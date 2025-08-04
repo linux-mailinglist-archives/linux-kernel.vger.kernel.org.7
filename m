@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-754591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE80BB199D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:25:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD4FB199D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C79174ECD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:25:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE65C7A95F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854E01EA7CC;
-	Mon,  4 Aug 2025 01:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F391EB5D6;
+	Mon,  4 Aug 2025 01:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="esVDAqRU"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q76UD000"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422AB29A1
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 01:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E85429A1;
+	Mon,  4 Aug 2025 01:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754270701; cv=none; b=IPJunCOkieipwiWxGjipWho6MkHl6nDg8nteF12zwr9OmmrmsaVDwdgFzutPbNu8t9BuNlo5ykrWERTWVHq5fCr0RurpXfS9NhoaNeoVA5BtFVsIPGT/s4vPiApFBG+ZAZaOp03JxzNIOXSiyAhRPKcoV3mSBqFQqrHG8VbKokk=
+	t=1754270744; cv=none; b=LeZEOrFmYG21z+WiYdCBBmAI0vRp2Pd0adr08onjPdZ+BVwguM//u674Ngpg5PNiu5VJJNLUYUIzNLFO5QjgP2sreJnpbL1Tspi+mSHX/2TY0OlJM45F9PhXZfkqn21vE+2PWQKmhDTjYyQUymFgCZZ6NnfT+85EcZSVtfaoSvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754270701; c=relaxed/simple;
-	bh=lBe1qSPgw4QXHHXslrEpP7PMufdFdef2wPoqFmROmfc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Xf+ea6QfotFkL5sXhcJ3n2clu9FyBJXmOxPxPmFIMD96HmzOsA08A2ZfqjbUyqr6maNuGQWCM+tcTrrE+CwPzGtCkUMe6qKM4IG4gJmvTBrRqaSgStDrbnTS/sd5/gfe1fPVxtn7C5vflFkfxuY44itAaNgixckJ0hziObOCkRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=esVDAqRU; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754270690; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=ngPeLVtN22D10xiauIRgXoZxyNy5qt56LuaZTotpsjc=;
-	b=esVDAqRUhaIPgt+gG1YHdtiyWSYezMhYmIZVHLFSXCYfDaPOx01vswWJWOLL1WW6K8Qjz/CsLfVVt9QcOXu3LbuUQvn9dXnqur1AILk7s14aBQwypQVs0oZeIuqK/y6ceP3ZzqS/e6fxUBuOQTadHgQGsWGMX7lEkwxXkUUfC5c=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WktIPnF_1754270672 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Aug 2025 09:24:48 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  SeongJae Park
- <sj@kernel.org>,  David Hildenbrand <david@redhat.com>,  Zi Yan
- <ziy@nvidia.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Matthew Brost
- <matthew.brost@intel.com>,  Rakie Kim <rakie.kim@sk.com>,  Byungchul Park
- <byungchul@sk.com>,  Gregory Price <gourry@gourry.net>,  Alistair Popple
- <apopple@nvidia.com>,  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  kernel-team@meta.com
-Subject: Re: [PATCH v2] mempolicy: Clarify what zone reclaim means
-In-Reply-To: <20250801144840.2067350-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
-	message of "Fri, 1 Aug 2025 07:48:39 -0700")
-References: <20250801144840.2067350-1-joshua.hahnjy@gmail.com>
-Date: Mon, 04 Aug 2025 09:24:31 +0800
-Message-ID: <8734a7zxo0.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754270744; c=relaxed/simple;
+	bh=CTOoSNavDPNe0/kE+A0n+AOfb1d3h5xV6lZHbqYaTJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e+DdKGp9VIkC+WqnODStttryfhczbi7dJmL+NSNCAzq5A8LfY168+R6wbSXwHTO5947NlJdNR4TV2rv+wDqHhJNGuaOGJF80yfnJXox4jnm5JbdXr71mB0jcEimlNeoZxqGw6qfxvyNp1FiOcYo/luCBSObhbjaocQ6aUHSZKVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Q76UD000; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754270740;
+	bh=jBZdkOsb/xZN8sCpF660Oe7sczVXc58fhkHo5Im8OUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q76UD000a9cvo3+8auLqWgUAlRKGgLToVn1UDJReDtns+A6v4o6d21d9U7w5Va/0b
+	 0Jr0dYuM+6WB9Yr3Eqf1fLOFQ7B7vFEKSJK7eBE+tPfE1HE7CGNV23IiAlsIwi7RQd
+	 zbjdfKQet6rknDgPoxbGgmCCfJAHhsxTq+uEGNS8gg8xN/5RSWu2WFLtrE+5rOZyNz
+	 xOIncTDwUHndXfVz7p2lJQ33T3rpO4blLCwf3wIhKtCAIaCVLxnFeJ+nUn8caVi8YE
+	 uvGUvifIBdKIX5LFE8oWGz3+Af+rxGNcsExY0Dg/i1QXpE1YNdUKMJWdmrd7JZcHS8
+	 8Gf5P90LuEjrA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwJlm5cr0z4wbY;
+	Mon,  4 Aug 2025 11:25:40 +1000 (AEST)
+Date: Mon, 4 Aug 2025 11:25:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Alexey Gladkov <legion@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20250804112540.6b8ed4b9@canb.auug.org.au>
+In-Reply-To: <20250730161223.63783458@canb.auug.org.au>
+References: <20250730161223.63783458@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; boundary="Sig_/qYqlHPDibEQVcTVn.ijODbv";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+--Sig_/qYqlHPDibEQVcTVn.ijODbv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 01 Aug 2025 08:59:20 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+Hi all,
+
+On Wed, 30 Jul 2025 16:12:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
->> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
->> 
->> > The zone_reclaim_mode API controls the reclaim behavior when a node runs out of
->> > memory. Contrary to its user-facing name, it is internally referred to as
->> > "node_reclaim_mode".
->> >
->> > This can be confusing. But because we cannot change the name of the API since
->> > it has been in place since at least 2.6, let's try to be more explicit about
->> > what the behavior of this API is. 
->> >
->> > Change the description to clarify what zone reclaim entails, and be explicit
->> > about the RECLAIM_ZONE bit, whose purpose has led to some confusion in the
->> > past already [1] [2].
->> >
->> > [1] https://lore.kernel.org/linux-mm/1579005573-58923-1-git-send-email-alex.shi@linux.alibaba.com/
->> > [2] https://lore.kernel.org/linux-mm/20200626003459.D8E015CA@viggo.jf.intel.com/
->> >
->> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->> > ---
->> >  include/uapi/linux/mempolicy.h | 8 +++++++-
->> >  1 file changed, 7 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
->> > index 1f9bb10d1a47..6c9c9385ff89 100644
->> > --- a/include/uapi/linux/mempolicy.h
->> > +++ b/include/uapi/linux/mempolicy.h
->> > @@ -66,10 +66,16 @@ enum {
->> >  #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
->> >  
->> >  /*
->> > + * Enabling zone reclaim means the page allocator will attempt to fulfill
->> > + * the allocation request on the current node by triggering reclaim and
->> > + * trying to shrink the current node.
->> > + * Fallback allocations on the next candidates in the zonelist are considered
->> > + * zone when reclaim fails to free up enough memory in the current node/zone.
->> > + *
->> >   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
->> >   * ABI.  New bits are OK, but existing bits can never change.
->> 
->> As far as I know, sysctl isn't considered kernel ABI now.  So, cghane
->> this line too?
->
-> Hi Ying, 
->
-> Thank you for reviewing this patch!
->
-> I didn't know that sysctl isn't considered a kernel ABI. If I understand your
-> suggestion correctly, I can rephrase the comment block above to something like this?
->
-> - * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
-> - * ABI. New bits are OK, but existing bits can never change.
-> + * These bit locations are exposed in the vm.zone_reclaim_mode sysctl and
-> + * in /proc/sys/vm/zone_reclaim_mode. New bits are OK, but existing bits
-> + * can never change.
+> After merging the kbuild tree, today's linux-next build (i386 defconfig)
+> failed like this:
+>=20
+> ld: .vmlinux.export.o: in function `__ksymtab___builtin_memcmp':
+> .vmlinux.export.c:(___ksymtab+__builtin_memcmp+0x0): undefined reference =
+to `__builtin_memcmp'
+>=20
+> Caused by commit
+>=20
+>   c4b487ddc51f ("modpost: Create modalias for builtin modules")
+>=20
+> I have reverted that commit, along with its parent and child, for
+> today.  It's parent commit
+>=20
+>   66ef3890c628 ("modpost: Add modname to mod_device_table alias")
+>=20
+> generated this warning in the i386 defconfig build:
+>=20
+> scripts/mod/file2alias.c: In function =E2=80=98handle_moddevtable=E2=80=
+=99:
+> scripts/mod/file2alias.c:1480:25: warning: variable =E2=80=98modnamelen=
+=E2=80=99 set but not used [-Wunused-but-set-variable]
+>  1480 |         size_t typelen, modnamelen;
+>       |                         ^~~~~~~~~~
 
-Because it's not an ABI, I think that we could avoid to say "never".
+I am still reverting those commits.
 
-> Thanks again for your review Ying, I hope you have a good day : -)
+--=20
+Cheers,
+Stephen Rothwell
 
-Welcome!  You too!
+--Sig_/qYqlHPDibEQVcTVn.ijODbv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-With some trivial tweak, please feel free to add my
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiQDBQACgkQAVBC80lX
+0GwU4Qf9FzvN6cHDOLiFCXUT9csNPoiyrUXRt9u9iyGLxsTnYgNegQEKL18Ou8Yz
+YJr0NIqkuKHuLWx7V5vuZfWXRG9pjrdSV6E8bjaIt05XrEIkX1hODlZDM36M9ES9
+A2NnI78sISQPGhaNWdYXJ/3ukZIfPnB2aHZ5xCb93bqFRfbP78TukktCdImcuSwA
+S/VCvx7Dpm0ZjIdOn5t/gzCCuTv9gHF88rY0X9Cc2CZYiKVdKBHEZtNbdJOCYdH6
+M1GX0cshj8ygblLN7d7D8hdVpeNz5YtTpv5ZP9ab3wQ4DUHYknLt1ewm24OR45/R
+hu0DC9T6wg1VcJtazYdjMAekdf/pFg==
+=eBwl
+-----END PGP SIGNATURE-----
 
-in the future version.
-
----
-Best Regards,
-Huang, Ying
+--Sig_/qYqlHPDibEQVcTVn.ijODbv--
 
