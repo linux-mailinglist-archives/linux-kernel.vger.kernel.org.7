@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-755341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95DFB1A52A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:43:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A78B1A52F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8268218A25A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31C51793D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A32737EE;
-	Mon,  4 Aug 2025 14:43:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE6A1FB3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF401EB5DD;
+	Mon,  4 Aug 2025 14:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhpJ0cuD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F3572615;
+	Mon,  4 Aug 2025 14:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318629; cv=none; b=uqEvlbnZgp1RsRWomSRHBhwdDqglV5oR1WNQR5k71xtZjrt9asfoaY79RscLhm0/ZvSQrKkwr20nWSN0Ml08MDYwlsgkuCRTSyP9W+/pEjdEwZvjo/EgusaSTfs+Qz/RwKuP+SxWAJYvou4TXf1q0I/8WsvZrVHE57aFq3wzlvI=
+	t=1754318718; cv=none; b=Rbi8k05HtCLvxEgwJSz12Duqq/nLxUhV+vwqQQ4H1BWIpMVbx6J8j1i7xVFu/0irs7y0czbFuXq49u5+0EaIJR2ha8XPd8T/YElwdVV6Dh6n9kP9MO2K7lXMjIN36Pq5T1c9V3jni73WufnSuyIQlTOIz6Pb0L/uascsP2I8mdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318629; c=relaxed/simple;
-	bh=d4n8FnV/L5ASC/KQP5eckHOAbv6VPJt6X8nRBabrSEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYNZBivtq6ajtrl3gMleqULqaF8eirmsrWUmD9+eiXKaBXt3njlDHZik2f7EaL14riQldPkaUKf7Z4I5lk06EgdeWSQYdP5W+IL07oqExcgzxEn/xvRpu+qzCFW0d9ILTpaX50aVUwasMWCXLUog1dp22WcXwMjx2QdxKs/ecqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A580E22BE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:43:38 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 77D903F738
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:43:46 -0700 (PDT)
-Date: Mon, 4 Aug 2025 15:43:12 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	"Kandpal, Suraj" <suraj.kandpal@intel.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/8] drm: writeback: clean up writeback connector
- initialization
-Message-ID: <aJDHAF69VOEHwcKO@e110455-lin.cambridge.arm.com>
-References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
+	s=arc-20240116; t=1754318718; c=relaxed/simple;
+	bh=Be30OiusCaeSqddavkiEXv3LWsIde8jXsUpqcxomgog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ugg5lI2UB4jDvDZngF4d7S6fscSmn773ZI5EBh+IbfUHg+O0zQN17UmDkCRMIv7wCVFoynuy4yVwjO/6+8AyZz61RskgiMvRCfAegyHhRpn7oBYU7IUHMwhLbNP6nDDfxoULRsm/hHEqNDUtNVbWxe3fNvL4h7hK5h8sWHdHWb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhpJ0cuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1DBC4CEE7;
+	Mon,  4 Aug 2025 14:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754318718;
+	bh=Be30OiusCaeSqddavkiEXv3LWsIde8jXsUpqcxomgog=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HhpJ0cuDFRnvowJFe7JndP7Y0pfAU5nNOJRiV4C+Gk7aIpMC3E4eZTU6eJ+Gdb1Jx
+	 xR5dwk/ZZejBTcdsCxQDzLlztUoIOuG4hVm+NM0cGDmeHhMkTln2JKe35DQ7z8nt5o
+	 xN5GyVorXS7O+SyV0/HL504qqulDEvJZZpjt/s2IYN4W+I6OYv/U3QP3d0rJor4CMS
+	 YG7ucgIDHVn2Dg60dnA6lzwpEHc6naaAECMBhCFBN4JkypKZRcK+LbkzwBcAYNi9xD
+	 ugw59fveCjII1sW5xaYWXg3XMaA1zlBlUWp1l8BEI05JxVPe17vjV9flheOOkGAvCQ
+	 4XAg0k4BCSujg==
+Message-ID: <72354ec9-7dc8-4192-9c25-d37abf33b5f0@kernel.org>
+Date: Mon, 4 Aug 2025 16:45:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH v4 0/7] Basic device tree support for ESWIN
+ EIC7700 RISC-V SoC
+To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Min Lin <linmin@eswincomputing.com>,
+ Pritesh Patel <pritesh.patel@einfochips.com>, Yangyu Chen
+ <cyy@cyyself.name>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Yu Chien Peter Lin <peterlin@andestech.com>,
+ Charlie Jenkins <charlie@rivosinc.com>,
+ Kanak Shilledar <kanakshilledar@gmail.com>,
+ Darshan Prajapati <darshan.prajapati@einfochips.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
+ <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ "rafal@milecki.pl" <rafal@milecki.pl>, Anup Patel <anup@brainfault.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250616112316.3833343-1-pinkesh.vaghela@einfochips.com>
+ <SA3PR04MB8931098CC4A73E8FDD481DA78326A@SA3PR04MB8931.namprd04.prod.outlook.com>
+ <2ed69301-f787-4257-8d44-a8544c1a43c9@kernel.org>
+ <SA3PR04MB89312063FB96E85ABB6F3D3E8323A@SA3PR04MB8931.namprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <SA3PR04MB89312063FB96E85ABB6F3D3E8323A@SA3PR04MB8931.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Fri, Aug 01, 2025 at 04:51:08PM +0300, Dmitry Baryshkov wrote:
-> Drivers using drm_writeback_connector_init() / _with_encoder() don't
-> perform cleanup in a manner similar to drmm_writeback_connector_init()
-> (see drm_writeback_connector_cleanup()). Migrate all existing drivers
-> to use drmm_writeback_connector_init(), drop
-> drm_writeback_connector_init() and drm_writeback_connector::encoder
-> (it's unused afterwards).
+On 04/08/2025 15:10, Pinkesh Vaghela wrote:
+> Hello Krzysztof,
 > 
-> This series leaves former drm_writeback_connector_init_with_encoder()
-> (renamed to drm_writeback_connector_init as a non-managed counterpart
-> for drmm_writeback_connector_init()). It is supposed to be used by
-> drivers which can not use drmm functions (like Intel). However I think
-> it would be better to drop it completely.
+> Sorry to bother you. I pinged because we addressed all the review comments of V3 in V4. But on V4 we have not received any comments since last 6 weeks.
+> Could you please let us know what should be the further steps?
 
-The intent of _init_with_encoder() was to be a special case for drivers
-that use their own specific encoder and the rest use the generic function
-that creates the virtual encoder inside the call. The API for
-_init_with_encoder() was actually introduced 4 years after the original
-patch, so that should give a hint.
+Please don't top post.
 
-drmm_writeback_connector_init() is more like _init_with_encoder() and
-I don't remember reviewing it, so I'm not sure why that was considered
-to be the better behaviour for the managed version. Now you're moving
-all the drivers to the managed version and you have to duplicate code
-in each driver to create the ENCODER_VIRTUAL encoder.
+That is a bit different question than you asked before: "Gentle reminder
+to review DT patches.".
 
-I'm not against the changes being made in the series, I just want to
-see a better justification on why _init_with_encoder() behaviour is
-better than the previous default that you're removing.
+Please read SoC subsystem maintainer profile document. For ARM platforms
+you would send now pull request or patches to soc. For RISC-V - not sure
+some trees are handled by Conor, but rest go directly to soc tree.
+
+I would suggest following standard SoC way, same as for every other new
+SoC (but carefully observe the kernel process cycle). You can easily
+check archives to see how people also did it...
 
 Best regards,
-Liviu
-
-
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-> Dmitry Baryshkov (8):
->       drm/amd/display: use drmm_writeback_connector_init()
->       drm/komeda: use drmm_writeback_connector_init()
->       drm/mali: use drmm_writeback_connector_init()
->       drm/msm/dpu: use drmm_writeback_connector_init()
->       drm/msm/dpu: use drmm_writeback_connector_init()
->       drm/vc4: use drmm_writeback_connector_init()
->       drm: writeback: drop excess connector initialization functions
->       drm: writeback: rename drm_writeback_connector_init_with_encoder()
-> 
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  2 +-
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   | 18 ++++--
->  .../drm/arm/display/komeda/komeda_wb_connector.c   | 30 ++++++----
->  drivers/gpu/drm/arm/malidp_mw.c                    | 25 ++++----
->  drivers/gpu/drm/drm_writeback.c                    | 69 +++-------------------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c      | 10 +---
->  .../gpu/drm/renesas/rcar-du/rcar_du_writeback.c    | 23 +++++---
->  drivers/gpu/drm/vc4/vc4_txp.c                      |  9 ++-
->  include/drm/drm_writeback.h                        | 22 +------
->  9 files changed, 77 insertions(+), 131 deletions(-)
-> ---
-> base-commit: 94f208ff622b09309358abaf26d7acca0c318fae
-> change-id: 20250801-wb-drop-encoder-97a0c75bd5d7
-> 
-> Best regards,
-> -- 
-> With best wishes
-> Dmitry
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Krzysztof
 
