@@ -1,175 +1,130 @@
-Return-Path: <linux-kernel+bounces-754830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1741DB19D44
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:04:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B191B19D47
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89A73A613A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12903A63A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E2023BF91;
-	Mon,  4 Aug 2025 08:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC72023BD00;
+	Mon,  4 Aug 2025 08:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntIloNWl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu2A4myV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04C8230BD2;
-	Mon,  4 Aug 2025 08:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDAD17D346;
+	Mon,  4 Aug 2025 08:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294665; cv=none; b=DEeEW4xyrJo8YqS0XGH1qogHBPbc4KGYWPDI/QI+R9hJ4QxzUMTmDujarqrndjBmEOePoEcClvTIDdpPOexgHLs82RXL5DqeqqbYk4Zdb5XJ7X386z+QCOgvoHc2SwXUHXwWRXMMWyJUfM0x1IRsAMZrDFh30oCsF5hw/pVexks=
+	t=1754294691; cv=none; b=GPIjzibPFrd5QsU7XEyi9SB2lxKnMTR4msbnfUG0Ud/voAtVJmEPj8pPQdqkbfYQ7zyeED9y4Y/+WWeky+LXj4h7/q+JrAg93WNOz/L5dilDxtUv4JbI4B4r9qnZaQS12cGdaXlbkZKJ76qZBjU62rN2tehHp42UlU8YTf0TFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294665; c=relaxed/simple;
-	bh=RKECXLolZ0+Hcz5RAIsl9N60kpDeOYEqxiBHrrjYHco=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=VnG9hUzvTISnZVUHz6dIyY+DQH1sKNoxaIaNyzQAtm1Re2//Y2wWZfssPgKXedXac48VU9f04kl69HsmV7Z2Dcp6RTjDMzqYVIc/fMJ24qG4OPpSNWvhkmLVyttVxy+L7C3yAldDdywQnFXGf3hu7MBiCvcMjR9URlaRb6E/yDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntIloNWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D359CC4AF0B;
-	Mon,  4 Aug 2025 08:04:24 +0000 (UTC)
+	s=arc-20240116; t=1754294691; c=relaxed/simple;
+	bh=0VuAiQf0Cv59dj4webRh41zL7rvvJGbD0h50qzSBf/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmJ/QvpEGxLC4t7IMcf+KCIKbkKw2OFgNFjyV8wIwWiIQQbZNmr2Bisl5nY4RzNC9GrnxGU3sM0ULrP2H6kjCx4OLNZN57JWE48PHoSRzo872F/tgkyjjDYK4j9WpRXqyHGh6jBH342VlWzx6hyC9N+GVlYBodJK98GqtZ2XE84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu2A4myV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42524C4CEE7;
+	Mon,  4 Aug 2025 08:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754294665;
-	bh=RKECXLolZ0+Hcz5RAIsl9N60kpDeOYEqxiBHrrjYHco=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ntIloNWl7dkUnA4Ud+WOESb+RaoQQ2dR5bm9FGDhn5ciK3RJJyMAjXjrx1vHHvMPM
-	 M2igx1ffKbH7yH0zcxq7TUWxp6Ba1cHkGzTTj5ucJVSwaG5vqyrjSZu1V0bLCIurh4
-	 srMH/SJTozryxgsT7eP/BzFAXr2g/YsSQ3Ml5a5gp13dpfqvjxtA1Vu/xQj1i51Ojz
-	 n0lbw9Oo2dbLPEyQwOcrP/nEWPd/D1bj2K3uj1CY+MAVqbEoDYxO3IPFCHDTXrnsrN
-	 PhxqZJoCnC9hlA5kirTsfzVsit0ZKyjKGeUOiwrWNAj7p55hcFWs6OG6gzsDvjiQv5
-	 dwfAr6v6QMVmw==
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DEE52F40066;
-	Mon,  4 Aug 2025 04:04:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 04 Aug 2025 04:04:23 -0400
-X-ME-Sender: <xms:h2mQaOTvDGl2k3J9v9cSKPnak2UIF77Lx8E02Vnu7KRqqNt9ZJkqPg>
-    <xme:h2mQaDwYL4BsiFCdjGVDjyt8YjfmxjfKAQ_gmgUoZ6npolQqU5lXmv4l8N4Mj4HEx
-    uz9uDU8roPztJ3svSg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddujeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrfgrth
-    htvghrnhepjeejffetteefteekieejudeguedvgfeffeeitdduieekgeegfeekhfduhfel
-    hfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedtvdeg
-    qddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrdguvg
-    dpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopedu
-    kedvheehuddujeduheelseduieefrdgtohhmpdhrtghpthhtohephhgrnhhsrdiihhgrnh
-    hgsegtihigthgvtghhrdgtohhmpdhrtghpthhtohepjhhinhhgohhohhgrnhdusehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprh
-    gtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkfihi
-    lhgtiiihnhhskhhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghrrghlih
-    hsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrnhhisehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:h2mQaFu7LhuyRrCKWhVwBTFKZTy29wc0MNFkqT6qbXBuqu7n9fT67Q>
-    <xmx:h2mQaHSV16-CTyAh22EXVWSltH71ro2e80F6WNAkqDuefzyQ6pJ6Sw>
-    <xmx:h2mQaKGL0ovkpIZnJ3tp8_ETHmsv9mhFdALfraI-euVJwXNXOapq2Q>
-    <xmx:h2mQaBces6M1nvOF6jd5Rr51louf-pmXq0oy6IhxkJz2wY5zQC6_5w>
-    <xmx:h2mQaJshPPqjSUIluVDY9rFZ3XsSShNj4P2CCMSyTl4P_ckuQRyQ413e>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B3B7E700065; Mon,  4 Aug 2025 04:04:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20201202; t=1754294690;
+	bh=0VuAiQf0Cv59dj4webRh41zL7rvvJGbD0h50qzSBf/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu2A4myVOFLEZ1l+8CKNrn6eHiM+py3XVDkIXHweOcOB2xEfwRq3CnMqqMvzUeyZh
+	 RHSkh/v7PvGQ3FWm9gmm3qBW6PolqxOe/KOoLCm6KMCMAWgaShAapuFroT6C7prGdL
+	 cOLydI5cnPK5/NaDfNgMzwg4GpUH0B4Niz+6oOsNF/3ljrgeQDMDY3hwBifM0cPEiz
+	 MHIaEgwlOREY+Eba/7cemGZvqIDkB6gaT+fLHXhi5UxykVEr1DsMGjL72OZ+2MMxZ8
+	 UVMGy3wZuTB8m7Yh98z+kivQSSVMDyvq7bL0NGazUu7m9KOfAh0tWbvJAV5h40REHf
+	 XyNkWWVk+eTlg==
+Date: Mon, 4 Aug 2025 10:04:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sam Ravnborg <sam@ravnborg.org>, Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, thomas.petazzoni@bootlin.com, Jyri Sarha <jsarha@ti.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: Add ti,am625-dss-clk-ctrl
+Message-ID: <20250804-industrious-neon-gorilla-2bbde6@kuoka>
+References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+ <20250730-fix-edge-handling-v1-2-1bdfb3fe7922@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tea76caf5b1f73f76
-Date: Mon, 04 Aug 2025 10:03:43 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Hans Zhang" <18255117159@163.com>, "Gerd Bayer" <gbayer@linux.ibm.com>,
- "Manivannan Sadhasivam" <mani@kernel.org>,
- "Hans Zhang" <hans.zhang@cixtech.com>
-Cc: "Bjorn Helgaas" <helgaas@kernel.org>, bhelgaas@google.com,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- jingoohan1@gmail.com,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-next <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>
-Message-Id: <74c17623-f1b5-4b28-a118-4e828e1e711a@app.fastmail.com>
-In-Reply-To: <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
-References: <20250731183944.GA3424583@bhelgaas>
- <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
- <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
- <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
- <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
- <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
- <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
- <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
- <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250730-fix-edge-handling-v1-2-1bdfb3fe7922@bootlin.com>
 
-On Mon, Aug 4, 2025, at 05:06, Hans Zhang wrote:
-> On 2025/8/1 19:30, Gerd Bayer wrote:
->> On Fri, 2025-08-01 at 16:24 +0530, Manivannan Sadhasivam wrote:
->   }
->
-> +#define CDNS_PCI_OP_READ(size, type, len)		\
-> +static inline int cdns_pcie_read_cfg_##size		\
-> +	(struct cdns_pcie *pcie, int where, type *val)	\
-> +{							\
-> +	if (len == 4)					\
-> +		*val = cdns_pcie_readl(pcie, where);	\
-> +	else if (len == 2)				\
-> +		*val = cdns_pcie_readw(pcie, where);	\
-> +	else if (len == 1)				\
-> +		*val = cdns_pcie_readb(pcie, where);	\
-> +	else						\
-> +		return PCIBIOS_BAD_REGISTER_NUMBER;	\
-> +							\
-> +	return PCIBIOS_SUCCESSFUL;			\
-> +}
-> +
-> +CDNS_PCI_OP_READ(byte, u8, 1)
-> +CDNS_PCI_OP_READ(word, u16, 2)
-> +CDNS_PCI_OP_READ(dword, u32, 4)
-> +
+On Wed, Jul 30, 2025 at 07:02:45PM +0200, Louis Chauvet wrote:
+> The dt-bindings for the multi-function device (mfd) syscon need to include
+> ti,am625-dss-clk-ctrl. On AM625 chips, the display controller (tidss) has
+> external registers to control certain clock properties. These registers
+> are located in the device configuration registers, so they need to be
+> declared using syscon. They will later be used with a phandle in the tidss
+> node.
 
-This is fine for the calling conventions, but the use of a macro
-doesn't really help readability, so I'd suggest just having
-separate inline functions if they are even needed.
+I don't understand above commit msg. You add new compatible (new device)
+but entire commit msg describes something else - some sort of a fix.
 
-> @@ -112,17 +110,17 @@ int pci_bus_read_config(void *priv, unsigned int 
-> devfn, int where, u32 size,
->   ({									\
->   	int __ttl = PCI_FIND_CAP_TTL;					\
->   	u8 __id, __found_pos = 0;					\
-> -	u32 __pos = (start);						\
-> -	u32 __ent;							\
-> +	u8 __pos = (start);						\
-> +	u16 __ent;							\
->   									\
-> -	read_cfg(args, __pos, 1, &__pos);				\
-> +	read_cfg##_byte(args, __pos, &__pos);				\
->   									\
->   	while (__ttl--) {						\
->   		if (__pos < PCI_STD_HEADER_SIZEOF)			\
->   			break;						\
->   									\
->   		__pos = ALIGN_DOWN(__pos, 4);				\
-> -		read_cfg(args, __pos, 2, &__ent);			\
-> +		read_cfg##_word(args, __pos, &__ent);			\
->   									\
->   		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
->   		if (__id == 0xff)					\
+> 
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
 
-I still don't feel great about this macro either, and suspect
-we should have a better abstraction with fixed types and a
-global function to do it, but I don't see anything obviously
-wrong here either.
+Heh? How? How adding a new driver needs fixes in the bindings?
 
-     Arnd
+This is just confusing.
+
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+> 
+> Cc: stable@vger.kernel.org
+
+That's not the way to add stable tag. See stable-kernel docs or any git
+log history.
+
+
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> index 27672adeb1fedb7c81b8ae86c35f4f3b26d5516f..afe4a2a19591e90c850c05ef5888f18bdb64eac9 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -121,6 +121,7 @@ select:
+>            - ti,am62-opp-efuse-table
+>            - ti,am62-usb-phy-ctrl
+>            - ti,am625-dss-oldi-io-ctrl
+> +          - ti,am625-dss-clk-ctrl
+
+Don't break the order. o > c
+
+>            - ti,am62p-cpsw-mac-efuse
+>            - ti,am654-dss-oldi-io-ctrl
+>            - ti,j784s4-acspcie-proxy-ctrl
+> @@ -228,6 +229,7 @@ properties:
+>            - ti,am62-opp-efuse-table
+>            - ti,am62-usb-phy-ctrl
+>            - ti,am625-dss-oldi-io-ctrl
+> +          - ti,am625-dss-clk-ctrl
+
+Same here
+
+I don't understand also why you are adding clock to syscon. Clock
+controllers have their own bindings.
+
+Best regards,
+Krzysztof
+
 
