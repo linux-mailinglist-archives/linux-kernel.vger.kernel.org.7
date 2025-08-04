@@ -1,133 +1,80 @@
-Return-Path: <linux-kernel+bounces-754996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF61B19FB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35C2B19FB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827B81644B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA283BDC9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA624C692;
-	Mon,  4 Aug 2025 10:25:54 +0000 (UTC)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0924C06A;
+	Mon,  4 Aug 2025 10:26:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BB42C1A2;
-	Mon,  4 Aug 2025 10:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C2F2C1A2;
+	Mon,  4 Aug 2025 10:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754303153; cv=none; b=qdHMIiFPHAKOhT1OGvLSUNfjVo70VafMamtLZaYqA72HIMEmw3ROmBybHDeqklYYXyrmzPcJ/fxoyjsP+lCuOJELVLShM4eiSHqrPvTlrzBMLWTlkQbqc8Ayzn5xWsOSnP/6rzdUTK2ONdehs1lBTX08iUUyLbaTugcMgv9y0yA=
+	t=1754303163; cv=none; b=s6J4WJnu93/2QV++IbCjX/ehZuF4JumKm38aihxTKogpluys+mYudoYSn6rqJmUEabyfctvEc+hL7MJCmrjpg5CYxTLLhqnc2SeP/SiwTsWEfN+51tViaqzc4pMe+I1d8lmMZj2vCAuqF1i65kwRe1JOdcJUkUZnxwqGqjkx2os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754303153; c=relaxed/simple;
-	bh=Gv/Yco+PLRB+eO81Xk6Z2wVlYEMcrAQFutwtK52dQYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSXvUmZDtVOmCtBi+EryleAUObiYY8swR2rrBmpAwpHWHMNl1ofV9Wldr5w2wUw9f6GpvHgAVvXva8Re6fuSw7s8oVilMqlOpEcATJY0Q6YkztoTy6w+OcZj09sjJEResJoX/Fp3ucf8herHJKofu8O3AwZk4hrkkoT5wd6iEUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-88ba6bb90d6so3001975241.0;
-        Mon, 04 Aug 2025 03:25:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754303150; x=1754907950;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eZddScDjOIs1bcwZar1ryVoYUm2q/hDGWLi3mEU/nG4=;
-        b=rjsdqISahIt9YtYeQjvBO10Rtlp+ZmHXo0cusaC6V5GYxypJaO2VmqXL9/LG5O6ZMw
-         4xPFioaLPlW6CMiwWw1wl/yYsD8X2RrNcOxLcb9AQbYt7YVcLEJa94Kz7lX8AXWYu4uC
-         ye44+UL76x/2IbXHM7AUja2hxjTRND34z5UKnlCfjghdigHJT4Cq89Tx3m69Y83mmu7P
-         IJliIrnuqUQ3Ktif9GFNg+hYqSfeWR32PBTN6dMcb3h7h6wmDNaMfBEniBT8AlBxodhx
-         Td75+Ursl1HARLUQhsC3f/Zo0S7+z8fH3BGVTp6QtiPCCQgQamkoQztnWoYnT1h9hFRo
-         6SMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCS9ZM3T7cV82MW59381KmyiigiwCJUfQOj+k94rH8mR7e54krG5TlPXC3qaXHqeV8psLQhr2yXDb@vger.kernel.org, AJvYcCWUAIjVuogZXXnNUOp1eaj2jeEJqaPWHfesOjvgm9oLtjtEeFCCknBz4VsCyQwSU2F4tveJgmKuaIjU@vger.kernel.org, AJvYcCX4vO/eczw/v7nW2l8pnZCaWR4ngw3gXdlEpHsrxaTmQbltjg8uiwUB1txG+g6UnQYerXw1LQXIAin5Beed@vger.kernel.org, AJvYcCXQYZV3tPcsLqqmxLJjBYBnML1yJrfOjYyhwIFzlUftEi7fxG/iCqKZLT2Ucjz5k2lr25vRiL7GdAl1m6S6cbWJoJk=@vger.kernel.org, AJvYcCXulT5sYKrIXCvDvSyU0qNwMG9g5IFxjNshJNSNnFGLTGPX1NJiUEVvEpQQ4MGRdXBCrmiKAtm/t1Z9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz60AdKImkK0zEaklfHAWTMB3b7E6ZgCFp3MdSU70/dfxKHOcQt
-	EnXl7QkDknjsz9nrqU29eK/FmVVN9NvMqTfzd8HZTKUzzC3SiQ3K5uNaFXkFxn4n
-X-Gm-Gg: ASbGncttezy9QDIBmNvQLITPy3qv2X+gqhmaGo2VKBVjuyN9CLEJJ46TrESccdN6S08
-	jWVIZB7DgJSObrQxWnGKMNJq+mTJKmzIliUneZnbA8Eh8P0dYtyRYwJ2mjduxnaYyBHEiMMSV8M
-	o5wD5QDmay/UBrWFlyLCzpR2zpDSjfFSq9NAn8a2kq+ZRMqHB8WvOMMrbqlNhe7S2D4jFCi9WgP
-	ab7+N9LruonGWNbjXms93lS+t8GZBK8SYgFEVJIFHS+eC8RyjIa6S19gH7R+bkVGZF3U3H/DPeF
-	AapQZKLAuRixU5KcI6bo+3xKFf2CL7MwZ4U6GVnB6MlJDc3WYUL9Bk4nE/qibaIsz+EzhxKv5jM
-	ES1Ilt4f9bSTLJAW83XUmJVhjTmDHJic9UWtpsv3lLdX4GgvujCxBS6zH969i
-X-Google-Smtp-Source: AGHT+IEb6a7Bd5VuoZnxYlYIATgP0FQjULwTFEBTZ5xQm6f07KtBAzHdP4x3XKxt2V8CJPIinTxpjA==
-X-Received: by 2002:a05:6102:3199:b0:4ee:5244:6607 with SMTP id ada2fe7eead31-4fc1014a862mr5910437137.11.1754303150292;
-        Mon, 04 Aug 2025 03:25:50 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88d8f44b688sm2252555241.26.2025.08.04.03.25.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 03:25:49 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-88bc19ddfe3so1183667241.1;
-        Mon, 04 Aug 2025 03:25:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+Bt+EMxBqYZFRQaNicB4iFSaJz6hY5u9q40HPFoDdadyFGGpEGxcoJXhYDAIp/oPyU0oBe3JGC7jv@vger.kernel.org, AJvYcCV97rVL+yn17FTwTzZ4Cu0lEIv4wLsgFgXIzp9TzefQSGXmxQ3fVQZMmwj+Hqd5K+amj1swe3gEOz3m@vger.kernel.org, AJvYcCVuPaQgxukZFJmxD0tHg5sQ2++opDcjFeQIB56/ciwWI0MG0/K3ETLv6E+Sk1IHBnIIx+vMgL5M61/DZJyaiKBESOc=@vger.kernel.org, AJvYcCW/KoEtkE74xwoFSxGuUMe3Fvl5eS64/+EDF3ih+uVXONTnFXJfWNovprz/2iBAUP5zZYpuZULQgf+G@vger.kernel.org, AJvYcCXgCepwEedYcQLbeJl9k57f+ZbUWCbYoeoEl8YFwKT/kBgN1fhc1wmZfjDzKtGYHHz7rm+DXpYVv6o8xzM5@vger.kernel.org
-X-Received: by 2002:a05:6102:6102:10b0:4fb:f495:43ec with SMTP id
- ada2fe7eead31-4fc1014a568mr4289741137.12.1754303149196; Mon, 04 Aug 2025
- 03:25:49 -0700 (PDT)
+	s=arc-20240116; t=1754303163; c=relaxed/simple;
+	bh=9nC3jxk2RnazplfKgQ1GKMWYtuAE4k1GwNFPeqtUQNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FzRxcD5myuEov3LpqQ35JOuyRVxdK1utXWAUgPOxDlIUIT4f2jblM/mkFnK4+7NaGP3RJ+Qd5hb20BzY+zr0GeUu9Ph+f2R0i+b9yDvL09GfloS7ceooIGdA+LoCIBrhIaUdnOhaYfg293o9Cs66xg1ZEavU06yG278H/v0He2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 748D9C4CEE7;
+	Mon,  4 Aug 2025 10:26:01 +0000 (UTC)
+Date: Mon, 4 Aug 2025 11:25:58 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	kuba@kernel.org, stable@kenrel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm/kmemleak: avoid deadlock by moving pr_warn() outside
+ kmemleak_lock
+Message-ID: <aJCKtmtus770t5LA@arm.com>
+References: <20250731-kmemleak_lock-v1-1-728fd470198f@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com> <20250704161410.3931884-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250704161410.3931884-3-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Aug 2025 12:25:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVrbOPrzwMMP0+HHqh01nwDfoUx8Mx0nZ=24ZU9XkFqgQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwFJTXzLRJiS_KcBRTI0cWrJpi5fbuV92Ri-bNxlf-GM9ClQh0GwvKc4cU
-Message-ID: <CAMuHMdVrbOPrzwMMP0+HHqh01nwDfoUx8Mx0nZ=24ZU9XkFqgQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/9] clk: renesas: r9a08g045: Add clocks and resets
- support for PCIe
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	lizhi.hou@amd.com, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731-kmemleak_lock-v1-1-728fd470198f@debian.org>
 
-On Fri, 4 Jul 2025 at 18:14, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add clocks and resets for the PCIe IP available on the Renesas RZ/G3S SoC.
-> The clkl1pm clock is required for PCIe link power management (PM) control
-> and should be enabled based on the state of the CLKREQ# pin. Therefore,
-> mark it as a no_pm clock to allow the PCIe driver to manage it during link
-> PM transitions.
->
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, Jul 31, 2025 at 02:57:18AM -0700, Breno Leitao wrote:
+> When netpoll is enabled, calling pr_warn_once() while holding
+> kmemleak_lock in mem_pool_alloc() can cause a deadlock due to lock
+> inversion with the netconsole subsystem. This occurs because
+> pr_warn_once() may trigger netpoll, which eventually leads to
+> __alloc_skb() and back into kmemleak code, attempting to reacquire
+> kmemleak_lock.
+> 
+> This is the path for the deadlock.
+> 
+> mem_pool_alloc()
+>   -> raw_spin_lock_irqsave(&kmemleak_lock, flags);
+>       -> pr_warn_once()
+>           -> netconsole subsystem
+> 	     -> netpoll
+> 	         -> __alloc_skb
+> 		   -> __create_object
+> 		     -> raw_spin_lock_irqsave(&kmemleak_lock, flags);
+> 
+> Fix this by setting a flag and issuing the pr_warn_once() after
+> kmemleak_lock is released.
+> 
+> Reported-by: Jakub Kicinski <kuba@kernel.org>
+> Fixes: c5665868183fec ("mm: kmemleak: use the memory pool for early allocations")
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Thanks for your patch!
+I think Andrew already added this to mm-stable but, for the record:
 
-> --- a/drivers/clk/renesas/r9a08g045-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
-> @@ -289,6 +289,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
->                                         MSTOP(BUS_MCPU2, BIT(14))),
->         DEF_MOD("tsu_pclk",             R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0,
->                                         MSTOP(BUS_MCPU2, BIT(15))),
-> +       DEF_MOD("pci_aclk",             R9A08G045_PCI_ACLK, R9A08G045_CLK_M0, 0x608, 0,
-> +                                       MSTOP(BUS_PERI_COM, BIT(10))),
-> +       DEF_MOD("pci_clk1pm",           R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608, 1,
-
-pci_clkl1pm
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18, with the above fixed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
