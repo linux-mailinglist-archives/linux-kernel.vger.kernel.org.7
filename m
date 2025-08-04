@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-755331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A690B1A50C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:34:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F032B1A50F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADB218A22EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:34:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEBBF4E1899
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE83627381A;
-	Mon,  4 Aug 2025 14:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062D127467A;
+	Mon,  4 Aug 2025 14:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDccK1XX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zo+MYhK0"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E503238C08;
-	Mon,  4 Aug 2025 14:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DF8271450;
+	Mon,  4 Aug 2025 14:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318034; cv=none; b=B83uycxNCNDkFAzjWo3GihNOvDZaEV7MQj1i/SkrUAQOZMVv3MQXRJ5ZHi1INwqiGTEr9DO/RjE39Jo9qeo4C5sIGe20W+CKCpH0kbjLS2B7p31NC0GdH6bXh/ew/zSlsl99o3djRQmCUP+TJbDZ+Cy4kung1b7W50pcsjkpJic=
+	t=1754318047; cv=none; b=pGnuV60TMGTEY3PWm7sqD6sfz8bx5+Bq9rgRDU9EqQ7lJHCMwemwrhgMAWWs40/a/TfTchQmWXS4R/oRubT2c27jvcXOZNDfL5DhjVye9Sgx0JbM4rS0SWMmUf2xrtudqziqt1nk0wyDjo4YurN0XxyoEwyAIjEcpbltk6IOMEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318034; c=relaxed/simple;
-	bh=BxJgaOKe6Tk/0KuMbw7KhSOpDJuDqbXWbDVAWr4BkYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJfNGhnCve3j40HEDuz9GvKRv/1NtLz3W+NUg0bSH+7HcKF4M5/eM95+iEQ0kyx2Unz3WPa9GCg0THVbonL4+EVcQvuWf/8vHrnNnqIdcSB+9lZuWMadovH7KqHHrEaXt869ygPi5rxTKpfCwf7vIjv90yDXXzzlm2mRBFCmzNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDccK1XX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AEE6C4CEE7;
-	Mon,  4 Aug 2025 14:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754318032;
-	bh=BxJgaOKe6Tk/0KuMbw7KhSOpDJuDqbXWbDVAWr4BkYs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hDccK1XXfHHOPEncrfomlcVlIRGiUT9lAsapWMFIznJIE0PQOZiE3jZhEmPhe5Cqe
-	 uc7H2TsCA33UyEDJ3xYn4LuarwnMPHi38jocb2SrTIGbWcRaP7Sd17ti3/IQepXquD
-	 6k1/1ngrWbBAa0Tlgm73VWrVijjsZRx+m7EZVgyK7UACoqaljeFiIHpqzwgvk/VhIb
-	 MWds0G+6MzBcwwfTzi0rX5ee3ckyyQgYUWWAjvvPkP5fu/lcYtIgj1+tQPbe04hZSe
-	 smaVUo2Hlbiv8CNEivm5mE7uce9YwYzHr6sKIxJIJZsDfgmW3eRzP5Nd6HjzKw2LOX
-	 0xnbTQlaWoYSw==
-Message-ID: <0fe4165d-f198-42cc-9c2f-f1e51bd96716@kernel.org>
-Date: Mon, 4 Aug 2025 16:33:46 +0200
+	s=arc-20240116; t=1754318047; c=relaxed/simple;
+	bh=QZTKp0AdmNxOZCCBvKATKlV+WF+E2k4VVUMWfpw3TsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X16OuxLlVuoSM9XdsqqFaTnRruwgkEXDWc6Xm/cNuGGaNzxWOFnhtDk1HOXYnEgily1FbqvAmlkR6rwZ3lYHL48UXo2K5CwQkbQbMaL6cZtMGemynJmLprtcVsZrkqqESudgDlayERDitgSklwBkOvSJaEcbitvdgr88jeQDcQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zo+MYhK0; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32127d5f63eso154931a91.0;
+        Mon, 04 Aug 2025 07:34:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754318045; x=1754922845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ThPz4EG6ZmgX+GG9SQyYVrMb+M6NgBy3ZDuWSe5fSmc=;
+        b=Zo+MYhK0Xny74u38HgDnumoCaefnQ+MQSZc8o1md+X21cUqOzb+c9tOKfspRGBN/7I
+         70hFFhAHOyBvzq3shFnVytO0OsOII79ld42k4qAJX1pSh+aWA6/oJj8zDEEhCql4LKGq
+         hYsk+PURlAFaeIFzhpNdnrb3FHNcR7QBtO21QHPa1DysaG4bnFGiqH30e6WnN0QJRRlZ
+         w/Yz9Fub6J6eukCd0qELU93qZ3JArz2ZYUKlBLuLuptRgmg34lpd7eTI7cxhnzuuRRXl
+         paUS9mAcKuEgwYZOvVO6RWwpXk9M0NXwiLzQe72PDEDMT/hbVh3BeupY2DPqNaPfdfwK
+         PY5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754318045; x=1754922845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ThPz4EG6ZmgX+GG9SQyYVrMb+M6NgBy3ZDuWSe5fSmc=;
+        b=ZKG5m+vUsiRlmt0GbUMEju1b/2A5gMTRy8/N0ocUKwHvqYJTpk4VGh44AqdNRxaNad
+         uDr9cQ0qPGgSaFYXTx7wL4yaXWhhCe6OVAXyZjE2KiaO2LCFFjkKvvaWTC4Iy+bao+ub
+         0DfMHJsVlNSTBqf9tKz8oX3GBrn9SFKc4ZE2iZqEWzEwPx83Ab6RdA8mKhhDfQ69MEx6
+         1AGcMEOx61lSd/pjp3RSrmmLgY6vROpLnWbu7917LAEJgK5EXMCNsrJoVKfFt28DY/QS
+         JgErIYJb32U2jBXE4LpJz/fp1PBKqI3jD7/ifN4RCCVMvkSMI24z9ou/5DB0FNLqhQxl
+         U1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwYl3Aznrc7i4LrDGdDCzhStpAWgE+6W9cZOVfovnmPTC8EHebvplK1tCzgaSmp70TfsPZi9BHLSI753CL@vger.kernel.org, AJvYcCXndGSVYarNpqkv98TUra8uwb9lGpE5/lPxITeREOeCLFa/kCYExtIVmEDsPFi58QG+PCSWOXeMrvmCqhfCIjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzYcIz55oNskPA+jOtHPRMmnguJ0fDP2DpUA5gPbMmJ0dIssvk
+	xdlE3I531Y628jaM1M2DGyaDp2Orn+N4CMVv0zqoV8jKwhR/8HOZzlo9vxki13HckgLK3EUktOu
+	BnRSjdVfCApWDfIfk7EXPe+Zk9u0KLYI=
+X-Gm-Gg: ASbGncsLQdMmuS5S20KIKmhXlS8Dz50DuLY/oijmrVBtTYEx1kyDkcbe8ez7M3VNgHG
+	dzJSX6NzzL3PJYvyrokeF9C5zGZLziTzSr2QkZ6sCdfKxWBbWbzMsgG9DFFM1HTtf69J2cBStw5
+	+4lwe71vD1UR9jG1Fgo3p6zUJsKRFsO2cbEXzk8Zoup8QydKlnBDo+AeOPKwvb/nT5B05l+zk/8
+	kOdHYW6
+X-Google-Smtp-Source: AGHT+IH2SjTWTgUng0xb8MVNI07treE0Rf1uZrlyLZS28ps1VWH5GeUrd451Qm6fRobbn3ai1A5EuPF9RQCs85dAYm4=
+X-Received: by 2002:a17:90b:1804:b0:31f:55a7:6504 with SMTP id
+ 98e67ed59e1d1-321162c71c9mr6274051a91.5.1754318045294; Mon, 04 Aug 2025
+ 07:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Laura Nao <laura.nao@collabora.com>, wenst@chromium.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
- nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org
-References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
- <20250804083540.19099-1-laura.nao@collabora.com>
- <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
- <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
- <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
- <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
- <2555e9fe-3bc0-4f89-9d0b-2f7f946632e7@kernel.org>
- <ed0884fc-e43a-4f5b-8701-3645c406b37d@kernel.org>
- <3a499702-ba75-4d8a-b38d-222a62bffb34@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3a499702-ba75-4d8a-b38d-222a62bffb34@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250801-amdgfxv9-v1-1-0b9670ab5509@ethancedwards.com>
+In-Reply-To: <20250801-amdgfxv9-v1-1-0b9670ab5509@ethancedwards.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 4 Aug 2025 10:33:52 -0400
+X-Gm-Features: Ac12FXzEWmuF5wDSj54XY1blu563_2bdAIUexGomIzDirrtij04qOUL9B36nQoM
+Message-ID: <CADnq5_Nzia7kvqBYxVwnRASFHyWWDPPrA-qBsLH4OxP_S49L5Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/gfx9: remove redundant repeated null checks
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/08/2025 16:31, AngeloGioacchino Del Regno wrote:
-> Il 04/08/25 16:19, Krzysztof Kozlowski ha scritto:
->> On 04/08/2025 15:58, Krzysztof Kozlowski wrote:
->>>>
->>>> So, what should we do then?
->>>>
->>>> Change it to "mediatek,clock-hw-refcounter", and adding a comment to the binding
->>>> saying that this is called "Hardware Voter (HWV)" in the datasheets?
->>>>
->>>> Or is using the "interconnect" property without any driver in the interconnect API
->>>> actually legit? - Because to me it doesn't look like being legit (and if it is, it
->>>> shouldn't be, as I'm sure that everyone would expect an interconnect API driver
->>>> when encountering an "interconnect" property in DT), and if so, we should just add
->>>
->>> Why you would not add any interconnect driver for interconnect API?
->>> Look, the current phandle allows you to poke in some other MMIO space
->>> for the purpose of enabling the clock FOO? So interconnect or power
->>> domains or whatever allows you to have existing or new driver to receive
->>> xlate() and, when requested resources associated with clock FOO.
->>
->> Something got here cut. Last sentence is supposed to be:
->>
->> "So interconnect or power
->> domains or whatever allows you to have existing or new driver to receive
->> xlate() and, when requested, toggle the resources associated with clock
->> FOO."
->>
->>>
->>> Instead of the FOO clock driver poking resources, you do
->>> clk_prepare_enable() or pm_domain or icc_enable().
->>
->> I looked now at the driver and see your clock drivers poking via regmap
->> to other MMIO. That's exactly usecase of syscon and exactly the pattern
->> *we are usually discouraging*. It's limited, non-scalable and vendor-driven.
->>
-> 
-> If the HWV wasn't BROKEN, I'd be the first one to go for generic stuff, but
-> since it is what it is, adding bloat to generic, non vendor-driven APIs would
-> be bad.
-> 
->> If this was a power domain provider then:
->> 1. Your clock drivers would only do runtime PM.
-> 
-> The clock drivers would have to get a list of power domain that is *equal to*
-> (in their amount) the list of clocks.
-> But then those are not power domains, as those registers in the MCU are ONLY
-> ungating a clock and nothing else in the current state of the hardware.
-> 
->> 2. Your MCU would be the power domain controller doing whatever is
->> necessary - toggling these set/clr bits - when given clock is enabled.
-> 
-> That MCU does support power domain voting (for two power domains in the main
-> PD Controller, and for all power domains in the multimedia PD controller), and
-> this is something completely separated from the *clock* controllers.
-> 
-> Just to make the picture complete for you: the power domains that this MCU can
-> manage are not in any way related to the clocks that it can manage. At all.
+On Sat, Aug 2, 2025 at 4:33=E2=80=AFAM Ethan Carter Edwards
+<ethan@ethancedwards.com> wrote:
+>
+> The repeated checks on grbm_soft_reset are unnecessary. Remove them.
+>
 
+Same comment as the gfx10 patch.  These are necessary.
 
-OK, thanks for explanations. Please rephrase commit msg and property
-description in v4. I am fine in using "hardware voter" terminology in
-some places, so it will match datasheet, but I want to make it clear
-that it is not voting for resources how we usually understand it. It's
-just syscon stuff, poking in other system-like device registers because
-hardware is like that.
+Alex
 
-
-Best regards,
-Krzysztof
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v9_0.c
+> index 6a9cf3587cc6f0a0d00ab1c109fd599dd8aa2579..a6ff9a137a83a93cde0b0c9c9=
+e51db66374bcbee 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -4175,19 +4175,17 @@ static int gfx_v9_0_soft_reset(struct amdgpu_ip_b=
+lock *ip_block)
+>                 /* Disable MEC parsing/prefetching */
+>                 gfx_v9_0_cp_compute_enable(adev, false);
+>
+> -               if (grbm_soft_reset) {
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -                       tmp |=3D grbm_soft_reset;
+> -                       dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n",=
+ tmp);
+> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -
+> -                       udelay(50);
+> -
+> -                       tmp &=3D ~grbm_soft_reset;
+> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -               }
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> +               tmp |=3D grbm_soft_reset;
+> +               dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n", tmp);
+> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> +
+> +               udelay(50);
+> +
+> +               tmp &=3D ~grbm_soft_reset;
+> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+>
+>                 /* Wait a little for things to settle down */
+>                 udelay(50);
+>
+> ---
+> base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+> change-id: 20250801-amdgfxv9-30357749717e
+>
+> Best regards,
+> --
+> Ethan Carter Edwards <ethan@ethancedwards.com>
+>
 
