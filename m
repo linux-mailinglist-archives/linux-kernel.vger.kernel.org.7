@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-754939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36596B19EE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:40:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC679B19EE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8F1169F59
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5B33BA6B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A60244673;
-	Mon,  4 Aug 2025 09:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC862459F3;
+	Mon,  4 Aug 2025 09:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YsUTDOp4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="bePZBDa3"
+Received: from smtp153-171.sina.com.cn (smtp153-171.sina.com.cn [61.135.153.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E971EA7CF;
-	Mon,  4 Aug 2025 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BE824418F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754300422; cv=none; b=NZgUQ2ZxD4gyt21Y9p8X3ZjMpdglWkKxJcm1ylBPTFLi5J+CTDUNMJyns+O1gNSFeygUmQrsuqY8agH0JTATKE5ZOMmpgZv6+GBagvt8mAyqZcgFOpTSlQeUzAOOg9cc9NUFVe7iTObyTq/zP23ek6+7LRQPQ6xgVJtRbRrnajk=
+	t=1754300471; cv=none; b=HoxilYoyh4ZiPP+Y4mdaDsLeotjR80CSPOW2cvhkJtYjDcqwYesT8DgXCk/G7CUL7DO9mx6ZHD9f+bQbscPrw/eVRyUjuz75zXGR4xrJ/4fNIC4C+o5MdZDw37krQ4RSH+bha8v0BbpthkzG0gp2H+LPeStwYK0q+5uz8QjWlEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754300422; c=relaxed/simple;
-	bh=za1PTKsWjFibSErq85AFsMvUwxohoDzwmMSpj4Q7Hog=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ai9Urdo4v6THbCri2AmkQSN9fJOdnYCghw7pcA8Ua28aT1ldgIENy23qGvO2kD7MHQAxnyfNnBuD2oOo55EmH+N1oT8+rqYOsRWc7/AR/mo3zk6v1KSkcflE8lMpXdo4+7KMBfY5jwEnMObSZZ9/fbu9819AO6Sgm9hFvmfaFeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YsUTDOp4; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754300421; x=1785836421;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=za1PTKsWjFibSErq85AFsMvUwxohoDzwmMSpj4Q7Hog=;
-  b=YsUTDOp4IfsO2nIkXxMt5wgurI0C64sXoFlJRWgZfOd4JkIoe0/kau1D
-   VmPkFOpBeADALZyJs3tXY5ko/s1EIwRpxzZVj5i4++2VobB8RTa7lyYRG
-   kc8y8xwLl1Pbd07lm0lGUZ3qA0jDh0u60nwd7Y/q26F8LV4LxtOex67KA
-   ZX1dbMJJTMo9J2tNew9LShzIXYAU1VkPo16khLJqIuD0W3TW9xqonQXEa
-   05SS75B6Iu3hHO1x1UZ9xItv0M0Tgu3K7zoOVaBBv/94gKLc1efoBiYii
-   Ec28F5OmdhgcoRWROC83McNRhNjsSQqViBcku5Xfm0Tdvyk6UqskD2+md
-   g==;
-X-CSE-ConnectionGUID: 2c5pNpAOTO+PjsrkeurmFQ==
-X-CSE-MsgGUID: 2TtQkNpMS3KmimQVO5Vb3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11511"; a="74142327"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="74142327"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 02:40:20 -0700
-X-CSE-ConnectionGUID: 7d6dt920SEexhKinLnnNRA==
-X-CSE-MsgGUID: EDZ/GzpIQ52XiYqiFjo+7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163785264"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.63]) ([10.245.245.63])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 02:40:18 -0700
-Message-ID: <ccf7c5b0494e46bbf86d45927e6bd130115c50fb.camel@linux.intel.com>
-Subject: Re: [PATCH v4] Mark xe driver as BROKEN if kernel page size is not
- 4kB
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Simon Richter <Simon.Richter@hogyros.de>,
- intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Date: Mon, 04 Aug 2025 11:40:15 +0200
-In-Reply-To: <20250802024152.3021-1-Simon.Richter@hogyros.de>
-References: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
-	 <20250802024152.3021-1-Simon.Richter@hogyros.de>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1754300471; c=relaxed/simple;
+	bh=plKyJBj3mtQKgRao7b68LOeuzCMGdCs8YTyQyXVbp8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KwDUraMv5Q8QqntqzAzJVQv1cZhhPMHjJwOTCSNl96fWSe5y1bS37CmOEIvVbauzv7Cr7MXQi3S4wsQ7dO5rVzctVbRFtt68oTh0fqHokd2wt0Z50xzobFb5xg8KiVVysWB/Y3ZD2jRj8ItZ0nmR+OV4/BsIpA2DE9ItP+9oklk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=bePZBDa3; arc=none smtp.client-ip=61.135.153.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754300462;
+	bh=/NMiWYArdixCnIV8qsR+BFCKpefIojulmRxT9MNKplE=;
+	h=From:Subject:Date:Message-ID;
+	b=bePZBDa3aDZuKzTOum+Khrx4ctRN9BvgcGssfdTTXLJu/d7nbYnp7cE/PJ2yJeIkh
+	 qa9ofgQlTMyHSgafolC2/wpVzCmt8bEQ9/m4JAMky0excct23Clv5fiuOY46htF+MH
+	 djvX2OgM4EFf2Q2dq22Q8sFVSqpgOl0fB7+L/3V0=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 689080280000239F; Mon, 4 Aug 2025 17:40:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8558406291946
+X-SMAIL-UIID: E994DBE1263645139F2664FF7472ED70-20250804-174057-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+2a0d2af125c01db73079@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] [ntfs3?] kernel BUG in set_page_refcounted
+Date: Mon,  4 Aug 2025 17:40:45 +0800
+Message-ID: <20250804094046.3872-1-hdanton@sina.com>
+In-Reply-To: <688cfb9d.050a0220.f0410.012f.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-08-02 at 11:40 +0900, Simon Richter wrote:
-> This driver, for the time being, assumes that the kernel page size is
-> 4kB,
-> so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with
-> 64kB
-> pages.
->=20
-> Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
-> Cc: stable@vger.kernel.org
-> ---
-> =C2=A0drivers/gpu/drm/xe/Kconfig | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-> index 2bb2bc052120..714d5702dfd7 100644
-> --- a/drivers/gpu/drm/xe/Kconfig
-> +++ b/drivers/gpu/drm/xe/Kconfig
-> @@ -5,6 +5,7 @@ config DRM_XE
-> =C2=A0	depends on KUNIT || !KUNIT
-> =C2=A0	depends on INTEL_VSEC || !INTEL_VSEC
-> =C2=A0	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
-> +	depends on PAGE_SIZE_4KB || COMPILE_TEST || BROKEN
-> =C2=A0	select INTERVAL_TREE
-> =C2=A0	# we need shmfs for the swappable backing store, and in
-> particular
-> =C2=A0	# the shmem_readpage() which depends upon tmpfs
+On 01.08.25 19:38, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    260f6f4fda93 Merge tag 'drm-next-2025-07-30' of https://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15c31834580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=bb7581d3fb1bb0d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2a0d2af125c01db73079
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149062a2580000
 
-R-B still stands.
+#syz test upstream master
 
-I've pushed this to drm-xe-next with a Fixes: tag which means it will
-likely end up in Linus' tree the upcoming weekend.
-
-Thanks,
-Thomas
-
+--- x/mm/page_alloc.c
++++ y/mm/page_alloc.c
+@@ -2974,6 +2974,8 @@ void free_unref_folios(struct folio_batc
+ 		unsigned int order = (unsigned long)folio->private;
+ 		int migratetype;
+ 
++		if (!free_pages_prepare(&folio->page, order))
++			continue;
+ 		folio->private = NULL;
+ 		migratetype = get_pfnblock_migratetype(&folio->page, pfn);
+ 
+--
 
