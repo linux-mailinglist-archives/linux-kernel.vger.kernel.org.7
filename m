@@ -1,214 +1,161 @@
-Return-Path: <linux-kernel+bounces-755125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88DCB1A18F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4994B1A18D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10713AA181
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D601895A03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC3F25B1C4;
-	Mon,  4 Aug 2025 12:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B419925A631;
+	Mon,  4 Aug 2025 12:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IVfUC+Nl"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2048.outbound.protection.outlook.com [40.107.94.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="I7+SAhko"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FC91C3027
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754311290; cv=fail; b=aIS/0wLt/7Y3fYEF0AKG+GRYTjq8m7yXDgC4sVWY4DoFBEf+4PKvWO5XeYsSB2reiBDE2ODcgtlNnH3qWhCgmsSo7Ngf+yMPZeasJhOtdFlMSB8W9wvQRZLy1EK6hIu1T0jL/dhkWpOcDAPlEMQ515RDzFETqZSuQq1PYkCAYUI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754311290; c=relaxed/simple;
-	bh=SF6pXS/0fRpF41kzJDh8SZEleox1zW6jNwncWMRWD4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VPwfR7HRmZ8ny2UGvu/q9rstTEFW1Zhns3JD3o39suBsfcF4YHm8lbiXmgtlrbFQk78rVfgftLbQ9tq5uKf2PjBqMx3bGGovvllezD1rq8uFuhT/x1Vk/hSaFPdhAvmntVSbk1O6Oc1Yzd+keSMV3G+OrpV6qJixSNeLc9+MnNY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IVfUC+Nl; arc=fail smtp.client-ip=40.107.94.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TZng4kVLmG2r3z74ijxupsnJYYbzWM6JlulE6mZH8zbjNvCt7ne2TwOvCGgiGQUxDHlbXkNaZR9KVhv0Hxrzv+cf62E3fnrYVJYkbLsTW4XxDKdjY3SHGkBkcwdgjs301CXE+yRHjUehOVebE/FsZhK+MhWbT2Xxb611f6UesXBWMtBowntVIENQSLZ4bYAmHg0Enbp/uz8xCGUqHwzOkwEZ8LTa0dxMivs/3uy5k61ugAFIpPEHdSIPOBwsHbaKh/Hm59xMoegTwyPbQjZHni9N2F/ZhcY5pcJ7WCiN1xCaOsCVEeo8RDj749MfKDogmYreFwM1TRRCdDcyrKlVIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hhe9Uj7ZGt3gWDx0MmWXsFWbnPWL0c5DfAOqIsD6mTU=;
- b=NjoRKIiKntqjRACTsTrHY14dYKCWCtrsG5yh1ebT4uSyJ/xOVodX3vQ2RJSw/RiVCkXyy04oDNNpQeK895Y1qXTMd3RR39HEcrQ1wNWuBS/4iDXgckNmO5py2nSefboKDQl9SwZQ/+KypCb2Y8x/XSghpqeTXvBRn4KWYJKbLMIj6YtlRY2uN9wpRXjh1Y/KU5xQZTZF9ZCWgJZm19xoW5u+JMJChSLTlGTvSDsv0m34Cp0N58cCRZ7ZXSkoYdyHUlxy36ePpmjlfC2mia8ep9QyJSvWLm5tuV5Q0I+cp3cUCBrnmL+3CcyTwGNVlVKE8BSXBoiSkFHeF8zyJoHguA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hhe9Uj7ZGt3gWDx0MmWXsFWbnPWL0c5DfAOqIsD6mTU=;
- b=IVfUC+NljD6BxkkOisTxUT1sdvtMLnUK5DMdtkAULC9ntSikfK/FKgDCbjAAPXawm6rwy7sQb1q41mgPgawHXU8eV0RLpK2za7qwta0FeUfxiQKQVx4acwxKaelvR4LDy7YP6NT8xEkN8aMlYSen2WiExE0dmh2BqnJ13Y3GHwykVUkPGqgR9qTwH+jySzwLlrMcOLG+qBLGMp1JDF5TLqRvME8BaarrqUfD3N2G0axBh/IiyLdneKvpNFXzSYTBegqzscw4zjPtyz07+0vGLeJGNMYTQTp5zzN/WXMEfWxwo2+IJRKNCwIu43gOCfy44I1Rgibm1jwdCScW4J0m/A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by BN7PPF0D942FA9A.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6c7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Mon, 4 Aug
- 2025 12:41:25 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
- 12:41:23 +0000
-Date: Mon, 4 Aug 2025 14:41:19 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
-	mingo@redhat.com, peterz@infradead.org
-Subject: Re: [PATCH v2 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
-Message-ID: <aJCqb-ZI4pd15cr5@gpd4>
-References: <20250804112743.711816-1-christian.loehle@arm.com>
- <20250804112743.711816-4-christian.loehle@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804112743.711816-4-christian.loehle@arm.com>
-X-ClientProxiedBy: MI2P293CA0011.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::11) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F04B25A350
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754311147; cv=none; b=D1wQf0R9pl2ae7a7Mn8KS9SQa53UQI1rY5w1Lvo8agohMc+cIbzZircG9o+zF4Z5TCEb55lD0mIFKc8ehzGwIAF+XJgW6ooevHBFLvz0TSGizEVcy1KrdNaSQHYBRlXqNwxjU1sZtaD5AnmuNE7YU/Km/Q+/5rCYeBPJEYHqK8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754311147; c=relaxed/simple;
+	bh=EBa3LJDotoq7e64FNgS2F6Sc5LW3ILO1eZ5TiKEqHeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ewm6WfkGKF6CgL2qAorrOAzwUwtad9hVB7S3LMLih+VKhpvPN/+bD5vFt2cChPcYbm4x7gCl3oCy7+BrY7WwBemJx/48zPo6q1aFloGbO8pQ97Lzl13fTaYZ2IS2IjZux0qnhzt9jMh335OeMs91fBxw075/FQWoHfosZr29QrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=I7+SAhko; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso4091657a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=csie.ntu.edu.tw; s=google; t=1754311143; x=1754915943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKCj6FOnfKnqynF1p18ufhjCbVSDwmBzNnZjJrqA/Zs=;
+        b=I7+SAhkoRETkKjCHkuhA+TVrAXZ4ic/BAN/TPXJNmSQIhce0uvleHhjkodyslRcQi2
+         n2o4/aQGwzyjUEn+Zu7xVYcIFCq0RP3CaCKYxSU65+IM8luR73o8/VYd/C1w9+a+VFhT
+         tuwQ6lhxmRYikETFVP7Y9H3QJiK8PhXFEGyNDUSygj/cPvptgFVxjAvUzlZA2ZsYSqUs
+         GXz4MOPxcr5ZbsSU1K/e98CmyEhw2RZRZphstOroh1npdB2vGdJ5p8ao3wrAF6qMBAKn
+         xSkpvOWTDZH6BQiBxn45Zr2UJPk0GC4cgQAeGqKCwLa/lChoLcvVr3TMsGNxtUKj1wXi
+         PiMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754311143; x=1754915943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YKCj6FOnfKnqynF1p18ufhjCbVSDwmBzNnZjJrqA/Zs=;
+        b=eGwWQTK0xBx1DckbbbYovWRcXCVDw4wvuB5KRcPalJtEEREb7+1hSYs3jfGOdQH08C
+         m51PENjkzawLj6r+Ep/JWxKrncoLP1zkanwkVKi6+oiy9X0uWBr3fuoedJDw4LdbRlNq
+         N1JRdQ6ZRLAZKgLrZsRhvO3SLSok/93iOUAEts1gyoLkt+vS1Sjw2RKjHPu85AEifvIN
+         LW1Ov8hdb2Ng0+5uo7gPGIjLVJHoV4hhmlU8L4l/F5/qYLsiJdx5fZKn6SqWm5ZfMIS+
+         c1H8V/0aRNEvFemsd0356cN4tG5xzG1dntNYrR0BmZn3JMs352CBeGhtM90EpGY4C8VF
+         0qXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNJTrPdQjgIJlKLJBApMn4U48LBqZDoPkCwlESXGm9TJnujR4hI4xH5FTurJQZ0yKm0NEJR4JQSk9Dwqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqCLsbdi4/wxTjAjX8A9PHOMs+abvW7ORz14b9mi6/CoHgJlvW
+	KN2iPrvMiJOUCtkOo1RHKvA7hMVRPmqY+6E7YOxPj+SB3wTEZOXwkBIcwY9/yk7hfNamnEnyi1q
+	7XJqp7I9S7ODCP5aLYXkR+4/zArKYLF2ZVbn/JFmk8TWHfDHa/TEKKW3cFyg=
+X-Gm-Gg: ASbGncsMwgAEof2Vb4nJ16HdPDo7f1jMCObq1wqC9GDP44bYbMJMsmSnvEJp1556th2
+	98J+8lBTe15WxOsCwHt8bPWjMNy4iXQrnlBkoztT1h9ufeHSAg1+McZBkRfmZHnw+ikvg4HEcgb
+	MrWJ01BOur6LF9zyZBWg8PwWBlWpzocsfYgRnxfsxli8BLVwKqhXBQu3HKXSxJroqeeOmMqBTdD
+	tbjPgVMPa+Yg18ise8c61YMeTn9eAH5J2im14GWUxcKEw/K1tIVOcvXQX2mTYh242WSKO8DJANl
+	VfxZQSEXyY9Y0dfKJbBG+kAWOHpYf/8Dz5vtlkLN/xkp4YbupHV2lbg5K3PYwsffXnFmzuix8bw
+	C1iJKyC1c/0IzNh6lqZqNFCTodHdIqnWiUkMUUP3S1omf3V8v9YGcmwML7MeObe2YQBCatgw=
+X-Google-Smtp-Source: AGHT+IFzfwXuQNe+jvCRtHRgBNrc6qR/ahRDyVponjDa59epA2QL+D64gAB3pXkW9DcRv6GRw24e4g==
+X-Received: by 2002:a17:90b:1d8a:b0:313:1e60:584e with SMTP id 98e67ed59e1d1-321161ec88fmr13406605a91.9.1754311143029;
+        Mon, 04 Aug 2025 05:39:03 -0700 (PDT)
+Received: from zenbook (1-162-100-196.dynamic-ip.hinet.net. [1.162.100.196])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee49e0sm14418422a91.24.2025.08.04.05.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 05:39:02 -0700 (PDT)
+Date: Mon, 4 Aug 2025 20:41:35 +0800
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: Anshuman Khandual <anshuman.khandual@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Sebastian Ene <sebastianene@google.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: ptdump: Fix exec attribute printing
+Message-ID: <z2hmwwmtgbrio2wv3sj2pc4zhxdjioorlhnm45o2arcsjahjni@xod435q26jqq>
+References: <20250802104021.3076621-1-r09922117@csie.ntu.edu.tw>
+ <d72b7928-8646-4616-a8f0-96b9d9bbaf09@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|BN7PPF0D942FA9A:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99bc707d-08f8-46a4-ce5b-08ddd3543865
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vyukXNJgENAWSlvRkKO2i0A9UcfVCmlgYLCvtvMeI5U/D7BpPabya0YChAJA?=
- =?us-ascii?Q?mP+70/gyoaXCngiYV+rhuB2voYIyjbrfV8jZFgEZdZb6VBWBIFQnwLkrW3Ol?=
- =?us-ascii?Q?JisHjAU51HW8tcPNh5q/mv7LjSQmURkobwMfux51MeJ9aeqDeNFaPJpv/88b?=
- =?us-ascii?Q?eoQm3VCTtwetaXg/elpRfZNA1CmEVC4crlffdNgYKe13Im5kNN96C/NjKwcG?=
- =?us-ascii?Q?1rOPm7ls6/INi1NhYE1tFxd3Qel3leC9CHVX/vhwbUyfKqnroab9YjX7aIZ2?=
- =?us-ascii?Q?xqgXYxq2WkKC3j9fmZx5bnC25DOzorqZMTTPv10MgnNzOdll15aNUwBalBF2?=
- =?us-ascii?Q?8zWmbPDismqRCUrMfa2GtgvsKreRAtpgEzYD03/N8s8LA6IwOoIC3zfnfKKO?=
- =?us-ascii?Q?jspdn/OcWnbRaClQ1T1ZfcunWMImsDWHN9a3iJeMVNxuVISDSDBcWRZowVBm?=
- =?us-ascii?Q?iy+8c/YmEDrUZO4GoIJaCt3Zaeo32O5/eTz4G4ksKlZzDCPkjZyKySuCZYRz?=
- =?us-ascii?Q?wTitVbwtexhY38MKwoV1mFuG7JvxmzzFLy1AzdzdMdB8v9DRCcuuro9ZvjnE?=
- =?us-ascii?Q?AgnaHgfTORJnDadF3M467ujcEEFkQcyCnkSVjekETxcp/bUA9Vk9So1e8O7M?=
- =?us-ascii?Q?iGngH3kh7gdFTQnN0H7IGEdL+I+qfl+740vqaOxuDjSE8klFX+gZ92OJz6oJ?=
- =?us-ascii?Q?br2RYS0fJlyWIn+Q3zk8jwSna7ucYX+XCD3mr+9yAua3+6IeGKdTFQMWWeUg?=
- =?us-ascii?Q?1UtEtD/czumW4O8wZE0Coe7i5PhzMXyyZ0WWiNwuBi1yMJMb7rSQFvTiKYii?=
- =?us-ascii?Q?086mndDtQAdiH5N30+yDDAgG38880qG7ZlqfmjwOnxgwYS7OApu/HCCNNAMN?=
- =?us-ascii?Q?MSyPaj8Wy59O/O1/k9Mw3PrQfNfTYa+Q6+qD2f3fv44paTbUUY+M+83Q5WBt?=
- =?us-ascii?Q?E2zmiDeUFXM+y2f6GJ/xsszsGKEC2mTE4XeavglMQutq5K1MMOc1+A/MspjU?=
- =?us-ascii?Q?Y+TwWciV4+cqFusrbH3mg8jeG5T5NlG4javiM2OyWMP+CBL0WnFM1il2ncRe?=
- =?us-ascii?Q?MFy7JHF6XIUIsqrWgop0YEkpPY3BNwWLyLXRpn0pV3hn8fZsRHNtco/QIJOl?=
- =?us-ascii?Q?JzTUsF4MNAd2BzIhGWTHMrRSWFsxLk9dfdZm5fLdOY5JI6NJlb5VB7NM5c+b?=
- =?us-ascii?Q?SmE+tISKKhQqsiIDUv/LJbtFxPDmYXUIB1aBzkVWk8O2zlsDD1Pbf3wARiAc?=
- =?us-ascii?Q?e7/6SsYIZ9gxd2fdMBMkXeCouWArgd7WnpKTsjGRrfJEs6mlcaUJnv4XVgZg?=
- =?us-ascii?Q?UomsInsnXzpnguyqL2znEcO+Yr5Rz1jZOCou7pqeOqiLB8IBrxMfjbql2YuK?=
- =?us-ascii?Q?78Rmbmn4kzupG6PdWsUuU3Q2yZen3sgzO/J0sE4404KnIIZcCA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3Pks52NKCBPgzO1ZHzoJ4N7NI5nW3KAEQbvXXEATeHF0RrWQqtkCgzBzxoJs?=
- =?us-ascii?Q?iNx/5ntz0Dx5rbCSYO36OWE/fjYDy7kOEtKWI2frvw6VrwtBccboNz15PwA1?=
- =?us-ascii?Q?N+zWkSuWNu+MhyCX9XijN6MWrYY0PIOjUa1JoRZ+g5VudYATa4iC8mgw3+vC?=
- =?us-ascii?Q?a7kv/d3Zg6zsgrOKyt2tvcnH9FHYMUh/ruovtwWoifmnQnU1zX5MNigEQKKf?=
- =?us-ascii?Q?wXEg3KtFdNrcsHEMVnYhF9CUUS3GvjDuRvf7Ts917PZg/pf/Kbt9VTvcOXOn?=
- =?us-ascii?Q?SAJQ7uiVk7kfN+kMwmVqgnC3zof6yHt5YQsGGW+jG5EtMgkXvXU4DfPuC/lY?=
- =?us-ascii?Q?U8BLTUhaJzPvGPsagd72jGKPkvyqitM7KMnKKyv4a4sE8Hup4WkKWHTaRrS7?=
- =?us-ascii?Q?ntR+FbY9TL/fo28up65JeTVHKmoxz6ITkhHCa5ftAAqC4kmmN+2hdb7Svhij?=
- =?us-ascii?Q?onSAt+kdEqXASXkgMH2XxU6NVWoOh0QTQk21Swd9ehOcJJv8LlYN8Q9jw6PV?=
- =?us-ascii?Q?/DQGEc6ukDWenBujh22Wqg5XC9uW1bbuI5/e9S/Gfnvcf81gpGjlMG3LGp4Y?=
- =?us-ascii?Q?IqpkR9C/kh66CtQcCCuzkwlpOiP9eHqL8QnDvD8Orbe8jqpJlVNxuL0I+XjH?=
- =?us-ascii?Q?76WCglV3L+O3gXyv78r223peeSdB02zr+sT4+79udNT8T73W4lEHVfZuVFhh?=
- =?us-ascii?Q?m9vhQ+Y+MlL1bPjnCd76dq7J8FbMslAqh83hz8MH4De4wUq8ZNJYX4vVtW1S?=
- =?us-ascii?Q?+tYlsPiMOr45iWFfdckfyV6OvnJ5yTKnOGufuWiZuWJHDfatDAF2ShQk6hWa?=
- =?us-ascii?Q?nxcQ76cGfMGVmvslJ2rp9XhJWJ8bQxGW58//YPsgu4SoEmpDsoxlsILy/nG7?=
- =?us-ascii?Q?U9LTI0yrocjWu73LQ3OIfKPXsTJrlCSY3+YI9ILv/hF/gKokqnew2aYmBUEM?=
- =?us-ascii?Q?oe/I7ScMFl9qJ0n+x6z6Okt6Wth4hVhngPWxTsplRJwAsIiCOTZGMz/WBUWn?=
- =?us-ascii?Q?1SSnLe/DwnTikc+L4rGrVmoz90xbk6hSrVoFPDbnK5ulRKVY6k/T4y9Nt5Kd?=
- =?us-ascii?Q?4g4/Gm1Qrb0h9i3L2nXOC7EjNd/9Xi7Z9c4WLl47VpHvDz8VVKQdSUTBRbGy?=
- =?us-ascii?Q?s9xf4B5RDw1n2uzbOaD2WsMHfMtQcaAQe2WY+mm0bzJ0BebkvjDE1L6lpRwk?=
- =?us-ascii?Q?Dv8M6yuU6g0WgkXBFa6KB+z5+GZOKS0/FvL/rLFAsEIruyMQbeuh53P2S43F?=
- =?us-ascii?Q?Z1aKw8/x08YH1Kg0pVx4A9178fnOJtLqIaOuI/yo+Lm12ke1pxqRoQQ1+700?=
- =?us-ascii?Q?GI78I1h6Gz6OzVi40imE3vfOEsTm7/38Su6oA7NAEA4JVm4j5973NIV3oZY6?=
- =?us-ascii?Q?yT8sM0R5OTRc0SRfT/bsqdxijdXfAgxSaBfat+Js85lCFVeNRiWV3FJFI1qv?=
- =?us-ascii?Q?zWXHtvp4QQJvZ7qMSVGLanIgc80oyi0D6Cmb46+L2pO+NTRCiga70xmrf2bS?=
- =?us-ascii?Q?QNPOK3OEgziXJyCig5a6EPjfxsrRfe1xFfzJAuAN1w6DgQcmv9a+BknuvjHm?=
- =?us-ascii?Q?g3lZjxA0+m9aXn4U1Ks5IoMU503GWp2MBHEyLzDl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99bc707d-08f8-46a4-ce5b-08ddd3543865
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 12:41:23.5658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zlZfTzFKaiUMmxEDnO5byzgdtZGf//owO9Krm2poUECw8nf2YiRjlZ0CZm+TFN3fwU32zj5Rs6g+wBdrTxrVTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF0D942FA9A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d72b7928-8646-4616-a8f0-96b9d9bbaf09@arm.com>
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On Mon, Aug 04, 2025 at 12:27:43PM +0100, Christian Loehle wrote:
-> Most fields in scx_bpf_cpu_rq() assume that its rq_lock is held.
-> Furthermore they become meaningless without rq lock, too.
-> Only return scx_bpf_cpu_rq() if we hold rq lock of that rq.
+Hi Anshuman,
+
+On Sun, Aug 03, 2025 at 07:33:04PM +0530, Anshuman Khandual wrote:
 > 
-> All upstream scx schedulers can be converted into the new
-> scx_bpf_remote_curr() instead.
 > 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  kernel/sched/ext.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+> On 02/08/25 4:10 PM, Wei-Lin Chang wrote:
+> > Currently the guest stage-2 page table dump has the executable attribute
+> > printed in reverse, showing "X" for a non-executable region and showing
+> > " " for an executable one. This is caused by misjudgement of which
+> > string gets printed for the executable and non-executable case. Fix it
+> > by swapping the two strings.
+> > 
+> > Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+> > ---
+> >  arch/arm64/kvm/ptdump.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> > index 098416d7e5c25..99fc13f1c11fb 100644
+> > --- a/arch/arm64/kvm/ptdump.c
+> > +++ b/arch/arm64/kvm/ptdump.c
+> > @@ -44,8 +44,8 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
+> >  	}, {
+> >  		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> >  		.val	= PTE_VALID,
+> > -		.set	= " ",
+> > -		.clear	= "X",
+> > +		.set	= "X",
+> > +		.clear	= " ",
+> >  	}, {
+> >  		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> >  		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
 > 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 1d9d9cbed0aa..0b05ddc1f100 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -7420,10 +7420,18 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
->   */
->  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
->  {
-> +	struct rq *rq;
-> +
->  	if (!kf_cpu_valid(cpu, NULL))
->  		return NULL;
->  
-> -	return cpu_rq(cpu);
-> +	rq = cpu_rq(cpu);
-> +	if (rq != scx_locked_rq_state) {
+> Is not KVM_PTE_LEAF_ATTR_HI_S2_XN already in the reverse semantics aka
+> XN (Execute Never). Hence when KVM_PTE_LEAF_ATTR_HI_S2_XN macro is set
+> that means the entry is not executable and vice versa.
 
-I think you want to check rq != scx_locked_rq(), since scx_locked_rq_state
-is a per-CPU variable.
+Yes you are correct. However in dump_prot() we have:
 
-We may also want to add a preempt_disable/enable() for consistency. How
-about something like this?
+if ((st->current_prot & bits->mask) == bits->val)
+	s = bits->set;
+else
+	s = bits->clear;
 
-	preempt_disable();
-	rq = cpu_rq(cpu);
-	if (rq != scx_locked_rq()) {
-		scx_kf_error("Accessing CPU%d rq from CPU%d without holding its lock",
-			     cpu, smp_processor_id());
-		rq = NULL;
-	}
-	preempt_enable();
+Analysis:
+
+1. region is executable:
+    - st->current_prot == PTE_VALID (ignore other bits)
+    - st->current_prot & bits->mask gets PTE_VALID
+    - if condition is true (.val is PTE_VALID)
+    - prints bits->set
+
+2. region is not executable:
+    - st->current_prot == KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID
+    - st->current_prot & bits->mask gets (KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID)
+    - if condition is false
+    - prints bits->clear
+
+Therefore we want .set = "X", and .clear = " ".
 
 Thanks,
--Andrea
-
-> +		scx_kf_error("Accessing not locked rq %d", cpu);
-> +		return NULL;
-> +	}
-> +
-> +	return rq;
->  }
->  
->  struct task_struct *bpf_task_acquire(struct task_struct *p);
-> -- 
-> 2.34.1
-> 
+Wei-Lin Chang
 
