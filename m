@@ -1,127 +1,184 @@
-Return-Path: <linux-kernel+bounces-754856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB5CB19D8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:26:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C402DB19D94
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B93164E0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:26:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7477B7AB461
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B98241679;
-	Mon,  4 Aug 2025 08:26:08 +0000 (UTC)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D52A241691;
-	Mon,  4 Aug 2025 08:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6812417C5;
+	Mon,  4 Aug 2025 08:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e+6ibFyJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D327241673;
+	Mon,  4 Aug 2025 08:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754295967; cv=none; b=rGyiqVRHnLVJ5F+dr43uFN7Q8QVCTqO4epX80QKWO4LERcWePhX1hF2qXHhaxg9+6G2zhpQEJ4FmIt9pFyr+L/wsDeGt5yNpSfeI9d/LQ/D4PPQg2pUPqP19guHUL6FrOHbzGsVKMTs5anOOGTnP3gwZCE34aI5I6DibPhQ7iU0=
+	t=1754295986; cv=none; b=XrP2sGE/2HpnMN+O+UtVhyfjehxnrGyY3Zjm6yjrZSd2DgEgqPef3elEDn34Qw3Dyn5DWTYFK+D7aY3YggUV3jZs95LsPJ8mkC64iIVeZsXvPzNR4vVhjAzJxszyePKJzNc1hCdarNO3vaSz81TEt3ihoQaZSd980myANZFMhug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754295967; c=relaxed/simple;
-	bh=Cddy+DcniI43JyvpraSQpuTZQPqon8yTQuXKkcGKrnI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kLlEHAtpMi868HqNgSscxMwrKugDHxHVOLXAvenB0+iCmM5fW3GUUVFHBGGOy0jT5o4tW9x1ddIWHQ+e9N+wB0BC2odgrEvCFoB41e/Hcp6XNw3eCmO6nxPoNq6oyL26XHAm9x0U+mbeEf7IVbAj4S3swLMnwHPF08nLWfA8P98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b421b70f986so3186398a12.1;
-        Mon, 04 Aug 2025 01:26:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754295961; x=1754900761;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AqRpM1yXasR5AyGBrxM8/MoUt+5M85Gie/5rLIodPao=;
-        b=lk9QNF2TnZiUFxz+3fU34DTs/TzyEH5bkGAXtvXq2adxQbY/q49nEtHBehn2igl3mU
-         S7huOX3vTRUruKJ4MAFRrHVrDYlAgLNngb+XmpTWDEgE4qroRoG+GqZdH+/DBmfPMcN6
-         bTD4PnsycrqkQ7mdbTbvmW5f1DgdbZ6Bjck/8lQ6LwuA64wZEGuj0whv+KJlcSEBTDry
-         0d4oYdJ96P0GGsKVJ05v+txYs9rbMj0GGt6mH7ZFhRHm3bXRMer2XJYvO/O5Tv3QSKJS
-         RG9dWBLp6axnQdrBf+FkHgjOxhCguVq+FKBYYGZJLN1dvBIC+3DQdlWe4Ck49A8jdk+Q
-         hX2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBL/GFCmt94tn7TyLe1iEluA0QcbJD1TxduS+yqXYncdTqSmAESVekInQfLnLfr8f+QHjH7bsmzU2+@vger.kernel.org, AJvYcCUTkAzHaKplN8XYiHM4VmWTSBQpLMn4W613cHQe21m6UXRsZnIKP5rRaTksVU+f2017S5zX0B6jP/N/V1L+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0AQG2WMtXPfP65b6iwwCdgunLUGTX+AGElEg6bj2ZgEgSi3rx
-	0O/2aYZxho13/xH7jIf6sJUV8tW+w+ohbt13gQx6t0KR4XYDF3bUuPhP
-X-Gm-Gg: ASbGncuAkIgaChij7Npuncfq4TBtLAQgbZtba1uPxOM7JqbfwEB+I8KN92pvpz+8Ume
-	ZcPee/p3X1FrlhsswGIybIumW781jaZE4X3qm4ujQ0bKodQPsbnnHknoA8qdeaQ3HlqpygSkmFN
-	g7fZ1m8U0thq0acvq5QfBEjWkC25jDRYm6syIUtUJAyJA4+8rNRPvT1ImNhoORdrOUTnYpR8pxF
-	ZqeQg1PauUV17JR+os3SlvdIjfTdjq060TcJzQqY7KU5jH7LKxcfyFiTgytppShTSip1j7d4VGc
-	zv4HUvIHRrlIkHQUd5dWk4a6IO7I5jqpswMru+ntu6Vh6DQKQb964btWVA4y1msBn53WE3k/D+v
-	ripe5M4QEynkdp8ZhgXgIugsqCT1nAj6AbLMxY7VztBrs88k4lIgtdzw=
-X-Google-Smtp-Source: AGHT+IHKSfXg4uq3HKmm3TV1pgiHglunlc1GY7Nn+5YFfqJShlJlJ9lVByjliOQ0DOrLfGGoWUajhA==
-X-Received: by 2002:a17:90b:1c92:b0:321:265a:e0b6 with SMTP id 98e67ed59e1d1-321265ae50emr7029975a91.20.1754295961195;
-        Mon, 04 Aug 2025 01:26:01 -0700 (PDT)
-Received: from localhost.localdomain ([116.128.244.169])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207edb5884sm10968539a91.28.2025.08.04.01.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 01:26:00 -0700 (PDT)
-From: xiehongyu1@kylinos.cn
-To: yilun.xu@intel.com
-Cc: trix@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	mdf@kernel.org,
-	Hongyu Xie <xiehongyu1@kylinos.cn>
-Subject: [PATCH v1] fpga: afu: fix potential intege overflow
-Date: Mon,  4 Aug 2025 16:25:23 +0800
-Message-Id: <20250804082523.419159-1-xiehongyu1@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754295986; c=relaxed/simple;
+	bh=4nz2pQeFXCsvdMKj0bF/k07bhoSmBAiNp2ChdL1jFzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=frUe/QE8MxWKGgTt5BfLTjmU/H8Ln4FrLLfkdOCApE8yt6SITRRlLqAfArBoewLQLvor+KXZLuRADPU9Y4XtWb90n+HfaLN2DlsMZtEEhN/FxzJxn09JQ3Pu+3QnIRBwIFP7XT0Ju0b7PTs6UF2o8Wxrmb5YV1/BzgcLYhGYWi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e+6ibFyJ; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=hf1vje5kyoKYOcmhLP1VHV7D/dW4HdknY9UdhcGoZdM=;
+	b=e+6ibFyJF1BjSOiseLpLnkNuk553jPYcnTOS2E5AGSqDF9L0hXkZZChIeIbDux
+	0QhKjaqnhF2RKC1eqiFYZHeCRjFCFixMVWaciK9yGq0SPhCLqsJX6Y767k2yYx+T
+	rZmHGs2rLSXhapWARp+KpSztDCRo4Qaj94jPGlTHWzk8A=
+Received: from [192.168.106.52] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCHQqGAbpBohEodJg--.27698S2;
+	Mon, 04 Aug 2025 16:25:39 +0800 (CST)
+Message-ID: <f4dfc405-1841-4254-95e9-2079c183277d@163.com>
+Date: Mon, 4 Aug 2025 16:25:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+To: Arnd Bergmann <arnd@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, Hans Zhang <hans.zhang@cixtech.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ jingoohan1@gmail.com, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
+ linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Rob Herring <robh@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20250731183944.GA3424583@bhelgaas>
+ <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
+ <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
+ <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
+ <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
+ <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
+ <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
+ <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
+ <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
+ <74c17623-f1b5-4b28-a118-4e828e1e711a@app.fastmail.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <74c17623-f1b5-4b28-a118-4e828e1e711a@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCHQqGAbpBohEodJg--.27698S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXFykWF4DAF45JrW7Zr1rCrg_yoW5CryDpF
+	Z8Cr4Fyw45Grn2krW0v3W0q3W0qa1rtFsIkwn5X34UuFsYgr13GFWY9w4a9r1ak3y8X3WI
+	vFZrKFy7G3Z0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbR6wUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxafo2iQaIvKrgAAsO
 
-From: Hongyu Xie <xiehongyu1@kylinos.cn>
 
-Overflow Scenarios:
-1, region->offset + region->size Overflow:
-  When region->offset is close to U64_MAX and region->size is
-sufficiently large, the addition result may wrap around to a
-very small value (e.g., 0 or near 0).
-  In this case, even if the target range [offset, offset+size)
-falls within the region, the condition region->offset +
-region->size >= offset + size will fail due to the wrapped
-value being small. This causes the function to erroneously
-return -EINVAL.
 
-2, offset + size Overflow:
-  When offset is close to U64_MAX and size is large, offset +
-size wraps around to a small value.
+On 2025/8/4 16:03, Arnd Bergmann wrote:
+> On Mon, Aug 4, 2025, at 05:06, Hans Zhang wrote:
+>> On 2025/8/1 19:30, Gerd Bayer wrote:
+>>> On Fri, 2025-08-01 at 16:24 +0530, Manivannan Sadhasivam wrote:
+>>    }
+>>
+>> +#define CDNS_PCI_OP_READ(size, type, len)		\
+>> +static inline int cdns_pcie_read_cfg_##size		\
+>> +	(struct cdns_pcie *pcie, int where, type *val)	\
+>> +{							\
+>> +	if (len == 4)					\
+>> +		*val = cdns_pcie_readl(pcie, where);	\
+>> +	else if (len == 2)				\
+>> +		*val = cdns_pcie_readw(pcie, where);	\
+>> +	else if (len == 1)				\
+>> +		*val = cdns_pcie_readb(pcie, where);	\
+>> +	else						\
+>> +		return PCIBIOS_BAD_REGISTER_NUMBER;	\
+>> +							\
+>> +	return PCIBIOS_SUCCESSFUL;			\
+>> +}
+>> +
+>> +CDNS_PCI_OP_READ(byte, u8, 1)
+>> +CDNS_PCI_OP_READ(word, u16, 2)
+>> +CDNS_PCI_OP_READ(dword, u32, 4)
+>> +
+> 
+> This is fine for the calling conventions, but the use of a macro
+> doesn't really help readability, so I'd suggest just having
+> separate inline functions if they are even needed.
+> 
 
-  Here, region->offset + region->size (which would be a large
-value if not overflowing) might incorrectly satisfy
-region->offset + region->size >= offset + size due to the
-wrapped small value. This leads to a false match, even though
-the actual range [offset, offset+size) spans the wrap-around
-boundary and does not belong to this region.
+Dear Arnd,
 
-So fix these two scenarios.
+Thank you very much for your reply.
 
-Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
----
- drivers/fpga/dfl-afu-region.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Will change.
 
-diff --git a/drivers/fpga/dfl-afu-region.c b/drivers/fpga/dfl-afu-region.c
-index b11a5b21e666..449c2ae809bd 100644
---- a/drivers/fpga/dfl-afu-region.c
-+++ b/drivers/fpga/dfl-afu-region.c
-@@ -157,7 +157,8 @@ int afu_mmio_region_get_by_offset(struct dfl_feature_dev_data *fdata,
- 	afu = dfl_fpga_fdata_get_private(fdata);
- 	for_each_region(region, afu)
- 		if (region->offset <= offset &&
--		    region->offset + region->size >= offset + size) {
-+		    region->size >= size &&
-+		    (offset - region->offset) <= (region->size - size)) {
- 			*pregion = *region;
- 			goto exit;
- 		}
--- 
-2.25.1
+>> @@ -112,17 +110,17 @@ int pci_bus_read_config(void *priv, unsigned int
+>> devfn, int where, u32 size,
+>>    ({									\
+>>    	int __ttl = PCI_FIND_CAP_TTL;					\
+>>    	u8 __id, __found_pos = 0;					\
+>> -	u32 __pos = (start);						\
+>> -	u32 __ent;							\
+>> +	u8 __pos = (start);						\
+>> +	u16 __ent;							\
+>>    									\
+>> -	read_cfg(args, __pos, 1, &__pos);				\
+>> +	read_cfg##_byte(args, __pos, &__pos);				\
+>>    									\
+>>    	while (__ttl--) {						\
+>>    		if (__pos < PCI_STD_HEADER_SIZEOF)			\
+>>    			break;						\
+>>    									\
+>>    		__pos = ALIGN_DOWN(__pos, 4);				\
+>> -		read_cfg(args, __pos, 2, &__ent);			\
+>> +		read_cfg##_word(args, __pos, &__ent);			\
+>>    									\
+>>    		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
+>>    		if (__id == 0xff)					\
+> 
+> I still don't feel great about this macro either, and suspect
+> we should have a better abstraction with fixed types and a
+> global function to do it, but I don't see anything obviously
+> wrong here either.
+
+
+Here is the history of communication with Bjorn and Ilpo. Because 
+variable parameters need to be used, otherwise it will be very difficult 
+to unify. I'll also think about your proposal again.
+
+
+Bjorn:
+https://lore.kernel.org/linux-pci/20250715224705.GA2504490@bhelgaas/
+ > > I would like this a lot better if it could be implemented as a
+ > > function, but I assume it has to be a macro for some varargs reason.
+ > >
+ >
+Hans:
+https://lore.kernel.org/linux-pci/903ea9c4-87d6-45a8-9825-4a0d45ec608f@163.com/
+ > Yes. The macro definitions used in combination with the previous review
+ > opinions of Ilpo.
+
+Ilpo:
+https://lore.kernel.org/linux-pci/d59fde6e-3e4a-248a-ae56-c35b4c6ec44c@linux.intel.com/
+The other option would be to standardize the accessor interface signature
+and pass the function as a pointer. One might immediately think of generic
+PCI core accessors making it sound simpler than it is but here the
+complication is the controller drivers want to pass some internal
+structure due to lack of pci_dev so it would need to be void
+*read_cfg_data. Then we'd need to deal with those voids also in some
+generic PCI accessors which is a bit ugly.
+
+
+Best regards,
+Hans
 
 
