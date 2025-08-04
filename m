@@ -1,241 +1,170 @@
-Return-Path: <linux-kernel+bounces-755579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36FCB1A8AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:33:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BF1B1A8B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D3467AFB08
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488D13BFD1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668528B4FC;
-	Mon,  4 Aug 2025 17:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B29224B1B;
+	Mon,  4 Aug 2025 17:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hXSrFKbr"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRooNYpw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FF8226D1B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF22F214209;
+	Mon,  4 Aug 2025 17:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328761; cv=none; b=ZHdrqs6vGnPhK3dzLmwNnV38RnwFCYu9tAj3hGTrnS74B6ippcyV3xfZDLhUHbTky7nzcbQTAhd6yZo0rXpcVvcvI67ceNMBGfGNs6G+I60/WjRfJo/xVuSl2GFmRCP+IxAT/VJuoTj6AUmOftHK0Xy/GR0QB2lqy+KYm8pldNE=
+	t=1754329283; cv=none; b=kRZINRLFS+XoEs6wjXP87o5YoxJfOa/qOrw3NVRwC9aNXnZ3WqvpsaiR/0aqElTq01WNnNE6rXVJg2HuSdFGx0jNS47PnmJHMAErGUCFVBqWtwX4pHJXEeWmUOvydfMxeizZ0mNh+Akw9Q+6hlWfOOIsmhrdNY2HDZOGxpWva+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328761; c=relaxed/simple;
-	bh=OAEQFqv3EswdYaHhtd7CEc9/2OEXW++O41GigbiMrXs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tKQcgbC3g+ARrvH/Oc8btcPrJf+0C4BOxqpNlZCxKhaG5PZMGNcJEpPiugQBvfUVNK5mcI8dBNuEntlEMqnWbfj149HdrTgG2Ge46NnI96dbeWipOxbUGprgluDbWDUKeR1XYaj+P25xy+KsRiOuNLBAV+ADUOga4YdDb3vxCG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hXSrFKbr; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24004ac2ecdso64649835ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754328759; x=1754933559; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQMUmLKs3xh972hbtTuWn5Gb9KU0cVynXKrRv5wztKs=;
-        b=hXSrFKbrnLbX1Kd7IPMNbQ+4qxaxljSJagPUtL8Ci+G8g2zA6kSA+hyPvDPbuoImOW
-         FW6Ej0DidvEZp3iujLePGu49YtbbRwmeIvIHmZYlNWSn5OMnUomXKg/3Vf1SXN9hzvUz
-         6bW4kd7pR8DjIM+QiclTI3amqnbwbInHYM7G0LKOtjMX7w0iuJIPFuApWPeIeMy3b+hV
-         +AktnkIDfYYtrCBBRAgBskYC61jSmVdYwscAi8lcezH5eZxw+IWuoIkEdrIi2/avlf/W
-         J5rkSaFyaEB03NrKOdHsqaR/OtBxPEWJKzTDrQJiEotHkubp3EkmjM+nsQf6QzIT985x
-         BJEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328759; x=1754933559;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQMUmLKs3xh972hbtTuWn5Gb9KU0cVynXKrRv5wztKs=;
-        b=ZT2TZQnjK9axwbJZYUSfdyeAyD8L3HlWIW/OiP92QmBtrANiuplO3FhL9qz3Ae67Ac
-         f+4HR67wY6hPhX3i6Yw6ktM9bdNsHhWA1aJYe6FGFU8v4BipaVKx13VDxGr+p8tdnkMw
-         IUy17rHMgG24RCZ59Cw++043gbIHOwPRPi3tq4HrNM5m0+2qPrKWcxHdBrRA4AcVcB+Y
-         u9GquGfUKnGvEBl4GVyCwlgiZ5eQjrTCKKzz5VijkgvE1dqivTmXR59Ilzcm5PSCsnYE
-         C/ebjVlWOpKQlbqNB6eHjBF+aBS6TZ3w/fHIRgcoYLWtAImpKmA/gPfm6nxTJ5jaYSv5
-         m8lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEwtQY6F52oGkWZ8yxyuwlTno76LQ0bErKKcyS377/GeEWliVPgD6WumM8CJRj1s6QGI00nR6/Gxbr7yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuqa1EksbnJ4eYaNY0bjgNMrwZ1JxI+wB6CjoOFZo/bZ0Q4AyO
-	qZhg7fgo6mxlXIw0vbuTaI1mJIQkT1iM+J05Y6hHNVHC5F/YCnNQJ1UZQIdVqRd9GfzftOCZWRG
-	NabHGDHWMWRSfqUuHJezRxt+Md46F4g==
-X-Google-Smtp-Source: AGHT+IEUISRCOUdvcdunQlfH7Ugn/MjFVzK+dOVNeTOe3EfG42PQ2i/eYIkKSU1xi7j49rI73Dh1hRhE+hEDRhcmABU=
-X-Received: from plbma14.prod.google.com ([2002:a17:903:94e:b0:240:1867:a503])
- (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d486:b0:234:d778:13fa with SMTP id d9443c01a7336-24289c27db1mr293835ad.26.1754328758859;
- Mon, 04 Aug 2025 10:32:38 -0700 (PDT)
-Date: Mon,  4 Aug 2025 10:32:28 -0700
-In-Reply-To: <20250804173228.1990317-1-paullawrence@google.com>
+	s=arc-20240116; t=1754329283; c=relaxed/simple;
+	bh=VeXwin7y6CfitrLRS5Zmpe8RE+RWDaVFtogzrgYWOcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YTOvCyVZDN7hJiiSsH3iHdD1iCYBmhIiTWVc94rXDL2JgYRYlFGqwU304OxhwR5Gxn5UxUypndJa8mrNBkLFNSByRf3bCAAOnJ+yaxun+YWqygoWl4knSyoTRhwxwif9Rv/EOk5H0AoK3v8N9oZg/VuYO20Qtdms1tUyE3OJq0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRooNYpw; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754329282; x=1785865282;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VeXwin7y6CfitrLRS5Zmpe8RE+RWDaVFtogzrgYWOcE=;
+  b=JRooNYpwRsBJQjlba9S5SWetQLOkKDEva3Uq1OHr998EGcsAPFcOtQ4R
+   /c/eB86daxvAZvfWsrdWTwQpiflijbTs4KPCiOK+VrIQg6yLuDV47UaVk
+   a+p55sPnmMcZCf+FBV4uRA+K0x/XmMgqEhGocMkePsylfVcsvZZ0tS/+X
+   p8Er8fkYQI/c+pleNPqkhbpjE1M6JGl0gZazVEWdKBtGZ0rR/mzqWtJ4l
+   WSFzXaZLYTUg113fZ4M2fB1aAnrrfkZ6bLnf/GpbDhHULAwn1WmjklQIe
+   0jylo3yR4QVFzkrjr62dkDcAIeFV1ngg85GaDse0noYjfPaxNsIVm20Xi
+   w==;
+X-CSE-ConnectionGUID: tU3o7IFuQDOQe9QVBfNKOA==
+X-CSE-MsgGUID: YP3xmQZbRByTpOmDY5MNkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="56318336"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="56318336"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 10:41:08 -0700
+X-CSE-ConnectionGUID: GvhxB/npQneV4T6iupmRvg==
+X-CSE-MsgGUID: hQvUdgjfRRy2b800SweERw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="164152115"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.42]) ([10.125.110.42])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 10:41:06 -0700
+Message-ID: <529fbbc1-90fe-467b-9bd2-d1a18bb38670@intel.com>
+Date: Mon, 4 Aug 2025 10:41:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
- <20250804173228.1990317-1-paullawrence@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250804173228.1990317-3-paullawrence@google.com>
-Subject: [PATCH 2/2] fuse: Add passthrough for mkdir and rmdir (WIP)
-From: Paul Lawrence <paullawrence@google.com>
-To: amir73il@gmail.com
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu, paullawrence@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] vmcoreinfo: Track and log recoverable hardware errors
+To: Breno Leitao <leitao@debian.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
+ Borislav Petkov <bp@alien8.de>, Robert Moore <robert.moore@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ acpica-devel@lists.linux.dev, osandov@osandov.com,
+ xueshuai@linux.alibaba.com, konrad.wilk@oracle.com,
+ linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-pci@vger.kernel.org, kernel-team@meta.com, osandov@fb.com
+References: <20250801-vmcore_hw_error-v4-1-fa1fe65edb83@debian.org>
+ <85663f65-d746-4e2c-b8a6-d594d9d0ba42@intel.com>
+ <f3yl424iqiyctgz4j36hzjrhkgae3a2h5smhalm2qbmq3nrpzd@oeuprthscfez>
+ <0c045f1b-44d0-430c-9e8a-58b65dd84453@intel.com>
+ <buhwuankenpnvmio6jeoxverixoyfpn2eh62ix7vzxw7xvlxcv@rpibcrufr2yg>
+ <842d675e-4c22-4f13-b40b-c4b5208e4223@intel.com>
+ <ipdhflmgqrlq2vor657fiwex66jqw2do747uvu3tvrcsvtvdjj@lg5zrcua2dgn>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <ipdhflmgqrlq2vor657fiwex66jqw2do747uvu3tvrcsvtvdjj@lg5zrcua2dgn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As proof of concept of setting a backing file at lookup, implement mkdir
-and rmdir which work off the nodeid only and do not open the file.
+On 8/4/25 10:12, Breno Leitao wrote:
+...
+> +- These errros are divided by are, which includes CPU, Memory, PCI, CXL and
+> +  others.
 
-Signed-off-by: Paul Lawrence <paullawrence@google.com>
----
- fs/fuse/dir.c             |  8 +++++++-
- fs/fuse/fuse_i.h          | 11 +++++++++--
- fs/fuse/passthrough.c     | 38 ++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |  2 ++
- 4 files changed, 56 insertions(+), 3 deletions(-)
+There's a double typo in there I think:
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index c0bef93dd078..25d6929d600a 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -129,7 +129,7 @@ void fuse_invalidate_attr(struct inode *inode)
- 	fuse_invalidate_attr_mask(inode, STATX_BASIC_STATS);
- }
- 
--static void fuse_dir_changed(struct inode *dir)
-+void fuse_dir_changed(struct inode *dir)
- {
- 	fuse_invalidate_attr(dir);
- 	inode_maybe_inc_iversion(dir, false);
-@@ -951,6 +951,9 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!fm->fc->dont_mask)
- 		mode &= ~current_umask();
- 
-+	if (fuse_inode_passthrough_op(dir, FUSE_MKDIR))
-+		return fuse_passthrough_mkdir(idmap, dir, entry, mode);
-+
- 	memset(&inarg, 0, sizeof(inarg));
- 	inarg.mode = mode;
- 	inarg.umask = current_umask();
-@@ -1058,6 +1061,9 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
- 	if (fuse_is_bad(dir))
- 		return -EIO;
- 
-+	if (fuse_inode_passthrough_op(dir, FUSE_RMDIR))
-+		return fuse_passthrough_rmdir(dir, entry);
-+
- 	args.opcode = FUSE_RMDIR;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 2;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index aebd338751f1..d8df2d5a73ac 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1279,6 +1279,7 @@ void fuse_check_timeout(struct work_struct *work);
- #define FUSE_STATX_MODSIZE	(FUSE_STATX_MODIFY | STATX_SIZE)
- 
- void fuse_invalidate_attr(struct inode *inode);
-+void fuse_dir_changed(struct inode *dir);
- void fuse_invalidate_attr_mask(struct inode *inode, u32 mask);
- 
- void fuse_invalidate_entry_cache(struct dentry *entry);
-@@ -1521,7 +1522,8 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
- 
- /* Passthrough operations for directories */
- #define FUSE_PASSTHROUGH_DIR_OPS \
--	(FUSE_PASSTHROUGH_OP_READDIR)
-+	(FUSE_PASSTHROUGH_OP_READDIR | FUSE_PASSTHROUGH_OP_MKDIR | \
-+	 FUSE_PASSTHROUGH_OP_RMDIR)
- 
- /* Inode passthrough operations for backing file attached to inode */
- #define FUSE_PASSTHROUGH_INODE_OPS \
-@@ -1532,7 +1534,8 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
- 	((map)->ops_mask & FUSE_PASSTHROUGH_OP(op))
- 
- #define FUSE_BACKING_MAP_VALID_OPS \
--	(FUSE_PASSTHROUGH_RW_OPS | FUSE_PASSTHROUGH_INODE_OPS)
-+	(FUSE_PASSTHROUGH_RW_OPS | FUSE_PASSTHROUGH_INODE_OPS |\
-+	 FUSE_PASSTHROUGH_DIR_OPS)
- 
- static inline struct fuse_backing *fuse_inode_backing(struct fuse_inode *fi)
- {
-@@ -1626,6 +1629,10 @@ ssize_t fuse_passthrough_getxattr(struct inode *inode, const char *name,
- 				  void *value, size_t size);
- ssize_t fuse_passthrough_listxattr(struct dentry *entry, char *list,
- 				   size_t size);
-+struct dentry *fuse_passthrough_mkdir(struct mnt_idmap *idmap,
-+				      struct inode *dir, struct dentry *entry,
-+				      umode_t mode);
-+int fuse_passthrough_rmdir(struct inode *dir, struct dentry *entry);
- 
- #ifdef CONFIG_SYSCTL
- extern int fuse_sysctl_register(void);
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index cee40e1c6e4a..acb06fbbd828 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -7,6 +7,7 @@
- 
- #include "fuse_i.h"
- 
-+#include "linux/namei.h"
- #include <linux/file.h>
- #include <linux/backing-file.h>
- #include <linux/splice.h>
-@@ -497,3 +498,40 @@ ssize_t fuse_passthrough_listxattr(struct dentry *entry, char *list,
- 	revert_creds(old_cred);
- 	return res;
- }
-+
-+struct dentry *fuse_passthrough_mkdir(struct mnt_idmap *idmap,
-+				      struct inode *dir, struct dentry *entry,
-+				      umode_t mode)
-+{
-+	struct fuse_backing *fb = fuse_inode_backing(get_fuse_inode(dir));
-+	struct dentry *backing_entry, *new_entry;
-+	const struct cred *old_cred;
-+
-+	old_cred = override_creds(fb->cred);
-+	backing_entry = lookup_one_unlocked(idmap, &entry->d_name,
-+		fb->file->f_path.dentry);
-+	new_entry = vfs_mkdir(idmap, fb->file->f_inode, backing_entry, mode);
-+	d_drop(entry);
-+	revert_creds(old_cred);
-+	fuse_dir_changed(dir);
-+	return new_entry;
-+}
-+
-+int fuse_passthrough_rmdir(struct inode *dir, struct dentry *entry)
-+{
-+	int err;
-+	struct dentry *backing_entry;
-+	struct fuse_backing *fb = fuse_inode_backing(get_fuse_inode(dir));
-+	const struct cred *old_cred;
-+
-+	old_cred = override_creds(fb->cred);
-+	backing_entry = lookup_one_unlocked(&nop_mnt_idmap, &entry->d_name,
-+		fb->file->f_path.dentry);
-+	err = vfs_rmdir(&nop_mnt_idmap, fb->file->f_inode, backing_entry);
-+	dput(backing_entry);
-+	if (!err)
-+		d_drop(entry);
-+	revert_creds(old_cred);
-+	return err;
-+}
-+
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 6dbb045c794d..8181d07b7bf1 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -1135,6 +1135,8 @@ struct fuse_backing_map {
- #define FUSE_PASSTHROUGH_OP_STATX	FUSE_PASSTHROUGH_OP(FUSE_STATX)
- #define FUSE_PASSTHROUGH_OP_GETXATTR	FUSE_PASSTHROUGH_OP(FUSE_GETXATTR)
- #define FUSE_PASSTHROUGH_OP_LISTXATTR	FUSE_PASSTHROUGH_OP(FUSE_LISTXATTR)
-+#define FUSE_PASSTHROUGH_OP_MKDIR	FUSE_PASSTHROUGH_OP(FUSE_MKDIR)
-+#define FUSE_PASSTHROUGH_OP_RMDIR	FUSE_PASSTHROUGH_OP(FUSE_RMDIR)
- 
- /* Device ioctls: */
- #define FUSE_DEV_IOC_MAGIC		229
--- 
-2.50.1.565.gc32cd1483b-goog
+	errros => errors
+and
+	are,=>area,
 
+> --- a/include/linux/vmcore_info.h
+> +++ b/include/linux/vmcore_info.h
+> @@ -77,4 +77,20 @@ extern u32 *vmcoreinfo_note;
+>  Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+>  			  void *data, size_t data_len);
+>  void final_note(Elf_Word *buf);
+> +
+> +enum hwerr_error_type {
+> +	HWERR_RECOV_CPU,
+> +	HWERR_RECOV_MEMORY,
+> +	HWERR_RECOV_PCI,
+> +	HWERR_RECOV_CXL,
+> +	HWERR_RECOV_OTHERS,
+> +	HWERR_RECOV_MAX,
+> +};
+That enum needs to go into an abi header.
+
+Otherwise, this is starting to look sane to me.
 
