@@ -1,159 +1,180 @@
-Return-Path: <linux-kernel+bounces-755696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0749EB1AA84
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D140DB1AA88
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B294F188C37F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1A9621A05
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A001215055;
-	Mon,  4 Aug 2025 21:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20AE23AB87;
+	Mon,  4 Aug 2025 21:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3gIuYzA"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhHLNfgx"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C824634
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 21:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52366215055;
+	Mon,  4 Aug 2025 21:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754344126; cv=none; b=eqDmWQCbO4IKZVaLYU08QBsgcozizOO6EW37fTXScII/hm0GSEw+yB5VSDTOe7mAgMsq4lQo3YMEDw08V5Li1Gl4Jx7WVjzQhH42E1iwXWXXzDUU9o7Y6DfR4/v6R5eUvDNwRhzsbbxqLRIjh/fHpVA13HiY2B0TH+xnfmsdlf8=
+	t=1754344143; cv=none; b=LViTGcxi5jrCo2LnqIZ4JWXtXWpY/kiuPjWfNTXhfVIujdkaaHG/kiv3fPBxfGccagEMYNlCPoVpytcKlyTYCcNnaSkRrz9xAazeu6w1XF6mBMoAXvNfovdoLddQSU+DGyrrRc0hL22ojM8VynrMAR2v93bICEmDcXgAoug5z2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754344126; c=relaxed/simple;
-	bh=kDC+e0x36v5yDL4hRYJaFAUN7zYjv9QTDdbWwhgVnG4=;
+	s=arc-20240116; t=1754344143; c=relaxed/simple;
+	bh=2x8KOgz2q7JfsX+Pl5gpGDVIep4NWKJe4BoPRF/W+iE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DhgDJilgKPyjGeeY2CX3aU62xqXEp8djyTvidb2OBdncUgm8fIzPrLz4R53Pt6+72bw8nAfn6mKNbZQ4lnnpMgwXBea98eFtmRYZlW2kDrrsobXsSs1VXft1HLgrFP3cnfRmD20Zwt+qK5kNhqz5wqIS9/1uP7lYsx8zKYFbOrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3gIuYzA; arc=none smtp.client-ip=209.85.222.45
+	 To:Cc:Content-Type; b=We/MwCuVBG94IAlh/O0xG+jOae/NI+Bc8o6yP89xwt5i7ATs0lybX794MHXnT9ZSKWW1qRKpv0xDY6ucpBxZIiWKqjabDOXJdw4v/5PA0fKct4uYb4YQL4NC9e4RHtKIRBzEt8H2So3k4gik4s/GvLt6N9ZPRI7vYd+Mad/RTH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhHLNfgx; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-88bc71ff9b0so1974363241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 14:48:44 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-555024588b1so4751114e87.1;
+        Mon, 04 Aug 2025 14:49:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754344124; x=1754948924; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754344139; x=1754948939; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PkVWykS6hCsn+sBU+xav7wxsK66ozGOyeXXP9ZKMhQY=;
-        b=E3gIuYzAHACQFQO42UVgFWo5n3XDaffCMbVeViW2SGTwC+5g/RS72dNiMG1dbPlWvf
-         QGscMt8MtnWA8m8Jd4t1X2OPPfwpZbqPU/kXCeY5KQs8Cp0hIXHoRQUI6qYxabGIOsnC
-         THO5SoNAvriBDqEKsAkeUdorgks1LdC0sIE+xtNnNtccz9f27wrvu3BwSSXtJlbVm4/r
-         FVqT3YmMZSFUo6Z/2356UznY26g3Oq6N+QIPLb9VeupRp8dB8troesGrbjtrNrnGmTDY
-         xAdvBhPuB0+bXuL6D1CZFpLnv8QaV4SWKVr9VnwrVTFBIYmrgzYRH3zkaX/Pr4jxhofH
-         V2PQ==
+        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
+        b=RhHLNfgxPkJaruuE6OH4KYocN4ndikgJ/q86exc/ssqy4FNt3lCuyCM8xwF9+7CGAi
+         NVqVl8v8rF1eKY4xalzO6Ul/QxvP+sq1fJ+AnbzCU3tNPH0uc8YFW4a61iYjtLvaqE5Z
+         Oy75zcz792GDIBuvEcZzxT2eQB8EiW+Z98PQE8RpKt0F5S/xehm4L1oEWMOB1/f+9wxU
+         N6ig4iRgNkzmHx+qi4vpy83mfKI+caJBhpvcm5v15yiJf2InhjYKmPWldyZtbcsMYRQj
+         hXVeyQ4ZWdZ3j4eJeeH8DJGDnfDAi0yDm0+xopatNxBgxHCiP1vhjx2LHiavWM0t2ihl
+         Lheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754344124; x=1754948924;
+        d=1e100.net; s=20230601; t=1754344139; x=1754948939;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PkVWykS6hCsn+sBU+xav7wxsK66ozGOyeXXP9ZKMhQY=;
-        b=K8wxriVxl0wOxgAAIF9jKjj7aOHA8t4pTYDZk+ryHrravDEg02bqFyA3/N+IeKYJZn
-         N6b4O98OL0xia4o0HjD/kI8+4AwI2ZoNPW+1Mzz+A6Z24ooHOglav7ZUOKuktGzem14Q
-         NTVMiJTt3YtinwNFpnstYLp2KYefAgIb5VmBPCId8Etznl1KQd1cydtRRs6ypjiZaVjr
-         FX3g1Cf6jwoK5duuOoiwPn37d9IBTtdV12/hQwrsIfwNfwn2XcMIH9dsbbRpYnXWW7C6
-         0C0gPxdkdIjI5yBkxaaR7jLWDwfgAAdy3XKDXN9zte2+Wh8osFkF0Ua1qjX6x5A05K5U
-         2QBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYoC1450iV7AUuJD8sR5bjcfCp1EWMQcB+NBiMXMszixWWJ8590rRTXDzcPPaXv5xW+F5DIqDsz0hHcC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlm0ptM+cujWa7pc9HdJzhDJ86dxXUi/flXDUHh1HPzXgnwuDc
-	c254SjxLMS7ylNF7MRbXkVkz2nuiaosY15OQiIPngdykarPQCH9v/LTc8GyX20GE42N40BoIxMQ
-	6/3xix8KY3mYS3TQZhTDJUoD4fRuYJEc=
-X-Gm-Gg: ASbGnct24DLY/Zeu7j3X84NsJijfmgCzIZD1LtRH/x3p0ZLAwbNqxs6zi42M3EQBhI4
-	ICGgDOjanGR4cMGdmD2qc5bRBd3d05wvZy8cSRT3wLRRnP6XD9OcE4Tn6DuyKdqmQJB8DLZGcRP
-	oQShRMcAmhzLHXGRDMQxk2KvsLiebZPgcMEsrLRUnk+8uNONBkajPUgM1oRoSHEgwi8UbHWhWvC
-	yDwKQ4=
-X-Google-Smtp-Source: AGHT+IHpRjfMrlG9ZlCq5AhjD8/HSKNvGraWFA12xbDdMtQQsEay8IeUKx9EaEgk778U6wfDNaXD5a6q9Pbd7E8y2SY=
-X-Received: by 2002:a05:6102:26d3:b0:4fc:156e:1046 with SMTP id
- ada2fe7eead31-4fdc4212c13mr4980106137.20.1754344123908; Mon, 04 Aug 2025
- 14:48:43 -0700 (PDT)
+        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
+        b=nUCmYxN2RZ4ILVpn/WEvBJL1fj3J5oKOvsgi8KrW+48otQNUeR2g64fJwB/A/cYBRh
+         e9/uMpFQCj9ptKfSWWZjLcK7Uppu5aJKT9fCuH85K1L9Cs68EvBZ3UCJx7ZUqZ/OHNHT
+         tsTXmT9gnFmiD0BJ1xMMQzNCs+I/CXEBP+L9q77g5XEMXlnMLBZt+jZ7+7b2uhvjStlO
+         D5xdGEb70yeCbfRUwa3vzHh4f7Qoxs/SBA/tc219/WmiRIr6aXb1nsTlV1jt+gL1PJ/5
+         UDF3D5hdQkJS5/dlA6kN9DkRs9q5jVnRPmHQe2GC+0RpIMGHwS8t/l4X6p/e4OA6y0io
+         cavA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXhioUGHV3anRphXieoqPi5A1zC7R5tq/Hqeg7kvUkhRAGJFxBJSluTGvDfMmg+OutUXUjXxGMMPxS+1mj@vger.kernel.org, AJvYcCVWdUFFxwgwjOncTO3v62soNduB4TYn7nCnMit4NpoffJhLcpdobS+VpZE7kB2dc0A19knLu5Ug8avN7E0hgP/x@vger.kernel.org, AJvYcCXT21JRZo++epWxee0LR+426SWamsxCunmrml5uWZ8NsAz7TPwQq009uUGbdSrVFkVYU4mV8BVcM0lSF1Z/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8UIVcmENYtT2gqd04Hrfh29dIADrFzBtRqifZ8iFZ+g/iGQqh
+	aCm4l5SIubS7j4oGlKWZOq09t1wo6LB4j027p5RHMxBTeMlUIocR4UhQ03f7H5CuzJytWCAcrxQ
+	d4fJ19h3ROm6h0vMe6D5MfS+MJGnVYr8=
+X-Gm-Gg: ASbGncuUSkmmTPMlPhzp5BaE/CHm0YI9VhQaUbC3E1p8Uk4wtUAUagfesAY27mDdb4W
+	vzjfr5SmAGcOAN2h3OuZvd7yBkl6TKAudl20v7ZNPVqQ9aNxVLNveVmWyvMCMcbQIGUplCNn6m+
+	RIUxS0MVEXf7MeXJSWmT/81D7L8im1S824fvGsfvacJ/uYj6121WMi+uEYE0mXaccTmGugWY9bS
+	M8Keo8=
+X-Google-Smtp-Source: AGHT+IFlZbW5lOCGSQjJt4+9a1bHOnV+gUrJQ5yivlFyz/JksHbYESP3g6+3UY9godJESN82MYvslsY/wq3q989OsgY=
+X-Received: by 2002:a05:6512:3b87:b0:55b:9595:c7cd with SMTP id
+ 2adb3069b0e04-55b97bd17d6mr3134536e87.54.1754344139144; Mon, 04 Aug 2025
+ 14:48:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250607220150.2980-1-21cnbao@gmail.com> <aJAFrYfyzGpbm+0m@ly-workstation>
- <1d1d97f9-2a67-4920-850e-accf4c82440e@redhat.com>
-In-Reply-To: <1d1d97f9-2a67-4920-850e-accf4c82440e@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 5 Aug 2025 09:48:32 +1200
-X-Gm-Features: Ac12FXwWuOB4aHDWxv82Z-ff62MNcG24p5-GDgdLvCO-VcGPJBIhpHkcI52g-pg
-Message-ID: <CAGsJ_4ypaAySaWyatH4Vu_dz--gEXUWk3yAQwM_8JTdR6U3fQA@mail.gmail.com>
-Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
-To: David Hildenbrand <david@redhat.com>, "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>, Qi Zheng <zhengqi.arch@bytedance.com>, yi1.lai@intel.com
+References: <20250803204746.1899942-1-hsukrut3@gmail.com> <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
+In-Reply-To: <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
+From: sukrut heroorkar <hsukrut3@gmail.com>
+Date: Mon, 4 Aug 2025 23:48:47 +0200
+X-Gm-Features: Ac12FXw563ckk6p2a5b2SueZmIkjD4EhqnLA6zSn7xgCZHTjWW399iUzCrYmTHE
+Message-ID: <CAHCkknoxpKV80-S3jByY1xnRXd1Pr=v=D2a0ZcgnY0-Hnya56Q@mail.gmail.com>
+Subject: Re: [PATCH] selftests/proc: Fix string literal warning in proc-maps-race.c
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:PROC FILESYSTEM" <linux-kernel@vger.kernel.org>, 
+	"open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, skhar@linuxfoundation.org, 
+	david.hunter.linux@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 7:57=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
+Hi Suren,
+
+On Mon, Aug 4, 2025 at 9:47=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
 >
-> On 04.08.25 02:58, Lai, Yi wrote:
-> > Hi Barry Song,
+> On Sun, Aug 3, 2025 at 1:48=E2=80=AFPM Sukrut Heroorkar <hsukrut3@gmail.c=
+om> wrote:
 > >
-> > Greetings!
+> > This change resolves non literal string format warning invoked
+> > for proc-maps-race.c while compiling.
 > >
-> > I used Syzkaller and found that there is general protection fault in __=
-pte_offset_map_lock in linux-next next-20250801.
+> > proc-maps-race.c:205:17: warning: format not a string literal and no fo=
+rmat arguments [-Wformat-security]
+> >   205 |                 printf(text);
+> >       |                 ^~~~~~
+> > proc-maps-race.c:209:17: warning: format not a string literal and no fo=
+rmat arguments [-Wformat-security]
+> >   209 |                 printf(text);
+> >       |                 ^~~~~~
+> > proc-maps-race.c: In function =E2=80=98print_last_lines=E2=80=99:
+> > proc-maps-race.c:224:9: warning: format not a string literal and no for=
+mat arguments [-Wformat-security]
+> >   224 |         printf(start);
+> >       |         ^~~~~~
 > >
-> > After bisection and the first bad commit is:
-> > "
-> > a6fde7add78d mm: use per_vma lock for MADV_DONTNEED
-> > "
+> > Added string format specifier %s for the printf calls
+> > in both print_first_lines() and print_last_lines() thus
+> > resolving the warnings invoked.
 > >
-> > All detailed into can be found at:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___p=
-te_offset_map_lock
-> > Syzkaller repro code:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___p=
-te_offset_map_lock/repro.c
-> > Syzkaller repro syscall steps:
-[...]
+> > The test executes fine after this change thus causing no
+> > affect to the functional behavior of the test.
 >
-> Skimming over the reproducer, we seem to have racing MADV_DONTNEED and
-> MADV_COLLAPSE on the same anon area, but the problem only shows up once
-> we tear down that MM.
+> Please add:
 >
-
-This seems to be where the race happens.
-Hi Lai, can you also double check if the below diff fixes the problem?
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 374a6a5193a7..6b40bdfd224c 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1172,11 +1172,11 @@ static int collapse_huge_page(struct mm_struct
-*mm, unsigned long address,
-        if (result !=3D SCAN_SUCCEED)
-                goto out_up_write;
-        /* check if the pmd is still valid */
-+       vma_start_write(vma);
-        result =3D check_pmd_still_valid(mm, address, pmd);
-        if (result !=3D SCAN_SUCCEED)
-                goto out_up_write;
-
--       vma_start_write(vma);
-        anon_vma_lock_write(vma->anon_vma);
-
-        mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
-
-> If I would have to guess, I'd assume it's related to PT_RECLAIM
-> reclaiming empty page tables during MADV_DONTNEED -- but the kconfig
-> does not indicate that CONFIG_PT_RECLAIM was set.
+> Fixes: aadc099c480f ("selftests/proc: add verbose mode for
+> /proc/pid/maps tearing tests")
 >
-> --
-> Cheers,
+> >
+> > Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
 >
-> David / dhildenb
+> Acked-by: Suren Baghdasaryan <surenb@google.com>
 >
+> Thanks,
+> Suren.
+>
+> > ---
+> >  tools/testing/selftests/proc/proc-maps-race.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/test=
+ing/selftests/proc/proc-maps-race.c
+> > index 66773685a047..94bba4553130 100644
+> > --- a/tools/testing/selftests/proc/proc-maps-race.c
+> > +++ b/tools/testing/selftests/proc/proc-maps-race.c
+> > @@ -202,11 +202,11 @@ static void print_first_lines(char *text, int nr)
+> >                 int offs =3D end - text;
+> >
+> >                 text[offs] =3D '\0';
+> > -               printf(text);
+> > +               printf("%s", text);
+> >                 text[offs] =3D '\n';
+> >                 printf("\n");
+> >         } else {
+> > -               printf(text);
+> > +               printf("%s", text);
+> >         }
+> >  }
+> >
+> > @@ -221,7 +221,7 @@ static void print_last_lines(char *text, int nr)
+> >                 nr--;
+> >                 start--;
+> >         }
+> > -       printf(start);
+> > +       printf("%s", start);
+> >  }
+> >
+> >  static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps=
+_race) *self)
+> > --
+> > 2.43.0
+> >
 
-Thanks
-Barry
+Thank you for the review and Acked-by.
+I will add the Fixes tag and resend as V2 shortly.
+
+Regards,
+Sukrut.
 
