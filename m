@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-755222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A05B1A336
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:27:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EE7B1A337
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BE73BB01D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1D2189B9F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C03269806;
-	Mon,  4 Aug 2025 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EyfmxvdX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A999259CA0;
-	Mon,  4 Aug 2025 13:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085CF26B747;
+	Mon,  4 Aug 2025 13:27:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2690B26A0AF
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314033; cv=none; b=CwK9G3UbPtC/K75aFRXx7QRQGVs0zJZEDitnb0K/dV6NgGVe5t2kiXHUB0k9bZ36FFVb3kZjV5xvGf/kDZHSJ40cPbeThRRuZUOzLRb2jaq33laOpVnYoyu+WfQgFFBSC1jyBxRyWM40DYbszasUy75/90Pv3gwTcJ948HUyWqw=
+	t=1754314040; cv=none; b=HUiIfsh8iGx0yDwVn24T6SeoRz1oXCaydTHCwHZlyuQxox38NncihRW6zZMlzMqkucUfWwsTjj1m3B+mr3AoUeY9QPghniG14suLp1TGpf5bY6Z3hzCyGte/kjEr15/lQb4EXLcLKd7I0OuSl90D56XGXcun2aGO4Yn9B89xwqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314033; c=relaxed/simple;
-	bh=HdvT5261gzhE4aRSmJHv+tFzObgX93mplUmVc06GufI=;
+	s=arc-20240116; t=1754314040; c=relaxed/simple;
+	bh=hrOFhNzQwtjQEgKoxn82R5VHolV33TM8BcW3dPefzrk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJi/S4/2XfIOi0dgcKAhS5b1Zo9+2BUnVVgw2SivzCa6hv8pvdC8BRebuBuUo71VIx0Y2JAOwew7KB0FS8odAgTj0WS9qqcAn9ShplmdqCH3a6yPJQ/bPm86Cl/ZFQYGD8NPceyx428vCW2f9VS27tH6cu/m3ucwDrePhtNWKJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EyfmxvdX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754314028;
-	bh=HdvT5261gzhE4aRSmJHv+tFzObgX93mplUmVc06GufI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EyfmxvdXZ+NzDsRzzPqikBca7aExVvjMxp9273QrCTmQDt5W03Ujk77tESdn04Cko
-	 0xSGbdjRQJHSijFEarIcVioaWZakdnvAoCCaSPc/gxCt1hPn64sI47ckjYMeHCmtw/
-	 VRfHcDkV2IjUclj1M2UBJ8IwGDrns57lcScN4xdZbM0UwsciK4xIrPk7151HRdQlmx
-	 lZT6iYkRYJZVLKZq40Ihoygwa70YWtTLZ75HCHrewFFF7J1RtLmn4tIg5xD1HgGJBU
-	 XP2U1JXD+JLDo8+oFCuob8guMEtN+qP5Wn4fxuCJOx727NVTWfCtWG0nC5xNkuFeIC
-	 m42FsuLYnQlzQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7A25817E01CC;
-	Mon,  4 Aug 2025 15:27:07 +0200 (CEST)
-Message-ID: <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
-Date: Mon, 4 Aug 2025 15:27:07 +0200
+	 In-Reply-To:Content-Type; b=mtoQca0Fa6z6eSJqPWumqPQf8ckOSG3oV8OS1583BU3AM2+Mt6HU7iWKSD0BEtIr2rtLsQkpksF8C5ZSTpxdRxQMtYKYV9Jt2IHLvUlN4M3CWXScmurCGXc4zKE0r0SYv4yBP9hYjac4yRVvKzTUCqxuqYSWPU8DiqT7vxGqgAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CFCE150C;
+	Mon,  4 Aug 2025 06:27:10 -0700 (PDT)
+Received: from [10.1.25.45] (e127648.arm.com [10.1.25.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5B263F673;
+	Mon,  4 Aug 2025 06:27:16 -0700 (PDT)
+Message-ID: <c8b71208-b8da-4f64-9550-13ddeca9b225@arm.com>
+Date: Mon, 4 Aug 2025 14:27:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,166 +41,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
- <laura.nao@collabora.com>, wenst@chromium.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
- nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org
-References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
- <20250804083540.19099-1-laura.nao@collabora.com>
- <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
- <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
- <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 2/3] sched_ext: Provide scx_bpf_remote_curr()
+To: Andrea Righi <arighi@nvidia.com>
+Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
+ sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
+ mingo@redhat.com, peterz@infradead.org
+References: <20250804112743.711816-1-christian.loehle@arm.com>
+ <20250804112743.711816-3-christian.loehle@arm.com> <aJCsx7hbCD9f5RK3@gpd4>
 Content-Language: en-US
-In-Reply-To: <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <aJCsx7hbCD9f5RK3@gpd4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Il 04/08/25 13:01, Krzysztof Kozlowski ha scritto:
-> On 04/08/2025 11:27, AngeloGioacchino Del Regno wrote:
->> Il 04/08/25 11:16, Krzysztof Kozlowski ha scritto:
->>> On 04/08/2025 10:35, Laura Nao wrote:
->>>> Hi,
->>>>
->>>> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
->>>>> On 01/08/2025 15:57, Rob Herring wrote:
->>>>>>> +  reg:
->>>>>>> +    maxItems: 1
->>>>>>> +
->>>>>>> +  '#clock-cells':
->>>>>>> +    const: 1
->>>>>>> +
->>>>>>> +  '#reset-cells':
->>>>>>> +    const: 1
->>>>>>> +    description:
->>>>>>> +      Reset lines for PEXTP0/1 and UFS blocks.
->>>>>>> +
->>>>>>> +  mediatek,hardware-voter:
->>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>>>> +    description:
->>>>>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
->>>>>>> +      MCU manages clock and power domain control across the AP and other
->>>>>>> +      remote processors. By aggregating their votes, it ensures clocks are
->>>>>>> +      safely enabled/disabled and power domains are active before register
->>>>>>> +      access.
->>>>>>
->>>>>> I thought this was going away based on v2 discussion?
->>>>>
->>>>> Yes, I asked to drop it and do not include it in v3. There was also
->>>>> discussion clarifying review.
->>>>>
->>>>> I am really surprised that review meant nothing and code is still the same.
->>>>>
->>>>
->>>> This has been re-submitted as-is, following the outcome of the discussion
->>>> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
->>>>
->>>> We haven't found a viable alternative to the current approach so far, and
->>>> the thread outlines why other options don’t apply. I'm happy to continue
->>>> the discussion there if anyone has further suggestions or ideas on how
->>>> to address this.
->>>>
->>>
->>> And where is any of that resolution/new facts in the commit msg? You
->>> must clearly reflect long discussions like that in the commit msg.
+On 8/4/25 13:51, Andrea Righi wrote:
+> On Mon, Aug 04, 2025 at 12:27:42PM +0100, Christian Loehle wrote:
+>> Provide scx_bpf_remote_curr() as a way for scx schedulers to
+>> check the curr task of a remote rq, without assuming its lock
+>> is held.
 >>
->> On that, I agree. That's a miss.
+>> Many scx schedulers make use of scx_bpf_cpu_rq() to check a
+>> remote curr (e.g. to see if it should be preempted). This is
+>> problematic because scx_bpf_cpu_rq() provides access to all
+>> fields of struct rq, most of which aren't safe to use without
+>> holding the associated rq lock.
 >>
->>>
->>> There was no objection from Chen to use clocks or power domains as I
->>> requested.
+>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+>> ---
+>>  kernel/sched/ext.c                       | 24 ++++++++++++++++++++++++
+>>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+>>  2 files changed, 25 insertions(+)
 >>
->> Sorry Krzysztof, but now I really think that you don't understand the basics of
->> MediaTek SoCs and how they're split in hardware - and I'm sorry again, but to me
->> it really looks like that you're not even trying to understand it.
+>> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+>> index 3ea3f0f18030..1d9d9cbed0aa 100644
+>> --- a/kernel/sched/ext.c
+>> +++ b/kernel/sched/ext.c
+>> @@ -7426,6 +7426,29 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+>>  	return cpu_rq(cpu);
+>>  }
+>>
+>> +struct task_struct *bpf_task_acquire(struct task_struct *p);
 > 
-> There is no DTS here. No diagrams or some simplified drawings to help me
-> understand.
-> 
->>
->>> The objection was about DUPLICATING interfaces or nodes.
->>
->> I don't see that duplication. The interface to each clock controller for each
->> of the hardware subdomains of each controller is scattered all around the (broken
->> by hardware and by concept, if you missed that in the discussion) HW Voter MMIO.
->>
->> There are multiple clock controllers in the hardware.
->> Each of those has its own interface to the HWV.
->>
->> And there are some that require you to write to both its HWV interface and to the
->> clock controller specific MMIO at the same time for the same operation. I explained
->> that in the big discussion that Laura linked.
-> 
-> That's not what property description says. I discussed that part. Your
-> description says - to aggregate votes.
+> Can we move include <linux/btf.h> all the way to the top? In this way we
+> don't have to add this forward declaration.
 > 
 
-Yes. That is what the datasheets say, but read down there.
+At least currently <linux/btf.h> doesn't declare bpf_task_acquire.
+I'm not quite sure what's most elegant here, none of the bpf helper
+kfuncs seem to be used from kernel code / kernel/sched/ext.c
 
-> Above you say that control is split between two different MMIO blocks.
+
+>> +
+>> +/**
+>> + * scx_bpf_remote_curr - Fetch the curr of a rq without acquiring its rq lock
+>> + * @cpu: CPU of the rq
+>> + *
+>> + * Increments the refcount of the task_struct which needs to be released later.
 > 
+> Maybe we should mention that the task must be released by calling
+> bpf_task_release().
 
-Also yes.
-
-> Aggregating votes is exactly what we discussed last time and you should
-> not use custom phandle for it.
-> 
-
-We discussed about aggregating votes, yes, in software - this instead is a
-*broken* hardware that does the aggregation internally and does not require
-nor want external drivers to do the aggregation.
-
-> Maybe it is just the name, so avoid all the confusing "votes" if this is
-> not voting system. If this is a voting system, then don't use custom
-> phandles.
-
-Being it fundamentally *broken*, this being a voting system is what the hardware
-initially wanted to be - but effectively, since it requires YOU to:
-  - Make sure that power supplies are turned on, if not, turn them on by "touching"
-    HW registers (so, without any assistance from the voter MCU), if any;
-  - Turn on parent clocks manually, if any, before using the "voter mcu" to try
-    to ungate that clock; and
-    - Enable the "FENC" manually, after the mcu says that the clock was ungated.
-
-in the current state, it is just an hardware managed refcounting system and
-nothing else, because the MCU seems to be unfinished, hence, again, b r o k e n.
-
-Note that by "manually" I always mean "with direct writes to a clock controller's
-registerS, and without any automation/assistance from the HWV MCU".
-
-We're using the "hardware-voter" name because this is how MediaTek calls it in the
-datasheets, and no it doesn't really *deserve* that name for what it is exactly in
-MT8196 and MT6991.
-
-And mind you - if using the "interconnect" property for this means that we have to
-add an interconnect driver for it, no, we will not do that, as placing a software
-vote that votes clocks in a a voter MCU that does exactly what the interconnect
-driver would do - then requiring virtual/fake clocks - is not a good solution.
-
-So, what should we do then?
-
-Change it to "mediatek,clock-hw-refcounter", and adding a comment to the binding
-saying that this is called "Hardware Voter (HWV)" in the datasheets?
-
-Or is using the "interconnect" property without any driver in the interconnect API
-actually legit? - Because to me it doesn't look like being legit (and if it is, it
-shouldn't be, as I'm sure that everyone would expect an interconnect API driver
-when encountering an "interconnect" property in DT), and if so, we should just add
-a new "hw-interconnect" or "interconnect-hw" instead to not create confusion.
-
-Regards,
-Angelo
+Sure.
 
 > 
-> Best regards,
-> Krzysztof
+> While at it, what do you think about renaming this to something like
+> scx_bpf_task_acquire_on_cpu(), so that it looks similar to
+> bpf_task_acquire()?
 
+Will change it to
+bpf_task_acquire_remote_curr()?
+..on_cpu() seems like a bit of a jump semantically.
+
+> 
+>> + */
+>> +__bpf_kfunc struct task_struct *scx_bpf_remote_curr(s32 cpu)
+>> +{
+>> +	struct task_struct *p;
+>> +
+>> +	if (!kf_cpu_valid(cpu, NULL))
+>> +		return NULL;
+>> +
+>> +	rcu_read_lock();
+>> +	p = cpu_rq(cpu)->curr;
+>> +	if (p)
+>> +		p = bpf_task_acquire(p);
+>> +	rcu_read_unlock();
+>> +	return p;
+>> +}
+>> +
+>>  /**
+>>   * scx_bpf_task_cgroup - Return the sched cgroup of a task
+>>   * @p: task of interest
+>> @@ -7590,6 +7613,7 @@ BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
+>>  BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
+>>  BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
+>>  BTF_ID_FLAGS(func, scx_bpf_cpu_rq, KF_RET_NULL)
+>> +BTF_ID_FLAGS(func, scx_bpf_remote_curr, KF_RET_NULL | KF_ACQUIRE)
+>>  #ifdef CONFIG_CGROUP_SCHED
+>>  BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
+>>  #endif
+>> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+>> index d4e21558e982..e5d4ef124532 100644
+>> --- a/tools/sched_ext/include/scx/common.bpf.h
+>> +++ b/tools/sched_ext/include/scx/common.bpf.h
+>> @@ -91,6 +91,7 @@ s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
+>>  bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+>>  s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+>>  struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+>> +struct task_struct *scx_bpf_remote_curr(s32 cpu) __ksym;
+>>  struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
+>>  u64 scx_bpf_now(void) __ksym __weak;
+>>  void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
+>> --
+>> 2.34.1
+>>
+> 
+> Thanks,
+> -Andrea
 
 
