@@ -1,553 +1,117 @@
-Return-Path: <linux-kernel+bounces-755583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D8CB1A8C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00248B1A8BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2FA621FD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97F418A2F64
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC12264D6;
-	Mon,  4 Aug 2025 17:50:40 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772F6165F13;
-	Mon,  4 Aug 2025 17:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5462264B8;
+	Mon,  4 Aug 2025 17:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAMEhejm"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1081CDFAC;
+	Mon,  4 Aug 2025 17:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754329840; cv=none; b=jcIOxnl3cN/cVjWvBiIPXR/YrCiPuW8a1XeF41c/N5mw5geckC9tKdQ1yu8IkOEl4LIoZVrcvENu9dWNoNcSx8UeYGuO+ZcwznEUbWmo8qwfNqeYkTH1x5fJj0Py1uIfeSdia7X67+heCoiO1A/2o9bDilHtGlI8d7smtnuPbkM=
+	t=1754329751; cv=none; b=tICE8pRuvoPAfoaCnIVOKCjUxUt29Ba3AVrJb704Rwek+xRadyUYQQs+Yq8kujLGmR5zW2YWzW6eqZ61NHS1+ncMfCwH7fK1qz0hAJDc0mnH/6znXjqodNmleZYp3NzINHjLVI8FGexnMPE7uHnP/0nJnHFsyXewwgwfueNl9I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754329840; c=relaxed/simple;
-	bh=TvafiNB5a75Pe+v2XH1p6swclI/U4WUPJjAsmEyX50A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IAShOJOdRQcutCSR+VsQZVxviHpxqAh4pjt3Yl3LFJbgqdiz/xaKc7eb2HEm7CtcfFbhrd3JZbGs20oGAn6LDSnbOe0pKXgDhcfRSQ6W/MXjp0YV8slnKpCqa8B+pw2KLM5+fz8dE7AJup14LAbV0JpTQ0+9oZ6Wd8Fab83NpsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bwkQc5NqHz9s2l;
-	Mon,  4 Aug 2025 19:42:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id DFriRqwcCTjp; Mon,  4 Aug 2025 19:42:16 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bwkQc4W37z9s28;
-	Mon,  4 Aug 2025 19:42:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D74C8B765;
-	Mon,  4 Aug 2025 19:42:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0AKjQet0pvHO; Mon,  4 Aug 2025 19:42:16 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EF5DD8B763;
-	Mon,  4 Aug 2025 19:42:15 +0200 (CEST)
-Message-ID: <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
-Date: Mon, 4 Aug 2025 19:42:15 +0200
+	s=arc-20240116; t=1754329751; c=relaxed/simple;
+	bh=v4pUmsqMa6OFko8oVu9RDVTG4nJaK5RpK2KGBLtv8XY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OnIltGy+KqFTKPBFiX1oQ7L5Xd5a21CuM/i3c3szA/8J/kAJh9mVfwvb8r3PcjFqmDNVpskkJnf0CmMHFi5RSyrNuwJpef4iohuiMWcFO7L+5KUVk5OGpOSTtscrSo5Jaqc9+DrBvXZquXiZSS9RRd0b8pHlBv//xcrtll/yL2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAMEhejm; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-458ba079338so16421615e9.1;
+        Mon, 04 Aug 2025 10:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754329748; x=1754934548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PNg9gSDjOiob/s8QaN8PpDUNVskdCO9RYGBdtiZaAo=;
+        b=OAMEhejmVmuFQFq38lk8jDjtqevsjHWzfNxs91/CvJmewbGqK5yJJYj3GTeWjmJTvk
+         QoPo00rInxoeRc5wJJnAnenR6nmsW6ROESB1K5jC3/4Yl8hDH0/AwMh42zAwxeP81V6J
+         HWF+TBogtQC4+LLClaerjkkAjrfXW7r7TII/ei5QCcyiPTyks41uT3kAj6lQYjGDgJ5r
+         a7loaHCU2+by9ceG39jzbvYPPs8j0FNgS3Xk+1FZMjHNQzh5kjYoyyFbhCz+KhgsGWBo
+         bwbLhF0a4BcdYp84YH4Y8iuDsTrErpPEs4LCKkBQZiQaZRMSD8ShoPRZPP0RI3u3zz+3
+         +FnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754329748; x=1754934548;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0PNg9gSDjOiob/s8QaN8PpDUNVskdCO9RYGBdtiZaAo=;
+        b=hi9HKIuGbWyZF1sEIFdFEEMgAb2NyU8r74kuxmVIXYeW+7ODW+JBTp25J+mT1EyrEe
+         t4lEfz8fieu4jcaEwSyhLC1tyw6V3vE8v88PqgLO0ZsIwgQ+Oah5/MTdZR9yp9hxsgrh
+         cnIMvS7aw+Jx6qwL8sbS7pynfYFvCKS0/C9MlBCzrLzGheDbKAgzIEOcpJa8u6GOhW2n
+         vmX3vl9PT0i++w3HDcpT3bNblavi61+WtgnyVElkUEN21klaKa8SGOu711J4sBGelFl7
+         IISCcQ+PFD/XalidMe2usgYNG8gpo1yQOigCFJrgfv/Y2y6KBkW5WWCZ+KM1pkI4JgHJ
+         hDDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVX6IWuuK3A7qpYCAy6QZ34WK+ukM9wJCLu3ZzUu89i9KdWJw4/Xzuht5sVhlsjxptsf3W9toIIbFYdg1A=@vger.kernel.org, AJvYcCVsRer8BKgL13oSlEh1i1Mu4SUvl+FLwXQAJH+0B2gyBHcTclzHIOQ5GymtOManCLulO1LeORJ97g1J2dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9eu1Zo3BshDaPAJuUhh6jcU44YyXTJzOU7DgX21piUgLl9oXT
+	PO4yXUMhwN+fQH1bI5OBcsHkwqVCXJmIEFma+RFLqXU+AT0VpQLk/1tJ
+X-Gm-Gg: ASbGncuBKiUa30888WqxsERDa0laC8dW3jhTcIcxUq+R6lFiRWF9ZiyUffh57XmVEbb
+	ezwEgQRXtiiYvDlgzB0kOqhFoU0w7c+qPIF8GI8yNwj9df7Dp1ZH1JDepV5dVztPrc2/pk11Wd3
+	kojrSZyipC9jJtUGIHHoNQmYgDgBZtmyz/GmVRmZhY0nHkYi4R8RxFOX7bcZaq1FrunLTfGmpyE
+	+YNfWfBfh6INDTBodj+4MBNC9s4NrAjJrBRi0XQY/URSyTs+iOfAHciLvmRlrX+BleQDgNzoL8g
+	mKMrPngmF+X/VFeuVFjpBmSAw3HIx0yrxbzd2YrQWmhpGv/WL3OdlupGRYQq7Rc5lhXvJ1Y90GG
+	wPN+uaELBqbSnsYy01O+x5oEENf+v4MmwEPWho3zxSXjs/+opgpO0i9M=
+X-Google-Smtp-Source: AGHT+IFOOE3AXvqzuEIjTYw9u2iDlmZZpzl0a6bpUDI2FU8kwx1CCcCcT3KRIH5cRtf3YuJwjOSfuQ==
+X-Received: by 2002:a05:600c:c119:b0:456:15be:d113 with SMTP id 5b1f17b1804b1-459e0cbf682mr3528715e9.1.1754329747710;
+        Mon, 04 Aug 2025 10:49:07 -0700 (PDT)
+Received: from localhost.localdomain ([2001:16a2:6713:7d00:3d48:427d:c564:e107])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4595cffdb28sm76021935e9.32.2025.08.04.10.49.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 04 Aug 2025 10:49:07 -0700 (PDT)
+From: Osama Albahrani <osalbahr@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Osama Albahrani <osalbahr@gmail.com>
+Subject: [PATCH] media: av7110: Fix warning 'unsigned' -> 'unsigned int'
+Date: Mon,  4 Aug 2025 20:48:59 +0300
+Message-Id: <20250804174859.9419-1-osalbahr@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
- code
-To: Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
-References: <20250803204433.75703-1-ebiggers@kernel.org>
- <20250803204433.75703-4-ebiggers@kernel.org>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250803204433.75703-4-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Fix the following checkpatch warning:
 
+av7110_ca.c:29: WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
 
-Le 03/08/2025 à 22:44, Eric Biggers a écrit :
-> MD5 is insecure, is no longer commonly used, and has never been
-> optimized for the most common architectures in the kernel.  Only mips,
-> powerpc, and sparc have optimized MD5 code in the kernel.  Of these,
-> only the powerpc one is actually testable in QEMU.  The mips one works
-> only on Cavium Octeon SoCs.
-> 
-> Taken together, it's clear that it's time to retire these additional MD5
-> implementations, and focus maintenance on the MD5 generic C code.
+Signed-off-by: Osama Albahrani <osalbahr@gmail.com>
+---
+ drivers/staging/media/av7110/av7110_ca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry, for me it is not that clear. Even if MD5 is depracated we still 
-have several applications that use MD5 for various reasons on our boards.
-
-I ran the test on kernel v6.16 with following file:
-
-# ls -l avion.au
--rw-------    1 root     root      12130159 Jan  1  1970 avion.au
-
-With CONFIG_CRYPTO_MD5_PPC:
-
-# time md5sum avion.au
-6513851d6109d42477b20cd56bf57f28  avion.au
-real    0m 1.02s
-user    0m 0.01s
-sys     0m 1.01s
-
-Without CONFIG_CRYPTO_MD5_PPC:
-
-# time md5sum avion.au
-6513851d6109d42477b20cd56bf57f28  avion.au
-real    0m 1.35s
-user    0m 0.01s
-sys     0m 1.34s
-
-I think the difference is big enough to consider keeping optimised MD5 code.
-
-Christophe
-
-
-
-> 
-> This commit removes the PowerPC optimized MD5 code.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->   arch/powerpc/configs/powernv_defconfig |   1 -
->   arch/powerpc/configs/ppc64_defconfig   |   1 -
->   arch/powerpc/crypto/Kconfig            |   8 -
->   arch/powerpc/crypto/Makefile           |   2 -
->   arch/powerpc/crypto/md5-asm.S          | 235 -------------------------
->   arch/powerpc/crypto/md5-glue.c         |  99 -----------
->   6 files changed, 346 deletions(-)
->   delete mode 100644 arch/powerpc/crypto/md5-asm.S
->   delete mode 100644 arch/powerpc/crypto/md5-glue.c
-> 
-> diff --git a/arch/powerpc/configs/powernv_defconfig b/arch/powerpc/configs/powernv_defconfig
-> index d06388b0f66e3..bd4685612de6d 100644
-> --- a/arch/powerpc/configs/powernv_defconfig
-> +++ b/arch/powerpc/configs/powernv_defconfig
-> @@ -318,11 +318,10 @@ CONFIG_FTR_FIXUP_SELFTEST=y
->   CONFIG_MSI_BITMAP_SELFTEST=y
->   CONFIG_XMON=y
->   CONFIG_CRYPTO_BENCHMARK=m
->   CONFIG_CRYPTO_PCBC=m
->   CONFIG_CRYPTO_HMAC=y
-> -CONFIG_CRYPTO_MD5_PPC=m
->   CONFIG_CRYPTO_MICHAEL_MIC=m
->   CONFIG_CRYPTO_SHA256=y
->   CONFIG_CRYPTO_WP512=m
->   CONFIG_CRYPTO_ANUBIS=m
->   CONFIG_CRYPTO_BLOWFISH=m
-> diff --git a/arch/powerpc/configs/ppc64_defconfig b/arch/powerpc/configs/ppc64_defconfig
-> index ce34597e9f3e1..2d92c11eea7e4 100644
-> --- a/arch/powerpc/configs/ppc64_defconfig
-> +++ b/arch/powerpc/configs/ppc64_defconfig
-> @@ -385,11 +385,10 @@ CONFIG_CRYPTO_TWOFISH=m
->   CONFIG_CRYPTO_PCBC=m
->   CONFIG_CRYPTO_MICHAEL_MIC=m
->   CONFIG_CRYPTO_SHA256=y
->   CONFIG_CRYPTO_WP512=m
->   CONFIG_CRYPTO_LZO=m
-> -CONFIG_CRYPTO_MD5_PPC=m
->   CONFIG_CRYPTO_AES_GCM_P10=m
->   CONFIG_CRYPTO_DEV_NX=y
->   CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
->   CONFIG_CRYPTO_DEV_VMX=y
->   CONFIG_SYSTEM_TRUSTED_KEYRING=y
-> diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
-> index cfe39fc221cf8..f4b779c7352de 100644
-> --- a/arch/powerpc/crypto/Kconfig
-> +++ b/arch/powerpc/crypto/Kconfig
-> @@ -13,18 +13,10 @@ config CRYPTO_CURVE25519_PPC64
->   	  Curve25519 algorithm
->   
->   	  Architecture: PowerPC64
->   	  - Little-endian
->   
-> -config CRYPTO_MD5_PPC
-> -	tristate "Digests: MD5"
-> -	select CRYPTO_HASH
-> -	help
-> -	  MD5 message digest algorithm (RFC1321)
-> -
-> -	  Architecture: powerpc
-> -
->   config CRYPTO_AES_PPC_SPE
->   	tristate "Ciphers: AES, modes: ECB/CBC/CTR/XTS (SPE)"
->   	depends on SPE
->   	select CRYPTO_SKCIPHER
->   	help
-> diff --git a/arch/powerpc/crypto/Makefile b/arch/powerpc/crypto/Makefile
-> index bc8fd27344b8b..9eb59dce67f36 100644
-> --- a/arch/powerpc/crypto/Makefile
-> +++ b/arch/powerpc/crypto/Makefile
-> @@ -4,17 +4,15 @@
->   #
->   # Arch-specific CryptoAPI modules.
->   #
->   
->   obj-$(CONFIG_CRYPTO_AES_PPC_SPE) += aes-ppc-spe.o
-> -obj-$(CONFIG_CRYPTO_MD5_PPC) += md5-ppc.o
->   obj-$(CONFIG_CRYPTO_AES_GCM_P10) += aes-gcm-p10-crypto.o
->   obj-$(CONFIG_CRYPTO_DEV_VMX_ENCRYPT) += vmx-crypto.o
->   obj-$(CONFIG_CRYPTO_CURVE25519_PPC64) += curve25519-ppc64le.o
->   
->   aes-ppc-spe-y := aes-spe-core.o aes-spe-keys.o aes-tab-4k.o aes-spe-modes.o aes-spe-glue.o
-> -md5-ppc-y := md5-asm.o md5-glue.o
->   aes-gcm-p10-crypto-y := aes-gcm-p10-glue.o aes-gcm-p10.o ghashp10-ppc.o aesp10-ppc.o
->   vmx-crypto-objs := vmx.o aesp8-ppc.o ghashp8-ppc.o aes.o aes_cbc.o aes_ctr.o aes_xts.o ghash.o
->   curve25519-ppc64le-y := curve25519-ppc64le-core.o curve25519-ppc64le_asm.o
->   
->   ifeq ($(CONFIG_CPU_LITTLE_ENDIAN),y)
-> diff --git a/arch/powerpc/crypto/md5-asm.S b/arch/powerpc/crypto/md5-asm.S
-> deleted file mode 100644
-> index fa6bc440cf4ac..0000000000000
-> --- a/arch/powerpc/crypto/md5-asm.S
-> +++ /dev/null
-> @@ -1,235 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-or-later */
-> -/*
-> - * Fast MD5 implementation for PPC
-> - *
-> - * Copyright (c) 2015 Markus Stockhausen <stockhausen@collogia.de>
-> - */
-> -#include <asm/ppc_asm.h>
-> -#include <asm/asm-offsets.h>
-> -#include <asm/asm-compat.h>
-> -
-> -#define rHP	r3
-> -#define rWP	r4
-> -
-> -#define rH0	r0
-> -#define rH1	r6
-> -#define rH2	r7
-> -#define rH3	r5
-> -
-> -#define rW00	r8
-> -#define rW01	r9
-> -#define rW02	r10
-> -#define rW03	r11
-> -#define rW04	r12
-> -#define rW05	r14
-> -#define rW06	r15
-> -#define rW07	r16
-> -#define rW08	r17
-> -#define rW09	r18
-> -#define rW10	r19
-> -#define rW11	r20
-> -#define rW12	r21
-> -#define rW13	r22
-> -#define rW14	r23
-> -#define rW15	r24
-> -
-> -#define rT0	r25
-> -#define rT1	r26
-> -
-> -#define INITIALIZE \
-> -	PPC_STLU r1,-INT_FRAME_SIZE(r1); \
-> -	SAVE_GPRS(14, 26, r1)		/* push registers onto stack	*/
-> -
-> -#define FINALIZE \
-> -	REST_GPRS(14, 26, r1);		/* pop registers from stack	*/ \
-> -	addi	r1,r1,INT_FRAME_SIZE
-> -
-> -#ifdef __BIG_ENDIAN__
-> -#define LOAD_DATA(reg, off) \
-> -	lwbrx		reg,0,rWP;	/* load data			*/
-> -#define INC_PTR \
-> -	addi		rWP,rWP,4;	/* increment per word		*/
-> -#define NEXT_BLOCK			/* nothing to do		*/
-> -#else
-> -#define LOAD_DATA(reg, off) \
-> -	lwz		reg,off(rWP);	/* load data			*/
-> -#define INC_PTR				/* nothing to do		*/
-> -#define NEXT_BLOCK \
-> -	addi		rWP,rWP,64;	/* increment per block		*/
-> -#endif
-> -
-> -#define R_00_15(a, b, c, d, w0, w1, p, q, off, k0h, k0l, k1h, k1l) \
-> -	LOAD_DATA(w0, off)		/*    W				*/ \
-> -	and		rT0,b,c;	/* 1: f = b and c		*/ \
-> -	INC_PTR				/*    ptr++			*/ \
-> -	andc		rT1,d,b;	/* 1: f' = ~b and d		*/ \
-> -	LOAD_DATA(w1, off+4)		/*    W				*/ \
-> -	or		rT0,rT0,rT1;	/* 1: f = f or f'		*/ \
-> -	addi		w0,w0,k0l;	/* 1: wk = w + k		*/ \
-> -	add		a,a,rT0;	/* 1: a = a + f			*/ \
-> -	addis		w0,w0,k0h;	/* 1: wk = w + k'		*/ \
-> -	addis		w1,w1,k1h;	/* 2: wk = w + k		*/ \
-> -	add		a,a,w0;		/* 1: a = a + wk		*/ \
-> -	addi		w1,w1,k1l;	/* 2: wk = w + k'		*/ \
-> -	rotrwi		a,a,p;		/* 1: a = a rotl x		*/ \
-> -	add		d,d,w1;		/* 2: a = a + wk		*/ \
-> -	add		a,a,b;		/* 1: a = a + b			*/ \
-> -	and		rT0,a,b;	/* 2: f = b and c		*/ \
-> -	andc		rT1,c,a;	/* 2: f' = ~b and d		*/ \
-> -	or		rT0,rT0,rT1;	/* 2: f = f or f'		*/ \
-> -	add		d,d,rT0;	/* 2: a = a + f			*/ \
-> -	INC_PTR				/*    ptr++			*/ \
-> -	rotrwi		d,d,q;		/* 2: a = a rotl x		*/ \
-> -	add		d,d,a;		/* 2: a = a + b			*/
-> -
-> -#define R_16_31(a, b, c, d, w0, w1, p, q, k0h, k0l, k1h, k1l) \
-> -	andc		rT0,c,d;	/* 1: f = c and ~d		*/ \
-> -	and		rT1,b,d;	/* 1: f' = b and d		*/ \
-> -	addi		w0,w0,k0l;	/* 1: wk = w + k		*/ \
-> -	or		rT0,rT0,rT1;	/* 1: f = f or f'		*/ \
-> -	addis		w0,w0,k0h;	/* 1: wk = w + k'		*/ \
-> -	add		a,a,rT0;	/* 1: a = a + f			*/ \
-> -	addi		w1,w1,k1l;	/* 2: wk = w + k		*/ \
-> -	add		a,a,w0;		/* 1: a = a + wk		*/ \
-> -	addis		w1,w1,k1h;	/* 2: wk = w + k'		*/ \
-> -	andc		rT0,b,c;	/* 2: f = c and ~d		*/ \
-> -	rotrwi		a,a,p;		/* 1: a = a rotl x		*/ \
-> -	add		a,a,b;		/* 1: a = a + b			*/ \
-> -	add		d,d,w1;		/* 2: a = a + wk		*/ \
-> -	and		rT1,a,c;	/* 2: f' = b and d		*/ \
-> -	or		rT0,rT0,rT1;	/* 2: f = f or f'		*/ \
-> -	add		d,d,rT0;	/* 2: a = a + f			*/ \
-> -	rotrwi		d,d,q;		/* 2: a = a rotl x		*/ \
-> -	add		d,d,a;		/* 2: a = a +b			*/
-> -
-> -#define R_32_47(a, b, c, d, w0, w1, p, q, k0h, k0l, k1h, k1l) \
-> -	xor		rT0,b,c;	/* 1: f' = b xor c		*/ \
-> -	addi		w0,w0,k0l;	/* 1: wk = w + k		*/ \
-> -	xor		rT1,rT0,d;	/* 1: f = f xor f'		*/ \
-> -	addis		w0,w0,k0h;	/* 1: wk = w + k'		*/ \
-> -	add		a,a,rT1;	/* 1: a = a + f			*/ \
-> -	addi		w1,w1,k1l;	/* 2: wk = w + k		*/ \
-> -	add		a,a,w0;		/* 1: a = a + wk		*/ \
-> -	addis		w1,w1,k1h;	/* 2: wk = w + k'		*/ \
-> -	rotrwi		a,a,p;		/* 1: a = a rotl x		*/ \
-> -	add		d,d,w1;		/* 2: a = a + wk		*/ \
-> -	add		a,a,b;		/* 1: a = a + b			*/ \
-> -	xor		rT1,rT0,a;	/* 2: f = b xor f'		*/ \
-> -	add		d,d,rT1;	/* 2: a = a + f			*/ \
-> -	rotrwi		d,d,q;		/* 2: a = a rotl x		*/ \
-> -	add		d,d,a;		/* 2: a = a + b			*/
-> -
-> -#define R_48_63(a, b, c, d, w0, w1, p, q, k0h, k0l, k1h, k1l) \
-> -	addi		w0,w0,k0l;	/* 1: w = w + k			*/ \
-> -	orc		rT0,b,d;	/* 1: f = b or ~d		*/ \
-> -	addis		w0,w0,k0h;	/* 1: w = w + k'		*/ \
-> -	xor		rT0,rT0,c;	/* 1: f = f xor c		*/ \
-> -	add		a,a,w0;		/* 1: a = a + wk		*/ \
-> -	addi		w1,w1,k1l;	/* 2: w = w + k			*/ \
-> -	add		a,a,rT0;	/* 1: a = a + f			*/ \
-> -	addis		w1,w1,k1h;	/* 2: w = w + k'		*/ \
-> -	rotrwi		a,a,p;		/* 1: a = a rotl x		*/ \
-> -	add		a,a,b;		/* 1: a = a + b			*/ \
-> -	orc		rT0,a,c;	/* 2: f = b or ~d		*/ \
-> -	add		d,d,w1;		/* 2: a = a + wk		*/ \
-> -	xor		rT0,rT0,b;	/* 2: f = f xor c		*/ \
-> -	add		d,d,rT0;	/* 2: a = a + f			*/ \
-> -	rotrwi		d,d,q;		/* 2: a = a rotl x		*/ \
-> -	add		d,d,a;		/* 2: a = a + b			*/
-> -
-> -_GLOBAL(ppc_md5_transform)
-> -	INITIALIZE
-> -
-> -	mtctr		r5
-> -	lwz		rH0,0(rHP)
-> -	lwz		rH1,4(rHP)
-> -	lwz		rH2,8(rHP)
-> -	lwz		rH3,12(rHP)
-> -
-> -ppc_md5_main:
-> -	R_00_15(rH0, rH1, rH2, rH3, rW00, rW01, 25, 20, 0,
-> -		0xd76b, -23432, 0xe8c8, -18602)
-> -	R_00_15(rH2, rH3, rH0, rH1, rW02, rW03, 15, 10, 8,
-> -		0x2420, 0x70db, 0xc1be, -12562)
-> -	R_00_15(rH0, rH1, rH2, rH3, rW04, rW05, 25, 20, 16,
-> -		0xf57c, 0x0faf, 0x4788, -14806)
-> -	R_00_15(rH2, rH3, rH0, rH1, rW06, rW07, 15, 10, 24,
-> -		0xa830, 0x4613, 0xfd47, -27391)
-> -	R_00_15(rH0, rH1, rH2, rH3, rW08, rW09, 25, 20, 32,
-> -		0x6981, -26408, 0x8b45,  -2129)
-> -	R_00_15(rH2, rH3, rH0, rH1, rW10, rW11, 15, 10, 40,
-> -		0xffff, 0x5bb1, 0x895d, -10306)
-> -	R_00_15(rH0, rH1, rH2, rH3, rW12, rW13, 25, 20, 48,
-> -		0x6b90, 0x1122, 0xfd98, 0x7193)
-> -	R_00_15(rH2, rH3, rH0, rH1, rW14, rW15, 15, 10, 56,
-> -		0xa679, 0x438e, 0x49b4, 0x0821)
-> -
-> -	R_16_31(rH0, rH1, rH2, rH3, rW01, rW06, 27, 23,
-> -		0x0d56, 0x6e0c, 0x1810, 0x6d2d)
-> -	R_16_31(rH2, rH3, rH0, rH1, rW11, rW00, 18, 12,
-> -		0x9d02, -32109, 0x124c, 0x2332)
-> -	R_16_31(rH0, rH1, rH2, rH3, rW05, rW10, 27, 23,
-> -		0x8ea7, 0x4a33, 0x0245, -18270)
-> -	R_16_31(rH2, rH3, rH0, rH1, rW15, rW04, 18, 12,
-> -		0x8eee,  -8608, 0xf258,  -5095)
-> -	R_16_31(rH0, rH1, rH2, rH3, rW09, rW14, 27, 23,
-> -		0x969d, -10697, 0x1cbe, -15288)
-> -	R_16_31(rH2, rH3, rH0, rH1, rW03, rW08, 18, 12,
-> -		0x3317, 0x3e99, 0xdbd9, 0x7c15)
-> -	R_16_31(rH0, rH1, rH2, rH3, rW13, rW02, 27, 23,
-> -		0xac4b, 0x7772, 0xd8cf, 0x331d)
-> -	R_16_31(rH2, rH3, rH0, rH1, rW07, rW12, 18, 12,
-> -		0x6a28, 0x6dd8, 0x219a, 0x3b68)
-> -
-> -	R_32_47(rH0, rH1, rH2, rH3, rW05, rW08, 28, 21,
-> -		0x29cb, 0x28e5, 0x4218,  -7788)
-> -	R_32_47(rH2, rH3, rH0, rH1, rW11, rW14, 16,  9,
-> -		0x473f, 0x06d1, 0x3aae, 0x3036)
-> -	R_32_47(rH0, rH1, rH2, rH3, rW01, rW04, 28, 21,
-> -		0xaea1, -15134, 0x640b, -11295)
-> -	R_32_47(rH2, rH3, rH0, rH1, rW07, rW10, 16,  9,
-> -		0x8f4c, 0x4887, 0xbc7c, -22499)
-> -	R_32_47(rH0, rH1, rH2, rH3, rW13, rW00, 28, 21,
-> -		0x7eb8, -27199, 0x00ea, 0x6050)
-> -	R_32_47(rH2, rH3, rH0, rH1, rW03, rW06, 16,  9,
-> -		0xe01a, 0x22fe, 0x4447, 0x69c5)
-> -	R_32_47(rH0, rH1, rH2, rH3, rW09, rW12, 28, 21,
-> -		0xb7f3, 0x0253, 0x59b1, 0x4d5b)
-> -	R_32_47(rH2, rH3, rH0, rH1, rW15, rW02, 16,  9,
-> -		0x4701, -27017, 0xc7bd, -19859)
-> -
-> -	R_48_63(rH0, rH1, rH2, rH3, rW00, rW07, 26, 22,
-> -		0x0988,  -1462, 0x4c70, -19401)
-> -	R_48_63(rH2, rH3, rH0, rH1, rW14, rW05, 17, 11,
-> -		0xadaf,  -5221, 0xfc99, 0x66f7)
-> -	R_48_63(rH0, rH1, rH2, rH3, rW12, rW03, 26, 22,
-> -		0x7e80, -16418, 0xba1e, -25587)
-> -	R_48_63(rH2, rH3, rH0, rH1, rW10, rW01, 17, 11,
-> -		0x4130, 0x380d, 0xe0c5, 0x738d)
-> -	lwz		rW00,0(rHP)
-> -	R_48_63(rH0, rH1, rH2, rH3, rW08, rW15, 26, 22,
-> -		0xe837, -30770, 0xde8a, 0x69e8)
-> -	lwz		rW14,4(rHP)
-> -	R_48_63(rH2, rH3, rH0, rH1, rW06, rW13, 17, 11,
-> -		0x9e79, 0x260f, 0x256d, -27941)
-> -	lwz		rW12,8(rHP)
-> -	R_48_63(rH0, rH1, rH2, rH3, rW04, rW11, 26, 22,
-> -		0xab75, -20775, 0x4f9e, -28397)
-> -	lwz		rW10,12(rHP)
-> -	R_48_63(rH2, rH3, rH0, rH1, rW02, rW09, 17, 11,
-> -		0x662b, 0x7c56, 0x11b2, 0x0358)
-> -
-> -	add		rH0,rH0,rW00
-> -	stw		rH0,0(rHP)
-> -	add		rH1,rH1,rW14
-> -	stw		rH1,4(rHP)
-> -	add		rH2,rH2,rW12
-> -	stw		rH2,8(rHP)
-> -	add		rH3,rH3,rW10
-> -	stw		rH3,12(rHP)
-> -	NEXT_BLOCK
-> -
-> -	bdnz		ppc_md5_main
-> -
-> -	FINALIZE
-> -	blr
-> diff --git a/arch/powerpc/crypto/md5-glue.c b/arch/powerpc/crypto/md5-glue.c
-> deleted file mode 100644
-> index 204440a90cd84..0000000000000
-> --- a/arch/powerpc/crypto/md5-glue.c
-> +++ /dev/null
-> @@ -1,99 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/*
-> - * Glue code for MD5 implementation for PPC assembler
-> - *
-> - * Based on generic implementation.
-> - *
-> - * Copyright (c) 2015 Markus Stockhausen <stockhausen@collogia.de>
-> - */
-> -
-> -#include <crypto/internal/hash.h>
-> -#include <crypto/md5.h>
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/string.h>
-> -
-> -extern void ppc_md5_transform(u32 *state, const u8 *src, u32 blocks);
-> -
-> -static int ppc_md5_init(struct shash_desc *desc)
-> -{
-> -	struct md5_state *sctx = shash_desc_ctx(desc);
-> -
-> -	sctx->hash[0] = MD5_H0;
-> -	sctx->hash[1] = MD5_H1;
-> -	sctx->hash[2] = MD5_H2;
-> -	sctx->hash[3] =	MD5_H3;
-> -	sctx->byte_count = 0;
-> -
-> -	return 0;
-> -}
-> -
-> -static int ppc_md5_update(struct shash_desc *desc, const u8 *data,
-> -			unsigned int len)
-> -{
-> -	struct md5_state *sctx = shash_desc_ctx(desc);
-> -
-> -	sctx->byte_count += round_down(len, MD5_HMAC_BLOCK_SIZE);
-> -	ppc_md5_transform(sctx->hash, data, len >> 6);
-> -	return len - round_down(len, MD5_HMAC_BLOCK_SIZE);
-> -}
-> -
-> -static int ppc_md5_finup(struct shash_desc *desc, const u8 *src,
-> -			 unsigned int offset, u8 *out)
-> -{
-> -	struct md5_state *sctx = shash_desc_ctx(desc);
-> -	__le64 block[MD5_BLOCK_WORDS] = {};
-> -	u8 *p = memcpy(block, src, offset);
-> -	__le32 *dst = (__le32 *)out;
-> -	__le64 *pbits;
-> -
-> -	src = p;
-> -	p += offset;
-> -	*p++ = 0x80;
-> -	sctx->byte_count += offset;
-> -	pbits = &block[(MD5_BLOCK_WORDS / (offset > 55 ? 1 : 2)) - 1];
-> -	*pbits = cpu_to_le64(sctx->byte_count << 3);
-> -	ppc_md5_transform(sctx->hash, src, (pbits - block + 1) / 8);
-> -	memzero_explicit(block, sizeof(block));
-> -
-> -	dst[0] = cpu_to_le32(sctx->hash[0]);
-> -	dst[1] = cpu_to_le32(sctx->hash[1]);
-> -	dst[2] = cpu_to_le32(sctx->hash[2]);
-> -	dst[3] = cpu_to_le32(sctx->hash[3]);
-> -	return 0;
-> -}
-> -
-> -static struct shash_alg alg = {
-> -	.digestsize	=	MD5_DIGEST_SIZE,
-> -	.init		=	ppc_md5_init,
-> -	.update		=	ppc_md5_update,
-> -	.finup		=	ppc_md5_finup,
-> -	.descsize	=	MD5_STATE_SIZE,
-> -	.base		=	{
-> -		.cra_name	=	"md5",
-> -		.cra_driver_name=	"md5-ppc",
-> -		.cra_priority	=	200,
-> -		.cra_flags	=	CRYPTO_AHASH_ALG_BLOCK_ONLY,
-> -		.cra_blocksize	=	MD5_HMAC_BLOCK_SIZE,
-> -		.cra_module	=	THIS_MODULE,
-> -	}
-> -};
-> -
-> -static int __init ppc_md5_mod_init(void)
-> -{
-> -	return crypto_register_shash(&alg);
-> -}
-> -
-> -static void __exit ppc_md5_mod_fini(void)
-> -{
-> -	crypto_unregister_shash(&alg);
-> -}
-> -
-> -module_init(ppc_md5_mod_init);
-> -module_exit(ppc_md5_mod_fini);
-> -
-> -MODULE_LICENSE("GPL");
-> -MODULE_DESCRIPTION("MD5 Secure Hash Algorithm, PPC assembler");
-> -
-> -MODULE_ALIAS_CRYPTO("md5");
-> -MODULE_ALIAS_CRYPTO("md5-ppc");
+diff --git a/drivers/staging/media/av7110/av7110_ca.c b/drivers/staging/media/av7110/av7110_ca.c
+index fce4023c9dea..63d9c97a5190 100644
+--- a/drivers/staging/media/av7110/av7110_ca.c
++++ b/drivers/staging/media/av7110/av7110_ca.c
+@@ -26,7 +26,7 @@
+ 
+ void CI_handle(struct av7110 *av7110, u8 *data, u16 len)
+ {
+-	unsigned slot_num;
++	unsigned int slot_num;
+ 
+ 	dprintk(8, "av7110:%p\n", av7110);
+ 
+-- 
+2.39.5 (Apple Git-154)
 
 
