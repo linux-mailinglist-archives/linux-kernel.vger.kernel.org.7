@@ -1,180 +1,220 @@
-Return-Path: <linux-kernel+bounces-755697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D140DB1AA88
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16672B1AA89
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1A9621A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B403C622225
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20AE23AB87;
-	Mon,  4 Aug 2025 21:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhHLNfgx"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52366215055;
-	Mon,  4 Aug 2025 21:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691B9239086;
+	Mon,  4 Aug 2025 21:49:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E105634;
+	Mon,  4 Aug 2025 21:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754344143; cv=none; b=LViTGcxi5jrCo2LnqIZ4JWXtXWpY/kiuPjWfNTXhfVIujdkaaHG/kiv3fPBxfGccagEMYNlCPoVpytcKlyTYCcNnaSkRrz9xAazeu6w1XF6mBMoAXvNfovdoLddQSU+DGyrrRc0hL22ojM8VynrMAR2v93bICEmDcXgAoug5z2o=
+	t=1754344160; cv=none; b=YY++ASgPF7B+k8FBz6VPq87vnaUdNbaFHkvqviJwOT2zqks5di65fH1ZRvrEF9+Z1ZqMC3CAbhMkcA4hd3UVbUtL2TQFqyGPAaM7dpPLWaxc31iwg9bUCIOeuLZJd4kJrYkuNA9O42BHXv4e0LfqL0NK2MpBiMb6IcB82hyCSQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754344143; c=relaxed/simple;
-	bh=2x8KOgz2q7JfsX+Pl5gpGDVIep4NWKJe4BoPRF/W+iE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=We/MwCuVBG94IAlh/O0xG+jOae/NI+Bc8o6yP89xwt5i7ATs0lybX794MHXnT9ZSKWW1qRKpv0xDY6ucpBxZIiWKqjabDOXJdw4v/5PA0fKct4uYb4YQL4NC9e4RHtKIRBzEt8H2So3k4gik4s/GvLt6N9ZPRI7vYd+Mad/RTH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhHLNfgx; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-555024588b1so4751114e87.1;
-        Mon, 04 Aug 2025 14:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754344139; x=1754948939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
-        b=RhHLNfgxPkJaruuE6OH4KYocN4ndikgJ/q86exc/ssqy4FNt3lCuyCM8xwF9+7CGAi
-         NVqVl8v8rF1eKY4xalzO6Ul/QxvP+sq1fJ+AnbzCU3tNPH0uc8YFW4a61iYjtLvaqE5Z
-         Oy75zcz792GDIBuvEcZzxT2eQB8EiW+Z98PQE8RpKt0F5S/xehm4L1oEWMOB1/f+9wxU
-         N6ig4iRgNkzmHx+qi4vpy83mfKI+caJBhpvcm5v15yiJf2InhjYKmPWldyZtbcsMYRQj
-         hXVeyQ4ZWdZ3j4eJeeH8DJGDnfDAi0yDm0+xopatNxBgxHCiP1vhjx2LHiavWM0t2ihl
-         Lheg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754344139; x=1754948939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=muTFQg3ki9PD9IOpXqr9RHnNzLZ07myg3+n31XmzRDU=;
-        b=nUCmYxN2RZ4ILVpn/WEvBJL1fj3J5oKOvsgi8KrW+48otQNUeR2g64fJwB/A/cYBRh
-         e9/uMpFQCj9ptKfSWWZjLcK7Uppu5aJKT9fCuH85K1L9Cs68EvBZ3UCJx7ZUqZ/OHNHT
-         tsTXmT9gnFmiD0BJ1xMMQzNCs+I/CXEBP+L9q77g5XEMXlnMLBZt+jZ7+7b2uhvjStlO
-         D5xdGEb70yeCbfRUwa3vzHh4f7Qoxs/SBA/tc219/WmiRIr6aXb1nsTlV1jt+gL1PJ/5
-         UDF3D5hdQkJS5/dlA6kN9DkRs9q5jVnRPmHQe2GC+0RpIMGHwS8t/l4X6p/e4OA6y0io
-         cavA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXhioUGHV3anRphXieoqPi5A1zC7R5tq/Hqeg7kvUkhRAGJFxBJSluTGvDfMmg+OutUXUjXxGMMPxS+1mj@vger.kernel.org, AJvYcCVWdUFFxwgwjOncTO3v62soNduB4TYn7nCnMit4NpoffJhLcpdobS+VpZE7kB2dc0A19knLu5Ug8avN7E0hgP/x@vger.kernel.org, AJvYcCXT21JRZo++epWxee0LR+426SWamsxCunmrml5uWZ8NsAz7TPwQq009uUGbdSrVFkVYU4mV8BVcM0lSF1Z/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8UIVcmENYtT2gqd04Hrfh29dIADrFzBtRqifZ8iFZ+g/iGQqh
-	aCm4l5SIubS7j4oGlKWZOq09t1wo6LB4j027p5RHMxBTeMlUIocR4UhQ03f7H5CuzJytWCAcrxQ
-	d4fJ19h3ROm6h0vMe6D5MfS+MJGnVYr8=
-X-Gm-Gg: ASbGncuUSkmmTPMlPhzp5BaE/CHm0YI9VhQaUbC3E1p8Uk4wtUAUagfesAY27mDdb4W
-	vzjfr5SmAGcOAN2h3OuZvd7yBkl6TKAudl20v7ZNPVqQ9aNxVLNveVmWyvMCMcbQIGUplCNn6m+
-	RIUxS0MVEXf7MeXJSWmT/81D7L8im1S824fvGsfvacJ/uYj6121WMi+uEYE0mXaccTmGugWY9bS
-	M8Keo8=
-X-Google-Smtp-Source: AGHT+IFlZbW5lOCGSQjJt4+9a1bHOnV+gUrJQ5yivlFyz/JksHbYESP3g6+3UY9godJESN82MYvslsY/wq3q989OsgY=
-X-Received: by 2002:a05:6512:3b87:b0:55b:9595:c7cd with SMTP id
- 2adb3069b0e04-55b97bd17d6mr3134536e87.54.1754344139144; Mon, 04 Aug 2025
- 14:48:59 -0700 (PDT)
+	s=arc-20240116; t=1754344160; c=relaxed/simple;
+	bh=/bgaucFJ2r+oh0cKuDumKrWp7pFGy77fimGTNdxqC30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WirfL8IjVIURUTgZ+3UuWs/YxZcnHFdUN2Z1JbpKFHQOygPiWx6hLjGiLIbFBu7r0myGhHqBFDTbmIOy54YDwcbpfzyNrLTXWIwscktTNxFoJ74sfEBCCx7cNpMr40XXm3KqysLOASOBZ5blkO9DDyxwICu21RUTtHMYcydk7r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AAD12574;
+	Mon,  4 Aug 2025 14:49:09 -0700 (PDT)
+Received: from [10.57.5.104] (unknown [10.57.5.104])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 591BE3F673;
+	Mon,  4 Aug 2025 14:49:15 -0700 (PDT)
+Message-ID: <e5193801-9160-4e05-8d02-eb129487437c@arm.com>
+Date: Mon, 4 Aug 2025 22:49:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803204746.1899942-1-hsukrut3@gmail.com> <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
-In-Reply-To: <CAJuCfpF8+MJ2xmS+dC2O3LLtorW_ugLNJozZw-KM+7fmnSHFhg@mail.gmail.com>
-From: sukrut heroorkar <hsukrut3@gmail.com>
-Date: Mon, 4 Aug 2025 23:48:47 +0200
-X-Gm-Features: Ac12FXw563ckk6p2a5b2SueZmIkjD4EhqnLA6zSn7xgCZHTjWW399iUzCrYmTHE
-Message-ID: <CAHCkknoxpKV80-S3jByY1xnRXd1Pr=v=D2a0ZcgnY0-Hnya56Q@mail.gmail.com>
-Subject: Re: [PATCH] selftests/proc: Fix string literal warning in proc-maps-race.c
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:PROC FILESYSTEM" <linux-kernel@vger.kernel.org>, 
-	"open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, skhar@linuxfoundation.org, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] perf: arm_spe: Add support for SPE VM interface
+Content-Language: en-GB
+To: James Clark <james.clark@linaro.org>,
+ Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Anshuman Khandual <Anshuman.Khandual@arm.com>,
+ Rob Herring <Rob.Herring@arm.com>, Robin Murphy <Robin.Murphy@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <aIzA632hiAldjJQQ@raptor> <a492ccbf-6442-44dc-82c8-d2c8b1d5c56b@linaro.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <a492ccbf-6442-44dc-82c8-d2c8b1d5c56b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Suren,
+On 04/08/2025 17:00, James Clark wrote:
+> 
+> 
+> On 01/08/2025 2:28 pm, Alexandru Elisei wrote:
+>> Hi,
+>>
+>> On Tue, Jul 01, 2025 at 04:31:56PM +0100, James Clark wrote:
+>>> SPE can be used from within a guest as long as the driver adheres to the
+>>> new VM interface spec [1]. Because the driver should behave correctly
+>>> whether it's running in a guest or not, the first patches are marked as
+>>> a fix. Furthermore, in future versions of the architecture the PE will
+>>> be allowed to behave in the same way.
+>>>
+>>> The last patch adds new behavior to make it easier for guests to be
+>>> able to reserve large buffers. It's not strictly necessary, so it's not
+>>> marked as a fix.
+>>
+>> I had a look at the patches, and they all look ok to me, so for the 
+>> series:
+>>
+>> Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+>>
+>> I also tested the series by hacking SPE virtualization support in KVM:
+>>
+>> - without these changes, the SPE driver gets into an infinite loop 
+>> because it
+>>    clears PMBSR_EL1.S before clearing PMBLIMITR_EL.E, and the 
+>> hypervisor is
+>>    allowed to ignore the write to PMBSR_EL1.
+>>
+>> - with these changes, that doesn't happen.
+>>
+>> - ran perf for about a day in a loop in a virtual machine and didn't 
+>> notice
+>>    anything out of the ordinary.
+>>
+>> - ran perf for about a day in a loop on baremetal and similary 
+>> everything looked
+>>    alright.
+>>
+>> - checked that the SPE driver correctly decodes the maximum buffer 
+>> size for
+>>    sizes 4M, 2M (2M is right at the boundary between the two encoding 
+>> schemes)
+>>    and 1M; that's also correctly reflected in
+>>    /sys/devices/platform/<spe>/arm_spe_0/caps/max_buffer_size.
+>>
+>> - checked that perf is not allowed to use a buffer larger than the 
+>> maximum.
+>>
+>> - checked that the SPE driver correctly detects a buffer size 
+>> management event.
+>>
+>> So:
+>>
+>> Tested-by: Alexandru Elisei <alexandru.elisei@arm.com>
+>>
+>> While testing I noticed two things:
+>>
+>> 1. When perf tries to use a buffer larger than the maximum, the error 
+>> is EINVAL
+>> (22):
+>>
+>> # cat /sys/devices/platform/spe/arm_spe_0/caps/max_buff_size
+>> 4194304
+>> # perf record -ae arm_spe// -m,16M -- sleep 10
+>> failed to mmap with 22 (Invalid argument)
+>>
+>> (used 16M as the buffer size because what the driver ends up 
+>> programming is half
+>> that).
+>>
+>> I would have expected to get back ENOMEM (12), that seems less 
+>> ambiguous to me.
+>> I had to hack the driver to print an error message to dmesg when the 
+>> max buffer
+>> size is exceed to make sure that's why I was seeing the error message 
+>> in perf,
+>> and it wasn't because of something else. I get that that's 
+>> because .setup_aux()
+>> can only return NULL on error, but feels like there's room for 
+>> improvement here.
+>>
+> 
+> We could add an error code, rb_alloc_aux() already returns one and that 
+> calls setup_aux(). But the scenarios would be either EINVAL or ENOMEM 
+> and wouldn't give the user the exact reason ("need > 2 pages", "need 
+> even number of pages", etc). So I'm not sure it would be enough of an 
+> improvement over returning NULL to be worth it.
+> 
+> However I will add a warning into Perf if the user asks for more than 
+> caps/max_buffer_size. That would be a useful message and Perf can do it 
+> itself so it doesn't need to be in the driver changes.
+> 
+>> 2. A hypervisor is allowed to inject a buffer size event even though 
+>> the buffer
+>> set by the guest is smaller than the maximum advertised. For example, 
+>> this can
+>> happen if there isn't enough memory to pin the buffer, or if the limit 
+>> on pinned
+>> memory is exceeded in the hypervisor (implementation specific 
+>> behaviour, not
+>> mandated in DEN0154, of course).
+>>
+>> In this situation, when the SPE driver gets a buffer size management 
+>> event
+>> injected by the hypervisor, there is no way for the driver to 
+>> communicate it to
+>> the perf instance, and the profiled process continues executing even 
+>> though
+>> profiling has stopped.
+>>
+>> That's not different from what happens today with buffer management 
+>> events, but
+>> unlike the other events, which aren't under the control of userspace, 
+>> the buffer
+>> size event is potentially recoverable if userspace restarts perf with 
+>> a smaller
+>> buffer.
+>>
+>> Do you think there's something that can be done to improve this 
+>> situation?
+>>
+>> Thanks,
+>> Alex
+>>
+> 
+> It doesn't look like there's currently anything that can stop an event 
+> or signal to Perf that the event has gone bad.
+> 
+> We could add something like "__u32 error" to struct 
+> perf_event_mmap_page. But I'm not sure what you'd do with it. If Perf is 
+> the parent of the process you wouldn't want to kill it in case anything 
+> bad happens. So you're left with leaving it running anyway. If it's just 
+> an error message that you want then there's already one in dmesg for 
+> buffer management errors, and that string is a lot better than a single 
+> code. Unless these new codes were detailed PMU specific ones? Actually 
+> it's a whole page so why not make it a string...
+> 
+> It's not a case of the samples ending randomly somewhere though, you'll 
+> either get all of them or none of them. So it will be quite obvious to 
+> the user that something has gone wrong. Secondly I think the scenario of 
+> not being able to pin memory when asking for less than the limit would 
+> be very rare. It's probably fine to leave it like this for now and we 
+> can always add something later, maybe if people start to run into it for 
+> real.
 
-On Mon, Aug 4, 2025 at 9:47=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Sun, Aug 3, 2025 at 1:48=E2=80=AFPM Sukrut Heroorkar <hsukrut3@gmail.c=
-om> wrote:
-> >
-> > This change resolves non literal string format warning invoked
-> > for proc-maps-race.c while compiling.
-> >
-> > proc-maps-race.c:205:17: warning: format not a string literal and no fo=
-rmat arguments [-Wformat-security]
-> >   205 |                 printf(text);
-> >       |                 ^~~~~~
-> > proc-maps-race.c:209:17: warning: format not a string literal and no fo=
-rmat arguments [-Wformat-security]
-> >   209 |                 printf(text);
-> >       |                 ^~~~~~
-> > proc-maps-race.c: In function =E2=80=98print_last_lines=E2=80=99:
-> > proc-maps-race.c:224:9: warning: format not a string literal and no for=
-mat arguments [-Wformat-security]
-> >   224 |         printf(start);
-> >       |         ^~~~~~
-> >
-> > Added string format specifier %s for the printf calls
-> > in both print_first_lines() and print_last_lines() thus
-> > resolving the warnings invoked.
-> >
-> > The test executes fine after this change thus causing no
-> > affect to the functional behavior of the test.
->
-> Please add:
->
-> Fixes: aadc099c480f ("selftests/proc: add verbose mode for
-> /proc/pid/maps tearing tests")
->
-> >
-> > Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
->
-> Acked-by: Suren Baghdasaryan <surenb@google.com>
->
-> Thanks,
-> Suren.
->
-> > ---
-> >  tools/testing/selftests/proc/proc-maps-race.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/test=
-ing/selftests/proc/proc-maps-race.c
-> > index 66773685a047..94bba4553130 100644
-> > --- a/tools/testing/selftests/proc/proc-maps-race.c
-> > +++ b/tools/testing/selftests/proc/proc-maps-race.c
-> > @@ -202,11 +202,11 @@ static void print_first_lines(char *text, int nr)
-> >                 int offs =3D end - text;
-> >
-> >                 text[offs] =3D '\0';
-> > -               printf(text);
-> > +               printf("%s", text);
-> >                 text[offs] =3D '\n';
-> >                 printf("\n");
-> >         } else {
-> > -               printf(text);
-> > +               printf("%s", text);
-> >         }
-> >  }
-> >
-> > @@ -221,7 +221,7 @@ static void print_last_lines(char *text, int nr)
-> >                 nr--;
-> >                 start--;
-> >         }
-> > -       printf(start);
-> > +       printf("%s", start);
-> >  }
-> >
-> >  static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps=
-_race) *self)
-> > --
-> > 2.43.0
-> >
+Do we get EMPTY AUX records in this case where there was no profiling
+data ? If so, why not convey the error via AUX record header flags ?
 
-Thank you for the review and Acked-by.
-I will add the Fixes tag and resend as V2 shortly.
+Suzuk
 
-Regards,
-Sukrut.
+> 
+> James
+> 
+> 
+
 
