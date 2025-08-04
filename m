@@ -1,39 +1,78 @@
-Return-Path: <linux-kernel+bounces-755185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E282B1A2C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10A2B1A2D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0693662161C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E99016BDC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C82026B760;
-	Mon,  4 Aug 2025 13:02:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D7A1E5213
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B78A26C3AC;
+	Mon,  4 Aug 2025 13:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnDB6aCW"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BF025F7A9
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754312573; cv=none; b=YIHAls9qgu8aoFY03t4P5Hn8Ahzlfh4vQAUpX3B6Ao6dQLaxAmm2ifRhRH22dgYmBrZVU4zRShtOTh3uU9tlSyFmjdCGQ39359AKMZDycF1nsw2H4ZLyYcbF/B9DzvOcpLMzBLd5/WnQI8SSULk7I8LyzD3LR6uWCF4pms6CS2g=
+	t=1754312597; cv=none; b=mEiYnq/8zlxL6S7UIMY5B+lSVbqxxRYWnsCVObrwspDk38vQwdkk8XXO4MM8SfVfKpeIU0SPoVpSRrrMxU4YUicAU7BcTX/RNPUqxp/rWt8EVMUIudxoovEGtxiiUxlOe8zqaNdrPoW8GDDySMDhUsSPyc3TQ0h83q4VSNa5+js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754312573; c=relaxed/simple;
-	bh=KVFdHv6v0HPgtkAz+4l8lGdkysZRAs30mbAPN7yO0tQ=;
+	s=arc-20240116; t=1754312597; c=relaxed/simple;
+	bh=AsROPsVEl1oTjmpB6nCLhCvRE0hr89auEqbCmM9WAyM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LabFCxlIUaklQNKC9k/Tomp3Ej/DkyhKtfXP+7xbTMi/PBA4wjpAhyqHlxZ4/iSkHbqIN3HrYOKWCJ6N8hCm9Hd+h5U8Mixqv77vPxwuj1MnG0oKuObU9v294ScmuPIBoVYHZ0yeuJuuwa18E5JpkWZn4ovibuve8Rjzvjc/z7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50485150C;
-	Mon,  4 Aug 2025 06:02:43 -0700 (PDT)
-Received: from [10.1.25.45] (e127648.arm.com [10.1.25.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A49B63F673;
-	Mon,  4 Aug 2025 06:02:49 -0700 (PDT)
-Message-ID: <1ae1700c-9102-44b1-93f0-1c2ebc4f433e@arm.com>
-Date: Mon, 4 Aug 2025 14:02:47 +0100
+	 In-Reply-To:Content-Type; b=k+RLkv0rhZ7M6LLQIIIBOpH06O98ineXozV9yblT2Kd0hkJMbxz63/0W16INp4P2W656pPkROlhgbHbaYHM2OfNKm3NI8mPYXTPjI3bKIfXoj0z9v+Ov/45knmLZ7swBXECGkSGABpmirh2pB7HjOwq2cWQZ5XikXbIFYKHhzYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnDB6aCW; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-61580eb7995so9651447a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 06:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754312594; x=1754917394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q47hRQ8aof0UlFDXgmcMzO/kJRO5vpkzZCiWS2hBN/U=;
+        b=RnDB6aCW1UjoSRMWGFE7N9JFBPSIznZeCv+jxcKhGjHmS/GP/+gbpqhnlwWwv0J3sd
+         5t+sGNahuwexVNIhVhcbqQgZBh00DLOvSUf8HqOsafXZOdVQS0+2yaooe94FVdcyZk9g
+         v+E6gAVC15CMK44ik9/vtjEwOfJxN1ZIqt4K87WNI+TfgZPbUi33fBVuSKE9yonTzSs+
+         ATbggjLfxmoP1eQUFUIXJf0b6G1eifgvwmhYImKuoHmKTticmgli8XSwtKbCb+p2TjZx
+         nrq4EnbcSe8tn/fhv+JwGc3ptxzjPtuwEfTvK2L+URggJBTFilY87ZYEc4GFtapsnEgR
+         4m9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754312594; x=1754917394;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q47hRQ8aof0UlFDXgmcMzO/kJRO5vpkzZCiWS2hBN/U=;
+        b=ov2lrFrWY1AzS2S/zwwgEOKD5NgOqlvchEQi4NnkXLk3UZfiqfqTzMYOUefxuhh4tZ
+         UvG6tN+GTM6t3xnVnOr4NI+TnXB1HEwP7KzxvQSs9IjKmOgvtJmHZ58tU3l68fDuq/Bk
+         93EEm81Z9FLcmVDQnY28C9PAkv5jhJsXc3w3gDl0gt66NZW/VUXd0zGTfBEix79CzxaP
+         RVoD7uTZqKSeD2EDCATp277d1PDo2f3+yWL+/ysHXKFDGaz8m8tiTxlYvZIr/+0Catt7
+         YIRHEFIpjeAEBmrV5UXJJHYNZcw7cbAi4EVraebPu/PM9jOhQL/VZTddYgSaabVFUfhR
+         RVbg==
+X-Gm-Message-State: AOJu0Yy5RJ97iypGzDkg4/py/s+T3oadMP3kSyfNySo19TaWOzfGj3L9
+	/ngdnt4+zkFM01Mhr4Za0baSmAFA2j4SjaERWbNy8F5x0a2FmiOehLTXrYhiDhfv7pY=
+X-Gm-Gg: ASbGncvvCvtszOU6+UiA/ROz7nEHfh+GsPYurO485a9AUF7hNgIcDfjqkbjy/eza67e
+	2cOPSR/vK6M89ciD9KvXej7NlFNW3Q+Iv5LpyxqH5tC/s8wJE3Bd9swivmxDOIwMH6snnBKIepP
+	umq3AvadaZZkT8Dpei4XgAIJ6Lzw+gga3CY5heIRDpRLZaFVtfMNYhpdYzL9bMEEkTm8U+CgK+I
+	OSlVVWZF2Znk9tXUV2UHmkSj3v5LSOysi/1211L7FJATvS0evI2XJLn/UK4tSRS9aIw+FgW2UV5
+	CgHwrZIHpe270GhHB8CNAIKV2QOnzU7vh0G+r/FYAT0p1k1CqXbBxu6h+8iU5nNRCJzV12jhpVU
+	NVzq1mnLbGWrlimEPRmDhYDzHT6DzaA==
+X-Google-Smtp-Source: AGHT+IGvSWWoom5PCcQotC2cJOEy0b1eBZ0+mNZIcNqIApwylioSaULTySuV/h+PeeW7g5S3kYnbAQ==
+X-Received: by 2002:a05:6402:27cc:b0:607:35d:9fb4 with SMTP id 4fb4d7f45d1cf-615e5e52361mr8637535a12.15.1754312593561;
+        Mon, 04 Aug 2025 06:03:13 -0700 (PDT)
+Received: from [192.168.0.33] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8effda1sm6755395a12.1.2025.08.04.06.03.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 06:03:13 -0700 (PDT)
+Message-ID: <ecd33fa3-8362-48f0-b3c2-d1a11d8b02e3@linaro.org>
+Date: Mon, 4 Aug 2025 16:03:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,68 +80,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
-To: Andrea Righi <arighi@nvidia.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
- sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
- mingo@redhat.com, peterz@infradead.org
-References: <20250804112743.711816-1-christian.loehle@arm.com>
- <20250804112743.711816-4-christian.loehle@arm.com> <aJCqb-ZI4pd15cr5@gpd4>
+Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
+To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org,
+ Christoph Hellwig <hch@infradead.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-23-eugen.hristev@linaro.org>
+ <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
+ <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
+ <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+ <aJCRgXYIjbJ01RsK@tiehlicka>
+ <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
+ <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
+ <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
+ <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <aJCqb-ZI4pd15cr5@gpd4>
+In-Reply-To: <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/4/25 13:41, Andrea Righi wrote:
-> On Mon, Aug 04, 2025 at 12:27:43PM +0100, Christian Loehle wrote:
->> Most fields in scx_bpf_cpu_rq() assume that its rq_lock is held.
->> Furthermore they become meaningless without rq lock, too.
->> Only return scx_bpf_cpu_rq() if we hold rq lock of that rq.
->>
->> All upstream scx schedulers can be converted into the new
->> scx_bpf_remote_curr() instead.
->>
->> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->> ---
->>  kernel/sched/ext.c | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
->> index 1d9d9cbed0aa..0b05ddc1f100 100644
->> --- a/kernel/sched/ext.c
->> +++ b/kernel/sched/ext.c
->> @@ -7420,10 +7420,18 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
->>   */
->>  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
->>  {
->> +	struct rq *rq;
->> +
->>  	if (!kf_cpu_valid(cpu, NULL))
->>  		return NULL;
->>  
->> -	return cpu_rq(cpu);
->> +	rq = cpu_rq(cpu);
->> +	if (rq != scx_locked_rq_state) {
-> 
-> I think you want to check rq != scx_locked_rq(), since scx_locked_rq_state
-> is a per-CPU variable.
 
-Duh, of course. m(
 
+On 8/4/25 15:49, David Hildenbrand wrote:
+> On 04.08.25 14:29, Eugen Hristev wrote:
+>>
+>>
+>> On 8/4/25 15:18, David Hildenbrand wrote:
+>>> On 04.08.25 13:06, Eugen Hristev wrote:
+>>>>
+>>>>
+>>>> On 8/4/25 13:54, Michal Hocko wrote:
+>>>>> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
+>>>>>> On 30.07.25 15:57, Eugen Hristev wrote:
+>>>>> [...]
+>>>>>>> Yes, registering after is also an option. Initially this is how I
+>>>>>>> designed the kmemdump API, I also had in mind to add a flag, but, after
+>>>>>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
+>>>>>>> here:
+>>>>>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
+>>>>>>> Do you think we can continue that discussion , or maybe start it here ?
+>>>>>>
+>>>>>> Yeah, I don't like that, but I can see how we ended up here.
+>>>>>>
+>>>>>> I also don't quite like the idea that we must encode here what to include in
+>>>>>> a dump and what not ...
+>>>>>>
+>>>>>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
+>>>>>> where we e.g., have
+>>>>>>
+>>>>>> VMCOREINFO_STRUCT_SIZE(pglist_data);
+>>>>>>
+>>>>>> Could we similar have some place where we construct what to dump similarly,
+>>>>>> just not using the current values, but the memory ranges?
+>>>>>
+>>>>> All those symbols are part of kallsyms, right? Can we just use kallsyms
+>>>>> infrastructure and a list of symbols to get what we need from there?
+>>>>>
+>>>>> In other words the list of symbols to be completely external to the code
+>>>>> that is defining them?
+>>>>
+>>>> Some static symbols are indeed part of kallsyms. But some symbols are
+>>>> not exported, for example patch 20/29, where printk related symbols are
+>>>> not to be exported. Another example is with static variables, like in
+>>>> patch 17/29 , not exported as symbols, but required for the dump.
+>>>> Dynamic memory regions are not have to also be considered, have a look
+>>>> for example at patch 23/29 , where dynamically allocated memory needs to
+>>>> be registered.
+>>>>
+>>>> Do you think that I should move all kallsyms related symbols annotation
+>>>> into a separate place and keep it for the static/dynamic regions in place ?
+>>>
+>>> If you want to use a symbol from kmemdump, then make that symbol
+>>> available to kmemdump.
+>>
+>> That's what I am doing, registering symbols with kmemdump.
+>> Maybe I do not understand what you mean, do you have any suggestion for
+>> the static variables case (symbols not exported) ?
 > 
-> We may also want to add a preempt_disable/enable() for consistency. How
-> about something like this?
+> Let's use patch #20 as example:
 > 
-> 	preempt_disable();
-> 	rq = cpu_rq(cpu);
-> 	if (rq != scx_locked_rq()) {
-> 		scx_kf_error("Accessing CPU%d rq from CPU%d without holding its lock",
-> 			     cpu, smp_processor_id());
-> 		rq = NULL;
-> 	}
-> 	preempt_enable();
+> What I am thinking is that you would not include "linux/kmemdump.h" and 
+> not leak all of that KMEMDUMP_ stuff in all these files/subsystems that 
+> couldn't less about kmemdump.
+> 
+> Instead of doing
+> 
+> static struct printk_ringbuffer printk_rb_dynamic;
+> 
+> You'd do
+> 
+> struct printk_ringbuffer printk_rb_dynamic;
+> 
+> and have it in some header file, from where kmemdump could lookup the 
+> address.
+> 
+> So you move the logic of what goes into a dump from the subsystems to
+> the kmemdump core.
+> 
 
-Ack
+That works if the people maintaining these systems agree with it.
+Attempts to export symbols from printk e.g. have been nacked :
+
+ https://lore.kernel.org/all/20250218-175733-neomutt-senozhatsky@chromium.org/
+
+So I am unsure whether just removing the static and adding them into
+header files would be more acceptable.
+
+Added in CC Cristoph Hellwig and Sergey Senozhatsky maybe they could
+tell us directly whether they like or dislike this approach, as kmemdump
+would be builtin and would not require exports.
+
+One other thing to mention is the fact that the printk code dynamically
+allocates memory that would need to be registered. There is no mechanism
+for kmemdump to know when this process has been completed (or even if it
+was at all, because it happens on demand in certain conditions).
+
+Thanks !
 
 
