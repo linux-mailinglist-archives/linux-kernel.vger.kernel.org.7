@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-754629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF74B19A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD10B19A43
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1644317077D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:41:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1A91712B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9A221ABC9;
-	Mon,  4 Aug 2025 02:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NchxNRRc"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A0933993;
-	Mon,  4 Aug 2025 02:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19621ABAA;
+	Mon,  4 Aug 2025 02:43:26 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 1C3B21172A;
+	Mon,  4 Aug 2025 02:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754275293; cv=none; b=mMsGghUb7uvJ7YGOhjaoWwwZ5viraXXSnmBj2vCl/A2SZR3B1+T7iWuSZu2R0MByB3dF2TrRpgd30zirwjwG1/1NZDnzUkRvZhBh8LseFaWYhZT/w/ilwuA2eGlK2mO4w50L5o81vy21YWdk0s4s9RRGqvaaaYvjdYqy64SK4BY=
+	t=1754275405; cv=none; b=iMb4hY+XXfFdttbqQ/1ky+ZM9C/vfa2aFKywl0w5xUI7+enRHAAO56jwkU969S27GkHCgpVgH2yF7sSLd6uucxpv3NotCYDusCYoH0YCFRQ7THUC6HR9FcqW/upHkYAhfgNbpxjXW6ncWlVVU9st13AHe4L6JYSMo5ekY0oumMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754275293; c=relaxed/simple;
-	bh=yF31kuPRqpeTTI+pJNKQuGhpe4j7lw9f+kTHTf7sw4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hz4W+IKN9xct2JPj0NOFFmIxHlfFn8oreEfVjvPqupQTyklhtL92A/y2fiWsk3UbUxbUvoio9sL1LyOQ5emYW43ICKwz4X1s9uGm9S8yJmGX4uGftTjNyiqV6pC5eo1lBTG8S7RKlF5B0Ux+zro29chHBeYkfeHFuWGG1KedsxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NchxNRRc; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-31ee880f7d2so4072555a91.0;
-        Sun, 03 Aug 2025 19:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754275291; x=1754880091; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICf5xJ6xg4MdvVyPWHXWuaEnY6bAabT5btl/udYFsbA=;
-        b=NchxNRRc/8naNQGwMR5fZ7jqM9pC7BIel5MBSilLNwRJN9ZQARFE70PZW+R5j1DGYG
-         9DWgQLEAqzIUyiVSlo5/J67axfkmIPoqQvZN1/Kc09j1AtS0nGEIC4gTZsz3oo9RDqN/
-         M8cJWGbpe5e0KxLogTjukEBHZ4GKXP2Z8EUH3pt8uNnOpmJPD7ThSGSQ4bHdHh3ye4J3
-         bgmZURqubfUUG9vgpOfPR+0P/FtTS2vYSBRtVf4HlZLKuNtus2FVBgHLmJpjok4biW7q
-         F3+A0rnecamALqz4m6bmhPzqmBHMZJ9FrzXaY92R0SxmRUYm8AfTj5MrPkWinqdxYZGX
-         Sziw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754275291; x=1754880091;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ICf5xJ6xg4MdvVyPWHXWuaEnY6bAabT5btl/udYFsbA=;
-        b=EZdkCkwS3hDhB770VOtPioBn+P0c5ePQ/Uum7cQpn/7j7R/30gWqjWTJJfobbd8rkZ
-         P8BYjsUa4+syVryphmJVGz11X86V+mECQHkWXfle1iB0ryrydeLEDXN2CNoyuly+y4pn
-         8VNM+/0udtOUW4zmFFjmeyRh7CPLOBGcdrry3hMwH/Z4H7WuG+31TPL7NIMrFOwB/+dN
-         O3tdtFayFHwNyi/V3zvKGlh7Kuq4HtCGOMyoFIcnRyqp32ewLYQVqf67JD0h0IxgiNbD
-         okWA0FW25jKUYYOc9gKx5Rrg50G9MePJjQ+R0lStp0S0t9gOtbZ2wM9YFQRLG4S5tRW+
-         gAtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqRmjpzIV8G7MWEhvw/31n6PDW5rnf1kZU/RpivHXbXVuMz0x+O6sITWUDuwK+abw+tOqHe8sv9/JYyFc9@vger.kernel.org, AJvYcCVoo9z4U8TKj+OWf6hJ89xr4DV5eqTg1Qv/YDvvqe4DMeE1oV7q+y4DcdthNJ3AWHPOQOTkTwI1xVct@vger.kernel.org, AJvYcCWPUqF4ycwE3NiA3AhlLx90YHY7E5PwjFUW+AHXqtK2WqkjOOijC6kuSZzhbKi16yaNvpbWsI5bCLCZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydmtk0UbXwTmXeHst6EwiJV9M69aD8JxcRcu2APkj/KU4gsOsc
-	/ICi13nNkrQTG5BjcPx3gwg8HRgxPJS2RInExRvpPIazUdARVQCQM3vy
-X-Gm-Gg: ASbGncvEZPj13TEilFFOw3SWju/cKHy13+oYKGWxiF6x2CtJEPBDFk62vj65H+6Dgkr
-	mq6s6fygqWQq/Y+msLsba6N0KUfLl2f8muAyS4VZUG7WK6HIOZ3jygc4PV22djslinjrL9f/Btu
-	+NR2u3wa5k+aZHmVgJB62uQTrXk1Li3R56Vo8IHKQbmiBfgrbGfWQh+dJAj65x3rIqNNZHNEQbI
-	j46uA8F0VktxJd8YWZx6Jnhg1F4VSTPlJczftV+u4Z+rKwWo2XzSGCVBaYOaj0Aq0Eb6C9VpWjT
-	HRc1OsaiFjqtpGJpa9H66CXcdii8WqwybUYdSqmHRwEpGcLb9484viyibhTJO1aC97ldboQORRk
-	eWHozs+Zp5utI9FUaC2tWaqg=
-X-Google-Smtp-Source: AGHT+IH/t0iEyDzAuGkZpl6GhgCR3HK/exZLgni1IPMsYXJvfTZ+QL9J22CL+JKK+W+pzS9oRBkeKQ==
-X-Received: by 2002:a17:90b:4ad2:b0:31e:ff94:3f9d with SMTP id 98e67ed59e1d1-3211631ad9cmr10565824a91.31.1754275290741;
-        Sun, 03 Aug 2025 19:41:30 -0700 (PDT)
-Received: from dixit ([2401:4900:1c43:eb01:acfe:5fdc:edb4:dbec])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebc3266sm10338868a91.13.2025.08.03.19.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 19:41:30 -0700 (PDT)
-Date: Mon, 4 Aug 2025 08:11:22 +0530
-From: Dixit Parmar <dixitparmar19@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
-Message-ID: <aJAd0k-PGbQJqD_R@dixit>
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
- <175423802305.483875.12095436762674457962.robh@kernel.org>
+	s=arc-20240116; t=1754275405; c=relaxed/simple;
+	bh=3PAh386lsFzRd2+pj0MuZRZ316W9kq+bKf+SpdXebTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=TXkNSU8QuT6Y+lvxZUAYJIjN1pq6rLcgUbsI+04/EnCgdxhNtNW2Le0HK3izCyXYdYz1sZnMgBcgLVCNPcJj9eh4mqymUhs/1CsKIT69l2t3OZXi2siyd8SP0tfQCYYCogWV0b/ywCmIfEzi6SYzcM33rADi5Vxr9JaAAlIReYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.100] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 40B06601091D8;
+	Mon,  4 Aug 2025 10:43:17 +0800 (CST)
+Message-ID: <5dd480e9-5fd6-463c-8d4f-255fd063c4f4@nfschina.com>
+Date: Mon, 4 Aug 2025 10:43:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175423802305.483875.12095436762674457962.robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] mm/slub: avoid accessing metadata when pointer is
+ invalid in object_err()
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: liqiong@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: liqiong <liqiong@nfschina.com>
+In-Reply-To: <aJAcjcBOcKCDPwjY@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 03, 2025 at 11:20:40AM -0500, Rob Herring (Arm) wrote:
-> 
-> On Sat, 02 Aug 2025 12:14:28 +0530, Dixit Parmar wrote:
-> > Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-> > controlled by I2C interface. Main applications includes joysticks, control
-> > elements (white goods, multifunction knops), or electric meters (anti-
-> > tampering).
-> > Drop duplicated entry for infineon,tlv493d from trivial-devices.yaml as
-> > its documented in infineon,tlv493d.yaml now.
-> > 
-> > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
-> > ---
-> >  .../iio/magnetometer/infineon,tlv493d.yaml         | 45 ++++++++++++++++++++++
-> >  .../devicetree/bindings/trivial-devices.yaml       |  2 -
-> >  2 files changed, 45 insertions(+), 2 deletions(-)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml: vdd: missing type definition
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml: 'example' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
-> 	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-> 
-Ack.
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
+
+
+在 2025/8/4 10:35, Harry Yoo 写道:
+> On Mon, Aug 04, 2025 at 11:25:23AM +0900, Harry Yoo wrote:
+>> On Mon, Aug 04, 2025 at 09:46:25AM +0800, Li Qiong wrote:
+>>> object_err() reports details of an object for further debugging, such as
+>>> the freelist pointer, redzone, etc. However, if the pointer is invalid,
+>>> attempting to access object metadata can lead to a crash since it does
+>>> not point to a valid object.
+>>>
+>>> In case check_valid_pointer() returns false for the pointer, only print
+>>> the pointer value and skip accessing metadata.
+>>>
+>>> Fixes: 81819f0fc828 ("SLUB core")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+>>> ---
+>>> v2:
+>>> - rephrase the commit message, add comment for object_err().
+>>> v3:
+>>> - check object pointer in object_err().
+>>> v4:
+>>> - restore changes in alloc_consistency_checks().
+>>> v5:
+>>> - rephrase message, fix code style.
+>>> ---
+>> Looks good to me,
+>> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+>>
+>> -- 
+>> Cheers,
+>> Harry / Hyeonggon
+>>
+>>>  mm/slub.c | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/slub.c b/mm/slub.c
+>>> index 31e11ef256f9..b3eff1476c85 100644
+>>> --- a/mm/slub.c
+>>> +++ b/mm/slub.c
+>>> @@ -1104,7 +1104,12 @@ static void object_err(struct kmem_cache *s, struct slab *slab,
+>>>  		return;
+>>>  
+>>>  	slab_bug(s, reason);
+>>> -	print_trailer(s, slab, object);
+>>> +	if (!check_valid_pointer(s, slab, object)) {
+> Wait, hold on. check_valid_pointer() returns true when object == NULL.
+> the condition should be (!object || !check_valid_pointer())?
+
+You're right, i ignored this situation.
+
+
 >
-I did not get this fully, is this concerning?
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
-Thanks,
-Dixit
+>>> +		print_slab_info(slab);
+>>> +		pr_err("Invalid pointer 0x%p\n", object);
+>>> +	} else {
+>>> +		print_trailer(s, slab, object);
+>>> +	}
+>>>  	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
+>>>  
+>>>  	WARN_ON(1);
+>>> -- 
+>>> 2.30.2
+
 
