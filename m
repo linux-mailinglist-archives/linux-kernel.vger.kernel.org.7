@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-755475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5C6B1A6B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:55:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C90B1A6B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85B0171927
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C11C189DE92
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7940E275B0E;
-	Mon,  4 Aug 2025 15:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EE7275114;
+	Mon,  4 Aug 2025 15:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Y0gj3Bce"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Z4MU14OB"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFDE272E51;
-	Mon,  4 Aug 2025 15:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283D714AD20;
+	Mon,  4 Aug 2025 15:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754322649; cv=none; b=YGV/Q0lOKfknEigK4V8wyT68aIbLiQ1rB5ClnloIEBvLdjZzcUwq9u23tgJdpb1NPo8+VcRjLMT2kgsCbSuz2NqflW+JYlZWk2lU+nEcV7Rt2Wewdv5uyBUH60oolbtCxGPkTlJpPHQqDQ+vHnz8Dsxq/BouL9O99sblplBdsqo=
+	t=1754322755; cv=none; b=jcb5eeojH/aiEPDToyUnGkVvILBIWGBHwKZicZR3KglxZPJwxxd+Kl3stW1jMLw+x0EP/2z+jucCdVvBYJ3WtfmXVPv3/M+W1OjTfXW23r4ylpudHb8IWpkxpNXEIgtgCgcv7GAWIkbnL2LQ2ejkIDAW5B1Cjs+bxfc0CESYWuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754322649; c=relaxed/simple;
-	bh=OXb4kAhtQWP6JExhGvhynrJSzXGqr/WFFL7vd70xgRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TUdDhygrxkrZ80TAWK5sTTgwlULVcN8iIb4iyeSfY4EdRCQOe2H8Di4bTJe7HeUDJZ3vP4Hc1VcKWz+M3fGYSQvXZ0e6vvWWUdbMpZw3RdsNUkHiY3AfY6G7cM2bpAoQglKZp8jwIW3Yi9F109nnOohVi6VZSoZFmnfS95YlYuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Y0gj3Bce; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bwgxz213DzlgqW0;
-	Mon,  4 Aug 2025 15:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1754322644; x=1756914645; bh=iQeGcdNTmDV9u8BQri6krA1j
-	KTYUzUD2thgbYEL0q7M=; b=Y0gj3Bcew/lQ2lir013/f+R2LHWbbQgrQ4eskQzS
-	y1ydylcDBFAsHKgm97W/jVWzQl4D89dpptf3QsUAxN0kjYzeopkiOj1MFMMylb2e
-	TJHn9Di0+i75rVZ+t1omrbHx6xGgbzqm13r1VyjdpC362y3e5v7UF3IKdePyS74T
-	4AfDDwkc5dZ2Mlormj8lpRTIp1HmB7sGrIs71jkJ9gTNahfeHj7R4biBYIqmJaUH
-	3pYhNwih45WI76KIojW2P+uYPrN+sUOIaa3g+r0EjRAXDhVYiaVO2+7P7Rtz0YgD
-	toUN/xKdRmI0t8NiibnrtYrqFYQefoEd1D617OQf5+ptFg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id M4mmXZ0FCTup; Mon,  4 Aug 2025 15:50:44 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bwgxr3FvWzlgqV9;
-	Mon,  4 Aug 2025 15:50:38 +0000 (UTC)
-Message-ID: <ff3455b4-b0f2-4931-95e1-da08f54dac70@acm.org>
-Date: Mon, 4 Aug 2025 08:50:37 -0700
+	s=arc-20240116; t=1754322755; c=relaxed/simple;
+	bh=PXfTV3Ext2asW/XhJtPEC7nTQ9od7occwTqoK5qo9QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlmRRKpj9si1RT+bJKndQDBZwIJcawO0PQkfFQMqpwwZthm+2arVhbEOd3d884LUt+yWIggOBHHJV5acyU+WpDw56AZKbvLPN2auUNgwkylsvhs93JsencbsqmbEnLQq9Uv1uzUg+p86icZ6V14UuROpgIXygNa6lVReWqge/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Z4MU14OB; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ns7rlHXoCwloogZwv8OFLPweSRGbius7I2ZVzURSBuc=; b=Z4MU14OBqmJt2Sc9JYKvBx3dyP
+	jg7JJdQ75RRVPvMFRF/OTbnHL8CM1o/glrt3DR+Xlnk58ZDcXfGQwedPkEiKkmgZgLAqd5J2l0VPQ
+	G/92foAeM2htz3lUiUYZ4mw9KlbsrFlYIwr6zeV9iashn/zTONIaaZioOwaO5hAfgDGOZQkpjTfFi
+	tPZklBvEmHmZot55sa3yZ1YfcvPL1GYpvD7x1YztvUgrSeeSn0gh2YZ1sNolSci6dD8ZY98CFR4bJ
+	UULnv5O6mYeQjmz2u98+8QiroTPuXeNuMh96Uv3x1h1NeEwpeZuHDdK/SwQZanyYmh7+3Yr9cyEfs
+	w6mGivRQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uixUD-0000000CPvz-0WLt;
+	Mon, 04 Aug 2025 15:52:29 +0000
+Date: Mon, 4 Aug 2025 16:52:29 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
+Message-ID: <20250804155229.GY222315@ZenIV>
+References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+ <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: Use vmalloc_array and vcalloc to simplify code
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Brian King <brking@us.ibm.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804063652.104424-1-rongqianfeng@vivo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250804063652.104424-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 8/3/25 11:36 PM, Qianfeng Rong wrote:
->   drivers/scsi/ipr.c        | 8 ++++----
->   drivers/scsi/scsi_debug.c | 6 ++----
->   2 files changed, 6 insertions(+), 8 deletions(-)
+On Mon, Aug 04, 2025 at 02:33:13PM +0200, Christian Brauner wrote:
 
-This patch modifies two independent drivers. One patch per driver
-please.
+> +       guard(spinlock)(&files->file_lock);
+>         err = expand_files(files, fd);
+>         if (unlikely(err < 0))
+> -               goto out_unlock;
+> -       return do_dup2(files, file, fd, flags);
+> +               return err;
+> +       err = do_dup2(files, file, fd, flags);
+> +       if (err < 0)
+> +               return err;
+> 
+> -out_unlock:
+> -       spin_unlock(&files->file_lock);
+> -       return err;
+> +       return 0;
+>  }
 
-Thanks,
-
-Bart.
+NAK.  This is broken - do_dup2() drops ->file_lock.  And that's why I
+loathe the guard() - it's too easy to get confused *and* assume that
+it will DTRT, no need to check carefully.
 
