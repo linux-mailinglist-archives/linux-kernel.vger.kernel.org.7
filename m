@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-755582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A596B1A8C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:49:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED47BB1A8C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A233C621FF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F2B18A3027
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB83226D1B;
-	Mon,  4 Aug 2025 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1692264C9;
+	Mon,  4 Aug 2025 17:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CssflQVc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BVPG6SID"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B061165F13;
-	Mon,  4 Aug 2025 17:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42676EEAB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754329784; cv=none; b=nKX6+cdEs97e0VLG5lyjImBx/EbPtz87yKIDUkAmovIBRnx9QjUNkfIfI8CN8yi0eoQ0ldCTXxbxD8ME2M2crUSZDUUG1oICTFGskQ994W8hlyR8vfEQjbswUZnUItpGAp8alu9Yao8WMt3YZLtgEU4eS509vPD75w/nw3Xik8k=
+	t=1754329974; cv=none; b=SWlOxdweaS1Sv/glxPf9FV36VJQ4AlI9DtOXYNkUyWuf32D0SnwCLvu/mYpI4d0ubEkPZO1jsKGC8PAGJVviD/n36tv0m5pdrGE4HYxK2v3FPwMx7NrtkddiEQ79SUZVwyCbQGPQBhUNstM2e2j65Sf2mR/LIdpeV7UURKhQiS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754329784; c=relaxed/simple;
-	bh=q6heWKyDFbjItz7wuCWRrYQJUr7D5cG41YJHZWVIU6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwkU2zn672YnuZFpRhOFwvpijUVNFFQd+44UsJML2+06TdModwHTjW4d7j2f7Y8/swIZsers1cd5MRJBi15cNFNweoviT3PxeBfK2jql9O0B/2wHmbk08CddBdL43nv/n5VxaqdSLqaxlNuTDOk6PIziQYNm/1f9jRkXtTMN50s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CssflQVc; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754329783; x=1785865783;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q6heWKyDFbjItz7wuCWRrYQJUr7D5cG41YJHZWVIU6g=;
-  b=CssflQVcXPUQfuFdUTUjNFl0hpLSC+6bHfy0ZdmiMUsW5ZQtNkiqgBeb
-   MrsDH3V666Bzq6E/MSmvC56XoWhisenEyaghFAHrhIraP3YdjHgmMXlHI
-   M4kRTath1iYFL2t6Pf9G5sOkNM4BALckt4BhmqWGRoEUVQCEEXeQr1yJO
-   W1vwYIktgMJAy5NXNU6eEsGKj+1P5sVsytMLfqxHU3R0qSoxotN7DCzeK
-   rYZTy0yj8fOw7j0Xca3sZGgjsCW6t3Ebl5cilCF6t51/euABWq0o282uV
-   u43XZLVLYDEddrMR1VQ3WgtIb6WXq3Zu1BaMY2MEO0k1QM/OtuMJT2Cse
-   w==;
-X-CSE-ConnectionGUID: hisk8w+TSxq61eVMpqU+Sw==
-X-CSE-MsgGUID: 2UIoeoXXQWOa1Tbp9vUA0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="67304834"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="67304834"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 10:49:42 -0700
-X-CSE-ConnectionGUID: olE6/67RQQOuZ+UKVgVyYA==
-X-CSE-MsgGUID: 3xthNx7uR+eN5fI4n0anQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163905010"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 04 Aug 2025 10:49:38 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uizJX-0000At-0a;
-	Mon, 04 Aug 2025 17:49:35 +0000
-Date: Tue, 5 Aug 2025 01:49:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
-	eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, srini@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, varshini.rajendran@microchip.com
-Subject: Re: [PATCH 02/15] nvmem: microchip-otpc: rework to access packets
- based on tag
-Message-ID: <202508050141.HKFcYdLy-lkp@intel.com>
-References: <20250804100219.63325-3-varshini.rajendran@microchip.com>
+	s=arc-20240116; t=1754329974; c=relaxed/simple;
+	bh=MITtmRLgX9iL5YGbpLUrutAFDqPhawvDMsW6dIhPldk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OvuH/934V+PTE9m451zkzTJTV6myeui577yb7BsGTt0n7kgscji/uScIdLrB43aEaeU3s/3GD8M23R9pBmyi8kN22QtOqs8/QWVMgSlx40ZF5+Sbpu3d/st2PyagU2hy90nvxWeaHGE8nkl7rBAFhXZhCdlt/lMEJJnhmDZY3X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BVPG6SID; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61553a028dfso4545637a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1754329970; x=1754934770; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MRofTYFybnWbqGD5aM5QMPfkcPNg289kfNTFul2BGPE=;
+        b=BVPG6SID1ElGYlU3KyKWTVkhPIhWJTh5imsdSbbyxd0aDf433faJpozR8jw3SS7pyx
+         bSSWxNzxVnOGI8aLkW2oPEcqywCYqH2t1aVflAV4YK6ZOeZwDQZX1y+fdzLcqA+S7+G3
+         6sOS44d7gs3+09Vfab0oVqBe/lIttABcV/DOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754329970; x=1754934770;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MRofTYFybnWbqGD5aM5QMPfkcPNg289kfNTFul2BGPE=;
+        b=wdA93IX/Dc6jH46P9rgL6PIX+qpblB7K6BYWb7P4cRkuzx17o+So/oK+XWDR09F4RS
+         1vjBv7pPtdgU0UCNWPf44XYZKDTDGQsAGqKf6x5zU7CtvPCMDzLUH4Bh+IHYCDe0CydL
+         OlfapMMN8HqPOtXLUYapfEkvxU2xnVWEP/OLyZpBLOM2GVxrrFRLdBdsVJXuZhEEuQb7
+         U8ARC6sa4zF9C4bop2NzFY33wEUODjIaC0MuWBNIccNVL4EmiVy/3qwPLSCljPWBmScX
+         rnYTQJ6h9fB1xm40e0sJBLX4WTuuXUpZWR7S0EencPSoJkhL1IRcD+GzdS80ADOlX0Dc
+         6nNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeg9VqayM7T9wg7aGEkzdJB96KrmninDlvu5QKgB4GWE546H4U+RwyKdWwWFL8M3Q8+QAmVnMMd0aThGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEQ/yJpjg3Gc9TNmOlAcQhpODOKY5p/5HlkVo61UgxbcBUU7wu
+	6+OdTsUrOqNuFo3V5+QN7iXrW8sBYQHZ0/x+Xb22dinMTu3PZtEzjDApjADlgWM5XnLx7vcdzXy
+	bfaiGnRk=
+X-Gm-Gg: ASbGncuQot6mDCYH5XaTAvQxsTrv3EtZSMQlwORxOhHHpNQSz5FGyAhNW00efdT6cdL
+	Eo1+E93CeQ30FmoWO8SWLMx/MxpO2W8nuvYGeIxIE3EsFun5DJSK7v89e2Mlw8+mmp7vBGuP4aA
+	NJJ/uKdvFlXlYxjfvYbdosnAL3d3ACxI+qNrka+hwQZc6/sMoDSVRm5M6Qn9y3HKUNLHbjUXcJE
+	2Gb1E3ACYhYq3KZ7NDK3WSP/du8RhErWJyKWpogTdkJTDDi5HK3mHIHsOuTKPm0rnV8YDPTXGTX
+	jBzYlG3AJQ0mGrn+AuSFgeRMBnHXAEM/adu6P5NldHPoATwSMGpd17sh0IBz+h64bVvRv/HFktm
+	GH6EiQ+dNi92pCEppFuGgRBFU6ZYlzg1ZrDfpQwVA4X/0DPnjp9vLq+JXAKbJ9+MOQ9B7Udrf
+X-Google-Smtp-Source: AGHT+IGEpjCF/Q3LRJkFE8xIc9uTAMula2imPM5EYvFGGQJ78Oquyc+DJwikUAW/z77lfk37GapPbw==
+X-Received: by 2002:a05:6402:518d:b0:615:a2d9:61f4 with SMTP id 4fb4d7f45d1cf-615e6ef6947mr9839025a12.15.1754329970331;
+        Mon, 04 Aug 2025 10:52:50 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a86758fcsm7205276a12.0.2025.08.04.10.52.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 10:52:49 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61521cd7be2so5063658a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:52:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUFKTJJLN3oI9OKVs5/KtwG6pct2ALr+HMUid4h1Daac51TAR4zdHJF+JML4AEJJ2O7XU/8RR4GX4E2XFM=@vger.kernel.org
+X-Received: by 2002:a17:906:c10f:b0:af9:21cb:23d4 with SMTP id
+ a640c23a62f3a-af94017fa1fmr1175104166b.36.1754329969058; Mon, 04 Aug 2025
+ 10:52:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804100219.63325-3-varshini.rajendran@microchip.com>
+References: <aIcdTI3e04W_RdM_@gmail.com> <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
+ <20250804125028.0676d201@gandalf.local.home>
+In-Reply-To: <20250804125028.0676d201@gandalf.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 4 Aug 2025 10:52:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg_xCaL6piu=nRsAfKFqYG8nZ9a8H9jubPiyJ0j1V9Xcw@mail.gmail.com>
+X-Gm-Features: Ac12FXypbVuHvYKSstofiY8xWrVfRI4N3UpLnj8vYr8_uARQCWJ2RFiTV44v0nI
+Message-ID: <CAHk-=wg_xCaL6piu=nRsAfKFqYG8nZ9a8H9jubPiyJ0j1V9Xcw@mail.gmail.com>
+Subject: Re: [GIT PULL] Scheduler updates for v6.17
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Mel Gorman <mgorman@suse.de>, Tejun Heo <tj@kernel.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Chris Bainbridge <chris.bainbridge@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Varshini,
+On Mon, 4 Aug 2025 at 09:50, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> It appears that Peter never sent in the change of:
+>
+>   https://lore.kernel.org/lkml/20250716104050.GR1613200@noisy.programming.kicks-ass.net/
+>
+> Looks like this could be your issue.
 
-kernel test robot noticed the following build warnings:
+Ack. I assume Peter is on vacation, so I just applied that one
+directly, because yes, that looks like a likely culprit.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on jic23-iio/togreg v6.16]
-[cannot apply to linus/master next-20250804]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Varshini-Rajendran/ARM-dts-microchip-sama7d65-add-cpu-opps/20250804-180839
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250804100219.63325-3-varshini.rajendran%40microchip.com
-patch subject: [PATCH 02/15] nvmem: microchip-otpc: rework to access packets based on tag
-config: arc-randconfig-002-20250804 (https://download.01.org/0day-ci/archive/20250805/202508050141.HKFcYdLy-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250805/202508050141.HKFcYdLy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508050141.HKFcYdLy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/nvmem/microchip-otpc.c:83 struct member 'payload_info' not described in 'mchp_otpc_packet'
->> Warning: drivers/nvmem/microchip-otpc.c:83 Excess struct member 'id' description in 'mchp_otpc_packet'
->> Warning: drivers/nvmem/microchip-otpc.c:83 Excess struct member 'offset' description in 'mchp_otpc_packet'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+            Linus
 
