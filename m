@@ -1,45 +1,86 @@
-Return-Path: <linux-kernel+bounces-754890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B00B19E14
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962A6B19E17
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7B03A69D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7EC11796B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FBF243946;
-	Mon,  4 Aug 2025 09:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5429D242938;
+	Mon,  4 Aug 2025 09:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xXliTTCn"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KI+qPv7l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B938242D6B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D90A23ABBB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298001; cv=none; b=c0N7WYrYRmnPu3RXNxuE2sZg6mvY8QEkOUcHWo3BmtsM94Un3sZdfHxKGeO9+XKr5zoDHFNtdq0qdWnHGmlRymW+HX35VzWVemcTPnElrao7w0EphFhsuWL+mm0TBJd0wwtPk6UR5MU+tS1o3oJA/fXPrkvArYrWMvILFaSOYIQ=
+	t=1754298030; cv=none; b=TipRmV0o6141rDgRoHeGG4GiGjhib3RGhOp5WGjRYOKGg1CIjqOCebmbwRh/qP49sefZyQaHEBqlTj40FQ+0v6bRcVQptI81J2/PzLQgNDn5EHLFHsy2tpBMob6QSqMHFodsU3nObjuRh5F5frLPjh0lTJbBfCECf99leb5AblM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754298001; c=relaxed/simple;
-	bh=BsOndgPckWFTtTdAqmy9G8UU0ZveaU+gYQM4CpU1jOM=;
+	s=arc-20240116; t=1754298030; c=relaxed/simple;
+	bh=KCH1pCdiGwOBI5qtyR9u3CbnJsjZm2nAIh6QkzgzEH8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tG5LtWlKW/Li5Mji7R+57nWXBhHYsxTYWZMWK0+aP6RL6L0g65SIk2Ldi5IUoT2jmO1CwORrNpFO5OtaH5AbHng9yQPVKyPeMyb5Y7Vx4grQR4zYrG76z6PAv5ckqkBaBvqLli3tS8B4sD7VoEnwc7r5rHRFnp87ZnbJ628dOw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xXliTTCn; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754297988; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kVDqTQkWRvs+VsDEwe5bifWicO5KdITd3j+JwjIPmo4=;
-	b=xXliTTCnkFMKBeitS7DtkWwPTFYWBQtUPjoMW4OGq7BDNjKUz1LuSwzJ6X2K+o1pHtlff5fmr64O6ibozBSTSCj4+ERgnuhrIh+Bj01eF8T5aFHNdSZOP8/sxm3GHRpGYzbHkYPHk4L0Qvh3zN3ZrSIf/SpMC4fZieFlZE7YW4E=
-Received: from 30.221.131.110(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WkxxuDS_1754297987 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Aug 2025 16:59:48 +0800
-Message-ID: <4978e947-f68f-455a-a318-5f365d686496@linux.alibaba.com>
-Date: Mon, 4 Aug 2025 16:59:47 +0800
+	 In-Reply-To:Content-Type; b=KX9/8JjrqsSIczCXIyWILl3QaQr+KYGy7uh+OZCLHRmvW+sBI/YsnS3Sp1TVT/Hp6O4NETFSlLooaczuTP7Cf5QKOx+r5KEAxVaqiC0vQMnX5YBFWRL5dR10t3sCnAvyZAv8n0o1pAJESMdK0hoqfmOjNMinTZ338k5laruziNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KI+qPv7l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5748THLt029904
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 09:00:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rLD6PUFRLMN+HbgpajUIIfX4iIztYiU2uFQ6pIPAkPo=; b=KI+qPv7ljAiWwRSm
+	o+cTfcCfWGnY/0Y7m3Jfv2DmhiCiaDPeiJGy1xoHbXe2I3sC5W4LOuioQeqLGD7U
+	qQrgnp+DSuOLR26mT4Cdj4Tj2Gkd/34BeEjQnYHQE7C8yb/MXz6ljYKuiVW6dz/i
+	pi0GBqIClcvpgCBHTsvQ/1XgECoogSsx8i/9iD+lTGzojO5lKrj0+WZEmubfTO4B
+	0i80RAGj6dzOuWyF8OPwe26bXlVxQ5dOwU/bfnGtiymAOpvgkaVu441P7QnHHe3z
+	Z9C5zmZ4Ud69/2Qjea+n8RarwaDlQGbFEnVtxbe2+f91iE+3DJ9BcNxdk+p4HiSo
+	brRGXQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489byc465g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:00:26 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76c0039e0f6so1078939b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:00:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754298008; x=1754902808;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rLD6PUFRLMN+HbgpajUIIfX4iIztYiU2uFQ6pIPAkPo=;
+        b=ipS+iQ6Tmu1Se+dNYh1TboKqtWtld+JJ9CP5L7jfbnnHS9Ap8sYRYvkphxIf3forCL
+         5/xArQmt5GpRWya9KtmEc3wV+SMBYxCQWRZgpe0FGSlHNeVBJNYUWWcrjJTXRSa+1NzU
+         dUxA6JOn5juinee43ARGAwI+9l9wHYsWpqlXpf146h4xN2HGXknl36kLmOMHpNGykq0W
+         oijzAJETeLfZLbGL92UbfYxr33TvOmxaByd6GBziq4eWQkWz9cV/lOfFK0iGfeUl9H4C
+         wYu0KqpHn7qmgOc80+Sxf7ddYrvOgziJ27nGbsrJ6eu541mDyKbLKs+RrEMw04rW3e+H
+         axcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBu2EuZTMrg5mGF5hhZEyer/HRWudIhJG8J4IOhL1Vq9QCSuGYyADbjyVLuGLyRegTydo1zbV/UiJ14Kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Z/atsROictwgWY6EbjhazcKbsncfEyK2F+h3Y3svJUab8dEd
+	qJpy1sr71NcYCwE6ZY3LmtWfhiVocRsdjzk9wwEMLG/Qz5Pw6MUfwGnEPuOMKxdU/OomQgl284e
+	fKXBJfKrZdI/d1gqOvVBezSiwKIYukYKllufuFJhR98dxhUXS6I1QYOV9PfQW8xn1Zdk=
+X-Gm-Gg: ASbGncspE78uobVZzdfuofz4DdLFMaX5uVMEBfA+kc4uKCiGhRncl/P6BFehHMAqi1e
+	sFtIvSubhgVSFEt7sucWpMWf2Z6GinS3P/dkwQi+FSs5LCLJizmrb7ExOfSiUpwBsaLjlZ/loLN
+	D4ut+mKgLlKOWFm8rUgdgmw0JoFsfhOhAVWVuJWILvwJb7ChqLF9KVCI4xwEFKc3N6VJjYBURU4
+	0RzEzE8G1I2CW2Pd3/mlR5epKVxOA4K9g+0bf8m5CykebtyEgjGCJXwnNGmqhf/JhfueLCGM4kL
+	afEi9+ou9xhFWF4Xrjjfhuvp+LsNrYazH3MGPD02qXojbvHKNnEntrM32X1lObuQqlo=
+X-Received: by 2002:a05:6a20:558f:b0:23f:f712:411c with SMTP id adf61e73a8af0-23ff71244dcmr6640460637.36.1754298007814;
+        Mon, 04 Aug 2025 02:00:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdxtGwnA/c48xKrIO/+id4y5Pj73li5eoGe6GJBL7RnkEfq1PIi9CDpV3qk/9Rh+1G6mWGHw==
+X-Received: by 2002:a05:6a20:558f:b0:23f:f712:411c with SMTP id adf61e73a8af0-23ff71244dcmr6640428637.36.1754298007371;
+        Mon, 04 Aug 2025 02:00:07 -0700 (PDT)
+Received: from [10.218.30.152] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c0a952525sm1455674b3a.79.2025.08.04.02.00.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 02:00:06 -0700 (PDT)
+Message-ID: <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
+Date: Mon, 4 Aug 2025 14:30:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,156 +88,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: Fix detection of atomic context to prevent
- sleeping in invalid context
-To: Junli Liu <liujunli@lixiang.com>, linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, gao.xiang@linux.alibaba.com,
- linux-mediatek@lists.infradead.org, chao@kernel.org, xiang@kernel.org,
- yangsonghua@lixiang.com
-References: <20250804082912.242580-1-liujunli@lixiang.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250804082912.242580-1-liujunli@lixiang.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@linaro.org>
+Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
+ <aIoBFeo00PPZncCs@linaro.org>
+ <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
+ <aIxRKHKdBHDefDs2@linaro.org>
+ <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: A3GYeEMcSxRoWj8wWSun4424iAOx3DKS
+X-Authority-Analysis: v=2.4 cv=Y6D4sgeN c=1 sm=1 tr=0 ts=689076aa cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=xkFCAPjOK7Wg2B_RzJ4A:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: A3GYeEMcSxRoWj8wWSun4424iAOx3DKS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA0OCBTYWx0ZWRfX62oWQLUUUdHb
+ 9ztydurjUofvWD+cDbo4IXNUp6JfWOxCs07FK1XvVITYAa8JUUkj0nmSAv81z2i7kSdgWqOQxwx
+ omgiBXM/0KyWcWoLCZP9E9vsWu8fXsaCEy70YbrsYUYxlnRZJ5AGafAxqUgVMgBhYUx2w2GGk9o
+ aWkTYFY+L1nhw5yKxr02f5Kla9AhUcaSP8F4dwfhWvnzXAO7134zQJqtAFAAVA3AXZtHu2FMfOP
+ qvytqoqaCuS4Uwns2c3LRhw24+QD2txns/kwpfJ6L/HmzMAwI3VJJGtIQaH2VDUct8L9hKM2on4
+ Nwy4F1u7eTa073T1/0RhupWWtux5+kZFM9mn5utrCxwKDcJ7uucJErMwt7FOsP73MPcOAW2w1iy
+ S66yOXpie0a+iDGaR7kQioSLGhd7gK34h1cB5/uD8fLZAWGrw1zBij9YfE3nsHNx6pwOu+cI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 malwarescore=0 adultscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040048
 
-Hi Junli,
 
-The patch format is broken, please check your email client (you
-could just use a simple `git send-email` to submit) and (if
-possible) send to yourself first.
 
-I think the subject can just be
-
-subject: erofs: fix atomic context detection when !CONFIG_DEBUG_LOCK_ALLOC
-
-On 2025/8/4 16:29, Junli Liu wrote:
-> From: Junli liu
+On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
+> On 8/1/25 7:31 AM, Abel Vesa wrote:
+>> On 25-08-01 10:02:15, Taniya Das wrote:
+>>>
+>>>
+>>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
+>>>> On 25-07-29 11:12:37, Taniya Das wrote:
+>>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
+>>>>> provides refclks for PCIE, USB, and UFS.
+>>>>>
+>>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>>>> ---
+>>>>>  drivers/clk/qcom/Kconfig         |   8 ++
+>>>>>  drivers/clk/qcom/Makefile        |   1 +
+>>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
+>>>>>  3 files changed, 266 insertions(+)
+>>>>>
+>>>>
+>>>> [...]
+>>>>
+>>>>> +
+>>>>> +static struct clk_branch tcsr_edp_clkref_en = {
+>>>>> +	.halt_reg = 0x1c,
+>>>>> +	.halt_check = BRANCH_HALT_DELAY,
+>>>>> +	.clkr = {
+>>>>> +		.enable_reg = 0x1c,
+>>>>> +		.enable_mask = BIT(0),
+>>>>> +		.hw.init = &(const struct clk_init_data) {
+>>>>> +			.name = "tcsr_edp_clkref_en",
+>>>>> +			.ops = &clk_branch2_ops,
+>>>>
+>>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
+>>>>
+>>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
+>>>> which is obviously not the case.
+>>>>
+>>>> Bringing this here since there is a disconnect between X Elite and
+>>>> Glymur w.r.t this now.
+>>>
+>>>
+>>> The ref clocks are not required to be have a parent of bi_tcxo as these
+>>> ideally can be left enabled(as a subsystem requirement) even if HLOS
+>>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
+>>> HLOS/APSS will not allow APSS to collapse.
+>>
+>> Is there a scenario where the APSS is collapsed and still the ref clock
+>> needs to stay enabled ? Sorry, this doesn't make sense to me.
 > 
-> The current atomic context detection is insufficient and can lead to
-> sleeping function calls in invalid contexts, causing kernel warnings
-> and potential system instability. See the stacktrace [1]
+> MDSS is capable of displaying things from a buffer when the CPU is off,
+> AFAICU
+> 
+> We can do CXO_AO instead to have it auto-collapse if it's just Linux
+> requesting it to stay on, I think.
+> 
 
-Yes, the issue is still valid, and it was discussed before in:
-https://lore.kernel.org/r/58b661d0-0ebb-4b45-a10d-c5927fb791cd@paulmck-laptop
-
-I prefer to apply to CONFIG_PREEMPT_COUNT cases only since
-I don't see any real Android user uses !CONFIG_PREEMPT_COUNT.
-
-But the commit message can be further improved as:
-
-"Since EROFS handles decompression in non-atomic contexts due to
-uncontrollable decompression latencies and vmap() usage, it tries
-to detect atomic contexts and only kicks off a kworker on demand
-in order to reduce unnecessary scheduling overhead.
-
-However, the current approach is insufficient and can lead to
-sleeping function calls in invalid contexts, causing kernel
-warnings and potential system instability. See the stacktrace [1]"
+Thanks Konrad for adding the display use case.
+Abel, we earlier also had some PCIe, USB use cases where we had to leave
+the ref clocks ON and APSS could collapse.
 
 
-Also shorten the commit message to 72 chars per line at maximum.
-
-> 
-> The current implementation only checks rcu_read_lock_any_held(), which
-> behaves inconsistently across different kernel configurations:
-> 
-> - When CONFIG_DEBUG_LOCK_ALLOC is enabled: correctly detects RCU critical
-> sections by checking rcu_lock_map
-> - When CONFIG_DEBUG_LOCK_ALLOC is disabled: compiles to "!preemptible()",
-> which only checks preempt_count and misses RCU critical sections
-> 
-> This patch introduces z_erofs_in_atomic() to provide comprehensive atomic
-> context detection:
-> 
-> 1. Check RCU preemption depth when CONFIG_PREEMPTION is enabled, as RCU
-> critical sections may not affect preempt_count but still require
-> atomic handling
-> 
-> 2. Always use async processing when CONFIG_PREEMPT_COUNT is disabled,
-> as preemption state cannot be reliably determined
-> 
-> 3. Fall back to standard preemptible() check for remaining cases
-> 
-> The function replaces the previous complex condition check and ensures
-> that z_erofs always uses (kthread_)work in atomic contexts to minimize
-> scheduling overhead and prevent sleeping in invalid contexts.
-> 
-> ==============================================
-> [1] Problem stacktrace
-> [ 61.266692] BUG: sleeping function called from invalid context at kernel/locking/rtmutex_api.c:510
-> [ 61.266702] in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 107, name: irq/54-ufshcd
-> [ 61.266704] preempt_count: 0, expected: 0
-> [ 61.266705] RCU nest depth: 2, expected: 0
-> [ 61.266710] CPU: 0 UID: 0 PID: 107 Comm: irq/54-ufshcd Tainted: G W O 6.12.17 #1
-> [ 61.266714] Tainted: [W]=WARN, [O]=OOT_MODULE
-> [ 61.266715] Hardware name: schumacher (DT)
-> [ 61.266717] Call trace:
-> [ 61.266718] dump_backtrace+0x9c/0x100
-> [ 61.266727] show_stack+0x20/0x38
-> [ 61.266728] dump_stack_lvl+0x78/0x90
-> [ 61.266734] dump_stack+0x18/0x28
-> [ 61.266736] __might_resched+0x11c/0x180
-> [ 61.266743] __might_sleep+0x64/0xc8
-> [ 61.266745] mutex_lock+0x2c/0xc0
-> [ 61.266748] z_erofs_decompress_queue+0xe8/0x978
-> [ 61.266753] z_erofs_decompress_kickoff+0xa8/0x190
-> [ 61.266756] z_erofs_endio+0x168/0x288
-> [ 61.266758] bio_endio+0x160/0x218
-> [ 61.266762] blk_update_request+0x244/0x458
-> [ 61.266766] scsi_end_request+0x38/0x278
-> [ 61.266770] scsi_io_completion+0x4c/0x600
-> [ 61.266772] scsi_finish_command+0xc8/0xe8
-> [ 61.266775] scsi_complete+0x88/0x148
-> [ 61.266777] blk_mq_complete_request+0x3c/0x58
-> [ 61.266780] scsi_done_internal+0xcc/0x158
-> [ 61.266782] scsi_done+0x1c/0x30
-> [ 61.266783] ufshcd_compl_one_cqe+0x12c/0x438
-> [ 61.266786] __ufshcd_transfer_req_compl+0x2c/0x78
-> [ 61.266788] ufshcd_poll+0xf4/0x210
-> [ 61.266789] ufshcd_transfer_req_compl+0x50/0x88
-> [ 61.266791] ufshcd_intr+0x21c/0x7c8
-> [ 61.266792] irq_forced_thread_fn+0x44/0xd8
-> [ 61.266796] irq_thread+0x1a4/0x358
-> [ 61.266799] kthread+0x12c/0x138
-> [ 61.266802] ret_from_fork+0x10/0x20
-> 
-> Signed-off-by: Junli Liu
-> ---
-> fs/erofs/zdata.c | 14 ++++++++++++--
-> 1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 792f20888..1883781c9 100644
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -1432,6 +1432,16 @@ static void z_erofs_decompressqueue_kthread_work(struct kthread_work *work)
-> }
-> #endif
-> 
-> +/* Use (kthread_)work in atomic contexts to minimize scheduling overhead */
-> +static inline bool z_erofs_in_atomic(void)
-> +{
-> + if (IS_ENABLED(CONFIG_PREEMPTION) && rcu_preempt_depth())
-> + return true;
-> + if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
-> + return true;
-> + return !preemptible();
-> +}
-> +
-> static void z_erofs_decompress_kickoff(struct z_erofs_decompressqueue *io,
-> int bios)
-> {
-> @@ -1446,8 +1456,8 @@ static void z_erofs_decompress_kickoff(struct z_erofs_decompressqueue *io,
-> 
-> if (atomic_add_return(bios, &io->pending_bios))
-> return;
-> - /* Use (kthread_)work and sync decompression for atomic contexts only */
-> - if (!in_task() || irqs_disabled() || rcu_read_lock_any_held()) {
-> +
-> + if (z_erofs_in_atomic()) {
-
-Please avoid the unnecessary new line in the next version.
-
+-- 
 Thanks,
-Gao XIang
+Taniya Das
+
 
