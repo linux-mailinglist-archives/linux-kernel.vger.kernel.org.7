@@ -1,286 +1,184 @@
-Return-Path: <linux-kernel+bounces-754636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0ECB19A4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:53:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CCBB19A54
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1D417449D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306DC3BA145
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B321C182;
-	Mon,  4 Aug 2025 02:53:17 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B020A5EB
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 02:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4A0212B31;
+	Mon,  4 Aug 2025 03:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JC/9YR5L"
+Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB84C8F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 03:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754275997; cv=none; b=AtDsteABToe/messNSCV73KHkEIkGpvboJS8mzrabFXNDJQlGmFebqeK8NrtvzFpFGbFoIsAGXiTkReuSFP6w6+kA9WqGzIM+KbU3ee9qmeMALI4DdsBq/hyMje5HVPTtzmodWsWgI/BEKdCZ7dHCazgGcrNnrejg6a8O9dWVro=
+	t=1754276547; cv=none; b=Y2pkO9XV+Um+Z9aysEZyRXZKPPziHgGQqqZlcyFW1nQEipPOC3Nat+XBQrK38gk9r5AlCvvQN78I5yAaL53gzgHxZbEWesm52aGk29jMTLZbcRnK4kJ2TaKWLrcUej0SjmAWmrCXJOjb3q/8wQY2IyAq052C8S4RGZgYFUKM+Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754275997; c=relaxed/simple;
-	bh=l5B4lJwk8CEdP9mZBAa5j1SigN5pFdanxaMinONd+p8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PdIe6OXkqIqdDorOtcz0h9qn99xAfj9gSSvzBkmijHp5IGmzxwY3v2XGO1Wsb5HKELT3lmgKUlx8PuTXXRLBRO2921Pe30KWYpfCSS3znj6Fu0RMG++yS01kbyEzMziSwMg39myIy/0qDZM5OIeH835q/1BENuinzdchPAYP/XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxNHCQIJBo1xc4AQ--.44755S3;
-	Mon, 04 Aug 2025 10:53:04 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJAxvsGMIJBoiuo0AA--.22459S3;
-	Mon, 04 Aug 2025 10:53:02 +0800 (CST)
-Subject: Re: [PATCH v3] LoongArch: Implement physical address with ELF program
- header
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
- Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250723080640.442339-1-maobibo@loongson.cn>
- <00651F3A-6649-4C69-B365-352C8D323902@flygoat.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <bc680815-b67b-638f-a920-03a0ac65540d@loongson.cn>
-Date: Mon, 4 Aug 2025 10:51:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1754276547; c=relaxed/simple;
+	bh=8XWLSI4sbgHCOIFGVmW8cfrPcnXHmFQdS5gy4Tfs07A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NFPZkA6x1dk9hItavjTMl68+cUFQmvdVh6USRiyv8nlbsRxF4CdT42sDLkET/8MIdnrJBPmRSLnwuWdXP5sbCIHZcEqCcTuTnfX0Ll7+waRwOddH0t95Y4N+TWjFCyVWTDvkppQrWFPRdn+IoIPvETCeFXD1HKra9gSBENY0mOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JC/9YR5L; arc=none smtp.client-ip=61.135.153.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754276539;
+	bh=aOhZ2C5HaWljkHmO37Lc3NOgUQcSBciisyPkKXjGhIc=;
+	h=From:Subject:Date:Message-ID;
+	b=JC/9YR5LaJCpd7eIAY4w7n70PgnZX69wCtGeag59NySyCDf2G47btdg0GhSSIUUFF
+	 f43Qec/Y+8+6Mgsga+Vr1yGCbptJfNb/5RPVXbyYFEKFmiKYiMrO14BEAg4qfvhrG+
+	 QJGGfB4JK+kpPvfjDRquijzpT4O5x5lDyI25nvNw=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6890207100007CC9; Mon, 4 Aug 2025 10:52:35 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6607066291995
+X-SMAIL-UIID: F2F1D8728BAF4654ABED1DA3926BB3EE-20250804-105235-1
+From: Hillf Danton <hdanton@sina.com>
+To: linux-kernel@vger.kernel.org
+Cc: Hillf Danton <hdanton@sina.com>
+Subject: Re: some works in 2025
+Date: Mon,  4 Aug 2025 10:52:23 +0800
+Message-ID: <20250804025224.3838-1-hdanton@sina.com>
+In-Reply-To: <20250624112437.1639-1-hdanton@sina.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <00651F3A-6649-4C69-B365-352C8D323902@flygoat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxvsGMIJBoiuo0AA--.22459S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Ar18ZFyxCr17uF18Ar1UJwc_yoW7Kryrpr
-	Wqya18CF4rGr1rZwnIqFn09FyUtrnak3Wjgr45Ja48AF1agr1DKw47Gr1DGF90vw4kZr4I
-	vFykJ3y2v3Z3KagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
 
+[continued I]
 
+On Tue, 24 Jun 2025 19:24:29 +0800 Hillf Danton wrote:
+> 
+> 001 Subject: Re: [syzbot] [fs?] KASAN: slab-out-of-bounds Write in __put_unused_fd
+> https://lore.kernel.org/lkml/6774a257.050a0220.25abdd.097a.GAE@google.com/
+> ...
+> 050 Subject: Re: [syzbot] [trace?] KASAN: slab-use-after-free Read in __free_filter
+> https://lore.kernel.org/lkml/685a6606.a00a0220.2e5631.0064.GAE@google.com/
+> 
+051 Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_get_neigh
+https://lore.kernel.org/lkml/685bc0ab.a00a0220.2e5631.00c2.GAE@google.com/
+052 Subject: Re: [syzbot] [bluetooth?] BUG: corrupted list in _hci_cmd_sync_cancel_entry
+https://lore.kernel.org/lkml/685c99ee.050a0220.2303ee.00c5.GAE@google.com/
+053 Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_ioctl (2)
+https://lore.kernel.org/lkml/685dc4fe.a00a0220.2e5631.037b.GAE@google.com/
+054 Subject: Re: [syzbot] [usb?] WARNING in flush_delayed_work
+https://lore.kernel.org/lkml/685f8b74.a70a0220.2f4de1.0008.GAE@google.com/
+055 Subject: Re: [syzbot] [smc?] KASAN: null-ptr-deref Read in smc_tcp_syn_recv_sock
+https://lore.kernel.org/lkml/6861e11a.a70a0220.2f4de1.0024.GAE@google.com/
+056 Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
+https://lore.kernel.org/lkml/68624d28.a70a0220.2f4de1.0028.GAE@google.com/
+057 Subject: Re: [syzbot] [usb?] INFO: task hung in hub_activate (3)
+https://lore.kernel.org/lkml/20250702080515.2160-1-hdanton@sina.com/
+058 Subject: Re: [syzbot] [kernel?] general protection fault in __cpa_flush_tlb
+https://lore.kernel.org/lkml/6866430e.a70a0220.5d25f.0860.GAE@google.com/
+059 Subject: Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
+https://lore.kernel.org/lkml/6866461d.a70a0220.2b31f5.0016.GAE@google.com/
+060 Subject: Re: [syzbot] [net?] kernel BUG in filemap_fault (2)
+https://lore.kernel.org/lkml/686743b3.a70a0220.29cf51.000e.GAE@google.com/
 
-On 2025/8/1 下午4:57, Jiaxun Yang wrote:
-> 
-> 
->> 2025年7月23日 16:06，Bibo Mao <maobibo@loongson.cn> 写道：
->>
->> With structure elf64_phdr, field p_paddr is physical address of the
->> segment. And it is convenient for qemu to calculate the physical
->> address when directly boot ELF kernel image.
->>
->> Otherwise QEMU needs convert virtual address p_vaddr into physical
->> address, the conversion logic assumes that DMW method is used where
->> 48 bit physical address is supported. However with direct MMU mapping
->> method with start address from 0xFFFF800000000000, only 47 bit physical
->> address is supported. QEMU cannot assume the kernel behavior at kernel
->> loading stage.
->>
->> Here add physical address indication in ELF program header, it is
->> convenient to get physical kernel loading address.
-> 
-> Hi Bibo,
-> 
-> Thanks for your patch. Unfortunately it breaks PMON’s DWARF debugging
-> Feature, causing exception on list symbols.
-> 
-> I’ll try to investigate.
-Hi Jiaxun.
+061 Subject: Re: [syzbot] [net?] general protection fault in qdisc_tree_reduce_backlog
+https://lore.kernel.org/all/6867885f.a00a0220.c7b3.0018.GAE@google.com/
+062 Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in force_devcd_write
+https://lore.kernel.org/all/6867f034.a70a0220.29cf51.0020.GAE@google.com/
+063 Subject: Re: [syzbot] [bluetooth?] [usb?] KASAN: slab-use-after-free Read in btusb_disconnect
+https://lore.kernel.org/all/6867fd53.a70a0220.29cf51.0022.GAE@google.com/
+064 Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
+https://lore.kernel.org/linux-fsdevel/20250704070249.2347-1-hdanton@sina.com/
+065 Subject: Re: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in pcl812_attach
+https://lore.kernel.org/lkml/68686ec1.a70a0220.29cf51.002a.GAE@google.com/
+066 Subject: Re: [syzbot] [kernel?] WARNING in driver_unregister (2)
+https://lore.kernel.org/lkml/6868e46d.a00a0220.c7b3.0030.GAE@google.com/
+067 Subject: Re: [syzbot] [net?] general protection fault in qdisc_tree_reduce_backlog
+https://lore.kernel.org/lkml/6868ec63.a00a0220.c7b3.0031.GAE@google.com/
+068 Subject: Re: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in pcl726_attach
+https://lore.kernel.org/lkml/68692339.a00a0220.c7b3.0038.GAE@google.com/
+069 Subject: Re: [syzbot] [kernel?] general protection fault in pcl818_ai_cancel
+https://lore.kernel.org/lkml/6869314b.a00a0220.c7b3.003b.GAE@google.com/
+070 Subject: Re: [syzbot] [nbd?] possible deadlock in nbd_queue_rq
+https://lore.kernel.org/lkml/20250707005946.2669-1-hdanton@sina.com/
 
-Thanks for reporting it. Could you describe the problem with more 
-detailed information? such as which command of PMON etc.
+071 Subject: Re: [syzbot] [kernel?] INFO: trying to register non-static key in waveform_detach
+https://lore.kernel.org/lkml/686c7513.050a0220.20334d.0001.GAE@google.com/
+072 Subject: Re: [syzbot] [bluetooth?] KASAN: null-ptr-deref Write in l2cap_sock_resume_cb (4)
+https://lore.kernel.org/lkml/686c749b.050a0220.20334d.0000.GAE@google.com/
+073 Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
+https://lore.kernel.org/lkml/686dd7ae.050a0220.1ffab7.002c.GAE@google.com/
+074 Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
+https://lore.kernel.org/lkml/686dda7e.050a0220.1ffab7.002d.GAE@google.com/
+075 Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_ilock_attr_map_shared (2)
+https://lore.kernel.org/lkml/20250709215135.3122-1-hdanton@sina.com/
+076 Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
+https://lore.kernel.org/lkml/686fbf2e.a00a0220.26a83e.0013.GAE@google.com/
+077 Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
+https://lore.kernel.org/lkml/687092d6.a00a0220.26a83e.0036.GAE@google.com/
+078 Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+https://lore.kernel.org/lkml/20250711060000.3413-1-hdanton@sina.com/
+079 Subject: Re: [syzbot] [hams?] WARNING: refcount bug in ax25_setsockopt
+https://lore.kernel.org/lkml/6871bde2.a00a0220.26a83e.0069.GAE@google.com/
+080 Subject: Re: [syzbot] [net?] WARNING in rt_set_nexthop
+https://lore.kernel.org/lkml/6871d11a.a00a0220.26a83e.006b.GAE@google.com/
 
-Regards
-Bibo Mao
-> 
-> Thanks
-> Jiaxun
-> 
-> 
-> 
->>
->> Here is output with command readelf -l vmlinux with patch:
->> Elf file type is EXEC (Executable file)
->> Entry point 0x90000000015f5000
->> There are 2 program headers, starting at offset 64
->> Program Headers:
->>    Type           Offset             VirtAddr           PhysAddr
->>                   FileSiz            MemSiz              Flags  Align
->>    LOAD           0x0000000000010000 0x9000000000200000 0x0000000000200000
->>                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
->>
->> And output with command readelf -l vmlinux without the patch:
->> Elf file type is EXEC (Executable file)
->> Entry point 0x90000000015f5000
->> There are 2 program headers, starting at offset 64
->> Program Headers:
->>    Type           Offset             VirtAddr           PhysAddr
->>                   FileSiz            MemSiz              Flags  Align
->>    LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
->>                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->> v2 ... v3:
->> 1. Fix compile issue where macro PHYS_OFFSET is not defined with assemble
->>     code.
->> v1 ... v2:
->> 1. Set LOAD_OFFSET with PAGE_OFFSET rather than CACHE_BASE, since it
->>     is generic with PAGE_OFFSET.
->> 2. Add AT information with missing edata_padding section.
->> ---
->> arch/loongarch/include/asm/addrspace.h |  2 +-
->> arch/loongarch/kernel/vmlinux.lds.S    | 36 +++++++++++++++++---------
->> 2 files changed, 25 insertions(+), 13 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/addrspace.h b/arch/loongarch/include/asm/addrspace.h
->> index e739dbc6329d..18f6c2b469bb 100644
->> --- a/arch/loongarch/include/asm/addrspace.h
->> +++ b/arch/loongarch/include/asm/addrspace.h
->> @@ -18,10 +18,10 @@
->> /*
->> * This gives the physical RAM offset.
->> */
->> -#ifndef __ASSEMBLER__
->> #ifndef PHYS_OFFSET
->> #define PHYS_OFFSET	_UL(0)
->> #endif
->> +#ifndef __ASSEMBLER__
->> extern unsigned long vm_map_base;
->> #endif /* __ASSEMBLER__ */
->>
->> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
->> index 08ea921cdec1..8ce6b0d948f4 100644
->> --- a/arch/loongarch/kernel/vmlinux.lds.S
->> +++ b/arch/loongarch/kernel/vmlinux.lds.S
->> @@ -3,10 +3,12 @@
->> #include <asm/asm-offsets.h>
->> #include <asm/thread_info.h>
->> #include <asm/orc_lookup.h>
->> +#include <asm/addrspace.h>
->>
->> #define PAGE_SIZE _PAGE_SIZE
->> #define RO_EXCEPTION_TABLE_ALIGN	4
->> #define PHYSADDR_MASK			0xffffffffffff /* 48-bit */
->> +#define LOAD_OFFSET			PAGE_OFFSET
->>
->> /*
->> * Put .bss..swapper_pg_dir as the first thing in .bss. This will
->> @@ -42,7 +44,7 @@ SECTIONS
->>
->> 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
->> 	_stext = .;
->> -	.text : {
->> +	.text : AT(ADDR(.text) - LOAD_OFFSET) {
->> 		TEXT_TEXT
->> 		SCHED_TEXT
->> 		LOCK_TEXT
->> @@ -60,7 +62,7 @@ SECTIONS
->> 	__inittext_begin = .;
->>
->> 	INIT_TEXT_SECTION(PAGE_SIZE)
->> -	.exit.text : {
->> +	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
->> 		EXIT_TEXT
->> 	}
->>
->> @@ -82,7 +84,7 @@ SECTIONS
->> 	}
->>
->> 	INIT_DATA_SECTION(16)
->> -	.exit.data : {
->> +	.exit.data : AT(ADDR(.exit.data) - LOAD_OFFSET) {
->> 		EXIT_DATA
->> 	}
->>
->> @@ -90,7 +92,7 @@ SECTIONS
->> 	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
->> #endif
->>
->> -	.init.bss : {
->> +	.init.bss : AT(ADDR(.init.bss) - LOAD_OFFSET) {
->> 		*(.init.bss)
->> 	}
->> 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
->> @@ -101,27 +103,34 @@ SECTIONS
->> 	_sdata = .;
->> 	RO_DATA(4096)
->>
->> -	.got : ALIGN(16) { *(.got) }
->> -	.plt : ALIGN(16) { *(.plt) }
->> -	.got.plt : ALIGN(16) { *(.got.plt) }
->> +	. =  ALIGN(16);
->> +	.got : AT(ADDR(.got) - LOAD_OFFSET) { *(.got) }
->> +	. =  ALIGN(16);
->> +	.plt : AT(ADDR(.plt) - LOAD_OFFSET) { *(.plt) }
->> +	. =  ALIGN(16);
->> +	.got.plt : AT(ADDR(.got.plt) - LOAD_OFFSET) { *(.got.plt) }
->>
->> 	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
->>
->> -	.rela.dyn : ALIGN(8) {
->> +	. = ALIGN(8);
->> +	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET) {
->> 		__rela_dyn_begin = .;
->> 		 *(.rela.dyn) *(.rela*)
->> 		__rela_dyn_end = .;
->> 	}
->>
->> #ifdef CONFIG_RELR
->> -	.relr.dyn : ALIGN(8) {
->> +	. = ALIGN(8);
->> +	.relr.dyn : AT(ADDR(.relr.dyn) - LOAD_OFFSET) {
->> 		__relr_dyn_begin = .;
->> 		 *(.relr.dyn)
->> 		__relr_dyn_end = .;
->> 	}
->> #endif
->>
->> -	.data.rel : { *(.data.rel*) }
->> +	.data.rel : AT(ADDR(.data.rel) - LOAD_OFFSET) {
->> +		*(.data.rel*)
->> +	}
->>
->> #ifdef CONFIG_RELOCATABLE
->> 	. = ALIGN(8);
->> @@ -134,10 +143,13 @@ SECTIONS
->>
->> 	ORC_UNWIND_TABLE
->>
->> -	.sdata : {
->> +	.sdata : AT(ADDR(.sdata) - LOAD_OFFSET) {
->> 		*(.sdata)
->> 	}
->> -	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
->> +	.edata_padding : AT(ADDR(.edata_padding) - LOAD_OFFSET) {
->> +		BYTE(0);
->> +		. = ALIGN(PECOFF_FILE_ALIGN);
->> +	}
->> 	_edata =  .;
->>
->> 	BSS_SECTION(0, SZ_64K, 8)
->>
->> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
->> -- 
->> 2.39.3
->>
->>
+081 Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbhid_raw_request
+https://lore.kernel.org/lkml/687490b3.a70a0220.3b380f.0048.GAE@google.com/
+082 Subject: Re: [syzbot] [fs?] WARNING: bad unlock balance in query_matching_vma
+https://lore.kernel.org/lkml/6875a57f.a70a0220.5f69f.0004.GAE@google.com/
+083 Subject: Re: [syzbot] [mm?] possible deadlock in lock_next_vma
+https://lore.kernel.org/lkml/6875ba5c.a70a0220.18f9d4.0019.GAE@google.com/
+084 Subject: Re: [syzbot] [mm?] general protection fault in mas_start
+https://lore.kernel.org/lkml/6875b407.a70a0220.18f9d4.0017.GAE@google.com/
+085 Subject: Re: [syzbot] [bluetooth?] [bcachefs?] KASAN: slab-use-after-free Read in hci_uart_write_work
+https://lore.kernel.org/lkml/68761983.a00a0220.3af5df.0001.GAE@google.com/
+086 Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in tcp_prune_ofo_queue
+https://lore.kernel.org/lkml/6876fc27.a70a0220.693ce.001b.GAE@google.com/
+087 Subject: Re: [syzbot] [mm?] possible deadlock in lock_next_vma
+https://lore.kernel.org/lkml/687881b0.a70a0220.693ce.0038.GAE@google.com/
+088 Subject: Re: [PATCH] vhost/net: Replace wait_queue with completion in ubufs reference
+https://lore.kernel.org/lkml/20250718090725.2352-1-hdanton@sina.com/
+089 Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in io_poll_remove_entries
+https://lore.kernel.org/lkml/687c46d7.a70a0220.693ce.00a2.GAE@google.com/
+090 Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_iop_getattr
+https://lore.kernel.org/lkml/687da320.a70a0220.693ce.00db.GAE@google.com/
 
+091 Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking dependency detected when plugging USB stick after ffa1e7ada456
+https://lore.kernel.org/lkml/CABXGCsOwAQuisqpfUvW+1BWtOV+O1GypcQ6mb4SSUgN3YkAZUQ@mail.gmail.com/
+092 Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in simple_recursive_removal (5)
+https://lore.kernel.org/lkml/68820e72.a00a0220.2f88df.0021.GAE@google.com/
+093 Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_new_lci
+https://lore.kernel.org/lkml/6882d8b6.a00a0220.2f88df.0039.GAE@google.com/
+094 Subject: Re: [syzbot] [input?] possible deadlock in input_ff_flush
+https://lore.kernel.org/lkml/6885af82.a00a0220.b12ec.0045.GAE@google.com/
+095 Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in exit_to_user_mode_loop
+https://lore.kernel.org/lkml/68885247.a00a0220.b12ec.00c8.GAE@google.com/
+096 Subject: Re: [syzbot] [fuse?] WARNING: refcount bug in process_scheduled_works
+https://lore.kernel.org/lkml/6889f33b.a00a0220.26d0e1.001b.GAE@google.com/
+097 Subject: Re: [syzbot] [dri?] WARNING in __ww_mutex_wound
+https://lore.kernel.org/lkml/20250730131345.3530-1-hdanton@sina.com/
+098 Subject: Re: [syzbot] [comedi?] KMSAN: kernel-infoleak in do_insnlist_ioctl
+https://lore.kernel.org/lkml/688b4d68.a00a0220.26d0e1.003d.GAE@google.com/
+099 Subject: Re: [syzbot] [net?] WARNING in __linkwatch_sync_dev (2)
+https://lore.kernel.org/lkml/688e9f03.a70a0220.249f57.000c.GAE@google.com/
+100 Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path on PREEMPT_RT
+https://lore.kernel.org/lkml/20250803084924.3785-1-hdanton@sina.com/
+
+[1] Subject: some works in 2025
+https://lore.kernel.org/lkml/20250624112437.1639-1-hdanton@sina.com/
 
