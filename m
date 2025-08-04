@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-754841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88858B19D67
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46067B19D6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3C31899847
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB3618998C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9238C23BF91;
-	Mon,  4 Aug 2025 08:12:48 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8197823D2B4;
+	Mon,  4 Aug 2025 08:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ET0kbWi4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B473323C50F
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749B23BCE2;
+	Mon,  4 Aug 2025 08:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754295168; cv=none; b=fzreLoA4ANlZlYVxHx1XuL0vQdcVyCJbHiE/3zF4PPgRJPHE+4rSAmFwTuXmNEv8wtRtf/NDlDvuJTEwDIA58bMLePFj7nJ6qIbzFlECsaB/8vk91vUXtkYgen4/3KAC5VXrGk+Oss00rDC4r55iWyy8vgHtcTvw9khCqty8OIw=
+	t=1754295225; cv=none; b=g7rApxgQ/mjC4LOAakYWjHn5WY7PBPUnozvHgVf+Z56t4nImKg4vEgLXbqw9en3zaH4Bw1W2w35ru941MclX5J3w2jScwsHTspOHGD5c2CB6JjTZoIugT/WPx6jIOKy1oLBDZhmtw7AFKAcBn3Dg93AbgP1iTyP6yOIQ9pRx/UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754295168; c=relaxed/simple;
-	bh=1FXpLi6vLvB+S2Zn4AuuAuGH5pvGTvR0uSJtW3wz/zY=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EcgjQW3GrLt3GxO87SM+XSD13KCEcHKG07hFfuNPEjurncJagkPl8QgAeWZp6SEtcuFCXgDISR041vMnzgG/m/XJFXeD4T8YGdIbCsXowtFjjYYd3xetQHJXSf84z6ViXl3upTvZhLrYdvEA1APe4ZVl14aWZXVctxJOzxL7TzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bwTgj2Fhhz14MGq;
-	Mon,  4 Aug 2025 16:07:45 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9FB4B18007F;
-	Mon,  4 Aug 2025 16:12:40 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 4 Aug 2025 16:12:40 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 4 Aug 2025 16:12:39 +0800
-CC: <robin.murphy@arm.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<yangyicong@hisilicon.com>
-Subject: Re: [PATCH 2/2] dma-mapping: benchmark: Add padding to ensure uABI
- remained consistent
-To: Barry Song <21cnbao@gmail.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Qinxin Xia <xiaqinxin@huawei.com>
-References: <20250724085600.4101321-1-xiaqinxin@huawei.com>
- <20250724085600.4101321-3-xiaqinxin@huawei.com>
- <CAGsJ_4zVR3R7erGP57vxM8vKBARG8BttA=FsCVFjy4QtswcsQw@mail.gmail.com>
- <c7f7d9b3-2ab3-4ebd-99fb-071733573291@huawei.com>
- <CGME20250724094224eucas1p13a911259338ac1890d4baed8b9998fb0@eucas1p1.samsung.com>
- <CAGsJ_4zSw57DMyRZM24BUdDpbi4+BRfgWUqxSKurCsAVC7Kptw@mail.gmail.com>
- <f8c0cbdc-9c68-46bb-8dad-1d7c80f3f741@samsung.com>
- <CAGsJ_4zs8=n+J4Xtd=Un8+p3c=FCOTji9qMfBsOKcc8sFG0v9A@mail.gmail.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <c5170042-ac38-b0db-ba51-c5fce5363d40@huawei.com>
-Date: Mon, 4 Aug 2025 16:12:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1754295225; c=relaxed/simple;
+	bh=pCWbIpgPnuJ09TaUynGKBB+FXSeY+nmvlXGp0GR0TH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUxUV/URom4VaBiTBsQRCsEFq4Onz3o0+sIs/6FvFGEhuW/vkbZnYPDJuFJBbEDrzNCJSNcopa0MCddWFuoa4BAMwilnZlai1gO8g2sYl2RBY5RbZpA1z9KyCThXsFAcRlkhcpc2EzZA+Hfl8DE/AdXbYNUdF4h8hmVo1icwfL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ET0kbWi4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECEFC4CEE7;
+	Mon,  4 Aug 2025 08:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754295224;
+	bh=pCWbIpgPnuJ09TaUynGKBB+FXSeY+nmvlXGp0GR0TH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ET0kbWi4qW25P3tOSoRFUOJt8XnZewHObdIlNJlRuJ94JG0NaRKexY4mnAszR7eb9
+	 HINj0tgw+bxNToY652vYMX/Mz16SCQiPk8zSvlliMcyUig2YmYnBWzWBYsYNNlOcYD
+	 GM5oyWDMRrHVmnV5q3w4k21Es90a/HEKWMJ4GSmvBh62t29rXrIfN6y7B9bS5NHhr9
+	 f8UN7gt5ZStbllVTVemiz5gbv379G4AASRtQ+y1CEuYjm9qnWCJJcyJB/PGSiVgnCi
+	 KkAG1QckA5nEKGM7E/4tg2nzatsLWveiqdzZMJZZMcnvqd30zEkG+fCXsH85QkYWDS
+	 AaGn6zONYOsxw==
+Date: Mon, 4 Aug 2025 10:13:41 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
+	Matt Coster <matt.coster@imgtec.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Drew Fustini <fustini@kernel.org>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v10 2/4] dt-bindings: gpu: img,powervr-rogue: Add TH1520
+ GPU support
+Message-ID: <20250804-talented-chubby-caiman-9ed7b5@kuoka>
+References: <20250801-apr_14_for_sending-v10-0-e85802902a29@samsung.com>
+ <CGME20250801103106eucas1p11c945f612fcf56ad2521151962d745b8@eucas1p1.samsung.com>
+ <20250801-apr_14_for_sending-v10-2-e85802902a29@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGsJ_4zs8=n+J4Xtd=Un8+p3c=FCOTji9qMfBsOKcc8sFG0v9A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250801-apr_14_for_sending-v10-2-e85802902a29@samsung.com>
 
-Hi Barry,
-
-On 2025/8/4 12:47, Barry Song wrote:
-> On Tue, Jul 29, 2025 at 8:32 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->>
->> On 24.07.2025 11:42, Barry Song wrote:
->>> On Thu, Jul 24, 2025 at 5:35 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->>>> On 2025/7/24 17:07:08, Barry Song <21cnbao@gmail.com> wrote:
->>>>> On Thu, Jul 24, 2025 at 4:56 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->>>>>> The padding field in the structure was previously reserved to
->>>>>> maintain a stable interface for potential new fields, ensuring
->>>>>> compatibility with user-space shared data structures.
->>>>>> However,it was accidentally removed by tiantao in a prior commit,
->>>>>> which may lead to incompatibility between user space and the kernel.
->>>>>>
->>>>>> This patch reinstates the padding to restore the original structure
->>>>>> layout and preserve compatibility.
->>>>>>
->>>>>> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header file for map_benchmark definition")
->>>>>> Cc: stable@vger.kernel.org
->>>>>> Acked-by: Barry Song <baohua@kernel.org>
->>>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>>>> I don’t think these two patches should be part of the same series. This
->>>>> one is a bug fix and should be handled separately—ideally picked up on
->>>>> its own and backported to stable.
->>>>>
->>>>> Also, the subject should not say "Add"—it should be "Restore". I assume
->>>>> Marek can handle it?
->>> ...
->>>> Ok, I will send a new version to fix it.
->>> If Marek can help fix it while picking it up into the dma-mapping tree, you
->>> might not need to send a new version.
->>>
->>> Honestly, I hope this gets merged soon—it feels like it's been
->>> overdue for quite a while.
->>
->> I'm sorry, I wasn't aware that this need to go via dma-mapping tree. I
->> will take it after this merge window.
+On Fri, Aug 01, 2025 at 12:31:02PM +0200, Michal Wilczynski wrote:
+> Rework the PowerVR Rogue GPU binding to use an explicit, per variant
+> style for defining power domain properties and add support for the
+> T-HEAD TH1520 SoC's GPU.
 > 
-> Thank you, Marek! I also noticed that Xiang Chen’s email has been invalid
-> for quite a while, likely he moved to another company some time ago. It looks
-> like Yicong has volunteered to take this on:
+> To improve clarity and precision, the binding is refactored so that
+> power domain items are listed explicitly for each variant [1]. The
+> previous method relied on an implicit, positional mapping between the
+> `power-domains` and `power-domain-names` properties. This change
+> replaces the generic rules with self contained if/then blocks for each
+> GPU variant, making the relationship between power domains and their
+> names explicit and unambiguous.
 > 
-> https://lkml.indiana.edu/2408.1/08865.html
+> The generic if block for img,img-rogue, which previously required
+> power-domains and power-domain-names for all variants, is removed.
+> Instead, each specific GPU variant now defines its own power domain
+> requirements within a self-contained if/then block, making the schema
+> more explicit.
 > 
-> I'm not sure if that's still the case. If it is, would Yicong be able to
-> resend the email with my ack?
+> This new structure is then used to add support for the
+> `thead,th1520-gpu`. While its BXM-4-64 IP has two conceptual power
+> domains, the TH1520 SoC integrates them behind a single power gate. The
+> new binding models this with a specific rule that enforces a single
+> `power-domains` entry and disallows the `power-domain-names` property.
 > 
+> Link: https://lore.kernel.org/all/4d79c8dd-c5fb-442c-ac65-37e7176b0cdd@linaro.org/ [1]
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 33 ++++++++++++++++------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
 
-thanks for reminding. I think currently Qinxin is more suitable to help with this.
-she's working on the smmu stuffs and help look after this benchmark tool internally
-for some time :)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Maybe she can help along with you (ack the fact that you're always helping to review
-the codes) if it's ok with you.
-
-Thanks.
+Best regards,
+Krzysztof
 
 
