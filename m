@@ -1,186 +1,101 @@
-Return-Path: <linux-kernel+bounces-755284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9C1B1A412
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:07:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94286B1A415
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9E418A1177
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4813A48DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2757426F44D;
-	Mon,  4 Aug 2025 14:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CEF26F463;
+	Mon,  4 Aug 2025 14:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVsKZFNL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ls0/4rEz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC688F58;
-	Mon,  4 Aug 2025 14:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3755D2BAF7;
+	Mon,  4 Aug 2025 14:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754316423; cv=none; b=Gq0RFUlEZmsnvbh/xEZZaLx5EVXzZJEV8BPAkbSOny7Ia+FWtYEU6w92MIoJgmuouwpdTU56/wqgxE027GW9b/D6UPE0oRSTG0sEuzhs2xRFH+hiQd/eBScbXNa/rvzlFg9PHxaIynEtgd86k6R8Ksv0pAGEqrdaIuYXhPTRibU=
+	t=1754316522; cv=none; b=nmpXgCA2/Y4aN7AVPbd6E5v2wxO7k0ffWoQwpEOryB+ktLEDNyXig+N4JeeUNAj1bputfwLS2Eihw0eJOvWc47D6n4u7R8mXykF72U2TMJhhhq5tXWb0pwX8SpOfn6m+4rYgtCafXGOKJv4fBk7a+jqWR/FMs+fpV4KsJV8bIV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754316423; c=relaxed/simple;
-	bh=g4R8Y73hb4BzJAzzDJSVFxqOj3sFPPyhtqJp7GLNKqA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j2070AtisfgZyu3SPrAtkL4arykInPVgFm3rDI37GIyir+AcmPR1LdCHKuCmJjtTzIlGx2Ld8FGrEAHP16xK8nF2ckANjh9O6hGypTU5h0Q0psDuwBkvg/lfBBzXFMLVBzylidFLD4fep4BCRSw3I0jUPeu5rOp3JZ0Lt9Aaatk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVsKZFNL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D70C4CEE7;
-	Mon,  4 Aug 2025 14:07:00 +0000 (UTC)
+	s=arc-20240116; t=1754316522; c=relaxed/simple;
+	bh=+7Q4LotkGwU5ARZYTGNnCuBdetHLX3DRgjQvtKWhXzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvRTePtynmMSRvJRYINB8rH98KWNAsK+kXjGqOFz22kXOc8z0bbsSfNK1yyVAzKxfRtq5o1ROf37AZc6F4+69guTvwiGNxgwmJ5VG9ivAGg34b3WiNrI9l0AldV20awDSwiHKkiUUBWk7w0MmwLPjiBmVQeOooNMeLOroD9fmrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ls0/4rEz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040E7C4CEE7;
+	Mon,  4 Aug 2025 14:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754316423;
-	bh=g4R8Y73hb4BzJAzzDJSVFxqOj3sFPPyhtqJp7GLNKqA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HVsKZFNL8augUOA5FqoPeyp2uE6lxeZwLHClECoWoBhbq9F+yveLuSe4YauCVUVPZ
-	 kiMkC1vWPVzu2USw8EfOBAl+Xr+L6PLxq5JQpXsLgtbW83Z2Y6Cny4uOPdmJhQ5GH5
-	 PVSBL9Ol4R6NJR9AFbdc/pQr1HlEsU9azz26yJWqldNWPGdOq8ba2VFg5VUehzrnlm
-	 +BH922GbqJBAWjymt7ypwqVf4yyWiS88ENQOX7iD62k9KQPKJ66Zz5CX3irxPl6yTP
-	 fBrbAmkV6obtx7OyP2Ep/Zzt9ZhKjE4gTMxcagUcIoxN5HNEaWcaOPkknGEhM4cmNC
-	 wTp79soAE95fA==
-From: Michael Walle <mwalle@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	nm@ti.com,
-	vigneshr@ti.com,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH] phy: ti: gmii-sel: Force RGMII TX delay
-Date: Mon,  4 Aug 2025 16:06:52 +0200
-Message-Id: <20250804140652.539589-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1754316521;
+	bh=+7Q4LotkGwU5ARZYTGNnCuBdetHLX3DRgjQvtKWhXzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ls0/4rEzghBmvR0vP8lQ63jV9Ne2vih9EuPhtx0lfJsVSWafCSD8lowTwlYCWSWH3
+	 iAJoAfO8H7B7MLKxPxBO9SG6lBdmVrr2brAy4i5atmiM+4sXCE4pzamyRou9a2izWt
+	 1gKTF7IFQ6ez+NqItBxcSbZ9lFCzk/wmuHE9YRFrJcijTUag6F08uIlDle8P1fMMOU
+	 +naPsw+VTvORrZ93ujPN8krJKyIL7XapyEx9868EnbA78ubsDdJDV7yrzGl/iVy7vw
+	 vkNK730Ir8W4L8YtoEynIHYQD8/Glt5GvaR26s+rQB7y6vebZKiifieCcXEpd/BhVu
+	 wM5VBUhVvk+fg==
+Date: Mon, 4 Aug 2025 08:08:38 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org
+Subject: Re: [PATCH 2/7] block: align the bio after building it
+Message-ID: <aJC-5qTTVDNjp0uk@kbusch-mbp>
+References: <20250801234736.1913170-1-kbusch@meta.com>
+ <20250801234736.1913170-3-kbusch@meta.com>
+ <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de>
 
-Some SoCs are just validated with the TX delay enabled. With commit
-ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
-RGMII TX delay"), the network driver will patch the delay setting on the
-fly assuming that the TX delay is fixed. In reality, the TX delay is
-configurable and just skipped in the documentation. There are
-bootloaders, which will disable the TX delay and this will lead to a
-transmit path which doesn't add any delays at all. Fix that by always
-forcing the TX delay to be enabled.
+On Mon, Aug 04, 2025 at 08:54:00AM +0200, Hannes Reinecke wrote:
+> On 8/2/25 01:47, Keith Busch wrote:
+> > +static int bio_align_to_lbs(struct bio *bio, struct iov_iter *iter)
+> > +{
+> > +	struct block_device *bdev = bio->bi_bdev;
+> > +	size_t nbytes;
+> > +
+> > +	if (!bdev)
+> > +		return 0;
+> > +
+> > +	nbytes = bio->bi_iter.bi_size & (bdev_logical_block_size(bdev) - 1);
+> > +	if (!nbytes)
+> > +		return 0;
+> > +
+> > +	bio_revert(bio, nbytes);
+> > +	iov_iter_revert(iter, nbytes);
+> > +	if (!bio->bi_iter.bi_size)
+> > +		return -EFAULT;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   /**
+> >    * bio_iov_iter_get_pages - add user or kernel pages to a bio
+> >    * @bio: bio to add pages to
+> > @@ -1336,6 +1355,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+> >   		ret = __bio_iov_iter_get_pages(bio, iter);
+> >   	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+> > +	ret = bio_align_to_lbs(bio, iter);
+> >   	return bio->bi_vcnt ? 0 : ret;
+> 
+> Wouldn't that cause the error from bio_align_to_lba() to be ignored
+> if bio->bi_vcnt is greater than 0?
 
-Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- drivers/phy/ti/phy-gmii-sel.c | 52 +++++++++++++++++++++++++++++------
- 1 file changed, 44 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
-index ff5d5e29629f..a0c19d00ff3a 100644
---- a/drivers/phy/ti/phy-gmii-sel.c
-+++ b/drivers/phy/ti/phy-gmii-sel.c
-@@ -34,6 +34,7 @@ enum {
- 	PHY_GMII_SEL_PORT_MODE = 0,
- 	PHY_GMII_SEL_RGMII_ID_MODE,
- 	PHY_GMII_SEL_RMII_IO_CLK_EN,
-+	PHY_GMII_SEL_FIXED_TX_DELAY,
- 	PHY_GMII_SEL_LAST,
- };
- 
-@@ -127,6 +128,16 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
- 		goto unsupported;
- 	}
- 
-+	/*
-+	 * Some SoCs only support fixed MAC side TX delays. According to the
-+	 * datasheet, they are always enabled, but that turns out not to be the
-+	 * case and the delay is configurable. But according to the vendor that
-+	 * mode is not validated and might not work. Some bootloaders disable
-+	 * that bit. To work around that enable it again.
-+	 */
-+	if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY))
-+		rgmii_id = 0;
-+
- 	if_phy->phy_if_mode = submode;
- 
- 	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
-@@ -210,25 +221,46 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814 = {
- 
- static const
- struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] = {
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2), },
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x0, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x4, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x8, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0xC, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x10, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x14, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x18, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x1C, 4, 4),
-+	},
- };
- 
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- };
- 
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
- 		       BIT(PHY_INTERFACE_MODE_USXGMII),
-@@ -239,6 +271,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII),
- 	.num_ports = 8,
-@@ -248,6 +282,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j784s4 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
- 		       BIT(PHY_INTERFACE_MODE_USXGMII),
--- 
-2.39.5
-
+That returns an error only if the alignment reduces the size to 0, so
+there would be a bug somewhere if bi_vcnt is not also 0 in that case.
 
