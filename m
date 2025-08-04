@@ -1,173 +1,155 @@
-Return-Path: <linux-kernel+bounces-755240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373F2B1A36E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:36:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDB4B1A368
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8E23BEFEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AFE17B1C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115579F2;
-	Mon,  4 Aug 2025 13:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A072826E16F;
+	Mon,  4 Aug 2025 13:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ppQCFwc2"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JAUh1LIj"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9226058D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF7926058D;
+	Mon,  4 Aug 2025 13:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314438; cv=none; b=GefwKST0cF8sNerdTbud+1ECUemZ+1eUD4nCtKpfroG8VqydLpyORJaAEpZnm3tKk09CJ/9iUWX7KaWFW/g81YCqy0cQAZA7s4YtTwgDdnVO2n1V//bD4WpFEec0NqvHl5L/23AIdc9lta0XyLrZYrWPGGo1E0lHbF31DmfbP9Q=
+	t=1754314446; cv=none; b=mcCsm5hne73ncQEV/yKFSq/spzyN9iT90fBh6B+1cBhRAYxcnNfRfgXCMOhxlBYOWoTb33IfrMwQEqAH/5bdgtTitmP3yDqXHdJvo25CaCJB9SUXpS8YjQOZBqtTzRTvzlgFLuKel9yEGJ+CLRZVsAfU/MJVvB7+1ADaZ0YuVsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314438; c=relaxed/simple;
-	bh=/hIQLH3dJF9uGlrh29QZ9uHswy0UcZ7HlGpLhUVP2nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+EV6/EYCrokfCYwlKI7hor0wdtYs0kykh74WdqZc/kUSUcWEdYiDrtU0VSNRJNLXZA80TaLS1f3hbJEvhooKHT/Q94bZIMZiJgiB9z9xTgx3klz3fHnF1FxG0aEQU+KlzvFc0krd/hIhnqqeXHvCob1LDh/DW9GyFVjDoQeSSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ppQCFwc2; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 4 Aug 2025 15:33:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754314423;
+	s=arc-20240116; t=1754314446; c=relaxed/simple;
+	bh=11wdTRrZtYzeH6eb9PhpkmebUR1B+lmtQaeXm6DqDbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UaJYGn9PJkpmNzTSWOzAklbbVsodSsPRp28WKtbyobF9+bL5kNAF+60RQSzAFNl7gR5sz9k+nda/dPpu60ldKyMLlf4pLbVUalWox+QfFFuRMSZoGYpjjqgyqrzehooul9befIQ/I93SmgQSLYodJWYQ2XaXXnRwMa8ZPCzZsYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JAUh1LIj; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 23EB744278;
+	Mon,  4 Aug 2025 13:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754314440;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p6zUScv7t4BYjICsI+KfZuOQ3Fxl+Scl3BphxUq+iJs=;
-	b=ppQCFwc28Q7d/Vu7yHRY9FEPc7Jvg+s5N8ipa9Qap1miej2gq33B8gf+XbjVCWSyCmiRsl
-	7KCmCBIEfLyyb8goRn4XtMw7tWB9cXYonTFTjzHYsG3IIGe6e1d5nGabc/3x2JALpu/Iok
-	Yl+Z8X7T+spm9HoKXBLyo8OhW9A+eTU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
-Message-ID: <v2p627nliqi55pk3w6pjckj5ddozkbgfcam2qbvdjo2w5b6rqx@si5pxcdmt2yr>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
- <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
- <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
- <5i6a77wbggmjjxfridurbq5mrdjksse236vwucawbi43fjv2ae@umy4fe7six5p>
- <aG92TxxIRdRES5cs@kekkonen.localdomain>
- <f4owcdddwjar6lg5f2urpaynykks4yrttto7h7qfnodmqg22ll@xl45pbhuyhmx>
- <aIqDEgrAoSkozxA3@kekkonen.localdomain>
+	bh=L3F19ni0D0rMQE6sBKRDx0Kq08dUhlD3d42RuDyW7RI=;
+	b=JAUh1LIjf6sGsOeF1M+6HCgaexWuinu/lk6NSlxbE3jGH4S88jLQU9gZfO1w8D7RWs93fj
+	jzkTPbtsGSWQFf+egVqwudIj/F6hANfSBIkTqtPA2GOgPtmgUI0veeF4GKl46le5yeQ5Do
+	9AI4hsZQ32HS/pnkncf9m5AVEUsbCgMDN5GONSwawocMO/mzk6MN9NoZ7nniKjF79jJr2n
+	OJru1HkcpnIeQKmRk5MEfzHpHUhuYJB7vP5sGLTMyY88+gyMibvYYhNjfEf1eQlGc9n/d8
+	C+xRQDPkZS34u4RTd1cvKmmRPIZ/lr+FvXzFH56cE/NT4824/vShpuFXkyWD+A==
+Date: Mon, 4 Aug 2025 15:33:53 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v10 04/15] net: phy: Introduce PHY ports
+ representation
+Message-ID: <20250804153353.1d83f8ab@fedora.home>
+In-Reply-To: <a915e167-1490-4a20-98a8-35b4e5c6c23c@lunn.ch>
+References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+	<20250722121623.609732-5-maxime.chevallier@bootlin.com>
+	<a915e167-1490-4a20-98a8-35b4e5c6c23c@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aIqDEgrAoSkozxA3@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddvgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Jul 30, 2025 at 08:39:46PM +0000, Sakari Ailus wrote:
-> Hi Richard,
-> 
-> On Fri, Jul 11, 2025 at 09:41:52AM +0200, Richard Leitner wrote:
-> > Hi Sakari,
-> > 
-> > On Thu, Jul 10, 2025 at 08:14:07AM +0000, Sakari Ailus wrote:
-> > > Hi Richard,
-> > > 
-> > > On Thu, Jul 10, 2025 at 08:50:24AM +0200, Richard Leitner wrote:
-> > > > Hi Sakari,
-> > > > 
-> > > > thanks for the feedback :)
-> > > > 
-> > > > On Wed, Jul 09, 2025 at 09:12:57PM +0000, Sakari Ailus wrote:
-> > > > > Hi Richard,
-> > > > > 
-> > > > > Thanks for the update.
-> > > > > 
-> > > > > On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
-> > > > > > Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
-> > > > > > feature of the sensor. This implements following modes:
-> > > > > > 
-> > > > > >  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
-> > > > > >  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
-> > > > > 
-> > > > > I really think you should use a different control for this. The sensor can
-> > > > > strobe the flash but it won't control its mode.
-> > > > > 
-> > > > > How about calling it V4L2_FLASH_STROBE_ENABLE?
-> > > > 
-> > > > I agree on that. But tbh V4L2_FLASH_STROBE_ENABLE somehow sounds wrong
-> > > > to me. As the strobe output in the ov9282 case goes high for the strobe
-> > > > duration, what do you think about calling it V4L2_FLASH_STROBE_PULSE?
-> > > 
-> > > That's how the hardware strobe is supposed to work, there's nothing unusual
-> > > in that. How about V4L2_FLASH_HW_STROBE_ENABLE?
-> > 
-> > Ah. Sorry. I believe I completely misunderstood your previous point.
-> > You're not referring to a new menu entry in V4L2_CID_FLASH_LED_MODE,
-> > but rather proposing a completely new boolean control, correct?
-> 
-> Correct.
-> 
-> > 
-> > As this would be separating the V4L2_CID's of "strobe signal source"
-> > (aka sensor) and "strobe signal consumer" (aka flash device/LEDs), that
-> > makes perfect sense to me now! :)
-> > 
-> > What are your thoughts on naming it V4L2_FLASH_HW_STROBE_SIGNAL?
-> 
-> Seems reasonable.
+On Sat, 26 Jul 2025 22:33:33 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Thanks again for your response. I already sent out a v6 with that
-control name. I hope that's fine.
+> > +
+> > +/**
+> > + * phy_caps_medium_get_supported() - Returns linkmodes supported on a given medium
+> > + * @supported: After this call, contains all possible linkmodes on a given medium,
+> > + *	       and with the given number of lanes.  
+> 
+> Maybe nit picking, but maybe append:
+> 
+> , or less.
+> 
+> > +		/* For most cases, min_lanes == lanes, except for 10/100BaseT that work
+> > +		 * on 2 lanes but are compatible with 4 lanes mediums
+> > +		 */
+> > +		if (link_mode_params[i].mediums & BIT(medium) &&
+> > +		    link_mode_params[i].lanes >= lanes &&
+> > +		    link_mode_params[i].min_lanes <= lanes) {  
+> 
+> We should only care about min_lanes here. I don't think the
+> link_mode_params[i].lanes >= lanes is needed.
+> 
+> Maybe you can add a BUILD_BUG_ON() into the macro to ensure
+> min_lanes <= lanes?
+> 
+> > +struct phy_port *phy_of_parse_port(struct device_node *dn)
+> > +{
+> > +	struct fwnode_handle *fwnode = of_fwnode_handle(dn);
+> > +	enum ethtool_link_medium medium;
+> > +	struct phy_port *port;
+> > +	const char *med_str;
+> > +	u32 lanes, mediums = 0;
+> > +	int ret;
+> > +
+> > +	ret = fwnode_property_read_u32(fwnode, "lanes", &lanes);
+> > +	if (ret)
+> > +		lanes = 0;  
+> 
+> The DT binding says that both properties are required. So i think this
+> should be:
+> 
+> 		return ret;
+
+Ah true indeed, let me fix that then :)
 
 > 
-> In order to use the control, the user space would need to know when to use
-> it, i.e. when the latching point would be in order to hit a particular
-> frame. If the strobe can start before the exposure (and presumably it needs
-> to), the latching point is before that point of time. I wonder if pixels
-> (as in the pixel array) would be reasonable unit for this as well.
+> > + * phy_port_get_type() - get the PORT_* attribut for that port.  
 > 
-> Does the sensor datasheet shed any light on this? It might be good to add a
-> control for that as well.
-
-I'm not sure if pixels is a good unit for that. The strobe duration and
-strobe timeout are both defined as µs. Therefore I would prefer to also
-use µs for the strobe shift/offset.
-
-The sensor features a control named "strobe shift" which allows to move the
-point of time when the strobe starts before/after the start of the exposure.
-
-I've named it V4L2_FLASH_HW_STROBE_SIGNAL_SHIFT in my downstream tree.
-What do you think about it?
-
-I have had planned to submit support for the strobe shift/offset control
-as soon as this series got accepted. Mainly to keept the series smaller
-and easier to handle (at least for me). Tbh I still want to stick to that
-approach. Is that fine with you? Or should I include those patches
-in this series?
-
+> attribut_e_
 > 
-> > 
-> > The main reason behind removing the "ENABLE" suffix is that none of
-> > the V4L2_CID_FLASH_* controls currently include "ENABLE" in their
-> > names. Altough, for example, V4L2_CID_FLASH_CHARGE performs a
-> > similar function (en-/disabling the charging of the capacitor).
-> > 
-> > On the other hand, adding "SIGNAL" to the control name, in my opinion,
-> > makes it clearer that it only enables a signal and not some kind of
-> > flash device or LED.
+> > +	 * If the port isn't initialized, the port->mediums and port->lanes
+> > +	 * fields must be set, possibly according to stapping information.  
 > 
-> -- 
-> Kind regards,
+> st_r_apping
 > 
-> Sakari Ailus
+> 	Andrew
 
-Thanks again for reviewing the series!
+Sorry for all the typos, it's a weak excuse but lately my laptop's
+keayboard has been acting up, and it either misses strokes or gets the
+letters stuck in repeat-mode. Russell has similar issues, so I'm still
+unsure if this is a hardware or software thing... I'll install and pass
+spellcheck for the next iteration to avoid that :)
 
-regards;rl
+Maxime
 
