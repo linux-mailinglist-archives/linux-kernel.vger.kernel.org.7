@@ -1,256 +1,995 @@
-Return-Path: <linux-kernel+bounces-755364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80812B1A573
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:05:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAA5B1A570
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A138416A43F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0C018A1EFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1650F218845;
-	Mon,  4 Aug 2025 15:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE952C190;
+	Mon,  4 Aug 2025 15:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SHicY9eG";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SHicY9eG"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010039.outbound.protection.outlook.com [52.101.69.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="IyEFWa0V"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1530E137C2A;
-	Mon,  4 Aug 2025 15:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.39
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319911; cv=fail; b=mHOOTCRCvFA/iD9BMPAxu7JIOelzeyGs4OraB1byob+U83qBxHF+Pz6g0XrPOz7Oxr9Kjo0qBsvIBkic8rZ+TvhKBk8Uop2o2Pr5O43y4JzdJieH4xWbjPrn3IA+Otp5RB4LdKMZNlB2wxJWxarwwVV768BJvwA42ZiZOUks5kQ=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319911; c=relaxed/simple;
-	bh=40/9PnpERQHHUjBiKguh2AbDR3zs+yum+urw0lzc+I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c9xOxSg30EVjG5T+mD7+0ByY3HjPvJGLT2yL6lcQj+90RWMxzoBeOgxBt2X4Jed9NOYR2dTqujD2f2d30/0LjfY9wkRQi7HpZPoMB1cFH5aHrrTz1iDE+DyYmreeUBIcU2o+2k9OK7jjcig9gnqsyaMb2sNu3CK9LiToxiTFaWo=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SHicY9eG; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SHicY9eG; arc=fail smtp.client-ip=52.101.69.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=F+WilQL9R9mTBm8wIiCSfWHPnCYKPmEP03jjFkJ5sAsuZfJQnNvhU9aJ3FxZSvmuWxa6SWs96GSm+xdktVJvo0k8D1QwfmUnCjab6iSn7H8swBiXdjw9e3EYfREDPNerRp5liWGz0qkmauZ2jXPA5F7rDghLSlp0AWuVqZtXFGeX8AKkkOtWD2Ur4aIqqtklsskimaR2uKTSH6EDmRAUSnpz48mf2+6XpbGs8L642sjhygGNAdqqZ/PuqOhmpWoow7vi4lOUa2SuvgliuVPzIksUgSaWWI4H28BnqCwvEUceeJh9kOuU9wdN7TNIuE7snIzlUKS2qWeeqWwc7co4rA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
- b=A2sPI7NA243V3ArnUngTDA5+vmKAKtAK/84Q4JuDi2I0Jpp82cRUZK3V9Cb9sk2brSgxjGfHCPJQNQGj8DJJftsX/9xIQTYTKtOp0TddgEk3ciUCMyrR5OyDW6uFsapDG3PCf2hgBX+gj0PcrhP2E4ivNSGBY7PMLrew/u+Luz0AC4JcqS3PMCgPwOMBH8slHZPeDYqKh6l8RmeHEhIf6jMt9Z4Yfy5wquSG9H9ButNkMrze09OrIYUcRh+1W6cQC5REEbuFcW7zZoDLo9FgUdfU3I7+tpsf2gh3gewF7zJWYc5OPIEEyeKPHx7CMOdxjwww5TSq1EagRJBTqO5WhA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
- b=SHicY9eG4cHJomJlFN4Xx2DFneJ9wyqUcBgPZkGmeXdB+wGgdXziraAoJ78N4ngyjdOibhTMH2ctRNwxtQ41mZ72zNpoA1PEfA11IhdEzmqKeLrOunuY+byFbnj69BHvBy31p3q7Lt/Yg1iPAPkK9U+GrRqalTEbeuvFOeuXNG0=
-Received: from DU2PR04CA0213.eurprd04.prod.outlook.com (2603:10a6:10:2b1::8)
- by AS8PR08MB9314.eurprd08.prod.outlook.com (2603:10a6:20b:5a5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 15:03:41 +0000
-Received: from DB1PEPF00039233.eurprd03.prod.outlook.com
- (2603:10a6:10:2b1:cafe::9f) by DU2PR04CA0213.outlook.office365.com
- (2603:10a6:10:2b1::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Mon,
- 4 Aug 2025 15:03:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB1PEPF00039233.mail.protection.outlook.com (10.167.8.106) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
- via Frontend Transport; Mon, 4 Aug 2025 15:03:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uM+z93E2JKzbO989JJz417QK9oB/BPhuhn+4DWOuU/7VqdCbZ/tU6OfJAgkDLkvcKZ+58w+cXHyVMCxaVCupv3qs5tZVMnGlOuIgBnUM3fOaGOdMskV5dkrrUpEuuZCRAk87Oov/lr1Pl73DdoB/18Ng0w1GR1pOhFUBQnPY80f0SLFyj/i38lJqU2j4nSdIZ1sYkrALZbL/i8bELP8JQNMmJ6W7Zmr9yMPoxn+Au+bCAt1XKsV6JOiah24pWRh+5F+xmjEwkxVaYGDDMSzJI1Hlv3nO33adhToO1Cd50DxhuqeDJZZ0PA/+Ss00duMtaAGB2G6BeMPOLKhFdZY6mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
- b=woo7PdGZx2yskqo8XUhlnSeO9RGXHxB96FxHdFGDUiOZlKzbTsIYrSqRLRCcDJD/x8Vbq5ssxzQnS8HygdEAqjULsUMBQtf/0MW/XC4+Snq6k/ZOC4OhvCOPvsP7cw3kYIROh7KizBfUwX6hJoOMuXW98fzoaFI+c/kRFQ+nJoVhfAdHWH1efllHLxwSpnk7mOEqvOIz/YHEgn2AfjCJLiH//WPoOnbQl+ZHlPf5Tdstf2QatnjbcXspQY/9m07khAGVBwIv4Eu4Hlo5c6OBp7Zma/cg3BTrVX4tvaNXT9umisRhNjIqQzUMvGI+3D9X2BHQyg0ZoslsbN0V4bzfkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
- b=SHicY9eG4cHJomJlFN4Xx2DFneJ9wyqUcBgPZkGmeXdB+wGgdXziraAoJ78N4ngyjdOibhTMH2ctRNwxtQ41mZ72zNpoA1PEfA11IhdEzmqKeLrOunuY+byFbnj69BHvBy31p3q7Lt/Yg1iPAPkK9U+GrRqalTEbeuvFOeuXNG0=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DBBPR08MB6220.eurprd08.prod.outlook.com
- (2603:10a6:10:205::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 15:03:07 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
- 15:03:07 +0000
-Date: Mon, 4 Aug 2025 16:03:03 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH 10/11] KVM: arm64: nv: support SCTLR2_ELx on nv
-Message-ID: <aJDLp+2Tuv7SMxK7@e129823.arm.com>
-References: <20250804121724.3681531-1-yeoreum.yun@arm.com>
- <20250804121724.3681531-11-yeoreum.yun@arm.com>
- <86pldb6xkl.wl-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86pldb6xkl.wl-maz@kernel.org>
-X-ClientProxiedBy: LO4P123CA0557.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:33b::13) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EA21F582E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754319827; cv=none; b=ZIjzbhkU1FfmMrEFizP7J8YLCBmAs1xv5NFiMCIiOXCxAoazE/JZ2XA0htXRx7yg9fjH4SE+tnsiW6fsUVvhQWxFObAgleFC7EIWpdufwL5k4JpmQqhBWJjeK6ypf5I1puocXCG4CyIQkpfoVHRh/3N7oJLVLPt7rFtt8GafNEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754319827; c=relaxed/simple;
+	bh=g6ImpL9J6sVyjotAL8WJeVtktdVqI53GWVa1CBWPY68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hhxUnK/T35ue5dk3xm3tlYW6Y9SvsGX36zy7NUHjZmJiJRSmMcF9QralxVIjjFFdFQmwSU7PPJber4l19rrZTzNVZrhm4Cee4q6cZ7yh+78pUyzXxfqhotQQrQbSaK4848g51kQUE++Fox6Qmd7+UPYCDXU+QEXwHbkKZ6CvEcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=IyEFWa0V; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4fe7dd45935so786173137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1754319823; x=1754924623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ola0euOooFuo5CNGcYOIUHPuNRlajhmIPg4Y0fTCR10=;
+        b=IyEFWa0VrPK5qT2o3vk3P+eOhqTzj4LhuvuFphGaX4CLwZL5gfyEbpkTUNkXyUEO8e
+         UTEVMzWduU4zvDI4MH+nlF4se7HgHl1bboXP9vFgMuvNvtQZfxWQlJ635Lib2syoGrEw
+         KZdjtCPxpn2+rkL1OpWksNXskJywtb6uZaE51/Pum5wjLvm8lC0r7QvNc6sEK+0TiJw0
+         B6QTJQPxFNhQDXyXSKrxWU6WQlDx5/FQvfrwO6NrActUE8kyjO9yNtwRga9uiI0eIgUQ
+         tl2MszArgKvev7jStlvLDEm0LJTM8whY4vMf2VmpQ/OitS8b58QwhvRPHgB3QqppBp1h
+         qGaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754319823; x=1754924623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ola0euOooFuo5CNGcYOIUHPuNRlajhmIPg4Y0fTCR10=;
+        b=B0J4aGge2VgBa/fBtDZC9VSqx9u1dr/sX+aXX9MjOOQCtvyc0eKbvh2xsL3qQN+m9V
+         wqBc24JopDoQXc1U64Jv69XB9c5/d3X7d/d/SA5jVx5EOoLZm8UwYrSerj3/gKbERNQ2
+         s5puepMQ5s89o3IuatUEVXQTmOBFS+I9LEGXMNxVrqH5MLczn5FzNg7t7wPlibHFu2zP
+         duJErQcf/+DeTv3Gt+H9ZY3wcOwxwFsnFfz/MwhQO82PEy5mW5ij7jtwR6DmwduqEajY
+         cfCuf73Z715et8dO1jQPaov9v+rLPBeW5NWwj8VhJRn8NWswPgi7W0f0qRJhP0F7inzU
+         WcBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoqW2dMrZwo9ggXsuXJgo1vraOQq8wbhJJuTBl9fPxsuUqZ35LJA4LQEzv6Sxh5Zdz3cVb6KvsDLzZaaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgQ6+3NKSE6X2j4QymZ88XRn+Dc3ERYxsXZEiXs9ajASrFlG95
+	Wk2TmijGZvDb09CZrkuaJYOWOsCyEO5t91kwOtLGqowjvdzH6lyjrxgEk1qiHBwkrTwc/sAcZYO
+	j921l1ityjx9E5qwo3cSV4NX3hPvD3EXkBpYRlCqTAQ==
+X-Gm-Gg: ASbGncuq7EWNSpNfgsCpPNgydffQkZfM4Uj5ZjXugB/WgvcGG0DtsL1hTQgBDcn6MKk
+	FZSw7rBimFpXxapu3g51XKSFc+W88/Qu8y/YzCPx6+GSt/WGrzW12KLbcxdIgNYUI/gSWGzYu35
+	UsrFvG3d03q5pajCVV4gZDaTel0sgbY794AkTwhxSamGBOtsMYA/XNBFIWbKzBIpKFdJnsHTxKf
+	swWhMY7
+X-Google-Smtp-Source: AGHT+IHQ/dyAeSf+stjcQ20wwc4NZ+oeoAM2Fn2PKyvmstvd1+VY7pJhpuWXDWlaXfAFPZnSYOBFssfIttTsqxOroK0=
+X-Received: by 2002:a05:6122:1d86:b0:535:aea0:7a30 with SMTP id
+ 71dfb90a1353d-5395f1044bbmr4063501e0c.2.1754319822962; Mon, 04 Aug 2025
+ 08:03:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DBBPR08MB6220:EE_|DB1PEPF00039233:EE_|AS8PR08MB9314:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebdc12ba-669e-4a47-c591-08ddd36818e3
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?pHVTFO2kUubWU5YYEfdgJiN71OXOiQ+V4Dq/sKv9d2G0uexboBebdjteBIgQ?=
- =?us-ascii?Q?G0PGiwGtkvqRfRZkvK6+lqdxQ/ih6Om6BTWDD1+YtD1HSfLGVeaFpRHjkGh1?=
- =?us-ascii?Q?gQm25ojDax368nyYWCY8dp/DfHWbGKVGuR2xxMg0iIiOZJJmVyOYaVZVAgzG?=
- =?us-ascii?Q?gkBmNe+EXAtQEZaXa6Tt0wxX5DgaWMUZuPNTfnNA6M2bdJtPwUtFEaW+FueH?=
- =?us-ascii?Q?YHWuBXNxMPRB21B9zu1ZBZu4/SeYMdp0DZyobdSE8gMjcZ/WCRBnyJi9L3pe?=
- =?us-ascii?Q?SQNXCm1y7KhiNuuyrc6KZfgt+q4OLAMh6NYs0cwCq2YauUjPyAoEita+jveN?=
- =?us-ascii?Q?o412PrFvcMF0PnbYm030T6C43dKNbmi1DUtQeQfdaIyMzAl1+xLglMYxaiV5?=
- =?us-ascii?Q?QizzmGdZG4NM7/9/BQwMFGl5qdJqZSQF4+MctdjeH9Jc8L+P3wEHi3tPAyuy?=
- =?us-ascii?Q?iif526/WN8UmJPDBXpdMVtjzCMXPHn5NwuxsMbBqLoHN3A2FcLe+36/r7xP2?=
- =?us-ascii?Q?woLHt48/vGBjHOQ/qZyTKHQFlbs0TSsO5ggvIf2GIrj7+XtZN0eRu0LvemxT?=
- =?us-ascii?Q?Pw+4A3wdgJDARChGXfI9Y3mYe87J1PCYmHvCjmF7SSshJDPi15Kn0yGXsz6t?=
- =?us-ascii?Q?H9EtKZmdVL9wUD7KD3cI6RTA8ffMP5BblOGrKf1O4bZtO0YItgAz8/Y1zj1/?=
- =?us-ascii?Q?fyj8XJVgzZkOtCJWHTUvBfUD+LZ3BzPyIEwzHyATfR2idXCpGbSOZYwgYNO1?=
- =?us-ascii?Q?5KnqaMzKwHgFPhUdt/9J6tTswnJ9GC71EyhnuWn9a9OOTzeO3+rM0s4uHuGJ?=
- =?us-ascii?Q?AdC4OSDq2RFjH2GRrU0uwMSnMNJc9lliBMmmHovR92CvuoLCUqD1f9mEwYpY?=
- =?us-ascii?Q?GqQ7AlYfcBhT2Rkq85oITVNv0uIvr1pg3aqzOoK2XbUnqsqgXv7P3OmG4xPg?=
- =?us-ascii?Q?1J0sJC8nkOD5CQnkd+CoB4hU9s8eprZNxI0jswT87QpzV3bnVmNHUe5i2Ptw?=
- =?us-ascii?Q?Ttf8aW/RIcpVbHu+DDmBlsELTAD/wJYFBtd7jJla8tZG+uwLSyAnsQBPZdfn?=
- =?us-ascii?Q?4pbMBl/Y7u9087QgyFU3mBo045ItlaXzLy7deJTYeIkbrKjH1/2ZgtA5H0hT?=
- =?us-ascii?Q?U8/IOCQZ9EfLT4MZc2+DryG122KIGH0+gknM7aiPoUtMkA1V/SRXMw2qDe+C?=
- =?us-ascii?Q?UBFSB07YSdTRWrna+eHm38w9yRT5jnunvHSpHy6eLOfL0Me+FdBFMVvgZBVg?=
- =?us-ascii?Q?gXqe6xUmo0TRY3SYUlv4VTy9nkhKxOaMEKvbBCULy/ddvusgijtfeXWbffxn?=
- =?us-ascii?Q?f30CdAZuS1Cj+mNA6IWh2q074CN+ejl2udFkKLs+m88IQFp0aQ4dnp3oxroT?=
- =?us-ascii?Q?/RNztxXgyQAbFaZYA4fklDd3Ek+zEaxX/jlB0c2dHHfec7tprQQfOL4PdI3l?=
- =?us-ascii?Q?dHE0JKgNn+s=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6220
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB1PEPF00039233.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	091177b6-e9f2-47c0-3096-08ddd36804ef
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|35042699022|82310400026|14060799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bQolujlGxB8O7t6nx4Ntv9NOUdiMa3PJBKqe/J5f23sHw1RPUuSKtj2vwMrK?=
- =?us-ascii?Q?OC181l2HtoTnC9EJScTM6gV19Q79bhh2XJkUcAWxalpYOFQ1i1sA4T+KmnPN?=
- =?us-ascii?Q?mm1qwvsQFC9VI3q8brDuG7eW5ssJ3nNz6+GBunaOJX0ePpYu6LnRo1Aj3htu?=
- =?us-ascii?Q?Nr3kkLQMYUNTFFPVc4EpeufBmow9YmY7hK/CcW3R0SkTmqdMiL2YYz1rzTqI?=
- =?us-ascii?Q?kU109GIl5gCi7ZHhJjHV0ybXAgO74Orcgm7+3iUCyzthyNy4nPZldEcQw+FA?=
- =?us-ascii?Q?8riCwKBRce6tjwgCe2OvKUykwtXhhD1rEhJ9Z1rhqezqWZe7U1N6pLX36V7f?=
- =?us-ascii?Q?jvGpeKmggVEt2i5RnN0PxV6w4gb0tyY6JPBEPtCsWEEUI6udyH3/6jIXaJy6?=
- =?us-ascii?Q?Oz+OeDRP3cS+cDUNA9CaFrRM5lMCxJjhbaoDHP9dq+s+Im0ZcX8KtyLslaA3?=
- =?us-ascii?Q?8584M5PgiUkTKfgM92SH8mYGUJFP3EUHnBcXeWVP4S4O5pZt/F8oLkqYkdHY?=
- =?us-ascii?Q?2Or1p9rSXW0znjtBiDxkXSF6Wp50ntdIZbnOpoFpI8+g4pfanXKCiQhnP4He?=
- =?us-ascii?Q?Yjv6TXcOqz0jo2Z3za79l/WufAM8FQoUkiVWm6skldb/U6aGJzjhucPZa6C9?=
- =?us-ascii?Q?f/kAOy2pZS2s1FABM8v1FTuN+b4tlF1+9tElEaxIBl85NNvqH1V7CLY5r8qS?=
- =?us-ascii?Q?xsx9MGxbcnylw2av7MgF8Iwmn8jVePyKrbtDZp4V7dPAuVPHHBptgWI0UetP?=
- =?us-ascii?Q?FLzFzRkQa3m8b1i/TXa20HsgnlZyxRIFUrzZC/ex17pFpQp+HDh9aiw4yfBU?=
- =?us-ascii?Q?NkR/c/VL86AuLno8HLikcDbmEObhR4vhCNoo2ig1F74aONP0UGzS+HzefyfD?=
- =?us-ascii?Q?RbjGU+pvh7U8zL0vdUyK68gfmrRa+04uK2v9uSrFRga433M3WJKswGclS7Ns?=
- =?us-ascii?Q?guLAe/biyCoU7Yc4ZQOyWLhhojfvf1MJHRzPr4ilev6YVBuJVU0sar8PhjId?=
- =?us-ascii?Q?dqs44j+2B2ty0DzoFKiC8mY8bVK+3QHNzevv6J96fCa3m6GVYCOyhkcmuvfQ?=
- =?us-ascii?Q?MCNK5mLThTMD79q+Z7Oed47Gmdh1ct9D9tb9oj+ZykrXWWh4cRS/FtkrflOr?=
- =?us-ascii?Q?yKueHa7uFkB/LS9fyxcUTbI2ftEXkMB0lXGW8njt/o4RQoTPyS9ALJhcG4MV?=
- =?us-ascii?Q?uvMvEPz6qxLcDfkljqrx39AT0C/l1dBrGddbNUepUHr+VemjbWOumTMi9NQl?=
- =?us-ascii?Q?WILubona1MJCOfSHUAPro9o0xMsecRKeBwU+iX5uqibt5P/KiVXnaMhI+WjH?=
- =?us-ascii?Q?qBujLl5dEY6REeFiWAdpGKz+IxCu9CRm7jzVmUeEgVGwBtnmaiZEXxIHaXER?=
- =?us-ascii?Q?aEB2MDHXLvWx/D9GP5f/K/hYSi2pEF82or3hwvvmX6f9lEgdv2n4n91JikG+?=
- =?us-ascii?Q?ZKaacQ+K/68IUNxgSAezfBoqfLUoKpcUNY0pbvBEgTTSMeUkLo5xuuOwOYnE?=
- =?us-ascii?Q?2uf4xv2K46Maj8Mnv2esZl518G4SC5Qk7PTf?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(35042699022)(82310400026)(14060799003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 15:03:40.3105
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebdc12ba-669e-4a47-c591-08ddd36818e3
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF00039233.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9314
+References: <20250722173829.984082-1-jesse@rivosinc.com> <20250722173829.984082-5-jesse@rivosinc.com>
+ <6bbecd00-8c47-44fc-aaa0-eb5607d4ca53@rivosinc.com>
+In-Reply-To: <6bbecd00-8c47-44fc-aaa0-eb5607d4ca53@rivosinc.com>
+From: Jesse Taube <jesse@rivosinc.com>
+Date: Mon, 4 Aug 2025 08:03:31 -0700
+X-Gm-Features: Ac12FXznzH7lP1Cns5PCUjwRvN7uiju_jSFRSombGmBHJDBQlpEoRZyyV5oKVLQ
+Message-ID: <CALSpo=Z8gOR1gkxEKr39+mTGDM6pEtNgGz8jNNuWgqARNKOn2g@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/6] riscv: Introduce support for hardware break/watchpoints
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, 
+	Himanshu Chauhan <hchauhan@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Deepak Gupta <debug@rivosinc.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Atish Patra <atishp@rivosinc.com>, 
+	Anup Patel <apatel@ventanamicro.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, WangYuli <wangyuli@uniontech.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Nam Cao <namcao@linutronix.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>, 
+	Joel Granados <joel.granados@kernel.org>, Celeste Liu <coelacanthushex@gmail.com>, 
+	Evan Green <evan@rivosinc.com>, Nylon Chen <nylon.chen@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
-
-> [...]
+On Mon, Aug 4, 2025 at 1:01=E2=80=AFAM Cl=C3=A9ment L=C3=A9ger <cleger@rivo=
+sinc.com> wrote:
 >
-> > diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> > index dc1d26559bfa..a4d3b2d2fd80 100644
-> > --- a/arch/arm64/kvm/nested.c
-> > +++ b/arch/arm64/kvm/nested.c
-> > @@ -1704,6 +1704,19 @@ int kvm_init_nv_sysregs(struct kvm_vcpu *vcpu)
-> >  			 TCR2_EL2_AMEC1 | TCR2_EL2_DisCH0 | TCR2_EL2_DisCH1);
-> >  	set_sysreg_masks(kvm, TCR2_EL2, res0, res1);
+>
+>
+> On 22/07/2025 19:38, Jesse Taube wrote:
+> > From: Himanshu Chauhan <hchauhan@ventanamicro.com>
 > >
-> > +	/*
-> > +	 * SCTLR2_EL2 - until explicit support for each feature, set all as RES0.
-> > +	 */
-> > +	res0 = SCTLR2_EL2_RES0 | SCTLR2_EL2_EMEC;
-> > +	res0 |= SCTLR2_EL2_EASE;
-> > +	res0 |= SCTLR2_EL2_NMEA;
-> > +	res0 |= (SCTLR2_EL2_EnADERR | SCTLR2_EL2_EnANERR);
-> > +	res0 |= SCTLR2_EL2_EnIDCP128;
-> > +	res0 |= (SCTLR2_EL2_CPTA | SCTLR2_EL2_CPTA0 |
-> > +		 SCTLR2_EL2_CPTM | SCTLR2_EL2_CPTM0);
-> > +	res1 = SCTLR2_EL2_RES1;
-> > +	set_sysreg_masks(kvm, SCTLR2_EL2, res0, res1);
+> > RISC-V hardware breakpoint framework is built on top of perf subsystem =
+and uses
+> > SBI debug trigger extension to install/uninstall/update/enable/disable =
+hardware
+> > triggers as specified in Sdtrig ISA extension.
+> >
+> > Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
+> > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> > ---
+> >  arch/riscv/Kconfig                     |   1 +
+> >  arch/riscv/include/asm/hw_breakpoint.h |  60 +++
+> >  arch/riscv/include/asm/kdebug.h        |   3 +-
+> >  arch/riscv/include/asm/sbi.h           |   4 +-
+> >  arch/riscv/kernel/Makefile             |   1 +
+> >  arch/riscv/kernel/hw_breakpoint.c      | 620 +++++++++++++++++++++++++
+> >  arch/riscv/kernel/traps.c              |   6 +
+> >  7 files changed, 693 insertions(+), 2 deletions(-)
+> >  create mode 100644 arch/riscv/include/asm/hw_breakpoint.h
+> >  create mode 100644 arch/riscv/kernel/hw_breakpoint.c
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index bbec87b79309..95d3047cab10 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -163,6 +163,7 @@ config RISCV
+> >       select HAVE_FUNCTION_ERROR_INJECTION
+> >       select HAVE_GCC_PLUGINS
+> >       select HAVE_GENERIC_VDSO if MMU && 64BIT
+> > +     select HAVE_HW_BREAKPOINT if PERF_EVENTS && RISCV_SBI
+> >       select HAVE_IRQ_TIME_ACCOUNTING
+> >       select HAVE_KERNEL_BZIP2 if !XIP_KERNEL && !EFI_ZBOOT
+> >       select HAVE_KERNEL_GZIP if !XIP_KERNEL && !EFI_ZBOOT
+> > diff --git a/arch/riscv/include/asm/hw_breakpoint.h b/arch/riscv/includ=
+e/asm/hw_breakpoint.h
+> > new file mode 100644
+> > index 000000000000..8efa3921c535
+> > --- /dev/null
+> > +++ b/arch/riscv/include/asm/hw_breakpoint.h
+> > @@ -0,0 +1,60 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (C) 2024 Ventana Micro Systems Inc.
+> > + */
+> > +
+> > +#ifndef __RISCV_HW_BREAKPOINT_H
+> > +#define __RISCV_HW_BREAKPOINT_H
+> > +
+> > +struct task_struct;
+> > +
+> > +#ifdef CONFIG_HAVE_HW_BREAKPOINT
+> > +
+> > +#include <uapi/linux/hw_breakpoint.h>
+> > +
+> > +#if __riscv_xlen =3D=3D 64
+> > +#define cpu_to_le cpu_to_le64
+> > +#define le_to_cpu le64_to_cpu
+> > +#elif __riscv_xlen =3D=3D 32
+> > +#define cpu_to_le cpu_to_le32
+> > +#define le_to_cpu le32_to_cpu
+> > +#else
+> > +#error "Unexpected __riscv_xlen"
+> > +#endif
+> > +
+> > +struct arch_hw_breakpoint {
+> > +     unsigned long address;
+> > +     unsigned long len;
+> > +
+> > +     /* Callback info */
+> > +     unsigned long next_addr;
+> > +     bool in_callback;
+> > +
+> > +
+> > +     /* Trigger configuration data */
+> > +     unsigned long tdata1;
+> > +     unsigned long tdata2;
+> > +     unsigned long tdata3;
+> > +};
+> > +
+> > +/* Maximum number of hardware breakpoints supported */
+> > +#define RV_MAX_TRIGGERS 32
+> > +
+> > +struct perf_event_attr;
+> > +struct notifier_block;
+> > +struct perf_event;
+> > +struct pt_regs;
+> > +
+> > +int hw_breakpoint_slots(int type);
+> > +int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+> > +int hw_breakpoint_arch_parse(struct perf_event *bp,
+> > +                          const struct perf_event_attr *attr,
+> > +                          struct arch_hw_breakpoint *hw);
+> > +int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+> > +                                 unsigned long val, void *data);
+> > +int arch_install_hw_breakpoint(struct perf_event *bp);
+> > +void arch_uninstall_hw_breakpoint(struct perf_event *bp);
+> > +void hw_breakpoint_pmu_read(struct perf_event *bp);
+> > +
+> > +#endif /* CONFIG_HAVE_HW_BREAKPOINT */
+> > +#endif /* __RISCV_HW_BREAKPOINT_H */
+> > diff --git a/arch/riscv/include/asm/kdebug.h b/arch/riscv/include/asm/k=
+debug.h
+> > index 85ac00411f6e..53e989781aa1 100644
+> > --- a/arch/riscv/include/asm/kdebug.h
+> > +++ b/arch/riscv/include/asm/kdebug.h
+> > @@ -6,7 +6,8 @@
+> >  enum die_val {
+> >       DIE_UNUSED,
+> >       DIE_TRAP,
+> > -     DIE_OOPS
+> > +     DIE_OOPS,
+> > +     DIE_DEBUG
+> >  };
+> >
+> >  #endif
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
+h
+> > index be2ca8e8a49e..64fa7a82aa45 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -282,7 +282,9 @@ struct sbi_sta_struct {
+> >       u8 pad[47];
+> >  } __packed;
+> >
+> > -#define SBI_SHMEM_DISABLE            -1
+> > +#define SBI_SHMEM_DISABLE    (-1UL)
+> > +#define SBI_SHMEM_LO(pa)     ((unsigned long)lower_32_bits(pa))
+> > +#define SBI_SHMEM_HI(pa)     ((unsigned long)upper_32_bits(pa))
+> >
+> >  enum sbi_ext_nacl_fid {
+> >       SBI_EXT_NACL_PROBE_FEATURE =3D 0x0,
+> > diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> > index 4f719b09e5ad..3e72505734bd 100644
+> > --- a/arch/riscv/kernel/Makefile
+> > +++ b/arch/riscv/kernel/Makefile
+> > @@ -99,6 +99,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)        +=3D mcount-dyn.o
+> >
+> >  obj-$(CONFIG_PERF_EVENTS)    +=3D perf_callchain.o
+> >  obj-$(CONFIG_HAVE_PERF_REGS) +=3D perf_regs.o
+> > +obj-$(CONFIG_HAVE_HW_BREAKPOINT)     +=3D hw_breakpoint.o
+> >  obj-$(CONFIG_RISCV_SBI)              +=3D sbi.o sbi_ecall.o
+> >  ifeq ($(CONFIG_RISCV_SBI), y)
+> >  obj-$(CONFIG_SMP)            +=3D sbi-ipi.o
+> > diff --git a/arch/riscv/kernel/hw_breakpoint.c b/arch/riscv/kernel/hw_b=
+reakpoint.c
+> > new file mode 100644
+> > index 000000000000..9e3a3b82d300
+> > --- /dev/null
+> > +++ b/arch/riscv/kernel/hw_breakpoint.c
+> > @@ -0,0 +1,620 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2024 Ventana Micro Systems Inc.
+> > + */
+> > +
+> > +#include <linux/hw_breakpoint.h>
+> > +#include <linux/perf_event.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/percpu.h>
+> > +#include <linux/kdebug.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/cpu.h>
+> > +#include <linux/cpuhotplug.h>
+> > +
+> > +#include <asm/insn.h>
+> > +#include <asm/sbi.h>
+> > +
+> > +#define DBTR_TDATA1_TYPE_SHIFT               (__riscv_xlen - 4)
+> > +#define DBTR_TDATA1_DMODE            BIT_UL(__riscv_xlen - 5)
+> > +
+> > +#define DBTR_TDATA1_TYPE_MCONTROL    (2UL << DBTR_TDATA1_TYPE_SHIFT)
+> > +#define DBTR_TDATA1_TYPE_MCONTROL6   (6UL << DBTR_TDATA1_TYPE_SHIFT)
+> > +
+> > +#define DBTR_TDATA1_MCONTROL6_LOAD           BIT(0)
+> > +#define DBTR_TDATA1_MCONTROL6_STORE          BIT(1)
+> > +#define DBTR_TDATA1_MCONTROL6_EXECUTE                BIT(2)
+> > +#define DBTR_TDATA1_MCONTROL6_U                      BIT(3)
+> > +#define DBTR_TDATA1_MCONTROL6_S                      BIT(4)
+> > +#define DBTR_TDATA1_MCONTROL6_M                      BIT(6)
+> > +#define DBTR_TDATA1_MCONTROL6_SIZE_FIELD     GENMASK(18, 16)
+> > +#define DBTR_TDATA1_MCONTROL6_SELECT         BIT(21)
+> > +#define DBTR_TDATA1_MCONTROL6_VU             BIT(23)
+> > +#define DBTR_TDATA1_MCONTROL6_VS             BIT(24)
+> > +
+> > +#define DBTR_TDATA1_MCONTROL6_SIZE_8BIT              1
+> > +#define DBTR_TDATA1_MCONTROL6_SIZE_16BIT     2
+> > +#define DBTR_TDATA1_MCONTROL6_SIZE_32BIT     3
+> > +#define DBTR_TDATA1_MCONTROL6_SIZE_64BIT     5
+> > +
+> > +#define DBTR_TDATA1_MCONTROL_LOAD            BIT(0)
+> > +#define DBTR_TDATA1_MCONTROL_STORE           BIT(1)
+> > +#define DBTR_TDATA1_MCONTROL_EXECUTE         BIT(2)
+> > +#define DBTR_TDATA1_MCONTROL_U                       BIT(3)
+> > +#define DBTR_TDATA1_MCONTROL_S                       BIT(4)
+> > +#define DBTR_TDATA1_MCONTROL_M                       BIT(6)
+> > +#define DBTR_TDATA1_MCONTROL_SIZELO_FIELD    GENMASK(17, 16)
+> > +#define DBTR_TDATA1_MCONTROL_SELECT          BIT(19)
+> > +#define DBTR_TDATA1_MCONTROL_SIZEHI_FIELD    GENMASK(22, 21)
+> > +
+> > +#define DBTR_TDATA1_MCONTROL_SIZELO_8BIT     1
+> > +#define DBTR_TDATA1_MCONTROL_SIZELO_16BIT    2
+> > +#define DBTR_TDATA1_MCONTROL_SIZELO_32BIT    3
+> > +/* value of 5 split across HI and LO */
+> > +#define DBTR_TDATA1_MCONTROL_SIZELO_64BIT    1
+> > +#define DBTR_TDATA1_MCONTROL_SIZEHI_64BIT    1
+> > +
+> > +/* Registered per-cpu bp/wp */
+> > +static DEFINE_PER_CPU(struct perf_event *, pcpu_hw_bp_events[RV_MAX_TR=
+IGGERS]);
+> > +static DEFINE_PER_CPU(unsigned long, ecall_lock_flags);
+> > +static DEFINE_PER_CPU(raw_spinlock_t, ecall_lock);
+> > +
+> > +/* Per-cpu shared memory between S and M mode */
+> > +static DEFINE_PER_CPU(union sbi_dbtr_shmem_entry, sbi_dbtr_shmem);
+> > +
+> > +/* number of debug triggers on this cpu . */
+> > +static int dbtr_total_num __ro_after_init;
+> > +static unsigned long dbtr_type __ro_after_init;
+> > +static unsigned long dbtr_init __ro_after_init;
+> > +
+> > +static int arch_smp_setup_sbi_shmem(unsigned int cpu)
+> > +{
+> > +     union sbi_dbtr_shmem_entry *dbtr_shmem;
+> > +     unsigned long shmem_pa;
+> > +     struct sbiret ret;
+> > +     int rc;
+> > +
+> > +     dbtr_shmem =3D per_cpu_ptr(&sbi_dbtr_shmem, cpu);
+> > +     if (!dbtr_shmem) {
+> > +             pr_err("Invalid per-cpu shared memory for debug triggers\=
+n");
+> > +             return -ENODEV;
+> > +     }
+> > +
+> > +     shmem_pa =3D virt_to_phys(dbtr_shmem);
+> > +
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_SETUP_SHMEM,
+> > +                     SBI_SHMEM_LO(shmem_pa), SBI_SHMEM_HI(shmem_pa), 0=
+, 0, 0, 0);
+> > +
+> > +     if (ret.error) {
+> > +             switch (ret.error) {
+> > +             case SBI_ERR_DENIED:
+> > +                     pr_warn("%s: Access denied for shared memory at %=
+lx\n",
+> > +                             __func__, shmem_pa);
+> > +                     rc =3D -EPERM;
+> > +                     break;
+> > +
+> > +             case SBI_ERR_INVALID_PARAM:
+> > +             case SBI_ERR_INVALID_ADDRESS:
+> > +                     pr_warn("%s: Invalid address parameter (%ld)\n",
+> > +                             __func__, ret.error);
+> > +                     rc =3D -EINVAL;
+> > +                     break;
+> > +
+> > +             case SBI_ERR_ALREADY_AVAILABLE:
+> > +                     pr_warn("%s: Shared memory is already set\n",
+> > +                             __func__);
+> > +                     rc =3D -EADDRINUSE;
+> > +                     break;
+> > +
+> > +             case SBI_ERR_FAILURE:
+> > +                     pr_err("%s: Internal sdtrig state error\n",
+> > +                            __func__);
+> > +                     rc =3D -ENXIO;
+> > +                     break;
+> > +
+> > +             default:
+> > +                     pr_warn("%s: Unknown error %lu\n", __func__, ret.=
+error);
+> > +                     rc =3D -ENXIO;
+> > +                     break;
+> > +             }
+> > +     }
 >
-> This patch is obsolete, but I'd like to point out that this is not the
-> way we describe these things. Each bit of the register needs to be
-> tracked against the feature it is part of, and not blindly added to
-> the RES0 set. See
+> Hi Jesse,
 >
-> https://lore.kernel.org/all/20250708172532.1699409-15-oliver.upton@linux.dev/
->
-> for the equivalent change.
->
-> You should *NEVER* describe a functional bit as RESx without
-> considering whether the feature is exposed to the guest, irrespective
-> of what the kernel supports.
+> Is there a reason not to use sbi_err_map_linux_errno() ?
 
-Thanks to let me know.
-I'll keep in mind :)
+No, I kept this from Himanshu Chauhan's original RFC.
+I changed it to:
+if (ret.error) {
+        pr_warn("%s: failed to setup shared memory. error: %ld\n",
+__func__, ret.error);
+        return sbi_err_map_linux_errno(ret.error);
+}
 
---
-Sincerely,
-Yeoreum Yun
+>
+> > +
+> > +     pr_debug("CPU %d: HW Breakpoint shared memory registered.\n", cpu=
+);
+> > +
+> > +     return rc;
+> > +}
+> > +
+> > +static int arch_smp_teardown_sbi_shmem(unsigned int cpu)
+> > +{
+> > +     struct sbiret ret;
+> > +
+> > +     /* Disable shared memory */
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_SETUP_SHMEM,
+> > +                     SBI_SHMEM_DISABLE, SBI_SHMEM_DISABLE, 0, 0, 0, 0)=
+;
+> > +
+> > +     if (ret.error) {
+> > +             switch (ret.error) {
+> > +             case SBI_ERR_DENIED:
+> > +                     pr_err("%s: Access denied for shared memory.\n",
+> > +                            __func__);
+> > +                     break;
+> > +
+> > +             case SBI_ERR_INVALID_PARAM:
+> > +             case SBI_ERR_INVALID_ADDRESS:
+> > +                     pr_err("%s: Invalid address parameter (%lu)\n",
+> > +                            __func__, ret.error);
+> > +                     break;
+> > +
+> > +             case SBI_ERR_ALREADY_AVAILABLE:
+> > +                     pr_err("%s: Shared memory is already set\n",
+> > +                            __func__);
+> > +                     break;
+> > +             case SBI_ERR_FAILURE:
+> > +                     pr_err("%s: Internal sdtrig state error\n",
+> > +                            __func__);
+> > +                     break;
+> > +             default:
+> > +                     pr_err("%s: Unknown error %lu\n", __func__, ret.e=
+rror);
+> > +                     break;
+> > +             }
+> > +     }
+>
+> Ditto
+>
+> > +
+> > +     pr_debug("CPU %d: HW Breakpoint shared memory disabled.\n", cpu);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void init_sbi_dbtr(void)
+> > +{
+> > +     struct sbiret ret;
+> > +
+> > +     /*
+> > +      * Called by hw_breakpoint_slots and arch_hw_breakpoint_init.
+> > +      * Only proceed if this is the first CPU to reach this code.
+> > +      */
+> > +     if (test_and_set_bit(0, &dbtr_init))
+> > +             return;
+> > +
+> > +     if (sbi_probe_extension(SBI_EXT_DBTR) <=3D 0) {
+> > +             pr_debug("%s: SBI_EXT_DBTR is not supported\n", __func__)=
+;
+> > +             dbtr_total_num =3D 0;
+> > +             return;
+> > +     }
+> > +
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_NUM_TRIGGERS,
+> > +                     DBTR_TDATA1_TYPE_MCONTROL6, 0, 0, 0, 0, 0);
+> > +     if (ret.error) {
+> > +             pr_warn("%s: failed to detect mcontrol6 triggers. error: =
+%ld.\n",
+> > +                     __func__, ret.error);
+> > +     } else if (!ret.value) {
+> > +             pr_warn("%s: No mcontrol6 triggers available.\n", __func_=
+_);
+> > +     } else {
+> > +             dbtr_total_num =3D ret.value;
+> > +             dbtr_type =3D DBTR_TDATA1_TYPE_MCONTROL6;
+> > +             return;
+> > +     }
+> > +
+> > +     /* fallback to legacy mcontrol triggers if mcontrol6 is not avail=
+able */
+>
+> Nit: Since all other comments starts with a capital letter, I'd suggest
+> using a capital F (Fallback).
+>
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_NUM_TRIGGERS,
+> > +                     DBTR_TDATA1_TYPE_MCONTROL, 0, 0, 0, 0, 0);
+> > +     if (ret.error) {
+> > +             pr_warn("%s: failed to detect mcontrol triggers. error: %=
+ld.\n",
+> > +                     __func__, ret.error);
+> > +     } else if (!ret.value) {
+> > +             pr_err("%s: No mcontrol triggers available.\n", __func__)=
+;
+> > +             dbtr_total_num =3D 0;
+> > +     } else {
+> > +             dbtr_total_num =3D ret.value;
+> > +             dbtr_type =3D DBTR_TDATA1_TYPE_MCONTROL;
+> > +     }
+> > +}
+> > +
+> > +int hw_breakpoint_slots(int type)
+> > +{
+> > +     /*
+> > +      * We can be called early, so don't rely on
+> > +      * static variables being initialised.
+> > +      */
+> > +     init_sbi_dbtr();
+> > +
+> > +     return dbtr_total_num;
+> > +}
+> > +
+> > +int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+> > +{
+> > +     unsigned int len;
+> > +     unsigned long va;
+> > +
+> > +     va =3D hw->address;
+> > +     len =3D hw->len;
+> > +
+> > +     return (va >=3D TASK_SIZE) && ((va + len - 1) >=3D TASK_SIZE);
+> > +}
+> > +
+> > +static int rv_init_mcontrol_trigger(const struct perf_event_attr *attr=
+,
+> > +                                 struct arch_hw_breakpoint *hw)
+> > +{
+> > +     unsigned long tdata1 =3D DBTR_TDATA1_TYPE_MCONTROL;
+> > +
+> > +     switch (attr->bp_type) {
+> > +     case HW_BREAKPOINT_X:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL_EXECUTE;
+> > +             break;
+> > +     case HW_BREAKPOINT_R:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL_LOAD;
+> > +             break;
+> > +     case HW_BREAKPOINT_W:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL_STORE;
+> > +             break;
+> > +     case HW_BREAKPOINT_RW:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL_STORE | DBTR_TDATA1_MCON=
+TROL_LOAD;
+> > +             break;
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     switch (attr->bp_len) {
+> > +     case HW_BREAKPOINT_LEN_1:
+> > +             hw->len =3D 1;
+> You can probably add a define for that to avoid
+>
+> #define TDATA1(lo, hi) \
+>         FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD, \
+>                    DBTR_TDATA1_MCONTROL_SIZELO_64BIT) | \
+>         FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZEHI_FIELD, \
+>                    DBTR_TDATA1_MCONTROL_SIZEHI_64BIT);
+
+Good idea! I changed the name to TDATA1_MCTRL_SZ and also added
+TDATA1_MCTRL6_SZ
+
+>
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL_SIZELO_8BIT);
+>
+>                 tdata1 |=3D TDATA1(DBTR_TDATA1_MCONTROL_SIZELO_8BIT, 0);
+>
+> > +             break;
+> > +     case HW_BREAKPOINT_LEN_2:
+> > +             hw->len =3D 2;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL_SIZELO_16BIT);
+>
+>                 tdata1 |=3D TDATA1(DBTR_TDATA1_MCONTROL_SIZELO_16BIT, 0);
+>
+> > +             break;
+> > +     case HW_BREAKPOINT_LEN_4:
+> > +             hw->len =3D 4;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL_SIZELO_32BIT);
+>
+>                 tdata1 |=3D TDATA1(DBTR_TDATA1_MCONTROL_SIZELO_32BIT, 0);
+>
+> > +             break;
+> > +#if __riscv_xlen >=3D 64
+> > +     case HW_BREAKPOINT_LEN_8:
+> > +             hw->len =3D 8;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL_SIZELO_64BIT) |
+> > +                       FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZEHI_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL_SIZEHI_64BIT);
+>
+>
+>                 tdata1 |=3D TDATA1(DBTR_TDATA1_MCONTROL_SIZELO_64BIT,
+> DBTR_TDATA1_MCONTROL_SIZEHI_64BIT);
+>
+> > +             break;
+> > +#endif
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     tdata1 |=3D DBTR_TDATA1_MCONTROL_U;
+> > +
+> > +     hw->tdata1 =3D tdata1;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int rv_init_mcontrol6_trigger(const struct perf_event_attr *att=
+r,
+> > +                                  struct arch_hw_breakpoint *hw)
+> > +{
+> > +     unsigned long tdata1 =3D DBTR_TDATA1_TYPE_MCONTROL;
+> > +
+> > +     switch (attr->bp_type) {
+> > +     case HW_BREAKPOINT_X:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL6_EXECUTE;
+> > +             break;
+> > +     case HW_BREAKPOINT_R:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL6_LOAD;
+> > +             break;
+> > +     case HW_BREAKPOINT_W:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL6_STORE;
+> > +             break;
+> > +     case HW_BREAKPOINT_RW:
+> > +             tdata1 |=3D DBTR_TDATA1_MCONTROL6_STORE | DBTR_TDATA1_MCO=
+NTROL6_LOAD;
+> > +             break;
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     switch (attr->bp_len) {
+> > +     case HW_BREAKPOINT_LEN_1:
+> > +             hw->len =3D 1;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL6_SIZE_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL6_SIZE_8BIT);
+> > +             break;
+> > +     case HW_BREAKPOINT_LEN_2:
+> > +             hw->len =3D 2;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL6_SIZE_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL6_SIZE_16BIT);
+> > +             break;
+> > +     case HW_BREAKPOINT_LEN_4:
+> > +             hw->len =3D 4;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL6_SIZE_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL6_SIZE_32BIT);
+> > +             break;
+> > +     case HW_BREAKPOINT_LEN_8:
+> > +             hw->len =3D 8;
+> > +             tdata1 |=3D FIELD_PREP(DBTR_TDATA1_MCONTROL6_SIZE_FIELD,
+> > +                                  DBTR_TDATA1_MCONTROL6_SIZE_64BIT);
+> > +             break;
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     tdata1 |=3D DBTR_TDATA1_MCONTROL6_U;
+> > +
+> > +     hw->tdata1 =3D tdata1;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int hw_breakpoint_arch_parse(struct perf_event *bp,
+> > +                          const struct perf_event_attr *attr,
+> > +                          struct arch_hw_breakpoint *hw)
+> > +{
+> > +     int ret;
+> > +
+> > +     /* Breakpoint address */
+> > +     hw->address =3D attr->bp_addr;
+> > +     hw->tdata2 =3D attr->bp_addr;
+> > +     hw->tdata3 =3D 0x0;
+> > +     hw->next_addr =3D 0x0;
+> > +     hw->in_callback =3D false;
+> > +
+> > +     switch (dbtr_type) {
+> > +     case DBTR_TDATA1_TYPE_MCONTROL:
+> > +             ret =3D rv_init_mcontrol_trigger(attr, hw);
+> > +             break;
+> > +     case DBTR_TDATA1_TYPE_MCONTROL6:
+> > +             ret =3D rv_init_mcontrol6_trigger(attr, hw);
+> > +             break;
+> > +     default:
+> > +             pr_warn("Unsupported trigger type %lu.\n", dbtr_type >> D=
+BTR_TDATA1_TYPE_SHIFT);
+> > +             ret =3D -EOPNOTSUPP;
+> > +             break;
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +/*
+> > + * Set breakpoint to next insruction after breakpoint.
+>
+> Typo: instruction
+>
+> > + * Returns 0 if success
+> > + * Returns < 0 on error
+> > + */
+> > +static int setup_singlestep(struct perf_event *event, struct pt_regs *=
+regs)
+> > +{
+> > +     struct arch_hw_breakpoint *bp =3D counter_arch_bp(event);
+> > +     struct arch_hw_breakpoint old_hw_bp;
+> > +     struct perf_event_attr bp_insn;
+> > +     unsigned long next_addr, insn;
+> > +     int ret;
+> > +
+> > +     /* Remove breakpoint even if return error as not to loop */
+> > +     arch_uninstall_hw_breakpoint(event);
+> > +
+> > +     ret =3D get_insn(regs, regs->epc, &insn);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     next_addr =3D get_step_address(regs, insn);
+> > +
+> > +     ret =3D get_insn(regs, next_addr, &insn);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     bp_insn.bp_type =3D HW_BREAKPOINT_X;
+> > +     bp_insn.bp_addr =3D next_addr;
+> > +     /* Get the size of the intruction */
+> > +     bp_insn.bp_len =3D GET_INSN_LENGTH(insn);
+> > +
+> > +     ret =3D hw_breakpoint_arch_parse(NULL, &bp_insn, bp);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D arch_install_hw_breakpoint(event);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     bp->in_callback =3D true;
+> > +     bp->next_addr =3D next_addr;
+> > +     return 0;
+> > +}
+> > +
+> > +/*
+> > + * HW Breakpoint/watchpoint handler
+> > + */
+> > +static int hw_breakpoint_handler(struct pt_regs *regs)
+> > +{
+> > +     struct perf_event *event;
+> > +     struct arch_hw_breakpoint *bp;
+> > +     int ret, i;
+> > +
+> > +     for (i =3D 0; i < dbtr_total_num; i++) {
+> > +             event =3D this_cpu_read(pcpu_hw_bp_events[i]);
+> > +             if (!event)
+> > +                     continue;
+> > +
+> > +             bp =3D counter_arch_bp(event);
+> > +             if (bp->in_callback) {
+> > +                     /* Reset changed breakpoint data */
+> > +                     bp->in_callback =3D false;
+> > +                     if (regs->epc =3D=3D bp->next_addr) {
+> > +                             arch_uninstall_hw_breakpoint(event);
+> > +                             /* Restore original breakpoint */
+> > +                             if (hw_breakpoint_arch_parse(NULL, &event=
+->attr, bp))
+> > +                                     return NOTIFY_DONE;
+> > +                             if (arch_install_hw_breakpoint(event))
+> > +                                     return NOTIFY_DONE;
+> > +                             return NOTIFY_STOP;
+> > +                     }
+> > +
+> > +                     pr_err("%s: in_callback was set, but epc(%lx) was=
+ not next "
+> > +                              "address(%lx).\n", __func__, regs->epc, =
+bp->next_addr);
+> > +                     bp->next_addr =3D 0x0;
+> > +                     return NOTIFY_DONE;
+> > +             }
+> > +
+> > +             switch (event->attr.bp_type) {
+> > +             /* Breakpoint */
+> > +             case HW_BREAKPOINT_X:
+> > +                     if (event->attr.bp_addr =3D=3D regs->epc) {
+> > +                             ret =3D setup_singlestep(event, regs);
+> > +                             if (ret < 0) {
+> > +                                     pr_err("%s: setup_singlestep fail=
+ed %d.\n", __func__, ret);
+> > +                                     return NOTIFY_DONE;
+> > +                             }
+> > +
+> > +                             perf_bp_event(event, regs);
+> > +                             return NOTIFY_STOP;
+> > +                     }
+> > +                     break;
+> > +
+> > +             /* Watchpoint */
+> > +             case HW_BREAKPOINT_W:
+> > +             case HW_BREAKPOINT_R:
+> > +             case HW_BREAKPOINT_RW:
+> > +                     if (event->attr.bp_addr =3D=3D regs->badaddr) {
+> > +                             ret =3D setup_singlestep(event, regs);
+> > +                             if (ret < 0) {
+> > +                                     pr_err("%s: setup_singlestep fail=
+ed %d.\n", __func__, ret);
+> > +                                     return NOTIFY_DONE;
+> > +                             }
+> > +
+> > +                             perf_bp_event(event, regs);
+> > +                             return NOTIFY_STOP;
+> > +                     }
+> > +                     break;
+> > +
+> > +             default:
+> > +                     pr_warn("%s: Unknown type: %u\n", __func__, event=
+->attr.bp_type);
+> > +                     break;
+> > +             }
+> > +     }
+> > +
+> > +     return NOTIFY_DONE;
+> > +}
+> > +
+> > +int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+> > +                                 unsigned long val, void *data)
+> > +{
+> > +     struct die_args *args =3D data;
+> > +
+> > +     if (val !=3D DIE_DEBUG)
+> > +             return NOTIFY_DONE;
+> > +
+> > +     return hw_breakpoint_handler(args->regs);
+> > +}
+> > +
+> > +/* atomic: counter->ctx->lock is held */
+> > +int arch_install_hw_breakpoint(struct perf_event *event)
+> > +{
+> > +     struct arch_hw_breakpoint *bp =3D counter_arch_bp(event);
+> > +     union sbi_dbtr_shmem_entry *shmem =3D this_cpu_ptr(&sbi_dbtr_shme=
+m);
+> > +     struct sbi_dbtr_data_msg *xmit;
+> > +     struct sbi_dbtr_id_msg *recv;
+> > +     struct perf_event **slot;
+> > +     unsigned long idx;
+> > +     struct sbiret ret;
+> > +     int err =3D 0;
+> > +
+> > +     raw_spin_lock_irqsave(this_cpu_ptr(&ecall_lock),
+> > +                           *this_cpu_ptr(&ecall_lock_flags));
+> > +
+> > +     xmit =3D &shmem->data;
+> > +     recv =3D &shmem->id;
+> > +     xmit->tdata1 =3D cpu_to_le(bp->tdata1);
+> > +     xmit->tdata2 =3D cpu_to_le(bp->tdata2);
+> > +     xmit->tdata3 =3D cpu_to_le(bp->tdata3);
+> > +
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIG_INSTALL,
+> > +                     1, 0, 0, 0, 0, 0);
+> > +
+> > +     if (ret.error) {
+> > +             pr_warn("%s: failed to install trigger. error: %ld\n", __=
+func__, ret.error);
+> > +             err =3D sbi_err_map_linux_errno(ret.error);
+> > +             goto done;
+> > +     }
+> > +
+> > +     idx =3D le_to_cpu(recv->idx);
+> > +     if (idx >=3D dbtr_total_num) {
+> > +             pr_warn("%s: invalid trigger index %lu\n", __func__, idx)=
+;
+> > +             err =3D -EINVAL;
+> > +             goto done;
+> > +     }
+> > +
+> > +     slot =3D this_cpu_ptr(&pcpu_hw_bp_events[idx]);
+> > +     if (*slot) {
+> > +             pr_warn("%s: slot %lu is in use\n", __func__, idx);
+> > +             err =3D -EBUSY;
+> > +             goto done;
+> > +     }
+> > +
+> > +     pr_debug("Trigger 0x%lx installed at index 0x%lx\n", bp->tdata2, =
+idx);
+> > +
+> > +     /* Save the event - to be looked up in handler */
+> > +     *slot =3D event;
+> > +
+> > +done:
+> > +     raw_spin_unlock_irqrestore(this_cpu_ptr(&ecall_lock),
+> > +                                *this_cpu_ptr(&ecall_lock_flags));
+> > +     return err;
+> > +}
+> > +
+> > +/* atomic: counter->ctx->lock is held */
+> > +void arch_uninstall_hw_breakpoint(struct perf_event *event)
+> > +{
+> > +     struct sbiret ret;
+> > +     int i;
+> > +
+> > +     for (i =3D 0; i < dbtr_total_num; i++) {
+> > +             struct perf_event **slot =3D this_cpu_ptr(&pcpu_hw_bp_eve=
+nts[i]);
+> > +
+> > +             if (*slot =3D=3D event) {
+> > +                     *slot =3D NULL;
+> > +                     break;
+> > +             }
+> > +     }
+> > +
+> > +
+> > +     if (i =3D=3D dbtr_total_num) {
+> > +             pr_warn("%s: Breakpoint not installed.\n", __func__);
+> > +             return;
+> > +     }
+> > +
+> > +     ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIG_UNINSTALL,
+> > +                     i, 1, 0, 0, 0, 0);
+> > +     if (ret.error)
+> > +             pr_warn("%s: Failed to uninstall trigger %d. error: %ld\n=
+", __func__, i, ret.error);
+> > +}
+> > +
+> > +void flush_ptrace_hw_breakpoint(struct task_struct *tsk) { }
+>
+> Is there nothing to do to remove the registered breakpoints ? All other
+> architecture seems to implement it.
+
+As you noticed in the next patch I did add it. This function is only
+necessary if adding ptrace support.
+
+Thanks,
+Jesse Taube
+
+>
+> > +
+> > +void hw_breakpoint_pmu_read(struct perf_event *bp) { }
+> > +
+> > +static int __init arch_hw_breakpoint_init(void)
+> > +{
+> > +     unsigned int cpu;
+> > +     int rc =3D 0;
+> > +
+> > +     for_each_possible_cpu(cpu)
+> > +             raw_spin_lock_init(&per_cpu(ecall_lock, cpu));
+> > +
+> > +     init_sbi_dbtr();
+> > +
+> > +     if (dbtr_total_num) {
+> > +             pr_debug("%s: total number of type %lu triggers: %u\n",
+> > +                     __func__, dbtr_type >> DBTR_TDATA1_TYPE_SHIFT, db=
+tr_total_num);
+> > +     } else {
+> > +             pr_debug("%s: No hardware triggers available\n", __func__=
+);
+> > +             return rc;
+> > +     }
+> > +
+> > +     /* Hotplug handler to register/unregister shared memory with SBI =
+*/
+> > +     rc =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> > +                            "riscv/hw_breakpoint:prepare",
+> > +                            arch_smp_setup_sbi_shmem,
+> > +                            arch_smp_teardown_sbi_shmem);
+> > +
+> > +     if (rc < 0)
+> > +             pr_warn("%s: Failed to setup CPU hotplug state\n", __func=
+__);
+> > +
+> > +     return rc;
+> > +}
+> > +arch_initcall(arch_hw_breakpoint_init);
+> > diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> > index 938a8b841f94..2ac471ec79a8 100644
+> > --- a/arch/riscv/kernel/traps.c
+> > +++ b/arch/riscv/kernel/traps.c
+> > @@ -289,6 +289,12 @@ void handle_break(struct pt_regs *regs)
+> >       if (probe_breakpoint_handler(regs))
+> >               return;
+> >
+> > +#ifdef CONFIG_HAVE_HW_BREAKPOINT
+> > +     if (notify_die(DIE_DEBUG, "EBREAK", regs, 0, regs->cause, SIGTRAP=
+)
+> > +         =3D=3D NOTIFY_STOP)
+> > +             return;
+> > +#endif
+> > +
+> >       current->thread.bad_cause =3D regs->cause;
+> >
+> >       if (user_mode(regs))
+>
 
