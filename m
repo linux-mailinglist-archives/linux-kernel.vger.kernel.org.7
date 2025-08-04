@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-755578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614B4B1A8AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:32:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36FCB1A8AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8ED18016F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:32:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D3467AFB08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB55226CF6;
-	Mon,  4 Aug 2025 17:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668528B4FC;
+	Mon,  4 Aug 2025 17:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uP56rsh4"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hXSrFKbr"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D8F224B1E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FF8226D1B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328758; cv=none; b=iNZ3F84yG2Xedyol6brsaMgPgc0XyjjkGBH9JzWLHIyedYuqit0AG2xaMLYd9nkLMy8D1/UjmtvOPnyOWvQnoVPiUUSuc+owgcNeCVwn1gwPJ2llLkcslcVUG4X84NxYdupSZ2Nk1p/LoEl3cH0+X5plBF9zUomLmmh70f+wBQ8=
+	t=1754328761; cv=none; b=ZHdrqs6vGnPhK3dzLmwNnV38RnwFCYu9tAj3hGTrnS74B6ippcyV3xfZDLhUHbTky7nzcbQTAhd6yZo0rXpcVvcvI67ceNMBGfGNs6G+I60/WjRfJo/xVuSl2GFmRCP+IxAT/VJuoTj6AUmOftHK0Xy/GR0QB2lqy+KYm8pldNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328758; c=relaxed/simple;
-	bh=CR9Dt1wH26vHE1YX5/CJIpyp8jDX/bTop8QDdnBP+8M=;
+	s=arc-20240116; t=1754328761; c=relaxed/simple;
+	bh=OAEQFqv3EswdYaHhtd7CEc9/2OEXW++O41GigbiMrXs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kIL0f0B8yvMnutn+rdGdNgtMlexHjIFqMYy0QFRqWIodXnxoR0S/iHU9Zh/R20i7u0jHGRfC5RcYJh3u2yvaKOXKtLjhA0NDu2xEcdqO5CGL+LQuvyTApSmOSHplB3oLvFB85OUSz84DhqD7gbff1L23OunTUMT4ciDeqtvJv9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uP56rsh4; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=tKQcgbC3g+ARrvH/Oc8btcPrJf+0C4BOxqpNlZCxKhaG5PZMGNcJEpPiugQBvfUVNK5mcI8dBNuEntlEMqnWbfj149HdrTgG2Ge46NnI96dbeWipOxbUGprgluDbWDUKeR1XYaj+P25xy+KsRiOuNLBAV+ADUOga4YdDb3vxCG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hXSrFKbr; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-75e28bcec3bso6293214b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:32:36 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24004ac2ecdso64649835ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754328756; x=1754933556; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754328759; x=1754933559; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q+fFbis65lzN6iN3E1Il6cAJENCj+5dg3T9v8McMK64=;
-        b=uP56rsh48J9+H3ZIn8rvFE8SH8qYqvWSfzAMYB5ibaFOVambIs7KUjtga/BJiOWm1W
-         758JLpzp52qBOkKOwJSqe8VT+w46iY9oYVFG6+7eb/SA+1hRSYlmqK5SPmQpzUWJAx++
-         Dm8Gf078i2Z8y0T7Z2/iHlfpTeGJR9Ffc6URVRdZQRCdSC34kLT48lyqZmJMbhzd53jX
-         1mmzXzmNOxt3gvRmJIO9T7uMl7t73w3b8O+IARh5x79sZ0rjxHdHhc7fMjwv9nq90Itn
-         ZlezFX9hUB9TulEPpkEQaovRv7o8Go1nuuLJSFNMcQ1PEdF+//GkkRHalhtqaC2KhAZ4
-         T4hA==
+        bh=CQMUmLKs3xh972hbtTuWn5Gb9KU0cVynXKrRv5wztKs=;
+        b=hXSrFKbrnLbX1Kd7IPMNbQ+4qxaxljSJagPUtL8Ci+G8g2zA6kSA+hyPvDPbuoImOW
+         FW6Ej0DidvEZp3iujLePGu49YtbbRwmeIvIHmZYlNWSn5OMnUomXKg/3Vf1SXN9hzvUz
+         6bW4kd7pR8DjIM+QiclTI3amqnbwbInHYM7G0LKOtjMX7w0iuJIPFuApWPeIeMy3b+hV
+         +AktnkIDfYYtrCBBRAgBskYC61jSmVdYwscAi8lcezH5eZxw+IWuoIkEdrIi2/avlf/W
+         J5rkSaFyaEB03NrKOdHsqaR/OtBxPEWJKzTDrQJiEotHkubp3EkmjM+nsQf6QzIT985x
+         BJEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328756; x=1754933556;
+        d=1e100.net; s=20230601; t=1754328759; x=1754933559;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q+fFbis65lzN6iN3E1Il6cAJENCj+5dg3T9v8McMK64=;
-        b=WACWlfzOHnDUxAhjAltq4RGz2sQ1m58TZ2KdHyBvccpCJ/WUsyBdQj37wgLVZKBwkE
-         SVyBTyVE6018FBk5063QJ5PEZoyJX7u5UcGedVkq4pjfcqLUoWbmCaUuRI1Ym9xqf3dk
-         j9Q7VoxV4R8IJ+rE0UmU+udNj6TOp88gfSa3kSz0TI0+7P0Fo19T99kk/zcLBbD5xLJZ
-         3WuFfPlmaO00Ez52FZfRSFsHKu+xar9A5IbVQo4LFwvzVWq/sayO26oB5zPHfWzUwq2V
-         W1av0/JfEkYqVXg6j538sHNCwdAqlkGrH6B5Yd59wqlj38Tn6IhScgwYoVgiG4vrOsae
-         /V6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6x+Fax0U4dAcMbfzAQm/780QjK8PKsWyUC9Nq8zkfcWbniSL7WuRi1BnXn+xrdSMc+vI/P2Wc6mYsBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXgkwmnU8RbQLG8IrTj1tjM5EsbXl4W6t+jHAGgp+/z+NwdYV8
-	cUT31cB76OJTP881By47EwGbTw+iGe6PTFGNXmJT4arsuP1kBkCxKUoyBVo21OMNdHZT8PE6u4+
-	5Wny08eq68G06SKO/R+HaY960BgXjwQ==
-X-Google-Smtp-Source: AGHT+IEVaICFnKy/dNHwTnYnHWnggLoU3y5vgOAABzCZm2Njzqap0z/bdEQDD7IW0zOnHdfGwk/80ry2oqrJgRZwurw=
-X-Received: from pfbcj11.prod.google.com ([2002:a05:6a00:298b:b0:767:efa:8329])
+        bh=CQMUmLKs3xh972hbtTuWn5Gb9KU0cVynXKrRv5wztKs=;
+        b=ZT2TZQnjK9axwbJZYUSfdyeAyD8L3HlWIW/OiP92QmBtrANiuplO3FhL9qz3Ae67Ac
+         f+4HR67wY6hPhX3i6Yw6ktM9bdNsHhWA1aJYe6FGFU8v4BipaVKx13VDxGr+p8tdnkMw
+         IUy17rHMgG24RCZ59Cw++043gbIHOwPRPi3tq4HrNM5m0+2qPrKWcxHdBrRA4AcVcB+Y
+         u9GquGfUKnGvEBl4GVyCwlgiZ5eQjrTCKKzz5VijkgvE1dqivTmXR59Ilzcm5PSCsnYE
+         C/ebjVlWOpKQlbqNB6eHjBF+aBS6TZ3w/fHIRgcoYLWtAImpKmA/gPfm6nxTJ5jaYSv5
+         m8lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEwtQY6F52oGkWZ8yxyuwlTno76LQ0bErKKcyS377/GeEWliVPgD6WumM8CJRj1s6QGI00nR6/Gxbr7yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywuqa1EksbnJ4eYaNY0bjgNMrwZ1JxI+wB6CjoOFZo/bZ0Q4AyO
+	qZhg7fgo6mxlXIw0vbuTaI1mJIQkT1iM+J05Y6hHNVHC5F/YCnNQJ1UZQIdVqRd9GfzftOCZWRG
+	NabHGDHWMWRSfqUuHJezRxt+Md46F4g==
+X-Google-Smtp-Source: AGHT+IEUISRCOUdvcdunQlfH7Ugn/MjFVzK+dOVNeTOe3EfG42PQ2i/eYIkKSU1xi7j49rI73Dh1hRhE+hEDRhcmABU=
+X-Received: from plbma14.prod.google.com ([2002:a17:903:94e:b0:240:1867:a503])
  (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:37c4:b0:76b:f0ac:e7b2 with SMTP id d2e1a72fcca58-76bf0aced3cmr10777588b3a.13.1754328755840;
- Mon, 04 Aug 2025 10:32:35 -0700 (PDT)
-Date: Mon,  4 Aug 2025 10:32:27 -0700
+ 2002:a17:902:d486:b0:234:d778:13fa with SMTP id d9443c01a7336-24289c27db1mr293835ad.26.1754328758859;
+ Mon, 04 Aug 2025 10:32:38 -0700 (PDT)
+Date: Mon,  4 Aug 2025 10:32:28 -0700
 In-Reply-To: <20250804173228.1990317-1-paullawrence@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,264 +74,167 @@ Mime-Version: 1.0
 References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
  <20250804173228.1990317-1-paullawrence@google.com>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250804173228.1990317-2-paullawrence@google.com>
-Subject: [PATCH 1/2] fuse: Allow backing file to be set at lookup (WIP)
+Message-ID: <20250804173228.1990317-3-paullawrence@google.com>
+Subject: [PATCH 2/2] fuse: Add passthrough for mkdir and rmdir (WIP)
 From: Paul Lawrence <paullawrence@google.com>
 To: amir73il@gmail.com
 Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, miklos@szeredi.hu, paullawrence@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Add optional extra outarg to FUSE_LOOKUP which holds a backing id to set
-a backing file at lookup.
+As proof of concept of setting a backing file at lookup, implement mkdir
+and rmdir which work off the nodeid only and do not open the file.
 
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/dir.c             | 23 ++++++++++++++++++----
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/iomode.c          | 41 +++++++++++++++++++++++++++++++++++----
- fs/fuse/passthrough.c     | 40 +++++++++++++++++++++++++++++---------
- include/uapi/linux/fuse.h |  4 ++++
- 5 files changed, 94 insertions(+), 17 deletions(-)
+ fs/fuse/dir.c             |  8 +++++++-
+ fs/fuse/fuse_i.h          | 11 +++++++++--
+ fs/fuse/passthrough.c     | 38 ++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |  2 ++
+ 4 files changed, 56 insertions(+), 3 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 62508d212826..c0bef93dd078 100644
+index c0bef93dd078..25d6929d600a 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -170,7 +170,8 @@ static void fuse_invalidate_entry(struct dentry *entry)
- 
- static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
- 			     u64 nodeid, const struct qstr *name,
--			     struct fuse_entry_out *outarg)
-+			     struct fuse_entry_out *outarg,
-+			     struct fuse_entry_passthrough_out *backing)
- {
- 	memset(outarg, 0, sizeof(struct fuse_entry_out));
- 	args->opcode = FUSE_LOOKUP;
-@@ -184,6 +185,12 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
- 	args->out_numargs = 1;
- 	args->out_args[0].size = sizeof(struct fuse_entry_out);
- 	args->out_args[0].value = outarg;
-+	if (backing) {
-+		args->out_numargs = 2;
-+		args->out_args[1].size = sizeof(struct fuse_entry_passthrough_out);
-+		args->out_args[1].value = backing;
-+		args->out_argvar = true;
-+	}
+@@ -129,7 +129,7 @@ void fuse_invalidate_attr(struct inode *inode)
+ 	fuse_invalidate_attr_mask(inode, STATX_BASIC_STATS);
  }
  
- /*
-@@ -236,7 +243,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 		attr_version = fuse_get_attr_version(fm->fc);
+-static void fuse_dir_changed(struct inode *dir)
++void fuse_dir_changed(struct inode *dir)
+ {
+ 	fuse_invalidate_attr(dir);
+ 	inode_maybe_inc_iversion(dir, false);
+@@ -951,6 +951,9 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!fm->fc->dont_mask)
+ 		mode &= ~current_umask();
  
- 		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
--				 name, &outarg);
-+				 name, &outarg, NULL);
- 		ret = fuse_simple_request(fm, &args);
- 		/* Zero nodeid is same as -ENOENT */
- 		if (!ret && !outarg.nodeid)
-@@ -369,6 +376,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 	struct fuse_forget_link *forget;
- 	u64 attr_version, evict_ctr;
- 	int err;
-+	struct fuse_entry_passthrough_out passthrough;
- 
- 	*inode = NULL;
- 	err = -ENAMETOOLONG;
-@@ -384,10 +392,10 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 	attr_version = fuse_get_attr_version(fm->fc);
- 	evict_ctr = fuse_get_evict_ctr(fm->fc);
- 
--	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
-+	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg, &passthrough);
- 	err = fuse_simple_request(fm, &args);
- 	/* Zero nodeid is same as -ENOENT, but with valid timeout */
--	if (err || !outarg->nodeid)
-+	if (err < 0 || !outarg->nodeid)
- 		goto out_put_forget;
- 
- 	err = -EIO;
-@@ -406,6 +414,13 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
- 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
- 		goto out;
- 	}
++	if (fuse_inode_passthrough_op(dir, FUSE_MKDIR))
++		return fuse_passthrough_mkdir(idmap, dir, entry, mode);
 +
-+	// TODO check that if fuse_backing is already set they are consistent
-+	if (args.out_args[1].size && !get_fuse_inode(*inode)->fb) {
-+		err = fuse_inode_set_passthrough(*inode, passthrough.backing_id);
-+		if (err)
-+			goto out;
-+	}
- 	err = 0;
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
+ 	inarg.umask = current_umask();
+@@ -1058,6 +1061,9 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
+ 	if (fuse_is_bad(dir))
+ 		return -EIO;
  
-  out_put_forget:
++	if (fuse_inode_passthrough_op(dir, FUSE_RMDIR))
++		return fuse_passthrough_rmdir(dir, entry);
++
+ 	args.opcode = FUSE_RMDIR;
+ 	args.nodeid = get_node_id(dir);
+ 	args.in_numargs = 2;
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 1e8e732a2f09..aebd338751f1 100644
+index aebd338751f1..d8df2d5a73ac 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1595,9 +1595,12 @@ ssize_t fuse_passthrough_splice_read(struct file *in, loff_t *ppos,
- ssize_t fuse_passthrough_splice_write(struct pipe_inode_info *pipe,
- 				      struct file *out, loff_t *ppos,
- 				      size_t len, unsigned int flags);
-+struct fuse_backing *fuse_backing_id_get(struct fuse_conn *fc, int backing_id);
- ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
- int fuse_passthrough_readdir(struct file *file, struct dir_context *ctx);
+@@ -1279,6 +1279,7 @@ void fuse_check_timeout(struct work_struct *work);
+ #define FUSE_STATX_MODSIZE	(FUSE_STATX_MODIFY | STATX_SIZE)
  
-+int fuse_inode_set_passthrough(struct inode *inode, int backing_id);
-+
- static inline struct fuse_backing *fuse_inode_passthrough(struct fuse_inode *fi)
+ void fuse_invalidate_attr(struct inode *inode);
++void fuse_dir_changed(struct inode *dir);
+ void fuse_invalidate_attr_mask(struct inode *inode, u32 mask);
+ 
+ void fuse_invalidate_entry_cache(struct dentry *entry);
+@@ -1521,7 +1522,8 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+ 
+ /* Passthrough operations for directories */
+ #define FUSE_PASSTHROUGH_DIR_OPS \
+-	(FUSE_PASSTHROUGH_OP_READDIR)
++	(FUSE_PASSTHROUGH_OP_READDIR | FUSE_PASSTHROUGH_OP_MKDIR | \
++	 FUSE_PASSTHROUGH_OP_RMDIR)
+ 
+ /* Inode passthrough operations for backing file attached to inode */
+ #define FUSE_PASSTHROUGH_INODE_OPS \
+@@ -1532,7 +1534,8 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+ 	((map)->ops_mask & FUSE_PASSTHROUGH_OP(op))
+ 
+ #define FUSE_BACKING_MAP_VALID_OPS \
+-	(FUSE_PASSTHROUGH_RW_OPS | FUSE_PASSTHROUGH_INODE_OPS)
++	(FUSE_PASSTHROUGH_RW_OPS | FUSE_PASSTHROUGH_INODE_OPS |\
++	 FUSE_PASSTHROUGH_DIR_OPS)
+ 
+ static inline struct fuse_backing *fuse_inode_backing(struct fuse_inode *fi)
  {
- #ifdef CONFIG_FUSE_PASSTHROUGH
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index f46dfa040e53..4c23ae640624 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -166,6 +166,37 @@ static void fuse_file_uncached_io_release(struct fuse_file *ff,
- 	fuse_inode_uncached_io_end(fi);
- }
+@@ -1626,6 +1629,10 @@ ssize_t fuse_passthrough_getxattr(struct inode *inode, const char *name,
+ 				  void *value, size_t size);
+ ssize_t fuse_passthrough_listxattr(struct dentry *entry, char *list,
+ 				   size_t size);
++struct dentry *fuse_passthrough_mkdir(struct mnt_idmap *idmap,
++				      struct inode *dir, struct dentry *entry,
++				      umode_t mode);
++int fuse_passthrough_rmdir(struct inode *dir, struct dentry *entry);
  
-+/* Setup passthrough for inode operations without an open file */
-+int fuse_inode_set_passthrough(struct inode *inode, int backing_id)
+ #ifdef CONFIG_SYSCTL
+ extern int fuse_sysctl_register(void);
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index cee40e1c6e4a..acb06fbbd828 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -7,6 +7,7 @@
+ 
+ #include "fuse_i.h"
+ 
++#include "linux/namei.h"
+ #include <linux/file.h>
+ #include <linux/backing-file.h>
+ #include <linux/splice.h>
+@@ -497,3 +498,40 @@ ssize_t fuse_passthrough_listxattr(struct dentry *entry, char *list,
+ 	revert_creds(old_cred);
+ 	return res;
+ }
++
++struct dentry *fuse_passthrough_mkdir(struct mnt_idmap *idmap,
++				      struct inode *dir, struct dentry *entry,
++				      umode_t mode)
 +{
-+	struct fuse_conn *fc = get_fuse_conn(inode);
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_backing *fb;
++	struct fuse_backing *fb = fuse_inode_backing(get_fuse_inode(dir));
++	struct dentry *backing_entry, *new_entry;
++	const struct cred *old_cred;
++
++	old_cred = override_creds(fb->cred);
++	backing_entry = lookup_one_unlocked(idmap, &entry->d_name,
++		fb->file->f_path.dentry);
++	new_entry = vfs_mkdir(idmap, fb->file->f_inode, backing_entry, mode);
++	d_drop(entry);
++	revert_creds(old_cred);
++	fuse_dir_changed(dir);
++	return new_entry;
++}
++
++int fuse_passthrough_rmdir(struct inode *dir, struct dentry *entry)
++{
 +	int err;
++	struct dentry *backing_entry;
++	struct fuse_backing *fb = fuse_inode_backing(get_fuse_inode(dir));
++	const struct cred *old_cred;
 +
-+	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH) || !fc->passthrough_ino)
-+		return 0;
-+
-+	/* backing inode is set once for the lifetime of the inode */
-+	if (fuse_inode_passthrough(fi))
-+		return 0;
-+
-+	fb = fuse_backing_id_get(fc, backing_id);
-+	err = PTR_ERR(fb);
-+	if (IS_ERR(fb))
-+		goto fail;
-+
-+	fi->fb = fb;
-+	set_bit(FUSE_I_PASSTHROUGH, &fi->state);
-+	fi->iocachectr--;
-+	return 0;
-+
-+fail:
-+	pr_debug("failed to setup backing inode (ino=%lu, backing_id=%d, err=%i).\n",
-+		 inode->i_ino, backing_id, err);
++	old_cred = override_creds(fb->cred);
++	backing_entry = lookup_one_unlocked(&nop_mnt_idmap, &entry->d_name,
++		fb->file->f_path.dentry);
++	err = vfs_rmdir(&nop_mnt_idmap, fb->file->f_inode, backing_entry);
++	dput(backing_entry);
++	if (!err)
++		d_drop(entry);
++	revert_creds(old_cred);
 +	return err;
 +}
 +
- /*
-  * Open flags that are allowed in combination with FOPEN_PASSTHROUGH.
-  * A combination of FOPEN_PASSTHROUGH and FOPEN_DIRECT_IO means that read/write
-@@ -185,8 +216,10 @@ static int fuse_file_passthrough_open(struct inode *inode, struct file *file)
- 	int err;
- 
- 	/* Check allowed conditions for file open in passthrough mode */
--	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH) || !fc->passthrough ||
--	    (ff->open_flags & ~FOPEN_PASSTHROUGH_MASK))
-+	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH) || !fc->passthrough)
-+		return -EINVAL;
-+
-+	if (ff->open_flags & ~FOPEN_PASSTHROUGH_MASK && !fuse_inode_backing(get_fuse_inode(inode)))
- 		return -EINVAL;
- 
- 	fb = fuse_passthrough_open(file, inode,
-@@ -224,8 +257,8 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	 * which is already open for passthrough.
- 	 */
- 	err = -EINVAL;
--	if (fuse_inode_backing(fi) && !(ff->open_flags & FOPEN_PASSTHROUGH))
--		goto fail;
-+	if (fuse_inode_backing(fi))
-+		ff->open_flags |= FOPEN_PASSTHROUGH;
- 
- 	/*
- 	 * FOPEN_PARALLEL_DIRECT_WRITES requires FOPEN_DIRECT_IO.
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index de6ece996ff8..cee40e1c6e4a 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -229,7 +229,6 @@ static int fuse_backing_id_free(int id, void *p, void *data)
- {
- 	struct fuse_backing *fb = p;
- 
--	WARN_ON_ONCE(refcount_read(&fb->count) != 1);
- 	fuse_backing_free(fb);
- 	return 0;
- }
-@@ -348,6 +347,29 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
- 	return err;
- }
- 
-+/*
-+ * Get fuse backing object by backing id.
-+ *
-+ * Returns an fb object with elevated refcount to be stored in fuse inode.
-+ */
-+struct fuse_backing *fuse_backing_id_get(struct fuse_conn *fc, int backing_id)
-+{
-+	struct fuse_backing *fb;
-+
-+	if (backing_id <= 0)
-+		return ERR_PTR(-EINVAL);
-+
-+	rcu_read_lock();
-+	fb = idr_find(&fc->backing_files_map, backing_id);
-+	fb = fuse_backing_get(fb);
-+	rcu_read_unlock();
-+
-+	if (!fb)
-+		return ERR_PTR(-ENOENT);
-+
-+	return fb;
-+}
-+
- /*
-  * Setup passthrough to a backing file.
-  *
-@@ -363,18 +385,18 @@ struct fuse_backing *fuse_passthrough_open(struct file *file,
- 	struct file *backing_file;
- 	int err;
- 
--	err = -EINVAL;
--	if (backing_id <= 0)
--		goto out;
--
- 	rcu_read_lock();
--	fb = idr_find(&fc->backing_files_map, backing_id);
-+	if (backing_id <= 0) {
-+		err = -EINVAL;
-+		fb = fuse_inode_backing(get_fuse_inode(inode));
-+	} else {
-+		err = -ENOENT;
-+		fb = idr_find(&fc->backing_files_map, backing_id);
-+	}
- 	fb = fuse_backing_get(fb);
--	rcu_read_unlock();
--
--	err = -ENOENT;
- 	if (!fb)
- 		goto out;
-+	rcu_read_unlock();
- 
- 	/* Allocate backing file per fuse file to store fuse path */
- 	backing_file = backing_file_open(&file->f_path, file->f_flags,
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index ff769766b748..6dbb045c794d 100644
+index 6dbb045c794d..8181d07b7bf1 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -695,6 +695,10 @@ struct fuse_entry_out {
- 	struct fuse_attr attr;
- };
+@@ -1135,6 +1135,8 @@ struct fuse_backing_map {
+ #define FUSE_PASSTHROUGH_OP_STATX	FUSE_PASSTHROUGH_OP(FUSE_STATX)
+ #define FUSE_PASSTHROUGH_OP_GETXATTR	FUSE_PASSTHROUGH_OP(FUSE_GETXATTR)
+ #define FUSE_PASSTHROUGH_OP_LISTXATTR	FUSE_PASSTHROUGH_OP(FUSE_LISTXATTR)
++#define FUSE_PASSTHROUGH_OP_MKDIR	FUSE_PASSTHROUGH_OP(FUSE_MKDIR)
++#define FUSE_PASSTHROUGH_OP_RMDIR	FUSE_PASSTHROUGH_OP(FUSE_RMDIR)
  
-+struct fuse_entry_passthrough_out {
-+	int32_t 	backing_id;
-+};
-+
- struct fuse_forget_in {
- 	uint64_t	nlookup;
- };
+ /* Device ioctls: */
+ #define FUSE_DEV_IOC_MAGIC		229
 -- 
 2.50.1.565.gc32cd1483b-goog
 
