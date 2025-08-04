@@ -1,141 +1,123 @@
-Return-Path: <linux-kernel+bounces-754819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339B9B19D29
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB03B19D2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEFF67ABA51
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CB43BB9C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D505244EA1;
-	Mon,  4 Aug 2025 07:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E623D2B4;
+	Mon,  4 Aug 2025 07:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ltw4DBWg"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ska+oRYq"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F4D24468A;
-	Mon,  4 Aug 2025 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919DD2F2D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294384; cv=none; b=ka2u7o67lonbYKO9ixN9SMpYOLwrMzJesN48xc4LiXw+1Ro945Kiw8TwNyIqY3K5HbLbacYee52S9Pr6I8BQAYlKYr+3vt9os432dz6o1GTychwsPEjPR7r/5oIjCsprq1dvhVxL1LG8kpDN9lsqL8k3PPu1eVTqIghkwr9XWbg=
+	t=1754294398; cv=none; b=YfWHvRHvsBw2hpSRcVpwzFsqy2SU4LPOl26OtmhCnK+KxeoH92wJrIOKEB8O1c/zvr0exY+sLYsbD77zmB4DaI/L6lhlBC9I0GACPG8JCDHnVAs3HV4eUMWPTKL0XqH6Z4EpXcPjkYH6oa046TMZg+8sOb6nmFp00e25nFyyTBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294384; c=relaxed/simple;
-	bh=IBXZ7nSQOKi0kqZYEQGLEV58gS4Z53xGfxUWv08M4f8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uI4LqyXSP+JalThJxpSsCzkSbkH2goUtV04zaOsN6wm0x7xpWVnfUbasoLT/608NTkfPLJ0XsDCOEx8Y/3NmYuWVLS0ecOCyIgapVM0bdXVL0XBtsJ8bl9PhqzFYHq82oQs410t1Wy6nGLqID04AxedWiXeYu2Bh5RlNnnhePUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ltw4DBWg; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754294381;
-	bh=IBXZ7nSQOKi0kqZYEQGLEV58gS4Z53xGfxUWv08M4f8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ltw4DBWglDgA5GAc6JaQwwgXfzFmD0Ngc/7DTsm/ftT4OLSHJg+9t+fB2+eEAOp/G
-	 xp+aEw/HrAL2sTNdcXPUiePzn99rqHR3k6pLb2VZYwPH7YNbCBg2AJMrCnfcLz8RPk
-	 KF4qq4/BN3c9VnNtXCNNd5xGD6LQ8depQpJQdDE/xHgMDu7wM5Rn9koqEGs9/tsFDw
-	 9j+pn9SP2d/9O95CZa8fsAtz/TF4LHQJbwtVm7MmUT4fIpLSEMqBcSz3OcsUZklYhF
-	 pHMoeA7SJb1Clk5+sVZVN/WpyQeEhL1RkcYvUCFTkyd4ekJRVcTxYAUaRnp7N38Rj/
-	 V+GJHXPhHnUjA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1135E17E04DA;
-	Mon,  4 Aug 2025 09:59:40 +0200 (CEST)
-Message-ID: <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
-Date: Mon, 4 Aug 2025 09:59:39 +0200
+	s=arc-20240116; t=1754294398; c=relaxed/simple;
+	bh=PA4Fi04XcbSSqBINhdlmikgc3t57oLyEd+cfx15ng2M=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Uq/creQG1RIrcprd+wd+DyY2T5mtR15yZQ8BxGRn9fc583eu+mUDM/NbkaWGl03GEaLZ56a/4E/Jko3LaGilkpUAeasVKS+PefFMOrF5ruZDAelc1UTOsdrk9cdrMvY8cb0oMHPqDdXusN7APNOUmoWYcZ/cTXy4EcRBZB1OTJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ska+oRYq; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31ecd1f0e71so3184168a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754294396; x=1754899196; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2j21EdQ9+BzhX5K3jWbsgABY3uftB7nrDoPZVb6R/s=;
+        b=Ska+oRYqkvg6Lxyp2CVBce2ttgdWYAVT4BwJBQBIxr9h3ztmNjhn4G5TjIWR7PKPDb
+         ydIFjvpR4IR5lAxV4bQQMPV3bgBg8zR4oOnNTm3e3BD0gMojGGW3EMLRQahrwA6rqLDI
+         F+KAuUrnX1lXKl3/T2hhfp2l5K0DpRQYA8Gj0JKDZEWFSVBm583A7xAjMQGTCXKMnn1r
+         8Cte5cai7+9NIW6acZb394Q26cLzft2/5Py25kh/A2ZLjMWXm2zxhXRh+92f8JcbFu9v
+         TsT7rQ9TJPdrxRSadMjWs0MYP5PrgAuHuxGqs0A6EPvsGBnso6KTYEukaX5gxTzgozhq
+         bvYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754294396; x=1754899196;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2j21EdQ9+BzhX5K3jWbsgABY3uftB7nrDoPZVb6R/s=;
+        b=q4bi17+AF2Jh53h9gdkKAKcaVkCF3y/PK1JPTM2DkygsaHiAMTs7/iGTgiGEP923jV
+         Sw5vam9YLqZqo2R9ewb+1SX0wD4FLS8OL/1VA9AhaAposCbmUFu42JIxOqRIryhOj/MH
+         +IcYbuDEAhCTpbla3dwl9ggCmbM0ImVTyzAyxkNolaW1MXsI8JkdLWr5GKdYyxNFzfKA
+         BdqWJRCz7Dif35oK15wGae6XlNhvycVXXrccyNft5IQ4Ej/0u2Rc2zm1Lh0phl9mwwci
+         FT8AoQ1TQVo3rSKbV8qG4lPJsgvWjGWA5AQA+cdJXu6S7b1StcCF+HIItHO5/+9ni2WO
+         yZrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+9Uch7Ndyn991n2eylL5nv1gxpztR7KdcDYVMHX3VyIao6KAVoSw4HM87feb762+HULY8JNxPQB6ra4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw77LhHl3xMfNWRASkz7CHd8XszdnUiPBUFqCurhdV5psujJOHl
+	tPG4Q3dVSnN4o8nWmjtHqkCms7IwvOg06eMj0NE4b8QL+ZKaIRIY8odn
+X-Gm-Gg: ASbGnctsoN+9FKbBaJSpR907nPEgrUfnJYnymfPtya0TgDEaM7DYnWP7NALeNOOL5L+
+	O9srHPsBhwgmnA5S/lK3VXhRm3D9Czfuf4EBbN+dgZR6wx4zGdX/zCd38rLKB7Ym978W7pfu/iz
+	JvANuTKB+n+X+SikKVlbYsJSWtAHpvlCRNNXpd/uSyUfJ1eRSMicgCctP/0sbAFdm+kWA+DBVAj
+	KXvki847mjNwqjpiHGhzksOHbu6xCXUnl6Bh8yXMYK0ACYI6shb3vOax7oX13ErloHJCKap+8CM
+	nnS//VIGPUYD1tSi2AcEbDX5bqPPE2vT5fy5EMGKuYWuAyOK6o7HliOoe5TPrk4GRT+ug/Dh/wK
+	DIpSX1l6B2IVAymNdN1PWDc+PT8jOXTAvRRc=
+X-Google-Smtp-Source: AGHT+IF7alqB/6wZ98S0FEX+bkqM69+K+32EZW07YuWmetJ1TBK03m4jlJehXUkJP0iXJhxQOzaY0g==
+X-Received: by 2002:a17:90b:4c4d:b0:321:43b2:4743 with SMTP id 98e67ed59e1d1-32143b248demr1268396a91.23.1754294395745;
+        Mon, 04 Aug 2025 00:59:55 -0700 (PDT)
+Received: from c45b92c47440.. ([202.120.234.58])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-31f63f0ba97sm13749540a91.29.2025.08.04.00.59.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 00:59:55 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Tiwei Bie <tiwei.btw@antgroup.com>,
+	Miaoqian Lin <linmq006@gmail.com>,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] um: virtio_uml: Fix use-after-free after put_device in probe
+Date: Mon,  4 Aug 2025 11:59:42 +0400
+Message-Id: <20250804075944.3612712-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] dt-bindings: clock: mediatek: Add power-domains
- property
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ikjoon Jang <ikjn@chromium.org>,
- Enric Balletbo i Serra <eballetbo@kernel.org>,
- Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
- Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
- <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 01/08/25 13:18, Julien Massot ha scritto:
-> The mt8183-mfgcfg node uses a power domain in its device tree node.
-> To prevent schema validation warnings, add the optional `power-domains`
-> property to the binding schema for mediatek syscon clocks.
-> 
-> Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+When register_virtio_device() fails in virtio_uml_probe(),
+the code sets vu_dev->registered = 1 even though
+the device was not successfully registered.
+This can lead to use-after-free or other issues.
 
-Is MT8183 the only one?
+Fixes: 04e5b1fb0183 ("um: virtio: Remove device on disconnect")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ arch/um/drivers/virtio_uml.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-if:
-   properties:
-     compatible:
-       contains:
-         - const: mediatek,mt8183-mfgcfg
-         ^^^^^^^(if it's not just mt8183, this should be an enum)
-
-then:
-   properties:
-     power-domains: true
-else:
-   properties:
-     power-domains: false
-
-(check if the above is correct, don't blindly trust what I wrote! :P)
-
-after which:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-(if it's not only mt8183, keep the R-b on this commit regardless)
-
-Cheers,
-Angelo
-
-> ---
->   Documentation/devicetree/bindings/clock/mediatek,syscon.yaml | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> index a86a64893c675ac134af609b3a49242565db6ad8..1011bc46cfcb97b90b86019e95a7e4bc8a819342 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> @@ -76,6 +76,9 @@ properties:
->             - const: mediatek,mt2701-vdecsys
->             - const: syscon
->   
-> +  power-domains:
-> +    maxItems: 1
-> +
->     reg:
->       maxItems: 1
->   
-> 
-
+diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
+index ad8d78fb1d9a..c402c4cc908a 100644
+--- a/arch/um/drivers/virtio_uml.c
++++ b/arch/um/drivers/virtio_uml.c
+@@ -1250,8 +1250,10 @@ static int virtio_uml_probe(struct platform_device *pdev)
+ 	device_set_wakeup_capable(&vu_dev->vdev.dev, true);
+ 
+ 	rc = register_virtio_device(&vu_dev->vdev);
+-	if (rc)
++	if (rc) {
+ 		put_device(&vu_dev->vdev.dev);
++		return rc;
++	}
+ 	vu_dev->registered = 1;
+ 	return rc;
+ 
+-- 
+2.25.1
 
 
