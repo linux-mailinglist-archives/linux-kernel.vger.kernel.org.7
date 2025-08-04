@@ -1,147 +1,104 @@
-Return-Path: <linux-kernel+bounces-755596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5AB1A8EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3761B1A8EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1397AEEAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:05:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 975B57A4FAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABBE28FAB7;
-	Mon,  4 Aug 2025 18:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B616B28B4FA;
+	Mon,  4 Aug 2025 18:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MruUN+ex"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhaRGEp4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C2328C2C6;
-	Mon,  4 Aug 2025 18:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288617BA9;
+	Mon,  4 Aug 2025 18:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754330738; cv=none; b=ivhWpXsqJhA5MVgv09fkwWVS11QDxKIra7qDNceLiOyXb/zRt6umDMGabl6cnqQm91ronlWk0bIiEUiq/32Qy4/plms5iLVe01Bt4AafLIhOLm5YpoPX1Re35H1F3zyrOe8R2P0H5gX6g9XXwTf9OM2KQmpcUyl0hrkkTVeXnMo=
+	t=1754330913; cv=none; b=YAlnaVwYG64m9mob2e3zwuh5vv6A+OO4JJweyvQLe8w2SGkF1Hq4fDvdAKh+grfXkJfwI5NczW26ueyAUEX6IPtivQo1e3IN/te+5qXB86uU/w6zgRr2SFUfnSZPXQTJVsAWHlS3mEwjXtxJFBJ35H3qgmg79HGHWTDU8Da9eyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754330738; c=relaxed/simple;
-	bh=ma/BQawGYoy7ITtIcGnWLTuLrZMFRrj4k7am8UwuYVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z0xvzjxegKPPKBgdLal0qxNglAr8WJh+qy7Lotih48MZ4ydc+1ycERYmV5XRI17uwAtFfugq4oZ89qEdoze7MnZkHCIm59KlK7jYF+pLVtflgltsis2r1Fj8Q3Q1dKtMSVFnnVUBczwNmaD1DQIDk9adz3HAxZ2pPxpFdRee8LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MruUN+ex; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7698e914cd2so4811779b3a.3;
-        Mon, 04 Aug 2025 11:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754330734; x=1754935534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k7igQM7Vyn71nhVvSbp2kQ44aAuz9LFYWyrsCyPIgIw=;
-        b=MruUN+exMXU9hwUWpJ6eaWZAciraELEMZINQXbSf1EzpFr3r3Mo0sqbPPDwGImyPFV
-         O+1LEGKhdJmv7cf8IzP5rs6HszmX7NzCEMF+retfz250q/G5k+kg9j/poqVxtlRYIfLl
-         Y4+RCti8c6bfHWiq29IP3/vjY5UsWsov32jrq/M8ILRgQU4nShW1hmcLOQ0egUgMfguM
-         OwnMejXQmZ7qP14PlnA6yAIDNQwPS2GHqmpxZfxNNrQiaMsm39b8DFt2PhuQNDW+UMtB
-         hRnM+eTSm6q6O3Auqhiw0n5yA4S7DDOyeLwhhnLfpzdm60hGMYmFvtfUAgpb572EZdjJ
-         0OOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754330734; x=1754935534;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k7igQM7Vyn71nhVvSbp2kQ44aAuz9LFYWyrsCyPIgIw=;
-        b=Xi4rM3IlbbxR4IKcmheER9rQVR1ptxCx2UQN7AGzKOvqBeb7JjpiGWKYLuGQF7ugNC
-         lgRAgQ/jwOz010STxNniwBKeWJEk3I8TveMQD2ANxCf95FLsI4R5B8KwWeaT+EPjj9lK
-         LhCGbeQQJPv0PPhAgfkM+5ZJFalXi0BTW+41zpfMI3/4QUGU0xgrxroTwaFlJEgDTWO/
-         LIj1smbAoce/9s/hSydv27gCqSu4F0tMz+h+qqLtTERF+h9vYo/8JKtwUyhzAszyycTN
-         bMyiirevk3v4d4wrnO3TLidlu7Ztlplh672ztuQSYM9JHaOVuR6xtklgIos5uD07Wr8L
-         zR8w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0tBjLNJrAWcNx+f1TIak6lfkLZfqc0lqmkEskdDFza9nwiNSXKAQMXIrRUbXeD4zzbRvrz8t9WPLZ@vger.kernel.org, AJvYcCVBCB3WzVASwZDynvgq5pHQyh+6TAAmDANKCTS2BU3JvDF7vAFmvvbn2SqixiKNr7BY6WM1z11J3pOjIPHk@vger.kernel.org, AJvYcCVjwWVNujkRxwOkHl/1RnYukhKZo2LL54OL78KyyNKujBroMNWLrXLgMeQZXYbQp9fmgo6GgJRqhARmPUS3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxsMXT8y/mzXUfTtotyDAjRE4gJegOEvtqZ6wuBBgWgYq2UWJJ
-	nMOsUYwKxSaXdcAY6Kae6clzm6GH2XpfL1BEUCWW4Z4ysbiZucNfFH3v
-X-Gm-Gg: ASbGncv3SMCB+vJ57TonD9q3I1tvv3PRD7dsSn48O3ej6HD7n5c+BXrjwcmnfxxJzse
-	T61R81+qAsH2InQ9buUfkG21KF4Lmw7rW4c3wseB6e4L21PIyddlg/gSPxEBiQqooAqvRcszIcA
-	wP4wrA0wjUKFQeZRyJNDojw9jBaJZ8ATa5aI04ZD+6pXKZ3GYCgzhq6pX0fMtgY6BYcx+M3phaQ
-	8l5DtKfVbGTn1O8GgenXwomMn+zSuu/EF04eNa7YhRYMwMRh/NVkTd6RkLzzUd8Z08qePvUryi3
-	GXaUXlW0tznMmf3g/QitpwdPfH94pplfzBpF9d9ZDjhBQX1OajxyKNFchl4iMn9xwKJpAQi2VbY
-	FVTt2uSThmkH6iE8Z40ddAtQvM7DzOiMw243aYQS4PtnxX9MA5YmOMzXj57dkkyA=
-X-Google-Smtp-Source: AGHT+IGEX9zQZ5yxqfGeWSNgESIzLOYxk4xxDtXRs6UBqCAGjHVyhfsKTVyBKHiF1X2tAvOh9Cxw6A==
-X-Received: by 2002:a17:902:fc45:b0:21f:617a:f1b2 with SMTP id d9443c01a7336-2424704958emr141890485ad.46.1754330733691;
-        Mon, 04 Aug 2025 11:05:33 -0700 (PDT)
-Received: from ubuntu-Virtual-Machine.corp.microsoft.com ([2001:4898:80e8:6f:2b47:96b8:6281:35ea])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aafb34sm114144825ad.173.2025.08.04.11.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 11:05:33 -0700 (PDT)
-From: Tianyu Lan <ltykernel@gmail.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de,
-	Neeraj.Upadhyay@amd.com,
-	kvijayab@amd.com
-Cc: Tianyu Lan <tiala@microsoft.com>,
-	linux-arch@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: [RFC PATCH V5 4/4] x86/hyperv: Allow Hyper-V to inject STIMER0 interrupts
-Date: Mon,  4 Aug 2025 14:05:25 -0400
-Message-Id: <20250804180525.32658-5-ltykernel@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250804180525.32658-1-ltykernel@gmail.com>
-References: <20250804180525.32658-1-ltykernel@gmail.com>
+	s=arc-20240116; t=1754330913; c=relaxed/simple;
+	bh=ID+vJhobuuyWhkhRwHBgvOYKsYosMJhwpGMPF6Hc9j8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+zAYaUqjH2/qbZFvaZWzYhgyi4zaFjYAnNwR1iwSpUg1h8uI/SPhIYrp+TS57WwlSKZN2QPMwexkY1MmdF50jnszLWccSMBjpMCgCaDcGjoQ/hH6jSi7qfDTx3SgEcDjZDqick3kRF+4OSyn1H7Ya0xnQ0OCqY+EtPLIX21R7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhaRGEp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921FFC4CEE7;
+	Mon,  4 Aug 2025 18:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754330912;
+	bh=ID+vJhobuuyWhkhRwHBgvOYKsYosMJhwpGMPF6Hc9j8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fhaRGEp4w6Bb2Aaszwjaxilqa+skAMNmEg4Zhr/hBzN10fXiwqU7oxMMXNWTsFJi5
+	 L9q+o9GokVd3NKTGfth4S4SiU4CtRgkgLuvpNlOByD9YWqJeFTh3qr24Mfi00g2eCv
+	 rbRoGajhNmXim5s5AM90NGajOvA2j8bY+HGCvaDbFJUTftvqNKfUJanjQFSKkYt0O+
+	 Mrgq6xwJcFanh3j9qvK4h2c8xJvbK+AuOXL3vzbQtVdbS6wlYtotvtjoBzIolkx+hr
+	 ySGzG9L2u2vSJJeOP5XaCNp6RthJC7es0vDDyioU4C+LbgiCWFluMKKPXSfbq4WTto
+	 5d9WLNj/bDjCQ==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so4146494a12.2;
+        Mon, 04 Aug 2025 11:08:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/n44qbLU2oeDZ2t8SLSwI0euXV5gEN68MMC6uzGfJ+PPFJpALWpRCxO77ZCyY1aCCQA66fQ3kwNQIR2/N@vger.kernel.org, AJvYcCWlJXrBK7nsz+HnTzVoS/wiXwHnfZIjkbCE2poIJvZINEiv69kF5kCPMeLAkeW8fxJdWVCtREFCyDw=@vger.kernel.org, AJvYcCXVEspPRcWIb8TNREa80rF8G4sfdHgbZra8pXjW35LqJu2VeSa+xEPvNUeZbbPLLG7mWpfB081ox2qv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfQ7Z9CONqWXxJuMHGQYmnzgH2Fpzpgr37fj01a32vwAgviDtY
+	NcCGMom0SV6NV/aV8GQj0yuaH2pv2Vr3yoNIJvXHP3277IApYENEOso+p8N2bUoQ96yQZniwXHc
+	rDXG/S0Jk50+y722FOZwk2YMurs71Zg==
+X-Google-Smtp-Source: AGHT+IESbkBOk4VXQ+qj0EbwMdurvHOFWsb2fwPx/cQ1mKZvoleIyUh0RxNWpG2D3ckhxwpCiB4GOOqzViLH9sT2XSc=
+X-Received: by 2002:a17:907:9707:b0:ae3:ce75:afd8 with SMTP id
+ a640c23a62f3a-af94015619dmr1092929866b.30.1754330911099; Mon, 04 Aug 2025
+ 11:08:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1753806485.git.mchehab+huawei@kernel.org> <b03b95b8d09358e81e4f27942839191f49b0ba80.1753806485.git.mchehab+huawei@kernel.org>
+In-Reply-To: <b03b95b8d09358e81e4f27942839191f49b0ba80.1753806485.git.mchehab+huawei@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 4 Aug 2025 13:08:19 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJV4JgWMn+w7XFX=ixnwWW=_buisp0fF_B-2NmbpmMTqw@mail.gmail.com>
+X-Gm-Features: Ac12FXwRQezySL4m4aOOBNpG1DwRIyZxmEgwfM2DYzX-sBu0w218Tt1nn_CVDxU
+Message-ID: <CAL_JsqJV4JgWMn+w7XFX=ixnwWW=_buisp0fF_B-2NmbpmMTqw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] docs: changes: better document Python needs
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Tianyu Lan <tiala@microsoft.com>
+On Tue, Jul 29, 2025 at 11:44=E2=80=AFAM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> Python is listed as an optional dependency, but this is not
+> true, as:
+>
+> 1) arm (multi_v7_defconfig and other defconfigs) and arm64 defconfig
+>    needs it due to DRM_MSM dependencies;
+>
+> 2) CONFIG_LTO_CLANG runs a python script at scripts/Makefile.vmlinux_o;
+>
+> 3) kernel-doc is called during compilation when some DRM options
+>    like CONFIG_DRM_I915_WERROR are enabled;
+>
+> 4) allyesconfig/allmodconfig will enable CONFIG_* dependencies
+>    that needs it;
+>
+> 5) besides DRM, other subsystems seem to have logic calling *.py
+>    scripts.
+>
+> So, better document that and change the dependency from optional
+> to mandatory to reflect the current needs.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/process/changes.rst | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-When Secure AVIC is enabled, call Secure AVIC
-function to allow Hyper-V to inject STIMER0 interrupt.
+DT schema checks requires it too.
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-Signed-off-by: Tianyu Lan <tiala@microsoft.com>
----
- arch/x86/hyperv/hv_init.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 3d1d3547095a..591338162420 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -132,6 +132,10 @@ static int hv_cpu_init(unsigned int cpu)
- 		wrmsrq(HV_X64_MSR_VP_ASSIST_PAGE, msr.as_uint64);
- 	}
- 
-+	/* Allow Hyper-V stimer vector to be injected from Hypervisor. */
-+	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-+		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, true);
-+
- 	return hyperv_init_ghcb();
- }
- 
-@@ -239,6 +243,9 @@ static int hv_cpu_die(unsigned int cpu)
- 		*ghcb_va = NULL;
- 	}
- 
-+	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-+		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, false);
-+
- 	hv_common_cpu_die(cpu);
- 
- 	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
--- 
-2.25.1
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
