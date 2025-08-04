@@ -1,270 +1,160 @@
-Return-Path: <linux-kernel+bounces-754640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD424B19A56
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C16FDB19A58
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6047918969E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7C318978E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3029021ADA4;
-	Mon,  4 Aug 2025 03:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9A421FF3F;
+	Mon,  4 Aug 2025 03:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0rKKMzH"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N9SJJ5ET"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F494C8F;
-	Mon,  4 Aug 2025 03:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF12156C6F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 03:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754276594; cv=none; b=aa9RAE9EV7ZT+BmxGeiiVJLKj0jrau+9xe/+aKekjCVnwEAZXG3t6R2Mjw5w9t1gqM4lYsbpc9jjnf5tMU4qAd9L9o589NaIHner0S8Yn0R45CxpOImhH3z6aMx4uemegbQ6b5FJkvjEGuvLp4liqSU0/L0XYc9pCfhCvItRirk=
+	t=1754276611; cv=none; b=R+x/iBrasL2sl17YgtRhhNAVzwrR99lvnQWAscmrI6ApD4VOLLg3EmgmXbFPo3vbIHSVJEDAub2bQ10gwgrSRUV6atZrFbhI5/z2fLpPcbnR+92K16bACDhub4dRm2ZAbqIu+wmv7l0015pKcp6kZk8efZeT2IG5LY5dOyk4SHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754276594; c=relaxed/simple;
-	bh=vHTGcW1tLqrQOXq6sjTxlB1TWTyPM+IHnHTS42jOWNQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pkIa7MWdK5wJVh1ZlxFGhRg12kav+ks4tLZ1eHpTRv55T3iFqCDOYKuv91JmuYUqFSZ9v9AI12oBjw/10iSOOdWKVm8c4Xe0wjTRwmJYAT+IQMm/juO5L4iEIwPccKeyj6NxiDmfm7TqF6v5JCOuY+oEWMCDysUZMTRoFKRCm8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0rKKMzH; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24009eeb2a7so29886105ad.0;
-        Sun, 03 Aug 2025 20:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754276592; x=1754881392; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+YTn/Y0sW7WeeEpSxmVY9gPF0z1HE+jN3M7PZc05t48=;
-        b=b0rKKMzHZZVPiOkleu0tA34xtg2SOTtghlK7wvamcmjMf2CJD0R1jZE/B2tS5VNarC
-         7kXLv0M8PJI5Fu+XGr/kumfXb96X67/3D6LP644eGTEa4aNhJmPrdSLnZEw3Ilu9yzLl
-         rj/1Cl6KpkxOWHAkD9n+ghLg4d5eEPpDMtSwBdildvpEWXl26MQ5UbSdqz0MHuF6jYl3
-         3XvuEngkMdxnLodMrhgLCz5ts2ZgJi/a/p7gsUI/vXt+qO7OZFjxTqnJQJLnQG86oNnq
-         AqO5rybplb+KPlfJkQRo23o2XnYw7qciEnGfQIEaiNToFN2nrt4AdQeAXSwpNwfwhKDk
-         SWew==
+	s=arc-20240116; t=1754276611; c=relaxed/simple;
+	bh=jQ6Cvrtue83tSPEngot30qNW8YbInIfCiq3W0BOsXyA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uVu7ZLa5F4Bp81MAVpMS0HtB2jHlsn4vFb1BTe3D+Za/5MFPAspIsG7N94/7wcE1Lbe7F020GJZD1dBCW2CAYGqRIgK1nwBeO7jsUUNEU2YRtdoyyWW4kx9elpQonysigrDW14yXtufdsWZokyQuhjdaQCf8Mc3eUrAhuAxeq9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N9SJJ5ET; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573No4S0025861
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 03:03:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jWjl2/LsT3uqPipUgEyDmG
+	kvO/8Fme3N41mIfB3Febc=; b=N9SJJ5ETd4G6rz5uzn091+6lFKx7ezo/L5flPw
+	cu9gX9/Rv3wmCZJp7dLAh2LFreL3Zg3l1IjIjZFUYuLY+TjgnrAipyn77LpeqJ0m
+	dREznokarCkF+MCd/M31r8XblQmKBjXG8mqONk+m6gP/TcY3sGLZvTIlS8oJr50s
+	8KT7NbOy41bxp80oMhO3d/OV52qPmYOzKsZqG8kaH/wqfNb+qeRrctm3Qlw18EbV
+	Be2rVJy5pHvM3P1Cczkr0xmxcfpBUiq9nqT5dFjY4qqYDSWiEnJVjglP6Pq6DD6L
+	HbW4lc1LQWi+KsFDd/jXC9X9VmX+0sD/+b5pKLKxFOGdItCA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489a0m3b4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 03:03:27 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b115fb801bcso5480848a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 20:03:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754276592; x=1754881392;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+YTn/Y0sW7WeeEpSxmVY9gPF0z1HE+jN3M7PZc05t48=;
-        b=nEE8V+EmhQoJjhtlCGhWzDaJlSXijuEPsTEvB+iM46d9ReQeWcdBgnsTaelOi98SdG
-         KHjiOkxZ2KjVH8m4o1DHXAlUx2UtM8gHUbdt3ZEYHRJdIxxrsTxlCAM6UPhfcpoYKGJc
-         QWOLOgkS3igD5ofZ8FQdeCfId5DHiPMu2y56GG7saWt0J5/rZWR8wjcCEUi65tk/r6+j
-         Dun3sTg50oa/7LBU+nC7W046InQdP7ySvjTBJMCgEoNSkbmUy0KZ+bsF0T4SesBCuJ4i
-         peU840RdskyXTBjYbq8HcIRVjHxXIVMTLxPKehkkT2wAvYRLuF0wnxfVDi/qzXbI0vPL
-         aJ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvvxvLUQpcBo0Ct4g4U5IUNgDcZUYEO89nX0IL1eAUZx/zBdszGDY1r9S1L5bzHNXjUv2LS6N6iS1+3CXGuA==@vger.kernel.org, AJvYcCWXIObik6u8MG3AjcnAoObwcUdMOBw2QWcm1GA6VKUXMmGfmuwFk6TdcPs8gXtOz0fC4r/P/L8Hfz6k9pkr5Q==@vger.kernel.org, AJvYcCX7ary8ctZOwixRLUkW5cI2D84Y2SzYGeU8SQXUD+xhff2knLi5EJocMhshBp4f0GL6/J3oRZciQ7tXObHL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ayNMwo5wYrIW5ZjCl01i4TDDiOJT+Q4rn4rAeMGdL9BNQHI4
-	pYcaXfbeof5TJgteefIUkXDOjgNpa1fvcEdm2V3v5Fboyej/TsopWjMa
-X-Gm-Gg: ASbGncuUf/xhhrQYlEIJ7qC/DLtOSprwwe88NbhshvIt2y6FFpjCeEicYRSHEGADX4T
-	1/cAAk306gni8ZuZT2OYWEnNao3wwlw7peWn1Ziei1ijHlg90yrKvhU8oXyF+W0R7nHDg70+oPf
-	SiHgAVde+hV86raL9AGfgS6xf+9lP/il/imYDtHaMFcKQtsnNDigoYLksSr5pDeUJBQuFv9qcz4
-	1RYtzMr2fPQZxckyOSAoDlcXeMOcXWQ8gq4R4Z2REYms2ntuWVPIiH0udC5WfxqIgF0G+mN1rTW
-	UrsG/ttL+oset1ypVAkrFSbaHou3uRnf82lsECo2GWqpT1iY8nangSqkFwWb6syQsqMH/QOz1Bd
-	EOQb98w==
-X-Google-Smtp-Source: AGHT+IHsDtLWVbpkOdhxPBWsESz4tdnu8lue9DlTyK5CT56aJ7oOY5lyHmzu6Jb7PchlIPQHAJ3GuA==
-X-Received: by 2002:a17:902:f684:b0:220:ea90:191e with SMTP id d9443c01a7336-24246f2cc2dmr128288095ad.4.1754276591868;
-        Sun, 03 Aug 2025 20:03:11 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef67e8sm97481495ad.8.2025.08.03.20.03.08
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Aug 2025 20:03:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1754276607; x=1754881407;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jWjl2/LsT3uqPipUgEyDmGkvO/8Fme3N41mIfB3Febc=;
+        b=CxgpD5cH5XcTkNQicfENimxw/NtAV6IM4u5DkKRv6Tm18c+1pZ0uzQ4ZsT2Z3PverQ
+         POfSvm/BDEq6Ik9GNahHX5XLrc8aTxUktpLIHmvEHJabuKOzNbQbOLdgusUopvIce72w
+         iTrYiFQ5Wy6i+AXMjB0JXgrz/BGMsgjsWK/Wg3v8nrzh0916JHI89zoDwJCUk3bhqK6t
+         SRGyyAVV4yT8cnlz4UrQykSq4m16ZuN/F6b/l9mydvTpaZWt0DwByCqoTeXabi+y7w3I
+         8+SObJm/0SRsa6d5O1Z0R8hsVTPhAkb2I6jthnG4H+ncwOiH1YLL6yVts4Ds2YTsJzeV
+         dQbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMSZozk79tpj2+oWRYl6H9fYeEMvIXCIL/cZUCLjd/gh1euTpWALtv1B4c2qVEu9GC2em7MqXnhy0feHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt/sDTwlWXy/6d26rTEXGwl4uKLsA56CDirzl3n73+4hpRNoIa
+	QdsEwsr7eqJznOObRL+72x5e0QMmSe5yW+pxBXFUgF8rrVBLb33NYUFCDF39nerPH8tZOZFOhA+
+	5s6NhLT4SMBp5MrgQF8yYgaSYTZ664cnlHkG9i2CLXUiBUVu26PkrnDEedlZcQHDx44M=
+X-Gm-Gg: ASbGnctMkB9xadaQx4O3LIznywT8mPTpltm1Ug+Wuk58YkhpzzXr5TK/hxMzmCz390B
+	tuWK/PYXJl7vkCYlxb1hxYRYCpJZJmtmAC1K3jaild7mhjmF7a0qwdr0Sg5KY+BVXqm55YnSmqc
+	ybbxqkyXuI3pnYqO/VBxXGywsXdXow6sZN+TupbbknENQ7izPPzjb9XkUoqv8BalTSTt0Iz7etd
+	+gaCtcJQw+8UUaB+A4rekLOBqBHokcvIyM6hkuEglXzCFxq6fpzrvRFdua/rzoezOUus4HkoibG
+	g7IaQUbpB2DIqqcAr/Ea9cyFbkvEiovpluwq9tnxUY12jFwJh5YoNcqOe8889R9oxIWfNjGNtWy
+	fmGtaapo6We+lbdKjUg==
+X-Received: by 2002:a05:6a20:12ce:b0:232:7628:9968 with SMTP id adf61e73a8af0-23df8f77df9mr10374389637.1.1754276606540;
+        Sun, 03 Aug 2025 20:03:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExvnKIZdOLteWnTOv2UyQtya6X6UggYZ9wc54uFCIA0Mg9TiA8q3Xq6Gvkrj+kUO2e9aNNtg==
+X-Received: by 2002:a05:6a20:12ce:b0:232:7628:9968 with SMTP id adf61e73a8af0-23df8f77df9mr10374347637.1.1754276606144;
+        Sun, 03 Aug 2025 20:03:26 -0700 (PDT)
+Received: from [127.0.1.1] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebc0e79sm10489000a91.10.2025.08.03.20.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Aug 2025 20:03:25 -0700 (PDT)
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Subject: [PATCH ath-next 0/2] wifi: ath12k: fix 2 instances of Smatch
+ warnings
+Date: Mon, 04 Aug 2025 11:03:09 +0800
+Message-Id: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in bch2_symlink
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <67a72070.050a0220.3d72c.0022.GAE@google.com>
-Date: Mon, 4 Aug 2025 11:02:54 +0800
-Cc: kent.overstreet@linux.dev,
- linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com,
- miklos@szeredi.hu,
- amir73il@gmail.com,
- linux-unionfs@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2F4A26BA-821F-4916-A8F6-71EDBA89A701@gmail.com>
-References: <67a72070.050a0220.3d72c.0022.GAE@google.com>
-To: syzbot <syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO4ikGgC/52NQQ6CMBREr2K69hN+CS248h7GxacWaIQWW6wYw
+ t1tWLvRzSSTmby3sqC90YGdDivzOppgnE0FjwemerKdBnNLnfGcl7lEATT3yO/QmgXCSLPq4UX
+ eGtuBsyA6iMMEVEvVVKItCAVLpMnr9N8tF5YAYPUys2taehNm59+7PuK+/2SKCDlUotSoWk25a
+ M4uhOzxpEG5ccxS7JrI/0DzhEZZy0YiEqfiC3rbtg/rqKPQQgEAAA==
+X-Change-ID: 20250716-ath12k-fix-smatch-warning-on-6g-vlp-a97cb86f3a16
+To: Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=JOM7s9Kb c=1 sm=1 tr=0 ts=68902300 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=2XfRbQ7RPn6m6gspCJgA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-GUID: Tz9e3oXO9xGOcGS1NeM2x960Xr8CDmTu
+X-Proofpoint-ORIG-GUID: Tz9e3oXO9xGOcGS1NeM2x960Xr8CDmTu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAxNCBTYWx0ZWRfX+B2snQ6f2lPO
+ yxlojvDG083fgONaKPdgYg+gQhybDtEfJQrba4y3x7L2uopt0N+1U+ku7yPMJCv5/wQKYx7JZYo
+ Jd0BGf9G+QyL8p96RjWt1m53Ft8NqyKcw0vSqB4t6xDbyocxHqVcz3/7403ix53g1dWzUu+h8sa
+ tQTldpijSpyJWB7TsezYcamhP8fkauf3BlH+K8P5QXcKGLslbr1Y3kRXbjuKLsEjJX/TE7LtY5j
+ saZ9y31o0hL9p/8RhZSFUrlo92CQ/tMVAwPI3KMi6Zq7+62vpAxz3HYWCBohDTUlf4lUoDHahMV
+ D22tTBebbXwS3/PpA+FZjUjnoyChUZS3djSFJ1nqJ040ePwllwOL0DwBWNvHxvUdJvdOFA6ZIO8
+ vgtHhwCqZuFkjXqE/K3uadaJrXL6Fd95ytZE9OTvLbV372eQxB/JsXWfVYRaxA/d700LTlfW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_01,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 suspectscore=0 mlxlogscore=701 spamscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040014
 
-+cc overlayfs
+Fix below two Smatch warnings:
 
-> On Feb 8, 2025, at 17:14, syzbot =
-<syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com> wrote:
->=20
-> syzbot has found a reproducer for the following issue on:
->=20
-> HEAD commit:    7ee983c850b4 Merge tag 'drm-fixes-2025-02-08' of =
-https://g..
-> git tree:       upstream
-> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D17375ca4580000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3D1909f2f0d8e641ce
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3D7836a68852a10ec3d790
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D14e0cca4580000
-> C reproducer:   =
-https://syzkaller.appspot.com/x/repro.c?x=3D155361b0580000
->=20
-> Downloadable assets:
-> disk image (non-bootable): =
-https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_dis=
-k-7ee983c8.raw.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/f2f78699fc41/vmlinux-7ee983c8=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/ca55e6e8dd01/bzImage-7ee983c8=
-.xz
-> mounted in repro: =
-https://storage.googleapis.com/syzbot-assets/aa79c539b21d/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com
->=20
-> bcachefs (loop0): reading snapshots table
-> bcachefs (loop0): reading snapshots done
-> bcachefs (loop0): done starting filesystem
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> WARNING: possible recursive locking detected
-> 6.14.0-rc1-syzkaller-00181-g7ee983c850b4 #0 Not tainted
-> --------------------------------------------
-> syz-executor294/5305 is trying to acquire lock:
-> ffff888044775078 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-inode_lock include/linux/fs.h:877 [inline]
-> ffff888044775078 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-bch2_symlink+0x176/0x310 fs/bcachefs/fs.c:839
->=20
-> but task is already holding lock:
-> ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-inode_lock include/linux/fs.h:877 [inline]
-> ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_workdir fs/overlayfs/copy_up.c:782 [inline]
-> ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_do_copy_up fs/overlayfs/copy_up.c:1001 [inline]
-> ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
-> ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_flags+0x19cb/0x47c0 fs/overlayfs/copy_up.c:1257
->=20
-> other info that might help us debug this:
-> Possible unsafe locking scenario:
->=20
->       CPU0
->       ----
->  lock(&sb->s_type->i_mutex_key#16);
->  lock(&sb->s_type->i_mutex_key#16);
->=20
-> *** DEADLOCK ***
->=20
-> May be due to missing lock nesting notation
->=20
-> 7 locks held by syz-executor294/5305:
-> #0: ffff88801df94420 (sb_writers#10){.+.+}-{0:0}, at: =
-mnt_want_write+0x3f/0x90 fs/namespace.c:547
-> #1: ffff88804470de50 (&ovl_i_mutex_dir_key[depth]/1){+.+.}-{4:4}, at: =
-inode_lock_nested include/linux/fs.h:912 [inline]
-> #1: ffff88804470de50 (&ovl_i_mutex_dir_key[depth]/1){+.+.}-{4:4}, at: =
-lock_rename fs/namei.c:3217 [inline]
-> #1: ffff88804470de50 (&ovl_i_mutex_dir_key[depth]/1){+.+.}-{4:4}, at: =
-do_renameat2+0x62c/0x13f0 fs/namei.c:5161
-> #2: ffff88804470e418 (&ovl_i_mutex_key[depth]){+.+.}-{4:4}, at: =
-inode_lock include/linux/fs.h:877 [inline]
-> #2: ffff88804470e418 (&ovl_i_mutex_key[depth]){+.+.}-{4:4}, at: =
-lock_two_nondirectories+0xe1/0x170 fs/inode.c:1281
-> #3: ffff88804470e9e0 (&ovl_i_mutex_key[depth]/4){+.+.}-{4:4}, at: =
-vfs_rename+0x6a2/0xf00 fs/namei.c:5040
-> #4: ffff88804470e7d0 (&ovl_i_lock_key[depth]){+.+.}-{4:4}, at: =
-ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:650 [inline]
-> #4: ffff88804470e7d0 (&ovl_i_lock_key[depth]){+.+.}-{4:4}, at: =
-ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:727
-> #5: ffff8880477b0420 (sb_writers#9){.+.+}-{0:0}, at: =
-ovl_copy_up_workdir fs/overlayfs/copy_up.c:781 [inline]
-> #5: ffff8880477b0420 (sb_writers#9){.+.+}-{0:0}, at: ovl_do_copy_up =
-fs/overlayfs/copy_up.c:1001 [inline]
-> #5: ffff8880477b0420 (sb_writers#9){.+.+}-{0:0}, at: ovl_copy_up_one =
-fs/overlayfs/copy_up.c:1202 [inline]
-> #5: ffff8880477b0420 (sb_writers#9){.+.+}-{0:0}, at: =
-ovl_copy_up_flags+0x19b4/0x47c0 fs/overlayfs/copy_up.c:1257
-> #6: ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-inode_lock include/linux/fs.h:877 [inline]
-> #6: ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_workdir fs/overlayfs/copy_up.c:782 [inline]
-> #6: ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_do_copy_up fs/overlayfs/copy_up.c:1001 [inline]
-> #6: ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
-> #6: ffff888044774148 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: =
-ovl_copy_up_flags+0x19cb/0x47c0 fs/overlayfs/copy_up.c:1257
->=20
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 5305 Comm: syz-executor294 Not tainted =
-6.14.0-rc1-syzkaller-00181-g7ee983c850b4 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS =
-1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
-> <TASK>
-> __dump_stack lib/dump_stack.c:94 [inline]
-> dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3039
-> check_deadlock kernel/locking/lockdep.c:3091 [inline]
-> validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3893
-> __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
-> lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-> down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-> inode_lock include/linux/fs.h:877 [inline]
-> bch2_symlink+0x176/0x310 fs/bcachefs/fs.c:839
-> vfs_symlink+0x137/0x2e0 fs/namei.c:4671
-> ovl_do_symlink+0x85/0xd0 fs/overlayfs/overlayfs.h:267
-> ovl_create_real+0x346/0x550 fs/overlayfs/dir.c:206
-> ovl_copy_up_workdir fs/overlayfs/copy_up.c:783 [inline]
-> ovl_do_copy_up fs/overlayfs/copy_up.c:1001 [inline]
-> ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
-> ovl_copy_up_flags+0x19fe/0x47c0 fs/overlayfs/copy_up.c:1257
-> ovl_rename+0x62a/0x1760 fs/overlayfs/dir.c:1150
-> vfs_rename+0xbdb/0xf00 fs/namei.c:5069
-> do_renameat2+0xd94/0x13f0 fs/namei.c:5226
-> __do_sys_rename fs/namei.c:5273 [inline]
-> __se_sys_rename fs/namei.c:5271 [inline]
-> __x64_sys_rename+0x82/0x90 fs/namei.c:5271
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0d8dddad19
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 =
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd9dbea2d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-> RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f0d8dddad19
-> RDX: 00007f0d8dddad19 RSI: 0000400000000840 RDI: 0000400000000800
-> RBP: 0031656c69662f2e R08: 000055558454d4c0 R09: 000055558454d4c0
-> R10: 000055558454d4c0 R11: 0000000000000246 R12: 00007ffd9dbea300
-> R13: 00007ffd9dbea528 R14: 431bde82d7b634db R15: 00007f0d8de2303b
-> </TASK>
-> syz-executor294 (5305) used greatest stack depth: 10768 bytes left
->=20
->=20
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before =
-testing.
->=20
+1#
+drivers/net/wireless/ath/ath12k/mac.c:10069
+ath12k_mac_fill_reg_tpc_info() error: uninitialized symbol 'eirp_power'.
+
+2#
+drivers/net/wireless/ath/ath12k/mac.c:9812
+ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'local_non_psd->power' 5 <= 15
+drivers/net/wireless/ath/ath12k/mac.c:9812
+ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'reg_non_psd->power' 5 <= 15
+
+Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+---
+Baochen Qiang (2):
+      wifi: ath12k: initialize eirp_power before use
+      wifi: ath12k: fix overflow warning on num_pwr_levels
+
+ drivers/net/wireless/ath/ath12k/mac.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+---
+base-commit: 4cedae6335644a5858e1bc2c367aedc10482b654
+change-id: 20250716-ath12k-fix-smatch-warning-on-6g-vlp-a97cb86f3a16
+
+Best regards,
+-- 
+Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
 
