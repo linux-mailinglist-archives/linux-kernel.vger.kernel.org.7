@@ -1,118 +1,268 @@
-Return-Path: <linux-kernel+bounces-755732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A9B1AAFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C92B1AB00
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A8916E8AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D30A3AB377
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BFA18D;
-	Mon,  4 Aug 2025 22:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDBC2900BA;
+	Mon,  4 Aug 2025 22:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FL5ewztc"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NrMvLysl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3MCexnNW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF69E38FA6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 22:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917A1917E3;
+	Mon,  4 Aug 2025 22:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754346879; cv=none; b=Q0m8vABd9BsscPZHK1mWNlnuEBtjvd5LnEYBgDV227E1vERtM08K/OW7YCN5WH9kuYVYnzujIqevRDO75E+Iq66LNuu2Qgkcn4f4ytmaymNE1i+EFvaiVkfGdllIcYx+0If7oCRkHfpoBZjGYtfS+bMFzF6hFRWWO0UsAd84rSU=
+	t=1754347326; cv=none; b=UTRHdbOM+b43+bPf4oGdvSEOt5tIx2/iAqoMBrOFla8DGx/IyUtk6JoPpfOBvhln1Smnzsxoxa5peoQAtQ7IRO9Kr9bRCBJqpje3nYCVNwWZLqslG+PEHdZJwlKbgWilQ6vxI974+DO/E/HTB5ne8QCwlnMVL5WdzkKFWeHqGTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754346879; c=relaxed/simple;
-	bh=jLqHuEkPoyPdegSoer1lnw1IVig1L4050MNMgQHpMcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=py/kEfg+MIVddfOp6ovzCvU++UCbZ4an/nFCIBCLYyNjnOsTqjJlYPnFCBdpvRR+tYdksx2kcETKyyHnGUfBIlmsJKrdUZIeNabepmKGwE57XZ52OAzN7SRxmf+siPskS8SXKqLil36FrSUgvOhmo0E7W8crfNY4kGi2oZR4Vdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FL5ewztc; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b786421e36so2798898f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 15:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754346876; x=1754951676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOe+oseDiKDWnydBzNUnhpGVuR6PDQg1TJ9zx0VvakQ=;
-        b=FL5ewztcSYYHGVQ8mSXMfw8ZRkW2N8h+IJugT9eSyDTJqxrcqjIULnxc3MaObLabz5
-         bwMEgHdXO708Tp4DZcolZ9XIyMoz7Izl+Pp8arLHiYvNKeEAzStAJupag4wx7qopqWNM
-         upIHx1Derq6Wotx5Zc4su7HRhCZTwjztrD/0HENrk/6GAyBeUU3oXzZV0UbWddUsEu3i
-         eVLjcAP6fXZmz2/L6h3y+FMGJ14h2SM7P+9nBYNynMIS5G4nERlypbC4Bubs1tXMvapG
-         Y57JtdzFkDZSg0Zet1wZDDleU77/+k+qDChTujeF+bQWwcSqO3r/x6+Rt/5AlpUE/T60
-         i72g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754346876; x=1754951676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOe+oseDiKDWnydBzNUnhpGVuR6PDQg1TJ9zx0VvakQ=;
-        b=NnBYY8TyytNmqivq1tnna4bhJmEzY8Ud7jwShAQtSoKnv4LiO8H8urhcdRx//uu6ec
-         ewY4RohwsLLyg8jy1HDNWpB6y2dH3fQ1BcoYZVdrqyClTUm4343LKpTSvqGjL87CnOOv
-         yFQDdE0pKejcuPXV+gMNQsJJOH+rfq/elDampOKNbUW6zFuW2pJA6QJtPRGbsvN+fb2y
-         lAQRK4WeNBvGYalQihmOnnJ57FElGoU4yZuzQIkGxXSheMnN6dKuTZMisSiNjVx6O/Sd
-         ftHH1n1aJVKzazd8eld5jUba0c2D48CeRJixFnGX+sLMyjudRvoQPNeQenIHlZ5j6Clb
-         0Q0w==
-X-Gm-Message-State: AOJu0Ywc1v7+5yB0CDoaMakTmhqMZy7qz48/N7x1o65PnfGAQhYu/Xww
-	tIGD0+nr6K7P067az7+bs4ylO5qnza4zNKR1IGKDPh3RQ2gAYoZF/DcA
-X-Gm-Gg: ASbGncs4/xlAFLr4JI7aeGm2akWyo1A8Ox6eOw8boVu6oMI3k988y6sYCen9QB9keQV
-	O/Cd2cCwb7PHoj3evPtF2Oro4oqvfuCUY6gFQZ/YaH/CASHwUwbboA5tBkQQBcI7aw7JlrqMjc2
-	BXsYJCXNPDIoR0APXWp09ryQ6bWqSQgG9aMquUMEG9FZWlAgg8fbISK+jetzgMi1lVeO7VMhNWo
-	dRgq5woEG1/ezTgAZgOP+H6Qtiw7zk5p4fmUQ/19l0q6ewCz/EnkTVlrVaUbdV6Z6sbbA9MJXIn
-	kVykjyDLSq9TVLpaB/z+1+1fGHjwH59mcTSMx1ncLFFa8bfZm9LLDwC0eUNaWxbiP0Hc8voa8ba
-	YNfEo6Tpq58K1nOoT4GuvijRThLj8pzgcIw==
-X-Google-Smtp-Source: AGHT+IGd8DDZ8BWAVJh7j/vBDdXoFmEdTXbAwA3/m84GUdaa2S9/2l9tNyJgnm6A6l0F+/T0kNg2nA==
-X-Received: by 2002:a05:6000:2204:b0:3b7:8b5e:831d with SMTP id ffacd0b85a97d-3b8d9472d25mr8064796f8f.17.1754346875994;
-        Mon, 04 Aug 2025 15:34:35 -0700 (PDT)
-Received: from debian.local ([90.252.123.198])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abed3sm16807486f8f.10.2025.08.04.15.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 15:34:34 -0700 (PDT)
-Date: Mon, 4 Aug 2025 23:34:32 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-kernel@vger.kernel.org, surenb@google.com, bsegall@google.com,
-	dietmar.eggemann@arm.com, mingo@redhat.com, juri.lelli@redhat.com,
-	mgorman@suse.de, peterz@infradead.org, rostedt@goodmis.org,
-	vschneid@redhat.com, vincent.guittot@linaro.org,
-	regressions@lists.linux.dev
-Subject: Re: [REGRESSION] intermittent psi_avgs_work soft lockup
-Message-ID: <aJE1eGwVkQdfDeOF@debian.local>
-References: <aI_fUhpBrIBrJ073@debian.local>
- <20250804133240.GA1303466@cmpxchg.org>
+	s=arc-20240116; t=1754347326; c=relaxed/simple;
+	bh=F3rT9VhiEn1cprxuycemIGbq7Kq3qEL31yLdVczjeKU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Ror+cVc+bRLEw/lBd+KZuxB6o8OySVTdn1m/qrGQ/4AxqVGctv6G05BUi+DQ3Tc1A9p55Df/n9A0LH6vfJ5cZ5RoAXKon/R+jW0qiR6rDO4cwdg6oWkR9sJPvAgfbsAO6CfFErCPf6XOB/ghBxPAeISu4Je+ow2LW118JslCLH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NrMvLysl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3MCexnNW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 04 Aug 2025 22:42:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754347323;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dt9Td28EOzuc+bIXGqpUQkEOOmQqt80jnH8LgqzNK2g=;
+	b=NrMvLyslYkuXqkCH9slSGbiaRVjESFRg2SI5lKCi6TAHV54s7BN965Nz3M/Z6uiUu45r9v
+	AOATC1Fy6oPEWYxF0tar1XyR/blVPh5aOvqfh+boTwkQNhwgc9WEYkRP2irNtO4gU21188
+	LOzaVs7c48kRv7HwdkaFIfcWgQdeBFHb4ZcXlWrqBawK4wvICTevJ3dCU8fuckWQdG8BEW
+	qyUL7pqglkq2QHx3kr7dSQpBWBrir4W2AFjUSkYgagmZf17zDbjorNfvRsYY6uCxZWYvLG
+	YtaS6AxaivYrbW+xqWQCejxyGpDkt9TxIOZeHk9KOSisLUz6zBdUGinc9/G2Zw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754347323;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dt9Td28EOzuc+bIXGqpUQkEOOmQqt80jnH8LgqzNK2g=;
+	b=3MCexnNWKgaj7f8uYvmWWXzarWCMb4pRvojly08JxqwTHWfQcRgri8aytnfDBtxPeBNJgt
+	/AaIr/Ovr0U3H4Cg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/irq: Plug vector setup race
+Cc: Hogan Wang <hogan.wang@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <draft-87ikjhrhhh.ffs@tglx>
+References: <draft-87ikjhrhhh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804133240.GA1303466@cmpxchg.org>
+Message-ID: <175434732073.1420.15265473606517387764.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 09:32:40AM -0400, Johannes Weiner wrote:
-> Hi Chris,
-> 
-> On Sun, Aug 03, 2025 at 11:14:42PM +0100, Chris Bainbridge wrote:
-> > Hello,
-> > 
-> > I'm getting intermittent soft lockups with recent kernel builds. This is
-> > a new error that I haven't seen before.
-> 
-> This smells of the seqlock re-init problem in 570c8efd5eb7. Could you
-> try to see if the below patch fixes it for you?
-> 
-> https://lore.kernel.org/lkml/20250716104050.GR1613200@noisy.programming.kicks-ass.net/
-> 
-> We probably want Cc: stable on this patch now that 6.16 is released.
-> 
-> Thanks
+The following commit has been merged into the x86/urgent branch of tip:
 
-That's the one. Thank you.
+Commit-ID:     ce0b5eedcb753697d43f61dd2e27d68eb5d3150f
+Gitweb:        https://git.kernel.org/tip/ce0b5eedcb753697d43f61dd2e27d68eb5d=
+3150f
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 24 Jul 2025 12:49:30 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 04 Aug 2025 23:34:03 +02:00
 
-#regzbot introduced: 570c8efd5eb7
-#regzbot monitor: https://lore.kernel.org/lkml/0d86c527-27a7-44d5-9ddc-f9a153f67b4d@meta.com/
-#regzbot fix: 99b773d720ae
+x86/irq: Plug vector setup race
+
+Hogan reported a vector setup race, which overwrites the interrupt
+descriptor in the per CPU vector array resulting in a disfunctional device.
+
+CPU0				CPU1
+				interrupt is raised in APIC IRR
+				but not handled
+  free_irq()
+    per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
+
+  request_irq()			common_interrupt()
+  				  d =3D this_cpu_read(vector_irq[vector]);
+
+    per_cpu(vector_irq, CPU1)[vector] =3D desc;
+
+    				  if (d =3D=3D VECTOR_SHUTDOWN)
+				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+
+free_irq() cannot observe the pending vector in the CPU1 APIC as there is
+no way to query the remote CPUs APIC IRR.
+
+This requires that request_irq() uses the same vector/CPU as the one which
+was freed, but this also can be triggered by a spurious interrupt.
+
+Interestingly enough this problem managed to be hidden for more than a
+decade.
+
+Prevent this by reevaluating vector_irq under the vector lock, which is
+held by the interrupt activation code when vector_irq is updated.
+
+To avoid ifdeffery or IS_ENABLED() nonsense, move the
+[un]lock_vector_lock() declarations out under the
+CONFIG_IRQ_DOMAIN_HIERARCHY guard as it's only provided when
+CONFIG_X86_LOCAL_APIC=3Dy.
+
+The current CONFIG_IRQ_DOMAIN_HIERARCHY guard is selected by
+CONFIG_X86_LOCAL_APIC, but can also be selected by other parts of the
+Kconfig system, which makes 32-bit UP builds with CONFIG_X86_LOCAL_APIC=3Dn
+fail.
+
+Can we just get rid of this !APIC nonsense once and forever?
+
+Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug=
+ retriggered irqs")
+Reported-by: Hogan Wang <hogan.wang@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Hogan Wang <hogan.wang@huawei.com>
+Link: https://lore.kernel.org/all/draft-87ikjhrhhh.ffs@tglx
+---
+ arch/x86/include/asm/hw_irq.h | 12 +++---
+ arch/x86/kernel/irq.c         | 63 +++++++++++++++++++++++++---------
+ 2 files changed, 55 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
+index 162ebd7..cbe19e6 100644
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -92,8 +92,6 @@ struct irq_cfg {
+=20
+ extern struct irq_cfg *irq_cfg(unsigned int irq);
+ extern struct irq_cfg *irqd_cfg(struct irq_data *irq_data);
+-extern void lock_vector_lock(void);
+-extern void unlock_vector_lock(void);
+ #ifdef CONFIG_SMP
+ extern void vector_schedule_cleanup(struct irq_cfg *);
+ extern void irq_complete_move(struct irq_cfg *cfg);
+@@ -101,12 +99,16 @@ extern void irq_complete_move(struct irq_cfg *cfg);
+ static inline void vector_schedule_cleanup(struct irq_cfg *c) { }
+ static inline void irq_complete_move(struct irq_cfg *c) { }
+ #endif
+-
+ extern void apic_ack_edge(struct irq_data *data);
+-#else	/*  CONFIG_IRQ_DOMAIN_HIERARCHY */
++#endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
++
++#ifdef CONFIG_X86_LOCAL_APIC
++extern void lock_vector_lock(void);
++extern void unlock_vector_lock(void);
++#else
+ static inline void lock_vector_lock(void) {}
+ static inline void unlock_vector_lock(void) {}
+-#endif	/* CONFIG_IRQ_DOMAIN_HIERARCHY */
++#endif
+=20
+ /* Statistics */
+ extern atomic_t irq_err_count;
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 9ed29ff..10721a1 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -256,26 +256,59 @@ static __always_inline void handle_irq(struct irq_desc =
+*desc,
+ 		__handle_irq(desc, regs);
+ }
+=20
+-static __always_inline int call_irq_handler(int vector, struct pt_regs *regs)
++static struct irq_desc *reevaluate_vector(int vector)
+ {
+-	struct irq_desc *desc;
+-	int ret =3D 0;
++	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
++
++	if (!IS_ERR_OR_NULL(desc))
++		return desc;
++
++	if (desc =3D=3D VECTOR_UNUSED)
++		pr_emerg_ratelimited("No irq handler for %d.%u\n", smp_processor_id(), vec=
+tor);
++	else
++		__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
++	return NULL;
++}
++
++static __always_inline bool call_irq_handler(int vector, struct pt_regs *reg=
+s)
++{
++	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
+=20
+-	desc =3D __this_cpu_read(vector_irq[vector]);
+ 	if (likely(!IS_ERR_OR_NULL(desc))) {
+ 		handle_irq(desc, regs);
+-	} else {
+-		ret =3D -EINVAL;
+-		if (desc =3D=3D VECTOR_UNUSED) {
+-			pr_emerg_ratelimited("%s: %d.%u No irq handler for vector\n",
+-					     __func__, smp_processor_id(),
+-					     vector);
+-		} else {
+-			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+-		}
++		return true;
+ 	}
+=20
+-	return ret;
++	/*
++	 * Reevaluate with vector_lock held to prevent a race against
++	 * request_irq() setting up the vector:
++	 *
++	 * CPU0				CPU1
++	 *				interrupt is raised in APIC IRR
++	 *				but not handled
++	 * free_irq()
++	 *   per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
++	 *
++	 * request_irq()		common_interrupt()
++	 *				  d =3D this_cpu_read(vector_irq[vector]);
++	 *
++	 * per_cpu(vector_irq, CPU1)[vector] =3D desc;
++	 *
++	 *				  if (d =3D=3D VECTOR_SHUTDOWN)
++	 *				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
++	 *
++	 * This requires that the same vector on the same target CPU is
++	 * handed out or that a spurious interrupt hits that CPU/vector.
++	 */
++	lock_vector_lock();
++	desc =3D reevaluate_vector(vector);
++	unlock_vector_lock();
++
++	if (!desc)
++		return false;
++
++	handle_irq(desc, regs);
++	return true;
+ }
+=20
+ /*
+@@ -289,7 +322,7 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
+ 	/* entry code tells RCU that we're not quiescent.  Check it. */
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
+=20
+-	if (unlikely(call_irq_handler(vector, regs)))
++	if (unlikely(!call_irq_handler(vector, regs)))
+ 		apic_eoi();
+=20
+ 	set_irq_regs(old_regs);
 
