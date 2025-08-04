@@ -1,168 +1,182 @@
-Return-Path: <linux-kernel+bounces-755372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935F9B1A596
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09A9B1A598
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4C93AB9E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE19517EDD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C2E25F78F;
-	Mon,  4 Aug 2025 15:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA4419ABC3;
+	Mon,  4 Aug 2025 15:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FCC2CgzF"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yd/MYvyG"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2DC25A2AE;
-	Mon,  4 Aug 2025 15:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709AC84A35
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754320519; cv=none; b=pJAAjeCojzVMz3FOgChrPQtsoIqfIRWKM7p1RsUZNEHb5tx2203JnnNaIG6jv+SBCW95JNBzqICFn2SuVPkxKN3QCWzBSs6eiuoyY/W37HCbMcSuYfdxMGUQuzmYUGqOOJo/svhdV2VKCOYJPgk2lTKf2fdoL0IVOqg80wHqawk=
+	t=1754320541; cv=none; b=gY4cWdqJhV1g/08H+D8/ueC2vyVQjKSyMhqNp1U+yMryOFnNEEFV1Y+6aGytTcPWJDgmiXAq1YshfD7QMNgndb9L9EVyxyVQ0zvLdx0yPgFkC+ntDBamtn5PBaoS4WRNAG19qbOn0UDfwXOcWx4XUdVQ4KWvHuqWqV6WX80v6YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754320519; c=relaxed/simple;
-	bh=P5etSnVODHY9mFda1e4aWjASEqQNNmKOkqoxvtsdqAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y8eEAVItV/kHXFCich52XRog9miE99a+Q8h4sdTSa8hEOvzWOb7dNYcZ9PvZlnFdZPPUiifgt/lQKGHtuoPUTPKAbNY+3dC+Bte8bSQGLmJKKIT1sKMdSSLLs/bRZUvSbgt6nLZBBgAShzoeCaI1vMo/PVqtKThLU+eQTcU8VVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FCC2CgzF; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574CdmVf024001;
-	Mon, 4 Aug 2025 15:15:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=kVlNkasbhPWtsdP92OI0TGfwW4AsNdYUXsTPRipab
-	pI=; b=FCC2CgzFcFsBVGX77lbxZR54vmSw0M3unkHxYQi5x3hSdF7awO13W38Vh
-	Re0aqanh4rb8OPNM+U9NqIalxA7FweySjmlRdhzdlkAqtFyB1gNTy+ow9GKp+Z+I
-	HqRfYHk/FkXVIhkNZzqVGiIMM7Xv+5TlT91FDfYkLEb8MZJtW+Tl4aQ/E4EjT3ze
-	AwyfcMWbl1ON9OEmEt5Y7eVEiN8MNi9Kajv/xLvpFeT3frYSnT3NRoOu29ddZcAC
-	8trj0n9icBflmVRiOgEP17HWkO9fc7HfEPgi5hXdvkgR+Yg4VsIJzLwcCzpvTvDJ
-	xSXBm56sjPzqh2yAOv8fZ8qHknVSA==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3hpct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 15:15:11 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 574Erdtc004594;
-	Mon, 4 Aug 2025 15:15:10 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 489yq2e4vq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 15:15:10 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 574FF6fh35258886
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Aug 2025 15:15:06 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE48D2004D;
-	Mon,  4 Aug 2025 15:15:06 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8974A2004B;
-	Mon,  4 Aug 2025 15:15:06 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Aug 2025 15:15:06 +0000 (GMT)
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>, sumanthk@linux.ibm.com
-Subject: [PATCH v2] mm: fix accounting of memmap pages for early sections
-Date: Mon,  4 Aug 2025 17:13:27 +0200
-Message-ID: <20250804151328.2326642-1-sumanthk@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754320541; c=relaxed/simple;
+	bh=mhvy51gDJdGX52YsY08HNDaaFP+bnKnsfUxWvu+Gcrk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NTC3jdVX4+aUUFZx7aYQaR2Wern04yvgh+v1RS1GRActHluYjVr9raG2oHr9LSS8DIC8Jw56NJlqwumQ9B8yFVAmk1c5ervpQghRanDUQCGBDRi9kAD5yx3QLG53j4YJSP1nMpYrg+xc02SIuVgD3N+TKU8FbRchr4WtSHG13AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yd/MYvyG; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-458b2d9dba5so17300945e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754320537; x=1754925337; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nJjeVcCtnXKnWhoVwXfMDE8hWmtcV5EpJXafPxt/CSU=;
+        b=yd/MYvyGnvbA+x6WI7xh9g8yRpLoesy+MpxHGxqOoG7fToiE7btygyvLNbjh7Kxn5a
+         yvNci1UDQ12hOdz3MFTEo1MGa9ViorWZpgi04h/tt4sMnrE9gnT43Y1ZsKj+AOxLj3ot
+         o9NmyDmHQdxi9kqCmmcybjee0t88RTxo0rRyuDT9kzurkf0w3lT6rmPSva0EmKH+1e3I
+         tGhPk6dH6P8T3zTWQ/dlV6k9dV+K334hpf0hjwygKd+m4L8tXD0t5s5tU7iIcjM+ZcFU
+         CQMXYGcVq7X8uINpz8pyzv2kaADyVe6YQYFk5jqoxa7mSRJoQ/hF5gTRDmV8f2yULlEE
+         0nYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754320537; x=1754925337;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nJjeVcCtnXKnWhoVwXfMDE8hWmtcV5EpJXafPxt/CSU=;
+        b=WjMB5GyBPKvP0KM1Ps3/OMt7+ujbxQ8jXo4imo0HxIdtZ3h2ZIfUJMn+FDVh86wXHa
+         13iwZQbyqvN2DzIX9HpjZBSXE533jKJ+Cg1JP6uCMrDmsTo+0L15Oo8uoNswyranWpG/
+         s3S/OdEUXdW7fE4n+QdCsdYaRN96bO5ENE0HenAkRnwFP3mShm+YD5uU/XEPlPU0JfSQ
+         AQRKxq2H3tvBnnuv1m/y+dTz0L9kBh1JYeuu7i4FcxjXAabGZLcYydwD1eOEo6K6bg6X
+         6UFV6hJtjVzQ7Feyk8//jOqjgt5/nfYu9D84RK15Tdmb7Guvof3IwF9W4Rqqh5ia5Qlm
+         bmag==
+X-Forwarded-Encrypted: i=1; AJvYcCWhxLKpD8pKCXYGhxP9/I43rjEelVq52wxiDlCKUFk+BS5ud1I3GoE6VentWXmLWEmTUF4J6PldHjgzfGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXuIEWa4Ag7G2uCkr+BXQ2HhVfHjsqBhwV1m39UY5IDgtaPUol
+	hfnFZmTfUKWIUfYwwPQM0b0bqwNzz3vexkPEoSh63qrAdCiDkOfZxpfMbAlFqn4hvNE=
+X-Gm-Gg: ASbGnctRVIcW+eWnkvJri4Mwx74kTakyCqT32C3bplgLpcXLzNbjzqePuYk83nfG7Ix
+	9XjaZR5Rkg+ez885goziJuotyvW20yy6KRYgXLY1chdEj19bIf7ICcHU5AjpL4dAcQxjzPQrvPw
+	T8mHwbv3iPH6UpGWAxWunB5aeB/sKGH/nKSGmjhrsXsHJcEdUUbcsenklEm0tIKeLnawuOAs2Op
+	PIcKBbj/77IOQux9UZ4V6eX+uhvWFatN+DJXMLsilfgJ2smPTk/dECik4EoFGe9kMfHfExrb55d
+	tuElz6SNIY67qmBEiGyprxtlMqSWG8nvG6eotf/8siTt3vGdYPgZW4cRTxXIGRWEym4RmyL+rGI
+	OOrbs0i52IX3yvgRfRupjnhuYcxoA7nKoTKtCz8ic5HLkk7XpazRmgJ78KV3bCdM9hV1OUO7Vnf
+	U=
+X-Google-Smtp-Source: AGHT+IEETbK5B9R4l4zfHSKM2IatUBsewiluok9u8cat8QEYDfF7e+N5lM3tAMhEwAekOpfuhYvQ+A==
+X-Received: by 2002:a05:600c:4ec6:b0:458:c059:7da0 with SMTP id 5b1f17b1804b1-458c0597f5bmr62093385e9.2.1754320537459;
+        Mon, 04 Aug 2025 08:15:37 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3030:f63e:fedd:700f? ([2a01:e0a:3d9:2080:3030:f63e:fedd:700f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf5638sm171780825e9.4.2025.08.04.08.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 08:15:37 -0700 (PDT)
+Message-ID: <0a2963df-59a7-45a8-a74e-e6f4ff1f9868@linaro.org>
+Date: Mon, 4 Aug 2025 17:15:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Z+jsHGRA c=1 sm=1 tr=0 ts=6890ce7f cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
- a=uDGzf9yX4s-_2kI86w8A:9
-X-Proofpoint-ORIG-GUID: uZI5NuSuM-9ubMXko91dLJlnURsMaP2E
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA4MSBTYWx0ZWRfX0fQfiCy9/IHv
- LOHwzbMU0A/cp0keLF/5hC7KrDAqIcUCHra42bywBqwOpBCAAWiGwCsOjW2ifc0AUtRmFnP201u
- iKFklA9cFNvbjvtL7ueyGpafGyXUq8+TaN8VGp6XOteZ+EZ2967GKs2Mza+w/+czTTcyHjqQjjx
- nE+VLmyXFeBBEudIj99T3SXOrIPAOYNnr6cleq1C0PS+QH6tC7CO6IPLo2gtyjeLGLRP09rEHvs
- O4pDldcGwEDZx98kChISofl0coxsLKhWljdLoVI2nwsH9NkQdnldOveqiqTXr2SSDYnH4llP05F
- HSeopl1bqMUQawIKkuVAspLKcMS98gphb7rVdOg/f58s6z4rgTMhhNhlETao9yemtLlLRkKUr9f
- Aw1MzPnOs5u00BvRhxGFmgph9K7qD33u0MDyTZQfKFDt2gXb5L+YdL2LvWkF872rPkVmlvXS
-X-Proofpoint-GUID: uZI5NuSuM-9ubMXko91dLJlnURsMaP2E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_06,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 mlxlogscore=560 adultscore=0 phishscore=0 mlxscore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040081
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 01/13] drm/panel: ilitek-ili9881c: turn off power-supply
+ when init fails
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, hjc@rock-chips.com,
+ andy.yan@rock-chips.com, andyshrk@163.com, nicolas.frattaroli@collabora.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250707164906.1445288-1-heiko@sntech.de>
+ <20250707164906.1445288-2-heiko@sntech.de>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250707164906.1445288-2-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-memmap pages can be allocated either from the memblock (boot) allocator
-during early boot or from the buddy allocator.
+On 07/07/2025 18:48, Heiko Stuebner wrote:
+> The prepare function turns on the power-supply regulator first, when
+> preparing the display. But in an error case, just returns the error
+> code, but does not power off the regulator again, fix that.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
+> index 28cd7560e5db..d7a17dca2a9c 100644
+> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
+> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
+> @@ -1292,7 +1292,7 @@ static int ili9881c_prepare(struct drm_panel *panel)
+>   						      instr->arg.cmd.data);
+>   
+>   		if (ret)
+> -			return ret;
+> +			goto disable_power;
+>   	}
+>   
+>   	ret = ili9881c_switch_page(ctx, 0);
+> @@ -1304,18 +1304,22 @@ static int ili9881c_prepare(struct drm_panel *panel)
+>   					 &ctx->address_mode,
+>   					 sizeof(ctx->address_mode));
+>   		if (ret < 0)
+> -			return ret;
+> +			goto disable_power;
+>   	}
+>   
+>   	ret = mipi_dsi_dcs_set_tear_on(ctx->dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+>   	if (ret)
+> -		return ret;
+> +		goto disable_power;
+>   
+>   	ret = mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
+>   	if (ret)
+> -		return ret;
+> +		goto disable_power;
+>   
+>   	return 0;
+> +
+> +disable_power:
+> +	regulator_disable(ctx->power);
+> +	return ret;
+>   }
+>   
+>   static int ili9881c_enable(struct drm_panel *panel)
 
-When these memmap pages are removed via arch_remove_memory(), the
-deallocation path depends on their source:
-
-* For pages from the buddy allocator, depopulate_section_memmap() is
-  called, which should decrement the count of nr_memmap_pages.
-
-* For pages from the boot allocator, free_map_bootmem() is called, which
-  should decrement the count of the nr_memmap_boot_pages.
-
-Ensure correct tracking of memmap pages for both early sections and non
-early sections by adjusting the accounting in section_deactivate().
-
-Cc: stable@vger.kernel.org
-Fixes: 15995a352474 ("mm: report per-page metadata information")
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
----
-v2: consider accounting for !CONFIG_SPARSEMEM_VMEMMAP.
-
- mm/sparse.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3c012cf83cc2..b9cc9e548f80 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -680,7 +680,6 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
- 	unsigned long start = (unsigned long) pfn_to_page(pfn);
- 	unsigned long end = start + nr_pages * sizeof(struct page);
- 
--	memmap_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
- 	vmemmap_free(start, end, altmap);
- }
- static void free_map_bootmem(struct page *memmap)
-@@ -856,10 +855,14 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	 * The memmap of early sections is always fully populated. See
- 	 * section_activate() and pfn_valid() .
- 	 */
--	if (!section_is_early)
-+	if (!section_is_early) {
-+		memmap_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE)));
- 		depopulate_section_memmap(pfn, nr_pages, altmap);
--	else if (memmap)
-+	} else if (memmap) {
-+		memmap_boot_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page),
-+				      PAGE_SIZE)));
- 		free_map_bootmem(memmap);
-+	}
- 
- 	if (empty)
- 		ms->section_mem_map = (unsigned long)NULL;
--- 
-2.48.1
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
