@@ -1,51 +1,81 @@
-Return-Path: <linux-kernel+bounces-755626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CE2B1A97B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:19:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD103B1A97F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A2E77A4755
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7ED91818B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1906D291882;
-	Mon,  4 Aug 2025 19:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38DF28B7DE;
+	Mon,  4 Aug 2025 19:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="MfevM9aj"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YzD5lKCp"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFBA29117A;
-	Mon,  4 Aug 2025 19:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3607628B3F3
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 19:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754335091; cv=none; b=JJcPpLEc0r1Zl9M1XDh6IB6apKoX8fx+u4jqlE5Sr64mSneDqOOIWykwtihJn6Vk9LCOPU9eN2gtyC70MbW29YBNazfh0DGPrjYgaFOQp30tKiN3E5YFtbtITJQaY5pklNwcTUIsH21Ygmzh2iIYbW1sb5Dy7vdZKe3VXpue5NA=
+	t=1754335109; cv=none; b=knCG7ptRCqoocPkozfjAzN16sXD5casLt3udecxdZ77NA/4RCkmf0oURQglxRocz6cPLDX/iZ5GI+Z2n6QoGVQsB4j4f6rZJdleMgAokKW7lJ6ttyC//kvCW1SJrknHVJesW9jH7ylqD4EL8Thf5ZG5DSzgeYLpe4YNGuuahHsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754335091; c=relaxed/simple;
-	bh=1x+TVFg1EE/G/icLAxbMuHtD3kejMkgtnyrVojEfsxA=;
+	s=arc-20240116; t=1754335109; c=relaxed/simple;
+	bh=OF7LyNhIL1EOuOn5pfi758khliHdObXKjDRY6+iPVTk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XUyno9VvznIisD3NLS+yn5gz6+ZIxrZKOl3pWvh0WRq6xS/A32P9kFeaLt4BGhv3ztKeqA8lkyMp9JItMaKAvMcbSkIpVreqlZxfdMoSKgVOevE4+OAM5AbtQiLD2QwIcBSgfYAMnNCwh8S4hX9+nEd/MKRtMlt6JcaTN7SMJ2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=MfevM9aj; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1d86:99fc::8c24])
-	by dvalin.narfation.org (Postfix) with UTF8SMTPSA id 402652034F;
-	Mon,  4 Aug 2025 19:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754335088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ovzcnQ/xHGgA/gscprR6UDZ8vi5gGtYCjZ76laWNKFw=;
-	b=MfevM9ajZMSDO6ynAxHauMF6zCgBqXRCS14SdahXbqnUV3eg5aXUuUnxPo/wqD+TzjCWKM
-	85gYUOvK8cEt8I9GdXzc6X1z9pcEUGnjdOnfLSNBx+2s56eSk7rW54IUk6quT+ldn+yb8m
-	HmXuwYYZtlYg6c5eMTryuYq29FxRFek=
-From: Sven Eckelmann <sven@narfation.org>
-Date: Mon, 04 Aug 2025 21:17:04 +0200
-Subject: [PATCH v3 5/5] i2c: rtl9300: Implement I2C block read and write
+	 In-Reply-To:To:Cc; b=gHWUHdlOze6KoBGzSo/oHSV+9DYNfvqE/f7GCK4qSP9QhGAc4zomHiPaFtiGavW0qkYr6NV32ddcJtfp/XMlH9COfjTkrh6VI7qImW6AyXKWP/6+IrYgsAPcC08FF6K0nYODvuIVCNxvrYfmczRdNCmwHEZQh3ffeOu075ICd5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YzD5lKCp; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-458bf57a4e7so135e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754335106; x=1754939906; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UiTfAb9cnMOM27iD69XKZ3u4igfynQ6rP5nLGl75Z/s=;
+        b=YzD5lKCp3Nc7LL+onR3iz9pARhaMIVkDuAPRgZwo+ncQd8SXrQa4jpe7z/nklub7EL
+         8PJGaNPy9+4pkUSP9Msey/7o5bMmAiLz7Cxz+lx8kMt7/Mn2W+tazAx9sFfpgOO5tMSJ
+         SbPbNbFlhLW8y2sLPzc+SNVUeNkjdND8RRrWbTG+RBZ4grqhaWIOrESc9ekAz+kMznri
+         O2jv7fZpCr+jXh4t2BA7mbaGEeMpOq/Q51hThe4ue6BGC+eKME00qZm4zOIyC1+VvJFb
+         a+lekUx8S4DAp75MXoxScbIWzSoG2meZh7qRq0QMT/nPfYPcAajDriqWcgTvGSjVzWmm
+         lKgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754335106; x=1754939906;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UiTfAb9cnMOM27iD69XKZ3u4igfynQ6rP5nLGl75Z/s=;
+        b=QWs21mPzAafrl1jQQJvQA1N2wGECWp2N+wqskEw4v0QD8XeGWvDTxodehNOC6XWplP
+         nWQ4SEYAVThUJmFeYszx25ZOB9hGKs0p2WSxWipQ7hJKlGvUOoJc/l3yMYrwRGmcGa9I
+         vKQDTh8xqc6IEFTlS+OKheIikuhSnxz6F8XePLh5bqhmYzwJfgtF611O/VHMd8BX8aWw
+         THTqY96mIKb3gSJHMwbV15PPgUFDG723jXtjMUfaidFf3pU/U3D4rXiR+nSzQPLH+JT4
+         M+dQP/TEEv9nBPZHuRDTKv0uw0nG8cJsHAMTD6EkVTIIZHRjw/IyTW+v+UyxGd4Si8O6
+         B7tA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ3l6KejyRUEx0qtguIUOpU+GTMqsfrxFPr71II0rEUo+UlFR/YrDlpq0c6nCP8mQRswpVNA8fMFdDcpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTUavmtlkJ0fgZuCPDJ3OeGEmfTOfbJoIr0gf5Rd45rudtVNiM
+	Qh2Sahb1bdjHE4U6ks+8GFLAY0Gi2RYwielYC03osDw/EwD6o1L33T8F9HaQCPDllQ==
+X-Gm-Gg: ASbGncvYVJZuvLMFYR2N2cFemQNDFqqXMnbtmewIwgjDT6N/U1BtnYi6aE/Bh2BnYQz
+	1OVgaqGxbQwIxF7alqobFclRrHYtYrYgtYA5YKEFJ4uI1vIOZdxF4NCCGzsW1wJtb0cmeEl6Cyd
+	TW+xP+FzOxCgqPB2Da1EnPrpGjc7+t0k6A/jiDTvNbPs80y6I7lrYt6LymrtKzGEMvIxhF4u3+B
+	U4TlA6I+6p6hpZSe93uxCNQI/VwyTnwh86QTHd2M86aMDtNL/XRUbRvpvVVjmbWG51SXYOqgTRc
+	c0c7dShd9Gf/kpAV9qZRxdtXRLR0On0Ia3MHFszcjW2IEMGmHO7hdAStry/akWeLDD5sg4PWvW1
+	0QEEpy1otwA==
+X-Google-Smtp-Source: AGHT+IGv48sGeD5VUgCauZAiE/92kma0rYRuzmY0NHuib68VVw0+Cdvc44IEf/hoe+8yq75/M+2y6A==
+X-Received: by 2002:a05:600c:444e:b0:442:feea:622d with SMTP id 5b1f17b1804b1-459e14ef635mr140015e9.1.1754335106255;
+        Mon, 04 Aug 2025 12:18:26 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:2069:2f99:1a0c:3fdd])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b9386sm16502103f8f.18.2025.08.04.12.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 12:18:25 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 04 Aug 2025 21:17:05 +0200
+Subject: [PATCH early RFC 1/4] kbuild: kasan,kcsan: refactor out enablement
+ check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,145 +84,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250804-i2c-rtl9300-multi-byte-v3-5-e20607e1b28c@narfation.org>
-References: <20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org>
-In-Reply-To: <20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonas Jelonek <jelonek.jonas@gmail.com>, 
- Harshal Gohel <hg@simonwunderlich.de>, 
- Simon Wunderlich <sw@simonwunderlich.de>, 
- Sven Eckelmann <sven@narfation.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4066; i=sven@narfation.org;
- h=from:subject:message-id; bh=qPUvBuXwx+gCbsn+FKrdc55Ikb834EBPsr9ria12TBc=;
- b=owGbwMvMwCXmy1+ufVnk62nG02pJDBkT2cOrCquuOax/8eXDv9csXZ88Z82/KsRTH/hi3Unnh
- R0cWlZlHaUsDGJcDLJiiix7ruSf38z+Vv7ztI9HYeawMoEMYeDiFICJfHBn+GcQ3pFmsOhi0rfM
- hZZHjVLMtS/H9j27rsK0dc+80Dm8tZkM/2s8XZwPzdeQqIvQWvp7w3Gte/oHd8zkO5vl/SzNhS3
- WgAsA
-X-Developer-Key: i=sven@narfation.org; a=openpgp;
- fpr=522D7163831C73A635D12FE5EC371482956781AF
+Message-Id: <20250804-kasan-via-kcsan-v1-1-823a6d5b5f84@google.com>
+References: <20250804-kasan-via-kcsan-v1-0-823a6d5b5f84@google.com>
+In-Reply-To: <20250804-kasan-via-kcsan-v1-0-823a6d5b5f84@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Marco Elver <elver@google.com>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, 
+ Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754335100; l=2094;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=OF7LyNhIL1EOuOn5pfi758khliHdObXKjDRY6+iPVTk=;
+ b=Nj7lWb06h7SXCifoXeKMs0DUlOqOdP4H8VnS8Otq1aKjtHh/Kl7wkBiRiTwimSc9Mb/vQL3wz
+ G/GTNIUIiYQAgciu1KMGaY+kSTClICVFU5L25WqzmjcvA+7+WE4fbAH
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-From: Harshal Gohel <hg@simonwunderlich.de>
+In preparation for making the logic for enabling KASAN/KCSAN compiler
+instrumentation more complicated, refactor the existing logic to be more
+readable and (for KASAN) less repetitive.
 
-It was noticed that the original implementation of SMBus Block Write in the
-driver was actually an I2C Block Write. Both differ only in the Count byte
-before the actual data:
-
-  S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
-
-The I2C Block Write is just skipping this Count byte and starts directly
-with the data:
-
-  S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
-
-The I2C controller of RTL93xx doesn't handle this Count byte special and it
-is simply another one of (16 possible) data bytes. Adding support for the
-I2C Block Write therefore only requires to skip the count byte (0) in
-data->block.
-
-It is similar for reads. The SMBUS Block read is having a Count byte before
-the data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
-
-And the I2C Block Read is directly starting with the actual data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
-
-The I2C controller is also not handling this byte in a special way. It
-simply provides every byte after the Rd marker + Ack as part of the 16 byte
-receive buffer (registers). The content of this buffer just has to be
-copied to the right position in the receive data->block.
-
-Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
-Co-developed-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
- drivers/i2c/busses/i2c-rtl9300.c | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+ scripts/Makefile.lib | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-index 8310675668fdddc9626a5813bee050cc55a61c09..2fa425b141ea394a7c1857d3ccd073b12a187520 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -186,22 +186,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
- 		return -EIO;
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 1d581ba5df66..017c9801b6bb 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -52,14 +52,12 @@ endif
+ # Enable address sanitizer flags for kernel except some files or directories
+ # we don't want to check (depends on variables KASAN_SANITIZE_obj.o, KASAN_SANITIZE)
+ #
++is-kasan-compatible = $(patsubst n%,, \
++	$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object))
+ ifeq ($(CONFIG_KASAN),y)
+ ifneq ($(CONFIG_KASAN_HW_TAGS),y)
+-_c_flags += $(if $(patsubst n%,, \
+-		$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object)), \
+-		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
+-_rust_flags += $(if $(patsubst n%,, \
+-		$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object)), \
+-		$(RUSTFLAGS_KASAN))
++_c_flags += $(if $(is-kasan-compatible), $(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
++_rust_flags += $(if $(is-kasan-compatible), $(RUSTFLAGS_KASAN))
+ endif
+ endif
  
- 	if (read_write == I2C_SMBUS_READ) {
--		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
-+		switch (size) {
-+		case I2C_SMBUS_BYTE:
-+		case I2C_SMBUS_BYTE_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->byte = val & 0xff;
--		} else if (size == I2C_SMBUS_WORD_DATA) {
-+			break;
-+		case I2C_SMBUS_WORD_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->word = val & 0xffff;
--		} else {
-+			break;
-+		case I2C_SMBUS_I2C_BLOCK_DATA:
-+			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
-+			if (ret)
-+				return ret;
-+			break;
-+		default:
- 			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
- 			if (ret)
- 				return ret;
-+			break;
- 		}
- 	}
- 
-@@ -299,6 +309,25 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
- 		len = data->block[0] + 1;
- 		break;
- 
-+	case I2C_SMBUS_I2C_BLOCK_DATA:
-+		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
-+		if (ret)
-+			goto out_unlock;
-+		if (data->block[0] < 1 || data->block[0] > I2C_SMBUS_BLOCK_MAX) {
-+			ret = -EINVAL;
-+			goto out_unlock;
-+		}
-+		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
-+		if (ret)
-+			goto out_unlock;
-+		if (read_write == I2C_SMBUS_WRITE) {
-+			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		len = data->block[0];
-+		break;
-+
- 	default:
- 		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
- 		ret = -EOPNOTSUPP;
-@@ -317,6 +346,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
- {
- 	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
- 	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
-+	       I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
- 	       I2C_FUNC_SMBUS_BLOCK_DATA;
- }
- 
+@@ -94,10 +92,10 @@ endif
+ # Enable KCSAN flags except some files or directories we don't want to check
+ # (depends on variables KCSAN_SANITIZE_obj.o, KCSAN_SANITIZE)
+ #
++is-kcsan-compatible = $(patsubst n%,, \
++	$(KCSAN_SANITIZE_$(target-stem).o)$(KCSAN_SANITIZE)$(is-kernel-object))
+ ifeq ($(CONFIG_KCSAN),y)
+-_c_flags += $(if $(patsubst n%,, \
+-	$(KCSAN_SANITIZE_$(target-stem).o)$(KCSAN_SANITIZE)$(is-kernel-object)), \
+-	$(CFLAGS_KCSAN))
++_c_flags += $(if $(is-kcsan-compatible), $(CFLAGS_KCSAN))
+ # Some uninstrumented files provide implied barriers required to avoid false
+ # positives: set KCSAN_INSTRUMENT_BARRIERS for barrier instrumentation only.
+ _c_flags += $(if $(patsubst n%,, \
 
 -- 
-2.47.2
+2.50.1.565.gc32cd1483b-goog
 
 
