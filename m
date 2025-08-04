@@ -1,98 +1,108 @@
-Return-Path: <linux-kernel+bounces-755613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414D8B1A936
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC63B1A937
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F204A1890D8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8B2171A2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47FE285078;
-	Mon,  4 Aug 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6045422A808;
+	Mon,  4 Aug 2025 18:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s+HuYPD1"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="19E5wnH1"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDE82248A3;
-	Mon,  4 Aug 2025 18:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8B61F1311
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754332206; cv=none; b=r5mEgfWZsxp7Pp6uV5vsL7IAvw7pgPE23GFHVztJPwUqycc11KGJPUbyD4VW1blQeIztlv4DZnB0vgbhbaWKO1s8jM/HXqbfrEOvp5KmygDTxbCZGXpWTyuLYV03WUNSTJymYPF2X4fLC4Wnpvl7lXQoiDbLKmtDDu1MmeUGVa8=
+	t=1754332285; cv=none; b=FLMn9KOQKg2uU28U6aCu9ZuqheSRgPDDuTD+qxufwlLgyWoSSZInC/4HrVqWW9gOIvBD+ImM9ZVlNLZo4xPyaojKI5xr9tDK+9uiozBgYIlKiP79e1MC218SZa4Yg8BuuaXDtjZLrh3YVNbwzgnZTNLEomm2EG0/HHUMKLKb6Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754332206; c=relaxed/simple;
-	bh=uJ/oOV5Bf1tX4cFJNMtJsUew/SY8AbI/2NnYXzLpDgg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R0qtgOk+gXLHrlxc6HyDjL2ZqI0u3cXv35JvHzbBgzfvTvv3YHA/XicVZUVgGxOZepE5FHCMA38kIYemNgrISsn1fOe/292j5m21zNlYm8BateIu+WF5ySAK8milsf2OdhdyQ/BbH8FbW9wZ2NlgR3NZqYvYA+a2cz9XZvjCwkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s+HuYPD1; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3F56C40AD7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1754332194; bh=HSp20fpXz0BSrhqJCgCQtB3PUB1/kgFx4skx2uINIgY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s+HuYPD12YdNeaEApq21R4UvoWmAKZst50BTI+b0wym/Ve7yy4sxHMkU9xBu+vXQs
-	 Uwy6QQFMZQ87Ys/LukWN0APBeLi3R4cnjUp0JGeSkkUSnZANHGsnTayqRyGl7mAx2j
-	 erHiUPvWm/2QR0lC0PvrZ04unvR54cTBTwa+HWxtJ8pKIikgGzL4MB6fp8V9BCbuON
-	 hns8HHcGb1EQsk2lJ4mPjtNQJh5WfpuCv+czoguKAy/dMmuoJ9crDmQbM3elMfiZu0
-	 767w4QLaYceIcLc4A326yLmy+gCsVGARBguw6SPxBDH8Ntrmtqw1RWq+vKGnaFY+a0
-	 87D7swpDZwJgw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3F56C40AD7;
-	Mon,  4 Aug 2025 18:29:54 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 03/12] docs: kdoc: backslashectomy in kdoc_parser
-In-Reply-To: <20250804180029.11b8c310@sal.lan>
-References: <20250801001326.924276-1-corbet@lwn.net>
- <20250801001326.924276-4-corbet@lwn.net> <20250801062710.552dac5a@foz.lan>
- <87h5yrruki.fsf@trenco.lwn.net> <20250804145818.3cc73ca2@foz.lan>
- <20250804180029.11b8c310@sal.lan>
-Date: Mon, 04 Aug 2025 12:29:53 -0600
-Message-ID: <8734a7ndni.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1754332285; c=relaxed/simple;
+	bh=2ZVlhV6ndThCFd4+zGJNIWInZ4a60Ev1vYWmuIdzmJ4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ikmz0HzVOfoLqNW8+DYvygc6TTcyT4Nt3RVN6skv8oNgYxia9A9UuCX8dvrMH9/OkxEs/729jVcSt3PTJ08v+RnIyobYViFnGTlKb9Ljn232WlggI+4WBB0o40BpRDJPoZLZTQh1im6lrjTq8GgZxmrwJ+7S+siw7JL4aytw1Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=19E5wnH1; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-237e6963f70so92499645ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754332284; x=1754937084; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ZVlhV6ndThCFd4+zGJNIWInZ4a60Ev1vYWmuIdzmJ4=;
+        b=19E5wnH1xcWWnluOpw2kqQ5rHIaUPP11QZII2es13gK63dNEbQfPs7cbs9shqgmbIY
+         HYKM3jhFZkbMTsEphYjdoBGcpm8pQrJX0tbkV4/ImrphGETzqXlNOFHL1hVE82FYPv5L
+         n0xzUyhHUHVqB5V42dYZRBXfikrx4UxS/QeW1hRHP6AyD2rcGIeV+qefSq4Q3RF5h/vz
+         kO+muXerE+vYSTo6ddN6v7yXWTlmcJzsMeV96VKcR1bFSMbHK7xEfT8t3E2WIFyNdIV2
+         sDf77HhL7/uJE8zRC8Te0hAe42A+YTQTwkmKSLQ+4eQeizb35mTIhl9MfuG8vyAqCCud
+         dnbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754332284; x=1754937084;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ZVlhV6ndThCFd4+zGJNIWInZ4a60Ev1vYWmuIdzmJ4=;
+        b=HC7qO0NcqnRtdELsnMZIi7+s+mklCLmgaw4z39/OlMs38tkZZMYZVvn9tGOgop1j21
+         Y/67KHMjoAuMx0yAVyctHmbtQhTTUiXcwO4rhQ0irnCk/+MBz2krWb0BApmWxR2ho24f
+         e4emnSkrrA5RdrTRsCv/Djizty6xZobfb9B3lboNLJ0q5YIZHvglx1oHo82DF5a3gNal
+         xzuuuBjXjH0C6UwsAuBTSI9ldXNR2FqzlL87upz0hSBKxo1+JGDsB0zTPJxnPJejtfA8
+         BBPVcosBWZ7OzhmOZZrYZi6t7qPxvF6bfLkxNYibeOuIq837vYOvuCz3AZLNLGa+a3nn
+         COsA==
+X-Forwarded-Encrypted: i=1; AJvYcCU067Yg6SHy4vIVdrQcneZi/yej3Xc2LsYZ93yLJIX5z6MxZwyaj8Cx2i2pxmCKUk3644Yo1yzl26DeyJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRS+4D5B6b/pSWZLQt14adnWymS/PKrKYYyoYat+PZ4PbHk3dY
+	hgpUKhL3Tq9surA358kS9T5KlVQF0KI6n4LIXam9s9Zt3oOBDmTb0Y5H3N07Bd2yf3vMMvGU+Tk
+	R8GY3NEXq1Q==
+X-Google-Smtp-Source: AGHT+IHWBu3VQz8pzZ+1rcfbz3HxJNSMQP0rdBf6OTWgijBCozRjoOUWrc/UH4pOKHcnDrH55Kq6u4Oao4QE
+X-Received: from plgw17.prod.google.com ([2002:a17:902:e891:b0:23f:fded:852b])
+ (user=jyescas job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d506:b0:240:52c8:2556
+ with SMTP id d9443c01a7336-24247023afamr130598435ad.39.1754332283728; Mon, 04
+ Aug 2025 11:31:23 -0700 (PDT)
+Date: Mon,  4 Aug 2025 11:31:21 -0700
+In-Reply-To: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250804183121.2892827-1-jyescas@google.com>
+Subject: [RFC PATCH] mm/page_alloc: Add PCP list for THP CMA
+From: Juan Yescas <jyescas@google.com>
+To: david@redhat.com
+Cc: akash.tyagi@mediatek.com, akpm@linux-foundation.org, 
+	angelogioacchino.delregno@collabora.com, hannes@cmpxchg.org, 
+	jackmanb@google.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-mm@kvack.org, matthias.bgg@gmail.com, mhocko@suse.com, 
+	surenb@google.com, jyescas@google.com, kaleshsingh@google.com, 
+	tjmercier@google.com, isaacmanjarres@google.com, vbabka@suse.cz, 
+	wsd_upstream@mediatek.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Hi David/Zi,
 
-> In time: I mean *possible* POSIX violations. 
->
-> I very much prefer more backslashs than needed or use re.escape()
-> than to read thoughtfully POSIX and Python-specific specific rules.
->
-> Python, in particular, is not very reliable between versions - each
-> new version comes with a set of incompatible changes.
+Is there any reason why the MIGRATE_CMA pages are not in the PCP lists?
 
-People like to complain about that ... but the LWN site code has been in
-Python since 2002, and with the notable exception of the Python 3
-transition, it has been really painless.
+There are many devices that need fast allocation of MIGRATE_CMA pages,
+and they have to get them from the buddy allocator, which is a bit
+slower in comparison to the PCP lists.
 
-FWIW, the 3.13 re module will warn if it sees a construction like "[[]"
-- evidently there is a possible future change that might make "[[" mean
-something special and new.  So I avoided that combination.
+We also have cases where the MIGRATE_CMA memory requirements are big.
+For example, GPUs need MIGRATE_CMA memory in the ranges of 30MiB to 500MiBs.
+These cases would benefit if we have THPs for CMAs.
 
-> In summary, if you agree with always escape brackets, curly brackets and
-> parenthesis inside brackets on kernel-doc, we should be free of not
-> opened/not closed "symbols" with is an annoyance at least for me, and
-> we should be freed of possible POSIX issues and undefined behavior(*).
+Could we add the support for MIGRATE_CMA pages on the PCP and THP lists?
 
-It shall be a mighty struggle, but I think I can find a way to live with
-that... :)
+Thanks
 
-Thanks,
 
-jon
+
 
