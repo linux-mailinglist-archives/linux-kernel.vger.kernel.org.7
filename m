@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-755666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D6FB1AA23
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:29:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0309BB1AA25
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92EBC3B1916
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601BC3B0DFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5976A236A73;
-	Mon,  4 Aug 2025 20:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517C9227E9B;
+	Mon,  4 Aug 2025 20:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJjfFllp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQXUKdMw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9008222586;
-	Mon,  4 Aug 2025 20:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC7443ABC;
+	Mon,  4 Aug 2025 20:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754339370; cv=none; b=FuhluR6rRvu/mt6hSfAE7nCRHW6koX/mAToXupzPeAWvFy9KYmeaMDt4mfLAGEg9oASidLCaBWzJS2E/kmA5OyZXjHYfgTQki3wf6QVGfUeZlUHrrfIva/G9IT5Ep6796eCT3Vr27Vw+taaDRS/6/mAcm5590WgQqNUsXf/KtkA=
+	t=1754339529; cv=none; b=FxIJ+hfg+LiMx9aLaSWOOlk4JMCYqT+/ENnsKgmCM5Yus9nHuCjnnAv7i4yN07jAyOQrskucAgySx/qvAT68yYAdq/zJX0DGsfijeLEqMcVt4c6HF01zMrQgU4R3NKLTCqbWOJL8TQMdOVS6gb0iMPlO7P/dFC4Ruxeqehj1CUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754339370; c=relaxed/simple;
-	bh=4BPsES3b5klXzdk6RpmOqf1VgsIU8ZAY8khzKwSwfwk=;
+	s=arc-20240116; t=1754339529; c=relaxed/simple;
+	bh=40RPmmhgenS++dUjxETl8DxV/XFXspYQo4HXXmsrhls=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pkv1NAy+nZwlt/t7lyaJR/I6JpU6Jblhmz2pFt5VW2BwVUSa9VKqk6tA4gKus6S1ZSzeVIvcTw3K96cRw2ULAbvNi7SVr2K7/LfzQbXV64/bgh7bv0ZCZZiea5/NUb+OC0HRB1hXgFtwG/op4n5yiAc8gYFnKOhmA/vZFjYHiK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJjfFllp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD6FC4CEE7;
-	Mon,  4 Aug 2025 20:29:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qhMk/YO7bg+o3mJLb5oSwoXiF3A3owGHG5ku6PALPQtsSBfyMLnGe3NCqZp+WnocYRZVSTlR2/C8htQFxkjxLOQmT/vA19AGB1p6iMF0uh1O9WZZFgCkFVH7f3BO+4D/MrR5TlM0K0py7IHBzW2wjOuLOHSaVNRNQLCakkwiZko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQXUKdMw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F95C4CEE7;
+	Mon,  4 Aug 2025 20:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754339370;
-	bh=4BPsES3b5klXzdk6RpmOqf1VgsIU8ZAY8khzKwSwfwk=;
+	s=k20201202; t=1754339529;
+	bh=40RPmmhgenS++dUjxETl8DxV/XFXspYQo4HXXmsrhls=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iJjfFllp9A5t0b3evqDJ86gBmdgbLw5CO5nbxRfYOF6T6zvYvTJplqmOZMF4ThZIo
-	 rfobGezjJOtX/4wBS1Vk8pP70muPLRhZvC7BSpdi9LBXuciPN6JVp4ZmbxfnGxAPlt
-	 F2pr/W0FtNniSZnsJ2+qO5E4eRlppbsRuZougnurPEQoriP4vL/c6WS6GDjE/0waXr
-	 KygzMNkPN6s9HyzUlxoVkon6bRUzRG3pIVdGKQYfE2IItRdcVRlP4mbp3Dc1o43HHX
-	 1TGjSl/9ZjSU37FkaDT1TDUea1L8WdHxiUVUbvp/8tAE1RHZ8f6iRV1eS0AptBRwS1
-	 ohcd9/z6+3Gnw==
+	b=JQXUKdMwFWEh72JN1E6XzW9gB6pcSUBn7mgP4hBUHV2TpolWdTSfQw4mCxYy4Zy3E
+	 lUtaIyYa44cze8FqCym9EpaeMrWsTATwoH27xF95eprgUJJmuX8DtRZ/QiocXQ8aIA
+	 jc4t2gY8jGLgkj3U/lrseTF3ovLDIfeRF/v10YguErQe6smk0ksBMrsbOIRzb55XFY
+	 28W/sTdccRNJl6jdGHkTr0BO8ndO2VYz/Ani6KoevoXAVgowgiDbhXZFgVj5gAS4iR
+	 Enk6figXDmKEHpnxpASTpbq88kekHHfDpVfBD7xWDRHwvW+N9ywUM1E/OOSiU10oIJ
+	 LNeyo9+ssoqnQ==
 From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
 To: Pu Lehui <pulehui@huaweicloud.com>, bpf@vger.kernel.org,
  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -52,13 +52,13 @@ Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
  Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
  <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Pu Lehui
  <pulehui@huawei.com>
-Subject: Re: [PATCH bpf-next 04/10] riscv: Separate toolchain support
- dependency from RISCV_ISA_ZACAS
-In-Reply-To: <20250719091730.2660197-5-pulehui@huaweicloud.com>
+Subject: Re: [PATCH bpf-next 05/10] riscv, bpf: Add rv_ext_enabled macro for
+ runtime detection extentsion
+In-Reply-To: <20250719091730.2660197-6-pulehui@huaweicloud.com>
 References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
- <20250719091730.2660197-5-pulehui@huaweicloud.com>
-Date: Mon, 04 Aug 2025 22:29:27 +0200
-Message-ID: <87qzxq3k60.fsf@all.your.base.are.belong.to.us>
+ <20250719091730.2660197-6-pulehui@huaweicloud.com>
+Date: Mon, 04 Aug 2025 22:32:06 +0200
+Message-ID: <87ms8e3k1l.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,12 +68,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
+Nit: Subject: s/extentsion/extension/
+
 Pu Lehui <pulehui@huaweicloud.com> writes:
 
 > From: Pu Lehui <pulehui@huawei.com>
 >
-> RV64 bpf is going to support ZACAS instructions. Let's separate
-> toolchain support dependency from RISCV_ISA_ZACAS.
+> Add rv_ext_enabled macro to check whether the runtime detection
+> extension is enabled.
 >
 > Signed-off-by: Pu Lehui <pulehui@huawei.com>
 
