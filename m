@@ -1,159 +1,194 @@
-Return-Path: <linux-kernel+bounces-754681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D2AB19ADE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEADB19AE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37ADA1896EE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EED1756E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341B61C860B;
-	Mon,  4 Aug 2025 04:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897A22135D1;
+	Mon,  4 Aug 2025 04:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GocBDvj5"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g7eiM1y5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F3D86359
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 04:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1D10E4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 04:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754282869; cv=none; b=P5BWollLnvM92cEGKZqSnYLWpjcrwWZ1dxBdfcKkBmO4uSauoA4b8kzmKJXdAmHylCuGgmKH4Hy1v90qYo4LacEzfdXd3mC+rFDTi1ixd336qqdJSGu0mGcPbJToCHKVqxTBGqzErIs4Us3Iub9rahDmuqbY8faERsY80d8dpFk=
+	t=1754282986; cv=none; b=CD6jMi1ddgR4sDiKLjB2BIpgQU7irpoVjzLas8xRlNbXk4BJee8+YXYSFCR0E/DfGlxE6mOWtyth9z9WPEwKWNLUZSLd4xQSigF/BUIF3ow0DU0o3IA1aPz1GNEEwTdq8tf/6+NCRhOffXm/3W/69GoanJdWLgzp92kgCsdJ/Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754282869; c=relaxed/simple;
-	bh=BDxJSgSRH4keRk0Fg9Fh3kQGq5lMmCw/wfaUL5w0mqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwqTEX39fS2lyh7ViUKFwfmP0mJNlWcziqdi0m0MZaEeyBrukdhhh+ALAZ/6aCvlANr0fBx47N0l3/Ac7V7tWdcx8oed7ja3VRmTiACUunYGLMlLmalETdm9lfpZhTdf5ZCaAymjwUWoIKmwy8t1KEQ0/lxglOe8/ysyV3oWG8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GocBDvj5; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53960818e9fso1526291e0c.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 21:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754282867; x=1754887667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDxJSgSRH4keRk0Fg9Fh3kQGq5lMmCw/wfaUL5w0mqw=;
-        b=GocBDvj5bQ/VbbSr0q0HHcmUj+U8d1ijB/aNPy/a4svdPG7vYkOjs4QVJCk0IiKViY
-         OjI/55pgHhjWfHG3qqK7oqe9I2CxI5ptuvQsCszAcz5IPOrjLAXtHD4ksdaTw9LYRBzU
-         80HPcxVxZGpE4GAB2E6Y7BCM1MtF2kuncJRrEIqZtUPrTha+z6u7gpsfZ44jSzWIj4FT
-         SBZZfnauzgWouwHPe/hvz01QvOfYHxR/xkPHt2ag/hATBygRBflxsVrZh+B8xOSDdLKW
-         k9jnT4lLDXScoiJrGja3FVzBaizgIrVa176bnYfgcpk6QdWcpp2MFJtw/r3VoFgdRyAk
-         JOiA==
+	s=arc-20240116; t=1754282986; c=relaxed/simple;
+	bh=0ltsV4mWvJmUpf/h8E1XC7/gt4iYXwt23Cs/5n8Rjdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXHghYiVyZgjjL/uJZobQR1qywCqX9sgWA9R1vh3lcL/DzWgH5Re6IgVMdXfslnPdmvMCCPvK+r+tNMyIrU5/rr5udp/g2IsPjPAFxWB30ifhK1gYam/ZxuC+HTLd0MUl89h/Gqo/kwVO/zvGl1KjwwJgVnrt95TKh9jy6kou8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g7eiM1y5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573NwDIX012229
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 04:49:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7Yglzp+yr4eKtq6gEDEP5fa6
+	YZypOJLaqkMYl6UIZkg=; b=g7eiM1y5O/gIMYLOM748dtFF6sgsQD7aG486JCJa
+	uBkwY8WfteAbZIH95pEwiQQd1PtY1yEb3zBkLdNfbRmd1+OlQl813xqdyVbSVgHZ
+	2Y0xPIxXj+ALbWW8I2h1xR0IhI+gSptZp/NU168tZkrvEIRs4n6oyeYK9LFwvcSe
+	8fH0G+9Fj1+NycxDvQ7stY5p5IKDFe5jLYxTtji+ioQ6wOZn0ednUHoeeMrz1Z4y
+	/WJZNsOXeDtK9XNFxJZVDGSoX3EaQgwzOXcFEsaeVq2G/TPYE5YAjdcOc0e9K/I2
+	5pWFdV4+Rg+oP76TWRJ7ylTk1CGComuikXj8XR7hpjR/Rw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48981rkteq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:49:43 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e32df3ace0so275881885a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 21:49:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754282867; x=1754887667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BDxJSgSRH4keRk0Fg9Fh3kQGq5lMmCw/wfaUL5w0mqw=;
-        b=POxJSpzABO2q/VxWSp7xEtRMCQN6h0RMRIaTSJT0kgbGIgI1f3mtqCmFkuBbsFmlyR
-         WXCIs+euGszTUNYvrFYTHSx/zcvLkp3BDXKvPupCXRszRbsvNU9Lf3e19LR9fUvn4AGN
-         9SZtLCMANpHysv/FpQzZLySGbRtXS6b6wo9BDixSnsSVZRRHulZwEKUOCI0oKB/097x/
-         FkErs8b4LXs+pPbTTs4k7NZ38UdUsgnrjBMkU3cGd8peWtuW1iRTGBCeu/YbbQrBJ7hy
-         txoc6aRZn50foS17CXin+uzBFg6EjCa+4LEYPB+l/7rPHX94fkutRdPGQHBqt7oVh7Xd
-         AlCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCZi1TEOIEqMFnuyS5z+ymOjmo+KjxbutxaQ9M4im9AD6QWGwG73mIn1ew8fq7TWoS5HT/TCjQCKtga7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhVhuZ34uMpCwjPBb7gI9hSNIhY59PNM0Y6KcgI832Lat7ybLe
-	qz7itLZ3PEBcRzZQOt8BAlSATaRia09rLt9SbOyXLrVS6gEilUa/M/vUjyBSU5zsyGvPWnTo0jb
-	bnYgxC4ATDtHsFDC1VEUN3uKw1CvPNrgonnPq
-X-Gm-Gg: ASbGncv2iMLTtp8DNQFy+mFyuEAqGki24b6io9oqeQNpdfTwXRTxHSqLN+xOgC8tGlp
-	dpbAsHQ3qaBa+wC2SpCOUXY2sDFhM3hZO18kKex2dCdWBrpKstnTuhTrIWMflNBumaAfDX633ST
-	ulJlmxWXucMfbF1gfdDyYBVg3plgBhqNCRS0+hzsw6/cavSvUC5tTKd39FOqz+0mql6IIyLx5bu
-	Lmi6MgGiBF78tex0A==
-X-Google-Smtp-Source: AGHT+IHqYM/KFdH9TSLDrogRF00/leasxHpcVOGzCepnD1Fdo9qSl8/RXPv2S+CcEk8TDBdbWgBJipfApFgWW+h5OrE=
-X-Received: by 2002:a05:6102:6447:b0:4c3:64bd:93ba with SMTP id
- ada2fe7eead31-4fdc22436a9mr2892411137.11.1754282866732; Sun, 03 Aug 2025
- 21:47:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754282983; x=1754887783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Yglzp+yr4eKtq6gEDEP5fa6YZypOJLaqkMYl6UIZkg=;
+        b=StHVACoiygmKYs9Vqp1APUWWW4TZ4YfpR5FSItfQFBwazAXidwLUJtK8nns8P8qJTa
+         XK4fSIO5yzMybmVpyxicvTiKtvZuW4LQXsnRMI1i073MkkEL5ZKygho1jmxNoZB5/NmI
+         bG53gBl8F+Rd6Dys6IPjabryi6KgY9Zaq82JT9VaOpUCByutRWcLlrYU/F0c44yl5tfr
+         2I5Yzr9d1FGeFbi/9AZ0t/5jIvkzzvk0AcHFR15prt1j4pzAYnE+jkQtUdXPhJeYegUp
+         yDwN7yUhxDARpf0Y1SnVJB2TNUaz1B+L8Xu3J2iCqnnxqR0v4pF8Y0s/O+dFajBjbj0B
+         NTjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG0g0UcysTzKDAOq0ptarOMGEDIg6lNPnCJeSuEs/VpvlZji+JfitaEN1agIPMcJpQHZQsPpUh5zsJmkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv8nLbEqVlwVJcnjHSf0r5QYUrfBDcbf5j+LGDUOP+N8p6LIpP
+	hmb9wQcyy1YlRnO+Soy6bKoNiR/gyK8XXAhM+Igd1Gh/AwERlu5x7UYCHuVvrLpvrrIdn9czFw4
+	T7Rrk60FZPcRJVQauuSrvbawwP3Yjy7UK06Mgbn4z5rIvJnjWkTxa+TvhGPBam2ZrDbE=
+X-Gm-Gg: ASbGncs8iqmHqbuZdlNPUoC7GKVD9uVaEQGMciA1P2HkmoYqsRQ2fibiZtApIBSFHqZ
+	mjYyKpuG5vYjNIAUoPfdkqz9UvI2Wp0vdr6Mcfv5pFOF5sdWSMxBhlkvBIiQF/DdQxLPwmPN9nh
+	kMz941DDgXBVREy920J46D7Qe40fHsj3+WTn0ZGhcyeEeHJ8KtGu4dQugpmNTWtt5n/pU+wti4d
+	S8dIzuYtbMlM+rV9Vs6CIjwEag/OHdBIbOZVu0xIohi2n9nYCegVXUez9mc77GechXbUCUPXKiY
+	IvZgdGg5Lg6S4JA6zKHcLbpzYGx0lodFJYsBbWchpDdgijt7yP81xt0/KVnCyRUlhy5KbprwBsR
+	zM5Hkr6P/yoiVS5A7JJyXvC+cHBOt160sqWB9/Zy7z84fT3dXyH6J
+X-Received: by 2002:a05:620a:36c7:b0:7e6:5e9d:f8e6 with SMTP id af79cd13be357-7e69629dbcdmr1106345285a.22.1754282983180;
+        Sun, 03 Aug 2025 21:49:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzOqo7RSMXHRYDfEyQ47x4B+Pz6jpUX0s23rEdmLa1EGEICWbN/mAirTNdrgCZnMomrjhq8g==
+X-Received: by 2002:a05:620a:36c7:b0:7e6:5e9d:f8e6 with SMTP id af79cd13be357-7e69629dbcdmr1106343785a.22.1754282982745;
+        Sun, 03 Aug 2025 21:49:42 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c98c15sm1529094e87.106.2025.08.03.21.49.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Aug 2025 21:49:41 -0700 (PDT)
+Date: Mon, 4 Aug 2025 07:49:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        freedreno@lists.freedesktop.org,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        David Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v5 3/5] dt-bindings: display/msm: Document MDSS on QCS8300
+Message-ID: <aiaonlbxwzbpuvnzijzp7btf2oxvtseq7zoylopllooeqshmux@unhoejkdyl6v>
+References: <20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com>
+ <20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com>
+ <175390746243.1660386.11206814214268936734.robh@kernel.org>
+ <cdbe1013-4f15-4638-870b-151292920ce7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724085600.4101321-1-xiaqinxin@huawei.com>
- <20250724085600.4101321-3-xiaqinxin@huawei.com> <CAGsJ_4zVR3R7erGP57vxM8vKBARG8BttA=FsCVFjy4QtswcsQw@mail.gmail.com>
- <c7f7d9b3-2ab3-4ebd-99fb-071733573291@huawei.com> <CGME20250724094224eucas1p13a911259338ac1890d4baed8b9998fb0@eucas1p1.samsung.com>
- <CAGsJ_4zSw57DMyRZM24BUdDpbi4+BRfgWUqxSKurCsAVC7Kptw@mail.gmail.com> <f8c0cbdc-9c68-46bb-8dad-1d7c80f3f741@samsung.com>
-In-Reply-To: <f8c0cbdc-9c68-46bb-8dad-1d7c80f3f741@samsung.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 4 Aug 2025 12:47:35 +0800
-X-Gm-Features: Ac12FXwC2QgKuJTJX69JLqTW3lt_irVikO6kS_bcR7G_jczX3yoMEbyFmccG3as
-Message-ID: <CAGsJ_4zs8=n+J4Xtd=Un8+p3c=FCOTji9qMfBsOKcc8sFG0v9A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dma-mapping: benchmark: Add padding to ensure uABI
- remained consistent
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Qinxin Xia <xiaqinxin@huawei.com>, robin.murphy@arm.com, jonathan.cameron@huawei.com, 
-	prime.zeng@huawei.com, fanghao11@huawei.com, linux-kernel@vger.kernel.org, 
-	linuxarm@huawei.com, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cdbe1013-4f15-4638-870b-151292920ce7@quicinc.com>
+X-Proofpoint-ORIG-GUID: Of7C_cR-mr37iW-iL_qMw0MF1KDY-_UX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAyMiBTYWx0ZWRfX7sKtB3JmnSV0
+ LGnZAYtMDxwnnnKqiQTUwkXFKa/3LxB3rBNlC08DrhHKlORjMvsR0EhKfwRQ3tUtFDNATfGZeNv
+ xRazSvyawTQ17L3PsiVFrWsp3ArB72nErGK51TXNIEG4TV2dhqkHUTrRPpJFIEAjirqxkjkZXWl
+ Pe1kFmgQaoOh2TZCnN+7NLVjK8yZjzaKqvzimko/tvZOURzqcg34NSGbZ1RlGB51lFNGGAj6u0w
+ V4oy6n9E6CQB+ldHWuUd8+lbp2MP54/wKfMklTSNV2+iupoOvfjvemU8WxgP3/RpYAkU1ny0epd
+ CE96Ov9oAP1/4vXa90KRtVU3eoLC8e2EYvheNSHP/JugEforUJjYR2wYhuy2le6M6h47JWJN52l
+ 8ovrSCdsVAGc3t0T2HK/5ok4BeFcOfMeHAgiswqEnjFG2sxI+ru0uQ8CyingEt35x+tQNbBK
+X-Proofpoint-GUID: Of7C_cR-mr37iW-iL_qMw0MF1KDY-_UX
+X-Authority-Analysis: v=2.4 cv=a8Mw9VSF c=1 sm=1 tr=0 ts=68903be8 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=voM4FWlXAAAA:8 a=COk6AnOGAAAA:8
+ a=VwQbUJbxAAAA:8 a=Wy_ckEHB4fXvzh_zUiEA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=sptkURWiP4Gy88Gu7hUp:22 a=IC2XNlieTeVoXbcui8wp:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_02,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
+ spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040022
 
-On Tue, Jul 29, 2025 at 8:32=E2=80=AFPM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> On 24.07.2025 11:42, Barry Song wrote:
-> > On Thu, Jul 24, 2025 at 5:35=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.co=
-m> wrote:
-> >> On 2025/7/24 17:07:08, Barry Song <21cnbao@gmail.com> wrote:
-> >>> On Thu, Jul 24, 2025 at 4:56=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.=
-com> wrote:
-> >>>> The padding field in the structure was previously reserved to
-> >>>> maintain a stable interface for potential new fields, ensuring
-> >>>> compatibility with user-space shared data structures.
-> >>>> However,it was accidentally removed by tiantao in a prior commit,
-> >>>> which may lead to incompatibility between user space and the kernel.
-> >>>>
-> >>>> This patch reinstates the padding to restore the original structure
-> >>>> layout and preserve compatibility.
-> >>>>
-> >>>> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common heade=
-r file for map_benchmark definition")
-> >>>> Cc: stable@vger.kernel.org
-> >>>> Acked-by: Barry Song <baohua@kernel.org>
-> >>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
-> >>> I don=E2=80=99t think these two patches should be part of the same se=
-ries. This
-> >>> one is a bug fix and should be handled separately=E2=80=94ideally pic=
-ked up on
-> >>> its own and backported to stable.
-> >>>
-> >>> Also, the subject should not say "Add"=E2=80=94it should be "Restore"=
-. I assume
-> >>> Marek can handle it?
-> > ...
-> >> Ok, I will send a new version to fix it.
-> > If Marek can help fix it while picking it up into the dma-mapping tree,=
- you
-> > might not need to send a new version.
-> >
-> > Honestly, I hope this gets merged soon=E2=80=94it feels like it's been
-> > overdue for quite a while.
->
-> I'm sorry, I wasn't aware that this need to go via dma-mapping tree. I
-> will take it after this merge window.
+On Mon, Aug 04, 2025 at 12:00:39PM +0800, Yongxing Mou wrote:
+> 
+> 
+> On 2025/7/31 4:31, Rob Herring (Arm) wrote:
+> > WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
+> > 
+> > On Wed, 30 Jul 2025 17:42:28 +0800, Yongxing Mou wrote:
+> > > Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+> > > 
+> > > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> > > ---
+> > >   .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 284 +++++++++++++++++++++
+> > >   1 file changed, 284 insertions(+)
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible:0: 'qcom,qcs8300-edp-phy' is not one of ['qcom,sa8775p-edp-phy', 'qcom,sc7280-edp-phy', 'qcom,sc8180x-edp-phy', 'qcom,sc8280xp-dp-phy', 'qcom,sc8280xp-edp-phy', 'qcom,x1e80100-dp-phy']
+> >          from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible: ['qcom,qcs8300-edp-phy', 'qcom,sa8775p-edp-phy'] is too long
+> >          from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> This warning need to apply this patch..
+> https://lore.kernel.org/all/20250730072725.1433360-1-quic_yongmou@quicinc.com/
+> thanks, link in the cover-letter seem wrong. and there is an unnecessary ~
 
-Thank you, Marek! I also noticed that Xiang Chen=E2=80=99s email has been i=
-nvalid
-for quite a while, likely he moved to another company some time ago. It loo=
-ks
-like Yicong has volunteered to take this on:
+It's not listed in b4 dependencies.
 
-https://lkml.indiana.edu/2408.1/08865.html
-
-I'm not sure if that's still the case. If it is, would Yicong be able to
-resend the email with my ack?
-
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
-
-Thanks
-Barry
+-- 
+With best wishes
+Dmitry
 
