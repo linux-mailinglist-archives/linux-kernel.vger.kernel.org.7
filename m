@@ -1,174 +1,183 @@
-Return-Path: <linux-kernel+bounces-754777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6D2B19C67
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD4AB19C6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBC018971AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B952178169
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43144237707;
-	Mon,  4 Aug 2025 07:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315AB2367CD;
+	Mon,  4 Aug 2025 07:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pVPoUrdp"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="dAPCGc62"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013035.outbound.protection.outlook.com [52.101.127.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2860B233722;
-	Mon,  4 Aug 2025 07:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754292179; cv=none; b=jeHPk9i3Q16TWARD+cyECbRg/himoLF9NcojAn0XcR9gxrYShfZ4xWV1PhHiaFZhsQFITNJo7bLmxXa+ErKO+nbw4E4CnXvX8wb9EMYhzi7GRU6kKNbwForbGMohk3k2OPO+l5UhUvuEEUUt9s/yVscz/eDTpjGuFJ4o/XYwt0M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754292179; c=relaxed/simple;
-	bh=I8MGzJx1jjFTw5eow+nX1J2zm8Gzr/92+RO8LD1Zhb0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Xi1X/6MO60GlSeA0kFaETbzq9BVIzAmjbFJmLRKlRbROnFce8HFDl9DXBi5F73uBOkIRwapLOQ92AEOm6gEGL3w5lOheu+0vGilyrny8GsUG2nYO2FKZ9xd3VdAy2W504+mOE4QDivmMmv/LvXCUXUNKJlskBiqBEAzbuDkKrdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pVPoUrdp; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 31AA1438DF;
-	Mon,  4 Aug 2025 07:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754292169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i18NPnv5eIUf6UbsI/khDMHH0nd6uxFV8xlsBSgXCP4=;
-	b=pVPoUrdp9u9L5F0YNFRXy/hoYu5wW9UM+VQzEkzatsRDj/oy2153NEgYFKAZn5+SYkbz0w
-	57YrnYt01cllo/jlXfqOk1DgSyGgQq3NAWPfgR9PLKBJs5Bw9SM8xuAVpRj+c/RjnuAeLb
-	JRXqk0R0A2mwHD+stOhsLZNXHX1J+5/Jn80ttBZaDKcJV3HOKfVGD87dLh/wIvmiQLkS8W
-	jX+YslVsKZ2epzqSQQPWl8ZeBqUWAOh2XJeaWC1xN0UEOngtp7O/7mkAsd18bTeUsuiWCV
-	MxsxbSd62ml9mtLAP/hXA5GaVxWbuUXp3lYxbLKGLCdI4rAaUKxMCIPvAOFqcg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
- <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  "Rafael J.
- Wysocki" <rafael@kernel.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>,
-  Zhang Rui <rui.zhang@intel.com>,  Lukasz Luba <lukasz.luba@arm.com>,
-  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] dt-binding: thermal: Convert
- marvell,armada-ap806-thermal to DT schema
-In-Reply-To: <CAL_Jsq+fV-W+PqZpvns5oFNyGXxKYYrHe1ipG7gj6dN-c2JJ6g@mail.gmail.com>
-	(Rob Herring's message of "Fri, 1 Aug 2025 15:22:20 -0500")
-References: <20250702230030.2892116-1-robh@kernel.org>
-	<87qzxv5d7z.fsf@bootlin.com>
-	<CAL_Jsq+fV-W+PqZpvns5oFNyGXxKYYrHe1ipG7gj6dN-c2JJ6g@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 04 Aug 2025 09:22:47 +0200
-Message-ID: <877bzjo8jc.fsf@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A3522422D;
+	Mon,  4 Aug 2025 07:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754292271; cv=fail; b=e73rYgF1+s0Ph74aV8ZTVXsjyOaVDI/NzYkijrpGLbinRqwHxpDw5p+mFzy3a/bpeT0gHetejF+FXw4YyW8+sinUzVDCygwebhoDFQuhqw9PpRdwuNbkJpaEBUj65vYdoo03MFfwC4AOqbDTxeZ9UKN6Tf5QcCdlldbsQCW93Hc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754292271; c=relaxed/simple;
+	bh=xxaIAE6Kk5ftNwJo0A2KJNJIyqbe7j43YsG2yN8ruE4=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UWkpSGRGWRIZclMWGneUqSfisUOdO/L39ctbsWlJ+liOz1J18dH14sCdRv/4vvTyaqwt96V934zjnnXcP1R2JbHK6KZRkIeYK8u9REYE00HW5nhNdwKNsjaUH0QDEPPWjK+A41+adyUYFcO5A/T8W+H/eNJOgHdpwclQK39dGtA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=dAPCGc62; arc=fail smtp.client-ip=52.101.127.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wO1mf6QtsX2nLQ0yKbkjzj+4lXcp1/fWYdGLGGIKWl5BlG6gNrtKDcECVuD9FCpKSqB8BcHY3B0Q1cwDPyyaK5Njb2pDRxwdleUa2/lCDVx1s5B2w/ba/zrMjwBLc/qmHFPG12BPSOCRmtUfYvjV+L40YMzkcpg7giJIhi2Q64T01AEjdAT3DBAuCtbiA+llYGFta68USRXumP4EIa9pIBM4xhjUlrnWol5SlwGycRQ21ujb5Nc9jZvrwb/ZqOfQt4PNrdeoT2YJ+CImx6Gt63eGBqKTZsxlpVrra7IZ+1CE0hqFZftxTPyJ9WOCVjfH+Jd7XslIIPIUXF7Yo9jfhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XZyGXp23amXAgVuIUW8FFS60vmPYOrOpiOh6Cc5XslE=;
+ b=eYA6yun4DEcPeFW6b+xPmgTNYrUf3YAwR2FfdmMDIqwOHak/k+dmg7jHpOSQaAbHPNIZa69CcXa8zxQDNkG4rXBqEPHtXtDktiEOt4zKRW3iFe5AHeL6WqqpjcCLQ+jRzGqnIOYsuAVrZ8QYa2WM0HQBvzDK4advWklTqyNFNOT/naQzWrs1o7SugvvZuS+LjGXzZU0qMtF655SoOPAkQaiYOmuMcKGzkjaWf+0r3hGo7n+MbqTBjEII0/jQ5/BpFP0oggz+gOHd245r2Yoep8f+taKFxw3THo4LxZVwXlA8bW/YlDdEM8DoVz47SnJhcBSc5+bdfe+kOkr+cGgjnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XZyGXp23amXAgVuIUW8FFS60vmPYOrOpiOh6Cc5XslE=;
+ b=dAPCGc62Qj72QOAvMmsA6ijia/xE9bTPeokQNzwWEJ+Iy8AREl6aYdSxex+dDJm6fiab27r+nW59O3zkzIB/358zdUX3Ul4EZfIpBDi/I7cg5gg3xuJpTY18xhnwmOMBIXo/jzE6huwBEs/gZUOQG67OEFTD56bzbB3fsj3RK40q5jusgsoxSE9j/HBiWGoSQ98Zf6bd+JG4Jzk8TbFbZDRlSJmxCzjQ3Jq6k5fCRF41jPKT/sZ/Rx7z4ZuhdI+6e7ZGLxR0x6MOAB2eEQ0d3xuHJPQWzNvI0s/+duatbnaEG3rUA6r28PUJy7dKw+U00LZlbT4qvtxgnVw1PMRBzw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ OSQPR06MB7251.apcprd06.prod.outlook.com (2603:1096:604:29b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 07:24:23 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.017; Mon, 4 Aug 2025
+ 07:24:23 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Helge Deller <deller@gmx.de>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev: Use vmalloc_array to simplify code
+Date: Mon,  4 Aug 2025 15:24:11 +0800
+Message-Id: <20250804072413.143154-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0137.apcprd02.prod.outlook.com
+ (2603:1096:4:188::17) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudduieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduhedprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrdhhvghsshgvlhgsrghrthhhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpt
- hhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|OSQPR06MB7251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8903d1fe-b491-42a2-9fed-08ddd327ef8c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CkeIEF4rz2sc1IFF6MJvmhCk6rA5n6JjY3RxuFODwuoswVxsD+LLuzCcVKjC?=
+ =?us-ascii?Q?Q8pNVLk9/Cpp/Hz+UIkTZ4IloLTaQrPqHnq9v3yGCyIQFIvQ0mBWV7N1HjZA?=
+ =?us-ascii?Q?Gzkq2kb0qloeNIakzBFyjhLPvRX5lXVxJmyKlI/BBkfjxp9OWTzbm1YDBWqt?=
+ =?us-ascii?Q?q77lq9ep9wjv9m+LbKUbFLt5SKMDUWQ5Ek57JEv4zbAUlooXfsaRUe+L4VUW?=
+ =?us-ascii?Q?7I5XFY96WYLiaPk2CmX6E9rI9szud/HHTvELhhVIRnO2CxcbL+qRtjKSNriI?=
+ =?us-ascii?Q?0Ffl4rq9+jUE95bxIuqRg+QZMMy6lhOzeQsqUhV3TMnicK3a0rzEE1THSar/?=
+ =?us-ascii?Q?XMeusOBMBcSqYh6UhAzr4fau7T2q8zroH25059hOhuMxL8eOY/BatZym30Ql?=
+ =?us-ascii?Q?3y4o1C7qM8GBpW0zhumkKVSC28na6xAw848w6R5ipzUhxqW4lDReoRaWI58u?=
+ =?us-ascii?Q?HT2RwwCldXg/9gpy/7TdtX7gCz4WuMXrt8sxnKyXPNHcbSlIIlYHRDEX0fMd?=
+ =?us-ascii?Q?zv0lrqOo4YXa6o/cPE8dc/Gc3OilRSQzGDUslCez4scf3ednI4kW4QjRINJZ?=
+ =?us-ascii?Q?YBCqgHrlWyD1Jqx+zjrX/HlUybbcEtTNfuQ0k7OSXOAzL7JjWXTmi1DwSfOW?=
+ =?us-ascii?Q?pjhDiroc6ZuR8a4T3GyChV8pjbHLm095x/p5r/I5eGLSh2cjQ9rRUbKD7ocH?=
+ =?us-ascii?Q?IU9VJuyG+Pn9/2A/X1pmppErZxTkWjcrCc6Hs0yFwGu/0gT6eu88XrAncww7?=
+ =?us-ascii?Q?KPPiNubQIRkzWJ2r/NowylB7ttDNFpZWOIL3/18XPzvA11E0B8wChnqX+kGT?=
+ =?us-ascii?Q?ennG2u9g+rnZwz94u8exWgSxy/cDSh5pEOrJ9pw0XB2WHmNQQGK/d/bEFvuc?=
+ =?us-ascii?Q?kX920oAXVk8Fjtn4ekEdU6o5I+BNMlbMJu0lSkzxih3iM9EaCnjL2iayPDM9?=
+ =?us-ascii?Q?hc/dlhh1t03Gu/BZXUPG6EGdJk0gvkUWXYdky7PNbi+/k/7cPeusrRjJcbVH?=
+ =?us-ascii?Q?083T0fKZzjcpciLKSn2RksitmDEv0b2Pg98/5u3AJ2vMTBiDcqZrtxRdFHr9?=
+ =?us-ascii?Q?HDd+ydC59TMX+wr4vrOzj03zzKFagsShBMvZOnIarfjpZ5b8Aj2CB3+xvn8g?=
+ =?us-ascii?Q?IsIVjKEnDg/ZXy+FgIZ+VJMchIalX+Q19+3RrOs+ywh1DE6uwyS+tqUwRsjI?=
+ =?us-ascii?Q?2WUeNnxty6aHm35qtAIX7oKwGHg4Khco4mdr29WSiwHjE2os8RwNKdfInJSh?=
+ =?us-ascii?Q?sdbZB8167u5pPCY4UKZfV73k8CbrcT6HLVNyL+rqrrZuZP2Tx9Tf9OeueI1g?=
+ =?us-ascii?Q?DKsH5+duu+wSGMWMv5g1/g/Vu51XiGiWZqe505Prog4DtZO9JFoabK3UF2R+?=
+ =?us-ascii?Q?nZr04W1yK/X8iDI/gHi6VoG4PiDzQ5+aQwXCw191fdF2cSqiqbR/AuZj/gIe?=
+ =?us-ascii?Q?i+n/g1QpGkpfA5tRhkVYAhG4yaZg5/u8Qo3xoh9KgwgV28Rh/iU2MA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VnNBhaZsy+VHJNTdP/9N9cvOx1ufIExA6nThxRE7CtRttR8XJBH106ZJTAJC?=
+ =?us-ascii?Q?uY+VK0kEiRcOo/+yUwlrvAn/1GVVlGncFOXgSMyD98ie4Jl7hhw1aNv4XR+2?=
+ =?us-ascii?Q?9ivSRGRQJRBSol7OV9LpPuDBxreDw27Ty0himPblmczRBRjqictO+Ldqs5jU?=
+ =?us-ascii?Q?kbBO+lpSWmfACiRN7X2BkFc8NpUTQI/fQGyVhLkLbNFRN6FVVxvqkj80xaA3?=
+ =?us-ascii?Q?uC57zHX397ekbdCgbYatH1EPe/ScD2sdfzLVOFJcSdNJihAW7htopGkPLgt2?=
+ =?us-ascii?Q?fEo8WYq/rkGXaGyU/f0wihvDyw3h6DcNOSiOPG3ExoREAdRYoq8DX+hTw6jK?=
+ =?us-ascii?Q?6TCg5qu/0hUzvJFwoTV/d4JOekEoI4kX6PRSm82xmnmS27UhNtNUnNEwcXmV?=
+ =?us-ascii?Q?35DHDi8Fe9/qautZRTtK/poLKlvFqdub/r7DXJSRzbmeXm1zQ/i+vpk2u4pT?=
+ =?us-ascii?Q?FD07/47hgMihOguGarDwjOfr7Kf1MFmS8oB9bWqRf486+9vzBTThvXQ8mYlb?=
+ =?us-ascii?Q?etmM1EC9y+TyZF0qVBuuA/rX6dt+YD0VyOAPQTiNETU/5G+oWNR8e4qKLkWE?=
+ =?us-ascii?Q?GovwCTnPgbSev1otUodZnOXiWpBkY6VhMipEGdz6qDt6ILulXCybHQEUVaiL?=
+ =?us-ascii?Q?Vveuu2rfAeDRzPOqHO8mvat48EImk2AO+CMVEC/P9EO2eresRdupIHOWugZ/?=
+ =?us-ascii?Q?XAZbBi2Ykbr5ped+SBlTq0zodNeLstS9nxNf2xyxoVV/DATvVSb8YrRppsTW?=
+ =?us-ascii?Q?NjJB1U7vPlvrWUMUrMW/hx5Wdl3yOBNuvX1QO/FQhsCT4zj0r5CgnxVxvAe0?=
+ =?us-ascii?Q?dc1Gk2STXF8vwF7PgndUmdg0AS6/Ljnz9Zr0pfgtcVoKa4TVT8q7NzYEUlCF?=
+ =?us-ascii?Q?8QLoTIPwpTDzD7tQWUEW9ex1QBLTq+BcL58H1WqAbV9qHlQ1l3swNHAUx7Iu?=
+ =?us-ascii?Q?gWOA+vkSXdYP55khPq/afqRp7KXdJi2Tjx0Rzj2r6ADqSb2cmbJXNynTGP5M?=
+ =?us-ascii?Q?JxbtkhM1KIMtE96X9xNKrq+Rv3zhFragvNjAIN/q4NdTE6G7u6bpl2iTkv74?=
+ =?us-ascii?Q?nd7IDotJUKOam+iAZm/1dksLN4vuS06W1TK/wRg4knxamQV6zlPKUhmen+kO?=
+ =?us-ascii?Q?9jA3jYRQdoFH9TnKNKNAqy30m00TehBLnzRSPmICfJojxYku4tqyFszeX0f7?=
+ =?us-ascii?Q?YAfrVbqi1fro3zc+k35NeG8r+A38IsdzYnQyl+x6DaHBMRf9AYvvSYFeybaq?=
+ =?us-ascii?Q?jYmNZihNt+fIPC7J3ioPsdJivuwEMP/WOhQxocBao/wUgxT4hFxryunVW9kY?=
+ =?us-ascii?Q?cxR9HxN1H5ttluAjHxK3VcCDY3fwiRYyCslj5jW05sG/J6k0ZwyauV7kemnA?=
+ =?us-ascii?Q?tmlBVIIgn8t34EtKNTPCAtfKLuH8hYDugnt2YShAhmkjA0A97FMX37x93ibR?=
+ =?us-ascii?Q?ewskmL50IgV1azQ7tzsJwNqrl4WdleTC9eDcWm0yPgcuJm3lWft+QCB+SXdl?=
+ =?us-ascii?Q?Z/1MJ2hggI6dj6Ck9t/8ZQWlItJXlZcy5h1PGa9KwrBshT52OtJR4EiRKFOk?=
+ =?us-ascii?Q?Cga7Jd4hKJFkmjNNdhetJsgUBqdd+u7WkRX+Ds0N?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8903d1fe-b491-42a2-9fed-08ddd327ef8c
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 07:24:23.4861
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H/YqG+kdS2Gg/BYJJv5jI97IvpYgy6jvMccAFHDYGDacrDFl5kn10eJDvxLLYlIljH5Dpv6vz8qb5FfNhJeKBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7251
 
-On 01/08/2025 at 15:22:20 -05, Rob Herring <robh@kernel.org> wrote:
+Use vmalloc_array() instead of vmalloc() to simplify the function
+xenfb_probe().
 
-> On Fri, Aug 1, 2025 at 9:27=E2=80=AFAM Miquel Raynal <miquel.raynal@bootl=
-in.com> wrote:
->>
->> Hi Rob,
->>
->> Sorry for the delay, I don't know why I forgot these.
->>
->> ...
->>
->> > +properties:
->> > +  compatible:
->> > +    enum:
->> > +      - marvell,armada-ap806-thermal
->> > +      - marvell,armada-ap807-thermal
->> > +      - marvell,armada-cp110-thermal
->> > +
->> > +  reg:
->> > +    maxItems: 1
->> > +
->> > +  interrupts:
->> > +    description: overheat interrupt
->> > +    maxItems: 1
->> > +
->> > +  '#thermal-sensor-cells':
->> > +    description: Cell represents the channel ID. There is one sensor =
-per
->> > +      channel. O refers to the thermal IP internal channel.
->> > +    const: 1
->> > +
->> > +required:
->> > +  - compatible
->> > +  - reg
->> > +
->> > +additionalProperties: false
->>
->> IIRC on these Marvell designs, there was one (or more, I don't remember)
->> Application Processor (AP) and several Co-Processors (CP).
->>
->> [On the AP]
->> The AP8XX overheat interrupt was not directly wired to the GIC but was
->> going through another intermediate IRQ controller named SEI (System
->> Error Interrupt).
->>
->>       Thermal overheat IRQ -> SEI -> GIC
->>
->> [On the CP]
->> There was one interrupt controller per CP11X named ICU, which would be
->> connected to the top level GIC through MSIs. The ICU was however split
->> into several sub-controllers reaching different areas on the GIC.
->>
->>                                       MSI
->>       Thermal overheat IRQ -> ICU SEI -> GIC
->>
->> As the OS could not guess the internal connexions, I believe we had to
->> include in the bindings the parent IRQ chip we were connected to. In the
->> case of the thermal over heat interrupts, they were all going through an
->> SEI controller (System Error Interrupt) which, if I still remember
->> correctly, was not the default parent, hence the use of
->> interrupts-parent/interrupts-extended in the examples.
->>
->> This is all a bit cloudy in my mind, but I believe these properties
->> matter and with 'additionalProperties: false' and without
->> interrupts-parent/interrupts-extended allowed, a real world DT
->> snippet would not pass the binding checks.
->
-> 'interrupt-parent' is implicitly allowed anywhere. Who is the parent
-> is outside the scope of the binding given it can vary.
+Compile-tested only.
 
-Ok, good to know.
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ drivers/video/fbdev/xen-fbfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> > +examples:
->> > +  - |
->> > +    thermal-sensor@80 {
->> > +        compatible =3D "marvell,armada-ap806-thermal";
->> > +        reg =3D <0x80 0x10>;
->> > +        interrupts =3D <18>;
->>
->> I do not know how accurate the example must be, but maybe the example
->> shall reflect the SEI connection as well.
->
-> No one has cared about converting the Marvell bindings, so *shrug*.
+diff --git a/drivers/video/fbdev/xen-fbfront.c b/drivers/video/fbdev/xen-fbfront.c
+index c90f48ebb15e..d8f3bfb2dd6c 100644
+--- a/drivers/video/fbdev/xen-fbfront.c
++++ b/drivers/video/fbdev/xen-fbfront.c
+@@ -390,7 +390,7 @@ static int xenfb_probe(struct xenbus_device *dev,
+ 
+ 	info->nr_pages = (fb_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+-	info->gfns = vmalloc(array_size(sizeof(unsigned long), info->nr_pages));
++	info->gfns = vmalloc_array(info->nr_pages, sizeof(unsigned long));
+ 	if (!info->gfns)
+ 		goto error_nomem;
+ 
+-- 
+2.34.1
 
-I was still mentioning the same interrupt-parent property here ("the SEI
-connection"), not how accurate the values were. So if we do not care
-about interrupt-parent because it is allowed anyway,
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks for the conversion,
-Miqu=C3=A8l
 
