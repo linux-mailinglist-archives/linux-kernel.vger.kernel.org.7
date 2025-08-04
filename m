@@ -1,204 +1,291 @@
-Return-Path: <linux-kernel+bounces-754736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDB6B19B9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:32:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B64B19B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B137175B93
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:32:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0B4E02E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69D61EDA0E;
-	Mon,  4 Aug 2025 06:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72C021A43B;
+	Mon,  4 Aug 2025 06:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eDvTaZk3"
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GivFIbK9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CED19882B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C8A19882B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754289117; cv=none; b=KWWVBqT/XQH93gbfZIFfGGCdojf1s/tBbp0UpMLlO+Ys7jzeUkEY6CRV0Cs/L4/YMpP/K71ZV9Z0xZAp1xeA6wKLOlO07JxybhL9CgAlmr5rv9LnA7YWVxGD7sSewQ3EoFMPpdSauBfzPFGmBb2n8ixsEaPK+2RFlywIlhVHJOU=
+	t=1754289126; cv=none; b=u8ElqKjob0HsHSCxd/NyI6ZN+2iVWQWkqR2PQJb8U/IAVjnG3r89ge6vhHIZqfSJXP8yYMzctk+WpWqrCjEUbfbEdV/91akjiQg2qcgn+y7/L3O/d/3ycejQVZHu7uWot+Rh+YGglv1epKPWOcgbNfKH/TZDj2hfCnX5ik01sgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754289117; c=relaxed/simple;
-	bh=GG99R7gLN4sGgR6J/q3H71APfiBbCI3EPW3gOJKxino=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BF2SbhdKZvXbaynUMd7Z0Ne9Wl2gZ7+dnYM9AdXVFX11GcrvbklaZLn089X6Et2kn2+W1UkyEW/WEwBOSNExJ3tn1INrodKHV+UwmKqh4XMamNMPdlokOgNB12dTld/yu+WV7ja2TrCDcj6e1oTz/hYH0OViDIMHE6vBemP7gcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eDvTaZk3; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E239144281;
-	Mon,  4 Aug 2025 06:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754289105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gLDlLSD9fZLuz5Yso1GjOxmc4NefvSELVejvScgC8Ko=;
-	b=eDvTaZk3bkqgx1n26ovQ3mqqbNX48z5Xp6NQ1a7MgNuxqX8QJhrSPC/rmQaI8cPdTeWUVj
-	QtapNMe49PdRGEGnjJwPFju/rfQp2DnB3X5CcRau27QdUxQ3LrZEff5bL10NbtmKrnYqGI
-	PsgDXOxmYeZa39beHABjv6ByeKqoO9cwQzg3wOe7jcKE+Crdl/sLT6zMFeWSglChBiX+l1
-	/XfCBMx0wh62iVS/2RJmQ9AI/9o1hLJ9btsv2MkPtQ2jMWDi1EbBgE0gLk4dsRgqoRlENV
-	GiJZ2ju9VAVOs8cquXBs6ylBKq46ohHbekB6aQlPkgIkbkPhnIeErKS+PQTGEg==
-Date: Mon, 4 Aug 2025 08:31:36 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Zijun Hu <quic_zijuhu@quicinc.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 0/9] drm/bridge: get/put the bridge returned by
- drm_bridge_get_next_bridge()
-Message-ID: <20250804083136.058353f9@booty>
-In-Reply-To: <1ebad5ca-26f3-4a5f-a812-8211129c764a@nxp.com>
-References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
-	<1ebad5ca-26f3-4a5f-a812-8211129c764a@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754289126; c=relaxed/simple;
+	bh=j5kuF3O1uzJVXoLJgeS/lJyE6669v13Dm14D4a9vk0c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H1bYomW81LCeTzzFGWZJnbRRsyxffx8JW8r2+/9qtJkNvLbq61fw0qnfGMHSmw+vs5FEuhq8/stFsDBRSatO1atoITsVGSY/kU6OZyffljsq7QmvUvHdAn8akuOGGN3fVkjeGLcr2X626XLahgd3Y/tEjKcR94ZcPUB8n2ivVAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GivFIbK9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8AAC4CEE7;
+	Mon,  4 Aug 2025 06:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754289125;
+	bh=j5kuF3O1uzJVXoLJgeS/lJyE6669v13Dm14D4a9vk0c=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=GivFIbK9Gv22nX3PqE8PSrPdNJjfS9tnagsTWgYu2u7vJ38mZGnpMxHXOpzGMaUov
+	 XLlfdVGsrWspfrSQbh5fCLD35UoTlgCurkJxahsuk0AldXE7r6vD92w1TvWAtl/n+g
+	 krJ0Q3FfRK5s77Mo14bFvYESHCuKNHON/7gDar90W8cf5RoomsCFdyTld7SlRH+7QZ
+	 V+z0tqI2+WU5FVuK66RFS7Jj/8LwS4RJItWXA5uj/6+Gbenfrl/O1A9Zx9jbnSwlP5
+	 /LqtvKF89chfLSmjoK1B5+5eOUFH3XKPG0RJzTTZwdzmd7ZG5dQDCtiIs1HlaXDYVn
+	 B26CDbwMMffaA==
+Message-ID: <c1472e21-64b1-468e-a98c-ed8e0a5ae8b5@kernel.org>
+Date: Mon, 4 Aug 2025 14:32:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] f2fs: add lookup_mode mount option
+To: Daniel Lee <chullee@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250804060327.512247-1-chullee@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250804060327.512247-1-chullee@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudduheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdegjeejveehhfeigffftefhtdeiffehfeevtdegkeetjefftdevudegiefhvdeknecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepfeejrdduiedurdekiedrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepfeejrdduiedurdekiedrieehpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehvihgtthhorhdrlhhiuhesnhigphdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrn
- hgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
+Content-Transfer-Encoding: 7bit
 
-Hello Liu,
+Daniel,
 
-thanks for having reviewed this series.
+On 8/4/25 14:03, Daniel Lee wrote:
+> For casefolded directories, f2fs may fall back to a linear search if
+> a hash-based lookup fails. This can cause severe performance
+> regressions.
+> 
+> While this behavior can be controlled by userspace tools (e.g. mkfs,
+> fsck) by setting an on-disk flag, a kernel-level solution is needed
+> to guarantee the lookup behavior regardless of the on-disk state.
+> 
+> This commit introduces the 'lookup_mode' mount option to provide this
+> kernel-side control.
+> 
+> The option accepts three values:
+> - perf: (Default) Enforces a hash-only lookup. The linear fallback
+>   is always disabled.
+> - compat: Enables the linear search fallback for compatibility with
+>   directory entries from older kernels.
+> - auto: Determines the mode based on the on-disk flag, preserving the
+>   userspace-based behavior.
+> 
+> Signed-off-by: Daniel Lee <chullee@google.com>
+> ---
+>  Documentation/filesystems/f2fs.rst | 19 ++++++++++++++
+>  fs/f2fs/dir.c                      | 17 ++++++++++++-
+>  fs/f2fs/f2fs.h                     | 41 ++++++++++++++++++++++++++++++
+>  fs/f2fs/super.c                    | 20 +++++++++++++++
+>  4 files changed, 96 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 440e4ae74e44..01c657ff7ae2 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -370,6 +370,25 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
+>  			 ====================== =============== =============== ========
+>  nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
+>  			 by default it's disabled.
+> +lookup_mode=%s		 Control the directory lookup behavior for casefolded
+> +			 directories. This option has no effect on directories
+> +			 that do not have the casefold feature enabled.
+> +
+> +			 ================== ========================================
+> +			 Value		    Description
+> +			 ================== ========================================
+> +			 perf		    (Default) Enforces a hash-only lookup.
+> +					    The linear search fallback is always
+> +					    disabled, ignoring the on-disk flag.
+> +			 compat		    Enables the linear search fallback for
+> +					    compatibility with directory entries
+> +					    created by older kernel that used a
+> +					    different case-folding algorithm.
+> +					    This mode ignores the on-disk flag.
+> +			 auto		    F2FS determines the mode based on the
+> +					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
+> +					    flag.
+> +			 ================== ========================================
+>  ======================== ============================================================
+>  
+>  Debugfs Entries
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index c36b3b22bfff..ba032d21a997 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -16,6 +16,21 @@
+>  #include "xattr.h"
+>  #include <trace/events/f2fs.h>
+>  
+> +static inline bool f2fs_should_fallback_to_linear(struct inode *dir)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+> +
+> +	switch (f2fs_get_lookup_mode(sbi)) {
+> +	case LOOKUP_PERF:
+> +		return false;
+> +	case LOOKUP_COMPAT:
+> +		return true;
+> +	case LOOKUP_AUTO:
+> +		return !sb_no_casefold_compat_fallback(sbi->sb);
+> +	}
+> +	return false;
+> +}
+> +
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  extern struct kmem_cache *f2fs_cf_name_slab;
+>  #endif
+> @@ -366,7 +381,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+>  
+>  out:
+>  #if IS_ENABLED(CONFIG_UNICODE)
+> -	if (!sb_no_casefold_compat_fallback(dir->i_sb) &&
+> +	if (f2fs_should_fallback_to_linear(dir) &&
+>  		IS_CASEFOLDED(dir) && !de && use_hash) {
+>  		use_hash = false;
+>  		goto start_find_entry;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9333a22b9a01..fed588f4fa3d 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -132,6 +132,12 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+>   */
+>  #define F2FS_MOUNT_LAZYTIME		0x40000000
+>  
+> +enum f2fs_lookup_mode {
+> +	LOOKUP_PERF,
+> +	LOOKUP_COMPAT,
+> +	LOOKUP_AUTO,
+> +};
 
-On Mon, 4 Aug 2025 12:02:48 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+We're going to use new mount API, please check last code in dev-test branch,
+and it's better to adapt code based on that.
 
-> Hi Luca,
->=20
-> On 08/01/2025, Luca Ceresoli wrote:
-> > Note: the cover in v1 was mentioning by mistake
-> > drm_bridge_get_last_bridge() instead of drm_bridge_get_next_bridge().
-> >                ^^^^
-> >=20
-> > This series adds drm_bridge_get/put() calls for DRM bridges returned by
-> > drm_bridge_get_next_bridge().
-> >=20
-> > This is part of the work towards removal of bridges from a still existi=
-ng
-> > DRM pipeline without use-after-free. The grand plan was discussed in [1=
-].
-> > Here's the work breakdown (=E2=9E=9C marks the current series):
-> >=20
-> >  1. =E2=9E=9C add refcounting to DRM bridges (struct drm_bridge)
-> >     (based on devm_drm_bridge_alloc() [0])
-> >     A. =E2=9C=94 add new alloc API and refcounting (in v6.16-rc1)
-> >     B. =E2=9C=94 convert all bridge drivers to new API (now in drm-misc=
--next)
-> >     C. =E2=9C=94 kunit tests (now in drm-misc-next)
-> >     D. =E2=9C=94 add get/put to drm_bridge_add/remove() + attach/detach=
-()
-> >          and warn on old allocation pattern (now in drm-misc-next)
-> >     E. =E2=9E=9C add get/put on drm_bridge accessors
-> >        1. =E2=9C=94 drm_bridge_chain_get_first_bridge() + add a cleanup=
- action
-> >        2. =E2=9C=94 drm_bridge_get_prev_bridge()
-> >        3. =E2=9E=9C drm_bridge_get_next_bridge()
-> >        4. =E2=80=A6 drm_for_each_bridge_in_chain()
-> >        5. drm_bridge_connector_init
-> >        6. of_drm_find_bridge
-> >        7. drm_of_find_panel_or_bridge, *_of_get_bridge
-> >     F. debugfs improvements
-> >  2. handle gracefully atomic updates during bridge removal
-> >  3. =E2=80=A6 avoid DSI host drivers to have dangling pointers to DSI d=
-evices
-> >  4. finish the hotplug bridge work, removing the "always-disconnected"
-> >     connector, moving code to the core and potentially removing the
-> >     hotplug-bridge itself (this needs to be clarified as points 1-3 are
-> >     developed)
-> >=20
-> > There are various users of drm_bridge_get_next_bridge() which cannot be
-> > converted easily. Luckily they are not really looking for the next brid=
-ge,
-> > but for something else, such as getting the last bridge in the encoder
-> > chain or checking whether a bridge is the last in the encoder chain. So
-> > introduce better functions for those users and use them instead of
-> > drm_bridge_get_next_bridge(), making the code cleaner at the same time.
-> >=20
-> > Finally add a drm_bridge_get() to drm_bridge_get_next_bridge() and
-> > drm_bridge_put() to the remaining, and legitimate, calls.
-> >=20
-> > [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc=
-1e629b715ea3d1ba537ef2da95eec
-> > [1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2=
-c9c3058@bootlin.com/t/#u
-> >=20
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> > Changes in v2:
-> > - Use cleanup action in patches 4, 8 and 9
-> > - Fix: replace get_last -> get_next in cover
-> > - Link to v1: https://lore.kernel.org/r/20250709-drm-bridge-alloc-getpu=
-t-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com
-> >=20
-> > ---
-> > Luca Ceresoli (9):
-> >       list: add list_last_entry_or_null()
-> >       drm/bridge: add drm_bridge_chain_get_last_bridge()
-> >       drm/bridge: imx93-mipi-dsi: use drm_bridge_chain_get_last_bridge()
-> >       drm/omapdrm: use drm_bridge_chain_get_last_bridge()
-> >       drm/bridge: add drm_bridge_is_last()
-> >       drm/display: bridge_connector: use drm_bridge_is_last()
-> >       drm/bridge: get the bridge returned by drm_bridge_get_next_bridge=
-()
-> >       drm/bridge: put the bridge returned by drm_bridge_get_next_bridge=
-()
-> >       drm/imx: parallel-display: put the bridge returned by drm_bridge_=
-get_next_bridge()
-> >=20
-> >  drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c    | 12 ++++------
-> >  drivers/gpu/drm/display/drm_bridge_connector.c |  5 ++--
-> >  drivers/gpu/drm/drm_bridge.c                   |  3 +--
-> >  drivers/gpu/drm/imx/ipuv3/parallel-display.c   |  4 ++--
-> >  drivers/gpu/drm/omapdrm/omap_drv.c             |  6 ++---
-> >  include/drm/drm_bridge.h                       | 32 ++++++++++++++++++=
-+++++++-
-> >  include/linux/list.h                           | 14 +++++++++++
-> >  7 files changed, 57 insertions(+), 19 deletions(-) =20
->=20
-> Looks like this one needs to be handled by this patch series?
->=20
-> drivers/gpu/drm/omapdrm/omap_encoder.c:101:
-> bridge =3D drm_bridge_get_next_bridge(bridge)) {
+> +
+>  #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+>  #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
+>  #define set_opt(sbi, option)	(F2FS_OPTION(sbi).opt |= F2FS_MOUNT_##option)
+> @@ -1355,6 +1361,8 @@ enum {
+>  	SBI_IS_RESIZEFS,			/* resizefs is in process */
+>  	SBI_IS_FREEZING,			/* freezefs is in process */
+>  	SBI_IS_WRITABLE,			/* remove ro mountoption transiently */
+> +	SBI_LOOKUP_COMPAT,			/* enable compat/auto lookup modes */
+> +	SBI_LOOKUP_AUTO,			/* enable auto lookup mode */
 
-This is handled in a better way in a separate series, converting the
-for_each loops around the bridges in an encoder chain:
+Could you please add lookup_mode field in struct f2fs_mount_info to record lookup_mode
+status like we did for other mount options? IIRC, in f2fs_remount(), we will record
+all old mount options in sbi.mount_opt for later recovery if necessary.
 
-https://lore.kernel.org/all/20250723-drm-bridge-alloc-getput-for_each_bridg=
-e-v1-9-be8f4ae006e9@bootlin.com/
+>  	MAX_SBI_FLAG,
+>  };
+>  
+> @@ -4897,6 +4905,39 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+>  	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
+>  }
+>  
+> +/*
+> + * The lookup mode is stored in two bits within sbi->s_flag:
+> + *
+> + * SBI_LOOKUP_COMPAT | SBI_LOOKUP_AUTO | Mode
+> + * ------------------|-----------------|--------
+> + *          0        |         0       | perf
+> + *          1        |         0       | compat
+> + *          1        |         1       | auto
+> + *
+> + */
+> +static inline enum f2fs_lookup_mode f2fs_get_lookup_mode(struct f2fs_sb_info *sbi)
+> +{
+> +	if (!is_sbi_flag_set(sbi, SBI_LOOKUP_COMPAT))
+> +		return LOOKUP_PERF;
+> +	if (is_sbi_flag_set(sbi, SBI_LOOKUP_AUTO))
+> +		return LOOKUP_AUTO;
+> +	return LOOKUP_COMPAT;
+> +}
+> +
+> +static inline void f2fs_set_lookup_mode(struct f2fs_sb_info *sbi,
+> +						enum f2fs_lookup_mode mode)
+> +{
+> +	clear_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
+> +	clear_sbi_flag(sbi, SBI_LOOKUP_AUTO);
+> +
+> +	if (mode == LOOKUP_COMPAT)
+> +		set_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
+> +	else if (mode == LOOKUP_AUTO) {
+> +		set_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
+> +		set_sbi_flag(sbi, SBI_LOOKUP_AUTO);
+> +	}
+> +}
+> +
+>  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+>  #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>  
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index bbf1dad6843f..09cdd4c22e58 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -196,6 +196,7 @@ enum {
+>  	Opt_age_extent_cache,
+>  	Opt_errors,
+>  	Opt_nat_bits,
+> +	Opt_lookup_mode,
+>  	Opt_err,
+>  };
+>  
+> @@ -276,6 +277,7 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_age_extent_cache, "age_extent_cache"},
+>  	{Opt_errors, "errors=%s"},
+>  	{Opt_nat_bits, "nat_bits"},
+> +	{Opt_lookup_mode, "lookup_mode=%s"},
+>  	{Opt_err, NULL},
+>  };
+>  
+> @@ -1317,6 +1319,22 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
+>  		case Opt_nat_bits:
+>  			set_opt(sbi, NAT_BITS);
+>  			break;
+> +		case Opt_lookup_mode:
+> +			name = match_strdup(&args[0]);
+> +			if (!name)
+> +				return -ENOMEM;
+> +			if (!strcmp(name, "perf")) {
+> +				f2fs_set_lookup_mode(sbi, LOOKUP_PERF);
+> +			} else if (!strcmp(name, "compat")) {
+> +				f2fs_set_lookup_mode(sbi, LOOKUP_COMPAT);
+> +			} else if (!strcmp(name, "auto")) {
+> +				f2fs_set_lookup_mode(sbi, LOOKUP_AUTO);
+> +			} else {
+> +				kfree(name);
+> +				return -EINVAL;
+> +			}
+> +			kfree(name);
+> +			break;
+>  		default:
+>  			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
+>  				 p);
+> @@ -2220,6 +2238,8 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
+>  #endif
+>  
+>  	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
+> +
+> +	f2fs_set_lookup_mode(sbi, LOOKUP_PERF);
 
-Luca
+I guess we need to change f2fs_show_options() as well, right?
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+
+>  }
+>  
+>  #ifdef CONFIG_QUOTA
+
 
