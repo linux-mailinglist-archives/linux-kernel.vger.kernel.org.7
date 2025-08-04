@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-754619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F88FB19A23
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:21:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91948B19A2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBEA87A5087
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301701896E1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7561F4615;
-	Mon,  4 Aug 2025 02:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kyn4r5eV"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE5A1D8DE1;
-	Mon,  4 Aug 2025 02:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B881FECA1;
+	Mon,  4 Aug 2025 02:27:11 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726AE4C83;
+	Mon,  4 Aug 2025 02:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754274069; cv=none; b=HW5siZUktgBfS+b/Vi19L4XwhMjgaedYdNbtH7XmgwuK/xFlxyQLocuJ+G1QIlF3aM5ozwsMXMXKPRUAC+j63se1nPYoQY9CeTUzTj8HJc7URgvljuhJovT7XsZRHvfOs1YCqvxLqmgcuhRcEJ46vsWEJzsV3FAAB1LNtxDu2Z0=
+	t=1754274430; cv=none; b=ikhEQI+y6rsi08DU+YEYtgDXJpX95wUdzGc6Z+rr1ncTCgFuaP+9d9Ox/sYTcB1Q1IhVxQrk1mRsc2/XLHTUJFO/kwfIIAj5lDn19kANWaXbAmYPVpi8GZ5XMjtbfsTZ4ZDfLjfKvwyPGWbDKRS5QUbgDnYzIsH4+KcEqcVO4Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754274069; c=relaxed/simple;
-	bh=PV00/DQDjtl55Q2sTjNkE07OPjvHk17khO8Nu6152Fc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iScJZhI7fxc9COwgv7KqglO2mOsCqbqIJ0z5/SY/MlGD0nOrko7bki3H8oRAigCnvgOfuZGL4USaaA1rG46eS2fxdoT+g501X3l+G19jRKDV+yekn7CBtAoNSuszpwzMqdiM7VKP/7kT15H0OElQTSs8XsvCjeyUXIcA8rgVpHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kyn4r5eV; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ly
-	ROzPVWAeV9XHHucx6h5OdtaN0VcdqdCQNP2WQJkMc=; b=kyn4r5eVbMOy6B5k1q
-	DuVNR1hlv1rp7VARW+hrvODZ1sh3ZipSxi72JJxnzWB2jqNfNp50oKdcttJxUt8y
-	rlqqO4F49lBOcXgQcFBXbGA2UTtuiw4olOKrGp43aZjYzeFIwKf0NVAGaeC9a/ID
-	wHBsI8zrvAhAeK5W8z8yB9yQY=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wA3h83nGJBocS5mJg--.9947S4;
-	Mon, 04 Aug 2025 10:20:24 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	sam@ravnborg.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@oss.qualcomm.com,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm: Fix potential null pointer dereference issues in drm_managed.c
-Date: Mon,  4 Aug 2025 10:20:21 +0800
-Message-Id: <20250804022021.78571-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754274430; c=relaxed/simple;
+	bh=SH2VsF0c2qYDhnX+O5sTl/7AV/kWTXVbVc1G+MkUcgs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lpDUiy3lfnE4pdku5P1+cf+Osu2apLbBd5iIZnAleUqJOWNV1BJ2bfuMGtbug/Fbc2BGMriA+6fJJPG/Muf1alqnGY5v/mGSBGZCMfJB8YFKEuoJQQr95Rdat0EJoB9QmG6K0dNCx5e0e4M2xRpUnbDBxcocaaHejrxMwC0beto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bwL6f5x5DzKHMRl;
+	Mon,  4 Aug 2025 10:27:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CC4BE1A06DD;
+	Mon,  4 Aug 2025 10:27:05 +0800 (CST)
+Received: from k-arm6401.huawei.com (unknown [7.217.19.243])
+	by APP4 (Coremail) with SMTP id gCh0CgAX4BBsGpBoTUL9CQ--.242S2;
+	Mon, 04 Aug 2025 10:27:05 +0800 (CST)
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+To: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yhs@fb.com>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Willem de Bruijn <willemb@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Paul Chaignon <paul.chaignon@gmail.com>,
+	Tao Chen <chen.dylane@linux.dev>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>
+Subject: [PATCH bpf-next 0/4] Add overwrite mode for bpf ring buffer
+Date: Mon,  4 Aug 2025 10:20:56 +0800
+Message-ID: <20250804022101.2171981-1-xukuohai@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA3h83nGJBocS5mJg--.9947S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFyrKrW5ur18KFWUWF1fCrg_yoWkXwc_u3
-	W8X3s3Wr4kCF95GF4qy3W3ZryIka1DuF4vvFW7tF9ayrW5Jr10q348Zr45JryDWF1xuF9x
-	u3WDAryfZrsrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRt6wZUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiMwmfbmiQFKqiFwAAs4
+X-CM-TRANSID:gCh0CgAX4BBsGpBoTUL9CQ--.242S2
+X-Coremail-Antispam: 1UD129KBjvJXoWruFy3GFyDZr4rXryxurWrGrg_yoW8Jryxpa
+	n5KFy5trn2ka4xuwn3uF4IqryrArs7Zr4fKw47Xw15Zry5JFW5XFyI9r15JrnxJrWxJr1F
+	kr90gryrG34jqFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxkF7I0Ew4C26cxK6c8Ij28IcwCY02Avz4vEIxC_Gr1l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUh89NDUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-Add check for the return value of kstrdup_const() in drm_managed.c
-to prevent potential null pointer dereference.
+From: Xu Kuohai <xukuohai@huawei.com>
 
-Fixes: c6603c740e0e ("drm: add managed resources tied to drm_device")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v2:
-- Modify a fix error. Thanks, Dmitry!
----
- drivers/gpu/drm/drm_managed.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+When the bpf ring buffer is full, new events can not be recorded util
+the consumer consumes some events to free space. This may cause critical
+events to be discarded, such as in fault diagnostic, where recent events
+are more critical than older ones.
 
-diff --git a/drivers/gpu/drm/drm_managed.c b/drivers/gpu/drm/drm_managed.c
-index cc4c463daae7..e34b8dcde48c 100644
---- a/drivers/gpu/drm/drm_managed.c
-+++ b/drivers/gpu/drm/drm_managed.c
-@@ -151,6 +151,11 @@ int __drmm_add_action(struct drm_device *dev,
- 	}
- 
- 	dr->node.name = kstrdup_const(name, GFP_KERNEL);
-+	if (!dr->node.name) {
-+		kfree(dr);
-+		return -ENOMEM;
-+	}
-+
- 	if (data) {
- 		void_ptr = (void **)&dr->data;
- 		*void_ptr = data;
-@@ -236,6 +241,10 @@ void *drmm_kmalloc(struct drm_device *dev, size_t size, gfp_t gfp)
- 		return NULL;
- 	}
- 	dr->node.name = kstrdup_const("kmalloc", gfp);
-+	if (!dr->node.name) {
-+		kfree(dr);
-+		return NULL;
-+	}
+So add ovewrite mode for bpf ring buffer. In this mode, the new event
+overwrites the oldest event when the buffer is full.
 
- 	add_dr(dev, dr);
- 
+Xu Kuohai (4):
+  bpf: Add overwrite mode for bpf ring buffer
+  libbpf: ringbuf: Add overwrite ring buffer process
+  selftests/bpf: Add test for overwrite ring buffer
+  selftests/bpf/benchs: Add overwrite mode bench for rb-libbpf
+
+ include/uapi/linux/bpf.h                      |   4 +
+ kernel/bpf/ringbuf.c                          | 159 +++++++++++++++---
+ tools/include/uapi/linux/bpf.h                |   4 +
+ tools/lib/bpf/ringbuf.c                       | 103 +++++++++++-
+ tools/testing/selftests/bpf/Makefile          |   3 +-
+ .../selftests/bpf/benchs/bench_ringbufs.c     |  22 ++-
+ .../bpf/benchs/run_bench_ringbufs.sh          |   4 +
+ .../selftests/bpf/prog_tests/ringbuf.c        |  74 ++++++++
+ .../bpf/progs/test_ringbuf_overwrite.c        |  98 +++++++++++
+ 9 files changed, 442 insertions(+), 29 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_overwrite.c
+
 -- 
-2.25.1
+2.43.0
 
 
