@@ -1,193 +1,126 @@
-Return-Path: <linux-kernel+bounces-754876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0C6B19DE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:42:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203F4B19DE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2F0189A130
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D003A3B4B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E62C242D6D;
-	Mon,  4 Aug 2025 08:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFA0242925;
+	Mon,  4 Aug 2025 08:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dv5z2YO8"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2oC6PDY"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36A72F2D;
-	Mon,  4 Aug 2025 08:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFC12F2D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296969; cv=none; b=iAWPs3XC2LkRmjt+Tm7kfxd4JW8nEmHdhgzqJUy8qXh2JceU+KifaXhXt5haX8LpvoKTpr+py+TvzEcae54ujgUv9XmbQkxpczKkn0pw0M1alWlx3tu12xbn4cHHJCNcQsD513yxy43P0byROJPQ+rFlOoV1NA+shdja2zo2voo=
+	t=1754297064; cv=none; b=p004v48C3zNk3Sn1UN22CrjpLVjXZZzmj9M7KO1xLhR4lWA8Yn0dF4upKKxCIwaNGTC+CFIBGpnburqimk4YFMM1EYO5BW7/Utk/21WpedxD92dDRRAGB7VOJjIhUpCNhMcXe4G28NRj/Cldjq3ab9gEDWQe4j+RBOeKnxIvqiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296969; c=relaxed/simple;
-	bh=L7T2peuzotcxh0WDpbjrWrh+4FLTWHQ/ToB/4BKx620=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k2Va8o6F13Q+24PX6GgUeOoipE0nv+0wqx3bVaCCcSHKMNK87DWOSJ1sRNl+/bUv6kpuAU0ol3CBnsc085WBtSee3fojEIm5w8dvctCDW1twpwzb23hY1InB87nQcEA36QDp/7URQTgB35NLRNE9kTG37degeWCffKjIJ2sMag0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dv5z2YO8; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754296965; x=1754901765; i=markus.elfring@web.de;
-	bh=UASp2Q43xdTYdojg64rqUD6JEddZj16gpDHk948VxA8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=dv5z2YO8haLlKOlwNl3UMwlixDWATeNZdkNX1asyYWBvnzi86/AH7OOlmHnm6ClM
-	 vLSUDQPK7xEGYRQmCbzDQK1wMmksvre3ZImA/DC61U+fLtMh0heO8QzvTSEbiucBy
-	 AGrPhfojTf5LJVylOAMP1D/ywRQ0BnkAQslruvEuy26e2+GnI55MrhgfOyswX+rlc
-	 flKdaliwkoclJecdXT4zPyWPqVxLb+Pcn+3/KxXrQwRbVYVoWN0ukeoXGUyRfSPNa
-	 INTq2n7Smy6D7pNldWJP1icelyTKFjGZe+/ZwcZVMXj5x+HYA2MjdWApOXJWCC2Rq
-	 38WlBwoHwKlghaWoug==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.221]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpCmZ-1uIH4l3BZn-00ch8v; Mon, 04
- Aug 2025 10:42:44 +0200
-Message-ID: <43362d25-5be8-4158-bda2-2c8e9c4743f4@web.de>
-Date: Mon, 4 Aug 2025 10:42:34 +0200
+	s=arc-20240116; t=1754297064; c=relaxed/simple;
+	bh=OQwV5bmZgsyIodUOnXaMt77DHO9HRxq4ALffDwjwojE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CU+Q3HvCrIqerwfV/FM1bGczl9gFIj6m7Ny/ebducARPhU02UMlnPFMQfU/AvwW3dlKBuofhLTHoGAxRxjGYAm5Y8euiAt/9pD402aakMuY/PLJtvbDYhspXGeGZz8JiIyTvB0fK7CJuofVTFst4L40cTTxiYIFG0F7pzYgEWeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2oC6PDY; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-240763b322fso37158785ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754297062; x=1754901862; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7weEBtXNu6O3OU3+Ic285vjIwi08+prtGPyxCf9KkS0=;
+        b=T2oC6PDYXUzH3z1pwotsr39oTfU1XTEmG21rKTOVRdwdN/Z2GO0mzJd7+CxDeEyBsf
+         fdsoiWxRAueBA+ctwaIqzG0XjOP8oeoyuisW1BeCzypBLu+CSJRj9OGYtWCDLnIMywA2
+         FRPzw+4XCk846DR7ab9/QnEpOR2wBKDu4axoKD7NnBJFZKupI/QW0ZJRMUGzL+iS9rAX
+         BuYY89Sn0liQxm5h47EHRIiIcDKWD9egF3k6HeHMpWDXsKzhjIcnwPjeQjzeU6/OJwIU
+         2oMZHJ798sKyj7VmiQuzs0pzE/pBRc/xg41b3Gk/lNjLfI7b3VE/eauVHQ/GJP6UYDdW
+         cI+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754297062; x=1754901862;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7weEBtXNu6O3OU3+Ic285vjIwi08+prtGPyxCf9KkS0=;
+        b=qlF5K5h5lKCsDQ9NRz83CMF9ADoh8srCs+uQ49MTRa0h51e3DV6qGNH1ZeZKD6l6wg
+         xgsxEd1LSAIvkuewCcb9ovACgmtYX0mr6cqRwjoxk5POl40T2+wm2Fq1cDBhKmky6QWh
+         HKuJV9esjEEgqbgg92Ct46qroR+HczphrQGIKLNVhfRsUGRl71rXP2OtsjS1mj8LGWMZ
+         feS+cnevpwrfsu65eNB2I+/qDGWYpk/rUqvzaN/zszY6j+Ja0D5KV7N9rV5ZBb6ZanYW
+         ojz82qBGgAz98J9hMArkRJF/Z9j/ZoehT/fccWlL04e7JDlX/nxaJIXnWaLZGh0kD9Jq
+         JCaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNRIxlygUTlda7Ig1FQ5DFI3gpdGedxaNI1FDCSr0xp0xhKHKVgeqwQW08sv9vLUIPJZ8akwuK5baQ4Ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJucRX/qGRDL+/hcTQDj7Qg/soW8hH7uiUthV5fhbnm9oWVxlK
+	U/IrKAvsfvJZa/LcQCpPWJx/30m2VSSpX8UahjKwLI7xc3v8vpN4Lx2U
+X-Gm-Gg: ASbGncumKjBxrxMRUUtCY+eg+D36pP0mJyvWgCZEWynm7kIe3OS1aKCAdjyfnCcDc5W
+	dfB1S380wXRLmCQo/hmjZqpd3Au0YA7EZphJUtMUJK+QyWympqpdohpzmPEnuv7S0Zy/ogw25zL
+	yCf1LsxCBPmyvoKeCgwc3IKrrqvld2yztVwZgdKHIOgVMyOw6n+awhg6ONK0eLVyqIZkPkl1NVA
+	iFYEw19whPRq7AHng2j3hzX2/0/hPIGZiyMUK2UK5kpBeAM2v+yz17kJgpkKcb6Zwe57hLI25YU
+	/nnPCkP4nBJmFBOZpG1srIL+vTF9sGjpJRZIMt95jFOkSUqGBYBRzBhXInrBXDnxJnkm8gzLxKg
+	8FvU0OUk1ISLliCJDkXHX
+X-Google-Smtp-Source: AGHT+IHbpi6lB61KVNgUupM53gjsKp3nANik+LeK6AxHjCEZdLwoL524Z+8ZPz52r/mw5Lm6YeX5Hg==
+X-Received: by 2002:a17:902:f0cc:b0:235:e76c:4362 with SMTP id d9443c01a7336-24246f3b2f6mr78754155ad.18.1754297061953;
+        Mon, 04 Aug 2025 01:44:21 -0700 (PDT)
+Received: from c45b92c47440.. ([202.120.234.58])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241e899b4b8sm103742855ad.137.2025.08.04.01.44.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 01:44:21 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] afs: Fix missing error pointer check after rxrpc_kernel_lookup_peer()
+Date: Mon,  4 Aug 2025 12:44:13 +0400
+Message-Id: <20250804084413.3627337-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: pcc: Add missed acpi_put_table() to fix
- memory leak
-To: Zhen Ni <zhen.ni@easystack.cn>, linux-acpi@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>
-References: <20250730124508.939257-1-zhen.ni@easystack.cn>
- <20250804074115.44573-1-zhen.ni@easystack.cn>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250804074115.44573-1-zhen.ni@easystack.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FG44XmFFueVGlehpQaLcXe7bSczvr7xOKVfQst+eEyCEVoQGekn
- AN5fzG/8ePu+J65Vyws4IVDxxlL1FQjdj6bd0nKf1fkYRWtTbTW/9UVaNmn4vn9qNgK+DMY
- KqX+SXR35IR9huFlf7Uk80ozhp0hH2ELc2vmGOlF4VdEbXWKCS/P+WQscMEgcTn24FggFir
- 9JAye0ArBnV80p2dTdmBQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Mz2mULEYJTs=;xL0gWXWXFt1EM9oAeOgynXXjDbE
- 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
- 0w==
+Content-Transfer-Encoding: 8bit
 
-> In pcc_mbox_probe(), the PCCT table acquired via acpi_get_table()
-> is only released in error paths but not in the success path. This
-> leads to a permanent ACPI memory leak when the driver successfully
-> initializes.
+rxrpc_kernel_lookup_peer() can also return error pointers.
+Add an IS_ERR_OR_NULL() check to handle both error and NULL returns.
+This prevents possible crashes from invalid pointer dereference.
 
-* You may occasionally put more than 66 characters into text lines
-  of such a change description.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.16#n658
+Fixes: 72904d7b9bfb ("rxrpc, afs: Allow afs to pin rxrpc_peer objects")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ fs/afs/addr_list.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-* See also once more:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.16#n94
+diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
+index e941da5b6dd9..1f8d1a8a92c3 100644
+--- a/fs/afs/addr_list.c
++++ b/fs/afs/addr_list.c
+@@ -298,7 +298,7 @@ int afs_merge_fs_addr4(struct afs_net *net, struct afs_addr_list *alist,
+ 	srx.transport.sin.sin_addr.s_addr = xdr;
+ 
+ 	peer = rxrpc_kernel_lookup_peer(net->socket, &srx, GFP_KERNEL);
+-	if (!peer)
++	if (IS_ERR_OR_NULL(peer))
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < alist->nr_ipv4; i++) {
+@@ -342,7 +342,7 @@ int afs_merge_fs_addr6(struct afs_net *net, struct afs_addr_list *alist,
+ 	memcpy(&srx.transport.sin6.sin6_addr, xdr, 16);
+ 
+ 	peer = rxrpc_kernel_lookup_peer(net->socket, &srx, GFP_KERNEL);
+-	if (!peer)
++	if (IS_ERR_OR_NULL(peer))
+ 		return -ENOMEM;
+ 
+ 	for (i = alist->nr_ipv4; i < alist->nr_addrs; i++) {
+-- 
+2.25.1
 
-
-=E2=80=A6> ---
-> Changes in v2:
-> - Add tags of 'Fixes' and 'Cc'
-> - Change goto target from out_put_pcct to e_nomem
-=E2=80=A6> +++ b/drivers/mailbox/pcc.c
-> @@ -763,19 +763,19 @@ static int pcc_mbox_probe(struct platform_device *=
-pdev)
->  					 GFP_KERNEL);
->  	if (!pcc_mbox_channels) {
->  		rc =3D -ENOMEM;
-> -		goto err;
-> +		goto e_nomem;
->  	}
-=E2=80=A6
-
-Why do you not move the assignment statement accordingly?
-
-
-=E2=80=A6> @@ -796,17 +796,17 @@ static int pcc_mbox_probe(struct platform=
-_device *pdev)
->  		    !pcc_mbox_ctrl->txdone_irq) {
->  			pr_err("Platform Interrupt flag must be set to 1");
->  			rc =3D -EINVAL;
-> -			goto err;
-> +			goto e_nomem;
->  		}
-=E2=80=A6
-
-You misunderstood one of my development suggestions.
-
-
-=E2=80=A6> @@ -827,9 +827,8 @@ static int pcc_mbox_probe(struct platform_d=
-evice *pdev)
-=E2=80=A6> -		return 0;
-> -err:
-> +
-> +e_nomem:
->  	acpi_put_table(pcct_tbl);
->  	return rc;
->  }
-Would an other code variant be more reasonable?
-
-e_nomem:
-	rc =3D -ENOMEM;
-	goto err;
-
-
-Regards,
-Markus
 
