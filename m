@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-755654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27008B1A9F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B22B1A9F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EBE18A3D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B702118A068F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C53C291C0F;
-	Mon,  4 Aug 2025 19:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC53B22422D;
+	Mon,  4 Aug 2025 20:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRfI9QIp"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXb93zCf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815A23D294;
-	Mon,  4 Aug 2025 19:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160C516F8E9;
+	Mon,  4 Aug 2025 20:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754337459; cv=none; b=pm1EEY/1xCF/llZ4n+8Ym+BGQRZNdswp66WIhxZFr99XSI4am2S1bx/WnFUwbCf+RrwYYLJrtvIm04J8MZ0leiftrMZS7ZJjYIH60eNAPOcpqZlxLiAosJeyGFCBVyPmwqPgfWh/zNPA3Zz3JP3pB5ULJuj8GvdpgzAZ7P7TChE=
+	t=1754337692; cv=none; b=A2XiLboV7WdGZY0NcnHPLTMg2EAsAFaTyK1fB49/dHKt+LMbCIgdLfxhbJYSPh+F+KtlTvJZBxJDr1lxFLibztI5aZEH5yKMtb+/HErhwZ1FcHJVgWDcZxpbyNNpLbFJ0SFylocffAq47nzZAhd6nkcj32nW/bwbD+DPwVosZwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754337459; c=relaxed/simple;
-	bh=iGZD0LQ3kSDXmYoPeaYnugCI5o1eWItexWDE/LM8Q+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XnR2Vrnq5kulFinydB7HWelITX9K6+14XlY+/XYF9NnbPDuqZLfJcKSvIRl06UaMhgbs2Tysj9tCYGfsmpazBzmAkOyCM5/CUUtMlxiVwHl4NjrIwTAcDndQVbBCp7EH9cwxNr2IuMUIZk2EOo8r31opXn+JVkLdeqozvO4k9kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRfI9QIp; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-455b00339c8so30487485e9.3;
-        Mon, 04 Aug 2025 12:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754337456; x=1754942256; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8VJM1mx30IuCWN7LUhFDjSWyKbNj6VnDSykcNH8sS+0=;
-        b=WRfI9QIpBhUnK0lGMssMEMgfhjpjPDjCHqWOELgFseJfUMz879ktSL7Qx28UON5W/c
-         MURuUl2PwwH+H758C4ex2ikI5Ft9HYqP20RK8E55vMepBhrYFAmBNC0TNac2nSz9FV66
-         kPh+brN79t5xnd04D6y8KjIs8M1MSfk2UDSNe+xbwqa2e6rFswkZSPGnPHU36HSqkLES
-         0RK5JJ+DMLpMW7HZ45ibx29ptu1OKW1EOLFNz8QpCoAYfQ1DnQsVi8Veg5wQNTvXgrCb
-         tu0t/JaYhatYc1/vMEB3czYL80oEzQwobZzAgv74rN4jnVqRh/VrSUTTWBWFTIgZ7546
-         qh3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754337456; x=1754942256;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8VJM1mx30IuCWN7LUhFDjSWyKbNj6VnDSykcNH8sS+0=;
-        b=H37GosiS92yuKA0tbTkfS+71qo7IGjJtqN/PAqUom1bGJbL5yOhvaE53dZYv6lfldY
-         KyNMpWpPgANMGdujoLiWjO3+9kNaME2ws/KhWmQJuDg8K1w8huZAUVyOU8ij2XuWua53
-         9Uj/hqqpRExfmPwt6WYgSf4dMPzVvnZ8JUf8mhQsAIEEEtUXSgNciUqoWc8r8NJHDidf
-         o5odUmFwg7vNxQBaELG0M9cjZqX7nsP4kR64SmYpszztXmiZ1x3XXbTvF7lQjEyO9DN/
-         cXb3h0IV+1YPhPXOY3kQZxc3TAYgNyVUrYCjJcjly8EuENGH6tB2otaQc21jCE9opIE7
-         niaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbiFnD7lYZo0reQEsFXourPEaIcSPjkF/q4JLJpnkgtABpAlc80hHLXbaWQWJy6AbV/yX57uvoGHHigHAM@vger.kernel.org, AJvYcCVr47Jr4g5asP39tD6yyoitPKUfPmEpvjGdhJ82dw+ArxjzywkBvjDX+MXaDPnaW2vlP2yCbGziV3s6vrOiqTXH8JQ=@vger.kernel.org, AJvYcCWWAH4G3KGtg0sT5Zy3fD/SuQL7z2882xVzN0VXBjjtGdoeIABnkZFTP1/RzLuiPIVj/+paRS8/62W3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN4Rdy0foQhyvISx4YPlYmYW5Ej9QfQQMA5vCPIY93TR5ClU/W
-	onuF6+CvpY+DtAOb6eOgJLeYy55EYHWi+8MzbdAxbDx/WmyJYRZ/uT0Q
-X-Gm-Gg: ASbGnct+S31DRJkQORPXD1Hpz6GTMbvuTDVCefhEJD20A2tsk6aB5Qd7BLJXV90Ufig
-	O+NMGDRCgrBxoIGhmR01PvZc1WnmWDltV4/Bn/Cl5iQAVtxkTDuQAfkZRRz1APEgbO9JEgAecMl
-	lqCTVyHIwktTqNHHjfhS5TsTG0r1p6g60IaWY00pWJ+Y+Kbnn2botNWXcV4ih5NtgVmenNFrR1h
-	ash2RuBK4lA0OofK60DgUFlFW+bgzj/WAkeXjeHoli3kGYqNqIfYBN4dFMyPWDrv8ufdidiOYFn
-	Iz6726O1csTqIhuoE2TtV1PevaNWQRUpANnPvYSxTL45vE6M5qblEEH/qQ4OsgMuh4c4ICUYVvw
-	nlX+ehJfhXSy3jsA5sdhbN7sDrbmXOCttnYC33DfgtR2OgYBAk9SJ7CqRN84i/qYYFmRfth9D6Q
-	==
-X-Google-Smtp-Source: AGHT+IFhirFSwPDMKdw0szNtN+lgDQLs7hfhawj6V3Wl0uz6ab9RL3vLHJiWuSfsZg9QrYIu8FKcTQ==
-X-Received: by 2002:a05:6000:2004:b0:3b8:d16a:a4b1 with SMTP id ffacd0b85a97d-3b8d94ca58dmr7129938f8f.58.1754337456380;
-        Mon, 04 Aug 2025 12:57:36 -0700 (PDT)
-Received: from iku.Home (97e54365.skybroadband.com. [151.229.67.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9074sm16293840f8f.17.2025.08.04.12.57.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 12:57:35 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 6/6] watchdog: rzv2h: Improve error strings and add newlines
-Date: Mon,  4 Aug 2025 20:57:23 +0100
-Message-ID: <20250804195723.3963524-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1754337692; c=relaxed/simple;
+	bh=3wXg1isZ6lxHlpd3i0U0vaueMgZ8obo0IlMsyyDjL6k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=SXXFAAaWYUpYxjhGg9jGhhdfh+GDaSol6abzRaNYV8QB/EuRGNQAxcbkWVS5oEoUVqt1v2UP24vDRxW7eWHggIN8MbZVExulLcBmioMm1f2XM9ON+lM1UkmN5hn71+26JRe3fFnsUaLLbkvpnoclfpZfFykkiOYSvkivQE/RZ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXb93zCf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B124DC4CEE7;
+	Mon,  4 Aug 2025 20:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754337691;
+	bh=3wXg1isZ6lxHlpd3i0U0vaueMgZ8obo0IlMsyyDjL6k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=hXb93zCflF2GraAtcpywerQpJVKt14hK5ryzD100/1mxQvw+Pbr2FmtKsn9RkkY/e
+	 PNtHy9eFStE6q8rFTOMa0hM95AQgWbheFZHIzhHpxyXPKxdcjK5qsL/m6Pfbp4rhba
+	 FxGffF4b0RqK0QUu5t2xoMckV4MJ8ZsVNQAkPz9qgIbnJ6ycl/B5gjpjGD5rEMT+Dn
+	 93sofNEa9xeKH2jfWI9FHR5PNh9DPGb//g82L1pyaU947HyhIrZiJpZH2k8pu2ITYE
+	 nUm1VA/kUnNAa1rq1SbXb9o+mLmoIZYxMVimr78sQPtYa78XoXuPVYIQof+pqfg1XZ
+	 UzVsJyJXoK7+g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 04 Aug 2025 22:01:26 +0200
+Message-Id: <DBTWT3AYHLLR.2NC0F6MRMZPCY@kernel.org>
+Subject: Re: [PATCH] rust: faux: fix C header link
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>,
+ <stable@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250804171311.1186538-1-ojeda@kernel.org>
+In-Reply-To: <20250804171311.1186538-1-ojeda@kernel.org>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon Aug 4, 2025 at 7:13 PM CEST, Miguel Ojeda wrote:
+> Starting with Rust 1.91.0 (expected 2025-10-30), `rustdoc` has improved
+> some false negatives around intra-doc links [1], and it found a broken
+> intra-doc link we currently have:
+>
+>     error: unresolved link to `include/linux/device/faux.h`
+>      --> rust/kernel/faux.rs:7:17
+>       |
+>     7 | //! C header: [`include/linux/device/faux.h`]
+>       |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^ no item named `includ=
+e/linux/device/faux.h` in scope
+>       |
+>       =3D help: to escape `[` and `]` characters, add '\' before them lik=
+e `\[` or `\]`
+>       =3D note: `-D rustdoc::broken-intra-doc-links` implied by `-D warni=
+ngs`
+>       =3D help: to override `-D warnings` add `#[allow(rustdoc::broken_in=
+tra_doc_links)]`
+>
+> Our `srctree/` C header links are not intra-doc links, thus they need
+> the link destination.
+>
+> Thus fix it.
+>
+> Cc: stable@vger.kernel.org
+> Link: https://github.com/rust-lang/rust/pull/132748 [1]
+> Fixes: 78418f300d39 ("rust/kernel: Add faux device bindings")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Update rzv2h_wdt_probe() to provide clearer error strings when retrieving
-the pclk, oscclk, and reset controller, and append missing newline
-characters to dev_err_probe() and dev_warn() calls for proper log
-formatting.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2->v3:
-- Added reviewed-by from Wolfram.
+Cheers,
+Benno
 
-v1->v2:
-- No changes.
----
- drivers/watchdog/rzv2h_wdt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index ee3ed5a6d98e..2027795f212e 100644
---- a/drivers/watchdog/rzv2h_wdt.c
-+++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -296,16 +296,16 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
- 
- 	priv->pclk = devm_clk_get_prepared(dev, "pclk");
- 	if (IS_ERR(priv->pclk))
--		return dev_err_probe(dev, PTR_ERR(priv->pclk), "no pclk");
-+		return dev_err_probe(dev, PTR_ERR(priv->pclk), "Failed to get pclk\n");
- 
- 	priv->oscclk = devm_clk_get_optional_prepared(dev, "oscclk");
- 	if (IS_ERR(priv->oscclk))
--		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "no oscclk");
-+		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "Failed to get oscclk\n");
- 
- 	priv->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
- 	if (IS_ERR(priv->rstc))
- 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
--				     "failed to get cpg reset");
-+				     "Failed to get cpg reset\n");
- 
- 	switch (priv->of_data->count_source) {
- 	case COUNT_SOURCE_LOCO:
-@@ -343,7 +343,7 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
- 
- 	ret = watchdog_init_timeout(&priv->wdev, 0, dev);
- 	if (ret)
--		dev_warn(dev, "Specified timeout invalid, using default");
-+		dev_warn(dev, "Specified timeout invalid, using default\n");
- 
- 	return devm_watchdog_register_device(dev, &priv->wdev);
- }
--- 
-2.50.1
-
+> ---
+> It may have been in 1.90, but the beta branch does not have it, and the
+> rollup PR says 1.91, unlike the PR itself, so I picked 1.91. It happened
+> just after the version bump to 1.91, so it may have to do with that.
+>
+>  rust/kernel/faux.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
