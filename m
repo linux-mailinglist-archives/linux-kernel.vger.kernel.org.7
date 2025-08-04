@@ -1,151 +1,133 @@
-Return-Path: <linux-kernel+bounces-754952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EBBB19F10
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC22AB19DD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AD43BAF7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0C91794B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0151424503B;
-	Mon,  4 Aug 2025 09:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6D3242D78;
+	Mon,  4 Aug 2025 08:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JX8u+a3c"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cH4+6Ecs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xzEOEukZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD691245031;
-	Mon,  4 Aug 2025 09:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934A4241696;
+	Mon,  4 Aug 2025 08:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301346; cv=none; b=dSZb5dL+Sp/U9Mc2mYIum+o9g8HMZkzM/gNuhf0OkjjwQWlWqohlxomZQAfEJ1I0RVwF6F7G2Tf32M9XFmtAr32aAimFz/SssuBYF24+1kZrIcv8U8viwHib1/DM+hsSLnUw0cIuGhTzdZVq59JcijecA6xj2DJlLO7J7cJmr3U=
+	t=1754296828; cv=none; b=CQVwOPfmWVrFoHED9u8JU53IzCWwAqnoyt71XXrYPWZ9VJ3U6d8OodFq7loIqNsvgBTz7Nr7MHYmnaGhWltBy2LeeJO6eOVsN6Mf+THzV06xm09eumU26j00iokAF3bpUbB9UcnnVOUYmMXIc2gsoe4RBXfgV9Fjc3rZ0WDMg6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301346; c=relaxed/simple;
-	bh=LXaJJmPQqXnbL/bmZnzqXb0txLVlMmOtBWlErQC9Kr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=urXng2deX39EQv1UFo9TLVFW0hZL94dm7j/LPsSFUzwzzfBswYD3WN25oNPtMvcHLD6QCSYnd9JgvtkLEOjcpr+Ji8dC+WXS9U8+OZ76LmQGHd7f3TPCFiF+RauRB1PLEJ3ImmHCQbj5fHTvBGMlQQ/j8kIwfiAxm95RDSZqqRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JX8u+a3c; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573IecYw009060;
-	Mon, 4 Aug 2025 09:55:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=DAQV0AwXeHE/PwMvOBgIQg+ASlsQc1X48WemPBpqA
-	p8=; b=JX8u+a3cp4KDC/RV+NejW54b99E6nfTYDShlIaekUf1ehXchWAO2YpvP/
-	tgAIFJUbMXx3+jiGiGH0PQH2a02nZWyCLNpMCrIPaRqGNN6EZiLD7sTfV0C1vNs4
-	XLquDB49vtvYYvlSZjVaABXxwIg4WDEjKPow34Bc1a1I+CuqJp8wH/e2qV3mRUmq
-	GXzLbIITjlyj8AvLfNr2uvyC6uX7gfQ7n8DV3Wi//saBdgVbRW9ITKSApHjdQTBF
-	SCYKxFP/4ksZ4h38AJ/2KTVM0lSrlJL8qUhRON3ROTC0SdcooDEegCMqDSQes8If
-	VtnxKCD4nv+oJPGeeOsTfhwW+9iHg==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t0ggv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 09:55:39 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5746go6e006876;
-	Mon, 4 Aug 2025 09:55:39 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmd38b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 09:55:38 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5749tYsA39715282
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Aug 2025 09:55:34 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 748E420328;
-	Mon,  4 Aug 2025 08:40:30 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5238D20326;
-	Mon,  4 Aug 2025 08:40:30 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Aug 2025 08:40:30 +0000 (GMT)
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>, sumanthk@linux.ibm.com
-Subject: [PATCH] mm: fix accounting of memmap pages for early sections
-Date: Mon,  4 Aug 2025 10:40:15 +0200
-Message-ID: <20250804084015.270570-1-sumanthk@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754296828; c=relaxed/simple;
+	bh=BVj2K46i1P8TjN6ep5m470ptQamNf/FI5rrL3pHLAbY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qpj9DeZy1DA4OicZdaEG1Di8UQMCt18tDsk1s85oYO/IWaDUudYdRKAxE/nI6c15jOlHb57rHbcCQN3OEKggxJ4v7JhGlxCDRpr4605iuDOYuKYn1YYaYHazFkw8VdNg9Pq8xpvTRSx7776Wy1z6N/0oDuMbpL1+WDYXVSQSQ0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cH4+6Ecs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xzEOEukZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754296824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cwf0xBGF64OhO606sUPwEaX7nlasQOFI0s+srhYAOK0=;
+	b=cH4+6EcsXntrIwNvELdJaksa1ZJBUZc9iPdskQQYF7oIJcWRjRrDuOcyBRFMk5xAiV9kHI
+	CRsnOZRW3mJSH5NLpqA7enidl8Nzf7+ArQ2YE0Qb7tQb24fBrLba42y7YM0QIbD8UBFOQm
+	d+TQEu8LuCkhNBxMyYSR6Gk5YQ9X0FiJjYj2Ddx4hroGAeNQkTgV81QmOS7gmTwc/p5IHQ
+	DmgW0JinXAMKvP89HG6/7CA0n1Pm5PB6TS1A3RLo90rtGIYC6uoQt0RcXRs+8XOn+1O/8D
+	n/wR3XhphducfgSDhw1iNL4VCGENtGHyNwuHXWLZwNm6mj53Gep0YhdUIWpdEQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754296824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cwf0xBGF64OhO606sUPwEaX7nlasQOFI0s+srhYAOK0=;
+	b=xzEOEukZDKkiXJneWe5t3rELp1DjU/OGtqk9xq1BQDXJAIihWCKk4xdHEtexNdLbLvZhYk
+	SwAlOyMlg0LdgWBA==
+Date: Mon, 04 Aug 2025 10:40:17 +0200
+Subject: [PATCH v2] fs: always return zero on success from replace_fd()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA1MyBTYWx0ZWRfX9UqKj1uDacui
- qq95fm1prsbYncAw2VJR/2hLoXU2AqQa4QXuYW3LutQBIZId2CnnxZqTbXsqoAZvQjl6BNc1SyF
- Yw/4ArdNT74fBp+fXzfEaRz7j/Geihorx3YRrZskAV9y5OSvP2RuULBc+QrjyAlBVHNOD/Zg8tc
- WIQmobi9rnIrPFgtzmsueEcoKBkpMH0u/nD9Zixw0+QQ5yaFnS/7KB3OXEj8KQeimDOQ4JNrTxT
- Lbyz0xBl7SZ31ni2rxEvlS/g6NDsAzN/fE3M0yB0RclbL1pCEkxQL+mFKRmNgYomit8p+tefSVS
- Pd9+ztjHpBn1yZMC/+9aaLmQkUIU0uenFiDJye4d6x1mPiWGHQ9Xv7lJPmIULd+2t9cVzER1IeC
- L4pgNYl7iJhDxjKvQCI9BARrrl2r6dSVgZO52vAQ/dtWoFvYktlF73iDeIK2Yzms/hk/Fwio
-X-Proofpoint-GUID: PFTZoDSImDPPihjzNlw7i8WSy-lbRLhl
-X-Proofpoint-ORIG-GUID: PFTZoDSImDPPihjzNlw7i8WSy-lbRLhl
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6890839b cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=KawUSfIWrfKEQJWuwW8A:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=434 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508040053
+Message-Id: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAPBxkGgC/4WNUQqDMBBEryL73ZQk1Vj65T2KiGTXuiBRNjZYx
+ Ls39QL9fMPMmx0iCVOER7GDUOLIc8hgLwX4sQ8vUoyZwWpb6bs2auBNCXniRN2AndAy9Z5UPSB
+ Wnlx1swh5vAjl5il+tplHjussn/MnmV/6V5mMMgpLh05rX5fomonDe5U58HZFgvY4ji9bgaF/w
+ AAAAA==
+X-Change-ID: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754296820; l=1840;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=BVj2K46i1P8TjN6ep5m470ptQamNf/FI5rrL3pHLAbY=;
+ b=45K73s0Y6YV8fA2OCAJMAwAId01qWNo3p0vTqqz64u6yxrheS6UnXcxw5jJcaTKRAl8NQ19Ba
+ 7+NFieiBjwyA693gJYwdzaIYOSvbpGmudpzodXgi/+LiH99JpkMvtJ8
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-memmap pages  can be allocated either from the memblock (boot) allocator
-during early boot or from the buddy allocator.
+replace_fd() returns the number of the new file descriptor through the
+return value of do_dup2(). However its callers never care about the
+specific number. In fact the caller in receive_fd_replace() treats any
+non-zero return value as an error and therefore never calls
+__receive_sock() for most file descriptors, which is a bug.
 
-When these memmap pages are removed via arch_remove_memory(), the
-deallocation path depends on their source:
+To fix the bug in receive_fd_replace() and to avoid the same issue
+happening in future callers, signal success through a plain zero.
 
-* For pages from the buddy allocator, depopulate_section_memmap() is
-  called, which also decrements the count of nr_memmap_pages.
-
-* For pages from the boot allocator, free_map_bootmem() is called. But
-  it currently does not adjust the nr_memmap_boot_pages.
-
-To fix this inconsistency, update free_map_bootmem() to also decrement
-the nr_memmap_boot_pages count by invoking memmap_boot_pages_add(),
-mirroring how free_vmemmap_page() handles this for boot-allocated pages.
-
-This ensures correct tracking of memmap pages regardless of allocation
-source.
-
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lore.kernel.org/lkml/20250801220215.GS222315@ZenIV/
+Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
 Cc: stable@vger.kernel.org
-Fixes: 15995a352474 ("mm: report per-page metadata information")
-Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- mm/sparse.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Move the fix to replace_fd() (Al)
+- Link to v1: https://lore.kernel.org/r/20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de
+---
+Untested, it stuck out while reading the code.
+---
+ fs/file.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3c012cf83cc2..d7c128015397 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -688,6 +688,7 @@ static void free_map_bootmem(struct page *memmap)
- 	unsigned long start = (unsigned long)memmap;
- 	unsigned long end = (unsigned long)(memmap + PAGES_PER_SECTION);
+diff --git a/fs/file.c b/fs/file.c
+index 6d2275c3be9c6967d16c75d1b6521f9b58980926..f8a271265913951d755a5db559938d589219c4f2 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1330,7 +1330,10 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+ 	err = expand_files(files, fd);
+ 	if (unlikely(err < 0))
+ 		goto out_unlock;
+-	return do_dup2(files, file, fd, flags);
++	err = do_dup2(files, file, fd, flags);
++	if (err < 0)
++		goto out_unlock;
++	err = 0;
  
-+	memmap_boot_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
- 	vmemmap_free(start, end, NULL);
- }
- 
+ out_unlock:
+ 	spin_unlock(&files->file_lock);
+
+---
+base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+
+Best regards,
 -- 
-2.48.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
