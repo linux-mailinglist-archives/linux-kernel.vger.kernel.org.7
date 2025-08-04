@@ -1,279 +1,144 @@
-Return-Path: <linux-kernel+bounces-755101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9498B1A153
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCDCB1A15D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4575A18A1B40
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42F41886F61
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351F0257AEE;
-	Mon,  4 Aug 2025 12:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4A825A2B2;
+	Mon,  4 Aug 2025 12:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EH+N/Ws8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpjtVP8g"
 Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E3A257AEC;
-	Mon,  4 Aug 2025 12:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB3A258CF7
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310104; cv=none; b=t7z0S4F19S+DcS85F8jY8JbVCpm10Rs9JemBlni6bqxN0IX1Nz9c1bqA+gr2njEJUXAfN/gxkjDeF9KD1zFTixSQdMpHt/hplb0HSaz+pqdsWxl2gCQNZUUaVFpgaeXbWyfxB8a/Vylcui5DOdTFvIkwKfimE8jmxeqJBlAUqO8=
+	t=1754310269; cv=none; b=IybNEAZq2EG7QmbgM7gA0yOWos89MttrPxg+NC+nmjlsQqAUQYNBZaNryQ/1FFgPYF/LjIyuXs7egxoR7qvnrFhimd2YVtHPWMe55iM/ELCBAFwJhVGFDvnmuIJQgiIguSHD0HrIv43FBIzwtQcmcs61W5i8owMPiWysDW4nFEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310104; c=relaxed/simple;
-	bh=Cd+J/fuFJeOf2BdB605y67NdZ6pgAvTvT+hOGCVGjU0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=phBX0Ep/8AnsEso9ts53hGzRFQlax2aFCSTQ1cvKPH2Db9wndNGRXGpbBGgeeNaoLHglmR6UQkPp18qurIbC44Te+cXYGQDqdpr6lBoQ6hftBTX1qWi1o2omZK0bk+J33xYhnzVP19TA0zx9Y4R5cRGTCWU+PojMpiXTAV0RZAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EH+N/Ws8; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1754310269; c=relaxed/simple;
+	bh=MMLwLWlUBkpNKpCHrz5KF4JVbyhd4pq1vLlCS8HQWvc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=htdeeYE5kpOYCtYRLh7GviEntU92VIatN3G63SS9SLPSumz4gxmzXS9auD3jwFkkwkVS9XzAIA3P/dHZQ7zd+BeWdThc00YBybr0fkwH60ZFZ9m3o25w7SAqJWranOXrtdM0CrOKHmNaAX0yPdn8UFnfN1JQe2cn2Mp9M48N7YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpjtVP8g; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2402774851fso35623285ad.1;
-        Mon, 04 Aug 2025 05:21:42 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-240418cbb8bso27895675ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754310102; x=1754914902; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AmwTseNNKWZTAlyuGNiRct16YBu9K9tkWd47g2bBReA=;
-        b=EH+N/Ws8fBKYOf81kvgFFc4pZIGNcpFAy2LKziYpe2ae6cQCLC8/F/t+zDP7TPi/Ex
-         QjlAbs2W3wVmU3NkdKV28TtUXKIIEZIKBA2r3xOXqni+I3xskex8atUQU24YH+9M3Ez2
-         JeQi8WuNjw4QPMy241X2+xZxOohaC/FyufRpfE5BiAX9zEScVDbg4CjLGeSFLrOPYD1s
-         AKAHJVNITNEJMfKJgDrKD+YTNp4mCVkiDK6ss+FIRbDfmCl0Y/flXNUlMQh/jhaANCIT
-         yVHjBe+9Kd3WYw2gNNzu4XVdDTwbW1JowMQxkeXhm3Glow1P6iscmh9MvUur4hTnO+aY
-         Pa4g==
+        d=gmail.com; s=20230601; t=1754310267; x=1754915067; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cDKvifJZltIzJedU/1ZLJadeuH9/nZztGosgIc2AVTU=;
+        b=XpjtVP8gShia2XvnuotxEomcQa/HuiVtU/Ihn5V3VI9MhWpCmPHB54VVJ/vdRLVEgv
+         lhBryvWBbV7RhvW8dPQhzZJJrvFjvR+o9REt2lBQPvqZNifg9KqcznQENuaev3QcrPgh
+         gQsxVZ9cYPUIbFOHVT4baEG+kjvfftaN9WHL6XPmARZmssoQ7gpb05UobI/It9PzeovL
+         v/+c9KGanbDj/OrPZ98k10UeBLlxyeynOneExLxEUBAeNqLSD3ePA3uqnXSLJwssrTTJ
+         OOCl2odBZppJzPVEHV8Fc4TZMTCS5jXfyd3nlI92Y9oiKEwj96nV81gl5byHx6kX7F70
+         YWhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754310102; x=1754914902;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AmwTseNNKWZTAlyuGNiRct16YBu9K9tkWd47g2bBReA=;
-        b=EJsSnlnyKKAHi3VC9VQHQu6/LEtBIecwiY2sIbKm4Twf7kEtJ7VBCDzSUm+UYpqDL0
-         LRXsmeEZ75PtnZOROFPEtskSzInDNjziZfeet40CuRmY2QP8xEUpjEIjJ6AAEXfO7/2o
-         /uqULK3DTZwaey+r8fSSTQrUVrG15Kj6O2g2KcHC65JQrQIg1vggxCHRShBF5NmBgRfy
-         RnEop013HStE1QGUBwKD7sca+KIFYnci7KfPkgrVvJ1etn6juPRxu2qhH+UKO9ZO7Wc3
-         RD+dWlzC2Wmlt+6Bx+JCzMfBuamiaYTgX5jAewTN6FrHgR93nSEMDqRK2PUg1EVuC+x0
-         69UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1UZO5TA36SY4FDxNOAHg0XCl0Job7kdGhhRrQUCCQ5O3ye+GAoKGaWehbJv8nqyS3Bx135eMFAMF1opG@vger.kernel.org, AJvYcCXJ71lqitC5yaYhrTCVvrREE3+vCBmxsytJicOFOFySVhd1uzaZH0U+MdVpuDSAaPEgJCuXxvGgr7esk2cUcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5K1z6Bm4Uf5desVezWJLoz4ah6pZDDX4zOCECXjkOboTz2l/q
-	uc0+bkZ1UI/9GtpglDSPa5O2oq7R0I8XtetlrKfFiMcJWhZWoK/XvSNr
-X-Gm-Gg: ASbGncsqbBHAL7keQ/m8vsYzr6HNnXNv4x375CMEnbCp6tNZxUaTDIGJ8gMpaUmnWb4
-	JIOQVyHjvRwqtn6L4idUQvhT8lrpp2jV5m51LSoGZMl5JIy/viJ2MDJ4rLl7MZjWIRDshLyLnIf
-	jnpA+rrgypMYGEYkHCHE2igo8fMOZCcladTsF7Db3B3hXFdedFG9aScA8gg2ijEkWYuEXqyzOzL
-	5iLQc2Q0ZThvGw5Bs97ms4XBIHqO4hIrNyi8aTvPq5ku3yD4mDOONY32ALc/O2UDrdqbkIJLldn
-	n1hPb7ZGlppBaZnh7dsbCMPRWuqk8YNoXEDNwic/zZFtu3u5YHixBjPFYSoOXc17TjiCIL102wZ
-	gd9+Dp76HzkcUs61o
-X-Google-Smtp-Source: AGHT+IHr+FQmnyYLpjpL0xF2Gp4lMXIArYiGXiocSe7WRNjSVRVNCBurvsUI1XVRZDRcZg2Ffclb7Q==
-X-Received: by 2002:a17:902:e54c:b0:240:8704:fb9 with SMTP id d9443c01a7336-242470647bemr137464495ad.53.1754310101723;
-        Mon, 04 Aug 2025 05:21:41 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207eca6eb1sm11674849a91.22.2025.08.04.05.21.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Aug 2025 05:21:41 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1754310267; x=1754915067;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cDKvifJZltIzJedU/1ZLJadeuH9/nZztGosgIc2AVTU=;
+        b=pz6SIYScWcdv30eqb4l9ggl/tYj3yTg5ORoRl6mSdhR7henoOCuEX7VM5QjQ1t7bIj
+         Rd1ePwcdh2sRJzEYROvu9h1s3j3/dEQlVivmhTvyd0fHSVBKsAZ9ID/J1k0MCGyzeH34
+         K2ggRSux4YNRPIoOSizRu6ytKkpx1apmV5FA6vGuhPWLoS3uRno+iRsqbzht7WN7UaL5
+         d5zeh1g6QGIW4B7iDjm34b706mnYOlYDHZLOydHQiPkmIph3hQRTXBQTSRFwkGWBJ9Ms
+         A3hSUrAwjivpWgCfjG4rWUufeNH5+wX7NijjSyM+8a6/5JmiV+HyJmLFIIHVP9Oglam7
+         WUvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwTf8GIAKp5Nmtf9rDp5JmT/nUxAG5umbGNyQFLvzNE84v4s9muggobLaAHtuGTU+fPlxS0OHue02dXis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6uRsNNkiiXS9tzeWOTVM5V0cXjK/vepj/YjAsZ5D5TB80DHGe
+	WU56i8OmirBdMUbpp/eodMhbXK44B9dfWJJ4eM2TkpkruFG0T6yXqTkUypvyxVWDDDat1g==
+X-Gm-Gg: ASbGncuKBi0q7H6D7E1xc664cHKdxzS+L9CDZYehFodY+/ayFyraOMgqO/8FtX6Qpia
+	Mhdqfq8cllkh3XFx72max84D64tTsUMDuydHOSFQRWtwGaVw7XBHcYrwafBMykspEQ5765Ajttx
+	47YHoIvOMOM51RV9jRWP/3G8uxkZ0EOFUkJRc6NDq+QA8xPUJLwPygM20QPtWJUjV0aFf6ekNZk
+	Xig6oikda913OhfJ7wzMMfejE7TvVNYvB+xbj8aWLsBMewlREWESWcz7eM9Km4XnGlF8lB7iCxT
+	thNcsMPTRNNxbNVgrBFK+LM7IpBwIMrh6pvxuYu1ABfNyHiFmXOW1wPKsaZzEUIrhsE90GTIFsg
+	8InMF5HdL9GESZpogXdebjwRliB2RPwsMkTLJEyr+2hjZoaTH/TIF16lMB+iv6wjI+PAxwzzGc3
+	nZtbAURQbVaGQn
+X-Google-Smtp-Source: AGHT+IFnCTK1oXgj2ujfGigzx4XT2C9KSw1IWXLB+pVsd6lKj052U+XAWh0fv5sgdiH2H59+2vCX1w==
+X-Received: by 2002:a17:902:f684:b0:220:ea90:191e with SMTP id d9443c01a7336-24246f2cc2dmr151331365ad.4.1754310266936;
+        Mon, 04 Aug 2025 05:24:26 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.161])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241e899b6a9sm108650335ad.134.2025.08.04.05.24.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 05:24:26 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Inki Dae <inki.dae@samsung.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Marek Vasut <marex@denx.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] drm/bridge: samsung-dsim: Fix potential double-free in TE GPIO handling
+Date: Mon,  4 Aug 2025 20:24:18 +0800
+Message-Id: <20250804122418.104360-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [syzbot] [bcachefs?] UBSAN: array-index-out-of-bounds in
- bch2_accounting_validate
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <68905ecc.050a0220.7f033.0004.GAE@google.com>
-Date: Mon, 4 Aug 2025 20:21:25 +0800
-Cc: kent.overstreet@linux.dev,
- linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2D7EE43B-5C6F-4F46-AE09-D5B50FF64589@gmail.com>
-References: <68905ecc.050a0220.7f033.0004.GAE@google.com>
-To: syzbot <syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Aug 4, 2025, at 15:18, syzbot =
-<syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com> wrote:
->=20
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:    352af6a011d5 Merge tag 'rust-6.17' of =
-git://git.kernel.org..
-> git tree:       upstream
-> console+strace: =
-https://syzkaller.appspot.com/x/log.txt?x=3D135d7aa2580000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3Dcae1291240e8962a
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3Dcd063f869beedf5b9cd7
-> compiler:       Debian clang version 20.1.7 =
-(++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD =
-20.1.7
-> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D14dcc6a2580000
-> C reproducer:   =
-https://syzkaller.appspot.com/x/repro.c?x=3D133e02f0580000
->=20
-> Downloadable assets:
-> disk image: =
-https://storage.googleapis.com/syzbot-assets/a762497d1fce/disk-352af6a0.ra=
-w.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/3055e1e47995/vmlinux-352af6a0=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/aa300ee98202/bzImage-352af6a0=
-.xz
-> mounted in repro: =
-https://storage.googleapis.com/syzbot-assets/de2a4b00a48a/mount_0.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com
->=20
-> bcachefs (loop0): error reading btree root btree=3Dsubvolumes level=3D0:=
- btree_node_read_error, fixing
-> bcachefs (loop0): invalid bkey in btree_node btree=3Dsnapshot_trees =
-level=3D0: u64s 6 type snapshot_tree POS_MIN len 0 ver 0: subvol 1 root =
-snapshot 4294967295
->  bad pos, deleting
-> bcachefs (loop0): error reading btree root btree=3Dsnapshot_trees =
-level=3D0: btree_node_read_error, fixing
-> ------------[ cut here ]------------
-> UBSAN: array-index-out-of-bounds in =
-fs/bcachefs/disk_accounting.c:238:2
-> index 175 is out of range for type 'const unsigned int[9]'
-> CPU: 0 UID: 0 PID: 5849 Comm: syz-executor427 Tainted: G        W      =
-     6.16.0-syzkaller-11322-g352af6a011d5 #0 PREEMPT_{RT,(full)}=20
-> Tainted: [W]=3DWARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, =
-BIOS Google 07/12/2025
-> Call Trace:
-> <TASK>
-> dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
-> ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
-> __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
-> bch2_accounting_validate+0x112f/0x1400 =
-fs/bcachefs/disk_accounting.c:238
-> bch2_bkey_val_validate+0x202/0x3e0 fs/bcachefs/bkey_methods.c:143
-> btree_node_bkey_val_validate fs/bcachefs/btree_io.c:880 [inline]
-> bch2_btree_node_read_done+0x4051/0x5550 fs/bcachefs/btree_io.c:1303
-> btree_node_read_work+0x40e/0xe60 fs/bcachefs/btree_io.c:1440
-> bch2_btree_node_read+0x887/0x2a00 fs/bcachefs/btree_io.c:-1
-> __bch2_btree_root_read fs/bcachefs/btree_io.c:1906 [inline]
-> bch2_btree_root_read+0x5f0/0x760 fs/bcachefs/btree_io.c:1928
-> read_btree_roots+0x2c6/0x840 fs/bcachefs/recovery.c:615
-> bch2_fs_recovery+0x261f/0x3a50 fs/bcachefs/recovery.c:1006
-> bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
-> bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
-> vfs_get_tree+0x92/0x2b0 fs/super.c:1815
-> do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
-> do_mount fs/namespace.c:4133 [inline]
-> __do_sys_mount fs/namespace.c:4344 [inline]
-> __se_sys_mount+0x317/0x410 fs/namespace.c:4321
-> do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f5016bf5eaa
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f =
-1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd552f5c58 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffd552f5c70 RCX: 00007f5016bf5eaa
-> RDX: 0000200000001000 RSI: 0000200000000000 RDI: 00007ffd552f5c70
-> RBP: 0000200000000000 R08: 00007ffd552f5cb0 R09: 000000000000492c
-> R10: 0000000000000000 R11: 0000000000000282 R12: 0000200000001000
-> R13: 00007ffd552f5cb0 R14: 0000000000000003 R15: 0000000000000000
-> </TASK>
-> ---[ end trace ]---
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before =
-testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
->=20
+The devm_gpiod_get_optional() function uses device-managed resources that
+are automatically cleaned up. The
+gpiod_put() calls in both the error path of samsung_dsim_register_te_irq()
+and in samsung_dsim_unregister_te_irq() are redundant and may lead to
+double-free when the device is removed.
 
+Fixes: e7447128ca4a ("drm: bridge: Generalize Exynos-DSI driver into a Samsung DSIM bridge")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/bridge/samsung-dsim.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-#syz test
-
-diff --git a/fs/bcachefs/disk_accounting.c =
-b/fs/bcachefs/disk_accounting.c
-index f96530c70262..4f5b290dc8f1 100644
---- a/fs/bcachefs/disk_accounting.c
-+++ b/fs/bcachefs/disk_accounting.c
-@@ -184,6 +184,11 @@ int bch2_accounting_validate(struct bch_fs *c, =
-struct bkey_s_c k,
-        void *end =3D &acc_k + 1;
-        int ret =3D 0;
-=20
-+       bkey_fsck_err_on(acc_k.type >=3D BCH_DISK_ACCOUNTING_TYPE_NR,
-+                        c, accounting_key_type_invalid,
-+                        "invalid accounting type (%u >=3D %u)",
-+                        acc_k.type, BCH_DISK_ACCOUNTING_TYPE_NR);
-+
-        bkey_fsck_err_on((from.flags & BCH_VALIDATE_commit) &&
-                         bversion_zero(k.k->bversion),
-                         c, accounting_key_version_0,
-diff --git a/fs/bcachefs/sb-errors_format.h =
-b/fs/bcachefs/sb-errors_format.h
-index 5317b1bfe2e5..5ba28a684f51 100644
---- a/fs/bcachefs/sb-errors_format.h
-+++ b/fs/bcachefs/sb-errors_format.h
-@@ -328,6 +328,7 @@ enum bch_fsck_flags {
-        x(accounting_key_replicas_devs_unsorted,                280,    =
-FSCK_AUTOFIX)   \
-        x(accounting_key_version_0,                             282,    =
-FSCK_AUTOFIX)   \
-        x(accounting_key_nr_counters_wrong,                     307,    =
-FSCK_AUTOFIX)   \
-+       x(accounting_key_type_invalid,                          325,    =
-FSCK_AUTOFIX)   \
-        x(logged_op_but_clean,                                  283,    =
-FSCK_AUTOFIX)   \
-        x(compression_opt_not_marked_in_sb,                     295,    =
-FSCK_AUTOFIX)   \
-        x(compression_type_not_marked_in_sb,                    296,    =
-FSCK_AUTOFIX)   \
-@@ -336,7 +337,7 @@ enum bch_fsck_flags {
-        x(dirent_stray_data_after_cf_name,                      305,    =
-0)              \
-        x(rebalance_work_incorrectly_set,                       309,    =
-FSCK_AUTOFIX)   \
-        x(rebalance_work_incorrectly_unset,                     310,    =
-FSCK_AUTOFIX)   \
--       x(MAX,                                                  325,    =
-0)
-+       x(MAX,                                                  326,    =
-0)
-=20
- enum bch_sb_error_id {
- #define x(t, n, ...) BCH_FSCK_ERR_##t =3D n,
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index bccc88d25948..6ffaee6b7738 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1691,7 +1691,6 @@ static int samsung_dsim_register_te_irq(struct samsung_dsim *dsi, struct device
+ 				   IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN, "TE", dsi);
+ 	if (ret) {
+ 		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
+-		gpiod_put(dsi->te_gpio);
+ 		return ret;
+ 	}
+ 
+@@ -1790,10 +1789,8 @@ static int samsung_dsim_host_attach(struct mipi_dsi_host *host,
+ 
+ static void samsung_dsim_unregister_te_irq(struct samsung_dsim *dsi)
+ {
+-	if (dsi->te_gpio) {
++	if (dsi->te_gpio)
+ 		free_irq(gpiod_to_irq(dsi->te_gpio), dsi);
+-		gpiod_put(dsi->te_gpio);
+-	}
+ }
+ 
+ static int samsung_dsim_host_detach(struct mipi_dsi_host *host,
+-- 
+2.35.1
 
 
