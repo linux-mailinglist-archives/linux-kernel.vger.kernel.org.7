@@ -1,103 +1,149 @@
-Return-Path: <linux-kernel+bounces-755511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95FCB1A738
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:43:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239FBB1A78A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B7C3BDBEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:43:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23FAD4E1BE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4530B2853FD;
-	Mon,  4 Aug 2025 16:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA74287514;
+	Mon,  4 Aug 2025 16:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PYTuhLIh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoDkY9It"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A22513C8FF;
-	Mon,  4 Aug 2025 16:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF90285CB4;
+	Mon,  4 Aug 2025 16:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754325807; cv=none; b=aZdsOTsw4ykPOFXf0p5cUp08vb8n0BDZaKBDWoysyklA6kJD/mKHMkPmP4BFn5CKXBN9Z8DavLP3d2PyLllBBGHrUFH8JMCnyMHiGoLRu1ZFgxwluoyQKOHIKBWwIZyZUlow9l0be4/J7HnRZ7PYld9rmQSVmLSxz7jStCZbgFU=
+	t=1754325858; cv=none; b=WSNq1mC/KDvlcmwHxDw8FCOgDF0aaA15hB5yFvjdPgCO5OlPQcaE6FgH38E9mkf7Fnj0oFngUamQh+ANJX87bjh3aDeFcp2ghnCxxnrHb8/OeeHgmbNi/7hpjs8Avf7sosUZDn5kWVz+Yf5vaDdZcBcX81FElnXmRBCy9KoWRhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754325807; c=relaxed/simple;
-	bh=GBsD2ehHu6t6UZvGTGVxIzFuZQmwG1Fufu/2qr3VL/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSj7typaXw/wkwwB4qnwzBa4JU8oiDWoUiuKadqvUqXrzfNjHR3XzCoCW+1QcoVRYjY/nGw5LbfMe/7c/AH5BmxuqIgWkqXBc20V3aE4CMF9GmhhPbW4tiyhggBTPxs1UevCMB5CJZIhDvPT80UxMZx94L49UuR/WSoh9nfphLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PYTuhLIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A487DC4CEE7;
-	Mon,  4 Aug 2025 16:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754325807;
-	bh=GBsD2ehHu6t6UZvGTGVxIzFuZQmwG1Fufu/2qr3VL/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PYTuhLIh1rk3C6QMw3S2/A0qY1jXIPhk2sKH8+HTOllYkQtRugugaijZ9mDJrjSKG
-	 RO+JHXTv5JGa+Umgc3CnMbPWCttgttWFNJUI5XKyCxafaADVm/dM+jv7gg8v08TQVN
-	 vOho0gQsyyMmz7g5GCsSBmsUgDHP3OihmsbhUhuk=
-Date: Mon, 4 Aug 2025 17:43:24 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kuen-Han Tsai <khtsai@google.com>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] usb: dwc3: Ignore late xferNotReady event to prevent
- halt timeout
-Message-ID: <2025080456-grip-thwarting-2424@gregkh>
-References: <20250804080809.1700691-1-khtsai@google.com>
+	s=arc-20240116; t=1754325858; c=relaxed/simple;
+	bh=r2v62d4bVt9owj808SKHRzdSx9oLY8KjiUCy34x/12Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WQVQ2nnyYT+7/wID2RgApF7nwkD5Xigec+azBHEQl736z6Vt3hMFF9209D7lTbsTFRUfaYWm1zfOS4dg9zsUY3xw1ayJC+9RqBqNRXrCq84Y81twEFa8DwdetY2cNfZ5GtqdfBbE+CLLrpL19nuppZKHHMjawe1+lOJZbjBWAUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoDkY9It; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE13C4CEE7;
+	Mon,  4 Aug 2025 16:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754325857;
+	bh=r2v62d4bVt9owj808SKHRzdSx9oLY8KjiUCy34x/12Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qoDkY9It5/lqR9fbX6g8iGg/nmmtCv14BOgAwhkb5uNiClyFaMkiukY7Oc+J1MaKh
+	 dZnz4X/S3ajFCt76duYJHDx0quVZH6oSu/c0vStSRzaSzbCcMKFV4L18ye0ZTJoXPN
+	 i3oURUhH5BvGFLUiBhUMaVt9LAqwPNrH4pyC8RyKbvz3yMn0pqcXcQS+g91j40QHjM
+	 lNQCmlS8pNR7LcsmFHjuc2AbEWdFGnRvWbhlC/VB8DAo2fUatOIF7DscYokL7FpXgy
+	 l5z39sJCmL4o5lHPcQDJdF9jtn/jsrC9WDmDQnvKWCYKZ26XpAxSx9TjSBv7Ns52lt
+	 j7UHemkdNe4Mg==
+From: Kees Cook <kees@kernel.org>
+To: linux-arch@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 00/17] Add __attribute_const__ to ffs()-family implementations
+Date: Mon,  4 Aug 2025 09:43:56 -0700
+Message-Id: <20250804163910.work.929-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804080809.1700691-1-khtsai@google.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3619; i=kees@kernel.org; h=from:subject:message-id; bh=r2v62d4bVt9owj808SKHRzdSx9oLY8KjiUCy34x/12Y=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkTHofFXgjp7KzykhVPcF48Q+LLy7qNn3Wc38x5WLbt/ 44z4VPWdZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzERo7hf8kiKe0FSd8l7Cv7 We7uUrdPYDs+m0lg/c5Dkx57tW49XMrwT2vS53lTDZ/v/XEnZcFFsaM9CXKfOL49eCxys3TZx5i tytwA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 04, 2025 at 04:08:05PM +0800, Kuen-Han Tsai wrote:
-> During a device-initiated disconnect, an xferNotReady event for an ISOC
-> IN endpoint can be received after the End Transfer command has already
-> completed.
-> 
-> This late event incorrectly triggers a new Start Transfer, which
-> prevents the controller from halting and results in a DSTS.DEVCTRLHLT
-> bit polling timeout.
-> 
-> Ignore the late xferNotReady event if the controller is already in a
-> disconnected state.
-> 
-> Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> ---
-> Tracing:
-> 
-> # Stop active transfers by sending End Transfer commands
->  android.hardwar-913     [004] d..1.  6172.855517: dwc3_gadget_ep_cmd: ep1out: cmd 'End Transfer' [20d08] params 00000000 00000000 00000000 --> status: Successful
->  android.hardwar-913     [004] dn.1.  6172.855734: dwc3_gadget_ep_cmd: ep1in: cmd 'End Transfer' [40d08] params 00000000 00000000 00000000 --> status: Successful
->  ...
-> # Recieve an xferNotReady event on an ISOC IN endpoint
->     irq/991-dwc3-29741   [000] D..1.  6172.856166: dwc3_event: event (35d010c6): ep1in: Transfer Not Ready [000035d0] (Not Active)
->     irq/991-dwc3-29741   [000] D..1.  6172.856190: dwc3_gadget_ep_cmd: ep1in: cmd 'Start Transfer' [35d60406] params 00000000 ffffb620 00000000 --> status: Successful
->  android.hardwar-913     [004] dn.1.  6172.868130: dwc3_gadget_ep_cmd: ep2in: cmd 'End Transfer' [30d08] params 00000000 00000000 00000000 --> status: Timed Out
->  ...
-> # Start polling DSTS.DEVCTRLHLT
->  android.hardwar-913     [000] .....  6172.869253: dwc3_gadget_run_stop: start polling DWC3_DSTS_DEVCTRLHLT
->  ...
-> # HALT timeout and show the endpoint status for debugging
->  android.hardwar-913     [004] .....  6177.479946: dwc3_gadget_run_stop: finish polling DWC3_DSTS_DEVCTRLHLT, is_on=0, reg=0
->  android.hardwar-913     [004] .....  6177.479957: dwc3_gadget_ep_status: ep1out: mps 1024/2765 streams 16 burst 5 ring 64/56 flags E:swbp:>
->  android.hardwar-913     [004] .....  6177.479958: dwc3_gadget_ep_status: ep1in: mps 1024/1024 streams 16 burst 2 ring 21/64 flags E:swBp:<
->  android.hardwar-913     [004] .....  6177.479959: dwc3_gadget_ep_status: ep2out: mps 1024/2765 streams 16 burst 5 ring 56/48 flags e:swbp:>
-> 
-> ---
->  drivers/usb/dwc3/gadget.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi,
 
-Why is this RFC?  What needs to happen to make it an actual submission
-that you wish to have applied?
+While tracking down a problem where constant expressions used by
+BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
+initializer was convincing the compiler that it couldn't track the state
+of the prior statically initialized value. Tracing this down found that
+ffs() was used in the initializer macro, but since it wasn't marked with
+__attribute_const__, the compiler had to assume the function might
+change variable states as a side-effect (which is not true for ffs(),
+which provides deterministic math results).
 
-thanks,
+Add KUnit tests for the family of functions and then add __attribute_const__
+to all architecture implementations and wrappers.
 
-greg k-h
+-Kees
+
+[1] https://github.com/KSPP/linux/issues/364
+
+Kees Cook (17):
+  KUnit: Introduce ffs()-family tests
+  bitops: Add __attribute_const__ to generic ffs()-family
+    implementations
+  csky: Add __attribute_const__ to ffs()-family implementations
+  x86: Add __attribute_const__ to ffs()-family implementations
+  powerpc: Add __attribute_const__ to ffs()-family implementations
+  sh: Add __attribute_const__ to ffs()-family implementations
+  alpha: Add __attribute_const__ to ffs()-family implementations
+  hexagon: Add __attribute_const__ to ffs()-family implementations
+  riscv: Add __attribute_const__ to ffs()-family implementations
+  openrisc: Add __attribute_const__ to ffs()-family implementations
+  m68k: Add __attribute_const__ to ffs()-family implementations
+  mips: Add __attribute_const__ to ffs()-family implementations
+  parisc: Add __attribute_const__ to ffs()-family implementations
+  s390: Add __attribute_const__ to ffs()-family implementations
+  xtensa: Add __attribute_const__ to ffs()-family implementations
+  sparc: Add __attribute_const__ to ffs()-family implementations
+  KUnit: ffs: Validate all the __attribute_const__ annotations
+
+ lib/Kconfig.debug                          |  14 +
+ lib/tests/Makefile                         |   1 +
+ arch/alpha/include/asm/bitops.h            |  14 +-
+ arch/csky/include/asm/bitops.h             |   8 +-
+ arch/hexagon/include/asm/bitops.h          |  10 +-
+ arch/m68k/include/asm/bitops.h             |  14 +-
+ arch/mips/include/asm/bitops.h             |   8 +-
+ arch/openrisc/include/asm/bitops/__ffs.h   |   2 +-
+ arch/openrisc/include/asm/bitops/__fls.h   |   2 +-
+ arch/openrisc/include/asm/bitops/ffs.h     |   2 +-
+ arch/openrisc/include/asm/bitops/fls.h     |   2 +-
+ arch/parisc/include/asm/bitops.h           |   6 +-
+ arch/powerpc/include/asm/bitops.h          |   4 +-
+ arch/riscv/include/asm/bitops.h            |   6 +-
+ arch/s390/include/asm/bitops.h             |  10 +-
+ arch/sh/include/asm/bitops.h               |   4 +-
+ arch/sparc/include/asm/bitops_64.h         |   8 +-
+ arch/x86/include/asm/bitops.h              |  12 +-
+ arch/xtensa/include/asm/bitops.h           |  10 +-
+ include/asm-generic/bitops/__ffs.h         |   2 +-
+ include/asm-generic/bitops/__fls.h         |   2 +-
+ include/asm-generic/bitops/builtin-__ffs.h |   2 +-
+ include/asm-generic/bitops/builtin-__fls.h |   2 +-
+ include/asm-generic/bitops/builtin-fls.h   |   2 +-
+ include/asm-generic/bitops/ffs.h           |   2 +-
+ include/asm-generic/bitops/fls.h           |   2 +-
+ include/asm-generic/bitops/fls64.h         |   4 +-
+ include/linux/bitops.h                     |   2 +-
+ lib/clz_ctz.c                              |   8 +-
+ lib/tests/ffs_kunit.c                      | 566 +++++++++++++++++++++
+ 30 files changed, 656 insertions(+), 75 deletions(-)
+ create mode 100644 lib/tests/ffs_kunit.c
+
+-- 
+2.34.1
+
 
