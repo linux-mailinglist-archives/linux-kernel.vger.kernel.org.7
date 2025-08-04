@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-754568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F10B197CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FADB197C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 136563B81CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777A0175481
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A5A1D79BE;
-	Mon,  4 Aug 2025 00:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618661DF265;
+	Mon,  4 Aug 2025 00:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzA5UPfc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSEOm1G4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B656A1D5AD4;
-	Mon,  4 Aug 2025 00:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823F2BAF9;
+	Mon,  4 Aug 2025 00:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267394; cv=none; b=hZIHB63pM7EOb8S3/7pOCrBAtZTwJqU+e72bDLVl29vMdV9uJE+uZvZCwJjfS+vqGvPh40X7HPB0auJmKI/UVhgpTDQvDAlzK7W4QRc+LDH++oOfSVJoe3Inthc/Kag618nDl+1AQUTwLu1WYFTNI/957auaSrgqQKNCBUmHw8I=
+	t=1754267405; cv=none; b=Lec/k3KQZNHAb9UzEhGaTZkqDUWFIx3APPwx/+wgkdOT1UjPOAEDTcYupyNY23rRPzUVVQ42LjXmjdWeh2zOwxlwOUwxSmFwVxf80gKLU/uz4acvvNIm4XEL9Pj14WrivcmHX0/RtARyg+MSHJSnED3gTZ++VNCEZu+Lks/7Yg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267394; c=relaxed/simple;
-	bh=nc0GlFSDATH8sVj1eJgpNU/mOdF2nC52mzR120WkNPI=;
+	s=arc-20240116; t=1754267405; c=relaxed/simple;
+	bh=l++NzT+L73KJiXsB6a0IVmXP/DGoaq7UgZ4RRVsp0CA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KI46YUViWhcIqXwoM8150Dpd7IVZzCCw+7lOXgvQ1C/9pU53jJ7Zi6abovCrFy6MbbMENOoEa+ZJg/xF04mzf6vykxkiDAwQHEiXMJ7eQxU3RFr2HMJVIzRcid6wyhAJAf9mjGihxrtaAH/EaYHs3ktBg4L8UZmChOr74wwZF4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzA5UPfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E069FC4CEF0;
-	Mon,  4 Aug 2025 00:29:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qyRC2HUpI3jc/+5VU/dO7WhYHjzecHTLhMn+CnJ22zVzZAwp2Y1jyi9qU6h0waEfhKVPe4NdeNrbnqNIH/LTA/IhBRaYeFQlkaR4J+XpE7de68W963a+/lbcP8AfPW6eKuLwB9OfIYQGFklwMHiA+QwgwXsawn2q8iJS8A4052w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSEOm1G4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D777C4CEEB;
+	Mon,  4 Aug 2025 00:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267394;
-	bh=nc0GlFSDATH8sVj1eJgpNU/mOdF2nC52mzR120WkNPI=;
+	s=k20201202; t=1754267405;
+	bh=l++NzT+L73KJiXsB6a0IVmXP/DGoaq7UgZ4RRVsp0CA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LzA5UPfcpvpUJdV4bawHMKe6C/KrDREsUY/8whKldFPmdxWaQIiTK+1TBJakeDgDk
-	 RytxjUXmQh9uzuoNbdFVXJtFeBz7h6bw3KbDOmhNn4cdP/nlYeXBBHZ59Apebem5fT
-	 /Ypxf60oZVqT4WbSrkKds9Bhq6vNE9l2Fs+ibR/JOoG+GpxdbwBnY7Czf21I/wBtVr
-	 57ReuUF9T7a3EjBXp3AuDgjIO+EQ8UJj4KmePPKpsqKwDTl7F2pChUmVPjORpkDG/c
-	 BBy6KABgOlP662jmXhA/QYeox9QSpIsssEStVjqI3PcsAsesVe1XJ5pFGmo38XIggp
-	 40eWVdOUvspdA==
+	b=fSEOm1G41gTuXsmRG5YREuj/Jho4kXiekQx4k9rrkRcQT6xgkouVXK7J67x5e7EsK
+	 Bndoap1uKw+vWwlQ4LCT3oLqkN61xtIR+LLdAuaKlZu8TS97LGoRjMoZF0/Z4MOV+I
+	 KOYOhKjc+XlI+ucQPDupzTm4eQGnLSgWf0l3yFekIqpADjA9bAnGkiZUcn8og/nmsG
+	 vYqVWXOpLPekL81jbirzRGX/nhyJzjzX4e/EG250VL2Dhwrjc3zVAx3FIbItcPGfxy
+	 PS1JrQdDIAUJCBKdC/PQJSm2zD6R/zqgGANj2e+bqkhE6txn0/Nr7hiD1VdTpc5s7z
+	 yKYJkuJzCWU1w==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+Cc: Hans de Goede <hansg@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sasha Levin <sashal@kernel.org>,
-	luto@kernel.org,
-	vincenzo.frascino@arm.com,
+	alexander.usyskin@intel.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 49/80] selftests: vDSO: vdso_test_getrandom: Always print TAP header
-Date: Sun,  3 Aug 2025 20:27:16 -0400
-Message-Id: <20250804002747.3617039-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.15 54/80] mei: bus: Check for still connected devices in mei_cl_bus_dev_release()
+Date: Sun,  3 Aug 2025 20:27:21 -0400
+Message-Id: <20250804002747.3617039-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250804002747.3617039-1-sashal@kernel.org>
 References: <20250804002747.3617039-1-sashal@kernel.org>
@@ -62,174 +60,134 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.15.9
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+From: Hans de Goede <hansg@kernel.org>
 
-[ Upstream commit 1158220b24674edaf885433153deb4f0e5c7d331 ]
+[ Upstream commit 35e8a426b16adbecae7a4e0e3c00fc8d0273db53 ]
 
-The TAP specification requires that the output begins with a header line.
-If vgetrandom_init() fails and skips the test, that header line is missing.
+mei_cl_bus_dev_release() also frees the mei-client (struct mei_cl)
+belonging to the device being released.
 
-Call vgetrandom_init() after ksft_print_header().
+If there are bugs like the just fixed bug in the ACE/CSI2 mei drivers,
+the mei-client being freed might still be part of the mei_device's
+file_list and iterating over this list after the freeing will then trigger
+a use-afer-free bug.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Link: https://lore.kernel.org/all/20250611-selftests-vdso-fixes-v3-8-e62e37a6bcf5@linutronix.de
+Add a check to mei_cl_bus_dev_release() to make sure that the to-be-freed
+mei-client is not on the mei_device's file_list.
+
+Signed-off-by: Hans de Goede <hansg@kernel.org>
+Link: https://lore.kernel.org/r/20250623085052.12347-11-hansg@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-**Backport Status: YES**
+**YES**
 
 This commit should be backported to stable kernel trees. Here's my
 extensive analysis:
 
-## Analysis of the Commit
+## Security Impact Analysis
 
-### 1. Bug Description
-The commit fixes a test output formatting bug in the vDSO getrandom
-selftest. Looking at the code changes in
-`tools/testing/selftests/vDSO/vdso_test_getrandom.c`:
+The commit adds a defensive check to detect use-after-free
+vulnerabilities in the MEI (Management Engine Interface) subsystem. The
+code change is minimal but addresses a serious security issue:
 
-**Before the fix (lines 239-245 and 296-298 in the original file):**
 ```c
-static void kselftest(void)
-{
-    // ... variables ...
-    ksft_print_header();
-    ksft_set_plan(2);
-    // ... test code ...
-}
-
-int main(int argc, char *argv[])
-{
-    vgetrandom_init();  // This was called BEFORE ksft_print_header()
-
-    if (argc == 1) {
-        kselftest();
-        return 0;
-    }
-    // ...
-}
++       struct mei_device *mdev = cldev->cl->dev;
++       struct mei_cl *cl;
++
++       list_for_each_entry(cl, &mdev->file_list, link)
++               WARN_ON(cl == cldev->cl);
++
+        kfree(cldev->cl);
 ```
 
-**After the fix:**
-```c
-static void kselftest(void)
-{
-    // ... variables ...
-    ksft_print_header();
-    vgetrandom_init();  // Moved AFTER ksft_print_header()
-    ksft_set_plan(2);
-    // ... test code ...
-}
+## Why This Is a Critical Backport Candidate
 
-int main(int argc, char *argv[])
-{
-    if (argc == 1) {
-        kselftest();
-        return 0;
-    }
+1. **Use-After-Free Prevention**: The commit addresses a classic memory
+   corruption bug. When `mei_cl_bus_dev_release()` frees the mei-client
+   structure via `kfree(cldev->cl)`, if that client is still on the
+   `mei_device->file_list`, any subsequent iteration over that list will
+   access freed memory, potentially leading to:
+   - Kernel crashes
+   - Information disclosure
+   - Arbitrary code execution with kernel privileges
 
-    // ...
-    vgetrandom_init();  // Called here for non-test modes
-    // ...
-}
-```
+2. **Widespread Hardware Impact**: MEI is present on virtually all
+   modern Intel systems with Management Engine, making this a broadly
+   applicable fix affecting millions of devices.
 
-### 2. Why This is a Bug
+3. **Low Risk, High Value**: The change adds only 6 lines of defensive
+   code that:
+   - Doesn't modify any existing logic flow
+   - Only adds a warning mechanism
+   - Has zero performance impact
+   - Cannot introduce regressions
 
-The TAP (Test Anything Protocol) specification requires that test output
-begins with a version header line (`TAP version 13`). The
-`ksft_print_header()` function prints this required header.
+4. **Security Context**: The commit message references "just fixed bug
+   in the ACE/CSI2 mei drivers," indicating this is addressing real-
+   world vulnerabilities already discovered in MEI client drivers. This
+   suggests similar bugs may exist in other MEI drivers.
 
-Looking at `vgetrandom_init()` (lines 113-131), it contains multiple
-`ksft_exit_skip()` calls that can terminate the test early:
-- Line 121: If `AT_SYSINFO_EHDR` is not present
-- Line 125: If the vDSO symbol is missing
-- Line 128: If the CPU doesn't have runtime support
+5. **Stable Kernel Criteria Compliance**:
+   - ✓ Fixes a serious bug (security vulnerability)
+   - ✓ Minimal change (6 lines)
+   - ✓ No new features
+   - ✓ Obvious correctness
+   - ✓ Already tested (signed-off by maintainer Greg KH)
 
-When `vgetrandom_init()` was called before `ksft_print_header()`, these
-skip conditions would exit the test without printing the TAP header,
-violating the TAP specification and potentially breaking test harnesses
-that parse the output.
+## Technical Details
 
-### 3. Stable Backport Criteria Assessment
+The fix works by iterating through `mdev->file_list` before freeing
+`cldev->cl` and issuing a `WARN_ON()` if the to-be-freed client is still
+in the list. This serves as an early warning system to catch driver bugs
+before they cause memory corruption.
 
-✓ **Fixes a bug that affects users**: Yes, this fixes incorrect test
-output that can break automated test systems and CI/CD pipelines that
-parse TAP output.
+## Recommendation
 
-✓ **Relatively small and contained**: Yes, the fix is minimal - it just
-reorders two function calls to ensure proper TAP header output.
+This should be backported to all currently maintained stable kernel
+branches (6.1.x, 6.6.x, 6.12.x) with priority given to LTS kernels. The
+combination of:
+- Security impact (use-after-free in kernel space)
+- Wide hardware coverage (Intel MEI)
+- Minimal risk (detection-only change)
+- Real-world bug evidence (ACE/CSI2 drivers)
 
-✓ **No major side effects**: The change only affects test output
-ordering, not functionality. The test logic remains identical.
+Makes this an ideal stable backport candidate that meets all the
+criteria for inclusion in stable kernels.
 
-✓ **No architectural changes**: This is a simple reordering of existing
-calls with no structural changes.
+ drivers/misc/mei/bus.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-✓ **Minimal risk**: The change is confined to the selftest code and
-cannot affect kernel runtime behavior.
-
-✓ **Important for testing infrastructure**: Correct TAP output is
-crucial for test automation systems used in continuous integration and
-validation of stable kernels.
-
-### 4. Additional Considerations
-
-- The commit message clearly describes the problem and solution
-- The fix follows established kselftest patterns (header before any
-  potential exits)
-- This is a test-only change with zero impact on production kernel code
-- The bug could cause false test results in automated systems that
-  expect valid TAP output
-
-This is an ideal candidate for stable backporting as it fixes a real bug
-in test infrastructure with minimal risk and clear benefits for kernel
-testing and validation.
-
- tools/testing/selftests/vDSO/vdso_test_getrandom.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-index 95057f7567db..ff8d5675da2b 100644
---- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-@@ -242,6 +242,7 @@ static void kselftest(void)
- 	pid_t child;
- 
- 	ksft_print_header();
-+	vgetrandom_init();
- 	ksft_set_plan(2);
- 
- 	for (size_t i = 0; i < 1000; ++i) {
-@@ -295,8 +296,6 @@ static void usage(const char *argv0)
- 
- int main(int argc, char *argv[])
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index 67176caf5416..1958c043ac14 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -1301,10 +1301,16 @@ static void mei_dev_bus_put(struct mei_device *bus)
+ static void mei_cl_bus_dev_release(struct device *dev)
  {
--	vgetrandom_init();
--
- 	if (argc == 1) {
- 		kselftest();
- 		return 0;
-@@ -306,6 +305,9 @@ int main(int argc, char *argv[])
- 		usage(argv[0]);
- 		return 1;
- 	}
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
++	struct mei_device *mdev = cldev->cl->dev;
++	struct mei_cl *cl;
+ 
+ 	mei_cl_flush_queues(cldev->cl, NULL);
+ 	mei_me_cl_put(cldev->me_cl);
+ 	mei_dev_bus_put(cldev->bus);
 +
-+	vgetrandom_init();
++	list_for_each_entry(cl, &mdev->file_list, link)
++		WARN_ON(cl == cldev->cl);
 +
- 	if (!strcmp(argv[1], "bench-single"))
- 		bench_single();
- 	else if (!strcmp(argv[1], "bench-multi"))
+ 	kfree(cldev->cl);
+ 	kfree(cldev);
+ }
 -- 
 2.39.5
 
