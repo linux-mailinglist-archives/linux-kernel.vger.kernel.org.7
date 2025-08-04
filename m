@@ -1,164 +1,118 @@
-Return-Path: <linux-kernel+bounces-754938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5723B19EDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36596B19EE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE093B85A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8F1169F59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1FD24418F;
-	Mon,  4 Aug 2025 09:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A60244673;
+	Mon,  4 Aug 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ZjM+meP4"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YsUTDOp4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1BBAD5A;
-	Mon,  4 Aug 2025 09:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E971EA7CF;
+	Mon,  4 Aug 2025 09:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754300323; cv=none; b=igOl0RGK6p6BKCYGPrEvbaGeRpIevVnUDaKf5VohY86E31VuIxzRF1Y1CAyVB4hBhONiy3gYGxGObizzhne6nW/M+SVr3fo06neuBJuyr/vo/P9sBMH1V45CAkVVjdLwaflm7n/s+I5gMGFcMV61oTGMvNv3t3LFuoqD2evc2k4=
+	t=1754300422; cv=none; b=NZgUQ2ZxD4gyt21Y9p8X3ZjMpdglWkKxJcm1ylBPTFLi5J+CTDUNMJyns+O1gNSFeygUmQrsuqY8agH0JTATKE5ZOMmpgZv6+GBagvt8mAyqZcgFOpTSlQeUzAOOg9cc9NUFVe7iTObyTq/zP23ek6+7LRQPQ6xgVJtRbRrnajk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754300323; c=relaxed/simple;
-	bh=Tf4hqiJ5K7TfYX23vl6kVK/ysmb6Mp+P1nBXj8EHwM4=;
+	s=arc-20240116; t=1754300422; c=relaxed/simple;
+	bh=za1PTKsWjFibSErq85AFsMvUwxohoDzwmMSpj4Q7Hog=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gs2YA+kphDWmSI/eInN8R9mGIZWw7auTEZUZUxlumpAIMqG88GTwoYeRa4GqH3gBlpBmMHgq1IAKIqiR7eJ9Wiw+0tcZvT77lQcJcv8t/PVokA8hDrACoxBVo/X9Jt8yGxU1ZCx25IWEZcLXWP5s8uFJMxEf/MzbquEYEyPkWpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ZjM+meP4; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3YTCl/zW/Wo/tkqi5mo+Efw9tJOY+FJ3ba2nykfa53A=; t=1754300319; x=1754905119; 
-	b=ZjM+meP4MAtcpcZG9Lu529MJvQ7EnfpzDLskccToFvuM97mihIGa9pn5KdU6jzqbamYYSkQiW2J
-	M/bEG2MGL4j6VPM2wbRHl6CKIcUJ8GMImdbHdyaf1c3CBRQyntyY9GfZLUgjFpTals/dgrKS09Jap
-	eSCsxySU/zYk2jTOzV/N3kwM3wYQzJGHpqRvqTcM8AC8nkpGCbfgkOc1Gisghjj/WvjRGNRebXZXP
-	aWuatajzciTCNHBvFzpPWWxmPeBuaE5N+nCWSDWMKgYbGxIHREE83rYTVlV0CF7ALMbEoAolYBQZ0
-	FajOWTdHtVPPZ5SJra2JyKdU+BByEq9VQ4eQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uireN-00000002kpa-1lOP; Mon, 04 Aug 2025 11:38:35 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uireN-00000000oqi-0mSZ; Mon, 04 Aug 2025 11:38:35 +0200
-Message-ID: <ab2138b468994050a817426f8ce4fd784108c210.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4 25/36] sparc64: Implement the new page table range API
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, "Matthew Wilcox (Oracle)"
-	 <willy@infradead.org>, linux-arch@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, "David S. Miller"	
- <davem@davemloft.net>, sparclinux@vger.kernel.org, Andreas Larsson	
- <andreas@gaisler.com>, Rod Schnell <rods@mw-radio.com>, Sam James
- <sam@gentoo.org>
-Date: Mon, 04 Aug 2025 11:38:34 +0200
-In-Reply-To: <d424e109e6f1a00b8cf22ec1b40d6dedff38ce52.camel@physik.fu-berlin.de>
-References: <20230315051444.3229621-1-willy@infradead.org>
-				 <20230315051444.3229621-26-willy@infradead.org>
-				 <ce6337237169f179c75fe4a1ba1ce98843577360.camel@physik.fu-berlin.de>
-				 <83931f05-a613-4972-be76-80bc695915e4@oracle.com>
-			 <75cbab0cdab084795422335c0e0d69c6f57b468c.camel@physik.fu-berlin.de>
-		 <76c45021481cfe1aaa9fe2cfcd2287ac6c8d4504.camel@physik.fu-berlin.de>
-	 <d424e109e6f1a00b8cf22ec1b40d6dedff38ce52.camel@physik.fu-berlin.de>
+	 Content-Type:MIME-Version; b=ai9Urdo4v6THbCri2AmkQSN9fJOdnYCghw7pcA8Ua28aT1ldgIENy23qGvO2kD7MHQAxnyfNnBuD2oOo55EmH+N1oT8+rqYOsRWc7/AR/mo3zk6v1KSkcflE8lMpXdo4+7KMBfY5jwEnMObSZZ9/fbu9819AO6Sgm9hFvmfaFeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YsUTDOp4; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754300421; x=1785836421;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=za1PTKsWjFibSErq85AFsMvUwxohoDzwmMSpj4Q7Hog=;
+  b=YsUTDOp4IfsO2nIkXxMt5wgurI0C64sXoFlJRWgZfOd4JkIoe0/kau1D
+   VmPkFOpBeADALZyJs3tXY5ko/s1EIwRpxzZVj5i4++2VobB8RTa7lyYRG
+   kc8y8xwLl1Pbd07lm0lGUZ3qA0jDh0u60nwd7Y/q26F8LV4LxtOex67KA
+   ZX1dbMJJTMo9J2tNew9LShzIXYAU1VkPo16khLJqIuD0W3TW9xqonQXEa
+   05SS75B6Iu3hHO1x1UZ9xItv0M0Tgu3K7zoOVaBBv/94gKLc1efoBiYii
+   Ec28F5OmdhgcoRWROC83McNRhNjsSQqViBcku5Xfm0Tdvyk6UqskD2+md
+   g==;
+X-CSE-ConnectionGUID: 2c5pNpAOTO+PjsrkeurmFQ==
+X-CSE-MsgGUID: 2TtQkNpMS3KmimQVO5Vb3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11511"; a="74142327"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="74142327"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 02:40:20 -0700
+X-CSE-ConnectionGUID: 7d6dt920SEexhKinLnnNRA==
+X-CSE-MsgGUID: EDZ/GzpIQ52XiYqiFjo+7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="163785264"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.63]) ([10.245.245.63])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 02:40:18 -0700
+Message-ID: <ccf7c5b0494e46bbf86d45927e6bd130115c50fb.camel@linux.intel.com>
+Subject: Re: [PATCH v4] Mark xe driver as BROKEN if kernel page size is not
+ 4kB
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Simon Richter <Simon.Richter@hogyros.de>,
+ intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Date: Mon, 04 Aug 2025 11:40:15 +0200
+In-Reply-To: <20250802024152.3021-1-Simon.Richter@hogyros.de>
+References: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
+	 <20250802024152.3021-1-Simon.Richter@hogyros.de>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
 
-Hi,
-
-
-On Mon, 2025-08-04 at 08:58 +0200, John Paul Adrian Glaubitz wrote:
-> OK, so v6.8 is fine while v6.9 crashes:
+On Sat, 2025-08-02 at 11:40 +0900, Simon Richter wrote:
+> This driver, for the time being, assumes that the kernel page size is
+> 4kB,
+> so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with
+> 64kB
+> pages.
 >=20
-> [   39.788224] Unable to handle kernel NULL pointer dereference
-> [   39.862657] tsk->{mm,active_mm}->context =3D 000000000000004b
-> [   39.935941] tsk->{mm,active_mm}->pgd =3D fff000000aa98000
-> [   40.004566]               \|/ ____ \|/
-> [   40.004566]               "@'/ .. \`@"
-> [   40.004566]               /_| \__/ |_\
-> [   40.004566]                  \__U_/
-> [   40.197871] (udev-worker)(88): Oops [#1]
-> [   40.249329] CPU: 0 PID: 88 Comm: (udev-worker) Tainted: P           O =
-      6.9.0+ #28
-> [   40.353415] TSTATE: 0000004411001605 TPC: 0000000000df092c TNPC: 00000=
-00000df0930 Y: 00000000    Tainted: P           O     =20
-> [   40.502105] TPC: <strlen+0x60/0xd4>
-> [   40.547844] g0: fff000000a3171a1 g1: 0000000000000000 g2: 000000000000=
-0000 g3: 0000000000000001
-> [   40.662224] g4: fff000000aa4dac0 g5: 0000000010000233 g6: fff000000a31=
-4000 g7: 0000000000000000
-> [   40.776599] o0: 0000000000000010 o1: 0000000000000010 o2: 000000000101=
-0101 o3: 0000000080808080
-> [   40.890974] o4: 0000000001010000 o5: 0000000000000000 sp: fff000000a31=
-7201 ret_pc: 00000000004d4b08
-> [   41.009924] RPC: <module_patient_check_exists.constprop.0+0x48/0x1e0>
-> [   41.094557] l0: fff0000100032f40 l1: 0000000000000000 l2: 000000000000=
-0000 l3: 0000000000000000
-> [   41.208936] l4: 0000000000000000 l5: 0000000000000000 l6: 000000000000=
-0000 l7: 0000000000000000
-> [   41.323311] i0: 00000001000256d8 i1: 0000000001143000 i2: 000000000114=
-3300 i3: 000000000000000b
-> [   41.437686] i4: 0000000000000010 i5: fffffffffffffff8 i6: fff000000a31=
-72e1 i7: 00000000004d63f0
-> [   41.552062] I7: <load_module+0x550/0x1f00>
-> [   41.605811] Call Trace:
-> [   41.637838] [<00000000004d63f0>] load_module+0x550/0x1f00
-> [   41.708752] [<00000000004d7fac>] init_module_from_file+0x6c/0xa0
-> [   41.787670] [<00000000004d81c8>] sys_finit_module+0x188/0x280
-> [   41.863158] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
-> [   41.939790] Caller[00000000004d63f0]: load_module+0x550/0x1f00
-> [   42.016423] Caller[00000000004d7fac]: init_module_from_file+0x6c/0xa0
-> [   42.101059] Caller[00000000004d81c8]: sys_finit_module+0x188/0x280
-> [   42.182266] Caller[0000000000406174]: linux_sparc_syscall+0x34/0x44
-> [   42.264614] Caller[fff000010480e2fc]: 0xfff000010480e2fc
-> [   42.334384] Instruction DUMP:
-> [   42.334387]  96132080=20
-> [   42.373269]  19004040=20
-> [   42.404151]  94132101=20
-> [   42.435030] <da020000>
-> [   42.465914]  9823400a=20
-> [   42.496793]  808b000b=20
-> [   42.527674]  024ffffd=20
-> [   42.558556]  90022004=20
-> [   42.589437]  8f336018=20
-> [   42.620318]
+> Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+> Cc: stable@vger.kernel.org
+> ---
+> =C2=A0drivers/gpu/drm/xe/Kconfig | 1 +
+> =C2=A01 file changed, 1 insertion(+)
 >=20
-> So, the regression was introduced with v6.9. Will bisect this later this =
-week.
+> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+> index 2bb2bc052120..714d5702dfd7 100644
+> --- a/drivers/gpu/drm/xe/Kconfig
+> +++ b/drivers/gpu/drm/xe/Kconfig
+> @@ -5,6 +5,7 @@ config DRM_XE
+> =C2=A0	depends on KUNIT || !KUNIT
+> =C2=A0	depends on INTEL_VSEC || !INTEL_VSEC
+> =C2=A0	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
+> +	depends on PAGE_SIZE_4KB || COMPILE_TEST || BROKEN
+> =C2=A0	select INTERVAL_TREE
+> =C2=A0	# we need shmfs for the swappable backing store, and in
+> particular
+> =C2=A0	# the shmem_readpage() which depends upon tmpfs
 
-Looking closer it seems that the original issue seems to be filesystem corr=
-uption and the
-consecutive crashes with older kernels might be a result of some corrupted =
-binaries.
+R-B still stands.
 
-Will first try to figure out what commit exactly introduced the ext4 issues=
- on sun4u.
+I've pushed this to drm-xe-next with a Fixes: tag which means it will
+likely end up in Linus' tree the upcoming weekend.
 
-Adrian
+Thanks,
+Thomas
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
