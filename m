@@ -1,333 +1,260 @@
-Return-Path: <linux-kernel+bounces-754620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE7EB19A25
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A65B19A28
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C7B1892B56
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5A43B691A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BD91FAC37;
-	Mon,  4 Aug 2025 02:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59F71F5838;
+	Mon,  4 Aug 2025 02:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQ1w2wLV"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hr8kGHRx";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="b8cQ8s3G"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A691DE3BB;
-	Mon,  4 Aug 2025 02:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754274297; cv=none; b=h86HaUMeByJj0Hjsb2a6NRUuXljyNyKnjI3a1yr3HbUwJ2sLNjpuNzNOxkUmXz3+DCUlt3wOgz/qfMwYQkUZZlY6NO/yQcES59JPXsPWprVaOjHBs90tGY9iUVv7wHR5aAWfHo2QpXJY05VYG/ngSb24BbUAbDsunelbin+jTCU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754274297; c=relaxed/simple;
-	bh=vIoLQAriU9QLyBP+GEsvN1SPVlN57wrfxtqM44gQ6uA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZfQ5NB3uWJt3Juv8mnvV1iVQAGeIjvJw1KP4QDiJlE0lu8vP2ajS58ZZwovAJ1Jdx59I8XFm3g0FSYBAdxmYpGBU2U5oTrCKCErDWMmXmtNC0PsifVuyWxdFvNXjya2jT5yZSK9eHx/i7d5b8VDULAS+WEdUkzQ2M73bIR5C7UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQ1w2wLV; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-433f3bc84e0so1114030b6e.3;
-        Sun, 03 Aug 2025 19:24:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFF21D5CED;
+	Mon,  4 Aug 2025 02:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754274354; cv=fail; b=JTaeh7xbWOoYGXz4VBJ0brCdiCYpYe1Lmwv6w4cG/VeIEct2KMGsVNawrDIygkZd7p/pRZaSns39TKvhMvIINAeuVZTOZO5SyAXn4/eex1JnrQlusgaQr9TkD9/K2snFeTiOUr2D/k/BtM2u91oQNkjk1fiKLHVSJQin42h7tcA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754274354; c=relaxed/simple;
+	bh=FPtQzwh6AM1yTVcaECEUL7O3aSnKhyek7RFyLxoCyjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Zb5+e4XlV0Ldpfps1+d8/vNXtALYF15S6vFxEpjrkMOARzLCjcdrdTQwhO6NreKIqvnrZmDFI0DlOq+C9EZUK89TfRFyppvp40jGYrL95bOKSOce8sLzgr5XIBcLq1KiDOkK7BipWku6H1umavaoBCr7YORm40o53gPPnILUGr8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Hr8kGHRx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=b8cQ8s3G; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573Nl6Je008635;
+	Mon, 4 Aug 2025 02:25:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=t+c0JXe0JTDR1FtnKY
+	hx2NsEgqnYHBfpYalBbdx8D5s=; b=Hr8kGHRx/YUScWMac1+5AH0clATFb90awL
+	6JjfBbiY1M/18Sj/3yD/A0mpLNqBdJH0+T0MNcjWMyHLsg1cN21EHFCtB7e/Gjtt
+	T10lmA+XRiv5JWOVIvQLDqISOxFPUGe7YbvVVT4Tg+FVnnPUp581vMMUCyeCAU22
+	grnDZZvI7xyGDdoSJmIt9hYocg9xwUqM32NkDsFGxjGMnhKsmQr/aGeJGRwdGW/x
+	jC/RHIM+NPJO2+L7n6a3lfASA5QoMBduKNQ2r21uFMZIIc5BabkwvRsb67zVN+Wf
+	SfEt1oy04bTckCrp9i29D4hbg1I61LUZ6dm+Aojzak9fmhZ0o6Fw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4899kf9t38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Aug 2025 02:25:33 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 573Nb0LI013595;
+	Mon, 4 Aug 2025 02:25:31 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48a7mqupr0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Aug 2025 02:25:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fZ891KTcKrAO5bzrsY1ryyaDt0bgun5a7z0vEzd35myoLNKDrJLWeNUvWay60T2f2z3VRZpXcPaP02bKhOlGMwqYnrbv+ODn+31aCdLOPtdKsGeS/UhwTEFDrhjXIUo90QzQw/qdolAv7k2h1zCdbZQNfAurFEMqtUnq0x+j6/05O7pGZrpESor7HnYxL3ATbuRbUMaeLq07sYonEyWlQiStmT2z+lWm8DboqExGEgbCOWflsPO12qZ9W3ZCzR9LJSY/NoHhTYm4f0/vgpNzycFZJf2jmlgUUUvc6PvZL76CkH3GNBlVDprjDnpu4/T7ZxUWZ5lxZxeGowru6+CyPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t+c0JXe0JTDR1FtnKYhx2NsEgqnYHBfpYalBbdx8D5s=;
+ b=ejtl/mKkljwfV3Ie9Kg89ui1pzSaTKFqfbvXn8T3TtWPOi4c7BdwNuvwsf+oY0beV7jC6mD8aCw+jPulbNq9TxFlqWc0Q88u8VM5/dzF5ZZ1VV5bhERRnZfPps/JfKjfPjwrYLSsCh0EkFJpEjJ696MnF9FHmE1f7zLgkggc1xYCQaPYe+uhdjTwuwdqhP8IViOXveoLWfzoahJmEVhFf3HsLLhUNtpeDRJaJPa1XleoW1QkQC3nx6GhnIG/RRlScQd4iq4m34Ia3L6vzcJTOfkfshVQvJkAVe0UvY/j1Ibws3e2qniD7U4uu8GZms+dCZw76EFkyHcR3TTmp5hPIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754274294; x=1754879094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BnRa1JA/UK/K7tosARzyACz2l637qczjgSNLiyAn2po=;
-        b=AQ1w2wLVBmsYVEFyk5FcWKoUvUCnjjZ5Xv+8lw7AaoueaWCICHekR9BYLrQ5TcMkdO
-         Hpij31COwzvyMux02/zV3boGSS13TkXqMJggGO7qe1Bgsxbz6NRPApsvRo8QaJQwmKQt
-         V1aDvBf0kR1RVZqchWcNqToDLfAzcXeSJ0d+GQ/ZHKffMVW09flPQYedDsQBVXPTmf+M
-         JId7e8CDmxJJf/cFRwEMxz7IrF1f6FjT9o7GuGSGnsu18k/vRQRx7Lif00HaWqB1yT3T
-         qkyGhJ1ATwDAfZzvmVCwInrlPFFqj+emmK3bJDnydkpR8y+W3hj0N33gO499aJEhuztJ
-         oeFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754274294; x=1754879094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnRa1JA/UK/K7tosARzyACz2l637qczjgSNLiyAn2po=;
-        b=khYxAWISO3hKjZId9HTvvMdK9fWcYf7j1zfVkW+l1AIx5Gd+4ZscBdo50MqDYGvcMm
-         TANekx7D8dIqi2q9WOyzwZwJKDZj5Yy7iewv/ckHFhvp4Tb/c1tSYTwbXhEO0RzOZF48
-         8eD/sFaIk1TMRYkCqPHAb+qnw8KJMSvyvZ71VYrP53Dkt10Mk7m+24Rj+praS5jLa2Ot
-         PqI1Me7Inhu4FeCK4Pf0Pc1Fc0kTdsYY5kdqPpNUBhTNSmfvGobQnBFrDWyvd/E9P2aA
-         HE2huwfF1CGulBUF88yhw1qsNLK6yWchqrGXWiPLl7HuS65mHxcRDy++qb1d0U5YTwBU
-         MFZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbgIx5Af4Zt+IeDKAQgeAim0uxVIQHu090hCAK/becFx74+ta6hAq/qAQiAuiKciOKRkc/c6KAQF5aohTx@vger.kernel.org, AJvYcCWshtaBgWD6l3Uk7gW9J/dkIqQfYt7qwbipv8NT+SZ4vVvc8kjEAHkYeFJCUJOvR37J9ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk46qH6ms2a3W9WG34AS0FWs+ZtKfyJj3AmhEIoNRIhoEea7ny
-	7N4nW74wB69YvySAE6IkSV9KGQuN0vYINBkvFMNEQ0FVNQidhgo8fddsEos1nPwuc73SQLPihdS
-	81STTKScl99l5dE6JTx48xnXZjnNsslg=
-X-Gm-Gg: ASbGnctctjPa3eKJYXcRpAuIjQlsRJ7bX9Q+xUCt1F5/vmU8Nf7yqCDl2fcM743SA56
-	1P8X1lmqCbR2Hta8hGs5wYEhw0S0c3/y++fhaQJHgrVh3cROvbVznEhHNd5+khxiMnO/W3oD5LS
-	q9PgwEbT6HGLYb1ys48XsGetC7RxgudTW3DNjP46KxMvAqy5s5ilyDnbrHLLYIq0AEMCag6sy6F
-	7oauqc=
-X-Google-Smtp-Source: AGHT+IHhH1YIlg21cr4MIGPuqerm1W25W6/jSAdfR4y9B8Edf1oakdGia3Vc0Pk46NXYA8Hkr1xOm7gYnffSPLFPPZ0=
-X-Received: by 2002:a05:6808:1910:b0:433:ff53:1b7e with SMTP id
- 5614622812f47-433ff532639mr2765208b6e.11.1754274294309; Sun, 03 Aug 2025
- 19:24:54 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t+c0JXe0JTDR1FtnKYhx2NsEgqnYHBfpYalBbdx8D5s=;
+ b=b8cQ8s3GjfSya7j1aAlA8rF9r/yMdESzr94WHTMbWsom5Z+4aZ/Q9JwSUWmlqhQtPe6Y2p3ani1lHJOxfey8lnoUx7NNztqZ+QWmoYvz3emDTDQ1ZptGPLhv+IJ0i6IwHBgvXLE29RDDX6zlRfF7bOx2Ad8luQtKaww6GJ0CqMw=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by BLAPR10MB4833.namprd10.prod.outlook.com (2603:10b6:208:333::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 02:25:29 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 02:25:29 +0000
+Date: Mon, 4 Aug 2025 11:25:23 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Li Qiong <liqiong@nfschina.com>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5] mm/slub: avoid accessing metadata when pointer is
+ invalid in object_err()
+Message-ID: <aJAaE9Bqb3eSHBX9@hyeyoo>
+References: <20250804014626.134396-1-liqiong@nfschina.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804014626.134396-1-liqiong@nfschina.com>
+X-ClientProxiedBy: SE2P216CA0146.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2c8::6) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730131257.124153-1-duanchenghao@kylinos.cn> <20250730131257.124153-4-duanchenghao@kylinos.cn>
-In-Reply-To: <20250730131257.124153-4-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Mon, 4 Aug 2025 10:24:43 +0800
-X-Gm-Features: Ac12FXw54_4HRJNzwKhuZVYGpesI_S2zavu44x_15b5aAywWy_Y1r58SRvoBSUo
-Message-ID: <CAEyhmHQOeKmQZnq9RvaPANdLfcsAJX=xU+nL+p4=sPwcYPOfGw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] LoongArch: BPF: Implement dynamic code
- modification support
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	vincent.mc.li@gmail.com, geliang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|BLAPR10MB4833:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bfdfc99-b423-4f87-9584-08ddd2fe2dc1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/LD5zTa23CaIjpolfTNNaIFTP4co7pTI3YldmdlHyIXiIXHvAWTgKwFftqzO?=
+ =?us-ascii?Q?86mOgXajAlUlAyE1xn6GLtqB4q1ZIr/A3298v6ng1TUpq0sxXU2xRaHOUm+9?=
+ =?us-ascii?Q?jZF3fWe7yxHYgorJyORAAoCykxU2mtqRWFAW4RHM52Gvyom9hSs1zCvhvOiU?=
+ =?us-ascii?Q?dIQGZ7sIg8YllbMkg2CxTX2mJXcP+1yypnw7tgApgvRVK+7yiXfnLYUY2ANo?=
+ =?us-ascii?Q?ISq+G+Qq+pZNrKklK724EsS2AjZVJNpH39WFoGwFHtguhADwWqwz83KEau0N?=
+ =?us-ascii?Q?RJC/FukMkf7IxJ3Y3U86XxPGquGs1LRgDA2IIqzD5vNgqZQZqPCe+lIiBzZ0?=
+ =?us-ascii?Q?N2mkovL6/vSBFVzYfLpaT9v42vl8V/x0RmBbI/a3vefjSiwOl2vnVd2U2ktl?=
+ =?us-ascii?Q?JjLM8DZpg4IsCBVFluBxmeKEYtgTHU3eGspa8p+kJvXXIpPeeJYnC/vm41ru?=
+ =?us-ascii?Q?Ntz58yPDIDGIguigRKuPm+DamK5CeO87qgEi7nQpFsQF/YC9ZI4TlpzxHoBa?=
+ =?us-ascii?Q?L9o9QHzDfvnbWaEpwVvP6RKTO7OJ7cXSt34plUiaFcbe67BtEsIVbKZJFajY?=
+ =?us-ascii?Q?YBeX6bata/mqXrZNi3EQ7pkHJRhsj+FVcn9b05tAo5UFouiECo35/+lLrTn7?=
+ =?us-ascii?Q?3UlTlT+ZT9+L6DJn8dq1r0Ce0wHreCyRSDpnt1PFqEYHgRlNYcueTShQRiuP?=
+ =?us-ascii?Q?bE0aFJyjAxW/5azMt4KJVUWSl7zRoVo77xIafIyjxCoehZ1wY4hKbq//77BP?=
+ =?us-ascii?Q?iv0AGFC070N4+mXMxwGzNLuPZZ1nKkwTLcXbiHSoASEMT9GK/vV3M9O/nsB7?=
+ =?us-ascii?Q?ZCzJh4xvomPxzM18OUSvMulUJEWH96T+MAkBjRHKwOnE1gX3KJ/iYxe95zzg?=
+ =?us-ascii?Q?wvLJ3Tl80TsMksOANPYALdc0w0sDXE1pg6me64mjCDrYpaM995r7SQ/JG7NR?=
+ =?us-ascii?Q?kgNDCxmF+mmwKkc1dhaah/dwIX0OWHNr1+xVTNfkbVEj0bGtqtDuSmA4gkR6?=
+ =?us-ascii?Q?tzlgRR/VXsC/FpJrwl23/j/VfitJMrqahlurIy2a/4cHO+I7DKL4uD6QTLP/?=
+ =?us-ascii?Q?Ezrcuy82FVXSW9l4HH5QUq5hXqT3qfoYmK55WonqwBpJ/1SdzApE0HP1jqYp?=
+ =?us-ascii?Q?M1+cQA0o4xSF9RdyChzAc4Pahb76BJyPG9r1m1VQJDnvJO2YRt48x5LM4lLD?=
+ =?us-ascii?Q?aXsr5AF08A+38IBCU7Yw/a2ANUoJ/BULI/kcgYEAidr63NzGm9Jq1vZ+ykv0?=
+ =?us-ascii?Q?zSeV/zm8Ao2AbWRxqeBYiK5vbE4jiDfogbp/OVdnSmiEluZJv+zcrj2IqjfM?=
+ =?us-ascii?Q?vmGAfYhMld1Snzi2xERdhyK9pHJjzTDdMbVd+YjI0iD78ASEzuCxw/QSsaKH?=
+ =?us-ascii?Q?vISuKSOVo8C1H+nEAxbw4vzgD2Ppn09uJyxI6leKiqe/pWUttQCW/I6JwmEF?=
+ =?us-ascii?Q?q5VoteAi7eA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DJLTAwcgKmEBNPev6y5vAfo6KNjSyllUlmKX/enHNqwEx/w/GfOnf7XVGP1F?=
+ =?us-ascii?Q?j9tOOy9VNBUZoUytcW4WMl5V7OYOtQCgKjr6/lyVFwS9Nq93ZPujk4jvAjwt?=
+ =?us-ascii?Q?Nj6HT8e0W6lQN1FGIx5owZSnmExjoFvi7CeCoa/XwyPjmF3KCdnGiLxFDOjS?=
+ =?us-ascii?Q?unqTeJY5/PZUqyVlV9Is6HfuXwcSSIn0MTuddMfuUxPsr7BaG/lFkSXcjrAZ?=
+ =?us-ascii?Q?M3rKeDEgh44iOe+t/8VdmHPpCqAMAFEz3dwm0RzGdQQUISoNyWQcqbp4wE1f?=
+ =?us-ascii?Q?IRKpwA3YMmy7WsMY7Lno+M6p5QEn6BPFAyIVG1TT+M3OFWNQo7/k11oHwUBf?=
+ =?us-ascii?Q?nZlKea/ESdoBXAYKu3L6RYn9J6AIoi4aQNRS6hY0k3CJrTMLMdO+t7WJ+b+n?=
+ =?us-ascii?Q?34XNZWZvfyU2UuWP4lodP3ltOi+32lzmUXbfer7+fnBu/CNvJ/pjiZlkXlYd?=
+ =?us-ascii?Q?/9fkvGHIQxdL2xEMpaUVwJ1eS804ssthVoVl2e16VJ/1aDpVe1s5c67K3VZ+?=
+ =?us-ascii?Q?vF9sQhCdEbne+qLOl/+bIN1G4uGpJ5UE1vX+h9JNps6Hzt0zamI9docqGS2X?=
+ =?us-ascii?Q?bfAt7c2p7gm7Aqznf1mPR4Vog5Jpsz3/eOTBA9LYJT/E/OhL1RQmvuj8k6ht?=
+ =?us-ascii?Q?a8l6r+0JPDrGoYiT0gfxlZoHJT5SHi/LbwJkrmhTOPmI1o1AcYvsU/1zWJAs?=
+ =?us-ascii?Q?4G6ahMLqut0HXAVS3U9P1kT0DQNpEvuBIHccGUCr4/3+hhCXaf8dVPXDGz4Z?=
+ =?us-ascii?Q?gMo2IcGKQOMa3d3HU1J6Jhz8cjoJaKdVX3fbIXCyZAFRvJ9m6JL+bu4r/Ixd?=
+ =?us-ascii?Q?pSgSDlw0OqbMjUtHR1B78mOUO2w8thqEA4udGnZWDWWcfimjCw8g6cfR/0Wi?=
+ =?us-ascii?Q?bv7zQFXmCD1Ie/SSVW6YfL4sEPN0w4YjgRNetVei840kAu927Y8IO+hQ38bH?=
+ =?us-ascii?Q?bI+fn33KpOxxYjRQGQo1/mkOLgr11BojLqO2BONBRgN3457MJUwC8n877MwS?=
+ =?us-ascii?Q?9n/qtZfMxDIZ12jMrSdN6oFT95aQ8/nOemj6/E3Te33CM2J0GCL9JyEWI6rQ?=
+ =?us-ascii?Q?bV5dmmZwCHmhno6C+0IPdwgEsSvT/sOgPmp2idKsluxGC/Lg+TnaM3on41ZO?=
+ =?us-ascii?Q?uUX8G+E4RjLXEOKwHic71gIKQ4i/iO1GjakTP3E8XjJBFisVVs3YpHETR/yQ?=
+ =?us-ascii?Q?fKHGHemjxwV3TdIJL58L3KXPO80ORe1HChHMi2gCocaXJnQ/jrHhKkUb2Mhw?=
+ =?us-ascii?Q?zyoEwyH43oMK5ZrLDpV9mRpsMj/nPLGbzTKu7FiSQ5MAhQwp0JR/RIZ73+EO?=
+ =?us-ascii?Q?gyKs+0ECCmxBvJt9C1Okf5u0e6Hdsp5itnZSUhrxZefD2+i+9nA55BkKh1sE?=
+ =?us-ascii?Q?q+MVnpxAshoOGmnQ0uhoA1VRGFfm8pzZWoZWPoeJBYAuQ21ECoM07gPN3vY7?=
+ =?us-ascii?Q?/Gq7Q9w484EqG+uZcYcmMxDahgDEDLC4lGOW0Pp+jK+tOEwYEIVjdSQwEFX4?=
+ =?us-ascii?Q?Nw1kDl5ozRDvuegJqw9DXJWnn/7elKj2SddzqxQp4vgx7c5Fu5HzhkuiY6V5?=
+ =?us-ascii?Q?kBYwb9DdvuSYolQgPAdb+zvdyZY8I80UR4SFcbwY?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	KvrM9pvLUAL73EAi4Gp29bgtLKhgDnf0R/DGjcdI0ChK3uY6EBPUVJ8dFmP62AC4zq4yqq/T54DBVmJSS4wGHWYG/aRsixuEXVqwpOxN2EXg2qgqmLCjKjOn5WR2VNKrnqMMB20POezzXwp0c968Zewy1OYzN2d6LBSCPyajlLX/ewKF0N8ubIPkwM4AQt4jtVunwEppan6iXFul1PG7OFoV8s/jLBRCpJH2SAwVvy/FavhMpRl+YLtD0vHfm/Xawki4SN7S7oagYDC2OQKUDzjjKFgSnQfCP3KDza95Gm3C0za/h+Fa2qVhAFnyoYLW+rRzG4KXenyO4xpdBKdlD7qH+PJYiWN4gucIkQXw3SYehZsyWhqYlY7ReRvzC+jhuPF2q50iZSD6qyzDrMrydn+qd7yb8TILBDEpoCYoLQ0f0mG6Q3IRDrE7q7RADO7BHtfwkQ5v8CIb29mZeCwHfpKTkORT+djx4HfMSSP2UEYOr63d5pm40Yt5C/nkyw66Y1DkeiO09w5oK2AzArz2Sl0045NYk3Kaxx0ch/ASKaIV7XNyu3GDCVk8Ml/XJ8G3S/QZIqK9Eai6mJRENsrb3IXh2zTMgPH6gjvlseLidMg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bfdfc99-b423-4f87-9584-08ddd2fe2dc1
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 02:25:28.9753
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nNwdAx8I/7fei4BOPox6yWrYsJp9o94YNujwUIk4siNjXMY36vzoZGpCVDD7HL+Mtdaeac3TaJ4igkurO1iP+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4833
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_01,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2508040011
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAxMCBTYWx0ZWRfX49s3MK90NY4M
+ ANZigy6Y2zvQO/E4dFm5LwdNE8j/2leIxsq3mUAM2JTRZKqhMdeMmialP63ERdqz+6UY+8we2AV
+ SRqhu1S3cpjoSHF5tcZNsUR4Y+we5t3N/tEVDMGjqKFyDCGWXbP62RWOr2DzJFhUslF5XalaXdg
+ iv7+sOHgU0Q40nm9J3koxnkfbuC0Ahbw3eoC2RRavxF6Bs1vcfXUN1/dZw1L4M6sH9S4qDFycsh
+ ME/dW1hpKiY8U31SGS+n4RY1JUtcJKirh1HOaAxUnA8dmPl2fQY4hC6A5FvLwRNEIGnBXMhNAAi
+ wzQTn+arsy7OpUzG/W0tJuI5Vnz/w7MB8LMLNywVQ4xPDiSP474z59T5eR0Idu2yb7hQeNSRqIl
+ 3tsGBHGsMLdsK4VZiOtH5lJyR8o2rv6e1EDJKrzCsxWPIn5qOTunFL57jr7F4C3E/xzYUQRj
+X-Proofpoint-GUID: kZlokjieP7zj32KCyq86Oh_zCqMWaNT1
+X-Proofpoint-ORIG-GUID: kZlokjieP7zj32KCyq86Oh_zCqMWaNT1
+X-Authority-Analysis: v=2.4 cv=VMvdn8PX c=1 sm=1 tr=0 ts=68901a1d b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=SlVAvriTAAAA:8
+ a=yPCof4ZbAAAA:8 a=95r7aR4FhjnzYnCyAq4A:9 a=CjuIK1q_8ugA:10
+ a=qesGs21RGGeVIEdTuB6w:22 cc=ntf awl=host:13596
 
-On Wed, Jul 30, 2025 at 9:13=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos=
-.cn> wrote:
->
-> This commit adds support for BPF dynamic code modification on the
-> LoongArch architecture.:
-> 1. Implement bpf_arch_text_poke() for runtime instruction patching.
-> 2. Add bpf_arch_text_copy() for instruction block copying.
-> 3. Create bpf_arch_text_invalidate() for code invalidation.
->
-> On LoongArch, since symbol addresses in the direct mapping
-> region cannot be reached via relative jump instructions from the paged
-> mapping region, we use the move_imm+jirl instruction pair as absolute
-> jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> instructions in the program as placeholders for function jumps.
->
-> larch_insn_text_copy is solely used for BPF. The use of
-> larch_insn_text_copy() requires page_size alignment. Currently, only
-> the size of the trampoline is page-aligned.
->
-> Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+On Mon, Aug 04, 2025 at 09:46:25AM +0800, Li Qiong wrote:
+> object_err() reports details of an object for further debugging, such as
+> the freelist pointer, redzone, etc. However, if the pointer is invalid,
+> attempting to access object metadata can lead to a crash since it does
+> not point to a valid object.
+> 
+> In case check_valid_pointer() returns false for the pointer, only print
+> the pointer value and skip accessing metadata.
+> 
+> Fixes: 81819f0fc828 ("SLUB core")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
 > ---
->  arch/loongarch/include/asm/inst.h |   1 +
->  arch/loongarch/kernel/inst.c      |  27 ++++++++
->  arch/loongarch/net/bpf_jit.c      | 104 ++++++++++++++++++++++++++++++
->  3 files changed, 132 insertions(+)
->
-> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
-sm/inst.h
-> index 2ae96a35d..88bb73e46 100644
-> --- a/arch/loongarch/include/asm/inst.h
-> +++ b/arch/loongarch/include/asm/inst.h
-> @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction i=
-nsn, struct pt_regs *regs);
->  int larch_insn_read(void *addr, u32 *insnp);
->  int larch_insn_write(void *addr, u32 insn);
->  int larch_insn_patch_text(void *addr, u32 insn);
-> +int larch_insn_text_copy(void *dst, void *src, size_t len);
->
->  u32 larch_insn_gen_nop(void);
->  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> index 674e3b322..7df63a950 100644
-> --- a/arch/loongarch/kernel/inst.c
-> +++ b/arch/loongarch/kernel/inst.c
-> @@ -4,6 +4,7 @@
->   */
->  #include <linux/sizes.h>
->  #include <linux/uaccess.h>
-> +#include <linux/set_memory.h>
->
->  #include <asm/cacheflush.h>
->  #include <asm/inst.h>
-> @@ -218,6 +219,32 @@ int larch_insn_patch_text(void *addr, u32 insn)
->         return ret;
->  }
->
-> +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       int ret;
-> +       unsigned long flags;
-> +       unsigned long dst_start, dst_end, dst_len;
-> +
-> +       dst_start =3D round_down((unsigned long)dst, PAGE_SIZE);
-> +       dst_end =3D round_up((unsigned long)dst + len, PAGE_SIZE);
-> +       dst_len =3D dst_end - dst_start;
-> +
-> +       set_memory_rw(dst_start, dst_len / PAGE_SIZE);
-> +       raw_spin_lock_irqsave(&patch_lock, flags);
-> +
-> +       ret =3D copy_to_kernel_nofault(dst, src, len);
-> +       if (ret)
-> +               pr_err("%s: operation failed\n", __func__);
-> +
-> +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> +       set_memory_rox(dst_start, dst_len / PAGE_SIZE);
-> +
-> +       if (!ret)
-> +               flush_icache_range((unsigned long)dst, (unsigned long)dst=
- + len);
-> +
-> +       return ret;
-> +}
-> +
->  u32 larch_insn_gen_nop(void)
->  {
->         return INSN_NOP;
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index 7032f11d3..5e6ae7e0e 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -4,8 +4,12 @@
->   *
->   * Copyright (C) 2022 Loongson Technology Corporation Limited
->   */
-> +#include <linux/memory.h>
->  #include "bpf_jit.h"
->
-> +#define LOONGARCH_LONG_JUMP_NINSNS 5
-> +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
-> +
->  #define REG_TCC                LOONGARCH_GPR_A6
->  #define TCC_SAVED      LOONGARCH_GPR_S5
->
-> @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
->   */
->  static void build_prologue(struct jit_ctx *ctx)
->  {
-> +       int i;
->         int stack_adjust =3D 0, store_offset, bpf_stack_adjust;
->
->         bpf_stack_adjust =3D round_up(ctx->prog->aux->stack_depth, 16);
-> @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
->         stack_adjust =3D round_up(stack_adjust, 16);
->         stack_adjust +=3D bpf_stack_adjust;
->
-> +       /* Reserve space for the move_imm + jirl instruction */
-> +       for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
-> +               emit_insn(ctx, nop);
-> +
->         /*
->          * First instruction initializes the tail call count (TCC).
->          * On tail call we skip this instruction, and the TCC is
-> @@ -1367,3 +1376,98 @@ bool bpf_jit_supports_subprog_tailcalls(void)
->  {
->         return true;
->  }
-> +
-> +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
-> +{
-> +       if (!target) {
-> +               pr_err("bpf_jit: jump target address is error\n");
-> +               return -EFAULT;
-> +       }
-> +
-> +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> +
-> +       return 0;
-> +}
-> +
-> +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_=
-call)
-> +{
-> +       struct jit_ctx ctx;
-> +
-> +       ctx.idx =3D 0;
-> +       ctx.image =3D (union loongarch_instruction *)insns;
-> +
-> +       if (!target) {
-> +               emit_insn((&ctx), nop);
-> +               emit_insn((&ctx), nop);
-> +               return 0;
-> +       }
-> +
-> +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOON=
-GARCH_GPR_ZERO,
-> +                                 (unsigned long)target);
-> +}
-> +
-> +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> +                      void *old_addr, void *new_addr)
-> +{
-> +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
-_NOP};
-> +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
-_NOP};
-> +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
-> +       int ret;
-> +
-> +       if (!is_kernel_text((unsigned long)ip) &&
-> +               !is_bpf_text_address((unsigned long)ip))
-> +               return -ENOTSUPP;
-> +
-> +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> +               return -EFAULT;
-> +
-> +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mutex_lock(&text_mutex);
-> +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> +               ret =3D larch_insn_text_copy(ip, new_insns, LOONGARCH_LON=
-G_JUMP_NBYTES);
-> +       mutex_unlock(&text_mutex);
+> v2:
+> - rephrase the commit message, add comment for object_err().
+> v3:
+> - check object pointer in object_err().
+> v4:
+> - restore changes in alloc_consistency_checks().
+> v5:
+> - rephrase message, fix code style.
+> ---
 
-The text_mutex and patch_lock inside larch_insn_text_copy() ONLY
-prevent concurrent modifications.
-You may need stop_machine() to prevent concurrent modifications/executions.
+Looks good to me,
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
-> +       return ret;
-> +}
-> +
-> +int bpf_arch_text_invalidate(void *dst, size_t len)
-> +{
-> +       int i;
-> +       int ret =3D 0;
-> +       u32 *inst;
-> +
-> +       inst =3D kvmalloc(len, GFP_KERNEL);
-> +       if (!inst)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < (len/sizeof(u32)); i++)
-> +               inst[i] =3D INSN_BREAK;
-> +
-> +       mutex_lock(&text_mutex);
-> +       if (larch_insn_text_copy(dst, inst, len))
-> +               ret =3D -EINVAL;
-> +       mutex_unlock(&text_mutex);
-> +
-> +       kvfree(inst);
-> +       return ret;
-> +}
-> +
-> +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       int ret;
-> +
-> +       mutex_lock(&text_mutex);
-> +       ret =3D larch_insn_text_copy(dst, src, len);
-> +       mutex_unlock(&text_mutex);
-> +       if (ret)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       return dst;
-> +}
-> --
-> 2.25.1
->
+-- 
+Cheers,
+Harry / Hyeonggon
+
+>  mm/slub.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 31e11ef256f9..b3eff1476c85 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1104,7 +1104,12 @@ static void object_err(struct kmem_cache *s, struct slab *slab,
+>  		return;
+>  
+>  	slab_bug(s, reason);
+> -	print_trailer(s, slab, object);
+> +	if (!check_valid_pointer(s, slab, object)) {
+> +		print_slab_info(slab);
+> +		pr_err("Invalid pointer 0x%p\n", object);
+> +	} else {
+> +		print_trailer(s, slab, object);
+> +	}
+>  	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
+>  
+>  	WARN_ON(1);
+> -- 
+> 2.30.2
 
