@@ -1,240 +1,106 @@
-Return-Path: <linux-kernel+bounces-755042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73745B1A089
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:24:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A66B1A08E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB733A4289
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398FF18901FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20192522A1;
-	Mon,  4 Aug 2025 11:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUN6Og3U"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEC11E5213;
-	Mon,  4 Aug 2025 11:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FBF24EAB1;
+	Mon,  4 Aug 2025 11:28:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6D71DFF0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754306674; cv=none; b=MTYdOyGLNo+FVm4yREoMGk9uQIvgDeEdqz83R8SGC+VkjmlZQl1tBkCaahNyprXdmoNKeo1hp9sXLugp3ZlmK2GV8w9ulXCNO+eYnTJ2C/9P0+H1B7KWzd4jU7wxifyU2g41KzDffINNx9ZFtNcJ5+6UkcDPnkpjihdechn5eVw=
+	t=1754306887; cv=none; b=EIj2o2ja3ADnMZiQWkb+0jYsVSwghtKvxQXuPJWvyODBsJ2KOQLwloJyTVl3GJXEr8I97HdvpRsvujbi00cZUNOW57saPXTtv2Y21mpiGqAaz+gs8HRWVSApNBLPFij/PRPUSOvbpDmfuY+KJWrDxV67aJnb3HQ2MQThsYKF7zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754306674; c=relaxed/simple;
-	bh=K3QmAP28TIZiVWo6uxeExrU7f5L8dIyVAI4JjHe6Fng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1t+k4+bRc8BhJIyGx9bbWMOZ8lc+GwR+wMDBSQRpwWsKfHxIQFti/KhWkd8mioYoN1cD1Zbd+UAILdUA6IkjsamASy6W7iofIecpdmCE6K6hegeHXloyiwnYcbC9iUNRfH2DpP6TOSjh0l3Ztz5nuhsJoPrg7nFFNrHZtKYt7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUN6Og3U; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459d4d7c745so11800135e9.1;
-        Mon, 04 Aug 2025 04:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754306670; x=1754911470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCjygzKZqoMfaDFf1VqZTbmyGyiejIeO2DsGnWTZzXg=;
-        b=lUN6Og3UkUbeXNqUMu7CCDu1DCNv9wKnOAeuhPPbMHsEk67izMK/4bkHp00nHgPCL9
-         tiOemgQYlq6+f2Kuko8WPyu28wZ34HztCKUqWk6/p01HUOw+tVRK1tIKhTpwYVsG6dJO
-         JC+XTo0L1TrpldiYjoRsOD+3a0imaZByre42b8k/s2XkatGBgE8TajvulqBLfoeAIfWV
-         KafGHL94bTFJ8Gjr6BsbtcIMqX+hHvDtzGFiC0NMcnGmYbZ3+HRoXg9juQb03w8ojcRp
-         fNAg/aJso0kX/yyR0DnWsPSY/YGmRCUDSAwYySNEJkUPpgzv8I72H1sjkx989d3lku48
-         zfNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754306670; x=1754911470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCjygzKZqoMfaDFf1VqZTbmyGyiejIeO2DsGnWTZzXg=;
-        b=DNCsw0kezwtu3jdZdm9CJP1p6nGxBAQ4QrqEstfnSb89QXtH6vJxBx0ij+I66q2XbY
-         iLi6HdKj7+IRPp4GLAHUaUT6uV6HwoXA9HXUYrnnimPduzWo6kW4wMETHwv5MbhnLv9s
-         MumPDBe34WwjF93rzBeq4F19oprO3/mqa7vV7mrhO0kt0O7MXI4z3gCOZvQ+YH6fqcpt
-         jHONJvta8luWCo0Xx4jBMe+CftyUFNV8u1fC07du/HckbqLUCo5hN96sJ9oF8PgPyMSg
-         gGq1YPMWqh495UiVTotdyDrRuLulCUOz4KW4/qEDlPhXIWLL2YK5lbN34Rc9VkYZyaYi
-         RF3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGMQbzi5/AjxVDx53+cYg75p2tloK8yz+nC2jZ5AXU77v8eo44pJaEls2inIq7yZEf5VjK0Wjwp5DMhzwmrYk=@vger.kernel.org, AJvYcCVzyNPfVi6iC9K7Wy8p0QQtblBGts4WZ0Wl3ze7bw96BIP1ChI0G4cv4K9D4eFMZmIaipVyo7gcBfZSAZ9r@vger.kernel.org, AJvYcCWpltUSnzHS2d6jb6UxXuajIMUFU6e2eaCGs/7+qxsk8p1xsLIatUP0YC2v5RlmQxxVjN25diVj0/d7x+uHL7twDcM=@vger.kernel.org, AJvYcCWzixGOT4Z4Rj9T1S+jpfRfrW2AX03Tyh0IOgbFcn+k0wT00JRLKW89FCxpVDPDVy6o3MKUdHc9FeD6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSB50MlcW2b+mgTJUUGNfWrgJgE0WDBKIWE9sufqrWFWNfkzP2
-	vjaMGImX6Ii2M66Qd/+oEz8J/H7AST/BQ0TLjx/p+rFepMLEnv/HjvXt/BEIrLbQyt0eUZBXmIz
-	b7NQX/KqBQ/4VaQapx9X1dCmiH3NEGEdzJg==
-X-Gm-Gg: ASbGncuT31v7Gw7fA6Uog/2OdbDBU+d+2V3rinxsvOxA7JZnwt5MufPj01M7pR5xZKr
-	Jw7zlovEjdHlyiyN1TWAvFCy9miQ3wKNz/8qZ2bU9f2VBJ6eNBJxFBvFv36aINwv+RWjSZ2/KsM
-	TwFYi8D9NK4IELJvt8GwZpGXKO46ZI70Ct98Vg9o1PyIa5A3mWt2uwniYAsE/2xJzfe3Ohx8E2t
-	J4axsU=
-X-Google-Smtp-Source: AGHT+IGEOsOZE7S7k8XmaBq4/opFyCzTHAK0PEsryUnIjdqtz1R0yNFX5+WAnDk7sG2xccjEEF36HnUvUQHqiVkbzxw=
-X-Received: by 2002:a05:6000:2dc9:b0:3b7:8d70:dac5 with SMTP id
- ffacd0b85a97d-3b8d9464526mr7069585f8f.2.1754306670116; Mon, 04 Aug 2025
- 04:24:30 -0700 (PDT)
+	s=arc-20240116; t=1754306887; c=relaxed/simple;
+	bh=TVL7oBZTW4sAc3iLEJbdMd79Nyh9EdGsVc8HVP/ZcWQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XRwmnsolVBuCb/CSczv779h/OTLCW+Zecu4EovYporgOVyQkXg/1sD9/LeOHJwzLUGqqj2rL4tDfKr+NKvenBYUnFqlUZfPpLhUV2nhaKp43LpI1ucn+WjxCvnpWtPPq5A7wGDa1WcjNZn9DEjV9kirO2ULhCUvFhQ8agK20BWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CCAF1424;
+	Mon,  4 Aug 2025 04:27:56 -0700 (PDT)
+Received: from e127648.cambridge.arm.com (e127648.arm.com [10.1.25.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 463E33F673;
+	Mon,  4 Aug 2025 04:28:02 -0700 (PDT)
+From: Christian Loehle <christian.loehle@arm.com>
+To: tj@kernel.org,
+	arighi@nvidia.com,
+	void@manifault.com
+Cc: linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	changwoo@igalia.com,
+	hodgesd@meta.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH v2 0/3]  sched_ext: Harden scx_bpf_cpu_rq()
+Date: Mon,  4 Aug 2025 12:27:40 +0100
+Message-Id: <20250804112743.711816-1-christian.loehle@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aIw-P6zkQSOhvYJW@shikoro> <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
- <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net> <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
- <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net> <CA+V-a8v0KZaeJwJAmEpRRdS3F3vC_CYv7zGN_n9a+M6qhFDMHg@mail.gmail.com>
- <6b9338c0-e333-47dd-a3e0-0446b346f008@roeck-us.net> <CA+V-a8tJMfjVUNfA5wue0Zwpj=dDC9XypQ69L9SeZApRH8i1aA@mail.gmail.com>
- <c5db278f-7fbf-45cf-8b6f-2f5604daf6ee@roeck-us.net>
-In-Reply-To: <c5db278f-7fbf-45cf-8b6f-2f5604daf6ee@roeck-us.net>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 4 Aug 2025 12:24:04 +0100
-X-Gm-Features: Ac12FXyhiGAmAilKDCDJZAtkMjeQIKXsi2BoPtE_meMOy3Ny_pbMFbrZnKKZ3tE
-Message-ID: <CA+V-a8tOFqt79D9K9vQsKYaou76b-=+73+4Y3RNc86uMXnqU5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Guenter,
+scx_bpf_cpu_rq() currently allows accessing struct rq fields without
+holding the associated rq.
+It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
+scx_tickless. Fortunately it is only ever used to fetch rq->curr.
+So provide an alternative scx_bpf_remote_curr() that doesn't expose
+struct rq and harden scx_bpf_cpu_rq() by ensuring we hold the rq lock.
 
-On Sun, Aug 3, 2025 at 1:16=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 8/2/25 12:26, Lad, Prabhakar wrote:
-> > Hi Guenter,
-> >
-> > On Fri, Aug 1, 2025 at 10:04=E2=80=AFPM Guenter Roeck <linux@roeck-us.n=
-et> wrote:
-> >>
-> >> On 8/1/25 13:51, Lad, Prabhakar wrote:
-> >>> Hi Guenter,
-> >>>
-> >>> On Fri, Aug 1, 2025 at 7:04=E2=80=AFPM Guenter Roeck <linux@roeck-us.=
-net> wrote:
-> >>>>
-> >>>> On 8/1/25 08:30, Lad, Prabhakar wrote:
-> >>>>> Hi Guenter,
-> >>>>>
-> >>>>> On Fri, Aug 1, 2025 at 2:52=E2=80=AFPM Guenter Roeck <linux@roeck-u=
-s.net> wrote:
-> >>>>>>
-> >>>>>> On 8/1/25 04:05, Lad, Prabhakar wrote:
-> >>>>>>> Hi Wolfram,
-> >>>>>>>
-> >>>>>>> Thank you for the review.
-> >>>>>>>
-> >>>>>>> On Fri, Aug 1, 2025 at 5:10=E2=80=AFAM Wolfram Sang
-> >>>>>>> <wsa+renesas@sang-engineering.com> wrote:
-> >>>>>>>>
-> >>>>>>>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
-> >>>>>>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>>>>>>>>
-> >>>>>>>>> Update the watchdog minimum timeout value to be derived from
-> >>>>>>>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid =
-and
-> >>>>>>>>> consistent minimum timeout in seconds.
-> >>>>>>>>
-> >>>>>>>> I don't understand this change. Why is the _minimum_ timeout bas=
-ed on
-> >>>>>>>> the _maximum_ heartbeat?
-> >>>>>>>>
-> >>>>>>> The reason for deriving min_timeout from max_hw_heartbeat_ms is t=
-o
-> >>>>>>> ensure the minimum watchdog period (in seconds) is compatible wit=
-h the
-> >>>>>>> underlying hardware.
-> >>>>>>>
-> >>>>>>> max_hw_heartbeat_ms is calculated as:
-> >>>>>>> max_hw_heartbeat_ms =3D (1000 * 16384 * cks_div) / clk_rate;
-> >>>>>>>
-> >>>>>>> This value varies by SoC:
-> >>>>>>>      RZ/T2H: cks_div =3D 8192, clk =E2=89=88 62.5 MHz -> max_hw_h=
-eartbeat_ms ~ 2147ms
-> >>>>>>>      RZ/V2H: cks_div =3D 256, clk =E2=89=88 240 MHz -> max_hw_hea=
-rtbeat_ms ~ 174ms
-> >>>>>>>
-> >>>>>>> Since min_timeout is in seconds, setting it to:
-> >>>>>>> min_timeout =3D DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
-> >>>>>>>
-> >>>>>>> ensures:
-> >>>>>>> The minimum timeout period is never less than what the hardware c=
-an support.
-> >>>>>>> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
-> >>>>>>> - For V2H, it=E2=80=99s just 1s (174ms -> 1s).
-> >>>>>>>
-> >>>>>>
-> >>>>>> Sorry, I completely fail to understand the logic.
-> >>>>>>
-> >>>>>> If the maximum timeout is, say, 2 seconds, why would the hardware
-> >>>>>> not be able to support a timeout of 1 second ?
-> >>>>>>
-> >>>>> The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter.=
- On
-> >>>>> initialization the down counters on the SoCs are configured to the =
-max
-> >>>>> down counter. On RZ/V2H down counter value 4194304 (which evaluates=
- to
-> >>>>> 174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). T=
-he
-> >>>>> board will be reset when we get an underflow error.
-> >>>>>
-> >>>>> So for example on T2H consider this example:
-> >>>>> - down counter is 134217728
-> >>>>> - min_timeout is set to 1 in the driver
-> >>>>> - When set  WDIOC_SETTIMEOUT to 1
-> >>>>> In this case the board will be reset after 2147ms, i.e. incorrect
-> >>>>> behaviour as we expect the board to be reset after 1 sec. Hence the
-> >>>>> min_timeout is set to 3s (2147ms -> 3s).
-> >>>>>
-> >>>>> Please let me know if my understanding of min_timeout is incorrect =
-here.
-> >>>>>
-> >>>>
-> >>>> The driver is missing a set_timeout function. It should set RZ/T2H
-> >>>> to 62514079 if a timeout of 1 second is configured.
-> >>>>
-> >>> Ok, you mean to handle the 1sec case, introduce the set_timeout for R=
-Z/T2H SoC.
-> >>>
-> >>> Although we cannot achieve the exact 1sec case as we can have only 4
-> >>> timeout period options (number of cycles):
-> >>>
-> >>> 1] For TIMEOUT_CYCLES =3D 1024
-> >>>    - (1000=C3=971024=C3=978192)/62500000 =3D 134.22 ms
-> >>> 2] For TIMEOUT_CYCLES =3D 4096
-> >>> - (1000=C3=974096=C3=978192)/62500000 =3D 536.87 ms
-> >>> 3] For TIMEOUT_CYCLES =3D 8192
-> >>> - (1000=C3=978192=C3=978192)/62500000 =3D 1,073.74 ms
-> >>> 4] For TIMEOUT_CYCLES =3D 16384
-> >>> - (1000=C3=9716384=C3=978192)/62500000 =3D 2,147.48 ms
-> >>>
-> >>> So to handle the 1sec case I'll set the timeout period to 8192 with
-> >>> which we get a timeout of 1,073.74 ms.
-> >>>
-> >>
-> >> Just four possible values to set the hardware timeout ? That is an odd
-> >> hardware. In that case, you could also set the period to 1024 or 4096
-> >> and set max_hw_heartbeat_ms accordingly. That would avoid the rounding
-> >> error.
-> >>
-> > Yes sadly we have four timeout periods only. To clarify, you mean to
-> > set `max_hw_heartbeat_ms` in set_timeout?
-> >
->
-> No, during initialization, and have no set_timeout function. max_hw_heart=
-beat_ms
-> is not supposed to change during runtime. If you do change it, the result=
-s
-> are undefined.
->
-Thank you for the clarification. Ive done the changes as suggested. I
-will send a v3 soon.
+This also simplifies scx code from:
 
-Cheers,
-Prabhakar
+rq = scx_bpf_cpu_rq(cpu);
+if (!rq)
+	return;
+p = rq->curr
+if (!p)
+	return;
+/* ... Do something with p */
+
+into:
+
+p = scx_bpf_remote_curr(cpu);
+if (!p)
+	return;
+/* ... Do something with p */
+bpf_task_release(p);
+
+
+Patch 1 was previously submitted and can be applied independently of
+the other two.
+https://lore.kernel.org/lkml/43a9cbdc-5121-4dc8-8438-0f01c90a4687@arm.com/
+https://lore.kernel.org/lkml/0b8111c6-1b14-41dc-a674-14a6361992b3@arm.com/
+
+v1:
+https://lore.kernel.org/lkml/20250801141741.355059-1-christian.loehle@arm.com/
+- scx_bpf_cpu_rq() now errors when a not locked rq is requested. (Andrea)
+- scx_bpf_remote_curr() calls bpf_task_acquire() which BPF user needs to
+release. (Andrea)
+
+Christian Loehle (3):
+  sched_ext: Mark scx_bpf_cpu_rq as NULL returnable
+  sched_ext: Provide scx_bpf_remote_curr()
+  sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
+
+ kernel/sched/ext.c                       | 36 ++++++++++++++++++++++--
+ tools/sched_ext/include/scx/common.bpf.h |  1 +
+ 2 files changed, 35 insertions(+), 2 deletions(-)
+
+--
+2.34.1
+
 
