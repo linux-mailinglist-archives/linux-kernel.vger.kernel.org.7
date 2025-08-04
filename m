@@ -1,144 +1,151 @@
-Return-Path: <linux-kernel+bounces-754914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4DDB19E78
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D635B19E80
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE6D179E48
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4791316CAF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD33242D6A;
-	Mon,  4 Aug 2025 09:08:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973FF238C08
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55539242D9E;
+	Mon,  4 Aug 2025 09:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fWb3SHUg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7CB1FAC4E;
+	Mon,  4 Aug 2025 09:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298497; cv=none; b=a/dXWcQNyFVl/vhC9BU8iT3ieeuLjqf3DhF4zh+2dPSEdGjyRW6BoDA57it+Crfw5yCU0B8K9tuvDE6tquPVY/bNaOMuDclqKlzY89o8OMzidQnZQaZtN1JxzC5JuhrmpKvmFavDQIGvt38n32VsVe9HkTwu6zaz3qHYowODPxw=
+	t=1754298573; cv=none; b=EbZZrOuqIQEnaCYay0gxphYKekbc31ys7NqJrCFMjysw5XrpggMZ/JE8EPwjjIjZUYxVc+9r4RhLHJCf+Jov32DgD1ur07Lzk2lSZ5paFbx6u/KCm4YBjDZ+rliw8xVcFySU1/bUxopObektaMHFRaXWu1WpqKYzwNAJw+CNfOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754298497; c=relaxed/simple;
-	bh=4cW79w3TAxed18ZA2cTsK6j6RgIzbNsrKALqC43LPXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNM5Q6J/WB+kZXpY5r1nYSWS4qrO6Uql+iGIYbDjxJuiXbWh4MVeeQWPnOPGHkpfYileNehAg0rOTFjFDHcFCU/fzDx6hzCBLeM7un9Vle6+U0Iaoxpv7cjKACvUYKENuhh4Z4WYjVTojVwBAUJIXCI9mLuttEY7YBJsZiiksrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACBEF1C25;
-	Mon,  4 Aug 2025 02:08:06 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 516E03F673;
-	Mon,  4 Aug 2025 02:08:14 -0700 (PDT)
-Date: Mon, 4 Aug 2025 10:08:12 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Levi Yun <yeoreum.yun@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/28] coresight: etm4x: Always set tracer's device
- mode on target CPU
-Message-ID: <20250804090812.GI143191@e132581.arm.com>
-References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
- <20250701-arm_cs_pm_fix_v3-v2-2-23ebb864fcc1@arm.com>
- <09f9d195-7f3c-4cf1-95da-7e29c398ebcc@arm.com>
+	s=arc-20240116; t=1754298573; c=relaxed/simple;
+	bh=LXaJJmPQqXnbL/bmZnzqXb0txLVlMmOtBWlErQC9Kr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B/XP+1cT2O0cZ5DFdqALpRcdjvmcvmTseSQSfx4NwwxXKvhP/OGBWp5m7xRAz9FotZ5sMVR8rVXU6XhyklSDIoVBdzFOduCJ0TwBIzn7ErFPpDT3JMuoAOEu/30xtUlgHy2T+qnYaNlO4SoDergi3Uj1zNIcUEpQIPwoRpSlr00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fWb3SHUg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573Kfcls029457;
+	Mon, 4 Aug 2025 09:09:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=DAQV0AwXeHE/PwMvOBgIQg+ASlsQc1X48WemPBpqA
+	p8=; b=fWb3SHUg47YjoUVNywFxRPTsnu/Wezkhd2rU3UvNgA/pAP9FTpxFEjxPP
+	Agd74NEokr2BHiA6vSZJMZgYBju4FucUXFjPRAzUZwyrx+KPfsM1gu4UhYThI71s
+	YV3FCGqacauCfc6SfG79AT+Wx9yUaRNMDtdng+I2y6tEw1MIJR2ArWXQ+5Adk8EO
+	7ebYvx4Ef+xuMq0qx/jl3D4jZysMZ5OASnA7UH3YbM5UPdrrDPM93GSr0Qyvfkth
+	6MNukVXhEZWT/NnbBeUZ2Oj3L7MJWls/vEFLGOcGUum9r5i3H2Ke9wBuH61bGe5l
+	fnJ5ObrkB2Be0iVkRbHr3YmM3FLsQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3fxj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 09:09:25 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5745fU3C002484;
+	Mon, 4 Aug 2025 09:09:24 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489wcyw3qq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 09:09:24 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57499Kxs47776186
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Aug 2025 09:09:20 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CC542033F;
+	Mon,  4 Aug 2025 09:09:20 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3C95B2034D;
+	Mon,  4 Aug 2025 09:09:14 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Aug 2025 09:09:14 +0000 (GMT)
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>, sumanthk@linux.ibm.com
+Subject: [PATCH] mm: fix accounting of memmap pages for early sections
+Date: Mon,  4 Aug 2025 11:08:59 +0200
+Message-ID: <20250804090859.727207-1-sumanthk@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09f9d195-7f3c-4cf1-95da-7e29c398ebcc@arm.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Z+jsHGRA c=1 sm=1 tr=0 ts=689078c5 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=KawUSfIWrfKEQJWuwW8A:9
+X-Proofpoint-ORIG-GUID: Mqcg8VsFLq_ouAd6ooDn7elCav4_qeSW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA0NyBTYWx0ZWRfX69T6gTqLTtTk
+ gNMtzS5VDmmjbCVGiGeAdc3H4texRhpBLJQusvAaX1ZmQNPnsBfeEAR5VHx7tNOeOwFAWyiCbhn
+ QU48qNiDoEWQr+TkTLD2/mO4hRvUJBIGQ9dFDBjp4gwhhS0WSifIZpx2HigXqXM/xoDS4OkhfhL
+ tfNHl+IvS2r75+pLnwBMV0jGKqia+H7O2gzwgEk0LmlqxS1N9mqO++gpN5jYcxDTZPDCz8epJmW
+ puCNvnRlC46oejNbzP5yjH1OBJresuJWBv70SZQSZ6OCzxpCjkEDG0UsciM/93/CebN27iOtrIB
+ BZiQnu+gV6MA7dQgAVr9TAYCVhgUIHzZGK9xsswwHO8n7rFKSCWoP+BtZndpSOkU0OGqQ2zHRG0
+ ZEkd2KVmhWrOjPBx6Gk4VSb08FA274TH4Hw3huVDjJA9D7wyV1nrx4S7t4Hd5He5rZJlajS8
+X-Proofpoint-GUID: Mqcg8VsFLq_ouAd6ooDn7elCav4_qeSW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1011 suspectscore=0
+ priorityscore=1501 mlxlogscore=434 adultscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040047
 
-On Tue, Jul 15, 2025 at 12:56:54PM +0530, Anshuman Khandual wrote:
-> 
-> On 01/07/25 8:23 PM, Leo Yan wrote:
-> > When enabling a tracer via SysFS interface, the device mode may be set
-> > by any CPU - not necessarily the target CPU. This can lead to race
-> > condition in SMP, and may result in incorrect mode values being read.
-> > 
-> > Consider the following example, where CPU0 attempts to enable the tracer
-> > on CPU1 (the target CPU):
-> > 
-> >  CPU0                                    CPU1
-> >  etm4_enable()
-> >   ` coresight_take_mode(SYSFS)
-> >   ` etm4_enable_sysfs()
-> >      ` smp_call_function_single() ---->  etm4_enable_hw_smp_call()
-> >      			                /
-> >                                        /  CPU idle:
-> >                                       /   etm4_cpu_save()
-> >                                      /     ` coresight_get_mode()
-> > 	       Failed to enable h/w /         ^^^
-> >   ` coresight_set_mode(DISABLED) <-'          Read the intermediate SYSFS mode
-> 
-> The problem is - CPU1's HW state and CPU1's sysfs mode state might not
-> remain in sync if CPU1 goes into idle state just after an unsuccessful
-> etm4_enable_sysfs() attempt from CPU0. In which case a subsequent read
-> coresight_get_mode() on CPU1 might erroneously give us DISABLED state,
+memmap pages  can be allocated either from the memblock (boot) allocator
+during early boot or from the buddy allocator.
 
-In this case, CPU1 reads an intermediate "SYSFS" state, even though it
-failed in etm4_enable_hw_smp_call(). The current code defers setting
-the state to DISABLED on CPU0. As a result, CPU1 will incorrectly save
-and restore the ETM context based on the intermediate "SYSFS" state.
+When these memmap pages are removed via arch_remove_memory(), the
+deallocation path depends on their source:
 
-> which actually does not seem to be too bad as the earlier enablement
-> attempt had failed anyway. Just trying to understand what is the real
-> problem here.
+* For pages from the buddy allocator, depopulate_section_memmap() is
+  called, which also decrements the count of nr_memmap_pages.
 
-The problem is CPU1 might get an intermediate state, it turns out a
-stale value and might guide CPU idle flow to wrongly save and restore
-ETM context.
+* For pages from the boot allocator, free_map_bootmem() is called. But
+  it currently does not adjust the nr_memmap_boot_pages.
 
-> > In this case, CPU0 initiates the operation by taking the SYSFS mode to
-> > avoid conflicts with the Perf mode. It then sends an IPI to CPU1 to
-> > configure the tracer registers. If any error occurs during this process,
-> 
-> What kind of error can happen during this process ?
+To fix this inconsistency, update free_map_bootmem() to also decrement
+the nr_memmap_boot_pages count by invoking memmap_boot_pages_add(),
+mirroring how free_vmemmap_page() handles this for boot-allocated pages.
 
-So far, it might fail to claim a device and return an error.
+This ensures correct tracking of memmap pages regardless of allocation
+source.
 
-A similar issue might occur when CPU1 exits an idle state. For example,
-if CPU0 initiates the ETM enabling flow and sets the SYSFS mode in
-advance, once CPU1 is woken up from idle by an IPI, it reads the ETM
-state (SYSFS mode) and then restores and enables the ETM. This can
-happen even before CPU1 invokes etm4_enable_hw_smp_call() to complete
-the ETM enable flow.
+Cc: stable@vger.kernel.org
+Fixes: 15995a352474 ("mm: report per-page metadata information")
+Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+---
+ mm/sparse.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > CPU0 rolls back by setting the mode to DISABLED.
-> 
-> Which seems OK.
-> 
-> > 
-> > However, if CPU1 enters an idle state during this time, it might read
-> > the intermediate SYSFS mode. As a result, the CPU PM flow could wrongly
-> > save and restore tracer context that is actually disabled.
-> 
-> Right but CPU0 had marked the CPU1' state as DISABLED after the enable
-> attempt had failed. So what is the problem ?
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 3c012cf83cc2..d7c128015397 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -688,6 +688,7 @@ static void free_map_bootmem(struct page *memmap)
+ 	unsigned long start = (unsigned long)memmap;
+ 	unsigned long end = (unsigned long)(memmap + PAGES_PER_SECTION);
+ 
++	memmap_boot_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
+ 	vmemmap_free(start, end, NULL);
+ }
+ 
+-- 
+2.48.1
 
-There is a race condition between CPU0 writing the state and CPU1
-reading the state (during its CPU idle flow). CPU1 might read a state
-that is inconsistent with the actual ETM hardware state, which causes
-CPU1 to save and restore the ETM context incorrectly.
-
-A wider view is this series heavily relies on the ETM state to decide
-the linked path has been enabled and take action for saving and
-restoring all components on the path (not for ETM device only). We need
-a reliable state machine to reflect hardware state. To avoid any
-intermediate state, we always set the state on the target CPU.
-
-Thanks,
-Leo
 
