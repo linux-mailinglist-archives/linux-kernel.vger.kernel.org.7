@@ -1,152 +1,93 @@
-Return-Path: <linux-kernel+bounces-755736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F50BB1AB0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:50:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C13B1A961
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5313D18A29C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:51:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA4D7A5071
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEEE23C8AE;
-	Mon,  4 Aug 2025 22:50:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA65323E;
-	Mon,  4 Aug 2025 22:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743E28B408;
+	Mon,  4 Aug 2025 19:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="I2SBtPqC"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6183C223DFB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 19:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754347838; cv=none; b=OQqcTRaw3GBwp0dAeQJZwEWhrW4WW7/3WPFghoDjnbz9VN8zQKjvDt3jiegRLqf1HSR2m7iq7sJ1mPYyOlmqPcl3Cz2qlH2JzyW185NQBdEaQZti+E1D1VPtUiDeDnMDuWQez3eVPsPFovB0Vnc+/uAVbHNuBX+Sc4l0MFG28wo=
+	t=1754334591; cv=none; b=NPzZQHZik2mOx8lmZb3iudEsQ9D4lQ3eKX9rpl/udE+y/D6OxLEc5UkagxQegTLWoskBAhA+x2w+5GUB8QV25bm35CrNV6Szz9658uf1rpglbNF5/wihXCF47d+zW5B3tbP6EXIcyN+C08/3LoYfrURWT+uypF5mEsXZA9IomeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754347838; c=relaxed/simple;
-	bh=lISH+n0jo+DtMvMOOnB9QUSLRxlCjqrGr9XQZv2c8so=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HT5TYcwqsJKy9j0HykaqYnq4I0/yNQ91Qch7m5MD2N5iqI9p3OYFxj4Xf12xCFVYTBu8nGLVRWAdgyZ3Zcki+VRbnwjLvvxsUwaZmgpOGrUWI8LSw7PJbrRhm4OJs7W1mbhAHtIOxvtwBSnq3Or/AVuYDWvngAfpURy+zw+lT1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bwmCH6vkyz9vF1;
-	Mon,  4 Aug 2025 21:02:35 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id dzPhUKf9CYtV; Mon,  4 Aug 2025 21:02:35 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bwmCF5SFSz9vDl;
-	Mon,  4 Aug 2025 21:02:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 695098B765;
-	Mon,  4 Aug 2025 21:02:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id KC5YIf5SR_OU; Mon,  4 Aug 2025 21:02:28 +0200 (CEST)
-Received: from [192.168.202.221] (unknown [192.168.202.221])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B770B8B763;
-	Mon,  4 Aug 2025 21:02:27 +0200 (CEST)
-Message-ID: <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
-Date: Mon, 4 Aug 2025 21:02:27 +0200
+	s=arc-20240116; t=1754334591; c=relaxed/simple;
+	bh=EoqfN+RU6ie7d3cK9su2M9aANqfgOvgis4RwAsxwdIM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJXWE0TZbb6h3utKNStrN10qx21orQp6t/uARY56spr2v3IM7rn+8m2ghSuerwgmqi0KnjLFj41qbqbFDLOC0RO13k/hdjAGJ6nvr+ldURWhGr9IU72G0LKusnGhJSeI2C21nFKsM5UtqI53qPdIApWzZzHdrrq8bXZVuxDq6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=I2SBtPqC; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574J4F7p014745
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 12:09:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=CVr4dJoT4GG1Eomf8VBL
+	A90t/VLrfXOEcI7JaT4XHqY=; b=I2SBtPqCUgL0pwVPlPkWHU0H827lpFozbzti
+	SOYdRsT9nxB5OYHVTDAze1tWxuKLL9R2PkqDr6JwMgpcmqe7n7W2pnxIVAX4Y8HB
+	nylx8C96ZRUx0NCGXn3zuu37Szz6lfZSkV/RptDf0YioVBnmvGHBfp83xo8ghQPk
+	7yf1pn1Hf573fOWcWS32gnXcq8NYRjTkXwedSoLIbAd5mTGtT0kfHsrgM826jbD1
+	U+v0ITxOOIHi4jIKoB2ZppFCcyckG9MPpHXMs0j787+XxVDNAkKW0Wx52J5Yjf8y
+	vKKaMbJFbpCAF4C9p83zGAgiSTNg2vlxIJCugD+wY9QdpDL7Ag==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48ar4gcc5w-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:09:49 -0700 (PDT)
+Received: from twshared21625.15.frc2.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Mon, 4 Aug 2025 19:09:46 +0000
+Received: by devgpu013.nha3.facebook.com (Postfix, from userid 199522)
+	id B3564654B2F; Mon,  4 Aug 2025 12:09:33 -0700 (PDT)
+Date: Mon, 4 Aug 2025 12:09:33 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith
+ Busch <kbusch@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <aJEFbQgzfY6nf5Lc@devgpu013.nha3.facebook.com>
+References: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
+ <20250804102559.5f1e8bcf.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
- code
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org
-References: <20250803204433.75703-1-ebiggers@kernel.org>
- <20250803204433.75703-4-ebiggers@kernel.org>
- <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
- <20250804180923.GA54248@google.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250804180923.GA54248@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250804102559.5f1e8bcf.alex.williamson@redhat.com>
+X-FB-Internal: Safe
+X-Proofpoint-ORIG-GUID: QVMYoBWadphQ4gmT1HV3eM0RJPlG1GXW
+X-Proofpoint-GUID: QVMYoBWadphQ4gmT1HV3eM0RJPlG1GXW
+X-Authority-Analysis: v=2.4 cv=bM0WIO+Z c=1 sm=1 tr=0 ts=6891057d cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=j2pstE2d10wfqDpL5AwA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDExMSBTYWx0ZWRfXwEb2Ob+9ZOHM SbfoFzKBtFXHfbcFSINyl5+mPmB842UqQAqMtFRcgtZrHEkCNksMY0V3GoxQftO4FvH1R2Af0oi DmRR7wMkBxfDBI8w51w3SBFPShVEi3AVYu9ljqmbpXtuC6oJpCQPHD+4rtk+0bm5/8PLvxodUr/
+ ewfCtmMQlxIGsUTpsSMDfjBpd0//9Vwfcv65qhwrouImUnXs7viZp24m3VhIzdXvP6B42leikF2 0M/oLt7I/UAecKRdeIpALm1k8gvfk2eLxiXsto4Qlyk6RrsRHqZ4COKBtNgP6TnYgq0lbLqF2GW CTn05NTUrhYVI5dk/G+MfnAs6+iyYGhXkhVU2l8AWmU2R2mBp0+mxM3RbL2HTfomlbffVrFtuhb
+ MLecBYVOvEuginaC/MG7hZxavxS0CVnAwf4RTEOEtsyj+8bxIxxZj3dhef5PsW1Xgtp3NGML
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_08,2025-08-04_01,2025-03-28_01
 
+On Mon, Aug 04, 2025 at 10:25:59AM -0600, Alex Williamson wrote:
+> Changes in this file look spurious, vfio_device_ops vs
+> vfio_device_fops?  Nothing implements or consumes the vfio_device_ops
+> callback here.
 
-
-Le 04/08/2025 à 20:09, Eric Biggers a écrit :
-> On Mon, Aug 04, 2025 at 07:42:15PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 03/08/2025 à 22:44, Eric Biggers a écrit :
->>> MD5 is insecure, is no longer commonly used, and has never been
->>> optimized for the most common architectures in the kernel.  Only mips,
->>> powerpc, and sparc have optimized MD5 code in the kernel.  Of these,
->>> only the powerpc one is actually testable in QEMU.  The mips one works
->>> only on Cavium Octeon SoCs.
->>>
->>> Taken together, it's clear that it's time to retire these additional MD5
->>> implementations, and focus maintenance on the MD5 generic C code.
->>
->> Sorry, for me it is not that clear. Even if MD5 is depracated we still have
->> several applications that use MD5 for various reasons on our boards.
->>
->> I ran the test on kernel v6.16 with following file:
->>
->> # ls -l avion.au
->> -rw-------    1 root     root      12130159 Jan  1  1970 avion.au
->>
->> With CONFIG_CRYPTO_MD5_PPC:
->>
->> # time md5sum avion.au
->> 6513851d6109d42477b20cd56bf57f28  avion.au
->> real    0m 1.02s
->> user    0m 0.01s
->> sys     0m 1.01s
->>
->> Without CONFIG_CRYPTO_MD5_PPC:
->>
->> # time md5sum avion.au
->> 6513851d6109d42477b20cd56bf57f28  avion.au
->> real    0m 1.35s
->> user    0m 0.01s
->> sys     0m 1.34s
->>
->> I think the difference is big enough to consider keeping optimised MD5 code.
-> 
-> But md5sum doesn't use the kernel's MD5 code.  So it's implausible that
-> it has any effect on md5sum.  The difference you saw must be due to an
-> unrelated reason like I/O caching, CPU frequency, etc.  Try running your
-> test multiple times to eliminate other sources of variation.
-
-md5sum uses the kernel's MD5 code:
-
-# ldd `which md5sum`
-         linux-vdso32.so.1 (0x77b90000)
-         libkcapi.so.1 => /usr/lib/libkcapi.so.1 (0x6ffa0000)    <==
-         libcrypt.so.1 => /lib/libcrypt.so.1 (0x6ff50000)
-         libc.so.6 => /lib/libc.so.6 (0x6fd10000)
-         /lib/ld.so.1 => //lib/ld.so.1 (0x77ba0000)
-
-Previous test was on an mpc8xx.
-
-I now did the test on mpc832x and the difference is even bigger:
-
-With CONFIG_CRYPTO_MD5_PPC:
-
-# time md5sum avion.au
-6513851d6109d42477b20cd56bf57f28  avion.au
-real    0m 0.41s
-user    0m 0.00s
-sys     0m 0.34s
-
-Without CONFIG_CRYPTO_MD5_PPC:
-
-# time md5sum avion.au
-6513851d6109d42477b20cd56bf57f28  avion.au
-real    0m 0.58s
-user    0m 0.00s
-sys     0m 0.47s
-
-Christophe
+Agh. Yes. I missed removing this. Fixing in v4.
 
