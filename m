@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-754861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EA0B19D9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:29:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C248DB19DA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737CF172BD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:29:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38527A50A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A4524169F;
-	Mon,  4 Aug 2025 08:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC5923F295;
+	Mon,  4 Aug 2025 08:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpagILEA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeCrmvpe"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAF71C5D59;
-	Mon,  4 Aug 2025 08:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413851E25EB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296141; cv=none; b=oaDOo2rG2wAHLXLwHTSKnGiuH1uF8HLpiXPe+w2nDT8dQj45J9dTUSRQHeMUuKrhC4toHij7toH7BN6X1fah4a81nzgHO4/6zjCByl7W7KWRRRh6pFiEljrQ3WjXL1NZcG8Koqd4uWJagaV0jv030rVs7C8tLnroCAHtWkWXTz4=
+	t=1754296206; cv=none; b=ng/GGTsRoJV7/FT88xRbof5bR74OVT5FVI4BM3yvIg0lcQzL1Xr5xIH0nksGfK1Q31xcBQYY9dxGP4UIGstLVsi+7/EWsvdhbVabKtg3GKf0rh+1vtWdYu9WFtvGZGU6zEFfv976anmRa0+2H0bN8+Q5vAVmlPys42CMxbMdXLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296141; c=relaxed/simple;
-	bh=DwOZcfM/c4GuDZJmEoD7EL7622q+//Noz+SL9yl0crc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BEV5RGi9NyzoHnV5dck62rj+AETLU6mHsgBHcUDloEPyQBMp4tvL7+dpkzVMX9Hp6z3vqUre/DKfGfYXD22XDrY5BqqIODHkIiBWgIqZ3d9pxXXhfkkx5zUK64Owe316zurGT0TJA3xFKLM1i+kJXtqjBwXQu1yCCVnIUPEZGC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpagILEA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8998C4CEE7;
-	Mon,  4 Aug 2025 08:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754296141;
-	bh=DwOZcfM/c4GuDZJmEoD7EL7622q+//Noz+SL9yl0crc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HpagILEA7gkYNsLZm0Bv8HzL64baPebYPjFllMETO/c0GOZi9K+zwAWKiiFjPq67U
-	 4FbMqDBpQABKMYxSRP8/mQndLaSdew0ux4N+mSl61oxDw+FJozL/Ecbfo50pqTUD/6
-	 ibPeSBPpnpVy6Uxh+jsjCDMO6qlR/ikmSuFIrwaYFkJYYHOCEtISRIk1Mh5X2p/2Qr
-	 Xrae55a2D+ovzA3t9t6V8IuedpbrpX/ZhYmKodBSMhSuJErLAVwyjufFaYXw6wqT2Z
-	 miC3msw+hG+O2AbbYMVinPft9CGYv1/n6oy/+y0Er7YXjGqivdyd6ZqIhSNZqIj2YY
-	 poIa7+jC2ZAJA==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Alexey Kardashevskiy <aik@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 10/38] iommufd/vdevice: Add TSM map ioctl
-In-Reply-To: <bfac9ab6-9115-44d5-90c8-e22c3dbdb607@amd.com>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-11-aneesh.kumar@kernel.org>
- <20250728141701.GC26511@ziepe.ca>
- <bfac9ab6-9115-44d5-90c8-e22c3dbdb607@amd.com>
-Date: Mon, 04 Aug 2025 13:58:53 +0530
-Message-ID: <yq5aikj38p8a.fsf@kernel.org>
+	s=arc-20240116; t=1754296206; c=relaxed/simple;
+	bh=G+Mk69SwhFZuF/HTHTi7oDBwppiwd1hxg4Ip6a8+5Kc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ga98rBvh9n9o8vxLg5j12hbiaurz5l6DS5nEfWUI/K/ell6TCs796j/8IK+uApOqHe/alQee/2plklefQvllfnlOUS46/t31WZe/TrzP4vEhtyAGPU0k6/M+jmK4w9zxjMjGlyDer9dsLj1u84ceK8sEqe2tATMpyyZxq8ZOrtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeCrmvpe; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24099fade34so32383655ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754296204; x=1754901004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3/zEyQGXGJNDQQQDdwGDRN3V31t4I9e8LP8T0bgzPo=;
+        b=CeCrmvpeaXbfiH1vxs+QVp39WMjysrnocGoCAEK3TQrtD+SZCsid2kixU94pYq3O7m
+         ctTiFlICZ71uesFt7MS9v6fcDKMFzgdx30zb/XhoFCCPMrOWdf8zl7Jb+hb2ZZ5Raj/G
+         tkKuTXPU/oKfM+iXEshSOpMjkraAPS02eiZC62Pw+uGfbkGBmuySp7ptXR1/0RcMNA4U
+         Bt3dc8LVq/kRrzCaiQtQg4O/qz/7VowkmGhGiEGyktmWcq0IZEHnw5B6dkgEr/p5feHw
+         MB/VNsKzJcVQtdpG1mgpVRsl4f4aLGbj3bZkLflDZa5he5D33B3DMNfnOQ6Oftf/Icpr
+         3CJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754296204; x=1754901004;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M3/zEyQGXGJNDQQQDdwGDRN3V31t4I9e8LP8T0bgzPo=;
+        b=jo2FZ4k7HpjxGo+tN4TnygwYc0+6j6X69dtT+f8aMRxpjPDAYwF+bBObEYACYh8+VQ
+         0kohQ/ktFZhpVUEN6lzhY6eQbtUIiNw/ii3lj2l1Gkug7mOBgDq1bJcpZ7lDN0gY1doh
+         uKqpL9ALUefX6H2xpjfl1Tcttzshk6feuv/pRqnRcwqD2PydGvmoJDiTHtQ4dPBcbMfX
+         J1DAXLWGNK2/cJBrU/5gf+Qms7NrPZOX2CihaGMfkfXpfdcAMRXVXYdyumC1ezKV5lCi
+         G4oQ3d2nZIqJz60a/IxRFKM75tLtM4RBdt8J+gVu+oHKEpmVJ0eHJnXwTetkK8WkdBMi
+         YYrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXy+FL/UhYQpq5LrIvguFQSyd021vxYG07jXxSHQg8x4lJI8rGGrcRzTFP/0mxYxVs3Z+yOQSgST+aTk64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmVg0ULwDf+IXpTkNTqqWD8pKGMXsSuf2c/VCXOYxxDH3aeU/5
+	F+JoR+LsZJsM8NAqwmhM5EZmN4LM1EKVfIGQNwA6hmuPmwn/mT0kWHMU
+X-Gm-Gg: ASbGncsA9u+dTEInDieXtMhPMHHw/5ZJRmVNGhzRG0piLQHfwRxRby3r8wO6SFJGYZ9
+	sxGfWZFm20ToDZUlLscAj/7Cjb13uWzU+bUfhLuVY0tAN1wddDoODPyft2YO6p1hEQJ7sX+mXaW
+	6wShMZujpglTTsVYeDlJp1RN+UyX64ZUfJ0JO7TZz90LeBu/hskoIHMAES3LEePNVOfjicasLkO
+	FsTaYEGTQYIi22gk+5/GnnDenVoVWXDyqMfOU+RbjYNznoqSUBnbKAlo/ZbyazZfWiIouAiIcn9
+	uqdCYYB5LCS54JrNdZIqjzsTOdLhGwGChktI4r5OHXGNp7AKkEeQr87vFzCky457feEfGTYWyUP
+	lUdqW6ltpubEm87I9ybgKEpH/
+X-Google-Smtp-Source: AGHT+IGXXg3XsdPzHMl+fAQP0WoV75VlRcNEHw3qdq2069o1heoW4eMWgWysIaradBNrhJE+LOUbJg==
+X-Received: by 2002:a17:902:f08a:b0:23f:cf96:3072 with SMTP id d9443c01a7336-24247004a08mr74844375ad.26.1754296204464;
+        Mon, 04 Aug 2025 01:30:04 -0700 (PDT)
+Received: from c45b92c47440.. ([202.120.234.58])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241e8aa8e0esm104935915ad.151.2025.08.04.01.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 01:30:04 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] most: core: Drop device reference after usage in get_channel()
+Date: Mon,  4 Aug 2025 12:29:55 +0400
+Message-Id: <20250804082955.3621026-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Alexey Kardashevskiy <aik@amd.com> writes:
+In get_channel(), the reference obtained by bus_find_device_by_name()
+was dropped via put_device() before accessing the device's driver data
+Move put_device() after usage to avoid potential issues.
 
-> On 28/7/25 19:47, Jason Gunthorpe wrote:
->> On Mon, Jul 28, 2025 at 07:21:47PM +0530, Aneesh Kumar K.V (Arm) wrote:
->>> With passthrough devices, we need to make sure private memory is
->>> allocated and assigned to the secure guest before we can issue the DMA.
->>> For ARM RMM, we only need to map and the secure SMMU management is
->>> internal to RMM. For shared IPA, vfio/iommufd DMA MAP/UNMAP interface
->>> does the equivalent
->>=20
->> I'm not really sure what this is about? It is about getting KVM to pin
->> all the memory and commit it to the RMM so it can be used for DMA?
->>=20
->> But it looks really strange to have an iommufd ioctl that just calls a
->> KVM function. Feeling this should be a KVM function, or a guestmfd
->> behavior??
->
->
-> I ended up exporting the guestmemfd's kvm_gmem_get_folio() for gfn->pfn a=
-nd its fd a bit differently in iommufd - "no extra referencing":
-> https://github.com/AMDESE/linux-kvm/commit/f1ebd358327f026f413f8d3d64d46d=
-ecfd6ab7f6
->
-> It is a new iommufd->kvm dependency though.
->
+Fixes: 2485055394be ("staging: most: core: drop device reference")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/most/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Was the motivation for that design choice the fact that in case of AMD
-VFIO/IOMMUFD manages both private memory allocation and updates to the
-IOMMU page tables?
+diff --git a/drivers/most/core.c b/drivers/most/core.c
+index a635d5082ebb..da319d108ea1 100644
+--- a/drivers/most/core.c
++++ b/drivers/most/core.c
+@@ -538,8 +538,8 @@ static struct most_channel *get_channel(char *mdev, char *mdev_ch)
+ 	dev = bus_find_device_by_name(&mostbus, NULL, mdev);
+ 	if (!dev)
+ 		return NULL;
+-	put_device(dev);
+ 	iface = dev_get_drvdata(dev);
++	put_device(dev);
+ 	list_for_each_entry_safe(c, tmp, &iface->p->channel_list, list) {
+ 		if (!strcmp(dev_name(&c->dev), mdev_ch))
+ 			return c;
+-- 
+2.25.1
 
-On the ARM side, the requirement is to ensure that pages are present in
-the stage-2 page table, which is managed by the firmware (RMM). Because
-of this, we need an interface that VFIO/IOMMUFD can use to trigger
-stage-2 mappings within KVM.
-
-Alternatively, we could introduce a dedicated KVM ioctl for this
-purpose, avoiding the need to rely on IOMMUFD.
-
-For reference, TDX uses a similar ioctl=E2=80=94`KVM_TDX_INIT_MEM_REGION`=
-=E2=80=94to
-initialize guest memory. However, that interface isn=E2=80=99t well-suited =
-for
-dynamic updates to stage-2 mappings during shared-to-private or
-private-to-shared transitions.
-
-
->
->> I was kind of thinking it would be nice to have a guestmemfd mode that
->> was "pinned", meaning the memory is allocated and remains almost
->> always mapped into the TSM's page tables automatically. VFIO using
->> guests would set things this way.
->
-> Yeah while doing the above, I was wondering if I want to pass the fd type=
- when DMA-mapping from an fd or "detect" it as I do in the above commit or =
-have some iommufd_fdmap_ops in this fd saying "(no) pinning needed" (or mak=
-e this a flag of IOMMU_IOAS_MAP_FILE).
->
-> The "detection" is (mapping_inaccessible(mapping) && mapping_unevictable(=
-mapping)), works for now.
->
-> btw in the AMD case, here it does not matter as much if it is private or =
-shared, I map everything and let RMP and the VM deal with the permissions. =
-Thanks,
->
->
-
--aneesh
 
