@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-754785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BE8B19CBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:36:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A76BB19CBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB94176BF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA9A177B34
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A35023909F;
-	Mon,  4 Aug 2025 07:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED11239581;
+	Mon,  4 Aug 2025 07:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RomulYfm"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ej79/ZjL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E2E22A4FE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579552E3705;
+	Mon,  4 Aug 2025 07:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754293005; cv=none; b=ifNB8Lz0Tqqt+Fu8Jb2lhCyRVZNLrK9ghA7MnOVWsTWIKb9x3BvKAIl2eE+1vbZ289ErWhBcouv3ccBTp6nBGUv0mwJvZyvBGrMXzex06M04Ff+ODovlPGs2SBLs7AANqOdX39/T7x7Z6qb150tG78bmjVZWK8MPKnQrjZn9m84=
+	t=1754293053; cv=none; b=bMdl6qoDORvpSikKsHBgmVXqUTnJ7E1v6lhM2Hoer6u8fh0j5JZjf+eHHPzmIWjxApgaCOoQTQjzU0tLXQQT39rC434xZSt4tcRw0SRbwRnoWkcnPezGKlzdYBYBhF3KEW6/qwTCPYtPY8+6AwVXUbMj6Mzw1b2WsegJsC1+AB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754293005; c=relaxed/simple;
-	bh=3Y/eNwvB5ILZs5E+ocvhqUEyyEQJUHJ6l9mncbf4LIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzfP2pUKdAND8o4MYbRWM3OUpAigxx8AOEPU4+Kgff1iuTOpyRgeg5Tt8mjO4kCcPJBNUsEJMH7/XAWTBYhznN4Vk9o7yuL8z4OA5pV9hZZxuwaPNCIkA8v2KkV0421JyQJzKw3teKe/ooMUHRzKrxl3iCOZF/kMTGul1jtA4rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RomulYfm; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4aedd1b006bso40956571cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754293003; x=1754897803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s3ooJeoXgiNxmCjKQ3/NUiLCRPH/OBbBVxn1XceNIw4=;
-        b=RomulYfmI35IjwyVZgiRfu6BIDfdWhbud076jZv7v3uLxOhPIHU75fiDPCCt5X01gT
-         XkKntFUf3wN7czyhM3OXc9YttnxOptB+xA6iSwOEwt6CxnQIocMQX/BbRSa5QUeXUZqX
-         0t21/UbsWGn8tBdOgN87j17XabVu9i2SnWCa7XxjHSIVlVuIP4Bm+fy9xmQzsbpKaFfd
-         i1M/wxuDpLDqUMeJQahOsRdjqfHPrQ1/QhmfJF7YGAK3BSrhFE0bx0DTjnpEbBmlepBA
-         qNPOkjLujrTxVlIBh8RxLt8dzPtlBCBBTPGZOMz83HPniSN7qExQQJpKyi2PynfjfDF1
-         3E7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754293003; x=1754897803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s3ooJeoXgiNxmCjKQ3/NUiLCRPH/OBbBVxn1XceNIw4=;
-        b=t/GF3g+O9D8ga5pbGs9qsYDJS4Q/hPbY4nLeBF8fj5gjMnPKZrK5kUwQDu5u112Ish
-         my1UzsISILZIAHUbfn+ewmnSR/EvcE7dx/e7ogVv8K/BSPrzJk4CjSLftubp8q5Aec4H
-         hexRe7XWbA34qrqDaxoiu1mfkTfmxECWPGA2OfpD+oEuOIMFyMMDkaKgSPX4wISKA+Ms
-         cwG9Bz9Qcd3iJSkWVACkgXMM9KGTj/1eBISVjHxp8KtoUVgc0DL0V5SMSvSv8OqNWxtx
-         1L8FOssb3HJPkj7lgIWQk66o2oSmW87ei9EOfurHN5ZxdHJWYBVerjQD56VnPs4dNIIB
-         JnyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Cgwgpo1SiYumDyst5wSFxil1kxM1dWSatmtj4AH424QxVPrCk2Y53nQnL1PthnxV+7OegnDFUETXNOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFazKwlq6BrGKZkke3TOIL5Sef4sjH7Bg7vL9vkg2zJTTMbiYM
-	7PEBk2klm48rvQntJtLu7QdLTuqIbnw/HXG5MAdlBHy5dPbthsKjsFheZfJKSNj7zl81mvdtuq3
-	MA9Hj0epDzGZm6YHNVAhGnhcQ/m8dzt5UxIy8eB+b
-X-Gm-Gg: ASbGncuNU82LGDT1iLMQsP7d4YW9vY0qxHYRTVFFuOyF2p2/NTb75t+vjgajEIzwAV5
-	C42FgpyD5SMWlsfZXCd6vx1260VYBE1nFR5Q9owq0dtfRbSXvkwk9wI5qW9xvNoMCsu3TsDeOJP
-	Pha+OgukYCcb+zrOS9KtDYogcNkP9A1RdqfP+obwyezII7pH9CDJBbmtBGH9kNAWXsrZsml8DHh
-	7wbZTxmaJGju10=
-X-Google-Smtp-Source: AGHT+IEoCUer5WNytH9wVW03O++C/FNr5V/5RS20GrME6Uk6NXfcgbALruaSrPF23gegV0XuKZHBdOlmBgO2ep9Ykx8=
-X-Received: by 2002:a05:622a:15c7:b0:4ab:c00c:250b with SMTP id
- d75a77b69052e-4af10cf33f6mr122336581cf.40.1754293002922; Mon, 04 Aug 2025
- 00:36:42 -0700 (PDT)
+	s=arc-20240116; t=1754293053; c=relaxed/simple;
+	bh=Hy50DwegmXkBEIcfBMpAQwt7iPyBXtj+MWF3Z0JBf2o=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=KMgpp7/F2v+kDZTuoQThOUequxSTWuH87OtQeasEYeVce1/vtW6btTqJm1dBRjvnSXQRMeT38Br+4SrnXxDS7N+f3IxAD1ZBu9oxv7QSKn+9bGC4cwywn6d94eS/Ye6o6qGl4mwd9wlgRAXL/77tdcrIgXrPapFB5OAhbwAT1V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ej79/ZjL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2C4C4CEE7;
+	Mon,  4 Aug 2025 07:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754293052;
+	bh=Hy50DwegmXkBEIcfBMpAQwt7iPyBXtj+MWF3Z0JBf2o=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=Ej79/ZjL7SoWXmTTqxezzowa7FoDmtHvbMzAkNnf8svXiIqmtM+UmfM1uP8RlS3Wg
+	 UFndA2+420DqG7FnR4BX9C+BG/kmAcyvzDTznqf01uxDGoVISJNrD6bm/5PXEvnX4U
+	 D3pZ6unGCBcS6pi6j0cP+OmuK3dU7i0MOvv0AcaOG/AG4GrQBIoPLOUeppf1BnPKCc
+	 MTmO8Ug4oIi1L7FaEUEQ21BM3/9SjbvXjuNJ163E6SBfz6ej5+HWf1ohrrrD3F5dT/
+	 458AszK06u/JQE3/WdYvXZCPRe57FTGdYMZ/CA1M31U3GNvtnFtwmQ1oOvJVQm2LNE
+	 wr2zljuReTrbA==
+Content-Type: multipart/signed;
+ boundary=10d157f1bbc1d46e05d56827db4bb5cdcb9554d40060213328a4fcc6eada;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 04 Aug 2025 09:37:28 +0200
+Message-Id: <DBTGZGPLGJBX.32VALG3IRURBQ@kernel.org>
+Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup
+ PHY mode for fixed RGMII TX delay"
+Cc: "Matthias Schiffer" <matthias.schiffer@ew.tq-group.com>, "Nishanth
+ Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
+ <kristo@kernel.org>, "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S .
+ Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Roger
+ Quadros" <rogerq@kernel.org>, "Simon Horman" <horms@kernel.org>, "Maxime
+ Chevallier" <maxime.chevallier@bootlin.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux@ew.tq-group.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Siddharth Vadapalli" <s-vadapalli@ti.com>, "Andrew Lunn"
+ <andrew@lunn.ch>
+X-Mailer: aerc 0.16.0
+References: <20250728064938.275304-1-mwalle@kernel.org>
+ <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
+ <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
+ <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
+ <DBOEPHG2V5WY.Q47MW1V5ZJZE@kernel.org>
+ <2269f445fb233a55e63460351ab983cf3a6a2ed6.camel@ew.tq-group.com>
+ <88972e3aa99d7b9f4dd1967fbb445892829a9b47.camel@ew.tq-group.com>
+ <84588371-ddae-453e-8de9-2527c5e15740@lunn.ch>
+ <47b0406f-7980-422e-b63b-cc0f37d86b18@ti.com>
+In-Reply-To: <47b0406f-7980-422e-b63b-cc0f37d86b18@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250804062004.29617-1-dqfext@gmail.com>
-In-Reply-To: <20250804062004.29617-1-dqfext@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 4 Aug 2025 00:36:31 -0700
-X-Gm-Features: Ac12FXznjO0BdtnALtDt-VPl7bSJs2FnxBEs7TFJ8fwttr2To0hldVsXZK8iBas
-Message-ID: <CANn89iJ3Lau_3W5bJdmRWL9BFUf3a40XqNgfjr7nCEu5PQ_otg@mail.gmail.com>
-Subject: Re: [PATCH net-next] ppp: remove rwlock usage
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+
+--10d157f1bbc1d46e05d56827db4bb5cdcb9554d40060213328a4fcc6eada
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Sun, Aug 3, 2025 at 11:20=E2=80=AFPM Qingfang Deng <dqfext@gmail.com> wr=
-ote:
+On Sat Aug 2, 2025 at 7:44 AM CEST, Siddharth Vadapalli wrote:
+> On Wed, Jul 30, 2025 at 04:27:52PM +0200, Andrew Lunn wrote:
+> > > I can confirm that the undocumented/reserved bit switches the MAC-sid=
+e TX delay
+> > > on and off on the J722S/AM67A.
+> >=20
+> > Thanks.
+> >=20
+> > > I have not checked if there is anything wrong with the undelayed
+> > > mode that might explain why TI doesn't want to support it, but
+> > > traffic appears to flow through the interface without issue if I
+> > > disable the MAC-side and enable the PHY-side delay.
+> >=20
+> > I cannot say this is true for TI, but i've often had vendors say that
+> > they want the MAC to do the delay so you can use a PHY which does not
+> > implement delays. However, every single RGMII PHY driver in Linux
+> > supports all four RGMII modes. So it is a bit of a pointless argument.
+> >=20
+> > And MAC vendors want to make full use of the hardware they have, so
+> > naturally want to do the delay in the MAC because they can.
+> >=20
+> > TI is a bit unusual in this, in that they force the delay on. So that
+> > adds a little bit of weight towards maybe there being a design issue
+> > with it turned off.
 >
-> In struct channel, the upl lock is implemented using rwlock_t,
-> protecting access to pch->ppp and pch->bridge.
->
-> As previously discussed on the list, using rwlock in the network fast
-> path is not recommended.
-> This patch replaces the rwlock with a spinlock for writers, and uses RCU
-> for readers.
->
-> - pch->ppp and pch->bridge are now declared as __rcu pointers.
-> - Readers use rcu_dereference_bh() under rcu_read_lock_bh().
-> - Writers use spin_lock_bh() to update, followed by synchronize_rcu()
->   where required.
->
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> ---
+> Based on internal discussions with the SoC and Documentation teams,
+> disabling TX delay in the MAC (CPSW) is not officially supported by
+> TI. The RGMII switching characteristics have been validated only with
+> the TX delay enabled - users are therefore expected not to disable it.
 
-....
-For all your patch :
+Of all the myriad settings of the SoC, this was the one which was
+not validated? Anyway, TI should really get that communicated in a
+proper way because in the e2e forum you'll get the exact opposite
+answer, which is, it is a documentation issue. And also, the
+original document available to TI engineers apparently has that setting
+documented (judging by the screenshot in the e2e forum).
 
-Since the spinlock is now only used from the control path in process
-context, what is the reason you use _bh() suffix
-blocking BH while holding it ?
+> Disabling the TX delay may or may not result in an operational system.
+> This holds true for all SoCs with various CPSW instances that are
+> programmed by the am65-cpsw-nuss.c driver along with the phy-gmii-sel.c
+> driver.
 
-Also, a mere rcu_read_lock() is enough for ppp_dev_name() and
-ppp_unit_number() : No need to disable BH there.
+In that case u-boot shall be fixed, soon. And to workaround older
+u-boot versions, linux shall always enable that delay, like Andrew
+proposed.
 
-> -       write_lock_bh(&pch->upl);
-> -       ppp =3D pch->ppp;
-> -       pch->ppp =3D NULL;
-> -       write_unlock_bh(&pch->upl);
-> +       spin_lock_bh(&pch->upl);
-> +       ppp =3D rcu_replace_pointer(pch->ppp, NULL, lockdep_is_held(&pch-=
->upl));
-> +       spin_unlock_bh(&pch->upl);
-> +       synchronize_rcu();
-> +
->         if (ppp) {
+> In addition to the above, I would like to point out the source of
+> confusion. When the am65-cpsw-nuss.c driver was written(2020), the
+> documentation indicated that the internal delay could be disabled.
+> Later on, the documentation was updated to indicate that internal
+> delay cannot (should not) be disabled by marking the feature reserved.
 
-You probably could move the synchronize_rcu() here, there is no need
-to call it if ppp is NULL
+> This was done to be consistent with the hardware validation performed.
+> As a result, older documentation contains references to the possibility
+> of disabling the internal delay whereas newer documentation doesn't.
 
->                 /* remove it from the ppp unit's list */
->                 ppp_lock(ppp);
-> --
-> 2.43.0
->
+See above, that seems to be still the case.
+
+-michael
+
+--10d157f1bbc1d46e05d56827db4bb5cdcb9554d40060213328a4fcc6eada
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaJBjORIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hpXQGAiBriOv6IxHVS6UwhziglQphaJZrmpxYR
+YAbDagIe390sSFp7Pi0Y/oVGf3FwEuHfAYC/fr7B4DQ+HPyxVJof5DCRAUkBIns4
+Ee7ORDQG56K+mXINMqu2MEjWSOkZ3HgzZBw=
+=zjdQ
+-----END PGP SIGNATURE-----
+
+--10d157f1bbc1d46e05d56827db4bb5cdcb9554d40060213328a4fcc6eada--
 
