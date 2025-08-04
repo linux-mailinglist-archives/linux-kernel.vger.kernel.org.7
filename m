@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-754883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D16B19DFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9D0B19E00
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF50189A3A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7881783EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF66243946;
-	Mon,  4 Aug 2025 08:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3D7OXgi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E83242D9E;
+	Mon,  4 Aug 2025 08:52:13 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C9E242D89;
-	Mon,  4 Aug 2025 08:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9244F23BD13;
+	Mon,  4 Aug 2025 08:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754297505; cv=none; b=JTVkWtHyOPK7PnxRs9Fe8U54WX3u7id5rmfhaKjPVga5/oe+YIkYDvO28BK6v3J9J9EfztNCar1Jv4LUSDE9fFppfElVXL/r1uOuTd2lku9uhkMS5IQLlM28iap6JDc13Md6DdCurPWI6otYpB5rDpctDeGBOOPxeZdwhWmjX2c=
+	t=1754297533; cv=none; b=GOoKZs2rTXzpeA/Be53NoO3IzXYAcYfHJojXnFWqscszSivyQyE0iUpruC3uebbK9Y9wagZaL1kJZBLlA61YxDyIP530Rdnm4aAnuM31d44TzPZBl0zbbuvltdSKTuuRrLSnVUYaDbJDxBrsz4ivMNiAR4p3thGYw8u/BESwT4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754297505; c=relaxed/simple;
-	bh=6BVLxWZDI6oTK0aU1mKaqp/Pgk0nOrw3tsRdbFp16HI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=osK1YhNuzFbrJG87XafrSVPP+PFo6/Rwja2cND53sCwdcHCtQVnfzzae5YnMQNsU9/mdXOr6OG1+AzeBhvxrsrEpdTykHO/dvnQSTBb5dMDCSWmXcCUJ9z9J8cBaKKwxpCAdUMVMu3gwzYC38F7w7UG51MEvnOuuCvR2Kh8o6Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3D7OXgi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A78C4CEE7;
-	Mon,  4 Aug 2025 08:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754297504;
-	bh=6BVLxWZDI6oTK0aU1mKaqp/Pgk0nOrw3tsRdbFp16HI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C3D7OXgiMHabUt/rRD2FtPPdy8d8FouZqA+W80TuQoGYUBZ1DezjM2p0AZgo7NtZw
-	 ioz6HXkBw0633CzdgZ9w35jdE/5S/Dgo8Dg/eYnCGCo0bJQBzZAAGMsDhDas3GqEaB
-	 Sb+gwC0dGyh1Vf+ve7cqOXEGTLKrNOL6gWWY/XR+xesiLNfgp62ejlorSjANpdwkq1
-	 M8QW3/8Q6lxxjY4st1QPVAywKJPkkPXqKlzPkRWuzSkbldqMQy/FtiPQXdRheeKgOP
-	 8nNdQ6cRH9nANNGYHPNHcwPHCipgUjuJIW7lW/GHgLLIVXKyZlhcdVZtK3OLyQR4vJ
-	 YF0JFPVUT6tUg==
-Message-ID: <592e9a1e-a58f-435d-aff7-13c13fe0598a@kernel.org>
-Date: Mon, 4 Aug 2025 10:51:42 +0200
+	s=arc-20240116; t=1754297533; c=relaxed/simple;
+	bh=4IU7flpgXJZ3fJEZAMijk8bAbla+8cir3PEIuaUq/rc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O66FMvn9BdPCOFRINv1f7bgd7xT/Gb6dMX+cFdrnHUl4RhKv1plbhhOu3i2+JUz7hlFcJmguBrYP2tzYE3dra2Fy7qwD5oavN689ykqU/VCYBwvWzUqQgCmoCpoz7aMnHXKOD82kbADb0o52LW+Hpw0yKgTHGCR6/vInkhfty/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-539425e3719so1766915e0c.0;
+        Mon, 04 Aug 2025 01:52:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754297530; x=1754902330;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r5QpB/JqeqeUdWePuoOvkxy8agxOZ5xx1VKurmtRXZE=;
+        b=NZwl7MTh5tNwIsPN8ulLwRuBY72qiV8eKi8GWMzzV4zkPQJF4bEkwvXxtCVHcEs/Nf
+         KyftiIXswGmVhVVsPR267vJdIoh0VkfwEHNVL45OdjATmjtVWjTa9qIq7wzsvQ00CXHX
+         F97ZPvk/WL/3m7OobYORPHOE4R5HMrdgH/lwUSOC10+BQtAMkXdibtn5YlWz5z8xYCaO
+         f3/WD110MEj9aNSjjMkG5KdYcXUjQ55DD0kzPDPe8KTOucTj+jlHKOGNKeXOg0oxwjHz
+         bbr37iTXRVNVXMpkfKJYb3IommdojYrIEr2KprStlVw7QVrOG03vhJnibkr5ki6l3GSM
+         jsRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9AO45lFWNp8yz2h5SLA6w8dlzhO3GuL+q6ko6U0Nz9SBUk56jN6ik8k8bRL4Vqc8qhR4GADQ2UtTjoqA=@vger.kernel.org, AJvYcCVhXCoEkUx1+EKTQ72daXdUhY1Ya+LNXal7fbvn0jxhEOdLRkJV6WsVc0DUY1uZ3O7XvfEilasE@vger.kernel.org
+X-Gm-Message-State: AOJu0YybzniOJ/TQCOxYnhyGQMandLBsvftZSGu5tvTUzqn9U4T+Ie9d
+	TIrF3fDrL2a3DlN+EAE0bpLTLqApDdjjCQtZ+d7AdKkk4CJ8OV2+Jo4XnO59y5dU
+X-Gm-Gg: ASbGncsbgThSoDTAnAHaenVKioBxD3UtaYXJ48kqd/Dyx0l5Kb4eTm022rdQN5NzacF
+	3ycqk24jYDppkYGCMIYn1ptVjLoxHoF+ZBLgXP3Az5cwn/T+r5lj2SHvM8Z0pmCAsQPrEoFYiKW
+	Fha1fl1l5mivRt4n/0F6j55YEGtxzhHuicsY5HzQlGHq5qxTdxWYFA5Qc+3wBdxQwfAq5pjBVjE
+	xV7jUta5oPhCT+/+7fSp7t2bjpebbVUv5R94kGOMayLIYpv/f3bq6YLFTH6Q7yai2zM3pejdpbd
+	h2vXDU2slRssJ0Wt5lvHGBDbJWJWbFLTzOQCKja0MTJmjhG+30VBjz1K9yQW70KMWUZ9Lh4TW05
+	H5JPjqnKTiDerQavW1QfZffCyZpffaFBqPvxfAJlk+8quFobFrs/tNRvuQo4e
+X-Google-Smtp-Source: AGHT+IEG94e1NdA1ncJxzW5X3RjeTScjkmDOBRj+mxMcIF3HR8ivv0I8yaujkvqIHvFlNJ+XYIuCcg==
+X-Received: by 2002:a05:6122:62ca:b0:538:e454:ea8e with SMTP id 71dfb90a1353d-53938905a99mr7460158e0c.7.1754297530249;
+        Mon, 04 Aug 2025 01:52:10 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936cbf2dcsm2633683e0c.23.2025.08.04.01.52.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 01:52:09 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-88ba6bb90d6so2966370241.0;
+        Mon, 04 Aug 2025 01:52:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVEzdjb0Pd5v/Y5YwMWyJXRzZkY6bjh37nhpNQE1+zLnKuB6nS3YAq1DQW7GuN+8MqrB3b6Oxax@vger.kernel.org, AJvYcCVhzNeh+aMP4uicfYvJOUGk9EVfwdhie1CSPExq4sIVwe+420JR6jRZiPso9KWrSchFRdiCm3B8+DWlO1U=@vger.kernel.org
+X-Received: by 2002:a05:6102:4689:b0:4df:e510:242e with SMTP id
+ ada2fe7eead31-4fc0ff376b2mr4798820137.5.1754297529508; Mon, 04 Aug 2025
+ 01:52:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read
- regmap_config flag
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250804083419.205892-1-hansg@kernel.org>
- <CAHp75VdfJvKb6VegNWCiiKoQkMBf0dQPs5yP3XfPM1icgtuyeg@mail.gmail.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <CAHp75VdfJvKb6VegNWCiiKoQkMBf0dQPs5yP3XfPM1icgtuyeg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250804083339.3200226-1-arnd@kernel.org>
+In-Reply-To: <20250804083339.3200226-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Aug 2025 10:51:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVfsx-sNRWRPGPLj=wp-b2jnB8pTBdd7AVqDq4ZZisS+w@mail.gmail.com>
+X-Gm-Features: Ac12FXy411-kQa3rWYorV5SoSgcF9GIrfasroFLsMIq3x61Sc0JlLNlmvUtf7PE
+Message-ID: <CAMuHMdVfsx-sNRWRPGPLj=wp-b2jnB8pTBdd7AVqDq4ZZisS+w@mail.gmail.com>
+Subject: Re: [PATCH] dpll: add back CONFIG_NET dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Ivan Vecera <ivecera@redhat.com>, Prathosh Satish <Prathosh.Satish@microchip.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, 
+	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andy,
+Hi Arnd,
 
-On 4-Aug-25 10:47 AM, Andy Shevchenko wrote:
-> On Mon, Aug 4, 2025 at 10:34 AM Hans de Goede <hansg@kernel.org> wrote:
->>
->> Testing has shown that reading multiple registers at once (for 10 bit
->> adc values) does not work. Set the use_single_read regmap_config flag
->> to make regmap split these for is.
->>
->> This should fix temperature opregion accesses done by
->> drivers/acpi/pmic/intel_pmic_chtdc_ti.c and is also necessary for
->> the upcoming drivers for the ADC and battery MFD cells.
-> 
-> ...
-> 
->> +       /* Reading multiple registers at once is not supported */
->> +       .use_single_read = true,
-> 
-> By HW or by problem in regmap as being suggested here:
-> https://lore.kernel.org/linux-gpio/CALNFmy1ZRqHz6_DD_2qamm-iLQ51AOFQH=ahCWRN7SAk3pfZ_A@mail.gmail.com/
-> ?
+On Mon, 4 Aug 2025 at 10:33, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Making the two bus specific front-ends the primary Kconfig symbol
+> results in a build failure when CONFIG_NET is disabled as this now
+> ignores the dependency:
+>
+> WARNING: unmet direct dependencies detected for ZL3073X
+>   Depends on [n]: NET [=n]
+>   Selected by [y]:
+>   - ZL3073X_I2C [=y] && I2C [=y]
+>
+> Make all of them depend on NET.
+>
+> Fixes: a4f0866e3dbb ("dpll: Make ZL3073X invisible")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This is a hw limitation. I tried with i2ctransfer to directly
-access the chip and it returns invalid values (1) after
-the first byte read.
+Thanks for your patch!
 
-> As a quick fix I am fine with this.
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+I already sent a similar patch two days ago:
+https://lore.kernel.org/all/20250802155302.3673457-1-geert+renesas@glider.be
 
-Thank you.
+Gr{oetje,eeting}s,
 
-Regards,
+                        Geert
 
-Hans
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-1) I don't remember if it was 0, 0xff or repeating
-of the first byte. But it definitely did not work.
-
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
