@@ -1,169 +1,129 @@
-Return-Path: <linux-kernel+bounces-755744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD9FB1AB30
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0C6B1AB3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE173BB792
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1A73BEF63
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800992918DE;
-	Mon,  4 Aug 2025 23:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DD28D849;
+	Mon,  4 Aug 2025 23:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c53ESy/h"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsLAxxIT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651E4242D99
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AB81BC4E;
+	Mon,  4 Aug 2025 23:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754348773; cv=none; b=RXjRNyDUuOr9+YO9y4oPiSFSL4lpOW38V47vBU7RlZQAqvBHlRmeHKO3YmQ0PzMjVdeU2NJ5ZN7sJkjRk9zay5NW5BtEkWFBS+waF0NPjrlHi/45JoFpso3FMxSWU8RxCLWPi7HcEn1YxAhOPB6y3w7i6CvdKEq5vuFi/2uLI8g=
+	t=1754348969; cv=none; b=k/9OY7RjQU3sXYNUuUS+v1G2SlYwlY9LSIrsvmPnhLR9ASSK2O3ncEuAwFqtmw/dtVUNoe3NlMf6Od5Z+1NJim0Ae+mFydsD/oKjllFVgqX66hVaOI4aCQe6fvMb13dlK229LPqrJGEzRijm22ZM/y/nAY5Yfl22MXT37Kflmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754348773; c=relaxed/simple;
-	bh=mW94YNphCeMDCqeSKUMhIoQuVsakToAJfrbz1O1/Yjg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kWaAW177snWW9I37Ooqi75bfiZ9bSVrvZs8QPjVaIHOuBCSLX5Iu1wmvXoHvCen1ckivyxamJ4A7iRyWoCps3rrunkOsju9S5vNn9IJ3CEGiwbSleXsLR799s5+dQIoKWvo5CtfGChFVn40XBG3+nH6b07OLnHHK/HpsS3JUcfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c53ESy/h; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4225ab1829so2620057a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 16:06:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754348772; x=1754953572; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGnjhlkr58/FOajbxu7sCyHuJOVEyicbJJHbor5PpZw=;
-        b=c53ESy/h8T0QYWrl38ulAWpSKmKEDa5UMfJxh/avUJfK2vYYOS1OpqePrrglCCGx8Y
-         ubdrACygZRuTU5t3E5zuZur+1jMk0swFt19Y/rN/7pz+p54J0zByKVhdwqcRH4VNPqWO
-         kjtaUefqZB97j3CGqyPe57Qv45Y3VHKnOuQkGC7IxKrUe7nFP+Vm+DfUrtgbVo4V94VS
-         fBe/ORNbz6aV98E4sbxKWsHR0HAnFbj9Ph/LJz+KE+Jvos/wHLwMlZGmhWpWuE3Sc1RM
-         pUwU4xgL84GKD1vK8o3wrp3Kd30nmKtjSWRGC+kezvGlQyyZeCf3xniWR+4bsGGFNRgG
-         YP7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754348772; x=1754953572;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGnjhlkr58/FOajbxu7sCyHuJOVEyicbJJHbor5PpZw=;
-        b=J0BxRo+pMr7EsGx+VqdWJRHHy9dcrt6DzyVF271/1/5wWi4FFTQjE0xF9pWwYOHIw6
-         rPeE2G184ZLP1+2pZoulyxxJR6d5zeDqkiPuUuZ1cnJMU5iyKtTHq1TpzHCauy1ABFxE
-         LNQ5d/rFN9uSMrQWPJoJtTpR0Uxd2YUd2WKOqf6n+H3YENki/N5hUBtsVYiG+Tr5Sel1
-         jckeYhmAuJv+56MrYmQaZt4v4WcMX7YHRggWwT17TsOk6eEOc7Re882Rypat6Gqq8pTy
-         i5Xd7QAEPEOgRMvTyd4kib/mGe2xSB873f9+FA5iN1C/lZsiHmz/jlNEJKd9xgr6gBTZ
-         SxFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvuvwE2h1mWIypa/HocKFyTxaTkwKaeEOQWZ1VqnwCxeRDaJaBjkBTpMrCDV3++QEtVHdiqu8vVYZ/Wyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8OOqtUo6SAV+JqgNj3F5njiSYwOq8Yk9CQcVOvtWI3YWd9jM1
-	AuHC1TBFU7nmoqXOKe9HKCBi0ekbKkyX8JP7KISG6bA4sg5fllgFSjlh2M8Akme7ibLFjZjfBy1
-	qBCX/F569gw==
-X-Google-Smtp-Source: AGHT+IHqorv7ISi2bpW1ywQ+0QWFp7Iixj0oB+s092j6YhuI66/ybNz3R6cLh8nZkBsRPXr/TTdU4tUtW7s3
-X-Received: from pjbeu3.prod.google.com ([2002:a17:90a:f943:b0:321:162c:e4fd])
- (user=chullee job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b83:b0:31e:4492:af48
- with SMTP id 98e67ed59e1d1-321162d3205mr14330735a91.28.1754348771682; Mon, 04
- Aug 2025 16:06:11 -0700 (PDT)
-Date: Mon,  4 Aug 2025 16:05:58 -0700
-In-Reply-To: <20250804230558.746338-1-chullee@google.com>
+	s=arc-20240116; t=1754348969; c=relaxed/simple;
+	bh=wYEx1h5rVCSwEkjK7MIqFH7taTkIsjQXMHcC71M4+Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZaYaai/k54HL7Q5g58i6+wPBnWQ/gVB4ygRd9PgSmmxjUZaUXpoRv3YqOsC6HdYgCi+/WJo/O4gwDSDlKRI6Jm+GWkJouYFvGtHRt6CdoLQHqstcun/av/Q3l7jNtyi5VRZ8sEzWP9CII6XAbSa1Sa7n9kxh0ncFmi3xwXhXg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsLAxxIT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34094C4CEE7;
+	Mon,  4 Aug 2025 23:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754348968;
+	bh=wYEx1h5rVCSwEkjK7MIqFH7taTkIsjQXMHcC71M4+Ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EsLAxxIT9ZwgvBbuv3BAKO4M+ZNIygr5J3TkX5LIs9gIczO+D0YxLWOgZ/ykDtYoK
+	 6U7EpvB9B1u6DJ+kJtpgn02WfQ2/bDJaWwhiR4Erfu8W/KtXhpj6FOkzDvMKwyJsfj
+	 Gb+6JUrjpFLUpauJ/hMSHT/U35N31WaMKcsgh043ubWHaq24IHN9cVrzRBADkIMyVY
+	 P1BdOlaqO4WjIH3zjBTyN950LbmW6oubAyvBXOcu/swYiM8jh1dtBWd536Kco2VGH/
+	 DvYYzy2Fc7jbbd8eVNqJ+rWN7mJ2JnXbbp+J/GOEfwi9aGCucqIxIYK2iIGXYfqH6Q
+	 EZcglPq6m/z2A==
+Date: Mon, 4 Aug 2025 23:09:26 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
+ code
+Message-ID: <20250804230926.GD54248@google.com>
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-4-ebiggers@kernel.org>
+ <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
+ <20250804180923.GA54248@google.com>
+ <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
+ <20250804225901.GC54248@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250804230558.746338-1-chullee@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250804230558.746338-2-chullee@google.com>
-Subject: [PATCH v2 2/2] f2fs: add sysfs entry for effective lookup mode
-From: Daniel Lee <chullee@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Daniel Lee <chullee@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250804225901.GC54248@google.com>
 
-This commit introduces a new read-only sysfs entry at
-/sys/fs/f2fs/<device>/effective_lookup_mode.
+On Mon, Aug 04, 2025 at 10:59:01PM +0000, Eric Biggers wrote:
+> On Mon, Aug 04, 2025 at 09:02:27PM +0200, Christophe Leroy wrote:
+> > 
+> > 
+> > Le 04/08/2025 à 20:09, Eric Biggers a écrit :
+> > > On Mon, Aug 04, 2025 at 07:42:15PM +0200, Christophe Leroy wrote:
+> > > > 
+> > > > 
+> > > > Le 03/08/2025 à 22:44, Eric Biggers a écrit :
+> > > > > MD5 is insecure, is no longer commonly used, and has never been
+> > > > > optimized for the most common architectures in the kernel.  Only mips,
+> > > > > powerpc, and sparc have optimized MD5 code in the kernel.  Of these,
+> > > > > only the powerpc one is actually testable in QEMU.  The mips one works
+> > > > > only on Cavium Octeon SoCs.
+> > > > > 
+> > > > > Taken together, it's clear that it's time to retire these additional MD5
+> > > > > implementations, and focus maintenance on the MD5 generic C code.
+> > > > 
+> > > > Sorry, for me it is not that clear. Even if MD5 is depracated we still have
+> > > > several applications that use MD5 for various reasons on our boards.
+> > > > 
+> > > > I ran the test on kernel v6.16 with following file:
+> > > > 
+> > > > # ls -l avion.au
+> > > > -rw-------    1 root     root      12130159 Jan  1  1970 avion.au
+> > > > 
+> > > > With CONFIG_CRYPTO_MD5_PPC:
+> > > > 
+> > > > # time md5sum avion.au
+> > > > 6513851d6109d42477b20cd56bf57f28  avion.au
+> > > > real    0m 1.02s
+> > > > user    0m 0.01s
+> > > > sys     0m 1.01s
+> > > > 
+> > > > Without CONFIG_CRYPTO_MD5_PPC:
+> > > > 
+> > > > # time md5sum avion.au
+> > > > 6513851d6109d42477b20cd56bf57f28  avion.au
+> > > > real    0m 1.35s
+> > > > user    0m 0.01s
+> > > > sys     0m 1.34s
+> > > > 
+> > > > I think the difference is big enough to consider keeping optimised MD5 code.
+> > > 
+> > > But md5sum doesn't use the kernel's MD5 code.  So it's implausible that
+> > > it has any effect on md5sum.  The difference you saw must be due to an
+> > > unrelated reason like I/O caching, CPU frequency, etc.  Try running your
+> > > test multiple times to eliminate other sources of variation.
+> > 
+> > md5sum uses the kernel's MD5 code:
+> >
+> > libkcapi.so.1 => /usr/lib/libkcapi.so.1 (0x6ffa0000)    <==
 
-This entry displays the actual directory lookup mode F2FS is
-currently using. This is needed for debugging and verification,
-as the behavior is determined by both on-disk flags and mount
-options.
+Oh, I think you used the obscure implementation of md5sum from
+libkcapi-tools, instead of the normal md5sum.  Why?  Did you check how
+the normal md5sum performs too?  Just doing the calculation in userspace
+is much more efficient.
 
-Signed-off-by: Daniel Lee <chullee@google.com>
----
-v2:
-- show "auto:perf" or "auto:compat" when lookup_mode is 'auto'.
- Documentation/ABI/testing/sysfs-fs-f2fs | 15 +++++++++++++++
- fs/f2fs/sysfs.c                         | 18 ++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index bc0e7fefc39d..ce189acd1908 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -883,3 +883,18 @@ Date:		June 2025
- Contact:	"Daeho Jeong" <daehojeong@google.com>
- Description:	Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
- 		Default: 1
-+
-+What:		/sys/fs/f2fs/<disk>/effective_lookup_mode
-+Date:		August 2025
-+Contact:	"Daniel Lee" <chullee@google.com>
-+Description:
-+		This is a read-only entry to show the effective directory lookup mode
-+		F2FS is currently using for casefolded directories.
-+		This considers both the "lookup_mode" mount option and the on-disk
-+		encoding flag, SB_ENC_NO_COMPAT_FALLBACK_FL.
-+
-+		Possible values are:
-+		- "perf": Hash-only lookup.
-+		- "compat": Hash-based lookup with a linear search fallback enabled
-+		- "auto:perf": lookup_mode is auto and fallback is disabled on-disk
-+		- "auto:compat": lookup_mode is auto and fallback is enabled on-disk
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index f736052dea50..82489c78aeda 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -281,6 +281,22 @@ static ssize_t encoding_flags_show(struct f2fs_attr *a,
- 		le16_to_cpu(F2FS_RAW_SUPER(sbi)->s_encoding_flags));
- }
- 
-+static ssize_t effective_lookup_mode_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	switch (F2FS_OPTION(sbi).lookup_mode) {
-+	case LOOKUP_PERF:
-+		return sysfs_emit(buf, "perf\n");
-+	case LOOKUP_COMPAT:
-+		return sysfs_emit(buf, "compat\n");
-+	case LOOKUP_AUTO:
-+		if (sb_no_casefold_compat_fallback(sbi->sb))
-+			return sysfs_emit(buf, "auto:perf\n");
-+		return sysfs_emit(buf, "auto:compat\n");
-+	}
-+	return 0;
-+}
-+
- static ssize_t mounted_time_sec_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -1211,6 +1227,7 @@ F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
- F2FS_GENERAL_RO_ATTR(unusable);
- F2FS_GENERAL_RO_ATTR(encoding);
- F2FS_GENERAL_RO_ATTR(encoding_flags);
-+F2FS_GENERAL_RO_ATTR(effective_lookup_mode);
- F2FS_GENERAL_RO_ATTR(mounted_time_sec);
- F2FS_GENERAL_RO_ATTR(main_blkaddr);
- F2FS_GENERAL_RO_ATTR(pending_discard);
-@@ -1329,6 +1346,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(current_reserved_blocks),
- 	ATTR_LIST(encoding),
- 	ATTR_LIST(encoding_flags),
-+	ATTR_LIST(effective_lookup_mode),
- 	ATTR_LIST(mounted_time_sec),
- #ifdef CONFIG_F2FS_STAT_FS
- 	ATTR_LIST(cp_foreground_calls),
--- 
-2.50.1.565.gc32cd1483b-goog
-
+- Eric
 
