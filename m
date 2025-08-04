@@ -1,153 +1,216 @@
-Return-Path: <linux-kernel+bounces-755604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFD9B1A913
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:18:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F69B1A918
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BDE18917E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:19:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8E2A7A4399
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38F244EA0;
-	Mon,  4 Aug 2025 18:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96CE2264B4;
+	Mon,  4 Aug 2025 18:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E61M0me9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="laDINb6t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5429217F33
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBAF21A44C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754331520; cv=none; b=WH4SO3zReFr77sZWZJH3YuCRkkG/7O4ga52nYuOAOse1ismiwRUxcfzIwy03JdsGsp7a2lu9JSXrYAtFKr+IvjQpRABaVfpL4Wq1uDArds3bS2w/b8qVMOmNbFpEJ8GUPHh5qr6WYYHiJamJ2k/s2h6XNiplvLefGVSguTC25p8=
+	t=1754331532; cv=none; b=II0USITFOfPLB31azOn2+eAfdWXGOf6DCvoyFNUFX4vgcLgJWODO3spvZM4hd3xiGpMJXszibbhJ7NXJjxtB5rhxriYVoUl29VI8MTOrcsQhIQMXYTzY5I1TyLXAMRy9PslcAmvFufTJufVddBqDkiebD/LrqzKRNmBP72pSRRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754331520; c=relaxed/simple;
-	bh=sJmIS+4VMfjqdG20GuSrtYDj9UHHKpW7QBhkO353ZHU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k9lHoY7lJcLwSb822tUi1Ci9b4YEqkZRyvL1vt7ly8Xiu9K7iZM+GI8m+6pYwd28Bw3ykfCI242rwLhAn+J9rs/8Jxr4d2KPc8oPan9T4ElPAsZEkgZF6VXK+tD9IlRx+F2Z8AxQkfAhcrbDwXk+mud6f4jndTGI0R1rGTzAWYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E61M0me9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754331517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qPFuA3XT5rZs0YkAQkaYeJ3lMViwpDLOl0oehXQ14cg=;
-	b=E61M0me9DtxW/czm6XIM2FssAVMmbq1EQJdXYqpkCBuVnAxV1dR/NGhTaQ6WCorzJRL7mx
-	V85wogt7NohbF9ZGNQjAAHf9d3y7wrFG67EKeQFEMLAIZe7gfjQNlOjdCtytWXl0W7v/Jt
-	tbQo/INVrqqZGv4y+uf1mtkjhY8NSBQ=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-2apXaeYxMsOwKH5sXTUa0w-1; Mon, 04 Aug 2025 14:18:36 -0400
-X-MC-Unique: 2apXaeYxMsOwKH5sXTUa0w-1
-X-Mimecast-MFC-AGG-ID: 2apXaeYxMsOwKH5sXTUa0w_1754331515
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c13b0a7beso415294439f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:18:36 -0700 (PDT)
+	s=arc-20240116; t=1754331532; c=relaxed/simple;
+	bh=7K1JJRpveNfg80TmuSLcXf/fCpRuzAmUJgIt0nUbHmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pa5PZvD8Rf8pDqCvZGO+iruMYVtpGibq0B8zLwOPFihoOp0nL5CptumrwjFhTAYEBALIkcqFg6y4+T+lD0Z+cMjts5sW0XnNYabuvZolrHyn8KKCuhvMG2xaeY8uOr7qGfuRFL8qhDdDo0SVJqSibIGzomLCH21ng0H/tLIBciM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=laDINb6t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574GDkwC000777
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 18:18:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Yt5mi4p22WNYCmgL4pLlpxDR0rYiRxhk5KHLynsxrC8=; b=laDINb6tmIBio3vq
+	zkPKbr5L7/spnlTsUkP3s/Ahthc9e3X0OrQq5SZVTZf252MK/6NrNHa9OaYkzxvL
+	2VvaeQufjQC/gK/At4GQrH1bRSAo+vODMYjpGYbyTFRXrmuJXaWTsCZRzTCpZoeZ
+	rMBQxbbkkBTgui908nWVOC5nGQBxWd/yhoeleOJeDJ86kvg7wWhBaBfT1I2GCXA4
+	jq35LeNNL+3lAhxbYOPO8VP6j/dqvuyyzVYhxbuppP1AgG8u/qDdKZhoBjHP5rBy
+	HQNGJfRrYqZ6xU8qoJPEoMkP8s1zVpUs88dHeSoI01/+uG/IywDap5cvw5L//2oK
+	kc/WNw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4898cjp6rw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:18:49 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76bf205f680so157218b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:18:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754331515; x=1754936315;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qPFuA3XT5rZs0YkAQkaYeJ3lMViwpDLOl0oehXQ14cg=;
-        b=rJzarMl45Qdev4+hJehOZUjKHmqHKtgTYk1shgknWpEYx5XNIy2xKOaeZy2Vo64amP
-         2TvI3NARP6jWo50UnCRw3OcVuJr2fW0bboZBOEMxbSS/UX8OXXaU5pabXSWWimDOCtyC
-         sCZbH/yLaaiUkapuk0BjQlTlKZQemWwRiDriRA8tk8wM8tWUDh3WNcKS4wl4d2yLzMg/
-         vzUfKtb28tCca/uAuXQPmt4ERF3sbXW3qTHPp4xOJzg5gkAlUuWmkRs3vzEi5XUjXmXk
-         I4I9KoDUPr4cexuyITUKDBniPdiqRbuuW0ff+lUKxpVwizUu812t13FqDsQH+24Czl3x
-         wEmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3I96Nlk5CyJTvcQdu7ShCs1ptz/R6HkO8hqldeA53eokm0UKpgR6ZFFEYcU3U1XPgNAmMPBA7Nm91lkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzckQJGHeiz6yxORx0ADYRhZAf44GoTobmr2o9oVld2h1aFTotB
-	+IYDGYTT5ze9KZZPSGEFx5TLjiiVPCKlTjqn0MpIfGiKFW9AKeC21p8tnpnxKD1KgTQbeYhjXJi
-	TnzW6rGhLPSkFRu0rTP0X5elvbSoseoHb1ZHQ9cQ++AYYASFHVnzpIcdOWJmFtDJLxA==
-X-Gm-Gg: ASbGncu/GkfXtS5gPqk4FLmQOB0WaL4TWnjjtWdHJ7AOe+UNiYlgB9KDuRGGNNwGtXZ
-	DCt/6fZUFycgHvWW19t7HxccixQMz2mQbgZKOnguJMNzjxCH34IKaBKDCk3/l7JTFpAe/DW5P8N
-	/bN9xwrSr5O0TRtHH5gkjQD3068Qez6sCr+dV+8lB3KB1QLEVyva4n7Aj+UqtXgD0BXu2z6GP9x
-	diJqlMaVXZA1C3tah4gLtzP0YeF7cHcpdffg9eixIO+jV0KDT4dAXEgseGq5wYQi/CgrDldSuWl
-	Jp/YYGv8jWHhqBkwgFXWFbk5DUR0KpSz1h7283Ui/CvbtCZoeIqaJs0yOVEpVFzFuSPb
-X-Received: by 2002:a05:6602:2cd5:b0:87c:2f66:70f9 with SMTP id ca18e2360f4ac-8816824b198mr1908989539f.0.1754331515392;
-        Mon, 04 Aug 2025 11:18:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRY7UzzPxt1OP5gyqT0uCW4Gog0m9+ZLLEFgonjkQDZIWdxputL/74lAccIGpspoDTOpfy5Q==
-X-Received: by 2002:a05:6602:2cd5:b0:87c:2f66:70f9 with SMTP id ca18e2360f4ac-8816824b198mr1908985239f.0.1754331514891;
-        Mon, 04 Aug 2025 11:18:34 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([50.145.183.242])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-88187f182a7sm60068839f.6.2025.08.04.11.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 11:18:34 -0700 (PDT)
-Message-ID: <0faa958ef9cc4b834a5ecdc92acd89520f522d44.camel@redhat.com>
-Subject: Re: [PATCH v2] tools/rtla: Consolidate common parameters into
- shared structure
-From: Crystal Wood <crwood@redhat.com>
-To: Costa Shulyupin <costa.shul@redhat.com>, Steven Rostedt
-	 <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, John Kacur
-	 <jkacur@redhat.com>, Eder Zulian <ezulian@redhat.com>, Dan Carpenter
-	 <dan.carpenter@linaro.org>, Jan Stancek <jstancek@redhat.com>, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Date: Mon, 04 Aug 2025 13:18:33 -0500
-In-Reply-To: <20250726072455.289445-1-costa.shul@redhat.com>
-References: <20250726072455.289445-1-costa.shul@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1754331529; x=1754936329;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yt5mi4p22WNYCmgL4pLlpxDR0rYiRxhk5KHLynsxrC8=;
+        b=RS0z7LcoHLBf3YjuvVS1BEkD/0+MvC4vOisblvcD0Ubj5WnhGHgu7IZwqt3RgLpO7V
+         xuwACvcZ9jS/+1lYBb/TBVW6w3TO37Nng14BuIIP19x1YE6kHqj3O6iRX6OXdBY9mkye
+         Tr65HSxZAX/QBYX17FFJGTDh1WL6Q7s7lM0M40M/w6cWYQkk1G8nNSqw4JyWlVluOUwM
+         /fLRE6CBwdEVX3fZ/Xom4sDBzyK5HDwHsabhgliaTXYzbXC7WPk3exW45b7osmfr286D
+         7cjqUI2JJ03m04w9rj0VcfvUoEu52QmL4ihc8WYNYjHEgKLZ2BwfgoRwaf0IP0wKHcoa
+         kJ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvw3XVuDWXwNnqvn1MtDmRh94mAbh+nsB+9czDkc0nyaMAIpWUYzvFeAOVWMKGqFZvHzSobovxknMsP6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydacNt8UQE/A3FvzH5baeXaGNYjG0ayXGhUpaEllCgYHd4oU6o
+	D9NjynbEPojCVDJvLfMRgQYHrQtpn3dw4esAqX+rqVNjkFUnoY7sQDqMyktQr1Wsdov/5YV/2Yc
+	rwM2WdFzhI/naOx8HAnzRO5l7Jzq0G6AXQ02cFfDKnRj6/cOrDCAWaLJ17DghsfnaUac=
+X-Gm-Gg: ASbGncvK0WnVt439BjlUL0L6cbvf02CZhvT8+NeGkdF3X/DhR07v6ew1mc1Fd+1jtuy
+	FlMwErg5VzstvQ/PFFSyLIebTgcU2UJwUPsxXQnXVF2KMfvEbuYK/dIkbhDN4s9ylmGzsiV3zHr
+	5GpnlTczxwn6cttpR8pVWU6G18rZBAZQ5iYZNy/KB3/n21K05wlMi5bs9cSthFfyjQGJs76r0By
+	mtSr/D1exw+9D5+JepNNR5NciiJe9MCzhlVinOKhUmLh3D7beyiOlaVRJk6KhHhB6shEGbbGEe+
+	htWkubr6Sg9su31gp8yfyfmfT8hYlv1rYb+qOUMIODlNeNfSDtQLM1lR6TUIjs5IhEHGzxfMbZW
+	4zFJErbVqdBq5O0ANfE5KByK2syGMMjQu
+X-Received: by 2002:a05:6a00:1d26:b0:755:2c5d:482c with SMTP id d2e1a72fcca58-76bec47847cmr5134772b3a.4.1754331528635;
+        Mon, 04 Aug 2025 11:18:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvhGBzOxgi/xKVgQhhPoJg28ueZWZWVcj10/Q+74coA0plQKiU+Q2o13fdZxk56/jThGn0Mw==
+X-Received: by 2002:a05:6a00:1d26:b0:755:2c5d:482c with SMTP id d2e1a72fcca58-76bec47847cmr5134751b3a.4.1754331528192;
+        Mon, 04 Aug 2025 11:18:48 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1cb5:a9d1:15b3:77df:1800:1497? ([2401:4900:1cb5:a9d1:15b3:77df:1800:1497])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd7d1sm11162496b3a.80.2025.08.04.11.18.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 11:18:47 -0700 (PDT)
+Message-ID: <588f29a8-827f-412e-b525-a1bd3f6c2d87@oss.qualcomm.com>
+Date: Mon, 4 Aug 2025 23:48:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64: dts: qcom: Add Monaco evaluation kit
+ initial board support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rakesh Kota <quic_kotarake@quicinc.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+References: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
+ <20250801163607.1464037-3-umang.chheda@oss.qualcomm.com>
+ <4rxy4iuqy3dstfuv744gw327gf5n5g6notjpmkspjme2w4sd3j@5sbqfoumb5y7>
+Content-Language: en-US
+From: Umang Chheda <umang.chheda@oss.qualcomm.com>
+In-Reply-To: <4rxy4iuqy3dstfuv744gw327gf5n5g6notjpmkspjme2w4sd3j@5sbqfoumb5y7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=MNBgmNZl c=1 sm=1 tr=0 ts=6890f989 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=-WHn9-XdheHXZOC3f6YA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: e7hbR9S8o7X-BLs0fCJX5mR1vWffvAHI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDEwNCBTYWx0ZWRfX2FLjFTnFfgEl
+ duewdccfhURd4+tQH7IXSH+KCDaeKd7aCHYNP9n11voRfQePEsh6H+6Q2lPitWtrVlZDRpZ9/MO
+ lBUUI45eFB+XqH5/eUTIF4OPsLevHVouwUeK5K92zU+Sn0JCCanrr24sKQ5QIGIfl5idxD32cgb
+ 9qccR/u/QAx0+7VxacwwZaZefFrhC5mvBKHy21e9qI41dFBjzUwhd5MT7FsLwqGwVWEsHwDvIWF
+ iAlB+Hj+4QXFkNdnQS+NqrYobXXtCK9XtL2YApyufS6MuGXg3MryOLcvAfOPHtAz+IEFsra/Lg3
+ EOcej2chfngCk5w3Z6CYdKqTOtNiHxUNIZd45A0MjFIanL1v5EJhA+puXcvLosKU0Wn9z/QMnu8
+ PQLlf5mSdNR4tyvC79x5dIz/6saW73lQ/bziMHJYmQcHMlf9W7J2bmKDD1ksHFKeko4mIXmE
+X-Proofpoint-GUID: e7hbR9S8o7X-BLs0fCJX5mR1vWffvAHI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_08,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
+ lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040104
 
-On Sat, 2025-07-26 at 10:24 +0300, Costa Shulyupin wrote:
-> timerlat_params and osnoise_params structures contain 15 identical
-> fields.
->=20
-> Introduce a common_params structure and move those fields into it to
-> eliminate the code duplication and improve maintainability.
->=20
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+Hi Dmitry,
 
-FWIW I have a bigger consolidation patchset in the works, that merges a
-lot of the codepaths as well as having everything use osnoise_params
-(with some members being tool-specific, indicated by comments).  If you
-want, I could rebase that on this and use container_of() to for tool-
-specific params... but then that adds complexity with the top and hist-
-specific params, most of which are common between timerlat and osnoise
-(and not merged by this patch).  So we might want to just keep it simple
-with one big struct.
+On 8/1/2025 10:44 PM, Dmitry Baryshkov wrote:
+> On Fri, Aug 01, 2025 at 10:06:07PM +0530, Umang Chheda wrote:
+>> Add initial device tree support for Monaco EVK board, based on
+>> Qualcomm's QCS8300 SoC.
+>>
+>> Implement basic features like uart/ufs to enable 'boot to shell'.
+> 
+> "boot to shell" only makes sense if the platform is new and not all
+> devices are enabled in the Linux kernel. Granted by the current level of
+> the platform support, DT files for the EVK should have much more
+> features. Please submit a full DT at once.
+> 
+Currently upstream aligned changes for other peripherals are not yet ready
+for this platform, hence posted base DT support, will subsequently post other patches
+when they are ready.
 
-Any thoughts?
+>>
+>> Co-developed-by: Rakesh Kota <quic_kotarake@quicinc.com>
+>> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+>> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/Makefile       |   1 +
+>>  arch/arm64/boot/dts/qcom/monaco-evk.dts | 199 ++++++++++++++++++++++++
+>>  2 files changed, 200 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 4bfa926b6a08..e78f56762b6d 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -29,6 +29,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp449.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+>> new file mode 100644
+>> index 000000000000..1e0635c93556
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+>> @@ -0,0 +1,199 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>> +
+>> +#include "qcs8300.dtsi"
+> 
+> No qcs8300-pmics.dtsi? Why?
 
-> diff --git a/tools/tracing/rtla/src/utils.h b/tools/tracing/rtla/src/util=
-s.h
-> index a2a6f89f342d..4c99a3746380 100644
-> --- a/tools/tracing/rtla/src/utils.h
-> +++ b/tools/tracing/rtla/src/utils.h
-> @@ -59,6 +59,32 @@ struct sched_attr {
->  };
->  #endif /* SCHED_ATTR_SIZE_VER0 */
-> =20
-> +/*
-> + * common_params - Parameters shared between timerlat_params and osnoise=
-_params
-> + */
-> +struct common_params {
+Ack, will add this in the next patch version.> 
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. Monaco EVK";
+>> +	compatible = "qcom,monaco-evk", "qcom,qcs8300";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart7;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +};
+>> +
+> 
 
-I'm not sure that util.h makes sense for this... it's pretty core rtla
-stuff rather than helper utilities.  I'd just put it in osnoise.h (or a
-new common.h if we want to keep the actual-osnoise-tracer stuff
-separate, though currently it's a jumble).
-
-Do we have any naming conventions for the actual osnoise tracer as
-opposed to the broader osnoise family?  I don't know if it's likely
-we'll ever try to put something outside the osnoise family to rtla, but
-if we do "common" could be a bit too generic.  Not sure if that's worth
-worrying about at this point.  Certainly better than using "osnoise" for
-both without clarifying.
-
--Crystal
+Thanks,
+Umang
 
 
