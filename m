@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-754866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7F0B19DAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62B6B19DB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAAED3BB078
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCEB21792C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258F23BD1B;
-	Mon,  4 Aug 2025 08:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CA6241679;
+	Mon,  4 Aug 2025 08:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbnTVP2p"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8Xi7I42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BFD239E7F;
-	Mon,  4 Aug 2025 08:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4243A17D346;
+	Mon,  4 Aug 2025 08:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296457; cv=none; b=fvv2EqtNj0GsVGAeQa5995SecZ2rjmOyylqM67cYqMUthPs4p6lUuRbZSUU+r9Gj+wsIN68t5BmK6Vu0LgMQTHs9r/IHz/b4Jdt3SJvwmhmU7p6y5wap8Jre9U80HS/+wFavn6txI/AcYCVjuLd42sm2L1L5D+uPfWe5T5Dxdrw=
+	t=1754296468; cv=none; b=olQdDCTqOqJ9JokVwMV/07O/1N+DwN7BsUTNXpZldSIfYJ56/ORvODKE/kOEjmVoxJQaNec94Mt2NEPJRHPiowU4DqxE9AcEBCwrbDrL5a7z9eZCO6D80q707+4w2mLDxZLDs6ifG1GAuqOFrS5VMC3tRFZc3eDWDBczsEGH5ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296457; c=relaxed/simple;
-	bh=dx2HpBOnPLsrb6oU+3Rzb9yQbsE1lsQjTTkyYt8N3jk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IqkUeWChE4bGE2F1my/Cc2rOUODgutWnvrjHbPDaQ5epCPQnCzpqjifJGrnqvR9JLTzTEdUw1O7PPy+ZcQpHuBnB9U54HU4t5wQ8AhjGM2d1YjpbPMTJzn45TBp3svA+aOcFDfNJblfJQJqhzfSWP08go282Nt64z/cu1uz0ZdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbnTVP2p; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af96d097df5so95946966b.3;
-        Mon, 04 Aug 2025 01:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754296454; x=1754901254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BVAaWRDfZ5hL4Va+pKEsiC3nSrkETUshGtURrIEYCSc=;
-        b=gbnTVP2pIfa8pbJ+CV0T9Yn0Kvg1VEl7zgItpPscY8fIcyDuWAjTMrpRHSrj9ZVw9H
-         f+mlAguefKk+cYatWrZt0RNx3mg1S4x2cYmN/V+HRkmL6l1r8G/ICI6nHcdnJn4jeJsS
-         rTeYAOqVWFNFMAWKbpu0JaWbX+oLbzREaIDqDDf9HEZ+KyLnZUXBY5F0dCGPHbMOaQ02
-         h4HhLgCbMxt9uMVblcqXZ02GjQXjAGKJqX/vDF+ll/XuSJEzIP6is8AEJ4Vxr9dm8ddd
-         sXhhOSrRf+EfePMZIr/WWoYtSfBxKN+KrMrr4oAcvpma/cN2J8RIyTOG0V/g6jdPcFdU
-         4hUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754296454; x=1754901254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BVAaWRDfZ5hL4Va+pKEsiC3nSrkETUshGtURrIEYCSc=;
-        b=Yz1/1V+cB3bQ6M7dpGCh1xaj+YVURgXatIRnLSfA8/kvT9j6G4G4tOE840KImydUAI
-         SsE7NCqxGIcgvMP7Ro6uVMktqrwDcqJfXjduwIwx6d5OlfFzkHrD0b8rFRPoUd6bm74J
-         cp8BVEEQGk/runyVA9HYR0+egR5oDzkc4LX6SoK6rotAcJHZ0r4SHDsffRTcM7O606Kr
-         kaNYGB4LvGenRP8PzhtG01O4OTLcpMntEa6YKKFleNX/iAkPIRlgTRJJh/7Vv5NXASBf
-         ea3sutamm3QnuwVpjerwwfEChPQsw8g9jFKR8z1COtFvUOUi0WyEHyDsSDVG8f/L02qi
-         GmkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJRwC2ceEGCbmMVvu3S6Rdv3YbJ8swqoqpQ7/sDxIyPnypOKpbHqwR8RLVkY4MhB9Mtr6yCRGkb/8=@vger.kernel.org, AJvYcCUxy3lNOasBLj3i+fWYylAMxh3SopjyHH7ceStkigcyDhFHeUcck8SLpkOwGgv9xtyf4ImyVpOGkWt3muhB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5ehfy9qKX3s7SOtEEzqtMC/0fnIIH0ZDosxKmOYBliSuA+Cg2
-	CVA4FcRd43A040a1rv8Zr1Yeh1iTO0dH4hFZpS6VO3AYxt4biyjvDP6V1IpIoRqrxgkuO47Ao6D
-	HSRLpECljFvGgWTFGLXN3SyApzTRZXOs=
-X-Gm-Gg: ASbGncsUycLbhNsCRsjMyLiiOZEn/X5COP+ECtOGSQa8aOQvjnWMiDk46C9XCLuqPLB
-	7ciHICZvBwzk+8/F5gZo7CXpPM3vDcylFGo3/6+SXUTywmlnkV0rI9ACSF9oU3vLId9e1ZFLNJE
-	CN79mv7C6uc3Ioz8aaYaJlTPlEx8MTVfUCMsbTjmY/M3r/kO7f4/5h9m937B6Lfm+utJd2sskHz
-	P5Hf9mAag==
-X-Google-Smtp-Source: AGHT+IE31LPTieeATPHB9TqfZ/rrNV8D2fuW9P6Ep8AruRk5dAs43xCQVMi8VZOonc4q/hIkzCr3X1rndXRHUQUdFyQ=
-X-Received: by 2002:a17:906:f749:b0:af9:5b1f:b87a with SMTP id
- a640c23a62f3a-af95b1fbb03mr472319166b.20.1754296454132; Mon, 04 Aug 2025
- 01:34:14 -0700 (PDT)
+	s=arc-20240116; t=1754296468; c=relaxed/simple;
+	bh=xGU8SrnP+viRjvp4iH3SDCyWJOmlYsrShYOR0Da0I44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4sCkxrkXFppTUFHqKSUtW7vTaCShqJyMvfZHvSM57gaaFKAxpk9t/3w/W+51nnc8wrtoP6bsUsmvRjzityajWFFJclY9gMDeVXtnG2lZgRib/Jy97MGJrfErwK1KoD3ryq+pw0MZP4VkXFBxHa2O3VdECsojch1sIF4BKZ2IHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8Xi7I42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880F5C4CEE7;
+	Mon,  4 Aug 2025 08:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754296467;
+	bh=xGU8SrnP+viRjvp4iH3SDCyWJOmlYsrShYOR0Da0I44=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U8Xi7I42IPlKd3HMayHDfBvLdyhXUJSBP6S3O4stID7MJt5g5j88CnlW8veaGVIyi
+	 K6OQ/WjXDfGGeQg+ytzwV2CtX0AD5Qnzjb9MjdeBaRGfjXpVoJXOH7ThzHgGo81HZJ
+	 tLrxDSS1ulOAyLxeXscPlRXBdUwUt6ZEnkH63jjrLHYIsLa5GXa3/fmLVHusOKR8wJ
+	 xmphFGkXXUNu15sVhzx+ZckKQuBGLj3P3g6wszhnuGl8gCob4t7UxP7hsPhymHc7Lw
+	 aX/qkDkLqh+Cg+Aba4pGkivS6XfJCLI3CFtqp3F2tBXDZfGLMwwQU1CD6TGswMq8VI
+	 3X26WG1Joi8PA==
+From: Hans de Goede <hansg@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read regmap_config flag
+Date: Mon,  4 Aug 2025 10:34:19 +0200
+Message-ID: <20250804083419.205892-1-hansg@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754041258.git.mazziesaccount@gmail.com>
- <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
- <20250801120901.00004a67@huawei.com> <e91711f6-c943-402a-8502-52d8ed4c05a9@gmail.com>
-In-Reply-To: <e91711f6-c943-402a-8502-52d8ed4c05a9@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 4 Aug 2025 10:33:37 +0200
-X-Gm-Features: Ac12FXyJn5xlYsUNgP8wKbi3hxvmGp2X0QFbWIChLgEX-msCXhk1pwj4nZoU8mE
-Message-ID: <CAHp75Vdyz6Pr1xm0LjhttVAO2GsLhWwb=OndvguSAqWqqhpMXg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] iio: adc: ad7476: Simplify chip type detection
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 4, 2025 at 7:57=E2=80=AFAM Matti Vaittinen <mazziesaccount@gmai=
-l.com> wrote:
-> On 01/08/2025 14:09, Jonathan Cameron wrote:
-> > On Fri, 1 Aug 2025 13:07:13 +0300
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Testing has shown that reading multiple registers at once (for 10 bit
+adc values) does not work. Set the use_single_read regmap_config flag
+to make regmap split these for is.
 
-...
+This should fix temperature opregion accesses done by
+drivers/acpi/pmic/intel_pmic_chtdc_ti.c and is also necessary for
+the upcoming drivers for the ADC and battery MFD cells.
 
-> >>      st =3D iio_priv(indio_dev);
-> >>      st->chip_info =3D
-> >> -            &ad7476_chip_info_tbl[spi_get_device_id(spi)->driver_data=
-];
-> >> +            (struct ad7476_chip_info *)spi_get_device_id(spi)->driver=
-_data;
-> >
-> > Switch to spi_get_device_match_data()
-> > which checks via generic firmware paths first (so DT here) and then the
-> > old school tables.  Also returns a void * so gets rid of need to cast.
->
-> Ah. Right! Thanks!
+Fixes: 6bac0606fdba ("mfd: Add support for Cherry Trail Dollar Cove TI PMIC")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hansg@kernel.org>
+---
+ drivers/mfd/intel_soc_pmic_chtdc_ti.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-More importantly it returns _const_ void *. And qualifier makes a lot
-of sense here.
+diff --git a/drivers/mfd/intel_soc_pmic_chtdc_ti.c b/drivers/mfd/intel_soc_pmic_chtdc_ti.c
+index 4c1a68c9f575..a23bda8ddae8 100644
+--- a/drivers/mfd/intel_soc_pmic_chtdc_ti.c
++++ b/drivers/mfd/intel_soc_pmic_chtdc_ti.c
+@@ -82,6 +82,8 @@ static const struct regmap_config chtdc_ti_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = 0xff,
++	/* Reading multiple registers at once is not supported */
++	.use_single_read = true,
+ };
+ 
+ static const struct regmap_irq chtdc_ti_irqs[] = {
+-- 
+2.49.0
 
-> > Only works with all pointers (or a lot of care) because a value 0 is a
-> > fail to match.  So kind of enabled by your patch.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
