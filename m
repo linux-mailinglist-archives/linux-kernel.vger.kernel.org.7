@@ -1,241 +1,172 @@
-Return-Path: <linux-kernel+bounces-755029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA128B1A04E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4923AB1A051
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07769175390
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:12:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE25F1895B67
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB0A253B7A;
-	Mon,  4 Aug 2025 11:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EbzCjNJy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DA1253B67;
+	Mon,  4 Aug 2025 11:12:40 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7F82512E6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284DE2517AC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754305938; cv=none; b=LLBrf3q0mdMsHN6KqKWRPUm6ELQVSH2YxyC9Xt/sKbGxAcS6Mu+NBlMt3LyU3DU4DYPRsypOB7phlSfy3G7hRLsSmJiVLKyiPT20hD3UMULavWGddXW8KReSfoKqIPXc7392vLv07Z29FqpMmZGUWUpS5Spxj34Ag+/rhLi47vE=
+	t=1754305959; cv=none; b=ODDZP693SoL/WBAZrl1T0ILbXiZv0k+/yQbdW6Dgclnsg5mbyvnB4JMaE3lmt6Zt/k74u6KeLkpoxCrSDL59WQ1bW08SeTIafSxn0PXztVMw7Zbsa8Hfi94apoq4X23Gq6EgpT5GZbWYkgqWF65x3MvEKB+aAc0IisSGniYi/uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754305938; c=relaxed/simple;
-	bh=Omw9hUFTDk90A03C6AJBHSpEvuZNntYrhakVU/5IIro=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhGL8O2RjN9Jb0ZevGT/Q9ejqHS5gZoZbLZHlHZWSAoaPBVbKhIUlEZ4im8EEXUGCJBErQfKjYa08Ghy2Ivwzf5QP7KrNzST5pwkXgdVlP8iBv2N+VjXEGr7r+aN8I/CdUiSGfcyIsq1hnbOl1c6/eAFY6VQwyJ4qTaswMkZljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EbzCjNJy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5749WarM011675
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 11:12:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xY08u+5CBSgmq/xMQH9j0OMW
-	anJB7Bd0uQk8adqRJ3s=; b=EbzCjNJydx55YP0xUhChkWIEueKB3twjMrbsr6se
-	zfm8p6icRJ+M9G9ygWQ6SvjXTvh77mc/ocz6MOyz/3wTj1wULGycTi949PLO7ndD
-	IMWPItJ8+Fcy1f+TnUUfhtSWa8Yvh0LJwmj2Qck7tjVNkaykmWTh1QfSRtDOckI4
-	1LU19xf7yQKPPPJPB5nt+Q/NBJzfuNjIGiVYsl0fd/AvrOvYLEf1H7T6dY8I+fqx
-	8ebTb3ha5Pw4bEwOgzSPbG+nvWPXIbeHcBRMkbl3brnt3is+1rW6AGrVYS27Fi7O
-	81hFRwEeuw645OF+lC4SGtkJ1fXi6/1biO+hRjE7O+TFBA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489a0m4njf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:12:14 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b0791a8e8dso8469911cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:12:14 -0700 (PDT)
+	s=arc-20240116; t=1754305959; c=relaxed/simple;
+	bh=sS1YT27CJtLoZAmprfV76F5Z1H4mkr6BMsHwJXvAoaE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tqofbKrPBw73lS2jZoiCQlT7942zPzG9fVHSpkP6Ek8NJGnFj+znj9JHivKzMpHYnZ47vtSsn7oMQyP8wymZwPKA6YmjCcrHHWo+KHV3yVE/OOMKCxn2Lx9TWaByZ0UNLPefPq2WbCsc6rjHCq5F7dRZzrcQONxRBLdfwjHGJs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88177c70d63so111116739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:12:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754305934; x=1754910734;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xY08u+5CBSgmq/xMQH9j0OMWanJB7Bd0uQk8adqRJ3s=;
-        b=XuzBVzLAvYY/Kot5jcHkjScr63wKA70TMhBDXLnks/GAfAmqysGb4xMERne6Klb6gu
-         1fRiu/9BXF0MEaXVrcDpNVqUFlnlLRbV1D8E8DclXijcHZQ3v/U8lSCj/sANvlqkzfoI
-         Rdmax4IUk6f2x3/KQEQQV7niRiQIpPeMFyhhH6QNv2XPPqMBUvNc2M4hCdbn7JeZAXin
-         3euAAiTq+64cIIZoI+rMnOturD0AaQVnB563ajcBriC0uEhDpQCNpvNrvMRzkEpGveQb
-         pZ6PGNvG0JpF6oDuMJnnnWeo+vASSo3Z0wzuaFSyHB0To7fYo6gQCkllUdJnCjAEU74H
-         98IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKoFKQ2YT4F4u1+yFGhSc69qCj+ttOcHCm7XIbqpuRpyIBhBeT/7riE3f2ubRa69Z7XQQV7EfzaGMihvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+ErjjarsiiqlivljGIpoUz2YcnQP9fZkt4Z+MECW6P9lOaMr
-	Z2puOADLqs8smF9VAqKFTFv42KNC0bbmvL0k/mq+btsQQ5YyD3W+vMQM0kdjDUgwLLvKwAMHEFf
-	xMHW07YnmAhYi6IFo+VnaI4yJ49YK98VCCUga1FDpUln7bjx9AOjL/WsE2o+ioz2Gj8E=
-X-Gm-Gg: ASbGnct906frEwNfiIQqdsqUXCeCT4guav6JNBlIFlQf12ARok8elrbPpZH2DTLk63h
-	koEcIQOBLKd3JkyHTFrY79Y2bdRLMZJiFnl8FOEKF6lHVMVlGud1VYVEFKWbovt+VdBuLu+sTzE
-	LFQvEBOu4O4UWPxNEbDqOw7Lnyx+SDOovGcNhykNejKtcqSK+xztEY9LU4s7HilVrJ/sV/99OeU
-	A2H75+b0C9i2eVICVhe9OUv2G0Yzy1m7eOOrExyKuafe839erQmJNmdT3TN7FOt1Vn/wlBVKTTy
-	QFjO4D5gTEOsI88p6ov5NIzfAveGKc4S1VNvmFiFVWiNrwK+LFrjd85PDFNveiEhiytJ6A==
-X-Received: by 2002:a05:622a:1344:b0:4b0:7ae5:c3a4 with SMTP id d75a77b69052e-4b07ae5d169mr6112591cf.40.1754305933548;
-        Mon, 04 Aug 2025 04:12:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYpcEbMHBm5v9EBV8ZN8gmjTX4c83T0s5eMl0+dY9O597Q54Xp8w1/yBRwTZEiScRbyY6AcA==
-X-Received: by 2002:a05:622a:1344:b0:4b0:7ae5:c3a4 with SMTP id d75a77b69052e-4b07ae5d169mr6112051cf.40.1754305932999;
-        Mon, 04 Aug 2025 04:12:12 -0700 (PDT)
-Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfeaesm217612295e9.16.2025.08.04.04.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 04:12:12 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Mon, 4 Aug 2025 13:12:11 +0200
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, quic_vgarodia@quicinc.com,
-        quic_dikshita@quicinc.com, krzk+dt@kernel.org, konradybcio@kernel.org,
-        mchehab@kernel.org, andersson@kernel.org, conor+dt@kernel.org,
-        amit.kucheria@oss.qualcomm.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/7] media: venus: Conditionally register codec nodes
- based on firmware version
-Message-ID: <aJCVi4fjY9SKWNOk@trex>
-References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
- <20250715204749.2189875-3-jorge.ramirez@oss.qualcomm.com>
- <2fd0d1a7-70ee-43ac-af84-d2321c40e8f8@linaro.org>
- <aHidibqhMyexExXJ@trex>
- <0dd1f38e-eaba-4c99-b386-4ff8fade5b9b@linaro.org>
+        d=1e100.net; s=20230601; t=1754305957; x=1754910757;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZC4QBhhXxtpdVYVwy1WTCm0gMYAELnv1sLEfnwbWNs=;
+        b=xQQhfJDVz65CQDb/wqrhWP286nS4GP8vKLb68waW/P9LBYux1XYT1SE+d99jHIbfoz
+         RUCwiMpNRoHzU0/LJFFjW3vfbhtLo0RtV5l+SFQDRBzo5Q43FKCF81qQQlHoKBFle430
+         pPPvt9kUwENwwrZ8Y/e2BDvM+oV4Rdq9nkXIeYmXBwsOpPqL/5FBdnRQeeSWSetpU5XT
+         EwM7p+LAcxOhiohd0AXBsqzuv3ZLB0Kn4btLTIQSDkmHsLl0SPZIwnqNg+3LOqaUdVar
+         BurNRBrN3FgDDPMQldWoR4kmiKyt10a1r/EJDZ3Zms/T5+zUyvk7xUTpOv+48Lbj9u+u
+         eqpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH3DZ/3mb7BcQGA5yBHvBVSYtF/W3zAOoJxk58rb2E/LGO4RdZHfP64bpQjfHHtRpRjlZ0fbMJEo71Qwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4UMt8Jsy29q/IncwpPZ0wFoSGhDq32C4r34TRSDNTQu9SfSgr
+	C38c0zOsn1c2AApXRRVj4KNnPQLlbHsp59rD3+Vq6nc94BCose/BGdkq9z4j7W68uQEtZYT2Vqt
+	/37EexkbqSg9zLp9CGvHAceXAUbBguxXMVh6P8OkUwLQqn0iOs3MLo9cQNcY=
+X-Google-Smtp-Source: AGHT+IFs9AdaOr2KbRyq2uBDNXmOAIq8TzhwKVvLOht03tvjs458CeoUQyq9O7YmYPMbVMr1ReGGRU26aXBDZrwwvDoEz4HNoivk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0dd1f38e-eaba-4c99-b386-4ff8fade5b9b@linaro.org>
-X-Authority-Analysis: v=2.4 cv=JOM7s9Kb c=1 sm=1 tr=0 ts=6890958e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=mEtzVpvg6qvpzuVc8OAA:9
- a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: ao6_MLcAKvZuFldoNuCQ4e_Mggg7VX4G
-X-Proofpoint-ORIG-GUID: ao6_MLcAKvZuFldoNuCQ4e_Mggg7VX4G
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2MSBTYWx0ZWRfXx5aWnBbU1kMD
- Ny0nUaCUT5WqH7ro2KG4S0B9amXpoOJln7oJB2s9OYYKzX540/ViHSBp//WMQ5i4jdO4+3u6aTI
- FY6HO1aLTvugBGrK/WMgyj1d82MX6cdrgopp1b+tYzRSdx/vTJvay3rDoASS3WZogF7d7bfZRnj
- qXliB6HHrxEYMNQEYEczipijLMGzl2hSedZqvEI5NeMrdcbRZ7I3f5/cNGVCMWpkuZiyN0XfZLl
- p8UzDIhxI8fSnchYeV7j79870MblEytQkBxSrQMMq6nVNoAE+0O+JnQBz5gfkG0EoojIOxO+dlr
- uupiwKLbubPyhuZHHmb95Gi1xPQaclsqcITnSbo3TCVogn8Ezycx20Y9noAiN9zfeHk/Nj3+2Iy
- CdLxXdwjfppQ3SlR7zthZGLfpUvV0omnvG2Z7mrkiUTEwsSKeJ/pOXXfXi2qbUKOcJCd3kIA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0 mlxscore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040061
+X-Received: by 2002:a05:6e02:1f0d:b0:3e3:f1db:d352 with SMTP id
+ e9e14a558f8ab-3e41616f18amr165903325ab.15.1754305957281; Mon, 04 Aug 2025
+ 04:12:37 -0700 (PDT)
+Date: Mon, 04 Aug 2025 04:12:37 -0700
+In-Reply-To: <67f66c9c.050a0220.25d1c8.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689095a5.050a0220.1fc43d.0009.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: null-ptr-deref Write in rcuref_put (4)
+From: syzbot <syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/07/25 09:55:08, Bryan O'Donoghue wrote:
-> On 17/07/2025 07:51, Jorge Ramirez wrote:
-> > On 17/07/25 00:37:33, Bryan O'Donoghue wrote:
-> > > On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
-> > > > The encoding and decoding capabilities of a VPU can vary depending on the
-> > > > firmware version in use.
-> > > > 
-> > > > This commit adds support for platforms with OF_DYNAMIC enabled to
-> > > > conditionally skip the creation of codec device nodes at runtime if the
-> > > > loaded firmware does not support the corresponding functionality.
-> > > > 
-> > > > Note that the driver becomes aware of the firmware version only after the
-> > > > HFI layer has been initialized.
-> > > > 
-> > > > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> > > > ---
-> > > >    drivers/media/platform/qcom/venus/core.c | 76 +++++++++++++++---------
-> > > >    drivers/media/platform/qcom/venus/core.h |  8 +++
-> > > >    2 files changed, 57 insertions(+), 27 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> > > > index 4c049c694d9c..b7d6745b6124 100644
-> > > > --- a/drivers/media/platform/qcom/venus/core.c
-> > > > +++ b/drivers/media/platform/qcom/venus/core.c
-> > > > @@ -28,6 +28,15 @@
-> > > >    #include "pm_helpers.h"
-> > > >    #include "hfi_venus_io.h"
-> > > > +static inline bool venus_fw_supports_codec(struct venus_core *core,
-> > > > +					   const struct venus_min_fw *ver)
-> > > > +{
-> > > > +	if (!ver)
-> > > > +		return true;
-> > > > +
-> > > > +	return is_fw_rev_or_newer(core, ver->major, ver->minor, ver->rev);
-> > > > +}
-> > > > +
-> > > >    static void venus_coredump(struct venus_core *core)
-> > > >    {
-> > > >    	struct device *dev;
-> > > > @@ -103,7 +112,9 @@ static void venus_sys_error_handler(struct work_struct *work)
-> > > >    	core->state = CORE_UNINIT;
-> > > >    	for (i = 0; i < max_attempts; i++) {
-> > > > -		if (!pm_runtime_active(core->dev_dec) && !pm_runtime_active(core->dev_enc))
-> > > > +		/* Not both nodes might be available */
-> > > 
-> > > "Neither node available" the latter for preference.
-> > 
-> > what about "One or both nodes may be unavailable" ?
-> 
-> Ah great that actually explains it then, as you can see I didn't get the
-> meaning from the comment.
-> 
-> > > 
-> > > > +		if ((!core->dev_dec || !pm_runtime_active(core->dev_dec)) &&
-> > > > +		    (!core->dev_enc || !pm_runtime_active(core->dev_enc)))
-> > > 
-> > > Is this change about registration or is it a fix trying to sneak in under
-> > > the radar ?
-> > 
-> > I think this functionality - the ability to enable or disable individual
-> > encode/decode nodes based on firmware capabilities - should be standard
-> > across multimedia drivers.
-> > 
-> > For example, on the AR50_LITE platform, the _current_ driver/firmware
-> > combo does not support encoding as it requires secure buffer handling
-> > which is not yet implemented in the kernel (changes to iommu, etc)
-> > 
-> > So, rather than disabling Venus entirely, I think it makes sense to
-> > expose the decoder node, which remains fully functional and unaffected
-> > by the secure buffer requirement.
-> > 
-> > Hence this commit (so yeah, I am not trying to sneak a fix, I swear!)
-> 
-> grand so.
-> 
-> > 
-> > > 
-> > > >    			break;
-> > > >    		msleep(10);
-> > > >    	}
-> > > > @@ -202,7 +213,8 @@ static u32 to_v4l2_codec_type(u32 codec)
-> > > >    	}
-> > > >    }
-> > > > -static int venus_enumerate_codecs(struct venus_core *core, u32 type)
-> > > > +static int venus_enumerate_codecs(struct venus_core *core, u32 type,
-> > > > +				  const struct venus_min_fw *ver)
-> > > >    {
-> > > >    	const struct hfi_inst_ops dummy_ops = {};
-> > > >    	struct venus_inst *inst;
-> > > > @@ -213,6 +225,9 @@ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
-> > > >    	if (core->res->hfi_version != HFI_VERSION_1XX)
-> > > >    		return 0;
-> > > > +	if (!venus_fw_supports_codec(core, ver))
-> > > > +		return 0;
-> > > Its not really a codec you're checking there, its a version.
-> > > 
-> > > The name should reflect that.
-> > 
-> > but the check isn't just about the firmware version: it is about whether
-> > the firmware in use supports a specific coded based on the firmware
-> > version knowledge built in the driver.
-> 
-> No OK "codec" is the right word.
-> 
-> ---
-> bod
+syzbot has found a reproducer for the following issue on:
 
-as per internal discussion - offline - I am replacing this feature for a
-simplified an "all or nothing" version: either the firmware version
-can support both the encoder and the decoder or none of them.
+HEAD commit:    5c5a10f0be96 Add linux-next specific files for 20250804
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f23aa2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4ccbd076877954b
+dashboard link: https://syzkaller.appspot.com/bug?extid=27d7cfbc93457e472e00
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1628faa2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12490434580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cb2134de7be8/disk-5c5a10f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fe8a36605e0c/vmlinux-5c5a10f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/12df22603d55/bzImage-5c5a10f0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: ffffffffffffffdb
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD df3b067 P4D df3b067 PUD df3d067 PMD 0 
+Oops: Oops: 0002 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6346 Comm: syz.0.336 Not tainted 6.16.0-next-20250804-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:arch_atomic_add_return arch/x86/include/asm/atomic.h:85 [inline]
+RIP: 0010:raw_atomic_sub_return_release include/linux/atomic/atomic-arch-fallback.h:846 [inline]
+RIP: 0010:atomic_sub_return_release include/linux/atomic/atomic-instrumented.h:327 [inline]
+RIP: 0010:__rcuref_put include/linux/rcuref.h:109 [inline]
+RIP: 0010:rcuref_put+0x172/0x210 include/linux/rcuref.h:173
+Code: c7 c7 80 72 94 8c be 68 00 00 00 48 c7 c2 c0 72 94 8c e8 21 f7 35 f8 48 89 df be 04 00 00 00 e8 84 90 bb f8 41 be ff ff ff ff <f0> 44 0f c1 33 41 8d 76 ff bf ff ff ff ff e8 ab 27 58 f8 41 ff ce
+RSP: 0018:ffffc9000431f960 EFLAGS: 00010256
+RAX: ffffffff89678f01 RBX: ffffffffffffffdb RCX: ffffffff89678fdc
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffffffffffffdb
+RBP: ffffc9000431f9f8 R08: ffffffffffffffde R09: 1ffffffffffffffb
+R10: dffffc0000000000 R11: fffffbfffffffffc R12: dffffc0000000000
+R13: dffffc0000000000 R14: 00000000ffffffff R15: 1ffff92000863f2c
+FS:  0000555583637500(0000) GS:ffff888125d17000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffdb CR3: 000000002465a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ dst_release+0x24/0x1b0 net/core/dst.c:167
+ ip_rt_put include/net/route.h:285 [inline]
+ pptp_xmit+0x14b/0x1a90 drivers/net/ppp/pptp.c:267
+ __ppp_channel_push+0xf2/0x1c0 drivers/net/ppp/ppp_generic.c:2166
+ ppp_channel_push+0x123/0x660 drivers/net/ppp/ppp_generic.c:2198
+ ppp_write+0x2b0/0x400 drivers/net/ppp/ppp_generic.c:544
+ vfs_write+0x27b/0xb30 fs/read_write.c:684
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fda7098eb69
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffb2fc7658 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fda70bb5fa0 RCX: 00007fda7098eb69
+RDX: 0000000000000013 RSI: 00002000000002c0 RDI: 0000000000000004
+RBP: 00007fda70a11df1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fda70bb5fa0 R14: 00007fda70bb5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+CR2: ffffffffffffffdb
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_add_return arch/x86/include/asm/atomic.h:85 [inline]
+RIP: 0010:raw_atomic_sub_return_release include/linux/atomic/atomic-arch-fallback.h:846 [inline]
+RIP: 0010:atomic_sub_return_release include/linux/atomic/atomic-instrumented.h:327 [inline]
+RIP: 0010:__rcuref_put include/linux/rcuref.h:109 [inline]
+RIP: 0010:rcuref_put+0x172/0x210 include/linux/rcuref.h:173
+Code: c7 c7 80 72 94 8c be 68 00 00 00 48 c7 c2 c0 72 94 8c e8 21 f7 35 f8 48 89 df be 04 00 00 00 e8 84 90 bb f8 41 be ff ff ff ff <f0> 44 0f c1 33 41 8d 76 ff bf ff ff ff ff e8 ab 27 58 f8 41 ff ce
+RSP: 0018:ffffc9000431f960 EFLAGS: 00010256
+RAX: ffffffff89678f01 RBX: ffffffffffffffdb RCX: ffffffff89678fdc
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffffffffffffdb
+RBP: ffffc9000431f9f8 R08: ffffffffffffffde R09: 1ffffffffffffffb
+R10: dffffc0000000000 R11: fffffbfffffffffc R12: dffffc0000000000
+R13: dffffc0000000000 R14: 00000000ffffffff R15: 1ffff92000863f2c
+FS:  0000555583637500(0000) GS:ffff888125d17000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffdb CR3: 000000002465a000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	c7 c7 80 72 94 8c    	mov    $0x8c947280,%edi
+   6:	be 68 00 00 00       	mov    $0x68,%esi
+   b:	48 c7 c2 c0 72 94 8c 	mov    $0xffffffff8c9472c0,%rdx
+  12:	e8 21 f7 35 f8       	call   0xf835f738
+  17:	48 89 df             	mov    %rbx,%rdi
+  1a:	be 04 00 00 00       	mov    $0x4,%esi
+  1f:	e8 84 90 bb f8       	call   0xf8bb90a8
+  24:	41 be ff ff ff ff    	mov    $0xffffffff,%r14d
+* 2a:	f0 44 0f c1 33       	lock xadd %r14d,(%rbx) <-- trapping instruction
+  2f:	41 8d 76 ff          	lea    -0x1(%r14),%esi
+  33:	bf ff ff ff ff       	mov    $0xffffffff,%edi
+  38:	e8 ab 27 58 f8       	call   0xf85827e8
+  3d:	41 ff ce             	dec    %r14d
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
