@@ -1,124 +1,121 @@
-Return-Path: <linux-kernel+bounces-756813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA0BB1B9A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:54:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FCDB1B9A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C05FB7AD895
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC4D3AB83B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4CF295DB8;
-	Tue,  5 Aug 2025 17:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD2295D86;
+	Tue,  5 Aug 2025 17:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0iIvbdp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpZcwvj4"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952C3A55;
-	Tue,  5 Aug 2025 17:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477E295511
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754416435; cv=none; b=htui4myC0RKggFqOjJb6T/vq4qpDBkXZW2DfDmEpxgNRe+YSEG4mZ32X6sPuLSfourTK81Pl5TUeIWSF/i6vYOA55NaXtWsknga/ZzCXI3GvbzlXS95hEQ3emlIG4MonjCWwFK5L1M1wTo/t/90oZmC6NJDN0DLTI/e1DOWBDkg=
+	t=1754416536; cv=none; b=uUHS+3kcAId7VWv7kM7Dd9Fmj4tcbpG7I3GDzpqr/XgRiTEp5nVSBW8TZ1LWWllY5udEu0jsOJ/f22fvWXFFdOtU0K41CU0+/LJ2KlAyRbM6owySKzEq1ImsXXzbDQOduqn1vWzgtsANMU4qy5xzIKkskqV4neVAahe3/rUZaeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754416435; c=relaxed/simple;
-	bh=MioYAhNotFZUh9CEi5VyuJwmmwIaFoi439ziNU1/xZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4COUQQ1qwOGHoiQZk78JE9jYSYJh0r6VhVD10G08M65DwV3qn+hQ3HbcJpX3zTBc1Aem1EHQJEwOGneiw1fKDDRVFiOUVXttshxG6pb4FO4dkxvPnnzdqEHHQ0kRYliKCuXOX3VAICTyYsEedmiQAKeJx6gTGbsqKToXISl3jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0iIvbdp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 096A5C4CEF0;
-	Tue,  5 Aug 2025 17:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754416435;
-	bh=MioYAhNotFZUh9CEi5VyuJwmmwIaFoi439ziNU1/xZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G0iIvbdpeFbfMCoUWOUNU6swI/EliSO8PLGjxXx+2FqXmmPipOCslpqGmJ+l8jyB2
-	 A+aDpXNCe0HKve5SYckNe3zMxD3rBB/7wLlwSN7vaqQfth8M91o0slwsy/Bi5GtykL
-	 LXBLRw071Lwk9PTvI6aAvbjIyCbFUIvlAWlk7UdUst6+i3nwnv76RM4fVdqPQH9BgK
-	 fiYR07U4n20ZLUIh2s/hhrPMjCxfQEZfWfGh9zqa4TbXnbIwjtmLq925h+WOu833r7
-	 0QZzLibgzVmlUQEyNJp8e8aNFejaB0WpEBVppck6Qsw/e71L90hcSAC/+efBA509aZ
-	 /+o0a8OE8rhfw==
-Date: Tue, 5 Aug 2025 12:53:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org,
-	y.oudjana@protonmail.com, fshao@chromium.org, wenst@chromium.org,
-	lihongbo22@huawei.com, mandyjh.liu@mediatek.com, mbrugger@suse.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	kernel@collabora.com,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Subject: Re: [PATCH v3 01/10] dt-bindings: memory: mtk-smi: Document
- #access-controller-cells
-Message-ID: <20250805175354.GA2004232-robh@kernel.org>
-References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
- <20250805074746.29457-2-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1754416536; c=relaxed/simple;
+	bh=5uRgKSu74lSNHScNwAmGr7aWrylfbsm7esJhr+/Y5Fo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t2HlgtWMXv75quyKiRVsyXWCRBoGzmrYyAXg8BUuVVG8lvmLZzPAXsMEeO5kVUFZReW57Q8PgAmCsC+tXhDUe+Yg7ImTHgawl1M5e+RvNGSCbxTb6II7YkFL3hGtRoUhPZH0euCBR2zQUk+l65N3rOZjUECeLQbuReL3EzaDDs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpZcwvj4; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-88dc7abaf5cso700606241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754416534; x=1755021334; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVq221nALtjhFP05t0bLvvBx0QkNkCxD0XEfFCrLV/s=;
+        b=BpZcwvj4o2Tn374alqmHe5Ix4WfSe23cUx1IUDADcc55vhB1dXNFI0mTGP1zQLr1Rd
+         YrZuausQhd2sNrU79jqpaleWGo6PoCfuLc7/v0Pdm3myNAGqE1U90vJuL+jHjB+yyrO1
+         LPXdlgD8mRxqJkv9AA1VgnUsrIRG7e0GIkwhbhHnWeKEtaeCzrLY1YVD7pclkUWIOIQ6
+         FI7DGypvpZ9tihV1z6DNjN58n6LtQP6+IjFhjEA2nxI2gGLMy2OCpxtsxSvo/OJvR7tm
+         RlyzvIK7x8d8GuGzEPsqb2odSacoZfZY4xzkGK4hQt8bDFTugYcxRZg1XIK6Pc5dqRR6
+         Aa4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754416534; x=1755021334;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tVq221nALtjhFP05t0bLvvBx0QkNkCxD0XEfFCrLV/s=;
+        b=Fx6yqvbDA8t7OJcyg/R8CON3++UrMurMNnutTFl0GPVTFAJwcT99/Mcl5lhQOjk9JB
+         3OU4p6Ibmj4Qix0tiU50tBOymLYXkptao02l9HFCsS/VP7D6E+qZlOe+58rddcZ3Wc6C
+         UGWIKo9N4Uxmf50pvCFFJmjst+b57tS4t1VY/lYY4cfraIk1xM2WBbhG3nIR4zOESzFt
+         d36PmSbR4wjIW7CqJJ3WPTY8EHCAuTUMhboqi6vjVaf6wxS6LulpCcIO8CAsMYweSf6z
+         mKgH/JXZecm7iZ++5HtSrXiYmMM9Ik3rjkLtGhwtuPpctIgW/3eEp1XNumTUONlSCjIx
+         42cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjNXdqFh4tmDn3Ss0xPLqXYANMEdxybcrNd+XAfuY5OViQUeZ6HuZmMVKdxm8J+7h1oZZK2VDHWRjIKvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxddMaoyg97Fpkhnp1w0iDFnBXCFYEWZbQRR2PPbFOA8CheTZDS
+	ZcRsIWDCn/+s4cW2VvRqD9TDbtl/kmSQ6UK+qdwgUGLTae7FYBETQ9LYPAJ8HQr3eP0ZAeTGY7+
+	6aZLEcCT40lWftDZFnYYNOoo7EfJcHc4=
+X-Gm-Gg: ASbGncsWg9L4MDuJWz/crd9NUWR/1yC9mtEJBTZGEvauHFT7Fl8boYbNTgmvNDEOBqn
+	3l6tt//YT/2/B+N8UtQ3gu9LgOcM9pftl5h130+jcj8b+1XttBwF6zdTLifOheF8MEYybmVEzgY
+	6QqjUnbwrNgLyssiKU+e9pf75OO+zUHumfoQXzAYbiQcibdjEXUUaq7BA/akT1DUyXxa0szXcFx
+	kfx
+X-Google-Smtp-Source: AGHT+IFq6h/thbNDD3MHQkdADFfHevpJOOgu6mE5Zb6UBKpSwxsw99sC3noj69jn6Ud4dU4nJziGqxM7qfPCA/wD4w4=
+X-Received: by 2002:a05:6102:54a1:b0:4fa:37cc:2877 with SMTP id
+ ada2fe7eead31-4fdbecde2bfmr6727430137.0.1754416534094; Tue, 05 Aug 2025
+ 10:55:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250805074746.29457-2-angelogioacchino.delregno@collabora.com>
+References: <20250804212902.22554-1-rampxxxx@gmail.com> <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
+ <CABPJ0vgz6gib5LdKY1O6uhPq7Tk5GN2X_dcGBwtx3b=TRQUw-Q@mail.gmail.com> <DBUNH9S9HCXH.SIOBPAT3U91N@brighamcampbell.com>
+In-Reply-To: <DBUNH9S9HCXH.SIOBPAT3U91N@brighamcampbell.com>
+From: Giant Sand Fans <rampxxxx@gmail.com>
+Date: Tue, 5 Aug 2025 19:55:22 +0200
+X-Gm-Features: Ac12FXzIPlcfkrae5_ZD700aFaYyz_be01IYT0UOwDsK_87Zy6B94T_fGsVQH-4
+Message-ID: <CABPJ0vgOMQk8aBUvtR5FhXzUJ1itF_mvXYiTw9gG8+0=5ipkyQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: Add directive to format code in comment
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	dri-devel <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 05, 2025 at 09:47:37AM +0200, AngeloGioacchino Del Regno wrote:
-> Some of the SMI Common HW provides access control to at least
-> the power controller: document the #access-controller-cells
-> property and allow specifying it only for MT8183 and MT8365
-> as those are the only known SoCs with an SMI acting as access
-> controller.
-> 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../memory-controllers/mediatek,smi-common.yaml  | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-> index 0762e0ff66ef..74b355a08493 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-> @@ -74,6 +74,9 @@ properties:
->      minItems: 2
->      maxItems: 4
->  
-> +  '#access-controller-cells':
-> +    const: 0
+On Tue, 5 Aug 2025 at 18:55, Brigham Campbell <me@brighamcampbell.com> wrote:
+>
+> On Tue Aug 5, 2025 at 5:53 AM MDT, Giant Sand Fans wrote:
+> > On Tue, 5 Aug 2025 at 12:49, Dmitry Baryshkov
+> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >> Fixes tag?
+> >    Sorry, what do you mean?
+>
+> Dmitry is looking for a tag in the body of your patch (much like your
+> "Signed-off-by" tag) which describes the commit which introduced the bad
+> behavior[1]. In this case, it looks like this block was introduced with
+> the incorrect kerneldoc code block formatting by commit 471920ce25d5, so
+> the correct Fixes tag would look like the following:
 
-I'm still wondering why this is 0? That seems odd that an access 
-controller is 1:1 with a device.
+oh, thank you .
 
-> +
->    mediatek,smi:
->      $ref: /schemas/types.yaml#/definitions/phandle
->      description: a phandle to the smi-common node above. Only for sub-common.
-> @@ -168,6 +171,19 @@ allOf:
->              - const: apb
->              - const: smi
->  
-> +  - if:  # for SMI providing access control
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - mediatek,mt8183-smi-common
-> +            - mediatek,mt8365-smi-common
-> +    then:
-> +      properties:
-> +        '#access-controller-cells': true
-> +    else:
-> +      properties:
-> +        '#access-controller-cells': false
-> +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.50.1
-> 
+>
+> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+
+Yes, this is it.
+
+
+>
+> [1]: https://docs.kernel.org/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
+
+
+
+>
+> Cheers,
+> Brigham
 
