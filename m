@@ -1,109 +1,210 @@
-Return-Path: <linux-kernel+bounces-756761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E10B1B8EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D093CB1B8F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E77D17A925
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EA417B777
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D18275B02;
-	Tue,  5 Aug 2025 17:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A85292B5E;
+	Tue,  5 Aug 2025 17:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VFbgCYjm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KCSxoWCr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CD42AD14;
-	Tue,  5 Aug 2025 17:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD5945C14
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754413484; cv=none; b=dDQsj4DTLjkg1XHI0A2JJCUuJGR0LSVbU5XwDcavie3MTEd2dd7euaR4O+KZP9tikSSbUvrjTz02FYxsy/KyT/GRduO1NDn2TwuNSKxl+udldXt6QIQd2YuO9cgKnF0HBNoblIM3D5JR1yb4d48YG46ERr+QSwhIOmjZL9EKFOU=
+	t=1754413596; cv=none; b=HkK/Zwz4JGOQE5H9MX5/fpEsc8jGuOEZODlxP3+2t5rbtY5+zZMOAxTBawvlTc1abTfll5ch64p4EP029+qZYE5nRHx5e9dxW1aFIOTXhzM5s980g9VPAVB9nvnigUZFP6OHmcexvq0AzbU57E8QkUSg1b5dnKYLaIl71gqMZWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754413484; c=relaxed/simple;
-	bh=Ab3Qv+mozGqtdtSWHmeNbL0iBe2pPQ6BF4NZ57OFjiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gsJmyokBJ1c73Wi816ESUhfYuq3z3D2JT2HIzsJ7TMcca+yZ3oBrvRR7ZhlmKTJ8hzREjwj9B5SV1xXINV0bTsLYA8LZJZCoXoYAkNLI3bucJVL7+61FCIAi4SAjrztFXTuSWN83T43tQn9d2Gk+Dz10jIIswBb7sDHwldy1WqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VFbgCYjm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754413478;
-	bh=GIVg5rF8VOyNngYSI34wBxodNdqe8OxlGs2MxACqFvo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VFbgCYjmF0/yISVzF54I6fWTPwMHnBKVchQH0ctHvr7O2z1YGktGCkawz7dnF0akn
-	 ilgWJ9r/HnkAWqVfufyeSMqMB7AjoBBfbQ55BRH+OdOXeaQcLYGLDMX6kpI8nBdnWy
-	 3PJ3+iC4AzQLJoMv8nhqkIl5KawJ3TgsOpqcftTcDgF+rHuP9YARkVfEOLcD40vmet
-	 D2Vcc9zHc91TzCdUv0RXtcx35w9yfFUbYFQN7zGuQbe2I6Cg/LyxWGOTR1WnYbL96U
-	 Cs3mXMf+uHwTsPpV811fOhMqjvAYpPLZM80YWmhRn2IVktrmuugZLCkB4Wd2WGCZnl
-	 YNqBnBq+dyvfg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bxKXj5Qghz4w2R;
-	Wed,  6 Aug 2025 03:04:37 +1000 (AEST)
-Date: Wed, 6 Aug 2025 03:04:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list
- <linux-kbuild@vger.kernel.org>
-Subject: Re: [GIT PULL] Kbuild updates for v6.17-rc1
-Message-ID: <20250806030434.10663c09@canb.auug.org.au>
-In-Reply-To: <CAK7LNAQW8b_HEQhWBzaQSPy=qDmKkqz6URtpJ+BYG8eq-sWRwA@mail.gmail.com>
-References: <CAK7LNAQW8b_HEQhWBzaQSPy=qDmKkqz6URtpJ+BYG8eq-sWRwA@mail.gmail.com>
+	s=arc-20240116; t=1754413596; c=relaxed/simple;
+	bh=PPiyEpwIMU8cftZVfItlL4WbshbAPLD6/m2rNt1TDzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uCgEN8iTsvtfRarghruptSQbrw38h/6ii2dav4I9KE4SBcbXgqgh+wvAxb+6kJmAQYh/1J9bPVxV9CxH6g/k/DykkV//4bZ9O2ISoYPNj4MoOk6DKjy6p6fePq40wFb/WATU9bb9uJPFAYb4OiNEUQmzFrQy3YLwEGSdIa/8T3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KCSxoWCr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575AC4ir013729
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 17:06:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rt4nc/wxh+EH+VqdYEzctT4GzuaEB/gmu+a0L2Q1reI=; b=KCSxoWCr0PmEeHdM
+	gvnDAYRKFaa7yjBGswgkw2LOV3cVRLlhakfOCfdpNiDoSB3OeMiLbR/c73chkJ/K
+	q4ooqXDc0Dc2Wr0Vr/iHuFxg+FzN6pyNDEZZTTeJYYdPjWUVhd5naAhnM8di39nX
+	fBm+EN+mQcrEclw7LYgCKYptg7TE83Fi/XTgc5eKL1v3hYLAMPUoRfEL8nJAOgLE
+	EsGgZUbvu0k6R3ZCRBu9gemMVs+sCXV7gJaeQEcKqxI8iX3hD1kxCqlVdATVFZWF
+	SoSN1u2DA8FQWhP+3/RPZ9tEDh/9B4+yOjbaLLXbns3AEDqyxdcKUuLeLT32Dme8
+	DDkTpA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48b8ag2evs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 17:06:34 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b07b805068so3741041cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:06:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754413593; x=1755018393;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rt4nc/wxh+EH+VqdYEzctT4GzuaEB/gmu+a0L2Q1reI=;
+        b=kDvD8Zm9ThZMb40raiZA+lINV/BJNSWUl73NOYr6H7i7PAitI/2RKuzI/QHFOl/RDA
+         mfz4AwWuH9RtjJV71OJrTUAs0cDCb/EN2WkwhJJponXNJ200Z7iB/HY1TKg/XVJSYb1Z
+         11YY0SFs5ddQIQICc/nrDqxaCmQQwmTXIwAh0kE9VzAESo5LLgNMvISE2dU+E75/e11w
+         4BehO2ct6K5I0NX1iVgFBE6wTfmRFpDRtSh3JjhRPE2srohL9s6rFm1K+4gGdEumR2nq
+         EsErC5YU0QZy6WOBya7QYOMrGxNfvNo7/+XqH6ABH7+hx1vzMwUmZJgl0t1yd6kHyJEo
+         yD4A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4HMWsMBODIPUQNjzq0Mn6wZ/8c825oUe6ajJDipStEEXKOyMgGYUXFe6ixlv4AZV786y/GfL6chbeOKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWuTQdYw01Hh0Q/WnaWLqdfJtPn1SRBugZC65tP0UDrNO4tEB/
+	qEY4pwak/wJYKV/ge+AWPG82sL1YaQ7XwapKBSnSxQG3jQWbggonTdWLTni4xVYl3lc82j3wUnj
+	yK1itpSDKl8hM9U3r+FejXRBU3g4iGFOwN+NvfIcKeIDD+WV7kgqApQf314cxmUI9zZQ=
+X-Gm-Gg: ASbGncsz3f1adGeTqCk+E9fxkOvO7/kK14/nWFyJxmt2n7grAKcS/XIfakXoIA2O7ds
+	S76QJwsTjQZp2TccH0RJIi5zDpit+WKTnzzlmQRXEaVkwTxL6VF1dGQvF4Q1DDOm2IgwPbf6oeI
+	aNCERoy75i1kmYoWz//to352mEJgGgyI+NapwpPGu2XGU5mHkc6Tpnt+lCc5RPTqOslYDeF5MdA
+	vJMuxhxw+wBwHGTfuF2fKffeq0YkVbrJQI9xyuDJfjILqA6URKeY6IPP3UudaaR2JeIyE6Fla4x
+	SRiY2fkF43xWK2nJ0WMG02b8OlF/Q7niDIk95TAYrrONfHrBsC3tMVCd61ykxxG9yyoVEW3s6Tt
+	hkaIchNRBU+d1hZD9jA==
+X-Received: by 2002:a05:622a:409:b0:4a9:e46d:ca65 with SMTP id d75a77b69052e-4af1094961cmr104667811cf.3.1754413593243;
+        Tue, 05 Aug 2025 10:06:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMqdQC6buQpdvvqYVY/ppzlsDv5p+scsz8lOs/x1DQWYljQfMBsI0+MjfKKzBFWsWhupDMVw==
+X-Received: by 2002:a05:622a:409:b0:4a9:e46d:ca65 with SMTP id d75a77b69052e-4af1094961cmr104667371cf.3.1754413592709;
+        Tue, 05 Aug 2025 10:06:32 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21ac0asm938646466b.99.2025.08.05.10.06.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 10:06:32 -0700 (PDT)
+Message-ID: <b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
+Date: Tue, 5 Aug 2025 19:06:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YZmDheFdPL9__=4_Xb=WN75";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
+        avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, James.Bottomley@hansenpartnership.com,
+        martin.petersen@oracle.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
+ <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+ <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+ <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+ <1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
+ <2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
+ <11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
+ <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: eeDPOGog-Q82sTmBKceduCNdmaIFTlhf
+X-Proofpoint-GUID: eeDPOGog-Q82sTmBKceduCNdmaIFTlhf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDExOSBTYWx0ZWRfXwodSLFSCoeKQ
+ dGmH5FYv0SFJWcu4CylgpI8MlNE2NR649RosrSQSTxQsnzvCi/GRufTj0+Ahq9VNJp1BKyHBG5V
+ flGIq5povmTkYs63GKsdQusaPmZfqjUItW7y67YrmevadmNyz1EPEcyV3KLBdU4N0yIUmRGbEJq
+ pvR+R+Oqypqv8laOd/PQds4ypFdsLtMXlM/rtwMAPhjQ37k0s6AKiA56ROvRMMgNmS9xsVFcw6q
+ mNwfvIhBe68l4d+rg08zPHj0YO+dVVY9NRMC7WonVwv2PzvyO59y3BuqwJPlYXRZHo5hyouews2
+ I13qr1QACIi8UA66lsfblvLGKEmhy/3D3uRc78xiSrmO5tIaVMyt9dgEpZLVydQvRb6NGKDAvZ7
+ AH/huzVOdwevJRmP2TjULMqcUj/ziP+PNRHWMsv8Bvn96BwrSmKV5czSahUUMh1s1zrz1iiD
+X-Authority-Analysis: v=2.4 cv=aJvwqa9m c=1 sm=1 tr=0 ts=68923a1a cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=Fgd5GahhPM9C-_jtZqkA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050119
 
---Sig_/YZmDheFdPL9__=4_Xb=WN75
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
+> On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
+>> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
+>>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski wrote:
+>>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
+>>>>>
+>>>>>
+>>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
+>>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
+>>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+>>>>>>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
+>>>>>>>> support automotive use cases that require limiting the maximum Tx/Rx HS
+>>>>>>>> gear and rate due to hardware constraints.
+>>>>>>>
+>>>>>>> What hardware constraints? This needs to be clearly documented.
+>>>>>>>
+>>>>>>
+>>>>>> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
+>>>>>> but keep on responding to other comments. This won't help you to get this series
+>>>>>> merged in any form.
+>>>>>>
+>>>>>> Please address *all* review comments before posting next iteration.
+>>>>>
+>>>>> Hi Mani,
+>>>>>
+>>>>> Apologies for the delay in responding. 
+>>>>> I had planned to explain the hardware constraints in the next patchset’s commit message, which is why I didn’t reply earlier. 
+>>>>>
+>>>>> To clarify: the limitations are due to customer board designs, not our SoC. Some boards can't support higher gear operation, hence the need for optional limit-hs-gear and limit-rate properties.
+>>>>>
+>>>>
+>>>> That's vague and does not justify the property. You need to document
+>>>> instead hardware capabilities or characteristic. Or explain why they
+>>>> cannot. With such form I will object to your next patch.
+>>>>
+>>>
+>>> I had an offline chat with Ram and got clarified on what these properties are.
+>>> The problem here is not with the SoC, but with the board design. On some Qcom
+>>> customer designs, both the UFS controller in the SoC and the UFS device are
+>>> capable of operating at higher gears (say G5). But due to board constraints like
+>>> poor thermal dissipation, routing loss, the board cannot efficiently operate at
+>>> the higher speeds.
+>>>
+>>> So the customers wanted a way to limit the gear speed (say G3) and rate
+>>> (say Mode-A) on the specific board DTS.
+>>
+>> I'm not necessarily saying no, but have you explored sysfs for this?
+>>
+>> I suppose it may be too late (if the driver would e.g. init the UFS
+>> at max gear/rate at probe time, it could cause havoc as it tries to
+>> load the userland)..
+>>
+> 
+> If the driver tries to run with unsupported max gear speed/mode, it will just
+> crash with the error spit.
 
-Hi Masahiro,
+OK
 
-On Wed, 6 Aug 2025 01:27:35 +0900 Masahiro Yamada <masahiroy@kernel.org> wr=
-ote:
->
-> ----------------------------------------------------------------
-> Alexey Gladkov (6):
->       s390: vmlinux.lds.S: Reorder sections
->       scsi: Always define blogic_pci_tbl structure
->       pinctrl: meson: Fix typo in device table macro
->       modpost: Add modname to mod_device_table alias
->       modpost: Create modalias for builtin modules
+just a couple related nits that I won't bother splitting into separate
+emails
 
-Did you miss this: https://lore.kernel.org/linux-next/20250730161223.637834=
-58@canb.auug.org.au/
+rate (mode? I'm seeing both names) should probably have dt-bindings defines
+while gear doesn't have to since they're called G<number> anyway, with the
+bindings description strongly discouraging use, unless absolutely necessary
+(e.g. in the situation we have right there)
 
---=20
-Cheers,
-Stephen Rothwell
+I'd also assume the code should be moved into the ufs-common code, rather
+than making it ufs-qcom specific
 
---Sig_/YZmDheFdPL9__=4_Xb=WN75
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiSOaIACgkQAVBC80lX
-0GxRlgf+OS/A49zGYd5zmBnP301wNyhlPLiIC41ajEohEZYjbtqIHN9E6oorGI/D
-xo3melpoeS3i1eT4G9aAWkiUq0BbbZcMRpcxPZCWu6NrHe6lh4pMyuks9mf2vapZ
-0CfPJXjSD9XlUWPeYhPUkjtthYWzFB52JUqWwKEG3oFXkAQJmD7VGO1OXtP9aO+y
-UtZ3GkjZFsSYgq+3/Ej7zofzNHCUjaIknbsqRUinL+PAa2jANtJVf1uQnBd6TDVa
-v9XcyqyaYEb1J2pWL22FTzBw3QtDMAVOgxYN+ut+E9ycMqMilzIWWHSVGWQjjip+
-x8wRfJVfrdgF62ZdsA/Mtpf2retPiQ==
-=JjtR
------END PGP SIGNATURE-----
-
---Sig_/YZmDheFdPL9__=4_Xb=WN75--
+Konrad
 
