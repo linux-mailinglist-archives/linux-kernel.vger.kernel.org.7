@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-756363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054F9B1B31C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 803A7B1B321
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5118A1645E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DAD11667A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA0E26CE2C;
-	Tue,  5 Aug 2025 12:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8E926FD87;
+	Tue,  5 Aug 2025 12:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bP0AIIQV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e3vlgZOf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784925CC6C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1C8242D99
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395847; cv=none; b=LNLPl6HtpQbdsg4FGhEovMvphHsBizONG8MrkWGRJ8pKx0KTs5dXdAeSNb0u3wPZAlfE2BlaZCx0T9p/LnKB70aRBbqGEhwSDZgQTotUK5Mok8zRiZr3rZz2qGob67E6XrA9a3mumbaODQHxRF0uyF/S/UhLgnD8mP8Pu5o/vZ8=
+	t=1754395924; cv=none; b=CCFUGljqsZF8wGPWnxvx3j0lXH4w8TSwremR+MgopfAmoV2cZz0/wl89wvXwD+fnuIvAFAO+OMaNMMxhVn/qZOHhZONPdIei9gAr7BmaueFjDWMvyzkQRzVrQy1m3Qb8LoQLEzwBhp4rUbneVswFup08XWDAsncdCrpVolyFYZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395847; c=relaxed/simple;
-	bh=dsbomZ2TJrqJxB3vb/LYF0ouD+kHHvZ3VGqy8aWySIo=;
+	s=arc-20240116; t=1754395924; c=relaxed/simple;
+	bh=PkN2XX7pLKcIUWqfRErxMi4SNlpWdneWn9/g4TS296g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tviapPcj05beG8uhnqMjMpDtSDex0rgVCqDKAM14jCJnyMOF2DWFJa3zG3q/HeYoxxMTOOfV5IgRyeWqSXi1nqPz3HIN2HAor8qzuiSrCEFj8FBb6SkxANlSRMRuoHOqO3Yti8wmQCbFCYJLJ46helGGQLnk5oy7eYRleFlQJdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bP0AIIQV; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=eqMhXQqn6UVdc884EMV2GYhUzT+l1Xg7/oyLMF6RHKxs6e6hGS0z1p+rEG7W2j05ZOc5u20t/QynNOewF4zinO/e18/WYY9Eot+CIG67sX9noe7+pRdc0h4ECQIpDOXrxFOqt4UXA0vzjIXc71THnZK8we7s37HblMgySyS84Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e3vlgZOf; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754395844;
+	s=mimecast20190719; t=1754395921;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mxPZ9mV2VGEDs+TcyLyleA5F2IOZRlRZriZVa56GH68=;
-	b=bP0AIIQV1Je0WcEnkmGqaJGd0nAyN5xTZwMLhbKrsxlL9kqpVkk8w0zG5ICW/kIBB1EqWu
-	C6W9O5LsFnO3pdzgGRvQPG7GhD+eFKC8URRR1qLHdDRSceLhhm4/fVyCtHc6gj3C3i2992
-	4T2/LY9iB6dguH/Rb+0/OxdNHksXr/U=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=SILdafDIUq6T1vxmByNHoLz/yQ+KxKADC56XxDUmCig=;
+	b=e3vlgZOfrho3yMxs/tt04e65k3T6GBxaRuNIfNrWjwaRJ3bLWJ2k6IGjCKs16txR2bBm7Z
+	SZCMzlkyn28y/mfbMTVrG2CbYMDvE+xDQuXZbL6anSPEVtrMoHiqoAiWo9M3AhlPlUmyb8
+	CzIHhO6BFET+mo44PbrcEEYypx80t/g=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-513-__cN0hJFOpuboUSYgXHXKg-1; Tue, 05 Aug 2025 08:10:43 -0400
-X-MC-Unique: __cN0hJFOpuboUSYgXHXKg-1
-X-Mimecast-MFC-AGG-ID: __cN0hJFOpuboUSYgXHXKg_1754395842
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458b9ded499so23378535e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:10:43 -0700 (PDT)
+ us-mta-492-SB_FpHfcPiapXblA7DiHuA-1; Tue, 05 Aug 2025 08:12:00 -0400
+X-MC-Unique: SB_FpHfcPiapXblA7DiHuA-1
+X-Mimecast-MFC-AGG-ID: SB_FpHfcPiapXblA7DiHuA_1754395919
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459d5f50a07so11784305e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:11:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754395842; x=1755000642;
+        d=1e100.net; s=20230601; t=1754395919; x=1755000719;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=mxPZ9mV2VGEDs+TcyLyleA5F2IOZRlRZriZVa56GH68=;
-        b=Dp9IiUKUwfQfUIN5XbuWE6y/nvFMLLwh1Jv38vSBfTK23ymlysT3tDZQ2d3VSKkzK2
-         UghfR8Au1FVYt9+ooasfO3NZ+Szw0NNIKjke+7wW93MO0DFUMvJUqqVJGFjdehwUNq21
-         k8Ubp65fI8uhnqCQVvWQsKM5aExCBwdl8ss0/CRgKX6pj3aMXXqKEN5wqja4CqxirPT1
-         sYtS8Y4+5fmKzR1LtZXE9pSGmc6HOrb5BF/vKdF8U5lhFGtxz9qYBFjXkEStxI1mhuos
-         TsEaZ0ITdJVuq5Nkv5wyfn4DASkI+jh9coySpZahZUMk1N3QJ9J/Mgyn79BeVd+zc4Mh
-         6DBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJgaDEvv8q2YZnu+BjqcCOJb2h9xCq06oUbpYF8piJpICsXyqQzWSNYnFwWF44P7tCUWnBfioOJYfZ2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoeaTyR8ZqBMKzhP1cgxxjrYBIyjegsV7bHv14Vbq33Zv8Dgl4
-	jW4uU4mD9z2zn0xLBSIrFLH7pJP6zhyNKASjlMz7ZXa7THu/kJPrFwa4/eeoib5iLhUNexdK+FS
-	5tKlb/dn71tcjguSf6Jh+HiGYFr3sCXUt3IA3Hige9Lkflx5gJjDY+gYcoMbYgkCHRw==
-X-Gm-Gg: ASbGncvnarbSXpq1jLGuW3h22+vIUFUAKNVNnSHziquYO3Zaalh8jmDX7+BjKNdPikF
-	/hVStAaCNqHPFzUNCa0A+WC0LYrLOBJxWmpReCNcXfg7C5s8QP/l8If3wxpnO8sPTGgFgh80Yml
-	xkvMVH4xpptel/WIhs5pqOIg3NXCnheBbohWSFa7Ypp8HXMG56oM5ypOuh6gzqxMpm+AhxUxrJD
-	c8uycqrHS907ngZmWl5BgOUM6n9g9RZ/Tsy3NWA7QfnOO6+JPJ2WCy0E9qjcAsHV/Uez3WZm+vG
-	wN5Ja0KHAQFnICmnxQIrnM3SFPvCM0IaD/JWOSsT3jJUNQbnG5pycMSnlJkUi5fNfOc1d72Ay3K
-	k03k1Y4JJzxseSMJrH7PaRLGqPEJmyrDeQIefaFZr1iB7SEJsyqeER7EH4JhDLSmre0I=
-X-Received: by 2002:a05:600c:1391:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-458b69ca295mr96547385e9.4.1754395841891;
-        Tue, 05 Aug 2025 05:10:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRVCbz9qSTE0QSs8VJxnp/4QbJ3PPlhM2p3GCusUFNug/XIQgjZ+Xc7sBO+ds4FESyakyM7A==
-X-Received: by 2002:a05:600c:1391:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-458b69ca295mr96546975e9.4.1754395841451;
-        Tue, 05 Aug 2025 05:10:41 -0700 (PDT)
+        bh=SILdafDIUq6T1vxmByNHoLz/yQ+KxKADC56XxDUmCig=;
+        b=bytLlQmnTnFXuCOsKjSZzEpnw4aFwbq9i9hCAsJqmlv0zStyRtZ6t75K7ITslzwPsB
+         qw5ZkOB3W9QKdYjnl8ITbFPatjwb3dHtwJNT3SF+5nsm2ljeBxP04FQD+asHi+eNUTrB
+         kpDjEkf2L7EBl734k+QOCL+Odl93TEWHjfUH7u3SSWZm/XTQB86inM4gSzdYSnYw19F+
+         Lnfjkqtg+/9Xacf6kWdsbL0DyZ0U7loMpOD3pxq4rqPLaCwNX7DYmRxcycNUxHLoQTmc
+         KllGnQ/slHF6a6qigPvdLg5+wDq3OR8WL1kM1lUU6dbCzP3FPs+MZGYIcUJD3YvleZHX
+         Q2Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqPEaEuSDu79Er8faS/3bo5oFQbJYeHI9I8kQ/M5y6Pr0dag8M4MCo+0SDzvwFTDYqAv6N6rmZwNtHyC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6ewu0RTonRT9DzSml9D2XmuD2cf6YJh6UEf+ZkwMRX10gNULh
+	iIlcov85BgRlKcW5PZGlPmlCZqq9xzftA8B1bdZkJmENmqtQRayGnHxT5TeSfttES6nMuvi2A6S
+	w5BhHBpkJHQiK8LjpC4gGlXtq106JtuzM4Mq36QqxIIYn5N2kcPCZj06aODzJALQaow==
+X-Gm-Gg: ASbGncvOasRB20VNF2y1uuwZRTUaIfYPjZv4nng5sDXaVmEaKsX04g+ubAO4elHd3Gs
+	ChzCNBIoGs58XRTObH+vbzDdef5DJuBdacIlGmGCuj8/knwDlUh/s54azhtWiPkCAMPvDItdlBK
+	2+aUt0JT8jWWg6av0mv63T2H+nrDk0GegwgyEYPfhNo1b+cY5Gk0+CxwE84uZOrwI4c2Du1v7hU
+	lj5JPi3ovLFCzGXNLg/KadTAtiyoLcqL7+H3sjakPeHSg4Gksi0LIwEpUgU7Tb9bIU7VB3CgnM1
+	9S7J1zdmIb+kzPMykqCCdTF/ThKLT9LkYrHEpvXeV0A3FJSzv5v9dTCdighs4+M4L6sE/Xys9n0
+	UV+9JuMCUW/saGS0wIYxBG12abyD3c5xzxmI8+zPzjGHr1QXhiI8A9V4uNd8nIpD0Gvw=
+X-Received: by 2002:a05:600c:1d08:b0:459:db5a:b0b9 with SMTP id 5b1f17b1804b1-459db5ab3a2mr48234235e9.28.1754395918793;
+        Tue, 05 Aug 2025 05:11:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxZPzHZOSJwMEcCot86poc9UZ/c44aOsLDwgU/vzU4XSjaGj8F0yKq7r0fWaYJ4jtRH1ng3A==
+X-Received: by 2002:a05:600c:1d08:b0:459:db5a:b0b9 with SMTP id 5b1f17b1804b1-459db5ab3a2mr48233995e9.28.1754395918402;
+        Tue, 05 Aug 2025 05:11:58 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm98317775e9.22.2025.08.05.05.10.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c4d02sm18618858f8f.33.2025.08.05.05.11.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 05:10:40 -0700 (PDT)
-Message-ID: <ca35da97-13d1-49f1-95b0-b8b9c8a7f540@redhat.com>
-Date: Tue, 5 Aug 2025 14:10:39 +0200
+        Tue, 05 Aug 2025 05:11:57 -0700 (PDT)
+Message-ID: <0c778373-3805-4dd2-b8ac-97d5ce77235f@redhat.com>
+Date: Tue, 5 Aug 2025 14:11:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,30 +89,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, x86@kernel.org,
- linux-block@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
- <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
- <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
- <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
- <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
- <dwkcsytrcauf24634bsx6dm2wxofaxxaa4jwsu5xszmtje3gin@7dzzzn6opjor>
+Subject: Re: [PATCH v1 2/2] KVM: s390: Fix FOLL_*/FAULT_FLAG_* confusion
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, frankja@linux.ibm.com,
+ seiden@linux.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
+ schlameuss@linux.ibm.com, hca@linux.ibm.com, mhartmay@linux.ibm.com,
+ borntraeger@de.ibm.com
+References: <20250805111446.40937-1-imbrenda@linux.ibm.com>
+ <20250805111446.40937-3-imbrenda@linux.ibm.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -160,53 +144,23 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <dwkcsytrcauf24634bsx6dm2wxofaxxaa4jwsu5xszmtje3gin@7dzzzn6opjor>
+In-Reply-To: <20250805111446.40937-3-imbrenda@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05.08.25 13:40, Pankaj Raghav (Samsung) wrote:
-> Thanks a lot Lorenzo and David for the feedback and quick iteration on
-> the patchset. I really like the number of lines of code has been
-> steadily reducing since the first version :)
+On 05.08.25 13:14, Claudio Imbrenda wrote:
+> Pass the right type of flag to vcpu_dat_fault_handler(); it expects a
+> FOLL_* flag (in particular FOLL_WRITE), but FAULT_FLAG_WRITE is passed
+> instead.
 > 
-> I will fold the changes in the next series.
+> This still works because they happen to have the same integer value,
+> but it's a mistake, thus the fix.
 > 
-> <snip>
->>>> @@ -866,9 +866,14 @@ static int __init thp_shrinker_init(void)
->>>>    	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
->>>>    	shrinker_register(huge_zero_folio_shrinker);
->>>> -	deferred_split_shrinker->count_objects = deferred_split_count;
->>>> -	deferred_split_shrinker->scan_objects = deferred_split_scan;
->>>> -	shrinker_register(deferred_split_shrinker);
->>>> +	if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO)) {
->>>> +		if (!get_huge_zero_folio())
->>>> +			pr_warn("Allocating static huge zero folio failed\n");
->>>> +	} else {
->>>> +		deferred_split_shrinker->count_objects = deferred_split_count;
->>>> +		deferred_split_shrinker->scan_objects = deferred_split_scan;
->>>> +		shrinker_register(deferred_split_shrinker);
->>>> +	}
->>>>    	return 0;
->>>>    }
->>>> --
->>>> 2.50.1
->>>>
->>>>
->>>> Now, one thing I do not like is that we have "ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO" but
->>>> then have a user-selectable option.
->>>>
->>>> Should we just get rid of ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO?
->>>
-> 
-> One of the early feedbacks from Lorenzo was that there might be some
-> architectures that has PMD size > 2M might enable this by mistake. So
-> the ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO was introduced as an extra
-> precaution apart from user selectable CONFIG_STATIC_HUGE_ZERO_FOLIO.
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Fixes: 05066cafa925 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+> ---
 
-People will find creative ways to mis-configure their system no matter 
-what you try :)
-
-So I think best we can do is document it carefully.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
