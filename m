@@ -1,120 +1,218 @@
-Return-Path: <linux-kernel+bounces-756513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06A6B1B54B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:52:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00AEB1B551
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7ED3A9C7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:52:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990174E26C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2916E272E5E;
-	Tue,  5 Aug 2025 13:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB01274B50;
+	Tue,  5 Aug 2025 13:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dbZ8n/qr"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vdp3mqg5"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA9B2472B7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BB423C8A0;
+	Tue,  5 Aug 2025 13:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754401923; cv=none; b=WS1jn/fie+bUs2bfZAyVeEkx6QADCwOsgwWzaFV1X9zObpKZNyA3xDl49AzlFyUf56cUtV9BqY/E9m1hAL8kkQOONFIRKnlb/TTH2Q9Fdq+3q9sekRywn1WB8Uk11H+2+4b8vQbmXoxRy+kiWbZQfzV5WNbolkdygwXrKrnVzjM=
+	t=1754401988; cv=none; b=c6ACfRio1J9+H//HUlRJ9mqmocISdbnvHv31qnxIcqc5LkeK5n0kxDthlgnnIJr63309GghnW1xUF+SEpBCfl6QfOIUAbsrwaSyaGa7ye8qbevwUS7LI2v5Z1hElvGM+wz2WTUu73QxV+PWAqkcYIgX77pOtFmOqS/ZYe9XuNFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754401923; c=relaxed/simple;
-	bh=BAZlAyuhsxBPeTusmuo9QTFmObbBL2HmaRovu4+mPcM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PeXPC2Idh1x11l+TNmpXuGljCpPAIsKgwWADPPNtLfpT8ViwuQYiFgsbxQORDxO8P7a4UjD9V7XErvrQGrb9c4AyKfcEZZXf/6GiGyZeawZGaitI2Ndmbpft6RcES3tKxXCf2asPyjS3H1WhxlljwvI65yiA4tNPw70UTAudg1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dbZ8n/qr; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af949bdf36cso563823466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:52:01 -0700 (PDT)
+	s=arc-20240116; t=1754401988; c=relaxed/simple;
+	bh=uuwQYFV4a8rDtlwIuIlrsfmkSaWzwwcDNhpynZHllK4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHIFXZqZ9Av/M3bw0rUlbn0apncW2tKZAwP8eB8V2YTn70l3IG4FAvSMRdzM3c2IS9G/MhnrXFXHSAs6mha6fgwrvVJRvBLBNQBbFHF4DOQg4/q4bBEEuRN7yHZKMl5JEiFqj7rlubpz19XMpTWGuEu3fUYDuPN7vBA/YDnBwu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vdp3mqg5; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so10019380a12.2;
+        Tue, 05 Aug 2025 06:53:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1754401920; x=1755006720; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hyqP3wgPlxttWz/Mpuh+X6Lo5NUqiC58jKjpmMLgf3c=;
-        b=dbZ8n/qrIDsZC1rnwrfH5dvyNOVBPoeaEr9swEaEVfb2CKR8iniTtM9dRdwUodjx8G
-         je6QnoQeAZdh6FkHrqZrCE+wGdl6+SRzk/HMTogtkXnh60X5AIeEyb8aIXJ4wKGaRsTj
-         oTf87ue6/pAF0DLeae0XVTq3aZj0ZuoQ9zdoc=
+        d=gmail.com; s=20230601; t=1754401985; x=1755006785; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SH1wB8Gi2MTnYi6+BkNp7a0JXjEXXABO2XTD+pj/4Ys=;
+        b=Vdp3mqg5i+7uIYgCuTClm2YtIkN9THHFI55GBUIRoEyZa02/sjtzxQnaTaDbAY/zA2
+         Hfw51fm4Tt/bFUkw/nuxyq4SZWpbY95ppQ9AdlIabywhCd3hnZ5Cns8S1KGbUz9MsGEf
+         I7aEUiWB5E6kZWwHmGXtb9XD5fXkv5zTxCKrhc1ahrpPBShXyxdsL8dsEsF3OlihKrmU
+         +jWB6FCTi66AeFVfyEa4FTKoJzlGBONiO7BS8tdQ4sKX9i44wz0ShTFuskE6DOvBRcmw
+         gZchHyetYx7pm+YeKS04daTWBjDdjjay+ZoAKgMxWA9zzHBwlm0Qcb234Fwragb2+D0I
+         g3bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754401920; x=1755006720;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hyqP3wgPlxttWz/Mpuh+X6Lo5NUqiC58jKjpmMLgf3c=;
-        b=TOnrwe9l0bhcJ2OEp3jTd3zFrOYqV50FUuSV7Xjf/T7toOzatgDukLe9q/tOt3+Cvs
-         wDqAPrh4qUTtJblNftg1MleG6e95zSoe+FVoJu36HP2zpZtRZeF70Va9WtgWjiJDHi8S
-         3JYVr+nu8uhIUwZ1zqko3wOMPoxiJMJhmTgXpqAIWoAntFQ3Q5+tbsGwBtqgYVeXUhWp
-         lsVOCFJkWOMFC+jHGDr5fFYODP4wovo9G8Xxe0zAkFvz1UV2NICCJDpCh9dDuMhP6T7P
-         t9NMC34iArTgxjHeKhBIsO7/H8A7phcuILL4lQ2P2ukFqxsWSWw1O2d8ifltymVSSt+M
-         WB+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXwGTFx5zOEujyX1ZJyQcIyKcWQ1zxgZ1B5PcFha+RJPn5CLLYJMlI9Rbw5J3XB/4pAcUSuINZRTM4R9T4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwP99aNsSJ7iAHCvfi5QZtpFc8Hx3J0kX/MmoUpfsP9Bos8sUO
-	9vyqiCyOWVBM0DH1Wi4rPzpraTPEnlUZAI2/157s/Ud3xrbc+ZIC6i/5WUTwCgHJ41bT9oJjxiX
-	eYNPW2KaawQ==
-X-Gm-Gg: ASbGncuREnIIrxZt+t6lQJIvKpLJQsO5g38twyfCnBtaRnS9PnAaWhZRwekaVJkGBs2
-	9wy5Cw2qimhzix0WxLWCjMgBod6o9GSgL5yvCsRGWrRO3Tx2I31PvNMsTIqotFwzU8WAO2fMfC7
-	k6IrCyiW3FgpdmQXhiaDcElFG/or+KvHQHO1n0nCOnkC64I50q++64knn8qFD3mNBujW6RQLZZK
-	VePgDH2IhMT2GJyJBY2NCBJNtUvkc6S2Vq3sLwwgmOJwiMTBjbvawHvccDqICGOrJUWRoCBvAFN
-	eNGnXaZnnBG8E0OK26/SIw0R1KBx5MmHbvWdbpOSUWXNFSSsIqCBRfAGyhGhw/meUXmXRpNpVCx
-	7IFV2oOmFfh2TzNAvyFfmodUBhxy729LTiw7Y9satdGSs/1ATpSWtvvuRU3qfn1XH8yHlSjK0zl
-	tG5ieWL2U=
-X-Google-Smtp-Source: AGHT+IGOTmCsCBc4ys4uDRpZeCKXERCHJD/Zbym3hRoGpPtsNMJ0PRCMq0jHjdlTVEj2ObHaql6+7Q==
-X-Received: by 2002:a17:907:970a:b0:ae0:afb7:6060 with SMTP id a640c23a62f3a-af940017713mr1335935166b.19.1754401919868;
-        Tue, 05 Aug 2025 06:51:59 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0771ebsm928019066b.6.2025.08.05.06.51.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:51:59 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so6094312a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:51:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjU1ldqrfPkgAUig9xVI7V5Y9FoA1cBVeuYoOmrr+MVcAFWcbVTZhaWxd5GJF+7TXz6fvTX3jqPNSwOsc=@vger.kernel.org
-X-Received: by 2002:a05:6402:518d:b0:615:a2d9:61f4 with SMTP id
- 4fb4d7f45d1cf-615e6ef6947mr12970613a12.15.1754401918593; Tue, 05 Aug 2025
- 06:51:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754401985; x=1755006785;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SH1wB8Gi2MTnYi6+BkNp7a0JXjEXXABO2XTD+pj/4Ys=;
+        b=a++TBPHWs1ouZE4n+AcoVJzN0PrvOx3CjkadFs/vNw+UJE/ZkYJzuNcNjn1u6GE6Ig
+         NrAHzsvPa/tyPxL6FwfMCzitqJJ7/80sJuWghN2liGSCqtplMJ4qBZVgAo67CAAxVwFv
+         FU5BeKcoW/6JmHswvRvxfYd/pcjKDZSMVUOGS5wy086SX3YKMyS+EzJV3n3srPM02phK
+         p88T0868G8h5VOKdBq3FQGt/QdjKPQyo/FJxGh9dGkxMZIB8hPnAxr/IP3tr48TG53Mw
+         DbD0Yoxmbx2uV9IYMat+gCXvgJkWIpnxdX61wY3tmF8ANvB4I8czVPMwdqX11X/fU3pj
+         9kTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6vw7bglLPXq1xNzlN2R8EmHUFWM6NLpQ3CrTKjgsm5+zEhsDuoht1WdMrza8Ckq3eESgaJLPZvDtPSeYj@vger.kernel.org, AJvYcCWmMtGYVLd1TmbH84CGdm7+oeJ7bLic9iwXlEJIzlAsY0iI+3b9xZEIjpEyyPgCllGZmn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUKDprHF5wWKZepUH3wcEg4SqUDVHdvDODv/UpC34R6ah2MB2c
+	peu7ZPIuupOR8psERkqhlA9JlFTi1l/wXuUjl8aNxwJT6eqbRnM2Wyt0
+X-Gm-Gg: ASbGncv98iDCYBMgCptaDYQkjRqWtT7Yq/ABnAnLiL5ibQaGr6IpWtDYQCBedY5Msye
+	BuVU+THFqIL43+wWBEBVg6RjxJYMQyx2ZFzqz7mBi5CrWpOwmjZ6wRynj4ZRkSUr2/TFU9Bsrh9
+	i6898qvJoJjJxbjdXr02u4c8XfrAffGemlkFco9SMKJuA2PLGVnhEtim+uCuW5sYiJ4D8WDUnDI
+	RvNDkZD5bnV00p00O2xLOCXxw1fjvcw2g13+GNBYjlTwnTgVimWAeEWIT4i9FzYwJtFMPNt3uEp
+	paQjrtVoPIL6ybz54ZW/cYIp9FDw2D5H3IgkOmM0orvTR5SSM6XEsVoqSMv+wJE5jvlK86dnGAH
+	1LReQD/i/
+X-Google-Smtp-Source: AGHT+IGoSl1mkAheWodWVeOU3uzc15i8AALpv4FagRrIF4NjBlKoPu/lc/rbUwjVmUBEXiRsZnKNSQ==
+X-Received: by 2002:a05:6402:3593:b0:60e:404:a931 with SMTP id 4fb4d7f45d1cf-615e6f015fcmr12107295a12.15.1754401984876;
+        Tue, 05 Aug 2025 06:53:04 -0700 (PDT)
+Received: from krava ([173.38.220.35])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15fa5sm8297145a12.14.2025.08.05.06.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 06:53:04 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 5 Aug 2025 15:53:02 +0200
+To: syzbot <syzbot+a9ed3d9132939852d0df@syzkaller.appspotmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev
+Subject: Re: [syzbot] [bpf?] WARNING in do_misc_fixups
+Message-ID: <aJIMvndTxgUzLC9F@krava>
+References: <68904050.050a0220.7f033.0001.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com> <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
- <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
- <20250805132558.GA365447@nvidia.com> <CAHk-=wg75QKYCCCAtbro5F7rnrwq4xYuKmKeg4hUwuedcPXuGw@mail.gmail.com>
- <4c68eb5d-1e0e-47f3-a1fc-1e063dd1fd47@redhat.com>
-In-Reply-To: <4c68eb5d-1e0e-47f3-a1fc-1e063dd1fd47@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 5 Aug 2025 16:51:41 +0300
-X-Gmail-Original-Message-ID: <CAHk-=whoh31th2awzO02zA3=cv4QNTFjdYr73=eSDDFfW2OdOw@mail.gmail.com>
-X-Gm-Features: Ac12FXyonuJzUBEmqvEEu6_0efeGmMOSkKZb1tbtO-JL66T9C00AtXnVqesiMVQ
-Message-ID: <CAHk-=whoh31th2awzO02zA3=cv4QNTFjdYr73=eSDDFfW2OdOw@mail.gmail.com>
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-To: David Hildenbrand <david@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68904050.050a0220.7f033.0001.GAE@google.com>
 
-On Tue, 5 Aug 2025 at 16:47, David Hildenbrand <david@redhat.com> wrote:
->
-> arch/x86/Kconfig:       select SPARSEMEM_VMEMMAP_ENABLE if X86_64
->
-> But SPARSEMEM_VMEMMAP is still user-selectable.
+On Sun, Aug 03, 2025 at 10:08:32PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a6923c06a3b2 Merge tag 'bpf-fixes' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1561dcf0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f89bb9497754f485
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a9ed3d9132939852d0df
+> compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165d0aa2580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117bd834580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-a6923c06.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9862ca8219e0/vmlinux-a6923c06.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/042ebe320cfd/Image-a6923c06.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+a9ed3d9132939852d0df@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> verifier bug: not inlined functions bpf_probe_read_kernel_str#115 is missing func(1)
+> WARNING: CPU: 1 PID: 3594 at kernel/bpf/verifier.c:22838 do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 3594 Comm: syz.2.17 Not tainted 6.16.0-syzkaller-11105-ga6923c06a3b2 #0 PREEMPT 
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 61402009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> pc : do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
+> lr : do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
+> sp : ffff80008936b9a0
+> x29: ffff80008936b9a0 x28: f5ff8000832f5000 x27: 000000000000000a
+> x26: f8f0000007ba8000 x25: 0000000000000000 x24: f8f0000007bae200
+> x23: 000000000000f0ff x22: 000000000000000a x21: f8f0000007bae128
+> x20: f8f0000007ba8aa8 x19: ffff80008243e828 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081b73b80
+> x14: 0000000000000342 x13: 0000000000000000 x12: 0000000000000002
+> x11: 00000000000000c0 x10: 646e0773d90f24cc x9 : 73727a981a23afd7
+> x8 : fcf0000007bb36f8 x7 : 0000000000000190 x6 : 0000003978391654
+> x5 : 0000000000000001 x4 : fbffff3fffffffff x3 : 000000000000ffff
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : fcf0000007bb2500
+> Call trace:
+>  do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838 (P)
+>  bpf_check+0x1308/0x2a8c kernel/bpf/verifier.c:24739
+>  bpf_prog_load+0x634/0xb74 kernel/bpf/syscall.c:2979
+>  __sys_bpf+0x2e0/0x1a3c kernel/bpf/syscall.c:6029
+>  __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
+>  __arm64_sys_bpf+0x24/0x34 kernel/bpf/syscall.c:6137
+>  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>  invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
+>  el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
+>  do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
+>  el0_svc+0x34/0x10c arch/arm64/kernel/entry-common.c:879
+>  el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
+>  el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
+> ---[ end trace 0000000000000000 ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-I think you missed this confusion on x86:
+trying suggested fix by Alexei
 
-        select SPARSEMEM_VMEMMAP if X86_64
+jirka
 
-IOW, that SPARSEMEM_VMEMMAP_ENABLE is entirely historical, I think,
-and it's unconditional these days.
 
-             Linus
+#syz test
+
+---
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 0806295945e4..6aa303f76849 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -11344,6 +11344,13 @@ static bool can_elide_value_nullness(enum bpf_map_type type)
+ 	}
+ }
+ 
++static bool is_valid_proto(const struct bpf_func_proto *fn, int func_id)
++{
++	if (func_id == BPF_FUNC_tail_call)
++		return true;
++	return fn && fn->func;
++}
++
+ static int get_helper_proto(struct bpf_verifier_env *env, int func_id,
+ 			    const struct bpf_func_proto **ptr)
+ {
+@@ -11354,7 +11361,7 @@ static int get_helper_proto(struct bpf_verifier_env *env, int func_id,
+ 		return -EINVAL;
+ 
+ 	*ptr = env->ops->get_func_proto(func_id, env->prog);
+-	return *ptr ? 0 : -EINVAL;
++	return is_valid_proto(*ptr, func_id) ? 0 : -EINVAL;
+ }
+ 
+ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
 
