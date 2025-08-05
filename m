@@ -1,533 +1,183 @@
-Return-Path: <linux-kernel+bounces-756050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80990B1AF2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A233FB1AF2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191B4188865D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ADBD3BCA9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD77231845;
-	Tue,  5 Aug 2025 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C9230278;
+	Tue,  5 Aug 2025 07:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qWpSCn0y";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mCGDxB0j"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="njLdUjM3"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46741266A7;
-	Tue,  5 Aug 2025 07:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8633266A7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377785; cv=none; b=k4KMAV06/llBo4uXWYOtDanXo7ahrS5JCBEa6IlJLywYwO66n0ttx8EtoPPYRZgwDf5V49sI/ZC/+vx6ILisIIw0Q66XOmE5uhEcOj6tCtSGE5NC5ecKCXCpqrkUsc/t2a3TqSCo38KEdg42WIQ1Qc4csx+4boL6LrNgCAB25TE=
+	t=1754377824; cv=none; b=rzR/2olzvvo5ZdT0MAa9PlL0eLzUr4ycnEISPEQF28LuFs/fEEo26SWh12C010M+Ady55ZpdWqm7AfbkVUWsJc8UWwFRZ2sBHjw0b85uB+Anx1xcFZ9lGKxP5sBfG0/wxz0uhU8G/hg6XHYeKPoajkFllRH1d/NWrFZZCy+uxFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377785; c=relaxed/simple;
-	bh=Yv6pyzaULJFakPWJc6Snav3uY0lCcWNUsmdrG7JyIjw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=slViSagRfchc+il2iwOdWJVlwtOpUXWkLVTPuVHpIux+2tFvMdQVEHYz180tP93ju/3EVh6zTPL05SVEJO7AZtgKSKYv4GpXuJrm6eJegJfh8ppJeAqas/MMuincyvmJc8Mt2MIhqYR8ClRwq9QQ9kz2sz99MYAyL6VYwE1cZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=qWpSCn0y; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mCGDxB0j reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754377780; x=1785913780;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YpiBidLi55cVrA5Q1+JkbaVW/C/MZq1ureTbmcQrHW8=;
-  b=qWpSCn0yIAP5bQfeh+909Vn1B4BrqJFZw/uxEuV2nPDDCCIqtGqS0Qh0
-   HjOOpT5cXpBVgHwspgZDT6nK2CQln/ODhPxCCarMnUgPulqyd89ZYw/Gx
-   e2VaMy9zZZE08FdLx0Do4Xw4lBTOOVgl4pFZUlyUSS71vh9XWEI1XMtB2
-   C/3wVuZHvTH6CJOLUlgeMnr2V4w6Rfczf7aKH2FPeBuyJgU7J2WUgb12s
-   sbm8lve2hxHe3v7w3iCeyUksKKk3pVPSPCxze8MDSE4naQdB42ZADN6En
-   Z4Wq5fa42MZ93fdEamT217vZLfaEMPwur+wGOowi7FOuWEEdlt4EbnzL+
-   Q==;
-X-CSE-ConnectionGUID: JM5QkLHOSZSxTMCBqVWOfA==
-X-CSE-MsgGUID: 6UmsbkpeSIGksvfH4faI2A==
-X-IronPort-AV: E=Sophos;i="6.17,265,1747692000"; 
-   d="scan'208";a="45583462"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Aug 2025 09:09:34 +0200
-X-CheckPoint: {6891AE2E-4D-9E907662-F3B2C93D}
-X-MAIL-CPID: 0A8FDC37236988276C4B04A8AE834C4E_4
-X-Control-Analysis: str=0001.0A002103.6891AE50.003B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 081551725AA;
-	Tue,  5 Aug 2025 09:09:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754377770;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YpiBidLi55cVrA5Q1+JkbaVW/C/MZq1ureTbmcQrHW8=;
-	b=mCGDxB0jy3BMyYnm9oICZiIMmst1TmTPoWrXK/Oy0Edbgnv84DuhqNdiwfEOxUGGTSXT5u
-	ehIFjHL7KoB9kE6T1iQQUA6xSkTpR9VveRawepCf6yubUgNU4tH+nt92/5lP04V9mOCmTE
-	esMJHmj+62rSfa5kT9J5XRcnMYJxsXTVNk96d5sugg0MEiYVkyhDPB4ooc6nS/LS4DxRIs
-	pI/KghO7QXM0HjsdUwlDZ0dfM1A8D0HgOUutqVorxXMob09b+8VwqUnbI2YYCQplZVEhnn
-	uJStobebeJcTEEsaH8SduL6Le3m7fpxX99Pi1JtwBY8J8uicM4B2KENXNZBWgA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
- cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz,
- tiwai@suse.com, linux-sound@vger.kernel.org
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-Subject:
- Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel Audio
- Interface
-Date: Tue, 05 Aug 2025 09:09:26 +0200
-Message-ID: <2380862.ElGaqSPkdT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250804104722.601440-6-shengjiu.wang@nxp.com>
-References:
- <20250804104722.601440-1-shengjiu.wang@nxp.com>
- <20250804104722.601440-6-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1754377824; c=relaxed/simple;
+	bh=h6XKzAtYh3pNODiQdcehSo4PcWdoXjQ+mRPWT/wKqgo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AMt0i3UcsueTv970m2Tbdc8zXo6SB0O/SUZ9CLhzMHBb9W+HrZN42afzJFpMah59GjdqBQh6L5D50LmSW9AXMUWIQtSrbEcZ1yAMfxi5otAJpZ4EP4y5sQzadN7phfFhnwirkIrm2BzbdV564hseQyBdex1dIh0JfppXxuXsSR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=njLdUjM3; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57579sFS4024169;
+	Tue, 5 Aug 2025 02:09:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754377794;
+	bh=gOnpZ3mFkm1p13Cn9nA/r3PqcAqgnCGYOFVTNL6XO1c=;
+	h=From:To:CC:Subject:Date;
+	b=njLdUjM3UE0Q2C14j/Xe58uoziXOr3DPNapRSKMPoitcaLMRXlzXP4gZAFLIog4aG
+	 iwiWy42zBvyJFIfHzHyCwFTSkawzlivS1iL75CwO9z8FGQm6A/gYJiMr6rVvByley5
+	 F9oJTr7JvYLpNgle1RYJX/rV02/5YWwh7nYUpu3Q=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57579s0A3268052
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 5 Aug 2025 02:09:54 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
+ Aug 2025 02:09:53 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 5 Aug 2025 02:09:53 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57579npT1730586;
+	Tue, 5 Aug 2025 02:09:50 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <13564923607@139.com>, <13916275206@139.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v1] ALSA: hda/tas2781: Support L"SmartAmpCalibrationData" to save calibrated data
+Date: Tue, 5 Aug 2025 15:09:45 +0800
+Message-ID: <20250805070945.524-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+Some devices save the calibrated data into L"CALI_DATA", and others into
+L"SmartAmpCalibrationData". Driver code will support both.
 
-Am Montag, 4. August 2025, 12:47:21 CEST schrieb Shengjiu Wang:
-> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
-> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
-> This IP block is found in the HDMI subsystem of the i.MX8MP SoC.
->=20
-> Data received from the audio subsystem can have an arbitrary component
-> ordering. The HTX_PAI block has integrated muxing options to select which
-> sections of the 32-bit input data word will be mapped to each IEC60958
-> field. The HTX_PAI_FIELD_CTRL register contains mux selects to
-> individually select P,C,U,V,Data, and Preamble.
->=20
-> Use component helper that imx8mp-hdmi-tx will be aggregate driver,
-> imx8mp-hdmi-pai will be component driver, then imx8mp-hdmi-pai can use
-> bind() ops to get the plat_data from imx8mp-hdmi-tx device.
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/imx/Kconfig           |   8 +
->  drivers/gpu/drm/bridge/imx/Makefile          |   1 +
->  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c | 205 +++++++++++++++++++
->  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c  |  55 +++++
->  include/drm/bridge/dw_hdmi.h                 |   6 +
->  5 files changed, 275 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
->=20
-> diff --git a/drivers/gpu/drm/bridge/imx/Kconfig b/drivers/gpu/drm/bridge/=
-imx/Kconfig
-> index 9a480c6abb85..6c1a8bc5d4a0 100644
-> --- a/drivers/gpu/drm/bridge/imx/Kconfig
-> +++ b/drivers/gpu/drm/bridge/imx/Kconfig
-> @@ -18,12 +18,20 @@ config DRM_IMX8MP_DW_HDMI_BRIDGE
->  	depends on OF
->  	depends on COMMON_CLK
->  	select DRM_DW_HDMI
-> +	imply DRM_IMX8MP_HDMI_PAI
->  	imply DRM_IMX8MP_HDMI_PVI
->  	imply PHY_FSL_SAMSUNG_HDMI_PHY
->  	help
->  	  Choose this to enable support for the internal HDMI encoder found
->  	  on the i.MX8MP SoC.
-> =20
-> +config DRM_IMX8MP_HDMI_PAI
-> +	tristate "Freescale i.MX8MP HDMI PAI bridge support"
-> +	depends on OF
-> +	help
-> +	  Choose this to enable support for the internal HDMI TX Parallel
-> +	  Audio Interface found on the Freescale i.MX8MP SoC.
-> +
->  config DRM_IMX8MP_HDMI_PVI
->  	tristate "Freescale i.MX8MP HDMI PVI bridge support"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/imx/Makefile b/drivers/gpu/drm/bridge=
-/imx/Makefile
-> index dd5d48584806..8d01fda25451 100644
-> --- a/drivers/gpu/drm/bridge/imx/Makefile
-> +++ b/drivers/gpu/drm/bridge/imx/Makefile
-> @@ -1,6 +1,7 @@
->  obj-$(CONFIG_DRM_IMX_LDB_HELPER) +=3D imx-ldb-helper.o
->  obj-$(CONFIG_DRM_IMX_LEGACY_BRIDGE) +=3D imx-legacy-bridge.o
->  obj-$(CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE) +=3D imx8mp-hdmi-tx.o
-> +obj-$(CONFIG_DRM_IMX8MP_HDMI_PAI) +=3D imx8mp-hdmi-pai.o
->  obj-$(CONFIG_DRM_IMX8MP_HDMI_PVI) +=3D imx8mp-hdmi-pvi.o
->  obj-$(CONFIG_DRM_IMX8QM_LDB) +=3D imx8qm-ldb.o
->  obj-$(CONFIG_DRM_IMX8QXP_LDB) +=3D imx8qxp-ldb.o
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c b/drivers/gpu/d=
-rm/bridge/imx/imx8mp-hdmi-pai.c
-> new file mode 100644
-> index 000000000000..9002974073ca
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
-> @@ -0,0 +1,205 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/component.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <drm/bridge/dw_hdmi.h>
-> +#include <sound/asoundef.h>
-> +
-> +#define HTX_PAI_CTRL			0x00
-> +#define   ENABLE			BIT(0)
-> +
-> +#define HTX_PAI_CTRL_EXT		0x04
-> +#define   WTMK_HIGH_MASK		GENMASK(31, 24)
-> +#define   WTMK_LOW_MASK			GENMASK(23, 16)
-> +#define   NUM_CH_MASK			GENMASK(10, 8)
-> +#define   WTMK_HIGH(n)			FIELD_PREP(WTMK_HIGH_MASK, (n))
-> +#define   WTMK_LOW(n)			FIELD_PREP(WTMK_LOW_MASK, (n))
-> +
-> +#define HTX_PAI_FIELD_CTRL		0x08
-> +#define   B_FILT			BIT(31)
-> +#define   PARITY_EN			BIT(30)
-> +#define   END_SEL			BIT(29)
-> +#define   PRE_SEL			GENMASK(28, 24)
-> +#define   D_SEL				GENMASK(23, 20)
-> +#define   V_SEL				GENMASK(19, 15)
-> +#define   U_SEL				GENMASK(14, 10)
-> +#define   C_SEL				GENMASK(9, 5)
-> +#define   P_SEL				GENMASK(4, 0)
-> +
-> +#define HTX_PAI_STAT			0x0c
-> +#define HTX_PAI_IRQ_NOMASK		0x10
-> +#define HTX_PAI_IRQ_MASKED		0x14
-> +#define HTX_PAI_IRQ_MASK		0x18
-> +
-> +struct imx8mp_hdmi_pai {
-> +	struct device	*dev;
-> +	struct regmap	*regmap;
-> +};
-> +
-> +static void imx8mp_hdmi_pai_enable(struct dw_hdmi *dw_hdmi, int channel,
-> +				   int width, int rate, int non_pcm,
-> +				   int iec958)
-> +{
-> +	const struct dw_hdmi_plat_data *pdata =3D dw_hdmi_to_plat_data(dw_hdmi);
-> +	struct imx8mp_hdmi_pai *hdmi_pai =3D (struct imx8mp_hdmi_pai *)pdata->p=
-riv_audio;
-> +	int val;
-> +
-> +	/* PAI set control extended */
-> +	val =3D  WTMK_HIGH(3) | WTMK_LOW(3);
-> +	val |=3D FIELD_PREP(NUM_CH_MASK, channel - 1);
-> +	regmap_write(hdmi_pai->regmap, HTX_PAI_CTRL_EXT, val);
-> +
-> +	/* IEC60958 format */
-> +	if (iec958) {
-> +		val =3D FIELD_PREP_CONST(P_SEL,
-> +				       __bf_shf(IEC958_SUBFRAME_PARITY));
-> +		val |=3D FIELD_PREP_CONST(C_SEL,
-> +					__bf_shf(IEC958_SUBFRAME_CHANNEL_STATUS));
-> +		val |=3D FIELD_PREP_CONST(U_SEL,
-> +					__bf_shf(IEC958_SUBFRAME_USER_DATA));
-> +		val |=3D FIELD_PREP_CONST(V_SEL,
-> +					__bf_shf(IEC958_SUBFRAME_VALIDITY));
-> +		val |=3D FIELD_PREP_CONST(D_SEL,
-> +					__bf_shf(IEC958_SUBFRAME_SAMPLE_24_MASK));
-> +		val |=3D FIELD_PREP_CONST(PRE_SEL,
-> +					__bf_shf(IEC958_SUBFRAME_PREAMBLE_MASK));
-> +	} else {
-> +		/* PCM choose 24bit*/
-> +		val =3D FIELD_PREP(D_SEL, width - 24);
-> +	}
-> +
-> +	regmap_write(hdmi_pai->regmap, HTX_PAI_FIELD_CTRL, val);
-> +
-> +	/* PAI start running */
-> +	regmap_write(hdmi_pai->regmap, HTX_PAI_CTRL, ENABLE);
-> +}
-> +
-> +static void imx8mp_hdmi_pai_disable(struct dw_hdmi *dw_hdmi)
-> +{
-> +	const struct dw_hdmi_plat_data *pdata =3D dw_hdmi_to_plat_data(dw_hdmi);
-> +	struct imx8mp_hdmi_pai *hdmi_pai =3D (struct imx8mp_hdmi_pai *)pdata->p=
-riv_audio;
-> +
-> +	/* Stop PAI */
-> +	regmap_write(hdmi_pai->regmap, HTX_PAI_CTRL, 0);
-> +}
-> +
-> +static int imx8mp_hdmi_pai_bind(struct device *dev, struct device *maste=
-r, void *data)
-> +{
-> +	struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_data *)dat=
-a;
-> +	struct imx8mp_hdmi_pai *hdmi_pai;
-> +
-> +	hdmi_pai =3D dev_get_drvdata(dev);
-> +
-> +	plat_data->enable_audio =3D imx8mp_hdmi_pai_enable;
-> +	plat_data->disable_audio =3D imx8mp_hdmi_pai_disable;
-> +	plat_data->priv_audio =3D hdmi_pai;
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx8mp_hdmi_pai_unbind(struct device *dev, struct device *ma=
-ster, void *data)
-> +{
-> +	struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_data *)dat=
-a;
-> +
-> +	plat_data->enable_audio =3D NULL;
-> +	plat_data->disable_audio =3D NULL;
-> +	plat_data->priv_audio =3D NULL;
-> +}
-> +
-> +static const struct component_ops imx8mp_hdmi_pai_ops =3D {
-> +	.bind   =3D imx8mp_hdmi_pai_bind,
-> +	.unbind =3D imx8mp_hdmi_pai_unbind,
-> +};
-> +
-> +static bool imx8mp_hdmi_pai_volatile_reg(struct device *dev, unsigned in=
-t reg)
-> +{
-> +	switch (reg) {
-> +	case HTX_PAI_IRQ_NOMASK:
-> +	case HTX_PAI_IRQ_MASKED:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool imx8mp_hdmi_pai_writeable_reg(struct device *dev, unsigned i=
-nt reg)
-> +{
-> +	switch (reg) {
-> +	case HTX_PAI_CTRL:
-> +	case HTX_PAI_CTRL_EXT:
-> +	case HTX_PAI_FIELD_CTRL:
-> +	case HTX_PAI_IRQ_NOMASK:
-> +	case HTX_PAI_IRQ_MASKED:
-> +	case HTX_PAI_IRQ_MASK:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static const struct regmap_config imx8mp_hdmi_pai_regmap_config =3D {
-> +	.reg_bits =3D 32,
-> +	.reg_stride =3D 4,
-> +	.val_bits =3D 32,
-> +	.max_register =3D HTX_PAI_IRQ_MASK,
-> +	.volatile_reg =3D imx8mp_hdmi_pai_volatile_reg,
-> +	.writeable_reg =3D imx8mp_hdmi_pai_writeable_reg,
-> +};
-> +
-> +static int imx8mp_hdmi_pai_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct imx8mp_hdmi_pai *hdmi_pai;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +
-> +	hdmi_pai =3D devm_kzalloc(dev, sizeof(*hdmi_pai), GFP_KERNEL);
-> +	if (!hdmi_pai)
-> +		return -ENOMEM;
-> +
-> +	base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	hdmi_pai->dev =3D dev;
-> +
-> +	hdmi_pai->regmap =3D devm_regmap_init_mmio(dev, base, &imx8mp_hdmi_pai_=
-regmap_config);
-> +	if (IS_ERR(hdmi_pai->regmap)) {
-> +		dev_err(dev, "regmap init failed\n");
-> +		return PTR_ERR(hdmi_pai->regmap);
-> +	}
-> +
-> +	dev_set_drvdata(dev, hdmi_pai);
-> +
-> +	return component_add(dev, &imx8mp_hdmi_pai_ops);
-> +}
-> +
-> +static void imx8mp_hdmi_pai_remove(struct platform_device *pdev)
-> +{
-> +	component_del(&pdev->dev, &imx8mp_hdmi_pai_ops);
-> +}
-> +
-> +static const struct of_device_id imx8mp_hdmi_pai_of_table[] =3D {
-> +	{ .compatible =3D "fsl,imx8mp-hdmi-pai" },
-> +	{ /* Sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, imx8mp_hdmi_pai_of_table);
-> +
-> +static struct platform_driver imx8mp_hdmi_pai_platform_driver =3D {
-> +	.probe		=3D imx8mp_hdmi_pai_probe,
-> +	.remove		=3D imx8mp_hdmi_pai_remove,
-> +	.driver		=3D {
-> +		.name	=3D "imx8mp-hdmi-pai",
-> +		.of_match_table =3D imx8mp_hdmi_pai_of_table,
-> +	},
-> +};
-> +module_platform_driver(imx8mp_hdmi_pai_platform_driver);
-> +
-> +MODULE_DESCRIPTION("i.MX8MP HDMI PAI driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/dr=
-m/bridge/imx/imx8mp-hdmi-tx.c
-> index 1e7a789ec289..ee08084d2394 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> @@ -5,11 +5,13 @@
->   */
-> =20
->  #include <linux/clk.h>
-> +#include <linux/component.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <drm/bridge/dw_hdmi.h>
->  #include <drm/drm_modes.h>
-> +#include <drm/drm_of.h>
-> =20
->  struct imx8mp_hdmi {
->  	struct dw_hdmi_plat_data plat_data;
-> @@ -79,11 +81,46 @@ static const struct dw_hdmi_phy_ops imx8mp_hdmi_phy_o=
-ps =3D {
->  	.update_hpd	=3D dw_hdmi_phy_update_hpd,
->  };
-> =20
-> +static int imx8mp_dw_hdmi_bind(struct device *dev)
-> +{
-> +	struct dw_hdmi_plat_data *plat_data;
-> +	struct imx8mp_hdmi *hdmi;
-> +	int ret;
-> +
-> +	hdmi =3D dev_get_drvdata(dev);
-> +	plat_data =3D &hdmi->plat_data;
-> +
-> +	ret =3D component_bind_all(dev, plat_data);
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+---
+ sound/hda/codecs/side-codecs/tas2781_hda.c | 47 +++++++++++++++-------
+ sound/hda/codecs/side-codecs/tas2781_hda.h |  2 +-
+ 2 files changed, 33 insertions(+), 16 deletions(-)
 
-Do you really need plat_data variable?
-
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "component_bind_all failed!\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx8mp_dw_hdmi_unbind(struct device *dev)
-> +{
-> +	struct dw_hdmi_plat_data *plat_data;
-> +	struct imx8mp_hdmi *hdmi;
-> +
-> +	hdmi =3D dev_get_drvdata(dev);
-> +	plat_data =3D &hdmi->plat_data;
-> +
-> +	component_unbind_all(dev, plat_data);
-
-Do you really need plat_data variable?
-
-> +}
-> +
-> +static const struct component_master_ops imx8mp_dw_hdmi_ops =3D {
-> +	.bind   =3D imx8mp_dw_hdmi_bind,
-> +	.unbind =3D imx8mp_dw_hdmi_unbind,
-> +};
-> +
->  static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
->  	struct dw_hdmi_plat_data *plat_data;
-> +	struct component_match *match;
-
-Set match =3D NULL for drm_of_component_match_add (and subcalls) to allocat=
-e memory.
-
-Best regards
-Alexander
-
-> +	struct device_node *remote;
->  	struct imx8mp_hdmi *hdmi;
-> +	int ret;
-> =20
->  	hdmi =3D devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
->  	if (!hdmi)
-> @@ -108,6 +145,22 @@ static int imx8mp_dw_hdmi_probe(struct platform_devi=
-ce *pdev)
-> =20
->  	platform_set_drvdata(pdev, hdmi);
-> =20
-> +	/* port@2 is for hdmi_pai device */
-> +	remote =3D of_graph_get_remote_node(pdev->dev.of_node, 2, 0);
-> +	if (remote && of_device_is_available(remote)) {
-> +		drm_of_component_match_add(dev, &match, component_compare_of, remote);
-> +
-> +		of_node_put(remote);
-> +
-> +		ret =3D component_master_add_with_match(dev, &imx8mp_dw_hdmi_ops, matc=
-h);
-> +		if (ret)
-> +			dev_warn(dev, "Unable to register aggregate driver\n");
-> +		/*
-> +		 * This audio function is optional for avoid blocking display.
-> +		 * So just print warning message and no error is returned.
-> +		 */
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -115,6 +168,8 @@ static void imx8mp_dw_hdmi_remove(struct platform_dev=
-ice *pdev)
->  {
->  	struct imx8mp_hdmi *hdmi =3D platform_get_drvdata(pdev);
-> =20
-> +	component_master_del(&pdev->dev, &imx8mp_dw_hdmi_ops);
-> +
->  	dw_hdmi_remove(hdmi->dw_hdmi);
->  }
-> =20
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index 095cdd9b7424..336f062e1f9d 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -143,6 +143,12 @@ struct dw_hdmi_plat_data {
->  					   const struct drm_display_info *info,
->  					   const struct drm_display_mode *mode);
-> =20
-> +	/*
-> +	 * priv_audio is specially used for additional audio device to get
-> +	 * driver data through this dw_hdmi_plat_data.
-> +	 */
-> +	void *priv_audio;
-> +
->  	/* Platform-specific audio enable/disable (optional) */
->  	void (*enable_audio)(struct dw_hdmi *hdmi, int channel,
->  			     int width, int rate, int non_pcm, int iec958);
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.c b/sound/hda/codecs/side-codecs/tas2781_hda.c
+index 34217ce9f28e..f46d2e06c64f 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda.c
+@@ -18,6 +18,8 @@
+ 
+ #include "tas2781_hda.h"
+ 
++#define CALIBRATION_DATA_AREA_NUM 2
++
+ const efi_guid_t tasdev_fct_efi_guid[] = {
+ 	/* DELL */
+ 	EFI_GUID(0xcc92382d, 0x6337, 0x41cb, 0xa8, 0x8b, 0x8e, 0xce, 0x74,
+@@ -160,36 +162,51 @@ int tas2781_save_calibration(struct tas2781_hda *hda)
+ 	 * manufactory.
+ 	 */
+ 	efi_guid_t efi_guid = tasdev_fct_efi_guid[LENOVO];
+-	static efi_char16_t efi_name[] = TASDEVICE_CALIBRATION_DATA_NAME;
++	/*
++	 * Some devices save the calibrated data into L"CALI_DATA",
++	 * and others into L"SmartAmpCalibrationData".
++	 */
++	static efi_char16_t *efi_name[CALIBRATION_DATA_AREA_NUM] = {
++		L"CALI_DATA",
++		L"SmartAmpCalibrationData",
++	};
+ 	struct tasdevice_priv *p = hda->priv;
+ 	struct calidata *cali_data = &p->cali_data;
+ 	unsigned long total_sz = 0;
+ 	unsigned int attr, size;
+ 	unsigned char *data;
+ 	efi_status_t status;
++	int i;
+ 
+ 	if (hda->catlog_id < LENOVO)
+ 		efi_guid = tasdev_fct_efi_guid[hda->catlog_id];
+ 
+ 	cali_data->cali_dat_sz_per_dev = 20;
+ 	size = p->ndev * (cali_data->cali_dat_sz_per_dev + 1);
+-	/* Get real size of UEFI variable */
+-	status = efi.get_variable(efi_name, &efi_guid, &attr, &total_sz, NULL);
+-	cali_data->total_sz = total_sz > size ? total_sz : size;
+-	if (status == EFI_BUFFER_TOO_SMALL) {
+-		/* Allocate data buffer of data_size bytes */
+-		data = p->cali_data.data = devm_kzalloc(p->dev,
+-			p->cali_data.total_sz, GFP_KERNEL);
+-		if (!data) {
+-			p->cali_data.total_sz = 0;
+-			return -ENOMEM;
++	for (i = 0; i < CALIBRATION_DATA_AREA_NUM; i++) {
++		/* Get real size of UEFI variable */
++		status = efi.get_variable(efi_name[i], &efi_guid, &attr,
++			&total_sz, NULL);
++		cali_data->total_sz = total_sz > size ? total_sz : size;
++		if (status == EFI_BUFFER_TOO_SMALL) {
++			/* Allocate data buffer of data_size bytes */
++			data = cali_data->data = devm_kzalloc(p->dev,
++				cali_data->total_sz, GFP_KERNEL);
++			if (!data) {
++				status = -ENOMEM;
++				continue;
++			}
++			/* Get variable contents into buffer */
++			status = efi.get_variable(efi_name[i], &efi_guid,
++				&attr, &cali_data->total_sz, data);
+ 		}
+-		/* Get variable contents into buffer */
+-		status = efi.get_variable(efi_name, &efi_guid, &attr,
+-			&p->cali_data.total_sz, data);
++		/* Check whether get the calibrated data */
++		if (status == EFI_SUCCESS)
++			break;
+ 	}
++
+ 	if (status != EFI_SUCCESS) {
+-		p->cali_data.total_sz = 0;
++		cali_data->total_sz = 0;
+ 		return status;
+ 	}
+ 
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.h b/sound/hda/codecs/side-codecs/tas2781_hda.h
+index 575a701c8dfb..66188909a0bb 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda.h
++++ b/sound/hda/codecs/side-codecs/tas2781_hda.h
+@@ -11,7 +11,7 @@
+ 
+ /* Flag of calibration registers address. */
+ #define TASDEV_UEFI_CALI_REG_ADDR_FLG	BIT(7)
+-#define TASDEVICE_CALIBRATION_DATA_NAME	L"CALI_DATA"
++
+ #define TASDEV_CALIB_N			5
+ 
+ /*
+-- 
+2.43.0
 
 
