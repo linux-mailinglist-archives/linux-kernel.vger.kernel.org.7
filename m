@@ -1,87 +1,44 @@
-Return-Path: <linux-kernel+bounces-756751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6E3B1B8CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:52:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179FDB1B8D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0289F18A6B68
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251BF181C71
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4A71552FD;
-	Tue,  5 Aug 2025 16:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pCAT0AcO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E016292B42;
+	Tue,  5 Aug 2025 16:54:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA95721A928
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 16:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4351F4C99;
+	Tue,  5 Aug 2025 16:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754412713; cv=none; b=rvRI0btPx2KXmO+we4niSR2IL/Ot0+l1be3BHy9gV1zHTSVkZGOXHJyXDhpKZ2gp3GfluApiNsvoe7V/LReDjWhn80kUea3Lk8h6074/CggX9RFPv76a6Kzy99uDLxdLlUkfDT4Uf2YeuFGEHd2rzJ0DRCBK2v+dVR/SO0ZZcFw=
+	t=1754412895; cv=none; b=aak1TCFI6aLpL3ItTgxcD7KAGVIOOfnbpjAE2vXKItWvMLSBva5slUuZQYRmw+2ttRIVWEaMCtsBhe2qjvGRveRYA14V7+prbr3dOn17/W8UH5y5J9dtAvuIaaHZk/NV53U+OLNie3+Y+ypsKgqyRt31PsUE0ttxegNvfuYgsPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754412713; c=relaxed/simple;
-	bh=9HuhvcVgcVWA8vrm4ARyM9LsZ5rPP/+FsBZiP8MsXi0=;
+	s=arc-20240116; t=1754412895; c=relaxed/simple;
+	bh=qXmkEdfK/zrsuD2vvJG7L2fd5aUMohVOhUtOW+wgXtQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKxpnDLLNjdKy0goMTv9L0EbED1hXavblEJWwEkPLjVbUOGqPseSiInpU6rYbP8xl0PagRl5DEdmdIM2Hvp9dFuhFRXGd3xutSwKjDpQzDyx1zS0nYrZa3hO3fvB51J/B2jP3kIE3WkMW6HaeA+Ddo9rbRzE7RiPHcST+GSjXDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pCAT0AcO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758O8iG031930
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 16:51:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OrW1DzUyVVmeukVpqBYLRBGHiHi6hAxmrlXRAz69Tg4=; b=pCAT0AcO0mia2Krn
-	I5LdhZKGCdJhYIpHxXpH//mQqwhzDd1SuRsAm8+r3L0kU2A5sPIwaREWyg7O5+vE
-	V6VO/yX6j8x0dL36xOKSon9f4dMuXYroUovwSc+te9rqlDfDn37q/JRjU4TIrTEo
-	KVvLFYopbObI5IjIab/JM2vz+V9gI93DFVKhbgENPjfcRgEXuhcbvrfZl47NrenQ
-	zvLa5DZ5PHEpG/ICyvleB85odDupRjAQXwNRnRlfsjHGz8rE8myWwj0tNa63fmiU
-	EJwU0iCYpHOb7XgaQZiUD8Bfp5VDSAJPU8GMm4JZyLV4t++AjTOvZC1qzJcUPbDb
-	/EXP+Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ak5a5wwr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 16:51:50 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e800094c82so52017185a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 09:51:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754412709; x=1755017509;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OrW1DzUyVVmeukVpqBYLRBGHiHi6hAxmrlXRAz69Tg4=;
-        b=be5/crwCLeFX5yBfCyK+kQaYbzGXrmjID9G74IS5qU7xQhjdX0x5MaZgtJlXjxsWcN
-         Aq2bxIaz2XddODv4tzHZNBwGEFHx1DzmjgYyOuxvp7LK1YgZI2zX5PQ4fBSuW61VA9MU
-         MSl0RCOZKfRflHC708jfzA2xKefYQBHKt9bJzTT9mCfVo4xZ5Vjvhtgn1VaxnEx/0ICG
-         3hKtinhn4T55ZD4/MTbgINei2jM7LlG5dNMyiPprqbiPmBunjVVMsnKAgZxIqBDsAI86
-         RqseK/cZXKTd0QMzsE8V+FKxwQE55lwiFe4wZOzCacHrF3HA8pFfHdV4gzfDlaMxWJup
-         Gx9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7UbyJ1NszzUbTZ6ps9GxEu5xMWTr53KzgkYb4lIrxkM2h9UhhCA3VbmmAMD/UGQzvbhW/8nqWy3aox8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMTpuiNoFB9KibVDVznlNesScRe1VAtPYWKg2En9NITqp7jhBL
-	9LuN0Z55ojZIXJufEkKqlhnJcYXvucJd0RqBPHrZZsIC41UgnK7Sgi6Q4HQI1pdHgmrN1Or4YfF
-	3le76LW/OqRiq14H6GQpM+7exrTt+RQzSdi/pmKDAaQDL+3iFjRbsOmYf6ARTuJkpdAo=
-X-Gm-Gg: ASbGncuQJf+N+7uPiTZ9OxmCP2KoLXkGWR1uoTbnFkqdDLcyRPI19BpXciL1oVClDJb
-	LmK0kheNyHfvuUqsXpMYLHTpDpu3is0Nf+ZUvgc3NU53u7vltcah935gmxrmzwcpkRZaXxURVzB
-	xyOFf8Zvp1W3Yk6RXwI7FFJwRjm1LSI3yMQRPDB6/R1cIsxTLg2tLtX6DTtY6xEwyXdhVuH3C3g
-	XBz31nzAdbM3FgSeMWZgVEasKIn34xvhqor5k+2nCgJzPCvyiXxGE1cchZmy6G+1ymNMJH/+72c
-	HJM+Sv1CTOpCfnLg9YZ6rxGhLGBw3oyO36hrreo22GM9eyD6OdrRskmKN4M43uFUR2B6raH+4CA
-	JVJjX4ROGy+9AZorW+Q==
-X-Received: by 2002:a05:620a:198b:b0:7e8:c4f:614b with SMTP id af79cd13be357-7e80c4f6500mr234284385a.7.1754412709479;
-        Tue, 05 Aug 2025 09:51:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsRfnZFgHHEyQmRgmvW0pHpImAXIwU7QUOWWa17SPxgdAKAosD77jO4lD+OvVYYq1NIsK+5A==
-X-Received: by 2002:a05:620a:198b:b0:7e8:c4f:614b with SMTP id af79cd13be357-7e80c4f6500mr234281985a.7.1754412709002;
-        Tue, 05 Aug 2025 09:51:49 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a076aecsm933342866b.9.2025.08.05.09.51.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 09:51:48 -0700 (PDT)
-Message-ID: <5590fdab-0fa3-4ac0-bcbf-d2cb41be16dc@oss.qualcomm.com>
-Date: Tue, 5 Aug 2025 18:51:46 +0200
+	 In-Reply-To:Content-Type; b=M0mMOiSgPVNj4g1H9mk5etGQhBt2TsL71iqJFnUlE3nVh/zbcZqLv0R+ScmGxaB0QwkGA38XJBEK9Z+jBfX7iHyJk88Pt0yHcG5ABzxw2BrfS2vF5ZFrtTxvzt6+7d/VasUD1iSldAgr40OlXFiseYpQ2lkauMa8PoXGD1j8dKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bxKKN3dwSzKHM0M;
+	Wed,  6 Aug 2025 00:54:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8D8A31A1432;
+	Wed,  6 Aug 2025 00:54:47 +0800 (CST)
+Received: from [10.174.178.209] (unknown [10.174.178.209])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxBSN5Jorj21Cg--.61441S3;
+	Wed, 06 Aug 2025 00:54:44 +0800 (CST)
+Message-ID: <7210239c-e15b-4c35-b234-c3bc939d4ab6@huaweicloud.com>
+Date: Wed, 6 Aug 2025 00:54:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,86 +46,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sm8750: Add adsp fastrpc
- nodes/support
-To: Alexey Klimov <alexey.klimov@linaro.org>, andersson@kernel.org,
-        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        srini@kernel.org, quic_ekangupt@quicinc.com,
-        krzysztof.kozlowski@linaro.org, dmitry.baryshkov@oss.qualcomm.com
-References: <20250805162041.47412-1-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250805162041.47412-1-alexey.klimov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDExNiBTYWx0ZWRfX97guqnjsBA3S
- zn3fQuATYHuXjN3OIZ9GpTgS8oy/5vbpPuVF0Mczee7o2QvM7bIWLCLwDZisswHGg+LTofQPfaJ
- X4zwELjcNyfmyPrbyjIOU3gHUMbimICBrnczrHWnoFfnZce1SrH2X5evX8bDNjZ/CTY/a5jV+WB
- vAFyhoD1E2UHbW9kpSF/RsqqnwxUYQnihfnh1cuL73uu2u8Ysjj957X0C/6Fyvekqk2EDutXhcW
- tNP8Llv+nRW24bdfHwdgbFsaZKtP8u+D5O8Ul0d1//qeQBARXCQ156YIgn8FMGPOs0uLafoKu6H
- 7CFczCANMwzMbFo5bYcgyYr33pEbS3jnFwJ8CnRXnata8n3895oWxzLbuyqMxPGZjAZyK2Z/yUw
- N4fhXsCKjEVUw2edgptMLaJr6EZlsUtkXs50wVPBZiQlsYZEFxvk/7FYBlMEX9IkcEMj/lCx
-X-Proofpoint-GUID: VZqrzdAyAPMvohMQTvyc6_btToK95NFj
-X-Authority-Analysis: v=2.4 cv=LP1mQIW9 c=1 sm=1 tr=0 ts=689236a6 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=i5LmXQDNGShexaeZTkYA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: VZqrzdAyAPMvohMQTvyc6_btToK95NFj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=999 suspectscore=0 spamscore=0 impostorscore=0
- phishscore=0 adultscore=0 malwarescore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050116
+Subject: Re: [PATCH V2 0/4] Fix mid_q_entry memory leaks in SMB client
+To: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: sfrench@samba.org, pshilov@microsoft.com, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20250805064708.332465-1-wangzhaolong@huaweicloud.com>
+ <ci3hj5mr7a3qjx7hiuomzq4ankp7kym3sqevkll3pn4r76kb2f@rpxbkf3sqinq>
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+In-Reply-To: <ci3hj5mr7a3qjx7hiuomzq4ankp7kym3sqevkll3pn4r76kb2f@rpxbkf3sqinq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHjxBSN5Jorj21Cg--.61441S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4ftw1rCw15AF18Jry3CFg_yoWrKw43pr
+	4Fqw42kry8Xr1xZFsrAa4DurW8Gw4kC3W3J3y8GFySyw1Uursaqry2qrWFgry7Ar4xXr1D
+	Zw1UJwnrZF1DCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6x
+	kF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY
+	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On 8/5/25 6:20 PM, Alexey Klimov wrote:
-> While at this, also add required memory region for adsp fastrpc.
-> 
-> Tested on sm8750-mtp device with adsprpdcd.
-> 
-> Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> Cc: Srinivas Kandagatla <srini@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
-> 
-> v2:
-> - removed qcom,non-secure-domain flag as requested by Srini.
-> 
-> Prev version: https://lore.kernel.org/linux-arm-msm/20250502011539.739937-1-alexey.klimov@linaro.org/
-> 
->  arch/arm64/boot/dts/qcom/sm8750.dtsi | 69 ++++++++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> index 4643705021c6..cc74fb2e27de 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> @@ -7,6 +7,7 @@
->  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
->  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
->  #include <dt-bindings/dma/qcom-gpi.h>
-> +#include <dt-bindings/firmware/qcom,scm.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interconnect/qcom,icc.h>
->  #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
-> @@ -523,6 +524,14 @@ llcc_lpi_mem: llcc-lpi@ff800000 {
->  			reg = <0x0 0xff800000 0x0 0x800000>;
->  			no-map;
->  		};
-> +
-> +		adsp_rpc_remote_heap_mem: adsp-rpc-remote-heap {
-> +			compatible = "shared-dma-pool";
-> +			alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
 
-perhaps size=<0x1 0x0> (1<<32) is what we really want, unless the hw/sw
-is allergic to accessing the very last byte in the 32-bit space
+> 
+> Do you have a reproducer for this?  mids are allocated from kmem cache,
+> and a leak should certainly be visible (WARN on rmmod), even without any
+> debugging facilities enabled.
 
-Konrad
+Thanks for your reply and review!
+
+Yes, I have the reproducer. I have listed it in the commit message.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220404
+
+> 
+> However, I do know that the following problem is quite common in cifs:
+> 
+> thread 0        | thread 1
+> ----------------|----------------
+>                  | lock
+>                  | check data
+>                  | data is valid
+>                  | unlock
+> lock            |
+> invalidate data | lock (spins)
+> unlock          | ...
+>                  | // assumes data still valid
+>                  | use invalid data (not really freed)
+>                  | unlock
+> 
+> You see that no matter how many locks you add to protect data, there's
+> still a chance of having this "race condition" feeling.
+> 
+> So, personally, I'm skeptical about having yet another spinlock with
+> questionable or no effect at all.
+> 
+> But again, if I can reproduce this bug myself, it'll be much easier to
+> analyse effectiveness/review your patches.
+> 
+> Apart from that, cleanup patches always get my +1 :)
+> 
+
+
+
+The data is interrelated, and updates to the data are protected by per-mid locks
+to avoid `race condition`.
+
+For example, in the following scenario, the update and check of
+mid->mid_state are protected by the lock spin_lock(&midQ[i]->mid_lock),
+which can prevent leakage issues.
+
+
+```
+User foreground process                    cifsd
+cifs_readdir
+  open_cached_dir
+   cifs_send_recv
+    compound_send_recv
+     smb2_setup_request
+      smb2_mid_entry_alloc
+       smb2_get_mid_entry
+        smb2_mid_entry_alloc
+         mempool_alloc // alloc mid
+         kref_init(&temp->refcount); // refcount = 1
+      mid[0]->callback = cifs_compound_callback;
+      mid[1]->callback = cifs_compound_last_callback;
+      smb_send_rqst
+      rc = wait_for_response
+       wait_event_state TASK_KILLABLE
+                                   cifs_demultiplex_thread
+                                     allocate_buffers
+                                       server->bigbuf = cifs_buf_get()
+                                     standard_receive3
+                                       ->find_mid()
+                                         smb2_find_mid
+                                           __smb2_find_mid
+                                            kref_get(&mid->refcount) // +1
+                                       cifs_handle_standard
+                                         handle_mid
+                                          /* bigbuf will also leak */
+                                          mid->resp_buf = server->bigbuf
+                                          server->bigbuf = NULL;
+                                          dequeue_mid
+                                      /* in for loop */
+     /* Signal interrupts wait: rc = -ERESTARTSYS */
+                                     spin_lock(&midQ[i]->mid_lock);
+                                     mids[0]->callback
+                                       cifs_compound_callback
+                                        /* The change comes too late */
+                                        mid->mid_state = MID_RESPONSE_READY
+                                     spin_lock(&midQ[i]->mid_lock);
+     spin_lock(&midQ[i]->mid_lock);
+     /* if (... || midQ[i]->mid_state == MID_RESPONSE_RECEIVED) Not satisfied  *?
+     spin_unlock(&midQ[i]->mid_lock);
+                                     release_mid  // -1
+     release_mid  // -1
+```
+
+Or, in the case where the callback is replaced
+
+User foreground process                    cifsd
+cifs_readdir
+  open_cached_dir
+   cifs_send_recv
+    compound_send_recv
+     smb2_setup_request
+      smb2_mid_entry_alloc
+       smb2_get_mid_entry
+        smb2_mid_entry_alloc
+         mempool_alloc // alloc mid
+         kref_init(&temp->refcount); // refcount = 1
+      mid[0]->callback = cifs_compound_callback;
+      mid[1]->callback = cifs_compound_last_callback;
+      smb_send_rqst
+      rc = wait_for_response
+       wait_event_state TASK_KILLABLE
+                                   cifs_demultiplex_thread
+                                     allocate_buffers
+                                       server->bigbuf = cifs_buf_get()
+                                     standard_receive3
+                                       ->find_mid()
+                                         smb2_find_mid
+                                           __smb2_find_mid
+                                            kref_get(&mid->refcount) // +1
+                                       cifs_handle_standard
+                                         handle_mid
+                                          /* bigbuf will also leak */
+                                          mid->resp_buf = server->bigbuf
+                                          server->bigbuf = NULL;
+                                          dequeue_mid
+                                      /* in for loop */
+     /* Signal interrupts wait: rc = -ERESTARTSYS */
+     spin_lock(&midQ[i]->mid_lock);
+     /* if (... || midQ[i]->mid_state == MID_RESPONSE_RECEIVED) Satisfied  *?
+     midQ[0]->callback = cifs_cancelled_callback;
+     cancelled_mid[i] = true;
+     spin_unlock(&midQ[i]->mid_lock);
+                                     spin_lock(&midQ[i]->mid_lock);
+                                     mids[0]->callback
+                                       cifs_cancelled_callback
+                                         cifs_compound_callback
+                                          /* The change comes too late */
+                                          mid->mid_state = MID_RESPONSE_READY
+                                         release_mid  // -1
+                                     spin_lock(&midQ[i]->mid_lock);
+                                     release_mid  // -1
+
+
+I know this approach is quite ugly, but it is a relatively reliable
+method that preserves the historical bugfix logic.
+
+Relevant patches:
+
+d527f51331ca ("cifs: Fix UAF in cifs_demultiplex_thread()")
+ee258d79159a ("CIFS: Move credit processing to mid callbacks for SMB3")
+8544f4aa9dd1 ("CIFS: Fix credit computation for compounded requests")
+d7d7a66aacd6 ("cifs: avoid use of global locks for high contention data")
+
+
+Thanks again for your reply. I’m looking forward to any further
+suggestions you may have to improve the patch.
+
+Best regards,
+Wang Zhaolong
+
 
