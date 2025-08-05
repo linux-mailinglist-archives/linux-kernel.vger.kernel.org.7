@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-756475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB62DB1B4D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:23:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7321AB1B4DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44360188B8A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAFFC7A2554
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E70F275844;
-	Tue,  5 Aug 2025 13:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8F02737FA;
+	Tue,  5 Aug 2025 13:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U2lNUL9v"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MppPOKAE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5892E274B29;
-	Tue,  5 Aug 2025 13:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35C2749C4;
+	Tue,  5 Aug 2025 13:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754400201; cv=none; b=G4a51Y3hcNhuw+kY6sbiud2QzI1aXYSFdxYBrmLd0Pybo074goUDZ6pjzc1IrpjE8j/VQ25c0oZiYgBGwAUD1KP8bHu9r+JQ6NeYZhzmVtSJyVDdaSh7SP6HNgqN1eRH4trtNJZmc5Bk5e7e8YMcm/88kIVbWUqtqS8nUn05A3M=
+	t=1754400196; cv=none; b=FGJDQhQ3w3F+X0GWRQ1SpD1nkScQJU/3lW4EH04QmpVmuzo34geMNM8xphjnJ7GgAVsyz2vVMHbhhGXo+Cdxj5m0BzDx1ur7Cy/7fo+ROSiHXNPvTYwJLIuk2nGXaMHIMtYXHI7j3+AcGXG1wUOUT5PID8Pinw8gkk3xUPUXeq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754400201; c=relaxed/simple;
-	bh=Zk5egdCsb360flUD1N8NGncqCRIR4Mj9JAMrkJp+34o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VJL8N98u4fd7PNhGlHMHTXOPST5oqvrAalq+0Sj09fu1J617QahCXpQ5FCaOIgyr8McO3BApSCmH3Q0Z/Sgb7S0pVyvJclfXk7+U39+g2b+rSTXFL6x+N1wPAYPDy3bPH27b4YXm3cqPeBXVVPJsWFzxQdGHCK02EFFv0IC0vIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U2lNUL9v; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575CwNM8030778;
-	Tue, 5 Aug 2025 13:23:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Zk5egd
-	Csb360flUD1N8NGncqCRIR4Mj9JAMrkJp+34o=; b=U2lNUL9veAHJhvCpSNnkE4
-	/8hkplRF1DvEX/l6M/buR7UKGqQ9UV3oLL0HJ0oN4/M7+FjMByjC6lnS1BIkkDKN
-	Q4gwXd8cluYl7Le0eDo/qRpaDGfehGKyiBVr7oNSGg8nCzJibFzp6vTmlBIC5A3i
-	xOa88XE8SDjxjKmxZ/gJ56hd3fZMulDfNmc1TUKBxh9vhzx610Y0q7nI5PsFq4JD
-	QY2XSxmNcAfHlHvLepX6Lyi/vHgBYfFdquGyikHbARTwNP/L/jecqPq9VqRhkbXr
-	GX4AmRjVKq5uyVsFRw1QtM2dbMAQaAfKhbGdAuX3N5peawvdRL8fgHLCE5Q2f1Fw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48b6keb3r3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:23:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 575Ct3bZ001890;
-	Tue, 5 Aug 2025 13:23:03 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489wd02ngb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:23:03 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575DMxga54133052
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 13:22:59 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ACDF02004E;
-	Tue,  5 Aug 2025 13:22:59 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E408F2004B;
-	Tue,  5 Aug 2025 13:22:58 +0000 (GMT)
-Received: from [127.0.0.1] (unknown [9.152.108.100])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 13:22:58 +0000 (GMT)
-Message-ID: <8a20f7ba33426bb6ced600f97f5f67e9d67ea503.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make BPF debug info available
- to GDB
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann
- <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Jan Kiszka
- <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Heiko Carstens
-	 <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
-	 <agordeev@linux.ibm.com>
-Date: Tue, 05 Aug 2025 15:22:58 +0200
-In-Reply-To: <20250710115920.47740-1-iii@linux.ibm.com>
-References: <20250710115920.47740-1-iii@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754400196; c=relaxed/simple;
+	bh=4XpKY+hrV//JqY5IB0jEGLiEF04z3a1ypjzN/Ip/ON0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SKONJF7B+hWiPVqNU9ZiF6K4yprxvP05kQUs4OleJbRXE9RPPUS52WdiP3Hd0JVvsf/OvtMtQMvTwUg5LM13VLPvP1n2lZOEnQ3X9og5f6NYToCQwgOtMSUNkUAVqjvTkqVbOVTBtl6z1ERVFD+G8csC1LjwNN1vUpXK/iPJTFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MppPOKAE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BF7C4CEF0;
+	Tue,  5 Aug 2025 13:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754400195;
+	bh=4XpKY+hrV//JqY5IB0jEGLiEF04z3a1ypjzN/Ip/ON0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MppPOKAETMD/BqZRdpVGHGh0jhnuJMh9KObQqr9IRR1G0wYcPe5YUe9bHfzOlG4po
+	 0SC44ly+aXPz/iMhRAM5yj4RkanAgvRO5IZ7sgNigcRJPM4OQ/ESdBLOs4DAbhmL4g
+	 nUVo8lRu4XRj+P19miwzQjWyepxUCuvk3y8h80yJz65ZWG8Mm7sZ+X1+hJV6gOgLWC
+	 XNLxrSVOcVAPGnQvDiAOOcB9UoLHf32eYEwBwriug0ierfD3VZolCZi3bwghbnfj6d
+	 fNdpad2Brd5jze6/lOtyc/y/7NyN+WXKvz1UzmkWGSOGIbB/Ay1LC9Krj1GH20Nq6d
+	 8udjMyFgWLOCw==
+Date: Tue, 5 Aug 2025 15:23:12 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kernel@axis.com, linux-pwm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] pwm: meson: Remove error print for
+ devm_add_action_or_reset()
+Message-ID: <sveurgnigarzdjreweoibcxkkl7rekcpufuwqr7bxcrdx7zdrd@kz4ohstmfyjh>
+References: <pndwm7ikt8v.a.out@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mN_RglAhD4otnhK8CcEMfIj8drI5NE98
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA5OCBTYWx0ZWRfX/YPWw9KDd4bm
- f+eEsye8/Gp/CTmjQSGAIeTZXohSu3WxAufqx7uJCzRSFiERTLOdvuZrw7VLKOYwsSsqPfNgCKP
- oz4TgxrOKSxaOWbHNdDCxJILaaXz9g0H8pmQ2PWrt+95WAY0RsVJak6RFaPHjQij8O7D/QxUQPv
- vvLXU62AEcx+PMlx9ztz/BLODd19jX69tVDH4RlQriabLQ4be5P48wXi86G/P//4ENQVttvnQDb
- VTQjW8TbDMe75WiJJxbottsVm+jEZ7130a0yOaNTj1sGyl8WRIePOe8zeysEj/Zstsw3CXZO2pA
- nulmXmKgz0uDDKalXS89P6bGn4OKt1m/HE7oi/iJkSvg/hF2xYe6yZ/TZqIyztDC6QGvb8zgufj
- mNvxE0bRBSTmK0IgTGToQ9hKcmi+RpzL7548fIrcRKHI9yJ8KFVUPULYh2wDkSdbmxPlduv+
-X-Authority-Analysis: v=2.4 cv=eLATjGp1 c=1 sm=1 tr=0 ts=689205b9 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=NR5_5KzkQmZuu3-uLU0A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: mN_RglAhD4otnhK8CcEMfIj8drI5NE98
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=517 adultscore=0 clxscore=1015 malwarescore=0 suspectscore=0
- mlxscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050098
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qpe4lsz3c3n5r2b5"
+Content-Disposition: inline
+In-Reply-To: <pndwm7ikt8v.a.out@axis.com>
 
-On Thu, 2025-07-10 at 13:53 +0200, Ilya Leoshkevich wrote:
-> Hi,
->=20
-> This series greatly simplifies debugging BPF progs when using QEMU
-> gdbstub by providing symbol names, sizes, and line numbers to GDB.
->=20
-> Patch 1 adds radix tree iteration, which is necessary for parsing
-> prog_idr. Patch 2 is the actual implementation; its description
-> contains some details on how to use this.
->=20
-> Best regards,
-> Ilya
->=20
-> Ilya Leoshkevich (2):
-> =C2=A0 scripts/gdb/radix-tree: add lx-radix-tree-command
-> =C2=A0 scripts/gdb/symbols: make BPF debug info available to GDB
->=20
-> =C2=A0scripts/gdb/linux/bpf.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 253
-> ++++++++++++++++++++++++++++++
-> =C2=A0scripts/gdb/linux/constants.py.in |=C2=A0=C2=A0 3 +
-> =C2=A0scripts/gdb/linux/radixtree.py=C2=A0=C2=A0=C2=A0 | 139 ++++++++++++=
-+++-
-> =C2=A0scripts/gdb/linux/symbols.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-77 ++++++++-
-> =C2=A04 files changed, 462 insertions(+), 10 deletions(-)
-> =C2=A0create mode 100644 scripts/gdb/linux/bpf.py
 
-Gentle ping. Any opinions on whether this is valuable? Personally I've
-been using this for quite some time, and having source level debugging
-for BPF progs (even if variables can't be inspected) feels really nice.
+--qpe4lsz3c3n5r2b5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] pwm: meson: Remove error print for
+ devm_add_action_or_reset()
+MIME-Version: 1.0
+
+Hello Waqar,
+
+On Tue, Aug 05, 2025 at 11:33:36AM +0200, Waqar Hameed wrote:
+> When `devm_add_action_or_reset()` fails, it is due to a failed memory
+> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+> anything when error is `-ENOMEM`. Therefore, remove the useless call to
+> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+> return the value instead.
+>=20
+> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> ---
+> Changes in v2:
+>=20
+> * Split the patch to one seperate patch for each sub-system.
+>=20
+> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
+>=20
+>  drivers/pwm/pwm-meson.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index 8c6bf3d49753..e90d37d4f956 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -520,8 +520,7 @@ static int meson_pwm_init_channels_s4(struct pwm_chip=
+ *chip)
+>  		ret =3D devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
+>  					       meson->channels[i].clk);
+>  		if (ret)
+> -			return dev_err_probe(dev, ret,
+> -					     "Failed to add clk_put action\n");
+> +			return ret;
+
+On the other hand the call to dev_err_probe() also doesn't hurt, right?
+And when we keep it, it is clear that this error path is correctly
+handled without having to know that devm_add_action_or_reset() can only
+return success or -ENOMEM and we don't have to watch
+devm_add_action_or_reset() to not grow something like
+
+diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
+index ae696d10faff..0876cce68776 100644
+--- a/include/linux/device/devres.h
++++ b/include/linux/device/devres.h
+@@ -156,6 +156,9 @@ static inline int __devm_add_action_or_reset(struct dev=
+ice *dev, void (*action)(
+ {
+ 	int ret;
+=20
++	if (IS_ERR_OR_NULL(dev))
++		return -EINVAL;
++
+ 	ret =3D __devm_add_action(dev, action, data, name);
+ 	if (ret)
+ 		action(data);
+
+=46rom a subsystem maintainer's POV it would be great if it was easy to
+notice if a given function needs an error message or not. One excellent
+way to cover functions that can only return -ENOMEM on failure is to
+optimize out the small overhead of the devm_add_action_or_reset() call.
+
+See
+https://lore.kernel.org/all/ylr7cuxldwb24ccenen4khtyddzq3owgzzfblbohkdxb7p7=
+eeo@qpuddn6wrz3x/
+for a prototype of what I imagine. Oh, you were the addressee of that
+mail, so you already know.
+
+To make my position here explicit: This is a nack.
+
+Best regards
+Uwe
+
+--qpe4lsz3c3n5r2b5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiSBb0ACgkQj4D7WH0S
+/k7uTAf+IV4xlBSvJged2+TaatRIHPURN3SCK5I88TP02Cl5uM6b7hApBTqA8Ypd
+g3faAO9lFQSRxGgQ7s8VAOsXAMJbmYzc0yFsAANBo1Nx587Q9QA/sVHFNhWPF/hs
+v0wUECR915RNR3BgakctzGvtF4aS99tCgkVS8DszU4ngP9ZYtqqHi6vztBHrZgA4
+61kveQRsL2xsBv//xmoN5cDtmcns2Gr7nAC3G+8lgq/kkSWiJ6BKMhpi1Tvz/2T0
+XagBlQK6u66Aa6letKYpYuDGCAoBxre4ecvDcTHTOCiwLBaCO7/cQKBWDPMUpnYl
+lgExQoYJuwfH3aw6jq1LbSFplv2QYQ==
+=NaYJ
+-----END PGP SIGNATURE-----
+
+--qpe4lsz3c3n5r2b5--
 
