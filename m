@@ -1,93 +1,200 @@
-Return-Path: <linux-kernel+bounces-756319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F239EB1B2A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:34:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF1AB1B2A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6528189CF3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7100F18A0C93
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21318258CD3;
-	Tue,  5 Aug 2025 11:34:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98380259CB9;
+	Tue,  5 Aug 2025 11:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wQDNy6KL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B1D241691
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 11:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CB5EEC0;
+	Tue,  5 Aug 2025 11:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754393644; cv=none; b=IrNnnGCae/gAxUynBGDfhaOmHHDrV9LuYkGVu6V0POoaO9Wfm/SM6KKvSupKM+IX3IVTMJFPb+48FwDRRPxnSl6tq594yJdL2ltp2RABBaGJ8uXITVJpBKnyMSMAB3+gx5azrNPwRHK1V08bFnfAXHKKa5Kmrcogriaxnv2Td98=
+	t=1754393857; cv=none; b=RZy6IOMKS2Ta59d4T1hT4GBYWkYKsxN0bZ+/ZpxRn0yT1zCVZ2m2p+ZjHZQWFwyth6laB6Z95TRop66sKd9LGlFFSS6/qyvMZu3YM6IFCLv4LP0PJlqPb6OuynxyekQ20o6HhjUtbImd6igCkUabMzmxDnGFsLXO/vdjr3BdBs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754393644; c=relaxed/simple;
-	bh=Sflcpsg0PD5XG5dljOG1ybZHenmBO0Bu1t55tSERMg8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NbmeowSJqZ+dJup2fttQ7XRZPZ7x87uCB9M1yIc6RsbrC6/ALH4nMj7MHsrWqNYdOVjmHmy5jFe0Nv3ZBh6GP5lLFmLlnRSwbz1heWIktDJgiGU4VAmMRw9SqPwxm1jW/oLH414GTdxYxhW/iBfj/3cIdWVaWApDpB40d2IMt6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88174f2d224so236214039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 04:34:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754393642; x=1754998442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95FWEmXIfrIEO/zYb45Z4W0pP1aqivE7KsjXCppK0uA=;
-        b=hft1tQAE+IiCua1hNyWjYr5gyY8q2+VtLRYc9W7md7T+8dD50no69lfa4GJcGr0RHw
-         /KxHpXG72Selzq0o0R/8SctE3U00jmSodV6qJ2oIhdItn5aFfOdN2YeS6iB85YTHgyqV
-         YSqZzX3yPxLdai6SySv+HN5aTV72J1T26tBp/U1WecZMVk4t4FGlDYRfXZHWdIWTYvoQ
-         04czOkfu8qxaVmg+9nksU2AV0taTy1+B9KVsoU8gfyswSuyF95sRouD6pv5LFOw874KU
-         M1jf7BVaPG8nRJzhrNqJUhLkafFOJI/3IoYnOj1xn/bzXsf6FTLfnGJIHC2528oKr56x
-         jAbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLq5JjINNJArBoxm28gbtcgLLdNkdyy3egOM2pdUnMxqibHfcuBmepOLLmfqUNSBKTaiAU4Nos+zpprbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX8sVpfFCxPV2npQW0eawsG8LtYLQ9H1yaDXGtBidGye286eAD
-	HhoGbrH+oJaHqd/WnwNQUPqyZlpBQ2ucSxhCN9rQl1r5RIPFpwGHzYC55vzqVt+RFPh4dh+PmmW
-	5U7QmSICrbqeRgOFvZ4SZ/UJaatJWAu04mCpT1KYGWhYmGwCv5IF0A89Kv4w=
-X-Google-Smtp-Source: AGHT+IFMu0t0Nn/b9qQTRS7KeyLXQj5B5JqMmtkPaTMaH+YrEoz27P7XhK1L1Ba/Tj2GJG85jei9IWOi9alFMFHti0KIahs+RlUF
+	s=arc-20240116; t=1754393857; c=relaxed/simple;
+	bh=pzknJzdLsQ0UdjwXfakRUzrYvY8rSGUHH5bJks8yJCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXjOciraCxtDju/sPrLYa9wUGQvxcL91czTSlI4gA+gEwq9QtAGXl+L3suzcdVmzHFrSjTYPTA9TidoUbo5G4wp4pA8rfAXsnV26r4akviV/1zdB/Sinnz+pcEBSu9VYn6eh2ZGa2TJXaC+T1N7vtTa5B3Vb6wMggPDQ1aeFpd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wQDNy6KL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CF00F664;
+	Tue,  5 Aug 2025 13:36:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754393806;
+	bh=pzknJzdLsQ0UdjwXfakRUzrYvY8rSGUHH5bJks8yJCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wQDNy6KLUkiR3+cp4aRj4/Ic0aLZJOCX1CWxfDlIBj0EKQtkgjhdzeRxrQ16OTgI/
+	 hrnh0HATxPbHq48EkYymZt0RWFd6dnhMDBBKYI5+xLeUeDyRWtxcsnMVw22p4OElh/
+	 DD/gqN+kbtebQsvPsnOVOuj0WtM8ajiy1lWrhAmc=
+Date: Tue, 5 Aug 2025 14:37:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Bin Du <Bin.Du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
+	sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
+Subject: Re: [PATCH v2 8/8] Documentation: add documentation of AMD isp 4
+ driver
+Message-ID: <20250805113719.GF24627@pendragon.ideasonboard.com>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <20250618091959.68293-9-Bin.Du@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2507:b0:3e3:c918:e3b6 with SMTP id
- e9e14a558f8ab-3e41607aa64mr220823675ab.0.1754393642206; Tue, 05 Aug 2025
- 04:34:02 -0700 (PDT)
-Date: Tue, 05 Aug 2025 04:34:02 -0700
-In-Reply-To: <67f66c9c.050a0220.25d1c8.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6891ec2a.050a0220.7f033.0021.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: null-ptr-deref Write in rcuref_put (4)
-From: syzbot <syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com>
-To: atenart@kernel.org, davem@davemloft.net, dawid.osuchowski@linux.intel.com, 
-	edumazet@google.com, gal@nvidia.com, horms@kernel.org, kuba@kernel.org, 
-	kuniyu@google.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250618091959.68293-9-Bin.Du@amd.com>
 
-syzbot has bisected this issue to:
+On Wed, Jun 18, 2025 at 05:19:59PM +0800, Bin Du wrote:
+> Add documentation for AMD isp 4 and describe the main components
+> 
+> Signed-off-by: Bin Du <Bin.Du@amd.com>
+> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> ---
+>  Documentation/admin-guide/media/amdisp4-1.rst | 64 +++++++++++++++++++
+>  Documentation/admin-guide/media/amdisp4.dot   |  8 +++
+>  MAINTAINERS                                   |  2 +
+>  3 files changed, 74 insertions(+)
+>  create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
+>  create mode 100644 Documentation/admin-guide/media/amdisp4.dot
+> 
+> diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
+> new file mode 100644
+> index 000000000000..417b15af689a
+> --- /dev/null
+> +++ b/Documentation/admin-guide/media/amdisp4-1.rst
+> @@ -0,0 +1,64 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. include:: <isonum.txt>
+> +
+> +====================================
+> +AMD Image Signal Processor (amdisp4)
+> +====================================
+> +
+> +Introduction
+> +============
+> +
+> +This file documents the driver for the AMD ISP4 that is part of
+> +AMD Ryzen AI Max 385 SoC.
+> +
+> +The driver is located under drivers/media/platform/amd/isp4 and uses
+> +the Media-Controller API.
+> +
+> +Topology
+> +========
+> +
+> +.. _amdisp4_topology_graph:
+> +
+> +.. kernel-figure:: amdisp4.dot
+> +     :alt:   Diagram of the media pipeline topology
+> +     :align: center
+> +
+> +
+> +
+> +The driver has 1 sub-device:
+> +
+> +- isp: used to resize and process bayer raw frames in to yuv.
+> +
+> +The driver has 1 video device:
+> +
+> +- <capture video device: capture device for retrieving images.
+> +
+> +
+> +  - ISP4 Image Signal Processing Subdevice Node
+> +-----------------------------------------------
+> +
+> +The isp4 is represented as a single V4L2 subdev, the sub-device does not
+> +provide interface to the user space.
 
-commit de9c4861fb42f0cd72da844c3c34f692d5895b7b
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Tue Jul 29 08:02:07 2025 +0000
+Doesn't it ? The driver sets the V4L2_SUBDEV_FL_HAS_DEVNODE flag for the
+subdev, and calls v4l2_device_register_subdev_nodes().
 
-    pptp: ensure minimal skb length in pptp_xmit()
+As far as I understand, the camera is exposed by the firmware with a
+webcam-like interface. We need to better understand your plans with this
+driver. If everything is handled by the firmware, why are the sensor and
+subdev exposed to userspace ? Why can't you expose a single video
+capture device, with a media device, and handle everything behind the
+scene ? I assume there may be more features coming later. Please
+document the plan, we can't provide feedback on the architecture
+otherwise.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17cb2042580000
-start commit:   5c5a10f0be96 Add linux-next specific files for 20250804
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=142b2042580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=102b2042580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4ccbd076877954b
-dashboard link: https://syzkaller.appspot.com/bug?extid=27d7cfbc93457e472e00
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1628faa2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12490434580000
+> The sub-device is connected to one video node
+> +(isp4_capture) with immutable active link. The isp entity is connected
+> +to sensor pad 0 and receives the frames using CSI-2 protocol. The sub-device is
+> +also responsible to configure CSI2-2 receiver.
+> +The sub-device processes bayer raw data from the connected sensor and output
+> +them to different YUV formats. The isp also has scaling capabilities.
+> +
+> +  - isp4_capture - Frames Capture Video Node
+> +--------------------------------------------
+> +
+> +Isp4_capture is a capture device to capture frames to memory.
+> +This entity is the DMA engine that write the frames to memory.
+> +The entity is connected to isp4 sub-device.
+> +
+> +Capturing Video Frames Example
+> +==============================
+> +
+> +.. code-block:: bash
+> +
+> +         # set the links
 
-Reported-by: syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com
-Fixes: de9c4861fb42 ("pptp: ensure minimal skb length in pptp_xmit()")
+This seems very under-documented.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +
+> +         # start streaming:
+> +         v4l2-ctl "-d" "/dev/video0" "--set-fmt-video=width=1920,height=1080,pixelformat=NV12" "--stream-mmap" "--stream-count=10"
+> diff --git a/Documentation/admin-guide/media/amdisp4.dot b/Documentation/admin-guide/media/amdisp4.dot
+> new file mode 100644
+> index 000000000000..a4c2f0cceb30
+> --- /dev/null
+> +++ b/Documentation/admin-guide/media/amdisp4.dot
+> @@ -0,0 +1,8 @@
+> +digraph board {
+> +	rankdir=TB
+> +	n00000001 [label="{{<port0> 0} | amd isp4\n | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n00000001:port1 -> n00000004 [style=bold]
+> +	n00000004 [label="Preview\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
+> +	n0000000a [label="{{} | ov05c10 22-0010\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+> +	n0000000a:port0 -> n00000001:port0 [style=bold]
+> +}
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 15070afb14b5..e4455bde376f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1113,6 +1113,8 @@ M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://linuxtv.org/media.git
+> +F:	Documentation/admin-guide/media/amdisp4-1.rst
+> +F:	Documentation/admin-guide/media/amdisp4.dot
+>  F:	drivers/media/platform/amd/Kconfig
+>  F:	drivers/media/platform/amd/Makefile
+>  F:	drivers/media/platform/amd/isp4/*
+
+-- 
+Regards,
+
+Laurent Pinchart
 
