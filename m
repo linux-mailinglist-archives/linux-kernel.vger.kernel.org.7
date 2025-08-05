@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-756122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7904CB1B046
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FEDB1B04A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05BCB3B83F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAB9188EB56
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2F72580CC;
-	Tue,  5 Aug 2025 08:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D278C256C84;
+	Tue,  5 Aug 2025 08:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X5afC7Aq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qhjHj15M"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IM+SVRXP"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1897256C89;
-	Tue,  5 Aug 2025 08:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F00D21858A;
+	Tue,  5 Aug 2025 08:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754383044; cv=none; b=jB6vleZTxuh4Em8xd6FK7TOy4ea4azQHPuKNN/PI/+BaFwlN0S3QQ5xoAymLUlwZOv07fYDdqRgFJYlbbXtxmvRCEsHSvMnvGOmI0p6Sc8eo7pPNWN0U9X7p+BUn6vvt1eXRRe5wK+kFDpdTI66OjclEYCsETwPRsEx1NaaebUM=
+	t=1754383191; cv=none; b=NiiUmFQmar4ilWPyh7Zk58xnPThG/d89oSF+NHILvEO3huGAlKK/Mews/UBajOXSQHObw04xZLvp68tQXkzweQroZ0zVwf701TgJe3RLwGXdZo5qm7lFVnhtCNuTfqe5j00vv1EgWmJSzC1G5p/k/PLbnsSBWI7ZixAkBp56Qa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754383044; c=relaxed/simple;
-	bh=ZJqlsKXUoC5wwrOfI/jTSTKnnHWHADq9o2e0bONZ97c=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=gogrzAkm4OeXmwEYcE9nLvvxkoEcyYgOrgw7YlHZndvaq6VEW+/4cf02OYNQ1jj345rdLguVTyEmg8ga0gKtCLol02Uk1Is2hXaU8yX6gylGJ/kIpQV5Nyi4iOwyCBJOafUGEOO3O0pAL9CwbPlcrfnOtsB5dLRT80q2Ivc4eO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X5afC7Aq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qhjHj15M; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 05 Aug 2025 08:37:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754383037;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=eW8zUxOGPj2ZG3rEitKqA76BulVYVqiloQ646gBKSmc=;
-	b=X5afC7Aq7+Wb1s2yoqJa3CN/AIA+JHjA+ARDtAxt/0EXcvajLOlA9MllqRjidj54IRTIuV
-	LU7n9akVdKAgWfLnO7eWrtkklFJCJrN3HuAGjPENQRbCB+VQRQzjkvZrcorrCeJ5rvs9tH
-	FxA0fdIQlpKMzH0xqxWStmEMDF6qyYwl0pr6jqc7+tKBnoRzbu5I9plVndo8Qs4pIocKAj
-	XdLt7d05nvsARLKJgmuIK7anZ+ruUfKmzOntI1ELO12PW6gUdawGzZP2VB57QivskyN/E1
-	XyHva6LacHnqTSIxHdxUXF5UcVbm7XF7XTPMduQKQax/bCIv59/albpC254ebA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754383037;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=eW8zUxOGPj2ZG3rEitKqA76BulVYVqiloQ646gBKSmc=;
-	b=qhjHj15MaJWdH++xQWQZsRy0f0sMPWBagijpXURyLoLQYE2d02ifuBVAftf/1Z+zg2dI3s
-	J5j90yzsZd6ZcKBg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/riscv-imsic: Don't dereference before NULL
- pointer check
-Cc: kernel test robot <lkp@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
+	s=arc-20240116; t=1754383191; c=relaxed/simple;
+	bh=8dCG009f28I/T5bh9HQ/pnDB0yMf2J3CDokXMRqyBlY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sMZhvliQqxImHPZuTPTRyrSthNnU3lo2RH/tVg1zL/2ywChOPi+BlN87yTSWKkAIyKzEcHtomN3fg3BAd1PmdxSoRrgaFxhwC2KxHx+ErMARStYJFMwhsLbONRiKgGic+/D+G9CsqWoBiyFcALKHuGIrhoqRasSAZDVPWikL9tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IM+SVRXP; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b7910123a0so5195483f8f.1;
+        Tue, 05 Aug 2025 01:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754383187; x=1754987987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ckg82r4yV+jVyEN6/rbJQCfYznBxYrDG5d0BRS6lfPA=;
+        b=IM+SVRXP8ZSLnb2XuwdPrp572BhQZ2smXtf35kH87yuMAXq26aga/4Te9d7Zj/9f6w
+         q3kJ16R9ACEKWlU/rQ3JKrkwg5ZBblZBckaaV858u06HlzY3OQ5jom9IZ6z7JwZSqTVS
+         HULnjMAZhmwOpQgEmRt2Ej+9kCb7qqXAvOBnLVi4qlFnvgiKZs/Q4srjNNw6znJPNkGd
+         pxVpBofE80hTr0h005JREFIG0g3wJuinx/UiT6HaSHXx5YzYMs39+DS4SUJDUP7kTdfC
+         2r5ptWwY0EEpFmVcwYKi2jgX3M7f4iQE8pFALKb+7XdVIwrDVSfkIdWCRyvJ3EORPe/c
+         8Luw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754383187; x=1754987987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ckg82r4yV+jVyEN6/rbJQCfYznBxYrDG5d0BRS6lfPA=;
+        b=kmyozib2Fn9GheLd5IGsgMmk//+JJSg5dTQ6o9I/tchB/WVH+/2HCI2ZtQcV9gZzpb
+         LBAR5BOyjIxjzleR7+k4f74ybLgG6JQqtxntq9tOFqq6ekPE8rWcjud259ng+qwxT8Tm
+         HCa5N2cCJpbJT3C2v4B/K3UvAOSvltkjhQNf5ORmAF0aKbcyiW4vhtC2NzO6i2ToQ5tm
+         c81z6QKWZMXacrb0xHVLiIk/G2DzmkLoaXXdq9Oi20Uj5d0uBG4heEOTzje2FIbrR6Fb
+         HDGhlaFNobIpOZ3Ua+FW2KnGp4MJmog+RpCl817CSioHCaDigh/sgTPfYObr4dbqMMsq
+         4ClA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRR8isWlVYt7QFKzz9DHFl+woKTH/X8uvlMdLPZHO3BCpJ1qf3x8oBn6fftjZnaKLxaZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzESb/r2mNOb5Wy3h9sFhEu56zHaQGnCsl4rKXXt752qcWKFPU5
+	G448gpP5pJ5ACZpLEj5XYWaayL77Z1ktz7TDqvjoR/yrCcGY5kD+0tfzLTVk4A==
+X-Gm-Gg: ASbGncvKhT1/dS4GEWt6lTuEqDA6aaA6GIhTtAIkItpaIUW4YBdZPfTRiF+u8cpoOpG
+	Y10frlphD8nsIfBi6u0/N6aEUyLMwEJ9yxsgtzJ63RWsktv8xliQLlXinuGoVv9tn5WK9sEGpN0
+	QeuaD9rHKsQsy6/o0GBVhMxPVpH+2bNxi/vsAPb6wiZuq8v+MhOUUwdPp+lskox33z0PjZ9PdkI
+	qMYeuV1J3jB0sWqYWKAPZGdGH3hTUSYttjoYueKsYnVtfsIKeNsgWJ1eNzwS0Gr74QpRuK/tXs3
+	3WkUR2hI+01DvC0+TZEnWTgYr+QyznpZj9076ejqK1stNSA/hNOve0y4DfEEqhMus7cpCFkicdg
+	hyrIEkNvGtpz6CQMrLG5aes4Dwpy/MV5p4w==
+X-Google-Smtp-Source: AGHT+IGUQ1CC3wGSqX3n2PthCP5i+TNxzdsTjL4pSdzIgtsPUjcOZd6wwrDmOy2lPNXfqcrUwsVwCA==
+X-Received: by 2002:a5d:5f4d:0:b0:3a5:2ef8:34f9 with SMTP id ffacd0b85a97d-3b8d94b9fb6mr8792134f8f.27.1754383186844;
+        Tue, 05 Aug 2025 01:39:46 -0700 (PDT)
+Received: from shameer-ubuntu ([195.11.233.227])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-459e00187f7sm39201055e9.15.2025.08.05.01.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 01:39:46 -0700 (PDT)
+From: Shameer Kolothum <shameerkolothum@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: alex.williamson@redhat.com,
+	wangzhou1@hisilicon.com,
+	liulongfang@huawei.com,
+	jonathan.cameron@huawei.com,
+	linuxarm@huawei.com,
+	shameerkolothum@gmail.com,
+	shameerali.kolothum.thodi@huawei.com
+Subject: [PATCH] MAINTAINERS: Update Shameer Kolothum's email address
+Date: Tue,  5 Aug 2025 09:39:13 +0100
+Message-ID: <20250805083913.55863-1-shameerkolothum@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175438303557.1420.5309890165754623173.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/urgent branch of tip:
+My Huawei email will soon bounce and hence change to my personal
+email for now.
 
-Commit-ID:     cb9f6a40382ca7b7a81d6f52285f897b09b5851b
-Gitweb:        https://git.kernel.org/tip/cb9f6a40382ca7b7a81d6f52285f897b09b=
-5851b
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Sat, 02 Aug 2025 12:59:13 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 05 Aug 2025 10:29:24 +02:00
+Also, since I no longer have access to HiSilicon hardware, remove
+myself from HISILICON PCI DRIVER maintainer entry.
 
-irqchip/riscv-imsic: Don't dereference before NULL pointer check
-
-smatch warns about a dereference before check:
-drivers/irqchip/irq-riscv-imsic-platform.c:317 imsic_irqdomain_init() warn: v=
-ariable dereferenced before check 'imsic' (see line 311)   =20
-
-Cure it by moving the firmware not assignement after the checks.
-
-Fixes: 59422904dd98 ("irqchip/riscv-imsic: Convert to msi_create_parent_irq_d=
-omain() helper")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Closes: https://lore.kernel.org/r/202507311953.NFVZkr0a-lkp@intel.com/       =
-                                                                             =
-                                                                             =
-                                                                             =
-         ---
- drivers/irqchip/irq-riscv-imsic-platform.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Signed-off-by: Shameer Kolothum <shameerkolothum@gmail.com>
 ---
- drivers/irqchip/irq-riscv-imsic-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .mailmap    | 1 +
+ MAINTAINERS | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq=
--riscv-imsic-platform.c
-index 74a2a28..643c8e4 100644
---- a/drivers/irqchip/irq-riscv-imsic-platform.c
-+++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-@@ -308,7 +308,6 @@ static const struct msi_parent_ops imsic_msi_parent_ops =
-=3D {
- int imsic_irqdomain_init(void)
- {
- 	struct irq_domain_info info =3D {
--		.fwnode		=3D imsic->fwnode,
- 		.ops		=3D &imsic_base_domain_ops,
- 		.host_data	=3D imsic,
- 	};
-@@ -325,6 +324,7 @@ int imsic_irqdomain_init(void)
- 	}
-=20
- 	/* Create Base IRQ domain */
-+	info.fwnode =3D imsic->fwnode,
- 	imsic->base_domain =3D msi_create_parent_irq_domain(&info, &imsic_msi_paren=
-t_ops);
- 	if (!imsic->base_domain) {
- 		pr_err("%pfwP: failed to create IMSIC base domain\n", imsic->fwnode);
+diff --git a/.mailmap b/.mailmap
+index 4bb3a7f253b9..0d0f689e0912 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -700,6 +700,7 @@ Sergey Senozhatsky <senozhatsky@chromium.org> <sergey.senozhatsky@mail.by>
+ Sergey Senozhatsky <senozhatsky@chromium.org> <senozhatsky@google.com>
+ Seth Forshee <sforshee@kernel.org> <seth.forshee@canonical.com>
+ Shakeel Butt <shakeel.butt@linux.dev> <shakeelb@google.com>
++Shameer Kolothum <shameerkolothum@gmail.com> <shameerali.kolothum.thodi@huawei.com>
+ Shannon Nelson <sln@onemain.com> <shannon.nelson@amd.com>
+ Shannon Nelson <sln@onemain.com> <snelson@pensando.io>
+ Shannon Nelson <sln@onemain.com> <shannon.nelson@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c0b444e5fd5a..424cb734215b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26038,7 +26038,6 @@ F:	drivers/vfio/fsl-mc/
+ 
+ VFIO HISILICON PCI DRIVER
+ M:	Longfang Liu <liulongfang@huawei.com>
+-M:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+ L:	kvm@vger.kernel.org
+ S:	Maintained
+ F:	drivers/vfio/pci/hisilicon/
+@@ -26067,7 +26066,7 @@ F:	drivers/vfio/pci/nvgrace-gpu/
+ VFIO PCI DEVICE SPECIFIC DRIVERS
+ R:	Jason Gunthorpe <jgg@nvidia.com>
+ R:	Yishai Hadas <yishaih@nvidia.com>
+-R:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
++R:	Shameer Kolothum <shameerkolothum@gmail.com>
+ R:	Kevin Tian <kevin.tian@intel.com>
+ L:	kvm@vger.kernel.org
+ S:	Maintained
+-- 
+2.50.1
+
 
