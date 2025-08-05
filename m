@@ -1,139 +1,78 @@
-Return-Path: <linux-kernel+bounces-757062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52783B1BD48
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:27:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C05B1BCF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A03D3A9796
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F511849AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA1E2BE04A;
-	Tue,  5 Aug 2025 23:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941CE2BDC0A;
+	Tue,  5 Aug 2025 23:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="GnZiNsdK"
-Received: from sonic.asd.mail.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssgplbCF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E07C2BDC32
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 23:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD4A2BD588;
+	Tue,  5 Aug 2025 23:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754436420; cv=none; b=ju8DtBmpLszCiOt5JOy8HqAWA4PHbZBl7DIjgVTLH5VjnVDIfUh3bCXC2Zp3jNRBnnUnZa5+oDd7zNobdtcYV+vHGgpZdj0lExepq8xlw5p6aigS+uNeXLuhTpTVdbw4afriMaKOnMXcdy3G14/HOwGUd9wn/FOR9Rj0hRhTAUA=
+	t=1754435380; cv=none; b=XoTnq5yrDTrIwbA85NFtPeZMtuiefdQQSRWrPBUIQgrR/Kz/8CLqJTT6KaIDrUbO1lhSteB7f+hCfrnNpuFtiZ1oHVrCDf80vmO/jr9yPNkRz/T3eQXtZcHaAQvb8tLHAzFRbD67dLrsQ0wTNQtXP8dRV3xCREcz0sKLK9F3Bik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754436420; c=relaxed/simple;
-	bh=gI3rS86sC3QWGfG4mXNqTXTeCskURGAfV4laolb/6yU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=knpxDl3inrBn0KHybW+WPoF+eFrhyp+B4dy8PWHYjM4PZQJ4FHj2tYO9ImfPouFsXBJYB4L6IpSeocuDSHm2CQ30xKZ+Y+Hp5UDs5VmNKXO4hofO4q0dQnQ0vDYDqm6U9hkb2X8OdgkY6sLH8xo06W2F9xyOrOwbyQgc+KjXzaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=GnZiNsdK; arc=none smtp.client-ip=66.163.186.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754436418; bh=vbjqlMYTXFyo6PdA0ZoJ+EikPHe/xyyE7Pw36UaDjOg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=GnZiNsdK4hOZQaqmAfRv+nzV/56fNNGpXRJeyPCcDujnKxjUcb8SowwuVj3FzUQLP72RF0JkNF8SPMsMxvyc4oyJzzR9gz9hLRpxW0Ln5LIyAZ38K/GnCNOUOZ5cwSyMl//Pt0l3uuvZZmV2Ylnk+HLrBK233jmcnfy+LjNIT3LEjlLs0ULl5GfvCgm6zQG8V2dgjxQfQhZEiMJwL/r3/O7QZoGQBf1Dp2jasc6Pf/18kApERztC6ABtjgPFa1kAm+7u+svzyXj1yld50LlFY4OAEpZbb4RJclYHZ3fSHMYvM9ZKzaKVpKBHFJXXBzA6+DOs9K4BavHbZhDLGe/N7w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754436418; bh=eAkmvQ+USKbKFA+v9aWgnNaDBXWSBrMOMa5m6wEmdIJ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WJ8M44SEyW7A7pPcM9vE3G8EF7AtovbJL9U7YvAuqqiHfQUc4ssz3ZSW9d/hVeJQjLm8+4z5IbjSaybRsnqYCQLikyVXQZE7Zd/y6U2ODynFMWK8LDLzGb6jX+j67XSChHlkGJcaQYlUIInmwOWP6O40LZYPrnOT08DaKP/X8N0vU5PYqZMJZP6jBc6eJuyFTmwsuriKF2zz7iCXgeTAb8IQz59n2637ao1VVB210q4QZKi42Zgunftn+WBo3if/o88FZimePCnJyX0QLubRcfmjxMlZ9fx+UUv+fEB1WQgSTX2cufyaOmO1M0Ac+Z4Kw0bCqFa9qnBjMmHUIiPKnw==
-X-YMail-OSG: wKaFS.MVM1ly25Cc1R1oVG3q2ZYW2SDEy8QrSWYgsuCp8DRdr3gUMdRMN94W8ik
- Yv4H_MFgvgymNHkbzghbm9wQk06kGMTiNgk8b6xSgmUYkODQgkh3fWV3M5ljAphngGiyXlebpP7C
- W195VbExWYFFBl1OEkHqmQAlmyCFbF8ulGo87DLL8AhAW0E6YKfmy6xWLnk_U1Iz4b4VUqsaADhV
- rKCicLTSHoGy8AUUkb7Kdgi18g_Zi.6.IVPlOzHn6K.U7YQIOzRRctELngRG9kJt0Hm8k7HO9G._
- 7zP03vZw.KrQPr7GquLWg.skRVDDKasQhbwAEWhNePm6TshajAd8KuENv.7tzsFJxUx.dd1vwJcz
- 0TdyxFbi7Dx2z9hhDk0lMVSYh7KlRnvFiPoI.wmFLm0w0Yknm0N0O9leWdSpGT2217txXt779svi
- 1.XaNuRGDkGyp6ehJXvdqghe0WH3c6zXqDu9q220clTHpeLwiWRI_OHNq4hlYV5M95R2NJZfDoMV
- yyd.ggO7kGvmGRwBu5wT2a6ubbkgElgijX8K0YlwcUGL5pBHeMb0oq5IWFSh3a0ROlv2VOqzcKZa
- YKj0vmPg0HsnYcaRk.5O2bvH6cQQPQ_MJSCB0dK0PwB138UvdTFKp_hma_hs5K5QQsEV.UhnMCl8
- 9H4pVWeyV7fT1Ar5HtUD62u7OxX8pOWE5KdMLkDH8G62HMMpzCrYLHEsoTkOVGY2znEBa4YcK3mO
- UlKMiJ_SMZFN27iStcuGse6UqkbeyC1x7kP2tA.8yxmbLHtqkIOMRt5SH01_qpdexm0XiKKOD5e_
- 6ktVKxMS5HgXF_R6gd.qmgdEpqfhDZlHhw0GbAAiwAHH6wyh_Kl15_lWRucCY4esGke3xBnPNcVG
- tJEVI.V2sY_EEHguXy87Pu2xdN_Goldl6f.ysrY5VqNGZPc.tQBUMKC68t4fzniZ3xngWVJa8JiM
- wX3jB3W7AWNDVNIyBq4N.rMZYuHNdISKcn2obEBVAp1b12xqDBKd2BQohMtec1XYM9zc1T1OyJ0h
- VwnDf71gQhOJ4dKW6IYlEK6a.GGV3nBBW4oPTAADZ.J_ljgy0mI7g6f0JNJOiji9Nz_SnKsWoV50
- b4t7PAonsITAiGBsQRKa1kMFTxbhlpDkLL6.3pKfzksLy2dt3JIWiQz45j0dU34Y9KjdZHqHM8kt
- eBFZcgPPGK.kSKiLUX.keRevpwTVokLrQM1nOR4QT4Mqi2dqj26mdXmjn8ftcdAfCIiE9SywicoV
- 24oGdpsPZn3dAHUbDD3JkzlriVwY9ns0LWp0MQCX52vMyRmgOmcnGaR7vzCW8TB29z6J0LBQo.8K
- rTZ_anb8Qg.odkZOhJAKawwKALRlRzzaAIvHBa4IsOrMv.x7OAO0lDLfE5hMAhcqPvjj4IA0nuHW
- l309149GIOspfUydcvsaeVgZWrZoiWmtkyPH1o73cYZYjKWfap4OYN11YQiyR4_qYns_lYqB7Rn9
- ljLYMDHdMLUk.X7VpBIaQNpRVm89hiIbcHOGfupw8Fl8cspcE4dteLVrho_rpaSOUsfDX8zDeTaB
- 7TFhIGn0PP9LXRboLuJqnnK2jFqWSkqHGItlZw97aHDolQRPDI.b1t1dqZiMucJvfUFMyGnZnT_F
- FP5M7cRThJL5V2ZQBe2XswqmcO7tnNEm2KtntHRrvHGMiiZRbMfA967JdpqfvOAMM4pk4QeuInEn
- K848ZLbHG1W7UXNJHJBjKAb6Py6bs.Alugit.OPdRmF69wUcRxHzOurEHNBHUA54SbronlLvBxyS
- 9PwSlpG1K04J4AAuEtLk8uZbJFPX4yBLFJUWIgztFdgeu3gxMa2Hq7nbruvJn2Y5OQuRbqtC2ojb
- 8MF9aGmNcaG2tmnkWMIJCcM89yL7bm43JLwj5_gKxX8WyhhA1N2xp.Z8nluWTVODWOPNBCMsM_NF
- ggsuNA_jKS0ZzN116zjqAc8wIccbeFCDh9Ge_FrQjnyH8Hb3fyDymGVedRot0tLGQoZjahSMzc0D
- pUo3ujbN0myKw27eB1ZbbBBlXjcVnmcrc6XBA99sV8.AnUSp1gUL16ub1D35PBP77dOfPrhq242h
- nzD2H6_RtnAYV164nllj8z5DXXvGICtCqZMMiEC4nMKhW9J.HxL6YLVfhZyP2iP0okwX8XLcPp2m
- ObQKCMZ.5UwuYZ64NUU.F2cD1hk23myQAQCXlEjkWlay5rtHCqYt.lmlK_Nsry6eG4k20aBB7304
- StxFOvYNYKMHGeFOHDikqpH_4IBRcHbiBlcGOJRckevgv1Q--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 00470c67-e6ca-4959-ab3d-9f5a80b28ac7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Aug 2025 23:26:58 +0000
-Received: by hermes--production-gq1-74d64bb7d7-45lk9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a88e5da3c38f1116d0d02f59c31e11b8;
-          Tue, 05 Aug 2025 23:06:39 +0000 (UTC)
-Message-ID: <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
-Date: Tue, 5 Aug 2025 16:06:37 -0700
+	s=arc-20240116; t=1754435380; c=relaxed/simple;
+	bh=b+4gC3jrvqG+83u5Vh0Kk2KArZaArOezV8zzx5Mi8Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DeFe/hq217zrz5MKS1hXgFwNzFZChpWGB+BEstBmKzCqKs2xsZ8qh0lK5ZdmUpEKoFl8leX7KLNb5hpdd7G9s/JDuypETvG2O9/8FefRq3X2+8SJU6xLaXzLcfbbangW4KrXgPqsgVlW4+nqAnBNGROM2jZn4rLjg6GFKonrH+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssgplbCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2717BC4CEF0;
+	Tue,  5 Aug 2025 23:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754435379;
+	bh=b+4gC3jrvqG+83u5Vh0Kk2KArZaArOezV8zzx5Mi8Pw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ssgplbCFi6TgjsQZXxa8e5ZrcwMPNsDUh0sVbNcJY/6wIfXMV9HIc9Oyh+CQRgqWW
+	 CFn/E7H+vaNflQdu0HuRxDFgItGFd4cEbxzzA858j4GL9PCVqCNjOoHJjQ21V9neYY
+	 RrhtlUKVQUstu5nrtT+Xv5pol32pPlj6X65ZBc59Bq6tfIblY9xqIBXdOVy3UdjGdM
+	 mVJmoRg4yabba0OeBZ+2DkcAGxSlEee+htvi3KVE1VoIdOPxSuCzp+FeuDB7huV1hZ
+	 wRz4RC3J9fKK8yBmc+MO1GnzZnrcccH4WuxicCsRoCdetYCHSiHuRophBGf//hwztb
+	 OCK8qK3/8CR1Q==
+Date: Tue, 5 Aug 2025 16:09:38 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eth: mlx4: Fix IS_ERR() vs NULL check bug in
+ mlx4_en_create_rx_ring
+Message-ID: <20250805160720.0187e36d@kernel.org>
+In-Reply-To: <20250805025057.3659898-1-linmq006@gmail.com>
+References: <20250805025057.3659898-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] Audit: Fix indentation in audit_log_exit
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250716212731.31628-5-casey@schaufler-ca.com>
- <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 8/5/2025 12:39 PM, Paul Moore wrote:
-> On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Fix two indentation errors in audit_log_exit().
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  kernel/auditsc.c | 7 ++++---
->>  1 file changed, 4 insertions(+), 3 deletions(-)
-> As this is indepdendent of all the other changes in this patchset, I'm
-> going to merge this into audit/dev-staging now and audit/dev later when
-> the merge window is closed.
+On Tue,  5 Aug 2025 06:50:57 +0400 Miaoqian Lin wrote:
+>  	ring->pp = page_pool_create(&pp);
+> -	if (!ring->pp)
+> +	if (IS_ERR(ring->pp))
+>  		goto err_ring;
 
-Spiffy. Thank You.
+Thanks for fixing! Looks we previously depended on err being initialized
+to -ENOMEM, but since we have an errno now, I think it'd be better to
+use it:
 
->
->> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->> index 322d4e27f28e..84173d234d4a 100644
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@ -1780,15 +1780,16 @@ static void audit_log_exit(void)
->>  						  axs->target_sessionid[i],
->>  						  &axs->target_ref[i],
->>  						  axs->target_comm[i]))
->> -				call_panic = 1;
->> +			call_panic = 1;
->>  	}
->>  
->>  	if (context->target_pid &&
->>  	    audit_log_pid_context(context, context->target_pid,
->>  				  context->target_auid, context->target_uid,
->>  				  context->target_sessionid,
->> -				  &context->target_ref, context->target_comm))
->> -			call_panic = 1;
->> +				  &context->target_ref,
->> +				  context->target_comm))
->> +		call_panic = 1;
->>  
->>  	if (context->pwd.dentry && context->pwd.mnt) {
->>  		ab = audit_log_start(context, GFP_KERNEL, AUDIT_CWD);
->> -- 
->> 2.50.1
-> --
-> paul-moore.com
+	if (IS_ERR(ring->pp)) {
+		err = PTR_ERR(ring->pp);
+		goto err_ring;
+	}
 
