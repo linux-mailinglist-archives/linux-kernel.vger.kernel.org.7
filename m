@@ -1,95 +1,45 @@
-Return-Path: <linux-kernel+bounces-756029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B152BB1AEE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:55:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2770CB1AEEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73CBD17F1EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9CC620D88
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78A2225417;
-	Tue,  5 Aug 2025 06:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K9Vm9hYI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4sQn+AqT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K9Vm9hYI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4sQn+AqT"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957262253E0;
+	Tue,  5 Aug 2025 06:55:44 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADABC224228
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C373F1917FB;
+	Tue,  5 Aug 2025 06:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376903; cv=none; b=uzRbHVjcEHQ8Rh+3/I6dHPzIoC1470Z022ZfKx/g8WGhgcpIgBh5ROF1Jn/fT8qacCdG+TgVPKjz6f1A0HcjhNKXhD93u2bvbJXW8b4rDG+2J4thqqswQGqP9QDiqkCoj654B3fAfYxz2S+7qFIzI/FMuQAqyHjsfE49RJlBAyM=
+	t=1754376944; cv=none; b=IOKiRxYzQcegz7MyHYx1Y42R19MnuMkAdLDGs5wxAeOK54kqYI6n/bjaO9FsVn1ucM0Fp+M0vHrwBqM3QJzam8NlftcBkRBDhGFDf9tKFqzKA0L0/vAMpCrD3MeY04DNblJdjE2umdyYAQlO7jxPycYUV7I5MDuLMvx7nw+K9Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376903; c=relaxed/simple;
-	bh=JKDKLL5GXsN/vyLB8aEuqyk5EASYOh40bqReveuJgpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jU9fl12TnOJerXuYe3m8mrc5F+ofYeAJXLKKvgxBsP/6zRfXELcJW3a2LJsggFpkMutafgxajALK7+D+u4XpbNWBB9VeKDUkb1XLYSfgxCwy+TBxOEoW6lVj1kitbl/FlH4BWN1gEk4prbx6JIb8c3sUM4VIYWx7Mi5W3hkif5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K9Vm9hYI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4sQn+AqT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K9Vm9hYI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4sQn+AqT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C181C1F441;
-	Tue,  5 Aug 2025 06:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754376898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Brvbp7do+2hmGpcJndzJpusi2adyp2hNTe9xEr5hTis=;
-	b=K9Vm9hYI3MsTVnd8DK5KtbSAXfQReveQTcbZWNFNUR38BMAip5M5wyQEx7dVCd7RGUJWSD
-	cHH6qMrvS76E3gb7+nshdHBxNuK5jSNoJBfrGrrxP/0/IVhBTP1qQ/l2EzSRagsatOfeLd
-	LZS8E/T1T+uGfhSqbtPCeT+zT0xGGuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754376898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Brvbp7do+2hmGpcJndzJpusi2adyp2hNTe9xEr5hTis=;
-	b=4sQn+AqTM7iAyapUSuDNJwsx8h/O2IVzzr5T5cFnVJniQuoIJerEMdRLDQ7UGxUAdL6Own
-	4eLlunA9eX5GfoDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=K9Vm9hYI;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4sQn+AqT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754376898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Brvbp7do+2hmGpcJndzJpusi2adyp2hNTe9xEr5hTis=;
-	b=K9Vm9hYI3MsTVnd8DK5KtbSAXfQReveQTcbZWNFNUR38BMAip5M5wyQEx7dVCd7RGUJWSD
-	cHH6qMrvS76E3gb7+nshdHBxNuK5jSNoJBfrGrrxP/0/IVhBTP1qQ/l2EzSRagsatOfeLd
-	LZS8E/T1T+uGfhSqbtPCeT+zT0xGGuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754376898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Brvbp7do+2hmGpcJndzJpusi2adyp2hNTe9xEr5hTis=;
-	b=4sQn+AqTM7iAyapUSuDNJwsx8h/O2IVzzr5T5cFnVJniQuoIJerEMdRLDQ7UGxUAdL6Own
-	4eLlunA9eX5GfoDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7895713A50;
-	Tue,  5 Aug 2025 06:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HLrYG8KqkWgmFwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 05 Aug 2025 06:54:58 +0000
-Message-ID: <be0733c0-0ca7-4359-a979-7cc55ec24fa6@suse.de>
-Date: Tue, 5 Aug 2025 08:54:58 +0200
+	s=arc-20240116; t=1754376944; c=relaxed/simple;
+	bh=FArsRfCOmBNuc3e584wfTFuUp9phIDbiTEt1k6FHVwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CWEo4MBPlF13L8lrRlaQkDmPjstcd2XnD58QljiwFfpdZxnFJ0She3DBVkF0kAGra0lFGcP9SSSgSPgCG5oAxtIUcuBNzuMHqjR5kG5Vi89flY1WA3kaiZnAz+NexMeHS8o+kP7JdDt+xAeSGBCKQGeWxAjS5IqsG7rnfsFhf2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bx3z233LRz2TT4T;
+	Tue,  5 Aug 2025 14:53:02 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3CE691A016C;
+	Tue,  5 Aug 2025 14:55:32 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 5 Aug 2025 14:55:30 +0800
+Message-ID: <a841c987-5cd1-4105-94be-e0ea55068c5a@huawei.com>
+Date: Tue, 5 Aug 2025 14:55:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,95 +47,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] block: align the bio after building it
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-3-kbusch@meta.com>
- <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de> <aJC-5qTTVDNjp0uk@kbusch-mbp>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <aJC-5qTTVDNjp0uk@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1] VSOCK: fix Information Leak in
+ virtio_transport_shutdown()
+To: <bsdhenrymartin@gmail.com>, <huntazhang@tencent.com>,
+	<jitxie@tencent.com>, <landonsun@tencent.com>, <stefanha@redhat.com>,
+	<sgarzare@redhat.com>, <mst@redhat.com>, <jasowang@redhat.com>,
+	<xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>
+CC: <kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Henry Martin
+	<bsdhenryma@tencent.com>, TCS Robot <tcs_robot@tencent.com>
+References: <20250805051009.1766587-1-tcs_kernel@tencent.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <20250805051009.1766587-1-tcs_kernel@tencent.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C181C1F441
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On 8/4/25 16:08, Keith Busch wrote:
-> On Mon, Aug 04, 2025 at 08:54:00AM +0200, Hannes Reinecke wrote:
->> On 8/2/25 01:47, Keith Busch wrote:
->>> +static int bio_align_to_lbs(struct bio *bio, struct iov_iter *iter)
->>> +{
->>> +	struct block_device *bdev = bio->bi_bdev;
->>> +	size_t nbytes;
->>> +
->>> +	if (!bdev)
->>> +		return 0;
->>> +
->>> +	nbytes = bio->bi_iter.bi_size & (bdev_logical_block_size(bdev) - 1);
->>> +	if (!nbytes)
->>> +		return 0;
->>> +
->>> +	bio_revert(bio, nbytes);
->>> +	iov_iter_revert(iter, nbytes);
->>> +	if (!bio->bi_iter.bi_size)
->>> +		return -EFAULT;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>    /**
->>>     * bio_iov_iter_get_pages - add user or kernel pages to a bio
->>>     * @bio: bio to add pages to
->>> @@ -1336,6 +1355,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
->>>    		ret = __bio_iov_iter_get_pages(bio, iter);
->>>    	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
->>> +	ret = bio_align_to_lbs(bio, iter);
->>>    	return bio->bi_vcnt ? 0 : ret;
->>
->> Wouldn't that cause the error from bio_align_to_lba() to be ignored
->> if bio->bi_vcnt is greater than 0?
-> 
-> That returns an error only if the alignment reduces the size to 0, so
-> there would be a bug somewhere if bi_vcnt is not also 0 in that case.
 
-It would, but we wouldn't be seeing it as 'ret' would be obscured
-if 'bio->bi_vcnt' continues to be greater than zero and 'ret' is set.
+在 2025/8/5 13:10, bsdhenrymartin@gmail.com 写道:
+> From: Henry Martin <bsdhenryma@tencent.com>
+>
+> The `struct virtio_vsock_pkt_info` is declared on the stack but only
+> partially initialized (only `op`, `flags`, and `vsk` are set)
+>
+> The uninitialized fields (including `pkt_len`, `remote_cid`,
+> `remote_port`, etc.) contain residual kernel stack data. This structure
+> is passed to `virtio_transport_send_pkt_info()`, which uses the
+> uninitialized fields.
+>
+> Fixes: 06a8fc78367d ("VSOCK: Introduce virtio_vsock_common.ko")
+> Reported-by: TCS Robot <tcs_robot@tencent.com>
+> Signed-off-by: Henry Martin <bsdhenryma@tencent.com>
+> ---
+>   net/vmw_vsock/virtio_transport_common.c | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+> index fe92e5fa95b4..cb391a98d025 100644
+> --- a/net/vmw_vsock/virtio_transport_common.c
+> +++ b/net/vmw_vsock/virtio_transport_common.c
+> @@ -1073,14 +1073,14 @@ EXPORT_SYMBOL_GPL(virtio_transport_connect);
+>   
+>   int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
+>   {
+> -	struct virtio_vsock_pkt_info info = {
+> -		.op = VIRTIO_VSOCK_OP_SHUTDOWN,
+> -		.flags = (mode & RCV_SHUTDOWN ?
+> -			  VIRTIO_VSOCK_SHUTDOWN_RCV : 0) |
+> -			 (mode & SEND_SHUTDOWN ?
+> -			  VIRTIO_VSOCK_SHUTDOWN_SEND : 0),
+> -		.vsk = vsk,
+> -	};
+> +	struct virtio_vsock_pkt_info info = {0};
+> +
+> +	info.op = VIRTIO_VSOCK_OP_SHUTDOWN;
+> +	info.flags = (mode & RCV_SHUTDOWN ?
+> +			VIRTIO_VSOCK_SHUTDOWN_RCV : 0) |
+> +			(mode & SEND_SHUTDOWN ?
+> +			VIRTIO_VSOCK_SHUTDOWN_SEND : 0);
+> +	info.vsk = vsk;
+>   
+>   	return virtio_transport_send_pkt_info(vsk, &info);
+>   }
 
-Cheers,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+No. The unassigned members (including `pkt_len`, `remote_cid`,
+`remote_port`, etc.) will be automatically initialized to 0?
+
 
