@@ -1,63 +1,66 @@
-Return-Path: <linux-kernel+bounces-756663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F3CB1B772
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935CBB1B777
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D76626951
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FBCD17F352
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEED279DD3;
-	Tue,  5 Aug 2025 15:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ITLY2LXP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8C127A124;
+	Tue,  5 Aug 2025 15:27:10 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02CD2777F9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B562777F9;
+	Tue,  5 Aug 2025 15:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407590; cv=none; b=lTcfEDI5ygC8ugPN1FKIUldaDXHiFVPB8zOPb+GYpUqWkxAg4Ui8zTU0v31jfsuQen7kSogWu+VkehqhHFrgdF1gVXQ8Q9Gq7AS05N/BGvhtwhf8LMZsCHIESoQFfqDxCsJD6XT58cko+9130xDn3c36MTDeo8DZKkUazPu0nfI=
+	t=1754407630; cv=none; b=WJ+7TjbgMKgoIAsQvA4dZ1Ewb+cyQnRkpD2lkjyTw/tmSnTYAAmnXEv7waNh5gfpdYOYFI/2N8PXGQp2D7kR+UhMIVKlW+dUvtWwdi/iNqLVUTt1VipKu9CgP/ACxv9pXTXTN8XfJoYz3lGqn0GiFc7+k19PpDD/MD2OySk1oU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407590; c=relaxed/simple;
-	bh=ClPDABoCKyds0P7p212Dc2TrMGxmXyvr84QrKA39lfw=;
+	s=arc-20240116; t=1754407630; c=relaxed/simple;
+	bh=lbWIMGmXSfPP8qxW81xC9fWF8J70sLsBiiZS09J+PqM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=usAifwsJ+r+IX99/DsBooIW55bczrNaweEleblbFCYvIZJqRebQnO6X7NBPrh29zNDp17gxToFnooiG60SHpBlTpt65zk9eZ7VNq42OvRwlQCvH67pzGR8kFJOCwONvdKHPRyZqd9y+vBu76yfPP7k01g5chRUgbm0VDxFkjqgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ITLY2LXP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754407587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXoRJsKx4vdNmT+9ZbmAJuS3gw/IRi0dWODJu4jAvGw=;
-	b=ITLY2LXPzUPtWHZ/0+U1WwrtoKat9GPW1n9CHLWbRBp8YKzEkcOdT7SyDS4HCGpcnbY8M0
-	0RpaWrxQ6Oc2dkhwlUqyjJNj5Kc38NEYkMOBl3JXKDel3WfJPJCHht11Zw244KJ670Gsxc
-	tg49lUzwIRUiY1n6G03X8oMGt1DwYF4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-ssCeknXJO8OgPQycv79brw-1; Tue,
- 05 Aug 2025 11:26:25 -0400
-X-MC-Unique: ssCeknXJO8OgPQycv79brw-1
-X-Mimecast-MFC-AGG-ID: ssCeknXJO8OgPQycv79brw_1754407583
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A77C195608F;
-	Tue,  5 Aug 2025 15:26:23 +0000 (UTC)
-Received: from [10.43.3.116] (unknown [10.43.3.116])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 11BCB1955E88;
-	Tue,  5 Aug 2025 15:26:18 +0000 (UTC)
-Message-ID: <b33c76da-8ce1-402f-b252-f6d439ec39c7@redhat.com>
-Date: Tue, 5 Aug 2025 17:26:17 +0200
+	 In-Reply-To:Content-Type; b=M/dKltzKLdsZjb6TdeuVM62cHmKydoBmrJbd/cx8iqjqN2R+9XXaayPsjYUAhLT6krFx6waJgYO0ZEk33MAwdPMSKeVJXwqgIlnmRbRREFl+gLWQ6UI2MUII1oTezEalG3+e+73o/exwE+iFO1UMT912enFVmj4OzUonV9K/EgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76624ecc7efso535153b3a.0;
+        Tue, 05 Aug 2025 08:27:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754407628; x=1755012428;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6pr6DrCEDv+a0jbLHVvBac89tThXy65vIV2bUWnsRig=;
+        b=r8a24T3kf7Rauef88rUFmmFNdhW3EbzKFK4gK5YldTb019Cn0pvRN1npJ9XoWXAaxI
+         hKIFrH0RsUljAKn5euSdamn6fpXej7XqiUFEJxs3llpzDJhvblYFxub4dcoSlmYhlZwg
+         U1zWZT6TRxxQs33t5P8mA42MXgTzZgLiT+sys9137+7XMb/PBYL2Fwh78IGY3WfoKFeK
+         cXGqES75StKyWtjnhd8DsR9kGb/3zDfr7Je2CTILCIrahM4bh4dIh8sGAbT0pOSK8xcC
+         GqdoAZqGCJdf/gHZlDIdcw2uixYQinlKN4sdyv5m9Nbhhs2u6HzRaCaClfbaGrYBcXEA
+         QnDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXKtYaqN5hYWmuCD/scUiL8+z16sV8+1O1uBXARlSvfByCL7cIQSVGSdYB1xcjd229CllfU8bYsFsp@vger.kernel.org, AJvYcCW49rEQW0lGEqTvtWLydWkISWQMX1WBZJdsOPCC7IZpoV1B0LdaCOIRvTyZoSWQU3BzwNqA5IOi@vger.kernel.org, AJvYcCW5tclj9NLJ2VZUKcJEIJ7R/w15eQpTrN2GRyrdNsUWOuw62qdi03tVvcx+w15aQVitBqN2ddQ7+kZXMVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8YO1BoWjuZSF5KoYlj0DTEr2mjFb/26NKwBkZZvH4duoooJo4
+	aLy+2PLXoMpYD7IKAeX/KhUcks05lIGY41x/mgCn/9EEcx6F5RtRCRtK
+X-Gm-Gg: ASbGncs9wrWp4gW7f8GFZ6jvJTAeipwUWpCOnM7Slcw4V58sd8sL1RMe86cqHaw5BLr
+	P/vG54+tVFr1/mE+iSSDcpx89ySStC9X8M7hxAhGy+11knKx5rAr7QKY9Ez/77rMR3iO66gJ5qp
+	0YO6DWQIlOWi97xBFK2l0h4QWqpmJZVJOaUdgZr0D3S21YPevTJOJNUmvOr5ZmA9rVXuXqJr3JY
+	lcuaPXjyVfJ15PqtyL1bh2aFBcZuNIiG9lL7tfO7uOl3CSvXv8cIVUyJruBo5htDU2li+nyynTZ
+	X/AJDs1Gu8TyyHeBx3B0EFw1u4aKVSBLIHu5D7V4voANN/Fi/j5ptQrL6gAEj1wXlKM7qddH/6p
+	QOWMV6LREdGhS5JhC7Pa09CTHoZ6KNWjv
+X-Google-Smtp-Source: AGHT+IEsKFfKhbmomJLvjN9Tv+WNDm8mFlc7vYZxJMukrVF3+0b0N+h3Y50ODx8JttQHR39Cg6w5ow==
+X-Received: by 2002:a05:6a00:856:b0:747:ae55:12e with SMTP id d2e1a72fcca58-76bec2ee69amr7829469b3a.1.1754407627955;
+        Tue, 05 Aug 2025 08:27:07 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce929aesm13090519b3a.49.2025.08.05.08.27.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 08:27:07 -0700 (PDT)
+Message-ID: <ddd14f62-b6c9-4984-84be-6c999ea92e30@kzalloc.com>
+Date: Wed, 6 Aug 2025 00:27:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,151 +68,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250717171100.2245998-1-ivecera@redhat.com>
- <20250717171100.2245998-2-ivecera@redhat.com>
- <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
- <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
- <20250721-lean-strong-sponge-7ab0be@kuoka>
- <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
- <9220f776-8c82-474b-93fc-ad6b84faf5cc@kernel.org>
- <466e293c-122f-4e11-97d2-6f2611a5178e@redhat.com>
- <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
- <f96b3236-f8e6-40c1-afb2-7e76894462f9@redhat.com>
- <1419bca0-b85a-4d4b-af1a-b0540c25933a@lunn.ch>
+Subject: Re: [PATCH v3 0/4] kcov, usb: Fix invalid context sleep in softirq
+ path on PREEMPT_RT
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+ Yeoreum Yun <yeoreum.yun@arm.com>, ppbuk5246@gmail.com,
+ linux-usb@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250803072044.572733-2-ysk@kzalloc.com>
+ <20250804122405.3e9d83ed@gandalf.local.home>
 Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <1419bca0-b85a-4d4b-af1a-b0540c25933a@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250804122405.3e9d83ed@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 04. 08. 25 8:45 odp., Andrew Lunn wrote:
->> Let's say we have a SyncE setup with two network controllers where each
->> of them feeds a DPLL channel with recovered clock received from some of
->> its PHY. The DPLL channel cleans/stabilizes this input signal (generates
->> phase aligned signal locked to the same frequency as the input one) and
->> routes it back to the network controller.
->>
->>      +-----------+
->>   +--|   NIC 1   |<-+
->>   |  +-----------+  |
->>   |                 |
->>   | RxCLK     TxCLK |
->>   |                 |
->>   |  +-----------+  |
->>   +->| channel 1 |--+
->>      |-- DPLL ---|
->>   +->| channel 2 |--+
->>   |  +-----------+  |
->>   |                 |
->>   | RxCLK     TxCLK |
->>   |                 |
->>   |  +-----------+  |
->>   +--|   NIC 2   |<-+
->>      +-----------+
->>
->> The PHCs implemented by the NICs have associated the ClockIdentity
->> (according IEEE 1588-2008) whose value is typically derived from
->> the NIC's MAC address using EUI-64. The DPLL channel should be
->> registered to DPLL subsystem using the same ClockIdentity as the PHC
->> it drives. In above example DPLL channel 1 should have the same clock ID
->> as NIC1 PHC and channel 2 as NIC2 PHC.
->>
->> During the discussion, Andrew had the idea to provide NIC phandles
->> instead of clock ID values.
->>
->> Something like this:
->>
->> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> b/Documenta
->> tion/devicetree/bindings/dpll/dpll-device.yaml
->> index fb8d7a9a3693f..159d9253bc8ae 100644
->> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> @@ -33,6 +33,13 @@ properties:
->>       items:
->>         enum: [pps, eec]
->>
->> +  ethernet-handles:
->> +    description:
->> +      List of phandles to Ethernet devices, one per DPLL instance. Each of
->> +      these handles identifies Ethernet device that uses particular DPLL
->> +      instance to synchronize its hardware clock.
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +
+Hi Steve,
+
+You're absolutely right to ask for clarification, and I now realize that
+I didn’t explain the background clearly enough in my cover letter.
+
+On 8/5/25 1:24 오전, Steven Rostedt wrote:
+> On Sun,  3 Aug 2025 07:20:41 +0000
+> Yunseong Kim <ysk@kzalloc.com> wrote:
 > 
-> I personally would not use a list. I would have a node per channel,
-> and within that node, have the ethernet-handle property. This gives
-> you a more flexible scheme where you can easily add more per channel
-> properties in the future.
+>> This patch series resolves a sleeping function called from invalid context
+>> bug that occurs when fuzzing USB with syzkaller on a PREEMPT_RT kernel.
+>>
+>> The regression was introduced by the interaction of two separate patches:
+>> one that made kcov's internal locks sleep on PREEMPT_RT for better latency
 > 
-> It took us a while to understand what you actually wanted. The ASCII
-> art helps. So i would include that and some text in the binding.
+> Just so I fully understand this change. It is basically reverting the
+> "better latency" changes? That is, with KCOV anyone running with PREEMPT_RT
+> can expect non deterministic latency behavior?
 
-Like this?
+The regression results from the interaction of two changes — and in my original
+description, I inaccurately characterized one of them as being 
+"for better latency." That was misleading.
 
-diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml 
-b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-index fb8d7a9a3693f..798c5484657cf 100644
---- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-+++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-@@ -27,11 +27,41 @@ properties:
-    "#size-cells":
-      const: 0
+The first change d5d2c51 replaced spin_lock_irqsave() with local_lock_irqsave()
+in KCOV to ensure compatibility with PREEMPT_RT. This avoided using a
+potentially sleeping lock with interrupts disabled.
+At the time, as Sebastian noted:
 
--  dpll-types:
--    description: List of DPLL channel types, one per DPLL instance.
--    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
--    items:
--      enum: [pps, eec]
-+  channels:
-+    type: object
-+    description: DPLL channels
-+    unevaluatedProperties: false
-+
-+    properties:
-+      "#address-cells":
-+        const: 1
-+      "#size-cells":
-+        const: 0
-+
-+    patternProperties:
-+      "^channel@[0-9a-f]+$":
-+        type: object
-+        description: DPLL channel
-+        unevaluatedProperties: false
-+
-+        properties:
-+          reg:
-+            description: Hardware index of the DPLL channel
-+            maxItems: 1
-+
-+          dpll-type:
-+            description: DPLL channel type
-+            $ref: /schemas/types.yaml#/definitions/string
-+            enum: [pps, eec]
-+
-+          ethernet-handle:
-+            description:
-+              Specifies a reference to a node representing an Ethernet 
-device
-+              that uses this channel to synchronize its hardware clock.
-+            $ref: /schemas/types.yaml#/definitions/phandle
-+
-+        required:
-+          - reg
+ "There is no compelling reason to change the lock type to raw_spin_lock_t...
+  Changing it would require to move memory allocation and deallocation outside
+  of the locked section."
 
-Thanks,
-Ivan
+However, the situation changed after another patch 8fea0c8 converted the USB
+HCD tasklet to a BH workqueue. As a result, usb_giveback_urb_bh() began running
+with interrupts enabled, and the KCOV remote coverage collection section in
+this path became re-entrant. To prevent nested coverage sections — which KCOV
+doesn’t support — kcov_remote_start_usb_softirq() was updated to explicitly
+disable interrupts during coverage collection f85d39d.
 
+This combination — using a local_lock (which can sleep on RT) alongside
+local_irq_save() — inadvertently created a scenario where a sleeping lock was
+acquired in atomic context, triggering a kernel BUG on PREEMPT_RT.
+
+So while the original KCOV locking change didn't require raw spinlocks at
+the time, it became effectively incompatible with the USB softirq use case once
+that path began relying on interrupt disabling for correctness. In this sense,
+the "no compelling reason" eventually turned into a "necessary compromise."
+
+To clarify: this patch series doesn't revert the previous change entirely.
+It keeps the local_lock behavior for task context (where it's safe and
+appropriate), but ensures atomic safety in interrupt/softirq contexts by
+using raw spinlocks selectively where needed.
+
+> This should be fully documented. I assume this will not be a problem as
+> kcov is more for debugging and should not be enabled in production.
+> 
+> -- Steve
+> 
+
+Thanks again for raising this — I’ll make sure the changelog documents this
+interaction more clearly.
+
+Best regards,
+Yunseong Kim
 
