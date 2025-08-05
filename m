@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-755989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E537DB1AE6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BB2B1AE6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA210188E41A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B3F189B1D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C19F1EFF96;
-	Tue,  5 Aug 2025 06:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44F121A94F;
+	Tue,  5 Aug 2025 06:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uct6gb6K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IaQ0US97"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB98F15E8B;
-	Tue,  5 Aug 2025 06:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A069218A6A7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754375592; cv=none; b=HDvs0kPVj7XTYky0c2WK88ewC9rFWb57+ALsERRDvtrAcjfMKF4w6SnuhQbfbzknhArviLRac9KpKuuKICCp0O/p9hCNczPmtQM0Q5USWhXG9o7viMF7OAJYoGjrpgLzU/yv+AIijIEzDcv/fs/h/QPMbADkpV/9C4tBQoIpX2Y=
+	t=1754375659; cv=none; b=nIzYS9/dbh1Pw35d2l9i4L5DCPKEkM+lfBgIkOVotz5WGxsOzzd8lOljjte1u9c6X2fYm/9I+sYUG9IwVVNgkPaUfmdY+wAIwsSKFEMZb3v6yeUtJ5Qi7te06KpI21R4cWOcURELuHxyHCq5NhoKTqE9mb5bvB4SXbsNoHabA1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754375592; c=relaxed/simple;
-	bh=FD0dbOI0Ps6FpAVxL7mG/7bxhDlNoH/uuOhQ3n2KokA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k7tJ2m6N3ruYS4WhdiyD5YKGw4OnZ5uhbOuihWxXmFbOVhpITMpHRtMNIW5xZWDw8j2Lj2QhnWQVP4//DC0XCm8hIImcTL/KPPE+5wuuBmFDHGDPKDVbpphwm2GCk4svlhTppdnO2/rpaQz9ccefAbjk8dUHX7wLbHriBE3o0U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uct6gb6K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB39AC4CEF4;
-	Tue,  5 Aug 2025 06:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754375592;
-	bh=FD0dbOI0Ps6FpAVxL7mG/7bxhDlNoH/uuOhQ3n2KokA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uct6gb6Kbuk0u+fjQzJhhWhZjfIfQcI1uPXbIFKk0iDQ2jawvxdLy7RPiehxDQZZT
-	 HblaeAGRjThMMBABgXkuTd9GqpRrjOp0NrxT7GOtwEA8UHeHo8PO0nVkqSh9VPesxF
-	 nyAKO+U32sJ3hSftavkgIkL70eFvgjXqQq81oksavXatFnKn7Ho7v9d4mB3odDskuO
-	 wBAXVspduUjk8ivNH98Bye/KuT2liJJ+LYQYarYwjPTWR6KszWS0aYmPv+t/DPttnl
-	 q3kB2e0AXsGl3LziUvR3b4Hmxk7bCfN/RxzLdsr7anpJCPWoSGbGR20M/tq9/1zfZC
-	 HRr9kA5U6K4GA==
-Message-ID: <f51b1915-1739-4d9f-a8ff-6bf7dc4b09c9@kernel.org>
-Date: Tue, 5 Aug 2025 08:33:07 +0200
+	s=arc-20240116; t=1754375659; c=relaxed/simple;
+	bh=cixIAO8oXA2knbhtv7yiIJY9vKrJjFWNPFcHiT/tnZA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lSqH/pPQIJjJrJr07LsbgNJxvyu8tyJQeN/bOEAxNmVDJccR156NgXoxXPl90RW+Q6MlTYO5Rd7MIWkox/4BhE48WjdOWSN76SZ23RFQ2wdqyGEUDXPiNcZhgXcV5TtsRykUnRzL2/RPFB+aaAQCRAreo/cYHrKDbC1qkbapM1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IaQ0US97; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-458c0845b34so12577555e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754375656; x=1754980456; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4jcziFTCywaC5rIJAZm6+DjYPtaEFdHTnELvD+78CD8=;
+        b=IaQ0US97fR2ekIBdWwzzYiV4DjyKZWyOSntsOMqQ98fDlzghbKEcrlkJv1CACa+odr
+         9EfDqERgX8aiSclO3/Q0ZSzjXe7eU3boawyeXCSNPx8V1yd2bK+fDalgc+yTjBRPcJCo
+         Ct1DCenftR7zJE0/8ac9lIE5ud61+6nagjpyLpqlD4T8L9jWm7zHeDNielvO/p7+4Ba6
+         GrcceVOFMfzamvseTGws4nRYE6sRcRjQVlhNgpbViLUbRSBasQC6DVtNnTe6FvDCcVz2
+         YAFLLdTwpM56T+a++ObWqbHZKDFmtIr9mzoiDH+oj2CMiRqEhICCXYDRKto5MQefvHH5
+         9vfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754375656; x=1754980456;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4jcziFTCywaC5rIJAZm6+DjYPtaEFdHTnELvD+78CD8=;
+        b=ZX2wBnc6waqE7QW9Gy1A/Gt2bVUrgh/LmeMuEBfmYiLpk3Ii8TxBi4+nUXqxjRCCsc
+         aQ5Q5KsPzI8fHYj7jhpfwaGhA0u/EYRnjUvjLVQCP0L3ZTWXz2lNO70EHCrk1RDHesgY
+         QZV2/XN8aaNdTZZfaby4Z3FmLiInc6jEyEzJOZr8R7COO1MCb8b2ooJD1L8R8JnNrD6n
+         3doMxmN1RDSBHUtZq4Q4ofZCpgPsfufljSvg+5JxOSo0FRnM/DrPiqRQuVDdx0z0a32t
+         CGennTBJs26ocU2oR2lybhuzTahRaqMSERD5QWjsILM3NhMPVqB7F+j816oqsi2PsBgh
+         1ulA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ZY/x1kd73fENDCWxxZY9ElA6CNOHMgpYqkotU0S4MHAmkz6fAC1geNVR2wyDC0cO1XbPVrPn3RTRA9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvM60Luaf8uOih24l4P1Tl0dBMre0F8/0HaseJDVSW09haL3iD
+	FX3lJYMbbtvrfNjOvOTaklrlIlfOd5vwoR9qo7i/ms6xUVAbtXgWVIAEIhMCJab6br6Ql2TKgAh
+	pBQvEnA==
+X-Google-Smtp-Source: AGHT+IH+SZCeGSGnjYQjRBM14WrANNPTb10svYVRYIcvIDrsT7KCEZNOf2pjlIe6AS7lbpPHhzvdUW/c8dY=
+X-Received: from wmbel9.prod.google.com ([2002:a05:600c:3e09:b0:459:dcca:571e])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3ba2:b0:459:e025:8c5a
+ with SMTP id 5b1f17b1804b1-459e0258d84mr25184895e9.33.1754375655980; Mon, 04
+ Aug 2025 23:34:15 -0700 (PDT)
+Date: Tue,  5 Aug 2025 14:34:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Resend 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20250804074642.75072-1-alexander.stein@ew.tq-group.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804074642.75072-1-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250805063413.2934208-1-khtsai@google.com>
+Subject: [PATCH] usb: dwc3: Ignore late xferNotReady event to prevent halt timeout
+From: Kuen-Han Tsai <khtsai@google.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuen-Han Tsai <khtsai@google.com>, stable <stable@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/08/2025 09:46, Alexander Stein wrote:
-> This driver is used on imx93-tqma9352-mba91xxca.dts.
+During a device-initiated disconnect, the End Transfer command resets
+the event filter, allowing a new xferNotReady event to be generated
+before the controller is fully halted. Processing this late event
+incorrectly triggers a Start Transfer, which prevents the controller
+from halting and results in a DSTS.DEVCTLHLT bit polling timeout.
 
-Hm, where or how exactly? That's USB WiFi, not built-in.
+Ignore the late xferNotReady event if the controller is already in a
+disconnected state.
 
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
-> Added IMX Maintainers
-> 
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index c7520e78b6a11..2271ce6079bbb 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -441,6 +441,7 @@ CONFIG_IWLMVM=m
->  CONFIG_MWIFIEX=m
->  CONFIG_MWIFIEX_SDIO=m
->  CONFIG_MWIFIEX_PCIE=m
-> +CONFIG_MWIFIEX_USB=m
+Fixes: 8f608e8ab628 ("usb: dwc3: gadget: remove unnecessary 'dwc' parameter")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+---
+Tracing:
 
+# Stop active transfers by sending End Transfer commands
+dwc3_gadget_ep_cmd: ep1out: cmd 'End Transfer' [20d08] params 00000000 00000000 00000000 --> status: Successful
+dwc3_gadget_ep_cmd: ep1in: cmd 'End Transfer' [40d08] params 00000000 00000000 00000000 --> status: Successful
+ ...
+# Recieve an xferNotReady event on an ISOC IN endpoint
+dwc3_event: event (35d010c6): ep1in: Transfer Not Ready [000035d0] (Not Active)
+dwc3_gadget_ep_cmd: ep1in: cmd 'Start Transfer' [35d60406] params 00000000 ffffb620 00000000 --> status: Successful
+dwc3_gadget_ep_cmd: ep2in: cmd 'End Transfer' [30d08] params 00000000 00000000 00000000 --> status: Timed Out
+ ...
+# Start polling DSTS.DEVCTRLHLT
+dwc3_gadget_run_stop: start polling DWC3_DSTS_DEVCTRLHLT
+ ...
+# HALT timeout and print out the endpoint status for debugging
+dwc3_gadget_run_stop: finish polling DWC3_DSTS_DEVCTRLHLT, is_on=0, reg=0
+dwc3_gadget_ep_status: ep1out: mps 1024/2765 streams 16 burst 5 ring 64/56 flags E:swbp:>
+dwc3_gadget_ep_status: ep1in: mps 1024/1024 streams 16 burst 2 ring 21/64 flags E:swBp:<
+dwc3_gadget_ep_status: ep2out: mps 1024/2765 streams 16 burst 5 ring 56/48 flags e:swbp:>
+---
+ drivers/usb/dwc3/gadget.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 25db36c63951..ad89cbeea761 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -3777,6 +3777,15 @@ static void dwc3_gadget_endpoint_transfer_complete(struct dwc3_ep *dep,
+ static void dwc3_gadget_endpoint_transfer_not_ready(struct dwc3_ep *dep,
+ 		const struct dwc3_event_depevt *event)
+ {
++	/*
++	 * During a device-initiated disconnect, a late xferNotReady event can
++	 * be generated after the End Transfer command resets the event filter,
++	 * but before the controller is halted. Ignore it to prevent a new
++	 * transfer from starting.
++	 */
++	if (dep->dwc->connected)
++		return;
++
+ 	dwc3_gadget_endpoint_frame_from_event(dep, event);
+
+ 	/*
+--
+2.50.1.565.gc32cd1483b-goog
+
 
