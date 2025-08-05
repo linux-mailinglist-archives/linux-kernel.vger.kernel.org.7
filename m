@@ -1,165 +1,302 @@
-Return-Path: <linux-kernel+bounces-756770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE840B1B8FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:08:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969CAB1B8FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD5918A724B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB755184CC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60940292B5E;
-	Tue,  5 Aug 2025 17:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4gqNcrV"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343FD275B02
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488F727EFFB;
+	Tue,  5 Aug 2025 17:08:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B61293C58
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754413709; cv=none; b=svtKqCXjNiR2gOvPIw2UjXHk+EDAbmjtGMTc85RObW8iod1vpYgwl6oC7xHbxse4wMIugqFpu93S2mogzKirOXHEVV9KR3x9D+DQtbklPaA6K9AUqQCD8d1dLiAvo7VPNKbmoUMfAlAbsyZjLzFJ0JBLRW60Mf2uX9vNqDcq+wM=
+	t=1754413712; cv=none; b=Q2TOTOJTvr0o0aH1Jz29ErQVh/Op8ArQhyv5yhMyehny9eiY1KmDkEmElgaepvAwqQKAmN/CVzqMYVbZAYef2yhj151s5rNv6KxsZPiPBUEYCUyKdIRa3X6s83OHuTTkG/9/3N14mCzkkt62/IZFruloiiQvQvEOPiGSx9e4B2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754413709; c=relaxed/simple;
-	bh=ek9seD7lfFFVLJUoAOVGYHKcOWsjS1dfTrcSdsjzm5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nKFis1jUMERGgoQMTg9oszYB+0P2zGbeKSde4kr0lqCeEKVvna0qa8TjH6eqSeEQ08Dgm0EBiPUAeiUx4VYpxAZBrnyAOGUhHxtlxTuVD4Bxukro1ZtGW5n7j/3CWldwQUo9Le2sBokhb8sD72Cy8pBC3/nVOz+DMvSVGdPeNZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4gqNcrV; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3e3eeb81f9aso44967475ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754413707; x=1755018507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuGlNi5wkdwqPW/iSbl5iQB6kg7YzYxdSeTWpFUyLag=;
-        b=l4gqNcrVAwDM5kb8hOB2NKFOR/kkWsiS2dy1Jwe4AoiPoi3vPDdR0KK2kLf+GQN0TM
-         ffVXdOipG6E5kcrr8r4q5QLlza3tZTJTY6ENXg2/Fw/eyI+sV5mqLatRa/bnHwHlp9hS
-         PKRzNE08U5In6H40/xyoaNfvhD95zMpVdGgYA9dVUv1ejnADEKyYoEdREt/mqCP1RzEn
-         CvPs1vgV5kbgQ1vClsvok2FRxKpGaOibxyc4bMlcov5ZWJn7YMDCVJMAGc6MVOCpkvmX
-         zbZkv9xlG/tx+j/i1G0RETXnFsP8D0ihQ65FRzD3reusDL18kRw7OWu/szs/4lRDQL8H
-         oIpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754413707; x=1755018507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VuGlNi5wkdwqPW/iSbl5iQB6kg7YzYxdSeTWpFUyLag=;
-        b=YzDDPNpB8o1NmfQaGvhIEqF4SuSsiqAefgoSlYXahXfEL1WSmlblV1x5K3erXNwUc4
-         Lr0xFAz8WGz3mSiYMzzqiybsfI4hm/0w+a5CSIXQWQ7O0VzZtNMXD0R5aXoi4p0LIeGC
-         JAzl4A89k6lRAgimD45ylb1kuOYXvKz2Gp+Qda/Rc/cnCOky/4NEa5gRws+r1tuqGSYf
-         xX1BaeQt8swGnRwe+ESjEV/Qit3oql5eWJBJgIsRkv8B26YwO7b1GLB1VVZcq1Cg1oTp
-         LAkeiM6+0DexBGGRcqTu1yCT+dYBFuJfTrMF/ZS1aMlSjEltkVWb58+TIV2IDzdiqeJ5
-         oH5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU48+JarNxUBAm+c8mRUVzLGJLLIPUhU6dLHzIbuGDxSB82C1i2itsABYnKFygc+G5Of7R9ODpddwcSkFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYihQSh2RjT9ypvIZMhDhj0tNg3hAIVAhj3LKaMA9ul8OUnsW7
-	Sakaqq/gNM0QrXhvi/yR6iMJwnlYcHSqHKEtCAnXHo21Xyjhmv16wQtdoAjAswfW2REtONTOA5w
-	XzA7SN+MDcQACJgx5XcAzX1fXZ4+LioY=
-X-Gm-Gg: ASbGnctbGDdc5le9pNX8ASv7L9WbPMWz2lzWzLumvA9ye7/5iDfDVI7tMJ0AXi8A1Fg
-	SDaUOybmXyc0gzmG6gF8X0Veo0qHTH9Ni4W75pZGds9SrP9WAHny4JxK5DEKxccSnbgsVhH/jsT
-	h2g2Z9ZgK4ipR8iEwmvRewaHmrloTkr3FClS9xPumWejgUInwlocOoWY7kZ5KdfgdtAl72WF+Ht
-	o946Iq5kzNxfVDTUQ==
-X-Google-Smtp-Source: AGHT+IEqq7nNOFFJaTElA7V7lvC6va1YYQWAIEKkUtPlihKKeRB3JNwAkJziv2mDjIJ1sh1UHZzt2+ijfUM6fV3x7NI=
-X-Received: by 2002:a05:6e02:3f12:b0:3e3:ef1c:ef16 with SMTP id
- e9e14a558f8ab-3e41611c103mr283471745ab.7.1754413707089; Tue, 05 Aug 2025
- 10:08:27 -0700 (PDT)
+	s=arc-20240116; t=1754413712; c=relaxed/simple;
+	bh=TH8Asgm8OLy2In9qXMOD3FCZczGJU6/93vyQj2VXtNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmFsSCyEC8UIgAlm3FpouW6qvGQukV9VHO2JLPN9WkscAJV1QAEeTP9dNJith6nfa1VBAI3kxRK+Gs2pHJ1AK1yU2t32dUACVZoR5q8NymMR8VPAB08IgrQGpHo9rlF1GuZLysGYHwewL1elYABeTrOwB704Hi0fF4Iu9++236E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68683150C;
+	Tue,  5 Aug 2025 10:08:22 -0700 (PDT)
+Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A71BF3F673;
+	Tue,  5 Aug 2025 10:08:27 -0700 (PDT)
+Message-ID: <742fe06b-81ab-4402-ae6a-19d6734507ae@arm.com>
+Date: Tue, 5 Aug 2025 18:08:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804172439.2331-1-ryncsn@gmail.com> <20250804172439.2331-2-ryncsn@gmail.com>
-In-Reply-To: <20250804172439.2331-2-ryncsn@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 5 Aug 2025 10:08:16 -0700
-X-Gm-Features: Ac12FXz8Edy2EvZFBtLZV8o6w06tTNVXqM-wIPEG1Fn4sVzEW2PdTitTtF1NPyo
-Message-ID: <CAKEwX=NSGbjG-bhjje4ga2n4xNFBdiFTZV8TRz+qSc_cvmxUJg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm, swap: don't scan every fragment cluster
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 11/36] dt-bindings: arm: Add MPAM MSC binding
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Ben Horgan <ben.horgan@arm.com>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-12-james.morse@arm.com>
+ <20250711214314.GA1376683-robh@kernel.org>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20250711214314.GA1376683-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 4, 2025 at 10:24=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Fragment clusters were mostly failing high order allocation already.
-> The reason we scan it now is that a swap slot may get freed without
-> releasing the swap cache, so a swap map entry will end up in HAS_CACHE
-> only status, and the cluster won't be moved back to non-full or free
-> cluster list.
->
-> Usually this only happens for !SWP_SYNCHRONOUS_IO devices when the swap
-> device usage is low (!vm_swap_full()) since swap will try to lazy free
-> the swap cache.
->
-> It's unlikely to cause any real issue. Fragmentation is only an issue
-> when the device is getting full, and by  that time, swap will already
-> be releasing the swap cache aggressively. And swap cache reclaim happens
-> when the allocator scans a cluster too. Scanning one fragment cluster
-> should be good enough to reclaim these pinned slots.
->
-> And besides, only high order allocation requires iterating over a
-> cluster list, order 0 allocation will succeed on the first attempt.
-> And high order allocation failure isn't a serious problem.
->
-> So the iteration of fragment clusters is trivial, but it will slow down
-> mTHP allocation by a lot when the fragment cluster list is long.
-> So it's better to drop this fragment cluster iteration design. Only
-> scanning one fragment cluster is good enough in case any cluster is
-> stuck in the fragment list; this ensures order 0 allocation never
-> falls, and large allocations still have an acceptable success rate.
->
-> Test on a 48c96t system, build linux kernel using 10G ZRAM, make -j48,
-> defconfig with 768M cgroup memory limit, on top of tmpfs, 4K folio
-> only:
->
-> Before: sys time: 4407.28s
-> After:  sys time: 4425.22s
->
-> Change to make -j96, 2G memory limit, 64kB mTHP enabled, and 10G ZRAM:
->
-> Before: sys time: 10230.22s  64kB/swpout: 1793044  64kB/swpout_fallback: =
-17653
-> After:  sys time: 5527.90s   64kB/swpout: 1789358  64kB/swpout_fallback: =
-17813
->
-> Change to 8G ZRAM:
->
-> Before: sys time: 21929.17s  64kB/swpout: 1634681  64kB/swpout_fallback: =
-173056
-> After:  sys time: 6121.01s   64kB/swpout: 1638155  64kB/swpout_fallback: =
-189562
->
-> Change to use 10G brd device with SWP_SYNCHRONOUS_IO flag removed:
->
-> Before: sys time: 7368.41s  64kB/swpout:1787599  swpout_fallback: 0
-> After:  sys time: 7338.27s  64kB/swpout:1783106  swpout_fallback: 0
->
-> Change to use 8G brd device with SWP_SYNCHRONOUS_IO flag removed:
->
-> Before: sys time: 28139.60s 64kB/swpout:1645421  swpout_fallback: 148408
-> After:  sys time: 8941.90s  64kB/swpout:1592973  swpout_fallback: 265010
->
-> The performance is a lot better and large order allocation failure rate
-> is only very slightly higher or unchanged.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+Hi Rob,
 
-LGTM. I've been learning a lot about cluster-based allocation design
-from your code for my vswap prototype. Thanks, Kairui!
+On 11/07/2025 22:43, Rob Herring wrote:
+> On Fri, Jul 11, 2025 at 06:36:23PM +0000, James Morse wrote:
+>> From: Rob Herring <robh@kernel.org>
+>>
+>> The binding is designed around the assumption that an MSC will be a
+>> sub-block of something else such as a memory controller, cache controller,
+>> or IOMMU. However, it's certainly possible a design does not have that
+>> association or has a mixture of both, so the binding illustrates how we can
+>> support that with RIS child nodes.
+>>
+>> A key part of MPAM is we need to know about all of the MSCs in the system
+>> before it can be enabled. This drives the need for the genericish
+>> 'arm,mpam-msc' compatible. Though we can't assume an MSC is accessible
+>> until a h/w specific driver potentially enables the h/w.
 
-FWIW:
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+> Is there any DT based h/w using this? I'm not aware of any.
+
+I'm told there is. I'll let them come out of the wood work to confirm it ...
+
+
+> I would 
+> prefer not merging this until there is. I have little insight whether 
+> these genericish compatibles will be sufficient, but I have lots of 
+> experience to say they won't be. I would also suspect that if anyone has 
+> started using this, they've just extended/modified it however they 
+> wanted and no feedback got to me.
+
+Sure, what are you looking for here, Reviewed-by tags from someone with a hardware
+platform that is going to ship with DT?
+
+
+>> diff --git a/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
+>> new file mode 100644
+>> index 000000000000..9d542ecb1a7d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
+>> @@ -0,0 +1,227 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/arm/arm,mpam-msc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Arm Memory System Resource Partitioning and Monitoring (MPAM)
+>> +
+>> +description: |
+>> +  The Arm MPAM specification can be found here:
+>> +
+>> +  https://developer.arm.com/documentation/ddi0598/latest
+>> +
+>> +maintainers:
+>> +  - Rob Herring <robh@kernel.org>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: arm,mpam-msc                   # Further details are discoverable
+>> +      - const: arm,mpam-memory-controller-msc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description: A memory region containing registers as defined in the MPAM
+>> +      specification.
+>> +
+>> +  interrupts:
+>> +    minItems: 1
+>> +    items:
+>> +      - description: error (optional)
+>> +      - description: overflow (optional, only for monitoring)
+>> +
+>> +  interrupt-names:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum: [ error, overflow ]
+>> +      - items:
+>> +          - const: error
+>> +          - const: overflow
+>> +
+>> +  arm,not-ready-us:
+>> +    description: The maximum time in microseconds for monitoring data to be
+>> +      accurate after a settings change. For more information, see the
+>> +      Not-Ready (NRDY) bit description in the MPAM specification.
+>> +
+>> +  numa-node-id: true # see NUMA binding
+>> +
+>> +  '#address-cells':
+>> +    const: 1
+>> +
+>> +  '#size-cells':
+>> +    const: 0
+>> +
+>> +patternProperties:
+>> +  '^ris@[0-9a-f]$':
+>> +    type: object
+>> +    additionalProperties: false
+>> +    description: |
+> 
+> '|' can be dropped.
+> 
+>> +      RIS nodes for each RIS in an MSC. These nodes are required for each RIS
+>> +      implementing known MPAM controls
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        enum:
+>> +            # Bulk storage for cache
+>> +          - arm,mpam-cache
+>> +            # Memory bandwidth
+>> +          - arm,mpam-memory
+>> +
+>> +      reg:
+>> +        minimum: 0
+>> +        maximum: 0xf
+>> +
+>> +      cpus:
+>> +        $ref: '/schemas/types.yaml#/definitions/phandle-array'
+
+> Don't need the type. It's in the core schemas now.
+
+(I assume the type is that '$ref' line)
+
+
+>> +        description:
+>> +          Phandle(s) to the CPU node(s) this RIS belongs to. By default, the parent
+>> +          device's affinity is used.
+>> +
+>> +      arm,mpam-device:
+>> +        $ref: '/schemas/types.yaml#/definitions/phandle'
+> 
+> Don't need quotes. This should be a warning, but no testing happened 
+> because the DT list and maintainers weren't CCed.
+
+Yup, its an RFC - I only CC'd the folk that have previously expressed an interest for the
+first pass. (git send-email put you on CC!)
+
+
+>> +        description:
+>> +          By default, the MPAM enabled device associated with a RIS is the MSC's
+>> +          parent node. It is possible for each RIS to be associated with different
+>> +          devices in which case 'arm,mpam-device' should be used.
+>> +
+>> +    required:
+>> +      - compatible
+>> +      - reg
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +dependencies:
+>> +  interrupts: [ interrupt-names ]
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    /*
+>> +    cpus {
+>> +        cpu@0 {
+>> +            next-level-cache = <&L2_0>;
+>> +        };
+>> +        cpu@100 {
+>> +            next-level-cache = <&L2_1>;
+>> +        };
+>> +    };
+>> +    */
+>> +    L2_0: cache-controller-0 {
+>> +        compatible = "cache";
+>> +        cache-level = <2>;
+>> +        cache-unified;
+>> +        next-level-cache = <&L3>;
+>> +
+>> +    };
+>> +
+>> +    L2_1: cache-controller-1 {
+>> +        compatible = "cache";
+>> +        cache-level = <2>;
+>> +        cache-unified;
+>> +        next-level-cache = <&L3>;
+>> +
+>> +    };
+> 
+> All the above should be dropped. Not part of this binding.
+> 
+>> +
+>> +    L3: cache-controller@30000000 {
+>> +        compatible = "arm,dsu-l3-cache", "cache";
+> 
+> Pretty sure this is a warning because that compatible doesn't exist.
+
+Not sure what to do with this. I see plenty of DT in the tree with 'cache', and you've got
+'foo,a-memory-controller' below ...
+
+
+>> +        cache-level = <3>;
+>> +        cache-unified;
+>> +
+>> +        ranges = <0x0 0x30000000 0x800000>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +
+>> +        msc@10000 {
+>> +            compatible = "arm,mpam-msc";
+>> +
+>> +            /* CPU affinity implied by parent cache node's  */
+>> +            reg = <0x10000 0x2000>;
+>> +            interrupts = <1>, <2>;
+>> +            interrupt-names = "error", "overflow";
+>> +            arm,not-ready-us = <1>;
+>> +        };
+>> +    };
+>> +
+>> +    mem: memory-controller@20000 {
+>> +        compatible = "foo,a-memory-controller";
+>> +        reg = <0x20000 0x1000>;
+>> +
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +        ranges;
+>> +
+>> +        msc@21000 {
+>> +            compatible = "arm,mpam-memory-controller-msc", "arm,mpam-msc";
+>> +            reg = <0x21000 0x1000>;
+>> +            interrupts = <3>;
+>> +            interrupt-names = "error";
+>> +            arm,not-ready-us = <1>;
+>> +            numa-node-id = <1>;
+>> +        };
+>> +    };
+
+
+James
 
