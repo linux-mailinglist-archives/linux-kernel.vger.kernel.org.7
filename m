@@ -1,136 +1,177 @@
-Return-Path: <linux-kernel+bounces-756666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66241B1B780
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB54B1B78B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B20176117
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB757189C3AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C5C1E32D7;
-	Tue,  5 Aug 2025 15:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tmvcjC22"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40135242D9D;
+	Tue,  5 Aug 2025 15:33:23 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49894A28;
-	Tue,  5 Aug 2025 15:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660B483CD1;
+	Tue,  5 Aug 2025 15:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407926; cv=none; b=N9NfjerYqm+Vxo10tTQc6A5Wnu+v35vDCd0e8Xw+7mpTtzHBGGze3ff2g/F686SslRrGJyFV390f5SggkfLIMKav6Zn9/QftKQzNuTjsQzWF0lQKpl9woTk12RF+GzEPw7M3iIgEx11L8LKKHkxzoabciChsPlY4a/MXnqVxnzY=
+	t=1754408002; cv=none; b=XFwVEOk5qb756Qo7CfEWDIuTikJlayFgsXiMcT+wfbNHhxNFsddVfHnbfq3x+gxSHKucv3lLCmFUzLiQkP4wed7xseJJ4G+nI5fwwoX0doJcFN1pNlcs+cBzTcs3879cBgtfXQksSKhbxKqzew3mRdaVH6XBKF+CfvDx9jnJsPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407926; c=relaxed/simple;
-	bh=zYc7c7d/i8Ql+qF+dnrBKCxeKxXeIyUFSPFcsCvQc5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzlcUh0Z7oqsiQFuK8AqL0x0jMfi8MNdNwtDAHT5e2DpZsrKmTo9Vb/30U7XT3tbLJtqPAZnZ8ZT6iWS+ZqzT4+BwRa4muc0eH5RsfCk+MxDxvQYSFqP4PY7m9SsXIdkf7Ss8iKoM8xVKiMJMOv10p66i9KXrt+IIv3XMDxMDZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tmvcjC22; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=PXyobKWbJw7huI969vcAU8isGv2OVX47I8Rs8Gm3eDk=; b=tmvcjC22yhmD1AcNl4Rky/fc1P
-	kdPOdRT5B63v65VBnB6TEWLW8omk7NhxEwmXzsjEQtA0hu4nnwQV74b8I7YNfUFQ8cXGU9iuPTG+m
-	qptmPQaAac2kOXRwe6Uov+9vnKU0ViY6rYcfMrLHrUtt/AjPHe+hUAoEdw9zl6mqjdJ0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ujJdp-003nnS-7I; Tue, 05 Aug 2025 17:31:53 +0200
-Date: Tue, 5 Aug 2025 17:31:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-Message-ID: <47cf42a2-bc8e-4ed8-8619-79975b95230f@lunn.ch>
-References: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
- <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
- <20250721-lean-strong-sponge-7ab0be@kuoka>
- <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
- <9220f776-8c82-474b-93fc-ad6b84faf5cc@kernel.org>
- <466e293c-122f-4e11-97d2-6f2611a5178e@redhat.com>
- <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
- <f96b3236-f8e6-40c1-afb2-7e76894462f9@redhat.com>
- <1419bca0-b85a-4d4b-af1a-b0540c25933a@lunn.ch>
- <b33c76da-8ce1-402f-b252-f6d439ec39c7@redhat.com>
+	s=arc-20240116; t=1754408002; c=relaxed/simple;
+	bh=eaNb6v/jyYYmzGGznooW2Go7ynSoEs7m74+LhzyQ2KM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lffa4zL8p+ATKdyf/5aVmUo55rkHFHAzFiEIBv6jtaj/Ol0ZHM3q9ObP5gfjzSlOgEOc4nOEGudDqRi9YArGVqG+7f/WTr/odjH9bRfzyZk42Bq9gm0lAcgXXk+jziXcpcMQZKBCDj1l1yUOKYPfz0YgXM4zjBGjIQKzYwushxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76624ecc7efso535891b3a.0;
+        Tue, 05 Aug 2025 08:33:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754408001; x=1755012801;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1yel2b+4RblLJvMRHPT+ucYyrlWej/tApR3MO/sdfls=;
+        b=UyDNsRViOEprQ5MxcsNB8mqV/tpl8+NHXg0LfZ6iHeYtggJIXP+elxV2/IPaT2AiVJ
+         P+acbYTHCx/c8RiwM6fj7QNcxx/mjK2ga5DYU6bCiFZGsXiL1AVFLxc5wqF0ZKowEzt3
+         jjyzQ2/kV1fxCAJI0B5agXquIRQGcSVgEfdG5JGYLN0VdPQGAuLQL9HnjgLM1EBlVh8g
+         1gIoXwB1k1QgvfCJGjZrZsU6Wzt/tcg9Tf6n6yra8V/VWZeX8acG58MMoCKsI1yrn3ZG
+         TbEbnQkWYN6A0omI0CX8d9tqLkLQRHnS8L8gEyssO98Z7UZrrn/M4+pvajc6TUynk5i5
+         a7SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7VY5VaUovoIRbxvIo/q5lMMxcQmXfUiDd1cG7phtILoe2Mv/XcANSbv+/LOJ5TiGB1Yy+K6S4IIjh@vger.kernel.org, AJvYcCVmWlOWKO1SraZzogZiUkQxEjoitT+T8LgyVnocg6L05ciEgTR0JiLmGk/bfRM5aD9NxK7vAL4S@vger.kernel.org, AJvYcCXJ2u/I3jy2vKdtv9+ktwIbLlVihACTzNNwnrjHqRCZ64+GINpMirfS+tetYvwGf16bvLyubAmIsQxCqJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8UC1f6LgE7LsLNodogp1Kn8XE1Dkr+6kn1H+8iV83hQ8sOfEJ
+	uJLb63B+LJIdA96K0D2Fa9oayEGCC7nT+i63vc5AFAMUvsfZYy9yDBvO
+X-Gm-Gg: ASbGncuxPNTVmGRDb09hCowHondFKuT7/yrdw7ewJfW9clPGqyV5mfs2nLD1xpqWfzu
+	zTIZQ3nOjLomiWrRirXanNsWQE2Sa0GOCMOcCEPckPvVgbOhRMtKrCjfcLCZ1IiNSal1HhJkSfX
+	rFldvDuIEuh8EybSCQ9pzeOTsAWmVmWE4bh9KaLV1kjRqkzUijLimxVMlUdKEHAwgDmQo9YhEx5
+	SqSRcJxGHFIZou3eItiloNZ6e2SLOumerkhIipyBHvyR0Wc0Vc6Ep5zhzshbYkgAItOcwDroHEM
+	0KLjS78tOZ3P6RyQwCwaWu72BzV8GGv9sbtkxC6nHieDxivCeM/OHEvMUGdYr1iufc0qJ+55euH
+	MC3mmHwmW8xX/jsIOLCK+PGisHXnWeR0m1H6HnHxv3RI=
+X-Google-Smtp-Source: AGHT+IHULNJQv9btYgDl6fxqXCuB+doWn0u6Jk2OHizCXQnUCeNbkYhIJotgEaqwCog6LsLyr7rQFA==
+X-Received: by 2002:a05:6a21:684:b0:232:b78b:cdc5 with SMTP id adf61e73a8af0-23df91ae1c8mr8645872637.7.1754408000588;
+        Tue, 05 Aug 2025 08:33:20 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bfcb26905sm6454802b3a.123.2025.08.05.08.33.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 08:33:19 -0700 (PDT)
+Message-ID: <d08de0fa-9dfd-4fc4-b9c0-ff181df8d459@kzalloc.com>
+Date: Wed, 6 Aug 2025 00:33:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b33c76da-8ce1-402f-b252-f6d439ec39c7@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] kcov: Use raw_spinlock_t for kcov->lock and
+ kcov_remote_lock
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+ Yeoreum Yun <yeoreum.yun@arm.com>, ppbuk5246@gmail.com,
+ linux-usb@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250803072044.572733-2-ysk@kzalloc.com>
+ <20250803072044.572733-4-ysk@kzalloc.com>
+ <20250804122758.620f934a@gandalf.local.home>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250804122758.620f934a@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Like this?
+Hi Steve,
+
+Thanks for the review and the suggestion.
+
+On 8/5/25 1:27 오전, Steven Rostedt wrote:
+> On Sun,  3 Aug 2025 07:20:43 +0000
+> Yunseong Kim <ysk@kzalloc.com> wrote:
 > 
-> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> index fb8d7a9a3693f..798c5484657cf 100644
-> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> @@ -27,11 +27,41 @@ properties:
->    "#size-cells":
->      const: 0
+>> The locks kcov->lock and kcov_remote_lock can be acquired from
+>> atomic contexts, such as instrumentation hooks invoked from interrupt
+>> handlers.
+>>
+>> On PREEMPT_RT-enabled kernels, spinlock_t is typically implemented
 > 
-> -  dpll-types:
-> -    description: List of DPLL channel types, one per DPLL instance.
-> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> -    items:
-> -      enum: [pps, eec]
-> +  channels:
-> +    type: object
-> +    description: DPLL channels
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^channel@[0-9a-f]+$":
-> +        type: object
-> +        description: DPLL channel
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          reg:
-> +            description: Hardware index of the DPLL channel
-> +            maxItems: 1
-> +
-> +          dpll-type:
-> +            description: DPLL channel type
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +            enum: [pps, eec]
-> +
-> +          ethernet-handle:
-> +            description:
-> +              Specifies a reference to a node representing an Ethernet
-> device
-> +              that uses this channel to synchronize its hardware clock.
-> +            $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +        required:
-> +          - reg
+> On PREEMPT_RT is implemented as a sleeping lock. You don't need to say
+> "typically".
 
-Yes, but i will leave the DT Maintainers to give it a deeper review,
-but this what i meant. And it makes your dpll-type much easier to
-handle.
+You're right — the phrase "typically implemented as a sleeping lock" was
+inaccurate. On PREEMPT_RT, spinlock_t is implemented as a sleeping lock, and
+I'll make sure to correct that wording in the next version.
 
-	Andrew
+>> as a sleeping lock (e.g., mapped to an rt_mutex). Acquiring such a
+>> lock in atomic context, where sleeping is not allowed, can lead to
+>> system hangs or crashes.
+>>
+>> To avoid this, convert both locks to raw_spinlock_t, which always
+>> provides non-sleeping spinlock semantics regardless of preemption model.
+>>
+>> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+>> ---
+>>  kernel/kcov.c | 58 +++++++++++++++++++++++++--------------------------
+>>  1 file changed, 29 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/kernel/kcov.c b/kernel/kcov.c
+>> index 187ba1b80bda..7d9b53385d81 100644
+>> --- a/kernel/kcov.c
+>> +++ b/kernel/kcov.c
+>> @@ -54,7 +54,7 @@ struct kcov {
+>>  	 */
+>>  	refcount_t		refcount;
+>>  	/* The lock protects mode, size, area and t. */
+>> -	spinlock_t		lock;
+>> +	raw_spinlock_t		lock;
+>>  	enum kcov_mode		mode;
+>>  	/* Size of arena (in long's). */
+>>  	unsigned int		size;
+>> @@ -84,7 +84,7 @@ struct kcov_remote {
+>>  	struct hlist_node	hnode;
+>>  };
+>>  
+>> -static DEFINE_SPINLOCK(kcov_remote_lock);
+>> +static DEFINE_RAW_SPINLOCK(kcov_remote_lock);
+>>  static DEFINE_HASHTABLE(kcov_remote_map, 4);
+>>  static struct list_head kcov_remote_areas = LIST_HEAD_INIT(kcov_remote_areas);
+>>  
+>> @@ -406,7 +406,7 @@ static void kcov_remote_reset(struct kcov *kcov)
+>>  	struct hlist_node *tmp;
+>>  	unsigned long flags;
+>>  
+>> -	spin_lock_irqsave(&kcov_remote_lock, flags);
+>> +	raw_spin_lock_irqsave(&kcov_remote_lock, flags);
+> 
+> Not related to these patches, but have you thought about converting some of
+> these locks over to the "guard()" infrastructure provided by cleanup.h?
+
+Also, I appreciate your note about the guard() infrastructure from cleanup.h.
+I'll look into whether it's applicable in this context, and plan to adopt it
+where appropriate in the next iteration of the series.
+
+>>  	hash_for_each_safe(kcov_remote_map, bkt, tmp, remote, hnode) {
+>>  		if (remote->kcov != kcov)
+>>  			continue;
+> 
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> -- Steve
+
+Thanks again for the feedback and for the Reviewed-by tag!
+
+Best regards,
+Yunseong Kim
+
 
