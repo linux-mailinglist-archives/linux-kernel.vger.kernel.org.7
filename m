@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-755948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9600FB1ADCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:00:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCE9B1ADCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D74218898F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A47E7A66DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ED52192F2;
-	Tue,  5 Aug 2025 06:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B768221767C;
+	Tue,  5 Aug 2025 06:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naerP0tt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+3kDkF6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B07B2E36F0;
-	Tue,  5 Aug 2025 06:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197E6134AC;
+	Tue,  5 Aug 2025 06:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754373651; cv=none; b=L/cd96vzwrdcFVXBsr6WTEc/k+I0FA88axa1HdyhTRGUggOzufiG97NTLIRl90v6kVsr3ogaM8uIrYBrBfhCn1a/ZsjBv1nKrt86glmcQlZ1xA2nqFgL3OKNNMZsiJkaCWmItu056Sfqhvx83SnF0aJMiTfEJDTTlFB7f+yIhC8=
+	t=1754373781; cv=none; b=L3Bger6JRJlYjnch2bbWXMlt03g68ywRIlPxOXkaD/24dVfkX7/eWYHcs1SdXi9mt3QUBrkjhWOwu0PFvI8Cdlaqtf1n1tyk/p5q91ycdJO1LEwIxi1nUGMEPZx6ute9CpgP3ZO9tQb0CyQwZcpnKUyMMzu7h4tIy8HDBimRqyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754373651; c=relaxed/simple;
-	bh=tX+ngnuNCAVb74IqefbM7zB6jjnyUWkCQsWDQARwTDw=;
+	s=arc-20240116; t=1754373781; c=relaxed/simple;
+	bh=At0YsxU0xyNqZmkThQW6291iW6m4/11QUcMJoGzgqZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDSmY+9DnqjhprXOgsjXxMQ+Z0f3eWiB5XAsyOcNOYdOHrmfQ7In67VWGk6PyhepilG/zaMKpYifGDpNRpwrlw/JirzFgYs8Smuuwf/VbKYN/LkX0erYsZqDnbxpMCLanC3ZhK8wEvGJDsxnuKepdHe3HQbs2dm6GyqvKCbsNfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naerP0tt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D014C4CEF4;
-	Tue,  5 Aug 2025 06:00:45 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bP+Ol5nRrV8Zane4y7jLoAGBbaSpwupwTOWe3vSYH+f/0bOpnm6ycWMPU8UOOKsTwBID461uUT013Wf3zeapYlMJu8GEL+QVHVygQfqwYFSjov5rMqxMSQ3bqIlAAu7B3PWB2aI4QW9Kww2LSRPLoYlRlEvoaFACpU46HPYJ6TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+3kDkF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416B6C4CEF4;
+	Tue,  5 Aug 2025 06:02:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754373651;
-	bh=tX+ngnuNCAVb74IqefbM7zB6jjnyUWkCQsWDQARwTDw=;
+	s=k20201202; t=1754373780;
+	bh=At0YsxU0xyNqZmkThQW6291iW6m4/11QUcMJoGzgqZE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=naerP0ttiD69mLYton5fom6/owqtH50KH5KE1/jXg5RiJHqD0mh39/LE/wDEjjD+i
-	 OyybObWdwzkBzZvfn7tUmxbPHCa47SOYbcSOa4N5PZBHyDlEgBmiBkD6+lDJC/frux
-	 CRpAharD/acv9XY+G8TpT+OGec6BzfBMC7Ae+czM1Pz908grfEBzbJ9zX72PMTz6OE
-	 x1iKZ2cshebsaZ/d+xsY/jtHRWSoVy+QEpL4wOuF3kBfM3ferconccsVjjc8u+71K7
-	 kmeI7KnChY6uHIUR0HeFi/QQx+eqIgLgIyHKBQNqwmtbGys/lha3BE/zIxy+kliPJ5
-	 pQ9YMsUbpBJ2g==
-Message-ID: <b753e36f-e52a-4b11-a3f5-60a14d5ccac2@kernel.org>
-Date: Tue, 5 Aug 2025 08:00:44 +0200
+	b=W+3kDkF6KMuS4K1bi9txcw8Kb+g8VzoZ6qljW7Ywuo4cUYS8Xs/hvuZbmOvFRmZW9
+	 w4kJmqx1IimCcEzon6s0NTbzqW8kzhlsW/yuFE+ngnuZZi8E+YyWMKCMb3BCl+He4v
+	 mUrBp8M7x5gGdDHzT9gOBgF4UyU3CXG1JQl3lcZENyCOZfCmdHfdYrjerjCO2ZVWbS
+	 6WxeQ/ZVNErMosG/Vl6AxavTEXBaOBDGAsk348Clc0bQWL9IKK1G4fBd/H7iz+rg5g
+	 NpVr2HT04ZSPA9bW8kQ6HKRY+uSCJAGaXH6hl7fNFGcfYgzWfu5vmW+uftWTYvGEFl
+	 613+TtF1GQNhA==
+Message-ID: <b5ba5a22-dc0a-423b-963f-5db6c7e04665@kernel.org>
+Date: Tue, 5 Aug 2025 08:02:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: display: panel: Add waveshare DPI
- panel support
-To: Liu Ying <victor.liu@nxp.com>, Joseph Guo <qijian.guo@nxp.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, Thierry Reding <thierry.reding@gmail.com>,
- Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250804-waveshare-v2-0-0a1b3ce92a95@nxp.com>
- <20250804-waveshare-v2-2-0a1b3ce92a95@nxp.com>
- <abe153f8-dac9-4c92-a191-3e97b5a591e8@nxp.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j722s-main: Add E5010 JPEG Encoder
+To: Brandon Brnich <b-brnich@ti.com>, linux-kernel@vger.kernel.org
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+ Udit Kumar <u-kumar1@ti.com>, Darren Etheridge <detheridge@ti.com>
+References: <20250804180106.2393256-1-b-brnich@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -113,25 +103,44 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <abe153f8-dac9-4c92-a191-3e97b5a591e8@nxp.com>
+In-Reply-To: <20250804180106.2393256-1-b-brnich@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/08/2025 03:54, Liu Ying wrote:
-> On 08/04/2025, Joseph Guo wrote:
->> Add dt-binding documentation for waveshare DPI panel
->>
->> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
->> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/display/panel/panel-simple.yaml | 4 ++++
->>  1 file changed, 4 insertions(+)
+On 04/08/2025 20:01, Brandon Brnich wrote:
+> This adds node for E5010 JPEG Encoder which is a stateful JPEG Encoder
+> present in J722s SoC, supporting baseline encoding of semiplanar based
+> YUV420 and YUV422 raw video formats to JPEG encoding, with resolutions
+> supported from 64x64 to 8kx8k.
 > 
-> Suggested-by: Liu Ying <victor.liu@nxp.com>
+> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+> ---
+> 
+> Changes in v2:
+>   - remove invalid clock-names attribute
+> 
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 5cfa7bf36641..fb24c14614b4 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -385,6 +385,16 @@ c7x_1: dsp@7e200000 {
+>  		ti,sci-proc-ids = <0x31 0xff>;
+>  		status = "disabled";
+>  	};
+> +
+> +	e5010: e5010@fd20000 {
 
-What issue is being fixed here, that you suggested?
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
-> Acked-by: Liu Ying <victor.liu@nxp.com>
+
+> +		compatible = "img,e5010-jpeg-enc";
+
+Wrong compatible. This is TI, not IMG.
 
 
 Best regards,
