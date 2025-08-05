@@ -1,287 +1,190 @@
-Return-Path: <linux-kernel+bounces-756443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA23B1B409
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:05:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9675EB1B3DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 808EE7ABE80
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C7916B948
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62C127510D;
-	Tue,  5 Aug 2025 13:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFEF2727E7;
+	Tue,  5 Aug 2025 12:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Oo9jZTOL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HqBaBc+q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B6E274FE8;
-	Tue,  5 Aug 2025 13:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F159C2264DB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399053; cv=none; b=bD4J9z76XSVwnxR+Zw1dbt9kQ2CxT2rEwdN6+E7+h3XxcQH3Wi0GkOknLfAOrgXx9d1BQRoSuCZ6oJEHNZ4wWoWTU09pXwai0diP1/2U3VP+Ta1OdxeavLaq8MGzFsVqoIkoXM+ZTWbh4A98qi8w4SD5gwd5HEFdv4VPlb0YnmQ=
+	t=1754398538; cv=none; b=r2/ATGfMM1pXrFFq/yKT2TBTq4QySC9f7LecfNZubKwSsuQ2yJBo7Q5VX2gjthFZpR5cHHQVlD0gTh2yaqWRCGMGn1XnNgXD1tMI6J/0NIVPb9z0Qfpu1NPlQWcklo7qrOE+x4Yb+4VzjUQcUWMsN6kgHX9lLuFje8fM5xx81Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399053; c=relaxed/simple;
-	bh=4TCs8T6rPdDw+WjORxD4LfXmreO/1Hdv3tZS6BINC8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jhNqc6j56BpOid3D3nWDhflCTVCICkQO2Rkm793UQtGHmyuNWaJq7uU71MWVdvv8aRpNhJi4T5hP3bPvy2sAL4gucv1adjl9P8468Ohon4SsShukP3+hrAlljWEh8KlQ3Ouk+S/Mfv1iYTL2aVmv4Wky+sTwV/UX6HPZCa+jDfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Oo9jZTOL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758wBSJ025323;
-	Tue, 5 Aug 2025 13:03:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=oznJXzdTR8cxpW1z6
-	yoy8Ld2n5Rz+kPjepuZzrbEiKQ=; b=Oo9jZTOLyeTMA+EnWWmish8KWe3hXBkKa
-	o88YzSO6crvxs2IOTBsHQmn0DoZCf1CVYibJVIihYeUbaIOchFqKflGz73U4YkNI
-	1u5ZzA7+u8/OLHv86clZ74r2BNuyikOo9JhfHepc1Ys4W45XMOQ7bvqt9xO/iHiR
-	vnUA/C80hSTbCPgnUY8ftLPxIEk0pVDy4B33hfxjIO851dikKtn0c2KY11GlX5/n
-	+d/2xs33D8ZFnRNYXmk29hnskxpBpMCDFJ18lPanjvsGXxK4k2OiTn9t+xMxc4/Y
-	g62zFP6+6F4sO3tTMHUkNB2eA5x+s0OmQa4RBi1ZpMdYph6FxXwWA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6wss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:03:56 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 575D3tTc010205;
-	Tue, 5 Aug 2025 13:03:55 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6wsq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:03:55 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 575A6bFw004495;
-	Tue, 5 Aug 2025 13:03:55 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 489yq2j7fg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:03:54 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575D3pSI19202414
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 13:03:51 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 41A9520043;
-	Tue,  5 Aug 2025 13:03:51 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CEE420040;
-	Tue,  5 Aug 2025 13:03:50 +0000 (GMT)
-Received: from heavy.ibm.com (unknown [9.87.141.116])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 13:03:50 +0000 (GMT)
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Ian Rogers <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Thomas Richter <tmricht@linux.ibm.com>, Jiri Olsa <jolsa@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v3 2/2] perf bpf-filter: Enable events manually
-Date: Tue,  5 Aug 2025 14:54:05 +0200
-Message-ID: <20250805130346.1225535-3-iii@linux.ibm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250805130346.1225535-1-iii@linux.ibm.com>
-References: <20250805130346.1225535-1-iii@linux.ibm.com>
+	s=arc-20240116; t=1754398538; c=relaxed/simple;
+	bh=HOB22G3loRJWaKMt8mwgyEJ+zx+KC090srXh72+31xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AB0zRp23JrHnn7YH8s5YwiV/cRloT+jbiYpiVjFjkVw7IO9JWLEpO6rKHd4VYbxSKzdcp0cvwexEAv2hHsbL+oLhkxcDOF5EEkW9B4iOJokjBiPuhXXi5MzmfJolxVmfJ6ucayI/6RsPASH0wUjHGldPFcspvPlnDxNLhEy5Fdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HqBaBc+q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754398534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mXQVWi/b7AMP+vy5HeVixIeMAJNnKqw2TByOJlo+1Us=;
+	b=HqBaBc+q+OtPQ6gXdtTqFGJ8+0N+G0MMVLJA/DSYspWhEeJfxWnQea1ouySUq7Ui5N8AaO
+	wcxuxYMWHohaTkbL15HJZtWpuXLpWkAmZ6/ERB7KqtoMo74+END649Uh36HQ498wsw1yTo
+	FYXQChTGDAsCZz+BjlrnKPnUIJungUM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-hyiUAY3qNO-QvufqOHK9kQ-1; Tue, 05 Aug 2025 08:55:31 -0400
+X-MC-Unique: hyiUAY3qNO-QvufqOHK9kQ-1
+X-Mimecast-MFC-AGG-ID: hyiUAY3qNO-QvufqOHK9kQ_1754398531
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4595cfed9f4so9294175e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:55:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754398530; x=1755003330;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mXQVWi/b7AMP+vy5HeVixIeMAJNnKqw2TByOJlo+1Us=;
+        b=uQJP0ZrB1x+mvnagyG8tAB55rdjmNw4pDNWjRefz1AcyPKvfWui0S8FSKsWDBx+qCD
+         uzBY5IohNjCluOP9kI77CymFk6Ss+HNsGXLYBdt7Me+tO5sT1WfzUaAPm3hV/O/rypS5
+         uBkJTjKs61pcTWAIoHF1XeGMbtQQIN/NZRp+WZg2zsCE6bbul8vXQe3TyBJosKX4YYij
+         f4BjWmcKTO7vk2H8w4A8J0/GWum9n2BhvzLq7S/I/nFtHthcet+XsfYzh8/hEBRkCt59
+         RYl3mKJQixxf0jTuPUUe+90SYf98NJs/UspDrVXefeRWRQ5kSeaWID0EuN5We5ADMW1D
+         tsXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuIzxow0S5rwvwCLLZj5mBN4vVe6gjnG725bGnfuKrdEH+IXWbFMQsNdt+7GKpdlMVyhRtGQLFqr3cNyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/3cvOG22RBjF6h2Lhkkv6P7txlHu93CLrcjtydwsDm40xS+tz
+	5J9PQOkr0N2lgrpxprr0JM13OCG5G87m2Qjq+j3eNx0H/WvBjSg7UStBl6kobpAJwBwzJixTFLq
+	+n0oghHCO2e+76/6FaAjvOsqvAKYKw4Ygc/yNZNNb3SXv86NKN1F8bIpIiTAeSpnCRQ==
+X-Gm-Gg: ASbGnctOMbZM6ZcicLJPVKR7zLWSwKU+sXnerouCpo0U0OTq3G4Wj/zAsZj6qLVbtYd
+	xsnQ4hoX3t0zPkfXr7meILz/Wi6/BWesDDUVHWVJUQvBmdMsSDpx4gjGWXjOUn0NCyfmHDmXHZ+
+	ypwnKTzLmKlQFy59p3hp0S3bYdVo0TCEjLlFbobBbZwrwDxUSyL2toyiR799RREvKoUCRINWKwn
+	czXVtIpMy7dad58hVxWb/WFGIIm2Rks1CNOskqJllA5sdi2hpAMgt8+P0SDrh7RfOwdKI5aBNTl
+	l5Sf5Nr4G4hKtNFBwOmTK5R9FlUiYWhidsAYfFJ4lI238MiY2Ziv87FaGtJsfcGnU1NsgNA=
+X-Received: by 2002:a05:6000:2287:b0:3b8:d2d1:5c11 with SMTP id ffacd0b85a97d-3b8d94d3549mr10242844f8f.51.1754398530421;
+        Tue, 05 Aug 2025 05:55:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoW0VEHeHdM6KbOLWiBmAjo9TG0Lqe1CZviyoNOwGriAOTp++1O5KXtJScToSn/9LRd7ABaA==
+X-Received: by 2002:a05:6000:2287:b0:3b8:d2d1:5c11 with SMTP id ffacd0b85a97d-3b8d94d3549mr10242807f8f.51.1754398529950;
+        Tue, 05 Aug 2025 05:55:29 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1a26f.dip0.t-ipconnect.de. [87.161.162.111])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4534b3sm19065920f8f.47.2025.08.05.05.55.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 05:55:29 -0700 (PDT)
+Message-ID: <e608f766-8750-4781-bd23-8fa95b6d683a@redhat.com>
+Date: Tue, 5 Aug 2025 14:55:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] selftests: prctl: introduce tests for disabling
+ THPs completely
+To: Usama Arif <usamaarif642@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+ <20250804154317.1648084-6-usamaarif642@gmail.com>
+ <66c2b413-fa60-476a-b88f-542bbda9c89c@redhat.com>
+ <a22beba8-17ae-4c40-88f0-d4027d17fdbc@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <a22beba8-17ae-4c40-88f0-d4027d17fdbc@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA5NCBTYWx0ZWRfX324SwytEouD1
- Fs1ajQyWChONgqYW8d4gmuGL+21nOHk2q+E7pptl07nXTzMuigLC2NHjcG10022p6h+/l0mIrwE
- oeITPgBWlVoSy9HSzyyvXZRlqS/X1oQopg84Z31LRC/obz7OIJfhEdwZH+CQkMZ3S2bXC7odCl2
- dYw6ddY5kZjutBQ1PUMw/ISfhUnbTfcbAtHYl5K9tqcJXEnctjCrqhUZcATSkUjDC8/5j0eSW4X
- il39bibvaAROVjYkYgCrTojHIp+L7FS0Zn/PZaK8nkFBovGekb3m4e6zKHl0TFBhiTmwdBkHI4x
- nNpQVLLs+dYALZKc80C/BzRA40hq63IIZ3Fg5bLn0bZVWkTxAqjjIxeZsBTNcfOBUHvC/1C+GLT
- jEZWdCU/lo6pjrACYnXpReg2ZdeO3+caCVcdtCaYCbw/L5BTuKVGrpE6VUVW2yA0g6LXM7Lc
-X-Proofpoint-GUID: KL32_dLLaN2XvdAwN5Y8IBib0CB_nCmp
-X-Proofpoint-ORIG-GUID: oTmD_Lxw1PKjGtEeRBBjLOGmESNl0GYT
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6892013c cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=vr62MNj9oYPwvujLfVgA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050094
 
-On linux-next
-commit b4c658d4d63d61 ("perf target: Remove uid from target")
-introduces a regression on s390. In fact the regression exists
-on all platforms when the event supports auxiliary data gathering.
+On 05.08.25 14:46, Usama Arif wrote:
+> 
+> 
+> On 05/08/2025 13:39, David Hildenbrand wrote:
+>>> +FIXTURE_SETUP(prctl_thp_disable_completely)
+>>> +{
+>>> +    if (!thp_available())
+>>> +        SKIP(return, "Transparent Hugepages not available\n");
+>>> +
+>>> +    self->pmdsize = read_pmd_pagesize();
+>>> +    if (!self->pmdsize)
+>>> +        SKIP(return, "Unable to read PMD size\n");
+>>> +
+>>> +    thp_save_settings();
+>>> +    thp_read_settings(&self->settings);
+>>> +    self->settings.thp_enabled = variant->thp_policy;
+>>> +    self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
+>>
+>> Oh, one more thing: should we set all other sizes also to THP_INHERIT or (for simplicity) THP_NEVER?
+>>
+> 
+> hmm do we need to? I am hoping that we should always get the PMD size THP no matter what the policy
+> for others is in the scenario we have?
 
-Command
+Assuming 64K is set to "always", couldn't it mislead us in the 
+"madvise"/"never" test cases in some scenarios?
 
-   # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
-   [ perf record: Woken up 1 times to write data ]
-   [ perf record: Captured and wrote 0.011 MB perf.data ]
-   # ./perf report --stats | grep SAMPLE
-   #
-
-does not generate samples in the perf.data file.
-On x86 command
-
-  # sudo perf record -e intel_pt// -u 0 ls
-
-is broken too.
-
-Looking at the sequence of calls in 'perf record' reveals this
-behavior:
-
-1. The event 'cycles' is created and enabled:
-
-   record__open()
-   +-> evlist__apply_filters()
-       +-> perf_bpf_filter__prepare()
-	   +-> bpf_program.attach_perf_event()
-	       +-> bpf_program.attach_perf_event_opts()
-	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
-
-   The event 'cycles' is enabled and active now. However the event's
-   ring-buffer to store the samples generated by hardware is not
-   allocated yet.
-
-2. The event's fd is mmap()ed to create the ring buffer:
-
-   record__open()
-   +-> record__mmap()
-       +-> record__mmap_evlist()
-	   +-> evlist__mmap_ex()
-	       +-> perf_evlist__mmap_ops()
-	           +-> mmap_per_cpu()
-	               +-> mmap_per_evsel()
-	                   +-> mmap__mmap()
-	                       +-> perf_mmap__mmap()
-	                           +-> mmap()
-
-   This allocates the ring buffer for the event 'cycles'. With mmap()
-   the kernel creates the ring buffer:
-
-   perf_mmap(): kernel function to create the event's ring
-   |            buffer to save the sampled data.
-   |
-   +-> ring_buffer_attach(): Allocates memory for ring buffer.
-       |        The PMU has auxiliary data setup function. The
-       |        has_aux(event) condition is true and the PMU's
-       |        stop() is called to stop sampling. It is not
-       |        restarted:
-       |
-       |        if (has_aux(event))
-       |                perf_event_stop(event, 0);
-       |
-       +-> cpumsf_pmu_stop():
-
-   Hardware sampling is stopped. No samples are generated and saved
-   anymore.
-
-3. After the event 'cycles' has been mapped, the event is enabled a
-   second time in:
-
-   __cmd_record()
-   +-> evlist__enable()
-       +-> __evlist__enable()
-	   +-> evsel__enable_cpu()
-	       +-> perf_evsel__enable_cpu()
-	           +-> perf_evsel__run_ioctl()
-	               +-> perf_evsel__ioctl()
-	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
-
-   The second
-
-      ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-
-   is just a NOP in this case. The first invocation in (1.) sets the
-   event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
-
-   perf_ioctl()
-   +-> _perf_ioctl()
-       +-> _perf_event_enable()
-           +-> __perf_event_enable()
-
-   return immediately because event::state is already set to
-   PERF_EVENT_STATE_ACTIVE.
-
-This happens on s390, because the event 'cycles' offers the possibility
-to save auxilary data. The PMU callbacks setup_aux() and free_aux() are
-defined. Without both callback functions, cpumsf_pmu_stop() is not
-invoked and sampling continues.
-
-To remedy this, remove the first invocation of
-
-   ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
-
-in step (1.) Create the event in step (1.) and enable it in step (3.)
-after the ring buffer has been mapped.
-
-Output after:
-
- # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
- [ perf record: Woken up 3 times to write data ]
- [ perf record: Captured and wrote 0.876 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      16200  (99.5%)
-              SAMPLE events:      16200
- #
-
-The software event succeeded both before and after the patch:
-
- # ./perf record -e cpu-clock -aB --synth=no -u 0 -- \
-					  ./perf test -w thloop 2
- [ perf record: Woken up 7 times to write data ]
- [ perf record: Captured and wrote 2.870 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      53506  (99.8%)
-              SAMPLE events:      53506
- #
-
-Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
-Suggested-by: Jiri Olsa <jolsa@kernel.org>
-Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
----
- tools/perf/util/bpf-filter.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
-index d0e013eeb0f7..d480ccaf3662 100644
---- a/tools/perf/util/bpf-filter.c
-+++ b/tools/perf/util/bpf-filter.c
-@@ -451,6 +451,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
- 	struct bpf_link *link;
- 	struct perf_bpf_filter_entry *entry;
- 	bool needs_idx_hash = !target__has_cpu(target);
-+	DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts,
-+			    .no_ioctl_enable = true);
- 
- 	entry = calloc(MAX_FILTERS, sizeof(*entry));
- 	if (entry == NULL)
-@@ -522,7 +524,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
- 	prog = skel->progs.perf_sample_filter;
- 	for (x = 0; x < xyarray__max_x(evsel->core.fd); x++) {
- 		for (y = 0; y < xyarray__max_y(evsel->core.fd); y++) {
--			link = bpf_program__attach_perf_event(prog, FD(evsel, x, y));
-+			link = bpf_program__attach_perf_event_opts(prog, FD(evsel, x, y),
-+								   &pe_opts);
- 			if (IS_ERR(link)) {
- 				pr_err("Failed to attach perf sample-filter program\n");
- 				ret = PTR_ERR(link);
 -- 
-2.50.1
+Cheers,
+
+David / dhildenb
 
 
