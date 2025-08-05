@@ -1,237 +1,265 @@
-Return-Path: <linux-kernel+bounces-756549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A99B1B5BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:05:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7700FB1B5D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA0674E282A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D03333A32A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41648275AE4;
-	Tue,  5 Aug 2025 14:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37EE27B505;
+	Tue,  5 Aug 2025 14:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="NvuHngQ8"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013058.outbound.protection.outlook.com [52.101.72.58])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="AZKhwYtC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C69C1448E0;
-	Tue,  5 Aug 2025 14:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C4D27AC3D;
+	Tue,  5 Aug 2025 14:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402467; cv=fail; b=V2BT8LMbXVaO/JNFcu/ziF501hoS09B+h5H/IPHHtWt8pDPfzFkafNN8HBBNAxLif4QbZLmd9sa6Eizhu1GT4K04w7HpPMBfSU8/khqKeo4Oz3qMdQU5QbHuZNOzyKlUr0cqurK2aY3XWU3zVysGhPCp2csvLrv5J46xkWvZiGY=
+	t=1754402579; cv=pass; b=RbHw6iNXSDfEFquaQT5GW1If+R7mp7H+AZLlN2zFAFrmINqBZTyTa+5l+46h7+x/Iwnj3OVG4EpVODQ1NZPKPOstUDzS1tI3UMg34pPqYXrqllZUEA+f2bkoIvUY6W2gBK4c9m6VKxKqUJJ8xz1nw2IbiU0v54eaqFKyEEOreyI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402467; c=relaxed/simple;
-	bh=MgddTAByWmhnXazF6iz0UtyVLTktWBPSVqif1bH6UYw=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pNZ1oC7KKmV5WxHs8MZsW1ceJZw4w+3EobE9eoojn48nDDCd2eCa71UXkQ8BQn9LJ5E7x/wpOz2h3e9wo1+k2HRjarvBVhhVGB0SyjJXJEvDEWKf8fVLyNnmj/L83bTu40Ue9DzBWu5m+w+woNLlsadEKrOo0XqkSV6CNGi4qY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=NvuHngQ8; arc=fail smtp.client-ip=52.101.72.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gE/ldy0FDTt7IC49M5CbfUyy2b5R6vprrDYK+RoAW8E+2Av20tLRQYxSlFmEVVTNpa7z05sENLfK0pAuYn4A+sZAnK4SATyY89kWo4VwG7NgJyRS0Bxb2Dv86V6Lj/PN6y163jP2UEoNYcRru6CIFuWTxxQyPDOPJ71Z/cR9ABG3TgsKDu7ok4OkgU3nK2a0iHP4FZ5wT070/Gt0QpZa1lkUYcJGU7aEBx1HT2vWQhhJAdnEPPmW9ltJkFJTsHUfrFh5Ut7yy/4nZbvW4dkyQ0gvQIIRS9A2wBZECZ3EAPqG3c4Lql66lDavjyUeSdLjoHApV8t/V9x+Q0g8NXeV0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OhrmX+VbZyfEClCyV8Hc7TX19PG0jza5H7iQ8Gy4srE=;
- b=sh3baCP+/AVdRKk3ca6LmgEeiDTvjJRnvtUn3DKHGKRC5c6nXo+Jt3bGY2LYhdKHqU6mzZKVKJzOcXss8Ios8lUMbM1Jo3yW8zeBskijE5aKu34pBu+0uZOhi8D9Ebu6I7XPqq5gOitoYeHP0vTwJS4zc4gNjVjRQR7ugLpFW2UCaTrVewrsmEInu9fv8ccics5zwOVr+O8BpdaYV3fCNYG0y6QRixzMLCpdI3gFZPBKKkRTtq2KdMtcStwpoANouqzhghGKbviaYVmbJ1ywJCc0EGHZ9noHprnDNe+oX71HtFEskaYaCnWSstZdXOZo83+d1z8C6VKNARPIfLRxpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OhrmX+VbZyfEClCyV8Hc7TX19PG0jza5H7iQ8Gy4srE=;
- b=NvuHngQ81Wju2d3/ohcEpW5o3aQ0028R3YIzUofm3v8XPYB42u1h/EvFclEcA4uDMPIpaKRnsFDWSRNLJhetTKjg65nNrIn99WoOR7Q/XHs/AtHLmV1kBphgRmo5CscwDr0YDwa1/PMOm3O+R3/dZZX/Z7OHv+f73wkSK3Jb61k=
-Received: from AM0PR01CA0118.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:168::23) by AS4PR02MB8670.eurprd02.prod.outlook.com
- (2603:10a6:20b:58d::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Tue, 5 Aug
- 2025 14:01:02 +0000
-Received: from AMS0EPF000001AF.eurprd05.prod.outlook.com
- (2603:10a6:208:168:cafe::d6) by AM0PR01CA0118.outlook.office365.com
- (2603:10a6:208:168::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Tue,
- 5 Aug 2025 14:01:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AMS0EPF000001AF.mail.protection.outlook.com (10.167.16.155) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9009.8 via Frontend Transport; Tue, 5 Aug 2025 14:01:01 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 5 Aug
- 2025 16:00:48 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-CC: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
-	<khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>, <kernel@axis.com>,
-	<linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] pwm: meson: Remove error print for
- devm_add_action_or_reset()
-In-Reply-To: <sveurgnigarzdjreweoibcxkkl7rekcpufuwqr7bxcrdx7zdrd@kz4ohstmfyjh>
-	("Uwe =?utf-8?Q?Kleine-K=C3=B6nig=22's?= message of "Tue, 5 Aug 2025
- 15:23:12 +0200")
-References: <pndwm7ikt8v.a.out@axis.com>
-	<sveurgnigarzdjreweoibcxkkl7rekcpufuwqr7bxcrdx7zdrd@kz4ohstmfyjh>
-User-Agent: a.out
-Date: Tue, 5 Aug 2025 16:00:48 +0200
-Message-ID: <pndcy99lvfz.a.out@axis.com>
+	s=arc-20240116; t=1754402579; c=relaxed/simple;
+	bh=/QgH0A8R3cgOTDRRPLoaPXVvMdgUw/ShCoYTRlnwe5E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=unSgfKy3gxMCnLj58I1BnOWU583kpTDRih8Fe6KwiT4798v9OpAKpf9jRd9sPjmScWRpna9b4i0oIEOzP0DYgy0b7ehJcgPh6GhzTXeTUdYKbu4r/IQ3D0CmSLfWTTb6dGS59qtUeSUNkAzP3c3TT7tbfjaS06UWe0QFzXgUXgc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=AZKhwYtC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754402506; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nUxhhGeOYWGMSQq4TuGXcvsj5fJLVw6BzO0J2+6PRP7K++lLNSLLyr+hceuGHL1wIvFqdGkri/uKMfzHQFX/QT4eVGVjFWpdkpZz9L0hCDwqJHKRzrQh0z4jwQtQQ4vMxM76jp1x4pLjwtbfXd/+LUw1hNGIFFpFxshpATbOkkc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754402506; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JNx5rDCPViP8TmHGLeMc30Mcr6Nu/C+gsNm2VgM8q3k=; 
+	b=DEg18Hedavq1UC6n5lcYbEs/BcNWiMYH/y5qRJqCMy7XgVYNKOGsxIwtOq6N9bMVovrxWIKboTDrmN5tV4BWVHbcqeM1+wPKrfW6yniB2cEqY3P9TVSgQp30AlSltVbGIb5I2+cko4oY9RNgajDAVfZtxDs8pahb1EMPeR86shk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754402506;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=JNx5rDCPViP8TmHGLeMc30Mcr6Nu/C+gsNm2VgM8q3k=;
+	b=AZKhwYtCEHXknT2qM4gusLK3yM7vzwulKxfcIl1gH9XlLuC6UBdcgo+qUDHxYCWT
+	Z2f73JsOnaJwFfNu+hypWleN9q1V1LI6uLP7TPuasyEUD7lQqR2PJNhEmPbhnn1oclO
+	H6aMXIVIx7Oswkej9nvjIHb6ihjbJH+FdRsj3TfM=
+Received: by mx.zohomail.com with SMTPS id 1754402502293977.7687680728351;
+	Tue, 5 Aug 2025 07:01:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
+Date: Tue, 5 Aug 2025 11:01:22 -0300
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ netdev@vger.kernel.org,
+ andrew@lunn.ch,
+ hkallweit1@gmail.com,
+ tmgross@umich.edu,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ a.hindborg@samsung.com,
+ aliceryhl@google.com,
+ anna-maria@linutronix.de,
+ frederic@kernel.org,
+ tglx@linutronix.de,
+ arnd@arndb.de,
+ jstultz@google.com,
+ sboyd@kernel.org,
+ mingo@redhat.com,
+ peterz@infradead.org,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ vschneid@redhat.com,
+ tgunders@redhat.com,
+ me@kloenk.dev,
+ david.laight.linux@gmail.com
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF000001AF:EE_|AS4PR02MB8670:EE_
-X-MS-Office365-Filtering-Correlation-Id: 459f408e-5f37-4d04-4919-08ddd428829e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFJmdXRmMEVKMDI5M2RLcVpYY09PUEFsMnlrRS9PV2VlMEp4UDk5cHFrUTl1?=
- =?utf-8?B?UHVyQ0JkTVRpSlBzRDV3QTR5alJ0S0ljK0pCWUFXYkJ3NTR3eUw1TXRWWjg5?=
- =?utf-8?B?U3RUbExhcGd0djZSSnNtVWJIa21kYnVJZmd4OU9oclZqdWNFTjdsRDVvNnVw?=
- =?utf-8?B?Z0dBTFJnam5JSnRIMjArSWdYWTBvdlRhS0p0enlHM1cxbGRpbnlOWTFnQzBY?=
- =?utf-8?B?WXUzRmp4ZUlyQ05VNlRBVTBzU1ZJNVVrZUF4U3ViZVIzNjNIMUpPRDl6dElu?=
- =?utf-8?B?dmh5RTUrQnJMclAwcDZDUzFKTlcwUmxCL1pBanhNV2RIOStUT1A3MlNvQkEy?=
- =?utf-8?B?SG9xZHFVY3Y0N0ttSmI4MnJBRXZKY2daOG5pQllVZ3lGNTA4WG5zTDAyMVps?=
- =?utf-8?B?SjZhOE5mb2h2cm04QnJEelJOeWFyVGo3UlFZejFpK040T3g3S1lZaEx3UytJ?=
- =?utf-8?B?SnFZZy9Wd0pQMW90SUVKQjVZZTYyeGxYVG95MFlqaUtHM0M1WkkzZVllRlhv?=
- =?utf-8?B?MkZuamE2b0JUVFlPUFhhekJ5MlRhaE9TS3k4WmhLTnB2L2xvRzQ4SGxOL3hj?=
- =?utf-8?B?M2RBL3ZRQUdKL0RnVGNBTUxNYXR2WS9XdDJnZ0xrdCtSMWVscE5wVkZabGpv?=
- =?utf-8?B?L2IreGkrRFFpU05GTG9jdUR3eHNPNmltcm9DVHhrajFiSmlqU2JWZ1d3eDdK?=
- =?utf-8?B?MXBDb2ZOdFBCWjJ6STl5dXZPK3BzbEhWY2VNMlB2TmljZTJHNFpaUmNrVHJZ?=
- =?utf-8?B?OFl5Rm1FdHVuaDFPaEUweVpqWTdJTlJMN0k0dGI3VXlJTGVhUC81T2gyNjhJ?=
- =?utf-8?B?cGVEb0tYZ2pPdDQ2LzhjMU1oaTYxUDYySnRnanV4THc3eTBCYVlqMi8rT0NQ?=
- =?utf-8?B?UmpqL1ZCWThLZXZQTjRrYWxVYzNZWmZ5ZWVxbENzS0tmbUxHd3h1MGorWEdK?=
- =?utf-8?B?MVhxdFZpTkVKMzJjS3NhMUN1NTlxRWlLQmlHWGthMk1PNGU1eXROVythRjhF?=
- =?utf-8?B?UDYvaTRhTGxDeTVVMXFzVHJOYzBkOENWQ2hGVkFqSW9KQytEeHhvWW4yNUtP?=
- =?utf-8?B?OWV5eFhDZUF3ZlR0U1VxNmNOT2xWUXY3MThIVGhDc0NwQnpOVFh1VXZXNGNi?=
- =?utf-8?B?bHAvYlpMTkVMOU9LcXpJR1VmdWJOcWIrZS9HTEdZY3NGeG5USjJ2ZXZrZXJH?=
- =?utf-8?B?VUxUWkZLVnh1ZEhsN2FhNnBGQ3J3eFM3Ni90R1czYkROck9nVzBHYkZ4SWk1?=
- =?utf-8?B?NW95a2NOYVMvTEJCNHMxUkVMblZoblZiTEF6TW15Sjltc3hOMkdOZGtmU0lU?=
- =?utf-8?B?OGZ5TlQxV0xKU1FyWUxPa2pab3NkbklTdXR6dmg1REpsV0JmU0VqU1V5UmNt?=
- =?utf-8?B?dkpzRmpFRnJlZ21FNGozLzFUYUZwRnUvOHFUSkVxRS9NbWxUOVJjR1B1QWlu?=
- =?utf-8?B?eGZxTm5QVENEdEtoeDBWYWZFUXlPTXlLYWR5YzNuUDNYK01OV2ZJaWIwNDR1?=
- =?utf-8?B?ODFDcE15cWFySVVnZVVBWFkvb0hydFRDek41VGF4UTZnUFhodXM4VnJlV1FP?=
- =?utf-8?B?ZnYxNFM4NDJwaUpkUFNvdUcwU2NjcTBiQXlRZlFiZEFJSTRDMDh1dSt0aWNp?=
- =?utf-8?B?S05nVnhtQXJ4S2MzOERERStncjBRMmtUZVpRSjdFbnJ6ZDRvbXdSYWRGYVZp?=
- =?utf-8?B?ZUFqUkpRRUFUTXdsUGh0dVROYU8vQ2NtOFFFajgzdkZZa042aXNpejFCVlNS?=
- =?utf-8?B?My9vaVdxVldmSGROdXhEYnJQM2MyaVRLU3d0RlVZY1VET0ZEaGdld1Zla3Rx?=
- =?utf-8?B?bFU2OVcrekVIR3JoZGRpTVVBQkNIWG5CbjJFTmlxTlVkVFVKeGthdENqRm05?=
- =?utf-8?B?QWZRN1A2QW1iakhPa0w1R0laYUxmMEtmSCtVMGQzWENDSVdkMkxJU1JVUmtu?=
- =?utf-8?B?NHZxcnoyVWhhQmVpbmE2UEN3N3UxWnR3YjV2N1NEY2pzOWR6dVBtZFhFdXl4?=
- =?utf-8?B?b2dvWUdtQUNBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 14:01:01.1246
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 459f408e-5f37-4d04-4919-08ddd428829e
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001AF.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR02MB8670
+Message-Id: <DCB831D1-8786-41BC-A95B-44F0BEE71990@collabora.com>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+ <20250220070611.214262-8-fujita.tomonori@gmail.com>
+ <DBNPR4KQZXY5.279JBMO315A12@kernel.org>
+ <20250802.104249.1482605492526656971.fujita.tomonori@gmail.com>
+ <DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Tue, Aug 05, 2025 at 15:23 +0200 Uwe Kleine-K=C3=B6nig <ukleinek@kernel.=
-org> wrote:
 
-> Hello Waqar,
->
-> On Tue, Aug 05, 2025 at 11:33:36AM +0200, Waqar Hameed wrote:
->> When `devm_add_action_or_reset()` fails, it is due to a failed memory
->> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
->> anything when error is `-ENOMEM`. Therefore, remove the useless call to
->> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
->> return the value instead.
->>=20
->> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
->> ---
->> Changes in v2:
->>=20
->> * Split the patch to one seperate patch for each sub-system.
->>=20
->> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
->>=20
->>  drivers/pwm/pwm-meson.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
->> index 8c6bf3d49753..e90d37d4f956 100644
->> --- a/drivers/pwm/pwm-meson.c
->> +++ b/drivers/pwm/pwm-meson.c
->> @@ -520,8 +520,7 @@ static int meson_pwm_init_channels_s4(struct pwm_chi=
-p *chip)
->>  		ret =3D devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
->>  					       meson->channels[i].clk);
->>  		if (ret)
->> -			return dev_err_probe(dev, ret,
->> -					     "Failed to add clk_put action\n");
->> +			return ret;
->
-> On the other hand the call to dev_err_probe() also doesn't hurt, right?
-> And when we keep it, it is clear that this error path is correctly
-> handled without having to know that devm_add_action_or_reset() can only
-> return success or -ENOMEM and we don't have to watch
-> devm_add_action_or_reset() to not grow something like
->
-> diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-> index ae696d10faff..0876cce68776 100644
-> --- a/include/linux/device/devres.h
-> +++ b/include/linux/device/devres.h
-> @@ -156,6 +156,9 @@ static inline int __devm_add_action_or_reset(struct d=
-evice *dev, void (*action)(
->  {
->  	int ret;
->=20=20
-> +	if (IS_ERR_OR_NULL(dev))
-> +		return -EINVAL;
-> +
->  	ret =3D __devm_add_action(dev, action, data, name);
->  	if (ret)
->  		action(data);
->
-> From a subsystem maintainer's POV it would be great if it was easy to
-> notice if a given function needs an error message or not. One excellent
-> way to cover functions that can only return -ENOMEM on failure is to
-> optimize out the small overhead of the devm_add_action_or_reset() call.
->
-> See
-> https://lore.kernel.org/all/ylr7cuxldwb24ccenen4khtyddzq3owgzzfblbohkdxb7=
-p7eeo@qpuddn6wrz3x/
-> for a prototype of what I imagine. Oh, you were the addressee of that
-> mail, so you already know.
->
-> To make my position here explicit: This is a nack.
 
-I fully understand your point and agree that there should not be a
-mental burden of knowing the exact return values from a function. That
-should be handled automatically, e.g. by the compiler or other tools.
+> On 2 Aug 2025, at 08:06, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Sat Aug 2, 2025 at 3:42 AM CEST, FUJITA Tomonori wrote:
+>> On Mon, 28 Jul 2025 15:13:45 +0200
+>> "Danilo Krummrich" <dakr@kernel.org> wrote:
+>>> On Thu Feb 20, 2025 at 8:06 AM CET, FUJITA Tomonori wrote:
+>>>> +/// This process continues until either `cond` returns `true` or =
+the timeout,
+>>>> +/// specified by `timeout_delta`, is reached. If `timeout_delta` =
+is `None`,
+>>>> +/// polling continues indefinitely until `cond` evaluates to =
+`true` or an error occurs.
+>>>> +///
+>>>> +/// # Examples
+>>>> +///
+>>>> +/// ```rust,ignore
+>>>=20
+>>> Why ignore? This should be possible to compile test.
+>>=20
+>> =
+https://lore.kernel.org/rust-for-linux/CEF87294-8580-4C84-BEA3-EB72E63ED7D=
+F@collabora.com/
+>=20
+> I disagree with that. 'ignore' should only be used if we can't make it =
+compile.
+>=20
+> In this case we can make it compile, we just can't run it, since =
+there's no real
+> HW underneath that we can read registers from.
+>=20
+> An example that isn't compiled will eventually be forgotten to be =
+updated when
+> things are changed.
+>=20
+>>>> +/// fn wait_for_hardware(dev: &mut Device) -> Result<()> {
+>>>=20
+>>> I think the parameter here can just be `&Io<SIZE>`.
+>>>=20
+>>>> +///     // The `op` closure reads the value of a specific status =
+register.
+>>>> +///     let op =3D || -> Result<u16> { dev.read_ready_register() =
+};
+>>>> +///
+>>>> +///     // The `cond` closure takes a reference to the value =
+returned by `op`
+>>>> +///     // and checks whether the hardware is ready.
+>>>> +///     let cond =3D |val: &u16| *val =3D=3D HW_READY;
+>>>> +///
+>>>> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), =
+Some(Delta::from_secs(3))) {
+>>>> +///         Ok(_) =3D> {
+>>>> +///             // The hardware is ready. The returned value of =
+the `op`` closure isn't used.
+>>>> +///             Ok(())
+>>>> +///         }
+>>>> +///         Err(e) =3D> Err(e),
+>>>> +///     }
+>>>> +/// }
+>>>> +/// ```
+>>>> +///
+>>>> +/// ```rust
+>>>> +/// use kernel::io::poll::read_poll_timeout;
+>>>> +/// use kernel::time::Delta;
+>>>> +/// use kernel::sync::{SpinLock, new_spinlock};
+>>>> +///
+>>>> +/// let lock =3D KBox::pin_init(new_spinlock!(()), =
+kernel::alloc::flags::GFP_KERNEL)?;
+>>>> +/// let g =3D lock.lock();
+>>>> +/// read_poll_timeout(|| Ok(()), |()| true, =
+Delta::from_micros(42), Some(Delta::from_micros(42)));
+>>>> +/// drop(g);
+>>>> +///
+>>>> +/// # Ok::<(), Error>(())
+>>>> +/// ```
+>>>> +#[track_caller]
+>>>> +pub fn read_poll_timeout<Op, Cond, T>(
+>>>> +    mut op: Op,
+>>>> +    mut cond: Cond,
+>>>> +    sleep_delta: Delta,
+>>>> +    timeout_delta: Option<Delta>,
+>>>> +) -> Result<T>
+>>>> +where
+>>>> +    Op: FnMut() -> Result<T>,
+>>>> +    Cond: FnMut(&T) -> bool,
+>>>> +{
+>>>> +    let start =3D Instant::now();
+>>>> +    let sleep =3D !sleep_delta.is_zero();
+>>>> +
+>>>> +    if sleep {
+>>>> +        might_sleep();
+>>>> +    }
+>>>=20
+>>> I think a conditional might_sleep() is not great.
+>>>=20
+>>> I also think we can catch this at compile time, if we add two =
+different variants
+>>> of read_poll_timeout() instead and be explicit about it. We could =
+get Klint to
+>>> catch such issues for us at compile time.
+>>=20
+>> Your point is that functions which cannot be used in atomic context
+>> should be clearly separated into different ones. Then Klint might be
+>> able to detect such usage at compile time, right?
+>>=20
+>> How about dropping the conditional might_sleep() and making
+>> read_poll_timeout return an error with zero sleep_delta?
+>=20
+> Yes, let's always call might_sleep(), the conditional is very error =
+prone. We
+> want to see the warning splat whenever someone calls =
+read_poll_timeout() from
+> atomic context.
+>=20
+> Yes, with zero sleep_delta it could be called from atomic context =
+technically,
+> but if drivers rely on this and wrap this into higher level helpers =
+it's very
+> easy to miss a subtle case and end up with non-zero sleep_delta within =
+an atomic
+> context for some rare condition that then is hard to debug.
+>=20
+> As for making read_poll_timeout() return a error with zero =
+sleep_delta, I don't
+> see a reason to do that. If a driver wraps read_poll_timeout() in its =
+own
+> function that sometimes sleeps and sometimes does not, based on some =
+condition,
+> but is never called from atomic context, that's fine.
+>=20
+>> Drivers which need busy-loop (without even udelay) can
+>> call read_poll_timeout_atomic() with zero delay.
+>=20
+> It's not the zero delay or zero sleep_delta that makes the difference  =
+it's
+> really the fact the one can be called from atomic context and one =
+can't be.
 
-There was no real consensus in the previous thread (Jonathan Cameron
-even CC:ed some checkpatch-people to get some input for automatic
-detection from tools, but with no response). I hope that we can have
-some good way of solving these in the future, because this currently
-doesn't scale well and I'm fairly sure another driver in the future will
-hit this exact situation again...
+Perhaps it=E2=80=99s worth it to clarify that in the docs for the future =
+versions?
+
+I feel like =E2=80=9Csleep_delta =3D=3D 0 -> this doesn=E2=80=99t sleep =
+-> it=E2=80=99s fine to
+use this in an atomic context=E2=80=9D is a somewhat expected thought =
+process.
+Also, this will lead to the confusion I mentioned, i.e. =E2=80=9Cwhy do =
+I need to
+use the atomic version if I can pass 0 for sleep_delta?=E2=80=9D
+
+I mean, the added context in this thread explains it, but it=E2=80=99s =
+probably
+worth it to make sure that the docs also do.
+
+Just my humble opinion.
+
+=E2=80=94 Daniel=
 
