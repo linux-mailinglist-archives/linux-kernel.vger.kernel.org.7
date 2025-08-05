@@ -1,84 +1,62 @@
-Return-Path: <linux-kernel+bounces-756247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B00B1B1D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:20:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690A5B1B20E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A9C189D5B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9780D16536C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2379D26A0A6;
-	Tue,  5 Aug 2025 10:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B422333D;
+	Tue,  5 Aug 2025 10:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CpioAsAF"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="RV9IzhG+"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B0A1C6FE8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 10:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3CD2566;
+	Tue,  5 Aug 2025 10:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754389218; cv=none; b=aQMkuWqpulwyAE0pBN54NbLE5CXUqfCGXhmbEGfwXYDCAPM1uUuQJA53xUwPqxXs/D48GmUiu0aUzOH5Ejoh3hYST4QCpe5zRCNjzS1Q64WoYh9EZxhL52Sdn4h7hOm6fNAHOkZLqc4Q2BjPHCdOxr9wQ7oHWnMG4Ck1RqSfr04=
+	t=1754389898; cv=none; b=Mhe6ikR2wDW0/vjCQj2UFjGJffBuk+mdE0D67C6sTKjChsjUbShwGUTo2/EVcKYZYl79b5tN4Z4b/U+MMbRCTEmhriSV4ZOqxjsFkc9B2LYAsVXmXhtTFPVB24jbmeIYIe74zUW33uWdEpdk/qYOITqfmSDUTQJiXmh6A3N1fno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754389218; c=relaxed/simple;
-	bh=yHS07nMwU4DvQAKXhw05BCSFbHkQtv4jF/xqOUl6vKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hOSkyr7KaeqGq5/tTPOI+Tg2oXCUXvNLoJjbJxBGOt7vwVpcCzpp774S0Fcc5MSsEY6EPcJrs/xNjeX110L+oIBRgOC+jYHkCm2jKG5uvq5Jv57Vz3kUqCcClvqwtVCf6VsxWKNpS/jXFL3j3vD3KY4aMhFPNHDIio4IZSl2soc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CpioAsAF; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7426c44e014so4836407b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 03:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1754389216; x=1754994016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ID/O+jpa5Id4ySA0O281Ba8wApOW+JtPIM75o1GLIzc=;
-        b=CpioAsAFk+SNSyTqcpZTu6b25BQbEIq3uEXBepL5DFE2yyRZkOewSyBHAzHH/kFTMC
-         DuMHTN6yO2YYPMruxnFSaJ27h2InAcevytck/WwYLfAPj3lRPkNMI0aYN8tA6h8d6f2G
-         64cNIvhUygUHpdElRifYZ2Hkn0AIPJcVIQsEw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754389216; x=1754994016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ID/O+jpa5Id4ySA0O281Ba8wApOW+JtPIM75o1GLIzc=;
-        b=HMqddFLA4rXiZUPqA+sa64RceryaNL+GT2/liM1X+A6whZH8kJb8XRxfgBqNKRM6WW
-         zQ5lrGOOW7HMJU+DMbkwpsRuXc0Bp14jOXVyiTdxcUdb/idxZjj4nprb4mf7rhvn9Q1k
-         FFjuMwuhnWjsx2LEco5u3SN5XhbdWJoIp5mmvCV5oGB+UqjBnyZx7eM7ekgNZ4NHSB33
-         CfJk2awP+n4BynN0NRsRSKnwW18N2tkpS3Q6h2mMTfp25VI0UjjsPfiSjp8+05LGa3v7
-         tLERNz+sRkmKOBefKhFzDbZFgiAG7t7HMASNS9Cr7WLKBun839Bs1U7GWGkFCIm4bbkZ
-         51ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSwKUL4wsmfPpTJBjoFGXiAFcWhUAjo4nYhRSfHihYgsdc7fL5C8vScH5bRaY6rrZi7zclbZ/hyWrOzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJqcxScTIPGVyyvHQBQn9wat9t4/o9CkjAUE9agWuCqOahWyWS
-	dhNo7wMoRMm7kvkIwLtPb5q3d5eXNRcSPxWQIJxacpibOl+fmYoFXJOTdZ2W0J7tsA==
-X-Gm-Gg: ASbGncv4+wk9D+TKauRlrhQZdlWze+Uh4TgnR1puGk2Ewl1lqOOcmrCRgZ5LZrUvHP0
-	oO8AMCHFYBZnxK2q0BsjauVvGBmdpcmj6T1EMt3U4feDSzxRz2CaPFkwqmynf5WWwRmrLuvQ+GM
-	TqL8XGuDP/9m5iy8gIyo0j0y2dhHg3zQqmRuAxRTURQv4/+lcifsYj5c4wWd7LnXv0ngC40qra3
-	LRP8Iv4HsfC0xNbo/SFwaTd5bSWp8xxNmuhg7p1VamygH7t2il2JZUj2y2GeiUs41H9f2/cb6b9
-	lheibBE7PnFMmiYeIroK3rFVvejZPvofsZvVQZL3eI8LPTtcNDtUiZ8jwFRP7BD+hqtTZG3N8GC
-	vQ9B7rlVCS45MN6jl/uVupOmAv6EbaLz4vNN3TMllPizn3C7QmMluLfhW
-X-Google-Smtp-Source: AGHT+IHS7XFrrCxOiBykpYR1RvBX10iSlM+rgsdsXMYDtW6cReThVLsKUIzXwtUEYfThTbVIyH+8+A==
-X-Received: by 2002:a05:6a00:21d4:b0:76b:da70:487b with SMTP id d2e1a72fcca58-76bec4bf096mr14993206b3a.15.1754389216404;
-        Tue, 05 Aug 2025 03:20:16 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:5a2c:a3e:b88a:14d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f30bsm12587965b3a.16.2025.08.05.03.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 03:20:15 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Minchan Kim <minchan@kernel.org>,
+	s=arc-20240116; t=1754389898; c=relaxed/simple;
+	bh=SZXiJmkDMpnyHVml/lE/tZpUhzlTWvl2AufRZ01q3hY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PAYuQIHd+e2Ih4aTGaUAyYV5uYdiccbJoHnaDjCIkdcKSOBQ4HNGfPloYcMJzEAOpsMareFiRCSY3XWasH7F1pP1xCztHnDWLywAMhKtSsbM3Pa0U/79zUg+sX4PFaP9Aq6l5Pa1yYkv/Rh6kF4T/KnTI9RarE1h964Zz6xl8f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=RV9IzhG+; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ew
+	X3zpeQCbPJL6bn0vT+8Zrn3/M7RCsOru7l1g5Iunc=; b=RV9IzhG+mR371FwMsI
+	+HWIQzYo1MRRhcNDUF0AqYM/0LXOs+/1WDXHzPLsy1sVxYPu9H/xqM4+OzFDy5ro
+	+G37kwhFkrf8MG1i9YxTxI5O2ydrrtTb5AQ0tEt5GQiRyw6Q9I8NlXjJq1oXTTjA
+	U3U2uyAwRhTDInc3Rdl51O9Q0=
+Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCnDwTm2pFoQFEdAg--.18285S2;
+	Tue, 05 Aug 2025 18:20:23 +0800 (CST)
+From: wenswang@yeah.net
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	corbet@lwn.net
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Seyediman Seyedarab <imandevel@gmail.com>
-Subject: [PATCH] zram: protect recomp_algorithm_show() with ->init_lock
-Date: Tue,  5 Aug 2025 19:19:29 +0900
-Message-ID: <20250805101946.1774112-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Wensheng Wang <wenswang@yeah.net>
+Subject: [PATCH v5 1/3] dt-bindings: hwmon: Add MPS mp2869,mp29608,mp29612,mp29816 and mp29502
+Date: Tue,  5 Aug 2025 18:20:18 +0800
+Message-Id: <20250805102020.749850-1-wenswang@yeah.net>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250805101754.749492-1-wenswang@yeah.net>
+References: <20250805101754.749492-1-wenswang@yeah.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,79 +64,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Ms8vCgCnDwTm2pFoQFEdAg--.18285S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw1rKF4DCw4xury8CFy3urg_yoW8CrWUpF
+	Wkur1IyF4rtr47Ca1I93WkGF45XFsrG3ykJa90yw17Gr1a9rZ29rWa93sYq398CrnayF4U
+	JrsFka409a4jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UqiifUUUUU=
+X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiIAduE2iR2udMfQAA3v
 
-sysfs handlers should be called under ->init_lock and are not
-supposed to unlock it until return, otherwise e.g. a concurrent
-reset() can occur.  There is one handler that breaks that rule:
-recomp_algorithm_show().
+From: Wensheng Wang <wenswang@yeah.net>
 
-Move ->init_lock handling outside of __comp_algorithm_show()
-(also drop it and call zcomp_available_show() directly) so that
-the entire recomp_algorithm_show() loop is protected by the
-lock, as opposed to protecting individual iterations.
+Add support for MPS mp2869/mp2869a,mp29608/mp29608a,mp29612/mp29612a,
+mp29816/mp29816a/mp29816b/mp29816c and mp29502 controller.
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Reported-by: Seyediman Seyedarab <imandevel@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Wensheng Wang <wenswang@yeah.net>
 ---
- drivers/block/zram/zram_drv.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+V4 -> V5:
+    1. merge dt-bindings
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 8acad3cc6e6e..9ac271b82780 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1225,18 +1225,6 @@ static void comp_algorithm_set(struct zram *zram, u32 prio, const char *alg)
- 	zram->comp_algs[prio] = alg;
- }
- 
--static ssize_t __comp_algorithm_show(struct zram *zram, u32 prio,
--				     char *buf, ssize_t at)
--{
--	ssize_t sz;
--
--	down_read(&zram->init_lock);
--	sz = zcomp_available_show(zram->comp_algs[prio], buf, at);
--	up_read(&zram->init_lock);
--
--	return sz;
--}
--
- static int __comp_algorithm_store(struct zram *zram, u32 prio, const char *buf)
- {
- 	char *compressor;
-@@ -1387,8 +1375,12 @@ static ssize_t comp_algorithm_show(struct device *dev,
- 				   char *buf)
- {
- 	struct zram *zram = dev_to_zram(dev);
-+	ssize_t sz;
- 
--	return __comp_algorithm_show(zram, ZRAM_PRIMARY_COMP, buf, 0);
-+	down_read(&zram->init_lock);
-+	sz = zcomp_available_show(zram->comp_algs[ZRAM_PRIMARY_COMP], buf, 0);
-+	up_read(&zram->init_lock);
-+	return sz;
- }
- 
- static ssize_t comp_algorithm_store(struct device *dev,
-@@ -1412,14 +1404,15 @@ static ssize_t recomp_algorithm_show(struct device *dev,
- 	ssize_t sz = 0;
- 	u32 prio;
- 
-+	down_read(&zram->init_lock);
- 	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
- 		if (!zram->comp_algs[prio])
- 			continue;
- 
- 		sz += sysfs_emit_at(buf, sz, "#%d: ", prio);
--		sz += __comp_algorithm_show(zram, prio, buf, sz);
-+		sz += zcomp_available_show(zram->comp_algs[prio], buf, sz);
- 	}
--
-+	up_read(&zram->init_lock);
- 	return sz;
- }
- 
+V3 -> V4:
+    1. split patches for MP2869,mp29608,mp29612,mp29816,mp29502
+    2. add description for vender specific registers
+
+V2 -> V3:
+    merge patches for MP2869,mp29608,mp29612,mp29816,mp29502
+
+V1 -> V2:
+    add Rob's Acked-by
+
+ Documentation/devicetree/bindings/trivial-devices.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index f3dd18681aa6..0e6ba6e12a63 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -293,10 +293,20 @@ properties:
+           - mps,mp2856
+             # Monolithic Power Systems Inc. multi-phase controller mp2857
+           - mps,mp2857
++            # Monolithic Power Systems Inc. multi-phase controller mp2869
++          - mps,mp2869
+             # Monolithic Power Systems Inc. multi-phase controller mp2888
+           - mps,mp2888
+             # Monolithic Power Systems Inc. multi-phase controller mp2891
+           - mps,mp2891
++            # Monolithic Power Systems Inc. multi-phase controller mp29502
++          - mps,mp29502
++            # Monolithic Power Systems Inc. multi-phase controller mp29608
++          - mps,mp29608
++            # Monolithic Power Systems Inc. multi-phase controller mp29612
++          - mps,mp29612
++            # Monolithic Power Systems Inc. multi-phase controller mp29816
++          - mps,mp29816
+             # Monolithic Power Systems Inc. multi-phase controller mp2993
+           - mps,mp2993
+             # Monolithic Power Systems Inc. hot-swap protection device
 -- 
-2.50.1.565.gc32cd1483b-goog
+2.25.1
 
 
