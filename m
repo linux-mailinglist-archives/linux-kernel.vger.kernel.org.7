@@ -1,173 +1,294 @@
-Return-Path: <linux-kernel+bounces-756810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F66B1B994
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:46:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B07DB1B99B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4EB57A9D81
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CBB16B64B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C106295513;
-	Tue,  5 Aug 2025 17:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6E0295513;
+	Tue,  5 Aug 2025 17:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dGyqXx4D"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mJJ9hyE3"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81960293454
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754415964; cv=none; b=OpQ24IdNI27wEH3kw10/xwy3/KsiKUom3TAYM3eLJgZE+9x5xLA8rRmIjnunGGTSjP93OryBHsYto/V1p0a/jBnYD861WkSCu8OrBHrgOe8dFA4mmNBw5T6wNi5dQEASUo2MoNQOg6a/2t7z43FvAQnrn6hquwoZWNTusAnfW2Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754415964; c=relaxed/simple;
-	bh=TAtqdH6g+0GPQAE6XOPxZfUxVtK3bhrslMB7vMoFjHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DeTjGsGUib+SXKbNf9NPixbU4Vi7glN70/Ve8pZekxgwNwDakIbEi0NWQ4AX0glOyE72s8aOXfRx3NQyiepn45xTOokgfWGDw8BWMNs9ZgLsRIUGotGElWTtdFpmMW3luuNBdjUBpXdDwgJZDGuF3+wjFVJ04zbDNCBaV1qGqXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dGyqXx4D; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <401418b7-248c-42a3-ba74-9b2b2959e36c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754415958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X3rfMSumMtyl2b10v3W+AWdRsEKtJ/myNuGbCChJRY8=;
-	b=dGyqXx4DRjy4GMTborzjJWZldSqsxzsvKcWNm0+3sP5MbUbpQxWR/+uZ2xQSSgJwQbyhHC
-	n2LVmxOHMC1IjY0qTr0wCIev3MdiNLaBilsG+3BFQLcZ7MEX0wRRUPqLplf81HWm+9Rw2u
-	HnV6UBwK0rdr/bRsC00eIJc777ZrdIU=
-Date: Tue, 5 Aug 2025 10:45:51 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DA621A928;
+	Tue,  5 Aug 2025 17:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754416311; cv=fail; b=lRIpjwEWaj5ZzCXWI7saqn5dym/uQxsB3GpRMLV/0ImFJ8m4687d0rK9M2wkkPzgVluy5almUYcLP3fFijO7QvgfmqJ3WDpLmjynZUKhm11RpHXgj6ugmTsPumEOnF+MQy+22XJwY6b4FVoIMuhxIfADH6jph+whu9zMfTNMXQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754416311; c=relaxed/simple;
+	bh=ZpA0bikQYf/pEWjTP2a2k2j+9aSuqUXPJlPxJkKuHdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tjFMWt97zbSBpPZHcspxnZK5CfU8tbmmZa2g+dCltT5PiPj53OCJ6tXXvzcN1wiSUuNqnxNmsM3rGmF5aM46bERIa01WMsk5kMaMrni93lUKyWunIlyqoxInONLmyPhfSUGu3LtGI7kPKnar2AeNgcLjBjYe3vsgeyRRH8kUN6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mJJ9hyE3; arc=fail smtp.client-ip=40.107.220.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HC/Pznybg4/Crm110A4MEy0CJBJgIHx+42KXVS/BCG2J7gtEJZI3rmTYh8C6j6TtKZ4sXaOFZCiVfeZFNZn0YBVJwtvEvZJx5Jc7dUM1SXom/tFCpHHGnRc8H/eMvj/rCbUXB5HYQ8UP963YqVJHX1xLslFjYouMSZ7eCbyemMrEMW7cMBFqZM0fngzpt5mDzu93VcWuC8OaxdC0kB+r1/frfMYm+nj1jMW4e47LYO/V/jhLgxhWVRgv67lGH/JjvtXfKzrBY+qN3tNuFDHvSXp2b7iDbPoTF20RRaqce0I4l+hvojQ0mBe873frWOp/YKCWb4H5L12NuGdyQj54jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SwPGcwNVesZMSvamT/IU7Ij0FHCtG4/sng5G+yTlZmo=;
+ b=Z4NRg24tqrehGPbCE3cH11nG1TdN6ABkfHRb6H8yjwdndcPykPdebppBHrNKKsj2NLY5pFeljAynKpd0JNjjKEcCxWlnLBlJWeBeexFTiyfIrCruhzxMkF8xdzwQ06HmT6N2DCMvZitIoWzHqN5i+7oWPFV1PORLN7f7dNMEuS7valIr1Lp8iuD5+7ICJa5vIQazUrkMPACxjEDRyWUAjS6ZV0hIEKJ95zmrZk2BBFSWlGHCFfvsJJReEB04fg2ipmJJAaYFD40qFkZf0/jWkBzvXRuqUDj8c7FyCF/I0zTIGkvQehwPb4bHqo33xvbKNDG6nqbR/J2z43aN9W26Nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SwPGcwNVesZMSvamT/IU7Ij0FHCtG4/sng5G+yTlZmo=;
+ b=mJJ9hyE3sarIExaSva5aH3f2kMonxUWCiHrSL2KRd8sy1bgofrt1lgyo4Y3+j7uZR1+EUoP0MS+lBgbtU4iWV8Cno6j+IJrzD/6xSlZkI/W8Kx6meZSgWpmMFo3uAZT4NpPfQQIDaqZsVWlfVuP9AaDooh9+ELvg+BDR10sHa9gxPWGQNb+3rf+f1Z4U1uidxZH3bjskerX2AHUVz0/yE7yciYh5pw2bJb4eiXXm2zdNJs5vXjHFxskM+hVYQ97kf1GakVKC8AAQvys6optT3Mp67lgNiJ+QdGKkag8EkSc136iwyU1LaiBfWKmlxbIvZ3aRd40XH310p2y4t5K0Ew==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH7PR12MB8796.namprd12.prod.outlook.com (2603:10b6:510:272::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 17:51:46 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 17:51:46 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: wang lian <lianux.mm@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Liam Howlett <liam.howlett@oracle.com>,
+	Mark Brown <broonie@kernel.org>,
+	SeongJae Park <sj@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH] selftests/mm: fix FORCE_READ to read input value correctly.
+Date: Tue,  5 Aug 2025 13:51:40 -0400
+Message-ID: <20250805175140.241656-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN0PR02CA0026.namprd02.prod.outlook.com
+ (2603:10b6:208:530::7) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 1/1] bpf: Allow fall back to interpreter for
- programs with stack size <= 512
-Content-Language: en-GB
-To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mrpre@163.com, mannkafai@gmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-References: <20250805115513.4018532-1-kafai.wan@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250805115513.4018532-1-kafai.wan@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB8796:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e181f8d-b4ce-4bc0-61ec-08ddd448be8f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jb5v+f/LEJqLLZfGv4kL9i6bgeeLoPax/LlNWuhK6Qup579rGfzhlqwwRYW9?=
+ =?us-ascii?Q?+1BhOp1r9Q6y7Yily7L77d6kjnp/7O8URBVdf8VcOnXDnNLAVxgWM2zp157v?=
+ =?us-ascii?Q?CLTen4uOpy0IWC6i11JC7+XxAwUI8bIdzhQ/8RzSxvnokMP4POk654E1h1Rl?=
+ =?us-ascii?Q?7qvLOpJSmMyZzxFyY+2VOU/bxw6Tc807rk9u3rJMFogc0t0PaZuQYfeWPW6Q?=
+ =?us-ascii?Q?x65uX53LwruXMXs9wazx2Gva2YKPpyQfPhBupWtO4+3cjJP73A8JhW8jDj80?=
+ =?us-ascii?Q?boc8oypmnc31b6t8lpxPfP16Ai1cMUy/RDEBSQUb4WDf1ol1R8flCTaOULDF?=
+ =?us-ascii?Q?pt/mN3x/O3jM7BA3fLatapYKOhVtlhp8G/3rebncnOrmOADjVNlpHPDwgKTF?=
+ =?us-ascii?Q?1kFfqH6SIVgIlLVrwzkT9wWBVvJbBoswq7LENAw/jXl5lfWEYXllsaNrrm3I?=
+ =?us-ascii?Q?zzDjDwmMSyXf7AuLh9dhEFbuLRmdWfk81ZmX8eou6intHRoEKepa2vB6te8x?=
+ =?us-ascii?Q?9QogE/pxVUKXSQtErJ4IzNEd5Lz7vrf5yhZTtY2GKZ5uh3/Pto0zIkqLmnlQ?=
+ =?us-ascii?Q?EYzL1hs7sbZgP0pb3THJcW0whDf2zZcy+cMbgEKMZRpAbO4vuutwOh7HZlFQ?=
+ =?us-ascii?Q?TYOE9lWjIhNuXXBEDky9t44dfk4XuL/i169dkJfNIM8GIPE/vUbC8GMJrpMx?=
+ =?us-ascii?Q?XoRHOsZV17AFBt4DTJv1TKlIwpE1QEUESb1hAQzPE9Xf9gykkTEB8LtgxL7X?=
+ =?us-ascii?Q?d8qlZsPFTYGtNV0M3XkOTncf0cqaQKw0bRlbm0AClQOIvsFmzZH/3b+qhUK4?=
+ =?us-ascii?Q?1szasEKGXFZ6nmtGWlRR7MiOoP7naNG/yUudKtohEE/eQDM61f7J5dP84/uk?=
+ =?us-ascii?Q?uI07dmktAYI28O8Ipxm/MtaKQfJuZvaBzHzxCiGEWbbDjQGb2o7xCiosPedo?=
+ =?us-ascii?Q?fNIv26fcgOfL9cf2rVcyXbMg0FDnFknyGyxVrtNo91y9cM4w1c+AJUz/v+a5?=
+ =?us-ascii?Q?AuCDSgqyTJ+TXQEkndViLyMG+7UgdHC/FH23c0Re9epGBH5RYkZvQTrpXc1s?=
+ =?us-ascii?Q?qnhuIYW2oi6dE4scHrM9YW/2+EqN1dM6MkTKv0s9tukmaGaZxG9TKK49JJxZ?=
+ =?us-ascii?Q?UiK0qYI1kjK3omSswV7CNVTxjFDNjcZeFFHNeH7GC7bN2g+rS5akFzMckjF8?=
+ =?us-ascii?Q?SLNxWM61Kj8Fm5fhPtNlPkgL+D6OAUYlAzlN5MQJ+E8mTa8M77Y8Ol7yPpHj?=
+ =?us-ascii?Q?ngYfXsMBt1qSC7uzOUxWl9VmVWWDO1IzmYAJymqkLqBd6ZYDVS+rE+Qf0ZqU?=
+ =?us-ascii?Q?vLn7bHYgBgQa602aROz0VJS+B6cz1AmmqBuRllYoCMLP5tHao5SutJlJ0mSH?=
+ =?us-ascii?Q?8HWRH+Rdj32AqS5umMiodfOzpipPfj2Jvc/8M2KWFhdQ042e2w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FMPtRZB+2t2IAHLnV9C0A+n2x/6eFMcU4873VNvP+w81z2QxKckX5vnfETl7?=
+ =?us-ascii?Q?j33c3/f09TyTaV4yHFyi2VSbIUI9BVTCmEyfyMd6RNH5wHF+rrv4sGSFr477?=
+ =?us-ascii?Q?7vhLxGRhsbABEeBS5O09EELZvKs0nRoyxs/qWalOMTcLYM8UetqZeDK612FI?=
+ =?us-ascii?Q?Cs/DaOyMaHossaKob8fEG8ZoEb6S+dD0e9sSNwQQsqI2HT+GGmtIet2nrQV3?=
+ =?us-ascii?Q?ax6/ehOXyv5MqWoyxXYN8l78VirvllLXnYb3ZTmq5lz/+1DW9bo2prku/qP4?=
+ =?us-ascii?Q?7ffIb0JT5y0GS5ZK2cuvQCai9RaTdG3afA05fMXclJyEazOmdnrX7kHqHvrm?=
+ =?us-ascii?Q?Sv2b+uPZTr2fy2vlWBJZ00lVlm2h5SZ9QA1b16sdm8jbJkzKonBo/g7sAMF1?=
+ =?us-ascii?Q?wZAvpCQrWuUbAPHTojr8G5J0oseE0wRqPjJPqAHOdYqT7bGRtPgVKfhDKbI8?=
+ =?us-ascii?Q?1LW2cNeJsVDtlujlP7CbQuN75Y8WPbAUsX6BVRDsQozTrZfLIEXU6MWhs/1H?=
+ =?us-ascii?Q?MkITzxg2W9NMO4zEBAZglgovdTGn2A/igJS0heY4SQ+HfxwNGjTIUBhtUPBc?=
+ =?us-ascii?Q?wc0Oi4zu/9hxlhCgdKyBcyzUg8TdtfLEyCMObVUs1vCrH0b0FFRMQfDLRyEN?=
+ =?us-ascii?Q?Wvm65g01Cu3FX6QYH1WFmezNnqVtCUW6CXvpvfn6QXKuIErByrHu2xeQYtMy?=
+ =?us-ascii?Q?xCfCTyqaA2TkjHu+qCwh/ki4M2YITSkesNNnZbLsYPyDN3wORZ3vje3/HQxK?=
+ =?us-ascii?Q?MYu2AV1wUKcOPVMnz+3IG8jU5HysVU8noVyDs2A4Nt8+cEYfAbNkBZwigmyX?=
+ =?us-ascii?Q?R36afU0xFBLXSU5U5ILG9BqB+Qz3fvRXkHQOjV4mxQLauT143iP269qEHcWX?=
+ =?us-ascii?Q?Elu8cnkKnfdwlU5We99czgrPqjgOG3vYG9Vm78XaqbQPQd0/uJWKp9TZn9xy?=
+ =?us-ascii?Q?Iw2N3P5hyiTAfauBPez0Lph5iZPRk4rrvjStHk1RvuoXDtk01i8uPMW30XXF?=
+ =?us-ascii?Q?lXdV9VU1ELQnHvd2mz0lqYLSXliN61dgYfl+1ncN1r8wzKH6Ih6c5ImV2sua?=
+ =?us-ascii?Q?QPoIsqgdUdiTbASm/eQJ6vWlttFK5TxAImVI6dotLjo+dH0R2YeM38dFGxF8?=
+ =?us-ascii?Q?1RqrUWWWzwBaIr1gHJpIa0RiXYlUyPqM3VokIBWtC3w2n73Wn9JytGW+Ru50?=
+ =?us-ascii?Q?ETjQPhFJZ+Sjp8ffN+S1je4Urf2C9C+6Vv0khNpKok4leQfUyYNqM8E9GKl+?=
+ =?us-ascii?Q?0vi65zEraWD2ObNEfIsyr9eViGYBOCagUt37oMHEUq1s6KWejBryfmhlDh/7?=
+ =?us-ascii?Q?h7f2uChIwkMNsA0835vbgd5MVzEdaO3nzbq5qiOSEHtH2P83tbW1SY9syoMX?=
+ =?us-ascii?Q?eeZhoiUPpH3j8+vigrGlSiOo4sp85y5eXVdN2MfWCxGbUEpA5TlsxswwiLrc?=
+ =?us-ascii?Q?rRHnZulAhWjv29H2TDkrUdLYVUXy0s7mFaGEX3klHR4l6rI/P99rJfc2WWvq?=
+ =?us-ascii?Q?5fSewtr6eJsFIMUfn1qMQ+usiqWlKePaME20ZEkb69P7KV9wMkbwq3n7JKdO?=
+ =?us-ascii?Q?I6gdr2VP2cAiyuj6A2y9x4QVFStLIPD9XMmyrzYv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e181f8d-b4ce-4bc0-61ec-08ddd448be8f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 17:51:45.7369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hCk9N2ZccxhiXQsgFvOVupK9917YM64c1JtbbtXnrrb33rmvvf/fnFHylb1EO9Kk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8796
+
+FORCE_READ() converts input value x to its pointer type then reads from
+address x. This is wrong. If x is a non-pointer, it would be caught it
+easily. But all FORCE_READ() callers are trying to read from a pointer and
+FORCE_READ() basically reads a pointer to a pointer instead of the original
+typed pointer. Almost no access violation was found, except the one from
+split_huge_page_test.
+
+Fix it by implementing a simplified READ_ONCE() instead.
+
+Fixes: 3f6bfd4789a0 ("selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"")
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+FORCE_READ() comes from commit 876320d71f51 ("selftests/mm: add self tests for
+guard page feature"). I will a separate patch to stable tree.
 
 
+ tools/testing/selftests/mm/cow.c                  | 4 ++--
+ tools/testing/selftests/mm/guard-regions.c        | 2 +-
+ tools/testing/selftests/mm/hugetlb-madvise.c      | 4 +++-
+ tools/testing/selftests/mm/migration.c            | 2 +-
+ tools/testing/selftests/mm/pagemap_ioctl.c        | 2 +-
+ tools/testing/selftests/mm/split_huge_page_test.c | 7 +++++--
+ tools/testing/selftests/mm/vm_util.h              | 2 +-
+ 7 files changed, 14 insertions(+), 9 deletions(-)
 
-On 8/5/25 4:55 AM, KaFai Wan wrote:
-> OpenWRT users reported regression on ARMv6 devices after updating to latest
-> HEAD, where tcpdump filter:
->
-> tcpdump -i mon1 \
-> "not wlan addr3 3c37121a2b3c and not wlan addr2 184ecbca2a3a \
-> and not wlan addr2 14130b4d3f47 and not wlan addr2 f0f61cf440b7 \
-> and not wlan addr3 a84b4dedf471 and not wlan addr3 d022be17e1d7 \
-> and not wlan addr3 5c497967208b and not wlan addr2 706655784d5b"
->
-> fails with warning: "Kernel filter failed: No error information"
-> when using config:
->   # CONFIG_BPF_JIT_ALWAYS_ON is not set
->   CONFIG_BPF_JIT_DEFAULT_ON=y
->
-> The issue arises because commits:
-> 1. "bpf: Fix array bounds error with may_goto" changed default runtime to
->     __bpf_prog_ret0_warn when jit_requested = 1
-> 2. "bpf: Avoid __bpf_prog_ret0_warn when jit fails" returns error when
->     jit_requested = 1 but jit fails
->
-> This change restores interpreter fallback capability for BPF programs with
-> stack size <= 512 bytes when jit fails.
->
-> Reported-by: Felix Fietkau <nbd@nbd.name>
-> Closes: https://lore.kernel.org/bpf/2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name/
-> Fixes: 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
-> Fixes: 86bc9c742426 ("bpf: Avoid __bpf_prog_ret0_warn when jit fails")
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> ---
->   kernel/bpf/core.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index 5d1650af899d..2d86bd4b0b97 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -2366,8 +2366,8 @@ static unsigned int __bpf_prog_ret0_warn(const void *ctx,
->   					 const struct bpf_insn *insn)
->   {
->   	/* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
-> -	 * is not working properly, or interpreter is being used when
-> -	 * prog->jit_requested is not 0, so warn about it!
-> +	 * or may_goto may cause stack size > 512 is not working properly,
-> +	 * so warn about it!
->   	 */
->   	WARN_ON_ONCE(1);
->   	return 0;
-> @@ -2478,10 +2478,10 @@ static void bpf_prog_select_func(struct bpf_prog *fp)
->   	 * But for non-JITed programs, we don't need bpf_func, so no bounds
->   	 * check needed.
->   	 */
-> -	if (!fp->jit_requested &&
-> -	    !WARN_ON_ONCE(idx >= ARRAY_SIZE(interpreters))) {
-> +	if (idx < ARRAY_SIZE(interpreters)) {
->   		fp->bpf_func = interpreters[idx];
->   	} else {
-> +		WARN_ON_ONCE(!fp->jit_requested);
->   		fp->bpf_func = __bpf_prog_ret0_warn;
->   	}
-
-Your logic here is to do interpreter even if fp->jit_requested is true.
-This is different from the current implementation.
-
-Also see below code:
-
-static unsigned int __bpf_prog_ret0_warn(const void *ctx,
-                                          const struct bpf_insn *insn)
-{
-         /* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
-          * is not working properly, or interpreter is being used when
-          * prog->jit_requested is not 0, so warn about it!
-          */
-         WARN_ON_ONCE(1);
-         return 0;
-}
-
-It mentions to warn if the interpreter is being used when
-prog->jit_requested is not 0.
-
-So if prog->jit_requested is not 0, it is expected not to use interpreter.
-
-
->   #else
-> @@ -2505,7 +2505,7 @@ struct bpf_prog *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
->   	/* In case of BPF to BPF calls, verifier did all the prep
->   	 * work with regards to JITing, etc.
->   	 */
-> -	bool jit_needed = fp->jit_requested;
-> +	bool jit_needed = false;
->   
->   	if (fp->bpf_func)
->   		goto finalize;
-> @@ -2515,6 +2515,8 @@ struct bpf_prog *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
->   		jit_needed = true;
->   
->   	bpf_prog_select_func(fp);
-> +	if (fp->bpf_func == __bpf_prog_ret0_warn)
-> +		jit_needed = true;
->   
->   	/* eBPF JITs can rewrite the program in case constant
->   	 * blinding is active. However, in case of error during
+diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
+index d30625c18259..c744c603d688 100644
+--- a/tools/testing/selftests/mm/cow.c
++++ b/tools/testing/selftests/mm/cow.c
+@@ -1554,8 +1554,8 @@ static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
+ 	}
+ 
+ 	/* Read from the page to populate the shared zeropage. */
+-	FORCE_READ(mem);
+-	FORCE_READ(smem);
++	FORCE_READ(*mem);
++	FORCE_READ(*smem);
+ 
+ 	fn(mem, smem, pagesize);
+ munmap:
+diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
+index b0d42eb04e3a..8dd81c0a4a5a 100644
+--- a/tools/testing/selftests/mm/guard-regions.c
++++ b/tools/testing/selftests/mm/guard-regions.c
+@@ -145,7 +145,7 @@ static bool try_access_buf(char *ptr, bool write)
+ 		if (write)
+ 			*ptr = 'x';
+ 		else
+-			FORCE_READ(ptr);
++			FORCE_READ(*ptr);
+ 	}
+ 
+ 	signal_jump_set = false;
+diff --git a/tools/testing/selftests/mm/hugetlb-madvise.c b/tools/testing/selftests/mm/hugetlb-madvise.c
+index 1afe14b9dc0c..c5940c0595be 100644
+--- a/tools/testing/selftests/mm/hugetlb-madvise.c
++++ b/tools/testing/selftests/mm/hugetlb-madvise.c
+@@ -50,8 +50,10 @@ void read_fault_pages(void *addr, unsigned long nr_pages)
+ 	unsigned long i;
+ 
+ 	for (i = 0; i < nr_pages; i++) {
++		unsigned long *addr2 =
++			((unsigned long *)(addr + (i * huge_page_size)));
+ 		/* Prevent the compiler from optimizing out the entire loop: */
+-		FORCE_READ(((unsigned long *)(addr + (i * huge_page_size))));
++		FORCE_READ(*addr2);
+ 	}
+ }
+ 
+diff --git a/tools/testing/selftests/mm/migration.c b/tools/testing/selftests/mm/migration.c
+index c5a73617796a..ea945eebec2f 100644
+--- a/tools/testing/selftests/mm/migration.c
++++ b/tools/testing/selftests/mm/migration.c
+@@ -110,7 +110,7 @@ void *access_mem(void *ptr)
+ 		 * the memory access actually happens and prevents the compiler
+ 		 * from optimizing away this entire loop.
+ 		 */
+-		FORCE_READ((uint64_t *)ptr);
++		FORCE_READ(*(uint64_t *)ptr);
+ 	}
+ 
+ 	return NULL;
+diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
+index 0d4209eef0c3..e6face7c0166 100644
+--- a/tools/testing/selftests/mm/pagemap_ioctl.c
++++ b/tools/testing/selftests/mm/pagemap_ioctl.c
+@@ -1525,7 +1525,7 @@ void zeropfn_tests(void)
+ 
+ 	ret = madvise(mem, hpage_size, MADV_HUGEPAGE);
+ 	if (!ret) {
+-		FORCE_READ(mem);
++		FORCE_READ(*mem);
+ 
+ 		ret = pagemap_ioctl(mem, hpage_size, &vec, 1, 0,
+ 				    0, PAGE_IS_PFNZERO, 0, 0, PAGE_IS_PFNZERO);
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index 718daceb5282..3c761228e451 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -440,8 +440,11 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+ 	}
+ 	madvise(*addr, fd_size, MADV_HUGEPAGE);
+ 
+-	for (size_t i = 0; i < fd_size; i++)
+-		FORCE_READ((*addr + i));
++	for (size_t i = 0; i < fd_size; i++) {
++		char *addr2 = *addr + i;
++
++		FORCE_READ(*addr2);
++	}
+ 
+ 	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
+ 		ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index c20298ae98ea..b55d1809debc 100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -23,7 +23,7 @@
+  * anything with it in order to trigger a read page fault. We therefore must use
+  * volatile to stop the compiler from optimising this away.
+  */
+-#define FORCE_READ(x) (*(volatile typeof(x) *)x)
++#define FORCE_READ(x) (*(const volatile typeof(x) *)&(x))
+ 
+ extern unsigned int __page_size;
+ extern unsigned int __page_shift;
+-- 
+2.47.2
 
 
