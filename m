@@ -1,60 +1,69 @@
-Return-Path: <linux-kernel+bounces-756661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83CBB1B76E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8657B1B770
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF4C1849FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79BF5189EAC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBEE279DB2;
-	Tue,  5 Aug 2025 15:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368CF27A10C;
+	Tue,  5 Aug 2025 15:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2gQZZkB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ci72ZknI"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2E02777F9;
-	Tue,  5 Aug 2025 15:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7984C2777F9;
+	Tue,  5 Aug 2025 15:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407490; cv=none; b=IFrBSmGnbKZakKIHXEIO/ViytwZvx+1jkCRuRevaNaiYZ6N7GEtyIO3YazMlxYnyIIURGIrO7YSYOACjQjVbMLemrjLsXT+3kpAZ6SCqKCD0n8jmpwj+1fhzsE3PBXqJns++MvwUR/qW9ykT6w3ZLW0fowpB9RkkvJ77RagvL8M=
+	t=1754407505; cv=none; b=iZ/PLV/15p5piSe39eehKlzPqnHDYBFXAz5HNnf3ENjy6awRmtDF8kq7mElVsW2AGLMw7fnk3RJfcMw12prqB2chjhrupJ0ZVVMckw6SRYw6hLm5vUs13QVwOq2EJeernshGyRlmKfosCZs28Eq60XkyD9PHnvDcrAZUGQ6FTfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407490; c=relaxed/simple;
-	bh=97kct6PPabBUrzu7qy+1m0OjpYO0JiszZ63BiWMDoY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qufa2CdPNizQJv4Nc7eWVusnFjFHusv2w349hYsiAa/zALk1enLjvB+kxN1b90Zhj99ws3Ns1Y8ktsi4mi8/pITR46tnHal0fD/spkaXJ12wWKQbrgmQX/45uylPB3grX3V0Qe7OEJ91/El1QAs5+bbZOC6tScMnN6SafC8nXzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2gQZZkB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 983ACC4CEF0;
-	Tue,  5 Aug 2025 15:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754407490;
-	bh=97kct6PPabBUrzu7qy+1m0OjpYO0JiszZ63BiWMDoY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U2gQZZkBnklYg5klw9G8DgA4Iy/DzU85xwb99UpA/sTfAenk4gwUnfsTMZJTCmnk1
-	 Cce5UdMPsItPZFpY0k8wcsRQ+cKc2sfgJ2kCMNLC3qw9ENMd8q3WQvMENz57gshMcI
-	 9tPtWZwsu4WjlWEo/3foJhUZKWbAzyjgMEZSNTToJOOpu8MxMIFYGuF60g5oMbkIbS
-	 GkWzgyyeaiQqfqmGY7dPufob8tp+hIxTy5hEdBCTEhKwerdY+gujgBJpUBsV8dHSzf
-	 +vautmgSaFZ6bsTi/IpHKkcvJvzqBy3C/f1gjtF0WuaaAUqE20H/jOQ77e95oGSU/H
-	 APLbkGIS0dd+A==
-Date: Tue, 5 Aug 2025 10:24:47 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Karel Balej <balejk@matfyz.cz>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	phone-devel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	David Wronek <david@mainlining.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/2] dt-bindings: mmc: sdhci-pxa: add state_uhs
- pinctrl
-Message-ID: <175440748721.1807566.14795455362522050804.robh@kernel.org>
-References: <20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz>
- <20250801-pxav3-uhs-v2-1-afc1c428c776@dujemihanovic.xyz>
+	s=arc-20240116; t=1754407505; c=relaxed/simple;
+	bh=f7v+PL9KoQa/FLM1Pk8mXOovI9NWywm4Mp/BQByiACo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l2/6ol3HqBJrC6UiPvX916XetsdIYeM4w6MgAmPLmR1FNmjgCw6/8OKg3TujH89Tn/bGq6NeJASUdoad9HhWH6M9zD0KTqN4SBZ/bUpGLg2tyB7INSt02CBZVYEgJqpuwPU/gNTnq2JUVEHslcOV0UUYBGmoBOM5Zmu9HaJtp5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ci72ZknI; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C703438DF;
+	Tue,  5 Aug 2025 15:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754407495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+bR0VckSoN9YaJX4wlOvB009sshe3mAwoA7HDDGUCpI=;
+	b=Ci72ZknI4OXBeJS8vhqNr/IUn2BHA2NeY694ItlWgUdkWtdHx0y4S+KYkdzppkzW0cVwpK
+	kBWY9e4b29rek3ZdCzZtlIDgwHk2MrV68RC64LfmiSIGG4/gUaU9VxnMia3Eex+wdt6Ajv
+	7C/i0N3DLleoUJldMMTEZo2//+zf0J3VSHMdvICfy3CDa/kx4h04G8zaSwi0CFbqMOTcXe
+	xRTIuc98AQ/k1S4UiVqS+29CX/A37APSl6fsKJPEE7IoIgDgpp6hFu3qmGCM0633s2TWU/
+	bd2sGoZvfT09zx0Bl0XsrBSsKBQs783ttrhMwkeZDgxWkV4h0TrSJrs+GRR/zw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Lorenzo Bianconi <lorenzo@kernel.org>,  Ray Liu
+ <ray.liu@airoha.com>,  Mark Brown <broonie@kernel.org>,  Tudor Ambarus
+ <tudor.ambarus@linaro.org>,  Martin Kurbanov
+ <mmkurbanov@salutedevices.com>,  Takahiro Kuwano
+ <Takahiro.Kuwano@infineon.com>,  Cheng Ming Lin
+ <chengminglin@mxic.com.tw>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-spi@vger.kernel.org
+Subject: Re: [PATCH 1/4] drivers: mtd: spi-nand: fix direct mapping creation
+ sizes.
+In-Reply-To: <20250804192132.1406387-2-mikhail.kshevetskiy@iopsys.eu> (Mikhail
+	Kshevetskiy's message of "Mon, 4 Aug 2025 22:21:29 +0300")
+References: <20250804192132.1406387-1-mikhail.kshevetskiy@iopsys.eu>
+	<20250804192132.1406387-2-mikhail.kshevetskiy@iopsys.eu>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Tue, 05 Aug 2025 17:24:50 +0200
+Message-ID: <87sei5hjul.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,28 +71,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801-pxav3-uhs-v2-1-afc1c428c776@dujemihanovic.xyz>
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudehhedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugfeuiefghffhiedvveejuefgueffvedugeevjeejgeetgfefgeffveetgefgleenucffohhmrghinhepohhppghtmhhplhdruggrthgrnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepmhhikhhhrghilhdrkhhshhgvvhgvthhskhhihiesihhophhshihsrdgvuhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhorhgvnhiioheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrhidrlhhiuhesrghirhhoh
+ hgrrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhuughorhdrrghmsggrrhhusheslhhinhgrrhhordhorhhgpdhrtghpthhtohepmhhmkhhurhgsrghnohhvsehsrghluhhtvgguvghvihgtvghsrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
+Hello Mikhail,
 
-On Fri, 01 Aug 2025 16:14:15 +0200, Duje Mihanović wrote:
-> On the pxav3 controller, increasing the drive strength of the data pins
-> might be required to maintain stability on fast bus clocks (above 100
-> MHz). Add a state_uhs pinctrl to allow this.
-> 
-> The existing state_cmd_gpio pinctrl is changed to apply only on pxav1 as
-> it's unneeded on the other controllers.
-> 
-> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+Thanks a lot for this series!
+
+On 04/08/2025 at 22:21:29 +03, Mikhail Kshevetskiy <mikhail.kshevetskiy@iop=
+sys.eu> wrote:
+
+> Continuous mode is only supported for non-raw data reads, thus raw I/O
+> or non-raw writing requires only single flash page mapping.
+>
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 > ---
-> Changes in v2:
-> - Newlines between properties in if:
-> ---
->  .../devicetree/bindings/mmc/sdhci-pxa.yaml         | 47 +++++++++++++++++-----
->  1 file changed, 37 insertions(+), 10 deletions(-)
-> 
+>  drivers/mtd/nand/spi/core.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> index b0898990b2a5..b42c42ec58a4 100644
+> --- a/drivers/mtd/nand/spi/core.c
+> +++ b/drivers/mtd/nand/spi/core.c
+> @@ -1103,9 +1103,6 @@ static int spinand_create_dirmap(struct spinand_dev=
+ice *spinand,
+>  	};
+>  	struct spi_mem_dirmap_desc *desc;
+>=20=20
+> -	if (spinand->cont_read_possible)
+> -		info.length =3D nanddev_eraseblock_size(nand);
+> -
+>  	/* The plane number is passed in MSB just above the column address */
+>  	info.offset =3D plane << fls(nand->memorg.pagesize);
+>=20=20
+> @@ -1117,6 +1114,8 @@ static int spinand_create_dirmap(struct spinand_dev=
+ice *spinand,
+>=20=20
+>  	spinand->dirmaps[plane].wdesc =3D desc;
+>=20=20
+> +	if (spinand->cont_read_possible)
+> +		info.length =3D nanddev_eraseblock_size(nand);
+>  	info.op_tmpl =3D *spinand->op_templates.read_cache;
+>  	desc =3D devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
+>  					  spinand->spimem, &info);
+> @@ -1132,6 +1131,9 @@ static int spinand_create_dirmap(struct spinand_dev=
+ice *spinand,
+>  		return 0;
+>  	}
+>=20=20
+> +	// ECC reading/writing always happen in non-continuous mode
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This comment does not sound helpful, at least I do not understand it?
+(and the comment style should be /* */)
 
+> +	info.length =3D nanddev_page_size(nand) + nanddev_per_page_oobsize(nand=
+);
+> +
+>  	info.op_tmpl =3D *spinand->op_templates.update_cache;
+>  	info.op_tmpl.data.ecc =3D true;
+>  	desc =3D devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
+
+May I suggest to use two different dirmap infos? One with a large size
+(for reads) and a page-sized one for other cases (including the fallback
+you're introducing in PATCH 2).
+
+Thanks,
+Miqu=C3=A8l
 
