@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-756862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C635BB1BA80
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0702B1BA83
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAAF07A213A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98940625C8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA229A333;
-	Tue,  5 Aug 2025 18:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A5229A333;
+	Tue,  5 Aug 2025 18:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWgBJMnu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5RcZ6QH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B791E51EF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092AE2E36F6
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754420078; cv=none; b=nH3CAms6yIllkwSt1W7M4K3urBvQgyYhgoOMYk8HApsJ62OJODLXyTdYWqoZa88sRJyeo4liz4OFnYbYnoA6Yga28fMA9ZH8AVvSCrjszQ/v1HdQa77zb7tm/Zi00h89KRt0v0+aFC0YpT9XOglqhkWWD22VlDJxJflVo6qZu7I=
+	t=1754420129; cv=none; b=FAxhqUY/1EklAefoVEKDtK0W2VCX2RKBkXvHOLcu4y0pKqRl5stm7mzEP1H4LiPZX0N6XHCngpr66/1D2NhdBU0bD+PsSh9Yos/O6NUQwY9cXopLx0wUkAygI9Aye/L6qEabPPMdw7mLlBrCztJ2EsYdMUDpTqIVRUB5y2OGY6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754420078; c=relaxed/simple;
-	bh=Eq+8/9N21uUABn7cM82efdGCZdsKLrvvKvKVERGXrMg=;
+	s=arc-20240116; t=1754420129; c=relaxed/simple;
+	bh=USC2EESxnOmf+5Qt9CEKOEaMZtDjkRdle8CeVvzYKDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgD8l9OAe4NsHtV6iaOXGuy3LD/FUFAua404zoWATE7/BosmiMv0oyat1roNORAkD0UJpMqfJNH8PGkf2tpy7Gn6j+Ru0igYU3ytqSNUVcqgKJH/j1kGAAKilqaxGMYgyk+B4TttoEV8q463KxDowLfk/j0cCIWrUMA1Jbl68T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWgBJMnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB60CC4CEF0;
-	Tue,  5 Aug 2025 18:54:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bWgmnwBG9BmC7c8HbkWk1adK7TdHY7aIckJzvmHdR6ry20hCZu1RbN3TqUrmgWT5iFN8+PTj7WZkQ0CikgIy8X8R0z0ijawmWczSDFkkecp+tqp5QPeAfgothebC/hXOJ0nMnxdNYi7Mlp//la8wBGBlPQ/lH8UI4tDTjHdy2CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5RcZ6QH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01573C4CEF0;
+	Tue,  5 Aug 2025 18:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754420077;
-	bh=Eq+8/9N21uUABn7cM82efdGCZdsKLrvvKvKVERGXrMg=;
+	s=k20201202; t=1754420128;
+	bh=USC2EESxnOmf+5Qt9CEKOEaMZtDjkRdle8CeVvzYKDY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UWgBJMnuWlhzUbBl/xwXY2/S6KDAAsIWAtTL8B3Jv7gnlle2dH7XjjHL5gN8Z2150
-	 z98aLTu4LzhlYe4iNYCuIxhtGqw6dfJ74sxClUSOCHA8H7t77EIFkwpb13zQbkUIo/
-	 BHF/iMb0I6CETWDifApRzCZBDM8r5ZVUxXF3RWWCoKsUXLFT2DEAr8ATyrVRTTKA2n
-	 zD7u64bLNAoG9Eiaivgbgm78glRpu7x33oSjF+xH7xmZ1N6vERvDb9t5fi+eX+BpE3
-	 EXkjSooG1oT5Eo2sEbfLxOVn/ouyiLn5c0doGpd4vYNv+eSqMoy60Q+TuhRsn7pGTw
-	 rT992c/wJsH4A==
-Message-ID: <4419fe5f-a500-4092-a1ea-32b714059c58@kernel.org>
-Date: Tue, 5 Aug 2025 13:54:35 -0500
+	b=Q5RcZ6QHUV5xlr+bghIaMGbyvF1XtVKH44DCLXVw7u48YYL0r4CNsxWwakt/ySXvz
+	 o1/rBKuppFLtsZc8vJtMiAcbYrT+cx1jt1RJJlBO4YsDI9YUIwLya2+OaimSmJ+QDD
+	 Adf3HAsk3yfG/iBvxe2G22K+7WzNYllIJp7h1qkiDoi9bpxKREnXLc91dyOyEh4kzq
+	 CY0OsY3JCPhweIKYODY7RKPxJVuLJuelVDbDBFtjaDPO1S7xLzx/SjCWLJxZi5eSnq
+	 1dTiLJAjfJfUdgCkrZP9Kx4Fm+/xv+Fsl+FjCvSiGBux4dAgVCD85VdtPojt7EQz27
+	 UQtdQhgL8i3qw==
+Message-ID: <8d877db5-3c16-44dd-8be8-eb3dd0130fc7@kernel.org>
+Date: Tue, 5 Aug 2025 13:55:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,10 @@ On 8/3/25 2:14 PM, Lizhi Hou wrote:
 > 
 > Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org)
+(I had an email transmission mistake, sorry if this is recieved twice by 
+anyone.)
+
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
 > ---
 >   drivers/accel/amdxdna/aie2_ctx.c        | 59 ++++++++++----------
