@@ -1,104 +1,149 @@
-Return-Path: <linux-kernel+bounces-756929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D400B1BB22
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DBCB1BB27
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0AA1881C61
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C45C62462B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE6F22D7B9;
-	Tue,  5 Aug 2025 19:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vvblv/Nk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CC526AAAB;
+	Tue,  5 Aug 2025 19:48:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2F01547CC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA5822B8AB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423068; cv=none; b=BLK65fU2dvLJxCHTHwPCDOVQchzFLvmOQsh8hxUPKek/FTDh5QCrPMP6G2Mu8uqUMvzdSaxikdWFhVvnronsN96RwVI7eYohVaelAhZmm3kHxR98fU2CthcaJa5J6tKzcVTwwQ0U6p+wSKlEox28RkvlHNYgHuuvkivF2dTHsUc=
+	t=1754423312; cv=none; b=AQ3Fc95dNMaAGTAN7C6fRCyglTsVkozcpNUhqvM4DLPgwgF0HCyd+49J2NfMVTO8QGtQ9XErxTzN0xfI3Okj/k3FfPGpJg/2bNydythANRui3bFHBHUAGY6xQh/sgrLG+UA5HVPY6kgO9HOMJ4r+4uShq8uH27U0RauQCB2GvPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423068; c=relaxed/simple;
-	bh=SfBzt2N3LNeDAm5Tym0MNtM5fNHtmIUlijMC48PoPDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THSEqr3UyE1EjkadhK6TzhkHTdPtzPn7lmKIIBCL2muQ6nxLBs0+lnzqpKkFRkqPYJBpOy/sTqEHMoqCFJOjz1rDq9DqyZsZuvf2lE6HuZrVHSGarODjE1kj0a1nbzkFeWAoT9Ci+a+NYkPwtW2g+ITPY5VXDZYwS3dUIatj/Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vvblv/Nk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754423064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SfBzt2N3LNeDAm5Tym0MNtM5fNHtmIUlijMC48PoPDo=;
-	b=Vvblv/NkvReR5g4zV8PEELZtvOlL02nukBLoP/Ikv0WknjAsXfrnnZGZk5eRWTX1e2M4Et
-	MbgahLL0/tRb2twNbs8pFsxhzG1QS4iBnVMdkg/UDsUggMviPeCgGqchAvcqqM8scySCH2
-	4RfQbp/0jDF52TctS8b42kixtTtO+zM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-3IhIyEopPyiYOwFN8HuviA-1; Tue,
- 05 Aug 2025 15:44:20 -0400
-X-MC-Unique: 3IhIyEopPyiYOwFN8HuviA-1
-X-Mimecast-MFC-AGG-ID: 3IhIyEopPyiYOwFN8HuviA_1754423058
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47F481800370;
-	Tue,  5 Aug 2025 19:44:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.134])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B8E1D1955E88;
-	Tue,  5 Aug 2025 19:44:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  5 Aug 2025 21:43:07 +0200 (CEST)
-Date: Tue, 5 Aug 2025 21:43:02 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Xiang Gao <gxxa03070307@gmail.com>,
-	"mjguzik@gmail.com" <mjguzik@gmail.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"joel.granados@kernel.org" <joel.granados@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?562U5aSNOiBbRXh0ZXJuYQ==?= =?utf-8?Q?l?= Mail]Re:
- [PATCH] pid: Add a judgment for ns null in pid_nr_ns
-Message-ID: <20250805194302.GC27131@redhat.com>
-References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
- <20250802022550.GT222315@ZenIV>
- <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
- <20250802084525.GB31711@redhat.com>
- <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
- <20250804114900.GA6656@redhat.com>
- <20250804-gepfercht-delfin-0172b1ee9556@brauner>
- <aa5272ddcec944e2a35ca7104f6a86bf@xiaomi.com>
+	s=arc-20240116; t=1754423312; c=relaxed/simple;
+	bh=KdApcye60KBOAgseekhcTCUxR2HPCy7XhIzXNeeDtAQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NcN3eNKrT+AhNOmet8f3lmEx/pE+XVxdrxcldMqr5x4JUwWmBiI0aFaGXr8QLUUr+aGz+0anGyX5PudsTUNVf+4/dI7PeS1S5oUoYEDgMZGXNwsYsva/ePxXTgk0HvDxV57GclFVMYSIVuZLd4sJFCesM7LdCNrl748rcpSLqR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8818b1512c2so226043639f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:48:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754423310; x=1755028110;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zs2euGn0ah7qTMO3mciJ66QIxphpePyNs7NtHKNe+ZQ=;
+        b=vtXiJUxLUxIxCVfCii+p5bR2wVSujwYC0hP488NB2z6DS2PMSYJBs3yvl8EXjyIxLv
+         ibyPFa/cQUDaqtYNnhSA97LYXYGL8GwGk7AlFNvhN0DPL34Q9iSi6cxwJPE6V/GBk7lZ
+         WpgM5+0pJp47dvB816ZnekbNQuD/pjK8bl+5sZDFOZrDBlICwGsGutea2Ff7saAeU1cd
+         CB1Q7HEoU7gdYxU8RXDIcJFKdlmKY0UkvrCAcGajej7yJHhXYVLYHKronqnAuXcWMpTm
+         1i6qkjlm2ItvvJ/4bcwrUTTj6l3beNworvTNUqkBylbHba2QPyyJinvxk/9bvy2jyZAx
+         BlkA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0wOMwOlaX9UxLyY8TvYxi954MhD7pdqxyn3NUN5ISlT1XT4K+FdGFUwZNcmeoSl78F+ne5qwI2lt+EWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVZrwdwsRQ/YTqALT2fQ2hSWcbf73w5eXH2GThZ3O7b7RL0s1a
+	Uigj/ksB26poPrZ/5WrLdW3wKqKYkaKfxTjMKGhMBT8mEuu9Fx09h0f47We6tduJlxk4259JRht
+	u7W3r5x376/EIEWhdQVIJvUxoKMs/r+zwdLqhuotOnyj5c2ezqWaRKACBByo=
+X-Google-Smtp-Source: AGHT+IEt+3Zjc5m/kisTeqXdfnZbP+4jV0np5AlLVJcR1JfEU9710iMC3OWxirj4xpUgpsROUFzfBr7fkTS4vkiONOUTsFUCib/v
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa5272ddcec944e2a35ca7104f6a86bf@xiaomi.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Received: by 2002:a05:6602:6088:b0:881:8186:60a1 with SMTP id
+ ca18e2360f4ac-8819f14b253mr13869739f.11.1754423310426; Tue, 05 Aug 2025
+ 12:48:30 -0700 (PDT)
+Date: Tue, 05 Aug 2025 12:48:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6892600e.050a0220.7f033.002f.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_teardown_sdata
+From: syzbot <syzbot+04851834dc894437cf21@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/05, 高翔 wrote:
->
-> I also think "WARN ON ONCE" is quite sensible .
+Hello,
 
-I am starting to agree, but lets wait for Christian.
+syzbot found the following issue on:
 
-Oleg.
+HEAD commit:    89748acdf226 Merge tag 'drm-next-2025-08-01' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1603e2a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b51b56c81c0761d
+dashboard link: https://syzkaller.appspot.com/bug?extid=04851834dc894437cf21
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/095171b2ab97/disk-89748acd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/48866e36b5ed/vmlinux-89748acd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/be4634873fa0/bzImage-89748acd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+04851834dc894437cf21@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1161 at net/mac80211/iface.c:848 ieee80211_teardown_sdata+0xd2/0x140 net/mac80211/iface.c:848
+Modules linked in:
+CPU: 0 UID: 0 PID: 1161 Comm: kworker/u8:8 Not tainted 6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:ieee80211_teardown_sdata+0xd2/0x140 net/mac80211/iface.c:848
+Code: f6 48 89 df 31 f6 31 d2 e8 db 99 00 00 48 81 c3 80 17 00 00 48 89 df 5b 41 5c 41 5e 41 5f 5d e9 54 ba 00 00 e8 bf b6 d6 f6 90 <0f> 0b 90 4c 8d bb a0 09 00 00 4c 89 f8 48 c1 e8 03 42 80 3c 20 00
+RSP: 0018:ffffc900040df390 EFLAGS: 00010293
+RAX: ffffffff8ae8cce1 RBX: ffff888038ab8d80 RCX: ffff888027048000
+RDX: 0000000000000000 RSI: 00000000ffffff9f RDI: ffff888038ab8d80
+RBP: ffffc900040df530 R08: ffffffff8fa1ba37 R09: 1ffffffff1f43746
+R10: dffffc0000000000 R11: ffffffff8ae92c70 R12: dffffc0000000000
+R13: ffff888038ab8c10 R14: ffff888038ab9978 R15: ffff888038ab8000
+FS:  0000000000000000(0000) GS:ffff888125c5b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa038adcf98 CR3: 000000003edb8000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ unregister_netdevice_many_notify+0x1953/0x1ff0 net/core/dev.c:12177
+ unregister_netdevice_many net/core/dev.c:12219 [inline]
+ unregister_netdevice_queue+0x33c/0x380 net/core/dev.c:12063
+ unregister_netdevice include/linux/netdevice.h:3382 [inline]
+ _cfg80211_unregister_wdev+0x165/0x590 net/wireless/core.c:1275
+ ieee80211_remove_interfaces+0x49a/0x6d0 net/mac80211/iface.c:2391
+ ieee80211_unregister_hw+0x5d/0x2c0 net/mac80211/main.c:1664
+ mac80211_hwsim_del_radio+0x275/0x460 drivers/net/wireless/virtual/mac80211_hwsim.c:5674
+ hwsim_exit_net+0x584/0x640 drivers/net/wireless/virtual/mac80211_hwsim.c:6554
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x49a/0x990 net/core/net_namespace.c:251
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
