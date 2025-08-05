@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-755957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723A6B1AE0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6B0B1AE11
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A63F18981DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431116201E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1932521A94F;
-	Tue,  5 Aug 2025 06:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90826214814;
+	Tue,  5 Aug 2025 06:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJ/4Ru0T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iugcPsXV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6503A175A5;
-	Tue,  5 Aug 2025 06:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FBE175A5
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374585; cv=none; b=pQPiiCLR9D21dTictJzGPHkaFgx16M0XxxO8Licwr/ceW3vRIHZYGjTjT38JU9DYPwyJTMzooSYZHlqk3bWqqV/vh6tp/wVC7AVWP4PjajElKWWsK+jIoZM2RlO4yy3XDgZj3l3HA9i4LbC5bDoBoERC8rvryVjC4XESD/xN5os=
+	t=1754374686; cv=none; b=IlJklZndQz260bI2sveaS/C60bbw+WWhNWKCqfeDpG8riKu+Et3RF/bt6xXW5Yzq0ohoO+yWh/3KNp52vsRnNNjuY9ZAAby9w/hPsjeW50++LLItauXbnz+vzdG3EuxtJSpEADPrKOK3o1NTqEVf/F9NxKqwX05sW/PftBgCjMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374585; c=relaxed/simple;
-	bh=E4DnAqs5juCZtQM1q8zq4eWD0Gdeu/dFvmY6c1wEMxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2dDtkqdQUsH1scyGxxvtxzxUPoWrfkqJTY6gGGoAwt6SuIHKVQL1dZsgjZUE/fJZE7MEegxu4pK+8vw2vMJ+8f+A1FhaJt/bPOcDJcbJilyg0l0ChisCPuHoTkzDxebnQXgZ1uxTFqupFtrsHmlEFXAzo3ihfQiOZmHRdkJ7w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJ/4Ru0T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E23C4CEF4;
-	Tue,  5 Aug 2025 06:16:24 +0000 (UTC)
+	s=arc-20240116; t=1754374686; c=relaxed/simple;
+	bh=DgJ6jHIbxLVmiXFgEe6KR9nH8EMJtdShONp10yEpRuw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PKZXa1ji9+L3miHnLjxkH1r2GdEEm69R9sidIvP8rUMt3jRiszdeJCszc75Vt8QlrbgmdwpVobjrzbuSv0or3AM16YwNn4DQapMljs+eXdUE30E+0sKtIC+qR8MDvchmM0INWvRo/iiodw11edf4cFa86b0mcxxbsK4cch5kP04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iugcPsXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7736AC4CEF4;
+	Tue,  5 Aug 2025 06:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754374584;
-	bh=E4DnAqs5juCZtQM1q8zq4eWD0Gdeu/dFvmY6c1wEMxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pJ/4Ru0TvNSs/1mdSeiR+23gvRUnlX2FrhHXehiRQlAHgboxcESB4VPRLlD+hfkq1
-	 UJcqlHcJOCH4rAS3wcL4pWVXA+bcKHT0NzKlNhXNy/bYAgPDG5zZpBDfHBnRanoNPP
-	 LIdpgx7xzCqXUIuv6c+Y5g7MjNUso/aENwVC37dtoovy4iASKhwtbHMZLVq+jMsr2U
-	 vB5elp+HLmLu0SHb9PAewt7pTwBuJMoY5NjEZC6lMmNdXQM/JkP09J6JYWh/n1QbXf
-	 N8XoCbeud6ic6fpBI+xNCfLCfjJeE5tCkwnduo4CG11lZgPs9+MBRs6ogzA3ESiWFg
-	 YTNQmGGc9j1Kw==
-Date: Tue, 5 Aug 2025 08:16:22 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org, djakov@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>, Md Sadre Alam <quic_mdalam@quicinc.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-Message-ID: <20250805-polite-prawn-from-heaven-bccc9b@kuoka>
-References: <20250804112041.845135-1-quic_varada@quicinc.com>
- <20250804112041.845135-2-quic_varada@quicinc.com>
+	s=k20201202; t=1754374685;
+	bh=DgJ6jHIbxLVmiXFgEe6KR9nH8EMJtdShONp10yEpRuw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iugcPsXVN40dyxh6qeY63pueNSJoFp1Su4a2x7lykPOQTZi4OBwcuBDSbV0+Asknt
+	 8IqffZzhfSURGRH4khM4ql+HmEZcF6d1ZqCWlGs6RitXFfv3quZs1EathBSNBNUjdJ
+	 6vvIF67bLG6qWDwFZtq61o7VDk6vuoxHeRv8eM0wI8omFXmuUe9nK2jCjx3Fq5tZ0E
+	 eF3HmIrVWGwbi8kz4hxJyvGSYVkXfp2FlNFxCj/GyW5uT8kc43sSpQa9bIKnemohvF
+	 43kxj1Q2FDw5uewualYomPHrsx7/EZCHOwK1tQF5PTHGtt8XwJ39OZ7CcFs6Im5E3s
+	 ESW/yTXLa8rgg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Qi Han <hanqi@vivo.com>
+Subject: [PATCH] f2fs: fix to return -EOPNOTSUPP for uncached write
+Date: Tue,  5 Aug 2025 14:17:33 +0800
+Message-ID: <20250805061733.3067254-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250804112041.845135-2-quic_varada@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 04, 2025 at 04:50:38PM +0530, Varadarajan Narayanan wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
-> The RCG and PLL have a separate register space from the GCC.
-> Also the L3 cache has a separate pll and needs to be scaled along
-> with the CPU.
-> 
-> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> [ Added interconnect related changes ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+f2fs doesn't support uncached write yet, for write() w/ IOCB_DONTCACHE
+flag, let's return -EOPNOTSUPP instead of ignoring IOCB_DONTCACHE flag
+and write w/o uncached IO.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Qi Han <hanqi@vivo.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- fix author info
+ fs/f2fs/file.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9b8d24097b7a..7f09cad6b6d7 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5185,6 +5185,11 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
+ 	}
+ 
++	if (iocb->ki_flags & IOCB_DONTCACHE) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
+ 	if (!f2fs_is_compress_backend_ready(inode)) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
+-- 
+2.49.0
 
 
