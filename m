@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-757054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6203EB1BD13
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:25:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A25B1BD15
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D705626D5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:25:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF7C18A468B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371172BDC07;
-	Tue,  5 Aug 2025 23:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67562BE040;
+	Tue,  5 Aug 2025 23:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZUYJUGQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2mvrXzr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5992E36E7;
-	Tue,  5 Aug 2025 23:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E42E36E7;
+	Tue,  5 Aug 2025 23:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754436312; cv=none; b=a16seHtHu36i6wyfohof/MvnNzIgedBjAAjLmo27dwGGd9wv1YKvC3VENucabPMlghmEJQQrvbt0frvmiY6SjR9gTXX/xlx2y9279PjVqQDbqqsEg4ft2L6iiWh2VwJHRHVDr6uKGov0ic9d2dwxnWkFvoMV+G8Q+1CJKAVL8Zg=
+	t=1754436316; cv=none; b=Vc5iAW88VXKFmyJbjY8oC2kvG0z0pbTGUueFVm+Kn7MwPN5pXORyS2EcE4S3iHDSR0gjvR1NrDxQkT4YfYkpTIToehT7mSmMCwe0NW28/cKY68sKJO97SNyoN5xgotNJegKWfUoEHcybGhnDeYpwE4Sb0/U6YGvfbzD63XI611A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754436312; c=relaxed/simple;
-	bh=spxvj8UNBEpa1KElVKtvKTp6JsUr2gQ3EwBu5q7Clr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IxvdlGEQUma5YNxvvxmlNPcnogrqF+G0X0jeNEdJG2ECIga04YUznHx1eqD6RFSe9HSl9ONl7yita9CnJtdsw4HYXCJuWXcbk6/0z2AMUlcnBnHiDh5W8Bg8hNp36cEv3Jsu7Gj3Kh/t4TgHzmS3iRexf9X8vpRs0GwRM1aBf0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZUYJUGQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F147BC4CEF0;
-	Tue,  5 Aug 2025 23:25:09 +0000 (UTC)
+	s=arc-20240116; t=1754436316; c=relaxed/simple;
+	bh=uRaQFKmTNs6WiDXUTtckqwoicM/kHAHx6j1ov6e95AA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IFLPyLRXQKte1ja021THHl1YVROetiDhJ/299NWB+L8kdzJ/RpPRg6aUpSp8IWRsYds8BrZC2kPDlgJXyfU0kqLrY37Uc5EIMTmKhT1MBX0DgHQzc/MuCkz2oIH9U8BHy1h/TM3/g9WFExuhv2/PIW9fh+TOGzi5k13LFORevO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2mvrXzr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E5BC4CEF0;
+	Tue,  5 Aug 2025 23:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754436310;
-	bh=spxvj8UNBEpa1KElVKtvKTp6JsUr2gQ3EwBu5q7Clr0=;
+	s=k20201202; t=1754436315;
+	bh=uRaQFKmTNs6WiDXUTtckqwoicM/kHAHx6j1ov6e95AA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=jZUYJUGQdwurbIsCPFisLJBwN14mKXusjvlS/41MI/++kJNrkutxtVT7pRqPDiD9c
-	 RIlAor8U6IMv5BeLXgm5fk3PgeZ1h16J8dTloNvVHMU/TDd1UhAQPhXm2PWNXm1Hl8
-	 K+2JVLUN65NJ6EwNzQnYRXHsxC3O5XeXmGd291PNtYJ+3dqZS0iLiKQdQ70RWYGEeu
-	 V5tpQfxgaHa3t69l/z8oiLqSltHduCUt3nDNGPeBdXu/j0HmkIzuxK+9G3HQnGuYo5
-	 oxU7r37FWnVwCgQpiV8iIWyjPkzp2O9OVysrhnCF+OlcSDukPTtNflsXI0tB2QXFZO
-	 c4PHmtQtlf/dQ==
+	b=J2mvrXzrwJkx9C9QKapUCqTGRhZZPxCQkE3/zUGA+oeJpvOZy/1Nc9WaqEvH7fntC
+	 OknLSQzQOmapjidp8RbQshrqzKYPr/6ak23oS9QK4YeCPVpL4yHW1McPrVHEzCrMcQ
+	 OJ7rRuxbEp0f6zfDwcbWe7TN25wCxBUdK5UQCPlGjai9dfV8XZuzofE9j6qcZ0Bvvn
+	 HfotzQYudwVx+gOkT7FXFSpk54NkvA+KS/f0scGOxPpgzM056M3eXllw5RfI2wDUOD
+	 IW/6xaGqg16Q5c4NR5eyaMtuVtGmt4EIOPrPlm2slAMyzU04ANtoKTcqKCvFt/H6QF
+	 twoXSOl7gCvCw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Andrew Lunn <andrew@lunn.ch>,
 	Gregory Clement <gregory.clement@bootlin.com>,
@@ -48,9 +48,9 @@ To: Andrew Lunn <andrew@lunn.ch>,
 Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: marvell: Convert marvell,armada-370-xp boards to DT schema
-Date: Tue,  5 Aug 2025 18:25:00 -0500
-Message-ID: <20250805232502.2827725-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: arm: marvell: Convert marvell,armada375 boards to DT schema
+Date: Tue,  5 Aug 2025 18:25:12 -0500
+Message-ID: <20250805232513.2828068-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,89 +60,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert Marvell Armada 370/XP based boards to DT schema format.
+Convert Marvell Armada-375 based boards to DT schema format.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/arm/marvell/98dx3236.txt         | 23 ------
- .../bindings/arm/marvell/armada-370-xp.txt    | 24 ------
- .../arm/marvell/marvell,armada-370-xp.yaml    | 78 +++++++++++++++++++
- 3 files changed, 78 insertions(+), 47 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,armada-370-xp.yaml
+ .../bindings/arm/marvell/armada-375.txt       |  9 --------
+ .../arm/marvell/marvell,armada375.yaml        | 21 +++++++++++++++++++
+ 2 files changed, 21 insertions(+), 9 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-375.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,armada375.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt b/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-375.txt b/Documentation/devicetree/bindings/arm/marvell/armada-375.txt
 deleted file mode 100644
-index 64e8c73fc5ab..000000000000
---- a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+index 867d0b80cb8f..000000000000
+--- a/Documentation/devicetree/bindings/arm/marvell/armada-375.txt
 +++ /dev/null
-@@ -1,23 +0,0 @@
--Marvell 98DX3236, 98DX3336 and 98DX4251 Platforms Device Tree Bindings
------------------------------------------------------------------------
+@@ -1,9 +0,0 @@
+-Marvell Armada 375 Platforms Device Tree Bindings
+--------------------------------------------------
 -
--Boards with a SoC of the Marvell 98DX3236, 98DX3336 and 98DX4251 families
--shall have the following property:
--
--Required root node property:
--
--compatible: must contain "marvell,armadaxp-98dx3236"
--
--In addition, boards using the Marvell 98DX3336 SoC shall have the
+-Boards with a SoC of the Marvell Armada 375 family shall have the
 -following property:
 -
 -Required root node property:
 -
--compatible: must contain "marvell,armadaxp-98dx3336"
--
--In addition, boards using the Marvell 98DX4251 SoC shall have the
--following property:
--
--Required root node property:
--
--compatible: must contain "marvell,armadaxp-98dx4251"
-diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt b/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt
-deleted file mode 100644
-index c6ed90ea6e17..000000000000
---- a/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--Marvell Armada 370 and Armada XP Platforms Device Tree Bindings
-----------------------------------------------------------------
--
--Boards with a SoC of the Marvell Armada 370 and Armada XP families
--shall have the following property:
--
--Required root node property:
--
--compatible: must contain "marvell,armada-370-xp"
--
--In addition, boards using the Marvell Armada 370 SoC shall have the
--following property:
--
--Required root node property:
--
--compatible: must contain "marvell,armada370"
--
--In addition, boards using the Marvell Armada XP SoC shall have the
--following property:
--
--Required root node property:
--
--compatible: must contain "marvell,armadaxp"
--
-diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,armada-370-xp.yaml b/Documentation/devicetree/bindings/arm/marvell/marvell,armada-370-xp.yaml
+-compatible: must contain "marvell,armada375"
+diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,armada375.yaml b/Documentation/devicetree/bindings/arm/marvell/marvell,armada375.yaml
 new file mode 100644
-index 000000000000..e65eadfbd097
+index 000000000000..81c33e46fecc
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/marvell,armada-370-xp.yaml
-@@ -0,0 +1,78 @@
++++ b/Documentation/devicetree/bindings/arm/marvell/marvell,armada375.yaml
+@@ -0,0 +1,21 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/marvell/marvell,armada-370-xp.yaml#
++$id: http://devicetree.org/schemas/arm/marvell/marvell,armada375.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Marvell Armada 370 and Armada XP platforms
++title: Marvell Armada 375 Platform
 +
 +maintainers:
 +  - Andrew Lunn <andrew@lunn.ch>
@@ -152,67 +107,9 @@ index 000000000000..e65eadfbd097
 +  $nodename:
 +    const: '/'
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - ctera,c200-v2
-+              - dlink,dns327l
-+              - globalscale,mirabox
-+              - netgear,readynas-102
-+              - netgear,readynas-104
-+              - marvell,a370-db
-+              - marvell,a370-rd
-+              - seagate,dart-2
-+              - seagate,dart-4
-+              - seagate,cumulus-max
-+              - seagate,cumulus
-+              - synology,ds213j
-+          - const: marvell,armada370
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - enum:
-+              - mikrotik,crs305-1g-4s
-+              - mikrotik,crs326-24g-2s
-+              - mikrotik,crs328-4c-20s-4s
-+          - const: marvell,armadaxp-98dx3236
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - const: marvell,db-xc3-24g4xg
-+          - const: marvell,armadaxp-98dx3336
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - const: marvell,db-dxbc2
-+          - const: marvell,armadaxp-98dx4251
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - enum:
-+              - lenovo,ix4-300d
-+              - linksys,mamba
-+              - marvell,rd-axpwifiap
-+              - netgear,readynas-2120
-+              - synology,ds414
-+          - const: marvell,armadaxp-mv78230
-+          - const: marvell,armadaxp
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - const: plathome,openblocks-ax3-4
-+          - const: marvell,armadaxp-mv78260
-+          - const: marvell,armadaxp
-+          - const: marvell,armada-370-xp
-+
-+      - items:
-+          - enum:
-+              - marvell,axp-db
-+              - marvell,axp-gp
-+              - marvell,axp-matrix
-+          - const: marvell,armadaxp-mv78460
-+          - const: marvell,armadaxp
-+          - const: marvell,armada-370-xp
++    items:
++      - const: marvell,a375-db
++      - const: marvell,armada375
 +
 +additionalProperties: true
 -- 
