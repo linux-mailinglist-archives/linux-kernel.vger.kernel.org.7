@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-756968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B82FB1BBA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E752B1BBA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61B718A79B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C3E18A7A1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD4231845;
-	Tue,  5 Aug 2025 21:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CA524169A;
+	Tue,  5 Aug 2025 21:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QhCRPr2Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p9aEjxJw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0+h2pSwz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rlry1KhR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7St0oHkK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95774632
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 21:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1BE23C38C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 21:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754428135; cv=none; b=dhcdGk4oMEstqhemgJb39rhLb8PPHEaH9ad3JgF3/FfHs/TDGEnfnwKKNI7OB7H8/wxrTOSTXIyC1e1Am67hze6cjvVzI/YcJS6Bghc9t0u1crlCxOr0C5+TZ9JaTzLfVjL2qKgfv/lDz9OTCJWlR8qZZ0M0tPdCLpG6Ecn7WKw=
+	t=1754428157; cv=none; b=sAJ655Up1HhoPvzhE+2wdXYWkSx52WU1OiTvMeXafmoujdZG1a++vWF0KOS3a3gJivCA6gN2xjbsTBW+aYnB59DRJQb86PsDPTn+SAGUhfInAKwpUYNPGOb4T/3sSxyd1tv6qFVkLwQZ3lX2RweKO0x0lPaHnDFD31I1ZRGEzu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754428135; c=relaxed/simple;
-	bh=fu0eK55NKWjFfXuUU5kvQlF0TSSqNolo84o61Yv99A8=;
+	s=arc-20240116; t=1754428157; c=relaxed/simple;
+	bh=TmNxbPUtByvsc0LNsruFjgdRcZsiaO+Yb/YPBqUk0Ho=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eXjbSs3AguJU7lQCWbeW6RDWqSgmnUFJ8BVH2+TdpIYlo+3m8o1ZGtqSoT4Yyp6NLHmUuqOD44a6fHCjbzHN1thLtj/J467Wp++jo+2n//qUGIS9IOGJwOXxUyW1da6hpYv+xiaDRrIscxhLxRREici7LAUi6v1eTHAtP3GtiWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QhCRPr2Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754428132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=j2kKxdznatuY+6Eo9mfwp5bsLzh3rOqHcPI/tMZsjVdSfNtKkV46imi0P9F3hqn9b3qJNnP7DKz8aDKeFE+v701SpNchac1zeOptcg64ZnEdxo74JYFRJfvkQtWaJ1Zrs8CQmbcaKIaeyNrK8QZwoVmiUHDKy+YIMlBbdKftZeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p9aEjxJw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0+h2pSwz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rlry1KhR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7St0oHkK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CF4751F38C;
+	Tue,  5 Aug 2025 21:09:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754428153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u/eL0tC2humxAnE4NSMATRiPYyHhDovlDD4H4yRhz90=;
-	b=QhCRPr2QZvD2rezNv5jH9dDUr2Oaq8dfmysXaGwzSqH6eWjB4Db/qTJTi0j2CKduXj/tjV
-	av9i9ss8xCiy92ruEMtGryFOGM2p9tzFaLIRuKLzjMsY1NW42OdLjvoMGVjJ/167kasVcC
-	GlPdt3BkOcU+SxYIVhNr9ek7NTvW4YU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-356-0G4xkw7aPcKg9hZrfMfXYA-1; Tue, 05 Aug 2025 17:08:51 -0400
-X-MC-Unique: 0G4xkw7aPcKg9hZrfMfXYA-1
-X-Mimecast-MFC-AGG-ID: 0G4xkw7aPcKg9hZrfMfXYA_1754428130
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458bf93f729so16509405e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 14:08:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754428130; x=1755032930;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=u/eL0tC2humxAnE4NSMATRiPYyHhDovlDD4H4yRhz90=;
-        b=RalH8FjY1h14ERbOoxsf2SnH7W/SzrsD1n5k2xZjwKXz7R6Ydbq/OtIsBMFcez+L0g
-         dnbr+ATbyhuZytPWYJvKQpR5i1Y+a3FrKbE9sMFnGCmgArvnUjn6aNWmcIBposPiDjY5
-         0p14egJ5TL623QqE+LwYuAheWDCpoRCtM8i3zm1yl8/EDK1+yO+mngTsPoOE0oDReHjL
-         59oRRml9+4wGZWaljW4mIJ6GjjLr+yMxPvl4PLmXe2UGG/uSmyYqIwXIh3Xh1dwkn8UR
-         TufJe2vaIBicrMpZb1cxdS82Onc/NXfyoLKHnTbJEg4f4wWN5F3fwagPr1y5T1i4qjq0
-         LSXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB7SyyYis4nphiuvWQcM9Mok7RPIMSe2uPhFVk7Za7QyxmVmLIM0BGDoxR+dX2xpuUfKPt5bQEAkui1dU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJRZm3/oMTOqsnlqX4lC6BBkoHRNPGxHgrwujj0gnqZUznbU7e
-	Pn8ArzGOvBJ3fhCPpSe/CsuCZaoLIHkQkkUObOxYa+o5PtAk7izs1k/v99Ti1MQs32Ye+M3fE3v
-	UjywhuOtXLqjYxwnnV3JkG9nsX4T9k9I2wf+d8KasrD6PBBB3QfhODFbUI1ClCr4oiQ==
-X-Gm-Gg: ASbGncu7dgS4hHMhnefmTLmxOafqw41AewotwtsT9/bnJtFeHQkNbBBIxOpNUao5h4n
-	U39ZVTfcBnxdnkEN2Pkq2r74uQy9LrO3/OzujEkcJlAfaN+vw6FORUHqVXCvIGMNlZTnU12O422
-	K5HlVEgpS2neyF0qF0Um+DOXbtqetckCaQiam4MZ0ARqmSagPKGpY8McFOO9f5HMyQ9tX5LzKUx
-	JtgtuB6GxcuucIHBZL6HKXlxPvf3S+0ou1LQAPRmvs59pRCZq/Sint9+xii56UOsORE7wEoqy09
-	xB8VaCTXM7U1BUwF9GB3yu0eVvjowxeFuiD2kH+Jf8db0ZYLXSJnBF5tMg/XG/0bVDtqLpMoy21
-	d+YD26l4wFe/5uXPkeecyQWonE7hn0YgYbLnvxVS97HVP5nMNoznecow1/mBEC1t7n9c=
-X-Received: by 2002:a05:600c:4fd5:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-459e70eeb5cmr2928275e9.17.1754428130190;
-        Tue, 05 Aug 2025 14:08:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcSYv4Sqy94KAApt5uEeACzubGuEsOE55mxZ7I9ESflZEKKHfxakUYforoYyFFXqPR+btRNg==
-X-Received: by 2002:a05:600c:4fd5:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-459e70eeb5cmr2928115e9.17.1754428129737;
-        Tue, 05 Aug 2025 14:08:49 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4b:5100:3004:3864:4049:722e? (p200300d82f4b5100300438644049722e.dip0.t-ipconnect.de. [2003:d8:2f4b:5100:3004:3864:4049:722e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5879d76sm20391725e9.24.2025.08.05.14.08.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 14:08:49 -0700 (PDT)
-Message-ID: <6dee6cd9-c67f-480f-b728-21c3a7b72004@redhat.com>
-Date: Tue, 5 Aug 2025 23:08:48 +0200
+	bh=MNClJXYCT5XCWlcWvf+P0euVhQkljwm42ZjsxOdKTwE=;
+	b=p9aEjxJw7HB9J2y3uwU1S6vwz0xm2N9udm5CG9zy8uIDv9pQXZba1tOWJTV1H2VEXw2E18
+	m+CS1lLrr+Vmzw3fBVc+esWPK0Vrxe6wKePHEPztNTU2myATpYlmzXD54JCRtqN2Oywy1n
+	vsfMBN80jhOdPeorfuab4hBlr87BWaw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754428153;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MNClJXYCT5XCWlcWvf+P0euVhQkljwm42ZjsxOdKTwE=;
+	b=0+h2pSwzPpAL5tjkWpN7UIdpFNtE+U/r1q00OOJIk8vBX00ubtfn+PCNmTlrTad+YQupPt
+	4jKeKuTsNptQVUBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Rlry1KhR;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7St0oHkK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754428152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MNClJXYCT5XCWlcWvf+P0euVhQkljwm42ZjsxOdKTwE=;
+	b=Rlry1KhR+rCVQORBJtVPWHI3iL0iE5YW3tP01npuVbXcheF+iLCWfNJVz57Gbp5jqzsSkP
+	ugtMDKXQq3DV/0gOyia6MqaigghctRnG4BTY9QqVYJKmFwPuOmsTe33x/2QMwsLkddd8DS
+	Sg8rXRgJeUET+wOYhdX44Au96I0fthE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754428152;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MNClJXYCT5XCWlcWvf+P0euVhQkljwm42ZjsxOdKTwE=;
+	b=7St0oHkKevZmpkxADTFWi3gQQHxHNBvES3gmnnzW4h1AL11Y4nYxQvJ48xHC5H0skiC5oW
+	Tnp44b0fVriojIBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ADA7513AA8;
+	Tue,  5 Aug 2025 21:09:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HLH7Kfhykmi0TgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 05 Aug 2025 21:09:12 +0000
+Message-ID: <ee7ba479-4917-4d83-8130-8c247c08d2d0@suse.cz>
+Date: Tue, 5 Aug 2025 23:09:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,178 +99,130 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH] mm/page_alloc: Add PCP list for THP CMA
 To: Juan Yescas <jyescas@google.com>
-Cc: akash.tyagi@mediatek.com, Andrew Morton <akpm@linux-foundation.org>,
+Cc: David Hildenbrand <david@redhat.com>, akash.tyagi@mediatek.com,
+ Andrew Morton <akpm@linux-foundation.org>,
  angelogioacchino.delregno@collabora.com, hannes@cmpxchg.org,
  Brendan Jackman <jackmanb@google.com>, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
  Linux Memory Management List <linux-mm@kvack.org>, matthias.bgg@gmail.com,
  Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, wsd_upstream@mediatek.com,
- Zi Yan <ziy@nvidia.com>, Kalesh Singh <kaleshsingh@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- Isaac Manjarres <isaacmanjarres@google.com>
+ wsd_upstream@mediatek.com, Zi Yan <ziy@nvidia.com>,
+ Kalesh Singh <kaleshsingh@google.com>, "T.J. Mercier"
+ <tjmercier@google.com>, Isaac Manjarres <isaacmanjarres@google.com>
 References: <CAJDx_rgzkZognxWzOXJ-ZxdTtUaM3FT6bmpkwxMz03XiX3fKAQ@mail.gmail.com>
  <d395b14a-9a84-4f25-b4f0-45e8500fc5fe@redhat.com>
  <CAJDx_rgrp1TpOt-iDcsSGRTL=qZZsK_dpKL1bSkyunPGcGXt5g@mail.gmail.com>
- <486c5773-c7fa-4e19-b429-90823ed2f7d5@redhat.com>
- <CAJDx_ri==3SxFcuKXHpNjrtxbp0hLyhM+zXeJ-LQX38rfbUChw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+ <4566222d-6b91-4789-bdd6-61e3769f5dbf@suse.cz>
+ <CAJDx_rjvYdjPYHbBDKvkaWV=-OPJG=oRdSAugaOyJAXaOVu-9w@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <CAJDx_ri==3SxFcuKXHpNjrtxbp0hLyhM+zXeJ-LQX38rfbUChw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAJDx_rjvYdjPYHbBDKvkaWV=-OPJG=oRdSAugaOyJAXaOVu-9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[redhat.com,mediatek.com,linux-foundation.org,collabora.com,cmpxchg.org,google.com,lists.infradead.org,vger.kernel.org,kvack.org,gmail.com,suse.com,nvidia.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: CF4751F38C
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On 05.08.25 18:57, Juan Yescas wrote:
-> On Tue, Aug 5, 2025 at 2:58 AM David Hildenbrand <david@redhat.com> wrote:
+On 8/5/25 19:12, Juan Yescas wrote:
+> On Tue, Aug 5, 2025 at 2:52 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >>
->> On 05.08.25 03:22, Juan Yescas wrote:
->>> On Mon, Aug 4, 2025 at 11:50 AM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 04.08.25 20:20, Juan Yescas wrote:
->>>>> Hi David/Zi,
->>>>>
->>>>> Is there any reason why the MIGRATE_CMA pages are not in the PCP lists?
->>>>>
->>>>> There are many devices that need fast allocation of MIGRATE_CMA pages,
->>>>> and they have to get them from the buddy allocator, which is a bit
->>>>> slower in comparison to the PCP lists.
->>>>>
->>>>> We also have cases where the MIGRATE_CMA memory requirements are big.
->>>>> For example, GPUs need MIGRATE_CMA memory in the ranges of 30MiB to 500MiBs.
->>>>> These cases would benefit if we have THPs for CMAs.
->>>>>
->>>>> Could we add the support for MIGRATE_CMA pages on the PCP and THP lists?
->>>>
->>>> Remember how CMA memory is used:
->>>>
->>>> The owner allocates it through cma_alloc() and friends, where the CMA
->>>> allocator will try allocating *specific physical memory regions* using
->>>> alloc_contig_range(). It doesn't just go ahead and pick a random CMA
->>>> page from the buddy (or PCP) lists. Doesn't work (just imagine having
->>>> different CMA areas etc).
->>>>
->>>> Anybody else is free to use CMA pages for MOVABLE allocations. So we
->>>> treat them as being MOVABLE on the PCP.
->>>>
->>>> Having a separate CMA PCP list doesn't solve or speedup anything, really.
->>>>
->>>
->>> Thanks David for the quick overview.
->>>
->>>> I still have no clue what this patch here tried to solve: it doesn't
->>>> make any sense.
->>>>
->>>
->>> The story started with this out of tree patch that is part of Android.
->>>
->>> https://lore.kernel.org/lkml/cover.1604282969.git.cgoldswo@codeaurora.org/T/#u
->>>
->>> This patch introduced the __GFP_CMA flag that allocates pages from
->>> MIGRATE_MOVABLE
->>> or MIGRATE_CMA. What it happens then, it is that the MIGRATE_MOVABLE
->>> pages in the
->>> PCP lists were consumed pretty fast. To solve this issue, the PCP
->>> MIGRATE_CMA list was added.
->>> This list is initialized by rmqueue_bulk() when it is empty. That's
->>> how we end up with the PCP MIGRATE_CMA list
->>> in Android. In addition to this, the THP list for MIGRATE_MOVABLE was
->>> allowed to contain
->>> MIGRATE_CMA pages. This is causing THP MIGRATE_CMA pages to be used
->>> for THP MIGRATE_MOVABLE
->>> making later allocations from THP MIGRATE_CMA to fail.
+>> >
+>> > Thanks David for the quick overview.
+>> >
+>> >> I still have no clue what this patch here tried to solve: it doesn't
+>> >> make any sense.
+>> >>
+>> >
+>> > The story started with this out of tree patch that is part of Android.
+>> >
+>> > https://lore.kernel.org/lkml/cover.1604282969.git.cgoldswo@codeaurora.org/T/#u
+>> >
+>> > This patch introduced the __GFP_CMA flag that allocates pages from
+>> > MIGRATE_MOVABLE
+>> > or MIGRATE_CMA.
 >>
->> Okay, so this patch here really is not suitable for the upstream kernel
->> as is. It's purely targeted at the OOT Android patch.
->>
-> Right, it is a temporary solution for the pinned MIGRATE_CMA pages.
+>> What kinds of allocations would then use __GFP_CMA?
 > 
->>>
->>> These workarounds are mainly because we need to solve this issue upstream:
->>>
->>> - When devices reserve big blocks of MIGRATE_CMA pages, the
->>> underutilized MIGRATE_CMA
->>> can fall back to MIGRATE_MOVABLE and these pages can be pinned, so if
->>> we require MIGRATE_CMA
->>> pages, the allocations might fail.
->>>
->>> I remember that you presented the problem in LPC. Were you able to
->>> make some progress on that?
->>
->> There is the problem of CMA pages getting allocated by someone for a
->> MOVABLE allocation, to then short-term pin it for DMA. Long-term
->> pinnings are disallowed (we just recently fixed a bug where we
->> accidentally allowed it).
->>
-> Nice, it is great the issue got caught and fixed upstream :)
-> 
->> One concern is that a steady stream of short-term pinnings can turn such
->> pages unmovable. We discussed ideas on how to handle that, but there is
->> no solution upstream yet.
-> 
-> Are there any plans to continue the discussion? Is it in the priority
-> list?
+> The __GFP_CMA allocations are used to allocate userspace anonymous memory. This
+> was done initially in the alloc_zeroed_user_highpage_movable()
+> function, now it is done
+> in vma_alloc_zeroed_movable_folio().
 
-Ohh, it's somewheeeeeere on the todo list :)
+So that means you perceive the risk of anonymous memory being temporarily
+pinned and thwarting a alloc_contig_pages() device CMA allocation lower than
+for file pages? The pinning can be a gup(), or a compaction migrating the
+page, etc...
 
-Do you (or one of your colleagues) have capacity to work on that? One 
-idea was to flag folios as "pending on migration" and disallow any 
-further short-term pins until migration is done. IIRC, there were other 
-ideas (e.g., isolated pageblock).
-
-> Maybe
-> a topic we can discuss in LPC Japan?
-
-Sounds good, feel free to propose this as a topic. I wills end out the 
-announcement of the MM MC probably next week.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
