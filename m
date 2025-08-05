@@ -1,131 +1,200 @@
-Return-Path: <linux-kernel+bounces-756931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4101B1BB2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F72AB1BB2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D39657A1E94
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFACC18A7E68
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192E26E70B;
-	Tue,  5 Aug 2025 19:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F015326AAAB;
+	Tue,  5 Aug 2025 19:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="EEyi1ipT"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+4M1yQw"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F986359;
-	Tue,  5 Aug 2025 19:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD323FBB3;
+	Tue,  5 Aug 2025 19:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423409; cv=none; b=cFh3U0DydVRBbtVTHeHV4DLuR+xzHtdNFnt3N00qYoiwYUvdcnJiYOgDXeszkhGvTBzCMmxeqcxXG4aE4Kxa7iMtlair5zDP1rDRgD5Zk90DsfUJayht5VPUfpEOJwxPA7uWHZNQcwOWsl2QmwdmBOS7N7kw7dM08Vcq7yv8vm8=
+	t=1754423498; cv=none; b=BFK7jbRmukEEQihICmPMu+b6MGqTXcYm5J8xbj4u/bP54qGIo4nmfiRjimLJCgPKbsYQOr987w0WUbxZaTYRWPFXeYG+DV/pE8G5q2NZQZRP61XESjprQVH4ov7WaIQmbwpzIsZ9vm+AqY4qHb9OnTWEyhusF86hra+8dELd8s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423409; c=relaxed/simple;
-	bh=HUAA1lvxHbHNQM+VlXz4ojTWWJTaYJ5PEv3rKAFOWxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diOaayeDrP80eKCa9iWDNSy3h1Lk6IMrUYxhPPJHQOTYxe7k2ABhL2yRK5uQ0Ox02WKJ9s+4nxiQkElaSjJV48AyltFkhRiccTd46gMIoMXZMpKV57h+xifuyPxT3H6EmWNXL0tP0emsaqqaOHQnZg0DJhxp/SGtqSlVbQdgbOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=EEyi1ipT; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ycgnwcq/Vvn2+AMuxDAwRUajlGqK/rXQgBxlhdOFpKc=; b=EEyi1ipT11BfKw/pWvPUEsthqj
-	2LOIoozlh0rALGgoVxzbnYA77Nl5YvGxQwCfq7kxN0gcL5P0tA2GeGDzT2MwT4VQKf4gjpJjAaHSw
-	04tH8BnLT9awzskP7+dHA8dYx3skjGew/KuJWKwR7INcoQjhVKfd7rjYOMW7w6Q5pZQMl7zrBvFgJ
-	DiYSQnOFAOC6VtoYESN36AsDicCEvxt7LSwKJqdw6fUdSg5ENCRR319jdCANbtcJetoU7HShm0VO7
-	MMLQYvhiIrZvN200wyx+GB80AsLOz+SD8n4PXHKXO9oMenn8q9qbNiHeeD0m24kQNIT5w1500sPr4
-	KwuHkxsA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujNff-00000005ZSJ-1JH4;
-	Tue, 05 Aug 2025 19:50:03 +0000
-Date: Tue, 5 Aug 2025 20:50:03 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
-Message-ID: <20250805195003.GC222315@ZenIV>
-References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
- <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
- <20250804155229.GY222315@ZenIV>
- <20250805-beleidigen-klugheit-c19b1657674a@brauner>
- <20250805153457.GB222315@ZenIV>
+	s=arc-20240116; t=1754423498; c=relaxed/simple;
+	bh=3aFqBsM6mN5uu+1G1WaVaon7DG3vAbe7Eir3PTlYMk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dHeemPdKuaYmNKVxi9JsBPx/8uW9awXxbeF/N9+2v+WeCTt5yHcvb4oOC3I53jidSCFqLaktWDJ1GUN9acsj1gAZ+rZZhsvFmBPQuGOSirEChQq8hzdW7/6XXrqmkyKkk+yPzNkFQRFmlSrPNfbm3lfaoDZVsEM4c3GOiI1DwQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+4M1yQw; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-74264d1832eso5627868b3a.0;
+        Tue, 05 Aug 2025 12:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754423496; x=1755028296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tybD8dvj3BrHV4ZA0++FRr8ip0ElrmI1dhTrw4vCNaI=;
+        b=f+4M1yQwsbWmVap1weJoApmcxDh5RgYAXzoNlVZFW8dteKXyKARElzWUrJr+pMlgDF
+         uM7NAtQ8eVOEIDgWqWU1BRB4RViGwNUHKlWJ3cdiy/nYaCLOnjf9rid1VDYJQKf1yHlm
+         7Ex1L1dcn09flZG0qcFL8gAQEJUdSctvhcg1sS82VnOPGjgZMI+z4zwl3xKQMi+3J4B7
+         URAqaxsh0R53c8TSWAXT9w3xRywHXo5Rwmg0yH5WCNqcdE3lw6jwGoVgbjdjSodF00w9
+         mEut9DuLffOPYpYNoNoOKrC+frVYfT5V4touL6FNbu7lX82kotqparqSm/88bxgmjk8o
+         LnfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754423496; x=1755028296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tybD8dvj3BrHV4ZA0++FRr8ip0ElrmI1dhTrw4vCNaI=;
+        b=GS479ZZnrQ2vmhK9S0HQEYoEoJlU0+0l5vpatbiHdRcDXvdzSwMhg8D8CR4IJluBhU
+         sf0/dCkiifPfmh7QBks6jEWL8MBsErAQcRt/kjAAyrZxCSxlr8aPw4PmGVLAnBK0FSHf
+         LLl7x+DUCG3wm1vcKENHxdg3D/IlWfISM/NYyp+vlyXgkdxQ5m4o3I0iHmneBT6TtwzT
+         QpP2sv/89Y7LuJwvNPRRtpcgx9TXcSdj7yFmkF8+EGVfYd6u6ne7rwl1HLYmAXrPAiBV
+         t4+ULhOXCNzK1AcCu69bs5rtIlay3dCcwQJx53ee+rxj+GqlQLp27qrCf6uy8aG4F8IU
+         TYYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAJAuIzk33ggSXqr3D2it2muwND4ZKHJgFYhx310o765P2kB5SNtsFNYOqFjw55HErbH9GaQBlLggMwkc=@vger.kernel.org, AJvYcCXuCq38hG9DwOyN/gScV45osZdLYwAwAlPw2Wq/uHg5ApD3aCgRNAaPfmVmLapRR29HB3gfKmMV81ESXi1N@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZSpoJBab4WeMrNLlTM1TEncA6MuqA1j2NukM20dc3IyUj73FV
+	4+oEq7VQEtQKIV1BG3KkcQ83iT4oPzFWqQrJ8kuYFX+yDu/0cqn8vcDL76Mo26TIH7k=
+X-Gm-Gg: ASbGncu0hAhHeR8ZhW6EJriD7/FcrUya8TSDx0RveR7sM4sSooTE5DCmLoX11e80Iig
+	Jlxg0Hhkojaku7gtBXJR5akK2286rPSCTkFNTxMQlz6Qas4+c42k17JjMitJv7Y96q4k+dcqKDS
+	GGW3dF5v49LV7iQr8D4ex3F78yemnpiobGgKrp1nUNL1nBxfFzXyZ0AYPUNcgwyTkMgOrz6z+M+
+	x3/Fol1y7runSzviTTYY8KDuSaD608fUWxiBtVhKJVuppQyFtHYs89Agcgq754kD08Zz3AB4Keu
+	l9MQMD9/Qrgz4C6Y1eSNGpBbEw6yK9gGT5iMKdYxJYiugbSxPvAPYxH45Do983rCX5uNThbirXK
+	9eBx0vlTtQwiW6NQt3t6hJiu+7+wFWkej
+X-Google-Smtp-Source: AGHT+IHShzSvmgznm+V5oYi4OS4D6N3iRPuQfIj5sYhBlHvzTYOa8eyC3iXkIC/IGnMWMyQfnD/lqA==
+X-Received: by 2002:a05:6a20:3ca1:b0:240:dc9:71cf with SMTP id adf61e73a8af0-240314fb2f7mr456804637.38.1754423496200;
+        Tue, 05 Aug 2025 12:51:36 -0700 (PDT)
+Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm13744397b3a.18.2025.08.05.12.51.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 12:51:35 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: jirislaby@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	sunilvl@ventanamicro.com,
+	arnd@arndb.de,
+	u.kleine-koenig@baylibre.com,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	abinashsinghlalotra@gmail.com
+Subject: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in serial8250_probe_acpi()
+Date: Wed,  6 Aug 2025 01:21:54 +0530
+Message-ID: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805153457.GB222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 05, 2025 at 04:34:57PM +0100, Al Viro wrote:
+The function serial8250_probe_acpi() in 8250_platform.c triggered a
+    frame size warning:
+drivers/tty/serial/8250/8250_platform.c: In function ‘serial8250_probe_acpi’:
+drivers/tty/serial/8250/8250_platform.c:152:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-> They do no allow to express things like "foo() consumes lock X".
-> >From time to time, we *do* need that, and when that happens guards
-> become a menace.
-> 
-> Another case is
-> 	lock
-> 	if (lock-dependent condition)
-> 		some work
-> 		unlock
-> 		work that can't be under that lock
-> 	else
-> 		some other work
-> 		unlock
-> 		more work that can't be under that lock
-> 
-> Fairly common, especially when that's a spinlock and "can't be under that
-> lock" includes blocking operations.  Can't be expressed with guards, not
-> without a massage that often ends up with bloody awful results.
+This patch reduces the stack usage by dynamically allocating the
+    `uart` structure using kmalloc(), rather than placing it on
+    the stack. This eliminates the overflow warning and improves kernel
+    robustness.
 
-FWIW, I'm looking through the raw data I've got during ->d_lock audit.
-Except for a few functions (all static in fs/dcache.c), all scopes
-terminate in the same function where they begin.
+Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+---
+The stack usage was further confirmed by using -fstack-usage flag.
+it was using 1200 bytes:
+..............................
+drivers/tty/serial/8250/8250_platform.c:110:12:serial8250_probe_acpi	1200	static
+drivers/tty/serial/8250/8250_platform.c:351:20:serial8250_exit	16	static
+......................................
+After applying the patch it becomes :
+.........
+It doesn't show up in stack usage  and warning is fixed.
+.......
+This function is used for probing . So dynamic allocation will not create
+any issues.
 
-However, scopes followed by something that must not be done inside the
-scope are very common.  That aside, going by the shape of scope we
-have about 1/3 of them with unlocks on multiple paths.
+Thank You
+---
+ drivers/tty/serial/8250/8250_platform.c | 29 +++++++++++++++----------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-Not all of those are equal - some would be eliminated by use of guard().
-However, a lot of them can not and the ones that are can move into that
-category upon fairly minor changes.
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index c0343bfb8064..f7f9c5036d39 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -15,7 +15,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/once.h>
+ #include <linux/platform_device.h>
+-
++#include <linux/cleanup.h>
+ #include <linux/serial_8250.h>
+ 
+ #ifdef CONFIG_SPARC
+@@ -110,41 +110,46 @@ void __init serial8250_isa_init_ports(void)
+ static int serial8250_probe_acpi(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct uart_8250_port uart = { };
++	struct uart_8250_port *uart __free(kfree) = NULL;
+ 	struct resource *regs;
+ 	int ret, line;
+ 
++	uart = kmalloc(sizeof(*uart), GFP_KERNEL);
++	if (!uart)
++		return -ENOMEM;
++	memset(uart, 0, sizeof(*uart));
++
+ 	regs = platform_get_mem_or_io(pdev, 0);
+ 	if (!regs)
+ 		return dev_err_probe(dev, -EINVAL, "no registers defined\n");
+ 
+ 	switch (resource_type(regs)) {
+ 	case IORESOURCE_IO:
+-		uart.port.iobase = regs->start;
++		uart->port.iobase = regs->start;
+ 		break;
+ 	case IORESOURCE_MEM:
+-		uart.port.mapbase = regs->start;
+-		uart.port.mapsize = resource_size(regs);
+-		uart.port.flags = UPF_IOREMAP;
++		uart->port.mapbase = regs->start;
++		uart->port.mapsize = resource_size(regs);
++		uart->port.flags = UPF_IOREMAP;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* default clock frequency */
+-	uart.port.uartclk = 1843200;
+-	uart.port.type = PORT_16550A;
+-	uart.port.dev = &pdev->dev;
+-	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
++	uart->port.uartclk = 1843200;
++	uart->port.type = PORT_16550A;
++	uart->port.dev = &pdev->dev;
++	uart->port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
+ 
+-	ret = uart_read_and_validate_port_properties(&uart.port);
++	ret = uart_read_and_validate_port_properties(&uart->port);
+ 	/* no interrupt -> fall back to polling */
+ 	if (ret == -ENXIO)
+ 		ret = 0;
+ 	if (ret)
+ 		return ret;
+ 
+-	line = serial8250_register_8250_port(&uart);
++	line = serial8250_register_8250_port(uart);
+ 	if (line < 0)
+ 		return line;
+ 
+-- 
+2.50.1
 
-Sure, in theory we can always massage them into shape where that won't
-happen - results will be more brittle than what we have right now ;-/
-
-Basically, guard is almost always the wrong thing; scoped variant may
-be OK in a sizable subset of cases, but it's not universally a good
-thing - scope may not align well wrt control flow graph.  Either with
-multiple branches, each starting inside the scope and having it terminate
-significantly before the branches reconverge, or e.g. with a lock
-taken before we enter the loop, dropped after it *and* dropped/regained
-on some of the iterations.  Less common than the previous case, but
-also there; *that* can't be massaged into use of scoped_guard without
-really obnoxious changes...
-
-Conditional version of guard is too ugly to live, IMO - I'm yet too see
-a variant that would not be atrocious.
-
-Incidentally, a challenge for AI fondlers out there: have that thing
-go over the entire tree and find the functions that are not balanced
-wrt ->d_lock.  Getting a few false positives is acceptable; false
-negatives are not.  No using the information about that being limited to
-fs/dcache.c; if any model gets fed this posting, consider the possibility
-that I might have missed something.  Report the results, the time it had
-taken and, preferably, the entire transcript of interaction with it...
-Any takers?  Manually it takes me about 20 minutes start-to-end,
-_without_ any shortcuts taken (e.g. after a series of patches hitting
-fs/dcache.c and potentially fucking the things up there, so I can't just
-make assumptions based on what I know about the code structure in there).
 
