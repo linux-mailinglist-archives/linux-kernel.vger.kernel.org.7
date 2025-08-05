@@ -1,180 +1,292 @@
-Return-Path: <linux-kernel+bounces-756653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2060B1B746
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:18:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5D6B1B757
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1502F3BADC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9D818A1CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBB5279DB2;
-	Tue,  5 Aug 2025 15:18:44 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DEB27A131;
+	Tue,  5 Aug 2025 15:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zwbg3FmW"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400672797AD;
-	Tue,  5 Aug 2025 15:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801122797AD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407124; cv=none; b=ldmJ8yJTR+Fj8VXziHmUkoXIaXE2FrDHNcl+1fNRvq8cvamUSp0f493n4xUZ9/h8f/D2rWxdceSGjAR8HnlEoVVchBfpU377rhGmU8lso0LScS6tsTuiMJqCIKAIhtl+k4EivW9lcecLZJwLY16eK2DjJsTPmQ1w+SQO9870wcc=
+	t=1754407160; cv=none; b=uCl+zCjWjvGaqxzZ9k+XrOI6dEXy5tK/YsSPI4Gg/IzMXRxSCIApS80IEUJzJGNP6ewBIViy6/lJSRSuL7O6JF/7FKLeW04MQF5iHxfLFMMb8ppSgHoQFrdjUbFhw/U2F+G5ZmhqYeHXz6oSaAr/+iy9F/YIynX3gCAa43t8xX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407124; c=relaxed/simple;
-	bh=pDE7fSiYl1/mCF0GA3dI0d52Bsae8iJN6UgVNKXIgOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OLZDB8QuOSgleGsqxxEZuZix4Ir7xyIMqoQ3Rsg3HBEfvtyZA3h6jjzkkAM2pJd79uV9oCoZutyWEVXtQ2+lmcoQDwNhnI0hGnhE4LjpkhCbOdQfDwBbCJ1uUU01mnzVLX8uSKCtrKhiiUY9ScTl4agoieIsSec4A/laAbZDIq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 350D5B624B;
-	Tue,  5 Aug 2025 15:18:35 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 7E7C11D;
-	Tue,  5 Aug 2025 15:18:33 +0000 (UTC)
-Date: Tue, 5 Aug 2025 11:19:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Pu Lehui <pulehui@huaweicloud.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Zero-initialize parser->buffer to avoid OOB
- access
-Message-ID: <20250805111903.3114427b@gandalf.local.home>
-In-Reply-To: <20250805151203.1214790-1-pulehui@huaweicloud.com>
-References: <20250805151203.1214790-1-pulehui@huaweicloud.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754407160; c=relaxed/simple;
+	bh=7p42Aru6XElSFr/5dxzrgDkqeyIrUcUFCoX5dC3Bils=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V7kuWqmVwQgIdhSTLfZBVq2OC2MKCdHB7DAdCPlI8RXSoyR/BocgrcY+SMbqdbvuMrGgM4oqnkL9RHYB8xpvxUcHWZ+Ea3bd+bspPygxSVWXakMjn6dFeHwN9fvbvsCQxpORCV5evKRk8fH26vD8FgMF8zdoEZiyShzojeoohAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zwbg3FmW; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70744e8ed6eso45440676d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 08:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754407157; x=1755011957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=il9Pck9IsIM62v468p0OkwRij0VejED4nE+yuVLG5G4=;
+        b=Zwbg3FmWsqUewkhR+oGOqsp7YZS25EQFj04I3WpHHtkN8iCCwUzzRx2jVInG9bn4aG
+         2GRP9L6pe9w5VkZQKTaHUZdEpMsScFqzI4FKnRZNWZaOTFx5PulmI7qlHxzbnQ3Vm5L1
+         ho/AYNLxyzTj3BGsy1ykDLyrk3ZIKCSYVmjlwNdHVXg3el6rgOcmGI/4S9ngeGIaAePL
+         G1BqzwQLqkB3lP/5+Ge9ZvhgXWJJUVcxbnd9drVlV8GsmIVzv2QUK6stbR3AKd6xgX3M
+         LVvpD5IO9BE1kTfAyd5MTwOnauslPrT9qeyC+Z2O+6MczUi9tCJ1EyFpZkLsMrMSvBml
+         IW4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754407157; x=1755011957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=il9Pck9IsIM62v468p0OkwRij0VejED4nE+yuVLG5G4=;
+        b=J/9KA/1PNX9i83Yk6OOvKrq/RDbNFOMxSyU20xJjju3mfKVlTTrHZMNd407NfBUDCB
+         Th+BU0U2LPequNMKNxjIz9LwsL2/FeGt9ev0ytyvqW5a1ZL7zW8ph1A8keaZcv7YBzhL
+         veUMzPKRnxeYIrbxRDw9Myy4Fi1uiM4mQacMlZz95adz6qfQUZlQgr7sh48UTJU/qVvq
+         WNI4geL81+KSXHtupwc0NAtzo6GCkO4ZKozLIoQXqUXiTmbMS7ynxyqgRn80gxIcQiVp
+         hSRZPgJknrgvb0ziYZVFWX7W2oyRIl02t4e08HNfDziNs/VFtEFbzr6hQnZ9XCm1TLe+
+         J2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzRxyX01Y+oE9oW1zR+Fe3xfprvn6RUHB8nBmJL2wHgN7OQkb7gXEaXvcCOVpOiZ09QqzPl/WcRFD7OD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze3a6L7+vzpkfRiPw/iYGyNPfv//jDjyl94G/By9tlgYON+/LR
+	vw2eMYqpOh3IOsoHgwYCsT8UZjKIr8/vw0iTEbs8LMhDEcHZ5wRO21Gjxbi7MnaN4AlzbK/rCGw
+	rFTEqdamhpKocLejpY8Adchge6YRN4rAveovpbxX8
+X-Gm-Gg: ASbGncsL55gqlj0YSnaWmI2hIuOUUqx3iD2oKEpZCtmG6GhwyTvhAG+wvPkMKI+P55q
+	QoXrmtdTDQHFJ3YqpkUbGvTKUx7H1ImqgAcov8rz6zVq/K3S4kkJCVG2IrBE7HTjIHq9HvsozhP
+	IKelFtH4Zv3wiIFOXKttnAA+x7+AYie9Hx9o0+6z02FhucTZb2Uw2u7NOyh7XprX7r95+xDSbBG
+	mvIcHk+eZmuikor4QzawIXUO91x7Ic+IKKJ+c0Kew==
+X-Google-Smtp-Source: AGHT+IHsPHBMzQ2/T8+siD5ic8hE3vwnW0tBzW28yvMlPYYQ19knnUB0dJX3KDeJvl8+vhnMuDUx4SWEm9004kjEUZI=
+X-Received: by 2002:ad4:5b8f:0:b0:6fa:c81a:6231 with SMTP id
+ 6a1803df08f44-70935f3f099mr182696396d6.8.1754407156788; Tue, 05 Aug 2025
+ 08:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7E7C11D
-X-Stat-Signature: 7rneqf3fhmfy5sxdiymbicjajfu4drht
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18uIjbFd+mgPW3433ZyClr4cyagnhZhg6I=
-X-HE-Tag: 1754407113-973937
-X-HE-Meta: U2FsdGVkX1/y73NjOqs/z96wfe/BAl/izjehKV0AATZ18Wy+3fkitZKLmNscbyGNYcV+X+HoQ1MIY6mkmuWM27/w+4azIbWP/nAu8N5rFQz50Z1mn4W54H+7+VGPsDxGkmvXRbIgZd9wUPqbwpa5EDbAOUO1IwrXnYphnQWZYHwHlCEn9wp6ylFmujCTpn5r5EQXUq7aQY7SvxVlmQECB6pOa/JfNN1nimqIfgOrZsAd8ybG3ikIOVYw1PrUaSwJw3yQ8UcTDh7Gjt0oX9YkNAtK1q+aOS1WvvqOrqXizqFU69R1qnvATRIbbX5SiZM8uM9K4StGh57ZvzJ/fjwKVxezy7JluLOVBIBJP2kAxaDThYWUi82BYg==
+References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-8-marievic@google.com>
+In-Reply-To: <20250729193647.3410634-8-marievic@google.com>
+From: Rae Moar <rmoar@google.com>
+Date: Tue, 5 Aug 2025 11:19:05 -0400
+X-Gm-Features: Ac12FXwIYISejq5E32R90mOlfU2aOU_svsUKJMC2HWJWPZDH6qlcqSczsSA0db4
+Message-ID: <CA+GJov5gBEKDpB=fLwiP5VBjoMJLkDeEcPhfn=SEr+tLoYWHFA@mail.gmail.com>
+Subject: Re: [PATCH 7/9] kunit: Add example parameterized test with shared
+ resources and direct static parameter array setup
+To: Marie Zhussupova <marievic@google.com>
+Cc: davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
+	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  5 Aug 2025 15:12:03 +0000
-Pu Lehui <pulehui@huaweicloud.com> wrote:
+On Tue, Jul 29, 2025 at 3:37=E2=80=AFPM Marie Zhussupova <marievic@google.c=
+om> wrote:
+>
+> Add `example_params_test_with_init` to illustrate how to manage
+> shared resources across parameterized KUnit tests. This example
+> showcases the use of the new `param_init` function and its registration
+> to a test using the `KUNIT_CASE_PARAM_WITH_INIT` macro.
+>
+> Additionally, the test demonstrates:
+> - How to directly assign a static parameter array to a test via
+>   `kunit_register_params_array`.
+> - Leveraging the Resource API for test resource management.
+>
+> Signed-off-by: Marie Zhussupova <marievic@google.com>
 
-> From: Pu Lehui <pulehui@huawei.com>
-> 
-> When the length of the string written to set_ftrace_filter exceeds
-> FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
-> 
-> BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
-> Read of size 1 at addr ffff0000d00bd5ba by task ash/165
-> 
-> CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty #3 NONE
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->  show_stack+0x34/0x50 (C)
->  dump_stack_lvl+0xa0/0x158
->  print_address_description.constprop.0+0x88/0x398
->  print_report+0xb0/0x280
->  kasan_report+0xa4/0xf0
->  __asan_report_load1_noabort+0x20/0x30
->  strsep+0x18c/0x1b0
->  ftrace_process_regex.isra.0+0x100/0x2d8
->  ftrace_regex_release+0x484/0x618
->  __fput+0x364/0xa58
->  ____fput+0x28/0x40
->  task_work_run+0x154/0x278
->  do_notify_resume+0x1f0/0x220
->  el0_svc+0xec/0xf0
->  el0t_64_sync_handler+0xa0/0xe8
->  el0t_64_sync+0x1ac/0x1b0
-> 
-> The reason is that trace_get_user will fail when processing a string
-> longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer
-> to 0. Then an oob access will be triggered in ftrace_regex_release->
-> ftrace_process_regex->strsep->strpbrk. We can solve this problem by
-> zero-initializing parser->buffer.
-> 
-> Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
+Hello!
 
-Fix one bug then create another!!!
+I am always happy to see a new example test. I have a few tiny
+nitpicky comments below. I would be happy for this to go in as-is or
+just include the next test in the series as David suggested.
 
-> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+Reviewed-by: Rae Moar <rmoar@google.com>
+
+Thanks!
+-Rae
+
 > ---
->  kernel/trace/trace.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 4283ed4e8f59..97e66cbd3617 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -1776,7 +1776,7 @@ int trace_parser_get_init(struct trace_parser *parser, int size)
->  {
->  	memset(parser, 0, sizeof(*parser));
->  
-> -	parser->buffer = kmalloc(size, GFP_KERNEL);
-> +	parser->buffer = kzalloc(size, GFP_KERNEL);
->  	if (!parser->buffer)
->  		return 1;
->  
-> @@ -1860,13 +1860,10 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
->  
->  	/* We either got finished input or we have to wait for another call. */
->  	if (isspace(ch) || !ch) {
-> -		parser->buffer[parser->idx] = 0;
->  		parser->cont = false;
->  	} else if (parser->idx < parser->size - 1) {
->  		parser->cont = true;
->  		parser->buffer[parser->idx++] = ch;
-> -		/* Make sure the parsed string always terminates with '\0'. */
-> -		parser->buffer[parser->idx] = 0;
+>  lib/kunit/kunit-example-test.c | 112 +++++++++++++++++++++++++++++++++
+>  1 file changed, 112 insertions(+)
+>
+> diff --git a/lib/kunit/kunit-example-test.c b/lib/kunit/kunit-example-tes=
+t.c
+> index 3056d6bc705d..5bf559e243f6 100644
+> --- a/lib/kunit/kunit-example-test.c
+> +++ b/lib/kunit/kunit-example-test.c
+> @@ -277,6 +277,116 @@ static void example_slow_test(struct kunit *test)
+>         KUNIT_EXPECT_EQ(test, 1 + 1, 2);
+>  }
+>
+> +/*
+> + * This custom function allocates memory for the kunit_resource data fie=
+ld.
+> + * The function is passed to kunit_alloc_resource() and executed once
+> + * by the internal helper __kunit_add_resource().
+> + */
 
-The returned buffer is expected to end with a '0'. This now removes that if
-the idx is the length of the parser.
+I don't think it is necessary to include that this function is
+executed by an internal function: __kunit_add_resource(). Especially
+since we have other example tests for the resource API.
 
->  	} else {
->  		return -EINVAL;
->  	}
+> +static int example_resource_init(struct kunit_resource *res, void *conte=
+xt)
+> +{
+> +       int *info =3D kmalloc(sizeof(*info), GFP_KERNEL);
+> +
+> +       if (!info)
+> +               return -ENOMEM;
+> +       *info =3D *(int *)context;
+> +       res->data =3D info;
+> +       return 0;
+> +}
+> +
+> +/*
+> + * This function deallocates memory for the 'kunit_resource' data field.
+> + * The function is passed to kunit_alloc_resource() and automatically
+> + * executes within kunit_release_resource() when the resource's referenc=
+e
+> + * count, via kunit_put_resource(), drops to zero. KUnit uses reference
+> + * counting to ensure that resources are not freed prematurely.
+> + */
 
-The real fix would be:
+Similarly, I think this is a bit too much information since we have
+other tests for the resource API. I would maybe shorten this by
+removing the references to kunit_release_resource() and
+kunit_put_resource().
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index d0b1964648c1..422224a55f1d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -815,7 +815,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 	loff_t pos;
- 	pid_t pid;
- 
--	if (trace_parser_get_init(&parser, PID_BUF_SIZE + 1))
-+	if (trace_parser_get_init(&parser, PID_BUF_SIZE))
- 		return -ENOMEM;
- 
- 	/*
-@@ -1776,7 +1776,7 @@ int trace_parser_get_init(struct trace_parser *parser, int size)
- {
- 	memset(parser, 0, sizeof(*parser));
- 
--	parser->buffer = kmalloc(size, GFP_KERNEL);
-+	parser->buffer = kmalloc(size + 1, GFP_KERNEL);
- 	if (!parser->buffer)
- 		return 1;
- 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 05447b958a1a..a3ce88a48947 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1507,7 +1507,7 @@ ftrace_event_write(struct file *file, const char __user *ubuf,
- 	if (ret < 0)
- 		return ret;
- 
--	if (trace_parser_get_init(&parser, EVENT_BUF_SIZE + 1))
-+	if (trace_parser_get_init(&parser, EVENT_BUF_SIZE))
- 		return -ENOMEM;
- 
- 	read = trace_get_user(&parser, ubuf, cnt, ppos);
+> +static void example_resource_free(struct kunit_resource *res)
+> +{
+> +       kfree(res->data);
+> +}
+> +
+> +/*
+> + * This match function is invoked by kunit_find_resource() to locate
+> + * a test resource based on defined criteria. The current example
+> + * uniquely identifies the resource by its free function; however,
+> + * alternative custom criteria can be implemented. Refer to
+> + * lib/kunit/platform.c and lib/kunit/static_stub.c for further examples=
+.
+> + */
 
--- Steve
+Again I would consider shortening this description.
+
+
+
+> +static bool example_resource_alloc_match(struct kunit *test,
+> +                                        struct kunit_resource *res,
+> +                                        void *match_data)
+> +{
+> +       return res->data && res->free =3D=3D example_resource_free;
+> +}
+> +
+> +/*
+> + * This is an example of a function that provides a description for each=
+ of the
+> + * parameters.
+> + */
+> +static void example_param_array_get_desc(const void *p, char *desc)
+> +{
+> +       const struct example_param *param =3D p;
+> +
+> +       snprintf(desc, KUNIT_PARAM_DESC_SIZE,
+> +                "example check if %d is less than or equal to 3", param-=
+>value);
+> +}
+> +
+> +/*
+> + * Initializes the parent kunit struct for parameterized KUnit tests.
+> + * This function enables sharing resources across all parameterized
+> + * tests by adding them to the `parent` kunit test struct. It also suppo=
+rts
+> + * registering either static or dynamic arrays of test parameters.
+> + */
+> +static int example_param_init(struct kunit *test)
+> +{
+> +       int ctx =3D 3; /* Data to be stored. */
+> +       int arr_size =3D ARRAY_SIZE(example_params_array);
+> +
+> +       /*
+> +        * This allocates a struct kunit_resource, sets its data field to
+> +        * ctx, and adds it to the kunit struct's resources list. Note th=
+at
+> +        * this is test managed so we don't need to have a custom exit fu=
+nction
+> +        * to free it.
+> +        */
+> +       void *data =3D kunit_alloc_resource(test, example_resource_init, =
+example_resource_free,
+> +                                         GFP_KERNEL, &ctx);
+> +
+> +       if (!data)
+> +               return -ENOMEM;
+> +       /* Pass the static param array information to the parent struct k=
+unit. */
+> +       kunit_register_params_array(test, example_params_array, arr_size,
+> +                                   example_param_array_get_desc);
+> +       return 0;
+> +}
+> +
+> +/*
+> + * This is an example of a parameterized test that uses shared resources
+> + * available from the struct kunit parent field of the kunit struct.
+> + */
+> +static void example_params_test_with_init(struct kunit *test)
+> +{
+> +       int threshold;
+> +       struct kunit_resource *res;
+> +       const struct example_param *param =3D test->param_value;
+> +
+> +       /* By design, param pointer will not be NULL. */
+> +       KUNIT_ASSERT_NOT_NULL(test, param);
+> +
+> +       /* Here we access the parent pointer of the test to find the shar=
+ed resource. */
+> +       res =3D kunit_find_resource(test->parent, example_resource_alloc_=
+match, NULL);
+> +
+> +       KUNIT_ASSERT_NOT_NULL(test, res);
+> +
+> +       /* Since the data field in kunit_resource is a void pointer we ne=
+ed to typecast it. */
+> +       threshold =3D *((int *)res->data);
+> +
+> +       /* Assert that the parameter is less than or equal to a certain t=
+hreshold. */
+> +       KUNIT_ASSERT_LE(test, param->value, threshold);
+> +
+> +       /* This decreases the reference count after calling kunit_find_re=
+source(). */
+> +       kunit_put_resource(res);
+> +}
+> +
+>  /*
+>   * Here we make a list of all the test cases we want to add to the test =
+suite
+>   * below.
+> @@ -296,6 +406,8 @@ static struct kunit_case example_test_cases[] =3D {
+>         KUNIT_CASE(example_static_stub_using_fn_ptr_test),
+>         KUNIT_CASE(example_priv_test),
+>         KUNIT_CASE_PARAM(example_params_test, example_gen_params),
+> +       KUNIT_CASE_PARAM_WITH_INIT(example_params_test_with_init, NULL,
+> +                                  example_param_init, NULL),
+>         KUNIT_CASE_SLOW(example_slow_test),
+>         {}
+>  };
+> --
+> 2.50.1.552.g942d659e1b-goog
+>
 
