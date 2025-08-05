@@ -1,86 +1,80 @@
-Return-Path: <linux-kernel+bounces-756098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1D2B1AFF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B71B1AFFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A8317E6ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7903BC5F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45F22D4F2;
-	Tue,  5 Aug 2025 08:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3D824291C;
+	Tue,  5 Aug 2025 08:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KLGfb8FC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C1QsGGua"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4AE1D61AA
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD95207669
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380975; cv=none; b=k1c6urm+VsCgaN+VyUPI6rhxGTb0KyscMLX6+YUGZjhwttbkgU5rqUDmMG/sXdhw3nHzpsilvH2Km8hPi7Xti9BBxQ11A8wuZf0PFiddE0Bm0I6SeLROFRpRYoQizB3R+auikJhkXZK/xE+03ptUwkK8uBFpm8mG9MN1xq+DP9M=
+	t=1754380986; cv=none; b=NiHAqVSV33wAO+dNhc2RWKxhjQmjxaj4uzBo9EZOLd3FdlvsBcAIU4RWag6Wm7LWTNOQxBLMK/kEpnmiQCyrbxYC9B4TRR5vRufPUSoNEXkfj9A+VesBcA1/SjRBDhEo8LEPE5HjIN1v0AkMENZ3Y680YYjHhU+hd7uAWlrYZL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380975; c=relaxed/simple;
-	bh=AKorIja7RVy+onIO0TDFtngawCmpaJLXDgVo2IMo5Jc=;
+	s=arc-20240116; t=1754380986; c=relaxed/simple;
+	bh=oQm/ztvGyOGwifmduBh40jvKEHQI6Sw3B8DUIu9PyT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L+65PU+55Z2ryJ0V/TPyiY+kvJ11bihJEGQNwuACE/nBY0Z/+Upxwf4WGZ5R0+wKPqh3SQfPn9pTpoNkEFn6EXi8Z0hR6LJ94pkMys/hF/q8fL9C5wKbe+0cWhPAFv0pxVqyrrSQgAUwiH5qlsjM+f0wZX+0HXXSmuo5+1Q1HFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KLGfb8FC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754380972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JSwkbSa6l7ycCc/BOqgqBvcWXEVn79qomV1EWHYkCrw=;
-	b=KLGfb8FCXWcIMNIkCr5rhbQ4I9tDWe+SbfYr5ZuSXWgHbMEZA00zw4OalK2HLiMDreLxvN
-	7nVmlStgLwjX/URF+IaCNmo2QdIkpPo7mofv/PLAv48k8xjwivtBT2FFD8WDty9RRL2+GP
-	GyvlcheVDKK2ys2GP/k1Tky0CN3wKuM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-490-0_ZaVVU5OFG9HwxOPsWXAw-1; Tue, 05 Aug 2025 04:02:50 -0400
-X-MC-Unique: 0_ZaVVU5OFG9HwxOPsWXAw-1
-X-Mimecast-MFC-AGG-ID: 0_ZaVVU5OFG9HwxOPsWXAw_1754380970
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-459db6e35c3so12569435e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:02:50 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=JTjcfJcgzPuriDHnPCaWAnbh2PQnYfEkA3wqbZ1wJoZO8wmasTOtOehKUZ5+CpnkX6u4r8BdwUXfL1CdqFMj4O/ASUOwPvMOxhSuh00EObEvaOG4x5IfCF6YzmI4+DyOeBCKGE+aVG+WKS+ryT5MUOUFNdfrVUgWyEVyAXpjk98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C1QsGGua; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso4462679f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754380983; x=1754985783; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
+        b=C1QsGGuaE1kPauyh3rEGbMJmlC+dcymNyu73rtoXjAzwM16mSUfC+bwje98fAeBvb6
+         vRqIwRskVI1lnY6s1HrtJF2uLmJ/7ZRptLqethwttfrV2VJxHleuYE9DN+4HGuDqeNsy
+         kK1cWedA1jvYTm6ggYPrNhVb78yVCx81ygaX04BL7GSYj3KQG2gULBMNoNZ/RD9khliD
+         jzyoCgI/ABK5PXZRFxduAZ/FiKq7v4YM7JnE6BU67SC12Wm7a3kfl8Nk8/8z5nVEphM7
+         FbhR133nhmX7mIViIhL9nYufH0407PdX2v4AP1Oe7t+EA74+JmdMHTwTWE5UisXaWGko
+         GOIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380969; x=1754985769;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JSwkbSa6l7ycCc/BOqgqBvcWXEVn79qomV1EWHYkCrw=;
-        b=PLfP9Nuj6WcSsmq8S82UJIvsZGHhELdew46XY+UbZ8QFZ9+wGBBF7c7cnELvw7u9U0
-         PGFDszbGtOKDTCpg3fJNUnntA5T2Z/qOurf2j8tv86ESKn1OZ2VFQ9s4Td9Z1Pa+HC5j
-         QPhL259MCTgvl3Z4bkTQtWCc47pYKssroIcikuduoJyoJeH1BNZS2GmCQ4rLr6LAWHga
-         E3p5sPZFStgtYS4XO5A+tCwmcKh9ICOiH5Kk/NbxvVk8pUzKeFVoXqcHralQEM1G3Eyk
-         +UtFDVmSD+cmdweyRX2eZ0CXuTD7dw32bf7EQRZZnONtlS83O1adtqB13J0I55CT2pal
-         8ZcA==
-X-Gm-Message-State: AOJu0Yx/gKqd9wTf+QFbUiO38bhlBINWUqpoJFPK6TTBYG9tL7mvfSeB
-	epUZA1OnHi1xqpKwEddVZgt5eULubhEtgH9QX3nNEfVeMFb61cwyyhFq36KRDAZl0vhYk4LC8Ug
-	yDr/fKUyhDxb4VMb4rOHUbfDrrdwPajvxWrlCZcFF/Ld+2xtlvweZPUhp3HAYnZjgUg==
-X-Gm-Gg: ASbGncvNWyh+qTm9xD1XuwBi5z7+vFB9J7uSqzfwWWKpahPhmoAfO/AwHaqlhf5Rpcm
-	EgyvGUkqAp9MxHEZveQ9LM6EhGiarcU9J+HW1IytMr0cZ5q6DUGRYcniGjLdzoX5s5PhFH0gr2f
-	trbqwkf/mgBUEZRv+TH/Rsasw0XXXNAJIEBu09y1p15L9mUvddM1xXuL3OB65Ioydba3AZibV8g
-	JRjARwZcsg0KOn0a6c31IwtI5lD8FvkGZ5PCsMFOv2GqE1YTd+KDu8h+2wM9DzriR9Bl86+vtxJ
-	y9PNC1mxkblOjwcvTRxldySUQGePgczSMrBIvQ5Q4fEFbYkLPBAvmIfJK6Rjm5s72pS0dsZ5O9+
-	zesTxbsndHcg9zMfgByRjjW2GGpzAjkREaIpQ8/PNoC4vyzfJAFPjQUAO6w1x/Le4A2I=
-X-Received: by 2002:a05:600c:35d2:b0:458:a992:6f1e with SMTP id 5b1f17b1804b1-458b69c6c25mr109428755e9.5.1754380969427;
-        Tue, 05 Aug 2025 01:02:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFq10p0Yw1CWG98R18igCn6l3zn4ByDpEOpw0MCY9quOv9K2UgJyFw5g8PFcpNZuwG5NHll3w==
-X-Received: by 2002:a05:600c:35d2:b0:458:a992:6f1e with SMTP id 5b1f17b1804b1-458b69c6c25mr109428095e9.5.1754380968862;
-        Tue, 05 Aug 2025 01:02:48 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0cd2c90sm25665045e9.17.2025.08.05.01.02.47
+        d=1e100.net; s=20230601; t=1754380983; x=1754985783;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
+        b=bdW740RH0w31fIZcUfGbRsenkZR7ki1X/FgvMzJirsJ5cwiUPN32jqwBJ8HFGZd7cS
+         +FomjMxuHG8qYcgcJqeF6zTtanak4cbPUtej2ww5hiOT51loK3jGM/Uva+Sb8CioPTvU
+         EoUxc9ajkJZ1F/6JMk21emiR0j8aBZYYt+nqVgLSyGIOeGpJU5t3RVTEk9l27dQbcJ+k
+         pQKABOiQVG5Rv1fr75oNxfzKQMy5yXokm4bMvUZT0IrdU/85NvoN+uKZ/WBrGNrrNw5K
+         XnN4W8VTXGrc2DIZhVC82GK6YLNVsLk7yfBkjprG5dl42r8wTYdnhJC78oI3ap19v+mk
+         OguA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/kVF40R1FsVRMgptyrbrGi4Rce5dIfFt9YRG8DvpYzTSnTgD3y0cDUhcOn1ceqwn6iyIbao/bBplnGZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmuoJ5HiHB/QrKOMWAJwxPJ75PprmN2eStrdFFnvMc+RzGLldd
+	EbqvZLMeIPg8fI0RVKPPfzS+gmoog8Tsdds2SuOHuXq4M1fEOhpinm57tL3KQiG1kbI=
+X-Gm-Gg: ASbGncskOJZInqji9iWFZtaWF+Ac5lJMdTm3vFl7EV31hZcTqbewhuzcpmFOZWMmxdB
+	P/lS/3QUyODZmVjkx45oUg7c7w6zfhRcvzYdwPGhBJlrf9VQNne0CNkvKA9+OU7VHxOFRor0Sqr
+	SBxC2PxgNt6VlIyrqJQ58i6f6x0uGb4portcy7zknIsfjXSRMAd5EMjeysosJwCfUZugA/UhK65
+	4GJfpoQfyQN0thpRfXVVeimUHocM6z0a1fzaqrkscrGHsg/++AifGJP2A2r/T8qMD2hUCxOsXGa
+	fPi6nty4M4UEhYIRjzLxw3WJfpz5mFIqEuiGjuhJBz7bYU+vq1AjZ2BytG+GpeEkJtabz7D3ble
+	Snh/dMvw3ObMfruYl7PxygWJyrIRlIVbG6k4PHaWtg+hleKN7xw==
+X-Google-Smtp-Source: AGHT+IHMG6M7h+w11+BYMtMmX8WemVMsPXxcbMHZpgW5luIfhyB84aA+NcxV5dCTd4atZPw7v8raPg==
+X-Received: by 2002:a05:6000:4027:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b8d94720e7mr8536259f8f.17.1754380982575;
+        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b9159e00sm122794765e9.9.2025.08.05.01.03.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 01:02:48 -0700 (PDT)
-Message-ID: <2e95f6a0-7376-47f0-841d-8f442890149a@redhat.com>
-Date: Tue, 5 Aug 2025 10:02:46 +0200
+        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
+Message-ID: <3be6b1c2-4b54-4107-8bdd-67d5cbcff58c@suse.com>
+Date: Tue, 5 Aug 2025 11:03:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,195 +82,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix the race between collapse and PT_RECLAIM under
- per-vma lock
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
- "Lai, Yi" <yi1.lai@linux.intel.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>, Vlastimil Babka <vbabka@suse.cz>,
- Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>,
- Lokesh Gidra <lokeshgidra@google.com>,
- Tangquan Zheng <zhengtangquan@oppo.com>, Lance Yang <ioworker0@gmail.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>
-References: <20250805035447.7958-1-21cnbao@gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+To: xiujianfeng <xiujianfeng@huawei.com>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+ dan.j.williams@intel.com
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+ <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+ <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250805035447.7958-1-21cnbao@gmail.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05.08.25 05:54, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
+
+
+On 8/5/25 09:57, xiujianfeng wrote:
 > 
-> The check_pmd_still_valid() call during collapse is currently only
-> protected by the mmap_lock in write mode, which was sufficient when
-> pt_reclaim always ran under mmap_lock in read mode. However, since
-> madvise_dontneed can now execute under a per-VMA lock, this assumption
-> is no longer valid. As a result, a race condition can occur between
-> collapse and PT_RECLAIM, potentially leading to a kernel panic.
 > 
->   [   38.151897] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASI
->   [   38.153519] KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
->   [   38.154605] CPU: 0 UID: 0 PID: 721 Comm: repro Not tainted 6.16.0-next-20250801-next-2025080 #1 PREEMPT(voluntary)
->   [   38.155929] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org4
->   [   38.157418] RIP: 0010:kasan_byte_accessible+0x15/0x30
->   [   38.158125] Code: 03 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc0
->   [   38.160461] RSP: 0018:ffff88800feef678 EFLAGS: 00010286
->   [   38.161220] RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 1ffffffff0dde60c
->   [   38.162232] RDX: 0000000000000000 RSI: ffffffff85da1e18 RDI: dffffc0000000003
->   [   38.163176] RBP: ffff88800feef698 R08: 0000000000000001 R09: 0000000000000000
->   [   38.164195] R10: 0000000000000000 R11: ffff888016a8ba58 R12: 0000000000000018
->   [   38.165189] R13: 0000000000000018 R14: ffffffff85da1e18 R15: 0000000000000000
->   [   38.166100] FS:  0000000000000000(0000) GS:ffff8880e3b40000(0000) knlGS:0000000000000000
->   [   38.167137] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   [   38.167891] CR2: 00007f97fadfe504 CR3: 0000000007088005 CR4: 0000000000770ef0
->   [   38.168812] PKRU: 55555554
->   [   38.169275] Call Trace:
->   [   38.169647]  <TASK>
->   [   38.169975]  ? __kasan_check_byte+0x19/0x50
->   [   38.170581]  lock_acquire+0xea/0x310
->   [   38.171083]  ? rcu_is_watching+0x19/0xc0
->   [   38.171615]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
->   [   38.172343]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
->   [   38.173130]  _raw_spin_lock+0x38/0x50
->   [   38.173707]  ? __pte_offset_map_lock+0x1a2/0x3c0
->   [   38.174390]  __pte_offset_map_lock+0x1a2/0x3c0
->   [   38.174987]  ? __pfx___pte_offset_map_lock+0x10/0x10
->   [   38.175724]  ? __pfx_pud_val+0x10/0x10
->   [   38.176308]  ? __sanitizer_cov_trace_const_cmp1+0x1e/0x30
->   [   38.177183]  unmap_page_range+0xb60/0x43e0
->   [   38.177824]  ? __pfx_unmap_page_range+0x10/0x10
->   [   38.178485]  ? mas_next_slot+0x133a/0x1a50
->   [   38.179079]  unmap_single_vma.constprop.0+0x15b/0x250
->   [   38.179830]  unmap_vmas+0x1fa/0x460
->   [   38.180373]  ? __pfx_unmap_vmas+0x10/0x10
->   [   38.180994]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
->   [   38.181877]  exit_mmap+0x1a2/0xb40
->   [   38.182396]  ? lock_release+0x14f/0x2c0
->   [   38.182929]  ? __pfx_exit_mmap+0x10/0x10
->   [   38.183474]  ? __pfx___mutex_unlock_slowpath+0x10/0x10
->   [   38.184188]  ? mutex_unlock+0x16/0x20
->   [   38.184704]  mmput+0x132/0x370
->   [   38.185208]  do_exit+0x7e7/0x28c0
->   [   38.185682]  ? __this_cpu_preempt_check+0x21/0x30
->   [   38.186328]  ? do_group_exit+0x1d8/0x2c0
->   [   38.186873]  ? __pfx_do_exit+0x10/0x10
->   [   38.187401]  ? __this_cpu_preempt_check+0x21/0x30
->   [   38.188036]  ? _raw_spin_unlock_irq+0x2c/0x60
->   [   38.188634]  ? lockdep_hardirqs_on+0x89/0x110
->   [   38.189313]  do_group_exit+0xe4/0x2c0
->   [   38.189831]  __x64_sys_exit_group+0x4d/0x60
->   [   38.190413]  x64_sys_call+0x2174/0x2180
->   [   38.190935]  do_syscall_64+0x6d/0x2e0
->   [   38.191449]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> On 2025/7/29 20:25, Nikolay Borisov wrote:
+>>
+>>
+>> On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
+>>> Hi Nikolay,
+>>>
+>>> Thanks for you patch.
+>>>
+>>> Quoting Kees [1], Lockdown is "about creating a bright line between
+>>> uid-0 and ring-0".
+>>>
+>>> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+>>> be activated independently. I fear this would lead to a false sense of
+>>> security, locking one reason alone often permits Lockdown restrictions
+>>> bypass. i.e enforcing kernel module signature verification but not
+>>> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+>>> used to disable the module signature enforcement.
+>>>
+>>> If one wants to restrict accesses to `/dev/mem`,
+>>> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
+>>>
+>>> My understanding of your problem is that this locks too much for your
+>>> usecase and you want to restrict reasons of Lockdown independently in
+>>> case it has not been enabled in "integrity" mode by default ?
+>>>
+>>> Can you elaborate more on the usecases for COCO ?
+>>
+>> Initially this patchset was supposed to allow us selectively disable
+>> /dev/iomem access in a CoCo context [0]. As evident from Dan's initial
+>> response that point pretty much became moot as the issue was fixed in a
+>> different way. However, later [1] he came back and said that actually
+>> this patch could be useful in a similar context. So This v2 is
+>> essentially following up on that.
 > 
-> This patch moves the vma_start_write() call to precede
-> check_pmd_still_valid(), ensuring that the check is also properly
-> protected by the per-VMA lock.
+> Hi Nikolay,
 > 
-> Fixes: a6fde7add78d ("mm: use per_vma lock for MADV_DONTNEED")
-> Tested-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-> Reported-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-> Closes: https://lore.kernel.org/all/aJAFrYfyzGpbm+0m@ly-workstation/
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Qi Zheng <zhengqi.arch@bytedance.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Lokesh Gidra <lokeshgidra@google.com>
-> Cc: Tangquan Zheng <zhengtangquan@oppo.com>
-> Cc: Lance Yang <ioworker0@gmail.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->   mm/khugepaged.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> I share a similar view with Nicolas, namely that using a bitmap
+> implementation would compromise the goal of Lockdown.
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 374a6a5193a7..6b40bdfd224c 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1172,11 +1172,11 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	if (result != SCAN_SUCCEED)
->   		goto out_up_write;
->   	/* check if the pmd is still valid */
-> +	vma_start_write(vma);
->   	result = check_pmd_still_valid(mm, address, pmd);
->   	if (result != SCAN_SUCCEED)
->   		goto out_up_write;
->   
-> -	vma_start_write(vma);
->   	anon_vma_lock_write(vma->anon_vma);
->   
->   	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
+> After reading the threads below, I understand you aim is to block user
+> access to /dev/mem, but without having Lockdown integrity mode enabled
+> to block other reasons, right? How about using BPF LSM? It seems it
+> could address your requirements.
+> 
 
-LGTM, I was wondering whether we should just place it next to the 
-mmap_write_lock() with the assumption that hugepage_vma_revalidate() 
-will commonly not fail.
+Well the use case that my change allows  (barring the original issue) is 
+say if someone wants LOCKDOWN_INTEGRITY_MAX + 1 or 2 things from the 
+CONFIDENTIALY_MAX level.
 
-So personally, I would move it further up.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
+>>
+>>
+>> [0]
+>> https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
+>>
+>> [1]
+>> https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
+>>
+>> <snip>
 
 
