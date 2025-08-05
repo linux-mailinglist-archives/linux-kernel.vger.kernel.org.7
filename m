@@ -1,194 +1,191 @@
-Return-Path: <linux-kernel+bounces-755847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A92B1AC75
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:38:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE22B1AC79
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90EB163BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8323C18A202A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C871AAE28;
-	Tue,  5 Aug 2025 02:38:52 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939511C2DB2;
+	Tue,  5 Aug 2025 02:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyDnPguj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5C510FD;
-	Tue,  5 Aug 2025 02:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7315A927
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 02:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754361531; cv=none; b=pRb9uho1XTMvrfu6SJu2ZD2JWDvFORf+HPlfJDbd0BakCeKB5R0hIXmb/hSwKTqHwGq/q6mTOd364mvSHwLmhQejHMA6qJzezI1FQhc8X0BaiPSYwxPGrZSJxf4tToOpDG+KM2TGfGIpJLmd5afTBesDpOJpV1wUZxGvW5Na3pk=
+	t=1754361743; cv=none; b=bD4Gr5aMwKI4LXYfX1M6WQnaWTvk8TyFua6j9SNDhLbs32oAm09ONvl16Tjmh7T3tw+2Cf3HhdBhqBjCzSn3gHiGGjJslJOFRfU0X8+4e1r7LpmnmWVMNhnX/+HQLMTv2pwq9B8WvEN0oLUhsIAR2HQqhj9bo35r+p6aCAAkqMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754361531; c=relaxed/simple;
-	bh=ZMGnpqg/HYDa2mdbQPGSpMy/49Ul9fvbniHgFDO/n+M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=p3a1v97FMN2f/XiO9mbEpq0DhPkyzM4bcCWv5/VxIPdTMJ5vwANSWmWpYGqXytTLAetQeEDSJvb1ZO4MVobTGozyyQVDPizPuRPYpJx9zxtOszLs4Vo+3Rf2H8ewX7L/lljTzxYu/78q4/TS5iwas2XgVuwZ2vTky9fMFJgscE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bwyDh6yvHz14MFZ;
-	Tue,  5 Aug 2025 10:34:28 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 18A27140144;
-	Tue,  5 Aug 2025 10:38:45 +0800 (CST)
-Received: from [10.174.178.209] (10.174.178.209) by
- kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 5 Aug 2025 10:38:44 +0800
-Message-ID: <4cd8bc82-5847-45ae-b988-ec45cbe5dda9@huawei.com>
-Date: Tue, 5 Aug 2025 10:38:43 +0800
+	s=arc-20240116; t=1754361743; c=relaxed/simple;
+	bh=8PINAAZCgLYFEM6lvYFZR7CfiG8y3mThZSagJ96DhAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3622Pvtkl3Cl+hdqrKTqsA92Je5Z8d4px3MUg7Fe8GdUNdodtf//JsWXsdVFBypEnCTbJ2mLcvw0jxsWgvt973yzvFkLUss7UyzB3pXIJ/VfivNFgwM66YmLa7kr81HZ9XdLYEk7uOb7aw/bKgT49dwC/cU0UFraeIeXFdbALA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyDnPguj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F7BC4CEE7;
+	Tue,  5 Aug 2025 02:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754361742;
+	bh=8PINAAZCgLYFEM6lvYFZR7CfiG8y3mThZSagJ96DhAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YyDnPgujcYEWcaB/UDTK1Q9+1dNXijlb32UB8iRCP3CYeyDCyald2J16XFv12J/rj
+	 A6i0ZRYwqPynl8d8A54k+fW3OSoa5lJqjZ4opDqmxXIgdMm97Dp62+/xkvK2Ih8mpk
+	 nIN66psXoMplVk6RoeBtrLkyI1EohgBRjumLou1bUSWRnIBVQ7L3+CPhEQFjKRgR1P
+	 oOJ6G+Ww8b8G6OkJEIDmmdrrIjQUqoGnPr6hjlAlanl8VXOXrdSzKyK1YmrMNAtBGO
+	 VM/W7DF5l5bCo/x+1KxU/Y9OmiFoRgceMJ0PyKJtN3GoqELDoxt0rtTmePKTz/FfAQ
+	 Jn8dZvcn3fAOw==
+Date: Tue, 5 Aug 2025 02:42:20 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Jan Prusakowski <jprusakowski@google.com>
+Subject: Re: [PATCH v2 3/3] f2fs: fix to zero data after EOF for compressed
+ file correctly
+Message-ID: <aJFvjBQv8PzJeFNN@google.com>
+References: <20250804014340.2537172-1-chao@kernel.org>
+ <20250804014340.2537172-3-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/2] smb: client: Fix use-after-free in readdir
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: Steve French <smfrench@gmail.com>
-CC: Paulo Alcantara <pc@manguebit.com>, <sfrench@us.ibm.com>,
-	<linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, <chengzhihao1@huawei.com>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>
-References: <20250516091256.2756826-1-wangzhaolong1@huawei.com>
- <860a4f7600814b17e48dbabe1ae19f68@manguebit.com>
- <CAH2r5mvo1e3034LpCWUAuE0=dDBb7R0bMCmt80dGRWKMegRV+Q@mail.gmail.com>
- <c1e693c6-573f-49d4-b6cf-cc308c339f06@huawei.com>
- <CAH2r5mvoS8Py_M95+i0hB2iP06Uqz5JQbb13schBfdmJ6NzL3g@mail.gmail.com>
- <f03b6422-eac8-4998-b516-a3ba34070f0d@huawei.com>
-In-Reply-To: <f03b6422-eac8-4998-b516-a3ba34070f0d@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804014340.2537172-3-chao@kernel.org>
 
+Chao, it seems you made a clean up before this? Can you post it first?
 
+On 08/04, Chao Yu wrote:
+> generic/091 may fail, then it bisects to the bad commit ba8dac350faf
+> ("f2fs: fix to zero post-eof page").
 > 
->> I was able to reproduce it by running the reproducer poc much longer
->>
->> [189335.643181] Key type cifs.idmap unregistered
->> [189335.643203] Key type cifs.spnego unregistered
->> [189335.649519] CIFS: VFS: kmem_cache_destroy small req cachep
->> [189335.656316]
->> =============================================================================
->> [189335.656320] BUG cifs_small_rq (Tainted: G    B   W  OE      ):
->> Objects remaining on __kmem_cache_shutdown()
->> [189335.656322]
->> -----------------------------------------------------------------------------
->>
->> [189335.656324] Object 0x000000001a39cfef @offset=15232
->> [189335.656326] Slab 0x00000000479475fe objects=36 used=1
->> fp=0x0000000090941d36
->> flags=0x17ffffc0000240(workingset|head|node=0|zone=2|lastcpupid=0x1fffff)
->> [189335.656334] ------------[ cut here ]------------
+> What will cause generic/091 to fail is something like below Testcase #1:
+> 1. write 16k as compressed blocks
+> 2. truncate to 12k
+> 3. truncate to 20k
+> 4. verify data in range of [12k, 16k], however data is not zero as
+> expected
 > 
-> After disabling KASAN, I encountered two memory leak issues after
-> running the POC for half-hour:
+> Script of Testcase #1
+> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
+> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
+> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
+> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
+> sync
+> truncate -s $((12*1024)) /mnt/f2fs/file
+> truncate -s $((20*1024)) /mnt/f2fs/file
+> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
+> od /mnt/f2fs/data
+> umount /mnt/f2fs
 > 
-> Phenomenon 1:
+> Analisys:
+> in step 2), we will redirty all data pages from #0 to #3 in compressed
+> cluster, and zero page #3,
+> in step 3), f2fs_setattr() will call f2fs_zero_post_eof_page() to drop
+> all page cache post eof, includeing dirtied page #3,
+> in step 4) when we read data from page #3, it will decompressed cluster
+> and extra random data to page #3, finally, we hit the non-zeroed data
+> post eof.
 > 
-> [ 2175.037198] ------------[ cut here ]------------
-> [ 2175.038447] WARNING: CPU: 2 PID: 425 at fs/smb/client/smb2ops.c:104 smb2_add_credits+0x2ac/0x6c0 [cifs]
-> [ 2175.041927] Modules linked in: cifs cifs_arc4 nls_ucs2_utils cifs_md4
-> [ 2175.043736] CPU: 2 UID: 0 PID: 425 Comm: cifsd Not tainted 6.15.0-rc6+ #241 PREEMPT(full)
-> [ 2175.046082] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
-> [ 2175.048680] RIP: 0010:smb2_add_credits+0x2ac/0x6c0 [cifs]
-> [ 2175.050432] Code: ff ff 4c 89 e7 e8 d4 8e ff ff 41 89 c5 e9 99 fe ff ff c7
-> 43 08 02 00 00 00 45 8b 8c 24 d8 01 00 00 45 85 c9 0f 85 48 fe ff ff <0f> 0b 80 3d
-> 41 6a eb ff 00 0f 84 dc 03 00 00 0f 1f 44 00 00 f
-> [ 2175.054563] RSP: 0018:ffffa9a94043fca8 EFLAGS: 00010246
-> [ 2175.055716] RAX: 0000000000001ffe RBX: ffffa9a94043fcf0 RCX: 0000000000000000
-> [ 2175.057236] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff90b807432a34
-> [ 2175.058760] RBP: 0000000000000000 R08: ffff90b80ce60188 R09: 0000000000000000
-> [ 2175.060268] R10: 0000000000000000 R11: 0000000000000001 R12: ffff90b807432800
-> [ 2175.061730] R13: 0000000000000000 R14: 0000000000000001 R15: ffff90b8074329d0
-> [ 2175.063210] FS:  0000000000000000(0000) GS:ffff90b8a9e84000(0000) knlGS:0000000000000000
-> [ 2175.064422] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 2175.065455] CR2: 00005643543896f8 CR3: 000000000192c000 CR4: 00000000000006f0
-> [ 2175.066519] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [ 2175.067561] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [ 2175.068658] Call Trace:
-> [ 2175.069068]  <TASK>
-> [ 2175.069402]  cifs_compound_callback+0x77/0xb0 [cifs]
-> [ 2175.070214]  cifs_cancelled_callback+0x12/0x40 [cifs]
-> [ 2175.071058]  clean_demultiplex_info+0x206/0x420 [cifs]
-> [ 2175.071935]  cifs_demultiplex_thread+0x1a6/0xcb0 [cifs]
-> [ 2175.072815]  ? dl_server_update_idle_time+0x60/0xa0
-> [ 2175.073579]  ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
-> [ 2175.074550]  kthread+0x10d/0x200
-> [ 2175.075051]  ? __pfx_kthread+0x10/0x10
-> [ 2175.075631]  ret_from_fork+0x34/0x50
-> [ 2175.076197]  ? __pfx_kthread+0x10/0x10
-> [ 2175.076683]  ret_from_fork_asm+0x1a/0x30
-> [ 2175.077143]  </TASK>
-> [ 2175.077398] ---[ end trace 0000000000000000 ]---
-> [ 2175.077919] CIFS: rreq R=00000000[0] Zero in_flight
-> [ 2175.285771] ------------[ cut here ]------------
+> However, the commit ba8dac350faf ("f2fs: fix to zero post-eof page") just
+> let the issue be reproduced easily, w/o the commit, it can reproduce this
+> bug w/ below Testcase #2:
+> 1. write 16k as compressed blocks
+> 2. truncate to 8k
+> 3. truncate to 12k
+> 4. truncate to 20k
+> 5. verify data in range of [12k, 16k], however data is not zero as
+> expected
 > 
+> Script of Testcase #2
+> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
+> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
+> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
+> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
+> sync
+> truncate -s $((8*1024)) /mnt/f2fs/file
+> truncate -s $((12*1024)) /mnt/f2fs/file
+> truncate -s $((20*1024)) /mnt/f2fs/file
+> echo 3 > /proc/sys/vm/drop_caches
+> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
+> od /mnt/f2fs/data
+> umount /mnt/f2fs
 > 
-> Phenomenon 2
+> Anlysis:
+> in step 2), we will redirty all data pages from #0 to #3 in compressed
+> cluster, and zero page #2 and #3,
+> in step 3), we will truncate page #3 in page cache,
+> in step 4), expand file size,
+> in step 5), hit random data post eof w/ the same reason in Testcase #1.
 > 
-> [ 2175.287049] kmem_cache_destroy cifs_request: Slab cache still has objects when called from exit_cifs+0x43/0x560 [cifs]
-> [ 2175.287205] WARNING: CPU: 0 PID: 3207738 at mm/slab_common.c:525 kmem_cache_destroy+0xfd/0x160
-> [ 2175.292071] Modules linked in: cifs(-) cifs_arc4 nls_ucs2_utils cifs_md4
-> [ 2175.293796] CPU: 0 UID: 0 PID: 3207738 Comm: modprobe Tainted: G        W           6.15.0-rc6+ #241 PREEMPT(full)
-> [ 2175.296519] Tainted: [W]=WARN
-> [ 2175.297339] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
-> [ 2175.299559] RIP: 0010:kmem_cache_destroy+0xfd/0x160
-> [ 2175.300836] Code: de 5b e9 86 bf 05 00 e8 b1 db e4 ff eb b2 48 8b 53 60 48 8b
-> 4c 24 08 48 c7 c6 a0 be a2 93 48 c7 c7 10 2e fb 93 e8 a3 9d da ff <0f> 0b 48 8b 53 68
-> 48 8b 43 70 48 c7 c7 80 8a 37 94 48 89 42 8
-> [ 2175.304313] RSP: 0018:ffffa9a94328beb8 EFLAGS: 00010286
-> [ 2175.305261] RAX: 0000000000000000 RBX: ffff90b801c63a00 RCX: 0000000000000000
-> [ 2175.306544] RDX: 0000000000000002 RSI: 0000000000000001 RDI: 00000000ffffffff
-> [ 2175.307815] RBP: 0000000000000800 R08: 0000000000004ffb R09: 00000000ffffefff
-> [ 2175.309077] R10: 00000000ffffefff R11: ffffffff94265060 R12: 0000000000000000
-> [ 2175.310353] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [ 2175.311632] FS:  00007fa76803b440(0000) GS:ffff90b8a9d84000(0000) knlGS:0000000000000000
-> [ 2175.313063] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 2175.314098] CR2: 0000560b6ad2e850 CR3: 000000000deac000 CR4: 00000000000006f0
-> [ 2175.315221] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [ 2175.316137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [ 2175.317091] Call Trace:
-> [ 2175.317433]  <TASK>
-> [ 2175.317734]  exit_cifs+0x43/0x560 [cifs]
-> [ 2175.318316]  __x64_sys_delete_module+0x1ad/0x2a0
-> [ 2175.318958]  ? fpregs_assert_state_consistent+0x25/0x50
-> [ 2175.319656]  do_syscall_64+0x4b/0x110
-> [ 2175.320184]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 2175.320856] RIP: 0033:0x7fa767927977
-> [ 2175.321359] Code: 73 01 c3 48 8b 0d a9 94 0c 00 f7 d8 64 89 01 48 83 c8 ff c3
-> 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 73 01 c3 48 8b 0d 79 94 0c 00 f7 d8 64 89 8
-> [ 2175.323766] RSP: 002b:00007ffd9f24c6f8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-> [ 2175.324766] RAX: ffffffffffffffda RBX: 000056460f617e30 RCX: 00007fa767927977
-> [ 2175.325721] RDX: 0000000000000000 RSI: 0000000000000800 RDI: 000056460f617e98
-> [ 2175.326580] RBP: 0000000000000000 R08: 1999999999999999 R09: 0000000000000000
-> [ 2175.327329] R10: 00007fa767999ac0 R11: 0000000000000206 R12: 0000000000000000
-> [ 2175.328086] R13: 0000000000000000 R14: 00007ffd9f24c730 R15: 00007ffd9f24dbe8
-> [ 2175.328832]  </TASK>
-> [ 2175.329090] ---[ end trace 0000000000000000 ]---
+> Root Cause:
+> In f2fs_truncate_partial_cluster(), after we truncate partial data block
+> on compressed cluster, all pages in cluster including the one post eof
+> will be dirtied, after another tuncation, dirty page post eof will be
+> dropped, however on-disk compressed cluster is still valid, it includes
+> invalid data post eof, result in exposing previous data post eof while
+> reading.
 > 
+> Fix:
+> In f2fs_truncate_partial_cluster(), let change as below to fix:
+> - call filemap_write_and_wait_range() to flush dirty page
+> - call truncate_pagecache() to drop pages or zero partial page post eof
+> - call f2fs_do_truncate_blocks() to truncate non-compress cluster to
+>   last vali block
 > 
-> These should be new issues. I'll get to the bottom of them as soon as I can.
+> Fixes: 3265d3db1f16 ("f2fs: support partial truncation on compressed inode")
+> Reported-by: Jan Prusakowski <jprusakowski@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2:
+> - should dirty & flush all pages in cluster and truncate blocks post eof
+> later
+>  fs/f2fs/compress.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
-> Best regards,
-> Wang Zhaolong
-> 
-
-I have identified the issue mentioned above. Below is my proposed fix:
-
-https://lore.kernel.org/all/20250804134006.3609555-1-wangzhaolong@huaweicloud.com/
-
-I'd like to kindly invite feedback and discussion from the community on this
-issue, particularly regarding the root cause and the correctness of the
-proposed solution. Any suggestions, concerns, or alternative approaches are
-highly welcome.
-
-Best regards,
-Wang Zhaolong
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index e37a7ed801e5..6ad8d3bc6df7 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1245,17 +1245,25 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
+>  	for (i = (1 << log_cluster_size) - 1; i >= 0; i--) {
+>  		struct folio *folio = page_folio(rpages[i]);
+>  		loff_t start = (loff_t)folio->index << PAGE_SHIFT;
+> +		loff_t offset = from > start ? from - start : 0;
+>  
+> -		if (from > start) {
+> -			folio_zero_segment(folio, from - start,
+> -					folio_size(folio));
+> +		folio_zero_segment(folio, offset, folio_size(folio));
+> +
+> +		if (from >= start)
+>  			break;
+> -		}
+> -		folio_zero_segment(folio, 0, folio_size(folio));
+>  	}
+>  
+>  	f2fs_compress_write_end(inode, fsdata, start_idx, true);
+> -	return 0;
+> +
+> +	err = filemap_write_and_wait_range(inode->i_mapping,
+> +			round_down(from, 1 << log_cluster_size << PAGE_SHIFT),
+> +			LLONG_MAX);
+> +	if (err)
+> +		return err;
+> +
+> +	truncate_pagecache(inode, from);
+> +
+> +	return f2fs_do_truncate_blocks(inode, round_up(from, PAGE_SIZE), lock);
+>  }
+>  
+>  static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+> -- 
+> 2.49.0
 
