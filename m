@@ -1,126 +1,294 @@
-Return-Path: <linux-kernel+bounces-756309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46937B1B283
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9280B1B286
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7549017B44A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5803BD885
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9AB247287;
-	Tue,  5 Aug 2025 11:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3E1E9B2A;
+	Tue,  5 Aug 2025 11:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQDpU2e9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SYFe/pgg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3000B1D7E5B;
-	Tue,  5 Aug 2025 11:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24432E3705
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 11:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754392690; cv=none; b=i73wz+O2sUP0ifz2TLXUD/pSp7iVtogyt7gK3RLIrQVlFpams1C/Aq0r9PGI8f5TKQFEzJ8XlRRMH8dTQ5yV6OTY2dU/yRpAjcYK7r2SFJIhySTyVci+Y5L9CEWqQ9k81bT1FiJ7NWR4FoIv+ZLjN2bFLu/Jw0jMJbmZ0JyLsCU=
+	t=1754392720; cv=none; b=R1yuYVZb39S7tiUpFuNAwN0+X6zvL6oDUHmZ/BRYZZHJS81P/YzNH2qGB5tLS4Z5/wyWJwq8qAomwFz6oR1BNlOXtH3x/HuDjasPgwxsohwKyzc5fD0Hg/K/hLl2/rteHvZM9htDWHGJotvFvwEVg23X2MfcMlNxRBmgApM63FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754392690; c=relaxed/simple;
-	bh=xvDDh6gLJbQlXLbG0l9A91FOiX1KeXuPAWb5BgdpKv8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VKVsXpAPAPvgwKkOtNUtPNjpBOZOe39xO1JFBV3ecyPoNCZpua0uLG+BxyolQtXwYHUxnM2D/7gh1iPE7OzAZhExxzpK/buL78+qFINZegx5JoBE01U2dUGxlvzcjZZlV0BPHcKkur1y+CwDVej6rbyHbtb8Ywi2ZGmznQgpQLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQDpU2e9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DB4C4CEF0;
-	Tue,  5 Aug 2025 11:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754392689;
-	bh=xvDDh6gLJbQlXLbG0l9A91FOiX1KeXuPAWb5BgdpKv8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tQDpU2e9dyJ0Y0eo/K6rBrM9cRpIq6uWRFS+9PJRr5rNS93vHBoBW2AlujTez0uBa
-	 7VDkhp22hATZxeej3I4zI2uIm6caqGQ98Q6L2pmwNu/wAcIrnjFwzv38JDc9coa2gO
-	 yFgs9/nmNA/9zkZ+BqxYOevMpKJL6w1qfV2EGM8ECdjEWUV2uHHXKXXzG+OdHMKK/P
-	 HTIhCSvsRgwP6kp+5miv7AykyR0Dph0OFMQ5Wd72nvXF/DT1Whsl2XZAq8+tEN0TFk
-	 cmvq3AcUwiUm9a4hZ42Ny+sdolKuKR0U8h2Fs9q0Uze1RHt+cRazv0b/x96rxOoQUQ
-	 5pLE2krAf0qOw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>,
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Alice
- Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>
-Subject: Re: [PATCH v3 1/4] rust: iov: add iov_iter abstractions for
- ITER_SOURCE
-In-Reply-To: <20250722-iov-iter-v3-1-3efc9c2c2893@google.com>
-References: <20250722-iov-iter-v3-0-3efc9c2c2893@google.com>
- <IMil7T48wWl_KirFiwKV5bNm7TuVsFNPEX3_6CJWEzwQ6n4jaVn943ujBotHAettCFL5Slnb0v_3Cz50enMdqw==@protonmail.internalid>
- <20250722-iov-iter-v3-1-3efc9c2c2893@google.com>
-Date: Tue, 05 Aug 2025 13:17:57 +0200
-Message-ID: <871ppq9fve.fsf@kernel.org>
+	s=arc-20240116; t=1754392720; c=relaxed/simple;
+	bh=hvEjaT5dcBfMjmESc+QEsUBDQcPRKYOGdN6kzoDe17w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCiZJZFoVzN4KDLYa/BtZtijiGHM8WkTSk3JBIN7nrepoYoEIS/SxPXxGnk753TNP6RgCHVkQTLYeZhGm8aPRSIcmdTA0e1sjLgQkY0wFoXQQ5n3FVGVtOz9MUevTa85aiRXOILwT3li6VLna8LNhIagrQgYCbelunAwSyB91Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SYFe/pgg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575A3lMY007598
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 11:18:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+UtkDtN+fyKayeHp5S67YUnWVczmNgfytTivDi9O4Bs=; b=SYFe/pggxZXEqNog
+	ztaw4eWkD3a/xeVkjA2bBgokWN1h6kbj02YMaX1gYhBKrRRlAkFE49vvjGL6a2iS
+	0GlLzFmSwoRdmvYzKmzvBW9z+VPueVXpjkgoa3C86w62njYm4mp/SL70hqF6eAhA
+	X0tBbiemqcn9aYcXr2Vl5MJSlRFB8ZGfc9J/FoA/efp7ovcWrz/+e/D9Bxs3TUmR
+	pfVm0x/yMeTgWEvI9IxzPw7A17WxcX6M9tt0wdsMxsXVdvNw1HBYtjQ7flK6ytDA
+	R8Djk4QX5vyYU4v6Jc+ulxEhdb5ixc8EiDQUQzlsTAD+o1gGs4F+Ua/o2IuoeKhg
+	ctPF8g==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a8466-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:18:36 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76bcd829ff1so4373083b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 04:18:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754392715; x=1754997515;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+UtkDtN+fyKayeHp5S67YUnWVczmNgfytTivDi9O4Bs=;
+        b=ndKVgg4XxJcp1WMZpVWDA4I/siyzVYVCtP9En9xydgl/2AdRV8Boif5YiPdLkNW6er
+         WPaQpzu/5eIEgGjaQQLFPNDeznLW2QMB/tO+pGBdqEx+/uSOd9dqCbXFkFK2hSH4nzEc
+         EUdVb9j1hqMdY8GB8INUpBAZ/MafFMTQ+hgEzlyBRnVR8YuRh++5ARDA4CBxLTbTuPfI
+         JFMWLCMaBrPh02CP6YQHwwqiC8coJzP/AoVKRWALeA7fyPqigytTjzteHMuDbt+O+7ny
+         D9OXHJRTuapujtnF8U7VgPXO+uoq8Y/Nq3Um6OTtwAFvQST5YLCNfswbpIt+FL/6MT/c
+         dRAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWI0SA04DYiHgoT+fCESS/RDKghj+OpIw7ZU5hUJp8cPGZON7vw56T2dMG9pBX9zcO420O5Jb9Sm/xe7e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHvT8+fBV/pRcQqF5S30knMFA5eO799LEdbz1p/QVnwPDGqZrh
+	ub1ANmD1ECTLmZLxUY+HaGhskkH/WkROCxR1ivSWsLGm96KDxkws4OZXQml834HnmVyBTNcf75q
+	liLiR3/uEPjETL1gyrDzxi2PY27sONKzj6zFOuVcp82/DCKt17p7Ik8+Zyz12Is8jOgc=
+X-Gm-Gg: ASbGncu2AwcrbZvzEkW/gPoKm6sYjJQpAnQuFsq3sZYAViTge7MGEJCCC5YZBc9jmXN
+	Vmo9aERmvHCLUtBmSR5AlVzB7agghlQQnBmqW1Nmiu5+4z/2oKTvTUJGS3T8fyxGUJxu6u+xMFL
+	NL0BaCqBFW15EXIoU15+f0qwCJeWUn+5P94Pv/8exBcmfo+i7LSiOdXTsFMT29glRHhCWtvfx8A
+	r9V+9kw7oiv9AR9MAb6+Q2gXe4qp+QZbtW0UGC7qjdWoyQZQR+/nTAOR/4KQUQS8fXvp/GLUvjx
+	cMCZEfyRULvpyUnfPaTCduO3d8hgrkwTJQTZnVXYrl/lC4oVrfgKSyq8t4X4+8W1ZBihqlY=
+X-Received: by 2002:a05:6a00:3910:b0:736:5f75:4a3b with SMTP id d2e1a72fcca58-76bec30c7ccmr17132056b3a.7.1754392715057;
+        Tue, 05 Aug 2025 04:18:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFGhrp3TbB/m3fibwOh2GnRn00juuzRFHGqHiZWS4PO3XswlF6ml/+1CbWee3207HS6IZGtw==
+X-Received: by 2002:a05:6a00:3910:b0:736:5f75:4a3b with SMTP id d2e1a72fcca58-76bec30c7ccmr17132019b3a.7.1754392714532;
+        Tue, 05 Aug 2025 04:18:34 -0700 (PDT)
+Received: from [10.92.173.209] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f6eesm12759553b3a.22.2025.08.05.04.18.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 04:18:34 -0700 (PDT)
+Message-ID: <d28a61ff-e40a-438d-afd7-5a4bc5cb3625@oss.qualcomm.com>
+Date: Tue, 5 Aug 2025 16:48:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-"Alice Ryhl" <aliceryhl@google.com> writes:
-
-> This adds abstractions for the iov_iter type in the case where
-> data_source is ITER_SOURCE. This will make Rust implementations of
-> fops->write_iter possible.
->
-> This series only has support for using existing IO vectors created by C
-> code. Additional abstractions will be needed to support the creation of
-> IO vectors in Rust code.
->
-> These abstractions make the assumption that `struct iov_iter` does not
-> have internal self-references, which implies that it is valid to move it
-> between different local variables.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-
-..
-
-> +
-> +    /// Advance this IO vector backwards by `bytes` bytes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The IO vector must not be reverted to before its beginning.
-> +    #[inline]
-> +    pub unsafe fn revert(&mut self, bytes: usize) {
-> +        // SAFETY: By the struct invariants, `self.iov` is a valid IO vector, and `bytes` is in
-> +        // bounds.
-
-"... and by method safety requirements `bytes` is in bounds", right?
-
-> +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
-> +    }
-> +
-> +    /// Read data from this IO vector.
-> +    ///
-> +    /// Returns the number of bytes that have been copied.
-> +    #[inline]
-> +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
-> +        // SAFETY: `Self::copy_from_iter_raw` guarantees that it will not deinitialize any bytes in
-> +        // the provided buffer, so `out` is still a valid `u8` slice after this call.
-
-I am curious if there is a particular reason you chose "deinitialize"
-over "write uninitialized" for the wording throughout this patch? It's
-an unfamiliar phrasing to me.
-
-
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-
-Best regards,
-Andreas Hindborg
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] usb: dwc3: qcom: Implement glue callbacks to
+ facilitate runtime suspend
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com>
+ <20250610091357.2983085-3-krishna.kurapati@oss.qualcomm.com>
+ <20250623233211.aeehndz2nxqovepd@synopsys.com>
+ <a46b9870-207b-45a1-b3e6-5c13e1857640@oss.qualcomm.com>
+ <20250711232929.5oukafed5lnvsu2v@synopsys.com>
+ <27ff2c46-9402-47e6-b5ea-8a1f783220b1@oss.qualcomm.com>
+ <20250730012307.7rwh3lzz4ohd4mob@synopsys.com>
+ <ac7212fe-5c22-46cf-ac3b-ac6b93cb1384@oss.qualcomm.com>
+ <20250801010119.tvhb6tjlf4fq7zhg@synopsys.com>
+Content-Language: en-US
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <20250801010119.tvhb6tjlf4fq7zhg@synopsys.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=6891e88c cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=SGoEfCKqnJIlJZnP-VQA:9
+ a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-ORIG-GUID: fi8jOGlAAzbRukD4FhPh5FVbZuy8xrBw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4MSBTYWx0ZWRfX446GxDFo1T3G
+ lE3HwuLtqe9An994ozQkR/iHNExTDUGx1s6Gr7Jac8Q0uxuVkgSaXf97i9JHQO7PZdVs86PfWtP
+ JgNEzRCJCuYAWq/DMEyE+K+brK1cjcnsSGad4rDXFHtJZ757IjCySr5JjDY7TOsVlPHV2pZiV/6
+ sc/LSXEPIWo4ZU19F3YUYSeW/3H+y2Ty2I7kP+eTgZiTUfU2nCTpB0m256BhHrlm/QiWH2VfIpG
+ 8A3YcNesjwSSNz+9jFd5qw/oHS1BsNlxryl47O2/r0rqhg21MojZQ+lRyg3sS1rhltbh126TW+Q
+ K7hoJgCX3uo+qsishJZ1LD++C84hMAez7h8WD02Zfb5Fs7z8cD/7ijR4BHYIKDLH2LPzfJKFA7t
+ VN2eOgxGcLe4+tupwq4AK1fZ/LBiCUcT4JpH8Yuj5uCmrbzj1Ao3An9Y5WFYmOmP/9/ZlBed
+X-Proofpoint-GUID: fi8jOGlAAzbRukD4FhPh5FVbZuy8xrBw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=910 clxscore=1015
+ phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508050081
 
 
 
+On 8/1/2025 6:31 AM, Thinh Nguyen wrote:
+> On Wed, Jul 30, 2025, Krishna Kurapati wrote:
+>>
+>>
+>> On 7/30/2025 6:53 AM, Thinh Nguyen wrote:
+>>> On Sun, Jul 13, 2025, Krishna Kurapati wrote:
+>>>>
+>>>>
+>>>> On 7/12/2025 4:59 AM, Thinh Nguyen wrote:
+>>>>> On Tue, Jun 24, 2025, Krishna Kurapati wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 6/24/2025 5:02 AM, Thinh Nguyen wrote:
+>>>>>>> On Tue, Jun 10, 2025, Krishna Kurapati wrote:
+>>>>>>>> On Qualcomm DWC3 dual-role controllers, the conndone/disconnect events in
+>>>>>>>> device mode are generated by controller when software writes to QSCRATCH
+>>>>>>>> registers in Qualcomm Glue layer rather than the vbus line being routed to
+>>>>>>>> dwc3 core IP for it to recognize and generate these events.
+>>>>>>>>
+>>>>>>>> UTMI_OTG_VBUS_VALID  bit of QSCRATCH_HS_PHY_CTRL register needs to be set
+>>>>>>>> to generate a connection done event and to be cleared for the controller to
+>>>>>>>> generate a disconnect event during cable removal. When the disconnect is
+>>>>>>>> not generated upon cable removal, the "connected" flag of dwc3 is left
+>>>>>>>> marked as "true" and it blocks suspend routines and for that to happen upon
+>>>>>>>> cable removal, the cable disconnect notification coming in via set_role
+>>>>>>>> call need to be provided to the Qualcomm glue layer as well.
+>>>>>>>>
+>>>>>>>> Currently, the way DWC3 core and Qualcomm legacy glue driver are designed,
+>>>>>>>> there is no mechanism through which the DWC3 core can notify the Qualcomm
+>>>>>>>> glue layer of any role changes which it receives via role switch. To
+>>>>>>>> register these glue callbacks at probe time, for enabling core to notify
+>>>>>>>> glue layer, the legacy Qualcomm driver has no way to find out when the
+>>>>>>>> child driver probe was successful since it does not check for the same
+>>>>>>>> during of_platform_populate.
+>>>>>>>>
+>>>>>>>> Hence implement the following glue callbacks for flattened Qualcomm glue
+>>>>>>>> driver:
+>>>>>>>>
+>>>>>>>> 1. set_role: To pass role switching information from drd layer to glue.
+>>>>>>>> This information is needed to identify NONE/DEVICE mode switch and modify
+>>>>>>>> QSCRATCH to generate connect-done event on device mode entry and disconnect
+>>>>>>>> event on cable removal in device mode.
+>>>>>>>>
+>>>>>>>> 2. run_stop: When booting up in device mode, if autouspend is enabled and
+>>>>>>>> userspace doesn't write UDC on boot, controller enters autosuspend. After
+>>>>>>>> this, if the userspace writes to UDC in the future, run_stop notifier is
+>>>>>>>> required to enable UTMI_OTG_VBUS_VALID of QSCRATCH so that connect done
+>>>>>>>> event is generated after run_stop(1) is done to finish enumeration.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>>>>>>>> ---
+>>>>>>>>      drivers/usb/dwc3/dwc3-qcom.c | 82 ++++++++++++++++++++++++++++++++----
+>>>>>>>>      1 file changed, 73 insertions(+), 9 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+>>>>>>>> index ca7e1c02773a..d40b52e2ba01 100644
+>>>>>>>> --- a/drivers/usb/dwc3/dwc3-qcom.c
+>>>>>>>> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+>>>>>>>> @@ -89,6 +89,12 @@ struct dwc3_qcom {
+>>>>>>>>      	bool			pm_suspended;
+>>>>>>>>      	struct icc_path		*icc_path_ddr;
+>>>>>>>>      	struct icc_path		*icc_path_apps;
+>>>>>>>> +
+>>>>>>>> +	/*
+>>>>>>>> +	 * Current role changes via usb_role_switch_set_role callback protected
+>>>>>>>> +	 * internally by mutex lock.
+>>>>>>>> +	 */
+>>>>>>>> +	enum usb_role		current_role;
+>>>>>>>
+>>>>>>> Can we just track the current role through dwc3 core instead of an
+>>>>>>> addition field in the glue?
+>>>>>>>
+>>>>>>
+>>>>>> Core caches only mode. We need ROLE NONE to identify cable connect. So
+>>>>>> adding that in glue to keep track.
+>>>>>>
+>>>>>
+>>>>> The controller is always either host or device, not somewhere in
+>>>>> between. You're using ROLE_NONE to indicate connection, which is a
+>>>>> separate state.
+>>>>>
+>>>>
+>>>> Yes, but there is no flag that indicates that in dwc structure today. Also
+>>>> since only dwc3-qcom needs it at the moment, I added that role info in glue
+>>>> layer.
+>>>
+>>> How are you using ROLE NONE? Do you send a role-switch call to "none" to
+>>> indicate disconnect? Let's not do that. Currently the dwc3 driver would
+>>> switch back to the default mode if "none" is selected, but this is not
+>>> well defined and implementation specific. It can be no-op and would not
+>>> violate the interface.
+>>>
+>>> The role-switch interface should only be used for role-switching and not
+>>> connection/disconnection.
+>>>
+>>>>
+>>>>> I feel this should be tracked separately for clarity. The dwc3 also
+>>>>> tracks the connection state, can we use that?
+>>>>>
+>>>>
+>>>> Are you referring to the "connected" flag in DWC structure ? I see that it
+>>>> indicates connection status only in gadget mode.
+>>>>
+>>>
+>>> Yes, that flag is only for gadget.
+>>>
+>>> Can you provide more info of the setup? Is there a type-c controller or
+>>> phy that can detect attach/deattach? Or it only propagates to the usb
+>>> controller?
+>>
+>> My response didn't show up on lore since the mail client I used before sent
+>> the message in HTML format. So resending my response again.
+>>
+>> Hi Thinh,
+>>
+>>   Yes this is for cases where role switching is present (either with a Type-C
+>> controller, USB-conn-gpio, or a glink based role-switch).
+>>
+>>   Actually the requirement is as follows:
+>>   1. When in device mode, if we receive a cable disconnect, we need to clear
+>> OTG_VBUS_VALID bit of QSCRATCH register in glue address space.
+>>   2. When cable is connected in device mode, we need to set the
+>> OTG_VBUS_VALID bit of QSCRATCH register in glue address space.
+>>   3. When the runstop is set back after a suspend rotuine, then we need to
+>> set  OTG_VBUS_VALID bit of QSCRATCH register in glueaddress space.
+>>
+>>   To take care of all the 3 scenarios above, the set_role and run_stop
+>> notifiers have been added.
+>>
+>>   The role info propagates only from core to glue. It is not sent to the phy.
+>>
+> 
+> When does ROLE NONE occur? Did you have the type-c driver set the role
+> switch to "none" indicate disconnect?
+> 
+> The vbus-valid is only for gadget, and you only care about the
+> OTG_VBUS_VALID right? Can we just use the dwc3->connected flag? Just
+> make sure that it's cleared on role-switch, which should be the case
+> because we always perform soft-disconnect on gadget unbind, and make
+> sure to set vbus-valid on pullup or gadget binding. Is there some
+> scenarios that dwc->connected does not cover?
+> 
+
+Hi Thinh,
+
+  In case of just a cable disconnect in device mode (and default dr mode 
+is peripheral only), there would be no role switch. In that scenario, 
+connected flag would stay "true" even after removing cable. In that 
+case, we can generate disconnect interrupt only by clearing this 
+VBUS_VALID bit and inturn the suspend will succeed. So wanted to use 
+notification from set_role which would cover all cases:
+1. cable disconnect/cable connect
+2. Role switch from host->device and device->host
+
+Regards,
+Krishna,
 
