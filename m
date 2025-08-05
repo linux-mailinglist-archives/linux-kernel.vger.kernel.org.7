@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-756186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60752B1B108
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:29:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD958B1B10A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B50216EC81
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:29:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC317A3D36
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCAC25A2D2;
-	Tue,  5 Aug 2025 09:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104225E44E;
+	Tue,  5 Aug 2025 09:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hPJBcL5A"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QVIWglHK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qp16iOQi"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A09251799
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967FE194137;
+	Tue,  5 Aug 2025 09:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386149; cv=none; b=YfuD18r4cA+b84xQn2z55vGDX0juqM3Z0IBFC/pmccduee/jN4G8OBn4y9HzyY7eulazw56Dd1z0cjF72xe+1w9E+HEzOc5WFEArWJ6AtASE/rcB4jzNG6L4jIJe7U+S8gjeKGuUskrOZuiptinPLsWn6Qv0uCP+BTdf78a9cK0=
+	t=1754386185; cv=none; b=NbD6GL+bnogGDRjMZCAGZrF6int6KT2dJY94TT0ynq+Nv5f5TU5k9gzbkWuJk0Yqaya72twjnkN32yW1diiCj/abAC1fLDTZ0PkxsRs6C8aEdi2YLQi2pV8Vvd1RRlNdt/mGXghuLWAomcIC8r+guca+76Po/zUD991dOcqfPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386149; c=relaxed/simple;
-	bh=Nu/yo03bxwSukuvoXb5drj/qxdTuJgGHnF93xhQ2c5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=getE212FFywPkW84yhwJY34qmfvtrgg6ZioUb43S2vUIO1fCJF+phNdtqBZlclYk2NzhhCd8NWuZPzH6nhmPx8lT9wgmC0drUH5LbmHq/1qhxUKbNuGnEMqQqvrpQkBNXIeJp805w+potkas/pF6JHDepMPeJKrzU5+yI4N9Y74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hPJBcL5A; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b792b0b829so4156734f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 02:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754386146; x=1754990946; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UF5Zt9voQATioY9RRbmU98WhyD6EdNV9XLQAXiUOGfY=;
-        b=hPJBcL5AcZ+KxOtM6+HrkeUPZcSRD5dWCApPCvP5moScUD8SP4XuMoJcWs3GCLsAAs
-         xxMZPNQuVDQbW+xOiOWElJJsD6gt8S+aNybf09SxI9CYMyI3+J/4X7N/Ji/h+2d0th5V
-         d9ktQbFf5LQNzr+EaXhMSgfTbb2rfNI5LvSAKC5J4e3gNfKo0k9MIZ0/W5KypABb2s33
-         YbjG6bByWzlV4oUsklP8GI1qN9sGLi8x3sjKcpJv1bIMRL1OSB8oYOi59yVCs2JJAwLu
-         /zvdySkSPDGgacdllL2J5Gpry/44y1lXxh8otx/5TgUN1wYy5phQIDdjcJ2+/jjbquAf
-         ilXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754386146; x=1754990946;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UF5Zt9voQATioY9RRbmU98WhyD6EdNV9XLQAXiUOGfY=;
-        b=WcX1rP/hrexxRBBmMeQJruykiX0pwfClyT3xRKb8txzvjZjIcua1rBA4g/j/dm3T5T
-         gqbIlpRW9pnTbzOl3g0NsADhLSVhidR7tJRS5WvAjwSd+Ok5HstEmWwIBpFkzydQyOIV
-         k8m98CDp9pDTtk4qI7mqFmsNXJIj7Im+GCLMvwXpmPMvoweB4BmEixANEVJleW6eqWMu
-         gG+7ag1eiNA2ATNqQxexWJpQww2YTALfYRD0Lt6NkO7VQ/0HGuotO6k+9FrXzJYzxQoC
-         jm6jZ6BI3ZZLhIlM5DISvCzioPx9voXIJJXBFZT0Q1NSnfJHGlG2lIJyjNL6BjeQbQzV
-         l88w==
-X-Forwarded-Encrypted: i=1; AJvYcCVf5GY7arEcmJ1kjmV7xhutXGnYw5YiCh3weN7bRoBw8psjecUCNq7NB6IRn47nGxnkeXRc+l4Q3rpZhn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHcSag0DtCrM/XGjQR43S+SDzuqdzyUTmnPenVhT38Iq5vxqW
-	ow1Cn/gy+RwRFEgfLwWatVZOBVZ9FB42QChe4ovFChVutZihN4bSvh8cV+6SBqVmuuY=
-X-Gm-Gg: ASbGncvj7S6VvqyT35bquWqtbS/qYA2DnyWyOMn6I2iPEAG+d2rf5uEXwHuViAOM5+Y
-	Web1t3ObV9y11wrfCHPPbG7pv7mHDj7XWahgv61X8+GrLdZOqzdp9lrAMAjXiqn05gNOz778eiS
-	aBXHeKgopTt0PFSSe49na5RI0gEcU3IqBQAN/dtgrTz2CSCCgy7eG01Et4ypRvyPkzrSlS6hpDi
-	rlDIpzoo/793gDaOUXsnDMtxLH6ui2nzGGyJHdEA3Zoz5aUg9HzkIAbrnPVUlltslCr1y8iF9Tg
-	5At6c7+o6LwSZLh/kPuVZwa1IFMsb67U0KZrWs7oyUqrfTfqymIwafbHav9TatmX819IHbWCvN5
-	VfC+tYencnC/i72KhQfAYtakCmAg=
-X-Google-Smtp-Source: AGHT+IG+S8EHXkDixCfKjiD9TLmPOVJSu9nB/gnFswyFBWmlaqpq9SDKhuT/ueldL0WcRP6mU/8Ixw==
-X-Received: by 2002:a5d:5d0e:0:b0:3b7:9350:44d4 with SMTP id ffacd0b85a97d-3b8d946b3d7mr10399692f8f.11.1754386146140;
-        Tue, 05 Aug 2025 02:29:06 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c47ae8esm18309695f8f.61.2025.08.05.02.29.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 02:29:05 -0700 (PDT)
-Date: Tue, 5 Aug 2025 12:29:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Val Packett <val@packett.cool>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: mdt_loader: Allow empty section headers in
- mdt_header_valid()
-Message-ID: <5d392867c81da4b667f61430d3aa7065f61b7096.1754385120.git.dan.carpenter@linaro.org>
-References: <cover.1754385120.git.dan.carpenter@linaro.org>
+	s=arc-20240116; t=1754386185; c=relaxed/simple;
+	bh=dAKal5weIHM3HgsAzvyNpVMMpmVqe/TuB2uUgYihS1M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=orCcSFIltOBtooKxuW/p9MiKHxsClFiHbzCSQcVo9RoadUZfXTzopCtUX7s7abhUSRgdfVB3XDz973+G2CZ9Xj7j/+hHIl/PbKsdjXKCatTmOs85baqGa3SeWzaYOumkL9jYqHxcMBt3rA6eRD0EAYplzYRaZjZ6jkNlPhF2wVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QVIWglHK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qp16iOQi; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 59E161D001F1;
+	Tue,  5 Aug 2025 05:29:41 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 05 Aug 2025 05:29:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754386181;
+	 x=1754472581; bh=dAKal5weIHM3HgsAzvyNpVMMpmVqe/TuB2uUgYihS1M=; b=
+	QVIWglHKuSRibiBnW54EffYuyq8om2Fqrj97P7o9VFEBdVIUesTFC1w/FgcQJRCc
+	+RYUPh+8cs388Lf+dJB3Fj/UMGsj7uOwgBvWB1jBySxsBrKB3RrWVDzHd9GYuRSw
+	qQc38/kLITcZLvnHIX8yLrfqRLqlRTA77Ru9zNxCRVqvT79FapYhDjQMKqTRF/rL
+	jg8HTzR0mzQph8hm+fmZRPMo8w5p/6+8QT87JH2V5l2VRh1WljjgWYZKbTUM0MsH
+	UQ+2Xh7m3zEaxcbjyGPKrMNXF//taziNtlm1F+KY1a9vtFGQTA7DCX2y5Mwkmk+L
+	JTg6dy79GyUPDfQrJOivVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754386181; x=
+	1754472581; bh=dAKal5weIHM3HgsAzvyNpVMMpmVqe/TuB2uUgYihS1M=; b=Q
+	p16iOQiSkI6whyWxvGtoNI0EQqqO0QpRs48tT6Plcz2QStaoBG2hLNf+u2rXwd08
+	Vyvi89Ft1uuBKyZ0FgLQXp5U80u4Rhz5Yb2CfNylZy8SyE9eIvpasXX64YWuuzmJ
+	b98CzV3R864UE03C5g32st+syqLZoy3qpBKMOHQTamissprIh2/cdluT6I7yjg3k
+	aHbzUa18lyocvTziivXdPSjvtNkYOfimPcEctqYyE8YrnNzy6wXSi83XXIEhEXQV
+	gQgQ2dktM4SDV9/E3diQF6XOYE/IfrD5GbEBowhxrdWoOAViKGz4yd4RDYuSoZ5y
+	JAZvr6xRhp9NVsoyF9T0w==
+X-ME-Sender: <xms:BM-RaNyCDgxiFC18A9ZKg1LIipXChoi4AChvUAWzIq9jpTgtzaUfmg>
+    <xme:BM-RaNR7hd7AFhVX_dGXDrLcFH3_gG1wGFx1gKQksabdQbKfHAx-hzGK0JFgkSoKN
+    jYvWST5i2e9icqL-p8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudegkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhope
+    grnhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgr
+    ihhghhhtrdhlihhnuhigsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghhlrghusghith
+    iisehphhihshhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepthhhuhhthhes
+    rhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhprghrtghlihhnuhigsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BM-RaEUBrHGPK3QR0OjosS_85VsUg_b8HwJJoG3bS7pSjSjxx3HorA>
+    <xmx:BM-RaFhGiYTVVcT6wnluuFWoV8o-ymJedzwj4uhSxzYsOqQF4JAaqg>
+    <xmx:BM-RaEAhr2HpOgKSm8DBRBVpx-9ruDYIbSBwK3wmpoP9gvHd0OrezA>
+    <xmx:BM-RaLs2rz6GTHqEEa0dNz86WEhU85Sx_r5okBOf-xJfrB1q0fRAaw>
+    <xmx:Bc-RaOAOocCM0MIM7DD4fNL3Fa0L3AT6mVZDteQD84rAVVZcP-dFt9XJ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 41AA1700065; Tue,  5 Aug 2025 05:29:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1754385120.git.dan.carpenter@linaro.org>
+X-ThreadId: Tc7b70f1228ed2fe7
+Date: Tue, 05 Aug 2025 11:29:10 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Huth" <thuth@redhat.com>, "Andreas Larsson" <andreas@gaisler.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David Laight" <david.laight.linux@gmail.com>
+Message-Id: <5f29e6cc-fa37-454a-937b-e2bc47453057@app.fastmail.com>
+In-Reply-To: <20250805092540.48334-1-thuth@redhat.com>
+References: <20250805092540.48334-1-thuth@redhat.com>
+Subject: Re: [PATCH] sparc: Drop the "-ansi" from the asflags
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The mdt_header_valid() function checks all the members for the elf
-header to ensure that reading the firmware doesn't lead to a buffer
-overflow or an integer overflow.  However it has a bug, in that it
-doesn't allow for firmware with no section headers and this prevents
-the firmware from loading.
+On Tue, Aug 5, 2025, at 11:25, Thomas Huth wrote:
+>
+> Since there does not seem to be any compelling reason anymore to use
+> "-ansi" nowadays, let's simply drop the "-ansi" flag from the sparc
+> subsystem now to get rid of those disadvantages.
+>
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-I know from bug reports that there are firmwares which have zero
-section headers, but the same logic applies to program headers.  An
-empty program header won't lead to a buffer overflow so it's safe to
-allow it.
-
-Fixes: 9f35ab0e53cc ("soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()")
-Cc: stable@vger.kernel.org
-Reported-by: Val Packett <val@packett.cool>
-Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/soc/qcom/mdt_loader.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 0ca268bdf1f8..d91c5cb325e3 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -32,14 +32,14 @@ static bool mdt_header_valid(const struct firmware *fw)
- 	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
- 		return false;
- 
--	if (ehdr->e_phentsize != sizeof(struct elf32_phdr))
-+	if (ehdr->e_phentsize && ehdr->e_phentsize != sizeof(struct elf32_phdr))
- 		return false;
- 
- 	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
- 	if (phend > fw->size)
- 		return false;
- 
--	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
-+	if (ehdr->e_shentsize && ehdr->e_shentsize != sizeof(struct elf32_shdr))
- 		return false;
- 
- 	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
--- 
-2.47.2
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
