@@ -1,160 +1,140 @@
-Return-Path: <linux-kernel+bounces-757021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095C6B1BC7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BF4B1BC87
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00327200FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CC21897A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0C525F98E;
-	Tue,  5 Aug 2025 22:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999C926E70B;
+	Tue,  5 Aug 2025 22:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S4TKYGXU"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uI+dm8Jr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A1035959;
-	Tue,  5 Aug 2025 22:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DB4215198;
+	Tue,  5 Aug 2025 22:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754432684; cv=none; b=n5CxTDn73iRXZh0kplNyKLVcihItZ3QQNDdfsBLyoDzIC0mX7SRr+QNkkGXMyz0EhK1oDWQ5PWNa9svph0OHQ13hPNrxFSXYwFobZ9kxy7iNKczVkqIdzbGlAC9yHdiZUkG4bP7EjPnLE8YN6kVdx2LTHl9Nnus2EYCEUDKrr74=
+	t=1754433007; cv=none; b=SxDn1x7wGK2qc+2JbeptRhRqE3kxqgstVxmLHiajVAlHS/2Scm9LI0Bnsj8jQ2YNk4mOqgPPhIh7XJEJ+6zL0FYf/qNe/D+AdfwDp1EM1QSi39iIClcsJH0/LwDLbqRPVmNTqNwggJdAivw6MQ/zz+10ob8Mg9hvwldqgML2Ao8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754432684; c=relaxed/simple;
-	bh=QfnuAfSIncG5cDGs2WQXDDBy6I3DO7Z42sfD8D0DoVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kD3emyAZHSzTkLywc7/7eP1RIol5BtiV0kRWclcs+FsTh+1zGQpf0yqK87ZhwHpZLyuUk3j5PZ3V/CF6efTPCnxy6m0J3bTWT4Pu1YlTQsfCYISgdcoNX8956Z5q3bLRNVG0H/cf+y8g7nrcIVyRH2h/e9OGzawFLYIIipcmSu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S4TKYGXU; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9955942E80;
-	Tue,  5 Aug 2025 22:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754432679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=odN3U5wUIKDj5D9hqrCcLp+EmyeB4OlgDk3ZQxZOpZg=;
-	b=S4TKYGXUfH31hW2weWUZO71JDvk6rqhsZQxcPW8T5sNn+sod7h7caFPj0PJ2+yKvfOsCWK
-	WVefcWIJG8YSSUhhFPPRY5Em6TeJl2qSc8t/CNjCoPksDBxlSDd2sBM3KjeveNTUiKxpZb
-	M/rnmaMWe730LXhWhTOAYb9avHWHAVN5YotelgrhriW5aZe8O4Wab0Cf+1k/WDAHFPL+v9
-	+7Q0EHtJrzIUsCxkjb48Bx23sE0sFj1LzN9mNq6FlhBqqeAl12Z+XVvb0e30wShpF6OdXt
-	8icQt4CTOKKhp2Xx1EP7zbQLO0lpeots2Oq2s1TNQDNmeeOBI+u82XrkwAGCrQ==
-Date: Wed, 6 Aug 2025 00:24:36 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: michal.simek@amd.com, srinivas.neeli@xilinx.com,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Ivan Vera <ivan.vera@enclustra.com>
-Subject: Re: [PATCH v1 1/1] rtc: zynqmp: ensure correct RTC calibration
-Message-ID: <202508052224366c9bb920@mail.local>
-References: <20250804154750.28249-1-l.rubusch@gmail.com>
- <20250804154750.28249-2-l.rubusch@gmail.com>
- <20250804213213d4844d4e@mail.local>
- <CAFXKEHZn0XQMe6RBHDJzcGZy+JPpNpfidD1mT2MBmZ_WamFQKQ@mail.gmail.com>
+	s=arc-20240116; t=1754433007; c=relaxed/simple;
+	bh=7ylTPhqKIZKqcaCZzAUkFz0JFvQR09C/unf3SduQA68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c5HwvTk5ybnUnh5nXjZEy3gpAwnJBSdbHP/Brb1INqexzrzM0yUB/mKV9+0vBVuEsLNNRNWOjm46O7HsqAHKDMtjYEG1slxvoVLBFOuArvf8XJ9p6XAzDLsPGhlx55LoRGIx4D6rC1wQzh/u6NrD4mhpWEjUDX7MQSb1biGGE0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uI+dm8Jr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E859BC4CEF0;
+	Tue,  5 Aug 2025 22:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754433006;
+	bh=7ylTPhqKIZKqcaCZzAUkFz0JFvQR09C/unf3SduQA68=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uI+dm8JrGYlbEptuLosbA376eEtZB3eyNYrv7b5JBvFPQSxCZXVXb+gHdeAkVZAes
+	 C7h6VOmn3DI/jO1iy81zLEC64c4bGfyw7Xn1Z0gnFy3GJHHOODVU18dw+NdH1UWatj
+	 vaXBnMEEqR96Fv81P8iqtkf9SM968MEnDOXEbpZK9NSiIOqsPL9UnF1/uYElHxkTYu
+	 dY5FExx/Gh0Gp1GVh50gEomRbvqQ+P66nq3xIquMXRh0O5aCUvUnJdWS4lYwTdf+HX
+	 WWcGDMVh0kOnqKg5kB9kPMbBGYyW95b52Zn6HoJXKITouqAY2RYQZoO/Ia1q1ZoMK2
+	 9UAsRpJ37UeVg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/7] MD5 library functions
+Date: Tue,  5 Aug 2025 15:28:48 -0700
+Message-ID: <20250805222855.10362-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFXKEHZn0XQMe6RBHDJzcGZy+JPpNpfidD1mT2MBmZ_WamFQKQ@mail.gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeifeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgheeuieeikefhgfdvhfehiedvhffgjeetfffgtefhudfgtefffeevledtleejteenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepgeehrdduuddrieekrdduudegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepgeehrdduuddrieekrdduudegpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhdrrhhusghushgthhesghhmrghilhdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimhgvkhesrghmugdrtghomhdprhgtphhtthhopehsrhhinhhivhgrshdrnhgvvghlihesgihilhhinhigrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrg
- hdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehivhgrnhdrvhgvrhgrsegvnhgtlhhushhtrhgrrdgtohhm
-X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 05/08/2025 23:56:46+0200, Lothar Rubusch wrote:
-> On Mon, Aug 4, 2025 at 11:32 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> >
-> > On 04/08/2025 15:47:50+0000, Lothar Rubusch wrote:
-> > > From: Ivan Vera <ivan.vera@enclustra.com>
-> (...)
-> > > diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
-> > > index f39102b66eac..0c063c3fae52 100644
-> > > --- a/drivers/rtc/rtc-zynqmp.c
-> > > +++ b/drivers/rtc/rtc-zynqmp.c
-> > > @@ -331,9 +331,9 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
-> > >               if (ret)
-> > >                       xrtcdev->freq = RTC_CALIB_DEF;
-> > >       }
-> > > -     ret = readl(xrtcdev->reg_base + RTC_CALIB_RD);
-> > > -     if (!ret)
-> > > -             writel(xrtcdev->freq, (xrtcdev->reg_base + RTC_CALIB_WR));
-> > > +
-> > > +     /* Enable unconditional re-calibration to RTC_CALIB_DEF or DTB entry. */
-> > > +     writel(xrtcdev->freq, xrtcdev->reg_base + RTC_CALIB_WR);
-> >
-> > Doesn't this forcefully overwrite the proper value that has been set
-> > from userspace and so trashes the time at each reboot?
-> >
-> Yes, it overwrites the calibration, i.e. counting 1sec in about 1sec.
-> No, the time/date is not actually "trashed" (I double-checked that
-> with timesyncd disabled, having and not having register content and
-> over several reboots keeping a bogus date/time - it psersistet in the
-> same time space. The current patch always overwrites the calib
-> register content. So, a manual userspace setting will be lost after
-> reboot. That's true.
+This series is targeting libcrypto-next and can also be retrieved from:
 
-It is about 1sec on your platform because it didn't deviate too much
-from the expected value but what if another platform needs a way
-different value? Then you are introducing the same issue as the one you
-are trying to fix but it will have it at each reboot.
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git md5-lib-v2
 
-> 
-> Would it rather make sense to extend it, say, instead of merely
-> checking whether the calibration register contains any data - which
-> could potentially be incorrect - also check for the presence of a
-> calibration property in the devicetree (or a similar property, since
-> 'calibration' may be deprecated)? If such a property exists, perform a
-> re-calibration based on the devicetree at every reboot. Otherwise,
-> retain the current behavior of checking whether the register is empty?
-> 
-> > Isn't the proper way to reset it to simply set the offset from userspace
-> > again?
-> >
-> Hm.. I'm unsure if I understood you correctly. You mean the way as
-> described in AMD's link to perform the reset by executing the devmem
-> from Linux manually? If so, why is it preferable to adjust the RTC
-> calibration manually every time this happens, rather than to simply
-> put a correction value into the devicetree properties for problematic
-> setups? Or do I miss something, is there a config file for RTC
-> calibration for doing this persistently from Linux, that I'm not aware
-> of?
-> 
-> Before, the devicetree properties seemed to have generally priority
-> over userspace settings. Now, after the calibration rework, this
-> priorization seems to have changed and a devicetree calib correction
-> for such problematic cases will generally be ignored, with a
-> recommendation by Xilinx/AMD (see link in cover letter) to execute a
-> devmem command from off Linux (...). I mean, can't this be elaborated
-> a bit more to allow for a persistent correction method?
+This series introduces a library API for MD5 and HMAC-MD5 and
+reimplements the crypto_shash "md5" and "hmac(md5)" on top of it.
 
-The value depends on each manufactured machine/board as it is supposed
-to correct for imprecision on the input clock which is either a crystal
-or derived from a crystal. This crystal may be more or less accurate and
-its accuracy will change over time notably because of temperature
-changes or simply because it is aging. Having the value in the device
-tree is as good as having it hardcoded in the driver which is not far
-from what your are doing here. It makes the feature useless.
+The library API will also be usable directly by various in-kernel users
+that are stuck with MD5 due to having to implement legacy protocols.
 
-What I was suggesting is simply to do the right thing, compute the
-inaccuracy and correct it from userspace, using the proper interface
-that is sysfs or the RTC_PARAM_SET ioctl for RTC_PARAM_CORRECTION
-This has to be done regularly anyway so I guess it would catch and
-correct any corrupted value in the register.
+This should again look quite boring and familiar, as it mirrors the
+SHA-1 and SHA-2 changes closely.
 
+Changed in v2:
+  - Kept the architecture-optimized MD5 code, since unfortunately there
+    were objections to removing it.
+
+Eric Biggers (7):
+  lib/crypto: md5: Add MD5 and HMAC-MD5 library functions
+  lib/crypto: mips/md5: Migrate optimized code into library
+  mips: cavium-octeon: Move octeon-crypto.c into parent dir
+  lib/crypto: powerpc/md5: Migrate optimized code into library
+  lib/crypto: sparc/md5: Migrate optimized code into library
+  crypto: md5 - Wrap library and add HMAC support
+  lib/crypto: tests: Add KUnit tests for MD5 and HMAC-MD5
+
+ arch/mips/cavium-octeon/Makefile              |   2 +-
+ arch/mips/cavium-octeon/crypto/Makefile       |   8 -
+ arch/mips/cavium-octeon/crypto/octeon-md5.c   | 214 -----------
+ .../{crypto => }/octeon-crypto.c              |   0
+ arch/mips/configs/cavium_octeon_defconfig     |   1 -
+ arch/mips/crypto/Kconfig                      |  10 -
+ arch/powerpc/configs/powernv_defconfig        |   1 -
+ arch/powerpc/configs/ppc64_defconfig          |   1 -
+ arch/powerpc/crypto/Kconfig                   |   8 -
+ arch/powerpc/crypto/Makefile                  |   2 -
+ arch/powerpc/crypto/md5-glue.c                |  99 -----
+ arch/sparc/crypto/Kconfig                     |  10 -
+ arch/sparc/crypto/Makefile                    |   4 -
+ arch/sparc/crypto/md5_glue.c                  | 174 ---------
+ crypto/Kconfig                                |   2 +-
+ crypto/md5.c                                  | 359 ++++++++----------
+ crypto/testmgr.c                              |   3 +
+ drivers/crypto/img-hash.c                     |   2 +-
+ include/crypto/md5.h                          | 181 ++++++++-
+ lib/crypto/Kconfig                            |  13 +
+ lib/crypto/Makefile                           |  12 +
+ lib/crypto/md5.c                              | 322 ++++++++++++++++
+ lib/crypto/mips/md5.h                         |  65 ++++
+ .../crypto => lib/crypto/powerpc}/md5-asm.S   |   0
+ lib/crypto/powerpc/md5.h                      |  12 +
+ lib/crypto/sparc/md5.h                        |  48 +++
+ .../crypto => lib/crypto/sparc}/md5_asm.S     |   0
+ lib/crypto/tests/Kconfig                      |  10 +
+ lib/crypto/tests/Makefile                     |   1 +
+ lib/crypto/tests/md5-testvecs.h               | 186 +++++++++
+ lib/crypto/tests/md5_kunit.c                  |  39 ++
+ 31 files changed, 1060 insertions(+), 729 deletions(-)
+ delete mode 100644 arch/mips/cavium-octeon/crypto/Makefile
+ delete mode 100644 arch/mips/cavium-octeon/crypto/octeon-md5.c
+ rename arch/mips/cavium-octeon/{crypto => }/octeon-crypto.c (100%)
+ delete mode 100644 arch/powerpc/crypto/md5-glue.c
+ delete mode 100644 arch/sparc/crypto/md5_glue.c
+ create mode 100644 lib/crypto/md5.c
+ create mode 100644 lib/crypto/mips/md5.h
+ rename {arch/powerpc/crypto => lib/crypto/powerpc}/md5-asm.S (100%)
+ create mode 100644 lib/crypto/powerpc/md5.h
+ create mode 100644 lib/crypto/sparc/md5.h
+ rename {arch/sparc/crypto => lib/crypto/sparc}/md5_asm.S (100%)
+ create mode 100644 lib/crypto/tests/md5-testvecs.h
+ create mode 100644 lib/crypto/tests/md5_kunit.c
+
+
+base-commit: 186f3edfdd41f2ae87fc40a9ccba52a3bf930994
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.50.1
+
 
