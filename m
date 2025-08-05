@@ -1,256 +1,161 @@
-Return-Path: <linux-kernel+bounces-756180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C94B1B0F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:24:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BC6B1B0F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6575C3AAE08
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:24:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D5A97A9B87
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3D825C807;
-	Tue,  5 Aug 2025 09:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0FA25D527;
+	Tue,  5 Aug 2025 09:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApyEkM9q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1IWKx7s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5125F183CC3;
-	Tue,  5 Aug 2025 09:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E42183CC3;
+	Tue,  5 Aug 2025 09:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754385858; cv=none; b=LKDojWtguLAVIix9HfXh/tlXMyfrQFsby51UIg8S10HUqiO/YHcVeWkaFQejQY8qz2RY+utzxry5y/xy59dRnhde+zfC6ZpyuAq3POhBHIs/9lOTWjwVT66cSG7+o2iVsURlPsC+CtZXB0EP169zqloxvwzkUKMTtXL7DesvlWI=
+	t=1754385947; cv=none; b=g1gnUU2B2YQ22iQsv04Xq7xP7x6EyR+qfOmqFwClfLBASxwuTzB2DZbZrE9Eg8zzXFcXvjOB9o3KNUsY0cE28HzEHNg1Hnby+8I/sAfIA6u+n15l2sBtmKlbf4stWMIc5HWHIsrVaGaFzKepGrbjL1xjvhux3eakLH+uX4loRgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754385858; c=relaxed/simple;
-	bh=wx/o8W6jWAxgJJjLCaERwXMfzXUSLlZCfV+7t3CeObM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ixzoDc5Ahm2YDjhuhewky4RLdWOkYG9qHB8lsg3zWOJkUMmozgzqIZwWzbgM+f16dBagzVrXF/9pIPk5j51unQfH+9Lg0jybFhvnsozRMFmWcL28bbEuScWlr2LqepuJPekBbmUNPx0eP7MgNPtJsASjfWenvo2s4a7yTdK0WFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApyEkM9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2F6C4CEF0;
-	Tue,  5 Aug 2025 09:24:12 +0000 (UTC)
+	s=arc-20240116; t=1754385947; c=relaxed/simple;
+	bh=+m+N+iT9UFauBP/qvow0voelhh0Op+NGM9/wRMfrGD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gD4+YD8K+aKJOjGK/L6BWB+hwHoKTZait8afoelaqSJalsUAP68sEe9KK6T/C2SSY9QzVuVmiGeDggVRN3hy8HgSvWGEyBwtphIh0DG9yQQokH+j8SiuydhqCYqsv0GL4+lV+iDOakXn493lB9QHk5d3oe8G9ulXXnLiHfrp3v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1IWKx7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A8FDC4CEF0;
+	Tue,  5 Aug 2025 09:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754385856;
-	bh=wx/o8W6jWAxgJJjLCaERwXMfzXUSLlZCfV+7t3CeObM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ApyEkM9q1Ev4H0eXEV/8lMeIqRLILsvaSyMZwYlilelA6pRnfF99pNo4WKRMn69QF
-	 xIXK0MiQ+V91XEtunSvPnFkOrDb3+mgJBi+sy8+qZbx21KN51Xi51hersMyQllXPk8
-	 vl4ET19pWHCTNkiu7TWp5SE/eCoLrqgHQ5fWm99/zrxAcp8Ii+Y/I9v4b85gNwA7/j
-	 H12rAKKsj/aNXxAI/KnGfupRYWyXQSpXuXR7w2HSv5B+2p6kzvI4Ji2PIqONPb6HAD
-	 4IhZry7QIyQrwFwN2hn50zGuf4kxBDrsuXrEib2oG55NjDjSPPk6kCGhFMz5+6ds1/
-	 oMK7mtvreFJYw==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 03/38] tsm: Move dsm_dev from pci_tdi to pci_tsm
-In-Reply-To: <20250804215227.GA3643759@bhelgaas>
-References: <20250804215227.GA3643759@bhelgaas>
-Date: Tue, 05 Aug 2025 14:54:09 +0530
-Message-ID: <yq5aa54e86km.fsf@kernel.org>
+	s=k20201202; t=1754385947;
+	bh=+m+N+iT9UFauBP/qvow0voelhh0Op+NGM9/wRMfrGD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p1IWKx7soj5/7c3n2Dep7d67OTvNgyQxpu3Kvp/V4+/uJg0S7H+7QAlafArPD6PPl
+	 k02dODygGWvoNuZO3xgweCCXQhlOovvD2rh0IIgD+iZrZdqoXyOr/EYEoumlNc9ZO4
+	 s6sJnDqihPRHxaE3yPd2axZZcL5L81JXVI3K9qXB2KtytkAjAom1aFJ4falvMwNM3c
+	 ycl5tXalyQTDHOKNR4DWnIRF/4F+xHJ0g1/r8d9AqgHQbSnXy5uB2GsZvq3cxVksvr
+	 qeQ4UE+IloUdX5CRnQmMLfCoUvHRQVH0mMmUpYtGkyQUTiLuWve9w17vZH13yodBwT
+	 aCdDTjXknz6bw==
+Message-ID: <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
+Date: Tue, 5 Aug 2025 11:25:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
+ broken capabilities
+To: Sarthak Garg <quic_sartgarg@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
+ quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
+ quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
+ <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
+ <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
+ <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
+On 05/08/2025 11:19, Sarthak Garg wrote:
+> 
+> 
+> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
+>> On 01/08/2025 10:45, Sarthak Garg wrote:
+>>> The kernel now handles level shifter limitations affecting SD card
+>>> modes, making it unnecessary to explicitly disable SDR104 and SDR50
+>>> capabilities in the device tree.
+>>>
+>>> However, due to board-specific hardware constraints particularly related
+>>> to level shifter in this case the maximum frequency for SD High-Speed
+>>> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
+>>> card in HS mode. This is achieved using the max-sd-hs-frequency property
+>>> in the board DTS.
+>>>
+>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
+>>>   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
+>>>   arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
+>>>   arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
+>>>   4 files changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>
+>> This will break MMC for all of the users and nothing in commit msg or
+>> cover letter explains that or mentions merging strategy.
+>>
+>> Exactly this case is covered by your internal guideline, no? Please read it.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Just to make sure I’m addressing the right concern — are you primarily 
+> worried about the introduction of the max-sd-hs-frequency property in 
+> the board DTS files, or about the removal of the sdhci-caps-mask
+> from the common sm8550.dtsi?
 
-> On Mon, Jul 28, 2025 at 07:21:40PM +0530, Aneesh Kumar K.V (Arm) wrote:
->
-> Subject line should include "PCI" prefix.
->
-> Needs a commit log, even if it repeats what's in the subject.  Would
-> also be good to know *why* this is desirable.
->
->> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
->> ---
->>  drivers/pci/tsm.c       | 72 ++++++++++++++++++++++++-----------------
->>  include/linux/pci-tsm.h |  4 +--
->>  2 files changed, 45 insertions(+), 31 deletions(-)
->> 
->> diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
->> index 794de2f258c3..e4a3b5b37939 100644
->> --- a/drivers/pci/tsm.c
->> +++ b/drivers/pci/tsm.c
->> @@ -415,15 +415,55 @@ static enum pci_tsm_type pci_tsm_type(struct pci_dev *pdev)
->>  	return PCI_TSM_INVALID;
->>  }
->>  
->> +/* lookup the Device Security Manager (DSM) pf0 for @pdev */
->
-> s/lookup/Look up/ (it's a verb here)
->  
->> +static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
->> +{
->> +	struct pci_dev *uport_pf0;
->> +
->
-> Remove this blank line ...
->
->> +	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
->
-> and add one here.
->
->> +	if (!pf0)
->> +		return NULL;
->> +
->> +	if (pf0 == pdev)
->> +		return no_free_ptr(pf0);
->> +
->> +	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
->> +	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
->> +		return no_free_ptr(pf0);
->> +
->> +	/*
->> +	 * For cases where a switch may be hosting TDISP services on
->> +	 * behalf of downstream devices, check the first usptream port
->> +	 * relative to this endpoint.
->
-> s/usptream/upstream/
->
->> +	 */
->> +	if (!pdev->dev.parent || !pdev->dev.parent->parent)
->> +		return NULL;
->> +
->> +	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
->> +	if (!uport_pf0->tsm)
->> +		return NULL;
->> +	return pci_dev_get(uport_pf0);
->> +}
->> +
->>  /**
->>   * pci_tsm_initialize() - base 'struct pci_tsm' initialization
->>   * @pdev: The PCI device
->>   * @tsm: context to initialize
->>   */
->> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
->> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
->>  {
->> +	struct pci_dev *dsm_dev __free(pci_dev_put) = dsm_dev_get(pdev);
->> +	if (!dsm_dev)
->> +		return -EINVAL;
->> +
->>  	tsm->type = pci_tsm_type(pdev);
->>  	tsm->pdev = pdev;
->
-> Add blank line before comment.
->
->> +	/*
->> +	 * No reference needed because when we destroy
->> +	 * dsm_dev all the tdis get destroyed before that.
->
-> "tdi" looks like an initialism, which would normally be capitalized.
->
->> +	 */
->> +	tsm->dsm_dev = dsm_dev;
->> +	return 0;
->>  }
->>  EXPORT_SYMBOL_GPL(pci_tsm_initialize);
->>  
->> @@ -447,7 +487,8 @@ int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm)
->>  	}
->>  
->>  	tsm->state = PCI_TSM_INIT;
->> -	pci_tsm_initialize(pdev, &tsm->tsm);
->> +	if (pci_tsm_initialize(pdev, &tsm->tsm))
->> +		return -ENODEV;
->>  
->>  	return 0;
->>  }
->> @@ -612,32 +653,6 @@ int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
->>  }
->>  EXPORT_SYMBOL_GPL(pci_tsm_doe_transfer);
->>  
->> -/* lookup the Device Security Manager (DSM) pf0 for @pdev */
->> -static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
->> -{
->> -	struct pci_dev *uport_pf0;
->> -
->> -	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
->> -	if (!pf0)
->> -		return NULL;
->> -
->> -	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
->> -	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
->> -		return no_free_ptr(pf0);
->> -
->> -	/*
->> -	 * For cases where a switch may be hosting TDISP services on
->> -	 * behalf of downstream devices, check the first usptream port
->> -	 * relative to this endpoint.
->> -	 */
->> -	if (!pdev->dev.parent || !pdev->dev.parent->parent)
->> -		return NULL;
->> -
->> -	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
->> -	if (!uport_pf0->tsm)
->> -		return NULL;
->> -	return pci_dev_get(uport_pf0);
->> -}
->
-> This code move looks like it could be a separate patch that only moves
-> (and fixes the typos I mentioned).
->
-> Then a second patch could do what the subject claims (moving dsm_dev
-> from pci_tdi to pci_tsm) so it's not buried in the simple move.
->
->>  /* Only implement non-interruptible lock for now */
->>  static struct mutex *tdi_ops_lock(struct pci_dev *pf0_dev)
->> @@ -695,7 +710,6 @@ int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id)
->>  		return -ENXIO;
->>  
->>  	tdi->pdev = pdev;
->> -	tdi->dsm_dev = dsm_dev;
->>  	tdi->kvm = kvm;
->>  	pdev->tsm->tdi = tdi;
->>  
->> diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
->> index 1920ca591a42..0d4303726b25 100644
->> --- a/include/linux/pci-tsm.h
->> +++ b/include/linux/pci-tsm.h
->> @@ -38,7 +38,6 @@ enum pci_tsm_type {
->>   */
->>  struct pci_tdi {
->>  	struct pci_dev *pdev;
->> -	struct pci_dev *dsm_dev;
->>  	struct kvm *kvm;
->>  };
->>  
->> @@ -56,6 +55,7 @@ struct pci_tdi {
->>   */
->>  struct pci_tsm {
->>  	struct pci_dev *pdev;
->> +	struct pci_dev *dsm_dev;
->>  	enum pci_tsm_type type;
->>  	struct pci_tdi *tdi;
->>  };
->> @@ -173,7 +173,7 @@ void pci_tsm_core_unregister(const struct pci_tsm_ops *ops);
->>  int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
->>  			 const void *req, size_t req_sz, void *resp,
->>  			 size_t resp_sz);
->> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
->> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
->>  int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm);
->>  int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id);
->>  int pci_tsm_unbind(struct pci_dev *pdev);
->> -- 
->> 2.43.0
->> 
 
-Thanks for the review comments. I'll update the patch with the suggested changes.
+Apply this patch and test MMC. Does it work? No. Was it working? Yes.
 
--aneesh
+
+Best regards,
+Krzysztof
 
