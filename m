@@ -1,185 +1,102 @@
-Return-Path: <linux-kernel+bounces-756456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B125DB1B49C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:15:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11301B1B4A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BCD83B4C6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C1918A4B81
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EE127510B;
-	Tue,  5 Aug 2025 13:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74D0274651;
+	Tue,  5 Aug 2025 13:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a0fspBgD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cgtIllom";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a0fspBgD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cgtIllom"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBDfMAU1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C132750FE
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34850256C84
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399613; cv=none; b=NYGNs9+hSbRpPq8wOTtooucp4JVxb05Kj4TbLgK7500AX9AUQrA+2BplYYoDQAfh2ybnq1TrmfZ7OBwIR1UrBT1LtjFU3MyCUww+EHVqcGB8YQFCOPuIJcLFEnJSIfy8iO25rlj63+rXgqeiveBxGsLzXCA3crzzddRs3GCbfQY=
+	t=1754399788; cv=none; b=BxDRgCdLrOhWrnka4MZtTqk2fS/vHdGiWeBCTD4DO3EZcK528GxQZC/Zyf6Q2sUUd1EQ7sN1CPxvwIbtUHKlpOVNzEs/aVJciIoGDHyXWS9ywnoYASkmMLgQFo4ZTZRS25DCJ8U4x/25c5trEQe9+uN/+/herwvLH8HD/mhKXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399613; c=relaxed/simple;
-	bh=HG4Zigi97cTn7NwfO4BqTXIoE6nxZgcqKAJuhJE85rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjELYNQ99DKZdtEEtcVWIUt1jiU7sU0EfY1gAcXZACxe36TpNkZdnK6IdnijFcBhF2lCfg+BfDx4W/itzwqvHpWFY5BZjqw/BUbJMkPquwwVr3/6r3Yk3Fv8ouo6l31GbTBORv9N+Qp2HTbp2yCzQ4FVze9S2cmslXPkz4do4ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a0fspBgD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cgtIllom; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a0fspBgD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cgtIllom; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5CC911F74C;
-	Tue,  5 Aug 2025 13:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754399609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xi0O+0PdcmQy2RsQ+A/bu5pdhayeg1okjbaLCenz2T0=;
-	b=a0fspBgDv7mHr0gCzRNAy6nYETWL0rIDRUlvXtJP1ZYmOnTK6jsGYCQTi82lAPng7mzru6
-	DBdAaMbvCYEUXRJkVxvXDQDWM4uEIHj37QXTgmEPfxSat8O6rMeVwKnklGIS5OOXIyqORq
-	A3BgHJtRpxmEIWwbj/yyynNc2YgGVGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754399609;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xi0O+0PdcmQy2RsQ+A/bu5pdhayeg1okjbaLCenz2T0=;
-	b=cgtIllomiETqtcvWGC8w/VKHvxEPfDzsj2/m9sWR5FJXfYzexlDfCESBMazpRTqR/apz3g
-	vEa/pPrVhcAMZDBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=a0fspBgD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cgtIllom
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754399609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xi0O+0PdcmQy2RsQ+A/bu5pdhayeg1okjbaLCenz2T0=;
-	b=a0fspBgDv7mHr0gCzRNAy6nYETWL0rIDRUlvXtJP1ZYmOnTK6jsGYCQTi82lAPng7mzru6
-	DBdAaMbvCYEUXRJkVxvXDQDWM4uEIHj37QXTgmEPfxSat8O6rMeVwKnklGIS5OOXIyqORq
-	A3BgHJtRpxmEIWwbj/yyynNc2YgGVGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754399609;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xi0O+0PdcmQy2RsQ+A/bu5pdhayeg1okjbaLCenz2T0=;
-	b=cgtIllomiETqtcvWGC8w/VKHvxEPfDzsj2/m9sWR5FJXfYzexlDfCESBMazpRTqR/apz3g
-	vEa/pPrVhcAMZDBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0167013A50;
-	Tue,  5 Aug 2025 13:13:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ApkCOngDkmi2FwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 05 Aug 2025 13:13:28 +0000
-Message-ID: <a4491b54-4e08-4bcc-bcd3-3bae20a490b2@suse.cz>
-Date: Tue, 5 Aug 2025 15:15:26 +0200
+	s=arc-20240116; t=1754399788; c=relaxed/simple;
+	bh=6W/xiw69ukViUYS1/UU6MQFnwfzZj750hgnXc5V+itg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ke4BiAZxu7hoXKzu5M1vuLy2/lfVk8kOaY9+SG3XrCd1hPchjfKHiyevqqgNKffcyuKLKmv51zccjioLEDdrLCxbYDAX1+AEsgi5SJeKQvr7NDNFk9Yc7JAEGyHqpem+xp/SwYLsifgauXS0evOAEV8SZc1y1zCGK9BXL33xB3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBDfMAU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF3AC4CEF0;
+	Tue,  5 Aug 2025 13:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754399787;
+	bh=6W/xiw69ukViUYS1/UU6MQFnwfzZj750hgnXc5V+itg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBDfMAU1if/4DRCA5L71LzllHZASdNF/G1sUrwtMoBv5XrQyiT6MTXM+lT4n3AxYK
+	 LOHeM/IRko/MbMWT2oEyY2K32IElsXLxRDHdnWWxF72ReLM5Spjlh778s6wSU3l7u8
+	 hAmr7tebPwSBtO7VedtDDojgONy6cUXEdpm7TnSG/Lc0PGoH0FLP7DAZ3/gwXJihOu
+	 agjNbM/3GnnNq+Uyf2oUTc+bLJ8taPkt3rTyVJNqwMnWkAgPjRLTos8C6JPKQKLfQh
+	 U3ATRjiVRoSWnB7CqvpUxCNaCi29ElJHF6xaj7yKuNNKWaAUqKoge/5yxsUL23FGtg
+	 UpHNQ9pELZIeQ==
+Date: Tue, 5 Aug 2025 14:16:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Pavel Machek <pavel@ucw.cz>
+Subject: Re: [GIT PULL] LEDs for v6.17
+Message-ID: <20250805131623.GL1049189@google.com>
+References: <20250730151013.GC6782@google.com>
+ <CAHk-=whwhtLWi7n1RjOk4Yvmt4sHdEMd9DdzaLdfHc_8StU-qA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
- performance
-To: Li Qiang <liqiang01@kylinos.cn>, akpm@linux-foundation.org,
- david@redhat.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com
-References: <74580442-2a9a-4055-b92d-23f5e5664878@redhat.com>
- <20250805120435.1142283-1-liqiang01@kylinos.cn>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250805120435.1142283-1-liqiang01@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5CC911F74C
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whwhtLWi7n1RjOk4Yvmt4sHdEMd9DdzaLdfHc_8StU-qA@mail.gmail.com>
 
-On 8/5/25 2:04 PM, Li Qiang wrote:
-> Ah, missed it after the performance numbers. As Vlastimil mentioned, I 
-> would have expected a bloat-o-meter output.
-> 
->>
->> My 2 cents is that usually it may be better to understand why it is
->> not inlined and address that (e.g., likely() hints or something else)
->> instead of blindly putting __always_inline. The __always_inline might
->> stay there for no reason after some code changes and therefore become
->> a maintenance burden. Concretely, in this case, where there is a single
->> caller, one can expect the compiler to really prefer to inline the
->> callees.
-> 
->>
->> Agreed, although the compiler is sometimes hard to convince to do the 
->> right thing when dealing with rather large+complicated code in my 
->> experience.
-> 
-> Question 1: Will this patch increase the vmlinux size?
-> Reply:
-> 	Actually, the overall vmlinux size becomes smaller on x86_64:
-> 	[root@localhost linux_old1]# ./scripts/bloat-o-meter before.vmlinux after.vmlinux  
-> 	add/remove: 6/0 grow/shrink: 0/1 up/down: 4569/-4747 (-178)  
-> 	Function                                     old     new   delta  
-> 	zap_present_ptes.constprop                     -    2696   +2696  
-> 	zap_pte_range                                  -    1236   +1236  
-> 	zap_pmd_range.isra                             -     589    +589  
-> 	__pfx_zap_pte_range                            -      16     +16  
-> 	__pfx_zap_present_ptes.constprop               -      16     +16  
-> 	__pfx_zap_pmd_range.isra                       -      16     +16  
-> 	unmap_page_range                            5765    1018   -4747  
-> 	Total: Before=35379786, After=35379608, chg -0.00%  
+On Thu, 31 Jul 2025, Linus Torvalds wrote:
 
-Is the before/after swapped here? This output suggests some functions
-became NOT inlined.
+> Just a small and unimportant nit:
+> 
+> On Wed, 30 Jul 2025 at 08:10, Lee Jones <lee@kernel.org> wrote:
+> >
+> >  * A potential buffer overflow warning in PCA955x was reported by older GCC
+> >   versions has been fixed by using a more precise format specifier when
+> >   creating the default LED label.
+> 
+> I'm trying to encourage people to use more straightforward language in
+> commit messages, and I ended up rewriting some of yours.
+> 
+> In particular, try to avoid passive voice.
+> 
+> So instead of "A fix has been implemented to Xyz" just say that it
+> contains "A fix for Xyz" (or even just "Fix Xyz").
+> 
+> Straight and to the point.
+> 
+> As an example, I edited that "was reported by gcc" and "has been
+> fixed", so that bullet point became
+> 
+>        - Fix a potential buffer overflow warning in PCA955x reported by
+>          older GCC versions by using a more precise format specifier when
+>          creating the default LED label.
+> 
+> in my tree.
+> 
+> This is not a huge deal, I just wanted to point out that "simple and
+> to the point" is a good thing, and talking about fixes in some kind of
+> passive voice is just strange.
 
-If I'm right the output binary becomes slightly larger. But it doesn't
-matter.
+Thanks for fixing.
+
+I'll try to bear it in mind in the future.
+
+-- 
+Lee Jones [李琼斯]
 
