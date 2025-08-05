@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-755872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD341B1ACC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BAEB1ACC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8311A189D3B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E4A17A5F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C51C75E2;
-	Tue,  5 Aug 2025 03:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E550D1F03C7;
+	Tue,  5 Aug 2025 03:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ks1udaDd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dd6cqySK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CA146D45;
-	Tue,  5 Aug 2025 03:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754364687; cv=none; b=Fpv3iZI737Ribs/Ws5a9D/QWXwle3GsHyTk9sp+MM3orOg4Tcd/oCd8bGjAU/DDjED6UkOM19w4RaJFc8FEETYBvG10vtUHxH7i06bPxD+/iuO8hBrvfiroKGkV/R664Vlc9FnLQ/nPenKsHZByXwI5vg/Ii0Ck58dfcqdPolMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754364687; c=relaxed/simple;
-	bh=bH8xAnpKadepAuhv2CA8+Yxy+PGqajGPU1SeU3V2b3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owt5+NE8kvN5N6fQwr/l/TR7YrNpLo/mCjK/m1kxikAi+stc6noUTycMxB92C2uBmSS1kI9uFzZtlNQFzkxiyBuJH6jbuf647IRrrR+c9Fz41D9WfAuaoKLikcLnNRhU0/AwLfwBc7Nu2PkvF3LZMHs5UGq06aD9PB8o8ppFkik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ks1udaDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6698C4CEF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2684D179BD;
 	Tue,  5 Aug 2025 03:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754364687;
-	bh=bH8xAnpKadepAuhv2CA8+Yxy+PGqajGPU1SeU3V2b3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ks1udaDdBB0iHISzBLiBbQ42CtbVmLEN8HBSXGpU0o/bSuxLlN0zHQSdaOiqgGomc
-	 o5UjrAif+e9dfgcl+ZIzPFIFo3uMJmbIP2iKYHsgJhDKhvw2pHXLRE+RvKS4ZKiku8
-	 uNxAbzLv1FymFyxmP7PG9qIZYf8Z8MI2m+cimhHwe5vfK+sM8fo+1MM8o7XvOlDMpx
-	 HmFCO3Y5ddCMcJKfuGdapxaxQs931M+wSSD5Vzi6qWDixSuUa1qbN3pwAavS8WlHUv
-	 axAtx0hAs9i0GeBAjL8kBcFwK82u43S8QYUxj++/Hu+bHi8RnRFd6UEHkA9b9ypPoN
-	 EIM6i4Uob4tGg==
-Date: Tue, 5 Aug 2025 11:31:20 +0800
-From: Coly Li <colyli@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Zhou Jifeng <zhoujifeng@kylinos.com.cn>,
-	linux-bcache <linux-bcache@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
-Message-ID: <20250805033120.7pzcpcjtpz5clnnz@P16.>
-References: <tencent_22DE1AC52BA931BD442CE823@qq.com>
- <wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
- <tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
- <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
- <tencent_31215CC45AD29EC835D34AD8@qq.com>
- <c2awlgl4ih23npqa3k2ilbrbhciv3nfd7wg5xnsjjxikcmednb@nwn3qc7aqhou>
- <20250804153130.igwkb6baf3vtjhzu@P16.>
- <gc54e3mk6ftv5qhuqvuguuguq3nbrwhty543egvictmiua5me7@nrzyczdgceyr>
- <tencent_418348EE386ED24E54E87AD7@qq.com>
- <mu7u23kbguzgzfovqpadr6id2pi5a3l6tca2gengjiqgndutw2@qu4aj5didb4h>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754364690; cv=none; b=gmPJbfkeND1l8RdRiWF6YCCND1uoJMRxeN6U1JOhOih88YNVSZYpkGAimLhkg1Cr0UsVQ7+c//2GBaYpt5dxTBl/KRQGH7CsnI0lgByj3qm3TasZY2EMbbBH4ifJG/IxX1ODOEgyi0b4npFH7s9UQ6bT42TNU8VKKY2PuVjNvwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754364690; c=relaxed/simple;
+	bh=gUtkbztmQvdeHQAbP42jNSwai1NyZam9pejzGDHk5Ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k9144yuAPGJnPySdVW4pkqvLKw2DXjcR9oJZIR1zCfgCtmXrljW0Hr8EwsT3TLnWE5G/1M1yCYG13FZv01Fnb6UYcfjPMinTLP+8KXQA4o7bE0PJF9+NeqK/3bcERV+EG5Co4NTE9HeruyoHhS6TFphZhcW7NXK5qFtM9e3rfZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dd6cqySK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754364683;
+	bh=gUtkbztmQvdeHQAbP42jNSwai1NyZam9pejzGDHk5Ro=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dd6cqySKQMb3QvLVjG7wSt4EdYqWaMVowFTJ5bGcmLilFnIuchnQDW7UTRHX4fnz4
+	 0+hi29Q6gDkoB2bZYauUH2OZn/6nz/Xa/nS3ZydOdthYVJtxWrcvI9i10vPBF69ekq
+	 OxvgpyKwhXuKYjXTJwfDS0rXYI1WqaF3FnP1VhSc9Z61b80cZidcJ94uMEaOXSnbmX
+	 HzsmZ2I8/f2FG8Tq9h12UzqL/WqBkQXjXiVzqioINrj7TKPE9mwHp6J1/S1/CCmu/Z
+	 +7JZZr+Mcl4wwwEJJ77eR7MyxC3wuZt/cNb+11nzSMbKdWKTLXzmJeCgbR/yyB9Y8u
+	 wrzmNJ8Otb2gQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwzVM56gHz4wcd;
+	Tue,  5 Aug 2025 13:31:23 +1000 (AEST)
+Date: Tue, 5 Aug 2025 13:31:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the kbuild tree
+Message-ID: <20250805133123.5a5edb70@canb.auug.org.au>
+In-Reply-To: <20250730164047.7c4a731a@canb.auug.org.au>
+References: <20250730164047.7c4a731a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <mu7u23kbguzgzfovqpadr6id2pi5a3l6tca2gengjiqgndutw2@qu4aj5didb4h>
+Content-Type: multipart/signed; boundary="Sig_/tG14QQJ_AjAfnn/_gdbpWMI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Aug 04, 2025 at 09:31:38PM -0400, Kent Overstreet wrote:
-> > Could we consider the solution I submitted, which is based on the
-> > following main principle:
-> > 1. Firstly, in the write_dirty_finish stage, the dirty marking bkeys are
-> > not inserted into the btree immediately. Instead, they are temporarily
-> > stored in an internal memory queue called Alist.
-> > 2. Then, when the number of bkeys in Alist exceeds a certain limit, a
-> > flush request is sent to the backend HDD.
-> > 3. After the flush is sent, the bkeys recorded in Alist are then
-> > inserted into the btree.
-> > This process ensures that the written dirty data is written to the disk
-> > before the btree is updated. The length of Alist can be configured,
-> > allowing for better control of the flush sending frequency and reducing
-> > the impact of the flush on the write speed.
-> 
-> That approach should work as well. You'll want to make the list size
-> rather bit, and add statistics for how ofter flushes are being issued.
+--Sig_/tG14QQJ_AjAfnn/_gdbpWMI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Wed, 30 Jul 2025 16:40:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
+> After merging the kbuild tree, today's linux-next build (arm64 defconfig)
+> produced this warning:
+>=20
+> aarch64-linux-gnu-objcopy: vmlinux.unstripped: warning: empty loadable se=
+gment detected at vaddr=3D0xffff800082750000, is this intentional?
+>=20
+> I am guessing this is caused by something added to the kbuild tree today.
 
-OK, then let me review this patch.
+I am still seeing this warning.
 
-Coly Li 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/tG14QQJ_AjAfnn/_gdbpWMI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiRewsACgkQAVBC80lX
+0Gzbdwf9GICdV0nQhT0V53oMiNNiujab84MFRWbVIH55fXFEn+AFJxYe5pwEs8JP
+9EXexqdGAIoYyRT4ubxGSz9ZRhBVFRsriiE2D1Bn9sGoXphHmUUOo9CFAWFU3eJ0
+erBfRDk93HwUNVusfFhOwzmRmJJ8+lwR4TNmbmo/7YNCxHzejzMOOYt7okQJY/So
+JNstidcD53jR7woM4obPUhDA0/iPhgwrdN+crkRk+sLOahbT24JPFD2n0OJWOsOe
+CJFVD+xj5oBtAvh/AEzmhln8w72EwuBCYJeLXBwZmLSwDRqFyDShgv5JPdLBQgHC
+Pyv4kiOtNEAxDuPwwIG50Pqu/gK5og==
+=WPFJ
+-----END PGP SIGNATURE-----
+
+--Sig_/tG14QQJ_AjAfnn/_gdbpWMI--
 
