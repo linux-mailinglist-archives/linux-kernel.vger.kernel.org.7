@@ -1,608 +1,248 @@
-Return-Path: <linux-kernel+bounces-757083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDEEB1BD78
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:43:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C54B1BD7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A8F18A80DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C9C181861
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C18A26CE26;
-	Tue,  5 Aug 2025 23:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3318026B74D;
+	Tue,  5 Aug 2025 23:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nW2AvU7+"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6r/mymm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6FE25A640
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 23:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754437370; cv=none; b=uaF8fTc4od8t8TXHh8fWfIGggIqE23WzEFd707BQMe/9VZE0c1UKiPDDTLpSq/UoRzymJOBUPqN7eqFAODdO3dWGMr4iDBreLbZnn7tMjKFy8MpysvfJM3qLla3mdKn43QGB4EbfpUTryWeoIQUWxViV7XQMe+SXcqwA0+XgIns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754437370; c=relaxed/simple;
-	bh=4fda22TgTuWiadvaszH38b14ApDDfXCoyj8cyEh8W78=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WlUN6DjAVPlPUeEKME0sBT5oXuYWKBDGrt9bJDhmE0bTNvklwavUqKEiN4LICBR3SlFQkihg1K+TjqnKt58/Fxt8C+vrUAt1urU9mo58R4FJ1eWjYrzBA1ZVQI8xVsKASEcCOpivjRs3lSKU3BERZzt4EIXQEfb4S2UjmZ1qHyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nW2AvU7+; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31effad1358so292386a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 16:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754437368; x=1755042168; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rKF9Q8BBSHy+/wtQyOEuvcjKlmlrY4xqBmOseK4oDQ=;
-        b=nW2AvU7+K0rlDaLVNBDte9pvIkJ1AgQjXo18nTBcr/nsRcKObzf306z+M7bGv25XQ+
-         9DwXFzpOEpMX4XIUgofxLQii2g7my/3spxAl3slB22mcRXgH4J2q+ZD5HUm+43JfkwhF
-         Qh6DdUT1CRSonPhbc6lpqhBVat8Rrbwtg4ZNwQUOZpA9Kb5UKCbKhYe3uATJh8cvV4vG
-         VQMFWa9pq0R/JoggH1CBxQm2FfVPUq/rPBNpkrGUXEzDbBJC9vd/Tc8t0TvzoVOuIPSM
-         KFfaXE+JlSELQ2EUTETUxHIc21kCx6rDYs/eZ1SzRcHWLHRHPGyV63K5uO6oYKvS/gxI
-         VE7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754437368; x=1755042168;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rKF9Q8BBSHy+/wtQyOEuvcjKlmlrY4xqBmOseK4oDQ=;
-        b=FTxbCEthh3rIQ8zf0KQslNfVNmjQ99a0dMbOtWkO7asKZZX9DqEKvATQ9RTC8EkPZg
-         ZV47h2EN4svtYBlGXq8tS3DFca6Kwswq6/aMJoWgWs9Evn+4pe21IUk6cVnU9xPnRp/c
-         pHeOKe6mBbr4LwH4lQh3sUKeihHZ7GgZL3uqGlQDb1LXs+MyJ9FmSMXq1mpU+f0Zp1rK
-         XLTAAx2UM69AobDTMbMz/Hw1qOqZdbdWS2I/wVuDommQNxr4devOU3fkei8FxcjxV+iG
-         eby8pvrZyNHV4Bnug1remqC9+lITVW33fl6mf9eZAwyYfMLXQSovvJ0FeP8KhtMsYKWH
-         NzOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUb65XQKJqYw7pt9e3z2kKTFnmSJ6XOniZblSlshNf2l3OW/a+5HRP7/hOot+BEcPkbXz1r5N8W8PiymQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjGFqBOKZ8Fg3RhnZRRkk9GJ89diFaKPo/XjlRYB8mSywbvyrQ
-	wQXOut/jymtF1avF9B09TGHPSC02ODiVDbWU4BYHvJ6sKOQ0owyctHaFkVolO5UVzcJ5rTdqgH7
-	Y7y8aww==
-X-Google-Smtp-Source: AGHT+IG+AV8qmrXngSCnE+/9Wet6KTt0UgJ8oo/Brn7hReFpZ/lcRygheNQKU7ChAqf/55wLP+N/lLWXEkw=
-X-Received: from pjbqi10.prod.google.com ([2002:a17:90b:274a:b0:311:c5d3:c7d0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a50:b0:31e:a3e9:fda5
- with SMTP id 98e67ed59e1d1-32166a54f76mr974551a91.17.1754437368304; Tue, 05
- Aug 2025 16:42:48 -0700 (PDT)
-Date: Tue, 5 Aug 2025 16:42:46 -0700
-In-Reply-To: <ce7ef1f0-c098-4669-85f3-b6ebb437a568@linux.microsoft.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83281D61AA;
+	Tue,  5 Aug 2025 23:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754437434; cv=fail; b=JwgMLKveUN563COTpxwPF3WbflO3IZ+3UZN7+RxL41zCGjDTpjtJOclZSsNqTJoyTwEh1JW8Z6uFZOJWklbszRGYXP3QrNSujz0zw8vflUfSkm1ov7UBvOnwkJvvyWkjWLCCB39B1shvsOfe2WLXmCPMemNGggpb8klSu7+/rAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754437434; c=relaxed/simple;
+	bh=wcMWa7wDrlSQ4wN99zzCVXCjc+T7LHptqt7Ebvpn0Wk=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=k3n1sr6dvIzkfJ39B1R4FDi+uQ0eqNmK6ukTHGoXvnpsW4Hr053zftFwOWUsPDvwpbOmKNHsqQZ+0Ydd12IcZUBz/RlczVpFgt4EB/M0FxZRrfmsz4aa9xPVMrCPc2CCcaB3oWId3cnoKVKJFuh1At7ZzKnXVIkFgrY+wIRv9XY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6r/mymm; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754437433; x=1785973433;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=wcMWa7wDrlSQ4wN99zzCVXCjc+T7LHptqt7Ebvpn0Wk=;
+  b=Q6r/mymmr+Bp/QNa2MfzWt3dpyUGRQ5Xly+F9yKYfl6bw8Mt7WviVAe8
+   kC/8VHLNE97oebEl92MtdrLZm23lLiWwrDVNhbSVc2QzmTJCyk2CslHDe
+   vcUuy+Wi0HIj6u9rSCfEYAiku3JqmN8fnV5N+M5wCZOB6uyLM7pZn8/30
+   QCXMbjbjP2CPWiBJ9nl+dqs4J3ces3GQ8PgkUgDrETraPEM2aJLpG3miZ
+   03lLz4JiG2YQmNLX2RLnxp3buKgsWv52Lx4pI/riBl4uIGtDRL3uIwp9X
+   VLS8s5MXvo63gSYPcKD+Nxr4p9MmQUwYsuOG8QLvLVwuMJF+1EI/m+MXV
+   A==;
+X-CSE-ConnectionGUID: bFAgsyPdRXepw7u3Z6VO5Q==
+X-CSE-MsgGUID: pXQOYNUAQ0SSu/X8lq0Q7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="68119226"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="68119226"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 16:43:50 -0700
+X-CSE-ConnectionGUID: c5JfTjPIQJOgeO3j77MtSA==
+X-CSE-MsgGUID: XHJqU92vSqCu8rjh3OD++w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164641837"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 16:43:49 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 16:43:48 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 5 Aug 2025 16:43:48 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.59)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 16:43:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N9awygo/pKnJQoQ0+vDtkBUVNK0/otIKi8ipPtkCeDxmYIKc3fvgSjeacBn35JCtZm+CDngjfbdiULfvK7Mf31GObIK+A/+nEoYl3rjjERuYnd/BYR7GHDBUV1hdFb43LiZYbAU9eFXl1RcUvEuiMKaslhXjIPEwmhS7bgj0UImZDaVY3r2QHC06YZ9JQBYQhsOP1aRgSxm2gtFm2ltpA/GFdn1vkr8z6m7dGYG/svXFfoijNhFUx2zpxtt2W44DH6s7kpqPueAX4NsZptZNRe16p6LfCUT4N1TDKQljPgQUuu2Xj14GKGGhpvPQ2iiRKbmp3cFqN1L7zksZQitg4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vKkBlQ7N3QHJ7akVKJC+tV0KYnl5xBdnvxrTAnqNFHw=;
+ b=C+AAf0dGcy8U9vr3bUBzKdwpcf5tWEZDlAu4Q3DHif0gXSrflqS+rks1Nq+qb/SxvEMntA1vKOSrA+wNL7IOSzhfddpnjGFi/dJZi1MyD55rxilypg8QDtUQIcbhImhPRUP/aUBGpDC3+fSy/8e8Jhspjr9pBxxEQ3lp+wy6GJwv6/OPAa1RH1mKfD9R+qQiU6qxdlbSvp7N0x9LmdPyt/a0vm8rQptf8KGshxPEQtvdKrdu/DJXY0CoGBkQFwTd9aIeIUiG1+/uLdk+OOIUyvcuioE1hz2k4i53knkVYxDcNtFd3n9iPA7h7uBh4oXX+xoEkuhvkUt9Ga5rwYdFRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 23:43:31 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 23:43:30 +0000
+From: <dan.j.williams@intel.com>
+Date: Tue, 5 Aug 2025 16:43:28 -0700
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Nikolay Borisov
+	<nik.borisov@suse.com>
+CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<paul@paul-moore.com>, <serge@hallyn.com>, <jmorris@namei.org>,
+	<dan.j.williams@intel.com>
+Message-ID: <68929720cd3b7_184e1f100e4@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR02CA0017.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::30) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
- <4266fc8f76c152a3ffcbb2d2ebafd608aa0fb949.1750432368.git.jpiotrowski@linux.microsoft.com>
- <875xghoaac.fsf@redhat.com> <ca26fba1-c2bb-40a1-bb5e-92811c4a6fc6@linux.microsoft.com>
- <87o6tttliq.fsf@redhat.com> <aHWjPSIdp5B-2UBl@google.com> <87tt2nm6ie.fsf@redhat.com>
- <aJE9x_pjBVIdiEJN@google.com> <ce7ef1f0-c098-4669-85f3-b6ebb437a568@linux.microsoft.com>
-Message-ID: <aJKW9gTeyh0-pvcg@google.com>
-Subject: Re: [RFC PATCH 1/1] KVM: VMX: Use Hyper-V EPT flush for local TLB flushes
-From: Sean Christopherson <seanjc@google.com>
-To: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, alanjiang@microsoft.com, 
-	chinang.ma@microsoft.com, andrea.pellegrini@microsoft.com, 
-	Kevin Tian <kevin.tian@intel.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: multipart/mixed; charset="UTF-8"; boundary="wuDpDytmYqa482FL"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ2PR11MB7573:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6bb282f-034e-4a77-dbd0-08ddd479e21a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NlFjT2h4SmJUUFVRckFmTDRNYUlHVlBRWDgvNU9EcnZoUmtJSmVWWFE3MWFU?=
+ =?utf-8?B?YTVhMVVSN1RSZXoxZkNUaUxhdFhrQlk3SDRhaWZXL2NmTEt3dFRPNFA2OHg2?=
+ =?utf-8?B?aUpKTmcwMG5HUTJxRTNNWmQwNUp5VUllSlh0M3pxR1dKRXlyN1ZZYU5tL0tm?=
+ =?utf-8?B?Ym5zVk1lb0Y0QjY4YnhrNkxuLzI5elltbWJmNWFlQzRRU0lKeG94Y29TN2NX?=
+ =?utf-8?B?UXowRWlMTEdLNmZNc3Z0b0FmdGlJRDVsdE5Mc0ZUQlJwenBpMjV0TUFhZi9P?=
+ =?utf-8?B?TnZYUitRYUtNU0dBbWtkTzBtbExMakpVWENCbExoNmpoZHZ5SnpDMWVSdWpN?=
+ =?utf-8?B?dGZaTVZNREkxMXlCa2xqaU0vbkpRczFXcmtlQmpHVm54czRhRm5ldThwbFNt?=
+ =?utf-8?B?dGg3Ri94bzF2UEdBZVVhS0lOYTZYSXEwR2xoNXA4TnpGa2VxZ3N1Qmp5eGZl?=
+ =?utf-8?B?dUtsMW9XNDEyTFVCeTIyeU4xcmRzL3VTbTF2dGcvdDNuanF1cFpySkVCamZL?=
+ =?utf-8?B?UTVUN0pXQ3RMSkpOK2pTREhLV1JCYWZkOVVIaTJ0dU1lcEdPTVVRZDZCZW8x?=
+ =?utf-8?B?bHprRDQwWGFMY2tkYlVnenRFOExBNjc2TXY5aDk5ZStsdmt5SkxEdFZSN1VC?=
+ =?utf-8?B?Y2NXR21iVEFjYkhOekNHOVpxaDhyQlRTRlZMbTc5eWNXUE1tSVdzL3FZTEhq?=
+ =?utf-8?B?cnVYazdNYndHaFE2aVpuVzAxdy9Gby9QY0tCMU1WUXJlMzlCb3c2d0cvbnJO?=
+ =?utf-8?B?M2FDT0toZ2hGSUlaQktacE5UZDhvL09BQjFUeVdaUC9GcStqRkpJZnlJWHM4?=
+ =?utf-8?B?eTkyUDN0UDNEZW5heEk3Tzl0TVlhSDI1MEFucFVQTXU5QXZnNmJBaUNydFNs?=
+ =?utf-8?B?aStvaDIzYnhZeFZtQXVlaENIQ2Y3dUZ3d29LU3NwenE2TEJITVVoV1Qxa0Zn?=
+ =?utf-8?B?aWRqMU9PaVk5RGdoTWg0V0dzUXRJb08va0xJYnhadlA2dEp5ZlJsbnRPYmEy?=
+ =?utf-8?B?WHdycGtxRjU1czN2UDRicDB0SzVaVmcxdTlMZXg2SnRYdTNLd0paVHJVSXM5?=
+ =?utf-8?B?eHZHT2JuSnJ2L1NmMEZjdGNJL2hIbzJpL2pzQ2tncEdoM2NobURiNXRDZnEx?=
+ =?utf-8?B?eHhnMlNGUGEyM1loV2d0Z3lNWnRYQm4yYVU1bStRUkRKcWwvSFFLQTdPN2pj?=
+ =?utf-8?B?am9UM0lwZi9YVmxVV3R1OEE4SG1pZFFiTlk2bmRtSUZXWmtyMlhRVHp0L2pi?=
+ =?utf-8?B?UDg2clkyckJvbHViUW5Zd0l5bTkra24zUFJKWXlHZnp1Y0N4SmxWa1dKeFhF?=
+ =?utf-8?B?ZEJGZ1B2SmcrNzJpYTdDYmpkMlJwL0ZkVFpRbmJnK2IxTkdHL3NtcDBTaitT?=
+ =?utf-8?B?N0haZXoyazFCUVJpY3l6ZDJuY2VTNkIwc01ISTZ1SVFJakFzbTJIcHRVNmFY?=
+ =?utf-8?B?MUNuR3haWTdYTVpQUTFTQWxOWjFFcml6RVVXekpNWnM4MXY2eEo4SDdzSDZj?=
+ =?utf-8?B?NWYxUnYyYTVzQ3hXYmdsTzZBY3FJcE14cGNEU0Y2ZFc0Y1FjaDB0eXFYOHlS?=
+ =?utf-8?B?anVmcFBSRHlVeW9yNUphZlExNGI3NkRLOEJMNWZtSDdncDNJOHJySkQ2dGNE?=
+ =?utf-8?B?U0NSYjl0ZFBuQ09xT3U1K1c4V2s4MWwyMU9nNmcwVXVGZlNsQlExbG5Gb0Z1?=
+ =?utf-8?B?M2l4WmEyNG9MQ3djaStBbDdlQ2ttYzhEd2hEbVhub3VOK2VMcEhFK01naXRC?=
+ =?utf-8?B?VWx2djJPOCsyZzJRQ2ljZEh2eWI1QmtRZTNBanZXTFhWbWJnZGtPZXc4cmtF?=
+ =?utf-8?B?cVF0L0sxbWNjZzRYMksxUUs3cVdIdGFxZzU3cDdRZUU5amtHUUZ0QmpLeFgw?=
+ =?utf-8?B?ZHdvaWtDaE8wNlNvWmVYOFYyMXRQYzRlNmVMN2wyN093QVpYeUxxclpMaHM4?=
+ =?utf-8?Q?AsUti+7En+4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dkEwaVJnMTFkVEdBQU1Wb0NYMytEOHprWlArcWUvU1FORWJNeW8yUlRraVlK?=
+ =?utf-8?B?RGJxakwxU2ExN21iemFsZ2RvaDBJTDNVSTZOa0p3TEN5OFZRaUVyTDI3TmtN?=
+ =?utf-8?B?ZWdsUW03eUFLNjNuaEVERytxbS9ncFQzZDdrUDNQQjJqU09oMGsyMGpSNktL?=
+ =?utf-8?B?d21nYWxIVHQ5d3ZpL0tKVFRtZk1QdW5pSnJ3eUo0ZTJRaFF3Q0poeXhyZmtr?=
+ =?utf-8?B?NGI1eFQ5U1o0aThaSWNyVE4zVjJXd1FwMk1CR3pVOXhCODFaMnQ4VmhjWE5F?=
+ =?utf-8?B?eVlKZmNOcWU3SHllYzBpUzFSNXRUdzRyVzFQa3c2dXhEdTlmeWhDQTBtUlU4?=
+ =?utf-8?B?ampTM1ZtWkdKZ2xybGpobFowUWZDRmtjMlo3ODNsejg3MDlEcFAvNktxZ3lD?=
+ =?utf-8?B?Y1cwWVRScUhrYzVMKzYrZENYVUV3ME9sckdwZDR1aEEvUnhFeXZGNnRqbnl1?=
+ =?utf-8?B?MXY0MmV6bUV5RHArS2wxQ0tRM3IzeWVtbVk3VE9zYk5TMnEyU2JJeVE1SDhE?=
+ =?utf-8?B?MmhOc1Npb3BnU0ZBRDJUZkRxTnVOdEx0amdHVWZ1ek05Um8xM2Q1clJ6bEhY?=
+ =?utf-8?B?bzFKSHduSXZBRUQ3MGFTZFVxRDhjZ1V6aWQwR2Zkck5vYmswb1NsSU5kUk9H?=
+ =?utf-8?B?S3M4dE0xSU1uK3ovckVLRlNuQit0L2JQajBUeFNHd2xKL1AzRjk4OTBNbmEw?=
+ =?utf-8?B?YkZNUjlCR1MzcFpBSjZQbytXUGtQOFZqRWkvcHhkYmV4TmxkaGlaK0pFdU5v?=
+ =?utf-8?B?Y2x0V0Q5UHNwZzVJVy83Y1NKV1AyR0h5azhzRTZPTmVTMjNKbjI4eDFnVXc3?=
+ =?utf-8?B?Q2d6c0NtaExMTGF0NUtEdGNvSFF3ckJoQkJxSmtuc0FwbWI4K0gwWGo2NHUv?=
+ =?utf-8?B?bTBUTG1sTGJOYW9HVjVra0QvLzVxWUtDcUk3WmtmTmdQb2ZoZW84MWxZK2lF?=
+ =?utf-8?B?QXlIM3hwTWQ3U1JVbWJXZUdOcndMYk5uMHJ2eHFUN3BTc1V0UUZ3SmZobGNV?=
+ =?utf-8?B?QXBkanJwM2Y2M1REQXRiSFg1R2djRTdMZGFhcmVLaWNYdTVNVUtZYVdUUlJz?=
+ =?utf-8?B?Z0oxQ1FkQSsxZENDMjJTWTVha3dIMzBTM3Zjbng2Wmx6SUZjemRYSkgvenVz?=
+ =?utf-8?B?Z0tOanJ5c0kvQWEwREZPM3JXUHc3V1luOEdPSW85VEhHM1FrS0QrdEpzaUha?=
+ =?utf-8?B?cldPd3NNMXBBTkFiY2pSNzl2NEdzMWNPVlNqVitDcnpyVGtPeGVqL2x0cnl6?=
+ =?utf-8?B?Q1hMOW05b1FTYzlJTEdSUDd2cWdqQnJLTEIyTEdnVjY3TlBvRXB5cHFINTNW?=
+ =?utf-8?B?dkhIRlgyYzY3RjJybVZtbFo0bTB3NHVyNzFubVVpTnhsM09ETHdpY2NvYTBH?=
+ =?utf-8?B?RFh4NGFXM0Q2dHZUZWY2R3F5RWRWMC82NDYzSktrampmUm9sWXFQNTVhSnEv?=
+ =?utf-8?B?THBqR1YzWWdNSi9KOHpMZDczd1UvS3RuT0s4OXJzajUwVlFaNmVtOFNZbm1u?=
+ =?utf-8?B?Y0JSL0w0UWw3eTNYQkRaZ01VaDdSMndzNU5mRVh5QjF5M2VaNVRpbmIxMjJS?=
+ =?utf-8?B?YVcwdUJWeUhWNVJSNlpNRTMyUEQ3Mm03UFVxRS9lc0F3TEhMYjdRc1VxZ2VP?=
+ =?utf-8?B?Z1c3T0p3S1NoY1J5bVhrT3BLdlhyNkJ0T2NIS3VxTE82b1MvQTRSMytIVEJS?=
+ =?utf-8?B?UHFsNlg0UlFaaHk1eklPR2hIMkROMDVXZHNrT1UxUmtRTUNhU2xyRGRkTTVL?=
+ =?utf-8?B?b0kya3lkNUxSL2pPRWlqaDUxNi9IVDhyS3g2RWRoVXV1RVVWeXZBQ29SYjJ2?=
+ =?utf-8?B?UzQwV1JtcnU4NVIxUlBMblJqTDliRGRXUFJOUFY1bS95NCtHMCtIR1NFd1U3?=
+ =?utf-8?B?RXpXN2FiZVA0OXcwcW9RTml3VkhXZVJiSWtBOXdQYzAzcDc4ZFJ6bzRKdU5O?=
+ =?utf-8?B?UjZzcFFZMXc4NnBsT2Z0VnBEalFjaTFYVTYyQmxDUGFNckdJVzdZc1pGUFMz?=
+ =?utf-8?B?bUM1aDA4LzVTUXZ6T0k2cmFicFVaaXBqemxiRXZmOG4ySi9kUHFjVGtyZ0N1?=
+ =?utf-8?B?S1ZjZTZkUFdrOHd6K3I0YVFLQWswbk9tQmlKcUV4WHZYTWVaOWpLR2tmdndP?=
+ =?utf-8?B?YVVxdXBNblZ5T0IyK1RkVXdhL0NvaFVOMDY4R1ljYjlWazR6V2ZLMlNHb1R0?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6bb282f-034e-4a77-dbd0-08ddd479e21a
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 23:43:30.7974
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XPJDBzwF1X+I47T6VKp1rUKbeueeABHwaURAe88ini4NxbYH98PWryHMkjRRgcEpex9dn1LRd9ay7Qg85ef4bZyEOv3UW6HiMD+exA+KNBU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7573
+X-OriginatorOrg: intel.com
 
-
---wuDpDytmYqa482FL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Aug 05, 2025, Jeremi Piotrowski wrote:
-> On 05/08/2025 01:09, Sean Christopherson wrote:
-> > On Mon, Aug 04, 2025, Vitaly Kuznetsov wrote:
-> >> Sean Christopherson <seanjc@google.com> writes:
-> >>> +void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root)
-> >>> +{
-> >>> +       struct kvm_tlb_flush_root data = {
-> >>> +               .kvm = kvm,
-> >>> +               .root = __pa(root->spt),
-> >>> +       };
-> >>> +
-> >>> +       /*
-> >>> +        * Flush any TLB entries for the new root, the provenance of the root
-> >>> +        * is unknown.  Even if KVM ensures there are no stale TLB entries
-> >>> +        * for a freed root, in theory another hypervisor could have left
-> >>> +        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
-> >>> +        * flush when freeing a root (see kvm_tdp_mmu_put_root()), and flushing
-> >>> +        * TLBs on all CPUs allows KVM to elide TLB flushes when a vCPU is
-> >>> +        * migrated to a different pCPU.
-> >>> +        */
-> >>> +       on_each_cpu(kvm_flush_tlb_root, &data, 1);
-> >>
-> >> Would it make sense to complement this with e.g. a CPU mask tracking all
-> >> the pCPUs where the VM has ever been seen running (+ a flush when a new
-> >> one is added to it)?
-> >>
-> >> I'm worried about the potential performance impact for a case when a
-> >> huge host is running a lot of small VMs in 'partitioning' mode
-> >> (i.e. when all vCPUs are pinned). Additionally, this may have a negative
-> >> impact on RT use-cases where each unnecessary interruption can be seen
-> >> problematic. 
-> > 
-> > Oof, right.  And it's not even a VM-to-VM noisy neighbor problem, e.g. a few
-> > vCPUs using nested TDP could generate a lot of noist IRQs through a VM.  Hrm.
-> > 
-> > So I think the basic idea is so flawed/garbage that even enhancing it with per-VM
-> > pCPU tracking wouldn't work.  I do think you've got the right idea with a pCPU mask
-> > though, but instead of using a mask to scope IPIs, use it to elide TLB flushes.
+Nicolas Bouchinet wrote:
+> Hi Nikolay,
 > 
-> Sorry for the delay in replying, I've been sidetracked a bit.
-
-No worries, I guarantee my delays will make your delays pale in comparison :-D
-
-> I like this idea more, not special casing the TLB flushing approach per hypervisor is
-> preferable.
+> Thanks for you patch.
 > 
-> > 
-> > With the TDP MMU, KVM can have at most 6 non-nested roots active at any given time:
-> > SMM vs. non-SMM, 4-level vs. 5-level, L1 vs. L2.  Allocating a cpumask for each
-> > TDP MMU root seems reasonable.  Then on task migration, instead of doing a global
-> > INVEPT, only INVEPT the current and prev_roots (because getting a new root will
-> > trigger a flush in kvm_mmu_load()), and skip INVEPT on TDP MMU roots if the pCPU
-> > has already done a flush for the root.
+> Quoting Kees [1], Lockdown is "about creating a bright line between
+> uid-0 and ring-0".
 > 
-> Just to make sure I follow: current+prev_roots do you mean literally those
-> (i.e. cached prev roots) or all roots on kvm->arch.tdp_mmu_roots?
-
-The former, i.e. "root" and all "prev_roots" entries in a kvm_mmu structure.
-
-> So this would mean: on pCPU migration, check if current mmu has is_tdp_mmu_active()
-> and then perform the INVEPT-single over roots instead of INVEPT-global. Otherwise stick
-> to the KVM_REQ_TLB_FLUSH.
-
-No, KVM would still need to ensure shadow roots are flushed as well, because KVM
-doesn't flush TLBs when switching to a previous root (see fast_pgd_switch()).
-More at the bottom.
-
-> Would there need to be a check for is_guest_mode(), or that the switch is
-> coming from the vmx/nested.c? I suppose not because nested doesn't seem to
-> use TDP MMU.
-
-Nested can use the TDP MMU, though there's practically no code in KVM that explicitly
-deals with this scenario.  If L1 is using legacy shadow paging, i.e. is NOT using
-EPT/NPT, then KVM will use the TDP MMU to map L2 (with kvm_mmu_page_role.guest_mode=1
-to differentiate from the L1 TDP MMU).
-
-> > Or we could do the optimized tracking for all roots.  x86 supports at most 8192
-> > CPUs, which means 1KiB per root.  That doesn't seem at all painful given that
-> > each shadow pages consumes 4KiB...
+> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+> be activated independently. I fear this would lead to a false sense of
+> security, locking one reason alone often permits Lockdown restrictions
+> bypass. i.e enforcing kernel module signature verification but not
+> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+> used to disable the module signature enforcement.
 > 
-> Similar question here: which all roots would need to be tracked+flushed for shadow
-> paging? pae_roots?
+> If one wants to restrict accesses to `/dev/mem`,
+> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
+> 
+> My understanding of your problem is that this locks too much for your
+> usecase and you want to restrict reasons of Lockdown independently in
+> case it has not been enabled in "integrity" mode by default ?
+> 
+> Can you elaborate more on the usecases for COCO ?
 
-Same general answer, "root" and all "prev_roots" entries.  KVM uses up to two
-"struct kvm_mmu" instances to actually map memory into the guest: root_mmu and
-guest_mmu.  The third instance, nested_mmu, is used to model gva->gpa translations
-for L2, i.e. is used only to walk L2 stage-1 page tables, and is never used to
-map memory into the guest, i.e. can't have entries in hardware TLBs.
+Nikolay already shared some of this but the succinct answer is that COCO
+breaks the fundamental expectations of /dev/mem that the only
+requirement to map memory is to install a page table entry for it.
 
-The basic gist is to add a cpumask in each root, and then elide TLB flushes on
-pCPU migration if KVM has flushed the root at least once.  Patch 5/5 in the attached
-set of patches provides a *very* rough sketch.  Hopefully its enough to convey the
-core idea.
+For COCO an additional step is needed to decide if the memory is private
+to the COCO guest VM (cVM) or shared with the host VMM. If it is private
+it additionally must be "accepted" by the cVM before it can be mapped.
 
-Patches 1-4 compile, but are otherwise untested.  I'll post patches 1-3 as a small
-series once their tested, as those cleanups are worth doing irrespective of any
-optimizations we make to pCPU migration.
+/dev/mem allows uncoordinated mapping attempts and at present causes
+memory protection violations because the /dev/mem backend attetmps to
+map it as shared, but another part of the kernel expects it is only
+mapped as cVM-private.
 
-
-P.S. everyone and their mother thinks guest_mmu and nested_mmu are terrible names,
-but no one has come up with names good enough to convince everyone to get out from
-behind the bikeshed :-)
-
---wuDpDytmYqa482FL
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-KVM-VMX-Hoist-construct_eptp-up-in-vmx.c.patch"
-
-From 8d0e63076371b04ca018577238b6d9b4e6cb1834 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 5 Aug 2025 14:29:19 -0700
-Subject: [PATCH 1/5] KVM: VMX: Hoist construct_eptp() "up" in vmx.c
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/vmx.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index aa157fe5b7b3..9533eabc2182 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -3188,6 +3188,20 @@ static inline int vmx_get_current_vpid(struct kvm_vcpu *vcpu)
- 	return to_vmx(vcpu)->vpid;
- }
- 
-+u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
-+{
-+	u64 eptp = VMX_EPTP_MT_WB;
-+
-+	eptp |= (root_level == 5) ? VMX_EPTP_PWL_5 : VMX_EPTP_PWL_4;
-+
-+	if (enable_ept_ad_bits &&
-+	    (!is_guest_mode(vcpu) || nested_ept_ad_enabled(vcpu)))
-+		eptp |= VMX_EPTP_AD_ENABLE_BIT;
-+	eptp |= root_hpa;
-+
-+	return eptp;
-+}
-+
- void vmx_flush_tlb_current(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_mmu *mmu = vcpu->arch.mmu;
-@@ -3365,20 +3379,6 @@ static int vmx_get_max_ept_level(void)
- 	return 4;
- }
- 
--u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
--{
--	u64 eptp = VMX_EPTP_MT_WB;
--
--	eptp |= (root_level == 5) ? VMX_EPTP_PWL_5 : VMX_EPTP_PWL_4;
--
--	if (enable_ept_ad_bits &&
--	    (!is_guest_mode(vcpu) || nested_ept_ad_enabled(vcpu)))
--		eptp |= VMX_EPTP_AD_ENABLE_BIT;
--	eptp |= root_hpa;
--
--	return eptp;
--}
--
- void vmx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
- {
- 	struct kvm *kvm = vcpu->kvm;
-
-base-commit: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
--- 
-2.50.1.565.gc32cd1483b-goog
-
-
---wuDpDytmYqa482FL
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0002-KVM-nVMX-Hardcode-dummy-EPTP-used-for-early-nested-c.patch"
-
-From 2ca5f9bccff0458dab303d1929b9e13e869b7c85 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 5 Aug 2025 14:29:46 -0700
-Subject: [PATCH 2/5] KVM: nVMX: Hardcode dummy EPTP used for early nested
- consistency checks
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/nested.c | 8 +++-----
- arch/x86/kvm/vmx/vmx.c    | 2 +-
- arch/x86/kvm/vmx/vmx.h    | 1 -
- 3 files changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index b8ea1969113d..f3f5da3ee2cc 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2278,13 +2278,11 @@ static void prepare_vmcs02_constant_state(struct vcpu_vmx *vmx)
- 	vmx->nested.vmcs02_initialized = true;
- 
- 	/*
--	 * We don't care what the EPTP value is we just need to guarantee
--	 * it's valid so we don't get a false positive when doing early
--	 * consistency checks.
-+	 * If early consistency checks are enabled, stuff the EPT Pointer with
-+	 * dummy *legal* value to avoid false positives on bad control state.
- 	 */
- 	if (enable_ept && nested_early_check)
--		vmcs_write64(EPT_POINTER,
--			     construct_eptp(&vmx->vcpu, 0, PT64_ROOT_4LEVEL));
-+		vmcs_write64(EPT_POINTER, VMX_EPTP_MT_WB | VMX_EPTP_PWL_4);
- 
- 	if (vmx->ve_info)
- 		vmcs_write64(VE_INFORMATION_ADDRESS, __pa(vmx->ve_info));
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 9533eabc2182..8fc114e6fa56 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -3188,7 +3188,7 @@ static inline int vmx_get_current_vpid(struct kvm_vcpu *vcpu)
- 	return to_vmx(vcpu)->vpid;
- }
- 
--u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
-+static u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
- {
- 	u64 eptp = VMX_EPTP_MT_WB;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index d3389baf3ab3..7c3f8b908c69 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -366,7 +366,6 @@ void set_cr4_guest_host_mask(struct vcpu_vmx *vmx);
- void ept_save_pdptrs(struct kvm_vcpu *vcpu);
- void vmx_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
- void __vmx_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
--u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level);
- 
- bool vmx_guest_inject_ac(struct kvm_vcpu *vcpu);
- void vmx_update_exception_bitmap(struct kvm_vcpu *vcpu);
--- 
-2.50.1.565.gc32cd1483b-goog
-
-
---wuDpDytmYqa482FL
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0003-KVM-VMX-Use-kvm_mmu_page-role-to-construct-EPTP-not-.patch"
-
-From f79f76040166e741261e5f819ed23595922a8ba2 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 5 Aug 2025 14:46:31 -0700
-Subject: [PATCH 3/5] KVM: VMX: Use kvm_mmu_page role to construct EPTP, not
- current vCPU state
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/vmx.c | 37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 8fc114e6fa56..2408aae01837 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -3188,20 +3188,36 @@ static inline int vmx_get_current_vpid(struct kvm_vcpu *vcpu)
- 	return to_vmx(vcpu)->vpid;
- }
- 
--static u64 construct_eptp(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
-+static u64 construct_eptp(hpa_t root_hpa)
- {
--	u64 eptp = VMX_EPTP_MT_WB;
-+	struct kvm_mmu_page *root = root_to_sp(root_hpa);
-+	u64 eptp = root_hpa | VMX_EPTP_MT_WB;
- 
--	eptp |= (root_level == 5) ? VMX_EPTP_PWL_5 : VMX_EPTP_PWL_4;
-+	/*
-+	 * EPT roots should always have an associated MMU page.  Return a "bad"
-+	 * EPTP to induce VM-Fail instead of continuing on in a unknown state.
-+	 */
-+	if (WARN_ON_ONCE(!root))
-+		return INVALID_PAGE;
- 
--	if (enable_ept_ad_bits &&
--	    (!is_guest_mode(vcpu) || nested_ept_ad_enabled(vcpu)))
-+	eptp |= (root->role.level == 5) ? VMX_EPTP_PWL_5 : VMX_EPTP_PWL_4;
-+
-+	if (enable_ept_ad_bits && !root->role.ad_disabled)
- 		eptp |= VMX_EPTP_AD_ENABLE_BIT;
--	eptp |= root_hpa;
- 
- 	return eptp;
- }
- 
-+static void vmx_flush_tlb_ept_root(hpa_t root_hpa)
-+{
-+	u64 eptp = construct_eptp(root_hpa);
-+
-+	if (VALID_PAGE(eptp))
-+		ept_sync_context(eptp);
-+	else
-+		ept_sync_global();
-+}
-+
- void vmx_flush_tlb_current(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_mmu *mmu = vcpu->arch.mmu;
-@@ -3212,8 +3228,7 @@ void vmx_flush_tlb_current(struct kvm_vcpu *vcpu)
- 		return;
- 
- 	if (enable_ept)
--		ept_sync_context(construct_eptp(vcpu, root_hpa,
--						mmu->root_role.level));
-+		vmx_flush_tlb_ept_root(root_hpa);
- 	else
- 		vpid_sync_context(vmx_get_current_vpid(vcpu));
- }
-@@ -3384,11 +3399,11 @@ void vmx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int root_level)
- 	struct kvm *kvm = vcpu->kvm;
- 	bool update_guest_cr3 = true;
- 	unsigned long guest_cr3;
--	u64 eptp;
- 
- 	if (enable_ept) {
--		eptp = construct_eptp(vcpu, root_hpa, root_level);
--		vmcs_write64(EPT_POINTER, eptp);
-+		KVM_MMU_WARN_ON(!root_to_sp(root_hpa) ||
-+				root_level != root_to_sp(root_hpa)->role.level);
-+		vmcs_write64(EPT_POINTER, construct_eptp(root_hpa));
- 
- 		hv_track_root_tdp(vcpu, root_hpa);
- 
--- 
-2.50.1.565.gc32cd1483b-goog
-
-
---wuDpDytmYqa482FL
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0004-KVM-VMX-Flush-only-active-EPT-roots-on-pCPU-migratio.patch"
-
-From 501f4c799f207a07933279485f76205f91e4537f Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 5 Aug 2025 15:13:27 -0700
-Subject: [PATCH 4/5] KVM: VMX: Flush only active EPT roots on pCPU migration
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/vmx.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 2408aae01837..b42747e2293d 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1395,6 +1395,8 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
- 	}
- }
- 
-+static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu);
-+
- void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -1431,7 +1433,12 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- 		 * Flush all EPTP/VPID contexts, the new pCPU may have stale
- 		 * TLB entries from its previous association with the vCPU.
- 		 */
--		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
-+		if (enable_ept) {
-+			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.root_mmu);
-+			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.guest_mmu);
-+		} else {
-+			kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
-+		}
- 
- 		/*
- 		 * Linux uses per-cpu TSS and GDT, so set these when switching
-@@ -3254,6 +3261,24 @@ void vmx_flush_tlb_guest(struct kvm_vcpu *vcpu)
- 	vpid_sync_context(vmx_get_current_vpid(vcpu));
- }
- 
-+static void __vmx_flush_ept_on_pcpu_migration(hpa_t root_hpa)
-+{
-+	if (!VALID_PAGE(root_hpa))
-+		return;
-+
-+	vmx_flush_tlb_ept_root(root_hpa);
-+}
-+
-+static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu)
-+{
-+	int i;
-+
-+	__vmx_flush_ept_on_pcpu_migration(mmu->root.hpa);
-+
-+	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
-+		__vmx_flush_ept_on_pcpu_migration(mmu->prev_roots[i].hpa);
-+}
-+
- void vmx_ept_load_pdptrs(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
--- 
-2.50.1.565.gc32cd1483b-goog
-
-
---wuDpDytmYqa482FL
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0005-KVM-VMX-Sketch-in-possible-framework-for-eliding-TLB.patch"
-
-From ca798b2e1de4d0975ee808108c7514fe738f0898 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 5 Aug 2025 15:58:13 -0700
-Subject: [PATCH 5/5] KVM: VMX: Sketch in possible framework for eliding TLB
- flushes on pCPU migration
-
-Not-Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-(anyone that makes this work deserves full credit)
----
- arch/x86/kvm/mmu/mmu.c     |  3 +++
- arch/x86/kvm/mmu/tdp_mmu.c |  2 ++
- arch/x86/kvm/vmx/vmx.c     | 21 ++++++++++++++-------
- 3 files changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6e838cb6c9e1..925efbaae9b9 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -3854,6 +3854,9 @@ static hpa_t mmu_alloc_root(struct kvm_vcpu *vcpu, gfn_t gfn, int quadrant,
- 	sp = kvm_mmu_get_shadow_page(vcpu, gfn, role);
- 	++sp->root_count;
- 
-+	if (level >= PT64_ROOT_4LEVEL)
-+		kvm_x86_call(alloc_root_cpu_mask)(root);
-+
- 	return __pa(sp->spt);
- }
- 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 7f3d7229b2c1..bf4b0b9a7816 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -293,6 +293,8 @@ void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu, bool mirror)
- 	root = tdp_mmu_alloc_sp(vcpu);
- 	tdp_mmu_init_sp(root, NULL, 0, role);
- 
-+	kvm_x86_call(alloc_root_cpu_mask)(root);
-+
- 	/*
- 	 * TDP MMU roots are kept until they are explicitly invalidated, either
- 	 * by a memslot update or by the destruction of the VM.  Initialize the
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b42747e2293d..e85830189cfc 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1395,7 +1395,7 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
- 	}
- }
- 
--static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu);
-+static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu, int cpu);
- 
- void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- {
-@@ -1434,8 +1434,8 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- 		 * TLB entries from its previous association with the vCPU.
- 		 */
- 		if (enable_ept) {
--			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.root_mmu);
--			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.guest_mmu);
-+			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.root_mmu, cpu);
-+			vmx_flush_ept_on_pcpu_migration(&vcpu->arch.guest_mmu, cpu);
- 		} else {
- 			kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
- 		}
-@@ -3261,22 +3261,29 @@ void vmx_flush_tlb_guest(struct kvm_vcpu *vcpu)
- 	vpid_sync_context(vmx_get_current_vpid(vcpu));
- }
- 
--static void __vmx_flush_ept_on_pcpu_migration(hpa_t root_hpa)
-+static void __vmx_flush_ept_on_pcpu_migration(hpa_t root_hpa, int cpu)
- {
-+	struct kvm_mmu_page *root;
-+
- 	if (!VALID_PAGE(root_hpa))
- 		return;
- 
-+	root = root_to_sp(root_hpa);
-+	if (!WARN_ON_ONCE(!root) &&
-+	    test_and_set_bit(cpu, root->cpu_flushed_mask))
-+		return;
-+
- 	vmx_flush_tlb_ept_root(root_hpa);
- }
- 
--static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu)
-+static void vmx_flush_ept_on_pcpu_migration(struct kvm_mmu *mmu, int cpu)
- {
- 	int i;
- 
--	__vmx_flush_ept_on_pcpu_migration(mmu->root.hpa);
-+	__vmx_flush_ept_on_pcpu_migration(mmu->root.hpa, cpu);
- 
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
--		__vmx_flush_ept_on_pcpu_migration(mmu->prev_roots[i].hpa);
-+		__vmx_flush_ept_on_pcpu_migration(mmu->prev_roots[i].hpa, cpu);
- }
- 
- void vmx_ept_load_pdptrs(struct kvm_vcpu *vcpu)
--- 
-2.50.1.565.gc32cd1483b-goog
-
-
---wuDpDytmYqa482FL--
+The attempt to communicate the mapping type, control for the acceptance
+status resulted in a pile of hacks, or even just add another
+COCO-specific check near the existing
+"security_locked_down(LOCKDOWN_DEV_MEM)" check were met with "please
+just use LOCKDOWN_DEV_MEM" directly and be done.
 
