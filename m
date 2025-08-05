@@ -1,193 +1,227 @@
-Return-Path: <linux-kernel+bounces-756785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E42B1B933
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C5CB1B945
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558493A9DC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305B23B04CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCBA29617A;
-	Tue,  5 Aug 2025 17:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7567C295DBE;
+	Tue,  5 Aug 2025 17:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bTJ+Ll8i"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MHm1iMEx"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2079.outbound.protection.outlook.com [40.107.101.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8DA293B5C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754414401; cv=none; b=YlWnL1oCNZtgiPhI35APoGyqFGy0bXCU1++jf30eh6GTf1Rl0jw7ZWZpxQLqO3lC8Jhedw6EE8MvKrrjYCUePizKY0rGkKagLGDqURwqW/cHHl5S0Jj15LQ5cv77AnTPFVid3SpzyIKQzMz9ik6LSpCtZsqbBEjMR6rHXL2/Gio=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754414401; c=relaxed/simple;
-	bh=wXk7AXwYUilCzs6h7m2OKQQRTWnaTbHCa5F4w44YHJ8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=CWImKbH+U3TEavnMZWoJAnwswQmzgavJzdYZgsRqM/4E2XnDAVATxL7g4rfL+8vLJsSbTcvAf1I136fn8KNZJT8tTDJKpVA2VEBqrAIQ+D+tUboPuNPBVNl2zi9qDWmVP+qM8CeIi5fX4WKiUpmRJ2AOpXdhGReLQ5Yjn9dGqIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bTJ+Ll8i; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250805171951epoutp03caa9f7d915d923963e8c25bc23507b54~Y7pgbBgAm0097100971epoutp03M
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:19:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250805171951epoutp03caa9f7d915d923963e8c25bc23507b54~Y7pgbBgAm0097100971epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754414391;
-	bh=wXk7AXwYUilCzs6h7m2OKQQRTWnaTbHCa5F4w44YHJ8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=bTJ+Ll8iCG5gbMfodw4A8Fwup93QAVqCdqc7W6ZJyTjSDDuZyJ0W3tvib2U5NQRZP
-	 x35RMlkFSXMWCS+DvqkB68ojlK8YQPBVlZ2ldf/oiFR2sKjijeasHTxtIyaZQui/1N
-	 YWkDDDGv+QsMlR8zZNRu/kXYyN1n0O6G+nbZdxmQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250805171950epcas5p42b2fd0f1f2586a9b20f77a611c78d496~Y7pfTi66b0183001830epcas5p4U;
-	Tue,  5 Aug 2025 17:19:50 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxKtG0H8Gz3hhT3; Tue,  5 Aug
-	2025 17:19:50 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250805171949epcas5p30c43bd9ea6a12814fad1be7988dc2bc7~Y7pd5c16_1679116791epcas5p3H;
-	Tue,  5 Aug 2025 17:19:49 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250805171946epsmtip13608ef786b01f6568760f2030e4f31e3~Y7pbsftBi1987919879epsmtip13;
-	Tue,  5 Aug 2025 17:19:46 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Manivannan
- Sadhasivam'" <mani@kernel.org>
-Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
-	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<andersson@kernel.org>, <konradybcio@kernel.org>,
-	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
-Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Date: Tue, 5 Aug 2025 22:49:45 +0530
-Message-ID: <061b01dc062d$25c47800$714d6800$@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A8629993B;
+	Tue,  5 Aug 2025 17:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754414549; cv=fail; b=bJm6qjy7YW2lbYEqNBPy2Tuk+i1xPA3X1uDo6yTqB4VODcZhbvlna6xIGp511RuZmi+fhduf8Bj8iGjtBWi2s5eO007hJPbjkWXwJWwCDQKwsoC1dJOehyOehb6+0gFoYDS/0MX1rICrOW+D8fhQEkjBsiX6HSc/zT25PnoLCa8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754414549; c=relaxed/simple;
+	bh=wWVn0lDu3Q2u7GptKqT97zsCwK97y/JI5Z7eDSQyVvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=E4xLmBYvW3JDVCxFjHbCeVEIUzFtDo18CDB1HDGwyapWN69Q7zFfqOreQLS74v2hxm5m/ON5AievrbOVOMKwh13id0BK+KviZOosLhV1HNrWIqAFtPNT1gP1RBWpyjLpBKLWvCUdSMMIQhWkIpFr37gpfSHPUsK7ZJsRYPzws60=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MHm1iMEx; arc=fail smtp.client-ip=40.107.101.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ylajIqxWZIsg04Dj1yfU5OcGXtaoNbhqQtPxlRxgcvTWWyHozazCR4Ay/o5pPYky+EnEzW8jBumbtKY4nh6I+qINg/bIqaNsUj3Rf7jyfv0HWJjS9WH3UmumuWLYDHsVbU5RVvSzDHtcZxtB6+JQn6lPUWz9YLvturaLW3oskP67kQCP8gjEk2IWt7Na2V5EpG83y6CLt71vtq0MsIyfQN4nSyWt2JYo/9VjZZFLio9SmWljrpjjt83o8DSUNnREwKUYNJeq2I0YtcKFR3hwn/fcBainxhn3AEM6fKiKTYzKFRBqLKmLcxNtA5d2ti1bYUcXPsT2zaIZHloDTgCcnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K15Tfzsa8HrQUD/EayzFLy8cGr1WysRmykUNwgTvn/o=;
+ b=Z8z1ercY2gUh+lmKZ6Tlb0jvGPaEomT+XEGaFoOYD+MgYfHHUgjIygg+2WXx12a266VPq+oe4VI/h5VM+klKQpUFbKMfe5466gEl2vSkj44B4QGaMQYZRcOJRZB+xkrnMSXeRhjxcCPmesGvZJTAakrlCYCTvMfmn4oumsEAVbSIlhc4rSiobwsdqkcAoCpgLF2KfxbRG+YRuIjrtgE8SaJERffdtztPwmoYK63bfVZcHrt1KP7QdbueKh4u8OUID7Z4kKjT2a2sQwbEOsWTp9pa+2+FDsg4hWmATzlGXms5Hpna6E1SPRC0N9wMgQY4KwkoRKAXDYzUhvn8kTSGpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K15Tfzsa8HrQUD/EayzFLy8cGr1WysRmykUNwgTvn/o=;
+ b=MHm1iMExDWcHxtwX35HB894cwAdz7Azy28UGZwM+0waUWanaWD86zpxtU6Kya4pOdCS6pmAlQEWBnbjKFrucymMC5aTwaOXcdJhKZkLLSkotBvMX/00sAzfwh8cGqNfxgkjoRK4RewrboT+pBekLzFMQfjYTPEzyuw52dsUOKHI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ DM4PR12MB6399.namprd12.prod.outlook.com (2603:10b6:8:b7::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.18; Tue, 5 Aug 2025 17:22:25 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 17:22:25 +0000
+Date: Tue, 5 Aug 2025 22:52:13 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev, linux-pm@vger.kernel.org,
+	Huang Rui <ray.huang@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: loading amd-pstate-ut kernel module crashes with PREEMPT_RT
+Message-ID: <aJI9xbIllYV7ON8S@BLRRASHENOY1.amd.com>
+References: <20250731092316.3191-1-spasswolf@web.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731092316.3191-1-spasswolf@web.de>
+X-ClientProxiedBy: PN2PR01CA0198.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:e9::7) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQEsDrE8JRCAsHRairxCtqkF8AWYdgJ3dE0KAYiFM6ICWTmtcAIeLXciAcYGcMYCPwKykwJqyOxTAqeW3QQBLCbdjgHWPm1htQ+xfrA=
-X-CMS-MailID: 20250805171949epcas5p30c43bd9ea6a12814fad1be7988dc2bc7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
-	<20250722161103.3938-3-quic_rdwivedi@quicinc.com>
-	<2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
-	<jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
-	<fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
-	<1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
-	<2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
-	<11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
-	<jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
-	<CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
-	<b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DM4PR12MB6399:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cc95657-b9c4-47a3-070b-08ddd444a529
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?S8lI97FGbJmpZITleLVPrZJDfBZoRqJWlUhzctUJBLyj8ugbpxOGUSJCytN+?=
+ =?us-ascii?Q?/6wr/8gFs+vLjla8j4/WARGB0GQhO78j7XMM14x8ukUPll2quTVTjBbddCY1?=
+ =?us-ascii?Q?chPuQDdilkL6wpMt8VAe8zNG1W+an5JwQ/UmIPtXrfcjkYXXKGy1QsSn+wB1?=
+ =?us-ascii?Q?rE9EPnDLde5NpnD1ILk1oM6A9ORGX3tsBH3c1kvIX4kSF0tqECOAFLxMNshw?=
+ =?us-ascii?Q?ZjncYiP5BgVua4VUFFbQFyWDPXB5qMAEPDUl51cSQc+S7c+sraZU2JRdM3sI?=
+ =?us-ascii?Q?eRJ9nYU0p0yfkDKaY0KLOhoH5QFEygGQ2ElrhH0eAqAPMsjdQILRIJ7v3iBE?=
+ =?us-ascii?Q?sK4klzUcHar+XQ3kFfDaF4qsmOnAj83jEaTRgLc+83eH4T7SbhcZAOKxbQTM?=
+ =?us-ascii?Q?fTQ/BcrfhYRgqYW6WCoK5tb5bG0MbKErmVzIZiuDsR7sW+Gx26opM863EsOn?=
+ =?us-ascii?Q?NJkrKOpkMItVG3bXiwQy7Qiv6NaQixwFNF7YcxxPe8NsiDZQ8Y0BGUUm7gqy?=
+ =?us-ascii?Q?EWOk4CTLAirsh1qtJ0Ph/t7WdgE/moA7rfDIFgUxINSvd8ih1M11tjdClopx?=
+ =?us-ascii?Q?xeKn2uYjAmYPw6u+VyTANVbeO/TMQvB0YTks72vsVkRtq8RiS+cgfzdIxINB?=
+ =?us-ascii?Q?GE/hZMkmi6YsiUOZQh1HXlvfwk0vDXuKUxCPB27ALa/5NIFlO9JtRtrAY64V?=
+ =?us-ascii?Q?d/yecWsH6Y0iGjXWpKOZc3DB5BsQCrkggTbX7nwCoYCqeyPHcpOaVYBhch0Q?=
+ =?us-ascii?Q?vfd6zUwnRewZWcnzXaZcsC211QSbXY17mWNpotH34vEWyf1+885OnbrNGjHt?=
+ =?us-ascii?Q?hkb35cYcQVYbC0cJ2PuPnw4SFPX30wDWZ3YMhbUN7LzauiXP6sYSE7FsWlyX?=
+ =?us-ascii?Q?/PCUikpckSLCace95QmmpO/648GjQptOM7lSMKkY81ElWu+b1JmaOdFk3w23?=
+ =?us-ascii?Q?Xhz6TAXcZ8/lyA0dYw6a4TMON0pv/WOtNmI1jjsH/Bh2AkvC+W+fBzgy1WEf?=
+ =?us-ascii?Q?ujMFo9/Y6J4G5E0i5ThTXB1kSKRtq8u7Eu1Z6NcRAq9DO9CWgP1P2rr9heYL?=
+ =?us-ascii?Q?fzUaGpzEq2uo8y1xVuhqF/MdU4xWIN9/8487v545r0vbWwkYhkDeUIW8jxnG?=
+ =?us-ascii?Q?54ZMIniRif8SJvCavHi9p6Cz3z1eC5lzA5gFiqz77g5IN1ZnxR5QLfgqA0Av?=
+ =?us-ascii?Q?+egZlQWMMsuI2V3ikWOXVC9BAHZW6uOtOLqK2i63rsKE9MQDExD7e0SPlUTk?=
+ =?us-ascii?Q?FXCxz5AV4tLx2afW7YMDL6cdT9Jr8BKEbUQum6cIVF3nrto7R6Gsx5RFqBIS?=
+ =?us-ascii?Q?nF5LYtU1K0RLiuA2v5+jN/akiVIRMBvmZ82YV9lq65Bl2LrBXUeTiAGOHS6R?=
+ =?us-ascii?Q?5d6aHnk2Z5vc3MwflBpGha//xGWbcVtU0QvbFsK7x0ffMTqwKu5Lp2aSOIFI?=
+ =?us-ascii?Q?tbfy6+rurMg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rCZCDj4rWobUs1ZQFGUB7Hu1iY23KNOoTiZ8w7u9rvYEvpqo7Vt0oaiLzk2c?=
+ =?us-ascii?Q?BgJcCkm9LkukyGFokpwlP/fR2CrKo3WO4ikOdvmZ4yTYgMwCz3twrtxPHNN7?=
+ =?us-ascii?Q?oVR4NoLURUhSatPSi+IPCV5ljj39S43+JbLagXnI0QJICQ1LqjFXhVD53hJ9?=
+ =?us-ascii?Q?CEPm6QGYhn7Rmv/ZNNLJeKNOfL+6RKcu7IaoyoPdD3USmmzl2NflzZ/pkwPK?=
+ =?us-ascii?Q?Y6IHSZlcflJgE7J+E/5znfYlEFsSjV7TQz+QAtU/S0/H8n/xmmmHu8ldqtqu?=
+ =?us-ascii?Q?/oTJnLtS1n12ZPyJ/RxQ1Kj1jQygdd3j9fZVJZpuEpeBHNQ5B2Va2/gxaOG0?=
+ =?us-ascii?Q?j3vzlHWSzZt0EPubYeZtXT/va5I/q35Pc9yMA4Jia1zDIYvAMX/WsTtubg/a?=
+ =?us-ascii?Q?Sj+26RpUvBEj/yUtqGRg7/C6Z2S8jfGn583G37EWH4ryP0TAzP/0v0vC0ELl?=
+ =?us-ascii?Q?DEWx4OHc6lnlE1Ro4i+fIOgLpH+v02NKowmZScZ65nlk8yCMrI0vRKvSdjlo?=
+ =?us-ascii?Q?bWEsBHyPL8G46KKmMniZFcA1KzfkuVUvyLTPQBMfWQPWhrWJQ1+m25UxijYk?=
+ =?us-ascii?Q?l+dFj4JvmFKAjwPWNwz22XdcfV9f9lkITrjIggXTqXAePonQBeu4721u96El?=
+ =?us-ascii?Q?tQRi26YGJGw6dvYg7YK2sYpYu6ecerxGd7/41cx2Sl+xhnqJNMsH3hLdl6RJ?=
+ =?us-ascii?Q?iOODX2K38jkW/l4dE4pYEJpGVHoO+tVHYCMVKqghVOZPFrBfuu8nTnRRO1ve?=
+ =?us-ascii?Q?ja7hCqnkozgswUULS4aqM+/BGVJrohdoaB9P73jrQtLZLJmYFfQjG/Q2SIkd?=
+ =?us-ascii?Q?duVEgO2s9h/aM3Ahc4Goaiqb5DUE4njSxQ/sAH+PloV7oV1EDjejOjLlvROI?=
+ =?us-ascii?Q?/bkqx4cDPAdruav4u+qfCbpZAEJs/6wpD5Un1FHttQc7AfqegLhs94Pl+CAf?=
+ =?us-ascii?Q?T/nCpwg9SCtyFQVhxPQxjFe3/8z1mYePcqjjRmtnquHaZBbb9OuCz8YRSAYm?=
+ =?us-ascii?Q?OU9cNjz6DuWhYzrDt5pjTptuGHSEmpD5k55vjcR5ifwwm02OcxYHP9YrlBwq?=
+ =?us-ascii?Q?YsYGr0xfmfqOKU5PlQd6TM8WM8Rpo8pfJPP5/SIo827x3M53rKTnxYYkm3D2?=
+ =?us-ascii?Q?/wm6pNjaZBfYNRl3Hn8/Yvu7nUvWjbGSmNJULfzIWVf9lkFQ/5RVPMj94cIu?=
+ =?us-ascii?Q?1M40/ZmOWyyUBN6obFFt1tKkfprmGyfkHELx6HEdL/uAci48jS+ltvLO5/C8?=
+ =?us-ascii?Q?DwNct1wVQJuFgTAvnzeAfQxFSlLQv6ETe6nx+Jgq7KARxzfgyJ/r2N/WXe2t?=
+ =?us-ascii?Q?sx+Uv9Z4F24stWDfv1QcVKoBn1ipcW9d9qKPUPxzradxUe5mlQ5055NgwusI?=
+ =?us-ascii?Q?2MPU6rr+kAL3Gwve9t1qJyyeOP7hoD5Cn7ReO3tv54q/ONUCPqk5C6WFuh8m?=
+ =?us-ascii?Q?m+CLieqhweQA+oZdrCo2uBC2UxGqmv9FyWCEzuX1iNpL1e3jACffSFN6Gzdg?=
+ =?us-ascii?Q?C7goa68m1G4BvryWRnBoFBXZur59JlIH5afJeXWsKhd7/w/j8b7O8PSb4PUY?=
+ =?us-ascii?Q?IcjheM85lypjtRHlrHtfwtqsaob8kk3K939hvMtH?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cc95657-b9c4-47a3-070b-08ddd444a529
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 17:22:25.6160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tjKlhPggwHI/D2eWs9GbTYFKXIlTv70cyjQp9R8DAOSEzFttNklKDjfPa9xTk4ihVumdNCS7I3GQBMPwdnr6eQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6399
+
+Hello Bert,
+
+On Thu, Jul 31, 2025 at 11:23:15AM +0200, Bert Karwatzki wrote:
+> When loading the amd-pstate-ut kernel module (which is supposed to test
+> the amd-pstate cpufreq driver) the following crash occurs (most of the 
+> time the loading has to be repeated several times):
+
+Thank you for reporting this. I haven't run amd-pstate with PREEMPT_RT
+yet. But for the following issue to occur, we need the schedutil()
+governor's sugov_update_single_perf() (which will eventually acquire
+the read side of the cpufreq_driver_lock) to race with some call that
+acquires the cpufreq_driver_lock on the write-side, thus forcing the
+read-side to take the slowpath which can block on PREEMPT_RT .
+
+The amd-pstate-ut has the amd_pstate_ut_check_driver() which will test
+switching between one mode to another. These mode-switches involve
+unregistering the driver, and that callpath involves write-acquire of
+the cpufreq_driver_lock.
+
+So the race should potentially occur when the following code-path
+through the amd_pstate_ut_check_driver()
 
 
+amd_pstate_ut_check_driver()
+|-> amd_pstate_set_mode()
+ |-> amd_pstate_update_status()
+  |-> cpufreq_unregister_driver()
+   |->subsys_interface_unregister()
+    |-> cpufreq_remove_dev()
+      |-> cpufreq_policy_free(policy-cpu-X)
+       |-> write_lock_irqsave(&cpufreq_driver_lock)
 
-> -----Original Message-----
-> From: Konrad Dybcio <konrad.dybcio=40oss.qualcomm.com>
-> Sent: Tuesday, August 5, 2025 10:36 PM
-> To: Manivannan Sadhasivam <mani=40kernel.org>
-> Cc: Krzysztof Kozlowski <krzk=40kernel.org>; Ram Kumar Dwivedi
-> <quic_rdwivedi=40quicinc.com>; alim.akhtar=40samsung.com;
-> avri.altman=40wdc.com; bvanassche=40acm.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; andersson=40kernel.org;
-> konradybcio=40kernel.org; James.Bottomley=40hansenpartnership.com;
-> martin.petersen=40oracle.com; agross=40kernel.org; linux-arm-
-> msm=40vger.kernel.org; linux-scsi=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
-limit
-> properties to UFS
->=20
-> On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
-> > On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
-> >> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
-> >>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski wrote:
-> >>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
-> >>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
-> >>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
-> >>>>>>>> Add optional limit-hs-gear and limit-rate properties to the UFS
-> >>>>>>>> node to support automotive use cases that require limiting the
-> >>>>>>>> maximum Tx/Rx HS gear and rate due to hardware constraints.
-> >>>>>>>
-> >>>>>>> What hardware constraints? This needs to be clearly documented.
-> >>>>>>>
-> >>>>>>
-> >>>>>> Ram, both Krzysztof and I asked this question, but you never
-> >>>>>> bothered to reply, but keep on responding to other comments. This
-> >>>>>> won't help you to get this series merged in any form.
-> >>>>>>
-> >>>>>> Please address *all* review comments before posting next iteration=
-.
-> >>>>>
-> >>>>> Hi Mani,
-> >>>>>
-> >>>>> Apologies for the delay in responding.
-> >>>>> I had planned to explain the hardware constraints in the next
-> patchset=E2=80=99s=20commit=20message,=20which=20is=20why=20I=20didn=E2=
-=80=99t=20reply=20earlier.=0D=0A>=20>>>>>=0D=0A>=20>>>>>=20To=20clarify:=20=
-the=20limitations=20are=20due=20to=20customer=20board=20designs,=20not=20ou=
-r=0D=0A>=20SoC.=20Some=20boards=20can't=20support=20higher=20gear=20operati=
-on,=20hence=20the=20need=20for=0D=0A>=20optional=20limit-hs-gear=20and=20li=
-mit-rate=20properties.=0D=0A>=20>>>>>=0D=0A>=20>>>>=0D=0A>=20>>>>=20That's=
-=20vague=20and=20does=20not=20justify=20the=20property.=20You=20need=20to=
-=0D=0A>=20>>>>=20document=20instead=20hardware=20capabilities=20or=20charac=
-teristic.=20Or=0D=0A>=20>>>>=20explain=20why=20they=20cannot.=20With=20such=
-=20form=20I=20will=20object=20to=20your=20next=0D=0A>=20patch.=0D=0A>=20>>>=
->=0D=0A>=20>>>=0D=0A>=20>>>=20I=20had=20an=20offline=20chat=20with=20Ram=20=
-and=20got=20clarified=20on=20what=20these=20properties=0D=0A>=20are.=0D=0A>=
-=20>>>=20The=20problem=20here=20is=20not=20with=20the=20SoC,=20but=20with=
-=20the=20board=20design.=20On=0D=0A>=20>>>=20some=20Qcom=20customer=20desig=
-ns,=20both=20the=20UFS=20controller=20in=20the=20SoC=20and=0D=0A>=20>>>=20t=
-he=20UFS=20device=20are=20capable=20of=20operating=20at=20higher=20gears=20=
-(say=20G5).=0D=0A>=20>>>=20But=20due=20to=20board=20constraints=20like=20po=
-or=20thermal=20dissipation,=20routing=0D=0A>=20>>>=20loss,=20the=20board=20=
-cannot=20efficiently=20operate=20at=20the=20higher=20speeds.=0D=0A>=20>>>=
-=0D=0A>=20>>>=20So=20the=20customers=20wanted=20a=20way=20to=20limit=20the=
-=20gear=20speed=20(say=20G3)=20and=0D=0A>=20>>>=20rate=20(say=20Mode-A)=20o=
-n=20the=20specific=20board=20DTS.=0D=0A>=20>>=0D=0A>=20>>=20I'm=20not=20nec=
-essarily=20saying=20no,=20but=20have=20you=20explored=20sysfs=20for=20this?=
-=0D=0A>=20>>=0D=0A>=20>>=20I=20suppose=20it=20may=20be=20too=20late=20(if=
-=20the=20driver=20would=20e.g.=20init=20the=20UFS=0D=0A>=20>>=20at=20max=20=
-gear/rate=20at=20probe=20time,=20it=20could=20cause=20havoc=20as=20it=20tri=
-es=20to=0D=0A>=20>>=20load=20the=20userland)..=0D=0A>=20>>=0D=0A>=20>=0D=0A=
->=20>=20If=20the=20driver=20tries=20to=20run=20with=20unsupported=20max=20g=
-ear=20speed/mode,=20it=0D=0A>=20>=20will=20just=20crash=20with=20the=20erro=
-r=20spit.=0D=0A>=20=0D=0A>=20OK=0D=0A>=20=0D=0A>=20just=20a=20couple=20rela=
-ted=20nits=20that=20I=20won't=20bother=20splitting=20into=20separate=20emai=
-ls=0D=0A>=20=0D=0A>=20rate=20(mode?=20I'm=20seeing=20both=20names)=20should=
-=20probably=20have=20dt-bindings=0D=0A>=20defines=20while=20gear=20doesn't=
-=20have=20to=20since=20they're=20called=20G<number>=20anyway,=0D=0A>=20with=
-=20the=20bindings=20description=20strongly=20discouraging=20use,=20unless=
-=20absolutely=0D=0A>=20necessary=20(e.g.=20in=20the=20situation=20we=20have=
-=20right=20there)=0D=0A>=20=0D=0A>=20I'd=20also=20assume=20the=20code=20sho=
-uld=20be=20moved=20into=20the=20ufs-common=20code,=20rather=0D=0A>=20than=
-=20making=20it=20ufs-qcom=20specific=0D=0A>=20=0D=0A>=20Konrad=0D=0ASince=
-=20this=20is=20a=20board=20specific=20constrains=20and=20not=20a=20SoC=20pr=
-operties,=20have=20an=20option=20of=20handling=20this=20via=20bootloader=20=
-is=20explored?=0D=0AOr=20passing=20such=20properties=20via=20bootargs=20and=
-=20handle=20the=20same=20in=20the=20driver?=0D=0A=0D=0A
+running concurrently with the schedutil governor on another CPU.
+
+sysvec_apic_timer_interrupt()
+|-> try_to_wake_up()
+ |-> ttwu_do_activate()
+  |-> enqueue_task_fair()
+   |-> enqueue_entity()
+    |-> update_load_avg()
+     |->sugov_update_single_freq()
+      |-> amd_pstate_adjust_perf()
+       |->cpufreq_cpu_get(on CPU Y)
+        |-> read_lock_irqsave(&cpufreq_driver_lock)
+
+
+Here, the read_lock_irqsave() has to take a slow-path in the presence
+of the writer, which can sleep on PREEMPT_RT. But this is illegal as
+this is invoked from the interrupt context.
+
+Can you please check if you can generate the same lock-up with the
+following script without relying on the amd-pstate-ut driver?
+
+-------------x8------------------x8------------------------------
+#!/bin/bash
+
+while ((1));
+do
+     echo "disable" > /sys/device/system/cpu/amd_pstate/status;
+     echo "guided" >  /sys/device/system/cpu/amd_pstate/status;
+done
+-------------x8------------------x8------------------------------
+
+
+> 
+> Bert Karwatzki
+
+-- 
+Thanks and Regards
+gautham.
 
