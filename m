@@ -1,294 +1,265 @@
-Return-Path: <linux-kernel+bounces-756811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B07DB1B99B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D487B1B99F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CBB16B64B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F554622DB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6E0295513;
-	Tue,  5 Aug 2025 17:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17922A55;
+	Tue,  5 Aug 2025 17:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mJJ9hyE3"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FbfMR8Iu"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DA621A928;
-	Tue,  5 Aug 2025 17:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754416311; cv=fail; b=lRIpjwEWaj5ZzCXWI7saqn5dym/uQxsB3GpRMLV/0ImFJ8m4687d0rK9M2wkkPzgVluy5almUYcLP3fFijO7QvgfmqJ3WDpLmjynZUKhm11RpHXgj6ugmTsPumEOnF+MQy+22XJwY6b4FVoIMuhxIfADH6jph+whu9zMfTNMXQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754416311; c=relaxed/simple;
-	bh=ZpA0bikQYf/pEWjTP2a2k2j+9aSuqUXPJlPxJkKuHdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tjFMWt97zbSBpPZHcspxnZK5CfU8tbmmZa2g+dCltT5PiPj53OCJ6tXXvzcN1wiSUuNqnxNmsM3rGmF5aM46bERIa01WMsk5kMaMrni93lUKyWunIlyqoxInONLmyPhfSUGu3LtGI7kPKnar2AeNgcLjBjYe3vsgeyRRH8kUN6Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mJJ9hyE3; arc=fail smtp.client-ip=40.107.220.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HC/Pznybg4/Crm110A4MEy0CJBJgIHx+42KXVS/BCG2J7gtEJZI3rmTYh8C6j6TtKZ4sXaOFZCiVfeZFNZn0YBVJwtvEvZJx5Jc7dUM1SXom/tFCpHHGnRc8H/eMvj/rCbUXB5HYQ8UP963YqVJHX1xLslFjYouMSZ7eCbyemMrEMW7cMBFqZM0fngzpt5mDzu93VcWuC8OaxdC0kB+r1/frfMYm+nj1jMW4e47LYO/V/jhLgxhWVRgv67lGH/JjvtXfKzrBY+qN3tNuFDHvSXp2b7iDbPoTF20RRaqce0I4l+hvojQ0mBe873frWOp/YKCWb4H5L12NuGdyQj54jA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SwPGcwNVesZMSvamT/IU7Ij0FHCtG4/sng5G+yTlZmo=;
- b=Z4NRg24tqrehGPbCE3cH11nG1TdN6ABkfHRb6H8yjwdndcPykPdebppBHrNKKsj2NLY5pFeljAynKpd0JNjjKEcCxWlnLBlJWeBeexFTiyfIrCruhzxMkF8xdzwQ06HmT6N2DCMvZitIoWzHqN5i+7oWPFV1PORLN7f7dNMEuS7valIr1Lp8iuD5+7ICJa5vIQazUrkMPACxjEDRyWUAjS6ZV0hIEKJ95zmrZk2BBFSWlGHCFfvsJJReEB04fg2ipmJJAaYFD40qFkZf0/jWkBzvXRuqUDj8c7FyCF/I0zTIGkvQehwPb4bHqo33xvbKNDG6nqbR/J2z43aN9W26Nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SwPGcwNVesZMSvamT/IU7Ij0FHCtG4/sng5G+yTlZmo=;
- b=mJJ9hyE3sarIExaSva5aH3f2kMonxUWCiHrSL2KRd8sy1bgofrt1lgyo4Y3+j7uZR1+EUoP0MS+lBgbtU4iWV8Cno6j+IJrzD/6xSlZkI/W8Kx6meZSgWpmMFo3uAZT4NpPfQQIDaqZsVWlfVuP9AaDooh9+ELvg+BDR10sHa9gxPWGQNb+3rf+f1Z4U1uidxZH3bjskerX2AHUVz0/yE7yciYh5pw2bJb4eiXXm2zdNJs5vXjHFxskM+hVYQ97kf1GakVKC8AAQvys6optT3Mp67lgNiJ+QdGKkag8EkSc136iwyU1LaiBfWKmlxbIvZ3aRd40XH310p2y4t5K0Ew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB8796.namprd12.prod.outlook.com (2603:10b6:510:272::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
- 2025 17:51:46 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
- 17:51:46 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: wang lian <lianux.mm@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Jann Horn <jannh@google.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Liam Howlett <liam.howlett@oracle.com>,
-	Mark Brown <broonie@kernel.org>,
-	SeongJae Park <sj@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH] selftests/mm: fix FORCE_READ to read input value correctly.
-Date: Tue,  5 Aug 2025 13:51:40 -0400
-Message-ID: <20250805175140.241656-1-ziy@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN0PR02CA0026.namprd02.prod.outlook.com
- (2603:10b6:208:530::7) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130DB293B5E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754416376; cv=none; b=FEiDqVbjVsic+YGRknYjDf0LiLdVX22JiHkOUAgCw0HRLUzXmxml3mrcjGWrBEof2997LgrMJrJWcKSIq+KfFCOj3hMmE0Rrd1cQ74Ne4FJ2Z0iCXN2zSXo5OtGubX/kmUHYulUYdFsDoXd8k95iQwGegjDucvqa6Unspn0JfK4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754416376; c=relaxed/simple;
+	bh=5MUadVaHGWCCq7FrAKqmnucwszJgzQvQi8cO+yh91iw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=WZJJSoATUyhiYEotgiQYMzkrKqG+9hajowX1dfSLgvthfXhbOEN0tNsd+hs3XJmv4TtstkAcAMso99Gxyz5G5D9ZJCtmhKYeUZElTcNXDf8NcAgUHOHQofVSTg+frUX3CBZYzHqSSOcP0fTeWfYEakpWIlZ4f3qWYhRrGETwPis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FbfMR8Iu; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250805175251epoutp01d218d3c224acb84371586b4fed541dc2~Y8GUhEaun1023910239epoutp01f
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:52:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250805175251epoutp01d218d3c224acb84371586b4fed541dc2~Y8GUhEaun1023910239epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754416372;
+	bh=5MUadVaHGWCCq7FrAKqmnucwszJgzQvQi8cO+yh91iw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=FbfMR8IuM7HsyvfLB9cZWSnBTnTgjmgURKrxEfS5suW1ICepxBW1J4Y1dDqSYLUI6
+	 Z2LB60cZY82f1tBETvHjaWFVE63jofBOtGpSLA0zZ+9I0gZVhGRryI6HhBEWJjWrdu
+	 v3cEouCk1rEa1b5NVvsLzJHyS5U5B+BU1+OIvIfc=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250805175250epcas5p486b669aaa074a9dd5a014a1737e3e987~Y8GTHHlyF0392303923epcas5p4X;
+	Tue,  5 Aug 2025 17:52:50 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bxLcK5jqhz6B9m4; Tue,  5 Aug
+	2025 17:52:49 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250805175248epcas5p1ac576a2bfa05ed08b0c6a35aaac46505~Y8GRMM1bY3243532435epcas5p1G;
+	Tue,  5 Aug 2025 17:52:48 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250805175246epsmtip12599070b04d8a6154696658672b8c423~Y8GO_GAql0790907909epsmtip13;
+	Tue,  5 Aug 2025 17:52:45 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Manivannan
+ Sadhasivam'" <mani@kernel.org>
+Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
+	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<andersson@kernel.org>, <konradybcio@kernel.org>,
+	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
+Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Date: Tue, 5 Aug 2025 23:22:44 +0530
+Message-ID: <061d01dc0631$c1766c00$44634400$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB8796:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e181f8d-b4ce-4bc0-61ec-08ddd448be8f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jb5v+f/LEJqLLZfGv4kL9i6bgeeLoPax/LlNWuhK6Qup579rGfzhlqwwRYW9?=
- =?us-ascii?Q?+1BhOp1r9Q6y7Yily7L77d6kjnp/7O8URBVdf8VcOnXDnNLAVxgWM2zp157v?=
- =?us-ascii?Q?CLTen4uOpy0IWC6i11JC7+XxAwUI8bIdzhQ/8RzSxvnokMP4POk654E1h1Rl?=
- =?us-ascii?Q?7qvLOpJSmMyZzxFyY+2VOU/bxw6Tc807rk9u3rJMFogc0t0PaZuQYfeWPW6Q?=
- =?us-ascii?Q?x65uX53LwruXMXs9wazx2Gva2YKPpyQfPhBupWtO4+3cjJP73A8JhW8jDj80?=
- =?us-ascii?Q?boc8oypmnc31b6t8lpxPfP16Ai1cMUy/RDEBSQUb4WDf1ol1R8flCTaOULDF?=
- =?us-ascii?Q?pt/mN3x/O3jM7BA3fLatapYKOhVtlhp8G/3rebncnOrmOADjVNlpHPDwgKTF?=
- =?us-ascii?Q?1kFfqH6SIVgIlLVrwzkT9wWBVvJbBoswq7LENAw/jXl5lfWEYXllsaNrrm3I?=
- =?us-ascii?Q?zzDjDwmMSyXf7AuLh9dhEFbuLRmdWfk81ZmX8eou6intHRoEKepa2vB6te8x?=
- =?us-ascii?Q?9QogE/pxVUKXSQtErJ4IzNEd5Lz7vrf5yhZTtY2GKZ5uh3/Pto0zIkqLmnlQ?=
- =?us-ascii?Q?EYzL1hs7sbZgP0pb3THJcW0whDf2zZcy+cMbgEKMZRpAbO4vuutwOh7HZlFQ?=
- =?us-ascii?Q?TYOE9lWjIhNuXXBEDky9t44dfk4XuL/i169dkJfNIM8GIPE/vUbC8GMJrpMx?=
- =?us-ascii?Q?XoRHOsZV17AFBt4DTJv1TKlIwpE1QEUESb1hAQzPE9Xf9gykkTEB8LtgxL7X?=
- =?us-ascii?Q?d8qlZsPFTYGtNV0M3XkOTncf0cqaQKw0bRlbm0AClQOIvsFmzZH/3b+qhUK4?=
- =?us-ascii?Q?1szasEKGXFZ6nmtGWlRR7MiOoP7naNG/yUudKtohEE/eQDM61f7J5dP84/uk?=
- =?us-ascii?Q?uI07dmktAYI28O8Ipxm/MtaKQfJuZvaBzHzxCiGEWbbDjQGb2o7xCiosPedo?=
- =?us-ascii?Q?fNIv26fcgOfL9cf2rVcyXbMg0FDnFknyGyxVrtNo91y9cM4w1c+AJUz/v+a5?=
- =?us-ascii?Q?AuCDSgqyTJ+TXQEkndViLyMG+7UgdHC/FH23c0Re9epGBH5RYkZvQTrpXc1s?=
- =?us-ascii?Q?qnhuIYW2oi6dE4scHrM9YW/2+EqN1dM6MkTKv0s9tukmaGaZxG9TKK49JJxZ?=
- =?us-ascii?Q?UiK0qYI1kjK3omSswV7CNVTxjFDNjcZeFFHNeH7GC7bN2g+rS5akFzMckjF8?=
- =?us-ascii?Q?SLNxWM61Kj8Fm5fhPtNlPkgL+D6OAUYlAzlN5MQJ+E8mTa8M77Y8Ol7yPpHj?=
- =?us-ascii?Q?ngYfXsMBt1qSC7uzOUxWl9VmVWWDO1IzmYAJymqkLqBd6ZYDVS+rE+Qf0ZqU?=
- =?us-ascii?Q?vLn7bHYgBgQa602aROz0VJS+B6cz1AmmqBuRllYoCMLP5tHao5SutJlJ0mSH?=
- =?us-ascii?Q?8HWRH+Rdj32AqS5umMiodfOzpipPfj2Jvc/8M2KWFhdQ042e2w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FMPtRZB+2t2IAHLnV9C0A+n2x/6eFMcU4873VNvP+w81z2QxKckX5vnfETl7?=
- =?us-ascii?Q?j33c3/f09TyTaV4yHFyi2VSbIUI9BVTCmEyfyMd6RNH5wHF+rrv4sGSFr477?=
- =?us-ascii?Q?7vhLxGRhsbABEeBS5O09EELZvKs0nRoyxs/qWalOMTcLYM8UetqZeDK612FI?=
- =?us-ascii?Q?Cs/DaOyMaHossaKob8fEG8ZoEb6S+dD0e9sSNwQQsqI2HT+GGmtIet2nrQV3?=
- =?us-ascii?Q?ax6/ehOXyv5MqWoyxXYN8l78VirvllLXnYb3ZTmq5lz/+1DW9bo2prku/qP4?=
- =?us-ascii?Q?7ffIb0JT5y0GS5ZK2cuvQCai9RaTdG3afA05fMXclJyEazOmdnrX7kHqHvrm?=
- =?us-ascii?Q?Sv2b+uPZTr2fy2vlWBJZ00lVlm2h5SZ9QA1b16sdm8jbJkzKonBo/g7sAMF1?=
- =?us-ascii?Q?wZAvpCQrWuUbAPHTojr8G5J0oseE0wRqPjJPqAHOdYqT7bGRtPgVKfhDKbI8?=
- =?us-ascii?Q?1LW2cNeJsVDtlujlP7CbQuN75Y8WPbAUsX6BVRDsQozTrZfLIEXU6MWhs/1H?=
- =?us-ascii?Q?MkITzxg2W9NMO4zEBAZglgovdTGn2A/igJS0heY4SQ+HfxwNGjTIUBhtUPBc?=
- =?us-ascii?Q?wc0Oi4zu/9hxlhCgdKyBcyzUg8TdtfLEyCMObVUs1vCrH0b0FFRMQfDLRyEN?=
- =?us-ascii?Q?Wvm65g01Cu3FX6QYH1WFmezNnqVtCUW6CXvpvfn6QXKuIErByrHu2xeQYtMy?=
- =?us-ascii?Q?xCfCTyqaA2TkjHu+qCwh/ki4M2YITSkesNNnZbLsYPyDN3wORZ3vje3/HQxK?=
- =?us-ascii?Q?MYu2AV1wUKcOPVMnz+3IG8jU5HysVU8noVyDs2A4Nt8+cEYfAbNkBZwigmyX?=
- =?us-ascii?Q?R36afU0xFBLXSU5U5ILG9BqB+Qz3fvRXkHQOjV4mxQLauT143iP269qEHcWX?=
- =?us-ascii?Q?Elu8cnkKnfdwlU5We99czgrPqjgOG3vYG9Vm78XaqbQPQd0/uJWKp9TZn9xy?=
- =?us-ascii?Q?Iw2N3P5hyiTAfauBPez0Lph5iZPRk4rrvjStHk1RvuoXDtk01i8uPMW30XXF?=
- =?us-ascii?Q?lXdV9VU1ELQnHvd2mz0lqYLSXliN61dgYfl+1ncN1r8wzKH6Ih6c5ImV2sua?=
- =?us-ascii?Q?QPoIsqgdUdiTbASm/eQJ6vWlttFK5TxAImVI6dotLjo+dH0R2YeM38dFGxF8?=
- =?us-ascii?Q?1RqrUWWWzwBaIr1gHJpIa0RiXYlUyPqM3VokIBWtC3w2n73Wn9JytGW+Ru50?=
- =?us-ascii?Q?ETjQPhFJZ+Sjp8ffN+S1je4Urf2C9C+6Vv0khNpKok4leQfUyYNqM8E9GKl+?=
- =?us-ascii?Q?0vi65zEraWD2ObNEfIsyr9eViGYBOCagUt37oMHEUq1s6KWejBryfmhlDh/7?=
- =?us-ascii?Q?h7f2uChIwkMNsA0835vbgd5MVzEdaO3nzbq5qiOSEHtH2P83tbW1SY9syoMX?=
- =?us-ascii?Q?eeZhoiUPpH3j8+vigrGlSiOo4sp85y5eXVdN2MfWCxGbUEpA5TlsxswwiLrc?=
- =?us-ascii?Q?rRHnZulAhWjv29H2TDkrUdLYVUXy0s7mFaGEX3klHR4l6rI/P99rJfc2WWvq?=
- =?us-ascii?Q?5fSewtr6eJsFIMUfn1qMQ+usiqWlKePaME20ZEkb69P7KV9wMkbwq3n7JKdO?=
- =?us-ascii?Q?I6gdr2VP2cAiyuj6A2y9x4QVFStLIPD9XMmyrzYv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e181f8d-b4ce-4bc0-61ec-08ddd448be8f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 17:51:45.7369
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hCk9N2ZccxhiXQsgFvOVupK9917YM64c1JtbbtXnrrb33rmvvf/fnFHylb1EO9Kk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8796
-
-FORCE_READ() converts input value x to its pointer type then reads from
-address x. This is wrong. If x is a non-pointer, it would be caught it
-easily. But all FORCE_READ() callers are trying to read from a pointer and
-FORCE_READ() basically reads a pointer to a pointer instead of the original
-typed pointer. Almost no access violation was found, except the one from
-split_huge_page_test.
-
-Fix it by implementing a simplified READ_ONCE() instead.
-
-Fixes: 3f6bfd4789a0 ("selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"")
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
-FORCE_READ() comes from commit 876320d71f51 ("selftests/mm: add self tests for
-guard page feature"). I will a separate patch to stable tree.
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQGIhTOigFb9OSA/zLmmRAowhNFqCwJZOa1wAh4tdyIBxgZwxgI/ArKTAmrI7FMCp5bdBAEsJt2OAdY+bWECqijPQgIPv58TAQlCtSUCbRSB8rQ1S7YA
+X-CMS-MailID: 20250805175248epcas5p1ac576a2bfa05ed08b0c6a35aaac46505
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d
+References: <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+	<jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+	<fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+	<1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
+	<2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
+	<11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
+	<jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
+	<CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
+	<b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
+	<061b01dc062d$25c47800$714d6800$@samsung.com>
+	<i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
+	<061c01dc062f$70ec34b0$52c49e10$@samsung.com>
+	<87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
 
 
- tools/testing/selftests/mm/cow.c                  | 4 ++--
- tools/testing/selftests/mm/guard-regions.c        | 2 +-
- tools/testing/selftests/mm/hugetlb-madvise.c      | 4 +++-
- tools/testing/selftests/mm/migration.c            | 2 +-
- tools/testing/selftests/mm/pagemap_ioctl.c        | 2 +-
- tools/testing/selftests/mm/split_huge_page_test.c | 7 +++++--
- tools/testing/selftests/mm/vm_util.h              | 2 +-
- 7 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
-index d30625c18259..c744c603d688 100644
---- a/tools/testing/selftests/mm/cow.c
-+++ b/tools/testing/selftests/mm/cow.c
-@@ -1554,8 +1554,8 @@ static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
- 	}
- 
- 	/* Read from the page to populate the shared zeropage. */
--	FORCE_READ(mem);
--	FORCE_READ(smem);
-+	FORCE_READ(*mem);
-+	FORCE_READ(*smem);
- 
- 	fn(mem, smem, pagesize);
- munmap:
-diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
-index b0d42eb04e3a..8dd81c0a4a5a 100644
---- a/tools/testing/selftests/mm/guard-regions.c
-+++ b/tools/testing/selftests/mm/guard-regions.c
-@@ -145,7 +145,7 @@ static bool try_access_buf(char *ptr, bool write)
- 		if (write)
- 			*ptr = 'x';
- 		else
--			FORCE_READ(ptr);
-+			FORCE_READ(*ptr);
- 	}
- 
- 	signal_jump_set = false;
-diff --git a/tools/testing/selftests/mm/hugetlb-madvise.c b/tools/testing/selftests/mm/hugetlb-madvise.c
-index 1afe14b9dc0c..c5940c0595be 100644
---- a/tools/testing/selftests/mm/hugetlb-madvise.c
-+++ b/tools/testing/selftests/mm/hugetlb-madvise.c
-@@ -50,8 +50,10 @@ void read_fault_pages(void *addr, unsigned long nr_pages)
- 	unsigned long i;
- 
- 	for (i = 0; i < nr_pages; i++) {
-+		unsigned long *addr2 =
-+			((unsigned long *)(addr + (i * huge_page_size)));
- 		/* Prevent the compiler from optimizing out the entire loop: */
--		FORCE_READ(((unsigned long *)(addr + (i * huge_page_size))));
-+		FORCE_READ(*addr2);
- 	}
- }
- 
-diff --git a/tools/testing/selftests/mm/migration.c b/tools/testing/selftests/mm/migration.c
-index c5a73617796a..ea945eebec2f 100644
---- a/tools/testing/selftests/mm/migration.c
-+++ b/tools/testing/selftests/mm/migration.c
-@@ -110,7 +110,7 @@ void *access_mem(void *ptr)
- 		 * the memory access actually happens and prevents the compiler
- 		 * from optimizing away this entire loop.
- 		 */
--		FORCE_READ((uint64_t *)ptr);
-+		FORCE_READ(*(uint64_t *)ptr);
- 	}
- 
- 	return NULL;
-diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
-index 0d4209eef0c3..e6face7c0166 100644
---- a/tools/testing/selftests/mm/pagemap_ioctl.c
-+++ b/tools/testing/selftests/mm/pagemap_ioctl.c
-@@ -1525,7 +1525,7 @@ void zeropfn_tests(void)
- 
- 	ret = madvise(mem, hpage_size, MADV_HUGEPAGE);
- 	if (!ret) {
--		FORCE_READ(mem);
-+		FORCE_READ(*mem);
- 
- 		ret = pagemap_ioctl(mem, hpage_size, &vec, 1, 0,
- 				    0, PAGE_IS_PFNZERO, 0, 0, PAGE_IS_PFNZERO);
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 718daceb5282..3c761228e451 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -440,8 +440,11 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
- 	}
- 	madvise(*addr, fd_size, MADV_HUGEPAGE);
- 
--	for (size_t i = 0; i < fd_size; i++)
--		FORCE_READ((*addr + i));
-+	for (size_t i = 0; i < fd_size; i++) {
-+		char *addr2 = *addr + i;
-+
-+		FORCE_READ(*addr2);
-+	}
- 
- 	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
- 		ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
-diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
-index c20298ae98ea..b55d1809debc 100644
---- a/tools/testing/selftests/mm/vm_util.h
-+++ b/tools/testing/selftests/mm/vm_util.h
-@@ -23,7 +23,7 @@
-  * anything with it in order to trigger a read page fault. We therefore must use
-  * volatile to stop the compiler from optimising this away.
-  */
--#define FORCE_READ(x) (*(volatile typeof(x) *)x)
-+#define FORCE_READ(x) (*(const volatile typeof(x) *)&(x))
- 
- extern unsigned int __page_size;
- extern unsigned int __page_shift;
--- 
-2.47.2
-
+> -----Original Message-----
+> From: Konrad Dybcio <konrad.dybcio=40oss.qualcomm.com>
+> Sent: Tuesday, August 5, 2025 11:10 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Manivannan Sadhasivam'
+> <mani=40kernel.org>
+> Cc: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
+> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
+> bvanassche=40acm.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.org;
+> James.Bottomley=40hansenpartnership.com; martin.petersen=40oracle.com;
+> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
+> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
+limit
+> properties to UFS
+>=20
+> On 8/5/25 7:36 PM, Alim Akhtar wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
+> >> Sent: Tuesday, August 5, 2025 10:52 PM
+> >> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> >> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
+> >> Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
+> >> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
+> bvanassche=40acm.org;
+> >> robh=40kernel.org; krzk+dt=40kernel.org;
+> >> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.or=
+g;
+> >> James.Bottomley=40hansenpartnership.com;
+> martin.petersen=40oracle.com;
+> >> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
+> >> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> >> kernel=40vger.kernel.org
+> >> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and ra=
+te
+> >> limit properties to UFS
+> >>
+> >> On Tue, Aug 05, 2025 at 10:49:45PM GMT, Alim Akhtar wrote:
+> >>>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Konrad Dybcio <konrad.dybcio=40oss.qualcomm.com>
+> >>>> Sent: Tuesday, August 5, 2025 10:36 PM
+> >>>> To: Manivannan Sadhasivam <mani=40kernel.org>
+> >>>> Cc: Krzysztof Kozlowski <krzk=40kernel.org>; Ram Kumar Dwivedi
+> >>>> <quic_rdwivedi=40quicinc.com>; alim.akhtar=40samsung.com;
+> >>>> avri.altman=40wdc.com; bvanassche=40acm.org; robh=40kernel.org;
+> >>>> krzk+dt=40kernel.org; conor+dt=40kernel.org; andersson=40kernel.org;
+> >>>> konradybcio=40kernel.org; James.Bottomley=40hansenpartnership.com;
+> >>>> martin.petersen=40oracle.com; agross=40kernel.org; linux-arm-
+> >>>> msm=40vger.kernel.org; linux-scsi=40vger.kernel.org;
+> >>>> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org
+> >>>> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and
+> >>>> rate limit properties to UFS
+> >>>>
+> >>>> On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
+> >>>>> On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
+> >>>>>> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
+> >>>>>>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski
+> wrote:
+> >>>>>>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
+> >>>>>>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski
+> >> wrote:
+> >>>>>>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+> >>>>>>>>>>>> Add optional limit-hs-gear and limit-rate properties to the
+> >>>>>>>>>>>> UFS node to support automotive use cases that require
+> >>>>>>>>>>>> limiting the maximum Tx/Rx HS gear and rate due to
+> hardware
+> >> constraints.
+> >>>>>>>>>>>
+> >>>>>>>>>>> What hardware constraints? This needs to be clearly
+> >> documented.
+> >>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> Ram, both Krzysztof and I asked this question, but you never
+> >>>>>>>>>> bothered to reply, but keep on responding to other comments.
+> >>>>>>>>>> This won't help you to get this series merged in any form.
+> >>>>>>>>>>
+> >>>>>>>>>> Please address *all* review comments before posting next
+> >> iteration.
+> >>>>>>>>>
+> >>>>>>>>> Hi Mani,
+> >>>>>>>>>
+> >>>>>>>>> Apologies for the delay in responding.
+> >>>>>>>>> I had planned to explain the hardware constraints in the next
+> >>>> patchset=E2=80=99s=20commit=20message,=20which=20is=20why=20I=20didn=
+=E2=80=99t=20reply=20earlier.=0D=0A>=20>>>>>>>>>=0D=0A>=20>>>>>>>>>=20To=20=
+clarify:=20the=20limitations=20are=20due=20to=20customer=20board=20designs,=
+=0D=0A>=20>>>>>>>>>=20not=20our=0D=0A>=20>>>>=20SoC.=20Some=20boards=20can'=
+t=20support=20higher=20gear=20operation,=20hence=20the=0D=0A>=20>>>>=20need=
+=20for=20optional=20limit-hs-gear=20and=20limit-rate=20properties.=0D=0A>=
+=20>>>>>>>>>=0D=0A>=20>>>>>>>>=0D=0A>=20>>>>>>>>=20That's=20vague=20and=20d=
+oes=20not=20justify=20the=20property.=20You=20need=20to=0D=0A>=20>>>>>>>>=
+=20document=20instead=20hardware=20capabilities=20or=20characteristic.=20Or=
+=0D=0A>=20>>>>>>>>=20explain=20why=20they=20cannot.=20With=20such=20form=20=
+I=20will=20object=20to=20your=0D=0A>=20>>>>>>>>=20next=0D=0A>=20>>>>=20patc=
+h.=0D=0A>=20>>>>>>>>=0D=0A>=20>>>>>>>=0D=0A>=20>>>>>>>=20I=20had=20an=20off=
+line=20chat=20with=20Ram=20and=20got=20clarified=20on=20what=20these=0D=0A>=
+=20>>>>>>>=20properties=0D=0A>=20>>>>=20are.=0D=0A>=20>>>>>>>=20The=20probl=
+em=20here=20is=20not=20with=20the=20SoC,=20but=20with=20the=20board=20desig=
+n.=0D=0A>=20>>>>>>>=20On=20some=20Qcom=20customer=20designs,=20both=20the=
+=20UFS=20controller=20in=20the=0D=0A>=20>>>>>>>=20SoC=20and=20the=20UFS=20d=
+evice=20are=20capable=20of=20operating=20at=20higher=20gears=0D=0A>=20>>>>>=
+>>=20(say=0D=0A>=20>>=20G5).=0D=0A>=20>>>>>>>=20But=20due=20to=20board=20co=
+nstraints=20like=20poor=20thermal=20dissipation,=0D=0A>=20>>>>>>>=20routing=
+=20loss,=20the=20board=20cannot=20efficiently=20operate=20at=20the=20higher=
+=0D=0A>=20>>=20speeds.=0D=0A>=20>>>>>>>=0D=0A>=20>>>>>>>=20So=20the=20custo=
+mers=20wanted=20a=20way=20to=20limit=20the=20gear=20speed=20(say=20G3)=0D=
+=0A>=20>>>>>>>=20and=20rate=20(say=20Mode-A)=20on=20the=20specific=20board=
+=20DTS.=0D=0A>=20>>>>>>=0D=0A>=20>>>>>>=20I'm=20not=20necessarily=20saying=
+=20no,=20but=20have=20you=20explored=20sysfs=20for=20this?=0D=0A>=20>>>>>>=
+=0D=0A>=20>>>>>>=20I=20suppose=20it=20may=20be=20too=20late=20(if=20the=20d=
+river=20would=20e.g.=20init=20the=0D=0A>=20>>>>>>=20UFS=20at=20max=20gear/r=
+ate=20at=20probe=20time,=20it=20could=20cause=20havoc=20as=20it=0D=0A>=20>>=
+>>>>=20tries=20to=20load=20the=20userland)..=0D=0A>=20>>>>>>=0D=0A>=20>>>>>=
+=0D=0A>=20>>>>>=20If=20the=20driver=20tries=20to=20run=20with=20unsupported=
+=20max=20gear=20speed/mode,=0D=0A>=20>>>>>=20it=20will=20just=20crash=20wit=
+h=20the=20error=20spit.=0D=0A>=20>>>>=0D=0A>=20>>>>=20OK=0D=0A>=20>>>>=0D=
+=0A>=20>>>>=20just=20a=20couple=20related=20nits=20that=20I=20won't=20bothe=
+r=20splitting=20into=0D=0A>=20>>>>=20separate=20emails=0D=0A>=20>>>>=0D=0A>=
+=20>>>>=20rate=20(mode?=20I'm=20seeing=20both=20names)=20should=20probably=
+=20have=20dt-bindings=0D=0A>=20>>>>=20defines=20while=20gear=20doesn't=20ha=
+ve=20to=20since=20they're=20called=20G<number>=0D=0A>=20>>>>=20anyway,=20wi=
+th=20the=20bindings=20description=20strongly=20discouraging=20use,=0D=0A>=
+=20>>>>=20unless=20absolutely=20necessary=20(e.g.=20in=20the=20situation=20=
+we=20have=20right=0D=0A>=20>>>>=20there)=0D=0A>=20>>>>=0D=0A>=20>>>>=20I'd=
+=20also=20assume=20the=20code=20should=20be=20moved=20into=20the=20ufs-comm=
+on=20code,=0D=0A>=20>>>>=20rather=20than=20making=20it=20ufs-qcom=20specifi=
+c=0D=0A>=20>>>>=0D=0A>=20>>>>=20Konrad=0D=0A>=20>>>=20Since=20this=20is=20a=
+=20board=20specific=20constrains=20and=20not=20a=20SoC=20properties,=0D=0A>=
+=20>>>=20have=20an=0D=0A>=20>>=20option=20of=20handling=20this=20via=20boot=
+loader=20is=20explored?=0D=0A>=20>>=0D=0A>=20>>=20Both=20board=20and=20SoC=
+=20specific=20properties=20*should*=20be=20described=20in=0D=0A>=20>>=20dev=
+icetree=20if=20they=20are=20purely=20describing=20the=20hardware.=0D=0A>=20=
+>>=0D=0A>=20>=20Agreed,=20what=20I=20understood=20from=20above=20conversati=
+on=20is=20that,=20we=20are=20try=0D=0A>=20>=20to=20solve=20a=20very=20*spec=
+ific*=20board=20problem=20here,=20this=20does=20not=20looks=20like=20a=0D=
+=0A>=20generic=20problem=20to=20me=20and=20probably=20should=20be=20handled=
+=20within=20the=20specific=0D=0A>=20driver.=0D=0A>=20=0D=0A>=20Introducing=
+=20generic=20solutions=20preemptively=20for=20problems=20that=20are=20simpl=
+e=20in=0D=0A>=20concept=20and=20can=20occur=20widely=20is=20good=20practice=
+=20(although=20it's=20sometimes=20hard=0D=0A>=20to=20gauge=20whether=20this=
+=20is=20a=20one-off),=20as=20if=20the=20issue=20spreads=20a=20generic=20sol=
+ution=0D=0A>=20will=20appear=20at=20some=20point,=20but=20we'll=20have=20to=
+=20keep=20supporting=20the=20odd=20ones=20as=0D=0A>=20well=0D=0A>=20=0D=0AO=
+k,=20=0D=0AI=20would=20prefer=20if=20we=20add=20a=20property=20which=20soun=
+ds=20like=20=22poor=20thermal=20dissipation=22=20or=20=0D=0A=22routing=20ch=
+annel=20loss=22=20rather=20than=20adding=20limiting=20UFS=20gear=20properti=
+es.=20=0D=0APoor=20thermal=20design=20or=20channel=20losses=20are=20generic=
+=20enough=20and=20can=20happen=20on=20any=20board.=0D=0A=0D=0A>=20Konrad=0D=
+=0A=0D=0A
 
