@@ -1,139 +1,104 @@
-Return-Path: <linux-kernel+bounces-756928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF82B1BB21
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D400B1BB22
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F24D63A8C4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0AA1881C61
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61CC238C26;
-	Tue,  5 Aug 2025 19:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE6F22D7B9;
+	Tue,  5 Aug 2025 19:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqJf7+az"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vvblv/Nk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD2D19258E;
-	Tue,  5 Aug 2025 19:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2F01547CC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754422977; cv=none; b=WjT6KzIE4vWBbar7+IjJldDgkbpJoRNXo8TT7HAaiAWsrmPzUlqAyayuO0Uek7GP85U3HtXrKZVNiyCzvZLUk4n3KWYIgU1o/yWnhKwXK0vbduqFgfX7TEGrqBnHvPRenQKeECL+ZJKi1JI1vC3ABMK8px3oVolAHY2XbgcBq/A=
+	t=1754423068; cv=none; b=BLK65fU2dvLJxCHTHwPCDOVQchzFLvmOQsh8hxUPKek/FTDh5QCrPMP6G2Mu8uqUMvzdSaxikdWFhVvnronsN96RwVI7eYohVaelAhZmm3kHxR98fU2CthcaJa5J6tKzcVTwwQ0U6p+wSKlEox28RkvlHNYgHuuvkivF2dTHsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754422977; c=relaxed/simple;
-	bh=kLs87WW2SMVWwYZE+OZT7eawLAhQQ1BZVADC8cwhPWA=;
+	s=arc-20240116; t=1754423068; c=relaxed/simple;
+	bh=SfBzt2N3LNeDAm5Tym0MNtM5fNHtmIUlijMC48PoPDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHc/7hVO4A6u+ajmeM4vJ2PjHRCemMiCGs6S3DGKxNztUj+mh43Ji757r3/UgES5oWoIkjL/WZ3jXyIy6rGoMU9G/weRFQlm/mi9DApqTsLbpx0VfNqszqnS1dB7ZDNDcOVQRFPYaV8FpqXVF7WNfHEVfdslPbUKpXObbw63L1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqJf7+az; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b390136ed88so4323818a12.2;
-        Tue, 05 Aug 2025 12:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754422975; x=1755027775; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/84FN0lCtL+yVEoD5dY9mi3r9WEEAKxtGWaGfvdRV8=;
-        b=AqJf7+azrc+Xa6CoJdQhNDIgI9YfkugmXI7Jvi8ebPM7y/jckYLwwM+0Sy8SzGYtB5
-         jzBAGTkQINDE668/dBXY65xbd2JLu0oJ6beziPuSyyGlF6u0hktWbszJifBkjCHfqk7h
-         iTNh0brgRV2otASxbRUT8iCNw0dWUevlaZ80S3QOGQIFYkF6iXCs8kBR4jBQZksVXex0
-         OxZZ1h3aSgfQ5PIHOA808yOjMmlpfsMgVJDtXRCDAbztdRsz8iN7/gW8L1FIcQUtCvr/
-         rh2DDRNKizKOXvtmMoDLX2Y694uEDpwjkt4BflRjYkG9AW0GffEQ0sDnzXdBIeTLobtU
-         fCIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754422975; x=1755027775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/84FN0lCtL+yVEoD5dY9mi3r9WEEAKxtGWaGfvdRV8=;
-        b=C33NI4EzE8+FM83AH8yj0u5Q0X/yLSaA8fNGOrGh9Dw57rJlzzx2NVioFaWD8NYUEr
-         lbgHmxvukjTeTCNPUNQR47c7B2943obTQKYSzFMaXseD7xpbRcZtVabnt1h2Nn/3KoHc
-         hw4eum+qcNtCIt0waA4Yfdol0xi45/04TJvzR3dcBclqb9bdkN60TyF0/RKpaZaYIFJS
-         izGOCyzfCsxg9ACx42+ERhQoba/LRLnEAHmF9NJXsUumsm3OVa9coG9xQMfUWLtcNo6x
-         MyUWJLchbSwIBbh17DN/1B9mYiQ3g+A9HOMVnwM+v1NoXw8pghjjIBNSIqGQfEbTuLOy
-         Gg0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUICT5/EE/QgzGRtwFb74ObAB/NhgeZBltlSv4vI9UfMrHtcdcSu10N66VHwhy17d/0ZTve1ZXNjjr2dQ==@vger.kernel.org, AJvYcCUpTjooO79MH1LvNBUXQ5tXI1b8xnli5fv6ABxe6q6cpVj9z/H/iXKc7AFcnD1GqITlwdBelBbfcWhuYAsduNXe0UdYZA==@vger.kernel.org, AJvYcCWsNsWTi8M7IwSKL3n3ZkCdfSRCAkLIQrM9gQezZErjf1iTQPz22hkG1Vd5x/7ymlA2mNb/JVIv3uDHKTuO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjD7+g9cyOnR1GObh1cAKLd1csmeSRBCP/T0YN8S6guN4Y1NOW
-	asRpzePADlpE3VkDO7ZpwjQ+MUK+0CQFV2D/ViCXe31+oy/v0DxYiDXQ
-X-Gm-Gg: ASbGncv6kWIruBb3Pbx1PSTDPvp/z3hNeUqGF0PIOs+i+f+EhuweiAEgvu77IYnRVyw
-	5nfCALbouyMvTlJTLP7QPdiZjBilHA1GSmCPwXc7kstiIiSSGxvq+mkvErkjACQbal1hm8zfXo0
-	AXgZkkOPyZpyf1s4mT33q+GEPVVYbBEd+k7ySX/xFWNe877O+3iqPyJThl+vzfFZmi+sb87WOWz
-	y2HjZnmddRhDF/v1WHZx/IC5aLkqjcbv1uYnC9ZaIRWae3AAtrAR1bJik4uKE8LXsZUP0Xjctod
-	KlszYVP0SGTk9qVgozGO0eXManLb0gPwj6mdEzzCUHXeTFKv/EQF/imFKBbNcW38LUQWMCHVyz4
-	V4zc0trzsGjvD5flaRjgia8U=
-X-Google-Smtp-Source: AGHT+IHwDgUbEeMEFWdNmOEMhZvWF2cWYbUvCz4fgrfhF/bG/IDYM6bA+UzkX2dEh5rPTgjY9k0jrQ==
-X-Received: by 2002:a17:90b:3c8b:b0:31f:7160:df4b with SMTP id 98e67ed59e1d1-32166c339d7mr101323a91.15.1754422974941;
-        Tue, 05 Aug 2025 12:42:54 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7365:6457:e1c0:7ff1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee0d77sm17475525a91.20.2025.08.05.12.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 12:42:54 -0700 (PDT)
-Date: Tue, 5 Aug 2025 12:42:51 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Gladyshev Ilya <foxido@foxido.dev>
-Cc: w_armin@gmx.de, linux-input@vger.kernel.org, 
-	nikita.nikita.krasnov@gmail.com, Hans de Goede <hansg@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2] platform/x86: Add WMI driver for Redmibook keyboard.
-Message-ID: <5e32uo4suh3mtib4tohtekwvycxgfzqcem3wwc6k6wwdxyjhpc@bt57y7vyvpmz>
-References: <20250729190528.8446-1-foxido@foxido.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=THSEqr3UyE1EjkadhK6TzhkHTdPtzPn7lmKIIBCL2muQ6nxLBs0+lnzqpKkFRkqPYJBpOy/sTqEHMoqCFJOjz1rDq9DqyZsZuvf2lE6HuZrVHSGarODjE1kj0a1nbzkFeWAoT9Ci+a+NYkPwtW2g+ITPY5VXDZYwS3dUIatj/Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vvblv/Nk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754423064;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SfBzt2N3LNeDAm5Tym0MNtM5fNHtmIUlijMC48PoPDo=;
+	b=Vvblv/NkvReR5g4zV8PEELZtvOlL02nukBLoP/Ikv0WknjAsXfrnnZGZk5eRWTX1e2M4Et
+	MbgahLL0/tRb2twNbs8pFsxhzG1QS4iBnVMdkg/UDsUggMviPeCgGqchAvcqqM8scySCH2
+	4RfQbp/0jDF52TctS8b42kixtTtO+zM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-3IhIyEopPyiYOwFN8HuviA-1; Tue,
+ 05 Aug 2025 15:44:20 -0400
+X-MC-Unique: 3IhIyEopPyiYOwFN8HuviA-1
+X-Mimecast-MFC-AGG-ID: 3IhIyEopPyiYOwFN8HuviA_1754423058
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47F481800370;
+	Tue,  5 Aug 2025 19:44:18 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.134])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B8E1D1955E88;
+	Tue,  5 Aug 2025 19:44:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  5 Aug 2025 21:43:07 +0200 (CEST)
+Date: Tue, 5 Aug 2025 21:43:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Xiang Gao <gxxa03070307@gmail.com>,
+	"mjguzik@gmail.com" <mjguzik@gmail.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"joel.granados@kernel.org" <joel.granados@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbRXh0ZXJuYQ==?= =?utf-8?Q?l?= Mail]Re:
+ [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250805194302.GC27131@redhat.com>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250802022550.GT222315@ZenIV>
+ <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
+ <20250802084525.GB31711@redhat.com>
+ <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
+ <20250804114900.GA6656@redhat.com>
+ <20250804-gepfercht-delfin-0172b1ee9556@brauner>
+ <aa5272ddcec944e2a35ca7104f6a86bf@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250729190528.8446-1-foxido@foxido.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa5272ddcec944e2a35ca7104f6a86bf@xiaomi.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jul 29, 2025 at 10:05:21PM +0300, Gladyshev Ilya wrote:
-> +static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
-> +{
-> +	struct redmi_wmi *data = dev_get_drvdata(&wdev->dev);
-> +	int value = 1;
-> +	bool autorelease = true;
-> +
-> +	if (obj->type != ACPI_TYPE_BUFFER) {
-> +		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
-> +		return;
-> +	}
-> +
-> +	if (obj->buffer.length != 32) {
-> +		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length);
-> +		return;
-> +	}
-> +
-> +	/* For linearizability */
-> +	guard(mutex)(&data->key_lock);
+On 08/05, 高翔 wrote:
+>
+> I also think "WARN ON ONCE" is quite sensible .
 
-What is the exact purpose of this mutex? What does it protect? 
+I am starting to agree, but lets wait for Christian.
 
-> +
-> +	u32 payload = get_unaligned_le32(obj->buffer.pointer);
-> +	struct key_entry *entry = sparse_keymap_entry_from_scancode(data->input_dev, payload);
-> +
-> +	if (!entry) {
-> +		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
-> +		return;
-> +	}
-> +
-> +	/* AI key quirk */
-> +	if (entry->keycode == KEY_ASSISTANT) {
-> +		value = !(payload & AI_KEY_VALUE_MASK);
-> +		autorelease = false;
-> +	}
-> +
-> +	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease);
-> +}
+Oleg.
 
-
-Thanks.
-
--- 
-Dmitry
 
