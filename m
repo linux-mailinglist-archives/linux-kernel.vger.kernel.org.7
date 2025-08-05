@@ -1,83 +1,72 @@
-Return-Path: <linux-kernel+bounces-756973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75802B1BBAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82C6B1BBB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB6317DBA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65AE173DD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BAD235354;
-	Tue,  5 Aug 2025 21:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A263B2566F5;
+	Tue,  5 Aug 2025 21:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="esXuty+w"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="shnc9GsQ"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC992066CF;
-	Tue,  5 Aug 2025 21:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6755C218AA0;
+	Tue,  5 Aug 2025 21:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754428584; cv=none; b=nmvx1IgOE21o11lw/fiqJZTjKyWWkawpesULiZxhHR0Rg28MepBKe5XBC91EVS4td7FOZ1s7I3wgXKPE0I7IHjB06QuChj3U9nPpXU9npB/toOGjlayWx7H6yYhTYMgVqsxCDTD+OpgU2e6u4OSCddvutXcwEm0crcN+o94aJwg=
+	t=1754428601; cv=none; b=Yz7Q0NRkGy4GLRSsGKtnCK51r48CR7EYYbCWzPLX7mI7XzUqWdqYzfXSsUnWk0WKHXNAhxgh08J56YEBbelD44D2smKhATqZajhjDHeLL8Grddm0Nh8/2fvvj5ULUbzQVeAQoP3qmUweorI5+RihkYuVbhMYcqQxVYDWHtKLTGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754428584; c=relaxed/simple;
-	bh=u/948oDQQIOodQ3QXjRgv6XTHw62TrPExIfVZivcLY8=;
+	s=arc-20240116; t=1754428601; c=relaxed/simple;
+	bh=WTogogv5r4A/5ZKWdt14UuL0jyacK2avQADhr9yJluw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmwo9NDgYRYT0IW1EYSGFZ2v0bkeEdCxPQo0QI1yQ2gA7KrVUZdXEG0fTnFDRaPEVjfE61JB7PqY+IDjIR2KvMwulyTLwOQnC31tNYyQPkw/59K7neBXTPjNOD+rlt5rmKDD29sTCDXBW3KdoT6wFFWTEbKVYhQlwianB7C0bA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=esXuty+w; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754428583; x=1785964583;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u/948oDQQIOodQ3QXjRgv6XTHw62TrPExIfVZivcLY8=;
-  b=esXuty+wEthDHXQbMlkX0QtMDUu92GPfW4qrQCXVrO3BhUo75MbTYRic
-   PntQgEiBrwFSqZ1gGeLVJFRJ5of5Xbx78QGLMuumrMc3dAMk0vy0IDeE4
-   EUnzTbnLAVQvDtUYeJ7AJiwSZ1c134NXaK3ZioZSOpHK62miRrHzNP3Ox
-   zGaClY+ItqMQwav1cKqwMAsiPsEOjIMcKksiafKgQbpPKQ3AS3Qx2tezT
-   McTRbgrB1Y7PA/a0Ce+mG4cLCXeW0xRrIyClcS+Indm2P+8MoE2oRiNIp
-   XRf9jvVjJo2BSklKZFw5lxcaQxqtREJbGo8uxE1bmRFq+K6ChemO2UaC7
-   w==;
-X-CSE-ConnectionGUID: fpvfyAmUTIWruoAKJqetGA==
-X-CSE-MsgGUID: lrFAk7yVT2+1iuh5a5G7Kw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="67811400"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="67811400"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:16:22 -0700
-X-CSE-ConnectionGUID: 0Od6XwJDQBC/j5qDmek8lg==
-X-CSE-MsgGUID: 6uh4nKtqTn2SpXFR6N6+YA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164502641"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:16:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ujP15-00000003r3M-0aFZ;
-	Wed, 06 Aug 2025 00:16:15 +0300
-Date: Wed, 6 Aug 2025 00:16:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, gshahrouzi@gmail.com,
-	hridesh699@gmail.com, linux-iio@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: Re: [PATCH] staging: iio: ad5933: Fix implicit fall-through in
- switch()
-Message-ID: <aJJ0npFx1mwJ-MoV@smile.fi.intel.com>
-References: <aIdKAJVnskdAVUMi@bhairav-test.ee.iitb.ac.in>
- <2025072835-singer-penny-a421@gregkh>
- <aIeDDsRurrgXqRQn@bhairav-test.ee.iitb.ac.in>
- <2025072808-evict-snorkel-8998@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NM98hmm9Gtlku/zInSMDSBzhKWGGuPSsUuOjv2Jvx4bM2JwEJhguwS8ybWJ5NiQEiatq9gxpHpaboV6VieNA8WZR0sFGSJd5cJTpdsHyoLvVihLJ5dBvUbK8NtprRW1iy6M6C4Jb2/JsxJpFhVai8ndqpIXKxIpcPYshlESe6vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=shnc9GsQ; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754428590;
+	bh=WTogogv5r4A/5ZKWdt14UuL0jyacK2avQADhr9yJluw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=shnc9GsQAl25TCfuHnWtLsK8dBC6BZyD0joV70TKHd12OHbmHC4hhb8twmTDgSTFr
+	 NeKiAXIjKbzNX4Q4XADVsx9gemEsmUyM7nEBgMmxgB/NI7zQD5PdXZ8VdT3lCMwqNa
+	 v+DF9LLHfOCuTaRjRhfZlyz8pW2H4dnWWKS5LZEWvoBRxmjFj0qip9NVm3lssWRZCM
+	 C8i7jQarfLIRyVMvdWMWizL/SHHwOfxcuERXGwFT21VIFYrrG+Hx/qAV4Bc43EKZs6
+	 ywvwBCNZOkmtCMSOXb8QwsP5nExdFo4QhzP3ROa4pQxDecvRdhAy9ELbDQbKZFKhoO
+	 7X++jV8qyyHqA==
+Received: from linux.gnuweeb.org (unknown [182.253.126.229])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 5992E3127B6E;
+	Tue,  5 Aug 2025 21:16:27 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Wed, 6 Aug 2025 04:16:24 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Simon Horman <horms@kernel.org>
+Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Netdev Mailing List <netdev@vger.kernel.org>,
+	Linux USB Mailing List <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org,
+	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
+Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on()
+ call placement
+Message-ID: <aJJ0qKopqPg38dMG@linux.gnuweeb.org>
+References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
+ <20250804100050.GQ8494@horms.kernel.org>
+ <20250805202848.GC61519@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,49 +75,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025072808-evict-snorkel-8998@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250805202848.GC61519@horms.kernel.org>
+X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-On Mon, Jul 28, 2025 at 04:23:49PM +0200, Greg KH wrote:
-> On Mon, Jul 28, 2025 at 07:32:54PM +0530, Akhilesh Patil wrote:
-> > On Mon, Jul 28, 2025 at 12:39:21PM +0200, Greg KH wrote:
-> > > On Mon, Jul 28, 2025 at 03:29:28PM +0530, Akhilesh Patil wrote:
-
-...
-
-> > > > +	default:
-> > > > +		return -EINVAL;
-> > > 
-> > > What tool is requiring this to be added?  It's totally redundant and
-> > > needs to have the tool fixed instead.
-> > 
-> > This patch is not inspired by any tool as such.
-> > I observed this code pattern while manually reading the staging area iio
-> > code. From my eyes, there is implicit intention to return from switch block if
-> > no match is found which can be improved in readibility by explicit
-> > default block returning error.
-> > I agree this is redundant and will not have any functional impact.
-> > However, imo - this can help support kernel wide efforts to
-> > clarify switch() blocks.
-> > 
-> > The motivation for this patch is from a035d552 which talks about
-> > eleminating ambiguity by clearly defining swich() case blocks.
+On Tue, Aug 05, 2025 at 09:28:48PM +0100, Simon Horman wrote:
+> It seems this has escalated a bit as it broke things for Linus while
+> he was travelling. He tested this patch and it resolved the problem.
+> Which I think counts for something.
 > 
-> Yes, but the code right after this does the "default return", so that is
-> now dead code.
+> https://lore.kernel.org/netdev/CAHk-=wgkvNuGCDUMMs9bW9Mz5o=LcMhcDK_b2ThO6_T7cquoEQ@mail.gmail.com/
+> 
+> I have looked over the patch and it appears to me that it addresses a
+> straightforward logic error: a check was added to turn the carrier on only
+> if it is already on. Which seems a bit nonsensical. And presumably the
+> intention was to add the check for the opposite case.
+> 
+> This patch addresses that problem.
+> 
+> So let me try and nudge this on a bit by providing a tag.
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-Hmm... If I read the code correctly it is either already was a dead code before
-that patch, or it's still accessible via goto label.
+Hi Linus,
 
-> I'd recommend the "pattern" that the current code is in, it's simpler.
+Given that Reviewed-by tag and the simplicity of the patch, it would be
+great if you can take this patch sooner to your tree. The fix is very
+critical for network connectivity. Especially for laptop users.
 
-The pattern to return from all switch cases, including default is commonly used
-in IIO drivers.
+https://lore.kernel.org/all/20250801190310.58443-1-ammarfaizi2@gnuweeb.org/
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Ammar Faizi
 
 
