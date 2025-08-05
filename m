@@ -1,88 +1,65 @@
-Return-Path: <linux-kernel+bounces-756961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00D9B1BB8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:57:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78A4B1BB94
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98B418A154A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88AD36226F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9056D23F295;
-	Tue,  5 Aug 2025 20:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AD624677B;
+	Tue,  5 Aug 2025 20:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+k4IvMB"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4I88P4ko"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B840B12E7F;
-	Tue,  5 Aug 2025 20:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914FB12E7F;
+	Tue,  5 Aug 2025 20:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754427451; cv=none; b=Zgxhm9evHhNyhNAHbzodk3IqwRJ5oK0MtpD3Lrqzk2vaZNzj/Axm7HjQ+pttau89z4DxBk0OH2wsTeEB9CvnX2EbEd5KAtk/tleEavjJF0SNbi6hO/xok5uj533tQUbZSszZM6ceyiJTV6xlliAbNKr1jwg4kuoy9ZJwXyqjCSo=
+	t=1754427568; cv=none; b=OwWbz4sEu4qDhejBLoGI5UdubmimhHqEJblSMdlJMDDIDKs9hAizTT/Z0IAbb6S+LaiD7Cm4RccL1gA7eoXu8awhq2QrtWUD3XTsTLduB5VAY3+dab6tkP+pvkYWGFFbwDkn4y/gb8pn8DHX9Pz0WqYgdoErvu7WOJShwfECL8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754427451; c=relaxed/simple;
-	bh=nJY6sL1Vow1jh2tM+KxiZZCdPvhuDW6WGjFbMJBy7lg=;
+	s=arc-20240116; t=1754427568; c=relaxed/simple;
+	bh=t7+tqrc2CSh6joUTYTSPNLhj41E9+PZPzVTdBsnSpsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgQO9ihoynkGwRft6XKUUq1E53C/O+62OX8GrkTM5fGHeh1f52x4fz5TDmS2ClbO58Zsrmx/nl574d1Me7OoL94KkPpoqT4bVXCe5jTpN9WJ/Fl/eO+34UCapADhuyKS9c497GgRsvAKqFz6tEU2ZQdjZLpPvcDw12f/L6RGOlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+k4IvMB; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-31ec651c2a1so3887400a91.0;
-        Tue, 05 Aug 2025 13:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754427449; x=1755032249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZB3WPkf3WjR1LKMOJSlQ99aS+by1+OhlcwCN4d0hnw=;
-        b=D+k4IvMBRTabzJwmpHQr57teAGamrutkewVlepk3KVyB6jQCBUVkbaI/kAXlQyh0ue
-         3zYJBfYIg52kYII7lDpUatyIeHkmm4sq/CFTnUqiVq8wJm6YWVlHewXlKqJkSWXJiXlH
-         LIjgZQzap/phdECfClnpvtTw5a+VU9ig1Gwx0ioOUhCnLYx6bFt/t+182cuG9rY9si08
-         iH7XEo1jt+othdUOLeIhtb4ovpoMSIJpFAk9FYWN47AXsLw97NZTO4rDzd6l6kdo6cTu
-         UElDnQjVJNXN2Hq/7F6GaBhoeNdm5Tf/4DwcZ938FeC88UlUjv8GGqBGXQmkCLSUjcF/
-         xLvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754427449; x=1755032249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PZB3WPkf3WjR1LKMOJSlQ99aS+by1+OhlcwCN4d0hnw=;
-        b=D3Q3/YBl+tyksJYk1gMnbhn+B3sC+ar0VDEjsprni5IpKLeXwn+jOXGoOnuQbRg7n7
-         BE030jwP3Yg5Y17/B3aCFy/BCBmLbw/wdB/8IyEmRbgpQijR9BFnzsq5ZubmFIC2B0R9
-         M/uimVjysW1V6Tl8pQpQtj3lrKKX9HzM3/OHy8+BWIF8/qD4v8QLh5qNGhXtkQL6mUuk
-         mv07+UHAQT/iOAgujzVpEqb7b+N0qL+zTanPDcV6SEyj3/G76UzenoUYy/k6jFGQOEkk
-         SM1X2HcySeI04PuTDntckRKtRhILuHerNgbYtgWi0xTwpZ+RWDLOt5ytVtzakc7RLOGg
-         ZO6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWtluLBve9QruNjW7MQH2TeCN8KEwyP1Pkh0qTgOaYjNmwvg4YpAEcoTAsH4SXHtbwfm6dw/2oBxP5G8Lo@vger.kernel.org, AJvYcCXSo5lBhttS8cdYYGPuVSMqByMWE6KFp6yfrjI8ri+oPe6eT8EvVYDdzEO18cT2JEpcqErRNR6srMK2Vg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7JKJKHBy/uIsTtjCuvzNUctWaGd/ZNRh7P2QhHAswKKLflwuM
-	lPmfqdU7uHCuXP4IH+q1mLmJaSPlh6Su/B/sFVw6Jiog1X7j2XVM3Mn3
-X-Gm-Gg: ASbGncslkYslyBadtrINrsJ0Su4tCGUiZcajis15dC7OAKKu/nowe6FKYfcAqlM06Gw
-	el9mbPumGdjENDi3idm/eafyzRpgkDOCgNXui3bM0tb5YidPAnRrd9qvkHFfzTBGdkt7HdXfqRt
-	0bf0fLQpv8hpF6p/qhn/chGsbtfwGeyZ9/2EUHOD9YNs8vtsWQQi4BV/EWR/xELrmTIUbXFqTGw
-	ZGcxSe5Kaz9bMHvWn1GaHqP8LD4XyFPr3TSW8FeOVGpBRqt2WUNQwsZwA7pm+jwbtTRRoZ0sQfl
-	BjdBtp2JMKsCfhl1bIJmge+L9SC/A+jD4y+50Mnwliu1XMN12j/ofKtlgqTNLw02ISIV7KXvWE2
-	Jh6PU/QZhnCkm6b8DZo52a6ftjGghEmLv3w==
-X-Google-Smtp-Source: AGHT+IG444f++5vk3FrhvAJtQZExIerTSfjt7xRE0X6jhjyLmVTLpcVShlovUWrdPmhXw+dvslCrdA==
-X-Received: by 2002:a17:90b:2fc3:b0:31f:336a:f0db with SMTP id 98e67ed59e1d1-32166e093b4mr240510a91.10.1754427448808;
-        Tue, 05 Aug 2025 13:57:28 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7365:6457:e1c0:7ff1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da6141sm17808048a91.1.2025.08.05.13.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 13:57:28 -0700 (PDT)
-Date: Tue, 5 Aug 2025 13:57:25 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vicki Pfau <vi@endrift.com>
-Cc: =?utf-8?Q?P=C3=A4r?= Eriksson <parherman@gmail.com>, 
-	Pavel Rojtberg <rojtberg@gmail.com>, Nilton Perim Neto <niltonperimneto@gmail.com>, 
-	Antheas Kapenekakis <lkml@antheas.dev>, Mario Limonciello <mario.limonciello@amd.com>, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] xpad: Add support for Thrustmaster, Inc. Ferrari 458
- Spider Racing Wheel
-Message-ID: <qnu5h6nyigaxdv3m3uxfztrxm6bad6hv6jfnvgbkr5ewhjgplz@dleqh5zzljbd>
-References: <20250805192036.53918-1-parherman@gmail.com>
- <1607cb00-1146-4a64-92cc-65eb91062706@endrift.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgWjuubVaZky3VQ2g+TxRRG41FX4gQECNxskntnCk9nC8SbJUlVrvoQN7YAh37iXWCrdv6GMDfVmqrAtp6Kp5GiXdYRt8SAtp6VjhC5Jsb1jlpyofUNcBjsMpAidWN3gA81gaWsbKkLCBFZ/+ks9DxNPN8ad04tcT4SropvzbF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4I88P4ko; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NWDHZJrVWOBu48yVTIxq5bN4KAAfsVdHWzf5NjnxC7c=; b=4I88P4kotaghdXCFOSfBkDGC4o
+	sFk7rBF3W7vefj3i0SNWceKobbrdFPCKJTu/qjhMpVIKEay54XbYVhw36DjvMzcbQXud9S/1azxVe
+	DKiXLr4lfR3hUd95y8E2leibqEeB+DIWUzcOBwhsW++6DVWlfhakmsiW/XhrQgM65Tsw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ujOkZ-003pEJ-6T; Tue, 05 Aug 2025 22:59:11 +0200
+Date: Tue, 5 Aug 2025 22:59:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Suraj Gupta <suraj.gupta2@amd.com>
+Subject: Re: [PATCH net-next v4 1/7] net: axienet: Fix resource release
+ ordering
+Message-ID: <9572f798-d294-4f24-8acb-c7972c1db247@lunn.ch>
+References: <20250805153456.1313661-1-sean.anderson@linux.dev>
+ <20250805153456.1313661-2-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,23 +68,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1607cb00-1146-4a64-92cc-65eb91062706@endrift.com>
+In-Reply-To: <20250805153456.1313661-2-sean.anderson@linux.dev>
 
-Hi Vicki,
+> +static void axienet_disable_misc(void *clocks)
+> +{
+> +	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, clocks);
+> +}
+> +
 
-On Tue, Aug 05, 2025 at 01:23:39PM -0700, Vicki Pfau wrote:
+...
 
-> I have a new driver I've been working on for a few months that
-> supports all of this stuff properly, including wheels, that I am
-> hoping to support for the 6.17 merge window.
+>  	ret = devm_clk_bulk_get_optional(&pdev->dev, XAE_NUM_MISC_CLOCKS, lp->misc_clks);
+>  	if (ret)
+> -		goto cleanup_clk;
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "could not get misc. clocks\n");
+>  
+>  	ret = clk_bulk_prepare_enable(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
+>  	if (ret)
+> -		goto cleanup_clk;
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "could not enable misc. clocks\n");
+> +
+> +	ret = devm_add_action_or_reset(&pdev->dev, axienet_disable_misc,
+> +				       lp->misc_clks);
 
-6.17 merge window is closing this weekend so no new drivers can go into
-it anymore, only what was in maintainer trees/linux-next.
+It seems like it would be better to add
+devm_clk_bulk_get_optional_enable(). There is already an
+devm_clk_bulk_get_all_enabled() so it does not seem like too big a
+step.
 
-6.18 is the earliest option.
-
-Thanks.
-
--- 
-Dmitry
+	Andrew
 
