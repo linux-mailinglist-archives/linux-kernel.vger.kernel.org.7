@@ -1,474 +1,177 @@
-Return-Path: <linux-kernel+bounces-756108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF46B1B018
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:14:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F6AB1B01B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89B9189B062
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9217AAE60
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7C02580CC;
-	Tue,  5 Aug 2025 08:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3CF22D4C0;
+	Tue,  5 Aug 2025 08:16:42 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B46256C9B
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10D178F2F
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754381649; cv=none; b=MsFMZkvhwDpPmDtjLZnq/WOEwqjwf90ZIrOAJA8wKAvctRfYOJZV4VfAAFwGXNCUhrNFtcUVarW6Q1r+GdVzKqAG+4RHwmTvfW+bZ3Z2l4ak7HKUZAPYAPjAGNnsLAgJyRNmvj/wS1FMtx+NFdMfBOfzO/rfVEopBqAG69Mgt58=
+	t=1754381801; cv=none; b=a3TquOkBQBvGY8/Gjj0TY+ZWE78iSNLkg4bi2WazuaL72LY144F4Oo1mFRHTWp6mfTBIyT1IPyk+TJbuoySwUfP10AGFHi2vL34PRseYSzTgDpUQzMbETXanviFyzZK+DMsgC4DCDVaN8UdmdUOWaLo/oVp6mrF23F0cTKsAzLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754381649; c=relaxed/simple;
-	bh=Jw5zRaXf/4VjiR/xkuwjdE2uUcPmQPItKQjRYEv7B3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hp4KAcq08mf3MvUYB+VWC//E+0JlWswqRPK3g7VpvPU4k0yaboJh7r49GvjPzLmu72R7a+KHvRO5zbwu0OyQUXLenkm6fd1WsyWZZgOqfyleoDl1hxpJ5BUGZZQRrU0u4Agy37HPkf7UkwNKkXbr1jf0RifqFKrZ7mkUlTVOhkc=
+	s=arc-20240116; t=1754381801; c=relaxed/simple;
+	bh=hG2BkjNRzkWGTNQnyT8YLby2fty3awVIZPKXLVHS3y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iSe9umKwMf1DgduLCN7H/yCtACb2ZAFUjUKvAqdFPBKgPFWwOxsGEXjWGaabIuyEyTO68rGFxhqt9XlxriTr7F0bouCVCtXtSUPwJ+92TNaZrj48uaMlanhNxUBkvLDIngjh0v6WQPzkvoF/fd55u0Z6H5rhbH+RSzdAnD6IJ58=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6F11424;
-	Tue,  5 Aug 2025 01:13:59 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF87E3F673;
-	Tue,  5 Aug 2025 01:14:05 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	akpm@linux-foundation.org,
-	Miko.Lenczewski@arm.com,
-	dev.jain@arm.com,
-	scott@os.amperecomputing.com,
-	cl@gentwo.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v6 4/4] arm64: mm: split linear mapping if BBML2 unsupported on secondary CPUs
-Date: Tue,  5 Aug 2025 09:13:49 +0100
-Message-ID: <20250805081350.3854670-5-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250805081350.3854670-1-ryan.roberts@arm.com>
-References: <20250805081350.3854670-1-ryan.roberts@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D6601424;
+	Tue,  5 Aug 2025 01:16:29 -0700 (PDT)
+Received: from [10.57.87.210] (unknown [10.57.87.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C65A3F673;
+	Tue,  5 Aug 2025 01:16:33 -0700 (PDT)
+Message-ID: <985f9d53-ea5e-4da0-9427-106a58be7f26@arm.com>
+Date: Tue, 5 Aug 2025 09:16:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v6 0/4] arm64: support FEAT_BBM level 2 and large
+ block mapping when rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250805081350.3854670-1-ryan.roberts@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250805081350.3854670-1-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Yang Shi <yang@os.amperecomputing.com>
+On 05/08/2025 09:13, Ryan Roberts wrote:
+> Hi All,
+> 
+> This is a new version built on top of Yang Shi's work at [1]. Yang and I have
+> been discussing (disagreeing?) about the best way to implement the last 2
+> patches. So I've reworked them and am posting as RFC to illustrate how I think
+> this feature should be implemented, but I've retained Yang as primary author
+> since it is all based on his work. I'd appreciate feedback from Catalin and/or
+> Will on whether this is the right approach, so that hopefully we can get this
+> into shape for 6.18.
 
-The kernel linear mapping is painted in very early stage of system boot.
-The cpufeature has not been finalized yet at this point. So the linear
-mapping is determined by the capability of boot CPU only.  If the boot
-CPU supports BBML2, large block mappings will be used for linear
-mapping.
+I forgot to mention that it applies on Linus's current master (it depends upon
+mm and arm64 changes that will first appear in v6.17-rc1 and are already merged
+in master). I'm using 89748acdf226 as the base.
 
-But the secondary CPUs may not support BBML2, so repaint the linear
-mapping if large block mapping is used and the secondary CPUs don't
-support BBML2 once cpufeature is finalized on all CPUs.
-
-If the boot CPU doesn't support BBML2 or the secondary CPUs have the
-same BBML2 capability with the boot CPU, repainting the linear mapping
-is not needed.
-
-Repainting is implemented by the boot CPU, which we know supports BBML2,
-so it is safe for the live mapping size to change for this CPU. The
-linear map region is walked using the pagewalk API and any discovered
-large leaf mappings are split to pte mappings using the existing helper
-functions. Since the repainting is performed inside of a stop_machine(),
-we must use GFP_ATOMIC to allocate the extra intermediate pgtables. But
-since we are still early in boot, it is expected that there is plenty of
-memory available so we will never need to sleep for reclaim, and so
-GFP_ATOMIC is acceptable here.
-
-The secondary CPUs are all put into a waiting area with the idmap in
-TTBR0 and reserved map in TTBR1 while this is performed since they
-cannot be allowed to observe any size changes on the live mappings.
-
-Co-developed-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
----
- arch/arm64/include/asm/mmu.h   |   3 +
- arch/arm64/kernel/cpufeature.c |   8 ++
- arch/arm64/mm/mmu.c            | 151 ++++++++++++++++++++++++++++++---
- arch/arm64/mm/proc.S           |  25 +++++-
- 4 files changed, 172 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-index 98565b1b93e8..966c08fd8126 100644
---- a/arch/arm64/include/asm/mmu.h
-+++ b/arch/arm64/include/asm/mmu.h
-@@ -56,6 +56,8 @@ typedef struct {
-  */
- #define ASID(mm)	(atomic64_read(&(mm)->context.id) & 0xffff)
- 
-+extern bool linear_map_requires_bbml2;
-+
- static inline bool arm64_kernel_unmapped_at_el0(void)
- {
- 	return alternative_has_cap_unlikely(ARM64_UNMAP_KERNEL_AT_EL0);
-@@ -72,6 +74,7 @@ extern void create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
- extern void *fixmap_remap_fdt(phys_addr_t dt_phys, int *size, pgprot_t prot);
- extern void mark_linear_text_alias_ro(void);
- extern int split_kernel_leaf_mapping(unsigned long addr);
-+extern int linear_map_split_to_ptes(void *__unused);
- 
- /*
-  * This check is triggered during the early boot before the cpufeature
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index f28f056087f3..11392c741e48 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -85,6 +85,7 @@
- #include <asm/insn.h>
- #include <asm/kvm_host.h>
- #include <asm/mmu_context.h>
-+#include <asm/mmu.h>
- #include <asm/mte.h>
- #include <asm/hypervisor.h>
- #include <asm/processor.h>
-@@ -2013,6 +2014,12 @@ static int __init __kpti_install_ng_mappings(void *__unused)
- 	return 0;
- }
- 
-+static void __init linear_map_maybe_split_to_ptes(void)
-+{
-+	if (linear_map_requires_bbml2 && !system_supports_bbml2_noabort())
-+		stop_machine(linear_map_split_to_ptes, NULL, cpu_online_mask);
-+}
-+
- static void __init kpti_install_ng_mappings(void)
- {
- 	/* Check whether KPTI is going to be used */
-@@ -3930,6 +3937,7 @@ void __init setup_system_features(void)
- {
- 	setup_system_capabilities();
- 
-+	linear_map_maybe_split_to_ptes();
- 	kpti_install_ng_mappings();
- 
- 	sve_setup();
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index f6cd79287024..5b5a84b34024 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -27,6 +27,7 @@
- #include <linux/kfence.h>
- #include <linux/pkeys.h>
- #include <linux/mm_inline.h>
-+#include <linux/pagewalk.h>
- 
- #include <asm/barrier.h>
- #include <asm/cputype.h>
-@@ -483,11 +484,11 @@ void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
- 
- #define INVALID_PHYS_ADDR	-1
- 
--static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
-+static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
- 				       enum pgtable_type pgtable_type)
- {
- 	/* Page is zeroed by init_clear_pgtable() so don't duplicate effort. */
--	struct ptdesc *ptdesc = pagetable_alloc(GFP_PGTABLE_KERNEL & ~__GFP_ZERO, 0);
-+	struct ptdesc *ptdesc = pagetable_alloc(gfp & ~__GFP_ZERO, 0);
- 	phys_addr_t pa;
- 
- 	if (!ptdesc)
-@@ -514,9 +515,9 @@ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
- }
- 
- static phys_addr_t
--try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
-+try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
- {
--	return __pgd_pgtable_alloc(&init_mm, pgtable_type);
-+	return __pgd_pgtable_alloc(&init_mm, gfp, pgtable_type);
- }
- 
- static phys_addr_t __maybe_unused
-@@ -524,7 +525,7 @@ pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
- {
- 	phys_addr_t pa;
- 
--	pa = __pgd_pgtable_alloc(&init_mm, pgtable_type);
-+	pa = __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
- 	BUG_ON(pa == INVALID_PHYS_ADDR);
- 	return pa;
- }
-@@ -534,7 +535,7 @@ pgd_pgtable_alloc_special_mm(enum pgtable_type pgtable_type)
- {
- 	phys_addr_t pa;
- 
--	pa = __pgd_pgtable_alloc(NULL, pgtable_type);
-+	pa = __pgd_pgtable_alloc(NULL, GFP_PGTABLE_KERNEL, pgtable_type);
- 	BUG_ON(pa == INVALID_PHYS_ADDR);
- 	return pa;
- }
-@@ -548,7 +549,7 @@ static void split_contpte(pte_t *ptep)
- 		__set_pte(ptep, pte_mknoncont(__ptep_get(ptep)));
- }
- 
--static int split_pmd(pmd_t *pmdp, pmd_t pmd)
-+static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp)
- {
- 	pmdval_t tableprot = PMD_TYPE_TABLE | PMD_TABLE_UXN | PMD_TABLE_AF;
- 	unsigned long pfn = pmd_pfn(pmd);
-@@ -557,7 +558,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd)
- 	pte_t *ptep;
- 	int i;
- 
--	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE);
-+	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE, gfp);
- 	if (pte_phys == INVALID_PHYS_ADDR)
- 		return -ENOMEM;
- 	ptep = (pte_t *)phys_to_virt(pte_phys);
-@@ -590,7 +591,7 @@ static void split_contpmd(pmd_t *pmdp)
- 		set_pmd(pmdp, pmd_mknoncont(pmdp_get(pmdp)));
- }
- 
--static int split_pud(pud_t *pudp, pud_t pud)
-+static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp)
- {
- 	pudval_t tableprot = PUD_TYPE_TABLE | PUD_TABLE_UXN | PUD_TABLE_AF;
- 	unsigned int step = PMD_SIZE >> PAGE_SHIFT;
-@@ -600,7 +601,7 @@ static int split_pud(pud_t *pudp, pud_t pud)
- 	pmd_t *pmdp;
- 	int i;
- 
--	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD);
-+	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD, gfp);
- 	if (pmd_phys == INVALID_PHYS_ADDR)
- 		return -ENOMEM;
- 	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
-@@ -688,7 +689,7 @@ int split_kernel_leaf_mapping(unsigned long addr)
- 	if (!pud_present(pud))
- 		goto out;
- 	if (pud_leaf(pud)) {
--		ret = split_pud(pudp, pud);
-+		ret = split_pud(pudp, pud, GFP_PGTABLE_KERNEL);
- 		if (ret)
- 			goto out;
- 	}
-@@ -713,7 +714,7 @@ int split_kernel_leaf_mapping(unsigned long addr)
- 		 */
- 		if (ALIGN_DOWN(addr, PMD_SIZE) == addr)
- 			goto out;
--		ret = split_pmd(pmdp, pmd);
-+		ret = split_pmd(pmdp, pmd, GFP_PGTABLE_KERNEL);
- 		if (ret)
- 			goto out;
- 	}
-@@ -738,6 +739,112 @@ int split_kernel_leaf_mapping(unsigned long addr)
- 	return ret;
- }
- 
-+static int split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
-+				   unsigned long next, struct mm_walk *walk)
-+{
-+	pud_t pud = pudp_get(pudp);
-+	int ret = 0;
-+
-+	if (pud_leaf(pud))
-+		ret = split_pud(pudp, pud, GFP_ATOMIC);
-+
-+	return ret;
-+}
-+
-+static int split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
-+				   unsigned long next, struct mm_walk *walk)
-+{
-+	pmd_t pmd = pmdp_get(pmdp);
-+	int ret = 0;
-+
-+	if (pmd_leaf(pmd)) {
-+		if (pmd_cont(pmd))
-+			split_contpmd(pmdp);
-+		ret = split_pmd(pmdp, pmd, GFP_ATOMIC);
-+	}
-+
-+	return ret;
-+}
-+
-+static int split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
-+				   unsigned long next, struct mm_walk *walk)
-+{
-+	pte_t pte = __ptep_get(ptep);
-+
-+	if (pte_cont(pte))
-+		split_contpte(ptep);
-+
-+	return 0;
-+}
-+
-+static const struct mm_walk_ops split_to_ptes_ops = {
-+	.pud_entry	= split_to_ptes_pud_entry,
-+	.pmd_entry	= split_to_ptes_pmd_entry,
-+	.pte_entry	= split_to_ptes_pte_entry,
-+};
-+
-+extern u32 repaint_done;
-+
-+int __init linear_map_split_to_ptes(void *__unused)
-+{
-+	/*
-+	 * Repainting the linear map must be done by CPU0 (the boot CPU) because
-+	 * that's the only CPU that we know supports BBML2. The other CPUs will
-+	 * be held in a waiting area with the idmap active.
-+	 */
-+	if (!smp_processor_id()) {
-+		unsigned long lstart = _PAGE_OFFSET(vabits_actual);
-+		unsigned long lend = PAGE_END;
-+		unsigned long kstart = (unsigned long)lm_alias(_stext);
-+		unsigned long kend = (unsigned long)lm_alias(__init_begin);
-+		int ret;
-+
-+		/*
-+		 * Wait for all secondary CPUs to be put into the waiting area.
-+		 */
-+		smp_cond_load_acquire(&repaint_done, VAL == num_online_cpus());
-+
-+		/*
-+		 * Walk all of the linear map [lstart, lend), except the kernel
-+		 * linear map alias [kstart, kend), and split all mappings to
-+		 * PTE. The kernel alias remains static throughout runtime so
-+		 * can continue to be safely mapped with large mappings.
-+		 */
-+		ret = walk_kernel_page_table_range_lockless(lstart, kstart,
-+						&split_to_ptes_ops, NULL);
-+		if (!ret)
-+			ret = walk_kernel_page_table_range_lockless(kend, lend,
-+						&split_to_ptes_ops, NULL);
-+		if (ret)
-+			panic("Failed to split linear map\n");
-+		flush_tlb_kernel_range(lstart, lend);
-+
-+		/*
-+		 * Relies on dsb in flush_tlb_kernel_range() to avoid reordering
-+		 * before any page table split operations.
-+		 */
-+		WRITE_ONCE(repaint_done, 0);
-+	} else {
-+		typedef void (repaint_wait_fn)(void);
-+		extern repaint_wait_fn bbml2_wait_for_repainting;
-+		repaint_wait_fn *wait_fn;
-+
-+		wait_fn = (void *)__pa_symbol(bbml2_wait_for_repainting);
-+
-+		/*
-+		 * At least one secondary CPU doesn't support BBML2 so cannot
-+		 * tolerate the size of the live mappings changing. So have the
-+		 * secondary CPUs wait for the boot CPU to make the changes
-+		 * with the idmap active and init_mm inactive.
-+		 */
-+		cpu_install_idmap();
-+		wait_fn();
-+		cpu_uninstall_idmap();
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * This function can only be used to modify existing table entries,
-  * without allocating new levels of table. Note that this permits the
-@@ -857,6 +964,8 @@ static inline void arm64_kfence_map_pool(phys_addr_t kfence_pool, pgd_t *pgdp) {
- 
- #endif /* CONFIG_KFENCE */
- 
-+bool linear_map_requires_bbml2;
-+
- static inline bool force_pte_mapping(void)
- {
- 	bool bbml2 = system_capabilities_finalized() ?
-@@ -892,6 +1001,8 @@ static void __init map_mem(pgd_t *pgdp)
- 
- 	early_kfence_pool = arm64_kfence_alloc_pool();
- 
-+	linear_map_requires_bbml2 = !force_pte_mapping() && can_set_direct_map();
-+
- 	if (force_pte_mapping())
- 		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
- 
-@@ -1025,7 +1136,8 @@ void __pi_map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
- 		    int level, pte_t *tbl, bool may_use_cont, u64 va_offset);
- 
- static u8 idmap_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
--	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
-+	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
-+	  bbml2_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
- 
- static void __init create_idmap(void)
- {
-@@ -1050,6 +1162,19 @@ static void __init create_idmap(void)
- 			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
- 			       __phys_to_virt(ptep) - ptep);
- 	}
-+
-+	/*
-+	 * Setup idmap mapping for repaint_done flag.  It will be used if
-+	 * repainting the linear mapping is needed later.
-+	 */
-+	if (linear_map_requires_bbml2) {
-+		u64 pa = __pa_symbol(&repaint_done);
-+
-+		ptep = __pa_symbol(bbml2_ptes);
-+		__pi_map_range(&ptep, pa, pa + sizeof(u32), pa, PAGE_KERNEL,
-+			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
-+			       __phys_to_virt(ptep) - ptep);
-+	}
- }
- 
- void __init paging_init(void)
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 8c75965afc9e..dbaac2e824d7 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -416,7 +416,29 @@ alternative_else_nop_endif
- __idmap_kpti_secondary:
- 	/* Uninstall swapper before surgery begins */
- 	__idmap_cpu_set_reserved_ttbr1 x16, x17
-+	b scondary_cpu_wait
- 
-+	.unreq	swapper_ttb
-+	.unreq	flag_ptr
-+SYM_FUNC_END(idmap_kpti_install_ng_mappings)
-+	.popsection
-+#endif
-+
-+	.pushsection	".data", "aw", %progbits
-+SYM_DATA(repaint_done, .long 1)
-+	.popsection
-+
-+	.pushsection ".idmap.text", "a"
-+SYM_TYPED_FUNC_START(bbml2_wait_for_repainting)
-+	/* Must be same registers as in idmap_kpti_install_ng_mappings */
-+	swapper_ttb	.req	x3
-+	flag_ptr	.req	x4
-+
-+	mrs     swapper_ttb, ttbr1_el1
-+	adr_l   flag_ptr, repaint_done
-+	__idmap_cpu_set_reserved_ttbr1 x16, x17
-+
-+scondary_cpu_wait:
- 	/* Increment the flag to let the boot CPU we're ready */
- 1:	ldxr	w16, [flag_ptr]
- 	add	w16, w16, #1
-@@ -436,9 +458,8 @@ __idmap_kpti_secondary:
- 
- 	.unreq	swapper_ttb
- 	.unreq	flag_ptr
--SYM_FUNC_END(idmap_kpti_install_ng_mappings)
-+SYM_FUNC_END(bbml2_wait_for_repainting)
- 	.popsection
--#endif
- 
- /*
-  *	__cpu_setup
--- 
-2.43.0
+> 
+> The first 2 patches are unchanged from Yang's v5; the first patch comes from Dev
+> and the rest of the series depends upon it.
+> 
+> I've tested this on an AmpereOne system (a VM with 12G RAM) in all 3 possible
+> modes by hacking the BBML2 feature detection code:
+> 
+>   - mode 1: All CPUs support BBML2 so the linear map uses large mappings
+>   - mode 2: Boot CPU does not support BBML2 so linear map uses pte mappings
+>   - mode 3: Boot CPU supports BBML2 but secondaries do not so linear map
+>     initially uses large mappings but is then repainted to use pte mappings
+> 
+> In all cases, mm selftests run and no regressions are observed. In all cases,
+> ptdump of linear map is as expected:
+> 
+> Mode 1:
+> =======
+> ---[ Linear Mapping start ]---
+> 0xffff000000000000-0xffff000000200000           2M PMD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000000200000-0xffff000000210000          64K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000000210000-0xffff000000400000        1984K PTE       ro NX SHD AF            UXN    MEM/NORMAL
+> 0xffff000000400000-0xffff000002400000          32M PMD       ro NX SHD AF        BLK UXN    MEM/NORMAL
+> 0xffff000002400000-0xffff000002550000        1344K PTE       ro NX SHD AF            UXN    MEM/NORMAL
+> 0xffff000002550000-0xffff000002600000         704K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000002600000-0xffff000004000000          26M PMD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000004000000-0xffff000040000000         960M PMD       RW NX SHD AF    CON BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000040000000-0xffff000140000000           4G PUD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000140000000-0xffff000142000000          32M PMD       RW NX SHD AF    CON BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000142000000-0xffff000142120000        1152K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000142120000-0xffff000142128000          32K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142128000-0xffff000142159000         196K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142159000-0xffff000142160000          28K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142160000-0xffff000142240000         896K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000142240000-0xffff00014224e000          56K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff00014224e000-0xffff000142250000           8K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142250000-0xffff000142260000          64K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142260000-0xffff000142280000         128K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000142280000-0xffff000142288000          32K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142288000-0xffff000142290000          32K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142290000-0xffff0001422a0000          64K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff0001422a0000-0xffff000142465000        1812K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142465000-0xffff000142470000          44K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000142470000-0xffff000142600000        1600K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000142600000-0xffff000144000000          26M PMD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000144000000-0xffff000180000000         960M PMD       RW NX SHD AF    CON BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000180000000-0xffff000181a00000          26M PMD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000181a00000-0xffff000181b90000        1600K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000181b90000-0xffff000181b9d000          52K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181b9d000-0xffff000181c80000         908K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181c80000-0xffff000181c90000          64K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181c90000-0xffff000181ca0000          64K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000181ca0000-0xffff000181dbd000        1140K PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181dbd000-0xffff000181dc0000          12K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181dc0000-0xffff000181e00000         256K PTE       RW NX SHD AF    CON     UXN    MEM/NORMAL-TAGGED
+> 0xffff000181e00000-0xffff000182000000           2M PMD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000182000000-0xffff0001c0000000         992M PMD       RW NX SHD AF    CON BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff0001c0000000-0xffff000300000000           5G PUD       RW NX SHD AF        BLK UXN    MEM/NORMAL-TAGGED
+> 0xffff000300000000-0xffff008000000000         500G PUD
+> 0xffff008000000000-0xffff800000000000      130560G PGD
+> ---[ Linear Mapping end ]---
+> 
+> Mode 3:
+> =======
+> ---[ Linear Mapping start ]---
+> 0xffff000000000000-0xffff000000210000        2112K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000000210000-0xffff000000400000        1984K PTE       ro NX SHD AF            UXN    MEM/NORMAL
+> 0xffff000000400000-0xffff000002400000          32M PMD       ro NX SHD AF        BLK UXN    MEM/NORMAL
+> 0xffff000002400000-0xffff000002550000        1344K PTE       ro NX SHD AF            UXN    MEM/NORMAL
+> 0xffff000002550000-0xffff000143a61000     5264452K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000143a61000-0xffff000143c61000           2M PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000143c61000-0xffff000181b9a000     1015012K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181b9a000-0xffff000181d9a000           2M PTE       ro NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000181d9a000-0xffff000300000000     6261144K PTE       RW NX SHD AF            UXN    MEM/NORMAL-TAGGED
+> 0xffff000300000000-0xffff008000000000         500G PUD
+> 0xffff008000000000-0xffff800000000000      130560G PGD
+> ---[ Linear Mapping end ]---
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20250724221216.1998696-1-yang@os.amperecomputing.com/
+> 
+> Thanks,
+> Ryan
+> 
+> Dev Jain (1):
+>   arm64: Enable permission change on arm64 kernel block mappings
+> 
+> Yang Shi (3):
+>   arm64: cpufeature: add AmpereOne to BBML2 allow list
+>   arm64: mm: support large block mapping when rodata=full
+>   arm64: mm: split linear mapping if BBML2 unsupported on secondary CPUs
+> 
+>  arch/arm64/include/asm/cpufeature.h |   2 +
+>  arch/arm64/include/asm/mmu.h        |   4 +
+>  arch/arm64/include/asm/pgtable.h    |   5 +
+>  arch/arm64/kernel/cpufeature.c      |  17 +-
+>  arch/arm64/mm/mmu.c                 | 368 +++++++++++++++++++++++++++-
+>  arch/arm64/mm/pageattr.c            | 161 +++++++++---
+>  arch/arm64/mm/proc.S                |  25 +-
+>  include/linux/pagewalk.h            |   3 +
+>  mm/pagewalk.c                       |  24 ++
+>  9 files changed, 566 insertions(+), 43 deletions(-)
+> 
+> --
+> 2.43.0
+> 
 
 
