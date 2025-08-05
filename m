@@ -1,436 +1,159 @@
-Return-Path: <linux-kernel+bounces-755942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BFEB1ADB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A32A4B1ADBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7A83BFDFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610153BE92E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB3E21CC47;
-	Tue,  5 Aug 2025 05:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11B821883F;
+	Tue,  5 Aug 2025 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="bU24rnvI"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JTWjNN8t"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2F621CA08;
-	Tue,  5 Aug 2025 05:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91AF2904;
+	Tue,  5 Aug 2025 05:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754372757; cv=none; b=aOLg058OOB5eFIrsiTceA4Uk20NNfHbtvS95yT/dmNDDzrx/HJ2bpvY7+9JaDfVhBCZgNSgk/w9au7fwD8xH6Ak9zf3+s6jYy5hxX+f7fVK0bZ6pRG4+CA1FwGoSuFEU27lB3tA/Z1nUIdg4HpGkAupK3cv7YRNIdCqBZxHR+7s=
+	t=1754373022; cv=none; b=R213eYUtPKwdtbSg4s5WMMe5q1ZOEV3KAKEdqyZ1gDcHjhe69HM9sMmMaF5HEygmLWT1G11iwLIbCSXh5aaJ78UwW1RP9Q5hYY00fWZj1CIKAj5a6Y+mnDapC1FIvWixMwvA6J9BfVxPFmnsDCLsGEQpx1mfT2MZ1+u2sphTKig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754372757; c=relaxed/simple;
-	bh=40vUJ0jC1FNCskPUMlIRHQw/7AqXNiyfzz/oz1EbBMs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E9q3IExcb6EPrFmAsL0nf3ozNmqQJNJv/PTaLrIA9c4dQ5z/vc5wSPkYwo86hTKQDPvpjirx2K5Pl2NJ/Q6woiYXd1v7rl2AqzuqyU4FNiy7uZ0IOgbJ0LKDJ7JnoxtS4skEn+/YRYM00O1bjCbHcUq5MXmYwhL2QijKqhHFVY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=bU24rnvI; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bx2TW344Vz9sWC;
-	Tue,  5 Aug 2025 07:45:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754372751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0UA9Hr24iLGhfKjvVdc9u7HZA7KbxdOYa3vKq7R6ls=;
-	b=bU24rnvI85XF+YJCV59nAXeWYAZyfR7nAy3ygq+GTJgIOWWxdUV46c0rElSImrZxrtON9Q
-	uH2GT2V/ML7Il5EmYJwFepX+iQFZUB86Fc/ZjZo/6qiaxu84fqOJSk0rqqCfFpepsPIjys
-	yFtjq8zvwvvQTPloBm6ehE4DqeJONf1l204r7YGGHN50rGoYOTvvToDEXJ9LUbZr1Pa9Sm
-	t4sVQYcEpVMTwo6CNGgrQNv2Qg96nAw0Ugeq6OP7ps9cutuhZvJILwckMQaLsG3ZPixP7J
-	1p/ODrpFPlmYNBO6HfWJD4wgxZ9txNlLxXn3S0yh8l/gUqFXsh/NvxbRtJcV3Q==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Tue, 05 Aug 2025 15:45:11 +1000
-Subject: [PATCH v4 4/4] selftests/proc: add tests for new pidns APIs
+	s=arc-20240116; t=1754373022; c=relaxed/simple;
+	bh=9UrC8R6/cHhzNeVb7PXG4J7LIKNuc9JI6bEz10hJXQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Lj4Od+l3+0HUkby0eup8r9+wIy+7qPpVMrb5F9q5O4EKmnwNNYl6nhqpDFkkFwkN9ezs8G3pGhZmjUdOU0uCdsTDlcAmDfyhfCkPwCqXzPlidvQW2YqJ7A8JdgvnlGl7/Gv7Z7r9VJPiwuDrUNI7XsiMAIJ9vPTqS3Aq+Hvy2xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JTWjNN8t; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5755o3L6269191;
+	Tue, 5 Aug 2025 00:50:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754373003;
+	bh=+VTpc+4yMWsn0h4j0qC+icyeqYURleBo3nXl9IU2OF4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JTWjNN8tga4OF9jxDBbqtfN4ilgOhDzSsip3w7+sS7Yvkvqeh/bpgVzTDvtwO5kZV
+	 FDif0DZ/CKOZLV0ztlSlMYHviTN7Swc7RZVtVDGnBohuugZpgILAVQsJje2M0gQwLD
+	 VoUAjQFcNXAnWshIUXG+5lpBnmIViv3CIKJNjnRw=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5755o2lR2071154
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 5 Aug 2025 00:50:02 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
+ Aug 2025 00:50:02 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 5 Aug 2025 00:50:02 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5755nvfM1325571;
+	Tue, 5 Aug 2025 00:49:58 -0500
+Message-ID: <40a7cc6c-363e-4516-847d-9ac6164203ef@ti.com>
+Date: Tue, 5 Aug 2025 11:19:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix emac link speed
+ handling
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Meghana Malladi
+	<m-malladi@ti.com>,
+        Himanshu Mittal <h-mittal1@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>
+References: <20250801121948.1492261-1-danishanwar@ti.com>
+ <be848373-4b7f-4205-b1e4-b08fe161d689@lunn.ch>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <be848373-4b7f-4205-b1e4-b08fe161d689@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250805-procfs-pidns-api-v4-4-705f984940e7@cyphar.com>
-References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
-In-Reply-To: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11255; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=40vUJ0jC1FNCskPUMlIRHQw/7AqXNiyfzz/oz1EbBMs=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMnJUv/TapQPDr8huGIcv+zPZ78MXLqb7zBMN9dY9D9
- 06Zsxd/6ChlYRDjYpAVU2TZ5ucZumn+4ivJn1aywcxhZQIZwsDFKQATWXKa4X/Yfp8nWUHMbQtv
- ihcd3LJVePbEtxeXXnsnFJO+zPn8Tu6vDP+TV4jGNzfGil3ZsD5gWejiqjj2VoYj9R/u1ErnXpd
- vY2UFAA==
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- tools/testing/selftests/proc/.gitignore   |   1 +
- tools/testing/selftests/proc/Makefile     |   1 +
- tools/testing/selftests/proc/proc-pidns.c | 315 ++++++++++++++++++++++++++++++
- 3 files changed, 317 insertions(+)
+Hi Andrew,
 
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 973968f45bba..2dced03e9e0e 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -17,6 +17,7 @@
- /proc-tid0
- /proc-uptime-001
- /proc-uptime-002
-+/proc-pidns
- /read
- /self
- /setns-dcache
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index b12921b9794b..c6f7046b9860 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -27,5 +27,6 @@ TEST_GEN_PROGS += setns-sysvipc
- TEST_GEN_PROGS += thread-self
- TEST_GEN_PROGS += proc-multiple-procfs
- TEST_GEN_PROGS += proc-fsconfig-hidepid
-+TEST_GEN_PROGS += proc-pidns
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/proc/proc-pidns.c b/tools/testing/selftests/proc/proc-pidns.c
-new file mode 100644
-index 000000000000..f7dd80a2c150
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-pidns.c
-@@ -0,0 +1,315 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Author: Aleksa Sarai <cyphar@cyphar.com>
-+ * Copyright (C) 2025 SUSE LLC.
-+ */
-+
-+#include <assert.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <sys/ioctl.h>
-+#include <sys/prctl.h>
-+
-+#include "../kselftest_harness.h"
-+
-+#define ASSERT_ERRNO(expected, _t, seen)				\
-+	__EXPECT(expected, #expected,					\
-+		({__typeof__(seen) _tmp_seen = (seen);			\
-+		  _tmp_seen >= 0 ? _tmp_seen : -errno; }), #seen, _t, 1)
-+
-+#define ASSERT_ERRNO_EQ(expected, seen) \
-+	ASSERT_ERRNO(expected, ==, seen)
-+
-+#define ASSERT_SUCCESS(seen) \
-+	ASSERT_ERRNO(0, <=, seen)
-+
-+static int touch(char *path)
-+{
-+	int fd = open(path, O_WRONLY|O_CREAT|O_CLOEXEC, 0644);
-+	if (fd < 0)
-+		return -1;
-+	return close(fd);
-+}
-+
-+FIXTURE(ns)
-+{
-+	int host_mntns, host_pidns;
-+	int dummy_pidns;
-+};
-+
-+FIXTURE_SETUP(ns)
-+{
-+	/* Stash the old mntns. */
-+	self->host_mntns = open("/proc/self/ns/mnt", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->host_mntns);
-+
-+	/* Create a new mount namespace and make it private. */
-+	ASSERT_SUCCESS(unshare(CLONE_NEWNS));
-+	ASSERT_SUCCESS(mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL));
-+
-+	/*
-+	 * Create a proper tmpfs that we can use and will disappear once we
-+	 * leave this mntns.
-+	 */
-+	ASSERT_SUCCESS(mount("tmpfs", "/tmp", "tmpfs", 0, NULL));
-+
-+	/*
-+	 * Create a pidns we can use for later tests. We need to fork off a
-+	 * child so that we get a usable nsfd that we can bind-mount and open.
-+	 */
-+	ASSERT_SUCCESS(mkdir("/tmp/dummy", 0755));
-+	ASSERT_SUCCESS(touch("/tmp/dummy/pidns"));
-+	ASSERT_SUCCESS(mkdir("/tmp/dummy/proc", 0755));
-+
-+	self->host_pidns = open("/proc/self/ns/pid", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->host_pidns);
-+	ASSERT_SUCCESS(unshare(CLONE_NEWPID));
-+
-+	pid_t pid = fork();
-+	ASSERT_SUCCESS(pid);
-+	if (!pid) {
-+		prctl(PR_SET_PDEATHSIG, SIGKILL);
-+		ASSERT_SUCCESS(mount("/proc/self/ns/pid", "/tmp/dummy/pidns", NULL, MS_BIND, NULL));
-+		ASSERT_SUCCESS(mount("proc", "/tmp/dummy/proc", "proc", 0, NULL));
-+		exit(0);
-+	}
-+
-+	int wstatus;
-+	ASSERT_EQ(waitpid(pid, &wstatus, 0), pid);
-+	ASSERT_TRUE(WIFEXITED(wstatus));
-+	ASSERT_EQ(WEXITSTATUS(wstatus), 0);
-+
-+	ASSERT_SUCCESS(setns(self->host_pidns, CLONE_NEWPID));
-+
-+	self->dummy_pidns = open("/tmp/dummy/pidns", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->dummy_pidns);
-+}
-+
-+FIXTURE_TEARDOWN(ns)
-+{
-+	ASSERT_SUCCESS(setns(self->host_mntns, CLONE_NEWNS));
-+	ASSERT_SUCCESS(close(self->host_mntns));
-+
-+	ASSERT_SUCCESS(close(self->host_pidns));
-+	ASSERT_SUCCESS(close(self->dummy_pidns));
-+}
-+
-+TEST_F(ns, pidns_mount_string_path)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-host", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-host", "proc", 0, "pidns=/proc/self/ns/pid"));
-+	ASSERT_SUCCESS(access("/tmp/proc-host/self/", X_OK));
-+
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-dummy", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-dummy", "proc", 0, "pidns=/tmp/dummy/pidns"));
-+	ASSERT_ERRNO_EQ(-ENOENT, access("/tmp/proc-dummy/1/", X_OK));
-+	ASSERT_ERRNO_EQ(-ENOENT, access("/tmp/proc-dummy/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy/pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_remount)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc", "proc", 0, ""));
-+
-+	ASSERT_SUCCESS(access("/tmp/proc/1/", X_OK));
-+	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, mount(NULL, "/tmp/proc", NULL, MS_REMOUNT, "pidns=/tmp/dummy/pidns"));
-+
-+	ASSERT_SUCCESS(access("/tmp/proc/1/", X_OK));
-+	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy/pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0)); /* noop */
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0)); /* noop */
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+int is_same_inode(int fd1, int fd2)
-+{
-+	struct stat stat1, stat2;
-+
-+	assert(fstat(fd1, &stat1) == 0);
-+	assert(fstat(fd2, &stat2) == 0);
-+
-+	return stat1.st_ino == stat2.st_ino && stat1.st_dev == stat2.st_dev;
-+}
-+
-+#define PROCFS_IOCTL_MAGIC 'f'
-+#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
-+
-+TEST_F(ns, host_get_pidns_ioctl)
-+{
-+	int procfs = open("/proc", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(procfs);
-+
-+	int procfs_pidns = ioctl(procfs, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(procfs_pidns);
-+
-+	ASSERT_TRUE(is_same_inode(self->host_pidns, procfs_pidns));
-+	ASSERT_FALSE(is_same_inode(self->dummy_pidns, procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(procfs));
-+	ASSERT_SUCCESS(close(procfs_pidns));
-+}
-+
-+TEST_F(ns, mount_implicit_get_pidns_ioctl)
-+{
-+	int procfs = open("/tmp/dummy/proc", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(procfs);
-+
-+	int procfs_pidns = ioctl(procfs, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(procfs_pidns);
-+
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(procfs));
-+	ASSERT_SUCCESS(close(procfs_pidns));
-+}
-+
-+TEST_F(ns, mount_pidns_get_pidns_ioctl)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-host", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-host", "proc", 0, "pidns=/proc/self/ns/pid"));
-+
-+	int host_procfs = open("/tmp/proc-host", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(host_procfs);
-+	int host_procfs_pidns = ioctl(host_procfs, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(host_procfs_pidns);
-+
-+	ASSERT_TRUE(is_same_inode(self->host_pidns, host_procfs_pidns));
-+	ASSERT_FALSE(is_same_inode(self->dummy_pidns, host_procfs_pidns));
-+
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-dummy", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-dummy", "proc", 0, "pidns=/tmp/dummy/pidns"));
-+
-+	int dummy_procfs = open("/tmp/proc-dummy", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(dummy_procfs);
-+	int dummy_procfs_pidns = ioctl(dummy_procfs, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(dummy_procfs_pidns);
-+
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, dummy_procfs_pidns));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, dummy_procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(host_procfs));
-+	ASSERT_SUCCESS(close(host_procfs_pidns));
-+	ASSERT_SUCCESS(close(dummy_procfs));
-+	ASSERT_SUCCESS(close(dummy_procfs_pidns));
-+}
-+
-+TEST_F(ns, fsconfig_pidns_get_pidns_ioctl)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
-+	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
-+	ASSERT_SUCCESS(new_mountfd);
-+
-+	ASSERT_SUCCESS(close(mountfd));
-+	mountfd = -EBADF;
-+
-+	int procfs_pidns = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(procfs_pidns);
-+
-+	ASSERT_NE(self->dummy_pidns, procfs_pidns);
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(new_mountfd));
-+	ASSERT_SUCCESS(close(procfs_pidns));
-+}
-+
-+TEST_HARNESS_MAIN
+On 04/08/25 10:19 pm, Andrew Lunn wrote:
+> On Fri, Aug 01, 2025 at 05:49:48PM +0530, MD Danish Anwar wrote:
+>> When link settings are changed emac->speed is populated by
+>> emac_adjust_link(). The link speed and other settings are then written into
+>> the DRAM. However if both ports are brought down after this and brought up
+>> again or if the operating mode is changed and a firmware reload is needed,
+>> the DRAM is cleared by icssg_config(). As a result the link settings are
+>> lost.
+>>
+>> Fix this by calling emac_adjust_link() after icssg_config(). This re
+>> populates the settings in the DRAM after a new firmware load.
+>>
+>> Fixes: 9facce84f406 ("net: ti: icssg-prueth: Fix firmware load sequence.")
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>> v1 - v2: Added phydev lock before calling emac_adjust_link() as suggested
+>> by Andrew Lunn <andrew@lunn.ch>
+>> v1 https://lore.kernel.org/all/20250731120812.1606839-1-danishanwar@ti.com/
+>>
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index 2b973d6e2341..58aec94b7771 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -50,6 +50,8 @@
+>>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
+>>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
+>>  
+>> +static void emac_adjust_link(struct net_device *ndev);
+>> +
+>>  static int emac_get_tx_ts(struct prueth_emac *emac,
+>>  			  struct emac_tx_ts_response *rsp)
+>>  {
+>> @@ -229,6 +231,12 @@ static int prueth_emac_common_start(struct prueth *prueth)
+>>  		ret = icssg_config(prueth, emac, slice);
+>>  		if (ret)
+>>  			goto disable_class;
+>> +
+>> +		if (emac->ndev->phydev) {
+>> +			mutex_lock(&emac->ndev->phydev->lock);
+>> +			emac_adjust_link(emac->ndev);
+>> +			mutex_unlock(&emac->ndev->phydev->lock);
+>> +		}
+> 
+> What about the else case? The link settings are lost, and the MAC does
+> not work?
+> 
+
+Actually this if else is not needed at all. If phydev == NULL, the
+driver would have already returned -ENODEV in emac_phy_connect() and the
+device's probe would have failed.
+
+If we have reached this point that means phydev is not null and there is
+no need for this check.
+
+I will drop this if check and send a v3.
+
+> 	Andrew
 
 -- 
-2.50.1
+Thanks and Regards,
+Danish
 
 
