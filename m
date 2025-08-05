@@ -1,179 +1,164 @@
-Return-Path: <linux-kernel+bounces-757059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79040B1BD1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EF3B1BD1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB731714ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CB8918A6B82
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4E02BE632;
-	Tue,  5 Aug 2025 23:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C1C2BE7A5;
+	Tue,  5 Aug 2025 23:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2HJ3yF0"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjrXyVmQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA1F2BDC37;
-	Tue,  5 Aug 2025 23:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404CB2BE03A;
+	Tue,  5 Aug 2025 23:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754436350; cv=none; b=jKdPE2eI2Mlh747JbFHciutms8jSQs1iIo0F/LWimdzQ0LZEvyckwcCr9SH9OqSNCAwfOrwBmt0Yb40JaYeiDEQrrcZruh21s2E0VjLzYYMi1ZFuxBw6a4xVok/XXVIRIeLhqCwKCKjyCkLKzlOpnqs+RxfdIDmgT8xKwktT2nM=
+	t=1754436355; cv=none; b=Yt+xlqDnThhHsZlNKrCjbNDsKh1AHrxZOY69V3P48ETpprt77xsxV6bgnsUcsHjoSnWyT47PBhYVB940k7rmQxs7vsh/Vd5Hb3IRMLdvz/4vfsldPv2KbHLVwOlvT1bLzsxOTdAM98l/j2L8x9xF3qhKd+uYatX+Rgs9JFXu9yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754436350; c=relaxed/simple;
-	bh=C65c+zzrN0XSxamvFIhvRx7t0j85ZHvgW94dLkvcamg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EspwryiG1lMx0D2HksbaK9h7aD1luEggh3lQlv6xuKt0VTWATHg9qzQwq3NXdpdEp53Yb+3vuRjD+GSRDupPg/f/oRP2oz4/sPkR+MuY00qu/OCxC8/gsziJb6Zvs16qIEf0V9dGTVL7DnV1o8DDI+Py2apy/xYkh3ax12vxcyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2HJ3yF0; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8fdbd45e10so4596716276.1;
-        Tue, 05 Aug 2025 16:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754436347; x=1755041147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C65c+zzrN0XSxamvFIhvRx7t0j85ZHvgW94dLkvcamg=;
-        b=Y2HJ3yF0NMbl0xU+oPkU8YG+xu+cNwEyOjp6/jbKW6t0eiEp1HT7xPC17+W22d4eKj
-         o9hoMetjZN3NxkdgWRmtAFF6Hy34b7UalKEgktGalaKmReylU8pl5v1Sfgw5OC1uMdJH
-         SMg13KWcyUuMbofvmwR6p6YQvJ1xiNE20CDOJY4mSi0aroQ7e62WP/ftHX7mabOENfPQ
-         77v9YWrl2BjtTpBi12x0VwgFp7FpELRGy2KJ8dekVay+9fQsm0uE+lPKeLDmzlQsDefo
-         Mc5M9VBFCp+Ng2zWQtC6VJtzJoLjBrgrbrUKkPOQ27v24CYWveCv5EYpIX8oIAzX8fzc
-         rbPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754436347; x=1755041147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C65c+zzrN0XSxamvFIhvRx7t0j85ZHvgW94dLkvcamg=;
-        b=MZkhGvG1eUWnet0rkKi7+eNwu1EKXnPDAiS+yrkswY3emzLK17g+g/FjNEauZXNJa1
-         KMw+N5BjNKJeq3zi8an4YSy9IR9y8lkltv0zl7iny/6JKNiBHiELNPxbiZ6peudKszp3
-         cfkFO/GLtubiK6H6TUU8t5iOS/Z3Nkw/MPFC0RrU0SPEW5Wl4gA1/HT6kODFkXnOpLoK
-         4SaECXrJTL7I1REQUNPa6HRJsqYvM/Yp+eUKAFS+bxElvuVhccjpPjJCnJvsuaMAgF8G
-         rF7LEzibYepM5TL1pz+weCKBsvkNFV6HlBDqrxLwi8hYRMCqJTgjoNM/ILJr8wOQnbus
-         fdAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcu9DKYyOgJM4G9a2PTDM/hFPVPGn0s8d8ClzgFvY3LGycO8iOJN4OeGcO1JU2vTG9J8jk14Adbxzk4Xe+yhkdNw==@vger.kernel.org, AJvYcCXKI2adHfNS2AOi1YZZJAPIka5jkp2AfNPe6+IsOrKl8xI0621JbWRJHELkuqm94Ah3bgqe4VvsJi1K9y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3qgBSdN6PJjsic10fAkawv9y50B+axmKsa+03vRr7TVtdgo/t
-	J9Jzbi/QapBzLh26Sit69JpXItAaFnibg6mBi4ZL2jC9Uuq4MTaFKSnkf4izCMbfzFF2zw3uEOb
-	K1V5SSOygat7Hytkml6QGY0nebQh+858=
-X-Gm-Gg: ASbGnctC0pcFWGz1vpfi/VvM52WiqUlqqhHnHaRXb+VMGFdnt6+Tbc1AGo9qiSEKRPY
-	DZX6pG1YnKkm8lnTPMoU2U4yYO4+HN7+kAg1tjbiwHVzXaYzuclT0SVlPEHnOUdrGGIZ/jUIgFP
-	T/moWjCvHXw8iNGo+DsIXEQFwHfsrdaaqaScrElHOxDOZLL9W/ieDvSrUntKIWST3CZUhui46Ne
-	WottuTDiEqiYMOMRV0=
-X-Google-Smtp-Source: AGHT+IEX101ADZuJOkZzh45cKclgEb+KcurGLnOOyjAvuwx2ZdewPfAY06vNJmOKs8uxGazfvKYQIcJGCK/87H2J5p0=
-X-Received: by 2002:a05:690c:6107:b0:70e:2d30:43eb with SMTP id
- 00721157ae682-71bc9716b8fmr14387547b3.12.1754436347573; Tue, 05 Aug 2025
- 16:25:47 -0700 (PDT)
+	s=arc-20240116; t=1754436355; c=relaxed/simple;
+	bh=5XIGIOtkm5wqnfle6b94B9BhH0eqVUZy3VtaDNaGTRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cEY6MBBGqH5mCCkKISeAsZfTusdBYAnN/EyV8lS6ntNp64iqe5m7qVT+9DlH4nNyOtxBhkV3Av9mQRBQ2+F+v2JG0TKDj0BXHgXLZqNcjSDCryWJ7eKVeGWRqrIeQJvo8aHhSlrbu55YuHfBeS5D3dV33u19fL//qKCZdQBsFR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjrXyVmQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F71C4CEF0;
+	Tue,  5 Aug 2025 23:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754436354;
+	bh=5XIGIOtkm5wqnfle6b94B9BhH0eqVUZy3VtaDNaGTRk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pjrXyVmQDlk+It43r3ZsQHPz8wXxy2KQswTJp5Ya2DpeP3p2DYG0IffPt0fmstgNE
+	 385oUvmWtnnGM4jGx0f4hCZNorHnRgcKVVMVj1NHSOZztjHh7Emhi2WYgdYVlsfO6U
+	 tG9Dw73ONxpvc4Sx4y1am98ssdcrOGUGVtKO3VqyPsZqDJLYeoq63vBp+dtRMjeN3/
+	 0DB4uAlcax2+NcjfefwNS2XGfIls5gxw0jib1J9um7aALUeW6ELxsqiqDmh4PIn77D
+	 CQ79PG3R8smA3RHCmvE768GbzTehOJz8E7kOouW92TdGU9m/xAZ/wPT8Pa3kQOlaXZ
+	 NyuEXia71Xgig==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: marvell: Convert marvell,orion5x boards to DT schema
+Date: Tue,  5 Aug 2025 18:25:51 -0500
+Message-ID: <20250805232552.2829241-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725185202.68671-1-irogers@google.com>
-In-Reply-To: <20250725185202.68671-1-irogers@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Tue, 5 Aug 2025 16:25:36 -0700
-X-Gm-Features: Ac12FXw1Sqf9yXJPja23W5inmdbX_gZuBK9K3Q3jPb0eTysr2xk8IAX7Y8pz4Ow
-Message-ID: <CAH0uvojRALoYJ6QqhvK1f5naoxCyQ0LuC5WcGm7NDuCUnjd5_w@mail.gmail.com>
-Subject: Re: [PATCH v9 00/16] New perf ilist app
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Collin Funk <collin.funk1@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Ian,
+Convert Marvell Orion5x based boards to DT schema format.
 
-On Fri, Jul 25, 2025 at 11:52=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> This patch series builds up to the addition of a new ilist app written
-> in python using textual [1] for the UI. The app presents perf PMUs and
-> events, displays the event information as in `perf list` while at the
-> bottom of the console showing recent activity of the event in total
-> and across all CPUs. It also displays metrics, placed in a tree
-> through their metric group, again with counts being displayed in the
-> bottom panel.
->
-> The first ground work patches of fixes, cleanup and refactoring were
-> separated into their own series here:
-> https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
->
-> The second part of the patches adds event json for the software PMU
-> and makes the tracepoint PMU support iteration of events and the
-> like. Without these improvements the tracepoint and software PMUs will
-> appear to have no events in the ilist app. As the software PMU moves
-> parsing to json, the legacy hard coded parsing is removed. This has
-> proven controversial for hardware events and so that cleanup isn't
-> done here.
->
-> The final patches expand the perf python APIs and add the ilist
-> command. To run it you need the updated perf.cpython.so in your
-> PYTHONPATH and then execute the script. Expanding PMUs and then
-> selecting events will cause event informatin to be displayed in the
-> top-right and the counters values to be displayed as sparklines and
-> counts in the bottom half of the screen.
->
-> [1] https://textual.textualize.io/
->
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/arm/marvell/marvell,orion5x.txt  | 25 -------------
+ .../bindings/arm/marvell/marvell,orion5x.yaml | 37 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 38 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.yaml
 
-Methinks this is a great series that opens up a ton of possibilities.
-Fwiw, here are my opinions:
+diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.txt b/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.txt
+deleted file mode 100644
+index 748a8f287462..000000000000
+--- a/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-Marvell Orion SoC Family Device Tree Bindings
+----------------------------------------------
+-
+-Boards with a SoC of the Marvell Orion family, eg 88f5181
+-
+-* Required root node properties:
+-compatible: must contain "marvell,orion5x"
+-
+-In addition, the above compatible shall be extended with the specific
+-SoC. Currently known SoC compatibles are:
+-
+-"marvell,orion5x-88f5181"
+-"marvell,orion5x-88f5182"
+-
+-And in addition, the compatible shall be extended with the specific
+-board. Currently known boards are:
+-
+-"buffalo,lsgl"
+-"buffalo,lswsgl"
+-"buffalo,lswtgl"
+-"lacie,ethernet-disk-mini-v2"
+-"lacie,d2-network"
+-"marvell,rd-88f5182-nas"
+-"maxtor,shared-storage-2"
+-"netgear,wnr854t"
+diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.yaml b/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.yaml
+new file mode 100644
+index 000000000000..c0417591b2be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.yaml
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/marvell/marvell,orion5x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell Orion5x SoC Family
++
++maintainers:
++  - Andrew Lunn <andrew@lunn.ch>
++  - Gregory Clement <gregory.clement@bootlin.com>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - netgear,wnr854t
++          - const: marvell,orion5x-88f5181
++          - const: marvell,orion5x
++      - items:
++          - enum:
++              - buffalo,kurobox-pro
++              - buffalo,lschl
++              - buffalo,lsgl
++              - buffalo,lswsgl
++              - buffalo,lswtgl
++              - lacie,ethernet-disk-mini-v2
++              - lacie,d2-network
++              - marvell,rd-88f5182-nas
++              - maxtor,shared-storage-2
++          - const: marvell,orion5x-88f5182
++          - const: marvell,orion5x
++
++additionalProperties: true
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 424d2a9cee49..f4d8b5721488 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2832,7 +2832,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gclement/mvebu.git
+ F:	Documentation/devicetree/bindings/arm/marvell/marvell,dove.yaml
+-F:	Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.txt
++F:	Documentation/devicetree/bindings/arm/marvell/marvell,orion5x.yaml
+ F:	Documentation/devicetree/bindings/soc/dove/
+ F:	arch/arm/boot/dts/marvell/dove*
+ F:	arch/arm/boot/dts/marvell/orion5x*
+-- 
+2.47.2
 
-1)
-Hitting enter while searching directly activates the collection, I'd
-rather hit enter twice for more control.
-
-2)
-steps to execution:
-~~~
-sudo -s
-source /home/howard/venv/bin/activate
-pip install textual
-PYTHONPATH=3D/tmp/perf/python python/ilist.py
-~~~
-For me, it's a lot of commands--especially since I need to install the
-textual package myself. If the process were simplified or
-well-documented on the perf wiki, I would have no problem entering all
-the commands.
-
-I don't have any issue running ilist.py using shabam (#!/usr/bin/env
-python3), but to improve it slightly, ilist.py should be renamed to
-ilist, just like b4 and yum.
-
-3)
-It would be better if the TreeNode could expand to the full height in
-the left window when not collecting events, but only show their event
-names, their parent, and positions.
-
-4)
-It'd be nice if I can pause the event collection.
-
-5)
-Sparkline's height can be bigger.
-
-6)
-If this is an interactive command that collects the count of events
-why not name it istat? ilist sounds like reading the menu without
-placing an order.
-
-I apologize for the delay.
-
-Thanks,
-Howard
 
