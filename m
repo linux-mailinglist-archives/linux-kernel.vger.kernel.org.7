@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-756776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D14EB1B90A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF3AB1B90E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D654A16B8E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A610E169699
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42450294A0C;
-	Tue,  5 Aug 2025 17:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AB6293C44;
+	Tue,  5 Aug 2025 17:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzsjP5ci"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D957B2741D1;
-	Tue,  5 Aug 2025 17:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7CD28136B;
+	Tue,  5 Aug 2025 17:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754413976; cv=none; b=GgWRxB9EqpBwVbKuXGG9dmP2/V6CFo7tpjph9Ga7HqMsFG7W4lnyTvSjctS0sDETJChtLmHp/enOxmJzLx2EyZAaLD8EdIXto5B8locNUcr21RSk6kcJ7y0YHgjcud2V+O3nGweBtEEj1ceaNA1ZM0rZUR9Kn20r3T4QEtN+3sw=
+	t=1754414033; cv=none; b=SoFgf1pW1b/WDR+M1o0vKvVF0M7prV7WN8B94/s8xg41e/BdMmJvjscO55H5HVBfottnh1RfPSOnMsbaCn3uK/0Pk1VaMcDyZzHSQHCNcLYAZ9bTs//BPCt1di6bXxb0kd5myhcc3KFGC7E6oYA94LxdTwf/77KQh8Zjj/DUIf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754413976; c=relaxed/simple;
-	bh=xd/IsbccSqAfGaeXar40DZ+WaoktIlhUucfbuJOH8xo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kZ7rVdzbGcJdL9hb2+ZHrzEdlvSlD7TEbvLWteFmBXI+IqRlEG5udN2f9jEDs72sDHrScaoRegBtSFZ5RZFySqJYXF9ln8vqPN4kwLvxcxgKGg+Q1qDO28NUQ4Lp1ITWmtsaE2MYA5m5Vmw2Pkhp9CbWIdOrtm8HDe+CkOBomfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45E1C4CEF7;
-	Tue,  5 Aug 2025 17:12:52 +0000 (UTC)
-From: Andreas Hindborg <a.hindborg@samsung.com>
-To: Boqun Feng <boqun.feng@gmail.com>, Danilo Krummrich <dakr@redhat.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org,
- russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com,
- wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, aliceryhl@google.com, airlied@gmail.com,
- fujita.tomonori@gmail.com, pstanner@redhat.com, ajanulgu@redhat.com,
- lyude@redhat.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rust: add firmware abstractions
-In-Reply-To: <ZnCzLIly3DRK2eab@boqun-archlinux>
-References: <20240617203010.101452-1-dakr@redhat.com>
- <20240617203010.101452-3-dakr@redhat.com>
- <ZnCzLIly3DRK2eab@boqun-archlinux>
-Date: Tue, 05 Aug 2025 19:12:44 +0200
-Message-ID: <87pld98zg3.fsf@kernel.org>
+	s=arc-20240116; t=1754414033; c=relaxed/simple;
+	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksCahA2xgyHdjYUpta+9LbxEw1HXr7p6xrhSfxeLKUT3ugGZXrXrvqsz9VRi020FTQ/nbT0lFyZHjeK+53CeJy3HKe8Up4m9mG6VqOTr75J2Lm4KtbTgOBOsR6VPtDeev/Wms3DUehV+FL9JQyFwfWhsFiSBrpbz8222CFB2AFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzsjP5ci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFFE6C4CEF0;
+	Tue,  5 Aug 2025 17:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754414033;
+	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mzsjP5ciz19VA8OYXPXGI3ps14D5SxS7bD9pxYQPAycE7Y4pHpSw4SS0UcE7MZLJK
+	 T0nkWr8PsG/9TjOF1GRpxVkvzT7db4zoXaZdRtioihy15x5sVlSB8Bs7VFkS4USG+H
+	 Jh8TXTGLuuhc2eWztbTmwYGT/92FpvmiC7XnpNWVLkRkIATERWrsm+4LumZ0x/SisN
+	 2Gugtnz8V8UuBGzMQgNBJ2r7eA4Qo27++wMMC4E07nPsGl+UN4J0Ds/hvhUs0pb2M1
+	 GPJCs5jNFr05si0U+WdLxZcTfZde5GzbWAjEOalxyRTUAQY34FeGxmnKczRm4z5JzF
+	 8oifLKq6fY5+w==
+Date: Tue, 5 Aug 2025 18:13:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Cc: sboyd@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] clk: divider, gate: create regmap-backed copies
+ of gate and divider clocks
+Message-ID: <20250805-slit-scrunch-e19f8afec16d@spud>
+References: <20250623-levitate-nugget-08c9a01f401d@spud>
+ <20250623-spleen-rambling-8bd898f2788e@spud>
+ <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-Boqun Feng <boqun.feng@gmail.com> writes:
-
-> On Mon, Jun 17, 2024 at 10:29:41PM +0200, Danilo Krummrich wrote:
->> Add an abstraction around the kernels firmware API to request firmware
->> images. The abstraction provides functions to access the firmware's size
->> and backing buffer.
->> 
->> The firmware is released once the abstraction instance is dropped.
->> 
->> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-
-..
-
->> +/// # Examples
->> +///
->> +/// ```
->> +/// # use kernel::{c_str, device::Device, firmware::Firmware};
->> +///
->> +/// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
->> +/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
->> +///
->> +/// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev).unwrap();
->> +/// let blob = fw.data();
->> +/// ```
->> +pub struct Firmware(NonNull<bindings::firmware>);
->> +
->
-> I feel like eventually we need a very simple smart pointer type for
-> these case, for example:
->
->     /// A smart pointer owns the underlying data.
->     pub struct Owned<T: Ownable> {
->         ptr: NonNull<T>,
->     }
->
->     impl<T: Ownable> Owned<T> {
->         /// # Safety
-> 	/// `ptr` needs to be a valid pointer, and it should be the
-> 	/// unique owner to the object, in other words, no one can touch
-> 	/// or free the underlying data.
->         pub unsafe to_owned(ptr: *mut T) -> Self {
-> 	    // SAFETY: Per function safety requirement.
-> 	    Self { ptr: unsafe { NonNull::new_unchecked(ptr) } }
-> 	}
->
-> 	/// other safe constructors are available if a initializer (impl
-> 	/// Init) is provided
->     }
->
->     /// A Ownable type is a type that can be put into `Owned<T>`, and
->     /// when `Owned<T>` drops, `ptr_drop` will be called.
->     pub unsafe trait Ownable {
->         /// # Safety
-> 	/// This could only be called in the `Owned::drop` function.
->         unsafe fn ptr_drop(ptr: *mut Self);
->     }
->
->     impl<T: Ownable> Drop for Owned<T> {
->         fn drop(&mut self) {
-> 	    /// SAFETY: In Owned<T>::drop.
-> 	    unsafe {
-> 	        <T as Ownable>::ptr_drop(self.as_mut_ptr());
-> 	    }
-> 	}
->     }
->
-> we can implement Deref and DerefMut easily on `Owned<T>`. And then we
-> could define Firmware as
->
->     #[repr(transparent)]
->     pub struct Firmware(Opaque<bindings::firmware>);
->
-> and
->
->     unsafe impl Ownable for Firmware {
->         unsafe fn ptr_drop(ptr: *mut Self) {
-> 	    // SAFETY: Per function safety, this is called in
-> 	    // Owned::drop(), so `ptr` is a unique pointer to object,
-> 	    // it's safe to release the firmware.
->             unsafe { bindings::release_firmware(ptr.cast()); }
->         }
->     }
->
-> and the request_*() will return a `Result<Owned<Self>>`. 
->
-> Alice mentioned the need of this in page as well:
->
-> 	https://lore.kernel.org/rust-for-linux/CAH5fLgjrt0Ohj1qBv=GrqZumBTMQ1jbsKakChmxmG2JYDJEM8w@mail.gmail.com		
->
-> Just bring it up while we are (maybe not? ;-)) at it. Also I would like
-> to hear whether this would work for Firmware in the longer-term ;-) But
-> yes, I'm not that worried about merging it as it is if others are all
-> OK.
-
-Please see [1] for an attempt at this pattern.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="M9zeZAJc7XAA2HBY"
+Content-Disposition: inline
+In-Reply-To: <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
 
 
-Best regards,
-Andreas Hindborg
+--M9zeZAJc7XAA2HBY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 31, 2025 at 01:23:49PM +0200, Gabriel FERNANDEZ wrote:
+>=20
+> On 6/23/25 14:56, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Implement regmap-backed copies of gate and divider clocks by replacing
+> > the iomem pointer to the clock registers with a regmap and offset
+> > within.
+> >=20
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Hi Conor,
+>=20
+> Excellent patch, thank you! I really needed this and will be using it.
+>=20
+> I would also be interested in having a similar regmap-backed implementati=
+on
+> for the multiplexer clock.=C2=A0 Do you have any plans to work on this as=
+ well?
+> If not, I=E2=80=99d be happy to propose a patch for it, with your agreeme=
+nt.
 
-[1] https://lore.kernel.org/r/20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me
+The only types of clock my driver needed were gate and divider, so those
+were all I focused on. I don't really have a plan to implement more,
+particular given the lack of feedback here means that I don't even know
+if what I have done is what Stephen wants. The rest of your comments
+seem reasonable, and I'll try to implement them in a new version.
 
+--M9zeZAJc7XAA2HBY
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJI7ywAKCRB4tDGHoIJi
+0sR1AP4zQnrLebu8U863VAtOFHm+6M8gEW/WnUp3VMypOqgoIAEA6d9iEeY01BHW
+S8o+uJeKAfF5/WvpbXoU0kZQT2osNwQ=
+=urpw
+-----END PGP SIGNATURE-----
+
+--M9zeZAJc7XAA2HBY--
 
