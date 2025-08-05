@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-756671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B12AB1B797
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:36:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DCCB1B79B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2855A1629BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B8A18A6875
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0149027B4F7;
-	Tue,  5 Aug 2025 15:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239C827C84F;
+	Tue,  5 Aug 2025 15:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lL+1wBuk"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Kv7ki/X0"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ABF279DCD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F0327A46A
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754408121; cv=none; b=rrOrzJZbhqeBdx9RxWC/Am/KkscCQ1FuHVUZeM3X9zbBzNqVHcOuN78q0+VAS7TeT/1UDxtWSf6QgqVPRcZ5TwhB5xYPU4tvY8eQB4b2lPcx8Fy5phzjeU2yH7mOiEJ+kgxdfrfBswcIJUZWOYMTte8cWdIZwYvJH0oQT/3DTII=
+	t=1754408122; cv=none; b=dPJpKzSV3RTTKSi0d8iAu1Fl5py4kSVwZ48L0z6mh/2+7SvowZZZO2xqGkhdyO57tJZ3hfHDQOXNqxbY0lRs+rhyieLx23OEaz0GZ5ve37QjcPQYPHIHFzwnIb1BFPS8jbtWuCgUdwp1zihwr6c6GAnZQ8y+xZ2xeOkMRAIGrOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754408121; c=relaxed/simple;
-	bh=FVteCX5nFxedLEyY4hDIrw5cfazi5xYujvhmEo2iJl4=;
+	s=arc-20240116; t=1754408122; c=relaxed/simple;
+	bh=JINeEfUReHlNfN4Ns88LU3c1dRlUKvpggMNQDivnrWU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XIlRLPRLFR/zBMD1iS1GkfTDJnwjBCo1RlIHo+juyYmGui4wO/Js1TjCud74VuJ/O2U0uvT5GewedemN5TU/HSKO7TFd+JU+IL9c1f1T/mnDg5ATo0lvlSitT3ShHTt3rYfI+cchN3ExWv+FgD9NvU3UgSFLhuLuuBeZhE1yZ6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lL+1wBuk; arc=none smtp.client-ip=91.218.175.189
+	 MIME-Version; b=OMRHnZQ+hla86mzpyN8/ukOnOmdRMlv1WdCmtOJZz9DXu/CaccqsDsICRCs8mNjpEcAstYWxOtLa584b8IhsWu2bdP5jOBhSx1fEKklxfjQAOBlV/AYDkmO6rSx2A8ICJn4P8E39bYCTuWOdmuxOYs4f8WCv7ZRenTnrg2JGOAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Kv7ki/X0; arc=none smtp.client-ip=91.218.175.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754408117;
+	t=1754408118;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HxGmLz1Ya+65fQyO+OBLk3+/0Yu+grwyrGLrIKSUdNI=;
-	b=lL+1wBukjB18xJ/83De9sKF6yCO5nNDD6stJGI67OLitbyVv7ZJr6tqED5WnsBq9xnQde0
-	/gmwmwItwIB5/CwZxOnPd5hB+WXv0ZwQX9bxUTsSYWspG+158ClunVrN8YojhqzZqH1HuS
-	VhL8617F1l4mPEPw84uAI+p3lYVu+K0=
+	bh=e10nwhxIlKlTQ6jthVLQK0vr7NmPf1h0C4lBIa7W+ls=;
+	b=Kv7ki/X0PsflZN88cFaLMLhtxUkWt33JZfCUJy2KKmgkrUzome7qbHV+B0GVsLHaEA5OT/
+	aeIplRfGiARRhVYpjErSdPpFn1oajrNuN2Z4dvYiQ1aTtjz4+QsTycLeW8ZzPj+JOO9F8T
+	SRNadM2VR3ZT0ExfqMqPD5agQPvkq4E=
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
@@ -55,9 +55,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Michal Simek <michal.simek@amd.com>,
 	Leon Romanovsky <leon@kernel.org>,
 	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH net-next v4 3/7] net: axienet: Use MDIO bus device in prints
-Date: Tue,  5 Aug 2025 11:34:52 -0400
-Message-Id: <20250805153456.1313661-4-sean.anderson@linux.dev>
+Subject: [PATCH net-next v4 4/7] net: axienet: Simplify axienet_mdio_setup
+Date: Tue,  5 Aug 2025 11:34:53 -0400
+Message-Id: <20250805153456.1313661-5-sean.anderson@linux.dev>
 In-Reply-To: <20250805153456.1313661-1-sean.anderson@linux.dev>
 References: <20250805153456.1313661-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -69,130 +69,46 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-For clarity and to remove the dependency on the parent netdev, use the
-MDIO bus device in print statements.
+We always put the mdio_node and disable the bus after probing, so
+perform these steps unconditionally.
 
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
 
-Changes in v4:
-- Fix documentation for axienet_mdio_enable
+(no changes since v1)
 
-Changes in v3:
-- New
-
- .../net/ethernet/xilinx/xilinx_axienet_mdio.c | 36 ++++++++++---------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+ drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-index 16f3581390dd..dd5f961801dc 100644
+index dd5f961801dc..1903a1d50b05 100644
 --- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
 +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-@@ -104,7 +104,7 @@ static int axienet_mdio_read(struct mii_bus *bus, int phy_id, int reg)
- 
- 	rc = ioread32(lp->regs + XAE_MDIO_MRD_OFFSET) & 0x0000FFFF;
- 
--	dev_dbg(lp->dev, "axienet_mdio_read(phy_id=%i, reg=%x) == %x\n",
-+	dev_dbg(&bus->dev, "%s(phy_id=%i, reg=%x) == %x\n", __func__,
- 		phy_id, reg, rc);
- 
- 	axienet_mdio_mdc_disable(lp);
-@@ -131,7 +131,7 @@ static int axienet_mdio_write(struct mii_bus *bus, int phy_id, int reg,
- 	int ret;
- 	u32 mcr;
- 
--	dev_dbg(lp->dev, "axienet_mdio_write(phy_id=%i, reg=%x, val=%x)\n",
-+	dev_dbg(&bus->dev, "%s(phy_id=%i, reg=%x, val=%x)\n", __func__,
- 		phy_id, reg, val);
- 
- 	axienet_mdio_mdc_enable(lp);
-@@ -160,7 +160,7 @@ static int axienet_mdio_write(struct mii_bus *bus, int phy_id, int reg,
- 
- /**
-  * axienet_mdio_enable - MDIO hardware setup function
-- * @lp:		Pointer to axienet local data structure.
-+ * @bus:	MDIO bus
-  * @np:		Pointer to mdio device tree node.
-  *
-  * Return:	0 on success, -ETIMEDOUT on a timeout, -EOVERFLOW on a clock
-@@ -169,8 +169,9 @@ static int axienet_mdio_write(struct mii_bus *bus, int phy_id, int reg,
-  * Sets up the MDIO interface by initializing the MDIO clock and enabling the
-  * MDIO interface in hardware.
-  **/
--static int axienet_mdio_enable(struct axienet_local *lp, struct device_node *np)
-+static int axienet_mdio_enable(struct mii_bus *bus, struct device_node *np)
- {
-+	struct axienet_local *lp = bus->priv;
- 	u32 mdio_freq = DEFAULT_MDIO_FREQ;
- 	u32 host_clock;
- 	u32 clk_div;
-@@ -186,28 +187,31 @@ static int axienet_mdio_enable(struct axienet_local *lp, struct device_node *np)
- 		/* Legacy fallback: detect CPU clock frequency and use as AXI
- 		 * bus clock frequency. This only works on certain platforms.
- 		 */
--		np1 = of_find_node_by_name(NULL, "cpu");
-+		np1 = of_find_node_by_name(NULL, "lpu");
- 		if (!np1) {
--			netdev_warn(lp->ndev, "Could not find CPU device node.\n");
-+			dev_warn(&bus->dev,
-+				 "Could not find CPU device node.\n");
- 			host_clock = DEFAULT_HOST_CLOCK;
- 		} else {
- 			int ret = of_property_read_u32(np1, "clock-frequency",
- 						       &host_clock);
- 			if (ret) {
--				netdev_warn(lp->ndev, "CPU clock-frequency property not found.\n");
-+				dev_warn(&bus->dev,
-+					 "CPU clock-frequency property not found.\n");
- 				host_clock = DEFAULT_HOST_CLOCK;
- 			}
- 			of_node_put(np1);
- 		}
--		netdev_info(lp->ndev, "Setting assumed host clock to %u\n",
--			    host_clock);
-+		dev_info(&bus->dev,
-+			 "Setting assumed host clock to %u\n", host_clock);
- 	}
- 
- 	if (np)
- 		of_property_read_u32(np, "clock-frequency", &mdio_freq);
- 	if (mdio_freq != DEFAULT_MDIO_FREQ)
--		netdev_info(lp->ndev, "Setting non-standard mdio bus frequency to %u Hz\n",
--			    mdio_freq);
-+		dev_info(&bus->dev,
-+			 "Setting non-standard mdio bus frequency to %u Hz\n",
-+			 mdio_freq);
- 
- 	/* clk_div can be calculated by deriving it from the equation:
- 	 * fMDIO = fHOST / ((1 + clk_div) * 2)
-@@ -245,14 +249,14 @@ static int axienet_mdio_enable(struct axienet_local *lp, struct device_node *np)
- 
- 	/* Check for overflow of mii_clk_div */
- 	if (clk_div & ~XAE_MDIO_MC_CLOCK_DIVIDE_MAX) {
--		netdev_warn(lp->ndev, "MDIO clock divisor overflow\n");
-+		dev_warn(&bus->dev, "MDIO clock divisor overflow\n");
- 		return -EOVERFLOW;
- 	}
- 	lp->mii_clk_div = (u8)clk_div;
- 
--	netdev_dbg(lp->ndev,
--		   "Setting MDIO clock divisor to %u/%u Hz host clock.\n",
--		   lp->mii_clk_div, host_clock);
-+	dev_dbg(&bus->dev,
-+		"Setting MDIO clock divisor to %u/%u Hz host clock.\n",
-+		lp->mii_clk_div, host_clock);
- 
- 	axienet_mdio_mdc_enable(lp);
- 
-@@ -295,7 +299,7 @@ int axienet_mdio_setup(struct axienet_local *lp)
- 	lp->mii_bus = bus;
- 
- 	mdio_node = of_get_child_by_name(lp->dev->of_node, "mdio");
--	ret = axienet_mdio_enable(lp, mdio_node);
-+	ret = axienet_mdio_enable(bus, mdio_node);
+@@ -302,19 +302,14 @@ int axienet_mdio_setup(struct axienet_local *lp)
+ 	ret = axienet_mdio_enable(bus, mdio_node);
  	if (ret < 0)
  		goto unregister;
++
  	ret = of_mdiobus_register(bus, mdio_node);
+-	if (ret)
+-		goto unregister_mdio_enabled;
+ 	of_node_put(mdio_node);
+ 	axienet_mdio_mdc_disable(lp);
+-	return 0;
+-
+-unregister_mdio_enabled:
+-	axienet_mdio_mdc_disable(lp);
+-unregister:
+-	of_node_put(mdio_node);
+-	mdiobus_free(bus);
+-	lp->mii_bus = NULL;
++	if (ret) {
++		mdiobus_free(bus);
++		lp->mii_bus = NULL;
++	}
+ 	return ret;
+ }
+ 
 -- 
 2.35.1.1320.gc452695387.dirty
 
