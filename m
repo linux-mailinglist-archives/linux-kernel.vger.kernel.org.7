@@ -1,112 +1,144 @@
-Return-Path: <linux-kernel+bounces-756649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E416B1B735
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E697B1B72A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56ABB18A4A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:12:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2197A17FDB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AE827A469;
-	Tue,  5 Aug 2025 15:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DV6vifOt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9F6279DA0;
+	Tue,  5 Aug 2025 15:08:49 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C1227A44C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCF0263F3C;
+	Tue,  5 Aug 2025 15:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754406732; cv=none; b=IBW1DW7CyFNW9SNbcUsOoZM9FFwIyDPYwi3JfvEi3BIYbEWXpvBIsezJ6XfW33d6oyvTYVyGj0reLV3x21IeRaVJtPTsxPQoD8MtBqI0Oa1dWIJiEGS5byltZ5ICF4UxA0S7H+VsMqi+9Z2MCRHGbE5FlBQ9xJMCgrniX0yeuQE=
+	t=1754406529; cv=none; b=W3iEn8ioI4BuKE+SI85/5Fx1fHWhaYye25vNSXjgqlFbJsT1LWhSBeFskU5yr033a0YYvnB1NRCeXDoR1a0P8XE8kZT01buj69C7xQyXBY9K4ZL46gQjkBZDBNMVAHXwYXAohpAaPnuppfxNRxMV/itAuonTwiwvPmfsO5OcZYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754406732; c=relaxed/simple;
-	bh=mdhnueASgKl0y+lHuxw3KdEgANEkTTFWl5SCJSHUY7I=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GRvtuS39muUOtbTm5zGy85Hi0q1Di1OYPuTDTbJ/vNHBDKfD0DF6h2Rwo0oKIXTvEQ92R65i0XeOMbXqSZCBPeUvvtYcNuvQiqvhXDhJ9q3IvinPO/bNAMFMGW2jNeDHTuU8Fo2hGy5atxJh0B4t+lQPEQN4Jq1o2YHC8FpheTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DV6vifOt; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754406731; x=1785942731;
-  h=date:from:to:cc:subject:message-id;
-  bh=mdhnueASgKl0y+lHuxw3KdEgANEkTTFWl5SCJSHUY7I=;
-  b=DV6vifOtgu1Z18dqB4cSR0guA6ihHh+lLizJK5ypjTV3v6LjJ0Qj+B53
-   IkK+VGEgrtBhDwzFoAUG1vkLoWjuCMup26sFJMTEiZzCvle5YDWLm9+oE
-   eNEgYxz8hEVeABAB9vXAgYwbR1wMDyCV5eJ8tzAUH4IbVKU7EKq5H0oyM
-   6DyIcRB7MQLp0CXlFL1LUoYUzdeCl5Bvq2HwIJ4cicWSXdca+HeE/vZJB
-   IFgiyhUfCV9WoYladFsCUF6hx4hVkryWXNGs/gUEIEZs0G6qdIejbNocE
-   BngjjHQzFrvUQzHgL1dYKja3O4o3lVyAf3HFSWeQGmIzWdH+pfJG/WlyF
-   Q==;
-X-CSE-ConnectionGUID: ErfUvtbDRH+dIQFmaa5bOA==
-X-CSE-MsgGUID: ZMQgdgrOQoqxocPtQFTwcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56847348"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56847348"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 08:12:11 -0700
-X-CSE-ConnectionGUID: GTzOQPkHSbeLroPWgZVZZA==
-X-CSE-MsgGUID: cHOuULCNTyGbvPDwFMZPdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="163766741"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 05 Aug 2025 08:12:09 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujJKc-0000dc-04;
-	Tue, 05 Aug 2025 15:12:03 +0000
-Date: Tue, 05 Aug 2025 23:11:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- ce0b5eedcb753697d43f61dd2e27d68eb5d3150f
-Message-ID: <202508052319.R0Zr9oek-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1754406529; c=relaxed/simple;
+	bh=hVcRW6KSa8Yn5WCJUu+xD2ZgiFj6m51RMmFzdtyVAwg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=idxaTql4Wyx6BoiIO4igJiMJFicA+g5npNQuFIvSqb9qT/qgJBV0m6RDChjmhxxAtOFL69+iFk8vTVnkZV2WsIlqrv4CKm0VbThXtyqOPjNPXi1bxaadEEuBZ8zaOfq+kLxG0imtLQrySdGEY5FmdWHUOYORHkwvgZQxfmyOhZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bxGyx6TpQzKHMpF;
+	Tue,  5 Aug 2025 23:08:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EB4201A07BB;
+	Tue,  5 Aug 2025 23:08:40 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgCHTg93HpJoQamsCg--.10744S2;
+	Tue, 05 Aug 2025 23:08:40 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Zero-initialize parser->buffer to avoid OOB access
+Date: Tue,  5 Aug 2025 15:12:03 +0000
+Message-Id: <20250805151203.1214790-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHTg93HpJoQamsCg--.10744S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4UCryfuF4kury5Gw1rZwb_yoW8Kw4kpF
+	WfKrs7Gw4qgF4IvFs5Zr10qa4kXan8GrW7GFs7JryYqa9xKF1j9rZrCrnrWw1fCryrJryY
+	yFy8K3yUKr1DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: ce0b5eedcb753697d43f61dd2e27d68eb5d3150f  x86/irq: Plug vector setup race
+From: Pu Lehui <pulehui@huawei.com>
 
-elapsed time: 955m
+When the length of the string written to set_ftrace_filter exceeds
+FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
 
-configs tested: 20
-configs skipped: 119
+BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
+Read of size 1 at addr ffff0000d00bd5ba by task ash/165
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty #3 NONE
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ show_stack+0x34/0x50 (C)
+ dump_stack_lvl+0xa0/0x158
+ print_address_description.constprop.0+0x88/0x398
+ print_report+0xb0/0x280
+ kasan_report+0xa4/0xf0
+ __asan_report_load1_noabort+0x20/0x30
+ strsep+0x18c/0x1b0
+ ftrace_process_regex.isra.0+0x100/0x2d8
+ ftrace_regex_release+0x484/0x618
+ __fput+0x364/0xa58
+ ____fput+0x28/0x40
+ task_work_run+0x154/0x278
+ do_notify_resume+0x1f0/0x220
+ el0_svc+0xec/0xf0
+ el0t_64_sync_handler+0xa0/0xe8
+ el0t_64_sync+0x1ac/0x1b0
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250805    clang-20
-i386    buildonly-randconfig-002-20250805    gcc-12
-i386    buildonly-randconfig-003-20250805    gcc-12
-i386    buildonly-randconfig-004-20250805    gcc-12
-i386    buildonly-randconfig-005-20250805    gcc-12
-i386    buildonly-randconfig-006-20250805    gcc-12
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250805    gcc-12
-x86_64  buildonly-randconfig-002-20250805    gcc-12
-x86_64  buildonly-randconfig-003-20250805    clang-20
-x86_64  buildonly-randconfig-004-20250805    gcc-12
-x86_64  buildonly-randconfig-005-20250805    clang-20
-x86_64  buildonly-randconfig-006-20250805    gcc-12
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-20
+The reason is that trace_get_user will fail when processing a string
+longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer
+to 0. Then an oob access will be triggered in ftrace_regex_release->
+ftrace_process_regex->strsep->strpbrk. We can solve this problem by
+zero-initializing parser->buffer.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
+ kernel/trace/trace.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..97e66cbd3617 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1776,7 +1776,7 @@ int trace_parser_get_init(struct trace_parser *parser, int size)
+ {
+ 	memset(parser, 0, sizeof(*parser));
+ 
+-	parser->buffer = kmalloc(size, GFP_KERNEL);
++	parser->buffer = kzalloc(size, GFP_KERNEL);
+ 	if (!parser->buffer)
+ 		return 1;
+ 
+@@ -1860,13 +1860,10 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 
+ 	/* We either got finished input or we have to wait for another call. */
+ 	if (isspace(ch) || !ch) {
+-		parser->buffer[parser->idx] = 0;
+ 		parser->cont = false;
+ 	} else if (parser->idx < parser->size - 1) {
+ 		parser->cont = true;
+ 		parser->buffer[parser->idx++] = ch;
+-		/* Make sure the parsed string always terminates with '\0'. */
+-		parser->buffer[parser->idx] = 0;
+ 	} else {
+ 		return -EINVAL;
+ 	}
+-- 
+2.34.1
+
 
