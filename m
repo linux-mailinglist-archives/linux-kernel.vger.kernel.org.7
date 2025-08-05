@@ -1,204 +1,166 @@
-Return-Path: <linux-kernel+bounces-756215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF03B1B14D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:38:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A781BB1B150
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6BA189F434
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B3A171F51
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489BA267AF6;
-	Tue,  5 Aug 2025 09:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaqdWXeH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4969E26B0BE;
+	Tue,  5 Aug 2025 09:38:23 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47685191F92;
-	Tue,  5 Aug 2025 09:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E426562D;
+	Tue,  5 Aug 2025 09:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386700; cv=none; b=s6Nd7jQCm+XROs5yCpCHsjR4KEuBAS93WPkYUxiULR/GDKp/z8d9QU1yC2vLGHeBCW6ApO89Hjm8uxZ7b3voqnx3IkvWcVgTBqVQT4dKXv0Q/E7/OvAWfExj2Wy7wVecZAbG4W+DklBNJt4SgJ2wB0CQpC/3q1sGbBZfXISUeaU=
+	t=1754386702; cv=none; b=hFk/S3JL8X7/5Lectn+qTzCocM71bJdbD7S0LOANZcwS8Ipp6C4aYGwuleTmfsL56nrkMYJTZp6Ijg5fYJKxvivbMYm2s4kCTqdafw21RuTE/d5J1+Z7aBwjPsG7K691bzMR2cJckHyXfr2tz/sIRcol3DAcqD/asXheJIRDF6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386700; c=relaxed/simple;
-	bh=PtcIziWKmeZojE8NbukEIlxT+NCLvvfcRfGscENjViM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P83KCJ6DGd0veSH4gg3xDDVDsE9VQbxkof+8vOwIBuitl1glNCKYRe5xaIIakFnMjWeow8NOexqoMZrTJRvc6bFjR4h0UPu+zwwYKt2x11crgzunvA6HhDZnSWbqQBij/10iLECUpXGjv2GCNgGPbFifRPWbKGpZfLRzTv+rnE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaqdWXeH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B73A3C4CEF7;
-	Tue,  5 Aug 2025 09:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754386699;
-	bh=PtcIziWKmeZojE8NbukEIlxT+NCLvvfcRfGscENjViM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WaqdWXeHFq4oltQn9PTlA505X/oL+/hHqNtgIoY7zKJ2rAIIyFMHaM+0OG/yh2pw4
-	 a4OPg6vNpHqwYzZOYWH9z2eFj0o9qdjphfKwQATxpDET/tUKgH15v5CCmaccGtiziI
-	 K47HqBXpuuIazHWs7f7nOBdJzkPcC6o7Uz2XE0NjVLokbL/vEdh4tvhC3lSlpz6wIJ
-	 cRJvBI/3D77VRI3Nw6Ov+py/jFgFc5Ni8OH6Dnx4eGST8kP5vZjYp9Nb+FQNxwUhWq
-	 2m2r86L7YkwtCZGME114r4pdSCFeteEHhrAOdiqvbKwV054IIClCJwCyv020K+cNSI
-	 X5cmccT7jkP9Q==
-Date: Tue, 5 Aug 2025 12:37:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <aJHQ9XCLtibFjt93@kernel.org>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
- <aJCRXVP-ZFEPtl1Y@pc636>
+	s=arc-20240116; t=1754386702; c=relaxed/simple;
+	bh=CsHmQFsEgsts7bo3tK+ycQE+LE3QQd13m41IB/xx2Z0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hzUNA+uJelbeluai6rVB+NQ4lSCXWyC0NB2E8mT1DehlAsxbC1efPHihQG0A+WtH3sp20u/Q535bOH1j+d3ShqudiSZBwuaaNziVpuLhciXxieQDKWYrmvkUTHI6kLkJAT5sA3T8wlB+X2qfqfNjRFeVLFyZz13MfXKkcjh7+/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5397d436dccso1125909e0c.0;
+        Tue, 05 Aug 2025 02:38:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754386700; x=1754991500;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=79Sev+FddMWY4af3rPBzvmaRJ3mXxP5x7puvKCiTzUQ=;
+        b=X996XLjQPD1X5N824m0NtEN16bHBICHLyD8EXJYuJO7R9EONEtfLADwOvPKZtf9rSz
+         wGCf/OUizEvxxv1nb9K6bVoHVXy/S4/B+eBzj3THRJu8mhe5Nx698y80cFX3MCTptKrv
+         ezZAsIEfs1rzYXyOC9ANkWxpBjVdioDOnSczrziqV4aEyPAl1K4yseoJN8bnGsQJ/bS1
+         BS4nXeC71/UyNcJHxITaRd930hj1fg4oYok3qUOng5dKwzC+fIuHuVx9RcBZ9HSSBb/1
+         mFtLQ3BuvFbwo3GoxusnqQerPkA5eXegPGa3H7TXjlSoPIw4krL+6HhutMxJmo7Ea2qf
+         jDOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/zwnyGZzvtL+uwkFusY7VbrnesTIHQGr/R9ppd0eODx58xiwRGjXaYZCE+bdsDcCLdyXkw2pjKtOyVwY=@vger.kernel.org, AJvYcCVEoHcIVvT5XpT/4Qv/HrZq4Ac4UlXZC3RUY1eBiY44rHoJLghZi5c2HOl4nSrl0fV+qxmVU8Lt3rJvKQt8Jo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvf5UjrXuXuWxrOxKbe/LEalIT25QFi+kPjSJc30o7SB8med4F
+	/VPPmv2u95IasocqiZJqU9Svh9XGciBN2TapBfSFPWk777p8WHoZuGffbFuNrC+y
+X-Gm-Gg: ASbGncuOzyNgaSn+oheA7x6kjUqryLkOtXKwoyDXNyRdNOzLEW1z9YtQDtK5xkNHfbU
+	b+2YCE2af0beclY7oShG4FOi7LiQtBsYy/Kib0qhkDyCk/567tjZAfIXPqh3STr0ZszYIgwlM4N
+	L8T6kZ2eGYBOV3lFtzDQub85QcyQVTcpzCSiy0lrpUKeZXGvkjTCXPSvoi3bkWKz/9U0n8uoUc4
+	QNwgp/0AAl9yC0DCOjmRXwx6+9bNyUmfP8YVLNGt27q0tsXTOIJBuY2oonJ7K4ryGBNc75JoL4L
+	ExDAtNR7U7epUyqTH1f4gok8vNawzKaR8IG0OSHJ/6A40anZAON1oa7Fe4WFtLvoOPV3bPv3VHl
+	hLa2nuRG5ZoO3XfH92JyoDn1YBoSW9lJXN0GXE/HDWNq0ivD0+1Ru47aGMx1j0DISQ2cb5k0=
+X-Google-Smtp-Source: AGHT+IGiAVxrYzV3bNydyAN1Kl9RxUYBHIou5jDmgprU0itO7KReDwpiKl9LlCEDg3P/Qg1yw9qCXg==
+X-Received: by 2002:a05:6122:21a4:b0:539:4bf9:233a with SMTP id 71dfb90a1353d-5398f3794e2mr1324293e0c.5.1754386699656;
+        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d11640sm3359146e0c.24.2025.08.05.02.38.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-88ba6bb90d6so3586217241.0;
+        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJs5Gq0QfGqHl4RNmED/bAeFIU6m+HwtbDsfwyLSLEmKQCUQPbp0s8dj2x9HfYOrnwvibdMZNaWuyQAGt2gBw=@vger.kernel.org, AJvYcCWdVBzB53JZwGFHONCATGMwxKVlB1VFzHWgaSooTvLcD67Vgae7RMBaVBmFMAc7YuDrbjTU2Cb1iw6wie0=@vger.kernel.org
+X-Received: by 2002:a67:f5d9:0:b0:4df:e510:242e with SMTP id
+ ada2fe7eead31-501df5d3a6dmr1150909137.5.1754386698952; Tue, 05 Aug 2025
+ 02:38:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJCRXVP-ZFEPtl1Y@pc636>
+References: <20250805084114.4125333-1-chenmiao.ku@gmail.com>
+ <20250805084114.4125333-2-chenmiao.ku@gmail.com> <aJHLxmPk-5cPCnPA@antec>
+In-Reply-To: <aJHLxmPk-5cPCnPA@antec>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Aug 2025 11:38:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
+X-Gm-Features: Ac12FXzRUM01SIDhF_ZhDuCMxt8maDs6G-ynYu_G6MZjpQyqy23qtgVMsp7zn64
+Message-ID: <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] openrisc: Add text patching API support
+To: Stafford Horne <shorne@gmail.com>
+Cc: ChenMiao <chenmiao.ku@gmail.com>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Arnd Bergmann <arnd@arndb.de>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Sahil Siddiq <sahilcdq0@gmail.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:OPENRISC ARCHITECTURE" <linux-openrisc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 04, 2025 at 12:54:21PM +0200, Uladzislau Rezki wrote:
-> Hello, Lorenzo!
-> 
-> > So sorry Ulad, I meant to get back to you on this sooner!
-> > 
-> > On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
-> > > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
-> > > > Andrew - FYI there's nothing to worry about here, the type remains
-> > > > precisely the same, and I'll send a patch to fix this trivial issue so when
-> > > > later this type changes vmalloc will be uaffected.
-> > > >
-> > > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
-> > > > > [Adding Uladzislau to Cc]
-> > > >
-> > > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
-> > > > same name and (currently) type as vma->vm_flags and is already the source
-> > > > of confusion.
-> > > >
-> > > You mean all "vm_flags" variable names? "vm_struct" has flags as a
-> > > member. So you want:
-> > >
-> > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
-> > > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
-> > > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
-> > > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
-> > > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
-> > > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
-> > > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
-> > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
-> > > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
-> > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
-> > >
-> > > to rename all those "vm_flags" to something, for example, like "flags"?
-> > 
-> > Yeah, sorry I know it's a churny pain, but I think it's such a silly source
-> > of confusion _in general_, not only this series where I made a mistake (of
-> > course entirely my fault but certainly more understandable given the
-> > naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
-> > 
-> > Really I think we should rename 'vm_struct' too, but if that causes _too
-> > much_ churn fair enough.
+Hi Stafford,
 
-Well, it's not that terrible :)
+On Tue, 5 Aug 2025 at 11:15, Stafford Horne <shorne@gmail.com> wrote:
+> On Tue, Aug 05, 2025 at 08:40:57AM +0000, ChenMiao wrote:
+> > From: chenmiao <chenmiao.ku@gmail.com>
+> >
+> > We need a text patching mechanism to ensure that in the subsequent
+> > implementation of jump_label, the code can be modified to the correct
+> > location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
+> >
+> > And, I create a new file named insn-def.h to define the or1k insn macro
+> > size and more define in the future.
+> >
+> > Among these changes, we implement patch_map and support the
+> > patch_insn_write API for single instruction writing.
+> >
+> > Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
 
-~/git/linux$ git grep -w vm_struct | wc -l
-173
+> > --- /dev/null
+> > +++ b/arch/openrisc/include/asm/insn-def.h
 
-> > I think even though it's long-winded, 'vmalloc_flags' would be good, both
-> > in fields and local params as it makes things very very clear.
-> > 
-> > Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
+> > +/* or1k instructions are always 32 bits. */
+> > +#define      OPENRISC_INSN_SIZE              4
 
-Do we really need the _struct suffix?
-How about vmalloc_area?
+> > --- /dev/null
+> > +++ b/arch/openrisc/kernel/patching.c
 
-It also seems that struct vmap_area can be made private to mm/.
+> > +static int __patch_insn_write(void *addr, const void *insn)
+> > +{
+> > +     void *waddr = addr;
+> > +     unsigned long flags = 0;
+> > +     int ret;
+> > +
+> > +     raw_spin_lock_irqsave(&patch_lock, flags);
+> > +
+> > +     waddr = patch_map(addr, FIX_TEXT_POKE0);
+> > +
+> > +     ret = copy_to_kernel_nofault(waddr, insn, OPENRISC_INSN_SIZE);
+>
+> If you change *insn to unsigned long insn, you can do:
+>
+>         ret = copy_to_kernel_nofault(waddr, &insn, iszeof(insn));
 
-> Uh.. This could be a pain :) I will have a look and see what we can do.
-> 
-> Thanks!
-> 
-> --
-> Uladzislau Rezki
+sizeof(*insn)?
+
+>
+> > +     local_icache_range_inv((unsigned long)waddr,
+> > +                            (unsigned long)waddr + OPENRISC_INSN_SIZE);
+> > +
+> > +     patch_unmap(FIX_TEXT_POKE0);
+> > +
+> > +     raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +int patch_insn_write(void *addr, const void *insn)
+>
+> Does insn need to be void *?  It think it could be just unsigned long. See
+> comment above.
+
+u32?
+
+unsigned long would be 64-bit on 64-bit platforms.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Sincerely yours,
-Mike.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
