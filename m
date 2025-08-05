@@ -1,302 +1,109 @@
-Return-Path: <linux-kernel+bounces-756771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969CAB1B8FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1817CB1B901
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB755184CC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA88184EB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488F727EFFB;
-	Tue,  5 Aug 2025 17:08:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B61293C58
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6E1922F5;
+	Tue,  5 Aug 2025 17:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWxSUOaM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FEF33997;
+	Tue,  5 Aug 2025 17:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754413712; cv=none; b=Q2TOTOJTvr0o0aH1Jz29ErQVh/Op8ArQhyv5yhMyehny9eiY1KmDkEmElgaepvAwqQKAmN/CVzqMYVbZAYef2yhj151s5rNv6KxsZPiPBUEYCUyKdIRa3X6s83OHuTTkG/9/3N14mCzkkt62/IZFruloiiQvQvEOPiGSx9e4B2Q=
+	t=1754413755; cv=none; b=pNYDNf3TycVCAZyes+ERNdU0x6egAptdwRWBB+sZi/wUmMdqIBnLk1WykT0Advvf/NrXiHYF2Dyo0M0CGQ/IiF000SyG7A9ZG/X9XlSsz0LBrX5DlR7ApUgnGyAXAatROIrndfRlQE5hvZmVCam8CIQDwPl1EfgWu614ssBU9A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754413712; c=relaxed/simple;
-	bh=TH8Asgm8OLy2In9qXMOD3FCZczGJU6/93vyQj2VXtNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmFsSCyEC8UIgAlm3FpouW6qvGQukV9VHO2JLPN9WkscAJV1QAEeTP9dNJith6nfa1VBAI3kxRK+Gs2pHJ1AK1yU2t32dUACVZoR5q8NymMR8VPAB08IgrQGpHo9rlF1GuZLysGYHwewL1elYABeTrOwB704Hi0fF4Iu9++236E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68683150C;
-	Tue,  5 Aug 2025 10:08:22 -0700 (PDT)
-Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A71BF3F673;
-	Tue,  5 Aug 2025 10:08:27 -0700 (PDT)
-Message-ID: <742fe06b-81ab-4402-ae6a-19d6734507ae@arm.com>
-Date: Tue, 5 Aug 2025 18:08:27 +0100
+	s=arc-20240116; t=1754413755; c=relaxed/simple;
+	bh=BiXWWnlklOTycyVkMhtWw6eGx+VQGGndhKiYBydUrcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sG/Of9H28KlQPLgzNZMQRcJFCWPLXfsfRuPlp4nePxTYMBukjgdtHJCqPQdIYcgsSuKn7ZiONTk/Z5kS9DV6tZtgFwtlHKwhjM2joXxDoHBgDVP6lqv03LlnKgTqNzoHjSXh+wS9bsPY/CfwXPIhUPC+m6WA6ri2vnxU+iY30K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWxSUOaM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77E0C4CEF0;
+	Tue,  5 Aug 2025 17:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754413755;
+	bh=BiXWWnlklOTycyVkMhtWw6eGx+VQGGndhKiYBydUrcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FWxSUOaMI4WrFLONGNKEtwMQT0NzeqVS8BR4wL3BcVBDReRaNUnKjVL4r0hJpgdVK
+	 6+5JLYkpCL8aGyCYm1o/6HnJwMQ35AhLXbOYKMXXwVHEdTPgN62NawlvHwS78KkUzE
+	 eBk60GhBNGtHSzEZa82T7vNTJIvwJJFft6M+dngs/78OOghnUwlStrsWeJFB8LKE4a
+	 VZrOu3LohjYFgeSFuDO54LmA1OKxkc4/PEdDGMXbbN0vw8dbI7lgxI+v598s3V1zcR
+	 XcJoX+9arDIQ7MZwlihTGPxCbJerIq559rDEIUqm7vQH1rsTmLVYzkwJIUHB3SH+vZ
+	 kN+GQ3KdGXVLw==
+Date: Tue, 5 Aug 2025 18:09:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/5] dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and
+ RZ/N2H support
+Message-ID: <20250805-shifty-gloater-93e1744e38f2@spud>
+References: <20250805122529.2566580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250805122529.2566580-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 11/36] dt-bindings: arm: Add MPAM MSC binding
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Ben Horgan <ben.horgan@arm.com>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-12-james.morse@arm.com>
- <20250711214314.GA1376683-robh@kernel.org>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250711214314.GA1376683-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Rob,
-
-On 11/07/2025 22:43, Rob Herring wrote:
-> On Fri, Jul 11, 2025 at 06:36:23PM +0000, James Morse wrote:
->> From: Rob Herring <robh@kernel.org>
->>
->> The binding is designed around the assumption that an MSC will be a
->> sub-block of something else such as a memory controller, cache controller,
->> or IOMMU. However, it's certainly possible a design does not have that
->> association or has a mixture of both, so the binding illustrates how we can
->> support that with RIS child nodes.
->>
->> A key part of MPAM is we need to know about all of the MSCs in the system
->> before it can be enabled. This drives the need for the genericish
->> 'arm,mpam-msc' compatible. Though we can't assume an MSC is accessible
->> until a h/w specific driver potentially enables the h/w.
-
-> Is there any DT based h/w using this? I'm not aware of any.
-
-I'm told there is. I'll let them come out of the wood work to confirm it ...
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dbbV6R/wGD9GE9Gw"
+Content-Disposition: inline
+In-Reply-To: <20250805122529.2566580-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
-> I would 
-> prefer not merging this until there is. I have little insight whether 
-> these genericish compatibles will be sufficient, but I have lots of 
-> experience to say they won't be. I would also suspect that if anyone has 
-> started using this, they've just extended/modified it however they 
-> wanted and no feedback got to me.
+--dbbV6R/wGD9GE9Gw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure, what are you looking for here, Reviewed-by tags from someone with a hardware
-platform that is going to ship with DT?
+On Tue, Aug 05, 2025 at 01:25:25PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Document the USB2 PHY controller for the Renesas RZ/T2H (r9a09g077) and
+> RZ/N2H (r9a09g087) SoCs. These SoCs share the same PHY block, which is
+> similar to the one on RZ/G2L but differs in clocks, resets, and register
+> bits. To account for these differences, a new compatible string
+> `renesas,usb2-phy-r9a09g077` is introduced.
+>=20
+> The RZ/N2H SoC uses the same PHY as RZ/T2H, so it reuses the RZ/T2H
+> compatible string as a fallback.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
->> diff --git a/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
->> new file mode 100644
->> index 000000000000..9d542ecb1a7d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
->> @@ -0,0 +1,227 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/arm/arm,mpam-msc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Arm Memory System Resource Partitioning and Monitoring (MPAM)
->> +
->> +description: |
->> +  The Arm MPAM specification can be found here:
->> +
->> +  https://developer.arm.com/documentation/ddi0598/latest
->> +
->> +maintainers:
->> +  - Rob Herring <robh@kernel.org>
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: arm,mpam-msc                   # Further details are discoverable
->> +      - const: arm,mpam-memory-controller-msc
->> +
->> +  reg:
->> +    maxItems: 1
->> +    description: A memory region containing registers as defined in the MPAM
->> +      specification.
->> +
->> +  interrupts:
->> +    minItems: 1
->> +    items:
->> +      - description: error (optional)
->> +      - description: overflow (optional, only for monitoring)
->> +
->> +  interrupt-names:
->> +    oneOf:
->> +      - items:
->> +          - enum: [ error, overflow ]
->> +      - items:
->> +          - const: error
->> +          - const: overflow
->> +
->> +  arm,not-ready-us:
->> +    description: The maximum time in microseconds for monitoring data to be
->> +      accurate after a settings change. For more information, see the
->> +      Not-Ready (NRDY) bit description in the MPAM specification.
->> +
->> +  numa-node-id: true # see NUMA binding
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 0
->> +
->> +patternProperties:
->> +  '^ris@[0-9a-f]$':
->> +    type: object
->> +    additionalProperties: false
->> +    description: |
-> 
-> '|' can be dropped.
-> 
->> +      RIS nodes for each RIS in an MSC. These nodes are required for each RIS
->> +      implementing known MPAM controls
->> +
->> +    properties:
->> +      compatible:
->> +        enum:
->> +            # Bulk storage for cache
->> +          - arm,mpam-cache
->> +            # Memory bandwidth
->> +          - arm,mpam-memory
->> +
->> +      reg:
->> +        minimum: 0
->> +        maximum: 0xf
->> +
->> +      cpus:
->> +        $ref: '/schemas/types.yaml#/definitions/phandle-array'
+--dbbV6R/wGD9GE9Gw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Don't need the type. It's in the core schemas now.
+-----BEGIN PGP SIGNATURE-----
 
-(I assume the type is that '$ref' line)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJI6tQAKCRB4tDGHoIJi
+0jROAPwML1c7LBdAHQaSCXLP4E/8cuHNy+Y0seBfZv4YTOcT7QD/WeKUs0MZOJ/E
+aZMA7QNoYpQg5FGyerNNwIBJMVg5ngg=
+=X1nL
+-----END PGP SIGNATURE-----
 
-
->> +        description:
->> +          Phandle(s) to the CPU node(s) this RIS belongs to. By default, the parent
->> +          device's affinity is used.
->> +
->> +      arm,mpam-device:
->> +        $ref: '/schemas/types.yaml#/definitions/phandle'
-> 
-> Don't need quotes. This should be a warning, but no testing happened 
-> because the DT list and maintainers weren't CCed.
-
-Yup, its an RFC - I only CC'd the folk that have previously expressed an interest for the
-first pass. (git send-email put you on CC!)
-
-
->> +        description:
->> +          By default, the MPAM enabled device associated with a RIS is the MSC's
->> +          parent node. It is possible for each RIS to be associated with different
->> +          devices in which case 'arm,mpam-device' should be used.
->> +
->> +    required:
->> +      - compatible
->> +      - reg
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +dependencies:
->> +  interrupts: [ interrupt-names ]
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    /*
->> +    cpus {
->> +        cpu@0 {
->> +            next-level-cache = <&L2_0>;
->> +        };
->> +        cpu@100 {
->> +            next-level-cache = <&L2_1>;
->> +        };
->> +    };
->> +    */
->> +    L2_0: cache-controller-0 {
->> +        compatible = "cache";
->> +        cache-level = <2>;
->> +        cache-unified;
->> +        next-level-cache = <&L3>;
->> +
->> +    };
->> +
->> +    L2_1: cache-controller-1 {
->> +        compatible = "cache";
->> +        cache-level = <2>;
->> +        cache-unified;
->> +        next-level-cache = <&L3>;
->> +
->> +    };
-> 
-> All the above should be dropped. Not part of this binding.
-> 
->> +
->> +    L3: cache-controller@30000000 {
->> +        compatible = "arm,dsu-l3-cache", "cache";
-> 
-> Pretty sure this is a warning because that compatible doesn't exist.
-
-Not sure what to do with this. I see plenty of DT in the tree with 'cache', and you've got
-'foo,a-memory-controller' below ...
-
-
->> +        cache-level = <3>;
->> +        cache-unified;
->> +
->> +        ranges = <0x0 0x30000000 0x800000>;
->> +        #address-cells = <1>;
->> +        #size-cells = <1>;
->> +
->> +        msc@10000 {
->> +            compatible = "arm,mpam-msc";
->> +
->> +            /* CPU affinity implied by parent cache node's  */
->> +            reg = <0x10000 0x2000>;
->> +            interrupts = <1>, <2>;
->> +            interrupt-names = "error", "overflow";
->> +            arm,not-ready-us = <1>;
->> +        };
->> +    };
->> +
->> +    mem: memory-controller@20000 {
->> +        compatible = "foo,a-memory-controller";
->> +        reg = <0x20000 0x1000>;
->> +
->> +        #address-cells = <1>;
->> +        #size-cells = <1>;
->> +        ranges;
->> +
->> +        msc@21000 {
->> +            compatible = "arm,mpam-memory-controller-msc", "arm,mpam-msc";
->> +            reg = <0x21000 0x1000>;
->> +            interrupts = <3>;
->> +            interrupt-names = "error";
->> +            arm,not-ready-us = <1>;
->> +            numa-node-id = <1>;
->> +        };
->> +    };
-
-
-James
+--dbbV6R/wGD9GE9Gw--
 
