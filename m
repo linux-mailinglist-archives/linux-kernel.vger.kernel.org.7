@@ -1,180 +1,164 @@
-Return-Path: <linux-kernel+bounces-756559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB32BB1B5D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AC0B1B5ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE8794E2789
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2851626805
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2B927FD51;
-	Tue,  5 Aug 2025 14:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20FA274B22;
+	Tue,  5 Aug 2025 14:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jAIMma6C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="timMHIc8"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D23C27F177
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5951C84CB;
+	Tue,  5 Aug 2025 14:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402721; cv=none; b=WIGT3SeyjjcFtb3RGegE9V8OW7eC46PrbX+HlTED3FxFGgY0HnwQB66JtL+KbgnqbNPNKtMq9S+B2kQf3ORJpB3UJ81gJquCY+pvdfDGK1sfOG2mws7jciae8TdlWskg843phnX24aS2yap3Z7wSfNuDLL0hCrGwkF5klVNrbWk=
+	t=1754402771; cv=none; b=AUqoRRuszdD9Sk/10DdIaJf8Trh/N4yzp03Mfe82ugXmrdHQ489JxU3rEkxII0L48W/RKAcM67GSmtdr/B9xTUdNi74uDiRJye6roH9ag5lQv1LkUQz94ZOAF8bn5K/N9ZlMqUXtSa4FcQwEi4Y5Yg7FXRrv6tISXTARsdx/BV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402721; c=relaxed/simple;
-	bh=8J5cuWTNGNmnCmEFZreVGaQl+BFghG3/wBWhuX49l00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AkirU9oBIjFa+sXXGYLtEVasGEfvMEJkni+VhUY/liy8VNbGRkOXDm8AEbOaiY+s7Ki3XZnUrc7SnkuIqwrSxLmVWMtz7wnZLq6dYxJMr8vaS4igr8ym989lK8CfNsyzqaThnBbtvc6NzzoHZW1jenl4DimqvA3b6YmDIdpeJss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jAIMma6C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5756SfkV005890
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 14:05:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=y8GWTLsDapJ06m9sj6GKQ34d
-	0P33lgkh1NvaX1OZEs4=; b=jAIMma6CYw3JK3nfFf0Da2hkIb7nPW1Jh4bDgmtD
-	5iw1pkAPLrNmwsi+f6MHzF+yZXpcqvNA+nivsWmTgTGBYZsyFEGHnZ6Z0C5WgLKo
-	+UrsaTVsR3Hc2lBXoCXlKiULAlsfBm+nhYZSLvLhM1MECxBSCQIzQYtwqEhwEkkm
-	SUHpQ9vVYlxAcPlFzel/7M8ThaizvIwdTPXXqqsufHLPnMeTT1EilxP+W6ZJKsHc
-	C5z7N2AdRpr1WurFIipApsqpmD7uelP8DxdCKqXMZ8N9XgDUpIs4ptV4JDZ+vh3u
-	eD4BQr9Qvh4D+WvpvJMBklk1m668AibdG7HQg3pQ7LjOIA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489bek8pjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 14:05:18 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32129c65bf8so2936674a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:05:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754402716; x=1755007516;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y8GWTLsDapJ06m9sj6GKQ34d0P33lgkh1NvaX1OZEs4=;
-        b=bct59r+wmt+8SZukqL+vR9cfTpd3hR4sBETn9kiPM0/R/E5zOjz86cHGuNMa9Dn51K
-         W5qWZ3raegGrdOFcGim9i1njE6ZVSoP7r4aIGKadBBYHes02PRero1u/T/JNDnZZ4RMr
-         oGEyvSRLGYa7J45o2R+8dAfQ8P5xf9Z/WuQeCMkurBcXR5Yv0X1Xt8t2UzAPuhQqw/mO
-         IwiOlKqH5s1/YqzYkx1ZntpWAlUmmM2+135QR7RMohEcLBPh5WaTyOsJAcE6Zm6kAXDO
-         5iOfvowmbrSIFfiW3pnHm6KGNJs1SD5noJJj9fP/3+9Gn7wktoF1EiOIZGBGU1Lh92Hf
-         qtdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2reXrqiDUnDz9KzWKm7HlBf+FBpswrU8j6dyrZzRxDIvxczOOt/vId7pzjOcdnvmRKXvEgV+DD/b/Kc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH4eCwdb5GLALnqUrqtqBD83z+4fOT1WfE9nCDnpcAqwhG0EGD
-	c3nerxR4hiOCeoMFbkK9IRK9wFFvnWgmotESp/A8S8kEEH/kSDYrJ4GVkQ+S0iXxJYiZJ6wXqkO
-	4/n73mEoI/xb8uOLTixy9Qr7Eq/AEhwYC+Z7u0whG+R8oT6re/XY9jxiQtlJTwiGBQ4E=
-X-Gm-Gg: ASbGncuM4i9k6fAlHe6L5ciagw7MplLI1oxOJeP9Rrcsl9tkv7ZqAaUdF5HrZ/duBOF
-	Xmzq8cHJy34Ry1jYgrXOIikU3TcXBj1oXldaC6U7u/FCHWgwk5GED8gkhxsdwLbwlDgMASaSEjX
-	BmrSPZ9VPnphSgRYyNkv+hkkNaKlzq0iLmN+wbPsWqKx9RoBLkxkjeK/FLJEld/D4ywyKZzFvBS
-	KBj1wF8jLXv0on+uXeflMsDj1KIKqrYzkzT0Zc3L7dYcIdA0cAEJhs0AP0ozhjj8Igi9/uDHYbc
-	niN3zxpsE3tG9dH8ODf97OEhIGGlgdhZEWMQTdYkpKA5z3LOM0FWXfwncMCz/veMuR8=
-X-Received: by 2002:a17:90b:3e8a:b0:321:3715:993 with SMTP id 98e67ed59e1d1-32137150ad5mr11688571a91.14.1754402715854;
-        Tue, 05 Aug 2025 07:05:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjmfwajEFNC0n/4JWnoR261FA5nFMX6Yqgmg9OjOOyA6BAlGJkbJzfB308KbNyUV9w099bVQ==
-X-Received: by 2002:a17:90b:3e8a:b0:321:3715:993 with SMTP id 98e67ed59e1d1-32137150ad5mr11688449a91.14.1754402714757;
-        Tue, 05 Aug 2025 07:05:14 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321611d846esm369077a91.8.2025.08.05.07.05.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 07:05:13 -0700 (PDT)
-Date: Tue, 5 Aug 2025 19:35:06 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Remove pas id parameter
-Message-ID: <20250805140506.b6d2x5berkss3it3@hu-mojha-hyd.qualcomm.com>
-Mail-Followup-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
- <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
- <658d7d55-fd5e-42cb-bc5d-abcc0b47a168@oss.qualcomm.com>
+	s=arc-20240116; t=1754402771; c=relaxed/simple;
+	bh=MNG+a38PQofKHypXt1CPqMvHNjsLHe2AAEsrZBTBd84=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=FcAnrw8Jk2By0h224IQ2pqCNs0Akh2sE2jV1DYrVOoH9AafibpNJzVh5V44ylzDT4ZQqnpoc6lKVTncSfselahw5TQGWvIfmSYjxUBOPcToSt9L/xvcR0H9b+PF0BoFCofMoiK2DZizIKoF8zMKUzaRAfXkZmkSXQ/UJ6RjlGIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=timMHIc8; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 575E5wPf4055648;
+	Tue, 5 Aug 2025 09:05:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754402758;
+	bh=5pqwMScuPTwzx0lyuc5MF37k0uqjqh5/S7oN85LSRqI=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=timMHIc8NKwRvpd+gXcAFdjLUIPylpbG6DYc1V3fi+tmzewXaCGClsKpRHs2v0Tef
+	 Fw+UetwtQBW5POwb2L+5/jjdA6rvCpfL+vssv0gn5GPdB4umxQTfxZSyWNRhLNJvpI
+	 YdEpgnZzBvzEdqIuZhxkAdAWKU3+B+S4r1+rIqsY=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 575E5wjF3496847
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 5 Aug 2025 09:05:58 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
+ Aug 2025 09:05:57 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 5 Aug 2025 09:05:57 -0500
+Received: from [10.249.34.164] ([10.249.34.164])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 575E5uk02223144;
+	Tue, 5 Aug 2025 09:05:56 -0500
+Message-ID: <f28d866d-3123-4484-9524-054442fa3cec@ti.com>
+Date: Tue, 5 Aug 2025 09:05:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <658d7d55-fd5e-42cb-bc5d-abcc0b47a168@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=M7tNKzws c=1 sm=1 tr=0 ts=68920f9e cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=9ZXyijcKk7BvzWFVFWYA:9
- a=CjuIK1q_8ugA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEwMyBTYWx0ZWRfXwCNpJPY1+orb
- n6k44krgpspjjRIEHAFM6XC+XdpWxD6k8Rl+ar43ArwPl9arksDCeOeAy0f+6KfsPyTWpdulQGG
- 8UVClxa5EoZ1/0Ibj5zbaGFUitC09zwUyKoEEeRp/EDwdvQnNENVqrRgDlTbdFkMsjVFTt5Km+q
- Ovtikmv7DMiHdRYdNIo8c1j9fOEwuSnKq38ZiWEnn7ErCiFK6PVtvIXHZhZFQbVErg7BkQnlv0t
- Iocg0sAh8b+wDN9ZTBrkX4N1W1eHKfffkciNlA0DF6cx41MBlpTZGHKahNq/lpvcRpY72juuQ7V
- lxUgrrtyc1bIqh+K4ZC1ezq21A/fPHh4ynJXG2m9t3tSPmg0CNccqC098bfrivjq5MaYdXIW4sz
- ImSeKHJhQs9Lo6BZne35a6pF9OxmjUxMOxm2K81IBdxKQ2iAxG5eEOYCJ3+Ni0KlQ0CV1bGs
-X-Proofpoint-ORIG-GUID: SJ9hZnm5TgR85E-AHnbXwMI02eirML71
-X-Proofpoint-GUID: SJ9hZnm5TgR85E-AHnbXwMI02eirML71
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 mlxlogscore=911 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 phishscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j722s-main: Add E5010 JPEG Encoder
+From: Brandon Brnich <b-brnich@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        Devarsh
+ Thakkar <devarsht@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Darren Etheridge
+	<detheridge@ti.com>
+References: <20250804180106.2393256-1-b-brnich@ti.com>
+ <b5ba5a22-dc0a-423b-963f-5db6c7e04665@kernel.org>
+ <b52fd6d4-b907-44dd-bd9b-e15c3321ad79@ti.com>
+Content-Language: en-US
+In-Reply-To: <b52fd6d4-b907-44dd-bd9b-e15c3321ad79@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Aug 04, 2025 at 07:17:02AM -0700, Jeff Johnson wrote:
-> On 8/4/2025 5:41 AM, Mukesh Ojha wrote:
-> > pas id is not used in qcom_mdt_load_no_init() and it should not
-> > be used as it is non-PAS specific function and has no relation
-> > to PAS specific mechanism.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> >  drivers/media/platform/qcom/venus/firmware.c |  4 ++--
-> >  drivers/net/wireless/ath/ath12k/ahb.c        |  2 +-
-> >  drivers/remoteproc/qcom_q6v5_adsp.c          |  2 +-
-> >  drivers/remoteproc/qcom_q6v5_pas.c           |  7 +++----
-> >  drivers/remoteproc/qcom_q6v5_wcss.c          |  2 +-
-> >  drivers/soc/qcom/mdt_loader.c                | 14 ++++++--------
-> >  include/linux/soc/qcom/mdt_loader.h          |  7 +++----
-> >  7 files changed, 17 insertions(+), 21 deletions(-)
+Hello,
+
+On 8/5/2025 8:34 AM, Brandon Brnich wrote:
+> Hi Krzysztof,
 > 
-> Since this patch touches files which go through different maintainers, do you
-> have a plan on how this will be merged?
+> Thanks for the review.
+> 
+> On 8/5/2025 1:02 AM, Krzysztof Kozlowski wrote:
+>> On 04/08/2025 20:01, Brandon Brnich wrote:
+>>> This adds node for E5010 JPEG Encoder which is a stateful JPEG Encoder
+>>> present in J722s SoC, supporting baseline encoding of semiplanar based
+>>> YUV420 and YUV422 raw video formats to JPEG encoding, with resolutions
+>>> supported from 64x64 to 8kx8k.
+>>>
+>>> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+>>> ---
+>>>
+>>> Changes in v2:
+>>>    - remove invalid clock-names attribute
+>>>
+>>>   arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 10 ++++++++++
+>>>   1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/ 
+>>> boot/dts/ti/k3-j722s-main.dtsi
+>>> index 5cfa7bf36641..fb24c14614b4 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+>>> @@ -385,6 +385,16 @@ c7x_1: dsp@7e200000 {
+>>>           ti,sci-proc-ids = <0x31 0xff>;
+>>>           status = "disabled";
+>>>       };
+>>> +
+>>> +    e5010: e5010@fd20000 {
+>>
+>> Node names should be generic. See also an explanation and list of
+>> examples (not exhaustive) in DT specification:
+>> https://devicetree-specification.readthedocs.io/en/latest/chapter2- 
+>> devicetree-basics.html#generic-names-recommendation
+> 
+> I got this name from the already present node in the am62a device 
+> tree[0]. Should I replace both of these with more generic name such as 
+> jpegenc?
 
-I am hoping,  Bjorn should be ok to take this into his tree ?
+Please ignore above comment, I was thinking about the label and not the 
+node name. I understand node name needs to be jpeg-encoder.
+
+Should label also be more generic? I see a few examples where the label 
+is jpegenc or something more generic than the specific part name. But I 
+don't see any specific rules in the devicetree specs on labels.
+
 
 > 
-> I can ack the drivers/net/wireless/ath change once I know how it will be handled.
-
-Going to send v2, please ack it, once we have confirmation on the above
-question.
-
--Mukesh
-
+>>
+>>
+>>> +        compatible = "img,e5010-jpeg-enc";
+>>
+>> Wrong compatible. This is TI, not IMG.
 > 
-> /jeff
+> Devarsh has pointed out the same, I will update compatible that matches 
+> TI version in v3.
+> 
+> Best,
+> Brandon
+> 
+> [0]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/ 
+> tree/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi#n1149
+> 
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+
 
