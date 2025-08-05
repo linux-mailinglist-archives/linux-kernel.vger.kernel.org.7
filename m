@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-755992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58C7B1AE71
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924E3B1AE78
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEED216DF8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:36:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45646189F498
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5E121C19E;
-	Tue,  5 Aug 2025 06:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD67B21C19E;
+	Tue,  5 Aug 2025 06:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOetwG6w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqmA5t7m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2441B1EFF96;
-	Tue,  5 Aug 2025 06:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281FA2192F2;
+	Tue,  5 Aug 2025 06:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754375761; cv=none; b=O0FDRK5iLmgxabfgz67XDgEKv/q1vmWQw3Ihe6BEs9O1F622o4AOYK/ea2no/+mFeKULjFXodpGQETPjYuznXX6h0mmdUK38WlmKZ+7BPpIrfI7IZDVpGbaA7m7Y/YvUv9u5CmO8Juzs3ral7x1XFQQ/6ntiFAnqpZcHykUC0mM=
+	t=1754375902; cv=none; b=ZqpKjmiHkf+ctZdVyoRNRS/Nprc1+FOOkJ+86xtFNbw9XCcbAvD+CQDnbP8pTElX36PE4EVfEKt0S3jj4vG7Pk25GqhPO8BOFz961Xt76ysqE+7k6rzfiYWatT13KgiyL2pHQdTea6iYQhk32s78qS1p+JgK8nJOC4PAIPEuhH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754375761; c=relaxed/simple;
-	bh=sIHPITH9zG/L0PbzCUmZDWaszbXx38hkA/bHt1tkCsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fKo2Q3SkqQQVFmEd7JuPAzOq0iv0O/bNfnxNLuSiaE1Jl3XuvOSUPjgnBvTMVU4C7oOwCJXdTFQRcWXJHyRaOGE9UixasiUq7OsYNYi4TQCGCGgJtsWyZq7w99Paq6WkvfBFgQXkMeMLAWlN9wY0PA+hzMWdOmet1PE3YQ7dTXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOetwG6w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB18C4CEF4;
-	Tue,  5 Aug 2025 06:35:59 +0000 (UTC)
+	s=arc-20240116; t=1754375902; c=relaxed/simple;
+	bh=8d7lQ+bhoPsmFsa1MIngmQ0m5Nr+uRObrl36ZfQiDrI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RB7AItPuFR53Kl8uG9k00zPfql90ciOx94uOwBw3FylwQjppzYEFsUOPJfl4sg9N4Klpu7jJ4bUfx9Ly7es1RCyAWjxiERCkuGCc3CUNi4HaAmrQpZTwwHdrb4+a6oohPI8ICP56GLsOs9V9M26YH5zJJ1g6z28XckppMDKNoIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqmA5t7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA29C4CEF4;
+	Tue,  5 Aug 2025 06:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754375760;
-	bh=sIHPITH9zG/L0PbzCUmZDWaszbXx38hkA/bHt1tkCsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vOetwG6wjPaFORrkROIrDOatq5ormVU2vdtjv/cTfRt7ABu2cGpYaG7vuXplt88PO
-	 eKnp/n+o346f6/YG8oB0r+bYIfWKNkbsnmX+moad9d9FBnPPpmHy/EUXFx4NgLHNtx
-	 ucu3PxmCL14qKSC1XJlI9SENNJMRxUivtYlWFKW+ongQ7WgRYC9uAtSV41x2PE8zHP
-	 m/Lz5HNXUpJPaTn7ZgTHnrUFAF8qwvfwH4HGRn7Vrm+Z+7NUxXbpxVBjhaL/zzqzdc
-	 IQfC4RvRWmK8w2Hq2+tZKGZ9PNcDLQCQ/t08gO4s/GcwGBq4BWIthFB+6lAEzlJ+jY
-	 BGGAuyxnJFixg==
-Date: Tue, 5 Aug 2025 08:35:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, devicetree@vger.kernel.org, l.stach@pengutronix.de, 
-	shengjiu.wang@gmail.com, perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: display: imx: add HDMI PAI for
- i.MX8MP
-Message-ID: <20250805-realistic-hawk-of-merriment-f84ef2@kuoka>
-References: <20250804104722.601440-1-shengjiu.wang@nxp.com>
- <20250804104722.601440-2-shengjiu.wang@nxp.com>
+	s=k20201202; t=1754375900;
+	bh=8d7lQ+bhoPsmFsa1MIngmQ0m5Nr+uRObrl36ZfQiDrI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LqmA5t7mJbOw85Yc5AKoUnfbM5kB2zW3Ed2Qi5Psb7G4aeX8SuzJW1be/pAN4RG8+
+	 R9syhpjBP0LAXUBohfI86R8S5mP1ZDmITx9UMwZi+cdRyWVjPBvQVJOeub5DEn6eQW
+	 0YSX+1Qbe7U6jYCDnAVPYTDnuVa2V8mc9Nl98uxf6wwSHZy8I6qKSD7YKc6llR/Q9l
+	 juw7TU6MfEM/WQHcJYpGi0DRoWO86YteUog6USFInEhnICNAcMhF6M0MiqATtRspUf
+	 mCe+xAJ9DpcEgoNi3JtueEI9bLgBqiNjqFokbtZjnx/5NQEHd6uNZRC3HVF/PTR9Rn
+	 AnIPea5OI7Jgg==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Pu Lehui <pulehui@huaweicloud.com>, bpf@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Pu Lehui
+ <pulehui@huawei.com>
+Subject: Re: [PATCH bpf-next 00/10] Add support arena atomics for RV64
+In-Reply-To: <20250719091730.2660197-1-pulehui@huaweicloud.com>
+References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
+Date: Tue, 05 Aug 2025 08:38:17 +0200
+Message-ID: <87v7n21deu.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,31 +64,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250804104722.601440-2-shengjiu.wang@nxp.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 06:47:17PM +0800, Shengjiu Wang wrote:
-> Add binding for the i.MX8MP HDMI parallel Audio interface block.
-> 
-> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
-> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
-> This IP block is found in the HDMI subsystem of the i.MX8MP SoC.
-> 
-> Aud2htx module in Audio Subsystem, HDMI PAI module and HDMI TX
-> Controller compose the HDMI audio pipeline.
-> 
-> In fsl,imx8mp-hdmi-tx.yaml, add port@2 that is linked to pai_to_hdmi_tx.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 12 ++++
->  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 69 +++++++++++++++++++
->  2 files changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
+Pu Lehui <pulehui@huaweicloud.com> writes:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> From: Pu Lehui <pulehui@huawei.com>
+>
+> patch 1-3 refactor redundant load and store operations.
+> patch 4-7 add Zacas instructions for cmpxchg.
+> patch 8 optimizes exception table handling.
+> patch 9-10 add support arena atomics for RV64.
+>
+> Tests `test_progs -t atomic,arena` have passed as shown bellow,
+> as well as `test_verifier` and `test_bpf.ko` have passed.
 
-Best regards,
-Krzysztof
+[...]
 
+> Pu Lehui (10):
+>   riscv, bpf: Extract emit_stx() helper
+>   riscv, bpf: Extract emit_st() helper
+>   riscv, bpf: Extract emit_ldx() helper
+>   riscv: Separate toolchain support dependency from RISCV_ISA_ZACAS
+>   riscv, bpf: Add rv_ext_enabled macro for runtime detection extentsion
+>   riscv, bpf: Add Zacas instructions
+>   riscv, bpf: Optimize cmpxchg insn with Zacas support
+>   riscv, bpf: Add ex_insn_off and ex_jmp_off for exception table
+>     handling
+>   riscv, bpf: Add support arena atomics for RV64
+>   selftests/bpf: Enable arena atomics tests for RV64
+>
+>  arch/riscv/Kconfig                            |   1 -
+>  arch/riscv/include/asm/cmpxchg.h              |   6 +-
+>  arch/riscv/kernel/setup.c                     |   1 +
+>  arch/riscv/net/bpf_jit.h                      |  70 ++-
+>  arch/riscv/net/bpf_jit_comp64.c               | 516 +++++-------------
+>  .../selftests/bpf/progs/arena_atomics.c       |   9 +-
+>  6 files changed, 214 insertions(+), 389 deletions(-)
+
+What a nice series! The best kind of changeset -- new feature, less
+code! Thank you, Lehui! Again, apologies for the horrible SLA. The
+weather in Sweden was simply Too Good this summer!
+
+Tested-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com> # QEMU only
+Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org>
 
