@@ -1,159 +1,244 @@
-Return-Path: <linux-kernel+bounces-756356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE485B1B308
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDF6B1B30E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D077A4D82
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBCB93BCE0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F10C26CE0E;
-	Tue,  5 Aug 2025 12:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD4D270569;
+	Tue,  5 Aug 2025 12:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a8q1esYT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ab8b0Ynt"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C037123F413;
-	Tue,  5 Aug 2025 12:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E324426C3A0;
+	Tue,  5 Aug 2025 12:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395522; cv=none; b=OIfnoJ438iyR+rJnAvL9SDrmX8W7IZrxCaC+midhabYm5LUZOMbq5RNVFnsbUxVTsYJWddZ/3ipgdFdZaf5DdcIt0rCg0ty7NKjRvBIgg05BnO8zadTWK3dTrPt7wVcBvD3v8/Q6LW1IQM1RZk/LTJGIcxXG7+nbjWjK+JjSJII=
+	t=1754395680; cv=none; b=YEfQ0zKbyf/DViTqwjd+LZJAyvk0nZ4qrqyrql/a7E0C+E4GHZhqI/kKJGW/AG1SQhsmwImg1m8BRzWS8SMc+t58OrgrKAOb6YpOytcEzFtcN2kEjagDU1Vd51SCg9p1kRGeiOY8bsR5qS/LlXwr84mpQX6lztvNgjhoZCAGagM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395522; c=relaxed/simple;
-	bh=u8ZXPWzbXElhYtM4KU8eWaIl56pJiSBCxWJL9BLCWwY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bh2rCxvkD2QVLhUn5r2mNe6+H0QCdrBFT72e7QfNc6nkwWmmE88D630IcCslcvOWU1DWkR2GUIoKCm6TlkHmVUaxEmIA3FGnbWj95YPnZMvQqVb9ONOFx2e8jSlui/kd6X+strBKnA6IVD/S03ZfON3eBBKH1WdEzVhII+tCVXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a8q1esYT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754395517;
-	bh=u8ZXPWzbXElhYtM4KU8eWaIl56pJiSBCxWJL9BLCWwY=;
-	h=Subject:From:To:Date:In-Reply-To:References:From;
-	b=a8q1esYTS25g40DMBzzkxyY9LU18Ik6v/VARhCxypbcw/2EC0mncWQuoGji3o8lKS
-	 5R3I+a2C58B+FXNKe6nyDvGuzXJHP0g7nMHbrzpeXhsBH+RXjj+WS67AwVUGEbBLXr
-	 XOi4eyRYeZqUTYLvqXfalCE/gEy3LyNV1hTxn4O7gauUsY3FjWvHKe8rN9m7YyxuxM
-	 2zF//nSCYfDPv2ACwQhwkHgvjrcp+ZLjLvcs6xHIlcxaocN6fkkWXmEJoYrvcBVfkq
-	 mY3kx1zzBWQGv5euDZhRCi4TxeyQwKCo3/GShaQeOP8d6ngaJj4h3XBUJvvNcHkqIZ
-	 sRaMEnjBlqogw==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C8CC617E04EE;
-	Tue,  5 Aug 2025 14:05:16 +0200 (CEST)
-Message-ID: <800b190c9f1c213c81d0d1dbf09015892edab29e.camel@collabora.com>
-Subject: Re: [PATCH] media: rkvdec: Fix incorrect NULL check for
- iommu_paging_domain_alloc
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Miaoqian Lin <linmq006@gmail.com>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
- <hverkuil@kernel.org>, 	linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, 	linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 05 Aug 2025 08:05:14 -0400
-In-Reply-To: <20250805061833.3670085-1-linmq006@gmail.com>
-References: <20250805061833.3670085-1-linmq006@gmail.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-GUyJd8Bie7c9ushUvXKa"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754395680; c=relaxed/simple;
+	bh=9jbRXTWg5drDGKZmm9+jxArkAVNt8hHd6dX/RQglKX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FH9hhkAcLEEWIwdW2DI8pHXvF91hkG/Q9dEARHRplskDDkcnVo6O/MneF5c3/Ehbn/dJTb5It4b2dUmnGj5XxcAVbk7ordfjO66SifnSZSMBGr9c6wHigZXyIBCiWw/DrqAYh+bS4gizJK4mfyS6mrUOwyciFkhOX1VwEuxnExI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ab8b0Ynt; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758wBMq025323;
+	Tue, 5 Aug 2025 12:07:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dmBbf3
+	vsbAhxRKAWpIUpnCOU2+QWNz069W2N+Af6Ybc=; b=Ab8b0YntlZLZOZXC2PHEtf
+	1ysW3ggWrBFahvWuZt+H2eyWlcf89ZQ7/ZkPkcPMogier67m0KgIfwKKl9hX3DCj
+	nTHLHUw0aiw6unk8qRS8Y3C33SMIySwRjy6oTcE1RGVUqORxwJIbxgRVYBSvig/b
+	lYe78X73b8YyLWoz3PafJT1RHVXR3pHwodRdBwc6k36RuSChFOJyIxyI8cLzOUor
+	dOIHgYO7ZSQWbDW5P/0lXkl2ozedD88mIJKjqcfThrd9gNWiDO9UtkUPTKsunuiK
+	/JPS0HaoTyQ6d8MMH7OppLG+L5kgBpmmqS+WPb8gYQ2bnWgO+UybLOqv3IQqYMQA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6mf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 12:07:12 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 575C2feI004587;
+	Tue, 5 Aug 2025 12:07:11 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6mf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 12:07:11 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5759ekUc001936;
+	Tue, 5 Aug 2025 12:07:10 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 489y7kt3sd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 12:07:10 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575C79bZ30212698
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 12:07:09 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EAD195805D;
+	Tue,  5 Aug 2025 12:07:08 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7279C58057;
+	Tue,  5 Aug 2025 12:07:01 +0000 (GMT)
+Received: from [9.61.255.245] (unknown [9.61.255.245])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 12:07:01 +0000 (GMT)
+Message-ID: <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
+Date: Tue, 5 Aug 2025 17:37:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena
+ atomics
+Content-Language: en-GB
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
+        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
+        iii@linux.ibm.com, shuah@kernel.org
+References: <20250805062747.3479221-1-skb99@linux.ibm.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20250805062747.3479221-1-skb99@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfX596WOsv8t2Nu
+ 6Ti0/7opO+/Q8aMNLWnOFfmjUNBB/zcIhHpT/MY5JSMv5Nk0fuL6essvF7IZ44Nh+PrH/2ckgaA
+ LED6BNdCtHpuKc36EO0J1jVW1dDKSAFO8keFj9eTnSHIq9lm8mxQGUMgnY4qCW8K02H2tCxfsRb
+ tBasacKbua117Y8aFxj1//ekizsGEEvS89PwaMUe13SMV8LOQGqQdQRQx/WfJXoOvx44AaV3GiD
+ uaDVm66KmSL0IyB1qs2oYAS9yzErO4bSuNu7xHhgrlBh2SSWSNmQESSbdjyfgPdomNjg67sbY9o
+ NYlLxtEYnOiJpq3/FY8J+cn2h4US8slemUKV9QY2YQRjGJLE+sOIYJKKDUa6sg9yK5aFwMAUFgN
+ +Sqg5bbCgqALo5I5pW5aOkVCKsPHaznm/pYRNFF+70tXbeLkAanhLzw0JdscY3XgSdWf78Ai
+X-Proofpoint-GUID: zwSgSe2PW3c_zdAjZHzvfg7IXhpW-4Nw
+X-Proofpoint-ORIG-GUID: h9GzZ1uOk1OkDlOyj5wXqG3a1SKTHaOc
+X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6891f3f0 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=bY9AdTtUMlb7YCNkD7QA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508050086
 
 
---=-GUyJd8Bie7c9ushUvXKa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Le mardi 05 ao=C3=BBt 2025 =C3=A0 10:18 +0400, Miaoqian Lin a =C3=A9crit=C2=
-=A0:
-> iommu_paging_domain_alloc returns error pointers on failure.
-> Replace the NULL check with IS_ERR to correctly handle error cases
-> and avoid invalid pointer dereference.
->=20
-> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
-> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index d707088ec0dc..1d40e81f44b9 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -1162,7 +1162,7 @@ static int rkvdec_probe(struct platform_device *pde=
-v)
-> =C2=A0	if (iommu_get_domain_for_dev(&pdev->dev)) {
-> =C2=A0		rkvdec->empty_domain =3D iommu_paging_domain_alloc(rkvdec-
-> >dev);
-> =C2=A0
-> -		if (!rkvdec->empty_domain)
-> +		if (IS_ERR(rkvdec->empty_domain))
+On 05/08/25 11:57 am, Saket Kumar Bhaskar wrote:
+> This patch series introduces support for the PROBE_MEM32,
+> bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
+> facilitating the implementation of BPF arena and arena atomics.
+>
+> The last patch in the series has fix for arena spinlock selftest
+> failure.
+>
+> This series is rebased on top of:
+> https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
+>
+> All selftests related to bpf_arena, bpf_arena_atomic(except
+> load_acquire/store_release) enablement are passing:
 
 
-Thanks for the fix, but Dan Carpenter have already sent this fix. It will b=
-e
-included soon.
+Hello Saket,
 
-https://lore.kernel.org/linux-media/696219e9-a1c7-4c87-b15c-1ffd42c95d58@sa=
-binyo.mountain/
 
-regards,
-Nicolas
+I see couple of selftests are failing on my set up.
 
-> =C2=A0			dev_warn(rkvdec->dev, "cannot alloc new empty
-> domain\n");
-> =C2=A0	}
-> =C2=A0
+>
+> # ./test_progs -t arena_list
+> #5/1     arena_list/arena_list_1:OK
+> #5/2     arena_list/arena_list_1000:OK
+> #5       arena_list:OK
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>
+> # ./test_progs -t arena_htab
+> #4/1     arena_htab/arena_htab_llvm:OK
+> #4/2     arena_htab/arena_htab_asm:OK
+> #4       arena_htab:OK
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>
+> # ./test_progs -t verifier_arena
+> #464/1   verifier_arena/basic_alloc1:OK
+> #464/2   verifier_arena/basic_alloc2:OK
+> #464/3   verifier_arena/basic_alloc3:OK
+> #464/4   verifier_arena/iter_maps1:OK
+> #464/5   verifier_arena/iter_maps2:OK
+> #464/6   verifier_arena/iter_maps3:OK
+> #464     verifier_arena:OK
+> #465/1   verifier_arena_large/big_alloc1:OK
+> #465/2   verifier_arena_large/big_alloc2:OK
+> #465     verifier_arena_large:OK
+> Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
 
---=-GUyJd8Bie7c9ushUvXKa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+All error logs:
+tester_init:PASS:tester_log_buf 0 nsec
+process_subtest:PASS:obj_open_mem 0 nsec
+process_subtest:PASS:specs_alloc 0 nsec
+run_subtest:PASS:obj_open_mem 0 nsec
+run_subtest:PASS:unexpected_load_failure 0 nsec
+do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
+run_subtest:FAIL:1103 Unexpected retval: 4 != 0
+#513/7   verifier_arena/reserve_invalid_region:FAIL
+#513     verifier_arena:FAIL
+Summary: 1/14 PASSED, 0 SKIPPED, 1 FAILED
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJHzegAKCRBxUwItrAao
-HMlmAKCfv5hoBmBLX6tlUdQpzxk963M+rACgvfn53WoJ+Bkca4EluHQ8KDLqOKg=
-=t/8B
------END PGP SIGNATURE-----
 
---=-GUyJd8Bie7c9ushUvXKa--
+>
+> # ./test_progs -t arena_atomics
+> #3/1     arena_atomics/add:OK
+> #3/2     arena_atomics/sub:OK
+> #3/3     arena_atomics/and:OK
+> #3/4     arena_atomics/or:OK
+> #3/5     arena_atomics/xor:OK
+> #3/6     arena_atomics/cmpxchg:OK
+> #3/7     arena_atomics/xchg:OK
+> #3/8     arena_atomics/uaf:OK
+> #3/9     arena_atomics/load_acquire:SKIP
+> #3/10    arena_atomics/store_release:SKIP
+> #3       arena_atomics:OK (SKIP: 2/10)
+> Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
+>
+> All selftests related to arena_spin_lock are passing:
+>
+> # ./test_progs -t arena_spin_lock
+> #6/1     arena_spin_lock/arena_spin_lock_1:OK
+> #6/2     arena_spin_lock/arena_spin_lock_1000:OK
+> #6/3     arena_spin_lock/arena_spin_lock_50000:OK
+> #6       arena_spin_lock:OK
+> Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+test_arena_spin_lock_size:FAIL:check counter value unexpected check 
+counter value: actual 15999 != expected 16000
+#6/1     arena_spin_lock/arena_spin_lock_1:FAIL
+#6       arena_spin_lock:FAIL
+Summary: 0/2 PASSED, 0 SKIPPED, 1 FAILED
+> Saket Kumar Bhaskar (6):
+>    bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
+>      instructions
+>    bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
+>    bpf,powerpc: Implement bpf_addr_space_cast instruction
+>    bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
+>      instructions
+>    bpf,powerpc: Implement PROBE_ATOMIC instructions
+>    selftests/bpf: Fix arena_spin_lock selftest failure
+>
+>   arch/powerpc/net/bpf_jit.h                    |   6 +-
+>   arch/powerpc/net/bpf_jit_comp.c               |  32 +-
+>   arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
+>   arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
+>   .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
+>   .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
+>   .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
+>   7 files changed, 348 insertions(+), 105 deletions(-)
+>
+> base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
+
+
+Regards,
+
+Venkat.
+
 
