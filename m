@@ -1,147 +1,249 @@
-Return-Path: <linux-kernel+bounces-756086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D39B1AFD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B0AB1AF8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA463AD58F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F01D3AE4BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BFC253F2A;
-	Tue,  5 Aug 2025 07:50:42 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08F2580CC;
-	Tue,  5 Aug 2025 07:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F624167B;
+	Tue,  5 Aug 2025 07:45:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB58230997;
+	Tue,  5 Aug 2025 07:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380242; cv=none; b=GT+CxnyE7zApG5cXy8UZseEGXf9aZtdntTgNo6/SZFFw8NnfSh6cNOLht/45G4LzQaRCq1UlzfPOmmlSQA6HPq/ZJoWm/dFy7afJGA1DY1G7CoRyrYGlH1ShUYDeIsVGF/WDuyeX7SnzdhdRNtIRDbPZjtLAlOaGiRouORwAWpM=
+	t=1754379906; cv=none; b=Cx/bRx0lXYDrSQ49oAly2C/NJIixymSO4Zi+5NhXJw0z284RNv/f/QWzRnmy/jQ3qRIyj1lRMzbHzSdYgYOuKZC3AHyRlb//o1HOJIzgMXTxfYoh3M7bpVWdsXK5TMuJtTm8QHthSxDkJ6nTG041VelL9vy8lGQH7HsCRFUfF8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380242; c=relaxed/simple;
-	bh=X34zklE2dG57JiP1U/Y/znUa2KrJiBam6wOU3O++NQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WMhf/cnPVGa4ABRq0zJn+UTeLq750JhuSjZYHBTqXwFo2ryBg1WtH5aMj/ErO4EjRiHxAW300xzNahMvvMPkE4eX+4JzBCBjWpXPvHhKRCf1D38YcmXV6RBVOtyoAGwVk78gJrm1ODWDYljN2fkrhT5Iqyy8YfxMChAjAgFfP2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bx4tk4fRkz9sqT;
-	Tue,  5 Aug 2025 09:34:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id M2KWXNzhh9Q9; Tue,  5 Aug 2025 09:34:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bx4tk3tHTz9sps;
-	Tue,  5 Aug 2025 09:34:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7BB458B765;
-	Tue,  5 Aug 2025 09:34:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 60eHZvnq60Lk; Tue,  5 Aug 2025 09:34:22 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4970B8B763;
-	Tue,  5 Aug 2025 09:34:21 +0200 (CEST)
-Message-ID: <e65548d0-14aa-4b9c-8051-7c91c5dffd1f@csgroup.eu>
-Date: Tue, 5 Aug 2025 09:34:21 +0200
+	s=arc-20240116; t=1754379906; c=relaxed/simple;
+	bh=y1uNWtwyyYBpELdDHwZWX70cVDhU+lAdCSyByB5Wmgk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m8MiqBojh2jdsJdn2tX8nzZprCdJe52BJeyc+wg+juHpRJHBYSJJ3mBHi0y/lFQs/MJI/lS2D7V/v9FxiQlbperMIpZGMGBG09FdKxzU6rOdCs3msqiZvjp0uuPzX3zCtJ5o9OXY/O+pLVki170wM9OpF/teELAQNXHrxegw90w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bx5734Jd3zYQv76;
+	Tue,  5 Aug 2025 15:45:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3FA191A0B04;
+	Tue,  5 Aug 2025 15:45:02 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhN8tpFoEsmICg--.25448S4;
+	Tue, 05 Aug 2025 15:45:01 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: yukuai3@huawei.com,
+	axboe@kernel.dk,
+	akpm@linux-foundation.org,
+	ming.lei@redhat.com,
+	dlemoal@kernel.org,
+	jack@suse.cz
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3 0/2] lib/sbitmap: convert shallow_depth from one word to the whole sbitmap
+Date: Tue,  5 Aug 2025 15:37:46 +0800
+Message-Id: <20250805073748.606294-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bpf-next 1/6] bpf,powerpc: Introduce
- bpf_jit_emit_probe_mem_store() to emit store instructions
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
- andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, naveen@kernel.org,
- maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
- memxor@gmail.com, iii@linux.ibm.com, shuah@kernel.org
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
- <20250805062747.3479221-2-skb99@linux.ibm.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250805062747.3479221-2-skb99@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnYhN8tpFoEsmICg--.25448S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF45JryxJr4UJw1rZF1xAFb_yoW5ZrWkpr
+	WfKF1fKr18Zry7Wws3Cr43JrWUJw4xGr1DWFy3KF40kF45Xwn2qr4rG3WrJFZrurZ7Ja12
+	kFykAr1Dur1jqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
+Changes from v2:
+ - split shallow_depth to each word in patch 1, suggested by Jan;
+ - add review tag by Jan in patch 2
+Changes from v1:
+ - fix some wording in patch 2
+ - add review tag by Damien in patch 2
 
-Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
-> bpf_jit_emit_probe_mem_store() is introduced to emit instructions for
-> storing memory values depending on the size (byte, halfword,
-> word, doubleword).
+Currently elevators will record internal 'async_depth' to throttle
+asynchronous requests, and they both calculate shallow_dpeth based on
+sb->shift, with the respect that sb->shift is the available tags in one
+word.
 
-Build break with this patch
+However, sb->shift is not the availbale tags in the last word, see
+__map_depth:
 
-   CC      arch/powerpc/net/bpf_jit_comp64.o
-arch/powerpc/net/bpf_jit_comp64.c:395:12: error: 
-'bpf_jit_emit_probe_mem_store' defined but not used 
-[-Werror=unused-function]
-  static int bpf_jit_emit_probe_mem_store(struct codegen_context *ctx, 
-u32 src_reg, s16 off,
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: 
-arch/powerpc/net/bpf_jit_comp64.o] Error 1
+if (index == sb->map_nr - 1)
+  return sb->depth - (index << sb->shift);
 
+For consequence, if the last word is used, more tags can be get than
+expected, for example, assume nr_requests=256 and there are four words,
+in the worst case if user set nr_requests=32, then the first word is
+the last word, and still use bits per word, which is 64, to calculate
+async_depth is wrong.
 
-> 
-> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> ---
->   arch/powerpc/net/bpf_jit_comp64.c | 30 ++++++++++++++++++++++++++++++
->   1 file changed, 30 insertions(+)
-> 
-> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-> index 025524378443..489de21fe3d6 100644
-> --- a/arch/powerpc/net/bpf_jit_comp64.c
-> +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> @@ -409,6 +409,36 @@ asm (
->   "		blr				;"
->   );
->   
-> +static int bpf_jit_emit_probe_mem_store(struct codegen_context *ctx, u32 src_reg, s16 off,
-> +					u32 code, u32 *image)
-> +{
-> +	u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
-> +	u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
-> +
-> +	switch (BPF_SIZE(code)) {
-> +	case BPF_B:
-> +		EMIT(PPC_RAW_STB(src_reg, tmp1_reg, off));
-> +		break;
-> +	case BPF_H:
-> +		EMIT(PPC_RAW_STH(src_reg, tmp1_reg, off));
-> +		break;
-> +	case BPF_W:
-> +		EMIT(PPC_RAW_STW(src_reg, tmp1_reg, off));
-> +		break;
-> +	case BPF_DW:
-> +		if (off % 4) {
-> +			EMIT(PPC_RAW_LI(tmp2_reg, off));
-> +			EMIT(PPC_RAW_STDX(src_reg, tmp1_reg, tmp2_reg));
-> +		} else {
-> +			EMIT(PPC_RAW_STD(src_reg, tmp1_reg, off));
-> +		}
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return 0;
-> +}
-> +
->   static int emit_atomic_ld_st(const struct bpf_insn insn, struct codegen_context *ctx, u32 *image)
->   {
->   	u32 code = insn.code;
+One the ohter hand, due to cgroup qos, bfq can allow only one request
+to be allocated, and set shallow_dpeth=1 will still allow the number
+of words request to be allocated.
+
+Fix those problems by using shallow_depth to the whole sbitmap instead
+of per word, also change kyber, mq-deadline and bfq to follow this,
+a new helper __map_depth_with_shallow() is introduced to calculate
+available bits in each word.
+
+An example how shallow_depth is splited to each word:
+
+assume sb->depth is 32 + 32 + 32 + 16
+
+shallow_depth word0 word1 word2 word3
+1: 1 0 0 0
+2: 1 1 0 0
+3: 1 1 1 0
+4: 1 1 1 1
+5: 2 1 1 1
+6: 2 2 1 1
+7: 2 2 2 1
+8: 3 2 2 1
+9: 3 3 2 1
+10: 3 3 3 1
+11: 3 3 3 2
+12: 4 3 3 2
+13: 4 4 3 2
+14: 4 4 4 2
+15: 5 4 4 2
+16: 5 5 4 2
+17: 5 5 5 2
+18: 5 5 5 3
+19: 6 5 5 3
+20: 6 6 5 3
+21: 6 6 6 3
+22: 7 6 6 3
+23: 7 7 6 3
+24: 7 7 7 3
+25: 7 7 7 4
+26: 8 7 7 4
+27: 8 8 7 4
+28: 8 8 8 4
+29: 9 8 8 4
+30: 9 9 8 4
+31: 9 9 9 4
+32: 9 9 9 5
+33: 10 9 9 5
+34: 10 10 9 5
+35: 10 10 10 5
+36: 11 10 10 5
+37: 11 11 10 5
+38: 11 11 11 5
+39: 11 11 11 6
+40: 12 11 11 6
+41: 12 12 11 6
+42: 12 12 12 6
+43: 13 12 12 6
+44: 13 13 12 6
+45: 13 13 13 6
+46: 13 13 13 7
+47: 14 13 13 7
+48: 14 14 13 7
+49: 14 14 14 7
+50: 15 14 14 7
+51: 15 15 14 7
+52: 15 15 15 7
+53: 15 15 15 8
+54: 16 15 15 8
+55: 16 16 15 8
+56: 16 16 16 8
+57: 17 16 16 8
+58: 17 17 16 8
+59: 17 17 17 8
+60: 17 17 17 9
+61: 18 17 17 9
+62: 18 18 17 9
+63: 18 18 18 9
+64: 19 18 18 9
+65: 19 19 18 9
+66: 19 19 19 9
+67: 19 19 19 10
+68: 20 19 19 10
+69: 20 20 19 10
+70: 20 20 20 10
+71: 21 20 20 10
+72: 21 21 20 10
+73: 21 21 21 10
+74: 21 21 21 11
+75: 22 21 21 11
+76: 22 22 21 11
+77: 22 22 22 11
+78: 23 22 22 11
+79: 23 23 22 11
+80: 23 23 23 11
+81: 23 23 23 12
+82: 24 23 23 12
+83: 24 24 23 12
+84: 24 24 24 12
+85: 25 24 24 12
+86: 25 25 24 12
+87: 25 25 25 12
+88: 25 25 25 13
+89: 26 25 25 13
+90: 26 26 25 13
+91: 26 26 26 13
+92: 27 26 26 13
+93: 27 27 26 13
+94: 27 27 27 13
+95: 27 27 27 14
+96: 28 27 27 14
+97: 28 28 27 14
+98: 28 28 28 14
+99: 29 28 28 14
+100: 29 29 28 14
+101: 29 29 29 14
+102: 29 29 29 15
+103: 30 29 29 15
+104: 30 30 29 15
+105: 30 30 30 15
+106: 31 30 30 15
+107: 31 31 30 15
+108: 31 31 31 15
+109: 31 31 31 16
+110: 32 31 31 16
+111: 32 32 31 16
+
+Yu Kuai (2):
+  lib/sbitmap: convert shallow_depth from one word to the whole sbitmap
+  lib/sbitmap: make sbitmap_get_shallow() internal
+
+ block/bfq-iosched.c     | 35 +++++++++-----------
+ block/bfq-iosched.h     |  3 +-
+ block/kyber-iosched.c   |  9 ++---
+ block/mq-deadline.c     | 16 +--------
+ include/linux/sbitmap.h | 19 +----------
+ lib/sbitmap.c           | 73 +++++++++++++++++++++++++----------------
+ 6 files changed, 65 insertions(+), 90 deletions(-)
+
+-- 
+2.39.2
 
 
