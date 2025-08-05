@@ -1,244 +1,154 @@
-Return-Path: <linux-kernel+bounces-755981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB84B1AE5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:30:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0600AB1AE40
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD9917C252
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4149C3B7404
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055A62367CD;
-	Tue,  5 Aug 2025 06:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7387921C9ED;
+	Tue,  5 Aug 2025 06:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qJgEW7D4"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mzMCQQBv"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE0F21FF24;
-	Tue,  5 Aug 2025 06:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51E1A3164;
+	Tue,  5 Aug 2025 06:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754375361; cv=none; b=iyNyabEIB+Dgr+fBcfKy6NXFybuwg48xOdMZYC1EqAx/230L62k+rKAW3JykQ84PINMeg+fempZQU1bP+GsdrD7bJS76Sr5fxv7BTtEVeCyXu3zAgbsvM4oOQbmYKlHerTcIlljUUlXSUbe8HHPHU0g/EGvQ8ov1Thqiz4cjCes=
+	t=1754375327; cv=none; b=kv4g2MhkrIUaQAnNJHYtPCZPJ62bj2G9LSnllo4FQNQXf34nvBkTJiEZT/2MjCtNbi5CraQX5txwSiXWG4LYt1nC04qCRUoM/EgfN/Y+jmKW0yTuxU05i0VWsQWsANZwsiHKut8Kx9xSXgSVCKSln7Vqr1tTARJOPIWHbLtuM2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754375361; c=relaxed/simple;
-	bh=OGJYvaoMg2wHvnr0j10NC2nMnlWBlp36/emw5KofFrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZteCjZ/jkluFsbIKSBajZOZuYL7NxeviUgIOzksqmewFnBkfUZi1aIDIHd4BL7dfBnmCXjZeCkBaYnC55pv92WsWr0eXZLb4tuWnqOlb0Z0/zgfq0cYq/kS6ypDNvur17Q7Xj1O/xwTIUtqLIqjy71nTQAlAwE/2DZIDP5iXJfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qJgEW7D4; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754tZcq032572;
-	Tue, 5 Aug 2025 06:28:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=v7OKblw0xucwCWLwh
-	8AHjg9A9qvlAn86fZ/L6YQyAcg=; b=qJgEW7D4jZQywXjKTqkIH8sEYppO3MUH1
-	3NDYlbrWKE10yRXc1rduDYTurdEiILjhPCYb7mQJU6JJpFP36oY5eE7OcYH5zLyS
-	8Mj1yIae7GtjO+Omuu8iNb2YSsPWZ1/G1FmlmdBYHw00hvY8Q2GFSt2EqrJGQCcb
-	NU2HuCieoDkIVL4Vdc9Sza95U0B25B22Nvr7qgN90UqEMhZkfEqibX7/LwDw0cHl
-	eKMjYiNC323Q61uHxkzhdIEy1guc7pAZgrUlTfsFQdWgArc+W0/Qyc7zpMAUkG2G
-	Y3/IbCdXeGwEdEzd7zHlnkBHDdfb2RSDq64U7WMLoZNFYH+If6fdg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq09v0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:28:51 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5756SpDh018514;
-	Tue, 5 Aug 2025 06:28:51 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq09uw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:28:51 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754NkDb009584;
-	Tue, 5 Aug 2025 06:28:50 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489x0p16fk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:28:50 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5756Sk4k33358382
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 06:28:46 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B7C920040;
-	Tue,  5 Aug 2025 06:28:46 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8934B20043;
-	Tue,  5 Aug 2025 06:28:39 +0000 (GMT)
-Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.ibm.com.com (unknown [9.43.39.141])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 06:28:39 +0000 (GMT)
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
-        andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
-        iii@linux.ibm.com, shuah@kernel.org
-Subject: [bpf-next 6/6] selftests/bpf: Fix arena_spin_lock selftest failure
-Date: Tue,  5 Aug 2025 11:57:47 +0530
-Message-ID: <20250805062747.3479221-7-skb99@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250805062747.3479221-1-skb99@linux.ibm.com>
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
+	s=arc-20240116; t=1754375327; c=relaxed/simple;
+	bh=U6uDB2KwPVN9IIbqNm7yRN4lLs2O6akNystj9BTSnqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYtBkb56Lq8UD8f/LcPW0sjlumPI3LNbprsh/TwK12zbwm4NxLbDI98NDRN1SW92CpQAY5S+vUOuCLeEKTti943eChkriab1w8ZnR6LsqRUrV6WdlccByjRDbD43LzYJUtCMrkkduaH1H5qlY5YJzIWJWe6paxbWTHFc88ZGp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mzMCQQBv; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754375317; x=1754980117; i=markus.elfring@web.de;
+	bh=U6uDB2KwPVN9IIbqNm7yRN4lLs2O6akNystj9BTSnqI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=mzMCQQBvAr046RPKx30sLlK9SVmOEOWwqC5F8MJ76beS+lcj6TITWsQ8POoLTD3l
+	 GjDStTeP7ja0fMQwU2uqWjwhNjDCe9VKksO6bXYpbvZnu645FdqiC7kHVpgPmqA42
+	 5cA7RUC75OS4akskDEd1MA/ddczs0GBd/b1GJe3HvoFkDac3q0+1Ni0wHa+LVChp+
+	 5I2n2jxnR/sDWq92qc9lmi44GzeDsRbMLsUW5ksaxUfmJ0R7OW79c/vsFSkY8WsXB
+	 TYZ4uTlF7TnAdw+LPCOOvtbNgv4hJI/3DqJrOB1ximhv9HANTDszbFoUHCb1ad9Fk
+	 gwuHrrWkqciuymEEew==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.245]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXocY-1v8X963lSG-00P3Ax; Tue, 05
+ Aug 2025 08:28:36 +0200
+Message-ID: <41fdbd2b-92c5-4f11-9c58-aff9b9f35e72@web.de>
+Date: Tue, 5 Aug 2025 08:28:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: MHtfuhSBX86H1GS-EDUE7_iMFDkm4UOi
-X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891a4a3 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=JZnv35P8lLju3lMB9JkA:9
-X-Proofpoint-ORIG-GUID: RLgM9aYmcIzILwAR7Iotf-RVGtxWO2zm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA0NSBTYWx0ZWRfX1K7J+oUmd5nL
- mfCZkWQLhWPVY9M222gUMff3yf4Zg+BRL0jXdtdHhtkRVXWByE6K8Uh1KpHEC7LoLklxpQGD/r9
- hIimr1BHSV7ECIDd6qkwC4BRM/cedilc7J58riP9sgBy/RBTa31HyO4ui6C7VHH/gohDCwhI3AL
- 3krUVIZFugLWIcW3NsTJAIzSAQh8/ddSezjMSMmPZRPQep/931tnHC+X+0HOfPH83KwVp/82iUP
- F7z6aVpGcFdwdZeaSOuSQW+zdompotUc+Q34c3lO5X8yREM553guktYZzyAksnNR2ToJybF33kn
- zAvMFtPrgIdtWoWhJ32V3HR9xtldl8cJssl1j0X8D2MgUVn2Yxb43rla10I6c0JNNOG7cDxbBjW
- 34enIJSqdMAGf20IWycsqEe9nNXw2euxgZ98BCDMleohl3EHgxqVI3Br6cMRfzxWpOQswMIa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050045
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] mailbox: pcc: Add missed acpi_put_table() to fix
+ memory leak
+To: Zhen Ni <zhen.ni@easystack.cn>, linux-acpi@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>
+References: <20250804121453.75525-1-zhen.ni@easystack.cn>
+ <20250805034829.168187-1-zhen.ni@easystack.cn>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250805034829.168187-1-zhen.ni@easystack.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9FnYXXZJWa+dy5fAX9zU19lrwOHDdamdfTjZDjwq5jMGFJRcoWg
+ gguiDa51f35oPyEbOg/5akIOenCPhWk/Hs4zdqkW+Giy6LwU+7drkub/VIXGu2m4H2ljL3i
+ UkMDqUdqgktsaRhVefLcLfhqrn2G1WAp2Z2aB4Gg29+mWcSDJH6Vkki0H+PR5ShOdKwnwjb
+ 6ACiqWqkiHNmzccDAmXmg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ldVu0L/C9cI=;2A+T04V5mTvOhDTc16kVP7DDm2q
+ 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
+ QaPGYtZ20theDb2zD68VTig=
 
-For systems having CONFIG_NR_CPUS set to > 1024 in kernel config
-the selftest fails even though the current number of online cpus
-is less. For example, on powerpc the default value for
-CONFIG_NR_CPUS is set to 8192.
+> Fixes a permanent ACPI memory leak in the success path by adding
+> acpi_put_table().
+> Renaming generic 'err' label to 'put_table' for clarity.
 
-get_nprocs() is used to get the number of available cpus in test
-driver code and the same is passed to the bpf program using rodata.
+Will a desire grow for the usage of imperative mood also in such change de=
+scriptions?
 
-Also the selftest is skipped incase bpf program returns EOPNOTSUPP,
-with a descriptive message logged.
+See also once more:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n94
 
-Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
----
- .../bpf/prog_tests/arena_spin_lock.c          | 23 +++++++++++++++++--
- .../selftests/bpf/progs/arena_spin_lock.c     |  8 ++++++-
- .../selftests/bpf/progs/bpf_arena_spin_lock.h |  4 +---
- 3 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-index 0223fce4db2b..fa0b4f0240a3 100644
---- a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-+++ b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-@@ -40,8 +40,13 @@ static void *spin_lock_thread(void *arg)
- 
- 	err = bpf_prog_test_run_opts(prog_fd, &topts);
- 	ASSERT_OK(err, "test_run err");
-+
-+	if (topts.retval == -EOPNOTSUPP)
-+		goto end;
-+
- 	ASSERT_EQ((int)topts.retval, 0, "test_run retval");
- 
-+end:
- 	pthread_exit(arg);
- }
- 
-@@ -60,9 +65,16 @@ static void test_arena_spin_lock_size(int size)
- 		return;
- 	}
- 
--	skel = arena_spin_lock__open_and_load();
--	if (!ASSERT_OK_PTR(skel, "arena_spin_lock__open_and_load"))
-+	skel = arena_spin_lock__open();
-+	if (!ASSERT_OK_PTR(skel, "arena_spin_lock__open"))
- 		return;
-+
-+	skel->rodata->nr_cpus = get_nprocs();
-+
-+	err = arena_spin_lock__load(skel);
-+	if (!ASSERT_OK(err, "arena_spin_lock__load"))
-+		goto end;
-+
- 	if (skel->data->test_skip == 2) {
- 		test__skip();
- 		goto end;
-@@ -86,6 +98,13 @@ static void test_arena_spin_lock_size(int size)
- 			goto end_barrier;
- 	}
- 
-+	if (skel->data->test_skip == 2) {
-+		printf("%s:SKIP: %d online CPUs exceed the maximum supported by arena spinlock\n",
-+		       __func__, get_nprocs());
-+		test__skip();
-+		goto end_barrier;
-+	}
-+
- 	ASSERT_EQ(skel->bss->counter, repeat * nthreads, "check counter value");
- 
- end_barrier:
-diff --git a/tools/testing/selftests/bpf/progs/arena_spin_lock.c b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-index c4500c37f85e..9ed5a3281fd4 100644
---- a/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-+++ b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-@@ -4,6 +4,9 @@
- #include <bpf/bpf_tracing.h>
- #include <bpf/bpf_helpers.h>
- #include "bpf_misc.h"
-+
-+const volatile int nr_cpus;
-+
- #include "bpf_arena_spin_lock.h"
- 
- struct {
-@@ -37,8 +40,11 @@ int prog(void *ctx)
- #if defined(ENABLE_ATOMICS_TESTS) && defined(__BPF_FEATURE_ADDR_SPACE_CAST)
- 	unsigned long flags;
- 
--	if ((ret = arena_spin_lock_irqsave(&lock, flags)))
-+	if ((ret = arena_spin_lock_irqsave(&lock, flags))) {
-+		if (ret == -EOPNOTSUPP)
-+			test_skip = 2;
- 		return ret;
-+	}
- 	if (counter != limit)
- 		counter++;
- 	bpf_repeat(cs_count);
-diff --git a/tools/testing/selftests/bpf/progs/bpf_arena_spin_lock.h b/tools/testing/selftests/bpf/progs/bpf_arena_spin_lock.h
-index d67466c1ff77..752131161315 100644
---- a/tools/testing/selftests/bpf/progs/bpf_arena_spin_lock.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_arena_spin_lock.h
-@@ -20,8 +20,6 @@
- #define __arena __attribute__((address_space(1)))
- #endif
- 
--extern unsigned long CONFIG_NR_CPUS __kconfig;
--
- /*
-  * Typically, we'd just rely on the definition in vmlinux.h for qspinlock, but
-  * PowerPC overrides the definition to define lock->val as u32 instead of
-@@ -494,7 +492,7 @@ static __always_inline int arena_spin_lock(arena_spinlock_t __arena *lock)
- {
- 	int val = 0;
- 
--	if (CONFIG_NR_CPUS > 1024)
-+	if (nr_cpus > 1024)
- 		return -EOPNOTSUPP;
- 
- 	bpf_preempt_disable();
--- 
-2.43.5
+=E2=80=A6> Changes in v4:
+> - Change goto target from err to put_table.
 
+Thanks.
+
+
+> - Remove goto tatget err_nomem
+=E2=80=A6
+
+Does this adjustment indicate questionable development difficulties?
+
+Regards,
+Markus
 
