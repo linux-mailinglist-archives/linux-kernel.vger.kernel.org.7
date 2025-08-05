@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-756641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7A5B1B723
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:07:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF52EB1B72E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6BD18950C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3A1626C46
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C9613B58A;
-	Tue,  5 Aug 2025 15:07:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36937263F3C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9521D279DAD;
+	Tue,  5 Aug 2025 15:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="pZK1pKaC"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417C2279903
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754406426; cv=none; b=PnKskDqGWMIAvP1BeQCpo8BUzHL2qI8+jKlciW1g49fGf2m3vnObDH5JD92ry0JHMoGv27wUpSIrIclEMNvx3jHhSUMQACtDngEVyuW2nc4nyOzoI5i9keNLDawAxOH3MZxG/PSbLxA3AoGoZjHbJRjnMX5AbJJSpTkEGf+CeLk=
+	t=1754406540; cv=none; b=sKtjoEIVwo38BLy89C8MfmMzkffI14mTTjSKZ/xSYxRfKF99Ev5/tmhErdSwitHWr9zlcinrNRTs+X6wd32hwoEkebXYWbgXB9JFZhIv1BIaY2BViPsQpeyhS/sJ9QDadm0aNjBa6MEM0aZmL+Z8CESg0zqsBu+MGPcRG3NgmIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754406426; c=relaxed/simple;
-	bh=K341mltDGgeg6pHczdXkhUZl87sYT4L3t7I25NJfKls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=lb3RFgkvdYZlIZ863qmhCAmuZTwyfzHFkXcNKYApT3mCe8UFIVdBQ+9mUV7kjsTZ7muuzKPgiXCnR8HJApfYC5ugIg3TTRI+sLfIdW/MEsrkNdV2kO4ZggkoSb0/e1vxJdjRl0UDD4dAK5P49K96X1fqGQH7ISTIzLj8JwP5xPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77E4C2BCE;
-	Tue,  5 Aug 2025 08:06:56 -0700 (PDT)
-Received: from [10.1.29.177] (e137867.arm.com [10.1.29.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 423853F673;
-	Tue,  5 Aug 2025 08:07:00 -0700 (PDT)
-Message-ID: <44fd646c-4e31-4ca6-9e22-f715ad19e0d7@arm.com>
-Date: Tue, 5 Aug 2025 16:06:58 +0100
+	s=arc-20240116; t=1754406540; c=relaxed/simple;
+	bh=6ooIakJHfw7YXMmRWfrQTaJz2DBq2g0w8g/ZJdwjlOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=alPgdgdTYS9zC5w0xa1AUxX4NaU9h9bK01eKHEYpdWrwVmJLuaFYUiLRNcN8h0WlaEbMKj5RiwuDKzSp91SAbuf1C4eBwS6KYWEO2f2N5PZiEYs0xx+p73ldTrsSxGuZffIR1RCaOMTvUGE02Zhjra41WXsmx9LqqlvesDKOY0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=pZK1pKaC; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-458bf6d69e4so29655535e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 08:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1754406534; x=1755011334; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H1NFToLTMCBICwkF2bXpGG3zLl1KYY37VeQX64wTwe4=;
+        b=pZK1pKaCVVqsaJRmnQv9BGUpH8zqjzBDD1nBiFOKVCM/nXjAqrX9qsXB7xGfupQTRC
+         LtQBVmRTh1rrhoYBdGj0rgvPXnq/fd1NjhJc57CBF3YEhN0GL62csOuekYMjRJIyR/gt
+         No0HVXykylmZICNMVqMVBymH9nBZ/8Oyw5Ld/QiTOTUySBsk96cWX+7CV2UyDYP0dOLk
+         jnYNes4AI2IPhcy/HKaaLOZNPWGdCHhnEvbIhqwxtdicD1XFkYjcbm2qXq7Mh1Qyyk81
+         V2A0ZL6BN/fBsW7qqGXSP33KHyTI9T7NXpDvHvOCUKWsoMnx+ZZDVWTL57tcFBp8F3fc
+         X04A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754406534; x=1755011334;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H1NFToLTMCBICwkF2bXpGG3zLl1KYY37VeQX64wTwe4=;
+        b=aGY0/k10a6XUONZfoQF0clg2qLZ2mC7wmtzoin1R9X9jdA7QCse9cCvg48BJAdFgLX
+         ig2UsDVIiXtrpRzXqbjMpM/YuxEhuvUAVYUT1JRPdV/+2mXy6Wc8YO1pML5sFq/Jy9sS
+         eoydHrdxe00BiWkaRdGGKFw8fNvqVbZdbIBucjQJXPNx0ycXXaLiOcynPpaXOvT0hp4X
+         VV21QyPdQCkuANlbZG0lO0MWusM0amxNcFtxCvljFhrBkMth3QX+5Dw0GFfr5kBif0jN
+         6/bGqBnNOz8o6jgg14dsUGUi8PPvSbq26QAwc7BrJBjhnQz86ObxhmA04+HkdQd+72aH
+         o5cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk4K2MvsmeA2i2z87aM++QZDjEpzvwJyFXWRbfbFFc6zOEx8onJlz6frl1Dr9AwJdNKaWitup3vKR/8VE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNUUeTH1kK0PuNwuYPXJeSYjhASdBjha14zoKwEGimx331aDBv
+	Wtdvzm9TFOCO27SuKb8VovouVH8IAwuNthAMh9N4IswOgG4D79qDB0yA6g2Q9UGbj9Y=
+X-Gm-Gg: ASbGncu36ENpRvfN6M00ymqZbqtNDDqPgoY9m3VNhGnzt+8LevTMGN1vq/aBEr33tiP
+	JcpBQwQPmwXxjtb5r4qZSQBTURAYCUojR/tzYQRtrbFXWpDfwIvjuh9mu4e9qQvJ+SlRbT9BktG
+	0/+iIkkR49ajgHndkHVmKE/vjOJOwYHbEw1mQHR1/PPlfQi3Fc8yL68Be4gSpEbWyI4oVrAiVx0
+	5kklvlZHkC2Jh/OPOQt2rAbW+1biAPPZr3VeZeIuBr7uDktILQjfIGO/Y/CPj8IJhnCG1rdJwXn
+	P9TmDoGMxlvNeBzJAs8Cl7UajUMU3hmDjAyNoAelqV93bSCBxkNx/aLUxALg9wb+XkTDkS8h7Ls
+	oaYAVxAuACVeFOBPN8jW4mmc4zFb7mrRf+tUPdPMbxLNaoMpX
+X-Google-Smtp-Source: AGHT+IFxn5pLwK5DhH3KCFQWy4nsv5vsgTiDMhFW15HhwD65qkQk4OJb8IifzI8vS1mm024ju4SDkg==
+X-Received: by 2002:a05:600c:1c98:b0:459:d8c2:80b2 with SMTP id 5b1f17b1804b1-459d8c2833amr66948015e9.7.1754406534167;
+        Tue, 05 Aug 2025 08:08:54 -0700 (PDT)
+Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:e77f:3816:a0b:2c4d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c469582sm19264199f8f.52.2025.08.05.08.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 08:08:53 -0700 (PDT)
+From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+To: linus.walleij@linaro.org,
+	dlan@gentoo.org
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Subject: [PATCH] pinctrl: spacemit: remove extra line in debug output
+Date: Tue,  5 Aug 2025 17:07:01 +0200
+Message-ID: <20250805150701.129113-1-hendrik.hamerlinck@hammernet.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v7 5/7] arm64: entry: Refactor
- preempt_schedule_irq() check code
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-6-ruanjinjie@huawei.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, oleg@redhat.com, sstabellini@kernel.org,
- mark.rutland@arm.com, puranjay@kernel.org, broonie@kernel.org,
- mbenes@suse.cz, ryan.roberts@arm.com, akpm@linux-foundation.org,
- chenl311@chinatelecom.cn, anshuman.khandual@arm.com,
- kristina.martsenko@arm.com, liaochang1@huawei.com, ardb@kernel.org,
- leitao@debian.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Content-Language: en-US
-Organization: Arm Ltd.
-In-Reply-To: <20250729015456.3411143-6-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Jinjie,
+The debug output for spacemit_pinconf_dbg_show() prints an extra newline
+at the end. This is redundant as pinconf_pins_show() in pinconf.c already
+adds a newline in its for loop.
 
-On 29/07/2025 02:54, Jinjie Ruan wrote:
-> ARM64 requires an additional check whether to reschedule on return
-> from interrupt. So add arch_irqentry_exit_need_resched() as the default
-> NOP implementation and hook it up into the need_resched() condition in
-> raw_irqentry_exit_cond_resched(). This allows ARM64 to implement
-> the architecture specific version for switching over to
-> the generic entry code.
-I was a bit confused by this, as I didn't see the link with the generic 
-entry
-given you implement `raw_irqentry_exit_cond_resched()` in arch/arm64
-as well in this patch : I expected the arm64 implementation to be added.
-I share more thoughts below.
+Remove the newline to avoid the extra line in the output.
 
-What do you think about something along those lines ?
+Example current output:
+$ cat /sys/kernel/debug/pinctrl/d401e000.pinctrl/pinconf-pins
+Pin config settings per pin
+Format: pin (name): configs
+pin 0 (GPIO_00): , bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
 
-	Compared to the generic entry code, arm64 does additional checks
-	when deciding to reschedule on return from an interrupt.
-	Introduce arch_irqentry_exit_need_resched() in the need_resched() condition
-	of the generic raw_irqentry_exit_cond_resched(), with a NOP default.
-	This will allow arm64 to implement its architecture specific checks when
-	switching over to the generic entry code.
+pin 1 (GPIO_01): slew rate (0x0), bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
 
-> [...]
-> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-> index b82032777310..4aa9656fa1b4 100644
-> --- a/kernel/entry/common.c
-> +++ b/kernel/entry/common.c
-> @@ -142,6 +142,20 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
->   	return ret;
->   }
->   
-> +/**
-> + * arch_irqentry_exit_need_resched - Architecture specific need resched function
-> + *
-> + * Invoked from raw_irqentry_exit_cond_resched() to check if need resched.
-Very nit : "to check if resched is needed." ?
-> + * Defaults return true.
-> + *
-> + * The main purpose is to permit arch to skip preempt a task from an IRQ.
-If feel that "to avoid preemption of a task" instead of "to skip preempt 
-a task"
-would make this much clearer, what do you think ?
-> + */
-> +static inline bool arch_irqentry_exit_need_resched(void);
-> +
-> +#ifndef arch_irqentry_exit_need_resched
-> +static inline bool arch_irqentry_exit_need_resched(void) { return true; }
-> +#endif
-> +
+pin 2 (GPIO_02): slew rate (0x0), bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
 
-I've had some trouble reviewing this patch : on the one hand because
-I didn't notice `arch_irqentry_exit_need_resched()` was added in
-the common entry code, which is on me !
-On the other hand, I felt that the patch itself was a bit disconnected :
-we add `arch_irqentry_exit_need_resched()` in the common entry code,
-with a default NOP, but in the same function we add to arm64,
-while mentioning that this is for arm64's additional checks,
-which we only implement in patch 7.
+...
 
-Would it make sense to move the `arch_irqentry_exit_need_resched()`
-part of the patch to patch 7, so that the introduction and
-arch-specific implementation appear together ?
-To me it seems easier to wrap my head around, as it would look like
-"Move arm64 to generic entry, but it does additional checks : add a new
-arch-specific function controlling re-scheduling, defaulting to true,
-and implement it for arm64". I feel it could help making patch 7's
-commit message clearer as well.
+Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+---
+ drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- From what I gathered on the archive `arch_irqentry_exit_need_resched()`
-being added here was suggested previously, so others might not have the
-same opinion.
-
-Maybe improving the commit message and comment for this would be enough
-as well, as per my suggestions above.
-
-
-Otherwise the changes make sense and I don't see any functional issues !
-
-Thanks,
-Ada
+diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
+index 9996b1c4a07e..fb361f2acb54 100644
+--- a/drivers/pinctrl/spacemit/pinctrl-k1.c
++++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
+@@ -707,7 +707,7 @@ static void spacemit_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 			   spacemit_get_drive_strength_mA(IO_TYPE_1V8, tmp),
+ 			   spacemit_get_drive_strength_mA(IO_TYPE_3V3, tmp));
+ 
+-	seq_printf(seq, ", register (0x%04x)\n", value);
++	seq_printf(seq, ", register (0x%04x)", value);
+ }
+ 
+ static const struct pinconf_ops spacemit_pinconf_ops = {
+-- 
+2.43.0
 
 
