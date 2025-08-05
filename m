@@ -1,193 +1,270 @@
-Return-Path: <linux-kernel+bounces-756110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB4EB1B01D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:17:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8151CB1B01F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5DA18975A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCCA3B2148
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B618023A562;
-	Tue,  5 Aug 2025 08:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC34D1A5B8C;
+	Tue,  5 Aug 2025 08:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HEUZWGoK"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a5RBPVSp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HRtLr/dP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D09378F2F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC41F30AD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754381833; cv=none; b=hfCJ7zpc2ErtHFiwMctHmvw35FgQVQwn3uePCVXxS8GO/uR2SrOuW7bNZwwrOanfPB5uWuzouY3/bF1j5ujhbyczH3hcQiPGcuhIWIQJNC4kIYqu3YLXbAtzAYevQFswxAnnEBxOXZJ4k4nQjBxombL0uBhRM4duJS4bJcNPyoI=
+	t=1754381976; cv=none; b=PTqSAZTMswEb95E2v9ImYx9Gl8CFbd6gPgg3H+B2TTWzuELur1DgxBOaOFJsWhfP/CoqFafzSWlrovBXK6mvWf62n9MgrEdJ/C9nIY0/9imKrKPUv2wq+Rw/sbfvy4A6pj8KC3P1OcePHIf5dVoe6IvC2XyUi+0wiSqQKCbCIkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754381833; c=relaxed/simple;
-	bh=3dFsx4eSSMGoD1vphLnPizmmQ2jSZohyIoMAAP2cwwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iobpa01Vt07xUsvniW/vOjHxirrHZtDKDLAgvSEALs1BQTazcL1ugoG/cE5bwUWB5/x8jiCpyxCiVbzYEzGsOa6AJxo6ggmy7r3IKsUIoGU5h6H8bN6+XoA1vjPhgoT7c6mih8lVfhFnxDYYj5c5wcpyy2ILSEk9CEODQHoke84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HEUZWGoK; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76c18568e5eso1065459b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1754381830; x=1754986630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hdi0osdCtNEGUqWnHGcG2RCagqkAaiO8Ttk2Pz8O1BE=;
-        b=HEUZWGoKwe1iFsA9wEc1VOrq+MdbFwWfByUKB9IMvxd683y9rg4pDI2lwgUfAWbDlS
-         +PjsCKjXKoTCXdf25WM8VE7sGz+tXfhmrpvraztcmiBssSjv2181UlOFD4x0wU7HBXCi
-         bBiehyIabvM+RH/qcoQDjEUWQFn9ZCTiVT4LDekEURTtjtPQjbgrNYhc3H8knD3SmvZ9
-         cMlpmKL6RHBYNzIX0dANK2k7Fg//RXSByT+LVQ2DvzsRZ2mToJO9Yo3K7jlnqVoGqMTC
-         gYYuN95bzl05iBHyM8eqI/QgusAMCpdQICqKRB58hEC7y5sf/dSQlJCF5mC1QTsGfkG5
-         jhJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754381830; x=1754986630;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Hdi0osdCtNEGUqWnHGcG2RCagqkAaiO8Ttk2Pz8O1BE=;
-        b=npBdjIsROnA7cbWEElax+RiczZznBowlakXxX1PwC734s2MmXLhkDo8NfB8IrYQygL
-         FgxEJgb07gIKvZ1t09jrEkFuqF6n9To2DdAcmKhlEWnsdO2yO8oQiFWAFEWoidx4G0vv
-         sM476u/B5Qld7VVBDjWaSDTWXmLGsjpPC5aDrCiy25KO5qEdiU38bsmXPspy7v3A0kb0
-         Xqz2CDt26dfJgBWL8XAYlJ+rHspv11vBe66G9rR74CaETDXmeKJGSfA8nYs8flMeRU8K
-         vCk6qXGm6lZwonzssgDWk8a98JOeF00sB5GI3/uWL3m71wR1OmtJE+DVfmRjIcO4EYev
-         8XRA==
-X-Gm-Message-State: AOJu0Yyf7DS4fmWio7v7WVfCeaJlWAHMoGW2juM4v2wWgwtldvwEtSxH
-	yEU2kg7lBPDqxUrLXQQI3UWSpEir5SP3JE15Cf8bgvYEKkxEJxKgwMOq7oe1XVR6o3s=
-X-Gm-Gg: ASbGnctD0l6FkqUtvgL3xEDa3F0rAMNQDed16F56VvTy1q2t2XB4uN1R+K4dKi2PK9I
-	uuVMuPuAqqDG206wrU2JMMNWnXY4Qs8UU7XOYCpFD3tj+yqQ9ZWFA0tM6SbnJGZwDT1toa1w6Uh
-	tst2ss/df4fFwaL8q1vbhGkjK1OzqiWkoLOwi4nmvQ2rgyyHs6pI1ONW3rptQEpymEVj3nDx/61
-	efpQOJTR0GitkPlfKMVWhcPk1gNSTvkYUQ//JmcPPJe+gzeVhGeCMo8V6YSH+hFD/uQVzORiqXM
-	90uuyxsmZC+wHu152i7bhzGwXgQbfZ18hlL9+ue9ooni8R8J+5f32zOrWnO3mh0cT/9m1jyqsty
-	fK/MKEu0ehHdAdYVbnMrShyA3Aw7RAUkEqyKKhCUSog/Z
-X-Google-Smtp-Source: AGHT+IHsJlClq5gm1xJnhjE3i6PmqXx7/BoTu7ITvgZDbc0/yB37WbKPsQyMszk+sBc66H6FkzV6mA==
-X-Received: by 2002:a05:6a00:2e98:b0:76c:1c69:111c with SMTP id d2e1a72fcca58-76c1c691425mr2054194b3a.9.1754381830515;
-        Tue, 05 Aug 2025 01:17:10 -0700 (PDT)
-Received: from [10.4.54.91] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce93da5sm12202646b3a.50.2025.08.05.01.17.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 01:17:09 -0700 (PDT)
-Message-ID: <b594a315-8458-439c-b535-fc7f052a3fae@bytedance.com>
-Date: Tue, 5 Aug 2025 16:17:01 +0800
+	s=arc-20240116; t=1754381976; c=relaxed/simple;
+	bh=Os9JiwIeGtnfmNy4C+UTY5wklB1lOf1J6DAA6X/9jus=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=InjuWfhymjnsbngGZTmOFbEKwryeu93SeUmQnWdAdcmvpaipMcw4JdE729OG8yc4LEp+//GkOj0aKzD+ArRbkOQhv2X5+CTaDRND+6xm3pVLyecTb611YsStVbmlhDDhkM7DK0jFzTuUeVDjDmz9h7p5euhDhY7kBQ4qHYh2TMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a5RBPVSp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HRtLr/dP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754381972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7eXqZukBJsjBSdz9QJmzEvxSldHJHVRIiX8d3xX8bzQ=;
+	b=a5RBPVSprZDV3Htcc3FsH6T6QM+N57wqK4qHzFp3A/CvpB5c/Yn7V13nYF66si8A9leMd0
+	bAH5i8vLnBWq7ulNuz6/AVFMBqt7wMTa70hx1ZBvjZgg2k2r4il9xT8NmbxiPgUH/yfqWQ
+	b8oE6UqH8nSAGfEWQWGKPh2mB0hO5QnDPL/qNI+BAUsaQsr+syh3IYeDHdSk5K1Hg0jIEc
+	Iot22oHSS8qVFwsZjMaTTnYIRmkB7MDcYicv6Kn4YGzmWIEstznZIYDFPEx7DwOLIo3Tas
+	Amk1mcoaGnohXTfssSInU83CppUUm/0XrRI0H7yNwJDPfLwksYuIm2xwcUKydQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754381972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7eXqZukBJsjBSdz9QJmzEvxSldHJHVRIiX8d3xX8bzQ=;
+	b=HRtLr/dPowXxJ7nvW9ff1UkZso7WUufswXqUPE5bt0MF8s5Qzdd0kt/P+Pl5S1dfH7/+2M
+	uE0L1ONaW0/O4eCg==
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>, mingo@redhat.com,
+ peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
+ andrealmeid@igalia.com, linux-kernel@vger.kernel.org
+Cc: jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, Pranav Tyagi
+ <pranav.tyagi03@gmail.com>
+Subject: Re: [PATCH v2] futex: don't leak robust_list pointer on exec race
+In-Reply-To: <20250804115533.14186-1-pranav.tyagi03@gmail.com>
+References: <20250804115533.14186-1-pranav.tyagi03@gmail.com>
+Date: Tue, 05 Aug 2025 10:19:31 +0200
+Message-ID: <871ppqgoz0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix the race between collapse and PT_RECLAIM under
- per-vma lock
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
- "Lai, Yi" <yi1.lai@linux.intel.com>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra
- <lokeshgidra@google.com>, Tangquan Zheng <zhengtangquan@oppo.com>,
- Lance Yang <ioworker0@gmail.com>, Zi Yan <ziy@nvidia.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>
-References: <20250805035447.7958-1-21cnbao@gmail.com>
- <35417160-86bf-4580-8ae9-5cadd4f6401d@bytedance.com>
- <d73213ba-5ca0-451c-b82b-f590d10da6d7@linux.alibaba.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <d73213ba-5ca0-451c-b82b-f590d10da6d7@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Baolin,
+On Mon, Aug 04 2025 at 17:25, Pranav Tyagi wrote:
+> Take a read lock on signal->exec_update_lock prior to invoking
+> ptrace_may_access() and accessing the robust_list/compat_robust_list.
+> This ensures that the target task's exec state remains stable during the
+> check, allowing for consistent and synchronized validation of
+> credentials.
+>
+> changed in v2:
+> - improved changelog
+> - helper function for common part of the compat and native syscalls
 
-On 8/5/25 3:53 PM, Baolin Wang wrote:
-> 
-> 
-> On 2025/8/5 14:42, Qi Zheng wrote:
->> Hi Barry,
->>
->> On 8/5/25 11:54 AM, Barry Song wrote:
->>> From: Barry Song <v-songbaohua@oppo.com>
->>>
->>> The check_pmd_still_valid() call during collapse is currently only
->>> protected by the mmap_lock in write mode, which was sufficient when
->>> pt_reclaim always ran under mmap_lock in read mode. However, since
->>> madvise_dontneed can now execute under a per-VMA lock, this assumption
->>> is no longer valid. As a result, a race condition can occur between
->>> collapse and PT_RECLAIM, potentially leading to a kernel panic.
->>
->> There is indeed a race condition here. And after applying this patch, I
->> can no longer reproduce the problem locally (I was able to reproduce it
->> stably locally last night).
->>
->> But I still can't figure out how this race condtion causes the
->> following panic:
->>
->> exit_mmap
->> --> mmap_read_lock()
->>      unmap_vmas()
->>      --> pte_offset_map_lock
->>          --> rcu_read_lock()
->>              check if the pmd entry is a PTE page
->>              ptl = pte_lockptr(mm, &pmdval)  <-- ptl is NULL
->>              spin_lock(ptl)                  <-- PANIC!!
->>
->> If this PTE page is freed by pt_reclaim (via RCU), then the ptl can 
->> not be NULL.
->>
->> The collapse holds mmap write lock, so it is impossible to be concurrent
->> with exit_mmap().
->>
->> Confusing. :(
-> 
-> IIUC, the issue is not caused by the concurrency between exit_mmap and 
-> collapse, but rather by the concurrency between pt_reclaim and collapse.
-> 
-> Before this patch, khugepaged might incorrectly restore a PTE pagetable 
-> that had already been freed.
-> 
-> pt_reclaim has cleared the pmd entry and freed the PTE page table. 
-> However, due to the race condition, check_pmd_still_valid() still passes 
-> and continues to attempt the collapse:
-> 
-> _pmd = pmdp_collapse_flush(vma, address, pmd); ---> returns a none pmd 
-> entry (the original pmd entry has been cleared)
-> 
-> pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl); ---> returns 
-> pte == NULL
-> 
-> Then khugepaged will restore the old PTE pagetable with an invalid pmd 
-> entry:
-> 
-> pmd_populate(mm, pmd, pmd_pgtable(_pmd));
-> 
-> So when the process exits and trys to free the mapping of the process, 
-> traversing the invalid pmd table will lead to a crash.
+Please put version log below the --- line. That's not part of the change log.
 
-CPU0                         CPU1
-====                         ====
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> Suggested-by: Jann Horn <jann@thejh.net>
+> Link: https://lore.kernel.org/linux-fsdevel/1477863998-3298-5-git-send-email-jann@thejh.net/
+> Link: https://github.com/KSPP/linux/issues/119
+> ---
+>  kernel/futex/syscalls.c | 110 ++++++++++++++++++++++------------------
+>  1 file changed, 62 insertions(+), 48 deletions(-)
+>
+> diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+> index 4b6da9116aa6..3278d91d95ce 100644
+> --- a/kernel/futex/syscalls.c
+> +++ b/kernel/futex/syscalls.c
+> @@ -39,46 +39,81 @@ SYSCALL_DEFINE2(set_robust_list, struct robust_list_head __user *, head,
+>  	return 0;
+>  }
+>  
+> -/**
+> - * sys_get_robust_list() - Get the robust-futex list head of a task
+> - * @pid:	pid of the process [zero for current task]
+> - * @head_ptr:	pointer to a list-head pointer, the kernel fills it in
+> - * @len_ptr:	pointer to a length field, the kernel fills in the header size
+> - */
+> -SYSCALL_DEFINE3(get_robust_list, int, pid,
+> -		struct robust_list_head __user * __user *, head_ptr,
+> -		size_t __user *, len_ptr)
+> +static void __user *get_robust_list_common(int pid,
+> +		bool compat)
 
-collapse
---> pmd_populate(mm, pmd, pmd_pgtable(_pmd));
-     mmap_write_unlock
-                              exit_mmap
-                              --> hold mmap lock
-                                  __pte_offset_map_lock
-                                  --> pte = __pte_offset_map(pmd, addr, 
-&pmdval);
-                                      if (unlikely(!pte))
-                                          return pte;   <-- will return
+What is this random line break for?
 
-IIUC, in this case, if we get an invalid pmd entry, we will retrun
-directly instead of causing a crash?
+>  {
+> -	struct robust_list_head __user *head;
+> +	void __user *head;
+>  	unsigned long ret;
+> -	struct task_struct *p;
+>  
 
-> 
-> Barry, please correct me if I have misunderstood something.
-> 
+Stray new line and please use reverse fir tree ordering of variables:
 
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
 
+> -	rcu_read_lock();
+> +	struct task_struct *p;
+>  
+> -	ret = -ESRCH;
+> -	if (!pid)
+> +	if (!pid) {
+>  		p = current;
+> -	else {
+> +		get_task_struct(p);
+> +	} else {
+> +		rcu_read_lock();
+>  		p = find_task_by_vpid(pid);
+> +		/*
+> +		 * pin the task to permit dropping the RCU read lock before
+> +		 * acquiring the semaphore
+> +		 */
+> +		if (p)
+> +			get_task_struct(p);
+> +		rcu_read_unlock();
+>  		if (!p)
+> -			goto err_unlock;
+> +			return ERR_PTR(-ESRCH);
+
+                scoped_guard(rcu) {
+                     p = find_task_by_vpid(pid);
+                     if (!p)
+			return (void __user *)ERR_PTR(-ESRCH);
+                     get_task_struct(p);
+                }
+
+No need for a comment about pinning the task. This is obvious and a
+common pattern all over the place. And note the type case on the error
+return.
+
+But you can simplify this whole thing even further:
+
+	struct task_struct *p = current;
+
+	scoped_guard(rcu) {
+        	if (pid) {
+                     p = find_task_by_vpid(pid);
+                     if (!p)
+			return (void __user *)ERR_PTR(-ESRCH);
+		}
+        	get_task_struct(p);
+        }
+
+Yes, RCU is not required for the !pid case, but this is not a hot path.
+
+>  
+> +	/*
+> +	 * Hold exec_update_lock to serialize with concurrent exec()
+> +	 * so ptrace_may_access() is checked against stable credentials
+> +	 */
+> +
+
+Stray newline.
+
+> +	ret = down_read_killable(&p->signal->exec_update_lock);
+> +	if (ret)
+> +		goto err_put;
+> +
+>  	ret = -EPERM;
+>  	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+>  		goto err_unlock;
+>  
+> -	head = p->robust_list;
+> -	rcu_read_unlock();
+> +	if (compat)
+> +		head = p->compat_robust_list;
+> +	else
+> +		head = p->robust_list;
+
+Brain compiler complains about a build fail with CONFIG_COMPAT=n
+
+static inline void __user *task_robust_list(struct task_struct *p, bool compat)
+{
+#ifdef COMPAT
+	if (compat)
+		return p->compat_robust_list;
+#endif
+	return p->robust_list;
+}
+
+So you don't have the #ifdef ugly in this function..
+
+> -	if (put_user(sizeof(*head), len_ptr))
+> -		return -EFAULT;
+> -	return put_user(head, head_ptr);
+> +	up_read(&p->signal->exec_update_lock);
+> +	put_task_struct(p);
+> +
+> +	return head;
+>  
+>  err_unlock:
+> -	rcu_read_unlock();
+> +	up_read(&p->signal->exec_update_lock);
+> +err_put:
+> +	put_task_struct(p);
+> +	return ERR_PTR(ret);
+> +}
+>  
+> -	return ret;
+> +
+> +/**
+> + * sys_get_robust_list() - Get the robust-futex list head of a task
+> + * @pid:	pid of the process [zero for current task]
+> + * @head_ptr:	pointer to a list-head pointer, the kernel fills it in
+> + * @len_ptr:	pointer to a length field, the kernel fills in the header size
+> + */
+> +SYSCALL_DEFINE3(get_robust_list, int, pid,
+> +		struct robust_list_head __user * __user *, head_ptr,
+> +		size_t __user *, len_ptr)
+> +{
+> +	struct robust_list_head __user *head =
+> +		get_robust_list_common(pid, false);
+
+No line break required.
+
+> +	if (IS_ERR(head))
+> +		return PTR_ERR(head);
+> +
+> +	if (put_user(sizeof(*head), len_ptr))
+> +		return -EFAULT;
+> +	return put_user(head, head_ptr);
+>  }
+>  
+>  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+> @@ -455,36 +490,15 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
+>  			compat_uptr_t __user *, head_ptr,
+>  			compat_size_t __user *, len_ptr)
+>  {
+> -	struct compat_robust_list_head __user *head;
+> -	unsigned long ret;
+> -	struct task_struct *p;
+> +	struct compat_robust_list_head __user *head =
+> +		get_robust_list_common(pid, true);
+
+Ditto
+
+Thanks,
+
+        tglx
 
