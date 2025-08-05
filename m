@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-756638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4173B1B71E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481FCB1B71F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11C21896DFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF61625579
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588162797AC;
-	Tue,  5 Aug 2025 15:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D92797B3;
+	Tue,  5 Aug 2025 15:06:31 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40736279780
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D652797AC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754406379; cv=none; b=TuI3gdmUApSYTDLTIiKK5d0r8P4kCx+efFXn0td37w75MaMuTHbSlSREJDgXfENN9AORgAsd4LuRAHdC9DahdBVa9ShZThYB4RneIRwtNpJ7FPX6UciAFJtaTNj76Go0m/yWIsLXicbbyRC+SFc+aFWOvU31xRDiYjR7jo2yMPM=
+	t=1754406391; cv=none; b=E6fPQ40pVnhSJVd053jspdEaDu8rN170zbzKCSMpy4BEOiubE+V3XEjnhKuQs1NuT0b7QH10oICMyL3VpbdEGXZjPLz2Ft4MlMEZR5QVxmiWJCtT6sad8JngaMpk7Erqwp0SxwCMLj56ctQrSJDzY/2r1SWp1Vi61qCh02y+Gnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754406379; c=relaxed/simple;
-	bh=C9KmOuqj/FTpq+0HJ6jUaCewQnMfWBs4/GmN6f7BPfk=;
+	s=arc-20240116; t=1754406391; c=relaxed/simple;
+	bh=IRPnCmz2fWFDtS9q+ve2Qncui0/3hOtCgfw5Vn3B8b4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Mq57li0akuF0/wGEoMuby5JmF/DnWo2l9XYSNnhUNq0jHu3aq6S/F946+KPfjJO2ijHF1EX1csu/qD4NzelWQ61f4GHuWJEXQOCwwTJ2cVazmX2ugHKKOOtaHqh4nbfREypc/JBF7ekJ90pT67n1quhs1Nho3ab25KSwEaVbhc0=
+	 In-Reply-To:Content-Type; b=iSpnvtJhM7r4DOCEMTBg5DZ23w0FC5ov4oxRIa7AU4sDerwB5hW+4/s1bYKSH1CuMa//Qy/ufyLrVcU3WXR/Kz7t7GDY8Y4mcAsKRNAx7go/adEH8x8tEIxKdlE1W89uttS+TDpA3O3ZUm/xjbo2vb4Ruz02qOdRKigl/yIwNNI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42E052BC2;
-	Tue,  5 Aug 2025 08:06:08 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74E5E2BCC;
+	Tue,  5 Aug 2025 08:06:21 -0700 (PDT)
 Received: from [10.1.29.177] (e137867.arm.com [10.1.29.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 226143F673;
-	Tue,  5 Aug 2025 08:06:11 -0700 (PDT)
-Message-ID: <df50cc99-027e-4182-ba4c-9837b354a062@arm.com>
-Date: Tue, 5 Aug 2025 16:06:10 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBD3F3F673;
+	Tue,  5 Aug 2025 08:06:25 -0700 (PDT)
+Message-ID: <b8adfbad-2a7d-47d4-a925-2f93c09cc414@arm.com>
+Date: Tue, 5 Aug 2025 16:06:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,11 +41,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v7 2/7] arm64: entry: Refactor the entry and exit
- for exceptions from EL1
+Subject: Re: [PATCH -next v7 3/7] arm64: entry: Rework
+ arm64_preempt_schedule_irq()
 To: Jinjie Ruan <ruanjinjie@huawei.com>
 References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-3-ruanjinjie@huawei.com>
+ <20250729015456.3411143-4-ruanjinjie@huawei.com>
 From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
 Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>, catalin.marinas@arm.com,
  will@kernel.org, oleg@redhat.com, sstabellini@kernel.org,
@@ -57,85 +57,29 @@ Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>, catalin.marinas@arm.com,
  linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 Content-Language: en-US
 Organization: Arm Ltd.
-In-Reply-To: <20250729015456.3411143-3-ruanjinjie@huawei.com>
+In-Reply-To: <20250729015456.3411143-4-ruanjinjie@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
 On 29/07/2025 02:54, Jinjie Ruan wrote:
 
-> The generic entry code uses irqentry_state_t to track lockdep and RCU
-> state across exception entry and return. For historical reasons, arm64
-> embeds similar fields within its pt_regs structure.
+> The generic entry code has the form:
 >
-> In preparation for moving arm64 over to the generic entry code, pull
-> these fields out of arm64's pt_regs, and use a separate structure,
-> matching the style of the generic entry code.
+> | raw_irqentry_exit_cond_resched()
+> | {
+> | 	if (!preempt_count()) {
+> | 		...
+> | 		if (need_resched())
+> | 			preempt_schedule_irq();
+> | 	}
+> | }
 >
-> No functional changes.
-As far as I understand and checked, we used the two fields
-in an exclusive fashion, so there is indeed no functional change.
-> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> In preparation for moving arm64 over to the generic entry code, align
+> the structure of the arm64 code with raw_irqentry_exit_cond_resched() from
+> the generic entry code.
+>
 > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
-> [...]
-> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-> index 8e798f46ad28..97e0741abde1 100644
-> --- a/arch/arm64/kernel/entry-common.c
-> +++ b/arch/arm64/kernel/entry-common.c
-> [...]
-> @@ -475,73 +497,81 @@ UNHANDLED(el1t, 64, error)
->   static void noinstr el1_abort(struct pt_regs *regs, unsigned long esr)
->   {
->   	unsigned long far = read_sysreg(far_el1);
-> +	arm64_irqentry_state_t state;
->   
-> -	enter_from_kernel_mode(regs);
-> +	state = enter_from_kernel_mode(regs);
-Nit: There is some inconsistencies with some functions splitting state's 
-definition
-and declaration (like el1_abort here), while some others do it on the 
-same line
-(el1_undef() below for example).
-In some cases it is welcome as the entry function is called after some 
-other work,
-but here for example it doesn't seem to be beneficial ?
->   	local_daif_inherit(regs);
->   	do_mem_abort(far, esr, regs);
->   	local_daif_mask();
-> -	exit_to_kernel_mode(regs);
-> +	exit_to_kernel_mode(regs, state);
->   }
->   
->   static void noinstr el1_pc(struct pt_regs *regs, unsigned long esr)
->   {
->   	unsigned long far = read_sysreg(far_el1);
-> +	arm64_irqentry_state_t state;
->   
-> -	enter_from_kernel_mode(regs);
-> +	state = enter_from_kernel_mode(regs);
->   	local_daif_inherit(regs);
->   	do_sp_pc_abort(far, esr, regs);
->   	local_daif_mask();
-> -	exit_to_kernel_mode(regs);
-> +	exit_to_kernel_mode(regs, state);
->   }
->   
->   static void noinstr el1_undef(struct pt_regs *regs, unsigned long esr)
->   {
-> -	enter_from_kernel_mode(regs);
-> +	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-> +
->   	local_daif_inherit(regs);
->   	do_el1_undef(regs, esr);
->   	local_daif_mask();
-> -	exit_to_kernel_mode(regs);
-> +	exit_to_kernel_mode(regs, state);
->   }
->
-> [...]
-Other than the small nit:
 Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
 
 
