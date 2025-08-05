@@ -1,186 +1,252 @@
-Return-Path: <linux-kernel+bounces-756244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2D4B1B1C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:15:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B587DB1B1CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15EA47AC98F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C359917BD4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A7C26C3A0;
-	Tue,  5 Aug 2025 10:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BFA26A0A6;
+	Tue,  5 Aug 2025 10:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Syr7Re/Y"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bVS3lkS0"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2043.outbound.protection.outlook.com [40.107.236.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D197F269CE6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 10:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754388927; cv=none; b=FFYGH8srMd2udHiFpkowmeX+ToBRXX3inkU9GXaqVqVKcpxx2b5wZIuvc1EUgGPoGe3Tm4SV7YJZrC3hHBUJ6M6LCQBZqxHVAJFSsYtY7PtjBrqifM3kelsmg9RJEhb0UmbK11xd3CDyNhTGb92wrKR1YjgiJNQUnWZqdGKN1+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754388927; c=relaxed/simple;
-	bh=qS5CvNi/TU2MCEo48xS65HI1PZQRvgnJ+LOTlZEISMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHTzTsnM6O+F9nzfw/oFFxCzeu77Q+kEquaKQtzX70ZzDEejwZHrTyYu7Dl/zIkSigFSO+S31tZz1LIqpw8bgS0y5HzdJ2NdTy7aezDsjxdHDXBQu3v3fSila6cfchrgykTFRZFqUtkeFgvxow2fnTbRUcW0jHBXS/uxqMYS4kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Syr7Re/Y; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6153a19dddfso8348935a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 03:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754388924; x=1754993724; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Ar0NLemVcS8Q0eL1gYpaDXHf8V6Ud9JA+Ifa04irXg=;
-        b=Syr7Re/Y21mT+fieDnD0ZHZTNTO2chrEUQ/ulq2LLd3U2huniISkiBVJEoroQbKtPq
-         8z4hA0fOJPM6Wyc50SwEtWLOwRocOAER/2DPlJTu0cLugC90j6IRt08iVQTxR9Cughdn
-         h9PBl2duSeXxIiyuu8hfMtnSd15qsdqTGjS1FKPk9Z6SSh8/0HQA/kHtFQjaLeOCzzP4
-         rP0Y3WjMm325q5herw2SYkDmXuxV7jA5ruiN5C/WtTzjy2n9KOvslue/vWzcRiknfvQs
-         AY6psezAHe3VdWHUt2XtWaIFS7ViKAXjsv5DK4Evq1800lkROtVVJWS2x7q0viq9d1yy
-         yb7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754388924; x=1754993724;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Ar0NLemVcS8Q0eL1gYpaDXHf8V6Ud9JA+Ifa04irXg=;
-        b=Gpl+1UTJIiAXTuRQ7CrsFDOv7QN61n06wIBaEhPfGM9Ulbmv5Xv1c2GRxbTwAkbyYf
-         1oTVCxutd9fznr1NgX3lGk98YfmhgyBcYaFgU035PEE/iQKzbIg2dIBiReXDGy3KJwV1
-         Pz477n2XRSPVT+TL8HhXfGzAqBS1HX3eo/a7HXRA0izxeb3AsqmPpdFPPC9CbdBrRYyb
-         n2Qn8lYOL8DnsMA9juadUHIVWREMm1X7wOx7KvGe0Wv9ThSBxb3Q8Wbzxtr5Hrc0rYFu
-         Z1BHOGecSSUkTOy4hbDJK5IDqK3bCF8gAkwTA0uUtlXWRjcIr4DQeyHCCdLXwUsPCsyy
-         XckA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW+j60feg9EYv+4fZ/wpKOrfG29R9Rk2GYUPl7yeEgTJ9XfRT5it4HKD/dfJgoFDzvMb7KphWZ2FKc7gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBb0t2g/Z3zxgUYsKftyU+GaIn1u7EeZdN9VPVatqtAc20gLXO
-	HkYU38K6XqjCLcaruYjac/4YUQI8QQ9g//oZYWLuZo8xfpZWp3Zzbxp3KOf1L04+cyS6VU70LJX
-	+CkUWnvK2SIWfVvexle8iHzKfrsMyMSjgGPmjPAp2iQ==
-X-Gm-Gg: ASbGncvneNfI0rJ8xwH6iahlCAJpKXvrt1+jtYn1XUIi8YBLAHr0d/aAonYCOM9JQR6
-	6akLh0AtQsc1uClDlcnCvybsm8F+sD74kxWfXbKKXYfcixQXBX7lISB5DVCQrdffwMsus8klnii
-	oQ4/2A+7noAuNq8mMrZEyfE6MFk5AP/eUEtU09k6Bfqta01H9u1n2WN2/QudER6SZ8MwFwzlwtz
-	2qUzQ==
-X-Google-Smtp-Source: AGHT+IHJC0OEe85WEW+uZTa05xouWEVU5GyBHg1A8HxJHnuylCsAviNXR5p7OpzyynSGKKmz7seq3XWzPEvfHkexNis=
-X-Received: by 2002:a17:907:9408:b0:ae3:f903:e41 with SMTP id
- a640c23a62f3a-af9402574b3mr1323967366b.54.1754388923827; Tue, 05 Aug 2025
- 03:15:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD9BB652;
+	Tue,  5 Aug 2025 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754388985; cv=fail; b=Hu4fo+4ZCdrJ52XJKPWUmaaclhBN4DpPJPh5g2sG0MKfAYWffHN0VoyyknQynRpvt/HCLbIHHPlhHWrs6kQZHiVYmM/c2BayTHCw1E4+47o2N9Eu2BYnW3D/9L5g9cE++QoutTWYrYwOuEI39HzUd9QGrhUvZ2naLHog2G4EKBQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754388985; c=relaxed/simple;
+	bh=PW59P5wIYwHzIFT2AXs17a9EtF4lYgtVbRqmTUhIuWM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ImJIwI4ltf/1EzhWwQJMrshMnt9NDM94+RMLXctsSjxu2xNBXkU4cEC1Oc9inz7God2afuYCnE8fxYdp7K4aIsC3THKGv3WIPiAPY8j1d68roi14dmCm1GUWJF6wBUXLkYFYlJtxJbDjwfK5zTGYMjYFhnQ1Ra4k3JbY41AhJcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bVS3lkS0; arc=fail smtp.client-ip=40.107.236.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cw8AwhsQuuSjgXW/88RigwsW1mGY+q3d8HW1guR4KllrO0J3goGNAHvVKMGG467tLRt5e+AE3wRHNNDOqv+nZISCSXBZM2NttYSn0VkWDPXOD51RrUFUmZt3d7zsfTORSbhmJzDyNrRAjzJdhVyYmeyZ6yrhrAFkQbpGuDRmw17bUZptl/2lT+YAWjN6jQp4w8quxf7pwnWPlbIsIPgyP0tN+ZIL0mXvApF6pRKLIhSO10Xo+J5sWmsHoKJLDeZcjOV95zrUdqFZrpMA4vIEZh9MKNKCEh64hGP+5QM2JlNIAyQvcN9f/E+kImcHl+VjOE2P1wPaM6ABatog1ykw8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=coAcsydaM6XL1EevNgJrQFXlAi8rNtANfsU+MuhazDM=;
+ b=gaI1bUaXx80s/9mMlvzsw8DS+vwfqjpoZaDTjZkfQ0uNAJGd29Chjlc8/IEi6ceZ7B+HS+t9NKO33xZ5T222jxJFGWMV1hk7dF21kDAOZD3QVVq5DNCZAbkpWHD5xjYE/FefuULVp1aXKNekaJEpL7lsIxPkAdbPXouOaLLKchfLw0ZqzJAa9QoQG//S2QuuT/V3v9D8cJ5d6/TBYYRqa++sf21BHmrUaojQUegy00kltRBaDbFW7FlOZsK1C0JDjf0osxlc8dmWnPT9gZlxNRiX/COlb9+KtoupU4Yu62teuF2KW7WG6VY48jckowU6h1EU747mAxGFFiI+RL2QJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=coAcsydaM6XL1EevNgJrQFXlAi8rNtANfsU+MuhazDM=;
+ b=bVS3lkS0DmjCSApoxW1KuUqzgb6MuacEP1JZ0tv9VPB/2vr7rbPB5zD1wyoC4cRO4rWfV2c1owvcN/MFkr3vmBl/xjxEOS56P9aA5EZMqTdt1MXgYe+U7wOXULPD/WHGvvSq6x/SCuIZbsFB+5beEDVyYBmld/GYEIMI84gHqMk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DS5PPF5C5D42165.namprd12.prod.outlook.com (2603:10b6:f:fc00::64f) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Tue, 5 Aug
+ 2025 10:16:20 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 10:16:20 +0000
+Message-ID: <4c7ab068-ec38-432f-81c7-860792408e62@amd.com>
+Date: Tue, 5 Aug 2025 12:16:13 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Alex Deucher <alexdeucher@gmail.com>, Leo Li <sunpeng.li@amd.com>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+ Brian Geffon <bgeffon@google.com>, "Wentland, Harry"
+ <Harry.Wentland@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li
+ <Yunxiang.Li@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
+ Prike Liang <Prike.Liang@amd.com>, Pratap Nirujogi
+ <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>,
+ stable@vger.kernel.org
+References: <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+ <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
+ <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
+ <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
+ <CADyq12x1f0VLjHKWEmfmis8oLncqSWxeTGs5wL0Xj2hua+onOQ@mail.gmail.com>
+ <CADnq5_OhHpZDmV5J_5kA+avOdLrexnoRVCCCRddLQ=PPVAJsPQ@mail.gmail.com>
+ <46bdb101-11c6-46d4-8224-b17d1d356504@amd.com>
+ <CADnq5_PwyUwqdv1QG_O2XgvNnax+FNskuppBaKx8d0Kp582wXg@mail.gmail.com>
+ <eff0ef03-d054-487e-b3bf-96bf394a3bf5@amd.com>
+ <CADnq5_NvPsxmm8j0URD_B8a5gg9NQNX8VY0d93AqUDis46cdXA@mail.gmail.com>
+ <aH90O93xJhD8PXWL@quatroqueijos.cascardo.eti.br>
+ <c4f9dbe8-d224-478f-a91f-03a420333fde@amd.com>
+ <CADnq5_PFLuoe2fqn1YL984YPy2FU8SdJ0yWS5nmKFfsNwc324Q@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <CADnq5_PFLuoe2fqn1YL984YPy2FU8SdJ0yWS5nmKFfsNwc324Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0450.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c6::11) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725100806.1157-1-jie.gan@oss.qualcomm.com> <20250725100806.1157-4-jie.gan@oss.qualcomm.com>
-In-Reply-To: <20250725100806.1157-4-jie.gan@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 5 Aug 2025 11:15:10 +0100
-X-Gm-Features: Ac12FXxr456QPb-g62XeDYWEW4C_Du37eJm8f_7Mmf5ggFk2nh7e_omeT6qcdRU
-Message-ID: <CAJ9a7VijwFKiaZzKsSKPynWapA3ik9d7JLeE+yVNFB0T62iH-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 03/10] coresight: tmc: add etr_buf_list to store
- allocated etr_buf
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>, Jinlong Mao <jinlong.mao@oss.qualcomm.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, Jie Gan <quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS5PPF5C5D42165:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8fbe19d-5c36-4383-88fd-08ddd4091f1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WkFVTXR5RnBCcWtuRHUrMTlsdk13OGxadmlIdXJpTElvWm1YYUhBNGs5Smth?=
+ =?utf-8?B?cytmNExQSXFIUE5GRndGSTZ5Mjg4N0IrYWVIWVhPQlBwc1N2YW50UnEvQzk4?=
+ =?utf-8?B?bnRnQ2tXczUyR050RWpIajU3Vmt5YjRVNFlFK3IxNkRPOURudUZpb21sSjZ0?=
+ =?utf-8?B?dnRtL0JBWWptK3NvMm5meDZueUxQQ0F0cElqaVlZYUtUVUNqNThUa3FTUUtn?=
+ =?utf-8?B?cEVCUVhvOStITjhlZExuUWxwYnphN0hSdnZ3QU0wSUNuVjNoN1A2WkkxVGRR?=
+ =?utf-8?B?WCtEOUVhbFJUNVZTei9IMURxNEVYbkY0Ukl6c1paaUZzYkVNRzJpOStUcy9F?=
+ =?utf-8?B?K0JvZTJsb1VDU1Y3WlpvWjY0VkY4azIyQ3ZRNU1NQzhjSDhvcU5zeWVMaGQ5?=
+ =?utf-8?B?ODZTcU8rT1QyaWRoQ0JSZWFNenZQMndRbDJkejNrUzhDc3pDN21CbHBDY0NR?=
+ =?utf-8?B?ZHRlK1dnZ1RPRG10eGd1dnhCcnBQU3ROV1BCWlNwN1pMQlFKWTBZK0tGWVVx?=
+ =?utf-8?B?OG9mTHlFSy9uODBVWkRVRkdaL2l5bFJ5Y0NrRFVMQzRkMjh1TUJWN2FHakxT?=
+ =?utf-8?B?OUNvSmFlSWNNL0JTdnZ2MVpGWkNTc0J0T0c0NFd6RjQza0RHcDdsak1rNHZM?=
+ =?utf-8?B?NFdPWnhxdUxxZmZiank5QkI0QldkZmF6ZkQwQmRoUDZ3c0ZPVDQ5UHo0a2U4?=
+ =?utf-8?B?bkNPbi9xS2QrUWxhU2RpRTJKcnJhUGNvMThkR3NHZXRPaitJTkl1a1QwMzU5?=
+ =?utf-8?B?ajlZQkNsUTcwb2tLMkxPSWI1VWpOMWxJUkdiRTB2T1BIcjhON3JmdVhTT001?=
+ =?utf-8?B?Y29YenhZRlNHVDRXcFZvOHN6YlljcnNQc04zcEN2dTVQRWIybDR3N0YvcU5x?=
+ =?utf-8?B?YnhjVnpIS3VFZEFaSXBMWVJ0aFU2NnBPYVJWaU5JTTVWdUxJRWJHeVI0dXR4?=
+ =?utf-8?B?Rm4xVlFkVUVNWnJNcE91bHJQdGQ2L3hNZVIzeVJJTEQ0akRjY0NpVll1V1RS?=
+ =?utf-8?B?YTVXaHU3eGo2VFRyWmJMS2JSY21uNEx2NFZVdFpCRDhHTDg4ZkJIRUxKZzZm?=
+ =?utf-8?B?c29ZTEEzSU9qbjdYU2kycGpnL3Z3ZDFYdE8va0crczBxYllVcEVtVXVaZk5W?=
+ =?utf-8?B?RzVjZnEzTWpQL3dVZlRZaDRFTXJIbzBpdEFVMENrREprMDZFQjNzZmVzS0I5?=
+ =?utf-8?B?cm5qaVBnU3lMZ3BuRkdQbStkc09wd0JqTUIwZjFVc1N3RjJiMUJ6YjYyWC83?=
+ =?utf-8?B?NVRtZ2dtMjYxQUViODVhZjNnbGd4dmFWZTVlb21jTmY4eld6d29wc0VmRnBV?=
+ =?utf-8?B?N1J6Wi9DRFIyNVRaeGtVeFp4VUZNbjhNR0VLd21YZXZibjVVZDBjWGlEMmM1?=
+ =?utf-8?B?dmRCdDVIZGp2SkxBRnNVUjNYTE0vcWJadXIyenQxTkY5Z1pDK2hHZ200ZFFq?=
+ =?utf-8?B?T2NLQnJlNG40VWFVWTBXQ1dJMDNKSmRaUFZINm1LTHJJN2REazVvRkQyWW1o?=
+ =?utf-8?B?VmhPV2pTeFo1ejcrVytKQndGQkZxbGpHVUJ1dlc5WDVCYWdUSzVxQndialI2?=
+ =?utf-8?B?bUo4azU5Lzd6UkZRVnYwelVsa3VUN3BYOHphU1NKTTlyaWgzclBLQ2dkWTNl?=
+ =?utf-8?B?dWNIUENZbEF3cW1pYkVFY2lTb09IeTcxQU9xTE9WbWVmaWorbWE5Q3B0MldU?=
+ =?utf-8?B?V2ZISWtYQUNLWG1tdlF2bXVIUkJ2dDVoaGlvVmtjRXlMdDE3aWt0MlFzcHBN?=
+ =?utf-8?B?eDRySWpUd0IrQ0FLZG9oanpiK0ZFRW1yUzlHWk4wdnlkQlc2ZkRINm1aNXI3?=
+ =?utf-8?B?Ukk4NXJRN1ZQQWJoWlNrNXZSQUc0UnpjZVpndElyb0ljN1lGRzhkbm5URWNI?=
+ =?utf-8?B?MzBTNkhjbm1ObFF2WWEvdUIxQ0prcGJzRlBRRys1N296c2Q5SEsvMGdLZk5K?=
+ =?utf-8?Q?LvK/MQE8wUo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VkJuL0ZmV2xrRGhEZDV4WGFxQW52Z2ZOSi8yRmZJRTdrUGJlMWhLNFpuZ0I1?=
+ =?utf-8?B?eG5uRWpab3ZsbGxraVpCTjhnbDduYUxKbDFxUWI4UHFlbXpOY0J1QnFldEJ5?=
+ =?utf-8?B?Y2dxYklCR1NKNGZoZk9rOUNJVTZMOGZuemlraGVwQUNoVFQvSW1jRTFGdjNS?=
+ =?utf-8?B?OTNnU0gzSWR2cWxnNkRGdHo4YW52STh0TXBKeWh5dDNlQXRtYllGZXZBTWda?=
+ =?utf-8?B?WXdOekNsYVMwRHNyYkMyaHlLbktpSzVVeitHN3g4ZnNnV2Y1N1A3RnIzaXN3?=
+ =?utf-8?B?dlR6akR1dmNMRVMrd2hjTDVDWTkzM2d6cXNRckd3NklUYjZ6QVRoU240TE9S?=
+ =?utf-8?B?bXlaaUd5NTVrdFJ0UHdxTnI1WURucTVFU0tsRHptQkJiU2NwVEVPdEw2TWlC?=
+ =?utf-8?B?YVJqb3NZRVE1YW5lczJZMFF1cGQvUjlmSmYwTDUwOGpIcXBaY3NpNnlOc3VU?=
+ =?utf-8?B?aHdHQlFkelNKSEFCcFNDNXd3NlFDWThub3RrQmpQRW1uYVBFVEVITG91OUN3?=
+ =?utf-8?B?YlRvUVZxK1hkM3BMcWdrTHdjbDFhTFhORFVMUHY4bnAvcVVzYTRwSzU3cVZk?=
+ =?utf-8?B?N0tMRGZUTmY5Z3p4WXh0MTNFeDJtWHJyZkFURkdBbXQvQXN0ODJPQ0JudU41?=
+ =?utf-8?B?Vm56UU9zaTA0ZUtNYktGRHd3MkJGN04rT1FDVjIvak5xcGU2alNhK1dISTBQ?=
+ =?utf-8?B?UkRyeFhLTWlkbHJYOXNhTVRSTm10VkxqYXdKZVdEcmc3UmQ4WEtmYWxTMUlv?=
+ =?utf-8?B?VG9UMURaYTAzNS9EV202Zlk5WFhtZ3FUWWFsVHUwT1g2UWlHZnRRSkVCakk0?=
+ =?utf-8?B?M3Bod3JHVk9KaDZITEs4RDMzZm1GZEcwTUdyem1DaUtIbmdKd0g2TklmbXcx?=
+ =?utf-8?B?R1pMZDl3bVdSSkFKMko5MG9aVVpwTWVmOW1ZMU8yZEhadUlyQ0RiNmJuWjVj?=
+ =?utf-8?B?VllWTGs1U3NOeDQ3Z1JGajhXek1UUmRzTFp0RmIwNGV6NnBPVDdPMUlBbWtx?=
+ =?utf-8?B?VVJtSEt6M2VvK0pRR2l5WDBrYllHYUlQdDF5emhFS1FTL2ZLZldtOW9jRVhE?=
+ =?utf-8?B?aTlLZUhPVGd0aWwva3UvZ0h1T1pmeFVkbGwwbDIvY1o5LzJxY3J2N0ZHSDc2?=
+ =?utf-8?B?UWNhK1luR0pHVDR0czRETGRTaGpiTlROOVBJZURXSUltVTJrR09SRng1enpC?=
+ =?utf-8?B?ZWJ6dXNrRWRHc1VvbDNrUzJsRXZ0TzZFcEFnQ0p2SnUzWjl2aVlYRXd3NTFD?=
+ =?utf-8?B?YnJtN2svaDFjOGk5YUJJWXc5MEZEb1F4ZFhrM0c0WUk1OGVpY1JMb0thUWJI?=
+ =?utf-8?B?NnpoNk01bkJGeGU4MjVpRzJneDhDUFh4UGtTdjV1UkhFYzRiSlpVSWdvSG01?=
+ =?utf-8?B?OXNIN1R5VnVlMnRTei9qZS9pRFlvdlJ1ZE5QTEhSNWsybC9IVFBac1hHOTNl?=
+ =?utf-8?B?S3RuZmh4OFQ4dW4zWkZrUUU1MUlGV1RTVkVmc0VZSWFCclNDQ3JXMlA5WVhQ?=
+ =?utf-8?B?blFDeGNxNWdJNkdoVEJ6cVE0cGF2eTNtV1dueGF6Y3RNQUwxSEJZMlowVnpl?=
+ =?utf-8?B?cmxBSnpDMDlZcGdxUEFtbzVkK2psTTBJcjVodTZWOXNUUDNReWxXZ2JRUVZa?=
+ =?utf-8?B?Z1RUSythQjkxNGpQUUZTZFZ6TWcwVW5tc3E3SWZnUzVsTldSR3Q2WEpFeFo3?=
+ =?utf-8?B?eVorY0VtNmFwTllOalpsblhGSjJNSE1UckpGRm5adEdFNU5rd25WWitsSE1D?=
+ =?utf-8?B?UlFsVnhOcTZoRElLVWlIanBsN2ZYWDN2cG85c3JrOTEvcWkxM2Fla1lIWlNI?=
+ =?utf-8?B?T2ZsNGRJMG96eVhXN3cyei8wOXhzMVZ3amZ4ZVQvS0VaSWM3WkM3M2pjelpV?=
+ =?utf-8?B?UE9jNlhEYnExTFQwRmFQN3pGODNtRU1yWWszMWR1UEkzSW1qZU1GY1FHdnM4?=
+ =?utf-8?B?eEtiakNpQzUzb0RXRGdjV3BjenBiZlJsUnBCS1JJYU1uODlyWFBnN0RVSEtP?=
+ =?utf-8?B?RXM1eGFvbWJ5VnhuZXMwRTRFUnVsTk5lbUIzWFZ0YWdXaGNPU29rTW5mYngy?=
+ =?utf-8?B?cUl5VStCWk1SV29ZbmRQN0p3eVdETnE1UHR6ZFBqTnRTNGVQdkdUTVpoUzNj?=
+ =?utf-8?Q?k95zpTuLssqmXeoarRGaNHKkp?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8fbe19d-5c36-4383-88fd-08ddd4091f1c
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 10:16:20.0452
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rd/xSKmL4o043b772bdEcTTEw3QPBLZVfteqGj6sqZnUbMGZunSQ9HhpdlzoHWsD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF5C5D42165
 
-Hi
+On 28.07.25 18:38, Alex Deucher wrote:
+>>>> Anyway, back to your suggestion, I think we can probably drop the
+>>>> checks as you should always get a compatible memory buffer due to
+>>>> amdgpu_bo_get_preferred_domain(). Pinning should fail if we can't pin
+>>>> in the required domain.  amdgpu_display_supported_domains() will
+>>>> ensure you always get VRAM or GTT or VRAM | GTT depending on what the
+>>>> chip supports.  Then amdgpu_bo_get_preferred_domain() will either
+>>>> leave that as is, or force VRAM or GTT for the STONEY/CARRIZO case.
+>>>> On the off chance we do get incompatible memory, something like the
+>>>> attached patch should do the trick.
+>>
+>> Thanks for the patch, this makes sense to me.
+>>
+>> Somewhat unrelated: I wonder if setting AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS is necessary before
+>> bo_pin(). FWIU from chatting with our DCN experts, DCN doesn't really care if the fb is
+>> contiguous or not.
+> 
+> Is this a APU statement or dGPU statement?  At least on older dGPUs,
+> they required contiguous VRAM.  This may not be an issue on newer
+> chips with DCHUB. At the moment, we use the FB aperture to access VRAM
+> directly in the kernel driver, so we do not set up page tables for
+> VRAM.  We'd need to do that to support linear mappings of
+> non-contiguous VRAM buffers in the kernel driver.  We do support it on
+> some MI chips, so it's doable, but it adds overhead.
+> 
+>>
+>> Which begs the question -- what exactly does AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS mean? From git
+>> history, it seems setting this flag doesn't necessarily move the bo to be congiguous. But
+>> rather:
+>>
+>>     When we set AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS
+>>     - This means contiguous is not mandatory.
+>>     - we will try to allocate the contiguous buffer. Say if the
+>>       allocation fails, we fallback to allocate the individual pages.
+>>
+>> https://github.com/torvalds/linux/commit/e362b7c8f8c7af00d06f0ab609629101aebae993
+>>
+>> Does that mean -- if the buffer is already in the required domain -- that bo_pin() will also
+>> attempt to make it contiguous? Or will it just pin it from being moved and leave it at that?
+>>
+> 
+> It means that the VRAM backing for the buffer will be physically contiguous.
+> 
+>> I guess in any case, it sounds like VRAM_CONTIGUOUS is not necessary for DCN scanout.
+>> I can give dropping it a spin and see if IGT complains.
+> 
+> That won't work unless we change how we manage VRAM in vmid0.  Right
+> now we use the FB aperture to directly access it, if we wanted to use
+> non-contiguous pages, we'd need to use page tables for VRAM as well.
 
-On Fri, 25 Jul 2025 at 11:08, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
->
-> Add a list to store allocated etr_buf.
->
-> The byte-cntr functionality requires two etr_buf to receive trace data.
-> The active etr_buf collects the trace data from source device, while the
-> byte-cntr reading function accesses the deactivated etr_buf after is
-> has been filled and synced, transferring data to the userspace.
->
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
-> ---
->  .../hwtracing/coresight/coresight-tmc-core.c  |  1 +
->  drivers/hwtracing/coresight/coresight-tmc.h   | 19 +++++++++++++++++++
->  2 files changed, 20 insertions(+)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index be964656be93..4d249af93097 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -830,6 +830,7 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->                 idr_init(&drvdata->idr);
->                 mutex_init(&drvdata->idr_mutex);
->                 dev_list = &etr_devs;
-> +               INIT_LIST_HEAD(&drvdata->etr_buf_list);
->                 break;
->         case TMC_CONFIG_TYPE_ETF:
->                 desc.groups = coresight_etf_groups;
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> index 6541a27a018e..52ee5f8efe8c 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> @@ -208,6 +208,21 @@ struct tmc_resrv_buf {
->         s64             len;
->  };
->
-> +/**
-> + * @sysfs_buf: Allocated sysfs_buf.
-> + * @is_free:   Indicates whether the buffer is free to choose.
-> + * @reading:   Indicates whether the buffer is reading.
-> + * @pos:       Position of the buffer.
-> + * @node:      Node in etr_buf_list.
-> + */
-> +struct etr_buf_node {
-> +       struct etr_buf          *sysfs_buf;
-> +       bool                    is_free;
-> +       bool                    reading;
-> +       loff_t                  pos;
-> +       struct list_head        node;
-> +};
-> +
->  /**
->   * struct tmc_drvdata - specifics associated to an TMC component
->   * @pclk:      APB clock if present, otherwise NULL
-> @@ -242,6 +257,8 @@ struct tmc_resrv_buf {
->   *             (after crash) by default.
->   * @crash_mdata: Reserved memory for storing tmc crash metadata.
->   *              Used by ETR/ETF.
-> + * @etr_buf_list: List that is used to manage allocated etr_buf.
-> + * @reading_node: Available buffer for byte-cntr reading.
->   */
->  struct tmc_drvdata {
->         struct clk              *pclk;
-> @@ -271,6 +288,8 @@ struct tmc_drvdata {
->         struct etr_buf          *perf_buf;
->         struct tmc_resrv_buf    resrv_buf;
->         struct tmc_resrv_buf    crash_mdata;
-> +       struct list_head        etr_buf_list;
-> +       struct etr_buf_node     *reading_node;
+Yeah, that isn't easily doable. We looked into that when on first HW generation with DCHUB.
 
-Potential simplification:-
-do you need both reading_node here and reading in the etr_buf_node?
-reading_node handles the logic for which buffer is being read, while
-is_free handles the empty/full logic - reading seems unneeded?
+In the end it was more trouble managing the page tables for VRAM than allocating VRAM contiguously.
 
->  };
->
->  struct etr_buf_operations {
-> --
-> 2.34.1
->
+Regards,
+Christian.
 
-regards
-
-Mike
-
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+> 
+> Alex
 
