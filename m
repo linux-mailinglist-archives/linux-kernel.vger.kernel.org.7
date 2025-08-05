@@ -1,228 +1,142 @@
-Return-Path: <linux-kernel+bounces-756414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEF2B1B3B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8FAB1B3B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE12622AEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3853E3B139D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56893274651;
-	Tue,  5 Aug 2025 12:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC2F27055D;
+	Tue,  5 Aug 2025 12:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRN0mvyd"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQmrItHN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18062737F6;
-	Tue,  5 Aug 2025 12:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1D17BA9;
+	Tue,  5 Aug 2025 12:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754397922; cv=none; b=jnrOSMKWSA2NYnOpQCDXJXL126t+MZVKHWtTomb9p6lMGge/jI65RpWZGpJuucSHqXn63EYQrBQY21dTnxzgiRvSeKwhCY8+FYtwFBQeIkKhbk9Q2YR9/5vtMOkEsuVtla9+hvIaEtQHQ+MQ7mfO49akFvIMPR7W+RNjVyxrA1I=
+	t=1754397994; cv=none; b=COMPImHFzSqNw6AqMz6YR+UlSXcHFsAjC0/KKtF8PHtra4mOP3MCS4sGAKvDu2mQVCocTOWE1SnHNdzfmHsHDBzBnTxzubLzhkv/hr5OltHG0h/+oNoyPuBANahkB7pl/A/D/exKq7kz7r2E1WPKIrhbVKsR5/V/aQwNdma8pbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754397922; c=relaxed/simple;
-	bh=ur0+FtE7C1sln/WEU2uVKhxyCP/viV94oTeRyrrapFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=twJycj5ZRWFbilJxTHQmdSv/QfbfEgpXVdvFThghLRCEZcI6Sv9Zc0n3EokcTS2yeHeRI3JjXAn/Z8PC7E/CFizojESChf4/I6HRUQ4Nq+LzFcNTE83IOGoh+527KXTCWDRZUs5G47oTajKPdurnt7sff3ycdXw6vApPb1O15CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRN0mvyd; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso5355042b3a.0;
-        Tue, 05 Aug 2025 05:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754397920; x=1755002720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gowrAGAtt/8PGy3ltcInMP14/WjUgpF9Gx6AgOeagC0=;
-        b=BRN0mvyd01ksXYHuXOQobhi6Sqbxn6LPxfXrE6J5BRtbkp3oiSjom4YCjNEvcRQ2RT
-         xiue94D5B+AyKp7/+seY08PIZLIb954MVamaXPSoWwgso3K9neNyCDS0rl+3+xp3GxSD
-         xYCmQxc9glfSgDhWoY3+gPmk4uy+Li8Bo1tQkF0NwHB2wONJpqBmjYakUfh2QhckNtl0
-         OVGZTPyDAVNnKxhO+RRmGdOPB3JwxknVWZPmoPmep/KrUGgJwnOyulCHjeXpiV/5QLs9
-         mW07AQd0DYyVLJqIwEbbNw7+q7oYf1vzPQC+RITZzCVfL2nBRWeAFXy7VGdFs0jUSPD3
-         U3ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754397920; x=1755002720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gowrAGAtt/8PGy3ltcInMP14/WjUgpF9Gx6AgOeagC0=;
-        b=U9/XEvZIAb8D09y32EbgQ1MIX7co7ivh/6JaavnXPxOopxPhRW/EyvqUGmvKMXGZP8
-         PZPOW6jdHMh3ZpdCigT7O3QwkHB/5GYqjm66TK7fs1noIXo0AGHuCUd4/ew+vS49areG
-         VOSL6Bjm/YImmYSTivVJN7eVrdxyDsySkCN+4jA8f1ytHmrYGYfIrnTvghr/ZTDilpsv
-         RpTgbFF8DYfZfHNJCiWsBa34k+SaRot4XwdfwkLE3Ve2efvdFBNXmj+XnU7smjZTu201
-         AtZE9J6dgzdagBjEd9jWOXvcU6DhWF8BI7CsPIDKy69aZg92dRkmp77bmNW/LEwzSS03
-         3BzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFwWV4TEMZF8HR72jSMraXyjvV5GbdBTmoN+jL2czJtU5+ZOBzvH7VoxBK01/G/gSLAfh5hTr5l4m6@vger.kernel.org, AJvYcCVpwM6JTBNMB1/I48EFulAoZ/TPYd5Lp63PG5nkh32PZXONXL+poXuuicvmrAOha0ysDAkDMN00c9FwVcVo@vger.kernel.org, AJvYcCWvkMVVEUWDkLrSeh/ocMGAercXP8SwA3g+oHFedTgUu15zFPisIO3ZmZrKnb04nrvlE1+ebzS5eAt5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBz3h4l52Rfj1+RTIInS2cmZ3PWnXJU3mIjfkEmKvxenaBUD9j
-	LkCeHKJbaULUZb3XhHpkS7kQBxqZSr9CTaQL+5l/KvtzXaqSRBrQwuO9RJjDKQ==
-X-Gm-Gg: ASbGncs6r5VBzR7WtFnsbyJ+VcUjFpiTfzg3c/yWtUpAKU0u4YRxpORfMQp1Y9e+SH7
-	xpcUucCPL7aLmMyU0hiNoyAtVXfv9eJNgp3fUptjg28BjTFmnsZtfBEWea64oxZtGWAvqdFCWbD
-	OdBCggtMxm3//KlEPwrwL3T/oobHUgqmTMcOnUGmAYdCn1Qf5pWApG4izzrWj0NIxixxVL9XEHK
-	KEFBfml2GWFTnfMFyUphFWn+9bSfhC1SJBHMg4z1bBsVb/7OSaYJmpVUmdo0BdpBXsFY1Q6IwhH
-	z0l6AlI9sQ3MGS8mXQb/57HPPOWoSBzKAMPxZAnh17FlnMOqE1cQp2zlzT75qiksEF68cE9yLWU
-	GoDuQv2zEsbOD2fbFHXb8OMk66+7aZc5wh9V/3tu2+Rd4diMqleLzqntbRMpF/dkliWnkevOch5
-	Z87ryV
-X-Google-Smtp-Source: AGHT+IEw2MkCSwxeG4/o+92lYWppE9GWCh5GkRQ4v1sjzLydlo76BptUhitZzBoLgdXN/RmRpQgLMg==
-X-Received: by 2002:a05:6a20:3953:b0:20b:a75e:fa32 with SMTP id adf61e73a8af0-23df98662e8mr20899533637.40.1754397920104;
-        Tue, 05 Aug 2025 05:45:20 -0700 (PDT)
-Received: from CNTWS00427A.itotolink.net (111-242-118-39.dynamic-ip.hinet.net. [111.242.118.39])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfcf523sm12959863b3a.90.2025.08.05.05.45.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 05:45:19 -0700 (PDT)
-From: ChiShih Tsai <tomtsai764@gmail.com>
-To: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	corbet@lwn.net,
-	t630619@gmail.com,
-	ChiShih Tsai <tomtsai764@gmail.com>
-Subject: [PATCH v2 2/2] hwmon: (pmbus/adm1275) add sq24905c support
-Date: Tue,  5 Aug 2025 20:44:49 +0800
-Message-ID: <20250805124449.15187-3-tomtsai764@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250805124449.15187-1-tomtsai764@gmail.com>
-References: <20250805124449.15187-1-tomtsai764@gmail.com>
+	s=arc-20240116; t=1754397994; c=relaxed/simple;
+	bh=QcCNjtZ8ljDHa+br/x98Jk8fa0gmUzucMn7T55a0Ci8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmOmVtLptYfxfMzrzOYoolmAkwIGBH4ZtI7ARuR2IrX94NP4r2jESljMFRgLN2/KEClzjh4CLqncBITd2iLEvsIHjdh+T/JiRdYQEfagFtwtIYyaI4yjH8PPwW2ayIfkylxXB3S0RZZ10EztUL//6lqenYG/QSuGbrVunfcNP1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQmrItHN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBCEC4CEF0;
+	Tue,  5 Aug 2025 12:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754397993;
+	bh=QcCNjtZ8ljDHa+br/x98Jk8fa0gmUzucMn7T55a0Ci8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IQmrItHNA1v8UkW9nESLT9nCGQOKH+yEBrEHODnHFZ6Fepx/NH9PJ2g3orlaRYAX7
+	 K9Bcps4gqRvtEMP11G703j0XNB1n7GMgbTW5tk740hQK+h/P0GFcQjUE/ocmvIRCGR
+	 7fHgxdHqxW2mtBg/pYCmrbjSocb7BXfx8m9gld23KATp3NurJQaj069iQafM32pA/a
+	 l++uQcvSr9MSQvAVdx6VfBuT4IDCYMN5EU971dC/cK3IoVTcq9uCMl2nFuu8yV0Dll
+	 5eo0N9/6n7JCQuC0MpL1KQnXy78HTDvUilMuucSZhyaFjhzkKBcPBAhYhBuilkcF/W
+	 7YncGNL+q+5fw==
+Message-ID: <a0f97029-86f7-4a97-aa67-497ca6615e23@kernel.org>
+Date: Tue, 5 Aug 2025 14:46:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: adm1275: add sq24905c support
+To: ChiShih Tsai <tomtsai764@gmail.com>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, t630619@gmail.com
+References: <20250805124449.15187-1-tomtsai764@gmail.com>
+ <20250805124449.15187-2-tomtsai764@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250805124449.15187-2-tomtsai764@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add support for sq24905c which is similar to adm1275 and other chips
-of the series.
+On 05/08/2025 14:44, ChiShih Tsai wrote:
+> Add support for sq24905c Hot-Swap Controller and Digital Power Monitor.
+> 
+> Signed-off-by: ChiShih Tsai <tomtsai764@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Signed-off-by: ChiShih Tsai <tomtsai764@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
 ---
- Documentation/hwmon/adm1275.rst | 24 ++++++++++++++++--------
- drivers/hwmon/pmbus/Kconfig     |  3 ++-
- drivers/hwmon/pmbus/adm1275.c   | 11 ++++++++---
- 3 files changed, 26 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/hwmon/adm1275.rst b/Documentation/hwmon/adm1275.rst
-index 57bd7a850558..cf923f20fa52 100644
---- a/Documentation/hwmon/adm1275.rst
-+++ b/Documentation/hwmon/adm1275.rst
-@@ -67,6 +67,14 @@ Supported chips:
- 
-     Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADM1293_1294.pdf
- 
-+  * Silergy SQ24905C
-+
-+    Prefix: 'mc09c'
-+
-+    Addresses scanned: -
-+
-+    Datasheet: https://www.silergy.com/download/downloadFile?id=5669&type=product&ftype=note
-+
- Author: Guenter Roeck <linux@roeck-us.net>
- 
- 
-@@ -74,14 +82,14 @@ Description
- -----------
- 
- This driver supports hardware monitoring for Analog Devices ADM1075, ADM1272,
--ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, and ADM1294 Hot-Swap
--Controller and Digital Power Monitors.
-+ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, ADM1294, and SQ24905C
-+Hot-Swap Controller and Digital Power Monitors.
- 
--ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, and
--ADM1294 are hot-swap controllers that allow a circuit board to be removed from
--or inserted into a live backplane. They also feature current and voltage
--readback via an integrated 12 bit analog-to-digital converter (ADC), accessed
--using a PMBus interface.
-+ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293,
-+ADM1294 and SQ24905C are hot-swap controllers that allow a circuit board to be
-+removed from or inserted into a live backplane. They also feature current and
-+voltage readback via an integrated 12 bit analog-to-digital converter (ADC),
-+accessed using a PMBus interface.
- 
- The driver is a client driver to the core PMBus driver. Please see
- Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
-@@ -160,5 +168,5 @@ temp1_highest		Highest observed temperature.
- temp1_reset_history	Write any value to reset history.
- 
- 			Temperature attributes are supported on ADM1272,
--			ADM1273, ADM1278, and ADM1281.
-+			ADM1273, ADM1278, ADM1281 and SQ24905C.
- ======================= =======================================================
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 55e492452ce8..77add0c6ee53 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -52,7 +52,8 @@ config SENSORS_ADM1275
- 	help
- 	  If you say yes here you get hardware monitoring support for Analog
- 	  Devices ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281,
--	  ADM1293, and ADM1294 Hot-Swap Controller and Digital Power Monitors.
-+	  ADM1293, ADM1294 and SQ24905C Hot-Swap Controller and
-+	  Digital Power Monitors.
- 
- 	  This driver can also be built as a module. If so, the module will
- 	  be called adm1275.
-diff --git a/drivers/hwmon/pmbus/adm1275.c b/drivers/hwmon/pmbus/adm1275.c
-index 7d175baa5de2..bc2a6a07dc3e 100644
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -18,7 +18,8 @@
- #include <linux/log2.h>
- #include "pmbus.h"
- 
--enum chips { adm1075, adm1272, adm1273, adm1275, adm1276, adm1278, adm1281, adm1293, adm1294 };
-+enum chips { adm1075, adm1272, adm1273, adm1275, adm1276, adm1278, adm1281,
-+	 adm1293, adm1294, sq24905c };
- 
- #define ADM1275_MFR_STATUS_IOUT_WARN2	BIT(0)
- #define ADM1293_MFR_STATUS_VAUX_UV_WARN	BIT(5)
-@@ -486,6 +487,7 @@ static const struct i2c_device_id adm1275_id[] = {
- 	{ "adm1281", adm1281 },
- 	{ "adm1293", adm1293 },
- 	{ "adm1294", adm1294 },
-+	{ "mc09c", sq24905c },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, adm1275_id);
-@@ -532,7 +534,8 @@ static int adm1275_probe(struct i2c_client *client)
- 		dev_err(&client->dev, "Failed to read Manufacturer ID\n");
- 		return ret;
- 	}
--	if (ret != 3 || strncmp(block_buffer, "ADI", 3)) {
-+	if ((ret != 3 || strncmp(block_buffer, "ADI", 3)) &&
-+	    (ret != 2 || strncmp(block_buffer, "SY", 2))) {
- 		dev_err(&client->dev, "Unsupported Manufacturer ID\n");
- 		return -ENODEV;
- 	}
-@@ -558,7 +561,8 @@ static int adm1275_probe(struct i2c_client *client)
- 
- 	if (mid->driver_data == adm1272 || mid->driver_data == adm1273 ||
- 	    mid->driver_data == adm1278 || mid->driver_data == adm1281 ||
--	    mid->driver_data == adm1293 || mid->driver_data == adm1294)
-+	    mid->driver_data == adm1293 || mid->driver_data == adm1294 ||
-+	    mid->driver_data == sq24905c)
- 		config_read_fn = i2c_smbus_read_word_data;
- 	else
- 		config_read_fn = i2c_smbus_read_byte_data;
-@@ -708,6 +712,7 @@ static int adm1275_probe(struct i2c_client *client)
- 		break;
- 	case adm1278:
- 	case adm1281:
-+	case sq24905c:
- 		data->have_vout = true;
- 		data->have_pin_max = true;
- 		data->have_temp_max = true;
--- 
-2.43.0
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
 
