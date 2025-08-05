@@ -1,122 +1,186 @@
-Return-Path: <linux-kernel+bounces-755961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BDCB1AE1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACB4B1AE1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20088179A22
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2075A189CCC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466C821ABB1;
-	Tue,  5 Aug 2025 06:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE8121A454;
+	Tue,  5 Aug 2025 06:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ki1Yrpi/"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTiE9Y1k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD42135A1;
-	Tue,  5 Aug 2025 06:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133052135A1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374727; cv=none; b=eHiC1VkZ+hF83XQENsKfDYzStqKHYlgbq1X41Wk0rVKTclab49uXpYlTITVt5YZbRbslnCYLfBdq/Djs+VSDDCw63CJJgGtJgXQ95xLMR01F1Xvq0wI6fRrvFpbceGsNTfotXkxoI31+OcC1vbEBdTYE4TmlZne0FdxZVoTx6nI=
+	t=1754374737; cv=none; b=IgFyUGdcG8+ZJJja/I9NnaEOt9hZ6uJSusFdaTRR1UdBkWk4LRPcBUCBh0Nazrl8sDsyjg+uNaZLuBERZiZGHKMW2HuTBPEe3SHyMxGeCO5NkbrHqBpKB/x81VS2+4lk0kD46/fi/RB7jVZxSWLKlFkdaUB5Tcl0hGw+z4on8q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374727; c=relaxed/simple;
-	bh=kTQH6NaZ9sbv1f+Rm2ugFeEMF2AGrfqtpW2DSd2AFPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j+HE2G/bZb7jdfhRvC2b7DcE3Px5c1H9ZLoI/QXQxRCzJHdFaxbazeRXUu4goCrpMMP1BanmAe+JOUpJVZV7B1HukEByVG8Wkml/63L4cgE7RsttlkuQmvEHPEdD1RraUfoS6Vvdnp6sFaG6O/x8VzEcaOcKU8JUDCNPW1L45/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ki1Yrpi/; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bd050184bso5886522b3a.2;
-        Mon, 04 Aug 2025 23:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754374725; x=1754979525; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGHZJELToikpWrlEcySa0pC3zkPCl8tzMg7YyI1CbFU=;
-        b=Ki1Yrpi/G3KVFyc0Vc2A/beUeMhgI3olOzhx1wlaK5VC3y3uez3CH5za88p/FFSwHO
-         XK1MayDxpCA3SJTsJAgnhtJ1rQZRLjRWf4refgeFUcrifi0naLN6bKhCAmKvyzbD9pCL
-         3k+ZTLMTSoQicR+ZZ3cz/S5Iak3qW4c4Oyl1oOUkVvjdJ7WjQXywMtK3bOjnPFKdR8xn
-         uPl8ANm1eQoTVZTIKDP9TTDeshYojuor8e6L3wK7MyaXS5KKvj6aZ5JSYCNU/dcWszjd
-         6SLuPIFMSxgPvOPpITiyXuSkLdnA1EPUoZZ1JZ2bnEPNBlbtxtKfR/gNNKt7quCzqUMM
-         CpLg==
+	s=arc-20240116; t=1754374737; c=relaxed/simple;
+	bh=I74jssdw+SpC/LfqUPup9AmRrmac+MtCVJLk6doKASc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iGndgiFXSJ7gsYrpzNaWT8aeNd3cXp833sleglwSxcoK5IQiZm0nNaDDh4ZoGKi3bhcKQMEba3pr0rC0AnrfdvlbfZ7+PUx0JWm7UYanNRrzJanBmF4W7HgdXWHpFj009rop2RmQqpHdKIsQ1x1+x4WmFzg2ovDQabbqdJe4MyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTiE9Y1k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754374733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vJ1eNsgcn/sAni6mkXijStzdoI600KWnpZ9DrmvA1T8=;
+	b=GTiE9Y1kP87+0mE+G2qKJmz0Fn6CV9tZNCPt2jtfoG8GIoXclvGz8J1h6jKxOhFd8p8XNJ
+	XqgcdiT1GGyFhEaT5+QGil8CuY21llv96BxjaP5CXCklsmYM0Cb342za9K1j9xrMdGNDs3
+	mf3wMzaOmesipN/7vzt86pfJjQAu+9o=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-hsw2cY3ePHCy7nKdf4Cs3Q-1; Tue, 05 Aug 2025 02:18:51 -0400
+X-MC-Unique: hsw2cY3ePHCy7nKdf4Cs3Q-1
+X-Mimecast-MFC-AGG-ID: hsw2cY3ePHCy7nKdf4Cs3Q_1754374731
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b081b2a94cso19479091cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:18:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754374725; x=1754979525;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fGHZJELToikpWrlEcySa0pC3zkPCl8tzMg7YyI1CbFU=;
-        b=HrXqq2+PvhgYdGisNXjqHFh0eWBlXVWm8DJEdIr8NyiZFwSRp7fvlueFqO1Rn95Pi1
-         m7v8FMmotxsFBzoUJ0CCrMPjnQSrOEpPHKt/y5OPioKl1tgM45jpOdIm8JxlB1vW7pbD
-         wabDDWHGSNIvxe4n9WfmQ8p700vBs0KDcznOvqY9g9AB9NjV1wmWycSvLJFWbSIKU7fB
-         pFJsbLjEGL3PESnMs9Wgh6gj+Idz9u9T1Y6KYyfdlx9xDYJSRHGdMjJXGVHRj283Zhrp
-         B2avooc/v5dE65ChFM+unAxSNSw/urLOg35DL+SWpOr04x06Kt2mGhrzINjWq+kRWX/c
-         /aVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBoZmznEZa0soRcj1x2YnyzE4FcUrzVAjR8GtcbYPNeHazU+XxRTu0B4O5nE+V8gqDXCDhu2JvRbYGCDQ=@vger.kernel.org, AJvYcCUUsWX2JHOqZsOM/lfxb5NvKSe32iCYgw+L3myJy8DjN7gZ6H5J1YCI3NbVJA+GsFYBDA5O0vmbWmpwTAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcOg8MTvxQkBjrPRE7vcKHtpYjTCkP0ZuIxISg8gV+9b84IAY/
-	hKVvoo7WkdcJjHE6Nuw7bk+qNundQ3yumXtX7VvYdAOnFtGh0UwjqwZd
-X-Gm-Gg: ASbGnct4xXj2J5jy5wwmgzqjfQIwH8F2aI6tyh/Qdtx14Gq6cRO6/zwakmjBi+G52Fk
-	SzJPPlyh9rPh1I9mSvLOFzAyxLgPLhr+89bSb4YOkyJbt4W5uKLbOWGlUz5XzZ0XPrM9+V1RE0b
-	pV7TmT4UbCG+sXCH/gSiFDy7LSWev3sMs1BKlOzgoFa11LTTw0WfPo5R+0ZJj3DSO9tSuksoMny
-	WksFR9BuNU+g7NRvdyUvs06IlU1LBZ2cjjJ7GKgHSRTebweyFYUtRZUPM+ifIJY5b1cmH5+gil1
-	pW+XlRV5NrPCe48nk4BtUL5wwrY5jHVGvUeQ9fhhuyRgJVQNm16BsqYR9TE2bgkYeiiC6cwdqiV
-	WHu66x/gJGSXCtecYK4+XcY6/
-X-Google-Smtp-Source: AGHT+IE8nPyMvHh3pB8DMo8HilMGNFFOAKHrsxWK8FE8utvRKfVlcZipsi1Qi7BgLY3ug6Mpthh3cw==
-X-Received: by 2002:a05:6a00:3d47:b0:740:67aa:94ab with SMTP id d2e1a72fcca58-76bebfb33c7mr16586220b3a.0.1754374725467;
-        Mon, 04 Aug 2025 23:18:45 -0700 (PDT)
-Received: from c45b92c47440.. ([202.120.234.58])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-76be9143a4asm8058029b3a.24.2025.08.04.23.18.40
+        d=1e100.net; s=20230601; t=1754374731; x=1754979531;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vJ1eNsgcn/sAni6mkXijStzdoI600KWnpZ9DrmvA1T8=;
+        b=atW4iA3El7rTd7wiSnfRtQdmlaOIbn4bMkfZ7kGhxyBETeqqCwE4mXjGPBkUfwmst3
+         jVDsKAJJUKXx/2jPKW/8cR05fJVgdegSRpphEaeAKlyXW7sGxg5zTB2uBsXv49SXdTlH
+         QVwZPtRaCnnk4VHnNpjLp/qzAgsQmB2zapsbuypzzdhPJygYXxAPrNEylC0rA7/nC9XC
+         60CnhFbX1S/+IcX5yY0oi5OxKxycbT6gQCbkzDosbru77MEsXqv4wSUumnR3fG7HuAb0
+         xXvMZ3+O5a4PLKHKzp4QId0WKCCbtunW71hatgdW1aaIPSMhikVfmqkUxelUwmEOc+Xj
+         IyiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV96nmYO/ZBjxYEJUxqHArZbP7QU5/SvXn0Se7DT2nIM2iFKhOR9eP1oJet9XryQDCpj7S9WiZ1A/A0Gho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzqZrqe1KX079uNz2PefrqUi9sLsiVKKY5o/Pa/DEzbSQPdCC1
+	ob1RG1qbmggb8DaxMi2YjUEfiG3f1woI51te0SKtadIE4nrWkDgSQYGHwvoWU9Y59Uq4Wu9dQ/9
+	U6TsmjrDO2NSljYxnMmg/AocdZ7CHFIbHh+EvfoTOtwcNHHk6cX+P9S6W40XaZqhDYQ==
+X-Gm-Gg: ASbGncvENwYCv55rgbYXB5pvUhpP5Jm6yWmgDmRhdheFid3YAzqMmaZ0GDl5Fde8U78
+	eSTq0eauvDa2umd7MQMIjoEqskCSjMFP7NRAxlGjFx5qeSjAgnTJ3Lb0LF6S79wKLddTLRXuwWW
+	5AsrDVA9ONDhgeNFBxgBu/SjxJQLgx+5jpn3f6WejRFnEnsxrgcK9ARWxPYG0475L974dm5u1BR
+	8H1nNcu0crbDSbqILPAbUgS+wRL7/98ML12l8qQpakf9ZkVrs1QcRHD/aD0rcezKuXUpx7/xiDN
+	eBvaC0jOSKaJjwT2ZG1hLV4MAEh+fql34LtL4wkZYOBH4+WG2pwZyAJQO3caZRAn2Q==
+X-Received: by 2002:a05:622a:1a96:b0:4b0:8822:443f with SMTP id d75a77b69052e-4b0882245c2mr1837501cf.18.1754374731262;
+        Mon, 04 Aug 2025 23:18:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9eaYCUZBrblo1oRVSbdJ7BzN0HK/JTOAD5cc/KJrR9x6Z1tgaDU/5IdS8zKXHi5VNZgTAVg==
+X-Received: by 2002:a05:622a:1a96:b0:4b0:8822:443f with SMTP id d75a77b69052e-4b0882245c2mr1837281cf.18.1754374730790;
+        Mon, 04 Aug 2025 23:18:50 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b076710ff1sm14137741cf.52.2025.08.04.23.18.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 23:18:45 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] media: rkvdec: Fix incorrect NULL check for iommu_paging_domain_alloc
-Date: Tue,  5 Aug 2025 10:18:33 +0400
-Message-Id: <20250805061833.3670085-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 04 Aug 2025 23:18:50 -0700 (PDT)
+Message-ID: <580bf2db57cefa07631e73e5af453228cfb3cecb.camel@redhat.com>
+Subject: Re: [PATCH] rv: Support systems with time64-only syscalls
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>, rostedt@goodmis.org, 
+	namcao@linutronix.de
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 05 Aug 2025 08:18:46 +0200
+In-Reply-To: <20250804194518.97620-2-palmer@dabbelt.com>
+References: <20250804194518.97620-2-palmer@dabbelt.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-iommu_paging_domain_alloc returns error pointers on failure.
-Replace the NULL check with IS_ERR to correctly handle error cases
-and avoid invalid pointer dereference.
+On Mon, 2025-08-04 at 12:45 -0700, Palmer Dabbelt wrote:
+> From: Palmer Dabbelt <palmer@dabbelt.com>
+>=20
+> Some systems (like 32-bit RISC-V) only have the 64-bit time_t
+> versions of syscalls.=C2=A0 So handle the 32-bit time_t version of those
+> being undefined.
+>=20
+> Fixes: f74f8bb246cf ("rv: Add rtapp_sleep monitor")
+> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+> ---
+> This seems a little ugly, as it'll blow up when neither is defined.=C2=A0
+> Some #if/#error type stuff seemed uglier, though, and that's the best
+> I could come up with.=C2=A0 I figure anyone without either flavor of fute=
+x
+> call is probably deep enough in the weeds to just figure what blows
+> up here...
 
-Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/media/platform/rockchip/rkvdec/rkvdec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, this is getting ugly.. I wasn't fun of this ifdeffery already but
+a few of them seemed acceptable, if we are really expecting any single
+one of them to potentially not be available, it isn't looking good.
 
-diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-index d707088ec0dc..1d40e81f44b9 100644
---- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-+++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-@@ -1162,7 +1162,7 @@ static int rkvdec_probe(struct platform_device *pdev)
- 	if (iommu_get_domain_for_dev(&pdev->dev)) {
- 		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
- 
--		if (!rkvdec->empty_domain)
-+		if (IS_ERR(rkvdec->empty_domain))
- 			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
- 	}
- 
--- 
-2.35.1
+What about doing in the beginning of the file something like:
+
+/*
+ * Define dummy syscall numbers for systems not supporting them
+ */
+
+#ifndef __NR_whatever
+#define __NR_whatever -1
+#endif
+
+#ifndef __NR_some_exotic_syscall
+#define __NR_some_exotic_syscall -2
+#endif
+
+The negative number would never match, we may add a mostly
+insignificant overhead checking for it but we keep the function
+readable. What do you think?
+
+I'm not sure if we can get the compiler rid of it completely, but it's
+probably not worth it.
+
+What do you think?
+
+Thanks,
+Gabriele
+
+> ---
+> =C2=A0kernel/trace/rv/monitors/sleep/sleep.c | 4 ++++
+> =C2=A01 file changed, 4 insertions(+)
+>=20
+> diff --git a/kernel/trace/rv/monitors/sleep/sleep.c
+> b/kernel/trace/rv/monitors/sleep/sleep.c
+> index eea447b06907..c1347da69e9d 100644
+> --- a/kernel/trace/rv/monitors/sleep/sleep.c
+> +++ b/kernel/trace/rv/monitors/sleep/sleep.c
+> @@ -127,7 +127,9 @@ static void handle_sys_enter(void *data, struct
+> pt_regs *regs, long id)
+> =C2=A0	mon =3D ltl_get_monitor(current);
+> =C2=A0
+> =C2=A0	switch (id) {
+> +#ifdef __NR_clock_nanosleep
+> =C2=A0	case __NR_clock_nanosleep:
+> +#endif
+> =C2=A0#ifdef __NR_clock_nanosleep_time64
+> =C2=A0	case __NR_clock_nanosleep_time64:
+> =C2=A0#endif
+> @@ -138,7 +140,9 @@ static void handle_sys_enter(void *data, struct
+> pt_regs *regs, long id)
+> =C2=A0		ltl_atom_update(current, LTL_CLOCK_NANOSLEEP, true);
+> =C2=A0		break;
+> =C2=A0
+> +#ifdef __NR_futex
+> =C2=A0	case __NR_futex:
+> +#endif
+> =C2=A0#ifdef __NR_futex_time64
+> =C2=A0	case __NR_futex_time64:
+> =C2=A0#endif
 
 
