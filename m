@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-756331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C116B1B2D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13100B1B2D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDE63BB682
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:54:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F23A6181BE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2213B2561D9;
-	Tue,  5 Aug 2025 11:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3F25D1E9;
+	Tue,  5 Aug 2025 11:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPwyY1vh"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ArAdZlSI"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174A61D416C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 11:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3E7248F42;
+	Tue,  5 Aug 2025 11:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754394849; cv=none; b=BIDVCow91GXOTPSU0e+SrlkmSERGWQotW93fuNXZr/mN0jYIqlV738H+DG2okpDx19iYSV6lMJkWoTp/wUqqGWW+w1ZBskgnnDsq8GtuJH0EwaUrpBuK3eMqAlf3cX3eFTWlwHkjNIMc8Lihl6h4hxQiorIOhck19No8ERiKsNc=
+	t=1754394869; cv=none; b=A5nRc8DRRDiJZdyhZzu++/tzOzsc3sezzYOvcPH57R3vJ4RJI7W2hMjtK4FZwXc4yp26/nDryc5G3twXa/rE8DP7BXiSqNi2+9Fe/6UkRRAhfuq0T10xsnGSIAu5MOEfHVx+Nv0ESriQm64L7WANxhkxIq9c5G8+WmLmzQHX2as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754394849; c=relaxed/simple;
-	bh=S8wXRTgxzn96H3CED/rPlblNWhUInnt6tVBHj4Xy7fs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sHy6Zc9XUJxpBOxCo2IwDvkEsN8RhL0RIKKViecK2ZmAph/m69ubVDMBmLhj247PpNnnw2Vnu+fWaiW8qX5jxN1LsDdI77YArSKD13RdTHV9KEk0rDPifW3xP1EwAT1rnSLcRUh97P4Vbb4zv+j+GC2ydM09HWrZqnyCc5wPFBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPwyY1vh; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5393cfc2e77so2346571e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 04:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754394847; x=1754999647; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMWT2yAkC9poiQmiDG3Eme4KwKIo8NaBao5tQDa3Na0=;
-        b=iPwyY1vh19aSvFsCnEZ+y8n0hgzuUYqDOOUWFsteJbTaWxriLMNDZq9grlj1gPeaNa
-         u0jYDQLYG02h1ERH0ucp990xdbjqd0lYNY44pYEs8wVzDv51YuED3roQbB1BAYVzvcaw
-         eRDTPJ36BKVexRpghgU2sf1xXT8J26yA3J1/nPyI7d+lHwoV9TgTwKr2Ukx+wDKZz9zp
-         zuJtmcNTzve/xU3OvdqQRUFrOCdhKFGAOzJjZBsNdx4SAN53BZAfxL8z+9R/kFdUpnIW
-         bCns4tk4MmuRrbJWFe0JBfzlv9D4JUfWmnVfzMLUcKrshHfmC4kO003O9hAtutT9jxzZ
-         j4dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754394847; x=1754999647;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nMWT2yAkC9poiQmiDG3Eme4KwKIo8NaBao5tQDa3Na0=;
-        b=KtSFeMc1Ml4lbWulOq+CcDsGpJX+yo+ATrbUMgtSZ7rvcQss6INz+P5FM37/l2i2fA
-         J2X7VHK4zsk78BTc1lXKkohr6MY0MHdKzsvYooJu9R4rD3qiXe6Pb5T5sulnqM4O4pYC
-         Hh5EGZAcCgmsWfKZ8n1p/gGdyHSzQfwu6XrkS0mbIxgIWxr9knWstZD8oZh5xbCeFOiH
-         WcyPB2ujXvt2vj3p9Yd5T6wVp/VVkyJKykFNtEvTvtYDQMh6+jP8GfL1nTDkStgHRKOZ
-         QDuOkS4VMcO3GGsE5QDLvQNuIKXEoMPdvYUxEu8J/VcSL+zY9k+VDL0EZ5A2Tot0u7oH
-         sb+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgegF34O4wcuUE/h4lVxX3ZkARo5RARXdi106etyqIMebeWFZE0N7OdVRaPkuRCAYFmEblxJddUci79cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxruIKNSgRQPMe3TL7T4sMNJFwMBa1/eQ15QJfEEYioA+vNIgxX
-	hMET1gxlAhMdhBojWouSuTXLpzC+XNC3M3CdKIH7XGeREk6qSD5dEHX5hvQHQ4q5JzhF4YIlu7n
-	jtu94CoiINX6vRW106virC6nnUMej9i0=
-X-Gm-Gg: ASbGncsnxAA/c4ExsErsyBXapV9sLgh+m2enmHXDGtCvRW5IzMEMSU1cgCzC+9Ok8kj
-	j44l5hbAGsta7sirr47kSudDi9gyXCKp2OepUMbj5T8qfzQDZYRd2P2tdDlFMHRMhPRLHlu8z77
-	GoCtezpcxUHjk+bULOtKaZjFOske/tNjs58MJqp2crvegTHDxUSlNNlR0wG+zLDvB415xlbBjDM
-	GwWCi02kR8NAt0=
-X-Google-Smtp-Source: AGHT+IG2V92W0l0OwpbZeUfC3F/wkgbkb/9IsXo1nWVQk2+FSLJEs2+4PjRH84lDaaw9wrUSA24ZzgN99lkxqM+ysDk=
-X-Received: by 2002:a05:6122:3192:b0:539:58c2:1e0a with SMTP id
- 71dfb90a1353d-5395f19a9cdmr5983593e0c.4.1754394846516; Tue, 05 Aug 2025
- 04:54:06 -0700 (PDT)
+	s=arc-20240116; t=1754394869; c=relaxed/simple;
+	bh=/ei+iA4HKDwB8/BUD35AL6sbVw6y20oVC+gdu1k/Gg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NvtlgNtcAuwAmtR80H8iSrqL5QwXYhM33hNbu/egrCsP78M82S8Elu5PkZUydUgVnvcOo4h3FtKvAatFq5bDvGvz4uJAbUNoz1H65rYuf7rsEawDTXAst5TAljnYpDg44nvC9vdNDsbtAuhjEGjYNe4IRY8iYcQUqdWyTBV7RT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com; spf=pass smtp.mailfrom=de.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ArAdZlSI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758xTa0005063;
+	Tue, 5 Aug 2025 11:54:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=V+j1r+
+	cF8apMbp5eO+t1yh7TLfHA03dva8elP5P2zr4=; b=ArAdZlSIsUUxz1JqVT7YPq
+	Zf0SAkvUnQlk9qvqEXAoBgsgZT8sy0qmgOCJjKWuqijC9VK6jCluHK7YgjwRPM4k
+	Z8hK4kplSm8RNCJEsoPiYd+LxMZtylo8UfvEKB46zrrCx+1TXKS8KsXA9veyW6o9
+	V4HD3DAzXg1rYUSeZRQk/ZpVbZz+TdWuefeo7/MXaV39GbsI4B7rcj4Qr0XhGSpg
+	MHPG8P/S/U5yG5rzhHjShKW/BaZvtOjCRSmc/kgJAOpXHwTswT/8hHbHu+jtMqQ6
+	g4a3CWrMen/2fPy7MsdB2F76uRBGhFxWKpxUpOrGcAwTr6kzKCdjKnLLbfYeJLXA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48a4aa2815-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 11:54:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57594rHn009594;
+	Tue, 5 Aug 2025 11:54:23 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489x0p27ge-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 11:54:23 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575BsJe045482408
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 11:54:19 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 790EF2004B;
+	Tue,  5 Aug 2025 11:54:19 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 263FC20040;
+	Tue,  5 Aug 2025 11:54:19 +0000 (GMT)
+Received: from [9.152.224.86] (unknown [9.152.224.86])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 11:54:19 +0000 (GMT)
+Message-ID: <c7e8276f-3b40-484b-a81a-d293c1e632dd@de.ibm.com>
+Date: Tue, 5 Aug 2025 13:54:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804212902.22554-1-rampxxxx@gmail.com> <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
-In-Reply-To: <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
-From: Giant Sand Fans <rampxxxx@gmail.com>
-Date: Tue, 5 Aug 2025 13:53:54 +0200
-X-Gm-Features: Ac12FXweqU7nV9K56xaxh8ocEV9BLO_mODDYQxsm2W9z3W52maWYVlrxOG5FvRY
-Message-ID: <CABPJ0vgz6gib5LdKY1O6uhPq7Tk5GN2X_dcGBwtx3b=TRQUw-Q@mail.gmail.com>
-Subject: Re: [PATCH] drm: Add directive to format code in comment
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] KVM: s390: Fix incorrect usage of
+ mmu_notifier_register()
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, david@redhat.com,
+        frankja@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com,
+        mhartmay@linux.ibm.com
+References: <20250805111446.40937-1-imbrenda@linux.ibm.com>
+ <20250805111446.40937-2-imbrenda@linux.ibm.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+In-Reply-To: <20250805111446.40937-2-imbrenda@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fQtn-qtmtKRBMIAIiib5um1D5-z3WXft
+X-Authority-Analysis: v=2.4 cv=dNummPZb c=1 sm=1 tr=0 ts=6891f0f1 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=h5QcjqOEMrQRjDIlvBAA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: fQtn-qtmtKRBMIAIiib5um1D5-z3WXft
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfX3KH1t6j53r62
+ GpNr/piSr1ELIUNsSD4iWk8T+yxJnm4d07Rm2KvupxPOuTg9TXiXl+78UqROygYJlwUhfwR419J
+ ik8Fd1emZsGoh37Wjs1FHPehHGtvTNKsaZ+0uQBYdMbZYXIAUqQI2sEXd7RDzbCIbeg2nSKkV+5
+ AMGJ6I+gLnAACX6uZzWQxmeXoO3sWO8a8haAiVEUjEUDPeCCUJr0jRDVGO4N8upGfxZPQihklaI
+ oXz5A8bzqOakFNshsatJ+1Fd3ZKZWzxUC8fYWKrrGWBs5VVAefEERh4TfTP0LlXxxTws9cHCeIT
+ TJWnc85D4NBwFHloWVgM3Xr5UjfpaJlYMg/jj8i9M9W/5s+l4gl9aWvrZfZfSX6O+Jv2RInUCVP
+ HZrsdz1E8uvNmb5SJ3J8qy0VJq1imCEU62JIjHJrtrkKpSSfOu+tFItm6pFeaXz+R+LUFuPB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050086
 
-On Tue, 5 Aug 2025 at 12:49, Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> On Mon, Aug 04, 2025 at 11:29:02PM +0200, Javier Garcia wrote:
-> > Fixes the warnings:
-> >
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2444: Unexpected indentation.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2446: Block quote ends without a blank line; unexpected unindent.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2450: Definition list ends without a blank line; unexpected unindent.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2451: Definition list ends without a blank line; unexpected unindent.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2455: Unexpected indentation.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2456: Definition list ends without a blank line; unexpected unindent.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2457: Definition list ends without a blank line; unexpected unindent.
-> >   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2458: Definition list ends without a blank line; unexpected unindent.
-> >
-> > Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->
-> Fixes tag?
-   Sorry, what do you mean?
->
-> --
-> With best wishes
-> Dmitry
+
+
+Am 05.08.25 um 13:14 schrieb Claudio Imbrenda:
+> If mmu_notifier_register() fails, for example because a signal was
+> pending, the mmu_notifier will not be registered. But when the VM gets
+> destroyed, it will get unregistered anyway and that will cause one
+> extra mmdrop(), which will eventually cause the mm of the process to
+> be freed too early, and cause a use-after free.
+> 
+> This bug happens rarely, and only when secure guests are involved.
+> 
+> The solution is to check the return value of mmu_notifier_register()
+> and return it to the caller (ultimately it will be propagated all the
+> way to userspace). In case of -EINTR, userspace will try again.
+> 
+> Fixes: ca2fd0609b5d ("KVM: s390: pv: add mmu_notifier")
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+
+Reviewed-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+
+> ---
+>   arch/s390/kvm/pv.c | 14 +++++++++-----
+>   1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/pv.c b/arch/s390/kvm/pv.c
+> index 14c330ec8ceb..e85fb3247b0e 100644
+> --- a/arch/s390/kvm/pv.c
+> +++ b/arch/s390/kvm/pv.c
+> @@ -622,6 +622,15 @@ int kvm_s390_pv_init_vm(struct kvm *kvm, u16 *rc, u16 *rrc)
+>   	int cc, ret;
+>   	u16 dummy;
+>   
+> +	/* Add the notifier only once. No races because we hold kvm->lock */
+> +	if (kvm->arch.pv.mmu_notifier.ops != &kvm_s390_pv_mmu_notifier_ops) {
+> +		ret = mmu_notifier_register(&kvm->arch.pv.mmu_notifier, kvm->mm);
+> +		if (ret)
+> +			return ret;
+> +		/* The notifier will be unregistered when the VM is destroyed */
+> +		kvm->arch.pv.mmu_notifier.ops = &kvm_s390_pv_mmu_notifier_ops;
+> +	}
+> +
+>   	ret = kvm_s390_pv_alloc_vm(kvm);
+>   	if (ret)
+>   		return ret;
+> @@ -657,11 +666,6 @@ int kvm_s390_pv_init_vm(struct kvm *kvm, u16 *rc, u16 *rrc)
+>   		return -EIO;
+>   	}
+>   	kvm->arch.gmap->guest_handle = uvcb.guest_handle;
+> -	/* Add the notifier only once. No races because we hold kvm->lock */
+> -	if (kvm->arch.pv.mmu_notifier.ops != &kvm_s390_pv_mmu_notifier_ops) {
+> -		kvm->arch.pv.mmu_notifier.ops = &kvm_s390_pv_mmu_notifier_ops;
+> -		mmu_notifier_register(&kvm->arch.pv.mmu_notifier, kvm->mm);
+> -	}
+>   	return 0;
+>   }
+>   
+
 
