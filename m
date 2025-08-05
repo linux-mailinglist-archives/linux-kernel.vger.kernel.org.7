@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-756154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58692B1B099
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:01:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223FDB1B09B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D9D3A2349
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D467C189AC6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686C92586C2;
-	Tue,  5 Aug 2025 09:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91172594BE;
+	Tue,  5 Aug 2025 09:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EoKXIyry"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuPY/vcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5621B19E98C;
-	Tue,  5 Aug 2025 09:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0A21D5CED;
+	Tue,  5 Aug 2025 09:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384506; cv=none; b=FyIwk9njEXHdO6U8VOxGG3O3ru92URixXXrUmxD1vaJ8x540hJFRoa0rcYsKLNlKyYgKUuovIMsqk4iyYuX1yhAAa15Yu55qSK3QkIAM9o1ZDSvpZgZWgJeDZm0d45LeS2sJ1AJ6qX57jZbI+cS7mpRUCIkvUXyDJYjtyyM5C48=
+	t=1754384534; cv=none; b=kemcJpLYlmWRBbCW+WIMBRVWnB9o1LzP0u7JFySYeHaxylQekx3UKDRaJA/41s8LAkBJZoqgjBqrmZx7PWNEbryQyOozPpH9WsrzhXsX1Ev28BwkGQH9Z4t/GiUBYJh1s9kGxYaJDVLGpqlhTPD0qQs4P6aJ6buvnJ6Dg86KWHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384506; c=relaxed/simple;
-	bh=gf1YHbam51GMAXwrHRGJvU/JvLb/rUHVZyplFxxR3CM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ew260Uso5GBKVZiieMg7vxAJ633ua9hbmZAJNfV+DaZkhgTPGVDQo4YOI/Uz6JLd23gk/rG+xrcpXZninILwCv4sg2RYGAR9HBcxslWXVJ75R0WnkjWDZ4x4ZEuVnEcWQDbUQzVIpFsCA4gBB3OrnTE050yBxiXGrQCGjvxKbIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EoKXIyry; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754384505; x=1785920505;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gf1YHbam51GMAXwrHRGJvU/JvLb/rUHVZyplFxxR3CM=;
-  b=EoKXIyry/SRpFuC6VXg0z03lsdSr9ZnPbxtBlxh1JxlnpJSsFye88C18
-   eUZduwQc7fdeeMuVjBEk13frbMMoneSje5WLtfeByoDORa2fiixeWposn
-   aw/z/6l8q2tYTgWNpBky5cUXFaipFVw0amTuNdoMopvdHZGsn+mhSfG5e
-   JAPRPb8KhGAcN1aTuB+oLa/pFCLWQAZncVTu8rQjI8wXaaseXwYq3K1aO
-   e/axdJlVqsFjSO2n/UcucUZSw/CVzAE0HB4SELJHgfc7Gvxm5VI2pdAZJ
-   91ab1vI9GyqT1E7nXRAs5K8DAboJ9eqyxlP/J1P52kMsceCmCFQtr7Xnb
-   A==;
-X-CSE-ConnectionGUID: 5FnDeFoAS7CAhFn5vGdCng==
-X-CSE-MsgGUID: 8TUPdItvTZ2c6VYwjlBNkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="60501699"
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="60501699"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 02:01:45 -0700
-X-CSE-ConnectionGUID: ku7DH78QTCyT3ySdc82PYQ==
-X-CSE-MsgGUID: NeBvjl4QSdCmHZQiDtmxPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="163679737"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 05 Aug 2025 02:01:39 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujDY8-0000Uc-2T;
-	Tue, 05 Aug 2025 09:01:36 +0000
-Date: Tue, 5 Aug 2025 17:01:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>, catalin.marinas@arm.com,
-	will@kernel.org, maz@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev, Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [PATCH 07/11] arm64: make the per-task SCTLR2_EL1
-Message-ID: <202508051649.pyaqcE8d-lkp@intel.com>
-References: <20250804121724.3681531-8-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1754384534; c=relaxed/simple;
+	bh=b9GN3Lz+pV7s7iyy8Oys2Xo7C8sJxv2XHxITouDycFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=doU+oF4SrUFQ2jTW5G//mOxyw6L3H4M1X449PWoUU94B7c/IP/0S4wrBmMDSecRnzXFa2XBdpAuVatPMCTkvs6mEyLDJao5mK99MTJdZFDhQRPTHLAWcpMQE6YRcytuKkoDepmIkily0Z5QQ0dy2W1B+DorU8NxD0ReZeDU7oJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuPY/vcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A81C4CEF0;
+	Tue,  5 Aug 2025 09:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754384533;
+	bh=b9GN3Lz+pV7s7iyy8Oys2Xo7C8sJxv2XHxITouDycFs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RuPY/vcgxsp9GhYz888RiWGT8dG6adhsMDHJqsRcz8TOx2wgjZV5cxN19cUhLNn27
+	 4KPmagJBMnN4JDSu2o5CSI2o1gbFRtfI0kJzwv2727xgLhriGJ7bBKTT10Y+4HvXAG
+	 tLG28AxYTL/L3zXyJk413sMUTgL5Hm4iTwmawocZY7/4Fogg0dh7/ju21XvBm4yN9H
+	 L3CRQryonzPPEbMTFozIdhW/gW17o0YCotatrzrMwrhZCOB9okmCuCKpDSHJhBIcPr
+	 67BS0uzZAvvm0sc+RK6UoWl117jfMQmBgg9Fkvn2GXY7wgVSA3dC+D1ukb1chT2j/g
+	 UD7yUG48RJKpg==
+Message-ID: <cdb31c16-74c3-43e4-bf9f-da7f48ab8d46@kernel.org>
+Date: Tue, 5 Aug 2025 11:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804121724.3681531-8-yeoreum.yun@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: media: atomisp: Fix stack buffer overflow in
+ gmin_get_var_int()
+To: Kees Cook <kees@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zepta
+ <z3ptaa@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>,
+ Thomas Andreatta <thomasandreatta2000@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250724080756.work.741-kees@kernel.org>
+ <0b284755-1ae7-4f5f-8338-836dfcb1db59@kernel.org>
+ <202507281745.0D675898@keescook>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <202507281745.0D675898@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Yeoreum,
+Hi Kees,
 
-kernel test robot noticed the following build errors:
+On 29-Jul-25 2:46 AM, Kees Cook wrote:
+> On Sat, Jul 26, 2025 at 02:24:51PM +0200, Hans de Goede wrote:
+>> Hi Kees,
+>>
+>> On 24-Jul-25 10:08 AM, Kees Cook wrote:
+>>> When gmin_get_config_var() calls efi.get_variable() and the EFI variable
+>>> is larger than the expected buffer size, two behaviors combine to create
+>>> a stack buffer overflow:
+>>>
+>>> 1. gmin_get_config_var() does not return the proper error code when
+>>>    efi.get_variable() fails. It returns the stale 'ret' value from
+>>>    earlier operations instead of indicating the EFI failure.
+>>>
+>>> 2. When efi.get_variable() returns EFI_BUFFER_TOO_SMALL, it updates
+>>>    *out_len to the required buffer size but writes no data to the output
+>>>    buffer. However, due to bug #1, gmin_get_var_int() believes the call
+>>>    succeeded.
+>>>
+>>> The caller gmin_get_var_int() then performs:
+>>> - Allocates val[CFG_VAR_NAME_MAX + 1] (65 bytes) on stack
+>>> - Calls gmin_get_config_var(dev, is_gmin, var, val, &len) with len=64
+>>> - If EFI variable is >64 bytes, efi.get_variable() sets len=required_size
+>>> - Due to bug #1, thinks call succeeded with len=required_size
+>>> - Executes val[len] = 0, writing past end of 65-byte stack buffer
+>>>
+>>> This creates a stack buffer overflow when EFI variables are larger than
+>>> 64 bytes. Since EFI variables can be controlled by firmware or system
+>>> configuration, this could potentially be exploited for code execution.
+>>>
+>>> Fix the bug by returning proper error codes from gmin_get_config_var()
+>>> based on EFI status instead of stale 'ret' value.
+>>>
+>>> The gmin_get_var_int() function is called during device initialization
+>>> for camera sensor configuration on Intel Bay Trail and Cherry Trail
+>>> platforms using the atomisp camera stack.
+>>>
+>>> Reported-by: zepta <z3ptaa@gmail.com>
+>>> Closes: https://lore.kernel.org/all/CAPBS6KoQyM7FMdPwOuXteXsOe44X4H3F8Fw+y_qWq6E+OdmxQA@mail.gmail.com
+>>> Fixes: 38d4f74bc148 ("media: atomisp_gmin_platform: stop abusing efivar API")
+>>> Signed-off-by: Kees Cook <kees@kernel.org>
+>>
+>> Thanks, patch looks good to me:
+>>
+>> Reviewed-by: Hans de Goede <hansg@kernel.org>
+>>
+>> I've already send an atomisp pull-request for 6.17 out
+>> and this is already in media-committers/next now and
+>> the media subsystem is typically not good in merging
+>> fixes just before the merge window.
+>>
+>> Kees, the file touched here is unchanged in
+>> media-committers/next vs Linus' latest master, can you
+>> send this fix to Linus yourself ?
+> 
+> I apologize; this slipped through the cracks. Shall I take it for -rc2,
+> or do you want to snag it?
 
-[auto build test ERROR on 038d61fd642278bab63ee8ef722c50d10ab01e8f]
+I'm just back from vacation and I see you've send this
+to Linus already:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yeoreum-Yun/arm64-sysreg-add-system-registers-SCTLR2_EL2/20250804-202225
-base:   038d61fd642278bab63ee8ef722c50d10ab01e8f
-patch link:    https://lore.kernel.org/r/20250804121724.3681531-8-yeoreum.yun%40arm.com
-patch subject: [PATCH 07/11] arm64: make the per-task SCTLR2_EL1
-config: arm64-randconfig-001-20250805 (https://download.01.org/0day-ci/archive/20250805/202508051649.pyaqcE8d-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250805/202508051649.pyaqcE8d-lkp@intel.com/reproduce)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/staging/media/atomisp?id=ee4cf798202d285dcbe85e4467a094c44f5ed8e6
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508051649.pyaqcE8d-lkp@intel.com/
+Which is great, thank you.
 
-All errors (new ones prefixed by >>):
+Regards,
 
-   /tmp/ccFwinHr.s: Assembler messages:
->> /tmp/ccFwinHr.s:1352: Error: selected processor does not support system register name 'sctlr2_el1'
-   /tmp/ccFwinHr.s:1362: Error: selected processor does not support system register name 'sctlr2_el1'
+Hans
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
