@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-756275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E22B1B228
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:42:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F26AB1B251
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59EB73A06E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:42:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 880E44E06C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808AC23C397;
-	Tue,  5 Aug 2025 10:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C635242D82;
+	Tue,  5 Aug 2025 10:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZIA6rl4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="MfB/95/X"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D877A2566;
-	Tue,  5 Aug 2025 10:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F91242922
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 10:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754390567; cv=none; b=tfG2ufpe0Dn6kxBtlqRcPd8ChMXTFB5lqD1q0SUESvyu+8gar4w52OPB9CpefrvAjnLGre/h+LQejkRNwjqiKDA5WyGHNbcGrC8ekyX5o2yI9nxhTtuycMcZB5n31cfX2iePph9kYNWyJ15fZfe5m3o8rLN4f0FaGJXWbzM5MAE=
+	t=1754391248; cv=none; b=LFslauwqO4xBk4dMi8WQuK3Qc3vIKkj3qHZ6OgQa6PhVDwH0lqS+aamehim4UDMMnKO9a8RJiovB1wl0uTiF78qqXh4v9Sj8UlfJ0TsR7uuqIeUZnPO3oBxeDMbDf5aHFLysgJyBFRvCIQw52qLoVyzI+9SkhR7i/AT9sM7aHUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754390567; c=relaxed/simple;
-	bh=rK71U250BK27CMyHf1FowcrdOTFDq8gjL7pfGebYpEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKaJaDwvTL4einJWDrU6g6mnxQXMrBPhKCxg1iC/vk6noeNdx+In8JLfpuH8czZpZtgUpMieBSfBHun7U+aMbnUbtDYg+TGoXobNc9StotBmfToxTnJr6Fp0nWZn7LgZosI6AMGqKBKbaNo7vNm8zhi0F4fbDkEcvKZBXbB3ZgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZIA6rl4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A99BC4CEF4;
-	Tue,  5 Aug 2025 10:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754390567;
-	bh=rK71U250BK27CMyHf1FowcrdOTFDq8gjL7pfGebYpEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gZIA6rl4omdzTy8g7gTN1gA/6k2Y0gFk+ifudok3drvkaP49riohOADH+jtfNKnAT
-	 u6WDQGSYmK8eXF4Ef7Q9A+uMSXLzGxHiNb9AyKRRYW25DH5Xf52N5TPUGodsjeL0pL
-	 aKEbvxrB6l4efVsPYfr35c+iiu6DF/g29kzmFtmIJvhTkS8evr11bq9uQ75gCAssH4
-	 stYvm0zcpqRKIq5LCaPS6RJvKm8iAXgxsV/OikzqcsQjT1GHtn1lswhB+v1/I+ikQG
-	 aLvd1GQMejjsRpOUbn8Ydz2WL188ZCoqKheOo1C18IFzaS3XkCF+YmmaV4hMcM9WdM
-	 Zx7BKG3AX83UA==
-Date: Tue, 5 Aug 2025 16:12:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Michal Simek <michal.simek@amd.com>, 
-	Brian Norris <briannorris@chromium.org>, Minghuan Lian <minghuan.Lian@nxp.com>, 
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] pci: nwl: Unhandled AER correctable error
-Message-ID: <g4w5tcasa4ka24rqhgmbrmrua5a23dytgcbsqkuoyzekgmv43f@2wjltdepyizc>
-References: <20250804205702.GA3640524@bhelgaas>
- <23d9f128-af95-41b1-a5b9-3c69d2df8ab8@linux.dev>
+	s=arc-20240116; t=1754391248; c=relaxed/simple;
+	bh=j6njE58QFD+zg3/0GPbXJiFfWjG2rF0iiy1yUJKDjrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bMSFbbbkv412MKEaXDAFD/tDAs6MfRfhgCq6NCXf/cnYhvdFC9DurhvAjrzBZuCy/RQ6JiIkPXlHhtuHLoFWG37MIpc2NAP06AMOStZPyqA4QodyBpCHn18zKFAAPyk0g69ZjyA9Inf15nlzeHC2UZpOZzT7Lgs3MRXO1ml/T+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=MfB/95/X; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b77dece52eso563516f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 03:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1754391245; x=1754996045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUiodtQBvKBTA/iKS7oNMgVKazgBWdic3Ly/8SfR7xc=;
+        b=MfB/95/X6j7hyi4c7mQpUHSGHCFQ+iwVMOhVU76zaZu1/ti6Q7Fsddwq90v7WAby9Z
+         bpQrNgHRQOapowQzdW2rKJND/CykUwh0CHt7OC6y16oXCsqauOJ6Iv+Q+dCZkBRD9TB/
+         ESbOFd/jij75oNWIsHZbATIku4rL7puYnZWQKDwCT9OZSWGKtpVz+4QfrgpGJYkkX2Ns
+         9HGPug2CVmlfubL7YgWML764DvueOgAsDvN2zAn282lf4EuuTU4mX/eDTC67Dnmq2r7e
+         SlANsfpi7uwMevgl1FI631eJEjgOtuMz6XnJKReJp3mdRah9u2Ik5NF6s5Y/vXwPCfgR
+         D06Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754391245; x=1754996045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUiodtQBvKBTA/iKS7oNMgVKazgBWdic3Ly/8SfR7xc=;
+        b=jyAZ0THePHWZhJAOwoE7OOdfChHCUfmJP+fcUUXC+9uz+ilNlRY/+Cg02n2OZF4tC6
+         plSh4N5aaepDwFkfM6T5apFSa9af6Eq+k9Kcc8iVpdrI7aJIl611tOCnCC97uATeEvpr
+         LSx41h+nwZ4yKlx0ATwDqjLVqIFD2VaQPESk+Es5zWPq/niJseR3dX3GU1kP6hs5hcbR
+         S+sJIeFFafYkY0Lg8jlkw8Odprt87CHsyBcKFN0SKh8xoJoVAvq37aswRx7NM9ODpqxf
+         RrQcITqDFFDW/lzdU9Q7yPAOvthGonJXvvd98r490LXXqg0SDm4UdfzU8ey169GiYrl1
+         unMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNSWGCOvgV2ypNY2zQXlmQLh21L6VK1B+gVtXYvNRIAhtJbQcjqyUP0fS0UxJuthUqMPkUWvJ6sZH1dTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+vHmeUQESnS0w1DJVidQQrGq0gxioSPP+AyAp8A5LroPYx+SQ
+	sWNDJl2GIzx3hWQGqTuL0RfrTqgp+jRPWDvAfTW6bOLZ9x4GcHyTWmZNLw5XjcMkSpw=
+X-Gm-Gg: ASbGncsnJsaj0xeqoHBvuOasT8Y7lAnx4qIgqP5Skom45rQFUtA5FELX86NhsYUxgUW
+	/iMp/WtPy0w9Dsyz0j7jC8cnxOhg8Cs2RNdvgV+6SRgtZLUkxiUu5TO5MGPPx9/40eMQI+L+99i
+	aLfXZJP/VIw3eHIZBWcV2CagTlTiv7u12lgy5xmazguj8rJBs3hvfZleMFKQ9XuZOTKXr1IknQT
+	S2Swy8W3MKke5D96uQcenEQorYST2a4e644VBaXZe1wK+rYVjoFps4OUoqO1yDzxqb4Hj0JXGLE
+	BUkfRmpQrAcxzkYKv6y7rcuKGtumI8fDMIuiu02v0Ez8FI/thuXxcW9EAPVhfB4RitnUK9E0yBf
+	++WNa73Z/9Cdl/V3XeI2bYW+6hhNnD34DrtgPBWw=
+X-Google-Smtp-Source: AGHT+IEpOsq0FAVja98/mlRReMdSEb+xPNZ7ZEoi0EN4dXoUtDCJVpNHURSd1y/tvYFRXGJZtratYw==
+X-Received: by 2002:a05:6000:1a86:b0:3b7:99a8:bf6d with SMTP id ffacd0b85a97d-3b8d94b6fa0mr3885890f8f.11.1754391245272;
+        Tue, 05 Aug 2025 03:54:05 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:d884:b809:d57:1ad7])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3abf0csm18344450f8f.14.2025.08.05.03.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 03:54:04 -0700 (PDT)
+From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+To: kvm-riscv@lists.infradead.org
+Cc: kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] RISC-V: KVM: fix stack overrun when loading vlenb
+Date: Tue,  5 Aug 2025 12:44:21 +0200
+Message-ID: <20250805104418.196023-4-rkrcmar@ventanamicro.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <23d9f128-af95-41b1-a5b9-3c69d2df8ab8@linux.dev>
 
-On Mon, Aug 04, 2025 at 06:10:48PM GMT, Sean Anderson wrote:
-> On 8/4/25 16:57, Bjorn Helgaas wrote:
-> > [+cc more folks who might be interested in AER with non-standard
-> > interrupts]
-> > 
-> > On Fri, Aug 01, 2025 at 01:43:19PM -0400, Sean Anderson wrote:
-> >> Hi,
-> >> 
-> >> AER correctable errors are pretty rare. I only saw one once before and
-> >> came up with commit 78457cae24cb ("PCI: xilinx-nwl: Rate-limit misc
-> >> interrupt messages") in response. I saw another today and,
-> >> unfortunately, clearing the correctable AER bit in MSGF_MISC_STATUS is
-> >> not sufficient to handle the IRQ. It gets immediately re-raised,
-> >> preventing the system from making any other progress. I suspect that it
-> >> needs to be cleared in PCI_ERR_ROOT_STATUS. But since the AER IRQ never
-> >> gets delivered to aer_irq, those registers never get tickled.
-> >> 
-> >> The underlying problem is that pcieport thinks that the IRQ is going to
-> >> be one of the MSIs or a legacy interrupt, but it's actually a native
-> >> interrupt:
-> >> 
-> >>            CPU0       CPU1       CPU2       CPU3       
-> >>  42:          0          0          0          0     GICv2 150 Level     nwl_pcie:misc
-> >>  45:          0          0          0          0  nwl_pcie:legacy   0 Level     PCIe PME, aerdrv
-> >>  46:         25          0          0          0  nwl_pcie:msi 524288 Edge      nvme0q0
-> >>  47:          0          0          0          0  nwl_pcie:msi 524289 Edge      nvme0q1
-> >>  48:          0          0          0          0  nwl_pcie:msi 524290 Edge      nvme0q2
-> >>  49:         46          0          0          0  nwl_pcie:msi 524291 Edge      nvme0q3
-> >>  50:          0          0          0          0  nwl_pcie:msi 524292 Edge      nvme0q4
-> >> 
-> >> In the above example, AER errors will trigger interrupt 42, not 45.
-> >> Actually, there are a bunch of different interrupts in MSGF_MISC_STATUS,
-> >> so maybe nwl_pcie_misc_handler should be an interrupt controller
-> >> instead? But even then pcie_port_enable_irq_vec() won't figure out the
-> >> correct IRQ. Any ideas on how to fix this?
-> >> 
-> >> Additionally, any tips on actually triggering AER/PME stuff in a
-> >> consistent way? Are there any off-the-shelf cards for sending weird PCIe
-> >> stuff over a link for testing? Right now all I have 
-> > 
-> > This is definitely a problem.  We have had some discussion about this
-> > in the past, but haven't quite achieved critical mass to solve this in
-> > a generic way.  Here are some links:
-> > 
-> >   https://lore.kernel.org/linux-pci/20250702223841.GA1905230@bhelgaas/t/#u
-> >   https://lore.kernel.org/linux-pci/1464242406-20203-1-git-send-email-po.liu@nxp.com/
-> 
-> Thanks for the links. Toggling PERST does seem to reliably cause
-> correctable errors (however "correctable" they may actually be in
-> practice). With the patch I posted on the other branch of this chain I
-> now get
-> 
-> [   43.041610] pcieport 0000:00:00.0: AER: Multiple Corrected error message received from 0000:00:00.0
-> [   43.050693] pcieport 0000:00:00.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-> [   43.061477] pcieport 0000:00:00.0:   device [10ee:d011] error status/mask=00000001/0000e000
-> [   43.069842] pcieport 0000:00:00.0:    [ 0] RxErr                 
-> 
-> Whether or not that's the right fix, at least I can test things :)
+The userspace load can put up to 2048 bits into an xlen bit stack
+buffer.  We want only xlen bits, so check the size beforehand.
 
-Could you please check if INTX is working for AER? You can just pass the cmdline
-parameter, "pcie_pme=nomsi" and observe if the IRQ is getting triggered.
+Fixes: 2fa290372dfe ("RISC-V: KVM: add 'vlenb' Vector CSR")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+---
+ arch/riscv/kvm/vcpu_vector.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-We have a desire to add platform IRQs for AER, but before doing that we need to
-make sure that the platform doesn't support both MSI and INTx.
-
-- Mani
-
+diff --git a/arch/riscv/kvm/vcpu_vector.c b/arch/riscv/kvm/vcpu_vector.c
+index a5f88cb717f3..05f3cc2d8e31 100644
+--- a/arch/riscv/kvm/vcpu_vector.c
++++ b/arch/riscv/kvm/vcpu_vector.c
+@@ -182,6 +182,8 @@ int kvm_riscv_vcpu_set_reg_vector(struct kvm_vcpu *vcpu,
+ 		struct kvm_cpu_context *cntx = &vcpu->arch.guest_context;
+ 		unsigned long reg_val;
+ 
++		if (reg_size != sizeof(reg_val))
++			return -EINVAL;
+ 		if (copy_from_user(&reg_val, uaddr, reg_size))
+ 			return -EFAULT;
+ 		if (reg_val != cntx->vector.vlenb)
 -- 
-மணிவண்ணன் சதாசிவம்
+2.50.0
+
 
