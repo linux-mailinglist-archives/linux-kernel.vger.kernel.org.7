@@ -1,236 +1,215 @@
-Return-Path: <linux-kernel+bounces-755799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D37B1ABF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E936AB1ABF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B36163655
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2156A620420
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC78618BBB9;
-	Tue,  5 Aug 2025 01:18:18 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A81199E89;
+	Tue,  5 Aug 2025 01:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8Ji9F1g"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C18A41;
-	Tue,  5 Aug 2025 01:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6B189905
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754356698; cv=none; b=Cli7VZfdCuBKURW1HmSxjR04qZtmldyC9NLmq/P2Q9K68vZ65X7RRVRKkXCoQqBRDAECJyJtvrG9rLJGTuPWStcclP5BG6XbJ+2K6eoJipT5V0szXEvL3hYusY2HpSokFVdJ1ckrAKo8jXTlNPGRuA0mQ2cFiZewL5Vx6jQRVyU=
+	t=1754356838; cv=none; b=RbH+BvZnutKb3S+58JxwcDRaAUSP1XnxOnARQ5ll9ii8a+lWjMWsNPuAiZmmx3Syt2NajKuHuenVAkazHRQblW9ZVaskfnBs1+gii80dEdRTnOmG3vftNObRaNOacN0jtFe+cX8DMAeAa98ZDzSSfwuwcGeVsfQhh/TcUCC3up4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754356698; c=relaxed/simple;
-	bh=6jCrU3kAp64gxaUw57mvg/OGsjXXRuPTMQhO+n8bI18=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=JhbDC/qLDBtOgt51wzDjTAsoQg/Gp/uJ/9yY3NdAEgfq08Veajw5WXUo8QrpaNxbU9AsI48k6Oibj29FiS+dRsSdvLKgTHZ3P5XZisae9Td3wpLTlDmuYF1YqFCyQwVVZoIJ+P/6g1tClPV2YEFpKbE32b54nBQtvDPv7ArjKi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=114.132.67.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
-EX-QQ-RecipientCnt: 4
-X-QQ-GoodBg: 2
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqSYbfq2fqToiE06OqpQR/8JocnLdZjgIrs=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: zFJg+inUssJgvAhLltYSJfOte1tzPP88TbQQN86HZJ4=
-X-QQ-STYLE: 
-X-QQ-mid: lv3sz3a-2t1754356651t5d414413
-From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
-To: "=?utf-8?B?S2VudCBPdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
-Cc: "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+	s=arc-20240116; t=1754356838; c=relaxed/simple;
+	bh=swpTiO+XH5TQq83hG6ZUZgyhocdMW7f+n5xUPvEAaRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkPOe+C/RuzBMkq+rybV1rX1s7peCZkj1VmCQ8UIJ/1OgQUePvX4AO1OZsFxFaBAPXAo9NYgwkbxfB9Z2UJU4dgdaCGtD21YSO4+or4MF+Nzi86QRD47GxWPtzJlUdH3Xgk+GN0QbvtuA/qdBCmv+BfXfzQkEfmo3XQYYi4hdi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8Ji9F1g; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-240718d5920so61035ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754356836; x=1754961636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C2cdGE1gGOLXCJmNC5s4I0c4oeV0J7N0veB1ToZLZSM=;
+        b=t8Ji9F1gLj1NGW/C+Dja89KJ1Av+OcjkTPAFZdjFTWXHShisY1oqzleK7DCjNDXdcz
+         HoDoN9+hn87lGAU81l8IEbfKhCnQoppYofz2//nfH5Q4pLLB3QFiwqag3NRNmSr3guqa
+         nV4wPg68kU+5o4lZ0IY3Po1a650f3+TVKuDyk6N0mID9wkEqDSsr0sNFJOa4Jdj3YgWf
+         0I/KcYxMCjEdqJm3KgirNx6WdwmyRCaDwJFHI/Av5PGgilScxgvOAo+ipvd+dL67jcHp
+         MV/94b8OH799HOfacJ2RgmFqKot3rBpcxIbufSkmnQy0Ds8IY1CEbBpHfpvtzyPfwLdt
+         T0Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754356836; x=1754961636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C2cdGE1gGOLXCJmNC5s4I0c4oeV0J7N0veB1ToZLZSM=;
+        b=LI2J9IogXghNptyKHvuvQ9tLCtK3PbXw3YZeWMLzK5rvFQ2Ot6luzpfaQq9Yx0NdGp
+         YlsvPpJ7JWReKraJzo6rFlayhGn6BOBBNm3K69OUPYVS1G181TXxk2riiQyHeR+grwnS
+         UCfhSZ6nemRMla8295xaMnGHJA2JwBi5Pq0XPrM3dBe+lmVCX6vrartGlenohSzxq2TA
+         /1gsK1AJ5lXLvHp4JVEAJoIqpY6nVJuJpf2trFQCYgH6ATG+pGGOWqeXg3xbwLabs0+x
+         NT7DTPiGJJPPEqsFgiQY2agRkgapdHpj1ffOLJSDzcATZHMl6VAs2fJTAccWGfQECeur
+         cL+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXB94eA9Fw5gP5HXn1jYF00FqdiSPeUUZvJNxK7QjLC+XBpFrYRNc3cDQ9MblEUusI/YLmfBfL48zHSCwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWdxDwzoUui/mSoxLwQOBXYfhVCtF/Xlz/RDbQAOBP40y2uYlX
+	8LSUq85q2cV9U8ZH/8MJJVJSgOVJV1gsNQMdECg7R95NtwlFrwsXvsBZN9Hde4UehjwNBnnCUn4
+	UAWu2VpEJs1ThjuLh9s7zhyoCe3cJHiKXjLzdU/7c
+X-Gm-Gg: ASbGncsKmH7qSDwrLtW5pStVzTw82vXry5U6WxzyRWBpHh+WAKtJiQew9LC9mjBokCS
+	S/KAfoknFtO0RKt6UeOLWYMlGLhFL9oiMBWmTC//yJG+bI5BPoaRTqgHH2eQjTER1tMKw3d1CB0
+	jFeXSXWEOMLNlsXOmIFphMKejqzooNeRuzneZcTKN80no68Rvl/vWimQid+jl+Zt223EGQZeZ+t
+	j07WMjRFTEDfoT6k2jZ98aAvTeXyqotpR4BuQ==
+X-Google-Smtp-Source: AGHT+IHoGln+nl/FJBCGfeuyumyroLaM5HvSz457gpDjG5nE2SZikVrNTnjMNkRuSQfpjMdg4bJ7hab+N8/lf0qaVDw=
+X-Received: by 2002:a17:902:d50b:b0:223:ff93:322f with SMTP id
+ d9443c01a7336-2428e9b08e0mr353115ad.2.1754356835453; Mon, 04 Aug 2025
+ 18:20:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 5 Aug 2025 09:17:31 +0800
-X-Priority: 3
-Message-ID: <tencent_418348EE386ED24E54E87AD7@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
-	<tencent_656F159830BC538C2D26CD68@qq.com>
-	<zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
-	<tencent_22DE1AC52BA931BD442CE823@qq.com>
-	<wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
-	<tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
-	<p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
-	<tencent_31215CC45AD29EC835D34AD8@qq.com>
-	<c2awlgl4ih23npqa3k2ilbrbhciv3nfd7wg5xnsjjxikcmednb@nwn3qc7aqhou>
-	<20250804153130.igwkb6baf3vtjhzu@P16.>
-	<gc54e3mk6ftv5qhuqvuguuguq3nbrwhty543egvictmiua5me7@nrzyczdgceyr>
-In-Reply-To: <gc54e3mk6ftv5qhuqvuguuguq3nbrwhty543egvictmiua5me7@nrzyczdgceyr>
-X-QQ-ReplyHash: 710088764
-X-BIZMAIL-ID: 11536978511272717220
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Tue, 05 Aug 2025 09:17:32 +0800 (CST)
-Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: MMKcwIwa79XOAbA7CDj+9E9aoE+QKY23XSUkCVmzMFEhe9UufBgUIZTU
-	tpZbRyZ6SLiocm6mt+7In+AfmLK0TUsAkZRcizXX0KrDT+Fr1Zy1PJpz4w/jGCITxrPwkMC
-	PTfS7YIRfaEa63NyHkHqwCUZFKUWx3WsgwM4iUPuRiLFdq+tDbKGPIVcHgBAJOKxJ5gXGy4
-	iHwOZSzWZm6sgFrSRz3uNJNTJS91dURdRcairKpNV4XpJZVVq0JMtBdOv9Huv6PeYqFrYL7
-	k0eKU3pKzZrW9O2f+AVXdw9igcpXSf17yThl5vNGlZmLfuGkRJIzeji3P9zuDaP7hb0Znbh
-	xtTwYRsA/8ydxRAtXapPCp0+k+EFP5JvD+EWzy885aZ8NKGVTAb3SdTXnhohmT4KqMCfgqH
-	skojLMkulCgkBDDo1Telyp4Zcl4zoeYV+y9VS5T3DQt1yMAVFe1LcjnRAPuB4ROr3mMU1mD
-	ugbTkBZ0srjcsyHQly0w4fc+tXIFQCGfS9sIjkTa9zhC7+bh+NSLjpav+872iIAYarZKDkC
-	1p7Hbnhx0qWw5lqQr98RZX+n4pbOkHJdyWPvR5kChuuo3vHZwCqE2QN61hhXUStZk7jfF6c
-	spDlCiEY3G1VlaHB/Jl9DsH18xqpskj4ravQrREn2SQgRsjejUP5Sk0NZOeIeweMyLWouC5
-	CM49zQNmgE98x8OjksxgAInMnmFqGL6VK83up9/YI6wxNshkrNywouqqSQgU4gyfIEgMOih
-	G3m3e3mQynkEmTd27OMDmE7BOHlccRiTc6cJxuavmSZlHskN6LfSUBPNGKduYcfmE2BNs1s
-	fVK2u5Gkke3JACVZlVsjma7VkQyvf2JQUcANNz7i9g/veDdyFOucngq9bZ5J090iBXyzlNa
-	InSH9CyM5gvUgMnNPLJapnVGV0Njd32H6D1UmEwRjC4ZJYGJqn7CWq5CByDaZr15SFlw1pb
-	kp6UMWNrufcviNLXAnENJTnLAHhviNJva9pUz9Ts6RAnYRp9EhFs7K96ApGwdxgY3Wp9u/Y
-	IPqnNEXPWBQy67mQoG
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+References: <aHEwT4X0RcfZzHlt@google.com> <aHSgdEJpY/JF+a1f@yzhao56-desk>
+ <aHUmcxuh0a6WfiVr@google.com> <aHWqkodwIDZZOtX8@yzhao56-desk>
+ <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com> <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+ <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
+ <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
+ <aJFOt64k2EFjaufd@google.com>
+In-Reply-To: <aJFOt64k2EFjaufd@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Mon, 4 Aug 2025 18:20:22 -0700
+X-Gm-Features: Ac12FXxp8MXYPovS7CHmH7yGaGLLp8dqnCHVsUqeh69FkNZnKElDWeFkrxjVNjM
+Message-ID: <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
+	tabba@google.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCA1IEF1ZyAyMDI1IGF0IDAwOjA3LCBLZW50IE92ZXJzdHJlZXQgPGtlbnQub3Zl
-cnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOg0KPg0KPiBPbiBNb24sIEF1ZyAwNCwgMjAyNSBh
-dCAxMTozMTozMFBNICswODAwLCBDb2x5IExpIHdyb3RlOg0KPiA+IE9uIE1vbiwgQXVnIDA0
-LCAyMDI1IGF0IDEyOjE3OjI4QU0gLTA0MDAsIEtlbnQgT3ZlcnN0cmVldCB3cm90ZToNCj4g
-PiA+IE9uIE1vbiwgQXVnIDA0LCAyMDI1IGF0IDExOjQ3OjU3QU0gKzA4MDAsIFpob3UgSmlm
-ZW5nIHdyb3RlOg0KPiA+ID4gPiBPbiBTdW4sIDMgQXVnIDIwMjUgYXQgMDE6MzAsIENvbHkg
-TGkgPGNvbHlsaUBrZXJuZWwub3JnPiB3cm90ZToNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IE9u
-IEZyaSwgQXVnIDAxLCAyMDI1IGF0IDAyOjEwOjEyUE0gKzA4MDAsIFpob3UgSmlmZW5nIHdy
-b3RlOg0KPiA+ID4gPiA+ID4gT24gRnJpLCAxIEF1ZyAyMDI1IGF0IDExOjQyLCBLZW50IE92
-ZXJzdHJlZXQgPGtlbnQub3ZlcnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOg0KPiA+ID4gPiA+
-ID4gPg0KPiA+ID4gPiA+ID4gPiBPbiBGcmksIEF1ZyAwMSwgMjAyNSBhdCAxMTozMDo0M0FN
-ICswODAwLCBaaG91IEppZmVuZyB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiBPbiBGcmksIDEg
-QXVnIDIwMjUgYXQgMTA6MzcsIEtlbnQgT3ZlcnN0cmVldCA8a2VudC5vdmVyc3RyZWV0QGxp
-bnV4LmRldj4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4g
-T24gRnJpLCBBdWcgMDEsIDIwMjUgYXQgMTA6Mjc6MjFBTSArMDgwMCwgWmhvdSBKaWZlbmcg
-d3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gPiA+IEluIHRoZSB3cml0ZWJhY2sgbW9kZSwgdGhl
-IGN1cnJlbnQgYmNhY2hlIGNvZGUgdXNlcyB0aGUNCj4gPiA+ID4gPiA+ID4gPiA+ID4gUkVR
-X09QX1dSSVRFIG9wZXJhdGlvbiB0byBoYW5kbGUgZGlydHkgZGF0YSwgYW5kIGNsZWFycyB0
-aGUgYmtleQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiBkaXJ0eSBmbGFnIGluIHRoZSBidHJlZSBk
-dXJpbmcgdGhlIGJpbyBjb21wbGV0aW9uIGNhbGxiYWNrLiBJIHRoaW5rDQo+ID4gPiA+ID4g
-PiA+ID4gPiA+IHRoZXJlIG1pZ2h0IGJlIGEgcG90ZW50aWFsIHJpc2s6IGlmIGluIHRoZSBl
-dmVudCBvZiBhbiB1bmV4cGVjdGVkDQo+ID4gPiA+ID4gPiA+ID4gPiA+IHBvd2VyIG91dGFn
-ZSwgdGhlIGRhdGEgaW4gdGhlIEhERCBoYXJkd2FyZSBjYWNoZSBtYXkgbm90IGhhdmUNCj4g
-PiA+ID4gPiA+ID4gPiA+ID4gaGFkIHRpbWUgdG8gYmUgcGVyc2lzdGVkLCB0aGVuIHRoZSBk
-YXRhIGluIHRoZSBIREQgaGFyZHdhcmUgY2FjaGUNCj4gPiA+ID4gPiA+ID4gPiA+ID4gdGhh
-dCBpcyBwZW5kaW5nIHByb2Nlc3NpbmcgbWF5IGJlIGxvc3QuIFNpbmNlIGF0IHRoaXMgdGlt
-ZSB0aGUgYmtleQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiBkaXJ0eSBmbGFnIGluIHRoZSBidHJl
-ZSBoYXMgYmVlbiBjbGVhcmVkLCB0aGUgZGF0YSBzdGF0dXMgcmVjb3JkZWQNCj4gPiA+ID4g
-PiA+ID4gPiA+ID4gYnkgdGhlIGJrZXkgZG9lcyBub3QgbWF0Y2ggdGhlIGFjdHVhbCBzaXR1
-YXRpb24gb2YgdGhlIFNTRCBhbmQNCj4gPiA+ID4gPiA+ID4gPiA+ID4gSERELg0KPiA+ID4g
-PiA+ID4gPiA+ID4gPiBBbSBJIHVuZGVyc3RhbmRpbmcgdGhpcyBjb3JyZWN0bHk/DQo+ID4g
-PiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gRm9yIHdoYXQgeW91J3JlIGRlc2Ny
-aWJpbmcsIHdlIG5lZWQgdG8gbWFrZSBzdXJlIHRoZSBiYWNraW5nIGRldmljZSBpcw0KPiA+
-ID4gPiA+ID4gPiA+ID4gZmx1c2hlZCB3aGVuIHdlJ3JlIGZsdXNoaW5nIHRoZSBqb3VybmFs
-Lg0KPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+IEl0J3MgcG9zc2libGUg
-dGhhdCB0aGlzIGlzbid0IGhhbmRsZWQgY29ycmVjdGx5IGluIGJjYWNoZTsgYmNhY2hlZnMN
-Cj4gPiA+ID4gPiA+ID4gPiA+IGRvZXMsIGFuZCBJIHdyb3RlIHRoYXQgY29kZSBhZnRlciBi
-Y2FjaGUgLSBidXQgdGhlIGJjYWNoZSB2ZXJzaW9uIHdvdWxkDQo+ID4gPiA+ID4gPiA+ID4g
-PiBsb29rIHF1aXRlIGRpZmZlcmVudC4NCj4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
-PiA+ID4gPiBZb3UndmUgcmVhZCB0aGF0IGNvZGUgbW9yZSByZWNlbnRseSB0aGFuIEkgaGF2
-ZSAtIGhhdmUgeW91IGNoZWNrZWQgZm9yDQo+ID4gPiA+ID4gPiA+ID4gPiB0aGF0Pw0KPiA+
-ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gSW4gdGhlIGB3cml0ZV9kaXJ0eV9maW5p
-c2hgIGZ1bmN0aW9uLCB0aGVyZSBpcyBhbiBhdHRlbXB0IHRvIHVwZGF0ZSB0aGUNCj4gPiA+
-ID4gPiA+ID4gPiBgYmtleWAgc3RhdHVzLCBidXQgSSBkaWQgbm90IG9ic2VydmUgYW55IGxv
-Z2dpbmcgd3JpdGluZyBwcm9jZXNzLiBJbiB0aGUNCj4gPiA+ID4gPiA+ID4gPiBjb3JlIGZ1
-bmN0aW9uIGBqb3VybmFsX3dyaXRlX3VubG9ja2VkYCBvZiBiY2FjaGUgZm9yIHdyaXRpbmcg
-bG9ncywgSQ0KPiA+ID4gPiA+ID4gPiA+IGFsc28gY291bGRuJ3QgZmluZCB0aGUgY29kZSBs
-b2dpYyBmb3Igc2VuZGluZyBhIEZMVVNIIGNvbW1hbmQgdG8gdGhlDQo+ID4gPiA+ID4gPiA+
-ID4gYmFja2VuZCBIREQuDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IFRoZSByaWdo
-dCBwbGFjZSBmb3IgaXQgd291bGQgYmUgaW4gdGhlIGpvdXJuYWwgY29kZTogYmVmb3JlIGRv
-aW5nIGENCj4gPiA+ID4gPiA+ID4gam91cm5hbCB3cml0ZSwgaXNzdWUgZmx1c2hlcyB0byB0
-aGUgYmFja2luZyBkZXZpY2VzLg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBDYW4g
-eW91IGNoZWNrIGZvciB0aGF0Pw0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4NCj4gPiA+
-ID4gPiA+IEkgY2hlY2tlZCBhbmQgZm91bmQgdGhhdCB0aGVyZSB3YXMgbm8gY29kZSBmb3Ig
-c2VuZGluZyBhIGZsdXNoIHJlcXVlc3QNCj4gPiA+ID4gPiA+IHRvIHRoZSBiYWNrZW5kIGRl
-dmljZSBiZWZvcmUgdGhlIGV4ZWN1dGlvbiBsb2cgd2FzIHdyaXR0ZW4uIEFkZGl0aW9uYWxs
-eSwNCj4gPiA+ID4gPiA+IGluIHRoZSBjYWxsYmFjayBmdW5jdGlvbiBhZnRlciB0aGUgZGly
-dHkgZGF0YSB3YXMgd3JpdHRlbiBiYWNrLCB3aGVuIGl0DQo+ID4gPiA+ID4gPiB1cGRhdGVk
-IHRoZSBia2V5LCBpdCBkaWQgbm90IGluc2VydCB0aGlzIHVwZGF0ZSBpbnRvIHRoZSBsb2cu
-DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gSXQgZG9lc24ndCBoYXZlIHRv
-LiBJZiB0aGUgcHJldmlvdXMgZGlydHkgdmVyc2lvbiBvZiB0aGUga2V5IGlzIG9uIGNhY2hl
-IGRldmljZQ0KPiA+ID4gPiA+IGFscmVhZHksIGFuZCBwb3dlciBvZmYgaGFwcGVucywgZXZl
-biB0aGUgY2xlYW4gdmVyc2lvbiBvZiB0aGUga2V5IGlzIGdvbmUsIHRoZQ0KPiA+ID4gPiA+
-IGRpcnR5IHZlcnNpb24gYW5kIGl0cyBkYXRhIGFyZSBhbGwgdmFsaWQuIElmIHRoZSBMQkEg
-cmFuZ2Ugb2YgdGhpcyBrZXkgaXMNCj4gPiA+ID4gPiBhbGxvY2F0ZWQgdG8gYSBuZXcga2V5
-LCBhIEdDIG11c3QgaGF2ZSBhbHJhZHkgaGFwcGVuZWQsIGFuZCB0aGUgZGlydHkga2V5IGlz
-DQo+ID4gPiA+ID4gaW52YWxpZCBkdWUgdG8gYnVja2V0IGdlbmVyYXRpb24gaW5jcmVhc2Vk
-LiBTbyBkb24ndCB3b3JyeSwgdGhlIGNsZWFuIGtleSBpcw0KPiA+ID4gPiA+IHVubmNlc3Nh
-cnkgdG8gZ28gaW50byBqb3VybmFsIGluIHRoZSB3cml0ZWJhY2sgc2NlbmFyaW8uDQo+ID4g
-PiA+ID4NCj4gPiA+ID4gPiBJTUhPLCB5b3UgbWF5IHRyeSB0byBmbHVzaCBiYWNraW5nIGRl
-dmljZSBpbiBhIGt3b3JrZXIgYmVmb3JlIGNhbGxpbmcNCj4gPiA+ID4gPiBzZXRfZ2Nfc2Vj
-dG9ycygpIGluIGJjaF9nY190aHJlYWQoKS4gVGhlIGRpc2sgY2FjaGUgY2FuIGJlIGZsdXNo
-ZWQgaW4gdGltZQ0KPiA+ID4gPiA+IGJlZm9yZSB0aGUgc3RpbGwtZGlydHktb24tZGlzayBr
-ZXlzIGFyZSBpbnZhbGlkYXRlZCBieSBpbmNyZWFzZSBidWNrZXQga2V5DQo+ID4gPiA+ID4g
-Z2VuLiBBbmQgYWxzbyBmbHVzaGluZyBiYWNraW5nIGRldmljZSBhZnRlciBzZWFyY2hlZF9m
-dWxsX2luZGV4IGJlY29tZXMNCj4gPiA+ID4gPiB0cnVlIGluIHRoZSB3cml0ZWJhY2sgdGhy
-ZWFkIG1haW4gbG9vcCAoYXMgeW91IGRpZCBub3cpLg0KPiA+ID4gPiA+DQo+ID4gPiA+DQo+
-ID4gPiA+IFRoZSAiZmx1c2giIGNvbW1hbmQgcHJldmlvdXNseSBpc3N1ZWQgYnkgR0Mgd2Fz
-IHN1cHBvc2VkIHRvIGFsbGV2aWF0ZQ0KPiA+ID4gPiB0aGUgcHJvYmxlbXMgaW4gc29tZSBz
-Y2VuYXJpb3MuIEhvd2V2ZXIsIEkgdGhvdWdodCBvZiBhIHNpdHVhdGlvbiB3aGVyZQ0KPiA+
-ID4gPiB0aGlzICJmbHVzaCIgY29tbWFuZCBpc3N1ZWQgYmVmb3JlIEdDIG1pZ2h0IG5vdCBi
-ZSBzdWZmaWNpZW50IHRvIHNvbHZlDQo+ID4gPiA+IHRoZSBpc3N1ZS4NCj4gPiA+ID4NCj4g
-PiA+ID4gU3VwcG9zZSBzdWNoIGEgc2NlbmFyaW86IGFmdGVyIGEgcG93ZXIgZmFpbHVyZSwg
-c29tZSBoYXJkd2FyZSBjYWNoZSBkYXRhDQo+ID4gPiA+IGluIHRoZSBIREQgaXMgbG9zdCwg
-d2hpbGUgdGhlIGNvcnJlc3BvbmRpbmcgYmtleSh3aXRoIHRoZSBkaXJ0eSBmbGFnIGNsZWFy
-ZWQpDQo+ID4gPiA+IHVwZGF0ZSBpbiB0aGUgU1NEIGhhcyBiZWVuIHBlcnNpc3RlZC4gQWZ0
-ZXIgdGhlIHBvd2VyIGlzIHJlc3RvcmVkLCBpZg0KPiA+ID4gPiBiY2FjaGUgc2VuZHMgYSBm
-bHVzaCBiZWZvcmUgR0MsIHdpbGwgdGhpcyBjYXVzZSBkYXRhIGxvc3M/DQo+ID4gPg0KPiA+
-ID4gWWVzLg0KPiA+DQo+ID4gVGhlIGNsZWFyZWQga2V5IGlzIHVwZGF0ZWQgaW4tcGxhY2Ug
-d2l0aGluIHRoZSBpbi1tZW1vcnkgYnRyZWUgbm9kZSwNCj4gPiBmbHVzaGluZyBiYWNraW5n
-IGRldmljZXMgYmVmb3JlIGNvbW1pdHRpbmcgam91cm5hbCBkb2Vzbid0IGhlbHAuDQo+DQo+
-IFllcywgaXQgd291bGQsIGFsdGhvdWdoIG9idmlvdXNseSB3ZSB3b3VsZG4ndCB3YW50IHRv
-IGRvIGEgZmx1c2ggZXZlcnkNCj4gdGltZSB3ZSBjbGVhciB0aGUgZGlydHkgYml0IC0gaXQg
-bmVlZHMgYmF0Y2hpbmcuDQo+DQo+IEFueSB0aW1lIHlvdSdyZSBkb2luZyB3cml0ZXMgdG8g
-bXVsdGlwbGUgZGV2aWNlcyB0aGF0IGhhdmUgb3JkZXJpbmcNCj4gZGVwZW5kZW5jaWVzLCBh
-IGZsdXNoIG5lZWRzIHRvIGJlIGludm9sdmVkLg0KPg0KPiA+IEkgdHJ5IHRvIGF2b2lkIGFk
-ZGluZyB0aGUgY2xlYXJlZCBrZXkgaW50byBqb3VybmFsLCBpbiBoaWdoIHdyaXRlIHByZXNz
-dXJlLA0KPiA+IHN1Y2ggc3luY2hyb25pemVkIGxpbmsgYmV0d2VlbiB3cml0ZWJhY2ssIGdj
-IGFuZCBqb3VybmFsIG1ha2VzIG1lIHJlYWxseQ0KPiA+IHVuY29tZm9ydGFibGUuDQo+ID4N
-Cj4gPiBBbm90aGVyIGNob2ljZSBtaWdodCBiZSBhZGRpbmcgYSB0YWcgaW4gc3RydWN0IGJ0
-cmVlLCBhbmQgc2V0IHRoZSB0YWcgd2hlbg0KPiA+IHRoZSBjbGVhcmVkIGtleSBpbi1wbGFj
-ZSB1cGRhdGVkIGluIHRoZSBidHJlZSBub2RlLiBXaGVuIHdyaXRpbmcgYSBic2V0IGFuZA0K
-PiA+IHRoZSB0YWcgaXMgc2V0LCB0aGVuIGZsdXNoIGNvcnJlc3BvbmRpbmcgYmFja2luZyBk
-ZXZjaWUgYmVmb3JlIHdyaXRpbmcgdGhlDQo+ID4gYnRyZWUgbm9kZS4gTWF5YmUgaHVydHMg
-bGVzcyBwZXJmb3JtYW5jZSB0aGFuIGZsdXNoaW5nIGJhY2tpbmcgZGV2aWNlIGJlZm9yZQ0K
-PiA+IGNvbW1pdHRpbmcgam91cm5hbCBzZXQuDQo+ID4NCj4gPiBIb3cgZG8geW91IHRoaW5r
-IG9mIGl0LCBLZW50Pw0KPg0KPiBIYXZlIGEgbG9vayBhdCB0aGUgY29kZSBmb3IgdGhpcyBp
-biBiY2FjaGVmcywgZnMvYmNhY2hlZnMvam91cm5hbF9pby5jLA0KPiBqb3VybmFsX3dyaXRl
-X3ByZWZsdXNoKCkuDQo+DQo+IElmIGl0J3MgYSBtdWx0aSBkZXZpY2UgZmlsZXN5c3RlbSwg
-d2UgaXNzdWUgZmx1c2hlcyBzZXBhcmF0ZWx5IGZyb20gdGhlDQo+IGpvdXJuYWwgd3JpdGUg
-YW5kIHdhaXQgZm9yIHRoZW0gdG8gY29tcGxldGUgYmVmb3JlIGRvaW5nIHRoZSBSRVFfRlVB
-DQo+IGpvdXJuYWwgd3JpdGUgLSB0aGF0IGVuc3VyZXMgdGhhdCBhbnkgY3Jvc3MgZGV2aWNl
-IElPIGRlcGVuZGVuY2llcyBhcmUNCj4gb3JkZXJlZCBjb3JyZWN0bHkuDQo+DQo+IFRoYXQg
-YXBwcm9hY2ggd291bGQgd29yayBpbiBiY2FjaGUgYXMgd2VsbCwgYnV0IGl0J2QgaGF2ZSBo
-aWdoZXINCj4gcGVyZm9ybWFuY2Ugb3ZlcmhlYWQgdGhhbiBpbiBiY2FjaGVmcyBiZWNhdXNl
-IGJjYWNoZSBkb2Vzbid0IGhhdmUgdGhlDQo+IGNvbmNlcHQgb2Ygbm9mbHVzaCAobm9uIGNv
-bW1pdCkgam91cm5hbCB3cml0ZXMgLSBldmVyeSBqb3VybmFsIHdyaXRlIGlzDQo+IEZMVVNI
-L0ZVQSwgYW5kIHRoZXJlJ3MgYWxzbyB3cml0ZXMgdGhhdCBieXBhc3MgdGhlIGNhY2hlLCB3
-aGljaCB3ZSB3ZSdsbA0KPiBiZSBmbHVzaGluZyB1bm5lY2Vzc2FyaWx5Lg0KPg0KPiBIYXZp
-bmcgYSBmbGFnL2JpdG1hc2sgZm9yICJ3ZSBjbGVhcmVkIGRpcnR5IGJpdHMsIHRoZXNlIGJh
-Y2tpbmcNCj4gZGV2aWNlKHMpIG5lZWQgZmx1c2hlcyIgd291bGQgcHJvYmFibHkgaGF2ZSBh
-Y2NlcHRhYmxlIHBlcmZvcm1hbmNlDQo+IG92ZXJoZWFkLg0KPg0KPiBBbHNvLCB3ZSdyZSBn
-ZXR0aW5nIGRhbW4gY2xvc2UgdG8gYmVpbmcgcmVhZHkgdG8gbGlmdCB0aGUgZXhwZXJpbWVu
-dGFsDQo+IGxhYmVsIG9uIGJjYWNoZWZzLCBzbyBtYXliZSBoYXZlIGEgbG9vayBhdCB0aGF0
-IHRvbyA6KQ0KPg0KDQpDb3VsZCB3ZSBjb25zaWRlciB0aGUgc29sdXRpb24gSSBzdWJtaXR0
-ZWQsIHdoaWNoIGlzIGJhc2VkIG9uIHRoZQ0KZm9sbG93aW5nIG1haW4gcHJpbmNpcGxlOg0K
-MS4gRmlyc3RseSwgaW4gdGhlIHdyaXRlX2RpcnR5X2ZpbmlzaCBzdGFnZSwgdGhlIGRpcnR5
-IG1hcmtpbmcgYmtleXMgYXJlDQpub3QgaW5zZXJ0ZWQgaW50byB0aGUgYnRyZWUgaW1tZWRp
-YXRlbHkuIEluc3RlYWQsIHRoZXkgYXJlIHRlbXBvcmFyaWx5DQpzdG9yZWQgaW4gYW4gaW50
-ZXJuYWwgbWVtb3J5IHF1ZXVlIGNhbGxlZCBBbGlzdC4NCjIuIFRoZW4sIHdoZW4gdGhlIG51
-bWJlciBvZiBia2V5cyBpbiBBbGlzdCBleGNlZWRzIGEgY2VydGFpbiBsaW1pdCwgYQ0KZmx1
-c2ggcmVxdWVzdCBpcyBzZW50IHRvIHRoZSBiYWNrZW5kIEhERC4NCjMuIEFmdGVyIHRoZSBm
-bHVzaCBpcyBzZW50LCB0aGUgYmtleXMgcmVjb3JkZWQgaW4gQWxpc3QgYXJlIHRoZW4NCmlu
-c2VydGVkIGludG8gdGhlIGJ0cmVlLg0KVGhpcyBwcm9jZXNzIGVuc3VyZXMgdGhhdCB0aGUg
-d3JpdHRlbiBkaXJ0eSBkYXRhIGlzIHdyaXR0ZW4gdG8gdGhlIGRpc2sNCmJlZm9yZSB0aGUg
-YnRyZWUgaXMgdXBkYXRlZC4gVGhlIGxlbmd0aCBvZiBBbGlzdCBjYW4gYmUgY29uZmlndXJl
-ZCwNCmFsbG93aW5nIGZvciBiZXR0ZXIgY29udHJvbCBvZiB0aGUgZmx1c2ggc2VuZGluZyBm
-cmVxdWVuY3kgYW5kIHJlZHVjaW5nDQp0aGUgaW1wYWN0IG9mIHRoZSBmbHVzaCBvbiB0aGUg
-d3JpdGUgc3BlZWQu
+On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> > > > > IIUC, the suggestion in the link is to abandon kvm_gmem_populate(=
+).
+> > > > > For TDX, it means adopting the approach in this RFC patch, right?
+> > > > Yes, IMO this RFC is following the right approach as posted.
+>
+> I don't think we want to abandon kvm_gmem_populate().  Unless I'm missing=
+ something,
+> SNP has the same AB-BA problem as TDX.  The copy_from_user() on @src can =
+trigger
+> a page fault, and resolving the page fault may require taking mm->mmap_lo=
+ck.
+>
+> Fundamentally, TDX and SNP are doing the same thing: copying from source =
+to guest
+> memory.  The only differences are in the mechanics of the copy+encrypt, e=
+verything
+> else is the same.  I.e. I don't expect that we'll find a magic solution t=
+hat works
+> well for one and not the other.
+>
+> I also don't want to end up with wildly different ABI for SNP vs. everyth=
+ing else.
+> E.g. cond_resched() needs to be called if the to-be-initialzied range is =
+large,
+> which means dropping mmu_lock between pages, whereas kvm_gmem_populate() =
+can
+> yield without dropping invalidate_lock, which means that the behavior of =
+populating
+> guest_memfd memory will be quite different with respect to guest_memfd op=
+erations.
 
+I would think that TDX/CCA VMs [1] will run into the similar behavior
+of needing to simulate stage2 faults i.e. KVM will end up picking up
+and dropping mmu_lock for each page anyways at least for these two
+platforms.
+
+[1] https://lore.kernel.org/kvm/20250611104844.245235-5-steven.price@arm.co=
+m/
+(rmi_rtt_create())
+
+>
+> Pulling in the RFC text:
+>
+> : I think the only different scenario is SNP, where the host must write
+> : initial contents to guest memory.
+> :
+> : Will this work for all cases CCA/SNP/TDX during initial memory
+> : population from within KVM:
+> : 1) Simulate stage2 fault
+> : 2) Take a KVM mmu read lock
+>
+> Doing all of this under mmu_lock is pretty much a non-starter.
+>
+> : 3) Check that the needed gpa is mapped in EPT/NPT entries
+>
+> No, KVM's page tables are not the source of truth.  S-EPT is a special sn=
+owflake,
+> and I'd like to avoid foisting the same requirements on NPT.
+
+I agree this would be a new requirement.
+
+>
+> : 4) For SNP, if src !=3D null, make the target pfn to be shared, copy
+> : contents and then make the target pfn back to private.
+>
+> Copying from userspace under spinlock (rwlock) is illegal, as accessing u=
+serspace
+> memory might_fault() and thus might_sleep().
+
+I would think that a combination of get_user_pages() and
+kmap_local_pfn() will prevent this situation of might_fault().
+
+>
+> : 5) For TDX, if src !=3D null, pass the same address for source and
+> : target (likely this works for CCA too)
+> : 6) Invoke appropriate memory encryption operations
+> : 7) measure contents
+> : 8) release the KVM mmu read lock
+> :
+> : If this scheme works, ideally we should also not call RMP table
+> : population logic from guest_memfd, but from KVM NPT fault handling
+> : logic directly (a bit of cosmetic change).
+>
+> LOL, that's not a cosmetic change.  It would be a non-trivial ABI change =
+as KVM's
+> ABI (ignoring S-EPT) is that userspace can delete and recreate memslots a=
+t will.
+
+Ack, this is not a cosmetic change once we start thinking about how
+memory ownership should be tied to memslots/NPT operations.
+
+>
+> : Ideally any outgoing interaction from guest_memfd to KVM should be only=
+ via
+>   invalidation notifiers.
+>
+> Why?  It's all KVM code.  I don't see how this is any different than e.g.=
+ common
+> code, arch code, and vendor code all calling into one another.  Artificia=
+lly
+> limiting guest_memfd to a super generic interface pretty much defeats the=
+ whole
+> purpose of having KVM provide a backing store.
+
+Inline with what we discussed on another thread, it makes sense to
+think of guest_memfd as not a super generic interface, but at least
+the one that has a very well defined role of supplying memory to KVM
+guests (so to userspace and IOMMU) and taking away the memory when
+needed. Memory population in my opinion is best solved either by users
+asserting ownership of the memory and writing to it directly or by
+using guest_memfd (to be) exposed APIs to populate memory ranges given
+a source buffer. IMO kvm_gmem_populate() is doing something different
+than both of these options.
 
