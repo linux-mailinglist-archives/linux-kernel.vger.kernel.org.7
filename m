@@ -1,122 +1,197 @@
-Return-Path: <linux-kernel+bounces-755852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41461B1AC81
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1445EB1AC82
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3AD3BC7C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5B01801E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE771DE8A3;
-	Tue,  5 Aug 2025 02:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4BB1DB92C;
+	Tue,  5 Aug 2025 02:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs0nX/Nl"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBMr+Pxi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC3A1F948;
-	Tue,  5 Aug 2025 02:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0687C19067C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 02:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754362271; cv=none; b=CW84Jhj2dokb9BV0q8V0Mk9VeXoKneH9B4xyWqmMjXrkgQSzCea0O2aa4bNQa5AMPiTazHqmfw1znl1GfkpjWRQBEUulCGxpQVJj/z4+sqB8gJpXe6Ebo9NEB8V2yDjc2tKd4SzPxeC/w0tttjcATGXGaNvoZg2MJzXNf4wSAg0=
+	t=1754362313; cv=none; b=LdO6qCrT4UViWzeQSaxGThh4+VPmnWovs8ioWivA3vkWgiJ9DP77TDOdTzSZKpNFQr/Xx3pXdzJflfnHAapHUAXZwAenOGflGfUvfe8WfuZEv+z5B3flTJlfhXEcOe+y8JBsowcy79B4b7y8WPYL0T3bhzCFR16/+FhR8OGHeYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754362271; c=relaxed/simple;
-	bh=uM2eVyipiju3kW/MbQVtysbJWhwxTWJEIHrHstjdqZY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2slHsI6WjJaVLYhpFtVPJBnnbe13HqCYzXQuGeVuPA8bzyDm6sP2XS+8UckHW0U7ZDG+GeWgAHFhMsWsRxhSFceWAlwqAYNjXcT0861lyEThDUFJKDcxc2d7fKR2QkrzUoo/vD0EGg8t0o8KhJdbgLuhpjq3AHxAaKmXWLULgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qs0nX/Nl; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b423036a317so2718228a12.3;
-        Mon, 04 Aug 2025 19:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754362269; x=1754967069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqeaa8uY9Za+zVsiXl9Xc9xX5x9azHIxirf0ihgztdg=;
-        b=Qs0nX/NlPDJxdkPdVP/IfDAawOzfG6UWzolAptu6vQ4XO30Vu0G1t5B4vJ0ZuI6k5w
-         zZetzIWjOrZKnJrNLxVEfr1r20tvhZaQYF3eJv+Tn3Q39MG+DbUd/wVn/C7LKNQpB7YY
-         dcxXEZJonb/boRy9n9p7aV7WC/yuGkKVKxLV0JnFMreRpI2A0VEZ4rsKM9H0OBDmL8bQ
-         81r5X9cfFMc8THxuRyHta8Mrr6/dqSxfrI5CGsIk1AqQ1jxDkAPexjLl6Kuue3MGF6Ka
-         SnWUr0nryWaqAVtlR/guQtmHOa3OAjpNu0URpi+C69L/2eVVl4DqqgFgGpVmd6IWAb1J
-         lV7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754362269; x=1754967069;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eqeaa8uY9Za+zVsiXl9Xc9xX5x9azHIxirf0ihgztdg=;
-        b=aWPlvLd24x6HiqIGLVaRzGKX5Lnd9RTQeHQoSHvmlB4teoA/BChvLlQuId5j9f8Oom
-         IVVlQU+bGmx0+SGO8xcnxeOmv6HVtTe+8h7n4Wdny4PF45NXmo6/XFbgW6T+m35N89xi
-         Ml5eKc+C1EzC/OyJ5HfiaTWQfi1QFlww13OGEDjyNDdfa+k0S/b7BHdsPY/FKQotxSvK
-         SHWyhuT3eQ3g6uA/py4Eartrp/n03djGuF/lrW2V4cRj6oANga8L1FLKYBaEb9tf+9s4
-         DkTxVEH6ZeAsN7i7VVxeD24imlKABn41gfgOOJo6yTycgWJRh3pZcIeJEQgyM7ExoyLr
-         5dzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVn6/f0f47mE7yjFfcykDG96wjuG52Y2R/3znM2oIy867BHfufOJfak7uz9njXqVVjzWoo22IVUJE7Ttg==@vger.kernel.org, AJvYcCW9YbU8sE6o8hUiN+e9N+8GvvrTWUFLzqfcNwICleuh18tQWMKocRgeNdOlwuB7+5pi27O73Hyu6miGXlo=@vger.kernel.org, AJvYcCWWXNiQ0tgVo71g4Cx79Qk1JY8XW1qP4KbSFehJ7GGnpUmBuKgV+hwN0EahlRyfX2FgYVRj90Rb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKB1x1/c1QOnfxm3vzk/Au5vF0yPgh8lreLoVJ9m2nOeYRMQS4
-	R+LP++5tET9eGfL7ITxDJYb+ZLMUN3d4qPEiHDMAmUzb913RaWhq/k7w
-X-Gm-Gg: ASbGncuSqTUkllmIaFH+x3KjUvjKxBme8dh2pPkjT00spOEdEt9oxYUxPxYvaqliRYQ
-	AhMqiBkAlfA7HDBrx9JP5KxORJeprHhzE1EHhJ9WfztsG+YZiKPduVMCZfGNXV5NfmU/qThN8NP
-	nsZHBIkIOS/7Vg018apBRsVVqPSkAV8swCH2ZNc2kqIRd6yQxBHlpEqrRckI3AlhErJIHPEGxe/
-	0HDwpESxSvQoDbrSBq8zTp56jS1h4m7dPAbpmhnUtrMWJBUDQEUci+sHeXALnaG+dF9MtXpXL1R
-	/92FIRquLY27glgXHN8uuX3EFS93brePli4sPWZiUP/ZIqWMiinY7TGocmPgcglPalIN2rM2NU4
-	lzq0q+P8Ggz62AMyoD0s0RPeD
-X-Google-Smtp-Source: AGHT+IEd/SBEMENFpG10Loncgc4YWgnJMjb2xdueteZUnYjU3CqX1v6XdICnKEMweKWdnQJXQ41P8w==
-X-Received: by 2002:a17:903:1247:b0:234:f4da:7eed with SMTP id d9443c01a7336-24247014978mr159776595ad.44.1754362269204;
-        Mon, 04 Aug 2025 19:51:09 -0700 (PDT)
-Received: from c45b92c47440.. ([202.120.234.58])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241d1f21b69sm122354335ad.71.2025.08.04.19.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 19:51:08 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] eth: mlx4: Fix IS_ERR() vs NULL check bug in mlx4_en_create_rx_ring
-Date: Tue,  5 Aug 2025 06:50:57 +0400
-Message-Id: <20250805025057.3659898-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754362313; c=relaxed/simple;
+	bh=hIYpjPGTOj1ZFCpNe9DNjh2U9NIYW7pnDQtucuxMe/o=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fRdvf9eE030RQBx57Y2fPUtC/m9q3OZkJE33p4+aB5KCbfwHZ12X9WNG0cCvLW4a/OcI6bX2lpJAT94jrq4xhPAOoto7sKoHefK89y6eafQnObrrKhj0ZWXu4kYgZaphoE3GJ9uBDXsOJYEr1BEdm/GfpcdMDroZoDscgcaFUVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBMr+Pxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C97AC4CEE7;
+	Tue,  5 Aug 2025 02:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754362312;
+	bh=hIYpjPGTOj1ZFCpNe9DNjh2U9NIYW7pnDQtucuxMe/o=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=eBMr+Pxi93e1EErEztqbXyMumcZn8qQqiq75hvP9d7440nFgYWKbtTz6xWsB3j7Yx
+	 uLWuiHYEcUfYcQ8E/DxsrVpyCBaBGcR+wq+4HDHdBvPULqHqyoJRs+rgE4HHeXL9s+
+	 VVs2casHDyWArNgDeGep8hPfhUqk2tDi27oqz+AUW3uq+4rfzY3VOZb6DPqoyGWiG2
+	 XAD/NhX3GQ3ii/RfWf2OuAJat+fFVc7sXhRKjlLdYu3Fjb3uhdWata/qyu4wWIZCaY
+	 j7VG80C7F3O1uXV8/2W21By8bLW32MhJtud4X6WJ+p2DNtQrMyAS90JLVGKjjCa0jW
+	 /xCBvhlffKskA==
+Message-ID: <1fa9d0c7-0d6f-4752-879b-f277682e82ae@kernel.org>
+Date: Tue, 5 Aug 2025 10:51:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Jan Prusakowski <jprusakowski@google.com>
+Subject: Re: [PATCH v2 3/3] f2fs: fix to zero data after EOF for compressed
+ file correctly
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250804014340.2537172-1-chao@kernel.org>
+ <20250804014340.2537172-3-chao@kernel.org> <aJFvjBQv8PzJeFNN@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aJFvjBQv8PzJeFNN@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace NULL check with IS_ERR() check after calling page_pool_create()
-since this function returns error pointers (ERR_PTR).
-Using NULL check could lead to invalid pointer dereference.
+Jaegeuk, sure, let me change the order.
 
-Fixes: 8533b14b3d65 ("eth: mlx4: create a page pool for Rx")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/net/ethernet/mellanox/mlx4/en_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-index 92a16ddb7d86..b60f3d5fbd16 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-@@ -267,7 +267,7 @@ int mlx4_en_create_rx_ring(struct mlx4_en_priv *priv,
- 	pp.dma_dir = priv->dma_dir;
- 
- 	ring->pp = page_pool_create(&pp);
--	if (!ring->pp)
-+	if (IS_ERR(ring->pp))
- 		goto err_ring;
- 
- 	if (xdp_rxq_info_reg(&ring->xdp_rxq, priv->dev, queue_index, 0) < 0)
--- 
-2.25.1
+On 8/5/25 10:42, Jaegeuk Kim wrote:
+> Chao, it seems you made a clean up before this? Can you post it first?
+> 
+> On 08/04, Chao Yu wrote:
+>> generic/091 may fail, then it bisects to the bad commit ba8dac350faf
+>> ("f2fs: fix to zero post-eof page").
+>>
+>> What will cause generic/091 to fail is something like below Testcase #1:
+>> 1. write 16k as compressed blocks
+>> 2. truncate to 12k
+>> 3. truncate to 20k
+>> 4. verify data in range of [12k, 16k], however data is not zero as
+>> expected
+>>
+>> Script of Testcase #1
+>> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
+>> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
+>> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
+>> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
+>> sync
+>> truncate -s $((12*1024)) /mnt/f2fs/file
+>> truncate -s $((20*1024)) /mnt/f2fs/file
+>> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
+>> od /mnt/f2fs/data
+>> umount /mnt/f2fs
+>>
+>> Analisys:
+>> in step 2), we will redirty all data pages from #0 to #3 in compressed
+>> cluster, and zero page #3,
+>> in step 3), f2fs_setattr() will call f2fs_zero_post_eof_page() to drop
+>> all page cache post eof, includeing dirtied page #3,
+>> in step 4) when we read data from page #3, it will decompressed cluster
+>> and extra random data to page #3, finally, we hit the non-zeroed data
+>> post eof.
+>>
+>> However, the commit ba8dac350faf ("f2fs: fix to zero post-eof page") just
+>> let the issue be reproduced easily, w/o the commit, it can reproduce this
+>> bug w/ below Testcase #2:
+>> 1. write 16k as compressed blocks
+>> 2. truncate to 8k
+>> 3. truncate to 12k
+>> 4. truncate to 20k
+>> 5. verify data in range of [12k, 16k], however data is not zero as
+>> expected
+>>
+>> Script of Testcase #2
+>> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
+>> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
+>> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
+>> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
+>> sync
+>> truncate -s $((8*1024)) /mnt/f2fs/file
+>> truncate -s $((12*1024)) /mnt/f2fs/file
+>> truncate -s $((20*1024)) /mnt/f2fs/file
+>> echo 3 > /proc/sys/vm/drop_caches
+>> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
+>> od /mnt/f2fs/data
+>> umount /mnt/f2fs
+>>
+>> Anlysis:
+>> in step 2), we will redirty all data pages from #0 to #3 in compressed
+>> cluster, and zero page #2 and #3,
+>> in step 3), we will truncate page #3 in page cache,
+>> in step 4), expand file size,
+>> in step 5), hit random data post eof w/ the same reason in Testcase #1.
+>>
+>> Root Cause:
+>> In f2fs_truncate_partial_cluster(), after we truncate partial data block
+>> on compressed cluster, all pages in cluster including the one post eof
+>> will be dirtied, after another tuncation, dirty page post eof will be
+>> dropped, however on-disk compressed cluster is still valid, it includes
+>> invalid data post eof, result in exposing previous data post eof while
+>> reading.
+>>
+>> Fix:
+>> In f2fs_truncate_partial_cluster(), let change as below to fix:
+>> - call filemap_write_and_wait_range() to flush dirty page
+>> - call truncate_pagecache() to drop pages or zero partial page post eof
+>> - call f2fs_do_truncate_blocks() to truncate non-compress cluster to
+>>   last vali block
+>>
+>> Fixes: 3265d3db1f16 ("f2fs: support partial truncation on compressed inode")
+>> Reported-by: Jan Prusakowski <jprusakowski@google.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>> v2:
+>> - should dirty & flush all pages in cluster and truncate blocks post eof
+>> later
+>>  fs/f2fs/compress.c | 20 ++++++++++++++------
+>>  1 file changed, 14 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>> index e37a7ed801e5..6ad8d3bc6df7 100644
+>> --- a/fs/f2fs/compress.c
+>> +++ b/fs/f2fs/compress.c
+>> @@ -1245,17 +1245,25 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
+>>  	for (i = (1 << log_cluster_size) - 1; i >= 0; i--) {
+>>  		struct folio *folio = page_folio(rpages[i]);
+>>  		loff_t start = (loff_t)folio->index << PAGE_SHIFT;
+>> +		loff_t offset = from > start ? from - start : 0;
+>>  
+>> -		if (from > start) {
+>> -			folio_zero_segment(folio, from - start,
+>> -					folio_size(folio));
+>> +		folio_zero_segment(folio, offset, folio_size(folio));
+>> +
+>> +		if (from >= start)
+>>  			break;
+>> -		}
+>> -		folio_zero_segment(folio, 0, folio_size(folio));
+>>  	}
+>>  
+>>  	f2fs_compress_write_end(inode, fsdata, start_idx, true);
+>> -	return 0;
+>> +
+>> +	err = filemap_write_and_wait_range(inode->i_mapping,
+>> +			round_down(from, 1 << log_cluster_size << PAGE_SHIFT),
+>> +			LLONG_MAX);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	truncate_pagecache(inode, from);
+>> +
+>> +	return f2fs_do_truncate_blocks(inode, round_up(from, PAGE_SIZE), lock);
+>>  }
+>>  
+>>  static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>> -- 
+>> 2.49.0
 
 
