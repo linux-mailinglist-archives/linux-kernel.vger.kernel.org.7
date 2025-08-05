@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-756943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C47B1BB5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B157B1BB5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DDB18A6539
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:23:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F007AE86B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CCA29A9FE;
-	Tue,  5 Aug 2025 20:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F6F29ACF1;
+	Tue,  5 Aug 2025 20:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LNgajVf8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OP4d0SXD"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB0728136B
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 20:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF887299AB5
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 20:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754425354; cv=none; b=guyS+bBNsrBLd3KDxcQLomEARkFjs1pGbbVSCtrHNuWJ2CG8qn8rFuyayqCfT92crOzThyFbUnGRTmh82YDkQdEgYsSANMP5nB4YJykv4RTPKa8HPAnn7qb6lpajENS9hNk4TNNfWq1I0BreqmIv/xeGyBe9r3qvQMM3bHbJsc8=
+	t=1754425356; cv=none; b=MSythQzBe4Mabb5OrzYoeQf6LRbz7yaVG7unSw7VLBVzLkPtaeAWbepgoS/Ky6L5Q7MB9b/3BCG6iS31qvqSr5ZqETWkd7foGpTxAXXdDSKFvoocHY41Yi0KDoRJedFfQyuIPYzPlWlCx7zCZVzXzneEJ6h1Ih7BHKOhvjqh8Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754425354; c=relaxed/simple;
-	bh=UJgmB/Ob4AoVZGt7xKkirFQmgZBvEN8yyFQqgRG07jE=;
+	s=arc-20240116; t=1754425356; c=relaxed/simple;
+	bh=e2I9314HPIpBFl9igczsMXWZp8yxi5cthi2XE5Azg8o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AUQwGjpnlpmTYGaEzjQ/5T6QCV8pgc1/WZu/eHwt2iHwAh7KvYG9OhE+3BG9e1ag7ZaQvvh/ZjCfubk4a1g6GIMqAlzOK2xom61HiSXbq8IuJrI8gh69Gebybr8w1HX6WSTqf5e/IjVKboe2QcTS12hdEv8s5T1nYnelGcdV7E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LNgajVf8; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=EDGjwvfz1BBuYlVE0S6hyVy8Oyn0dkptbIoZ3XtSLrCIDBfFKzXoJ1kZd24yUIaPsbVzq4PrlsTuDUBm/mV8Wy6F8+RI8MCfprjaKOJzP4jQHkpsCpe/+wkFzTfhKmcQhiEOLQqzK/739JLO3qhGrFcDh6ZuYO/E8+WwOXzUcQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OP4d0SXD; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f74a64da9so6764110a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 13:22:32 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31ed2a7d475so4986894a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 13:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754425352; x=1755030152; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754425354; x=1755030154; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVdzLN8sL24VDPUeSwih1MH9qTKCVxqUydN6MJPX8eQ=;
-        b=LNgajVf8hR7ARBuOTlmqFhBla9uUS5uUsCbqxl1m/TYdQxDR4eoqAtnm75EwT4IwrN
-         ioGivrmBUyY2DhmQcf55FPrBt/Klitl/XqramIiLwdYq2BkpZiyYbPJIw5VObT311cPC
-         ssb8FTwZ53WCbzvvYYov4TnB9lbzJytbPZr9SZFF2ksNHmZS46nv0n1v65qViCzUiJdP
-         hWJdCeebmZc0xFGfJKolHUhWWJS1qE1EV9NUz3ZB/nR8ezExt/gPysSwOaK4pUaHUGil
-         2nZNuadHvCrsMRqh4BGhsFc2VHlFZWBH3FzOkmd8sRuZreOiBejP4oB00+wbUdlm7bu7
-         84vg==
+        bh=5vwmlR1d0IHiMOo6jObRDAiKTHWGb9+yBzPo613PVvY=;
+        b=OP4d0SXD/iDQjndkG5Qe9dAhx1+sDDTXmmM4k6ij+plUiNJZW2fQSJfZCGF5zGfc4e
+         WdDqMPqpSy39ThrWP83XUMRgx1r1PsvViYZ/y5tznh1igHXXK8k8M+FYF/R1BOC16IWJ
+         MbBLoLtk7y7kcQ/+1V1zffN+EKnEdfgFD4R41S9bjlyc/mrxxj2NH+6330rVyOmeWFWJ
+         +Y/Sl9SZKMMOxGfEZYYZIUsA3mAJzgAKFIF2UQTeOaoGOc1YQ/zX2Viiytaoaacc2ItS
+         sAVHayEd+yMead0pxzaiXXt6OQMBNzbk4SFME6Tf2ougqmKXOroI1VxAkXnDskLhGmm4
+         M88A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754425352; x=1755030152;
+        d=1e100.net; s=20230601; t=1754425354; x=1755030154;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hVdzLN8sL24VDPUeSwih1MH9qTKCVxqUydN6MJPX8eQ=;
-        b=gNK+jwt3YkTqpzI6iwK5iRJ5FrO0F46/iIYXQNyHy81+t2dLKepKNmvvfyCUloE+hg
-         /sAssMYt+K6WkIoYyAurOZFmMFkUNW6lIMuhgtowdTt2Avt8rR6X2Z1JhTtJ+WF9B7AS
-         fuW7YY1HZGWSxuOoEeZoFz1V3oWetWYg1byEQyldxkzhOLocbL/C1PjSI7+1nNWlujkM
-         j+Z6jZ8QAPW6FJzde1nbaCtnYyEZBB6GsE82SyR81H8Am3xWxJlXr3tgx3he3nwvMr15
-         JSkzuwG+5YtPWjeCheJidtjO0cV7ZXTZxPimB3hcos2J0UIjJqE55fCXnUKp1Dsa7Bt2
-         PGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLZtmTGNTuP9NQuiEC9HfU6a/dV5GkEvhqBmLH/hAANu3UzzSJPttk5m6yCwFJIVHEBv6d+2Um7wRwW+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRK1ZjRGHL97UfPtMxRXQD5ZCaWaVvcV33OJsJnBMrBIrtBxeU
-	/n5v+iAtet5mooXzBHIPOkpdwHX8N75Mwb4kALLY/oOtoreztglx6V7iwa7ylSETYPB2+Uo/lIz
-	Iv0658g==
-X-Google-Smtp-Source: AGHT+IFN/daddyCjGSfBUXDE3umrKXqLhMKLGZOT2guDNhYn6MZXS/lzN74VrFw4eL7k99H8xccG0Nf0VGI=
-X-Received: from pjro15.prod.google.com ([2002:a17:90a:b88f:b0:31f:1dad:d0a4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:524f:b0:312:e8ed:758
- with SMTP id 98e67ed59e1d1-32166c20054mr214109a91.13.1754425352370; Tue, 05
- Aug 2025 13:22:32 -0700 (PDT)
+        bh=5vwmlR1d0IHiMOo6jObRDAiKTHWGb9+yBzPo613PVvY=;
+        b=TgDwfFDKthjXiPVAwZh7+uQOLMs0a4ntSRJcJlxJookG58HQI40WXdbmDm3YLnIcme
+         dswR5tamgBKM8a+a0H3di96epltObhpj6xkN5vNehlaAc77zFeUNRSlF1Ctq7BGyzxku
+         6AS2JugG8pMyYj2AbsJ3V9eKvvZ3N2QRzDimxushY7ockpXbyqPYtjHJgdm1RtEevrVp
+         IkMEeFWt/z+8XY2mQoA2J2dywWsMdy91GVFuzbAZ2t1QpKAGSwaIuVE2KwkGKnMRqidk
+         qKYTnZseUvwWLCcYnA7P8LfnWOG/Nmd0uPwft1RykrimQlXJYzFcNR+6+cpGOSlhHOGA
+         r0KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw9w/Eu7aCZVq6XX+iaREJJRn+THqG8FARn+48Z5+2hmpaSBhBwf9AU4Ka4Na1zpjEUG9yo3Ii1GLzcBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh/5R6E45IvZjlFqi3GcphGCr6faL0kLRn/jEJx5sYyKfcOYfw
+	+RQTCsN/4QeWvwMCiPYqCq3bKt9Tn3WUc7diq4ZeILljM66rseZk3agi61sQTWM7DEKMk46ApR7
+	ObPPRjw==
+X-Google-Smtp-Source: AGHT+IEo7cJCHqYoYh8KZTKmcUCO2w3FybZUjjoTK5f0mcQiWQs81U9X5kUzl1rtWaMgTlO4PqHhe4rIJ2I=
+X-Received: from pjbsz13.prod.google.com ([2002:a17:90b:2d4d:b0:31c:38fb:2958])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:35c8:b0:321:2160:bf72
+ with SMTP id 98e67ed59e1d1-32166dfb0c8mr121888a91.7.1754425354132; Tue, 05
+ Aug 2025 13:22:34 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  5 Aug 2025 13:22:20 -0700
+Date: Tue,  5 Aug 2025 13:22:21 -0700
 In-Reply-To: <20250805202224.1475590-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,102 +75,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250805202224.1475590-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250805202224.1475590-3-seanjc@google.com>
-Subject: [PATCH v3 2/6] KVM: x86: Rename local "ecx" variables to "msr" and
- "pmc" as appropriate
+Message-ID: <20250805202224.1475590-4-seanjc@google.com>
+Subject: [PATCH v3 3/6] KVM: x86: Rename handle_fastpath_set_msr_irqoff() to handle_fastpath_wrmsr()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename "ecx" variables in {RD,WR}MSR and RDPMC helpers to "msr" and "pmc"
-respectively, in anticipation of adding support for the immediate variants
-of RDMSR and WRMSRNS, and to better document what the variables hold
-(versus where the data originated).
+From: Xin Li <xin@zytor.com>
+
+Rename the WRMSR fastpath API to drop "irqoff", as that information is
+redundant (the fastpath always runs with IRQs disabled), and to prepare
+for adding a fastpath for the immediate variant of WRMSRNS.
 
 No functional change intended.
 
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+[sean: split to separate patch, write changelog]
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kvm/svm/svm.c | 2 +-
+ arch/x86/kvm/vmx/vmx.c | 2 +-
+ arch/x86/kvm/x86.c     | 4 ++--
+ arch/x86/kvm/x86.h     | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index f7e1e665a826..ca550c4fa174 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4197,7 +4197,7 @@ static fastpath_t svm_exit_handlers_fastpath(struct kvm_vcpu *vcpu)
+ 	case SVM_EXIT_MSR:
+ 		if (!control->exit_info_1)
+ 			break;
+-		return handle_fastpath_set_msr_irqoff(vcpu);
++		return handle_fastpath_wrmsr(vcpu);
+ 	case SVM_EXIT_HLT:
+ 		return handle_fastpath_hlt(vcpu);
+ 	case SVM_EXIT_INVD:
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 95765db52992..ae2c8c10e5d2 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7170,7 +7170,7 @@ static fastpath_t vmx_exit_handlers_fastpath(struct kvm_vcpu *vcpu,
+ 
+ 	switch (vmx_get_exit_reason(vcpu).basic) {
+ 	case EXIT_REASON_MSR_WRITE:
+-		return handle_fastpath_set_msr_irqoff(vcpu);
++		return handle_fastpath_wrmsr(vcpu);
+ 	case EXIT_REASON_PREEMPTION_TIMER:
+ 		return handle_fastpath_preemption_timer(vcpu, force_immediate_exit);
+ 	case EXIT_REASON_HLT:
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5af2c5aed0f2..d3afb875133e 100644
+index d3afb875133e..6470f0ab2060 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -1572,10 +1572,10 @@ EXPORT_SYMBOL_GPL(kvm_get_dr);
+@@ -2142,7 +2142,7 @@ static inline bool kvm_vcpu_exit_request(struct kvm_vcpu *vcpu)
+ 	       kvm_request_pending(vcpu) || xfer_to_guest_mode_work_pending();
+ }
  
- int kvm_emulate_rdpmc(struct kvm_vcpu *vcpu)
+-fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
++fastpath_t handle_fastpath_wrmsr(struct kvm_vcpu *vcpu)
  {
--	u32 ecx = kvm_rcx_read(vcpu);
-+	u32 pmc = kvm_rcx_read(vcpu);
- 	u64 data;
- 
--	if (kvm_pmu_rdpmc(vcpu, ecx, &data)) {
-+	if (kvm_pmu_rdpmc(vcpu, pmc, &data)) {
- 		kvm_inject_gp(vcpu, 0);
- 		return 1;
- 	}
-@@ -2026,23 +2026,23 @@ static int kvm_msr_user_space(struct kvm_vcpu *vcpu, u32 index,
- 
- int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
- {
--	u32 ecx = kvm_rcx_read(vcpu);
-+	u32 msr = kvm_rcx_read(vcpu);
- 	u64 data;
- 	int r;
- 
--	r = kvm_get_msr_with_filter(vcpu, ecx, &data);
-+	r = kvm_get_msr_with_filter(vcpu, msr, &data);
- 
- 	if (!r) {
--		trace_kvm_msr_read(ecx, data);
-+		trace_kvm_msr_read(msr, data);
- 
- 		kvm_rax_write(vcpu, data & -1u);
- 		kvm_rdx_write(vcpu, (data >> 32) & -1u);
- 	} else {
- 		/* MSR read failed? See if we should ask user space */
--		if (kvm_msr_user_space(vcpu, ecx, KVM_EXIT_X86_RDMSR, 0,
-+		if (kvm_msr_user_space(vcpu, msr, KVM_EXIT_X86_RDMSR, 0,
- 				       complete_fast_rdmsr, r))
- 			return 0;
--		trace_kvm_msr_read_ex(ecx);
-+		trace_kvm_msr_read_ex(msr);
- 	}
- 
- 	return kvm_x86_call(complete_emulated_msr)(vcpu, r);
-@@ -2051,23 +2051,23 @@ EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr);
- 
- int kvm_emulate_wrmsr(struct kvm_vcpu *vcpu)
- {
--	u32 ecx = kvm_rcx_read(vcpu);
-+	u32 msr = kvm_rcx_read(vcpu);
  	u64 data = kvm_read_edx_eax(vcpu);
- 	int r;
+ 	u32 msr = kvm_rcx_read(vcpu);
+@@ -2167,7 +2167,7 @@ fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
  
--	r = kvm_set_msr_with_filter(vcpu, ecx, data);
-+	r = kvm_set_msr_with_filter(vcpu, msr, data);
+ 	return EXIT_FASTPATH_REENTER_GUEST;
+ }
+-EXPORT_SYMBOL_GPL(handle_fastpath_set_msr_irqoff);
++EXPORT_SYMBOL_GPL(handle_fastpath_wrmsr);
  
- 	if (!r) {
--		trace_kvm_msr_write(ecx, data);
-+		trace_kvm_msr_write(msr, data);
- 	} else {
- 		/* MSR write failed? See if we should ask user space */
--		if (kvm_msr_user_space(vcpu, ecx, KVM_EXIT_X86_WRMSR, data,
-+		if (kvm_msr_user_space(vcpu, msr, KVM_EXIT_X86_WRMSR, data,
- 				       complete_fast_msr_access, r))
- 			return 0;
- 		/* Signal all other negative errors to userspace */
- 		if (r < 0)
- 			return r;
--		trace_kvm_msr_write_ex(ecx, data);
-+		trace_kvm_msr_write_ex(msr, data);
- 	}
+ /*
+  * Adapt set_msr() to msr_io()'s calling convention
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 46220b04cdf2..2dab9c9d6199 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -437,7 +437,7 @@ int x86_decode_emulated_instruction(struct kvm_vcpu *vcpu, int emulation_type,
+ 				    void *insn, int insn_len);
+ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 			    int emulation_type, void *insn, int insn_len);
+-fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu);
++fastpath_t handle_fastpath_wrmsr(struct kvm_vcpu *vcpu);
+ fastpath_t handle_fastpath_hlt(struct kvm_vcpu *vcpu);
+ fastpath_t handle_fastpath_invd(struct kvm_vcpu *vcpu);
  
- 	return kvm_x86_call(complete_emulated_msr)(vcpu, r);
 -- 
 2.50.1.565.gc32cd1483b-goog
 
