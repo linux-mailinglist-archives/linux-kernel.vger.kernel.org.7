@@ -1,552 +1,180 @@
-Return-Path: <linux-kernel+bounces-756660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34894B1B760
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:20:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2060B1B746
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F46718A5017
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1502F3BADC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5992227A139;
-	Tue,  5 Aug 2025 15:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HsJuXBiY"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBB5279DB2;
+	Tue,  5 Aug 2025 15:18:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA8A27A124;
-	Tue,  5 Aug 2025 15:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407191; cv=pass; b=mL6uD1Nho+pRZIQmzuY0NYEf6wSahZjSrePNKXai+G3Ee6whcIHoRVTRFLATa22Btqk/GTjb7ojONOu7+qhd/bctGJqpCwPRtsdc2NbyDHTpe8mxUPEBToLSbBMhXa57kICLUU61zEl9rEDZYdsJJDmmXEw5vavHmOWAx+FVduk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407191; c=relaxed/simple;
-	bh=33+XrDeNV5tvhfNf9EoI+jxo6QaWucqIWOjeTD7McZQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Ns1UkMsQ1lMhqWsHR72F/aJF2U7KD0Ea/VyiiuTuXW9b6BqzfEi9H9KeVztsX/eZdeG/ZuEh1dGyYyrnQB0mggUAmwhVeCAon5VdU1pJR/PW7A7Y2eiyc1ETeRBhAGO7pM24cASJalPynwnw5TVB9DNbpE8j0pbe66iLlKfzWzw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HsJuXBiY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754407156; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iWIoVDa+wTOrQJ/dj3bgnFlDxndNvdkiL/v5MN/wUVhKQZe42OSa/R18u+TqKtBbiwpdZCmm7QBYNPkcYxIagosHjfEC8dB/KHKvvsPL19sUJaNr4prO2zvoPtjHstxoPwe6bPWAho3/WI58nHGFZ+Eo+hKrmopE8wn+zEHORXs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754407156; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=beYGwomH+lbWL9jpEDBGEPmwoZ7gaJ8/W3aJ1x/dddw=; 
-	b=jtlUEpWGOXoAagS566GxH3w2IUe/HsFkwA9I2qBti0QF4sZFdz2G+9NwLZKelEH79GkE4MCc2AOSenDizyyDqPz/Eq1XpGSQM074RfUN5x380w1lAn1p1oOSVm16ogCnpNGG7dhFbqok6X9DNMpjtQ65+k6dJ22EyS4IHmPCXuI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754407156;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=beYGwomH+lbWL9jpEDBGEPmwoZ7gaJ8/W3aJ1x/dddw=;
-	b=HsJuXBiYcKPZ4jLf1RWopBpzcMLObSjqYIeD24MqPJsDbK78NtGQhAij/0h7JX67
-	TpvYtrcqLAC3URwnYS5Na86QneEx8ZfDPru2tJn0eh+PdFkteU3bv1BLRzO01oqXtrW
-	Iuvk2DA91GTe5Ysq8AhFw/KqoasRArLY2uzMRUPM=
-Received: by mx.zohomail.com with SMTPS id 1754407153738359.155186405833;
-	Tue, 5 Aug 2025 08:19:13 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400672797AD;
+	Tue,  5 Aug 2025 15:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754407124; cv=none; b=ldmJ8yJTR+Fj8VXziHmUkoXIaXE2FrDHNcl+1fNRvq8cvamUSp0f493n4xUZ9/h8f/D2rWxdceSGjAR8HnlEoVVchBfpU377rhGmU8lso0LScS6tsTuiMJqCIKAIhtl+k4EivW9lcecLZJwLY16eK2DjJsTPmQ1w+SQO9870wcc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754407124; c=relaxed/simple;
+	bh=pDE7fSiYl1/mCF0GA3dI0d52Bsae8iJN6UgVNKXIgOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OLZDB8QuOSgleGsqxxEZuZix4Ir7xyIMqoQ3Rsg3HBEfvtyZA3h6jjzkkAM2pJd79uV9oCoZutyWEVXtQ2+lmcoQDwNhnI0hGnhE4LjpkhCbOdQfDwBbCJ1uUU01mnzVLX8uSKCtrKhiiUY9ScTl4agoieIsSec4A/laAbZDIq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 350D5B624B;
+	Tue,  5 Aug 2025 15:18:35 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 7E7C11D;
+	Tue,  5 Aug 2025 15:18:33 +0000 (UTC)
+Date: Tue, 5 Aug 2025 11:19:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Pu Lehui <pulehui@huaweicloud.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Zero-initialize parser->buffer to avoid OOB
+ access
+Message-ID: <20250805111903.3114427b@gandalf.local.home>
+In-Reply-To: <20250805151203.1214790-1-pulehui@huaweicloud.com>
+References: <20250805151203.1214790-1-pulehui@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBS8REY5E82S.3937FAHS25ANA@kernel.org>
-Date: Tue, 5 Aug 2025 12:18:56 -0300
-Cc: Onur <work@onurozkan.dev>,
- Boqun Feng <boqun.feng@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com,
- dri-devel <dri-devel@lists.freedesktop.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8B1FB608-7D43-4DD9-8737-DCE59ED74CCA@collabora.com>
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
- <DAU0ELV91E2Q.35FZOII18W44J@kernel.org> <20250707163913.5ffc046d@nimda.home>
- <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org> <20250707210613.2fd5bb55@nimda.home>
- <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
- <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
- <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
- <E997DCAF-552F-4EF2-BF94-1385ECADF543@collabora.com>
- <DBS8REY5E82S.3937FAHS25ANA@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 7E7C11D
+X-Stat-Signature: 7rneqf3fhmfy5sxdiymbicjajfu4drht
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18uIjbFd+mgPW3433ZyClr4cyagnhZhg6I=
+X-HE-Tag: 1754407113-973937
+X-HE-Meta: U2FsdGVkX1/y73NjOqs/z96wfe/BAl/izjehKV0AATZ18Wy+3fkitZKLmNscbyGNYcV+X+HoQ1MIY6mkmuWM27/w+4azIbWP/nAu8N5rFQz50Z1mn4W54H+7+VGPsDxGkmvXRbIgZd9wUPqbwpa5EDbAOUO1IwrXnYphnQWZYHwHlCEn9wp6ylFmujCTpn5r5EQXUq7aQY7SvxVlmQECB6pOa/JfNN1nimqIfgOrZsAd8ybG3ikIOVYw1PrUaSwJw3yQ8UcTDh7Gjt0oX9YkNAtK1q+aOS1WvvqOrqXizqFU69R1qnvATRIbbX5SiZM8uM9K4StGh57ZvzJ/fjwKVxezy7JluLOVBIBJP2kAxaDThYWUi82BYg==
 
-Hi Benno,
+On Tue,  5 Aug 2025 15:12:03 +0000
+Pu Lehui <pulehui@huaweicloud.com> wrote:
 
-> On 2 Aug 2025, at 17:58, Benno Lossin <lossin@kernel.org> wrote:
->=20
-> On Sat Aug 2, 2025 at 4:15 PM CEST, Daniel Almeida wrote:
->> On 2 Aug 2025, at 07:42, Benno Lossin <lossin@kernel.org> wrote:
->>> On Fri Aug 1, 2025 at 11:22 PM CEST, Daniel Almeida wrote:
->>>> One thing I didn=E2=80=99t understand with your approach: is it =
-amenable to loops?
->>>> i.e.: are things like drm_exec() implementable?
->>>=20
->>> I don't think so, see also my reply here:
->>>=20
->>>   https://lore.kernel.org/all/DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org
->>>=20
->>> The type-based approach with tuples doesn't handle dynamic number of
->>> locks.
->>>=20
->>=20
->> This is probably the default use-case by the way.
->=20
-> That's an important detail. In that case, a type state won't we a good
-> idea. Unless it's also common to have a finite number of them, in =
-which
-> case we should have two API.
->=20
->>>> /**
->>>> * drm_exec_until_all_locked - loop until all GEM objects are locked
->>>> * @exec: drm_exec object
->>>> *
->>>> * Core functionality of the drm_exec object. Loops until all GEM =
-objects are
->>>> * locked and no more contention exists. At the beginning of the =
-loop it is
->>>> * guaranteed that no GEM object is locked.
->>>> *
->>>> * Since labels can't be defined local to the loops body we use a =
-jump pointer
->>>> * to make sure that the retry is only used from within the loops =
-body.
->>>> */
->>>> #define drm_exec_until_all_locked(exec) \
->>>> __PASTE(__drm_exec_, __LINE__): \
->>>> for (void *__drm_exec_retry_ptr; ({ \
->>>> __drm_exec_retry_ptr =3D &&__PASTE(__drm_exec_, __LINE__);\
->>>> (void)__drm_exec_retry_ptr; \
->>>> drm_exec_cleanup(exec); \
->>>> });)
->>>=20
->>> My understanding of C preprocessor macros is not good enough to =
-parse or
->>> understand this :( What is that `__PASTE` thing?
->>=20
->> This macro is very useful, but also cursed :)
->>=20
->> This declares a unique label before the loop, so you can jump back to =
-it on
->> contention. It is usually used in conjunction with:
->=20
-> Ahh, I missed the `:` at the end of the line. Thanks for explaining!
-> (also Miguel in the other reply!) If you don't mind I'll ask some more
-> basic C questions :)
->=20
-> And yeah it's pretty cursed...
->=20
->> /**
->> * drm_exec_retry_on_contention - restart the loop to grap all locks
->> * @exec: drm_exec object
->> *
->> * Control flow helper to continue when a contention was detected and =
-we need to
->> * clean up and re-start the loop to prepare all GEM objects.
->> */
->> #define drm_exec_retry_on_contention(exec) \
->> do { \
->> if (unlikely(drm_exec_is_contended(exec))) \
->> goto *__drm_exec_retry_ptr; \
->> } while (0)
->=20
-> The `do { ... } while(0)` is used because C doesn't have `{ ... }`
-> scopes? (& because you want to be able to have this be called from an =
-if
-> without braces?)
+> From: Pu Lehui <pulehui@huawei.com>
+> 
+> When the length of the string written to set_ftrace_filter exceeds
+> FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
+> 
+> BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
+> Read of size 1 at addr ffff0000d00bd5ba by task ash/165
+> 
+> CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty #3 NONE
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  show_stack+0x34/0x50 (C)
+>  dump_stack_lvl+0xa0/0x158
+>  print_address_description.constprop.0+0x88/0x398
+>  print_report+0xb0/0x280
+>  kasan_report+0xa4/0xf0
+>  __asan_report_load1_noabort+0x20/0x30
+>  strsep+0x18c/0x1b0
+>  ftrace_process_regex.isra.0+0x100/0x2d8
+>  ftrace_regex_release+0x484/0x618
+>  __fput+0x364/0xa58
+>  ____fput+0x28/0x40
+>  task_work_run+0x154/0x278
+>  do_notify_resume+0x1f0/0x220
+>  el0_svc+0xec/0xf0
+>  el0t_64_sync_handler+0xa0/0xe8
+>  el0t_64_sync+0x1ac/0x1b0
+> 
+> The reason is that trace_get_user will fail when processing a string
+> longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer
+> to 0. Then an oob access will be triggered in ftrace_regex_release->
+> ftrace_process_regex->strsep->strpbrk. We can solve this problem by
+> zero-initializing parser->buffer.
+> 
+> Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
 
-do {} while (0) makes this behave as a single statement. It usually used =
-in
-macros to ensure that they can be correctly called from control =
-statements even
-when no braces are used, like you said. It also enforces that a =
-semi-colon has
-to be placed at the end when the macro is called, which makes it behave =
-a bit
-more like a function call.
+Fix one bug then create another!!!
 
-There may be other uses that I am not aware of, but it=E2=80=99s not =
-something that
-specific to =E2=80=9Cdrm_exec_retry_on_contention".
-
->=20
->> The termination is handled by:
->>=20
->> /**
->> * drm_exec_cleanup - cleanup when contention is detected
->> * @exec: the drm_exec object to cleanup
->> *
->> * Cleanup the current state and return true if we should stay inside =
-the retry
->> * loop, false if there wasn't any contention detected and we can keep =
-the
->> * objects locked.
->> */
->> bool drm_exec_cleanup(struct drm_exec *exec)
->> {
->> if (likely(!exec->contended)) {
->> ww_acquire_done(&exec->ticket);
->> return false;
->> }
->>=20
->> if (likely(exec->contended =3D=3D DRM_EXEC_DUMMY)) {
->> exec->contended =3D NULL;
->> ww_acquire_init(&exec->ticket, &reservation_ww_class);
->> return true;
->> }
->>=20
->> drm_exec_unlock_all(exec);
->> exec->num_objects =3D 0;
->> return true;
->> }
->> EXPORT_SYMBOL(drm_exec_cleanup);
->>=20
->> The third clause in the loop is empty.
->>=20
->> For example, in amdgpu:
->>=20
->> /**
->> * reserve_bo_and_vm - reserve a BO and a VM unconditionally.
->> * @mem: KFD BO structure.
->> * @vm: the VM to reserve.
->> * @ctx: the struct that will be used in unreserve_bo_and_vms().
->> */
->> static int reserve_bo_and_vm(struct kgd_mem *mem,
->>      struct amdgpu_vm *vm,
->>      struct bo_vm_reservation_context *ctx)
->> {
->> struct amdgpu_bo *bo =3D mem->bo;
->> int ret;
->>=20
->> WARN_ON(!vm);
->>=20
->> ctx->n_vms =3D 1;
->> ctx->sync =3D &mem->sync;
->> drm_exec_init(&ctx->exec, DRM_EXEC_INTERRUPTIBLE_WAIT, 0);
->> drm_exec_until_all_locked(&ctx->exec) {
->> ret =3D amdgpu_vm_lock_pd(vm, &ctx->exec, 2);
->> drm_exec_retry_on_contention(&ctx->exec);
->> if (unlikely(ret))
->> goto error;
->>=20
->> ret =3D drm_exec_prepare_obj(&ctx->exec, &bo->tbo.base, 1);
->> drm_exec_retry_on_contention(&ctx->exec);
->> if (unlikely(ret))
->> goto error;
->> }
->>        // <=E2=80=94=E2=80=94 everything is locked at this point.
->=20
-> Which function call locks the mutexes?
-
-The function below, which is indirectly called from amdgpu_vm_lock_pd() =
-in
-this particular example:
-
-```
-/**
- * drm_exec_lock_obj - lock a GEM object for use
- * @exec: the drm_exec object with the state
- * @obj: the GEM object to lock
- *
- * Lock a GEM object for use and grab a reference to it.
- *
- * Returns: -EDEADLK if a contention is detected, -EALREADY when object =
-is
- * already locked (can be suppressed by setting the =
-DRM_EXEC_IGNORE_DUPLICATES
- * flag), -ENOMEM when memory allocation failed and zero for success.
- */
-int drm_exec_lock_obj(struct drm_exec *exec, struct drm_gem_object *obj)
-{
-	int ret;
-
-	ret =3D drm_exec_lock_contended(exec);
-	if (unlikely(ret))
-		return ret;
-
-	if (exec->prelocked =3D=3D obj) {
-		drm_gem_object_put(exec->prelocked);
-		exec->prelocked =3D NULL;
-		return 0;
-	}
-
-	if (exec->flags & DRM_EXEC_INTERRUPTIBLE_WAIT)
-		ret =3D dma_resv_lock_interruptible(obj->resv, =
-&exec->ticket);
-	else
-		ret =3D dma_resv_lock(obj->resv, &exec->ticket);
-
-	if (unlikely(ret =3D=3D -EDEADLK)) {
-		drm_gem_object_get(obj);
-		exec->contended =3D obj;
-		return -EDEADLK;
-	}
-
-	if (unlikely(ret =3D=3D -EALREADY) &&
-	    exec->flags & DRM_EXEC_IGNORE_DUPLICATES)
-		return 0;
-
-	if (unlikely(ret))
-		return ret;
-
-	ret =3D drm_exec_obj_locked(exec, obj);
-	if (ret)
-		goto error_unlock;
-
-	return 0;
-
-error_unlock:
-	dma_resv_unlock(obj->resv);
-	return ret;
-}
-EXPORT_SYMBOL(drm_exec_lock_obj);
-```
-
-And the tracking of locked objects is done at:
-
-```
-/* Track the locked object in the array */
-static int drm_exec_obj_locked(struct drm_exec *exec,
-			       struct drm_gem_object *obj)
-{
-	if (unlikely(exec->num_objects =3D=3D exec->max_objects)) {
-		size_t size =3D exec->max_objects * sizeof(void *);
-		void *tmp;
-
-		tmp =3D kvrealloc(exec->objects, size + PAGE_SIZE, =
-GFP_KERNEL);
-		if (!tmp)
-			return -ENOMEM;
-
-		exec->objects =3D tmp;
-		exec->max_objects +=3D PAGE_SIZE / sizeof(void *);
-	}
-	drm_gem_object_get(obj);
-	exec->objects[exec->num_objects++] =3D obj;
-
-	return 0;
-}
-```
-
-Note that dma_resv_lock() is:
-
-```
-static inline int dma_resv_lock(struct dma_resv *obj,
-				struct ww_acquire_ctx *ctx)
-{
-	return ww_mutex_lock(&obj->lock, ctx);
-}
-```
-
-
-Again, this is GEM-specific, but the idea is to generalize it.
-
-
->=20
->> return 0;
->>=20
->>=20
->> So, something like:
->>=20
->> some_unique_label:
->> for(void *retry_ptr;
->>    ({ retry_ptr =3D &some_unique_label; drm_exec_cleanup(); });
->=20
-> Normally this should be a condition, or rather an expression =
-evaluating
-> to bool, why is this okay? Or does C just take the value of the last
-> function call due to the `({})`?
-
-This is described here [0]. As per the docs, it evaluates to bool (as
-drm_exec_cleanup() is last, and that evaluates to bool)=20
-
->=20
-> Why isn't `({})` used instead of `do { ... } while(0)` above?
-
-I=E2=80=99m not sure I understand what you=E2=80=99re trying to ask.
-
-If you=E2=80=99re asking why ({}) is being used here, then it=E2=80=99s =
-because we need
-to return (i.e. evaluate to) a value, and a do {=E2=80=A6} while(0) does =
-not do
-that.
-
->=20
->>    /* empty *) {
->>     /* user code here, which potentially jumps back to =
-some_unique_label  */
->> }
->=20
-> Thanks for the example & the macro expansion. What I gather from this =
-is
-> that we'd probably want a closure that executes the code & reruns it
-> when contention is detected.
-
-Yep, I think so, too.
-
->=20
->>>> In fact, perhaps we can copy drm_exec, basically? i.e.:
->>>>=20
->>>> /**
->>>> * struct drm_exec - Execution context
->>>> */
->>>> struct drm_exec {
->>>> /**
->>>> * @flags: Flags to control locking behavior
->>>> */
->>>> u32                     flags;
->>>>=20
->>>> /**
->>>> * @ticket: WW ticket used for acquiring locks
->>>> */
->>>> struct ww_acquire_ctx ticket;
->>>>=20
->>>> /**
->>>> * @num_objects: number of objects locked
->>>> */
->>>> unsigned int num_objects;
->>>>=20
->>>> /**
->>>> * @max_objects: maximum objects in array
->>>> */
->>>> unsigned int max_objects;
->>>>=20
->>>> /**
->>>> * @objects: array of the locked objects
->>>> */
->>>> struct drm_gem_object **objects;
->>>>=20
->>>> /**
->>>> * @contended: contended GEM object we backed off for
->>>> */
->>>> struct drm_gem_object *contended;
->>>>=20
->>>> /**
->>>> * @prelocked: already locked GEM object due to contention
->>>> */
->>>> struct drm_gem_object *prelocked;
->>>> };
->>>>=20
->>>> This is GEM-specific, but we could perhaps implement the same idea =
-by
->>>> tracking ww_mutexes instead of GEM objects.
->>>=20
->>> But this would only work for `Vec<WwMutex<T>>`, right?
->>=20
->> I=E2=80=99m not sure if I understand your point here.
->>=20
->> The list of ww_mutexes that we've managed to currently lock would be =
-something
->> that we'd keep track internally in our context. In what way is a KVec =
-an issue?
->=20
-> I saw "array of the locked objects" and thus thought so this must only
-> work for an array of locks. Looking at the type a bit closer, it
-> actually is an array of pointers, so it does work for arbitrary data
-> structures storing the locks.
->=20
-> So essentially it would amount to storing `Vec<WwMutexGuard<'_, T>>` =
-in
-> Rust IIUC. I was under the impression that we wanted to avoid that,
-> because it's an extra allocation.
-
-It=E2=80=99s the price to pay for correctness IMHO.
-
-The =E2=80=9Cexec=E2=80=9D abstraction also allocates:
-
-```
-/* Track the locked object in the array */
-static int drm_exec_obj_locked(struct drm_exec *exec,
-			       struct drm_gem_object *obj)
-{
-	if (unlikely(exec->num_objects =3D=3D exec->max_objects)) {
-		size_t size =3D exec->max_objects * sizeof(void *);
-		void *tmp;
-
-		tmp =3D kvrealloc(exec->objects, size + PAGE_SIZE, =
-GFP_KERNEL);
-		if (!tmp)
-			return -ENOMEM;
-
-		exec->objects =3D tmp;
-		exec->max_objects +=3D PAGE_SIZE / sizeof(void *);
-	}
-	drm_gem_object_get(obj);
-	exec->objects[exec->num_objects++] =3D obj;
-
-	return 0;
-}
-```
-
-
-
->=20
-> But maybe that's actually what's done on the C side.
-
-See above.
-
->=20
->> Btw, I can also try to implement a proof of concept, so long as =
-people agree that
->> this approach makes sense.
->=20
-> I'm not sure I understand what you are proposing, so I can't give a
-> recommendation yet.
->=20
-
-I am suggesting what you said above and more:
-
-a) run a user closure where the user can indicate which ww_mutexes they =
-want to lock
-b) keep track of the objects above
-c) keep track of whether a contention happened
-d) rollback if a contention happened, releasing all locks
-e) rerun the user closure from a clean slate after rolling back
-f)  run a separate user closure whenever we know that all objects have =
-been locked.
-
-That=E2=80=99s a very broad description, but I think it can work.
-
-Note that the operations above would be implemented by a separate type, =
-not by
-the ww_mutex abstraction itself. But users should probably be using the =
-API
-above unless there=E2=80=99s a strong reason not to.
-
+> Signed-off-by: Pu Lehui <pulehui@huawei.com>
 > ---
-> Cheers,
-> Benno
->=20
+>  kernel/trace/trace.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 4283ed4e8f59..97e66cbd3617 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -1776,7 +1776,7 @@ int trace_parser_get_init(struct trace_parser *parser, int size)
+>  {
+>  	memset(parser, 0, sizeof(*parser));
+>  
+> -	parser->buffer = kmalloc(size, GFP_KERNEL);
+> +	parser->buffer = kzalloc(size, GFP_KERNEL);
+>  	if (!parser->buffer)
+>  		return 1;
+>  
+> @@ -1860,13 +1860,10 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+>  
+>  	/* We either got finished input or we have to wait for another call. */
+>  	if (isspace(ch) || !ch) {
+> -		parser->buffer[parser->idx] = 0;
+>  		parser->cont = false;
+>  	} else if (parser->idx < parser->size - 1) {
+>  		parser->cont = true;
+>  		parser->buffer[parser->idx++] = ch;
+> -		/* Make sure the parsed string always terminates with '\0'. */
+> -		parser->buffer[parser->idx] = 0;
 
-=E2=80=94 Daniel
+The returned buffer is expected to end with a '0'. This now removes that if
+the idx is the length of the parser.
 
+>  	} else {
+>  		return -EINVAL;
+>  	}
 
-[0]: https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html=
+The real fix would be:
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index d0b1964648c1..422224a55f1d 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -815,7 +815,7 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+ 	loff_t pos;
+ 	pid_t pid;
+ 
+-	if (trace_parser_get_init(&parser, PID_BUF_SIZE + 1))
++	if (trace_parser_get_init(&parser, PID_BUF_SIZE))
+ 		return -ENOMEM;
+ 
+ 	/*
+@@ -1776,7 +1776,7 @@ int trace_parser_get_init(struct trace_parser *parser, int size)
+ {
+ 	memset(parser, 0, sizeof(*parser));
+ 
+-	parser->buffer = kmalloc(size, GFP_KERNEL);
++	parser->buffer = kmalloc(size + 1, GFP_KERNEL);
+ 	if (!parser->buffer)
+ 		return 1;
+ 
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 05447b958a1a..a3ce88a48947 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1507,7 +1507,7 @@ ftrace_event_write(struct file *file, const char __user *ubuf,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (trace_parser_get_init(&parser, EVENT_BUF_SIZE + 1))
++	if (trace_parser_get_init(&parser, EVENT_BUF_SIZE))
+ 		return -ENOMEM;
+ 
+ 	read = trace_get_user(&parser, ubuf, cnt, ppos);
+
+-- Steve
 
