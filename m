@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-756814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C88B1B9A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:55:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA0BB1B9A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9952618A3F80
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:55:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C05FB7AD895
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0BC2957CD;
-	Tue,  5 Aug 2025 17:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4CF295DB8;
+	Tue,  5 Aug 2025 17:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V5dtunmS"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0iIvbdp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C888295504
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952C3A55;
+	Tue,  5 Aug 2025 17:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754416519; cv=none; b=Xhtcqjhtv7iYy+5k5Qv6NL8xKo8y3VnfjxMKWho9x2Ri6uRvUmtkuuvxe4yDc8GcDk/plCrhN2Rya5soD2hAveK39CY6goDNLPX1QwliT4BI776tzaeJjl+fwAmGqFl2KXy95eB0WyL3arafaMTQauVuEeSjAByD9sAx6Smf/J4=
+	t=1754416435; cv=none; b=htui4myC0RKggFqOjJb6T/vq4qpDBkXZW2DfDmEpxgNRe+YSEG4mZ32X6sPuLSfourTK81Pl5TUeIWSF/i6vYOA55NaXtWsknga/ZzCXI3GvbzlXS95hEQ3emlIG4MonjCWwFK5L1M1wTo/t/90oZmC6NJDN0DLTI/e1DOWBDkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754416519; c=relaxed/simple;
-	bh=TZly8mud1T3RB8nAlENz1FLPsbjtlRIUVXzbtKTHP5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kn//wHn7grLF5wOodGLTmF+ehHNa6Jcsdl+xOEo4QmjpzO+GjXmEbCSp+cCTGOOtsw5q0eHqGHatfzYY/lsobzsEQg2h0W7tdnyZko4tfmqi80rb+kK1bynMUNIcZAHRDQ7mLei2h0Tn56jDWtHjEa/ulnpPZa3A/1xgQXMxJQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V5dtunmS; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754416504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vulfXIFmexpfA5lwRoGk96ZZXlWrhV40376EMZHa1Sg=;
-	b=V5dtunmSPVsFyztOawBJbnTGI5dGhqjdJaE8bb5+Pzlq6mrdXLk7eD/7IsU23iBkUH6fU9
-	akb7ZYhXaHqkK1w84zPx0rbsX0RpjqPs5z5uierAVEB6wwMscyCtyvvW2Jwa8EQyOATjv4
-	s8QaAhSD4yQS0x7xd/f/BERBA/tZVEI=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	stable@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] NFSD: Fix destination buffer size in nfsd4_ssc_setup_dul()
-Date: Tue,  5 Aug 2025 19:53:02 +0200
-Message-ID: <20250805175302.29386-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1754416435; c=relaxed/simple;
+	bh=MioYAhNotFZUh9CEi5VyuJwmmwIaFoi439ziNU1/xZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4COUQQ1qwOGHoiQZk78JE9jYSYJh0r6VhVD10G08M65DwV3qn+hQ3HbcJpX3zTBc1Aem1EHQJEwOGneiw1fKDDRVFiOUVXttshxG6pb4FO4dkxvPnnzdqEHHQ0kRYliKCuXOX3VAICTyYsEedmiQAKeJx6gTGbsqKToXISl3jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0iIvbdp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 096A5C4CEF0;
+	Tue,  5 Aug 2025 17:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754416435;
+	bh=MioYAhNotFZUh9CEi5VyuJwmmwIaFoi439ziNU1/xZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G0iIvbdpeFbfMCoUWOUNU6swI/EliSO8PLGjxXx+2FqXmmPipOCslpqGmJ+l8jyB2
+	 A+aDpXNCe0HKve5SYckNe3zMxD3rBB/7wLlwSN7vaqQfth8M91o0slwsy/Bi5GtykL
+	 LXBLRw071Lwk9PTvI6aAvbjIyCbFUIvlAWlk7UdUst6+i3nwnv76RM4fVdqPQH9BgK
+	 fiYR07U4n20ZLUIh2s/hhrPMjCxfQEZfWfGh9zqa4TbXnbIwjtmLq925h+WOu833r7
+	 0QZzLibgzVmlUQEyNJp8e8aNFejaB0WpEBVppck6Qsw/e71L90hcSAC/+efBA509aZ
+	 /+o0a8OE8rhfw==
+Date: Tue, 5 Aug 2025 12:53:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org,
+	y.oudjana@protonmail.com, fshao@chromium.org, wenst@chromium.org,
+	lihongbo22@huawei.com, mandyjh.liu@mediatek.com, mbrugger@suse.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	kernel@collabora.com,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Subject: Re: [PATCH v3 01/10] dt-bindings: memory: mtk-smi: Document
+ #access-controller-cells
+Message-ID: <20250805175354.GA2004232-robh@kernel.org>
+References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
+ <20250805074746.29457-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250805074746.29457-2-angelogioacchino.delregno@collabora.com>
 
-Commit 5304877936c0 ("NFSD: Fix strncpy() fortify warning") replaced
-strncpy(,, sizeof(..)) with strlcpy(,, sizeof(..) - 1), but strlcpy()
-already guaranteed NUL-termination of the destination buffer and
-subtracting one byte potentially truncated the source string.
+On Tue, Aug 05, 2025 at 09:47:37AM +0200, AngeloGioacchino Del Regno wrote:
+> Some of the SMI Common HW provides access control to at least
+> the power controller: document the #access-controller-cells
+> property and allow specifying it only for MT8183 and MT8365
+> as those are the only known SoCs with an SMI acting as access
+> controller.
+> 
+> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../memory-controllers/mediatek,smi-common.yaml  | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> index 0762e0ff66ef..74b355a08493 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+> @@ -74,6 +74,9 @@ properties:
+>      minItems: 2
+>      maxItems: 4
+>  
+> +  '#access-controller-cells':
+> +    const: 0
 
-The incorrect size was then carried over in commit 72f78ae00a8e ("NFSD:
-move from strlcpy with unused retval to strscpy") when switching from
-strlcpy() to strscpy().
+I'm still wondering why this is 0? That seems odd that an access 
+controller is 1:1 with a device.
 
-Fix this off-by-one error by using the full size of the destination
-buffer again.
-
-Cc: stable@vger.kernel.org
-Fixes: 5304877936c0 ("NFSD: Fix strncpy() fortify warning")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/nfsd/nfs4proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 71b428efcbb5..32be002a248f 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1469,7 +1469,7 @@ static __be32 nfsd4_ssc_setup_dul(struct nfsd_net *nn, char *ipaddr,
- 		return 0;
- 	}
- 	if (work) {
--		strscpy(work->nsui_ipaddr, ipaddr, sizeof(work->nsui_ipaddr) - 1);
-+		strscpy(work->nsui_ipaddr, ipaddr);
- 		refcount_set(&work->nsui_refcnt, 2);
- 		work->nsui_busy = true;
- 		list_add_tail(&work->nsui_list, &nn->nfsd_ssc_mount_list);
--- 
-2.50.1
-
+> +
+>    mediatek,smi:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description: a phandle to the smi-common node above. Only for sub-common.
+> @@ -168,6 +171,19 @@ allOf:
+>              - const: apb
+>              - const: smi
+>  
+> +  - if:  # for SMI providing access control
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - mediatek,mt8183-smi-common
+> +            - mediatek,mt8365-smi-common
+> +    then:
+> +      properties:
+> +        '#access-controller-cells': true
+> +    else:
+> +      properties:
+> +        '#access-controller-cells': false
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> -- 
+> 2.50.1
+> 
 
