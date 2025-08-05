@@ -1,285 +1,433 @@
-Return-Path: <linux-kernel+bounces-756840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CA5B1BA1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7FBB1B992
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF09618A49EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65E918A46F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDAD20C469;
-	Tue,  5 Aug 2025 18:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9029D292B3E;
+	Tue,  5 Aug 2025 17:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SdC+Q7kn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="etR2Lwnz"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2120.outbound.protection.outlook.com [40.107.101.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7762222D2
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754418684; cv=none; b=aaXN6Raa61SsIYZG8Z3C5NIS7rYG4Bt9w19TsAxLji2/5p0m1Rle5NBEZJzV6UFCBTnDqAW0hEigu3KHBFTqWSuMRH077Z9/pYiqysErzjxrWpc20hjfXnt08cTGxK44bHojP/3hFilZn10UgW3yYqzDl0NF2r5LRZ42DsSqvN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754418684; c=relaxed/simple;
-	bh=rMkA5RiDJXWmKMzU79X+CVM3moHKrjOdTD2NiIhyWi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHMVvL2aOA4N0w3ibeMYULvMXGffuCQidrzFf2RQ6DVBkfzgW/ALBQyotV2ttl87+AtT4SvAozuN2bIwNtAimhbMTdcL6wV2gR3OsrYK0X4SLvQfi+84GpfglybQMTXXeadi1AMYU+yIDmu7Hjk07N4DUAdtaMlhDWgecAEj9G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SdC+Q7kn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575Gwa84021239
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 17:40:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2mEjso+MHTmFdrnw8L4UXzTgRbSzPxuCfvfs53kAta0=; b=SdC+Q7knQTBkxjoW
-	Ka2joYgrQobaOMOxOOVNO3UBNZahrbjfzWlYcdrlZE+FT+VZmk4+ZDWdcgw4DdJ8
-	uZtkHXzR0up5iv7pcIn0Adt49lYV1z7HNcxeyV80bc8YISWiw/wQ3Km+9J1R3RJf
-	yZUopbwoPRuN+diwYuErImM1typh78pscsHPIePh8uRaACYqAd8fvsVELKsSiV63
-	fw9OXodLQK+Ary2YKj4ruGTEGvSKJk+bhnEqyB6CpGPFQBwf18oG/jf2Nr3H2qqr
-	MVnv1QCUt7tJTSUmCGMtIK10zFkSZlJS8larLCk6ptLS21wSUdoPl20GlBJDs3DL
-	K4Az8g==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48981rshwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 17:40:34 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e80143e64dso44001485a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:40:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754415634; x=1755020434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mEjso+MHTmFdrnw8L4UXzTgRbSzPxuCfvfs53kAta0=;
-        b=d/7G1pCIAh/uAkPqpqzIcVXYKDS1WCOVD8k8HPn56Szx7nZTiGLZMKHt9QcjjyQ7No
-         VY2BB8vSfEotJ1X2qnUGmpam1ptHqEdG6XbBrL2iXwVvKjA3OorN4jMfvPeS46jWVIU8
-         rNUXfcMd0TrZtj70wch/luPWnRJt+azqU20IpeEXqKsO5nIctt7iVR5h2FoO4Y2dVOgU
-         ndkQmL7FJ2940i+NtXTz8yXQVcxGYISPfWu/7WIL28w4xHl226oU1cBMItuDeo36zlDX
-         iVAyhsnsRwtR8l632AKliMqjRoBgIBZzC2TJeStL75STE1ZukBHrSqSiDE71W7D3k6fD
-         ZVCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSOPCBT4M2a4+G7s6hqA3GNAu8mxZUITLCkU3m8PJDpvZz2UamQXeC1yIwDWCjb9v/sp8wx9uA7cTR27g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFbMHOuhm49n4p15wUnp+rSi9u8JE2t/YRxSzobOukL0lLFt9V
-	aRgxlsVxzvNgQzD6rveHwcaLJhRlBfA80h6nlEJciTr4Z11p2PrjeLUVOHiQuHGIwZ+CrKA4Fdq
-	ITOWaocA9hD88G48s7aNW9v07/yWPL/G0oDizuDRpIBVjDfJRb3Ca3L5M6VrWds3wJI8=
-X-Gm-Gg: ASbGncuUnuoVsMh1DfwNzulHLYXoGUZGw8Zjd6zrVLFReduQW0g9oav38Dg00woN1W1
-	W1R6yHQF1cQ4oLsksV/lXm3gBAn1jc3ulK0ETy6olItnNby3mQVhb6d+a/Lb6KRcfRq06Lyk9uq
-	L/sEt/Pj0tBIHns05UwE7khsRsWtkFusJ7rerHJwZoAsalWX5Nhr94f3NwuuayqO+2ruh3OqvA7
-	7QwCihOjjUpZaTgVzigVPRHPsWsdmlFN1UHr7iE9iHlhWZ2pysJsVjaFFwSyNix25DSnZQ55vez
-	hyUXv3nlMQg1CIUFmKCYFr3o65ko6FVQ6QjEvHTTFv/MZspZjm8LxK4qO9WRZrFX1cbZiP9Y3B5
-	2iTkhiRGMCIYPWYt5Ug==
-X-Received: by 2002:a05:620a:31aa:b0:7e6:9e1a:19 with SMTP id af79cd13be357-7e814efc94fmr5349185a.13.1754415633778;
-        Tue, 05 Aug 2025 10:40:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGN61724+FWqz+IOFVoaAZfGxTWvMM8Tyky7Q5EoDS+vMDpv+5lunJYIZkQhEwOeqX/LwZPWw==
-X-Received: by 2002:a05:620a:31aa:b0:7e6:9e1a:19 with SMTP id af79cd13be357-7e814efc94fmr5345585a.13.1754415633254;
-        Tue, 05 Aug 2025 10:40:33 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e8359sm942723166b.89.2025.08.05.10.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 10:40:32 -0700 (PDT)
-Message-ID: <87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
-Date: Tue, 5 Aug 2025 19:40:29 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B1B295DBC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754415941; cv=fail; b=jduGdzuTUhlisTT8QLgQZn/uvD5adEGL2uPz3BU1sinkf1Z80HwpDRwk6e7gxxBHbblgXI8WtY1nkkGP+atTEEz28M7ro4kW9C+HCCheseanKgRrb01BEVjguj2NQJ+1DIq0UTLOQd4znWPd/vK3kH1D2DApktTx1HGnfiF6p20=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754415941; c=relaxed/simple;
+	bh=YLrkBJHl1V0Km/GGGHzyQ78cb0BcuHKdr9DTb2v/rpA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iKbK0X8A/1ki5cRbRZxjHEocnTFYlbnACekJlkZxfveFC+WC8/ycy29TvuVv81NzDxizw+JMzdcKRXhQGb21tFx7X/c3a8RL/8h9Twx2rbXgXzlROl+hmJKi531ZVa0TKlRA94PzZ0+210vnLlmLKRMkfh4CyO2XbUXfzeNNqxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=etR2Lwnz; arc=fail smtp.client-ip=40.107.101.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q/QtBW3DLqwYYlGD6Z8uc1HTiO5iruN07CoTWuPvKiQTd3ye5P59CLZFeY2BGd1cjLMuSJpG3T4pW6/vCvNlN+FNlNRSt8bO0wElvH9B5tbgt790DGGooL8rol90bc2TJX85pPR+4tH1lbSCzWbFcR7iVTlH5RpnjBOllANJKmmotZARUz9CEtlQaij3t5gSxF1JrxskOWxfNXYdvwkT42gUiwOFpnJ+26GNJUHJCfHwuFf4w6kDVQctosA/Iv3kszsPYUPAT7+iO+ctTNtaGBaWrWku2O7095+UU1VhFctmsXijR+Z2QMjpap58WUM7XkOKzLGnZpM9Vqj4qvloyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DWehGQL4vGGZzl4IyCkZ85Qzq66gqpTWKDjXRfg7tYU=;
+ b=lPIr+ngk1EiDaSuDIWjL5XWm41bp3IWyO6qqeQvWuKLHkB26/CiWEU81zDXEiWuOy3A1LN0uv13S1l5cdWTsl2WaSoXwp39UV6BC4jsS9JUvOuUfbUNgsZBULcMDps0wXoTvHsJyHRHHvek/bqlKA9mFnbkk7dX2TAY+vnmewMHSD6s5tExA2fJR95q55olvzbZdiM4kqmEiVhI/RxCyfhi0GBgtO1epDgw1DKuRd37xT2RUKbFV29PSW1Rhv/cnvCXvnCU8aymiXxulWtW/l3PqKX51cnXOHk6gHiocKS7I6Em5v096QlzsVG0m9m3DvC4ylyCQdXkyVPp5DyN9jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DWehGQL4vGGZzl4IyCkZ85Qzq66gqpTWKDjXRfg7tYU=;
+ b=etR2Lwnz724ZmUa6vcJIW5/6iifhntjlyaFD356HGoYgPokfqnYUzL94bRHp/GeJRS9u0LUt3S+MIlg48dUM7L6NGMT/hEeAWUag+XNaNtGeOqd1Rbdf3tnUHaMTABLkeOXvnNGF0Yeg+ErE8UmymYn1701zeOwpsh2nZZkCQHs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ BN0PR01MB6894.prod.exchangelabs.com (2603:10b6:408:168::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.14; Tue, 5 Aug 2025 17:45:36 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 17:45:35 +0000
+Message-ID: <1a4dc965-511b-4638-bac1-03f36d044141@os.amperecomputing.com>
+Date: Tue, 5 Aug 2025 10:45:31 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: mm: split linear mapping if BBML2 is not
+ supported on secondary CPUs
+To: Ryan Roberts <ryan.roberts@arm.com>, will@kernel.org,
+ catalin.marinas@arm.com, akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724221216.1998696-1-yang@os.amperecomputing.com>
+ <20250724221216.1998696-5-yang@os.amperecomputing.com>
+ <86d3af99-0011-43fc-9533-4d51ffcc9a0a@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <86d3af99-0011-43fc-9533-4d51ffcc9a0a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CYZPR14CA0021.namprd14.prod.outlook.com
+ (2603:10b6:930:8f::22) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-        'Manivannan Sadhasivam' <mani@kernel.org>
-Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, avri.altman@wdc.com,
-        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
- <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
- <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
- <1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
- <2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
- <11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
- <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
- <CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
- <b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
- <061b01dc062d$25c47800$714d6800$@samsung.com>
- <i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
- <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 8J9WX1fvzfDl2tFAoo_CoVRbzJdyQZ_p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEyMiBTYWx0ZWRfX/vmIwDwsvZ6U
- i4vtctq8cG0DBV6Fn3wy7E1JLRPndsnJ5ljFC+YMtP5NO00Vre+uUfD4ei22lYUCFNN2cp56ejD
- DRZ2bqGa4F6K9fyEuMnJmiKVd9cAG2UgzAcFtBsqPDSx7AWjGL4IhPOlAUFAYueYCgbcziWIj/r
- VVVng7DRUpfLGJvzvqL6i5OY/kJvpVx0dEhoTioYmeJTzhNlqaD2DASJ+NrSAQB3jQKVyksB5cr
- e4hgn3CaBdfiRWqQtdq1Ve/86EpQDVNN6nsJ/RWnOX0VjdX4snfE6ZL5J+/fr9l5L0neHN6ZUrr
- As5MA4EPCl9DCIScyCUVrcX7Zs/C23fOdSIu2dSVvChkCEeS0VDBfj2rG7MH6YXre7z6FG3xPNs
- MvaoPh8HcU3gUwJUl4ctzdZIxVLz7las45eHP1QiUmbJpr60v5EPBqvRU0Xv2+Sz6YOQWGcK
-X-Proofpoint-GUID: 8J9WX1fvzfDl2tFAoo_CoVRbzJdyQZ_p
-X-Authority-Analysis: v=2.4 cv=a8Mw9VSF c=1 sm=1 tr=0 ts=68924212 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=JF9118EUAAAA:8 a=N54-gffFAAAA:8
- a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8 a=_u80KDpoiKaTEXzHalMA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
- a=xVlTc564ipvMDusKsbsT:22 a=zSyb8xVVt2t83sZkrLMb:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050122
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|BN0PR01MB6894:EE_
+X-MS-Office365-Filtering-Correlation-Id: e124d065-c531-470e-f93b-08ddd447e1d9
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1ZQUVBzS3VwbmJqZXJwRWtuNTNiK3NUdlgxOU9TYW4wSThtdWVMOHdabWRG?=
+ =?utf-8?B?N085ZHR1cEtYODM2cVhucmp2NERPbjdBc3pvRHNDWlI3NmxacHI3K2ZKa2Mz?=
+ =?utf-8?B?M3doem9BdmFnY251bjNCU0N4Y2E0UDNzQU1oWHFPRlBtaDNmbVVONm9BUmhR?=
+ =?utf-8?B?MVpFVTc4SS9aNVE0Qm8yQUk2OXJMRlo4T0dTL3ZJZ1l1VkFMMTRJb25TUGp5?=
+ =?utf-8?B?ZWhRaU9FVUVnWGtYVmNoMW5EdmsrUERGZ3RZVVYvT0xkOEo3MFZXTW1QSkJx?=
+ =?utf-8?B?Sm5KV1RRRWJodkxVc1haaFoxT1BoN2Y2RitpUThjTWRpbGllMnJBaWFqNHNk?=
+ =?utf-8?B?dVc2emR6ZWcyWkhZUjNFa0JnVXF0Vm0vandZbWJwS3NKbnFWRW43eFZhcTBw?=
+ =?utf-8?B?bjVwZGNnWFllMnQwelNPYktFWDNDT2xFN1dVdjIxL2hyVmcram9nMWFQUE9V?=
+ =?utf-8?B?RWlYU054c1Bid1B3cGdiL0RWWnIyUVFMK0p6WS9CS0RYUVBqNE13V1hHL3Vs?=
+ =?utf-8?B?QWp2Qm5sTGpMUWpIaEtmMUxtTGNWWUNmcjZ5aGZUNWFCTGM2THArd1NMbjYy?=
+ =?utf-8?B?eEo1UXpaSU4zVEFycjdSMEFIVkl5OS9jbTlIOW5Qb25leUJlU0ZiR3BJdGdr?=
+ =?utf-8?B?clJVL1d3ODhZK3UrcFFDRXNzdG5RSlNaSlcwNU03Rm1hWkZWTHQ3NW1qVVNi?=
+ =?utf-8?B?Zk1FdW1SLzMrcWQrZjBPczVuRmhUMjZwY3Z0Q1c3eEljVnFVaGlmZWk1bnM0?=
+ =?utf-8?B?ZFMzMnpDYVJYSTk3VWVJb0JWRW83aWNQS3lvcnNPWGtUdVZvRUZsc2xzQkdN?=
+ =?utf-8?B?TFExejBVcTR2eXRtWHRnVkZndUxlOWtRWDNiai93OE5YQ25qc1lqT1pSSmZQ?=
+ =?utf-8?B?WmdzeFhYUHIzeG9Wem1PSEp4NElNT0Z0N0NDQXNOTUk5RVB6S2MyRTdUZGI0?=
+ =?utf-8?B?ZU1hVmp6clY4ZjhKWkZOTWdaZ2R1U3VnSDk3bmJnc0FhTldSZ01jN290a0wx?=
+ =?utf-8?B?WXh6U2Q1MGNEaXdyQ0VTL256bkN2K1pURWF5dVdnVHBUSEx2Tlh0M0Y3QktV?=
+ =?utf-8?B?ai8ya1U4T3hQYWNZRU8rR01TWFRHTjZrU0JYeC9WSC9iZWZYeFBPYm9wVlM3?=
+ =?utf-8?B?Qk45bkphZDNtZWJEKyt3aGNZYUxMcEhUcEhWQlZwY2svWjN1alhFTTJOT1dC?=
+ =?utf-8?B?d0VIbmM3VWhlbXkvR3hEMzI1ZUNFUlRmZGdBUmlOd01jSUJ4OWxJWkpXdGNM?=
+ =?utf-8?B?QlpZZXRpVmVtT3REa0N6OWlmblU3VHl2d1dMOVdqdVNmVEd1dis2MzdqSlRw?=
+ =?utf-8?B?RUxRbXJ3UFN2MjZONmhGdHYwNWRSTXdrT3FhRmFpakFPbW9oSjl1MEVxT0Q0?=
+ =?utf-8?B?WkJEMEEvZjRoT0ttZ3kyeXlsQVk3MHdnZDlJcTZOQ0ZMUnIwbmhIa0s1bWdW?=
+ =?utf-8?B?ZUh2ZzNBZElMNnRXN2N1ejkwWWdON21OSDFTSEFpTFVHY0dPM2drRDErWjFK?=
+ =?utf-8?B?RktCdVBhWkk4U2xDQ3JmLzRzZ0Q0RGwwZTBORGxybURYNEsrTmxPWU85a1p4?=
+ =?utf-8?B?S2Q5U0ZUTFdRK0E1UFJ3Y0tnUFEwaXpGcUc2ZEcwNHJ0QUFUOVRHTnEwR0dQ?=
+ =?utf-8?B?SzZLZ2ZaNTN0bldETHJIUzRVeHhFaG4xSW9mNHB4YU9ZY01BTG1PSEZ3bWtk?=
+ =?utf-8?B?d1NUZVVWZk1FemlhQ1M0RDNvV01YT29YU1FqS1orZ3ZraHRhS2ovV21aOWs1?=
+ =?utf-8?B?Zi9UOXhEQlBZREF4N2Zic3c0ZGlaSTIvRUNzOTd1VDFmdld4N3pVSm0wVFRJ?=
+ =?utf-8?B?UVBmKytlM3pjVVlNa1A2d2lnRlViUWtUYm1jSkU0SHEraVpLMWticDk0VjQx?=
+ =?utf-8?B?UXRaVmFicjZGdzhwM3plR2ZjY0syMVlPeTVQaDJhWWdQbVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0Y2VWp5dEkzM01FTkE1L1BaYWh3QXRsdVlLSDVmKzlGQ1R5Vmh0NURxWHkz?=
+ =?utf-8?B?NzBhL1JZa0xUNWg3eElHZmdFY3dIbzM2aEV3cUZ0VWw2bFRUeldaRzlMUFh5?=
+ =?utf-8?B?MjdVcGNwbSs0YnVnWXUyQnRwTmRNc2pRQWg3TVFsY2M3Y09uSUNWSFBPcEZS?=
+ =?utf-8?B?WldTV0YrbU95c0hQR0NzWEtHY01zVUhWVW8zOGx1bjNZQkF0RzVsVmtmRm9y?=
+ =?utf-8?B?QTJUU1IwbU1hVmdHbjlxNmFyaGtlTk02em1PbmJGeGRjZ1VUZEhNd3hBYkVE?=
+ =?utf-8?B?dGZZZWRzb0lHd1dNZVZBNm5LSk9RSkVlTDc1R1FXczJqaWk5SE1OS1EyNkdH?=
+ =?utf-8?B?dUIwcGM0NHAvYzEwamU3Z2FySzNCWC9BYVlJNWpES0tUbFFBY2xlS2cwMjBC?=
+ =?utf-8?B?a2xXTkNVUE1EMXVCVlVPZ3c0STRiZWZVVWgwekFJVTZpTDhDZzRtSUFRSStk?=
+ =?utf-8?B?V3A1eHBSRERpa2kyQ2NoMmZKV01TQy9udTRWQnJYbC8ycG1jK2Q5QmZGT3Nu?=
+ =?utf-8?B?M3B6dTVIY0hHMEhObVNRQlRJUU9YaHpaTElKRmhxUjRsSzBPT05pSnJVZ0hw?=
+ =?utf-8?B?eVRvbzdCb1lTNjJNZWFjdUNnQjYrWS90djYxZVBlQ01xUUc2Qk5hSVJqbzZS?=
+ =?utf-8?B?dW9QMDlIb3lQVk9iZ2Z2R1hUdXh5ZWVHZ1ZZeVVORm03MzVZYkRLa0RoZ2Ni?=
+ =?utf-8?B?OUh6VHE1V0FWZ3JpZ1BQSG54Z3RJN2xlVkUrd0dWUEdTWUNtTUdaa2VXaC9S?=
+ =?utf-8?B?cXBrakNEQVZycW5KM2V4eU9yYWF0dkFVRTRabTlpM2dabmFjNEZ0ckV3WW5l?=
+ =?utf-8?B?RnBMRng4M1gvTHVGZ1UreUhDNGwvNGxIaDM3TWdhNW9kUzJIbm51TEpBY05Q?=
+ =?utf-8?B?ckZLV1k1TmZLK1orSXE5aU80eHU2YXUvMXdxREhTOTNDTlNScnJ3OHdLS0Qy?=
+ =?utf-8?B?YkpWRTZ0anJRUno2ZFlKb0ZpN2JhMjM3VzZiSUl6RWNkUEQvR09OUlFsUjdN?=
+ =?utf-8?B?WTBTeTIxOS9xV05MNFA2alh5Ry9jMW1ZSXJ6VXBGUzM2SjNoUWtoTnRlV1FU?=
+ =?utf-8?B?Q2hKZkh1ZVd6akJZZnpOdzJodW5HT05kV1BNS09US0hubjFOdHVVekVFTm5C?=
+ =?utf-8?B?RUh0VlM4VnRNVFdsajRXY2hPVEphM2s5bmtJYnRURU5Gcit3WkowT3RrOSsw?=
+ =?utf-8?B?ZUNuazFBR2xIdUpYUHNrRzBsL1dPYm9yTjZra01iVlBOVU83QUFDellQYVdp?=
+ =?utf-8?B?L3JHOTlYL1F6d2t3bGY0eUxraFppc25SWnNqV3VwbmFoRjNkaXJwOVhubHNH?=
+ =?utf-8?B?K0M4VG9kMndtVXVlYmRTZXEvL0pZTXhURmc5SW56K0lpRkpveVFBQ1JOU3RH?=
+ =?utf-8?B?Zk8yUXZ3UytwWFdYUUFwN2lqWmdZVnA0NGg1dFMwN3lEMUlaWXovU2xhU1l6?=
+ =?utf-8?B?ektYOFpuUUZBejYydjJDRGxqSzFxRDhwcUxOSm5EUXg3N3lrbE82dFdrMkNZ?=
+ =?utf-8?B?VnFIMmlBL05sTFR1QnNwRlpZcnF2aEJMZXl4WlRYZkRxSkdKL2c1eXg1RjBC?=
+ =?utf-8?B?Y2RQRmN1Mmw4UWpIODU0OGRFZ0VtQWZuYVRVWTYvZVZMakQ3TVBHV29pWXU2?=
+ =?utf-8?B?TTNqRldaSTdUTCtkOEZjWHNKZTBid1B5eGJKcncxejVHYnAzbWRUQlRBS0Ft?=
+ =?utf-8?B?eEhZdnFQMEFBRU9sSTZSZi9pOW5DcVRDZmNsNnN4M2VoK1JtVFREU0hMbGJW?=
+ =?utf-8?B?NkJhaFR2WmlaM2dPOUJLdWpkWkxleUUxS1pxVlo0TWtUWXR5cEp5ZEs4OFds?=
+ =?utf-8?B?bHRDaTd1S20yczA3dEpTTHViRmliY2FKcHlidmRyN1hJK0REMWloU1ZqSVF3?=
+ =?utf-8?B?ckYwWlZsd0ZwU1BhUFdqTk9VdEhDdnAxb3NTdHJrcDlMME5aVk1kdmwvSVhV?=
+ =?utf-8?B?cTIwc0IrQnpTbVowK2VvN3JxcUVmKzR3R3F6NFAwTXVPT3RRaXc1bmpPMHU0?=
+ =?utf-8?B?azdCN0FnRDYzRGpGeUxwRDZBR2sxaEdLam1Cc2pCczZ4QncwclhRZUFYa1VC?=
+ =?utf-8?B?S3hnd3JEUFJXWFNwazZrb1BwRXkzZGI3Z3BMVVBwb1BFWmQyRWNXbEp3MGZH?=
+ =?utf-8?B?Qm5oU1UwL2FoOW9yLzBXMnA1eE1tckNqSnhwQTRTQmZPazBVQ2xpVjREYkc5?=
+ =?utf-8?Q?WASRFr8xylZdbP3m8znheUc=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e124d065-c531-470e-f93b-08ddd447e1d9
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 17:45:35.7062
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zW2HpKK4FBlK2ZfrFlsdfCbqyh8ShfLjnpbLttvQ9lBT4QEc7yIwS7t101iRQwHbjG7HVqKVJrdp0X8xVxhTbOKH8ZAt9xm/aTzt8JmWAQM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR01MB6894
 
-On 8/5/25 7:36 PM, Alim Akhtar wrote:
-> 
-> 
->> -----Original Message-----
->> From: 'Manivannan Sadhasivam' <mani@kernel.org>
->> Sent: Tuesday, August 5, 2025 10:52 PM
->> To: Alim Akhtar <alim.akhtar@samsung.com>
->> Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>; 'Krzysztof
->> Kozlowski' <krzk@kernel.org>; 'Ram Kumar Dwivedi'
->> <quic_rdwivedi@quicinc.com>; avri.altman@wdc.com;
->> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; andersson@kernel.org; konradybcio@kernel.org;
->> James.Bottomley@hansenpartnership.com; martin.petersen@oracle.com;
->> agross@kernel.org; linux-arm-msm@vger.kernel.org; linux-
->> scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
->> properties to UFS
->>
->> On Tue, Aug 05, 2025 at 10:49:45PM GMT, Alim Akhtar wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>> Sent: Tuesday, August 5, 2025 10:36 PM
->>>> To: Manivannan Sadhasivam <mani@kernel.org>
->>>> Cc: Krzysztof Kozlowski <krzk@kernel.org>; Ram Kumar Dwivedi
->>>> <quic_rdwivedi@quicinc.com>; alim.akhtar@samsung.com;
->>>> avri.altman@wdc.com; bvanassche@acm.org; robh@kernel.org;
->>>> krzk+dt@kernel.org; conor+dt@kernel.org; andersson@kernel.org;
->>>> konradybcio@kernel.org; James.Bottomley@hansenpartnership.com;
->>>> martin.petersen@oracle.com; agross@kernel.org; linux-arm-
->>>> msm@vger.kernel.org; linux-scsi@vger.kernel.org;
->>>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
->>>> Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate
->>>> limit properties to UFS
->>>>
->>>> On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
->>>>> On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
->>>>>> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
->>>>>>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski wrote:
->>>>>>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
->>>>>>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski
->> wrote:
->>>>>>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
->>>>>>>>>>>> Add optional limit-hs-gear and limit-rate properties to the
->>>>>>>>>>>> UFS node to support automotive use cases that require
->>>>>>>>>>>> limiting the maximum Tx/Rx HS gear and rate due to hardware
->> constraints.
->>>>>>>>>>>
->>>>>>>>>>> What hardware constraints? This needs to be clearly
->> documented.
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Ram, both Krzysztof and I asked this question, but you never
->>>>>>>>>> bothered to reply, but keep on responding to other comments.
->>>>>>>>>> This won't help you to get this series merged in any form.
->>>>>>>>>>
->>>>>>>>>> Please address *all* review comments before posting next
->> iteration.
->>>>>>>>>
->>>>>>>>> Hi Mani,
->>>>>>>>>
->>>>>>>>> Apologies for the delay in responding.
->>>>>>>>> I had planned to explain the hardware constraints in the next
->>>> patchset’s commit message, which is why I didn’t reply earlier.
->>>>>>>>>
->>>>>>>>> To clarify: the limitations are due to customer board designs,
->>>>>>>>> not our
->>>> SoC. Some boards can't support higher gear operation, hence the need
->>>> for optional limit-hs-gear and limit-rate properties.
->>>>>>>>>
->>>>>>>>
->>>>>>>> That's vague and does not justify the property. You need to
->>>>>>>> document instead hardware capabilities or characteristic. Or
->>>>>>>> explain why they cannot. With such form I will object to your
->>>>>>>> next
->>>> patch.
->>>>>>>>
->>>>>>>
->>>>>>> I had an offline chat with Ram and got clarified on what these
->>>>>>> properties
->>>> are.
->>>>>>> The problem here is not with the SoC, but with the board design.
->>>>>>> On some Qcom customer designs, both the UFS controller in the
->>>>>>> SoC and the UFS device are capable of operating at higher gears (say
->> G5).
->>>>>>> But due to board constraints like poor thermal dissipation,
->>>>>>> routing loss, the board cannot efficiently operate at the higher
->> speeds.
->>>>>>>
->>>>>>> So the customers wanted a way to limit the gear speed (say G3)
->>>>>>> and rate (say Mode-A) on the specific board DTS.
->>>>>>
->>>>>> I'm not necessarily saying no, but have you explored sysfs for this?
->>>>>>
->>>>>> I suppose it may be too late (if the driver would e.g. init the
->>>>>> UFS at max gear/rate at probe time, it could cause havoc as it
->>>>>> tries to load the userland)..
->>>>>>
->>>>>
->>>>> If the driver tries to run with unsupported max gear speed/mode,
->>>>> it will just crash with the error spit.
->>>>
->>>> OK
->>>>
->>>> just a couple related nits that I won't bother splitting into
->>>> separate emails
->>>>
->>>> rate (mode? I'm seeing both names) should probably have dt-bindings
->>>> defines while gear doesn't have to since they're called G<number>
->>>> anyway, with the bindings description strongly discouraging use,
->>>> unless absolutely necessary (e.g. in the situation we have right
->>>> there)
->>>>
->>>> I'd also assume the code should be moved into the ufs-common code,
->>>> rather than making it ufs-qcom specific
->>>>
->>>> Konrad
->>> Since this is a board specific constrains and not a SoC properties, have an
->> option of handling this via bootloader is explored?
->>
->> Both board and SoC specific properties *should* be described in devicetree
->> if they are purely describing the hardware.
->>
-> Agreed, what I understood from above conversation is that, we are try to solve a very *specific* board problem here, 
-> this does not looks like a generic problem to me and probably should be handled within the specific driver.
 
-Introducing generic solutions preemptively for problems that are simple
-in concept and can occur widely is good practice (although it's sometimes
-hard to gauge whether this is a one-off), as if the issue spreads a
-generic solution will appear at some point, but we'll have to keep
-supporting the odd ones as well
 
-Konrad
+On 8/5/25 12:54 AM, Ryan Roberts wrote:
+> Hi Yang,
+>
+> On 24/07/2025 23:11, Yang Shi wrote:
+>> The kernel linear mapping is painted in very early stage of system boot.
+>> The cpufeature has not been finalized yet at this point.  So the linear
+>> mapping is determined by the capability of boot CPU.  If the boot CPU
+>> supports BBML2, large block mapping will be used for linear mapping.
+>>
+>> But the secondary CPUs may not support BBML2, so repaint the linear mapping
+>> if large block mapping is used and the secondary CPUs don't support BBML2
+>> once cpufeature is finalized on all CPUs.
+>>
+>> If the boot CPU doesn't support BBML2 or the secondary CPUs have the
+>> same BBML2 capability with the boot CPU, repainting the linear mapping
+>> is not needed.
+>>
+>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+>> ---
+>>   arch/arm64/include/asm/mmu.h   |   6 +-
+>>   arch/arm64/kernel/cpufeature.c |   8 ++
+>>   arch/arm64/mm/mmu.c            | 173 +++++++++++++++++++++++++++------
+>>   arch/arm64/mm/pageattr.c       |   2 +-
+>>   arch/arm64/mm/proc.S           |  57 ++++++++---
+>>   5 files changed, 196 insertions(+), 50 deletions(-)
+> [...]
+>
+>> +int __init linear_map_split_to_ptes(void *__unused)
+>> +{
+>> +	typedef void (repaint_wait_fn)(void);
+>> +	extern repaint_wait_fn bbml2_wait_for_repainting;
+>> +	repaint_wait_fn *wait_fn;
+>> +
+>> +	int cpu = smp_processor_id();
+>> +
+>> +	wait_fn = (void *)__pa_symbol(bbml2_wait_for_repainting);
+>> +
+>> +	/*
+>> +	 * Repainting just can be run on CPU 0 because we just can be sure
+>> +	 * CPU 0 supports BBML2.
+>> +	 */
+>> +	if (!cpu) {
+>> +		phys_addr_t kernel_start = __pa_symbol(_stext);
+>> +		phys_addr_t kernel_end = __pa_symbol(__init_begin);
+>> +		phys_addr_t start, end;
+>> +		unsigned long vstart, vend;
+>> +		int flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>> +		u64 i;
+>> +		int ret;
+>> +
+>> +		/*
+>> +		 * Wait for all secondary CPUs get prepared for repainting
+>> +		 * the linear mapping.
+>> +		 */
+>> +		smp_cond_load_acquire(&repaint_done, VAL == num_online_cpus());
+>> +
+>> +		memblock_mark_nomap(kernel_start, kernel_end - kernel_start);
+>> +		/* Split the whole linear mapping */
+>> +		for_each_mem_range(i, &start, &end) {
+>> +			if (start >= end)
+>> +				return -EINVAL;
+>> +
+>> +			vstart = __phys_to_virt(start);
+>> +			vend = __phys_to_virt(end);
+>> +			ret = split_kernel_pgtable_mapping(vstart, vend, flags);
+
+Hi Ryan,
+
+> I've been thinking about this; I think the best approach is to use the pagewalk
+> API here, then you don't need to implement your own pgtable walker; you can just
+> implement the pud, pmd and pte callbacks to do the splitting and they can reuse
+> common split helper functions. This reduces code size quite a bit I think. And
+> also means that for split_kernel_pgtable_mapping() you can just pass a single
+> address and don't need to iterate over every entry.
+
+Using pgtable walker API is fine to me. The biggest concern is how to 
+reuse split code for repainting. I think it basically solves the problem.
+
+>
+> I started prototyping this to prove to myself that it is possible and ended up
+> with quite a clean implementation. I'm going to post that as a v6 RFC shortly -
+> I hope that's ok. I've retained you as primary author since it's all based on
+> your work. I'm hoping that the posting will speed up review so we can hopefully
+> get this into 6.18.
+
+Thank you for making the prototype. I will take a look that and reply in 
+that series directly.
+
+Regards,
+Yang
+
+>
+> Thanks,
+> Ryan
+>
+>> +			if (ret)
+>> +				panic("Failed to split linear mappings\n");
+>> +
+>> +			flush_tlb_kernel_range(vstart, vend);
+>> +		}
+>> +		memblock_clear_nomap(kernel_start, kernel_end - kernel_start);
+>> +
+>> +		/*
+>> +		 * Relies on dsb in flush_tlb_kernel_range() to avoid
+>> +		 * reordering before any page table split operations.
+>> +		 */
+>> +		WRITE_ONCE(repaint_done, 0);
+>> +	} else {
+>> +		/*
+>> +		 * The secondary CPUs can't run in the same address space
+>> +		 * with CPU 0 because accessing the linear mapping address
+>> +		 * when CPU 0 is repainting it is not safe.
+>> +		 *
+>> +		 * Let the secondary CPUs run busy loop in idmap address
+>> +		 * space when repainting is ongoing.
+>> +		 */
+>> +		cpu_install_idmap();
+>> +		wait_fn();
+>> +		cpu_uninstall_idmap();
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   #ifdef CONFIG_KFENCE
+>>   
+>>   bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
+>> @@ -1079,7 +1174,8 @@ void __pi_map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
+>>   		    int level, pte_t *tbl, bool may_use_cont, u64 va_offset);
+>>   
+>>   static u8 idmap_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
+>> -	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
+>> +	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
+>> +	  bbml2_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
+>>   
+>>   static void __init create_idmap(void)
+>>   {
+>> @@ -1104,6 +1200,19 @@ static void __init create_idmap(void)
+>>   			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+>>   			       __phys_to_virt(ptep) - ptep);
+>>   	}
+>> +
+>> +	/*
+>> +	 * Setup idmap mapping for repaint_done flag.  It will be used if
+>> +	 * repainting the linear mapping is needed later.
+>> +	 */
+>> +	if (linear_map_requires_bbml2) {
+>> +		u64 pa = __pa_symbol(&repaint_done);
+>> +		ptep = __pa_symbol(bbml2_ptes);
+>> +
+>> +		__pi_map_range(&ptep, pa, pa + sizeof(u32), pa, PAGE_KERNEL,
+>> +			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+>> +			       __phys_to_virt(ptep) - ptep);
+>> +	}
+>>   }
+>>   
+>>   void __init paging_init(void)
+>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+>> index 6566aa9d8abb..4471d7e510a1 100644
+>> --- a/arch/arm64/mm/pageattr.c
+>> +++ b/arch/arm64/mm/pageattr.c
+>> @@ -140,7 +140,7 @@ static int update_range_prot(unsigned long start, unsigned long size,
+>>   	data.set_mask = set_mask;
+>>   	data.clear_mask = clear_mask;
+>>   
+>> -	ret = split_kernel_pgtable_mapping(start, start + size);
+>> +	ret = split_kernel_pgtable_mapping(start, start + size, 0);
+>>   	if (WARN_ON_ONCE(ret))
+>>   		return ret;
+>>   
+>> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+>> index 80d470aa469d..f0f9c49a4466 100644
+>> --- a/arch/arm64/mm/proc.S
+>> +++ b/arch/arm64/mm/proc.S
+>> @@ -239,6 +239,25 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+>>   	dsb	nshst
+>>   	.endm
+>>   
+>> +	.macro wait_for_boot_cpu, tmp1, tmp2, tmp3, tmp4
+>> +	/* Increment the flag to let the boot CPU know we're ready */
+>> +1:	ldxr	\tmp3, [\tmp2]
+>> +	add	\tmp3, \tmp3, #1
+>> +	stxr	\tmp4, \tmp3, [\tmp2]
+>> +	cbnz	\tmp4, 1b
+>> +
+>> +	/* Wait for the boot CPU to finish its job */
+>> +	sevl
+>> +1:	wfe
+>> +	ldxr	\tmp3, [\tmp2]
+>> +	cbnz	\tmp3, 1b
+>> +
+>> +	/* All done, act like nothing happened */
+>> +	msr	ttbr1_el1, \tmp1
+>> +	isb
+>> +	ret
+>> +	.endm
+>> +
+>>   /*
+>>    * void __kpti_install_ng_mappings(int cpu, int num_secondaries, phys_addr_t temp_pgd,
+>>    *				   unsigned long temp_pte_va)
+>> @@ -416,29 +435,35 @@ alternative_else_nop_endif
+>>   __idmap_kpti_secondary:
+>>   	/* Uninstall swapper before surgery begins */
+>>   	__idmap_cpu_set_reserved_ttbr1 x16, x17
+>> +	wait_for_boot_cpu swapper_ttb, flag_ptr, w16, w17
+>>   
+>> -	/* Increment the flag to let the boot CPU we're ready */
+>> -1:	ldxr	w16, [flag_ptr]
+>> -	add	w16, w16, #1
+>> -	stxr	w17, w16, [flag_ptr]
+>> -	cbnz	w17, 1b
+>> +	.unreq	swapper_ttb
+>> +	.unreq	flag_ptr
+>> +SYM_FUNC_END(idmap_kpti_install_ng_mappings)
+>> +	.popsection
+>> +#endif
+>>   
+>> -	/* Wait for the boot CPU to finish messing around with swapper */
+>> -	sevl
+>> -1:	wfe
+>> -	ldxr	w16, [flag_ptr]
+>> -	cbnz	w16, 1b
+>> +/*
+>> + * Wait for repainting is done. Run on secondary CPUs
+>> + * only.
+>> + */
+>> +	.pushsection	".data", "aw", %progbits
+>> +SYM_DATA(repaint_done, .long 1)
+>> +	.popsection
+>>   
+>> -	/* All done, act like nothing happened */
+>> -	msr	ttbr1_el1, swapper_ttb
+>> -	isb
+>> -	ret
+>> +	.pushsection ".idmap.text", "a"
+>> +SYM_TYPED_FUNC_START(bbml2_wait_for_repainting)
+>> +	swapper_ttb	.req	x0
+>> +	flag_ptr	.req	x1
+>> +	mrs     swapper_ttb, ttbr1_el1
+>> +	adr_l   flag_ptr, repaint_done
+>> +	__idmap_cpu_set_reserved_ttbr1 x16, x17
+>> +	wait_for_boot_cpu swapper_ttb, flag_ptr, w16, w17
+>>   
+>>   	.unreq	swapper_ttb
+>>   	.unreq	flag_ptr
+>> -SYM_FUNC_END(idmap_kpti_install_ng_mappings)
+>> +SYM_FUNC_END(bbml2_wait_for_repainting)
+>>   	.popsection
+>> -#endif
+>>   
+>>   /*
+>>    *	__cpu_setup
+
 
