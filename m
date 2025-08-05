@@ -1,144 +1,183 @@
-Return-Path: <linux-kernel+bounces-756159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE03BB1B0A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:04:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1552B1B0A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD970167912
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAAB189D238
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63321259CA9;
-	Tue,  5 Aug 2025 09:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3EA259CA1;
+	Tue,  5 Aug 2025 09:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qXyRG3ax"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="DvrMEwyk"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013064.outbound.protection.outlook.com [40.107.44.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE2586C9;
-	Tue,  5 Aug 2025 09:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384653; cv=none; b=Q48YTQ/wdDY9SQfRPQHf/TZJvOb5PeavU/LXXwEywUng5n+nFAo103dMd2NXx6gP3ReDRlXQCPLKs8U1N2vTfvu2aPaNXM9zvsvjjvuHEBEVA3IeUtDNIUSUWm1dm+Aq2r3vjfmDEbKp0gvGhXNrTY2umygq70L9kziU0zoUW7g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384653; c=relaxed/simple;
-	bh=NUpfptKkWuTZM/PifetKSGfcOkDvXHVifVwI0o/vcLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ODohm3mpm3yJcZCbeGfKQ1tfkK2YZjKml6wDBmEQcyr1k8X4747i7S3pnYaQ2vsnJBqJLhoxFGBBz79FKl2S8fvBHDurFyCF/jpZhe4AYdwWF3FMOXXnDAzji4f4V4fLp+sB2WAXx4mrK+jD+Yo3ea85A6Tbvy29BygMq8zl0OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qXyRG3ax; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758xqeG010877;
-	Tue, 5 Aug 2025 09:04:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=elaOjrB2plLMfQbXE+Lk2N8XqtfoumlKiKpuacXIZ
-	T8=; b=qXyRG3axLn6MB64VBggkMfnvWGsQ5aPk3W67GG7j+E720EK6GtAceARBc
-	K/DesLC19CSpY5CdFamZ4d5RPz+egwEF6aN3gqC+0/zh9uRgydBHPNhiCPlKpynN
-	3HVGkxKrgJ9R/70KAVxT7Ca8TGxjOSYBkrHPQuzn3fvBmASZFGtqU0DUyMLqrSN2
-	7lka0wvr2tmmJR4jdpeJhU1HwKD0dE4h24GwIdYukHfAj4oPBx+LsGiS9XpYcRpl
-	o3fovVrshK/9AP2rWIAbsDHBkvstPLyTr/mvPn0k9eES5WSFaSklA+N7hIiOGYdo
-	9b2HkEXX+FZv5DUm93s29ZhaGM4VA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48a4aa1h8p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:04:07 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754T3FZ006823;
-	Tue, 5 Aug 2025 09:04:06 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmhm8v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:04:06 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575942mX53805552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 09:04:02 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EB8B920043;
-	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C40D120040;
-	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, japo@linux.ibm.com,
-        Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf/docu: Update header documentation on BPF_PROG_INFO
-Date: Tue,  5 Aug 2025 11:03:49 +0200
-Message-ID: <20250805090349.361730-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A367EEC0;
+	Tue,  5 Aug 2025 09:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754384691; cv=fail; b=Hg4eo9AG54Jt1lvHsDOXfi/ampK72AXp/W0HBZ73QOx5Aq0Bp4jxwYo+e/Xf+a1J3pKYhRUiYGgnnK9xie9TqSOKZ6nZPTPti1AFDt9MuObIEXFHr8TrIE/sTIUqcT2b7SZfOXS9yixznxZM4jlWZl8H7im45TvqF6jkT3WJyHo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754384691; c=relaxed/simple;
+	bh=ChbqRGL8ZTgzP5eZDN9av6ITfgeHEkQG7Ve1NXoL/bM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=oB+kFo+rdQXmEppq0kvTp7/RlK6uvKmlkA2J2Mi87ST8WVaAQAJ/9LB/67f13/42rXzwKcXPywbKETreeetUAo/tTXxphLOr8GsMZftMqlQfcf9XTZ3Hh3J9nsHUS1FtyZ23tL1WdQUxBfgn1Q8YkyEo5/o2yPFbpLJwtUmXE34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=DvrMEwyk; arc=fail smtp.client-ip=40.107.44.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XludA71V2HdqTlfT+InzYlLvq26xw9xOfnlolpTN2YmPmQl/p9srG1it9V6pHUYI5pYZTgEy285cRF+87DTiRip4kfHG2zrbzdXMHUmQafx4RZJoa1GnXISudFwj2PKUAJ8WTLFY0d9JCDICRRN4zbvRxzN7b8hI5juMiV/0jxaZqgLcyU2h7COjxoTYDiYQ1YPFXU6keTdDY+oii2VgM07Fn/62/A4nnoEylQYfRKcRUyiaSbdc5p84jfNPuKVF/CvvbP6+QlUTUj7YUQCifumji7agvqf//SK99Tcq6dQmNjug3W6j6GCgZcYC7fcrSgePWNFgLRKL+jmbwnX2bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yqE4oipae9bN7USy2D42bcfM5tlmPcZNusQFwfZvT5U=;
+ b=YR/f+VkeNMmZw7jA+q8U6BG/o2XJkjTveYchcBbzZ4iVPFIJmVqaU2zSHN1oCnkGNoUH2iWyGiPD3VNX/n79VC1HHF6fpGj1Zlu3NbWPMct6TJVPFRcyZKD/Eo9nH5jeCzxDMxuiQ8JqhGF56J6bpfx4nsV/eXzDmdgbDp29b31i0gjaDZz7xYV7/5CskGhkkR1RxwlcPqsLYJizq8W6BnNIQPiB9WOoOW0aOg4/AI0McaAd2RQyyeKA1pqU2d44oTL5zO1Rm04v1PhxEOJxdgPxmVMyVVOEhPwTmSoUo/bGSkqF32MZMgMacH7ToiawrmlI4yPVxmgywn70v4Uffw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yqE4oipae9bN7USy2D42bcfM5tlmPcZNusQFwfZvT5U=;
+ b=DvrMEwykNRl3QCHilGY0a8avAid9mQGfVkWbjACg+uItxXwtPlZL3vsP/qv+Sh655hvru+3d4dqf1Zm2ssRQqo4QLcArPtz6w4FxP2Tb43iUz+EGrJhSyQVTBl3gFj9KhC/VNRECarGkl8tsXJvbWOapIRi3F0S04CgpBxzd/xSUxrJYf4RjsLy2D24/ITpHWSWIkFbAbnW7ERa8KG2cvh6tlTYVoVbDZIow1plZ7sQ36yPoRud7+J4t4WAnTbImWzaz9lEfkcCirJM97GlOk0Byp/53s0I9TxReGdVFWHaSoSXLizaCUdwVL5hSntTOlLJVJ5+j/8kSRIg8PB5P1Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by TYUPR06MB5980.apcprd06.prod.outlook.com (2603:1096:400:357::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Tue, 5 Aug
+ 2025 09:04:43 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 09:04:41 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: david.rhodes@cirrus.com,
+	rf@opensource.cirrus.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] ASoC: cs48l32: Use PTR_ERR_OR_ZERO() to simplify code
+Date: Tue,  5 Aug 2025 17:04:31 +0800
+Message-Id: <20250805090431.117114-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0047.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::10) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Ea2xIgP8pp8XjclC_aBc8dnKKfSInHZn
-X-Authority-Analysis: v=2.4 cv=dNummPZb c=1 sm=1 tr=0 ts=6891c907 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=85rDWHBjpAYECwts9QIA:9
-X-Proofpoint-ORIG-GUID: Ea2xIgP8pp8XjclC_aBc8dnKKfSInHZn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2NCBTYWx0ZWRfX6D9stS0W+OII
- dujpK4omHQstZqeXjAQ8DMFWnaRldKju8W5dguMn8Fu8ENkO0uK6FRqi100K22IRZKQNR9f0Rrr
- riXOGpXT7Pm7C+u2xuwzojGOYUYrMTllh6Mapl2JAvQ4Fawggtc+92RfSr1zJBU+wSUMgHQYza7
- K9IBPHMJpn9Cp+QKU7Rq634EChjYwwzTIb9ac39/nGaVGuzwA55FtgrF52a7s6tUhO7eZyujXWo
- z4BCoT6yvUdGPlMOZl9KVC/wtokcXdzMtMJLEBRPU6UJQrjjYLHMaj0zDHnqNLs9xNpMnG7okHA
- pqG3yFrUi3cLsYeCaXr03lGNKnrGdpC9fCn5NLqpK41p42E50eoKrc12dZ1W2DUOiCrZ4xc0Zbp
- OC86lAqKncb7hwl7Sw0Ig7Vbf1MF9NhAup7N5yyCvX2vv43lKn2OzB97GOM9sg78VRsayneG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=908
- malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050064
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYUPR06MB5980:EE_
+X-MS-Office365-Filtering-Correlation-Id: 192b8073-5c24-433b-d386-08ddd3ff1d12
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xk3FJJ0scNCPpHb3vvX4fwqffWlr9TCxwp03tX1+Zi3JF0fTd6BHYOfqxdrh?=
+ =?us-ascii?Q?ar6Z6tASxL0te/8C6F0iitjxAT+if5kYpmFXjueihhHJAdbSFvE1gmsWJtIO?=
+ =?us-ascii?Q?I6WVjyTQuhOXlflmaQCN+Ue+D8DCxFrARRV3gly4NyMGwF3t8dWxFpQ94MEu?=
+ =?us-ascii?Q?2h8TGEYgA+yVtDDqEBraRh6rkt95wLsjsfDXQtFGOzITDrc63Q33caKW9ttH?=
+ =?us-ascii?Q?SGlan3tczw7XPKb/uy0TaRTbYUPMNiDaFhnMe7kMRC5h8tuKswJ5B5GYKD68?=
+ =?us-ascii?Q?/LTOXaDr+UJ2+sgerpE8CdDL77D22Wd64nW8HYpp6hsnS9zbu/nlHprpBryF?=
+ =?us-ascii?Q?XExNm/dF/3QqxFBivk78mFIPeG6o4td3sjD/O8JyWluKLoROOemC8MQAhEoT?=
+ =?us-ascii?Q?jm9CIli8ODwTI9gjQb7hlZpMUwJoziab4/oiEiy2aLGEyMUNxTjk093a9xQD?=
+ =?us-ascii?Q?rDLMXJ8jDz2HTaT5DEUS0PTe/X2shwxBFfwzYmPU9IOiP60YWTp3kCf7qngA?=
+ =?us-ascii?Q?3080HixuW3py9nYvTULFABGH4VY4gX3WSyiiP2z4jPmtaYljcdcrh5l+aApf?=
+ =?us-ascii?Q?Fa6qVnfLaUxWk3O7NMz/0t3zomPHiUR1k/AGvTuuQPnvufzog3LY8T7FNTu5?=
+ =?us-ascii?Q?miBfdCinWoo+ojDvvCGvS6AvRqE2byQna42z0ziaiUt1tkPMy1viCDhErhaG?=
+ =?us-ascii?Q?q9bwry8YtgOcS56tBKJEeXk+YazE+HlIzzRSImRN+sqkZxdC7Z2OqWybo4a5?=
+ =?us-ascii?Q?vCM9JRO3wt2bQKPgLWB8iP4wLb7m10NRHig+eF0HIvD/X1mHiqhyor/7PN+5?=
+ =?us-ascii?Q?nworqVbBmXMnikrE5yrCecCTXyCyRKi0qxgj2DkONnc3rv+u8HVuTS5uTGOF?=
+ =?us-ascii?Q?nJs0vGJr4Tcc1+VFMqD2jJWvoZcIt0E9oo/bztfswJNXDDK8DfKuixcY0eBY?=
+ =?us-ascii?Q?G1AgYYnNkxniIPBpCBkN0a9bWWhOL6qlyoOEohjW1WjGv3Uqmw/2CoEavzOx?=
+ =?us-ascii?Q?Rs0E3OHl8MtYulHg2Vi3F1Yq979k2/5yf4vgKPBTqaWApMMFeHYHuXAUNQx7?=
+ =?us-ascii?Q?hHgmDI4A0D0TkBNc+zXJ49lzi3ns/i2LoKbRC0KFoZxcS80uGIcc/G0mCHXv?=
+ =?us-ascii?Q?xosKyKqj03m/Be61zoZxVpwlQ7SQjHmkn1gTsCYFpCAgJ6oTH5eCNfFoUxgu?=
+ =?us-ascii?Q?8rOFzcA7/t/JctRqogEOWq4+Fz+K46z2riNnpVOVg5+XNlkLUAocKzYhb0HQ?=
+ =?us-ascii?Q?p4kfPaTm/lZYiApHlnL2dEjJ95ryNTep3X3ME1w6mJYLazwABpqYFCOaC8WX?=
+ =?us-ascii?Q?XwDMUOyzFHAZRDWAoopomZFOY73qaDWvuOMh6uwLMOLgvk8+W4FfIaniGJgX?=
+ =?us-ascii?Q?lpngzc1xs83kKuJe4qbfMuCFyh8uIu8mqf+ia00y7el3kaougAs2ja0JGrbH?=
+ =?us-ascii?Q?mQs0eAmIEo4Brry5W/hn4tpomsb1P/AeZIBOdBsKhf1ZOoRgkaBfhw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qMMUmeP1P/4Ny0wFSma7Ygqr56xm0sscgBpnk/E9lOn9U18e5E6CDzSThEPJ?=
+ =?us-ascii?Q?OTTUPhv+yX23jv56lgy8RJcwj2XMHtG2npHaPo246AinnAUgh1h76ARX55zs?=
+ =?us-ascii?Q?16Ifjgb+FsjVfKdaixm/fZn2dA7quWkF1cEGN8/bqHs0Hsn+MQhHbUgKQPpw?=
+ =?us-ascii?Q?B9GhLIo5hKCB4MCUs8f1OZYW1SYoMJdkdG8UeMWL1Gdlva/y/XKM31F7mAKZ?=
+ =?us-ascii?Q?sQ8XbumjRu3OBWNnyk9N9syc68bEG68IKuyOajY09X5nqvAcotXpFBaiHqWk?=
+ =?us-ascii?Q?6vLig1oYwCMonQLwBNFEVhjqejnCacsXmcMsnQDoIWlEpZe0KSDP3TH0ZCSy?=
+ =?us-ascii?Q?/M87Wz3IKHRDqvDEOvZCRIBj1kT3SU7WD8L9eqyL4QBVyEuYlIQAU6o7+iT1?=
+ =?us-ascii?Q?Li9RX1939lemLeuegKF8Ao1Vew192/HI+FQdvL4vIX6mQ6zjInQpiMlv6hai?=
+ =?us-ascii?Q?ULcneNrA6qn08uO5nIP0YeRp+g9MtL2BV6KBSBjoWwBqWFvELiY6s3HOBRFy?=
+ =?us-ascii?Q?/5LupPXoEz/mcMkTRyYuGjy7+ON+YCWaPgOUerXQkXM9B1E8VgJr65d+IfQg?=
+ =?us-ascii?Q?GsZPoNvqsiVR0AfS12cEVbAVuLjq99OxTjzcRvXq/voc4CcIw7Q6uDL0cp4R?=
+ =?us-ascii?Q?q4bbQYycE5x98Qxm2H5KyREr25Vb7a6FQtcqUcdVVoIchskvLAfDBBP/v6Xv?=
+ =?us-ascii?Q?Y9oHUbEJFsmY9f70S65csxQlzQJ6f8JH0ejQvO3VRPitgAWNUvbN/9NbLWe+?=
+ =?us-ascii?Q?l03cICguDXNmbkzYNKqcns0XUIWyG0ati8Kv3LZ6IeP5jF6S4k4+mbehdScz?=
+ =?us-ascii?Q?cwUfnWRbRS+VfVUWAe9RXQqnQNR4loZp+8xsqHqKDbXfekMM3SBpRNh/cKTX?=
+ =?us-ascii?Q?qm346oGtBPNuniKqO6586jwDnJebYcQpTocDVcyQVm9824m+TVBKK3ynwvG3?=
+ =?us-ascii?Q?St1IRopye7QS7HyjcQDWQjDuT57LvcJRHb+3CBMwYxAtP3O3cThkVzsalGr+?=
+ =?us-ascii?Q?M4f8Tr00zGs7ht/w+AizStqcp7FvJ4oBikR8E+32r42We88CO/NTngGhatkw?=
+ =?us-ascii?Q?Isu5oH/4qaEdc6j9v2AW3Nngd0HAvMF1V0w/Xm+X7oV2xFg0Z6O8IoUNYJRU?=
+ =?us-ascii?Q?rdR8UhYOjDzkjoT1Gy4EgglOF+9ElWC8P6A+c3b6ufGKsJOVurcZeOSTgKZq?=
+ =?us-ascii?Q?hrF7IW3l59mIP4dFj21HlREvvSZ5nXNRkSx9Mnp0kG71MxcFgn02SxuDWSrs?=
+ =?us-ascii?Q?EgiV16bhbzBkHLag+xOvT+UWu5Ngz3YtsnP01aIMRm0tEa56fWSsPGrH3mYG?=
+ =?us-ascii?Q?Dwmfb7y3Cw4GFRqcSP6MFQBnqJ9NG6Cw8hVxqPWtjqQV1yL+gyM5JHw1vKe0?=
+ =?us-ascii?Q?8km/yFRyYiZmbTIM/Hk18ulGN8UyVbzGKqlE8XPMwfrstWC+6sbCzRK86thc?=
+ =?us-ascii?Q?69OS5E+ILKwlZSPmBP/3wiVO5/RWcmtDq/j5VPVgSKcmE1OXfaChk4VJndeL?=
+ =?us-ascii?Q?oiY2z7rCfmTDubnpH1/TwzRFzq4JgAx8B89ojQ6w8ki0Hje24vR8CRQaqsAE?=
+ =?us-ascii?Q?Ba3aO6DMnlSAq3b4dNvXSFFjxHY8skvTmGo3jFRk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 192b8073-5c24-433b-d386-08ddd3ff1d12
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 09:04:41.6711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WErLp8HCzCLzmRyiJ8rC5IXoYeROGxCjaHPKJWVKA2QNI3xSdZZT/sDSFRX7tJ2Oz8uflJfvZiA+iCSv1inE1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB5980
 
-Update the perf.data file format description on header
-section HEADER_BPF_PROG_INFO.
-The information is taken from process_bpf_prog_info()
-and write_bpf_prog_info() from file util/header.c.
+Use the standard error pointer macro to shorten the code and simplify.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Reviewed-by: Jan Polensky <japo@linux.ibm.com>
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- tools/perf/Documentation/perf.data-file-format.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/soc/codecs/cs48l32-tables.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index cd95ba09f727..0437eb5d9188 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -348,6 +348,16 @@ to special needs.
+diff --git a/sound/soc/codecs/cs48l32-tables.c b/sound/soc/codecs/cs48l32-tables.c
+index 59eaa9a5029f..8ff3652a010e 100644
+--- a/sound/soc/codecs/cs48l32-tables.c
++++ b/sound/soc/codecs/cs48l32-tables.c
+@@ -533,8 +533,6 @@ static const struct regmap_config cs48l32_regmap = {
+ int cs48l32_create_regmap(struct spi_device *spi, struct cs48l32 *cs48l32)
+ {
+ 	cs48l32->regmap = devm_regmap_init_spi(spi, &cs48l32_regmap);
+-	if (IS_ERR(cs48l32->regmap))
+-		return PTR_ERR(cs48l32->regmap);
  
- struct perf_bpil, which contains detailed information about
- a BPF program, including type, id, tag, jited/xlated instructions, etc.
-+The format of data in HEADER_BPF_PROG_INFO is as follows:
-+	u32 count
-+
-+	struct perf_bpil {
-+		u32 info_len;	/* size of struct bpf_prog_info, when the tool is compiled */
-+		u32 data_len;	/* total bytes allocated for data, round up to 8 bytes */
-+		u64 arrays;	/* which arrays are included in data */
-+		struct bpf_prog_info info;
-+		u8  data[];
-+	}[count];
- 
-         HEADER_BPF_BTF = 26,
- 
+-	return 0;
++	return PTR_ERR_OR_ZERO(cs48l32->regmap);
+ }
 -- 
-2.48.1
+2.34.1
 
 
