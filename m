@@ -1,129 +1,199 @@
-Return-Path: <linux-kernel+bounces-756692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E68BB1B7D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED9FB1B7D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03D93BEB38
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:54:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444307A3282
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E2C289815;
-	Tue,  5 Aug 2025 15:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nUerZmxj"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A493289815;
+	Tue,  5 Aug 2025 15:59:37 +0000 (UTC)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9CF1C84B8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EEC2045B7;
+	Tue,  5 Aug 2025 15:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754409272; cv=none; b=VJkBDPr4ziDcq8cd1i/a5bP7nnQ+LjNS6V6LseRPSk4YumgD2kaoZ7VnHEywWYZl+AQoKYmi71Xpio83eLhzgsoxfOKdnE49Mil/G3LS2aBLxbRh7oWaAISi6yjNH2rqxPXScPF0QU2C+oHMP3ZtmLqCP6ITWcgJIMCxmrmsggE=
+	t=1754409577; cv=none; b=SzxEWQtKHJbTuXok8xencdyPExUldGTISwTvAcEgO4ziNDeKomX0EQAY6GnwtZHRdvaFn0cN2/vLisYEp+NCRZQ0RMzlgwiJosnDkWJBN2f+5f6wrqb4M2APY3RFSyO1tw+FBlf7uU3cDilYn4UQD/oUMNQ7gMST4XFRzW7FoAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754409272; c=relaxed/simple;
-	bh=/OzaxpwEfK7AcyjcWdiVUrxbZQFVcmCDmajtf4oAfG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+KBZTsbS1gdNHQ9FmaEqmovwIVH3hCTgac0CvO0JBiUmPlREbqSsmR6S6KJgicO9YxOSPQAjKe85qZh3leI0R3g3DgdmTkRUR+4G8p/b63PlhvHgHcNvnTKyKKQo/bLuVChfVXV8GUjQcXFGz5A4r91o4LhPygvq9mmGiG3bx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=nUerZmxj; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-7074a74248dso51210106d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 08:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754409270; x=1755014070; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qmi6Xyv0QvJ7lU7CctnLT4GD6xbprG8jnHy2E/XWXdI=;
-        b=nUerZmxjSMp1DUMwIFFeolXfd8tUy/uWDH40vCEHDy6biYq3FC4U2f19cBCg/BE7Uk
-         pLEKZtHAl2euHAMsszm2+cuUpZrB+cSTMj2d+PJcTg28Hejf2Te4aBhbfwhgVytTMT1V
-         mJkn8OKA3TB+gvS5uvXEbIgUi8z60iaKcxTTbo8PFuOYRyAw6f9YBTij0Wl89/b6op4D
-         xF7cSa/2ndXE6RBUXpoQQo7o/Ezgw+lyLJGyHrgTNKHPp5T+yzf/5gUH1Fhpz39mYxfm
-         Nn8m01KmxjY9IUqHIdHJRtCOo1vYbYJy0S909/soMsnvtdCtQzHZgVAOoW8P+Q2x5lrv
-         sdnQ==
+	s=arc-20240116; t=1754409577; c=relaxed/simple;
+	bh=m0LU1qaLRSsRPSbX0ciBnhWdZnBeXv9neFXKF8f56Ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jAnEoqijWvkXqzTorLDzShTRT83aMCLm5UBQ05q0ulSjej6K88exXpKuJbszneaken7zspZe2PtPpRTqt7Rzsw7MU6FpSAbjhNO5nkuBcu8gxE8wQrJrS9zbpY4hs/xotnGGzLKBNw8y0bHOE+nWj79ri9Vpvpk5HbaKRfCt4io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32116dd55dcso724445a91.3;
+        Tue, 05 Aug 2025 08:59:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754409270; x=1755014070;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmi6Xyv0QvJ7lU7CctnLT4GD6xbprG8jnHy2E/XWXdI=;
-        b=XuRA2ssZT0nafx+lHRAYq2unihxgLO+uMPZmHuSG1qcu1rPIXrchySucKDK6jAECTP
-         rWY4k+qTYSSZoebi+aJ16L+w9EGcg/HDKWbeOWSUmt129LtazR0hc/ZqJpPdAbyqPqxq
-         G/G9gCPj4g/z2uncZAX8yIJ4FC7OMvIzivVilDFeH9ODtUe3hAUnBQOgPmBXGAvkH8ca
-         iXRpNOp2ey20jdOftItGTI9WfiuDuD+TygSELXcp5/+wOfMHZcEs8S5H710xukUZrC5Q
-         g+GmQuS7TkoUKJA1ROiavDAdCKjz7upTTu5FZEE48BwSZ+Rp+gcwhTYnS99emRGayBGb
-         SsIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHvEHbdgWEG5/jxVxwQfCckB5hygl+XR8IKRs2EvJ8OLIY4Ph8hNrIp79iBRjH1IqvrCKPtsDbjJUlFOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwACE+eftURAyjrzFYuWE7LLYEmo8R9svH0bnogrsU3IGn97ylL
-	CJgpFQBV0xPUNf6RxZA//HRNa9bmtE8Lu13RiEB8SsonjwoQTt9qf7MF/Xz8hf9yGp4=
-X-Gm-Gg: ASbGncsnVhIldGKzpUM6LXIhNk6MZ4P437yzY5uEzg9IqZksZdwPBV/+38LqYJI2ucX
-	SQH5RNBOyTXkntonkAJor/ovkXwfbSWDV8FUSL6l2LoHe+IUZBrrzGd5+vB/Px5TspzDkK/e7Ik
-	6nnLifKHa7+7IRRgJxDgD8iXZJ4bGvdfhJ35Bn3/ZkUJVETxzVxz6VeqRGdp71l4+88hooelgmZ
-	gI4woQfbh4ANMa/kAa40v7+r2DDCN1wnq2yjXoHu4x9SDDNIQrVdp/v+2YJ+e0FulIWR4jkt2Em
-	VVS+1JjSJSrYMQAS7vk4PL8jS310WXvYRgtqJqY0mh21TccjhI7hYQV2KwyXuYnNfpxJZbMyxBW
-	l0IesPPpK04rbficEMyVImVpn4Dgf09vXKK5tFlGnRCmHeL7Zx6QyAueIqAku7zTKM6/g
-X-Google-Smtp-Source: AGHT+IEbopEuDV++hnxNrBy6jE94j7fNSg5OYfawZGMmOOqA+BK3PuMzmdEKgi6bq4gnWI1YvySFkw==
-X-Received: by 2002:a05:6214:2a4c:b0:707:635f:67c3 with SMTP id 6a1803df08f44-70935f79001mr202676776d6.14.1754409269871;
-        Tue, 05 Aug 2025 08:54:29 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce37c01sm73097906d6.79.2025.08.05.08.54.29
+        d=1e100.net; s=20230601; t=1754409575; x=1755014375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V/Od2rfppNEDbprPUwulY8XJGdzkkGhVfmvmHo9N+0g=;
+        b=rKBx1Qtclf86YmV+q0ZFlRzc8APG9tErKiLAzDok8RCzO5LDPYtU0gSdQG5GOJffOS
+         DK53Jguh7JNvpky2R8V81j2WRWAg4pb4Xv+J4e7R2m2/bXgG/N3vwpLLeMc/1I1WgdRX
+         fHQO0mx/ENnNf1ClDOfxZ5vFaDMrHnehDM7aqGg9df2hl/MoPPFmwRr7zsV0BDZNJxFM
+         8x+NA/Y4YKT9q/biYIdCpBeRkJAtDWu4INbYb0a16WG0N6aNBUa9aymKszqTVV1Z4ve3
+         DWRczAfFgJ+M4MBxxuhYuHjm6zW06yfUzJ37QFjJ7arImzrGjG2ZZBAvkhduMDJcqhGB
+         eFDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEm2vXJVuLQ3rNfuXkpg/g89amPNodnRaZW7aQ9SMSalwVSDOZogSllZ0o4zqnEDoAVc2k/SgrE40YLN6b@vger.kernel.org, AJvYcCVxSWTT0bXa88RJAoKPsK0SGsv3582erCcTdxS3J2bG6iQwBQckzErHu64FmoYPgJ28NK6rBHGYCKSp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbeHIPLMUQh0GnwiiJzohO+xT/VvZbE7sRGPP8lzhKJfCDt+Ga
+	msk4ffzTaZRoawVpOhA1uNSvG43BPTDD2lDBsUujtXCEaTX23QCOBSypQHhBEw==
+X-Gm-Gg: ASbGnctJXfOF8O98R0JHBhrWQQD2mr+2JSyhvx7tT2PP4fWDVFgSej5tP3J/4ghpke8
+	ND2thSywmoHiVSROBV2VuAk29XRUS/AuACRZYG/ebsCjIReJ8+HhIDLMIyxsaqLC2s8qcPjoD3p
+	FzrvwQ5ojpD1C/GTsifXqtqLFAGB9tTlX/s4b5fJ/0NBMspSP76iT2kLsYyogukALRd9B2Wn99J
+	ESxbNujApvcVZ6/CFNolxdG7P4uSQD03lwLanNYIiV0vp2Pj0qAVH5F+n8ygU9h2/2/CXHsURwP
+	mL2pBHMCBTgxEoyWNfnGjZcCIrk6gn20bLQNcXuXUv+3RZT7sjMgZuyufBjzNBF7s6LWRsZZgY5
+	D+qmVD2jOxHOP
+X-Google-Smtp-Source: AGHT+IES1fD8irvZA4SGu2efKUtBxC9f4epdz1iAOhgYvBR/G8G/w5ox4688q4NrAUGzo/aiypeyyQ==
+X-Received: by 2002:a17:90b:1b06:b0:31f:24c2:16cb with SMTP id 98e67ed59e1d1-321162cd92dmr7989190a91.6.1754409574886;
+        Tue, 05 Aug 2025 08:59:34 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f35f90sm17375728a91.35.2025.08.05.08.59.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 08:54:29 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ujJzg-00000001YhL-3W2I;
-	Tue, 05 Aug 2025 12:54:28 -0300
-Date: Tue, 5 Aug 2025 12:54:28 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
- memory
-Message-ID: <20250805155428.GU26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-5-aneesh.kumar@kernel.org>
- <20250728143318.GD26511@ziepe.ca>
- <yq5a5xfbbe35.fsf@kernel.org>
- <20250729143339.GH26511@ziepe.ca>
- <yq5aikj69kpn.fsf@kernel.org>
- <20250802134154.GI26511@ziepe.ca>
- <yq5aldnz8teu.fsf@kernel.org>
+        Tue, 05 Aug 2025 08:59:34 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>,
+	notselwyn@pwning.tech
+Subject: [PATCH] ksmbd: add kcov remote coverage support via ksmbd_conn
+Date: Tue,  5 Aug 2025 15:56:28 +0000
+Message-ID: <20250805155627.1605911-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <yq5aldnz8teu.fsf@kernel.org>
 
-On Mon, Aug 04, 2025 at 12:28:33PM +0530, Aneesh Kumar K.V wrote:
-> Note that we don’t update the phys_addr_t to set the top
-> bit. For reference:
-> 
-> 	tlb_addr = slot_addr(pool->start, index) + offset;
+KSMBD processes SMB requests on per-connection threads and then hands
+off work items to a kworker pool for actual command processing by
+handle_ksmbd_work(). Because each connection may enqueue multiple
+struct ksmbd_work instances, attaching the kcov handle to the work
+itself is not sufficient: we need a stable, per-connection handle.
 
-This seems unfortunate.
+Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
+and initialize it when the connection is set up. In both
+ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
+and handle_ksmbd_work() which receives a struct ksmbd_work*, start
+kcov_remote with the per-connection handle before processing and stop
+it afterward. This ensures coverage collection remains active across
+the entire asynchronous path of each SMB request.
 
-So you end up with the private IPA space having shared pages in it,
-so *sometimes* you have to force the unencrypted bit?
+The kcov context tied to the connection itself, correctly supporting
+multiple outstanding work items per connection.
 
-Seems to me we should insist the phys_addr is cannonised before
-reaching the dma API. Ie that the swiotlb/etc code will set the right
-IPA bit.
+The related work for syzkaller support is currently being developed
+in the following GitHub PR:
+Link: https://github.com/google/syzkaller/pull/5524
 
-Jason
+Based on earlier work by Lau.
+Link: https://pwning.tech/ksmbd-syzkaller/
+
+Cc: linux-cifs@vger.kernel.org
+Cc: notselwyn@pwning.tech
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+---
+ fs/smb/server/connection.c |  4 +++-
+ fs/smb/server/connection.h | 14 ++++++++++++++
+ fs/smb/server/server.c     |  4 ++++
+ 3 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
+index 3f04a2977ba8..6ce20aee8cc1 100644
+--- a/fs/smb/server/connection.c
++++ b/fs/smb/server/connection.c
+@@ -322,6 +322,8 @@ int ksmbd_conn_handler_loop(void *p)
+ 	if (t->ops->prepare && t->ops->prepare(t))
+ 		goto out;
+ 
++	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
++
+ 	max_req = server_conf.max_inflight_req;
+ 	conn->last_active = jiffies;
+ 	set_freezable();
+@@ -412,7 +414,7 @@ int ksmbd_conn_handler_loop(void *p)
+ 			break;
+ 		}
+ 	}
+-
++	kcov_remote_stop();
+ out:
+ 	ksmbd_conn_set_releasing(conn);
+ 	/* Wait till all reference dropped to the Server object*/
+diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
+index dd3e0e3f7bf0..07cd0d27ac77 100644
+--- a/fs/smb/server/connection.h
++++ b/fs/smb/server/connection.h
+@@ -15,6 +15,7 @@
+ #include <linux/kthread.h>
+ #include <linux/nls.h>
+ #include <linux/unicode.h>
++#include <linux/kcov.h>
+ 
+ #include "smb_common.h"
+ #include "ksmbd_work.h"
+@@ -109,6 +110,9 @@ struct ksmbd_conn {
+ 	bool				binding;
+ 	atomic_t			refcnt;
+ 	bool				is_aapl;
++#ifdef CONFIG_KCOV
++	u64				kcov_handle;
++#endif
+ };
+ 
+ struct ksmbd_conn_ops {
+@@ -246,4 +250,14 @@ static inline void ksmbd_conn_set_releasing(struct ksmbd_conn *conn)
+ }
+ 
+ void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
++
++static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
++{
++#ifdef CONFIG_KCOV
++	return conn->kcov_handle;
++#else
++	return 0;
++#endif
++}
++
+ #endif /* __CONNECTION_H__ */
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 8c9c49c3a0a4..0757cd6ef4f7 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+ 	struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
+ 	struct ksmbd_conn *conn = work->conn;
+ 
++	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
++
+ 	atomic64_inc(&conn->stats.request_served);
+ 
+ 	__handle_ksmbd_work(work, conn);
+@@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+ 	ksmbd_conn_try_dequeue_request(work);
+ 	ksmbd_free_work_struct(work);
+ 	ksmbd_conn_r_count_dec(conn);
++
++	kcov_remote_stop();
+ }
+ 
+ /**
+-- 
+2.50.0
+
 
