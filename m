@@ -1,171 +1,154 @@
-Return-Path: <linux-kernel+bounces-756435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38A5B1B3E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C6AB1B3EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 909894E250E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:00:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4510D4E24D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D1A23D288;
-	Tue,  5 Aug 2025 13:00:15 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C052230997;
+	Tue,  5 Aug 2025 13:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e/qC8sot"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74ED17996;
-	Tue,  5 Aug 2025 13:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042BD10A1F
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754398815; cv=none; b=L/RxXtQ35lQlYa54SPhqdjoigtVTRSSuMRxsjA7gr4U62QTtKlQVMscOCLciNffrryESLwz9zjvUZFu3OZmYgO/xcpVx1/RV/Wg2hhfu4JB4TMt9UOsRSXLOAE8Q++EnBvL2kh0j0DXORxYXCRMxkgAm8Fl7HrLwyvh/8vSwuLU=
+	t=1754398876; cv=none; b=q+6jW8hflINDbnGXfcd+Lt4rfx+0VnNgGKCAvVOxtKbp7wfaaxCWxkZyYmPXPTIAYNSU/Ba+6H3yWCBLOZqlaqCb1uFqWni39KyDLV54bdtiU+qzLDaK9l9fKyfTYXxuluRRExvqXulPv86b73RL2tCKFch4KkkBLZNPbKFCIKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754398815; c=relaxed/simple;
-	bh=4t7dMcqzc7zDlbYdbuJAk8tlv9zQyDoso6MSnjmvM50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdlaTrk9DCw8tUM8zrs/4/SRZHSOqbC/1EYW7j+BYZ1c66sUYMhx5DnMszoA6YaAqTDiHVJpo7UKGWZCNHCb9sKov/ioWXNB8BMr+YsPxP1EYqqHd7Cp0BJGuo52WI7nLUi4fZ1knxVjXikoD6HrAW7wekIn4Zq4HIEIsqwsIOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6154655c8aeso7587848a12.3;
-        Tue, 05 Aug 2025 06:00:13 -0700 (PDT)
+	s=arc-20240116; t=1754398876; c=relaxed/simple;
+	bh=jCINSY02b3VcKaYR8JyLD/p2mOf2EtH7q4vBP76L8iU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XFeEJW/Jh0O7X7J4SIn74VzePjqk9S2EFc+ati6g1k93XRb33OtLF3jWti9rOyFgTHns5UR9VQUp/4HrhhuRuw+SjY9hIfOaqwZnlOO3PXYQ1Gu2gMAbVTENIR5pjzCHmEZppmzsqWZ0gPLKN5ch/lSUegEKwwsrIVkZr7bkwvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e/qC8sot; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af96fba3b37so349320166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1754398872; x=1755003672; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjxzM+Wf4qtRYVaNCOW0++JtZ+DW7avxmv36rBvNzbg=;
+        b=e/qC8sotlWxt8Yomkrc2xTX22jmwuOR0yuA1+BTSnJSaFOOClzh3Yxz30eltZ2G3FL
+         h62xCSMRbm5mFdIIbF8QWZvozy024OrBGwYOcv9MAfiq1iW2++HVUFAPGjH+GYrolIj/
+         H2fv4caUKxzR/EPrH5cA49ArFupPCjKILs0ng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754398812; x=1755003612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BzQHx1i5Fs/JOgRu+gEHkLfTlj9ZTI1ibV6XEx4O938=;
-        b=JUsTIk7LiRZfCbPteZKgD13Bx88wsb/6aaBGdpECOA11fFVTAEXvWFaa9mmEjwoqua
-         VUAS/r5FFWrqc9Cy4VdcFQ9xKe5yUIXNt56kqMMJjIzKQDY4J07fwIKalVtHPac/MKrX
-         +/fIlCzXoGdtnYSWRv9o2erF9YODUE3AOwQspOS5G15FTUZTHpYsVF3442oBT8YQ+KUS
-         f+WEcf3sU8c0AX21CVlZbfFs77tom7GTzB/szbTy/4Feg9wyvaDfvdt99zvsOvf+7bc7
-         D1FW+OV1Erg+p7hvUmblgBCT4OktQfnOA3TMlz9eRAiPYMuZlZVoYhSVYSJzFoB2MYP4
-         YrCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCgcvL5VOmL+Lq0sXH3cv9fMgFIq0iamPy2BDLkJWWkl/o40zgMqn6phl91T2GQYHepwFnsYhysKhj@vger.kernel.org, AJvYcCW+hjNKoa+zChQB5GBQ28LG6lb45BULULlf7LCut3PQ1oXEswZCq0rcWkaJrz0CJG7VOAi2efM/QZ+n@vger.kernel.org, AJvYcCWf4neT7Wh71m/7ilqF/YwstPxXBtd4d1whDDsU18psOilGwVVRnByvix33RLIxxVx/3cjeGLHXl5+PKluK@vger.kernel.org, AJvYcCWsltZkemN8/vG86hEj3dkrcLQ3GIgsH8OxXv2R07HUpzOqAPU3JQiNJPGgBosAYBKkEuADEW4wHJiQUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTrM1KFLXiUP3OfLYQ7l0yI5FobOeJ2tvJ8fgYDTstkRFzKDnO
-	IxJI2nlm5fVgDVoWOT+11zqZuJn6KywZWYKwdn6mXFjcW/z2GBMT03Mi
-X-Gm-Gg: ASbGncuWcljrjn0P6YdrsguMVELhzOOFKQ5JRVzdFHtdpC+AD8JBbQNqJ5bTm0MxOZT
-	LNZ2QeU17bItx9aTnnudgenXUlr9tJKdeI/696omhLcNkpawLkNjnXrGOOl24TbZPCBNEVXw08P
-	1DRSxuax5qDs33wraQtbacaGimm88YKXTGmnrl/Ru+DgS0BQFPu9IWqH7uW66u9ydNfqht17nnb
-	R0GKRrRenACyMJqLYSQLPkLrEfLhDbiAVQpb2A4G1YzvY434CJ3Ar9F/an1RqgwC9pYOp4S1j6N
-	UvTvQO7Xg7Hkd4J1K/wFrb9c39GU3eHo73BVEqq9zzLyASWm0n46Sg9RHEuXELdFDuIzYme0feN
-	lMUFupVtnKmnS
-X-Google-Smtp-Source: AGHT+IGjZSNpW7mJUj3kJ0f8IpMzBnPj+YUjP2KOPDwITdV1e7i/FDQIvzJwDgp/H8IFr3t8Mztalg==
-X-Received: by 2002:a05:6402:4402:b0:615:b0e2:124b with SMTP id 4fb4d7f45d1cf-615e715bd27mr13276935a12.24.1754398811018;
-        Tue, 05 Aug 2025 06:00:11 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2a448sm8429117a12.20.2025.08.05.06.00.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 06:00:10 -0700 (PDT)
-Date: Tue, 5 Aug 2025 06:00:07 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Robert Moore <robert.moore@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, osandov@osandov.com, 
-	xueshuai@linux.alibaba.com, konrad.wilk@oracle.com, linux-edac@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, kernel-team@meta.com, osandov@fb.com
-Subject: Re: [PATCH v4] vmcoreinfo: Track and log recoverable hardware errors
-Message-ID: <j4ac55vpiemdjdbfzoktoqv763fhpv6q2agmgaeggvahfj5kuy@v7l5lrrdwkjj>
-References: <20250801-vmcore_hw_error-v4-1-fa1fe65edb83@debian.org>
- <85663f65-d746-4e2c-b8a6-d594d9d0ba42@intel.com>
- <f3yl424iqiyctgz4j36hzjrhkgae3a2h5smhalm2qbmq3nrpzd@oeuprthscfez>
- <0c045f1b-44d0-430c-9e8a-58b65dd84453@intel.com>
- <buhwuankenpnvmio6jeoxverixoyfpn2eh62ix7vzxw7xvlxcv@rpibcrufr2yg>
- <842d675e-4c22-4f13-b40b-c4b5208e4223@intel.com>
- <ipdhflmgqrlq2vor657fiwex66jqw2do747uvu3tvrcsvtvdjj@lg5zrcua2dgn>
- <529fbbc1-90fe-467b-9bd2-d1a18bb38670@intel.com>
+        d=1e100.net; s=20230601; t=1754398872; x=1755003672;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fjxzM+Wf4qtRYVaNCOW0++JtZ+DW7avxmv36rBvNzbg=;
+        b=Ri1e+7is2tULtn1YVq6z5xBYSZb+UA4d2vgE4K2z21O+qhKsyRl7pijwfOIOiQMTQe
+         9aSto7ix8MQ4qMbiPe9wdnsPGgdutCoamcEIteQDfaTNDEfmm5owtDIhW00SabxlJOkW
+         TsiScLs43da4HYvgZM3vEfem0Merfuod4LK3rQ9B9zh2O7DM2TUOKz0ZdagHHeLeeXBE
+         MyAymoH4dQcKrDV9hluMLpdgxeu2YDqj1s2sf2WDnFJ3i1g5YUun9JIsmTo0+tRZCggP
+         YK11MWtcCNmQ7M7Chipq/BE+BmjfoD8f6l6h0MiwsvbuQle+o3gI+Y0mvX1Yvb3AHjU4
+         M3sA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1KZAu81DnSnmMLjh1TOed1mSlPCUrlDzy1kBVnSXpseAmf2Pk7GAkbpvD5qu0aL8/rG7MQF9AOh6vF+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEOXgahU2pxhrF+1NavtBYgeoF8wJaBUL5y2yGGkRVP+ZfAJjB
+	iJHfqaLRIEvIBFm03I7iM1YJY1a1IXuYv3OYj9jc1C7ihYSHO72Gm82mKa4MOUJH2hZE65eJEnc
+	EXOEZWnYO0Q==
+X-Gm-Gg: ASbGncsexs0ZRur5fsCP0iSTVjTj2/In4ga8lWmfUnJtw594TYt46yRzr9cnPvJ/B2L
+	xWc/3Ax2FcNq1aTMMg19NYVFDVawSZ8k33fHmTfg4ynuDMVqoaJucJhHCqyKka9gipvagl3Og3D
+	lcrCUS3NiKbiQprG/N3x/0c2LgxWvwF420PoxiEMJbNKee//6jMGg642TmevFSR/EOG2TPZNf8+
+	lVt561EkHvR46OauDbn9yRa2JRcgAozDfIxKvNYYyLurLL05yMW5TVXX+8CvzyXNjStdZP6FJET
+	CZjxGKN5wnWPkXi9tbv8D7R3e3sIlxGB4/ssGzBp4RW2Aif/6A03zLDTHCa60XTUXAVoPfwmE9g
+	nJzQCA6G3R9z3F462ns53zu/Au3RQaJmsDYjtAjQHaRJwft6Jt1DK4dTICVt6OqTFIFnQiU72
+X-Google-Smtp-Source: AGHT+IHDsPizzp6RYQEwtk+nR/E2lyIa6BmHLS+TJEyZdusSG/rpPqO/ERxrYjrsumioEmgDvU44sQ==
+X-Received: by 2002:a17:906:7312:b0:af6:361e:664d with SMTP id a640c23a62f3a-af93ffcf84fmr1412484466b.7.1754398871579;
+        Tue, 05 Aug 2025 06:01:11 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23fd00sm899438166b.122.2025.08.05.06.01.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 06:01:10 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso9547880a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:01:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWt9d6oY+ok0N6oY1avVxQl0e4DbKfkxgQoQ1OK2I3CgG7RNHrq4/GGG7bx6e/q9lTqgF7rBfFZ1ChHRLg=@vger.kernel.org
+X-Received: by 2002:a05:6402:35c9:b0:615:9fe5:f9b4 with SMTP id
+ 4fb4d7f45d1cf-615e6f51419mr10235333a12.20.1754398870074; Tue, 05 Aug 2025
+ 06:01:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <529fbbc1-90fe-467b-9bd2-d1a18bb38670@intel.com>
+References: <20250804162201.66d196ad.alex.williamson@redhat.com>
+ <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
+ <20250804185306.6b048e7c.alex.williamson@redhat.com> <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
+In-Reply-To: <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Aug 2025 16:00:53 +0300
+X-Gmail-Original-Message-ID: <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
+X-Gm-Features: Ac12FXxoX_CjIAKtjLryo0sCU8BxLl8OrhQv0TcPGjBq_s03leh63xL_WcFm2cw
+Message-ID: <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
+Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
+To: David Hildenbrand <david@redhat.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lizhe.67@bytedance.com" <lizhe.67@bytedance.com>, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 04, 2025 at 10:41:05AM -0700, Dave Hansen wrote:
-> On 8/4/25 10:12, Breno Leitao wrote:
-> ...
-> > +- These errros are divided by are, which includes CPU, Memory, PCI, CXL and
-> > +  others.
-> 
-> There's a double typo in there I think:
-> 
-> 	errros => errors
-> and
-> 	are,=>area,
-> 
-> > --- a/include/linux/vmcore_info.h
-> > +++ b/include/linux/vmcore_info.h
-> > @@ -77,4 +77,20 @@ extern u32 *vmcoreinfo_note;
-> >  Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
-> >  			  void *data, size_t data_len);
-> >  void final_note(Elf_Word *buf);
-> > +
-> > +enum hwerr_error_type {
-> > +	HWERR_RECOV_CPU,
-> > +	HWERR_RECOV_MEMORY,
-> > +	HWERR_RECOV_PCI,
-> > +	HWERR_RECOV_CXL,
-> > +	HWERR_RECOV_OTHERS,
-> > +	HWERR_RECOV_MAX,
-> > +};
-> That enum needs to go into an abi header.
+On Tue, 5 Aug 2025 at 10:47, David Hildenbrand <david@redhat.com> wrote:
+>
+> The concern is rather false positives, meaning, you want consecutive
+> PFNs (just like within a folio), but -- because the stars aligned --
+> you get consecutive "struct page" that do not translate to consecutive PFNs.
 
-Agree. I came up with something like the change below. Is it the right
-thing to mark the enum as stable ABI?
+So I don't think that can happen with a valid 'struct page', because
+if the 'struct page's are in different sections, they will have been
+allocated separately too.
 
-Thanks
---breno
+So you can't have two consecutive 'struct page' things without them
+being consecutive pages.
 
-diff --git a/include/linux/vmcore_info.h b/include/linux/vmcore_info.h
-index 37e003ae52626..e71518caacdfc 100644
---- a/include/linux/vmcore_info.h
-+++ b/include/linux/vmcore_info.h
-@@ -5,6 +5,7 @@
- #include <linux/linkage.h>
- #include <linux/elfcore.h>
- #include <linux/elf.h>
-+#include <uapi/linux/vmcore.h>
+But by all means, if you want to make sure, just compare the page
+sections. But converting them to a PFN and then converting back is
+just crazy.
 
- #define CRASH_CORE_NOTE_HEAD_BYTES ALIGN(sizeof(struct elf_note), 4)
- #define CRASH_CORE_NOTE_NAME_BYTES ALIGN(sizeof(NN_PRSTATUS), 4)
-@@ -77,4 +78,11 @@ extern u32 *vmcoreinfo_note;
- Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
-                          void *data, size_t data_len);
- void final_note(Elf_Word *buf);
-+
-+#ifdef CONFIG_VMCORE_INFO
-+void hwerr_log_error_type(enum hwerr_error_type src);
-+#else
-+static inline void hwerr_log_error_type(enum hwerr_error_type src) {};
-+#endif
-+
- #endif /* LINUX_VMCORE_INFO_H */
-diff --git a/include/uapi/linux/vmcore.h b/include/uapi/linux/vmcore.h
-index 3e9da91866ffd..2ba89fafa518a 100644
---- a/include/uapi/linux/vmcore.h
-+++ b/include/uapi/linux/vmcore.h
-@@ -15,4 +15,13 @@ struct vmcoredd_header {
-        __u8 dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Device dump's name */
- };
+IOW, the logic would literally be something like (this assumes there
+is always at least *one* page):
 
-+enum hwerr_error_type {
-+       HWERR_RECOV_CPU,
-+       HWERR_RECOV_MEMORY,
-+       HWERR_RECOV_PCI,
-+       HWERR_RECOV_CXL,
-+       HWERR_RECOV_OTHERS,
-+       HWERR_RECOV_MAX,
-+};
-+
- #endif /* _UAPI_VMCORE_H */
+        struct page *page = *pages++;
+        int section = page_to_section(page);
+
+        for (size_t nr = 1; nr < nr_pages; nr++) {
+                if (*pages++ != ++page)
+                        break;
+                if (page_to_section(page) != section)
+                        break;
+        }
+        return nr;
+
+and yes, I think we only define page_to_section() for
+SECTION_IN_PAGE_FLAGS, but we should fix that and just have a
+
+  #define page_to_section(pg) 0
+
+for the other cases, and the compiler will happily optimize away the
+"oh, it's always zero" case.
+
+So something like that should actually generate reasonable code. It
+*really* shouldn't try to generate a pfn (or, like that horror that I
+didn't pull did, then go *back* from pfn to page)
+
+That 'nth_page()' thing is just crazy garbage.
+
+And even when fixed to not be garbage, I'm not convinced this needs to
+be in <linux/mm.h>.
+
+              Linus
+
+PS. No - I didn't test the above trivial loop. It may be trivial, but
+it may be buggy. Think of it as "something like this" rather than
+"this is tested and does the right thing"
 
