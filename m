@@ -1,149 +1,236 @@
-Return-Path: <linux-kernel+bounces-756563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1200CB1B5F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:10:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8E9B1B5F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5473B2C60
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:09:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED4464E2897
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ED5200113;
-	Tue,  5 Aug 2025 14:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241B824E4B4;
+	Tue,  5 Aug 2025 14:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="njyPRPiA"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYrF9sgN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69841CF96
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFB2238C16
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402970; cv=none; b=KIyXeOuORjnjbrQbx42/crt5+9Xu1+4qXwsPfnXVsIakwj653TKVS4U9MV/98C6tabWRSy3ZbLG17nBThSkoK9XicZE359jFTciY9+TX9uPpQQWbr/Q3xuctVLHtgUJwVoAQ5YZQDCeg4zmukW9RnkXDM6DUbVQf+Tdbd6AKc6U=
+	t=1754403053; cv=none; b=dP6u0vhwOkHJ2E3cXhyVfUYUtCxmmeERgcEDK08hUFTdYCCIzS2lgPzRM2Ei5BdFiz0jdo3Fmycyp8VgXm37bI1hHhfhGWwdjvsmY7rcBsnypTuzb3tyntPeCfSciZFtxIK6NUZSlU24T45Dim+6wQT0dX2FSr/vHld1yxCCb+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402970; c=relaxed/simple;
-	bh=320HJNn3ZyIhNHt0qLcttuzPG79KlsmiYoJdg+13Uio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZEOZBz8rrVhw1SQiuopRpG8GGS89tRRsg0PAjooW+Dcys46+Vm0/1n0J1d2Rdx4MDwYSCASgmtS34U2lAbrhddiSJBnEQjdd0QuIMQsE7KN7O/e2ycraEQTAghVQbPOnBrOa0yx8NwCL1lzOOguBkftwZN7Gmg3wKdhBmz4JrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=njyPRPiA; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b0619a353dso20422501cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754402967; x=1755007767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzAYIR/shPSYacUrOQJo0K9+jh4P0UFNjUkTluGngLM=;
-        b=njyPRPiAKf3bMRCuA/9e7cisDO/K2qpF4agGRHzziUCskjsL+wPH7okJdOeR+kAc3F
-         H2GjPUM4bpaxPfU21xnd5Y0giX1AIu1nngIplnhNzWXSm2X+73kladYgX6jeuW3Tsg6A
-         1/5VnZuOGrK9it0FAGirZHhbO4sAnsiCbfWFkEdhBSVWjgZIF7hx25L14ISklnHu9a9P
-         uu1YRYWBMKWSVKwDklL6Dj3hCPp+EWT3hKiwfkNFtBRcQZptFhccOe/m9Uxp2qvbMYb6
-         f6dk8ZG96UDMXug+vY/CCb8SViNPUeNh3Pf1RrVvakzdyujzrE0U11cNffKrkEkrTIK2
-         5dBQ==
+	s=arc-20240116; t=1754403053; c=relaxed/simple;
+	bh=TsaADbPptyH1cgXg0qVwhNBfnCMXc9onrE46aaSHIIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYDW1/Y1YazIjzNEV+6/FG9VLYbiVI3UAbR2igYj1WQ8c0V0+3+xYsA/FsaYKp8PDNydmZFbwi3MLq5YUL0hGJGGx83Xx/GbSLp+vL41zgJzSojAePyX/HgtDNWgVup931ofe5oI27dxM+i4tUPxNoHMfYtq3VG/OLjfT+GdX8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYrF9sgN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754403050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0m5Gw04UbMRLmAQHZrUFAKCbY0Ac8md2NOdlEcfunIs=;
+	b=cYrF9sgNab1FOcvRH6+BjRSq537kXihtLUJ42ht1/h1LIMkyq723CNrnTF16DCs28NaF6r
+	jvPMLzoDdTVOu4ADVPmx6eLi/3kHvTIIiSI4g2GSv60DrCpWpJNvq9+aETDZ9I9rEzazx/
+	CSXYae1z86op37gnaxXZDob1PVPaDwA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-f9BFk_ZWPYO3_4Sp_b5FBw-1; Tue, 05 Aug 2025 10:10:49 -0400
+X-MC-Unique: f9BFk_ZWPYO3_4Sp_b5FBw-1
+X-Mimecast-MFC-AGG-ID: f9BFk_ZWPYO3_4Sp_b5FBw_1754403048
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b78329f180so4083380f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:10:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754402967; x=1755007767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uzAYIR/shPSYacUrOQJo0K9+jh4P0UFNjUkTluGngLM=;
-        b=jIg/7ECYvDrLqcftnOlDuHsl6c4yI/2s6uFCsM1J86UTyWI+lgWm3aNLzuxlL7jaUh
-         dMqyRrs8jUsvWWgzg4jMUVoaHnh3lehU/jRVL+thwMUNa6h7PdIxLAepeV3f4FclGRDx
-         X25oZTuq1ue3B56pvCM+vON9ruOVJRDyDMnJ+PO7fr8wbsEp4zYY0CJFbkVnOAWmyVED
-         R4WKDdoX8pNyX1S2LlR9mnmec1XLwOo7OlwQmakiRh2p+Kls5z5lUKG6OJ8+fs93b2+g
-         AWPAjWwekgxhOEh7gsDBnU08/PY1nnjzaH99pJu6QeF9ABZse/3dey8YPgBXx/POtPEW
-         I09Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDTlnWiKov0cE/8TquiOj7RD1cNwN8WOpuKXgYx8t02popaOViQkweIGxJmjOI24aoQUU/xRJOBelHUh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOn5Kd/c+UoKZPg29AeBkWGTyL5R6LbGyQBP9htSXrW4bJ7277
-	MmcqC05NLrUSDhqtzleG4ebaQhqPK8n8VGsbipGqZgHky2Q+5NsFE1vrFlDmVrn+XfQ=
-X-Gm-Gg: ASbGncu5n0gmhUlCjU8iOMvzvHVSXC8kuQpC51ewuhVybAjXcvNPT+zQF5JjtYH2zcI
-	1Y+OpZYAuDTQeRfSYQF57eKDL8S4/1IWgaVaCcVBcqztOSYipErjDnckyoBZNrDOIzgoK1srh8P
-	Wo0IPpH8RgK0CruXhVYeH5sQ0kl7G2e5Q47oK+7TcA1YNbQCBTuWkhV+eDeGymbSKZ0bRLSbNJw
-	3FAmy6scp2lVqdIZ3Zna5SSeBrybt3gmub64loWQKumuRq3My4YiECIRdlhW49N/LWz7R4hGWuV
-	1ca51zhiveliUOWBzvcN4YvWbFPKwCrJ0GsyYjpl5lCOiMalh8VJzjjlNjhDHw6KTIIEdwSYRZt
-	gmlZO9yCQCQqHN7FCKAUIJsS/UwlaOprs4y+dUczauFnLuzNdy3L2G4qrUnvwompRwe9mHcTVyV
-	RDgaE=
-X-Google-Smtp-Source: AGHT+IHL+J4sqP2SxcyYA/bm344OksrCpi3leJPwTfOOG1s5eCheuA6YOXSpbD6tw1CHk8ksExeFwQ==
-X-Received: by 2002:a05:622a:4a14:b0:4a9:a3ff:28bb with SMTP id d75a77b69052e-4af10a1abd0mr240543491cf.25.1754402967223;
-        Tue, 05 Aug 2025 07:09:27 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeed669c0sm65687951cf.33.2025.08.05.07.09.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 07:09:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ujIM1-00000001XVj-3WEg;
-	Tue, 05 Aug 2025 11:09:25 -0300
-Date: Tue, 5 Aug 2025 11:09:25 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Yonatan Maman <ymaman@nvidia.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Ben Skeggs <bskeggs@nvidia.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Or Har-Toov <ohartoov@nvidia.com>,
-	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
-	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
- private pages
-Message-ID: <20250805140925.GO26511@ziepe.ca>
-References: <aH4_QaNtIJMrPqOw@casper.infradead.org>
- <7lvduvov3rvfsgixbkyyinnzz3plpp3szxam46ccgjmh6v5d7q@zoz4k723vs3d>
- <aIBcTpC9Te7YIe4J@ziepe.ca>
- <cn7hcxskr5prkc3jnd4vzzeau5weevzumcspzfayeiwdexkkfe@ovvgraqo7svh>
- <a3f1af02-ef3f-40f8-be79-4c3929a59bb7@redhat.com>
- <i5ya3n7bhhufpczprtp2ndg7bxtykoyjtsfae6dfdqk2rfz6ix@nzwnhqfwh6rq>
- <20250801164058.GD26511@ziepe.ca>
- <b8009500-8b0b-4bb9-ae5e-6d2135adbfdd@redhat.com>
- <20250801165749.GF26511@ziepe.ca>
- <vscps6igy42u5limiigiok6y35mjx6acawi3qmvzbrpvltp4qp@mkydml7lz6fu>
+        d=1e100.net; s=20230601; t=1754403048; x=1755007848;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0m5Gw04UbMRLmAQHZrUFAKCbY0Ac8md2NOdlEcfunIs=;
+        b=Gf7+0puCi0+F+3OLuMnQCICTkP01tfxPa0vB+PxE9z5j4hUyLsR/SehowrUYQUpDAz
+         aEVhbCKiSFFlF4BGT11JenpOSqJBiZq7jRf+LO5MFBsIO+7IoXKPlj6GRrTDSBBwfdLT
+         m5xDgd8JSesKdVkDSwszx2tx3gg9XZ0STDGpfevJQgrQi75047iudqXFwVT8j/y51RcE
+         0+kxfktERAdoXuT3+/m8K3jnhqN1W4RBOnicbLl0xjU61YRZDR9lLFtvAdj/n0Gpy5td
+         su19oinUHJJyXXE3Zcwb66fpI+IDsuO1tb4xAPUPm1D8pfx70wtWnilZFiFKEtj9L5MS
+         iCzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdV73SHjtfl8A2f7q09wtblCS0XhEOB/P5Zl3wb+EGdPXbiCfH3AhRv1b74YDiziQvs397/AS2bdEvsBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCdwf/iVVl6d50Gn89T02SCRzSaeAAYXLdVmWy5Dwh3qrlzqFX
+	QzLr4nmrVM9jQtc1B4aVbw+Vlgg/EK0Ta1qzKAbgwdUKOltMHxRluLZzjs0xPSybh9LlxZ8t7yE
+	Q4lNzyZeWRKXSIVsiF06D/+f86BOVU8PmXW8VZ7dndijrj5OylBpiNODLuLVthYwe1ePBXawo/P
+	6n
+X-Gm-Gg: ASbGncs1TVGDKCQo4Ukl8DWY737Z13Y1Vo1u49i1mvVWjg4lN/3u4ptIU0PJWy0Wc/Q
+	hryMrsITuV44Jz3m8u4NzbOyo71Tk4KJikxcrWp4JyBPnIr5ZH+5HGct4ySnZcZpVnI2QVvaXEt
+	zi28yU/15xCCqY51CRLibTTbtzxC7QItYLt7GKUsRaMrgBHbyehd3+sU1bRo7AKzhwj3bqSpJxv
+	yLhvmJBYcdTkIlvlicBivNg3GBhZeUiYgVpePt8yiLvyZOzXwfhwOZ++4bmhZEpQDKYslUQGOpR
+	88UBoOg1PBJgZy0QdiGsALL1huswDGI9ZBTQKofm/eKMpS9cwABNrZ6ymok8q8ydAeKyWL8=
+X-Received: by 2002:a05:6000:1a88:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3b8d94c3709mr11246741f8f.39.1754403047887;
+        Tue, 05 Aug 2025 07:10:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEexNiINw+B4zOB1F3l89SuwXwPjwmOTkxYd/AiBzbluL+XUrha4BO9qng5Gb9r3LombGt9uQ==
+X-Received: by 2002:a05:6000:1a88:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3b8d94c3709mr11246710f8f.39.1754403047439;
+        Tue, 05 Aug 2025 07:10:47 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1a26f.dip0.t-ipconnect.de. [87.161.162.111])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c45346asm19484393f8f.39.2025.08.05.07.10.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 07:10:46 -0700 (PDT)
+Message-ID: <44157147-c424-4cc0-9302-ccf42c648247@redhat.com>
+Date: Tue, 5 Aug 2025 16:10:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vscps6igy42u5limiigiok6y35mjx6acawi3qmvzbrpvltp4qp@mkydml7lz6fu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
+References: <20250804162201.66d196ad.alex.williamson@redhat.com>
+ <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
+ <20250804185306.6b048e7c.alex.williamson@redhat.com>
+ <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
+ <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
+ <20250805132558.GA365447@nvidia.com>
+ <00999740-d762-488a-a946-0c10589df146@redhat.com>
+ <20250805135505.GL184255@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250805135505.GL184255@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 11:51:38AM +1000, Alistair Popple wrote:
-> On Fri, Aug 01, 2025 at 01:57:49PM -0300, Jason Gunthorpe wrote:
-> > On Fri, Aug 01, 2025 at 06:50:18PM +0200, David Hildenbrand wrote:
-> > > On 01.08.25 18:40, Jason Gunthorpe wrote:
-> > > > On Fri, Jul 25, 2025 at 10:31:25AM +1000, Alistair Popple wrote:
-> > > > 
-> > > > > The only issue would be if there were generic code paths that somehow have a
-> > > > > raw pfn obtained from neither a page-table walk or struct page. My assumption
-> > > > > (yet to be proven/tested) is that these paths don't exist.
-> > > > 
-> > > > hmm does it, it encodes the device private into a pfn and expects the
-> > > > caller to do pfn to page.
+On 05.08.25 15:55, Jason Gunthorpe wrote:
+> On Tue, Aug 05, 2025 at 03:33:49PM +0200, David Hildenbrand wrote:
 > 
-> What callers need to do pfn to page when finding a device private pfn via
-> hmm_range_fault()? GPU drivers don't, they tend just to use the pfn as an offset
-> from the start of the pgmap to find whatever data structure they are using to
-> track device memory allocations.
+>>> David, there is another alternative to prevent this, simple though a
+>>> bit wasteful, just allocate a bit bigger to ensure the allocation
+>>> doesn't end on an exact PAGE_SIZE boundary?
+>>
+>> :/ in particular doing that through the memblock in sparse_init_nid(), I am
+>> not so sure that's a good idea.
+> 
+> It would probably be some work to make larger allocations to avoid
+> padding :\
+> 
+>> I prefer Linus' proposal and avoids the one nth_page(), unless any other
+>> approach can help us get rid of more nth_page() usage -- and I don't think
+>> your proposal could, right?
+> 
+> If the above were solved - so the struct page allocations could be
+> larger than a section, arguably just the entire range being plugged,
+> then I think you also solve the nth_page() problem too. > Effectively the nth_page() problem is that we allocate the struct page
+> arrays on an arbitary section-by-section basis, and then the arch sets
+> MAX_ORDER so that a folio can cross sections, effectively guaranteeing
+> to virtually fragment the page *'s inside folios.
+> 
+> Doing a giant vmalloc at the start so you could also cheaply add some
+> padding would effectively also prevent the nth_page problem as we can
+> reasonably say that no folio should extend past an entire memory
+> region.
+> 
+> Maybe there is some reason we can't do a giant vmalloc on these
+> systems that also can't do SPARSE_VMMEMAP :\ But perhaps we could get
+> up to MAX_ORDER at least? Or perhaps we could have those systems
+> reduce MAX_ORDER?
+> 
+> So, I think they are lightly linked problems.
 
-All drivers today must. You have no idea if the PFN returned is a
-private or CPU page. The only way to know is to check the struct page
-type, by looking inside the struct page.
+There are some weird scenarios where you hotplug memory after boot 
+memory, and suddenly you can runtime-allocate a gigantic folio that 
+spans both ranges etc.
 
-> So other than adding a HMM_PFN flag to say this is really a device index I don't
-> see too many issues here.
+So while related, the corner cases are all a bit nasty, and just 
+forbidding folios to span a memory section on these problematic configs 
+(sparse !vmemmap) sounds interesting.
 
-Christoph suggested exactly this, and it would solve the issue. Seems
-quite easy too. Let's do it.
+As Linus said, x86-64 and arm64 are already VMEMMAP-only. s390x allows 
+for gigantic folios, and VMEMMAP migjt still be configurable. Same for 
+ppc at least. Not sure about riscv and others, will have to dig.
 
-Jason
+That way we could just naturally make folio_page() and folio_page_idx() 
+simpler. (and some GUP code IIRC as well where we still have to use 
+nth_page)
+
+> 
+> I suppose this is also a limitation with Linus's suggestion. It
+> doesn't give the optimal answer for for 1G pages on these older systems:
+> 
+>          for (size_t nr = 1; nr < nr_pages; nr++) {
+>                  if (*pages++ != ++page)
+>                          break;
+> 
+> Since that will exit every section.
+
+Yes. If folios can no longer span a section in these configs, then we'd 
+be good if we stop when we cross a section. We'd still always cover the 
+full folio.
+
+> 
+> At least for scatterlist like cases the point of this function is just
+> to speed things up. If it returns short the calling code should still
+> be directly checking phys_addr contiguity anyhow.
+
+Same for vfio I think.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
