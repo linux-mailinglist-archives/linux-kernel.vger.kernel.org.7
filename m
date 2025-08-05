@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-756777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF3AB1B90E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:14:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CDBB1B912
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A610E169699
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C35168F53
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AB6293C44;
-	Tue,  5 Aug 2025 17:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0029C294A0B;
+	Tue,  5 Aug 2025 17:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzsjP5ci"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="buCjQPph"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7CD28136B;
-	Tue,  5 Aug 2025 17:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F4D292B36;
+	Tue,  5 Aug 2025 17:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754414033; cv=none; b=SoFgf1pW1b/WDR+M1o0vKvVF0M7prV7WN8B94/s8xg41e/BdMmJvjscO55H5HVBfottnh1RfPSOnMsbaCn3uK/0Pk1VaMcDyZzHSQHCNcLYAZ9bTs//BPCt1di6bXxb0kd5myhcc3KFGC7E6oYA94LxdTwf/77KQh8Zjj/DUIf4=
+	t=1754414068; cv=none; b=ChkffV5944aysZgcN1okqGsV+nktBxyTTKmxHbP1mUrHqBPIpApMiDVdwLFmrmsNB4j3EhRS0vJwrqQx04itlZMjeU4Ji2dpbWPmeUHggl1Bv4WDHKgKAHmPVNuvAGPMgOgrmO1b/+WT0KjU5to84UmhXegbEVASs6R3DZp7cHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754414033; c=relaxed/simple;
-	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksCahA2xgyHdjYUpta+9LbxEw1HXr7p6xrhSfxeLKUT3ugGZXrXrvqsz9VRi020FTQ/nbT0lFyZHjeK+53CeJy3HKe8Up4m9mG6VqOTr75J2Lm4KtbTgOBOsR6VPtDeev/Wms3DUehV+FL9JQyFwfWhsFiSBrpbz8222CFB2AFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzsjP5ci; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFFE6C4CEF0;
-	Tue,  5 Aug 2025 17:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754414033;
-	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzsjP5ciz19VA8OYXPXGI3ps14D5SxS7bD9pxYQPAycE7Y4pHpSw4SS0UcE7MZLJK
-	 T0nkWr8PsG/9TjOF1GRpxVkvzT7db4zoXaZdRtioihy15x5sVlSB8Bs7VFkS4USG+H
-	 Jh8TXTGLuuhc2eWztbTmwYGT/92FpvmiC7XnpNWVLkRkIATERWrsm+4LumZ0x/SisN
-	 2Gugtnz8V8UuBGzMQgNBJ2r7eA4Qo27++wMMC4E07nPsGl+UN4J0Ds/hvhUs0pb2M1
-	 GPJCs5jNFr05si0U+WdLxZcTfZde5GzbWAjEOalxyRTUAQY34FeGxmnKczRm4z5JzF
-	 8oifLKq6fY5+w==
-Date: Tue, 5 Aug 2025 18:13:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-Cc: sboyd@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] clk: divider, gate: create regmap-backed copies
- of gate and divider clocks
-Message-ID: <20250805-slit-scrunch-e19f8afec16d@spud>
-References: <20250623-levitate-nugget-08c9a01f401d@spud>
- <20250623-spleen-rambling-8bd898f2788e@spud>
- <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
+	s=arc-20240116; t=1754414068; c=relaxed/simple;
+	bh=6lbYw/Td/NTUPgIOaVNkmO7VINv3ZdqXK0a+RuwbjxU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Istc4ttuE47mzvfCXLioYQXPwkIHgkHNA3LZsA52Rb7hKjsRdr75/PjmZ1GPvz6ON2iIfbQATl9MHzgx26r+ZOK/j8peXDsLTYS4Jjx7dhKwa/imH1VHviUPJAPpuGBiOQ+HEYYrYkHl5HG9r286/hSzYEZSjBerVbnIikha/bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=buCjQPph; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-31effad130bso3668071a91.3;
+        Tue, 05 Aug 2025 10:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754414066; x=1755018866; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z5OOTXzGWVVgmVRg0X1KfTB1dkMRMeD/PW1OHO9QcZE=;
+        b=buCjQPphA11cw06j2PTN3dB4UoVSQWIIOElUcnsgLkEI+RIajm887p2kkzkRbPSqLs
+         mlugGFML7oDl7HS9AmXrbQ+/EN4aHsNyVQefuZ6rEIhvWHXhotmSIihLJkZF24xFGMlq
+         4PBf0/SN/u8UE4eWTiO6a9E4kTH1cE7saN/ltbcLjvO1Y8jnvmpoy72Rhr/ihB8G0GPq
+         emGtQJO6FJw2AmMpXvU9R0I9cmi9+7WeuUDPKraUvFaKcB5BfmgbrpvIPKnXhr3oaOlb
+         lP1fgg+/u2aKlKbV42Y4IrNU7ew2htvBAH4i4WUX2cN/LDkwVFVPbvZC2hB+cDQ4Hhpo
+         kKtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754414066; x=1755018866;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z5OOTXzGWVVgmVRg0X1KfTB1dkMRMeD/PW1OHO9QcZE=;
+        b=Z7Xd03uU4vjaQfdUDlSY1iC5SyJsirt3wnjuQNHdgAcoZ1ron71c04d/m9kUbHFaOA
+         R0MTD5cjPZaf1Yq6xAf7phIr1tMTr2X/tPFu/RjvrrMkbGJ0txYVElQlkQzoy33rAdXw
+         ML2kqX+JxVz2KqZjqTI8g6i7PFXenAR5eUWRrFIXhAyAVJbVFtNHChc6cd2Vn6lH9YhH
+         uAo2R915Q5OwIO1Yp6Js6EmkOrYvW+4SuYv6EA3jcBMyYFR3Da3Yux7ZZyFwFu1f9+2j
+         3xqssXSUbVyH8maTWcbz486njxAY6wQf16hOR1ueB5DXnFmTLqYQ7fgalxO9HmZ7XVjQ
+         Y4Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE72zlH2HGUkotJqcdiPNGIYjobPmNj6NxIQ8qCH56VxnIui2EueIxMzQG7uhcM5tzl6q8zuM62GPmSZ4bwNFVMw==@vger.kernel.org, AJvYcCUnq+G0bC/8YY/eZMv0Z+mSwhOv0U8uhqerwBYGXH9sKLybk6v2gY/qufNulACqvC5OeLO/bvxOe7EIfQ==@vger.kernel.org, AJvYcCWwn1pUPiADufwKji5qkuaLPWeX3agPHdymzTVmBixq4Y5//G8HtpNr80Zl17PNdCgW8xc=@vger.kernel.org, AJvYcCXmFW72r7DAESUCVOtosFsQYzv/iN4GnzePO3s778hbSDe5nufqTsA1AIvCo5vK4UpTykesvHzX3zEz5J51@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3OJVmpWHQo2PmXgi4T/2K9W6Wk2agxxAuEUSCdmJM9XplcNxs
+	VysRuJB4d/s+MkU4N4wYV1vjUHaw3N5Q8tYceEeY4Q/PYDf1mc/nOR1/EbMOCft3
+X-Gm-Gg: ASbGncsOut6KLYqepuAZln6oPYDFLWbFqEla7zCMc4czko2nDEAtMC4BMv7pnbx/0V1
+	/E4p4sgWo5qm6XByxkxd4ivi7U/+TJd870atCcogFy+le6NkSUr4EpGsRNHUm+mCaQ5pY2Y0ja9
+	OUh1ojXPBiYaevsaq/6t1JN9F2lwaBCUjysozHwnHZqPJzbeDovoDoQN/wJ2hs82DpktrMVC8eq
+	V8Is4xZkZC3UNsjmvDLwAmpifRnhWEFA4lwXchGyftmV8RbVLKHn9qWPbWiAY1/k1cEnYoTnSaU
+	LsTEY9dv/WdHSVj5tgVERV+Z1QOSaF2+5tkDhdGpxp9/gNCG9gI9x7pYO4oFMekz2OgdiLKQn27
+	uIv5u10mEVp4r7JW524AAZhtVpQ==
+X-Google-Smtp-Source: AGHT+IFo45A+ox/+HcyhDozQVdTe0ElxogJQCoID3RNAqDuP/D63LOZ2vEtEwf7P4gdQW62O97NqaQ==
+X-Received: by 2002:a17:90b:58c4:b0:31e:cb1a:3dc5 with SMTP id 98e67ed59e1d1-3211620acdfmr21293942a91.11.1754414066250;
+        Tue, 05 Aug 2025 10:14:26 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::6? ([2620:10d:c090:600::1:255e])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da5719sm17523330a91.6.2025.08.05.10.14.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 10:14:25 -0700 (PDT)
+Message-ID: <d71dc18f397becb9e7120a0f3253828d045e1ae0.camel@gmail.com>
+Subject: Re: [PATCH v3 1/2] libbpf: Add the ability to suppress perf event
+ enablement
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Ilya Leoshkevich
+	 <iii@linux.ibm.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>, Ian Rogers
+ <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,  bpf
+ <bpf@vger.kernel.org>, "linux-perf-use."
+ <linux-perf-users@vger.kernel.org>, LKML	 <linux-kernel@vger.kernel.org>,
+ linux-s390 <linux-s390@vger.kernel.org>,  Thomas Richter
+ <tmricht@linux.ibm.com>, Jiri Olsa <jolsa@kernel.org>, Heiko Carstens
+ <hca@linux.ibm.com>,  Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>
+Date: Tue, 05 Aug 2025 10:14:23 -0700
+In-Reply-To: <CAADnVQ+6WuHrrAg1bQ+-6p1zZAWQVC_EGtt9ocv5aZE9=CxB5g@mail.gmail.com>
+References: <20250805130346.1225535-1-iii@linux.ibm.com>
+	 <20250805130346.1225535-2-iii@linux.ibm.com>
+	 <CAADnVQ+6WuHrrAg1bQ+-6p1zZAWQVC_EGtt9ocv5aZE9=CxB5g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="M9zeZAJc7XAA2HBY"
-Content-Disposition: inline
-In-Reply-To: <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
 
-
---M9zeZAJc7XAA2HBY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 31, 2025 at 01:23:49PM +0200, Gabriel FERNANDEZ wrote:
->=20
-> On 6/23/25 14:56, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
+On Tue, 2025-08-05 at 09:45 -0700, Alexei Starovoitov wrote:
+> On Tue, Aug 5, 2025 at 6:04=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.co=
+m> wrote:
 > >=20
-> > Implement regmap-backed copies of gate and divider clocks by replacing
-> > the iomem pointer to the clock registers with a regmap and offset
-> > within.
+> > Automatically enabling a perf event after attaching a BPF prog to it is
+> > not always desirable.
 > >=20
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > Add a new no_ioctl_enable field to struct bpf_perf_event_opts. While
+> > introducing ioctl_enable instead would be nicer in that it would avoid
+> > a double negation in the implementation, it would make
+> > DECLARE_LIBBPF_OPTS() less efficient.
+> >=20
+> > Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> > Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> > ---
+
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+
+[...]
+
+> > --- a/tools/lib/bpf/libbpf.h
+> > +++ b/tools/lib/bpf/libbpf.h
+> > @@ -499,9 +499,11 @@ struct bpf_perf_event_opts {
+> >         __u64 bpf_cookie;
+> >         /* don't use BPF link when attach BPF program */
+> >         bool force_ioctl_attach;
+> > +       /* don't automatically enable the event */
+> > +       bool no_ioctl_enable;
 >=20
-> Hi Conor,
+> The patch logic looks fine, but I feel the knob name is too
+> implementation oriented.
+> imo "dont_auto_enable" is more descriptive and easier
+> to reason about.
 >=20
-> Excellent patch, thank you! I really needed this and will be using it.
->=20
-> I would also be interested in having a similar regmap-backed implementati=
-on
-> for the multiplexer clock.=C2=A0 Do you have any plans to work on this as=
- well?
-> If not, I=E2=80=99d be happy to propose a patch for it, with your agreeme=
-nt.
+> Let's wait for Eduard/Andrii reviews. This patch has to go
+> via bpf trees first while the latter via perf.
 
-The only types of clock my driver needed were gate and divider, so those
-were all I focused on. I don't really have a plan to implement more,
-particular given the lack of feedback here means that I don't even know
-if what I have done is what Stephen wants. The rest of your comments
-seem reasonable, and I'll try to implement them in a new version.
-
---M9zeZAJc7XAA2HBY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJI7ywAKCRB4tDGHoIJi
-0sR1AP4zQnrLebu8U863VAtOFHm+6M8gEW/WnUp3VMypOqgoIAEA6d9iEeY01BHW
-S8o+uJeKAfF5/WvpbXoU0kZQT2osNwQ=
-=urpw
------END PGP SIGNATURE-----
-
---M9zeZAJc7XAA2HBY--
+Agree with Alexei,
+something like "dont_enable" should be simpler to read.
 
