@@ -1,197 +1,156 @@
-Return-Path: <linux-kernel+bounces-755853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1445EB1AC82
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B8EB1AC8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5B01801E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577CD189E161
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4BB1DB92C;
-	Tue,  5 Aug 2025 02:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752911E32D7;
+	Tue,  5 Aug 2025 02:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBMr+Pxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lzXN9p1E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0687C19067C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 02:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301AC1DF759
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 02:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754362313; cv=none; b=LdO6qCrT4UViWzeQSaxGThh4+VPmnWovs8ioWivA3vkWgiJ9DP77TDOdTzSZKpNFQr/Xx3pXdzJflfnHAapHUAXZwAenOGflGfUvfe8WfuZEv+z5B3flTJlfhXEcOe+y8JBsowcy79B4b7y8WPYL0T3bhzCFR16/+FhR8OGHeYk=
+	t=1754362339; cv=none; b=tuSxOt6CipCU8ITDl1uXBI8GoCZxJs07pGX+fMW5stHc9TKJrQb+lTHa4JpRYczLFjtkdYBS0IP89HSZgEAPqvH1J1HbbdtckiUuSOIB6HRG7h0E60+9t7QbYtrKwDEucZeF/8/HXdccXTuYq6JD48mc87UxCSbtTBlMrxb8Xkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754362313; c=relaxed/simple;
-	bh=hIYpjPGTOj1ZFCpNe9DNjh2U9NIYW7pnDQtucuxMe/o=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fRdvf9eE030RQBx57Y2fPUtC/m9q3OZkJE33p4+aB5KCbfwHZ12X9WNG0cCvLW4a/OcI6bX2lpJAT94jrq4xhPAOoto7sKoHefK89y6eafQnObrrKhj0ZWXu4kYgZaphoE3GJ9uBDXsOJYEr1BEdm/GfpcdMDroZoDscgcaFUVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBMr+Pxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C97AC4CEE7;
-	Tue,  5 Aug 2025 02:51:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754362312;
-	bh=hIYpjPGTOj1ZFCpNe9DNjh2U9NIYW7pnDQtucuxMe/o=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=eBMr+Pxi93e1EErEztqbXyMumcZn8qQqiq75hvP9d7440nFgYWKbtTz6xWsB3j7Yx
-	 uLWuiHYEcUfYcQ8E/DxsrVpyCBaBGcR+wq+4HDHdBvPULqHqyoJRs+rgE4HHeXL9s+
-	 VVs2casHDyWArNgDeGep8hPfhUqk2tDi27oqz+AUW3uq+4rfzY3VOZb6DPqoyGWiG2
-	 XAD/NhX3GQ3ii/RfWf2OuAJat+fFVc7sXhRKjlLdYu3Fjb3uhdWata/qyu4wWIZCaY
-	 j7VG80C7F3O1uXV8/2W21By8bLW32MhJtud4X6WJ+p2DNtQrMyAS90JLVGKjjCa0jW
-	 /xCBvhlffKskA==
-Message-ID: <1fa9d0c7-0d6f-4752-879b-f277682e82ae@kernel.org>
-Date: Tue, 5 Aug 2025 10:51:49 +0800
+	s=arc-20240116; t=1754362339; c=relaxed/simple;
+	bh=xWrtF2tYxg+vd0XZ4zy3xUBL5mHYjDp8KuWsqUmiJ64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LvYIkByEyY0WOBGC9Prixz4N1Dai8oVdv1xa36y4OgKWtFgwaTq/0dplmkOqiFmV3LQ+mq3nK9082qDqEkFqWyofm6RSq3RqHLrg6UoSVaYZJxfRYJjTshn7OM1/xC28n6m880HSqRziM2Ni+00sluz2gltaQJi1HNAYCXUscBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lzXN9p1E; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754362338; x=1785898338;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=xWrtF2tYxg+vd0XZ4zy3xUBL5mHYjDp8KuWsqUmiJ64=;
+  b=lzXN9p1EE5bqSNh3X2OPPuHd5BPtI04Sy9pOBDdokjBoR7fs+mw4iD9Z
+   PYXVSvHtn30Q6hmfeQ8j6TEGovT6/p1H5o5vDoHo6AtbAfpqTZwTQopj7
+   z4wn5j861brMVgYyCZ6bQ1fU6CBTC/6iC5DEEryyrTGfcvhNLVYp/9f/N
+   FyE2KXqD839LjI2wB7kJeL+8V/2h13B6buBmjT91B7hBMtDWONQs+Wd8Z
+   tAZ1T86s1YjmPc+zK1N0DBdnAbdw8pTVcRDmympr9KUJLgKXA9TT9lXqO
+   xsebTWJJX+Enr+s3jD54FlPXAxuzX0WEbdqAAwmFUJbnTjFKbq3//TLJ4
+   w==;
+X-CSE-ConnectionGUID: xgNRSfV3T32evQ6dAoQYoQ==
+X-CSE-MsgGUID: wCPpCsOrS7Crx2LYFXfGBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="56558367"
+X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
+   d="scan'208";a="56558367"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 19:52:17 -0700
+X-CSE-ConnectionGUID: +QD27GhQRrGOrsaI9i9K0w==
+X-CSE-MsgGUID: jd9PHEawTMeqV1/KL6z4Cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
+   d="scan'208";a="195169335"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 19:52:14 -0700
+Date: Tue, 5 Aug 2025 10:52:10 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Lokesh Gidra <lokeshgidra@google.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>, yi1.lai@intel.com
+Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
+Message-ID: <aJFx2mg5RRq1uzvR@ly-workstation>
+References: <20250607220150.2980-1-21cnbao@gmail.com>
+ <aJAFrYfyzGpbm+0m@ly-workstation>
+ <1d1d97f9-2a67-4920-850e-accf4c82440e@redhat.com>
+ <CAGsJ_4ypaAySaWyatH4Vu_dz--gEXUWk3yAQwM_8JTdR6U3fQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Jan Prusakowski <jprusakowski@google.com>
-Subject: Re: [PATCH v2 3/3] f2fs: fix to zero data after EOF for compressed
- file correctly
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250804014340.2537172-1-chao@kernel.org>
- <20250804014340.2537172-3-chao@kernel.org> <aJFvjBQv8PzJeFNN@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <aJFvjBQv8PzJeFNN@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4ypaAySaWyatH4Vu_dz--gEXUWk3yAQwM_8JTdR6U3fQA@mail.gmail.com>
 
-Jaegeuk, sure, let me change the order.
-
-On 8/5/25 10:42, Jaegeuk Kim wrote:
-> Chao, it seems you made a clean up before this? Can you post it first?
+On Tue, Aug 05, 2025 at 09:48:32AM +1200, Barry Song wrote:
+> On Mon, Aug 4, 2025 at 7:57 PM David Hildenbrand <david@redhat.com> wrote:
+> >
+> > On 04.08.25 02:58, Lai, Yi wrote:
+> > > Hi Barry Song,
+> > >
+> > > Greetings!
+> > >
+> > > I used Syzkaller and found that there is general protection fault in __pte_offset_map_lock in linux-next next-20250801.
+> > >
+> > > After bisection and the first bad commit is:
+> > > "
+> > > a6fde7add78d mm: use per_vma lock for MADV_DONTNEED
+> > > "
+> > >
+> > > All detailed into can be found at:
+> > > https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock
+> > > Syzkaller repro code:
+> > > https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/repro.c
+> > > Syzkaller repro syscall steps:
+> [...]
+> >
+> > Skimming over the reproducer, we seem to have racing MADV_DONTNEED and
+> > MADV_COLLAPSE on the same anon area, but the problem only shows up once
+> > we tear down that MM.
+> >
 > 
-> On 08/04, Chao Yu wrote:
->> generic/091 may fail, then it bisects to the bad commit ba8dac350faf
->> ("f2fs: fix to zero post-eof page").
->>
->> What will cause generic/091 to fail is something like below Testcase #1:
->> 1. write 16k as compressed blocks
->> 2. truncate to 12k
->> 3. truncate to 20k
->> 4. verify data in range of [12k, 16k], however data is not zero as
->> expected
->>
->> Script of Testcase #1
->> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
->> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
->> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
->> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
->> sync
->> truncate -s $((12*1024)) /mnt/f2fs/file
->> truncate -s $((20*1024)) /mnt/f2fs/file
->> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
->> od /mnt/f2fs/data
->> umount /mnt/f2fs
->>
->> Analisys:
->> in step 2), we will redirty all data pages from #0 to #3 in compressed
->> cluster, and zero page #3,
->> in step 3), f2fs_setattr() will call f2fs_zero_post_eof_page() to drop
->> all page cache post eof, includeing dirtied page #3,
->> in step 4) when we read data from page #3, it will decompressed cluster
->> and extra random data to page #3, finally, we hit the non-zeroed data
->> post eof.
->>
->> However, the commit ba8dac350faf ("f2fs: fix to zero post-eof page") just
->> let the issue be reproduced easily, w/o the commit, it can reproduce this
->> bug w/ below Testcase #2:
->> 1. write 16k as compressed blocks
->> 2. truncate to 8k
->> 3. truncate to 12k
->> 4. truncate to 20k
->> 5. verify data in range of [12k, 16k], however data is not zero as
->> expected
->>
->> Script of Testcase #2
->> mkfs.f2fs -f -O extra_attr,compression /dev/vdb
->> mount -t f2fs -o compress_extension=* /dev/vdb /mnt/f2fs
->> dd if=/dev/zero of=/mnt/f2fs/file bs=12k count=1
->> dd if=/dev/random of=/mnt/f2fs/file bs=4k count=1 seek=3 conv=notrunc
->> sync
->> truncate -s $((8*1024)) /mnt/f2fs/file
->> truncate -s $((12*1024)) /mnt/f2fs/file
->> truncate -s $((20*1024)) /mnt/f2fs/file
->> echo 3 > /proc/sys/vm/drop_caches
->> dd if=/mnt/f2fs/file of=/mnt/f2fs/data bs=4k count=1 skip=3
->> od /mnt/f2fs/data
->> umount /mnt/f2fs
->>
->> Anlysis:
->> in step 2), we will redirty all data pages from #0 to #3 in compressed
->> cluster, and zero page #2 and #3,
->> in step 3), we will truncate page #3 in page cache,
->> in step 4), expand file size,
->> in step 5), hit random data post eof w/ the same reason in Testcase #1.
->>
->> Root Cause:
->> In f2fs_truncate_partial_cluster(), after we truncate partial data block
->> on compressed cluster, all pages in cluster including the one post eof
->> will be dirtied, after another tuncation, dirty page post eof will be
->> dropped, however on-disk compressed cluster is still valid, it includes
->> invalid data post eof, result in exposing previous data post eof while
->> reading.
->>
->> Fix:
->> In f2fs_truncate_partial_cluster(), let change as below to fix:
->> - call filemap_write_and_wait_range() to flush dirty page
->> - call truncate_pagecache() to drop pages or zero partial page post eof
->> - call f2fs_do_truncate_blocks() to truncate non-compress cluster to
->>   last vali block
->>
->> Fixes: 3265d3db1f16 ("f2fs: support partial truncation on compressed inode")
->> Reported-by: Jan Prusakowski <jprusakowski@google.com>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v2:
->> - should dirty & flush all pages in cluster and truncate blocks post eof
->> later
->>  fs/f2fs/compress.c | 20 ++++++++++++++------
->>  1 file changed, 14 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->> index e37a7ed801e5..6ad8d3bc6df7 100644
->> --- a/fs/f2fs/compress.c
->> +++ b/fs/f2fs/compress.c
->> @@ -1245,17 +1245,25 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
->>  	for (i = (1 << log_cluster_size) - 1; i >= 0; i--) {
->>  		struct folio *folio = page_folio(rpages[i]);
->>  		loff_t start = (loff_t)folio->index << PAGE_SHIFT;
->> +		loff_t offset = from > start ? from - start : 0;
->>  
->> -		if (from > start) {
->> -			folio_zero_segment(folio, from - start,
->> -					folio_size(folio));
->> +		folio_zero_segment(folio, offset, folio_size(folio));
->> +
->> +		if (from >= start)
->>  			break;
->> -		}
->> -		folio_zero_segment(folio, 0, folio_size(folio));
->>  	}
->>  
->>  	f2fs_compress_write_end(inode, fsdata, start_idx, true);
->> -	return 0;
->> +
->> +	err = filemap_write_and_wait_range(inode->i_mapping,
->> +			round_down(from, 1 << log_cluster_size << PAGE_SHIFT),
->> +			LLONG_MAX);
->> +	if (err)
->> +		return err;
->> +
->> +	truncate_pagecache(inode, from);
->> +
->> +	return f2fs_do_truncate_blocks(inode, round_up(from, PAGE_SIZE), lock);
->>  }
->>  
->>  static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->> -- 
->> 2.49.0
+> This seems to be where the race happens.
+> Hi Lai, can you also double check if the below diff fixes the problem?
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 374a6a5193a7..6b40bdfd224c 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1172,11 +1172,11 @@ static int collapse_huge_page(struct mm_struct
+> *mm, unsigned long address,
+>         if (result != SCAN_SUCCEED)
+>                 goto out_up_write;
+>         /* check if the pmd is still valid */
+> +       vma_start_write(vma);
+>         result = check_pmd_still_valid(mm, address, pmd);
+>         if (result != SCAN_SUCCEED)
+>                 goto out_up_write;
+> 
+> -       vma_start_write(vma);
+>         anon_vma_lock_write(vma->anon_vma);
+> 
+>         mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
+>
 
+Applied this change on top of both linux-next next-20250801 and
+next-20250804 separately. Issue cannot be reproduced using the
+reproducer.
+ 
+> > If I would have to guess, I'd assume it's related to PT_RECLAIM
+> > reclaiming empty page tables during MADV_DONTNEED -- but the kconfig
+> > does not indicate that CONFIG_PT_RECLAIM was set.
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
+> 
+> Thanks
+> Barry
 
