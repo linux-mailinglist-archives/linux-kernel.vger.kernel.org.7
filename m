@@ -1,212 +1,158 @@
-Return-Path: <linux-kernel+bounces-756150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39BBB1B091
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:59:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14050B1B093
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C6C3BDFBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:59:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B547A999E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DB2594B7;
-	Tue,  5 Aug 2025 08:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E252259CBC;
+	Tue,  5 Aug 2025 09:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jYW2eAzZ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otP6Yr4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFAF258CDC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384367; cv=fail; b=XGICtR4+2Sh5vBE2h02USEEkrj7ycXeEOueyWQFPNm7iyTHf+qN1Z4hongno+7sllSR3oUbFy7uQjVjqS2i7Qo7zndPdV80+n5NWX5kF+/LV4rW02uEQbObvuxzFdaW8jmXaRuEbeHsjelhupghbiBkUTrrgPK4Y33JnqKwZDbE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384367; c=relaxed/simple;
-	bh=9W6+1oZODM9b+VGFcLlD/+rwpyeCnxqcnVQAeqt1nEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DcZE60k5XuXg0J+JvOn0TpPlH53DsQwtuhl1rovAR0qhmYMeDPKkyYMwAj7C4wiBE+/yqU35EsBhgbBl8uWVMCkbR4+Y9PNDGf1uEAXHM7rpqs2lZEC67mABHfRflZNXK8Lo1WBbRRluyJxKWdz+fDa4jFFjoRx/u+AuEMkRmGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jYW2eAzZ; arc=fail smtp.client-ip=40.107.93.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p0NKg0DqhBkaLXRuZW1zL0dHsPE93quSpqVfoqZ10sYBSNqbVMfn+nfPcvu15/wiVNFNH7ZvCuut1EuN4LmMXRElRnQCuDpSL3JGX4Xl79EmdJJtLjCS/nmpg4ktL43MaAIqtFa+aweWXUrpIWAupT2zyg1POil3iwxPmyFEBJrl3v6qGJKp4B1wtWOBL/Tt3UQ76J1oSZna9M2WcD3zGML5CRRSrgFXUmgM7gYAV+KVqer2bWSi8LR6L5GyyqSQCqwPrueIGoLz259s2R8xdfptyC5w1t4Ho+jI1qXVJu1A6vsQ2W7+aPWKK3DkVLWkEUSCEKMZZaU3R8qnPrC6TA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nVibW2pAazX7IlYNALKgk2ICIdSxZX6c1Xz3Zu2yfkE=;
- b=c7clG/J7KLlEqgWJRP0h4oz4G81hds8Ux8E1Vxtx1Xwg96HJcbBjV0R+fH6H79p+8qRM7y20Irv3FgnBizd0FXAt6NkXxwpvYuXn71AMoiB6y0HK8fQdiUFbJ5yEgOEdLp8hjRLClWQlrnmc4oVktFLp0QCXncNsuzPt6zoh9VQOmIpgqe3xdcbVAiFnverDIgs1WPhgH6LzvgjBBV/6YTlnktwaXA1tCQAqNNPR0seJmqM3soVVEifRtiQv82UqxUw3/N32ZIrCNZcMbTtpQtqsczeaEFR/qAmaMDG3Ej+yOmE2wRn+b8NJUaiLN/5mxiatfG4yhF4argwnanwvPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nVibW2pAazX7IlYNALKgk2ICIdSxZX6c1Xz3Zu2yfkE=;
- b=jYW2eAzZdUgRZu4eOSFiDZHlK1jYNiQniKhf5qY83AEZJ5/C/4JqXCGKzfS16be739AUlGSN7pOVRil5dohAjzuI52WbS9FhcTytLEG+0w0SYY0xepKKaFUX6vMZXWz2/3I3a9DTc6qiGfLkklKr+U7GzUuRqj13LC0tYOcntzQbouo02Lvw9FKTasDOSaPZKnRuepNa3d0hXJcxPsmBgb2tGMg9m2oTwVsyeisNRClEbLC3va5hkhro9S0FbE0EdzsOva90DLxMoIOf2UwVpaJBew+SkLlWGY1LzUmQ27Id2idtePuA8QLWwIktLq07k0+1WxFK56rxOQ85VBlTXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by MW4PR12MB6951.namprd12.prod.outlook.com (2603:10b6:303:209::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Tue, 5 Aug
- 2025 08:59:15 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
- 08:59:15 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/ext: Fix invalid task state transitions on class switch
-Date: Tue,  5 Aug 2025 10:59:11 +0200
-Message-ID: <20250805085911.164956-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR2P278CA0036.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:47::14) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF7218AA3;
+	Tue,  5 Aug 2025 09:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754384413; cv=none; b=MqfveCCpxkIneyo8q6XGAcqG8Sj/858ToNFa0ycem4XRnU6N9jyV86iFENx2hxax06ONRJdpqQh5ctqnVfpSFJ/uaoWnDkneoU70hxgOIst2Gjc5gKA1H9K6PUQuA2USz7sVxY0uqqfRf/Ff5g38rIwrQ5fhz+lwSGpdVUInZxI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754384413; c=relaxed/simple;
+	bh=Ss5+o9mGlFGpOFYaX0Rvuk2dt041GM5MzYR0NO61GJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClTt/NQpllCffYX9RhBE5tJeKsXjRgOFCHjiJ3qQ48x/9s6/wA++7ZsRdDYGLlzPyBXYjaIjfz7hUSh7EBaWJEVOuqzanOWmxCGnvGt75Fg0gI/72Xc5O7Sluo4N7BVmOIBIV4AuJHaCwI9p+3uUyvfh/o7fhvu35vx9b8TDrFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otP6Yr4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 365ACC4CEF0;
+	Tue,  5 Aug 2025 09:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754384412;
+	bh=Ss5+o9mGlFGpOFYaX0Rvuk2dt041GM5MzYR0NO61GJk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=otP6Yr4J1pqfmmft5pQ/QcsnPJiwpUDtnQ/ghyYRPB2uJ5wtuJE2o7WKqZs0LECzB
+	 Z4fnkF+Bk1rEgSXGEFKTCbB8mN9mZ6yRXwE6HGNZ2ejTTEctVYfuFd5FRDDFplrqku
+	 yVlIOTR8wPkb4W1hhQNJAcugKH3dwbeYTOi0sxU8kYQv1tEmI4l2kxuA7M47p4NI6h
+	 d4QA4H3c+Zrzlg+z/m6yhTuPreyCzwzuBqbhTlYsDh6gd0KumsOb6JHhAU6X5bOlqV
+	 PNtnGP4URMJOFC+PIRzStMUUPyUYoB0QsdNZ9SAvRjg8Y2pI/8I86q1Le8lDsIo2cM
+	 zJPXcIhHA3XgA==
+Message-ID: <5c9bf027-f362-4176-b4af-bcba9aa96e0c@kernel.org>
+Date: Tue, 5 Aug 2025 11:00:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW4PR12MB6951:EE_
-X-MS-Office365-Filtering-Correlation-Id: d531b66b-3185-47b4-3bc6-08ddd3fe5aa5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WmbcO9PqA+yYMr4V2HZ0RftJXClApJhP1/PZTNxcL2t1YTWCVXAqP3TS7ill?=
- =?us-ascii?Q?VYSjpZkRN6FsD46BLky2bjHTS3+dDhNE94LC2ncre0SuXHQBe8nnufHjhX8x?=
- =?us-ascii?Q?/cTWtiHdQWoVJRgKKIO83HTrbA5kgtQjYpWf1WKBN+Qf27xAf1gP6kBA2IuQ?=
- =?us-ascii?Q?ypWytGBTTfe0Ua4pGPGDC9GOkWHae3JYtAwcUoXR97Mbch31Cg8T+IyYCNw3?=
- =?us-ascii?Q?BEDYXpz8ddyQxrNNoKbHiRwM3xnitgizfczE5vsDa3px+kLy0qLLxl6tJpf4?=
- =?us-ascii?Q?RS3u/jZ8nfUeC68dEijR+ddT/wrEX/5G13ilvHOt3+PhzTjnYtzTaDL9J5kD?=
- =?us-ascii?Q?5n4L4d9++FFS42DSayEVXvQrORVYsJUGxBkXKNYlro6Fo5ZQJPiMpvXYTXtp?=
- =?us-ascii?Q?2D8/QJ6Xg3bgyEGh7W0IncLJr3uXz4DTeiCi2pLeBwI9Pjv2dasDI4b4Ru7p?=
- =?us-ascii?Q?CcsxiYG1bWnTykAJzvlp+gSuALZvM4VOUb9y8poM7J+AmSh2HcJGxH+hK5o+?=
- =?us-ascii?Q?Q6jOxHbc3sEBnt5Jlgfhy2mIH+H0gcSod0hx0y/d1XSUc8wYGfiSXppscF8f?=
- =?us-ascii?Q?WUKQezwaY1z3lMIOHyy9DFH2Dxh6oYiFNEKjpTnlytYcKPIqRFaj6geYl1Mf?=
- =?us-ascii?Q?WEmDiZBgsaD0MqRuTFj9T0ZhrUyu3W7q5lt5wqSeaIjTE62hzZUfwZhB/xXA?=
- =?us-ascii?Q?HFreRluTGVL2yDTi0B5e6FU4mIWAsaPHoirMHjukfQ1SwHjicp5/9S4IZTIU?=
- =?us-ascii?Q?n6qbinX7OmVwdYrpJpzrSOM6gbZFCiYQ3g6ZbDEAhoUMpXsjrMD7QZqT0Xf7?=
- =?us-ascii?Q?fhDdRZ0iZmHbART5ZQLKc0HRBP9aTpeIPASIHGIMYkHn8jRmS7ybBCRCILx+?=
- =?us-ascii?Q?U06ifpyPv4nlvqadtsqv+vm6EP8XeSTo0v1JvSheezdVswaSQhnX42HhDcx6?=
- =?us-ascii?Q?mqyWkbdej3wsMG1XxTQYG/Q3RCkSpny86rJ9pvX94D8H67toZyRKQubJ5Ccn?=
- =?us-ascii?Q?LcWrpbM7G6ZMqx1w7miHWbWRXWdkgU0fS2u9ZureOF3Us94Y1zBEJpbps0NC?=
- =?us-ascii?Q?5RDNvLGtv37rteJ8JoLuN+jA/Kx/d6C2V4IvXS8tPa/4iXWhJDj5oBgRR0sR?=
- =?us-ascii?Q?IRJ7EG5AHVovZRIdJ7pzOfq1ZlZGuafgPHy0fkXzir7fjO+JcMxGYyemuUdt?=
- =?us-ascii?Q?4ObU9jix/4UnnZXN8ewbcTLyxxv3h3MI/z+xNunFQPWs0OGT71yvhrGyqhey?=
- =?us-ascii?Q?6eAcnJfCUctcsnzOn7twLbzs6Zw0E/7EVue7JQD9lciXp3mcXFqUuwPAfIO9?=
- =?us-ascii?Q?+ctuBY842uqNyT3zEmme0bl2Kmdicq6hW42ifAhfh7PdtpXV00c57gzZ/EkZ?=
- =?us-ascii?Q?Kd1jJ6qziI9461YotxjaEV2Pt2IOM/mPw7FfOZmytvr1WX4KL1w8m50jBQOX?=
- =?us-ascii?Q?016Y7wE/SwM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sQ6ZbXGFpk04/Fb1bKM1QyKVBL9Bn1tCFzup56h9DKbj9aZtGX1WlGmXl5mv?=
- =?us-ascii?Q?yM3cp87XTfypnIOZ98ttKDTwzs1NifSRxMOwBiVAM2lymGLrtb8f9zucDp+T?=
- =?us-ascii?Q?z/kZthTLjF3+wPWBQ6Fg9XXIRmzYKfIEQ8xmJUeYfWjYyRzn0og0tOjjeucb?=
- =?us-ascii?Q?CqXZ0NkRt4TKXUcZbLp6g5UJHMohRouzwsQa4sfj9o3Si0zsbcrNJjDMPCxT?=
- =?us-ascii?Q?iJypWaxWi0qE2anfyGtNkyL1nX/9haBcOW2/73pbyHA7N4xcm5PxeRhh+vL/?=
- =?us-ascii?Q?UgcDWXIRjNfjbAhZk0p1wpfdBaG0bAPRtUl/qNJ1qYTbwN9rc51QQhWWMuNO?=
- =?us-ascii?Q?EYdDZs2zt/IRAFdk3/JnRLEHvXrtZ+P6yaZtEl3lDFChS+b/LLyXZgYreBeo?=
- =?us-ascii?Q?xXVDmkh438tAndryaqSwcqI8/HmWnZZCWs52CmxSbPyifKmV4SghwKInrU6S?=
- =?us-ascii?Q?zznSb5gBczO74basj0HbPmu8BPdWHfU3Ane88vYU3PX4lNofkCDL0IZxspFo?=
- =?us-ascii?Q?voU74cSuXGbZFwhpdTd1a6vudilruNvEBHeG9Sb/NcwqNGWMj1kgx9k0RFjZ?=
- =?us-ascii?Q?prmQ4wwQPmXJI1cVaB+UvGuePla1rt7cxIt10wkWzy/m2ZHWnplk1hcBH5xf?=
- =?us-ascii?Q?heGwubdEnccIUqKMM/uqOnC0PG7gTFxWs4VnUszJOg3ZXv0/lE6ckM0+mgPB?=
- =?us-ascii?Q?AseiLYeE+meqDHDuFMnib4c/RVkuN3NJVap1fEQeoeYtd96HGGknGz1iUYK0?=
- =?us-ascii?Q?B1bQZPHtJeCc6LnNx3X7re9WgRFBgMIoGEk/VaQ0uGeO8Dh7sqxbNXxfasSN?=
- =?us-ascii?Q?MkgtHKRF7LWPj2ZY/aE10nBhLPYDA3Ip9qS5U81IiWoACmaBdXSHhtSqkI9v?=
- =?us-ascii?Q?ryS5O9m9n+0gcjqOV/8ruP2phDAdpVXirtXhWEIGtugjSfsVZ/RPi8OXa/tj?=
- =?us-ascii?Q?SguD/4OfL67USdUXFHweoopRlxNWzCMI3I6n9LEbHlrhp+lY56xb9NKSk4Ny?=
- =?us-ascii?Q?E/cHHGrt78PDP5QVmcBTOmSv8NxZS10QWypGEamDjVVGxFwinz+yfo2QlVtF?=
- =?us-ascii?Q?kPbgjUQpCQmdtLkVCr4wo/voPmM+6E0IOJN4ulFx/2P4488yS3QTL/yl2Y4R?=
- =?us-ascii?Q?QR1CU7vvFAIddcqiwuR4yrf0Isl26bEmM2QgF9aCrUFXNdZwp3xZvVXR+DVL?=
- =?us-ascii?Q?etiHyPAM5bzf79GUaPhcLElTtPRONqyTu/r9fz++qfDSyb3omVaDdS6kLLds?=
- =?us-ascii?Q?6x9dxe+kI3uWlGvsEImviNLil+dGk3K4/HTAZkh3MRo4v8RnmRQNOOEG6tWJ?=
- =?us-ascii?Q?uIMEF6sOIP0qJ45r0yX+rbH5+mNohHLQxf+HiHXojrZMHB9cZJsXoXQk3Xk1?=
- =?us-ascii?Q?aO0umXgWfhNOA8KIGQio8Qu2C0jOssRptNb342MFgo9ALEXpbS9ttRiE+Kdy?=
- =?us-ascii?Q?SlPdmBZ5OGG9oDGnbYs+fnZCGZuDguGGmT+RrriFnxjR2ocrnJFCUBzqgyIZ?=
- =?us-ascii?Q?UVf/wTSsNv+cGzeWEI5ZfUtdnqlcxAkPX5Fm7zoF43IXKeICzWfSejmwUZc8?=
- =?us-ascii?Q?3si2qPwhQMuW+ZdDwlCiiq2qIj41MM42OmR2FQmU?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d531b66b-3185-47b4-3bc6-08ddd3fe5aa5
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 08:59:15.4676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j1MJewFLiA3ZiTb6RIzinChZUMmoLhT1GGShfynOb+f5Ce1MvpTwp7TheJJAX0tV8y2NSpDsgg5IfKHGsnpwGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6951
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] staging: media: atomisp: add missing mutex lock in
+ atomisp_s_fmt_cap
+To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com, andy@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel-mentees@lists.linux.dev,
+ skhan@linuxfoundation.org, dan.carpenter@linaro.org
+References: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When enabling a sched_ext scheduler, we may trigger invalid task state
-transitions, resulting in warnings like the following (which can be
-easily reproduced by running the hotplug selftest in a loop):
+Hi,
 
- sched_ext: Invalid task state transition 0 -> 3 for fish[770]
- WARNING: CPU: 18 PID: 787 at kernel/sched/ext.c:3862 scx_set_task_state+0x7c/0xc0
- ...
- RIP: 0010:scx_set_task_state+0x7c/0xc0
- ...
- Call Trace:
-  <TASK>
-  scx_enable_task+0x11f/0x2e0
-  switching_to_scx+0x24/0x110
-  scx_enable.isra.0+0xd14/0x13d0
-  bpf_struct_ops_link_create+0x136/0x1a0
-  __sys_bpf+0x1edd/0x2c30
-  __x64_sys_bpf+0x21/0x30
-  do_syscall_64+0xbb/0x370
-  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On 17-Jul-25 2:42 PM, Abdelrahman Fekry wrote:
+> The function atomisp_set_fmt() modifies shared device state and expects
+> callers to hold the isp->mutex for synchronization. While most internal
+> callers correctly lock the mutex before invoking atomisp_set_fmt(), the
+> V4L2 ioctl handler atomisp_s_fmt_cap() does not.
+> 
+> This results in an unsafe execution path for VIDIOC_S_FMT ioctls
+> (e.g. via v4l2-ctl), where shared structures such as pipe->pix and
+> pipe->frame_info may be modified concurrently without proper protection.
+> 
+> - Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
 
-This happens because we skip initialization for tasks that are already
-dead (with their usage counter set to zero), but we don't exclude them
-during the scheduling class transition phase.
+Thank you for your patch, but I'm afraid that this stems from
+not understanding how v4l2 drivers work.
 
-Fix this by also skipping dead tasks during class swiching, preventing
-invalid task state transitions.
+isp->mutex is set as the mutex for the /dev/video# node in:
+drivers/staging/media/atomisp/pci/atomisp_v4l2.c:
 
-Fixes: a8532fac7b5d2 ("sched_ext: TASK_DEAD tasks must be switched into SCX on ops_enable")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 4 ++++
- 1 file changed, 4 insertions(+)
+int atomisp_video_init(struct atomisp_video_pipe *video)
+{
+	...
+	video->vdev.lock = &video->isp->mutex;
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 7dedc9a16281b..4ae32ef179dd0 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5749,6 +5749,9 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 			__setscheduler_class(p->policy, p->prio);
- 		struct sched_enq_and_set_ctx ctx;
- 
-+		if (!tryget_task_struct(p))
-+			continue;
-+
- 		if (old_class != new_class && p->se.sched_delayed)
- 			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
- 
-@@ -5761,6 +5764,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 		sched_enq_and_set_task(&ctx);
- 
- 		check_class_changed(task_rq(p), p, old_class, p->prio);
-+		put_task_struct(p);
- 	}
- 	scx_task_iter_stop(&sti);
- 	percpu_up_write(&scx_fork_rwsem);
--- 
-2.50.1
+This guarantees that any ioctl handlers will be called with
+isp->mutex already held.
+
+The suggested change here will result in trying to lock
+the mutex a second time leading to a deadlock.
+
+So NACK for this patch.
+
+What would be useful is adding:
+
+	lockdep_assert_held(&isp->mutex);
+
+to functions which expect the mutex to be held. I regularly
+test the atomisp code with lockdep enabled kernels so this
+will help catch any paths where we indeed are not locking
+the mutex while we should lock it.
+
+Regards.
+
+Hans
+
+
+
+
+
+
+> 
+> Fixes: 4bdab80981ca ("media: atomisp: Make it possible to call atomisp_set_fmt() without a file handle")
+> Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+> ---
+> v3:
+> - Use guard(mutex) as suggested by Dan Carpenter and Andy Shevchenko
+> - Remove extra blank line after variable declaration
+> - Fix include order as requested by Andy Shevchenko
+> 
+> v2: https://lore.kernel.org/all/20250717013003.20936-1-abdelrahmanfekry375@gmail.com/
+> - Add Fixes tag
+> - use cleanup.h micros instead of explicitly calling mutex_lock/unlock
+> 
+> v1: https://lore.kernel.org/all/20250716014225.15279-1-abdelrahmanfekry375@gmail.com/
+> ---
+>  drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> index bb8b2f2213b0..2690c05afff3 100644
+> --- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> +++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> @@ -7,6 +7,7 @@
+>   * Copyright (c) 2010 Silicon Hive www.siliconhive.com.
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/pci.h>
+>  
+> @@ -416,7 +417,9 @@ static int atomisp_s_fmt_cap(struct file *file, void *fh,
+>  			     struct v4l2_format *f)
+>  {
+>  	struct video_device *vdev = video_devdata(file);
+> +	struct atomisp_device *isp = video_get_drvdata(vdev);
+>  
+> +	guard(mutex)(&isp->mutex);
+>  	return atomisp_set_fmt(vdev, f);
+>  }
+>  
 
 
