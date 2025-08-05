@@ -1,154 +1,88 @@
-Return-Path: <linux-kernel+bounces-756453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F43AB1B480
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:14:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2350B1B42D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CAE182E81
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:13:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A341F7B0727
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B42797AC;
-	Tue,  5 Aug 2025 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="1UGnYPFj"
-Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56A02749C8;
+	Tue,  5 Aug 2025 13:10:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAE2275B0B;
-	Tue,  5 Aug 2025 13:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4F4273D6C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399505; cv=none; b=tTTxkm3rApqFBrGey+3J0WxAICkHXlsEiC/QWSU02bY4CXr5oge1g1K4fkTt9WYBOV02ylLsa97DM2sqPQQVqf7cAH+j4/ACVdYcEMSB3HsTgtfSzWCG8j61DqkOSrgje+arvCjTZ72egY+XUEYrO5VFoxpimUFKEQQL7/vAx98=
+	t=1754399406; cv=none; b=nHD111IOJUokKBTuEhd7yn9+JUxVjXa5EbnntycSVGyNxIN5PVxqVFaPtuQ3nGpWnKbDCS2t/5H2EIjVvOnY/sbe//OaQWuO0gU4naFZqPEAbSwXAiPx06DiD3RfzvH/Lya1R+Oz2rzdCQtgPOMMThawzViGZbPRA3RWEJU/K+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399505; c=relaxed/simple;
-	bh=YLBQDy6eQNpuqYJmBuJHbdvk6W3dpGmVOLhbuzAjcJU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TTFSBvkJENWaUz/S69TWJHGe76mrBdi+XXxszLjeBBVk5HzkbptY5KZ3BFNp1Vb2d3pXOpLoTwRxB2xOICpRfXiy4W7AUDiLZXIT/wa0k9Hlhdf28EXMi0Ed37Epx0VH/si63qj0oapzcENH/g+SY4F9ZAAmr6XNQRH1rmavwbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=1UGnYPFj; arc=none smtp.client-ip=178.154.239.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:29a1:0:640:5fbc:0])
-	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id B5EF080627;
-	Tue, 05 Aug 2025 16:10:23 +0300 (MSK)
-Received: from kniv-nix.yandex-team.ru (unknown [2a02:6bf:8080:849::1:3b])
-	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 6AgoJU9GpKo0-4ePcQdmN;
-	Tue, 05 Aug 2025 16:10:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1754399422;
-	bh=1fhMX3tvH9apZXuDu7nTQnIUMtDysNPzl2m86b8poH0=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=1UGnYPFjO7Zh2vLJEXLFw6uSfIpf/6yERIuID+XBynFeIndBMTP9ZIQV8adLQCrYi
-	 lRenxXGknUS3kKJKSv+I6l0afbWZSX0c5Q7xrrvWC5xdnyWSlWI87G8RcF3PsSSCRy
-	 fJbLHsR1l/ZhQSlyPSCnsDVbIp/secb0ROJWvGUc=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Nikolay Kuratov <kniv@yandex-team.ru>
-To: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	kvm@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Lei Yang <leiyang@redhat.com>,
-	Hillf Danton <hdanton@sina.com>,
-	kniv@yandex-team.ru,
-	stable@vger.kernel.org,
-	Andrey Ryabinin <arbn@yandex-team.com>
-Subject: [PATCH v3] vhost/net: Protect ubufs with rcu read lock in vhost_net_ubuf_put()
-Date: Tue,  5 Aug 2025 16:09:17 +0300
-Message-Id: <20250805130917.727332-1-kniv@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754399406; c=relaxed/simple;
+	bh=9YWpYPvVuEhAa8l0RhynQKbgmpONs4dDFhykbP7zSEI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OqxFMYPTxdUTDue/SI9x4kdnuPjc1UUbkPf60RAokRWzdqY698fIuQC0xnjgtL+x3pW0RC8d1zZICfXnA8Kq1ZErMMs+iZyu7vpmv/1rnlI7jPGcRfHyMHpvvuk0KeJN5Kec0t3i+S+fIkBHe21sHhvRSBySdRrXdNMwo91+ke4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88177d99827so245185639f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:10:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754399404; x=1755004204;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/u1raVmfsGzizOARhEi93ynB6XPUBYegU2vD8ceKqEQ=;
+        b=OGdEWCUPIdcxCvI+ZXH1rILVP+yUo4KkQHs3fn01xDzrC7hIeSy6clKwwbq0XN/wQS
+         Swkx1eFOQ8F9AfxRLr8tbUbphOrqELVAJ/W+cbEX5mdByw+/mJAJegdIHHe5Fg5yX6i/
+         d3ZNCfhjth8Yfl8Pzsq2ZEXFCkozCOgqbrHPnC8TSLnU2nnEk5EnC7mqs9S6vKz07bCz
+         F6HMAdJXvAe2gIZr11oWjT+BUaRP9JrA1A6xv6rUbx0oxI4C4JeO/UVX1iDgpGaeMfug
+         U9JQQTE2e5CU15/Re5NrcIkw/G11CuzCypS/0ir0XAq2a9QJonSx2zATS7Noq/Axtgdv
+         QZpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj5UBYOCAGsw5joBFcgUvdqDVTDN+rlMMJ3s7zKDSStNTE292PG4mHg0k8zQDxWIg8nNfhsMdauT+xbr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDal6/Ag8U+Lo2zy9/mT+Yacsr3JLcrkYI+RXnHmu3DHFZoD/z
+	Ar85bQ28wXw+XGJvLzSqpyWuAJmHSXrs5rR0xVILXaLTYINyr7mZw1A5ZRvgCNtAVR6Mfi4UQoy
+	r8l000nvpO7819mnNVicXy9furH+Qw7kYdQYBHqAZ0DyxBCIEVR1G1pHGhSQ=
+X-Google-Smtp-Source: AGHT+IHYI5YJSkaoaN8QBlJToEh4ZCCY9QLRv560/aS/hYDa1iiJPwUbyy9c8Z3Ys9rzoQyR5fPboAJHevQronEdKiM1KXoIf/08
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5d:83d5:0:b0:87c:78b2:6ddb with SMTP id
+ ca18e2360f4ac-881683b28aamr2177206939f.9.1754399403991; Tue, 05 Aug 2025
+ 06:10:03 -0700 (PDT)
+Date: Tue, 05 Aug 2025 06:10:03 -0700
+In-Reply-To: <419ADDD0-A731-45E5-9B51-DCB2B0CA1717@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689202ab.050a0220.7f033.0022.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] INFO: task hung in pipe_release (6)
+From: syzbot <syzbot+23e4a7772eb9a9715b85@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mmpgouride@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When operating on struct vhost_net_ubuf_ref, the following execution
-sequence is theoretically possible:
-CPU0 is finalizing DMA operation                   CPU1 is doing VHOST_NET_SET_BACKEND
-                             // ubufs->refcount == 2
-vhost_net_ubuf_put()                               vhost_net_ubuf_put_wait_and_free(oldubufs)
-                                                     vhost_net_ubuf_put_and_wait()
-                                                       vhost_net_ubuf_put()
-                                                         int r = atomic_sub_return(1, &ubufs->refcount);
-                                                         // r = 1
-int r = atomic_sub_return(1, &ubufs->refcount);
-// r = 0
-                                                      wait_event(ubufs->wait, !atomic_read(&ubufs->refcount));
-                                                      // no wait occurs here because condition is already true
-                                                    kfree(ubufs);
-if (unlikely(!r))
-  wake_up(&ubufs->wait);  // use-after-free
+Hello,
 
-This leads to use-after-free on ubufs access. This happens because CPU1
-skips waiting for wake_up() when refcount is already zero.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-To prevent that use a read-side RCU critical section in vhost_net_ubuf_put(),
-as suggested by Hillf Danton. For this lock to take effect, free ubufs with
-kfree_rcu().
+Reported-by: syzbot+23e4a7772eb9a9715b85@syzkaller.appspotmail.com
+Tested-by: syzbot+23e4a7772eb9a9715b85@syzkaller.appspotmail.com
 
-Cc: stable@vger.kernel.org
-Fixes: 0ad8b480d6ee9 ("vhost: fix ref cnt checking deadlock")
-Reported-by: Andrey Ryabinin <arbn@yandex-team.com>
-Suggested-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
----
-v2:
-* move reinit_completion() into vhost_net_flush(), thanks
-  to Hillf Danton
-* add Tested-by: Lei Yang
-* check that usages of put_and_wait() are consistent across
-  LTS kernels
-v3:
-* use rcu_read_lock() with kfree_rcu() instead of completion,
-  as suggested by Hillf Danton
+Tested on:
 
- drivers/vhost/net.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+commit:         5f63c1c6 bcachefs: Fix readahead involved deadlock
+git tree:       https://github.com/alanskind/bcachefs
+console output: https://syzkaller.appspot.com/x/log.txt?x=1560b6a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e6834878e5ced02
+dashboard link: https://syzkaller.appspot.com/bug?extid=23e4a7772eb9a9715b85
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 6edac0c1ba9b..c6508fe0d5c8 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -99,6 +99,7 @@ struct vhost_net_ubuf_ref {
- 	atomic_t refcount;
- 	wait_queue_head_t wait;
- 	struct vhost_virtqueue *vq;
-+	struct rcu_head rcu;
- };
- 
- #define VHOST_NET_BATCH 64
-@@ -250,9 +251,13 @@ vhost_net_ubuf_alloc(struct vhost_virtqueue *vq, bool zcopy)
- 
- static int vhost_net_ubuf_put(struct vhost_net_ubuf_ref *ubufs)
- {
--	int r = atomic_sub_return(1, &ubufs->refcount);
-+	int r;
-+
-+	rcu_read_lock();
-+	r = atomic_sub_return(1, &ubufs->refcount);
- 	if (unlikely(!r))
- 		wake_up(&ubufs->wait);
-+	rcu_read_unlock();
- 	return r;
- }
- 
-@@ -265,7 +270,7 @@ static void vhost_net_ubuf_put_and_wait(struct vhost_net_ubuf_ref *ubufs)
- static void vhost_net_ubuf_put_wait_and_free(struct vhost_net_ubuf_ref *ubufs)
- {
- 	vhost_net_ubuf_put_and_wait(ubufs);
--	kfree(ubufs);
-+	kfree_rcu(ubufs, rcu);
- }
- 
- static void vhost_net_clear_ubuf_info(struct vhost_net *n)
--- 
-2.34.1
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
