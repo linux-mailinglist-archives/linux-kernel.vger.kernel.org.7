@@ -1,161 +1,157 @@
-Return-Path: <linux-kernel+bounces-756954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A05B1BB7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:39:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61997B1BB82
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8043621F8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266B4189EA63
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095502405E8;
-	Tue,  5 Aug 2025 20:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2/uTo6i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2029221FBF;
+	Tue,  5 Aug 2025 20:47:42 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBED23BF8F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 20:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596752F2E;
+	Tue,  5 Aug 2025 20:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754426392; cv=none; b=OaNoryrPEZk3wzyLHAAqs0i3Ba+3P43QsdSmPQK1QFeZoXdDE+UZDzMKkSGTuKGNhbbDiur37R40b8fLk5/qMBHK6o8CRU0j974Mv6QxFgIfHWECvrkruxid3WgL6LETL4E9xBoh8HsBeP6SaIzqiSzuh91tFcVfSrfcX2skc0w=
+	t=1754426862; cv=none; b=UadpwcnKX9G/sHWwI/s+t2YWWNfj+UPGaD5Iv2EUOd/3lcEq7lDVZRph7PKr+09QtDLa6OLxV4AiQNWn1FuJa25gfya4M6pYuwWonGTPtK0up9grAYFEXMnjq/ZEixIo4ZRoE5jKckAi+/ZhebgOhQ2EMOx/mrj+yukhhk/e1UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754426392; c=relaxed/simple;
-	bh=dyfHIRATU2t4bkgtjP3LT2vu87vdlm0BXmEeEGKt8uE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=flmKYzH4lz7lc6dvBWwjwTP4KHlGA1KjMOASuqWGxsCc5lNiLYsWfvld7SxILfRENRAhX1MbTJLcTgGzDg820r/0c8cUZrR03KwUk7iClsGkUxcjay9gWMCOlww3KYYs/mqa8FRegDMg9f2SrH/TySqvF7O4Qom46qY9UlT3jOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2/uTo6i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783F2C4CEF0;
-	Tue,  5 Aug 2025 20:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754426391;
-	bh=dyfHIRATU2t4bkgtjP3LT2vu87vdlm0BXmEeEGKt8uE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=e2/uTo6iVIxKgLjnb62tSmS7038exlSbn/7iP/LCYds2qu/b931N4/ZvgI1Wjgfmg
-	 j/yB0MmQIGK1ddek2dnGr59Ja1XjNQvBf0/mRigv7DZc7lXI2ZC1IisPFv7LUDNIS8
-	 3FTmJTjC89PsfGNUKVJwRH1Gflm1C+bXvpe5xUzCHgK4jmk6q0z2LpuTKyriwv0MOg
-	 PBV925oAb4qjoxmDonbGvEDMvugoOUjecqP2D5Is4V27KNWYA7lwi6rzyVqWXPtkm1
-	 GGqIPooZwGyYR9UHxCBKV1cWqAxq4e74Nmg5zGqvMD1ETBRAHNtalHrvH1x0A4vonU
-	 fFtLmlbNw9N8Q==
-Message-ID: <741ba76709df27536a278412d00ddb1d52a25cdb.camel@kernel.org>
-Subject: Re: [PATCH] ref_tracker: use %p instead of %px in debugfs dentry
- name
-From: Jeff Layton <jlayton@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
-	 <edumazet@google.com>, Kees Cook <kees@kernel.org>, 
+	s=arc-20240116; t=1754426862; c=relaxed/simple;
+	bh=IVNEX/N5pP68FirwTK9wbwXxMlQy2oD+T/nM86DuZF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K7AzErsBajHLIfiLucZRNKXbu0HBQC3zEYqDbHa/gLsXfuLsQmV5Zcldq3FRy8mQXWET2dLoYo+ZptXAp7UD0k16vDSOvMkDqbEfsOnNaDmvLqegZHjGqHucfnogIdKOu7C+DEz0EYJeZnSFfQpD2BNuUjaMl1TG+mwjga6E+DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 021FF1F00036;
+	Tue,  5 Aug 2025 20:47:36 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 79E2BB011F6; Tue,  5 Aug 2025 20:47:36 +0000 (UTC)
+X-Spam-Level: *
+Received: from shepard (unknown [192.168.1.65])
+	by laika.paulk.fr (Postfix) with ESMTP id 27FFBB011F1;
+	Tue,  5 Aug 2025 20:47:19 +0000 (UTC)
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Date: Tue, 05 Aug 2025 16:39:50 -0400
-In-Reply-To: <20250731071355.2da07d06@kernel.org>
-References: <20250731-reftrack-dbgfs-v1-1-143ee1cfda44@kernel.org>
-	 <20250731071355.2da07d06@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Paul Kocialkowski <paulk@sys-base.io>
+Subject: [PATCH 1/2] media: uapi: Move colorimetry controls at the end of the file
+Date: Tue,  5 Aug 2025 22:47:17 +0200
+Message-ID: <20250805204718.6893-1-paulk@sys-base.io>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-31 at 07:13 -0700, Jakub Kicinski wrote:
-> On Thu, 31 Jul 2025 07:57:05 -0400 Jeff Layton wrote:
-> > As Kees points out, this is a kernel address leak, and debugging is
-> > not a sufficiently good reason to expose the real kernel address.
-> >=20
-> > Fixes: 65b584f53611 ("ref_tracker: automatically register a file in deb=
-ugfs for a ref_tracker_dir")
-> > Reported-by: Kees Cook <kees@kernel.org>
-> > Closes: https://lore.kernel.org/netdev/202507301603.62E553F93@keescook/
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > I trust that Kees is right here, so let's go ahead and fix this. I gave
-> > this a quick build and boot this morning and it did the right thing.
->=20
-> Assuming Andrew will take this one since you haven't cced netdev@ ..
+The colorimetry controls class is defined after the stateless codec
+class at the top of the controls header. It is currently defined in
+the middle of stateless codec controls.
 
-Ahh yeah, it wasn't net/ specific so I didn't think to add netdev.
-Andrew, would you mind picking this one up?
+Move the colorimetry controls after the stateless codec controls,
+at the end of the file.
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+---
+ include/uapi/linux/v4l2-controls.h | 68 +++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
+
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 73e2a4ec7a16..e52cdf48d652 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -2664,40 +2664,6 @@ struct v4l2_ctrl_hevc_scaling_matrix {
+ 	__u8	scaling_list_dc_coef_32x32[2];
+ };
+ 
+-#define V4L2_CID_COLORIMETRY_CLASS_BASE	(V4L2_CTRL_CLASS_COLORIMETRY | 0x900)
+-#define V4L2_CID_COLORIMETRY_CLASS	(V4L2_CTRL_CLASS_COLORIMETRY | 1)
+-
+-#define V4L2_CID_COLORIMETRY_HDR10_CLL_INFO	(V4L2_CID_COLORIMETRY_CLASS_BASE + 0)
+-
+-struct v4l2_ctrl_hdr10_cll_info {
+-	__u16 max_content_light_level;
+-	__u16 max_pic_average_light_level;
+-};
+-
+-#define V4L2_CID_COLORIMETRY_HDR10_MASTERING_DISPLAY	(V4L2_CID_COLORIMETRY_CLASS_BASE + 1)
+-
+-#define V4L2_HDR10_MASTERING_PRIMARIES_X_LOW	5
+-#define V4L2_HDR10_MASTERING_PRIMARIES_X_HIGH	37000
+-#define V4L2_HDR10_MASTERING_PRIMARIES_Y_LOW	5
+-#define V4L2_HDR10_MASTERING_PRIMARIES_Y_HIGH	42000
+-#define V4L2_HDR10_MASTERING_WHITE_POINT_X_LOW	5
+-#define V4L2_HDR10_MASTERING_WHITE_POINT_X_HIGH	37000
+-#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_LOW	5
+-#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_HIGH	42000
+-#define V4L2_HDR10_MASTERING_MAX_LUMA_LOW	50000
+-#define V4L2_HDR10_MASTERING_MAX_LUMA_HIGH	100000000
+-#define V4L2_HDR10_MASTERING_MIN_LUMA_LOW	1
+-#define V4L2_HDR10_MASTERING_MIN_LUMA_HIGH	50000
+-
+-struct v4l2_ctrl_hdr10_mastering_display {
+-	__u16 display_primaries_x[3];
+-	__u16 display_primaries_y[3];
+-	__u16 white_point_x;
+-	__u16 white_point_y;
+-	__u32 max_display_mastering_luminance;
+-	__u32 min_display_mastering_luminance;
+-};
+-
+ /* Stateless VP9 controls */
+ 
+ #define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
+@@ -3630,4 +3596,38 @@ struct v4l2_ctrl_av1_film_grain {
+ #define V4L2_CID_MPEG_MFC51_BASE        V4L2_CID_CODEC_MFC51_BASE
+ #endif
+ 
++#define V4L2_CID_COLORIMETRY_CLASS_BASE	(V4L2_CTRL_CLASS_COLORIMETRY | 0x900)
++#define V4L2_CID_COLORIMETRY_CLASS	(V4L2_CTRL_CLASS_COLORIMETRY | 1)
++
++#define V4L2_CID_COLORIMETRY_HDR10_CLL_INFO	(V4L2_CID_COLORIMETRY_CLASS_BASE + 0)
++
++struct v4l2_ctrl_hdr10_cll_info {
++	__u16 max_content_light_level;
++	__u16 max_pic_average_light_level;
++};
++
++#define V4L2_CID_COLORIMETRY_HDR10_MASTERING_DISPLAY	(V4L2_CID_COLORIMETRY_CLASS_BASE + 1)
++
++#define V4L2_HDR10_MASTERING_PRIMARIES_X_LOW	5
++#define V4L2_HDR10_MASTERING_PRIMARIES_X_HIGH	37000
++#define V4L2_HDR10_MASTERING_PRIMARIES_Y_LOW	5
++#define V4L2_HDR10_MASTERING_PRIMARIES_Y_HIGH	42000
++#define V4L2_HDR10_MASTERING_WHITE_POINT_X_LOW	5
++#define V4L2_HDR10_MASTERING_WHITE_POINT_X_HIGH	37000
++#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_LOW	5
++#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_HIGH	42000
++#define V4L2_HDR10_MASTERING_MAX_LUMA_LOW	50000
++#define V4L2_HDR10_MASTERING_MAX_LUMA_HIGH	100000000
++#define V4L2_HDR10_MASTERING_MIN_LUMA_LOW	1
++#define V4L2_HDR10_MASTERING_MIN_LUMA_HIGH	50000
++
++struct v4l2_ctrl_hdr10_mastering_display {
++	__u16 display_primaries_x[3];
++	__u16 display_primaries_y[3];
++	__u16 white_point_x;
++	__u16 white_point_y;
++	__u32 max_display_mastering_luminance;
++	__u32 min_display_mastering_luminance;
++};
++
+ #endif
+-- 
+2.50.1
+
 
