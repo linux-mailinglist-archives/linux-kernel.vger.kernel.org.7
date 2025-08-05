@@ -1,103 +1,86 @@
-Return-Path: <linux-kernel+bounces-756668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF482B1B78F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B271DB1B7A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6CF181F06
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D771723FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FC526CE0E;
-	Tue,  5 Aug 2025 15:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01C027A139;
+	Tue,  5 Aug 2025 15:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FyNtfuhQ"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="pOZA8Qkr"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AE683CD1;
-	Tue,  5 Aug 2025 15:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34B927933A;
+	Tue,  5 Aug 2025 15:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754408103; cv=none; b=Yk+KKAhI772w0p4TCYTeUlNnv0Q5sztvXvcTV1OzZL6cvkMplTE87N0vnWONIbmJ4Jk5gdk2siDlJkL2NT5Mb9v3lwqSOqRRMPaVKrJ2vQ3DOnASlNnSPBaFUMm6Mj5XYgrnIgOmAYzAGExT6+NGL0jRJcc2GBhFHmteIomF9J0=
+	t=1754408145; cv=none; b=diABHhkwoPr5SmNdspCllMRmp3baMn1I02QGwqWMJ0dch8F6RdYD3cIcAgu1Ml88YcVHjTKCTm0YnnCKdzR2z0qCI1cKD0cagSS8ZYLjqksmOfVWINmBQXyyCuCNwi94Fb0HIr3NJXIc9tVgDvs07DrBwXS6EalreHdkSnhHZQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754408103; c=relaxed/simple;
-	bh=XK6HZ5uluC/yLeVprkG4TH9P18HkPbS+rBUFfOfvsrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgI+3oGsPZdv7bPmqu/W9nv6t5ZOKkbHqEk8F91CoO7hEWON8yjsUZKT6CEVsZWpTwoX6hwACmo7jBvkeQ+o7HM7+hr8dYoe/CUO7mx4+9JMtyzwtrxzRcAykP6HX9ROsEr6MAPMUsE1mMMw7dTWwvM5d8AoI/nKMAF2pgJo/K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FyNtfuhQ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e3EEufs82epJ/gvfFHbwXvJf/cUrVUPjug1lfJYmV2w=; b=FyNtfuhQb/6XxNOdYClktcW3IR
-	Ny1cHqKl5RwZP/k+WaYXuqrrHX5G0us3pon2kgHOJv6uCUzeQubObabJasL40EzzrAGCW/8rCYEx9
-	DWoDDt4aUEKyAhCARrr4CK3MO0KrZeFc0FLsDKMEGXFrbm0MdL7cwfIxUcgJzobhCNuP+K3joScFC
-	o+Q27MurGlT61g5Eawzp/DgcBTgasu9lyJLR0r3BCl2DT6z4FqsFjTbCMvAno7P7JUgGFIH0QtDy+
-	+wz7mdt3qUNy5DVaWeNGFj19vA6hQSuXjF1b1Qfz7WpBlh5LZKt6xmUPl8/c9VtVs9h5GFBgQwSQn
-	yj2joE1Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujJgn-00000004CjA-2YFG;
-	Tue, 05 Aug 2025 15:34:57 +0000
-Date: Tue, 5 Aug 2025 16:34:57 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
-Message-ID: <20250805153457.GB222315@ZenIV>
-References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
- <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
- <20250804155229.GY222315@ZenIV>
- <20250805-beleidigen-klugheit-c19b1657674a@brauner>
+	s=arc-20240116; t=1754408145; c=relaxed/simple;
+	bh=+5Qsxq/T4w0ZGPyPBqCczmAvgqWgVMUPoZBStuR3Cpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdAQgajM1z1Ts+8Xp32WxWAwBrMr+urqSMnqmsgdtcUOZRB9DSxbHh1FiAzd05kKI1QnFoB4S6VaGJbLxhzRH9D1ZybHVPiboid4hURDdrS62i6MgD/N+ZM19Y2z/Al8vdUCdehg+s8dObm4FdjZACtKVhp5NCQDli+M9bwmrRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=pOZA8Qkr; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bxHZ64DQyzlgqTp;
+	Tue,  5 Aug 2025 15:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1754408140; x=1757000141; bh=+5Qsxq/T4w0ZGPyPBqCczmAv
+	gqWgVMUPoZBStuR3Cpo=; b=pOZA8Qkr8YPMD/b7BTfKqmUQMx6ORCS0ZwzLX5ht
+	6bmiBmWw1nBIIifB7SXF5OyI/YLTRMcnE4k3HY17hYLmPk18LdlDbD//Xc8tzp9/
+	CYK9tVGKU81T2cvIWe6PAxHQBqOpfyr6YoNWe98Az7BOPV4E3s3FgIvovVYcvV5e
+	j8Sfiky9rEzi8TkQ3RMkHXNt8qBg5owIrmLlDbCoXDJbunoIagWGiJ3R0onNcG/a
+	vsJtBXfPQBjoq312oW1LMoE4kfGD9Za/7rf7k6/ouebxI9H9WvJRU7KEjnpJztCK
+	FDFGOKHLjGWdl76hVkZLbG5pHxicDZMbRX2GJPPSIlpSyQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id E_0mWYxqqj9m; Tue,  5 Aug 2025 15:35:40 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bxHYw3GW5zlgqTr;
+	Tue,  5 Aug 2025 15:35:31 +0000 (UTC)
+Message-ID: <1d0a2486-1295-49d6-af36-3bf9c15bd05e@acm.org>
+Date: Tue, 5 Aug 2025 08:35:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805-beleidigen-klugheit-c19b1657674a@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] lib/sbitmap: make sbitmap_get_shallow() internal
+To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
+ akpm@linux-foundation.org, ming.lei@redhat.com, dlemoal@kernel.org,
+ jack@suse.cz
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250805073748.606294-1-yukuai1@huaweicloud.com>
+ <20250805073748.606294-3-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250805073748.606294-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 05, 2025 at 01:55:59PM +0200, Christian Brauner wrote:
+On 8/5/25 12:37 AM, Yu Kuai wrote:
+> Because it's only used in sbitmap.c
 
-> The calling conventions of do_dup2() are terrible. The only reason it
-> drops file_lock itself instead of leaving it to the two callers that
-> have to acquire it anyway is because it wants to call filp_close() if
-> there's already a file on that fd.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-Alternative calling conventions end up being nastier - I've tried.
-
-> And really the side-effect of dropping a lock implicitly is nasty
-> especially when the function doesn't even indicate that it does that in
-> it's name.
-> 
-> And guards are great.
-
-They do no allow to express things like "foo() consumes lock X".
-From time to time, we *do* need that, and when that happens guards
-become a menace.
-
-Another case is
-	lock
-	if (lock-dependent condition)
-		some work
-		unlock
-		work that can't be under that lock
-	else
-		some other work
-		unlock
-		more work that can't be under that lock
-
-Fairly common, especially when that's a spinlock and "can't be under that
-lock" includes blocking operations.  Can't be expressed with guards, not
-without a massage that often ends up with bloody awful results.
 
