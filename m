@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-756355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF8AB1B304
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:04:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE485B1B308
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 880C5175AAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:04:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D077A4D82
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87283269CE6;
-	Tue,  5 Aug 2025 12:04:49 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F10C26CE0E;
+	Tue,  5 Aug 2025 12:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a8q1esYT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FEB23F413
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C037123F413;
+	Tue,  5 Aug 2025 12:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395489; cv=none; b=RJxvELsF51azSGFVzmAnGvGW4Ihv9HPNRPa0LQNbCt+PJxdhGUpU/SRId5UDxhW6+ZzklPTlTAQDYrcJ0mEuFnU3qwX0+xha+iRnQgOoRVIDreJgqnMQ+B90CsiSpjAdw/RB6WH2/NWYq7bE59tppgoIN3VDNU/Sly5HJR6t/Wo=
+	t=1754395522; cv=none; b=OIfnoJ438iyR+rJnAvL9SDrmX8W7IZrxCaC+midhabYm5LUZOMbq5RNVFnsbUxVTsYJWddZ/3ipgdFdZaf5DdcIt0rCg0ty7NKjRvBIgg05BnO8zadTWK3dTrPt7wVcBvD3v8/Q6LW1IQM1RZk/LTJGIcxXG7+nbjWjK+JjSJII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395489; c=relaxed/simple;
-	bh=uJBSd0RYDASFFZ/Z0ey9ZuL5lP97B4RDRI3fSG6SzW4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VCVYXsacav11WRPyE1g5B9lPloCpt/AfNJHvM32m0VZezOcDH/le9MjUsk08r7m/CwJSkibdbir5SPj2hGgXOGV49BmoUCzzcbeYaTE3bCYOKXvpL0ASazwJ/OfUw14pwTfw/kCftn2K6DvVxn0TY4jENW8/754fXyDxf0QWWYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5c889e4271f411f0b29709d653e92f7d-20250805
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:e08b59db-1227-415f-9524-48b789a41595,IP:0,U
-	RL:0,TC:0,Content:11,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:11
-X-CID-META: VersionHash:6493067,CLOUDID:bde39b8ec4116adce4cae47d27490bca,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|102,TC:nil,Content:4|50,EDM:-3,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5c889e4271f411f0b29709d653e92f7d-20250805
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 55385721; Tue, 05 Aug 2025 20:04:38 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 71C0FE008FA2;
-	Tue,  5 Aug 2025 20:04:38 +0800 (CST)
-X-ns-mid: postfix-6891F356-36186845
-Received: from localhost.localdomain (unknown [10.42.12.14])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 53D29E008FA2;
-	Tue,  5 Aug 2025 20:04:36 +0800 (CST)
-From: Li Qiang <liqiang01@kylinos.cn>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com
-Subject: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for performance
-Date: Tue,  5 Aug 2025 20:04:35 +0800
-Message-Id: <20250805120435.1142283-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <74580442-2a9a-4055-b92d-23f5e5664878@redhat.com>
-References: <74580442-2a9a-4055-b92d-23f5e5664878@redhat.com>
+	s=arc-20240116; t=1754395522; c=relaxed/simple;
+	bh=u8ZXPWzbXElhYtM4KU8eWaIl56pJiSBCxWJL9BLCWwY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bh2rCxvkD2QVLhUn5r2mNe6+H0QCdrBFT72e7QfNc6nkwWmmE88D630IcCslcvOWU1DWkR2GUIoKCm6TlkHmVUaxEmIA3FGnbWj95YPnZMvQqVb9ONOFx2e8jSlui/kd6X+strBKnA6IVD/S03ZfON3eBBKH1WdEzVhII+tCVXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a8q1esYT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754395517;
+	bh=u8ZXPWzbXElhYtM4KU8eWaIl56pJiSBCxWJL9BLCWwY=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=a8q1esYTS25g40DMBzzkxyY9LU18Ik6v/VARhCxypbcw/2EC0mncWQuoGji3o8lKS
+	 5R3I+a2C58B+FXNKe6nyDvGuzXJHP0g7nMHbrzpeXhsBH+RXjj+WS67AwVUGEbBLXr
+	 XOi4eyRYeZqUTYLvqXfalCE/gEy3LyNV1hTxn4O7gauUsY3FjWvHKe8rN9m7YyxuxM
+	 2zF//nSCYfDPv2ACwQhwkHgvjrcp+ZLjLvcs6xHIlcxaocN6fkkWXmEJoYrvcBVfkq
+	 mY3kx1zzBWQGv5euDZhRCi4TxeyQwKCo3/GShaQeOP8d6ngaJj4h3XBUJvvNcHkqIZ
+	 sRaMEnjBlqogw==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C8CC617E04EE;
+	Tue,  5 Aug 2025 14:05:16 +0200 (CEST)
+Message-ID: <800b190c9f1c213c81d0d1dbf09015892edab29e.camel@collabora.com>
+Subject: Re: [PATCH] media: rkvdec: Fix incorrect NULL check for
+ iommu_paging_domain_alloc
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Miaoqian Lin <linmq006@gmail.com>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
+ <hverkuil@kernel.org>, 	linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 05 Aug 2025 08:05:14 -0400
+In-Reply-To: <20250805061833.3670085-1-linmq006@gmail.com>
+References: <20250805061833.3670085-1-linmq006@gmail.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-GUyJd8Bie7c9ushUvXKa"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+
+
+--=-GUyJd8Bie7c9ushUvXKa
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Ah, missed it after the performance numbers. As Vlastimil mentioned, I=20
-would have expected a bloat-o-meter output.
+Hi,
 
+Le mardi 05 ao=C3=BBt 2025 =C3=A0 10:18 +0400, Miaoqian Lin a =C3=A9crit=C2=
+=A0:
+> iommu_paging_domain_alloc returns error pointers on failure.
+> Replace the NULL check with IS_ERR to correctly handle error cases
+> and avoid invalid pointer dereference.
 >=20
-> My 2 cents is that usually it may be better to understand why it is
-> not inlined and address that (e.g., likely() hints or something else)
-> instead of blindly putting __always_inline. The __always_inline might
-> stay there for no reason after some code changes and therefore become
-> a maintenance burden. Concretely, in this case, where there is a single
-> caller, one can expect the compiler to really prefer to inline the
-> callees.
-
->
-> Agreed, although the compiler is sometimes hard to convince to do the=20
-> right thing when dealing with rather large+complicated code in my=20
-> experience.
-
-Question 1: Will this patch increase the vmlinux size?
-Reply:
-	Actually, the overall vmlinux size becomes smaller on x86_64:
-	[root@localhost linux_old1]# ./scripts/bloat-o-meter before.vmlinux afte=
-r.vmlinux =20
-	add/remove: 6/0 grow/shrink: 0/1 up/down: 4569/-4747 (-178) =20
-	Function                                     old     new   delta =20
-	zap_present_ptes.constprop                     -    2696   +2696 =20
-	zap_pte_range                                  -    1236   +1236 =20
-	zap_pmd_range.isra                             -     589    +589 =20
-	__pfx_zap_pte_range                            -      16     +16 =20
-	__pfx_zap_present_ptes.constprop               -      16     +16 =20
-	__pfx_zap_pmd_range.isra                       -      16     +16 =20
-	unmap_page_range                            5765    1018   -4747 =20
-	Total: Before=3D35379786, After=3D35379608, chg -0.00% =20
+> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
+> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index d707088ec0dc..1d40e81f44b9 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -1162,7 +1162,7 @@ static int rkvdec_probe(struct platform_device *pde=
+v)
+> =C2=A0	if (iommu_get_domain_for_dev(&pdev->dev)) {
+> =C2=A0		rkvdec->empty_domain =3D iommu_paging_domain_alloc(rkvdec-
+> >dev);
+> =C2=A0
+> -		if (!rkvdec->empty_domain)
+> +		if (IS_ERR(rkvdec->empty_domain))
 
 
-Question 2: Why doesn't GCC inline these functions by default? Are there =
-any side effects of forced inlining?
-Reply:
-	1) GCC's default parameter max-inline-insns-single imposes restrictions.=
- However, since these are leaf functions, inlining them not only improves=
- performance but also reduces code size. May we consider relaxing the max=
--inline-insns-single restriction in this case?
+Thanks for the fix, but Dan Carpenter have already sent this fix. It will b=
+e
+included soon.
 
-	2) The functions being inlined in this patch follow a single call path a=
-nd are ultimately inlined into unmap_page_range. This only increases the =
-size of the unmap_page_range assembly function, but since unmap_page_rang=
-e itself won't be further inlined, the impact is well-contained.
+https://lore.kernel.org/linux-media/696219e9-a1c7-4c87-b15c-1ffd42c95d58@sa=
+binyo.mountain/
 
+regards,
+Nicolas
 
+> =C2=A0			dev_warn(rkvdec->dev, "cannot alloc new empty
+> domain\n");
+> =C2=A0	}
+> =C2=A0
 
-Question 3: Does this inlining modification affect code maintainability?
-Reply: The modified inline functions are exclusively called by unmap_page=
-_range, forming a single call path. This doesn't introduce additional mai=
-ntenance complexity.
+--=-GUyJd8Bie7c9ushUvXKa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
-Question 4: Have you performed performance testing on other platforms? Ha=
-ve you tested other scenarios?
-Reply:
-	1) I tested the same GCC version on arm64 architecture. Even without thi=
-s patch, these functions get inlined into unmap_page_range automatically.=
- This appears to be due to architecture-specific differences in GCC's max=
--inline-insns-single default values.
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJHzegAKCRBxUwItrAao
+HMlmAKCfv5hoBmBLX6tlUdQpzxk963M+rACgvfn53WoJ+Bkca4EluHQ8KDLqOKg=
+=t/8B
+-----END PGP SIGNATURE-----
 
-	2) I believe UnixBench serves as a reasonably representative server benc=
-hmark. Theoretically, this patch should improve performance by reducing m=
-ulti-layer function call overhead. However, I would sincerely appreciate =
-your guidance on what additional tests might better demonstrate the perfo=
-rmance improvements. Could you kindly suggest some specific benchmarks or=
- test scenarios I should consider?
-
---
-Cheers,
-
-Li Qiang
+--=-GUyJd8Bie7c9ushUvXKa--
 
