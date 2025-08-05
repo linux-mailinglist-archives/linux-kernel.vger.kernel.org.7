@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-756361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B398B1B317
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:09:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED38B1B31F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96759180F91
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:09:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E5E7ADE0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B51E26B74F;
-	Tue,  5 Aug 2025 12:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574AC26C3BC;
+	Tue,  5 Aug 2025 12:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUtH2Mbx"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s1nW3ICo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C848B248F51;
-	Tue,  5 Aug 2025 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6840B23F40C;
+	Tue,  5 Aug 2025 12:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395781; cv=none; b=ZjqeBmLaQ7M6Dm3nagXriae1RZDYlyi0QRlniicWCsalENdhwhdv9hf+Kfa+N1qbEn31+ZbT3mB9sX1CS0Uk2hywhdr/6Sfu74aQEW9elbsj1Ne1X+77dEhN4hdqEnR7V1FNw9fosmFeDbzgMnqrCR9+h45QVQTkAzYm9Ij1gFA=
+	t=1754395918; cv=none; b=leYAvmBma/IiCFc2syKEMk6nW3Nw6fLspdrdmqUckyuMb9OvCqyEnY7gkxSJF2mh1f8dh2/2sJV6CdT91GfuaSW6HpCpa3Wfclo7bV1Khsj6rP3rQ/5sknXa6ZjIb6LQPMZZTJ+v4cqZRnkp4DeXWBjYhApw71RUGVTRlXSG6DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395781; c=relaxed/simple;
-	bh=u7YmLOIiY7LaTcDo3/FpMSiIN+D1YykNaQxHLBfp7fE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2VtuA+2H6eYgNQWEE9eOJpoazFOzC75FdhGh2V80ZVODS4mud9x28wQ6xWb89jpzxkFX4yKhiSxAx3VuNbMS1FsxsgUXWqh02f+vbR2vxI/XVpDYfgg3PWpXOvjlyrq6otrXImuzpv0PgJMkAdDXdVM2HC9TUoJoqegCiAdM0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUtH2Mbx; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-458baf449cbso29114045e9.0;
-        Tue, 05 Aug 2025 05:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754395777; x=1755000577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QnDvv+RYZWrQhG27roIN5rQzgCLkdpLVj3Hura9BY24=;
-        b=IUtH2MbxxEJkE/LcuiU9ZJGJBWxBSYnqbJ0VyBOvhWLBdQsOVAvtnWNfXpGy87uR/o
-         Ci+i+SZQxxmchjwrGjTMqZdv+emy+QhfPrWx8Bwi2Svj+YjDVs8UE+7q8aeQUZtchx+p
-         A+XhgDs27+gCdpdR9U9dheohaUhS+fRAcL6yMi0TI7uPdW9Q0oooA+KoDsbpqkJzfR65
-         tKhoogBLU86b6poNKKHZljzYaAwCreURewFA8tOo9C9jHth4laARE3aeYbignJ6QjiVx
-         QolacnKSEK6abgmwqV0JsANmLKnViuGefMXGMaxZloFI88IdtbylgDnL5ot7zFm9j7I6
-         3djg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754395777; x=1755000577;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnDvv+RYZWrQhG27roIN5rQzgCLkdpLVj3Hura9BY24=;
-        b=uTg0ULzfOup6teayaHIq3aawiJSvAwBQzDTY3GR75t4996hpXHMVoWo/yXge91oqZw
-         8H8/1Gx97cRZ46PX4yNtE3gkxN9celFdMEFjPbGLZPXjCAyPz2gXEa9VnQ5F4bpmeq1A
-         VDm234kdV80cxGyX6H5u3kkJOGsil++9TIF9eraxPT2sBY9FwQtLgdKpTeNrfO9uGRu9
-         a6pryo5GpCWiTA6IGJkmUEw2CIgwXM6CejjB5UgNO6bEJ1CHkBcrxDjyWMsmXdOPEmOI
-         pxRHPgIjX6GyZIVaaxWAUgTT3EU4ahV6jSmrTfWxsathD+j88nKi6Gh2WIR3BnyLeFbJ
-         Z+2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWy67y6nlzUIxhwdyRzI7vpiY+8H8TxM6uuRQ8qMi304gqHHluoz/JHlDoR9zulkJ/c9946lEbyEV0=@vger.kernel.org, AJvYcCXI3Ui+M8Jb7sax/2FTzSbJCA4ePO8Vzbc8+8QXV9UDh85jjvikqTx40NMXg210EpBUviKQZxn+LcTiUH9u@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOe1eNrgNajfiSaIomDnqY+giqzbF/ui9o61lf0zEnJ4Uq81SW
-	EhZbO0iHJABpl8/PEaobp6QQmdnLopanpFSLW28jczGVM4+M1gEECxmn
-X-Gm-Gg: ASbGncvIAC2WdRHdHtTLxCVrTlPDBrXLaf0naT6o8Q/fVKPsUzT4D3z3tgIhaIuhuYF
-	Em2Q4MMVDGRLTkDTKHVcWVETpIm6hTrs2cK0GYReNX1BdcHu3MOEbVGKfDFg81mJoFF06SQmcrh
-	ma/kT4jfqXavK8v3eKQmNE3iHeaIjzagRkXc68bjJ+PhSCCVYKint4q+Si/OglNZAcp8YkWPS1R
-	MDBVGojlPmhzk5GaydCNxufs1f0o4nUuVG97qIqHTGeBim5q9eMWL2KGa5J0hk/CV6lOPzcWrjs
-	SUDIzQmrspb0sAUjAbhEwQ52bWdrmFCBs/OsJLaFc8Ux7inS5vdoEu5L5N1sUkP3iDS/n8QtFTF
-	x7V3L13HWCvhKeUjoNGhZ5e/vHUasNoNycBS1VvMqf9rY6LBL7ycO5Hw5f2sEzCMHGhjvomg=
-X-Google-Smtp-Source: AGHT+IHaZvpfuNdcteCmnFuvch+C+rl8ZmnFCmfkcK/icZCUVfFy77dZQumTyON7VuwTLmN17F0Guw==
-X-Received: by 2002:a05:600c:4709:b0:459:d46a:ee3d with SMTP id 5b1f17b1804b1-459d46af0c7mr77845295e9.2.1754395776562;
-        Tue, 05 Aug 2025 05:09:36 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::6:98ea])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58400f5sm1048305e9.2.2025.08.05.05.09.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 05:09:35 -0700 (PDT)
-Message-ID: <4cb3dbf4-87bb-4946-8e43-36dcb5d9fefe@gmail.com>
-Date: Tue, 5 Aug 2025 13:09:31 +0100
+	s=arc-20240116; t=1754395918; c=relaxed/simple;
+	bh=0oDVDBQc6FPyUkh0LwIGXFxrP6HB7Zxj+MYYUU41S7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dIoPanCjwSLGq3GVIr9Z0ASCboLZOeGkEI4wblJHqL6edaIRqw+xPc7X8myGeysTxSIRj/DLNhUvrB+1TZq/FW1rANKOPB/lONJ/JAiffDw1NO/59DDpXBNmZzCtB1PlLPx407skS7W20tolDGs2ApjAe95TSvX3uaBmNypRsBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s1nW3ICo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575AnqSM029445;
+	Tue, 5 Aug 2025 12:11:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=/kohu+v1FOAz4DkmPdu08m4lsClpQS2Dv4JC55CyY
+	AM=; b=s1nW3ICoE6nw48+1HAWfodM0yYR8M6ZSBnIJtOYuJqQpd9zeTtJ8Yw7AT
+	LQsMxIyOfektWVnCdBWTC+HEnIAwL9K6TqNKey1LlP/MNkESkI1XMP7mHpuSIG7p
+	k5eqwUUZRHxi5vUgASvaagCQ58mWzAm3JnAaU8a3x2PHjGH1+x49vEkRBlMxZNKf
+	RBlHz+1UPdx9LpmzGvoJScWDHJSUR7BOEMyi900HGLvrkMQWIdfHvZOysR/WpGym
+	7k2UMym6yEqW0u56vzPC1ujdJeCop1BZKKDrC3JhaQDP0yu4DJUO6FGaW7Mhtdfp
+	ypsdVd2YaqXvuNT1ICQK4AFgx7GHA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ac0x8e1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 12:11:54 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 575AYAS6004450;
+	Tue, 5 Aug 2025 12:11:53 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 489yq2j1v3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 12:11:53 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575CBnuW15532312
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 12:11:49 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8C5CD2004B;
+	Tue,  5 Aug 2025 12:11:49 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BF2E620040;
+	Tue,  5 Aug 2025 12:11:48 +0000 (GMT)
+Received: from heavy.ibm.com (unknown [9.87.141.116])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 12:11:48 +0000 (GMT)
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [PATCH] perf build: Allow using compiler wrappers with CLANG
+Date: Tue,  5 Aug 2025 14:09:34 +0200
+Message-ID: <20250805121143.1224807-1-iii@linux.ibm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] docs: transhuge: document process level THP
- controls
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250804154317.1648084-1-usamaarif642@gmail.com>
- <20250804154317.1648084-5-usamaarif642@gmail.com>
- <7828753c-98fc-4f96-bf7c-0d94f3b99e4b@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <7828753c-98fc-4f96-bf7c-0d94f3b99e4b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QLWhg2QJPhkya_LMW8ImXwhHfdlNp570
+X-Proofpoint-ORIG-GUID: QLWhg2QJPhkya_LMW8ImXwhHfdlNp570
+X-Authority-Analysis: v=2.4 cv=GNoIEvNK c=1 sm=1 tr=0 ts=6891f50a cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=uRFscEWZ48GPqj20UDoA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfXy7PBNkTOLGmh
+ TrmcZ986RVQrUe7xavXUJ8X6cGgnzUNiaPjAjP6Eg7Wgv/fgchqpZcMH87Br+LVWogSGT0rPY75
+ oOdUchdk/R5VPJ+y8r9TkAg9EtvpWXE/Wv8DRAcXbkcSxNf+fJYnVKgkklvciRkrE8ZSKH4C4LT
+ 711+0cZnfxyOnFsAIbIuxYVFDAakgaoumZiA+b2wSVYy6YjLkAv+xhN4ikdWKTzDtyELb4JLf9B
+ QLNGTZxgt1DpH5DGU5napoa9vJYK6iDTxOt0TkNNNsOw5VLRQxXj1mqQj/1uar9LdN4LLId9CPU
+ hfnJT1OdMAkCRVcBQKbyOY4dP++9jo6BGXsiVYHWDRHjAhOxYTdBRPVRxwzyZbRytM901QAXgqP
+ N9HxQSd41QblD1W2cE5bkl59rkdmT+9S69WzCCeiME/GgBNAUwn+WuYwfQ84yOw8rj8mB5QQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 impostorscore=0 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508050086
 
+It is useful to specify CLANG="ccache clang" in order to speed up
+builds. Unfortunately perf's compiler detection logic does not like
+this:
 
+    Makefile.config:704: Warning: Disabled BPF skeletons as clang (ccache clang) is missing
 
-On 05/08/2025 11:24, David Hildenbrand wrote:
-> On 04.08.25 17:40, Usama Arif wrote:
->> This includes the PR_SET_THP_DISABLE/PR_GET_THP_DISABLE pair of
->> prctl calls as well the newly introduced PR_THP_DISABLE_EXCEPT_ADVISED
->> flag for the PR_SET_THP_DISABLE prctl call.
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>   Documentation/admin-guide/mm/transhuge.rst | 38 ++++++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 370fba113460..a36a04394ff5 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -225,6 +225,44 @@ to "always" or "madvise"), and it'll be automatically shutdown when
->>   PMD-sized THP is disabled (when both the per-size anon control and the
->>   top-level control are "never")
->>   +process THP controls
->> +--------------------
->> +
->> +A process can control its own THP behaviour using the ``PR_SET_THP_DISABLE``
->> +and ``PR_GET_THP_DISABLE`` pair of prctl(2) calls. These calls support the
->> +following arguments::
->> +
-> 
-> Not sure if we really want to talk about MMF_ internals.
-> 
+We don't need to know the full path to $(CLANG), so using
+get-executable is not necessary. Fix by trying to run
+`$(CLANG) --version` instead.
 
-Thanks! have changed it for the next revision according to your suggestions.
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ tools/perf/Makefile.config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 5a5832ee7b53..4bc11db5aa4d 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -700,7 +700,7 @@ ifeq ($(BUILD_BPF_SKEL),1)
+   else ifeq ($(filter -DHAVE_LIBBPF_SUPPORT, $(CFLAGS)),)
+     $(warning Warning: Disabled BPF skeletons as libbpf is required)
+     BUILD_BPF_SKEL := 0
+-  else ifeq ($(call get-executable,$(CLANG)),)
++  else ifneq ($(shell $(CLANG) --version >/dev/null 2>&1; echo $$?),0)
+     $(warning Warning: Disabled BPF skeletons as clang ($(CLANG)) is missing)
+     BUILD_BPF_SKEL := 0
+   else
+-- 
+2.50.1
+
 
