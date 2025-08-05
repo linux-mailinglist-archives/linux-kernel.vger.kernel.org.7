@@ -1,169 +1,157 @@
-Return-Path: <linux-kernel+bounces-756799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83140B1B95F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:31:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BFBB1B959
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5E2185515
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C661D18A1737
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B4C218EA8;
-	Tue,  5 Aug 2025 17:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22052957B6;
+	Tue,  5 Aug 2025 17:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DCC5rwfm"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011041.outbound.protection.outlook.com [40.107.130.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="osBfD8UV"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8814849C;
-	Tue,  5 Aug 2025 17:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754415082; cv=fail; b=sgDMGy+LQ9cc+WmPg5U0M+tBR7dCtM/re6p/NgBK6vdriRheC7nQoahafa1tA/uCXZ4vcrjBMBA8aAms061ukrO8RvMP8K0ajW3QLQYp1P5Tz9POXBhp4Bn6WJbCc1n1tF+uLYwTzY+zwj5r1CfKyk3AtrH0na+v2FY1cMATV4k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754415082; c=relaxed/simple;
-	bh=g2cD34EPqh5wQlSnZU1MqOUUrZBb0HiFwx860RzEhGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OWIGb4x/H9wuSY+HcRSpxUQw8QWzGeiHJJRxYerdCHqLd64qt4Zk3kDZ7Wl8EERDpTEbgz4/FGHz0PKCy2Bb6zUmdJCCQxI/82ycIGiUilc85l+qO5OX1mDfGDAd0ooGVOtsYy1sS9fhWL3pzqtut3RwPiKIh8VW8b2LrOcQhF0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DCC5rwfm; arc=fail smtp.client-ip=40.107.130.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oOL8gMSWXbHhX7Sz2TJH1oFntEG7OeWCYfTdNTebCOJpu47a5Nxq9xv72eRen2RvqScQuh1JYv6GHm/+yJCkQNl1IccQ/Lxm9ziD4LbuWXY6sxivhsrtZprZhpAAoLMTBhuMm9GwiEot2t3LsvGoyH671bnqHdk8njziWyiXXn+VNsiwTDlM/Vn05AebmnrLshgnLik1GyvFtRVKNkuc8OthEUtnY00RwMG22k0fx+aQjEyHH85ZWUZOnBEeLeX18mO4/jTMo6eGoqixjHdRgh9u4lAskve4EDceFpaGN6LJZgC/LOKgDgpq5HE5iVymDA4YaiKOK5j+zmh7X2p7gQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yfg5MWpeC+W1OzKkRyyUPu6rHTulZLVWv0pSpKFwkKA=;
- b=Fl5budU4ahZ/w2PFFp27ED186I265aMdP7BZ+Qrlqq6bHBTzSYM1AxPHcjOImaUszi64quqd7FiSf8ND3Fr2VJx0Bvj10mBijee0c2CTrKkr5Uwh+NQFBTtbiI0L46TeHL8UWkfIAXcvS2Y4JJakSrt9OFpBdGdDiF5e3NmK9CcR7vWSXSqLIWIQ238MXyQYqBaG/suRmAL0ZYZg1Cpsjlk6ZiAoD+1fPU9Cy1AJGrYV/BzvaNE2AM9Ym38fyZ5RSvOsO5NnjL2h5gbvSXF/hhIf3sRe800762N6QlCadPZ455H7BUTHp6WFYLiWtsuZqWf5ghdQVOJyOZUMq76TNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yfg5MWpeC+W1OzKkRyyUPu6rHTulZLVWv0pSpKFwkKA=;
- b=DCC5rwfmv7T2T9SaVxfIxWA2s9keq+Y342VdWHr3Ax6v9OUSkV7AVWv6oPCdLS7noHPIy4K0OGQFJZiav6kJPUzKGQPFLcNcZkKuqtiAJW4Jg6nIwGElBuV3gEntlx5DwzoTEuKlwBOJ2KQ/B4KgqkWwDlchNuhTih23Oyz4HxKJzOLyaZcx7Xp8REcgKyUXOBIT0FK6dhNxTgpoIwk/zyMBwnOsk++P7GGkHMunoLXuZ2afR7RoJ4G4HAJOj6HWb4xDPb0Ex5ogyPakFHzStLjtCp7p/dPv88zpQwmb6jEyMg63ssT32/RsH6z5So3vA2OJ5tzNFHMcxRQcIUzrJg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DBBPR04MB7740.eurprd04.prod.outlook.com (2603:10a6:10:1ee::23)
- by AS8PR04MB8898.eurprd04.prod.outlook.com (2603:10a6:20b:42d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
- 2025 17:31:17 +0000
-Received: from DBBPR04MB7740.eurprd04.prod.outlook.com
- ([fe80::7a71:369b:fb82:59d7]) by DBBPR04MB7740.eurprd04.prod.outlook.com
- ([fe80::7a71:369b:fb82:59d7%5]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
- 17:31:16 +0000
-Date: Wed, 6 Aug 2025 01:26:37 +0800
-From: Jeff Chen <jeff.chen_1@nxp.com>
-To: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Bing Zhao <bzhao@marvell.com>,
-	"John W. Linville" <linville@tuxdriver.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, s.hauer@pengutronix.de
-Subject: Re: [PATCH] wifi: mwifiex: send world regulatory domain to driver
-Message-ID: <aJI+zbuErHJtOBw0@nxpwireless-Inspiron-14-Plus-7440>
-References: <20250804-fix-mwifiex-regulatory-domain-v1-1-e4715c770c4d@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804-fix-mwifiex-regulatory-domain-v1-1-e4715c770c4d@pengutronix.de>
-X-ClientProxiedBy: AM0PR06CA0097.eurprd06.prod.outlook.com
- (2603:10a6:208:fa::38) To DBBPR04MB7740.eurprd04.prod.outlook.com
- (2603:10a6:10:1ee::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931A0283FEE
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754414865; cv=none; b=NFlc3FlqdVxvhAskShRsil/qyAUCawCkzC5NoQVwRgItXR5eotd8YkA96UfPP3BRc5bYJDWMEKm1UtPJWrAf84d5g39wmG/hTMVHitn5fr908iJXhE0/yvwE8Ybp7Bd2v0KzhKqjKZjkbYSGMmfSuO+W8NaTW9+GiXxvAY7SrA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754414865; c=relaxed/simple;
+	bh=ksPy7bPW/9nCkZK2o4mLxIR2SoHOhV5fATid0kfvACw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofueKspFSCz0EF4a3qZsaevobadABIHpWzw709uMZlRA6reEoBWuSlLfDMqmac4iVTF96taqf+h1vsQKM+FQdyVPTpTNcXn1ZRIVy2hoyNC22bs0BMLJmOit5ikvNu2qrU3FYovigW2s7xGXY7BFiK7VrL4NVIlPSrk0eN/Ax6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=osBfD8UV; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e809baeef7so163180485a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1754414862; x=1755019662; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WjDqUy71lV/WUAYYIZFC/brYVFN0tl6XNylwIvC8u88=;
+        b=osBfD8UVzBrChf9dkjM4UhG721ESlaD2FTVO9XucIS2Rnrk9f7SZDt+KxXUN+bYf4h
+         hYj5axfbh2kAtVqThWiB0O+g3WeiWrRXqrkje/mRrLNlFx3JHCBbC0Kl+mcMOezNIwrg
+         emrCzZ4EyJ+kSILFrxzOL9sf+1V+DJdl4uKMpmOknKE4QecqlxIP/LoSRe/HTYIEhN7Q
+         sWJl49lm8tVl7824J/iK89TcjCWZC4WtmnJXklOMynvg2PcPLXwgwqRr8GKxD59o2G8g
+         9bZukzFikh/mz1YggtfvM4rH1c5YuWpklM1QhmAu9S2SJku4MJ0v5Pok9W3AAfML0UZd
+         qb+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754414862; x=1755019662;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjDqUy71lV/WUAYYIZFC/brYVFN0tl6XNylwIvC8u88=;
+        b=YEeW37ZV7Clgra/0sZvVYiqn9pQa353E1qg7FmiYtA/qGin8aJyBRumdK7mai43NvX
+         2Nka2uBMlqgHwJl83qVq14XR5O8ObVazTPsjoO3scZ3yO5PW36wttS9EJfTaXcBKwx9Z
+         XbzKDdzOknxBSVKbNeJsIupbnQMhvmmyE5FtylI/oXCLkQGQ4FzG8iCp5jnrKpDNoUP9
+         Z0mtdifXWQW9qFZZAIIUR/iCenIQlX8HXvWbJANX0FZPXoiXWC6g5PDTS/gU68XRmh51
+         zXiNQ4q0UnhhQxzbYcPTbt91N6sKdRygHWDRW9O5Ms7jBAkXk2OSki2s8CMUEutb4xpG
+         872w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4PN5Hgp7QA1B0eycLGE2tci0NI+x8kjCHbo6wZfbOtaaE1tlKuttjrKGUojTCkp2McQhWyC2z2ARTO4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvssOVWN6g5DsVPOHuDlIXayOXs8dFBTqeLV2JWPVmvSrPPsOM
+	BYFvgY+l7Rv1BYNfjNIwzIpfzXdHfc53HL3ODV4VPaKlYbCYuntmb/xM6CEsSvbNFCc=
+X-Gm-Gg: ASbGnct0UjWADSQvwWs4VGISxw6nBs0m60STjg2pvKE5P5+hlloK9HzoW4bGYvAu1X2
+	X22GYqO/JaFu3xXJ45xbgmh78mkm1bEx8nR5VvSyPyziQj/n3IoWFNUGNWl/sx+y1l+48Fvaj4u
+	LZSCDRkB+Be92diMsiMr8VaByR/SdYexeRmdHRGG/br0Y+GZE0OtLHrZ8y/FDVw0ssXrPOo5936
+	Ekd4nomlXtFKaSTDRQeMjkDJDrJQkM2PBFJR91ZMkmjA0NXYJiswgiSEBdGw318gH27PSvM07LJ
+	NuoZ+GaxB2CvR36xxr1rzJDVaCck/eU6y7Z7Nmt06ll2lV9nqtTnaFLY6ibk7GzUupv1Hi04kjs
+	XxZ5ggo2zo/79KvlInTwm50dbbvIHo9LZl0frJgo2Z6uyiDmWDt+MKGBVhfGWC4s51FHr
+X-Google-Smtp-Source: AGHT+IHy7XpO/6qEYngCoahXnCYpu69oHlagjnUCUPJ2Su1NtW9vipMRvRP+Dn6+sPrF7WNA3FiTmA==
+X-Received: by 2002:a05:620a:a203:b0:7e3:2c33:6d9f with SMTP id af79cd13be357-7e814dad6abmr7669585a.31.1754414862403;
+        Tue, 05 Aug 2025 10:27:42 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e806ad969dsm201306385a.78.2025.08.05.10.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 10:27:41 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ujLRt-00000001ZRN-0PWO;
+	Tue, 05 Aug 2025 14:27:41 -0300
+Date: Tue, 5 Aug 2025 14:27:41 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: dan.j.williams@intel.com, linux-coco@lists.linux.dev,
+	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
+Message-ID: <20250805172741.GX26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250801155104.GC26511@ziepe.ca>
+ <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
+ <yq5acy9a8ih6.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR04MB7740:EE_|AS8PR04MB8898:EE_
-X-MS-Office365-Filtering-Correlation-Id: 030d2652-0202-4824-bed0-08ddd445e1fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vabnhaeFF9OoMFu+AuQ1gdXPoJiDolClybqRyiQg4Iwjcjv8kKOyF7Oh5duv?=
- =?us-ascii?Q?YdYBTSMLopkFFsSFICjqIXNCbH617+240olqRRD5SRSHUJHCCxPdMi1aDi6Q?=
- =?us-ascii?Q?qcNcnVqLYTWQvWjYu39UIuadNTqRTAbwRbRDKRlKjDpGnXFHOoQEdgpzMVsR?=
- =?us-ascii?Q?HKvtIq1rrRsYRfZTKmaAPwyu/u+ubHcWTg3B/ZopH12Dp/nYx3Md1yGcu58k?=
- =?us-ascii?Q?AgEaFH/l/M9FgOM57FtE1jhtCFKnJgt2eXV399fEPiZ0/fyLpE3orOA6xqc7?=
- =?us-ascii?Q?8d15TyeH50fchoZp6tRwVpGRoDiovGkmv2VhozeoWMnopSTd7/qts4xH7p9x?=
- =?us-ascii?Q?x6vgsFyTwS1clibTC3mc5cpcJs6hoFjPERGMjYUkibPzzmfJHZJ62qvvPAci?=
- =?us-ascii?Q?VovEnqaQMhtbrg2mzPsFHTRL0GynFHiqkrOBI4G3maJ1FIdFO7k6pNuLoDjS?=
- =?us-ascii?Q?QCmUCUlMw5f78/BFqctw4M0ZyO8aDZcwYCJaNR8JXv+3GrAWedO1gerw1bZ8?=
- =?us-ascii?Q?htow4YFgv6csstG6qoV4OkzYfAy4BAuz38WebYfuGIm5QWP9n41yZZVl1gWp?=
- =?us-ascii?Q?j4KQAb/TZV16EE+BKyxdOdGmjJsiXgJbECfGsX79MG+EFaUaZgEKz0pTKQvf?=
- =?us-ascii?Q?Hf1WYPvBcttLIkKhcmUsIcPhGCgDnPllH/1DID/mA1PBx+d8K44Bp63ysHtY?=
- =?us-ascii?Q?CHuajEX1FkNKxJ89nE3x4V1OGwapyduHTXB4L7cq5fHAMXTin5C9BBAtprYN?=
- =?us-ascii?Q?ly8mchjE3UWmWtwDDMkumwSjgjynaTtKTYq4FuQoeK+aqzynr1qmhp1XtVJY?=
- =?us-ascii?Q?ZU4kZG3W+uqfjtuDWBhjzYm0n7zkzda3jf3EnxByE11x1FLymBDcJBLd4Xfo?=
- =?us-ascii?Q?itUmEpu5GY3eMSP5mpxdkSKElq+xMHden+nr9KFPgd9HoNaAtyQFTqjEguZx?=
- =?us-ascii?Q?bdN5RD7xZy0WhEySi8eNuIhNZszAsuFen5/3rEODwFKMzKxMDkJX+xLevG1R?=
- =?us-ascii?Q?8TGyDD8DsSS7U4AKgFzWFYo6WBLmq+L0AYXzRJDUEGmH/IMjcArro9q4EDQV?=
- =?us-ascii?Q?Guot701ybm+YmTyQyk7M5iaRJ+Qz79KSrZPDmcw0J+3pFXhRfXvc2EJUaf+2?=
- =?us-ascii?Q?RGN/ByLxOGIjyIcKJCWIZB/QB0+gRNZUH/24HrI0PncnhHqaCpjgkSK91IHC?=
- =?us-ascii?Q?XD7p6UJJqPYfmLE7lbikNe0jcsMDg3v6+sF5VL9tJfD90s0qR8/f1p7QLeRz?=
- =?us-ascii?Q?rvDOmLR6oO77Z/mBXo/+SMh/41UKc3mdzWk4Scl+lfzO1mB1ux5N9dYeK5Fx?=
- =?us-ascii?Q?JTyIncq5lC9baZvZrDAIZXP5Bi8KOYYJZvgtWISaXzDlUsrlUWu5Mjg9Yq6q?=
- =?us-ascii?Q?ZoexlxLYNNH6itgPj+7gJNpMeKyafIwrcmlLmxQGQ0IB1Za0llu+i/zkLUqR?=
- =?us-ascii?Q?1SgGgZ610vUsGk8kjQEv2FBOTp/UqQMjAZEsjrFqxodZVMsThUM7UQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7740.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BzYZsavfR+E5XVwywubqAA378wf6r3c5MrLhJHGot/Ha4DS6eQrTPoSCt8Mr?=
- =?us-ascii?Q?UB/+TuNRRaiscazMjdOAYNiXq9styiLVMDUu+3d9+anWtZ5Zn5vR//KO2GLJ?=
- =?us-ascii?Q?9+BlHkfbhITHusT0iM3xyJOlAzpizaignRhgrLrCvEhox74BRYViGZlXa2h1?=
- =?us-ascii?Q?V4ej5v4KbKygaAy1cX6eP5b1pzuezjU7Hsbbb+AYp31285M8tvh1+kYWja3t?=
- =?us-ascii?Q?4Pz4pIL0M7HkNRASGYoz/106oybUdF4JVYaJqxnVMEY1rZHsfIh5n/ewt1eT?=
- =?us-ascii?Q?6omN9j58Uppk8n+5EU8TSGacz7tmroLno4ABZcerowkH9wO3zOLK/dOlmXcG?=
- =?us-ascii?Q?lbN/qgnc+7WiG009p4lVQAWfOkvnDHlYFdAaO/OtZtsGOVyN9dE1n2xVr+eW?=
- =?us-ascii?Q?aSsRv/vtgDmERvVBRq6uo+e1sVvldgOS/wW+vocvMCI3qOOqMQXY325g9ijL?=
- =?us-ascii?Q?pEHOSJAcbzkOCvIZI/zjVaInAVwlvDirOQ7Nlma69o/dI5XwZvbimywZq4TG?=
- =?us-ascii?Q?bSnj3PeH6DqBGbbwdTbBMRlEo4RWtFeAoEvkbMw5cirMH3+kWxh3Nr/ttPZf?=
- =?us-ascii?Q?/xiuYs/hBhNysrc6nWmzmbNeTwtklcAmrxBpy2k1VhehxARe30CNfKMzQESa?=
- =?us-ascii?Q?hQFHG5BrnwKuCFUFF0/e0gYW18unfuiSz6TsSDUjOAhQRgmFKeXpHQ8WZEGA?=
- =?us-ascii?Q?eWj6+t0t+I6r4f7PJKgg5PpCI6DxmA+mos8+VgrTQ+HOXK09OqKUggeAXTSf?=
- =?us-ascii?Q?B1Re5Ee1irLnKoy87eGVqRFoD89doFkBlo3u7erQ7apcfgiVRYVttVtxAyQs?=
- =?us-ascii?Q?cGZvqT1hWzZN2LUlUmKaG9/jZCNJCiPz9z6CevYsl+w8iUX5gNAIh4R5kyYZ?=
- =?us-ascii?Q?iESVSFvIhD7R+OaSIZpQnnUSaXTJ5Mb6rfMjVXLwkS+iJdIuptvMnBrDPDV7?=
- =?us-ascii?Q?vEYEGQAyjlLbiRQt46y3CWauAwW2akqMZm1zPxJKoWcfn+gug6CSHdghkhiP?=
- =?us-ascii?Q?O02HopEHavh7qpIxm3ofHd3/ojIjVq3JXvTDpMkHGYFycnS/Yzy6B7GwaZtP?=
- =?us-ascii?Q?avCn+4lyshb5FQLsnKgh5rnqLL8Rck86E7I89GlynCWSe7kgS548Yxqf9vFB?=
- =?us-ascii?Q?uJdQc6UTtie63xAHin1DCcMlsMPNd6kIIA62bLkSHJRaYhYL1j297mM6E7Av?=
- =?us-ascii?Q?ZQZFAUe5MGLDBAr8YqJbpvXg4Yq8TFrhK8VC0AhtpYlksWYZANECewp23Ngd?=
- =?us-ascii?Q?9XvVwJnMqvAoPcJ8Si1CZdrFaMh9FO9gVudPEdBOv+Lmr4A1YC4MHpXZxrSK?=
- =?us-ascii?Q?/cQofFxd6skAo9bBvaXSbKsOA3SXCsWkTZBBF0uGygPrD18MoFknhK6r+UYQ?=
- =?us-ascii?Q?mU/Vkzfv5wzAFz1AApXcRYLo4GSA9orBV2L4dDNobqyY1G9u+NhErxkOXZK2?=
- =?us-ascii?Q?dDt8/nw67zEC7OW7lNeD1bY6giteILyDXfEFgS+Dw64HgAWl4jp3PZO52doN?=
- =?us-ascii?Q?obf00s2Xt4iHy5/IB7tZQIgBRwNZ3nUT4wC9D784dGbljhiWFpsDKHy9tCfY?=
- =?us-ascii?Q?oMRLIqgCq+4LZemtuN9pnl36/3Ym+IKYBz40U8ak?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 030d2652-0202-4824-bed0-08ddd445e1fc
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7740.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 17:31:16.8962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zb3Qp9C08EJ2mGY2OxMGNW2VOkFq8O/UIV+btsmXCOtJOOuyE15nifvXbjuyMb/h9TPsvFOl0qNmn9wjKWQUsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8898
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yq5acy9a8ih6.fsf@kernel.org>
 
-On Mon, Aug 04, 2025 at 04:16:59 PM +0200, Stefan Kerkmann wrote:
-> The world regulatory domain is a restrictive subset of channel
-> configurations which allows legal operation of the adapter all over the
-> world. Changing to this domain should not be prevented.
+On Tue, Aug 05, 2025 at 10:37:01AM +0530, Aneesh Kumar K.V wrote:
+> > To me it is an unfortunate PCI specification wrinkle that writing to the
+> > command register drops the device from RUN to ERROR. So you can LOCK
+> > without setting BME, but then no DMA.
 > 
-> Fixes: dd4a9ac05c8e1 ("mwifiex: send regulatory domain info to firmware only if alpha2 changed") changed
-> Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+> This is only w.r.t clearing BME isn't ?
+>
+> According to section 11.2.6 DSM Tracking and Handling of Locked TDI Configurations
+> 
+> Clearing any of the following bits causes the TDI hosted
+> by the Function to transition to ERROR:
+> 
+> • Memory Space Enable
+> • Bus Master Enable
 
-Reviewed-by: Jeff Chen <jeff.chen_1@nxp.con>
+Oh that's nice, yeah!
 
-Thanks for addressing this issue.
+> Which implies the flow described in the cover-letter where driver enable the BME works?
+> However clearing BME may be problematic? I did have a FIXME!!/comment in [1]
+> 
+> vfio_pci_core_close_device():
+> 
+> #if 0
+> 	/*
+> 	 * destroy vdevice which involves tsm unbind before we disable pci disable
+> 	 * A MSE/BME clear will transition the device to error state.
+> 	 */
+> 	if (core_vdev->iommufd_device)
+> 		iommufd_device_tombstone_vdevice(core_vdev->iommufd_device);
+> #endif
+> 
+> 	vfio_pci_core_disable(vdev);
+
+Here is where I feel the VMM should be trapping this and NOPing it, or
+failing that the guest PCI Core should NOP it.
+
+With the ideal version being the TSM and VMM would be able to block
+the iommu as a functional stand in for BME.
+
+> Currently, we destroy (TSM unbind) the vdevice after calling
+> vfio_pci_core_disable(), which means BME is cleared before unbinding,
+> and the TDI transitions to the ERROR state.
+
+I don't think this ordering is deliberate, we can destroy the vdevice
+much earlier??
+
+Jason
 
