@@ -1,97 +1,163 @@
-Return-Path: <linux-kernel+bounces-757035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEB4B1BCCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:46:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCCEB1BCCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8E418A4199
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C69C16F43F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA21021FF4C;
-	Tue,  5 Aug 2025 22:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3112A26A1AB;
+	Tue,  5 Aug 2025 22:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DaDw12F/"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OxOP0CTK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FACD221DB6;
-	Tue,  5 Aug 2025 22:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9E0524F;
+	Tue,  5 Aug 2025 22:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754433985; cv=none; b=FOpZ97QzCJZLe0SFhI8RMupRCnVPc32dI+P6fapDfVyR3aEbRxRNqUIlk34NKrLvlhwLqhlJ78Z4/bj6V7Y7CZtXwDocaqLXJ0OtAOApZBYRJT19jKT65juilGXhheBwRiifkaFH3dQ0+toqAGu8Tn0ix+viLwvA+pBqjN3lgLg=
+	t=1754434051; cv=none; b=m1pS31VCDUD7J2IIUInuo1AujJOJVZEguipAhaFTgMfyt1GseDvOPzDrVMrFi1J4w7btYwpaLH/S9WK+4F6XBsu+MMtBDBpwQT1DcE5T5wmMsASqSdTKAeVba2fShedv/iLQr5ClYOQr/2Nt8S8rnRYF7DY3bzHdUKWx03i6aa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754433985; c=relaxed/simple;
-	bh=rX+rRKTtvMPKWDm9tJXAz+kJfWbbm+FiFfp2ba4OJL8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PSqCo32jbH2bh8wnN5OXv+WjYPvkPD0DRc1wD9N0CQwiYlml1gZerTR7jyl0aOfkgH8Y7E/MH4RN1VOWuwsqc1ufokAjsIgAGUzpzDp1u4AhwJoYaANJ09rsn+oU+fLyAWPEY56m5Ex2uLQyz5Y0tPuT4u2b5Iva72dDKc0ycdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DaDw12F/; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BEA3940AD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1754433971; bh=RdpQo7jAReEyWC1pvuPCfemKLhTOM/+GymqNSoWjQ18=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DaDw12F/j/FKnYhTMxiv5JVWBgOpDIz4ZQViYthLWPXWPACZ+9sgbQycr2RxCcR7D
-	 hVqTg0Od08dgOxDQszA7EJW/HbQgDrxOoow/MsllmqFF244j/bMb4wU4SbZ/E2C6P6
-	 PDPSVY9d+UvqqrKnp+PcElaVV6/8tUW9W2xDj8shfXFaSULoO2p6ipVxxFwzeB1XqG
-	 AWO9CdYReDsY/TzshPig42cMXMeATCZUzBEo8PWknrDjzKl+1MVv+XbCcqi0gBxiZy
-	 pVyXVDaa+5pQYprun3sEGvtZxn9E2UPQ/bBXe/Jj8l0QnR+iaeMao1Um4+JfdVpjQe
-	 MWCrFivhWx4cA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id BEA3940AD5;
-	Tue,  5 Aug 2025 22:46:11 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 10/12] docs: kdoc: further rewrite_struct_members() cleanup
-In-Reply-To: <20250804151511.73ffb949@foz.lan>
-References: <20250801001326.924276-1-corbet@lwn.net>
- <20250801001326.924276-11-corbet@lwn.net>
- <20250801080744.14f83626@foz.lan> <87v7n6pscu.fsf@trenco.lwn.net>
- <20250804151511.73ffb949@foz.lan>
-Date: Tue, 05 Aug 2025 16:46:10 -0600
-Message-ID: <87ms8djsjx.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1754434051; c=relaxed/simple;
+	bh=KYw4RNUeASdFXsPrATJzTl49vE5DAknXhp2CsRtxLOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBKSOI/2moqs7VuUvN8Ya+U/kwhMgw26A3+jYwaOXEN4S1GgA/7qEKVqfps0IcsiQb4CBCShChZFu88iF/qSHo6kX7+TUHwmdFTLFeBO1MB3+/CK6CjNa/pdcqr9t8b/2um7wE3VtD7CwzFPAyFVH9NH4reFFB+NuV0LIjJoQYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OxOP0CTK; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754434050; x=1785970050;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KYw4RNUeASdFXsPrATJzTl49vE5DAknXhp2CsRtxLOg=;
+  b=OxOP0CTKn8cMCN3qml7mrAYYxfIuqOc4vlmPwtBWDEttAZNCUS2/aXfi
+   fjqY6XJeCBxKjlvMaRHR+PgwWWxp3nP+2H3z+idVts11BtIofD0kK/CPh
+   v7LIti5d1wGk/BX4b58ThdCbUn3UlNcpOC899YOPzmnFeSnVJttZegkSv
+   egHktFye+0LfcfpaUnp4zeKrBdI5DdHe8Z17mam9UFrbtvV4AtxlKWTyZ
+   JhGJ8/RaZG3gQHSVBJQYNS6KNLpBA5+Zanj2dXENv7QDR3RASMOs8pPIw
+   Jdt5ciopuyt7vL1aJuFYOM/OffiKFuGBez9kfpqWEtbRQNgYqj0ZKqoR/
+   g==;
+X-CSE-ConnectionGUID: 7cEgfDxgRemQun14yvP1uw==
+X-CSE-MsgGUID: f/i+WTdgTXax9TovkpTzKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="55780365"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="55780365"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:47:29 -0700
+X-CSE-ConnectionGUID: PCD5D5urR9CM2dpvKcS+Ig==
+X-CSE-MsgGUID: pX+gkuTSSbW81hMyD72weg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169066712"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:47:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ujQRD-00000003s6A-0sOQ;
+	Wed, 06 Aug 2025 01:47:19 +0300
+Date: Wed, 6 Aug 2025 01:47:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+	kieran.bingham@ideasonboard.com,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] media: i2c: add ov2735 image sensor driver
+Message-ID: <aJKJ9l_j2VJFEcHe@smile.fi.intel.com>
+References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250731061004.5447-3-hardevsinh.palaniya@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731061004.5447-3-hardevsinh.palaniya@siliconsignals.io>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Thu, Jul 31, 2025 at 11:39:58AM +0530, Hardevsinh Palaniya wrote:
+> Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.
+> 
+> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an
+> active array size of 1920 x 1080.
+> 
+> The following features are supported:
+> - Manual exposure an gain control support
+> - vblank/hblank control support
+> - Test pattern support control
+> - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)
 
-> Perhaps one alternative would do something like:
->
-> 	tuples = struct_members.findall(members)
->         if not tuples:
->             break
->
-> 	maintype, -, -, content, -, s_ids = tuples
->
-> (assuming that we don't need t[1], t[2] and t[4] here)
->
-> Btw, on this specific case, better to use non-capture group matches
-> to avoid those "empty" spaces, e.g. (if I got it right):
+...
 
-The problem is this line here:
+> +#define OV2735_REG_LONG_EXPOSURE		OV2735_PAGE_REG16(0x01, 0x03)
+> +#define	OV2735_EXPOSURE_MIN			4
+> +#define	OV2735_EXPOSURE_STEP			1
+> +
+> +#define OV2735_REG_ANALOG_GAIN                  OV2735_PAGE_REG8(0x01, 0x24)
+> +#define	OV2735_ANALOG_GAIN_MIN			0x10
+> +#define	OV2735_ANALOG_GAIN_MAX			0xff
+> +#define	OV2735_ANALOG_GAIN_STEP			1
+> +#define	OV2735_ANALOG_GAIN_DEFAULT		0x10
 
-                oldmember = "".join(t) # Reconstruct the original formatting
+I dunno if the TAB after #define is something being required here, to me sounds
+like a misplacement.
 
-The regex *has* to capture the entire match string so that it can be
-reconstructed back to its original form, which we need to edit the full
-list of members later on.
+...
 
-This code could use a deep rethink, but it works for now :)
+> +static int ov2735_page_access(struct ov2735 *ov2735, u32 reg, int *err)
+> +{
+> +	u8 page = reg >> CCI_REG_PRIVATE_SHIFT;
+> +	int ret = 0;
+> +
+> +	if (err && *err)
+> +		return *err;
 
-Thanks,
+> +	mutex_lock(&ov2735->page_lock);
 
-jon
+Since you have cleanup.h, why not use guard() here?
+
+> +	/* Perform page access before read/write */
+> +	if (ov2735->current_page != page) {
+> +		ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, err);
+> +		if (ret)
+> +			goto err_mutex_unlock;
+> +		ov2735->current_page = page;
+> +	}
+> +
+> +err_mutex_unlock:
+> +	mutex_unlock(&ov2735->page_lock);
+> +	return ret;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
