@@ -1,166 +1,274 @@
-Return-Path: <linux-kernel+bounces-756418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131EBB1B3BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:48:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0EAB1B3BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DDF18A09AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEC81824E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8C2701D6;
-	Tue,  5 Aug 2025 12:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16E525C816;
+	Tue,  5 Aug 2025 12:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl5Obup4"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWt6wTJ2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k+00XsIC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWt6wTJ2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k+00XsIC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA1E17BA9;
-	Tue,  5 Aug 2025 12:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661CA17BA9
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754398093; cv=none; b=hYVAWtRjHr9PATBMT/2HfaKQQqeU8L8n8w2JjTyc/an4Sxf8GcVNQq62x6Cekdwa4O0vH2QPj4N6feaGXcpnPakCfOwhYpAl1s6YKWiaeVKNdmGqs1xtzt4EC7lusjsu5X/wd67EpMIgp8lVz51L8jDCEdtChBuPjxNTdFA8zqM=
+	t=1754398065; cv=none; b=nb6GwPXAdIj3sVCHNH7l9phg6+vGNMD5lTGxv6J1HTeUD6+4KpiLf8CHBtNfduoKqpM7ZsoBZY9R5a1i72+g+WdqhDX/9mU7MX4//EgWp8bF5dMWwusQJCc1vPkz+nNCF+Y8XfH9+QPFY9w6pgFWtt0StVlKKfNW03uqgDQeAQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754398093; c=relaxed/simple;
-	bh=puskYHQyC6KL85FMnyUigLBXFVESpYhBrg0RpClDOWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X2rVj91C/zH2Hvk2xRFr6o2BBhruyGF0mMQ3hGI7/TJ2vU7AlyLnskfpsRmC2oWiosfyta1blepo8nCkbUdtdgu9HG+r3QmMf85rCYSmpiLFw/tGaYHDdFVBRkqjcEWo6DzxK1gYIwDlJkW5lvQsE68EQj3IfhcXxk7KqgLOJZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl5Obup4; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af93bcaf678so504525366b.0;
-        Tue, 05 Aug 2025 05:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754398090; x=1755002890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uRPcVMFRBdpJOvWHPvTEp2JM/aBDAM2/KtZKKIHDMGg=;
-        b=kl5Obup4d3lXGP4Qh4u7sWP/vfnyVkkQ9T2NBzeJbMA88Hvurhmr0qauxz82U0Lw2x
-         EaLVCl1R3WC8//lE2N2oJA1wBKB8gUfGiM4XAtDfD1o9CAbm7rFBy2oKH+R1H5SjazFZ
-         pPzZQosTefNbh+dCz5R4q0OstYuV0AjWYjsd1yFAe9tjh0/ir+3FFwDn/eo1u9pj9do/
-         9PMBWPaObFSBdbCfqC3QNQbObnusTTxSZ2ZJZSqBoRMLm5zwxGJcquUS9xiXusywh5/B
-         Y7T96ZF9fzi6QgizUo6OI9+1hd3Qgj8dNbPBHDonb7MkmQStRRUy0stGbpubl5vv577D
-         wj0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754398090; x=1755002890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uRPcVMFRBdpJOvWHPvTEp2JM/aBDAM2/KtZKKIHDMGg=;
-        b=CsMu0LNDsh0hYnO3+QxKl7uaBaecX1XRdkJHUlIB30DceoCJWzs1EEhuSeI72u/lH2
-         4aO87s0P/PDJx6nO9pigSzb8rMmQa7fGbMK52CtYMVGim4IVukgT687Z3oVE3bMFD3kW
-         sx9DrW1MDMP28CkrHP0qW4pc6KI41LZUaxhV8gLlmVJ4TSlbZghaCXV+eNWHQZKd5d0U
-         58Rn+oYd6atQKaYjavQMar69aKwsYb+sTlwQxmtaMtsNJ20KIRtRBUQAz31mDPiYiEWG
-         Z7A54agmhuB0cfpCInjutxda3+wjelRK0wRGlsci+BaByR/Npi1F7BNuRoFATuB//Qj/
-         ib8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVV1jE4g5ub+MiHTGA5zRCLp3UXsf5Y9x5tfFjHDSjrIeSYGK0/j1AFhzhYUwLpgn8xhLk5Teqs7NZ3qmDZ@vger.kernel.org, AJvYcCXGrYxdh9Xo41QgIjXhHe1iUonxTD04MDZYKM7FNIk5ShmNV9CPhn4/zLgLtZhEq5Lpmmxp0LO3v48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPf/JtTopOFUDOrWmNN2evxc0+rEaAQ2P+hFley8LNa+Td74W0
-	On4nDRotP62PV4I+izatLFpE5ZOMqqwTqI6qgPuA7Ta4k7ardSAby9edW4WHcJLuPGCTK0U7UYj
-	v7k7/RCX0bbzjmOXtj4PwxGG1k5stf6I=
-X-Gm-Gg: ASbGnctK328dPBheunulaiLmKn4uXgrM/IFjH67LSdK1fyslhnt9cwUoRPF6BxaBAXi
-	hFo78MiuPpWIZkLPEtdhX8ovmluXqd0UMd0HGkdjt6ukNGLXvYazDHqjQ+mn/xScrjfyCy80YBv
-	s0e3LL35LFf1XffE/R1JN5b1x1oUUVjsmIxvj3iBk0BcqihhHmiMt4mW44FKwIwvQi3IEPG69rs
-	Jm/G1bVIw==
-X-Google-Smtp-Source: AGHT+IHGF9Ud8gh8UvtlfG6tG2ciUV6ow5sjsaPmKKNcVLwPdsG7ADxVDRcqjNqsUWkecXeSBKFszhGXbhw+3+NbI3w=
-X-Received: by 2002:a17:907:7292:b0:ae3:f16a:c165 with SMTP id
- a640c23a62f3a-af9401aff4cmr1379494066b.31.1754398089425; Tue, 05 Aug 2025
- 05:48:09 -0700 (PDT)
+	s=arc-20240116; t=1754398065; c=relaxed/simple;
+	bh=off6nfg4zjNZp4n11v0EkG1RVFdkrSbhxm96eS/gJ5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QyvoampTWdmiukray+FYk0acdNErt8KRw/XOyVaJc8+jk//yV1A6dJZofpk4rqLmUrXkMf1wCkFffbqlPEIIopvbl0z6inwMJdy/dLvUGQrbl/yUY5Fxq9Q7gICt048MdqzhDLYzZapReSzMlNjZZtiSBHRWVr4Qwvwb9m5TNwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWt6wTJ2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k+00XsIC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWt6wTJ2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k+00XsIC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 92A5F216F1;
+	Tue,  5 Aug 2025 12:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754398060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8nWLo0aRWk7YuQOcCa8Ie4aVAnTszPhkbHWtT5G8T0=;
+	b=NWt6wTJ2kbOHB9A0fmjljRNx0wf5wBvS/Ct8xLLVaTJxS0+60/inCh1PdtRhFitYWn2EjC
+	BiykHR2WgdtXXPkoaXyKP8xB+kEgTGzUH3kNupud4FPqxeRMGcijVktJBciX4u+J7Yzawf
+	DUErLq9csW7rEuKyDjiEUOHG6+N8ow4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754398060;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8nWLo0aRWk7YuQOcCa8Ie4aVAnTszPhkbHWtT5G8T0=;
+	b=k+00XsIC+Z2MxbqW80RCbHEOOD1EXr4YYjQj+HyihLb3cMgkfcpf6gxZnWL9A2HTlw57Es
+	bWDaXqKbuRRFhhBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754398060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8nWLo0aRWk7YuQOcCa8Ie4aVAnTszPhkbHWtT5G8T0=;
+	b=NWt6wTJ2kbOHB9A0fmjljRNx0wf5wBvS/Ct8xLLVaTJxS0+60/inCh1PdtRhFitYWn2EjC
+	BiykHR2WgdtXXPkoaXyKP8xB+kEgTGzUH3kNupud4FPqxeRMGcijVktJBciX4u+J7Yzawf
+	DUErLq9csW7rEuKyDjiEUOHG6+N8ow4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754398060;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s8nWLo0aRWk7YuQOcCa8Ie4aVAnTszPhkbHWtT5G8T0=;
+	b=k+00XsIC+Z2MxbqW80RCbHEOOD1EXr4YYjQj+HyihLb3cMgkfcpf6gxZnWL9A2HTlw57Es
+	bWDaXqKbuRRFhhBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D39D13A9F;
+	Tue,  5 Aug 2025 12:47:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SqwxNWv9kWhjDwAAD6G6ig
+	(envelope-from <ematsumiya@suse.de>); Tue, 05 Aug 2025 12:47:39 +0000
+Date: Tue, 5 Aug 2025 09:47:37 -0300
+From: Enzo Matsumiya <ematsumiya@suse.de>
+To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+Cc: sfrench@samba.org, pshilov@microsoft.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, chengzhihao1@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH V2 0/4] Fix mid_q_entry memory leaks in SMB client
+Message-ID: <ci3hj5mr7a3qjx7hiuomzq4ankp7kym3sqevkll3pn4r76kb2f@rpxbkf3sqinq>
+References: <20250805064708.332465-1-wangzhaolong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
- <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com> <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
-In-Reply-To: <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 5 Aug 2025 14:47:32 +0200
-X-Gm-Features: Ac12FXzFtjMEtaNWvs1Vz485HQLvS005IiKgjdLb6tmVsPWtaxaqbf-fjJ7cKoA
-Message-ID: <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
-Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
- support in device registration
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250805064708.332465-1-wangzhaolong@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <akshayaj.lkd@gmail.co=
-m> wrote:
+Hi Wang,
+
+On 08/05, Wang Zhaolong wrote:
+>I've been investigating a pretty nasty memory leak in the SMB client. When
+>compound requests get interrupted by signals, we end up with mid_q_entry
+>structures and server buffers that never get freed[1].
 >
-> On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > Doesn't sound right to me. HAve you investigated PM runtime paths?
-> Yes I did investigate and found that PM runtime->suspend() callback
-> co-exists with remove callback.
+>User foreground process                    cifsd
+>cifs_readdir
+> open_cached_dir
+>  cifs_send_recv
+>   compound_send_recv
+>    smb2_setup_request
+>     smb2_mid_entry_alloc
+>      smb2_get_mid_entry
+>       smb2_mid_entry_alloc
+>        mempool_alloc // alloc mid
+>        kref_init(&temp->refcount); // refcount = 1
+>     mid[0]->callback = cifs_compound_callback;
+>     mid[1]->callback = cifs_compound_last_callback;
+>     smb_send_rqst
+>     rc = wait_for_response
+>      wait_event_state TASK_KILLABLE
+>                                  cifs_demultiplex_thread
+>                                    allocate_buffers
+>                                      server->bigbuf = cifs_buf_get()
+>                                    standard_receive3
+>                                      ->find_mid()
+>                                        smb2_find_mid
+>                                          __smb2_find_mid
+>                                           kref_get(&mid->refcount) // +1
+>                                      cifs_handle_standard
+>                                        handle_mid
+>                                         /* bigbuf will also leak */
+>                                         mid->resp_buf = server->bigbuf
+>                                         server->bigbuf = NULL;
+>                                         dequeue_mid
+>                                     /* in for loop */
+>                                    mids[0]->callback
+>                                      cifs_compound_callback
+>    /* Signal interrupts wait: rc = -ERESTARTSYS */
+>    /* if (... || midQ[i]->mid_state == MID_RESPONSE_RECEIVED) *?
+>    midQ[0]->callback = cifs_cancelled_callback;
+>    cancelled_mid[i] = true;
+>                                       /* The change comes too late */
+>                                       mid->mid_state = MID_RESPONSE_READY
+>                                    release_mid  // -1
+>    /* cancelled_mid[i] == true causes mid won't be released
+>       in compound_send_recv cleanup */
+>    /* cifs_cancelled_callback won't executed to release mid */
 >
-> > Looking at what the code you added there it sounds to me like a part
-> > of PM runtime ->suspend() callback.
-> Yes, part of functionality will always be common, because both the
-> callback implementations put
-> the device into powered down or low power state which is what has been do=
-ne here
-> Both _suspend() and remove are called at different times in the lifecycle=
- of the
-> driver, but with respect to register setting, they put the device into
-> power down state.
+>The core issue is a race condition where cifs_cancelled_callback never
+>gets a chance to run, so cleanup never happens. I've spent quite a bit
+>of time trying to understand how to fix this safely.
 
-Are you sure about the remove stage and how it interacts with runtime
-PM? Please, check how the device driver core manages PM on the remove
-stage.
+Do you have a reproducer for this?  mids are allocated from kmem cache,
+and a leak should certainly be visible (WARN on rmmod), even without any
+debugging facilities enabled.
 
-> Additionally .remove() can have code for:
-> 1. disable runtime power management (if enabled while device registration=
-).
+However, I do know that the following problem is quite common in cifs:
 
-If the device core enables it for you, it will disable it
-symmetrically. I don't see the issue here, it should be done
-automatically. If you do that explicitly, use the respective
-devm_pm_runtime_*() call.
+thread 0        | thread 1
+----------------|----------------
+                 | lock
+                 | check data
+                 | data is valid
+                 | unlock
+lock            |
+invalidate data | lock (spins)
+unlock          | ...
+                 | // assumes data still valid
+                 | use invalid data (not really freed)
+                 | unlock
 
-> 2. device cleanup (disabling interrupt and cleaning up other configs done=
-).
+You see that no matter how many locks you add to protect data, there's
+still a chance of having this "race condition" feeling.
 
-Wrap them into devm if required.
+So, personally, I'm skeptical about having yet another spinlock with
+questionable or no effect at all.
 
-> 2. unregister the device.
+But again, if I can reproduce this bug myself, it'll be much easier to
+analyse effectiveness/review your patches.
 
-Already done in the original code which your patch reverts, why?
+Apart from that, cleanup patches always get my +1 :)
 
-> For eg: another light sensor bh1750
-> static void bh1750_remove(struct i2c_client *client)
-> {
->     iio_device_unregister(indio_dev);
->     mutex_lock(&data->lock);
->     i2c_smbus_write_byte(client, BH1750_POWER_DOWN);
->     mutex_unlock(&data->lock);
-> }
+
+Cheers,
+
+Enzo
+
+>Honestly, my first instinct was to just patch the callback assignment
+>logic directly. But the more I dug into it, the more I realized that
+>the current locking scheme makes this really tricky to do safely. We
+>have one big lock protecting multiple different things, and trying to
+>fix the race condition directly felt like playing with fire.
 >
-> static int bh1750_suspend(struct device *dev)
-> {
->     mutex_lock(&data->lock);
->     ret =3D i2c_smbus_write_byte(data->client, BH1750_POWER_DOWN);
->     mutex_unlock(&data->lock);
->     return ret;
-> }
-
-Correct and where do you see the problem here? Perhaps the problem is
-in the cleanup aordering and some other bugs vs. devm calls?
-
-> In drivers/iio/light, you can find similar examples in pa12203001,
-> rpr0521, apds9960,
-> vcnl4000, isl29028, vcnl4035. You can find many more examples in
-> sensors other than light sensors.
-
-Good, should all they need to be fixed?
-
---=20
-With Best Regards,
-Andy Shevchenko
+>I kept running into scenarios where a "simple" fix could introduce
+>deadlocks or new race conditions. After looking at this from different
+>angles, I came to the conclusion that I needed to refactor the locking
+>first to create a safe foundation for the actual fix.
+>
+>Patches 1-3 are foundational refactoring. These three patches rename
+>locks for clarity, separate counter protection from queue operations,
+>and replace the confusing mid_flags bitmask with explicit boolean
+>fields. Basically, they untangle the current locking mess so I can
+>implement the real fix without breaking anything.
+>
+>The 4th patch in the series is where the real fix happens. With
+>the previous refactoring in place, I could safely add a lock to each
+>mid_q_entry and implement atomic callback execution. This eliminates
+>the race condition that was causing the leaks.
+>
+>In summary, my approach to the fix is to use smaller-grained locking to
+>avoid race conditions. However, during the implementation process,
+>this approach involves more changes than I initially hoped for. If
+>there's a simpler or more elegant way to fix this race condition that
+>I've missed, I'd love to hear about it. I've tried to be thorough in
+>my analysis, but I know there are folks with more experience in this
+>codebase who might see a better path.
+>
+>V1 -> V2:
+>  - Inline the mid_execute_callback() in the smb2ops.c to eliminate
+>    the sparse warning.
+>
+>Link: https://bugzilla.kernel.org/show_bug.cgi?id=220404 [1]
+>
+>Wang Zhaolong (4):
+>  smb: client: rename server mid_lock to mid_queue_lock
+>  smb: client: add mid_counter_lock to protect the mid counter counter
+>  smb: client: smb: client: eliminate mid_flags field
+>  smb: client: fix mid_q_entry memleak leak with per-mid locking
+>
+> fs/smb/client/cifs_debug.c    | 12 ++++--
+> fs/smb/client/cifsglob.h      | 22 ++++++-----
+> fs/smb/client/connect.c       | 57 +++++++++++++++++----------
+> fs/smb/client/smb1ops.c       | 23 +++++++----
+> fs/smb/client/smb2ops.c       | 72 +++++++++++++++++++----------------
+> fs/smb/client/smb2transport.c |  5 ++-
+> fs/smb/client/transport.c     | 71 ++++++++++++++++++----------------
+> 7 files changed, 152 insertions(+), 110 deletions(-)
+>
+>-- 
+>2.39.2
+>
+>
 
