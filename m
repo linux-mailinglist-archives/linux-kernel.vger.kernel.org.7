@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-756754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EBCB1B8D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921B9B1B8DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69A818288C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:55:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9380F16BB8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757C0293B75;
-	Tue,  5 Aug 2025 16:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B628229552B;
+	Tue,  5 Aug 2025 16:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fChGc0hi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="GCAyi8l3"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66B61F4C99;
-	Tue,  5 Aug 2025 16:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CA1294A0B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 16:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754412931; cv=none; b=kaKATAXzu1UuXgUusb7yfQGHB0ZKBXtOu0b6zbURzRVrEwhMrhKjnVTouMgkmldgr3o5MsY47sKx+TQb81IA9pgopgOBrlomYskcfi3Sm+DiPaw8Y6UFvMUqBu3GT8kYHM0wU4FC7+/0PI7c1J8I2y5JZx9rAdNWxzKIuimaEDI=
+	t=1754412935; cv=none; b=kjHLCcE+2O7xlnDdu/l2h9UyVHiAbR/hwK4G1Or1HptFv9tCqi9AWhGjaA8OwAHEKRI9QimNpqcbPooI01SyB6tcRa4Nhte8vbEUooMcz+CNdyp6u/rnqjTW1WD4pa9T2MBmesATSOtWLDWFIwGDXrlII404CAhoyZwSyPXniNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754412931; c=relaxed/simple;
-	bh=iFb6L5QBtgK6Jtecx2G+pkHMUbVEo5K2fnQW/Pldmvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Di6Ci2dZRo1xuIGwspc+8V+044YOmRjcY179tFPOTyfeZLYFZbgSy8u+Ecks+ZOKQtmAfNTHyWel1EQhQIDP9UF3Ocv61AIFq9fGK2MrqPaymGtvEdwVKfTKreT8zhu8vwBB7hV2YfTrBYf5U3VhSqVpoDGT5NH9xAnaZXVEWCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fChGc0hi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C544C4CEF0;
-	Tue,  5 Aug 2025 16:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754412931;
-	bh=iFb6L5QBtgK6Jtecx2G+pkHMUbVEo5K2fnQW/Pldmvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fChGc0hiZ3jA+d0ue2T8eXZMrfcIaBUFCeiiG/89AKxJOBRUMPIc8pBVJ7VeS3VHy
-	 ZeadXuAkhRa6njrAfYaSODZ2GkKjktdw/OjPdt+4gk6nhZWk63pgpSl3NsrxmiD+ZU
-	 nX1t5Q/GOYpxv1Cq5egYtxxu1l2cde1DaoP87/gPY3jEZDAcyd6+YFzZIwxMlTi/Zz
-	 6KhUlbsXdQb/9KaDBVoB2GmTF9Q2nnOZvkEAQYO9EeiPwoFlxJlWOLciY3ZR5o470L
-	 alTgOApPNXlcy4kmZv5/Y6Nn32Kh5ME41K7YpmKJjwOeraRzQzH48f3x86f3s5cyTr
-	 Qa02Bo/WdS3FA==
-Date: Tue, 5 Aug 2025 22:25:15 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, agross@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Message-ID: <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
- <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
- <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
- <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
- <1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
- <2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
- <11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
+	s=arc-20240116; t=1754412935; c=relaxed/simple;
+	bh=Fp5HWiT4EbVZep/x9cvBV1E7HldqS1NmMje5M8EiILI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LCrC0JSgg3ebyDWUAZEPbZ3M1lqbIUwFjKJBSD4wWWGQGcke/yvBF0SEqq2cnxglURQTVZHYUWGFrgFUQLzZndFqKwqJjSROy55BeUzL57xtfquhyeVkHBFEJL7rxvwYosCNLzyITEBJ73UCsb2tiag3AEZPHwmeNnp+z0z5BLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=GCAyi8l3; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b170c99aa49so3806634a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 09:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1754412933; x=1755017733; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wkz91KHprB6isKf23cxufh6A8qop4qxhhEsx0NJGcM=;
+        b=GCAyi8l3iVyWYbEU2ealgxNkQcsYBhVYo/UrfwnEowwrCJe+ur7TvplvasSFLa2Jh8
+         5a9/pADFupQ/NmdyY7eMuGnt4RqZg9/nhHVYmj+UCTf4d9f8OBQfRurQHukaknOQ8vsM
+         0l5inrMCKVKcj7WZodb8sGAAIUMz8ZVFcTFUjR4lNl3EBJlCn3f7tzw4fYNDlHGc3GhV
+         Z4LHuQHxrjyZ4ZrLK0UkPpHx3GbOsIn4A1FZ7TtAKX/8pFTKHGxK9CefqXc4SFky0QlD
+         tFroCHnBjt84uJP+9MUWe9aj1MdcllXEnPYMGdijYk3NOMYAzMwscbtADjt3FrTtE4dt
+         Mpjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754412933; x=1755017733;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1wkz91KHprB6isKf23cxufh6A8qop4qxhhEsx0NJGcM=;
+        b=iw4/2+y9V+DZ5fMd+GokcHwarAw8a59NZlvgFx5TJdgfWyLP/sMAjF44Vyv8UM8XP/
+         Rd4WIKK4Y1799vi759ZymN/F8F04pZ7sSA1AjzEzGj+VudtSvlEBtn9k2WgGlh8dXDTE
+         z7os06bTI1jTSrhK5r7Az9lQgTN60JhvaX5bWgAf5t7pLKBIGcjgAeLyOj8KbMD2tUvT
+         0XrzeGQCiemutxXS4U33a5ZpKBE8ughpUCoCZ1JsI2WqqIC9Wno7ZhjOYvxKHfAz0L7d
+         NXm43mEECirYOZUyb6vbACqPheoH5I09uNTymh67IRet711BB6HtpX7ZIMak/Y7ubkr8
+         H4AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVEVYmYa7PlxAR3MBfAzVUHDalTo02OYUWTf9UG0832KmbPkWnPRYwsRdNb81D2EnJZRV12qos6AHKx/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyoXopjbNwuWd71ErG/oDd8tr85VRW6VzahT+Lrq7d0o/5AN0d
+	4sXt/I3q/3INchHNosa4nk8dASfk1iMowVJXIMnqcsS1O6EmAJZhkWMwlA89MfoBq/k=
+X-Gm-Gg: ASbGncsIMw1aVZexinDp83X9ulEMdHwJPHE56uuze3BhebqdpajstcfyF0A81LRfFNB
+	ClrLe4smoPcU22tnNWDBD7T9XnFCUkGgsCBX1xhb3xtTwPF3GYzwMBJhVb5spBPOH//R3nIR0HT
+	ftHOaxvXPjY9nXC2IP6qFuP1CdFUQqGAGZQkeGx0XreeI6KfVTDzkDWW66+ga/NYhRlFyznlRzw
+	RX8jMSFGTZIu5uzZWqC/b9Rc3LFDvARCsDi8oH7gfL1zkntlb1rr7yei4Te8DmV5lv5dWZEgRxJ
+	yW/RASeYMW21x/kk8q+IqIn2Sycm0Gezrc5YvRYZvwGUOMLLDgUNPjtz9IdELeh7fkwEX8LXvtC
+	Jx7bzphKfhWxs09V5G/U=
+X-Google-Smtp-Source: AGHT+IGAfhYUa7PhuRsJVXdjeXsZjVW5MeNg35FqZ+gfJ661zQM8GUygCqYfQ1PuCGyCdesm2o1qQw==
+X-Received: by 2002:a17:903:2f87:b0:23f:cf96:3071 with SMTP id d9443c01a7336-24247033f3dmr220933225ad.49.1754412932893;
+        Tue, 05 Aug 2025 09:55:32 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaf855sm138621195ad.168.2025.08.05.09.55.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 09:55:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 05 Aug 2025 10:55:30 -0600
+Message-Id: <DBUNH9S9HCXH.SIOBPAT3U91N@brighamcampbell.com>
+Cc: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH] drm: Add directive to format code in comment
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Giant Sand Fans" <rampxxxx@gmail.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250804212902.22554-1-rampxxxx@gmail.com>
+ <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
+ <CABPJ0vgz6gib5LdKY1O6uhPq7Tk5GN2X_dcGBwtx3b=TRQUw-Q@mail.gmail.com>
+In-Reply-To: <CABPJ0vgz6gib5LdKY1O6uhPq7Tk5GN2X_dcGBwtx3b=TRQUw-Q@mail.gmail.com>
 
-On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
-> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
-> > On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski wrote:
-> >> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
-> >>>
-> >>>
-> >>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
-> >>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
-> >>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
-> >>>>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
-> >>>>>> support automotive use cases that require limiting the maximum Tx/Rx HS
-> >>>>>> gear and rate due to hardware constraints.
-> >>>>>
-> >>>>> What hardware constraints? This needs to be clearly documented.
-> >>>>>
-> >>>>
-> >>>> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
-> >>>> but keep on responding to other comments. This won't help you to get this series
-> >>>> merged in any form.
-> >>>>
-> >>>> Please address *all* review comments before posting next iteration.
-> >>>
-> >>> Hi Mani,
-> >>>
-> >>> Apologies for the delay in responding. 
-> >>> I had planned to explain the hardware constraints in the next patchset’s commit message, which is why I didn’t reply earlier. 
-> >>>
-> >>> To clarify: the limitations are due to customer board designs, not our SoC. Some boards can't support higher gear operation, hence the need for optional limit-hs-gear and limit-rate properties.
-> >>>
-> >>
-> >> That's vague and does not justify the property. You need to document
-> >> instead hardware capabilities or characteristic. Or explain why they
-> >> cannot. With such form I will object to your next patch.
-> >>
-> > 
-> > I had an offline chat with Ram and got clarified on what these properties are.
-> > The problem here is not with the SoC, but with the board design. On some Qcom
-> > customer designs, both the UFS controller in the SoC and the UFS device are
-> > capable of operating at higher gears (say G5). But due to board constraints like
-> > poor thermal dissipation, routing loss, the board cannot efficiently operate at
-> > the higher speeds.
-> > 
-> > So the customers wanted a way to limit the gear speed (say G3) and rate
-> > (say Mode-A) on the specific board DTS.
-> 
-> I'm not necessarily saying no, but have you explored sysfs for this?
-> 
-> I suppose it may be too late (if the driver would e.g. init the UFS
-> at max gear/rate at probe time, it could cause havoc as it tries to
-> load the userland)..
-> 
+On Tue Aug 5, 2025 at 5:53 AM MDT, Giant Sand Fans wrote:
+> On Tue, 5 Aug 2025 at 12:49, Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+>> Fixes tag?
+>    Sorry, what do you mean?
 
-If the driver tries to run with unsupported max gear speed/mode, it will just
-crash with the error spit.
+Dmitry is looking for a tag in the body of your patch (much like your
+"Signed-off-by" tag) which describes the commit which introduced the bad
+behavior[1]. In this case, it looks like this block was introduced with
+the incorrect kerneldoc code block formatting by commit 471920ce25d5, so
+the correct Fixes tag would look like the following:
 
-- Mani
+Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
 
--- 
-மணிவண்ணன் சதாசிவம்
+[1]: https://docs.kernel.org/process/submitting-patches.html#using-reported=
+-by-tested-by-reviewed-by-suggested-by-and-fixes
+
+Cheers,
+Brigham
 
