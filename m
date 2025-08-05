@@ -1,135 +1,292 @@
-Return-Path: <linux-kernel+bounces-756019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC416B1AECA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:52:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796EBB1AEE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7DE616832F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:52:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 562324E2350
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A3221726;
-	Tue,  5 Aug 2025 06:52:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7E221280;
+	Tue,  5 Aug 2025 06:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cluUfSEf"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E442A927;
-	Tue,  5 Aug 2025 06:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C7022068A
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376741; cv=none; b=nHyIrOUApjlmH43E8FrDL/JY3UsvL/5lrcUzt11uzUX0DwANzjbIL32/3MFHwVsRegvocGmmIe3KRyrMHhz0pIRQeR8KKy7IEIE2+AVX/LF5sC0s+B++RoGuec+d1EMF0TbDuJHRZ2Jmn8jsXkTf0B8nhIMNvYcdv1f8VzkS6EU=
+	t=1754376923; cv=none; b=aFFnmOvcuHy5zZAV5tWJ5sLIaqwcmtII9CO6+jcXQVspYaUN5Nbz3FEusf9E9WDIcXGLiIEvZy/fVkKOOVQye1Urd0P5KlJpiPfLHVSfQg4q0tDH+7dNRf1CkJpMSfgU7AAZ8ElV2n5eo9le4zsKjgHGyVp1jJKasw532bktCmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376741; c=relaxed/simple;
-	bh=EMxtRogzgzHl8PxCqJ7f7I6y9Kp68vv7fhkSHUskZEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qmdUvBRS9MWo+DZqMUQoNMtBDGws8Hlrb/PDXPzbvSwfbTPpKrVv8jp/787RiA+9/rY5yxCRU9jvxIFXFgcVIGihhqV4zjRhoSnGW9gY2de00mvetHTTkkpY0LvUlCNORnLzdIHEfVZIJUTq7SwNDwgcE9Ie2q/hpNDM/GsCgQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bx3y70j70zYQtdx;
-	Tue,  5 Aug 2025 14:52:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B7EB61A018D;
-	Tue,  5 Aug 2025 14:52:13 +0800 (CST)
-Received: from [10.67.109.184] (unknown [10.67.109.184])
-	by APP2 (Coremail) with SMTP id Syh0CgB3N7kdqpFoblJfCg--.48321S2;
-	Tue, 05 Aug 2025 14:52:13 +0800 (CST)
-Message-ID: <00538107-08e3-4ba3-a11a-19fa9fd0a496@huaweicloud.com>
-Date: Tue, 5 Aug 2025 14:52:13 +0800
+	s=arc-20240116; t=1754376923; c=relaxed/simple;
+	bh=FWiQ/cn0h9cwc3brNPzLifLYW/RAGqg1eESQ+GWLN9A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=M0bPgMRwkr1uc9d7OTd4RPfvPekIGDz2yaXL2n7kafYga2szVUl1Lub2xHHR+3AQJWx875ZmPQ+QZkckNVj2weRC9x1+670LTRJjUxg55fuoLuQD8WTO8LGA/x3N65NpVmQP75iMwiqADSWtgjAN2ens+B+YsIWfz4T+lyZ4JqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cluUfSEf; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24283069a1cso13012415ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754376920; x=1754981720; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KEpLNwzlu2PrVruo6qrV5HzwRqjVG1/m25AZhXshC6w=;
+        b=cluUfSEfsBU2lWW498Hs4GU4+ERqhzt4RNWjLSQOMAApkJl+NX5VOGyMuoExQ3NFbC
+         oEokCPEgsbG2olEHQAxCvp3TEu9iqHfSApYwjiYs/NZEcSyIEuZDC9KbYh6O52RLdmw2
+         CeF8lirUU4KuzkoxG5BRSQ5On05A3Buwfkp6Az8cWCX1FxfU3d0k7v64etkeP8t+E8yM
+         5mpVuHkZTS8Od5nN6wrJqoyusoW+WtOxTmT21bvTcEyt0puCcGlYgE5MZoufKjKpoYCw
+         oAky/1fJ4cTd1mFqoWpFpW6OYzJDkkiv68lXn6JcGS0yS6Rwlr96E8/0wEqasZ93dc7e
+         hCXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754376920; x=1754981720;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KEpLNwzlu2PrVruo6qrV5HzwRqjVG1/m25AZhXshC6w=;
+        b=jGJUsAikirtQ7kLM+egTXwDRupg5qk6BdQMHduZWdHeRdwYd5GVSTCpUzxm8B+RP0M
+         8GialQr2DjAnMs3e6X7RQGK+y/lAYrzv11X7XapQbECZi5upjOVK9bFz1zFQXgs+40Hl
+         M4JJorYvh0NmnfoiG1/VsN2ZCvUMFH0CgPH9fuuASFTgS7dfImtzlS+A7V/ZsY+cOQ0d
+         cwwHs05N00oYMSH90bryw4WE32YdINqiO9M3IObvbxJyMmtjysvAL/ELh9QDFj4Gtg8T
+         tEU0MiT2M2mlLlQKIc6WDWA/Lggu6mNHx/I5xqrYdMdlnHWRTyuXQMDEufZQcu2N6AsX
+         WGtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGeAI2Oi9wy4+r2TKeFsm42XeLlkLmi6ni8sPBVIo4rS00GUJNRywvcqJzJCEEvql+u+654xSY38uEZyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgpSf2gg1QLXl9tDq7CYBuGfbjXkPSAu0q+QN6mUKt04Fj4rXy
+	LT1sawTYLT3dz/dbg73QgXyYswLkYa4uFmCboMZ0M1JgEMfQ6drQiaK5FRxWqKBRihzR56VqTDc
+	UEZzz/hghdA==
+X-Google-Smtp-Source: AGHT+IH8Mbj611XAjvSLNlIYBSto0/pFpbsPWDpwTNg0FN6ajxiBIGOOPATE1mYeK7Nt6sEdS7CUdT0+0nbz
+X-Received: from plok5.prod.google.com ([2002:a17:903:3bc5:b0:240:718d:564a])
+ (user=chullee job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea06:b0:240:887c:7b95
+ with SMTP id d9443c01a7336-24246f30415mr190317035ad.5.1754376920190; Mon, 04
+ Aug 2025 23:55:20 -0700 (PDT)
+Date: Mon,  4 Aug 2025 23:52:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 00/10] Add support arena atomics for RV64
-Content-Language: en-US
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, bpf@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Pu Lehui <pulehui@huawei.com>
-References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
- <87v7n21deu.fsf@all.your.base.are.belong.to.us>
-From: Pu Lehui <pulehui@huaweicloud.com>
-In-Reply-To: <87v7n21deu.fsf@all.your.base.are.belong.to.us>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB3N7kdqpFoblJfCg--.48321S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr1UZw43tw13uFWUJF1xAFb_yoW8Ary7pa
-	1rC3ZIkrWrGryxCasFqrW2vFyfKrs5C343Xw1DJ3yayF1jqrW2kFn7Ka48uF98AFZ3Xr1U
-	C3Wjkry3Aw1rZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	bAw3UUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250805065228.1473089-1-chullee@google.com>
+Subject: [PATCH v3 1/2] f2fs: add lookup_mode mount option
+From: Daniel Lee <chullee@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	Daniel Lee <chullee@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+For casefolded directories, f2fs may fall back to a linear search if
+a hash-based lookup fails. This can cause severe performance
+regressions.
 
+While this behavior can be controlled by userspace tools (e.g. mkfs,
+fsck) by setting an on-disk flag, a kernel-level solution is needed
+to guarantee the lookup behavior regardless of the on-disk state.
 
-On 2025/8/5 14:38, Björn Töpel wrote:
-> Pu Lehui <pulehui@huaweicloud.com> writes:
-> 
->> From: Pu Lehui <pulehui@huawei.com>
->>
->> patch 1-3 refactor redundant load and store operations.
->> patch 4-7 add Zacas instructions for cmpxchg.
->> patch 8 optimizes exception table handling.
->> patch 9-10 add support arena atomics for RV64.
->>
->> Tests `test_progs -t atomic,arena` have passed as shown bellow,
->> as well as `test_verifier` and `test_bpf.ko` have passed.
-> 
-> [...]
-> 
->> Pu Lehui (10):
->>    riscv, bpf: Extract emit_stx() helper
->>    riscv, bpf: Extract emit_st() helper
->>    riscv, bpf: Extract emit_ldx() helper
->>    riscv: Separate toolchain support dependency from RISCV_ISA_ZACAS
->>    riscv, bpf: Add rv_ext_enabled macro for runtime detection extentsion
->>    riscv, bpf: Add Zacas instructions
->>    riscv, bpf: Optimize cmpxchg insn with Zacas support
->>    riscv, bpf: Add ex_insn_off and ex_jmp_off for exception table
->>      handling
->>    riscv, bpf: Add support arena atomics for RV64
->>    selftests/bpf: Enable arena atomics tests for RV64
->>
->>   arch/riscv/Kconfig                            |   1 -
->>   arch/riscv/include/asm/cmpxchg.h              |   6 +-
->>   arch/riscv/kernel/setup.c                     |   1 +
->>   arch/riscv/net/bpf_jit.h                      |  70 ++-
->>   arch/riscv/net/bpf_jit_comp64.c               | 516 +++++-------------
->>   .../selftests/bpf/progs/arena_atomics.c       |   9 +-
->>   6 files changed, 214 insertions(+), 389 deletions(-)
-> 
-> What a nice series! The best kind of changeset -- new feature, less
-> code! Thank you, Lehui! Again, apologies for the horrible SLA. The
-> weather in Sweden was simply Too Good this summer!
+This commit introduces the 'lookup_mode' mount option to provide this
+kernel-side control.
 
-Sounds like a great vacation!
+The option accepts three values:
+- perf: (Default) Enforces a hash-only lookup. The linear fallback
+  is always disabled.
+- compat: Enables the linear search fallback for compatibility with
+  directory entries from older kernels.
+- auto: Determines the mode based on the on-disk flag, preserving the
+  userspace-based behavior.
 
-> 
-> Tested-by: Björn Töpel <bjorn@rivosinc.com> # QEMU only
-> Acked-by: Björn Töpel <bjorn@kernel.org>
+Signed-off-by: Daniel Lee <chullee@google.com>
+---
+v3:
+- show option lookup_mode=perf.
+v2:
+- rework mount option parsing to use the new mount API.
+- add lookup_mode field to struct f2fs_mount_info.
+- add show_options support for the new option.
+ Documentation/filesystems/f2fs.rst | 19 +++++++++++++++++++
+ fs/f2fs/dir.c                      | 17 ++++++++++++++++-
+ fs/f2fs/f2fs.h                     |  7 +++++++
+ fs/f2fs/super.c                    | 25 +++++++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 03b1efa6d3b2..a80ed82a547a 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -370,6 +370,25 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
+ 			 ====================== =============== =============== ========
+ nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
+ 			 by default it's disabled.
++lookup_mode=%s		 Control the directory lookup behavior for casefolded
++			 directories. This option has no effect on directories
++			 that do not have the casefold feature enabled.
++
++			 ================== ========================================
++			 Value		    Description
++			 ================== ========================================
++			 perf		    (Default) Enforces a hash-only lookup.
++					    The linear search fallback is always
++					    disabled, ignoring the on-disk flag.
++			 compat		    Enables the linear search fallback for
++					    compatibility with directory entries
++					    created by older kernel that used a
++					    different case-folding algorithm.
++					    This mode ignores the on-disk flag.
++			 auto		    F2FS determines the mode based on the
++					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
++					    flag.
++			 ================== ========================================
+ ======================== ============================================================
+ 
+ Debugfs Entries
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index fffd7749d6d1..48f4f98afb01 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -16,6 +16,21 @@
+ #include "xattr.h"
+ #include <trace/events/f2fs.h>
+ 
++static inline bool f2fs_should_fallback_to_linear(struct inode *dir)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++
++	switch (F2FS_OPTION(sbi).lookup_mode) {
++	case LOOKUP_PERF:
++		return false;
++	case LOOKUP_COMPAT:
++		return true;
++	case LOOKUP_AUTO:
++		return !sb_no_casefold_compat_fallback(sbi->sb);
++	}
++	return false;
++}
++
+ #if IS_ENABLED(CONFIG_UNICODE)
+ extern struct kmem_cache *f2fs_cf_name_slab;
+ #endif
+@@ -366,7 +381,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 
+ out:
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	if (!sb_no_casefold_compat_fallback(dir->i_sb) &&
++	if (f2fs_should_fallback_to_linear(dir) &&
+ 		IS_CASEFOLDED(dir) && !de && use_hash) {
+ 		use_hash = false;
+ 		goto start_find_entry;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7029aa8b430e..1c0edb8a7134 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -212,6 +212,7 @@ struct f2fs_mount_info {
+ 	int compress_mode;			/* compression mode */
+ 	unsigned char extensions[COMPRESS_EXT_NUM][F2FS_EXTENSION_LEN];	/* extensions */
+ 	unsigned char noextensions[COMPRESS_EXT_NUM][F2FS_EXTENSION_LEN]; /* extensions */
++	unsigned int lookup_mode;
+ };
+ 
+ #define F2FS_FEATURE_ENCRYPT			0x00000001
+@@ -1448,6 +1449,12 @@ enum {
+ 	TOTAL_CALL = FOREGROUND,
+ };
+ 
++enum f2fs_lookup_mode {
++	LOOKUP_PERF,
++	LOOKUP_COMPAT,
++	LOOKUP_AUTO,
++};
++
+ static inline int f2fs_test_bit(unsigned int nr, char *addr);
+ static inline void f2fs_set_bit(unsigned int nr, char *addr);
+ static inline void f2fs_clear_bit(unsigned int nr, char *addr);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e16c4e2830c2..0638ae9816ac 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -181,6 +181,7 @@ enum {
+ 	Opt_nat_bits,
+ 	Opt_jqfmt,
+ 	Opt_checkpoint,
++	Opt_lookup_mode,
+ 	Opt_err,
+ };
+ 
+@@ -244,6 +245,13 @@ static const struct constant_table f2fs_param_errors[] = {
+ 	{}
+ };
+ 
++static const struct constant_table f2fs_param_lookup_mode[] = {
++	{"perf",	LOOKUP_PERF},
++	{"compat",	LOOKUP_COMPAT},
++	{"auto",	LOOKUP_AUTO},
++	{}
++};
++
+ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_enum("background_gc", Opt_gc_background, f2fs_param_background_gc),
+ 	fsparam_flag("disable_roll_forward", Opt_disable_roll_forward),
+@@ -300,6 +308,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_enum("memory", Opt_memory_mode, f2fs_param_memory_mode),
+ 	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
+ 	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
++	fsparam_enum("lookup_mode", Opt_lookup_mode, f2fs_param_lookup_mode),
+ 	{}
+ };
+ 
+@@ -336,6 +345,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+ #define F2FS_SPEC_discard_unit			(1 << 21)
+ #define F2FS_SPEC_memory_mode			(1 << 22)
+ #define F2FS_SPEC_errors			(1 << 23)
++#define F2FS_SPEC_lookup_mode			(1 << 24)
+ 
+ struct f2fs_fs_context {
+ 	struct f2fs_mount_info info;
+@@ -1143,6 +1153,10 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_nat_bits:
+ 		ctx_set_opt(ctx, F2FS_MOUNT_NAT_BITS);
+ 		break;
++	case Opt_lookup_mode:
++		F2FS_CTX_INFO(ctx).lookup_mode = result.uint_32;
++		ctx->spec_mask |= F2FS_SPEC_lookup_mode;
++		break;
+ 	}
+ 	return 0;
+ }
+@@ -1652,6 +1666,8 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 		F2FS_OPTION(sbi).memory_mode = F2FS_CTX_INFO(ctx).memory_mode;
+ 	if (ctx->spec_mask & F2FS_SPEC_errors)
+ 		F2FS_OPTION(sbi).errors = F2FS_CTX_INFO(ctx).errors;
++	if (ctx->spec_mask & F2FS_SPEC_lookup_mode)
++		F2FS_OPTION(sbi).lookup_mode = F2FS_CTX_INFO(ctx).lookup_mode;
+ 
+ 	f2fs_apply_compression(fc, sb);
+ 	f2fs_apply_test_dummy_encryption(fc, sb);
+@@ -2416,6 +2432,13 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	if (test_opt(sbi, NAT_BITS))
+ 		seq_puts(seq, ",nat_bits");
+ 
++	if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_PERF)
++		seq_show_option(seq, "lookup_mode", "perf");
++	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_COMPAT)
++		seq_show_option(seq, "lookup_mode", "compat");
++	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_AUTO)
++		seq_show_option(seq, "lookup_mode", "auto");
++
+ 	return 0;
+ }
+ 
+@@ -2480,6 +2503,8 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
+ #endif
+ 
+ 	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
++
++	F2FS_OPTION(sbi).lookup_mode = LOOKUP_PERF;
+ }
+ 
+ #ifdef CONFIG_QUOTA
+-- 
+2.50.1.565.gc32cd1483b-goog
 
 
