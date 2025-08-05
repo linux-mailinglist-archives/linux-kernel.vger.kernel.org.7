@@ -1,197 +1,202 @@
-Return-Path: <linux-kernel+bounces-756903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A7DB1BAEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CE9B1BAED
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708D3173067
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14E73A312D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A7E24728B;
-	Tue,  5 Aug 2025 19:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61322248A4;
+	Tue,  5 Aug 2025 19:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGDkJkzA"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MEjU8bHU"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2051.outbound.protection.outlook.com [40.107.93.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED54AE55A;
-	Tue,  5 Aug 2025 19:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754421932; cv=none; b=ZawckzMzlrxPcY76e3tbykLJbbx87oBR8UZ+bdu7MtPkIRWm9EZNWQUpBvCKo+Ha5JzCRAql8Rm/G24YjKkZK7KuDduh/POWkzD4fnCdUeDvNU1BPTKdFZStsUyBdP/zzg0NYsXcgrFRECNdOBFXuNZc/ADu6vS7ea7OkOxMc2k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754421932; c=relaxed/simple;
-	bh=IvAMGyYMul8YuDgB7guuqrH196efXLWCMYxChU+1zrg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0TCKZduM5Cyyrx0fStFIslSUWQ8JJMhdOQX+CqJIwCSn+0Mw/O4K3r/g0uk68XJKtKrwveYFfk/oK2yXXcVoIlGpqeEN6qVaM+ii4yl3jzlBOuxT7pi1f/oHZZ8abH/BpYdCWY8Sq9kDTjLftX19Jawparpo4W+IN/nQ/UnTos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGDkJkzA; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24009eeb2a7so47045735ad.0;
-        Tue, 05 Aug 2025 12:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754421930; x=1755026730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nXUb4RrbMp7wNFmrUkG/OHb3oHVhCrLGH9v6ErBeJY4=;
-        b=OGDkJkzAXSXgPMNSjcU+BuKUPMKE/z0nAWFafRlHcrVhi2fUNpZnsBov6YLp0ddU52
-         TjtPGEYdOSsK4fRQ8dlSkY3031pDgZbrBj60NHuVo91ehpwbi2PRXOPKayDS8LUUZppN
-         gKlR8yBqJjHeYQnYEVeeOtiCMQvXXYjx9+sRVP4QDp8kEuD21q/o+qYp8CL2YEds1uIg
-         QS7NA41umCCOYPxzWFWkndTpJYsxFuPLYvfyROhljSLYbBhip1gfkQO+9Oz8mEzW4+QM
-         Yu/7PpkvV9LsdfsUH8KlyJ+CmUmazYQCmJGbx2O83bw1i47lRJhLSTfn9C0K4k5NwdAG
-         w9PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754421930; x=1755026730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nXUb4RrbMp7wNFmrUkG/OHb3oHVhCrLGH9v6ErBeJY4=;
-        b=wG9+OGEILOHbjP7EmBSLLMeo78KXaIDkd6EQz3aN17cukXp1hsLbDNSkiePcrrruE0
-         Eptt/r+NJlPm9XoRoQXgDrQVZMEi9fzdOEabhyqGQPpicjsTUs4o0uBt7hVPxKBF1xPx
-         +wflXsy05cK0J2GQq+XFLtViPaeiFdIdBdqSP2J53IAkh5pbat6URRooZp4j6NaqTeaJ
-         WQkpAIHEJd6Z+6Hpk7COqtL+Ibe3E3YBncMJf3q9jnaNqj0OPtqMUkbvizBuFlgAkvSl
-         IymBKRhL4K1E8TOH5xPfYv11Fkni1YgUkKuwdXQfjHuMiP0jLtmDTbh77WuYJ31lRt8Z
-         Mwqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgGQHaK+C1gi4QtauO+syQEuVMet1V5Eco9AekFGlbdlUt9g/ABrtZhRDK5TbDDGhFjOslqpaYm/vt@vger.kernel.org, AJvYcCVc4zkx3NZ+dAAv0ruHBPd5RPbJOGseHPf4865wyk+GcrYrwYUzCoaAT0wK+QCnD/d/Q9ueP+VA/kQsQ9Pi@vger.kernel.org, AJvYcCXPNI9FoWbV8GdfvISBqVgKtNcubitxxpQmHxQF7J76pu+20OWgcr/rGB9c3KkIdFoKuxPhQjU0yh10y8d8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC3R/TUvQWSzKiObDAHHasSK0sac1VEOliAje4p68wvolY/eqO
-	P2HHY/NSRDZHOqiATvxWONDp6PTdcS0UQt8entN/kE8jAXiExQ0tFVGQyw8xMjaCy9x2zrim+/V
-	ftZFIbDPOvPre7f33vS0CXPe65wlTVTU=
-X-Gm-Gg: ASbGncs+xcqCzgoug7y5cgoCy3BuRVOodzJRXdQLE3nbHchK7HRPpH/1NgihdU2lxR+
-	1tLpzAEv4QS046ltFJwvX61ytG3zyd55aKkhu1YAAhPMqsLITwWQU3fAA+jkfaJqWedo4djNmAg
-	plDDCIxSa1KvxYkmUagTxwgIUad+NxlT0Xlsx/SH459cGxN+WGWqW55nwecEhbfAyCwBRegnoli
-	qz2dL/Athp4l34=
-X-Google-Smtp-Source: AGHT+IGPQGDYInXHaVACpPWIrnrEzr5t50IpwU/JJrhyvSHMTDzu6RpMYb6XX8H10zagOTQBD3AS4f2Mti1152COw9Q=
-X-Received: by 2002:a17:902:e743:b0:240:b073:932b with SMTP id
- d9443c01a7336-2429eeb4372mr3419625ad.23.1754421930214; Tue, 05 Aug 2025
- 12:25:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7632721FF2E;
+	Tue,  5 Aug 2025 19:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754421994; cv=fail; b=sw/Rcjt6DCnCzz5yV7iFyskCMhZq/5izm7L40ErPQUPIkv1RlzPs7UYytLmV0cOH85QZ+3VK2/uyZKVYA+VvuxDv44Wsh+5woVdFibR+I6pgOqciDhteMx8m8SfbgNBdrpQOV0pqCiXpObZotEst6WqNycoP8RRvCYGvEw67mWY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754421994; c=relaxed/simple;
+	bh=/lDrWCf8R9Yg/7En4qEMZBa/3JevfGBBsg+8Hp4fA1w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HIC//thckQxsdayXlf0wVsS4/RuXWdLyajsgNEezGqN8eYrb3fs4zI7B/SIrmpjuNP5j8YhMswygSur2uDhZfTJfUlAlYR04wKwVWxLln1SWkmHXcKCcR9O7/Kix5KQXcRk5QuFOHyhF84oXL9A7AqrCRsPbC7mrGltd73sI+ng=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MEjU8bHU; arc=fail smtp.client-ip=40.107.93.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xyn8vCHethTPC8MQUJ6J52JU8f870tcSuKSOu/DZ9sARHQrJAE+ZQi5gvaPb5Hb/+JQ8x4rwqhceqArGHNiSSZX2yzUPvAqbkFaXgGXeiorvfnEyACRJQdIs0VNkzk6Gno76udeINLwhlLeEcBiW6cH8E+hYSzWEqutBKkBEQ1JoXPJIhOACcJgSIPfwaafFFzRVFTnJqd8f+PI6wW4fxk7o35jPthTDQ6EV185SzA84oKqnLGcITVCiOK10pD0CcBV6M9Pgcp3v0Te0SblVNTJbUnoCCD3s/XgQIxaSJ+fNYHcnhPoMpstg7dHKZvnVtz5YeoNIdN4DchS4fs8PRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SR38dvRgd6Vktt+8SgJkWG7CWj9TG7KlP9aRuxV255Q=;
+ b=jyWaD4cqkdNkWjdBOGEwPZfZbja9DxqtfTIt9iOAbJ3pITJTkffbMMwNznGzqf1gpBdrIxye81ILnEIzml6aDEgXA75SwEuPQIH/XoBUmHaQR5bEcOe/UNJSABTx8oFIQbNnAIyWKWtRHN9tJpEwy2JDoI7/q05FKDxsfc145IJU1uY8g0mDqe0r1ytoZ8ncWNkoeQ7t6dcX5TxPeK0A27vNBS/Rw6T1M8Pun09cDXm81oESQYSDIDaZXyjhxSYJQ+HJRdE6Jm/Q9I7pbXdHJJ8szB9yEggctwZxZz8d6CFQUfZzYm+pVhHk7wOv1PV61hVwlmIPdMt00BkDSsEXxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SR38dvRgd6Vktt+8SgJkWG7CWj9TG7KlP9aRuxV255Q=;
+ b=MEjU8bHU2nx6pMx2Uw4DwVBCzJyoUXyrl/xlGxr5SRNi8TZTWE0iRUXur/F91G9u8s0LJOzceL8wOIuKmT7J6EyrJGO2xxsdwVJZfG8JwAx9Uiny/gDEyuVrDo1wkbJKmx3KdZXjDCqGzMx5XwJjerU7yaXC3mBGtaOo4Rg6SPjjxXrJY9XSmoUPa4WMg3P0bhHmYkiLpVIYGXAmlGpVqhi7wiC97rvw8m9NPOLVTNgUz8t1ZbaHuTMpuL8QoYL5WkOmIOEjIAGEyJRqxgjKKtyLhCd77yY2/1sF9Hde7pP8MbjV0eesOFdlcvgJQT2urTbj6k4n8HPFZR3J0bjXGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by MN0PR12MB6271.namprd12.prod.outlook.com (2603:10b6:208:3c1::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 19:26:30 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 19:26:30 +0000
+Message-ID: <cac21970-e2aa-49a8-ba25-7b41ffbc05f9@nvidia.com>
+Date: Tue, 5 Aug 2025 12:26:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] rust: add `Alignment` type
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
+References: <20250804-num-v2-0-a96b9ca6eb02@nvidia.com>
+ <CANiq72mEDhT_OvSo1b=z4Z4VhND8+DFzeGBY_NNfXhq9jy5GhA@mail.gmail.com>
+ <DBUJ19RTU4F8.2XAILWW3HMAWQ@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DBUJ19RTU4F8.2XAILWW3HMAWQ@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0025.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::30) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804180525.32658-1-ltykernel@gmail.com> <20250804180525.32658-3-ltykernel@gmail.com>
- <SN6PR02MB415700541E44263490781D86D422A@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To: <SN6PR02MB415700541E44263490781D86D422A@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Wed, 6 Aug 2025 03:24:54 +0800
-X-Gm-Features: Ac12FXyGficOvp7FusFhCVUGyTE2vboJ4NaTnI9WF2smhgQlijf8LtmTl1RC-Ig
-Message-ID: <CAMvTesB0hAqV2P7kFegmsXdLq2mfY0LQCj3B=YH4YEd007x-Sw@mail.gmail.com>
-Subject: Re: [RFC PATCH V5 2/4] Drivers: hv: Allow vmbus message synic
- interrupt injected from Hyper-V
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>, 
-	"Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>, "kvijayab@amd.com" <kvijayab@amd.com>, 
-	Tianyu Lan <tiala@microsoft.com>, 
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|MN0PR12MB6271:EE_
+X-MS-Office365-Filtering-Correlation-Id: bed83b5b-25b0-4e0a-3154-08ddd455faa8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cXQyQUUrTjFqVzlGQUsyT0dIWVFlZDE0ZTkxTkkrZlJ2RzZqdWhzd3UvRUY5?=
+ =?utf-8?B?L01oclYvOUNvOHhYTnVCMysrR2FIWW8ra3RZTS9uMWpyWmVySUE0OE5BV2R1?=
+ =?utf-8?B?RFYwcUs4RDB0bHVvMHJpQnltN1poTEswUHVKZUlOSElWTW1HcmRnQ1FCM3Zl?=
+ =?utf-8?B?U1JLVWFrb1VyWjRyc2xWK1pOU2FGdTkvNEl6ZFlDYk5zdURKUUVBMExzL1Uv?=
+ =?utf-8?B?NXBMTmh5bUhEVUJRL3JyTEIvT1BrVG8ybWV0SHkyMjFPcjNQdnhKZGJPdllV?=
+ =?utf-8?B?ZUs3Q0RFb2s1Zk11VlE3UDl1WU10VVAxbWtjZzA0Vk5Ga2UrczNGL2Y4cDZD?=
+ =?utf-8?B?UzV5Sm44TUdwYnF5TDhKb1d5MUJwbjFhOHpQOTdKQzdGbG02UCt5RzFOMGk0?=
+ =?utf-8?B?ZmloRVhZengwemlpaml0V2hWWk0rMGNrWmcvUEVyeFlBekcrNXlSNjQ1VkR6?=
+ =?utf-8?B?bmM3NGVqdjhpd1p1NUVBTEFMaDJvL2FucVpBekNLVGxqRzZhQWFydWZlYXpG?=
+ =?utf-8?B?OUhBR1VMUktjVXFWY1VrN05Zbm1jbVJhNmk1QjhCcDhEakZwZ0Z2aVY1YXAr?=
+ =?utf-8?B?T01vb01Na0w1eHFvbi9sNmNjY2Y4Rk5XZWk1ZldpTlF0eDFwRklqR3M4bGls?=
+ =?utf-8?B?NE9UVHNmMFZMZ1dScGprZ1VLdUJBWHFVeVQrSjRJbjVYdTdyZ2VYdWpvZXFM?=
+ =?utf-8?B?ZjFadGpUc0VzZUJMRWV2cFJ6VHY2b2xRbzE1SmZsTElmNFgyalg3TERyME5Q?=
+ =?utf-8?B?eFV4RjF6RklVM2JoL2VyeEVXZjcvQ0E0UTUySkNHRmlYbG9uZUZYdHB4WVRv?=
+ =?utf-8?B?aStSc2xWL3FSUnN5Z0NxRVNlSVUwRFY1QmRjMW1VSHp1R0RsZld3VklSdU1E?=
+ =?utf-8?B?eTlFOVdqK1hFSFFRT21DajEyVHFFbVhjcm5xVVlFeUROczRjbkhUcWF2TkJG?=
+ =?utf-8?B?aWZHNkM4ZldlZmlYUTg0RWdaa2pRTXYva1RLMXFQMnB4ZVVwZTl1Tm0wb2Fl?=
+ =?utf-8?B?OXNSTnczNGdma1BXNHZaRzkrT2lQU21FbzBxRE1Gc29VcEFSMDJpM1BIc3Rv?=
+ =?utf-8?B?QUtaUVhsWDlHWFd5UDNmUm9NUkRhSWV4M3JQcExkZU9Wc21BNmFwMzZuM0tl?=
+ =?utf-8?B?MFQ4c1lqeC9GSnpOVTlqWUQxZEU5M0lmd2VINHQ5TzZGZEYwalRhd3RPTGtE?=
+ =?utf-8?B?dEh1SEN5aVc1cXVhd1hWR0tZZmo2ZnJsMFFLdUdYWE9zbDZ5TGcwNmZITnNm?=
+ =?utf-8?B?OEFRK0ZHMXdRYm05N1EyemVSSlNpeWpqcUZOejR4OU1lNEF0aDI3aVlGREtl?=
+ =?utf-8?B?aHFJK2dZOVl6My9vWXVKdGt5QVNOSzNhNXc0MGZLTXQ0WGYvL1lQSjVjVFBO?=
+ =?utf-8?B?RU9BS2dqMmNod1A1WERYSmszenI5UitLaXQ1OEZvVjdRZExMTTc2UnhVWWJa?=
+ =?utf-8?B?emdXY05wTkdZR0xkWG5ZVnJHcnVRcFVTdEM0KzJkNjREUmozZWFySkFnbzJi?=
+ =?utf-8?B?b042K003MkdRTFM0Z3JhZmN2YVM0c1oyQ05VU0FxSUR2RytGMU1LNno2Uk00?=
+ =?utf-8?B?VGRQSzRTV2JyOTJwRGIvWW91eU5ZZzhDeXZZME1nZjYwUDl2OVVDM2NjTExw?=
+ =?utf-8?B?cFdDQXRTOG03bjJ5K3diTzYyU2MzUDlra0JtbnpJUEp1NFlEOUxCVndLaXZi?=
+ =?utf-8?B?TDNBQTYycUthZ3ZKQmIzV3hCV25UUmlpTEhFVVQ5am5ZVk45MVFYcS80SG9L?=
+ =?utf-8?B?WWdjekZlazk2dXh2UHhOWUpQaFNJVUZjMTVSUlFlWEpFRHU4aG96N1g4MFpD?=
+ =?utf-8?B?VHl6QVFlL1VWcjNDL21xa2VtWkxmUXQrKytqak1RdXhPTTdTYmlzMThrRDhs?=
+ =?utf-8?B?V3g1ZWMrVmpESXV3YnoyQUV4UVVSUjJLcXZMOCtKM0c4NUFOejV4aW9GbkxI?=
+ =?utf-8?Q?0qaFtqkhSH8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bVgzR2dBamx1UysxOVk5SENWYkI0VzNCWDFhTEpoYzYxVVJoSkkwWFB6WUJ4?=
+ =?utf-8?B?S3VPc1VWRGlJaVZ5MlVHd3U2U2RMOXlZcVhmbStORkNIR0tFUy9xdXl0aGI3?=
+ =?utf-8?B?ZU9vSk4xcnllcDBPR3UrRk9kQmRoeUlCOWNOUlFsaDh4T3JOazUxOUp1NU41?=
+ =?utf-8?B?eE9jSHFITHJOSmIwWUxpallhUDFlK0hWZmVxNXJocXA0cmh2cE0zaVlIb3Bl?=
+ =?utf-8?B?OXFFRlUrTnFLYVI1MHhhaDdhTkRaa0l1Vks0UUxsQk1NVVZveUluS05mZGpX?=
+ =?utf-8?B?MlN2WHFwMms4aHl4Wk56OUtkUHV1N3dHN1l1U0U4ZkJMckU0cTNTN3ZnQWdN?=
+ =?utf-8?B?RnRITkVjYnhCMUVENkJXNTZmWkJaZ1YvRUdUK1R5K0c0dm4vcWU4QVQzMjIy?=
+ =?utf-8?B?S0pSeVpQTVM2cktBcDM0RjdsSlQ4dEtDTGF5d3N1b1lNcGRYZWI1MzdjNFpD?=
+ =?utf-8?B?andMVHBPbVBGZDlBTm1ROVMzdU8rYVR5NytTak5sRjFNWnpTTmJqTnhWM0x6?=
+ =?utf-8?B?Wm9iL2VUdldVTW53eTFkdi9KcWJYUWtidXBPTnFxbUVDSEVTUVFndXNZWkxh?=
+ =?utf-8?B?SFRDMU9jRVJmQVBJZWNZdSt4eGJHdkxYSTQ3VCtVd3ZuWlRLaGkwOUVOblE0?=
+ =?utf-8?B?ZW5od2xkMzFPUm1IeTdSZ1hOSTdXdGp3TUt2aXFhYXo0NW5KZ3orVXpYUjFC?=
+ =?utf-8?B?bGI4dGNwUDR1Vy93VlJtWnR4S0huaHRYWWVmMURQTHQvZXI4eG40OWYrdTFo?=
+ =?utf-8?B?d0JMdWM5Qyt6a1RlallNWmIwaXVPbWVKS0tWeFVSOVV3VURSeWxkNEhFR0tC?=
+ =?utf-8?B?VEgvSDZoUktML2JhMndDa0dSZzE0cXpzK2dPREt1QWNGcnM3d0pMcFFHb3hi?=
+ =?utf-8?B?bGx6ZmJycjNSTmthcVRzQmxGL09JN3MxNUV5UldzZURPN1crWEMzK1Y3K3Fm?=
+ =?utf-8?B?c3ZSY2RLQ2tLdUI3RHo2Sy9HVXBPRWhHQXUvQUFVeTV5VVhsRTlSb0YzdmNB?=
+ =?utf-8?B?dnRUNEcwazRQL0JUdCtzdTNRZkJaMGs2cEpzYkxhRGlCSjhRdkN3ald5RWtm?=
+ =?utf-8?B?OGdKci9TUmVOUllFMkRHRGRUMVdjVFR5dVBhWlcrV3hnZWVEK2hDQXZnTTVP?=
+ =?utf-8?B?RWJ6b1VIdUNDQTJkOVVPdU0yeXF1RmlXRTJZcFppYjFiaEtLbktRWXIrL0ZV?=
+ =?utf-8?B?NmZOYXltazdpMVFBVysvMDRFMGlOVjl6cUVMdUZPa1FVNkJrMjBSZERUb1hP?=
+ =?utf-8?B?VHkzVEhOOTdUWXdFNlZ5VkczdE9CSkhLUXhTK1hhQTlPOG1DMUFoMDNRM1VU?=
+ =?utf-8?B?WC9sbFFOWWJwYXp6SDNFWXZmcWVERjVRbHVIVXl1NzdMZG1YSkIrRVRpZGNG?=
+ =?utf-8?B?R2VUSFBXSi9UaldPaTBZL3hXZWd1Vi85MHNoRzR4anhyR2s2bnBrUEsrVGt4?=
+ =?utf-8?B?WVdSa1E3NG1wQm9NNDdFbHVJWDJaK3dIUGlibjRkQnhXblhLcTExK09hZHVP?=
+ =?utf-8?B?UUIwajBRMkdOYy9Vei83RjlMakdGeFVIbzZGVU44Nm83a1JSc2xEa1lZbUc1?=
+ =?utf-8?B?RkpFYlJPVDZaWVZVbUF1U2Nrd3R4aGpqUGM4QXdicHhFUjNlUjFoUjVEVC9n?=
+ =?utf-8?B?SnlDdHQ2ZGhXRW05TDZidlZSMnc3UUs5RWpmVjczckxDaHNiSlRsVGVWVkha?=
+ =?utf-8?B?WWVlM2x2U3ZRQWduZ3pkamUxZnIwSTNBbXF4RHBKMWRhajRVMnd1Q2YxeGJq?=
+ =?utf-8?B?WCttdUx0OVJQQkJSZVo3c1RLUjMzZmp6WU5wZjZKWFNhVy8zdnk4TkUzYmx6?=
+ =?utf-8?B?ZW9KWXZwRENSTFdDdVhVZW5UZ0tDRTI0K1ZhdTFwMnkvZThtV1VKRVZMVjd1?=
+ =?utf-8?B?cVE0cDVnZHAyUHkyc3JwcVQxWG80U0w4QkdoVW5IbmlDNUFlUVpCS1BZd0hR?=
+ =?utf-8?B?ZDJqa2pNRDVTdm44RFFyN09VSTh3WlVkazJOTjBPZG5MRXFwdjlFd0w2NzVj?=
+ =?utf-8?B?Y0Z4c3ZadExuMmxNUjF6WVU4TGdPeG14WndSTGRIblVFR053RWJYMlRVSkF4?=
+ =?utf-8?B?SzhXK1ZzN3ZobFkxT2lHbW0vT2pVV0EzSzhBV0U4cU5jd1FLWVpQWWticVJD?=
+ =?utf-8?Q?oMiQapRlOut3BJV0HNQCR/vJS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bed83b5b-25b0-4e0a-3154-08ddd455faa8
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 19:26:30.1484
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tA+70kwjXw73u5kxaadIDhf1oyIW97BQe6YlUVRyBdVrf9d/w4m8ceisBN2+Cl6DAojQB7+rkybHjAxdbqpy8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6271
 
-On Wed, Aug 6, 2025 at 2:09=E2=80=AFAM Michael Kelley <mhklinux@outlook.com=
-> wrote:
->
-> From: Tianyu Lan <ltykernel@gmail.com> Sent: Monday, August 4, 2025 11:05=
- AM
-> >
-> > When Secure AVIC is enabled, VMBus driver should
-> > call x2apic Secure AVIC interface to allow Hyper-V
-> > to inject VMBus message interrupt.
-> >
-> > Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
-> > ---
-> > Change since RFC V4:
-> >         - Change the order to call hv_enable_coco_interrupt()
-> >         in the hv_synic_enable/disable_regs().
-> >       - Update commit title "Drivers/hv:" to "Drivers: hv:"
-> >
-> > Change since RFC V3:
-> >        - Disable VMBus Message interrupt via hv_enable_
-> >                coco_interrupt() in the hv_synic_disable_regs().
-> > ---
-> >  arch/x86/hyperv/hv_apic.c      | 5 +++++
-> >  drivers/hv/hv.c                | 7 ++++++-
-> >  drivers/hv/hv_common.c         | 5 +++++
-> >  include/asm-generic/mshyperv.h | 1 +
-> >  4 files changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-> > index e669053b637d..a8de503def37 100644
-> > --- a/arch/x86/hyperv/hv_apic.c
-> > +++ b/arch/x86/hyperv/hv_apic.c
-> > @@ -53,6 +53,11 @@ static void hv_apic_icr_write(u32 low, u32 id)
-> >       wrmsrq(HV_X64_MSR_ICR, reg_val);
-> >  }
-> >
-> > +void hv_enable_coco_interrupt(unsigned int cpu, unsigned int vector, b=
-ool set)
-> > +{
-> > +     apic_update_vector(cpu, vector, set);
-> > +}
-> > +
-> >  static u32 hv_apic_read(u32 reg)
-> >  {
-> >       u32 reg_val, hi;
-> > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> > index 308c8f279df8..2ff433cb5cc2 100644
-> > --- a/drivers/hv/hv.c
-> > +++ b/drivers/hv/hv.c
-> > @@ -314,8 +314,11 @@ void hv_synic_enable_regs(unsigned int cpu)
-> >       shared_sint.vector =3D vmbus_interrupt;
-> >       shared_sint.masked =3D false;
-> >       shared_sint.auto_eoi =3D hv_recommend_using_aeoi();
-> > +
-> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
-64);
-> >
-> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, true);
-> > +
-> >       /* Enable the global synic bit */
-> >       sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
-> >       sctrl.enable =3D 1;
-> > @@ -342,7 +345,6 @@ void hv_synic_disable_regs(unsigned int cpu)
-> >       union hv_synic_scontrol sctrl;
-> >
-> >       shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE=
-_SINT);
-> > -
-> >       shared_sint.masked =3D 1;
-> >
-> >       /* Need to correctly cleanup in the case of SMP!!! */
-> > @@ -350,6 +352,9 @@ void hv_synic_disable_regs(unsigned int cpu)
-> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
-64);
-> >
-> >       simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
-> > +
-> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, false);
-> > +
->
-> I agree with Neeraj's comment on the placement of this line of code.
-> As I commented on v4 of the series, the hv_synic_enable/disable_regs()
-> functions have units of code that do read, modify, then write of a
-> synthetic MSR, such as the SIMP, SIEFP, and SINT. It's weird to have
-> hv_enable_coco_interrupt() in the middle of such a unit. In this v5,
-> you fixed the issue for hv_synic_enable_regs(), but not here for
-> hv_synic_disable_regs(). The call to hv_enable_coco_interrupt()
-> should go after call to hv_set_msr(HV_MSR_SINT0 ....), but before
-> the call to hv_get_msr(HV_MSR_SIMP) so that the read/modify/write
-> units aren't mixed with other things.
->
-Hi Michael:
-       Thanks for your review. Agree. Will update in the next version.
+On 8/5/25 6:26 AM, Alexandre Courbot wrote:
+...
+> This leaves us with two viable solutions: `Alignable` extension trait
+> with `align_up` and `align_down` operations that take an `Alignment` as
+> parameter (with the caveat that they could not be const for now), or a
 
---
-Thanks
-Tianyu Lan
+From a readability point of view, this first option sounds nice. It's
+clear, concise, and doesn't involve macros.
+
+thanks,
+-- 
+John Hubbard
+
+> set of per-type functions defined using a macro, similar to bit/genmask.
+> I am fine with both but don't know which one would be preferred, can the
+> R4L leadership provide some guidance? :)
+> 
+
+
+
+
 
