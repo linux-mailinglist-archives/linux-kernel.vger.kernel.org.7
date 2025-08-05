@@ -1,223 +1,202 @@
-Return-Path: <linux-kernel+bounces-755955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C3AB1AE08
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:13:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83623B1AE0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 093B43BF8E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E7417BD2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C6F2192F2;
-	Tue,  5 Aug 2025 06:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242B021930B;
+	Tue,  5 Aug 2025 06:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="FtbPi3Zh"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023107.outbound.protection.outlook.com [40.107.44.107])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W9o7oqv5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2B91078F;
-	Tue,  5 Aug 2025 06:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374431; cv=fail; b=ghNkTe2+6EM/K1ecMhnAi9yMoK18TSJi+Oz+Zfp2SYYO6cjvLuHVGdtlaBLwlm9w5gfqQy/Ifs0zhUAzZoAWtP0Pjr69+7mozvokw9kIN3T73h+MVYW+1cMHd3ADf9/mbtcE5FAk0+mIynOqXTWgbCfgkNu8kD2iPYXdfr1bZCM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374431; c=relaxed/simple;
-	bh=KVA6/rkm33Xw2BHfOUQ33dtIN/v1GOOnZ7yOF87lGSE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qxsbXl9JJ8vkIU0MRIVUY3xCZ0OH+FhYWjBf+LtHYz5+dxEEKDtd3EAET0ziWi95I41i8J6rkrTmNEz3XwpufOQXPmIRoBL6yJoDirJhg4wcpHBsE/pF+fqqhP3khjFneqsdFiumjLLbO6ofwdIIUmbib3kaeNGOq5JLpD1oF0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=FtbPi3Zh; arc=fail smtp.client-ip=40.107.44.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GyFawkaktPn8SmlMKADRyLh7RDB0mk6zRgiBDygcdxYLYVA5uyv6t1P2x9I0cmmKDaOjR86tHQ1dexmPTpOl/MwQ68Pk0+ZDuiim+Tg1ghG2O7u3lQc5lKTo3LcZiWYQ/QBrJusL0k+fZwSvaKDpP8nkG82SsGAvZAwjJn1t0EsY/IGZ2Pss1GjGXPXJI7CC5EQ6DKQMUVGXDZsH9EKNpJXOY/7pgVMN5pKvTQn8blHdtHrtyS8+nYl6slrrWOJzFY13c1Nda+bofCwx4EL2ddkhIHcReDnxb+AQS8gl4GrPJqXUGOxsVv6GPXfIJaNav74W8pXCTfQZBMePrlAhiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HLf+a1wV5W/ReLtaaJKwMqanvMqjHz1twaah3NMjfn0=;
- b=tzRmYgDMxZmNF3g49ibnlzJVifdrlEHHcH97YoZ7JQOTaobc+Og/E1rS5iD690mFRDrdf7+vJAcCvjjTfokKiIo05Bd0d9rFFN6D3ofuhxaw/Lgcz1XtCSvR+wEPbk/ApS0Q3R46T+vKuW0vPS77HTRdsmoo3IUxsfC0iP4rFAHP5dp5diFEPArM6qEgNenkWLnfFJTxzBtx8h4bagWoIMI7kg3pecSJa7dSC92VDEjIDA5q4ziL2BnSuyN31GoN0MXJ2Ptm8OX+r3099WnGPPS77x6N0KxpwiDhPgXuKNOcJo0vxrb1fTp0p6xjo1Rt99f5cMM8VrBQ+yjmq6leTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HLf+a1wV5W/ReLtaaJKwMqanvMqjHz1twaah3NMjfn0=;
- b=FtbPi3ZhDaio7JCmRhFffDuUQF9nY/y4zIzZu8pH3KmlccouyHYDyzdgbRBz2Lr+schnvccxsSlsGjQK7R07amGqW2hXabg2WxRaif8R7W9BuUsioF+lIzRTasIxih2vEK8nZDAY7UWbV0dT85Dw37fVos83nZ9UpR/YN3E8z/I96QSpn5zB3uIAZJWJJpz1wijznGwj6c5ntH3zI2izLV7NKEDC+HY+8gL6QhFijoYwkXW3cpDaGaiawKLOu5i1fq1PHmUqt7iScn5rJQdb8hXz/5I6Ac9T+tlbfb3B51cqG/sSi6d2gkbV+7KhMi7/JD85ECN+FLvlfWvuUPqEtw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB9374.apcprd03.prod.outlook.com (2603:1096:101:2d1::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
- 2025 06:13:46 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%4]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
- 06:13:45 +0000
-Message-ID: <e2d67fbb-7b27-4340-b811-cadc01618a44@amlogic.com>
-Date: Tue, 5 Aug 2025 14:13:09 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Add fault tolerance to of_clk_hw_onecell_get()
-To: Stephen Boyd <sboyd@kernel.org>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
- <175398035351.3513.14541914855277799230@lazor>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <175398035351.3513.14541914855277799230@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0290.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c8::7) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822C2063FD;
+	Tue,  5 Aug 2025 06:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754374464; cv=none; b=YYNyr/T9e/VTRI+MwZNUQQbf/HgdQuCBogxvnnvRCeXogCuJv8randilkeJ9emo3NRzmjdWPdIUMsnRn2rH/Pa7B0W9VuKOc0q9F15DKqp8L/t6XNhk5yYCyuZY2S5K2+/bpRQF4XcDvvAI6ASUDoBgVSU/AZR7AxbZffnV86M8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754374464; c=relaxed/simple;
+	bh=tfp0tPWITgyeiYmzD2fLJxy7hLQlxJhZ3bYHvT9+rhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dH2c2a88e+KFVj9whnrGYgP4cEfMBJdABAgyOMFFa/XbPtjteH+i11J7g6lbn2bs9hr0UKc6BUCOvSafcLoysfIPPgl9xkCWxuzJxVcVxAKnvr6BObSAOjZq0idToNUGbDCK4q6d5PyRYUxShUe6mKnu6tj97eoaG0ud96nkUBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W9o7oqv5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5751HI3q022644;
+	Tue, 5 Aug 2025 06:14:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/nSruB
+	1AfIiJcbqhJAd9VdSFyvMrBKvghywAZBeiRWs=; b=W9o7oqv5iTHaOg9xPNgqEm
+	U/o9KJZZlvcyXOSBFHjvLgeXiDglaWQuPAPdU90Dz4NmdhgQAa0dWgMI92s+U3iF
+	ndZw9JLQ2uqjMkRghkT0O8yI7pY3PIjY54mjHJE2BMSiUVRMDgEBQVXLoLbkpPWQ
+	/e/pMvLBCK0MifjlWiHxNoxSa/1UT7Safjeyig5ysPe1IuwJc63pMzJ0I7U5j0hz
+	KIQ9rCBFMsv2MCcwVOv0x4G/EGy1VCzKaCasyQx/F66xh1xxy6YFmbaGHPQ73XvT
+	37nOIb9QnbFLXRmhOvXAh5/+yMDPG2wvs2qX+t9KDnYX6H+tH7zR+xqw46C4CjeA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ac0vqft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:14:06 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5756E576001185;
+	Tue, 5 Aug 2025 06:14:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ac0vqfr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:14:05 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57550SgY001508;
+	Tue, 5 Aug 2025 06:14:04 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 489y7kryvv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:14:04 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5756E4JF10814496
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 06:14:04 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E8AC5820D;
+	Tue,  5 Aug 2025 06:14:04 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E57075820C;
+	Tue,  5 Aug 2025 06:13:57 +0000 (GMT)
+Received: from [9.109.245.113] (unknown [9.109.245.113])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 06:13:57 +0000 (GMT)
+Message-ID: <1399003a-31e6-42e3-9457-24c0a89e8757@linux.ibm.com>
+Date: Tue, 5 Aug 2025 11:43:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB9374:EE_
-X-MS-Office365-Filtering-Correlation-Id: cef3d1a6-4e57-484d-4c57-08ddd3e73c19
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eGs5eGUrbzBXRU54K3c2cFNSTU0zdWlYZXphQ3NZaUl3Ui9vYmZndi9HVGZS?=
- =?utf-8?B?Rmd3azdFRHlBMFJyUDg0YU5aSXVmL2I2REJxWFA2ckRWdnlaRFA0R1NkL1Ju?=
- =?utf-8?B?OVZVYU15ZDJhblo0YjMvU21OTVlsL1ZKNUFKOENsUlh1ZklJazkrZitzTVU4?=
- =?utf-8?B?OEdlNzFXMktIbW9wdEU3VnN2emphdkVmOTZJVTAwM1ZFU0gvc1ZWVDNzRDZG?=
- =?utf-8?B?WXhHYjZRS3k0QndXK3kydmFpRnFHU0NCTzhFc0U5K2FQTFpXbHRzVGJhZXRq?=
- =?utf-8?B?WWc4ZnVPNy9JQW5WQU9CZU9nZUltSUVTdTdVWm4yZFpOdkxTUkFrSm5FNDdD?=
- =?utf-8?B?MlE2Y01oSzBoRHpXUndNRkMvRC9iYmN3TDMxOVpwUDFzRFpwTUdnaUg4RVBS?=
- =?utf-8?B?bkIxZGMrbjNTWkFuTGlTcUhuL25wbTI5UzByTEUxS3NnQXRoREU4WlNaTkh2?=
- =?utf-8?B?bXJUcFMwby96ZW1UMmNVYU1DejBITS9lKzkwNWZwNHRaQTIvb21qeW9rb1No?=
- =?utf-8?B?aHFVZjVERlY0UnBFaG9Ic0pxTUhUdVJ5bWJKY1ZCeHFDRVllYjJ0eXZ2dGw3?=
- =?utf-8?B?ZkpQblprTDFmZERhaGViSXM4aWpKTWt2YTFvU2l1cndmZ1ZjcFQ1Y2JKbjBt?=
- =?utf-8?B?QWZROURmNkJYU0dJUDlsdG5VKzFXamRucEplc0IxVnlkb05uang5TytzVWVn?=
- =?utf-8?B?NW5rWkVIblFvbG1GazRXaUo1WWNISEpvUXYyWTQ0UGZvL01HV0FQekZNQXNh?=
- =?utf-8?B?UEZGY3c4NWNVQS9Hcjh6dzhFbHRCTkpXR2NmNURQYUZhblZXN29vYUR1dWkx?=
- =?utf-8?B?T3R2WnVBbTJyb2daZHU5Sksxa3R2VFRLUlY1UlpOQjRjZ0prbUhOd21aNGM4?=
- =?utf-8?B?Yy95Y0hpQzM0QllHNzd1Mjk0bzUyMGxJMVljZGM3VGlTVmtNMzdQb0NSenFr?=
- =?utf-8?B?R2JPald6bnJvNmovYk5oTWRHUWN0WWcyUGpNeVhJTGY1eEdnRXUzQjAzNCti?=
- =?utf-8?B?MFYyaDNVNGs1Vi9ONFdoUTRlbmJhL0tuVXhaai85ZFF1R3hnSDB6djZrVzlw?=
- =?utf-8?B?VEFTbWFrWTg5dS9JdXRVWXd1YWxsdG1WUy9PTmxJRlpyN1dpQmVKZTAveGRK?=
- =?utf-8?B?UENRRjJhaVJYSkJQOHJsM2ZuNDd3aUd6L0d4bmxRZmFYeE1RemRkNStUc203?=
- =?utf-8?B?WFJPOUM5OFEzbTN0ZjRreVpBbzFxbEZOckhzVWl3WXF0Q25vTld1RFJOenpL?=
- =?utf-8?B?TTB1T1FpS1pNOUZGaGJibW94K01OQ0dsR2N0YUg5SnVRSE03a1hhNHlIa2Vm?=
- =?utf-8?B?RmFQTkpSWFZGeUxFS3FxUk1LeU5IWWUrdkY4dXo4YU5YZzBQbUtiMUovd2J4?=
- =?utf-8?B?djArUGhuU2N6SG5SdGxkZlRCcXRXVk1ZS1pJeVh0OUVtODRXZStmTkgxbWFJ?=
- =?utf-8?B?NFpXcys3Z05nN2VHTUpaaDNYZW5LRDIvZUtJS1hTTnJUaXAwTHFPYjJDN0lt?=
- =?utf-8?B?UlhJbXpOaWE3WDAzalZYdVZQOUlpZmNGUFV0Mk9TekN1SlRMcGF6Z1FIelRS?=
- =?utf-8?B?bURsRDgvSkltV1d1TXpvYjJKLzZObktJc1NIWUx6MVFTbnhVNk5wSE9Hamx5?=
- =?utf-8?B?eUUzeHBXWC9aWkdQL3hDanVCMVRwRGY4M0Y2NmVGTTdXbXZFdk9tNFQrM2Jy?=
- =?utf-8?B?WjBlbUdvN3Y3cE9CMXZEZnozVFpaeXdhK0JOWnRPaEpCT0RVWUZLR3VmOFBo?=
- =?utf-8?B?MWRXcVkrRmFYK01rSnBrSkVyeUZYN0llRjdEYVcxeXVJZWtkVnRZbHY0N0pw?=
- =?utf-8?B?Z3NhRklHRmZmZ2REdk8ya1ZFQVJxbFdzL2FSSnRXNTZ1UnlCU3dVR1dwSk4v?=
- =?utf-8?B?NCtFQXNBb3drY0UrMEQ4RFRiYUQybktsUUhhSDBqM3J1aVhsUWt5bU1hUldy?=
- =?utf-8?Q?M0OgAo/mqVA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmNybSt2dXI1dTV5TUFXd3FZL3VZMHZPQW1HZzJWc3kvS1c5c0x0Nzc2MzNV?=
- =?utf-8?B?TURvbGlZMnBjOG1ENTVxTHNPQWk4YVFDWkpJR0kyU3JRaGJLcGVFQ25QakZO?=
- =?utf-8?B?dnBrUnl1YVFIVUtzZ2VmaGMwZGlCZDZ5aHF2ZmxRZVo1Mmg3dDgrVmM5RWF6?=
- =?utf-8?B?RlFSYXppZklXNDV3NjUxbytRYmxwVDlpa1E3ek1OOFJRNFZQV1VKUUlzcnF4?=
- =?utf-8?B?NnhDNVIxb2JUR2Z4UVNLaXdJL0JsU25hV3VFLzVSdktDT0NFOXVTMmdoUkli?=
- =?utf-8?B?NFRkL0hLQWZVWkFzZ1IxQ3BkOEgvYUZGNFRFYjU4T1lJcnpzV2ZwNEpkUGhk?=
- =?utf-8?B?cFlqYXpxRjNlY1NCZjdFelBsV1pzOEhKOTlXb1hheHUxTEI1NXFreXNqUW9v?=
- =?utf-8?B?U1J3U2xpVkx1N2NZV0JpM0dJemEwMlpPelMrVldjTXJOQTB2VXM5UEhKQmhS?=
- =?utf-8?B?L3AvekJoQnNuVkZxVmEwOW80YlhETDMvbmsvMzNVUS9VQUxUckpCeUFxT2NO?=
- =?utf-8?B?YzdjdUxNV3A0bGdVMmJOUTMwdWlVZmcxaXkvSDN3dDRXMkRhbVBnWTBySk9I?=
- =?utf-8?B?R3dESlhKTFJYeGJUc0N0VWw5eTA2RlJ2SURrN2JNdkwxK2F2eWN1dWdOUWlL?=
- =?utf-8?B?WWxiR09aTERjS3B0V3FIYmVWU2hLejkrdGlTZHhEMUdNRXNSRldHRjMyZGR0?=
- =?utf-8?B?WDhVSS9oaExvbm9uWXFybDJxRldQcHpDdkY4NlRQYXdaV0ZMWGttZ3hEN2RK?=
- =?utf-8?B?dmw0M3BBV0ZRR3NDT3VOQkRzeldJMzJ4VjBYZDkxT09FQXBrR1BmeFE0Nysy?=
- =?utf-8?B?bGJkL01Ob2JQRXM4TnUwNEgxc1IrR2NSVG9jdThDR1lRdVBaTVNTM2NSYXUw?=
- =?utf-8?B?UVhrV1NWNFM0TEdVcExNajNhZTI0TC8rWURNWXkvZ09OZlBucTd6aWVHTjRP?=
- =?utf-8?B?T2dCUUpmYTc0NEE4SEVud1JIS0RKbzZ1RkI0WldyZTJlT2J2SHBxYWdtZnFi?=
- =?utf-8?B?ZW03NVp1dTl0VzhyL0tQci9EYlc1TXVRclhUSW9Qd1dDK3BBYlBXMVZzckh5?=
- =?utf-8?B?TDlqdi8xQTJ2bjNLMjEzZU11QUlFT2c2U2R1S1ZEeXU4WUIyWktmVHp3WjVU?=
- =?utf-8?B?SHVkSUl5cFhPY0pBZlRWZFZFaHB2U3BzZ2UyUmF2cmxDZWtnMElwYysyTU5i?=
- =?utf-8?B?ZS8vbnplUDVmZGdGN01MMVF4OHgycHRiOE9kUy9CZFQ2d01OUkhNeFRmN2xk?=
- =?utf-8?B?c1kxK3JFMTVIQjREcFZnNkNPZkFuenJGOHYrVkFpRnNORUFIRUJMOUQveUlH?=
- =?utf-8?B?d1hGSlNVcVJQWG1ETWwvMlo0SER3RXZjUTZYd1BiQ01oTGJPOWdrUnA2MFUy?=
- =?utf-8?B?bEt0RkswTHoxdjV6R0hvQkcwb20xL0dsUy8wTXV2REhucDZ6RHVHYkxXZE8v?=
- =?utf-8?B?OE9IN3lyWkY5WmExVStLb1FTN3NrRDlqbXlsL044VCtGd1FOSEIyUFhrZXd1?=
- =?utf-8?B?VXdHaTE4QysrMk9ZRFU3MUFEcTlIM2UrWU9HUHVzN2xoSkFLTnQvNGlxUTFP?=
- =?utf-8?B?Rnk2NnJvOFlEcEJ5c2dtNkV1TzJyanlNN1ZUTWpob1dGaitIbTZRSXFIRjdP?=
- =?utf-8?B?MTNOMVJaM2Roc0hGWmltdXlUenBsb041dWlLMm4xVUQyci9EWTdvUHRuRVZi?=
- =?utf-8?B?MzBrUGszc2NOajJoMlZHVDhmMi9uSjByUUFVTGg3VElsN01vZmNxbEpyM3V1?=
- =?utf-8?B?SWFIb2dDV0I4cVAwUzRoNGsrSXhOT2lSQ0FBdC9sWjJwSWttWWJINlkxU04x?=
- =?utf-8?B?c0VhSEQ2dUM2QS81bURjeFBxVVNGUE4yLzRrejdERXJjVUZWSWdvMDJoOU9h?=
- =?utf-8?B?SnJET1FnUkJzSENEZUs2RkhmNTlHekJOUElxd2VNR3g0dElIREQ1VklIU3JN?=
- =?utf-8?B?QzhIRW9kTzErOU54SFA2RGoxTHFmekRERyt4dnpacVZ3M3R6bXREVmt1bzVu?=
- =?utf-8?B?SDFxRGZWTDhyeW85U01rcVJsaFlwTmJ5NFVFeHlkS3Y4Zy9JS1FpaFllMTlL?=
- =?utf-8?B?RjFFdFluQkViUEQ0Zk5uQ2dwUEtKZ1cvQ0xDM1lpb0ZPQ0VLTUtFRk9PTUxh?=
- =?utf-8?Q?HI2nxLb79T4p3mg+r4wbscjbo?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cef3d1a6-4e57-484d-4c57-08ddd3e73c19
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 06:13:45.7838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vLHPuyuFBmm6eIrUD9eVSJAPlj1u/QmOp2n2HL66vJnaLRQ04lZJ7y0aEkhWuba4o11XZtN8Be57h4Ot6+2qlg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB9374
-
-Hi Stephen:
-
-     After reviewing all CCF drivers referencing of_clk_hw_onecell_get(),
-I confirmed their corresponding binding *.yaml files define
-'#clock-cells' as 'const: 1'.
-
-Therefore, the case I previously described is currently disallowed.
-Please ignore this patch. Thanks.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/7] mm/selftests: Fix split_huge_page_test failure on
+ systems with 64KB page size
+To: Wei Yang <richard.weiyang@gmail.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+        lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ritesh.list@gmail.com
+References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
+ <20250729053403.1071807-5-aboorvad@linux.ibm.com>
+ <20250804090410.of5xwrlker665bdp@master>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20250804090410.of5xwrlker665bdp@master>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tlzj5DoY8pOA_ZBoPalFWaMlmr2nH0yv
+X-Proofpoint-ORIG-GUID: ivDDrpa1Sp2ERmiG-QxWJYQ2orBF1Fbt
+X-Authority-Analysis: v=2.4 cv=GNoIEvNK c=1 sm=1 tr=0 ts=6891a12e cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=7CQSdrXTAAAA:8
+ a=Ikd4Dj_1AAAA:8 a=drvxjjOeZLWjmwp7pQoA:9 a=QEXdDO2ut3YA:10
+ a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAzNyBTYWx0ZWRfX6ZaxNbpx7iDv
+ LA8o8XKmI8fSnDhuD771QnEj+QlFPbmuCX+a4mmF9CUSa5OKZKtDi3VFuppwFmXmC1hvb7TwvDE
+ OrHh6LY2223m++hkGhcChKW6zahuNfNp3AqEKvZHW77MSmdFYdQ4D/FTH9NrvmL1Jij8+IPrn+A
+ g2+w4u8NGW+0w3+Ja6B/QJT6UFzh5kBIs4EwHkmnn4I5IxvGeMhfTEpNyPjNNtl2fYTpd37H30S
+ z/eUeeidEyODu493cKyxSW97+k6GPX9FjGP78BVC3XSVnnbnF90daW0Rn4o7ygplmR4cy4NaJL2
+ Zoh6TtIHG70q6OthaedvqRAuIGgmNiZjX7rNTVrkiBBF816YxdfT42GPwoRDBNQM4wv7OPKLeVj
+ 7n3tIKbeLXs4VadoeNOOgmzz4GzH2G06T2vM8L17iFCI5PZQhL93Pkvu4XfawakkhaZc4Pth
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 impostorscore=0 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508050037
 
 
-On 8/1/2025 12:45 AM, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
->
-> Quoting Chuan Liu via B4 Relay (2025-07-31 05:39:58)
->> From: Chuan Liu <chuan.liu@amlogic.com>
+On 8/4/25 2:34 PM, Wei Yang wrote:
+> On Tue, Jul 29, 2025 at 11:04:00AM +0530, Aboorva Devarajan wrote:
+>> From: Donet Tom <donettom@linux.ibm.com>
 >>
->> In specific cases, even a clk_provider managing only a single clock may
->> reference of_clk_hw_onecell_get() to access its member clocks, as seen
->> in implementations like clk-scmi.
+>> The split_huge_page_test fails on systems with a 64KB base page size.
+>> This is because the order of a 2MB huge page is different:
 >>
->> For a clk_provider with only one clock, when calling
->> of_parse_phandle_with_args(), the phandle_args->args[] members are not
->> assigned. In this case, the reference to phandle_args->args[0] in
->> of_clk_hw_onecell_get() becomes invalid. If phandle_args->args[0]
->> initially contains a non-zero value, this will trigger an error.
+>> On 64KB systems, the order is 5.
 >>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>> On 4KB systems, it's 9.
+>>
+>> The test currently assumes a maximum huge page order of 9, which is only
+>> valid for 4KB base page systems. On systems with 64KB pages, attempting
+>> to split huge pages beyond their actual order (5) causes the test to fail.
+>>
+>> In this patch, we calculate the huge page order based on the system's base
+>> page size. With this change, the tests now run successfully on both 64KB
+>> and 4KB page size systems.
+>>
+>> Fixes: fa6c02315f745 ("mm: huge_memory: a new debugfs interface for splitting THP tests")
+>> Reviewed-by: Dev Jain <dev.jain@arm.com>
+>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>> Co-developed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
 >> ---
->> Error conditions observed:
+>> .../selftests/mm/split_huge_page_test.c       | 23 ++++++++++++-------
+>> 1 file changed, 15 insertions(+), 8 deletions(-)
 >>
->> scmi_clk: protocol@14 {
->>          reg = <0x14>;
->>          #clock-cells = <0>;
->> };
+>> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+>> index 05de1fc0005b..718daceb5282 100644
+>> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+>> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+>> @@ -36,6 +36,7 @@ uint64_t pmd_pagesize;
 >>
->> phandle1: clock-controller@1 {
->>          #clock-cells = <1>;
->> }
+>> #define PFN_MASK     ((1UL<<55)-1)
+>> #define KPF_THP      (1UL<<22)
+>> +#define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
 >>
->> clock-consumer@2 {
->>          assigned-clocks = <&phandle1 1>,
->>                            <&scmi_clk>;
->>          assigned-clock-rates = <xxx>,
->>                                 <xxx>;
->> }
+>> int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+>> {
+>> @@ -522,6 +523,9 @@ int main(int argc, char **argv)
+>> 	const char *fs_loc;
+>> 	bool created_tmp;
+>> 	int offset;
+>> +	unsigned int max_order;
+>> +	unsigned int nr_pages;
+>> +	unsigned int tests;
 >>
->> Under these conditions, executing of_clk_set_defaults() triggers the
->> error: 'of_clk_hw_onecell_get: invalid index 1'.
-> Please write a KUnit test.
+>> 	ksft_print_header();
+>>
+>> @@ -533,35 +537,38 @@ int main(int argc, char **argv)
+>> 	if (argc > 1)
+>> 		optional_xfs_path = argv[1];
+>>
+>> -	ksft_set_plan(1+8+1+9+9+8*4+2);
+>> -
+>> 	pagesize = getpagesize();
+>> 	pageshift = ffs(pagesize) - 1;
+>> 	pmd_pagesize = read_pmd_pagesize();
+>> 	if (!pmd_pagesize)
+>> 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
+>>
+>> +	nr_pages = pmd_pagesize / pagesize;
+>> +	max_order = GET_ORDER(nr_pages);
+> There is a sz2ord() in cow.c and uffd-wp-mremap.c.
+>
+> Maybe we can factor it into vm_util.h and use it here.
+
+Sure, I will make the change and send a new version.
+
+>
 
