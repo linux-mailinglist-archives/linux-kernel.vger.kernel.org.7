@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-756034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93FCB1AEF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D363B1AEF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CF6167650
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03C43B21F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7590D222564;
-	Tue,  5 Aug 2025 06:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BSag1495";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jvVFDhYZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BSag1495";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jvVFDhYZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4247221F32;
+	Tue,  5 Aug 2025 06:57:29 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B27C21FF41
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A1A221710;
+	Tue,  5 Aug 2025 06:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377031; cv=none; b=B4MVGJOmH7ZjEFL5CGMkgD9OtrACozsi/idow9ESqwIzxpij0H+mBSVZZxiGkE226XGW/hIWWn3ZbuMGIAdGPH0CifZQeTR0zbsQJzeSwkzWnHahWy/iKIeJ0QZzwIPPBdX5IH5oBpqyfHPCHGejdabIRhB7nMjVUzRL7pkrpnM=
+	t=1754377049; cv=none; b=mnvOwD1O8oJY2qHPAk+k5bFucqQb8tI1Fi2tDgA0MKVTRwHv5Ru4d0hRZ0on1W/gpHoL7mz1abcbrHp26sK9Mn5Gl5i6aak+wrS6bo3Lf/wWsKQ0CWK7HjUZ0g21olZDIoiBbZThKXwD5GBtq1CqKMu9Va1tUUIOAp/zi0wkqYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377031; c=relaxed/simple;
-	bh=sDRX3GOjzOFyJb1hlVaivfs0JLjbEAu6B/QAgvN7xcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mPJVU55nJUGN2caXcHIGJ4nZ1PTYS7Cih1myUPIW16IXl/n/IiWg+FDVVEqsIZ2COmLQLzOiwwWXUEE5KE/SjfPhY0WYHEdD4tKzrWnXbgJsgJr8pOUYASjbCUAapHhjXgTFE93aSrBGjnWmI6pmRSX4MTWen7OLTim4MPEuZGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BSag1495; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jvVFDhYZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BSag1495; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jvVFDhYZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8AB521F387;
-	Tue,  5 Aug 2025 06:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754377028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
-	b=BSag14956rIhHiFVrk7o5VkFqLAHmxWvu54bueoc8d/9/1z01hqtFLRVtRLr7sEatn8nzV
-	+Bel1mxxVk7o5BipgWoOQGtAP4ajC+ZAySUx2g+dsXJ+z0RDxe9tyeR/sfJbZkrnqY7q8l
-	2cTouLLQR+nj6CRhU3HSEox5k9zv8tc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754377028;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
-	b=jvVFDhYZ05QZ6tLktuNYkrzTIfNe3L/EVvkQ0Oq7H88Hd+DZTuxMd4V1fj0Utq1LGby4ju
-	dvUlgA1iasLFHtBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754377028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
-	b=BSag14956rIhHiFVrk7o5VkFqLAHmxWvu54bueoc8d/9/1z01hqtFLRVtRLr7sEatn8nzV
-	+Bel1mxxVk7o5BipgWoOQGtAP4ajC+ZAySUx2g+dsXJ+z0RDxe9tyeR/sfJbZkrnqY7q8l
-	2cTouLLQR+nj6CRhU3HSEox5k9zv8tc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754377028;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
-	b=jvVFDhYZ05QZ6tLktuNYkrzTIfNe3L/EVvkQ0Oq7H88Hd+DZTuxMd4V1fj0Utq1LGby4ju
-	dvUlgA1iasLFHtBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E2E213A50;
-	Tue,  5 Aug 2025 06:57:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ly76CUSrkWjHFwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 05 Aug 2025 06:57:08 +0000
-Message-ID: <8c56e9f5-9e82-4a79-aa82-49099c1dda71@suse.de>
-Date: Tue, 5 Aug 2025 08:57:07 +0200
+	s=arc-20240116; t=1754377049; c=relaxed/simple;
+	bh=eBwIi8kiuq4Hr6QR0KApYpwSO5nTRiqpl2duBh2TT/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=psuhv4rne224MviWnH5hM7BYvSIvZP6/SKenwZWzkGLlqeXzGDhVpnOzA+tyHOzN6fNF700hz71cHXuQZezYO3tzM2qfx8EvtLxOECihKFZZ/u/p5+vnEW7ZZ+D+YwgWceqIwMKOeajT58dXF/PLnmcQZmMh6zJz+++r6h1yzEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bx40L6WC5z13N2q;
+	Tue,  5 Aug 2025 14:54:10 +0800 (CST)
+Received: from kwepemg500012.china.huawei.com (unknown [7.202.181.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95DA21401F3;
+	Tue,  5 Aug 2025 14:57:24 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ kwepemg500012.china.huawei.com (7.202.181.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 5 Aug 2025 14:57:23 +0800
+Message-ID: <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
+Date: Tue, 5 Aug 2025 14:57:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] block: simplify direct io validity check
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-4-kbusch@meta.com>
- <065d699a-1edb-4712-9857-021c58c5e5c2@suse.de> <aJDppvHXW8rspmVx@kbusch-mbp>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <aJDppvHXW8rspmVx@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Nikolay Borisov <nik.borisov@suse.com>, Nicolas Bouchinet
+	<nicolas.bouchinet@oss.cyber.gouv.fr>
+CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<paul@paul-moore.com>, <serge@hallyn.com>, <jmorris@namei.org>,
+	<dan.j.williams@intel.com>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+ <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemg500012.china.huawei.com (7.202.181.74)
 
-On 8/4/25 19:11, Keith Busch wrote:
-> On Mon, Aug 04, 2025 at 08:55:36AM +0200, Hannes Reinecke wrote:
->> On 8/2/25 01:47, Keith Busch wrote:
->>>    static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
->>>    				struct iov_iter *iter)
->>>    {
->>> -	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
->>> -		!bdev_iter_is_aligned(bdev, iter);
->>> +	return (iocb->ki_pos | iov_iter_count(iter)) &
->>> +			(bdev_logical_block_size(bdev) - 1);
->>
->> Bitwise or? Sure?
+
+
+On 2025/7/29 20:25, Nikolay Borisov wrote:
 > 
-> Yep, this is correct. We need to return an error if either the size or
-> offset are not aligned to the block size. "Or"ing the two together gets
-> us a single check against the logical block size mask instead of doing
-> each individually.
+> 
+> On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
+>> Hi Nikolay,
+>>
+>> Thanks for you patch.
+>>
+>> Quoting Kees [1], Lockdown is "about creating a bright line between
+>> uid-0 and ring-0".
+>>
+>> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+>> be activated independently. I fear this would lead to a false sense of
+>> security, locking one reason alone often permits Lockdown restrictions
+>> bypass. i.e enforcing kernel module signature verification but not
+>> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+>> used to disable the module signature enforcement.
+>>
+>> If one wants to restrict accesses to `/dev/mem`,
+>> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
+>>
+>> My understanding of your problem is that this locks too much for your
+>> usecase and you want to restrict reasons of Lockdown independently in
+>> case it has not been enabled in "integrity" mode by default ?
+>>
+>> Can you elaborate more on the usecases for COCO ?
+> 
+> Initially this patchset was supposed to allow us selectively disable
+> /dev/iomem access in a CoCo context [0]. As evident from Dan's initial
+> response that point pretty much became moot as the issue was fixed in a
+> different way. However, later [1] he came back and said that actually
+> this patch could be useful in a similar context. So This v2 is
+> essentially following up on that.
 
-Oh, my. Wasn't aware that we're running an obfuscated C-contest ...
+Hi Nikolay,
 
-Anyway.
+I share a similar view with Nicolas, namely that using a bitmap
+implementation would compromise the goal of Lockdown.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+After reading the threads below, I understand you aim is to block user
+access to /dev/mem, but without having Lockdown integrity mode enabled
+to block other reasons, right? How about using BPF LSM? It seems it
+could address your requirements.
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+> 
+> 
+> [0]
+> https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
+> 
+> [1]
+> https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
+> 
+> <snip>
 
