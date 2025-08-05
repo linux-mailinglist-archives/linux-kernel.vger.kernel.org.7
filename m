@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-757033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D89B1BCC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:42:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF896B1BCC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CB6170257
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F68189EDD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD11427057C;
-	Tue,  5 Aug 2025 22:42:01 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F741267AF6;
+	Tue,  5 Aug 2025 22:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3ciXNWT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33EA23ABBD;
-	Tue,  5 Aug 2025 22:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C802E36F0;
+	Tue,  5 Aug 2025 22:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754433721; cv=none; b=la/WZnwDf5Y2SsYOtdEhvyshBJKmLCafV9h+Yu0O0FWfpIwyXVSK3b/UXc5PkTxGXV8rwSh1ozDA3J4i2i6u6uX2CHqmVBuOZ1omV/kuRnsoasvT12t7ifwjANj3jjK0C+udYTdINGpul0puUyskeMrVSfT+OzarIzUg544IJng=
+	t=1754433966; cv=none; b=clZ0n77B5gmiWRNUYYo4UcB0y8yA0XG0MsSCebSOK1RHCLCPqKoVnfLJXtxSs4KIvF77bvUDNFZXlNPZTK7t+jIf5VXbpnjFT86vI27q6MemDdzXUWF3q0g6T+pw425fZ2q02K4AOsncWoG/AyQ8/niT0s/TuPDLfD7ExLYyHNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754433721; c=relaxed/simple;
-	bh=VXgYibGzEYTF3VEY/ezdYz25VvLo89godDcuA1QyDIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZd7MQo4qmej2WfUQa/ECsgwSXCBI9j5lNeUvHFMZ1aTEt3BEEvHlbIdUVzO5ilXpfJcRwJbwa+R9A/WljtZREdvg2CVGpp0BYPBO9zVDYDzkFAZHo4yuWF7WTkKqsLlYobCYvpsrkVysYWCldydPrRABfBZiCsd++7edIFShyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.147.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id CFE16335DB1;
-	Tue, 05 Aug 2025 22:41:58 +0000 (UTC)
-Date: Wed, 6 Aug 2025 06:41:49 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: linus.walleij@linaro.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: spacemit: remove extra line in debug output
-Message-ID: <20250805224149-GYA950625@gentoo>
-References: <20250805150701.129113-1-hendrik.hamerlinck@hammernet.be>
+	s=arc-20240116; t=1754433966; c=relaxed/simple;
+	bh=NqAn7xkr0Rfx37RWYqFvxyrYUe9MsAbnMN8SOZ0XZ8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gvtko5+WrWzti0BGVQu3wa4iAiacnckZKay7wtbjVzm9pk/mfvGH54egdtoweGAuXqfJ6Oatczm210JKd9V8Upum527H+LTCsY62UGU3BS16p8RPVABWbxfr0yDxG3bcxb13zpFM0MXGJaS65OkvP0G7POU/6uWMBm/imJW5oLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3ciXNWT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4400C4CEF0;
+	Tue,  5 Aug 2025 22:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754433966;
+	bh=NqAn7xkr0Rfx37RWYqFvxyrYUe9MsAbnMN8SOZ0XZ8A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f3ciXNWTApQibSjgZTVBIQ1cfxquSZMI/00XCX77N9oGij/RpxiPKAUV4q3Brivk3
+	 VahaglYpe02/YuF/x1S9+U9CKzsJKDnd0e099GnXRys/MKRtq5QwNcGJrQ+OGkqS3Q
+	 nwSxEwzT4mkMC9oahFyy8cmWtOY+QeZQtuaOohxHzwLjMFMHMbMR4fNKthJ+UAyC8F
+	 70uPWfb/uaah7OOzIMUSOP8Fgyzzb0QM06zlJppwgB7IZco4rh5pX/lsJxWCVO32F0
+	 5TvqJ+3oajZpY1dPkAJNfduWnl4Z/Qp0S9S2WYuZPzoQE5IcujFxxhf1FBoGN+syrX
+	 4N/DDJOwAvRbQ==
+Date: Tue, 5 Aug 2025 15:46:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
+ <michal.kubiak@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, "Paolo Abeni" <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>,
+ Simon Horman <horms@kernel.org>,
+ <nxne.cnse.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
+Message-ID: <20250805154604.680bde07@kernel.org>
+In-Reply-To: <a151336a-eda4-4f44-9ab5-da79e7712838@intel.com>
+References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+	<20250730160717.28976-17-aleksander.lobakin@intel.com>
+	<20250801153343.74e0884b@kernel.org>
+	<a151336a-eda4-4f44-9ab5-da79e7712838@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805150701.129113-1-hendrik.hamerlinck@hammernet.be>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Hendrik, 
-On 17:07 Tue 05 Aug     , Hendrik Hamerlinck wrote:
-> The debug output for spacemit_pinconf_dbg_show() prints an extra newline
-> at the end. This is redundant as pinconf_pins_show() in pinconf.c already
-> adds a newline in its for loop.
+On Tue, 5 Aug 2025 18:09:40 +0200 Alexander Lobakin wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
+> Date: Fri, 1 Aug 2025 15:33:43 -0700
 > 
-> Remove the newline to avoid the extra line in the output.
+> > On Wed, 30 Jul 2025 18:07:15 +0200 Alexander Lobakin wrote:  
+> >> Use __LIBETH_WORD_ACCESS to parse descriptors more efficiently when
+> >> applicable. It really gives some good boosts and code size reduction
+> >> on x86_64.  
+> > 
+> > Could you perhaps quantify the goodness of the boost with a number? :)  
 > 
-> Example current output:
-> $ cat /sys/kernel/debug/pinctrl/d401e000.pinctrl/pinconf-pins
-> Pin config settings per pin
-> Format: pin (name): configs
-> pin 0 (GPIO_00): , bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
-> 
-> pin 1 (GPIO_01): slew rate (0x0), bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
-> 
-> pin 2 (GPIO_02): slew rate (0x0), bias pull disabled, io type (Fixed/1V8), drive strength (32 mA), register (0x1041)
-> 
-> ...
-> 
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> index 9996b1c4a07e..fb361f2acb54 100644
-> --- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-> +++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> @@ -707,7 +707,7 @@ static void spacemit_pinconf_dbg_show(struct pinctrl_dev *pctldev,
->  			   spacemit_get_drive_strength_mA(IO_TYPE_1V8, tmp),
->  			   spacemit_get_drive_strength_mA(IO_TYPE_3V3, tmp));
->  
-> -	seq_printf(seq, ", register (0x%04x)\n", value);
-> +	seq_printf(seq, ", register (0x%04x)", value);
->  }
->  
->  static const struct pinconf_ops spacemit_pinconf_ops = {
-> -- 
-> 2.43.0
-> 
+> Sure, only a matter of switching this definition and running the tests
+> (and bloat-o-meter).
+> Intel doesn't allow us to publish raw numbers (Gbps/Mpps), I hope the
+> diff in percents (+ bloat-o-meter output) would be enough?
 
--- 
-Yixun Lan (dlan)
+Yes, delta is perfect. Absolute numbers aren't very meaningful if you
+don't specify all HW components and FW versions, and direction of wind
+on the day, anyway :$
 
