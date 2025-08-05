@@ -1,297 +1,220 @@
-Return-Path: <linux-kernel+bounces-755953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F7CB1ADDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EB7B1AE05
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111CA3BD13A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1B93BCEFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333FE218ACA;
-	Tue,  5 Aug 2025 06:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3F821A43C;
+	Tue,  5 Aug 2025 06:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PCyEjKdV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EVQwkuZ4"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012030.outbound.protection.outlook.com [52.101.66.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F691078F;
-	Tue,  5 Aug 2025 06:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374192; cv=none; b=J3buCkJPV1WpyjzZqbXoc+rCRkcM3ilhITkXTLtabtbe7SwbNVMCaBnQcrCrERthEgs4soDoLeqJPFLL8BJAyDVdzVEFRr0bI/UDsknsrLb7eC+UWk7YSBr5yO3qRCZWILM2xK6925NSJXZDEBMmSEIAZErbAVeOGzXdx4QJKR0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374192; c=relaxed/simple;
-	bh=udjhgi6qxAFlIcnadf+oQO8aauar43fffLw4K8xogfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3hjHdDu65UperVxALaA5+6I7KVKJo2PP8aVuz3sdjUrz9B0i+ElSwg8f4300JnjMiUEWnv95ASBc/4jgKmarB7+zbQxsSo+ylzqGW57oenPzX7X9AB/7GAzzv4DAcbN39SxJkOFBNEiEGiMeGjA9WZNZainFdjvlr5946xvAF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PCyEjKdV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754twoK000914;
-	Tue, 5 Aug 2025 06:09:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=KZIUdY
-	nSrH8hLHLCb8+749ChGGZ8R8KtKeM+yeFqK6M=; b=PCyEjKdVzoiKo7aeakZCBD
-	dTtxSd/6ikCQAd/elqlWw/JDFE3i/qLg9FPEWM3MXUBDcLVODJ3da1DtZyNlZLCt
-	PJg1nPYoti3+TEwYu2F2bKv6Q68DrVat19dAA5HQZTlSnKgq/CdSitHvvhsCHBS9
-	Rvxx26efTAqktt5ODblTPJtJs5MOFevZ55e7/t2vAf20PuoC5J6SEwPNeoN5BbJ1
-	SQhKtWKi4THkgIgO0tktTSRHk+C6eFARkU67zMsa349ajaZxfa1wG3GS1ICSYjMx
-	vm0aZQkJ5c7c1dqNKaEQJFlbHtoHv28/w7vSmXFJFX7KwuKtp/h5o4pJ3RP3IQQw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq07wp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:09:32 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57569WLr013800;
-	Tue, 5 Aug 2025 06:09:32 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq07wf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:09:32 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754fB0T006873;
-	Tue, 5 Aug 2025 06:09:31 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmh2dy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 06:09:31 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57569UgB22282868
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 06:09:30 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 754B35813E;
-	Tue,  5 Aug 2025 06:09:30 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 71EF858124;
-	Tue,  5 Aug 2025 06:09:17 +0000 (GMT)
-Received: from [9.109.245.113] (unknown [9.109.245.113])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 06:09:17 +0000 (GMT)
-Message-ID: <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
-Date: Tue, 5 Aug 2025 11:39:15 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE01078F;
+	Tue,  5 Aug 2025 06:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754374211; cv=fail; b=vFrV9XXlICAnPaj1Wj5audGLNzVU/uZxTYWJ7JxIwEkUTi6TsER+NqbHJyBTC0g7rOSWNYo8fHVeL7ZFG6U/hswnq55TbvuCP7HViI+cxwCfsk98UpLOv+gUn/GHSQe4iSNS1HVpOfkKfzKc5+laNWNmijO3DEMyHbVqi6+Rz8U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754374211; c=relaxed/simple;
+	bh=JhbcL8DMsLOIC+6+bZzOA+llhsKTehdvzAgPYrdALoM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=urFmXmBMPebMGIHpTQVQdz4KTDvgwYzzoCOB9ar4egsPQx167Gh4jhoMUnU1LP3bCgKC2QawIaH7Kj8EgMjnCaP422ZaoJdBv2hn/vcKxSUQ3GQAVBmjOZRDxXbl/vyUmx8AqF2esgXq1UoVtUY72J+L6rsSFld7jfck0m24dB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EVQwkuZ4; arc=fail smtp.client-ip=52.101.66.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gSxhN4V8dCmMrweIgbtjp9z/TRcIJd/MKoRto0CUPnueOS0foU9LGIHOQ1pEZH3qaYDFRvUshSA2v4YlgCjnNCSOdUFZNdHC2n+QJvsaUOWQVeJ8yh/m4Fq6fdI+rQYdLxTtjp3jt2gXd9h0k47X35x05RSRZ302DVtHKDJtHMkMfSAe4BxgeG3aEUYY7yjwa7sMLwNKIzCuXST7QkHumK3ZcSL+RouVh/TdMW+cPZuAqDcrLcieePfCFatQP5GNZ60zJEHb4Zq3Me42ihBwMvaVbcJAvVX08NtqnxtQzcDQRGMPLY60x5Gagzw7ZKe3BE+Y2T+TPVBhTX+y6VBdqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jNeiWEa3a7hPWPY5TZwX0Im3GKAL4AZfq4/8tzIzRz8=;
+ b=ksc57VrJn0S59hEiCwBQLcBJrwaSXjhm2KFedwpxhvW8D/H4063oXhVq028fMkwbtgGHoUe5qpk/I9TSAtGBHhVxsRO2VGSE1mXT8jTu32xeFd+S0lOy0NTk1rsROiXHihIV+DF6wZQ96VsSuGiV4NIvXztdo9kgi7Srb5mNSuFet7wpatBRvcjoOeNtvcQv4u0wKO3MOCBzz5ocAGoikVSPQFuVzWm2XfnbBPFu5zG6H1amhfKw0WP0d4zwFd4G6orpf26uEQS/+iCV85QN9Kf1g3pOtq/dJZRoaWds+5peXt9jdpSP/6II37L/0pVrTM8TzUprF8B+TmB/QghynA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jNeiWEa3a7hPWPY5TZwX0Im3GKAL4AZfq4/8tzIzRz8=;
+ b=EVQwkuZ4Tob01bjFDHtA4uDo+YDO81GFI/j2k/vYrIctqaA1pdlW2mJRqwSIo3nFFMMMzEmv6HcA2bUp0hdyOoLqpucxedZ7lILu7C6Mag4S280aW9d5IWiprg51PwsTIj563tc37vhvNqjIr7g8tcbqOik/AOZKZUHRge/oDvPT85RqoEywS4vdJEPy8tSBvNL2IH02XIQay0RqY3rttCdsRAV3ZMt0KE4z7UJE8tLChAyEY1AoOBot6fiWEAmqHNiZNJ4R90mKvUTHQw4JIzQZp8vd/dJ26mlffKJhcvO2MAaouo6O4px1ZbZWuCb8mzHv11UpiJ+XBpWW9oGySg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by VI1PR04MB7024.eurprd04.prod.outlook.com (2603:10a6:800:124::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Tue, 5 Aug
+ 2025 06:10:06 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
+ 06:10:05 +0000
+Message-ID: <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
+Date: Tue, 5 Aug 2025 14:11:35 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Joseph Guo <qijian.guo@nxp.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250804-waveshare-v2-0-0a1b3ce92a95@nxp.com>
+ <20250804-waveshare-v2-3-0a1b3ce92a95@nxp.com>
+ <9aca40c3-e22a-4d41-bac8-18a7cc8e3e96@nxp.com>
+ <8c8d9723-bb0e-4c4b-9fcf-3e1ec46609bd@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <8c8d9723-bb0e-4c4b-9fcf-3e1ec46609bd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0092.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ae::16) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
-To: Wei Yang <richard.weiyang@gmail.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-        lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        baohua@kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ritesh.list@gmail.com
-References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
- <20250729053403.1071807-4-aboorvad@linux.ibm.com>
- <20250804091141.ifwryfmgjepwrog4@master>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <20250804091141.ifwryfmgjepwrog4@master>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: k3p7J4adTRlrZ9ZmUW45SmpQ7mAGp2RF
-X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891a01c cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=0R2oKJRu712hfJE7rpUA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: aDV2fjvZ8eW6TQSfXuRrIfKTplaaXBqG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAzNyBTYWx0ZWRfX0Zx4ttLZjAVU
- MkjHC9a9E8hxGzo8KaSa/xD5kERSTjlpLOEGXz+LwvGVu9ypduqLtuTSLO5wAtsNC38EaLaoxn9
- jGPGGwSl7oVPr1lriJlIVPWFmYvLpJBLDxWCZmvCLtz23b00//y4Io6jTJF1ppg5dqZj5+N7Dfe
- u7UxmqJBiSuLLlNTOPo4hRUdjoNwoeG4XJR1S65Oeu2sZ4ev4CCt9toK02E9/wHHAjlsSGKg1AQ
- 8xXnZVffvG21nJmOx68m16pKWYy6TRWsznfAN0hCSnR0KoGobD3zO42BIfPv00En1Y0cao60Ud1
- qJAZNVTQ2RXAEMkfdYp5wUPjeO9qvWt9i92VEbscnusnoc/iuT9SXjP2doH/uNjQ3Rb4iA9zkQu
- P/zzPLVUmAwqq6Ihgj+Rl5/TdFRucHTt0z09PBgyYyqbFsMThb7ezLTeoaXpW3R5Evp6Gf/G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050037
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI1PR04MB7024:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2916958c-1bfe-4370-4d0c-08ddd3e6b8c2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|19092799006|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?UUlGOE5pbDNSejV4dUVjYkQvblRHMHQ3OVJZMFlrZVZOTXpaQUZUNHArTWRz?=
+ =?utf-8?B?TTg2bXZiL3dBamNJTXlyS1MxUUVkMHVtMFVOcFVCYzd6TEt5MldqeU5jS2p6?=
+ =?utf-8?B?bFFUNWNvNVEveWIveUk4RnZQblA3TC9sRUM4YTNJaGhaMHRLakVuUUFhRTRv?=
+ =?utf-8?B?akV2WGVjc1FnTFJaOXZsMllQU2szbDV0Y2tTaVZ0ZWd5WVAyVXRtUlRuRzRN?=
+ =?utf-8?B?R0hyU1FoYmpmQ3JDTkxwcUNxS2NWZWpHNGR5S3dDa2RQK2dLc0JtYlRTL3JO?=
+ =?utf-8?B?ZDJiNTlNNGUyMkxZdk9DSEVxUnZIbUwwdGduWWp5YW1uTWJZUEx2Nk0wU1V1?=
+ =?utf-8?B?cWVyQjFDRVYyWW5RRm9XMHN3M3g1UHpKVVdBbThmR1k0QUpkS2JwLzEwOHVj?=
+ =?utf-8?B?V2hkWkV3RDIxT0d6MWVZekVONGNPa3VFVTROWTR1YVpQdUd5VkNvZjFDUWFQ?=
+ =?utf-8?B?Y1NDTElOYzc1TGp4NzVWaGFlRGlmaUEyRkt4czgxVU5sUkZySEJ5K2tXeFVL?=
+ =?utf-8?B?ZmkwNG8rc0ViTm84Zm9FNDhrNWtydGVZUWtvK0hLOHEwVTRCN09Xa3ZlbnR4?=
+ =?utf-8?B?S3RRVDJEMTRpcEFiUGlXazR3eG90R3E3MmcvTktsNDU4c1hUTnNpYnlsZ1Ev?=
+ =?utf-8?B?Y3diVlhzYlpzTHlyR3F1V01TVXpXWmZkQXB3cnMzVXNjdmNnalV1cEc1NHU2?=
+ =?utf-8?B?ZWloRW45L0ZhcnlkbGRHN0xHRW54S1l0NEFLQTJYblFuWHltVzhmbEJDZ0pk?=
+ =?utf-8?B?NU0rdHo2bFJlVDFUSnJ5TS82ZEh1ZjFWZGRwYWZpQVpaY01UaEJBcWRscDBE?=
+ =?utf-8?B?VmdZUlo1OGIwdEFGTU8za0RZb2xnMEdKZ1czaTNLSHFxUityanAyUC9idG9o?=
+ =?utf-8?B?VUN4U3JEMHRIVkJrYmVQNXBhdklOQ011WjlqOHZoZFpZd3RsOU9yL0JCaFpx?=
+ =?utf-8?B?UXhTZmJBblJxOUF1YklnMzRrSWtpam5HVCtlNkkzZExwWU9XK3JFWWYreDdJ?=
+ =?utf-8?B?Um1tQ0NnMXQ3R3NkUi9HRkhkZnRWcllhRnlPeWI4YVpUZmhOU0ZOTEo5U0g5?=
+ =?utf-8?B?WkU0bkZORytJR2pZMjhaV0w1clVZWFcrdTBGbjJhelZiNHNpSkFWV0k3bE9U?=
+ =?utf-8?B?WW1VYXYrV1p0aGZPQTVsWFpjalE0U1J5SzZkWCswOXl3TUdWdzQzSFVVMnhi?=
+ =?utf-8?B?UVZ4d0p0eHdYeXA5Y3lucUsvNUp5MjRxV2hqNjdKbGJBYURYRzZPN3lPU0M5?=
+ =?utf-8?B?TDkvWlpocmh3QnI4UjhZK2N0TGdlUmJmTkF2V0VUTlgwZUQ3eHJ5NW1yYytU?=
+ =?utf-8?B?YklQd1RjYkcyYkdHSUR1Ymo0QmJnYkVwaXc2c3RWSytuWlUybW8vQjZaMDdm?=
+ =?utf-8?B?WXo0SWZwUlpsbHZKTkNKd3c1OVpkR0pLbmFQaytzWEFyZjYweUZmNFlvMTlJ?=
+ =?utf-8?B?Q3hTWHlQN0lhTHhDeFpHaEtVTEhMQXc5bHpTUGp0Y2VObXB3b2Jkckw2bGNO?=
+ =?utf-8?B?eGxHcXl5L2M4LzJzTUFVNzRCT0VZWmxuOGx6V24rMkVBc3g0OWRLZjhZdVhW?=
+ =?utf-8?B?bXBsa3ZwaU5rMVowcWcySkk4REQvTnBLYWdRZEZLUGxSWmRrRVl6c1hzNS9p?=
+ =?utf-8?B?cXpNWmFqUFRZbjcvM1F1L0E4SkdVNE1PdUJ6RmFPY3dyV2I2Ry80YlczUmdL?=
+ =?utf-8?B?a2xRV2lvNm5yMDl1bUhmZXZVK3BDak8rNjhpUC83U1dNSUtYV3M2cHE3cnlx?=
+ =?utf-8?B?Z1A5T2NRbkZrMHY1SzF0clM2bGFoY3VMNWhoYVQ3V0ZyUjhPOEVCVmpMblgz?=
+ =?utf-8?B?cEVtTjZhOUFrb0ZaQ1ZBWFgyV1BKbEVKaThKV3NLNlVJbjlVbVN1MmF3UHh4?=
+ =?utf-8?B?TkJpUlhXaGRqYWd6ODA0a2pMMkhYUlpCZVVJV0oxdm9Oc1pWT1Y1clhOTUFY?=
+ =?utf-8?Q?9vmwwOcVaLc=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(19092799006)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?N2dKVVJwQ3F6ZW1KYWRqNEF4VHNjSUVVaUdweWxzZ240V25tYnIwbUo2cGt0?=
+ =?utf-8?B?TVFtSWVDZFpPMjlUOG1OWjBpc0NjQmxaQ0N5eFFjZnpVVDNGVGF5cjFrY0RP?=
+ =?utf-8?B?MXliSFMvK1VSU2Zvck14d3llT0d2Y1pqeGQrQ3dUZmliK2MrcW1oQ2Rpc0p1?=
+ =?utf-8?B?a2s1Ymx1THA3dDBJSGZRWGJOZ1VwM3JJeWdXVHI2WGErNFZVb3E2ODhBQzFM?=
+ =?utf-8?B?RDI1L3dUNVA3cVF3YkpUZTMrenNNRTZlN1ppS2dKMEV1dW12UC85U1o5cHIw?=
+ =?utf-8?B?TE9pYUZTdW82N3BjMTFNRndGQ2haUmJiTkxucFl4VzlGRHVidUdpdWhheXhZ?=
+ =?utf-8?B?MEpURjN2aHhGdFNrYS90ajhpbWxYNHVPeUdTTkFZN0d5V05vcjk3Q3F1bElC?=
+ =?utf-8?B?cExYdmN1S09MNU1Ecitmc3dUTHdqL2VBUmU3VEVUazV3T1RUcFFGbG5ZUFVp?=
+ =?utf-8?B?T1NoWFJTSWRiTHJMTGg1VW5Sc3BUUWFxWmdmRzRRSS94ZTkwMnhhbmZQT1du?=
+ =?utf-8?B?R2lCaTRzQVV2KzVnZ2RnS1FMUHJoSTZ3WTRUR3QrbGVJWTZxdzlKWjJIZ29K?=
+ =?utf-8?B?d0xGV1c5VG5IZ2NsRlM4OFFMNmpJNk9nQTRpdGJyazhCRE5SMjBYVjZyWlBj?=
+ =?utf-8?B?SWx4cHIyZnNrWGdtUEpuQVRJOFNUTFpveEwySVVuQ1FvRDZsVGY1RUg0elVS?=
+ =?utf-8?B?TDdUTXNLR0cybXRzTm1vVGtOUWFCLzYzT0dvbFhMQUdKOVRmWlJVdm4zMHNl?=
+ =?utf-8?B?allIQU92WlhTeUVrQzFIbWJVUVBLNUJyR3JmWDRYM2JPNnArRXpMQjlrZGV1?=
+ =?utf-8?B?dS9rVFFyendCTVhlRzQrL1JpYy92NTVGRFcvaDhXeW5ZNSt5Zk5mdEhoNEcr?=
+ =?utf-8?B?UVlOdWFxTjB3VURVWHl1dndySW1pKzVrK1hNWHlzRkRWU0hQS24zakNqMnk1?=
+ =?utf-8?B?SXNnU0Q2bEdZdlFRUmZ4WllyVVJYUHQzbFIvV01PaGRESGQrMGxWRENoY0ZC?=
+ =?utf-8?B?Qnl2MUJWdTVzeGFaWW1sYkhSNStnQkpVeENPc0huWmZWTTk5dS9OeEpyOUh4?=
+ =?utf-8?B?YWExRmgwTHRBQjQrMFZNbUNwWXhsSmN6U001d1pZd1Fld0xLWjJOTnArN2s0?=
+ =?utf-8?B?US9oemdqZm5xS1VvUDAvRTd3aTg1Tjh1Qk5aY0Yvc2tZdEFpKzg2Qmh2ZVU4?=
+ =?utf-8?B?YitXUU1ESmcwUXEzUlkwbThGY0huaWlrNTZkUGtDZHJZRG15cURvcG1vZ3lB?=
+ =?utf-8?B?TkxLWWNyZWluYjlaczBQR0Q5cjJCNHJwN2E0YzE5dGdNWTJjSnRHN2xpWVlP?=
+ =?utf-8?B?MmVIMHF0THJLR3NQaEhOQ2d1MmRBN3RmQjIxa0NXRUFNUkJhNUF6NzVEL2pu?=
+ =?utf-8?B?VTFhdUJ5aXY5cm12SXZzMGVqM0E0dlg4Q0hOUGp2Z3FnbnJQdEVERkZnR0pi?=
+ =?utf-8?B?aUlOUmpyN1NJRmorUVpiVVNPMko4THB3b1N1VEtPU2xoYkhQNDhZOUJCQW9Q?=
+ =?utf-8?B?UFdUWSt4K2NUVnN2RjZnSDVGNWRBSS92UC8rK1pRUFRQMGhyRk5Pb2VtemEv?=
+ =?utf-8?B?NVdXaU1YRnBFRTZBSFNzODJyUENGd3NiMWNBY3FKelNrVGVpZk5kM1lXdUxE?=
+ =?utf-8?B?U295ZUdPYzhTV0hacjgxYStZUmc3bk10c1lRMWtJbkNOWHdyK00rWXM2WUNY?=
+ =?utf-8?B?eHZiVFBlSzJ3bXpBSDBZRTNUbkVjcTQ3ZGFrSjFtcXFqTm5WOVZJVEhmOTY4?=
+ =?utf-8?B?RlNlMjRjRmUrcm1VS0d1NW4yZzJueHM4VkRrQTdYT1c2NkZJOGRTT0FaSDlw?=
+ =?utf-8?B?c2VQWGFmQkQraTZ3T0dBT1JTRzlyQkpFbEtBMmR5dS9Na2tKaUxLOGczZWVO?=
+ =?utf-8?B?Ulh2bmlUMytPQVljWEJBbnNLMGZudUhIVzBUbWdIcUtoQWR1dDIvTUpJNkRB?=
+ =?utf-8?B?TWo2Q0ovRjJIQUdRZk4xVDdIcHphYVl0dy9IRERuMzJZOWxnTXZ0USszOUx1?=
+ =?utf-8?B?Q0tJT2UxM1hYUGhmR0lnQ1U5dXR4ZEpXbTYzWkJGMVlGSEQzcHdCVlZWL0wv?=
+ =?utf-8?B?dWdiaGgxSVNpSkdCOGdqN1d6b09pZjQ2bG05NVR1KzdnTjVOMWVrSkN2OWgx?=
+ =?utf-8?Q?UbkYoTD76hajOrnzpOf4s7a2y?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2916958c-1bfe-4370-4d0c-08ddd3e6b8c2
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 06:10:05.5843
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EXJf2/ejfOjRi9jcr3kYDB/jppFnBVs6xfjUXMq3Uc0Jdrj+sOcasmUS7E/iqky/8wJ36rfJ/S2sIIpstt53qg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7024
+
+On 08/05/2025, Krzysztof Kozlowski wrote:
+> On 05/08/2025 04:22, Liu Ying wrote:
+>> Hi Joseph,
+>>
+>> On 08/04/2025, Joseph Guo wrote:
+>>> Waveshare touchscreen consists of a DPI panel and a driver board.
+>>> The waveshare driver board consists of ICN6211 and a MCU to
+>>> convert DSI to DPI and control the backlight.
+>>> This driver treats the MCU and ICN6211 board as a whole unit.
+>>> It can support all resolution waveshare DSI2DPI based panel,
+>>> the timing table should come from 'panel-dpi' panel in the device tree.
+>>>
+>>> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+>>
+>> For next version, you may add:
+>> Suggested-by: Liu Ying <victor.liu@nxp.com>
+> 
+> Why?
+
+As I replied in the cover letter, I provided general idea for this
+patch series in NXP down stream kernel.  Same for the DT binding patches.
+
+https://lore.kernel.org/dri-devel/647f4a16-cb25-46f7-95d7-4c049e6c145b@nxp.com/T/#mb491c1e74df28dab74d8dcb7843f12e7a3b537cb
+
+> 
+> Best regards,
+> Krzysztof
 
 
-On 8/4/25 2:41 PM, Wei Yang wrote:
-> On Tue, Jul 29, 2025 at 11:03:59AM +0530, Aboorva Devarajan wrote:
->> From: Donet Tom <donettom@linux.ibm.com>
->>
->> This patch fixed 2 issues.
->>
->> 1) After fork() in test_prctl_fork, the child process uses the file
->> descriptors from the parent process to read ksm_stat and
->> ksm_merging_pages. This results in incorrect values being read (parent
->> process ksm_stat and ksm_merging_pages will be read in child), causing
->> the test to fail.
->>
->> This patch calls init_global_file_handles() in the child process to
->> ensure that the current process's file descriptors are used to read
->> ksm_stat and ksm_merging_pages.
->>
->> 2) All tests currently call ksm_merge to trigger page merging.
->> To ensure the system remains in a consistent state for subsequent
->> tests, it is better to call ksm_unmerge during the test cleanup phase.
->>
->> In the test_prctl_fork test, after a fork(), reading ksm_merging_pages
->> in the child process returns a non-zero value because a previous test
->> performed a merge, and the child's memory state is inherited from the
->> parent.
->>
->> Although the child process calls ksm_unmerge, the ksm_merging_pages
->> counter in the parent is reset to zero, while the child's counter
->> remains unchanged. This discrepancy causes the test to fail.
->>
->> To avoid this issue, each test should call ksm_unmerge during cleanup
->> to ensure the counter is reset and the system is in a clean state for
->> subsequent tests.
->>
->> execv argument is an array of pointers to null-terminated strings.
->> In this patch we also added NULL in the execv argument.
->>
->> Fixes: 6c47de3be3a0 ("selftest/mm: ksm_functional_tests: extend test case for ksm fork/exec")
->> Co-developed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->> ---
->> tools/testing/selftests/mm/ksm_functional_tests.c | 12 +++++++++++-
->> 1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
->> index d8bd1911dfc0..996dc6645570 100644
->> --- a/tools/testing/selftests/mm/ksm_functional_tests.c
->> +++ b/tools/testing/selftests/mm/ksm_functional_tests.c
->> @@ -46,6 +46,8 @@ static int ksm_use_zero_pages_fd;
->> static int pagemap_fd;
->> static size_t pagesize;
->>
->> +static void init_global_file_handles(void);
->> +
->> static bool range_maps_duplicates(char *addr, unsigned long size)
->> {
->> 	unsigned long offs_a, offs_b, pfn_a, pfn_b;
->> @@ -274,6 +276,7 @@ static void test_unmerge(void)
->> 	ksft_test_result(!range_maps_duplicates(map, size),
->> 			 "Pages were unmerged\n");
->> unmap:
->> +	ksm_unmerge();
-> In __mmap_and_merge_range(), we call ksm_unmerge(). Why this one not help?
->
-> Not very familiar with ksm stuff. Would you mind giving more on how this fix
-> the failure you see?
-
-
-The issue I was facing here was test_prctl_fork was failing.
-
-# [RUN] test_prctl_fork
-# Still pages merged
-#
-
-This issue occurred because the previous test performed a merge, causing
-the value of /proc/self/ksm_merging_pages to reflect the number of
-deduplicated pages. After that, a fork() was called. Post-fork, the 
-child process
-inherited the parent's ksm_merging_pages value.
-
-Then, the child process invoked __mmap_and_merge_range(), which resulted
-in unmerging the pages and resetting the value. However, since the 
-parent process
-had performed the merge, its ksm_merging_pages value also got reset to 0.
-Meanwhile, the child process had not performed any merge itself, so the 
-inherited
-value remained unchanged. That’s why get_my_merging_page() in the child was
-returning a non-zero value.
-
-Initially, I fixed the issue by calling ksm_unmerge() before the fork(), 
-and that
-resolved the problem. Later, I decided it would be cleaner to move the
-ksm_unmerge() call to the test cleanup phase.
-
-
->
->> 	munmap(map, size);
->> }
->>
->> @@ -338,6 +341,7 @@ static void test_unmerge_zero_pages(void)
->> 	ksft_test_result(!range_maps_duplicates(map, size),
->> 			"KSM zero pages were unmerged\n");
->> unmap:
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> }
->>
->> @@ -366,6 +370,7 @@ static void test_unmerge_discarded(void)
->> 	ksft_test_result(!range_maps_duplicates(map, size),
->> 			 "Pages were unmerged\n");
->> unmap:
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> }
->>
->> @@ -452,6 +457,7 @@ static void test_unmerge_uffd_wp(void)
->> close_uffd:
->> 	close(uffd);
->> unmap:
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> }
->> #endif
->> @@ -515,6 +521,7 @@ static int test_child_ksm(void)
->> 	else if (map == MAP_MERGE_SKIP)
->> 		return -3;
->>
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> 	return 0;
->> }
->> @@ -548,6 +555,7 @@ static void test_prctl_fork(void)
->>
->> 	child_pid = fork();
->> 	if (!child_pid) {
->> +		init_global_file_handles();
-> Would this leave fd in parent as orphan?
->
->> 		exit(test_child_ksm());
->> 	} else if (child_pid < 0) {
->> 		ksft_test_result_fail("fork() failed\n");
->> @@ -595,7 +603,7 @@ static void test_prctl_fork_exec(void)
->> 		return;
->> 	} else if (child_pid == 0) {
->> 		char *prg_name = "./ksm_functional_tests";
->> -		char *argv_for_program[] = { prg_name, FORK_EXEC_CHILD_PRG_NAME };
->> +		char *argv_for_program[] = { prg_name, FORK_EXEC_CHILD_PRG_NAME, NULL };
->>
->> 		execv(prg_name, argv_for_program);
->> 		return;
->> @@ -644,6 +652,7 @@ static void test_prctl_unmerge(void)
->> 	ksft_test_result(!range_maps_duplicates(map, size),
->> 			 "Pages were unmerged\n");
->> unmap:
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> }
->>
->> @@ -677,6 +686,7 @@ static void test_prot_none(void)
->> 	ksft_test_result(!range_maps_duplicates(map, size),
->> 			 "Pages were unmerged\n");
->> unmap:
->> +	ksm_unmerge();
->> 	munmap(map, size);
->> }
->>
->> -- 
->> 2.47.1
->>
+-- 
+Regards,
+Liu Ying
 
