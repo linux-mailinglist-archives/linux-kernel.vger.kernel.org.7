@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-755797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5886B1ABEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC9AB1ABF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8645318A21E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02640189FF4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8C3341AA;
-	Tue,  5 Aug 2025 01:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aJZ+NV3H"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3FBA41;
+	Tue,  5 Aug 2025 01:15:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201BF189919
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006CC2E36ED;
+	Tue,  5 Aug 2025 01:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754356368; cv=none; b=U5dKiem7nmFZZ0Ua4RjeYQf6vnIId5u5YYnbsbgB8vilW/vRr7LFYvYwlHqyzKEYmGCCCrZXLFZnINGye79A9jJBmplxT55iwoY3+T64Xi3fSCA8bbEJknhpBpT7jbXcfZzIpa+i4qMeBrQEQ6UhluAWSjReJ8WIBT8A7Hf2RXk=
+	t=1754356552; cv=none; b=IGl2AyYg7ncQe/HdaLw2/ZkbFgffvOWAVQF0vVEc8E+Dz4k6GWd+X80hrsJSijP6u4gAFxabllbeQjm3RI4gqYc5sTQzwy03PglHQ+3NIRQGXL7qoBequON07jjO00Anv5MLesadFz0OMjYfALpi45fwwwpsE+dvWsfUviGzph8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754356368; c=relaxed/simple;
-	bh=IssW0J3YfD78mQWKfR9piPho3y+18KHinlVGttUM0Gw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+xP8m8vJCM264xmOk3GE79cPZc3zz1G0PHc9p/84pdFXh8o26la5B2znkf5dm5tMDa7ZqYUK4lw2SaZcNshLPQkdjaeWxWTTRRaKm66Ehdu2CmYbo2AQacqKNcjNnYYskKN2tZm8wopNu6IDRZZ81gTM3XCdPlxIFzv0FZChR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aJZ+NV3H; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso211371cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754356366; x=1754961166; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1THODX6cXrJgsKrzLiWdmBkVFsg+xvhr1Laebx33cFU=;
-        b=aJZ+NV3HrSkt8c0tQsnoWSbrv4Pb4Qt1ZctV0lkpUdWwzTM+25T0J4mH6ojyK5fAbi
-         e+2p9MAAd4EYOB5AzAryHYPhwR5P8PsWEYRhIJhhaXV5WKkayV3N0k6KJypp9EYrjUTD
-         7kLIpGcZ60mo9NamEGYJ2C3ncGPT2H6LZLtSffX9blrzGTgFjGVW+T+Xqn2UTOHzwOwQ
-         BzqeMBOfs/rvSkWKo1opkMMq2lOBcGKtOm91YlMBlELunM/rZjWKa1J5vapkmF3mm978
-         +P4g1IsyEuodX54Ay9EUQAPStPJmF/gBh6Z7X7DRWMiV186yGq6mTMl65j9YekxsoT+P
-         Vx7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754356366; x=1754961166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1THODX6cXrJgsKrzLiWdmBkVFsg+xvhr1Laebx33cFU=;
-        b=rfAf44zhYlInszEwP1Ou0QmvwPujNfrcJKOheZlLGpCZkx150nM2eGudEY/RNkaOhy
-         nbI01O1AxrCRbQHRyXPZJhWbWi3fi08DjQAROpV5NSxtsSRcm1+Rhpbj1gHK8b7HZtXF
-         ykWrCslAO8b/cVqmSdajRSFvppiOlV1SAz6Ji0Lt9P+72kxBE6PZ9byUjpTa0wxXsPbk
-         1nwRctyp/1MPq9Al4nik3YQjNsMzp2oHhhNK/Q+ieZDym6e1GrmM5DJ4zmH9huTteyga
-         NRE05eKabVm83Khm+a9VyFAtIGkhnwqejpBqxQLmOVgp9r8kjtyYzX4Un+1RXg0RH90H
-         PWGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVns49WVyre3IMIh9/NkqMzvj9nZzHQYFOcm1bLQ3qAs3RIiljearaSkloRGGe7ernN0gbwfy8mNTzYb0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLgHpao8Tj9EtVKGzD4p7R6xwqfXI20vTuM3iguU8jzs+MKl4V
-	Q6jWHSThTH7b4H7ghxcq/FuRygDvw7knjdkQGrmn0NOJVRiV3X7EnW8D4zxIUZCi9MtR0RI2kVH
-	e9agba76qKDoUh0YeIR2EIl9w2rI8YWdrJDDP+Jps
-X-Gm-Gg: ASbGncuCQqRKZuE/U8v7VqQ8VOFtctjXlJum2ohBZ/upGK+voS8uAMGgPRwLn+FRCJb
-	fjjgH26868cWBt/UmZI6rhwKxtyzdKuG4HBplEMyFknuFOdb6ZyuxXYOQDn0SOdYcTlq+WmKf9j
-	1h3deMLd3njiiyIfcspasIi8eiAOTQqOCPYGJxs++RaxW5e+EvxckqX3cqa2cgtsQwE0mxWWAZG
-	QgmXbKAavtsDsSS
-X-Google-Smtp-Source: AGHT+IEyQD2Cezy8/wkC7XfHIjoY6NUMH1DmfY+dK1PsKlX8IdWynIH9pDg2WV4yx3/wQ4+hxzBWtv2hVfDrwdNcDnI=
-X-Received: by 2002:a05:622a:180b:b0:497:75b6:e542 with SMTP id
- d75a77b69052e-4b084f11753mr397691cf.10.1754356365735; Mon, 04 Aug 2025
- 18:12:45 -0700 (PDT)
+	s=arc-20240116; t=1754356552; c=relaxed/simple;
+	bh=V78xahyJ1ep3lliD6kGEhd9fl1U9Xx618/exFlNyj4I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=vFJBNcxWyw0IU3avFafnkLD3vA+bNcFWj+W5Y0HXrnGNR7EWBAXfPNr5yRqGNzAb7CPb2QKnozES77pgepCUHC/U6v5Fdap5fLrYw6gGIG73pquqyB6VymMiAnE+uQ8rst6luJmkWOGUFrSh+C2MWrXV4a+b6jjma8pn1fc8gsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bwwTv2KBczYQvCN;
+	Tue,  5 Aug 2025 09:15:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F0E161A0C88;
+	Tue,  5 Aug 2025 09:15:45 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHwhI_W5FolqNpCg--.41295S3;
+	Tue, 05 Aug 2025 09:15:45 +0800 (CST)
+Subject: Re: [PATCH v5 08/11] md/md-bitmap: add a new method blocks_synced()
+ in bitmap_operations
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@lst.de, corbet@lwn.net, song@kernel.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, linan122@huawei.com, hare@suse.de,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250801070346.4127558-1-yukuai1@huaweicloud.com>
+ <20250801070346.4127558-9-yukuai1@huaweicloud.com>
+ <CALTww2_jcDJf-55AEvK2fzf2PLnnOfBw5dG4bQG65B9eFw8Xmg@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <65ab0815-daf0-c614-7fa5-cab095d513b1@huaweicloud.com>
+Date: Tue, 5 Aug 2025 09:15:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730032312.167062-1-yubowen8@huawei.com> <20250730032312.167062-3-yubowen8@huawei.com>
- <20250730063930.cercfcpjwnfbnskj@vireshk-i7> <CAFivqmLkLn-92rMow+c7iEADCdh3-DEapVmtB_Qwk1a2JrwwWw@mail.gmail.com>
- <9041c44e-b81a-879d-90cd-3ad0e8992c6c@hisilicon.com> <CAFivqmLr_0BDkMhD4o6box3k9ouKek8pnY7aHX36h1Q9TaT_HA@mail.gmail.com>
- <7a9030d0-e758-4d11-11aa-d694edaa79a0@hisilicon.com>
-In-Reply-To: <7a9030d0-e758-4d11-11aa-d694edaa79a0@hisilicon.com>
-From: Prashant Malani <pmalani@google.com>
-Date: Mon, 4 Aug 2025 18:12:34 -0700
-X-Gm-Features: Ac12FXy9xyakfz6nU1zTVwjcHt0kVuVHngyBTkjBFJgF_Kl_APh9mesLw2n5bqQ
-Message-ID: <CAFivqmJyYJ+d+TH4qYBKf_5t-AqWZuzgk2H_4nHmynTjoUHnYQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in cppc_scale_freq_workfn()
-To: Jie Zhan <zhanjie9@hisilicon.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Bowen Yu <yubowen8@huawei.com>, rafael@kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, lihuisong@huawei.com, zhenglifeng1@huawei.com, 
-	Beata Michalska <beata.michalska@arm.com>, Ionela Voinescu <ionela.voinescu@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALTww2_jcDJf-55AEvK2fzf2PLnnOfBw5dG4bQG65B9eFw8Xmg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHwhI_W5FolqNpCg--.41295S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr43Ar4rJrWxXr1fGF15Arb_yoW5tF4Upa
+	9rXasxuayUWr4UX3W7XayDuFyFq39rtry7JFWSg34ruF90grnxWFyftayY9a4jk3WagasI
+	v3Z0y345Crn5tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, 3 Aug 2025 at 23:21, Jie Zhan <zhanjie9@hisilicon.com> wrote
-> On 01/08/2025 16:58, Prashant Malani wrote:
-> > This begs the question: why is this work function being scheduled
-> > for CPUs that are in reset or offline/powered-down at all?
-> > IANAE but it sounds like it would be better to add logic to ensure this
-> > work function doesn't get scheduled/executed for CPUs that
-> > are truly offline/powered-down or in reset.
-> Yeah good question.  We may discuss that on your thread.
+Hi,
 
-OK.
-Quickly looking around, it sounds having in the CPPC tick function [1]
-might be a better option (one probably doesn't want to lift it beyond the
-CPPC layer, since other drivers might have different behaviour).
-One can add a cpu_online/cpu_enabled check there.
+在 2025/08/04 17:15, Xiao Ni 写道:
+> Hi Kuai
+> 
+> I found one thing. The interface ->blocks_synced doesn't work in the
+> write io path. So there is a risk of data corruption. For example:
+> 
+> mdadm -CR /dev/md0 -l5 -n5 /dev/loop[0-4] --bitmap=lockless (all bits
+> are unwritten because lazy initial recovery)
+> 1. D1 D2 D3 D4 P1, a small write hits D2. rmw is 2 (need to read old
+> data of D2 and P1), rcw is 3 (need to read D1 D3 and D4).
+> 2. D2 disk fails
+> 3. read data from disk2. It needs to calculate the data from other
+> disks. But the result is not the real data which was written to D2
+> 
+> So ->blocks_synced needs to be checked in handle_stripe_dirtying.
 
-[1] https://elixir.bootlin.com/linux/v6.16/source/include/linux/cpumask.h#L1233
+This is correct, the write path is missing. Will fix it in the next
+version.
 
--- 
--Prashant
+Thanks,
+Kuai
+
+> 
+> Best Regards
+> Xiao
+> 
+> On Fri, Aug 1, 2025 at 3:11 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Currently, raid456 must perform a whole array initial recovery to build
+>> initail xor data, then IO to the array won't have to read all the blocks
+>> in underlying disks.
+>>
+>> This behavior will affect IO performance a lot, and nowadays there are
+>> huge disks and the initial recovery can take a long time. Hence llbitmap
+>> will support lazy initial recovery in following patches. This method is
+>> used to check if data blocks is synced or not, if not then IO will still
+>> have to read all blocks for raid456.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>> Reviewed-by: Xiao Ni <xni@redhat.com>
+>> Reviewed-by: Li Nan <linan122@huawei.com>
+>> ---
+>>   drivers/md/md-bitmap.h | 1 +
+>>   drivers/md/raid5.c     | 6 ++++++
+>>   2 files changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+>> index 95453696c68e..5f41724cbcd8 100644
+>> --- a/drivers/md/md-bitmap.h
+>> +++ b/drivers/md/md-bitmap.h
+>> @@ -90,6 +90,7 @@ struct bitmap_operations {
+>>          md_bitmap_fn *end_discard;
+>>
+>>          sector_t (*skip_sync_blocks)(struct mddev *mddev, sector_t offset);
+>> +       bool (*blocks_synced)(struct mddev *mddev, sector_t offset);
+>>          bool (*start_sync)(struct mddev *mddev, sector_t offset,
+>>                             sector_t *blocks, bool degraded);
+>>          void (*end_sync)(struct mddev *mddev, sector_t offset, sector_t *blocks);
+>> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+>> index 5285e72341a2..2121f0ff5e30 100644
+>> --- a/drivers/md/raid5.c
+>> +++ b/drivers/md/raid5.c
+>> @@ -3748,6 +3748,7 @@ static int want_replace(struct stripe_head *sh, int disk_idx)
+>>   static int need_this_block(struct stripe_head *sh, struct stripe_head_state *s,
+>>                             int disk_idx, int disks)
+>>   {
+>> +       struct mddev *mddev = sh->raid_conf->mddev;
+>>          struct r5dev *dev = &sh->dev[disk_idx];
+>>          struct r5dev *fdev[2] = { &sh->dev[s->failed_num[0]],
+>>                                    &sh->dev[s->failed_num[1]] };
+>> @@ -3762,6 +3763,11 @@ static int need_this_block(struct stripe_head *sh, struct stripe_head_state *s,
+>>                   */
+>>                  return 0;
+>>
+>> +       /* The initial recover is not done, must read everything */
+>> +       if (mddev->bitmap_ops && mddev->bitmap_ops->blocks_synced &&
+>> +           !mddev->bitmap_ops->blocks_synced(mddev, sh->sector))
+>> +               return 1;
+>> +
+>>          if (dev->toread ||
+>>              (dev->towrite && !test_bit(R5_OVERWRITE, &dev->flags)))
+>>                  /* We need this block to directly satisfy a request */
+>> --
+>> 2.39.2
+>>
+> 
+> 
+> .
+> 
+
 
