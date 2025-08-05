@@ -1,80 +1,92 @@
-Return-Path: <linux-kernel+bounces-755995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74800B1AE7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:40:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C68B1AE7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216973BB836
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309E918A0116
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752412206BF;
-	Tue,  5 Aug 2025 06:40:08 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2917921C9F2;
+	Tue,  5 Aug 2025 06:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EExD8YAy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9E321FF2A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2BCA927;
+	Tue,  5 Aug 2025 06:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376008; cv=none; b=PlJJVs0ksmpkH14lnNEdM0cBqD2uRSdghaEPY0/Y8yVlOzhSy/WDWQECc2zwhsNBjdj0KbM645cVHZbUuc/mnp5DP9pKxhTEAZ2URlA9qH5a/A/RX6ch6u1OZo02Yqdx/6vOx2Uvw7+f6/PSLX6DnZ7HeHv1RkMee+oGSYWT/24=
+	t=1754376003; cv=none; b=PtZxElX4h+7XqiXwXy9sreqcfyY/JQa5z3GdlGNoUPmZPoFyDXK5NYvfXE9pfz7bLA8W9rjmxRtEQYLjeQQl7o15OzUHGkdd7N09suH0shqWB2MOPlGApjsgcb6SfweMH+nKFfNecngXU66XdHvGrJuGhsrlO3mZjH6P0cMQxgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376008; c=relaxed/simple;
-	bh=LFgFOVSuuIvqgfhGwW5SoPbSGuI4dQhkbDlJcjAObYM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dSvRRJF0wuk7fJSAUcXYYQh/66xeLhzdnBqrUg2OVGbH5A/abgXSemQxWgIrolRVV7Y2WIxWP1yqSpE9DR+II5a1VhjV1ZQje2wTk1zmfTu6dCF8FYvjYHxiQ8qqKZA2NsAwbr5mik8nqyM2lR+YqI6KpCE52j4/STc3AakcZOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 5 Aug
- 2025 14:39:57 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 5 Aug 2025 14:39:57 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: ryan_chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] drivers/soc/aspeed: Add AST27XX SoC ID support
-Date: Tue, 5 Aug 2025 14:39:57 +0800
-Message-ID: <20250805063957.1452653-1-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754376003; c=relaxed/simple;
+	bh=y43eChycutdYzUFJz6MO9DSyRcPKyMzwMzBdeUn8eDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwAbjflXEPABIEcffvj4saFaQmrMw6uurj7PqMm1X8uLd46BXCXOIDuFzwIqNw3kXBLWG5u+muvKR6z0jmhwlO8prBzVtr9HpFjNq1yIegz3PrIHv6M15Qd7VPL4wvVJdGzBY3AMglS2H9bmLcZxMF9M4x5katL365tHyPmMuGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EExD8YAy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE1AC4CEF8;
+	Tue,  5 Aug 2025 06:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754376002;
+	bh=y43eChycutdYzUFJz6MO9DSyRcPKyMzwMzBdeUn8eDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EExD8YAyPy4IntVrNv5HTw9a1S6WReOOAccYEoeuwQqzW9g5z9BuZfedX6pSz20zP
+	 orXKOtidCIjP+kxPbYY1e+lLSNgDfrKR+/EH4KPG/xXnptdo1zMWniyJoNRxMjfkYg
+	 CWQXzDHySZnCw3Q2wzVl7TrIFgUQ9Mas0WBCPbOrGDc2aFYQqjFCCTjqgnmS9chBOv
+	 75eseopcjBLp7ptbCoiV59ighwvz9ClTA/cbuw7Tf9Xy1rORgy4EZQ3wZEigiL/HyQ
+	 RAHNiLuvfWa4B6R5/qyDoYmeJEfeTsSgYCt4V3OnMiQCBhjf1xAzIgyQB9mB2JrGBq
+	 d+54i7k65Ecsg==
+Date: Tue, 5 Aug 2025 08:39:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	linux-riscv@lists.infradead.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 1/3] dt-bindings: net: thead,th1520-gmac: Describe
+ APB interface clock
+Message-ID: <20250805-portable-jasmine-marmoset-e34026@kuoka>
+References: <20250801091240.46114-1-ziyao@disroot.org>
+ <20250801091240.46114-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250801091240.46114-2-ziyao@disroot.org>
 
-Extend the ASPEED SoC info driver to support AST27XX silicon IDs.
+On Fri, Aug 01, 2025 at 09:12:38AM +0000, Yao Zi wrote:
+> Besides ones for GMAC core and peripheral registers, the TH1520 GMAC
+> requires one more clock for configuring APB glue registers. Describe
+> it in the binding.
+> 
+> Fixes: f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Tested-by: Drew Fustini <fustini@kernel.org>
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
----
- drivers/soc/aspeed/aspeed-socinfo.c | 4 ++++
- 1 file changed, 4 insertions(+)
+You cannoy really test the binding, except part of build process and we
+do not consider building something equal to testing.
 
-diff --git a/drivers/soc/aspeed/aspeed-socinfo.c b/drivers/soc/aspeed/aspeed-socinfo.c
-index 3f759121dc00..67e9ac3d08ec 100644
---- a/drivers/soc/aspeed/aspeed-socinfo.c
-+++ b/drivers/soc/aspeed/aspeed-socinfo.c
-@@ -27,6 +27,10 @@ static struct {
- 	{ "AST2620", 0x05010203 },
- 	{ "AST2605", 0x05030103 },
- 	{ "AST2625", 0x05030403 },
-+	/* AST2700 */
-+	{ "AST2750", 0x06000003 },
-+	{ "AST2700", 0x06000103 },
-+	{ "AST2720", 0x06000203 },
- };
- 
- static const char *siliconid_to_name(u32 siliconid)
--- 
-2.34.1
+> ---
+>  .../devicetree/bindings/net/thead,th1520-gmac.yaml          | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
