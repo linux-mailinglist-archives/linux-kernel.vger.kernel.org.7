@@ -1,39 +1,79 @@
-Return-Path: <linux-kernel+bounces-756644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5DF8B1B726
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CDFB1B72F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4B4174CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806576270D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8D12798ED;
-	Tue,  5 Aug 2025 15:08:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFC8279780
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C08279DD3;
+	Tue,  5 Aug 2025 15:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMTd3rYF"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A483D279DB1;
+	Tue,  5 Aug 2025 15:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754406513; cv=none; b=agDfTQ5vVQcMblTCVWeBmWGELy6W9SNTEFwhFeg4HT3ZqabU6lXSCR73XZYkW2Ii6cyGLgCf/PAEQBSNWk8Toz5CcTud4BABh3zMbdh22UP0STgwZtrX9wGQWOdPTa6A+5hu4mSQDCSKRjkFwY4/bUg/nlgw9DZMaCNa2Esg2yk=
+	t=1754406544; cv=none; b=CWMUu0n2PVUwotWMA1YTmlYdEOjZCQA3wIDHPJlZFfAwoxyOv+BcSLPH7tnWxMugFcyBc0C5/IWtkKPqjLX2QOZYCZe4aO/VJuuLyxb5dOl+6EE8Yk5XkR7kLUlGu43B92yCEpaY89M08DT88jhLdtG5SD78tRVLF2Eqk7q5MDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754406513; c=relaxed/simple;
-	bh=solg/BAxy0Q7+JjjWzI/VjKXvIKH6hxbQyE0QMr84og=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=fm+OlSsA35/hBF9cbXeNQ3qe2MMPExNYQIAiliVV4EJHZxk1cM4k00hiCPepn0CnliT6dIvmIYO239Si1G7QbRHHMWf8aG8JyOT8uYYKY0DTYZxV3QuUhwEJf5E35+7DxC6wh37yl9SW0GHqHNuKJyPhXijOvzj9emRWVUxRZOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C1652BCE;
-	Tue,  5 Aug 2025 08:08:23 -0700 (PDT)
-Received: from [10.1.29.177] (e137867.arm.com [10.1.29.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A5AA3F673;
-	Tue,  5 Aug 2025 08:08:26 -0700 (PDT)
-Message-ID: <6bd09b5b-9830-42b4-ad9e-9ad1e153e564@arm.com>
-Date: Tue, 5 Aug 2025 16:08:24 +0100
+	s=arc-20240116; t=1754406544; c=relaxed/simple;
+	bh=CloU7AwQ+4ed8BmT0f+moVCt+pXdA9kyuCa+TPRFKQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EkG2vKrF5lMLgppjnOtg2JUc5TbOegDWxrHkHgfL3uQMT7kpoH17qPfNQMaEk6aXypvTh3DFVpk0Vv19S/kyeGgqByexT6B7EcxWeA4lthMKk8hmjIPB/GNeq29LnLh2EHw/P3MrSl3/EHhYKc7ZNwxMQCwCcYg1g1EKApKzVvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMTd3rYF; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4589968e001so36529895e9.0;
+        Tue, 05 Aug 2025 08:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754406541; x=1755011341; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=clkjTg5nzbZkcjPnCyY4ICyTnv2rK6xqFAiXWelGD9U=;
+        b=IMTd3rYFSvF219EphUpdhRaee2XcN9S1I2zvzjxTQPztIcMmdS50t204R3KYAH4Wdg
+         scsEWOWUBwHh8jxO6jvWuFU3EtMXj2Ja92oCnn5y+QMi42aT22GVrn2SFkHgJgfwD1i7
+         29lAG8XipK8DF98QqRHq4RRvI3YlZWd9oEdMCkYjYV/LzPkqUeiCmr9acAm9FT7O29oY
+         YdJBScTXVEd4gl1LG2Pbcox64QUJzokCOAJ5uYaOrafaZr7bckdsg3SELQ3GyRZtW9Eq
+         AdZrsaZHn+JNg+yjDL/QoEV9/H4G2NQjpkE+ZfIb9KQMyTb9eSWO2bNp+fPFCx29nYVR
+         cJog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754406541; x=1755011341;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=clkjTg5nzbZkcjPnCyY4ICyTnv2rK6xqFAiXWelGD9U=;
+        b=nTOknL3MbJM3EsktL76BRfo01FhNdM5ZigikDe6Fk1vOGtbwXVb0B/m2p/jJwkxomV
+         wLEKsiBgFHpbNueq3USeikyInvdTvILYX9ZMCxqQlGbG1rKV7P1NZ310+g5E8OTizx10
+         +KZbzrp7j46JXihEsB81ntN9JG/2k5V6KNg/GaWZppH4fwJzLX0JVEvclRLg273qBzFf
+         zJeOSV6+r65HmqD0mfFPCoAw5wiYw9T/YmCuY1/yse3Z/niICK/n0MrafabhWn6bbdrT
+         Yr77An9MHAIupTLKdUWgw53FTPAoy1yabcS3tsBhWS43qB+0IzH+5xpyDcU6c1SvrVD8
+         5t6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWElB3ycTn4o9ptVgoG+Vc/iMv+zN/17U787rpJ+NTn8cF0uuL+b4ost4vHH1K60CTa4FNHsaXTZfZ8Lwg0@vger.kernel.org, AJvYcCWhAKCj61tBqOnS3BBZe+u9R2EcUojdEnaFH4KuA9KnZVLy22GSIhY/qGiKRwF4p1OWgMxNEIaR9ayTs0qCsg==@vger.kernel.org, AJvYcCXPunKBZgzKOGm9K1AtzT7tQm1UXxw9QIhJEjqOlBrrbJA+0/cL+r1pdwJDvA6iXeRGWgAMuFm14iU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/5QJr5CiCW+oGj0PJBaKjpVGSuV1d2BFTWnZAlKB7/AimuCme
+	n8g/yq7OAqsi5VPq44M0wwYc1z89SV2PwTlz2Cln7wrWrTT5yf3G691P
+X-Gm-Gg: ASbGncseJqwg9dJaIEr7mgfZoKnTzUgW1Lf5bmK5vLrtN60z9q8c6FjVCtRJ2kStNOi
+	MWZW0CZjVtlMBQVitF8hVEpnboCEMRLpkkHC+lbBe1Me433lWIEM73WTmaV43e4nmajZXnIYIzr
+	YSsPlz6nEWWIwtgpBwFKpWG4sI2ZtY8jl0McV6VYYLSn0PfYaKDFr0YC6gTdPi1PgOBUvhx35Wb
+	moTBL8lBYpTCJ9jnNjy4U/kjEKKfh6kPKUwl/UcGLbnlJcf3dfHTgc+WfecCelcJ0pSCN3uVyLi
+	PeQcGjZRQOJ9SnbLRQOtYcHABYxFty8s81d3JRA1r9erQj35AWdy9KWFHQ17UPmDuzELO/HpQel
+	RxL1FyjiOw7eGV2eUe31gSouhwxkauS3LRwwb896xO5ozw9+aWgVSTDG7Vx0y0KbiLgtLbe8=
+X-Google-Smtp-Source: AGHT+IEJleTvyo7dw5ZGzLVioDY9Jwr93ljNYRwnTw/ri7vqTNIxJbrhwwu2JSLWJ5dOnaJY7nNELw==
+X-Received: by 2002:a05:600c:3548:b0:459:db80:c2d0 with SMTP id 5b1f17b1804b1-459dbf8f654mr60706285e9.7.1754406540648;
+        Tue, 05 Aug 2025 08:09:00 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::6:98ea])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm40017195e9.1.2025.08.05.08.08.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 08:08:59 -0700 (PDT)
+Message-ID: <cd99f0f2-260d-4494-bbf6-99daec3e0683@gmail.com>
+Date: Tue, 5 Aug 2025 16:08:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,81 +81,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v7 0/7] arm64: entry: Convert to generic irq entry
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, oleg@redhat.com, sstabellini@kernel.org,
- mark.rutland@arm.com, puranjay@kernel.org, broonie@kernel.org,
- mbenes@suse.cz, ryan.roberts@arm.com, akpm@linux-foundation.org,
- chenl311@chinatelecom.cn, anshuman.khandual@arm.com,
- kristina.martsenko@arm.com, liaochang1@huawei.com, ardb@kernel.org,
- leitao@debian.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v3 3/6] mm/huge_memory: respect MADV_COLLAPSE with
+ PR_THP_DISABLE_EXCEPT_ADVISED
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
+ baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+ <20250804154317.1648084-4-usamaarif642@gmail.com>
+ <8bfed1e2-ec44-473b-b006-8cb2505220d4@lucifer.local>
 Content-Language: en-US
-Organization: Arm Ltd.
-In-Reply-To: <20250729015456.3411143-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <8bfed1e2-ec44-473b-b006-8cb2505220d4@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Jinjie,
 
-On 29/07/2025 02:54, Jinjie Ruan wrote:
+>> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+>> index 9c1d6e49b8a9..cdda963a039a 100644
+>> --- a/include/uapi/linux/prctl.h
+>> +++ b/include/uapi/linux/prctl.h
+>> @@ -185,7 +185,7 @@ struct prctl_mm_map {
+>>  #define PR_SET_THP_DISABLE	41
+>>  /*
+>>   * Don't disable THPs when explicitly advised (e.g., MADV_HUGEPAGE /
+>> - * VM_HUGEPAGE).
+>> + * VM_HUGEPAGE, MADV_COLLAPSE).
+>>   */
+>>  # define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
+>>  #define PR_GET_THP_DISABLE	42
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 85252b468f80..ef5ccb0ec5d5 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -104,7 +104,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>  {
+>>  	const bool smaps = type == TVA_SMAPS;
+>>  	const bool in_pf = type == TVA_PAGEFAULT;
+>> -	const bool enforce_sysfs = type != TVA_FORCED_COLLAPSE;
+>> +	const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
+>> +	const bool enforce_sysfs = !forced_collapse;
+> 
+> I guess as discussed we'll return to this.
+> 
 
-> Since commit a70e9f647f50 ("entry: Split generic entry into generic
-> exception and syscall entry") split the generic entry into generic irq
-> entry and generic syscall entry, it is time to convert arm64 to use
-> the generic irq entry. And ARM64 will be completely converted to generic
-> entry in the upcoming patch series.
-Note : I had to manually cherry-pick a70e9f647f50 when pulling the series
-on top of the Linux Arm Kernel for-next/core branch, but there might be
-something I'm missing here.
->
-> The main convert steps are as follows:
-> - Split generic entry into generic irq entry and generic syscall to
->    make the single patch more concentrated in switching to one thing.
-> - Make arm64 easier to use irqentry_enter/exit().
-> - Make arm64 closer to the PREEMPT_DYNAMIC code of generic entry.
-> - Switch to generic irq entry.
+Thanks for the review!
 
-I reviewed the whole series and as expected it looks good ! Just a few nits
-here and there and some clarifications that I think could be useful.
-
-I'm not sure about the generic implementation of 
-`arch_irqentry_exit_need_resched()`
-in patch 5, I would be tempted to move it to patch 7. I detail my 
-thoughts more
-on the relevant patches, but I might be wrong and that feels like details :
-I don't think the code itself has issues.
-> It was tested ok with following test cases on QEMU virt platform:
->   - Perf tests.
->   - Different `dynamic preempt` mode switch.
->   - Pseudo NMI tests.
->   - Stress-ng CPU stress test.
->   - MTE test case in Documentation/arch/arm64/memory-tagging-extension.rst
->     and all test cases in tools/testing/selftests/arm64/mte/*.
->
-> The test QEMU configuration is as follows:
->
-> 	qemu-system-aarch64 \
-> 		-M virt,gic-version=3,virtualization=on,mte=on \
-> 		-cpu max,pauth-impdef=on \
-> 		-kernel Image \
-> 		-smp 8,sockets=1,cores=4,threads=2 \
-> 		-m 512m \
-> 		-nographic \
-> 		-no-reboot \
-> 		-device virtio-rng-pci \
-> 		-append "root=/dev/vda rw console=ttyAMA0 kgdboc=ttyAMA0,115200 \
-> 			earlycon preempt=voluntary irqchip.gicv3_pseudo_nmi=1" \
-> 		-drive if=none,file=images/rootfs.ext4,format=raw,id=hd0 \
-> 		-device virtio-blk-device,drive=hd0 \
->
-I'll spend some time testing the series now, specifically given patch 6's
-changes, but other than that everything I saw made sense and didn't look
-like it would be of concern to me.
-
-Thanks,
-Ada
+Yes I have a follow up patch ready, will send that when things stabalize and this series
+makes into mm-new.
 
