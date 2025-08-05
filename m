@@ -1,164 +1,190 @@
-Return-Path: <linux-kernel+bounces-755923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D47B1AD6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:01:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31076B1AD74
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444133B9737
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:01:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 695AB7AD781
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DDA21A420;
-	Tue,  5 Aug 2025 05:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8F217A2FA;
+	Tue,  5 Aug 2025 05:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="phwgjS5x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rRcX1HZB"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27481E9B3A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 05:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAEC13C8FF
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 05:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754370087; cv=none; b=cH2jqJsxPhzAp0c+djxQGwIs8wZVXszPRjmoZRx93lC43BywUZ+J6vxj9XoQ/5njV+SGmn59LqMSnqy/RxZj4I7hjquFEKOKIf3XISj1iy/dhTt4iAa7r8TWRCBtXiG92AvbgUk5Vzg+KuZn45S++PRuQijsVLRsQd87PvJjl4Q=
+	t=1754370217; cv=none; b=Kb2FmyfgUTMDks48iNzFXmCX7fQfnk3V9C0ykDGYaa3t0B0TjzSH15unucllORt/JQhxsrsYEnP12l85fs2lfLmOPu5BqOqMsi+V7qWvg5OQxqffReA1lEnMthO1lpeyQ9iiQiDfEO0m96Z8CiHApyiWN28BtnNj/vNxHoND6Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754370087; c=relaxed/simple;
-	bh=xRL3ruAQkNgj97zvQUzJtTn9tgi4hIXR+ln1qFdIkWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5yuQkb2s5SImcvVlskqB9lmBxxyIRCLjbzWjGQkgdsz8WvAZ3I8aPBBRdyDDPV5U2mZkauqXNYmIbc7+FRve+MTCnWx/b4VXFVAZTbN/yYb4KJWFb0D2YjsOFTRy6Ss55KxXYW6lSSA8DZxSbfdarI5u0KbiiX1jBxaf4GIplo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=phwgjS5x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754qwra022429
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 05:01:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=O9RIDmNzhmmHiightJnBZ7fI
-	75tTgnPyBB5yU+qp9lE=; b=phwgjS5x5Wrbd34/c9mJy01NrjVqbLwhnwmEwR8g
-	kmIYh0CMbdbF2yik0sk6V0uoFffk2oO6wzTBTF/zDSPH/bo9bk8pc3bLloIJblHh
-	s+cOZyrn2cymDnmBApp7Hv/UfT7DRtnhn3Y6XhHlDcMU7i09iXIfh4ZRhCEKAx96
-	sj4FWqJmAJsV1MF/65Ae/cI3cAbzQNjrvLOBST+uSmNE0euqXa0GzPEaLRmu4pgd
-	IHMSWuSrrWJqszD6fC4AU3AlgynHgfClFVhWQGc4H2S4dkI3Th3PwVVmFE30m5+G
-	9KZWFIzKYoSb0zctr+9QZgG5csaCR5xgHcmlZFVs4ubuEA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ak5a3yn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:01:23 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b07bf0783bso25934591cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 22:01:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754370083; x=1754974883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1754370217; c=relaxed/simple;
+	bh=8eUuiOAVr7JSZ5ksqVPkUqhNwo/8hc8bMdYjo7FjjO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezvQGmAJlvtKRb59GjoNirDAxG3raA4bhtqrRquZDEsyR8ajpAqE8hR+5xaMNK7EphWd0kSIgWOxeaWGuLIsh7NuGQLBszEprt9UhlkG2MAfSEZqcDn1m4I9GBtbPwOyl4d3wAnb8mkAGtzCcxOcOBFL+v6itdZ0UyFSkZywvoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rRcX1HZB; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-718389fb988so49704637b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 22:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754370214; x=1754975014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O9RIDmNzhmmHiightJnBZ7fI75tTgnPyBB5yU+qp9lE=;
-        b=jTEaseRvC9rgUl0+vHaP9zRA0/iEOVa5R5RcyN2bhSexLTYpQVfhjcHNUjCcMLAWSg
-         uiHw0y7o3shf7kY5kaEz5voCk2BbXjiT1+d7v0IrHeUmOrnAxsZ6VCtmdnCneDBvLcD6
-         A0HvubwSxJjdW2wxIltNnasEJvxim12DR6WLAvitW0gCXzC/iMx5NTi/tFSi9ULLzOfU
-         uhSf9MlgEx1jjOoTWSHKmfNlDbaZE41Q/oi1iznZbmE/RjK7FnwilzBSgMSgvfVOcj+F
-         EzHDT6HXp+jyRNhlQ4GqCdWghWbZ2O6FFsuGb4BKxVoaeYSzDXN24OPOHvfrjA6JAeEp
-         SxEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtoSO8P/Y/QkffOhfWjH01SM/+bD8GR6/Bgp6+kynVSlCTpYft1VRTj9/1YRM7+reLjtMNFb5M/EB7/HM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3xcUNlbqJWbGiiqavXd23XIuQocDqIm/lmVMat+rZM1sJvpPh
-	E4d6LvUU5INU/RyuFnIzsVU3Vz5DqpqJZlx+zneIWZ5Q3mOvxAYAjYbigwmubyzD8YE9C/ahRHV
-	su4Yw1y06Eq+xieuGG8qrLnk+lq8gW4OKRRxsuvQ8Pv8td+F+wlES+nHaULox58DJZag=
-X-Gm-Gg: ASbGncu3AXz6JNk2/1M97ICjPxgD0OJ7o7WIyQwTcQZWKCBq0gVTTrAteiafTDWHCUN
-	M8c4n2LztuILTGPemjVm4vE0fPVoD4btOaPsMFJmVNfJs2QiVitSnHGbBNRfygSCeH84RXjJj3I
-	UCfQJwO8ibnNbf7lm45ENgXfcZ54rlyY/P6oCcVdZ84VBcUxF+WDo6gVi97kUleGhTbdZVkov0X
-	FZy2boySeGeGknXrEQ2er7fm+cjlsNvBVbacuWk77j1hY9lE/6pqvfsLWS87aW2WJDBHwzp537I
-	U0kEZZ4L1AFvWWuE62fbUR/AB7M9DmtOUsQlVSagmLPSMb/uRCTXXhkg27XZnj1O+07lWtwKwIY
-	lylZsN7xYvaDPl/PyOYcLRRIJKmFBnfZnnIMlVqGJH3XzVyRBh3qz
-X-Received: by 2002:a05:622a:2614:b0:4a4:2c4c:ccb3 with SMTP id d75a77b69052e-4af10a4a6f8mr183536961cf.38.1754370082949;
-        Mon, 04 Aug 2025 22:01:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFrkygcTlWMwxP/dXL1HWOn4RsCOYuS94xjX9GRmLBpCLWrY5VJAZwhtLhFsjZ3j/oj45ilQ==
-X-Received: by 2002:a05:622a:2614:b0:4a4:2c4c:ccb3 with SMTP id d75a77b69052e-4af10a4a6f8mr183536451cf.38.1754370082422;
-        Mon, 04 Aug 2025 22:01:22 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332624953b1sm9339861fa.80.2025.08.04.22.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 22:01:21 -0700 (PDT)
-Date: Tue, 5 Aug 2025 08:01:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 0/3] EDITME: cover title for mdtloader-changes
-Message-ID: <volasof2jfa5bv7f7epyetxgci6ymt64ampqf2hhqhjf7co4vo@afkw5oxoralp>
-References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
+        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
+        b=rRcX1HZBhz+7gXxh6R1MLbFhNa9oTQ4Dntav+38dfyqV5pUds8W2C7+1/KtHNMcwPb
+         CyAgiabfQoq9NcTo1jphPnQbX7NlyXOUQGy45O0SE1cn+VDlw8U+E4ZHXqYtNn6/GKdh
+         9FC20lNjghCCXK0rbyp3RsCQEleZtPhyDU/eoGlu5mEzSVPoXrrDaLGPANaDh6SO6aLH
+         1UOI1N/EMz/NA7v0POXf1aYeqGvgQhB7a46YYwPUPHlRoZtqmRLYCFSZPu8ZSkaW65qs
+         T1XkWjZB8/G7Kih7pBIkK0gduSeuP3kXHBGrhHKb3/RrntZ/XW7kl5vN5eeuRInjvODd
+         ia0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754370214; x=1754975014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eY5N7v+zWU8+UjZUkDsBJT0AwO4FrfcIvgZ3TXySOJk=;
+        b=rx+ZHeGxVYfxdxquywih32Nzf5g0DaLlKqQB3S5nWEdw9RU7xey4qKxK7Ek5t542Mg
+         Zh/AR0IrqbRZJgcxBekV+77pS67CCGwLLkS8NmryviuAS3LFWRQCOr5zENeZCeUf+1RQ
+         frprOv7jmeN2bmAFaKPbe6vhM0YQNRd/mf1i9+WOJJtgc+BZBphD1r5JPDepdtYLq3Hl
+         jtFTiz0JOTXJ9slWQkkywhGRMpCU/ZzMl2g8K0LsdY2LGlo9unlC3g1xh1M6FPR0+IiO
+         6FihAaBjgBYvzEbZY5Cv5/Ee7WaTho7ain2MCGs8eeSekmowD/9DcMOEuhKdKD95v3nN
+         Jk+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ttXjGpR7+iEHVVrIFZ3hCtUyKQM7oQYSNrs4d39BgiBeaJlSXvyI0J2qlSatPbR/wzrKDQVFjO02OKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkhsZ03C/vqSvMak2Uoj4/wXAniyP9ez0//M+lRYNvbYETV28e
+	KiAjhZCikj6WElETQ2GvkhmCEnZebS23L7zJ1PfuQJ7s1u4whqMhQ3k9njXHR7S8U8ZsOkYtDV+
+	3K4prScpUg1ZdoYXS1gx6BLSHdtEz8P1smCfQL4g0Lg==
+X-Gm-Gg: ASbGncstZOJ9iYnB/0onwczud4j4ibTuTsYp5mZmoUb7sdRKgxwnyRq6jH6AzWmmByR
+	VK3f5s0oq/2ANYDhenb5XSC6NYxBlcrXU5oWor3mblNEfwLaEVuWvQjAHO4250/QrDUJ+FA8eBV
+	37WJF5l12QvH1Ffxx3scmeKtRoLnmnlwZfywqAvhQdhKTFqk62Z/7Afmm1juanFyMauiW0Ydfqd
+	GvX4w==
+X-Google-Smtp-Source: AGHT+IG1oZhqjscU5pfjiY1Q7UEpsk3imnmFMsZ67z7dBWGY5jc3R9ttC3dArQUXZ4i83be1Xm4e66GVmgTedDEMPjA=
+X-Received: by 2002:a05:690c:6f0f:b0:71a:251e:36eb with SMTP id
+ 00721157ae682-71b7ef66861mr146668157b3.21.1754370214226; Mon, 04 Aug 2025
+ 22:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAzNCBTYWx0ZWRfX7M07pKCKbuZr
- 3sPkshDN+SBxjs1n4+C4tGOsveyQDhXlAcV063wlnv5uITD1IsQdybObGWEoj2FDQJbEWIuYk+r
- GNQUM2tiTB+07T5AY6zoI3+6MTxji4HojCLXrf5MBNzQmflrvtWa2OJX97wVyUYT1jvzNIISQma
- 0AONCP9oCf/24pM6GHljTW82OIIHktCrfX5zilYnL4dq3Umv0cEBYPiqgz5S0/Fps3fOSjNCgfw
- TuQ4F5ZxwAKQW5tQ4ubKxiEyph/LOlGKzDMbREbysd86QDd7wADtgZLA2n5IlaDW87FEn87WIzo
- wJHwbT8EYHEUz5f4g6qYyBXloKrY34c5uTDYXRtj2BV0QcI8uZsEnWaIpagVF0a8Z5KS3by4kV/
- 3uuhc8IUvI9DN56qv13mWQDp+Pgo9c3GAFdMwaeUEzzuXh+i+ompHvC3Pkq79FJBh/d6JX7U
-X-Proofpoint-GUID: 2DJARAUUOkH4yc-M_7JacZ4OE8ZBLWQG
-X-Authority-Analysis: v=2.4 cv=LP1mQIW9 c=1 sm=1 tr=0 ts=68919023 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=PPOPQqKM8dVImZj3vAoA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: 2DJARAUUOkH4yc-M_7JacZ4OE8ZBLWQG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=865 suspectscore=0 spamscore=0 impostorscore=0
- phishscore=0 adultscore=0 malwarescore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050034
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+ <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-3-sw617.shin@samsung.com>
+ <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+ <000a01dc05c0$9f0ab110$dd201330$@samsung.com> <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+In-Reply-To: <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 5 Aug 2025 00:03:23 -0500
+X-Gm-Features: Ac12FXwhfK5c6hCAFDVH8lXtPSm0rXJFOVWdmBpTpuOp_j1X3bUQ9DkVKABvZIY
+Message-ID: <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: sw617.shin@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, 
+	wim@linux-watchdog.org, khwan.seo@samsung.com, dongil01.park@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 06:11:48PM +0530, Mukesh Ojha wrote:
-> 
-> ---
-> Mukesh Ojha (3):
->       soc: qcom: mdt_loader: Remove unused parameter
->       soc: qcom: mdt_loader: Remove pas id parameter
->       soc: qcom: mdt_loader: Fix check mdt_header_valid()
+On Mon, Aug 4, 2025 at 11:47=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>
+> On 8/4/25 21:22, sw617.shin@samsung.com wrote:
+> > On Saturday, August 2, 2025 at 1:12 PM Sam Protsenko <semen.protsenko@l=
+inaro.org> wrote:
+> >
+> >> How about something like this instead?
+> >>
+> >> 8<--------------------------------------------------------------------=
+->8
+> >> static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq) =
+{
+> >>      const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+> >>                  S3C2410_WTCON_MAXDIV; /* 32768 */
+> >>      const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
+> >>      u64 t_max =3D n_max / freq;
+> >>
+> >>      if (t_max > UINT_MAX)
+> >>          t_max =3D UINT_MAX;
+> >>
+> >>      return (unsigned int)t_max;
+> >> }
+> >> 8<--------------------------------------------------------------------=
+->8
+> >>
+> >> This implementation's result:
+> >>    - is never greater than real timeout, as it loses the decimal part =
+after
+> >> integer division in t_max
+> >>    - much closer to the real timeout value, as it benefits from very b=
+ig
+> >> n_max in the numerator (this is the main trick here)
+> >>    - prepared for using 32-bit max counter value in your next patch, a=
+s it
+> >> uses u64 type for calculations
+> >>
+> >> For example, at the clock frequency of 33 kHz:
+> >>    - real timeout is: 65074.269 sec
+> >>    - old function returns: 65535 sec
+> >>    - your function returns: 32767 sec
+> >>    - the suggested function returns: 65074 sec
+> >
+> > Thank you for your feedback.
+> > I'll make the code changes as follows in the next patch set:
+> >
+> > static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *w=
+dt)
+> >   {
+> >          const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> > +       const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
+> > +                       S3C2410_WTCON_MAXDIV;
+> > +       const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
+>
+> Not sure if splitting this expression adds any value. Why not just the fo=
+llowing ?
+>
+> const u64 n_max =3D (u64)(S3C2410_WTCON_PRESCALE_MAX + 1) *
+>                     S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
+>
+> Or just use a define ?
+>
 
-For v2 please move the fix to the start of the series, so that it can be
-picked up independently.
+Oh, that code snippet above is just a suggestion, please treat it as
+pseudo-code for this purpose, -- I just wanted to illustrate the idea,
+and should've been more clear! Yes, definitely should be revised and
+re-tested. And yeah, I agree, one single const or define would be
+enough, no need to make it too verbose. Also, the naming may be not
+the best, e.g. cnt_max might be better than n_max for example. But
+I'll leave it to Sangwook Shin to decide on the implementation, just
+wanted to communicate the idea.
 
-> 
->  drivers/media/platform/qcom/venus/firmware.c |  4 ++--
->  drivers/net/wireless/ath/ath12k/ahb.c        |  2 +-
->  drivers/remoteproc/qcom_q6v5_adsp.c          |  2 +-
->  drivers/remoteproc/qcom_q6v5_pas.c           |  7 +++----
->  drivers/remoteproc/qcom_q6v5_wcss.c          |  2 +-
->  drivers/soc/qcom/mdt_loader.c                | 22 ++++++++++------------
->  include/linux/soc/qcom/mdt_loader.h          |  7 +++----
->  7 files changed, 21 insertions(+), 25 deletions(-)
-> ---
-> base-commit: 5c5a10f0be967a8950a2309ea965bae54251b50e
-> change-id: 20250804-mdtloader-changes-9aca55e8cf37
-> 
-> Best regards,
-> -- 
-> Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> 
+> > +       u64 t_max =3D n_max / freq;
+> >
+>
+> Make sure this compiles on 32-bit builds.
+>
 
--- 
-With best wishes
-Dmitry
+Can you please elaborate what might be the possible problem -- just
+curious? I admit I never though about 32-bit case when writing that
+code, but don't see any immediate issues with that too.
+
+> > -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_M=
+AX + 1)
+> > -                                      / S3C2410_WTCON_MAXDIV);
+> > +       if (t_max > UINT_MAX)
+> > +               t_max =3D UINT_MAX;
+> > +
+> > +       return (unsigned int)t_max;
+>
+> I am quite sure that this typecast is unnecessary.
+>
+> Guenter
+>
 
