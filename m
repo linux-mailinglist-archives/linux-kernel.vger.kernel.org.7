@@ -1,115 +1,224 @@
-Return-Path: <linux-kernel+bounces-756115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A786B1B031
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:30:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF5DB1B035
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E8294E1BCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BDC189B1F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13880256C6C;
-	Tue,  5 Aug 2025 08:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578502566E9;
+	Tue,  5 Aug 2025 08:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IZCCYivz"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UZ3esxMd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC0321C167
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A9CC8CE;
+	Tue,  5 Aug 2025 08:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754382600; cv=none; b=dmbQb1RaUipXp9ydKxJr7TdAb3vxQ+0YvF3AAoSLzCT8y377kIjR6UmqNthZmihIwhlMSpFKBrnRzpUKJc1wH7zdRzlgt32HVpGlWLJ84DEDpe7UgXWswwVz7KBEKfWlB6ifImnbRkWFyllEg466qAgWDSgpRRF62+1bj6x0p/U=
+	t=1754382650; cv=none; b=SP62ntKrVtxW6k1iFkRNtn45APL/1YqLTyF+tTt4agEI07zCDsai0hRX+06ZO81nFs4d3R7ixqh/VAWadgGnt/daE6VI1Xx+2bl5nkVDwRs8jZYPlPssQP63J7OlZO7q4cqBuoDwapr7jIZkeo9mlVhvgiNrliCU5paiN+5ONB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754382600; c=relaxed/simple;
-	bh=vwzQhfg01r+binZbgcr7a/QRd8jw9d+nqmk4LD/Ao7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nnGDW3swVfkRIjJyVDf5Kof6NCZOIGlRiRXWiBvYPsqTs+y2pscoKfPJQhSBqelrd0zpte5Vwf+fs2fEWkWXLlpJLAUGDkoq6+yIRdoOiF10UOJYUR9EAtdKlqsCCvBd4HTN3bShx0BTu9RHpLAcY4HRFG0C/cDZQPHbcOApvsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IZCCYivz; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b7886bee77so4416342f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754382597; x=1754987397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LyLVSQpb0tLUDxNzw0tajIN36UwJANGlESlbNcPlm/w=;
-        b=IZCCYivz1UdBYRbyqXOFsSsdBD+OVewZ2mq5hBYhG3Ysk4YBNTV8sTXheoEQ7WccX9
-         0p1QNCnqkUZ1awpVfCwbDdmD7Gx1MHFIQ6rKdeZlZy/JsiZL4HMFpV+GKt4atwHu+hwj
-         tHtdzZ3pFFJ7rrBGj4AkirlShDMOaOWqQmUzv1vvZPzmx+2zowDn8Gtziu5dSwIql7DF
-         EYTg/5E1vZnYkFv/KRWjoukykaO/P1H6jOwG6U46ubKnXR33QCUVeYEBOkUe2/QD4ZsO
-         V1BfJK/0HXhtaS8h/X+GophK3v23cg9GNetIO8xAc65kI+YcSf/gKhRtwwFxUYxKm7Aq
-         ra4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754382597; x=1754987397;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyLVSQpb0tLUDxNzw0tajIN36UwJANGlESlbNcPlm/w=;
-        b=Vc425RtTl09aF2ZwnRRHA5QjUFeDeeJ0IK4BH99HeKy059zbSL+5YKevGU3ruqtGpz
-         pS8OwwriAvedwBd463R5sLqw2l6wPnLqhVDs8gvmc230SIh9csOiJ6xiYa5S6W+EORHR
-         KR48XxSfRkEUEFIgMm+3/spjq6kF0K+XTl2/ePrh1nI+EEUjbjHS7M/f4Q7G98eaJfuX
-         qc/hPV6m8TmDjnZliXuZPEBVJGQPKusVGhCiJ3LIbA7oardPlwe5wWzDDR4Q9Ah7geW5
-         jn/s7JCrvC/23XAYR55iUTw72aIcjvCBCqT5LkjtV38eZTj20BKtG/6RlI4ua35DSXq7
-         jQiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMe65NMLN3TSs9czGvZITGgLdDZRgsFvYdf56uYJ96Kn0uqO0zPd5G8AY8sSM3ycnAb/8WtGZ3RHfMl34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq6LgKUxnVnP974DEI1czOsA8nrEzF3WOsd7D8u6lapHoy+bj+
-	FfY0C+OmISBa3a6ctFHueWzLobFr1M+Wp72Wk2G70Wdvhe8eun5L38KawQvrexwMiQw=
-X-Gm-Gg: ASbGnctX26wmhpkfSU0HXWif0d1jeSu9Bx4t0ADlNFX46WNEy7FW4HNn9Fht7fZ+NZ3
-	g3yNZJInDvOlK0MPpNs0gWmv9eVi53kSfILitQ42HSKuBc+pKwhbmRw4JdbsYB+MAEZdoL4DE+v
-	Ws1HKBADVda5BeBzvXequ2diqpJeeuxWJj8bqfL8EsNmCA5i1NKrE75mToIE4Af3a8gK4ByhtVo
-	Xn0N5st2DK36iJMQWr2+VEgXAgKhH1IXmRjS9ok61JyXPcvRTN9khaAyTJsw/+492GSg+Vdymi6
-	ampbYWB6C9PSIcP8HQaKbJ2wFVaejtR57LUqLVbjK9kygeMpTTeaVFfst3Ok2qRYtOm4FmK4t6h
-	82SrdzIvmWX4HW1OPQb2tEsftUXMSY1yzMTrIMIRsqTyCU+lo9YPa3qelE9ULMNNnoVCoBypGUA
-	==
-X-Google-Smtp-Source: AGHT+IHxXn2yLf/O2bw0wSVQuR2yrp3qNWp/lca6o04wzOt6BocP+pKYn0NEJrwyp2gbNHx+3bV2CA==
-X-Received: by 2002:a5d:5c84:0:b0:3b8:d79a:6a7d with SMTP id ffacd0b85a97d-3b8d947167fmr8598420f8f.13.1754382597141;
-        Tue, 05 Aug 2025 01:29:57 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4595cffdb28sm98597745e9.32.2025.08.05.01.29.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 01:29:56 -0700 (PDT)
-Message-ID: <a5c292ec-e59b-49f0-9681-a990128cbdfe@linaro.org>
-Date: Tue, 5 Aug 2025 09:29:55 +0100
+	s=arc-20240116; t=1754382650; c=relaxed/simple;
+	bh=dQFPlLpUZCm3YX4idu8YDib0SOi8lBQovynGkaau74Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gS8+YpF5q3Z4wJYoDFf3eJ89DNOXrzbhjdBAcGaSkEnoaAQEN518URkFlWyxI8IccO0Tvq+41PBmq8kbnn1hBSo9q3a/3NoIur7995SHxJEPL1083ALz4fqvW1orIMQwBr1Fna6qlof0+E1wComIM7ufTTGhI0CoCnNDxIb81Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UZ3esxMd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754uxj5002664;
+	Tue, 5 Aug 2025 08:30:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=FodkDBM716VS3jUFUdYENAuiD8PGpGTqC68YIrqyd
+	Go=; b=UZ3esxMd6jApDH7PnxUIKLC1ndiC+0CdJDLbP0wh9Qgs2KLWWeqL0la8g
+	FP86n00+/lm1DNfSEa1ZCzVC/5MoDUqmqAifPnDwviaGO23TvORxqxjT3l5FAVDz
+	jmM0HxkA6vFuaw7bWpZXiVbQp2oAkZw2ih/XgeUnDV/SmKkb/G1Ivhdy5VUMjy3t
+	WgNSStf2p/Nfcqhi4/Tnz9395lXXqNCUABWrgzcHdF27dL5pIDvOcc/R5gZ9zndO
+	7B6mT3qg9XGr8kdNc8jl67rPWoELJEe9hlHF6ougxrlXqK4QMdd2Q3adTY5uvmwS
+	b79ou3mckJ0yPPV/Yssmu/XQotPIw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq0v3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 08:30:38 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5758URU9020015;
+	Tue, 5 Aug 2025 08:30:37 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq0v3c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 08:30:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5753jVa6001881;
+	Tue, 5 Aug 2025 08:30:37 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489wd01qbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 08:30:36 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5758UYcY53281248
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 08:30:34 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 91B802004B;
+	Tue,  5 Aug 2025 08:30:34 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8F4AA20040;
+	Tue,  5 Aug 2025 08:30:32 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.in.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 08:30:32 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
+        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Disha Goel <disgoel@linux.ibm.com>
+Subject: [PATCH 1/2] ext4: Fix fsmap end of range reporting with bigalloc
+Date: Tue,  5 Aug 2025 14:00:30 +0530
+Message-ID: <e7472c8535c9c5ec10f425f495366864ea12c9da.1754377641.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/7] media: venus: Define minimum valid firmware
- version
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
- quic_dikshita@quicinc.com, quic_vgarodia@quicinc.com,
- konradybcio@kernel.org, krzk+dt@kernel.org
-Cc: mchehab@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-3-jorge.ramirez@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250805064430.782201-3-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: v9hMc5Onco47m_VQBbFAPPm1qbl29rrO
+X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891c12e cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=3bgJNC2bSexIn_ObHfEA:9
+X-Proofpoint-ORIG-GUID: f4Mv6syUl9YV4PQbd_vBZOd9eUFc_EsA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2MCBTYWx0ZWRfX36Kp1C7R9wp1
+ 0G5tNh9SbrkbRs1sn8NfT6WzEOBIddBttEjcZnAbP3VHTVLY7SN2jj0qNLZ8MCOsbwe+vQFkBmZ
+ kJ/j5vm6jj5NK6JSSHM4R+qpMSSJERffTNfpWQRszozmiucCa/dMGuGcongD8iGq5D4UtlIjvks
+ Zs6XKvvIWbIU7uc/zkajsAOo7898ysqWRd1LBeIO/wHVIh3m8P59+sw/ItlKMgj6/pCrW8Gmlz0
+ J+h4Np/GAUwos06q0XI9AwAo4DC1T/a7zVQL3Qm5IkjBihWYKqh5H8MyCOrQEQawnO8EyqpL2cj
+ E9DEgZcPjyxMpe3PA7om0OD3FPL9hpNdqxbbwJhUojgFbEXYwm9GxabvEYFsZ1rwBgfJxb/AoZ3
+ r4WI5ezrPiP7LMSOep5gzZZsMreWg5O7+CV7OIjTd4flvCXpUP19c9/ShC8BOqO87r1KWp9o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050060
 
-On 05/08/2025 07:44, Jorge Ramirez-Ortiz wrote:
-> +	if (!is_fw_rev_or_newer(core, ver->major, ver->minor, ver->rev))
-> +		return -EINVAL;
-> +
+With bigalloc enabled, the logic to report last extent has a bug since
+we try to use cluster units instead of block units. This can cause an issue
+where extra incorrect entries might be returned back to the user. This was
+flagged by generic/365 with 64k bs and -O bigalloc.
 
-This is the sort of error case that deserves a kernel log.
+** Details of issue **
 
-dev_err(dev, "Firmware version %d.%d < minimum version %d.%d\n, etc);
+The issue was noticed on 5G 64k blocksize FS with -O bigalloc which has
+only 1 bg.
 
-If I were to try booting venus with an old/unsupported I wouldn't know 
-why the probe was failing.
+$ xfs_io -c "fsmap -d" /mnt/scratch
 
+  0: 253:48 [0..127]: static fs metadata 128   /* sb */
+  1: 253:48 [128..255]: special 102:1 128   /* gdt */
+  3: 253:48 [256..383]: special 102:3 128   /* block bitmap */
+  4: 253:48 [384..2303]: unknown 1920       /* flex bg empty space */
+  5: 253:48 [2304..2431]: special 102:4 128   /* inode bitmap */
+  6: 253:48 [2432..4351]: unknown 1920      /* flex bg empty space */
+  7: 253:48 [4352..6911]: inodes 2560
+  8: 253:48 [6912..538623]: unknown 531712
+  9: 253:48 [538624..10485759]: free space 9947136
+
+The issue can be seen with:
+
+$ xfs_io -c "fsmap -d 0 3" /mnt/scratch
+
+  0: 253:48 [0..127]: static fs metadata 128
+  1: 253:48 [384..2047]: unknown 1664
+
+Only the first entry was expected to be returned but we get 2. This is
+because:
+
+ext4_getfsmap_datadev()
+  first_cluster, last_cluster = 0
+  ...
+  info->gfi_last = true;
+  ext4_getfsmap_datadev_helper(sb, end_ag, last_cluster + 1, 0, info);
+    fsb = C2B(1) = 16
+    fslen = 0
+    ...
+    /* Merge in any relevant extents from the meta_list */
+    list_for_each_entry_safe(p, tmp, &info->gfi_meta_list, fmr_list) {
+      ...
+      // since fsb = 16, considers all metadata which starts before 16 blockno
+      iter 1: error = ext4_getfsmap_helper(sb, info, p);  // p = sb (0,1), nop
+        info->gfi_next_fsblk = 1
+      iter 2: error = ext4_getfsmap_helper(sb, info, p);  // p = gdt (1,2), nop
+        info->gfi_next_fsblk = 2
+      iter 3: error = ext4_getfsmap_helper(sb, info, p);  // p = blk bitmap (2,3), nop
+        info->gfi_next_fsblk = 3
+      iter 4: error = ext4_getfsmap_helper(sb, info, p);  // p = ino bitmap (18,19)
+        if (rec_blk > info->gfi_next_fsblk) { // (18 > 3)
+          // emits an extra entry ** BUG **
+        }
+    }
+
+Fix this by directly calling ext4_getfsmap_datadev() with a dummy record
+that has fmr_physical set to (end_fsb + 1) instead of last_cluster + 1. By
+using the block instead of cluster we get the correct behavior.
+
+Replacing ext4_getfsmap_datadev_helper() with ext4_getfsmap_helper() is
+okay since the gfi_lastfree and metadata checks in
+ext4_getfsmap_datadev_helper() are anyways redundant when we only want to
+emit the last allocated block of the range, as we have already taken care
+of emitting metadata and any last free blocks.
+
+Reported-by: Disha Goel <disgoel@linux.ibm.com>
+Fixes: 4a622e4d477b ("ext4: fix FS_IOC_GETFSMAP handling")
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
-bod
+ fs/ext4/fsmap.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
+index 383c6edea6dd..9d63c39f6077 100644
+--- a/fs/ext4/fsmap.c
++++ b/fs/ext4/fsmap.c
+@@ -526,6 +526,7 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
+ 	ext4_group_t end_ag;
+ 	ext4_grpblk_t first_cluster;
+ 	ext4_grpblk_t last_cluster;
++	struct ext4_fsmap irec;
+ 	int error = 0;
+ 
+ 	bofs = le32_to_cpu(sbi->s_es->s_first_data_block);
+@@ -609,10 +610,18 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
+ 			goto err;
+ 	}
+ 
+-	/* Report any gaps at the end of the bg */
++	/*
++	 * The dummy record below will cause ext4_getfsmap_helper() to report
++	 * any allocated blocks at the end of the range.
++	 */
++	irec.fmr_device = 0;
++	irec.fmr_physical = end_fsb + 1;
++	irec.fmr_length = 0;
++	irec.fmr_owner = EXT4_FMR_OWN_FREE;
++	irec.fmr_flags = 0;
++
+ 	info->gfi_last = true;
+-	error = ext4_getfsmap_datadev_helper(sb, end_ag, last_cluster + 1,
+-					     0, info);
++	error = ext4_getfsmap_helper(sb, info, &irec);
+ 	if (error)
+ 		goto err;
+ 
+-- 
+2.49.0
+
 
