@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-756438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10416B1B3EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:02:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EDBB1B3EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE4D1891A69
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC70816D8AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5B7267AF6;
-	Tue,  5 Aug 2025 13:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B2324166E;
+	Tue,  5 Aug 2025 13:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="uHEJ1rrp"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="O1qhnFL+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B691F19A;
-	Tue,  5 Aug 2025 13:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7591F19A;
+	Tue,  5 Aug 2025 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754398918; cv=none; b=nqbGZugD0XmK7J9p31uogWa6PBYVRvINP+8PSrx5J2+YnbKnlRD+FBGLRpiee5UJAKoh6QfPHX/1K5hYQZZ5gO7VGeZgNxzBnDbnAd4/FHP1+caQA+5FXSM2Jwd2lULPeUpqh5Aw1t4kCXNxPkIu7p+ZpBtgXloZoFUc/oUxD+w=
+	t=1754398905; cv=none; b=CMh1uiWJOFFRPNf0dxVUqh9gRVBMT+nQ3VaUx1XbN2NxNk3YWhWAein+Dmz1dV8CQ2uQR8WJpoMdyIbgG2NUOKFYTDQT3M9QsKDKfsMoHnu6QcQ47Q0RkFpShErKUXH7y1Nqt4JGUw7nSxDT9JObYwGgH9EgeS91qyDHEQElcRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754398918; c=relaxed/simple;
-	bh=5BkvHDYGZxcrey1OnIOFiDWh/mlgsN57huK66iChlDA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UTURHsc1RrCFKxZdocQ8tdzwwDgtS08zXnjpIGZ7QxYIRlkOYbCcvrqKLfbIJSNXRGdbEf12vcjDgoBxS0xO/tGt4MF2jBQvMH2ttg1Y+Jl1IW9BlvaKk/VMjW7+0EHtPG+iWGpStXQPp2JsyuM4UuOjKEetjyTnRXJw4VkBsPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=uHEJ1rrp; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1754398896;
-	bh=FVBPVEeUd1bxjQJhz//RpBXorx7jPTLOEKGvJHJaQ6I=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=uHEJ1rrp8lcFNQEhaZH83d0TGSxh9/MSb2rI3Tk71G4A78BOeZEnlqSzxd8bdC0gl
-	 4aI8s8HHr62oWtRKRFX4+EBbzWUp74TfTUR0EDaWVYFaErzExwm6f17+9lZKHHgj9Y
-	 Ehg63CRZep78d6sUEKcUIlloLxYs1XprVwDfObZ8=
-X-QQ-mid: zesmtpip2t1754398895tfe7aa0dd
-X-QQ-Originating-IP: CPpRJvHoFk9wwvAZxLC1CoM7Jc+eYsDtqwv2sfJO/dA=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 05 Aug 2025 21:01:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9963814642751996560
-EX-QQ-RecipientCnt: 15
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Tue, 05 Aug 2025 21:01:09 +0800
-Subject: [PATCH v4 1/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for
- SSPA
+	s=arc-20240116; t=1754398905; c=relaxed/simple;
+	bh=ileFvsHjabfVRxw1MDew59PE6tMBoncnJbyg5LbwBxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s17KvZYf/c/XnEbczuRDAjvA63DNyNWj32krUjVOSLbfjQivpaA2FJSOy3gKjpEftnugOat4yB6EpV9FKtUQCylj1GNqL2t4gduSOtWgrztYoSzKG51vxNrCf9yG05itMViT+hvyLRGidGwGFu80BWynipbVnhD542hU3euT+sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=O1qhnFL+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/d+dg7cO3eDA5tEQZRg19r22HlNvg8xOVpbz/n+a3rs=; b=O1qhnFL+ctBuAhiF816Luq6j6Q
+	aGzeesnj4+K0R6mAOUEeDTpWhesEFbTjW6d4I4aLz5quxgDpgYIN/v1L3PkUKf47RIZLmg3bbjz1o
+	rhwE072Xn0qGh3WTGLWWTSBwjjTxq9JWbO7LukuvPMQK4VPULCZJL20SjBSxlebm45rDDckd2ooVV
+	t2jPp/rQMt41wLNI3cZWl7jyHzEpZTIbv/rnTUGgTfqcvQE1eAgQ9NFPC31RbvOrxzgm9tLKdjzdV
+	iJhiwtS+eDs7Pcpx64B+e5K6nkEjLW61kIZNR8TZfwTy1nN7m5vFZeGpBfjlkUfHwZCovajUjNcRB
+	mAeJVo5A==;
+Received: from [191.204.199.202] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1ujHII-009hGF-DK; Tue, 05 Aug 2025 15:01:30 +0200
+Message-ID: <a7f2500d-75db-4baa-9d87-07346839478d@igalia.com>
+Date: Tue, 5 Aug 2025 10:01:25 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250805-k1-clk-i2s-v4-1-038181284dd4@linux.spacemit.com>
-References: <20250805-k1-clk-i2s-v4-0-038181284dd4@linux.spacemit.com>
-In-Reply-To: <20250805-k1-clk-i2s-v4-0-038181284dd4@linux.spacemit.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754398873; l=907;
- i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=5BkvHDYGZxcrey1OnIOFiDWh/mlgsN57huK66iChlDA=;
- b=SxTtW4MUMwC7dLisiqic3znXA6OPJqUWvrb5W5Pn6+JFG8K/Yh3eUkw2+FCEHT/mEu4vhreEc
- rAhO0DskONhChyvl0uXygnVqsvgGn/ntlTHpow6ebqltPYLSEQ4B0QC
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NaNf4b06WLAJYE2riTHfVtee7rzDHiQpvZJQ1KX3K2Ckt9m3ntLBJ7fX
-	j4XLjWgkYORaEBslikgF/c5CYH9ccOobIEKZHxZyyspmCosCdPkg3Zm9zZMSg1J1SGSpCbn
-	N8DeePNO4Kj3UFFp+XSrPDAnsaTUNAtuMrdbjc9JPiK7QR8LhugWZ2gzbNOBLS6H6qvc4zl
-	V6G9QsP2eOEVOmG4a1W07/xYbW7qNMKsRUXHJ6TKjv4RFdIOM94rzgN0Up1jXpso3XFxjEg
-	AB0nZrr1nnDJEtRiobnc8E7xUlmA5yoyDY8xco8VQLqRFWR2iPhkHOunLLQrSiJxQLIDgMQ
-	CrumY2uadwFXMLORKDexupj00Fe8rMRfY7QJEsOtz5maK/y0NZUaU7IfIuz/AXbnWaN34uN
-	FgYgdlEMTkma4zEwsr8T0K7CXuicHAXbA00E7f3txp4kM7hS448I3gOxlS7sgXTiyCNUsqJ
-	QTguwVsgJY+YL0jqryuB1Vifh0XcAUOIpNWvhrownD2RfoxrrfFhem+M5Yb3HPAg+5/TtgN
-	NPimnszEhJI+eiRjMeQPbcvT/iXLP/vbIpUZVkQ7p4Q+I9a78Vgh8pMW+BQ8PJNh26czQnt
-	4mA6pfvft9R/MATxkwrG1cW3idow0huF/uA+U8CMMv3GuOEsjBZupKN4x7bB/aWqXG+EF7i
-	CZgwEmed7+YKPq2J6Dj+jNSWNpnu6ZJhi/faZg8K1yJYbh8kEWFUnN8Jc371y9FRm+kKhJm
-	mn1Dq8/aqvIE8qShDHEUQGENJku9+D7DhFLUrOMWrh2HKHgfg1gzwBlOYwpH2svSbBSI+HD
-	6/aRUtYHhissNt2hQ5PE7jz/BBTzw4sNtRt5Hr7ze2dPYrWpxAgBdMqRlsE58dBjoPKwPCz
-	IJr2MMR5uGpvG0ty/Astx7r/wlfa3g79lhONDlljnwTUVKVNgLRTNQgtEbePE00E/T7ChzU
-	y9pF+ijfV8VzU4X6k+ZdvDNWPLGPmFXSmJSik75QyRsXz6rdHgJPgwZHvofwKkZ6+Je6Jtw
-	rETLImEZ010dfH5rIVYVuQSmKdg9CYvnFdG3K38khV9awWd0Ml3QLc9Es4hyGgWSTt8MiCK
-	pr3nRfbN1+XYZZgRpTRdFMaysO+MmCRaBuOTRG8OzFNZmBOe8J0xgFv//tikN12tQ==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/8] ovl: Create ovl_strcmp() with casefold support
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>,
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, kernel-dev@igalia.com
+References: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
+ <20250805-tonyk-overlayfs-v2-2-0e54281da318@igalia.com>
+ <20250805050809.GA222315@ZenIV>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250805050809.GA222315@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
-register it in the driver, this patch introduces the macro definition.
+Em 05/08/2025 02:08, Al Viro escreveu:
+> On Tue, Aug 05, 2025 at 12:09:06AM -0300, André Almeida wrote:
+> 
+>> +static int ovl_strcmp(const char *str, struct ovl_cache_entry *p, int len)
+> 
+>> +	if (p->map && !is_dot_dotdot(str, len)) {
+>> +		dst = kmalloc(OVL_NAME_LEN, GFP_KERNEL);
+> 
+> ...`
+> 
+>> +	kfree(dst);
+>> +
+>> +	return cmp;
+>> +}
+>> +
+> 
+>> @@ -107,7 +145,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root,
+>>   	while (node) {
+>>   		struct ovl_cache_entry *p = ovl_cache_entry_from_node(node);
+>>   
+>> -		cmp = strncmp(name, p->name, len);
+>> +		cmp = ovl_strcmp(name, p, len);
+>>   		if (cmp > 0)
+>>   			node = p->node.rb_right;
+>>   		else if (cmp < 0 || len < p->len)
+> 
+> Am I misreading that, or do really we get a kmalloc()/kfree() for each
+> sodding tree node we traverse on rbtree lookup here?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
- include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
-index 35968ae98246609c889eb4a7d08b4ff7360de53b..9be578953d71e79e93eb10eaa35b47b97812e826 100644
---- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-+++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-@@ -179,6 +179,8 @@
- #define CLK_SSPA1_BUS		97
- #define CLK_TSEN_BUS		98
- #define CLK_IPC_AP2AUD_BUS	99
-+#define CLK_SSPA0_I2S_BCLK	100
-+#define CLK_SSPA1_I2S_BCLK	101
- 
- /* APMU clocks */
- #define CLK_CCI550		0
-
--- 
-2.50.0
-
+Yes, this is what's implemented here, as it is. Alternatively, I could 
+allocate one buffer prior to the rbtree search/insert to be reused, and 
+free it later... I going to add that for the v3.
 
