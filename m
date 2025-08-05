@@ -1,160 +1,237 @@
-Return-Path: <linux-kernel+bounces-755987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F9CB1AE67
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:32:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B59B1AE61
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94AA188D5D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6265F1759DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A5D2248A4;
-	Tue,  5 Aug 2025 06:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E006A54774;
+	Tue,  5 Aug 2025 06:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wmr+uJwb"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cuxiLdGM"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011002.outbound.protection.outlook.com [52.101.65.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE1F220F2F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754375462; cv=none; b=DAwoDb9GZBQ8TbKj05JzYiiARb0rZixraBqYooF8KxIjMBfxE7DuviSXM2HjwT5jgID411UJcLf2EMrOxh67hJrF/emjhdfWsZrJQYp7BowxYwgpbqkIcy8+LH9kV7KZA+McYO4lQPbnuGXm8RWYUWnIKCD8mBBN6zhJf2/A1n4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754375462; c=relaxed/simple;
-	bh=j4NGPp9VaFnGFUx9rXSZLw81UeQeNpRciHGBKHrhjSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKKTRCX/cCg5mPAraiwMo/xr5F+dalTI6vakCzezmNjZA5rS+ApHrD7PhIh7C8Qza2Nkpu4IKbTC9+jyEBY9saSk5/rKRVK1ltmRLDq4eKm7X/kaQBNpzgddEo3TZj0gaRTc0IaemXhvp9kj0C9uyZpTJSV/2Dys81+7gAChe8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wmr+uJwb; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55b8703c6f5so3381e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754375459; x=1754980259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tjt9G2y2gclTjM4TF8PRpe+XCHgzqxVfWjoTVQCasd0=;
-        b=wmr+uJwbx+jdT2EhKn/TIENC6MAhBuSabB3/aGOtMcTmF+Gkt2s+R9ZUuOfs9dnGD+
-         9gW/WmkE5RTp3Iu8xIjjKB+eEHXl3wCL3RqNo+tF4m5jy4cYdCJoVQXg3IYPfc/41PaI
-         8ZhusWue1JImFA1SoNLmT+b94nYZJeR7b1GxAsFmQpHUQ6sxSs2Ay8BZgz8mrpiL/Y2T
-         Fx7YnCJGQqXqSu9wNVGAMPbZGcCR/i/PeuIz/pQZ2pP2+SgYs/jdUZ1NSqkOf2Gq7tBT
-         jw/C5qtl61JW1Q/ijMNDtne5/56JZH+6EyhFFswJ2f9kyAlPWu7dWX5yIxZ/N/sDWSqr
-         p3ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754375459; x=1754980259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tjt9G2y2gclTjM4TF8PRpe+XCHgzqxVfWjoTVQCasd0=;
-        b=fDJO+LMJtbCUorXpipe5UoLpcrW2kNRLDCLJulGZwfAGSPpn9CIrS6n1cSc3Sfc8C9
-         VZ78GvRGFILqRNCjcA0Sy8WXKfi2goTCUAybURBGKQmxrb/0ltN4ypJtmoF7KdxuliAA
-         YcjKLQHTuHZ/8FJl3zMDY54xMVfZPdJEmlUh8zRyjMYn6sPG5yOzEwjpp4v3xc/BIUcc
-         JioQ/6NL41uBOm9CPiFByx3bnL8Je6pmJURkkSJdhmSQNQfSj330T+hahrVljb8CMBgE
-         o4kBkFLvT6LNstRiWew2mY3FvD5oB48IZvNIvy12vsGNgBdPn5W779PPpymv+2GlaYcG
-         x9Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVML1VTGs14VvbjiQDQxiFCnIzkW9zyFhr3cPMZoyaD5SZ0Lb6rcnDB/N2cUiwBZw6CQ97C5ZpyhzqC1ZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbbORRJk4yIEQbNtLjWNhd7xggZCID1bo0yvgVJtab7KABXK8g
-	Gwvd3hE+1INl/92MrjrYvLsLRzK21nFsUSbDNppr9mTv9LC4QGANSJsb4lH+nvJv0AqiFkJEW/S
-	teabIS/rRKHYonMIFYvxgWrpENmVkYunQPLVfFShG
-X-Gm-Gg: ASbGncteQUBtUFAfncrhuMsyAEFx0CqEzJjFMznd+/1wSBqDUeJcfgR4bG2PlRbBceS
-	jVSFaEUk/szUaR7966nXLqzUSDeP//I4rKoiyheRnNMrKQ95pbI7sjD5wBerUDExQ6xjRC9p/tX
-	Dzb6ooRTh1/1MaQqKBFFLVk7S4LjC0GttP2W6Ru739mt81Ad4wzYmTzIjbRaFLdFZYDKSxQ54Hf
-	RVGo+UAbl2dw9WVBpbUOHm8QwCxyunStg==
-X-Google-Smtp-Source: AGHT+IH5w9MRUES9L0VP1bjNRzGoTswsTku6upjE74sws7QAjbnj9qsLbG1dbqddm9aI22Jn3ENEInyRXGoK7oSxiMQ=
-X-Received: by 2002:a05:6512:6410:b0:55b:af2d:393b with SMTP id
- 2adb3069b0e04-55baf2d39a8mr24728e87.4.1754375458906; Mon, 04 Aug 2025
- 23:30:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC3482EB;
+	Tue,  5 Aug 2025 06:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754375430; cv=fail; b=sNk7BFR4k6o7r4ApPiiOaZd1uD23Qn6wlqlp2Z/xCOXNNLyfRKUDUV46Q6gA3TBvvpVzRcqAqh1Pu15eEgJkhZgxOfBDRejDbO0hDDbx0QcCkG83jZuFDz3aVNKnvDfyU62p1aeWeiyRXa92U9lvRHFVFilFQKdw2DpZWIRPaeg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754375430; c=relaxed/simple;
+	bh=C97UhAkvR5em7xA8hEyzYVui5OybDBIM3/E2oWS9/7E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PN+mMzJcNJWOndsXmdTAHcjVkVQAok5V/HYM5pDGvGXnf+0PccOFYBg5U/CqEzp46NB+z72KEl/3Fn2+MDpbZwxgN6+0+S4CqFG34G+ls3VVEp+Ppb5SoYC17OXzc5ngP0qSNbiLPPzLbxS3JWwdA4ajBiSoU3TSLS2YJc91fdM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cuxiLdGM; arc=fail smtp.client-ip=52.101.65.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wAI3SEKo3zgzq0Xzb5zeepaHgfZHXh5hOBoZuHtF9QeJbuBssf15zKYVLlnKIF1fklBtvHtmLhmuFv2llfZQNA3+U///vXHnRR7O3M1syrUxBBmVEVGhEH88JAznHq2Jxn1narfcgKdMMQVaoJU3ALn2CzASsJgRnWMEb9oLWh+88OEWujyJKd09O1TEbOO8ZjzPZuGcZgDLr+N7ipANDgSM4coCmfr8CSIfcQRblGooSY2PC7PHNabRI+AEwJNrX/ofBOQRQVHyVonVfOotpUFVCGU8QikWTFfc8OlRCgltKnAPSW8xUizgaZQRNBrRO74bhapCbDiteVS85lUB6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T2LjwtJ48mA704Uju3XLAQrS5a3l/W7fD6SEWLKDMp8=;
+ b=kekC/LuWUDn0O9/yc1RNQ8u467G2PXxzmzen0izgYrE4Bb/BoxiaLNv9lruh/Mgx7xgrzQuI7zFgiQe0nK4FOgBThIJ7ysNESBi0jo+yKk2oaRMqzMFZwzTcGT5FFYWDVy0sJsYt1sZVkDBZIKz98rdyFWMPtw7ZsuDbjcZHbyv9HmmF/V95aCFcErEcAcmYAizxl10Il9HFufzxIzsfRmEHH9x9ItPugBIXwJelLTl+NTshqXT4Scar1yecF/tqyOTqzRWzuUIRG+8zbDIC90lEgj14PGupgjtSoPdoMc1f1s/egwtstP4K4ylHjSADtCNUZflT7usv+BUqKPil2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T2LjwtJ48mA704Uju3XLAQrS5a3l/W7fD6SEWLKDMp8=;
+ b=cuxiLdGMSqrmmRnQNA4kz6960LmUteFulUQzbpwzrEg6TBkhUyQx9pSSQBVMiD31uQjPcpwgdccQkV4bi0ednmC2zXoM3drzQ0TgQ49RDALnfnu4ZqJxWOcLB0e4jxA5Pq0CzLNHqMkF3zjPo16w8c8RmW7Qn6NrBcqW/ZAzNinKCEqBHHQkTbSwHf18hLWOCq7e22U4SGRz0LyYVhMXHbdhdS/96fZ94y5CgsfCkS92vg7O6T04nXJVh7OXvERwM4EQeFaQf2rF1wLUbIIS0iNBn9GWvk6Luay1wtpQ3aAvWH40bNbK/atyOKGG7hsDMVrkzMm/DoEdcgo6/EXtFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DB9PR04MB8346.eurprd04.prod.outlook.com (2603:10a6:10:24d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
+ 2025 06:29:04 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
+ 06:29:04 +0000
+Message-ID: <dcbcb017-e25b-4244-8ad3-9c07da99c253@nxp.com>
+Date: Tue, 5 Aug 2025 14:30:35 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Joseph Guo <qijian.guo@nxp.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250804-waveshare-v2-0-0a1b3ce92a95@nxp.com>
+ <20250804-waveshare-v2-3-0a1b3ce92a95@nxp.com>
+ <9aca40c3-e22a-4d41-bac8-18a7cc8e3e96@nxp.com>
+ <8c8d9723-bb0e-4c4b-9fcf-3e1ec46609bd@kernel.org>
+ <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
+ <e52b3630-5846-49ac-9abf-3b42e1d585f4@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <e52b3630-5846-49ac-9abf-3b42e1d585f4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0137.apcprd02.prod.outlook.com
+ (2603:1096:4:188::17) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804080809.1700691-1-khtsai@google.com> <2025080456-grip-thwarting-2424@gregkh>
-In-Reply-To: <2025080456-grip-thwarting-2424@gregkh>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Tue, 5 Aug 2025 14:30:32 +0800
-X-Gm-Features: Ac12FXxwyS6UTJdKetRrX_qEul9fl5YHif6lgaN570EvgDdKqy7j9PYbE530fBg
-Message-ID: <CAKzKK0p5Vkncudu3Bu=rM8x7b+nPe2PVDgdjP_Hp057NNcFGiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] usb: dwc3: Ignore late xferNotReady event to prevent
- halt timeout
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB9PR04MB8346:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8857aca5-53e6-476e-508f-08ddd3e95fef
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?aFFySjFpM3dTcDBTanNocEdqekk4ME1lQVFXYW14ZGxPZ1Ftbm9kUC96TUlB?=
+ =?utf-8?B?YUxFNyt0eEdsSk9OWklib21PRTNRZjNtMVJja1IxQlVPQi9PNGdUV0FYZith?=
+ =?utf-8?B?bmcvT2VCbERhY0M0TVFDNWFIMDJWakZjRjRJYzFwY3dRN2p1R1BMc0N0TnpT?=
+ =?utf-8?B?Y1hnMldpK2tSWnJobG4ra29RY2VPdHNQRFZubGw4VEdvWWlzZVRCeVVhWlVr?=
+ =?utf-8?B?c0pTZzZwd1VvMyt4U3ViTGg5T2tncHlFclkwWkJzZDZyZ2Exc3haQUdWQ0N5?=
+ =?utf-8?B?dDhMd2xqKzFuQVZJUjZpOGx3ODdRaW5vM2JCdVg4RGQ3Ym5JMjkzTEJPQmpU?=
+ =?utf-8?B?RHNXZElqMm42YWxwUy8rVHVZclpPd212SnBEMnJkSmxWWkxzcWkwdDl6aGhJ?=
+ =?utf-8?B?ODNYcWlVOE9yRnV4YVBvcnRpNTJjMS82V2JMZUVOZkR5Y1ljNzNlK0R5cy90?=
+ =?utf-8?B?K1psU1FyNUlpd1dFWW5sL290VVp6Z0NXdzhMd05CazQvclFURkNLeEtlMmpT?=
+ =?utf-8?B?eVQ3bWFrS0hRVk9OMG9uaFJlcmI1TS9BTFFBUDlrTE8rYzlmbUNBTnR5bmZ2?=
+ =?utf-8?B?S2VuS3c5cUEzVFJoUWNVZzZ5dm9XMVF3cCtacXRaS0p3bVFrRzdpK1R2WTNR?=
+ =?utf-8?B?MWdiNXVKUGV0bnFNN1hxcHR0ZnZ0Rko3Y3Evb1ZoN25FQVhUenEycnBadFhy?=
+ =?utf-8?B?N1ovSTdlNFo1WHdyUlVBT0JNVVlicFNaVTFNcGFHOWszbkdIME9Pb2d3WC85?=
+ =?utf-8?B?QjRSV2FBbVNHZEZLV09WMFN1UzJ1OXVMdHFQWStwSnpvWXh2anNkU0tnZ21W?=
+ =?utf-8?B?MGwyWEJRYVFHd1VDK0kvLzRXb0RGRDJUbmY3NVAxWWd0RHNLQWRZZ2dwTXNt?=
+ =?utf-8?B?Z2cwVytDeWtoQldTSkNBSU5SUy9HYTdsTEQraW1EQXVmaFA0VzF0WDl6MGYx?=
+ =?utf-8?B?NHZFVFhmYnY0RVI0eStrL25JbElleUFVTTg1NS85bFVwdmdUdGF0TG95Q01m?=
+ =?utf-8?B?M3QwTnVNYTEvR2k4Z0JyNmhlSXNRby94cjhrTVgzcnVlM3NsODdFeGJMSDJG?=
+ =?utf-8?B?di9HUExqZmlBSnBXMXVhQ2JPYUE1TjBVcGZNK0Z5aEhnYmZXQUJRQk95RTVq?=
+ =?utf-8?B?REY1QjlqYWtQc20rTGU2SUg0cUs4V2RkeFRoTzNSMWZWLzBsa0wzWjlHTkFM?=
+ =?utf-8?B?a0RVOHR3SWhzZjluZXdoMXVJd2tMK2U3aXZwMEJhcENZaDIwNXViaFVUaFFy?=
+ =?utf-8?B?anVmWWlIa3BNMTBtS1NqdDVzNTh0V3Y5VjFIYjJkWEpsb1FrMVY4VmIvdWx5?=
+ =?utf-8?B?Mk5hdmFScVBMT2NDN0ZlcW9DOXdHRXNJM0hUVU1tblMvenZPZjVsV0xtQUg2?=
+ =?utf-8?B?WEhqYXV0U011eGZmeWlFS1Q1blBjUHVlTzZFV0YxKzRnZ3pSMVRZVG9vQ1Fo?=
+ =?utf-8?B?UnZoL0g1cXVaSVNGUTNNS1JjL2Jxd1o2OVBFMG51OUEwS3hFdm0xek9mTkda?=
+ =?utf-8?B?aFlocEdIa0JWZlNyZG1MOWlMK0hRSkUzWlhTUDd3YXpHT0lNeVhieUNXSTdH?=
+ =?utf-8?B?YmFWZU1wT0Z5UmZ1Q3dST01qQmdzNmpjL2x4VGpUN3phUVVTTlo5UFMxTDVq?=
+ =?utf-8?B?dlhUWkhqVzlBMk9WYmh2eUszTDJGUFNZQXdqTWQwM3BwUzlHc25RZlJuZWdk?=
+ =?utf-8?B?aHpxWWVwNnR6TlhQUENZR1daY2tmZGozeEFMK0NqWE1CMXhQaFF6K2JXTnFm?=
+ =?utf-8?B?U2t5RzZkZG92SXRtZ1ArVk80bnVpTUt2aUpuSlh0V3FpSjBubU9JbDdoR2Nm?=
+ =?utf-8?B?RDQ2di9Pakx2ZGs1VnUvWm8zQTJPc0hRUW55N3Y0aUZpTjNhZncwaks4anlD?=
+ =?utf-8?B?N2NnVE1EREd5WnphTmw0b1JzUUZBSlpRa3RqakhmM0tWT0FUd1RUVWM1QzY0?=
+ =?utf-8?B?bXhWQURWV01xSVBCZFJBT1QyWU1WM3NOU2ZIRnZIcUVVclJxKzNyaTNaVHFr?=
+ =?utf-8?B?dXpnajM5ZDZRPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TUpWYld3UTBic1Vsa2dwVndOQi9BNUV3SnZueXlGRm1tZ0xlczY2MTVGUklq?=
+ =?utf-8?B?Qjg3bkdIaG1YOWlCQ0dGOHNXUUtqekV4R2VhY0xVNkdaNUR0ZldGZk9aZi8z?=
+ =?utf-8?B?OGlFUFVtZzFpQS9aOFVEcjE4L2xvOTR0S3JVcHZoUmg4Vm1ZYW9TR1FpT2hy?=
+ =?utf-8?B?dThnRENrNlpwaEZDZ0p6aXZrYktkZUZjTmY4NWFxY2xHc2lMRWZtT1RObnZJ?=
+ =?utf-8?B?VWJscDlSTWoyTmVmTFRUeFowT0VjUTNNYUtQOVNwWmZ3YkVqTEQvQWFNVlp4?=
+ =?utf-8?B?cFZMN1BjWDROWjhMM3h1QTg5V1VGcnFJUWZodXl0UFVMcGppUktCaXFHK1d3?=
+ =?utf-8?B?Y25FS3ZSWkZhMlpTTUk1WEc5WFlWd0xoNzVFckhzeExSNTE3L2poZ2NnR3Q2?=
+ =?utf-8?B?MzNTRWhTbG05NFpKZDdBMUpacXVLQzVCMnRBVjkvZGhOcWcxM1R5NlBYSTVw?=
+ =?utf-8?B?TER2UG1aYWVxOTAzMkZTWkFvZTdCanlUVHBFNll2RkpNYlVnV3RCWUNKTUVq?=
+ =?utf-8?B?QUZXaXhWY3EyZEhGby9QbTZnZmg3T1J5a3VYOGpWNTBpNURZcHNMc1R0MSta?=
+ =?utf-8?B?b3BNZVZIWElhWjZ0RExWNFNiNUxuV05NZGhpTkdjU3p4c1ZYSkFhN1ErREdJ?=
+ =?utf-8?B?ckVzZnY4OE9mMVpaaWNaWmtRVlVjSWIyYlBTdHhMT2llNVBlcEY4Ry8zYzNo?=
+ =?utf-8?B?QThhd3ppNUFGTHJCRVg4VE1jQjRkdUk3Yks3TS9IM0FJeGg3Vm9YN1pOU3hp?=
+ =?utf-8?B?V084TWYwM3hjS0cyOHFIYWRjb0NYWkNuTUxCQWJtV3BFM1dUSmRxQjZSQno1?=
+ =?utf-8?B?bGtQWUdpN1RrbW1qc3U4TEZvcnVZa3R1c3o2eEFXeFRwSjVDdXU3UEszWDdI?=
+ =?utf-8?B?aXR0OWtDSW9WYnZxSlBEWlpEaGxla0JSV29HZWplVUVwNmlxcG82dXhuSGQ1?=
+ =?utf-8?B?MFAyRXlzdyt3eXVhcmcwbFhMbXJhbjF6QmoxNU96cnNKV3F5d0lOaEt2ZGtR?=
+ =?utf-8?B?U3dFT0dQODZiMzhhWmhZSWEvMmpxdXNENjlwQ1NGekxsRldWTGNSOUdTTDJU?=
+ =?utf-8?B?WjJsQzRTUDRhSDlzZ3ZHVGxISFlFa1RxT1Uvalh4Z0pEektZbG1JeUUzazBt?=
+ =?utf-8?B?THFSVUQ4MWtrVUc3bzhkcFJvUU1yaUU2ZWxGaEp3OGdIN3pmeTRodlo3WEl0?=
+ =?utf-8?B?YkExSlhtdVJKUU8vMzRmSGxvSTdBMG1HUkhCdGF6Zjd5TUxLazBlYnRXOEZ0?=
+ =?utf-8?B?UkNlYUlJVVZPcXRDaWtFV296OHZ1OFBBRUJZWXJXKzJmRXhMZldidHoyZ0RP?=
+ =?utf-8?B?NHRWZm4rS08yVk1WV2xtQldoQ2ZFTzFyT3NRVm5kK2NzQ3RyQllHNEhwaHA3?=
+ =?utf-8?B?QVJ6bXpyMThuR2M3V0hXaXQwOFBJSlg2ckgzQTZ3NnM0MWhaV3ZkRmE2cmN5?=
+ =?utf-8?B?SlZOamlsd2VETXhCWkg1eklhU1o3dFFqTko0T3V5TER2aXhzN1g3aGdqajVV?=
+ =?utf-8?B?a3RSOVNjVjZSYlNyamNuK1VIR0dXOVlhRURFSGF1T3hacFBOMG4vR25xVVZT?=
+ =?utf-8?B?eDIrU2E2V2lvWlMzRlRYcHJ4S3dFc0c2UzVnRmJSVzlleDNyNTZkU0p3eEhh?=
+ =?utf-8?B?d0IxeWtMUVlHbzhFa1M2aWMyeWlGMlp2THR6TjBDMFVQVGNBMTJhdW91RWFU?=
+ =?utf-8?B?ejZvZ00xcTY0SVR1UzNrS0hoS3Bta3FQVTVDL0pGUjIzcHpiL0J6U3p6M1NF?=
+ =?utf-8?B?Ti9IZEVYZld6WE9Pc09OdDJ3bGVXWXRMT2RhREtOTjRvV3BIUXVlellRRU1k?=
+ =?utf-8?B?eWY1OHRvZ0d4bmR5cCtpTG81ekcxQytVQzd2Q2czczhwanZPMlFOSzZPN21a?=
+ =?utf-8?B?S3BIREIwSFhEbGNsWU95RmhqcGs2Z0VqV1Jybi9VU0VDb1U5YU5way8wM0VI?=
+ =?utf-8?B?dno3MW1OdmtwZENQVC85Z2JhUGM3VmdtWUQrN2p6WlBjMTh0SFZGU2JxYmlk?=
+ =?utf-8?B?amVvSU4vRDhXeUhIbXR5aldMUVpoQjNJQ1FvWXZKSHROR2UvNjZJNW5oYzlZ?=
+ =?utf-8?B?MytkNzBLLzJXZm5JVlMwcGhTZFdRRktwUnYyRURqUHk5em5mRzlMaU9Gc0wx?=
+ =?utf-8?Q?YkUG6Yn228qmRbZwEWaPTxsq4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8857aca5-53e6-476e-508f-08ddd3e95fef
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 06:29:04.8056
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KgqThz8UMBVjuXTIImn9Tzxrp0oBuwh2fOQ0PAdMQEQ0d/UxtAv6YuBIbtGOwMBI3mCiK9TjwnQDF2D94qHrig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8346
 
-Hi Greg,
+On 08/05/2025, Krzysztof Kozlowski wrote:
+> On 05/08/2025 08:11, Liu Ying wrote:
+>> On 08/05/2025, Krzysztof Kozlowski wrote:
+>>> On 05/08/2025 04:22, Liu Ying wrote:
+>>>> Hi Joseph,
+>>>>
+>>>> On 08/04/2025, Joseph Guo wrote:
+>>>>> Waveshare touchscreen consists of a DPI panel and a driver board.
+>>>>> The waveshare driver board consists of ICN6211 and a MCU to
+>>>>> convert DSI to DPI and control the backlight.
+>>>>> This driver treats the MCU and ICN6211 board as a whole unit.
+>>>>> It can support all resolution waveshare DSI2DPI based panel,
+>>>>> the timing table should come from 'panel-dpi' panel in the device tree.
+>>>>>
+>>>>> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+>>>>
+>>>> For next version, you may add:
+>>>> Suggested-by: Liu Ying <victor.liu@nxp.com>
+>>>
+>>> Why?
+>>
+>> As I replied in the cover letter, I provided general idea for this
+>> patch series in NXP down stream kernel.  Same for the DT binding patches.
+> 
+> General idea to add support for new driver? So like every patch being a
+> result of for example task from manager means "Suggested-by"? Since when
+> new device support is treated as suggested-by?
 
-On Tue, Aug 5, 2025 at 12:43=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Mon, Aug 04, 2025 at 04:08:05PM +0800, Kuen-Han Tsai wrote:
-> > During a device-initiated disconnect, an xferNotReady event for an ISOC
-> > IN endpoint can be received after the End Transfer command has already
-> > completed.
-> >
-> > This late event incorrectly triggers a new Start Transfer, which
-> > prevents the controller from halting and results in a DSTS.DEVCTRLHLT
-> > bit polling timeout.
-> >
-> > Ignore the late xferNotReady event if the controller is already in a
-> > disconnected state.
-> >
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> > ---
-> > Tracing:
-> >
-> > # Stop active transfers by sending End Transfer commands
-> >  android.hardwar-913     [004] d..1.  6172.855517: dwc3_gadget_ep_cmd: =
-ep1out: cmd 'End Transfer' [20d08] params 00000000 00000000 00000000 --> st=
-atus: Successful
-> >  android.hardwar-913     [004] dn.1.  6172.855734: dwc3_gadget_ep_cmd: =
-ep1in: cmd 'End Transfer' [40d08] params 00000000 00000000 00000000 --> sta=
-tus: Successful
-> >  ...
-> > # Recieve an xferNotReady event on an ISOC IN endpoint
-> >     irq/991-dwc3-29741   [000] D..1.  6172.856166: dwc3_event: event (3=
-5d010c6): ep1in: Transfer Not Ready [000035d0] (Not Active)
-> >     irq/991-dwc3-29741   [000] D..1.  6172.856190: dwc3_gadget_ep_cmd: =
-ep1in: cmd 'Start Transfer' [35d60406] params 00000000 ffffb620 00000000 --=
-> status: Successful
-> >  android.hardwar-913     [004] dn.1.  6172.868130: dwc3_gadget_ep_cmd: =
-ep2in: cmd 'End Transfer' [30d08] params 00000000 00000000 00000000 --> sta=
-tus: Timed Out
-> >  ...
-> > # Start polling DSTS.DEVCTRLHLT
-> >  android.hardwar-913     [000] .....  6172.869253: dwc3_gadget_run_stop=
-: start polling DWC3_DSTS_DEVCTRLHLT
-> >  ...
-> > # HALT timeout and show the endpoint status for debugging
-> >  android.hardwar-913     [004] .....  6177.479946: dwc3_gadget_run_stop=
-: finish polling DWC3_DSTS_DEVCTRLHLT, is_on=3D0, reg=3D0
-> >  android.hardwar-913     [004] .....  6177.479957: dwc3_gadget_ep_statu=
-s: ep1out: mps 1024/2765 streams 16 burst 5 ring 64/56 flags E:swbp:>
-> >  android.hardwar-913     [004] .....  6177.479958: dwc3_gadget_ep_statu=
-s: ep1in: mps 1024/1024 streams 16 burst 2 ring 21/64 flags E:swBp:<
-> >  android.hardwar-913     [004] .....  6177.479959: dwc3_gadget_ep_statu=
-s: ep2out: mps 1024/2765 streams 16 burst 5 ring 56/48 flags e:swbp:>
-> >
-> > ---
-> >  drivers/usb/dwc3/gadget.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> Why is this RFC?  What needs to happen to make it an actual submission
-> that you wish to have applied?
+Not for new driver, but for architecture level, like treating the MCU and
+ICN6211 as a whole unit/DRM bridge and treating the DPI panel as a simple
+panel from both DT's point of view and DRM driver's point of view.
 
-I'm not sure if this solution is acceptable since I couldn't find any
-guidance in the programming guide about ignoring xferNotReady events
-depending on the controller's status. I was thinking marking this as
-an RFC is more appropriate to solicit feedback on the solution.
+> 
+> I also do not understand how downstream kernel is relevant here.
 
-I will send a new patch without the RFC tag soon.
+That suggestion did happen when I reviewed this patch series for downstream
+kernel.  Just shared the information.
 
+> 
+> Best regards,
+> Krzysztof
+
+
+-- 
 Regards,
-Kuen-Han
+Liu Ying
 
