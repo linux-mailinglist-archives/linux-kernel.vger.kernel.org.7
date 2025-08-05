@@ -1,139 +1,208 @@
-Return-Path: <linux-kernel+bounces-756937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C29BB1BB39
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:59:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA59B1BB42
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6715118808B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A365A17B5E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A104F2750E7;
-	Tue,  5 Aug 2025 19:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AA4232368;
+	Tue,  5 Aug 2025 20:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SPVwXk9r"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAf2fehi"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9F222B5AC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0417B217F36
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 20:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423966; cv=none; b=Lk9tk8zIfTLFHqgPcwLfLW0Oix99m+/5/3HtyXXenNaSIzEOuKBH7oH96ABDvgm6AzGmawa/GZAStf4WMlo9suBFf7iDATHY3lfa6ZU2vaE8VYiSK1pQxY9CwKFGZZuPGuoGty96ly7d+C80AswUv8Mr8iBQeuU6am7aQvOb1+M=
+	t=1754424204; cv=none; b=X1BmFnwhCOgPYgEH0nglw4fTS19e1/zZfaSL+TWlvKEYL74PFr8iT9hPch2AuwGBLUa8wcbfBq2r6UqNM2hGqUJ/WmIOCZO0du+wZA7fcPRpZLWozqPgHAFJygTJPt7T8XyIa/OE9rewjai3FJqBaylqmqWILKZj7eD3RvFdoPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423966; c=relaxed/simple;
-	bh=pXhxchSRRgtxWJx8jVY2QY92qQA379bq+J7HbDgvShU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MGki4hJIJl9NY8AUkuufPvv9HDR2XBAkqUiDAnM4jCjAv/knrfzPpGZA8nduMO6o+6ctLVfviMPxTL4dFZNZGTleuxMXlDlanO5yFsHk737f7u/il3cCPkXpIknSYJD9Fn2gmLRnjRRM9oQhpSDsTjTarkFpwbiQucqqfQfJ66Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SPVwXk9r; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f729bf733so8594711a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:59:24 -0700 (PDT)
+	s=arc-20240116; t=1754424204; c=relaxed/simple;
+	bh=kkK7uAJUahm01Mvv0DG1Aj/KtgqzV4K4zfohF/1l0tY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=o2j2RU+fE2xRvA+mD9UPddl+EOhZCQA/BJB6HeuO0Q9aYJFidAqlkZhkRRIr/Vmdb483jCPGtcSKoi06XcfjzsKLG/Fihfi/GPGCVbE3x/72O7SLV2fPaz4iIq0ZpH+IS3oKLzneK8N631u6Bb5psOjoHwPaKig8p+TZkuAxu/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAf2fehi; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8fe5f3f340so248435276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 13:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754423964; x=1755028764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w3Yvf2JfDXGKcx67v9ooLLvg0JCE6s5eg0KrtzPSvSI=;
-        b=SPVwXk9rlSJWnmlbW2bmHhgn1zxdmjolLq9toYnkL9Odbdz6PFCyss55pgh+ACNQ4H
-         I777PmMXBUXYAWa/nQdSh0o34s7qZpy4+v5oKhHw+01mf0ecNLEcbowx9QW2DuwqwKQW
-         TEI0U7nzF5nfKSHPH2SN5G6ICc79DUxWGRmAikcrrdcRG45gGv5EjabaMt7DJEEdU8iT
-         2VRSE/rL0gb6v7O/oHCDC6BAmWQZs2jPCxZXNlp7NVTII1usZPtiHletraIbxFUZBGDs
-         9035KSjs6KHpkuPHWZ8i1g2n/YY0gjLEiapWzwVa5l/xxAHyti25J730jxaEvL07CcDo
-         s9lw==
+        d=gmail.com; s=20230601; t=1754424202; x=1755029002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HURENJIwBW4HrYnDuyD6HC79md6aohHgiDH/gmZ6R4Y=;
+        b=UAf2fehiMzIqhqM3dREsFjYhOq4kT/iiDn5aXBvLSOW3N7cJWA5+Z2ral3o/G38FWk
+         F3r8F3WqWhnQNsOWq/Uy4SGBS15EffoE9QBvCoGsjJWJkYo4dYJozWRknJEsFIk5bsTk
+         O1B0uRppZFrD+S7YgzG/kLH4oHBPyLljfCTbIG3I885p4hmSyWLQB0x4sbMHCFGm2zkK
+         toerXPsm6WNTXlcsDo1GGO+04qdau3shYHVmFdepbKJwfGAFpF42Oc3aGS2bEkUKwu67
+         /dZBTQxu7ntWtfxosmnIhPO86CNspKSPX/s4YZALlrzyMwvWdO0k6N5H0/COutxNM5hR
+         HRtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754423964; x=1755028764;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w3Yvf2JfDXGKcx67v9ooLLvg0JCE6s5eg0KrtzPSvSI=;
-        b=R5XtBNUCi49wTrkgPsKyAoSn9r5uMxR0f5O3C8nqOzQ8jHoLEEmSaTXR27y+BleLVX
-         6QeZeYadY3Rdgrg9x80AmVQmyQlJG6dk+enAq66YfpqWqXl7IAeTzm6KLFCpUsEWQ5vg
-         ppOyZ2tlmeoQGTSZVZzxvYKsDDkUEXBHzm0gqoCabJpcKV1b7pfuEkTAQTBqvqJkbU+3
-         8+V7ZD0ODbSMY2+I33SJn1xDiALbEHpzyNJeKRF8aV9//hPevCEFakGYDTPHgqCkiX6C
-         u+xcIymjxHZ66O6WJea3IqTt6wxbImnrMYEyoeuVFN/Yro3/ean6cv5LEhI6xfioBHK8
-         gIPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWooRDxFx3vbSEmUT/N4/bgbY0qsaifRC+wNNZvR7yUJ9WASo2EaAGkAxxXsJ4+nUIZI+/Z/XPIs3+5CvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2rFBcDC0f/Q8Q+XPzluMwu+Jh1gkeRhGkyyShEZnhv5KAkpQu
-	tKehT4QvkFNUV1sXu/78WEqrU0Y8qnNGo7MRXE6d0iAY29tfz9xMrfZIpdYLuIiT4HyZJ5q5saJ
-	PM86h1g==
-X-Google-Smtp-Source: AGHT+IEuI8KiE77OJVjXZOrcYjc8/vveaA71MtGaUeonbU64/fh8UEXUNZAQbuVlyWgScx/PDrxoAQPbFoQ=
-X-Received: from pjbpx16.prod.google.com ([2002:a17:90b:2710:b0:2e0:915d:d594])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5584:b0:312:51a9:5d44
- with SMTP id 98e67ed59e1d1-32166c15c64mr147232a91.5.1754423963903; Tue, 05
- Aug 2025 12:59:23 -0700 (PDT)
-Date: Tue, 5 Aug 2025 12:59:22 -0700
-In-Reply-To: <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1754424202; x=1755029002;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HURENJIwBW4HrYnDuyD6HC79md6aohHgiDH/gmZ6R4Y=;
+        b=kxKGJr1BnZWZB09aDguxfgfe5gJyNJy9jNpvVXjRIjsd366r/h248hhdW8IZIcmPUf
+         7mtJ/QGtBU9zizdEwnLOfaiOHIXNwA08htmFuC9O6C/oNyH0jABgXgDGyJefUbxkk/BM
+         uQuuSQh8BwwqcbG692CPKlo8vcG4B4GQsoGKjywq0B19/ppgtMSTWl5ruBmkdiw7KLdp
+         RAchub37avB97Qczr5MDafEJDGeftaHhLX3bKZRS8MeQMrbKc4HRXIMkWuivb0qvwHtZ
+         yKqbxkQ9b6Ydt2VUdmjOZjgYWoOBROAcjPGcCfR4osp9s72pSk17IytaW7sxBaeARdBz
+         gytQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlzj9ZffRiM6EvGGp9uuXXItZagRXp9JN7zeUnmPb5bogjlZRqIGRFRx5uHxedCu+l9/nE+Qh/h2loOF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykcmI9ImjQqQxEriauSuhNjVrvnFqtfPZFLLZJpq/F3BhNPa7F
+	BY+/UitVRC79iSynMsElSj/V6FqS5a9CIHEU2Pbvkv/XO1c8ju9tV0OQ
+X-Gm-Gg: ASbGncvYb33Nei+DIwl/vOET241dplkZsSTZKQjpw0fEDZ36Z6aZ7/p2z9gN9dv7zHP
+	U1haCcbIkwPlkkZBeUvW/LstDG27896BjIWjRH3em/ASLZOw65M5sQSuXLgSg6iZvgQ4nCl0GnD
+	YvXEXHYvDXEeQa8lxqE7RNrkYtIM90hKANRtdkAnR3xtdqtQUBGDZNtWzWoogS0u57FwvxEwlVx
+	pGbJzTUAfMA+hzrIjA9+HG1RJML4siDtseZaJnK1v1FXifd/YUX9tWpRWZuzXOnLL6T+ZeRrJBB
+	09JXjvletfK3Mb/9EoKE1heMZcCPl0wNpSTf9kP+iipooNe0a1TXsqCKmxFtpFl8g5Sl/6JGNLx
+	zBYb4YNlZQIB6g8zguSdXTqIyhnMRLqI6
+X-Google-Smtp-Source: AGHT+IFnzMQf5da51VExlk1Urn50FIjZRa8sDOuW02dJ1AnrX7pyCFyQYMgNkjSpbi1PpgHTIjcXag==
+X-Received: by 2002:a05:690c:6b03:b0:71b:69b6:9438 with SMTP id 00721157ae682-71bca5db9acmr3454587b3.0.1754424201439;
+        Tue, 05 Aug 2025 13:03:21 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:50::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a3a9986sm33829937b3.12.2025.08.05.13.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 13:03:20 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	SeongJae Park <sj@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v2] mempolicy: Clarify what zone reclaim means
+Date: Tue,  5 Aug 2025 13:03:18 -0700
+Message-ID: <20250805200319.1298046-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <871ppqy2v1.fsf@DESKTOP-5N7EMDA>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aHUmcxuh0a6WfiVr@google.com> <aHWqkodwIDZZOtX8@yzhao56-desk>
- <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com> <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
- <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
- <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
- <aJFOt64k2EFjaufd@google.com> <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
-Message-ID: <aJJimk8FnfnYaZ2j@google.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
-	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
-	tabba@google.com, chao.p.peng@intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 04, 2025, Vishal Annapurve wrote:
-> On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > : 4) For SNP, if src !=3D null, make the target pfn to be shared, copy
-> > : contents and then make the target pfn back to private.
+On Tue, 05 Aug 2025 09:27:30 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+
+> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> 
+> > On Mon, 04 Aug 2025 09:24:31 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
 > >
-> > Copying from userspace under spinlock (rwlock) is illegal, as accessing=
- userspace
-> > memory might_fault() and thus might_sleep().
->=20
-> I would think that a combination of get_user_pages() and
-> kmap_local_pfn() will prevent this situation of might_fault().
+> >> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> >> 
+> >> > On Fri, 01 Aug 2025 08:59:20 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+> >> >
+> >> >> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> >> >> 
+> >> >> > The zone_reclaim_mode API controls the reclaim behavior when a node runs out of
+> >> >> > memory. Contrary to its user-facing name, it is internally referred to as
+> >> >> > "node_reclaim_mode".
+> >> >> >
+> >> >> > This can be confusing. But because we cannot change the name of the API since
+> >> >> > it has been in place since at least 2.6, let's try to be more explicit about
+> >> >> > what the behavior of this API is. 
+> >> >> >
+> >> >> > Change the description to clarify what zone reclaim entails, and be explicit
+> >> >> > about the RECLAIM_ZONE bit, whose purpose has led to some confusion in the
+> >> >> > past already [1] [2].
+> >> >> >
+> >> >> > [1] https://lore.kernel.org/linux-mm/1579005573-58923-1-git-send-email-alex.shi@linux.alibaba.com/
+> >> >> > [2] https://lore.kernel.org/linux-mm/20200626003459.D8E015CA@viggo.jf.intel.com/
+> >> >> >
+> >> >> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> >> >> > ---
+> >> >> >  include/uapi/linux/mempolicy.h | 8 +++++++-
+> >> >> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >> >> >
+> >> >> > diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+> >> >> > index 1f9bb10d1a47..6c9c9385ff89 100644
+> >> >> > --- a/include/uapi/linux/mempolicy.h
+> >> >> > +++ b/include/uapi/linux/mempolicy.h
+> >> >> > @@ -66,10 +66,16 @@ enum {
+> >> >> >  #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
+> >> >> >  
+> >> >> >  /*
+> >> >> > + * Enabling zone reclaim means the page allocator will attempt to fulfill
+> >> >> > + * the allocation request on the current node by triggering reclaim and
+> >> >> > + * trying to shrink the current node.
+> >> >> > + * Fallback allocations on the next candidates in the zonelist are considered
+> >> >> > + * zone when reclaim fails to free up enough memory in the current node/zone.
+> >> >> > + *
+> >> >> >   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+> >> >> >   * ABI.  New bits are OK, but existing bits can never change.
+> >> >> 
+> >> >> As far as I know, sysctl isn't considered kernel ABI now.  So, cghane
+> >> >> this line too?
+> >> >
+> >> > Hi Ying, 
+> >> >
+> >> > Thank you for reviewing this patch!
+> >> >
+> >> > I didn't know that sysctl isn't considered a kernel ABI. If I understand your
+> >> > suggestion correctly, I can rephrase the comment block above to something like this?
+> >> >
+> >> > - * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+> >> > - * ABI. New bits are OK, but existing bits can never change.
+> >> > + * These bit locations are exposed in the vm.zone_reclaim_mode sysctl and
+> >> > + * in /proc/sys/vm/zone_reclaim_mode. New bits are OK, but existing bits
+> >> > + * can never change.
+> >
+> > Hi Ying,
+> >
+> >> Because it's not an ABI, I think that we could avoid to say "never".
+> >
+> > My personal opinion is that we should keep this warning, since there has
+> > already been an example before where a developer tried to remove this bit [1],
+> > and this broke some behavior for userspace configurations. However, if I
+> > understand your comment correctly, you are suggesting that we should change
+> > the wording to not include "never", since sysctls are no longer an ABI (and
+> > therefore we should be OK to change what the values mean?)
+> >
+> > If that is the case, then I can send in another patch since I think the goals
+> > are a bit different for the two patches. With that said, I think we should
+> > keep the warning just to avoid any breakages in userspace, even if sysctl
+> > might not be considered an ABI anymore (also I must have missed this, I didn't
+> > know this at all!)
+> 
+> Sorry for confusing.  I agree that we shouldn't change the sysctl
+> interface in most cases.  I just thought that we could soften the
+> wording a little?  For example,
+> 
+> New bits are OK, but existing bits shouldn't be changed.
+> 
+> I think that it's still clear that we don't want to change the existing
+> bits.
+> 
+> However, my English is poor.  So, my suggestion may not make sense.
 
-Yes, but if SNP is using get_user_pages(), then it looks an awful lot like =
-the
-TDX flow, at which point isn't that an argument for keeping populate()?
+Hi Ying, thank you again for the response!
 
-> Memory population in my opinion is best solved either by users asserting
-> ownership of the memory and writing to it directly or by using guest_memf=
-d
-> (to be) exposed APIs to populate memory ranges given a source buffer. IMO
-> kvm_gmem_populate() is doing something different than both of these optio=
-ns.
+No worries at all, it was my misunderstanding : -) This suggestion makes sense,
+and I think it's small enough & relevant to the code block, so I'll also fold
+this change into my patch as well. I'll send out the next version shortly!
 
-In a perfect world, yes, guest_memfd would provide a clean, well-defined AP=
-I
-without needing a complicated dance between vendor code and guest_memfd.  B=
-ut,
-sadly, the world of CoCo is anything but perfect.  It's not KVM's fault tha=
-t
-every vendor came up with a different CoCo architecture.  I.e. we can't "fi=
-x"
-the underlying issue of SNP and TDX having significantly different ways for
-initializing private memory.
+Have a great day!
+Joshua
 
-What we can do is shift as much code to common KVM as possible, e.g. to min=
-imize
-maintenance costs, reduce boilerplate and/or copy+paste code, provide a con=
-sistent
-ABI, etc.  Those things always need to be balanced against overall complexi=
-ty, but
-IMO providing a vendor callback doesn't add anywhere near enough complexity=
- to
-justify open coding the same concept in every vendor implementation.
+Sent using hkml (https://github.com/sjp38/hackermail)
 
