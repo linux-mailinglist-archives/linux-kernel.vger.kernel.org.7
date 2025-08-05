@@ -1,80 +1,167 @@
-Return-Path: <linux-kernel+bounces-756033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A992FB1AEF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93FCB1AEF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DEAC18A0DE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CF6167650
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EC823A562;
-	Tue,  5 Aug 2025 06:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7590D222564;
+	Tue,  5 Aug 2025 06:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azlyW3FW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BSag1495";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jvVFDhYZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BSag1495";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jvVFDhYZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8132022576C;
-	Tue,  5 Aug 2025 06:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B27C21FF41
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376947; cv=none; b=IB43jUc6Dkk0grV+VAbwq+yN8/1YSpiZqiFzIR73NStUn8SIB40kdoNbJDeMjL1QdIP+Zu15CQtpYChNMy5MOlW06lYVKXWj47PSJltu1HkJnijQVsAIRRRZ1lucdmmjzj7aq/8+6oJog0d6LMPn5kjBOVq88hcP7Z0hOorhcKo=
+	t=1754377031; cv=none; b=B4MVGJOmH7ZjEFL5CGMkgD9OtrACozsi/idow9ESqwIzxpij0H+mBSVZZxiGkE226XGW/hIWWn3ZbuMGIAdGPH0CifZQeTR0zbsQJzeSwkzWnHahWy/iKIeJ0QZzwIPPBdX5IH5oBpqyfHPCHGejdabIRhB7nMjVUzRL7pkrpnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376947; c=relaxed/simple;
-	bh=zRktS7tLY1en7iXMLnLj6uv8j5ngLB1dqGGyBECiblE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpFTCbvleO5vIWwN1p9AuUPg9gXo6VhYdWJU2HqZI1cxrynw6ZN2B1sbUbCDIddUrfms7lK9eLEoZ7Bi1zxrD4DGIlPBm1d8MFwDU1jktLjJpAUjJRyNV+osVRxNCh2lFO+n0NwJLYuKcFokiuEpDswUhy+nMEpRupnGENEhA2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azlyW3FW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F161C4CEF4;
-	Tue,  5 Aug 2025 06:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754376947;
-	bh=zRktS7tLY1en7iXMLnLj6uv8j5ngLB1dqGGyBECiblE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=azlyW3FWSEQ2XP3fACoYQZrxXwn21yiJt7+f1wJiHpxnKDni6qVPsrcjO7i65RzAu
-	 q4KgLoAudjJjC6o0FSZigmnj2awONCPYrX7uHlPVvYmWJkb8beQbqBAPDCjNx5qQLg
-	 TQ+FA2FaeCFo9QaqtJG7SL/04Lw7/RQGBUVeEvT70gDTfPEorDLqTWJzLc57Y3OPdm
-	 ZR205NeyUEiKuj4YiC0g2WE+kyTh9tHq+n9T5bGcN0A95UzGOFB93Rt9omaWAyftW+
-	 QPg9myMS4CRT5oRb7aB9feZPjQMS8F3/20fLFqKRLnXR3+XOCCpD0DWjzlkd1erJ0w
-	 LxDkYZMWvlADQ==
-Date: Tue, 5 Aug 2025 08:55:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, srini@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/15] dt-bindings: iio: adc: at91-sama5d2: document
- sama7d65
-Message-ID: <20250805-stylish-elegant-raptor-1ac78e@kuoka>
-References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
- <20250804100219.63325-9-varshini.rajendran@microchip.com>
+	s=arc-20240116; t=1754377031; c=relaxed/simple;
+	bh=sDRX3GOjzOFyJb1hlVaivfs0JLjbEAu6B/QAgvN7xcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mPJVU55nJUGN2caXcHIGJ4nZ1PTYS7Cih1myUPIW16IXl/n/IiWg+FDVVEqsIZ2COmLQLzOiwwWXUEE5KE/SjfPhY0WYHEdD4tKzrWnXbgJsgJr8pOUYASjbCUAapHhjXgTFE93aSrBGjnWmI6pmRSX4MTWen7OLTim4MPEuZGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BSag1495; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jvVFDhYZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BSag1495; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jvVFDhYZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8AB521F387;
+	Tue,  5 Aug 2025 06:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754377028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
+	b=BSag14956rIhHiFVrk7o5VkFqLAHmxWvu54bueoc8d/9/1z01hqtFLRVtRLr7sEatn8nzV
+	+Bel1mxxVk7o5BipgWoOQGtAP4ajC+ZAySUx2g+dsXJ+z0RDxe9tyeR/sfJbZkrnqY7q8l
+	2cTouLLQR+nj6CRhU3HSEox5k9zv8tc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754377028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
+	b=jvVFDhYZ05QZ6tLktuNYkrzTIfNe3L/EVvkQ0Oq7H88Hd+DZTuxMd4V1fj0Utq1LGby4ju
+	dvUlgA1iasLFHtBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754377028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
+	b=BSag14956rIhHiFVrk7o5VkFqLAHmxWvu54bueoc8d/9/1z01hqtFLRVtRLr7sEatn8nzV
+	+Bel1mxxVk7o5BipgWoOQGtAP4ajC+ZAySUx2g+dsXJ+z0RDxe9tyeR/sfJbZkrnqY7q8l
+	2cTouLLQR+nj6CRhU3HSEox5k9zv8tc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754377028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9zAwcp48BVfi3+ZkJLuJVyOnVo+XL9a5AEOTUrphLlA=;
+	b=jvVFDhYZ05QZ6tLktuNYkrzTIfNe3L/EVvkQ0Oq7H88Hd+DZTuxMd4V1fj0Utq1LGby4ju
+	dvUlgA1iasLFHtBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E2E213A50;
+	Tue,  5 Aug 2025 06:57:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ly76CUSrkWjHFwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 05 Aug 2025 06:57:08 +0000
+Message-ID: <8c56e9f5-9e82-4a79-aa82-49099c1dda71@suse.de>
+Date: Tue, 5 Aug 2025 08:57:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250804100219.63325-9-varshini.rajendran@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] block: simplify direct io validity check
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org
+References: <20250801234736.1913170-1-kbusch@meta.com>
+ <20250801234736.1913170-4-kbusch@meta.com>
+ <065d699a-1edb-4712-9857-021c58c5e5c2@suse.de> <aJDppvHXW8rspmVx@kbusch-mbp>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aJDppvHXW8rspmVx@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Mon, Aug 04, 2025 at 03:32:12PM +0530, Varshini Rajendran wrote:
-> Add dt-binding documentation for sama7d65 ADC.
+On 8/4/25 19:11, Keith Busch wrote:
+> On Mon, Aug 04, 2025 at 08:55:36AM +0200, Hannes Reinecke wrote:
+>> On 8/2/25 01:47, Keith Busch wrote:
+>>>    static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
+>>>    				struct iov_iter *iter)
+>>>    {
+>>> -	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
+>>> -		!bdev_iter_is_aligned(bdev, iter);
+>>> +	return (iocb->ki_pos | iov_iter_count(iter)) &
+>>> +			(bdev_logical_block_size(bdev) - 1);
+>>
+>> Bitwise or? Sure?
 > 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Yep, this is correct. We need to return an error if either the size or
+> offset are not aligned to the block size. "Or"ing the two together gets
+> us a single check against the logical block size mask instead of doing
+> each individually.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Oh, my. Wasn't aware that we're running an obfuscated C-contest ...
 
-Best regards,
-Krzysztof
+Anyway.
 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
