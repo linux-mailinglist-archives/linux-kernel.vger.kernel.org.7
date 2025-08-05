@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-756731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43886B1B87B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:28:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B48AB1B884
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40F73BF4AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:27:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F7817E3EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27633275B01;
-	Tue,  5 Aug 2025 16:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00D7292B33;
+	Tue,  5 Aug 2025 16:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOnhD7gO"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6Saer3C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE2472630;
-	Tue,  5 Aug 2025 16:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8C372630;
+	Tue,  5 Aug 2025 16:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754411269; cv=none; b=jbhSZaF7bWu1gcd9pJYcT4++SezLCNk0/fb3OTuXcdblYbZVZzuefoJTHNJCiLDbquLlKwbTD3ValmQYJG3cQoNdoXNG24b1pXoUEEWqv+2zO3C1lARflvS1EJglVjzxSToGVZEgSgrdTwxt4S8BSwfX8F5c6hDxJGYcrIxCYIo=
+	t=1754411361; cv=none; b=duJPtqZnuR7joiimwtRwl1lJOUx6OReyLEELOj0uBObbwgqIeq4otDzG2pos7PQZy0hQaBrUQDq2n3sR+l55mM62AkPxbAIc3Kux+L9NmPU701FPsQd2rzXqe++4NG9sowE9/EnKm9iCTobczOOdEqI0hW7UPicQme/JR8UfUbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754411269; c=relaxed/simple;
-	bh=5BJyQyJpgV+yQh2Ditn8oy8a04n9ISc9q8hHHgTLqBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KxcgI26KbH86DT62jSjVOBRObHDGtj394/UbH4GSrBdGRpopqQEquYZx+lefyHnhCCyBMSfn+ss3segzSXLVTn6hs9UAL7gFuNITnmRwq02viWnLtKLqqEPZl87b/fhtdYbxKkXkVmFbSt4TLGwinB2EZ4hSRohUkAzlRZzmTpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UOnhD7gO; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23fe2be6061so519865ad.0;
-        Tue, 05 Aug 2025 09:27:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754411267; x=1755016067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+3O50zNUML0rXrgIz2L4u9X6MchbPe/SOppfxHs5UVY=;
-        b=UOnhD7gOSdrochvqwP0lOpDYrwADZkM0D8Kv42fL/4UtlgSqMmpf+SzyPlVthB7dRS
-         tIKqDyMpsUXMNBW2kNSo+w+2QTomgOsjEaYwWSaWivvJShtCu9SqFmSZ8bGIfV8fIoYN
-         QtBQARj9Ghe3PNIP4JLi6Y2fN3q683RkRK+qA5n/tr6L9yNQ7e+fxNwxLQ5mPP5Lmdp1
-         q7ChCTzxkt78gPMuh1SsANm7IA07t9e3aFs2ZaLP8d6EVEkaJmHE0krgTzIyyu0gB7cZ
-         gBnF6qZ8/dIoIAL55UcLPOy2klHDqPO8mVUaJH0Two9r83J93AEeJxX2rNc/DOPfkLqr
-         w9NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754411267; x=1755016067;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+3O50zNUML0rXrgIz2L4u9X6MchbPe/SOppfxHs5UVY=;
-        b=I2khUOIUkS+9bNOY+ff7QHNtddRWkv0i5UhQYMAg/rqSn/AsksA/f41bVc9TI9so/b
-         8StR27DT2iN8Yn28jOGM0TIpPbGhgcKc2qFYJzcucmK509x0kjYhYIToVeCFmpe5Juvz
-         zrkgWQqNexGVcVS+yMdriQrZCc7rJfEgMqx0msdyIwdgoF+dI+aK37xCbinLnhuU91Pa
-         wIhg90eTVQnEALIbSUeIGYqo30ry54xsfq2R0gXBlgvg+UTN8S6xpyeVTndeWnKX8Xu6
-         LyoIEt2jmgamuSNdaXXNpQTHBhS6E9QOpVFa7jAwb/2GgqGpFmSfX47L6uFEfwnEepPr
-         3WLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4rwAoUqFA/g9/gSj6nzl9/OTQ9l4ZWuaB2MOPgfMd3y1Jh6EfAHcIQ8wt562WIH+QtZqTi6lO/j4F@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzviTgf5lPS2bJFcTtPlEy51LQ2dCs+8HBZCruL2ocu79eOYSe
-	+WZ4dYJ1rfJDS1idRIfmI7S5e2+hUbarD50dxagDh5TiY7ab33q8Df2gBB0zNMow
-X-Gm-Gg: ASbGncsLWZ7WuPAnO722TfhF92ptrZLIt0YsDI1w9VJ0/YnyGMPp15X7NYGVi4WYZEc
-	8hrbwXsSNFXw+eRGirqAorVEmc65siiyq/MiVepYQByI+kgAzu52shNxBHwf3fTJeNOmzpxK+NM
-	zsX5Apzc42EedqEQEyU8yM+kOZV+9bnYj0vTGatT47QOOAwILYKyjMhHGWSbKl5XT9bAgltzjIo
-	rGWnRyfoXNikL35VackYU8NoFNVtDKeZsgy00R5fdtuf7zDONChPr+KtuHSyh+0u5epNND/Es+p
-	nVbXZq+dqYPpOgMMD+XwzyCyXaw/NIZBcvybxbJFK22dxCc9vansYB+13m5DnMqd1VHvehY0is0
-	vbYAnUWc7V7p3KFcmWEHoilCb1cAFBidPaB7vs2XV9SmWwojLXqSjrbeE595o5XePkC8qq9UIUL
-	rt
-X-Google-Smtp-Source: AGHT+IHd19vjUFBW1J+x03NMEuyJK581n036vQ9x7nKm3KkZ/4nVoUzKV04IA+ulDj2XieVTIyuOvA==
-X-Received: by 2002:a17:902:d508:b0:215:b1e3:c051 with SMTP id d9443c01a7336-24288d2ef67mr49304575ad.11.1754411267413;
-        Tue, 05 Aug 2025 09:27:47 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1f27:8800:d28b:e1ed:c83b:1281? ([2401:4900:1f27:8800:d28b:e1ed:c83b:1281])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0f7bfsm137074095ad.41.2025.08.05.09.27.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 09:27:47 -0700 (PDT)
-Message-ID: <4dc74bbe-da7b-4f40-a5e4-130ef20dbaa8@gmail.com>
-Date: Tue, 5 Aug 2025 21:57:42 +0530
+	s=arc-20240116; t=1754411361; c=relaxed/simple;
+	bh=z2f5E5qduYyTuQDNdWrkJD60BxEll0QTORUTvnlrshY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUmbCCsKTh6PQcLZsmAkChjJk3+W5RKpqBrQCMJ9zixl+BnjSwGWk2RtDThE+0OuPHtXyg562Crf7vj8qXnyhFKZtOXSm1GL5zjlRzyYzVYIYJ8gsCtZhW6CJDykbr5GKgCPSidRX44ZOWmkZjlEY6fi5W/fYeDVZde8DXmCDTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6Saer3C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A8EC4CEF0;
+	Tue,  5 Aug 2025 16:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754411360;
+	bh=z2f5E5qduYyTuQDNdWrkJD60BxEll0QTORUTvnlrshY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f6Saer3CTW7RcCIGPsuQSY5QFQeHJlgaUXlXrIhCRuFM+ycTnj66AnazqTez7pFow
+	 vEBcEJjRXx/9FxRVq7JH/nDCIfhVcf3+pnHh6KiWQRfckzEoAfdvnTCNT1zuji/0nn
+	 tCBgcvxbZwu++FuDjwpUwGv7Y1XtQUaSktRCFbFe7RR8yDMt7ly37boUX2/9KRlUBc
+	 GY535s59QFu7id9ILARy1ROg1HQ9wBJUoyAwCqOqNRWVLvVkoF6CryB1DkPtpdm2p9
+	 mPkj3lQHX2jUFXOuIi3MIIMXEkT69aikWHvXjxfYWejczA0KFUTw9uOjddkg+KIbU1
+	 dWOgsMrmq89Hg==
+Date: Wed, 6 Aug 2025 00:29:15 +0800
+From: Coly Li <colyli@kernel.org>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Cc: "kent.overstreet" <kent.overstreet@linux.dev>,
+	linux-bcache <linux-bcache@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+Message-ID: <20250805162915.3kaqbxjbwfuj6u6w@P16.>
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+ <20250805045745.iu4ukc6tfdm3j7xn@P16.>
+ <tencent_29AAD4111647BCD160DCFD85@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] acpi: remove unnecessary return parentheses and
- conditional braces
-To: Markus Elfring <Markus.Elfring@web.de>, linux-acpi@vger.kernel.org,
- acpica-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Robert Moore <robert.moore@intel.com>
-References: <20250804185826.29723-1-dikshakdevgan@gmail.com>
- <927e03af-6682-44c5-9225-fb269b0a6e1c@web.de>
-Content-Language: en-US
-From: Diksha Kumari <dikshakdevgan@gmail.com>
-In-Reply-To: <927e03af-6682-44c5-9225-fb269b0a6e1c@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_29AAD4111647BCD160DCFD85@qq.com>
 
+On Tue, Aug 05, 2025 at 05:37:44PM +0800, Zhou Jifeng wrote:
+> On Tue, 5 Aug 2025 at 13:00, Coly Li <colyli@kernel.org> wrote:
+> >
+> > On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
+> > > There is a potential data consistency risk in bcache's writeback mode:when
+> > > the application calls fsync, bcache returns success after completing the
+> > > log write, persisting the cache disk data, and persisting the HDD internal
+> > > cache. However, at this point, the actual application data may still be in
+> > > a dirty state and remain stuck in the cache disk. when these data are
+> > > subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
+> > > there is no forced refresh mechanism to ensure physical placement on the
+> > > disk, and there may be no power-off protection measures, which poses a risk
+> > > of data loss. This mechanism may cause the application to misjudge that the
+> > > data has been persisted, which is different from the actual storage state,
+> > > and also violates the semantic agreement that fsync should ensure data
+> > > persistence.
+> > >
+> >
+> > [snipped]
+> >
+> >
+> >
+> > If before the cleared key inserted into the btree, there are new write
+> > into overlapped LBA range of the cleared key and a dirty key inserted.
+> > Then the cleared key is inserted and overwrites the dirty key, but the
+> > dirty data on cache is not written back to backing device yet. How to
+> > handle such situation?
+> >
+> 
+> There are indeed some issues here. I have initially come up with a
+> solution: Utilize the existing dc->writeback_keys mechanism for
+> protection. The general processing flow is as follows:
+> 1. In the write_dirty_finish() function, remove the operation of 
+> updating bkey insertion, and delete the code bch_keybuf_del(&dc
+> ->writeback_keys, w).
+> 2. After executing the read_dirty(dc) code, perform flush, then
+> insert the updated bkey, and finally remove the bkey from dc->
+> writeback_keys. This process is equivalent to sending a flush
+> every KEYBUF_NR bkeys are written back.
+> 3. Support configurable KEYBUF_NR to indirectly control the
+> frequency of flush.
+> 
+> Is this plan appropriate? Or are there any better ways to handle it?
 
-On 05/08/25 01:54, Markus Elfring wrote:
->> This patch removes …
-> See also:
->
-> * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n94
->
-> * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n658
->
-ok, i will do the changes in the next revision.
-> …
->
->> These changes address checkpatch.pl warnings and improve code readability.
->>
->> v3:
->> - Updated commit message
-> …> ---
->>   drivers/acpi/acpica/dbconvert.c | 43 +++++++++++++++------------------
-> …
->
-> Please move your patch version descriptions behind the marker line.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n784
+No, I won't suggest this way. It sounds complicaed and changes the main
+code flow too much in an implicit way, this should be avoided.
 
-ok, will do the changes in the next revision.
+So it seems Kent's suggestion to flush backing device before committing
+jset is the proper method I can see now.
 
-
-Thanks again for the feedback.
-
-Regards,
-
-Diksha
-
-> Regards,
-> Markus
+Coly Li 
 
