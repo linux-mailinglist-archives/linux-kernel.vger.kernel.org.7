@@ -1,173 +1,193 @@
-Return-Path: <linux-kernel+bounces-757015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41F1B1BC69
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:08:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971CFB1BC6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0613AE568
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B13AF7A1985
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948C25EFBD;
-	Tue,  5 Aug 2025 22:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100025B309;
+	Tue,  5 Aug 2025 22:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2NjuO8i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L90XrZQf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80BD200127;
-	Tue,  5 Aug 2025 22:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C21255F39
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 22:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754431715; cv=none; b=EpC2It5y7dcM7aqZwagOxgTyeM04F/Kw79mpFwoN06fUi1eMzE1GnP8zy0hI3IWaxTAJmaYpyp2/wo1005vm/tQNUXsv9A+S9NL009YjlDSyywHidyQ03IjpEegHa95/mvfkyfw+Igne6wXNbqeIGtsRQYYlax4fennFav8Zt7Q=
+	t=1754431733; cv=none; b=j7s6rnpYWtcvR8A2RUaCYoFSR7cZCJYK/lCXEFUBtrOIkpp1F1ArjHQHkAq0JsaTxJw7wCtmybFFRp3hQbdgpU7AsUfjxeVgIBBiSKn9pp6SqVjgeGstwhMseoE51+Q4U/O182RtYKXIl5MnKB4Kgj7OjF/zNi0oI8ocbBQE4ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754431715; c=relaxed/simple;
-	bh=/aoxjBnanB6z5ZymLaTy2qG1GykI0n2CxoPSGTJMDc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyDB85tvR610tvDSoFcMTV/SyXAlh/vpyOO2ExdNNMC5lj6mmPUZIcntAoQe/O6/aT7/yEprwTK2tHGPknLuQ3Jvl3l0gRoYKsR+PKFEL3E5vMsTyBFSWqyX7Wl8ShIvC30a+kDBX9tZHroa9DvQaE0WkBDS4f4oKGwUQOwGiFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2NjuO8i; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754431714; x=1785967714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/aoxjBnanB6z5ZymLaTy2qG1GykI0n2CxoPSGTJMDc4=;
-  b=b2NjuO8iTJIz0Qa11KYK5cBntET/zISaNwW9gGnM4qCOKwKQaFWzjRUZ
-   hlqv+3DlBUvapOVF8iKTD6fONZcj984qRGr6P43l6oWhW0ULbrfWMLayv
-   MRrBaU3zi7UTtOpdD2yYVGNP0DW9Jo0+MMixRGHLK781k/+C16X+goEY0
-   cHdLG2twL40QWhyV0/sMNTI6FllBwtQxUo0KWN2cUMGpcuFaWmzt5JcLI
-   lzPf7ZwXqxZzfp9kBBK7SKgEXqPb+fXDYArw/1K4Iw1MYgwAJJQMNxC6G
-   Jpy4vufPM89a9/u21rben3iuTNjdIMbgUcP5yH+hlnK0AnrsRrQIBotkN
-   Q==;
-X-CSE-ConnectionGUID: 7JyA5hHQQF+77Qe2lZlMPA==
-X-CSE-MsgGUID: IeyhPkPyQQSJhwRlOc8Tqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44334918"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="44334918"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:08:31 -0700
-X-CSE-ConnectionGUID: cvABU6gySmCN+nSbWkFxIg==
-X-CSE-MsgGUID: QOXnb3dlQReNBMfKeCvA3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164139100"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:08:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ujPpG-00000003rhU-3uHR;
-	Wed, 06 Aug 2025 01:08:06 +0300
-Date: Wed, 6 Aug 2025 01:08:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Viresh Kumar <vireshk@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?iso-8859-1?Q?Am=E9lie?= Delaunay <amelie.delaunay@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-actions@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 3/6] dmaengine: qcom: gpi: Accept protocol ID hints
-Message-ID: <aJKAxkXO7csIi5Oi@smile.fi.intel.com>
-References: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
- <20250730-topic-dma_genise_cookie-v1-3-b505c1238f9f@oss.qualcomm.com>
- <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
+	s=arc-20240116; t=1754431733; c=relaxed/simple;
+	bh=C4aF0jhnSDNzgCpC/9MJ35IS2P6qdTHutz5MBfw8VPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p1vu7yONxU7OwbwxNCJ66p1krLPniirzM5TsnrWQ9oYaqUIsDiuFPonXEmq3hmnk6N+YR9aJyzRt+oYRUMoOrFSB5osoMCCoqp3hCHw12NVFeUJi6eLVF1AvaGQ5OKkHDQ1qXaDAktZdUbN0C01+sN+J/PsXpMTrFuJUYSD5rQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L90XrZQf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575I2wOn012472
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 22:08:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NPGNwiXRp88kNPj5T9C7eKWaHt3n1T+xdGhFfZ8qfi8=; b=L90XrZQfg0e/SVV5
+	hnJOKrC93kx5V44KikYr3CH8RJsRDp4v9t6jNOV9v6ig0dEbvn/BQhiIHm6Nuqv5
+	8B/nWVhfNdJHAL7p6iw5uncWCNh25Oo5KdaloshaBt+u52upFL7Fg1M0+NWwIqWs
+	wS6Cdj0usjPaNQdJYeWr7Z/P+f856S2ghV0/OdSAgQ14rtDPGreGLFREZZXmKD3+
+	zTxxDAzBRoixo8InXokNVTnS8l/q+EVa5NM+pMe+s20BZu05Q6i+lVC0KQJLUVA5
+	m98cd/jZUUyRz99QBiVQ1N4OfyqlQBbdiEMOIJVflcUD9kkRsTuWrZYbEtu6866d
+	raJO+w==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw2rk29-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 22:08:49 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fe984fe57so67758245ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 15:08:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754431728; x=1755036528;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPGNwiXRp88kNPj5T9C7eKWaHt3n1T+xdGhFfZ8qfi8=;
+        b=LiGuLvJaYcs7PD5SBc2g8Giunw48izoxKGWkFl/+91S1iXxcufnlL+oYUUV6eoCGmf
+         G5zxXIJ58Ynqq8yiCgsrHaWjdMOlRcH3PpdxAPHTfVfU3RjIrtki0t1Xis3STemH59R9
+         +yjShh1ZLYQqJnLDh2vrxYVESajZvZZ+47ygRKbSjZab4rWHVtoLdZXn4nivIch0rFIE
+         LZdAu/IiBnuQx4h08LwfJXM2O3U7n2aeYtO8sn5oBS35dTDlNK7LKgXfzBdT0z2nVw1A
+         IxByVJjDnh33pgtRyQdsKJv2nbePS/hFJbtvfGMHhwavoW/CsqGNnVz1zvcOga6XfyMs
+         uScQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM2byWL2RrEXfb1oDlBTwPGB+JElP+TCha6xxt0SWHqEb3zMF6Y87Thiu53/yiVmeAQ3ooKC7E2+VR2TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK2pGHVocKnCayr7dNnjheAaX9wCui7B1TeuJVIlJE8rChBcIZ
+	6PLEW1oBxhhicagu7Ytl245qh06JDsvx6UuY1sOZqXqS54FKKPUjXFllJslsSpU7hO1kTxu85Eg
+	FMpFoqK013w65uJrLZnLCCfgFYyhNNtYP5bd6MmNI0Xe8zyUzj//Z3eOZ5cE29Jgaf3jpJZ1wsw
+	U=
+X-Gm-Gg: ASbGncuqeiETnN6P4R9inNVE7O9b/ytVDZuevMF5hp5K2kOeEQZmDT1QUhLALq/atEW
+	I7O3sxcUVm3w+x0Xlr982tKX35/mZwB9JEob4+Q0KkS3J17s/lw1bDyVMciVFEZhSAjM5LGH8Kn
+	qAhJkgw4ZA356bADXP8wjM38ANX8zX7MEtPRHSOtcMjp9XPuvYoKVeGvjNvux6hPPTl7TOJikA0
+	jJYCEuDO8UaiOvK46yxRZMQhT/0o+yZeAdqInXWn+GPdZHzoTmCY+y+AXgeZNciruswSFSoPdWQ
+	kjJ8vhrwWLReVkHtVC3eLcUMugCMlurG+kYUw52WFDIK8BUBgb2n2hFKshAjDPXQIle4tzvTiEq
+	dGdm2Om6l9wV1jZn2sz+I4HhT/nwLSYCJ
+X-Received: by 2002:a17:902:ce83:b0:23d:d2d2:b511 with SMTP id d9443c01a7336-242a0ac1ecfmr3280135ad.19.1754431727855;
+        Tue, 05 Aug 2025 15:08:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0Kul0H2qbAtCnTZWaSV2/tYAXzYWabMFDcnnTPF71+z9fGCHROeCrM/g1vJAXwk5dY+X+Wg==
+X-Received: by 2002:a17:902:ce83:b0:23d:d2d2:b511 with SMTP id d9443c01a7336-242a0ac1ecfmr3279765ad.19.1754431727402;
+        Tue, 05 Aug 2025 15:08:47 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f21c65sm143695185ad.73.2025.08.05.15.08.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 15:08:46 -0700 (PDT)
+Message-ID: <771aef93-df3e-4a9b-b6d9-3a5057f77ddb@oss.qualcomm.com>
+Date: Tue, 5 Aug 2025 15:08:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] agents: add legal requirements and agent attribution
+ guidelines
+To: Sasha Levin <sashal@kernel.org>, corbet@lwn.net, linux-doc@vger.kernel.org,
+        workflows@vger.kernel.org
+Cc: josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-5-sashal@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250727195802.2222764-5-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Vbz3PEp9 c=1 sm=1 tr=0 ts=689280f1 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=e70TP3dOR9hTogukJ0528Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KGwrKJCAF6cQJkUQTlQA:9
+ a=QEXdDO2ut3YA:10 a=mLIokOBbMDMA:10 a=W1xJO3YbG5cA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: bKYHxc74N3W1Mlwc2TQzkQ2iktW3thVi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDE1NyBTYWx0ZWRfX3heUqTWKJjZO
+ eCnFwL3plxB5u6sJq48gXlwGg+zKyyBG6XdPpTCfhGWPF7Q4C6vT0EdoMVqltvtUlP5KCCedKgM
+ eyh+T5ydivmGAubqu10wd6nw4aDbvFo7iy34Kx8mg/EG8aJGeUYGybWlXV4iM09IFRlNUzrS5IO
+ gmx4+LlXLQBAk99vQmLe+K7FWTCbSVMbgcL++WK5Jz3/0GZIU/vW9kJgPebLShMMPKfMmNqAAgF
+ zVcdGJI8vnTh+ik7NjtVZUtaIr5f14NCAusvH/1vAQaQfkxic39dNu2Yf054ouywW77tWeFey1Z
+ 72zu5iKZMBxj0t6ZR6AaBwa9Z82tG5msGigQGexlWlr4gbvS2dA/QEXpM4XDRi7hibGPo4Vj8sb
+ HoVTqe2HOZJeMHhLGundyAT3OiYRhWz8+q65C0VOpR1fITLzT++Twqhd9oOsBQ96Be4avfDW
+X-Proofpoint-GUID: bKYHxc74N3W1Mlwc2TQzkQ2iktW3thVi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=796
+ adultscore=0 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ spamscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508050157
 
-On Wed, Jul 30, 2025 at 01:32:58PM +0200, Geert Uytterhoeven wrote:
-> On Wed, 30 Jul 2025 at 11:35, Konrad Dybcio <konradybcio@kernel.org> wrote:
-
-...
-
-> > +       /* The protocol ID is in the teens range, simply ignore the higher bits */
-> > +       gchan->protocol = (u32)((u64)proto);
+On 7/27/2025 12:58 PM, Sasha Levin wrote:
+> And below is the first test of this scheme:
 > 
-> A single cast "(uintptr_t)" should be sufficient.
-
-FWIW, this means (unsigned long) as Torvalds is quite against uintptr_t in the kernel.
-
-> Casing the pointer to u64 on 32-bit may trigger:
+> Co-developed-by: Claude claude-opus-4-20250514
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  Documentation/agents/index.rst |  3 ++-
+>  Documentation/agents/legal.rst | 42 ++++++++++++++++++++++++++++++++++
+>  Documentation/agents/main.rst  |  5 ++++
+>  3 files changed, 49 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/agents/legal.rst
 > 
->     warning: cast from pointer to integer of different size
-> [-Wpointer-to-int-cast]
-> 
-> >         return dma_get_slave_channel(&gchan->vc.chan);
-> >  }
+> diff --git a/Documentation/agents/index.rst b/Documentation/agents/index.rst
+> index 354af3f025e5..982602db3349 100644
+> --- a/Documentation/agents/index.rst
+> +++ b/Documentation/agents/index.rst
+> @@ -9,4 +9,5 @@ Agents
+>  
+>     main
+>     core
+> -   coding-style
+> \ No newline at end of file
+> +   coding-style
+> +   legal
+> \ No newline at end of file
+> diff --git a/Documentation/agents/legal.rst b/Documentation/agents/legal.rst
+> new file mode 100644
+> index 000000000000..67e6b2cdff9d
+> --- /dev/null
+> +++ b/Documentation/agents/legal.rst
+> @@ -0,0 +1,42 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============================
+> +Legal Requirements for Agents
+> +===============================
+> +
+> +This document outlines critical legal requirements that coding agents must follow when working with the Linux kernel codebase.
+> +
+> +Licensing Requirements
+> +----------------------
+> +
+> +**GPL-2.0 License**
+> +  The Linux kernel is licensed under GPL-2.0 only with a syscall exception. Coding agents MUST follow this licensing rule with no exceptions. Any code contributed must be compatible with this license.
+> +
+> +**SPDX License Identifiers**
+> +  All files must have proper SPDX license identifiers. For most kernel source files, this should be the first line of the file in the appropriate comment format:
+> +
+> +  - For C source/header files: ``// SPDX-License-Identifier: GPL-2.0``
+> +  - For scripts: ``# SPDX-License-Identifier: GPL-2.0``
+> +  - For documentation: ``.. SPDX-License-Identifier: GPL-2.0``
 
--- 
-With Best Regards,
-Andy Shevchenko
+I believe the agent has not processed the following correctly:
+https://www.kernel.org/doc/html/latest/process/license-rules.html
 
+1) C header files use /* SPDX-License-Identifier: <expression> */
+2) Contributions need not be GPL-2.0, "individual files can be provided under
+a dual license, e.g. one of the compatible GPL variants and alternatively
+under a permissive license like BSD, MIT etc."
 
+These two issues jumped out at me...
+
+/jeff
 
