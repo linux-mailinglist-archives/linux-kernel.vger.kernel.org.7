@@ -1,200 +1,163 @@
-Return-Path: <linux-kernel+bounces-756321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF1AB1B2A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:37:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441ECB1B2AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7100F18A0C93
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:38:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 334EC4E2458
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98380259CB9;
-	Tue,  5 Aug 2025 11:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C776E25B2E7;
+	Tue,  5 Aug 2025 11:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wQDNy6KL"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="m3praHCn"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CB5EEC0;
-	Tue,  5 Aug 2025 11:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC451917E3;
+	Tue,  5 Aug 2025 11:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754393857; cv=none; b=RZy6IOMKS2Ta59d4T1hT4GBYWkYKsxN0bZ+/ZpxRn0yT1zCVZ2m2p+ZjHZQWFwyth6laB6Z95TRop66sKd9LGlFFSS6/qyvMZu3YM6IFCLv4LP0PJlqPb6OuynxyekQ20o6HhjUtbImd6igCkUabMzmxDnGFsLXO/vdjr3BdBs0=
+	t=1754394071; cv=none; b=dhpLdAl/GfhWS5Pf8XogKZilzX3XS/CZ9ZhjNMAHswzQW2pkRa0Ndx2zgULHNbz6y0qDeGyl/yHp8KNIZyjsQo8ecipq4hzhkWUMrrOfnVPrkM4WmXFC6m8EU2i+9DY75thm1vC7TFN+uYnyimCjpdPnu/Ndb7XzIzuky22aeNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754393857; c=relaxed/simple;
-	bh=pzknJzdLsQ0UdjwXfakRUzrYvY8rSGUHH5bJks8yJCE=;
+	s=arc-20240116; t=1754394071; c=relaxed/simple;
+	bh=pNsHYAr00WaqEVJYvd9WruoCdVpv2BxDafChToYFmSc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXjOciraCxtDju/sPrLYa9wUGQvxcL91czTSlI4gA+gEwq9QtAGXl+L3suzcdVmzHFrSjTYPTA9TidoUbo5G4wp4pA8rfAXsnV26r4akviV/1zdB/Sinnz+pcEBSu9VYn6eh2ZGa2TJXaC+T1N7vtTa5B3Vb6wMggPDQ1aeFpd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wQDNy6KL; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CF00F664;
-	Tue,  5 Aug 2025 13:36:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754393806;
-	bh=pzknJzdLsQ0UdjwXfakRUzrYvY8rSGUHH5bJks8yJCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wQDNy6KLUkiR3+cp4aRj4/Ic0aLZJOCX1CWxfDlIBj0EKQtkgjhdzeRxrQ16OTgI/
-	 hrnh0HATxPbHq48EkYymZt0RWFd6dnhMDBBKYI5+xLeUeDyRWtxcsnMVw22p4OElh/
-	 DD/gqN+kbtebQsvPsnOVOuj0WtM8ajiy1lWrhAmc=
-Date: Tue, 5 Aug 2025 14:37:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
-Subject: Re: [PATCH v2 8/8] Documentation: add documentation of AMD isp 4
- driver
-Message-ID: <20250805113719.GF24627@pendragon.ideasonboard.com>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-9-Bin.Du@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFLkHpB6YPi3v+IViulgLJpEKUzG+3td7Ql8Z19FuncDgwlhyZktm6VOSdPv4M+drBO3ePbeC1UTdEDncaj8B3sO1wTqiTY/ZRCbujtFDZBzrAIPA0KyDIIma14r3kXzoJNrdsf9hQVVCDqDs+k+xelK38DK2jQRmXB8qAC6jJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=m3praHCn; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bxBMH4rKSz9t6B;
+	Tue,  5 Aug 2025 13:40:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1754394059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NmEnKsY11qSmqnHzHIwJADtWs59gB0JXO/b+GAgtrX8=;
+	b=m3praHCntM/p3xOI6zdjvjnxW8gQopf/zzPO6ndH3fXwgubVWgSr1ZbH5Jw0cV05Yn6xot
+	hrYPn5XEMFYGJUyBqvh75jmM3UHRKvRC6VW55w9fZip21gotUBMJn/Fn5VeLcbiK1ymJUw
+	rL3tZLd/io/ut39fnW3OdGrZT/hFCUaB7UKqzmEqUp3yVKMkg77gxUigEPNcCsFfshY/GK
+	ukvvxjDeQ7F3mfHr/XThHYuhgnaOFbIWu2UwufT5PSxF+GBZWtT0Em9L97u1g/27uTIkx3
+	1oUs5llRqGuFEBkd+5FxH1aU+u3VFKS1Tad9BZvAND99rLhbKUT9vIM0lJVp3g==
+Date: Tue, 5 Aug 2025 13:40:47 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	Ritesh Harjani <ritesh.list@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 3/5] mm: add static huge zero folio
+Message-ID: <dwkcsytrcauf24634bsx6dm2wxofaxxaa4jwsu5xszmtje3gin@7dzzzn6opjor>
+References: <20250804121356.572917-1-kernel@pankajraghav.com>
+ <20250804121356.572917-4-kernel@pankajraghav.com>
+ <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
+ <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
+ <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
+ <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618091959.68293-9-Bin.Du@amd.com>
+In-Reply-To: <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
 
-On Wed, Jun 18, 2025 at 05:19:59PM +0800, Bin Du wrote:
-> Add documentation for AMD isp 4 and describe the main components
+Thanks a lot Lorenzo and David for the feedback and quick iteration on
+the patchset. I really like the number of lines of code has been
+steadily reducing since the first version :)
+
+I will fold the changes in the next series.
+
+<snip>
+> > > @@ -866,9 +866,14 @@ static int __init thp_shrinker_init(void)
+> > >   	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
+> > >   	shrinker_register(huge_zero_folio_shrinker);
+> > > -	deferred_split_shrinker->count_objects = deferred_split_count;
+> > > -	deferred_split_shrinker->scan_objects = deferred_split_scan;
+> > > -	shrinker_register(deferred_split_shrinker);
+> > > +	if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO)) {
+> > > +		if (!get_huge_zero_folio())
+> > > +			pr_warn("Allocating static huge zero folio failed\n");
+> > > +	} else {
+> > > +		deferred_split_shrinker->count_objects = deferred_split_count;
+> > > +		deferred_split_shrinker->scan_objects = deferred_split_scan;
+> > > +		shrinker_register(deferred_split_shrinker);
+> > > +	}
+> > >   	return 0;
+> > >   }
+> > > --
+> > > 2.50.1
+> > > 
+> > > 
+> > > Now, one thing I do not like is that we have "ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO" but
+> > > then have a user-selectable option.
+> > > 
+> > > Should we just get rid of ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO?
+> > 
+
+One of the early feedbacks from Lorenzo was that there might be some
+architectures that has PMD size > 2M might enable this by mistake. So
+the ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO was introduced as an extra
+precaution apart from user selectable CONFIG_STATIC_HUGE_ZERO_FOLIO.
+
+Isn't it better to have an extra knob per-arch to be on the safer side
+or you think it is too excessive?
+
+> > Yeah, though I guess we probably need to make it need CONFIG_MMU if so?
+> > Probably don't want to provide it if it might somehow break things?
 > 
-> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> ---
->  Documentation/admin-guide/media/amdisp4-1.rst | 64 +++++++++++++++++++
->  Documentation/admin-guide/media/amdisp4.dot   |  8 +++
->  MAINTAINERS                                   |  2 +
->  3 files changed, 74 insertions(+)
->  create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
->  create mode 100644 Documentation/admin-guide/media/amdisp4.dot
+> It would still depend on THP, and THP is !MMU. So that should just work.
 > 
-> diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
-> new file mode 100644
-> index 000000000000..417b15af689a
-> --- /dev/null
-> +++ b/Documentation/admin-guide/media/amdisp4-1.rst
-> @@ -0,0 +1,64 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+> We could go one step further and special case in mm_get_huge_zero_folio() +
+> mm_put_huge_zero_folio() on CONFIG_STATIC_HUGE_ZERO_FOLIO.
+> 
+> Something like
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9c38a95e9f091..9b87884e5f299 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -248,6 +248,9 @@ static void put_huge_zero_page(void)
+> 
+>  struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
+>  {
+> +       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
+> +               return huge_zero_folio;
 > +
-> +.. include:: <isonum.txt>
+>         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
+>                 return READ_ONCE(huge_zero_folio);
+> 
+> @@ -262,6 +265,9 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct
+> *mm)
+> 
+>  void mm_put_huge_zero_folio(struct mm_struct *mm)
+>  {
+> +       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
+> +               return huge_zero_folio;
 > +
-> +====================================
-> +AMD Image Signal Processor (amdisp4)
-> +====================================
-> +
-> +Introduction
-> +============
-> +
-> +This file documents the driver for the AMD ISP4 that is part of
-> +AMD Ryzen AI Max 385 SoC.
-> +
-> +The driver is located under drivers/media/platform/amd/isp4 and uses
-> +the Media-Controller API.
-> +
-> +Topology
-> +========
-> +
-> +.. _amdisp4_topology_graph:
-> +
-> +.. kernel-figure:: amdisp4.dot
-> +     :alt:   Diagram of the media pipeline topology
-> +     :align: center
-> +
-> +
-> +
-> +The driver has 1 sub-device:
-> +
-> +- isp: used to resize and process bayer raw frames in to yuv.
-> +
-> +The driver has 1 video device:
-> +
-> +- <capture video device: capture device for retrieving images.
-> +
-> +
-> +  - ISP4 Image Signal Processing Subdevice Node
-> +-----------------------------------------------
-> +
-> +The isp4 is represented as a single V4L2 subdev, the sub-device does not
-> +provide interface to the user space.
-
-Doesn't it ? The driver sets the V4L2_SUBDEV_FL_HAS_DEVNODE flag for the
-subdev, and calls v4l2_device_register_subdev_nodes().
-
-As far as I understand, the camera is exposed by the firmware with a
-webcam-like interface. We need to better understand your plans with this
-driver. If everything is handled by the firmware, why are the sensor and
-subdev exposed to userspace ? Why can't you expose a single video
-capture device, with a media device, and handle everything behind the
-scene ? I assume there may be more features coming later. Please
-document the plan, we can't provide feedback on the architecture
-otherwise.
-
-> The sub-device is connected to one video node
-> +(isp4_capture) with immutable active link. The isp entity is connected
-> +to sensor pad 0 and receives the frames using CSI-2 protocol. The sub-device is
-> +also responsible to configure CSI2-2 receiver.
-> +The sub-device processes bayer raw data from the connected sensor and output
-> +them to different YUV formats. The isp also has scaling capabilities.
-> +
-> +  - isp4_capture - Frames Capture Video Node
-> +--------------------------------------------
-> +
-> +Isp4_capture is a capture device to capture frames to memory.
-> +This entity is the DMA engine that write the frames to memory.
-> +The entity is connected to isp4 sub-device.
-> +
-> +Capturing Video Frames Example
-> +==============================
-> +
-> +.. code-block:: bash
-> +
-> +         # set the links
-
-This seems very under-documented.
-
-> +
-> +         # start streaming:
-> +         v4l2-ctl "-d" "/dev/video0" "--set-fmt-video=width=1920,height=1080,pixelformat=NV12" "--stream-mmap" "--stream-count=10"
-> diff --git a/Documentation/admin-guide/media/amdisp4.dot b/Documentation/admin-guide/media/amdisp4.dot
-> new file mode 100644
-> index 000000000000..a4c2f0cceb30
-> --- /dev/null
-> +++ b/Documentation/admin-guide/media/amdisp4.dot
-> @@ -0,0 +1,8 @@
-> +digraph board {
-> +	rankdir=TB
-> +	n00000001 [label="{{<port0> 0} | amd isp4\n | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n00000001:port1 -> n00000004 [style=bold]
-> +	n00000004 [label="Preview\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-> +	n0000000a [label="{{} | ov05c10 22-0010\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n0000000a:port0 -> n00000001:port0 [style=bold]
-> +}
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 15070afb14b5..e4455bde376f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1113,6 +1113,8 @@ M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  T:	git git://linuxtv.org/media.git
-> +F:	Documentation/admin-guide/media/amdisp4-1.rst
-> +F:	Documentation/admin-guide/media/amdisp4.dot
->  F:	drivers/media/platform/amd/Kconfig
->  F:	drivers/media/platform/amd/Makefile
->  F:	drivers/media/platform/amd/isp4/*
-
--- 
-Regards,
-
-Laurent Pinchart
+>         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
+>                 put_huge_zero_page();
+>  }
+> 
+> 
+--
+Pankaj
 
