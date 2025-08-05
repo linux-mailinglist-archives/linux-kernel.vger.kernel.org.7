@@ -1,311 +1,234 @@
-Return-Path: <linux-kernel+bounces-756547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4EB9B1B5E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87507B1B5DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95EF6188A467
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39AFD160B06
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48373222560;
-	Tue,  5 Aug 2025 13:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2487327602A;
+	Tue,  5 Aug 2025 13:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B441gfQl"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GJs3UrDE"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2F9277003
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402254; cv=none; b=UQ50ioMp9JcmUxFEpAPY/VsgW6Er8c4wqzEWMxXQ1yd0P+9nFCgraavLRx68L3KO5JlHIybBijSpd0SeeZAJf6ltTny5yZbWaUFPfk1bxJ+RPjMdFlkvFPExxJD6lCDJQpA1L4/Act2HaBEvQzbs9zkrR+uavTYXts8uzmcUOeY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402254; c=relaxed/simple;
-	bh=7mZLLojTaTNmZeT9QnUtEiyTdad0TC/+kp78K+eo16A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wz26LreLGyo1cy90Y9f2dEhVRbtV/3nJ5f7vKkyIOmUP39il4Vq8VkT9K5+9CHPckuNPuHOOLI5a/+PZ+f8ZEdgWAz87NY75x0oycJUTY4cjg5bk7bbj1Mgp+CUMcZ3KpBxa0WjTcBRBq3EUlAp/b+TkiyKkxXzeoTfOHAytasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B441gfQl; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55b93104888so4431414e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:57:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754402250; x=1755007050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A8x1ZaMc+KsTk7oJAjVa/yFvyS0e8ToozTSSDn94vgA=;
-        b=B441gfQl95Iz/NSU24EkGozysU7eyb0so7cNQPaT6fBi6bKUCkOdxm3zjLBVlikGon
-         cwY1PBc2muI4txpzQmd2KK/TX2GAJwHFtC3+qRlXWOuBgfuBwuRSrsnqVOvyXqvf69Kh
-         +hBxLnsBYJ6v6PxuVkgCOzN9YEqALfejtCObPKXtIxJNhwEOI6aDXUxbmM7iaDYYwqqt
-         ODmXXC507E4AIPNV/5I892cCReOBc1+zl8WruKaC305nAE8+vIr6u2NHv56/lDm5K5BU
-         oIth1N3nc0uaHM5R2AvEEnSkhgQV6G2ifvUMdX2pmrrxk3Nle2bqu3PWUWqCoGE2rF0d
-         /Z6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754402250; x=1755007050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A8x1ZaMc+KsTk7oJAjVa/yFvyS0e8ToozTSSDn94vgA=;
-        b=DYK9rq6x7b5cKnWTm8EpLRIQbqtLLqvbd4zTs2RxK6sa4MhDOic45kTzhKwLDmouDX
-         oErornrPS8D3CUWNobEAyY/0F/fPflb8uiANbxvvKbI4j75aALspljmRna2qVQ6X98tk
-         23pM02FsqjcXhxmVVBPqZgc+cpGAgeOujZ76DIgRvDaHCZK9MMyjijc1cbNTo9lNKgXJ
-         1XtlZG3unpMY1W0LhzYRJYBb35mHSvQai99FjbGUVpbTx7pB7rxsxipr658Iab6nm2XT
-         r4RsLapEf6Ac11Tf4P6AVWdLYsTcyimaeWH+E7mv3+45cEMfz/9hiyKP8NfDjc6rgEeD
-         UEvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4QKggy8vc7FKJ8epY8fS8uRZXUnpIq9p47XJFi/5sIjDP++rXdNayHGe+bAP3OSfdgm1rWMG0zsvjQvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSUFctfPzSCR7DYggOsrDPRspZzyCRKsIKyuucBYkM9Z+q+LcU
-	2ULnjovfK+I4sOe4i9C5lnPXuel9I4kOhpOZG4cHchDf2YwwXOU9wxnVRItTNAKcRPawZr5hKwF
-	ZpJ73iLTPvPEyVPamxeoFrAYHN7Xv37Jl0A==
-X-Gm-Gg: ASbGnctBNSbyqq8tC2U7llyWP6fRu8iSiPBJ9jFjGe9fqVPVKS9fqLNljlH7wR57+Ed
-	A3u9gLwJQFxFYlEwV48nY2kBetIrjZhIvWrAKwLdNbGAkp2KtVMVtSyIUkUv3bVYTBSgD76feE5
-	33E4xKPDCFozkUhmwGKvNlEx67CgB/Th/kTbhD5GlTx00HRZS14phvdebU2X57hQsz5uyHyhjKK
-	LVGMie0X0ZzjblJeDrlo2UjU+yzR83i0tKqkBzYoe5MXc//9gAGBYeAZY8Umj8=
-X-Google-Smtp-Source: AGHT+IE6hEDmJq97vpjlOL7UQIlkvgomWNXiN58b4EEyHBWTB5an1DnMBan/ZHnhZYH9hPkt/AfkwC6jtltvzzDUwIo=
-X-Received: by 2002:a05:6512:31c8:b0:55b:81c4:5f22 with SMTP id
- 2adb3069b0e04-55b97b7b1ffmr3758549e87.47.1754402249525; Tue, 05 Aug 2025
- 06:57:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F33272E5E;
+	Tue,  5 Aug 2025 13:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754402365; cv=fail; b=iS/3stKf/7Dg0/ishr9ZbZYcPfvGjatv3BVKfqXY+XTsrXQ4EXv0kHBy8uLfLtxongGJIH5tXtSIkKj/scp5DtwAjB5zp0XoVhKhv6ON8AL/do066MhGNiMfRQCuMrWrYnoTOFseVOTNel9QpRflv2LwXRcGTc6jJsPAND1Hnwc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754402365; c=relaxed/simple;
+	bh=ndQxu3zFGnxwmoHY6z9QnQceJyQXdJRKQXE8wqzfKYA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FXBxXtQgp3GBAocxUHfDidxaavTXHkRjq4u8UV8dorj0gbjOkhY4J3gGlDAE5eLM9kcLmCwB66rqSTd8v9jnoi67IMSP25kuNQdvtw6etcvVRkfPB9wSzmDuiFWGwXEjGgyK+uVwa1tNfkCRI9BEd+K0RnmdDzpZvqXF4Idl+bY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GJs3UrDE; arc=fail smtp.client-ip=40.107.220.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xw13G5G4eKQzBuAZ+SXGIZkVsrURbvMQ5eQG4p6LonU2GnxFyaFsGPey+m9TlIXXouFf8NldWByDZzCaLXtYhMdH1zzW/Nycm0NAsnlxDaNCv86DikImxhdPTi4HJf3yn1AABfz/XVnYKxez0FJTjKTI+d3+ej1uzy1jNqDvEIX1HeDqklwS23es9qR1K7T+6+DA3Q6S8BOcLKrjf1tNJWkr5VXHRUxYECok8cEsxRAq38eRdkSFWavkqfO1ncsalPg28h+7ffLvy4jVfcdjTDPXPGSoEQ0YFXbdaK6uX9V0Kz19IOg1xiPO6SOwBBQU7f+/KxCVhotRBbnbXVl/VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IMXWY2W7bTG0sP9P8Xs8zKLgvw7gVdjVlpdn2vPX/Fk=;
+ b=cxDqhhuzq8isg2YtBZMkQShZJyi3tLJcpaikss9n1efv16uHnn+IWpqMEJbL+CEE9N0KUYmvHaTH2twg67eCWBe5GN+7zQXukKXEqRCcxQCWRyhMbxHghourjkvxiJaLuh4zUQpdLCrC9+YHyN2pohc0g6hjWvt5cr9E8f3+gQRjGeYlISQB6lsyFcf2DR8BCXMblwZjvGDG/U+7Eng8siM7gb8tjQ0JixuwVQ1cBXZOzuTRj765M1CfXoEl+VfkYD7NzLqnyDpN9vGnoF7YcL6T6D4hqhrN2SzeJSor4pqCPVgzxj4pn0Q0yuEITsyMXaJrcsW+dPNyQPa0n28N2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IMXWY2W7bTG0sP9P8Xs8zKLgvw7gVdjVlpdn2vPX/Fk=;
+ b=GJs3UrDEak1PAtXguYpy+HrdFkMbmW1ux7YKaS4Zfl7DuRQPonlX7teM8TzBvnge3y35zHhsIyQUZPhvwJdMP19GOXeBXMeftJVIhjeezx8uajFMvcmMSmSaZ7bF5ao7bJPjwXfoR3cQttRpVLOUP42bo9pLsBVHyFzoliPkwAw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ BY5PR12MB4178.namprd12.prod.outlook.com (2603:10b6:a03:20e::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.13; Tue, 5 Aug 2025 13:59:20 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%5]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 13:59:19 +0000
+Message-ID: <912536fc-15d4-4a57-91b5-ec902a93e2f4@amd.com>
+Date: Tue, 5 Aug 2025 19:29:08 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V5 2/4] Drivers: hv: Allow vmbus message synic
+ interrupt injected from Hyper-V
+To: Tianyu Lan <ltykernel@gmail.com>, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de,
+ kvijayab@amd.com
+Cc: Tianyu Lan <tiala@microsoft.com>, linux-arch@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Kelley <mhklinux@outlook.com>
+References: <20250804180525.32658-1-ltykernel@gmail.com>
+ <20250804180525.32658-3-ltykernel@gmail.com>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250804180525.32658-3-ltykernel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0115.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::19) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804115533.14186-1-pranav.tyagi03@gmail.com> <871ppqgoz0.ffs@tglx>
-In-Reply-To: <871ppqgoz0.ffs@tglx>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Tue, 5 Aug 2025 19:27:17 +0530
-X-Gm-Features: Ac12FXzUzyRhwEIq9Mhys6GbNbXUuuGnNJZmpU_M14C8D3LU-CT0y5PbmBOLJJQ
-Message-ID: <CAH4c4j+1dG3523MGL5qdV2dC8OkqGN7QOn00HR0nuwQBaAz8iw@mail.gmail.com>
-Subject: Re: [PATCH v2] futex: don't leak robust_list pointer on exec race
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, 
-	dave@stgolabs.net, andrealmeid@igalia.com, linux-kernel@vger.kernel.org, 
-	jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|BY5PR12MB4178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94e5f60c-da5f-4ed1-819a-08ddd42845b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aWlweElhTWpvWlVhbnJ3T3dGSjNjWm5jV3pzOTFJQmV1S004NDVlTExRMG8y?=
+ =?utf-8?B?eDBBelRMTXRzRWVxWm4xN2tyRk5kREVST3RJQ3lvMGxDOHhyMmNDRlRsUUZ2?=
+ =?utf-8?B?TktwUXI3RUFUWkdvRU1yR3NCVTNPMjhuSWlUWXpyajNSWk1sdHVORVNCUXhL?=
+ =?utf-8?B?ckFtdU9mTnR1UFFZZ1hSMnU1b2Y1SG44Qjk4S3B1QWt0QmRsRFR4YmJIV0Y4?=
+ =?utf-8?B?VnJZNGFnU2V1L3FRYXRRRkJqaEcycms2eFVBTnRydTliMnFzb01zU016Q3VB?=
+ =?utf-8?B?WWl6V08wM25GU3dYdHhmOHVwQUtkeGZjNjFPK1FLQU1lTE9pbjJQRnRuekdQ?=
+ =?utf-8?B?dnlRN1VTMm5yZ1BVQlMzTmtBMWRQaCtiaEwreDVtUTNZZGxpc1FpdzM5bnUw?=
+ =?utf-8?B?dm1DOXlhV01RYkJNLzcrd2VqR0xQU2NHVEx1WDdEVExLckdzYUxjU2FpWlls?=
+ =?utf-8?B?Y2dJbVdEUDJTVDZTVEd6V3JoODhGK2Mra0l0QnQrVjlDc0xZWkRHQ1ZYVWhW?=
+ =?utf-8?B?NlhneXBEVkRGRFdJMmxOMWdHU1pSdzQzVTN5NVZzTUlIYllXSzdZTHB4OHRv?=
+ =?utf-8?B?U3E0a01ZOUtUWnBOeVRaTWhXQXpSTlNWOHlVQTJjeExsSEdJOE5lVXk2RTdh?=
+ =?utf-8?B?WDEvbkZHc3NHeGhXQjJ1YWR4MmtYbmZiYUhBRVFBMVp5Yi9YNjMzNHJ5YzFm?=
+ =?utf-8?B?Qjd0cnFpN09VdWw4bVpuRVlLRmdYY3ZXSFZ1ZVhKeHZhNFI2VS9jaWk4T1NZ?=
+ =?utf-8?B?VnU5U3VTb2hJazZQSU9Wby9YVDhBSTNuTTlqVTFMU3BhSkVpVld6YkF3SjdO?=
+ =?utf-8?B?K3puQWExRjJNVW5OVGxLNElWV1FDWmw2MXNPYzFRUWJlSHpLTGxvQ2htTW83?=
+ =?utf-8?B?akZGMVBGcFlCRHBMbFUrdFNSYUNqVlZVYytuM1YxNFRUTGRTRjVtZk93cUhp?=
+ =?utf-8?B?YmhXVGs2MjQ3L3FzOTJaQ3psbXJXMktxaFZhdVRCWlhpSlFsY2VxS2w4V1oz?=
+ =?utf-8?B?RG1ycGlzRCtWSXNrcWJiZE9jbW83SXdUZ2poTy9oSE03b1IweVhDbWNMY3h6?=
+ =?utf-8?B?TnJRWG5nVjJYdzZNTXlNVmhsZzBFdmZiLy9UcVJ6bWZ6R29IWjFWTVRQMGVC?=
+ =?utf-8?B?OHNTRVZ5Y2xEMDRJWk1LY3B1VFVxUmxzSHY3b3VlRTFNRVFDcVlXTkRzM210?=
+ =?utf-8?B?Zlo1WjhteGxwanZPMXFjcWZvdE1tWXI2RjY2WFcwSDljai9VYTVQN1lQcFVo?=
+ =?utf-8?B?S3BtYlNOaldua1V5bWc0ZktRSGRDK0l1d1lnenBDS0MyNEpUOW9GMEZqMUF5?=
+ =?utf-8?B?d0NDSlZ2THZ2VEdrS3JpRzljVU1TM1hRWjdnZ1ZKQVZCZHg3SjIyRDFjNWs2?=
+ =?utf-8?B?Qk9hcE5pZVFCSXlIdVZ4bmxXTFFoWSs0WndWYlliTjVlcndHZjhWWmxINmhs?=
+ =?utf-8?B?SnJqZkhiOXV4bFJRVUVuNHcwTVZGazB1RnJ2NElhajVUaTgxZWZnZmZoOW4y?=
+ =?utf-8?B?WDRTNlF1YUhIZE9weWpNOHJCWnk5SzNTRHd6bnRoenJnTUgrdUYrY25iNFha?=
+ =?utf-8?B?cVRxdzZNNldJYjBxdSt6bWVXYUprUE9xWWg1SFJrKzlmNWVOQnkzNFdsWkdr?=
+ =?utf-8?B?QXVJYmE5TjhSNVY1TFhmMkFjYTk2R05mQnFIVFFrODVDZ2JUN3JMTWVMMWVT?=
+ =?utf-8?B?b0I2YmNBd2lNV0VibE9qVWVGWTZ6WWxiMlJlNHBBcDc5UzRzbUtza04wbVZv?=
+ =?utf-8?B?bXI5QzRQbmQ1eWd4bHpLVmZQRzNDZVhIVmtRNjFzdkt0eXplK3NFdHVCYUJO?=
+ =?utf-8?B?OGNXZEVRa1d2UjlPVzRJenNuZHRRNGhqNkZxdEZZRnp0RzhXSExja053MVN6?=
+ =?utf-8?B?TEh1VUw1YTZlaTJnaFBlaUsrQUNrUGV4SkxlcDg2WWZFcVBmN3FZNzVOQkxE?=
+ =?utf-8?Q?NDACjNXGbKb2GOPob98a5msT7cJu0yW8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WFZWMWFucFNFSjdaOEFXb1IwYkd6MHM4d1ZEUlNxRjg5bk0yNFFleEYvY3Vp?=
+ =?utf-8?B?QVlINjJTSG5zaU9uNHFoN2kxMGs5dVhxeCtyYWQ4Q29SZko2M2pzM1pBbE9w?=
+ =?utf-8?B?N1dSais1VGE5ZDh1SWYrRXQvNldlUDlPeVh6c3dBVmcyTVBEMnFqdzNFSmxT?=
+ =?utf-8?B?eWJuNXV2cXVrNVVIMUwwOXZ0M1BBdisxcXNEWDRuOEhwMGF0S3laaXcxcWVO?=
+ =?utf-8?B?TGpPWjRobmNTSHhoU2FJTmRpbzY2WUs5SmMzVkxnTk9ZYTF3UUhwZVZEU1cr?=
+ =?utf-8?B?eU84eS9keG0wbVpmNWhYS24yTlFzWVJBVloxRldKSlRKRGxJcWtpeEJMNTJD?=
+ =?utf-8?B?ZEpka09Xbm54aTlvUXlrUmtPYU55ZGFPaEFmNnNwZ3V3UzZMVkcxbHc1cVB6?=
+ =?utf-8?B?QTRkajI0WkhCWlhOTW9tTW83NlFnOXZCT29XT21iaEhBbUdmdklyanNub1Ar?=
+ =?utf-8?B?VzNFT1IvRjIxSGwwaFcvaG1JM1RoOWUxU1d3MTFJNERLakdORVYydEUwbVd1?=
+ =?utf-8?B?TmU3RENpcnM5T2U2V2pibTRabnd2Mm05b20yVVROaDNtL2NvdGE5YWhqSk9W?=
+ =?utf-8?B?ZVB6b1JhT0NXQk5JVktVRUl4Rm51Z3hiVmhxdjhOaVRjVmpFU3dLY1JKVXll?=
+ =?utf-8?B?R0pscUdmeTliQUc5cTJqbisrYW0yb1IvUC93UGFQc3BockUvS3QrdUp2cDVZ?=
+ =?utf-8?B?UE82MTQ3NVN1UHdNTVFBTmFMUXd3Sk1DdjI0cUdjeHZRMXRyeWt5dm9wL3oy?=
+ =?utf-8?B?cDc5cStEdlVicG9SWmh5N0c4NlMwZTdMcTdXRE8vL0NSTEtkNWczUlVVaHpl?=
+ =?utf-8?B?Ry9FaU11eVI0TE1rSlhnZUp0TlpKZnNpWUk2cXhzSVREbWplRjE5eVM0YnZB?=
+ =?utf-8?B?VE4yc0N2cVZ3bmNTKzgxZ3FhRzNNRlZNTHcxTmlEVDFwYUwwUWhmV1h1Y1pK?=
+ =?utf-8?B?VUN2ejg3OUdNaG1zb3NIRDc0TDZLUXZKc25ZT3JvK055a0ZjcWc3a3ZKRHp6?=
+ =?utf-8?B?YUd3d3cweDdXZW5JZjR0eGQ5SUV6SHpUcWcrYzVMTGNRanZlVWhMcFkzTWYz?=
+ =?utf-8?B?a08wMXBUcWs0QlFpK1VpOTRoRU1qa0tPaC9idmluejlLTjUzejRLY0ZRV2Nx?=
+ =?utf-8?B?ZEhvTklLOWZQSzdpd0szTm9qUndHaDU0Y0Y3akpVcXZPRWZ5NzJvRzBnMG1a?=
+ =?utf-8?B?L3pUQVp2MHVDMFRBU0wvS3VYbklJWG9HRm50bVVXRTFXY0ZCR00rZTdUYnBh?=
+ =?utf-8?B?UGpoVzhvZTRBSG44OEJnNnJmUVdHNDBnTUJBbXBsanQ5ZlBDUFNwTTFUUXdj?=
+ =?utf-8?B?dFRGS3hxNXJNaTlybzZoZGdvVGRJMGR0T0h3b0t4LzZYV1R6NmkxY3hKQUlL?=
+ =?utf-8?B?NzRQQVlOS3B5MHRNZXdwdyttQUh4VFcwN3k4Tm5hbHlhZHFidVBWWHVCV2lw?=
+ =?utf-8?B?d2xISHNHRFZBdG5LWTl6WmVIZHA4Rm9aWGhmMTZHWXVtczV2djhVTllOeTJl?=
+ =?utf-8?B?VUhRNVJkTFh2U1NqYnVMeDVQbTBDYkR4a0hWS3ZxdEN5eGw2RXVJZldWNnBM?=
+ =?utf-8?B?RThEcUZoc3hTUElFZ3ZlY0svZ2UzbWdCSnpHMlQ4eVhYZDVxNmk3YXJuZ2Mr?=
+ =?utf-8?B?ZytyQjJxZDdGdHQwSVZjbHZOa1A5ajcrdGNIcURjK2xpL0poMGJtMWsxd0NZ?=
+ =?utf-8?B?VTQwMlZQb29DbnZXZHp2MUZaL2orQUdSdGF4cTlqTU5wMTVETnJQbk50N3Bk?=
+ =?utf-8?B?WFJvYUNOOUN3RHFHUlFoRk02L2N1TzEwdmlaanQ3K1VLOVI4SnNKQmlvMDZi?=
+ =?utf-8?B?RkJhTkRrSWpVNS8vakJrRXZEMGMxRTdaNWx0aGxrdFNENGR6TFlMMzQzakJR?=
+ =?utf-8?B?bFZwYzdObExsbWxCa2huWDFaZ2VxUjh3M1EyZ0ZBTmdxczVPdFpCRGJ1RVUz?=
+ =?utf-8?B?aVRDOTN0dnNtRUcwcmg2bExoU2NyZHRjcHU4cGVOTkQ4YnBFdkYvaXAvbSt0?=
+ =?utf-8?B?TW5HTThIaURRM1ZQMVFuK1NudFNMR2hJVHU5ZUFrbk8xL251ejlFbFVzSTVt?=
+ =?utf-8?B?UEJodkVYMkhtS0htMnUrK3REdGROSmRMNFJueW9DdUNaSkJibkFzQmJrV0V1?=
+ =?utf-8?Q?VBRCr3Atdl9Q+m/l74vQTLGP0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94e5f60c-da5f-4ed1-819a-08ddd42845b7
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 13:59:19.1974
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ci76l1iaFvWoqGdPkDQEl+5cNzHXzQMI6fJq7sYLhhi/jXS+R1+qR42C9vTaTwEeEA0f2F/8Ubvn6vy/iSu54A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4178
 
-On Tue, Aug 5, 2025 at 1:49=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Mon, Aug 04 2025 at 17:25, Pranav Tyagi wrote:
-> > Take a read lock on signal->exec_update_lock prior to invoking
-> > ptrace_may_access() and accessing the robust_list/compat_robust_list.
-> > This ensures that the target task's exec state remains stable during th=
-e
-> > check, allowing for consistent and synchronized validation of
-> > credentials.
-> >
-> > changed in v2:
-> > - improved changelog
-> > - helper function for common part of the compat and native syscalls
->
-> Please put version log below the --- line. That's not part of the change =
-log.
->
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > Suggested-by: Jann Horn <jann@thejh.net>
-> > Link: https://lore.kernel.org/linux-fsdevel/1477863998-3298-5-git-send-=
-email-jann@thejh.net/
-> > Link: https://github.com/KSPP/linux/issues/119
-> > ---
-> >  kernel/futex/syscalls.c | 110 ++++++++++++++++++++++------------------
-> >  1 file changed, 62 insertions(+), 48 deletions(-)
-> >
-> > diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
-> > index 4b6da9116aa6..3278d91d95ce 100644
-> > --- a/kernel/futex/syscalls.c
-> > +++ b/kernel/futex/syscalls.c
-> > @@ -39,46 +39,81 @@ SYSCALL_DEFINE2(set_robust_list, struct robust_list=
-_head __user *, head,
-> >       return 0;
-> >  }
-> >
-> > -/**
-> > - * sys_get_robust_list() - Get the robust-futex list head of a task
-> > - * @pid:     pid of the process [zero for current task]
-> > - * @head_ptr:        pointer to a list-head pointer, the kernel fills =
-it in
-> > - * @len_ptr: pointer to a length field, the kernel fills in the header=
- size
-> > - */
-> > -SYSCALL_DEFINE3(get_robust_list, int, pid,
-> > -             struct robust_list_head __user * __user *, head_ptr,
-> > -             size_t __user *, len_ptr)
-> > +static void __user *get_robust_list_common(int pid,
-> > +             bool compat)
->
-> What is this random line break for?
->
-> >  {
-> > -     struct robust_list_head __user *head;
-> > +     void __user *head;
-> >       unsigned long ret;
-> > -     struct task_struct *p;
-> >
->
-> Stray new line and please use reverse fir tree ordering of variables:
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variab=
-le-declarations
->
-> > -     rcu_read_lock();
-> > +     struct task_struct *p;
-> >
-> > -     ret =3D -ESRCH;
-> > -     if (!pid)
-> > +     if (!pid) {
-> >               p =3D current;
-> > -     else {
-> > +             get_task_struct(p);
-> > +     } else {
-> > +             rcu_read_lock();
-> >               p =3D find_task_by_vpid(pid);
-> > +             /*
-> > +              * pin the task to permit dropping the RCU read lock befo=
-re
-> > +              * acquiring the semaphore
-> > +              */
-> > +             if (p)
-> > +                     get_task_struct(p);
-> > +             rcu_read_unlock();
-> >               if (!p)
-> > -                     goto err_unlock;
-> > +                     return ERR_PTR(-ESRCH);
->
->                 scoped_guard(rcu) {
->                      p =3D find_task_by_vpid(pid);
->                      if (!p)
->                         return (void __user *)ERR_PTR(-ESRCH);
->                      get_task_struct(p);
->                 }
->
-> No need for a comment about pinning the task. This is obvious and a
-> common pattern all over the place. And note the type case on the error
-> return.
->
-> But you can simplify this whole thing even further:
->
->         struct task_struct *p =3D current;
->
->         scoped_guard(rcu) {
->                 if (pid) {
->                      p =3D find_task_by_vpid(pid);
->                      if (!p)
->                         return (void __user *)ERR_PTR(-ESRCH);
->                 }
->                 get_task_struct(p);
->         }
->
-> Yes, RCU is not required for the !pid case, but this is not a hot path.
->
-> >
-> > +     /*
-> > +      * Hold exec_update_lock to serialize with concurrent exec()
-> > +      * so ptrace_may_access() is checked against stable credentials
-> > +      */
-> > +
->
-> Stray newline.
->
-> > +     ret =3D down_read_killable(&p->signal->exec_update_lock);
-> > +     if (ret)
-> > +             goto err_put;
-> > +
-> >       ret =3D -EPERM;
-> >       if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
-> >               goto err_unlock;
-> >
-> > -     head =3D p->robust_list;
-> > -     rcu_read_unlock();
-> > +     if (compat)
-> > +             head =3D p->compat_robust_list;
-> > +     else
-> > +             head =3D p->robust_list;
->
-> Brain compiler complains about a build fail with CONFIG_COMPAT=3Dn
->
-> static inline void __user *task_robust_list(struct task_struct *p, bool c=
-ompat)
-> {
-> #ifdef COMPAT
->         if (compat)
->                 return p->compat_robust_list;
-> #endif
->         return p->robust_list;
-> }
->
-> So you don't have the #ifdef ugly in this function..
->
-> > -     if (put_user(sizeof(*head), len_ptr))
-> > -             return -EFAULT;
-> > -     return put_user(head, head_ptr);
-> > +     up_read(&p->signal->exec_update_lock);
-> > +     put_task_struct(p);
-> > +
-> > +     return head;
-> >
-> >  err_unlock:
-> > -     rcu_read_unlock();
-> > +     up_read(&p->signal->exec_update_lock);
-> > +err_put:
-> > +     put_task_struct(p);
-> > +     return ERR_PTR(ret);
-> > +}
-> >
-> > -     return ret;
-> > +
-> > +/**
-> > + * sys_get_robust_list() - Get the robust-futex list head of a task
-> > + * @pid:     pid of the process [zero for current task]
-> > + * @head_ptr:        pointer to a list-head pointer, the kernel fills =
-it in
-> > + * @len_ptr: pointer to a length field, the kernel fills in the header=
- size
-> > + */
-> > +SYSCALL_DEFINE3(get_robust_list, int, pid,
-> > +             struct robust_list_head __user * __user *, head_ptr,
-> > +             size_t __user *, len_ptr)
-> > +{
-> > +     struct robust_list_head __user *head =3D
-> > +             get_robust_list_common(pid, false);
->
-> No line break required.
->
-> > +     if (IS_ERR(head))
-> > +             return PTR_ERR(head);
-> > +
-> > +     if (put_user(sizeof(*head), len_ptr))
-> > +             return -EFAULT;
-> > +     return put_user(head, head_ptr);
-> >  }
-> >
-> >  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
-> > @@ -455,36 +490,15 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
-> >                       compat_uptr_t __user *, head_ptr,
-> >                       compat_size_t __user *, len_ptr)
-> >  {
-> > -     struct compat_robust_list_head __user *head;
-> > -     unsigned long ret;
-> > -     struct task_struct *p;
-> > +     struct compat_robust_list_head __user *head =3D
-> > +             get_robust_list_common(pid, true);
->
-> Ditto
->
-> Thanks,
->
->         tglx
 
-Hi,
 
-Thanks for pointing out the shortcomings in my patch. I will
-resend a v3 for the same shortly.
+On 8/4/2025 11:35 PM, Tianyu Lan wrote:
+> From: Tianyu Lan <tiala@microsoft.com>
+> 
 
-Regards
-Pranav Tyagi
+...
+
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index 308c8f279df8..2ff433cb5cc2 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -314,8 +314,11 @@ void hv_synic_enable_regs(unsigned int cpu)
+>  	shared_sint.vector = vmbus_interrupt;
+>  	shared_sint.masked = false;
+>  	shared_sint.auto_eoi = hv_recommend_using_aeoi();
+> +
+
+Nit: extra newline.
+
+>  	hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
+>  
+> +	hv_enable_coco_interrupt(cpu, vmbus_interrupt, true);
+> +
+>  	/* Enable the global synic bit */
+>  	sctrl.as_uint64 = hv_get_msr(HV_MSR_SCONTROL);
+>  	sctrl.enable = 1;
+> @@ -342,7 +345,6 @@ void hv_synic_disable_regs(unsigned int cpu)
+>  	union hv_synic_scontrol sctrl;
+>  
+>  	shared_sint.as_uint64 = hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT);
+> -
+
+Nit: extra newline.
+
+
+>  	shared_sint.masked = 1;
+>  
+>  	/* Need to correctly cleanup in the case of SMP!!! */
+> @@ -350,6 +352,9 @@ void hv_synic_disable_regs(unsigned int cpu)
+>  	hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
+>  
+>  	simp.as_uint64 = hv_get_msr(HV_MSR_SIMP);
+> +
+> +	hv_enable_coco_interrupt(cpu, vmbus_interrupt, false);
+> +
+
+Nit: Maybe this should be above "simp.as_uint64 = hv_get_msr(HV_MSR_SIMP)" ?
+
+Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+
+
+- Neeraj
+
+
 
