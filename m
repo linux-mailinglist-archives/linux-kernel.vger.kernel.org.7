@@ -1,131 +1,161 @@
-Return-Path: <linux-kernel+bounces-756057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D70B1AF51
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C2CB1AFD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BD43AF998
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA1F189FE41
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3D323ABB2;
-	Tue,  5 Aug 2025 07:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RNPy6bg+"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59057238179
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF84525A2D1;
+	Tue,  5 Aug 2025 07:50:47 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83F9230997;
+	Tue,  5 Aug 2025 07:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754378774; cv=none; b=hXsBsCAmL9iiQQa3ZfhIetYBD8sZSA8f75qGpcNYaqKECszVFzcDdtT/riKCIq14yX4k26NPMTY0nXSGMBzjCk8q7Cx6J8CrUW7tZIzWDoNGqjelr/1WxeYCuPfdszn67oKLbXblyRfLMo5SoiGF+kVNEFY3xdmx5PZREmFq3YQ=
+	t=1754380247; cv=none; b=sjAKZvblyUxt1tdWEgd6TENDM9u2VjaPLD+6LuiAg3uNJfZ6hLzFYeFoxwvLI0rZsORl96SwexKIYWo2HEUBxl0w8tQ/0vUCDBUCysTwOfJMGmVU0gbdbiKUNdyiZyZTf0ZWWjjwv1X1seyL5DURYhqFW9fJ1z4fOkJrDSfKLNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754378774; c=relaxed/simple;
-	bh=fPHmNA5iNHVa4JmNaWVOI3ppu9LKnt/GbELSlZzLwg0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=WVH/vnIhwm/C6LwqVHpcPaSC1u+fG7NDTGaHzTSkroNX2FCdX5euBM8ZGWWpZqSVkCTh+UioJbr7fh/Y2NcH1siVnrj4sMZw83ueorfSqPkklExJMWGVpHyVUJro8wRevSvfuphVTbwjKlIaGPSmkRSnKT41SuDkI/MMg0UskEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RNPy6bg+; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250805072610epoutp015eed92bb60fe4122f4f9352d4d839b2f~YzjJV_fUv2524125241epoutp01_
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:26:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250805072610epoutp015eed92bb60fe4122f4f9352d4d839b2f~YzjJV_fUv2524125241epoutp01_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754378770;
-	bh=8vtyMqN7BBl94yLtrpE133kapPVMyCygmknIpKLTZQ8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=RNPy6bg+Fs/jsy4qN/qnWzqrncRwoQ4eTk7b9NqY6hEG3TZajeRK9RlVsltmHRn/o
-	 kntzv3/pogUM/z1sQRyPmKrf72DRgrfpO9UpPaD0XHnoatH+0SK+PP0r5jcMgXYE3U
-	 vEZeg1dhFWJ+nKtrk6UnkQHH/oow8fvuSrGsh+cs=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250805072609epcas2p3d840144f6c0c778395d6483e25a7c47d~YzjI2Lt0X2580225802epcas2p3R;
-	Tue,  5 Aug 2025 07:26:09 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bx4jF23Txz6B9mQ; Tue,  5 Aug
-	2025 07:26:09 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250805072608epcas2p4afbd5db258530d696c80e4007749953d~YzjHnrh3Z2393223932epcas2p4q;
-	Tue,  5 Aug 2025 07:26:08 +0000 (GMT)
-Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250805072608epsmtip13df80963802621da648f1f1b2ba181f8~YzjHjiOlZ1882618826epsmtip1i;
-	Tue,  5 Aug 2025 07:26:08 +0000 (GMT)
-From: <sw617.shin@samsung.com>
-To: "'Sam Protsenko'" <semen.protsenko@linaro.org>, "'Guenter Roeck'"
-	<linux@roeck-us.net>
-Cc: <krzk@kernel.org>, <alim.akhtar@samsung.com>, <wim@linux-watchdog.org>,
-	<khwan.seo@samsung.com>, <dongil01.park@samsung.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
-Subject: RE: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-Date: Tue, 5 Aug 2025 16:26:08 +0900
-Message-ID: <008501dc05da$36362600$a2a27200$@samsung.com>
+	s=arc-20240116; t=1754380247; c=relaxed/simple;
+	bh=dcGXUt1lw3wXKBYwR4j+dEXdRhfuJ+Bo6i6A0db1rlo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QHT7XkB+MRLvpLUD9AYC4bEev4Th0/rNhLiuD9/0KZqCWZ1dKtMWJRZSvCDDrI3YQyQJeG/BbMRx14Nsy+bTN2l6y0/2B1t5hWTsTHWOg6zcI6S4mibwuQBAr7DJTIFgZ1sa59pgmn7JMJtvsh9ZjpdlNcjGyMGUOeDfR0KtNT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bx4mh5xdKz9snj;
+	Tue,  5 Aug 2025 09:29:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 223RPuL6PMvc; Tue,  5 Aug 2025 09:29:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bx4mh57Wpz9slR;
+	Tue,  5 Aug 2025 09:29:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A64AA8B765;
+	Tue,  5 Aug 2025 09:29:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 9rErELeUWBy6; Tue,  5 Aug 2025 09:29:08 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A2B08B763;
+	Tue,  5 Aug 2025 09:29:07 +0200 (CEST)
+Message-ID: <bc6ef2d1-da06-4b29-a0ec-67549074bc0b@csgroup.eu>
+Date: Tue, 5 Aug 2025 09:29:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH0xghtQJzMk6eIf2JQ+3VnAplQzQKQWbtpAWsaNKYBwwrfwwEQ7YR8A5N0zr4BpLWR/LPB5rkg
-Content-Language: ko
-X-CMS-MailID: 20250805072608epcas2p4afbd5db258530d696c80e4007749953d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250724081336epcas2p38e95932ddc5c702e05a6436f05582993
-References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
-	<20250724080854.3866566-1-sw617.shin@samsung.com>
-	<20250724080854.3866566-3-sw617.shin@samsung.com>
-	<CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
-	<000a01dc05c0$9f0ab110$dd201330$@samsung.com>
-	<18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
-	<CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bpf-next 3/6] bpf,powerpc: Implement bpf_addr_space_cast
+ instruction
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
+ andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, naveen@kernel.org,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+ memxor@gmail.com, iii@linux.ibm.com, shuah@kernel.org
+References: <20250805062747.3479221-1-skb99@linux.ibm.com>
+ <20250805062747.3479221-4-skb99@linux.ibm.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250805062747.3479221-4-skb99@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, August 5, 2025 at 2:03 PM Sam Protsenko <semen.protsenko=40lina=
-ro.org> wrote:
 
->=20
-> > > +       u64 t_max =3D n_max / freq;
-> > >
-> >
-> > Make sure this compiles on 32-bit builds.
-> >
->=20
-> Can you please elaborate what might be the possible problem -- just
-> curious? I admit I never though about 32-bit case when writing that code,
-> but don't see any immediate issues with that too.
->=20
 
-In my opinion, it seems that Gunter Reck's explanation is correct.
-I've found out that the error of =22undefined reference to '__aeabi_uldivmo=
-d'=22 may occur when compiling new code on a 32-bit architecture.
-If you don't mind, I would like to proceed with maintaining the previous re=
-vision below.
-=46rom my perspective, this approach appears to be the most reasonable solu=
-tion for supporting both 32-bit and 64-bit architectures.
+Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
+> LLVM generates bpf_addr_space_cast instruction while translating
+> pointers between native (zero) address space and
+> __attribute__((address_space(N))). The addr_space=0 is reserved as
+> bpf_arena address space.
+> 
+> rY = addr_space_cast(rX, 0, 1) is processed by the verifier and
+> converted to normal 32-bit move: wX = wY.
+> 
+> rY = addr_space_cast(rX, 1, 0) : used to convert a bpf arena pointer to
+> a pointer in the userspace vma. This has to be converted by the JIT.
+> 
+> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+> ---
+>   arch/powerpc/net/bpf_jit.h        |  1 +
+>   arch/powerpc/net/bpf_jit_comp.c   |  6 ++++++
+>   arch/powerpc/net/bpf_jit_comp64.c | 11 +++++++++++
+>   3 files changed, 18 insertions(+)
+> 
+> diff --git a/arch/powerpc/net/bpf_jit.h b/arch/powerpc/net/bpf_jit.h
+> index 2d095a873305..748e30e8b5b4 100644
+> --- a/arch/powerpc/net/bpf_jit.h
+> +++ b/arch/powerpc/net/bpf_jit.h
+> @@ -165,6 +165,7 @@ struct codegen_context {
+>   	unsigned int exentry_idx;
+>   	unsigned int alt_exit_addr;
+>   	u64 arena_vm_start;
+> +	u64 user_vm_start;
+>   };
+>   
+>   #define bpf_to_ppc(r)	(ctx->b2p[r])
+> diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
+> index 35bfdf4d8785..2b3f90930c27 100644
+> --- a/arch/powerpc/net/bpf_jit_comp.c
+> +++ b/arch/powerpc/net/bpf_jit_comp.c
+> @@ -205,6 +205,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
+>   	/* Make sure that the stack is quadword aligned. */
+>   	cgctx.stack_size = round_up(fp->aux->stack_depth, 16);
+>   	cgctx.arena_vm_start = bpf_arena_get_kern_vm_start(fp->aux->arena);
+> +	cgctx.user_vm_start = bpf_arena_get_user_vm_start(fp->aux->arena);
+>   
+>   	/* Scouting faux-generate pass 0 */
+>   	if (bpf_jit_build_body(fp, NULL, NULL, &cgctx, addrs, 0, false)) {
+> @@ -441,6 +442,11 @@ bool bpf_jit_supports_kfunc_call(void)
+>   	return true;
+>   }
+>   
+> +bool bpf_jit_supports_arena(void)
+> +{
+> +	return IS_ENABLED(CONFIG_PPC64);
+> +}
+> +
+>   bool bpf_jit_supports_far_kfunc_call(void)
+>   {
+>   	return IS_ENABLED(CONFIG_PPC64);
+> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+> index 16e62766c757..d4fe4dacf2d6 100644
+> --- a/arch/powerpc/net/bpf_jit_comp64.c
+> +++ b/arch/powerpc/net/bpf_jit_comp64.c
+> @@ -812,6 +812,17 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>   		 */
+>   		case BPF_ALU | BPF_MOV | BPF_X: /* (u32) dst = src */
+>   		case BPF_ALU64 | BPF_MOV | BPF_X: /* dst = src */
+> +
+> +			if (insn_is_cast_user(&insn[i])) {
+> +				EMIT(PPC_RAW_RLDICL(tmp1_reg, src_reg, 0, 32));
 
-=40=40 -411,8 +411,8 =40=40 static inline unsigned int s3c2410wdt_max_timeo=
-ut(struct s3c2410_wdt *wdt)
- =7B
- 	const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
-=20
--	return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
--				       / S3C2410_WTCON_MAXDIV);
-+	return S3C2410_WTCNT_MAXCNT / DIV_ROUND_UP(freq,
-+		(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV);
- =7D
+Define and use PPC_RAW_RLDICL_DOT to avoid the CMPDI below.
+
+> +				PPC_LI64(dst_reg, (ctx->user_vm_start & 0xffffffff00000000UL));
+> +				EMIT(PPC_RAW_CMPDI(tmp1_reg, 0));
+> +				PPC_BCC_SHORT(COND_EQ, (ctx->idx + 2) * 4);
+> +				EMIT(PPC_RAW_OR(tmp1_reg, dst_reg, tmp1_reg));
+> +				EMIT(PPC_RAW_MR(dst_reg, tmp1_reg));
+> +				break;
+> +			}
+> +
+>   			if (imm == 1) {
+>   				/* special mov32 for zext */
+>   				EMIT(PPC_RAW_RLWINM(dst_reg, dst_reg, 0, 0, 31));
 
 
