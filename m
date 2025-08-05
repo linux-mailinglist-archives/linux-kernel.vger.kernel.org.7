@@ -1,197 +1,178 @@
-Return-Path: <linux-kernel+bounces-756451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A92B1B42F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DA7B1B465
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5024622839
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F1F3B8466
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579D274B57;
-	Tue,  5 Aug 2025 13:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEC327876A;
+	Tue,  5 Aug 2025 13:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAa7QN4x"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RK2tctLX"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5BF2749D5;
-	Tue,  5 Aug 2025 13:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58371271A9A;
+	Tue,  5 Aug 2025 13:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399413; cv=none; b=nsngcSjPQTd0DqYE4wUhAoHJ7WApR511L3HDekWR0LKB/W59B2z6yp1XOgWAla/e4QsqjF40JV/RbXnGObA3eLinCyTSOK4UeYeOJ2q5QyQIEam7cYvK+rByrosGX1JVX65NiYawGdW3RZufG9C7H7wqLA5zRtqnxiwYD2QniJE=
+	t=1754399480; cv=none; b=kHZkDbcTe1KgUZJVXjvT98GYODX1UPzPK/2kJCkXyX6YkvZrFQjjFdUzw1e7SkotouJf38mMQrm/Odyv2sUj0NIua+/srLsu3Pvuu0v5aPdLrWbO7xZAcbIyKvG0MqN+XByK+GMF56D1SQ8mXB8EXXCgNlXTjHKKz380yldjT6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399413; c=relaxed/simple;
-	bh=C1sGPmucJ6JCMs4CoRhIxF97FkfQUOs2Jk2OtQjPTl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smMlSePSJHaKKCQ+zX1mS6n6B6Tu4Li60KiXgTE41A3Zu+gUBdiOOmSX0mBxz5Y+8E0Z+9cFS5C17IVmOqn2sGWHlBlMxxVxNyPkA6R/zGzPB1nWi/XI2rfHgrUsR7Pz1jZcz+anDhM2czyieray/6V90tLjajMrw5Qgl3YIIvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAa7QN4x; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1754399480; c=relaxed/simple;
+	bh=8U47cS8M0ega3JyH0Yo9BlwG6duqLp0+XcCDukm0GSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/f2zyMn57fjZMqTyQ2BsDKeuz6Qpu7wp1aRtUW39Xq9KN9s01RqxG3U30wdf7lswm0mbJhgeDmV/UgrORLaLJlscfmOMg4XChHSWD2I7Hdj7RuOzNHT/I7PaTu2oYx5n7D8LR0qMX9VQjc1/U9DlXR1OA8Lwcq5UA+6YkaywWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RK2tctLX; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2405c0c431cso56706815ad.1;
-        Tue, 05 Aug 2025 06:10:10 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458b2d9dba5so23606335e9.1;
+        Tue, 05 Aug 2025 06:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754399410; x=1755004210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Df0Tn7UBjE6/kXxfrPbcGsY9nGyoaEzNiY19+deWC+k=;
-        b=AAa7QN4xwoWUs7pQ03zIo1T62vfGGk1jBYY4PSwCSgzUNJLM0PXI6ir25/0iMse1e6
-         nPvfpU0YYgo6bES3oaDpxvKxrMpv82zVAebzEB9aqKmnywGdD0NeKfTt91amVqJgEO5k
-         /1gLjzZOeyxitKOCu1oYLH+OZvyi3z5O5sLOjNx4Lbt6dstWoHGLC4zmM+GUoPWvezQK
-         7rOyS+28MNSJJdvL4bkvCqnt7wDCIpqxW4UdojEkvfEruKTvv6frpa4ir1mIpo3B0n4j
-         DuLV4hae67zk1uWzBeyhTijFDXrYBIeDQ9kJJAn+mTCkZFe0pmMLov6gBspb1zIPIbjf
-         TUKw==
+        d=gmail.com; s=20230601; t=1754399477; x=1755004277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5AkrgU4Qr/mp1srzuYumnT3vjFuy8QJEZxbccvGb4VI=;
+        b=RK2tctLX9Ata0AacdzBrSTrGhGAfLux4VajxgAEHANzDN2XqTBcaYrPlScrnKq44WG
+         dCQ6KTVaIsMJyjyA3/M+sjSKK81atn/Dejq8a5moLpo7Re9LKsKRthsLvBQs9uoaRgVP
+         uR2JZDOEickwm7ePMtYfTSrvvhdibL6o4lzgN4H4EGKqTKDCFUJ6q00+mtHEFM4L+MLH
+         BnRAEOKRZdVCKBr9bss515E615DunTnypF8Jvt/Dnxa9XDR+6pR3YEqHAwP8GwLrffyP
+         Xs6pGhWbkoN+dT3cx52eS/L8CVdW9mCOr4CN3DkxqkJgd/GJeKHYjaqK3YqIifZU3JS0
+         fjbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754399410; x=1755004210;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1754399477; x=1755004277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Df0Tn7UBjE6/kXxfrPbcGsY9nGyoaEzNiY19+deWC+k=;
-        b=mlIavspKWUpTYWmAgShDY62dyMTo4vlaFOT3W8y0gFmQw3tl1YchoGIz0XBYYzZalB
-         8EhdY8yjO9A8CxCUW/IodSIcisETDBfhM5aH2dS2DHaKrtRTEsiEQZ58FtpzzNUKKmln
-         d2jHiBQQ+dd8bL9ksC3t9aiY8gkuolxPBuB61a2YcalzEUz49VWWjrtSsqkp/QdPx5M2
-         HwQbdXQTmOm9VH4gF7VbQqCiDWwonToVhs/wQOZ434uPl7kHw8VvibueAiBDZLtWySCQ
-         +H7D+se+l2pesXRRQLJV6JbSryqNbcYGD4XuAvbPBwEIzvgG6h1R6/BXDK7+5VtrKFq7
-         ryAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYSSatAiVcs1WRAJN3oixohsC9ihMzNVMAuIZs286njNv4ENqegODAhTJC0+kIuvnkV/OKyxRmv3ml2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YysF2EKGpT8wwnZYFYco7KNji51SORmg/sGwjjrxC8DcKnnT6Su
-	pzrU4jYjMU7BOtDYTSAy5vZ/ASyUkY8UM3zKTyepodOrRG+lKwui4Si2
-X-Gm-Gg: ASbGnct4qxIaRb2TRv929ONXy3TSocVWsavh/G6LYi2B6Znk23kDAYqkxTpndi0R6cY
-	8vBQypnMmEVw82I7oTE7Gfu90QFl+Uj0GtUla0y0bF5zibEe3CP+OANY4R6Qu55L/Vtb4clvgGF
-	6RQO5N++WTzr/hQkhNLBrr/2yeluUyrVFex9JwvMwwT8WajXU5xa6fiw4fQSWaCzRKoqFjjyW4Q
-	t0DpqLAXUCljwyu2JJFy74/qcbPc6p0yl3nmnsm7IfImrdPcfmv0RNrFLi0ILLDufn+lmFqu66R
-	Wb53zFSwjV1nuMfrowOqFhod8idAtpi/VaEhasJl81pQS/gwvNrZ502PmcW82WAFY2pPN+13Olb
-	QAcUl8NWSCv5nyvKeTUTciTjQsYtYt8QEyQfrqIV/o9I0RkTTGRikTpFqjz6zb84cCGuY1Xo=
-X-Google-Smtp-Source: AGHT+IGDs2cjWA1Z11CbkO1c6XQDe6pA8d0mJl1d10ySLxBxsb+cZTCHN2Iuq4eC5XyyJ/ifW48VXw==
-X-Received: by 2002:a17:902:e751:b0:240:6fd0:25b7 with SMTP id d9443c01a7336-24246ff846amr208366595ad.38.1754399408771;
-        Tue, 05 Aug 2025 06:10:08 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a48esm134536415ad.114.2025.08.05.06.10.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:10:08 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e5d568fe-5aa2-4233-aff7-6d4b105e9ab9@roeck-us.net>
-Date: Tue, 5 Aug 2025 06:10:06 -0700
+        bh=5AkrgU4Qr/mp1srzuYumnT3vjFuy8QJEZxbccvGb4VI=;
+        b=PwYkfzhJ0RKT9XMe8mHu0VZ2VHHssw7l20ZjcYzTozPNkyoLVR7TTxkyslSunnMpug
+         SSIP+DP9SucZkqfCdCds5Uy3sDL0po+fi8MxRLT9uM3hwd45aSTNsYIWkhN8+7cUhg1s
+         81HSh9gEkCc/c3a9GI7DbDMLN7aX2I78ur1vWJba1nevKubefYWeLvVrnT7yNFEQ0a05
+         shb2KJhPxq5fhiYspogjzLgstPDHHj4fGLD4+UjsUOPu7s9dFLaSNgXm6It/Y4JkGnrn
+         qcHUHY3BDjwfuMHv6xH/RX5RXgrtZjuArexeJg2eN5xOE1Cz4AaDMoQj5PadusaBjmcx
+         qIHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaBOiNFoxyIrRCmWYhrvJOGMTBVmlgWdZQWftX5xXqiufYI+7/xZzDgubWy1qAAFOmy/MfaQuKJehQRIU=@vger.kernel.org, AJvYcCX6YeqcigIcq8zPMq7TNDpbnli4NfO6GHiJxarTSCFXHHjc783fmBLQqjzscNeJfqLXj4VVuw1vcSRR8nh0z+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzqr1iwnmh/YWNr/S+wNaDib3j/4+cr78REaOSeUo0/NGxEDE1
+	uZyyMN/KMg7sBLGce6wT+NdghgkLI/HgJuZ4bOqRuW/VtMkepuOpiI5W
+X-Gm-Gg: ASbGncuRe7FUYh3LsOAue8KXTAJAmEwvareQ6Dfc87aiy3Zv0GfhtBZihH+oGq0r2a/
+	sWIkT0kCP6XlkO0rXG/8kY8eE9mS4zoRhQ7s+2Yrul1EfhNu9RD631ah8GgC9ms2YBQmh0URRuw
+	xL2rEvW3toJ3ue/lXMVwMKrsy1jDG17fj45Co0/ZX3MphUZfnZLGkjIb17ZNdw5ishKknyYnZKj
+	a6gvBy+m281Hl1/EV5wQONZ4dZW6qF4zMlfn8HHW5kD+d7Glhseg5Kv7gptlmn59UIRLzrzA87K
+	vqyhjt8HE82OfGpK2xKOUMyhjYT49DMAaOpq763efB6CqbV2MEmym4tfOK1fm8ngbwLjzBKPaSX
+	F45Wcgm7ZwJ0sLRSCPkK689raJHVjOOGQVMvMGC9DSxlAeAGq/rzSbNS3qZhskg==
+X-Google-Smtp-Source: AGHT+IHbXCw4RVSetbK6YNwmG6sT806SwSmGa7Dhml3YfvSWegT5tnRgzznI79Idd6F3osM/IClmJw==
+X-Received: by 2002:a05:600c:4fc6:b0:458:bfe1:4a8a with SMTP id 5b1f17b1804b1-458bfe14efcmr96562855e9.14.1754399476396;
+        Tue, 05 Aug 2025 06:11:16 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e0683045sm9539723f8f.41.2025.08.05.06.11.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 06:11:15 -0700 (PDT)
+Date: Tue, 5 Aug 2025 14:11:14 +0100
+From: Stafford Horne <shorne@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: ChenMiao <chenmiao.ku@gmail.com>, Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sahil Siddiq <sahilcdq0@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:OPENRISC ARCHITECTURE" <linux-openrisc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] openrisc: Add text patching API support
+Message-ID: <aJIC8o1WmVHol9RY@antec>
+References: <20250805084114.4125333-1-chenmiao.ku@gmail.com>
+ <20250805084114.4125333-2-chenmiao.ku@gmail.com>
+ <aJHLxmPk-5cPCnPA@antec>
+ <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] hwmon: scmi: Add default case with debug output
-To: "a.shimko" <artyom.shimko@gmail.com>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
- cristian.marussi@arm.com, jdelvare@suse.com, guenter.roeck@linux.com
-References: <20250805125003.12573-1-artyom.shimko@gmail.com>
- <20250805125003.12573-2-artyom.shimko@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250805125003.12573-2-artyom.shimko@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
 
-On 8/5/25 05:43, a.shimko wrote:
-> From: Artem Shimko <artyom.shimko@gmail.com>
+On Tue, Aug 05, 2025 at 11:38:07AM +0200, Geert Uytterhoeven wrote:
+> Hi Stafford,
 > 
-> Improve handling of unsupported sensor types:
-> - Add default case in sensor type switch statement
-> - Log skipped sensors with debug information including:
->    * Sensor ID
->    * Sensor type
->    * Sensor name (if available)
-> - Use rate-limited dev_dbg for safety
+> On Tue, 5 Aug 2025 at 11:15, Stafford Horne <shorne@gmail.com> wrote:
+> > On Tue, Aug 05, 2025 at 08:40:57AM +0000, ChenMiao wrote:
+> > > From: chenmiao <chenmiao.ku@gmail.com>
+> > >
+> > > We need a text patching mechanism to ensure that in the subsequent
+> > > implementation of jump_label, the code can be modified to the correct
+> > > location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
+> > >
+> > > And, I create a new file named insn-def.h to define the or1k insn macro
+> > > size and more define in the future.
+> > >
+> > > Among these changes, we implement patch_map and support the
+> > > patch_insn_write API for single instruction writing.
+> > >
+> > > Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
 > 
-
-The code doesn't actually do that, and it would be pointless
-and make the message useless.
-
-> Debug output format:
-> "Skipping unsupported sensor ID:%d Type:%d (%s)"
+> > > --- /dev/null
+> > > +++ b/arch/openrisc/include/asm/insn-def.h
 > 
-> Signed-off-by: Artem Shimko <artyom.shimko@gmail.com>
-> ---
->   drivers/hwmon/scmi-hwmon.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
+> > > +/* or1k instructions are always 32 bits. */
+> > > +#define      OPENRISC_INSN_SIZE              4
 > 
-> diff --git a/drivers/hwmon/scmi-hwmon.c b/drivers/hwmon/scmi-hwmon.c
-> index 364199b332c0..a3b5b5c0ec25 100644
-> --- a/drivers/hwmon/scmi-hwmon.c
-> +++ b/drivers/hwmon/scmi-hwmon.c
-> @@ -275,6 +275,10 @@ static int scmi_hwmon_probe(struct scmi_device *sdev)
->   			nr_count[type]++;
->   			break;
->   		}
-> +		default:
-> +			dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
-> +				i, sensor->type, sensor->name ? sensor->name : "unnamed");
-> +			continue;
+> > > --- /dev/null
+> > > +++ b/arch/openrisc/kernel/patching.c
+> 
+> > > +static int __patch_insn_write(void *addr, const void *insn)
+> > > +{
+> > > +     void *waddr = addr;
+> > > +     unsigned long flags = 0;
+> > > +     int ret;
+> > > +
+> > > +     raw_spin_lock_irqsave(&patch_lock, flags);
+> > > +
+> > > +     waddr = patch_map(addr, FIX_TEXT_POKE0);
+> > > +
+> > > +     ret = copy_to_kernel_nofault(waddr, insn, OPENRISC_INSN_SIZE);
+> >
+> > If you change *insn to unsigned long insn, you can do:
+> >
+> >         ret = copy_to_kernel_nofault(waddr, &insn, iszeof(insn));
+> 
+> sizeof(*insn)?
 
-			break;
+Yes, typo, thanks.
 
->   	}
->   
->   	if (nr_count[hwmon_temp])
-> @@ -323,6 +327,10 @@ static int scmi_hwmon_probe(struct scmi_device *sdev)
->   			idx = --nr_count[type];
->   			*(scmi_sensors->info[type] + idx) = sensor;
->   			break;
-> +		default:
-> +			dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
-> +				i, sensor->type, sensor->name ? sensor->name : "unnamed");
-> +			continue;
+> >
+> > > +     local_icache_range_inv((unsigned long)waddr,
+> > > +                            (unsigned long)waddr + OPENRISC_INSN_SIZE);
+> > > +
+> > > +     patch_unmap(FIX_TEXT_POKE0);
+> > > +
+> > > +     raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +int patch_insn_write(void *addr, const void *insn)
+> >
+> > Does insn need to be void *?  It think it could be just unsigned long. See
+> > comment above.
+> 
+> u32?
+> 
+> unsigned long would be 64-bit on 64-bit platforms.
 
-			break;
+Thanks, yes for us it's more correct to use u32.  I always thing unsigned long is
+OK in openrisc as we have no 64-bit implementations.  But might as well have it
+correct in case we ever add the 64-bit implementation.
 
->   		}
->   	}
->   
-
+-Stafford
 
