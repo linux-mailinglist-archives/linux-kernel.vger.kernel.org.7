@@ -1,55 +1,118 @@
-Return-Path: <linux-kernel+bounces-756557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1C0B1B5FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:11:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB32BB1B5D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03A7316E78D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:07:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE8794E2789
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576FA27E1D0;
-	Tue,  5 Aug 2025 14:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2B927FD51;
+	Tue,  5 Aug 2025 14:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yqolqbm7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jAIMma6C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE06A278771
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D23C27F177
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402708; cv=none; b=NzpAv6lwuLB/W+cpon8uVjDUkn3AtWGZqteMc8M8RoafJQ3H3/az2PTdt93NttbnGBGu5WkzhTJmNuJG+3CjhV5KloKw9sB2b/JAXqiYWW1uiBEE9PpGA4LZ9cSDgo79ttaUedfdmpSFpz1NvWNJXj3IVRXjXS+CgM4GE0w94DE=
+	t=1754402721; cv=none; b=WIGT3SeyjjcFtb3RGegE9V8OW7eC46PrbX+HlTED3FxFGgY0HnwQB66JtL+KbgnqbNPNKtMq9S+B2kQf3ORJpB3UJ81gJquCY+pvdfDGK1sfOG2mws7jciae8TdlWskg843phnX24aS2yap3Z7wSfNuDLL0hCrGwkF5klVNrbWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402708; c=relaxed/simple;
-	bh=kTbQlLHadq8Qyhgv+ihd8unPEbfse/RrJPWvdHSevr8=;
+	s=arc-20240116; t=1754402721; c=relaxed/simple;
+	bh=8J5cuWTNGNmnCmEFZreVGaQl+BFghG3/wBWhuX49l00=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSvZbOoUrcWKaFM4XEsH0inpROu3FNPYIpm52Zzm73m8VWAo2M8jSgo/cBZnnkGN9Gay+7NPrzhi9EviYlmTPQaGpljvnZkLSyLkvpIblyFUPNTpqGU4lK/t3Z1YOz3w8ax/r/m9pByVHC3mKbWNqo6+c1z9zrSLMZVoxQ52uDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yqolqbm7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512C8C4CEF0;
-	Tue,  5 Aug 2025 14:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754402708;
-	bh=kTbQlLHadq8Qyhgv+ihd8unPEbfse/RrJPWvdHSevr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yqolqbm76SUa3LpLoucSg/mlXFQ/iKXKihj3GMcpSGX8ZAL/cHkLZB9apmIiITGza
-	 8RKaVU4SfHuiKJP569CID9jYNRVJChyuqr8hme7wUnD/aHU4baCSt9PgBExMspUmba
-	 nYa+gvFS0FIXfwuYREkTz0GXtebitUI+iGDY7UTRjTe8OSKa6l+ZWmaRm1emdETEJj
-	 4UKMdMo5nrxQY6+LA7aR0hMbA76/rhqCAC+kVNTQ/6woRduxy2SHg2sXltcZH4X7WO
-	 nKvdEQcTUiF9WbhI67PVo7gUi3JCnvMmPKCZLtV65GyD+bryGuoGf6U/wTiZNcqBW1
-	 lRYFzswvtT8Ww==
-Date: Tue, 5 Aug 2025 09:05:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, S32@nxp.com, linux-kernel@vger.kernel.org,
-	ghennadi.procopciuc@oss.nxp.com, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 01/20] clocksource/drivers/vf-pit: Replace
- raw_readl/writel to reald/writel
-Message-ID: <20250805140504.GA1529859-robh@kernel.org>
-References: <20250804152344.1109310-1-daniel.lezcano@linaro.org>
- <20250804152344.1109310-2-daniel.lezcano@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AkirU9oBIjFa+sXXGYLtEVasGEfvMEJkni+VhUY/liy8VNbGRkOXDm8AEbOaiY+s7Ki3XZnUrc7SnkuIqwrSxLmVWMtz7wnZLq6dYxJMr8vaS4igr8ym989lK8CfNsyzqaThnBbtvc6NzzoHZW1jenl4DimqvA3b6YmDIdpeJss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jAIMma6C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5756SfkV005890
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 14:05:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=y8GWTLsDapJ06m9sj6GKQ34d
+	0P33lgkh1NvaX1OZEs4=; b=jAIMma6CYw3JK3nfFf0Da2hkIb7nPW1Jh4bDgmtD
+	5iw1pkAPLrNmwsi+f6MHzF+yZXpcqvNA+nivsWmTgTGBYZsyFEGHnZ6Z0C5WgLKo
+	+UrsaTVsR3Hc2lBXoCXlKiULAlsfBm+nhYZSLvLhM1MECxBSCQIzQYtwqEhwEkkm
+	SUHpQ9vVYlxAcPlFzel/7M8ThaizvIwdTPXXqqsufHLPnMeTT1EilxP+W6ZJKsHc
+	C5z7N2AdRpr1WurFIipApsqpmD7uelP8DxdCKqXMZ8N9XgDUpIs4ptV4JDZ+vh3u
+	eD4BQr9Qvh4D+WvpvJMBklk1m668AibdG7HQg3pQ7LjOIA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489bek8pjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 14:05:18 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32129c65bf8so2936674a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:05:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754402716; x=1755007516;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8GWTLsDapJ06m9sj6GKQ34d0P33lgkh1NvaX1OZEs4=;
+        b=bct59r+wmt+8SZukqL+vR9cfTpd3hR4sBETn9kiPM0/R/E5zOjz86cHGuNMa9Dn51K
+         W5qWZ3raegGrdOFcGim9i1njE6ZVSoP7r4aIGKadBBYHes02PRero1u/T/JNDnZZ4RMr
+         oGEyvSRLGYa7J45o2R+8dAfQ8P5xf9Z/WuQeCMkurBcXR5Yv0X1Xt8t2UzAPuhQqw/mO
+         IwiOlKqH5s1/YqzYkx1ZntpWAlUmmM2+135QR7RMohEcLBPh5WaTyOsJAcE6Zm6kAXDO
+         5iOfvowmbrSIFfiW3pnHm6KGNJs1SD5noJJj9fP/3+9Gn7wktoF1EiOIZGBGU1Lh92Hf
+         qtdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2reXrqiDUnDz9KzWKm7HlBf+FBpswrU8j6dyrZzRxDIvxczOOt/vId7pzjOcdnvmRKXvEgV+DD/b/Kc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH4eCwdb5GLALnqUrqtqBD83z+4fOT1WfE9nCDnpcAqwhG0EGD
+	c3nerxR4hiOCeoMFbkK9IRK9wFFvnWgmotESp/A8S8kEEH/kSDYrJ4GVkQ+S0iXxJYiZJ6wXqkO
+	4/n73mEoI/xb8uOLTixy9Qr7Eq/AEhwYC+Z7u0whG+R8oT6re/XY9jxiQtlJTwiGBQ4E=
+X-Gm-Gg: ASbGncuM4i9k6fAlHe6L5ciagw7MplLI1oxOJeP9Rrcsl9tkv7ZqAaUdF5HrZ/duBOF
+	Xmzq8cHJy34Ry1jYgrXOIikU3TcXBj1oXldaC6U7u/FCHWgwk5GED8gkhxsdwLbwlDgMASaSEjX
+	BmrSPZ9VPnphSgRYyNkv+hkkNaKlzq0iLmN+wbPsWqKx9RoBLkxkjeK/FLJEld/D4ywyKZzFvBS
+	KBj1wF8jLXv0on+uXeflMsDj1KIKqrYzkzT0Zc3L7dYcIdA0cAEJhs0AP0ozhjj8Igi9/uDHYbc
+	niN3zxpsE3tG9dH8ODf97OEhIGGlgdhZEWMQTdYkpKA5z3LOM0FWXfwncMCz/veMuR8=
+X-Received: by 2002:a17:90b:3e8a:b0:321:3715:993 with SMTP id 98e67ed59e1d1-32137150ad5mr11688571a91.14.1754402715854;
+        Tue, 05 Aug 2025 07:05:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjmfwajEFNC0n/4JWnoR261FA5nFMX6Yqgmg9OjOOyA6BAlGJkbJzfB308KbNyUV9w099bVQ==
+X-Received: by 2002:a17:90b:3e8a:b0:321:3715:993 with SMTP id 98e67ed59e1d1-32137150ad5mr11688449a91.14.1754402714757;
+        Tue, 05 Aug 2025 07:05:14 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321611d846esm369077a91.8.2025.08.05.07.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 07:05:13 -0700 (PDT)
+Date: Tue, 5 Aug 2025 19:35:06 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Remove pas id parameter
+Message-ID: <20250805140506.b6d2x5berkss3it3@hu-mojha-hyd.qualcomm.com>
+Mail-Followup-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
+ <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
+ <658d7d55-fd5e-42cb-bc5d-abcc0b47a168@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,11 +121,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250804152344.1109310-2-daniel.lezcano@linaro.org>
+In-Reply-To: <658d7d55-fd5e-42cb-bc5d-abcc0b47a168@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=M7tNKzws c=1 sm=1 tr=0 ts=68920f9e cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=9ZXyijcKk7BvzWFVFWYA:9
+ a=CjuIK1q_8ugA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEwMyBTYWx0ZWRfXwCNpJPY1+orb
+ n6k44krgpspjjRIEHAFM6XC+XdpWxD6k8Rl+ar43ArwPl9arksDCeOeAy0f+6KfsPyTWpdulQGG
+ 8UVClxa5EoZ1/0Ibj5zbaGFUitC09zwUyKoEEeRp/EDwdvQnNENVqrRgDlTbdFkMsjVFTt5Km+q
+ Ovtikmv7DMiHdRYdNIo8c1j9fOEwuSnKq38ZiWEnn7ErCiFK6PVtvIXHZhZFQbVErg7BkQnlv0t
+ Iocg0sAh8b+wDN9ZTBrkX4N1W1eHKfffkciNlA0DF6cx41MBlpTZGHKahNq/lpvcRpY72juuQ7V
+ lxUgrrtyc1bIqh+K4ZC1ezq21A/fPHh4ynJXG2m9t3tSPmg0CNccqC098bfrivjq5MaYdXIW4sz
+ ImSeKHJhQs9Lo6BZne35a6pF9OxmjUxMOxm2K81IBdxKQ2iAxG5eEOYCJ3+Ni0KlQ0CV1bGs
+X-Proofpoint-ORIG-GUID: SJ9hZnm5TgR85E-AHnbXwMI02eirML71
+X-Proofpoint-GUID: SJ9hZnm5TgR85E-AHnbXwMI02eirML71
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 mlxlogscore=911 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 phishscore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508050103
 
-On Mon, Aug 04, 2025 at 05:23:19PM +0200, Daniel Lezcano wrote:
-> The driver uses the raw_readl() and raw_writel() functions. Those are
-> not for MMIO devices. Replace them with readl() and writel()
+On Mon, Aug 04, 2025 at 07:17:02AM -0700, Jeff Johnson wrote:
+> On 8/4/2025 5:41 AM, Mukesh Ojha wrote:
+> > pas id is not used in qcom_mdt_load_no_init() and it should not
+> > be used as it is non-PAS specific function and has no relation
+> > to PAS specific mechanism.
+> > 
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> >  drivers/media/platform/qcom/venus/firmware.c |  4 ++--
+> >  drivers/net/wireless/ath/ath12k/ahb.c        |  2 +-
+> >  drivers/remoteproc/qcom_q6v5_adsp.c          |  2 +-
+> >  drivers/remoteproc/qcom_q6v5_pas.c           |  7 +++----
+> >  drivers/remoteproc/qcom_q6v5_wcss.c          |  2 +-
+> >  drivers/soc/qcom/mdt_loader.c                | 14 ++++++--------
+> >  include/linux/soc/qcom/mdt_loader.h          |  7 +++----
+> >  7 files changed, 17 insertions(+), 21 deletions(-)
+> 
+> Since this patch touches files which go through different maintainers, do you
+> have a plan on how this will be merged?
 
-Typo in the subject: reald
+I am hoping,  Bjorn should be ok to take this into his tree ?
+
+> 
+> I can ack the drivers/net/wireless/ath change once I know how it will be handled.
+
+Going to send v2, please ack it, once we have confirmation on the above
+question.
+
+-Mukesh
+
+> 
+> /jeff
 
