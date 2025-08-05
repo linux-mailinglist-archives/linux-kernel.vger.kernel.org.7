@@ -1,148 +1,204 @@
-Return-Path: <linux-kernel+bounces-756015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E6DB1AEBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:51:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4408DB1AE3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF923189D98F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:51:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E82A4E204D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993042253E1;
-	Tue,  5 Aug 2025 06:50:45 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8773F1C861A;
-	Tue,  5 Aug 2025 06:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2D721B9D8;
+	Tue,  5 Aug 2025 06:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="phMkDhma"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8921401B;
+	Tue,  5 Aug 2025 06:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376645; cv=none; b=G12cWLg81s4+ho1jv6HOANoQapKPX2AArvw68rgbJtLQnJEUW4jPgw7aplFbOAsO+7v5B+HFGcvEKaip5CH+uqgUGZQEVJOAP55ACrn4xb/ErC4iahGgRhFLizdEjQVd222n3CPFr9JCN8jp8rf32KnOkL21+zbwaQpOUoKjbpc=
+	t=1754375326; cv=none; b=JYu9u6seqbl76u/t4iLqju7QiFNEzeOAq8CUny2E8dAZBgj0HhKpSims+10gTTSrCqqoPy6XTBZ7/Gt7eaMi5jian5MHdMMdPqSH8tnGj2Zd1tBSe7KzusegdrmO9Sz58BE/vZJ664DJOZckUmzXF156l1MSc0vFavvnC2FAmHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376645; c=relaxed/simple;
-	bh=GlMP83qOoRkreWYcN68itbSBxtM6loXtd7T4zZW7mQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioejTzPt8r0rAVO6QorjarqoX51mgna8QqYAxpaDn48fv5wr1gel6JtZeGJUrWGG9oYgkVuNvzWMoWrgOhgPd0ux3ZgzjApDrqhT21TQTi9Gqjn/NPwYZ9xJG43T1Vm7EPd+4+0Lykih5aj2M17JS2MH9/6NnXCzgKGdFFBqErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bx3PH42tYz9sRp;
-	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id MOt6ej6e3T4G; Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bx3PH34F3z9sHR;
-	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 62F0C8B765;
-	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id yZAG-jS96Z85; Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F07C08B763;
-	Tue,  5 Aug 2025 08:27:14 +0200 (CEST)
-Message-ID: <c4191597-341d-4fd7-bc3d-13daf7666c41@csgroup.eu>
-Date: Tue, 5 Aug 2025 08:27:14 +0200
+	s=arc-20240116; t=1754375326; c=relaxed/simple;
+	bh=1dFmJ/aPHCJKe9xTs6NAdOgXOJO+ndjlsJcByNIvA+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NSorwaCMbNAua7HsMJ5/7YFwRi/xxO3+gsb82bj0GB7M8ha82zZAuHOKSP63Sorh2zkW2vCqNVeyJ1mTKWnV1whFGWRR24KdF7lIlFRxaE46vIHCm6ZJHdErxEdaAO41kixmacV6BPyq40vhPwEhuugfWBTF+WmqBFRA78NByTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=phMkDhma; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754uWpT001514;
+	Tue, 5 Aug 2025 06:28:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=8uIJuR9UrU7MGTqSwYlkqz64897zNUcWple/qkX3k
+	/M=; b=phMkDhma8rvwYT8kX9eTP3VOJItnH0i8AZbql1uBSlxFEcoEdAZoNRobn
+	IQFw7UZIwbIoikKM6Rvh61Lh6gknFxzXJJhgYDIdgP9qRai4sNR1yfMqmM1jhdft
+	vinleBCbRRoRmGw91zjbqQx7HDKRneswYYtUIP1W4HOrKZhHir8sDoSFpmunX4uk
+	0UdMRUFPtPh6cG60duERG+UPUfatyjxLAkBUjd41ywWCAXTxiF0Aop93GV0RCOCo
+	yM493kd+jaoO4iAZMfLpekcgSF85d6434dre3fHu5EaELozt2O9b3ohknwPJOQXn
+	Nzod7oG3v1O+sxfVXnVMpncLfvRgA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq09s6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:28:07 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5756NCbR006902;
+	Tue, 5 Aug 2025 06:28:07 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq09s3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:28:07 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754fB3P006873;
+	Tue, 5 Aug 2025 06:28:06 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmh3u2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 06:28:06 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5756S2pb42271158
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 06:28:02 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4299C2004D;
+	Tue,  5 Aug 2025 06:28:02 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 70CE020043;
+	Tue,  5 Aug 2025 06:27:55 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.ibm.com.com (unknown [9.43.39.141])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 06:27:55 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
+        andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
+        iii@linux.ibm.com, shuah@kernel.org
+Subject: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena atomics
+Date: Tue,  5 Aug 2025 11:57:41 +0530
+Message-ID: <20250805062747.3479221-1-skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
- code
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org
-References: <20250803204433.75703-1-ebiggers@kernel.org>
- <20250803204433.75703-4-ebiggers@kernel.org>
- <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
- <20250804180923.GA54248@google.com>
- <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
- <20250804225901.GC54248@google.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250804225901.GC54248@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: UMmdy6bvE1EWRZnnAASiwlqph1l7sE6d
+X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891a477 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=XcCzD8yPhtL1pJmi5pkA:9
+X-Proofpoint-ORIG-GUID: 0uFU9b9z2tVP7R2TCtIrI-HJLKmEzpe3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA0NSBTYWx0ZWRfX0nqFUJvFAVfW
+ cwwDfeCJGT5nBPuvxbgMUop1ZXXgqblArZk0C/tE7aOh46rQ0TLP/Brk+NsngH6oPe97utZs5wX
+ Gxy/3QaCuzUzrTe0OJmbvLSQZeqOgDCO8SFRkTacG5UVLrjYDTr3Q9AC99XeipE1y7XJ1atHn5d
+ SbTCtXxh861mYmCkQIELqPPI0DasAeC+xUvUSmualO1mhFHcJaPi4EWEaj5A7G4am+Lg3nJZMgF
+ XMKUBJTdYaGubDEGSlHEbGNwW5RN/E+fAQatrSe1MoBMtm+pg9cjibEOuuJa+y2U4cCR+t4Qg5M
+ VmcTd7S/uFp7pXyL2at9tv6thbkq34/crQ5lccc5F1tubFcUlfwomj0NKvsr4mOR1SrIpvk6BHN
+ S6/dguMR0eHjijnsXbGtnHHmSB70qYJRzK/wvEcGJ4+Ny0FGdehy4ATFpyarIlWiu1lcJE0B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=612 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050045
 
+This patch series introduces support for the PROBE_MEM32,
+bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
+facilitating the implementation of BPF arena and arena atomics.
 
+The last patch in the series has fix for arena spinlock selftest
+failure.
 
-Le 05/08/2025 à 00:59, Eric Biggers a écrit :
-> On Mon, Aug 04, 2025 at 09:02:27PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 04/08/2025 à 20:09, Eric Biggers a écrit :
->>> On Mon, Aug 04, 2025 at 07:42:15PM +0200, Christophe Leroy wrote:
->>>>
->>>>
->>>> Le 03/08/2025 à 22:44, Eric Biggers a écrit :
->>>>> MD5 is insecure, is no longer commonly used, and has never been
->>>>> optimized for the most common architectures in the kernel.  Only mips,
->>>>> powerpc, and sparc have optimized MD5 code in the kernel.  Of these,
->>>>> only the powerpc one is actually testable in QEMU.  The mips one works
->>>>> only on Cavium Octeon SoCs.
->>>>>
->>>>> Taken together, it's clear that it's time to retire these additional MD5
->>>>> implementations, and focus maintenance on the MD5 generic C code.
->>>>
->>>> Sorry, for me it is not that clear. Even if MD5 is depracated we still have
->>>> several applications that use MD5 for various reasons on our boards.
->>>>
->>>> I ran the test on kernel v6.16 with following file:
->>>>
->>>> # ls -l avion.au
->>>> -rw-------    1 root     root      12130159 Jan  1  1970 avion.au
->>>>
->>>> With CONFIG_CRYPTO_MD5_PPC:
->>>>
->>>> # time md5sum avion.au
->>>> 6513851d6109d42477b20cd56bf57f28  avion.au
->>>> real    0m 1.02s
->>>> user    0m 0.01s
->>>> sys     0m 1.01s
->>>>
->>>> Without CONFIG_CRYPTO_MD5_PPC:
->>>>
->>>> # time md5sum avion.au
->>>> 6513851d6109d42477b20cd56bf57f28  avion.au
->>>> real    0m 1.35s
->>>> user    0m 0.01s
->>>> sys     0m 1.34s
->>>>
->>>> I think the difference is big enough to consider keeping optimised MD5 code.
->>>
->>> But md5sum doesn't use the kernel's MD5 code.  So it's implausible that
->>> it has any effect on md5sum.  The difference you saw must be due to an
->>> unrelated reason like I/O caching, CPU frequency, etc.  Try running your
->>> test multiple times to eliminate other sources of variation.
->>
->> md5sum uses the kernel's MD5 code:
-> 
-> What?  That's crazy.  Userspace MD5 code would be faster and more
-> reliable.  No need to make syscalls, transfer data to and from the
-> kernel, have an external dependency, etc.  Is this the coreutils md5sum?
-> We need to get this reported and fixed.
+This series is rebased on top of:
+https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
 
+All selftests related to bpf_arena, bpf_arena_atomic(except
+load_acquire/store_release) enablement are passing:
 
-Content of files is already buffered inside the kernel. likcapi doesn't 
-tranfer data, it uses splice().
+# ./test_progs -t arena_list
+#5/1     arena_list/arena_list_1:OK
+#5/2     arena_list/arena_list_1000:OK
+#5       arena_list:OK
+Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
 
-As far as I know, coreutil is not able to use the TALITOS Security 
-engine we have on the mpc885 and mpc8321 microcontroleurs. We primarily 
-use libkcapi for that.
+# ./test_progs -t arena_htab
+#4/1     arena_htab/arena_htab_llvm:OK
+#4/2     arena_htab/arena_htab_asm:OK
+#4       arena_htab:OK
+Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
 
-In order to keep things consistant, we use the same userspace on boards 
-which don't have a security engine, ie the mpc866, we rely on the kernel 
-providing an optimised software implementation fallback.
+# ./test_progs -t verifier_arena
+#464/1   verifier_arena/basic_alloc1:OK
+#464/2   verifier_arena/basic_alloc2:OK
+#464/3   verifier_arena/basic_alloc3:OK
+#464/4   verifier_arena/iter_maps1:OK
+#464/5   verifier_arena/iter_maps2:OK
+#464/6   verifier_arena/iter_maps3:OK
+#464     verifier_arena:OK
+#465/1   verifier_arena_large/big_alloc1:OK
+#465/2   verifier_arena_large/big_alloc2:OK
+#465     verifier_arena_large:OK
+Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
 
-Christophe
+# ./test_progs -t arena_atomics
+#3/1     arena_atomics/add:OK
+#3/2     arena_atomics/sub:OK
+#3/3     arena_atomics/and:OK
+#3/4     arena_atomics/or:OK
+#3/5     arena_atomics/xor:OK
+#3/6     arena_atomics/cmpxchg:OK
+#3/7     arena_atomics/xchg:OK
+#3/8     arena_atomics/uaf:OK
+#3/9     arena_atomics/load_acquire:SKIP
+#3/10    arena_atomics/store_release:SKIP
+#3       arena_atomics:OK (SKIP: 2/10)
+Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
+
+All selftests related to arena_spin_lock are passing:
+
+# ./test_progs -t arena_spin_lock
+#6/1     arena_spin_lock/arena_spin_lock_1:OK
+#6/2     arena_spin_lock/arena_spin_lock_1000:OK
+#6/3     arena_spin_lock/arena_spin_lock_50000:OK
+#6       arena_spin_lock:OK
+Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+
+Saket Kumar Bhaskar (6):
+  bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
+    instructions
+  bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
+  bpf,powerpc: Implement bpf_addr_space_cast instruction
+  bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
+    instructions
+  bpf,powerpc: Implement PROBE_ATOMIC instructions
+  selftests/bpf: Fix arena_spin_lock selftest failure
+
+ arch/powerpc/net/bpf_jit.h                    |   6 +-
+ arch/powerpc/net/bpf_jit_comp.c               |  32 +-
+ arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
+ arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
+ .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
+ .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
+ .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
+ 7 files changed, 348 insertions(+), 105 deletions(-)
+
+base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
+-- 
+2.43.5
+
 
