@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-756665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE93B1B77C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66241B1B780
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F71C1892640
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:30:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B20176117
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDD119343B;
-	Tue,  5 Aug 2025 15:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C5C1E32D7;
+	Tue,  5 Aug 2025 15:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pgUOwV3k"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tmvcjC22"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29614747F;
-	Tue,  5 Aug 2025 15:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49894A28;
+	Tue,  5 Aug 2025 15:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407829; cv=none; b=eMIDIXfRpr8dbRn0i77lhIl26pL2cz+20tsTHf5hnzpKviQeLUidmsY9L/kcewVzmp6q9XAaLzINd1UemmqjQaf3FKFC6B9FKJ5y+5zu2PaTYM+dDWOtSK2lKPavPMKVG2ztaaMJWFshaQP4cJKOuKZVJEJAwBV4yIyObU8aRbU=
+	t=1754407926; cv=none; b=N9NfjerYqm+Vxo10tTQc6A5Wnu+v35vDCd0e8Xw+7mpTtzHBGGze3ff2g/F686SslRrGJyFV390f5SggkfLIMKav6Zn9/QftKQzNuTjsQzWF0lQKpl9woTk12RF+GzEPw7M3iIgEx11L8LKKHkxzoabciChsPlY4a/MXnqVxnzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407829; c=relaxed/simple;
-	bh=Kw7eMyWY5zW7INntokk4JGSpcNbA8RU/Mez2RPQZKBw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kH1rGV6p+3ywMZ6cm1aqkfg9NzFG8YNlrCyYl+K+bZWrBWnm9UzJI/hamcs7MhFrUnkVthaZirSxnK2Ygf6V+ABssXSBno261nfaIf3cF41bkelHNKLdM6Gml6dQDgISgVfLgwGZCiHxRXz1pnte+ECRvg6bi8XLKOP3HSkvMF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pgUOwV3k; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6530C43A0E;
-	Tue,  5 Aug 2025 15:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754407819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgEzWtcjDyKuxbmCqKV4hy0KTKvQ/vKyVEQYqrgBHyY=;
-	b=pgUOwV3ki0x/OqoP8gQIxOi/isGPmWOV76dFtkEXV+TRXpoHunlxrIRxHGPgqisHsTEJx7
-	xooSvd5EkjdxOhz2p8XGcG7qnHFeLP8ovBJ1RCP9hy92NnIxjxJq/05hbSGMvhdlCQDKHw
-	LxvcYugBw+2nhYzfuBqmxU2mv5tOw6sOi43GzDeN9tan1gpYH7dcQDdTqqn97cdYsye68c
-	Rb2hS2ElRdng1BobEiNXBwy0XLVVyP1RA/qUFM4Hp98k1tBQQEVJ/IwrrNZcssi+o3a/oZ
-	LdxY/vWLvk4pDG3VBNBLafNe+BiVf4vdZna5sUWeMSyPVUkAgG8KC+WTsDMicg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Lorenzo Bianconi <lorenzo@kernel.org>,  Ray Liu
- <ray.liu@airoha.com>,  Mark Brown <broonie@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Martin Kurbanov
- <mmkurbanov@salutedevices.com>,  Takahiro Kuwano
- <Takahiro.Kuwano@infineon.com>,  Cheng Ming Lin
- <chengminglin@mxic.com.tw>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/4] drivers: mtd: spi-nand: try a regular dirmap if
- creating a dirmap for continuous reading fails
-In-Reply-To: <20250804192132.1406387-3-mikhail.kshevetskiy@iopsys.eu> (Mikhail
-	Kshevetskiy's message of "Mon, 4 Aug 2025 22:21:30 +0300")
-References: <20250804192132.1406387-1-mikhail.kshevetskiy@iopsys.eu>
-	<20250804192132.1406387-3-mikhail.kshevetskiy@iopsys.eu>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 05 Aug 2025 17:30:16 +0200
-Message-ID: <87jz3hhjlj.fsf@bootlin.com>
+	s=arc-20240116; t=1754407926; c=relaxed/simple;
+	bh=zYc7c7d/i8Ql+qF+dnrBKCxeKxXeIyUFSPFcsCvQc5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzlcUh0Z7oqsiQFuK8AqL0x0jMfi8MNdNwtDAHT5e2DpZsrKmTo9Vb/30U7XT3tbLJtqPAZnZ8ZT6iWS+ZqzT4+BwRa4muc0eH5RsfCk+MxDxvQYSFqP4PY7m9SsXIdkf7Ss8iKoM8xVKiMJMOv10p66i9KXrt+IIv3XMDxMDZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tmvcjC22; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PXyobKWbJw7huI969vcAU8isGv2OVX47I8Rs8Gm3eDk=; b=tmvcjC22yhmD1AcNl4Rky/fc1P
+	kdPOdRT5B63v65VBnB6TEWLW8omk7NhxEwmXzsjEQtA0hu4nnwQV74b8I7YNfUFQ8cXGU9iuPTG+m
+	qptmPQaAac2kOXRwe6Uov+9vnKU0ViY6rYcfMrLHrUtt/AjPHe+hUAoEdw9zl6mqjdJ0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ujJdp-003nnS-7I; Tue, 05 Aug 2025 17:31:53 +0200
+Date: Tue, 5 Aug 2025 17:31:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
+Message-ID: <47cf42a2-bc8e-4ed8-8619-79975b95230f@lunn.ch>
+References: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+ <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
+ <20250721-lean-strong-sponge-7ab0be@kuoka>
+ <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
+ <9220f776-8c82-474b-93fc-ad6b84faf5cc@kernel.org>
+ <466e293c-122f-4e11-97d2-6f2611a5178e@redhat.com>
+ <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
+ <f96b3236-f8e6-40c1-afb2-7e76894462f9@redhat.com>
+ <1419bca0-b85a-4d4b-af1a-b0540c25933a@lunn.ch>
+ <b33c76da-8ce1-402f-b252-f6d439ec39c7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudehheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtsehttdertddtredtnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfelkedvveffleeuhfeigfdvvefhgfejgffghfeiteegteeiudegfedtjeehkeefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepmhhikhhhrghilhdrkhhshhgvvhgvthhskhhihiesihhophhshihsrdgvuhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhorhgvnhiioheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrhidrlhhiuhesrghirhhohhgrrdgtohhmpdhrtghpthhtohepsghrohhonhhivgesk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhuughorhdrrghmsggrrhhusheslhhinhgrrhhordhorhhgpdhrtghpthhtohepmhhmkhhurhgsrghnohhvsehsrghluhhtvgguvghvihgtvghsrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b33c76da-8ce1-402f-b252-f6d439ec39c7@redhat.com>
 
-On 04/08/2025 at 22:21:30 +03, Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu> wrote:
-
-> Continuous reading may result in multiple flash pages reading in one
-> operation. Typically only one flash page has read/written (a little bit
-> more than 2-4 Kb), but continuous reading requires the spi-controller
-> to read up to 512 Kb in one operation without togling CS in beetween.
->
-> Roughly speaking spi-controllers can be divided on 2 categories:
->  * spi-controllers without dirmap acceleration support
->  * spi-controllers with dirmap acceleration support
->
-> Usually, first of them have no issues with large reading support.
-> Second group often supports acceleration of single page only reading.
-> Thus enabling of continuous reading can break flash reading.
-
-I would be more conservative, I believe it is very implementation
-dependent; many controller drivers do not even advertise a max size.
-
-I agree though that controllers with dirmap support may express
-limitations such as the mapped size which may lead to splitting
-operations into smaller chunks, possibly leading to CS changes which
-would break the continuous read mode on the chip's side.
-
-> This patch tries to create dirmap for continuous reading first and
-> fallback to regular reading if spi-controller refuses to create it.
-
-no '-'                              ^
-
->
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->  drivers/mtd/nand/spi/core.c | 29 +++++++++++++++++++++++++----
->  1 file changed, 25 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> index b42c42ec58a4..ff6a1e2fcfdc 100644
-> --- a/drivers/mtd/nand/spi/core.c
-> +++ b/drivers/mtd/nand/spi/core.c
-> @@ -1114,11 +1114,32 @@ static int spinand_create_dirmap(struct spinand_device *spinand,
->  
->  	spinand->dirmaps[plane].wdesc = desc;
->  
-> -	if (spinand->cont_read_possible)
-> +	desc = NULL;
-> +	if (spinand->cont_read_possible) {
-> +		/*
-> +		 * spi-controllers may return an error if info.length is
-> +		 * too large
-> +		 */
->  		info.length = nanddev_eraseblock_size(nand);
-> -	info.op_tmpl = *spinand->op_templates.read_cache;
-> -	desc = devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
-> -					  spinand->spimem, &info);
-> +		info.op_tmpl = *spinand->op_templates.read_cache;
-> +		desc = devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
-> +						  spinand->spimem, &info);
-> +	}
+> Like this?
+> 
+> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> index fb8d7a9a3693f..798c5484657cf 100644
+> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> @@ -27,11 +27,41 @@ properties:
+>    "#size-cells":
+>      const: 0
+> 
+> -  dpll-types:
+> -    description: List of DPLL channel types, one per DPLL instance.
+> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> -    items:
+> -      enum: [pps, eec]
+> +  channels:
+> +    type: object
+> +    description: DPLL channels
+> +    unevaluatedProperties: false
 > +
-> +	if (IS_ERR_OR_NULL(desc)) {
-
-Here if the problem is continuous reading, I expect an error and not a
-NULL pointer.
-
-> +		/*
-> +		 * continuous reading is not supported by flash or
-
-Not by the flash, here if we get an error, it is the spi controller
-(still without '-' ;) ) that fails (please fix the comment).
-
-> +		 * its spi-controller, try regular reading
-> +		 */
-> +		spinand->cont_read_possible = false;
+> +    properties:
+> +      "#address-cells":
+> +        const: 1
+> +      "#size-cells":
+> +        const: 0
 > +
-> +		info.length = nanddev_page_size(nand) +
-> +			      nanddev_per_page_oobsize(nand);
-> +		info.op_tmpl = *spinand->op_templates.read_cache;
-> +		desc = devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
-> +						  spinand->spimem, &info);
-> +	}
+> +    patternProperties:
+> +      "^channel@[0-9a-f]+$":
+> +        type: object
+> +        description: DPLL channel
+> +        unevaluatedProperties: false
 > +
->  	if (IS_ERR(desc))
->  		return PTR_ERR(desc);
+> +        properties:
+> +          reg:
+> +            description: Hardware index of the DPLL channel
+> +            maxItems: 1
+> +
+> +          dpll-type:
+> +            description: DPLL channel type
+> +            $ref: /schemas/types.yaml#/definitions/string
+> +            enum: [pps, eec]
+> +
+> +          ethernet-handle:
+> +            description:
+> +              Specifies a reference to a node representing an Ethernet
+> device
+> +              that uses this channel to synchronize its hardware clock.
+> +            $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +        required:
+> +          - reg
+
+Yes, but i will leave the DT Maintainers to give it a deeper review,
+but this what i meant. And it makes your dpll-type much easier to
+handle.
+
+	Andrew
 
