@@ -1,328 +1,179 @@
-Return-Path: <linux-kernel+bounces-756836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C4FB1BA08
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:27:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DC8B1BA0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCAA718A61C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C317A184A8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD682989B4;
-	Tue,  5 Aug 2025 18:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523F129826A;
+	Tue,  5 Aug 2025 18:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a93Oo/fb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EKRDaszx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927AF26CE30
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317552980AC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754418425; cv=none; b=hfzDeNK424PUwB67gyZgzOEm0CdWae/hJDQs4KMXliLBGYNvokdRKB0T3NrH/DeTJeXSGTaq2rxxFXjCsS1zcvq6CfY9tsFQ/IahnTt9BPS9oNrdatF9h45UEXKD8BTz9yncNnJoKKAM5XjIv3/WpoWVPZveCyHjDiNCFm4rNnY=
+	t=1754418486; cv=none; b=tZFYiys0byaOgVvMPg48bV3EIqkDangc9R2J/zhSbn5K3rgjIwv43rSlScg4P4qa1ML/E6okIa757oK8s1s6J5XPV/s/cxf9Ebq7kEbLcTw43YH9vtmG9ybLo8HtBf31epSmz2oIme9GHCQNBc8TxKPXszK7WrQzyaPjtiwRy20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754418425; c=relaxed/simple;
-	bh=6y8nlc9gd+kcsuPS309XlKj1GjKIPI4qnHhdViPlT3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FkwHunzrSr+N18fPKFARLe1cWwByAYKZ7T3Pa59WVACa9mYPC3ptdx06pY6htG+/S4lbe2+wxiVLd/BVFglEhUzcjlPDFF2GkU7TyO+mCEYK+eYjLYkwEagtlu/SzukLvN6GG29Kbe/Fye3LEaapMf3h8lNAb0Is8QqanxWDazE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a93Oo/fb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575I7bfe012152
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 18:27:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8X+rFEyh78q3PUoe5+Y4jMYH5oFL6y+MBtI/T1H47EQ=; b=a93Oo/fb/ngIEVQ9
-	j0Ro2fFoX2FjfFDx8J6daWRewfH7wfgLBqQCkv8pvlwyXlhQmnc1ZLsvGClMeQbq
-	lOUgwBfjE1cu1QyAWV4nLp1D5sSdvhhmaNdUgk+rCim+3UuABe90F/7XpdoEco+o
-	KemsCIKonzMWpixuqLxPJ7Xl/JjF5hr2x4aWFhn5q03GnhBi9x6CTSarjS+k7fLP
-	0OXTV0UgY07aXBB3R0zCxlWEZ36BY6RmnoPB7nIYE+XgwHAwQCZnpZzUp8Fukn2o
-	8VriSv/HoQknP9QBDjspEpyAzVeTlkcchmArVZFrg1y02+a8SnZA0O2QjmIppw5h
-	3D8/Ig==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy6r1qs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:27:02 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4af1219f29bso3838321cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:27:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754418421; x=1755023221;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8X+rFEyh78q3PUoe5+Y4jMYH5oFL6y+MBtI/T1H47EQ=;
-        b=IPDl6E3HV+mR5DVbul4u1iPvx7TyHoKAE2My+ZtCwdhBte3goA/Eon9Fptgu2g3ZXd
-         APMoQZM/O0kE/WUzImxTRf/dtiUdgOiunyoXTqi65z4iQvmxD5uowbXwvMjINy3GmXmI
-         eGFqEU+nQXmtPBrQg/+LRhXeq7rCxE/Bpl6A82/XoRlBoEfXWtL3VL1dPBpSGZ6LMBuu
-         ZJAzaKLpUBhZPnteQNxIlr1hH0cbenaJYBKqLQRg/8JUJTgBId07ilp1PbFej0kUmb0F
-         knlcfyotZSe0kk+uedFyNtdpROuoOmmQF2i1lH3ryhLJEPAl2ejfyd2s4n+k+fxlJFy6
-         bWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpRDVanURuelut/Z8uTzqEpg8K9GLARxq1lBcksO8+PoNvcV6AjpVnu3KOWuaSkDCmw1HG/lJIPxEsyM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvHpS6UF4YLm0Od8dqLbImp5T5YkTfRuTb4XTDvntuv++6HS1b
-	pZlntj2GiW4DWNOlow9fLo3shgcVRNcx/9QjHoquOgDC/7OdQRNo7THuO2+E2RJDSFcpd34ZvRZ
-	6kJNFK7SLMIV7JBf2FTA05dIzMMn6QGfHaLUF81Y6MEjPGL0buCoCUsXQ8yAyeXSAjFU=
-X-Gm-Gg: ASbGnctue7gl1O2H97JcvDtyUnwjqXiNhpvSzJ6SkVsfbWS7BT5OIJ67L+qlBs6yUdh
-	p6lcqmAvOAefVIWdyOyEqjMBP7BIOS/i3AZAw+X+h5/mHeOZ12qxyP8D4xJRV1TFPe6GS6DklpR
-	BLtdkxNdLf6tVfpWKLWlS+Cu4UF3PXYJfgVnkHdR4G2kU1auGVbiRTbhi7BYeWLcjRUmIWVUE7w
-	ErCtwIBgy4QtCS8THVfDwQcJQBh4sBpUNHtTX2LQSnT63n1nl0KNjGFI3pAVNIgfQ/qp27gY+E6
-	tt1xi2PTr6JGzDxMzdtfg6QsFL0Zo/VK/97wR507k70TcZ/5OnJJlhodXH+SdepEJLkjfeLTsLk
-	0B4M8iZLJh5Pk9/7EIQ==
-X-Received: by 2002:a05:622a:8358:b0:4b0:7e9f:aff8 with SMTP id d75a77b69052e-4b07e9fbdfbmr31517361cf.11.1754418421155;
-        Tue, 05 Aug 2025 11:27:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZlCU8CvK41aG98FrS4OVUGBpHFuya4XLRz4mNMlXfYenvsD4229VwAFQ/ihh8G6Z8SHozlA==
-X-Received: by 2002:a05:622a:8358:b0:4b0:7e9f:aff8 with SMTP id d75a77b69052e-4b07e9fbdfbmr31517091cf.11.1754418420464;
-        Tue, 05 Aug 2025 11:27:00 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a37a8sm957277266b.40.2025.08.05.11.26.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 11:26:59 -0700 (PDT)
-Message-ID: <3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
-Date: Tue, 5 Aug 2025 20:26:57 +0200
+	s=arc-20240116; t=1754418486; c=relaxed/simple;
+	bh=FOQvbQRSUGjE8iHkF54qWCgx7Osq1+scC09ZUtIWw/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5aKR0KIwgcNyN0WintRz/OLwO/lGqB6nPOE38zqJmGg+7I5dSM88BXtwRdDbzUrlStBzYebTbr97mPqdovjLzhrgSnk4oL3a2tOkgT0KoukvmPWy+wLgLjaj/xq0bA+8ChJQOTUx62TMLN30rZVWTaLdjOOfgT2LM+uJBq5ixM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EKRDaszx; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754418485; x=1785954485;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FOQvbQRSUGjE8iHkF54qWCgx7Osq1+scC09ZUtIWw/A=;
+  b=EKRDaszxqSbEJEJlH44dvAPsVYT6ed4IHLZPLEotD2kh6bmu8vVRQLvs
+   G+rQKgQomcqZNvBTTzqb74+WWd6KIUWYt4B4Oh2C00xppIXBvhcIotb6s
+   LNNJRUlG4Z9UuIc//LlpjaDlEHOACXCAtCE/u4ONn8k1hNM5vIyfYYI6F
+   gj5+5qhcwSdCHpApVBRTUUvOv/2VDAdZtVR3CGKWWLUX0v5ROWWRuDKs+
+   gUz/uiaiamkEwdr/Qbu6QZfiq1f+GyD5akVBZcWN4RA94gvnFBLxZxWYr
+   USl5JXlCvIae07HQojiATVXyNJS6W/TciAlZL5nelwcdjrwZ6Zdc86/HT
+   A==;
+X-CSE-ConnectionGUID: 8WEPM9yvTQ+nqdIrRxnK8g==
+X-CSE-MsgGUID: tFcrQYX7SdSUuU9Uff6s7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="66992615"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="66992615"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 11:28:05 -0700
+X-CSE-ConnectionGUID: HJk/SMxGQamMDyloygqm8Q==
+X-CSE-MsgGUID: r7PwQAe7Q5qDQVfpgsDeTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164929326"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Aug 2025 11:28:02 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujMOF-0000kI-2i;
+	Tue, 05 Aug 2025 18:27:59 +0000
+Date: Wed, 6 Aug 2025 02:27:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org,
+	dave@stgolabs.net, andrealmeid@igalia.com,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jann@thejh.net, keescook@chromium.org,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	Pranav Tyagi <pranav.tyagi03@gmail.com>
+Subject: Re: [PATCH v2] futex: don't leak robust_list pointer on exec race
+Message-ID: <202508060225.urZa7B2V-lkp@intel.com>
+References: <20250804115533.14186-1-pranav.tyagi03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-        'Manivannan Sadhasivam' <mani@kernel.org>
-Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, avri.altman@wdc.com,
-        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
- <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
- <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
- <1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
- <2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
- <11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
- <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
- <CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
- <b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
- <061b01dc062d$25c47800$714d6800$@samsung.com>
- <i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
- <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
- <87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
- <061d01dc0631$c1766c00$44634400$@samsung.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <061d01dc0631$c1766c00$44634400$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 28gsyXLKCfSnerm0Qu1Ad6FrmrzpviEC
-X-Proofpoint-GUID: 28gsyXLKCfSnerm0Qu1Ad6FrmrzpviEC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEyOSBTYWx0ZWRfXx8JSUowBHuZp
- 2KMGznyp9jWqjdechp3a5Tc5UxTiRc7AERXBOazZI1q4F7GlpTv/qZWiG5Xop1pHQvSYiT/WT98
- QTLzXemNUHS3WgMuJmc0oaNALZFb69RccbB1VKqLZpfQTsZNTbXnj3tITdPTvleQmm1/dRFTWZh
- FxWstPfaZw7BJw890iz3h93U6RTBacZGRo0U5u1Duj75RyGkVh3ndX+jnp3qPeRXEX1YogLXwFR
- ME7uXmDAVEQBwkrmSlev+S4cGZ3HxRgCHy8Q7zfuR8J7ETBJo8/ktszZYbbREhWUKcrBv5/dvGZ
- kXhldDRZMmoMbZPR4CTZYrz1/GacWmjldnUKKy6sfQD6bnhvn+QRnRBg6oI/i/YNL8eSeMRR7j0
- TQVeihGGnia67kBkSukQhfCX7xOHReviX5kvdNZAMbJ60bQ+ijOdf3LxitZxVnE9H+n/ooRG
-X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=68924cf6 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=hD80L64hAAAA:8
- a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=JF9118EUAAAA:8 a=N54-gffFAAAA:8
- a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8 a=vENURVL_7Fm7xlK8qQ8A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
- a=xVlTc564ipvMDusKsbsT:22 a=zSyb8xVVt2t83sZkrLMb:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 impostorscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508050129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804115533.14186-1-pranav.tyagi03@gmail.com>
 
-On 8/5/25 7:52 PM, Alim Akhtar wrote:
-> 
-> 
->> -----Original Message-----
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Sent: Tuesday, August 5, 2025 11:10 PM
->> To: Alim Akhtar <alim.akhtar@samsung.com>; 'Manivannan Sadhasivam'
->> <mani@kernel.org>
->> Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>; 'Ram Kumar Dwivedi'
->> <quic_rdwivedi@quicinc.com>; avri.altman@wdc.com;
->> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; andersson@kernel.org; konradybcio@kernel.org;
->> James.Bottomley@hansenpartnership.com; martin.petersen@oracle.com;
->> agross@kernel.org; linux-arm-msm@vger.kernel.org; linux-
->> scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
->> properties to UFS
->>
->> On 8/5/25 7:36 PM, Alim Akhtar wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: 'Manivannan Sadhasivam' <mani@kernel.org>
->>>> Sent: Tuesday, August 5, 2025 10:52 PM
->>>> To: Alim Akhtar <alim.akhtar@samsung.com>
->>>> Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>; 'Krzysztof
->>>> Kozlowski' <krzk@kernel.org>; 'Ram Kumar Dwivedi'
->>>> <quic_rdwivedi@quicinc.com>; avri.altman@wdc.com;
->> bvanassche@acm.org;
->>>> robh@kernel.org; krzk+dt@kernel.org;
->>>> conor+dt@kernel.org; andersson@kernel.org; konradybcio@kernel.org;
->>>> James.Bottomley@hansenpartnership.com;
->> martin.petersen@oracle.com;
->>>> agross@kernel.org; linux-arm-msm@vger.kernel.org; linux-
->>>> scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
->>>> kernel@vger.kernel.org
->>>> Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate
->>>> limit properties to UFS
->>>>
->>>> On Tue, Aug 05, 2025 at 10:49:45PM GMT, Alim Akhtar wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>>> Sent: Tuesday, August 5, 2025 10:36 PM
->>>>>> To: Manivannan Sadhasivam <mani@kernel.org>
->>>>>> Cc: Krzysztof Kozlowski <krzk@kernel.org>; Ram Kumar Dwivedi
->>>>>> <quic_rdwivedi@quicinc.com>; alim.akhtar@samsung.com;
->>>>>> avri.altman@wdc.com; bvanassche@acm.org; robh@kernel.org;
->>>>>> krzk+dt@kernel.org; conor+dt@kernel.org; andersson@kernel.org;
->>>>>> konradybcio@kernel.org; James.Bottomley@hansenpartnership.com;
->>>>>> martin.petersen@oracle.com; agross@kernel.org; linux-arm-
->>>>>> msm@vger.kernel.org; linux-scsi@vger.kernel.org;
->>>>>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
->>>>>> Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and
->>>>>> rate limit properties to UFS
->>>>>>
->>>>>> On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
->>>>>>> On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
->>>>>>>> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
->>>>>>>>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski
->> wrote:
->>>>>>>>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
->>>>>>>>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski
->>>> wrote:
->>>>>>>>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
->>>>>>>>>>>>>> Add optional limit-hs-gear and limit-rate properties to the
->>>>>>>>>>>>>> UFS node to support automotive use cases that require
->>>>>>>>>>>>>> limiting the maximum Tx/Rx HS gear and rate due to
->> hardware
->>>> constraints.
->>>>>>>>>>>>>
->>>>>>>>>>>>> What hardware constraints? This needs to be clearly
->>>> documented.
->>>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Ram, both Krzysztof and I asked this question, but you never
->>>>>>>>>>>> bothered to reply, but keep on responding to other comments.
->>>>>>>>>>>> This won't help you to get this series merged in any form.
->>>>>>>>>>>>
->>>>>>>>>>>> Please address *all* review comments before posting next
->>>> iteration.
->>>>>>>>>>>
->>>>>>>>>>> Hi Mani,
->>>>>>>>>>>
->>>>>>>>>>> Apologies for the delay in responding.
->>>>>>>>>>> I had planned to explain the hardware constraints in the next
->>>>>> patchset’s commit message, which is why I didn’t reply earlier.
->>>>>>>>>>>
->>>>>>>>>>> To clarify: the limitations are due to customer board designs,
->>>>>>>>>>> not our
->>>>>> SoC. Some boards can't support higher gear operation, hence the
->>>>>> need for optional limit-hs-gear and limit-rate properties.
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> That's vague and does not justify the property. You need to
->>>>>>>>>> document instead hardware capabilities or characteristic. Or
->>>>>>>>>> explain why they cannot. With such form I will object to your
->>>>>>>>>> next
->>>>>> patch.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> I had an offline chat with Ram and got clarified on what these
->>>>>>>>> properties
->>>>>> are.
->>>>>>>>> The problem here is not with the SoC, but with the board design.
->>>>>>>>> On some Qcom customer designs, both the UFS controller in the
->>>>>>>>> SoC and the UFS device are capable of operating at higher gears
->>>>>>>>> (say
->>>> G5).
->>>>>>>>> But due to board constraints like poor thermal dissipation,
->>>>>>>>> routing loss, the board cannot efficiently operate at the higher
->>>> speeds.
->>>>>>>>>
->>>>>>>>> So the customers wanted a way to limit the gear speed (say G3)
->>>>>>>>> and rate (say Mode-A) on the specific board DTS.
->>>>>>>>
->>>>>>>> I'm not necessarily saying no, but have you explored sysfs for this?
->>>>>>>>
->>>>>>>> I suppose it may be too late (if the driver would e.g. init the
->>>>>>>> UFS at max gear/rate at probe time, it could cause havoc as it
->>>>>>>> tries to load the userland)..
->>>>>>>>
->>>>>>>
->>>>>>> If the driver tries to run with unsupported max gear speed/mode,
->>>>>>> it will just crash with the error spit.
->>>>>>
->>>>>> OK
->>>>>>
->>>>>> just a couple related nits that I won't bother splitting into
->>>>>> separate emails
->>>>>>
->>>>>> rate (mode? I'm seeing both names) should probably have dt-bindings
->>>>>> defines while gear doesn't have to since they're called G<number>
->>>>>> anyway, with the bindings description strongly discouraging use,
->>>>>> unless absolutely necessary (e.g. in the situation we have right
->>>>>> there)
->>>>>>
->>>>>> I'd also assume the code should be moved into the ufs-common code,
->>>>>> rather than making it ufs-qcom specific
->>>>>>
->>>>>> Konrad
->>>>> Since this is a board specific constrains and not a SoC properties,
->>>>> have an
->>>> option of handling this via bootloader is explored?
->>>>
->>>> Both board and SoC specific properties *should* be described in
->>>> devicetree if they are purely describing the hardware.
->>>>
->>> Agreed, what I understood from above conversation is that, we are try
->>> to solve a very *specific* board problem here, this does not looks like a
->> generic problem to me and probably should be handled within the specific
->> driver.
->>
->> Introducing generic solutions preemptively for problems that are simple in
->> concept and can occur widely is good practice (although it's sometimes hard
->> to gauge whether this is a one-off), as if the issue spreads a generic solution
->> will appear at some point, but we'll have to keep supporting the odd ones as
->> well
->>
-> Ok, 
-> I would prefer if we add a property which sounds like "poor thermal dissipation" or 
-> "routing channel loss" rather than adding limiting UFS gear properties. 
-> Poor thermal design or channel losses are generic enough and can happen on any board.
+Hi Pranav,
 
-This is exactly what I'm trying to avoid through my suggestion - one
-board may have poor thermal dissipation, another may have channel
-losses, yet another one may feature a special batch of UFS chips that
-will set the world on fire if instructed to attempt link training at
-gear 7 - they all are causes, as opposed to describing what needs to
-happen (i.e. what the hardware must be treated as - gear N incapable
-despite what can be discovered at runtime), with perhaps a comment on
-the side
+kernel test robot noticed the following build warnings:
 
-Konrad
+[auto build test WARNING on tip/locking/core]
+[also build test WARNING on linus/master v6.16 next-20250805]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pranav-Tyagi/futex-don-t-leak-robust_list-pointer-on-exec-race/20250804-195739
+base:   tip/locking/core
+patch link:    https://lore.kernel.org/r/20250804115533.14186-1-pranav.tyagi03%40gmail.com
+patch subject: [PATCH v2] futex: don't leak robust_list pointer on exec race
+config: x86_64-randconfig-r132-20250805 (https://download.01.org/0day-ci/archive/20250806/202508060225.urZa7B2V-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508060225.urZa7B2V-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508060225.urZa7B2V-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> kernel/futex/syscalls.c:64:39: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __user * @@     got void * @@
+   kernel/futex/syscalls.c:64:39: sparse:     expected void [noderef] __user *
+   kernel/futex/syscalls.c:64:39: sparse:     got void *
+   kernel/futex/syscalls.c:94:23: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __user * @@     got void * @@
+   kernel/futex/syscalls.c:94:23: sparse:     expected void [noderef] __user *
+   kernel/futex/syscalls.c:94:23: sparse:     got void *
+
+vim +64 kernel/futex/syscalls.c
+
+    41	
+    42	static void __user *get_robust_list_common(int pid,
+    43			bool compat)
+    44	{
+    45		void __user *head;
+    46		unsigned long ret;
+    47	
+    48		struct task_struct *p;
+    49	
+    50		if (!pid) {
+    51			p = current;
+    52			get_task_struct(p);
+    53		} else {
+    54			rcu_read_lock();
+    55			p = find_task_by_vpid(pid);
+    56			/*
+    57			 * pin the task to permit dropping the RCU read lock before
+    58			 * acquiring the semaphore
+    59			 */
+    60			if (p)
+    61				get_task_struct(p);
+    62			rcu_read_unlock();
+    63			if (!p)
+  > 64				return ERR_PTR(-ESRCH);
+    65		}
+    66	
+    67		/*
+    68		 * Hold exec_update_lock to serialize with concurrent exec()
+    69		 * so ptrace_may_access() is checked against stable credentials
+    70		 */
+    71	
+    72		ret = down_read_killable(&p->signal->exec_update_lock);
+    73		if (ret)
+    74			goto err_put;
+    75	
+    76		ret = -EPERM;
+    77		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+    78			goto err_unlock;
+    79	
+    80		if (compat)
+    81			head = p->compat_robust_list;
+    82		else
+    83			head = p->robust_list;
+    84	
+    85		up_read(&p->signal->exec_update_lock);
+    86		put_task_struct(p);
+    87	
+    88		return head;
+    89	
+    90	err_unlock:
+    91		up_read(&p->signal->exec_update_lock);
+    92	err_put:
+    93		put_task_struct(p);
+    94		return ERR_PTR(ret);
+    95	}
+    96	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
