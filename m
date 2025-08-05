@@ -1,356 +1,216 @@
-Return-Path: <linux-kernel+bounces-757029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2FEB1BCAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:31:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A7AB1BCAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B06216EAC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0954C18A3FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB829B77B;
-	Tue,  5 Aug 2025 22:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C21264A92;
+	Tue,  5 Aug 2025 22:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSKW7I4L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sq/ASSQU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675A929ACCE;
-	Tue,  5 Aug 2025 22:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754433011; cv=none; b=mlUZu+RsA3qNY/hjpP4YXYu12RYO0p5lLD6CrsjAheaw/K0hL8yWGw0WtUKffgLgJ82Arpo3vTsOlLEPnsGdrLocCN3yvo/1xC9K1aREtr1yJ9nQ1JDYG29I5hAGBVAsgCTGyws3EldssVMJDIK4j4vJKCKbiXEQVU4zgpsDjeo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754433011; c=relaxed/simple;
-	bh=boThjt8cR7TxwRjjaFjdaDJhkGbA4kE6Mndg6Kr8QuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hRw63BihO5Nv0JELx/uItL3PQXSubB0rVNttsR+7MsuApA57LUTL9PuyNCgiStJv9c75PmrxBZ822g8WWWGC/SBoLaWxvG+MKM11/Ehz1CbUoX5sC3yZwqxYqFULqMBaSxdizSNYy6xs/eFkWdtDEjaLoxZja8YGeFBvUP6mI6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSKW7I4L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE1FFC4CEF4;
-	Tue,  5 Aug 2025 22:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754433011;
-	bh=boThjt8cR7TxwRjjaFjdaDJhkGbA4kE6Mndg6Kr8QuE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RSKW7I4L7nNMPftqpR3gqPEVjBLkgUbf4jfOejiYcOvrQzTTY6Na45OuQbsjxTrTi
-	 LgFnrzTt8k0+PmTr53GyzoYE5kSMR48pz+V8wTPlUaXoOKH2BEY+H385TQPPTiHnRR
-	 iMrj4yABBzlXQ5EA9lZuAImMTyh2DN4Hm0j9gasflky9rzaSDyRQwuBHPfmVrseXmn
-	 XEWFLAEFG5U/gondCiMw1cRi1+QH/hwfeVkJ+0v13FojgedTdBtjUN+f4v1ytNNnwB
-	 Gggw228sKUC3lFy5qYxnW4NzAijJH5A/lVaISUtgJyAJ61/B/TsVCQ24dAdvdOvJaR
-	 nmQIiDGYWRG8w==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 7/7] lib/crypto: tests: Add KUnit tests for MD5 and HMAC-MD5
-Date: Tue,  5 Aug 2025 15:28:55 -0700
-Message-ID: <20250805222855.10362-8-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250805222855.10362-1-ebiggers@kernel.org>
-References: <20250805222855.10362-1-ebiggers@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5469E29CB40;
+	Tue,  5 Aug 2025 22:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754433018; cv=fail; b=pj7LJTlEcTC2fPc/WiTXa0t+5sEKH0duZOctW952S3FA2+u0bgvqccv1YzF3bXIJ6XXCDWScfpElMeR888xGM4XNDdJNOYI1my34sM4+8mDc2qxdRj65lCRsltqADVNteu5uCNflNKIL1ePEda80LW7vZytlLO1eWt/J5AZEocw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754433018; c=relaxed/simple;
+	bh=SX52lZhaoFfYxUPFeVLz4BzBwSUFtfJ39OkkRbhL7QM=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=ELSjwKSp10Hz+Sz4amuWeGTvrPJKtJei/H3HAmhuk87nHhQ3nrV+mSc5TXlE6+AmEJgkp1t7MK7e1BiTsoX55PsM5GXrpKs4Li7yyGCZ6EstPlwsLfJfb9KrX9r5jCwOT6IolyHuBQ66PzBUE3crcx3LMA0qIlTrwEftdibaVJE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sq/ASSQU; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754433017; x=1785969017;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=SX52lZhaoFfYxUPFeVLz4BzBwSUFtfJ39OkkRbhL7QM=;
+  b=Sq/ASSQUnVdpMUdxDSXBVL5gw4Swc9tS7PSQbE219i1cNKeofEXIAVEw
+   yltQfxlRKK7VPaYLsZa5s8c5YFOUgq95h1EiaQd0+0qZMKS6DAhqnnWnL
+   PTrduYq+mtvpd4iGZKLOeM3lnGzOCezpw8/XelJjhi+UnKDrHI2flmfRT
+   4T3okC8BE8ZeqcVsBbMtXnZ7gAUImOXM0bpMMSS89/g5vid86fZtnq8P4
+   uC+nNoskSBAbBptVeZX0GBoGa7F0ipjecyUrnjRUlefpdiX5E2mxzPsun
+   YKiEcaaRk3zbctVNpMJqjRStKkgtHsz7o/L1ujmuHIzaOJ4WCsFmyxaZf
+   A==;
+X-CSE-ConnectionGUID: 5NhqXNt3S06joAIgzIyJHQ==
+X-CSE-MsgGUID: 9VeMUOk0SYKwNv1CcOtucA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74202871"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="74202871"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:30:16 -0700
+X-CSE-ConnectionGUID: K8zQnZsvTRKikTaM+Cb5+Q==
+X-CSE-MsgGUID: ajj+rl3tRB6/YluvbgHCrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="168861794"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:30:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 15:30:14 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 5 Aug 2025 15:30:14 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.79)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 15:30:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v8r5Q2anRDvp796QzhONb86iquE5aYX6DzHWYylt0rAMXkcZigNlVTOizfNKtLKDqgflrrnnNP4ovSaP2ik6s07hn/PdKulJyDgbKljz1w7EqO7K0jqXSxOv5SP7c01dr1Q4y92QV4jwFiTJFz55uPuoFKHL7S8hQpm9kE4U7q0McqGHLNe8dY48hGQuhRRmsv59FbvPJim9wQrmsOliJNL4IlH9MmBrejw5u2U/Vt0nvBMp7NSDAkQVbKSLeAKsOvAA0bb3eOQSPn+0R0mUk02mJ2tFufqAJaQT3qvssUS+sAXNofVIUlroGS4d9wLhCwE58tgH7tAqTQ+e+EXN7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c7cUMbmlQc55FbGmf3pAhwBZXf4yiUNz2q0lephi+l4=;
+ b=QoJvOpGF+7uqMcxD6aIvOjH3LYHfD9CiFnPPw7DU+zrgdTCEjm9ywRoQdWxj1pQSFcBQHBQFD2YnhMLukWm3X+Izq3ax8mZHHZewPjAAPKrvMkiovhBw/CvnFfG3lSyUwU6dvWcrt11k3w9pkgwUtonIkijZEGhLtYE54frSdb9x8aFFgtrn60kv/uBElFRMOvtvjgksSSDfOwB/gwNBMMd3Jo/dWPgzV+II6MQFS4FJBrVayonUMe5AU/1qh5qLdQ8cG1s+KPNQn/8YoBVsvJMNQ4+ao83qLrKxVB8qq1q93rco55iQAUuTay0opZfgdYkqQ+urfTEeMMDECqZuXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com (2603:10b6:806:2f1::13)
+ by PH8PR11MB8061.namprd11.prod.outlook.com (2603:10b6:510:250::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Tue, 5 Aug
+ 2025 22:30:10 +0000
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec]) by SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec%4]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 22:30:10 +0000
+From: <dan.j.williams@intel.com>
+Date: Tue, 5 Aug 2025 15:30:07 -0700
+To: Nikolay Borisov <nik.borisov@suse.com>,
+	<linux-security-module@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <paul@paul-moore.com>, <serge@hallyn.com>,
+	<jmorris@namei.org>, <dan.j.williams@intel.com>, Nikolay Borisov
+	<nik.borisov@suse.com>
+Message-ID: <689285efaf59e_cff9910066@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20250728111517.134116-4-nik.borisov@suse.com>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <20250728111517.134116-4-nik.borisov@suse.com>
+Subject: Re: [PATCH v2 3/3] lockdown: Use snprintf in lockdown_read
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0216.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::11) To SA3PR11MB8118.namprd11.prod.outlook.com
+ (2603:10b6:806:2f1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR11MB8118:EE_|PH8PR11MB8061:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e21ac7e-6208-4a92-238f-08ddd46fa390
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TDh3RXk1bytrUGJTc1ZyQVM0cEY2Z1hVekxlTzRwNHFBUFZodUhCU2ZQZVpw?=
+ =?utf-8?B?TUNUNFhiNzh1bUttRlRhRFB4alFWbFlVQVB3SUhaZUgxZ0pBc3p3Um56QTFL?=
+ =?utf-8?B?Zmh0ZWp1SGxIc1ZuRWFqYVNIMTVseStOMjhTemtWeUJDelhkVklZSVBWblVO?=
+ =?utf-8?B?bVpUVXhtSGpGVUt4d2k3VWI3SXlSUEdQNGM3T3pPcXY5YkUvZVJMK2w1V2dn?=
+ =?utf-8?B?eXdlYmRIaGQ1RURpTkR4enkxb256Y2o1bU5abUFBOGZsSjdVREpGY1E0WS9v?=
+ =?utf-8?B?Mit6Vk83NGZVc3cyU0xBZWNYZTR4YlNMZ2RTMTFTOXRnT1dQU1ZUTDRXb2lQ?=
+ =?utf-8?B?SnlNaHBBVmFmNTJtRm9ZNVhxNG5TNVlwNWhwK1RQSloyeW9FZFRiL0ROZnBC?=
+ =?utf-8?B?SHNtN1ZTVVJMUHhNdmNpcEg2RTRBU2R0Ujg1VlJhSjBlaVhpNk9mSDd3cXhs?=
+ =?utf-8?B?VXZwMkRnK2RuN2YrU29POFZ0MHlBcS9ac2xQRGVoZld2UzlHdzk5VDUvckdi?=
+ =?utf-8?B?U1p5RHlWOEgwcGlWM0N0Tm96dk9vMEFOM1JsZnhzcnp0OTJYWUlieVlJUDlD?=
+ =?utf-8?B?MUJjQXVTVCt0OUczZzhyZ1pMUUtTWVMwN2h5WkwxYnZLN2pQOU1MUTdKSXpp?=
+ =?utf-8?B?TEljVm5kdXJISGpIL2loNWs4V3FCOW9MYm1EWFdwRVkwVkxjaTdtMXBBK2lH?=
+ =?utf-8?B?UU5GWURGVWluN0NXNm9nWGhnNVNqMEhkb2Fjdk1TSktEeE9XTnRzQzQzUUts?=
+ =?utf-8?B?QlA1OFJxeFVvMjFaZm5jN1JWSTFwTlppaTdyUWJwQ2tDU2EzUDhxQmNqRE1v?=
+ =?utf-8?B?NTZ4NHVOQXY3aXZrQk42ejhuSjF3SEFZWWJ2NVZiQXhJekw3L2pxR3ZXbFlC?=
+ =?utf-8?B?Nk1lRFRyTVc2ZUFvN0VjdTZwdk5UUUVmMlVKV3JrSFVndlRYZmsvOWVxWnFo?=
+ =?utf-8?B?YTY2R1dhWGpMdXdkSSs5dWdUZm1aR3NPUmNqNmUvbFZLOG9qZGNNQXFZVVRD?=
+ =?utf-8?B?Y2NBVTlDQ3pVZjJnWDliR25pNmlkdkNjcHErTXpaYW1sNkErRUxOQ3RkSEpG?=
+ =?utf-8?B?WDBUR2I2cWVPYVNpbzkvclpodlEvZVpZRGNIUUV4dklob1hCL3N3TWR0NmdF?=
+ =?utf-8?B?eXgwUGloa2JXZ2kzN05sa2x0SDg1OUx0bHh5YTdVd0hlQUZVS09rTDEyZ29V?=
+ =?utf-8?B?M2s1cUxxdHN6SjFYb3pBbFovM3VZd0pKMGxCVWM4T0tiUWNRd0ZZQzltWng2?=
+ =?utf-8?B?VHJXVzRPK0djOE9UcWd4elpsUFJLQ1o4YVIwN3ZVT3Exb0Z4bUJOWVVpTVBM?=
+ =?utf-8?B?bE11eklpQ1E3aCs3Q2FkbHZHdXNQamZ2SFRDTDdqa0ZXNU9rWVdUbGtMZ2Ja?=
+ =?utf-8?B?ckV6Y1VVLys5VWtGRVUvelhQODdnMDVYQ1g4M0w3eHNMelZzanEvRVdzQmx4?=
+ =?utf-8?B?a1gwSm51YWZ3OHVxVW1waVVxRTBLd0pHV3dGRG5XWXpPdEM5cDhuTGVzNXZw?=
+ =?utf-8?B?WTR4TllZQzJycW9OSTduVUUxUm1sQXR1TnBGTU1OZG1BK2FlbHNiV2R2RkJG?=
+ =?utf-8?B?NkRaY0xtbHU2OHFTMVhRMjZ5aXVHcW5ZZHBqcWE0dFJYWW8vSkZCQzRFbzZN?=
+ =?utf-8?B?RGQ1dTUxMDJxdFRHQTl5MkVUd3c5Y1YrenVtKzg5bUIwRFExa0RvR3phcFZI?=
+ =?utf-8?B?SmtCTUhtQm9USTNhMXl1VGNjVFY5UExtK1ptL3hUbVdNcForNVB2Rmd1dU9D?=
+ =?utf-8?B?U3FXalF0d2k4eUxlWFIrQkxUaGVML2dSY2F6WncrMDBBTVI3elNvK2VvclJh?=
+ =?utf-8?B?THNsaXhkRXhXTkphcEFBMTgvZ1EwbWhYRDh0NWViRGdINExkSzV0eUpkSjBV?=
+ =?utf-8?B?VndnekJrRVRoSTdXNHpJMTZIRmwwSVhBZjNSUlZpYkpVSCt2T3V4M2xKVjU2?=
+ =?utf-8?Q?x5lIOXb5v0s=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8118.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U2RKcVQrRGgxNUt0WGhUbnpOMC90TUg5VklxMkt2djFjeHNGMXRmOHVBYUZ6?=
+ =?utf-8?B?cjhhVjNkYm9NdzJQeVVubEVmaURHem1qbzlhcHRjM0dnSmRyN3M5UHovTmlO?=
+ =?utf-8?B?aENzNDNwQXdtL1RhNUpMWmVxeCtlOU1kUy81MFUrSDlvdHFDeXBwY2l4dE8x?=
+ =?utf-8?B?VU5sTkxYdEliTC9VVFlaaTR0eGZnZVlWS1dZNnBZTk1wQ3UrY0JUQ3dHRTFj?=
+ =?utf-8?B?Q2J1ZDU2eWpZcnVINUJDK095ejZaRlcrOTIzZHRZdmY4SVp6UjFuaUVMZ2Z2?=
+ =?utf-8?B?Z203ZWJtWVpDbjh6aE1qdlVuRitBZTYzc2xtUHpOTVZjOCtUZDZ4V2FUd2RI?=
+ =?utf-8?B?RTFsbk85cVYwaVJqeU8yQldRS09MT3Yya2FmV0tQU3VSaXp3VG5BY3JuSUVF?=
+ =?utf-8?B?eEtaN0haY09iVzJ0dlBza2pUcVRoemJ6YnpLT3JKb1F2ZHhBSDJVMm8yR0ZR?=
+ =?utf-8?B?UXY4aGN0aXR0NEw1Sy85bjd4ZitURytabkV1THdLNm5RVEFwdkhkSk9yZitN?=
+ =?utf-8?B?Q3hGZjRXZnlvdHdGVEZ2Qm5KaWQ4WitvZzI1Q3Ywd3Z3Mlo5QXp6YVRJb0VC?=
+ =?utf-8?B?cGpnSk1wZEcyT0tzbjdXbWIwSllBb1hBMGRvY28ySmpucXFTOVhueFB3ZFRD?=
+ =?utf-8?B?dWxHVkpBdEZyYVhwNlJDRFMzYzlPNmRSTEtwQmMrUi9wWW40YnhnbWs3dzdI?=
+ =?utf-8?B?MlBucHlmM2FZSmdDTGpMdFJOR2NFTlowbjBYNjl4UzR6Zm1pYi9KZEJVM3ps?=
+ =?utf-8?B?OHcwQ1pjRnNYZVpqbkUyZGN4T2ZUYlRPMmpHU0J3UXlqZXExcTBEQmZ3N0xa?=
+ =?utf-8?B?Z1NzSDN4TTdUaVh5N20veXorWmJIT05BdU5uRjU4NjZIYnVoSDlSMzV2Y0ZT?=
+ =?utf-8?B?OTlocGNpanJHWFk1WXVIOE9NNHBCSERjOFZpZEthQVBNL2V2c1YvSWt3Yzk4?=
+ =?utf-8?B?VG1LTUxqNys5cjlHbGV1ck9OZDZCMndHWTlweDBwSHRSMWduUENCOTIwY2RX?=
+ =?utf-8?B?UWVtN292dndXNnpITnlBWTRGSTUwR0JKVGlpcEliTUwrT3F2bG5YaHVpc0dU?=
+ =?utf-8?B?UkV1azVoL09ZVzZkQlNJMllFZUxweUFNb0FoYWNQUFNvQ1E4eGdNd0dJUHl5?=
+ =?utf-8?B?Qm1SbTBSakg5R2tqS2xXZ1BtRnNwMFNiQmJ2NGdqRk1nVEhoMTUwZW0wVFMw?=
+ =?utf-8?B?VUo4bm4vcE9IdHBQUXhPUm5QZmk0RXpUVllZZ3BhdWI5SzdhdjRCZzR4NVp0?=
+ =?utf-8?B?OTJoWTVXVDBvOENuM0JKYThING5Zd0p4M1ZIOE5VbWV2VkdMZkVrak1KaUZP?=
+ =?utf-8?B?NHVRREE3WmlIRU13T09WemJ4ZU1JenJSZkNVb3l2dFpJWVpTSFQzdmkxSHBs?=
+ =?utf-8?B?U0NMckZLL3VNSWIxNGYxRWw4c056N242bUhieGVMdmRlZUMrZS80THR4aTFj?=
+ =?utf-8?B?RHZpejRnT3JBRUoyOTRlZGx2eGZHVnU2MTdXK09BTUtxeWF5NEs1WmVLRUNk?=
+ =?utf-8?B?ZHUrL3Q4MWYrTURxNG1LVkFMcUpIbEFNMVJiMzNFSGMvQXBVK1k0L0pvMUk5?=
+ =?utf-8?B?MUFOVDRVK3g3SzZGQyttbmtHRW1Wb2xNelUwQlc4L3VMcW9tRHJ5U25zenFP?=
+ =?utf-8?B?T0FiNWN1QjlDSVgxMEFBZ2ErL2ZtMk50SEJDVFNYSk1tb1Ztdjlyc2hQeE5s?=
+ =?utf-8?B?aGNveC93TWJHK0xhS0tYbXp3Wm5JTVhJcUczanpBdXVuWmxYZ2NJRGVMUVpR?=
+ =?utf-8?B?N2lIL2QvRUVDTTN5d0d2b2U1UXF1RUE5ZUIxOUxFblQvQnNoWHUwZm5KNG0v?=
+ =?utf-8?B?TzFHNWJpS3ZyOTVQUVZqM09PbmZkdTFoWDhCaXdRcU1aMmp2aGR1VktHZlRU?=
+ =?utf-8?B?emdHNlFiNk42a2ZocUFBeHh6RGUxK2ZLRkVDTHRONmd2MHhoSHNsNENmZUVW?=
+ =?utf-8?B?T2wzbnA2Z3o4d0sySmYxWFI2Nm1RV2hZc1FlOW44SEx6L05ncEx1UWJ4bU9h?=
+ =?utf-8?B?SzJLNWc2Y09mUzY4ejVpZ3pNa1JHZ0dCcG1jQWNZV2FXNVRyOFU0NkZ4NEs3?=
+ =?utf-8?B?M21TK2RwREUyN1NlQkhLaGEzLzg2WHp1Rm1CMkMyRVM3Z1pGbWtHYXBQNVhT?=
+ =?utf-8?B?R3JBQVQxZ1o5allRRDhrSU9LWVpXWkI4SmtmVlgzWkxQZEg0bDI3N1AwazB0?=
+ =?utf-8?B?SWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e21ac7e-6208-4a92-238f-08ddd46fa390
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8118.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 22:30:10.8799
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rtNsa+4KkK+UrblnBhS83VzaFDlCVOoVSJNc3TufeAl3PX68XBaDUzgyppkqwjG9pWLyU6Z62Wv6jSj+rHikFyqVls306Z3zOrSEPulge/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8061
+X-OriginatorOrg: intel.com
 
-Add a KUnit test suite for the MD5 library functions, including the
-corresponding HMAC support.  The core test logic is in the
-previously-added hash-test-template.h.  This commit just adds the actual
-KUnit suite, and it adds the generated test vectors to the tree so that
-gen-hash-testvecs.py won't have to be run at build time.
+Nikolay Borisov wrote:
+> Since individual features are now locked down separately ensure that if
+> the printing code is change to list them a buffer overrun won't be
+> introduced.  As per Serge's recommendation switch from using sprintf to
+> using snprintf and return EINVAL in case longer than 80 char string hasi
+> to be printed.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- lib/crypto/tests/Kconfig        |  10 ++
- lib/crypto/tests/Makefile       |   1 +
- lib/crypto/tests/md5-testvecs.h | 186 ++++++++++++++++++++++++++++++++
- lib/crypto/tests/md5_kunit.c    |  39 +++++++
- 4 files changed, 236 insertions(+)
- create mode 100644 lib/crypto/tests/md5-testvecs.h
- create mode 100644 lib/crypto/tests/md5_kunit.c
-
-diff --git a/lib/crypto/tests/Kconfig b/lib/crypto/tests/Kconfig
-index de7e8babb6afc..c21d53fd4b0ce 100644
---- a/lib/crypto/tests/Kconfig
-+++ b/lib/crypto/tests/Kconfig
-@@ -1,7 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- 
-+config CRYPTO_LIB_MD5_KUNIT_TEST
-+	tristate "KUnit tests for MD5" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS || CRYPTO_SELFTESTS
-+	select CRYPTO_LIB_BENCHMARK_VISIBLE
-+	select CRYPTO_LIB_MD5
-+	help
-+	  KUnit tests for the MD5 cryptographic hash function and its
-+	  corresponding HMAC.
-+
- config CRYPTO_LIB_POLY1305_KUNIT_TEST
- 	tristate "KUnit tests for Poly1305" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS || CRYPTO_SELFTESTS
- 	select CRYPTO_LIB_BENCHMARK_VISIBLE
-diff --git a/lib/crypto/tests/Makefile b/lib/crypto/tests/Makefile
-index 8601dccd6fdda..f6f82c6f9cb5d 100644
---- a/lib/crypto/tests/Makefile
-+++ b/lib/crypto/tests/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- 
-+obj-$(CONFIG_CRYPTO_LIB_MD5_KUNIT_TEST) += md5_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_POLY1305_KUNIT_TEST) += poly1305_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA1_KUNIT_TEST) += sha1_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA256_KUNIT_TEST) += sha224_kunit.o sha256_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA512_KUNIT_TEST) += sha384_kunit.o sha512_kunit.o
-diff --git a/lib/crypto/tests/md5-testvecs.h b/lib/crypto/tests/md5-testvecs.h
-new file mode 100644
-index 0000000000000..be6727feb2966
---- /dev/null
-+++ b/lib/crypto/tests/md5-testvecs.h
-@@ -0,0 +1,186 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* This file was generated by: ./scripts/crypto/gen-hash-testvecs.py md5 */
-+
-+static const struct {
-+	size_t data_len;
-+	u8 digest[MD5_DIGEST_SIZE];
-+} hash_testvecs[] = {
-+	{
-+		.data_len = 0,
-+		.digest = {
-+			0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
-+			0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e,
-+		},
-+	},
-+	{
-+		.data_len = 1,
-+		.digest = {
-+			0x16, 0x7b, 0x86, 0xf2, 0x1d, 0xf3, 0x76, 0xc9,
-+			0x6f, 0x10, 0xa0, 0x61, 0x5b, 0x14, 0x20, 0x0b,
-+		},
-+	},
-+	{
-+		.data_len = 2,
-+		.digest = {
-+			0x2d, 0x30, 0x96, 0xc7, 0x43, 0x40, 0xed, 0xb2,
-+			0xfb, 0x84, 0x63, 0x9a, 0xec, 0xc7, 0x3c, 0x3c,
-+		},
-+	},
-+	{
-+		.data_len = 3,
-+		.digest = {
-+			0xe5, 0x0f, 0xce, 0xe0, 0xc8, 0xff, 0x4e, 0x08,
-+			0x5e, 0x19, 0xe5, 0xf2, 0x08, 0x11, 0x19, 0x16,
-+		},
-+	},
-+	{
-+		.data_len = 16,
-+		.digest = {
-+			0xe8, 0xca, 0x29, 0x05, 0x2f, 0xd1, 0xf3, 0x99,
-+			0x40, 0x71, 0xf5, 0xc2, 0xf7, 0xf8, 0x17, 0x3e,
-+		},
-+	},
-+	{
-+		.data_len = 32,
-+		.digest = {
-+			0xe3, 0x20, 0xc1, 0xd8, 0x21, 0x14, 0x44, 0x59,
-+			0x1a, 0xf5, 0x91, 0xaf, 0x69, 0xbe, 0x93, 0x9d,
-+		},
-+	},
-+	{
-+		.data_len = 48,
-+		.digest = {
-+			0xfb, 0x06, 0xb0, 0xf0, 0x00, 0x10, 0x4b, 0x68,
-+			0x3d, 0x75, 0xf9, 0x70, 0xde, 0xbb, 0x32, 0x16,
-+		},
-+	},
-+	{
-+		.data_len = 49,
-+		.digest = {
-+			0x52, 0x86, 0x48, 0x8b, 0xae, 0x91, 0x7c, 0x4e,
-+			0xc2, 0x2a, 0x69, 0x07, 0x35, 0xcc, 0xb2, 0x88,
-+		},
-+	},
-+	{
-+		.data_len = 63,
-+		.digest = {
-+			0xfa, 0xd3, 0xf6, 0xe6, 0x7b, 0x1a, 0xc6, 0x05,
-+			0x73, 0x35, 0x02, 0xab, 0xc7, 0xb3, 0x47, 0xcb,
-+		},
-+	},
-+	{
-+		.data_len = 64,
-+		.digest = {
-+			0xc5, 0x59, 0x29, 0xe9, 0x0a, 0x4a, 0x86, 0x43,
-+			0x7c, 0xaf, 0xdf, 0x83, 0xd3, 0xb8, 0x33, 0x5f,
-+		},
-+	},
-+	{
-+		.data_len = 65,
-+		.digest = {
-+			0x80, 0x05, 0x75, 0x39, 0xec, 0x44, 0x8a, 0x81,
-+			0xe7, 0x6e, 0x8d, 0xd1, 0xc6, 0xeb, 0xc2, 0xf0,
-+		},
-+	},
-+	{
-+		.data_len = 127,
-+		.digest = {
-+			0x3f, 0x02, 0xe8, 0xc6, 0xb8, 0x6a, 0x39, 0xc3,
-+			0xa4, 0x1c, 0xd9, 0x8f, 0x4a, 0x71, 0x40, 0x30,
-+		},
-+	},
-+	{
-+		.data_len = 128,
-+		.digest = {
-+			0x89, 0x4f, 0x79, 0x3e, 0xff, 0x0c, 0x22, 0x60,
-+			0xa2, 0xdc, 0x10, 0x5f, 0x23, 0x0a, 0xe7, 0xc6,
-+		},
-+	},
-+	{
-+		.data_len = 129,
-+		.digest = {
-+			0x06, 0x56, 0x61, 0xb8, 0x8a, 0x82, 0x77, 0x1b,
-+			0x2c, 0x35, 0xb8, 0x9f, 0xd6, 0xf7, 0xbd, 0x5a,
-+		},
-+	},
-+	{
-+		.data_len = 256,
-+		.digest = {
-+			0x5d, 0xdf, 0x7d, 0xc8, 0x43, 0x96, 0x3b, 0xdb,
-+			0xc7, 0x0e, 0x44, 0x42, 0x23, 0xf7, 0xed, 0xdf,
-+		},
-+	},
-+	{
-+		.data_len = 511,
-+		.digest = {
-+			0xf6, 0x5f, 0x26, 0x51, 0x8a, 0x5a, 0x46, 0x8f,
-+			0x48, 0x72, 0x90, 0x74, 0x9d, 0x87, 0xbd, 0xdf,
-+		},
-+	},
-+	{
-+		.data_len = 513,
-+		.digest = {
-+			0xd8, 0x2c, 0xc9, 0x76, 0xfa, 0x67, 0x2e, 0xa6,
-+			0xc8, 0x12, 0x4a, 0x64, 0xaa, 0x0b, 0x3d, 0xbd,
-+		},
-+	},
-+	{
-+		.data_len = 1000,
-+		.digest = {
-+			0xe2, 0x7e, 0xb4, 0x5f, 0xe1, 0x74, 0x51, 0xfc,
-+			0xe0, 0xc8, 0xd5, 0xe6, 0x8b, 0x40, 0xd2, 0x0e,
-+		},
-+	},
-+	{
-+		.data_len = 3333,
-+		.digest = {
-+			0xcd, 0x7d, 0x56, 0xa9, 0x4c, 0x47, 0xea, 0xc2,
-+			0x34, 0x0b, 0x84, 0x05, 0xf9, 0xad, 0xbb, 0x46,
-+		},
-+	},
-+	{
-+		.data_len = 4096,
-+		.digest = {
-+			0x63, 0x6e, 0x58, 0xb3, 0x94, 0x6b, 0x83, 0x5f,
-+			0x1f, 0x0e, 0xd3, 0x66, 0x78, 0x71, 0x98, 0x42,
-+		},
-+	},
-+	{
-+		.data_len = 4128,
-+		.digest = {
-+			0x9d, 0x68, 0xfc, 0x26, 0x8b, 0x4c, 0xa8, 0xe7,
-+			0x30, 0x0b, 0x19, 0x52, 0x6e, 0xa5, 0x65, 0x1c,
-+		},
-+	},
-+	{
-+		.data_len = 4160,
-+		.digest = {
-+			0x1c, 0xaa, 0x7d, 0xee, 0x91, 0x01, 0xe2, 0x5a,
-+			0xec, 0xe9, 0xde, 0x57, 0x0a, 0xb6, 0x4c, 0x2f,
-+		},
-+	},
-+	{
-+		.data_len = 4224,
-+		.digest = {
-+			0x1b, 0x31, 0xe3, 0x14, 0x07, 0x16, 0x17, 0xc6,
-+			0x98, 0x79, 0x88, 0x23, 0xb6, 0x3b, 0x25, 0xc4,
-+		},
-+	},
-+	{
-+		.data_len = 16384,
-+		.digest = {
-+			0xc6, 0x3d, 0x56, 0x90, 0xf0, 0xf6, 0xe6, 0x50,
-+			0xf4, 0x76, 0x78, 0x67, 0xa3, 0xdd, 0x62, 0x7b,
-+		},
-+	},
-+};
-+
-+static const u8 hash_testvec_consolidated[MD5_DIGEST_SIZE] = {
-+	0x70, 0x86, 0x9e, 0x6c, 0xa4, 0xc6, 0x71, 0x43,
-+	0x26, 0x02, 0x1b, 0x3f, 0xfd, 0x56, 0x9f, 0xa6,
-+};
-+
-+static const u8 hmac_testvec_consolidated[MD5_DIGEST_SIZE] = {
-+	0x10, 0x02, 0x74, 0xf6, 0x4d, 0xb3, 0x3c, 0xc7,
-+	0xa1, 0xf7, 0xe6, 0xd4, 0x32, 0x64, 0xfa, 0x6d,
-+};
-diff --git a/lib/crypto/tests/md5_kunit.c b/lib/crypto/tests/md5_kunit.c
-new file mode 100644
-index 0000000000000..38bd52c25ae3e
---- /dev/null
-+++ b/lib/crypto/tests/md5_kunit.c
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright 2025 Google LLC
-+ */
-+#include <crypto/md5.h>
-+#include "md5-testvecs.h"
-+
-+#define HASH md5
-+#define HASH_CTX md5_ctx
-+#define HASH_SIZE MD5_DIGEST_SIZE
-+#define HASH_INIT md5_init
-+#define HASH_UPDATE md5_update
-+#define HASH_FINAL md5_final
-+#define HMAC_KEY hmac_md5_key
-+#define HMAC_CTX hmac_md5_ctx
-+#define HMAC_PREPAREKEY hmac_md5_preparekey
-+#define HMAC_INIT hmac_md5_init
-+#define HMAC_UPDATE hmac_md5_update
-+#define HMAC_FINAL hmac_md5_final
-+#define HMAC hmac_md5
-+#define HMAC_USINGRAWKEY hmac_md5_usingrawkey
-+#include "hash-test-template.h"
-+
-+static struct kunit_case hash_test_cases[] = {
-+	HASH_KUNIT_CASES,
-+	KUNIT_CASE(benchmark_hash),
-+	{},
-+};
-+
-+static struct kunit_suite hash_test_suite = {
-+	.name = "md5",
-+	.test_cases = hash_test_cases,
-+	.suite_init = hash_suite_init,
-+	.suite_exit = hash_suite_exit,
-+};
-+kunit_test_suite(hash_test_suite);
-+
-+MODULE_DESCRIPTION("KUnit tests and benchmark for MD5 and HMAC-MD5");
-+MODULE_LICENSE("GPL");
--- 
-2.50.1
-
+I would have expected this safety to come before patch1, but it also
+feels like the maximum buffer size could be calculated at compile time
+to make the maximum output always fit.
 
