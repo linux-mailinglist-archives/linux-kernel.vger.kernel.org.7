@@ -1,181 +1,191 @@
-Return-Path: <linux-kernel+bounces-756957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFEBB1BB85
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406EFB1BB88
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC343BB85D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:48:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080B118A0BE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC497230BFF;
-	Tue,  5 Aug 2025 20:47:58 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1FC235BE8;
+	Tue,  5 Aug 2025 20:50:00 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310F52F2E;
-	Tue,  5 Aug 2025 20:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED2B78F2F;
+	Tue,  5 Aug 2025 20:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754426878; cv=none; b=D1KYQ99eed4dVPSJvF3nTSP9EeN1MrmjkEP6RMHjo6a1vEWef5MZPGq5Z2yieFRGZ2Dqw9lqBfbgqDd3iexsRhysXDCmWSN2dgttGOKpSaYCnvPJoZe9D0mTnRMDcgDbeuZNIoob9RfnCf5Lhb3e9JZa7v11MuzYjhqkI/lKOow=
+	t=1754427000; cv=none; b=BGbvlXEPQTzTF6hj8RYpErSJcHfTkJ4/Rr1ZF/RxC6nW/7FM6GrGnYtXxjAHG8RjdXcOEqUGSAcq06dy3MEyFjKxwVHOzvdrMUrQ+KSKB0Nwl5IB3td0MFuz3xRRwBMV3Xc1KqGDUhvrAa6VyGhEMUeKwn9E6AyXJySetj7grBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754426878; c=relaxed/simple;
-	bh=amCV64pPxjnHkNFYTYcY55fRdYYPOsxAfjuR2zyZHXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MWlBa/pv3fUfFv6esLQUks7Mh06GaDEiQRIJLpYy8vj7d7xvy0qhbel2P6pqD3rLX/9Vtxc9bXQVMv1vyQh7VdYajhekneUbKOkD5kIK5Fmie9CmLUJ6z//AERvFwiDWxciLmp/vtsRtcR5CCjTfkD0OpXEWG7qFoJYYsXhFHdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 3CE0A1F0003D;
-	Tue,  5 Aug 2025 20:47:54 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id B23E9B011F2; Tue,  5 Aug 2025 20:47:53 +0000 (UTC)
-X-Spam-Level: *
-Received: from shepard (unknown [192.168.1.65])
-	by laika.paulk.fr (Postfix) with ESMTP id 73B2BB011F2;
-	Tue,  5 Aug 2025 20:47:19 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Paul Kocialkowski <paulk@sys-base.io>
-Subject: [PATCH 2/2] media: uapi: Cleanup tab after define in headers
-Date: Tue,  5 Aug 2025 22:47:18 +0200
-Message-ID: <20250805204718.6893-2-paulk@sys-base.io>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250805204718.6893-1-paulk@sys-base.io>
-References: <20250805204718.6893-1-paulk@sys-base.io>
+	s=arc-20240116; t=1754427000; c=relaxed/simple;
+	bh=aLhc8Bw36/66/OjVMNAvLc/anRiGdt29/5bujHg3EcY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=q1Etp3TtMIiquc2fKBf6w0T72ywdRlhPtZRlRdiQQfOnRfRy1bedfoFw4z5myvZdFEk7PxiCcb8Dw79oi0Rai/x+D9EwVW2QU+Q8VVZQuhdNHEGKbQsrYiWJEYbtk7jJP1I1uQf/PC+K/4VNOYtudiEHSjXSxjr4LUj/HIgWmoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:7b12:35fe:1712:13bc] (unknown [IPv6:2a02:8084:255b:aa00:7b12:35fe:1712:13bc])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 7B4A242077;
+	Tue,  5 Aug 2025 20:49:49 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:7b12:35fe:1712:13bc) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:7b12:35fe:1712:13bc]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <a0e172e9-e4d3-427f-b237-ba8f6b3772f4@arnaud-lcm.com>
+Date: Tue, 5 Aug 2025 21:49:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: Yonghong Song <yonghong.song@linux.dev>, song@kernel.org,
+ jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+References: <20250729165622.13794-1-contact@arnaud-lcm.com>
+ <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
+ <5124b615-3a71-4a44-a497-eea3b5964fda@arnaud-lcm.com>
+ <6ce83e5c-de34-4ef2-b9f4-2ad15e645969@arnaud-lcm.com>
+Content-Language: en-US
+In-Reply-To: <6ce83e5c-de34-4ef2-b9f4-2ad15e645969@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175442699038.30990.12216209494253811498@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Some definitions use a tab after the define keyword instead of the
-usual single space. Replace it for better consistency.
+Hi,
+I gave it several tries and I can't find a nice to do see properly.
+The main challenge is to find a way to detect memory corruption. I 
+wanted to place a canary value
+  by tweaking the map size but we don't have a way from a BPF program 
+perspective to access to the size
+of a stack_map_bucket. If we decide to do this computation manually, we 
+would end-up with maintainability
+  issues:
+#include "vmlinux.h"
+#include "bpf/bpf_helpers.h"
 
-Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
----
- include/uapi/linux/v4l2-controls.h | 30 +++++++++++++++---------------
- include/uapi/linux/videodev2.h     | 18 +++++++++---------
- 2 files changed, 24 insertions(+), 24 deletions(-)
+#define MAX_STACK_DEPTH 32
+#define CANARY_VALUE 0xBADCAFE
 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index e52cdf48d652..5b7dd8c990f6 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -1193,7 +1193,7 @@ enum v4l2_flash_strobe_source {
- #define V4L2_CID_JPEG_CLASS_BASE		(V4L2_CTRL_CLASS_JPEG | 0x900)
- #define V4L2_CID_JPEG_CLASS			(V4L2_CTRL_CLASS_JPEG | 1)
- 
--#define	V4L2_CID_JPEG_CHROMA_SUBSAMPLING	(V4L2_CID_JPEG_CLASS_BASE + 1)
-+#define V4L2_CID_JPEG_CHROMA_SUBSAMPLING	(V4L2_CID_JPEG_CLASS_BASE + 1)
- enum v4l2_jpeg_chroma_subsampling {
- 	V4L2_JPEG_CHROMA_SUBSAMPLING_444	= 0,
- 	V4L2_JPEG_CHROMA_SUBSAMPLING_422	= 1,
-@@ -1202,15 +1202,15 @@ enum v4l2_jpeg_chroma_subsampling {
- 	V4L2_JPEG_CHROMA_SUBSAMPLING_410	= 4,
- 	V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY	= 5,
- };
--#define	V4L2_CID_JPEG_RESTART_INTERVAL		(V4L2_CID_JPEG_CLASS_BASE + 2)
--#define	V4L2_CID_JPEG_COMPRESSION_QUALITY	(V4L2_CID_JPEG_CLASS_BASE + 3)
-+#define V4L2_CID_JPEG_RESTART_INTERVAL		(V4L2_CID_JPEG_CLASS_BASE + 2)
-+#define V4L2_CID_JPEG_COMPRESSION_QUALITY	(V4L2_CID_JPEG_CLASS_BASE + 3)
- 
--#define	V4L2_CID_JPEG_ACTIVE_MARKER		(V4L2_CID_JPEG_CLASS_BASE + 4)
--#define	V4L2_JPEG_ACTIVE_MARKER_APP0		(1 << 0)
--#define	V4L2_JPEG_ACTIVE_MARKER_APP1		(1 << 1)
--#define	V4L2_JPEG_ACTIVE_MARKER_COM		(1 << 16)
--#define	V4L2_JPEG_ACTIVE_MARKER_DQT		(1 << 17)
--#define	V4L2_JPEG_ACTIVE_MARKER_DHT		(1 << 18)
-+#define V4L2_CID_JPEG_ACTIVE_MARKER		(V4L2_CID_JPEG_CLASS_BASE + 4)
-+#define V4L2_JPEG_ACTIVE_MARKER_APP0		(1 << 0)
-+#define V4L2_JPEG_ACTIVE_MARKER_APP1		(1 << 1)
-+#define V4L2_JPEG_ACTIVE_MARKER_COM		(1 << 16)
-+#define V4L2_JPEG_ACTIVE_MARKER_DQT		(1 << 17)
-+#define V4L2_JPEG_ACTIVE_MARKER_DHT		(1 << 18)
- 
- 
- /* Image source controls */
-@@ -1243,10 +1243,10 @@ enum v4l2_jpeg_chroma_subsampling {
- #define V4L2_CID_DV_CLASS_BASE			(V4L2_CTRL_CLASS_DV | 0x900)
- #define V4L2_CID_DV_CLASS			(V4L2_CTRL_CLASS_DV | 1)
- 
--#define	V4L2_CID_DV_TX_HOTPLUG			(V4L2_CID_DV_CLASS_BASE + 1)
--#define	V4L2_CID_DV_TX_RXSENSE			(V4L2_CID_DV_CLASS_BASE + 2)
--#define	V4L2_CID_DV_TX_EDID_PRESENT		(V4L2_CID_DV_CLASS_BASE + 3)
--#define	V4L2_CID_DV_TX_MODE			(V4L2_CID_DV_CLASS_BASE + 4)
-+#define V4L2_CID_DV_TX_HOTPLUG			(V4L2_CID_DV_CLASS_BASE + 1)
-+#define V4L2_CID_DV_TX_RXSENSE			(V4L2_CID_DV_CLASS_BASE + 2)
-+#define V4L2_CID_DV_TX_EDID_PRESENT		(V4L2_CID_DV_CLASS_BASE + 3)
-+#define V4L2_CID_DV_TX_MODE			(V4L2_CID_DV_CLASS_BASE + 4)
- enum v4l2_dv_tx_mode {
- 	V4L2_DV_TX_MODE_DVI_D	= 0,
- 	V4L2_DV_TX_MODE_HDMI	= 1,
-@@ -1267,7 +1267,7 @@ enum v4l2_dv_it_content_type {
- 	V4L2_DV_IT_CONTENT_TYPE_NO_ITC	  = 4,
- };
- 
--#define	V4L2_CID_DV_RX_POWER_PRESENT		(V4L2_CID_DV_CLASS_BASE + 100)
-+#define V4L2_CID_DV_RX_POWER_PRESENT		(V4L2_CID_DV_CLASS_BASE + 100)
- #define V4L2_CID_DV_RX_RGB_RANGE		(V4L2_CID_DV_CLASS_BASE + 101)
- #define V4L2_CID_DV_RX_IT_CONTENT_TYPE		(V4L2_CID_DV_CLASS_BASE + 102)
- 
-@@ -2667,7 +2667,7 @@ struct v4l2_ctrl_hevc_scaling_matrix {
- /* Stateless VP9 controls */
- 
- #define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
--#define	V4L2_VP9_LOOP_FILTER_FLAG_DELTA_UPDATE	0x2
-+#define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_UPDATE	0x2
- 
- /**
-  * struct v4l2_vp9_loop_filter - VP9 loop filter parameters
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 8e26c0485234..a65a4ee61d7c 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -1607,8 +1607,8 @@ struct v4l2_bt_timings {
- } __attribute__ ((packed));
- 
- /* Interlaced or progressive format */
--#define	V4L2_DV_PROGRESSIVE	0
--#define	V4L2_DV_INTERLACED	1
-+#define V4L2_DV_PROGRESSIVE	0
-+#define V4L2_DV_INTERLACED	1
- 
- /* Polarities. If bit is not set, it is assumed to be negative polarity */
- #define V4L2_DV_VSYNC_POS_POL	0x00000001
-@@ -2791,15 +2791,15 @@ struct v4l2_remove_buffers {
-  * Only implemented if CONFIG_VIDEO_ADV_DEBUG is defined.
-  * You must be root to use these ioctls. Never use these in applications!
-  */
--#define	VIDIOC_DBG_S_REGISTER	 _IOW('V', 79, struct v4l2_dbg_register)
--#define	VIDIOC_DBG_G_REGISTER	_IOWR('V', 80, struct v4l2_dbg_register)
-+#define VIDIOC_DBG_S_REGISTER	 _IOW('V', 79, struct v4l2_dbg_register)
-+#define VIDIOC_DBG_G_REGISTER	_IOWR('V', 80, struct v4l2_dbg_register)
- 
- #define VIDIOC_S_HW_FREQ_SEEK	 _IOW('V', 82, struct v4l2_hw_freq_seek)
--#define	VIDIOC_S_DV_TIMINGS	_IOWR('V', 87, struct v4l2_dv_timings)
--#define	VIDIOC_G_DV_TIMINGS	_IOWR('V', 88, struct v4l2_dv_timings)
--#define	VIDIOC_DQEVENT		 _IOR('V', 89, struct v4l2_event)
--#define	VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct v4l2_event_subscription)
--#define	VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct v4l2_event_subscription)
-+#define VIDIOC_S_DV_TIMINGS	_IOWR('V', 87, struct v4l2_dv_timings)
-+#define VIDIOC_G_DV_TIMINGS	_IOWR('V', 88, struct v4l2_dv_timings)
-+#define VIDIOC_DQEVENT		 _IOR('V', 89, struct v4l2_event)
-+#define VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct v4l2_event_subscription)
-+#define VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct v4l2_event_subscription)
- #define VIDIOC_CREATE_BUFS	_IOWR('V', 92, struct v4l2_create_buffers)
- #define VIDIOC_PREPARE_BUF	_IOWR('V', 93, struct v4l2_buffer)
- #define VIDIOC_G_SELECTION	_IOWR('V', 94, struct v4l2_selection)
--- 
-2.50.1
+/* Calculate size based on known layout:
+  * - fnode: sizeof(void*)
+  * - hash: 4 bytes
+  * - nr: 4 bytes
+  * - data: MAX_STACK_DEPTH * 8 bytes
+  * - canary: 8 bytes
+  */
+#define VALUE_SIZE (sizeof(void*) + 4 + 4 + (MAX_STACK_DEPTH * 8) + 8)
 
+struct {
+     __uint(type, BPF_MAP_TYPE_STACK_TRACE);
+     __uint(max_entries, 1);
+     __uint(value_size, VALUE_SIZE);
+     __uint(key_size, sizeof(u32));
+} stackmap SEC(".maps");
+
+static __attribute__((noinline)) void recursive_helper(int depth) {
+     if (depth <= 0) return;
+     asm volatile("" ::: "memory");
+     recursive_helper(depth - 1);
+}
+
+SEC("kprobe/do_sys_open")
+int test_stack_overflow(void *ctx) {
+     u32 key = 0;
+     u64 *stack = bpf_map_lookup_elem(&stackmap, &key);
+     if (!stack) return 0;
+
+     stack[MAX_STACK_DEPTH] = CANARY_VALUE;
+
+     /* Force minimum stack depth */
+     recursive_helper(MAX_STACK_DEPTH + 10);
+
+     (void)bpf_get_stackid(ctx, &stackmap, 0);
+     return 0;
+}
+
+char _license[] SEC("license") = "GPL";
+
+On 01/08/2025 19:16, Lecomte, Arnaud wrote:
+> Well, it turns out it is less straightforward than it looked like to 
+> detect the memory corruption
+>  without KASAN. I am currently in holidays for the next 3 days so I've 
+> limited access to a
+> computer. I should be able to sort this out on monday.
+>
+> Thanks,
+> Arnaud
+>
+> On 30/07/2025 08:10, Arnaud Lecomte wrote:
+>> On 29/07/2025 23:45, Yonghong Song wrote:
+>>>
+>>>
+>>> On 7/29/25 9:56 AM, Arnaud Lecomte wrote:
+>>>> Syzkaller reported a KASAN slab-out-of-bounds write in 
+>>>> __bpf_get_stackid()
+>>>> when copying stack trace data. The issue occurs when the perf trace
+>>>>   contains more stack entries than the stack map bucket can hold,
+>>>>   leading to an out-of-bounds write in the bucket's data array.
+>>>> For build_id mode, we use sizeof(struct bpf_stack_build_id)
+>>>>   to determine capacity, and for normal mode we use sizeof(u64).
+>>>>
+>>>> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+>>>> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+>>>> Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+>>>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>>>
+>>> Could you add a selftest? This way folks can easily find out what is
+>>> the problem and why this fix solves the issue correctly.
+>>>
+>> Sure, will be done after work
+>> Thanks,
+>> Arnaud
+>>>> ---
+>>>> Changes in v2:
+>>>>   - Use utilty stack_map_data_size to compute map stack map size
+>>>> ---
+>>>>   kernel/bpf/stackmap.c | 8 +++++++-
+>>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+>>>> index 3615c06b7dfa..6f225d477f07 100644
+>>>> --- a/kernel/bpf/stackmap.c
+>>>> +++ b/kernel/bpf/stackmap.c
+>>>> @@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>>>>       struct bpf_stack_map *smap = container_of(map, struct 
+>>>> bpf_stack_map, map);
+>>>>       struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+>>>>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>>>> -    u32 hash, id, trace_nr, trace_len, i;
+>>>> +    u32 hash, id, trace_nr, trace_len, i, max_depth;
+>>>>       bool user = flags & BPF_F_USER_STACK;
+>>>>       u64 *ips;
+>>>>       bool hash_matches;
+>>>> @@ -241,6 +241,12 @@ static long __bpf_get_stackid(struct bpf_map 
+>>>> *map,
+>>>>         trace_nr = trace->nr - skip;
+>>>>       trace_len = trace_nr * sizeof(u64);
+>>>> +
+>>>> +    /* Clamp the trace to max allowed depth */
+>>>> +    max_depth = smap->map.value_size / stack_map_data_size(map);
+>>>> +    if (trace_nr > max_depth)
+>>>> +        trace_nr = max_depth;
+>>>> +
+>>>>       ips = trace->ip + skip;
+>>>>       hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+>>>>       id = hash & (smap->n_buckets - 1);
+>>>
+>>>
 
