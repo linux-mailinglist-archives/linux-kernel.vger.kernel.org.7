@@ -1,287 +1,191 @@
-Return-Path: <linux-kernel+bounces-756068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E76B1AF9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:47:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5528B1AF9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5792B7A4A7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF55189EE41
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A851EB5FD;
-	Tue,  5 Aug 2025 07:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9C7231C9F;
+	Tue,  5 Aug 2025 07:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DxyG/Idw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Odn44y4u"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E594D230997
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EAB189;
+	Tue,  5 Aug 2025 07:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380047; cv=none; b=SiYtUGb6VPVeN3AefKandO01vkEGfSx8hW1Ti1JKDbF6dq9tu3WztLDBpUgIsAoqJX36YxCZjmZxjZPEogyJhT3gT981jn/JTD2WyPuqk10/hyBWyiS17xJntF7KwmrEw6wMGk22QSfZJD2d4PvMD6zKYnzF1qcDN1M/l9WDpwA=
+	t=1754380120; cv=none; b=PJ6iw65wdJQvQrzdXPYcEYSuEUH+ocLAZbHMvM8GfHcV73m9ZCkjcXh355O6ypsYt/d5wRNgk6qAbb7iYqUu4VPEVCfvncCdJk333ukUWclpXKBMnag7ULSVFerpiiiy2KFjVcwvGbOB45bS5/S2Iie8hdKl6+bVsB8yLHJfZY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380047; c=relaxed/simple;
-	bh=QdoM5jijl3U+bzt98WBSeNJn3NvpJT7uEM7WhHOfV2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ESXui1vY7phtHRkw9x4P5gTjlZKVbWXT8I1i0gW8Uoqrt6RbzGB/1dBJFrfeq/F4AqzPloDnlW/7Oz3c7KsGPv46beXT6/Afwh2v4HLf5UURevBFSMdIea9uLmxQZwO763Mv6n+o7BCRdCQZCL3pVedH+6mKtbqaNH8ZE/iIJJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DxyG/Idw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754380044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4FVZZvLwQ+yV12DH+flnf1KHJLBs63H0OjRwDryvigc=;
-	b=DxyG/IdwHL+yA3StnxDXol0/vwaBq6PDe8Zslby3+hNkbnyVEm6AFc5xfVpKIHaGZYbbXO
-	MwNbMxWfEtCkoC5/Kjel+aBN7UfpayhozUsuWzC5ufl7Gg9CJsGtFcI5Znws5RXPRdP8Uo
-	C15OenqTNeJLnlliG5y3/OpD9dIx+4o=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-uqAphNPdMe6yfB3sGuyF7g-1; Tue, 05 Aug 2025 03:47:22 -0400
-X-MC-Unique: uqAphNPdMe6yfB3sGuyF7g-1
-X-Mimecast-MFC-AGG-ID: uqAphNPdMe6yfB3sGuyF7g_1754380041
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459de0d5fb1so11717765e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 00:47:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380041; x=1754984841;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4FVZZvLwQ+yV12DH+flnf1KHJLBs63H0OjRwDryvigc=;
-        b=k76cOZFhvujCa94FqdDI7AS/BFM6OCeuxttKmwUfArY7J8Q22eSxWlC0MRS6ZAWmcl
-         0XiOLm2I7FWe9sDhAx/d8oigUxPtvO9NKk5vQRKNnnm5nMYQOPCCZNqnGWz5c0ImcgKT
-         Y/1SKsmTarTmrrqg5Tk3ztUU1PGdRjCr5PKA34zb2JMIQT6WsuHvAH2QSfAKOwCtlaVt
-         7sdq5vO64Z5ClpNVqOWQYYY6K8NXBxheSuj5A/+8ftCtpGh1l9eN0gpRXwEebmjEa/8R
-         IK5SMv1pKwdW7nS9s9GVu61gP7r3ouHvMYOdSUPxKPPFmzMexl3r4ntqg3dN7RcFRPH4
-         2DEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUr48yaLkjV7iuM1ZDq+e37Qfl57fQQweXCTZwQ0nX3GDPWFoH51FzBvNU2ci88MV1dTRUQIN0T3uKHs60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeTMeQZoGdTJzoTsQqk85eDHsat0FpStmpXPxqP8VkilryW9Nt
-	WtSt0CCbxLYe9mMVTPvi17CWeeYcLj9Jx29c4gohRkb4DAMsCbWnUlYmPrjMxn4Q/5vE3rz+b84
-	E/jxOGXpP0IVuoJyYesSouVEAzC2GekvkpZ47j4tUpofEy8N2s6esLgBAA5E2ErAC7g==
-X-Gm-Gg: ASbGncs3hSdhK5gvv37JTE8LyAxZfXuI9IKNwqprP+CPKha3dN+KOKLWjMGVcyvY/jr
-	SOX01wEdAESQNuoq66uTqnUqTGFl896xnJkhxUCNNXm2u7Aso3MnMaYKRJF+QkP77+ZaS5ZJ1aM
-	6UxeqVlOQ4ce02OIgp8kcVYu2QNMOOUB48NrUp9rtDLgOyIXbZSKRamgpaPPALpQ5EAE5uV90wx
-	S3kCFmi7TqBzAWTlixnLf+kqW7V6ECaZdWz12xY/1SDJyvYPgPD7rrejQTYCbK8G1Kw8QYM6hYu
-	4Lq8ONxt9q7eBNW3hB1AdKslmVVHgLPvXb7XvPGSPcHyW2oowPq3fk8lCGSnML4xF7N2lq+FXJI
-	ygWLTntsLGiyhX12Olp4GUa2OR+2yBo53YhyjeO8AqjPdoqXTCEbuBBJasEbEa42Q0jM=
-X-Received: by 2002:a05:600c:1c12:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-459e0f02dcbmr17622795e9.6.1754380041268;
-        Tue, 05 Aug 2025 00:47:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHN1EeqY4x3j3RAtBvMc8UHTVzni5qYf4SXtqWIha76OhHDzRFGx3XTSbRwyXKYIlqHtsxFQg==
-X-Received: by 2002:a05:600c:1c12:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-459e0f02dcbmr17622545e9.6.1754380040792;
-        Tue, 05 Aug 2025 00:47:20 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e2a28bfasm12176375e9.21.2025.08.05.00.47.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 00:47:20 -0700 (PDT)
-Message-ID: <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
-Date: Tue, 5 Aug 2025 09:47:18 +0200
+	s=arc-20240116; t=1754380120; c=relaxed/simple;
+	bh=dfz9GEQtGUBOq+4N1TmCcfkFU6ARoozvcEdCqiVMSXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uC40YAjIZlCdqr04JIu7Vy1KA/6Ct/XxakstW9PMv4IVvLoaX0VcUMU0kwdF2Xsg+9mRYdUV+5K8Cj9CG6Dwj6YXvrr9u71N4Hk40eRkjKoOQRufbr2975JEIFmmwxOYOV3OhX1LK4opfkxDES7jM9rIhnjfNbrJ3xds5X8QLDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Odn44y4u; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754380116;
+	bh=dfz9GEQtGUBOq+4N1TmCcfkFU6ARoozvcEdCqiVMSXg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Odn44y4uCkUytDBo/oOSHQ7Idxe70sJ2w8swzbeUWboeYTHjT/CsidZXMOuT+Dz9x
+	 0IJC8XC8Bpd0b6dmKLumrBFue826zqygwgJGH7itTCDFn8xkj0NMBRWHQ4DkwdgDN2
+	 NOmPMQLG3v3Bjcisl1wcX2tG+iaXbzcUTS0Q2c5oF/AYdtTS7+UafYfCuPXRFwi3ha
+	 aC/YeUbGdMf+JFc5+mJ21QF0bVJungC5MpQsWpPPbemOdacMQclz8vLGy+yx4Pd5SU
+	 7X4Xh0j82ip32kfhOI7pIh+ISaqH7ku2XYYTKmjzyqUzBO3ue7vfIB2il1Sz/JLJS6
+	 WZC6R43AR4kJw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5175D17E01F5;
+	Tue,  5 Aug 2025 09:48:35 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	ulf.hansson@linaro.org,
+	y.oudjana@protonmail.com,
+	fshao@chromium.org,
+	wenst@chromium.org,
+	lihongbo22@huawei.com,
+	mandyjh.liu@mediatek.com,
+	mbrugger@suse.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v3 00/10] pmdomain: Partial refactor, support modem and RTFF
+Date: Tue,  5 Aug 2025 09:47:36 +0200
+Message-ID: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-To: Alex Williamson <alex.williamson@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>,
- Jason Gunthorpe <jgg@nvidia.com>
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250804185306.6b048e7c.alex.williamson@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 05.08.25 02:53, Alex Williamson wrote:
-> On Mon, 4 Aug 2025 16:55:09 -0700
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> 
->> On Mon, 4 Aug 2025 at 15:22, Alex Williamson <alex.williamson@redhat.com> wrote:
->>>
->>> Li Zhe (6):
->>>        mm: introduce num_pages_contiguous()
->>
->> WHY?
->>
->> There is exactly *ONE* user, why the heck do we introduce this
->> completely pointless "helper" function, and put it in a core header
->> file like it was worth it?
-> 
-> There was discussion here[1] where David Hildenbrand and Jason
-> Gunthorpe suggested this should be in common code and I believe there
-> was some intent that this would get reused.  I took this as
-> endorsement from mm folks.  This can certainly be pulled back into
-> subsystem code.
+Changes in v3:
+ - Dropped specified items for cells restriction as suggested by Rob
+ - Fixed an issue in patch 4 still referencing "mediatek,bus-protection"
+   as it is entirely replaced by "access-controllers"
 
-Yeah, we ended up here after trying to go the folio-way first, but then
-realizing that code that called GUP shouldn't have to worry about
-folios, just to detect consecutive pages+PFNs.
+Changes in v2:
+ - Added #access-controller-cells allowance for MT8188/95 infracfg_ao
 
-I think this helper will can come in handy even in folio context.
-I recall pointing Joanne at it in different fuse context.
+This series is a subset of [1], leaving out the Hardware Voter specific
+bits for MT8196 until the discussion around it reaches a conclusion.
 
-> 
->> And it's not like that code is some kind of work of art that we want
->> to expose everybody to *anyway*. It's written in a particularly stupid
->> way that means that it's *way* more expensive than it needs to be.
->>
->> And then it's made "inline" despite the code generation being
->> horrible, which makes it all entirely pointless.
->>
->> Yes, I'm grumpy. This pull request came in late, I'm already
->> traveling, and then I look at it and it just makes me *angry* at how
->> bad that code is, and how annoying it is.
-> 
-> Sorry, I usually try to get in later during the first week to let the
-> dust settle a bit from the bigger subsystems, I guess I'm running a
-> little behind this cycle.  We'll get it fixed and I'll resend.  Thanks,
-> 
-> Alex
-> 
->> My builds are already slower than usual because they happen on my
->> laptop while traveling, I do *not* need to see this kind of absolutely
->> disgusting code that does stupid things that make the build even
->> slower.
->>
->> So I refuse to pull this kind of crap.
->>
->> If you insist on making my build slower and exposing these kinds of
->> helper functions, they had better be *good* helper functions.
->>
->> Hint: absolutely nobody cares about "the pages crossed a sparsemem
->> border. If your driver cares about the number of contiguous pages, it
->> might as well say "yeah, they are contiguous, but they are in
->> different sparsemem chunks, so we'll break here too".
+Even though the proposed code was born as a preparation to support the
+MT8196/MT6991 SoCs power domain controllers, it is a necessary cleanup
+for all power domain controllers of all of the currently supported SoCs
+from MediaTek.
 
-The concern is rather false positives, meaning, you want consecutive
-PFNs (just like within a folio), but -- because the stars aligned --
-you get consecutive "struct page" that do not translate to consecutive PFNs.
+You may also notice the addition of support for modem power sequences:
+this was brought up 6 months ago (or more) by community contributors
+(mainly Yassine Oudjana) that were trying to upstream the MediaTek
+MT6735 Smartphone SoC and needed support to provide power to the MD
+subsystem - so, even though in this specific series the code for the
+modem power sequence is not yet triggered by any SoC, please please
+please, let it in.
+Besides, "a bunch" of upstream supported SoCs do have the MD power
+domain even though it wasn't added to their drivers (because if there
+was no support in the driver, it would just crash the system); the
+addition is something that I plan to do at some point, but definitely
+not now as I have no bandwidth for that (bar MT8196, which will have
+this domain).
 
-So that's why the nth page stuff is not optional in the current
-implementation as far as I can tell.
+Compared to v1 in [1]:
+ - Changed mediatek,bus-protection to access-controllers
+   as suggested by Rob (thanks!)
+ - Added commits to document #access-controller-cells on all of
+   the access control providers
 
-And because that nth_page stuff is so tricky and everyone gets it wrong
-all the time, I am actually in favor of having such a helper around. not
-buried in some subsystem.
+In the meanwhile.... relevant excerpt from the old series:
 
->>
->> And at that point all you care about is 'struct page' being
->> contiguous, instead of doing that disgusting 'nth_page'.
+This series refactors the bus protection regmaps retrieval to avoid
+searching in all power domain devicetree subnodes for vendor properties
+to get syscons for different busses, and adds a new property which is
+located in the power controller root node containing handles to the same.
 
-I think stopping when we hit the end of a memory section in case of
-!CONFIG_SPARSEMEM_VMEMMAP could be done and documented.
+Retrocompatibility is retained and was tested on multiple SoCs in the
+Collabora lab - specifically, on Genio 350/510/700/1200, and manually
+on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
+Chromebooks.
 
-It's just that ... code gets more complicated: we end up really only
-optimizing for the unloved child sparsemem withoutCONFIG_SPARSEMEM_VMEMMAP:
+This was tested *three times*:
+ - Before the per-SoC conversion in drivers/pmdomain/mediatek
+ - With per-SoC conversion code but with *legacy* devicetree
+ - With per-SoC conversion code and with *new* devicetree conversion
 
+All of those tests were successful on all of the aforementioned SoCs.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0d4ee569aa6b6..f080fa5a68d4a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1773,6 +1773,9 @@ static inline unsigned long page_to_section(const struct page *page)
-   * the memory model, this can mean that the addresses of the "struct page"s
-   * are not contiguous.
-   *
-+ * On sparsemem configs without CONFIG_SPARSEMEM_VMEMMAP, we will stop once we
-+ * hit a memory section boundary.
-+ *
-   * @pages: an array of page pointers
-   * @nr_pages: length of the array
-   */
-@@ -1781,8 +1784,16 @@ static inline unsigned long num_pages_contiguous(struct page **pages,
-  {
-         size_t i;
-  
-+       if (IS_ENABLED(CONFIG_SPARSEMEM) &&
-+           !IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP)) {
-+               const unsigned long pfn = page_to_pfn(pages[0]);
-+
-+               nr_pages = min_t(size_t, nr_pages,
-+                                PAGES_PER_SECTION - (pfn & PAGES_PER_SECTION));
-+       }
-+
-         for (i = 1; i < nr_pages; i++)
--               if (pages[i] != nth_page(pages[0], i))
-+               if (pages[i] != pages[i - 1] + 1)
-                         break;
-  
+This also adds support for:
+ - Modem power domain for both old and new MediaTek SoCs, useful for
+   bringing up the GSM/3G/4G/5G modem for both laptop and smartphone use
+ - RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity 9400
 
-Whether that helper should live in mm/utils.c is a valid point the bigger it gets.
+...and prepares the pmdomain code to accomodate only the directly
+controlled power domains for MT8196 (HW Voter support was left out).
 
->>
->> And then - since there is only *one* single user - you don't put it in
->> the most central header file that EVERYBODY ELSE cares about.
->>
->> And you absolutely don't do it if it generates garbage code for no good reason!
+[1] https://lore.kernel.org/all/20250623120154.109429-1-angelogioacchino.delregno@collabora.com
 
-I understand the hate for nth_page in this context.
+AngeloGioacchino Del Regno (10):
+  dt-bindings: memory: mtk-smi: Document #access-controller-cells
+  dt-bindings: clock: mediatek: Document #access-controller-cells
+  dt-bindings: power: mediatek: Document access-controllers property
+  pmdomain: mediatek: Refactor bus protection regmaps retrieval
+  pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
+  pmdomain: mediatek: Move ctl sequences out of power_on/off functions
+  pmdomain: mediatek: Add support for modem power sequences
+  pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
+  pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
+  arm64: dts: mediatek: Convert all SoCs to use access-controllers
 
-But I rather hate it *completely* because people get it wrong all of the time.
-
-In any case, enjoy you travel Linus.
+ .../bindings/clock/mediatek,infracfg.yaml     |   3 +
+ .../clock/mediatek,mt8186-sys-clock.yaml      |  15 +
+ .../clock/mediatek,mt8188-sys-clock.yaml      |  15 +
+ .../clock/mediatek,mt8192-sys-clock.yaml      |  15 +
+ .../clock/mediatek,mt8195-sys-clock.yaml      |  15 +
+ .../clock/mediatek,mt8365-sys-clock.yaml      |  15 +
+ .../mediatek,smi-common.yaml                  |  16 +
+ .../power/mediatek,power-controller.yaml      |  37 ++
+ arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   5 +-
+ arch/arm64/boot/dts/mediatek/mt8167.dtsi      |   6 +-
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi      |   4 +-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  17 +-
+ arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  12 +-
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      |  23 +-
+ arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  13 +-
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  20 +-
+ arch/arm64/boot/dts/mediatek/mt8365.dtsi      |  16 +-
+ drivers/pmdomain/mediatek/mt6795-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8167-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8173-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8183-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8186-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8188-pm-domains.h |   6 +
+ drivers/pmdomain/mediatek/mt8192-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8195-pm-domains.h |   5 +
+ drivers/pmdomain/mediatek/mt8365-pm-domains.h |  14 +-
+ drivers/pmdomain/mediatek/mtk-pm-domains.c    | 399 +++++++++++++++---
+ drivers/pmdomain/mediatek/mtk-pm-domains.h    |  74 +++-
+ 28 files changed, 594 insertions(+), 181 deletions(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.50.1
 
 
