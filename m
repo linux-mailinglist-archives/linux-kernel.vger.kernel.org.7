@@ -1,309 +1,214 @@
-Return-Path: <linux-kernel+bounces-755819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC26B1AC24
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A514B1AC25
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CA4189F6A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BFAB189FC74
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA36B19C553;
-	Tue,  5 Aug 2025 01:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D2199E94;
+	Tue,  5 Aug 2025 01:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qTElEv0J"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="BLx96nCh"
+Received: from smtp153-171.sina.com.cn (smtp153-171.sina.com.cn [61.135.153.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33C51547CC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FCE10FD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754357818; cv=none; b=riK2XWixB/Y2W27GdQnc+2lC87hBK8LW0yWbG7HPO2W3vVboCf16KfRNdo11ti8GV3R6HvIM6TNuti7FuyKg069hKKDc/aEM6nOx5Rp0vkxjkStJ3jUcSrBqrLS0/D3b/uy8hClqLQDwUEcvQv8Hrh5OFzuYesGlDiA1Mz+8LI0=
+	t=1754357961; cv=none; b=FKt5yxlPqphoX4XETr++6LVgOZDTTgxPk3GqxNFQQ6IUVdNbNTx26Fa/n5aS2K7x/Viu7UN35yd33ArE5dAjz2yMjBBnQmQKCe2hY8cfUxdijGd1rUOSEimVFw3R+m9q07KkP8PANeg2tBjf5xwzgzTGmTol/MJJY1KtzO58whk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754357818; c=relaxed/simple;
-	bh=14rJY76pYCowLl26Jh/Gtt3YHSBgzVhu7C3NkYPnQ5k=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S7aziL2YV90i9gLZhm4ZOM3Gual14wvjExtP++qGZQjqq2eEiIMQySKJSXkZYaoKXgfQO29f/ZWpiP8kdJEtsXMxu3HwEYAeJ5ClBH7xt1o/T+krpk7N5dVB9FPFJJ/dG7P4aqElvMoSKuLuGbwgHKvYXbmyzX8zfbkjZRmu0+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qTElEv0J; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74ea7007866so3734731b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754357816; x=1754962616; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EWDIRG94rF/jhpzQYk9pekkna8f6TwTEVOGNiOzScoU=;
-        b=qTElEv0Jn7qZ2joTr6mGgLLY46nA0t8/mAqyXb1TIPtxCIPjg6FxnY1Cx4HxDZGrR/
-         uRgrsvyH5a7b/KIF5qA5/HRVZ4pnJddRbGqu9xIXecd/d7kNFDYo2YtenbrjCPzHTgy1
-         aRgS9QYyILjDvBRoCFE443WZt7Bro70JShHurwnTdGCIScKDD90b9phICTYTCmT51uCC
-         uyepXuQ4OIcW05N+vqM0NpdWYojlQt7f/CbxyBwKjeabjkRP0yZde9rbxdXrhpZjGKbz
-         duh2fWZMOXhz6nf4jZ7Nza7FbdBGEutymuO1FFNSZ9teO4LfO4Q/KRW3Ylu1INIxooRd
-         k7vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754357816; x=1754962616;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EWDIRG94rF/jhpzQYk9pekkna8f6TwTEVOGNiOzScoU=;
-        b=PLQKBnpUcWpxeKX4tSOun4US9+DT7Fp9EIyTtQaogyr8pG/4Tr4VCRsElp2y7tqgP5
-         rfe3tsbCh0PBGonq0OI5NHZBx03+cwC1y3vm4H+xEpGyTIj6BKo/KrpWF90uPVWkQQk7
-         l7E1LtsL8cjGhbzvN9zodi9UYEQFsz+ojFgyleAqp2KN1NkJfUkOCtXo9edghASSg+4B
-         r7Q3aR3w0yQ17hcj7EWKtgJo3A6LTRc1kgB9vxXBeUja2E2sV9jl6vWiqOhsZqIPmOXd
-         KXcp6q8wHoYdhc+60OBvMCiRm3Jp948EU9P7VgA8DFiDzkS7MARSbGqT4xPsiXL6OlfI
-         m3MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWp3ED5N7hhQbXVH7nzGAEKCIZeEQVRSktxpDZwT0gHDDjdDEYdTRbkSzaR+ku3rFaCuHD6K+z2RbfO8QM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy13vshAt1qsiyPnhXeawludVS9RzXYnNCwCT5Vmb+bRe/fw/uq
-	BRkxc7F4fzenRO+h9lMeJZquk1v/llOXX0+7xCiY3rP6+zNxdufa9MoAX8LR7fPLZSjEE3RWX1i
-	BB6hSZbvbZTSgAhtMHw==
-X-Google-Smtp-Source: AGHT+IEP4Ogt0yYMTIBcyMkZVXGHn1+5yaxjZGFBUoanUVK2ZcSy/N7vLmJir+3zYOINgjYWp9TiiN0hN/ltZ0Y=
-X-Received: from pgdq17.prod.google.com ([2002:a63:9811:0:b0:b2b:f469:cf78])
- (user=sudarsanm job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7287:b0:240:27c:fcc6 with SMTP id adf61e73a8af0-240027d0352mr9585169637.42.1754357815911;
- Mon, 04 Aug 2025 18:36:55 -0700 (PDT)
-Date: Mon,  4 Aug 2025 18:36:29 -0700
+	s=arc-20240116; t=1754357961; c=relaxed/simple;
+	bh=fMGOPpyGCvojsT7WoNjoyxGaga4HNCrAKDv2136YJCQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mdWabe9Nj7aRfIL0Qlm5AlSmICdg5LOvliaZRbViG80GWim7eQbNsJTWOQywJVv4Am0MruXIALF6wV/Qo8sifCKqUPzq5j8laSdn4QSE7mF7xVlnVluni7IURfVUMKc9iHzUCg5eGuXo9SsY9hPGWp4F5qjXziGZhWlFmXtK2zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=BLx96nCh; arc=none smtp.client-ip=61.135.153.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754357952;
+	bh=nzJPeJLSMubm99etnFxGppt3ULsBhft8uKnlc2PZWWA=;
+	h=From:Subject:Date:Message-ID;
+	b=BLx96nChLaKdPLwID2ahE9MY3EcYuOw6tJ3EkKV3vHem4BnFw37Ezsmd+XvUHvG5M
+	 vImOOSN8oAUTnYn16Oke5xLLgWfmFLVqcc9tZBnO6eMQAu6GpEqU3xb7LtfaNm/h8c
+	 0n1QYgzr8XDH1/SUpy/iY8MTYdb54dsIas6W4u58=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 689160B900005244; Tue, 5 Aug 2025 09:39:07 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3704676291922
+X-SMAIL-UIID: 9CC48675D1244ABCA715D720E5AB31F5-20250805-093907-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+2a0d2af125c01db73079@syzkaller.appspotmail.com>
+Cc: Aleksandr Nogikh <nogikh@google.com>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] [ntfs3?] kernel BUG in set_page_refcounted
+Date: Tue,  5 Aug 2025 09:38:55 +0800
+Message-ID: <20250805013856.3890-1-hdanton@sina.com>
+In-Reply-To: <68910eae.050a0220.1fc43d.0011.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250805013629.47629-1-sudarsanm@google.com>
-Subject: [PATCH v3] selftests/mm: pass filename as input param to VM_PFNMAP tests
-From: Sudarsan Mahendran <sudarsanm@google.com>
-To: linux-kselftest@vger.kernel.org, David Hildenbrand <david@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>, Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	trivial@kernel.org, Sudarsan Mahendran <sudarsanm@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Enable these tests to be run on other pfnmap'ed memory like
-NVIDIA's EGM.
+> Date: Mon, 04 Aug 2025 12:49:02 -0700
+> Hello,
+> 
+> syzbot tried to test the proposed patch but the build/boot failed:
+> 
+> l2tp_ip: L2TP IP encapsulation support (L2TPv3)
+> [   27.825502][    T1] l2tp_netlink: L2TP netlink interface
+> [   27.825920][    T1] l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
+> [   27.825937][    T1] l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2TPv3)
+> [   27.826620][    T1] NET: Registered PF_PHONET protocol family
+> [   27.827330][    T1] 8021q: 802.1Q VLAN Support v1.8
+> [   27.828378][    T1] sctp: Hash tables configured (bind 16/30)
+> [   27.845592][    T1] NET: Registered PF_RDS protocol family
+> [   27.857773][    T1] Registered RDS/infiniband transport
+> [   27.860770][    T1] Registered RDS/tcp transport
+> [   27.860799][    T1] tipc: Activated (version 2.0.0)
+> [   27.862127][    T1] NET: Registered PF_TIPC protocol family
+> [   28.127730][    T1] tipc: Started in single node mode
+> [   28.130531][    T1] NET: Registered PF_SMC protocol family
+> [   28.131342][    T1] 9pnet: Installing 9P2000 support
+> [   28.134047][    T1] NET: Registered PF_CAIF protocol family
+> [   28.146328][    T1] NET: Registered PF_IEEE802154 protocol family
+> [   28.147148][    T1] Key type dns_resolver registered
+> [   28.147397][    T1] Key type ceph registered
+> [   28.148909][    T1] libceph: loaded (mon/osd proto 15/24)
+> [   28.151956][    T1] batman_adv: B.A.T.M.A.N. advanced 2025.3 (compatibility version 15) loaded
+> [   28.152357][    T1] openvswitch: Open vSwitch switching datapath
+> [   28.158678][    T1] NET: Registered PF_VSOCK protocol family
+> [   28.159384][    T1] mpls_gso: MPLS GSO support
+> [   28.468182][    T1] IPI shorthand broadcast: enabled
+> [   30.357628][ T4187] kworker/u8:7 (4187) used greatest stack depth: 25160 bytes left
+> [   31.509877][    T1] sched_clock: Marking stable (30902438698, 602418618)->(31510037087, -5179771)
+> [   31.530861][    T1] registered taskstats version 1
+> [   31.556152][    T1] Loading compiled-in X.509 certificates
+> [   31.602333][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 46cd9d46b5c7fa66669dfc53ee62f72ced050d22'
+> [   32.275192][    T1] zswap: loaded using pool 842/zsmalloc
+> [   32.281063][    T1] Demotion targets for Node 0: null
+> [   32.281080][    T1] Demotion targets for Node 1: null
+> [   32.281096][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+> [   32.285682][    T1] Key type .fscrypt registered
+> [   32.285704][    T1] Key type fscrypt-provisioning registered
+> [   32.296150][    T1] kAFS: Red Hat AFS client v0.1 registering.
+> [   32.353465][    T1] Btrfs loaded, assert=on, ref-verify=on, zoned=yes, fsverity=yes
+> [   32.354863][    T1] Key type big_key registered
+> [   32.355022][    T1] Key type encrypted registered
+> [   32.355295][    T1] ima: No TPM chip found, activating TPM-bypass!
+> [   32.355365][    T1] Loading compiled-in module X.509 certificates
+> [   32.404555][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 46cd9d46b5c7fa66669dfc53ee62f72ced050d22'
+> [   32.404611][    T1] ima: Allocated hash algorithm: sha256
+> [   32.405041][    T1] ima: No architecture policies found
+> [   32.405732][    T1] evm: Initialising EVM extended attributes:
+> [   32.405739][    T1] evm: security.selinux (disabled)
+> [   32.405746][    T1] evm: security.SMACK64
+> [   32.405751][    T1] evm: security.SMACK64EXEC
+> [   32.405757][    T1] evm: security.SMACK64TRANSMUTE
+> [   32.405763][    T1] evm: security.SMACK64MMAP
+> [   32.405768][    T1] evm: security.apparmor (disabled)
+> [   32.405774][    T1] evm: security.ima
+> [   32.405780][    T1] evm: security.capability
+> [   32.405785][    T1] evm: HMAC attrs: 0x1
+> [   32.410288][    T1] PM:   Magic number: 5:461:697
+> [   32.410412][    T1] video4linux radio12: hash matches
+> [   32.410476][    T1] usb usb58-port5: hash matches
+> [   32.410614][    T1] usb usb26-port1: hash matches
+> [   32.411199][    T1] netconsole: network logging started
+> [   32.412165][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
+> [   32.435157][    T1] rdma_rxe: loaded
+> [   32.440081][    T1] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+> [   32.446570][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+> [   32.450487][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+> [   32.454686][   T31] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+> [   32.454728][   T31] faux_driver regulatory: Falling back to sysfs fallback for: regulatory.db
+> [   32.459994][    T1] clk: Disabling unused clocks
+> [   32.460415][    T1] ALSA device list:
+> [   32.460429][    T1]   #0: Dummy 1
+> [   32.460444][    T1]   #1: Loopback 1
+> [   32.460456][    T1]   #2: Virtual MIDI Card 1
+> [   32.610149][    T1] check access for rdinit=/init failed: -2, ignoring
+> [   32.610176][    T1] md: Waiting for all devices to be available before autodetect
+> [   32.610183][    T1] md: If you don't use raid, use raid=noautodetect
+> [   32.610197][    T1] md: Autodetecting RAID arrays.
+> [   32.610316][    T1] md: autorun ...
+> [   32.610324][    T1] md: ... autorun DONE.
+> [   32.673022][ T5160] dec_stack_record_count: refcount went to 0 for 125436371 handle
+> [   32.673441][    T1] dec_stack_record_count: refcount went to 0 for 468 handle
+> [   32.676518][    T1] dec_stack_record_count: refcount went to 0 for 96207031 handle
+> [   32.677071][    T1] ------------[ cut here ]------------
+> [   32.677084][    T1] WARNING: CPU: 0 PID: 1 at lib/stackdepot.c:510 depot_fetch_stack+0x97/0xa0
+> [   32.677108][    T1] Modules linked in:
+> [   32.677128][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0-syzkaller-11579-g35a813e010b9-dirty #0 PREEMPT_{RT,(full)} 
 
-Add '--' as a separator to pass in file path. This allows
-passing of cmd line arguments to kselftest_harness.
-Use '/dev/mem' as default filename.
+Testing with RT turned on makes no sense, no?
 
-Existing test passes:
-	pfnmap
-	TAP version 13
-	1..6
-	# Starting 6 tests from 1 test cases.
-	# PASSED: 6 / 6 tests passed.
-	# Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Pass params to kselftest_harness:
-	pfnmap -r pfnmap:mremap_fixed
-	TAP version 13
-	1..1
-	# Starting 1 tests from 1 test cases.
-	#  RUN           pfnmap.mremap_fixed ...
-	#            OK  pfnmap.mremap_fixed
-	ok 1 pfnmap.mremap_fixed
-	# PASSED: 1 / 1 tests passed.
-	# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Pass non-existent file name as input:
-	pfnmap -- /dev/blah
-	TAP version 13
-	1..6
-	# Starting 6 tests from 1 test cases.
-	#  RUN           pfnmap.madvise_disallowed ...
-	#      SKIP      Cannot open '/dev/blah'
-
-Pass non pfnmap'ed file as input:
-	pfnmap -r pfnmap.madvise_disallowed -- randfile.txt
-	TAP version 13
-	1..1
-	# Starting 1 tests from 1 test cases.
-	#  RUN           pfnmap.madvise_disallowed ...
-	#      SKIP      Invalid file: 'randfile.txt'. Not pfnmap'ed
-
-Signed-off-by: Sudarsan Mahendran <sudarsanm@google.com>
----
-
-v2 -> v3:
-* Add check_vmflag_pfnmap func
-* Re-use existing check_vmflag_io func
-* Verify pfnmap using mmap addr
-* Rename phys_addr to offset
-
-v1 -> v2:
-* Add verify_pfnmap func to sanity check the input param
-* mmap with zero offset if filename != '/dev/mem'
-
----
- tools/testing/selftests/mm/pfnmap.c  | 48 ++++++++++++++++++++--------
- tools/testing/selftests/mm/vm_util.c | 14 ++++++--
- tools/testing/selftests/mm/vm_util.h |  1 +
- 3 files changed, 47 insertions(+), 16 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/pfnmap.c b/tools/testing/selftests/mm/pfnmap.c
-index 866ac023baf5..88659f0a90ea 100644
---- a/tools/testing/selftests/mm/pfnmap.c
-+++ b/tools/testing/selftests/mm/pfnmap.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Basic VM_PFNMAP tests relying on mmap() of '/dev/mem'
-+ * Basic VM_PFNMAP tests relying on mmap() of input file provided.
-+ * Use '/dev/mem' as default.
-  *
-  * Copyright 2025, Red Hat, Inc.
-  *
-@@ -25,6 +26,7 @@
- #include "vm_util.h"
- 
- static sigjmp_buf sigjmp_buf_env;
-+static char *file = "/dev/mem";
- 
- static void signal_handler(int sig)
- {
-@@ -51,7 +53,7 @@ static int test_read_access(char *addr, size_t size, size_t pagesize)
- 	return ret;
- }
- 
--static int find_ram_target(off_t *phys_addr,
-+static int find_ram_target(off_t *offset,
- 		unsigned long long pagesize)
- {
- 	unsigned long long start, end;
-@@ -91,7 +93,7 @@ static int find_ram_target(off_t *phys_addr,
- 		/* We need two pages. */
- 		if (end > start + 2 * pagesize) {
- 			fclose(file);
--			*phys_addr = start;
-+			*offset = start;
- 			return 0;
- 		}
- 	}
-@@ -100,7 +102,7 @@ static int find_ram_target(off_t *phys_addr,
- 
- FIXTURE(pfnmap)
- {
--	off_t phys_addr;
-+	off_t offset;
- 	size_t pagesize;
- 	int dev_mem_fd;
- 	char *addr1;
-@@ -113,23 +115,31 @@ FIXTURE_SETUP(pfnmap)
- {
- 	self->pagesize = getpagesize();
- 
--	/* We'll require two physical pages throughout our tests ... */
--	if (find_ram_target(&self->phys_addr, self->pagesize))
--		SKIP(return, "Cannot find ram target in '/proc/iomem'\n");
-+	if (strncmp(file, "/dev/mem", strlen("/dev/mem")) == 0) {
-+		/* We'll require two physical pages throughout our tests ... */
-+		if (find_ram_target(&self->offset, self->pagesize))
-+			SKIP(return,
-+				   "Cannot find ram target in '/proc/iomem'\n");
-+	} else {
-+		self->offset = 0;
-+	}
- 
--	self->dev_mem_fd = open("/dev/mem", O_RDONLY);
-+	self->dev_mem_fd = open(file, O_RDONLY);
- 	if (self->dev_mem_fd < 0)
--		SKIP(return, "Cannot open '/dev/mem'\n");
-+		SKIP(return, "Cannot open '%s'\n", file);
- 
- 	self->size1 = self->pagesize * 2;
- 	self->addr1 = mmap(NULL, self->size1, PROT_READ, MAP_SHARED,
--			   self->dev_mem_fd, self->phys_addr);
-+			   self->dev_mem_fd, self->offset);
- 	if (self->addr1 == MAP_FAILED)
--		SKIP(return, "Cannot mmap '/dev/mem'\n");
-+		SKIP(return, "Cannot mmap '%s'\n", file);
-+
-+	if (!check_vmflag_pfnmap(self->addr1))
-+		SKIP(return, "Invalid file: '%s'. Not pfnmap'ed\n", file);
- 
- 	/* ... and want to be able to read from them. */
- 	if (test_read_access(self->addr1, self->size1, self->pagesize))
--		SKIP(return, "Cannot read-access mmap'ed '/dev/mem'\n");
-+		SKIP(return, "Cannot read-access mmap'ed '%s'\n", file);
- 
- 	self->size2 = 0;
- 	self->addr2 = MAP_FAILED;
-@@ -182,7 +192,7 @@ TEST_F(pfnmap, munmap_split)
- 	 */
- 	self->size2 = self->pagesize;
- 	self->addr2 = mmap(NULL, self->pagesize, PROT_READ, MAP_SHARED,
--			   self->dev_mem_fd, self->phys_addr);
-+			   self->dev_mem_fd, self->offset);
- 	ASSERT_NE(self->addr2, MAP_FAILED);
- }
- 
-@@ -246,4 +256,14 @@ TEST_F(pfnmap, fork)
- 	ASSERT_EQ(ret, 0);
- }
- 
--TEST_HARNESS_MAIN
-+int main(int argc, char **argv)
-+{
-+	for (int i = 1; i < argc; i++) {
-+		if (strcmp(argv[i], "--") == 0) {
-+			if (i + 1 < argc && strlen(argv[i + 1]) > 0)
-+				file = argv[i + 1];
-+			return test_harness_run(i, argv);
-+		}
-+	}
-+	return test_harness_run(argc, argv);
-+}
-diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
-index 5492e3f784df..2cebe4212db8 100644
---- a/tools/testing/selftests/mm/vm_util.c
-+++ b/tools/testing/selftests/mm/vm_util.c
-@@ -402,7 +402,7 @@ unsigned long get_free_hugepages(void)
- 	return fhp;
- }
- 
--bool check_vmflag_io(void *addr)
-+static bool check_vmflag(void *addr, const char *flag)
- {
- 	char buffer[MAX_LINE_LENGTH];
- 	const char *flags;
-@@ -419,13 +419,23 @@ bool check_vmflag_io(void *addr)
- 		if (!flaglen)
- 			return false;
- 
--		if (flaglen == strlen("io") && !memcmp(flags, "io", flaglen))
-+		if (flaglen == strlen(flag) && !memcmp(flags, flag, flaglen))
- 			return true;
- 
- 		flags += flaglen;
- 	}
- }
- 
-+bool check_vmflag_io(void *addr)
-+{
-+	return check_vmflag(addr, "io");
-+}
-+
-+bool check_vmflag_pfnmap(void *addr)
-+{
-+	return check_vmflag(addr, "pf");
-+}
-+
- /*
-  * Open an fd at /proc/$pid/maps and configure procmap_out ready for
-  * PROCMAP_QUERY query. Returns 0 on success, or an error code otherwise.
-diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
-index b8136d12a0f8..ec1f61f30fe7 100644
---- a/tools/testing/selftests/mm/vm_util.h
-+++ b/tools/testing/selftests/mm/vm_util.h
-@@ -84,6 +84,7 @@ int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
- 			      bool miss, bool wp, bool minor, uint64_t *ioctls);
- unsigned long get_free_hugepages(void);
- bool check_vmflag_io(void *addr);
-+bool check_vmflag_pfnmap(void *addr);
- int open_procmap(pid_t pid, struct procmap_fd *procmap_out);
- int query_procmap(struct procmap_fd *procmap);
- bool find_vma_procmap(struct procmap_fd *procmap, void *address);
--- 
-2.50.1.565.gc32cd1483b-goog
-
+> [   32.677150][    T1] Tainted: [W]=WARN
+> [   32.677155][    T1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> [   32.677165][    T1] RIP: 0010:depot_fetch_stack+0x97/0xa0
+> [   32.677180][    T1] Code: c7 c7 d7 a3 04 8d 89 ee 44 89 f2 89 d9 e8 e1 ca 95 fc 90 0f 0b 90 90 31 c0 5b 41 5e 5d e9 c1 7c 08 06 cc 90 0f 0b 90 eb ee 90 <0f> 0b 90 eb e8 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90
+> [   32.677192][    T1] RSP: 0000:ffffc90000067480 EFLAGS: 00010246
+> [   32.677205][    T1] RAX: ffff88814371c000 RBX: 0000000000002de0 RCX: 00000000000000b6
+> [   32.677215][    T1] RDX: 0000000000000000 RSI: ffffffff8d1e65a6 RDI: ffffffff8b61eb00
+> [   32.677226][    T1] RBP: 00000000000000b6 R08: 0000000000000000 R09: 0000000000000000
+> [   32.677235][    T1] R10: dffffc0000000000 R11: ffffed10035a9b81 R12: 0000000000000000
+> [   32.677245][    T1] R13: 0000000000000000 R14: 00000000000001d4 R15: 000000079bacacab
+> [   32.677255][    T1] FS:  0000000000000000(0000) GS:ffff888126af6000(0000) knlGS:0000000000000000
+> [   32.677267][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   32.677277][    T1] CR2: ffff88823ffff000 CR3: 000000000d5a6000 CR4: 00000000003526f0
+> [   32.677290][    T1] Call Trace:
+> [   32.677296][    T1]  <TASK>
+> [   32.677305][    T1]  __reset_page_owner+0xd0/0x1f0
+> [   32.677328][    T1]  free_unref_folios+0x1ebb/0x2280
+> [   32.677365][    T1]  folios_put_refs+0x569/0x670
+> [   32.677396][    T1]  ? __pfx_folios_put_refs+0x10/0x10
+> [   32.677427][    T1]  truncate_inode_pages_range+0x338/0xb90
+> [   32.677450][    T1]  ? __pfx_truncate_inode_pages_range+0x10/0x10
+> [   32.677485][    T1]  ? has_bh_in_lru+0x307/0x340
+> [   32.677507][    T1]  ? __pfx_has_bh_in_lru+0x10/0x10
+> [   32.677530][    T1]  ? smp_call_function_many_cond+0xda5/0x12d0
+> [   32.677572][    T1]  ? __pfx__raw_spin_unlock_irqrestore+0x10/0x10
+> [   32.677593][    T1]  ? __pfx_has_bh_in_lru+0x10/0x10
+> [   32.677620][    T1]  blkdev_flush_mapping+0x10b/0x280
+> [   32.677641][    T1]  ? bdev_release+0x41a/0x660
+> [   32.677662][    T1]  bdev_release+0x422/0x660
+> [   32.677687][    T1]  ? __pfx_blkdev_release+0x10/0x10
+> [   32.677709][    T1]  blkdev_release+0x15/0x20
+> [   32.677729][    T1]  __fput+0x458/0xa80
+> [   32.677761][    T1]  task_work_run+0x1d1/0x260
+> [   32.677795][    T1]  ? __pfx_task_work_run+0x10/0x10
+> [   32.677825][    T1]  mount_root_generic+0x1b0/0x350
+> [   32.677851][    T1]  ? __pfx_mount_root_generic+0x10/0x10
+> [   32.677869][    T1]  ? getname_kernel+0x20e/0x2f0
+> [   32.677893][    T1]  ? kernel_init+0x1d/0x1d0
+> [   32.677914][    T1]  prepare_namespace+0x71/0xa0
+> [   32.677929][    T1]  kernel_init_freeable+0x373/0x4b0
+> [   32.677948][    T1]  ? __pfx_kernel_init_freeable+0x10/0x10
+> [   32.677963][    T1]  ? __pfx_rt_mutex_slowunlock+0x10/0x10
+> [   32.677991][    T1]  ? __pfx_kernel_init+0x10/0x10
+> [   32.678012][    T1]  kernel_init+0x1d/0x1d0
+> [   32.678031][    T1]  ? __pfx_kernel_init+0x10/0x10
+> [   32.678050][    T1]  ret_from_fork+0x3fc/0x770
+> [   32.678092][    T1]  ? __pfx_ret_from_fork+0x10/0x10
+> [   32.678114][    T1]  ? __switch_to_asm+0x39/0x70
+> [   32.678137][    T1]  ? __switch_to_asm+0x33/0x70
+> [   32.678158][    T1]  ? __pfx_kernel_init+0x10/0x10
+> [   32.678180][    T1]  ret_from_fork_asm+0x1a/0x30
+> [   32.678214][    T1]  </TASK>
 
