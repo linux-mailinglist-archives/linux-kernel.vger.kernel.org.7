@@ -1,228 +1,166 @@
-Return-Path: <linux-kernel+bounces-756184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10621B1B101
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA35B1B103
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 535E97A274C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11733BB6F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7060525A2D8;
-	Tue,  5 Aug 2025 09:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E99264A92;
+	Tue,  5 Aug 2025 09:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8npn5LE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SrHaLIAK"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B4EEA6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4351E25D209
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386076; cv=none; b=SLqJt8BkkLOpR71wavMAMqBKduEPEn009q7wSsixjCaVCG3vaBraUawT46iU2himYytUwrd4JQn4KMVHsFbwpHGHnesn4f5SWYc6/FKrxZJXcSiaOeQs/DWgGiJjW73iY7xLG2QfpGQpPw9Pv0kchlkXMSf/etBw5khPa+n1u2k=
+	t=1754386103; cv=none; b=jFRSDclT6BP01dBBNRewgzFq/2LOBehG6EnyjRLZIy2bEl8U7BXpOi13vOC2uBLlP5aLDIRvHVDzQli5sRxpUXcNn0Usphmj9jFmUdmnEaoQAEETU9PsS8HAQ35BeZA05Iw6gdi8w1shYAKIxz0SokuiaH9xUknm4r27TTUuL5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386076; c=relaxed/simple;
-	bh=kHzAWdEEyHHxaN1vXjRG8OGUmjIyv0kYOdW3E+6IeS0=;
+	s=arc-20240116; t=1754386103; c=relaxed/simple;
+	bh=7+uUq409iofdj2E1aMxnCZHDona4pEtANeAruxc2xIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oDQMGIHDEjXXUw8nIzuXmHBQ5fVTfl05QUu20lNuI255ZObq9EzvUX3dhWUAUcUGE3a9jQVZFLPlqjGty+cJnGMdUyq2RlJ1BGkhb6EGi+G+feBusjrKBlAafd/Fai+JeELNdSYNGHbQpmaRGptCS8gU6fFKbLmkWeqZMLXj8yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8npn5LE; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754386074; x=1785922074;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kHzAWdEEyHHxaN1vXjRG8OGUmjIyv0kYOdW3E+6IeS0=;
-  b=C8npn5LEGST9eDM6XZjs2d3FDnlH5Q6Flpf7HfPvvtNMWxSJjneQ6OMo
-   8ttviix2PoplfTH1utM9yPT9IAdaRAV9Qpe/bKkY2AADKyrPnW5c+hnKr
-   h/Ndp+/2b/VnN88C/3uuO3u9J0o2aCR3TPgvida4WQH+RBl6fL2E0YeYe
-   sAbWmujenuablVgrfksCVD0aPro8JKSGNLILFp8wyhKpwYa79lo8mQGAH
-   GbMtQ5x5gEpvO6sgipWt4jAVGulRYPLeGzU/QRsA6dEJ+A5MikqRFs569
-   IuPW0fEY/ogCD8HVaz4FVOhp8NGV6OeIjcNUO88xNNQI1AqdcLPLg02oo
-   A==;
-X-CSE-ConnectionGUID: URsN0Ml9TyW2oLgyglXPBA==
-X-CSE-MsgGUID: BqT/zfz6QmWFsVorlV77EA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="74252172"
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="74252172"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 02:27:54 -0700
-X-CSE-ConnectionGUID: nKR2A65+Q96DGJWV/x6WOg==
-X-CSE-MsgGUID: vNNSvW2XTZO2ig975EPUDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="164341511"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO [10.245.245.254]) ([10.245.245.254])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 02:27:50 -0700
-Message-ID: <d737c0f0-c0e0-4df5-8246-b484db8d061b@linux.intel.com>
-Date: Tue, 5 Aug 2025 11:27:47 +0200
+	 In-Reply-To:Content-Type; b=dUxGX4PUrQUtdBEKKDYgBq7X+gmtyDFPwb9yy1TDajMTCw9KQq2K0G+9dRrb+EhlbVYU6rRrNyMrNK+SLgnlKQg7+A+4Ms8SQ+1i/xWTwLzMylPzQWD5kFL9ecq0rpwU/qvAnlY6NP+/7bjjBwcUHdx3on0j6OmwpUsXWWlP+Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SrHaLIAK; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a365a7ae-fee1-4148-9b5b-9593fde7f6f7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754386087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2GufKtQSI/m9hW3OZjr51F0H/hsgTIHHhk7SWxhmKDc=;
+	b=SrHaLIAK/uStZRspzxcrw8fCE4LQ0pXWAYHIIhgZYLlZ5prbLqZKWuJJn38ExqHWfae6TB
+	cHjoItHFO5izEwwLj44KSjDUBf9HbkI0ildovbH9IzY0q2dE0mf0xcs3gC7c0jnUDNiWwq
+	78JbHlgs8jJ/V0cSuhblBsB1AgGTCmM=
+Date: Tue, 5 Aug 2025 17:27:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] locking: Fix __clear_task_blocked_on() warning from
- __ww_mutex_wound() path
-To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com,
- K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Valentin Schneider <valentin.schneider@arm.com>,
- Suleiman Souhlal <suleiman@google.com>, airlied@gmail.com,
- mripard@kernel.org, simona@ffwll.ch, tzimmermann@suse.de,
- dri-devel@lists.freedesktop.org, kernel-team@android.com
-References: <20250801192157.912805-1-jstultz@google.com>
- <20250805001026.2247040-1-jstultz@google.com>
-Content-Language: en-US
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-In-Reply-To: <20250805001026.2247040-1-jstultz@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH bpf-next] bpf: Disable migrate when kprobe_multi attach to
+ access bpf_prog_active
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, mattbobrowski@google.com,
+ rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20250804121615.1843956-1-chen.dylane@linux.dev>
+ <aJCvY7G-gVR8taLh@krava> <c5e66881-2fca-479b-9ef6-c9ada34e731c@linux.dev>
+ <aJHJu6dOeKVIc7JV@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <aJHJu6dOeKVIc7JV@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Acked-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+在 2025/8/5 17:07, Jiri Olsa 写道:
+> On Mon, Aug 04, 2025 at 10:15:46PM +0800, Tao Chen wrote:
+>> 在 2025/8/4 21:02, Jiri Olsa 写道:
+>>> On Mon, Aug 04, 2025 at 08:16:15PM +0800, Tao Chen wrote:
+>>>> The syscall link_create not protected by bpf_disable_instrumentation,
+>>>> accessing percpu data bpf_prog_active should use cpu local_lock when
+>>>> kprobe_multi program attach.
+>>>>
+>>>> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+>>>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>>>> ---
+>>>>    kernel/trace/bpf_trace.c | 4 ++--
+>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>>>> index 3ae52978cae..f6762552e8e 100644
+>>>> --- a/kernel/trace/bpf_trace.c
+>>>> +++ b/kernel/trace/bpf_trace.c
+>>>> @@ -2728,23 +2728,23 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
+>>>>    	struct pt_regs *regs;
+>>>>    	int err;
+>>>> +	migrate_disable();
+>>>>    	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
+>>>
+>>> this is called all the way from graph tracer, which disables preemption in
+>>> function_graph_enter_regs, so I think we can safely use __this_cpu_inc_return
+>>>
+>>>
+>>>>    		bpf_prog_inc_misses_counter(link->link.prog);
+>>>>    		err = 1;
+>>>>    		goto out;
+>>>>    	}
+>>>> -	migrate_disable();
+>>>
+>>> hum, but now I'm not sure why we disable migration in here then
+>>>
+>>
+>> It seems that there is a cant_migrate() check in bpf_prog_run, so it should
+>> be disabled before run.
+> 
+> yes, but disabled preemption will take care of that
+> 
 
-Den 2025-08-05 kl. 02:10, skrev John Stultz:
-> The __clear_task_blocked_on() helper added a number of sanity
-> checks ensuring we hold the mutex wait lock and that the task
-> we are clearing blocked_on pointer (if set) matches the mutex.
+I see, you are right, preempt will pass the check, thanks.
+
+void __cant_migrate(const char *file, int line)
+{
+         static unsigned long prev_jiffy;
+
+         if (irqs_disabled())
+                 return;
+
+         if (is_migration_disabled(current))
+                 return;
+
+         if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+                 return;
+
+         if (preempt_count() > 0)
+                 return;
+...
+
+> I think we can do change below plus some comment that Yonghong
+> is suggesting in the other reply
 > 
-> However, there is an edge case in the _ww_mutex_wound() logic
-> where we need to clear the blocked_on pointer for the task that
-> owns the mutex, not the task that is waiting on the mutex.
+
+Yes, i will remove the migrate_disable and add some comment as you
+and Yonghong suggested.
+
+> jirka
 > 
-> For this case the sanity checks aren't valid, so handle this
-> by allowing a NULL lock to skip the additional checks.
 > 
-> K Prateek Nayak and Maarten Lankhorst also pointed out that in
-> this case where we don't hold the owner's mutex wait_lock, we
-> need to be a bit more careful using READ_ONCE/WRITE_ONCE in both
-> the __clear_task_blocked_on() and __set_task_blocked_on()
-> implementations to avoid accidentally tripping WARN_ONs if two
-> instances race. So do that here as well.
-> 
-> This issue was easier to miss, I realized, as the test-ww_mutex
-> driver only exercises the wait-die class of ww_mutexes. I've
-> sent a patch[1] to address this so the logic will be easier to
-> test.
-> 
-> [1]: https://lore.kernel.org/lkml/20250801023358.562525-2-jstultz@google.com/
-> 
-> Fixes: a4f0b6fef4b0 ("locking/mutex: Add p->blocked_on wrappers for correctness checks")
-> Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
-> Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Closes: https://lore.kernel.org/lkml/68894443.a00a0220.26d0e1.0015.GAE@google.com/
-> Signed-off-by: John Stultz <jstultz@google.com>
-> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
-> v2:
-> * Rewording of "lock" to "mutex" in commit and comment for
->   clarity
-> * Rework __clear_task_blocked_on() to use READ_ONCE and WRITE_ONCE
->   so we don't trip over the WARNING if two instances race, as suggested
->   by K Prateek Nayak and Maarten Lankhorst
-> v3:
-> * Add READ_ONCE and WRITE_ONCE to __set_task_blocked_on(), to avoid
->   tripping similar warnings as suggested by K Prateek Nayak
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: Suleiman Souhlal <suleiman@google.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: airlied@gmail.com
-> Cc: mripard@kernel.org
-> Cc: simona@ffwll.ch
-> Cc: tzimmermann@suse.de
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: kernel-team@android.com
-> ---
->  include/linux/sched.h     | 29 +++++++++++++++++------------
->  kernel/locking/ww_mutex.h |  6 +++++-
->  2 files changed, 22 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 40d2fa90df425..62103dd6a48e0 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -2144,6 +2144,8 @@ static inline struct mutex *__get_task_blocked_on(struct task_struct *p)
->  
->  static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
->  {
-> +	struct mutex *blocked_on = READ_ONCE(p->blocked_on);
-> +
->  	WARN_ON_ONCE(!m);
->  	/* The task should only be setting itself as blocked */
->  	WARN_ON_ONCE(p != current);
-> @@ -2154,8 +2156,8 @@ static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
->  	 * with a different mutex. Note, setting it to the same
->  	 * lock repeatedly is ok.
->  	 */
-> -	WARN_ON_ONCE(p->blocked_on && p->blocked_on != m);
-> -	p->blocked_on = m;
-> +	WARN_ON_ONCE(blocked_on && blocked_on != m);
-> +	WRITE_ONCE(p->blocked_on, m);
->  }
->  
->  static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
-> @@ -2166,16 +2168,19 @@ static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
->  
->  static inline void __clear_task_blocked_on(struct task_struct *p, struct mutex *m)
->  {
-> -	WARN_ON_ONCE(!m);
-> -	/* Currently we serialize blocked_on under the mutex::wait_lock */
-> -	lockdep_assert_held_once(&m->wait_lock);
-> -	/*
-> -	 * There may be cases where we re-clear already cleared
-> -	 * blocked_on relationships, but make sure we are not
-> -	 * clearing the relationship with a different lock.
-> -	 */
-> -	WARN_ON_ONCE(m && p->blocked_on && p->blocked_on != m);
-> -	p->blocked_on = NULL;
-> +	if (m) {
-> +		struct mutex *blocked_on = READ_ONCE(p->blocked_on);
-> +
-> +		/* Currently we serialize blocked_on under the mutex::wait_lock */
-> +		lockdep_assert_held_once(&m->wait_lock);
-> +		/*
-> +		 * There may be cases where we re-clear already cleared
-> +		 * blocked_on relationships, but make sure we are not
-> +		 * clearing the relationship with a different lock.
-> +		 */
-> +		WARN_ON_ONCE(blocked_on && blocked_on != m);
-> +	}
-> +	WRITE_ONCE(p->blocked_on, NULL);
->  }
->  
->  static inline void clear_task_blocked_on(struct task_struct *p, struct mutex *m)
-> diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
-> index 086fd5487ca77..31a785afee6c0 100644
-> --- a/kernel/locking/ww_mutex.h
-> +++ b/kernel/locking/ww_mutex.h
-> @@ -342,8 +342,12 @@ static bool __ww_mutex_wound(struct MUTEX *lock,
->  			 * When waking up the task to wound, be sure to clear the
->  			 * blocked_on pointer. Otherwise we can see circular
->  			 * blocked_on relationships that can't resolve.
-> +			 *
-> +			 * NOTE: We pass NULL here instead of lock, because we
-> +			 * are waking the mutex owner, who may be currently
-> +			 * blocked on a different mutex.
->  			 */
-> -			__clear_task_blocked_on(owner, lock);
-> +			__clear_task_blocked_on(owner, NULL);
->  			wake_q_add(wake_q, owner);
->  		}
->  		return true;
-
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 3ae52978cae6..74e8d9543c6d 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -2734,14 +2734,12 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
+>   		goto out;
+>   	}
+>   
+> -	migrate_disable();
+>   	rcu_read_lock();
+>   	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
+>   	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+>   	err = bpf_prog_run(link->link.prog, regs);
+>   	bpf_reset_run_ctx(old_run_ctx);
+>   	rcu_read_unlock();
+> -	migrate_enable();
+>   
+>    out:
+>   	__this_cpu_dec(bpf_prog_active);
+-- 
+Best Regards
+Tao Chen
 
