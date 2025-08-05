@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-756884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDA9B1BAB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC8B1BAB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3226B720259
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0E4170469
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4838629ACFD;
-	Tue,  5 Aug 2025 19:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A782C159F;
+	Tue,  5 Aug 2025 19:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BHvibVWH"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VpnuU6x7"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587E02BF3F3
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3B12C08BF
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754420760; cv=none; b=BrciVHrcqonY6bJnGRWMUQvRVXoPhwjw95xdP+CYiqzpT98Dtt9+oHPCTtnAL9eL08VwbE6CmOi4J2creexrekBIwSKSEkWqzeVtoRO6jREhSMXvlSpwjgznG/SDP6dIXgFP4DzdmN3h8tqDv9BsZ0euYXsBSPpNJ1Sb5D8VKe8=
+	t=1754420762; cv=none; b=FV7pepXNYmsUAzp4i3ZdZOzSZ4xgyeMDX8pEW+TD3pdv9bmQnndMyDM9//OIMMhGzJldTTJJJFp4AvcoU53zkOChlO4fhh4RvjhPPBQtqjG4LmYgZXVb3s42t+d86btFRA7x5rqBcor3hm23qZ0nVwFMdbeaWjlnHHAwjTg8g0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754420760; c=relaxed/simple;
-	bh=psR4I+ufoU1UhwaQI/3V99Tsfg4a+RYPNxW/6rK3XCY=;
+	s=arc-20240116; t=1754420762; c=relaxed/simple;
+	bh=zATxkyxAcSPZiTxDepTukQWJ8dyUc3y2yARhHF2lPNo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CPrisVB41sHi2xIbGnzErKg8uWtHxfgMZpRExMBdG+D7jNxIz5C11ugnTkg6kVdVY+35XLQWe5W2CKjCCtQU0ZF+t7M3xjwb0/qJrXPZzD+SYL9Yp+44QtZpLLWj05w3rzU5PX64h5G3yX0197HXCt/wAGNV21D3Cq7yHRxJZqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BHvibVWH; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=Lxy4F/w+/3F6bBC0cUzPaV07GMdqzxd+AcEkTcD7vPbsq0wKwQDqoYMf3i+w7y41v+s8Hg4aVzbLAgrSICJr7UYvZMxc39pVYSTJBRDwZiwERZSs13yya4Yk9uBwEYDrBpWbd4cBrpeVG06LmOqLfucObStCjyvVkzizlcJZ0dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VpnuU6x7; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31eec17b5acso5935150a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:59 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b42249503c4so141494a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:06:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754420759; x=1755025559; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754420760; x=1755025560; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=fLHs8RygRrQALNjclLr7Le+Q1ExkVvDCVfxeia7/R9A=;
-        b=BHvibVWH2qGtT8e/EATDkj92rZiu/diVQdVrdpQ/JZ42ePuvIpEfLGm7F4WEOscr9o
-         DSWdVUOoT67XuIA5q6hzq4P4XfTBzzfQl4nelbgRvEG+fjBWaHbwzvlBkVGjf+BGGKjx
-         QuuCJHC93Hl7uwb68O0tymVLda0NSRdY4FY9F7BHqQ8Kkpjgydn0W0AvH0p1I9Iu6rKG
-         yVsg9r6Nk8TRsVcvyOG0let7NhDdD5RN1FXGMqabQ5WzifPD0H5zRzoycQOYZCU1smyp
-         B7OU5/oOAnZkQM1SQDp+ehSxNgIBuq6+XmKt8B6MLy3vor38CSy3hOl1qERvb8p6wPUK
-         UBqA==
+        bh=rAVrGWcmedyfCvbeUeNYdLWZXibA/eVVDu2b3ZtfBaQ=;
+        b=VpnuU6x7oAbvKQP03oy+uT1Rs2ZLS9gMTtf9f8mCuuyLgzNF9LYGz9Z6fYj59xoxHi
+         Q+IExm9N8nxQA2tAiB00E4A6/Z0KAf9ntbOH3A1qDizz60t53PCv4mI3ApxfIsweoRLK
+         kt++a8JWNVZQMeaeriMXw0izO0TpLtIBDTtcPvUrvIQtR2AiaxVALWcYdvJ8w/RZq3GO
+         FH5aAOORD4PnK0PgwXO6qIR5BuF+N5KxNC8+46rXHYLYSHPoQQWtCNpl5du5QRHR4w2Y
+         3ZloOqSHOcvz8Z0WD3JSlARlvUInFs0zG5f5LeQ92klXwGkiOATBgA+czQU4ZYPE8eI3
+         54+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754420759; x=1755025559;
+        d=1e100.net; s=20230601; t=1754420760; x=1755025560;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fLHs8RygRrQALNjclLr7Le+Q1ExkVvDCVfxeia7/R9A=;
-        b=Y9nSH+WvUalPdTkl0ppR00ec8LE8kF5eWrBwg08LcYY3lE0y31M36wpdzICdqhWT0a
-         G1OyBwm43Uk00J174zbFg4Eca7JbxxEX8zrQZceFnOMC+tsDHNzzVIPNq9tJns+QIk/N
-         3kQTdbWrrqfbpdiUdeexCzqZDWsgdjtuzAkpxB5UyVUhBZERK5jQZGFGKWhru3K4/KaW
-         NtJYT147xI2RkghHiD+8GskMx7V8jUC58TGwWLnWXBxe2GcnMuCIHVOlzqxTYGoppI7r
-         H+0yUvQp3BE43DXXR1VZnv8I8Nl89jjZMSw7z2THY40txjetIBM/oSMTxNdBud3ewvIn
-         k/+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUTNaUczRmvubAY/z9iD51wUEw+XdTrz+fS6OroT5HpU6697htbz+i3EzJE1Nt8IuDLwKUhTl2/ytdY3zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5X9qEsxBukFRkoPkMVqIdmTTvLPStc0dl4PPjFbg2Me2XqJCB
-	NOAi/YUBV/12umHOjt4qeoloPaVGlcvzWd5FfFKL6gSzL3SLHWSdJxVe1aoguTRF/kL81Ep3p3B
-	Yate+TQ==
-X-Google-Smtp-Source: AGHT+IHhRzbfPkZZCi4sJ+HYHlO8wPFG7lfHkjOAeauEAzcP+gDuNgftd87bIo4kHYo6mkitvsEho/wi4LQ=
-X-Received: from pjxx5.prod.google.com ([2002:a17:90b:58c5:b0:31f:b2f:aeed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b4f:b0:31f:30a6:56ff
- with SMTP id 98e67ed59e1d1-321162a204fmr20394494a91.19.1754420758726; Tue, 05
- Aug 2025 12:05:58 -0700 (PDT)
+        bh=rAVrGWcmedyfCvbeUeNYdLWZXibA/eVVDu2b3ZtfBaQ=;
+        b=RTKzDlcd52f8JlbHgPFqQIsk9L+ylVZxNmwwXpnvFUsnSZhRKkoLc4cXmLfis6Ewv7
+         dwrmEbpy06NNE4LmqJ2LazbNE01NbceRASXO3P8KkiS0eaXlBhd8pwwizb709fp0Obdh
+         uIqnWhm3De043Amtg/N7k6fxMcGq2ET3ps7KBfK5T2LtpLAy3Csn3QKIYSXkxXVbwTDH
+         vN4GTl5t3lwrvbpOOs+4x4qS3xGQoi3kaL54KxsMVwqqYWfHXPFCU90bdTXTSoGpgzUa
+         eYuh6lsuPTptOsYsSSzvvrGD5sS6qaugWWgHX9jZg9XCStvr415iRMGAXYdU9nqf4E1F
+         sucg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcXEbaEHc9KCAVSWxlnJD7Xk/Wn7P7w49U8iegRz4WT112FtZy9u03RJXC6UnMzJU8yVg9sEhq7rEXXXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySflzU+BBjvMcNWJYUkt1sxeRtlMB+oC0QkyIC+IDGX4BadFCC
+	6i0oK9c+tyHXYh/TQ4Uvzz0ua+420m4XKNMTsX0BRpx55kWxUnzPbfEpU09WT0PIa3urZQqMyrC
+	1m00JGw==
+X-Google-Smtp-Source: AGHT+IHN8xHb/VjKiH3ppGdR8gJCBUsLr/MHH+tOxG5LkRUI154GMU25wC6+IauyXC0h6zXwo/6t8nUNWuw=
+X-Received: from pjsk12.prod.google.com ([2002:a17:90a:62cc:b0:31f:37f:d381])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:568d:b0:31f:ecf:36f
+ with SMTP id 98e67ed59e1d1-3216684b48dmr113350a91.1.1754420760530; Tue, 05
+ Aug 2025 12:06:00 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  5 Aug 2025 12:05:24 -0700
+Date: Tue,  5 Aug 2025 12:05:25 -0700
 In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,55 +75,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250805190526.1453366-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250805190526.1453366-17-seanjc@google.com>
-Subject: [PATCH 16/18] KVM: x86/pmu: Rename check_pmu_event_filter() to pmc_is_event_allowed()
+Message-ID: <20250805190526.1453366-18-seanjc@google.com>
+Subject: [PATCH 17/18] KVM: x86: Push acquisition of SRCU in fastpath into kvm_pmu_trigger_event()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
 	Dapeng Mi <dapeng1.mi@linux.intel.com>, Sandipan Das <sandipan.das@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename check_pmu_event_filter() to make its polarity more obvious, and to
-connect the dots to is_gp_event_allowed() and is_fixed_event_allowed().
+Acquire SRCU in the VM-Exit fastpath if and only if KVM needs to check the
+PMU event filter, to further trim the amount of code that is executed with
+SRCU protection in the fastpath.  Counter-intuitively, holding SRCU can do
+more harm than good due to masking potential bugs, and introducing a new
+SRCU-protected asset to code reachable via kvm_skip_emulated_instruction()
+would be quite notable, i.e. definitely worth auditing.
 
-No functional change intended.
+E.g. the primary user of kvm->srcu is KVM's memslots, accessing memslots
+all but guarantees guest memory may be accessed, accessing guest memory
+can fault, and page faults might sleep, which isn't allowed while IRQs are
+disabled.  Not acquiring SRCU means the (hypothetical) illegal sleep would
+be flagged when running with PROVE_RCU=y, even if DEBUG_ATOMIC_SLEEP=n.
+
+Note, performance is NOT a motivating factor, as SRCU lock/unlock only
+adds ~15 cycles of latency to fastpath VM-Exits.  I.e. overhead isn't a
+concern _if_ SRCU protection needs to be extended beyond PMU events, e.g.
+to honor userspace MSR filters.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/pmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kvm/pmu.c |  4 +++-
+ arch/x86/kvm/x86.c | 18 +++++-------------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 422af7734846..e75671b6e88c 100644
+index e75671b6e88c..3206412a35a1 100644
 --- a/arch/x86/kvm/pmu.c
 +++ b/arch/x86/kvm/pmu.c
-@@ -476,7 +476,7 @@ static bool is_fixed_event_allowed(struct kvm_x86_pmu_event_filter *filter,
- 	return true;
- }
+@@ -955,7 +955,7 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+ 	DECLARE_BITMAP(bitmap, X86_PMC_IDX_MAX);
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+ 	struct kvm_pmc *pmc;
+-	int i;
++	int i, idx;
  
--static bool check_pmu_event_filter(struct kvm_pmc *pmc)
-+static bool pmc_is_event_allowed(struct kvm_pmc *pmc)
- {
- 	struct kvm_x86_pmu_event_filter *filter;
- 	struct kvm *kvm = pmc->vcpu->kvm;
-@@ -502,7 +502,7 @@ static int reprogram_counter(struct kvm_pmc *pmc)
- 	emulate_overflow = pmc_pause_counter(pmc);
+ 	BUILD_BUG_ON(sizeof(pmu->global_ctrl) * BITS_PER_BYTE != X86_PMC_IDX_MAX);
  
- 	if (!pmc_is_globally_enabled(pmc) || !pmc_is_locally_enabled(pmc) ||
--	    !check_pmu_event_filter(pmc))
-+	    !pmc_is_event_allowed(pmc))
- 		return 0;
- 
- 	if (emulate_overflow)
-@@ -969,7 +969,7 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+@@ -968,12 +968,14 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+ 			     (unsigned long *)&pmu->global_ctrl, X86_PMC_IDX_MAX))
  		return;
  
++	idx = srcu_read_lock(&vcpu->kvm->srcu);
  	kvm_for_each_pmc(pmu, pmc, i, bitmap) {
--		if (!check_pmu_event_filter(pmc) || !cpl_is_matched(pmc))
-+		if (!pmc_is_event_allowed(pmc) || !cpl_is_matched(pmc))
+ 		if (!pmc_is_event_allowed(pmc) || !cpl_is_matched(pmc))
  			continue;
  
  		kvm_pmu_incr_counter(pmc);
+ 	}
++	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+ }
+ 
+ void kvm_pmu_instruction_retired(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index f2b2eaaec6f8..a56f83b40a55 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2137,7 +2137,6 @@ fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+ {
+ 	u64 data = kvm_read_edx_eax(vcpu);
+ 	u32 msr = kvm_rcx_read(vcpu);
+-	int r;
+ 
+ 	switch (msr) {
+ 	case APIC_BASE_MSR + (APIC_ICR >> 4):
+@@ -2152,13 +2151,12 @@ fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+ 		return EXIT_FASTPATH_NONE;
+ 	}
+ 
+-	kvm_vcpu_srcu_read_lock(vcpu);
+-	r = kvm_skip_emulated_instruction(vcpu);
+-	kvm_vcpu_srcu_read_unlock(vcpu);
+-
+ 	trace_kvm_msr_write(msr, data);
+ 
+-	return r ? EXIT_FASTPATH_REENTER_GUEST : EXIT_FASTPATH_EXIT_USERSPACE;
++	if (!kvm_skip_emulated_instruction(vcpu))
++		return EXIT_FASTPATH_EXIT_USERSPACE;
++
++	return EXIT_FASTPATH_REENTER_GUEST;
+ }
+ EXPORT_SYMBOL_GPL(handle_fastpath_set_msr_irqoff);
+ 
+@@ -11251,13 +11249,7 @@ EXPORT_SYMBOL_GPL(kvm_emulate_halt);
+ 
+ fastpath_t handle_fastpath_hlt(struct kvm_vcpu *vcpu)
+ {
+-	int ret;
+-
+-	kvm_vcpu_srcu_read_lock(vcpu);
+-	ret = kvm_emulate_halt(vcpu);
+-	kvm_vcpu_srcu_read_unlock(vcpu);
+-
+-	if (!ret)
++	if (!kvm_emulate_halt(vcpu))
+ 		return EXIT_FASTPATH_EXIT_USERSPACE;
+ 
+ 	if (kvm_vcpu_running(vcpu))
 -- 
 2.50.1.565.gc32cd1483b-goog
 
