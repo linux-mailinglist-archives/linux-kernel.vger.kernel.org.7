@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-755964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD707B1AE23
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D888AB1AE25
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D1B189BEB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3B189944B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F67921ABCF;
-	Tue,  5 Aug 2025 06:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF7521ADB7;
+	Tue,  5 Aug 2025 06:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxSf78xU"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9t08Vji"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D375186294;
-	Tue,  5 Aug 2025 06:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2C20A5EB;
+	Tue,  5 Aug 2025 06:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374854; cv=none; b=aZPdpueIvnkeU5QGeiqtT/DoCbcsd4wKe8EcGmj4tLgvYxOQKpg2oYbVnIp+RXzou/Ik7EO/q/jN11VrQZl0A6Pr5xGXalyHTAIYSEYH5suzeMX1XFIoaCjSzWeQk2axoKOG9zwYKPegitzqzK/lpTxP1/Y88vPsxIe6rc5s8xk=
+	t=1754374864; cv=none; b=ezYFQ3pIs/Gcih8jHg0LvIP56czezFEllFSsHprWo49VKttjQTWlGfkFrCK9WyPTKqRRz/pbZZoLEghkG853O+z/C50IMMuDrfhqonLi/FHlw0mnCYSpEJ6oBfr04ejWAqFv6EXi3HdX3vc4ahX04wGtK0tmgTGLskjkbS6HeXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374854; c=relaxed/simple;
-	bh=HU3EoErcw718HgQs6DMndFnBksuEYx4Ps3O8g3pWdi4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b73Qc+iAAanwqqdrq3vtpdbfg30KRgdnQXa4DZSLPMYrgO0XRLJh5aoDf+DwvdVTgj4IY98W7VZh1JYOXU8rWK0s4W301OkselCWX+mxTkrzxGkR3Y5pe2Bwb/lLcip2cjTdzpF9Rw0uQYRuwB33/h/oH8oluRV36lwEWJpZ6IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxSf78xU; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-31efc10bb03so3779396a91.0;
-        Mon, 04 Aug 2025 23:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754374852; x=1754979652; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxXdvCPPZKEryeBHh/ilhPWl4SN2qoBiCBLYJe9cq58=;
-        b=dxSf78xUTwDt/x9XmyL33jVkaXD9MmNEQtpmR2teXOSQAx6YzoT/g3Nm8zSyV+V6WF
-         5P5QKCk2l9hB/EE9b7o3DVSDgDOdD/c9NIXtrCtOqNtjcZ99pL0obuV8EX3sta0c1F4e
-         GrNlDD0RPyT+X/SnbIHzuqDjVy1nK4S3yjKiWmONTduLPACqUezwOPXNnc/jKPeKbt5g
-         c99Fqgzj2VNzHRKoha9Fje0DevxNyAf7UQvjkNZ906Tt9tb0DpEAwYsVw49GTfFjHT6i
-         0UzraqolW1t/SwmoZoT/gdot/njHxsgF4P4lNp1UpA1WrbiovJvizjIdvwn0XybePL/9
-         8Y0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754374852; x=1754979652;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bxXdvCPPZKEryeBHh/ilhPWl4SN2qoBiCBLYJe9cq58=;
-        b=q1JiBiPrGwwH/2lw6c4uudLPTRKXfAcLz4cLMY8zDA37oH84lWNo4MieAj5vDFmR1w
-         4Be6Ba9XbMd+++7D/C9ncef9Nm+3LHSSxHVwuavgPZBaTGwuydaedeBEUWD6v8iVosI/
-         8h9MmDf8RBnveIMAmTgg2xjz/J6pWXa+vYgDuyTZqtE35dtV6SypNklNGfNRdMaoCiJm
-         iJt4SKu581SCR659KGd55n4ksn8MRzxscNpfKZ6d3+WxejQQoqPe1RbJmMLJ6lK+Q+B1
-         Qj6d8ZRfjMc0OQlM4Y2OT76sX0hUrsQllDCjkE20NXy2q6krxYpSSUolDjsdjyIKNezF
-         uJUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsTHhJz7IQ7CqvVUd299TTSZHgTGuYabdqEkTEjTB1b5slmTzoYbq33AAMq2P6LqAy+bs/vww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy/0cmACMSYhHALMV6BwbLe0xZTynizMtWqIElV+8CbZxPe33/
-	DjpzGpgDM0y+9ca3Ib3z675UDC+FDE9/hXjscu91tF/FQcTcKhjDYn0Ve5VKtEcfE8c9Wg==
-X-Gm-Gg: ASbGncu9HAqltTVijTERfZ9eMrTRo5vnT7VgWfRx+1IS8UX300ZdTSWVzqLBQZvNhNh
-	C7qXnTmB7IMjn09oD7IV0N8GCnnCTx8sn5sFbajTu+ohQcv1WrtyImlVZUM3EuFCiEHq3lSBF+L
-	nfBX7OncHTGWdCBft5clsCWE7Tqz+KVN/EsH1toC4kHk2CaGvoXUQbAUdiCn8+KtR8XrK9F1yFS
-	mn9WHdig08NTVBAaXZ74i8FKle+LwnjGxooVq4QkHNTWysmqhvI1MqPwxXXbPz4PdoHmrdWK3++
-	+InlP7u2r2kkUhxBGJelLq25ash20sWdd1bp7Nii/9e0UznZoEGnpp/Nka8XRng37xjE6yN1dWE
-	J6VKNrxHvHvs8Te4NJaxwFBDV8vP4JlCt0S04czO0S2d+2kwvgpT9Zx6ZIfGp
-X-Google-Smtp-Source: AGHT+IE6My9ExfIadYycYh55LtSyfalv/17oohhFtIWDUvu7/IXwtZ4gsI1N0BiWTm7Fcv5PWkWCUA==
-X-Received: by 2002:a17:90b:4a11:b0:321:59e7:c5c5 with SMTP id 98e67ed59e1d1-32159e7c72fmr955459a91.27.1754374851535;
-        Mon, 04 Aug 2025 23:20:51 -0700 (PDT)
-Received: from localhost.localdomain ([14.116.239.35])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207eca6e9asm13095030a91.18.2025.08.04.23.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 23:20:51 -0700 (PDT)
-From: bsdhenrymartin@gmail.com
-X-Google-Original-From: tcs_kernel@tencent.com
-To: huntazhang@tencent.com,
-	jitxie@tencent.com,
-	landonsun@tencent.com,
-	bryan-bt.tan@broadcom.com,
-	vishnu.dasa@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	sgarzare@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	bsdhenrymartin@gmail.com,
-	Henry Martin <bsdhenryma@tencent.com>,
-	TCS Robot <tcs_robot@tencent.com>
-Subject: [PATCH v1] VSOCK: fix Out-of-Bounds Read in vmci_transport_dgram_dequeue()
-Date: Tue,  5 Aug 2025 14:20:41 +0800
-Message-ID: <20250805062041.1804857-1-tcs_kernel@tencent.com>
-X-Mailer: git-send-email 2.41.3
+	s=arc-20240116; t=1754374864; c=relaxed/simple;
+	bh=BRNKEI5g2PV7iMHZA2w3uzrDHh21dufQnN/CJY0cfsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LgzPYwOMorj1BG7zieHcb66sL5qMNawDOpP//XISvUSlmq2zAE9kqub1beqSv2NlBC/HvNXoTfOk5+zci2AYWijGCSUIjVzqE4eyA5J2aIhTS8lbIvucKzY2hlosVRypVAAwb0jj82E1EPmlUk/OEIUUelaeETE6D85TwisqqVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9t08Vji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A7EC4CEF4;
+	Tue,  5 Aug 2025 06:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754374864;
+	bh=BRNKEI5g2PV7iMHZA2w3uzrDHh21dufQnN/CJY0cfsA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n9t08VjimayiNb7Hufr0EaDWw3KA9XI6cunD6K52BHh5NaGQvdEVl4+AnHyFV3lTv
+	 cHt7UQmclSsUusZrWWWBXMFLtw4myQyr9lzlVKbKaLSW4WxuOatv9vBkVYGt3NsCSV
+	 WfTnkWry/4PmJif916aJzz+IDaAro8srjN9tEw2DNiIHI75Awwt+uyevoOU+WsGSgy
+	 1hvXQdEILquRGqXKo/1EXTR7dERRdpXCxpK6IhWrH5Aw5QYmT3XGm6/BYrq/O4o7Ap
+	 Ti5XWVkcgf6nlRjvEki8udG5HKfi6YszeDfPMow3X5usFzDp7EJMybNz5nRoWHHnnG
+	 Tst7NLHq0ohQw==
+Message-ID: <42de1ed3-073a-4058-971b-a9a8c473d9a0@kernel.org>
+Date: Tue, 5 Aug 2025 08:20:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] gs101: MAX77759 Fuel Gauge driver support and
+ enablement
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Henry Martin <bsdhenryma@tencent.com>
+On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
+> The gs101-oriole (Google Pixel 6) and gs101-raven (Google Pixel 6 Pro)
+> have a Maxim MAX77759 which provides a fuel gauge functionnality based
+> on the MAX M5 fuel gauge.
+> 
+> Add a driver for fuel gauge of the the Maxim MAX77759 based on the
+> one for the Maxim MAX1720x which also uses the MAX M5 fuel gauge.
+> Enable it for the gs101-oriole and gs101-raven boards.
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> ---
+> Hi everyone,
+> I decided to completely separate the MAX77759 and the MAX1720x. The
+> reason I had just modified the MAX1720x initially was because I
+> thought at the time that their difference were much less important
+> than they ended up being.
+> 
+> Their common parts could be put in a common MAX M5 files which could
+> prove useful if more chips using the MAX M5 are to be added.
+> 
+> Changes in v5:
+> - Separate MAX77759 from MAX1720x for clarity
+> - Remove voltage reporting
+> - Add initialization of the chip
+> - Add device dependent initialization data
+> - Add access to eeprom for access to non-volatile backup data.
+> - Link to v4: https://lore.kernel.org/r/20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be
 
-vmci_transport_dgram_dequeue lack of buffer length validation before
-accessing `vmci_datagram` header.
+No changes in the bindings? There were errors posted due to lack of testing.
 
-Trigger Path:
-1. Attacker sends a datagram with length < sizeof(struct
-   vmci_datagram).
-2. `skb_recv_datagram()` returns the malformed sk_buff (skb->len <
-   sizeof(struct vmci_datagram)).
-3. Code casts skb->data to struct vmci_datagram *dg without verifying
-   skb->len.
-4. Accessing `dg->payload_size` (Line: `payload_len =
-   dg->payload_size;`) reads out-of-bounds memory.
-
-Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
-Reported-by: TCS Robot <tcs_robot@tencent.com>
-Signed-off-by: Henry Martin <bsdhenryma@tencent.com>
----
- net/vmw_vsock/vmci_transport.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
-index 7eccd6708d66..0be605e19b2e 100644
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -1749,6 +1749,11 @@ static int vmci_transport_dgram_dequeue(struct vsock_sock *vsk,
- 	if (!skb)
- 		return err;
- 
-+	if (skb->len < sizeof(struct vmci_datagram)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
- 	dg = (struct vmci_datagram *)skb->data;
- 	if (!dg)
- 		/* err is 0, meaning we read zero bytes. */
--- 
-2.41.3
-
+Best regards,
+Krzysztof
 
