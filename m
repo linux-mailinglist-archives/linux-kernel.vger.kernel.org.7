@@ -1,177 +1,180 @@
-Return-Path: <linux-kernel+bounces-756119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B189B1B03C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:32:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12515B1B040
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 682FE4E22F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2B03BDDB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE0F243376;
-	Tue,  5 Aug 2025 08:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7092566E9;
+	Tue,  5 Aug 2025 08:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RrxJovKJ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2NZl6Nr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B440190472
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CB3C8CE;
+	Tue,  5 Aug 2025 08:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754382729; cv=none; b=I7SQBMVGsXVilpE+6LpWKL4IhzJeuw6PZwb2WnJlzFAzgukF92Zdyllk+KKfGKGg+LivCBU754p4tB/ledhpbo0CrFjTejOkGp9slQD75ziNm36eSCKAnZQA3kBXl7FWZ00YxthRumxfLTK/GpnuSfOa2du0il6hrML/U63ZJvU=
+	t=1754382781; cv=none; b=G8/RnB86ZKAEyGgYdoCGT22vtXqz7CniKx8pg7Sbi15w9b1uUocVuT+aGOjsB6eE/zvvxNAeoD25F3eKtV+q+QrDVySAydkzcip/z7on1DZvUh6t4/JbOOfrWLg/O4Op2OiZj8oS0XzzaMvsKCA0Mge8WOSEZ9Xsjr52Ui8gPLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754382729; c=relaxed/simple;
-	bh=fHmpaIOPjkyexmjJ3+L8AA+pWZ8k+h7xPPc0/QhT1+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVXZEvuY8dnfJNIeVvVnqUnZ/kcco21eFXP13XgXCgtE1sSMOHiafEFe8t/ohiWCjhCFwR6zlb9XDtGBeHWCnDz85ufNUKzrA1ZoEFp9YyDV81HJ2i8Klqv67h5Mk2bXEnZ8ObqHKE7VpFMFJzyVgTXT5S0DcSfKlGWqgN1DmrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RrxJovKJ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-458bf57a4e7so63985e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754382725; x=1754987525; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BWA0STOcqIUzpFQVaS5UHy7SE6OJhVfIhAfBgcIup8=;
-        b=RrxJovKJuYYk/6DxAc/CBB5JYgSngBkdoMFktyCLSh/g1x+r5JleGwKuQIB65Smqib
-         E15WtgGnUmEEXuR3YFLL+v22OvfSauBa5K/ixU5rXDqLvPP3zC3Q5nkhZ6IM7bVd2Ru+
-         gzq5c1dxX5nDxfkoiH9kuRL525TO3A9tAS9rME+5EJuKYN5smTyENNdQrTPwDjQRvJAG
-         M4TSFrps+Aj2sn1iXYKfDdTsSizfqRoHmXvKWfYUXrtlGnjALnrTgnMVrs+2w+s0dMty
-         xuejJDrBchr4nf6Xc1cD84bc5BFiUte7aGlYC7z0fEP21uVFTdJmPg+P8AoBWk+yEV8w
-         Dzvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754382725; x=1754987525;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7BWA0STOcqIUzpFQVaS5UHy7SE6OJhVfIhAfBgcIup8=;
-        b=kBFHHWIBmXrDp9vJnOpzG6G5yJ5GYddvl0uFq16OZaIZ/doI3rIkQgwXxg5fQonY8t
-         JckeVjUbl+U/79uL+DAKN88pUUeJhW/ZxnuM3inMhCfLmBWh5yr9EyhNZZSwJO43YpOo
-         8WpNVhs4mYoCro4q7zB9KTmgIsch73+ARmv5sINl5fXXhcqAEKCo0mLp0sZpyRnCQ6ji
-         /i77MaVNKug0ZqVj01/lnQO9M6Qtpzdl0aCvOv1wf+OZxPSJsqz82L3Ty0eoE1QJk/lJ
-         rB4dq9R61PizL2cNPHgsbthDPWE8I9ja4ItlSYUFtip1v2+GmHvRcZTn09o6gI/FB+HH
-         FWBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhmLvCOUx7biFCkWRkfwc6QV5xNIFngT/oFAbJfiAwNr3wHggZtp4fp3tGrOxgNAJatrqqFLDFe57OjlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh2eljO0RQbZEpbqr6Bnmbr6yUfVxOeaIXLvwMGFfa3c4cjXmI
-	7v19JjR2vf+ooRiM9VqCPCPsebksVlzU9jHNIfkEUFWqrGuLqW9ljSD4Le6LejgA3w==
-X-Gm-Gg: ASbGnctHuREP+TVyWVut0Alz+YIoGnL+GeoXyjDUqQx1t58RpWe6sWDJI7Jc5z/8BXg
-	zWHoFd38bzMl97YlLWt5CtbOEwenFSXv5uUpn+D6EZxJfpZjpFvA82gGJm36j5iWoDe8yt3g3Fq
-	pgWn4NzRavhj56Bf2P+eoHOFLftvkYbCR3cUqTyopMwBd2Wqk644jvt5M2IoUULwIBDc56hfWHJ
-	+FhYsb0fe/vXWFmAhC5+53r8IRfhxVvZteoL16WaVAyIdfUSalWzH7FE1DR0tNMW9UGMbjWfFKK
-	a3olIVjXEmjTzWDopgPNqJUoiF+xMs+ZvnMduywPCKNdatdjzZuMmFImnsM5SRIFkRIB/JpgySg
-	kMKosqqbigfcBOlf8oK5G1PVejJ54sImo2MXWF8mi0zKVq6I7cYE6OZHFc0G4gOE=
-X-Google-Smtp-Source: AGHT+IFKztsRYhYKwdwIDsCDgAVK6+r35a5h3+OYoOMO7aVdiPkoVmjrLzpy/fS3Hiy5FOXrT7eLpw==
-X-Received: by 2002:a05:600c:888a:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-459e269dbbamr469945e9.2.1754382724391;
-        Tue, 05 Aug 2025 01:32:04 -0700 (PDT)
-Received: from google.com (72.47.233.35.bc.googleusercontent.com. [35.233.47.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e075047fsm18416515e9.1.2025.08.05.01.32.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 01:32:03 -0700 (PDT)
-Date: Tue, 5 Aug 2025 08:31:59 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: ptdump: Fix exec attribute printing
-Message-ID: <aJHBf4KCUPpWbyU5@google.com>
-References: <20250802104021.3076621-1-r09922117@csie.ntu.edu.tw>
- <d72b7928-8646-4616-a8f0-96b9d9bbaf09@arm.com>
- <z2hmwwmtgbrio2wv3sj2pc4zhxdjioorlhnm45o2arcsjahjni@xod435q26jqq>
+	s=arc-20240116; t=1754382781; c=relaxed/simple;
+	bh=H+195tupBnrAgDGdlIgQ3BH2CjjoT2sHHXaqRr4/ORs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NpY6WWD+VZ/8BQfRXC9NQFwHetTAjDygAzLRG88N5PVUkjWbGCb4458DalV4StzbHQ2xWm1btwcKM3adM5H3NzEs9IrGh36P/FrOpdKl/DN9pgNllejqFoWvtn2QWmlt0hssEWWR8Hp2+TIFm8NhAmZvpLc9j7iajvoLYISpafM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2NZl6Nr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12CFC4CEF4;
+	Tue,  5 Aug 2025 08:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754382780;
+	bh=H+195tupBnrAgDGdlIgQ3BH2CjjoT2sHHXaqRr4/ORs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B2NZl6Nr9/SxTW59A3tJ1Rgt0Rc8Lgi/6qbX7oD/moywv08iB6rxtDJTqJyg/CsAg
+	 p0T7bTnrLipNOx7L1gG/krytcUFRVxl5Fkf7+BND+dAV1VFuM17FNYHd8kw51FfXt4
+	 pDi00T0dDelWcA0ubEUudVR8n/lFJTkiqrskq04MScVIv1AVphYVSf9LGBb5oD4+nq
+	 AnFqq0bUB/Dc7cuxWjiVjhF1bsI3IKIW8GQHHfzfMNUemPSfaesfAd2nBPilGN2KAZ
+	 77XTs8hr6GZdnJZDPfkoKAoC3YneILHvyelUQdLLUbmAanwTpxhXnimDLrbq0h5pJy
+	 PrfZg21hGa51Q==
+Message-ID: <b7b22093-539d-48af-8f78-54754b4412bb@kernel.org>
+Date: Tue, 5 Aug 2025 10:32:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <z2hmwwmtgbrio2wv3sj2pc4zhxdjioorlhnm45o2arcsjahjni@xod435q26jqq>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] dt-bindings: power: supply: add support for
+ MAX77759 fuel gauge
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
+ <20250804-b4-gs101_max77759_fg-v5-2-03a40e6c0e3d@uclouvain.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-2-03a40e6c0e3d@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 08:41:35PM +0800, Wei-Lin Chang wrote:
+On 04/08/2025 16:26, Thomas Antoine via B4 Relay wrote:
+> +  monitored-battery:
 
-Hi Wei-Lin,
+You don't have the type defined because of missing power supply ref.
 
-> Hi Anshuman,
+> +    description: |
+> +      The fuel gauge needs the following battery properties:
+> +      - charge-full-design-microamp-hours
+> +      - charge-term-current-microamp
+> +
+> +  nvmem-cells:
+> +    maxItems: 1
+> +    description: |
+> +      Saved fuel gauge state. This state will be used during the initialization
+> +      and saved on exit. It must be initialized beforehand.
+> +      Its layout must be composed of
+> +        - RCOMP0 (characterization of the open-circuit voltage)
+> +        - TCOMPO (temperature compensation information)
+> +        - FULLCAPREP (reported full capacity)
+> +        - QRTABLE00, QRTABLE10, QRTABLE20, QRTABLE30 (cell capacity information)
+> +        - cv_mixcap (remaining capacity of the cell without empty compensation)
+> +        - cv_halftime (time-to-full characterization time constant)
+> +      They must all be aligned on 2 bytes. A valid CRC8 checksum must
+> +      also be found at the end (polynomial x^8 + x^2 + x + 1).
+> +
+> +  nvmem-cell-names:
+> +    const: fg_state
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - shunt-resistor-micro-ohms
+> +  - monitored-battery
+> +  - nvmem-cells
+> +  - nvmem-cell-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      fuel-gauge@36 {
+> +        compatible = "maxim,max77759-fg";
+> +        reg = <0x36>;
+> +        interrupt-parent = <&gpa9>;
+> +        interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> +        shunt-resistor-micro-ohms = <5000>;
+> +        monitored-battery = <&battery>;
+> +        nvmem-cell-names = "fg_state";
+> +        nvmem-cells = <&fg_state>;
+
+Reverse the order of these two.
+
+> +      };
+> +    };
 > 
-> On Sun, Aug 03, 2025 at 07:33:04PM +0530, Anshuman Khandual wrote:
-> > 
-> > 
-> > On 02/08/25 4:10 PM, Wei-Lin Chang wrote:
-> > > Currently the guest stage-2 page table dump has the executable attribute
-> > > printed in reverse, showing "X" for a non-executable region and showing
-> > > " " for an executable one. This is caused by misjudgement of which
-> > > string gets printed for the executable and non-executable case. Fix it
-> > > by swapping the two strings.
-> > > 
-> > > Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-> > > ---
-> > >  arch/arm64/kvm/ptdump.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-> > > index 098416d7e5c25..99fc13f1c11fb 100644
-> > > --- a/arch/arm64/kvm/ptdump.c
-> > > +++ b/arch/arm64/kvm/ptdump.c
-> > > @@ -44,8 +44,8 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
-> > >  	}, {
-> > >  		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
-> > >  		.val	= PTE_VALID,
-> > > -		.set	= " ",
-> > > -		.clear	= "X",
-> > > +		.set	= "X",
-> > > +		.clear	= " ",
-> > >  	}, {
-> > >  		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> > >  		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> > 
-> > Is not KVM_PTE_LEAF_ATTR_HI_S2_XN already in the reverse semantics aka
-> > XN (Execute Never). Hence when KVM_PTE_LEAF_ATTR_HI_S2_XN macro is set
-> > that means the entry is not executable and vice versa.
-> 
-> Yes you are correct. However in dump_prot() we have:
-> 
-> if ((st->current_prot & bits->mask) == bits->val)
-> 	s = bits->set;
-> else
-> 	s = bits->clear;
-> 
-> Analysis:
-> 
-> 1. region is executable:
->     - st->current_prot == PTE_VALID (ignore other bits)
->     - st->current_prot & bits->mask gets PTE_VALID
->     - if condition is true (.val is PTE_VALID)
->     - prints bits->set
-> 
-> 2. region is not executable:
->     - st->current_prot == KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID
->     - st->current_prot & bits->mask gets (KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID)
->     - if condition is false
->     - prints bits->clear
-> 
-> Therefore we want .set = "X", and .clear = " ".
 
 
-This seems correct but it will produce a different output than the
-stage-1 ptdump. What if we drop the PTE_VALID from the mask & value as
-Mark and Anshuman are suggesting and print NX when the bit is set and x
-otherwise as the stage-1 ptdump does ?
-
-> 
-> Thanks,
-> Wei-Lin Chang
-
-Thanks,
-Sebastian
+Best regards,
+Krzysztof
 
