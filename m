@@ -1,86 +1,137 @@
-Return-Path: <linux-kernel+bounces-756781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE010B1B920
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:17:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819B1B1B930
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB0E18A71CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4868F189BB58
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7412951B3;
-	Tue,  5 Aug 2025 17:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA591295513;
+	Tue,  5 Aug 2025 17:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTk+blBX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zk/DiF+i"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A755A1400C;
-	Tue,  5 Aug 2025 17:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79327292B52;
+	Tue,  5 Aug 2025 17:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754414255; cv=none; b=pK3Ic8DHtuf1VpSg/jtk9yv6UhxC5W6VonjVdrtjVfOhhgDNqTuzdXlYEsKeTqPI6ezd4VzNRGd6qqLb/tdALvyXt2YAVaVSgzOTcdbf/fRwwiTKaJPOw3JgGYXSZbbuxAz4JVYxwkbikmUBMc2ZBUAgVwvBMvmFui8RPpME6hg=
+	t=1754414400; cv=none; b=uF+ORf24kRL3cljjPZt8ddPmg8FgwV3Hy3sYr00DNnJgBG2wg6dOV8CdTfn0Kn6LHeHJn3tWYE2Y60TvG7UOiKzd3oQCzQFeMibnVEVvWQaenY343lDS8EkHd7DxOI6E2+bnQxyvP0CiPRxpUgeKGcUVUKdeSUzoSuNCOnkh8B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754414255; c=relaxed/simple;
-	bh=zPti4vHQ72c0KUJK1MFtmTjRrvlP5Fdb3fbdUSg7DhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqC5d0H/1YsTj6/wq4ssTDsxyYf5y645kryk2CHW8VjBA59x4QcDH/aiwrpfJmI1KdTdlm16i27cTaxnHEkusPmmMnLQDqEeKfdsMkFklVz/4U9CoiDdn4+Zs2WXs9v6nefnOuZU8JR1irAI+ZkcVEcrktZ6qFKdGOmWuFnlq0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTk+blBX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14502C4CEF0;
-	Tue,  5 Aug 2025 17:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754414255;
-	bh=zPti4vHQ72c0KUJK1MFtmTjRrvlP5Fdb3fbdUSg7DhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VTk+blBXu+Mhx+4uUQU5Gv/TlCK62jDarbWpdTCEI11qqCUJ0shwy5gSGTG0ZkRGM
-	 GVn/0CuULcFpf+yUCB3kJo4vTZX5Mq5mzPySaZX1y3kJ/gqaeK5dShUe8qNguzewsL
-	 1DfEpC87mz1fV0lSkKZ2OqSsW9wlhz4XLX5VEFtFAM4yhXvc1106qV2F8X6dx2LeMt
-	 yJLMMvuFSzcREDDcFjmTNdvUUtxzawpdlR1d1Pd0rrKKQIBZhoPyKOQDuO2KLbB4NN
-	 owm5jYt31sZvANBU8Rz0aqtrZSM2NzBPGjgl/2SrcvnSn1Uuhk7mElcoDCyA8ajAZB
-	 Qg8SgcertQPxQ==
-Date: Tue, 5 Aug 2025 12:17:34 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laura Nao <laura.nao@collabora.com>
-Cc: bchihi@baylibre.com, srini@kernel.org, rafael@kernel.org,
-	linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
-	arnd@arndb.de, colin.i.king@gmail.com, nfraprado@collabora.com,
-	linux-mediatek@lists.infradead.org,
-	angelogioacchino.delregno@collabora.com, linux-pm@vger.kernel.org,
-	conor+dt@kernel.org, u.kleine-koenig@baylibre.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org, frank-w@public-files.de, lukasz.luba@arm.com,
-	rui.zhang@intel.com, kernel@collabora.com,
-	daniel.lezcano@linaro.org, lala.lin@mediatek.com,
-	andrew-ct.chen@mediatek.com
-Subject: Re: [PATCH v3 9/9] dt-bindings: nvmem: mediatek: efuse: Add support
- for MT8196
-Message-ID: <175441425377.1957748.9727174250578457285.robh@kernel.org>
-References: <20250804133035.309990-1-laura.nao@collabora.com>
- <20250804133035.309990-10-laura.nao@collabora.com>
+	s=arc-20240116; t=1754414400; c=relaxed/simple;
+	bh=vAXnpuKxs/l1W6Pm+Trii3WWl/FJ6RefL0KkHMHqok4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S4aO/mO444LMbH7wofIbMhpEYnbARKENS3t0fSh/QYIps/+Lszeljw9EatRIj32IoHS82OcqRY9rmzkdpOZdkVfA9fBwzugJxo3aDWuXbvW8EIy5ZOiHHusW8CIeYJHsBWpgl23GK3cMSt9YP+MMFtNYTw8bUuGLhX1/qYegboc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zk/DiF+i; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55b98acb9faso132449e87.3;
+        Tue, 05 Aug 2025 10:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754414396; x=1755019196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/FfZaSan1eV7HDF3Wa83lEa0xPcSUpZYrzYE5G9wjk=;
+        b=Zk/DiF+id+OMDjUW38sxBjTWhAT9DFKEsoAGPgFHkPEOZ2ob9qlFUpCwrcrymC9zRb
+         IX/qEGxjUTBz6SAEvWpHcurPJ8Ym4rphh8gfYiL3vR3lwTpmNmkQvH0rlnn4UCdpHd6u
+         PfGmjgycrqRZgTpfzXAER4xz52SkStkKHl4Jelv+VwszqfHyg1b2ChLuXw/d973tnjwx
+         z6imxpV3jggFl/VWmtFcDTlDkJfYLqMmDnJhycULTTqFndIS8vC+zsFg/5iujQ7/A7/c
+         1KTqkaxzOs3N5bvH5+SLwKYFAafibR1RALS05IAAQoibxUz0NAye+dO5lFKG4/9BSpY2
+         StZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754414396; x=1755019196;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/FfZaSan1eV7HDF3Wa83lEa0xPcSUpZYrzYE5G9wjk=;
+        b=l89Ah0IJKMVScUoJ9va6lKcRYEcOw4q5FK+PqpV7IZtWesF/+KNcGzb+BPz8Z5yZ12
+         5+lbbKSCnOHdzcmYxpu/mA+YuI5D/CVy5PrQqDhwcQmXYOq77NScSZNZvprIonmPKxba
+         Lwoxh9YH/t+MZg6QrFCNzVfourujGkCFbn/XiFio9GfUVjtpee2mUB0QTDqt2nVmGBN2
+         /s7RTT3xbL4u42rHjV7wPJsZoQmkJXON5svQozboogXALcwoFqUFkyfU83ov6NS/eozK
+         QSprfcMc9fQJts+6KJb82VxSLK33/FtRegQ02hg0HunNdHnR27ey/btzib6FnkiGO5aD
+         yu/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6hyK7/GTCr0dps0Zzgv7HtDDaKfjmQ0sKxkgJDUSFH6OYjv5O8pSIxInm0Dysm+9ZG1DQbsBfx8WFAQ==@vger.kernel.org, AJvYcCWScw/3vlHHENa8p7ENjWWFcJAOueWKLMLXwL2H0bqVSXjnTer1aQHx0+WlR6GvadAH/oHNIPEXji7zrZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ3MRc0oClwuiq2BUF5bapqqLn4IgPpS+klghxCFSZIiCZUxDI
+	Zu29DGdM49il4DrkBKAqMqX3wjfipMQY7Y0NZ4QlkviZ7vqkJQyL23y6
+X-Gm-Gg: ASbGnctVzsda8h2zlgj0EB8TZ2fRqgeAcQ4ef51LbKnlKG41W58MW5adZzJP4/CE/RH
+	KlR7Zvu/mMNzVCiYyA3dLnJKGPUMFeoSEr36lkDlCgm96HIGl+2gmXt9V4WpOOh54Wg2VmorVbj
+	uGw+GB2kU0I4WE6tEu7/U8CHULBvcQlUDByyrKiMzfvIMPsvyqFi90Ku35wALRtKzvsPX1n0917
+	aTYk6ggyJ7KVna6Dkn4cvoerG3JRzHY9Kf9Ha3TqMuqWMe8vOzmRWQw8p8D1VKEeNpky3vY8BxD
+	O2Frf+NyCF2Fc0ysssv7Can/z79an0DusM5Y+IYXB9JP6vC5L8gLSoYNVE8/Z/HpyQNW45ZSjRv
+	kJ9qrfwstmZhi87TvNK4ZlifZWAoJ
+X-Google-Smtp-Source: AGHT+IFZ9pdK1jvsk2cxgalB1qSoH0zZWAWc/VG+Lc+QySUYQJ+aNEU1tTzI15MgaTEZ+riRKR17/A==
+X-Received: by 2002:a05:6512:6d1:b0:553:2480:230a with SMTP id 2adb3069b0e04-55b979b819amr1540170e87.0.1754414396425;
+        Tue, 05 Aug 2025 10:19:56 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a9483sm19586481fa.23.2025.08.05.10.19.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 10:19:56 -0700 (PDT)
+Message-ID: <60895f3d-abe2-4fc3-afc3-176a188f06d4@gmail.com>
+Date: Tue, 5 Aug 2025 19:19:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804133035.309990-10-laura.nao@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/9] kasan/um: select ARCH_DEFER_KASAN and call
+ kasan_init_generic
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, hca@linux.ibm.com,
+ christophe.leroy@csgroup.eu, andreyknvl@gmail.com, agordeev@linux.ibm.com,
+ akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
+ trishalfonso@google.com, davidgow@google.com
+Cc: glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250805142622.560992-1-snovitoll@gmail.com>
+ <20250805142622.560992-7-snovitoll@gmail.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250805142622.560992-7-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Mon, 04 Aug 2025 15:30:35 +0200, Laura Nao wrote:
-> The MT8196 eFuse layout is compatible with MT8186 and shares the same
-> decoding scheme for the gpu-speedbin cell.
+
+On 8/5/25 4:26 PM, Sabyrzhan Tasbolatov wrote:
 > 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
+> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> index 9083bfdb773..8d14c8fc2cd 100644
+> --- a/arch/um/Kconfig
+> +++ b/arch/um/Kconfig
+> @@ -5,6 +5,7 @@ menu "UML-specific options"
+>  config UML
+>  	bool
+>  	default y
+> +	select ARCH_DEFER_KASAN
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+select ARCH_DEFER_KASAN if STATIC_LINK
 
+>  	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+>  	select ARCH_HAS_CACHE_LINE_SIZE
+>  	select ARCH_HAS_CPU_FINALIZE_INIT
+> diff --git a/arch/um/include/asm/kasan.h b/arch/um/include/asm/kasan.h
+> index f97bb1f7b85..81bcdc0f962 100644
+> --- a/arch/um/include/asm/kasan.h
+> +++ b/arch/um/include/asm/kasan.h
+> @@ -24,11 +24,6 @@
+>  
+>  #ifdef CONFIG_KASAN
+>  void kasan_init(void);
+> -extern int kasan_um_is_ready;
+> -
+> -#ifdef CONFIG_STATIC_LINK
+> -#define kasan_arch_is_ready() (kasan_um_is_ready)
+> -#endif
+>  #else
+>  static inline void kasan_init(void) { }
+>  #endif /* CONFIG_KASAN */
 
