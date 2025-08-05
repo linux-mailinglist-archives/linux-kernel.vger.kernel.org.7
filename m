@@ -1,120 +1,80 @@
-Return-Path: <linux-kernel+bounces-756032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2770CB1AEEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A992FB1AEF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9CC620D88
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DEAC18A0DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957262253E0;
-	Tue,  5 Aug 2025 06:55:44 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EC823A562;
+	Tue,  5 Aug 2025 06:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azlyW3FW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C373F1917FB;
-	Tue,  5 Aug 2025 06:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8132022576C;
+	Tue,  5 Aug 2025 06:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376944; cv=none; b=IOKiRxYzQcegz7MyHYx1Y42R19MnuMkAdLDGs5wxAeOK54kqYI6n/bjaO9FsVn1ucM0Fp+M0vHrwBqM3QJzam8NlftcBkRBDhGFDf9tKFqzKA0L0/vAMpCrD3MeY04DNblJdjE2umdyYAQlO7jxPycYUV7I5MDuLMvx7nw+K9Ug=
+	t=1754376947; cv=none; b=IB43jUc6Dkk0grV+VAbwq+yN8/1YSpiZqiFzIR73NStUn8SIB40kdoNbJDeMjL1QdIP+Zu15CQtpYChNMy5MOlW06lYVKXWj47PSJltu1HkJnijQVsAIRRRZ1lucdmmjzj7aq/8+6oJog0d6LMPn5kjBOVq88hcP7Z0hOorhcKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376944; c=relaxed/simple;
-	bh=FArsRfCOmBNuc3e584wfTFuUp9phIDbiTEt1k6FHVwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CWEo4MBPlF13L8lrRlaQkDmPjstcd2XnD58QljiwFfpdZxnFJ0She3DBVkF0kAGra0lFGcP9SSSgSPgCG5oAxtIUcuBNzuMHqjR5kG5Vi89flY1WA3kaiZnAz+NexMeHS8o+kP7JdDt+xAeSGBCKQGeWxAjS5IqsG7rnfsFhf2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bx3z233LRz2TT4T;
-	Tue,  5 Aug 2025 14:53:02 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3CE691A016C;
-	Tue,  5 Aug 2025 14:55:32 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 5 Aug 2025 14:55:30 +0800
-Message-ID: <a841c987-5cd1-4105-94be-e0ea55068c5a@huawei.com>
-Date: Tue, 5 Aug 2025 14:55:28 +0800
+	s=arc-20240116; t=1754376947; c=relaxed/simple;
+	bh=zRktS7tLY1en7iXMLnLj6uv8j5ngLB1dqGGyBECiblE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpFTCbvleO5vIWwN1p9AuUPg9gXo6VhYdWJU2HqZI1cxrynw6ZN2B1sbUbCDIddUrfms7lK9eLEoZ7Bi1zxrD4DGIlPBm1d8MFwDU1jktLjJpAUjJRyNV+osVRxNCh2lFO+n0NwJLYuKcFokiuEpDswUhy+nMEpRupnGENEhA2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azlyW3FW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F161C4CEF4;
+	Tue,  5 Aug 2025 06:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754376947;
+	bh=zRktS7tLY1en7iXMLnLj6uv8j5ngLB1dqGGyBECiblE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=azlyW3FWSEQ2XP3fACoYQZrxXwn21yiJt7+f1wJiHpxnKDni6qVPsrcjO7i65RzAu
+	 q4KgLoAudjJjC6o0FSZigmnj2awONCPYrX7uHlPVvYmWJkb8beQbqBAPDCjNx5qQLg
+	 TQ+FA2FaeCFo9QaqtJG7SL/04Lw7/RQGBUVeEvT70gDTfPEorDLqTWJzLc57Y3OPdm
+	 ZR205NeyUEiKuj4YiC0g2WE+kyTh9tHq+n9T5bGcN0A95UzGOFB93Rt9omaWAyftW+
+	 QPg9myMS4CRT5oRb7aB9feZPjQMS8F3/20fLFqKRLnXR3+XOCCpD0DWjzlkd1erJ0w
+	 LxDkYZMWvlADQ==
+Date: Tue, 5 Aug 2025 08:55:44 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	claudiu.beznea@tuxon.dev, srini@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/15] dt-bindings: iio: adc: at91-sama5d2: document
+ sama7d65
+Message-ID: <20250805-stylish-elegant-raptor-1ac78e@kuoka>
+References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
+ <20250804100219.63325-9-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] VSOCK: fix Information Leak in
- virtio_transport_shutdown()
-To: <bsdhenrymartin@gmail.com>, <huntazhang@tencent.com>,
-	<jitxie@tencent.com>, <landonsun@tencent.com>, <stefanha@redhat.com>,
-	<sgarzare@redhat.com>, <mst@redhat.com>, <jasowang@redhat.com>,
-	<xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>
-CC: <kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Henry Martin
-	<bsdhenryma@tencent.com>, TCS Robot <tcs_robot@tencent.com>
-References: <20250805051009.1766587-1-tcs_kernel@tencent.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <20250805051009.1766587-1-tcs_kernel@tencent.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250804100219.63325-9-varshini.rajendran@microchip.com>
 
-
-在 2025/8/5 13:10, bsdhenrymartin@gmail.com 写道:
-> From: Henry Martin <bsdhenryma@tencent.com>
->
-> The `struct virtio_vsock_pkt_info` is declared on the stack but only
-> partially initialized (only `op`, `flags`, and `vsk` are set)
->
-> The uninitialized fields (including `pkt_len`, `remote_cid`,
-> `remote_port`, etc.) contain residual kernel stack data. This structure
-> is passed to `virtio_transport_send_pkt_info()`, which uses the
-> uninitialized fields.
->
-> Fixes: 06a8fc78367d ("VSOCK: Introduce virtio_vsock_common.ko")
-> Reported-by: TCS Robot <tcs_robot@tencent.com>
-> Signed-off-by: Henry Martin <bsdhenryma@tencent.com>
+On Mon, Aug 04, 2025 at 03:32:12PM +0530, Varshini Rajendran wrote:
+> Add dt-binding documentation for sama7d65 ADC.
+> 
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 > ---
->   net/vmw_vsock/virtio_transport_common.c | 15 +++++++--------
->   1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
-> index fe92e5fa95b4..cb391a98d025 100644
-> --- a/net/vmw_vsock/virtio_transport_common.c
-> +++ b/net/vmw_vsock/virtio_transport_common.c
-> @@ -1073,14 +1073,14 @@ EXPORT_SYMBOL_GPL(virtio_transport_connect);
->   
->   int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
->   {
-> -	struct virtio_vsock_pkt_info info = {
-> -		.op = VIRTIO_VSOCK_OP_SHUTDOWN,
-> -		.flags = (mode & RCV_SHUTDOWN ?
-> -			  VIRTIO_VSOCK_SHUTDOWN_RCV : 0) |
-> -			 (mode & SEND_SHUTDOWN ?
-> -			  VIRTIO_VSOCK_SHUTDOWN_SEND : 0),
-> -		.vsk = vsk,
-> -	};
-> +	struct virtio_vsock_pkt_info info = {0};
-> +
-> +	info.op = VIRTIO_VSOCK_OP_SHUTDOWN;
-> +	info.flags = (mode & RCV_SHUTDOWN ?
-> +			VIRTIO_VSOCK_SHUTDOWN_RCV : 0) |
-> +			(mode & SEND_SHUTDOWN ?
-> +			VIRTIO_VSOCK_SHUTDOWN_SEND : 0);
-> +	info.vsk = vsk;
->   
->   	return virtio_transport_send_pkt_info(vsk, &info);
->   }
+>  Documentation/devicetree/bindings/iio/adc/atmel,sama5d2-adc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-No. The unassigned members (including `pkt_len`, `remote_cid`,
-`remote_port`, etc.) will be automatically initialized to 0?
+Best regards,
+Krzysztof
 
 
