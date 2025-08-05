@@ -1,189 +1,244 @@
-Return-Path: <linux-kernel+bounces-756351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9430B1B2F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1935B1B2FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 048733A773A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A8C3AF9F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAB7261595;
-	Tue,  5 Aug 2025 11:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76158269CE6;
+	Tue,  5 Aug 2025 12:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bdVLTXvm"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MtdzQSM2"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD841259CB9;
-	Tue,  5 Aug 2025 11:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28DD259CB9;
+	Tue,  5 Aug 2025 12:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395182; cv=none; b=Q3UKFr+3vk2I1b1Xy5DK3eNqdJQAFqRlG7TCy3teRJ3DWmewSRoE3tFc4SwSw9oNAJ+er1p6AoMTW7kXSPS6qvFnqQUwPdjXMuTMd00FUdabckG9oQe0Nl6TGXiQsgUwTbDVwrtZri1DFLFsMlp5ubthnoIE4KSND8RVvtwi8nE=
+	t=1754395240; cv=none; b=duJ4NBfnGI74Y7aLivZM8UrsGtDaRYcPWyv58SsGjfm59E4L844gZiEXjIthTgu0ZWVI/DqctoeJThKWAXO8mzioX7VXPBfJYqH1PItcxUkiwXa7u+9QIhyWzM5cFoKdp1iFGsLowhwjATnjRk57pMueFAgM1BpfT03m4uEFLHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395182; c=relaxed/simple;
-	bh=9y2t835x/9yCwwNVrk4m/m3iHjWBH6yRxgRIwXvDjK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AU0ZCoYjl1tVS9gZUnD/pmTEtIY/UxyRE2zWyHFOT2oHXinltg1R4pgflfB8s6RClSA8dpThEYv0+MSHCa2yZntvQBWz+770yE0PoidgY1kyJve12swf6RmEf1nLg24QJLSA8MycpDuY+BQdNaLr2P3WRQU04HCohhkIwEp6LtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bdVLTXvm; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1754395240; c=relaxed/simple;
+	bh=xrM4WeTgymAn2Av7O4JvQUIDjOgknDHWsP+RvztNPQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oWuYljM/daRaT8M+WZvAe8csvPTVTZJm45dgZPSj9NAWzMtV/MtWzQha08go7oMhJ2UE49wWmB7NxkiIU1zNg0piGiK8WAdFpGuaEqdVqQJpmL4MzNxucklH/eXfLMAz3ZyMA13l1KQa0Wilw+N8+R1jv0QeUEnO98FIhHjSMJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MtdzQSM2; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575BpKpx001419;
-	Tue, 5 Aug 2025 11:59:38 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5757T01F005960;
+	Tue, 5 Aug 2025 11:59:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=SJKo6g
-	1XjouCbq46KEPHh8y1sxs4mdQJURz9BSU8RLk=; b=bdVLTXvmbhBCAQ8b36hekx
-	PiJRKJlTjPB7TtZiCnyWlI/D87Rcnq6A6ve3Qt/aDRZojvvfmxPzFppB/P5voX36
-	pRJgQoMNd45aA5OmbyfN7isy0ItOj1A8cuPqQnm/6hl34oqiXw5IS4gFyogY/TW6
-	7C3Y1BIrTAt6MX1c/usZceWAiox3Sx+u+Jkx+nhtOO0uDuDMwcq71dqOY7x1j/8/
-	4CTCIZWxluk1x62N3gjikX2OJNOzMIlVxsdQZ8sbGeekb5pH4PeuDylZQAwJrw0P
-	9QrLNCcHIliFIWNaRSnjLK1We7RF39SDBWEMGI9ZRhIcSjtkxySA//mRMIftKF7g
+	:message-id:mime-version:references:subject:to; s=pp1; bh=gDxUPJ
+	qKGqjr8rlHOZKNB+EVcQ3fCKRGkCpMd7qiHs4=; b=MtdzQSM2trJ7mAFiZz2Gc3
+	OoqUWe1o/kprh3BGhMZ4a43IVzGQEWIOIlSEmA780gfd1YqVQsChmCk2a3LgxxGl
+	a4qtTUfTpwOgb7M1XBui7vxg3xW3UpRnnPfcpudaBxzSDoaosrCcxW8q9Ej8jUrN
+	e31xy6WfPRJmp2oJ+Wj5LAEgtLHf5YBwMPyFkqescKqxEKDX3YRF+95rQDWQ4VJh
+	v9xTaDSH4t3FEnhhynQeM5iX4pDyVDZTZXF41PS02oJvc8/SHZTALCQYVAqAzyIV
+	ZIwGQpY5vOTqKqhpPlwYKCWewBT3gep+ukUQP5DkWQ5n4At0UOgcB5c3+HOpJatA
 	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6k6b-1
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3p606-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 11:59:38 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5758moEV006810;
-	Tue, 5 Aug 2025 11:59:37 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmj5dd-1
+	Tue, 05 Aug 2025 11:59:59 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 575BoKXX002111;
+	Tue, 5 Aug 2025 11:59:58 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3p603-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 11:59:37 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575BxXwc50397658
+	Tue, 05 Aug 2025 11:59:58 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5758uXBw009971;
+	Tue, 5 Aug 2025 11:59:58 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489x0p27ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 11:59:58 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575Bxu9U12124836
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 11:59:33 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 550C02004B;
-	Tue,  5 Aug 2025 11:59:33 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E98020049;
-	Tue,  5 Aug 2025 11:59:33 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 11:59:33 +0000 (GMT)
-Date: Tue, 5 Aug 2025 13:59:31 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, david@redhat.com, frankja@linux.ibm.com,
-        seiden@linux.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        schlameuss@linux.ibm.com, hca@linux.ibm.com, mhartmay@linux.ibm.com
-Subject: Re: [PATCH v1 2/2] KVM: s390: Fix FOLL_*/FAULT_FLAG_* confusion
-Message-ID: <20250805135931.0dbcf0f2@p-imbrenda>
-In-Reply-To: <5b0b8d5e-efab-4c5b-be1e-93d8a8f155b3@de.ibm.com>
-References: <20250805111446.40937-1-imbrenda@linux.ibm.com>
-	<20250805111446.40937-3-imbrenda@linux.ibm.com>
-	<5b0b8d5e-efab-4c5b-be1e-93d8a8f155b3@de.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	Tue, 5 Aug 2025 11:59:56 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF76558061;
+	Tue,  5 Aug 2025 11:59:56 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0274F58057;
+	Tue,  5 Aug 2025 11:59:49 +0000 (GMT)
+Received: from [9.61.255.245] (unknown [9.61.255.245])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 11:59:48 +0000 (GMT)
+Message-ID: <8cfa1cb2-57bf-4984-a64e-53c82440e87f@linux.ibm.com>
+Date: Tue, 5 Aug 2025 17:29:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bpf-next 1/6] bpf,powerpc: Introduce
+ bpf_jit_emit_probe_mem_store() to emit store instructions
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
+        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+        naveen@kernel.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        npiggin@gmail.com, memxor@gmail.com, iii@linux.ibm.com,
+        shuah@kernel.org
+References: <20250805062747.3479221-1-skb99@linux.ibm.com>
+ <20250805062747.3479221-2-skb99@linux.ibm.com>
+ <e65548d0-14aa-4b9c-8051-7c91c5dffd1f@csgroup.eu>
+Content-Language: en-GB
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <e65548d0-14aa-4b9c-8051-7c91c5dffd1f@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfX8E31I8aytwpE
- j6S7VSAIbKTz0SWsweYOhOwPovtyusbke+DSD2YVpYRyBIyOsztAhIUr1CmPQTBV9MV8PMfimif
- NLfVyuvzr/u1Cy/exxqfzyZlcclwnZFkgp7X/91SSXZJzdshXdq147Me4g0kw5jdR9JMeWs9FkF
- /Mz/LqfYztic8ITAHFHYVNO5hYS9Gctxq5VTvL8r3JN2dflDcpM9tCNeviyZd7mFheK67+CtgEC
- SYe3efxEBV2PfVTxXbLvfw9gRd8KSnomAA14NfAdJhrQ8XZnDrLr3dsA/MHffWk1HRP+blqeRV8
- YPoxCkNFOYlRVuKzTjyKA/BU4s6vUvWHF7M5n+6derKV7PZmQ2hBkBIpR2KoN/21FW3dviEr4eJ
- ufS0Gqvc/QEDgfWP5kPvjBwKzMPg/RNaYAfQVMGRkWaGSsVJk/xj+JwEnBQJkjoywmvaC+vh
-X-Proofpoint-GUID: 9EHhLsbnER1ONKRekT8vN5DvEqTSvgpU
-X-Proofpoint-ORIG-GUID: 9EHhLsbnER1ONKRekT8vN5DvEqTSvgpU
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6891f22a cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=rfCcW7z_6SUoAgKhWwcA:9
- a=CjuIK1q_8ugA:10
+X-Authority-Analysis: v=2.4 cv=Z+jsHGRA c=1 sm=1 tr=0 ts=6891f23f cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=Oh2cFVv5AAAA:8
+ a=VnNF1IyMAAAA:8 a=7K6N0i7FaoFpiFnlUvQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=7KeoIwV6GZqOttXkcoxL:22
+X-Proofpoint-ORIG-GUID: ou2P2lE5vzwaHKjkyE6NV709Xb4msYv1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfX1CnmoYQjwmFj
+ zmfX82cU1YVSukbVR2EeOTPfk411IxX96NzsnBsnJG9jUh1nt5uK31dJ4ysc0SKdRhzMO4aunzs
+ KYeFfKTQBa1lWi6BGhx6lQlnlemviSAnz39whxxnzeJ5u+RisNyx3uefUekSalD+DDm5LdVd6Eg
+ t+VCdkNpxbQJ0JyVwtBaxmqS7b3bbelWxJB3noTrTFWU2PzZMFECXiCWUXHosmI8a4q9MgpVGnZ
+ AB/W1u0WfIBV+EpjvKGBLwzZBAZdIEwL6D+bUUtWSeEI2m/Y0bd/JKgAxADq8VvB31couGvWW51
+ hJlQZ9YrlRbT3CMYigc7/vPlcGx/HQxjEIzwj+yBkcPyIl01uFEochApb36mjIgNjfmq1rtV67o
+ O5HzA7oaNxdonnQlfuUbA3oWT+7qhcrkPAdV8y+FgFzh2Kddy4vpNLBw5ileSLqPFlg8jm/X
+X-Proofpoint-GUID: noiSPkXud0KeF4qGBUGl8bOA2EH1cmrK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050086
+ lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1011 suspectscore=0
+ priorityscore=1501 mlxlogscore=999 adultscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050086
 
-On Tue, 5 Aug 2025 13:44:04 +0200
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
 
-> Am 05.08.25 um 13:14 schrieb Claudio Imbrenda:
-> > Pass the right type of flag to vcpu_dat_fault_handler(); it expects a
-> > FOLL_* flag (in particular FOLL_WRITE), but FAULT_FLAG_WRITE is passed
-> > instead.
-> > 
-> > This still works because they happen to have the same integer value,
-> > but it's a mistake, thus the fix.
-> > 
-> > Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> > Fixes: 05066cafa925 ("s390/mm/fault: Handle guest-related program interrupts in KVM")  
-> 
-> Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-> 
-> Shouldnt we rename the parameter to __kvm_s390_handle_dat_fault and
-> vcpu_dat_fault_handler from flags to foll as well in their
-> implementation and prototypes to keep this consistent?
+On 05/08/25 1:04 pm, Christophe Leroy wrote:
+>
+>
+> Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
+>> bpf_jit_emit_probe_mem_store() is introduced to emit instructions for
+>> storing memory values depending on the size (byte, halfword,
+>> word, doubleword).
+>
+> Build break with this patch
+>
+>   CC      arch/powerpc/net/bpf_jit_comp64.o
+> arch/powerpc/net/bpf_jit_comp64.c:395:12: error: 
+> 'bpf_jit_emit_probe_mem_store' defined but not used 
+> [-Werror=unused-function]
+>  static int bpf_jit_emit_probe_mem_store(struct codegen_context *ctx, 
+> u32 src_reg, s16 off,
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: 
+> arch/powerpc/net/bpf_jit_comp64.o] Error 1
+>
+I tried this on top of bpf-next, and for me build passed.
 
-that's a fair point
+Note: I applied 
+https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/ 
+before applying current patch.
 
-a patch in an upcoming series will do that, but I guess I can move that
-change here instead.
+gcc version 14.2.1 20250110
 
-I'll send a v2 later on today
+uname -r: 6.16.0-gf2844c7fdb07
 
-> 
-> > ---
-> >   arch/s390/kvm/kvm-s390.c | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> > index d5ad10791c25..d41d77f2c7cd 100644
-> > --- a/arch/s390/kvm/kvm-s390.c
-> > +++ b/arch/s390/kvm/kvm-s390.c
-> > @@ -4954,13 +4954,13 @@ static int vcpu_dat_fault_handler(struct kvm_vcpu *vcpu, unsigned long gaddr, un
-> >   
-> >   static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
-> >   {
-> > -	unsigned int flags = 0;
-> > +	unsigned int foll = 0;
-> >   	unsigned long gaddr;
-> >   	int rc;
-> >   
-> >   	gaddr = current->thread.gmap_teid.addr * PAGE_SIZE;
-> >   	if (kvm_s390_cur_gmap_fault_is_write())
-> > -		flags = FAULT_FLAG_WRITE;
-> > +		foll = FOLL_WRITE;
-> >   
-> >   	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
-> >   	case 0:
-> > @@ -5002,7 +5002,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
-> >   			send_sig(SIGSEGV, current, 0);
-> >   		if (rc != -ENXIO)
-> >   			break;
-> > -		flags = FAULT_FLAG_WRITE;
-> > +		foll = FOLL_WRITE;
-> >   		fallthrough;
-> >   	case PGM_PROTECTION:
-> >   	case PGM_SEGMENT_TRANSLATION:
-> > @@ -5012,7 +5012,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
-> >   	case PGM_REGION_SECOND_TRANS:
-> >   	case PGM_REGION_THIRD_TRANS:
-> >   		kvm_s390_assert_primary_as(vcpu);
-> > -		return vcpu_dat_fault_handler(vcpu, gaddr, flags);
-> > +		return vcpu_dat_fault_handler(vcpu, gaddr, foll);
-> >   	default:
-> >   		KVM_BUG(1, vcpu->kvm, "Unexpected program interrupt 0x%x, TEID 0x%016lx",
-> >   			current->thread.gmap_int_code, current->thread.gmap_teid.val);  
-> 
+bpf-next repo: 
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next
 
+HEAD:
+
+commit f3af62b6cee8af9f07012051874af2d2a451f0e5 (origin/master, origin/HEAD)
+Author: Tao Chen <chen.dylane@linux.dev>
+Date:   Wed Jul 23 22:44:42 2025 +0800
+
+     bpftool: Add bash completion for token argument
+
+
+Build Success logs:
+
+   TEST-OBJ [test_progs-cpuv4] xdp_vlan.test.o
+   TEST-OBJ [test_progs-cpuv4] xdpwall.test.o
+   TEST-OBJ [test_progs-cpuv4] xfrm_info.test.o
+   BINARY   bench
+   BINARY   test_maps
+   BINARY   test_progs
+   BINARY   test_progs-no_alu32
+   BINARY   test_progs-cpuv4
+
+
+Regards,
+
+Venkat.
+
+>
+>>
+>> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+>> ---
+>>   arch/powerpc/net/bpf_jit_comp64.c | 30 ++++++++++++++++++++++++++++++
+>>   1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/powerpc/net/bpf_jit_comp64.c 
+>> b/arch/powerpc/net/bpf_jit_comp64.c
+>> index 025524378443..489de21fe3d6 100644
+>> --- a/arch/powerpc/net/bpf_jit_comp64.c
+>> +++ b/arch/powerpc/net/bpf_jit_comp64.c
+>> @@ -409,6 +409,36 @@ asm (
+>>   "        blr                ;"
+>>   );
+>>   +static int bpf_jit_emit_probe_mem_store(struct codegen_context 
+>> *ctx, u32 src_reg, s16 off,
+>> +                    u32 code, u32 *image)
+>> +{
+>> +    u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
+>> +    u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
+>> +
+>> +    switch (BPF_SIZE(code)) {
+>> +    case BPF_B:
+>> +        EMIT(PPC_RAW_STB(src_reg, tmp1_reg, off));
+>> +        break;
+>> +    case BPF_H:
+>> +        EMIT(PPC_RAW_STH(src_reg, tmp1_reg, off));
+>> +        break;
+>> +    case BPF_W:
+>> +        EMIT(PPC_RAW_STW(src_reg, tmp1_reg, off));
+>> +        break;
+>> +    case BPF_DW:
+>> +        if (off % 4) {
+>> +            EMIT(PPC_RAW_LI(tmp2_reg, off));
+>> +            EMIT(PPC_RAW_STDX(src_reg, tmp1_reg, tmp2_reg));
+>> +        } else {
+>> +            EMIT(PPC_RAW_STD(src_reg, tmp1_reg, off));
+>> +        }
+>> +        break;
+>> +    default:
+>> +        return -EINVAL;
+>> +    }
+>> +    return 0;
+>> +}
+>> +
+>>   static int emit_atomic_ld_st(const struct bpf_insn insn, struct 
+>> codegen_context *ctx, u32 *image)
+>>   {
+>>       u32 code = insn.code;
+>
 
