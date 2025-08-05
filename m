@@ -1,329 +1,260 @@
-Return-Path: <linux-kernel+bounces-756146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17188B1B089
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:56:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B86DB1B08D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E90189941A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38837AC212
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A04D2586C5;
-	Tue,  5 Aug 2025 08:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHq4cxY7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5242586CA;
+	Tue,  5 Aug 2025 08:58:35 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4483C257AF4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9C523C511
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384195; cv=none; b=br2SKsswX8xDmIngoNe4zFuHbn+GE9viKXsRPbSI4O3AqULf7k0/GIF185Gh32eV2eNGj5jb1CBPZj7X9sj8t5UFtgr9gna6mslDq64+Q99xoAdCuxUcoCz8bhDUYxRm1pCww1HIdEvjIBLeixvDFp9dGmAHC+f+1srCTvxG+Ww=
+	t=1754384314; cv=none; b=p0Svj5kqE/LntuMGn8UeqJ4jQprt/LYvzaSFJCcruai9BV+hOmvNrIxhih56aKY7YPumMZOQBMQDhbRq6pL/99H+H9yqrU/S1+XW4NcJWqzOPRgnw8GUMwhXNbvaDsGZu/P+CsDs6Sx0Ux3dRMsDl1ymEiEg10qCumkDPcMF4Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384195; c=relaxed/simple;
-	bh=9vjAPyfgh4NxdA5OBLaM7XfPba5k+3sWvZLcnao3/sc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kd1WYRTm3pH2yfBpL212JHrHnTBpLlooKMN0ldoA4PhBxqUj3CXnJnb1u+MhK+uNXMhCVM2wPhEkvVuV40bPIq2KrE70DdwTo0bAb7qedo9DV7sNJGGZfM/e5igMz6SusrVmVTIY+nj55NI7Hr5WYkx7GvL2arEd2+R1Dq4lroo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHq4cxY7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C7AC4CEF0;
-	Tue,  5 Aug 2025 08:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754384194;
-	bh=9vjAPyfgh4NxdA5OBLaM7XfPba5k+3sWvZLcnao3/sc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=FHq4cxY7If6yBp8x+sSlXcTCT8pHiIN2lox/kp25zAFas6B5WDWH799C8A8svTc6H
-	 alqlMc33THicxKy72S2M90qL8PMB9inECQKMSPy5Fg4+OUlVhSAYgEnqc/jO793KLy
-	 ZSfL5DEAXR3LJhJq576oiXJ/ZJ4No2JW5IkDc6+TP1jlr9zIp+W57jIOlDcumVirON
-	 crn8bRhAXJDSlmHVG/BFbusWyCJbeOkrP65YHvAJ72bDdL2h4zhTVMhad8rzHj1GkA
-	 7E5rV7TalFOXUzmOwGsZbswswFdHdy0NG7xvL5H/E7UEi3ML5MMLtPWAzfiN3lk1ud
-	 kuSnnbjQLv/lQ==
-Message-ID: <ee0955ae-7d7a-40b7-8bae-f65ca56bd45c@kernel.org>
-Date: Tue, 5 Aug 2025 16:56:27 +0800
+	s=arc-20240116; t=1754384314; c=relaxed/simple;
+	bh=ROU4usAY7FLO4IEUuf/j0jcf3HhoyxppnIrnbW9Gg4E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QxBkx1H4BtFAorB0rwFTaDH7AtkE8XVZsWqmIvQGAhFkZehgOObaGRsMCw/7+peVLGDxvGXiZoo2eEjpUJjNkzHZRQKpLMNomRxW3R7k+yGG0oYcJaY57gtrKbcGQ0Xzkzn2hrg0uk1Wsfe8hv4lmkrozqywNOkiHuXzaBFxHKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88178b5ce20so440146739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:58:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754384312; x=1754989112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l1WNoAj0DpZzqc24ya6V8dghZm6KdpNb3dMMcndP+Qo=;
+        b=Upa3nf1V9GXxofPmA/pWSL5P6wLIUx/Ll6295DgjDIbNntWiNp0+l7CtWDnXxanCmM
+         of3V56BXIv6Jx4ov6vWTU9r+vyiZ/Vj9IZC4mbdH178Z2mP/A3sqh0OYccaTOU3r45yI
+         U7f5k0jFn/JvEqzKNUQg74JIxWPJ0H2BRD5fSBwBWer7QLmYp7TrtHe6RaB2Sf4o55HZ
+         Y0UDOKGF8OMy7D8WDKqh5hlshmxUlVs/Cua+Gw+PmrubT9+2eG3Tn48fjyuf1S2uCMMX
+         iHgFWn2ZQVmqWq3YtY0kO93o/LrGgeO0K19XHiIep5jED7axinFg9BFQn6A/dRfrlfIA
+         XTXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjA/c+HGsZH+IJNQ5e1Y8LO6b5DjSRuzrZrvdT8P+qYZ01k6UDrUHl69xNUj2z3O9Q3flqoy9Ba2GoWkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd15Xh3nBhoxyZQKidte5hS2t8JHCDrPuRz37OJ5SkgtruRpfn
+	7QV+YGldAFpBOjcaqJcph2BdA6P+HKpAN+5ltdEOSXrqfbeg4hLXKGkk8eUVUUO57VPMFlhDe2O
+	OaTSH91ewxta2gCJOoxhnEiTJYn8ZTf6u6ST1qlcjsut3/iKKTE+K5XfcL4g=
+X-Google-Smtp-Source: AGHT+IFodmuJvtVjyVs52g4C10q8nTRHjv7OPiVkaIHbKXtYdeEhfRV8PP5epOXl5W2U5ZYRS4Pif1KtqJX7qOnNnnccBhtH8Peu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] f2fs: add reserved nodes for privileged users
-To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
-References: <20250731075731.628454-1-guochunhai@vivo.com>
- <13bec8f2-8482-44f5-a7c6-db7cbde5173b@kernel.org>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <13bec8f2-8482-44f5-a7c6-db7cbde5173b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:2b89:b0:881:7c17:ef2b with SMTP id
+ ca18e2360f4ac-8817c17f0abmr1355865739f.6.1754384312221; Tue, 05 Aug 2025
+ 01:58:32 -0700 (PDT)
+Date: Tue, 05 Aug 2025 01:58:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6891c7b8.050a0220.7f033.001f.GAE@google.com>
+Subject: [syzbot] [perf?] KASAN: slab-use-after-free Read in __task_pid_nr_ns
+From: syzbot <syzbot+e0378d4f4fe57aa2bdd0@syzkaller.appspotmail.com>
+To: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
+	namhyung@kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/31/25 16:46, Chao Yu wrote:
-> On 7/31/25 15:57, Chunhai Guo wrote:
->> This patch allows privileged users to reserve nodes via the
->> 'reserve_node' mount option, which is similar to the existing
->> 'reserve_root' option.
->>
->> "-o reserve_node=<N>" means <N> nodes are reserved for privileged
->> users only.
->>
->> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
->> ---
->> v3->v4: Rebase this patch on https://lore.kernel.org/linux-f2fs-devel/20250731060338.1136086-1-chao@kernel.org
->> v2->v3: Apply Chao's suggestion from v2.
->> v1->v2: Add two missing handling parts.
->> v1: https://lore.kernel.org/linux-f2fs-devel/20250729095238.607433-1-guochunhai@vivo.com/
->> ---
->>  Documentation/filesystems/f2fs.rst |  9 ++++---
->>  fs/f2fs/f2fs.h                     | 14 +++++++---
->>  fs/f2fs/super.c                    | 43 +++++++++++++++++++++++++-----
->>  3 files changed, 52 insertions(+), 14 deletions(-)
->>
->> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
->> index 03b1efa6d3b2..95dbcd7ac9a8 100644
->> --- a/Documentation/filesystems/f2fs.rst
->> +++ b/Documentation/filesystems/f2fs.rst
->> @@ -173,9 +173,12 @@ data_flush		 Enable data flushing before checkpoint in order to
->>  			 persist data of regular and symlink.
->>  reserve_root=%d		 Support configuring reserved space which is used for
->>  			 allocation from a privileged user with specified uid or
->> -			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
->> -resuid=%d		 The user ID which may use the reserved blocks.
->> -resgid=%d		 The group ID which may use the reserved blocks.
->> +			 gid, unit: 4KB, the default limit is 12.5% of user blocks.
->> +reserve_node=%d		 Support configuring reserved nodes which are used for
->> +			 allocation from a privileged user with specified uid or
->> +			 gid, the default limit is 12.5% of all nodes.
->> +resuid=%d		 The user ID which may use the reserved blocks and nodes.
->> +resgid=%d		 The group ID which may use the reserved blocks and nodes.
->>  fault_injection=%d	 Enable fault injection in all supported types with
->>  			 specified injection rate.
->>  fault_type=%d		 Support configuring fault injection type, should be
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index eb372af22edc..b9676ef16246 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
->>   * string rather than using the MS_LAZYTIME flag, so this must remain.
->>   */
->>  #define F2FS_MOUNT_LAZYTIME		0x40000000
->> +#define F2FS_MOUNT_RESERVE_NODE		0x80000000
->>  
->>  #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
->>  #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
->> @@ -172,6 +173,7 @@ struct f2fs_rwsem {
->>  struct f2fs_mount_info {
->>  	unsigned int opt;
->>  	block_t root_reserved_blocks;	/* root reserved blocks */
->> +	block_t root_reserved_nodes;	/* root reserved nodes */
->>  	kuid_t s_resuid;		/* reserved blocks for uid */
->>  	kgid_t s_resgid;		/* reserved blocks for gid */
->>  	int active_logs;		/* # of active logs */
->> @@ -2355,7 +2357,7 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
->>  	return ofs == XATTR_NODE_OFFSET;
->>  }
->>  
->> -static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
->> +static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
->>  					struct inode *inode, bool cap)
->>  {
->>  	if (!inode)
->> @@ -2380,7 +2382,7 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
->>  	avail_user_block_count = sbi->user_block_count -
->>  					sbi->current_reserved_blocks;
->>  
->> -	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_blocks(sbi, inode, cap))
->> +	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
->>  		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
->>  
->>  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
->> @@ -2738,7 +2740,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
->>  					struct inode *inode, bool is_inode)
->>  {
->>  	block_t	valid_block_count;
->> -	unsigned int valid_node_count;
->> +	unsigned int valid_node_count, avail_user_node_count;
->>  	unsigned int avail_user_block_count;
->>  	int err;
->>  
->> @@ -2767,8 +2769,12 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
->>  		goto enospc;
->>  	}
->>  
->> +	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
->> +	if (test_opt(sbi, RESERVE_NODE) &&
->> +			!__allow_reserved_root(sbi, inode, false))
-> 
-> Chunhai,
-> 
-> Do we need to pass cap=true to __allow_reserved_root()?
-> 
-> In addition, do we need to change cap as well for below statement?
-> 
-> avail_user_block_count = get_available_block_count(sbi, inode, false);
+Hello,
 
-I meant something like this? not sure.
+syzbot found the following issue on:
+
+HEAD commit:    e8d780dcd957 Merge tag 'slab-for-6.17' of git://git.kernel..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12392f82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=287afdea79829fda
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0378d4f4fe57aa2bdd0
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5aa4922d60a2/disk-e8d780dc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f92a03738fad/vmlinux-e8d780dc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ac22ca9f709f/bzImage-e8d780dc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e0378d4f4fe57aa2bdd0@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in __task_pid_nr_ns+0x1da/0x470 kernel/pid.c:517
+Read of size 8 at addr ffff888066bbaa28 by task syz.5.936/10344
+
+CPU: 0 UID: 0 PID: 10344 Comm: syz.5.936 Not tainted 6.16.0-syzkaller-ge8d780dcd957 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ __task_pid_nr_ns+0x1da/0x470 kernel/pid.c:517
+ perf_event_pid_type kernel/events/core.c:1431 [inline]
+ perf_event_pid kernel/events/core.c:1440 [inline]
+ perf_event_read_event kernel/events/core.c:8519 [inline]
+ sync_child_event kernel/events/core.c:13962 [inline]
+ perf_child_detach kernel/events/core.c:2339 [inline]
+ __perf_remove_from_context+0x22e5/0x2a80 kernel/events/core.c:2510
+ perf_remove_from_context+0x152/0x1d0 kernel/events/core.c:2559
+ perf_event_release_kernel+0x2dd/0x510 kernel/events/core.c:5837
+ perf_release+0x38/0x50 kernel/events/core.c:5870
+ __fput+0x449/0xa70 fs/file_table.c:468
+ task_work_run+0x1d1/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:208 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1fae18eb69
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff16a52328 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007f1fae3b7ba0 RCX: 00007f1fae18eb69
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f1fae3b7ba0 R08: 0000000000000200 R09: 0000001d16a5261f
+R10: 00007f1fae3b7ac0 R11: 0000000000000246 R12: 000000000005b884
+R13: 00007f1fae3b6320 R14: ffffffffffffffff R15: 00007fff16a52440
+ </TASK>
+
+Allocated by task 10345:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4179 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4235
+ copy_signal+0x50/0x630 kernel/fork.c:1651
+ copy_process+0x16a6/0x3c00 kernel/fork.c:2169
+ kernel_clone+0x21e/0x840 kernel/fork.c:2602
+ __do_sys_clone kernel/fork.c:2745 [inline]
+ __se_sys_clone kernel/fork.c:2729 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 10345:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2416 [inline]
+ slab_free mm/slub.c:4679 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4781
+ copy_process+0x2953/0x3c00 kernel/fork.c:2455
+ kernel_clone+0x21e/0x840 kernel/fork.c:2602
+ __do_sys_clone kernel/fork.c:2745 [inline]
+ __se_sys_clone kernel/fork.c:2729 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888066bba880
+ which belongs to the cache signal_cache of size 1544
+The buggy address is located 424 bytes inside of
+ freed 1544-byte region [ffff888066bba880, ffff888066bbae88)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x66bb8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff88807df50c01
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b6dd780 ffffea00009cb000 dead000000000002
+raw: 0000000000000000 0000000080120012 00000000f5000000 ffff88807df50c01
+head: 00fff00000000040 ffff88801b6dd780 ffffea00009cb000 dead000000000002
+head: 0000000000000000 0000000080120012 00000000f5000000 ffff88807df50c01
+head: 00fff00000000003 ffffea00019aee01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5203, tgid 5203 (S02sysctl), ts 31817104133, free_ts 28252177307
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2486 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2654
+ new_slab mm/slub.c:2708 [inline]
+ ___slab_alloc+0xbeb/0x1410 mm/slub.c:3890
+ __slab_alloc mm/slub.c:3980 [inline]
+ __slab_alloc_node mm/slub.c:4055 [inline]
+ slab_alloc_node mm/slub.c:4216 [inline]
+ kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4235
+ copy_signal+0x50/0x630 kernel/fork.c:1651
+ copy_process+0x16a6/0x3c00 kernel/fork.c:2169
+ kernel_clone+0x21e/0x840 kernel/fork.c:2602
+ __do_sys_clone kernel/fork.c:2745 [inline]
+ __se_sys_clone kernel/fork.c:2729 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
+ __free_pages mm/page_alloc.c:5071 [inline]
+ free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:6927
+ destroy_args+0x64/0x4a0 mm/debug_vm_pgtable.c:1009
+ debug_vm_pgtable+0x3a7/0x3e0 mm/debug_vm_pgtable.c:1389
+ do_one_initcall+0x233/0x820 init/main.c:1269
+ do_initcall_level+0x104/0x190 init/main.c:1331
+ do_initcalls+0x59/0xa0 init/main.c:1347
+ kernel_init_freeable+0x334/0x4a0 init/main.c:1579
+ kernel_init+0x1d/0x1d0 init/main.c:1469
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888066bba900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888066bba980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888066bbaa00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                  ^
+ ffff888066bbaa80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888066bbab00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
 
 ---
- fs/f2fs/f2fs.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3804b70e5a28..d0aa5766ea66 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2805,7 +2805,8 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 	spin_lock(&sbi->stat_lock);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
- 	valid_block_count = sbi->total_valid_block_count + 1;
--	avail_user_block_count = get_available_block_count(sbi, inode, false);
-+	avail_user_block_count = get_available_block_count(sbi, inode,
-+				test_opt(sbi, RESERVE_NODE));
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
- 	if (unlikely(valid_block_count > avail_user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
-@@ -2814,7 +2815,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
- 	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
- 	if (test_opt(sbi, RESERVE_NODE) &&
--			!__allow_reserved_root(sbi, inode, false))
-+			!__allow_reserved_root(sbi, inode, true))
- 		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
- 	valid_node_count = sbi->total_valid_node_count + 1;
- 	if (unlikely(valid_node_count > avail_user_node_count)) {
--- 
-2.49.0
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Thanks,
-
-> 
-> Thanks,
-> 
->> +		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
->>  	valid_node_count = sbi->total_valid_node_count + 1;
->> -	if (unlikely(valid_node_count > sbi->total_node_count)) {
->> +	if (unlikely(valid_node_count > avail_user_node_count)) {
->>  		spin_unlock(&sbi->stat_lock);
->>  		goto enospc;
->>  	}
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 30c038413040..a24e855a38ed 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -143,6 +143,7 @@ enum {
->>  	Opt_extent_cache,
->>  	Opt_data_flush,
->>  	Opt_reserve_root,
->> +	Opt_reserve_node,
->>  	Opt_resgid,
->>  	Opt_resuid,
->>  	Opt_mode,
->> @@ -265,6 +266,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
->>  	fsparam_flag_no("extent_cache", Opt_extent_cache),
->>  	fsparam_flag("data_flush", Opt_data_flush),
->>  	fsparam_u32("reserve_root", Opt_reserve_root),
->> +	fsparam_u32("reserve_node", Opt_reserve_node),
->>  	fsparam_gid("resgid", Opt_resgid),
->>  	fsparam_uid("resuid", Opt_resuid),
->>  	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
->> @@ -336,6 +338,7 @@ static match_table_t f2fs_checkpoint_tokens = {
->>  #define F2FS_SPEC_discard_unit			(1 << 21)
->>  #define F2FS_SPEC_memory_mode			(1 << 22)
->>  #define F2FS_SPEC_errors			(1 << 23)
->> +#define F2FS_SPEC_reserve_node			(1 << 24)
->>  
->>  struct f2fs_fs_context {
->>  	struct f2fs_mount_info info;
->> @@ -437,22 +440,30 @@ static void f2fs_destroy_casefold_cache(void) { }
->>  
->>  static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
->>  {
->> -	block_t limit = min((sbi->user_block_count >> 3),
->> +	block_t block_limit = min((sbi->user_block_count >> 3),
->>  			sbi->user_block_count - sbi->reserved_blocks);
->> +	block_t node_limit = sbi->total_node_count >> 3;
->>  
->>  	/* limit is 12.5% */
->>  	if (test_opt(sbi, RESERVE_ROOT) &&
->> -			F2FS_OPTION(sbi).root_reserved_blocks > limit) {
->> -		F2FS_OPTION(sbi).root_reserved_blocks = limit;
->> +			F2FS_OPTION(sbi).root_reserved_blocks > block_limit) {
->> +		F2FS_OPTION(sbi).root_reserved_blocks = block_limit;
->>  		f2fs_info(sbi, "Reduce reserved blocks for root = %u",
->>  			  F2FS_OPTION(sbi).root_reserved_blocks);
->>  	}
->> -	if (!test_opt(sbi, RESERVE_ROOT) &&
->> +	if (test_opt(sbi, RESERVE_NODE) &&
->> +			F2FS_OPTION(sbi).root_reserved_nodes > node_limit) {
->> +		F2FS_OPTION(sbi).root_reserved_nodes = node_limit;
->> +		f2fs_info(sbi, "Reduce reserved nodes for root = %u",
->> +			  F2FS_OPTION(sbi).root_reserved_nodes);
->> +	}
->> +	if (!test_opt(sbi, RESERVE_ROOT) && !test_opt(sbi, RESERVE_NODE) &&
->>  		(!uid_eq(F2FS_OPTION(sbi).s_resuid,
->>  				make_kuid(&init_user_ns, F2FS_DEF_RESUID)) ||
->>  		!gid_eq(F2FS_OPTION(sbi).s_resgid,
->>  				make_kgid(&init_user_ns, F2FS_DEF_RESGID))))
->> -		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root",
->> +		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root"
->> +				" and reserve_node",
->>  			  from_kuid_munged(&init_user_ns,
->>  					   F2FS_OPTION(sbi).s_resuid),
->>  			  from_kgid_munged(&init_user_ns,
->> @@ -841,6 +852,11 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->>  		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
->>  		ctx->spec_mask |= F2FS_SPEC_reserve_root;
->>  		break;
->> +	case Opt_reserve_node:
->> +		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
->> +		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
->> +		ctx->spec_mask |= F2FS_SPEC_reserve_node;
->> +		break;
->>  	case Opt_resuid:
->>  		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
->>  		ctx->spec_mask |= F2FS_SPEC_resuid;
->> @@ -1424,6 +1440,14 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
->>  		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
->>  		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
->>  	}
->> +	if (test_opt(sbi, RESERVE_NODE) &&
->> +			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
->> +			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
->> +		f2fs_info(sbi, "Preserve previous reserve_node=%u",
->> +			F2FS_OPTION(sbi).root_reserved_nodes);
->> +		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
->> +		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
->> +	}
->>  
->>  	err = f2fs_check_test_dummy_encryption(fc, sb);
->>  	if (err)
->> @@ -1623,6 +1647,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
->>  	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
->>  		F2FS_OPTION(sbi).root_reserved_blocks =
->>  					F2FS_CTX_INFO(ctx).root_reserved_blocks;
->> +	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
->> +		F2FS_OPTION(sbi).root_reserved_nodes =
->> +					F2FS_CTX_INFO(ctx).root_reserved_nodes;
->>  	if (ctx->spec_mask & F2FS_SPEC_resgid)
->>  		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
->>  	if (ctx->spec_mask & F2FS_SPEC_resuid)
->> @@ -2342,9 +2369,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->>  	else if (F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_BLK)
->>  		seq_puts(seq, "fragment:block");
->>  	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
->> -	if (test_opt(sbi, RESERVE_ROOT))
->> -		seq_printf(seq, ",reserve_root=%u,resuid=%u,resgid=%u",
->> +	if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
->> +		seq_printf(seq, ",reserve_root=%u,reserve_node=%u,resuid=%u,"
->> +				"resgid=%u",
->>  				F2FS_OPTION(sbi).root_reserved_blocks,
->> +				F2FS_OPTION(sbi).root_reserved_nodes,
->>  				from_kuid_munged(&init_user_ns,
->>  					F2FS_OPTION(sbi).s_resuid),
->>  				from_kgid_munged(&init_user_ns,
-> 
-
+If you want to undo deduplication, reply with:
+#syz undup
 
