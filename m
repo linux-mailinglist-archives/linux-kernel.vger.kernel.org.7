@@ -1,183 +1,201 @@
-Return-Path: <linux-kernel+bounces-756051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A233FB1AF2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:10:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B371B1AF31
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ADBD3BCA9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465CD177E33
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C9230278;
-	Tue,  5 Aug 2025 07:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A985B230BD2;
+	Tue,  5 Aug 2025 07:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="njLdUjM3"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="no8kx89s";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="glCnyA+f"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8633266A7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD122F767;
+	Tue,  5 Aug 2025 07:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377824; cv=none; b=rzR/2olzvvo5ZdT0MAa9PlL0eLzUr4ycnEISPEQF28LuFs/fEEo26SWh12C010M+Ady55ZpdWqm7AfbkVUWsJc8UWwFRZ2sBHjw0b85uB+Anx1xcFZ9lGKxP5sBfG0/wxz0uhU8G/hg6XHYeKPoajkFllRH1d/NWrFZZCy+uxFg=
+	t=1754377837; cv=none; b=Z/dvl4dVYTJkIWat3uoKvhJzB8nNGe8Y+dKWN+deKcwBFx6BOI/ziykr0lXMEN3/lKThups2O/sQXa/U2qbYLAd+sg8enSrjH9PwnRbnh0/XZWgpaLC6edGnqflY8xajdv3BdCvZxPrZ6WVtO9dbYNH/qh6ddE2BOLUSENs2ZWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377824; c=relaxed/simple;
-	bh=h6XKzAtYh3pNODiQdcehSo4PcWdoXjQ+mRPWT/wKqgo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AMt0i3UcsueTv970m2Tbdc8zXo6SB0O/SUZ9CLhzMHBb9W+HrZN42afzJFpMah59GjdqBQh6L5D50LmSW9AXMUWIQtSrbEcZ1yAMfxi5otAJpZ4EP4y5sQzadN7phfFhnwirkIrm2BzbdV564hseQyBdex1dIh0JfppXxuXsSR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=njLdUjM3; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57579sFS4024169;
-	Tue, 5 Aug 2025 02:09:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754377794;
-	bh=gOnpZ3mFkm1p13Cn9nA/r3PqcAqgnCGYOFVTNL6XO1c=;
-	h=From:To:CC:Subject:Date;
-	b=njLdUjM3UE0Q2C14j/Xe58uoziXOr3DPNapRSKMPoitcaLMRXlzXP4gZAFLIog4aG
-	 iwiWy42zBvyJFIfHzHyCwFTSkawzlivS1iL75CwO9z8FGQm6A/gYJiMr6rVvByley5
-	 F9oJTr7JvYLpNgle1RYJX/rV02/5YWwh7nYUpu3Q=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57579s0A3268052
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 5 Aug 2025 02:09:54 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
- Aug 2025 02:09:53 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 5 Aug 2025 02:09:53 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57579npT1730586;
-	Tue, 5 Aug 2025 02:09:50 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <13564923607@139.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Support L"SmartAmpCalibrationData" to save calibrated data
-Date: Tue, 5 Aug 2025 15:09:45 +0800
-Message-ID: <20250805070945.524-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1754377837; c=relaxed/simple;
+	bh=zSNJZOZFX9hckn6mXpstET/OnFkhJk3WprzXlL1fO90=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BfC91QNjalsVhlNf3SAZbLTTj5eVjHVzzfAzvbKhkHoLHi6v2/Ai+HPv39Ygxt042LxdkLkN7RLssX0APaqhXQUBvonMpAvpDGESImIBfRowVGULO7JO/dMkBeRzsq+bdWs1cIxKOWGTUEqLgglAySNf12m5XU456TzBrvTcxPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=no8kx89s; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=glCnyA+f reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1754377834; x=1785913834;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EeUMDc2WntfI8A+x14TyU5FunBo17nAG01EM1yXferM=;
+  b=no8kx89s5PZc+b4B/nUvwtfJd1Kmdx7gyIqnya1Z2cqlFAL0drVGYhUb
+   jaMl4glCh8BdzuYpV9Keej0JSzH15k/YuwS3eI/fyjoFQGi+xxYGAAPlo
+   hD/vGIsDx95FuSixJvBZxE83zKL2Sh1BT2yJTa3uNxE82MHDdGBYv2nLO
+   clZn6/2Z+Fpf0QYKNmMPBFqwYpQchmGuGHdXmn9L22PZWQ/ixzvfNrPPk
+   RmIxQgcbKYtqYVbYwKmsWZILaedH6Lvx1LTwtI30czE4nwWjQuuNChzZa
+   FUmmCExwDr9gW4X9TkZafDR6FPWmm9j4FfkAZ8q7hGkwOQR0csFH9dNEH
+   Q==;
+X-CSE-ConnectionGUID: 8OggMXCVRb67Yq9VaFkfPg==
+X-CSE-MsgGUID: 8IVFNqAAS7ej/ExTuYvMvg==
+X-IronPort-AV: E=Sophos;i="6.17,265,1747692000"; 
+   d="scan'208";a="45583489"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 05 Aug 2025 09:10:30 +0200
+X-CheckPoint: {6891AE67-1-D4215818-E44699D1}
+X-MAIL-CPID: 2D3DFB7860E93CFACCD9674F0CED3F89_0
+X-Control-Analysis: str=0001.0A00210F.6891ADD9.008C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BCE91726E2;
+	Tue,  5 Aug 2025 09:10:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1754377826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EeUMDc2WntfI8A+x14TyU5FunBo17nAG01EM1yXferM=;
+	b=glCnyA+fmdYQNcL4hjR8TMji7ODikkmnhi0R1O5XQKeNugloKyyvHZQ83XwJsYjuB6+8Ae
+	1udmhwtm9IlRZMmkW5O1u4TvP2X52nDpukEcApOm7q1jggNxlhFiQhYMnuxkCUJjAVr7Vn
+	tfIQBcOQ7fdpjlqABQzQMMWOql2v0VjnXLsJ2ofukHDzU+/Pw5YpmRrN/NdoFKg1UVpgJB
+	yKrDxvf9s14PS8vHOXhKatmVvMjbNox2QiHoGEdtuIblD/2y4CEOtq7+KQPObM2JexudQy
+	Ov1xWntFqW8YSfXdMs5lUCO5+PAVsG9gunueaE/fPDP386+Ov+rHz04r9B8CsQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
+ cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz,
+ tiwai@suse.com, linux-sound@vger.kernel.org
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+Subject:
+ Re: [PATCH v3 6/6] arm64: dts: imx8mp: Add hdmi parallel audio interface node
+Date: Tue, 05 Aug 2025 09:10:25 +0200
+Message-ID: <1932645.tdWV9SEqCh@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250804104722.601440-7-shengjiu.wang@nxp.com>
+References:
+ <20250804104722.601440-1-shengjiu.wang@nxp.com>
+ <20250804104722.601440-7-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Some devices save the calibrated data into L"CALI_DATA", and others into
-L"SmartAmpCalibrationData". Driver code will support both.
+Am Montag, 4. August 2025, 12:47:22 CEST schrieb Shengjiu Wang:
+> The HDMI TX Parallel Audio Interface (HTX_PAI) is a bridge between the
+> Audio Subsystem to the HDMI TX Controller.
+>=20
+> Shrink register map size of hdmi_pvi to avoid overlapped hdmi_pai device.
+>=20
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp-evk.dts |  4 +++
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 28 +++++++++++++++++++-
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
----
- sound/hda/codecs/side-codecs/tas2781_hda.c | 47 +++++++++++++++-------
- sound/hda/codecs/side-codecs/tas2781_hda.h |  2 +-
- 2 files changed, 33 insertions(+), 16 deletions(-)
+Please separate commits for SoC and board files. Thanks
 
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.c b/sound/hda/codecs/side-codecs/tas2781_hda.c
-index 34217ce9f28e..f46d2e06c64f 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda.c
-@@ -18,6 +18,8 @@
- 
- #include "tas2781_hda.h"
- 
-+#define CALIBRATION_DATA_AREA_NUM 2
-+
- const efi_guid_t tasdev_fct_efi_guid[] = {
- 	/* DELL */
- 	EFI_GUID(0xcc92382d, 0x6337, 0x41cb, 0xa8, 0x8b, 0x8e, 0xce, 0x74,
-@@ -160,36 +162,51 @@ int tas2781_save_calibration(struct tas2781_hda *hda)
- 	 * manufactory.
- 	 */
- 	efi_guid_t efi_guid = tasdev_fct_efi_guid[LENOVO];
--	static efi_char16_t efi_name[] = TASDEVICE_CALIBRATION_DATA_NAME;
-+	/*
-+	 * Some devices save the calibrated data into L"CALI_DATA",
-+	 * and others into L"SmartAmpCalibrationData".
-+	 */
-+	static efi_char16_t *efi_name[CALIBRATION_DATA_AREA_NUM] = {
-+		L"CALI_DATA",
-+		L"SmartAmpCalibrationData",
-+	};
- 	struct tasdevice_priv *p = hda->priv;
- 	struct calidata *cali_data = &p->cali_data;
- 	unsigned long total_sz = 0;
- 	unsigned int attr, size;
- 	unsigned char *data;
- 	efi_status_t status;
-+	int i;
- 
- 	if (hda->catlog_id < LENOVO)
- 		efi_guid = tasdev_fct_efi_guid[hda->catlog_id];
- 
- 	cali_data->cali_dat_sz_per_dev = 20;
- 	size = p->ndev * (cali_data->cali_dat_sz_per_dev + 1);
--	/* Get real size of UEFI variable */
--	status = efi.get_variable(efi_name, &efi_guid, &attr, &total_sz, NULL);
--	cali_data->total_sz = total_sz > size ? total_sz : size;
--	if (status == EFI_BUFFER_TOO_SMALL) {
--		/* Allocate data buffer of data_size bytes */
--		data = p->cali_data.data = devm_kzalloc(p->dev,
--			p->cali_data.total_sz, GFP_KERNEL);
--		if (!data) {
--			p->cali_data.total_sz = 0;
--			return -ENOMEM;
-+	for (i = 0; i < CALIBRATION_DATA_AREA_NUM; i++) {
-+		/* Get real size of UEFI variable */
-+		status = efi.get_variable(efi_name[i], &efi_guid, &attr,
-+			&total_sz, NULL);
-+		cali_data->total_sz = total_sz > size ? total_sz : size;
-+		if (status == EFI_BUFFER_TOO_SMALL) {
-+			/* Allocate data buffer of data_size bytes */
-+			data = cali_data->data = devm_kzalloc(p->dev,
-+				cali_data->total_sz, GFP_KERNEL);
-+			if (!data) {
-+				status = -ENOMEM;
-+				continue;
-+			}
-+			/* Get variable contents into buffer */
-+			status = efi.get_variable(efi_name[i], &efi_guid,
-+				&attr, &cali_data->total_sz, data);
- 		}
--		/* Get variable contents into buffer */
--		status = efi.get_variable(efi_name, &efi_guid, &attr,
--			&p->cali_data.total_sz, data);
-+		/* Check whether get the calibrated data */
-+		if (status == EFI_SUCCESS)
-+			break;
- 	}
-+
- 	if (status != EFI_SUCCESS) {
--		p->cali_data.total_sz = 0;
-+		cali_data->total_sz = 0;
- 		return status;
- 	}
- 
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.h b/sound/hda/codecs/side-codecs/tas2781_hda.h
-index 575a701c8dfb..66188909a0bb 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda.h
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda.h
-@@ -11,7 +11,7 @@
- 
- /* Flag of calibration registers address. */
- #define TASDEV_UEFI_CALI_REG_ADDR_FLG	BIT(7)
--#define TASDEVICE_CALIBRATION_DATA_NAME	L"CALI_DATA"
-+
- #define TASDEV_CALIB_N			5
- 
- /*
--- 
-2.43.0
+Best regards,
+Alexander
+
+>  2 files changed, 31 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/bo=
+ot/dts/freescale/imx8mp-evk.dts
+> index c0cc5611048e..cc9351a5bd65 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> @@ -442,6 +442,10 @@ &flexcan2 {
+>  	status =3D "disabled";/* can2 pin conflict with pdm */
+>  };
+> =20
+> +&hdmi_pai {
+> +	status =3D "okay";
+> +};
+> +
+>  &hdmi_pvi {
+>  	status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index 841d155685ee..00d8474bd1b1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -2066,7 +2066,7 @@ irqsteer_hdmi: interrupt-controller@32fc2000 {
+> =20
+>  			hdmi_pvi: display-bridge@32fc4000 {
+>  				compatible =3D "fsl,imx8mp-hdmi-pvi";
+> -				reg =3D <0x32fc4000 0x1000>;
+> +				reg =3D <0x32fc4000 0x800>;
+>  				interrupt-parent =3D <&irqsteer_hdmi>;
+>  				interrupts =3D <12>;
+>  				power-domains =3D <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PVI>;
+> @@ -2092,6 +2092,24 @@ pvi_to_hdmi_tx: endpoint {
+>  				};
+>  			};
+> =20
+> +			hdmi_pai: audio-bridge@32fc4800 {
+> +				compatible =3D "fsl,imx8mp-hdmi-pai";
+> +				reg =3D <0x32fc4800 0x800>;
+> +				interrupt-parent =3D <&irqsteer_hdmi>;
+> +				interrupts =3D <14>;
+> +				clocks =3D <&clk IMX8MP_CLK_HDMI_APB>;
+> +				clock-names =3D "apb";
+> +				power-domains =3D <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
+> +				status =3D "disabled";
+> +
+> +				port {
+> +
+> +					pai_to_hdmi_tx: endpoint {
+> +						remote-endpoint =3D <&hdmi_tx_from_pai>;
+> +					};
+> +				};
+> +			};
+> +
+>  			lcdif3: display-controller@32fc6000 {
+>  				compatible =3D "fsl,imx8mp-lcdif";
+>  				reg =3D <0x32fc6000 0x1000>;
+> @@ -2143,6 +2161,14 @@ port@1 {
+>  						reg =3D <1>;
+>  						/* Point endpoint to the HDMI connector */
+>  					};
+> +
+> +					port@2 {
+> +						reg =3D <2>;
+> +
+> +						hdmi_tx_from_pai: endpoint {
+> +							remote-endpoint =3D <&pai_to_hdmi_tx>;
+> +						};
+> +					};
+>  				};
+>  			};
+> =20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
