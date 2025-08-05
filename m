@@ -1,196 +1,128 @@
-Return-Path: <linux-kernel+bounces-756713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA59B1B81F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A739B1B825
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E07165F8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C39622FEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09916291C39;
-	Tue,  5 Aug 2025 16:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1E5292B44;
+	Tue,  5 Aug 2025 16:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6xwprIR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDvz7LLb"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FF12797AD;
-	Tue,  5 Aug 2025 16:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC8C292906;
+	Tue,  5 Aug 2025 16:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754410371; cv=none; b=HBbkY9n9dS/3/qMrLKKrcwMmShoYvJQvAgJO8Z8reOh3418xZBd4ZOp8UznoA67L1DjJpXdgPT2JGlgvz6cgMrhO42bNLjgqpZ/MQB+ggygCXQQsb4wI3LVBUIBqyjtWUgjBkdzU8Vo84DGFwCYHrE9pcZXpUmYbBtKkueWIviA=
+	t=1754410383; cv=none; b=WObFQJ1LAZSfASI4GF7iSwiwQFs4oifou+YDlOJrOi7wikkcWiOodmN4nJCPJVCYEdDAj/fYr6oMScyr6LTKuJweDcIw6454ikQ7s5xnYEaTd9ua2KPeGl90TXgz3bKiPAQy7W99Qich+jUOgRRYKbr66Z6tapwYiy5fQglL780=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754410371; c=relaxed/simple;
-	bh=bbHU6KYYdQLA/uDOxt5RSEmbEi7rhJimwuUtfJHMrac=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=MfVtmsUITIRoJKk/QJhYAEqIZ99XcnVK8MSfd3rINQS4eV1S+6kzuGdKtmFm8pPk6Re30SIKqTvhEcjz5xHDrFJwNfc/GQj7N1438JfevqrCm//m0iVQQGE45oKVT3DiYsh4mJdVSEcekKsYrB0a745eKB73EP9o1ED1ovqOSeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6xwprIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA34CC4CEF0;
-	Tue,  5 Aug 2025 16:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754410371;
-	bh=bbHU6KYYdQLA/uDOxt5RSEmbEi7rhJimwuUtfJHMrac=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=n6xwprIRrJt5Q4IUroUQhnJTxS9RlPXvWjsVQtYaNXgzQtPHH/Ybz5lCO5S/sHq83
-	 R8NgDYczl6HfSqBKzqzJNqNib9n2C/gbdJt3OspEJb6UgVPntEndspmfDyfb8DsJzc
-	 OptR+Et/Z5j6MIgXf57/jvKUr6hDlTyVvO8Er9ZRqwvp0SBTBNmn2XLLkl0G1tXnl+
-	 OZhuR1P/ai4f0RsSGtejqqv5Ik6xFf7Wp0KhaVT2ik3P2g/s4Wf6HtH6mOm4PApuC9
-	 /Lkj4TZBwqw9t2jeyZ/dZu1FffgaeDaqs+cWbkn4bvCZzb+qZWM/T4UOU7m1EwGanA
-	 dqr3DrDI6aJZQ==
+	s=arc-20240116; t=1754410383; c=relaxed/simple;
+	bh=rRhOMnJaXbH2DsNOiXiySwYYqVDOpYKbEOHZc7gvk2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cfaxngk9b5p5mFLJ6vh0CovthhwD1UjWTlZqai7gaKJOoEmIG5pfPvj6S3FBBmbe2l08hxM5AHtB7UOe5qTT8/HpHDiF9AyRAMRLNJ7QdgqALyz558u3hfUcluLk3FLSdztypOG/2OdXzEQQ2nBYfJ9F/ckmtPfWPM0xNpw59m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDvz7LLb; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b7892609a5so3842742f8f.1;
+        Tue, 05 Aug 2025 09:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754410380; x=1755015180; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kzsNue1EiCY6bi1jTjxVYfQO05vHAxYAdI5gi2RiJlM=;
+        b=nDvz7LLbU6OKlbVxMnNBPh8r6hJcTm8ymI90n4rzH3t2kMJyhDeu5tJhjDDyNaEaSD
+         VZzIVwvCkcMutqJlvyxAbXDOk35kb2Uacv7YhstRzyN8OoUmax6E/twuJ7sCbPSFDdLh
+         6R0wnVrRsSJta3W1Cd+Snkk2XkLPNTWildmFZEWna7D2gUD4wKgdaI7YxYuIcIMywfjr
+         a0dnR08fWLOBIJax8KdaUfayYxopRrTooaDqdG8sFbaxbFsydqBrgEcsyxChTCCG0NGz
+         +iFtc9KJ5cLAi1E8rNfUedNq5fuYK10mzAXConJJsLz+DX9KQ8S0C4xi2qNs/tCoNMsM
+         J85A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754410380; x=1755015180;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kzsNue1EiCY6bi1jTjxVYfQO05vHAxYAdI5gi2RiJlM=;
+        b=hpwY9waZgNW8uroIUWTYcbot4AB2M+DYQcY/W4U9nrCmgegzsaidZ+dbA7VX205mXM
+         NyOZvWJJSdl1rU3X1giGHOgy8Ce0gISdO5veNtTAUW2XON0gwVBmYhO0A4xuGgJBfOJk
+         N4kBAhQKnIqP0kgzASwoyEeDUc0MTqKWdwUZepVI7cT3aJj7qsuqzzG3pHzsdymDYjcc
+         VLiuTao0u4OYaJtBahDzb6A999yXn7XwAOVY3SuolLphNYbMq4TwhId3AvtaMVivJddZ
+         YlLovFL97W64SIef5HrEIE1q5mI189oT7QkV5Ur+aSWsOmIJj6cAy+to83FW8HfEphWd
+         ZJug==
+X-Forwarded-Encrypted: i=1; AJvYcCV7t7KzNujtRObDB5gYnaX4ALoiFjzJZLGSuSALwNjRfuiGH7qvJpkLUNTEmH1JKX5wox4HAqDWnNMFHFa6@vger.kernel.org, AJvYcCXDmHZxSYBBX7jeAGV9c+bwkNi7841RSWzEW4RVrg4YC2ohHbPSSWxVzbXx0/oj+q/UUcrmcfx4cZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1oGstuwl2bmf9YDBLstwMMEO1bzbvwFcBAY1YQ7tG3IAAXVjO
+	Lo84CzZFP+50E6oYT1Ept9s005S4x18wEP8NdYkSlg0FjhaI/skL+jnkXp0NNw1d5Mg=
+X-Gm-Gg: ASbGncv21SSDSPTyEPI1Tqm5AtTYgTZFsNEwB0ZtuGyoGxfJsCUAUCw2gF+EH6IenHk
+	3ney6Ao64r1qYiUUjCOg5XXKm7FUiKFisZ6hkAfGdFKbndackyRpLejgk1kM0pSdc74uA8x2orc
+	BtqbmS5+u7OTEI4EumHafZz5h1LyeYr19HR695VQoH47JvBZ6gZf/BO4U9f/tqIbgbTIj04b4z9
+	dCv0nGQDmpqxZjOsZIEeny7FjlOq6h1p3xJpJ1U9eYpRm1hHg0CsN8V7oaVVOPaLqtBpWsp+rJf
+	785aD2WDw1yHQsD7IV0Jkh3eOQBstJpdvb+SsnJ3cdQcusgC6SVhTyXG8U5ji0WR5tGDm7zqfm3
+	USBxRWTgaq3Ex3xdCO9cu9Aqk
+X-Google-Smtp-Source: AGHT+IHolTUHMxnP7yndz8Y5Ygqi/TZevGAglqlabKFpduqy8MXl7UxdhPlxqd5xzNJvKgb7jD5XCg==
+X-Received: by 2002:a05:6000:2584:b0:3b8:893f:a17d with SMTP id ffacd0b85a97d-3b8d94d35d6mr9257536f8f.49.1754410379436;
+        Tue, 05 Aug 2025 09:12:59 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48105csm19832869f8f.64.2025.08.05.09.12.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 09:12:59 -0700 (PDT)
+Date: Tue, 5 Aug 2025 17:13:15 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Stefano Manni <stefano.manni@gmail.com>, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad799x: add reference supply for ad7994
+Message-ID: <o4snk6isxzpkgmcgr7ff2zfuqwqvd5mbvbff5d3cd7jspiljwb@pv57a63fyfin>
+References: <20250805142423.17710-1-stefano.manni@gmail.com>
+ <CAHp75VfCL88GMSRYnJ+wh85Yj_RrBztSLWOvQJTapVdgFerMyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 05 Aug 2025 18:12:44 +0200
-Message-Id: <DBUMKISHUL6D.UVSF04ZRQR9Z@kernel.org>
-Subject: Re: [PATCH v3 1/2] rust: add initial scatterlist abstraction
-Cc: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <lyude@redhat.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Tamir
- Duberstein" <tamird@gmail.com>, "FUJITA Tomonori"
- <fujita.tomonori@gmail.com>, "open list" <linux-kernel@vger.kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap"
- <rdunlap@infradead.org>, "Herbert Xu" <herbert@gondor.apana.org.au>, "Caleb
- Sander Mateos" <csander@purestorage.com>, "Petr Tesarik"
- <petr@tesarici.cz>, "Sui Jingfeng" <sui.jingfeng@linux.dev>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Robin Murphy"
- <robin.murphy@arm.com>, <airlied@redhat.com>, "open list:DMA MAPPING
- HELPERS" <iommu@lists.linux.dev>, <rust-for-linux@vger.kernel.org>
-To: "Jason Gunthorpe" <jgg@ziepe.ca>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
- <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
- <DBK1M000P87N.2HJHDJN1LG5CA@nvidia.com>
- <676ac763-cd23-4077-815f-8eaa9bc960fb@gmail.com>
- <20250805154222.GS26511@ziepe.ca>
-In-Reply-To: <20250805154222.GS26511@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VfCL88GMSRYnJ+wh85Yj_RrBztSLWOvQJTapVdgFerMyg@mail.gmail.com>
 
-On Tue Aug 5, 2025 at 5:42 PM CEST, Jason Gunthorpe wrote:
-> On Mon, Aug 04, 2025 at 11:56:53AM +0300, Abdiel Janulgue wrote:
->> Hi,
->>=20
->> On 24/07/2025 08:40, Alexandre Courbot wrote:
->> >=20
->> > I see a few issues with the `Item` type here.
->> >=20
->> > The first one is that `Page` can only be created by allocating a new
->> > page from scratch using `Page::alloc_page`. This doesn't cover the cas=
-es
->> > where we want to map memory that is now allocated through this
->> > mechanism, e.g. when mapping a `VVec`. So I think we have no choice bu=
-t
->> > return `*mut bindings::page`s.
->> >=20
->> Just commenting on this bit, still going through the others one by one.
->> Anyways, there is already existing code I'm working on that should be ab=
-le
->> to extend Page that are not allocated by it's constructor (e.g. those co=
-ming
->> from vmalloc_to_page). I think's it's safe at least to not expose the ra=
-w
->> pointers here if we can? Just a thought.
->
-> I would try not to expose vmalloc_to_page() to safe rust.
+On Tue, Aug 05, 2025 at 03:13:06PM +0200, Andy Shevchenko wrote:
+> On Tue, Aug 5, 2025 at 2:28 PM Stefano Manni <stefano.manni@gmail.com> wrote:
+> >
+> > AD7994 supports the external reference voltage on pin REFIN.
+> 
+> ...
+> 
+> > -               if ((st->id == ad7991) || (st->id == ad7995) || (st->id == ad7999)) {
+> > +               if ((st->id == ad7991) || (st->id == ad7995) || (st->id == ad7999)
+> > +                       (st->id == ad7994)) {
+> 
+> Instead of making this conditional longer and uglier, it is better to
+> add a boolean field to chip_info and just check it instead. This will
+> remove the churn when any new chip will require the same change in the
+> future.
+> 
+> So, please make it two patches:
+> - introducing a field in chip_info and use it for the existing cases
+> - add this field to be true for the ad7994 case.
 
-Agreed, not directly at least, more below.
+Agreed!
 
-> alloc_page() at least gives you a refcounted page with a sensible
-> refcount based lifecycle, vmalloc_to_page() gives you something that
-> is not refcountable at all and has a lifetime bound to the vmalloc.
->
-> They may both be struct page in C but for rust they have very
-> different rules and probably types.
+Plus either is already too late for my eyes but I don't think this patch
+is compilable.
 
-For now they actually have, i.e. BorrowedPage<'a> [1], but this will go awa=
-y
-once we have the Ownable trait and Owned type. Once we have that we can
-represent a borrowed page as &'a Page. Where 'a represents the lifetime of =
-the
-reference in both cases.
-
-Let me sketch up how the lifetime of a page is modeled if the page is owned=
- by
-some other entity, let's say a vmalloc allocation through VBox.
-
-First we have a trait which represents the owner of a Page that we can borr=
-ow
-the page from:
-
-	pub trait PageOwner {
-	    fn borrow_page_at<'a>(&'a mut self, n: usize) -> Result<BorrowedPage<'=
-a>>;
-	}
-
-The Vmalloc allocator can provide a helper for vmalloc_to_page(), but this =
-is
-not an API that should be used by drivers directly:
-
-	impl Vmalloc {
-	    pub unsafe fn to_page<'a>(ptr: NonNull<u8>) -> page::BorrowedPage<'a> =
-{
-	        // SAFETY: `ptr` is a valid pointer to `Vmalloc` memory.
-	        let page =3D unsafe { bindings::vmalloc_to_page(ptr.as_ptr().cast(=
-)) };
-=09
-	        // SAFETY: `vmalloc_to_page` returns a valid pointer to a `struct =
-page` for a valid pointer
-	        // to `Vmalloc` memory.
-	        let page =3D unsafe { NonNull::new_unchecked(page) };
-=09
-	        // SAFETY:
-	        // - `self.0` is a valid pointer to a `struct page`.
-	        // - `self.0` is valid for the entire lifetime of `'a`.
-	        unsafe { page::BorrowedPage::from_raw(page) }
-	    }
-	}
-
-The implementation of VBox could look like this:
-
-	impl<T> PageOwner for VBox<T> {
-	    fn borrow_page_at<'a>(&'a mut self, n: usize) -> Result<BorrowedPage<'=
-a>> {
-	        // Calculate offset of the Nth page of the VBox and store it in `p=
-tr`.
-=09
-	        unsafe { Vmalloc::to_page(ptr) }
-	    }
-	}
-
-(Actually, we may want to use some iterator instead. I'm not sure yet, but
-either way, the same principle does apply.)
-
-Finally, if you have some VBox you can borrow a Page list this:
-
-	let mut vbox =3D VBox::<[u8; PAGE_SIZE]>::new_uninit(GFP_KERNEL)?;
-
-	// Get the first page of the `vbox`.
-	let page =3D borrow_page_at(&mut vbox, 0)?;
-
-Note that the lifetime of page is now bound to the lifetime of vbox.
-
-Analogous, any entity that owns one or multiple pages can implement the
-PageOwner trait in a similar way.
-
-For the scatterlist abstractions, we're mostly interested in VVec for now.
-
-For an owned SGTable we would consume a value of some generic type P that
-implements PageOwner (P: PageOwner), or whatever we call it in the end.
-
-> If you want kmalloc/vmalloc to get into a scatterlist you should have
-> APIs to go directly from void * and into the scatterlist, and also
-> link the scatterlist to the lifetime of the original allocation.
-
-[1] https://lore.kernel.org/rust-for-linux/20250804195023.150399-1-dakr@ker=
-nel.org/
+- Nuno Sá
+> 
+> Is it doable?
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
