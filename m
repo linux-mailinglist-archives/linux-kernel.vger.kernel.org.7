@@ -1,472 +1,138 @@
-Return-Path: <linux-kernel+bounces-756830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CB4B1B9F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6CFB1B9F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0D557A61DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:18:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA3418A14A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8762980DB;
-	Tue,  5 Aug 2025 18:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055B2951DD;
+	Tue,  5 Aug 2025 18:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LC0T23N7"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HIVF6jFi"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A36C1E51EF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FC354F81
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754418004; cv=none; b=LQXcctKvK5EJEEZhKcDUCgC5HZypVt1ewlPsDkDVOT2EAS9WC4OUKiUp+UxeEcJYC04c02Nag0nR5mzSccdB6hV1PhnRfeU09hxDXOqEfDRD14ntYGSkD+EIwKFAh8FJJbSAd/DOWGWUD88vWMGa7iesSRF3JYTfo7ZjtGQV6BI=
+	t=1754418160; cv=none; b=fUlZMbsuq66KBV7WgeDRaB6PBltqV7CuPQGSRihggipf31y9lY33/Q3+N4JAXZ3jMtzHBxtnoOq4t3ShwvduNZRpFlfeEVSIPtPhz5j98emj5Ygf52/t0ELcLEctGQwhwdVq7m3PX6LO7oi8jN93lDoc5O/82OZKOzZPBJtkRhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754418004; c=relaxed/simple;
-	bh=SoWeAkL3iEjJwCLqt4FbJMg6xWcRvn6FBDhLLGVZRuE=;
+	s=arc-20240116; t=1754418160; c=relaxed/simple;
+	bh=yRwKa2dpxZLra8wGKZ7T59g5/UHIisUODlygBYDlzWo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hw/0+q4KDo4k+g+gUUPqwcS7LAZ4kEfeVGewwVbDz2d5NxR0BCwLqcLGp1EjRLmrzzAU1uVWXaZwJWZnL4pT5spAPVKw51u8HfgIoIQrkHB3arafQ6bWUaxyp5DpUJ/RPrpMA79CTpZwiUM777weJ9eLb7lZPh0uAXGZ8TCyDag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=LC0T23N7; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b062b6d51aso29395431cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:20:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=VV7Ga0BAdHPiLwZkrrO2O4DJiRDsBtW96DpM77xPGL4i+hIgOHVTWYl1Gp4OsBQ9jN58vcSQP1weSKbRyqYNGeEZSmn+kR4vA1Hkb/AINGqc22TAfQl5e1549qEVBTvWhsc+f5ISwBvTf66Mm2vMai7syU9diQhckxv+c5rxRdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HIVF6jFi; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af96d097df5so443814066b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754418001; x=1755022801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DJOL+OvU/nrmYX0+Cdrz/7P1lhjrc0IsETGcPgFQaaY=;
-        b=LC0T23N7XDZDcA3ZTmS2aaM1uuXEP0PNwtmn/5qQBlZ4XNcZ4jlH81gFkv+LLw6QEA
-         OATdrEEZ9tv4t6t3VMhNcaZtp7qd1tjc2Oxutg4mMg4kHu/YNspSa2AxVWPIXZzyfzog
-         leVg2iXlyF34xsRrPguJANxh4fRuhNsWPL9306jdcuA5tNsqvSxiEQaBCD8NaG/W1fOp
-         E0oqM2fhpTKVIU0VhDx+V99Yo83cGAIZbAqZf8/dB+qkdCnvInbESywwCCT/OvnHP1g1
-         DxqeliAcC37JtAwreDCDEkuc3vXvObgTzliIF/e/4bmxigRsHZGlMOzxiZ4Q2I6W81oJ
-         jVNg==
+        d=linux-foundation.org; s=google; t=1754418156; x=1755022956; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=raX1gawg21AY9SOkHHAfr69KGWhZgSSn9UJ00DFOtpM=;
+        b=HIVF6jFiws0PRns1DZy4v6UD9LEb7OtusRuMoq/zgX+FKMeWxZCPEaH+l4x4kOCvLp
+         dgOo/cNLGqYpOwtfl//JMPWtE2Ptcx6m/KzJ7FJCsviHxdtUUzB60Z/xKbmg4qJlzqC0
+         lHBPx4YwjRZIHiyzNW0BMzUjCbrLBVSYAmRXo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754418001; x=1755022801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DJOL+OvU/nrmYX0+Cdrz/7P1lhjrc0IsETGcPgFQaaY=;
-        b=wKxgRug3cS3YcaW1/gEJbhWyUmvYgu1nZmaXmGSBimA0onM6J8vxEDo6pcp/0S/mEl
-         +DIaIjgNmmnOmpAthZ3kH+hnX7S0conllr3uDjkvqedmUDhLBWtXcbBLLl+l8NnNe6ct
-         UYxbdxVaCbpOel2M7jWvkSjyIl3jVjX9ADBCd2/DC5J5Cw7HPMJynrz8eRubqT8WqFjC
-         4/hn3jtattk98l9ELas9wWwmS/gC9I82OExfMcR89di13O/03VgN6Hou73QTIbJ3+3F5
-         OP7CjOjSBW8MTeWZKlJfMbVo9rXcgagxyrHOkHvGS7C330sPQwGDdBcvKtgUZfPdMi+J
-         Shew==
-X-Forwarded-Encrypted: i=1; AJvYcCVD09LxXQtyqrQ1+L+spAwYpdbXONEXNsQEWJxDW2Ygcu01Tg+KctdGN1lbZ2wl4YxugEY7+Zt1w62wrvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzIyab5cglQNI0LIJCrannLe1pmTIJp52EIvHxkyI28yiB2i8u
-	+Ie4K/GpCNO3A9lVUhwSmslMyTQLyLOREUAhO2Ife/hvouBaCXBSjQUCu8xv6l2pERlVQXD9Wdr
-	knF451kL1dG3/QzcZekAQataUqDCrarHpdce/VY19eA==
-X-Gm-Gg: ASbGncsmlbVhi422/LE5TmKo8TF6Dva+rjmMfNzv5iEOFlgC5jrt5xbuxoovtBTMSZD
-	n4BHaorY5C412cj1IOBtrUOyemFAZz28TJNVCAY3TdA8AilSW9td5JT0gm9D+lX+y2CUxYNCNbO
-	QLPPkmFRFoNJUXp3srVrEIAW4QhT4Jxh+rrXOofRL44dFKpqbaLfVFM8IT4h3YxewM1XPrpzKxJ
-	4T8
-X-Google-Smtp-Source: AGHT+IEw+lnJXb281yq+trj2cDJrjXcg+zACfYTXT195jbevAktpYuj5aCvlB20L+shR7ta89N5uGsQOoFo/By5YjC8=
-X-Received: by 2002:a05:622a:5c94:b0:4b0:67b0:867 with SMTP id
- d75a77b69052e-4b067b02bd2mr149540751cf.27.1754418000991; Tue, 05 Aug 2025
- 11:20:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754418156; x=1755022956;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=raX1gawg21AY9SOkHHAfr69KGWhZgSSn9UJ00DFOtpM=;
+        b=IDVTqowIDQTfEvPOcpHqceuadOAlWNcFb9C2kwASZUZzr1CsnzE6fRVkUJae34AKUj
+         JMrpeP2u1Ep0VBdYVI+FgIN56xsA8OsPGXp6a2dZsrUEhfOpZ4JDOvwuiP27oYTaFWL5
+         VF+lcaDt9YIIar5wK0KsedwxKcE62Q+9rihJPWgk64rxxK5tcHHWQoV7wPJLwJVfdwdc
+         AcCHSH/I0qcyC3HnzwHZyUzw+1CFQfyMW3WG4kdjgiotFQL7q6nnKeMfuSmHIB+AoqQv
+         BZiQBPoLJx930jan5jktH6tgbMLsGzEurzPZCTiJWtweh5WM5j5g9F/gO1OgyIVbVnlP
+         5oLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUc8RG+wHBVDcB/+yfotE2qaGxEJLry/q/DYar6FaDg+r0Dtg2/TZlVhW8Ur/sn0+7YHJ/w84VP2D9Rh5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvOwaPmnwQgF+mo1pqtzwPKvUZQjlDXYCXffDlgzbWW8UvMUs7
+	Y09LY57ziU5uq0/kvQQkMgwlAiwirq/lSJk+9hwNJLPRP8SaTmGKZFMKv9ivarhH6EOPU6Sl1uX
+	rFv17G61+xw==
+X-Gm-Gg: ASbGncsOT5fNC/6iiLglBL+cjwJEBd74rX9bklYi5kqlF5cbqsu2mE087H/OsIz8HiT
+	7ZbeMrt6mySfTHlyKAznblYHmazKSsGVeBmFf1mokxDUdFNpxVqDuhuOt2yANqOVZ72s1vepTwK
+	yZ9E96T0AaoTKTnUXWwutrbAt6gY0WCoWegZSqIBa5vlRz+oMokgnMihYXhkF9b5uQ6y6ZUhoiD
+	4kjdOqyobxdVGnCxG+N0Ds7xSCcAi4ompoK0gpZ6ILb9BPgRADuISbSZweD5kUmNvxen70kIV9c
+	eqvCEfw7DXRmlcA/77rr8QsbHwBFuv6Vy9zS0wc67KmxVA3tQr32Y+otWVnyNx3hBeMB8hC+VAf
+	4ZihRuSUL8u/NJT2DQbwPtbaGWstKbqSzl1qjI03l5ebxUI0OTgZ0JzA7McupS/9hXeWJStB3o8
+	Y1MX3+sms=
+X-Google-Smtp-Source: AGHT+IGGG+h0NptbyvgDSNI7nUPdqWXeTqc2ZF3OuuxTCDxDePnSh6RrfjyvHm8AfjmQ98jK3cu2RA==
+X-Received: by 2002:a17:907:3d55:b0:ad5:1c28:3c4b with SMTP id a640c23a62f3a-af990389045mr2942266b.52.1754418155863;
+        Tue, 05 Aug 2025 11:22:35 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c157sm944297266b.100.2025.08.05.11.22.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 11:22:35 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af9618282a5so587981466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:22:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWW9bEzkmohgnuAdpBF9L+lx20wN3STFbbvavWSQbggLpJMYRfDZ3BEgJ187vGC9NkoojWahm2tjlgjBMU=@vger.kernel.org
+X-Received: by 2002:a17:906:dc95:b0:af9:14cf:d811 with SMTP id
+ a640c23a62f3a-af990078cdamr6855866b.17.1754418154788; Tue, 05 Aug 2025
+ 11:22:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-17-pasha.tatashin@soleen.com> <20250729163536.GN36037@nvidia.com>
-In-Reply-To: <20250729163536.GN36037@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 5 Aug 2025 18:19:23 +0000
-X-Gm-Features: Ac12FXz1LXAIJ7aYVxZ3KJkjC5AKnczPYVgMksSZ0RYc1suLLyDEIPbV7Oa9zmM
-Message-ID: <CA+CK2bBOu9oRiO7gih7JpePXQjds2vN8uFXodgHU48fxpP_bVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 16/32] liveupdate: luo_ioctl: add ioctl interface
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
+References: <20250727013451.2436467-1-kuba@kernel.org> <CAHk-=wjKh8X4PT_mU1kD4GQrbjivMfPn-_hXa6han_BTDcXddw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjKh8X4PT_mU1kD4GQrbjivMfPn-_hXa6han_BTDcXddw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Aug 2025 21:22:18 +0300
+X-Gmail-Original-Message-ID: <CAHk-=wiQ0p09UvRVZ3tGqmRgstgZ75o7ppcaPfCa6oVJOEEzeQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyErT7ozxXaXNrZo7vnN1O87X36CHHYSSDaB5dnqnfCuIGERvksssGxq0A
+Message-ID: <CAHk-=wiQ0p09UvRVZ3tGqmRgstgZ75o7ppcaPfCa6oVJOEEzeQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.17
+To: Jakub Kicinski <kuba@kernel.org>, John Ernberg <john.ernberg@actia.se>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pabeni@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 12:35=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> w=
-rote:
+On Tue, 5 Aug 2025 at 19:22, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Wed, Jul 23, 2025 at 02:46:29PM +0000, Pasha Tatashin wrote:
-> > Introduce the user-space interface for the Live Update Orchestrator
-> > via ioctl commands, enabling external control over the live update
-> > process and management of preserved resources.
+> On Sun, 27 Jul 2025 at 04:35, Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > Networking changes for 6.17.
 >
-> I strongly recommend copying something like fwctl (which is copying
-> iommufd, which is copying some other best practices). I will try to
-> outline the main points below.
+> So I found out the hard way while traveling that this networking pull
+> seems to have broken USB tethering for me. Which I only use when
+> traveling, but then I do often end up relying on my phone as the
+> source of internet (the phone being on the single-device flight wifi,
+> and tethering to the laptop which is why hotspot doesn't necessarily
+> work).
 >
-> The design of the fwctl scheme allows alot of options for ABI
-> compatible future extensions and I very strongly recommend that
-> complex ioctl style APIs be built with that in mind. I have so many
-> scars from trying to undo fixed ABI design :)
+> It *might* be something else, and I'm bisecting it right now, but the
+> networking pull is the obvious first suspect, and my first three
+> bisection steps have taken me into that pull.
 
-Thank you for bringing this up, I have reviewed fwctl ioctl
-implementation, and also iommufd ioctl, and I made the necessary
-changes to make luo similar.
+To absolutely zero surprise, it continued to bisect into the
+networking pull, and this is the end result:
 
-> > +/**
-> > + * struct liveupdate_fd - Holds parameters for preserving and restorin=
-g file
-> > + * descriptors across live update.
-> > + * @fd:    Input for %LIVEUPDATE_IOCTL_FD_PRESERVE: The user-space fil=
-e
-> > + *         descriptor to be preserved.
-> > + *         Output for %LIVEUPDATE_IOCTL_FD_RESTORE: The new file descr=
-iptor
-> > + *         representing the fully restored kernel resource.
-> > + * @flags: Unused, reserved for future expansion, must be set to 0.
-> > + * @token: Input for %LIVEUPDATE_IOCTL_FD_PRESERVE: An opaque, unique =
-token
-> > + *         preserved for preserved resource.
-> > + *         Input for %LIVEUPDATE_IOCTL_FD_RESTORE: The token previousl=
-y
-> > + *         provided to the preserve ioctl for the resource to be resto=
-red.
-> > + *
-> > + * This structure is used as the argument for the %LIVEUPDATE_IOCTL_FD=
-_PRESERVE
-> > + * and %LIVEUPDATE_IOCTL_FD_RESTORE ioctls. These ioctls allow specifi=
-c types
-> > + * of file descriptors (for example memfd, kvm, iommufd, and VFIO) to =
-have their
-> > + * underlying kernel state preserved across a live update cycle.
-> > + *
-> > + * To preserve an FD, user space passes this struct to
-> > + * %LIVEUPDATE_IOCTL_FD_PRESERVE with the @fd field set. On success, t=
-he
-> > + * kernel uses the @token field to uniquly associate the preserved FD.
-> > + *
-> > + * After the live update transition, user space passes the struct popu=
-lated with
-> > + * the *same* @token to %LIVEUPDATE_IOCTL_FD_RESTORE. The kernel uses =
-the @token
-> > + * to find the preserved state and, on success, populates the @fd fiel=
-d with a
-> > + * new file descriptor referring to the restored resource.
-> > + */
-> > +struct liveupdate_fd {
-> > +     int             fd;
->
-> 'int' should not appear in uapi structs. Fds are __s32
+  0d9cfc9b8cb17dbc29a98792d36ec39a1cf1395f is the first bad commit
+  commit 0d9cfc9b8cb17dbc29a98792d36ec39a1cf1395f
+  Author: John Ernberg <john.ernberg@actia.se>
+  Date:   Wed Jul 23 10:25
 
-done
+      net: usbnet: Avoid potential RCU stall on LINK_CHANGE event
 
->
-> > +     __u32           flags;
-> > +     __aligned_u64   token;
-> > +};
-> > +
-> > +/* The ioctl type, documented in ioctl-number.rst */
-> > +#define LIVEUPDATE_IOCTL_TYPE                0xBA
->
-> I have found it very helpful to organize the ioctl numbering like this:
->
-> #define IOMMUFD_TYPE (';')
->
-> enum {
->         IOMMUFD_CMD_BASE =3D 0x80,
->         IOMMUFD_CMD_DESTROY =3D IOMMUFD_CMD_BASE,
->         IOMMUFD_CMD_IOAS_ALLOC =3D 0x81,
->         IOMMUFD_CMD_IOAS_ALLOW_IOVAS =3D 0x82,
-> [..]
->
-> #define IOMMU_DESTROY _IO(IOMMUFD_TYPE, IOMMUFD_CMD_DESTROY)
->
-> The numbers should be tightly packed and non-overlapping. It becomes
-> difficult to manage this if the numbers are sprinkled all over the
-> file. The above structuring will enforce git am conflicts if things
-> get muddled up. Saved me a few times already in iommufd.
+and I'll test with that just reverted on top of current -tip. But it
+bisected right to that commit, and the commit certainly makes sense as
+a "that could break usbnet" commit, so I expect that the revert will
+indeed fix it.
 
-Done
+Considering that I will need usb tethering while traveling during the
+rest of the merge window, I almost certainly will just revert it for
+good tomorrow, but if somebody comes up with a fix for this that
+doesn't involve a revert, I'm all ears.
 
->
-> > +/**
-> > + * LIVEUPDATE_IOCTL_FD_PRESERVE - Validate and initiate preservation f=
-or a file
-> > + * descriptor.
-> > + *
-> > + * Argument: Pointer to &struct liveupdate_fd.
-> > + *
-> > + * User sets the @fd field identifying the file descriptor to preserve
-> > + * (e.g., memfd, kvm, iommufd, VFIO). The kernel validates if this FD =
-type
-> > + * and its dependencies are supported for preservation. If validation =
-passes,
-> > + * the kernel marks the FD internally and *initiates the process* of p=
-reparing
-> > + * its state for saving. The actual snapshotting of the state typicall=
-y occurs
-> > + * during the subsequent %LIVEUPDATE_IOCTL_PREPARE execution phase, th=
-ough
-> > + * some finalization might occur during freeze.
-> > + * On successful validation and initiation, the kernel uses the @token
-> > + * field with an opaque identifier representing the resource being pre=
-served.
-> > + * This token confirms the FD is targeted for preservation and is requ=
-ired for
-> > + * the subsequent %LIVEUPDATE_IOCTL_FD_RESTORE call after the live upd=
-ate.
-> > + *
-> > + * Return: 0 on success (validation passed, preservation initiated), n=
-egative
-> > + * error code on failure (e.g., unsupported FD type, dependency issue,
-> > + * validation failed).
-> > + */
-> > +#define LIVEUPDATE_IOCTL_FD_PRESERVE                                 \
-> > +     _IOW(LIVEUPDATE_IOCTL_TYPE, 0x00, struct liveupdate_fd)
->
-> From a kdoc perspective I find it works much better to attach the kdoc
-> to the struct, not the ioctl:
->
-> /**
->  * struct iommu_destroy - ioctl(IOMMU_DESTROY)
->  * @size: sizeof(struct iommu_destroy)
->  * @id: iommufd object ID to destroy. Can be any destroyable object type.
->  *
->  * Destroy any object held within iommufd.
->  */
-> struct iommu_destroy {
->         __u32 size;
->         __u32 id;
-> };
-> #define IOMMU_DESTROY _IO(IOMMUFD_TYPE, IOMMUFD_CMD_DESTROY)
->
-> Generates this kdoc:
->
-> https://docs.kernel.org/userspace-api/iommufd.html#c.iommu_destroy
-
-Agreed, done the same as above.
-
->
-> You should also make sure to link the uapi header into the kdoc build
-> under the "userspace API" chaper.
->
-> The structs should also be self-describing. I am fairly strongly
-> against using the size mechanism in the _IOW macro, it is instantly
-> ABI incompatible and basically impossible to deal with from userspace.
->
-> Hence why the IOMMFD version is _IO().
-
-Right, I came to the same conclusion while reviewing fwctl, I replaced
-everything with pure _IO().
-
->
-> This means stick a size member in the first 4 bytes of every
-> struct. More on this later..
->
-> > +/**
-> > + * LIVEUPDATE_IOCTL_FD_UNPRESERVE - Remove a file descriptor from the
-> > + * preservation list.
-> > + *
-> > + * Argument: Pointer to __u64 token.
->
-> Every ioctl should have a struct, with the size header. If you want to
-> do more down the road you can not using this structure.
-
-Done
-
->
-> > +#define LIVEUPDATE_IOCTL_FD_RESTORE                                  \
-> > +     _IOWR(LIVEUPDATE_IOCTL_TYPE, 0x02, struct liveupdate_fd)
->
-> Strongly recommend that every ioctl have a unique struct. Sharing
-> structs makes future extend-ability harder.
-
-Done
-
->
-> > +/**
-> > + * LIVEUPDATE_IOCTL_PREPARE - Initiate preparation phase and trigger s=
-tate
-> > + * saving.
->
-> Perhaps these just want to be a single 'set state' ioctl with an enum
-> input argument?
-
-Added a IOCTL: LIVEUPDATE_SET_EVENT, and all events
-PREPARE/FINISH/CANCEL are now done through it.
-
->
-> > @@ -7,4 +7,5 @@ obj-$(CONFIG_KEXEC_HANDOVER)          +=3D kexec_handov=
-er.o
-> >  obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)   +=3D kexec_handover_debug.o
-> >  obj-$(CONFIG_LIVEUPDATE)             +=3D luo_core.o
-> >  obj-$(CONFIG_LIVEUPDATE)             +=3D luo_files.o
-> > +obj-$(CONFIG_LIVEUPDATE)             +=3D luo_ioctl.o
-> >  obj-$(CONFIG_LIVEUPDATE)             +=3D luo_subsystems.o
->
-> I don't think luo is modular, but I think it is generally better to
-> write the kbuilds as though it was anyhow if it has a lot of files:
->
-> iommufd-y :=3D \
->         device.o \
->         eventq.o \
->         hw_pagetable.o \
->         io_pagetable.o \
->         ioas.o \
->         main.o \
->         pages.o \
->         vfio_compat.o \
->         viommu.o
-> obj-$(CONFIG_IOMMUFD) +=3D iommufd.o
-
-Done
-
->
-> Basically don't repeat obj-$(CONFIG_LIVEUPDATE), every one of those
-> lines creates a new module (if it was modular)
->
-> > +static int luo_open(struct inode *inodep, struct file *filep)
-> > +{
-> > +     if (!capable(CAP_SYS_ADMIN))
-> > +             return -EACCES;
->
-> IMHO file system permissions should control permission to open. No
-> capable check.
-
-Removed
-
->
-> > +     if (filep->f_flags & O_EXCL)
-> > +             return -EINVAL;
->
-> O_EXCL doesn't really do anything for cdev, I'd drop this.
->
-> The open should have an atomic to check for single open though.
-
-Removed, and added an enforcement for a single open.
-
->
-> > +static long luo_ioctl(struct file *filep, unsigned int cmd, unsigned l=
-ong arg)
-> > +{
-> > +     void __user *argp =3D (void __user *)arg;
-> > +     struct liveupdate_fd luo_fd;
-> > +     enum liveupdate_state state;
-> > +     int ret =3D 0;
-> > +     u64 token;
-> > +
-> > +     if (_IOC_TYPE(cmd) !=3D LIVEUPDATE_IOCTL_TYPE)
-> > +             return -ENOTTY;
->
-> The generic parse/disptach from fwctl is a really good idea here, you
-> can cut and paste it, change the names. It makes it really easy to manage=
- future extensibility:
->
-> List the ops and their structs:
->
-> static const struct fwctl_ioctl_op fwctl_ioctl_ops[] =3D {
->         IOCTL_OP(FWCTL_INFO, fwctl_cmd_info, struct fwctl_info, out_devic=
-e_data),
->         IOCTL_OP(FWCTL_RPC, fwctl_cmd_rpc, struct fwctl_rpc, out),
-> };
->
-> Index the list and copy_from_user the struct desribing the opt:
->
-> static long fwctl_fops_ioctl(struct file *filp, unsigned int cmd,
->                                unsigned long arg)
-> {
->         struct fwctl_uctx *uctx =3D filp->private_data;
->         const struct fwctl_ioctl_op *op;
->         struct fwctl_ucmd ucmd =3D {};
->         union fwctl_ucmd_buffer buf;
->         unsigned int nr;
->         int ret;
->
->         nr =3D _IOC_NR(cmd);
->         if ((nr - FWCTL_CMD_BASE) >=3D ARRAY_SIZE(fwctl_ioctl_ops))
->                 return -ENOIOCTLCMD;
->
->         op =3D &fwctl_ioctl_ops[nr - FWCTL_CMD_BASE];
->         if (op->ioctl_num !=3D cmd)
->                 return -ENOIOCTLCMD;
->
->         ucmd.uctx =3D uctx;
->         ucmd.cmd =3D &buf;
->         ucmd.ubuffer =3D (void __user *)arg;
->         // This is reading/checking the standard 4 byte size header:
->         ret =3D get_user(ucmd.user_size, (u32 __user *)ucmd.ubuffer);
->         if (ret)
->                 return ret;
->
->         if (ucmd.user_size < op->min_size)
->                 return -EINVAL;
->
->         ret =3D copy_struct_from_user(ucmd.cmd, op->size, ucmd.ubuffer,
->                                     ucmd.user_size);
->
->
-> Removes a bunch of boiler plate and easy to make wrong copy_from_users
-> in the ioctls. Centralizes size validation, zero padding checking/etc.
-
-Yeap, implemented as  above.
-
->
-> > +             ret =3D luo_register_file(luo_fd.token, luo_fd.fd);
-> > +             if (!ret && copy_to_user(argp, &luo_fd, sizeof(luo_fd))) =
-{
-> > +                     WARN_ON_ONCE(luo_unregister_file(luo_fd.token));
-> > +                     ret =3D -EFAULT;
->
-> Then for extensibility you'd copy back the struct:
->
-> static int ucmd_respond(struct fwctl_ucmd *ucmd, size_t cmd_len)
-> {
->         if (copy_to_user(ucmd->ubuffer, ucmd->cmd,
->                          min_t(size_t, ucmd->user_size, cmd_len)))
->                 return -EFAULT;
->         return 0;
-> }
->
-> Which truncates it/etc according to some ABI extensibility rules.
->
-> > +static int __init liveupdate_init(void)
-> > +{
-> > +     int err;
-> > +
-> > +     if (!liveupdate_enabled())
-> > +             return 0;
-> > +
-> > +     err =3D misc_register(&liveupdate_miscdev);
-> > +     if (err < 0) {
-> > +             pr_err("Failed to register misc device '%s': %d\n",
-> > +                    liveupdate_miscdev.name, err);
->
-> Should remove most of the pr_err's, here too IMHO..
-
-Removed.
-
->
-> Jason
-
-Thanks a lot for the thorough review!
-
-Pasha
+             Linus
 
