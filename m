@@ -1,144 +1,94 @@
-Return-Path: <linux-kernel+bounces-756123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FEDB1B04A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECB9B1B04C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAB9188EB56
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE243B54D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D278C256C84;
-	Tue,  5 Aug 2025 08:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCBE253F05;
+	Tue,  5 Aug 2025 08:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IM+SVRXP"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0AJXyO8i"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F00D21858A;
-	Tue,  5 Aug 2025 08:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12132494C2;
+	Tue,  5 Aug 2025 08:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754383191; cv=none; b=NiiUmFQmar4ilWPyh7Zk58xnPThG/d89oSF+NHILvEO3huGAlKK/Mews/UBajOXSQHObw04xZLvp68tQXkzweQroZ0zVwf701TgJe3RLwGXdZo5qm7lFVnhtCNuTfqe5j00vv1EgWmJSzC1G5p/k/PLbnsSBWI7ZixAkBp56Qa0=
+	t=1754383213; cv=none; b=WcvdTuefd16KTfXUm2nakAelMQHJDYNCPjvOlk+6o7IhJmgMD4CwGV1SqXcR2McIpAlUgzqeZzzEqji4EDdHHhOL9hrfRZrZUnA6Ls0XmlsHC7NE6xUreO0LGMmQLmTrpKtLfrwX93QJIR6yYZm5zbDEsdasrcvEI8z68fMWiqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754383191; c=relaxed/simple;
-	bh=8dCG009f28I/T5bh9HQ/pnDB0yMf2J3CDokXMRqyBlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sMZhvliQqxImHPZuTPTRyrSthNnU3lo2RH/tVg1zL/2ywChOPi+BlN87yTSWKkAIyKzEcHtomN3fg3BAd1PmdxSoRrgaFxhwC2KxHx+ErMARStYJFMwhsLbONRiKgGic+/D+G9CsqWoBiyFcALKHuGIrhoqRasSAZDVPWikL9tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IM+SVRXP; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b7910123a0so5195483f8f.1;
-        Tue, 05 Aug 2025 01:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754383187; x=1754987987; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ckg82r4yV+jVyEN6/rbJQCfYznBxYrDG5d0BRS6lfPA=;
-        b=IM+SVRXP8ZSLnb2XuwdPrp572BhQZ2smXtf35kH87yuMAXq26aga/4Te9d7Zj/9f6w
-         q3kJ16R9ACEKWlU/rQ3JKrkwg5ZBblZBckaaV858u06HlzY3OQ5jom9IZ6z7JwZSqTVS
-         HULnjMAZhmwOpQgEmRt2Ej+9kCb7qqXAvOBnLVi4qlFnvgiKZs/Q4srjNNw6znJPNkGd
-         pxVpBofE80hTr0h005JREFIG0g3wJuinx/UiT6HaSHXx5YzYMs39+DS4SUJDUP7kTdfC
-         2r5ptWwY0EEpFmVcwYKi2jgX3M7f4iQE8pFALKb+7XdVIwrDVSfkIdWCRyvJ3EORPe/c
-         8Luw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754383187; x=1754987987;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ckg82r4yV+jVyEN6/rbJQCfYznBxYrDG5d0BRS6lfPA=;
-        b=kmyozib2Fn9GheLd5IGsgMmk//+JJSg5dTQ6o9I/tchB/WVH+/2HCI2ZtQcV9gZzpb
-         LBAR5BOyjIxjzleR7+k4f74ybLgG6JQqtxntq9tOFqq6ekPE8rWcjud259ng+qwxT8Tm
-         HCa5N2cCJpbJT3C2v4B/K3UvAOSvltkjhQNf5ORmAF0aKbcyiW4vhtC2NzO6i2ToQ5tm
-         c81z6QKWZMXacrb0xHVLiIk/G2DzmkLoaXXdq9Oi20Uj5d0uBG4heEOTzje2FIbrR6Fb
-         HDGhlaFNobIpOZ3Ua+FW2KnGp4MJmog+RpCl817CSioHCaDigh/sgTPfYObr4dbqMMsq
-         4ClA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRR8isWlVYt7QFKzz9DHFl+woKTH/X8uvlMdLPZHO3BCpJ1qf3x8oBn6fftjZnaKLxaZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzESb/r2mNOb5Wy3h9sFhEu56zHaQGnCsl4rKXXt752qcWKFPU5
-	G448gpP5pJ5ACZpLEj5XYWaayL77Z1ktz7TDqvjoR/yrCcGY5kD+0tfzLTVk4A==
-X-Gm-Gg: ASbGncvKhT1/dS4GEWt6lTuEqDA6aaA6GIhTtAIkItpaIUW4YBdZPfTRiF+u8cpoOpG
-	Y10frlphD8nsIfBi6u0/N6aEUyLMwEJ9yxsgtzJ63RWsktv8xliQLlXinuGoVv9tn5WK9sEGpN0
-	QeuaD9rHKsQsy6/o0GBVhMxPVpH+2bNxi/vsAPb6wiZuq8v+MhOUUwdPp+lskox33z0PjZ9PdkI
-	qMYeuV1J3jB0sWqYWKAPZGdGH3hTUSYttjoYueKsYnVtfsIKeNsgWJ1eNzwS0Gr74QpRuK/tXs3
-	3WkUR2hI+01DvC0+TZEnWTgYr+QyznpZj9076ejqK1stNSA/hNOve0y4DfEEqhMus7cpCFkicdg
-	hyrIEkNvGtpz6CQMrLG5aes4Dwpy/MV5p4w==
-X-Google-Smtp-Source: AGHT+IGUQ1CC3wGSqX3n2PthCP5i+TNxzdsTjL4pSdzIgtsPUjcOZd6wwrDmOy2lPNXfqcrUwsVwCA==
-X-Received: by 2002:a5d:5f4d:0:b0:3a5:2ef8:34f9 with SMTP id ffacd0b85a97d-3b8d94b9fb6mr8792134f8f.27.1754383186844;
-        Tue, 05 Aug 2025 01:39:46 -0700 (PDT)
-Received: from shameer-ubuntu ([195.11.233.227])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-459e00187f7sm39201055e9.15.2025.08.05.01.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 01:39:46 -0700 (PDT)
-From: Shameer Kolothum <shameerkolothum@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: alex.williamson@redhat.com,
-	wangzhou1@hisilicon.com,
-	liulongfang@huawei.com,
-	jonathan.cameron@huawei.com,
-	linuxarm@huawei.com,
-	shameerkolothum@gmail.com,
-	shameerali.kolothum.thodi@huawei.com
-Subject: [PATCH] MAINTAINERS: Update Shameer Kolothum's email address
-Date: Tue,  5 Aug 2025 09:39:13 +0100
-Message-ID: <20250805083913.55863-1-shameerkolothum@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754383213; c=relaxed/simple;
+	bh=1ip67BdMs/akXi5ehVuqM2pQ7e1uUDLLsiJWWVNnZw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nSdrg2kVar0+3N36rhDpuMUVnPqul4La5lHuLFzSE47++W8CO+0cW/59qjo1m1ucuzhHzZuar2hHBpiWAO2kltf755p0Ia7PhwHTYBG6YuAlwzcV3sZxrWakb4IyxiPmAHZBB2r6SxV5m3fXuuckFldQfbiP45A4LDtOj+si+VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0AJXyO8i; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=XoPxFNcgJAdEsyWsliRUUMh2F6p8LJA74DV0vc4jgz0=; b=0AJXyO8ipdWn0DQG5vvehlul4J
+	rT6iw99nglWoNXDFrqsorX1kPXe7qSddRSeNwmcwkbnDBIWFS1+F5bNXR3/EjdHvXOOI5pbllTwJF
+	ENDybyQu5HAY/qfFgl9x8LIPgUwlyIMWIR3yA92I7HrxhIFA4i77bZz80XUlnqWo+cIIpULtJKah1
+	H9Xe8mGj4v6+GLoo9i9Rnlp8WAge23Me5DBLTFw97KbLdgUd9PgZvp4ji4Sc/G9idpMH0AKObcEsC
+	QLw/ONECJyeoYcuiFbatVCJFb4lxSjV+/lKhbmV4W82WuoGgO8dQFXtfaUoNQ10/APkKP6cl7F9qX
+	07tsTzMg==;
+Received: from i53875aca.versanet.de ([83.135.90.202] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ujDDH-0004kH-KH; Tue, 05 Aug 2025 10:40:03 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
+Cc: linmq006@gmail.com
+Subject:
+ Re: [PATCH] media: rkvdec: Fix incorrect NULL check for
+ iommu_paging_domain_alloc
+Date: Tue, 05 Aug 2025 10:40:02 +0200
+Message-ID: <2196043.OBFZWjSADL@diego>
+In-Reply-To: <20250805061833.3670085-1-linmq006@gmail.com>
+References: <20250805061833.3670085-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-My Huawei email will soon bounce and hence change to my personal
-email for now.
+Am Dienstag, 5. August 2025, 08:18:33 Mitteleurop=C3=A4ische Sommerzeit sch=
+rieb Miaoqian Lin:
+> iommu_paging_domain_alloc returns error pointers on failure.
+> Replace the NULL check with IS_ERR to correctly handle error cases
+> and avoid invalid pointer dereference.
+>=20
+> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 
-Also, since I no longer have access to HiSilicon hardware, remove
-myself from HISILICON PCI DRIVER maintainer entry.
+Going from the (static inline) function definition [0] to the
+iommu_paging_domain_alloc_flags() function [1] it uses, the doc states
+	"Return [...]  or an ERR pointer for failure."
 
-Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Signed-off-by: Shameer Kolothum <shameerkolothum@gmail.com>
----
- .mailmap    | 1 +
- MAINTAINERS | 3 +--
- 2 files changed, 2 insertions(+), 2 deletions(-)
+So this is the correct fix,
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/.mailmap b/.mailmap
-index 4bb3a7f253b9..0d0f689e0912 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -700,6 +700,7 @@ Sergey Senozhatsky <senozhatsky@chromium.org> <sergey.senozhatsky@mail.by>
- Sergey Senozhatsky <senozhatsky@chromium.org> <senozhatsky@google.com>
- Seth Forshee <sforshee@kernel.org> <seth.forshee@canonical.com>
- Shakeel Butt <shakeel.butt@linux.dev> <shakeelb@google.com>
-+Shameer Kolothum <shameerkolothum@gmail.com> <shameerali.kolothum.thodi@huawei.com>
- Shannon Nelson <sln@onemain.com> <shannon.nelson@amd.com>
- Shannon Nelson <sln@onemain.com> <snelson@pensando.io>
- Shannon Nelson <sln@onemain.com> <shannon.nelson@intel.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0b444e5fd5a..424cb734215b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26038,7 +26038,6 @@ F:	drivers/vfio/fsl-mc/
- 
- VFIO HISILICON PCI DRIVER
- M:	Longfang Liu <liulongfang@huawei.com>
--M:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
- L:	kvm@vger.kernel.org
- S:	Maintained
- F:	drivers/vfio/pci/hisilicon/
-@@ -26067,7 +26066,7 @@ F:	drivers/vfio/pci/nvgrace-gpu/
- VFIO PCI DEVICE SPECIFIC DRIVERS
- R:	Jason Gunthorpe <jgg@nvidia.com>
- R:	Yishai Hadas <yishaih@nvidia.com>
--R:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-+R:	Shameer Kolothum <shameerkolothum@gmail.com>
- R:	Kevin Tian <kevin.tian@intel.com>
- L:	kvm@vger.kernel.org
- S:	Maintained
--- 
-2.50.1
+
+
+[0] https://elixir.bootlin.com/linux/v6.16/source/include/linux/iommu.h#L858
+[1] https://elixir.bootlin.com/linux/v6.16/source/drivers/iommu/iommu.c#L20=
+46
+
 
 
