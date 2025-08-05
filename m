@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-757009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F51B1BC38
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F0DB1BC53
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D8D3B88CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13AF18A54CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400A124DFF4;
-	Tue,  5 Aug 2025 21:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBBB253932;
+	Tue,  5 Aug 2025 22:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq0M75F3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kr7O7WRw"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A24B3594C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 21:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0591D5AB7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 22:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754431149; cv=none; b=c9hnnVOw2leIlsTpKG8mSZP1LdMoGPHb1X1B/P81ywnUTTuImapHhTcsVCGfGM6gQILH1yFRS7/amqUW2NM6bUywdTAm9QiXro51TOOmKw2RZsx7ns5+so+oUPh1+pi8PxhEz3eAyCwcyJ7eJOBB6I6Hbp50xfh/2p7I/2XYkIE=
+	t=1754431381; cv=none; b=D29aEJp0WwviWa+Y30O3npSpUzku0Y3P/iyaUo4Lo5GtZlC+i/RfGvHISDb2tQpEXD6TYvr/5aTe608aWFur8z92Z4RMUB/ToJC+/5oFJiSpVNb5+dHnNfU9/Y+fYeYyd5m/o9VGnUdRaN5sksMVRNBBVwAWMfG5kChJCSYOWUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754431149; c=relaxed/simple;
-	bh=EaMvOaRV5chlfG7PUma2cPCP9U04BplrQiABKl+h3HY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6P8gQXrtjAtDWGETJ+AvJVu7dsHw8J8vl91GvqKwP9aIzXL3/I7TtURCr3HLTeDRCRjIi2FD891xXk7zIO4y/Pey/cZ1QElvxAYPtmfIGqgzrMxtX9DQ+Vcyxx2Uw2AQiFrYP9FNqm2Hgz5H5d3CNLvBsOy2yvWN33N3s7VCqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq0M75F3; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754431148; x=1785967148;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EaMvOaRV5chlfG7PUma2cPCP9U04BplrQiABKl+h3HY=;
-  b=Oq0M75F3pU02ulEMGA9XqpwPFvfK+qZsSGS2+pXdtCM44P064weaJ6SD
-   6AlcC9ZzwC/z3O9V2PbKOv93q7/xoToRvBfvjiUBEnd1LbHVJ2V0fBunW
-   M/Zf/yRD494YFBsacTjq9duHqLcu1fmKnA83ieRtaoa7NjBTSmQdAqGEE
-   VXwd/tHocKSN+Ag/RJ3R8vl49Ju/mLIsKaIuWTS/q9Eu3CWngA0ydqlPU
-   eJzkaOiJehWxTm0Fi0w8eIzJEFszqosRaTU1MBRhMJQEyXV/1kHa5QVVq
-   dUbTLew34VLcvoypZkpZGwS1qeR8emeFIZMM2fLNTmvmb42NxX7FaK2XL
-   Q==;
-X-CSE-ConnectionGUID: epUVdxl9R7ai8TvJw3c0Lg==
-X-CSE-MsgGUID: 6oR2DEWTRhOfVM3YaQ6oNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74318919"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="74318919"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:59:07 -0700
-X-CSE-ConnectionGUID: Ejd+COAuTdmDl7wfpaD/yg==
-X-CSE-MsgGUID: 29bNG84tQTeFOGQQRD41fQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="169980994"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:59:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ujPgU-00000003rZ9-28WP;
-	Wed, 06 Aug 2025 00:59:02 +0300
-Date: Wed, 6 Aug 2025 00:59:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: map: add back asm/barrier.h inclusion
-Message-ID: <aJJ-pqFvHy2hCgop@smile.fi.intel.com>
-References: <20250730135934.1712198-1-arnd@kernel.org>
+	s=arc-20240116; t=1754431381; c=relaxed/simple;
+	bh=d5TkrEbLHEN+FxVF9A7Yh7YQ6z+4BIBtcBTz0GYsdmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uK6vIZXUSGLFktNZhmVCoJDzEfiID8xhnPmROolDjXh5fIQaBhyCPKm+3XC0dQPvgnqmRmUmLX9iG4CdeS1pY1fOTsPH0ENB9u7VnM0gZbb0LQHl62G4yrqrmSx0Mz7C6GV1q9Kts1M2rRRFBvyYd/8TrkNg7xRpV364DFj83p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kr7O7WRw; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3c426447-e2b9-4c81-8fc2-7cf7e36660d2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754431377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ez2C2OAgBeMciXBR/9ziwB88bSx7rB1jiAVUqpft0y0=;
+	b=kr7O7WRwZkhdIDqHHSrr6Y8PAQhUdIndp5EkK8M0u59gQIN6aSpVFLbEvW3qqcaTSxaLb3
+	82q31ru/fk3dAm7044JYssSMWy/ZmaIh5Bu1pmjmaTrU8CuPuWyBfvgBBtRto8zHOylQEw
+	/1YgidHpvsbDWAj1OVOqPv6LngUqQIw=
+Date: Tue, 5 Aug 2025 18:02:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730135934.1712198-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Subject: Re: [PATCH net-next v4 7/7] net: axienet: Split into MAC and MDIO
+ drivers
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@amd.com>,
+ Leon Romanovsky <leon@kernel.org>
+References: <20250805153456.1313661-1-sean.anderson@linux.dev>
+ <20250805153456.1313661-8-sean.anderson@linux.dev>
+ <c320da3b-6e55-474a-93d6-666092b70774@lunn.ch>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <c320da3b-6e55-474a-93d6-666092b70774@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 30, 2025 at 03:59:24PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 8/5/25 17:40, Andrew Lunn wrote:
+>> Fixes: 1a02556086fc ("net: axienet: Properly handle PCS/PMA PHY for 1000BaseX mode")
 > 
-> The mb() macro is used in this header:
+> If this is for net-next, please don't have a Fixes: tag.
+
+This is a fix. But as explained in the cover letter this is quite an
+involved fix for an uncommon bug. I can target net if you like.
+
+>>  struct axienet_common {
+>>  	struct platform_device *pdev;
+>> +	struct auxiliary_device mac;
+>>  
+>>  	struct clk *axi_clk;
+>>  
+>>  	struct mutex reset_lock;
+>> -	struct mii_bus *mii_bus;
+>> +	struct auxiliary_device mii_bus;
 > 
-> In file included from include/linux/mtd/qinfo.h:5,
->                  from include/linux/mtd/pfow.h:8,
->                  from drivers/mtd/lpddr/lpddr_cmds.c:14:
-> include/linux/mtd/map.h: In function 'inline_map_write':
-> include/linux/mtd/map.h:428:9: error: implicit declaration of function 'mb' [-Wimplicit-function-declaration]
+> Keeping the name mii_bus for something which is not an struct mii_bus
+> is going to cause confusion. Please give it a different name.
 
-Oops, thanks!
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Like mdio?
 
+> This is another patch which needs splitting up.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I don't think it can be split up in any major way. The whole conversion
+of the MAC/MDIO portions of the driver has to be done at the same time
+as the parent driver is converted to use them.
 
-
+--Sean
 
