@@ -1,214 +1,229 @@
-Return-Path: <linux-kernel+bounces-756934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A86BB1BB30
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:52:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0DEB1BB33
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 239A17A8960
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383F2184E79
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD12274658;
-	Tue,  5 Aug 2025 19:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36A6270551;
+	Tue,  5 Aug 2025 19:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcQreted"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Odm4q/3W"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52554258CDC;
-	Tue,  5 Aug 2025 19:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF5022CBD3
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423518; cv=none; b=CdvnOmn5xVOwdJg9Avtm/3aIe03P4/YpRWbvmmPttNx2YU3yNQVeR1qMrmYwlucxcq68V+WCDpUqF1BAggKSzJV54mwYURKK/70y/z2g3ttdynikU+5ToRgljCDCr/FSfMLzzZ+EMe1wDnNey3GsY8Y63BYA4N9fXWvl2tmoA/Y=
+	t=1754423680; cv=none; b=MdGuIocA84KIPQcCyPkpo/JG40sRGDQrIRoBvkqezuZTm7Xqxn01fuQz5cOlnsnoTYPPZ74v6wf9VoBpQ4wGMC3AWQU81OHgaVVd1/mvbwe72m3E5eL9jk1dXumrN1NMMrjjMS/DYbSiiOWGQO3eFECjjM3ZyPeUoRWGaHvqs4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423518; c=relaxed/simple;
-	bh=WKskQjnDuPRfZGq6aVAzNHj7TdUGFaEOiESvhCgPCsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U7ryEmif4hZ0Ur9dW5y6H2QKafR2xP0vyUA0J3zvCqO1TzEH7uxvonKtS7wc2P7/V5pKtjheh6wuBByiyHLJDuuCaumlZ9Q512dErFB1sZIfNvy8R5lCe4v1dmyyxXCnUUVPnw5JYU3SCuD6fcwYR5YthP5dkhFV8bi7KVC5lhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcQreted; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1754423680; c=relaxed/simple;
+	bh=f47NBA1xQ05+tGqj8E2TiUwKpACiuW7lolj6ZcrUgRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PY5DL5GCZVVNFnnwn9lfNVGDPQBrgY286XtFGyQl/CuExledJZUoprUGp6Nt97uBM1f1jrU0s/oCahGGQC6p6hW2GaDILvPoSLRwHpwSST9PaFcVjymPH+nOGFMRfPOa4MK+mrDRS0Wf8S5X3+WLq/cguItaoPa7WzeBwfv2Ex0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Odm4q/3W; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76c18568e5eso1895192b3a.1;
-        Tue, 05 Aug 2025 12:51:57 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4209a0d426so6342123a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754423516; x=1755028316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02zt95JSIZhvyc1m6kLzXG+cJqDtwABL9QPxGxdLnW4=;
-        b=HcQreted7a+CgPX8el4RRDuiwM1uzpgD1KS9NajOL8CIw9Sm6A2N3mkrIWaL6sZLNn
-         HXU7oy+TzjZPDX0Dq2JLHi7zJy5Ds3vnVvk4v2q7RoC7HE0lDZ24l5N8icqrM/OhT8S3
-         gQmk/NhTfFdceRUXBQgUG6aPF+Y4LyuN5A3P/ic+wjW/CI1swTS7bR5DgDVdLwYCgORT
-         isqZSDmCW863J70iPKuoLQso6K1u4fDZCcxZHq4c40eQxuNlMQnljPCGWKvUDakUjO4p
-         QTTEFotmeIVv14FnXtkKTAsJEfQYxfXOqwA4bgBQp8STA4hN0bJStB55N4akoHZvB1M8
-         P1Bw==
+        d=gmail.com; s=20230601; t=1754423678; x=1755028478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=PjrtWHVRsSWeqipGaCCShcBjkWxbAcWjrEUic7mEi4k=;
+        b=Odm4q/3WhY+0FpphoVaAwoYU5JQsZWV3IwCNhcFLaRooI3oyR1p7hz36yrmRhdRuNa
+         Bctqi6+lS7RO1AZrGt5FnXyVxjQHORDAyWNS7lYx2ZcNvw3qr5ji53b4a0/pNRY0DmCk
+         hp3vSecJ0WFM+I74vJPG+Fs/ob9oIGb1PZWlaiTOUGKNBOTQK9sAfTNBHQgmoq2Ym04+
+         Y5x39LKyYuqcP8K1Akz2BK+jJlotsAlb0mu5vabdW9VUA77l5fzTo8NC1+2hAtY5GwZr
+         3wOPCmDBOqIXuHHo/72nEtw2XCNYtIg/cIMZc3Bv9kHKzsRzHa8W9r66KSpY7yB4mNFa
+         Z7JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754423516; x=1755028316;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02zt95JSIZhvyc1m6kLzXG+cJqDtwABL9QPxGxdLnW4=;
-        b=jcmpSj+hNWhMkkBJAKQid1onuG2+a7Fmmhlqy9rHIN/Q6P2LFyLpvYBR+9IpFjifMv
-         0LhNTzoPLoxP2SuCDxk8TbDTFf1XJa1Dd9+FddU4lBIy/rOZx5fC7bRKh/vr3pKnZpB/
-         DG1loTVMlgolYcBZWFTnOlbM/1HsLz6MYoKoqNjgToAjznZZ552ah1XgGTMHGFXF0w7p
-         dvFQQF6tI/U9QC/bS7qkD0+oKGWiqkvFEwx1hXQWRXkmfzAsPvM5UAzuiey96NS0i3Oo
-         wEgRX2N2JA3FauL3K9KC2M3bXnHauo67DX4WU0xQKRRj8PSWxpbA1VDrR3a4N47WXYCj
-         tq/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpH4bNx7QqOKznPeHzAQda8B/hFxizMv0UZL8szH3jln8ACiVC/BpSzu2x+DUkrILRDAQ+CSUKJB00tQc=@vger.kernel.org, AJvYcCXvMKAQU8yKfXP7DHj6rMSci2qfbgPAXb6/Snmva6sINM9qJZQmtOwCyqIa7xLF4YIAUAw54V6NlqyENgv7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6kgfooIPV4UuxfkGj0GaQWCIqvQw/LMpSAVrC+nPSANFTDJ4K
-	u2PQ4d2wjO3lX8a7u90J3o0yewUypOEow/fg9yvzE9EH9GaTodBG+I8ayr9jM0zrdM0=
-X-Gm-Gg: ASbGncsC2cFGQMH5ySQhiIhImA+wocUXZHUtQrbT2tZK7xmaKJSkknRS5wpdy+j77Sz
-	fpD7xd6h+4lS/ulLFvIX9Q+Y0sIj32+Dp7hcdsvt2kIfoYKBwA01m49sctnDrq2wVWQosk6TTbf
-	Iv6g/acfIAMikpuXfnIpFpLVFAS6HZObNyoeTHg7HMsG9Ql+BVLsuj0QJlSRdEqXcEGQOOsqJXd
-	uhkkiyO5gRdaNCxWsGPwRFMmaz14dt4SLSQaOzA0sdSr6Kyklx3bcRfS+Tg3AQCmhP7VzKXZpyx
-	C9meB0y+gSDvBB6SZ/Y7bnw9Nu2DG/htzNeO14bBp3c9rA2/uWs+oxI1ke3i13DMtjyjNr9ALGw
-	sySAejxE8kzBEZaxQ2IlWAY9tIl+rsWx2
-X-Google-Smtp-Source: AGHT+IFHc4vG1G/T3XZna5tCJg244PSDXuBclEDuuVzt0iPu7zCV172SLYMKl1Jsz+zFxybtnXKAkw==
-X-Received: by 2002:a05:6a00:2d11:b0:76b:e0d7:c3cf with SMTP id d2e1a72fcca58-76c2a12c06fmr114050b3a.4.1754423516568;
-        Tue, 05 Aug 2025 12:51:56 -0700 (PDT)
-Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm13744397b3a.18.2025.08.05.12.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 12:51:56 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: jirislaby@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	sunilvl@ventanamicro.com,
-	arnd@arndb.de,
-	u.kleine-koenig@baylibre.com,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	abinashsinghlalotra@gmail.com
-Subject: [RFC PATCH 2/2]  tty: serial/8250: Fix build warning in serial8250_probe_platform()
-Date: Wed,  6 Aug 2025 01:21:55 +0530
-Message-ID: <20250805195155.742004-2-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
-References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
+        d=1e100.net; s=20230601; t=1754423678; x=1755028478;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PjrtWHVRsSWeqipGaCCShcBjkWxbAcWjrEUic7mEi4k=;
+        b=GK82qyLMBmKz+NTl/VgOBUP2SIO6jPzJKMG/J+h6O2Q1GzfMJd55rUQHcFt4rkb/o0
+         lTbzQg6Z6PYQp/TvYqjw1mQsH3TifI8AZ6I8ZmirNRVXpMLPJ4gEex7gmWgZbIk8u3/b
+         FilDEs6Oc3qlAV2a5iyS5hwGc2Z5Hjt/WEiPSvnzUT9avAwismoNJrewXHGWVZPF6u5Z
+         TiLMkwB4MrZZkIMK092T+HSdh10pl8EJyITYNJzT06XIT95SG0vJsmS8WkdeVSQ62Mmd
+         7xW1nUjUZhV3BKp6bQtOOkFOh7FN+rJtBtUMzskRUAKIgx7vhNvz09UKc+FaSw5MtYRp
+         xTrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGxIodSp2z+pj4lZgpEHfLOdB9L2ViCnuxWSuEw/m91jafjAHMCUM5lNLf/DEOGt/B99DX0YCncsdYIuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsgY3XQMNLdWOVndllrAfQShyhSnfFbPpipT5fNmIjobyakPok
+	pdJ38gOS15TRuWWu0Qor3rTEuMVU+2RxvnYC+/jD+lB+Z/l/BIR8XgLcVUatsg==
+X-Gm-Gg: ASbGncvCycAolw3j/F0ho9Z8H9SLq2cMCSlP2wIUd72SWUFXgxLXXk2A1gw5hIgMJiB
+	wv9z0OyAcUv2YgF02tFRiyF2DtidblFFi1qu+0QS4O9YeGL7o+ltX6h5yH3jhMl+mareG5RORSF
+	MPBZaMAwzXt+4jXqUcr3PFiQqHBmdCqMp0477JtGOqggOUq6ceH+7HMeI25KJaypH0uXAJWFiGf
+	fBIhmw0dQRIpQFnGf6T2v5XUb6Rx6dn30KHb4HsuYA3ZnKHRk4nBrx83SK3pDwy8nvE38HsOfrF
+	dALU9HC6zmBCVBavzZ0a+uVueoVyGq/Hl4vjhRi8jq4vIRRbqQi+mu8stJOTjB5N53E69FR4p+x
+	X+lr0tvfzDX3y5/AQ21+py1ZAdWcdIRHY6tERaJrshrzczFyLkkgcAO5krhyCEoO9XVx9MX4=
+X-Google-Smtp-Source: AGHT+IE7udqz4Z8P2+ay6Fs9O3TlMTfx95QIGhKGwNAnIdFC+HoQyX/YfLatr4F2cIhJ3GEVGHghBw==
+X-Received: by 2002:a17:903:46c8:b0:234:d292:be7a with SMTP id d9443c01a7336-2429f2f52e8mr4814525ad.1.1754423678157;
+        Tue, 05 Aug 2025 12:54:38 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef6bcfsm141757635ad.5.2025.08.05.12.54.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 12:54:37 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d3ff0792-5811-40b5-ae98-e6d30281930b@roeck-us.net>
+Date: Tue, 5 Aug 2025 12:54:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] genirq/test: Resolve irq lock inversion warnings
+To: Brian Norris <briannorris@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Tsai Sung-Fu <danielsftsai@google.com>,
+ Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
+References: <20250522210837.4135244-1-briannorris@chromium.org>
+ <31a761e4-8f81-40cf-aaf5-d220ba11911c@roeck-us.net>
+ <aJJONEIoIiTSDMqc@google.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <aJJONEIoIiTSDMqc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-    The function serial8250_probe_platform() in 8250_platform.c triggered a
-        frame size warning:
-    drivers/tty/serial/8250/8250_platform.c: In function ‘serial8250_probe_platform.isra’:
-drivers/tty/serial/8250/8250_platform.c:201:1: warning: the frame size of 1184 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+On 8/5/25 11:32, Brian Norris wrote:
+> irq_shutdown_and_deactivate() is normally called with the descriptor
+> lock held, and interrupts disabled. Nested a few levels down, it grabs
+> the global irq_resend_lock. Lockdep rightfully complains [1].
+> 
+> Grab the descriptor lock, and disable interrupts, to resolve the
+> complaint.
+> 
+> Tested with:
+> 
+>    tools/testing/kunit/kunit.py run 'irq_test_cases*' \
+>        --arch x86_64 --qemu_args '-smp 2' \
+>        --kconfig_add CONFIG_DEBUG_KERNEL=y \
+>        --kconfig_add CONFIG_PROVE_LOCKING=y \
+>        --raw_output=all
+> 
+> [1]
+> ========================================================
+> WARNING: possible irq lock inversion dependency detected
+> 6.16.0-11743-g6bcdbd62bd56 #2 Tainted: G                 N
+> --------------------------------------------------------
+> kunit_try_catch/40 just changed the state of lock:
+> ffffffff898b1538 (irq_resend_lock){+...}-{2:2}, at: clear_irq_resend+0x14/0x70
+> but this lock was taken by another, HARDIRQ-safe lock in the past:
+>   (&irq_desc_lock_class){-.-.}-{2:2}
+> 
+> and interrupts could create inverse lock ordering between them.
+> 
+> other info that might help us debug this:
+>   Possible interrupt unsafe locking scenario:
+> 
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(irq_resend_lock);
+>                                 local_irq_disable();
+>                                 lock(&irq_desc_lock_class);
+>                                 lock(irq_resend_lock);
+>    <Interrupt>
+>      lock(&irq_desc_lock_class);
+> 
+> [...]
+> 
+>   ... key      at: [<ffffffff898b1538>] irq_resend_lock+0x18/0x60
+>   ... acquired at:
+>     __lock_acquire+0x82b/0x2620
+>     lock_acquire+0xc7/0x2c0
+>     _raw_spin_lock+0x2b/0x40
+>     clear_irq_resend+0x14/0x70
+>     irq_shutdown_and_deactivate+0x29/0x80
+>     irq_shutdown_depth_test+0x1ce/0x600
+>     kunit_try_run_case+0x90/0x120
+>     kunit_generic_run_threadfn_adapter+0x1c/0x40
+>     kthread+0xf3/0x200
+>     ret_from_fork+0x140/0x1b0
+>     ret_from_fork_asm+0x1a/0x30
+> 
+> [    5.766715]     ok 2 irq_free_disabled_test
+> [    5.769030]
+> [    5.769106] ========================================================
+> [    5.769159] WARNING: possible irq lock inversion dependency detected
+> [    5.769355] 6.16.0-11743-g6bcdbd62bd56 #1 Tainted: G                 N
+> [    5.769413] --------------------------------------------------------
+> [    5.769465] kunit_try_catch/122 just changed the state of lock:
+> [    5.769532] ffffffffb81ace18 (irq_resend_lock){+...}-{2:2}, at: clear_irq_resend+0x14/0x70
+> [    5.769899] but this lock was taken by another, HARDIRQ-safe lock in the past:
+> [    5.769967]  (&irq_desc_lock_class){-.-.}-{2:2}
+> [    5.769989]
+> [    5.769989]
+> [    5.769989] and interrupts could create inverse lock ordering between them.
+> ...
+> [    5.776956]  ret_from_fork_asm+0x1a/0x30
+> [    5.776983]  </TASK>
+> [    5.778916]     # irq_shutdown_depth_test: pass:1 fail:0 skip:0 total:1
+> [    5.778953]     ok 3 irq_shutdown_depth_test
+> 
+> Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/lkml/31a761e4-8f81-40cf-aaf5-d220ba11911c@roeck-us.net/
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-This patch reduces the stack usage by dynamically allocating the
-`uart` structure using kmalloc(), rather than placing it on
-the stack. This eliminates the overflow warning and improves kernel
-robustness.
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
----
-The stack usage was further confirmed by using -fstack-usage flag.
-it was usiing 1248 bytes:
-..............................
-drivers/tty/serial/8250/8250_platform.c:154:12:serial8250_probe_platform.isra	1248	dynamic,bounded
-drivers/tty/serial/8250/8250_platform.c:208:12:serial8250_probe	16	static
-......................................
-After applying the patch it becomes :
-.........
-It doesn't show up in stack usage  and warning is fixed.
-.......
-This function is used for probing . So dynamic allocation will not create
-any issues.
+Thanks for the quick turnaround!
 
-Thank You
----
- drivers/tty/serial/8250/8250_platform.c | 63 +++++++++++++------------
- 1 file changed, 33 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-index f7f9c5036d39..86816d9b32ce 100644
---- a/drivers/tty/serial/8250/8250_platform.c
-+++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -158,43 +158,46 @@ static int serial8250_probe_acpi(struct platform_device *pdev)
- 
- static int serial8250_probe_platform(struct platform_device *dev, struct plat_serial8250_port *p)
- {
--	struct uart_8250_port uart;
-+	struct uart_8250_port *uart __free(kfree) = NULL;
- 	int ret, i, irqflag = 0;
- 
--	memset(&uart, 0, sizeof(uart));
-+	uart = kmalloc(sizeof(*uart), GFP_KERNEL);
-+	if (!uart)
-+		return -ENOMEM;
-+	memset(uart, 0, sizeof(*uart));
- 
- 	if (share_irqs)
- 		irqflag = IRQF_SHARED;
- 
- 	for (i = 0; p && p->flags != 0; p++, i++) {
--		uart.port.iobase	= p->iobase;
--		uart.port.membase	= p->membase;
--		uart.port.irq		= p->irq;
--		uart.port.irqflags	= p->irqflags;
--		uart.port.uartclk	= p->uartclk;
--		uart.port.regshift	= p->regshift;
--		uart.port.iotype	= p->iotype;
--		uart.port.flags		= p->flags;
--		uart.port.mapbase	= p->mapbase;
--		uart.port.mapsize	= p->mapsize;
--		uart.port.hub6		= p->hub6;
--		uart.port.has_sysrq	= p->has_sysrq;
--		uart.port.private_data	= p->private_data;
--		uart.port.type		= p->type;
--		uart.bugs		= p->bugs;
--		uart.port.serial_in	= p->serial_in;
--		uart.port.serial_out	= p->serial_out;
--		uart.dl_read		= p->dl_read;
--		uart.dl_write		= p->dl_write;
--		uart.port.handle_irq	= p->handle_irq;
--		uart.port.handle_break	= p->handle_break;
--		uart.port.set_termios	= p->set_termios;
--		uart.port.set_ldisc	= p->set_ldisc;
--		uart.port.get_mctrl	= p->get_mctrl;
--		uart.port.pm		= p->pm;
--		uart.port.dev		= &dev->dev;
--		uart.port.irqflags	|= irqflag;
--		ret = serial8250_register_8250_port(&uart);
-+		uart->port.iobase	= p->iobase;
-+		uart->port.membase	= p->membase;
-+		uart->port.irq		= p->irq;
-+		uart->port.irqflags	= p->irqflags;
-+		uart->port.uartclk	= p->uartclk;
-+		uart->port.regshift	= p->regshift;
-+		uart->port.iotype	= p->iotype;
-+		uart->port.flags		= p->flags;
-+		uart->port.mapbase	= p->mapbase;
-+		uart->port.mapsize	= p->mapsize;
-+		uart->port.hub6		= p->hub6;
-+		uart->port.has_sysrq	= p->has_sysrq;
-+		uart->port.private_data	= p->private_data;
-+		uart->port.type		= p->type;
-+		uart->bugs		= p->bugs;
-+		uart->port.serial_in	= p->serial_in;
-+		uart->port.serial_out	= p->serial_out;
-+		uart->dl_read		= p->dl_read;
-+		uart->dl_write		= p->dl_write;
-+		uart->port.handle_irq	= p->handle_irq;
-+		uart->port.handle_break	= p->handle_break;
-+		uart->port.set_termios	= p->set_termios;
-+		uart->port.set_ldisc	= p->set_ldisc;
-+		uart->port.get_mctrl	= p->get_mctrl;
-+		uart->port.pm		= p->pm;
-+		uart->port.dev		= &dev->dev;
-+		uart->port.irqflags	|= irqflag;
-+		ret = serial8250_register_8250_port(uart);
- 		if (ret < 0) {
- 			dev_err(&dev->dev, "unable to register port at index %d "
- 				"(IO%lx MEM%llx IRQ%d): %d\n", i,
--- 
-2.50.1
+Guenter
 
 
