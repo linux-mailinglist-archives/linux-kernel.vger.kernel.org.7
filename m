@@ -1,211 +1,198 @@
-Return-Path: <linux-kernel+bounces-755831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E5FB1AC4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26468B1AC52
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1EA18928CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4A33BF2A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E291C3027;
-	Tue,  5 Aug 2025 01:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8341C1F13;
+	Tue,  5 Aug 2025 02:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DhNJFuoR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dH4opRsT"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0A83FE7;
-	Tue,  5 Aug 2025 01:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C201853
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 02:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754359133; cv=none; b=rSEBA8wpf6y+NEnI/KrGOVeJBcwb1rmdmAJfhxnXgRn5SJwotUeIAZe2B8M/ZBh5F79MC1rijSVJzhrd5+edd+INWbIZkIdIdm2+i95izidLHKOuKoGstDm5Vs1w5xBZbrST6vYj0YPO2zK6mbihBfLH3RAUn5ef4NaqPThBZF8=
+	t=1754359220; cv=none; b=EBu8h4S3xr5ZCxUymosOzwt9Zt4wdvWj2UxZGXTNSxC7wG4SzU6wHQ/WwSLBsCg2tLa7lWWn4Sf/LZ7H1ZfLp1ZZxd+O/FZ3nD8zp0ShQdN5takD/4xIgHiWIPHzQUB8RXZ4689h38dNnMHJHqQrTAjJyDoQZf3N4quyPDYkSck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754359133; c=relaxed/simple;
-	bh=zxcA38zhJxLeuNnCt3MgCVsaJMa24DpyresNs6gIDdE=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=rxA/ybC0SgtopCzgpqpHBrkwow9TmUAs1fAgPkcKs8X6R3sPotEN/ffD1qiXdrZyJp3VCX18joy0CmJuUeOUtkOAweK3utz6P5LIYThmzHhKXq65jyVHPolFVkCs53SaLfvpxVKboAqcDeaPU7vQ8bfZkiEj4Eb6PLKN9pqm/aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DhNJFuoR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E494AC4CEE7;
-	Tue,  5 Aug 2025 01:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1754359133;
-	bh=zxcA38zhJxLeuNnCt3MgCVsaJMa24DpyresNs6gIDdE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DhNJFuoRiXsCswzz9Yv+4+0rdQEGQ/xTs8Jz7RGXMC84vNwKXe7FJVJhO5swRPb1t
-	 r1uueT6B5BPKX/kKiooz8YrF/LM8p8A7hfKiUPvXzadxjKW8c8h5RLU64JJ/12Tqj+
-	 CMGRsf0VrL9gyQlgYi5nfaPLjfLK4EuHQLEsWr+Q=
-Date: Mon, 4 Aug 2025 18:58:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Additional MM updates for 6.17-rc1
-Message-Id: <20250804185852.038ce90aa6f9a177c492b675@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754359220; c=relaxed/simple;
+	bh=NjinuHwmtuyYiVMs4H4gMTWeZnhWmSGhsiSyk2G4mjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=popupNF8cSZHqgcDYQA1ZEXe27ulxueDp1kUsvEtkoHqwlLVwfka9qi+PJwdLP2D4nwr9GojmE3wSQcO+eDFyTdbrw3fhhNpm5eXZoAFQnX09cyDk1oRB8majhOchIWLcBCp4eYOhKFcSNCQ3BdqOOtIHKgpXRONJC3wWMAyi+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dH4opRsT; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-459ddf83023so8490805e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 19:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754359217; x=1754964017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kSG7opwXv5FWsH2EhXuTn8+OP17SmN7esmHU9ZRgkXc=;
+        b=dH4opRsTRERRZSgagq8iOFfxo1MpmeLOLppNLrd3aUBj5r270aHxkMyfp6yddpjCko
+         w/D6jEndCApLSQWaHqpa9sK8mBjlnfqJMGpCr2esYxXKQZlEpatQK1Nw3O2vrOCyoD5a
+         SN3zrEACYQD9DBzEJdD5w3V1l9mFMD2QjjcnoqSTiLKTaECXmisHS6y8BkyQnJa+sAMW
+         bp4S9pR5Fo98hvaqN0IuMPLiY8uUKBwwCnOFPgT3brisMIqrjYf9y9TvR6nt2qyWrjlj
+         4owoOw6E8Dju8iCMVWeHi3L8FJgUHb+04Tu30It1vdd8wALCISawXVMwWOZiBfzLSufj
+         R76A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754359217; x=1754964017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kSG7opwXv5FWsH2EhXuTn8+OP17SmN7esmHU9ZRgkXc=;
+        b=fk2GSugCiYQuJOwSO97K64YpooLdEGOfCzHjZ5OX8T5Zy7yeRPMyLIjGDPJbO1O9wR
+         HhonyaCpb/qfJ7XcRSa6OXyzCTtRbeRNTiCZ7i/I4DrpNTO96B5KPe1AaMh58jF+mmar
+         v8QJ6kapS+05J6+Tqh1hj5Ax/0GmPLjjM8E2IsczWXnRkALVCrYHzOK9nKsAI1ztcrlp
+         WVszgFsCoHS7iuxnhbMr35JlGExB+TX7R8XqTURrQf2LBFmBkFbGUfGKlub5166+Pwp3
+         zjf85mxL0aiQzrbaLemXptaLA7CyHFJT27Spa4j/gH+aU8nlhM4rBftf0+3cl+ZLDRgC
+         eJDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyGfEnMy+fEo6WH4IBABdY7POMU/+ZQZK4Gm+YLxrJZWQVHIRZwEqJrWj7RDaGD/EX4oz8kRw5dhB9i4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx54LjdsvKuoUy6qX3wzrJDW6mDwPoYs21COsPJmwYfEpv+4keL
+	rPo//DVlKgKUpwoZnmWSAtWvYRrhftkeoLzAKcWqISDsSOAgWYBIeU1A8iEjzMqCvGBFZ9vSzey
+	UZBdvrKDSX/sAYAregZ2MB113ec2uheAnoC+XXvZO
+X-Gm-Gg: ASbGnctSPTeNR93IoYFwHR5av3VZOEqwCwwyMGST4kCWH6PzsM5yMLReeobUyEO/suz
+	6fGFjUq1XRjHaQ9Ugq849khHes2Apgb1VD3J+yRBKPu3P0yxIhObkdkVSbiLy3ydSm9j24ECp19
+	Uk74DuscL8cXjdE1bid3Fp+2zrGvI19uVhUJ1jPsOZeuLvlZSsfIxglWUGFZ/GaRC03bSGZkN3J
+	5u3XNSO
+X-Google-Smtp-Source: AGHT+IHU8mICIqYoxrBVexKLpAl1lfHIFd4RBPzxvH9x1QdKoshXo7HiGb8ekOlyGWshojjeuYWAqUhNU+zNS+nDRmI=
+X-Received: by 2002:a05:600c:1548:b0:43e:bdf7:7975 with SMTP id
+ 5b1f17b1804b1-458b6b5ef11mr91572245e9.32.1754359217211; Mon, 04 Aug 2025
+ 19:00:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250801234559.1178521-1-sudarsanm@google.com> <8c609741-c2b8-426c-8f83-8a79022b67d7@redhat.com>
+In-Reply-To: <8c609741-c2b8-426c-8f83-8a79022b67d7@redhat.com>
+From: Sudarsan Mahendran <sudarsanm@google.com>
+Date: Mon, 4 Aug 2025 18:59:40 -0700
+X-Gm-Features: Ac12FXz0fbRx1mvWhuQG3tGn2Pn1eTjXZ_7L8a0gEEdaxYWLXKdLSI_NNmxxtvM
+Message-ID: <CAA9mObDx=oDeRAGJSdY3crMAYY=qn0-v2ZH9vsxkv3NcgUCL-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] selftests/mm: pass filename as input param to
+ VM_PFNMAP tests
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	trivial@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-Linus, please pull this second and final batch of MM updates for the
-upcoming -rc1 cycle, thanks.
-
-I'm presently seeing no merge issues with this small batch of changes.
-
-Thanks.
-
-
-The following changes since commit af915c3c13b64d196d1c305016092f5da20942c4:
-
-  MAINTAINERS: add missing headers to mempory policy & migration section (2025-07-26 15:08:24 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2025-08-03-12-35
-
-for you to fetch changes up to a2152fef29020e740ba0276930f3a24440012505:
-
-  mm: mempool: fix crash in mempool_free() for zero-minimum pools (2025-08-02 12:06:13 -0700)
-
-----------------------------------------------------------------
-Significant patch series in this pull request:
-
-- The 4 patch series "mseal cleanups" from Lorenzo Stoakes erforms some
-  mseal cleaning with no intended functional change.
-
-- The 3 patch series "Optimizations for khugepaged" from David
-  Hildenbrand improves khugepaged throughput by batching PTE operations
-  for large folios.  This gain is mainly for arm64.
-
-- The 8 patch series "x86: enable EXECMEM_ROX_CACHE for ftrace and
-  kprobes" from Mike Rapoport provides a bugfix, additional debug code and
-  cleanups to the execmem code.
-
-- The 7 patch series "mm/shmem, swap: bugfix and improvement of mTHP
-  swap in" from Kairui Song provides bugfixes, cleanups and performance
-  improvememnts to the mTHP swapin code.
-
-----------------------------------------------------------------
-Baolin Wang (1):
-      mm: shmem: fix the shmem large folio allocation for the i915 driver
-
-Bijan Tabatabai (1):
-      mm/damon/vaddr: skip isolating folios already in destination nid
-
-David Hildenbrand (1):
-      mm: add get_and_clear_ptes() and clear_ptes()
-
-Dev Jain (2):
-      khugepaged: optimize __collapse_huge_page_copy_succeeded() by PTE batching
-      khugepaged: optimize collapse_pte_mapped_thp() by PTE batching
-
-Jann Horn (2):
-      kasan: skip quarantine if object is still accessible under RCU
-      mm/rmap: add anon_vma lifetime debug check
-
-Jinjiang Tu (2):
-      mm/memory-failure: hold PTL in hwpoison_hugetlb_range
-      mm/mincore: hold PTL in mincore_hugetlb
-
-Joanne Koong (1):
-      mm/page-flags: remove folio_start_writeback_keepwrite()
-
-Kairui Song (8):
-      mm/shmem, swap: improve cached mTHP handling and fix potential hang
-      mm/shmem, swap: avoid redundant Xarray lookup during swapin
-      mm/shmem, swap: tidy up THP swapin checks
-      mm/shmem, swap: tidy up swap entry splitting
-      mm/shmem, swap: never use swap cache and readahead for SWP_SYNCHRONOUS_IO
-      mm/shmem, swap: simplify swapin path and result handling
-      mm/shmem, swap: rework swap entry and index calculation for large swapin
-      mm/shmem, swap: fix major fault counting
-
-Lorenzo Stoakes (7):
-      mm/mseal: always define VM_SEALED
-      mm/mseal: update madvise() logic
-      mm/mseal: small cleanups
-      mm/mseal: simplify and rename VMA gap check
-      mm/mseal: rework mseal apply logic
-      mm: remove mm/io-mapping.c
-      mm: correct type for vmalloc vm_flags fields
-
-Mike Rapoport (Microsoft) (8):
-      execmem: drop unused execmem_update_copy()
-      execmem: introduce execmem_alloc_rw()
-      execmem: rework execmem_cache_free()
-      execmem: move execmem_force_rw() and execmem_restore_rox() before use
-      execmem: add fallback for failures in vmalloc(VM_ALLOW_HUGE_VMAP)
-      execmem: drop writable parameter from execmem_fill_trapping_insns()
-      x86/kprobes: enable EXECMEM_ROX_CACHE for kprobes allocations
-      x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace allocations
-
-Suren Baghdasaryan (1):
-      mm: fix a UAF when vma->mm is freed after vma->vm_refcnt got dropped
-
-Suresh K C (1):
-      selftests: cachestat: add tests for mmap, refactor and enhance mmap test for cachestat validation
-
-Xuanye Liu (1):
-      mm: add process info to bad rss-counter warning
-
-Yadan Fan (1):
-      mm: mempool: fix crash in mempool_free() for zero-minimum pools
-
-wang lian (1):
-      selftests/mm: add process_madvise() tests
-
- Documentation/core-api/mm-api.rst                  |   1 -
- arch/arm64/mm/mmu.c                                |   4 +-
- arch/x86/kernel/alternative.c                      |   3 +-
- arch/x86/kernel/ftrace.c                           |   2 +-
- arch/x86/kernel/kprobes/core.c                     |  18 --
- arch/x86/mm/init.c                                 |  24 +-
- include/linux/execmem.h                            |  54 ++--
- include/linux/io-mapping.h                         |   3 -
- include/linux/mm.h                                 |   6 +-
- include/linux/mmap_lock.h                          |  30 ++
- include/linux/page-flags.h                         |   2 -
- include/linux/pgtable.h                            |  45 +++
- include/linux/rmap.h                               |  22 ++
- kernel/fork.c                                      |   9 +-
- kernel/module/main.c                               |  13 +-
- mm/Kconfig                                         |   4 -
- mm/Makefile                                        |   1 -
- mm/damon/vaddr.c                                   |   4 +
- mm/execmem.c                                       | 206 ++++++++----
- mm/internal.h                                      |   2 +-
- mm/io-mapping.c                                    |  30 --
- mm/kasan/common.c                                  |  25 +-
- mm/khugepaged.c                                    |  58 ++--
- mm/madvise.c                                       |  71 ++++-
- mm/memory-failure.c                                |  12 +-
- mm/mempool.c                                       |  24 +-
- mm/mincore.c                                       |   3 +
- mm/mmap_lock.c                                     |  10 +-
- mm/mprotect.c                                      |   2 +-
- mm/mremap.c                                        |   4 +-
- mm/mseal.c                                         | 166 +++-------
- mm/nommu.c                                         |   2 +-
- mm/rmap.c                                          |   2 +-
- mm/shmem.c                                         | 279 +++++++++--------
- mm/vma.c                                           |   4 +-
- mm/vma.h                                           |  27 +-
- tools/testing/selftests/cachestat/test_cachestat.c |  62 +++-
- tools/testing/selftests/mm/.gitignore              |   1 +
- tools/testing/selftests/mm/Makefile                |   1 +
- tools/testing/selftests/mm/process_madv.c          | 344 +++++++++++++++++++++
- tools/testing/selftests/mm/run_vmtests.sh          |   5 +
- tools/testing/vma/vma_internal.h                   |   6 +-
- 42 files changed, 1080 insertions(+), 511 deletions(-)
- delete mode 100644 mm/io-mapping.c
- create mode 100644 tools/testing/selftests/mm/process_madv.c
-
-
+On Mon, Aug 4, 2025 at 1:25=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 02.08.25 01:45, Sudarsan Mahendran wrote:
+> > Enable these tests to be run on other pfnmap'ed memory like
+> > NVIDIA's EGM.
+> >
+> > Add '--' as a separator to pass in file path. This allows
+> > passing of cmd line arguments to kselftest_harness.
+> > Use '/dev/mem' as default filename.
+> >
+> > Existing test passes:
+> >       pfnmap
+> >       TAP version 13
+> >       1..6
+> >       # Starting 6 tests from 1 test cases.
+> >       # PASSED: 6 / 6 tests passed.
+> >       # Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
+> >
+> > Pass params to kselftest_harness:
+> >       pfnmap -r pfnmap:mremap_fixed
+> >       TAP version 13
+> >       1..1
+> >       # Starting 1 tests from 1 test cases.
+> >       #  RUN           pfnmap.mremap_fixed ...
+> >       #            OK  pfnmap.mremap_fixed
+> >       ok 1 pfnmap.mremap_fixed
+> >       # PASSED: 1 / 1 tests passed.
+> >       # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+> >
+> > Pass non-existent file name as input:
+> >       pfnmap -- /dev/blah
+> >       TAP version 13
+> >       1..6
+> >       # Starting 6 tests from 1 test cases.
+> >       #  RUN           pfnmap.madvise_disallowed ...
+> >       #      SKIP      Cannot open '/dev/blah'
+> >
+> > Pass non pfnmap'ed file as input:
+> >       pfnmap -r pfnmap.madvise_disallowed -- randfile
+> >       TAP version 13
+> >       1..1
+> >       # Starting 1 tests from 1 test cases.
+> >       #  RUN           pfnmap.madvise_disallowed ...
+> >       #      SKIP      Invalid file: 'randfile'. Not pfnmap'ed
+> >
+> > Signed-off-by: Sudarsan Mahendran <sudarsanm@google.com>
+> > ---
+> >
+> > v1 -> v2:
+> > * Add verify_pfnmap func to sanity check the input param
+> > * mmap with zero offset if filename !=3D '/dev/mem'
+> >
+> > ---
+> >   tools/testing/selftests/mm/pfnmap.c | 62 ++++++++++++++++++++++++----=
+-
+> >   1 file changed, 53 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/mm/pfnmap.c b/tools/testing/selfte=
+sts/mm/pfnmap.c
+> > index 866ac023baf5..e078b961c333 100644
+> > --- a/tools/testing/selftests/mm/pfnmap.c
+> > +++ b/tools/testing/selftests/mm/pfnmap.c
+> > @@ -1,6 +1,7 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >   /*
+> > - * Basic VM_PFNMAP tests relying on mmap() of '/dev/mem'
+> > + * Basic VM_PFNMAP tests relying on mmap() of input file provided.
+> > + * Use '/dev/mem' as default.
+> >    *
+> >    * Copyright 2025, Red Hat, Inc.
+> >    *
+> > @@ -25,6 +26,7 @@
+> >   #include "vm_util.h"
+> >
+> >   static sigjmp_buf sigjmp_buf_env;
+> > +static char *file =3D "/dev/mem";
+> >
+> >   static void signal_handler(int sig)
+> >   {
+> > @@ -98,6 +100,30 @@ static int find_ram_target(off_t *phys_addr,
+> >       return -ENOENT;
+> >   }
+> >
+> > +static int verify_pfnmap(void)
+>
+> You really want to pass in the address, and verify that that very
+> mapping is a PFNMAP. (not something unrelated, like the vdso or
+> something odd like that)
+>
+> We have a helper in vm_util.c that might be useful: __get_smap_entry()
+>
+> We also have a check_vmflag_io() in there. So likely you want to add a
+> helper check_vmflag_pfnmap().
+>
+Done. Sent v3 patch for review.
+>
+> Nothing else jumped at me, except that phys_addr might be better called
+> something like "offset" now.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
