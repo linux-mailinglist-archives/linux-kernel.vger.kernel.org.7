@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-756358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDF6B1B30E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D84FB1B30A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBCB93BCE0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD72C3BCB2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD4D270569;
-	Tue,  5 Aug 2025 12:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B637E26B2D2;
+	Tue,  5 Aug 2025 12:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ab8b0Ynt"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hvPkNgNb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E324426C3A0;
-	Tue,  5 Aug 2025 12:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C2423F40C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395680; cv=none; b=YEfQ0zKbyf/DViTqwjd+LZJAyvk0nZ4qrqyrql/a7E0C+E4GHZhqI/kKJGW/AG1SQhsmwImg1m8BRzWS8SMc+t58OrgrKAOb6YpOytcEzFtcN2kEjagDU1Vd51SCg9p1kRGeiOY8bsR5qS/LlXwr84mpQX6lztvNgjhoZCAGagM=
+	t=1754395678; cv=none; b=GCHwgfyuk4J6ryjTAk9suerMgZLdvR9XABcAO3VRlcNXcZipIJWqjJCt4g9IlSYxke+Wlmr0YJuOAd+U0ONPIyFhRZZXOZGzhD5e8cSMUNstN5ZsxCr+AJT0ZBK8uvqOA8ZhkKjJhhlReFUAtL340VYIPQK+kkwi95/cSC+Wqc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395680; c=relaxed/simple;
-	bh=9jbRXTWg5drDGKZmm9+jxArkAVNt8hHd6dX/RQglKX0=;
+	s=arc-20240116; t=1754395678; c=relaxed/simple;
+	bh=IppRhA9f5LX9Nb32MXQBE5CFGdG98rfIOP9iCkcxLn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FH9hhkAcLEEWIwdW2DI8pHXvF91hkG/Q9dEARHRplskDDkcnVo6O/MneF5c3/Ehbn/dJTb5It4b2dUmnGj5XxcAVbk7ordfjO66SifnSZSMBGr9c6wHigZXyIBCiWw/DrqAYh+bS4gizJK4mfyS6mrUOwyciFkhOX1VwEuxnExI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ab8b0Ynt; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758wBMq025323;
-	Tue, 5 Aug 2025 12:07:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dmBbf3
-	vsbAhxRKAWpIUpnCOU2+QWNz069W2N+Af6Ybc=; b=Ab8b0YntlZLZOZXC2PHEtf
-	1ysW3ggWrBFahvWuZt+H2eyWlcf89ZQ7/ZkPkcPMogier67m0KgIfwKKl9hX3DCj
-	nTHLHUw0aiw6unk8qRS8Y3C33SMIySwRjy6oTcE1RGVUqORxwJIbxgRVYBSvig/b
-	lYe78X73b8YyLWoz3PafJT1RHVXR3pHwodRdBwc6k36RuSChFOJyIxyI8cLzOUor
-	dOIHgYO7ZSQWbDW5P/0lXkl2ozedD88mIJKjqcfThrd9gNWiDO9UtkUPTKsunuiK
-	/JPS0HaoTyQ6d8MMH7OppLG+L5kgBpmmqS+WPb8gYQ2bnWgO+UybLOqv3IQqYMQA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6mf3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 12:07:12 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 575C2feI004587;
-	Tue, 5 Aug 2025 12:07:11 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6mf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 12:07:11 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5759ekUc001936;
-	Tue, 5 Aug 2025 12:07:10 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 489y7kt3sd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 12:07:10 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575C79bZ30212698
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 12:07:09 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EAD195805D;
-	Tue,  5 Aug 2025 12:07:08 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7279C58057;
-	Tue,  5 Aug 2025 12:07:01 +0000 (GMT)
-Received: from [9.61.255.245] (unknown [9.61.255.245])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 12:07:01 +0000 (GMT)
-Message-ID: <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
-Date: Tue, 5 Aug 2025 17:37:00 +0530
+	 In-Reply-To:Content-Type; b=KNTtoLsqJJF4xAcQqvNIXbRpD9EK8dfoz8HB6vFPWliJtEIFOfZjVlkb5pM8OMvtKBm+IkBOeS/tncnmaVtKVy1zVBioHcqMzU9IxgQ8bW1NQ5NLLB0n4vm/9W6f94/I0DV7Dj17lAY2ysk43hD7cGEdvokzOKuMRD92muvo9HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hvPkNgNb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754395674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7g5TY6RCcpzFCYXDHvD8PiehF1IggpjyaG88FCPGaI8=;
+	b=hvPkNgNbS111p1Yk0wPs9yvlc7t8096txUrsqi7Jg/7esywAqnetKJws6lwyh+fJmVINEH
+	wsjO8liFBBV4zaCZrBtVn1Mt615PJRUNx+sGWwYPCSvyNapDjEyx+HfKLKt5P9UU41BwBh
+	Gd5XQMkdIWCACtkV7H2eh3577JjGtoU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-UFct9GWjM9KkRkOnCpePiQ-1; Tue, 05 Aug 2025 08:07:53 -0400
+X-MC-Unique: UFct9GWjM9KkRkOnCpePiQ-1
+X-Mimecast-MFC-AGG-ID: UFct9GWjM9KkRkOnCpePiQ_1754395672
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-458a31421a3so20484415e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:07:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754395672; x=1755000472;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7g5TY6RCcpzFCYXDHvD8PiehF1IggpjyaG88FCPGaI8=;
+        b=Ug5crU/kQZLKFs12mt3UzeH2xITeDrG09bxgn4uOtTyFckVO/3VHhYd2wQZmqXfOXj
+         kVA1l40MjpMvU5ejr0URZmsfQePule1cNL34QGrpYI2nIlTcAkr6HXD8lEEg7BgsZEju
+         yGvk2RcL5W2JhQGh+pD3VVv6LsVDgyk7WDlo5Gv7adlBU2F8XwMhJ++NmiPSw5xZVSk2
+         qSxWXylLVDL/hhCFKFS4HIvX2Wmh10ErTFfsA3eKddbPbm3u1tWiV+G5bQz/Mq2IpyV1
+         LUj6HeuHNa2Rts/VZ2sBuLW4ttJtRDGvHofolPkNxBV0+W2z4qjJbuqZsqVQ0iJ2r9jF
+         IeBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKCZ7GfbSf/LXFYDmFAtJ4213oF9KYLf6XSGWhoo3N22xwVe6mTE0DlvJdfLq+5Cpno1zIRj6QedcJ/GE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCqfWebRflLhMq5x0XLzTWunv0O+lgdayT2s1AU/E9n4Wt3bvG
+	b1/YeKhDQJ7sqzFO0QR7AdOMigg7KehDhbP/JHIOAd4JrqNDFUA4pHsPROo3rC5Hi4IzAOtruaQ
+	4pzvJ4vc8UVEQTdDLgp4bCgxPG6bva2FzdITc83U57fMwMXdrOM4xMPYk10lnJY9x4A==
+X-Gm-Gg: ASbGncsgb5P/9FYF0luTRMawY1jBIbQPYe5uxEfd1nDVpreQCZf7RTnQueASXGWLF6r
+	6WfO5y0NvU76lyJdWydjf5NvRLP/ufAyyMoCRlJysxuu+j9UxCyZY1qTa73LMLT8oCRs5wWBzDj
+	0R9dsoZd769BA7S2Wul5Iroo/F1cXqOV9QZiW+f6LK5INvKwu+6iUvEHSY8jC2maa6yyHh9nb3N
+	BPGeOqW0U3vWNPX8gS5rXl1e3xUhJiBluFWFQORf9elJVAas1ab2PNfJMjs4/RJe2yoZYhuqcH4
+	ppB2ZuNVNTfhGAbLMCRh9n1Kx+AGZFFYp8W2owWIYi9SVpiXQFFfwR124ApGhXLO8g+t+2qATX/
+	0dWCEBaVTELbxTa+erPls0PWXpD7ICpA3C4PSlkhNWJYW5DHp/z/JU06RCS1WCUXl3G8=
+X-Received: by 2002:a05:600c:a43:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-458b69c8300mr110640375e9.2.1754395671745;
+        Tue, 05 Aug 2025 05:07:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+IhNRqRL6jSPu1sN+HeHznfpj9c1/PPhayfhWO2xWYBfi+odz5/vWfgQK82w4OMctODG6Xg==
+X-Received: by 2002:a05:600c:a43:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-458b69c8300mr110640065e9.2.1754395671242;
+        Tue, 05 Aug 2025 05:07:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459de0d4cf1sm59347605e9.13.2025.08.05.05.07.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 05:07:50 -0700 (PDT)
+Message-ID: <9b447a66-7dcb-442b-9d45-f0b14688aa8c@redhat.com>
+Date: Tue, 5 Aug 2025 14:07:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,162 +89,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena
- atomics
-Content-Language: en-GB
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
-        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
-        iii@linux.ibm.com, shuah@kernel.org
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <20250805062747.3479221-1-skb99@linux.ibm.com>
+Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
+References: <20250804162201.66d196ad.alex.williamson@redhat.com>
+ <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
+ <20250804185306.6b048e7c.alex.williamson@redhat.com>
+ <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
+ <20250805114908.GE184255@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250805114908.GE184255@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4NiBTYWx0ZWRfX596WOsv8t2Nu
- 6Ti0/7opO+/Q8aMNLWnOFfmjUNBB/zcIhHpT/MY5JSMv5Nk0fuL6essvF7IZ44Nh+PrH/2ckgaA
- LED6BNdCtHpuKc36EO0J1jVW1dDKSAFO8keFj9eTnSHIq9lm8mxQGUMgnY4qCW8K02H2tCxfsRb
- tBasacKbua117Y8aFxj1//ekizsGEEvS89PwaMUe13SMV8LOQGqQdQRQx/WfJXoOvx44AaV3GiD
- uaDVm66KmSL0IyB1qs2oYAS9yzErO4bSuNu7xHhgrlBh2SSWSNmQESSbdjyfgPdomNjg67sbY9o
- NYlLxtEYnOiJpq3/FY8J+cn2h4US8slemUKV9QY2YQRjGJLE+sOIYJKKDUa6sg9yK5aFwMAUFgN
- +Sqg5bbCgqALo5I5pW5aOkVCKsPHaznm/pYRNFF+70tXbeLkAanhLzw0JdscY3XgSdWf78Ai
-X-Proofpoint-GUID: zwSgSe2PW3c_zdAjZHzvfg7IXhpW-4Nw
-X-Proofpoint-ORIG-GUID: h9GzZ1uOk1OkDlOyj5wXqG3a1SKTHaOc
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6891f3f0 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=bY9AdTtUMlb7YCNkD7QA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050086
+Content-Transfer-Encoding: 7bit
 
+On 05.08.25 13:49, Jason Gunthorpe wrote:
+> On Tue, Aug 05, 2025 at 09:47:18AM +0200, David Hildenbrand wrote:
+>>> There was discussion here[1] where David Hildenbrand and Jason
+>>> Gunthorpe suggested this should be in common code and I believe there
+>>> was some intent that this would get reused.  I took this as
+>>> endorsement from mm folks.  This can certainly be pulled back into
+>>> subsystem code.
+>>
+>> Yeah, we ended up here after trying to go the folio-way first, but then
+>> realizing that code that called GUP shouldn't have to worry about
+>> folios, just to detect consecutive pages+PFNs.
+>>
+>> I think this helper will can come in handy even in folio context.
+>> I recall pointing Joanne at it in different fuse context.
+> 
+> The scatterlist code should use it also, it is doing the same logic.
+> 
+>> The concern is rather false positives, meaning, you want consecutive
+>> PFNs (just like within a folio), but -- because the stars aligned --
+>> you get consecutive "struct page" that do not translate to consecutive PFNs.
+> 
+> I wonder if we can address that from the other side and prevent the
+> memory code from creating a bogus contiguous struct page in the first
+> place so that struct page contiguity directly reflects physical
+> contiguity?
 
-On 05/08/25 11:57 am, Saket Kumar Bhaskar wrote:
-> This patch series introduces support for the PROBE_MEM32,
-> bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
-> facilitating the implementation of BPF arena and arena atomics.
->
-> The last patch in the series has fix for arena spinlock selftest
-> failure.
->
-> This series is rebased on top of:
-> https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
->
-> All selftests related to bpf_arena, bpf_arena_atomic(except
-> load_acquire/store_release) enablement are passing:
+Well, if we could make CONFIG_SPARSEMEM_VMEMMAP the only sparsemem 
+option ... :) But I recall it's not that easy (e.g., 32bit).
 
+I don't see an easy way to guarantee that. E.g., populate_section_memmap 
+really just does a kvmalloc_node() and 
+__populate_section_memmap()->memmap_alloc() a memblock_alloc().
 
-Hello Saket,
+So if the starts align, the "struct page" of the memory of two memory 
+sections are contiguous, although the memory sections are not contiguous.
 
+Just imagine memory holes.
 
-I see couple of selftests are failing on my set up.
+Also, I am not sure if that is really a problem worth solving right now. 
+If a helper on !CONFIG_SPARSEMEM_VMEMMAP is a little slower on some 
+operations, like nth_page(), I really don't particularly care.
 
->
-> # ./test_progs -t arena_list
-> #5/1     arena_list/arena_list_1:OK
-> #5/2     arena_list/arena_list_1000:OK
-> #5       arena_list:OK
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
->
-> # ./test_progs -t arena_htab
-> #4/1     arena_htab/arena_htab_llvm:OK
-> #4/2     arena_htab/arena_htab_asm:OK
-> #4       arena_htab:OK
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
->
-> # ./test_progs -t verifier_arena
-> #464/1   verifier_arena/basic_alloc1:OK
-> #464/2   verifier_arena/basic_alloc2:OK
-> #464/3   verifier_arena/basic_alloc3:OK
-> #464/4   verifier_arena/iter_maps1:OK
-> #464/5   verifier_arena/iter_maps2:OK
-> #464/6   verifier_arena/iter_maps3:OK
-> #464     verifier_arena:OK
-> #465/1   verifier_arena_large/big_alloc1:OK
-> #465/2   verifier_arena_large/big_alloc2:OK
-> #465     verifier_arena_large:OK
-> Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
+Eventually, !CONFIG_SPARSEMEM_VMEMMAP will go away in some distant 
+future and we will all be happy.
 
+-- 
+Cheers,
 
-All error logs:
-tester_init:PASS:tester_log_buf 0 nsec
-process_subtest:PASS:obj_open_mem 0 nsec
-process_subtest:PASS:specs_alloc 0 nsec
-run_subtest:PASS:obj_open_mem 0 nsec
-run_subtest:PASS:unexpected_load_failure 0 nsec
-do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
-run_subtest:FAIL:1103 Unexpected retval: 4 != 0
-#513/7   verifier_arena/reserve_invalid_region:FAIL
-#513     verifier_arena:FAIL
-Summary: 1/14 PASSED, 0 SKIPPED, 1 FAILED
-
-
->
-> # ./test_progs -t arena_atomics
-> #3/1     arena_atomics/add:OK
-> #3/2     arena_atomics/sub:OK
-> #3/3     arena_atomics/and:OK
-> #3/4     arena_atomics/or:OK
-> #3/5     arena_atomics/xor:OK
-> #3/6     arena_atomics/cmpxchg:OK
-> #3/7     arena_atomics/xchg:OK
-> #3/8     arena_atomics/uaf:OK
-> #3/9     arena_atomics/load_acquire:SKIP
-> #3/10    arena_atomics/store_release:SKIP
-> #3       arena_atomics:OK (SKIP: 2/10)
-> Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
->
-> All selftests related to arena_spin_lock are passing:
->
-> # ./test_progs -t arena_spin_lock
-> #6/1     arena_spin_lock/arena_spin_lock_1:OK
-> #6/2     arena_spin_lock/arena_spin_lock_1000:OK
-> #6/3     arena_spin_lock/arena_spin_lock_50000:OK
-> #6       arena_spin_lock:OK
-> Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-test_arena_spin_lock_size:FAIL:check counter value unexpected check 
-counter value: actual 15999 != expected 16000
-#6/1     arena_spin_lock/arena_spin_lock_1:FAIL
-#6       arena_spin_lock:FAIL
-Summary: 0/2 PASSED, 0 SKIPPED, 1 FAILED
-> Saket Kumar Bhaskar (6):
->    bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
->      instructions
->    bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
->    bpf,powerpc: Implement bpf_addr_space_cast instruction
->    bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
->      instructions
->    bpf,powerpc: Implement PROBE_ATOMIC instructions
->    selftests/bpf: Fix arena_spin_lock selftest failure
->
->   arch/powerpc/net/bpf_jit.h                    |   6 +-
->   arch/powerpc/net/bpf_jit_comp.c               |  32 +-
->   arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
->   arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
->   .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
->   .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
->   .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
->   7 files changed, 348 insertions(+), 105 deletions(-)
->
-> base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
-
-
-Regards,
-
-Venkat.
+David / dhildenb
 
 
