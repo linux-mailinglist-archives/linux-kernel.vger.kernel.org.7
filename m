@@ -1,214 +1,153 @@
-Return-Path: <linux-kernel+bounces-756867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F9EB1BA8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:01:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D4FB1BA94
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3214716BF87
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D417625A31
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A59A29AAEF;
-	Tue,  5 Aug 2025 19:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BA8298CDE;
+	Tue,  5 Aug 2025 19:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HliLs8Np"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ePJFqYae"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC75274FD5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA862222D1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754420466; cv=none; b=T4S4yxQKmv3pU/x2U/TgCMQyYtT/Wy3wNmeTUn8jWdvLQ+bRuTyHfyxqeCKQgHc9JovNMF6S4rfHgz9vLnN/L+auYYP43X+/orHzr6vkTFwQePGDCfjG72M3TsmjNi6ZsvG2B9FsyPWMUno9EfoIQP/35DQYCxmlJYHtsg2QPBs=
+	t=1754420731; cv=none; b=syLyuQoEsbDDGrLgPzSxcEe+ALBOQHfpoXRfdPzV7k9vWIr12yf86hXmkYXnbwmSaY3Ab2AC4Ky19Heqeu2I/9HloV5wFnYiR48yIwqDaKObyJVFzU2E23lsdO2cLJBU5fN6A5hZgqJ7RsRIW+xrf2DAvItptVAFkOA4Fq9RUIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754420466; c=relaxed/simple;
-	bh=1Krwh7FobQRcREyaRrEQ/cZSl+wxFYPAAxZAK3zDSnE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PheyufRHKBURj37ukTXXGo90LGPELga88DRXeWECBz6/tKv7N2nhgV8QxWnOFGqJukZSQm+gpSI8Wcrdu4IyeiBOCzT7P7w78Hvfh98LRMhxFo9trIaH3coUGpMT9lcapXK2S3PhHBSyeVDu3/dTzY8clFf3nJVJJnPwLV6+4eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HliLs8Np; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1754420731; c=relaxed/simple;
+	bh=a50FLnYjbryMJmdW+4ZgeVhCMzW50M8NynvFWUpALqc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jTFioVq7BmiDxeadZJqhyNsW5jp39X5RKu/5YIYHuXr48yBM/qMkLeil38173YnN7VzSladsfV56wuaPMUuznIjGdptXki9CI+xZ1WWZAmOZzbj4RzvHE5S4+V/4DKoPoZMw7IpagyPebrkSRPMGenp8Ah/xwoBYKN2PaKyRMtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ePJFqYae; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b423036a317so3300981a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:01:03 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3141f9ce4e2so8163410a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754420463; x=1755025263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DqbqG+VYQxLPKNsOYQV05DishlUwU606vMY98kUStrY=;
-        b=HliLs8NpTBAuorR0X6Sg/pvTVZn78RNMb0iiSSPo/aLovWQdcin0PGlFuLDVXgGMWR
-         yZkjJEOehor0GpnNDZvwlpmi+uUOJp/miDZ1+WAwRh3HuP2FsKNM/jjMMlyfvoFSGQ5X
-         qUV//b1u6i/xsH3k4tSnBd/wTWff4i+u+0XxwrsNdFWdr9bgczD+JwyvhYFKJZuHobEh
-         8YsbzXbQn8ceKsfKuYCrWSh4kHQkQCUMhcUsF7fru9j8m3h67ksNp5S8lTi0bpCKark3
-         P7x0qgUgkTP1FYu1b6WRzsyuqAEMCvghiE/OQSanGx/PidOLIZEwUH5xw0uL5mm0vEL+
-         yGBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754420463; x=1755025263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1754420729; x=1755025529; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DqbqG+VYQxLPKNsOYQV05DishlUwU606vMY98kUStrY=;
-        b=JjKt7CMzooCzOvKtN84Lxpxr/i8hDe05yVjvR7TY3hJghoawLlcZoyILUgxw7IEcd4
-         ZECMhplIABOe2ojEn+XmBFlSA7ObOCvKwjqBaO9UzEp6O3K0s1AVvfXyNzcD5COyeae1
-         Ky0C/tM7JGIvuA3p82UCL6HUUWGvHNwoTSElqid8dSoMy7Q0+QSAacPHnbIwYRcdO+Qs
-         oTKKxXlMiFMp3QSdzn5Fkmw08cpqPrGywB2CwywiZbzSScFGfeFkQ3CiP3lEBrX+NwzA
-         gEYqD7IQ3D5SokdezlrdtCfSOftq8Mq7COLdO4KyieVe5F8ZrgAqM+mcAYkmEiibDOgM
-         PsBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH0hiOyUOT48B9kS4SOGhDPwAXruqS+kgUX87AvrBEJ4pc32XmTSMZpMcpXuVkz7FV1VXRfHECAn/s4zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTrOPM2fYLNOgv5Ick1E5vKeqGHe1kOLxZUZkV/lyGMI5pdjZT
-	1HU9krkoGRtrBptaFtAHn5dK7iBmeXwy5OF+eLjTUBUfKSvLqa04xkSU9HoOJm3SERgJhyeZ/cS
-	X4O3+OXtRYQsSMZyQX+m2h+rtAdj+26Ih9RJMtYwj
-X-Gm-Gg: ASbGncswVWE0xBJO8JiZZXrTUObuUkuYDQIKEa7g0lj2zAaK0tQW5vEj22wvyGqw4zF
-	c2DlCOG92BnuU6UpTv8drw9UC0ktr6zu/w6jaGCk7W9MY0jpM10okgLXc+H7JOvWxWX3jk60UYU
-	X9Di5fY/ECEBToxo5wZuHWVwJ1RsKcFCfiWfRrptyTOpLnky/TaauSk7NQWwT9MnYnUJlgqEI14
-	DLkmYE/dFBJkwME5eOvfEJEQox+ag7i+JhDCg==
-X-Google-Smtp-Source: AGHT+IHCLnUMZEnBTd9aRh9NH9ZiXKIeQVodIqM9YdjvCELP3pwRah8p6LpocyUTBWFy/TFpXkyzkolaS50sngI+iqg=
-X-Received: by 2002:a17:90b:1c10:b0:312:959:dc4f with SMTP id
- 98e67ed59e1d1-321161da11emr16503491a91.5.1754420462096; Tue, 05 Aug 2025
- 12:01:02 -0700 (PDT)
+        bh=bS6lzGa+a4UoxmIiZruUwsnBpGjEnGL2s8vnSrdXcIw=;
+        b=ePJFqYaeAa++tFW1n27rn0YtZfQIQKWa4eK/UO/lVxadyWZpfrUx6Sc6RelJIwic5a
+         3y2DJk06gN7+HyLc2D8CMw421kUJS1qytH/Yv17Le9yA2OLo0Y53m+3mEhatwfkt9bAr
+         kyNF8UraEKatezvTfpZsf9wAYKWpleWbqHCoUphn01Nh0OUNNCy5ScMRj4B5aH9rhctw
+         vqVJbl3rj6FzX8H3Y6e4zF2Z8U1EGamF0yhp1EW8h/eRzkMsY9Z7z4mlQvIRMjsRsCik
+         dhcNm2nNSYc06e4hfZWpq3eOVhiZO6CIvpWFklNWzmlYNCtrkGT4E0trfbnusXbOpzZM
+         r2+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754420729; x=1755025529;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bS6lzGa+a4UoxmIiZruUwsnBpGjEnGL2s8vnSrdXcIw=;
+        b=N89wOHW9+CuEuXvGtmpfOBI10l6CAcIGNscnlQ00Ai4xG2It4C22vSnHiAxrD/9T65
+         eRyQSZPZAXgX1QFfxXGTzBUvM/nj1/qhIjEU5HuUqObP6a/IouzRliOdFXcigFTl2QCW
+         vvl/wNj3tfkIZNWQEAmzgFAK+fhYI0SdCtUlxACIBA/GxLhTjnSiHg9wSKQRVGLyIItx
+         LmmQ4GeYhBPnlPNlsxX4uSIuJe2NXFNggEAD+DgqwnYeGjHl/RfZlxRwrgiiryZ7P1Md
+         ti5UHw8X1q/y+ie9KfcfbyWVl+8OIUxaKDs7Y8KS2fjHzA4VJj+lpVX68kwhtEF7yiFO
+         ODRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWl+Jlnrbmz0BglC2cRVkQsoyXqmQnUmJzbi8dS+3K4+QI3/Cz+Jo0M/VKSV+4kIUlCzcpiHfwzXIXGXeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu5G0hYRY1GWOIIZhVanrQ3BxhggaZPtwx3bVo5SZ1V9frAYUm
+	hRrJTl7sy8pW9okgaa5gqrtqmkQYqf5AlCupuA+jWduQQU55+c837TKcz/wLbJM8WWvsmNzX523
+	fxU1WJA==
+X-Google-Smtp-Source: AGHT+IHuXgga47QgLpiDcAb7ecTVo2jB0HFPscDo4Uwpkl9uNuR9J8wQh7clBJZ+ZAj0PIKE9mft2wsX57U=
+X-Received: from pjpo11.prod.google.com ([2002:a17:90a:9f8b:b0:31f:6ddd:ef5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4984:b0:31f:1db2:69b1
+ with SMTP id 98e67ed59e1d1-321162b5186mr21688924a91.18.1754420729216; Tue, 05
+ Aug 2025 12:05:29 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue,  5 Aug 2025 12:05:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250802092435.288714-1-dongml2@chinatelecom.cn> <20250802092435.288714-3-dongml2@chinatelecom.cn>
-In-Reply-To: <20250802092435.288714-3-dongml2@chinatelecom.cn>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Tue, 5 Aug 2025 12:00:51 -0700
-X-Gm-Features: Ac12FXzTuA4HMKsW7fdVVKpIo_5_0_S7ESYLcz_iQDdsIdyslQiuGk4V2pjHPR4
-Message-ID: <CAAVpQUBAk=339yyCnG+hDnHEu-O1+WPnAVqX=X9H22T=POQ3Bg@mail.gmail.com>
-Subject: Re: [PATCH net v3 2/2] selftests/net: test TCP reuseport socket selection
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: edumazet@google.com, ncardwell@google.com, davem@davemloft.net, 
-	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	shuah@kernel.org, kraig@google.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250805190526.1453366-1-seanjc@google.com>
+Subject: [PATCH 00/18] KVM: x86: Fastpath cleanups and PMU prep work
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Sandipan Das <sandipan.das@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 2, 2025 at 2:24=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> The test script is provided by Kuniyuki in [1], which is used to test the
-> selection of the TCP reuseport socket problem.
->
-> Link: https://lore.kernel.org/netdev/20250801040757.1599996-1-kuniyu@goog=
-le.com/ [1]
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
->  tools/testing/selftests/net/Makefile         |  1 +
->  tools/testing/selftests/net/tcp_reuseport.py | 36 ++++++++++++++++++++
->  2 files changed, 37 insertions(+)
->  create mode 100755 tools/testing/selftests/net/tcp_reuseport.py
->
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftes=
-ts/net/Makefile
-> index b31a71f2b372..0f4c3eea9709 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -117,6 +117,7 @@ TEST_GEN_FILES +=3D tfo
->  TEST_PROGS +=3D tfo_passive.sh
->  TEST_PROGS +=3D broadcast_pmtu.sh
->  TEST_PROGS +=3D ipv6_force_forwarding.sh
-> +TEST_PROGS +=3D tcp_reuseport.py
->
->  # YNL files, must be before "include ..lib.mk"
->  YNL_GEN_FILES :=3D busy_poller netlink-dumps
-> diff --git a/tools/testing/selftests/net/tcp_reuseport.py b/tools/testing=
-/selftests/net/tcp_reuseport.py
-> new file mode 100755
-> index 000000000000..eaeb7096382e
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/tcp_reuseport.py
-> @@ -0,0 +1,36 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import os
-> +
-> +from lib.py import ksft_run, ksft_exit
-> +from socket import *
-> +
-> +def test_reuseport_select() -> None:
-> +    s1 =3D socket()
-> +    s1.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-> +    s1.setsockopt(SOL_SOCKET, SO_BINDTODEVICE, b'lo')
-> +    s1.listen()
-> +    s1.setblocking(False)
-> +
-> +    s2 =3D socket()
-> +    s2.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-> +    s2.bind(s1.getsockname())
-> +    s2.listen()
-> +    s2.setblocking(False)
-> +
-> +    for i in range(3):
-> +        c =3D socket()
-> +        c.connect(s1.getsockname())
-> +        try:
-> +            print("SUCCESS: assigned properly:", s1.accept())
-> +        except:
-> +            print("FAIL: wrong assignment")
-> +            os.sys.exit(1)
+This is a prep series for the mediated PMU, and for Xin's series to add
+support for the immediate forms of RDMSR and WRMSRNS (I'll post a v3 of
+that series on top of this).
 
-It seems you don't need to handle an exception with ksft.
-You can see os.sys.exit(1) triggers another exception when
-you run it without patch 1.
+The first half cleans up a variety of warts and flaws in the VM-Exit fastpath
+handlers.  The second half cleans up the PMU code related to "triggering"
+instruction retired and branches retired events.  The end goal of the two
+halves (other than general cleanup) is to be able bail from the fastpath when
+using the mediated PMU and the guest is counting instructions retired, with
+minimal overhead, e.g. without having to acquire SRCU.
 
-TAP version 13
-1..1
-# timeout set to 3600
-# selftests: net: tcp_reuseport.py
-# TAP version 13
-# 1..1
-# FAIL: wrong assignment
-# # Exception| Traceback (most recent call last):
-# # Exception|   File
-"/root/linux/tools/testing/selftests/net/./tcp_reuseport.py", line 26,
-in test_reuseport_select
-# # Exception|     print("SUCCESS: assigned properly:", s1.accept())
-# # Exception|                                          ~~~~~~~~~^^
-# # Exception|   File "/usr/lib64/python3.13/socket.py", line 295, in accep=
-t
-# # Exception|     fd, addr =3D self._accept()
-# # Exception|                ~~~~~~~~~~~~^^
-# # Exception| BlockingIOError: [Errno 11] Resource temporarily unavailable
-# # Exception|
-# # Exception| During handling of the above exception, another
-exception occurred:
-# # Exception|
-# # Exception| Traceback (most recent call last):
-# # Exception|   File
-"/root/linux/tools/testing/selftests/net/lib/py/ksft.py", line 244, in
-ksft_run
-# # Exception|     case(*args)
-# # Exception|     ~~~~^^^^^^^
-# # Exception|   File
-"/root/linux/tools/testing/selftests/net/./tcp_reuseport.py", line 29,
-in test_reuseport_select
-# # Exception|     os.sys.exit(1)
-# # Exception|     ~~~~~~~~~~~^^^
-# # Exception| SystemExit: 1
-# not ok 1 tcp_reuseport.test_reuseport_select
-# # Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
-not ok 1 selftests: net: tcp_reuseport.py # exit=3D1
+Because the mediated PMU context switches PMU state _outside_ of the fastpath,
+the mediated PMU won't be able to increment PMCs in the fastpath, and so won't
+be able to skip emulated instructions in the fastpath if the vCPU is counting
+instructions retired.
+
+The last patch to handle INVD in the fastpath is a bit dubious.  It works just
+fine, but it's dangerously close to "just because we can, doesn't mean we
+should" territory.  I added INVD to the fastpath before I realized that
+MSR_IA32_TSC_DEADLINE could be handled in the fastpath irrespective of the
+VMX preemption timer, i.e. on AMD CPUs.  But being able to use INVD to test
+the fastpath is still super convenient, as there are no side effects (unless
+someone ran the test on bare metal :-D), no register constraints, and no
+vCPU model requirements.  So, I kept it, because I couldn't come up with a
+good reason not to.
+
+Sean Christopherson (18):
+  KVM: SVM: Skip fastpath emulation on VM-Exit if next RIP isn't valid
+  KVM: x86: Add kvm_icr_to_lapic_irq() helper to allow for fastpath IPIs
+  KVM: x86: Only allow "fast" IPIs in fastpath WRMSR(X2APIC_ICR) handler
+  KVM: x86: Drop semi-arbitrary restrictions on IPI type in fastpath
+  KVM: x86: Unconditionally handle MSR_IA32_TSC_DEADLINE in fastpath
+    exits
+  KVM: x86: Acquire SRCU in WRMSR fastpath iff instruction needs to be
+    skipped
+  KVM: x86: Unconditionally grab data from EDX:EAX in WRMSR fastpath
+  KVM: x86: Fold WRMSR fastpath helpers into the main handler
+  KVM: x86/pmu: Move kvm_init_pmu_capability() to pmu.c
+  KVM: x86/pmu: Add wrappers for counting emulated instructions/branches
+  KVM: x86/pmu: Calculate set of to-be-emulated PMCs at time of WRMSRs
+  KVM: x86/pmu: Rename pmc_speculative_in_use() to
+    pmc_is_locally_enabled()
+  KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
+  KVM: x86/pmu: Drop redundant check on PMC being globally enabled for
+    emulation
+  KVM: x86/pmu: Drop redundant check on PMC being locally enabled for
+    emulation
+  KVM: x86/pmu: Rename check_pmu_event_filter() to
+    pmc_is_event_allowed()
+  KVM: x86: Push acquisition of SRCU in fastpath into
+    kvm_pmu_trigger_event()
+  KVM: x86: Add a fastpath handler for INVD
+
+ arch/x86/include/asm/kvm_host.h |   3 +
+ arch/x86/kvm/lapic.c            |  59 ++++++++----
+ arch/x86/kvm/lapic.h            |   3 +-
+ arch/x86/kvm/pmu.c              | 155 +++++++++++++++++++++++++-------
+ arch/x86/kvm/pmu.h              |  60 ++-----------
+ arch/x86/kvm/svm/svm.c          |  14 ++-
+ arch/x86/kvm/vmx/nested.c       |   2 +-
+ arch/x86/kvm/vmx/pmu_intel.c    |   2 +-
+ arch/x86/kvm/vmx/vmx.c          |   2 +
+ arch/x86/kvm/x86.c              |  85 +++++-------------
+ arch/x86/kvm/x86.h              |   1 +
+ 11 files changed, 218 insertions(+), 168 deletions(-)
 
 
-btw, I'd write an official uAPI selftest in plain C for socket as
-python sometimes does a tricky thing and I don't trust it.
+base-commit: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
+-- 
+2.50.1.565.gc32cd1483b-goog
 
-For example, this is...
-
-from socket import *
-
-s =3D socket()
-s.listen(-1)
-
-internally translated to:
-
-socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) =3D 3
-listen(3, 0)                            =3D 0
 
