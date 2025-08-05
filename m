@@ -1,129 +1,221 @@
-Return-Path: <linux-kernel+bounces-758941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB981B1D5F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168DFB1AD97
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78422623A1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B89167024
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6F426D4EF;
-	Thu,  7 Aug 2025 10:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9552153EA;
+	Tue,  5 Aug 2025 05:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e2jZcK3M"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aweqrtRO"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A121FF49
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D3175A5;
+	Tue,  5 Aug 2025 05:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754563827; cv=none; b=eyBPDNCMHgzjral10nk2LmkUxCSmz8xUYUJLZHCggqPdWpBrcvunW0vz2SH/L4gug5DwueTtiOZjj7BvhjYGEmq+wzinTLZzxmAoGyp8XFEAdR0QUM/k5HML60nUpnsOImLE4b8DojRoBiEgNtbiBphAQ/fPOwzBG8L/Nqrp1wc=
+	t=1754372412; cv=none; b=GUOU0UMQ0ZUmelFM43PwLtOJApeBIzyR20I+oHzVEiOidHWIBeUr/7F9XoQXIIRs+Hmuag5LRUyzXnZiamFGcoJW3wAzAUOgyTAtWBaLr8X5IKmTcMD8rAtKkeKSFdUyIqdnWPapD1JPSk6yedhJ+vraib3iu66oWvEtGoYaBIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754563827; c=relaxed/simple;
-	bh=Syfn0NEuvRi1yje0O/PsVJqRnUVtWUN/PEXoRX+j6eU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=KlW+ztDkUk8kytI+yFLGRcD7V0D0FRhltQ2buIRf5mzOXbP8LrNwnaEBbjdPdu//4RdbAiVjrRQIWzlSBSgQ3+lefqAtH/F7A9UhKMQ+MM4pTOP0NcyRMkjRQu1z0iIKNVkV3aBecJ+dcRh9fKCnDbbAxlntgl7VuhF/6VPn4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e2jZcK3M; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250807105022epoutp033e54d6d66a33ac91180cb7070be0fdcf~ZdoAO8txq0652306523epoutp03x
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:50:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250807105022epoutp033e54d6d66a33ac91180cb7070be0fdcf~ZdoAO8txq0652306523epoutp03x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754563822;
-	bh=4JuxWH0gBRJFGn1yRVR8bYk8LvsjMgUCt5sZEIKMU0w=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=e2jZcK3MhHShok6QY1JpZA90wrloAaNL1f4N67gVCrQ0cHt+aESjgPMQLu6lIPajZ
-	 2o/Df62U5i3edTPAuG5HKG+UqZG6SD8MQXyyDyAY0Zuu/WxECQbBS9aTx1fFcHYPrI
-	 p3d02kLcxwAKqR9Os+i7I8n+CzqCmsa/sio/i6c8=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250807105021epcas5p3d0cb6d2d9e7317dda010087be19fcb1f~Zdn-wez1Y0694006940epcas5p3R;
-	Thu,  7 Aug 2025 10:50:21 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4byP7x017Dz2SSKb; Thu,  7 Aug
-	2025 10:50:21 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250805052803epcas5p47a93b443b6c085e237adbafc4de1f3b7~Yx8BUYASz2721327213epcas5p4k;
-	Tue,  5 Aug 2025 05:28:03 +0000 (GMT)
-Received: from FDSFTE361 (unknown [107.122.81.127]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250805052802epsmtip299b7db91253d19087c2c9b5618578ed1~Yx7-3VIlX0050500505epsmtip22;
-	Tue,  5 Aug 2025 05:28:02 +0000 (GMT)
-From: "Bharat Uppal" <bharat.uppal@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
-	<martin.petersen@oracle.com>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <linux-samsung-soc@vger.kernel.org>
-Cc: <pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>, "'Nimesh Sati'"
-	<nimesh.sati@samsung.com>
-In-Reply-To: <c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
-Subject: RE: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
- in reset on suspend
-Date: Tue, 5 Aug 2025 10:58:00 +0530
-Message-ID: <0ae601dc05c9$b749ba60$25dd2f20$@samsung.com>
+	s=arc-20240116; t=1754372412; c=relaxed/simple;
+	bh=N/pmzhrhBR41PCutlnpr0nlE6nslcrMo+1tEG23f7Dk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DbqBhdcVOawPIRf8QqyVOAGol6ykiDkVuz5GfQKDlvE9ez+Trc08aNpkZi1Z5/QLlUeGnpoEGJuljsJyX4jd/PY3cw9ktfByv1RXERodpS77+z+hyGqcXtxEJCfRe1kFrhUwLDyT7zk39UCFk/qio1muoOVmYujUin2PkBLVzO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aweqrtRO; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76bc5e68d96so4188256b3a.3;
+        Mon, 04 Aug 2025 22:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754372410; x=1754977210; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LeEJhrhnwUrTVBP5B/ItjxYOvOdUNX9WUsE+fmf4AKc=;
+        b=aweqrtRONwjeUoe1AkDvDjjoyg2i3DX8P74uLl0TgOD1WFqhIF+xrFC9C+FbZ2/BwD
+         xJIBXdQS7RHWj+UI3CgtUBq4YZXh2ubCXm8/JGXFkMc7wuODnfjR+rMT9AHjvodazW1A
+         IIuHXo0I2EYkt7DTerkTt7yCrbpucdnqXcRQ/f16x2a9OwxhinozZA4/+74iXgNQPkek
+         nfuqpRSq4XHSDVzryckrY8GiqTlB0OZg8MKBNlLhuiG9zBKzhmxzyF2NgZdUmPMUmMs7
+         scoXw7yIoVTFNGaTZE2D1LDdwtKjuDd8skicL0UJKD5InGODrQD17W5OKGF2xkuHzGMi
+         +OEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754372410; x=1754977210;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LeEJhrhnwUrTVBP5B/ItjxYOvOdUNX9WUsE+fmf4AKc=;
+        b=fv0j+HVefNjFu2bA3YRyy88CwpEPlCRR8mmCO2xYKRvvwVOv5FSvtY/L37GJJXj5XQ
+         Fw1VHOZuD5o8DbTralyS9/Qh7xk9G25SWoi0QJUVAMNYwusD16mLsxcS0fzF/DUMifPe
+         91deCpbHszHvreXn+WVp2DQD58TkGlNB4uKOpGwjGGlMCTrxIvr6u39jBIiMtlgbyrMg
+         3Sx8NVKuuk7IhApYmZtb05LX0LGAtVBJeJxgB8KnAI73hCOFuHtYkhANy8D4+kkphHPx
+         +zFp0Awzn1WLBuc6LYYbMYX3Zlak+DdFx7yDYTR8AQfn4h7cFSgexDOIV7/znJ+z+y4a
+         Y+Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUswvs04XeU6r9n3V1SvR7SOB37IkK80Edahb65v4VZbX33I4/4ik12p4GU+9ZZ2qoe8Ex/0/TxHXWRMBw=@vger.kernel.org, AJvYcCXooV13dfG9Td98WBQ5T1yxaJJ7mnS2iQtPidfJbFl1GnbusjsHpJ4vCeJI2vgjQTXOzSkyJQUbke0UTyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8lkkqw8f4vV2LbFy58jMdXvr2HH7iW76R7nguY1N5DCXF/t91
+	VGNRWgSUT/q0hKW2lt0IesgvUDNz59eviH9/lUARkDYT56TVkz4rOazW
+X-Gm-Gg: ASbGnctRzy+o9797QQaQpFU7FVAOreVKcxOIBMDWfJjtcyqt9T9o4kQMBjejA3y3Qem
+	D5lpp9JoOAJGKRuI4ExVgriksi47bcO5mWoPWKHGH5gZMmEnjZgFy9J2wzaWVI7/9oxAqM9m0M4
+	mvy7xurTLLK+c6of5yGUkQdbOtAfyCugRj7rdS0phOYLM4Oh315yRmiXr/PCFhjDITFc2TPQsA7
+	0NCh8sAjpGyXVAPY6ma5X6+43meicpNrMCbM2crzs8oshLDPjgWKEjEDkj6IUlNITTb15u9g+ST
+	7PxzHOI0ceIibTW6gPohUpR5op4cjAcwtMt1IQAY0nnE8D/BTdvzrxiWL+3VnnFch6M2Ume/USt
+	MPvI3E8szK8LySacphfsFEtP4VWahPaMSM+EAHuvyvfYwNV0ISqw=
+X-Google-Smtp-Source: AGHT+IHYPgdA0GQ9owG/1e3TrYAgjSvBMzlvWf2Zgn2fzmwlOXUmTfEe6wtES4ekW7qNSW7tVKHLZA==
+X-Received: by 2002:a05:6a00:3d0f:b0:732:2484:e0ce with SMTP id d2e1a72fcca58-76bec4c537amr14636092b3a.17.1754372410238;
+        Mon, 04 Aug 2025 22:40:10 -0700 (PDT)
+Received: from [127.0.1.1] (211-23-39-77.hinet-ip.hinet.net. [211.23.39.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce89125sm11990006b3a.33.2025.08.04.22.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 22:40:09 -0700 (PDT)
+From: LiangCheng Wang <zaq14760@gmail.com>
+Subject: [PATCH v4 0/3] Add support for Mayqueen Pixpaper e-ink panel
+Date: Tue, 05 Aug 2025 13:40:04 +0800
+Message-Id: <20250805-drm-v4-0-94eaec01598d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-in
-Thread-Index: AQExeeAfBfzr5YSvfr0wrrMUW8ELmAHKrEFuAhf3ztm1iYbGIA==
-X-CMS-MailID: 20250805052803epcas5p47a93b443b6c085e237adbafc4de1f3b7
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
-	<20250804113643.75140-1-bharat.uppal@samsung.com>
-	<c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADSZkWgC/13MQQ7CIBCF4as0rMUwQ4HqynsYFwSmLYm1BgzRN
+ L27tN1Ul/9kvjexRDFQYudqYpFySGF8lKgPFXO9fXTEgy/NUKASRjTcx4FrgeBbYUB5w8rnM1I
+ b3uvK9Va6D+k1xs86mmG5/voMXPBaCaVab71r7KUbbLgf3TiwxWfcGag3g8UoDxYJ0Jy0+zdyZ
+ xA2I4sh0E46IoNa7s08z18s8fyW/gAAAA==
+X-Change-ID: 20250708-drm-6021df0715d7
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Wig Cheng <onlywig@gmail.com>, LiangCheng Wang <zaq14760@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754372406; l=4414;
+ i=zaq14760@gmail.com; h=from:subject:message-id;
+ bh=N/pmzhrhBR41PCutlnpr0nlE6nslcrMo+1tEG23f7Dk=;
+ b=EMUuPFvBDlpo2snWJLgaqTIGP2JwNUP2YFITzZ6fglmGFr1BO2fYzTpxF/x97kZG0flZeEY1a
+ v4hEgG+FZL8DgUZIxoMD8hoYl5Bridtc8anmzusrv71pKs6eQD0z9z+
+X-Developer-Key: i=zaq14760@gmail.com; a=ed25519;
+ pk=5IaLhzvMqasgGPT47dsa8HEpfb0/Dv2BZC0TzSLj6E0=
 
+This patch series adds support for the Mayqueen Pixpaper e-ink display panel,
+controlled via SPI.
 
-> -----Original Message-----
-> From: Bart Van Assche <bvanassche=40acm.org>
-> Sent: 04 August 2025 21:17
-> To: Bharat Uppal <bharat.uppal=40samsung.com>; linux-scsi=40vger.kernel.o=
-rg;
-> linux-kernel=40vger.kernel.org; James.Bottomley=40HansenPartnership.com;
-> martin.petersen=40oracle.com; alim.akhtar=40samsung.com;
-> avri.altman=40wdc.com; linux-samsung-soc=40vger.kernel.org
-> Cc: pankaj.dubey=40samsung.com; aswani.reddy=40samsung.com; Nimesh Sati
-> <nimesh.sati=40samsung.com>
-> Subject: Re: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put UFS=
- device in
-> reset on suspend
->=20
-> On 8/4/25 4:36 AM, Bharat Uppal wrote:
-> > +static int fsd_ufs_suspend(struct exynos_ufs *ufs) =7B
-> > +	exynos_ufs_gate_clks(ufs);
-> > +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-> > +	return 0;
-> > +=7D
->=20
-> Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
-Thanks for reviewing.
-Indeed setting 0 is right, but in the same file ufs-exynos.c,  I have seen =
-HCI_GPIO_OUT register configured using 0 << 0.
-My intent here is to maintain coding style within the file.
+The series includes:
+- A new vendor-prefix entry for "mayqueen"
+- Device tree binding documentation for the Pixpaper panel
+- A DRM tiny driver implementation for the Pixpaper panel
+- A MAINTAINERS entry for the Pixpaper DRM driver and binding
 
-With Regards
-Bharat Uppal
+The panel supports 122x250 resolution with XRGB8888 format and uses SPI,
+along with GPIO lines for reset, busy, and data/command control.
 
->=20
-> Thanks,
->=20
-> Bart.
+The driver has been tested on:
+- Raspberry Pi 2 Model B
+with Linux kernel 6.16.
+
+---
+Changes in v4:
+- Applied BIT() macro for all register bit definitions (per checkpatch)
+- Fixed alignment and indentation based on checkpatch suggestions
+- Removed unnecessary blank lines after braces
+- Fixed universal plane init() call indentation
+- Link to v3: https://lore.kernel.org/r/20250721-drm-v3-0-e16c3cee7263@gmail.com
+
+Changes in v3:
+- MAINTAINERS
+    - Added pixpaper-regs.h
+
+- Kconfig
+    - Rename config symbol to DRM_PIXPAPER (drop TINYDRM_ prefix).
+    - Reordered Kconfig select lines alphabetically.
+
+- Code structure & style
+    - Fix include order: move <linux/> headers above <drm/> headers.
+    - Removed forward declarations; placed static functions next to usage
+    - Switched logging to drm_err()/drm_warn()/drm_dbg() (legacy DRM_ERROR/WARN removed)
+    - Remove dev_info() statements.
+    - Switched encoder type to DRM_MODE_ENCODER_NONE
+    - Moved pixpaper_panel_hw_init() from atomic_enable() to probe() to avoid redundant hardware init.
+    - Use helper to_pixpaper_panel() instead of container_of() on crtc.
+
+- Robustness
+    - Added timeout + warning in pixpaper_wait_busy() to ensure robustness if BUSY line gets stuck.
+    - Introduced struct pixpaper_error_ctx to propagate SPI/GPIO errors
+
+- Clean‑ups
+    - Removed drm_plane_enable_fb_damage_clips() (full‑frame updates)
+    - Removed noisy info prints; kept drm_dbg() only where helpful
+    - Consolidated all magic register values/commands into new
+      pixpaper-regs.h with datasheet‑aligned naming
+
+- Memory helpers
+    - Driver now uses GEM SHMEM helpers; GEM DMA helpers dropped
+      (panel has no bus‑mastering DMA)
+
+- Functionality fixes
+    - Rewrote pack_pixels_to_byte() to correctly handle 4-color (B/W/R/Y) layout
+      based on expected panel color encoding
+
+- DRM callback safety
+    - Add missing drm_dev_enter()/drm_dev_exit() in callbacks.
+
+- Tags added
+    - Reviewed-by: Rob Herring <robh@kernel.org> (from v1)
+    - Acked-by: Rob Herring <robh@kernel.org> (from v1)
+    - Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> (from v2)
+
+- Link to v2: https://lore.kernel.org/r/20250714-drm-v2-0-5d1a2e12796c@gmail.com
+
+Changes in v2:
+- Reordered patches so that DT bindings come before the driver (suggested by Rob Herring)
+- Fixed sparse warning: removed duplicate `.reset` initializer in `pixpaper_plane_funcs`
+- Fixed checkpatch issues reported by Media CI:
+  - Removed unnecessary blank line before closing brace
+  - Moved opening parentheses up to function call lines (e.g., `DRM_WARN(...)`)
+  - Fixed alignment of conditionals
+  - Fixed `dev_warn(` and `drm_universal_plane_init(` formatting
+- Thanks to Rob Herring for ack on vendor-prefix patch
+- Link to v1: https://lore.kernel.org/r/20250708-drm-v1-0-45055fdadc8a@gmail.com
+
+Thanks to all reviewers for feedback across earlier versions.
+
+Best regards,
+LiangCheng Wang
+<zaq14760@gmail.com>
+
+---
+LiangCheng Wang (2):
+      dt-bindings: display: Add Mayqueen Pixpaper e-ink panel
+      drm: tiny: Add support for Mayqueen Pixpaper e-ink panel
+
+Wig Cheng (1):
+      dt-bindings: vendor-prefixes: Add Mayqueen name
+
+ .../bindings/display/mayqueen,pixpaper.yaml        |  63 ++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ MAINTAINERS                                        |   7 +
+ drivers/gpu/drm/tiny/Kconfig                       |  15 +
+ drivers/gpu/drm/tiny/Makefile                      |   1 +
+ drivers/gpu/drm/tiny/pixpaper-regs.h               | 428 +++++++++++
+ drivers/gpu/drm/tiny/pixpaper.c                    | 789 +++++++++++++++++++++
+ 7 files changed, 1305 insertions(+)
+---
+base-commit: 7e161a991ea71e6ec526abc8f40c6852ebe3d946
+change-id: 20250708-drm-6021df0715d7
+
+Best regards,
+-- 
+LiangCheng Wang <zaq14760@gmail.com>
 
 
