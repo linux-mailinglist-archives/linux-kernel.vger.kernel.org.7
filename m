@@ -1,129 +1,235 @@
-Return-Path: <linux-kernel+bounces-756491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86D7B1B50F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:36:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6059EB1B512
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7AFB623040
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F5B183337
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B7827510D;
-	Tue,  5 Aug 2025 13:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9491C275867;
+	Tue,  5 Aug 2025 13:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KGSkARlc"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQYqvUHn"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F01189906
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5543E25A341;
+	Tue,  5 Aug 2025 13:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754401003; cv=none; b=Dp+provaNODMOF0pH1wV2nTR6D9TK2SyurXyRbZC1AFPQvpezDtLKZHymfZj3tYZHFLxIHba4XAzP9pzQzsRj+ClGfca/VCX4e99KZ+kSsveAuyI410tpQB75oZrji/nK7OgMOvgfUeXnCGrow2K3biVAjtzh+V/ZHR+V/9PWQo=
+	t=1754401062; cv=none; b=YUmBfzlXjCtATmRxKnUSDaNO8H4i2ToNCbGmtnNdvL2c7U8wY0hmPzkvcN/wyvbZCNiPI8yXf9yVi6uIYVD5eikUIZiRYUXrdAwwDCWxxSWmO6cKRMFZfpLSZFcq0HSpby/H6RoDG4JVhpR9k5BhGXgGooutIcBYIoXszl7/nrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754401003; c=relaxed/simple;
-	bh=J6DjSwoZRUXD6cC0Swrx2Kq6FOSNEG7qx/VOWa/IiUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ou8rA0PzC3MmQbsUQoDVEOCAgHLZxbp1v/Pv8bxkgPkXqxwaXswO5hXA8EUlsSRA6DcqaVxMjve2q7367ZzAOAtczmSWNp3gjBbaxOeuZWiAfKWzaG0Gee9as7skzO2nfH5XPveOEKW2LDjle1W2svzbyuqks6L6auaHzgY4GYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KGSkARlc; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-615a115f0c0so9503257a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:36:40 -0700 (PDT)
+	s=arc-20240116; t=1754401062; c=relaxed/simple;
+	bh=mPSsj2ncxMMlcv0RsZ6mN78BHOw/uNMUAcUoAvbjIOo=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NS4GhWLaPE/54GbohF5lWS7Xb7+sNJzPv1XxhxUBpo+EVWGZOmlLo7keGQ/iAPtBXlkD4CmeKkMfnRMrFMWJ4/VQ6YRgfPcP9E3E5eecPNTHZpEe+LuA2V2DbhyM/Ag3FFHGvlNbNpS734L3PpeAHPalT5W8WniJd8O3e66xlBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQYqvUHn; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24009eeb2a7so44151785ad.0;
+        Tue, 05 Aug 2025 06:37:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1754400999; x=1755005799; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DMoGQJPU4f1NGWiqNzClF6T4JpK0+MQSV0Gqu0kgblw=;
-        b=KGSkARlc3X78cyUEDaYqfFmRHi6xaDaBPQiIQgKMG3jP9KjNY4vsly3FjAzmI99KL/
-         7GfwyyMzGCLL7zhUlOVAfuQ7zn6lkM+eRCq2uTkkej47twMIE0pBM/DAS8GZr8JWyYBA
-         Jvk8efZ6nJoTX0X1G+sZbRcwzfhPJQzT4UenQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754400999; x=1755005799;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1754401060; x=1755005860; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DMoGQJPU4f1NGWiqNzClF6T4JpK0+MQSV0Gqu0kgblw=;
-        b=tJyl+ZxRVLT2ldaaaPOLcyx3ARwtIukqhwNlG6MUxA/oIRXrNcAXgvs3IdjGtflzfd
-         3/7L0dwV9aXyaG68q3GRTU7yARNZdlE/gH0IcuXyntnu/Wm0w0LIIxxVFHaOK77br5su
-         SUIKoDpE9eWOF0RCsQX9cPVCo8hwOtO/6ipw0J8PH/B2pBrzLOZGoOHhcBZfytEKyuRb
-         kt2pSYenCWAwVSdp3kmkr9HLyjcGGECDXnmGZi4oHZ8JnfcZgNsEMp3cHucc8huMnWJ9
-         cxQ2EUe2AnQtejhwazzHjq43GHSjGB76hQNrHTCkCtYHW7JhA1BkJAt7YBXez3Za00XK
-         E5EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDkvdriyQjJtAX1UM8lm+sOSQphajtYQ/BTBNuOYmGPqCAncVig4q+F93qICkGLdAkfbvrSvjYFQKpTmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywya69hcM9/g8GQe3/m77LbslaWhp22zr8iJfnWOW3xNVuU4Fv2
-	ZqP440Q/TK1fmVBuv/xSIbqKIDqJbXC+9YzCvp5nRs4QLc7Dx7UB3RDuSnMKxKcgocB4JBF3kun
-	e9wVvX+LCgQ==
-X-Gm-Gg: ASbGncsncqTK/xrVkepn+6qA9SFAKDSOe12hr/Ng9gPjUI8thbqiuMtoPRLT8fvbrOj
-	qQ+wxV0WQeOrwUy6T3Sz030C5a6N6LowNY1uPNEZLS3CNbwZr6jwSapFSWEpp6HQvhEg18P6ucr
-	qMxsnpWemAG6/U1W3bD/s0sE36rntT37t+YhTu1pSbwXf5Fvsm77mSGZfk892jm1JtoTrBgu0Eu
-	bmZhUrL/vdv683vyqaadl0yNGiOPvAdmFD1qihxDSYilDuNP6ZrynvPiAjMGy0H86lhmyMgzwO6
-	JTchybtYpT63qIyhh54z6OEJSCGdkFYI0gLbHVcM/zDFEG1hcnQFjG4gjoR0PdGkh1g7Kts2bmG
-	CGHH8AqzH547sZc7ygOXGYXi6cgsBvTe+KYCNWliZfUEzTj6KkQ+1mDAUSf+fFln9ARJul6wx
-X-Google-Smtp-Source: AGHT+IFyx+xDbNCAROAJEfINAOfOzP4DDInbNl1otwr8HKh+Y8C0HKWqfl5xRsN1l9T7l9e5kOUkxw==
-X-Received: by 2002:a17:907:3d86:b0:ae7:cb7:9005 with SMTP id a640c23a62f3a-af940175970mr1415731966b.35.1754400998611;
-        Tue, 05 Aug 2025 06:36:38 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af937c86989sm687678266b.74.2025.08.05.06.36.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:36:37 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61530559887so7464757a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:36:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFNxksPPkGGxZqS5jVxGN1phnJCFghBFDeWxpN0g/qZV8WSW1iGM1g1sFjYpwD0/YjaSTiOHJZUGIONLM=@vger.kernel.org
-X-Received: by 2002:a05:6402:254e:b0:615:aec5:b5bc with SMTP id
- 4fb4d7f45d1cf-615e6cd3968mr11395134a12.0.1754400996985; Tue, 05 Aug 2025
- 06:36:36 -0700 (PDT)
+        bh=LiS8BhJ936jcB2tyM9Y30V/6/vFqlgQAd81Grs50doc=;
+        b=dQYqvUHnYCoVqk+MhDVjiC2MjuDVYXBoRGC+fp/b3FqmMJ+utT6C6bV/OrAuAtBTGx
+         QUQFTlbSc3JT5FpGjQE2PggM8c1xu4whBCVbJxJy+9HDHOrD7ik6fU+cCiQEicPStzsM
+         4XF84RU/oTu3gLvcYZ+yPQw/PsAddX/BoyBET752uYtDgOWC3JjRPFcDrj6yL80L4uBE
+         6fyicwavWnnCNZ+iODU5nIWlYnIoB11UV/YHv5WjCSm9MaEsdZq+Z93bSUmmeeg9QqU+
+         ed6THOuTlUaXDdYk5gI1vYfPHPsADXw5V4awwQHQTr0EbMN7oRHM6F5AVbmy6D6UZyoh
+         engA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754401060; x=1755005860;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LiS8BhJ936jcB2tyM9Y30V/6/vFqlgQAd81Grs50doc=;
+        b=Bw59JqcQZWyND2zQpncSM3i1kae6VqjgO/cBmi/XMf1tQeJIpUCayPFxKIHwzTop8v
+         2mvoIvbYVs4/6YqxM1uAL6bg8dyXFz9guwtCM5tYcj+PsizaxMLhDNADI6n5v2vyzUh8
+         L3FIArF/Yw9ErqMrHXpRxYXun29JKXwGvqyvq7V//PB7iaRNqgFDYyrusj2TXrhis8QS
+         Qpmnu3kpZBYebOL/XK84v6XjBS6sSrp3oG4nlPyR7LOlb7TgvHGJxVL1ro2atPYO4N0o
+         LDHwPEfvxtSsqOW691mKefzoT6Gk1RCAL8381U+uDolU5WQwvKM8cj0WJppYlVi0tDCN
+         lc7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdK9Gh1UcPleoWMGQjEs/MIhZ+dBj1ucWbqYHk0B4FO3GKUF5WqNP089UYdY8wpN77sBO+oe5bAWLkxiQ=@vger.kernel.org, AJvYcCUelTaumoIsFDozRholcy3LgDU25mMg8JXqakRXHn33ajNBRbs7JMWuCj60uatw1tUvLB5egVKM@vger.kernel.org, AJvYcCXtHt1di7UDeohKltaO+TCQJrPyTODRP6162CcKwAFl+D5vrOtf0LoVFIvQcjbVZoaXnWd/MS8hv4snsgoQMjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxzBiweb1ieFZd7N3brfmL19va5ski7FYGWezO351QFHZ8ev0q
+	mP3mo6OX28RPO4UOEx5wmRvFI3XBXncrm/edloR8wC/IlXVukDRlmmbS
+X-Gm-Gg: ASbGncsn4npUdxETlDYU2JbkyUaG6AnryVkwx892z63FPtYLZ533MNTAisGHbPILwHd
+	RU3hKYaldZZrqF0fugV8fzXVIBB/+n3aDtVzOdDdTf7NT281/EytsynNJE21HAIey0UeloZD+yF
+	r2DORzrza/mLS3W8PtVKoREE90PgZN9/TkSA0JTQ7LkmDjp66VYAAIswKzBDJuYn9qFKLPM7JIz
+	nv5p1wzgNqKXY9gODOk0MaoPDbHJ4iUyw/aRemMTsi/R+mJkB8bXkgxgwOo/hxnM80KsGftuAHK
+	Rz/v3UWGpe4W3aVCxIGhgZPS6EIshvQKZI+p0gtteuCldHn4vnjYSpu17wQ1qrSARMCPWewjg93
+	/W+AV1B/QwneII/mWZDd02dyGqzSRN1K/VON+9xnCct5GcO16rbNeRTnAQ9yNAJsn4QmYdYlGkY
+	t8
+X-Google-Smtp-Source: AGHT+IGrXZA4Ihax4H+y51EM2ka6Nzm9Z3DpiVncTVWgN9IOSBjGcWevdKSSHxn3+TReo3p380OpXA==
+X-Received: by 2002:a17:903:2f87:b0:23f:cf96:3071 with SMTP id d9443c01a7336-24247033f3dmr211033265ad.49.1754401059445;
+        Tue, 05 Aug 2025 06:37:39 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976cb1sm134913705ad.89.2025.08.05.06.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 06:37:38 -0700 (PDT)
+Date: Tue, 05 Aug 2025 22:37:21 +0900 (JST)
+Message-Id: <20250805.223721.524503114987740782.fujita.tomonori@gmail.com>
+To: dakr@kernel.org
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+ netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+ jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
+ david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
+References: <DBNPR4KQZXY5.279JBMO315A12@kernel.org>
+	<20250802.104249.1482605492526656971.fujita.tomonori@gmail.com>
+	<DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com> <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
- <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com> <20250805132558.GA365447@nvidia.com>
-In-Reply-To: <20250805132558.GA365447@nvidia.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 5 Aug 2025 16:36:20 +0300
-X-Gmail-Original-Message-ID: <CAHk-=wg75QKYCCCAtbro5F7rnrwq4xYuKmKeg4hUwuedcPXuGw@mail.gmail.com>
-X-Gm-Features: Ac12FXyPQ_UPydLfRJMzum57G0PVuq0AJqMF82gLhObs0pxwHXHWtx7lBNKByIg
-Message-ID: <CAHk-=wg75QKYCCCAtbro5F7rnrwq4xYuKmKeg4hUwuedcPXuGw@mail.gmail.com>
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Tue, 5 Aug 2025 at 16:26, Jason Gunthorpe <jgg@nvidia.com> wrote:
->
-> David, there is another alternative to prevent this, simple though a
-> bit wasteful, just allocate a bit bigger to ensure the allocation
-> doesn't end on an exact PAGE_SIZE boundary?
+On Sat, 02 Aug 2025 13:06:04 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-So I don't mind adding a check for "page_section()", because at least
-that makes sense.
+> On Sat Aug 2, 2025 at 3:42 AM CEST, FUJITA Tomonori wrote:
+>> On Mon, 28 Jul 2025 15:13:45 +0200
+>> "Danilo Krummrich" <dakr@kernel.org> wrote:
+>>> On Thu Feb 20, 2025 at 8:06 AM CET, FUJITA Tomonori wrote:
+>>>> +/// This process continues until either `cond` returns `true` or the timeout,
+>>>> +/// specified by `timeout_delta`, is reached. If `timeout_delta` is `None`,
+>>>> +/// polling continues indefinitely until `cond` evaluates to `true` or an error occurs.
+>>>> +///
+>>>> +/// # Examples
+>>>> +///
+>>>> +/// ```rust,ignore
+>>> 
+>>> Why ignore? This should be possible to compile test.
+>>
+>> https://lore.kernel.org/rust-for-linux/CEF87294-8580-4C84-BEA3-EB72E63ED7DF@collabora.com/
+> 
+> I disagree with that. 'ignore' should only be used if we can't make it compile.
+> 
+> In this case we can make it compile, we just can't run it, since there's no real
+> HW underneath that we can read registers from.
+> 
+> An example that isn't compiled will eventually be forgotten to be updated when
+> things are changed.
 
-But yes, it would also probably be a good idea to try to minimize
-SPARSEMEM without VMEMMAP. I'd love to get rid of it entirely, of
-course, but even if that isn't possible, I'd *really* just like people
-to try to make sure that it's neve ra valid thing to try to combine
-memory across different sections.
+I also prefer the example that can be compiled however I can't think
+of a compilable example that is similar to actual use cases (for
+example, waiting for some hardware condition). Do you have any ideas?
 
-David mentioned the 1GB hugepage folios, and I really thought that
-even *those* were all in one section. They *should* be.
+>>>> +/// fn wait_for_hardware(dev: &mut Device) -> Result<()> {
+>>> 
+>>> I think the parameter here can just be `&Io<SIZE>`.
+>>> 
+>>>> +///     // The `op` closure reads the value of a specific status register.
+>>>> +///     let op = || -> Result<u16> { dev.read_ready_register() };
+>>>> +///
+>>>> +///     // The `cond` closure takes a reference to the value returned by `op`
+>>>> +///     // and checks whether the hardware is ready.
+>>>> +///     let cond = |val: &u16| *val == HW_READY;
+>>>> +///
+>>>> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), Some(Delta::from_secs(3))) {
+>>>> +///         Ok(_) => {
+>>>> +///             // The hardware is ready. The returned value of the `op`` closure isn't used.
+>>>> +///             Ok(())
+>>>> +///         }
+>>>> +///         Err(e) => Err(e),
+>>>> +///     }
+>>>> +/// }
+>>>> +/// ```
+>>>> +///
+>>>> +/// ```rust
+>>>> +/// use kernel::io::poll::read_poll_timeout;
+>>>> +/// use kernel::time::Delta;
+>>>> +/// use kernel::sync::{SpinLock, new_spinlock};
+>>>> +///
+>>>> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
+>>>> +/// let g = lock.lock();
+>>>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
+>>>> +/// drop(g);
+>>>> +///
+>>>> +/// # Ok::<(), Error>(())
+>>>> +/// ```
+>>>> +#[track_caller]
+>>>> +pub fn read_poll_timeout<Op, Cond, T>(
+>>>> +    mut op: Op,
+>>>> +    mut cond: Cond,
+>>>> +    sleep_delta: Delta,
+>>>> +    timeout_delta: Option<Delta>,
+>>>> +) -> Result<T>
+>>>> +where
+>>>> +    Op: FnMut() -> Result<T>,
+>>>> +    Cond: FnMut(&T) -> bool,
+>>>> +{
+>>>> +    let start = Instant::now();
+>>>> +    let sleep = !sleep_delta.is_zero();
+>>>> +
+>>>> +    if sleep {
+>>>> +        might_sleep();
+>>>> +    }
+>>> 
+>>> I think a conditional might_sleep() is not great.
+>>> 
+>>> I also think we can catch this at compile time, if we add two different variants
+>>> of read_poll_timeout() instead and be explicit about it. We could get Klint to
+>>> catch such issues for us at compile time.
+>>
+>> Your point is that functions which cannot be used in atomic context
+>> should be clearly separated into different ones. Then Klint might be
+>> able to detect such usage at compile time, right?
+>>
+>> How about dropping the conditional might_sleep() and making
+>> read_poll_timeout return an error with zero sleep_delta?
+> 
+> Yes, let's always call might_sleep(), the conditional is very error prone. We
+> want to see the warning splat whenever someone calls read_poll_timeout() from
+> atomic context.
+> 
+> Yes, with zero sleep_delta it could be called from atomic context technically,
+> but if drivers rely on this and wrap this into higher level helpers it's very
+> easy to miss a subtle case and end up with non-zero sleep_delta within an atomic
+> context for some rare condition that then is hard to debug.
+> 
+> As for making read_poll_timeout() return a error with zero sleep_delta, I don't
+> see a reason to do that. If a driver wraps read_poll_timeout() in its own
+> function that sometimes sleeps and sometimes does not, based on some condition,
+> but is never called from atomic context, that's fine.
 
-Do we have any relevant architectures that still do SPARSEMEM without
-VMEMMAP? Because if it's purely some "legacy architecture" thing (ie
-x86-32), how about just saying "no 1GB hugepages for you".
+Ok, let's always call might_sleep, even when there's no possibility of
+sleeping.
 
-Because that whole SPARSEMEM without VMEMMAP is certainly painful even
-outside of nth_page, and minimizing the pain sounds sane.
+>> Drivers which need busy-loop (without even udelay) can
+>> call read_poll_timeout_atomic() with zero delay.
+> 
+> It's not the zero delay or zero sleep_delta that makes the difference  it's
+> really the fact the one can be called from atomic context and one can't be.
 
-                Linus
+That's what I meant.
+
+Since calling read_poll_timeout_atomic() with zero delay can achieve
+the same thing as calling read_poll_timeout with zero sleep delta, I
+thought the zero sleep delta in read_poll_timeout is unncessary.
+
+But as in the use case you mentioned above, a driver could use the
+sleep delta that is not const and calls the function with both
+non-zero and zero delta values so let's keep zero sleep delta support.
+
+
 
