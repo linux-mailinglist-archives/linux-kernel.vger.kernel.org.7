@@ -1,281 +1,238 @@
-Return-Path: <linux-kernel+bounces-755938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E881B1ADA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:43:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177BBB1ADC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8323BF895
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F1B18A0600
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C524207A0B;
-	Tue,  5 Aug 2025 05:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60D121A43C;
+	Tue,  5 Aug 2025 05:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YhjxBYWM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="bBjDfKYW"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702DD3234
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 05:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AE3175A5;
+	Tue,  5 Aug 2025 05:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754372630; cv=none; b=lNUtJuh46D30jUnk9GlOTbJ60ZSAEDHGRRy7ifp1lmYkmC+mpNNieJ0JI/rpdRfK4AABv1SpMlMp23gryo1qsEbUv7Cvttu7yMFYHtHpGenXcX15lw7OQGCbt/m6w6MFPIUja+j/PCQyzrrhD8a3XcLSbLk/xGWrksyzYD1Etxo=
+	t=1754373243; cv=none; b=ZBp17RtvMN/SPj4VqTRlHUJrzCBkQVSGk+8KHj1xzTk2Tuo12vypppyeB2IxUORm2oXeYchWy1Ygr1yh8KCyalqU1NKWrKsyl0daUedYDx4vxJsDPVGC1fz0UOEqrHLbZF77zKIH4YCW8goPzpTwbGy1pD0bl6z7GSmBmcEd4mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754372630; c=relaxed/simple;
-	bh=1ip+vj499GdwbEKnHNeWoiu8j+KejNcszhbCUDwtMX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C6SBJ8t9fidCYbhACHs+WXmbvV7QDsc0r/BRGj1bd9kYSu+a6xM094PvbcZsdc+AP8OrfEiunaQlPZhESVX8mlet6i+QlpR6INXuPKyEb74FhZGUNSZfaR+3dtQC6agJ/0i2INQsCAzbpFr0QBvjqDlbFwSER9qR4iwu2rmRzsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YhjxBYWM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5753jblj011342;
-	Tue, 5 Aug 2025 05:43:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=iu+9r72zR3pCASRkhWRIyYr8/5WyzLrSI0sN2QkS7K0=; b=YhjxBYWMBNWW
-	i7WQGT4zXdWwNhaT3sVHfi0Iz7o9vFT1o8f9BpclXB9ttT2DWE/buxtyoIFW1f2w
-	gH/Gp3C6IJGblgoJbAiyY3rJCMFqbSXA6MiJ+VEhGi+5KyyKzrnbaJg1Jiz9o3yf
-	T1DUxKwvuuHPQ8eYWEj55LTb7Io+thLi60ueV0RuUwQCW/upl/RYyoMaRdW+AMKN
-	eYoIbshlCyLOFxc6zAU1qdfPBXqodkwbqKx94IwurFyX3gBNIlu2PtazWq/L2ojO
-	VAoTOlqrP2d5Rwk5yKJM0PIn7JUU8B3Vhq6NHnTANYoWXlKoSEudlyh9iy72/IsE
-	dl+8/+PlZA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3mku0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 05:43:11 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5755ffQl015529;
-	Tue, 5 Aug 2025 05:43:11 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3mktx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 05:43:11 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754KFv0006827;
-	Tue, 5 Aug 2025 05:43:10 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmh05n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 05:43:10 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5755h6ht38207856
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 05:43:06 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6069620043;
-	Tue,  5 Aug 2025 05:43:06 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4043D20040;
-	Tue,  5 Aug 2025 05:43:04 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.126.150.29])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 05:43:04 +0000 (GMT)
-Date: Tue, 5 Aug 2025 11:13:03 +0530
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>
-Subject: Re: [PATCH] pseries/lparcfg: Add resource group monitoring
-Message-ID: <aJGZ5_Sf4c1ByCeb@linux.ibm.com>
-Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
-References: <20250716104600.59102-1-srikar@linux.ibm.com>
- <da3a0717-fe3a-49db-bebd-f231a7fdedb7@linux.ibm.com>
+	s=arc-20240116; t=1754373243; c=relaxed/simple;
+	bh=b3qLvidQt2IQmyqEcAsLJbmTR+wVyp6SbcerHb1qMcs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hy2vXOhRTo/c4zigZyhpweHyn1q2wDksmrE76+qAsU1UMAWCu1ch6Jw47tSkM1FynqTTNe4u0jny3VAb64+hmCfT9w5DYfkU9IASUpF2EodOtzmjQoshbe+CBtVoiUOhcKW84AOeykvGmk3oDQtdKL9zn9TwJ/P1zIq1lUtpNPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=bBjDfKYW; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bx2T60Psrz9t8l;
+	Tue,  5 Aug 2025 07:45:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754372730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bPF4WdQCtv984o72KwXLxMISxhU/aJPqgLwzYtsm72M=;
+	b=bBjDfKYWT21NFwvhbyK5aFKtO6yFlm8WKPH9dWAj5oD5m1o+cPDeaf3RswmG9jD83irGDi
+	OpSvCvXeZuBix3/tg2FMC3AL8+gyQwrHiZibGBamiSy0+gusfknYSXjoUG11XufHr79v3u
+	MlViEwFLGuQ3lGIcljKeXIn8m4w6+Fsj6atzQWPSheC0cBLTAigLG/UyXtsbl9AnMLXxvE
+	Xh3lR5sdmm9nFCjCaZpezk3FnoxlEBuDmYJ/6vqSp4OH4Sn5xcuTJsiKuPM5+mqs78ViPV
+	o17N3NWGq4KpbOeOgNto/Uksx9Cu4EwpetVbqhnax656nKXT5VIaTRzEDWBH9Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+From: Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v4 0/4] procfs: make reference pidns more user-visible
+Date: Tue, 05 Aug 2025 15:45:07 +1000
+Message-Id: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <da3a0717-fe3a-49db-bebd-f231a7fdedb7@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Z+jsHGRA c=1 sm=1 tr=0 ts=689199ef cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=pGLkceISAAAA:8
- a=1UX6Do5GAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=lvIQcBwFF3NVhGCl7ikA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=Et2XPkok5AAZYJIKzHr1:22
- a=IC2XNlieTeVoXbcui8wp:22
-X-Proofpoint-ORIG-GUID: FY6mcWGyx6EazsTF6nacTvWuaUOVG35s
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAzNyBTYWx0ZWRfX/36Mr1FyDhwd
- dE6horRhScaRXRtEHNdTN/atoUsYjUazqUprEjoHXXMmtfS3ajkPfzWYEDNJKLD0UgaQ/3NIiO7
- DKrzCGZcQgydDw3WrIHeUBjxTKfsH/mgXm7Ebcm6vh/CpizR19K01wnHJamvYLlAgJN/YK6livv
- n0znTmHOs7hXrEGPn+cJZMiO5pxT/EJSNBvTj7EQ7E6gLhOTTpF/ke1xWuFV0AKfoetnhCBvYLv
- v6Ju1RXL1J5wh5dEGbw4kD7CIN9VhdalbcttPJgMJPHmm3VUS8mlnCeFez19Ps8GmAr91VAJVtr
- a0pnyIRzzi49Z9gPAqI/ozzll13wI4KpPi3rFmjuGMdSIToWBR4E98Qnuf4SD0gOP6gWXGYexCQ
- W+YK0ASydNKEicgfgysImdkHqss21FAEqX58wmMqwmJRdemLobeOWe+7ge37THHjjBRyonhQ
-X-Proofpoint-GUID: VcAtqeWHvzy-U1iaqPjdyHvDBi3kwJbT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_01,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 mlxlogscore=999 adultscore=0 phishscore=0 mlxscore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050037
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGOakWgC/23NTQ6CMBCG4auYrq3p9IcWV97DuCDtIF0ITWsaC
+ eHuFuICA8v3S+aZiSSMHhO5niYSMfvkh76EPJ+I7Zr+idS70oQzrpgGTUMcbJto8K5PtAmeGnS
+ gjJACWkbKWYjY+s9K3h+lO5/eQxzXDxmW9Ydx2GMZKKPKupoxjQq4u9kxdE282OFFFi3zrSAOB
+ F6EigNqdM6gZDtBbAV5IIgiSFsZZWtgNRd/wjzPX4EKj1I1AQAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7460; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=b3qLvidQt2IQmyqEcAsLJbmTR+wVyp6SbcerHb1qMcs=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMnJV35/6lhU2bWe6c99t5d/cht20Cy821S3StD09t/
+ V617E/f4Y5SFgYxLgZZMUWWbX6eoZvmL76S/GklG8wcViaQIQxcnAIwEekljAwv5yivvVnkLrSR
+ vfXk4+Wpn166LLTnnrJ5VZB6vEPwv6z7jAzbNp5fo5x/vczhas+Cjh1/LR3a7bbue9Pf/bPhdPe
+ dCiEGAA==
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-Rspamd-Queue-Id: 4bx2T60Psrz9t8l
 
-* Shrikanth Hegde <sshegde@linux.ibm.com> [2025-08-01 19:27:22]:
+Ever since the introduction of pid namespaces, procfs has had very
+implicit behaviour surrounding them (the pidns used by a procfs mount is
+auto-selected based on the mounting process's active pidns, and the
+pidns itself is basically hidden once the mount has been constructed).
 
-> 
-> On 7/16/25 16:15, Srikar Dronamraju wrote:
-> > Systems can now be partitioned into resource groups. By default all
-> > systems will be part of default resource group. Once a resource group is
-> > created, and resources allocated to the resource group, those resources
-> > will be removed from the default resource group. If a LPAR moved to a
-> > resource group, then it can only use resources in the resource group.
-> > 
-> > So maximum processors that can be allocated to a LPAR can be equal or
-> > smaller than the resources in the resource group.
-> > 
-> > lparcfg can now exposes the resource group id to which this LPAR belongs
-> > to. It also exposes the number of processors in the current resource
-> > group. The default resource group id happens to be 0. These would be
-> > documented in the upcoming PAPR update.
-> 
-> Could you please add a link to patch on power utils on how it is being consumed?
+/* pidns mount option for procfs */
 
-I am not sure I understood your query, it looks a bit ambiguous.
+This implicit behaviour has historically meant that userspace was
+required to do some special dances in order to configure the pidns of a
+procfs mount as desired. Examples include:
 
-If your query is on how lparcfg data is being consumed.
-All tools that are consuming lparcfg will continue to use the same way.
-Since this is not changing the way lparcfg is being consumed, I think it is
-redundant information that need not be carried in all the changes/commits to
-lparcfg. Such an information would be required when lparcfg file was
-created.
+ * In order to bypass the mnt_too_revealing() check, Kubernetes creates
+   a procfs mount from an empty pidns so that user namespaced containers
+   can be nested (without this, the nested containers would fail to
+   mount procfs). But this requires forking off a helper process because
+   you cannot just one-shot this using mount(2).
 
-If your query is on how resource group data is being consumed by users.
-Kernel is being transparent and reporting the information from the firmware.
-This information is mostly for system administrators and they would already
-known this info since they would be people who would have configured the
-resource groups in the first place. Kernel doesnt provide a way to configure
-resource group settings. This is more of a handy way to recollect the
-information, rather than any action that needs to be taken.
+ * Container runtimes in general need to fork into a container before
+   configuring its mounts, which can lead to security issues in the case
+   of shared-pidns containers (a privileged process in the pidns can
+   interact with your container runtime process). While
+   SUID_DUMP_DISABLE and user namespaces make this less of an issue, the
+   strict need for this due to a minor uAPI wart is kind of unfortunate.
 
-> 
-> > 
-> > Example of an LPAR in a default resource group
-> > root@ltcp11-lp3 $ grep resource_group /proc/powerpc/lparcfg
-> > resource_group_number=0
-> > resource_group_active_processors=50
-> > root@ltcp11-lp3 $
-> > 
-> > Example of an LPAR in a non-default resource group
-> > root@ltcp11-lp5 $ grep resource_group /proc/powerpc/lparcfg
-> > resource_group_number=1
-> > resource_group_active_processors=30
-> > root@ltcp11-lp5 $
-> > 
-> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: "Thomas Weiﬂschuh" <thomas.weissschuh@linutronix.de>
-> > Cc: Tyrel Datwyler <tyreld@linux.ibm.com>
-> > Cc: linuxppc-dev@lists.ozlabs.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Srikar Dronamraju <srikar@linux.ibm.com>
-> > ---
-> >   arch/powerpc/platforms/pseries/lparcfg.c | 17 ++++++++++++++---
-> >   1 file changed, 14 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/platforms/pseries/lparcfg.c b/arch/powerpc/platforms/pseries/lparcfg.c
-> > index cc22924f159f..6554537984fb 100644
-> > --- a/arch/powerpc/platforms/pseries/lparcfg.c
-> > +++ b/arch/powerpc/platforms/pseries/lparcfg.c
-> 
-> Does MODULE_VERS need to increased?
+Things would be much easier if there was a way for userspace to just
+specify the pidns they want. Patch 1 implements a new "pidns" argument
+which can be set using fsconfig(2):
 
-All tools that are consuming lparcfg will continue to use the same way.
-If there was some conditional changes that need to be done by the tools,
-then we should have updated the same.
-Hence there is not need to update MODULE_VERS.
+    fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+    fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0);
 
-> 
-> > @@ -78,6 +78,8 @@ struct hvcall_ppp_data {
-> >   	u8	capped;
-> >   	u8	weight;
-> >   	u8	unallocated_weight;
-> > +	u8      resource_group_index;
-> > +	u16     active_procs_in_resource_group;
-> >   	u16	active_procs_in_pool;
-> >   	u16	active_system_procs;
-> >   	u16	phys_platform_procs;
-> > @@ -86,7 +88,7 @@ struct hvcall_ppp_data {
-> >   };
-> >   /*
-> > - * H_GET_PPP hcall returns info in 4 parms.
-> > + * H_GET_PPP hcall returns info in 5 parms.
-> >    *  entitled_capacity,unallocated_capacity,
-> >    *  aggregation, resource_capability).
-> >    *
-> > @@ -94,11 +96,11 @@ struct hvcall_ppp_data {
-> >    *  R5 = Unallocated Processor Capacity Percentage.
-> >    *  R6 (AABBCCDDEEFFGGHH).
-> >    *      XXXX - reserved (0)
-> > - *          XXXX - reserved (0)
-> > + *          XXXX - Active Cores in Resource Group
-> >    *              XXXX - Group Number
-> >    *                  XXXX - Pool Number.
-> >    *  R7 (IIJJKKLLMMNNOOPP).
-> > - *      XX - reserved. (0)
-> > + *      XX - Resource group Number
-> >    *        XX - bit 0-6 reserved (0).   bit 7 is Capped indicator.
-> >    *          XX - variable processor Capacity Weight
-> >    *            XX - Unallocated Variable Processor Capacity Weight.
-> > @@ -120,9 +122,11 @@ static unsigned int h_get_ppp(struct hvcall_ppp_data *ppp_data)
-> >   	ppp_data->entitlement = retbuf[0];
-> >   	ppp_data->unallocated_entitlement = retbuf[1];
-> > +	ppp_data->active_procs_in_resource_group = (retbuf[2] >> 4 * 8) & 0xffff;
-> >   	ppp_data->group_num = (retbuf[2] >> 2 * 8) & 0xffff;
-> >   	ppp_data->pool_num = retbuf[2] & 0xffff;
-> > +	ppp_data->resource_group_index = (retbuf[3] >> 7 *  8) & 0xff;
-> >   	ppp_data->capped = (retbuf[3] >> 6 * 8) & 0x01;
-> >   	ppp_data->weight = (retbuf[3] >> 5 * 8) & 0xff;
-> >   	ppp_data->unallocated_weight = (retbuf[3] >> 4 * 8) & 0xff;
-> > @@ -236,6 +240,13 @@ static void parse_ppp_data(struct seq_file *m)
-> >   	seq_printf(m, "unallocated_capacity=%lld\n",
-> >   		   ppp_data.unallocated_entitlement);
-> > +	if (ppp_data.active_procs_in_resource_group)  {
-> 
-> ppp_data.active_procs_in_resource_group can ever be zero?
-> 
-> If the entry is absent in lparcfg, then lparstat will print it as 0 (which happens to be
-> default RG, while default RG may have processors)
+or classic mount(2) / mount(8):
 
-If active_procs_in_resource_group is 0, then we are not printing the
-resource group information. If active_procs_in_resource_group is non-zero
-and resource_group_index is wrong, we need to report a bug to the firmware
-to update it. Kernel is very transparent with respect to this information.
-It can neither verify the information received nor should we even be doing
-this.
+    // mount -t proc -o pidns=/proc/self/ns/pid proc /tmp/proc
+    mount("proc", "/tmp/proc", "proc", MS_..., "pidns=/proc/self/ns/pid");
 
-> 
-> > +		seq_printf(m, "resource_group_number=%d\n",
-> > +				ppp_data.resource_group_index);
-> > +		seq_printf(m, "resource_group_active_processors=%d\n",
-> > +				ppp_data.active_procs_in_resource_group);
-> > +	}
-> > +
-> >   	/* The last bits of information returned from h_get_ppp are only
-> >   	 * valid if the ibm,partition-performance-parameters-level
-> >   	 * property is >= 1.
-> 
+The initial security model I have in this RFC is to be as conservative
+as possible and just mirror the security model for setns(2) -- which
+means that you can only set pidns=... to pid namespaces that your
+current pid namespace is a direct ancestor of and you have CAP_SYS_ADMIN
+privileges over the pid namespace. This fulfils the requirements of
+container runtimes, but I suspect that this may be too strict for some
+usecases.
 
+The pidns argument is not displayed in mountinfo -- it's not clear to me
+what value it would make sense to show (maybe we could just use ns_dname
+to provide an identifier for the namespace, but this number would be
+fairly useless to userspace). I'm open to suggestions. Note that
+PROCFS_GET_PID_NAMESPACE (see below) does at least let userspace get
+information about this outside of mountinfo.
+
+Note that you cannot change the pidns of an already-created procfs
+instance. The primary reason is that allowing this to be changed would
+require RCU-protecting proc_pid_ns(sb) and thus auditing all of
+fs/proc/* and some of the users in fs/* to make sure they wouldn't UAF
+the pid namespace. Since creating procfs instances is very cheap, it
+seems unnecessary to overcomplicate this upfront. Trying to reconfigure
+procfs this way errors out with -EBUSY.
+
+/* ioctl(PROCFS_GET_PID_NAMESPACE) */
+
+In addition, being able to figure out what pid namespace is being used
+by a procfs mount is quite useful when you have an administrative
+process (such as a container runtime) which wants to figure out the
+correct way of mapping PIDs between its own namespace and the namespace
+for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
+alternative ways to do this, but they all rely on ancillary information
+that third-party libraries and tools do not necessarily have access to.
+
+To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
+can be used to get a reference to the pidns that a procfs is using.
+
+Rather than copying the (fairly strict) security model for setns(2),
+apply a slightly looser model to better match what userspace can already
+do:
+
+ * Make the ioctl only valid on the root (meaning that a process without
+   access to the procfs root -- such as only having an fd to a procfs
+   file or some open_tree(2)-like subset -- cannot use this API). This
+   means that the process already has some level of access to the
+   /proc/$pid directories.
+
+ * If the calling process is in an ancestor pidns, then they can already
+   create pidfd for processes inside the pidns, which is morally
+   equivalent to a pidns file descriptor according to setns(2). So it
+   seems reasonable to just allow it in this case. (The justification
+   for this model was suggested by Christian.)
+
+ * If the process has access to /proc/1/ns/pid already (i.e. has
+   ptrace-read access to the pidns pid1), then this ioctl is equivalent
+   to just opening a handle to it that way.
+
+   Ideally we would check for ptrace-read access against all processes
+   in the pidns (which is very likely to be true for at least one
+   process, as SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set
+   by most programs), but this would obviously not scale.
+
+I'm open to suggestions for whether we need to make this stricter (or
+possibly allow more cases).
+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+Changes in v4:
+- Remove unneeded EXPORT_SYMBOL_GPL. [Christian Brauner]
+- Return -EOPNOTSUPP for new APIs for CONFIG_PID_NS=n rather than
+  pretending they don't exist entirely. [Christian Brauner]
+- PROCFS_IOCTL_MAGIC conflicts with XSDFEC_MAGIC, so we need to allocate
+  subvalues more carefully (switch to _IO(PROCFS_IOCTL_MAGIC, 32)).
+- Add some more selftests for PROCFS_GET_PID_NAMESPACE.
+- Reword argument for PROCFS_GET_PID_NAMESPACE security model based on
+  Christian's suggestion, and remove CAP_SYS_ADMIN edge-case (in most
+  cases, such a process would also have ptrace-read credentials over the
+  pidns pid1).
+- v3: <https://lore.kernel.org/r/20250724-procfs-pidns-api-v3-0-4c685c910923@cyphar.com>
+
+Changes in v3:
+- Disallow changing pidns for existing procfs instances, as we'd
+  probably have to RCU-protect everything that touches the pinned pidns
+  reference.
+- Improve tests with slightly nicer ASSERT_ERRNO* macros.
+- v2: <https://lore.kernel.org/r/20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+
+Changes in v2:
+- #ifdef CONFIG_PID_NS
+- Improve cover letter wording to make it clear we're talking about two
+  separate features with different permission models. [Andy Lutomirski]
+- Fix build warnings in pidns_is_ancestor() patch. [kernel test robot]
+- v1: <https://lore.kernel.org/r/20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
+
+---
+Aleksa Sarai (4):
+      pidns: move is-ancestor logic to helper
+      procfs: add "pidns" mount option
+      procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+      selftests/proc: add tests for new pidns APIs
+
+ Documentation/filesystems/proc.rst        |  12 ++
+ fs/proc/root.c                            | 166 +++++++++++++++-
+ include/linux/pid_namespace.h             |   9 +
+ include/uapi/linux/fs.h                   |   4 +
+ kernel/pid_namespace.c                    |  22 ++-
+ tools/testing/selftests/proc/.gitignore   |   1 +
+ tools/testing/selftests/proc/Makefile     |   1 +
+ tools/testing/selftests/proc/proc-pidns.c | 315 ++++++++++++++++++++++++++++++
+ 8 files changed, 514 insertions(+), 16 deletions(-)
+---
+base-commit: 66639db858112bf6b0f76677f7517643d586e575
+change-id: 20250717-procfs-pidns-api-8ed1583431f0
+
+Best regards,
 -- 
-Thanks and Regards
-Srikar Dronamraju
+Aleksa Sarai <cyphar@cyphar.com>
+
 
