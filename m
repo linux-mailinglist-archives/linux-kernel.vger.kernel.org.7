@@ -1,144 +1,209 @@
-Return-Path: <linux-kernel+bounces-756330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD19B1B2D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:53:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC69B1B936
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D4B18114E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DD8189BC0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068D425A626;
-	Tue,  5 Aug 2025 11:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1DD2222D2;
+	Tue,  5 Aug 2025 17:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wwl9iJ+I"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VJeeclnk"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4C81D7E5B;
-	Tue,  5 Aug 2025 11:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA01F582F
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754394810; cv=none; b=fGC/YbiqfNINn1pnSCcxrYsPYqKkF4ajRg4XhAp6s4VGkbfkaCXa+Nw2T0vpMFbQ5mefJ4dSOHcTaUHb3+EoFzZyttQfK3oupI34OSz9NJHoYgr/R7w+A1x3w9ev8TvuDibRF147EI1qLF4DhP0UIbwSvjgLxRXD5F5BeACCA/Q=
+	t=1754414534; cv=none; b=nY9VzslE6X4Kx2bwtzq0vJC2l1feWMbka6nIzqqwN0NirtACzYzaiCqnnG0gIrxnFtlo7QdeCBb+N/aG0hM88vrGUtwS3JtjFJYqGVn3Ul5XhhisAYVxiE+7BC1Z8IqXYkph0CpzQVaZSNzmUPayfjl+T/Gm9q+tCQQzPLMupTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754394810; c=relaxed/simple;
-	bh=WRdngEMWr5emC4tZA/PBQpV5+c3Yw6c9CnLLz0i9C9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HPF1CzVC5G8z3Stsr7+uXIZvslh3VC66WwocVtHHqL7eVtBS01nFZRlleVGRM0eJ5JiufQIwir9Ldm/ozfGo8/nqIgckAbl+2JkiEHLSSpdtqCAurL78pOeH50AUM8WtABFwewfHyOzQVHdbmX/daD6jsJr3OGlriwGQnDej8XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wwl9iJ+I; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5759LHwB006190;
-	Tue, 5 Aug 2025 13:52:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	vYofx1rgOkS6euoEnD5cIWfWqSH84c0L9K8aBMbtQtY=; b=wwl9iJ+ILPZboT9s
-	VKEu1riEx4ojW5MJRXaLYYSUBfJIu7Udwhj68ECEYHqCmhfyyyzFM2QfyiXrVrOk
-	9fiMaEDoapg/dierdu9475AIgK/LFHR29eolkKjkWQ3kSIWb1bFJLLCTQA1nIx0N
-	3AfT0k2w0KxcKfvE152IijrdQvY20wSMOOaPSjPWQALpNbyusyOVsRHxGgGXUma5
-	93LwFNaTONFiqO7vY7OMHGoe3Uutl58Cjnr07T7XrQislLR90oEudhKcTZT8atXI
-	rwhGVeIyOnNlRYVHMfiTCRtJ6ja0S4a+mXUAOoGGvMGZ2xh+QVYn63eHXgHbwzun
-	GNIyFw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 489v861e7d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 13:52:48 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1851740046;
-	Tue,  5 Aug 2025 13:51:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4D13273294D;
-	Tue,  5 Aug 2025 13:50:31 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 5 Aug
- 2025 13:50:30 +0200
-Message-ID: <54530300-82c5-41af-adc6-8d0a45f9b37b@foss.st.com>
-Date: Tue, 5 Aug 2025 13:50:19 +0200
+	s=arc-20240116; t=1754414534; c=relaxed/simple;
+	bh=zkejJQGsucBjn8FTzlnbTMRminSezPhSkYOLjzKedTg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=kMZv0Dvr+tmTR+WopIJeyyNZSfcbAHZ5ITcybKvKoMHg7PqXP5MvdtRDrvhOK0TgAr6dOfs+NePeWv1qaYxkB6KTGZjcWtZMdICo1ylIxq7tjNi13xkkc4uiTWg0wbNmJeFQBd77AVAMzHYvCKmUH8ja8avTHALRoTU+IX9oPkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VJeeclnk; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250805172210epoutp03263718f17645ce7bc82c1a8a0169f29d~Y7rh6tfVY3035930359epoutp03X
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:22:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250805172210epoutp03263718f17645ce7bc82c1a8a0169f29d~Y7rh6tfVY3035930359epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754414531;
+	bh=3NWT4mKOZNdlidQlsy7YVyOqci6Cq0pxcFhWUe0hI/k=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=VJeeclnkExY7awXzIfdrX8Ks5JanYHPRBb9IN8rjjmFOiWbyz7qy+ERRc12Q754/D
+	 fLTdg4Vy08pkOROpCSIdzk9A9hXEbxk1ivi72K3eVao3hVrCM61b5YIfC766cgg8z0
+	 +A1ER82rrmqUnIShG5RjpUarBtCQGsSp6aWwbkEY=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250805172210epcas5p3bc2aeda341a6c1f21643e6d976843297~Y7rhLyOma1679616796epcas5p30;
+	Tue,  5 Aug 2025 17:22:10 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxKwx3Sz9z3hhT3; Tue,  5 Aug
+	2025 17:22:09 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250805114303epcas5p4c88843b7e38d86b722e60e386c637160~Y3DbswWTk1917319173epcas5p4L;
+	Tue,  5 Aug 2025 11:43:03 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250805114300epsmtip154a84efe22ffd7b56289c339abd25a90~Y3DYxqakz1387413874epsmtip1h;
+	Tue,  5 Aug 2025 11:43:00 +0000 (GMT)
+From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org,
+	ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
+	m.szyprowski@samsung.com, s.nawrocki@samsung.com, pritam.sutar@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+	selvarasu.g@samsung.com
+Subject: [PATCH v5 0/6] initial usbdrd phy support for Exynosautov920 soc
+Date: Tue,  5 Aug 2025 17:22:10 +0530
+Message-Id: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] drivers: net: stmmac: add
- STMMAC_RELATIVE_FLEX_PPS
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250724-relative_flex_pps-v1-0-37ca65773369@foss.st.com>
- <20250724-relative_flex_pps-v1-1-37ca65773369@foss.st.com>
- <aJHdNMWPqNsU9AiK@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <aJHdNMWPqNsU9AiK@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250805114303epcas5p4c88843b7e38d86b722e60e386c637160
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114303epcas5p4c88843b7e38d86b722e60e386c637160
+References: <CGME20250805114303epcas5p4c88843b7e38d86b722e60e386c637160@epcas5p4.samsung.com>
+
+This SoC has a single USB 3.1 DRD combo phy and three USB2.0 only
+DRD phy controllers as mentined below
+
+  * Combo phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+    compatible to the USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is added
+    to support USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data rates.
+    These two phys are combined to form a combo phy as mentioned below.
 
 
+   USB30DRD_0 port
 
-On 8/5/25 12:30, Russell King (Oracle) wrote:
-> On Thu, Jul 24, 2025 at 02:31:18PM +0200, Gatien Chevallier wrote:
->> +config STMMAC_RELATIVE_FLEX_PPS
->> +	bool "Support for STMMAC system time relative flexible PPS generation"
->> +	default n
-> 
-> There is no need for "default n" because the default default is n.
->
+ +------------------------------------------------------------+
+ |                                                            |
+ |                (combo) USB phy controller                  |
+ |      +----------------------------------------------+      |
+ |      |                  USB HSPHY                   |      |
+ |      |  (samsung,exynosautov920-usbdrd-combo-hsphy) |      |
+ |      +----------------------------------------------+      |
+ |                                                            |
+ |    +--------------------------------------------------+    |
+ |    |                   USB SSPHY                      |    |
+ |    |   (samsung,exynosautov920-usb31drd-combo-ssphy)  |    |
+ |    +--------------------------------------------------+-   |
+ |                                                            |
+ +------------------------------------------------------------+
+ |                     USBDRD30 Link                          |
+ |                       Controller                           |
+ +------------------------------------------------------------+
 
->> +	help
->> +	  Say Y to add the MAC system time to the arguments passed to the
->> +	  PTP driver when requesting a flexible PPS generation. This avoids
->> +	  the tedious task of passing an absolute time value when using sysfs
->> +	  entry.
-> 
-> How does a distro decide whether to enable or disable this option? What
-> does it depend on?
-> 
-> If it's only for some platforms and not others (due to causing
-> regressions) then what is a distro supposed to do with their kernels
-> that support multiple platforms?
-> 
+  * USB2.0 phy supports only UTMI+ interface. USB2.0DRD phy
+    is very similar to the existing Exynos850 support in this driver.
 
-Hello Russell,
+   USB20DRD_0/1/2 ports
 
-Following Jakub's feedback, I sent a v2 [1] with this config removed.
-The idea now is to compare the time value given to the stmmac_ptp driver
-and compare it to the MAC system time. If the time value is is the past,
-relative to the MAC system time, then it is considered as an offset
-relative the the MAC system time.
+      +---------------------------------------------------+
+      |                                                   |
+      |                USB PHY controller                 |
+      |    +-----------------------------------------+    |
+      |    |              USB HSPHY                  |    |
+      |    |  (samsung,exynosautov920-usbdrd-phy)    |    |
+      |    +-----------------------------------------+    |
+      |                                                   |
+      +---------------------------------------------------+
+      |             USBDRD20_* Link                       |
+      |                Controller                         |
+      +---------------------------------------------------+
 
-It's not ideal as it would have probably been better to always consider
-an offset but I don't know how popular and used this feature currently
-is. Therefore, I did not want to break any existing script by changing
-the current behavior.
+The "USB20 phy output isolation" is shared across the USB20 phys.
+We have to bypass isolation when any one of the USBs is configured
+and enable it when all are turned off. The "USB31 phy isolation"
+is seperate for USB31 phy.
 
-I'd be very interested to have your take on this as well.
+There are 3 types of the phys in this SoC as mentioned in above
+above block diagram.    
+ - one is simmilar with exynos850 as mentioned in patch no.1.
+ - second supports only USB2.0 HS as in patch no 3.
+ - third supports only USB3.1 SSP+ and denoted in patch no 5.
+ 
+These three phys(usbdrd-phy, combo-hsphy, combo-ssphy) are totally
+deferent, "NOT" same, hence added three compatible for three phys.
 
- From what I observed, it's linked to the MAC version. So enabling this
-config would have meant knowing what MAC version is embedded. Supporting
-multiple platforms then becomes tricky.
+This patchset only supports device mode and same is verified with
+as NCM device.
 
-[1]: 
-https://lore.kernel.org/all/20250729-relative_flex_pps-v2-0-3e5f03525c45@foss.st.com/
+changelog
+----------
+Changes in v5:
+- removed "Reviewed-by" tag.
+- addressed comments from v4 patchset.
+  - DTS style is corrected and added required supplies in code 
+    and schema.
+  - new schema block added for supplies to resolve below failure 
+    during 'dtbs_check'.
+    Unevaluated properties are not allowed ('dvdd075-usb-supply', 'vdd18-usb20-supply', 'vdd33-usb20-supply' were unexpected.
+  - removed usage_counter(will take this later in subsequent patch-sets)
+  link for v4: https://lore.kernel.org/linux-phy/20250701120706.2219355-1-pritam.sutar@samsung.com/
+
+Changes in v4:
+- addressed comments from v3 patchset
+  - removed dts related patches, to be posted in new patchset.
+  - added regulator, pmu and power sequences.
+  - phy isol is shared across USBs, added usage counter to bypass or
+    enable phy isolation.
+  - modified schemas with hs and combo phy compatible names
+    (used "combo" to denote combo phy) and regulators
+- modified code to work with binding and unbinding devices/drivers
+- added "Reviewed-by" tag.
+  link for v3: https://lore.kernel.org/linux-phy/20250613055613.866909-1-pritam.sutar@samsung.com/
+
+Changes in v3:
+- Updated dt-bindings for USB2.0 only.
+- Added dt-bindings for combo phy.
+- Added implementation for combo phy (SS and HS phy).
+- Added added DTS nodes for all the phys
+  link for v2: https://lore.kernel.org/linux-phy/20250516102650.2144487-1-pritam.sutar@samsung.com/
+
+Changes in v2:
+- Used standard GENMASK() and FIELD_GET() to get the major version
+  from controller version register.
+  link for v1: https://lore.kernel.org/linux-phy/20250514134813.380807-1-pritam.sutar@samsung.com/
+
+Pritam Manohar Sutar (6):
+  dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 HS phy
+    compatible
+  phy: exynos5-usbdrd: support HS phy for ExynosAutov920
+  dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo hsphy
+  phy: exynos5-usbdrd: support HS combo phy for ExynosAutov920
+  dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo ssphy
+  phy: exynos5-usbdrd: support SS combo phy for ExynosAutov920
+
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  41 ++
+ drivers/phy/samsung/phy-exynos5-usbdrd.c      | 652 ++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h   |   3 +
+ 3 files changed, 696 insertions(+)
+
+-- 
+2.34.1
+
 
