@@ -1,203 +1,207 @@
-Return-Path: <linux-kernel+bounces-756367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D6EB1B325
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA87B1B328
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D23437AF0AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823F23A9F40
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FC026CE30;
-	Tue,  5 Aug 2025 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6476626D4C7;
+	Tue,  5 Aug 2025 12:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJd7KIyT"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKP9VE4p"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4E12F30;
-	Tue,  5 Aug 2025 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DD32F30;
+	Tue,  5 Aug 2025 12:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754396000; cv=none; b=YM2epT4KlN+tzQJmdqj8/+gfUiwKfhznhyNUF8h0j1xf4qL59XuZsV97SS30NRMSYHgkXs/o8Goy17yuKB1+YZFdxU3lVcyk6EI2l660jxRiCjeVqsLLIOuWvX9aVPFKSKa4sBWfD31MDqBB0NrH1UyzVDhLF0y+yGyTAzRH6a4=
+	t=1754396038; cv=none; b=sFBU2XYfpu4GyRI6oAt2a7eahVOCY163rcTF8hQ2YEXb0XtxQABcXrKyU0Wd8fiARhbepMgNWOcACD+AqUNI+FzA6d1mIdqvW+w8C9x2V3zNA2O+IHB6dcGjfyjjE3lmDuvvRlFFV1zDnRayA0z9seyO33egX5i3OAhusuDfbRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754396000; c=relaxed/simple;
-	bh=EwgV03aMmUigY4Ai2ZcUT6R7WsVFMtOcHbmjEh5+jE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u9aC6SZcH2aQk3TKldkcfVG7OYQVfpHdMfTfJyURSQscHb7fHz0/uoQq+zlyyyvY7NYm5gD96v5SawG5AuNkiguBKEhNAiYAiMrEUfPkBc/3BeTxHf5U4abTt5aWwXMw4I58CsB/DVhUUCdnI6YtOZ6VVdbucm7Ue2ufOOYYSf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJd7KIyT; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1754396038; c=relaxed/simple;
+	bh=dx+w+PWC8dN+bRqgmmkr1t8wrpUe+dWzeDNdxXYKd7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfbLqb4cNNd3PqsPGO/69i7bPTrvvbfsyGOqBv2ZKJYBHV5Y68/Spf4hHvnIpRTKwEuhEXw/D6RwH9Ez7ZoIjHav3UVEXpaxKtLyTnc98CPAgRXgg7t28YPqr5vqJUCM05OkN8UTgHRcv3UN3zJPq8ac9j/s2pr7/lvzwQqjurg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKP9VE4p; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71a1ce529e0so2500537b3.2;
-        Tue, 05 Aug 2025 05:13:18 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b7848df30cso3927165f8f.0;
+        Tue, 05 Aug 2025 05:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754395998; x=1755000798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p8V2DgHri8YgTejj87JvYTtqdyOnLtF+JDKa1lXF5to=;
-        b=QJd7KIyTutj045OGpUop01mhE8sI3qJ6ZK3gMawUrWe2yGiQG+rXaFnSz1XVpUsqUH
-         96Q+Hg04XRQpF479xj5sa5QntKCBwXSV16nMHNCE6hhRvZffeLcUm8a/j1OfzjNQ+1XS
-         u0OMI4j+J1oSwchMfqOOQdo1JP6fYnEfJvpRam92s7t+fPZfCIvCFQ68pgy9GBvelTUO
-         gqaQXhL/YI8Mocqgl67FVDQKKD1pS3tWHIJ6bZi02g1HLkBhQHeCLRFzX6P4odCbc/yd
-         bvHLLuIw5Kjer4o75HKd0ynG7O9bGr4SxY5zcqnUxotRetvTlsT63RoHiOQPOPt4nMi3
-         KTWA==
+        d=gmail.com; s=20230601; t=1754396035; x=1755000835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GQRMFhKZNRLRVXrqn1NUSMh/FhCDWMwTV0xGjqW0gQ0=;
+        b=mKP9VE4p1htIiQ3ruqTuCpR31Q8VP+wj0S0YmatklltEMAFuLUzbO1pBIzCoh75C+3
+         AdqNxZORqaElNOkxZ8DYXc15yCDdnu5QOBKOXGXAPog2O02OyD0uRB3rhrji0SHYHADO
+         78uVRGWK/uExaWg1R7DwqG8bEgodCyYOwibbY053I9AS70u5BzxRf6nmTMmAuyRKIV8e
+         VBu8dbubZ6PYon11a31f0MLLowr30dOyGtjbK0eJqvV/EZgCPByeWPaNUqzfdUP5Hrwa
+         6O7N7bawG6bHsovAXaYFW5qoYW0AkDwDYYz+0PYGq5xHPHNkZ1RG2t6asMGaHo+d+kHS
+         pFZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754395998; x=1755000798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p8V2DgHri8YgTejj87JvYTtqdyOnLtF+JDKa1lXF5to=;
-        b=T3E2LupnHZoF9rK78S5Dqvb/BDWhnDMAxclzWeyfSR3xa+yOvGqGnaCqx3TQT3X/w2
-         y6EfXWtBOON6Jt+gu7F9K+gC5SVqjvSPSyjezEk6DMUCO5WII0zPxrvv0HxLXQC9pEN6
-         6pawHqCnXK+WKVrp5WfTGcIdz6FHQmtOCJKAQgxRpzw5UmhisTqx2fYAQWMvRi+ZdA+h
-         4+/s5gqUlDBN3LWojNgSr1vGrVMlG4L1cE7885whZlbJ/+KwDVNUsaG2g/puKXS3x+jc
-         Hz0pVw+xqM39389AKs5y0BOQRhexWZmA1BQTHw2GQaMLhi2LCyGyZeSCACw1jOf8IIhS
-         MaMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRG6yZ7RE7CQypk07kW6r1NXb3d6r6+xOgQKW8rpcYV3P7CBARhxGzTq/3wzYdzaMmOZTsnGNP4g5jo28=@vger.kernel.org, AJvYcCW0yzCM07FrkrlYXBHe6Z1oInv7sxvqS7PztZr7ibXVZwXB8c8xTNMHPeYXfxjIAWrw87vCIqiXCx1sAJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1B5wSaJ0sO+Km5KpDC8who9I3jk7siN79z12fyF3WNqKCdNQy
-	jJ+Jjm4cUjtbfJRZRjyBG5Imb1jxBxE/HrbCoFSDyb+JYVYBhirEAT6cnGsbBdjA6+Q6/0FSDhs
-	QTNHPPhX3V+YBhjcXStURKuuSRRb6Y6aAqXBA
-X-Gm-Gg: ASbGncu6cMZZX0/tVcIsqFw0aRCL/oWIHMF0B8mf5Q7fJyJd6BCAwh9edhAqmuKpc6P
-	dqzTcE1TmqWBlGfof91PIw9XPUXDO4C2AUIWFZLxkht3o6wtUQOYJor86BTM8lJMfTJN5hkx34n
-	IBDCbuN9f4nset+DYeeVyCZIGP2It0pwVIj6ITH7tmALHkSMv+BLncNM2S/MQV4PL+Fj66I4OcW
-	GTMRMXY
-X-Google-Smtp-Source: AGHT+IFno5ZUE+zPi7eL10QnBpUmwNfmnQnJRM7Ol/kSuAJPwRUHFeKn/aaBiKWgZBJ4/hwctVDxvaI1CZE+sNLrowI=
-X-Received: by 2002:a05:690c:3390:b0:71a:2d5f:49b9 with SMTP id
- 00721157ae682-71b7ed87a67mr84871107b3.1.1754395997637; Tue, 05 Aug 2025
- 05:13:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754396035; x=1755000835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQRMFhKZNRLRVXrqn1NUSMh/FhCDWMwTV0xGjqW0gQ0=;
+        b=v7FfM+tktzjOw6rgzzNJ867S4eh+V5/BS9zKITe7ItByObMgo2qzw3g5c/m5+K18Fi
+         0csjMJoWtvwpAI62dcAzu8KSARuN24ebqNgX/0rHNMmMPxHHvVxc2+0kvFvQMfbigj79
+         MFf6OkVwjmBizCMGzv1L1AlJPF5ggUgZ3BzNd2zODf9R/ZRrGktMckQtDMm8RBJs1hXo
+         ErrfjFBdvKft2x4S9AtLb9vwX1xTBdHAY3WyGOxHjjaWJ1ASC8Nqy4nMPb1Fk2iu27wh
+         txUuEEgpbfZWa56ih8UG4tErtnhbRAFJx5mQbHTXd4ZFFkdne1BHcx0tfnOuICWzJbBQ
+         7HzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYNjcqExn6RuZI1Qg7LyBNJaow4q7BiSvMY5Ujy6bdGSOh3eSeY50iDsa1RmERHPfB39sJeXfxbtFbdnFQ@vger.kernel.org, AJvYcCWj8+A8cPX3Neaaf0lal7M2KBg+tbYKpo04v/Qo/kQRdwBmfPOPzohQqwlm07GoGnI9382RGWDf0xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv9UeuaLRgYNaqufkOG1qTbmiCPiFx2wiG7EhPNFjP3ZkyDo65
+	1JOIh55Zd/7e+1WwS5lzNGPzKQHLNIBQzEacoX6q1bAGnbTxN/40C6ET
+X-Gm-Gg: ASbGncs948v82Eqq3MoDB6budv5ROBPGeMPpKh8YmH1o+7Syq/Zfal2uVr8G8nRWtXe
+	ud0ipbAJ73gb5AL34F2Y18ilAkE7s6vVh/EzsuAEbxYRwiQRfkIVyOrSVsut/QSiWwl4qnTC1Ul
+	qdsNZJAGyr7aklPmiKKO+Lj1xq4SZZHon10ky6xcBTQffLmVzKSkoJn3rKB/lAn1CnqewP4pbZn
+	YiTV7dOzZ7fuxrf2rA1qIe71plpiRC52AwlJtuJYeDKCQUyOqELRtGIhL8NXKV2b+1sOF3l5Ctq
+	Mm3wlROSbEoPUC1XsvRUSA3CenOmkBOH4KKXqhtXciMh6hMBPc98Re9yiiRDRnI5Nxa+5F7p4XO
+	C5cyxaTVVsVw621/R3ee/whJvb+8Xir8+o0tFWOBIH6XDa064blVMAEjSGpF17r6H3bf4nn64ZJ
+	J/rEbtjg==
+X-Google-Smtp-Source: AGHT+IGwRKtI0tVNRZIj++4L7ABQYvhpdiJwXLcYY2IEL2oHCw8906db2fHyLCpfcG5BZzaLfo/kpQ==
+X-Received: by 2002:a5d:5f90:0:b0:3b7:90c7:325d with SMTP id ffacd0b85a97d-3b8ebc9e883mr2324975f8f.6.1754396034932;
+        Tue, 05 Aug 2025 05:13:54 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::6:98ea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac036sm18872226f8f.15.2025.08.05.05.13.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 05:13:54 -0700 (PDT)
+Message-ID: <2c795230-5885-4a1a-a0f9-c8352b9e7738@gmail.com>
+Date: Tue, 5 Aug 2025 13:13:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com> <5c9bf027-f362-4176-b4af-bcba9aa96e0c@kernel.org>
-In-Reply-To: <5c9bf027-f362-4176-b4af-bcba9aa96e0c@kernel.org>
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Date: Tue, 5 Aug 2025 15:13:07 +0300
-X-Gm-Features: Ac12FXwc6JwF_PWuXYoAwmMgTz0-8NbtMwbbTAQwO8Nlhz1mma8RYwLFA7qqMM8
-Message-ID: <CAGn2d8MC4JckjW8isvz6q6SMsb9VEAR2QrnNkJHPRuLZtwqqSg@mail.gmail.com>
-Subject: Re: [PATCH v3] staging: media: atomisp: add missing mutex lock in atomisp_s_fmt_cap
-To: Hans de Goede <hansg@kernel.org>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, andy@kernel.org, 
-	gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] selftests: prctl: introduce tests for disabling
+ THPs completely
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com,
+ Donet Tom <donettom@linux.ibm.com>
+References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+ <20250804154317.1648084-6-usamaarif642@gmail.com>
+ <eec7e868-a61f-41ed-a8ef-7ff80548089f@redhat.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <eec7e868-a61f-41ed-a8ef-7ff80548089f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
-Thanks for the feedback.
 
-On Tue, Aug 5, 2025 at 12:00=E2=80=AFPM Hans de Goede <hansg@kernel.org> wr=
-ote:
->
-> Hi,
->
-> On 17-Jul-25 2:42 PM, Abdelrahman Fekry wrote:
-> > The function atomisp_set_fmt() modifies shared device state and expects
-> > callers to hold the isp->mutex for synchronization. While most internal
-> > callers correctly lock the mutex before invoking atomisp_set_fmt(), the
-> > V4L2 ioctl handler atomisp_s_fmt_cap() does not.
-> >
-> > This results in an unsafe execution path for VIDIOC_S_FMT ioctls
-> > (e.g. via v4l2-ctl), where shared structures such as pipe->pix and
-> > pipe->frame_info may be modified concurrently without proper protection=
-.
-> >
-> > - Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
->
-> Thank you for your patch, but I'm afraid that this stems from
-> not understanding how v4l2 drivers work.
->
-> isp->mutex is set as the mutex for the /dev/video# node in:
-> drivers/staging/media/atomisp/pci/atomisp_v4l2.c:
->
-> int atomisp_video_init(struct atomisp_video_pipe *video)
-> {
->         ...
->         video->vdev.lock =3D &video->isp->mutex;
->
-> This guarantees that any ioctl handlers will be called with
-> isp->mutex already held.
->
-> The suggested change here will result in trying to lock
-> the mutex a second time leading to a deadlock.
-great, now i understand.
->
-> So NACK for this patch.
->
-> What would be useful is adding:
->
->         lockdep_assert_held(&isp->mutex);
->
-> to functions which expect the mutex to be held. I regularly
-> test the atomisp code with lockdep enabled kernels so this
-> will help catch any paths where we indeed are not locking
-> the mutex while we should lock it.
-will look into that.
-Could you please check my other patch series if you have time
-https://lore.kernel.org/all/20250712191325.132666-1-abdelrahmanfekry375@gma=
-il.com/
-thank you !
->
-> Regards.
->
-> Hans
->
->
->
->
->
->
-> >
-> > Fixes: 4bdab80981ca ("media: atomisp: Make it possible to call atomisp_=
-set_fmt() without a file handle")
-> > Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-> > ---
-> > v3:
-> > - Use guard(mutex) as suggested by Dan Carpenter and Andy Shevchenko
-> > - Remove extra blank line after variable declaration
-> > - Fix include order as requested by Andy Shevchenko
-> >
-> > v2: https://lore.kernel.org/all/20250717013003.20936-1-abdelrahmanfekry=
-375@gmail.com/
-> > - Add Fixes tag
-> > - use cleanup.h micros instead of explicitly calling mutex_lock/unlock
-> >
-> > v1: https://lore.kernel.org/all/20250716014225.15279-1-abdelrahmanfekry=
-375@gmail.com/
-> > ---
-> >  drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/driver=
-s/staging/media/atomisp/pci/atomisp_ioctl.c
-> > index bb8b2f2213b0..2690c05afff3 100644
-> > --- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-> > +++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-> > @@ -7,6 +7,7 @@
-> >   * Copyright (c) 2010 Silicon Hive www.siliconhive.com.
-> >   */
-> >
-> > +#include <linux/cleanup.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/pci.h>
-> >
-> > @@ -416,7 +417,9 @@ static int atomisp_s_fmt_cap(struct file *file, voi=
-d *fh,
-> >                            struct v4l2_format *f)
-> >  {
-> >       struct video_device *vdev =3D video_devdata(file);
-> > +     struct atomisp_device *isp =3D video_get_drvdata(vdev);
-> >
-> > +     guard(mutex)(&isp->mutex);
-> >       return atomisp_set_fmt(vdev, f);
-> >  }
-> >
->
+
+On 05/08/2025 11:30, David Hildenbrand wrote:
+> On 04.08.25 17:40, Usama Arif wrote:
+>> The test will set the global system THP setting to never, madvise
+>> or always depending on the fixture variant and the 2M setting to
+>> inherit before it starts (and reset to original at teardown).
+>>
+>> This tests if the process can:
+>> - successfully set and get the policy to disable THPs completely.
+>> - never get a hugepage when the THPs are completely disabled
+>>    with the prctl, including with MADV_HUGE and MADV_COLLAPSE.
+>> - successfully reset the policy of the process.
+>> - after reset, only get hugepages with:
+>>    - MADV_COLLAPSE when policy is set to never.
+>>    - MADV_HUGE and MADV_COLLAPSE when policy is set to madvise.
+>>    - always when policy is set to "always".
+>> - repeat the above tests in a forked process to make sure
+>>    the policy is carried across forks.
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> ---
+>>   tools/testing/selftests/mm/.gitignore         |   1 +
+>>   tools/testing/selftests/mm/Makefile           |   1 +
+>>   .../testing/selftests/mm/prctl_thp_disable.c  | 173 ++++++++++++++++++
+>>   tools/testing/selftests/mm/thp_settings.c     |   9 +-
+>>   tools/testing/selftests/mm/thp_settings.h     |   1 +
+>>   5 files changed, 184 insertions(+), 1 deletion(-)
+>>   create mode 100644 tools/testing/selftests/mm/prctl_thp_disable.c
+>>
+>> diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
+>> index e7b23a8a05fe..eb023ea857b3 100644
+>> --- a/tools/testing/selftests/mm/.gitignore
+>> +++ b/tools/testing/selftests/mm/.gitignore
+>> @@ -58,3 +58,4 @@ pkey_sighandler_tests_32
+>>   pkey_sighandler_tests_64
+>>   guard-regions
+>>   merge
+>> +prctl_thp_disable
+>> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+>> index d13b3cef2a2b..2bb8d3ebc17c 100644
+>> --- a/tools/testing/selftests/mm/Makefile
+>> +++ b/tools/testing/selftests/mm/Makefile
+>> @@ -86,6 +86,7 @@ TEST_GEN_FILES += on-fault-limit
+>>   TEST_GEN_FILES += pagemap_ioctl
+>>   TEST_GEN_FILES += pfnmap
+>>   TEST_GEN_FILES += process_madv
+>> +TEST_GEN_FILES += prctl_thp_disable
+>>   TEST_GEN_FILES += thuge-gen
+>>   TEST_GEN_FILES += transhuge-stress
+>>   TEST_GEN_FILES += uffd-stress
+>> diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
+>> new file mode 100644
+>> index 000000000000..ef150180daf4
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/mm/prctl_thp_disable.c
+>> @@ -0,0 +1,173 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Basic tests for PR_GET/SET_THP_DISABLE prctl calls
+>> + *
+>> + * Author(s): Usama Arif <usamaarif642@gmail.com>
+>> + */
+>> +#include <stdio.h>
+>> +#include <stdlib.h>
+>> +#include <string.h>
+>> +#include <unistd.h>
+>> +#include <sys/mman.h>
+>> +#include <sys/prctl.h>
+>> +#include <sys/wait.h>
+>> +
+>> +#include "../kselftest_harness.h"
+>> +#include "thp_settings.h"
+>> +#include "vm_util.h"
+>> +
+>> +static int sz2ord(size_t size, size_t pagesize)
+>> +{
+>> +    return __builtin_ctzll(size / pagesize);
+>> +}
+> 
+> Note: We have this helper duplicated elsewhere (e.g., cow.c).
+> 
+> See [1] how we're going to clean it up.
+> 
+> Not sure how to resolve this. Probably, which series lands first in mm-unstable should clean it up.
+> 
+> I would assume that Donet's series would go in first, such that you can just reuse the helper from vm_utils.h
+> 
+> [1] https://lkml.kernel.org/r/20250804090410.of5xwrlker665bdp@master
+> 
+> 
+> Nothing else jumped at me
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+
+Thanks!
+
+I will wait a few days and see if it has made it into mm-new and rebase and send the next revision.
+
 
