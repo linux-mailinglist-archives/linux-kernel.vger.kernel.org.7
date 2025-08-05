@@ -1,201 +1,420 @@
-Return-Path: <linux-kernel+bounces-756500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0BBB1B529
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20252B1B528
 	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706F4625031
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DEB9183581
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6CF275AE4;
-	Tue,  5 Aug 2025 13:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054C527586C;
+	Tue,  5 Aug 2025 13:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3DJLailj"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2042.outbound.protection.outlook.com [40.107.102.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4VAP8s9"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE4A27586C;
-	Tue,  5 Aug 2025 13:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754401345; cv=fail; b=UTrfn1+4La70UVLcgEnKbe0DH7iC9n3B+j51enZ4ROg4NoceDGTohD0Miv8ARiLo42njpzi128zY8MXRLNkE6vV+VqQV+b7/dlJbjFUh2mpTKozVZFmIBNPEZadwg+3OuJh8QuYbKsxL7MI3OrCy2jfSgsDaX2VsUnEKqyg/fHM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754401345; c=relaxed/simple;
-	bh=fkiVyF+h+mMS4GGWjdah9O3mqVr3uxyzjef4sNAOaok=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HlqYQjHcVhNMIkooCI0O+Vg41eoZ6eYyKH9Q10VoEqJWr6PcFB7GV81jefZ9b6rZC0wUdJVvWINZIPEuxAFUKfe2ap/UznoVfdzQNQzpPdNUt85G29pLi8tzi+LsEIEMGi2/J0KDppQFk1S5GEyBQUaMO9iYaRxUQkCTw43jXdE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3DJLailj; arc=fail smtp.client-ip=40.107.102.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A8jKYckcaSj9fhCkFqRqd3bfujK/R+RSJMIhBvjkYMXM7EzKjPyiSkovy+iMdTpcxPa/V0FrYsBIaH6V8W1+1uRDOT1k4bKo/kLYqu7wNE8p2wba58Ba7kxn1rawykKEqWEQ5uZ+wpxRS8f3u+UebOavBoxjxS6Eg05ik5LmjjN5Gmpkb0ySYxDEM5ckKoeq00qFnRfPdBXB4d/aIHDN0XHmusDCjA3t8R7e/cJ9FTPLeLzKDI/LlBN1koT6vxeF0Ik674uDiaXr8sBzwQ+ZGS74EDpEmHkdaz01QO19UvwuNHCDKTonhXTvZ49PHzI5VQlVFYBXVsMgdUa+cHsc0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L73SDsNmaSbCdMwVX0mGGaY1g7ZBOJnDo4cwo7lKz9Y=;
- b=U44SGo0K5asTKVzy4y0lCYtQZoYTZAfqb5rtwVEIyc8v9bDTfcpOpIsEjjpXs4fnZE8KoqMz1taDG5JiQJFRqtme3k+/SxtiM9H2GXcw+S4EIVsprgL0O7PU0Pogpv7KnYo1chUHI+u6SjyTslXKoUZ6nA088oWcfeP4PEg/Gv2+8xCXsSoSJ5hF4S499Dpp7YKqBRJlXFAcyNYymDnZ4vj25A7dk2jenHXYk75p3GUmWZPo9sifgmS/qT1VJpz+CN8Ez0SdHshwGof2+MJAWD7AMMeOe8puW5tQMmnR/nbk9lDCspLQJnwwMpYKn3IDDMYzjXBiBmbLDfo5OS8iwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L73SDsNmaSbCdMwVX0mGGaY1g7ZBOJnDo4cwo7lKz9Y=;
- b=3DJLailjMEWV1WNxUsCEqSv0+7llpPV3+gA/eqfPW/r29i1mtwMMAwGiLLOqrVI+VQs4Jv35YXqVFis0qoNL2wCqW92JRhhGjhvHEx9MKFsb8ouC54RtF7crcv5OHaBrvn20lGs3WFJ9dY6JXcgvIiuRwu/w1lijTlB0Rhl6ips=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- DS7PR12MB8229.namprd12.prod.outlook.com (2603:10b6:8:ea::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8989.20; Tue, 5 Aug 2025 13:42:21 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627%5]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
- 13:42:21 +0000
-Message-ID: <f243416a-6c6a-4fe6-95a2-8bd1db326023@amd.com>
-Date: Tue, 5 Aug 2025 19:12:11 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V5 1/4] x86/hyperv: Don't use hv apic driver when
- Secure AVIC is available
-To: Tianyu Lan <ltykernel@gmail.com>, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de,
- kvijayab@amd.com
-Cc: Tianyu Lan <tiala@microsoft.com>, linux-arch@vger.kernel.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250804180525.32658-1-ltykernel@gmail.com>
- <20250804180525.32658-2-ltykernel@gmail.com>
-Content-Language: en-US
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-In-Reply-To: <20250804180525.32658-2-ltykernel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0010.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::17) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E2D27584C;
+	Tue,  5 Aug 2025 13:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754401354; cv=none; b=VFWnt/WG4HCc0woB7yhc4aPOPOFzVZzm2ocsTHv+NIHUXHLztP7+QeGujf07Wvpu8MaMs+7Lkn9iggpDK1sRnHCAVHBv6RlHbUrv/NW+1AitAcd9SG/XNEUkwwech6nADBE5ER19xhhwFxlOAds8mCWqBETDA0gsCnzEaAHTfNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754401354; c=relaxed/simple;
+	bh=jiWRZlu30KCgc0bW1cXmyzwwH+9OjcHfP9ALGv6NbW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fpQiN+JsuluaaAJf46WMzw7Qvn1v5ljXrHSAK3w7z5G+NtSY4dHxbzjohJYsGVlUqA8H+FdaovG4llViwMexxZenuD5Fl+m1IjKNjtb/UkLnUq5HEJ0iS/44N2huQ45xuGKcgHlgHObWdFPbVckLzL9F/iJCeAi6F7w4iaNoUhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4VAP8s9; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4aeb2f73fc0so52584691cf.2;
+        Tue, 05 Aug 2025 06:42:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754401350; x=1755006150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9tqW6prf2C3KdFtzF3A5CcH40D2BcXOPzZkaGzsQogs=;
+        b=D4VAP8s98Z5xMJ1gnfrVur0dZO1kK+sWCLWAz2GLTGrz9039h/ai5EWXblWADiK5W3
+         24NuibVWRSMDdUQo20TaCrpqytn6NnbZc4fSLi8s1551xbcpji/T4WKF2ykTJX3Wfm4q
+         tqAI0WzaoDRoYcpMljVgItOLrnZocSX8re0QzSyD7xbU8CaaBLENpm5Vrgl1urBgVLo+
+         kH3vjIT74Icv1C+rScrr7PZce+O1mA/V94Q9fKVJOJYYjBIM62benjFggKpCGRbrVWQr
+         lX5B2u31K+RfHoI0I+0XTJG+PYjjy/aNu+XeaBfty7rgQDgHybhbGHm7dZaCMT2Lpsyz
+         sKUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754401350; x=1755006150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9tqW6prf2C3KdFtzF3A5CcH40D2BcXOPzZkaGzsQogs=;
+        b=gkhoQM+g/CqS2zB1WQ/9UlaW+DE8IuxeAsUGuwzyOn9pGm9zfQU5jjND6Rjsy5PdH4
+         p/TmTGSsO1dYrV/lQLcYhpFG6YZK4Hbx/ZaTt1nc0n5gpFSqiH7n67mc0NjyrXNi1zLY
+         aaH6XzqWtfVXIL+moW8g9F5ZlGIDkZcJBS2uULcxyn/3b8KYAxpVqbZIX6PwKivR1009
+         sjJciW5LzY7Y7ex6cRK4QYe1IknlFmdrkel2R+qFZpqHQqn8jzB/SOl3VOxGjJwYf+6H
+         T3/9wERC1grcL5XUWXbLsRNvYc6jzxpzzn7oiHTAleD3ClbSgroiTb5vKAhCe/oD1CzC
+         dovg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPMy87f/BrP2N9TpB5puUttaUBIhd99Oy0/Ju69qQpvrYZKvuXt1pMXs3IQlvr7s3Q8YY=@vger.kernel.org, AJvYcCXas3ELqYkm19YPSEjsj/bVkjPtd/tKKcTLtsf8MvgloRetQTAY5kv/rSNLz95zihvZKux4EigR1RK8OWrv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Y0pfKDn3HXQA7gR5CY1beK9+VZIeiWsSW9uSh2ItDSklgDZe
+	LtAire6xZgAx+H7RsyCuAywhcQ62NqgIQgUnMZl/VtinzZFt+IW8VsMXcYIwEgmBF+dVAGDf7+5
+	ESafz7iVNsOBOfqu63mggaq9ccuhzgYc=
+X-Gm-Gg: ASbGncsinR6lFvoDFTQLoT3QOMbv7dkWAbKYbyqueOB3pj85i5Cv/+SJyH1vqF9/e/6
+	KilSkG1oRTyUu7C/E8GDA+mIwO3l85G4kWcsnw6ec1QSQC4//iKYQtEEtq/jsY3QSW+0k8L1G8t
+	abPNbqIMqKHzlrw6c49gtDU4mx5CwDn31V8/HMwm6rV1v8nDQpfLjm+ZZab5+iUouYgWyedpPqQ
+	LmGyzo=
+X-Google-Smtp-Source: AGHT+IGrQcY12vRWP7gowk1Nks+lt6a2YGRtJlkkMeGyN7pv8Ai/zBG8ooVw/Sp4UQnK+kFf4YCyfypD3T99/Sp8qPQ=
+X-Received: by 2002:a05:622a:648:b0:4b0:7e88:8cd3 with SMTP id
+ d75a77b69052e-4b07e889188mr49195961cf.34.1754401349437; Tue, 05 Aug 2025
+ 06:42:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|DS7PR12MB8229:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9cf7418-2275-4165-e697-08ddd425e6b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YnR4RUphd1l6dDZHUXlQOUxDK1E3cWR1MkVhZkVzYTZzeUVWazRnc0NwQXVz?=
- =?utf-8?B?NUpZZEYySitnU0JYbGNabkFEbElxWm9Uakl2NHNXMnZJdzh1eEFrcWx2cUJS?=
- =?utf-8?B?dXlzQmkyR1hHRHpZdmtEWGdiaDE0bm1xbnZ3THFGd3cyUC9BSTdjTlF3L0Y4?=
- =?utf-8?B?bmt0ekJQTFVMYzZDTUVwNHZHdDZLUEZhV3ZXZGdLMFNNaHNidHdhQ3k0RUpY?=
- =?utf-8?B?U0htTnBCditjRndBT0FjSlZxV3NRejFPT04zdVpkN3ZjMzdQR2VNcVBiWmwv?=
- =?utf-8?B?cXVRRGlQaDlNUEZoSjE1RFBPOGhrcVo2elJpbU9VUDJrOTl4SWtLTStML3dq?=
- =?utf-8?B?aWFVeWoyU0VDOUJqMENEYXVXL1dpTlVGV3FmRTFqQlR4RzUzTGpLdU5WRGhl?=
- =?utf-8?B?Ui9ScXZpbC94MitJZlM0NjZ0RHJUS2hDSktvUUFvdERodHB5U25qQ1o1RTlO?=
- =?utf-8?B?QjJ1cllWSnEvamhiQmg4Y01lZDl4ajFSVk1VcVIvclZVc0hNNEdLYnpsZlRZ?=
- =?utf-8?B?RDMzM3psQXBsRnFuQ25Ka0JaeWNhQWVWYWZWZy93WUVYMXIxYjV6U2MzVlc1?=
- =?utf-8?B?TU1XMEtPdjNucnVPU2lnM1JIUE9WRnQ4UTBWLzJ4WTl3N0RGQUxwTTZpL2s1?=
- =?utf-8?B?UXRsVmRCNFNhVnBZSVprdUFaWE1Nczd3UEM5QTFkaUN6c2QrTXlOY3Ntb3hu?=
- =?utf-8?B?bHpPYlYrS2dVRFdmNXZVQVJrNXZvdUl3TkxoM1NLZzhVaEp3dnZxTmNYRGVu?=
- =?utf-8?B?TXNtczNIYXYyakhXOWZkdTZiM0gvSnNOLzlaMldXWjRXZkJTT3lQZVd1UXJr?=
- =?utf-8?B?MjVJMFF4VkxuaGYvZ08vdHdxZDYyQUI0dFNXTVczM2M3NmxCck5jdTR2VGUw?=
- =?utf-8?B?SFV0OERsNUlRVGVhTC9HczBuS1pHRGRZY2k5M3lORVc2dCtFVHl0RW43SCty?=
- =?utf-8?B?T3JuSUtIMDR3VmtYSDc1SmxQUWtVNjBpemJmR3MzcFphdjF1ZmdWOXBsZVBW?=
- =?utf-8?B?eUlHYXk2MHZiakRhZlR5alg4RzNuYVRJVkVGc0ZFYnVQWTM4dmhaU25CZEZw?=
- =?utf-8?B?RGdJc2dma0FwMktjbDN0MnBiVnFsNENmcSsyOFEyT0ljVjFraEFST0dkRVo5?=
- =?utf-8?B?MkRSRHJGc1BleHhtYTlwOWFrOXltMHFOejViOUNLWXIyeCszUkxMbDYvRElL?=
- =?utf-8?B?eWhwVXdsNUJnYUF2N3BsT3JUMDdZRyszYVRVTDBHZmJtbkRMZVMzaWovcjRG?=
- =?utf-8?B?eHhHbVBwblVVczVRSXdqZ2hBMkp6NE1wQ3haVDZjU3lSTTJvdGx0WmhjVDRq?=
- =?utf-8?B?VThrOEx4SElzdEFOajJpb3dERnFNWWFvTVI2WERoMEhjODJ2cHBiaE9WWVNB?=
- =?utf-8?B?UVd1cVg2VlltWUJ1K3pTS1BzMythM1RZOXFXU2ppM0UreEs0Tmh1NW4zY0k4?=
- =?utf-8?B?eW9EUHVqRUFWbVhZZWRSM29wcUNmeW5KZDY0ME9EVE94TzZXZmltazJDYUJW?=
- =?utf-8?B?N0RhZkY3NnVsQk9SaDYvTDIrZ0lkK3NzZ3NCOWNDcDNKRGttKzdqTDQrQ3pX?=
- =?utf-8?B?d0xKTWcrTUhEK1B1ZFZRU09sWWc1b0UzMFFKUjM1SFJndXZZMmtpNHlBb0do?=
- =?utf-8?B?dWQrdzk2V0l0NEUvVFZXUXF3elNBc0tqUTV4UUduVUhkWElhVk5sRWkwTVha?=
- =?utf-8?B?OE95NWgxNFRqWEhHVlJ1alF0VllnV3RZWjAvVi8yZklJSzJxUUdsazhZUnFJ?=
- =?utf-8?B?Wlp6Z3dpb0xJb3hQWGJDb3FCT3ZCWUM2Ty82dkg4N3RLM0VDTkdsR3dBV09Z?=
- =?utf-8?B?dVBraStCOWp6Si9RY0wyTmlYREpzWjhvelZMN09iZW1aYlJkWWd1emZJZUc2?=
- =?utf-8?B?KzJPMnY1WXRwS2huSjdEWGxaODc2NmhDcXFpWnZ0aU5qQ2M5bGlkaDZLbmYv?=
- =?utf-8?B?Rzg1eVFCL0NHTXl5OUV3WnAxaDZnK1BXTU5qNDZWeExIejY5ZCtXMHVZQ3Zv?=
- =?utf-8?B?RG1VbmE2ay9BPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzJvY0d4MkdHcmpHSzhhSVhST0V3SUZGdmljenJaTFhhM29RaGdYWXladEJq?=
- =?utf-8?B?ZG9zZnlTTXZzRFhEVmVhNmFvcFIzWDcvcXIyL0ZNcUExRGt3Y0V4VTUxSzIx?=
- =?utf-8?B?MGRiQ3MycGVTQ0VNZTEzYVBLNUpkeWN5Nm5Fbm9qVlpHL3dxT25talpQTFIz?=
- =?utf-8?B?Nm1taTRYUmg5V1U2STl6N1gzWHQyTGFJQ0w1aVh2QzRFNC9ML3BZSHdZajJB?=
- =?utf-8?B?R01iMnlkcmVhU0V6S0JyWEFJSWtEcmZZbzF5T3FkVkh2YkNnemk3YS9PVGlK?=
- =?utf-8?B?bnpscDRFRVdBTnN0SkxTcHNUbTBvYlJTWWJvc2VNVDkwZFpvZGdIVkY2eGhr?=
- =?utf-8?B?eUx3OVdmelU0UkdLaXdPeVQ2VC8xNVlHYnkzNnZySC9GRUc0cm1DRklqM0lE?=
- =?utf-8?B?T05WQjhDN3ZBT2lDVGo5U0ZaSGc3Mkt3SGNsRHluMmhiczhHUkZtRVpaUGtq?=
- =?utf-8?B?OXR2QnRjanlNK29Eb0d4V0VxRGozVzJNb3I1NHRQcHVZN0w4d2NoSzhiN1px?=
- =?utf-8?B?RzJOMUNFenRlbUJvbnJKOEd3dVZFU21USmdFdkUxdWo3MnhiOVdzUUxMWFBu?=
- =?utf-8?B?UjJ5MDNyamE3MmltWTJxZFREQkhET0Z4RlV2c2J5RWJhS1VxRlg3TGx6aG93?=
- =?utf-8?B?dGdtbGhTdHoxTDZLTW1EMmxkS3JGSlozTy9XL2RTR3prMEd5SUZ5WnlEWE1D?=
- =?utf-8?B?aFZmMVU1RDQ5RmIwRWc5cTd4c000NEcxbk5sZFFmQnhGcE00d3poV1Z1SEZD?=
- =?utf-8?B?TzJVUXJtbjZLS3J1M1ArL1pGTDhOQlZJeG41MGxEWldzZmRYTEpsZ0s5S2xW?=
- =?utf-8?B?cEd5N0hLMnJSOS81eit1dW5rME84OEV4ckQ1czhWK2VYblJac2hEZ0FsVDE1?=
- =?utf-8?B?M1pNelpXTWIzSUhPSDFFcXI2NE9PSVgrVU96UitxbHVEZXlOMVh0Q0RkdGdO?=
- =?utf-8?B?R2MwU2JwY2FMOG9USFhkSnhPOHAxeFZwVFQ0TTNFODVYTTRVUFdMUHlrZ1I5?=
- =?utf-8?B?cXhXM1hQSUZEcWVJV2h0Vk1qSGVyYUhxTjQ3WXREbXJSTlY5M3dTeDZsR3hu?=
- =?utf-8?B?cGplVkFuaWpTWVNSekdLNGY4VjI5OW1HcXZ2QWMySHc3TmFDNW11NU5nNXpB?=
- =?utf-8?B?WjVIY2VSemVMM2Q5bngva0ZRR24ybWhMRW9NUjF1TTdpY3pOUVlxRCsydkV6?=
- =?utf-8?B?TFlaT3diMGdETkttZllOTTBNdmNCREYxKzQxR1hrRDJCd1Q5UWZDeVhLbCtC?=
- =?utf-8?B?cEMxMEFnMHFHWDBZVGZjZEY3b25PdmdMR1dLd1B0TjRxM1BTVFN4UmVCVWVs?=
- =?utf-8?B?WHFQZStwRXhxWkJJbXdwTkUxTDcxRDNHTzNpODNoZFBlQ1RaV0lZS0VqQzdp?=
- =?utf-8?B?c2hzKzVRK2RCSHhQWmtGWkkzRFN2UU5GWXBFWG1SS2NDT0xkMW1RMmZMWmdL?=
- =?utf-8?B?dTByYmswZnBOUFhyZFpQL0ZTcGQwY3Q5S2diWVNWemVsaWFzTkZISjFPUnVD?=
- =?utf-8?B?VGFDRFRmRU9OWDNBa1dnUm52ekJZaERQVWNzZUN2cjZiWm8vRkl6cE5RbWlK?=
- =?utf-8?B?dGVpcGdFa2swdExsVU55UFpwUHRNK01NRmdrWXZ4OEplWDA3emRkTHJIdGNF?=
- =?utf-8?B?Tjh4WkpFbEhrTnFhSFhpc3dycGNhOFpPYWRxWUNUMndDTmlXeEZHOWg0Zzc1?=
- =?utf-8?B?elJYTjhpdUFwczJVWWFPcUdkMmZVZ0R1SGJPSHphY0M4TFZac3hwOWszdlFU?=
- =?utf-8?B?V3NKZXdBRzBUdURHeklvOW1NdFhBcXlwU3pCY2k4Mi8zMldla3RHQnhlRTda?=
- =?utf-8?B?WVdNYmQwRVYyd2VONXVFNnF3UjAxQUF0RlJhbFhkL2ttdjZZWVA1czNlcFdx?=
- =?utf-8?B?eHNnTnMxRnRTNXB0OTk2UWxnZXZkWnhqNDRBdllDYS8wL0p3Sit0Z2RoeU42?=
- =?utf-8?B?ek91b2k3SHN0NWN4VlZEa0hvYmJDUW04VjkrSEZlMzY5SGhUMUtkMjNDWUps?=
- =?utf-8?B?S3hGNTB3b0hvNTNmM09mODBZR2R3U1ZxeFlzbXlEMjRkMDg4OXdDb2ZySTNO?=
- =?utf-8?B?RGRMYUpIdW5YNGhEN2drdld5TUc3eVY5VWlnMjdLY0huQ2tvWElpZEFNYmRw?=
- =?utf-8?Q?OKqIOJ5LA/+aRRNFRULFcxJjh?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9cf7418-2275-4165-e697-08ddd425e6b9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 13:42:21.2517
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sZv1XouVAho8K5RcsvzaxrduB7WZIW7XQt8wtZ4CgcD6TOh+7zBm1TgPTI+bF3JUk5SoxCDuka4Z9zvYLSVCnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8229
+References: <20250730131257.124153-1-duanchenghao@kylinos.cn>
+ <20250730131257.124153-4-duanchenghao@kylinos.cn> <CAEyhmHTE8yd0-N5YkMvJScv+Dsw3sAvgyZt8h1sd1=rzaCoTwQ@mail.gmail.com>
+ <CAAhV-H55VoFdK8B-PBhYfzHAOQJLnOxLUZGZyHqqdvt=5K3Zhg@mail.gmail.com>
+ <20250805063014.GA543627@chenghao-pc> <CAAhV-H4W6z2CRBJ2VDsKTmmGNS+NmfH4aZCRB6K9+XQ4i3vPCA@mail.gmail.com>
+In-Reply-To: <CAAhV-H4W6z2CRBJ2VDsKTmmGNS+NmfH4aZCRB6K9+XQ4i3vPCA@mail.gmail.com>
+From: Vincent Li <vincent.mc.li@gmail.com>
+Date: Tue, 5 Aug 2025 06:42:17 -0700
+X-Gm-Features: Ac12FXxGXbn8ATQiQdyqqOFnSullYE9xAtYRrrJlWDYEI3JCfvaDdXd3edk3VY8
+Message-ID: <CAK3+h2wGeVFuzpUroiPcOGt9Tu76fV=aZMFy6yxub8MOF569YQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] LoongArch: BPF: Implement dynamic code
+ modification support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Chenghao Duan <duanchenghao@kylinos.cn>, Hengqi Chen <hengqi.chen@gmail.com>, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, yangtiezhu@loongson.cn, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
+	geliang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 5, 2025 at 4:13=E2=80=AFAM Huacai Chen <chenhuacai@kernel.org> =
+wrote:
+>
+> On Tue, Aug 5, 2025 at 2:30=E2=80=AFPM Chenghao Duan <duanchenghao@kylino=
+s.cn> wrote:
+> >
+> > On Tue, Aug 05, 2025 at 12:10:05PM +0800, Huacai Chen wrote:
+> > > On Mon, Aug 4, 2025 at 10:02=E2=80=AFAM Hengqi Chen <hengqi.chen@gmai=
+l.com> wrote:
+> > > >
+> > > > On Wed, Jul 30, 2025 at 9:13=E2=80=AFPM Chenghao Duan <duanchenghao=
+@kylinos.cn> wrote:
+> > > > >
+> > > > > This commit adds support for BPF dynamic code modification on the
+> > > > > LoongArch architecture.:
+> > > > > 1. Implement bpf_arch_text_poke() for runtime instruction patchin=
+g.
+> > > > > 2. Add bpf_arch_text_copy() for instruction block copying.
+> > > > > 3. Create bpf_arch_text_invalidate() for code invalidation.
+> > > > >
+> > > > > On LoongArch, since symbol addresses in the direct mapping
+> > > > > region cannot be reached via relative jump instructions from the =
+paged
+> > > > > mapping region, we use the move_imm+jirl instruction pair as abso=
+lute
+> > > > > jump instructions. These require 2-5 instructions, so we reserve =
+5 NOP
+> > > > > instructions in the program as placeholders for function jumps.
+> > > > >
+> > > > > larch_insn_text_copy is solely used for BPF. The use of
+> > > > > larch_insn_text_copy() requires page_size alignment. Currently, o=
+nly
+> > > > > the size of the trampoline is page-aligned.
+> > > > >
+> > > > > Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > > > > ---
+> > > > >  arch/loongarch/include/asm/inst.h |   1 +
+> > > > >  arch/loongarch/kernel/inst.c      |  27 ++++++++
+> > > > >  arch/loongarch/net/bpf_jit.c      | 104 ++++++++++++++++++++++++=
+++++++
+> > > > >  3 files changed, 132 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/i=
+nclude/asm/inst.h
+> > > > > index 2ae96a35d..88bb73e46 100644
+> > > > > --- a/arch/loongarch/include/asm/inst.h
+> > > > > +++ b/arch/loongarch/include/asm/inst.h
+> > > > > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instr=
+uction insn, struct pt_regs *regs);
+> > > > >  int larch_insn_read(void *addr, u32 *insnp);
+> > > > >  int larch_insn_write(void *addr, u32 insn);
+> > > > >  int larch_insn_patch_text(void *addr, u32 insn);
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len);
+> > > > >
+> > > > >  u32 larch_insn_gen_nop(void);
+> > > > >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+> > > > > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel=
+/inst.c
+> > > > > index 674e3b322..7df63a950 100644
+> > > > > --- a/arch/loongarch/kernel/inst.c
+> > > > > +++ b/arch/loongarch/kernel/inst.c
+> > > > > @@ -4,6 +4,7 @@
+> > > > >   */
+> > > > >  #include <linux/sizes.h>
+> > > > >  #include <linux/uaccess.h>
+> > > > > +#include <linux/set_memory.h>
+> > > > >
+> > > > >  #include <asm/cacheflush.h>
+> > > > >  #include <asm/inst.h>
+> > > > > @@ -218,6 +219,32 @@ int larch_insn_patch_text(void *addr, u32 in=
+sn)
+> > > > >         return ret;
+> > > > >  }
+> > > > >
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       int ret;
+> > > > > +       unsigned long flags;
+> > > > > +       unsigned long dst_start, dst_end, dst_len;
+> > > > > +
+> > > > > +       dst_start =3D round_down((unsigned long)dst, PAGE_SIZE);
+> > > > > +       dst_end =3D round_up((unsigned long)dst + len, PAGE_SIZE)=
+;
+> > > > > +       dst_len =3D dst_end - dst_start;
+> > > > > +
+> > > > > +       set_memory_rw(dst_start, dst_len / PAGE_SIZE);
+> > > > > +       raw_spin_lock_irqsave(&patch_lock, flags);
+> > > > > +
+> > > > > +       ret =3D copy_to_kernel_nofault(dst, src, len);
+> > > > > +       if (ret)
+> > > > > +               pr_err("%s: operation failed\n", __func__);
+> > > > > +
+> > > > > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > > > > +       set_memory_rox(dst_start, dst_len / PAGE_SIZE);
+> > > > > +
+> > > > > +       if (!ret)
+> > > > > +               flush_icache_range((unsigned long)dst, (unsigned =
+long)dst + len);
+> > > > > +
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > >  u32 larch_insn_gen_nop(void)
+> > > > >  {
+> > > > >         return INSN_NOP;
+> > > > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bp=
+f_jit.c
+> > > > > index 7032f11d3..5e6ae7e0e 100644
+> > > > > --- a/arch/loongarch/net/bpf_jit.c
+> > > > > +++ b/arch/loongarch/net/bpf_jit.c
+> > > > > @@ -4,8 +4,12 @@
+> > > > >   *
+> > > > >   * Copyright (C) 2022 Loongson Technology Corporation Limited
+> > > > >   */
+> > > > > +#include <linux/memory.h>
+> > > > >  #include "bpf_jit.h"
+> > > > >
+> > > > > +#define LOONGARCH_LONG_JUMP_NINSNS 5
+> > > > > +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS *=
+ 4)
+> > > > > +
+> > > > >  #define REG_TCC                LOONGARCH_GPR_A6
+> > > > >  #define TCC_SAVED      LOONGARCH_GPR_S5
+> > > > >
+> > > > > @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
+> > > > >   */
+> > > > >  static void build_prologue(struct jit_ctx *ctx)
+> > > > >  {
+> > > > > +       int i;
+> > > > >         int stack_adjust =3D 0, store_offset, bpf_stack_adjust;
+> > > > >
+> > > > >         bpf_stack_adjust =3D round_up(ctx->prog->aux->stack_depth=
+, 16);
+> > > > > @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ct=
+x)
+> > > > >         stack_adjust =3D round_up(stack_adjust, 16);
+> > > > >         stack_adjust +=3D bpf_stack_adjust;
+> > > > >
+> > > > > +       /* Reserve space for the move_imm + jirl instruction */
+> > > > > +       for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> > > > > +               emit_insn(ctx, nop);
+> > > > > +
+> > > > >         /*
+> > > > >          * First instruction initializes the tail call count (TCC=
+).
+> > > > >          * On tail call we skip this instruction, and the TCC is
+> > > > > @@ -1367,3 +1376,98 @@ bool bpf_jit_supports_subprog_tailcalls(vo=
+id)
+> > > > >  {
+> > > > >         return true;
+> > > > >  }
+> > > > > +
+> > > > > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 ta=
+rget)
+> > > > > +{
+> > > > > +       if (!target) {
+> > > > > +               pr_err("bpf_jit: jump target address is error\n")=
+;
+> > > > > +               return -EFAULT;
+> > > > > +       }
+> > > > > +
+> > > > > +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
+> > > > > +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, =
+bool is_call)
+> > > > > +{
+> > > > > +       struct jit_ctx ctx;
+> > > > > +
+> > > > > +       ctx.idx =3D 0;
+> > > > > +       ctx.image =3D (union loongarch_instruction *)insns;
+> > > > > +
+> > > > > +       if (!target) {
+> > > > > +               emit_insn((&ctx), nop);
+> > > > > +               emit_insn((&ctx), nop);
+> > > >
+> > > > There should be 5 nops, no ?
+> > > Chenghao,
+> > >
+> > > We have already fixed the concurrent problem, now this is the only
+> > > issue, please reply tas soon as possible.
+> > >
+> > > Huacai
+> >
+> > Hi Hengqi & Huacai,
+> >
+> > I'm sorry I just saw the email.
+> > This position can be configured with 5 NOP instructions, and I have
+> > tested it successfully.
+> OK, now loongarch-next [1] has integrated all needed changes, you and
+> Vincent can test to see if everything is OK.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loon=
+gson.git/log/?h=3Dloongarch-next
+>
 
+Tested-by: Vincent Li <vincent.mc.li@gmail.com>
 
-On 8/4/2025 11:35 PM, Tianyu Lan wrote:
-> From: Tianyu Lan <tiala@microsoft.com>
-> 
-> When Secure AVIC is available, the AMD x2apic Secure
-> AVIC driver will be selected. In that case, have hv_apic_init()
-> return immediately without doing anything.
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> Signed-off-by: Tianyu Lan <tiala@microsoft.com>
-> ---
-
-
-Do you need to include linux/cc_platform.h ?
-
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-
-
-- Neeraj
-
+> Huacai
+>
+> >
+> > sudo ./test_progs -a fentry_test/fentry
+> > sudo ./test_progs -a fexit_test/fexit
+> > sudo ./test_progs -a fentry_fexit
+> > sudo ./test_progs -a modify_return
+> > sudo ./test_progs -a fexit_sleep
+> > sudo ./test_progs -a test_overhead
+> > sudo ./test_progs -a trampoline_count
+> > sudo ./test_progs -a fexit_bpf2bpf
+> >
+> > if (!target) {
+> >         int i;
+> >         for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> >                 emit_insn((&ctx), nop);
+> >         return 0;
+> > }
+> >
+> >
+> > Chenghao
+> >
+> > >
+> > > >
+> > > > > +               return 0;
+> > > > > +       }
+> > > > > +
+> > > > > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T=
+0 : LOONGARCH_GPR_ZERO,
+> > > > > +                                 (unsigned long)target);
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_ty=
+pe,
+> > > > > +                      void *old_addr, void *new_addr)
+> > > > > +{
+> > > > > +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =
+=3D INSN_NOP};
+> > > > > +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =
+=3D INSN_NOP};
+> > > > > +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       if (!is_kernel_text((unsigned long)ip) &&
+> > > > > +               !is_bpf_text_address((unsigned long)ip))
+> > > > > +               return -ENOTSUPP;
+> > > > > +
+> > > > > +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call=
+);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> > > > > +               return -EFAULT;
+> > > > > +
+> > > > > +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call=
+);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> > > > > +               ret =3D larch_insn_text_copy(ip, new_insns, LOONG=
+ARCH_LONG_JUMP_NBYTES);
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_invalidate(void *dst, size_t len)
+> > > > > +{
+> > > > > +       int i;
+> > > > > +       int ret =3D 0;
+> > > > > +       u32 *inst;
+> > > > > +
+> > > > > +       inst =3D kvmalloc(len, GFP_KERNEL);
+> > > > > +       if (!inst)
+> > > > > +               return -ENOMEM;
+> > > > > +
+> > > > > +       for (i =3D 0; i < (len/sizeof(u32)); i++)
+> > > > > +               inst[i] =3D INSN_BREAK;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       if (larch_insn_text_copy(dst, inst, len))
+> > > > > +               ret =3D -EINVAL;
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +
+> > > > > +       kvfree(inst);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       ret =3D larch_insn_text_copy(dst, src, len);
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +       if (ret)
+> > > > > +               return ERR_PTR(-EINVAL);
+> > > > > +
+> > > > > +       return dst;
+> > > > > +}
+> > > > > --
+> > > >
+> > > > bpf_arch_text_invalidate() and bpf_arch_text_copy() is not related =
+to
+> > > > BPF trampoline, right ?
+> >
+> > From the perspective of BPF core source code calls, the two functions
+> > bpf_arch_text_invalidate() and bpf_arch_text_copy() are not only used f=
+or
+> > trampolines.
+> >
+> > > >
+> > > > > 2.25.1
+> > > > >
+> >
 
