@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-755903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87609B1AD1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A874DB1AD21
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FB43B91B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640533B90BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B102139B5;
-	Tue,  5 Aug 2025 04:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD882153C6;
+	Tue,  5 Aug 2025 04:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="doRtWLst"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kThrxO3m"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D9F1EF0B9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 04:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB6D15E8B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 04:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754367887; cv=none; b=iuT08Mm9K4bl9DbznIjc91lSYGFbv5DAU2/upRc7ruELoZLQ9+HuwCzPc6f9rzkdJqLy6HZAFuCCn1chCBWtmaOlUZFywy/ANtcg+vrskUcDGGF7coLuQ4oGEN4bt22GzFbwCgD/8XZZSl9jyLthyKT9BOLIyBs9bIEzQfbsN3c=
+	t=1754368032; cv=none; b=YD6OS/IB/g0JkX6aZ1LKMc90Z2qg4jbpeRTJg3PqiRQRKwSabvO5tGWIpXdNPjrd1qhr22NywzX5WMGAOnqhwmU432e/lniOMlLhnWHNSLQRD2JdRbrGL9DS56yDnGurbbH5msTJhRmflH0JLZbls2RwSrLrBQYXrlsxLuU6opw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754367887; c=relaxed/simple;
-	bh=jVSoAZIPhZnQaJQlg+oCLFX64dHD7xlTLh4STp/cQ5A=;
+	s=arc-20240116; t=1754368032; c=relaxed/simple;
+	bh=8Hr9h14k+JMHtkWuKF8W6cTI23XIk8rTEu77cj7T03A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ATc1IMubqgG3/hBqvo65GJruEJXp8DPk6K5u3qZOfanawyg7bsIu6PZ0m9fA5ykGGzBha7ZYI3ZuPkvNPT8q8XuD/hHZkcNPJKR3W6/ubwmARvKZALnP2k5h316nOjFxOOfyvfGMzJqx3pGu63Q55bQtv5vkP6l/V2TDOqLB1F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=doRtWLst; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754367884;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMAMOBOEqJtPphtd0X+hPY/9bdMZAOIxqSHXSbKc4X4=;
-	b=doRtWLstz9JnxD7j8EaYS+7RxBJTgqfr5gXLoDc62U6eeNY6RXBlJX+NvZW02mgR4o8yfd
-	YxsYjBqcshoqjq580UD/L1uh3dBPED7cJL9jscPDfh/LdmW3sKikXlDaadnv9vdJGWJFf6
-	gQ1HV0uCdY7viH7HkKf29gsUl8te3us=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-Bo0HYqO0NdS3Gk5zjh9s-Q-1; Tue, 05 Aug 2025 00:24:41 -0400
-X-MC-Unique: Bo0HYqO0NdS3Gk5zjh9s-Q-1
-X-Mimecast-MFC-AGG-ID: Bo0HYqO0NdS3Gk5zjh9s-Q_1754367880
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-3322b98b1a6so24030461fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 21:24:41 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=tG5R3qJpakTLD6ub1qCEmj3jS1iA+IQBAWWo277W++ySu82TqykG29EaA/XCQ6lDStzz1AdVlvh0gkBEed/+W0RaU9ogGBUmjAZ2xsm6aRpV1x8IST2iW6KXfW5QwX7LvlZB0+NfQCmQm5XflC3+4GRB8UnQFYafdCCHj7k1/Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kThrxO3m; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574K3mCk031543
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 04:27:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oOc6z05PE+JQqEEqbcSZYn5GdoipElasSOcBl/QC7mg=; b=kThrxO3mtDNyptln
+	ENj7Vn4UHb1q8h4R/1TPBHteW6nAWsKccbCxgqx3M2Tsp5BF4lbQSBXdzn7Y8CvX
+	unP4tP0f7Eg8v9agYfX/RG4oyuQLzYthdK/1fTVj1Dmgn2zvDqhovuJL+k4ZlIQN
+	l65RRm8cSYq7nQspXUEBeRnUflH/zkRDomKPWp9LrQhQGNVwtM5pEhUipo4AXWUr
+	Z7Jw2K2YJI3/NRya0dPmhBGmELtQy4/iCNm56LtqumsWlbB09EjccwrVPXSlt3pe
+	CIA0lIWAnYImH0wM/Jbf6oMIYuvZC1xMWW9ArpYQaqrKIzlzmK1fo3y5k8d0O2S3
+	Z2U1Qg==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ak5a3wn4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 04:27:09 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76bf8e79828so4145675b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 21:27:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754367880; x=1754972680;
+        d=1e100.net; s=20230601; t=1754368028; x=1754972828;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YMAMOBOEqJtPphtd0X+hPY/9bdMZAOIxqSHXSbKc4X4=;
-        b=okX9XZYwlh2aQOozhbzWlGCxAeM0jg+TIgYpbPzcYgWf5XGqlQcYi0MvzazHhNwakf
-         MOSopg+wAsf0R06d6rfnFT2zmDuDkf+9J6mbywvc0CTR81Rec8NL0+7EHkKAuQWK2iL2
-         Tr4+BTkjnjoTzwcttiTaPWjF1IlaJVG3x+K9H766HJdfiGvG2ybwmPIFnm+Kh1U9N2n3
-         SbpLlhfWRQbc/N00XMFiWXEPkAQdiQ0hgs+q39XAAAv3FzHbTLl7c4Z9VXkHcBGPFA/6
-         IqAYMu5dFxFVI4VlT4qM0lRrBh5lH1l/85DOvm+0VGZr9/DTaOGEXy74NVX/heuD1KI8
-         Cwpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVb/SDpooHZwwnOwty32EVY8MrUfMVzIZekSIP0T9QRZRKHShpwEZhlbWmzhBjR+TnR/1rMD5rgNmggEqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1MzrfD4fXhjEDLb5OBP/tp3BPy2cNtTazWDi16GgYlOJcIS46
-	ELgmWROAfRn9X2zuNTLNUHnq0odBdtQENPLjH7Y7gdL9CCsslus9pzuHf/e/2wnOvkK8cNBMFfv
-	CcyU2te4NZSXptO80j/Y3XHs/nBt3gxzEp6TBiFhBXj1nE4qggUHdU+wj9OmGkbA6
-X-Gm-Gg: ASbGnctySKY7yLUAVcwJ42MGLc7hG0Ikr9ES2tMN+yhhbv3gKtH1TvdCylMVBozszbD
-	XlRWm4O22uKnnovZHf1DVjer87lh2qXAIMB/gLHKXGiN/wPwbdKwej9vuK0pdQkCvuNr7zfgBqP
-	VwmYlvUwwMvHeiAaF1Tyaua7mrCj5SPBoUU76nSDydkBU3crRo0oF9fvl/0lPDY41u4Jrjq0GB/
-	ECzUf/S9tBiEZeqOVySadhpjmn5IMn7nCSb2XKwStiqHtP1QDsWX4DoZaceEHWtuV0V6cih3P+p
-	VVPjblrZ+fy6F/NfXjhzB6H/16GazDA+9RcBVZSkVwp9KUgmGX4asGsqO49vLzyNBg==
-X-Received: by 2002:a05:6512:2210:b0:55b:8827:b7c4 with SMTP id 2adb3069b0e04-55b97b933fbmr2790453e87.40.1754367880257;
-        Mon, 04 Aug 2025 21:24:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEL02ize8GRHM9rNlRgyTroZ9wz58VzZXq9iQJXfnMFISrcR6FCo97dbuVFAOEC8WDkwTThqg==
-X-Received: by 2002:a05:6512:2210:b0:55b:8827:b7c4 with SMTP id 2adb3069b0e04-55b97b933fbmr2790447e87.40.1754367879738;
-        Mon, 04 Aug 2025 21:24:39 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca296csm1832935e87.119.2025.08.04.21.24.38
+        bh=oOc6z05PE+JQqEEqbcSZYn5GdoipElasSOcBl/QC7mg=;
+        b=nLL0wcP2H+brNqmmXTZUWhDT+79X4cWK1dqgEY67fiMZtFhGQNeq8+cUfMnshZHCA4
+         +xWCWhBPQr/91rBSVkytWxz5Gl7SHtWqxN5scbLZXZMf+Pd5nIkJpQy+9zNFnxorp4K2
+         PYqOPLKGBrAG9lVQzs3Rwh6OsJs7Qc1186czuMtU/6m1oWkOqSls+DDPpXiTi1MHAZqU
+         BzgGWQzpqKfex0Asc/Amj354HNUtn2Lb2bbfUinlmzPIIWKs8SAxKmQPTrxMB6PyzJbT
+         No+7r7jESgh3JGBHp5zfmiYMqXZ7Y6ISqOV8qF35TptsjTuw/5lELOFXDSzfvBQBWwmI
+         QOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvFVpriQVx6p1igJKS6wL/ykoqQiXwXJCgvdYorZc8PoRAtiSITdwgGc+9/y6FYVkTGlqWNVJgunJIfZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLCEkDmtSyM78Dv0y/C5ZDbPASJ1tkrYzn84v5jrHzHy2XumJ2
+	AGcCjnzfmb/wotnUsqNungnEvX6ENnFgx6f18oNAt8HQnEBUxwJE9zXVRxuR/SwFFzLOsVmLPcn
+	/LLU+JTMjD1NcwVwsGngt524LNQ2rDDNHLjKWZ8me5o9eNpXulDtkPQaCqAmzWN0ZHm8=
+X-Gm-Gg: ASbGncuBlbK9prqQ2M4stoZikzw9GquCTawhOb7zuJuNN97hu8fomjfMPFNsc7pMaDq
+	NgJasDjQxV7FKHQTiyx7xAvrTPxbrBJQHY3Go/iDBxRC77EXuYSO12t75hUJipWLVJ+y96B3gWw
+	a6qrfVvmyfsIMHEg00CCesSS/kYflyZi+5fGfzkoXyBAHKCNiGyv+GQAQI+uyBsl1fpS/GU7vBB
+	yg+XqAQ6+9doveU4MSpEjQYCbBtc2Yk0rcSsOhNyn0bwfCwGoLB2/t3EfsLtrQJXe+K2ftok5/z
+	mnLG0/bIOKMcrW30vH3mnhFXyTDMqaiZChkyeIxDier5wWqX97JgcT0l0U4=
+X-Received: by 2002:a05:6a00:21d4:b0:74e:ab93:422b with SMTP id d2e1a72fcca58-76bec2f304fmr16590708b3a.4.1754368028222;
+        Mon, 04 Aug 2025 21:27:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw0pS+Af4/vl57IxtwquJOBQTfIqG+DV8SuowUeMiLkLhA25xCUY8PxbXrQoBIQT63gbcfpA==
+X-Received: by 2002:a05:6a00:21d4:b0:74e:ab93:422b with SMTP id d2e1a72fcca58-76bec2f304fmr16590676b3a.4.1754368027830;
+        Mon, 04 Aug 2025 21:27:07 -0700 (PDT)
+Received: from [10.5.16.15] ([14.99.203.242])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd4893sm11746425b3a.107.2025.08.04.21.26.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 21:24:39 -0700 (PDT)
-Message-ID: <087e40e6-3b3f-4a02-8270-7e6cfdb56a04@redhat.com>
-Date: Tue, 5 Aug 2025 07:24:38 +0300
+        Mon, 04 Aug 2025 21:27:07 -0700 (PDT)
+Message-ID: <3e880194-5ac8-4056-929c-ac103bedc737@oss.qualcomm.com>
+Date: Tue, 5 Aug 2025 09:56:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,321 +88,170 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
-To: Balbir Singh <balbirs@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Barry Song <baohua@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Donet Tom <donettom@linux.ibm.com>, Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Ralph Campbell <rcampbell@nvidia.com>
-References: <20250730092139.3890844-1-balbirs@nvidia.com>
- <9FBDBFB9-8B27-459C-8047-055F90607D60@nvidia.com>
- <11ee9c5e-3e74-4858-bf8d-94daf1530314@redhat.com>
- <b5fa0989-a64a-4c91-ac34-6fb29ee6d132@redhat.com>
- <EC99D49E-86FF-4A50-A1AA-FC43A7D3716C@nvidia.com>
- <14aeaecc-c394-41bf-ae30-24537eb299d9@nvidia.com>
- <e5dd3f46-c063-45ff-8be7-64ac92534985@redhat.com>
- <71c736e9-eb77-4e8e-bd6a-965a1bbcbaa8@nvidia.com>
- <edbe38d4-3489-4c83-80fb-dc96a7684294@redhat.com>
- <e8f867cf-67f1-413a-a775-835a32861164@nvidia.com>
- <ee06bd19-4831-493f-ae88-f1d8a2fe9fa4@redhat.com>
- <47BC6D8B-7A78-4F2F-9D16-07D6C88C3661@nvidia.com>
- <2406521e-f5be-474e-b653-e5ad38a1d7de@redhat.com>
- <A813C8B0-325E-44F0-8E30-3D0CBACB6BE1@nvidia.com>
- <ab46303e-a891-4f48-8a86-964155a1073d@nvidia.com>
- <920a4f98-a925-4bd6-ad2e-ae842f2f3d94@redhat.com>
- <f3e85850-bc5b-461a-9efc-d1961fb5d340@nvidia.com>
- <196f11f8-1661-40d2-b6b7-64958efd8b3b@redhat.com>
- <ede98867-bc17-4894-a375-d17d8f83dd55@nvidia.com>
+Subject: Re: [PATCH v3 0/5] Add Type-C DP support for RK3399 EVB IND board
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Yubing Zhang <yubing.zhang@rock-chips.com>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Amit Sunil Dhamne <amitsd@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+        Diederik de Haas <didi.debian@cknow.org>,
+        Peter Robinson <pbrobinson@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20250729090032.97-1-kernel@airkyi.com>
+ <3kefqzjewmsyzfvyi33kvlgjd6jphjg3fsnixb3of7yb3xkgs2@hgi6xfkgd653>
+ <63ec11cf-7927-431a-995e-a5fc35ef1ba7@rock-chips.com>
+ <pk5wecbbpxn7v4bdwtghhdnm76fmrmglelytljwfb4cgvpu2i6@rk5turgyt5xq>
+ <0207826d-a987-4464-b306-29bdbfac45bc@rock-chips.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <ede98867-bc17-4894-a375-d17d8f83dd55@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <0207826d-a987-4464-b306-29bdbfac45bc@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAyOSBTYWx0ZWRfX7fAQwxmQ7DaI
+ EqKPDrGcvbdjzKiz5Un2jzJlAzgrs6Mj5G9K2oj+9KNSsqV/xO4FRfyb0JYJxee8SXd4fTxe5pd
+ S6NEuV8DGe6FzkjqjXqaLPslePkA8YdKahQ6QCzJISCvn5Qv7Q6HCVRx9sVzDpTpcsYO9URlJTy
+ u8SpBmtNLZS3XgGCPGxNxk9tMeK+CwnjD3DaOYxfBfTH+hAH2VHZopSzfurlELD4cotPj80zrgN
+ 19+qJqzvfCXJb/2/1amvzY7pV5yqRgUjRUKyuDZRdJk5JIGS7dJR9uhFHRgalFnZaHZJ/R8jhc3
+ aNRhNSzwBxHFaeoUAFr957pWEWEHx/babTrBvDSVvOPzeGM3jSzwmJmGCNGUaVfjyVEIJ8Fk8Oa
+ caspHTc6R16+3oS2ox2Qvss3/DHKYjyntQp3o/LvY6Lx3JppVTD0AaK5WQSM8Nz/IqXxEEx2
+X-Proofpoint-GUID: 79jdYJCt1Iu1UCSvyVudMo9a9zPa4QO1
+X-Authority-Analysis: v=2.4 cv=LP1mQIW9 c=1 sm=1 tr=0 ts=6891881d cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=BCJAbJEDZziWQyy0sFgk6w==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8
+ a=lJfCAnFZCnoPuUJW_CAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-ORIG-GUID: 79jdYJCt1Iu1UCSvyVudMo9a9zPa4QO1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_10,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=999 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 adultscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050029
 
-Hi,
-
-On 8/5/25 07:10, Balbir Singh wrote:
-> On 8/5/25 09:26, Mika Penttilä wrote:
->> Hi,
->>
->> On 8/5/25 01:46, Balbir Singh wrote:
->>> On 8/2/25 22:13, Mika Penttilä wrote:
->>>> Hi,
->>>>
->>>> On 8/2/25 13:37, Balbir Singh wrote:
->>>>> FYI:
->>>>>
->>>>> I have the following patch on top of my series that seems to make it work
->>>>> without requiring the helper to split device private folios
->>>>>
->>>> I think this looks much better!
->>>>
->>> Thanks!
+On 05/08/2025 09:13, Chaoyi Chen wrote:
+> Hi Dmitry,
+> 
+> On 8/2/2025 5:55 PM, Dmitry Baryshkov wrote:
+> 
+> [...]
+> 
+> 
+>>> Currently, the software simply selects the first available port. So 
+>>> if user
+>>> plugs in DP dongles in both USB-C ports, the DP driver will select 
+>>> the first
+>>> port. This process is implemented in cdn_dp_connected_port() .
 >>>
->>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>>> ---
->>>>>  include/linux/huge_mm.h |  1 -
->>>>>  lib/test_hmm.c          | 11 +++++-
->>>>>  mm/huge_memory.c        | 76 ++++-------------------------------------
->>>>>  mm/migrate_device.c     | 51 +++++++++++++++++++++++++++
->>>>>  4 files changed, 67 insertions(+), 72 deletions(-)
+>> I think Stephen Boyd has been looking on similar issues for Chromebooks,
+>> which were sharing DP controller between several USB-C ports. I don't
+>> remember what was his last status. I think there it was easier since the
+>> bifurcation point was the EC.
+> 
+> I think the latest progress should be here: [0]. It seems that it hasn't 
+> been updated for a while.
+
+Might be :-(
+
+> 
+> [0]: https://lore.kernel.org/all/20240901040658.157425-1- 
+> swboyd@chromium.org/
+> 
+> 
+>>
+>> I think, CDN-DP needs to register up to two encoders and up to two
+>> connectors, having a separate drm_bridge chain for each of the DP
+>> signals paths (in the end, you can not guarantee that both branches will
+>> have the same simple CDN-DP -> PHY -> USB-C configuration: there can be
+>> different retimers, etc).
+>>
+>> Both encoders should list the same CRTC in possible_crtcs, etc. Of
+>> course, it should not be possible to enable both of them.
+>>
+>> This way if the user plugs in two DP dongles, it would be possible to
+>> select, which output actually gets a signal.
+> 
+> That makes sense, but this might make the DP driver quite complex. I 
+> will see if I can make it happen.
+
+I think it's trading one burden for another, because CDN-DP currently 
+has a complication of calling cdn_dp_get_port_lanes() / 
+cdn_dp_enable_phy() in a loop rather than just enabling one instance.
+
+> 
+> 
+>>
+>>>
+>>>>> BTW, one of the important things to do is to implement extcon-like
+>>>>> notifications. I found include/drm/bridge/aux-bridge.h , but if the
+>>>>> aux-bridge is used, the bridge chain would look like this:
 >>>>>
->>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>>> index 19e7e3b7c2b7..52d8b435950b 100644
->>>>> --- a/include/linux/huge_mm.h
->>>>> +++ b/include/linux/huge_mm.h
->>>>> @@ -343,7 +343,6 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->>>>>  		vm_flags_t vm_flags);
->>>>>  
->>>>>  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->>>>> -int split_device_private_folio(struct folio *folio);
->>>>>  int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>>>>  		unsigned int new_order, bool unmapped);
->>>>>  int min_order_for_split(struct folio *folio);
->>>>> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
->>>>> index 341ae2af44ec..444477785882 100644
->>>>> --- a/lib/test_hmm.c
->>>>> +++ b/lib/test_hmm.c
->>>>> @@ -1625,13 +1625,22 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
->>>>>  	 * the mirror but here we use it to hold the page for the simulated
->>>>>  	 * device memory and that page holds the pointer to the mirror.
->>>>>  	 */
->>>>> -	rpage = vmf->page->zone_device_data;
->>>>> +	rpage = folio_page(page_folio(vmf->page), 0)->zone_device_data;
->>>>>  	dmirror = rpage->zone_device_data;
->>>>>  
->>>>>  	/* FIXME demonstrate how we can adjust migrate range */
->>>>>  	order = folio_order(page_folio(vmf->page));
->>>>>  	nr = 1 << order;
->>>>>  
->>>>> +	/*
->>>>> +	 * When folios are partially mapped, we can't rely on the folio
->>>>> +	 * order of vmf->page as the folio might not be fully split yet
->>>>> +	 */
->>>>> +	if (vmf->pte) {
->>>>> +		order = 0;
->>>>> +		nr = 1;
->>>>> +	}
->>>>> +
->>>>>  	/*
->>>>>  	 * Consider a per-cpu cache of src and dst pfns, but with
->>>>>  	 * large number of cpus that might not scale well.
->>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>> index 1fc1efa219c8..863393dec1f1 100644
->>>>> --- a/mm/huge_memory.c
->>>>> +++ b/mm/huge_memory.c
->>>>> @@ -72,10 +72,6 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
->>>>>  					  struct shrink_control *sc);
->>>>>  static unsigned long deferred_split_scan(struct shrinker *shrink,
->>>>>  					 struct shrink_control *sc);
->>>>> -static int __split_unmapped_folio(struct folio *folio, int new_order,
->>>>> -		struct page *split_at, struct xa_state *xas,
->>>>> -		struct address_space *mapping, bool uniform_split);
->>>>> -
->>>>>  static bool split_underused_thp = true;
->>>>>  
->>>>>  static atomic_t huge_zero_refcount;
->>>>> @@ -2924,51 +2920,6 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
->>>>>  	pmd_populate(mm, pmd, pgtable);
->>>>>  }
->>>>>  
->>>>> -/**
->>>>> - * split_huge_device_private_folio - split a huge device private folio into
->>>>> - * smaller pages (of order 0), currently used by migrate_device logic to
->>>>> - * split folios for pages that are partially mapped
->>>>> - *
->>>>> - * @folio: the folio to split
->>>>> - *
->>>>> - * The caller has to hold the folio_lock and a reference via folio_get
->>>>> - */
->>>>> -int split_device_private_folio(struct folio *folio)
->>>>> -{
->>>>> -	struct folio *end_folio = folio_next(folio);
->>>>> -	struct folio *new_folio;
->>>>> -	int ret = 0;
->>>>> -
->>>>> -	/*
->>>>> -	 * Split the folio now. In the case of device
->>>>> -	 * private pages, this path is executed when
->>>>> -	 * the pmd is split and since freeze is not true
->>>>> -	 * it is likely the folio will be deferred_split.
->>>>> -	 *
->>>>> -	 * With device private pages, deferred splits of
->>>>> -	 * folios should be handled here to prevent partial
->>>>> -	 * unmaps from causing issues later on in migration
->>>>> -	 * and fault handling flows.
->>>>> -	 */
->>>>> -	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
->>>>> -	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
->>>>> -	VM_WARN_ON(ret);
->>>>> -	for (new_folio = folio_next(folio); new_folio != end_folio;
->>>>> -					new_folio = folio_next(new_folio)) {
->>>>> -		zone_device_private_split_cb(folio, new_folio);
->>>>> -		folio_ref_unfreeze(new_folio, 1 + folio_expected_ref_count(
->>>>> -								new_folio));
->>>>> -	}
->>>>> -
->>>>> -	/*
->>>>> -	 * Mark the end of the folio split for device private THP
->>>>> -	 * split
->>>>> -	 */
->>>>> -	zone_device_private_split_cb(folio, NULL);
->>>>> -	folio_ref_unfreeze(folio, 1 + folio_expected_ref_count(folio));
->>>>> -	return ret;
->>>>> -}
->>>>> -
->>>>>  static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>>  		unsigned long haddr, bool freeze)
->>>>>  {
->>>>> @@ -3064,30 +3015,15 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>>  				freeze = false;
->>>>>  			if (!freeze) {
->>>>>  				rmap_t rmap_flags = RMAP_NONE;
->>>>> -				unsigned long addr = haddr;
->>>>> -				struct folio *new_folio;
->>>>> -				struct folio *end_folio = folio_next(folio);
->>>>>  
->>>>>  				if (anon_exclusive)
->>>>>  					rmap_flags |= RMAP_EXCLUSIVE;
->>>>>  
->>>>> -				folio_lock(folio);
->>>>> -				folio_get(folio);
->>>>> -
->>>>> -				split_device_private_folio(folio);
->>>>> -
->>>>> -				for (new_folio = folio_next(folio);
->>>>> -					new_folio != end_folio;
->>>>> -					new_folio = folio_next(new_folio)) {
->>>>> -					addr += PAGE_SIZE;
->>>>> -					folio_unlock(new_folio);
->>>>> -					folio_add_anon_rmap_ptes(new_folio,
->>>>> -						&new_folio->page, 1,
->>>>> -						vma, addr, rmap_flags);
->>>>> -				}
->>>>> -				folio_unlock(folio);
->>>>> -				folio_add_anon_rmap_ptes(folio, &folio->page,
->>>>> -						1, vma, haddr, rmap_flags);
->>>>> +				folio_ref_add(folio, HPAGE_PMD_NR - 1);
->>>>> +				if (anon_exclusive)
->>>>> +					rmap_flags |= RMAP_EXCLUSIVE;
->>>>> +				folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
->>>>> +						 vma, haddr, rmap_flags);
->>>>>  			}
->>>>>  		}
->>>>>  
->>>>> @@ -4065,7 +4001,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>>  	if (nr_shmem_dropped)
->>>>>  		shmem_uncharge(mapping->host, nr_shmem_dropped);
->>>>>  
->>>>> -	if (!ret && is_anon)
->>>>> +	if (!ret && is_anon && !folio_is_device_private(folio))
->>>>>  		remap_flags = RMP_USE_SHARED_ZEROPAGE;
->>>>>  
->>>>>  	remap_page(folio, 1 << order, remap_flags);
->>>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->>>>> index 49962ea19109..4264c0290d08 100644
->>>>> --- a/mm/migrate_device.c
->>>>> +++ b/mm/migrate_device.c
->>>>> @@ -248,6 +248,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>>  			 * page table entry. Other special swap entries are not
->>>>>  			 * migratable, and we ignore regular swapped page.
->>>>>  			 */
->>>>> +			struct folio *folio;
->>>>> +
->>>>>  			entry = pte_to_swp_entry(pte);
->>>>>  			if (!is_device_private_entry(entry))
->>>>>  				goto next;
->>>>> @@ -259,6 +261,55 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>>  			    pgmap->owner != migrate->pgmap_owner)
->>>>>  				goto next;
->>>>>  
->>>>> +			folio = page_folio(page);
->>>>> +			if (folio_test_large(folio)) {
->>>>> +				struct folio *new_folio;
->>>>> +				struct folio *new_fault_folio;
->>>>> +
->>>>> +				/*
->>>>> +				 * The reason for finding pmd present with a
->>>>> +				 * device private pte and a large folio for the
->>>>> +				 * pte is partial unmaps. Split the folio now
->>>>> +				 * for the migration to be handled correctly
->>>>> +				 */
->>>>> +				pte_unmap_unlock(ptep, ptl);
->>>>> +
->>>>> +				folio_get(folio);
->>>>> +				if (folio != fault_folio)
->>>>> +					folio_lock(folio);
->>>>> +				if (split_folio(folio)) {
->>>>> +					if (folio != fault_folio)
->>>>> +						folio_unlock(folio);
->>>>> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
->>>>> +					goto next;
->>>>> +				}
->>>>> +
->>>> The nouveau migrate_to_ram handler needs adjustment also if split happens.
->>>>
->>> test_hmm needs adjustment because of the way the backup folios are setup.
->> nouveau should check the folio order after the possible split happens.
->>
-> You mean the folio_split callback?
+>>>>> PHY0 aux-bridge ---+
+>>>>>                      | ----> CDN-DP bridge
+>>>>> PHY1 aux-bridge ---+
+>>>>>
+>>>>> Oh, CDN-DP bridge has two previous aux-bridge!
+>>>>>
+>>>>> Now, I try to use drm_connector_oob_hotplug_event() to notify HPD
+>>>>> state between PHY and CDN-DP controller.
+>>>> Does it actually work? The OOB HPD event will be repoted for the usb-c
+>>>> connector's fwnode, but the DP controller isn't connected to that node
+>>>> anyhow. If I'm not mistaken, the HPD signal will not reach DP driver in
+>>>> this case.
+>>> Yes.  What you mentioned is the case in
+>>> drivers/usb/typec/altmodes/displayport.c . I have also added a new 
+>>> OOB event
+>>> notify in the PHY driver in Patch 3, where the expected fwnode is 
+>>> used in
+>>> the PHY. So now we have two OOB HPD events, one from altmodes/ 
+>>> displayport.c
+>>> and the other from PHY. Only the HPD from PHY is eventually passed to 
+>>> the DP
+>>> driver.
+>> This way you will loose IRQ_HPD pulse events from the DP. They are used
+>> by DPRX (aka DP Sink) to signal to DPTX (DP Source) that there was a
+>> change on the DPRX side and the DPTX should reread link params and maybe
+>> retrain the link.
+> 
+> Sorry, I still don't quite understand your point. I think the entire 
+> notification path is as follows:
+> 
+> Type-C mux callback -> RK3399 USBDP PHY -> PHY calls 
+> drm_connector_oob_hotplug_event() -> DP driver
+> 
+> Are you concerned that the IRQ_HPD event is not being handled somewhere 
+> along the path? Is it that the Type-C mux callback didn't notify the 
+> PHY, or that after the PHY passed the event to the DP driver via the OOB 
+> event, the DP driver didn't handle it?
 
-no, nouveau_dmem_migrate_to_ram():
-..
-        sfolio = page_folio(vmf->page);
-        order = folio_order(sfolio);
-...
-        migrate_vma_setup()
-..
-if sfolio is split order still reflects the pre-split order
+The IRQ_HPD is an event coming from DPRX, it is delivered as a part of 
+the attention VDM, see DP_STATUS_IRQ_HPD. It's being handled by the 
+altmode displayport.c driver and is then delivered as an OOB hotplug 
+call. However, it's not a mux event, so it is not (and it should not) 
+being broadcasted over the typec_mux devices.
 
->
->>>>> +				/*
->>>>> +				 * After the split, get back the extra reference
->>>>> +				 * on the fault_page, this reference is checked during
->>>>> +				 * folio_migrate_mapping()
->>>>> +				 */
->>>>> +				if (migrate->fault_page) {
->>>>> +					new_fault_folio = page_folio(migrate->fault_page);
->>>>> +					folio_get(new_fault_folio);
->>>>> +				}
->>>>> +
->>>>> +				new_folio = page_folio(page);
->>>>> +				pfn = page_to_pfn(page);
->>>>> +
->>>>> +				/*
->>>>> +				 * Ensure the lock is held on the correct
->>>>> +				 * folio after the split
->>>>> +				 */
->>>>> +				if (folio != new_folio) {
->>>>> +					folio_unlock(folio);
->>>>> +					folio_lock(new_folio);
->>>>> +				}
->>>> Maybe careful not to unlock fault_page ?
->>>>
->>> split_page will unlock everything but the original folio, the code takes the lock
->>> on the folio corresponding to the new folio
->> I mean do_swap_page() unlocks folio of fault_page and expects it to remain locked.
->>
-> Not sure I follow what you're trying to elaborate on here
+The way we were handling that is by having a chain of drm_aux_bridges 
+for all interim devices, ending up with a drm_dp_hpd_bridge registered 
+by the TCPM. This way when the DPRX triggers the IRQ_HPD event, it is 
+being handled by the displayport.c and then delivered through that 
+bridge to the DP driver.
 
-do_swap_page:
-..
-        if (trylock_page(vmf->page)) {
-                ret = pgmap->ops->migrate_to_ram(vmf);
-                               <- vmf->page should be locked here even after split
-                unlock_page(vmf->page);
-
-> Balbir
->
---Mika
-
+-- 
+With best wishes
+Dmitry
 
