@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-756397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5578B1B380
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC7FB1B387
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD3618A3BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1AEF17C0C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D326F44D;
-	Tue,  5 Aug 2025 12:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D953A270579;
+	Tue,  5 Aug 2025 12:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mqvJ9cNr"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JNCaIIl8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ihefQX9G"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B35542A80;
-	Tue,  5 Aug 2025 12:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21817BA9;
+	Tue,  5 Aug 2025 12:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754397137; cv=none; b=sY3k4mjgRxxNuJv/MkJve6KpsNhKHh2CPph34RziyzR4Aln5P3yJVnLUYguIJdSWLDqlyIbSe47cRdRqtZJbMnPyOIOpic8KPEvxgBzSwZhfNaVH0goFb4lVUNmGFVm8+p9guCHWIeh/kq8WYRK6MKff+vzERnMjL3jIufbABtA=
+	t=1754397495; cv=none; b=sa2aMK6tYQVwpgrD0/9sOYxhTWcdTRATaBObMBfiBQzCw1oZx/qkGYUu8lHdiTV5nOkOGK2NMexOmhK/CS9Vhr3kt+gO/GnDYCU3Yr/mPSPCZxwIuyMcVLfzkKI0qsvglYQLqPHc6AviBKRiWTWqdPTVOFmf0Nex9aezkxFuYfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754397137; c=relaxed/simple;
-	bh=LCcUsHDyEylOJxo60d6aDYDkO3n3zWE4kkDtNdzkZNo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=D09R3NFr90ZtMEEnkEU8ThrOa1nak7J8X1MOhzUFJVQX5ZL8seITQHVUAG8F6a11sdeIbDfL8rNTW37qOtZW6DUOq8BsYKHm+uhpfpQBpMdtQTJxbCuVjzYdHFO9th1JkoXZu3AhSfGMOMxIXHnxVxlkx/LB881s6xTO8SLubpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mqvJ9cNr; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754397128; x=1755001928; i=markus.elfring@web.de;
-	bh=7l1mlVBcTICQ2rfvOFneQ/QK4V53LeUCp6av5LwzJ5U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mqvJ9cNr0kBfXDO26Eu0ZSPMBVaVNssbAYb5G4xOsG23pZgdoI0tbcBPTHdJshtN
-	 JatTH3lPyPep+FQXYKxk05n9u6Vh2H8pF1pmaAQjZUEuJmLDgfqR49FKiWHbQTI+L
-	 1SIcYKuQrKoZwM4kZ1hMK8I19hh+YWaA+D4+WQ7JMvtvJrY5fJ60rBQ7cu3sLZocu
-	 izOL2mW859EOnDzcrVKf6+o1NKMqbZFaGZ8Ljl8OYfMAFSB+/9FyAfs6fQm1F4uX6
-	 jjrQmpmTlvBJ9iL1ATlo5DcfGaJVpvdlw12x5wXZmCd85IeOVfVEMFF/jM3MrAfgH
-	 S/7YcvEwnnGLANmlow==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.245]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N7QQB-1uYpfh0jkb-00y6zc; Tue, 05
- Aug 2025 14:32:08 +0200
-Message-ID: <d4064644-63ed-4d4a-9382-34d3d12e0094@web.de>
-Date: Tue, 5 Aug 2025 14:32:05 +0200
+	s=arc-20240116; t=1754397495; c=relaxed/simple;
+	bh=8d8QMvUVqhaWfclFa0wycXMMw4PtuHHIiX4zoK+9ULg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SwqvDu1ocQJOFcDwqzhgK6KpOJmYgeWvIFv3e5tR5Vbav+VlVJzUWy2iumTuL6IFaONbDEqSAWSa6WqrLDpKglWpqRwQjEg/I+mOlTn/7VaSAfPZcBs9qk159sH4ydXBUJz3HLxS/YjO939oxUlpZorTbi3miSbmaFvsG6Lo5qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JNCaIIl8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ihefQX9G; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754397492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yCjfpwBcN4N8qmMi1Ar7HuQgM20TOs1AcGFBtHVLexA=;
+	b=JNCaIIl8aFl3gkzVhv6d9DrGjyV/nznAukxAA0r78zen6yRP3UO3LsfGN3rafl8RV2RXgp
+	Avjxiwjgl5t2xIqFVyqmgUSPsAUVznt214irOQ4m22s7ei3mq1qjxuuttmA6JkYp1qUlj4
+	i9WTq8A9Zfrx4XN1L9T5fpn61Oap9QLhnMwy93nc8512u4CBJqbAJ411E3apUdzVcc9efW
+	rdozwGR+XipjPCYlXLS92eW3bxBFquqqIp7XL25zNqw+5zDyZ0nBZPW2cGkN9Gm8gj33zQ
+	tfsF4gNV67mct7gcEG4Cq3fYE6paijkJCiHb9uwOakVAvhsFjdRa4tOtUemB9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754397492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yCjfpwBcN4N8qmMi1Ar7HuQgM20TOs1AcGFBtHVLexA=;
+	b=ihefQX9GohRoxTQlTGxil8zuYy43oISzbixFSQH/MP994gd0HBe9Es7sF9nFuC4is/B6Xh
+	eEOVewrBZKu5GsCw==
+Date: Tue, 05 Aug 2025 14:38:08 +0200
+Subject: [PATCH v3] fs: always return zero on success from replace_fd()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qianfeng Rong <rongqianfeng@vivo.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Bart Van Assche
- <bvanassche@acm.org>, Brian King <brking@us.ibm.com>,
- "James E. J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20250805022637.329212-2-rongqianfeng@vivo.com>
-Subject: Re: [PATCH v2 1/2] scsi: ipr: Use vmalloc_array to simplify code
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250805022637.329212-2-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:2AYA8p8ULxcRy4Wzy0BxHX46btMjyeXbO+sJZFfN0WbcErSBCzR
- fKIu8RtWXoil61DWOaz5sqqyXXEe/WMsW6auiSt1OvJB7R9n64XNddIocaC2ux3Auyzh8Dm
- 2EiDIMzSGwgx6joNsdx8ozsXkqUX3Sh9oUdnO+Luadzv6dAtsyCYn7YMOBET2rVcdX/OHdo
- zB3uB8QNYWif1/nTeCJSw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iXpnhVFsdEk=;qNPw0GnW9+/Q6aWNLnqCTjZwWWt
- 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
- UB0fFUMDUu2DbK/HWoTdzeTkt/SZDTjM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250805-fix-receive_fd_replace-v3-1-b72ba8b34bac@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAC/7kWgC/4XNwQqDMAyA4VeRntfRVq26095jDNEmzoBUaV1xi
+ O++6mkMxo5/SL6szKMj9OySrMxhIE+jjZGeEmb6xj6QE8RmSqhclELyjhbu0CAFrDuoHU5DY5A
+ XHUBuUOepAhaPJ4dx84Bv99g9+Xl0r+NPkPv0LxkklxwyDVoIU2SgrwPZ5+xGS8sZkO1sUJ9U9
+ pNSkULTqtIUbSVV9U1t2/YGFM3nbgsBAAA=
+X-Change-ID: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754397489; l=2030;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=8d8QMvUVqhaWfclFa0wycXMMw4PtuHHIiX4zoK+9ULg=;
+ b=/U+Zxpala7BBX6WPjvitGPYhWuQXsy1CfdLQXUReBrWLKcx8VqNK8MjvbQvwhhvgQHFXrCT43
+ vBU/ws35HBFBBID/DSrEHQcqLyQB7fpYMgg5yjhjjvLrCjfzfNdsD2Z
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-> Use vmalloc_array() instead of vmalloc() to simplify the functions
+replace_fd() returns the number of the new file descriptor through the
+return value of do_dup2(). However its callers never care about the
+specific returned number. In fact the caller in receive_fd_replace() treats
+any non-zero return value as an error and therefore never calls
+__receive_sock() for most file descriptors, which is a bug.
 
-                                                       this function implementation?
+To fix the bug in receive_fd_replace() and to avoid the same issue
+happening in future callers, signal success through a plain zero.
 
-Regards,
-Markus
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lore.kernel.org/lkml/20250801220215.GS222315@ZenIV/
+Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v3:
+- Make commit message slightly more precise
+- Avoid double-unlock of file_lock
+- Link to v2: https://lore.kernel.org/r/20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de
+
+Changes in v2:
+- Move the fix to replace_fd() (Al)
+- Link to v1: https://lore.kernel.org/r/20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de
+---
+Untested, it stuck out while reading the code.
+---
+ fs/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 6d2275c3be9c6967d16c75d1b6521f9b58980926..80957d0813db5946ba8a635520e8283c722982b9 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1330,7 +1330,8 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+ 	err = expand_files(files, fd);
+ 	if (unlikely(err < 0))
+ 		goto out_unlock;
+-	return do_dup2(files, file, fd, flags);
++	err = do_dup2(files, file, fd, flags);
++	return err < 0 ? err : 0;
+ 
+ out_unlock:
+ 	spin_unlock(&files->file_lock);
+
+---
+base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
