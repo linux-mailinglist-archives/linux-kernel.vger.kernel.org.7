@@ -1,197 +1,189 @@
-Return-Path: <linux-kernel+bounces-756487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF35B1B4FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:34:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E49B1B508
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DB687A0F9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5383BF89C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57688276059;
-	Tue,  5 Aug 2025 13:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BAD274FEB;
+	Tue,  5 Aug 2025 13:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NKNNFXoK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lU+lLa4Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46A2275AEB
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290E3218E91;
+	Tue,  5 Aug 2025 13:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754400837; cv=none; b=kXO5qGwZqt01Ro4uKN4JHLH5Q2BoAmcN8fZBGIfQFsuAxIx0duTXfB5lnFvQZQGob9/EN2MiRB4JudQ+iBhk+gxTNiZbehBQvPU9Nqnjmm7Hnw6KR2WZ50/5M2xhNX0aZaUNzsVAUuDk/uZ44rUFOFmfl+UlvbrobdJ4UWbFs2s=
+	t=1754400903; cv=none; b=DwU0eNPPQyxYcbhCAmChCGWEycsjDb3Wx5N0Eg67SBaLqfiSfcuYs84e2YPd5ewlSOBJuar19U6RBx6HD3WrxStDw+kBunk4zhoPgUl+6Qc81TSHW+xDfkqwp4SinfPepI/qReaVqR3sUQ3BfoO+eXpgZmPY0nOgQL0pTyi1Ozc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754400837; c=relaxed/simple;
-	bh=QMpDNaL5WJ1RE/MaPb56ilN7pYjhlTdQtZWwmUFMRmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cad4o/R6zmWvHhrv8GI3rcM4VemsUeQEwnylCYbdFu0jl5VK5Zc6OeuERvHR6BEu0gzd+KDF0LCrzGei5o9n50pBeOc2Z4wjhPfrwMk/i18i/oxzaonsA8RA/2eBnzzMUP4uWMzrOlLFRf7/zB+fqJmGRWEO6L4361hNrNrm3Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NKNNFXoK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754400834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+WYt6rd9/T+z0v/X9j3zOniisBmkObJHDVlt8TFvSZI=;
-	b=NKNNFXoKT1rBY8RuCQEzZndC7OoyLTSV0n/zpcHv2h8ZtUgj0ywKQVnnp9v2FYUEcIfvMi
-	cGWTQsbYo+uVjaufQiSfgVBde4opWMoyOKt9+B0nHMQiKo9xkC4cC8aPupN3DplNmw+s8M
-	rQN5WeNDvNx7qvCQR3ffbtGpE7UinGM=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-B8rtlJTsO6S0F2GQwbF-YQ-1; Tue, 05 Aug 2025 09:33:53 -0400
-X-MC-Unique: B8rtlJTsO6S0F2GQwbF-YQ-1
-X-Mimecast-MFC-AGG-ID: B8rtlJTsO6S0F2GQwbF-YQ_1754400831
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b788e2581bso2562402f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:33:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754400831; x=1755005631;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+WYt6rd9/T+z0v/X9j3zOniisBmkObJHDVlt8TFvSZI=;
-        b=aNmJaiRUGfQOxYzc51NMRBmZyyCqqd90b2BEK6Vp8sj+DcHqqD3q9zKITMsKUEJkbR
-         KXdCClJ0jrEk2kKnzhzR6YuGEuLk8/j2lMInBN4j67SbZdTvJZldTrrFwHwrnfTyrB61
-         V2PUy1jGVORr3S7rk9gv95kXBQnJmDYWbd6CWdPH/kJRJYnGnEsyNs/Uo474WwUs30gF
-         d7c07Z54sWO0d5djIXnVyhEtM9XH1faFplLURvzvR8gYHnMGm/DqzLUeAUSdlqOGSDnN
-         D71DJJn8Zj1vWAQX57dFGl4MHZgZ3E1q4r7o6xek0x1bGrGB9vIX1wdr9M1ZvMhNhhDY
-         kpyA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0GYk0lzuUw0xbgvpdeYCUV8GPymannPmJgIDk0d4rLpOhNLFFM6woem7nw1jEnSiKZExYKb5pzoid0yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjhVZGNe43JqF9qAh8jelS0seqtjkS7AoHfKM0LncLmm/AYmrM
-	Ukh7o+Lib1r86ulWL+zbtQJ8TiDDrIUm9tNE2vjWpnuN4jrBjDpYbSCdW2ZBKx5/n4UcqYlOMSr
-	cUmL55mgpcTEKWCijCbVfgS5GrkzHQzoZ/tB6cPTOjYNNYFqhLfm4iMmzUmBDiUeBaQ==
-X-Gm-Gg: ASbGnctuRNEpEMkBnPs9mD8K8DFNPgoCvjQl7YthSifLeOul5WBbj7kUCEC7x1Qf/9H
-	M6KVAg2/yekKWjft2jAsM/dWPmhD3nvATE4tTnds3jMuZvzhnO6fAaEA8uMz3Tw7Zh5x9/1WB1x
-	/81vs1Fk/VXuVsyqZ1ptl2oMBawoYlZqZX+kz5HPJhE2Lac/XPdkMlljQ90se12on/pjY6Ele5A
-	RsuZ/X8ghTi822LLwpfFjrmx0VIZSq0tkl+muAd3W3V84N8fvMpW1Qo0ctfoEuOFdfohehMBQ9m
-	G31F6GeJb1nh8mH978YGZVTIwsMhcCHjH3Ge+XGjcpvPmWrU8FrjdYZwLZIaFUj4VHEAEY7xbYB
-	CuCTcQHoO7MElquaMNYO5paz+S6Bsm7Gelcw4OMfZJmizaDKSfkdqh5NbAQ5Eht+0ho0=
-X-Received: by 2002:a05:6000:188c:b0:3b7:9bd2:7ae7 with SMTP id ffacd0b85a97d-3b8d94ca755mr10078640f8f.57.1754400831233;
-        Tue, 05 Aug 2025 06:33:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIObB8DRyB3S0rfwdWzVl32HGpVvH72r3KyaA9Fl/4UDRL54Gjavxvd60hUeleCboLn+7h5A==
-X-Received: by 2002:a05:6000:188c:b0:3b7:9bd2:7ae7 with SMTP id ffacd0b85a97d-3b8d94ca755mr10078617f8f.57.1754400830774;
-        Tue, 05 Aug 2025 06:33:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48a05bsm19380753f8f.69.2025.08.05.06.33.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:33:50 -0700 (PDT)
-Message-ID: <00999740-d762-488a-a946-0c10589df146@redhat.com>
-Date: Tue, 5 Aug 2025 15:33:49 +0200
+	s=arc-20240116; t=1754400903; c=relaxed/simple;
+	bh=/0ZE234TeSw9xjJpsbQakcX1dsGmzNxtfI+WMMXz2Kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4OCQvm9+iWJxXC/u84NcczE5tdmxd/M6Lx+E1AIqhnksbBXQwvrL/9floZhsh3aUwAo9wAJFdqh6ovyre/Kw/bPDaw9eD36e3VU7TB+bXHVmWai09P5TQJQDKY7X0U+W/oDE7tihhbnHPGMXQkNOm7zxdbjMVFhul+jnI54Hvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lU+lLa4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C45BC4CEF7;
+	Tue,  5 Aug 2025 13:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754400901;
+	bh=/0ZE234TeSw9xjJpsbQakcX1dsGmzNxtfI+WMMXz2Kk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lU+lLa4Zrpe/uj+pWg2ZxX89B5r4JrzaxePFTDj8FhpjrDcq3CfN5sbou/RNgS0pJ
+	 7jLrGu10EEKOou8IK+saOPLUuu5vIp2E0ynNnoM7IYXL9hDm1YeYhUVhm31lisHfdt
+	 dtZwexUTb4hGIdQVru11j6aIKVCoyrpCtMwZfqymeBHOpKmnZeJHWL3AJYlCFjMkjR
+	 4jZLhZzJmCbSKAILgJRPQ+atWOY4PJ2kWNDpFhKdVDPc+2lvF47AVAqD2NWlTF13lM
+	 KDyU8JmdoRgMv8lmA6UUd/rDY8Pu/X38IYSDL/87TpfGbBtd53uMVnhuDtF0QF0HnB
+	 Vc/PzUijScXxg==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Marc Zyngier <maz@kernel.org>
+Subject: [PATCH] of/irq: Convert of_msi_map_id() callers to of_msi_xlate()
+Date: Tue,  5 Aug 2025 15:34:43 +0200
+Message-ID: <20250805133443.936955-1-lpieralisi@kernel.org>
+X-Mailer: git-send-email 2.48.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-To: Jason Gunthorpe <jgg@nvidia.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com>
- <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
- <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
- <20250805132558.GA365447@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250805132558.GA365447@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05.08.25 15:25, Jason Gunthorpe wrote:
-> On Tue, Aug 05, 2025 at 04:00:53PM +0300, Linus Torvalds wrote:
->> On Tue, 5 Aug 2025 at 10:47, David Hildenbrand <david@redhat.com> wrote:
->>>
->>> The concern is rather false positives, meaning, you want consecutive
->>> PFNs (just like within a folio), but -- because the stars aligned --
->>> you get consecutive "struct page" that do not translate to consecutive PFNs.
->>
->> So I don't think that can happen with a valid 'struct page', because
->> if the 'struct page's are in different sections, they will have been
->> allocated separately too.
-> 
-> This is certainly true for the CONFIG_SPARSEMEM_VMEMMAP case, but in
-> the other cases I thought we end up with normal allocations for struct
-> page? This is what David was talking about.
-> 
-> So then we are afraid of this:
-> 
->    a = kvmalloc_array(nelms_a);
->    b = kvmalloc_array(nelms_b);
-> 
->    assert(a + nelms_a != b)
-> 
-> I thought this was possible with our allocator, especially vmemmap?
-> 
-> David, there is another alternative to prevent this, simple though a
-> bit wasteful, just allocate a bit bigger to ensure the allocation
-> doesn't end on an exact PAGE_SIZE boundary?
+With the introduction of the of_msi_xlate() function, the OF layer
+provides an API to map a device ID and retrieve the MSI controller
+node the ID is mapped to with a single call.
 
-:/ in particular doing that through the memblock in sparse_init_nid(), I 
-am not so sure that's a good idea.
+of_msi_map_id() is currently used to map a deviceID to a specific
+MSI controller node; of_msi_xlate() can be used for that purpose
+too, there is no need to keep the two functions.
 
-I prefer Linus' proposal and avoids the one nth_page(), unless any other 
-approach can help us get rid of more nth_page() usage -- and I don't 
-think your proposal could, right?
+Convert of_msi_map_id() to of_msi_xlate() calls and update the
+of_msi_xlate() documentation to describe how the struct device_node
+pointer passed in should be set-up to either provide the MSI controller
+node target or receive its pointer upon mapping completion.
 
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+As suggested by RobH:
+
+https://lore.kernel.org/lkml/20250627213241.GA168190-robh@kernel.org/
+
+ drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c |  2 +-
+ drivers/of/irq.c                            | 25 +++++----------------
+ drivers/pci/msi/irqdomain.c                 |  2 +-
+ include/linux/of_irq.h                      |  6 -----
+ 4 files changed, 7 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c b/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
+index 11549d85f23b..b5785472765a 100644
+--- a/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
+@@ -30,7 +30,7 @@ static u32 fsl_mc_msi_domain_get_msi_id(struct irq_domain *domain,
+ 	u32 out_id;
+ 
+ 	of_node = irq_domain_get_of_node(domain);
+-	out_id = of_node ? of_msi_map_id(&mc_dev->dev, of_node, mc_dev->icid) :
++	out_id = of_node ? of_msi_xlate(&mc_dev->dev, &of_node, mc_dev->icid) :
+ 			iort_msi_map_id(&mc_dev->dev, mc_dev->icid);
+ 
+ 	return out_id;
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 74aaea61de13..e7c12abd10ab 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -673,13 +673,14 @@ void __init of_irq_init(const struct of_device_id *matches)
+ /**
+  * of_msi_xlate - map a MSI ID and find relevant MSI controller node
+  * @dev: device for which the mapping is to be done.
+- * @msi_np: Pointer to store the MSI controller node
++ * @msi_np: Pointer to target MSI controller node
+  * @id_in: Device ID.
+  *
+  * Walk up the device hierarchy looking for devices with a "msi-map"
+- * property. If found, apply the mapping to @id_in. @msi_np pointed
+- * value must be NULL on entry, if an MSI controller is found @msi_np is
+- * initialized to the MSI controller node with a reference held.
++ * property. If found, apply the mapping to @id_in.
++ * If @msi_np points to a non-NULL device node pointer, only entries targeting
++ * that node will be matched; if it points to a NULL value, it will receive the
++ * device node of the first matching target phandle, with a reference held.
+  *
+  * Returns: The mapped MSI id.
+  */
+@@ -699,22 +700,6 @@ u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in)
+ 	return id_out;
+ }
+ 
+-/**
+- * of_msi_map_id - Map a MSI ID for a device.
+- * @dev: device for which the mapping is to be done.
+- * @msi_np: device node of the expected msi controller.
+- * @id_in: unmapped MSI ID for the device.
+- *
+- * Walk up the device hierarchy looking for devices with a "msi-map"
+- * property.  If found, apply the mapping to @id_in.
+- *
+- * Return: The mapped MSI ID.
+- */
+-u32 of_msi_map_id(struct device *dev, struct device_node *msi_np, u32 id_in)
+-{
+-	return of_msi_xlate(dev, &msi_np, id_in);
+-}
+-
+ /**
+  * of_msi_map_get_device_domain - Use msi-map to find the relevant MSI domain
+  * @dev: device for which the mapping is to be done.
+diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+index 0938ef7ebabf..555c61b1fc36 100644
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -422,7 +422,7 @@ u32 pci_msi_domain_get_msi_rid(struct irq_domain *domain, struct pci_dev *pdev)
+ 	pci_for_each_dma_alias(pdev, get_msi_id_cb, &rid);
+ 
+ 	of_node = irq_domain_get_of_node(domain);
+-	rid = of_node ? of_msi_map_id(&pdev->dev, of_node, rid) :
++	rid = of_node ? of_msi_xlate(&pdev->dev, &of_node, rid) :
+ 			iort_msi_map_id(&pdev->dev, rid);
+ 
+ 	return rid;
+diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+index a480063c9cb1..1db8543dfc8a 100644
+--- a/include/linux/of_irq.h
++++ b/include/linux/of_irq.h
+@@ -55,7 +55,6 @@ extern struct irq_domain *of_msi_map_get_device_domain(struct device *dev,
+ 							u32 bus_token);
+ extern void of_msi_configure(struct device *dev, const struct device_node *np);
+ extern u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in);
+-u32 of_msi_map_id(struct device *dev, struct device_node *msi_np, u32 id_in);
+ #else
+ static inline void of_irq_init(const struct of_device_id *matches)
+ {
+@@ -105,11 +104,6 @@ static inline u32 of_msi_xlate(struct device *dev, struct device_node **msi_np,
+ {
+ 	return id_in;
+ }
+-static inline u32 of_msi_map_id(struct device *dev,
+-				 struct device_node *msi_np, u32 id_in)
+-{
+-	return id_in;
+-}
+ #endif
+ 
+ #if defined(CONFIG_OF_IRQ) || defined(CONFIG_SPARC)
 -- 
-Cheers,
-
-David / dhildenb
+2.48.0
 
 
