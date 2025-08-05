@@ -1,294 +1,602 @@
-Return-Path: <linux-kernel+bounces-757080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E6FB1BD71
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:41:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA88B1BD73
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 296704E2D42
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF2F17B468
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A4426CE26;
-	Tue,  5 Aug 2025 23:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D1B26A1C9;
+	Tue,  5 Aug 2025 23:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="i421JPBd";
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dI23JXqX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gRQtyYFs"
-Received: from mx0a-00230701.pphosted.com (mx0a-00230701.pphosted.com [148.163.156.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1l8oO59i"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140161EEA5D;
-	Tue,  5 Aug 2025 23:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754437281; cv=fail; b=cF0t72WkCDYHp+HH6oqT4FMBsoXeXh7WxBZK/RNsZZf/rlyNzJNfi5b83chkoCuqYkx7JTzFwebdap/AA/MiwKNPyhmEK7q255zdzszrutL5xJxKkfMlQj8LwciQWnmbUFYAUzL0NuQbKVT0EMa21+K2Wxa6eMD0T6NqOYkBCNY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754437281; c=relaxed/simple;
-	bh=SeJnGdynUesXpZbidIkY4jfworgQUMjhDkprK8GEts0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LOSjtvIU87ddx2kd+Wp8j9zBnhxxWwcIYEap3DYrSth/jTEKEXDBMB9jI1yRvw7LQDkBKxXLEVB1R4FhJhCT7ZceZjAiwbXGlXvkH+e2yWVlHyipTXncdhGAZvmPBvyZsFwJ1VyaIf1YOLuKZHt7ipH4jeYjcEuu6rpUFrmauOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=i421JPBd; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=dI23JXqX; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=gRQtyYFs reason="signature verification failed"; arc=fail smtp.client-ip=148.163.156.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
-Received: from pps.filterd (m0297266.ppops.net [127.0.0.1])
-	by mx0a-00230701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575IAiLh001020;
-	Tue, 5 Aug 2025 16:40:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pfptdkimsnps; bh=SeJnGdynUesXpZbidIkY4jfworgQUMjhDkprK8GEts0=; b=
-	i421JPBdfrRqFvErqViEJATKawAG/A4ATTbTsDnyMTmiI+9g+xBrmo67GboFAcot
-	oihSBUqkIGhKLTiXOHxN8DKPct0dcHrnRfklOXyyO87SZyAs/delc2HSm4tumZr5
-	UCvFOb2DJEJ1u9PJ2WTiVS/yz3+B5XWX19NPIAsV1J7+vLdRVNr4YC7bfiDF1PXc
-	9Va/U9cyk/yluOicS3B2rCTErrobTFkrNtMo8D7ujnlSdPiNBWMeL1mFcY49Tk79
-	0wb7uh8zulv+VDI+Gy5Pk6w1zc2pAjTjSU/fMfvqK5Un119eQqp+8XVG2abkWglt
-	g9OUSwmB+rJHhuZ5++iG6Q==
-Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.73.133])
-	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 48bq0r9f7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 16:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-	t=1754437251; bh=SeJnGdynUesXpZbidIkY4jfworgQUMjhDkprK8GEts0=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=dI23JXqXu6T2Vd5Ak8UC5q73TPPcjIUUKjKWYS7kJNzSIe2KwY1R2bOsZ+3CzkfqQ
-	 832cCjB5BLUFxXY+XK8w6KRIJrEUN5zWI6gyYPd1yAQp6Upt4PKDsui5ZANzfHqURX
-	 3FmNJH3Ipj8Rtjo//e9SJd/nCb1ZK+5c/7mRexWzsPD+hG/MeoDFQhs0aHJloSxCtL
-	 7pWil1J3ipN7SKlPWmQ7OVQ1bLyAgIckV/hCMk0f+EmpKrudoDncXYxYYV56S9tp/1
-	 EFOswF16FE6RECotGnOx6ZEyZ0KUamUfNSPFaFkxyeH7h7f+AqAMzD054t/Q3BWFYb
-	 5SxYggQrd7B+g==
-Received: from mailhost.synopsys.com (sv2-mailhost2.synopsys.com [10.205.2.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
-	 client-signature RSA-PSS (2048 bits))
-	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B7ECC40087;
-	Tue,  5 Aug 2025 23:40:49 +0000 (UTC)
-Received: from o365relay-in.synopsys.com (us03-o365relay1.synopsys.com [10.4.161.137])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (not verified))
-	by mailhost.synopsys.com (Postfix) with ESMTPS id 5758CA00A2;
-	Tue,  5 Aug 2025 23:40:49 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=gRQtyYFs;
-	dkim-atps=neutral
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2040.outbound.protection.outlook.com [104.47.73.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-	by o365relay-in.synopsys.com (Postfix) with ESMTPS id DBEE340596;
-	Tue,  5 Aug 2025 23:40:47 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rac+hWUtY+tWhZSAD6+7ts0ZMeDWFRnEtrugE+utUZdCHF5QMj4fPVuAnARPFNn6VQrInVAK3G3ckxR4ytWxpiJR1JvXr4ZRl4tB629awcsZjIg1UP3INRGbi0THwYGlEFUoMkog66LQNRZFx6/jDXzKCqFYrp2bGmy0WlUYKQGuYce7FJ+L2wsXQji0MQM5GymdCsqEVVnbr9EnpGZMsL0JiAsH5gDDzirXOqnvdo34i+YOwHIiWajsLnXIR2NpfRO613+mHm9iWseZeXYP5DKATbpcNBtoPXo9HNqWyFae7sIIQGEPUUK6LdrxK5rQ5L7K1tMqQbx3X+SPzgqkQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SeJnGdynUesXpZbidIkY4jfworgQUMjhDkprK8GEts0=;
- b=D/sWu2ptOTwUBaY8Q6igX7XURBRnsMGim7lqSfXDNklTN3h2gVSTKFCsYvevHfwt7WucQfW26+LD9bq6ziHsprlWEwSa/QV2ptBwVUXkKNNvOl3IDfJuTVYBAU9ON55UA0cuhTFkoPtltJ8VO1W+9I8Qa6dG0Cjrw+IuEbZmxH5Hzu08xsa1JJuiEHl/CfmVRPvMAulBXVd82t4SkT8ND/KEVQBpFK18pitsjJ9iMET5A/o2A7hsERT7u6s3AUc69T2kqXOSIhk902q+FHkfTs+htGR20QeVqTdt4gJDlPp+jB1eYm3ttt4tvI6Kfc2KkM2Z6SEpZMRCGKf+a/Eq3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SeJnGdynUesXpZbidIkY4jfworgQUMjhDkprK8GEts0=;
- b=gRQtyYFseWKQBcf/EosZ3TQ/hSIhtYlGyQiTDtPP+UXUs9fbBm7I3RhqUihnTlYdn6tyfGN2WImN6DVtVB6loZ1Ai8qjeSFt68Hv1DROzAtKTBf8mWS8Xt23cOsqaRGngReV5BUDf0QypSkCJRHx+dXzKiqhpuETY2Vcodp3tAk=
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16)
- by SA1PR12MB9516.namprd12.prod.outlook.com (2603:10b6:806:45b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
- 2025 23:40:45 +0000
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8]) by LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8%3]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
- 23:40:45 +0000
-X-SNPS-Relay: synopsys.com
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@kernel.org>, Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Xu Yang <xu.yang_2@nxp.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "imx@lists.linux.dev" <imx@lists.linux.dev>,
-        "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 3/3] usb: dwc3: imx8mp: Set out of band wakeup for
- i.MX95
-Thread-Topic: [PATCH v2 3/3] usb: dwc3: imx8mp: Set out of band wakeup for
- i.MX95
-Thread-Index: AQHcAp2uf7v8ge4llEOYVx25CxeV6bRUv30A
-Date: Tue, 5 Aug 2025 23:40:45 +0000
-Message-ID: <20250805234044.j75p6bqfbjidxm3b@synopsys.com>
-References: <20250801-pm-v2-0-97c8fb2a433c@nxp.com>
- <20250801-pm-v2-3-97c8fb2a433c@nxp.com>
-In-Reply-To: <20250801-pm-v2-3-97c8fb2a433c@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR12MB5990:EE_|SA1PR12MB9516:EE_
-x-ms-office365-filtering-correlation-id: 3cbf3151-abf7-40ea-8b00-08ddd4797fe1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UTZnb1VQdWp5cmlMOEQydzhsSnJPcUwzSkJxZ1dLSzlBRjNXSVpoNEUyVndo?=
- =?utf-8?B?c0FaZFFOZkF5a1dwQ1g4dzJUVXMrajlNWEdYMG9PY1NNWGY1TC9NbCtKdUlU?=
- =?utf-8?B?ZVlSNmlaa1JXckx3NElNeldnbW5WeHJMcHFSTkFaZHRGbGllcFdoNFpCWjlx?=
- =?utf-8?B?bGlmRVpPcEpBZWluVGFKOFJnZFZyNktSNCs0ZWNuRXlvdUxFTS9hZlhuWjBR?=
- =?utf-8?B?MXh1MlhrMFp0ekVjNHR5bS95VU5Ucm8vNzVqN3ZlNUtLU0IyRTMxU1V5SzBh?=
- =?utf-8?B?OWNqZ1QwZUpMdWwrOUZ5QjVIdDJ0eTh5V0t1UEQ2U3lBZ1I1cXdkbWNEcUJJ?=
- =?utf-8?B?VXVhNzdhcVNFSlJsSVh3MzRhNmREYzZCZUJyczdvZjMxV05WNURYWUNBeXR1?=
- =?utf-8?B?d3FLd29tU2VhZmN2eCtPZUxiMW40dEhNUVpTUGNaNEROelQvemYreGxMOHd3?=
- =?utf-8?B?RkMvNW8wNTh2bXFxRlpxVE5UY3hjQ1dRalBTMHNnZTgwaWJobWlVejhSMkpn?=
- =?utf-8?B?c1ljVFJGamU4eExMQUpEMmp3VUhkVVZzQ3dFQzA5cFlQZ0dYYnZsREliNXBB?=
- =?utf-8?B?WEdVeXZGaDdyOE9BSUd0cHRJdVgrUjZzQkJVd3NIUWo3SGpMYVIvQTFLS3Rn?=
- =?utf-8?B?UUNwMlR5NUt0Q0R4UnFKb0JZVjlvQm9KMFRCRHlrSWh3ejlOSmh3Nlp6T2h6?=
- =?utf-8?B?NVhaSk0wc2t3WGRSbWRQOEpUTS9tQ2pGZ0dGdUZ3TmFObGNRVWRKbFc1YUpX?=
- =?utf-8?B?OVdGZGI5OFBMVWhWUGRsWVhhRUhiVDM5OHVHeFB4OVFZK0ZMVStsTndmT2R3?=
- =?utf-8?B?WXFtSWRoaTk3MDg1Tmp3RGlMSUhISXFiYTBuM1VMVjlqSWQwdzIxUG5oblNQ?=
- =?utf-8?B?RlVJMC9YcW1QZ1I0YkxpY0FLeVhFNmhwR0lPY25Ed3BiQ3RKbDFhdUJsU2hp?=
- =?utf-8?B?UWJmVTNjQm1tU1Bzb2NaWlowYkkvNjAvazN0c2JpeFRHL2E2bHZuMHRFWlFm?=
- =?utf-8?B?RVpWaEcwaFBiV1FCc2lhRVp4VXJYUjRWdHRGQys5UTZuUFhMLy9nRmw5Q3JE?=
- =?utf-8?B?UlpqZUdvU2ptN0VOaXNVSTFIdkZKZVZiL0c1dTlsaFdXR0t4dlF0U3Z4YUlh?=
- =?utf-8?B?TzlCbXloOFE2OU9HVFZYSFl4QzFScDQwZEd5UFRpZjZvMk95L1dDMHl3bHpC?=
- =?utf-8?B?KzlXZ0VXemZTU1VyRU1pTlRrZ2pabzN6YWZTQ29pZEFueHNXRkMvOGxJaDJE?=
- =?utf-8?B?dnFIUi9ILzl3NnBjYm9lVHBOZDZPSEVuZlliVWVNbURWMW1McDVHcUVweWxp?=
- =?utf-8?B?ajFpdkRNNmNCVWdGcHVNMlp2NWRtYUpmYWk3V1dkNmFUM2txNUIybGw2TzB3?=
- =?utf-8?B?MWpSNHN4eEliTDhWdlNjaDd2QnpERjhHK0wrd29PZXg2Yml0RGREQ1l0YVVT?=
- =?utf-8?B?QlE2RjJHdmdSR2lPWW51Q1J6L1k0RFFOVGMyQnF1WVRXdE41RzRGVG95VlRV?=
- =?utf-8?B?dEcyajlOK21pSzkrdllwNjVNcy91RmdpZjVLVWZKYzFINnNKeTdNVkdBZTk3?=
- =?utf-8?B?azNkY0R0eG1xam51clNPSlV2cnNsNExSTUhpUXNIN0NpY1VzaFJ2ckxQT0Jm?=
- =?utf-8?B?VUdRSVVTeVFkTUM3Smw2a0Z1VTNMODQvUHo1V2hsSmZMYXBSYmxvd04xdkpu?=
- =?utf-8?B?SGNjK2wzdkk4bWlYczU2YVNtTlZyd2xVdXhFdklnemk3K3AwR3JVLytlLzVU?=
- =?utf-8?B?ck5zOTJjTlE0Nkl2bEM0c28zbyt4NGw4UXRiRE1oKytscFZYdDRRZjlSMlVF?=
- =?utf-8?B?TVI5NVFqeldhdDlFYnNZOHE2Z1dkd2svK0RMMlg4a1Vybi9pU3k5L2hZMk8v?=
- =?utf-8?B?SkVQaHJ3Mm1ITGQzVGNHcU0vK003L3hZNEh2SVlCSC9qV0k4QVU1SG53M2pr?=
- =?utf-8?B?ZEpBZ1BiZHZWdmVVVFdqUFhjeTMwbTRWUVNMcHpmN2FCbXAyZDV5MnpwRnFE?=
- =?utf-8?Q?xOchioCAG4YfQCUwiD+Fj+NbZw1rVU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WEdzN1hTNGxMZ25ERVppNlRHdmlmL3orRGYxMGx2N2U4OFJsYWhkU3phTS9S?=
- =?utf-8?B?NWhUUWwxblZDd0g2MllqWmlqblFkdEh4MFRiYS9RTnFOQllJTnpPRzNsZVRB?=
- =?utf-8?B?RTJpLzJVNk1keGtGdWUwaHEySXl0ekMzOXh6aG43MmRLeFY2TnUvOWF1MW1W?=
- =?utf-8?B?S0libnF0cjRac2xTV05QQ1lFSUk1L0YyUVpoektpMklrVWZHT0RqSkpEdDUy?=
- =?utf-8?B?ZzcyeUFwbFF2b20rbkJ5VDlkVjJ5Tm03RXZrZzBlYW9PZGxleDBNaXdINzJ1?=
- =?utf-8?B?cG1PVFNOTENZRU9tMHVTeklUZ2QvNWtYeHU2aDQyOWFRVnhKbDQ2Tk1OS1Qx?=
- =?utf-8?B?cmRkanlKckoxQW5RN2psdktPU1h1K25LbVRtSFdQb2R0TTJoUzEyeEFScFU4?=
- =?utf-8?B?WWF1TXRnQ3Y5SFR0Z0Q2djBpSXhYR0hmUkhzV1FvemZuWVhTODd0WHArS2xB?=
- =?utf-8?B?SVV0OTYwWVgwK3ZPN0ZkdHY3S3M4bXdyNlE1S0dhakJCSXZ6dXMxQWNxRVlB?=
- =?utf-8?B?Yi8zQStORGJIVElCSWxjZmJCUHBqcTMrR1hrYkZqRjZVSTYzd0xmWGU4L1RY?=
- =?utf-8?B?RjBjajI1L09aSUo5MEdxOS9ZVjY3Tzdkc0dMRmgrOFJ3MWxFRk1YRGZlYnNv?=
- =?utf-8?B?bjZhVDh0bWxZOVoyeDBPUzR6em5ueW5UQjc1WXpFRm5jVHBLYmg0QXRwOG1C?=
- =?utf-8?B?d1cySExkL0ZyLzZ5bTNMT3VnUzlaN09XRmpsY1dsbU9pRFFmMGVhZ3NEd3Fn?=
- =?utf-8?B?dnNqUEpQNHdoTDhOeHZPN2hwNlRnR3VNOTdqWGI4aTFDc1BnOWtTRGRRSDEw?=
- =?utf-8?B?Ly9tUi9tNE5yLzVZODFFeThEVlRxZ3gxUTVoYndGSjZZMDY1SEI5ak8wSVJp?=
- =?utf-8?B?Y3BybDZmZk1iaVdUUCsrMHdNNW1hR2dCdlJQQ0RnSncyUzYvZlZkaURKSWxN?=
- =?utf-8?B?cnEyRjZ2MlJQeHJjZW00R3hjRHpzM05RVDZJQnJPTk41eDRIR2tGQVFtbkQx?=
- =?utf-8?B?OGVGU2ZJV0tLRnhEQVhRRU82TWswQ3FjVWJocGlRM3NIRDY1N2daY0dCS2gx?=
- =?utf-8?B?czhUSGo0d2VVNDZ0RXRyc0prKzIyeDZHbllrcEhQZC8rNnRTNmVNQ3ZUd0pk?=
- =?utf-8?B?UTFFVjFDaTk3d1gxTk5xakNpQ1dHcXhUbzdnMy92MjhQQmF6aW5OOXNPTHh6?=
- =?utf-8?B?ck5WNkFrYnRobTZFa1VHSW9uOHRXSTJHaG5NRmxCQUNockUrbkxKeGczSzhC?=
- =?utf-8?B?ZXlTaWZ5M0J2NHJBRlpRZTdDaFlWelk3WFlQRnZyeGlhblA0aGc2UTNzYWJO?=
- =?utf-8?B?RWN3cHAyMjVPQWgybmduYkY5Yk0yRkpwc1oyMjFEaGluaHVWdHdsa3ZkdndM?=
- =?utf-8?B?UXdyMXRKcjZLN3VyRGFsYTFkaXpubFNJeitMam1oOHVXbDFwbHRKN04xbUZZ?=
- =?utf-8?B?NTN4aXVtYko1ZWtnSVptVzFGU3VURmdIUFExbjhoTTAvd3NXMWl1UFhHRzRP?=
- =?utf-8?B?bWJpcEYvd2Q3KzlyMHFNYXIwZUVXUS81NHNwZWhJUlFsZlRzakJ4RVZnenBV?=
- =?utf-8?B?TXFDSEI0d2dldlZ4bmdJcHhlMnNVQlE4eHBwdndDdkRMWHl2OW5CejRINzBj?=
- =?utf-8?B?ODBJQ28xSmNFdXpCOFYxbENJcTBKbUxjeTVKMUdNQldiUjc0R1M1NkRmTzkw?=
- =?utf-8?B?SWsyNFh2Y00vOFBwZjBNaGRla3BmblB4L1NLODRiWm9WVzN0QVJudWJZdERT?=
- =?utf-8?B?S2I3cDF4c2ROaExPQ0p1Smxyb2F6TWxmODJ0UlRSdDM1WWJuc0ZvRUZwTjlV?=
- =?utf-8?B?d3lkSEpVUXl6QmlqQXk3S0J6ZkYvdDZmTEt1M2JEejFrWVhETjBUU1dQeFF6?=
- =?utf-8?B?MElDa2t3Yk5mS3Q1N2U2WHBLOUJYMldwc1BUdi9VNkFKN0NMdERnYy8vN29J?=
- =?utf-8?B?U0JyYmJxOEVsOCtpdEM4Q2R3TnFnRjlhTlEwV09meFRuUGI5SUk4R2tva2wr?=
- =?utf-8?B?aU5saDJDL2c0eEw5ZWlZbHo2UGlzUCs3dkJlWFlBL0tqYzhyRmdaZVY1TTNu?=
- =?utf-8?B?OG9UdCtkbmppaDlLRXRSRElpZ2VLVlpoUzY3VTh2L294d0wyZzgraDhOMEln?=
- =?utf-8?Q?WWnpDE0FvDbMBWOv44cJFyfIN?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <057C242C59A3C3408BDDC235592D0D73@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E614725228C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 23:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754437293; cv=none; b=FTQtk1jP11oPyr6+UyTYG6de0DY0NktxK0cW9+7Dt0wspW2JH5vmf0F61WMSJcwJLv3/zHQQ9p4Lzdcr5WdfUNBTCUpcJkzfWxMoT/VmkaTWVtMrpfepy82XVzo96R0OfxwfmmAfG2w/qJb0Om/U+Ngq6htDcTG04ZegEwVZNUY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754437293; c=relaxed/simple;
+	bh=ZuU1pZTIVc9kG8ukS1mMjqkO4CYJdigw0zkilMJyIBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jXz8YF5uUKfCNS/GGXFKph9hJVWlWdgSmPyYW5iH+1uXrguggwGuZivhfZukreXQga7tM/Ecr7K+i7AIm5bkEeR2rxc2gEz1TV3taI2s04t09umecEMy+36DRRsbUihQmCFD9GY+4ibUKAw6rF8/Z0DF+8rFUMG4Zo7gZDDOJjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1l8oO59i; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b0673b0a7cso250061cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 16:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754437290; x=1755042090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f+S3bmPXejwFO1KMmyrSrq+aYMwqbrRLmpkvUdxnslc=;
+        b=1l8oO59idod/0c6vmQe6e40Ie9dlAJWmtBKiYTGn658pHR6dCxffeVpEMa8TwT3COd
+         +TCkOqNRImUf1exwyVK2RsvL9CiADXFAb0mqsp3y39+UWiMyZW1B6wtVwrRtMxQKGRPI
+         M9RpptYDJFbG0LUSZok3TAnBSscwmMOGOzDVuYGoY5JqDJtLCHiRvC6Hk4U2VmhzjOkC
+         t/pOAE7qT5xSmNFLU1xhagDWzRhkjKXe9Z0TlSGxZPczQVqxSO/n+pU4kfYD7mtTNP3M
+         KPtUazVI5kHfmv/PKgDG/reCoaMESCdCc9KJHR7EyXtZiTjUmt5O8CBgpbD2XmWZ9F9P
+         KzWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754437290; x=1755042090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f+S3bmPXejwFO1KMmyrSrq+aYMwqbrRLmpkvUdxnslc=;
+        b=L1E9tLMk72LwZ2xKBLZVUYbmJG8jnxzqAmSFR4NaQ5az3Vv4DJl+4mJd4VLckK3YSv
+         qkPnJBdVxPXLL/A9ZWn8diN036bZgggv98qf4ehaxi+zoTYP4iJbIIJe+cqSDvWUJRwZ
+         nMERZZUNpoyadEa0COcpCleJeMFF2E8mLz1XKQTIFWAywscVwqnI+vlVgDfkav00/kZJ
+         mZuPykjbdlsYeiupXnGfbGAx6008jQ864QhykoVgwHDAX5gZPs+73bruEOKWpzAZ8YeQ
+         Py1V/qGmkJmqo2yyh+KfxleXtvHROnvmKTWDQlfbGDX9JhivJq+jucVCpaVVgogNv3Bj
+         J5xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqJspAD8WMoFniES0P2lmz6/TgaihowiHFc1foteTyL/se+hBLCfIOqx9hhp/UbbzWTT5c0/c31ksuuHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu9Ujc/9F4v0TcPF8aY/NUR6+f5MX0eF/1SqK0DrpEcmA8XGzv
+	y5xvwWB0fgun+SwTdFIwEtYjO5FXFiHEJ5yBRQKDFD+wpjaShZ84gfxzx1KS5CAxqoDio8rkbUT
+	FZqpr9kgPr9Y9zmFiTgESxMLlNv8kHn71VNPDFtlc
+X-Gm-Gg: ASbGncuH7hR7vRikYKIvXxqr6K225m1NPsYf1JFk5HVVkS+ahQLY+QgavTbM7crZCCI
+	QUxxM3te2xGk+V9mJkAfNAi+cMaWwiv5eW2yMow7YQtDkUKqZS3JOyolH4boTtSBzLo/EjZ1hzv
+	g5X0QM4iKZ6R4PWjuCFa68yhLqv67Vk6naXHekmd4QQQARdu2amFuSBeI22ZGGhMafe5Dyxc1Lq
+	JiItu55pPWwZOYkq/5zOVYcZ0hAUCI7kFKog68T3uqTtRZD
+X-Google-Smtp-Source: AGHT+IEEmBiUQbr0GQVcfi3phUF9vukRyuZfQf9xofLE27keKB1H1qrGIdFCVd6QbGW9E6OxiTrII591nTP7vFtRWWg=
+X-Received: by 2002:ac8:7e90:0:b0:4ae:d2cc:ad51 with SMTP id
+ d75a77b69052e-4b09261783cmr1338171cf.1.1754437289233; Tue, 05 Aug 2025
+ 16:41:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1l0thd3/gfL9GFAGOr46PH9N/LnQVANMeQbhl0CApMKqTQOsQOiT3y0BtI4QBYka+gEjQs1DBhPc7pOI1yUDWpgUM/32CrQ6FW5SlDBXjPX9ssEtBn6hfBwTyTDQBrL6cs468zSQ1NGoeTAPbT+tfAsej5mv9ngL++DPLKJYgpB+lnHQ/OmF8jLGTi2XyVz3mjHisXbyJexkAX6VIX0+q0/coDm/Ny7PnVTjaJlgGdxwVuUqzIARn+ACGceUdCLbZzFCj1p5Gf1WjRkIx0xWoGmUPqI9NH9wcrCRUzofvSk8DplAox94J+DgiRv1hOwW3QUH2v5drKch4oX2WR2BXC9IHPFvxHlN9Zn/Gg9Ujf7oqbJ90rDlO3DqouT/YLtebxssX/9XhpvmmtJs9NxHy2ScLEf8wzBbWr0C2A8o2FslcHLYb7aBORdjo1fhHUPu9NFgPrtMwj2NyLSWiCPMCPTz7RfvnaEnjIxKuAymOItUohp9J8BxsBNTTtsT/ga097zYdK7Qo7AmzY/8sngPHkVjQd7HxSXGBcrKyzq4SbatCHbGtifqGPH91tmwysT7evJEKMudFVzqU5nJ+IC3Ct1G7Yqdzg9uuEDoz+hOkHdjI/Y65h7/0hE4h5JKT2ipQzjhpP+sR/qd1Azl59YdmA==
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cbf3151-abf7-40ea-8b00-08ddd4797fe1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2025 23:40:45.7471
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uv2PDX6NeqPIncJmq9iUIX8vMymhvQkqf2YEDCz+h9f0EtgvioTgdHyRIuCx0dGh5e3AgyxgiDNMzFI+9xwTTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9516
-X-Proofpoint-GUID: DH-l6kEG83oQkdG3PxiYkQVr2Cz_cc-g
-X-Proofpoint-ORIG-GUID: DH-l6kEG83oQkdG3PxiYkQVr2Cz_cc-g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEyNyBTYWx0ZWRfX34gD8gt6/Va2
- vXrA09zLiMskBwC1QZN8ssZY9NTdkrhFvUwvxJPe51MA7OX7RCWNeZQWwQEsXAGEBkWV982Aqsl
- /4JFp0xXIFRNi/HNpr+uofWu4CSVyxJF1sH3kGumhKQBhIfuC5WDgaeAUUt1rJSwJzrbBRs5W+v
- DvNqntJgV3NiFr1yzPvrKvfIGHBc4TUYCkssQHq4FsuIjcuijjhznZ/JGJb0eHf/Xs1o5ZobfBy
- YphOOlDCDY1S+Ixghz/L11gLGx3Iq+eFzILraxxsq8c//9t0OisUjc3x3Oo99ia+swPuRT1q6PW
- JlRAYZQCntMLTQiFNBRTtGX1uyejLMVjVzhOFL0b6jIuSNbaBAHoD5lYWNLAS2itm1RKqOQWUiJ
- Mj8LFAzF
-X-Authority-Analysis: v=2.4 cv=H+nbw/Yi c=1 sm=1 tr=0 ts=68929683 cx=c_pps
- a=8EbXvwLXkpGsT4ql/pYRAw==:117 a=8EbXvwLXkpGsT4ql/pYRAw==:17
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=qPHU084jO2kA:10
- a=8AirrxEcAAAA:8 a=jIQo8A4GAAAA:8 a=SXcBeQr9A4UVe0lxy50A:9 a=QEXdDO2ut3YA:10
- a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam
- policy=outbound_active_cloned score=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 clxscore=1011 classifier=typeunknown authscore=0 authtc=
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508050127
+References: <aIzMGlrR1SL5Y_Gp@x1.local> <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
+ <aIzp6WqdzhomPhhf@x1.local> <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
+ <aIz1xrzBc2Spa2OH@x1.local> <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
+ <aI0Ffc9WXeU2X71O@x1.local> <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
+ <aI1ckD3KhNvoMtlv@x1.local> <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
+ <aJIXlN-ZD_soWdP0@x1.local> <CAJuCfpFzP_W8i8pwL+-Uv-n+2LixgFrzqn2HsY_h-1kbP=g3JQ@mail.gmail.com>
+ <CAJuCfpFEf92gTR+Jw+1wcCcT0fEt-SP193NHzpyxVXJA=VAwng@mail.gmail.com>
+In-Reply-To: <CAJuCfpFEf92gTR+Jw+1wcCcT0fEt-SP193NHzpyxVXJA=VAwng@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 5 Aug 2025 16:41:18 -0700
+X-Gm-Features: Ac12FXyFn6ZM5k32WyQsCctB41kkckIUGLUX8rOqsdud2EjylewU1LQBkK1P12w
+Message-ID: <CAJuCfpFeSVq+hq4JRJStLgFfQgmS6SQ7zoFsj4=SeQT89r3TTw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gRnJpLCBBdWcgMDEsIDIwMjUsIFBlbmcgRmFuIHdyb3RlOg0KPiBpLk1YOTUgRFdDMyBpbnNp
-ZGUgSFNJT01JWCBjb3VsZCBzdGlsbCB3YWtldXAgTGludXgsIGV2ZW4gaWYgSFNJT01JWA0KPiBw
-b3dlciBkb21haW4oRGlnaXRhbCBsb2dpYykgaXMgb2ZmLiBUaGVyZSBpcyBzdGlsbCBhbHdheXMg
-b24gbG9naWMNCj4gaGF2ZSB0aGUgd2FrZXVwIGNhcGFiaWxpdHkgd2hpY2ggaXMgb3V0IGJhbmQg
-d2FrZXVwIGNhcGJpbGl0eS4NCj4gDQo+IFNvIHVzZSBkZXZpY2Vfc2V0X291dF9iYW5kX3dha2V1
-cCBmb3IgaS5NWDk1IHRvIG1ha2Ugc3VyZSBEV0MzIGNvdWxkDQo+IHdha2V1cCBzeXN0ZW0gZXZl
-biBpZiBIU0lPTUlYIHBvd2VyIGRvbWFpbiBpcyBpbiBvZmYgc3RhdGUuDQo+IA0KPiBTaWduZWQt
-b2ZmLWJ5OiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3Vz
-Yi9kd2MzL2R3YzMtaW14OG1wLmMgfCA0ICsrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2Vy
-dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9kd2MzL2R3YzMtaW14OG1w
-LmMgYi9kcml2ZXJzL3VzYi9kd2MzL2R3YzMtaW14OG1wLmMNCj4gaW5kZXggYmNlNmFmODJmNTRj
-MjQ0MjNjMWUxZmNjNDY5MTNjODQ1NmI2ZjAzNS4uZmRlMTU4ZDFmNmUzZDg5ZDI2MWVkMzY4OWEx
-N2Q3MDM4NzhjN2UzNyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy91c2IvZHdjMy9kd2MzLWlteDht
-cC5jDQo+ICsrKyBiL2RyaXZlcnMvdXNiL2R3YzMvZHdjMy1pbXg4bXAuYw0KPiBAQCAtMjQ4LDYg
-KzI0OCwxMCBAQCBzdGF0aWMgaW50IGR3YzNfaW14OG1wX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpDQo+ICAJfQ0KPiAgDQo+ICAJZGV2aWNlX3NldF93YWtldXBfY2FwYWJsZShk
-ZXYsIHRydWUpOw0KPiArDQo+ICsJaWYgKGRldmljZV9pc19jb21wYXRpYmxlKGRldiwgImZzbCxp
-bXg5NS1kd2MzIikpDQo+ICsJCWRldmljZV9zZXRfb3V0X2JhbmRfd2FrZXVwKGRldiwgdHJ1ZSk7
-DQo+ICsNCj4gIAlwbV9ydW50aW1lX3B1dChkZXYpOw0KPiAgDQo+ICAJcmV0dXJuIDA7DQo+IA0K
-PiAtLSANCj4gMi4zNy4xDQo+IA0KDQpBY2tlZC1ieTogVGhpbmggTmd1eWVuIDxUaGluaC5OZ3V5
-ZW5Ac3lub3BzeXMuY29tPg0KDQpCUiwNClRoaW5o
+On Tue, Aug 5, 2025 at 1:39=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Aug 5, 2025 at 7:57=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> >
+> > On Tue, Aug 5, 2025 at 7:39=E2=80=AFAM Peter Xu <peterx@redhat.com> wro=
+te:
+> > >
+> > > On Mon, Aug 04, 2025 at 07:55:42AM -0700, Suren Baghdasaryan wrote:
+> > > > On Fri, Aug 1, 2025 at 5:32=E2=80=AFPM Peter Xu <peterx@redhat.com>=
+ wrote:
+> > > > >
+> > > > > On Fri, Aug 01, 2025 at 07:30:02PM +0000, Suren Baghdasaryan wrot=
+e:
+> > > > > > On Fri, Aug 1, 2025 at 6:21=E2=80=AFPM Peter Xu <peterx@redhat.=
+com> wrote:
+> > > > > > >
+> > > > > > > On Fri, Aug 01, 2025 at 05:45:10PM +0000, Suren Baghdasaryan =
+wrote:
+> > > > > > > > On Fri, Aug 1, 2025 at 5:13=E2=80=AFPM Peter Xu <peterx@red=
+hat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasar=
+yan wrote:
+> > > > > > > > > > On Fri, Aug 1, 2025 at 9:23=E2=80=AFAM Peter Xu <peterx=
+@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghd=
+asaryan wrote:
+> > > > > > > > > > > > On Fri, Aug 1, 2025 at 7:16=E2=80=AFAM Peter Xu <pe=
+terx@redhat.com> wrote:
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David H=
+ildenbrand wrote:
+> > > > > > > > > > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > Hi!
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > Did you mean in you patch description:
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with s=
+ome non-present PMDs"
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > Talking about THP holes is very very confusing.
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MOD=
+E_ALLOW_SRC_HOLES and it
+> > > > > > > > > > > > > > > encounters a non-present THP, it fails to pro=
+perly recognize an unmapped
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > You mean a "non-present PMD that is not a migra=
+tion entry".
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > hole and tries to access a non-existent folio=
+, resulting in
+> > > > > > > > > > > > > > > a crash. Add a check to skip non-present THPs=
+.
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > That makes sense. The code we have after this p=
+atch is rather complicated
+> > > > > > > > > > > > > > and hard to read.
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOV=
+E uABI")
+> > > > > > > > > > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzk=
+aller.appspotmail.com
+> > > > > > > > > > > > > > > Closes: https://lore.kernel.org/all/68794b5c.=
+a70a0220.693ce.0050.GAE@google.com/
+> > > > > > > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@goo=
+gle.com>
+> > > > > > > > > > > > > > > Cc: stable@vger.kernel.org
+> > > > > > > > > > > > > > > ---
+> > > > > > > > > > > > > > > Changes since v1 [1]
+> > > > > > > > > > > > > > > - Fixed step size calculation, per Lokesh Gid=
+ra
+> > > > > > > > > > > > > > > - Added missing check for UFFDIO_MOVE_MODE_AL=
+LOW_SRC_HOLES, per Lokesh Gidra
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > [1] https://lore.kernel.org/all/2025073017073=
+3.3829267-1-surenb@google.com/
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++=
+++++++++----------------
+> > > > > > > > > > > > > > >   1 file changed, 29 insertions(+), 16 deleti=
+ons(-)
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultf=
+d.c
+> > > > > > > > > > > > > > > index cbed91b09640..b5af31c22731 100644
+> > > > > > > > > > > > > > > --- a/mm/userfaultfd.c
+> > > > > > > > > > > > > > > +++ b/mm/userfaultfd.c
+> > > > > > > > > > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(st=
+ruct userfaultfd_ctx *ctx, unsigned long dst_start,
+> > > > > > > > > > > > > > >             ptl =3D pmd_trans_huge_lock(src_p=
+md, src_vma);
+> > > > > > > > > > > > > > >             if (ptl) {
+> > > > > > > > > > > > > > > -                   /* Check if we can move t=
+he pmd without splitting it. */
+> > > > > > > > > > > > > > > -                   if (move_splits_huge_pmd(=
+dst_addr, src_addr, src_start + len) ||
+> > > > > > > > > > > > > > > -                       !pmd_none(dst_pmdval)=
+) {
+> > > > > > > > > > > > > > > -                           struct folio *fol=
+io =3D pmd_folio(*src_pmd);
+> > > > > > > > > > > > > > > +                   if (pmd_present(*src_pmd)=
+ || is_pmd_migration_entry(*src_pmd)) {
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > [1]
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > > > +                           /* Check if we ca=
+n move the pmd without splitting it. */
+> > > > > > > > > > > > > > > +                           if (move_splits_h=
+uge_pmd(dst_addr, src_addr, src_start + len) ||
+> > > > > > > > > > > > > > > +                               !pmd_none(dst=
+_pmdval)) {
+> > > > > > > > > > > > > > > +                                   if (pmd_p=
+resent(*src_pmd)) {
+> > > > > > > > > > >
+> > > > > > > > > > > [2]
+> > > > > > > > > > >
+> > > > > > > > > > > > > > > +                                           s=
+truct folio *folio =3D pmd_folio(*src_pmd);
+> > > > > > > > > > >
+> > > > > > > > > > > [3]
+> > > > > > > > > > >
+> > > > > > > > > > > > > > > +
+> > > > > > > > > > > > > > > +                                           i=
+f (!folio || (!is_huge_zero_folio(folio) &&
+> > > > > > > > > > > > > > > +                                            =
+              !PageAnonExclusive(&folio->page))) {
+> > > > > > > > > > > > > > > +                                            =
+       spin_unlock(ptl);
+> > > > > > > > > > > > > > > +                                            =
+       err =3D -EBUSY;
+> > > > > > > > > > > > > > > +                                            =
+       break;
+> > > > > > > > > > > > > > > +                                           }
+> > > > > > > > > > > > > > > +                                   }
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > ... in particular that. Is there some way to ma=
+ke this code simpler / easier
+> > > > > > > > > > > > > > to read? Like moving that whole last folio-chec=
+k thingy into a helper?
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > One question might be relevant is, whether the ch=
+eck above [1] can be
+> > > > > > > > > > > > > dropped.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > The thing is __pmd_trans_huge_lock() does double =
+check the pmd to be !none
+> > > > > > > > > > > > > before returning the ptl.  I didn't follow closel=
+y on the recent changes on
+> > > > > > > > > > > > > mm side on possible new pmd swap entries, if migr=
+ation is the only possible
+> > > > > > > > > > > > > one then it looks like [1] can be avoided.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Hi Peter,
+> > > > > > > > > > > > is_swap_pmd() check in __pmd_trans_huge_lock() allo=
+ws for (!pmd_none()
+> > > > > > > > > > > > && !pmd_present()) PMD to pass and that's when this=
+ crash is hit.
+> > > > > > > > > > >
+> > > > > > > > > > > First for all, thanks for looking into the issue with=
+ Lokesh; I am still
+> > > > > > > > > > > catching up with emails after taking weeks off.
+> > > > > > > > > > >
+> > > > > > > > > > > I didn't yet read into the syzbot report, but I thoug=
+ht the bug was about
+> > > > > > > > > > > referencing the folio on top of a swap entry after re=
+ading your current
+> > > > > > > > > > > patch, which has:
+> > > > > > > > > > >
+> > > > > > > > > > >         if (move_splits_huge_pmd(dst_addr, src_addr, =
+src_start + len) ||
+> > > > > > > > > > >             !pmd_none(dst_pmdval)) {
+> > > > > > > > > > >                 struct folio *folio =3D pmd_folio(*sr=
+c_pmd); <----
+> > > > > > > > > > >
+> > > > > > > > > > > Here looks like *src_pmd can be a migration entry. Is=
+ my understanding
+> > > > > > > > > > > correct?
+> > > > > > > > > >
+> > > > > > > > > > Correct.
+> > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > > If we drop the check at [1] then the path that take=
+s us to
+> > > > > > > > > > >
+> > > > > > > > > > > If my above understanding is correct, IMHO it should =
+be [2] above that
+> > > > > > > > > > > makes sure the reference won't happen on a swap entry=
+, not necessarily [1]?
+> > > > > > > > > >
+> > > > > > > > > > Yes, in case of migration entry this is what protects u=
+s.
+> > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > > split_huge_pmd() will bail out inside split_huge_pm=
+d_locked() with no
+> > > > > > > > > > > > indication that split did not happen. Afterwards we=
+ will retry
+> > > > > > > > > > >
+> > > > > > > > > > > So we're talking about the case where it's a swap pmd=
+ entry, right?
+> > > > > > > > > >
+> > > > > > > > > > Hmm, my understanding is that it's being treated as a s=
+wap entry but
+> > > > > > > > > > in reality is not. I thought THPs are always split befo=
+re they get
+> > > > > > > > > > swapped, no?
+> > > > > > > > >
+> > > > > > > > > Yes they should be split, afaiu.
+> > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > > Could you elaborate why the split would fail?
+> > > > > > > > > >
+> > > > > > > > > > Just looking at the code, split_huge_pmd_locked() check=
+s for
+> > > > > > > > > > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
+> > > > > > > > > > pmd_trans_huge() is false if !pmd_present() and it's no=
+t a migration
+> > > > > > > > > > entry, so __split_huge_pmd_locked() will be skipped.
+> > > > > > > > >
+> > > > > > > > > Here might be the major part of where confusion came from=
+: I thought it
+> > > > > > > > > must be a migration pmd entry to hit the issue, so it's n=
+ot?
+> > > > > > > > >
+> > > > > > > > > I checked the code just now:
+> > > > > > > > >
+> > > > > > > > > __handle_mm_fault:
+> > > > > > > > >                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) =
+{
+> > > > > > > > >                         VM_BUG_ON(thp_migration_supported=
+() &&
+> > > > > > > > >                                           !is_pmd_migrati=
+on_entry(vmf.orig_pmd));
+> > > > > > > > >
+> > > > > > > > > So IIUC pmd migration entry is still the only possible wa=
+y to have a swap
+> > > > > > > > > entry.  It doesn't look like we have "real" swap entries =
+for PMD (which can
+> > > > > > > > > further points to some swapfiles)?
+> > > > > > > >
+> > > > > > > > Correct. AFAIU here we stumble on a pmd entry which was all=
+ocated but
+> > > > > > > > never populated.
+> > > > > > >
+> > > > > > > Do you mean a pmd_none()?
+> > > > > >
+> > > > > > Yes.
+> > > > > >
+> > > > > > >
+> > > > > > > If so, that goes back to my original question, on why
+> > > > > > > __pmd_trans_huge_lock() returns non-NULL if it's a pmd_none()=
+?  IMHO it
+> > > > > > > really should have returned NULL for pmd_none().
+> > > > > >
+> > > > > > That was exactly the answer I gave Lokesh when he theorized abo=
+ut the
+> > > > > > cause of this crash but after reproducing it I saw that
+> > > > > > pmd_trans_huge_lock() happily returns the PTL as long as PMD is=
+ not
+> > > > > > pmd_none(). And that's because it passes as is_swap_pmd(). But =
+even if
+> > > > > > we change that we still need to implement the code to skip the =
+entire
+> > > > > > PMD.
+> > > > >
+> > > > > The thing is I thought if pmd_trans_huge_lock() can return non-NU=
+LL, it
+> > > > > must be either a migration entry or a present THP. So are you des=
+cribing a
+> > > > > THP but with present bit cleared?  Do you know what is that entry=
+, and why
+> > > > > it has present bit cleared?
+> > > >
+> > > > In this case it's because earlier we allocated that PMD here:
+> > > > https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L179=
+7
+> > >
+> > > AFAIU, this line is not about allocation of any pmd entry, but the pm=
+d
+> > > pgtable page that _holds_ the PMDs:
+> > >
+> > > static inline pmd_t *pmd_alloc(struct mm_struct *mm, pud_t *pud, unsi=
+gned long address)
+> > > {
+> > >         return (unlikely(pud_none(*pud)) && __pmd_alloc(mm, pud, addr=
+ess))?
+> > >                 NULL: pmd_offset(pud, address);
+> > > }
+> > >
+> > > It makes sure the PUD entry, not the PMD entry, be populated.
+> >
+> > Hmm. Then I was reading this code completely wrong and need to rethink
+> > what is happening here.
+> >
+> > >
+> > > > but wouldn't that be the same if the PMD was mapped and then got
+> > > > unmapped later? My understanding is that we allocate the PMD at the
+> > > > line I pointed to make UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES case the sa=
+me
+> > > > as this unmapped PMD case. If my assumption is incorrect then we co=
+uld
+> > > > skip the hole earlier instead of allocating the PMD for it.
+> > > >
+> > > > >
+> > > > > I think my attention got attracted to pmd migration entry too muc=
+h, so I
+> > > > > didn't really notice such possibility, as I believe migration pmd=
+ is broken
+> > > > > already in this path.
+> > > > >
+> > > > > The original code:
+> > > > >
+> > > > >                 ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
+> > > > >                 if (ptl) {
+> > > > >                         /* Check if we can move the pmd without s=
+plitting it. */
+> > > > >                         if (move_splits_huge_pmd(dst_addr, src_ad=
+dr, src_start + len) ||
+> > > > >                             !pmd_none(dst_pmdval)) {
+> > > > >                                 struct folio *folio =3D pmd_folio=
+(*src_pmd);
+> > > > >
+> > > > >                                 if (!folio || (!is_huge_zero_foli=
+o(folio) &&
+> > > > >                                                !PageAnonExclusive=
+(&folio->page))) {
+> > > > >                                         spin_unlock(ptl);
+> > > > >                                         err =3D -EBUSY;
+> > > > >                                         break;
+> > > > >                                 }
+> > > > >
+> > > > >                                 spin_unlock(ptl);
+> > > > >                                 split_huge_pmd(src_vma, src_pmd, =
+src_addr);
+> > > > >                                 /* The folio will be split by mov=
+e_pages_pte() */
+> > > > >                                 continue;
+> > > > >                         }
+> > > > >
+> > > > >                         err =3D move_pages_huge_pmd(mm, dst_pmd, =
+src_pmd,
+> > > > >                                                   dst_pmdval, dst=
+_vma, src_vma,
+> > > > >                                                   dst_addr, src_a=
+ddr);
+> > > > >                         step_size =3D HPAGE_PMD_SIZE;
+> > > > >                 } else {
+> > > > >
+> > > > > It'll get ptl for a migration pmd, then pmd_folio is risky withou=
+t checking
+> > > > > present bit.  That's what my previous smaller patch wanted to fix=
+.
+> > > > >
+> > > > > But besides that, IIUC it's all fine at least for a pmd migration=
+ entry,
+> > > > > because when with the smaller patch applied, either we'll try to =
+split the
+> > > > > pmd migration entry, or we'll do move_pages_huge_pmd(), which int=
+ernally
+> > > > > handles the pmd migration entry too by waiting on it:
+> > > > >
+> > > > >         if (!pmd_trans_huge(src_pmdval)) {
+> > > > >                 spin_unlock(src_ptl);
+> > > > >                 if (is_pmd_migration_entry(src_pmdval)) {
+> > > > >                         pmd_migration_entry_wait(mm, &src_pmdval)=
+;
+> > > > >                         return -EAGAIN;
+> > > > >                 }
+> > > > >                 return -ENOENT;
+> > > > >         }
+> > > > >
+> > > > > Then logically after the migration entry got recovered, we'll eit=
+her see a
+> > > > > real THP or pmd none next time.
+> > > >
+> > > > Yes, for migration entries adding the "if (pmd_present(*src_pmd))"
+> > > > before getting the folio is enough. The problematic case is
+> > > > (!pmd_none(*src_pmd) && !pmd_present(*src_pmd)) and not a migration
+> > > > entry.
+> > >
+> > > I thought we could have any of below here on the pmd entry:
+> > >
+> > >   (0) pmd_none, which should constantly have pmd_trans_huge_lock -> N=
+ULL
+> > >
+> > >   (1) pmd pgtable entry, which must have PRESENT && !TRANS, so
+> > >   pmd_trans_huge_lock -> NULL,
+> > >
+> > >   (2) pmd migration, pmd_trans_huge_lock -> valid
+> > >
+> > >   (3) pmd thp, pmd_trans_huge_lock -> valid
+> > >
+> > > I thought (2) was broken, which we seem to agree upon.. however if so=
+ the
+> > > smaller patch should fix it, per explanation in my previous reply.  O=
+TOH I
+> > > can't think of (4).
+> >
+> > The case I was hitting is (!pmd_none && !pmd_present &&
+> > !is_pmd_migration_entry). My original thinking was that this entry was
+> > newly allocated at the line I pointed earlier but now I'm not so sure
+> > anymore.
+>
+> Hmm, now I can't reproduce this case... I'm pretty sure I've seen that
+> case before but now I hit an occasional migration entry and that's
+> all. I must have done something wrong when testing it before.
+
+Ok, I let the reproducer run for half a day and it did not hit this
+case, so I must have done something wrong during my initial
+investigation. Sorry for the confusion. I could have sworn that I saw
+this case but now it just does not happen.
+
+With migration entry being the only case that leads to that
+pmd_folio(), the only check we need to add is the "if
+(pmd_present(*src_pmd))" before pmd_folio(). Would you like me to
+check anything else or should I go ahead and post that fix?
+
+>
+> >
+> > >
+> > > Said that, I just noticed (3) can be broken as well - could it be a
+> > > prot_none entry?  The very confusing part of this patch is it seems t=
+o
+> > > think it's pmd_none() here as holes:
+> > >
+> > >         if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)=
+) {
+> > >                 ...
+> > >         } else {
+> > >                 spin_unlock(ptl);
+> > >                 if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES)) {
+> > >                         err =3D -ENOENT;
+> > >                         break;
+> > >                 }
+> > >                 /* nothing to do to move a hole */
+> > >                 err =3D 0;
+> > >                 step_size =3D min(HPAGE_PMD_SIZE, src_start + len - s=
+rc_addr);
+> > >         }
+> > >
+> > > But is it really?  Again, I don't think pmd_none() could happen with
+> > > pmd_trans_huge_lock() returning the ptl.
+> >
+> > That is true, in the pmd_none() case pmd_trans_huge_lock() returns NULL=
+.
+> >
+> > >
+> > > Could you double check this?  E.g. with this line if that makes sense=
+ to
+> > > you:
+> > >
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index 8bf8ff0be990f..d2d4f2a0ae69f 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -1903,6 +1903,7 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx,=
+ unsigned long dst_start,
+> > >                                                           dst_addr, s=
+rc_addr);
+> > >                                 step_size =3D HPAGE_PMD_SIZE;
+> > >                         } else {
+> > > +                               BUG_ON(!pmd_none(*src_pmd));
+> > >                                 spin_unlock(ptl);
+> > >                                 if (!(mode & UFFDIO_MOVE_MODE_ALLOW_S=
+RC_HOLES)) {
+> > >                                         err =3D -ENOENT;
+> > >
+> > > I would expect it constantly BUG() here, if that explains my thoughts=
+.
+> >
+> > I'll add this and check.
+>
+> This check does trigger and I logged pmd_val=3D0x8b3714067 and I think
+> this is normal. _PAGE_BIT_PRESENT is set and _PAGE_BIT_PSE is not set,
+> so is_swap_pmd()=3D=3Dfalse and pmd_trans_huge()=3D=3Dfalse, therefore
+> pmd_trans_huge_lock() returns NULL.
+>
+>
+> >
+> > >
+> > > Now I doubt it's a prot_none THP.. aka, a THP that got numa hint to b=
+e
+> > > moved.  If so, we may need to process it / move it / .. but we likely
+> > > should never skip it.  We can double check the buggy pmd entry you hi=
+t
+> > > (besides migration entry) first.
+> >
+> > Let me log the flags of the entry when this issue happens. That should
+> > provide more insights.
+> > Thanks,
+> > Suren.
+> >
+> > >
+> > > Thanks,
+> > >
+> > > --
+> > > Peter Xu
+> > >
 
