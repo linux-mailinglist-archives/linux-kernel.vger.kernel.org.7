@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-756875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0C7B1BAA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D089B1BAA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EAB18A6B96
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD1F18A6C2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F982BD000;
-	Tue,  5 Aug 2025 19:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DB29DB65;
+	Tue,  5 Aug 2025 19:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XM8k8oCP"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A5qUfrX9"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6327729A32D
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3367929A9ED
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754420743; cv=none; b=KwrQ3FNECeRl1K/ScGfPlgDqVtNO0tRxa9N7Df6OUK7tcf4wTfEl/HNShAo0J62QFQbZ5gUv7ShxtKznCWi5DUGJMJokhP0O6Pa9Cd2P5NcP/m6PRrmB7HEEGR7cvoOdWz3RRn+1l9mk1CJU93CWizz1KtDMmURLa8opOi8+HuU=
+	t=1754420745; cv=none; b=b+h/sKPTMJyMO7fnhv9DCw7S4pfr83wPpJwp2hP1DfBaoVpq8DhXgyFBoRN1oIqS/YNxMTcv97pFMa0ehQ8zq1NL6wpJhcfh1VlneZyRcyeZLv34AvxBoUl18dPfcBn03Liaun6zx7fMJCU0vF+gxfSWPgTM4LOE1MmEPp7iOOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754420743; c=relaxed/simple;
-	bh=FjHicGFKJBMj6eqQRJA4zeVHrXkQNDh3WomaZ2JWU6w=;
+	s=arc-20240116; t=1754420745; c=relaxed/simple;
+	bh=ATOJWurILJ+pXvAy7vgZb2du/uRW5OngKfJEtQ9MjgE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gLFXHnXjCk1GL41LrAfX6fWRqEVPRwiJHZmQUHZD6k5Pf4mD0qTe82F0Kj2eARFiHQyCKx2v+Ql1uqP3Nh6Jf2cl89o5CnxjG1VgMBnNDv7hJGGyQFtR5fhnkdNcEHeh5DQNKJniSnzIQkI+LISsIRqY9aeaEYfLvYcpYnlmiQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XM8k8oCP; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=s46v3VOBvz3to7K06Z2XxR/Vu/9RKDmIn95YCSu9wKO4k5ZDY3cGL+QMsdx98bjJNsUdVfAUAP0sKSOHJQ4BKdv6jcSnZiUWMrwexK91skETVM0T33UjRxZSrXsE3fbSwoGqe2ljul6h4Sa4Jpag4+APx17G9V0k3uF1DWCD8no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A5qUfrX9; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31eac278794so6046148a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:42 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3f38d3cabeso4054915a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754420742; x=1755025542; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754420743; x=1755025543; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=sD1yq2ng+3s/RvhfKS4rEdaP5yHsiyn1WT57oqE0wt8=;
-        b=XM8k8oCPxx282wuw+6dbhLacCNonDw2E2pjSZ3pyz8/khplEZIRjLuyHRUmVqgkqRZ
-         x7a7iV69Ct7tkoBpbg2GDL9zsrvxkr+LrXZgKhahWf6ugn2NKhmdOYlHle1wP56/iKNP
-         0E1ilzdfu5XK7M5snBMpxSMefp1xFpCHmzOVcCziES6nKXKmx3xorI/ju8Re9pJnf0ay
-         +y7+Mwpg90eU1wSpGoJl8gAsnT1BNhf8QjBD9qf3TLACvnG2oeGPcCTlgVisoExf561p
-         sCttityu0MYtAcXiGj/ZNDNGzpKwB/hCJZiss5u7hVpWIdWNnhXGBaWKLa7CCa839u6O
-         KsNw==
+        bh=fXcZGtwr18gSNfbGq/ApRRZ2cGpCSejOkegwkd2RB7g=;
+        b=A5qUfrX9p8W5M2MMDCKietvNz9pH4MYXTCrKsz3zFzXI2DeY3E0wnplRn7A3LM8VP8
+         XYF7Wr/HBKbgYr6LOaSarsjoP8BkbjIK9ZplauyILn4ZGmZrP0lcdnaE7fVnqkL3EkG+
+         PC1yc8x6EX3fYKkKQwSIQGTsHAJ22oy8+cGJHEWxTm05Hn/F+J8NhA7+Hi9nHCMWq+IR
+         e+/5/hSC0KVXlq5U0Wkajan1p9vU+HI5okyPrV6PYzhqyIT08XHhnkBE947jidGTCDV5
+         iILU6z4VVEDvgoophv7olhAK1gkzNlziC7hJpmawAbmjVubFjF7aICe0ZiptQIZONAVN
+         QEgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754420742; x=1755025542;
+        d=1e100.net; s=20230601; t=1754420743; x=1755025543;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sD1yq2ng+3s/RvhfKS4rEdaP5yHsiyn1WT57oqE0wt8=;
-        b=ocfyv4vDS7jqZ5epWR3t/eBDfaUBwDWh0nEKu8tK9TlCCGwRGbtweW8YxKOxK/BDQs
-         RdYYmH/SJRer2EQIcuc5Bz5Ctc6XqR8u3e2EGgUJ+VsHCUDk7h7oxpnvTLjSt9/UE0j8
-         opl5sBczggLlZ+uplaXUvkqGZseG5AO1mNjONY30RiRZdoDM6LGLQBwDBLfD4bKoDmHC
-         6pPVrrdViyOyJL/jgc2DWKOvLhMSATD6l4uzYZ2XM2LKlcI4UeLsYD3wa03DJughr9F4
-         oAqcPeJa4ZHY8jTcyo0Tlh+0W1d6pqyp/DjDdQw21f3Ks0vCqBwYqYYVf1bPmTsKKUZw
-         /C5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWmFbURUtI3vMBiJ1TguaGHVo/+pr9pmvmWNryGgrKAGcZ9xiT/FpSgHPo8hLJR7aQVR4qChTZ/1wnQdkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd+9+hzxQxA7sV5mSK4WLYkAp9tEff/fgRqMX8ieDF2LHB+he8
-	Wj8TBHjsDykxMAYRTWtnl+SHiLaUiDogZkoKv5r+vpUHUOSzQGgJt+Uxl80jidZoGjGSphUtLv2
-	38tLTFw==
-X-Google-Smtp-Source: AGHT+IFJUuShphCDKjpbJ4bBJ29lWr9wj20brYqPy6fH3C0e3fDw9eD2bFKuavKmEfXY9vwq/YetKdwwOJQ=
-X-Received: from pjrz21.prod.google.com ([2002:a17:90a:bd95:b0:312:fb53:41c0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e84:b0:321:1df6:97d3
- with SMTP id 98e67ed59e1d1-3211df698c4mr15042572a91.4.1754420741580; Tue, 05
- Aug 2025 12:05:41 -0700 (PDT)
+        bh=fXcZGtwr18gSNfbGq/ApRRZ2cGpCSejOkegwkd2RB7g=;
+        b=OsVZp4nw0IALhfan7KZHXqPBbWJSfJM196GlZoZ0kT/uZ0AJzKuY/xLPWrdm7PZrPd
+         i+4g9zpFmfLgcUBoBXihlQMxbI8XE8doYohhwaVK7jri0o9zzng7n24NSfRFpbsnUew2
+         93FgYyD8UOXxVMyDh0ARmF8BcycK13P+3RGcUbpXXkqYI+1QAS3dcHqrLVNAdNADSChs
+         +3uPskbUk95lF30H3xvSwuz7HR1On7BjC9YqLKSr8/SILRbpLROvsPEA8koIzTDpuKfU
+         ry8JIm0KIcAuP+6BfhAIdbWylnT+t4WLp0lHCFCNo2vtSyxQlXirk51VsKiiiQX7ZAbK
+         FHOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVM9ZOEVi31P9X6z1Ww/pLVaAAOxa+9IdlZSnZSrtlMrIMaTwoDkCFqYFx8FVRvHrRMHrarivrqWUpY844=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Cg+D6uHmK/KQxSTycSztUg9AscVXxgomr9zBwZC9T7zwXeWQ
+	MUUGWTZPgSbb+leNjzt0cX1tvq5xQto+aS/2RS9R9mTW49yimhk5QYUcA8uOXjw19N1U9OGxlAf
+	Gqd7jHg==
+X-Google-Smtp-Source: AGHT+IFzn/biQe1Qxm6XvedDBvzagTRf5b39R3idgrE1MR4qbj1/mKxMhU5L7MOTzCIbn6eqqm8/r77blPw=
+X-Received: from pjbli2.prod.google.com ([2002:a17:90b:48c2:b0:2ff:6132:8710])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1346:b0:31f:9114:ead8
+ with SMTP id 98e67ed59e1d1-321161dd744mr21743989a91.6.1754420743452; Tue, 05
+ Aug 2025 12:05:43 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  5 Aug 2025 12:05:15 -0700
+Date: Tue,  5 Aug 2025 12:05:16 -0700
 In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,53 +75,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250805190526.1453366-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250805190526.1453366-8-seanjc@google.com>
-Subject: [PATCH 07/18] KVM: x86: Unconditionally grab data from EDX:EAX in
- WRMSR fastpath
+Message-ID: <20250805190526.1453366-9-seanjc@google.com>
+Subject: [PATCH 08/18] KVM: x86: Fold WRMSR fastpath helpers into the main handler
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
 	Dapeng Mi <dapeng1.mi@linux.intel.com>, Sandipan Das <sandipan.das@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Always grab EDX:EAX in the WRMSR fastpath to deduplicate and simplify the
-case statements, and to prepare for handling immediate variants of WRMSRNS
-in the fastpath (the data register is explicitly provided in that case).
-There's no harm in reading the registers, as their values are always
-available, i.e. don't require VMREADs (or similarly slow operations).
+Fold the per-MSR WRMSR fastpath helpers into the main handler now that the
+IPI path in particular is relatively tiny.  In addition to eliminating a
+decent amount of boilerplate, this removes the ugly -errno/1/0 => bool
+conversion (which is "necessitated" by kvm_x2apic_icr_write_fast()).
 
-No real functional change intended.
+Opportunistically drop the comment about IPIs, as the purpose of the
+fastpath is hopefully self-evident, and _if_ it needs more documentation,
+the documentation (and rules!) should be placed in a more central location.
 
-Cc: Xin Li <xin@zytor.com>
+No functional change intended.
+
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/kvm/x86.c | 34 +++++-----------------------------
+ 1 file changed, 5 insertions(+), 29 deletions(-)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 69c668f4d2b6..e6c221f9b92e 100644
+index e6c221f9b92e..a4441f036929 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -2156,18 +2156,16 @@ static int handle_fastpath_set_tscdeadline(struct kvm_vcpu *vcpu, u64 data)
+@@ -2133,48 +2133,24 @@ static inline bool kvm_vcpu_exit_request(struct kvm_vcpu *vcpu)
+ 	       kvm_request_pending(vcpu) || xfer_to_guest_mode_work_pending();
+ }
  
+-/*
+- * The fast path for frequent and performance sensitive wrmsr emulation,
+- * i.e. the sending of IPI, sending IPI early in the VM-Exit flow reduces
+- * the latency of virtual IPI by avoiding the expensive bits of transitioning
+- * from guest to host, e.g. reacquiring KVM's SRCU lock. In contrast to the
+- * other cases which must be called after interrupts are enabled on the host.
+- */
+-static int handle_fastpath_set_x2apic_icr_irqoff(struct kvm_vcpu *vcpu, u64 data)
+-{
+-	if (!lapic_in_kernel(vcpu) || !apic_x2apic_mode(vcpu->arch.apic))
+-		return 1;
+-
+-	return kvm_x2apic_icr_write_fast(vcpu->arch.apic, data);
+-}
+-
+-static int handle_fastpath_set_tscdeadline(struct kvm_vcpu *vcpu, u64 data)
+-{
+-	kvm_set_lapic_tscdeadline_msr(vcpu, data);
+-	return 0;
+-}
+-
  fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
  {
-+	u64 data = kvm_read_edx_eax(vcpu);
+ 	u64 data = kvm_read_edx_eax(vcpu);
  	u32 msr = kvm_rcx_read(vcpu);
--	u64 data;
- 	bool handled;
+-	bool handled;
  	int r;
  
  	switch (msr) {
  	case APIC_BASE_MSR + (APIC_ICR >> 4):
--		data = kvm_read_edx_eax(vcpu);
- 		handled = !handle_fastpath_set_x2apic_icr_irqoff(vcpu, data);
+-		handled = !handle_fastpath_set_x2apic_icr_irqoff(vcpu, data);
++		if (!lapic_in_kernel(vcpu) || !apic_x2apic_mode(vcpu->arch.apic) ||
++		    kvm_x2apic_icr_write_fast(vcpu->arch.apic, data))
++			return EXIT_FASTPATH_NONE;
  		break;
  	case MSR_IA32_TSC_DEADLINE:
--		data = kvm_read_edx_eax(vcpu);
- 		handled = !handle_fastpath_set_tscdeadline(vcpu, data);
+-		handled = !handle_fastpath_set_tscdeadline(vcpu, data);
++		kvm_set_lapic_tscdeadline_msr(vcpu, data);
  		break;
  	default:
+-		handled = false;
+-		break;
+-	}
+-
+-	if (!handled)
+ 		return EXIT_FASTPATH_NONE;
++	}
+ 
+ 	kvm_vcpu_srcu_read_lock(vcpu);
+ 	r = kvm_skip_emulated_instruction(vcpu);
 -- 
 2.50.1.565.gc32cd1483b-goog
 
