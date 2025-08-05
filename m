@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-756972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BD2B1BBAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75802B1BBAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 514A47A6E2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB6317DBA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A6231836;
-	Tue,  5 Aug 2025 21:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BAD235354;
+	Tue,  5 Aug 2025 21:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TsyzzyM6"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="esXuty+w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC299849C;
-	Tue,  5 Aug 2025 21:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC992066CF;
+	Tue,  5 Aug 2025 21:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754428569; cv=none; b=ibex/4clx0A81yMkzy+TU28NuHV9lfDVDE3MW711txZGKL1C5OvvC6kDSO0M4Y7iP8shm9VzwdDe4uYRT25EefDblrDOeoji3KA30scJceLTp9YrKV9eTFuD/CwomcH21a9gPIFtpHAdl/XX0JvDakGnN/OiM2Nc0tVR2yqXR4A=
+	t=1754428584; cv=none; b=nmvx1IgOE21o11lw/fiqJZTjKyWWkawpesULiZxhHR0Rg28MepBKe5XBC91EVS4td7FOZ1s7I3wgXKPE0I7IHjB06QuChj3U9nPpXU9npB/toOGjlayWx7H6yYhTYMgVqsxCDTD+OpgU2e6u4OSCddvutXcwEm0crcN+o94aJwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754428569; c=relaxed/simple;
-	bh=gVWU27N9HqOZO+IUAKKSsMf/n2usEf6ekSZ3Ow/lwOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmoDx03ZYTHyICvx0Kj8j+cfi/qaXPAJUWb8gcn3RPPebGpoxiRxUgvAKFr7pdJtzEI+4jCaizwCbDmu75s5yJ1sVRPwwUF8i31syK73ykqgpmhI4gDlxLVhQNGl8rcbVSJP2zbrgShC8zqQL1Gni5GpibB+oUTjjFaQWyweXCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TsyzzyM6; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6349fbbb-de1f-4ec9-abb0-96b4e2d37c97@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754428564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cDvcXYGl2SM9lHx0jfhT79En8esQte6fbgJAw4tuiQU=;
-	b=TsyzzyM63LSewoRZ9QH/0uF5rJN/ZQvLNt6sIZ0oNVMt0VV7yXoh8+xXI77+nE1OgqEDkz
-	GblkHkxXM0x1Qc/a1TurMcTEg9CrYt1QYiYBItv4jmOoaitNAVOnw7/TkwjZuEdL7eIiNP
-	PTWOCUCvr2iFWc2IpLCZF9/+t6cmiaY=
-Date: Tue, 5 Aug 2025 17:15:59 -0400
+	s=arc-20240116; t=1754428584; c=relaxed/simple;
+	bh=u/948oDQQIOodQ3QXjRgv6XTHw62TrPExIfVZivcLY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmwo9NDgYRYT0IW1EYSGFZ2v0bkeEdCxPQo0QI1yQ2gA7KrVUZdXEG0fTnFDRaPEVjfE61JB7PqY+IDjIR2KvMwulyTLwOQnC31tNYyQPkw/59K7neBXTPjNOD+rlt5rmKDD29sTCDXBW3KdoT6wFFWTEbKVYhQlwianB7C0bA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=esXuty+w; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754428583; x=1785964583;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u/948oDQQIOodQ3QXjRgv6XTHw62TrPExIfVZivcLY8=;
+  b=esXuty+wEthDHXQbMlkX0QtMDUu92GPfW4qrQCXVrO3BhUo75MbTYRic
+   PntQgEiBrwFSqZ1gGeLVJFRJ5of5Xbx78QGLMuumrMc3dAMk0vy0IDeE4
+   EUnzTbnLAVQvDtUYeJ7AJiwSZ1c134NXaK3ZioZSOpHK62miRrHzNP3Ox
+   zGaClY+ItqMQwav1cKqwMAsiPsEOjIMcKksiafKgQbpPKQ3AS3Qx2tezT
+   McTRbgrB1Y7PA/a0Ce+mG4cLCXeW0xRrIyClcS+Indm2P+8MoE2oRiNIp
+   XRf9jvVjJo2BSklKZFw5lxcaQxqtREJbGo8uxE1bmRFq+K6ChemO2UaC7
+   w==;
+X-CSE-ConnectionGUID: fpvfyAmUTIWruoAKJqetGA==
+X-CSE-MsgGUID: lrFAk7yVT2+1iuh5a5G7Kw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="67811400"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67811400"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:16:22 -0700
+X-CSE-ConnectionGUID: 0Od6XwJDQBC/j5qDmek8lg==
+X-CSE-MsgGUID: 6uh4nKtqTn2SpXFR6N6+YA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164502641"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:16:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ujP15-00000003r3M-0aFZ;
+	Wed, 06 Aug 2025 00:16:15 +0300
+Date: Wed, 6 Aug 2025 00:16:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com, gshahrouzi@gmail.com,
+	hridesh699@gmail.com, linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH] staging: iio: ad5933: Fix implicit fall-through in
+ switch()
+Message-ID: <aJJ0npFx1mwJ-MoV@smile.fi.intel.com>
+References: <aIdKAJVnskdAVUMi@bhairav-test.ee.iitb.ac.in>
+ <2025072835-singer-penny-a421@gregkh>
+ <aIeDDsRurrgXqRQn@bhairav-test.ee.iitb.ac.in>
+ <2025072808-evict-snorkel-8998@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 3/7] net: axienet: Use MDIO bus device in
- prints
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@amd.com>,
- Leon Romanovsky <leon@kernel.org>
-References: <20250805153456.1313661-1-sean.anderson@linux.dev>
- <20250805153456.1313661-4-sean.anderson@linux.dev>
- <8a28ce41-f28d-4089-8a8e-a82ae2ccfc82@lunn.ch>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <8a28ce41-f28d-4089-8a8e-a82ae2ccfc82@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072808-evict-snorkel-8998@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 8/5/25 17:07, Andrew Lunn wrote:
-> On Tue, Aug 05, 2025 at 11:34:52AM -0400, Sean Anderson wrote:
->> For clarity and to remove the dependency on the parent netdev, use the
->> MDIO bus device in print statements.
+On Mon, Jul 28, 2025 at 04:23:49PM +0200, Greg KH wrote:
+> On Mon, Jul 28, 2025 at 07:32:54PM +0530, Akhilesh Patil wrote:
+> > On Mon, Jul 28, 2025 at 12:39:21PM +0200, Greg KH wrote:
+> > > On Mon, Jul 28, 2025 at 03:29:28PM +0530, Akhilesh Patil wrote:
+
+...
+
+> > > > +	default:
+> > > > +		return -EINVAL;
+> > > 
+> > > What tool is requiring this to be added?  It's totally redundant and
+> > > needs to have the tool fixed instead.
+> > 
+> > This patch is not inspired by any tool as such.
+> > I observed this code pattern while manually reading the staging area iio
+> > code. From my eyes, there is implicit intention to return from switch block if
+> > no match is found which can be improved in readibility by explicit
+> > default block returning error.
+> > I agree this is redundant and will not have any functional impact.
+> > However, imo - this can help support kernel wide efforts to
+> > clarify switch() blocks.
+> > 
+> > The motivation for this patch is from a035d552 which talks about
+> > eleminating ambiguity by clearly defining swich() case blocks.
 > 
->> @@ -186,28 +187,31 @@ static int axienet_mdio_enable(struct axienet_local *lp, struct device_node *np)
->>  		/* Legacy fallback: detect CPU clock frequency and use as AXI
->>  		 * bus clock frequency. This only works on certain platforms.
->>  		 */
->> -		np1 = of_find_node_by_name(NULL, "cpu");
->> +		np1 = of_find_node_by_name(NULL, "lpu");
-> 
-> There is nothing about dev in this change?
+> Yes, but the code right after this does the "default return", so that is
+> now dead code.
 
-Whoops, this was left over from doing s/lp/cp/ and then reverting
-it when I decided that there would be too much diffstat. Will fix for v5.
+Hmm... If I read the code correctly it is either already was a dead code before
+that patch, or it's still accessible via goto label.
 
---Sean
+> I'd recommend the "pattern" that the current code is in, it's simpler.
 
+The pattern to return from all switch cases, including default is commonly used
+in IIO drivers.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
