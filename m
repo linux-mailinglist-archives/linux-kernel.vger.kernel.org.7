@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-756416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CC1B1B3BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:46:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131EBB1B3BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C66166B56
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DDF18A09AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC0F273803;
-	Tue,  5 Aug 2025 12:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8C2701D6;
+	Tue,  5 Aug 2025 12:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZ/ktx6A"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl5Obup4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBF6270572;
-	Tue,  5 Aug 2025 12:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA1E17BA9;
+	Tue,  5 Aug 2025 12:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754397996; cv=none; b=gjnVCNrcRlFRRfqEmenDHyvYOUdp1RawH5MvnfBdtbVUhapSCl93cWEd2rsPVCsQR8TCnZjYrzVCtwu3MDYy06IwPZniqRi6AqFsA307eCH9C91G0ZdWETWyh7Ap4sKAYIGp8CToGn0ENZwJKDAG5ZlZAcyMdSERQmGTRvXv0cw=
+	t=1754398093; cv=none; b=hYVAWtRjHr9PATBMT/2HfaKQQqeU8L8n8w2JjTyc/an4Sxf8GcVNQq62x6Cekdwa4O0vH2QPj4N6feaGXcpnPakCfOwhYpAl1s6YKWiaeVKNdmGqs1xtzt4EC7lusjsu5X/wd67EpMIgp8lVz51L8jDCEdtChBuPjxNTdFA8zqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754397996; c=relaxed/simple;
-	bh=c52wsAmzQmMSkV8ky4R5zRMKeoWTxR7tmEk0y82AHHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LVnSkMQ7e0w2i0V4pDekJQ+xokMXHQj+BWroCVY1xqxUHuMgyTNJhjtd6UHj5uNl99S498CSWGomG+U6eZE/8BDn1RBVQHtVfL/NGFKwi8H+r1KhEHm8KQNiDHPr+mO3KEp7fewoBbE9R5IcXW/EgmuuFVxVFgN0VEOrvaIFlEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZ/ktx6A; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1754398093; c=relaxed/simple;
+	bh=puskYHQyC6KL85FMnyUigLBXFVESpYhBrg0RpClDOWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X2rVj91C/zH2Hvk2xRFr6o2BBhruyGF0mMQ3hGI7/TJ2vU7AlyLnskfpsRmC2oWiosfyta1blepo8nCkbUdtdgu9HG+r3QmMf85rCYSmpiLFw/tGaYHDdFVBRkqjcEWo6DzxK1gYIwDlJkW5lvQsE68EQj3IfhcXxk7KqgLOJZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl5Obup4; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso26364985e9.3;
-        Tue, 05 Aug 2025 05:46:34 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af93bcaf678so504525366b.0;
+        Tue, 05 Aug 2025 05:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754397993; x=1755002793; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kts85wOR8B785cDY/fcRHxCicRY9ydmXyui8WvGgCiA=;
-        b=OZ/ktx6ABivrYuBBfr0+Ogqz2KtZRzqsj289tUXx5Wn6OW9uRXvKGv6TJQRGsoANWK
-         MBM7UyU972LwLi/zlURhZHCwRA5zRf561GRb6sLSpVwKg2zFEKxV2Lk6tAfLY1IQD5lY
-         3G0VFFC5mk4ONtB4brUjcMTHKGPXQ8tbxJn+QqkmBtcnM1KEuw+SJoKZYDTbqeL67HgZ
-         Sy5XMdu56okL0DT7o4yym+XebbWxRhDq6AfnCvvWaBUzphk3c4ZwK2qXx14Ggrh3FijN
-         h3lhDjSFIwvHHIlLx5vy0zLTNtdyVMXWim75XgxGuNI6juJxTbaagBz6n0IBTxJG9Ojw
-         /Wlw==
+        d=gmail.com; s=20230601; t=1754398090; x=1755002890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uRPcVMFRBdpJOvWHPvTEp2JM/aBDAM2/KtZKKIHDMGg=;
+        b=kl5Obup4d3lXGP4Qh4u7sWP/vfnyVkkQ9T2NBzeJbMA88Hvurhmr0qauxz82U0Lw2x
+         EaLVCl1R3WC8//lE2N2oJA1wBKB8gUfGiM4XAtDfD1o9CAbm7rFBy2oKH+R1H5SjazFZ
+         pPzZQosTefNbh+dCz5R4q0OstYuV0AjWYjsd1yFAe9tjh0/ir+3FFwDn/eo1u9pj9do/
+         9PMBWPaObFSBdbCfqC3QNQbObnusTTxSZ2ZJZSqBoRMLm5zwxGJcquUS9xiXusywh5/B
+         Y7T96ZF9fzi6QgizUo6OI9+1hd3Qgj8dNbPBHDonb7MkmQStRRUy0stGbpubl5vv577D
+         wj0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754397993; x=1755002793;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kts85wOR8B785cDY/fcRHxCicRY9ydmXyui8WvGgCiA=;
-        b=VKwoeXEE2YXIazU22Po7pkGABX6XP0zt18IuVFZbDkRnYtT261so03e6Za+PlJVl79
-         yiWOIeIUVeXx8Xpu7tfHMfvzu1vArVkx2jyflDnKuA0ZSPThZoiFyCXzRATo/CKjxbdL
-         E9wFYWhedSegQraVAYsKwfeb+qwi1bNctoV86ta6U0TAh7SC+EVr5QNxG74VgZrontgV
-         HJLFGxyS90QJswiTzqeA83VzS5pGgDBxBVg1GuI5Sd+qtKx/ZHE2uppWH9iEaUGPlKrj
-         VRIFfWfpw6UryUOPVeXM3G+JY1jtxo/i0Gh4bcE92rYFwyGORkM+u2/Iq2TvejtjrBZ+
-         CY1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEto07GFOcAc2nzMDiVjXzd8LgRk6OV2UU6k5Rj9nIZzc32CPHf/jvoOU/FvQXLYsDREHvJcNlYX8=@vger.kernel.org, AJvYcCWgj8D1/ESLmjZmtqg/DWucX/Bqmgq8VtXJZ4DB4UxOSAwqMnjOkqfn49qixR1tzbWqHGTWqaP2+8im0b69@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3YaH+z/ihQ+BtO4x9lpsB+DaXtZhJ+oRcVs+uHzqS6rUBVKx1
-	GjWRvI3YNdCQlrGEQKrRXPJ5fEsRQWEMcxCZmc+lxG8CdLDRcq/QTi3z
-X-Gm-Gg: ASbGncumCsmj65BLipDSsRIV5gzG8WMXOBvyw4LmqeV2gz+cQg0hg5cqiDoOwO614mG
-	UI7zDReaEwzaRR4m52AlVH82nS+6OZtKpqtpJlgyO4xZoQg1rAod53RXNKteozL566Xs7o7s0Oa
-	VuSmNd5OEoWY6qgWzHZ9ZB/e0v+Vply3+8Drw7lkjNkwz3Imo3StiKHygXrQfKignF6HU727K7K
-	slNprSqQu3EIvtl/4N4h8fUmGgDQkg6tguEuOT3T6CUnnJFQ55hwxTZaxviHvquKgHMYEir5txQ
-	a9NEAbn19urZyOHmH7FXBP4eTp+qnPdCH6nRo5lunxNvlxK6FXmFvc53puuzfzlMMQL5Q8LBqI+
-	yh992G1ryY2WiFYPRaxAZ3V05a4fwSCOM1dD1H30s4hlRBi5hRcSNhO/Y+yRH35wXTBs5kkI=
-X-Google-Smtp-Source: AGHT+IGbwhKqeLKVbuUBtyRIXnxHc6wmxoB1d3BMQRjaQbajedNiSQ08om9tQBTpc0k2ftB702prvw==
-X-Received: by 2002:a05:600c:a46:b0:455:f380:32e2 with SMTP id 5b1f17b1804b1-458b6b30363mr102873805e9.18.1754397993088;
-        Tue, 05 Aug 2025 05:46:33 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::6:98ea])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dc900606sm66735885e9.15.2025.08.05.05.46.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 05:46:32 -0700 (PDT)
-Message-ID: <a22beba8-17ae-4c40-88f0-d4027d17fdbc@gmail.com>
-Date: Tue, 5 Aug 2025 13:46:28 +0100
+        d=1e100.net; s=20230601; t=1754398090; x=1755002890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uRPcVMFRBdpJOvWHPvTEp2JM/aBDAM2/KtZKKIHDMGg=;
+        b=CsMu0LNDsh0hYnO3+QxKl7uaBaecX1XRdkJHUlIB30DceoCJWzs1EEhuSeI72u/lH2
+         4aO87s0P/PDJx6nO9pigSzb8rMmQa7fGbMK52CtYMVGim4IVukgT687Z3oVE3bMFD3kW
+         sx9DrW1MDMP28CkrHP0qW4pc6KI41LZUaxhV8gLlmVJ4TSlbZghaCXV+eNWHQZKd5d0U
+         58Rn+oYd6atQKaYjavQMar69aKwsYb+sTlwQxmtaMtsNJ20KIRtRBUQAz31mDPiYiEWG
+         Z7A54agmhuB0cfpCInjutxda3+wjelRK0wRGlsci+BaByR/Npi1F7BNuRoFATuB//Qj/
+         ib8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVV1jE4g5ub+MiHTGA5zRCLp3UXsf5Y9x5tfFjHDSjrIeSYGK0/j1AFhzhYUwLpgn8xhLk5Teqs7NZ3qmDZ@vger.kernel.org, AJvYcCXGrYxdh9Xo41QgIjXhHe1iUonxTD04MDZYKM7FNIk5ShmNV9CPhn4/zLgLtZhEq5Lpmmxp0LO3v48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPf/JtTopOFUDOrWmNN2evxc0+rEaAQ2P+hFley8LNa+Td74W0
+	On4nDRotP62PV4I+izatLFpE5ZOMqqwTqI6qgPuA7Ta4k7ardSAby9edW4WHcJLuPGCTK0U7UYj
+	v7k7/RCX0bbzjmOXtj4PwxGG1k5stf6I=
+X-Gm-Gg: ASbGnctK328dPBheunulaiLmKn4uXgrM/IFjH67LSdK1fyslhnt9cwUoRPF6BxaBAXi
+	hFo78MiuPpWIZkLPEtdhX8ovmluXqd0UMd0HGkdjt6ukNGLXvYazDHqjQ+mn/xScrjfyCy80YBv
+	s0e3LL35LFf1XffE/R1JN5b1x1oUUVjsmIxvj3iBk0BcqihhHmiMt4mW44FKwIwvQi3IEPG69rs
+	Jm/G1bVIw==
+X-Google-Smtp-Source: AGHT+IHGF9Ud8gh8UvtlfG6tG2ciUV6ow5sjsaPmKKNcVLwPdsG7ADxVDRcqjNqsUWkecXeSBKFszhGXbhw+3+NbI3w=
+X-Received: by 2002:a17:907:7292:b0:ae3:f16a:c165 with SMTP id
+ a640c23a62f3a-af9401aff4cmr1379494066b.31.1754398089425; Tue, 05 Aug 2025
+ 05:48:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] selftests: prctl: introduce tests for disabling
- THPs completely
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250804154317.1648084-1-usamaarif642@gmail.com>
- <20250804154317.1648084-6-usamaarif642@gmail.com>
- <66c2b413-fa60-476a-b88f-542bbda9c89c@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <66c2b413-fa60-476a-b88f-542bbda9c89c@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
+ <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com> <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+In-Reply-To: <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Aug 2025 14:47:32 +0200
+X-Gm-Features: Ac12FXzFtjMEtaNWvs1Vz485HQLvS005IiKgjdLb6tmVsPWtaxaqbf-fjJ7cKoA
+Message-ID: <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <akshayaj.lkd@gmail.co=
+m> wrote:
+>
+> On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > Doesn't sound right to me. HAve you investigated PM runtime paths?
+> Yes I did investigate and found that PM runtime->suspend() callback
+> co-exists with remove callback.
+>
+> > Looking at what the code you added there it sounds to me like a part
+> > of PM runtime ->suspend() callback.
+> Yes, part of functionality will always be common, because both the
+> callback implementations put
+> the device into powered down or low power state which is what has been do=
+ne here
+> Both _suspend() and remove are called at different times in the lifecycle=
+ of the
+> driver, but with respect to register setting, they put the device into
+> power down state.
 
+Are you sure about the remove stage and how it interacts with runtime
+PM? Please, check how the device driver core manages PM on the remove
+stage.
 
-On 05/08/2025 13:39, David Hildenbrand wrote:
->> +FIXTURE_SETUP(prctl_thp_disable_completely)
->> +{
->> +    if (!thp_available())
->> +        SKIP(return, "Transparent Hugepages not available\n");
->> +
->> +    self->pmdsize = read_pmd_pagesize();
->> +    if (!self->pmdsize)
->> +        SKIP(return, "Unable to read PMD size\n");
->> +
->> +    thp_save_settings();
->> +    thp_read_settings(&self->settings);
->> +    self->settings.thp_enabled = variant->thp_policy;
->> +    self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
-> 
-> Oh, one more thing: should we set all other sizes also to THP_INHERIT or (for simplicity) THP_NEVER?
-> 
+> Additionally .remove() can have code for:
+> 1. disable runtime power management (if enabled while device registration=
+).
 
-hmm do we need to? I am hoping that we should always get the PMD size THP no matter what the policy
-for others is in the scenario we have?
+If the device core enables it for you, it will disable it
+symmetrically. I don't see the issue here, it should be done
+automatically. If you do that explicitly, use the respective
+devm_pm_runtime_*() call.
 
+> 2. device cleanup (disabling interrupt and cleaning up other configs done=
+).
+
+Wrap them into devm if required.
+
+> 2. unregister the device.
+
+Already done in the original code which your patch reverts, why?
+
+> For eg: another light sensor bh1750
+> static void bh1750_remove(struct i2c_client *client)
+> {
+>     iio_device_unregister(indio_dev);
+>     mutex_lock(&data->lock);
+>     i2c_smbus_write_byte(client, BH1750_POWER_DOWN);
+>     mutex_unlock(&data->lock);
+> }
+>
+> static int bh1750_suspend(struct device *dev)
+> {
+>     mutex_lock(&data->lock);
+>     ret =3D i2c_smbus_write_byte(data->client, BH1750_POWER_DOWN);
+>     mutex_unlock(&data->lock);
+>     return ret;
+> }
+
+Correct and where do you see the problem here? Perhaps the problem is
+in the cleanup aordering and some other bugs vs. devm calls?
+
+> In drivers/iio/light, you can find similar examples in pa12203001,
+> rpr0521, apds9960,
+> vcnl4000, isl29028, vcnl4035. You can find many more examples in
+> sensors other than light sensors.
+
+Good, should all they need to be fixed?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
