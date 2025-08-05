@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-756280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1012B1B240
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:48:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3BEB1B241
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106D8189E5A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B43C3AE8F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F003F23F40F;
-	Tue,  5 Aug 2025 10:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1B23BF96;
+	Tue,  5 Aug 2025 10:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QR0Xu4AX"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXqA6Bj3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC29FA41;
-	Tue,  5 Aug 2025 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D82A41;
+	Tue,  5 Aug 2025 10:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754390906; cv=none; b=a/PY3QqgdMxWgkhc8fclNQAIXcYSUSnBoBwvMIwjJMpAgvKYRs2kQIrhZur/ya00j4SZDZajuWZo6ev/WOToyhOKtrd8UjfR5itWiTY3iAFMzU0UmjjHS68s7aqNhOo0aNT/CEIIJh1YgvSwKMp8fpvrvyybS5e2o1eU6F1jdmE=
+	t=1754390942; cv=none; b=D8PPunkwqodpaxSyHY8LKgyfDOvkNQJanDdVEgx0OrKBIbXl0kSnGbKpQZ4DsxyshfQ6XLdm4q2IGyL0qJNL44jgH0KVZnhPR5cN6IBTq5Gkf/2Tj+hQQz28vu8d17ysd0GRWHQUtYby/EfHigqXsFhnacPlcqF23rnGzdBDNVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754390906; c=relaxed/simple;
-	bh=WGVS5ezly+moX5D6PQd+oukCd6IzVK1WbUbYtvId5HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIdtuspRLOUtkfEg8vXH7D6tOMFFQ+jEikomIIu5DM0hD+AZ5h4CyzohGdeiZ7VMg4enpQfnOKBc+sr+zA21E3PcoUNd0Hc0aKH6Re8T4y65Y4Ee2Ouay7ieCwek/WtDODQhuUa6RMGyizSJ0wM7VEDRuuRuV3PgRiyQBAMlNkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QR0Xu4AX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459d40d16bdso15135895e9.0;
-        Tue, 05 Aug 2025 03:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754390903; x=1754995703; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eFjhrBEqlkaveJaCgIwUUbswLHsCvi6mC7lTuJNEgrA=;
-        b=QR0Xu4AX8hXfCZbdRiMucEeOi0JQaUNLcubwGSxQVI77OGITcVMXLF4cGOH8Xd0wTh
-         cebYBxQVAo5k2vmCoywBIwdsBD4ZM8iUKYSUOKjkKLLOXiLMJCZUho34BnlSmqSDr0Gy
-         rXSvkmGGbFSz0AGDfBWJhKSagKFIk4EEpQP+R6Br0Ue6AFkBgSs4TTUfAteYeU6DMGvm
-         ADVqpOdXCKC1XErHvAaO3TdMqaurWte2uovwcFAC+x6a6hlEW6rpQtmmLwSVwwRRuZGY
-         +6fazUQrHOYED1IVXnAOo2thoXzgJ/KYduY4fpH+Dyl7GqRM2J64iZsTTaU9iJFz3ePA
-         YwfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754390903; x=1754995703;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eFjhrBEqlkaveJaCgIwUUbswLHsCvi6mC7lTuJNEgrA=;
-        b=H3/FZHfEctyI0omeHnnDoXUnr9MmdL68CToOYjTKt8oo2nKZjIDQ11v+JZ2O5sGTbK
-         7EvvSOoJfOQYLeyj1MXX9PVVCBoDxDib+f5wvchP4n8MSc+nhjSq7KAXMO8doSOYHDXi
-         bOR1zS4jR6BHTbQcNDW9fxzKU9DnwrXq73OQ6z6fXZPraRisjV8u9CbBLqT+e57jyuuj
-         b+Y1IZEm1SweSU1rTwlp/VIO4BkDr984/fVatk7BulccoXN9vhd5uCaNZGaBHGiVOswy
-         aNbIz6MSIdzBb4OXe+rufnANHZNaufKP+E+oG1gw9AYivvOf33y8Hc5KWFwKuECmAR21
-         EPrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVCZTPMzvEcvVGDMzabqhAKYA/zXrLFmXF9mWQiFA1YcrjXQdOpQBg4Bp5OPK9jYCxjCySRH1INwTwy84U@vger.kernel.org, AJvYcCUmUo6UNNBJe6xGPxehogg5uo1aCmmnGpTduBAA13IYQFBCe636woMuHzm0GjRcCIAPmQo1bZyrV79G@vger.kernel.org, AJvYcCWJ6+WecCYMiIEzLDMkH/CWJIrQ6f/q9QSoxmFScBiY525ShE/LoTBL+ZDPFbALH2Y/aXeG5nM3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQpzZ6nOWWo7OYbr33lPRnBeuHGACSyiVCD4vs2mmHzz4E9Igl
-	jz9UEbo0hnLW5t13/GMtmuoRcjdzYDWgyftcDPZJ6nG5JBEi0Ot9J+9O
-X-Gm-Gg: ASbGncvi+TbYDnjCQqk0pDTBrUoy2bbm8woErV7IyFiGHWzhRX+cm1xDJFHNKaAEfmn
-	PDohG98ERL+Ht+NYW0CDq+7wgyRp2DKKhgIAU68rEOs6JN7cs/3pjQd+at4Je8Yt59wtFwFu1Xa
-	E+q3AuVa7S6MYIWeI9+domlVjvnhYipj/Aq6F5EEtrhzcwlXJk6VS65rrrUJIvuzi5d7XfJXBJm
-	QMPg6TQwe390F621hmQqOahm26+lgq+Pl40PuLeoVglwQPH0zYBA3adbpw3bF3MQJBs17I4Uvtm
-	F6iJPObC8B9pIyPG1BzMk4gvxClYbz0S4Z0+wwxFxXKtQBww9MaFFexqu/KERCGgcpu/DVOuf2r
-	9SK6agxx1hcAO4w==
-X-Google-Smtp-Source: AGHT+IEp1B/j8vOHbyW62rr111CZYVZiRClUs66HrVgWJ37G/YiM74ESAOC0+IZA231Mi/D4WOjiVA==
-X-Received: by 2002:a05:600c:4505:b0:458:b4a6:19e9 with SMTP id 5b1f17b1804b1-458b6a03d43mr102866165e9.13.1754390902838;
-        Tue, 05 Aug 2025 03:48:22 -0700 (PDT)
-Received: from nsa ([91.205.230.243])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e3315a74sm15225375e9.6.2025.08.05.03.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 03:48:22 -0700 (PDT)
-Date: Tue, 5 Aug 2025 11:48:39 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, 
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, Cedric Encarnacion <cedricjustine.encarnacion@analog.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] dt-bindings: net: Replace bouncing Alexandru
- Tachici emails
-Message-ID: <mjeyywrkyhvhhm3v34ys4kgtn4milx3ge65ztdmxh4qovllo3s@lfzjtyysg447>
-References: <20250724113758.61874-2-krzysztof.kozlowski@linaro.org>
- <20250801131647.316347ed@kernel.org>
- <895ad082-bc6f-48e3-ae1c-29675ff0e949@linaro.org>
+	s=arc-20240116; t=1754390942; c=relaxed/simple;
+	bh=1SQ374xhrVvMt2lc3PLDfYgIIhwxy2llUepDQiiaPnA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oE7Q9VW1Mmf1DdgWoO/MtnAquQ3x/i9eR5rwX142YrmEj4wGqrEq7W0zaLFjbz9X5tSk1H7ynibkaxX6gaswOHVlE0WzfImY3X7ld88mheUHjvRIPPHWLYsvbuUGil0T4ZimUcnZpzjErGrQXDddleCrQoSxNlF06LMVTLWKBYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXqA6Bj3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D513C4CEF0;
+	Tue,  5 Aug 2025 10:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754390942;
+	bh=1SQ374xhrVvMt2lc3PLDfYgIIhwxy2llUepDQiiaPnA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LXqA6Bj3xLvZT4QEsEKyPzfbNz2VNnEO5JXkBqixRW5O+D6eFJiCZdQoiNeX2jJOU
+	 eOy8OUQ4LJJ1j0xNCONsfMV3ZskE0BL1DpJsaxYNLxrKWgOrl1IPnUhcFD1z6Ew8jk
+	 yHisxBMMg8qdJLFAepI5zaUxqY8cpmpW5Tu3nXCD+jrPDxb6QGp/OfT87rOSSjjmvU
+	 Lc+G9mYmCx7RHSkT+vGASXQYVKDvs5GYXHm9RRIMEtUPrvtl9jQco0g98WeNBdiKcd
+	 ONa3Bt67Yh7E8UcymKDfCc5u6tbkqK5/bOX/05qlIjOlAPl5FCpx4EPwkIB0LV3Hqr
+	 ocn12DfmeVPLg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Trevor
+ Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee
+ Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>
+Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for
+ ITER_SOURCE
+In-Reply-To: <aHT1etvG0R648EB9@google.com>
+References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
+ <U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
+ <20250704-iov-iter-v2-1-e69aa7c1f40e@google.com>
+ <878qkyoi6d.fsf@kernel.org>
+ <0Y9Bjahrc6dbxzIFtBKXUxv-jQtuvM2UWShaaSUsjKBuC1KKeGIpBFTC4a89oNrOLBP66SXtC7kQx1gtt04CMg==@protonmail.internalid>
+ <aG5NdqmUdvUHqUju@google.com> <87ecuplgqy.fsf@kernel.org>
+ <q7QRbcFgb5yhmBOt4eLkkzqyckspc2L2g3e0pXhJxm0yBVeG2Hifi4O77gaxwpWss1Z_CUjSy1P22ppxcxo8jw==@protonmail.internalid>
+ <aG5iLiUJg_cHtB8r@google.com> <87ikk1jnwi.fsf@kernel.org>
+ <WVgUwLhmbElHeP5tPcNONT_9FpPV-_YhCcW3fjEerTwYFRTwOwr660BifN5WZ7Jlon5AivliY6W87qxnrn1mKw==@protonmail.internalid>
+ <aHT1etvG0R648EB9@google.com>
+Date: Tue, 05 Aug 2025 12:48:52 +0200
+Message-ID: <874ium9h7v.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <895ad082-bc6f-48e3-ae1c-29675ff0e949@linaro.org>
+Content-Type: text/plain
 
-On Sat, Aug 02, 2025 at 09:43:13AM +0200, Krzysztof Kozlowski wrote:
-> On 01/08/2025 22:16, Jakub Kicinski wrote:
-> > On Thu, 24 Jul 2025 13:37:59 +0200 Krzysztof Kozlowski wrote:
-> >> Marcelo Schmitt, could you confirm that you are okay (or not) with this?
-> > 
-> > Doesn't look like Marcelo is responding, Marcelo?
-> 
-> 
-> Maybe we should just remove support for these Analog devices?
-> 
-> Cc two more recent addresses from analog.com.
-> 
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Oh sorry, somehow I missed this one! Feel me free to add me...
+> On Wed, Jul 09, 2025 at 07:05:01PM +0200, Andreas Hindborg wrote:
+>> "Alice Ryhl" <aliceryhl@google.com> writes:
+>>
+>> > On Wed, Jul 09, 2025 at 01:56:37PM +0200, Andreas Hindborg wrote:
+>> >> "Alice Ryhl" <aliceryhl@google.com> writes:
+>> >>
+>> >> > On Tue, Jul 08, 2025 at 04:45:14PM +0200, Andreas Hindborg wrote:
+>> >> >> "Alice Ryhl" <aliceryhl@google.com> writes:
+> The iov_iter type is like a giant enum with a bunch of different
+> implementations. Some implementations just read from a simple kernel
+> buffer that must, of course, be mapped. Some implementations traverse
+> complex data structures and stitch the data together from multiple
+> buffers. Other implementations map the data into memory on-demand inside
+> the copy_from_iter call, without requiring it to be mapped at other
+> times. And finally, some implementations perform IO by reading from
+> userspace, in which case it's valid for the userspace pointer to be
+> *literally any 64-bit integer*. If the address is dangling, that's
+> caught inside the call to copy_from_iter and is not a safety issue.
 
-I'll ping Marcelo internally.
+At any rate, this is a very informative paragraph. It would be great if
+you could have this information in the documentation for this type.
 
-- Nuno Sá
+
+Best regards,
+Andreas Hindborg
+
 
 
