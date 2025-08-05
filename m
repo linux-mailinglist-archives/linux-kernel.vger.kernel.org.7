@@ -1,201 +1,178 @@
-Return-Path: <linux-kernel+bounces-756052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B371B1AF31
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:10:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B07CB1AF41
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465CD177E33
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:10:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1787A59DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A985B230BD2;
-	Tue,  5 Aug 2025 07:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE298238179;
+	Tue,  5 Aug 2025 07:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="no8kx89s";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="glCnyA+f"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C44mCuBq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD122F767;
-	Tue,  5 Aug 2025 07:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF2C1AA782
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377837; cv=none; b=Z/dvl4dVYTJkIWat3uoKvhJzB8nNGe8Y+dKWN+deKcwBFx6BOI/ziykr0lXMEN3/lKThups2O/sQXa/U2qbYLAd+sg8enSrjH9PwnRbnh0/XZWgpaLC6edGnqflY8xajdv3BdCvZxPrZ6WVtO9dbYNH/qh6ddE2BOLUSENs2ZWM=
+	t=1754378157; cv=none; b=LJM+1VuR7Q5/Txya4Bjw9OvVG6UsnC0dxHI41vq+foiva/3+wXYStGzkOmXWsDAzlr7zU30lUaA965DdcxHoxIuqQmtPYoZKZxz3eAgebpD94gL4JWMVMuQV57bZcZtSnV/3HLOA+Vx9IGNrOHVYfWglBNYPERiPSzu/GYvcM/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377837; c=relaxed/simple;
-	bh=zSNJZOZFX9hckn6mXpstET/OnFkhJk3WprzXlL1fO90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BfC91QNjalsVhlNf3SAZbLTTj5eVjHVzzfAzvbKhkHoLHi6v2/Ai+HPv39Ygxt042LxdkLkN7RLssX0APaqhXQUBvonMpAvpDGESImIBfRowVGULO7JO/dMkBeRzsq+bdWs1cIxKOWGTUEqLgglAySNf12m5XU456TzBrvTcxPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=no8kx89s; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=glCnyA+f reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754377834; x=1785913834;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EeUMDc2WntfI8A+x14TyU5FunBo17nAG01EM1yXferM=;
-  b=no8kx89s5PZc+b4B/nUvwtfJd1Kmdx7gyIqnya1Z2cqlFAL0drVGYhUb
-   jaMl4glCh8BdzuYpV9Keej0JSzH15k/YuwS3eI/fyjoFQGi+xxYGAAPlo
-   hD/vGIsDx95FuSixJvBZxE83zKL2Sh1BT2yJTa3uNxE82MHDdGBYv2nLO
-   clZn6/2Z+Fpf0QYKNmMPBFqwYpQchmGuGHdXmn9L22PZWQ/ixzvfNrPPk
-   RmIxQgcbKYtqYVbYwKmsWZILaedH6Lvx1LTwtI30czE4nwWjQuuNChzZa
-   FUmmCExwDr9gW4X9TkZafDR6FPWmm9j4FfkAZ8q7hGkwOQR0csFH9dNEH
-   Q==;
-X-CSE-ConnectionGUID: 8OggMXCVRb67Yq9VaFkfPg==
-X-CSE-MsgGUID: 8IVFNqAAS7ej/ExTuYvMvg==
-X-IronPort-AV: E=Sophos;i="6.17,265,1747692000"; 
-   d="scan'208";a="45583489"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Aug 2025 09:10:30 +0200
-X-CheckPoint: {6891AE67-1-D4215818-E44699D1}
-X-MAIL-CPID: 2D3DFB7860E93CFACCD9674F0CED3F89_0
-X-Control-Analysis: str=0001.0A00210F.6891ADD9.008C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BCE91726E2;
-	Tue,  5 Aug 2025 09:10:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754377826;
+	s=arc-20240116; t=1754378157; c=relaxed/simple;
+	bh=ftuIf5p693pbIE28Ca6q+2oPAzEBuJqq8byNCo2RqCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnGhntWXZSodl6/a+Lgk35HkfjGkUhapT4BnvPF4v/UkzYrBsrVs94hf9C19GX6GhXK6NaL+nitv9fZ++3OQoaeEz5XQ4kbivICdpxyEV/aXEOsqgdoyuu7s0/omzdbTQ3JNvDH5a7t3B+Inaq2PaSDaI3C74HNywCGPpv5qiK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C44mCuBq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754378154;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EeUMDc2WntfI8A+x14TyU5FunBo17nAG01EM1yXferM=;
-	b=glCnyA+fmdYQNcL4hjR8TMji7ODikkmnhi0R1O5XQKeNugloKyyvHZQ83XwJsYjuB6+8Ae
-	1udmhwtm9IlRZMmkW5O1u4TvP2X52nDpukEcApOm7q1jggNxlhFiQhYMnuxkCUJjAVr7Vn
-	tfIQBcOQ7fdpjlqABQzQMMWOql2v0VjnXLsJ2ofukHDzU+/Pw5YpmRrN/NdoFKg1UVpgJB
-	yKrDxvf9s14PS8vHOXhKatmVvMjbNox2QiHoGEdtuIblD/2y4CEOtq7+KQPObM2JexudQy
-	Ov1xWntFqW8YSfXdMs5lUCO5+PAVsG9gunueaE/fPDP386+Ov+rHz04r9B8CsQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
- cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz,
- tiwai@suse.com, linux-sound@vger.kernel.org
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-Subject:
- Re: [PATCH v3 6/6] arm64: dts: imx8mp: Add hdmi parallel audio interface node
-Date: Tue, 05 Aug 2025 09:10:25 +0200
-Message-ID: <1932645.tdWV9SEqCh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250804104722.601440-7-shengjiu.wang@nxp.com>
-References:
- <20250804104722.601440-1-shengjiu.wang@nxp.com>
- <20250804104722.601440-7-shengjiu.wang@nxp.com>
+	bh=y1lfQQck/gEfvghhrXvc2lp4TNPtdu8JSj2lFK/nD/A=;
+	b=C44mCuBqayv7ZDAGvVQqTzGKZacTiQTnoaTkVDPxm6wClF48ivgd5Lg++mRY5JPlIk1F1T
+	juQN4+RhrOb4CIhVUJDuzMU3e0QNt4Q1S0xYeXvzSIp6SduNSt+oq9b9pZvfdUGRYKPAKl
+	TW9Iqz4RwtYZKSxQq3KsxlicX9DjSqM=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-JYxJQJWOM-u8TvCfNSQExA-1; Tue, 05 Aug 2025 03:15:53 -0400
+X-MC-Unique: JYxJQJWOM-u8TvCfNSQExA-1
+X-Mimecast-MFC-AGG-ID: JYxJQJWOM-u8TvCfNSQExA_1754378153
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fab979413fso101563806d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 00:15:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754378153; x=1754982953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1lfQQck/gEfvghhrXvc2lp4TNPtdu8JSj2lFK/nD/A=;
+        b=Apn4WKYC0n6lGwb0SFe9wcKFWwkfYAfy21XwqfQxzslKvtEQoF0BP2pxbi6Z1V37+N
+         EHQvwvKFS4jE1KxMKUbhi4lOoVtJDA9pOaJBLe8/uNcMpYoFklZp/3DsagnU1QndfJmP
+         VL8kiKaKz/wnUiL9Ixkg0zf9uwn2+sC5bihFssW4dQR1mjRuU82sg4wpCqTjzCTx+2Pf
+         JJVWHp7UbY5kzGYhSl93RoHrXebsDSB7S2bN5P5BxiO7qQh+XxE1clmIbdQjoIgeTljd
+         lD2hacqa71Au/1CZ70sl2CHrTQBl4/pMtjx4nrJMhgw9E05xGRv/iurIJv+tJuAJsLh0
+         AQCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0pvXvVz1wNcwt57JjlUc2K4Z9CD2RoIn0brxaa8xBrLuiT9U3T/4b9pWNJ7tw65kTWXnITIhc6We8ylM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb6MPvdvQe3xfTSvDaKU92ogt5Vfr0l/0FYRHcmlqUVY9TcNvl
+	DC2tYCF7IIcwkBT46Vu+yZllUEepW2qagClFRVTMSVplx3ZJN7Y8NsJDHfrFbLr6ISCOhaWHNTb
+	tZS7aodyw1IPArfEYb0aFelUHSdYIVL4BlTdwq9/ZHhrPUJ0X15Cn7uONVpWzxKu5kw==
+X-Gm-Gg: ASbGncsr/uDYNmRmX9yxled9xkKZ9SHiPBAO3VeZZWiuw5iQbFnJW0hwlMtvrRRkIW9
+	Oe0dqpq0DPUQnx7X5ZU9aLdRyqlDA5nQGqlmceeFll/W4B4ttqPfj9vXDuygxQ+FOXkOArTVxsg
+	X5fO6TjYMwAI8jvAtYzRg3zRS/kMwLI7qFiejLmBYvmHlX/zEoHxssbt3vq2gem78SIp6IFGggx
+	2WdnXzZ6YmkQ7q4YdThLnBTphhf8WRjjSFVUxUy2c6bI/itZfhor7j/El/e2xWSiS33bBVBU3WQ
+	CngeeDQcVXQ3NatNjNCBAmLRJXTeGxyipVYAoP1qm8kcs0wJbpFfm/wgEtthN1efrO7CobLp0DQ
+	P2ySn8qBeA12qIOA=
+X-Received: by 2002:a05:6214:c47:b0:700:c39c:9d12 with SMTP id 6a1803df08f44-70936327c52mr160762256d6.43.1754378152794;
+        Tue, 05 Aug 2025 00:15:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFZ6fig7Xx657yIfyOJPg7qs7PE+/ypJzBtTrd0P+Slx/GHljmbFT9/ITIdPwSIwQdwRhc6g==
+X-Received: by 2002:a05:6214:c47:b0:700:c39c:9d12 with SMTP id 6a1803df08f44-70936327c52mr160762006d6.43.1754378152227;
+        Tue, 05 Aug 2025 00:15:52 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-45-205-118.retail.telecomitalia.it. [79.45.205.118])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ca464acsm68273536d6.36.2025.08.05.00.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 00:15:51 -0700 (PDT)
+Date: Tue, 5 Aug 2025 09:15:44 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: bsdhenrymartin@gmail.com
+Cc: huntazhang@tencent.com, jitxie@tencent.com, landonsun@tencent.com, 
+	bryan-bt.tan@broadcom.com, vishnu.dasa@broadcom.com, bcm-kernel-feedback-list@broadcom.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, Henry Martin <bsdhenryma@tencent.com>, 
+	TCS Robot <tcs_robot@tencent.com>
+Subject: Re: [PATCH v1] VSOCK: fix Out-of-Bounds Read in
+ vmci_transport_dgram_dequeue()
+Message-ID: <jqgnivkquty3gdhhedbx3vub7wguhuxyorelkpvwhu6r3mfvzm@q7voouptegpt>
+References: <20250805062041.1804857-1-tcs_kernel@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250805062041.1804857-1-tcs_kernel@tencent.com>
 
-Am Montag, 4. August 2025, 12:47:22 CEST schrieb Shengjiu Wang:
-> The HDMI TX Parallel Audio Interface (HTX_PAI) is a bridge between the
-> Audio Subsystem to the HDMI TX Controller.
->=20
-> Shrink register map size of hdmi_pvi to avoid overlapped hdmi_pai device.
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mp-evk.dts |  4 +++
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 28 +++++++++++++++++++-
+On Tue, Aug 05, 2025 at 02:20:41PM +0800, bsdhenrymartin@gmail.com wrote:
+>From: Henry Martin <bsdhenryma@tencent.com>
+>
+>vmci_transport_dgram_dequeue lack of buffer length validation before
+>accessing `vmci_datagram` header.
+>
+>Trigger Path:
+>1. Attacker sends a datagram with length < sizeof(struct
+>   vmci_datagram).
 
-Please separate commits for SoC and board files. Thanks
+How?
 
-Best regards,
-Alexander
+>2. `skb_recv_datagram()` returns the malformed sk_buff (skb->len <
+>   sizeof(struct vmci_datagram)).
 
->  2 files changed, 31 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/bo=
-ot/dts/freescale/imx8mp-evk.dts
-> index c0cc5611048e..cc9351a5bd65 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> @@ -442,6 +442,10 @@ &flexcan2 {
->  	status =3D "disabled";/* can2 pin conflict with pdm */
->  };
-> =20
-> +&hdmi_pai {
-> +	status =3D "okay";
-> +};
-> +
->  &hdmi_pvi {
->  	status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mp.dtsi
-> index 841d155685ee..00d8474bd1b1 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -2066,7 +2066,7 @@ irqsteer_hdmi: interrupt-controller@32fc2000 {
-> =20
->  			hdmi_pvi: display-bridge@32fc4000 {
->  				compatible =3D "fsl,imx8mp-hdmi-pvi";
-> -				reg =3D <0x32fc4000 0x1000>;
-> +				reg =3D <0x32fc4000 0x800>;
->  				interrupt-parent =3D <&irqsteer_hdmi>;
->  				interrupts =3D <12>;
->  				power-domains =3D <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PVI>;
-> @@ -2092,6 +2092,24 @@ pvi_to_hdmi_tx: endpoint {
->  				};
->  			};
-> =20
-> +			hdmi_pai: audio-bridge@32fc4800 {
-> +				compatible =3D "fsl,imx8mp-hdmi-pai";
-> +				reg =3D <0x32fc4800 0x800>;
-> +				interrupt-parent =3D <&irqsteer_hdmi>;
-> +				interrupts =3D <14>;
-> +				clocks =3D <&clk IMX8MP_CLK_HDMI_APB>;
-> +				clock-names =3D "apb";
-> +				power-domains =3D <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
-> +				status =3D "disabled";
-> +
-> +				port {
-> +
-> +					pai_to_hdmi_tx: endpoint {
-> +						remote-endpoint =3D <&hdmi_tx_from_pai>;
-> +					};
-> +				};
-> +			};
-> +
->  			lcdif3: display-controller@32fc6000 {
->  				compatible =3D "fsl,imx8mp-lcdif";
->  				reg =3D <0x32fc6000 0x1000>;
-> @@ -2143,6 +2161,14 @@ port@1 {
->  						reg =3D <1>;
->  						/* Point endpoint to the HDMI connector */
->  					};
-> +
-> +					port@2 {
-> +						reg =3D <2>;
-> +
-> +						hdmi_tx_from_pai: endpoint {
-> +							remote-endpoint =3D <&pai_to_hdmi_tx>;
-> +						};
-> +					};
->  				};
->  			};
-> =20
->=20
+The sk_buff is queued by vmci_transport_recv_dgram_cb() calling
+sk_receive_skb(). And It is allocated with this code:
 
+#define VMCI_DG_HEADERSIZE sizeof(struct vmci_datagram)
+#define VMCI_DG_SIZE(_dg) (VMCI_DG_HEADERSIZE + (size_t)(_dg)->payload_size)
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+static int vmci_transport_recv_dgram_cb(void *data, struct vmci_datagram *dg)
+{
+	...
+	size = VMCI_DG_SIZE(dg);
 
+	/* Attach the packet to the socket's receive queue as an sk_buff. */
+	skb = alloc_skb(size, GFP_ATOMIC);
+	...
+	skb_put(skb, size);
+	...
+}
+
+So I don't understand what this patch is fixing...
+
+>3. Code casts skb->data to struct vmci_datagram *dg without verifying
+>   skb->len.
+>4. Accessing `dg->payload_size` (Line: `payload_len =
+>   dg->payload_size;`) reads out-of-bounds memory.
+>
+>Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
+>Reported-by: TCS Robot <tcs_robot@tencent.com>
+
+Please fix your robot and also check your patches.
+This is the second no-sense patch from you I reviewed today, I'll start
+to ignore if you continue.
+
+Stefano
+
+>Signed-off-by: Henry Martin <bsdhenryma@tencent.com>
+>---
+> net/vmw_vsock/vmci_transport.c | 5 +++++
+> 1 file changed, 5 insertions(+)
+>
+>diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+>index 7eccd6708d66..0be605e19b2e 100644
+>--- a/net/vmw_vsock/vmci_transport.c
+>+++ b/net/vmw_vsock/vmci_transport.c
+>@@ -1749,6 +1749,11 @@ static int vmci_transport_dgram_dequeue(struct vsock_sock *vsk,
+> 	if (!skb)
+> 		return err;
+>
+>+	if (skb->len < sizeof(struct vmci_datagram)) {
+>+		err = -EINVAL;
+>+		goto out;
+>+	}
+>+
+> 	dg = (struct vmci_datagram *)skb->data;
+> 	if (!dg)
+> 		/* err is 0, meaning we read zero bytes. */
+>-- 
+>2.41.3
+>
 
 
