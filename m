@@ -1,217 +1,287 @@
-Return-Path: <linux-kernel+bounces-756070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3F4B1AF9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E76B1AF9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D47617A833
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5792B7A4A7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5170923C8AE;
-	Tue,  5 Aug 2025 07:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A851EB5FD;
+	Tue,  5 Aug 2025 07:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cJyDr0W8"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012022.outbound.protection.outlook.com [52.101.126.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DxyG/Idw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BFD223DDF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380054; cv=fail; b=tLWMGvm5B2eug+x9gFVXB21NUWBRjgib0Mr1/Ql/9Y3zn/3rP8wpAcu2ASiQn1Scmg39k5yM7n4VEgaL6V8KjaKLn8+3VqRkXzzOxdYz9P2zp26iEEjeAG7F6YmYPyb+bRDRreWdiRM+c8NHVM9V4jndpu6Liv5+H96L/ihiORo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380054; c=relaxed/simple;
-	bh=EFYCHQ5sqE8kMwipj3IqUp6CyJesh9uN6Al+Td/YCak=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jaz8zhemLA2FexWDOg+ue5CctyPq5y5GDOqmcgrVgkKoBC8bED54VeT1B7MHuHVrJ0TVTW3UojAP1JTy+HMLeWRSWehfl8ePl7yS/+hfst4qRUlfS7ZScL9sUkNYot4I+uCz4mgobeKp5VDi2n+qOJ2m53jQKdmWQuVMaIO7bfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cJyDr0W8; arc=fail smtp.client-ip=52.101.126.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KRjnCn+cwmmH+jDeILHFBQPhe4JMWyZGAN+DeVyFnnbbosTyhSi787c1QvR8ZJ7/BCKl0oPKPcVehmx7lrE+z6Hm6dKTduyFixlsbcZxOxsDXPaAfOb5kBBv1tmkXqhs+MDNpP6ujvAtwXQaoE432gtTeyRFkKw2MQNhB+QOA5FxByRSCQ0WkM6L4a4KZFBQT+xuxE4qAtvcArEPlsWVDuhnECXruQcs+VpZvLoZcuc21Hz+BV4TiEWETosDgNOqgmbjArS52jlPA9dLORpyPprzEr8ir3VqDk3cYmfsm+dTzhOm/PhnRbC4GveeDSEz/pqF2Fp038cgyvoXyNCMlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VegefIvQ/6IBDYkgFdRmYX2o2N5zc+RWIowozX+0NRA=;
- b=Q4TZDljZE4+4OtES+XEbUJRZmU+/ZLPmxIq1sm4eYnp9mBcis/f9LKR9t0DIaWc+cQjPxqmb1k9NHxUVH4FAoGcyp+egZ0MUHGG1k6J3s6pZAKU9hdEXisDcShl2vE1Qtb/SFPiEp2cc0KaMS8bqtXijP9/ilkI68qrsVZ0P7I+PH2/GGfKU3EfdwZ1QMktdK6kvnO2F44rR0INBS93z7dN9WnHdQteEIGs/VGRAWhvbdhK28/7IZ+Q1Xq5MdYsQctr/iz6HRFD59+4YpfRf1jMrmQDx2Zaca5aMdp/PJqwqwFd/mhGMaJEPqqN06O6CfEjxL92Kldk9T2yrsbtYVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VegefIvQ/6IBDYkgFdRmYX2o2N5zc+RWIowozX+0NRA=;
- b=cJyDr0W8sAbqATRc4sMqkgLOXup5ttlOM2YP6MTbWJGBuKflpNz4wVnehOpLlqaYbVtQ1C/c+H5JVAA8bHcrUsRyX1pI6cN85i2tyUhSoByZbzAmRDE5KzZvq7NUhbkcPLOnLJukvkSp/GAVQrySMyExhTGWZJv2dExZcIaO4SJrevcm85lJ8XtHqYSmf+Wch1dCrNspw198SSN4/Wa0NrdOu1YYo7rnvtiS/XxFpiXa3xYbT+gqgPQ2YNsNj+GN2aDWr5sJetsjX0Y3NTgQeNL7pSZoqnmiAgRz246NIUW3H9DapXhfjxoVRTnMeueV3bR6E0S0l7q8wdTMu7PpFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by OSQPR06MB7278.apcprd06.prod.outlook.com (2603:1096:604:29c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
- 2025 07:47:28 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
- 07:47:28 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org (open list:DRM PANEL DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH 4/4] drm/panel: Remove goto label that are only used once
-Date: Tue,  5 Aug 2025 15:46:19 +0800
-Message-Id: <20250805074645.625911-5-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250805074645.625911-1-liaoyuanhong@vivo.com>
-References: <20250805074645.625911-1-liaoyuanhong@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0017.apcprd02.prod.outlook.com
- (2603:1096:4:194::17) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E594D230997
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754380047; cv=none; b=SiYtUGb6VPVeN3AefKandO01vkEGfSx8hW1Ti1JKDbF6dq9tu3WztLDBpUgIsAoqJX36YxCZjmZxjZPEogyJhT3gT981jn/JTD2WyPuqk10/hyBWyiS17xJntF7KwmrEw6wMGk22QSfZJD2d4PvMD6zKYnzF1qcDN1M/l9WDpwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754380047; c=relaxed/simple;
+	bh=QdoM5jijl3U+bzt98WBSeNJn3NvpJT7uEM7WhHOfV2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ESXui1vY7phtHRkw9x4P5gTjlZKVbWXT8I1i0gW8Uoqrt6RbzGB/1dBJFrfeq/F4AqzPloDnlW/7Oz3c7KsGPv46beXT6/Afwh2v4HLf5UURevBFSMdIea9uLmxQZwO763Mv6n+o7BCRdCQZCL3pVedH+6mKtbqaNH8ZE/iIJJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DxyG/Idw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754380044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4FVZZvLwQ+yV12DH+flnf1KHJLBs63H0OjRwDryvigc=;
+	b=DxyG/IdwHL+yA3StnxDXol0/vwaBq6PDe8Zslby3+hNkbnyVEm6AFc5xfVpKIHaGZYbbXO
+	MwNbMxWfEtCkoC5/Kjel+aBN7UfpayhozUsuWzC5ufl7Gg9CJsGtFcI5Znws5RXPRdP8Uo
+	C15OenqTNeJLnlliG5y3/OpD9dIx+4o=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-uqAphNPdMe6yfB3sGuyF7g-1; Tue, 05 Aug 2025 03:47:22 -0400
+X-MC-Unique: uqAphNPdMe6yfB3sGuyF7g-1
+X-Mimecast-MFC-AGG-ID: uqAphNPdMe6yfB3sGuyF7g_1754380041
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459de0d5fb1so11717765e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 00:47:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754380041; x=1754984841;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4FVZZvLwQ+yV12DH+flnf1KHJLBs63H0OjRwDryvigc=;
+        b=k76cOZFhvujCa94FqdDI7AS/BFM6OCeuxttKmwUfArY7J8Q22eSxWlC0MRS6ZAWmcl
+         0XiOLm2I7FWe9sDhAx/d8oigUxPtvO9NKk5vQRKNnnm5nMYQOPCCZNqnGWz5c0ImcgKT
+         Y/1SKsmTarTmrrqg5Tk3ztUU1PGdRjCr5PKA34zb2JMIQT6WsuHvAH2QSfAKOwCtlaVt
+         7sdq5vO64Z5ClpNVqOWQYYY6K8NXBxheSuj5A/+8ftCtpGh1l9eN0gpRXwEebmjEa/8R
+         IK5SMv1pKwdW7nS9s9GVu61gP7r3ouHvMYOdSUPxKPPFmzMexl3r4ntqg3dN7RcFRPH4
+         2DEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUr48yaLkjV7iuM1ZDq+e37Qfl57fQQweXCTZwQ0nX3GDPWFoH51FzBvNU2ci88MV1dTRUQIN0T3uKHs60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeTMeQZoGdTJzoTsQqk85eDHsat0FpStmpXPxqP8VkilryW9Nt
+	WtSt0CCbxLYe9mMVTPvi17CWeeYcLj9Jx29c4gohRkb4DAMsCbWnUlYmPrjMxn4Q/5vE3rz+b84
+	E/jxOGXpP0IVuoJyYesSouVEAzC2GekvkpZ47j4tUpofEy8N2s6esLgBAA5E2ErAC7g==
+X-Gm-Gg: ASbGncs3hSdhK5gvv37JTE8LyAxZfXuI9IKNwqprP+CPKha3dN+KOKLWjMGVcyvY/jr
+	SOX01wEdAESQNuoq66uTqnUqTGFl896xnJkhxUCNNXm2u7Aso3MnMaYKRJF+QkP77+ZaS5ZJ1aM
+	6UxeqVlOQ4ce02OIgp8kcVYu2QNMOOUB48NrUp9rtDLgOyIXbZSKRamgpaPPALpQ5EAE5uV90wx
+	S3kCFmi7TqBzAWTlixnLf+kqW7V6ECaZdWz12xY/1SDJyvYPgPD7rrejQTYCbK8G1Kw8QYM6hYu
+	4Lq8ONxt9q7eBNW3hB1AdKslmVVHgLPvXb7XvPGSPcHyW2oowPq3fk8lCGSnML4xF7N2lq+FXJI
+	ygWLTntsLGiyhX12Olp4GUa2OR+2yBo53YhyjeO8AqjPdoqXTCEbuBBJasEbEa42Q0jM=
+X-Received: by 2002:a05:600c:1c12:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-459e0f02dcbmr17622795e9.6.1754380041268;
+        Tue, 05 Aug 2025 00:47:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHN1EeqY4x3j3RAtBvMc8UHTVzni5qYf4SXtqWIha76OhHDzRFGx3XTSbRwyXKYIlqHtsxFQg==
+X-Received: by 2002:a05:600c:1c12:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-459e0f02dcbmr17622545e9.6.1754380040792;
+        Tue, 05 Aug 2025 00:47:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e2a28bfasm12176375e9.21.2025.08.05.00.47.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 00:47:20 -0700 (PDT)
+Message-ID: <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
+Date: Tue, 5 Aug 2025 09:47:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|OSQPR06MB7278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e5ec22f-9f00-4b10-6795-08ddd3f453b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uaxp7whFQzXD+3DinsGng8ycopQMmKGjUt37pjLZJz40oRoKHrJPxk/bOo2x?=
- =?us-ascii?Q?OsR4pouf3Njwg36FuHuChgRDdFx54Y+del2mEZ62HpsjHvP/QHh4wTSikmHd?=
- =?us-ascii?Q?NYswgvFbKup6NbDLUvl3gP7ONvMjrPEk/Y6ajF36x/MNjLo7axj0ay3iVA6U?=
- =?us-ascii?Q?tI5UvdjBNxgx+a0b4mIzx19l8WvT+W+XbQpuGw/EkkL8JdS8S/XEqxbbi3T2?=
- =?us-ascii?Q?CItlxuwr/IwpHBdQ7eaSs+9GwMGo5u9JEKv3Ks471TpuqUkCFsFzgVK66ocN?=
- =?us-ascii?Q?eDt4MqrQqLLPoZ3au8JUEFi4hDGyTYLpwiqvomgum9ksyN0g0irUhm3wBqPw?=
- =?us-ascii?Q?i07e3nQN/sbdXNkyGcTebc/hf2vpUgBngQwfxck+uTYiQ6POytLeF/jhteMu?=
- =?us-ascii?Q?bulev2ikgCv4Qx0nWaIFyKRZHBV534R88l47Ae78NFfzXYQwkSTV0Ulmlydq?=
- =?us-ascii?Q?c0X7+eDtTPavLb34Hz5Ebenvc6wv255+Q3EoHi11ykYbFV7BDXzt1gXr0N/7?=
- =?us-ascii?Q?J+6oyqFR72GPtp4a2/l5fRpAQzzunMr3+cdx9JHRshRZ8wApukkrYmN6wlLI?=
- =?us-ascii?Q?EkP9j0Waw7ro5v504qaB+PRubBbn2PH3ieuoGVfry5V5LG4U8Jfl/aT/Wkqg?=
- =?us-ascii?Q?37xz36/0i1IfQyt9hlHIAe4eRh/F4AaQDbNIq34k6KQUmvCbedEzJHb/mLUv?=
- =?us-ascii?Q?Y+TiCyf6Ev/qKtO1ZE71CT+JEavwO29rwRG32qaeiJHobd+28LKGvtZG+n4I?=
- =?us-ascii?Q?++1i2OGVr5QPFeK4ph9R4nQiT3O1xyi0YxfF8RKvdVm0QBepWOAxly7f79TP?=
- =?us-ascii?Q?DBaedWQ0sfX1BdaF4vsLUcE19IfexT5HsvmZ66SE9n32oDTj4y1ieapq12oe?=
- =?us-ascii?Q?Fyfb9lwpgszIISlqmAx/6sdJVYUZByDPTd5We0lhDmQmBYqRm8i3a0j5Q9xx?=
- =?us-ascii?Q?tZLDnQztWBBCmgGss11zRZbbBMEKs9IV21OULZ7WVdnnTIMcx5QRmw4qaKfS?=
- =?us-ascii?Q?b9bai8dAMT25WY7CNeyMNXiga4FC+oiJtA3VtgDPWRcr7PZLsSt67MYW38K5?=
- =?us-ascii?Q?SOHR22bDNHoX9vsOYc4Ca6R2tP4ZxF0or1jO5kiSOpXQ/yga1Sip/EBUvCu9?=
- =?us-ascii?Q?8FzO2WDsAb6Uin0394snkcBN/59kwxQmUcegMsBEmKI/M6EsUi90csfr1pdk?=
- =?us-ascii?Q?Rja7S2ddYYt11tTRTa8o3NcDy/zGvUUPF23usk2w9TuA3TlFpH5Uo1QrLZHb?=
- =?us-ascii?Q?eRyEuc5cjo1nhm5Ital3vZpHraj7H7hb+WZCeoETTSkAuNeKj2L1ntykwYqG?=
- =?us-ascii?Q?WI1UI8WTTTckTud+n/zkH8bzc4Sp85kYSqFcvkiLgyKGbJ03kN9A8VEQ4qP2?=
- =?us-ascii?Q?MJIadsRXMpOWzVhkOKpZuVSmDg5n/J+4FLBvUNpJxr5XXwsrOSIm0XxFSfT0?=
- =?us-ascii?Q?REwFTY0DUwymF5VDTAJQXQ0O92nOL+2y1IbdAUff8yr6JRSyFXOUeQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oa0UKon2vHkVdkvuvnS7gj+aicAJVhcf52fsemor5mOtklQWt315MUbkpIdl?=
- =?us-ascii?Q?aVgr+Zc1aT8KxeE187gX72vf/qfekjYVZ6ntvbNUERv0xGnUGIjqAsrVcWrN?=
- =?us-ascii?Q?qjBdMoW6RyvVgEcmOwwqlj8ipt89zkwJQGulU1a75NoEoDQjsZhU4uqVR9Nr?=
- =?us-ascii?Q?mOkMoQMH+G/00HLYci8ejA2sDvr/TsZuwZ225QpoUshLj+AO1S653+VO8LRV?=
- =?us-ascii?Q?Vcyiplj44REKGqXrySbVyAc33HQHQ7UwZB8ryvTA+F2xsXtWWaOqhgzmJ90H?=
- =?us-ascii?Q?NHbiGhGbpxTF8U0/HtRi4I1gNpDkyXXAhVLM4psArSQxASgsZtvAg2Y521li?=
- =?us-ascii?Q?QCqa2RvH2VH6y+xVbRT+3+W9mPcNpztOsB3jJR0GNfwN9/H5isr4TT+togY3?=
- =?us-ascii?Q?YR8xCYblU4GZ5yiaSnRjgmtYtnUSyZYkSkhhAseYBWCO/jUQ65KjTAmP8aA5?=
- =?us-ascii?Q?VtnWfYYoILznI34w+Nt1Fo9UtqSr02wmcX+6mNyYr/d41l4SvnPXha6TiSWY?=
- =?us-ascii?Q?foJXmmEGsySt8pWzHxaqDt8RotNTmqqUFt8Pez+aUEObFEK5HvQfNYEG1Qf3?=
- =?us-ascii?Q?4IqspxdAP1XMX1md6740ZA1ydcPKeNyhlNINwk2pj9mulbyJNQ/9gGlnm1KD?=
- =?us-ascii?Q?RzagnH1dSrebk7QhGFmbXKjrmBuxZUWS/+qZ7I/ScM60X+h4HKCQuJr7pFL7?=
- =?us-ascii?Q?DEp/yWztIQm//yJVkaD8B64uo++g9pmko8q8GsNwBvxfKmeEWth75yugo/3F?=
- =?us-ascii?Q?LlQ/rwIPLbYm1C1v1MYzNHxHDJrRCUjjSiizzqD40Lklfm2xcFkvDhxui53Q?=
- =?us-ascii?Q?/b8VPHKQ8kP0DlTdCEjeAmCbm+QILjP5k1M/iVHAvKS6qCuyJJmrtn6HhDly?=
- =?us-ascii?Q?u5uHCLKxd89rp1BSsLs4cJjd38oL+Zuzl8jTs3Tx5MuwFDX+lhW4B1pOIUAq?=
- =?us-ascii?Q?TGjmQdl2MJ3XmuDn0bQUh3dSBP+oAf+D95SwQaExUpX+srE31mSKo2t2QRte?=
- =?us-ascii?Q?SsLrUeIVGPCPTetP9m+K41qUgiM2wXI1nyIi/O1plCODEuIUuqkfgDFeLd7f?=
- =?us-ascii?Q?sx/UB7UhHEQS0+n6oz4WKbRg4OFpWFSRJAwtPHAq+/VKm9FrDzMo7itJ5uod?=
- =?us-ascii?Q?soWwUt9yL8PHjKUPNDbsyhOCcZzTYfnASeiqbc3uujpzvAoOANF350P+t0mO?=
- =?us-ascii?Q?oT9RZFQ0zvPfv5TwwVAS8Q/hn2TNx6GgUAHO3OUht/aoB1CyLjxF3MC/Wo3g?=
- =?us-ascii?Q?2/ccrek1PGS9kbsR7vkjRXY+WAJ9E3iEmXWcCa6Q9jxRX0jGvtM1PdeQ7/9G?=
- =?us-ascii?Q?74LNjurCmhwMvI4KVagU82uFYXUxdn1kAa6M9R0GvDR0UyslVeP7eoR5T6k6?=
- =?us-ascii?Q?nHgkL/8Mw/0cZWdYAdJVS8OylOAKvhw78h1sD5CLC38f1lbw11xc5eIbvjs3?=
- =?us-ascii?Q?zZVr1ym6NI91Ke6wgOcfjkMwj/hv6jhdhHW1Hn0GXQJCBsn9sO7ouSgk/Lon?=
- =?us-ascii?Q?BEFo4DIaIGtwamtSThzcqwJxDjd+Hv+qODqA4QEhA/aJXea0WgfQzxxF6+7e?=
- =?us-ascii?Q?txxpAUNaHK2I/0mtysVDI4DoDiR/iUB+jycm+AoR?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e5ec22f-9f00-4b10-6795-08ddd3f453b1
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 07:47:28.7981
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XlV2xFojEtEeyt7xW1lh9WFciSqi2hRE6GDGkj3yHRcrHGNp+EWVN5NwzG+mXhjG6JzH/Qg9N3wWB72At95GJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7278
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
+To: Alex Williamson <alex.williamson@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20250804162201.66d196ad.alex.williamson@redhat.com>
+ <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
+ <20250804185306.6b048e7c.alex.williamson@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250804185306.6b048e7c.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove unnecessary goto labels to improve code readability. 
+On 05.08.25 02:53, Alex Williamson wrote:
+> On Mon, 4 Aug 2025 16:55:09 -0700
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+>> On Mon, 4 Aug 2025 at 15:22, Alex Williamson <alex.williamson@redhat.com> wrote:
+>>>
+>>> Li Zhe (6):
+>>>        mm: introduce num_pages_contiguous()
+>>
+>> WHY?
+>>
+>> There is exactly *ONE* user, why the heck do we introduce this
+>> completely pointless "helper" function, and put it in a core header
+>> file like it was worth it?
+> 
+> There was discussion here[1] where David Hildenbrand and Jason
+> Gunthorpe suggested this should be in common code and I believe there
+> was some intent that this would get reused.  I took this as
+> endorsement from mm folks.  This can certainly be pulled back into
+> subsystem code.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/gpu/drm/panel/panel-innolux-ej030na.c    | 7 ++-----
- drivers/gpu/drm/panel/panel-orisetech-ota5601a.c | 7 ++-----
- 2 files changed, 4 insertions(+), 10 deletions(-)
+Yeah, we ended up here after trying to go the folio-way first, but then
+realizing that code that called GUP shouldn't have to worry about
+folios, just to detect consecutive pages+PFNs.
 
-diff --git a/drivers/gpu/drm/panel/panel-innolux-ej030na.c b/drivers/gpu/drm/panel/panel-innolux-ej030na.c
-index f85b7a4cbb42..6779a584bbd8 100644
---- a/drivers/gpu/drm/panel/panel-innolux-ej030na.c
-+++ b/drivers/gpu/drm/panel/panel-innolux-ej030na.c
-@@ -105,14 +105,11 @@ static int ej030na_prepare(struct drm_panel *panel)
- 				     ARRAY_SIZE(ej030na_init_sequence));
- 	if (err) {
- 		dev_err(dev, "Failed to init registers: %d\n", err);
--		goto err_disable_regulator;
-+		regulator_disable(priv->supply);
-+		return err;
- 	}
- 
- 	return 0;
--
--err_disable_regulator:
--	regulator_disable(priv->supply);
--	return err;
- }
- 
- static int ej030na_unprepare(struct drm_panel *panel)
-diff --git a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-index fc87f61d4400..95cf8f36dd09 100644
---- a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-+++ b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-@@ -130,16 +130,13 @@ static int ota5601a_prepare(struct drm_panel *drm_panel)
- 				     ARRAY_SIZE(ota5601a_panel_regs));
- 	if (err) {
- 		dev_err(drm_panel->dev, "Failed to init registers: %d\n", err);
--		goto err_disable_regulator;
-+		regulator_disable(panel->supply);
-+		return err;
- 	}
- 
- 	msleep(120);
- 
- 	return 0;
--
--err_disable_regulator:
--	regulator_disable(panel->supply);
--	return err;
- }
- 
- static int ota5601a_unprepare(struct drm_panel *drm_panel)
+I think this helper will can come in handy even in folio context.
+I recall pointing Joanne at it in different fuse context.
+
+> 
+>> And it's not like that code is some kind of work of art that we want
+>> to expose everybody to *anyway*. It's written in a particularly stupid
+>> way that means that it's *way* more expensive than it needs to be.
+>>
+>> And then it's made "inline" despite the code generation being
+>> horrible, which makes it all entirely pointless.
+>>
+>> Yes, I'm grumpy. This pull request came in late, I'm already
+>> traveling, and then I look at it and it just makes me *angry* at how
+>> bad that code is, and how annoying it is.
+> 
+> Sorry, I usually try to get in later during the first week to let the
+> dust settle a bit from the bigger subsystems, I guess I'm running a
+> little behind this cycle.  We'll get it fixed and I'll resend.  Thanks,
+> 
+> Alex
+> 
+>> My builds are already slower than usual because they happen on my
+>> laptop while traveling, I do *not* need to see this kind of absolutely
+>> disgusting code that does stupid things that make the build even
+>> slower.
+>>
+>> So I refuse to pull this kind of crap.
+>>
+>> If you insist on making my build slower and exposing these kinds of
+>> helper functions, they had better be *good* helper functions.
+>>
+>> Hint: absolutely nobody cares about "the pages crossed a sparsemem
+>> border. If your driver cares about the number of contiguous pages, it
+>> might as well say "yeah, they are contiguous, but they are in
+>> different sparsemem chunks, so we'll break here too".
+
+The concern is rather false positives, meaning, you want consecutive
+PFNs (just like within a folio), but -- because the stars aligned --
+you get consecutive "struct page" that do not translate to consecutive PFNs.
+
+So that's why the nth page stuff is not optional in the current
+implementation as far as I can tell.
+
+And because that nth_page stuff is so tricky and everyone gets it wrong
+all the time, I am actually in favor of having such a helper around. not
+buried in some subsystem.
+
+>>
+>> And at that point all you care about is 'struct page' being
+>> contiguous, instead of doing that disgusting 'nth_page'.
+
+I think stopping when we hit the end of a memory section in case of
+!CONFIG_SPARSEMEM_VMEMMAP could be done and documented.
+
+It's just that ... code gets more complicated: we end up really only
+optimizing for the unloved child sparsemem withoutCONFIG_SPARSEMEM_VMEMMAP:
+
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0d4ee569aa6b6..f080fa5a68d4a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1773,6 +1773,9 @@ static inline unsigned long page_to_section(const struct page *page)
+   * the memory model, this can mean that the addresses of the "struct page"s
+   * are not contiguous.
+   *
++ * On sparsemem configs without CONFIG_SPARSEMEM_VMEMMAP, we will stop once we
++ * hit a memory section boundary.
++ *
+   * @pages: an array of page pointers
+   * @nr_pages: length of the array
+   */
+@@ -1781,8 +1784,16 @@ static inline unsigned long num_pages_contiguous(struct page **pages,
+  {
+         size_t i;
+  
++       if (IS_ENABLED(CONFIG_SPARSEMEM) &&
++           !IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP)) {
++               const unsigned long pfn = page_to_pfn(pages[0]);
++
++               nr_pages = min_t(size_t, nr_pages,
++                                PAGES_PER_SECTION - (pfn & PAGES_PER_SECTION));
++       }
++
+         for (i = 1; i < nr_pages; i++)
+-               if (pages[i] != nth_page(pages[0], i))
++               if (pages[i] != pages[i - 1] + 1)
+                         break;
+  
+
+Whether that helper should live in mm/utils.c is a valid point the bigger it gets.
+
+>>
+>> And then - since there is only *one* single user - you don't put it in
+>> the most central header file that EVERYBODY ELSE cares about.
+>>
+>> And you absolutely don't do it if it generates garbage code for no good reason!
+
+I understand the hate for nth_page in this context.
+
+But I rather hate it *completely* because people get it wrong all of the time.
+
+In any case, enjoy you travel Linus.
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
