@@ -1,207 +1,129 @@
-Return-Path: <linux-kernel+bounces-755915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBBFB1AD49
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:51:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5A6B1AD4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A06D4E2034
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBA73BC167
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1845F218592;
-	Tue,  5 Aug 2025 04:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8596F218592;
+	Tue,  5 Aug 2025 04:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTDagdNd"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G3Z6h5jZ"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3C9215062
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 04:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61132288DB;
+	Tue,  5 Aug 2025 04:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369474; cv=none; b=Nyj1mIaMiEJg2fvWlnugduY3LbPTaLhrqXWkUZ4bhTFXizzIh1S/88HRcUvR9tBkGGNx+xH90kXh9TUA7qtCwkFXw5HCjWBXkv6MWC8p1owbB5+StHJGW5ekTfu3U+GBIWksa3sN2WH0WqnmaiCigyqOcGOF1BtzuQqsOp+LmKk=
+	t=1754369788; cv=none; b=uAQTCk29RcEpfY1rn3ibrwyC4wFJhz/M3CIChjym44P6/7IYUSj3I5ReSpFM7QNWs+OCqZkHH+VjZHsbA2qVZ3XSI6bM5FswugpuWjfY1o2Soka0WudVIJmRPPGIlthuARwqlFcY1rgI3j8xKt2e9N1Ad6QFJTgYAUHAxv1mFkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369474; c=relaxed/simple;
-	bh=v0Ft1DFU0RL+7vSEod4nlD2k84JOMABcIK1ssZxiqnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovRISQ0056yQqh4MuJIm0FbT4yKAUB4vIeJy0sHy8oOww0+TL2iCg6+PEjKobMnX74xom4sSjg8dYIu5cbG0ONfE4nLZDNmQyYuSCeBKcrppfZUajZsAe5Z28octVI9qAsSN+UWDS2/oGEbLdy7jVbHOUp0/tz2Em/D98qEpFVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTDagdNd; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71b52d6d1e3so51513547b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 21:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754369471; x=1754974271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=goRDbiInExYlg2FZrZ7REiNXbKoKaAvkFCx3YBMBwsw=;
-        b=kTDagdNdCOFVgdDkh940Si786d/amhH1VeVMmdWOJcti1havtIZdiEa344OpRNaXWX
-         xawk0H6Gr62J92x/IGQJuJ7cLUEhRWF0LKv2fsAfZG1JbpYLs94G7FcEl1/g2bGIXFX6
-         wkk0ZkN34kFhvjs1pn3z0RFOgBD1AsL7mTQtoY/+Sym0u/hyJ1UHwwYQmRi+rvuNFMFp
-         xjKgkimpTnoRmOMvxhNGjIMv8Tta8ULzP6dKaDTL2b1chV72b38DIV5ry+19NXaRRMtL
-         bfZz0A0evTDZlAzJCn6IYTeziY2tLzw8hCapFlvYD1AfUqQXNTrRoiLfJkQS2aZfgmzV
-         6fUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754369471; x=1754974271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=goRDbiInExYlg2FZrZ7REiNXbKoKaAvkFCx3YBMBwsw=;
-        b=H0rteogMORl3+UcaVOb9OeUhkojifsN8taKkEriV0B2wbdyPR+SJ7rT838gnZ4SchM
-         NtANaPjcenYIoocrO8TiJteFhLd7I7G040sXtZH88wQznspUnyhPJDRQSCUAXSmBOspV
-         lfRyp5g3mxEKvUv/IilWIp6fuOsH3gLIC1HDrbu3IULnqDFMYoE4MWMufH49CWXDwmq9
-         JEbRxhoqdcyQ8u6yfoTVhgBspxgUvHfueO5HSwba+uH2DuSpvrs2+noZypG9fr/zGxNf
-         AsnTt1yCJx5/XdN8Ff45AXvVxvVPM06XWz6jJivNNP7uDgm2WYBb4NpjK+0naevoGdbZ
-         2zxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1O6TyAtouZ9GQAruE6GKLigHiAswjLOT7SB7Z2ORdR6240TnNkg78bauoSe3M1ZSfdhZYcl7VVuyniZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh3c/nDXezxGZum6ENzYN+GcCh7hSZNJJXnZvXtnwpnU2WHtIR
-	60nklLWIjdhzi+c6wmvZPA5nWl3H1MNRQBJEmyttcHkLhEnWx5k6wYUoiFXjoI3Uljf2/UAFObW
-	BFrkOOXsVG0OKej5OK93wPqUxowtzwCTC7H2RaFTY9g==
-X-Gm-Gg: ASbGncsh+bfA1R03rM7PQsUngrypC1nYRuuHbMkHugzrPbU/uT5VhW1uvXb0SRpDcHz
-	nK1G8YaV2MuIdrlMKK9Uz8MdOwmgUKMTOLOaDzDxIFUnjQNZAWV1uNIKqj26lHfzCGX93k8qlcO
-	+WFOORvZ1AFje47YB5u2dP7EG/rzJdE4kVFotw04adXOy2QA9dAeB4XET7gjC3hyHIKu1LbDtvS
-	IxkVA==
-X-Google-Smtp-Source: AGHT+IHeQ9gjfgM8r8LCqDBzIZurZmcUaTL4L7HOV3CKVzHJvHoNvkFagl++11B+nx8hPTcRNP2NnteS7qwpSI1JFek=
-X-Received: by 2002:a05:690c:14:b0:70e:7ae4:5a21 with SMTP id
- 00721157ae682-71b7f0c56fbmr121732557b3.4.1754369471580; Mon, 04 Aug 2025
- 21:51:11 -0700 (PDT)
+	s=arc-20240116; t=1754369788; c=relaxed/simple;
+	bh=4UMJ7AYTejC0cbJn4XRjuEKExVDbgONFQ2SxHGgIoy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LxdDCKfrPFLAL7JKXR/MuM6l7OSrKBonAy0ef9IBlHKFP976j6RMuecDwKgc4tzJY4T1YXGmP7IVGkWOGBMg9pC5LA4n9cN12TxSPTiroE9qW9/qN7KiDXd+jd3YhZ+LGDRk5f+M8ZwNdejRB/NnblfJcn4rTz07zvCrN6jGUqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G3Z6h5jZ; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5754uGaO206029;
+	Mon, 4 Aug 2025 23:56:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754369776;
+	bh=DRU7MBSf2wWijMMbUefq1mXuYp0x7VCTRKxEugD/E+o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=G3Z6h5jZvN1fnqoWcZmjOkbHJQKq+XtmD+mb6onaxsjXu3J4ysgPJXkjThlWOZCFV
+	 XMhcQiI5LUdSMwsYyzqEioeQwHpRTrybU9n1oLqpYsaQ5B79rlONY0xCFpVnej78/0
+	 0+5xB/0UkLSLwqxkliMf+zKyd5GqUhVNbY3PdkkI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5754uGEV2542974
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 4 Aug 2025 23:56:16 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 4
+ Aug 2025 23:56:15 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 4 Aug 2025 23:56:16 -0500
+Received: from [10.249.145.16] ([10.249.145.16])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5754uBGR1259545;
+	Mon, 4 Aug 2025 23:56:12 -0500
+Message-ID: <dcacfd08-8a2b-4da3-a7b2-42150540eaab@ti.com>
+Date: Tue, 5 Aug 2025 10:26:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250724081337epcas2p31f594b6e9ab87e24c94f11dea4070956@epcas2p3.samsung.com>
- <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-4-sw617.shin@samsung.com>
- <CAPLW+4mo-Fw5+KmwHdZGAM4uNpOWL6QakTgP-wMSxR=+dMGqsQ@mail.gmail.com> <000b01dc05c0$a50f5f20$ef2e1d60$@samsung.com>
-In-Reply-To: <000b01dc05c0$a50f5f20$ef2e1d60$@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 4 Aug 2025 23:51:00 -0500
-X-Gm-Features: Ac12FXxJPNFLaHj5nje0A_AcDG6Ll1OXb556rCVkvn6Yb_8cbt1jdRu-9Ss-iOU
-Message-ID: <CAPLW+4=sJM4UwsqfC8t=swzhGU=BdRn3T6GjJje0unZSgNg-ng@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] watchdog: s3c2410_wdt: Increase max timeout value
- of watchdog
-To: sw617.shin@samsung.com
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, khwan.seo@samsung.com, dongil01.park@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j722s-main: Add E5010 JPEG Encoder
+To: Brandon Brnich <b-brnich@ti.com>, <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        Udit
+ Kumar <u-kumar1@ti.com>, Darren Etheridge <detheridge@ti.com>
+References: <20250804180106.2393256-1-b-brnich@ti.com>
+Content-Language: en-US
+From: devarsh <devarsht@ti.com>
+In-Reply-To: <20250804180106.2393256-1-b-brnich@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Aug 4, 2025 at 11:23=E2=80=AFPM <sw617.shin@samsung.com> wrote:
->
-> On Saturday, August 2, 2025 at 1:37 PM Sam Protsenko <semen.protsenko@lin=
-aro.org> wrote:
-> > Not a strong point, but I'd break this patch into two:
-> >   1. Add 32-bit counter feature (without enabling it in exynosautov920
-> > implementation)
-> >   2. Enable 32-bit counter feature in exynosautov920
-> >
->
-> I'll break this patch into two in the next patch set.
->
-> > >  #define S3C2410_WTCNT_MAXCNT   0xffff
-> >
-> > Suggest renaming this to S3C2410_WTCNT_MAXCNT_16, to emphasize the fact
-> > this value is for 16-bit counters. And for consistency with the below o=
-ne.
-> >
-> > > +#define S3C2410_WTCNT_MAXCNT_32        0xffffffff
-> > >
->
-> I'll rename this to S3C2410_WTCNT_MAXCNT_16 in the next patch set.
->
-> > > + * %QUIRK_HAS_32BIT_MAXCNT: WTDAT and WTCNT are 32-bit registers.
-> > > + With these
-> >
-> > Why not name it like QUIRK_HAS_32BIT_CNT or QUIRK_HAS_32BIT_COUNTER?
-> > As I understand, the quirk means that the chip has 32-bit counter, so M=
-AX
-> > bit is not really needed?
-> >
-> > > + * 32-bit registers, larger values to be set, which means that large=
-r
-> > > + timeouts
-> >
-> > Spelling: "to be set" -> "will be set" (or "have to be set").
->
-> I'll modify this in the next patch set.
->
-> > > +       unsigned int            max_cnt;
-> >
-> > Maybe make it u32? It definitely refers to a 32-bit register value, so
-> > will be more explicit that way. Not a strong opinion though.
-> >
->
-> I'll change this to u32 in the next patch set.
->
-> > >  };
-> > >
-> > >  static const struct s3c2410_wdt_variant drv_data_s3c2410 =3D {
-> > > @@ -349,7 +356,7 @@ static const struct s3c2410_wdt_variant
-> > drv_data_exynosautov920_cl0 =3D {
-> > >         .cnt_en_bit =3D 8,
-> > >         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET=
- |
-> > >                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> > > -                 QUIRK_HAS_DBGACK_BIT,
-> > > +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
-> > >  };
-> > >
-> > >  static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 =
-=3D {
-> > > @@ -362,7 +369,7 @@ static const struct s3c2410_wdt_variant
-> > drv_data_exynosautov920_cl1 =3D {
-> > >         .cnt_en_bit =3D 8,
-> > >         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET=
- |
-> > >                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> > > -                 QUIRK_HAS_DBGACK_BIT,
-> > > +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
-> >
-> > Yeah, I think it would be easier to review and handle further if this
-> > exynosautov920 enablement is extracted into a separate patch.
-> >
->
-> I'll break this patch into two in the next patch set.
->
-> > >
-> > > -       if (count >=3D 0x10000) {
-> > > -               divisor =3D DIV_ROUND_UP(count, 0xffff);
-> > > +       if (count > wdt->max_cnt) {
-> >
-> > wdt->max_cnt + 1?
-> >
->
-> Yes, 0x10000 represented 'wdt->max_cnt + 1.'
-> Would you like to suggest any revisions?
->
+Hi Brandon,
 
-Ah, sorry, I didn't notice you also changed >=3D to just >. All well and
-good, no change is needed here!
+Thanks for the patch.
+On 04/08/25 23:31, Brandon Brnich wrote:
+> This adds node for E5010 JPEG Encoder which is a stateful JPEG Encoder
+> present in J722s SoC, supporting baseline encoding of semiplanar based
+> YUV420 and YUV422 raw video formats to JPEG encoding, with resolutions
+> supported from 64x64 to 8kx8k.
+> 
+> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+> ---
+> 
+> Changes in v2:
+>   - remove invalid clock-names attribute
+> 
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 5cfa7bf36641..fb24c14614b4 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -385,6 +385,16 @@ c7x_1: dsp@7e200000 {
+>  		ti,sci-proc-ids = <0x31 0xff>;
+>  		status = "disabled";
+>  	};
+> +
+> +	e5010: e5010@fd20000 {
+> +		compatible = "img,e5010-jpeg-enc";
 
-> > > +       wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
-> > > +       if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> >
-> > Double braces don't seem to be needed.
-> >
-> > > +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
-> > > +
-> >
-> > Style (minor nitpick): this block can be more explicit, i.e.:
-> >
-> >        if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
-> >                wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
-> >        else
-> >                wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
-> >
->
-> I'll fix these in the next patch set.
->
->
->
+This is missing ti specific compatible. As we don't use the IP block
+directly but there is a wrapper used to integrate with TI platform, so
+it is better to use TI specific compatible too to account for the future
+compatibility as discussed here [1]. You can refer AM62A device-tree [2]
+for references on this.
+
+[1]:
+https://lore.kernel.org/all/50d97c30-4926-0bbf-1209-dfd25043e359@ti.com/
+[2] :
+https://gitlab.com/linux-kernel/linux-next/-/blob/master/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi?ref_type=heads#L1150
+
+Regards
+Devarsh
 
