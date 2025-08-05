@@ -1,215 +1,179 @@
-Return-Path: <linux-kernel+bounces-755800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E936AB1ABF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:20:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3A2B1ABF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2156A620420
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:20:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 652FB7ABCC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A81199E89;
-	Tue,  5 Aug 2025 01:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E1189905;
+	Tue,  5 Aug 2025 01:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8Ji9F1g"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F1HRIu4s"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6B189905
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6C7F9C0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754356838; cv=none; b=RbH+BvZnutKb3S+58JxwcDRaAUSP1XnxOnARQ5ll9ii8a+lWjMWsNPuAiZmmx3Syt2NajKuHuenVAkazHRQblW9ZVaskfnBs1+gii80dEdRTnOmG3vftNObRaNOacN0jtFe+cX8DMAeAa98ZDzSSfwuwcGeVsfQhh/TcUCC3up4=
+	t=1754356956; cv=none; b=JbEF216uIozdwR7W2zO68aioX8ufIdbzJ1w9q4z6KkAcISJOCDTd1HdfH8yYksb97O5NVGDFxxnSIuf+QFgOGc+Tvqz9DOOWafDlC0jIGM0Wfx+/x84vXnXWn1yvWV7JNDMKFzxkmPdh9/3H9dxpQMISYkBwUch2EWqs3Ct9gz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754356838; c=relaxed/simple;
-	bh=swpTiO+XH5TQq83hG6ZUZgyhocdMW7f+n5xUPvEAaRE=;
+	s=arc-20240116; t=1754356956; c=relaxed/simple;
+	bh=hAJ4RHocJtdCibwUW7vMzbUCC5UcCNRUv+aRR+ZSOM4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qkPOe+C/RuzBMkq+rybV1rX1s7peCZkj1VmCQ8UIJ/1OgQUePvX4AO1OZsFxFaBAPXAo9NYgwkbxfB9Z2UJU4dgdaCGtD21YSO4+or4MF+Nzi86QRD47GxWPtzJlUdH3Xgk+GN0QbvtuA/qdBCmv+BfXfzQkEfmo3XQYYi4hdi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8Ji9F1g; arc=none smtp.client-ip=209.85.214.169
+	 To:Cc:Content-Type; b=doTGGw6NPGyIvxeqfB1BxVUoPjVn26qgWB8EigZ2x8MSXewwU8NH4SeW9fjdfbt61LKygJ1L6Xywx/gK713Vq8t98d7Vz1btt6N/MJu4XX9iEbiSWcrfYr+f/aFENq4gi3nU/bGAJIr2F8MTjEkM87C4ljDxuflOgGJQrGWrAzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F1HRIu4s; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-240718d5920so61035ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:20:36 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24070dd87e4so76825ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754356836; x=1754961636; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754356954; x=1754961754; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C2cdGE1gGOLXCJmNC5s4I0c4oeV0J7N0veB1ToZLZSM=;
-        b=t8Ji9F1gLj1NGW/C+Dja89KJ1Av+OcjkTPAFZdjFTWXHShisY1oqzleK7DCjNDXdcz
-         HoDoN9+hn87lGAU81l8IEbfKhCnQoppYofz2//nfH5Q4pLLB3QFiwqag3NRNmSr3guqa
-         nV4wPg68kU+5o4lZ0IY3Po1a650f3+TVKuDyk6N0mID9wkEqDSsr0sNFJOa4Jdj3YgWf
-         0I/KcYxMCjEdqJm3KgirNx6WdwmyRCaDwJFHI/Av5PGgilScxgvOAo+ipvd+dL67jcHp
-         MV/94b8OH799HOfacJ2RgmFqKot3rBpcxIbufSkmnQy0Ds8IY1CEbBpHfpvtzyPfwLdt
-         T0Yg==
+        bh=hAJ4RHocJtdCibwUW7vMzbUCC5UcCNRUv+aRR+ZSOM4=;
+        b=F1HRIu4ss9auFdJP9fL1jGueX/gy49Rg9XGy/ElVlAwD4TOsXXAtPOQD0wbWlzhcA2
+         AMs0F1epEQDxVPFvKV9B2qCbgwVH1n5iFnuz2FnDkRXpyozgPrdB6Vv5hzSSoTL+w6OX
+         nxKztsVkk0IIk9VDZSpkgVJKfeHUnn95pl3mF3lm53aB1pSgpyF59k9txMxEIUbtsbdz
+         5cmtZ4fp2CsFVZt+JHZAgXvHM4taq72Gbe5MAaSBJ8Cly4jgo96kbQHX/LA0YQn6ClEf
+         3jSD4OkEHnqVecEY0VJWKOhzHYTNr5Tvw4Pct46Jk4f0fPGH7aR8VBnHce0BOwrY3EZ9
+         rRnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754356836; x=1754961636;
+        d=1e100.net; s=20230601; t=1754356954; x=1754961754;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C2cdGE1gGOLXCJmNC5s4I0c4oeV0J7N0veB1ToZLZSM=;
-        b=LI2J9IogXghNptyKHvuvQ9tLCtK3PbXw3YZeWMLzK5rvFQ2Ot6luzpfaQq9Yx0NdGp
-         YlsvPpJ7JWReKraJzo6rFlayhGn6BOBBNm3K69OUPYVS1G181TXxk2riiQyHeR+grwnS
-         UCfhSZ6nemRMla8295xaMnGHJA2JwBi5Pq0XPrM3dBe+lmVCX6vrartGlenohSzxq2TA
-         /1gsK1AJ5lXLvHp4JVEAJoIqpY6nVJuJpf2trFQCYgH6ATG+pGGOWqeXg3xbwLabs0+x
-         NT7DTPiGJJPPEqsFgiQY2agRkgapdHpj1ffOLJSDzcATZHMl6VAs2fJTAccWGfQECeur
-         cL+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXB94eA9Fw5gP5HXn1jYF00FqdiSPeUUZvJNxK7QjLC+XBpFrYRNc3cDQ9MblEUusI/YLmfBfL48zHSCwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWdxDwzoUui/mSoxLwQOBXYfhVCtF/Xlz/RDbQAOBP40y2uYlX
-	8LSUq85q2cV9U8ZH/8MJJVJSgOVJV1gsNQMdECg7R95NtwlFrwsXvsBZN9Hde4UehjwNBnnCUn4
-	UAWu2VpEJs1ThjuLh9s7zhyoCe3cJHiKXjLzdU/7c
-X-Gm-Gg: ASbGncsKmH7qSDwrLtW5pStVzTw82vXry5U6WxzyRWBpHh+WAKtJiQew9LC9mjBokCS
-	S/KAfoknFtO0RKt6UeOLWYMlGLhFL9oiMBWmTC//yJG+bI5BPoaRTqgHH2eQjTER1tMKw3d1CB0
-	jFeXSXWEOMLNlsXOmIFphMKejqzooNeRuzneZcTKN80no68Rvl/vWimQid+jl+Zt223EGQZeZ+t
-	j07WMjRFTEDfoT6k2jZ98aAvTeXyqotpR4BuQ==
-X-Google-Smtp-Source: AGHT+IHoGln+nl/FJBCGfeuyumyroLaM5HvSz457gpDjG5nE2SZikVrNTnjMNkRuSQfpjMdg4bJ7hab+N8/lf0qaVDw=
+        bh=hAJ4RHocJtdCibwUW7vMzbUCC5UcCNRUv+aRR+ZSOM4=;
+        b=Ec6cCA4mAMZowzwwJ0iYtA3U/wZHEpUsBEiEeu/JndTHu7zmCqnpIizb3gShjTQLtG
+         FBrZy3s9d4IB4i8a6sOQT5v2+ZWIjwIHkgKKVRgcMrkfpreW3d11yXtUf7TNTukRJU4c
+         AU3Q+GO7Y1e//+kffYcVj6fHPKqnfgQ8bylqMA1g0L7W9DVrOcOIlYnWnGhvzz95GmQo
+         eAI8/jSbO5diAg0qQqKUJvruwQQUMeJ90md7CfiDknn3/vubXK7NHIFiHd4R6R7UAWUj
+         5EmP0uq2ZWSUA0+yELnbIqbSUcgnCaIl5fCZf5T5xyBmVwKGj7GEfc8BALo7/A8IlnfW
+         xmEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9NIMJzT0UDcCQGs4A4YCrgazGcvk0TUdJ3SVCI5ekOCjXtBuYaEbNVNWGMm6j5GuccJAzgqLbFMPf7eU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJoHlE/Wbd2WO6NnQo4ynfkRD6BjgwqTmgoNrSHw8pOhgTcq1c
+	Z5+hgZ6oHgh9BgwczwKKeWiEGpkfRARIdsFcTl9lsYAu/GdD+aojrJruPGRSqjYYtNwl0MGzBfp
+	PquW9XIqxQ7CgS7HR6/cVfufSkTWVW0ujaQ3YVAth
+X-Gm-Gg: ASbGncuWnyRHd0Bjt3zwfu1tkzb6J/k2ZeLaQn3ZlclTYcgBWzWpRsamDGnlBAKtDgQ
+	0DUte1BM/DS3D5jF0lAkz1O2AB4NBBDrwbik31uZSWq6/MBnY1VfTS42jouAOmy8LOvu4+679iM
+	MGI/M9VLuHf8Fghor26UhDSc2xnjTF8lSx6XSZrM9pqG9AG1xsgEcchSADUqnpeSkRaHabyH5+s
+	A4iOMvwy+fXCAiRKV7LbgpB+9V7/8gTpSCBd8JE
+X-Google-Smtp-Source: AGHT+IHUNdtQwZDC9iJcA9U28t/KjMRhfY0lm9oTiYDKuEahIO/YtsfurNp2t+vB8T6wdGKdYuKho7IuX7hBOXsBD6M=
 X-Received: by 2002:a17:902:d50b:b0:223:ff93:322f with SMTP id
- d9443c01a7336-2428e9b08e0mr353115ad.2.1754356835453; Mon, 04 Aug 2025
- 18:20:35 -0700 (PDT)
+ d9443c01a7336-2428e9b08e0mr357745ad.2.1754356953205; Mon, 04 Aug 2025
+ 18:22:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aHEwT4X0RcfZzHlt@google.com> <aHSgdEJpY/JF+a1f@yzhao56-desk>
- <aHUmcxuh0a6WfiVr@google.com> <aHWqkodwIDZZOtX8@yzhao56-desk>
- <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com> <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
- <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
- <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
- <aJFOt64k2EFjaufd@google.com>
-In-Reply-To: <aJFOt64k2EFjaufd@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 4 Aug 2025 18:20:22 -0700
-X-Gm-Features: Ac12FXxp8MXYPovS7CHmH7yGaGLLp8dqnCHVsUqeh69FkNZnKElDWeFkrxjVNjM
-Message-ID: <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
-	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
-	tabba@google.com, chao.p.peng@intel.com
+References: <CAJDx_rgzkZognxWzOXJ-ZxdTtUaM3FT6bmpkwxMz03XiX3fKAQ@mail.gmail.com>
+ <d395b14a-9a84-4f25-b4f0-45e8500fc5fe@redhat.com>
+In-Reply-To: <d395b14a-9a84-4f25-b4f0-45e8500fc5fe@redhat.com>
+From: Juan Yescas <jyescas@google.com>
+Date: Mon, 4 Aug 2025 18:22:20 -0700
+X-Gm-Features: Ac12FXz6D7iBBMFZt4PN7BOj1xXY8Im3BiqcIN-p29imUt-Q6tjBh8yWlEWjeZQ
+Message-ID: <CAJDx_rgrp1TpOt-iDcsSGRTL=qZZsK_dpKL1bSkyunPGcGXt5g@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm/page_alloc: Add PCP list for THP CMA
+To: David Hildenbrand <david@redhat.com>
+Cc: akash.tyagi@mediatek.com, Andrew Morton <akpm@linux-foundation.org>, 
+	angelogioacchino.delregno@collabora.com, hannes@cmpxchg.org, 
+	Brendan Jackman <jackmanb@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Linux Memory Management List <linux-mm@kvack.org>, matthias.bgg@gmail.com, Michal Hocko <mhocko@suse.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, wsd_upstream@mediatek.com, 
+	Zi Yan <ziy@nvidia.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Isaac Manjarres <isaacmanjarres@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
-> > > > > IIUC, the suggestion in the link is to abandon kvm_gmem_populate(=
-).
-> > > > > For TDX, it means adopting the approach in this RFC patch, right?
-> > > > Yes, IMO this RFC is following the right approach as posted.
+On Mon, Aug 4, 2025 at 11:50=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> I don't think we want to abandon kvm_gmem_populate().  Unless I'm missing=
- something,
-> SNP has the same AB-BA problem as TDX.  The copy_from_user() on @src can =
-trigger
-> a page fault, and resolving the page fault may require taking mm->mmap_lo=
-ck.
+> On 04.08.25 20:20, Juan Yescas wrote:
+> > Hi David/Zi,
+> >
+> > Is there any reason why the MIGRATE_CMA pages are not in the PCP lists?
+> >
+> > There are many devices that need fast allocation of MIGRATE_CMA pages,
+> > and they have to get them from the buddy allocator, which is a bit
+> > slower in comparison to the PCP lists.
+> >
+> > We also have cases where the MIGRATE_CMA memory requirements are big.
+> > For example, GPUs need MIGRATE_CMA memory in the ranges of 30MiB to 500=
+MiBs.
+> > These cases would benefit if we have THPs for CMAs.
+> >
+> > Could we add the support for MIGRATE_CMA pages on the PCP and THP lists=
+?
 >
-> Fundamentally, TDX and SNP are doing the same thing: copying from source =
-to guest
-> memory.  The only differences are in the mechanics of the copy+encrypt, e=
-verything
-> else is the same.  I.e. I don't expect that we'll find a magic solution t=
-hat works
-> well for one and not the other.
+> Remember how CMA memory is used:
 >
-> I also don't want to end up with wildly different ABI for SNP vs. everyth=
-ing else.
-> E.g. cond_resched() needs to be called if the to-be-initialzied range is =
-large,
-> which means dropping mmu_lock between pages, whereas kvm_gmem_populate() =
-can
-> yield without dropping invalidate_lock, which means that the behavior of =
-populating
-> guest_memfd memory will be quite different with respect to guest_memfd op=
-erations.
+> The owner allocates it through cma_alloc() and friends, where the CMA
+> allocator will try allocating *specific physical memory regions* using
+> alloc_contig_range(). It doesn't just go ahead and pick a random CMA
+> page from the buddy (or PCP) lists. Doesn't work (just imagine having
+> different CMA areas etc).
+>
+> Anybody else is free to use CMA pages for MOVABLE allocations. So we
+> treat them as being MOVABLE on the PCP.
+>
+> Having a separate CMA PCP list doesn't solve or speedup anything, really.
+>
 
-I would think that TDX/CCA VMs [1] will run into the similar behavior
-of needing to simulate stage2 faults i.e. KVM will end up picking up
-and dropping mmu_lock for each page anyways at least for these two
-platforms.
+Thanks David for the quick overview.
 
-[1] https://lore.kernel.org/kvm/20250611104844.245235-5-steven.price@arm.co=
-m/
-(rmi_rtt_create())
+> I still have no clue what this patch here tried to solve: it doesn't
+> make any sense.
+>
 
->
-> Pulling in the RFC text:
->
-> : I think the only different scenario is SNP, where the host must write
-> : initial contents to guest memory.
-> :
-> : Will this work for all cases CCA/SNP/TDX during initial memory
-> : population from within KVM:
-> : 1) Simulate stage2 fault
-> : 2) Take a KVM mmu read lock
->
-> Doing all of this under mmu_lock is pretty much a non-starter.
->
-> : 3) Check that the needed gpa is mapped in EPT/NPT entries
->
-> No, KVM's page tables are not the source of truth.  S-EPT is a special sn=
-owflake,
-> and I'd like to avoid foisting the same requirements on NPT.
+The story started with this out of tree patch that is part of Android.
 
-I agree this would be a new requirement.
+https://lore.kernel.org/lkml/cover.1604282969.git.cgoldswo@codeaurora.org/T=
+/#u
 
->
-> : 4) For SNP, if src !=3D null, make the target pfn to be shared, copy
-> : contents and then make the target pfn back to private.
->
-> Copying from userspace under spinlock (rwlock) is illegal, as accessing u=
-serspace
-> memory might_fault() and thus might_sleep().
+This patch introduced the __GFP_CMA flag that allocates pages from
+MIGRATE_MOVABLE
+or MIGRATE_CMA. What it happens then, it is that the MIGRATE_MOVABLE
+pages in the
+PCP lists were consumed pretty fast. To solve this issue, the PCP
+MIGRATE_CMA list was added.
+This list is initialized by rmqueue_bulk() when it is empty. That's
+how we end up with the PCP MIGRATE_CMA list
+in Android. In addition to this, the THP list for MIGRATE_MOVABLE was
+allowed to contain
+MIGRATE_CMA pages. This is causing THP MIGRATE_CMA pages to be used
+for THP MIGRATE_MOVABLE
+making later allocations from THP MIGRATE_CMA to fail.
 
-I would think that a combination of get_user_pages() and
-kmap_local_pfn() will prevent this situation of might_fault().
+These workarounds are mainly because we need to solve this issue upstream:
 
->
-> : 5) For TDX, if src !=3D null, pass the same address for source and
-> : target (likely this works for CCA too)
-> : 6) Invoke appropriate memory encryption operations
-> : 7) measure contents
-> : 8) release the KVM mmu read lock
-> :
-> : If this scheme works, ideally we should also not call RMP table
-> : population logic from guest_memfd, but from KVM NPT fault handling
-> : logic directly (a bit of cosmetic change).
->
-> LOL, that's not a cosmetic change.  It would be a non-trivial ABI change =
-as KVM's
-> ABI (ignoring S-EPT) is that userspace can delete and recreate memslots a=
-t will.
+- When devices reserve big blocks of MIGRATE_CMA pages, the
+underutilized MIGRATE_CMA
+can fall back to MIGRATE_MOVABLE and these pages can be pinned, so if
+we require MIGRATE_CMA
+pages, the allocations might fail.
 
-Ack, this is not a cosmetic change once we start thinking about how
-memory ownership should be tied to memslots/NPT operations.
+I remember that you presented the problem in LPC. Were you able to
+make some progress on that?
 
->
-> : Ideally any outgoing interaction from guest_memfd to KVM should be only=
- via
->   invalidation notifiers.
->
-> Why?  It's all KVM code.  I don't see how this is any different than e.g.=
- common
-> code, arch code, and vendor code all calling into one another.  Artificia=
-lly
-> limiting guest_memfd to a super generic interface pretty much defeats the=
- whole
-> purpose of having KVM provide a backing store.
+Thanks
+Juan
 
-Inline with what we discussed on another thread, it makes sense to
-think of guest_memfd as not a super generic interface, but at least
-the one that has a very well defined role of supplying memory to KVM
-guests (so to userspace and IOMMU) and taking away the memory when
-needed. Memory population in my opinion is best solved either by users
-asserting ownership of the memory and writing to it directly or by
-using guest_memfd (to be) exposed APIs to populate memory ranges given
-a source buffer. IMO kvm_gmem_populate() is doing something different
-than both of these options.
+
+
+
+
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
