@@ -1,710 +1,195 @@
-Return-Path: <linux-kernel+bounces-755857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00D3B1AC92
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:53:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C1FB1AC96
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED01D3ADFCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:53:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CF97A4398
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B371DDC35;
-	Tue,  5 Aug 2025 02:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977D61DEFD2;
+	Tue,  5 Aug 2025 02:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzhelpCE"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W4tLOclK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53801607A4;
-	Tue,  5 Aug 2025 02:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273DF19067C;
+	Tue,  5 Aug 2025 02:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754362414; cv=none; b=nrhYsY28db64LbajToR4agGPBbM3osAHuA54gX8wtkU3jCYYGLLAqujDHq94AWTroS9Z9q/Q6pof8XRn9lKoAKJ6XBFj4GpmZGdHwmH35mkJLgIwXZuvJzYoq8fD96pWr+AsgoZUPt6HwTwKgA7Xxo1w7h7tBAnnMlYJKh6k7bI=
+	t=1754362532; cv=none; b=LJmhAJLflYiYdcY+xUo0kdQAG4oi/zTV1PwPbU3JZFzeUAXUxWRxPzYM5VtxEy51IDCM7LIffktw12c1HylT+EggPP6v/Mf502MarhHxKkEw3DDjgLOZUEA0R+yknRtE6gj4ckPePwjmQWmuD6OeFstKVBp+EEYkqMqTnEJRJHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754362414; c=relaxed/simple;
-	bh=QipTbnbmJbXevkSIwo1Mx4o31Cq7mUkcYKgMQTWPLCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fZ5U9jSWagDJXF/U6M37m9zgwgs3E13U5hQ+StCyYwrQ2ynsUKTSOPJ0EJRjynvo9kqBnd9TkQsRkXRRpvP6DpJ1yvCYpGsVJN2oFarfZw/nZVNI4o4JS+aTk4tE9SzGl7OUpTwmNad8vz6GWvchsutdgV95poAZ+nIKeqmBrhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzhelpCE; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-707453b0306so40149856d6.2;
-        Mon, 04 Aug 2025 19:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754362411; x=1754967211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTBIYJDzpO1VP+KxSz7Ly2eNdEPOXZNrT/SgOAmUWdg=;
-        b=ZzhelpCE4G29TUjtluqsuBWwLZ3lkKrVJXqFbf0KSoyQo9YPLdN3iSKU0WTKN3jQhg
-         5Q7qGS4rA9zPD92VijJgN6aghu5qvLu4DDoAjA6QQck0FRYsvDN2YOVN3X+M+h4x7cXL
-         8xY3w7ym6P4JgClTRSkytoOxY5W2EmwK4sb26vvZKWTl0DF5OeYFLsYXO1AAxQLcMzfW
-         UcH3CMuNvVgJR3NJn9lPqoNfqvV55m0INIVSSjf4HOqsYJvjTs9sLSj3xZY0SMLAUkZO
-         SSOGgEWO5D/7yEffyITA5hxnD4mc1ArkE39S8O5mLdxmMNzgctde8sThYT7Ooe6a6e5n
-         QcRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754362411; x=1754967211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gTBIYJDzpO1VP+KxSz7Ly2eNdEPOXZNrT/SgOAmUWdg=;
-        b=gcV/84524n/QMd8rtcU69/9ympXNwSUQXKY+OfVJ139cNOQLdpLDvrp4NKyWfDgr76
-         6jhPaOv66Coi+OLUYIchnYIylIscSWeXGSCJ0BY3xZFyEMdMitfao+dnIz4GdXuBo9SI
-         5cb9debyp9kwdITxqvg88fEjBm26r3uITKML0ZAhokA8/5knlYpk5y/G8vI1HI9hItvu
-         4r28g4uL9/b8b4mc3C6Vx0NYFulVYIx4o0Gupqwa5ah/xVoKVi5Hopf/Gx2QGaiDCR1V
-         Ar8JREtvDfrs9kRjk2elGnJS3Du0YdBEkxksRoUerdLVT8RFugNPMAsI++KojFktWW2T
-         7Jaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuRwnSDTdVICAhKeV7NT48I9gHpU/0FiaJBy2uLBXuFPgNnG1uNYYGOcwLMSzQCJzAobHDPA9hjijfpUPT@vger.kernel.org, AJvYcCXVgikaMknM11AXiZU9gcfJ16/gXz6U/oeypbM+rx8/ov5Or5oG+UY++AsinMF0EsdRWfgThf4hFIJ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCF51SMkCT7KlQ41eMAkJ42pggUQQ5m8QDHP+jEB/wLUvDijIX
-	aSxUzOA3rCg1LUneds/fk0dNZbi7OcSdPUewHq3CKPxSyZthcxjTDvlTQaNOMsD2B5i8YWAwxeN
-	SUq8a4GokzOGD93DuY1m72+Iul4IbOPw=
-X-Gm-Gg: ASbGnct8DrwEJcqkGWUuJ04lMH4/z93UafwMyqfWaiPDqQltsB5gdMHPe5X9SFO9YWn
-	x1+xwyLVd8KwtSfzlxspHH/R6MrklBQs1JdMKSY+4KGEbObtvTncmA+du/yDWxjJXov49vmigkE
-	etnGHV+si7MwjmYnDFxN3LBjD1BwklzbKNBU0ry893aXOpGGWr8XDh4rocv3pjP4rzzwRxyVH2o
-	VR/c0wDdRPhk7IWRpzScHY5UgMngbyHTOqzZl2z
-X-Google-Smtp-Source: AGHT+IEHugcsIIdBbwAElP7Ou4nDpjVC71saUAuTwRXFjb4dSEDbeiXP/6AS/MYxCpBqS1qzATkjO+ZEsPvIvl6kgqw=
-X-Received: by 2002:a05:6214:2626:b0:707:159e:d1c9 with SMTP id
- 6a1803df08f44-7093637cd44mr155173246d6.51.1754362411168; Mon, 04 Aug 2025
- 19:53:31 -0700 (PDT)
+	s=arc-20240116; t=1754362532; c=relaxed/simple;
+	bh=+Oa1SYk7rH7RR7dwTN4cNqhgSPkcTFZqD/QlZ4EoxYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mv3r6EsIXIL9qWWL09OG8RCHnn8hPflI1uhMkdzInaxyzYSMx/cHLNIHMQ20kL+ly3P5d5nh9YkiseXxqKCMKMKGYIgsK7I5Zb3oo2KN/onHmq50mohHzPjHV6CU+CVufXM2gH2AoTPbwBuys+DPvzszdafqGHu7w7Mw6ybgwqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W4tLOclK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574E2AWT026093;
+	Tue, 5 Aug 2025 02:55:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L2lMJIGQ2wZkzoNhGgGAp72JyXMQq+SgmtR2nOQ+WF8=; b=W4tLOclKhFzdJ7TY
+	p1hlSh7RUdotHoFcssmqkAuoB8qHv10Amc08xArT1J2Dt5oVwVng+qD3dkjtLyeq
+	4YYVI+JRUtn/Prz+pcrTnHzUI26B7I2sc5KDB9ngWupi9qLO2kdGlTAGFErOQ9bq
+	eScXdJ+fgd1oNuCzizmljkgxNvsU2ZVvMdHaVIKiicZqOoF/RA3GziLVOrsuYChi
+	8S4pOa1r0Vjt/PAebWZsNYZ18WHOGkZqvwIIqjr/RVKQgesa/Mj9wCkYQgRCHlkD
+	EQyKP03E2kMR2Nh7YDzhxXhWuPPaHe2kXHctUqmWzu0xxwn+/F7seh5PbGQQ+LZT
+	KNtm/w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48avvu9yeh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 02:55:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5752tFDl016636
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Aug 2025 02:55:15 GMT
+Received: from [10.133.33.160] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 4 Aug
+ 2025 19:55:12 -0700
+Message-ID: <13cd5f5c-99a8-483b-a722-86dd636e092e@quicinc.com>
+Date: Tue, 5 Aug 2025 10:55:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804134006.3609555-1-wangzhaolong@huaweicloud.com> <20250804134006.3609555-5-wangzhaolong@huaweicloud.com>
-In-Reply-To: <20250804134006.3609555-5-wangzhaolong@huaweicloud.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 4 Aug 2025 21:53:19 -0500
-X-Gm-Features: Ac12FXzdFQIPDLfcYV2sZ4kQPaMCxZ-H4qfax2f4AXCDAnpHju02B6lnQZAO_q8
-Message-ID: <CAH2r5mu8bn_j98zuDoTOPnW3ShnDr+YFOkG7_Y5Frk=4eiixUA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] smb: client: fix mid_q_entry memleak leak with
- per-mid locking
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: pshilov@microsoft.com, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-minor sparse warning when compiling this:
-
-  CHECK   smb2ops.c
-smb2ops.c: note: in included file:
-cifsglob.h:1362:40: error: marked inline, but without a definition
-
-On Mon, Aug 4, 2025 at 9:00=E2=80=AFAM Wang Zhaolong
-<wangzhaolong@huaweicloud.com> wrote:
->
-> This is step 4/4 of a patch series to fix mid_q_entry memory leaks
-> caused by race conditions in callback execution.
->
-> In compound_send_recv(), when wait_for_response() is interrupted by
-> signals, the code attempts to cancel pending requests by changing
-> their callbacks to cifs_cancelled_callback. However, there's a race
-> condition between signal interruption and network response processing
-> that causes both mid_q_entry and server buffer leaks:
->
-> ```
-> User foreground process                    cifsd
-> cifs_readdir
->  open_cached_dir
->   cifs_send_recv
->    compound_send_recv
->     smb2_setup_request
->      smb2_mid_entry_alloc
->       smb2_get_mid_entry
->        smb2_mid_entry_alloc
->         mempool_alloc // alloc mid
->         kref_init(&temp->refcount); // refcount =3D 1
->      mid[0]->callback =3D cifs_compound_callback;
->      mid[1]->callback =3D cifs_compound_last_callback;
->      smb_send_rqst
->      rc =3D wait_for_response
->       wait_event_state TASK_KILLABLE
->                                   cifs_demultiplex_thread
->                                     allocate_buffers
->                                       server->bigbuf =3D cifs_buf_get()
->                                     standard_receive3
->                                       ->find_mid()
->                                         smb2_find_mid
->                                           __smb2_find_mid
->                                            kref_get(&mid->refcount) // +1
->                                       cifs_handle_standard
->                                         handle_mid
->                                          /* bigbuf will also leak */
->                                          mid->resp_buf =3D server->bigbuf
->                                          server->bigbuf =3D NULL;
->                                          dequeue_mid
->                                      /* in for loop */
->                                     mids[0]->callback
->                                       cifs_compound_callback
->     /* Signal interrupts wait: rc =3D -ERESTARTSYS */
->     /* if (... || midQ[i]->mid_state =3D=3D MID_RESPONSE_RECEIVED) *?
->     midQ[0]->callback =3D cifs_cancelled_callback;
->     cancelled_mid[i] =3D true;
->                                        /* The change comes too late */
->                                        mid->mid_state =3D MID_RESPONSE_RE=
-ADY
->                                     release_mid  // -1
->     /* cancelled_mid[i] =3D=3D true causes mid won't be released
->        in compound_send_recv cleanup */
->     /* cifs_cancelled_callback won't executed to release mid */
-> ```
->
-> The callback assignment (mid->callback =3D cifs_cancelled_callback) and
-> callback execution (mid->callback(mid)) are not atomic, allowing the
-> network thread to execute the old callback even after cancellation.
->
-> Solution:
-> Add per-mid locking to ensure atomic callback execution:
->
-> - Add spinlock_t mid_lock to struct mid_q_entry
-> - Protect mid_state, callback, and related fields with mid_lock
-> - Add mid_execute_callback() wrapper for safe callback execution
-> - Use mid_lock in compound_send_recv() cancellation logic
->
-> Key changes:
-> - Initialize mid_lock in alloc_mid() and smb2_mid_entry_alloc()
-> - Replace direct mid->callback() calls with mid_execute_callback()
-> - Protect all mid state changes with appropriate locks
-> - Update locking documentation
->
-> This ensures that either the original callback or the cancellation
-> callback executes atomically, preventing reference count leaks when
-> requests are interrupted by signals.
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D220404
-> Fixes: ee258d79159a ("CIFS: Move credit processing to mid callbacks for S=
-MB3")
-> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-> ---
->  fs/smb/client/cifs_debug.c    |  4 ++++
->  fs/smb/client/cifsglob.h      |  5 +++++
->  fs/smb/client/connect.c       | 22 ++++++++++++++++++----
->  fs/smb/client/smb1ops.c       |  6 ++++++
->  fs/smb/client/smb2ops.c       | 15 +++++++++------
->  fs/smb/client/smb2transport.c |  1 +
->  fs/smb/client/transport.c     | 29 ++++++++++++++++++-----------
->  7 files changed, 61 insertions(+), 21 deletions(-)
->
-> diff --git a/fs/smb/client/cifs_debug.c b/fs/smb/client/cifs_debug.c
-> index 80d6a51b8c11..4708afc9106c 100644
-> --- a/fs/smb/client/cifs_debug.c
-> +++ b/fs/smb/client/cifs_debug.c
-> @@ -60,10 +60,11 @@ void cifs_dump_mids(struct TCP_Server_Info *server)
->                 return;
->
->         cifs_dbg(VFS, "Dump pending requests:\n");
->         spin_lock(&server->mid_queue_lock);
->         list_for_each_entry(mid_entry, &server->pending_mid_q, qhead) {
-> +               spin_lock(&mid_entry->mid_lock);
->                 cifs_dbg(VFS, "State: %d Cmd: %d Pid: %d Cbdata: %p Mid %=
-llu\n",
->                          mid_entry->mid_state,
->                          le16_to_cpu(mid_entry->command),
->                          mid_entry->pid,
->                          mid_entry->callback_data,
-> @@ -80,10 +81,11 @@ void cifs_dump_mids(struct TCP_Server_Info *server)
->                 if (mid_entry->resp_buf) {
->                         cifs_dump_detail(mid_entry->resp_buf, server);
->                         cifs_dump_mem("existing buf: ",
->                                 mid_entry->resp_buf, 62);
->                 }
-> +               spin_unlock(&mid_entry->mid_lock);
->         }
->         spin_unlock(&server->mid_queue_lock);
->  #endif /* CONFIG_CIFS_DEBUG2 */
->  }
->
-> @@ -672,16 +674,18 @@ static int cifs_debug_data_proc_show(struct seq_fil=
-e *m, void *v)
->
->                                 seq_printf(m, "\n\tServer ConnectionId: 0=
-x%llx",
->                                            chan_server->conn_id);
->                                 spin_lock(&chan_server->mid_queue_lock);
->                                 list_for_each_entry(mid_entry, &chan_serv=
-er->pending_mid_q, qhead) {
-> +                                       spin_lock(&mid_entry->mid_lock);
->                                         seq_printf(m, "\n\t\tState: %d co=
-m: %d pid: %d cbdata: %p mid %llu",
->                                                    mid_entry->mid_state,
->                                                    le16_to_cpu(mid_entry-=
->command),
->                                                    mid_entry->pid,
->                                                    mid_entry->callback_da=
-ta,
->                                                    mid_entry->mid);
-> +                                       spin_unlock(&mid_entry->mid_lock)=
-;
->                                 }
->                                 spin_unlock(&chan_server->mid_queue_lock)=
-;
->                         }
->                         spin_unlock(&ses->chan_lock);
->                         seq_puts(m, "\n--\n");
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index 536dff5b4a9c..430163a878d9 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -1357,10 +1357,11 @@ struct tcon_link {
->         struct cifs_tcon        *tl_tcon;
->  };
->
->  extern struct tcon_link *cifs_sb_tlink(struct cifs_sb_info *cifs_sb);
->  extern void smb3_free_compound_rqst(int num_rqst, struct smb_rqst *rqst)=
-;
-> +extern inline void mid_execute_callback(struct mid_q_entry *mid);
->
->  static inline struct cifs_tcon *
->  tlink_tcon(struct tcon_link *tlink)
->  {
->         return tlink->tl_tcon;
-> @@ -1730,10 +1731,11 @@ struct mid_q_entry {
->         unsigned int resp_buf_size;
->         int mid_state;  /* wish this were enum but can not pass to wait_e=
-vent */
->         int mid_rc;             /* rc for MID_RC */
->         __le16 command;         /* smb command code */
->         unsigned int optype;    /* operation type */
-> +       spinlock_t mid_lock;
->         bool wait_cancelled:1;  /* Cancelled while waiting for response *=
-/
->         bool deleted_from_q:1;  /* Whether Mid has been dequeued frem pen=
-ding_mid_q */
->         bool large_buf:1;       /* if valid response, is pointer to large=
- buf */
->         bool multiRsp:1;        /* multiple trans2 responses for one requ=
-est  */
->         bool multiEnd:1;        /* both received */
-> @@ -2034,10 +2036,13 @@ require use of the stronger protocol */
->   *                                                             init_cach=
-ed_dir
->   * cifsFileInfo->fh_mutex      cifsFileInfo                    cifs_new_=
-fileinfo
->   * cifsFileInfo->file_info_lock        cifsFileInfo->count             c=
-ifs_new_fileinfo
->   *                             ->invalidHandle                 initiate_=
-cifs_search
->   *                             ->oplock_break_cancelled
-> + * mid_q_entry->mid_lock       mid_q_entry->mid_state          alloc_mid
-> + *                             mid_q_entry->callback           smb2_mid_=
-entry_alloc
-> + *                             (Ensure that mid->callback is executed at=
-omically)
->   ***********************************************************************=
-*****/
->
->  #ifdef DECLARE_GLOBALS_HERE
->  #define GLOBAL_EXTERN
->  #else
-> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-> index 587845a2452d..2d85554b8041 100644
-> --- a/fs/smb/client/connect.c
-> +++ b/fs/smb/client/connect.c
-> @@ -288,10 +288,18 @@ cifs_mark_tcp_ses_conns_for_reconnect(struct TCP_Se=
-rver_Info *server,
->                 }
->         }
->         spin_unlock(&cifs_tcp_ses_lock);
->  }
->
-> +inline void mid_execute_callback(struct mid_q_entry *mid)
-> +{
-> +       spin_lock(&mid->mid_lock);
-> +       if (mid->callback)
-> +               mid->callback(mid);
-> +       spin_unlock(&mid->mid_lock);
-> +}
-> +
->  static void
->  cifs_abort_connection(struct TCP_Server_Info *server)
->  {
->         struct mid_q_entry *mid, *nmid;
->         struct list_head retry_list;
-> @@ -322,22 +330,24 @@ cifs_abort_connection(struct TCP_Server_Info *serve=
-r)
->         INIT_LIST_HEAD(&retry_list);
->         cifs_dbg(FYI, "%s: moving mids to private list\n", __func__);
->         spin_lock(&server->mid_queue_lock);
->         list_for_each_entry_safe(mid, nmid, &server->pending_mid_q, qhead=
-) {
->                 kref_get(&mid->refcount);
-> +               spin_lock(&mid->mid_lock);
->                 if (mid->mid_state =3D=3D MID_REQUEST_SUBMITTED)
->                         mid->mid_state =3D MID_RETRY_NEEDED;
-> +               spin_unlock(&mid->mid_lock);
->                 list_move(&mid->qhead, &retry_list);
->                 mid->deleted_from_q =3D true;
->         }
->         spin_unlock(&server->mid_queue_lock);
->         cifs_server_unlock(server);
->
->         cifs_dbg(FYI, "%s: issuing mid callbacks\n", __func__);
->         list_for_each_entry_safe(mid, nmid, &retry_list, qhead) {
->                 list_del_init(&mid->qhead);
-> -               mid->callback(mid);
-> +               mid_execute_callback(mid);
->                 release_mid(mid);
->         }
->
->         if (cifs_rdma_enabled(server)) {
->                 cifs_server_lock(server);
-> @@ -917,11 +927,11 @@ is_smb_response(struct TCP_Server_Info *server, uns=
-igned char type)
->                          */
->                         list_for_each_entry_safe(mid, nmid, &dispose_list=
-, qhead) {
->                                 list_del_init(&mid->qhead);
->                                 mid->mid_rc =3D mid_rc;
->                                 mid->mid_state =3D MID_RC;
-> -                               mid->callback(mid);
-> +                               mid_execute_callback(mid);
->                                 release_mid(mid);
->                         }
->
->                         /*
->                          * If reconnect failed then wait two seconds. In =
-most
-> @@ -956,14 +966,16 @@ dequeue_mid(struct mid_q_entry *mid, bool malformed=
-)
->  {
->  #ifdef CONFIG_CIFS_STATS2
->         mid->when_received =3D jiffies;
->  #endif
->         spin_lock(&mid->server->mid_queue_lock);
-> +       spin_lock(&mid->mid_lock);
->         if (!malformed)
->                 mid->mid_state =3D MID_RESPONSE_RECEIVED;
->         else
->                 mid->mid_state =3D MID_RESPONSE_MALFORMED;
-> +       spin_unlock(&mid->mid_lock);
->         /*
->          * Trying to handle/dequeue a mid after the send_recv()
->          * function has finished processing it is a bug.
->          */
->         if (mid->deleted_from_q =3D=3D true) {
-> @@ -1104,22 +1116,24 @@ clean_demultiplex_info(struct TCP_Server_Info *se=
-rver)
->                 spin_lock(&server->mid_queue_lock);
->                 list_for_each_safe(tmp, tmp2, &server->pending_mid_q) {
->                         mid_entry =3D list_entry(tmp, struct mid_q_entry,=
- qhead);
->                         cifs_dbg(FYI, "Clearing mid %llu\n", mid_entry->m=
-id);
->                         kref_get(&mid_entry->refcount);
-> +                       spin_lock(&mid_entry->mid_lock);
->                         mid_entry->mid_state =3D MID_SHUTDOWN;
-> +                       spin_unlock(&mid_entry->mid_lock);
->                         list_move(&mid_entry->qhead, &dispose_list);
->                         mid_entry->deleted_from_q =3D true;
->                 }
->                 spin_unlock(&server->mid_queue_lock);
->
->                 /* now walk dispose list and issue callbacks */
->                 list_for_each_safe(tmp, tmp2, &dispose_list) {
->                         mid_entry =3D list_entry(tmp, struct mid_q_entry,=
- qhead);
->                         cifs_dbg(FYI, "Callback mid %llu\n", mid_entry->m=
-id);
->                         list_del_init(&mid_entry->qhead);
-> -                       mid_entry->callback(mid_entry);
-> +                       mid_execute_callback(mid_entry);
->                         release_mid(mid_entry);
->                 }
->                 /* 1/8th of sec is more than enough time for them to exit=
- */
->                 msleep(125);
->         }
-> @@ -1392,11 +1406,11 @@ cifs_demultiplex_thread(void *p)
->                                                                 "Share de=
-leted. Reconnect needed");
->                                         }
->                                 }
->
->                                 if (!mids[i]->multiRsp || mids[i]->multiE=
-nd)
-> -                                       mids[i]->callback(mids[i]);
-> +                                       mid_execute_callback(mids[i]);
->
->                                 release_mid(mids[i]);
->                         } else if (server->ops->is_oplock_break &&
->                                    server->ops->is_oplock_break(bufs[i],
->                                                                 server)) =
-{
-> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-> index 13f600a3d0c4..6a6b09cfcefa 100644
-> --- a/fs/smb/client/smb1ops.c
-> +++ b/fs/smb/client/smb1ops.c
-> @@ -95,17 +95,20 @@ cifs_find_mid(struct TCP_Server_Info *server, char *b=
-uffer)
->         struct smb_hdr *buf =3D (struct smb_hdr *)buffer;
->         struct mid_q_entry *mid;
->
->         spin_lock(&server->mid_queue_lock);
->         list_for_each_entry(mid, &server->pending_mid_q, qhead) {
-> +               spin_lock(&mid->mid_lock);
->                 if (compare_mid(mid->mid, buf) &&
->                     mid->mid_state =3D=3D MID_REQUEST_SUBMITTED &&
->                     le16_to_cpu(mid->command) =3D=3D buf->Command) {
-> +                       spin_unlock(&mid->mid_lock);
->                         kref_get(&mid->refcount);
->                         spin_unlock(&server->mid_queue_lock);
->                         return mid;
->                 }
-> +               spin_unlock(&mid->mid_lock);
->         }
->         spin_unlock(&server->mid_queue_lock);
->         return NULL;
->  }
->
-> @@ -198,16 +201,19 @@ cifs_get_next_mid(struct TCP_Server_Info *server)
->
->                 num_mids =3D 0;
->                 spin_lock(&server->mid_queue_lock);
->                 list_for_each_entry(mid_entry, &server->pending_mid_q, qh=
-ead) {
->                         ++num_mids;
-> +                       spin_lock(&mid_entry->mid_lock);
->                         if (mid_entry->mid =3D=3D cur_mid &&
->                             mid_entry->mid_state =3D=3D MID_REQUEST_SUBMI=
-TTED) {
-> +                               spin_unlock(&mid_entry->mid_lock);
->                                 /* This mid is in use, try a different on=
-e */
->                                 collision =3D true;
->                                 break;
->                         }
-> +                       spin_unlock(&mid_entry->mid_lock);
->                 }
->                 spin_unlock(&server->mid_queue_lock);
->
->                 /*
->                  * if we have more than 32k mids in the list, then someth=
-ing
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 2643d86a5b5f..14c572e04894 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -4803,27 +4803,30 @@ static void smb2_decrypt_offload(struct work_stru=
-ct *work)
->  #endif
->                         if (dw->server->ops->is_network_name_deleted)
->                                 dw->server->ops->is_network_name_deleted(=
-dw->buf,
->                                                                          =
-dw->server);
->
-> -                       mid->callback(mid);
-> +                       mid_execute_callback(mid);
->                 } else {
->                         spin_lock(&dw->server->srv_lock);
->                         if (dw->server->tcpStatus =3D=3D CifsNeedReconnec=
-t) {
-> -                               spin_lock(&dw->server->mid_queue_lock);
-> -                               mid->mid_state =3D MID_RETRY_NEEDED;
-> -                               spin_unlock(&dw->server->mid_queue_lock);
->                                 spin_unlock(&dw->server->srv_lock);
-> -                               mid->callback(mid);
-> +                               spin_lock(&mid->mid_lock);
-> +                               mid->mid_state =3D MID_RETRY_NEEDED;
-> +                               if (mid->callback)
-> +                                       mid->callback(mid);
-> +                               spin_unlock(&mid->mid_lock);
->                         } else {
-> +                               spin_unlock(&dw->server->srv_lock);
->                                 spin_lock(&dw->server->mid_queue_lock);
-> +                               spin_lock(&mid->mid_lock);
->                                 mid->mid_state =3D MID_REQUEST_SUBMITTED;
-> +                               spin_unlock(&mid->mid_lock);
->                                 mid->deleted_from_q =3D false;
->                                 list_add_tail(&mid->qhead,
->                                         &dw->server->pending_mid_q);
->                                 spin_unlock(&dw->server->mid_queue_lock);
-> -                               spin_unlock(&dw->server->srv_lock);
->                         }
->                 }
->                 release_mid(mid);
->         }
->
-> diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.=
-c
-> index ff9ef7fcd010..bc0e92eb2b64 100644
-> --- a/fs/smb/client/smb2transport.c
-> +++ b/fs/smb/client/smb2transport.c
-> @@ -769,10 +769,11 @@ smb2_mid_entry_alloc(const struct smb2_hdr *shdr,
->         }
->
->         temp =3D mempool_alloc(cifs_mid_poolp, GFP_NOFS);
->         memset(temp, 0, sizeof(struct mid_q_entry));
->         kref_init(&temp->refcount);
-> +       spin_lock_init(&temp->mid_lock);
->         temp->mid =3D le64_to_cpu(shdr->MessageId);
->         temp->credits =3D credits > 0 ? credits : 1;
->         temp->pid =3D current->pid;
->         temp->command =3D shdr->Command; /* Always LE */
->         temp->when_alloc =3D jiffies;
-> diff --git a/fs/smb/client/transport.c b/fs/smb/client/transport.c
-> index ca9358c24ceb..8bbcecf2225d 100644
-> --- a/fs/smb/client/transport.c
-> +++ b/fs/smb/client/transport.c
-> @@ -52,10 +52,11 @@ alloc_mid(const struct smb_hdr *smb_buffer, struct TC=
-P_Server_Info *server)
->         }
->
->         temp =3D mempool_alloc(cifs_mid_poolp, GFP_NOFS);
->         memset(temp, 0, sizeof(struct mid_q_entry));
->         kref_init(&temp->refcount);
-> +       spin_lock_init(&temp->mid_lock);
->         temp->mid =3D get_mid(smb_buffer);
->         temp->pid =3D current->pid;
->         temp->command =3D cpu_to_le16(smb_buffer->Command);
->         cifs_dbg(FYI, "For smb_command %d\n", smb_buffer->Command);
->         /* easier to use jiffies */
-> @@ -875,17 +876,17 @@ SendReceiveNoRsp(const unsigned int xid, struct cif=
-s_ses *ses,
->  static int
->  cifs_sync_mid_result(struct mid_q_entry *mid, struct TCP_Server_Info *se=
-rver)
->  {
->         int rc =3D 0;
->
-> +       spin_lock(&mid->mid_lock);
->         cifs_dbg(FYI, "%s: cmd=3D%d mid=3D%llu state=3D%d\n",
->                  __func__, le16_to_cpu(mid->command), mid->mid, mid->mid_=
-state);
->
-> -       spin_lock(&server->mid_queue_lock);
->         switch (mid->mid_state) {
->         case MID_RESPONSE_READY:
-> -               spin_unlock(&server->mid_queue_lock);
-> +               spin_unlock(&mid->mid_lock);
->                 return rc;
->         case MID_RETRY_NEEDED:
->                 rc =3D -EAGAIN;
->                 break;
->         case MID_RESPONSE_MALFORMED:
-> @@ -896,21 +897,25 @@ cifs_sync_mid_result(struct mid_q_entry *mid, struc=
-t TCP_Server_Info *server)
->                 break;
->         case MID_RC:
->                 rc =3D mid->mid_rc;
->                 break;
->         default:
-> +               cifs_server_dbg(VFS, "%s: invalid mid state mid=3D%llu st=
-ate=3D%d\n",
-> +                        __func__, mid->mid, mid->mid_state);
-> +               spin_unlock(&mid->mid_lock);
-> +
-> +               spin_lock(&server->mid_queue_lock);
->                 if (mid->deleted_from_q =3D=3D false) {
->                         list_del_init(&mid->qhead);
->                         mid->deleted_from_q =3D true;
->                 }
->                 spin_unlock(&server->mid_queue_lock);
-> -               cifs_server_dbg(VFS, "%s: invalid mid state mid=3D%llu st=
-ate=3D%d\n",
-> -                        __func__, mid->mid, mid->mid_state);
-> +
->                 rc =3D -EIO;
->                 goto sync_mid_done;
->         }
-> -       spin_unlock(&server->mid_queue_lock);
-> +       spin_unlock(&mid->mid_lock);
->
->  sync_mid_done:
->         release_mid(mid);
->         return rc;
->  }
-> @@ -1212,17 +1217,19 @@ compound_send_recv(const unsigned int xid, struct=
- cifs_ses *ses,
->                 for (; i < num_rqst; i++) {
->                         cifs_server_dbg(FYI, "Cancelling wait for mid %ll=
-u cmd: %d\n",
->                                  midQ[i]->mid, le16_to_cpu(midQ[i]->comma=
-nd));
->                         send_cancel(server, &rqst[i], midQ[i]);
->                         spin_lock(&server->mid_queue_lock);
-> +                       spin_lock(&midQ[i]->mid_lock);
->                         midQ[i]->wait_cancelled =3D true;
->                         if (midQ[i]->mid_state =3D=3D MID_REQUEST_SUBMITT=
-ED ||
->                             midQ[i]->mid_state =3D=3D MID_RESPONSE_RECEIV=
-ED) {
->                                 midQ[i]->callback =3D cifs_cancelled_call=
-back;
->                                 cancelled_mid[i] =3D true;
->                                 credits[i].value =3D 0;
->                         }
-> +                       spin_unlock(&midQ[i]->mid_lock);
->                         spin_unlock(&server->mid_queue_lock);
->                 }
->         }
->
->         for (i =3D 0; i < num_rqst; i++) {
-> @@ -1421,20 +1428,20 @@ SendReceive(const unsigned int xid, struct cifs_s=
-es *ses,
->                 goto out;
->
->         rc =3D wait_for_response(server, midQ);
->         if (rc !=3D 0) {
->                 send_cancel(server, &rqst, midQ);
-> -               spin_lock(&server->mid_queue_lock);
-> +               spin_lock(&midQ->mid_lock);
->                 if (midQ->mid_state =3D=3D MID_REQUEST_SUBMITTED ||
->                     midQ->mid_state =3D=3D MID_RESPONSE_RECEIVED) {
->                         /* no longer considered to be "in-flight" */
->                         midQ->callback =3D release_mid;
-> -                       spin_unlock(&server->mid_queue_lock);
-> +                       spin_unlock(&midQ->mid_lock);
->                         add_credits(server, &credits, 0);
->                         return rc;
->                 }
-> -               spin_unlock(&server->mid_queue_lock);
-> +               spin_unlock(&midQ->mid_lock);
->         }
->
->         rc =3D cifs_sync_mid_result(midQ, server);
->         if (rc !=3D 0) {
->                 add_credits(server, &credits, 0);
-> @@ -1603,19 +1610,19 @@ SendReceiveBlockingLock(const unsigned int xid, s=
-truct cifs_tcon *tcon,
->                 }
->
->                 rc =3D wait_for_response(server, midQ);
->                 if (rc) {
->                         send_cancel(server, &rqst, midQ);
-> -                       spin_lock(&server->mid_queue_lock);
-> +                       spin_lock(&midQ->mid_lock);
->                         if (midQ->mid_state =3D=3D MID_REQUEST_SUBMITTED =
-||
->                             midQ->mid_state =3D=3D MID_RESPONSE_RECEIVED)=
- {
->                                 /* no longer considered to be "in-flight"=
- */
->                                 midQ->callback =3D release_mid;
-> -                               spin_unlock(&server->mid_queue_lock);
-> +                               spin_unlock(&midQ->mid_lock);
->                                 return rc;
->                         }
-> -                       spin_unlock(&server->mid_queue_lock);
-> +                       spin_unlock(&midQ->mid_lock);
->                 }
->
->                 /* We got the response - restart system call. */
->                 rstart =3D 1;
->                 spin_lock(&server->srv_lock);
-> --
-> 2.39.2
->
->
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/2] coresight: Add label sysfs node support
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20250717125343.3820505-1-quic_jinlmao@quicinc.com>
+Content-Language: en-US
+From: Jinlong Mao <quic_jinlmao@quicinc.com>
+In-Reply-To: <20250717125343.3820505-1-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDAxNiBTYWx0ZWRfX+Qr43J75r3TG
+ HCF035D1DuIckO3bcKgRL+sDnns8Dpjuu3DCBLmaOMtzWU/CxxJHi6VPwPLwXz1aR6KhMe76gl4
+ ByM6iejaJ9vWs9AglB/dkpH4YCNbpFnCuEMITsYrfOoOmn6qV+FWaq2WpHSZsrC96rKJgaABMu/
+ IxD8aewS0Msai/tnFXqnbaYrlz9FslrD9KfHfiuOpqUi5G2EWW4vubaYlG9ktrYVzk33Ox0SATf
+ LFrqUQFvOdU5hxAcPj50pq8A4ArIunOkjL9TZeV4O9IMkHsAuZwyagsN33BjuCq47qCXz26mTfi
+ 37dGhALa6ABhTlYMaUGeZDKq+b72rf2E8xcR+cFiFrlmG9QSVNqnLMXsrK2v1M/OD2+ZzQaC8Wh
+ a3cXszeEFSw32dYTVETuuNDJlMjc5OSAUt+8LwwNmoCJ5ntzt2/YbMl8Jjb2KKXWKjostcUA
+X-Proofpoint-GUID: l2AN4s8sIN7w-plOzh3hZP6lef8ODsAx
+X-Authority-Analysis: v=2.4 cv=OYKYDgTY c=1 sm=1 tr=0 ts=68917294 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=D19gQVrFAAAA:8
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=z2QAkc51omxNimOJtHIA:9 a=QEXdDO2ut3YA:10
+ a=W4TVW4IDbPiebHqcZpNg:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: l2AN4s8sIN7w-plOzh3hZP6lef8ODsAx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_10,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050016
 
 
---=20
-Thanks,
+On 7/17/2025 8:53 PM, Mao Jinlong wrote:
+> Change since V8:
+> 1. Add label in all documentations of coresight components.
+> 2. Add control of the visibility of the label sysfs attribute.
+> V8 link: https://lkml.org/lkml/2025/7/3/985
 
-Steve
+Gentle reminder for the review of V9.
+
+> 
+> Change since V7:
+> 1. Update the conflict when apply to coresight next.
+> 2. Update the Date and version in ABI file.
+> V7 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250226121926.2687497-3-quic_jinlmao@quicinc.com/
+> 
+> Change since V6:
+> 1. Update the date and verison in ABI file.
+> 
+> Change since V5:
+> 1. Update the kernel version of ABI files.
+> 2. Add link of different patch versions.
+> V5 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20241210122253.31926-1-quic_jinlmao@quicinc.com/
+> 
+> Change since V4:
+> 1. Add label in DT and add label sysfs node for each coresight device.
+> V4 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
+> 
+> Change since V3:
+> 1. Change device-name to arm,cs-dev-name.
+> 2. Add arm,cs-dev-name to only CTI and sources' dt-binding.
+> V3 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240131082628.6288-1-quic_jinlmao@quicinc.com/
+> 
+> Change since V2:
+> 1. Fix the error in coresight core.
+> drivers/hwtracing/coresight/coresight-core.c:1775:7: error: assigning to 'char *' from 'const char *' discards qualifiers
+> 
+> 2. Fix the warning when run dtbinding check.
+> Documentation/devicetree/bindings/arm/arm,coresight-cpu-debug.yaml: device-name: missing type definition
+> V2 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240115164252.26510-1-quic_jinlmao@quicinc.com/
+> 
+> Change since V1:
+> 1. Change coresight-name to device name.
+> 2. Add the device-name in coresight dt bindings.
+> V1 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230208110716.18321-1-quic_jinlmao@quicinc.com/#25231737
+> 
+> Mao Jinlong (2):
+>    dt-bindings: arm: Add label in the coresight components
+>    coresight: Add label sysfs node support
+> 
+>   .../testing/sysfs-bus-coresight-devices-cti   |  6 ++
+>   .../sysfs-bus-coresight-devices-dummy-source  |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-etb10 |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-etm3x |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-etm4x |  6 ++
+>   .../sysfs-bus-coresight-devices-funnel        |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-stm   |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-tmc   |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-tpdm  |  6 ++
+>   .../testing/sysfs-bus-coresight-devices-trbe  |  6 ++
+>   .../bindings/arm/arm,coresight-cti.yaml       |  4 ++
+>   .../arm/arm,coresight-dummy-sink.yaml         |  4 ++
+>   .../arm/arm,coresight-dummy-source.yaml       |  4 ++
+>   .../arm/arm,coresight-dynamic-funnel.yaml     |  4 ++
+>   .../arm/arm,coresight-dynamic-replicator.yaml |  4 ++
+>   .../bindings/arm/arm,coresight-etb10.yaml     |  4 ++
+>   .../bindings/arm/arm,coresight-etm.yaml       |  4 ++
+>   .../arm/arm,coresight-static-funnel.yaml      |  4 ++
+>   .../arm/arm,coresight-static-replicator.yaml  |  4 ++
+>   .../bindings/arm/arm,coresight-tmc.yaml       |  4 ++
+>   .../bindings/arm/arm,coresight-tpiu.yaml      |  4 ++
+>   .../bindings/arm/qcom,coresight-ctcu.yaml     |  4 ++
+>   .../arm/qcom,coresight-remote-etm.yaml        |  4 ++
+>   .../bindings/arm/qcom,coresight-tpda.yaml     |  4 ++
+>   .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 ++
+>   drivers/hwtracing/coresight/coresight-sysfs.c | 71 ++++++++++++++++++-
+>   26 files changed, 189 insertions(+), 2 deletions(-)
+> 
+
 
