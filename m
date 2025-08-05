@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-755920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032DEB1AD5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A843B1AD63
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6133B621183
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0F0189D1E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C9D21A42F;
-	Tue,  5 Aug 2025 04:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540B7218AB3;
+	Tue,  5 Aug 2025 04:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3O1Xs24"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sibsd5Ib"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9179B288DB;
-	Tue,  5 Aug 2025 04:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930F288DB;
+	Tue,  5 Aug 2025 04:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369919; cv=none; b=FLVncG0MuOtTE8+fBzs7b2SnI8sS+YjDnTaWfr8eA3zrix3bEmq9Y0C7RbJam73AOXj7xQjnD5buRvJ44Czx1HWrmBh7ZzCvn6YEZerufhQN0yBMvcd6Qj+3cJoW7jH4WF1xlIjtJCa9hKT20tzTRU4DNNSOAMiaOrngTwl3IPg=
+	t=1754369983; cv=none; b=HtBUSllvUVfxvZfL81TeVg39tj7YWJsVoRESO9rhKYHhlah9MXs/7tP4N2Gbt0BDP5XAM/0sOp0x1lfMiDVryXyXcFY929Atg2NdJi/vrcyP2+6x1uK3tUcnxI+EmVlKDhbsc5v/8i/IYNf3X1ffpLfqkPpm3OmtZa7P3kw4E34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369919; c=relaxed/simple;
-	bh=p3Ctln5ArnuqEriQVMrjSsSycEXSlWingWpH88cmVVY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=W1YiCk1fFqqaj0aubGqZ0J+YE8JDkOVJ32kQwSTLD+DWsVpFSskdFak31Q4Ihq3FROq/TQMYQOhmA8Q/6WQk8BN+DPR5Q/8+MdXwKijI0qfmpiXEM+1v9nq6BTkJdLMMGQt4PmsN5qDllv2lDsi9W+AAIinDOmaY7w23BoFIijQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3O1Xs24; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21656C4CEF4;
-	Tue,  5 Aug 2025 04:58:32 +0000 (UTC)
+	s=arc-20240116; t=1754369983; c=relaxed/simple;
+	bh=eaxnvmVTMli/ZAZQbfboGasvLy0/KdIKJiwUt3cWC1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2X77a+YRJGUV1kgDdMRyqv6wqgYk0E7WPW6jsxTVhwPuophyM3KUMmaHcYV6FiC2OmZIpeJNMkroh8DMXYO5v8dzjJpkYiVRrkgWqG6K+W1hTA41CeiIkT1wXv03bidEmoGbJtxux9c3DUue2lcZweOSPe/GoS1YmNSVroy2Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sibsd5Ib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E67AFC4CEF4;
+	Tue,  5 Aug 2025 04:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754369918;
-	bh=p3Ctln5ArnuqEriQVMrjSsSycEXSlWingWpH88cmVVY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=N3O1Xs243//hGVgduP9ucmQLc1mAU0+00JxEYL8S/mHxpbCYQj9YGa3ns+J0f+wbY
-	 XvH1iHOKTKJttx+GFQiutBfSbVUixllJOWlSwpQmhdJK5Qtb/0LnKeJBdghiHojBuO
-	 c1M5fhSZV8ex0HXNQYodcoubSS7yGINLqkaiXDjge2mBMnWefEE61tRyZK1UGo0sj3
-	 M8tPxg5kUSxKUKr77ExSfJsg7eFUKrECodT5HIy6M5ai1LZ8JFh53r20tCF2YpO3pw
-	 9irhgqipyxlolSqDyVR2cGCZmANlFRx9dfoJwEfgdC7Sgn+/IUi9pmf/bxqoLsRE3j
-	 MUe8qchs9beJQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Yuvaraj Ranganathan <quic_yrangana@quicinc.com>, 
- Anusha Rao <quic_anusha@quicinc.com>, 
- Md Sadre Alam <quic_mdalam@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>, 
- Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
-References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
-Subject: Re: (subset) [PATCH 0/8] dmaengine: qcom: bam_dma: Fix DT error
- handling for num-channels/ees
-Message-Id: <175436991267.243171.3381840472442505364.b4-ty@kernel.org>
-Date: Tue, 05 Aug 2025 10:28:32 +0530
+	s=k20201202; t=1754369983;
+	bh=eaxnvmVTMli/ZAZQbfboGasvLy0/KdIKJiwUt3cWC1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sibsd5Ib8TIGgpCHzIQtPVqgLjZvCWfmrAOeyow9dEzOgIiMYKQeDwgG0kONbFyb+
+	 BkUJhZT5mPRwGIX0jc8tTiE4Z8V3nkVCmFKZbE/jrng1GDORa2IfVAQ7X9IiqaCOMF
+	 pRDS8RDKRcYWhdiDPIazvkh2+5LpYA6xaRP26jnu2Hb6/JMAKxejHQVi4oYUadAfv3
+	 g9tkSHBfE6NAl/VEIMcpdr/Q/ICHWsp+sOrnNt8Zm/NwIKNGxGn4U3FhKTcjo6k1wG
+	 8MRjZOLfKaTCi7Ch9t6qeiyk1EEUEAvCriVyKTTgX0RjBtL+JK2yopuTYbRwIY341j
+	 xhT3F5a6adiRw==
+Date: Mon, 4 Aug 2025 21:58:46 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Simon Richter <Simon.Richter@hogyros.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
+Subject: Re: Crypto use cases (was: Remove PowerPC optimized MD5 code)
+Message-ID: <20250805045846.GA10695@sol>
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-4-ebiggers@kernel.org>
+ <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
+ <20250804180923.GA54248@google.com>
+ <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
+ <20250804225901.GC54248@google.com>
+ <913e23f9-d039-4de1-a0d3-d1067dcda8ac@hogyros.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <913e23f9-d039-4de1-a0d3-d1067dcda8ac@hogyros.de>
 
-
-On Wed, 12 Feb 2025 18:03:46 +0100, Stephan Gerhold wrote:
-> num-channels and qcom,num-ees are required for BAM nodes without clock,
-> because the driver cannot ensure the hardware is powered on when trying to
-> obtain the information from the hardware registers. Specifying the node
-> without these properties is unsafe and has caused early boot crashes for
-> other SoCs before [1, 2].
+On Tue, Aug 05, 2025 at 01:49:31PM +0900, Simon Richter wrote:
+> Hi,
 > 
-> The bam_dma driver has always printed an error to the kernel log in these
-> situations, but that was not enough to prevent people from upstreaming
-> patches without the required properties.
+> On 8/5/25 07:59, Eric Biggers wrote:
 > 
-> [...]
+> > > md5sum uses the kernel's MD5 code:
+> 
+> > What?  That's crazy.  Userspace MD5 code would be faster and more
+> > reliable.  No need to make syscalls, transfer data to and from the
+> > kernel, have an external dependency, etc.  Is this the coreutils md5sum?
+> > We need to get this reported and fixed.
+> 
+> The userspace API allows zero-copy transfers from userspace, and AFAIK also
+> directly operating on files without ever transferring the data to userspace
+> (so we save one copy).
+> 
+> Userspace requests are also where the asynchronous hardware offload units
+> get to chomp on large blocks of data while the CPU is doing something else:
+> 
+> $ time dd if=test.bin of=/dev/zero bs=1G     # warm up caches
+> real    0m1.541s
+> user    0m0.000s
+> sys     0m0.732s
+> 
+> $ time gzip -9 <test.bin >test.bin.gz        # compress with the CPU
+> real    2m57.789s
+> user    2m55.986s
+> sys     0m1.508s
+> 
+> $ time ./gzfht_test test.bin                 # compress with NEST unit
+> real    0m3.207s
+> user    0m0.584s
+> sys     0m2.487s
+> 
+> $ time gzip -d <test.bin.nx.gz >test.bin.nx  # decompress with CPU
+> real    1m0.103s
+> user    0m57.990s
+> sys     0m1.878s
+> 
+> $ time ./gunz_test test.bin.gz               # decompress with NEST unit
+> real    0m2.722s
+> user    0m0.200s
+> sys     0m1.872s
+> 
+> That's why I'm objecting to measuring the general usefulness of hardware
+> crypto units by the standards of fscrypt, which has an artificial limitation
+> of never submitting blocks larger than 4kB: there are other use cases that
+> don't have that limitation, and where the overhead is negligible because it
+> is incurred only once for a few gigabytes of data.
+> 
+> That's why I suggested changing from a priority field to "speed" and
+> "overhead" fields, and calculate priority for each application as
+> (size/speed+overhead) -- smallest number wins, size is what the application
+> expects to use as the typical request size (which for fscrypt and IPsec is
+> on the small side, so it would always select the CPU unless there was a
+> low-overhead offload engine available)
+> 
+> This probably needs some adjustment to allow selecting a low-power
+> implementation (e.g. on mobile, I'd want to use offloading for fscrypt even
+> if it is slower), and model request batching which reduces the overhead in a
+> busy system, but it should be a good start.
 
-Applied, thanks!
+What does this have to do with this thread, which is about the PowerPC
+optimized MD5 code?
 
-[7/8] dt-bindings: dma: qcom: bam-dma: Add missing required properties
-      commit: e0e2cea86f75c8255b7da13ec92a34bb35a9c4fb
-[8/8] dmaengine: qcom: bam_dma: Fix DT error handling for num-channels/ees
-      commit: 2f8a2cfd0994adf5f71737bb0946a76800479220
-
-Best regards,
--- 
-~Vinod
-
-
+- Eric
 
