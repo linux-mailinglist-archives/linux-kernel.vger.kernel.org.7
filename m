@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-756915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C21DB1BB02
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8B3B1BB03
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A44D7A1CAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F987A3A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3278123504D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EC1238143;
 	Tue,  5 Aug 2025 19:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Qw0fbRPm"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AdgEqdVx"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05F220F24
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6522221A94F
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754422756; cv=none; b=Tof1btAi4Bm/QO5RUJ9i+erS040iPNGrQ73IZ8VSg1N6JykV3GhtThcYT8euu8yhCZs5GyCGS8ypvI2A7W2qmy4meswPIlExa3VKTvs2lGY/IhQdYvB0oa3+PpN28LTEWDYaEyeXGNx29R1Ys6gsygWo7luyDTi44nS+uI2Jr1s=
+	t=1754422757; cv=none; b=N3qD0VHX/1fzBcUhSXwTxIe7lfV8uEiJTkRhwBLksMCFqmKeOyHKPMtTvNfsFjeUiVQbwBOgBvABs6Vyu9w0VzBOYrfB++a8xI8vY8AuhIzbc1w2tjsNPKCNXMM2fS5OLlEJKLxzb3Ypp+vRB0Lz6TNiMJs8exKaXTo8AQXspZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754422756; c=relaxed/simple;
-	bh=mNM5ceg27t1pmPc6MFL1IkCx1VG1gkdG1QIjBvtyi7c=;
+	s=arc-20240116; t=1754422757; c=relaxed/simple;
+	bh=hrWShkwoLgpiXECNmA7ue8Ad2qXssEeiJhCjKxFwpUw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=UGEJ5q6+4PSOx9Er4gDS1nDqA20bFczY5MNXtxU5iOdJ3jbzVvQKC0RG5Q76Ix1cOwafL2fsZNtqh+/5Esxsi3c9sPjnJT4QPx2IZfKWzkdNJTho1LzczHGRefXY+XAi1xv4ZNnmPaa8YwY86ciMyvpGt7xh7Wgfma6GLRvOnLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Qw0fbRPm; arc=none smtp.client-ip=209.85.160.176
+	 References:In-Reply-To; b=md23DNFIa1jvXxEWFOtzhPqA/HqdaL8a4hCuUUUvy/I/GwpSSIiNgtOs6ZSabKhvAXcOw1IurRMsdbTJ9KlfhdzQPYNfFJ9rAhe5Z12oCCrkZrpzdyq6ZdTbPZEgY44NbarWqedDhhaFbJJGoqpuKfXeGE0xe9BP1Z8ecJMxjfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AdgEqdVx; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b07cb2d13bso22172411cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:39:13 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b070b3b7adso34911421cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754422752; x=1755027552; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1754422754; x=1755027554; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZTPNLEZZkuqyqQbmqm6Yfc3sc2AjHLZIpvjt/gfXteU=;
-        b=Qw0fbRPmQEB1LYmjJNbWlfw2ahY3H9mrmRSpdv7bm+TU4q7AUiZOZkIYQpzsR3pbKR
-         KrU8n5TM9Qhgbzyx5piyv0tbflSLxWspj/yKt5unYY+LbTToKyY/zRCORTBG+OJUtCjz
-         I0FjyuUnU/xilHk5v+CWoKgdzXJDAuHv1lkwfhb8CjKxdjBLNNsyctssUgwBayL9xnwh
-         uZLzoUvy/L3sgeWGyj4+gT7WLLkuQbenDfhbDwcfIMo475xseSKWE4u2cuRWIW7NFKsT
-         9GretgrGFwQbXDFD8KMsho5ORPAC4Am0YkCJSYi0xHW5OuwZZh8wpnmB4fiTVD6C2yPB
-         Q2KA==
+        bh=fBazbWpOs6DnsY5hjuc5EgI1FanuICFKa6JiwIf4Boc=;
+        b=AdgEqdVxp+p3aCgMQklEJoqYqxtp3hq7CHD70lHatl48iYNUfqs4J6ioXr1JDcaSy2
+         D4cDsSNeSsWU8YrTTqI2HmzntGW50i2nVttSP2SU5zi8bdGHm8ZreaiZfdT+0ILIFmPt
+         ENjn6X7E+DC24x1/Xp1PQ/JllxFrDUw+v6bXyDEIMLn7AvpPvCKG48xKGJwYdobqgu3q
+         Q3MuCQ15mQAPFq+aAgAiRbjoqOEbMtNcJAU5Io4X140zmfrDY0LXEF83+SgsLmtxF3Ql
+         6zZJ8LEkasEMCLGlub5mrif7b6bJ7+R6t/yWSD3yGJjf+TcdV1Yg81t79kdRQw0F+4sC
+         QXJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754422752; x=1755027552;
+        d=1e100.net; s=20230601; t=1754422754; x=1755027554;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ZTPNLEZZkuqyqQbmqm6Yfc3sc2AjHLZIpvjt/gfXteU=;
-        b=XY282AQ4leeCQpN9eTJY/ocp+ldih+vLaxE1MLQWmKr6UjaXAOxuLTdEkqyvpwgjjJ
-         kfvnX/iz4GaSQgwdgHY2dEHti3w72JuknmAUBRPs8IRThdQw/VKMXTDUAF2tjV1yzb29
-         JOnsgmH9Y0KVeDJiYGk9jAZa1ftFK/KZhlpbWhwne8rYccNGIpRdNHcmeik9vcvKIJmF
-         Pm3e3XPUf0jXSQjcwNwm+09JtNzMGztf9mqtRbRKL/bzlQorZ3gjrj2HegvJn00dGuC2
-         fnn52af363UC3XAJOTRIPlT/yk/m3j3w/TJ+xGywzUch0KDbcnC2zP73NMgPWU0NalMO
-         fAJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9KnZCyGbS7YurtvDREMjH5BhmNapHTr6I079RbOSVASz/N9qhfG8WWGWuYFGZ3+YWBMMWAwKL7ebkPEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMXn1h23716+q1vawbx//hrMyIZYvyZvy0cuQxwJ6X+IudGqze
-	L2mag3XlI1AXKBVmmnOfprzpH15hQ9gokFS2n7o1PONyCwCTuEZB4WRX0wIccSDicw==
-X-Gm-Gg: ASbGncvS+JLmCX93lU9B3qwJl10Ia0KP4msquavrLcQvLQA37J4/9jES1NloITlBn3A
-	SYVTK+BD9DcAtGNdGSCWv+kvwUehOXga2GiQs6UPqMZjXclv0xcsujVZH/mgaI1/glhLDAUz6kG
-	T58vBt4OKxbo8JV79X3FOzWPz0PedcaQqlGThtKOUZzIxTQ09HyUsY8MkGzKeCUVy8u0dDZQBVH
-	6kdO44Gg8zQIG3FSLo7ML+3oK6OdmyjdUhzSuSp/MNDVUcd7MKK8S9uaMz4d3GrmwHlFAPlUinQ
-	JiHC13lVr+qjs6ucK7zI5ugBrckAHoTggAva78SaZXuPhilfxO5BCeXOsBRPvHgDMDVmMaFUY3W
-	FmGO0pMIk3KEfZh6cttSxB7fmBUIfra+o4xLJpz7nUGaIlOvEBOdNEZ6bDJ66n3PmMuE=
-X-Google-Smtp-Source: AGHT+IG8l0bLRrSlwfPmL45Yk0MG8/c7kPJgmEK8f1pFbtct6QaXmsUO6kX5XPX2x2gQ5mXM1RQ4YA==
-X-Received: by 2002:a05:622a:216:b0:4ab:c0ec:6236 with SMTP id d75a77b69052e-4b09132dd52mr2620841cf.12.1754422752057;
-        Tue, 05 Aug 2025 12:39:12 -0700 (PDT)
+        bh=fBazbWpOs6DnsY5hjuc5EgI1FanuICFKa6JiwIf4Boc=;
+        b=cK/M0G04iAgRjkJeTJmy+4P7HBIrEu+t7LmqdrSsJy3vB1gsziuK6Vz5MRYcAOcZR5
+         AtTaI7X1uleMoMpWoMKfvhL8ABrCmqufcKtf21GsnUEUWg2NZJ9EfhcjkGQfgYZPpjFh
+         3ghhfYH2jPweABNvm76Co2/aPENmdo2ZKpYEoXvjVp7a/stlDBH1LSSnH+zK0I1V03RR
+         bpg4UIEYUSbIZ6xGExuFB5wtFqqtiNyy1tEfuthZ2eBRPrm199rHjYRja7w8RdhK4rPG
+         eblcsqfnF6p1laageomA3ujoKO1uY2WdXkhybpM4WBxx1Bvow7G4mrrc1ztLdXca9iCy
+         4kzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv/Z0zepRHoX0M0lKZm0l7KC6kF5iCZPlc8+8yRlc1/9LhQHnQFTOoLAYRvzQK0sHJ8lJaGHZFiNvgqvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhi2zEjFY6VMtvNQ1P+0R0LEUZuDegSdYUjFTNBNDonL/f3LJZ
+	M+N0zCosuPDyYUJcOalhQkiP8ZBm/dmYxREQRQm6/9lPjHVP2zayAcb8pPXON/7ItQ==
+X-Gm-Gg: ASbGncsO6EVTCeNVrg0i0OnOipyJDO+s3VqlYcZF3aK9AWoFSu2264b0qe5tYs7sHPE
+	ea27zHKNWIZ/H+2ZeR597vefiTD4jUr4pOoW9ZdmYT69uqyMLxgQyA3PEBSpaaJMVsJFHUwtzwe
+	xWTUFXjHVnCwOVRdnUVh/FosOwtvtYnwFU8AYwNcFijOl+GkzhSH0hxYDRYPbeEe9Jsqnm0XuDx
+	84cKEMXR15WeE9cVbzJC0+xgHDV3YmJdQoDP52LeVDaJKHeO2aduIdpSN1O9LRYlWCA8fXCxVQB
+	YSC6V+wu+knVbKgKVuJLK53FUgWv9vwjLKpSUNvLeMOPk52PjVVXyg06ERQE0HymBKitZLX1RNC
+	FBQnRi3AnNjIoCv3l/TeVz59D5xeRTiOCzVl1QLGIEuHNZNH6B97l0MR/zXfqKL59TF0=
+X-Google-Smtp-Source: AGHT+IE+HthgC1i47sqQa2UGVUpX+LBzsQmL7EJldwFkiqkyAsWUvz71mh0r1BVzJ+awOI6xE6jKGw==
+X-Received: by 2002:a05:6214:2a4c:b0:707:5c4f:f0c9 with SMTP id 6a1803df08f44-70979523ac7mr9246676d6.16.1754422754256;
+        Tue, 05 Aug 2025 12:39:14 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4aeeed67010sm69419191cf.30.2025.08.05.12.39.11
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-7077ca464acsm76152926d6.36.2025.08.05.12.39.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 12:39:11 -0700 (PDT)
-Date: Tue, 05 Aug 2025 15:39:10 -0400
-Message-ID: <aafebe14727836ea747b97982926cc38@paul-moore.com>
+        Tue, 05 Aug 2025 12:39:12 -0700 (PDT)
+Date: Tue, 05 Aug 2025 15:39:12 -0400
+Message-ID: <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,186 +86,49 @@ X-Mailer: pstg-pwork:20250805_1248/pstg-lib:20250804_1752/pstg-pwork:20250805_12
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] Audit: Add record for multiple task security  contexts
-References: <20250716212731.31628-4-casey@schaufler-ca.com>
-In-Reply-To: <20250716212731.31628-4-casey@schaufler-ca.com>
+Subject: Re: [PATCH v5 4/5] Audit: Fix indentation in audit_log_exit
+References: <20250716212731.31628-5-casey@schaufler-ca.com>
+In-Reply-To: <20250716212731.31628-5-casey@schaufler-ca.com>
 
 On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Replace the single skb pointer in an audit_buffer with a list of
-> skb pointers. Add the audit_stamp information to the audit_buffer as
-> there's no guarantee that there will be an audit_context containing
-> the stamp associated with the event. At audit_log_end() time create
-> auxiliary records as have been added to the list. Functions are
-> created to manage the skb list in the audit_buffer.
+> Fix two indentation errors in audit_log_exit().
 > 
-> Create a new audit record AUDIT_MAC_TASK_CONTEXTS.
-> An example of the MAC_TASK_CONTEXTS record is:
-> 
->     type=MAC_TASK_CONTEXTS
->     msg=audit(1600880931.832:113)
->     subj_apparmor=unconfined
->     subj_smack=_
-> 
-> When an audit event includes a AUDIT_MAC_TASK_CONTEXTS record the
-> "subj=" field in other records in the event will be "subj=?".
-> An AUDIT_MAC_TASK_CONTEXTS record is supplied when the system has
-> multiple security modules that may make access decisions based on a
-> subject security context.
-> 
-> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx().
-> This is used in netlabel auditing to provide multiple subject security
-> contexts as necessary.
-> 
-> Suggested-by: Paul Moore <paul@paul-moore.com>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  include/linux/audit.h        |  16 +++
->  include/uapi/linux/audit.h   |   1 +
->  kernel/audit.c               | 207 +++++++++++++++++++++++++++++------
->  net/netlabel/netlabel_user.c |   9 +-
->  security/apparmor/lsm.c      |   3 +
->  security/lsm.h               |   4 -
->  security/lsm_init.c          |   5 -
->  security/security.c          |   3 -
->  security/selinux/hooks.c     |   3 +
->  security/smack/smack_lsm.c   |   3 +
->  10 files changed, 202 insertions(+), 52 deletions(-)
+>  kernel/auditsc.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-If there were no other issues with this patch I would have just fixed
-this up during the merge (I did it in my review branch already), but
-since you're no longer dependent on the LSM init rework changes (and
-I've dropped the subj/obj counting in the latest revision), just go
-ahead and base your next revision on the audit tree or Linus' tree as
-one normally would.
+As this is indepdendent of all the other changes in this patchset, I'm
+going to merge this into audit/dev-staging now and audit/dev later when
+the merge window is closed.
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 226c8ae00d04..c7dea6bfacdd 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-
-...
-
-> +/**
-> + * audit_log_subj_ctx - Add LSM subject information
-> + * @ab: audit_buffer
-> + * @prop: LSM subject properties.
-> + *
-> + * Add a subj= field and, if necessary, a AUDIT_MAC_TASK_CONTEXTS record.
-> + */
-> +int audit_log_subj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
->  {
-> -	struct lsm_prop prop;
->  	struct lsm_context ctx;
-> +	char *space = "";
->  	int error;
-> +	int i;
->  
-> -	security_current_getlsmprop_subj(&prop);
-> -	if (!lsmprop_is_set(&prop))
-> +	security_current_getlsmprop_subj(prop);
-> +	if (!lsmprop_is_set(prop))
->  		return 0;
->  
-> -	error = security_lsmprop_to_secctx(&prop, &ctx, LSM_ID_UNDEF);
-> -	if (error < 0) {
-> -		if (error != -EINVAL)
-> -			goto error_path;
-> +	if (audit_subj_secctx_cnt < 2) {
-> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
-> +		if (error < 0) {
-> +			if (error != -EINVAL)
-> +				goto error_path;
-> +			return 0;
-> +		}
-> +		audit_log_format(ab, " subj=%s", ctx.context);
-> +		security_release_secctx(&ctx);
->  		return 0;
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 322d4e27f28e..84173d234d4a 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1780,15 +1780,16 @@ static void audit_log_exit(void)
+>  						  axs->target_sessionid[i],
+>  						  &axs->target_ref[i],
+>  						  axs->target_comm[i]))
+> -				call_panic = 1;
+> +			call_panic = 1;
 >  	}
-> -
-> -	audit_log_format(ab, " subj=%s", ctx.context);
-> -	security_release_secctx(&ctx);
-> +	/* Multiple LSMs provide contexts. Include an aux record. */
-> +	audit_log_format(ab, " subj=?");
-> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_TASK_CONTEXTS);
-> +	if (error)
-> +		goto error_path;
-> +
-> +	for (i = 0; i < audit_subj_secctx_cnt; i++) {
-> +		error = security_lsmprop_to_secctx(prop, &ctx,
-> +						   audit_subj_lsms[i]->id);
-> +		if (error < 0) {
-> +			/*
-> +			 * Don't print anything. An LSM like BPF could
-> +			 * claim to support contexts, but only do so under
-> +			 * certain conditions.
-> +			 */
-> +			if (error == -EOPNOTSUPP)
-> +				continue;
-> +			if (error != -EINVAL)
-> +				audit_panic("error in audit_log_task_context");
-
-Argh ... please read prior review comments a bit more carefully.  As was
-pointed out in the v4 posting you're using the wrong function name here.
-
-https://lore.kernel.org/audit/fc242f4c853fee16e587e9c78e1f282e@paul-moore.com
-
-> +		} else {
-> +			audit_log_format(ab, "%ssubj_%s=%s", space,
-> +					 audit_subj_lsms[i]->name, ctx.context);
-> +			space = " ";
-> +			security_release_secctx(&ctx);
-> +		}
-> +	}
-> +	audit_buffer_aux_end(ab);
->  	return 0;
 >  
->  error_path:
-> -	audit_panic("error in audit_log_task_context");
-> +	audit_panic("error in audit_log_subj_ctx");
->  	return error;
->  }
-> +EXPORT_SYMBOL(audit_log_subj_ctx);
-
-...
-
-> @@ -2423,25 +2575,16 @@ int audit_signal_info(int sig, struct task_struct *t)
->  void audit_log_end(struct audit_buffer *ab)
->  {
->  	struct sk_buff *skb;
-> -	struct nlmsghdr *nlh;
+>  	if (context->target_pid &&
+>  	    audit_log_pid_context(context, context->target_pid,
+>  				  context->target_auid, context->target_uid,
+>  				  context->target_sessionid,
+> -				  &context->target_ref, context->target_comm))
+> -			call_panic = 1;
+> +				  &context->target_ref,
+> +				  context->target_comm))
+> +		call_panic = 1;
 >  
->  	if (!ab)
->  		return;
->  
-> -	if (audit_rate_check()) {
-> -		skb = ab->skb;
-> -		ab->skb = NULL;
-> +	while ((skb = skb_dequeue(&ab->skb_list)))
-> +		__audit_log_end(skb);
->  
-> -		/* setup the netlink header, see the comments in
-> -		 * kauditd_send_multicast_skb() for length quirks */
-> -		nlh = nlmsg_hdr(skb);
-> -		nlh->nlmsg_len = skb->len - NLMSG_HDRLEN;
-> -
-> -		/* queue the netlink packet and poke the kauditd thread */
-> -		skb_queue_tail(&audit_queue, skb);
-> +	/* poke the kauditd thread */
-> +	if (audit_rate_check())
->  		wake_up_interruptible(&kauditd_wait);
-> -	} else
-> -		audit_log_lost("rate limit exceeded");
-
-... here is another case where you've missed/ignored previous feedback.
-I believe this is the second revision in the history of this patchset
-where you've missed feedback; *please* try to do better Casey, stuff like
-this wastes time and drags things out longer than needed.
-
-https://lore.kernel.org/audit/fc242f4c853fee16e587e9c78e1f282e@paul-moore.com
-
->  	audit_buffer_free(ab);
->  }
+>  	if (context->pwd.dentry && context->pwd.mnt) {
+>  		ab = audit_log_start(context, GFP_KERNEL, AUDIT_CWD);
+> -- 
+> 2.50.1
 
 --
 paul-moore.com
