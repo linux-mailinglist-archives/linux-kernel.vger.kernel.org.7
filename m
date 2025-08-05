@@ -1,94 +1,92 @@
-Return-Path: <linux-kernel+bounces-756555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B57B1B5F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:10:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05874B1B600
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5F77B1495
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C88818A5F61
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B8D27E043;
-	Tue,  5 Aug 2025 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D2227E7DD;
+	Tue,  5 Aug 2025 14:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1NE9DSs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp3v4xCw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A96278143;
-	Tue,  5 Aug 2025 14:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC4A1D7E31;
+	Tue,  5 Aug 2025 14:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402638; cv=none; b=AVzedSzvW0eSJF+cCfAC5ZcSMmaaHobREsadIi/oNQ8Mm3OePo3cE6m1hCrxMvqnbOhiVyEVqXR+O60MACzxdBW9yq6lImrsBfVEf7nfhUW9WZqGJunOG13SBkBSrQjQ3VEcEW3Xbasa2vv8zBbX+oWCxJmMoBoxaINJGJxq44s=
+	t=1754402656; cv=none; b=REV36sWpV+4nALOzxCsocGAwXC7Mpa2cM8JEslzfIhzwAtbIrq5s5FP5EYnIDfOdfEwg1CP3At0S+qwKfUa8ijy+1hw40RFISVktYfodekRuFuZ9V3wKPBXK4PkSa+0FBAR3ZhOjfCc61MpO3dpGmz78pCfZDdJZ97Quc526iI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402638; c=relaxed/simple;
-	bh=a//RMkT7QxB02c4HlMWI/+kv14S5DssakZHwqBJWWZk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=AHcwZV5h4DthSqC/UObUYX8BgoJsryHH4uxwAmUqubQplj+bsWEqZ/hClflQ3qBUT9Hs8OJbLuC4SUFhC/xrt6IHpYA646zIp3s2LMQJWOKqqadbukvZUplxmJzJAtY4hYo/8VnDnvnTxeA7JswR/Nnng/MwnP63VKFn+nalUFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1NE9DSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09E6C4CEF0;
-	Tue,  5 Aug 2025 14:03:51 +0000 (UTC)
+	s=arc-20240116; t=1754402656; c=relaxed/simple;
+	bh=iMoRTUhEfsYPSZ5AfdOy40I7O04fj4XLzBcVOQrAo/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlVP26RMW3rCMLBRudL1rZzwCtFtUn5k0/D3Vfut2xFUNLyPpV37doZPirwRx65mRimhw8oYPPaYXVGPaWc9HCUGjNHupfIhGqkD4Zxj+fILRaKwg3wyvNkx08a9JbUC2sPh8Wk0NgymxPAjxjTSzIoVnrSkHWG3y+xl8dHw5Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp3v4xCw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5BFAC4CEF4;
+	Tue,  5 Aug 2025 14:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754402638;
-	bh=a//RMkT7QxB02c4HlMWI/+kv14S5DssakZHwqBJWWZk=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=d1NE9DSshfhbYDTNXm+5NbN6aUpYBAQdm3bKJU0MD+xVAEWDbmfPaJJzGOhYIZvI0
-	 wpa6r765xkC3RhDGnM0uLB+tu/uok6Z+TlAlEdF+swOx3nhITBA4oxUxXxoTGjet/G
-	 TypCJ7y+mnQTcCVLLE48pXOId3Nml8P/j/bBBqLLTjUiEpNqHYy3aw5At6yRdKhJDB
-	 s16joxFp5GulzVFOi6h0eCbUk0hID0a8SyXb6PMWdQAbnJNBOLGjDT0604BuzPQUHC
-	 7fcyJsbe2PtQhQ1/GOZEc0N8EQrDUeDFWmPS1fFoz0rtkz2lfW7/ZT2JvuclP9EISG
-	 I/+LfEn80FqTQ==
+	s=k20201202; t=1754402656;
+	bh=iMoRTUhEfsYPSZ5AfdOy40I7O04fj4XLzBcVOQrAo/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hp3v4xCwjKGkrGD4Pzvd2o9pDWOtwqrXnp2Kn2lj151s1LKFeBBRBLP49GX0Q4ZLV
+	 GH24bIyZHdMWr69elUOKHdJfxOocQGiy429kpmYfxAQlXISu/e34mL/rbGPInoy5cr
+	 n/TRhq0VcxyvDC/IizKSTAXNHSlJZMXnwRcsQO/d4vJtL5FSrRQLoPQj2ZCu9qVJhj
+	 WiuNHwIt5fIIV71yMLzH/+QSVDIssvMXkkIKXDh8ZsbHbufDgzSZnmtJLHk5g3cApm
+	 zB+XUkPn/0jcceHU+8cO/wgASDfC51aszIzimce8Z5TSNz6AkwBSrHQGcrKJdZurWy
+	 vmcJk76eCthzg==
+Date: Tue, 5 Aug 2025 09:04:13 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, ghennadi.procopciuc@oss.nxp.com,
+	devicetree@vger.kernel.org, tglx@linutronix.de, S32@nxp.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v3 19/20] dt: bindings: fsl,vf610-pit: Add compatible for
+ s32g2 and s32g3
+Message-ID: <175440262896.1529239.4583136749439718490.robh@kernel.org>
+References: <20250804152344.1109310-1-daniel.lezcano@linaro.org>
+ <20250804152344.1109310-20-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 05 Aug 2025 16:03:50 +0200
-Message-Id: <DBUJTTW31QCI.9EJMRC5RPYLK@kernel.org>
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>,
- <linux-kernel@vger.kernel.org>, <daniel.almeida@collabora.com>,
- <rust-for-linux@vger.kernel.org>, <netdev@vger.kernel.org>,
- <hkallweit1@gmail.com>, <tmgross@umich.edu>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <benno.lossin@proton.me>, <a.hindborg@samsung.com>, <aliceryhl@google.com>,
- <anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>,
- <arnd@arndb.de>, <jstultz@google.com>, <sboyd@kernel.org>,
- <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
- <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
- <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
- <vschneid@redhat.com>, <tgunders@redhat.com>, <me@kloenk.dev>,
- <david.laight.linux@gmail.com>
-To: "Andrew Lunn" <andrew@lunn.ch>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <DBNPR4KQZXY5.279JBMO315A12@kernel.org>
- <20250802.104249.1482605492526656971.fujita.tomonori@gmail.com>
- <DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
- <20250805.223721.524503114987740782.fujita.tomonori@gmail.com>
- <a843788e-80f4-49d3-96f1-1da092ee318c@lunn.ch>
-In-Reply-To: <a843788e-80f4-49d3-96f1-1da092ee318c@lunn.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804152344.1109310-20-daniel.lezcano@linaro.org>
 
-On Tue Aug 5, 2025 at 3:53 PM CEST, Andrew Lunn wrote:
->> I also prefer the example that can be compiled however I can't think
->> of a compilable example that is similar to actual use cases (for
->> example, waiting for some hardware condition). Do you have any ideas?
->
-> Does it have to be successfully runnable? Just read from address
-> 0x42. If it actually gets run, it will trigger an Opps, but it should
-> be obvious why.
 
-No, we have all three options.
+On Mon, 04 Aug 2025 17:23:37 +0200, Daniel Lezcano wrote:
+> The Vybrid Family is a NXP (formerly Freescale) platform having a
+> Programmable Interrupt Timer (PIT). This timer is an IP found also on
+> the NXP Automotive platform S32G2 and S32G3.
+> 
+> Add the compatible for those platforms to describe the timer.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  .../devicetree/bindings/timer/fsl,vf610-pit.yaml         | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
 
-  (1) Don't do anything with the code.
-  (2) Compile it, but don't run it.
-  (3) Compile it and run it as kunit test.
 
-In this case we want to compile it, but not actually run it.
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-- Danilo
+If a tag was not added on purpose, please state why and what changed.
+
+Missing tags:
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
+
+
 
