@@ -1,158 +1,198 @@
-Return-Path: <linux-kernel+bounces-756759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF51B1B8E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:03:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3B8B1B8E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5504F17A99E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5030717A9C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FA3279333;
-	Tue,  5 Aug 2025 17:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F8827F19B;
+	Tue,  5 Aug 2025 17:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVFuy2Bn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnqJdZsS"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BF22AD14
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BF433997;
+	Tue,  5 Aug 2025 17:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754413419; cv=none; b=L81XFnN4cSQQ7fhPKZqjZbRC4ja8GlSS2c9RwinSRKxSzweNsH5rix1qQzthn3M7ixXNA+hDJnn5IQdKnSEBSegvhM13esx5Oo+4++x8mNpJx1dJokSEEMYBHzSeJKiltlUxY6GD7sQK8xEV1F05kj+BtGlGN3g1V5+6tYrpDfM=
+	t=1754413439; cv=none; b=EeqIHhe+Us5Mc0tHrp0IP2pIA3qVmLSsoJ1Gl2twHA4j221e2NyZWPn1/9/vASTVwlseuM0E5sbk3Y6lk9nXnY3BGtZHDWQYWjVUihfrT739HYStyjuQtP6TnDiX/QHfALoAPHe5XnAoMDm9qMVzbet5+7zCuzDQ+sLAsD3YF5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754413419; c=relaxed/simple;
-	bh=Kh56pL20T7H5zlhh9Vn7vZ2/KCtiWdU2V/izuigl+nM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HfH7e9BQyzu7UF+uyog4AGLB8w4yYY9YkNMyG78TNSU4EpSohtgvQXBjS/51AJGRuG2LTIfJoJAUsqtCgahlcoG6GtIiH4dsEBP6qd48N58PzhGdrtLbUnFnm2aK+4RkwXdV9lvTOmn35wgSaivceL7z41qj0UVWRxt1GC5I+jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EVFuy2Bn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754413416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tbVVoGaAB5mP5RybMnrtLIB1JKz2+YRNMZHEyFUTSmw=;
-	b=EVFuy2BnqoVMoKsaS0LikDTqB5Mlgt9KAO/PetsFbgE8QctrypnnGaAKYqYlwvT9vCOnoT
-	C7yZVBppUGjebaSDMnrxw4WVUyH97S6+S8EBhEhw83oRi8daH+VJhJNi8zFLSRln42qOlW
-	mmdaJgFBvfAnRfjuppYimWFp/AbG2qI=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-1-p_B9ua1jPfKu7QbYKeHcNg-1; Tue, 05 Aug 2025 13:03:32 -0400
-X-MC-Unique: p_B9ua1jPfKu7QbYKeHcNg-1
-X-Mimecast-MFC-AGG-ID: p_B9ua1jPfKu7QbYKeHcNg_1754413411
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-30bbadb3f41so2098796fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:03:32 -0700 (PDT)
+	s=arc-20240116; t=1754413439; c=relaxed/simple;
+	bh=UvMe0V6kKXltSytEvFS/hOQFEj/5VxmSNqBL6fa8VGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8/W46Pd3ZeenjADgVEHCcOayEmKY6GlD1r7Y6xrSaroI61+AZYvhJVM9SGppL+PgDJdDARf/398Nx9P7h4uK9bSFE2RGbFB04YqWVt8MDZPkrpXmxbj3E9o0RtFJkDfg/4Wd7tonAf1bcVWQ0et3xIhkgj2CYkFzqDv4vB1etI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnqJdZsS; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61530559887so7844644a12.1;
+        Tue, 05 Aug 2025 10:03:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754413436; x=1755018236; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ocAA6Mc755BpdMt20sH6v5c6z0jN15Kqz/vvCPh53bY=;
+        b=JnqJdZsSJkJdd1c+x38m4027ebaezVUMyx/XfQqESQEFyGzNRDC2b/2VI9r54GzM01
+         Zt9CMUwC90pmsK/z6MgbJRNZkyIPrrpAPyRRt2tKu+0x+oK5ghRILAHvqf8VqituXxSS
+         1H5IGs6Zw9ah00cSPu7zR+S/nk97Misfemz8MhF48IJcYaAm0/GMDQah95XqZ0NKGOP5
+         RCOV8yDf7QIs2HT/VuQF08iZHmHG6ZW/qW76DZeL7fv75QL5LP9NWQQ8DNN4YxKv+ECw
+         tgmTCG3chDYEYYWLlvdasgyBE5Lr1x/x+I29f84hsrZntBXUILUCc1gjPuR0OikxVtIi
+         hBNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754413411; x=1755018211;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbVVoGaAB5mP5RybMnrtLIB1JKz2+YRNMZHEyFUTSmw=;
-        b=Ma9JSRsdCE0aGCjfsRtg87/Q8meZ+36JToM03iLFyzHuaXauvBBebJeJOi9H7SIRcY
-         ed4NpaRhAtYSWc5WJ7xWlzKHr788c1oJVDlJh7JIaEqaypOedpUpCcYqJBnHEpfzeO9Y
-         lxyDxjtyMp0R/eQdMeU6jqvO/E/GZBteAGG9MrGbUskwm32YdxgSYYeXHimuqLBwQQgm
-         BqT2gQgSLAIFobtVj2GAdu4qGbOj0OgtOg9fC0grPGI5k28rD7od7R5NyuDtSmWvPn4i
-         h5YCWq6Y/9iGvviO42brSlG7kJLIzNfGiva7C0lEaf6+pFIkqAGqedu+Xa8mavfXVD6f
-         WgpA==
-X-Gm-Message-State: AOJu0YwLbI/MqD0JvWEy49Vh0ZhtneUydxu0qq6PHO3OopZdx7FBoxqe
-	+bJTLduUGt3DP5HHm15CjloLSYGLMh6Wwr25m6p6lLKybe7F6PWpIXA9ZY4ZpjreLpe48uDKNZu
-	ystemUrmYVVYviIw6i4xI04HLuNuqx/pIHWYUHdHJHSESIAM2zkTwddTTQP+LyQKPnQ==
-X-Gm-Gg: ASbGncumUQXS+mHW2H7x30O64b8UxNLlXab0iXhzmoFikiccMq5bWjtMQfqsuHAN/Jj
-	ry5d3V+J28bUDwWjD50R+ldZCYTbMaVudpfr3u2ejxZ5lrMCQb5p/r4tA8hicrls29KBftF1M+t
-	tMjbGgMASmuYySQra6i+gL3tDM2EByyXOoVjd6A3EYWBcV4vRByd+PhzQJ5/wtjEcySmgFwdtlO
-	YdkpukmAl+FXLHsNzZvMv4kbgb4w2tNjuYIt2pZwjNY6CMn5e8nDFYWcFkugjFYQ1yXB1KphpYk
-	AhHlxmo7oBg0pwW9q2o29duyvwgM/sSO
-X-Received: by 2002:a05:6871:2317:b0:2f3:4720:f7ca with SMTP id 586e51a60fabf-30b67628183mr8873977fac.2.1754413411372;
-        Tue, 05 Aug 2025 10:03:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGc+1OdQM+G/winnp5rPILb3JTMTlJWC5iVwWvIxlu/QYRJKW6ClokbBNAn1HhCL44Xbq8bxQ==
-X-Received: by 2002:a05:6871:2317:b0:2f3:4720:f7ca with SMTP id 586e51a60fabf-30b67628183mr8873915fac.2.1754413410937;
-        Tue, 05 Aug 2025 10:03:30 -0700 (PDT)
-Received: from [10.2.0.2] ([146.70.8.22])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-742fa231cefsm434274a34.45.2025.08.05.10.03.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 10:03:30 -0700 (PDT)
-Message-ID: <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
-Date: Tue, 5 Aug 2025 12:03:28 -0500
+        d=1e100.net; s=20230601; t=1754413436; x=1755018236;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocAA6Mc755BpdMt20sH6v5c6z0jN15Kqz/vvCPh53bY=;
+        b=RuG+l0EBgP9x4ZsYvAxbOpb1xw5DsKIUprquKsmCGOv6pjDaoWaXin1jj4x82PAhxg
+         mBltF2UnZD4cHu+24VwMz0eMNqLHEYJbzgeKb2MjbckcwmTnlOvdh4u6bGX52w00vvLU
+         1knFPqCLs1nM6u/jRXWugjats+XOaEtxQofM0U8O3bIZsptjKx4AAWL0GlX+A7vj9dFB
+         gzClxF8jgVRMZlhpJ3KLFIZEdLPx+7wbPw/IbI/oTYxRJbXktJLuFCfg/5rgv307kIG1
+         +UoEmpS1Q1JumMl+2N+bBBXcVC56EyONjrMlnhf2yyrNe16zZISVMKkB6HxhHTGirqvH
+         Kjhg==
+X-Forwarded-Encrypted: i=1; AJvYcCV27JZwDS3NZoDyCSAxY0Txq/K+ljYaQeLqLMVfNwSg1SvazpJewEuMBILMed9/ONrzjbkp1OXc/sYS557FyK2T@vger.kernel.org, AJvYcCWhXtiTcvtGbYvhjKG++9tqDDMlVUNsZ6GgKUWzxUTHgczBoIIqwchULW0JYGErYk9YzhP6k3J/rEsJ1fQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydoaAvEQ6Mwg5i0j1ZRzMwbf7QZbj57xWeo2Po1erOciphEf3s
+	7dsIQMELRvL+jEhLAN0EF1HHijTX+hfnerKIRPQyltUec6Y4SQcPaoBu
+X-Gm-Gg: ASbGncv/NVxKd1uTUAvoq5SW6fx6DZ82rftr2xNixa0SdlXiKTxkZikIhZTJmAiyNdn
+	jTtccIUgFKCHbplPNBhfE6vmHGeqhSa/YXGf9VbNrd3M9xtkl4IbbX6YB0+il0HZfGRWInYMIJN
+	93f2UGxcGuauCeuasKZjLxK57JnqnenK8tf9db3FBJJpUU2CTepKrH+O2lEjVkhAna1vg8b71h9
+	IuIqDgbH6/V7wRg6sTk6dkgNRwBxMVwX7w8clhqwk0ohXvP/7uAoA2vZh7dy9c4fqpfo/NzSFEo
+	KU4Tlj8xrmJ4p3QhaJE75JEXIxes1jJ4B96BS2gxNZ9ZuV3+l+lNV39nbNpEf4U+XlKDhDDscMx
+	6GEPTFJ3lgS4x/hTiUuNUmNcCTDRGEKNl
+X-Google-Smtp-Source: AGHT+IHg2poof9nm6xmGEfRIM/7L18y09RE8bRAhvnrt2eAaqx4Y2wGX6dk9nmtbikSVdZkiCToGqw==
+X-Received: by 2002:a05:6402:4491:b0:614:a23b:4959 with SMTP id 4fb4d7f45d1cf-615e6ec6e07mr12362413a12.10.1754413435687;
+        Tue, 05 Aug 2025 10:03:55 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2b892sm8777081a12.25.2025.08.05.10.03.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Aug 2025 10:03:54 -0700 (PDT)
+Date: Tue, 5 Aug 2025 17:03:53 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>,
+	akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ritesh.list@gmail.com
+Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
+Message-ID: <20250805170353.6vlbyg6qn5hv4yzz@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
+ <20250729053403.1071807-4-aboorvad@linux.ibm.com>
+ <20250804091141.ifwryfmgjepwrog4@master>
+ <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-From: Eric Sandeen <sandeen@redhat.com>
-To: Charalampos Mitrodimas <charmitro@posteo.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
- <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
-Content-Language: en-US
-In-Reply-To: <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 8/4/25 12:22 PM, Eric Sandeen wrote:
-> On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
->> Mount options (uid, gid, mode) are silently ignored when debugfs is
->> mounted. This is a regression introduced during the conversion to the
->> new mount API.
->>
->> When the mount API conversion was done, the line that sets
->> sb->s_fs_info to the parsed options was removed. This causes
->> debugfs_apply_options() to operate on a NULL pointer.
->>
->> As an example, with the bug the "mode" mount option is ignored:
->>
->>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
->>   $ mount | grep debugfs_test
->>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
->>   $ ls -ld /tmp/debugfs_test
->>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
-> 
-> Argh. So, this looks a lot like the issue that got fixed for tracefs in:
-> 
-> e4d32142d1de tracing: Fix tracefs mount options
-> 
-> Let me look at this; tracefs & debugfs are quite similar, so perhaps
-> keeping the fix consistent would make sense as well but I'll dig
-> into it a bit more.
+On Tue, Aug 05, 2025 at 11:39:15AM +0530, Donet Tom wrote:
+>
+>On 8/4/25 2:41 PM, Wei Yang wrote:
+>> On Tue, Jul 29, 2025 at 11:03:59AM +0530, Aboorva Devarajan wrote:
+>> > From: Donet Tom <donettom@linux.ibm.com>
+>> > 
+[...]
+>> > diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
+>> > index d8bd1911dfc0..996dc6645570 100644
+>> > --- a/tools/testing/selftests/mm/ksm_functional_tests.c
+>> > +++ b/tools/testing/selftests/mm/ksm_functional_tests.c
+>> > @@ -46,6 +46,8 @@ static int ksm_use_zero_pages_fd;
+>> > static int pagemap_fd;
+>> > static size_t pagesize;
+>> > 
+>> > +static void init_global_file_handles(void);
+>> > +
+>> > static bool range_maps_duplicates(char *addr, unsigned long size)
+>> > {
+>> > 	unsigned long offs_a, offs_b, pfn_a, pfn_b;
+>> > @@ -274,6 +276,7 @@ static void test_unmerge(void)
+>> > 	ksft_test_result(!range_maps_duplicates(map, size),
+>> > 			 "Pages were unmerged\n");
+>> > unmap:
+>> > +	ksm_unmerge();
+>> In __mmap_and_merge_range(), we call ksm_unmerge(). Why this one not help?
+>> 
+>> Not very familiar with ksm stuff. Would you mind giving more on how this fix
+>> the failure you see?
+>
+>
+>The issue I was facing here was test_prctl_fork was failing.
+>
+># [RUN] test_prctl_fork
+># Still pages merged
+>#
+>
+>This issue occurred because the previous test performed a merge, causing
+>the value of /proc/self/ksm_merging_pages to reflect the number of
+>deduplicated pages. After that, a fork() was called. Post-fork, the child
+>process
+>inherited the parent's ksm_merging_pages value.
+>
 
-So, yes - a fix following the pattern of e4d32142d1de does seem to resolve
-this issue.
+Yes, this one is fixed by calling init_global_file_handles() in child.
 
-However, I think we might be playing whack-a-mole here (fixing one fs at a time,
-when the problem is systemic) among filesystems that use get_tree_single()
-and have configurable options. For example, pstore:
+>Then, the child process invoked __mmap_and_merge_range(), which resulted
+>in unmerging the pages and resetting the value. However, since the parent
+>process
+>had performed the merge, its ksm_merging_pages value also got reset to 0.
+>Meanwhile, the child process had not performed any merge itself, so the
+>inherited
 
-# umount /sys/fs/pstore 
+I assume the behavior described here is after the change to call
+init_global_file_handles() in child.
 
-# mount -t pstore -o kmsg_bytes=65536 none /sys/fs/pstore
-# mount | grep pstore
-none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
+Child process inherit the ksm_merging_pages from parent, which is reasonable
+to me. But I am confused why ksm_unmerge() would just reset ksm_merging_pages
+for parent and leave ksm_merging_pages in child process unchanged.
 
-# mount -o remount,kmsg_bytes=65536 /sys/fs/pstore
-# mount | grep pstore
-none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=65536)
-#
+ksm_unmerge() writes to /sys/kernel/mm/ksm/run, which is a system wide sysfs
+interface. I expect it applies to both parent and child.
 
-I think gadgetfs most likely has the same problem but I'm not yet sure
-how to test that.
+>value remained unchanged. That’s why get_my_merging_page() in the child was
+>returning a non-zero value.
+>
 
-I have no real objection to merging your patch, though I like the
-consistency of following e4d32142d1de a bit more. But I think we should
-find a graceful solution so that any filesystem using get_tree_single
-can avoid this pitfall, if possible.
+I guess you mean the get_my_merging_page() in __mmap_and_merge_range() return
+a non-zero value. But there is ksm_unmerge() before it. Why this ksm_unmerge()
+couldn't reset the value, but a ksm_unmerge() in parent could.
 
--Eric
+>Initially, I fixed the issue by calling ksm_unmerge() before the fork(), and
+>that
+>resolved the problem. Later, I decided it would be cleaner to move the
+>ksm_unmerge() call to the test cleanup phase.
+>
 
+Also all the tests before test_prctl_fork(), except test_prctl(), calls
+
+  ksft_test_result(!range_maps_duplicates());
+
+If the previous tests succeed, it means there is no duplicate pages. This
+means ksm_merging_pages should be 0 before test_prctl_fork() if other tests
+pass. And the child process would inherit a 0 ksm_merging_pages. (A quick test
+proves it.)
+
+So which part of the story I missed?
+
+-- 
+Wei Yang
+Help you, Help me
 
