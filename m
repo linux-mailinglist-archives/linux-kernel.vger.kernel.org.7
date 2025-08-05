@@ -1,323 +1,107 @@
-Return-Path: <linux-kernel+bounces-756189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F02B1B10D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4ABBB1B10F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC818189248D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011BC189EC7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB3D262FE9;
-	Tue,  5 Aug 2025 09:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130F7267AF6;
+	Tue,  5 Aug 2025 09:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRbJXcK3"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UisXez2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84602652AF;
-	Tue,  5 Aug 2025 09:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1942652B4
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386208; cv=none; b=peXdo1b1JYEihEmvTNB0CKPQ4enQsED6Dq+rQfpAPA2oSboCgO7LC9LY0Hflvev8xfDB6zp6rR7p3CpPnDaSMjATDKdkgZ4Oi8/hFn+dq9JMbI1784GyUeLA5jDWE9OPicQjPl8U0gTr9r+XK1bi40xLc/L11XykJUQxltQ2B24=
+	t=1754386216; cv=none; b=bbg7sIw2d8ra7rgVPyo4RS3kObop7+WhWI/QXemDCoW6TFfCFboPJvEjGTuECHtblNDvqGXdZyk636hQ+1jfj1Loc6JcO+IQ5/6etW9gvSsXKZy5ThUhFz+dz/R/RAiJFxh/cFZzV9WYmw2AlLihD4BkyKoAxxyNAuXGQ2Jwvo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386208; c=relaxed/simple;
-	bh=/96+wQdXuYGBiFVc2O5oqpZxgQ+f+NwwoqPvRvuLFIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bg0al1OIQmqzw0a/32d4qegX9LfBpX6KajdW7paY+8/h16CMs6l5TG/bhfVSB7oetfhjHeZtZCNtypwroD5YMaf8BucN7Ur5rqtaA8ECq5PWX/az3iMlAMnBPrTPbPoPjhn3aQb4hhmUJ2PidXOFrw0TtKYFLyIBpGOzlSFoST0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRbJXcK3; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af949891d3aso410623766b.1;
-        Tue, 05 Aug 2025 02:30:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754386205; x=1754991005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a8ozOId1ZhD4j/yjEjr/14e7MP0S5CB4O3gJh9exrdI=;
-        b=MRbJXcK336HS7YSeifHAGkxvS1jDvI64Iwef3xm9/+00F57r8b9yU9NOoTy6mMIMZv
-         akv9vzoScHOija/RuXVi4vRi3qW6aklTvq03BL4JG2brflFKnM2JvoFAEJsIvFJ7SZKa
-         tPKj9U/9Eu2E5uT4CrtEynhXzRqZ1CfBDBsFs2iFP+5gS4C3VfyqCzDlZF/Yy3EtMA8T
-         O3Wmt/KpG4lbN8AlLbOupxaHQRiTzs8CPfY/GhcvhbtKotpEDOlkllT2zt0odPvTrrMS
-         IjplwQWnz1iOpheBgkxknvUSDUdnJErrXvoc5EAnOV51lbjGwPcxu7xWOMO0JxWFuxto
-         3ydQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754386205; x=1754991005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a8ozOId1ZhD4j/yjEjr/14e7MP0S5CB4O3gJh9exrdI=;
-        b=B4j4UfH6eyHs08PbiQJrbvFmnukijJV4wxWZcJ4/KsQWfZMs0Z7ELmrllo7VaWM9M9
-         kOAg84h1n1gR+t9+jBdE41waDjjqpUfu2NVBrzQYVcDvxyKYkbEGFwIx/LmFsEfe7nMR
-         Oe8jqk5se2TLPtLClNHJLmCFZeZTm7o4oFq2HSVRq5onccr8t61mNc1QKyDZPpCk//9P
-         yWD3Ha6ldu7EJJ23e8IXCSumTtzCG1PraESwov4ADEZJgNl0K2XITJaQ60cajj0GSe2g
-         wslXULwtkk6vXpExEzu9A+k61VipmP2EwinaRAgPSqYGjA/USaJL3FPCU97slChoFrcG
-         S9Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrwpAgPFLB0gVmRzjnP689Cka8ADHFXAxCy0zFmrFiNv2QUlOY8SWikAuzdMeAwQSnCc/hHkOHHiRG3G0=@vger.kernel.org, AJvYcCWMb/GmYUTIYZzha+1L1uC0eZXnK9fdXXzekPQL38vIvffLKKtxGnzyA17XAOPkEszDKpuCkA1QHeh8HPfASzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTZRWXfuj9we+a5kHw1T4QxZzAbqf07H8Nuk9DtK0XjVTCQzBg
-	2hYOxkBfVqURMBi0KzJ4VrqMe6xHXpPKKYGhMq+DneQd7hTODdWoOJWYUsFORXYwusB85ebp1Sb
-	Y+QuWLP58969AX7otrabSXCGgP12ZixM=
-X-Gm-Gg: ASbGncuK8VX6hPas9uASBlPfVH2fY8nFMzPPnTIkUBXMTAM8+EulQ3lecLgMIo7SPiE
-	mcyQl9XE9a0ph9d2sfEw7cZJ/vTIYMW4oi3Vpc7v0TtcVEMzbjfJLx9Jg+pcaW7eisucOSQlMof
-	GpjY++/KpFeEt27eg6eWSxVZ7BO7tbZ1OlDOoHOG1iqHcYvpyKkqiFxEfzD+W7KdqK+K6uqBvM5
-	vkp4jo=
-X-Google-Smtp-Source: AGHT+IH6PTc3BtkOiDilh73+QBsRvV3S5gbrjB3Dg51VaqRBpHDpZQ7l4uV26oIASArzJRSk+1aue0oGggbzKtV88UY=
-X-Received: by 2002:a17:907:9812:b0:af6:3194:f024 with SMTP id
- a640c23a62f3a-af940081981mr1204367366b.13.1754386204741; Tue, 05 Aug 2025
- 02:30:04 -0700 (PDT)
+	s=arc-20240116; t=1754386216; c=relaxed/simple;
+	bh=5UL00lu4xZn/SVf3QC30fPZtl2/7wiyTldeA5ZwXXoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxlzgjmx8fQNpOnkgG/wDfF4xz/hwy5LQb9P08hO2aA0N3byv2awrMP5O+R6B3HR7akO8Xp9eNSOErQVyxGuYGS5eAWM48/0KbOTMGPnaAUHiYU1uQLJy8OFBDznZPPW8C7mrAhHBsubE2/QklKnpF5HB5s81062xeWHu5ew8Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UisXez2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A532C4CEF0;
+	Tue,  5 Aug 2025 09:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754386216;
+	bh=5UL00lu4xZn/SVf3QC30fPZtl2/7wiyTldeA5ZwXXoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UisXez2SMuX7vliFgFd7tUEQG80nciTOaO7y238OZvizTdN0nOEfxJjHul/rCwGZ2
+	 9WvAOO5qiyikZs5itcJisc41sR067BEFLsvtfQdDNSVCsMqYSnpAEwb9DO/GLuCzzC
+	 OZSSLh4Q6w2ieMGyDcuOVd+uoAbONiyMx4QdmmrtBsVi7uDLAy0L2FI9PTOXtV266a
+	 z1khto4C0dRIOWYVo0EH4NjXL7xZYRYPDU13TW75av+o/Juzm1LeIp29r8xx0WGX+8
+	 V3tohp9cziypxtyXUOJSn2IdDzPwPdwK1Pc71EyniohDq6CiolXQeE847ym1qkr8eV
+	 /SwevBaw52jhQ==
+Date: Tue, 5 Aug 2025 11:30:11 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 0/3] irqchip/gic-v5: Minor clean-ups/fixes
+Message-ID: <aJHPI8xRtleEx+3r@lpieralisi>
+References: <20250801-gic-v5-fixes-6-17-v1-0-4fcedaccf9e6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805084114.4125333-1-chenmiao.ku@gmail.com>
- <20250805084114.4125333-2-chenmiao.ku@gmail.com> <aJHLxmPk-5cPCnPA@antec>
-In-Reply-To: <aJHLxmPk-5cPCnPA@antec>
-From: Miao Chen <chenmiao.ku@gmail.com>
-Date: Tue, 5 Aug 2025 17:29:26 +0800
-X-Gm-Features: Ac12FXyNYIwtCwX-pcCeWHZgSU4-r1UfqaVhARQbfbH0KRC0W9fL1DeGM24KcQ8
-Message-ID: <CAKxVwgdKjwPMkCtz+MDuCuf7L+pcRDYsUYd8xPFYTQBrTqC6Jw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] openrisc: Add text patching API support
-To: Stafford Horne <shorne@gmail.com>
-Cc: Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Arnd Bergmann <arnd@arndb.de>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Sahil Siddiq <sahilcdq0@gmail.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:OPENRISC ARCHITECTURE" <linux-openrisc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801-gic-v5-fixes-6-17-v1-0-4fcedaccf9e6@kernel.org>
 
-I also considered this approach. In the initial design, there was a
-size_t len parameter, but since OpenRISC doesn't support it yet, it
-was removed to only support single instructions. If there are plans to
-support modifying multiple instructions in the future, we can simply
-add size_t lento this API and replace OPENRISC_INSN_SIZE with len.
-That's why I didn't change it to unsigned long and kept it as const
-void*, while using OPENRISC_INSN_SIZE to fix the length of a single
-instruction.
+On Fri, Aug 01, 2025 at 09:58:17AM +0200, Lorenzo Pieralisi wrote:
+> A trivial fix for a kbot reported issue and two clean-ups
+> discovered after the initial series was queued for v6.17;
+> now that the driver code is merged I am sharing them.
+> 
+> Only patch (1) is a fix, the two others are cleaning the code up
+> and removing useless constructs.
+> 
+> The series apply cleanly on top of this three-patch series [1] fixing
+> some exit path issues with the gic-v5 driver that should also
+> be considered for merging please (I reviewed it and tested it [2]):
 
-Stafford Horne <shorne@gmail.com> =E4=BA=8E2025=E5=B9=B48=E6=9C=885=E6=97=
-=A5=E5=91=A8=E4=BA=8C 17:15=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Aug 05, 2025 at 08:40:57AM +0000, ChenMiao wrote:
-> > From: chenmiao <chenmiao.ku@gmail.com>
-> >
-> > We need a text patching mechanism to ensure that in the subsequent
-> > implementation of jump_label, the code can be modified to the correct
-> > location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
-> >
-> > And, I create a new file named insn-def.h to define the or1k insn macro
-> > size and more define in the future.
-> >
-> > Among these changes, we implement patch_map and support the
-> > patch_insn_write API for single instruction writing.
-> >
-> > Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-> > ---
-> >  arch/openrisc/include/asm/Kbuild          |  1 -
-> >  arch/openrisc/include/asm/fixmap.h        |  1 +
-> >  arch/openrisc/include/asm/insn-def.h      | 12 ++++
-> >  arch/openrisc/include/asm/text-patching.h | 13 ++++
-> >  arch/openrisc/kernel/Makefile             |  1 +
-> >  arch/openrisc/kernel/patching.c           | 79 +++++++++++++++++++++++
-> >  arch/openrisc/mm/init.c                   |  2 +-
-> >  7 files changed, 107 insertions(+), 2 deletions(-)
-> >  create mode 100644 arch/openrisc/include/asm/insn-def.h
-> >  create mode 100644 arch/openrisc/include/asm/text-patching.h
-> >  create mode 100644 arch/openrisc/kernel/patching.c
-> >
-> > diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/a=
-sm/Kbuild
-> > index 2b1a6b00cdac..cef49d60d74c 100644
-> > --- a/arch/openrisc/include/asm/Kbuild
-> > +++ b/arch/openrisc/include/asm/Kbuild
-> > @@ -9,4 +9,3 @@ generic-y +=3D spinlock.h
-> >  generic-y +=3D qrwlock_types.h
-> >  generic-y +=3D qrwlock.h
-> >  generic-y +=3D user.h
-> > -generic-y +=3D text-patching.h
-> > diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include=
-/asm/fixmap.h
-> > index aaa6a26a3e92..74000215064d 100644
-> > --- a/arch/openrisc/include/asm/fixmap.h
-> > +++ b/arch/openrisc/include/asm/fixmap.h
-> > @@ -28,6 +28,7 @@
-> >
-> >  enum fixed_addresses {
-> >       FIX_EARLYCON_MEM_BASE,
-> > +     FIX_TEXT_POKE0,
-> >       __end_of_fixed_addresses
-> >  };
-> >
-> > diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/inclu=
-de/asm/insn-def.h
-> > new file mode 100644
-> > index 000000000000..dc8d16db1579
-> > --- /dev/null
-> > +++ b/arch/openrisc/include/asm/insn-def.h
-> > @@ -0,0 +1,12 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (C) 2025 Chen Miao
-> > + */
-> > +
-> > +#ifndef __ASM_INSN_DEF_H
-> > +#define __ASM_INSN_DEF_H
-> > +
-> > +/* or1k instructions are always 32 bits. */
-> > +#define      OPENRISC_INSN_SIZE              4
-> > +
-> > +#endif /* __ASM_INSN_DEF_H */
-> > diff --git a/arch/openrisc/include/asm/text-patching.h b/arch/openrisc/=
-include/asm/text-patching.h
-> > new file mode 100644
-> > index 000000000000..4c3d8a6a906a
-> > --- /dev/null
-> > +++ b/arch/openrisc/include/asm/text-patching.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (C) 2025 Chen Miao
-> > + */
-> > +
-> > +#ifndef _ASM_PATCHING_H_
-> > +#define _ASM_PATCHING_H_
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +int patch_insn_write(void *addr, const void *insn);
-> > +
-> > +#endif /* _ASM_PATCHING_H_ */
-> > diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makef=
-ile
-> > index 58e6a1b525b7..f0957ce16d6b 100644
-> > --- a/arch/openrisc/kernel/Makefile
-> > +++ b/arch/openrisc/kernel/Makefile
-> > @@ -13,5 +13,6 @@ obj-$(CONFIG_SMP)           +=3D smp.o sync-timer.o
-> >  obj-$(CONFIG_STACKTRACE)     +=3D stacktrace.o
-> >  obj-$(CONFIG_MODULES)                +=3D module.o
-> >  obj-$(CONFIG_OF)             +=3D prom.o
-> > +obj-y        +=3D patching.o
-> >
-> >  clean:
-> > diff --git a/arch/openrisc/kernel/patching.c b/arch/openrisc/kernel/pat=
-ching.c
-> > new file mode 100644
-> > index 000000000000..2b979a0bc584
-> > --- /dev/null
-> > +++ b/arch/openrisc/kernel/patching.c
-> > @@ -0,0 +1,79 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/* Copyright (C) 2020 SiFive
-> > + * Copyright (C) 2025 Chen Miao
-> > + */
-> > +
-> > +#include <linux/mm.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/spinlock.h>
-> > +#include <linux/uaccess.h>
-> > +
-> > +#include <asm/insn-def.h>
-> > +#include <asm/cacheflush.h>
-> > +#include <asm/page.h>
-> > +#include <asm/fixmap.h>
-> > +#include <asm/text-patching.h>
-> > +#include <asm/sections.h>
-> > +
-> > +static DEFINE_RAW_SPINLOCK(patch_lock);
-> > +
-> > +static inline bool is_exit_text(uintptr_t addr)
-> > +{
-> > +     /* Now Have NO Mechanism to do */
-> > +     return true;
-> > +}
-> > +
-> > +static __always_inline void *patch_map(void *addr, int fixmap)
-> > +{
-> > +     uintptr_t uaddr =3D (uintptr_t) addr;
-> > +     phys_addr_t phys;
-> > +
-> > +     if (core_kernel_text(uaddr) || is_exit_text(uaddr)) {
-> > +             phys =3D __pa_symbol(addr);
-> > +     } else {
-> > +             struct page *page =3D vmalloc_to_page(addr);
-> > +             BUG_ON(!page);
-> > +             phys =3D page_to_phys(page) + offset_in_page(addr);
-> > +     }
-> > +
-> > +     return (void *)set_fixmap_offset(fixmap, phys);
-> > +}
-> > +
-> > +static void patch_unmap(int fixmap)
-> > +{
-> > +     clear_fixmap(fixmap);
-> > +}
-> > +
-> > +static int __patch_insn_write(void *addr, const void *insn)
-> > +{
-> > +     void *waddr =3D addr;
-> > +     unsigned long flags =3D 0;
-> > +     int ret;
-> > +
-> > +     raw_spin_lock_irqsave(&patch_lock, flags);
-> > +
-> > +     waddr =3D patch_map(addr, FIX_TEXT_POKE0);
-> > +
-> > +     ret =3D copy_to_kernel_nofault(waddr, insn, OPENRISC_INSN_SIZE);
->
-> If you change *insn to unsigned long insn, you can do:
->
->         ret =3D copy_to_kernel_nofault(waddr, &insn, iszeof(insn));
->
-> > +     local_icache_range_inv((unsigned long)waddr,
-> > +                            (unsigned long)waddr + OPENRISC_INSN_SIZE)=
-;
-> > +
-> > +     patch_unmap(FIX_TEXT_POKE0);
-> > +
-> > +     raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +int patch_insn_write(void *addr, const void *insn)
->
-> Does insn need to be void *?  It think it could be just unsigned long. Se=
-e
-> comment above.
->
-> > +{
-> > +     u32 *tp =3D addr;
-> > +     int ret;
-> > +
-> > +     if ((uintptr_t) tp & 0x3)
-> > +             return -EINVAL;
-> > +
-> > +     ret =3D __patch_insn_write(tp, insn);
-> > +
-> > +     return ret;
-> > +}
-> > diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
-> > index e4904ca6f0a0..b5925710f954 100644
-> > --- a/arch/openrisc/mm/init.c
-> > +++ b/arch/openrisc/mm/init.c
-> > @@ -226,7 +226,7 @@ static int __init map_page(unsigned long va, phys_a=
-ddr_t pa, pgprot_t prot)
-> >       return 0;
-> >  }
-> >
-> > -void __init __set_fixmap(enum fixed_addresses idx,
-> > +void __set_fixmap(enum fixed_addresses idx,
-> >                        phys_addr_t phys, pgprot_t prot)
-> >  {
-> >       unsigned long address =3D __fix_to_virt(idx);
-> > --
-> > 2.45.2
-> >
+Hi Thomas, Marc,
+
+thank you for reviewing and pulling these fixes, please also consider
+fixes in [1] below that are still current, Dan sent them before the
+series was queued for -next and I reviewed/tested them (in particular
+patch (3) - others are obvious).
+
+Thanks,
+Lorenzo
+
+> 
+> [1] https://lore.kernel.org/lkml/670bb1dc-7827-4916-84f3-bb46ee408b20@sabinyo.mountain/
+> [2] https://lore.kernel.org/lkml/aHoU8sKPuyzEFRIn@lpieralisi/
+> 
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> ---
+> Lorenzo Pieralisi (3):
+>       irqchip/gic-v5: iwb: Fix iounmap probe failure path
+>       irqchip/gic-v5: iwb: Remove module boilerplate
+>       irqchip/gic-v5: Remove IRQD_RESEND_WHEN_IN_PROGRESS for ITS IRQs
+> 
+>  drivers/irqchip/irq-gic-v5-its.c |  1 -
+>  drivers/irqchip/irq-gic-v5-iwb.c | 14 +++-----------
+>  2 files changed, 3 insertions(+), 12 deletions(-)
+> ---
+> base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
+> change-id: 20250731-gic-v5-fixes-6-17-949eae3c5594
+> 
+> Best regards,
+> -- 
+> Lorenzo Pieralisi <lpieralisi@kernel.org>
+> 
 
