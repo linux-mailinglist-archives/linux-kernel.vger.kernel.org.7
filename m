@@ -1,174 +1,155 @@
-Return-Path: <linux-kernel+bounces-756448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC65B1B41B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:08:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C821B1B41D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD30C182114
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282CF18A1439
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7EA273814;
-	Tue,  5 Aug 2025 13:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F372737EF;
+	Tue,  5 Aug 2025 13:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RNFfABln"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBxgtV10"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E27F26C39F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639F2B9B7;
+	Tue,  5 Aug 2025 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399294; cv=none; b=n5L7YTLPB2eovMBVKw0zW/P95CJ9481Moca+r+ER3jY2Eh3vLHBPMNRmd3DaGmI5snCmcSXkh3iBq1EeZ/y7IKScwZuckuIzAglfMt20VDvXAT/hVCBenSP794O5sdWLOqT5IPvuGBd9jOQeo7CKgI/2Iw163Ooiy8WmHyyK0Hc=
+	t=1754399389; cv=none; b=ZRKjokesOs0HBI44tF1QSGgZ+RXRdEJ/SuI9KJZ2gO6gqs4tM92KRhqHJz4EdZXWed2JQTLk8ATiDGBdgpC8I64coqf1tV0IGu6mt9K4UwnKeRGnydlfyvlZAe0YDiI9QLq2YOOmgVqrw3nErWBrl96il4jFZU1WRVIpm9d+24Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399294; c=relaxed/simple;
-	bh=XMQ/CjpHTQ625oN346Fj4oJVA2n+W7fLJLcl8OfHgdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tenTmEAZOSM9GzGKmxERrogGHn9MO5OF6LpRvqexNuAFJT9K29RNpsw7aaw24hNvWDThnBAk9agBuv2pmqeCw29e2lH7Gn69xJX7lrO7JvhcrEdeJtwoEcuA7W7e9+FycZ6B/UTedYSrD1Ok79EEq/dlAU1LUEOpUB3ffDIJ8C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RNFfABln; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57578FFb027566
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 13:08:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V1RinYJ//EKx/XDr4zrnDSZd6gtIJfrzcdr6MQbb4o8=; b=RNFfABln/8ZBwmeo
-	YpNeLxPvSeiJYW8CKNyoetOA57j/scU5Z6xZZn06OC7ht/+oH31RtOlYcJwK6ZfU
-	TLROl26OBvFQ5IJQy9e6uBexblAfSZvfSsCMNVWSnF6AQnGOcWV9eT78PQdAuIou
-	OLCmNVo3H26WhY0ehdIVh40ErOemT0tOpLK8DFDNFsiK6sqlqdxAmDvatsrtTcl2
-	WgKy8QkPZgJqJC40eFC3J3lWIP6wVCBqitFJzfX8NYY4L9CuUWfLTix9vIzQAb24
-	p31E3hFfemkLV4wbMCru+C6bICAercOjuJhb0eOsUOT9kG0LA5ZhMzsZGrQgyzi/
-	XQn+Hw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bd9w8yf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 13:08:12 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e800094c82so45164485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:08:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754399291; x=1755004091;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V1RinYJ//EKx/XDr4zrnDSZd6gtIJfrzcdr6MQbb4o8=;
-        b=c+XkZdHthg3bDTo275g2y1c6RCfxm9s2uGh6JKH7OQ+HKvtg355vs/s91ZEPZOgL+U
-         e2D4qzckXGD05mlPuG11UAJWzQ10Lqj49dneAeHsrGRuCBzkRIHGE2S5RQOix7HdzfT+
-         Aw9doTCvR18jNh5dIWAmW2zif4tPm7uJSjmhj+1n1HFvssCk8bKS8yC7nQlxevo6lcYw
-         G0HcpkICoAecSDxuXczQzQbnB9R7SZzUsNyVwNdQHp8Ag1g8+T4U/qpuY+dfmfWW2v1j
-         /vbEPSxLwhr/tvP6V4S6LtpK1BzOv+YVs9FHiFZyopyDu35Ga4BTTP4A81EDCS1xnMMY
-         anUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/+wfNh21R0LzpQXz89gcJggri0GDx9lspXUWgsbY4ySERXN+osdlLKl6g9lWexZ3HXaK0Y/9m5Ze1+cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzitYZfokN7wh3BtsAxUMVBDmHUuKhXc68uUxdiZpiX/JHQAsiz
-	JmTtLljQtq8JTJJyIB/X9b3oYFNtUxWohLptrORcDfDgF+h1qu9SbR42OOyZu3GutyVWe0nq/jE
-	fFjiWEKFviTzHGsxkC+/q3Y9pWKq186hvyhGwg79U3lxhWT2sR2e71bEcydz0SvX/wZ8=
-X-Gm-Gg: ASbGncvn7MCAtYHHdeygbxNiHUF4B68w8sVZOb0ahsUPx4GR+wsUDPJQ09n7pIIRJBv
-	cnstsGbTXx9+CBehqCKmzCPLuVspmxhUJpPDfcWZ/zMmkXxQDOYj6BziHmBjPxXpibbejpj/W8Y
-	+xITCaTsRjugRq0BCdtdV62kRCTyPlcwAOhCq4VfG2+oV1zEv8XvzgeUumi39mUgCVvd4i9eFde
-	P908Ns2uZYoUQrpFrGJGn3lt5aglS9GLR0MQ53EqrTPzxvSEVMupeDL4OClBpnJfVYHf22qaldc
-	CAihrHW5RLKoxlzm9oss8ooQt0hwRJUy+IIGa/dtoHzZuBVdVaaOc52NYX1D3QubbOfaep+8ZJQ
-	s5fZDM3OwJGUfslLXHw==
-X-Received: by 2002:a05:620a:3703:b0:7e6:39a2:3ebe with SMTP id af79cd13be357-7e69627a8ffmr993277985a.1.1754399290896;
-        Tue, 05 Aug 2025 06:08:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzNz3BICSPsbshnHOdcR51KGwLa6oOSI7DAskcW2OrM/K4xCPKDoMD/yMxAl4j9/+41ZoXKw==
-X-Received: by 2002:a05:620a:3703:b0:7e6:39a2:3ebe with SMTP id af79cd13be357-7e69627a8ffmr993273085a.1.1754399290302;
-        Tue, 05 Aug 2025 06:08:10 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e8306sm911353866b.83.2025.08.05.06.08.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:08:09 -0700 (PDT)
-Message-ID: <5d5820c5-463a-4fa0-8ad9-21b75797aaf9@oss.qualcomm.com>
-Date: Tue, 5 Aug 2025 15:08:06 +0200
+	s=arc-20240116; t=1754399389; c=relaxed/simple;
+	bh=MqDN7xUWTd4Ww+dv13mq9KzDQ9G6fwr4yZInmW0+5rM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SvAAwsQFKMYMJRbr+1sn4HgQ6UJi4UKKtAOzFtJKjB+X5T6vVGQvwHeY+IArQWHFFJm6aTUc2igCIfk/TDf1FqaZjWku02/q0tyfquZq5kJ/qMcHu1uhzplPGbT7/xr3meixsveQNra77COnDx2I583jBUpXoZOqx8dd99JWRO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBxgtV10; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30B3C4CEF0;
+	Tue,  5 Aug 2025 13:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754399388;
+	bh=MqDN7xUWTd4Ww+dv13mq9KzDQ9G6fwr4yZInmW0+5rM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FBxgtV10qzcPYTL8syXlyw/QS0y6CfT69/+CT6iab1En79k8eQFham00oYVbw+mLi
+	 q0wVikflsks34hxVRvn803O2FUCKXzu9CFmHPNiJqra9ZjQnxB5W97o3/mO3uJD4wp
+	 mVswq3lKN2lliGP91kucyB+IfDiyD70h9HyK+9BgWIjMTFvyOciuKupvRvuHpTuj4I
+	 /fwAzKsiPhvd2tIRwzMllCTMFg8X5mudv9o4r3Q6n5XKiAzm7d/eC83k8XYxHA9dNQ
+	 PtUvJkJ2gzB/yjJy/uDnHm4tWB9r9tZiXB7niZLQWD2t7GDR3IU4QBPJVUk//icjD1
+	 jSPSv6ADpgVzw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Lee Jones <lee@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.16-6.6] mfd: axp20x: Set explicit ID for AXP313 regulator
+Date: Tue,  5 Aug 2025 09:08:36 -0400
+Message-Id: <20250805130945.471732-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
- broken capabilities
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_cang@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
-        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-        kernel@oss.qualcomm.com
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
- <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
- <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
- <lkjp2353athoi76h3j3bgkcxdwfn6akcyyweipt4g774ztmmer@vcw7ru5red3n>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <lkjp2353athoi76h3j3bgkcxdwfn6akcyyweipt4g774ztmmer@vcw7ru5red3n>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=NN7V+16g c=1 sm=1 tr=0 ts=6892023c cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=36rLTHuftK6yE2Nq2w8A:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: MPuotZXs-wpAl8acCf2g_h03G-DkbB2a
-X-Proofpoint-ORIG-GUID: MPuotZXs-wpAl8acCf2g_h03G-DkbB2a
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA5NSBTYWx0ZWRfX5RG8kT8W9zUg
- xJ8osfKpD+1kBfbVgTh8PACFQ30XZMoFtfckgNOPUawl73AaiCL0T8qz1yk+gD8S9tloxUmCDC1
- 5IN1fxIzmNqbpGYoSIDv/OL1mZqbkJceRNwcEr7rRxDk2T2Fz2DPZ8tXzkGns37w87TxqbIr5vT
- Dg231qlMr6+sppYPhub7HH70JiuvpppDfacGKD8hfII/4pHLAvFAhQnz/xnKndHfrcct3lDBJpG
- SQlaoDmjpqNU0RdY6UBDDLeVdzIJWYV4MVlXj79dBPO/lKjBIoCDaY+lzI4Onyx1b6YEcWk1CIw
- zUzzT7l1QiIQJXZqQQ8dSWQg/wZYH/UwS4wiQhYheuxPAoLNSLNLglc6Kp/u2auG/6z4MpWMLGQ
- LukQ9/lOiNsah2A4ed24Z4gMwtbQjiS4bQbgq6fgkcrjGE8HfnUgQY3X9ZjmltBD0XyHcoG4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015 spamscore=0
- phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=787
- bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050095
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.16
+Content-Transfer-Encoding: 8bit
 
-On 8/5/25 11:59 AM, Dmitry Baryshkov wrote:
-> On Tue, Aug 05, 2025 at 02:49:29PM +0530, Sarthak Garg wrote:
->>
->>
->> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
->>> On 01/08/2025 10:45, Sarthak Garg wrote:
->>>> The kernel now handles level shifter limitations affecting SD card
->>>> modes, making it unnecessary to explicitly disable SDR104 and SDR50
->>>> capabilities in the device tree.
->>>>
->>>> However, due to board-specific hardware constraints particularly related
->>>> to level shifter in this case the maximum frequency for SD High-Speed
->>>> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
->>>> card in HS mode. This is achieved using the max-sd-hs-frequency property
->>>> in the board DTS.
->>>>
->>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
->>>>   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
->>>>   arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
->>>>   arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
-> 
-> You missed several devices which use SM8550. Please fix that.
+From: Chen-Yu Tsai <wens@csie.org>
 
-I would be in favor of making this addition in the SoC dtsi and removing/
-altering it on a case by case basis, since as I explained in the threads
-of previous revisions, the fix for the limitation is additional on-board
-hardware
+[ Upstream commit 88828c7e940dd45d139ad4a39d702b23840a37c5 ]
 
-Konrad
+On newer boards featuring the A523 SoC, the AXP323 (related to the
+AXP313) is paired with the AXP717 and serves as a secondary PMIC
+providing additional regulator outputs. However the MFD cells are all
+registered with PLATFORM_DEVID_NONE, which causes the regulator cells
+to conflict with each other.
+
+Commit e37ec3218870 ("mfd: axp20x: Allow multiple regulators") attempted
+to fix this by switching to PLATFORM_DEVID_AUTO so that the device names
+would all be different, however that broke IIO channel mapping, which is
+also tied to the device names. As a result the change was later reverted.
+
+Instead, here we attempt to make sure the AXP313/AXP323 regulator cell
+does not conflict by explicitly giving it an ID number. This was
+previously done for the AXP809+AXP806 pair used with the A80 SoC.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Link: https://lore.kernel.org/r/20250619173207.3367126-1-wens@kernel.org
+Signed-off-by: Lee Jones <lee@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+Based on my analysis, here's my assessment:
+
+**Backport Status: YES**
+
+This commit is suitable for backporting to stable kernel trees for the
+following reasons:
+
+1. **Fixes a real bug**: The commit addresses a device naming conflict
+   issue when using AXP313/AXP323 PMICs alongside AXP717 as a secondary
+   PMIC. Without this fix, the kernel produces a sysfs duplicate
+   filename error and fails to properly register the secondary regulator
+   device.
+
+2. **Small and contained change**: The fix is minimal - it only changes
+   one line of code from `MFD_CELL_NAME("axp20x-regulator")` to
+   `MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1)`, which
+   explicitly sets an ID of 1 for the AXP313 regulator cell.
+
+3. **Follows established pattern**: The commit follows an existing
+   pattern already used in the same driver for the AXP806 PMIC (lines
+   1173-1174 in axp806_cells), which also sets an explicit ID (2) to
+   avoid conflicts when paired with AXP809.
+
+4. **Minimal risk of regression**: The change only affects AXP313/AXP323
+   devices and doesn't touch other PMIC configurations. The explicit ID
+   assignment is a safe approach that doesn't break existing IIO channel
+   mappings (which was the problem with the previous PLATFORM_DEVID_AUTO
+   approach mentioned in the commit message).
+
+5. **Clear problem and solution**: The commit message clearly explains
+   the issue (sysfs duplicate filename error) and references the history
+   of previous attempts to fix similar issues (commit e37ec3218870 and
+   its revert). The solution is targeted and doesn't introduce
+   architectural changes.
+
+6. **Hardware enablement fix**: This fix enables proper functioning of
+   boards with the A523 SoC that use dual PMIC configurations (AXP323 +
+   AXP717), which would otherwise fail to initialize properly.
+
+The commit meets the stable tree criteria of being an important bugfix
+with minimal risk and contained scope. It fixes a specific hardware
+configuration issue without introducing new features or making broad
+architectural changes.
+
+ drivers/mfd/axp20x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index e9914e8a29a3..25c639b348cd 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -1053,7 +1053,8 @@ static const struct mfd_cell axp152_cells[] = {
+ };
+ 
+ static struct mfd_cell axp313a_cells[] = {
+-	MFD_CELL_NAME("axp20x-regulator"),
++	/* AXP323 is sometimes paired with AXP717 as sub-PMIC */
++	MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1),
+ 	MFD_CELL_RES("axp313a-pek", axp313a_pek_resources),
+ };
+ 
+-- 
+2.39.5
+
 
