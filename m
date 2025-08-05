@@ -1,214 +1,188 @@
-Return-Path: <linux-kernel+bounces-755910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CAEB1AD38
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:47:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32738B1AD3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85BD18A274F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7B83B3232
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C43521639B;
-	Tue,  5 Aug 2025 04:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160A4217F56;
+	Tue,  5 Aug 2025 04:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMeJPmLU"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJMyP2nV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A41201269;
-	Tue,  5 Aug 2025 04:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D584201269;
+	Tue,  5 Aug 2025 04:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369237; cv=none; b=ffhABAUEoQ0UlOoPKjNiiZ6ET3AUtV0jCemP8BvIbWvZSSSiwHuCLzWAQ/Z9xAZik8IuPUxI9O2JbTCbucGlNp8yPXeEMxfGETFX+zLWxxamVWmFB2o27yxX6MVsJRN89sdKCC9NprPt4YvI/Oz5chHv0Y1gTXopyhgBs208Y/g=
+	t=1754369284; cv=none; b=eUGk6mZaxWx4ryhXs0oTmXVvQJx5XyHF4pv/tyMmvU80+aln4s3nigegKE9s/kxeImeUMhX7EE5AHSykkeNzyPaSFi9MMlx2XUMDhClcplZ3tuNCl/ZwAF8q98dwlRT+swm//ze7PHv9eaE494UK0LXw+euBsbMKzT4TPwquRng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369237; c=relaxed/simple;
-	bh=5EyV9W1p+eRAF32BWJq+rGR0/9SRgu9cQOc+UTlyHMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eA2lOZ9hg684LfDguRQ1G5cJltneur7bH8H+JO1c8JIXl1ZtmyZgu8kHB1nqKVm8ZMRJOOsrV1ST+hi56Ytj1KrBEp8ihLiaDyjeoUJmnm6FpSYpkitBiqwtxtqq7HgSnPR5605dOUc4B3hIVjVtSzRE0SY8FHwrVPgzxCV+WO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMeJPmLU; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24099fade34so41562045ad.0;
-        Mon, 04 Aug 2025 21:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754369235; x=1754974035; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=iXPfazU7cIbMUIyerGOFfz8XN/djYB2vzUoaHbctEVo=;
-        b=CMeJPmLUHVO228kitWjZJzG2rMe0hJolUNrAQpn//kNPSx4yUTZa3bZ/TSMzI1fhLe
-         de+KDyUwsj3S7+yZsS2oqYOB7RyCvg2bPWrxRtGQ8SCTQ6cZucKByPWZgMOPmWLLzTnK
-         QuBoiFPMJgE57v274AcMUKxIlsqYp+oUZcsp8gfMURAyWW4pLXPiv1Ill3Zb5gV5oWYS
-         FiO7RzTZGiineP835E7ug0Yvtez2s/bQ8UpRX6Rq1RdKN//l9+ajdW1T54xRKNl2iUWS
-         6stcg7YRR7Mlz0e71ISssNaOOi7IIQtphVNhPRuxXRs+o+k/q9uvRH+akBLo0FDahYCP
-         Zl5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754369235; x=1754974035;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iXPfazU7cIbMUIyerGOFfz8XN/djYB2vzUoaHbctEVo=;
-        b=WeyZNGX7vb2/tcGMs/UOhzXkadOVpvX2JPgVBQEwnGejqJHHzIOYkkUuNwPx6oVVqQ
-         QGwIBMwE23HkYLKgKYuJvG82D/abRVXxrnNUP+KrpOIXm9o+Osrf/bQ0nm65ASHUetgm
-         gdoC3kqo8/Xz6doahGFkEq7Ab3w4QVf+GC5d+MuTtVQYxV93THAmkcvDoTtNoTVFdGA6
-         5gbV9wZ3t4iAqpKyCqVdWk3pVwVhvsHfRTI/ccs4VJhBI31TTqvnFScKHqFjeRHk3GwL
-         9I4UkQxdM8f1ZNLTXK+Bzmgtsx7uzNd9uCVlxUrhatzqcHoY1aQIhs+DiHfkehuVFXua
-         ilsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN410R6KecvPLk6YPwA6uvrms7yKrPsS0vwI7lTJBWYRyd7PEcI6YDzalLHi0AKjg4KKsbE8z6XRkf/5YRpJM=@vger.kernel.org, AJvYcCWCCqGUvFPOGOVccFnKH1ovWCitgSD1wF+fzJwwtn8UxUsTbEFdtcgDetGKauKZx3Bdy4zvlJegWLic1+U5jyOc+E4=@vger.kernel.org, AJvYcCXr/o+j78nEfe2TEtGAtVHRvK+6fnHlx/RPdg2+Rdk4Wqz8rcItUBjjNmrTjvlZxuSNCOukOEOtzSC6aPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzARhyeabY+vMq3bV+ifBjmBpa4Vu8A+TuHZm/rw/DXED/pp4Nx
-	J1u13OL2miIJS2UoVVAsu6dYIFMu5KC4MdIcAIxaEgWPbwkcfO+9CRnc
-X-Gm-Gg: ASbGnctS45OoqewhJYwoEZkPiDjNskhCmW30TvV7hEPRkn+wzUIZ7Zlb7d5O76c1ZOl
-	jwIJHGOw02FmedtzJ9MbrPMbDJPtC+5GBYxGOAPfNftLjw2qDi2ZQsvril0U4UMVa6ytI19mH2+
-	SMHUPjLpcUHfqfTsVEOO8wFuNkBHhQDmqqIcKOjBHz6p29CYFDdg+vhdfUkV3XczKJ4Jyzlwf+Y
-	Ock1WjMzsihHCTn7VhSBmuO67xSQH10AAlc5nP5YP/58AgOV4aj2LK162Ecb8gzrugAG+LDQmR2
-	gUR4QeiR2XSNNKkmusuYPp2JuCgni1HFsrOkUT2hc4ozRMW8vK/K20HJ/rHWLV87O/QgqMrN1Vs
-	/8892ZFQhae9YBbziptAUSDMs4ECnX5HHiv0/C5y2MdByxXe4hFOVftRFcWwot85kluVE2S7cXG
-	u4ItsiWw==
-X-Google-Smtp-Source: AGHT+IFRmiQ7ZlIJtTOEEwOYYDOIvHRJnWLaM4H23tvUN6aEoH8QKnC0VXtgR0x8R9QnCygL2zeloQ==
-X-Received: by 2002:a17:903:187:b0:236:9726:7264 with SMTP id d9443c01a7336-24246f3ecf0mr201885345ad.5.1754369234567;
-        Mon, 04 Aug 2025 21:47:14 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaadadsm123348155ad.156.2025.08.04.21.47.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 21:47:13 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
-Date: Mon, 4 Aug 2025 21:47:12 -0700
+	s=arc-20240116; t=1754369284; c=relaxed/simple;
+	bh=LoCncB0T59vM/YkkVlcIhEh0yb/IFkNXHSj+2ArsmPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJsiwjyrrQSWbNkAWFmx1qNbEfZAqYQzgMVX3YzWC0FNsLc5IPftWNV9/KnVAihKBDnystW2lZItXOqe9J3esJOGG/9f3OrsVqdFP939bkzSzNmoq6YA+LS+S01zDiup5ZwI8UjDOUAjZtl64yrHDsfw6iRK/IscFY2+CQ8hMWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJMyP2nV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D26AC4CEF4;
+	Tue,  5 Aug 2025 04:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754369283;
+	bh=LoCncB0T59vM/YkkVlcIhEh0yb/IFkNXHSj+2ArsmPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJMyP2nVjI/Ojpw0jHVvM/d0xQcdh27oI035+1DsLhGY/TKIo32vUwNMs4ckKFHc4
+	 axcsxLeAv1bXze6etwdJ4n1hWERU64YNBZjPSK4RjpRLHi8snQOIaUITjlfPWWTYbr
+	 p4TicsKIwuOPmfSsgbcCioAdOEVvzDjKREzufyx7LRuaBbczue4ZMejrKlnmJkyL2a
+	 v2SFWE/b8yvpjsSqQNzz2/gA/ArQxTIL+cD2nutLf/7cHWWJm5u1v1Gfg25SMyYpQA
+	 qfE/TbBlQmYuEd5VmJSDV9BN9vfFctr+aV4yq5XpbisNCX59O06ylNJFbt4DRHhYEz
+	 uSKUrKmO2twSw==
+Date: Tue, 5 Aug 2025 10:17:59 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Joris Verhaegen <verhaegen@google.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Miller Liang <millerliang@google.com>
+Subject: Re: [PATCH v4 2/3] ALSA: compress_offload: Add
+ SNDRV_COMPRESS_TSTAMP64 ioctl
+Message-ID: <aJGM2zXS6hOLDFm1@vaman>
+References: <20250801092720.1845282-1-verhaegen@google.com>
+ <20250801092720.1845282-3-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-To: sw617.shin@samsung.com, 'Sam Protsenko' <semen.protsenko@linaro.org>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
- khwan.seo@samsung.com, dongil01.park@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
- <20250724080854.3866566-1-sw617.shin@samsung.com>
- <20250724080854.3866566-3-sw617.shin@samsung.com>
- <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
- <000a01dc05c0$9f0ab110$dd201330$@samsung.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <000a01dc05c0$9f0ab110$dd201330$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801092720.1845282-3-verhaegen@google.com>
 
-On 8/4/25 21:22, sw617.shin@samsung.com wrote:
-> On Saturday, August 2, 2025 at 1:12 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
+On 01-08-25, 10:27, Joris Verhaegen wrote:
+> The previous patch introduced the internal infrastructure for handling
+> 64-bit timestamps. This patch exposes this capability to user-space.
 > 
->> How about something like this instead?
->>
->> 8<--------------------------------------------------------------------->8
->> static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq) {
->>      const u64 div_max = (S3C2410_WTCON_PRESCALE_MAX + 1) *
->>                  S3C2410_WTCON_MAXDIV; /* 32768 */
->>      const u64 n_max = S3C2410_WTCNT_MAXCNT * div_max;
->>      u64 t_max = n_max / freq;
->>
->>      if (t_max > UINT_MAX)
->>          t_max = UINT_MAX;
->>
->>      return (unsigned int)t_max;
->> }
->> 8<--------------------------------------------------------------------->8
->>
->> This implementation's result:
->>    - is never greater than real timeout, as it loses the decimal part after
->> integer division in t_max
->>    - much closer to the real timeout value, as it benefits from very big
->> n_max in the numerator (this is the main trick here)
->>    - prepared for using 32-bit max counter value in your next patch, as it
->> uses u64 type for calculations
->>
->> For example, at the clock frequency of 33 kHz:
->>    - real timeout is: 65074.269 sec
->>    - old function returns: 65535 sec
->>    - your function returns: 32767 sec
->>    - the suggested function returns: 65074 sec
+> Define the new ioctl command SNDRV_COMPRESS_TSTAMP64, which allows
+> applications to fetch the overflow-safe struct snd_compr_tstamp64.
 > 
-> Thank you for your feedback.
-> I'll make the code changes as follows in the next patch set:
+> The ioctl dispatch table is updated to handle the new command by
+> calling a new snd_compr_tstamp64 handler, while the legacy path is
+> renamed to snd_compr_tstamp32 for clarity.
 > 
-> static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
->   {
->          const unsigned long freq = s3c2410wdt_get_freq(wdt);
-> +       const u64 div_max = (S3C2410_WTCON_PRESCALE_MAX + 1) *
-> +                       S3C2410_WTCON_MAXDIV;
-> +       const u64 n_max = S3C2410_WTCNT_MAXCNT * div_max;
-
-Not sure if splitting this expression adds any value. Why not just the following ?
-
-const u64 n_max = (u64)(S3C2410_WTCON_PRESCALE_MAX + 1) *
-                    S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
-
-Or just use a define ?
-
-> +       u64 t_max = n_max / freq;
+> This patch bumps the SNDRV_COMPRESS_VERSION to 0.4.0.
 > 
+> Reviewed-by: Miller Liang <millerliang@google.com>
+> Tested-by: Joris Verhaegen <verhaegen@google.com>
+> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
+> ---
+>  include/uapi/sound/compress_offload.h |  5 +++--
+>  sound/core/compress_offload.c         | 19 +++++++++++++------
+>  2 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
+> index abd0ea3f86ee..70b8921601f9 100644
+> --- a/include/uapi/sound/compress_offload.h
+> +++ b/include/uapi/sound/compress_offload.h
+> @@ -13,8 +13,7 @@
+>  #include <sound/asound.h>
+>  #include <sound/compress_params.h>
+>  
+> -
+> -#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 3, 0)
+> +#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 4, 0)
+>  /**
+>   * struct snd_compressed_buffer - compressed buffer
+>   * @fragment_size: size of buffer fragment in bytes
+> @@ -208,6 +207,7 @@ struct snd_compr_task_status {
+>   * Note: only codec params can be changed runtime and stream params cant be
+>   * SNDRV_COMPRESS_GET_PARAMS: Query codec params
+>   * SNDRV_COMPRESS_TSTAMP: get the current timestamp value
+> + * SNDRV_COMPRESS_TSTAMP64: get the current timestamp value in 64 bit format
+>   * SNDRV_COMPRESS_AVAIL: get the current buffer avail value.
+>   * This also queries the tstamp properties
+>   * SNDRV_COMPRESS_PAUSE: Pause the running stream
+> @@ -230,6 +230,7 @@ struct snd_compr_task_status {
+>  						 struct snd_compr_metadata)
+>  #define SNDRV_COMPRESS_TSTAMP		_IOR('C', 0x20, struct snd_compr_tstamp)
+>  #define SNDRV_COMPRESS_AVAIL		_IOR('C', 0x21, struct snd_compr_avail)
+> +#define SNDRV_COMPRESS_TSTAMP64		_IOR('C', 0x22, struct snd_compr_tstamp64)
+>  #define SNDRV_COMPRESS_PAUSE		_IO('C', 0x30)
+>  #define SNDRV_COMPRESS_RESUME		_IO('C', 0x31)
+>  #define SNDRV_COMPRESS_START		_IO('C', 0x32)
+> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+> index d3164aa07158..445220fdb6a0 100644
+> --- a/sound/core/compress_offload.c
+> +++ b/sound/core/compress_offload.c
+> @@ -736,18 +736,23 @@ snd_compr_set_metadata(struct snd_compr_stream *stream, unsigned long arg)
+>  	return retval;
+>  }
+>  
+> -static inline int
+> -snd_compr_tstamp(struct snd_compr_stream *stream, unsigned long arg)
+> +static inline int snd_compr_tstamp(struct snd_compr_stream *stream,
+> +				   unsigned long arg, bool is_32bit)
+>  {
+>  	struct snd_compr_tstamp64 tstamp64 = { 0 };
+>  	struct snd_compr_tstamp tstamp32 = { 0 };
+> +	const void *copy_from = &tstamp64;
+> +	size_t copy_size = sizeof(tstamp64);
+>  	int ret;
+>  
+>  	ret = snd_compr_update_tstamp(stream, &tstamp64);
+>  	if (ret == 0) {
+> -		snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
+> -		ret = copy_to_user((struct snd_compr_tstamp __user *)arg,
+> -				   &tstamp32, sizeof(tstamp32)) ?
+> +		if (is_32bit) {
+> +			snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
+> +			copy_from = &tstamp32;
+> +			copy_size = sizeof(tstamp32);
+> +		}
 
-Make sure this compiles on 32-bit builds.
+Most of the applications and people would be 32bit right now and we
+expect this to progressively change, but then this imposes a penalty as
+default path is 64 bit, since we expect this ioctl to be called very
+frequently, should we do this optimization for 64bit here?
 
-> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
-> -                                      / S3C2410_WTCON_MAXDIV);
-> +       if (t_max > UINT_MAX)
-> +               t_max = UINT_MAX;
-> +
-> +       return (unsigned int)t_max;
+> +		ret = copy_to_user((void __user *)arg, copy_from, copy_size) ?
+>  			      -EFAULT :
+>  			      0;
+>  	}
+> @@ -1327,7 +1332,9 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+>  
+>  	switch (cmd) {
+>  	case SNDRV_COMPRESS_TSTAMP:
+> -		return snd_compr_tstamp(stream, arg);
+> +		return snd_compr_tstamp(stream, arg, true);
+> +	case SNDRV_COMPRESS_TSTAMP64:
+> +		return snd_compr_tstamp(stream, arg, false);
+>  	case SNDRV_COMPRESS_AVAIL:
+>  		return snd_compr_ioctl_avail(stream, arg);
+>  	case SNDRV_COMPRESS_PAUSE:
+> -- 
+> 2.50.1.565.gc32cd1483b-goog
 
-I am quite sure that this typecast is unnecessary.
-
-Guenter
-
+-- 
+~Vinod
 
