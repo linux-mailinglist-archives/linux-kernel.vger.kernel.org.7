@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-756089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9576DB1AFD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85517B1AFC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8320D4E1FDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82C93BEA9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D554242D87;
-	Tue,  5 Aug 2025 07:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69E424C664;
+	Tue,  5 Aug 2025 07:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/wTo+7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EadUrHEr"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16E8946C;
-	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D342494C2;
+	Tue,  5 Aug 2025 07:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380303; cv=none; b=oujEKI8NKG2VgRjGT6xljzLHBrEaBBKmy6eogqtc2XR8flvkuDnuqFOMr17PxZMuBK5pQlQm1tSaXh63nXvjdJz1kNovpQwGIrI42Pz5sFIc3QzB6csTbTeNVuJ6JWkhqWu55J1tvqe5rDErg6Bivbt2mD9clEF8txpNpe6oZKs=
+	t=1754380193; cv=none; b=cM6KmndKSzD0akYC2TLo6FZk9j9S5+1RsTNLiRNXvqoz07Wm+vHfakl0h13UoKgGilmsqyW1rrvQO7SNN5Ltik0kX+j1Q8pkHu94rRu8lOzoFDNFVsbqb7toaiAJR/u/DOOR0jtwbM2W6t7+JwlNdxJDTfqcuYGFi8GzzXfYbvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380303; c=relaxed/simple;
-	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FIbRrV+wZDR4c9KRtSibdprJWB07SA3p8wVaG+vDuQMUMb0/E/soHzC2NUi4rVI3rDEcE1roPB9SgLIflNdul9gFglakjbofcHR58d76kT6vzmydI1R19N9BQtXcpmAq9aZPY74AxTyt7uqgvyd59kbf7BasM2Xi3NgNSOMxRNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/wTo+7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD9CC4CEF4;
-	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754380303;
-	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V/wTo+7eKfeslKF9rfcaUrhfVqZsjAmicnMmyfiquzuhnD5ABG0bsDEyWVsBVlp0k
-	 v3ilyTYzMw7AkqzrghRguerGHnfavIHs6gnZiwPEHMIScnoS2b6eiIMFCXhECNPAu/
-	 /ymxRWYBaFRvWE4rjVcxoLzjtFUWeFLaPd3NVqMAGqbqOtwPi2ZUfKodrYsuYJwgR1
-	 yXseT+oSL0yLj+T8tkIYWjr8AVO1lzoOmsCwXMYydxLM2jV0Tt7vD78GYY9TCOidw8
-	 cBQO9H5ZWlqpQy6n05qjzp7cQnqzXePMoljj1H5RMaimD3tI3u/SOsG0SF587MzREB
-	 np1WL2neozi8A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ujCST-00437m-3a;
-	Tue, 05 Aug 2025 08:51:41 +0100
-Date: Tue, 05 Aug 2025 08:51:40 +0100
-Message-ID: <86ms8e6wab.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Toan Le <toan@os.amperecomputing.com>,	Lorenzo Pieralisi
- <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kwilczynski@kernel.org>,	Manivannan Sadhasivam <mani@kernel.org>,	Rob
- Herring <robh@kernel.org>,	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in xgene_msi_handler_setup()
-In-Reply-To: <aIzCbVd93ivPinne@stanley.mountain>
-References: <aIzCbVd93ivPinne@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754380193; c=relaxed/simple;
+	bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=javb0XHf7I4QoZ+4thDE1FITeZGWxGbq3O9ijk0sa+MK7xWT6ZC+RgKSXq0Y0IVoAyT0sGfOzxMx1FCm2Ck0IdDuCOBEO5sUZydJkEI2MPb7xfZOqsdI1vlareiXJ1Irt/nb+bbpwHTP+Ral09lY8CPJdDDE5f68lRx1d3bqdPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EadUrHEr; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so4217064a91.3;
+        Tue, 05 Aug 2025 00:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754380191; x=1754984991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
+        b=EadUrHErW7vkKVzl00F3FnUKop06BdBOUwAWBTJ/jLXlgIsxqZ+8kqL88766on1UwV
+         eQfx9ktCLHWBeq/H0YuyzJ0+kMN0iTz+/ZJQvlRjbaD5bzE7f8ToqGKr7xjGvRN3BzVi
+         xmAworfeB+0VRbIiGG03DsDUBwHGl/eJzHfcgd3GNu94nBwQzEK0XnnRNAk6TFzeLK7O
+         X9ZK5lnoI/i2NpMg4VZDacHorXYwVxFB+pF3hcrlnMgr5/l+oAygz2BuOqJFADamye46
+         pJPEBmWiqyg9dnTsSDKkc9iVCHK3OPENjEmIg2ixO27gRZ1q2VhChzNt89v7lZUtN1tX
+         uP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754380191; x=1754984991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
+        b=cFb4j6q0HqXorDVtP2O4iKF1PoB+PW5tII80FMsjzb8B35sP3V2Tkq6aXtnt3ornEF
+         MxQapLveu/XNvhetzV6uBrL+Uovq+Q20OzBre6gB5LJfK4OSFLsBpS3IlfQjXwmHc0Wn
+         mNaWDWLlrzjTWh6tQvtxT2vV6kp/TrRWwPLDSf13TMm7ODZbjjE8WD4gHnbanKlZe24M
+         OvXxGgbkDsu/PkSs6B4GQ5Gc1gHNBUV9uJnKzyLVllxQ+NS11ztAfPFrUSp2YbbGsHvG
+         IRX6nI4s0VG6XGggGyrCn4N0E6Q+vNxyZH1I5mCvKfaLwF896htt2g18YD86qpWHgM7b
+         Yc/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnUnVDL3BKkr5HOjapt32R3IP27+U58Ti+hUGXizeeWy0o+6t9E/UfuRppZx6qFmgkV2jzVLMSyeZFh+x/@vger.kernel.org, AJvYcCV+lNOxyNTWseiE90V0eJ2wgcxgxp8Qum/TrE2cA/uOvtkH7YLFGBouJs8mZTv5NlJm180qibnd05D7@vger.kernel.org, AJvYcCWvirG7aCPvtX1SyV9/dw/42nM36oIe+HYoFW9ZYGBuftTePQdL0XWv9T64zEc+xoTVlYOqdBrtzugd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrH0jkNSrgIqzG6gT3xMgXqvjC6379zBYxGVFjXJXsImGpePfU
+	DuwTxrrGx89AVHpBiBRj9wknUlCLSdVOrOUwtx0v4tZ2+4ESoRV/vb6lCke8ibgonbnsML5lswx
+	iI6me6L1znQ4SnNcu0QGb3q6AzxwNNMI=
+X-Gm-Gg: ASbGncvFd4momJpNrv6P7wDbpE1ASeMcC25ZvhCTEb1oXCYZQo7OnZCGbINAelFljfX
+	bj9ZwyJesdlqIRuV8CE84v1A86N98aTTpSaqp0mVn4TEoi3WfG0DM7sqXQ189lawizbIA1PU848
+	6bPRLpu8rjS4aeY1qJhi5dENm2e/e/FAUKMXMfCpyC9dsSGdD0jBsLMqGECgDyHviwQg7TpR6MP
+	DJ9
+X-Google-Smtp-Source: AGHT+IGzN/lG60iP8C5y42/6GZHUdwFTfQPnirMANk8NvV5b0No4/sTpu/QFLlH7OULW0Qi45yw+Mon+tegHBGVKjCQ=
+X-Received: by 2002:a17:90b:3e84:b0:321:1df6:97d3 with SMTP id
+ 98e67ed59e1d1-3211df698c4mr12468336a91.4.1754380190738; Tue, 05 Aug 2025
+ 00:49:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com> <20250804155407.285353-6-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250804155407.285353-6-laurentiumihalcea111@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 5 Aug 2025 10:51:56 +0300
+X-Gm-Features: Ac12FXz_yTxmGlhhGe-fi7WMSXizT1iAGAYfFnkICkWhi-5XkkI01xGLjDZkakI
+Message-ID: <CAEnQRZAAwmivz-uu2Z88Ky71eJ=5oRjdSJqqSQ2S4JT2cwQpOA@mail.gmail.com>
+Subject: Re: [PATCH 5/7] reset: imx8mp-audiomix: Extend the driver usage
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 01 Aug 2025 14:34:37 +0100,
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> There is a typo so we accidentally return positive EINVAL instead of
-> negative -EINVAL.  Add the missing '-' character.
-> 
-> Fixes: 6aceb36f17ab ("PCI: xgene-msi: Restructure handler setup/teardown")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pci/controller/pci-xgene-msi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-> index 0a37a3f1809c..654639bccd10 100644
-> --- a/drivers/pci/controller/pci-xgene-msi.c
-> +++ b/drivers/pci/controller/pci-xgene-msi.c
-> @@ -311,7 +311,7 @@ static int xgene_msi_handler_setup(struct platform_device *pdev)
->  		msi_val = xgene_msi_int_read(xgene_msi, i);
->  		if (msi_val) {
->  			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
-> -			return EINVAL;
-> +			return -EINVAL;
->  		}
->  
->  		irq = platform_get_irq(pdev, i);
+On Mon, Aug 4, 2025 at 6:57=E2=80=AFPM Laurentiu Mihalcea
+<laurentiumihalcea111@gmail.com> wrote:
+>
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> Some NXP SoCs integrate one or more, per-subsystem, block control IPs,
+> which allow users to control the assertion and de-assertion of the
+> reset lines tied to some peripherals present in said subsystems. Some
+> examples of such SoCs include i.MX8MP with AUDIOMIX block control and
+> i.MX8ULP with SIM LPAV.
+>
+> Some of the aformentioned block control IPs exhibit a common pattern with
+> respect to the assertion and de-assertion of the reset lines. Namely, the
+> user is able to control the state of the reset line by toggling a bit fro=
+m
+> one of the IP's registers.
+>
+> Linux can take advantage of this pattern and, instead of having one drive=
+r
+> for each block control IP, a single, more generic driver could be used.
+>
+> To allow this to happen, the previous approach, in which a single reset
+> map is used, is replaced by a per-driver approach, in which each auxiliar=
+y
+> device driver holds a reference to a certain reset map.
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
