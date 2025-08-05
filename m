@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-756158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3C0B1B0A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:03:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE03BB1B0A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466713A5811
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:03:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD970167912
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED790259C87;
-	Tue,  5 Aug 2025 09:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63321259CA9;
+	Tue,  5 Aug 2025 09:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l57AS8tP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qXyRG3ax"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502FD255E20;
-	Tue,  5 Aug 2025 09:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE2586C9;
+	Tue,  5 Aug 2025 09:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384626; cv=none; b=Odf69Qc7iVw/DqLSAZVej6rjm8OSCDSWOxrWoKbOfntT/uQtGFa1mJWx1w0DbmJfFn4TdwskkyeVYaKKl8pGF4rsQXf0hhEcUf7UWW+6Y5AvRtpsDmt7zKjNjFpiHev5NSq0o0O/leSqkBLjZxQjvgtVPEPC8yEiwxAgLlMw24A=
+	t=1754384653; cv=none; b=Q48YTQ/wdDY9SQfRPQHf/TZJvOb5PeavU/LXXwEywUng5n+nFAo103dMd2NXx6gP3ReDRlXQCPLKs8U1N2vTfvu2aPaNXM9zvsvjjvuHEBEVA3IeUtDNIUSUWm1dm+Aq2r3vjfmDEbKp0gvGhXNrTY2umygq70L9kziU0zoUW7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384626; c=relaxed/simple;
-	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AAwWW7NWg2WxJh9ij7sJfCTnZobL6urn6/04lMXgg2fDjoOiiEA3qvTkVvA3C7N+YwX8tnNDa7ClOTELJ3u837/Fs4MladSFcjy+dMKSgXJCkWqpHrEdtNZCwrBwxb/4ID61ySx1i57CC8ColFRsyJvMmIqBg097aZ23WOC9YWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l57AS8tP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B84C4CEF0;
-	Tue,  5 Aug 2025 09:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754384624;
-	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l57AS8tPO/TU2LnmMVBLk8M1XntNd9ifxy+61taiX5Hly6vneP249ZdWeTMx9ESpv
-	 lRQABqW7cI2rvyBVEKUuhtJtN0FPCqj4nNn/LgMluhIVXbhXyvpU2upTPzmaFMg4fH
-	 +qKs2dPeKBZD67JJLo+Rp9q45BOiXn7AJ4KM+v+isYOppD73bENARFTuGbfZW4cOTR
-	 f0O4p2iOJ8pbdW+Yckkc5DPH9IGjdTLvAk6+td6EJKOxIzJoGKueJJ5U6AZZ7dvjme
-	 ILvAn6PoRC7LPDX+BvO05Dm+nyDGAnTsCNobFBmrirO1GrI5mfImYlalxOOb0RcYXT
-	 JYjcxVS0yEDIg==
-Message-ID: <e61ce15a-b16d-4975-9467-5e3758003dd9@kernel.org>
-Date: Tue, 5 Aug 2025 11:03:40 +0200
+	s=arc-20240116; t=1754384653; c=relaxed/simple;
+	bh=NUpfptKkWuTZM/PifetKSGfcOkDvXHVifVwI0o/vcLs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ODohm3mpm3yJcZCbeGfKQ1tfkK2YZjKml6wDBmEQcyr1k8X4747i7S3pnYaQ2vsnJBqJLhoxFGBBz79FKl2S8fvBHDurFyCF/jpZhe4AYdwWF3FMOXXnDAzji4f4V4fLp+sB2WAXx4mrK+jD+Yo3ea85A6Tbvy29BygMq8zl0OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qXyRG3ax; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5758xqeG010877;
+	Tue, 5 Aug 2025 09:04:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=elaOjrB2plLMfQbXE+Lk2N8XqtfoumlKiKpuacXIZ
+	T8=; b=qXyRG3axLn6MB64VBggkMfnvWGsQ5aPk3W67GG7j+E720EK6GtAceARBc
+	K/DesLC19CSpY5CdFamZ4d5RPz+egwEF6aN3gqC+0/zh9uRgydBHPNhiCPlKpynN
+	3HVGkxKrgJ9R/70KAVxT7Ca8TGxjOSYBkrHPQuzn3fvBmASZFGtqU0DUyMLqrSN2
+	7lka0wvr2tmmJR4jdpeJhU1HwKD0dE4h24GwIdYukHfAj4oPBx+LsGiS9XpYcRpl
+	o3fovVrshK/9AP2rWIAbsDHBkvstPLyTr/mvPn0k9eES5WSFaSklA+N7hIiOGYdo
+	9b2HkEXX+FZv5DUm93s29ZhaGM4VA==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48a4aa1h8p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 09:04:07 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5754T3FZ006823;
+	Tue, 5 Aug 2025 09:04:06 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmhm8v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 09:04:06 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575942mX53805552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 09:04:02 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB8B920043;
+	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C40D120040;
+	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 09:04:01 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, japo@linux.ibm.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf/docu: Update header documentation on BPF_PROG_INFO
+Date: Tue,  5 Aug 2025 11:03:49 +0200
+Message-ID: <20250805090349.361730-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si514/544 to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250804222042.4083656-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804222042.4083656-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Ea2xIgP8pp8XjclC_aBc8dnKKfSInHZn
+X-Authority-Analysis: v=2.4 cv=dNummPZb c=1 sm=1 tr=0 ts=6891c907 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=85rDWHBjpAYECwts9QIA:9
+X-Proofpoint-ORIG-GUID: Ea2xIgP8pp8XjclC_aBc8dnKKfSInHZn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2NCBTYWx0ZWRfX6D9stS0W+OII
+ dujpK4omHQstZqeXjAQ8DMFWnaRldKju8W5dguMn8Fu8ENkO0uK6FRqi100K22IRZKQNR9f0Rrr
+ riXOGpXT7Pm7C+u2xuwzojGOYUYrMTllh6Mapl2JAvQ4Fawggtc+92RfSr1zJBU+wSUMgHQYza7
+ K9IBPHMJpn9Cp+QKU7Rq634EChjYwwzTIb9ac39/nGaVGuzwA55FtgrF52a7s6tUhO7eZyujXWo
+ z4BCoT6yvUdGPlMOZl9KVC/wtokcXdzMtMJLEBRPU6UJQrjjYLHMaj0zDHnqNLs9xNpMnG7okHA
+ pqG3yFrUi3cLsYeCaXr03lGNKnrGdpC9fCn5NLqpK41p42E50eoKrc12dZ1W2DUOiCrZ4xc0Zbp
+ OC86lAqKncb7hwl7Sw0Ig7Vbf1MF9NhAup7N5yyCvX2vv43lKn2OzB97GOM9sg78VRsayneG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=908
+ malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050064
 
-On 05/08/2025 00:20, Rob Herring (Arm) wrote:
-> Convert the Silicon Labs SI514 and SI544 bindings to DT schema format.
-> Combine the bindings into a single schema as they are the same.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/clock/silabs,si514.txt           | 24 ---------
->  .../bindings/clock/silabs,si544.txt           | 25 ---------
->  .../bindings/clock/silabs,si544.yaml          | 54 +++++++++++++++++++
+Update the perf.data file format description on header
+section HEADER_BPF_PROG_INFO.
+The information is taken from process_bpf_prog_info()
+and write_bpf_prog_info() from file util/header.c.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Reviewed-by: Jan Polensky <japo@linux.ibm.com>
+---
+ tools/perf/Documentation/perf.data-file-format.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index cd95ba09f727..0437eb5d9188 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -348,6 +348,16 @@ to special needs.
+ 
+ struct perf_bpil, which contains detailed information about
+ a BPF program, including type, id, tag, jited/xlated instructions, etc.
++The format of data in HEADER_BPF_PROG_INFO is as follows:
++	u32 count
++
++	struct perf_bpil {
++		u32 info_len;	/* size of struct bpf_prog_info, when the tool is compiled */
++		u32 data_len;	/* total bytes allocated for data, round up to 8 bytes */
++		u64 arrays;	/* which arrays are included in data */
++		struct bpf_prog_info info;
++		u8  data[];
++	}[count];
+ 
+         HEADER_BPF_BTF = 26,
+ 
+-- 
+2.48.1
+
 
