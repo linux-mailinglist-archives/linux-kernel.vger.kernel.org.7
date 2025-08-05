@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-756605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C9BB1B69B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80244B1B69C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849761786BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9441782CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114EA278E47;
-	Tue,  5 Aug 2025 14:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C27278157;
+	Tue,  5 Aug 2025 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YoohEbcg"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kaDTtUVO"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83AF275B07
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754404392; cv=fail; b=fUX75naSd3MO3swPgaJZ0PPlozJiNtz7djaxSnyOGDJ3xOSwJpsA88k0Gj2lXxbvZU1zZSycovNH+PbA6Z3p1zkj3NjiqFOHBAGZn9fRbsusZNyCO6ME7MB3h6XW7kRGnYWNA1PhPPAJDcCIdVVYAOo+d8jgo6SZjh5IZ8wdg4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754404392; c=relaxed/simple;
-	bh=NE13pcJw3JgOuN6SILB9CLahybINXLP57RkdhaE7HIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=h/GTa+PkQA98QMGfx0TYUVMqnr2hiXaR+/CQl3DTzJyuE1P4q5Fymbqzo2e2geue0yXRuhq0p4msnCPGWOEEePK7ss573BfbSNis/62SUKtiFWYzjVQByQen3EV+J/UsDJ6l8paS97NNwIbvr9F52ZZSAA0V+DY8ULaE9Do6wkY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YoohEbcg; arc=fail smtp.client-ip=40.107.102.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oIASGX6iyNNtTbHvFGzLZRz58HdKhSqCtbypKIF4/auSx2njT/JXbCJRILkmXSsHVcnkVZbdeig25kzC93z+Hh6FaYoVvyeSTugnY7eMMG6lY/GUQL6jtFK/c7Xa5R2CHBXxdQC/qayF/PWKByJsdLBfo19CkpEL3TO76EysFHQrWUvT9Uypo3W9qLtxfTVGf6hcQHXjreIL0gAr1R74vv7W9SJvNPUv56XX/hZuJqE4C7LzCgBXeZvD2iPVC1Y8DuRAh9hcnG6gs9Bjc+pWq0LLhhEUFPwkt9FqB5rnxcCrekWcg3akO46v3kRQtGh1MtIkFFOS5JFCaZjTzLJvvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8PY5nwCB8yUCOFGAlE8Nd4iraVGLQGDVua8xbspSV0s=;
- b=soTDY2N3ooldeysbmNaZFzyYd3bET3Q1AZt9k84LYDNTbwOEzTxLP5GLn5OgFeqhKvkW+G1KHYxLdP166LYcySc3WTAfZ1iqsAyXkT46AF7ZEXcMCVupQl07o5kUq23BhjyUtrFxRml8iaxJSHDTylpolEp34QO0Po9IHY5KS8ZNjrIFwJ4+zrt+Smz9qJIM+Yb+oHTrMIB1eTblXOf2oriOWHNJtobyEL05Qfoy3wQGFb4SksAwfeAoCpp4oD+JQLfN1UXPLdKSqkSe8xL5Dl4d8vqsQUW7wa9/eCkvaR+E9BSOejjDV09aV9NcPiqS0t4DjZUAW56wAT8a0OTafA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8PY5nwCB8yUCOFGAlE8Nd4iraVGLQGDVua8xbspSV0s=;
- b=YoohEbcgxMt4F8rrRBsMFcGyLSTGLeCx+QbWCXl8J0Cmbd/zLBBYmuCBST+Aca0UJnr1Jg4pHGZkPet7cA/8wBUd7pFc/ixZFLzwginxDquj5v+AU+vL+b83SNxuIcGHg6T51lty1LqAeT9LvOWSq+PLWCCzJAooad9rdNavJilTlOeSkf7RHAcRDV81OvHNnWj6HumtHviiigpdzEy8oxV9/VWa0gUr0gs89HKm74N9ptL1oj9c40HTrEagnwLrqCinxbVIOqUmANpW9sFOldfi7CrllJyqB4IvWlmVDmLtOa4gaUGIGonqie/yxXKwDJkqUgd5VFgNfzI7FHaIJA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SA1PR12MB7175.namprd12.prod.outlook.com (2603:10b6:806:2b2::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
- 2025 14:33:07 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
- 14:33:07 +0000
-Date: Tue, 5 Aug 2025 16:33:02 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
-	mingo@redhat.com, peterz@infradead.org
-Subject: Re: [PATCH v3 0/3] sched_ext: Harden scx_bpf_cpu_rq()
-Message-ID: <aJIWHk_4IuOxyh5d@gpd4>
-References: <20250805111036.130121-1-christian.loehle@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805111036.130121-1-christian.loehle@arm.com>
-X-ClientProxiedBy: ZR0P278CA0147.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:41::21) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33570275B07
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754404506; cv=none; b=OMzT6rqXrSZY6vLAbvfDXnYQUAbqRFZW1PpFRL8QUcLn02ThGWmheJLwmTMLvnMmRK8egC/rRAysC1yQSf1VK6R3tQqfkZMolADNGcgZjJRgA61Rgvogpc9GVDmB8ntxsYrTs67x9OwW2fRborwKeC+HsVEUm89DxEaosOHhdrM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754404506; c=relaxed/simple;
+	bh=Cwbx4fAo3v6Kvmo6qZurjhrji8V9gCulLFdPdTB/AJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+ZEb2a1rkF9U4uktFjuWdK3XcV+KLRUxn7fg/CGkk1V9mstCO+L04mCFWcT9vlvyfo6YskCjWnKGFqxeLN6sqKUmTiTc2fT4iDQBYyziQRGBb833rszw1ds6oG3zv9zRWrU9fA46lhtI405NGpy4Ilvy9HEMZi6twzYXeBVeZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kaDTtUVO; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e7f940a386so145688985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1754404504; x=1755009304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RBToXdvc7vhVURp+VSgDGT8CNn/O/Lx3N4Cacd9QC+s=;
+        b=kaDTtUVOdsgW+SanOdS8detQSiuBhifz7s5q7Q96YUopgFQgZywMedTVza5U8yIxll
+         ALPmtOY3tFzvmI1rKiWdkzIU0jwxaMQyPL0SgyOmFQnoqytBjj97wVsRJif7mq+9pgQG
+         69ELtb4hgNq3yV8JNjG2BXDuS3NpBrxQ3TvRMcuGxJw0so6H0H337S3NBwioKKtdF57d
+         vtNr7t/ofrVvu7Xcvv7OKtPd1CLmu0WT8ikJDFFzNNfnT9E0Ovwm4fDiEnBFFO89CJe9
+         K+b1dOs7x82+NXGrxUVQEWLQMNxzOeA3dYo6ch/C4J45haSbqcpb8YoeAdrJ2VCjewyT
+         RTAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754404504; x=1755009304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RBToXdvc7vhVURp+VSgDGT8CNn/O/Lx3N4Cacd9QC+s=;
+        b=EablImsIy8GETcTkE8xFm+97s/hlSI/2VZW7x42rtVjW1vxw6/Gy94nkGIptfULKI8
+         tRK3EpvSvDVlpCq1x0P2KJYUgnW3cGv98x6GTKQywoS8YlZW4EXTiMMHzH5qKK8l7W/r
+         yQAVCyxXW27+hiOZ57IVQiKPHcBD0F/kogRrrDvhQC2iehyekIo/dykPxcN8w9i6MYOe
+         XU0dY2Q/YOWtp3RvQpqBsBIr6SmvtdzEC/n7HDjK6MWq5HYzEQ+n5RSX20lsByLXazD4
+         v6m4zbyz1SdumFQTL+UDJIKX45qDHVmOxs76j8YC75sqjGUG53EfHFFqQ38XW1YXHWzb
+         9Aqw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0YlN62tyIu8T4QqhmDmXy0Hj9StdHmlDKSlfXOnzdV9+bPb8ssDNuwk6MjajueW3gnaZivdTKnzAI8C0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznCuHjeRhviH0y7juuemGPbW5ZGkoOIv4mVvNaw7+oJUxFZvWI
+	nPFqlfMj8I8XRwIkv7Mw7f8K9XyyTTr8fCCHbc6KPjZ7nQIDXj8PiXzvFUxXJILg6ts=
+X-Gm-Gg: ASbGncuRcONiJXK8KBpwf6EsECwtjfBw5DB+PGQgTbJqX8x4VaXczA/wfFr8TOLUVCn
+	dbGVz/8mIYSYB98LRE1KUhEM1yqjVYEPRXdDhgZejYyx8k/08YE+mhunwn1tcLGU9/WWPx2ouhm
+	GslgfhPGJoF525KfnKzR3BfiqeGT2Po+LvALgt+Jzu96qSbEwhxMeZZdcwCW8X2h2B1cO74zBMG
+	Rfk6MYjh1HLKMPjULQW2bPESHepxLskvvUQr99fdc3jkcPrBftVnaB0LKSEoz8cHhw6b9L96aTR
+	xMUwyNWlD21PhdMb3LckVGpIGwTUx/3fpdnMSZl0Tgssv1bfRz93ZBRCS5vpnzBhEA6XYSAzqgu
+	/CHjEXe3qyeS9xDaGcg1/Z8YIfhMTlOUbUxXnyZxBcFFgaTPA5L+BPn5uxEu7YQ7F3i0vlvE0O1
+	LckUk=
+X-Google-Smtp-Source: AGHT+IF+3kfrwzrTgPnPbgiihuZwD781MauBUX6H7jY1e1xn+FzW3NhXvH6UtxUPt9nNb/NESu2wng==
+X-Received: by 2002:a05:620a:a483:b0:7e6:7e39:be55 with SMTP id af79cd13be357-7e696269e7amr1410178785a.2.1754404503789;
+        Tue, 05 Aug 2025 07:35:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5bee91sm681707485a.32.2025.08.05.07.35.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 07:35:03 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ujIko-00000001Y5w-2i8N;
+	Tue, 05 Aug 2025 11:35:02 -0300
+Date: Tue, 5 Aug 2025 11:35:02 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: Bernard Metzler <bernard.metzler@linux.dev>,
+	Leon Romanovsky <leon@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	Jakub Kicinski <kuba@kernel.org>,
+	David Howells <dhowells@redhat.com>, Tom Talpey <tom@talpey.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, torvalds@linux-foundation.org,
+	stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2] RDMA/siw: Fix the sendmsg byte count in
+ siw_tcp_sendpages
+Message-ID: <20250805143502.GQ26511@ziepe.ca>
+References: <20250729120348.495568-1-pfalcato@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB7175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 509027ee-0499-4c0b-b68a-08ddd42cfea7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7OB3tgM/uGipOpnhK5fm1QJQSHlDyr4Xxyl8MnLtSwoJdrXF+j88Y+hOpIZb?=
- =?us-ascii?Q?wQ2wVd3PVOYLI7lFlB3l/dfuLcgsdulIpfz6Oe/2blKQy0OBx1iE0PQ5qBP1?=
- =?us-ascii?Q?h3tqOUHxnG2JPtmfU9ZP7wLyGf3UCtUHhffIeEy4CaiVGjvvwWvmvacQJfBX?=
- =?us-ascii?Q?d9wXFaAL9R5tIdf5MbxTBuYi3ZJmb1OQPf5w9xCdooL8DKxy3LTL7WQ1XZuh?=
- =?us-ascii?Q?I0QuZsg1OMR10S1tYp/yHWXozHMA4iV6Hq7VvcHD7z22mLNwp5sglHY53hA2?=
- =?us-ascii?Q?guvg2VK6eBlxezcNwqm1fkD+2P0WEC7+UqpJhwZUHTiljltSxFgIwVGJQmf8?=
- =?us-ascii?Q?M6psptKxge1HCIZdfwo8YlC8WZMwLIH1KgNm9QBoSFlVbPCWu5Mo97CbCdHD?=
- =?us-ascii?Q?USrN1V4K628E+jkl2YveX0p67KMYskT40Vq7jaImvi6Tvc0jUoObNpihASgQ?=
- =?us-ascii?Q?PNk0oS/hgfz1CIRjS/McZpDJTZCG94HbmApGX98sbFWM6EOjSG1XzLTDSa8s?=
- =?us-ascii?Q?Bg7z62xbhZyiGBkZWevoD0hEhj2iz1CFdPquMRI+0hB/Bi9ttk7Pb+PczC74?=
- =?us-ascii?Q?TJ8zZMeV5d3SdnmjY2SoHTp2rpJZWxi3NH4LoHe29EmiRNFtO+eXZg0WUrex?=
- =?us-ascii?Q?8bGkjU4a61+KI3SQr48w3+Id7S+mEVwP6XSvDCdK/OX6l49CR6nXKq6NrbT5?=
- =?us-ascii?Q?AjR8K/mdWGQYa6fK+ehjBXUD38pgntGmWLcIPoczEiAWkvZUQnKcHKJyUiOY?=
- =?us-ascii?Q?MN0erHEufTUG/888qSgOhqJRFtTn1x2xsPBwDga1qoMadfWRZ6P4cOQtdYYV?=
- =?us-ascii?Q?HFcANzA3Mq7SEAHCxrXA4cvN63fGrric2LntvWxGx4St3mh+F/nVHfBNhWz0?=
- =?us-ascii?Q?p77kD0WWFBMHnrE3uV8YVvgkvo/nmLEf0z2SqB96jyTN8VpwpUZXMtmGNYwq?=
- =?us-ascii?Q?IuWQ1RAM7GlAF9nYK+ISoRqejJ5glpuMHdrDrg0MGnpb6DikG2jJTX2us4ov?=
- =?us-ascii?Q?21dBmLUw9ZptQFFSMvK9g7PHt0fkYhzF88jlPxO99hYltDEoV0cooIZC/6QC?=
- =?us-ascii?Q?wxO0y0vsZcEa/kr+JB3mByYbHbhUk2IHZaNpI6izYIceFx/3Q+0JuWC+K2h0?=
- =?us-ascii?Q?CBIJfZpqivnvjItWhdIIKPGeNRUuKWCkZ8v0C83n54MViYiwUM1UnbDTj7Cx?=
- =?us-ascii?Q?KgioVEPeVSdptyOsNXBSQ/5uOzWxKpAW4yCqZLMAq+lu+3+Pn8bn1BJXzOO+?=
- =?us-ascii?Q?8/eCZK8coBMJtsy1s8YET69qkMrS9WymK9EwFN2OOd3wG/Tsm6jlfbiEOEIS?=
- =?us-ascii?Q?H0EHkKZp0sMKcix+vWgLVeCvT0EJcha24NoT/VQNu0LSZlhfeBNtWBKE//d5?=
- =?us-ascii?Q?4hzRUCMSf/NTeLni/1qhzQEXOQpighFappX/EYYgKi+pdvomzvA5qebfMdx4?=
- =?us-ascii?Q?A06q47W7TM4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nTwQ2IorVxftbj02E72QcllPGh6BPOHxpNQmBrtMeBikFxRPcAhZ1tjvVx31?=
- =?us-ascii?Q?/vMLtAFSTGFNiO5tO0i46JwQuXxNe9vg0k4oGAAKe3TjPKCV7MZJFbp9T+rH?=
- =?us-ascii?Q?T61a/ooFywGunFKvI8QfIxZSCIo0+HrTy+a8cr89dnB3Sf9JIITCe4RlXCpt?=
- =?us-ascii?Q?bhuNz0k/VPS1xkdjwAKKqjz+2uJSXAy2UcHdVpZcd78cQDxEa7xkr0TVmPda?=
- =?us-ascii?Q?uMAXyZ0lsnHVMYBUcZw+3BDNAuZEDP0XZyFoA6RFTMgTk56ioGkb7ooxydBN?=
- =?us-ascii?Q?dWGmpSMizPFXpu7G1G3vPm/K4390ohOlPzOtpvaD5t+069InZ66oV8iOEHge?=
- =?us-ascii?Q?mL9d4BGHWLohB6zVOIawOJvJb6r5vUnWq+tvx+DQul69pZKYszl7ffr3Sq1i?=
- =?us-ascii?Q?qXcX9VAOgqu4XXMwUUCupxGhuMneklClcFTmdMcvXr9uQdSOjeydM343m5tq?=
- =?us-ascii?Q?A9uUQmUHe40MJayrbRVKReUGQH/3+XYyzZrlERSnAF/zYWBQgD0Ki41BBmhq?=
- =?us-ascii?Q?fvkh67MLOzWRmPwqhq2Yi/UR4QmR2zmPvzw/765sMI/vP8ZdU34Yq9VLjfEY?=
- =?us-ascii?Q?GfKwD5JxxjhqyOGKF6GWKdt7BdRsNKre07gvmfSkhpDCFT2qEORi67IUox8h?=
- =?us-ascii?Q?5PcxYuJO3kv9gaxbL0KoxrvkxfhB2evjpErY5dVlAx3ddwOKqc/gByhbCi/s?=
- =?us-ascii?Q?t5iuK0ZxqR2+fdk5SObaLlaECyDklqlhuTkiQi+ab4rbSEGx9JDP0p2n4Yfi?=
- =?us-ascii?Q?/pS7mhZvDUF6ileXhbuAg5qHaz+ZVq1acguEA7t+GBARp6tdfr18092LqmJC?=
- =?us-ascii?Q?0YKlAW+ShE9haaGVIAvN9ZQWxOsoWQ8v2yAeiY6JNkisQw5lPxSrKL9Ob1qy?=
- =?us-ascii?Q?/X1rLEijx0djf0CzKtO7EIL7b1woHapPJ0G1ZyUvdwhfLrolnwX15KDgni5i?=
- =?us-ascii?Q?meJK7qJfG/JNFRjtlAb74tIlYeniMpo2Egu4MUryAOVMKVvM0gZ1Cd/pRALS?=
- =?us-ascii?Q?BURwMPkwkdj0/klLe5EHdv4+g4tetW4p2f1LPydpcTHMfGe55kMojyHdHPMp?=
- =?us-ascii?Q?OSxGwXd8fRGbnybLuRL2xuZTz9ZBalWN/1AuUdhg9iJVt6a8kw56decYwz/A?=
- =?us-ascii?Q?nKZVs3kZoGY66kOSKgDbbcYPXQfRElzX2pYYUZMjMnrc31+Bz1E+KNYR2gBD?=
- =?us-ascii?Q?SGRdYsjmP5BrgXBc+MB2CUOyxmwByoJkSTg53/sLYeLaZYN223/68Sv93/6g?=
- =?us-ascii?Q?mRvl/DdcPKB/MJT5b1ng9UI97vO8K+gEK9EAkZRy+V3/+ua/cUdLX5+0dktA?=
- =?us-ascii?Q?I+qz6KHsZrNvw4aczne3UJStewONN90ps7G7YTca+zWs+wJPDUVH64bBNxG3?=
- =?us-ascii?Q?Fcrko+Chdk3uuXy+g4x3lmMA5RjVUvFMmhECTybFhEQnnrAay735g0wNxoFg?=
- =?us-ascii?Q?hrK78QahdC/jo96igAKR9w7wAIe6nLZ4VfzOHj1w83HLeiGjVLOekJ+3MGwr?=
- =?us-ascii?Q?tMdHwKbuBJctyQyo/awHJxAdbSyMOczj0qpgMn7gos/QK3tVLSoOfFlYUJkm?=
- =?us-ascii?Q?mLl8YAtUIY/qDlA/57U5PB0kBjkb26y1i+IPk7fv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 509027ee-0499-4c0b-b68a-08ddd42cfea7
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 14:33:07.4210
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CDTEgCVyO8UberJq1y96AEnapINuemeK3LRH8z8GlKPqlHn6Jjwp9PtLcnP+7kP0+I+XSDLvK1GfZckCzR5BRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7175
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729120348.495568-1-pfalcato@suse.de>
 
-On Tue, Aug 05, 2025 at 12:10:33PM +0100, Christian Loehle wrote:
-> scx_bpf_cpu_rq() currently allows accessing struct rq fields without
-> holding the associated rq.
-> It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
-> scx_tickless. Fortunately it is only ever used to fetch rq->curr.
-> So provide an alternative scx_bpf_task_acquire_remote_curr() that
-> doesn't expose struct rq and harden scx_bpf_cpu_rq() by ensuring we
-> hold the rq lock.
+On Tue, Jul 29, 2025 at 01:03:48PM +0100, Pedro Falcato wrote:
+> Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
+> we have been doing this:
 > 
-> This also simplifies scx code from:
+> static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+>                              size_t size)
+> [...]
+>         /* Calculate the number of bytes we need to push, for this page
+>          * specifically */
+>         size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
+>         /* If we can't splice it, then copy it in, as normal */
+>         if (!sendpage_ok(page[i]))
+>                 msg.msg_flags &= ~MSG_SPLICE_PAGES;
+>         /* Set the bvec pointing to the page, with len $bytes */
+>         bvec_set_page(&bvec, page[i], bytes, offset);
+>         /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
+>         iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+> try_page_again:
+>         lock_sock(sk);
+>         /* Sendmsg with $size size (!!!) */
+>         rv = tcp_sendmsg_locked(sk, &msg, size);
 > 
-> rq = scx_bpf_cpu_rq(cpu);
-> if (!rq)
-> 	return;
-> p = rq->curr
-> if (!p)
-> 	return;
-> /* ... Do something with p */
+> This means we've been sending oversized iov_iters and tcp_sendmsg calls
+> for a while. This has a been a benign bug because sendpage_ok() always
+> returned true. With the recent slab allocator changes being slowly
+> introduced into next (that disallow sendpage on large kmalloc
+> allocations), we have recently hit out-of-bounds crashes, due to slight
+> differences in iov_iter behavior between the MSG_SPLICE_PAGES and
+> "regular" copy paths:
 > 
-> into:
+> (MSG_SPLICE_PAGES)
+> skb_splice_from_iter
+>   iov_iter_extract_pages
+>     iov_iter_extract_bvec_pages
+>       uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
+>   skb_splice_from_iter gets a "short" read
 > 
-> p = scx_bpf_tas_acquire_remote_curr(cpu);
-> if (!p)
-> 	return;
-> /* ... Do something with p */
-> bpf_task_release(p);
+> (!MSG_SPLICE_PAGES)
+> skb_copy_to_page_nocache copy=iov_iter_count
+>  [...]
+>    copy_from_iter
+>         /* this doesn't help */
+>         if (unlikely(iter->count < len))
+>                 len = iter->count;
+>           iterate_bvec
+>             ... and we run off the bvecs
+> 
+> Fix this by properly setting the iov_iter's byte count, plus sending the
+> correct byte count to tcp_sendmsg_locked.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
+> Reviewed-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
 
-Looks good to me.
+Applied thanks,
 
-Reviewed-by: Andrea Righi <arighi@nvidia.com>
-
-Thanks,
--Andrea
+Jason
 
