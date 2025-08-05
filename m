@@ -1,146 +1,228 @@
-Return-Path: <linux-kernel+bounces-756183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D25B1B0FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:26:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10621B1B101
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5DD16DFD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 535E97A274C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8BF25F780;
-	Tue,  5 Aug 2025 09:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7060525A2D8;
+	Tue,  5 Aug 2025 09:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PZDUDuFJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8npn5LE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4025D209;
-	Tue,  5 Aug 2025 09:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B4EEA6
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754385968; cv=none; b=FwgkyedMDA/PKCtEjUmcfR+3fQjMYQahlo1NIPpGaVZX2jwRLmGbmTKgJKxyE/mhHTn6JzUn0F0i5f+0QW6yjthdBqY7H/MPuD+4cRw6TgCs3piDMkIxGoNypKtgsWKdxoeW1PUwkceg35+ewe0VvU8MD4XGXGa3nZNJbmjAGro=
+	t=1754386076; cv=none; b=SLqJt8BkkLOpR71wavMAMqBKduEPEn009q7wSsixjCaVCG3vaBraUawT46iU2himYytUwrd4JQn4KMVHsFbwpHGHnesn4f5SWYc6/FKrxZJXcSiaOeQs/DWgGiJjW73iY7xLG2QfpGQpPw9Pv0kchlkXMSf/etBw5khPa+n1u2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754385968; c=relaxed/simple;
-	bh=SC7kBJKgGGpXyIjZc97jxuiKeFp4ze/eQl6HVrX/jwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UHi+9GJ2JDiyo7ODAzrSDO2jj5hJ6cDzCvYJ9c0ojihp8BjY5QLdw9CkjcJ1NDI20H1h9Oa0wmtblS0NTKk87mZO87baen6d10jijM5F85mN1MOSg651fi8GVh+NNTmG0hdmAt3BM4/gVo4R4RdZRRVoERF1ebIMXoOECHSDzPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PZDUDuFJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754t2HG031981;
-	Tue, 5 Aug 2025 09:26:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=WW9xICsrfqoVJzFaZpY6jTtLHaZI6sQdYK4gr259q
-	q4=; b=PZDUDuFJW9i7sPgs768cuZm1oGHTG/rlyAX7r/RNfmY0OttHAd58jDe8c
-	sk0UIvkVCni33aJqXbJM38eVDtrh+81OzZiYKtrbTwKL2KcO1AdnR/CoxvgnXtvk
-	GJFURrrZCGAMC2iiLeTnyQiTY6zIUaaP9yfy4ZLEY9COFEPicnN3JgAfw9+lIlYX
-	axRAnykOFeDM5O9e0Ek/UGqiHAFOp4tOHzbJVSgZNVchCM0Qk4/ZQzW9XQa06RD4
-	KYVx8pJ4FORnNNce6+Qrd3t/t0ulBfevfJCbdPCfj2xUbpRMeEcaLPD4lF2nKPT5
-	1nPC4DQZ3azW8NWlqgoNQdH2+UzNg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq1380-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:26:00 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5759Q0u9004614;
-	Tue, 5 Aug 2025 09:26:00 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq137w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:26:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5757qfj3009449;
-	Tue, 5 Aug 2025 09:25:59 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 489w0thx4u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:25:59 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5759PwZj58720674
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 09:25:58 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 014302005A;
-	Tue,  5 Aug 2025 09:25:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D677620043;
-	Tue,  5 Aug 2025 09:25:56 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.in.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 09:25:56 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] generic/365: Fix false failure when mapping ends with free space
-Date: Tue,  5 Aug 2025 14:55:56 +0530
-Message-ID: <cc80fdb62151d677809f2eb36eadebd3720c8701.1754385487.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1754386076; c=relaxed/simple;
+	bh=kHzAWdEEyHHxaN1vXjRG8OGUmjIyv0kYOdW3E+6IeS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDQMGIHDEjXXUw8nIzuXmHBQ5fVTfl05QUu20lNuI255ZObq9EzvUX3dhWUAUcUGE3a9jQVZFLPlqjGty+cJnGMdUyq2RlJ1BGkhb6EGi+G+feBusjrKBlAafd/Fai+JeELNdSYNGHbQpmaRGptCS8gU6fFKbLmkWeqZMLXj8yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8npn5LE; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754386074; x=1785922074;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kHzAWdEEyHHxaN1vXjRG8OGUmjIyv0kYOdW3E+6IeS0=;
+  b=C8npn5LEGST9eDM6XZjs2d3FDnlH5Q6Flpf7HfPvvtNMWxSJjneQ6OMo
+   8ttviix2PoplfTH1utM9yPT9IAdaRAV9Qpe/bKkY2AADKyrPnW5c+hnKr
+   h/Ndp+/2b/VnN88C/3uuO3u9J0o2aCR3TPgvida4WQH+RBl6fL2E0YeYe
+   sAbWmujenuablVgrfksCVD0aPro8JKSGNLILFp8wyhKpwYa79lo8mQGAH
+   GbMtQ5x5gEpvO6sgipWt4jAVGulRYPLeGzU/QRsA6dEJ+A5MikqRFs569
+   IuPW0fEY/ogCD8HVaz4FVOhp8NGV6OeIjcNUO88xNNQI1AqdcLPLg02oo
+   A==;
+X-CSE-ConnectionGUID: URsN0Ml9TyW2oLgyglXPBA==
+X-CSE-MsgGUID: BqT/zfz6QmWFsVorlV77EA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="74252172"
+X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
+   d="scan'208";a="74252172"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 02:27:54 -0700
+X-CSE-ConnectionGUID: nKR2A65+Q96DGJWV/x6WOg==
+X-CSE-MsgGUID: vNNSvW2XTZO2ig975EPUDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
+   d="scan'208";a="164341511"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO [10.245.245.254]) ([10.245.245.254])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 02:27:50 -0700
+Message-ID: <d737c0f0-c0e0-4df5-8246-b484db8d061b@linux.intel.com>
+Date: Tue, 5 Aug 2025 11:27:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Exrh5Cltwx0qwNHbchGNTJqEizp7W3XT
-X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891ce28 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=L-JcgC3ReIh2akJ2wxQA:9
-X-Proofpoint-ORIG-GUID: 3ZJytAWtBMSaFd7-gO5V9GlqJuyIK2mD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2OCBTYWx0ZWRfX/OnzmAn/XSM5
- O833NdEsL6QfghVCUn+9itxn0y351XgSbSR3skZd5VY506A++jXXHGV89W/tVHHusnxXMzbapGQ
- ce/RRiK+AXYTB3izf2xRefE1ZgREF1E7lPWNDGdO7lMBgNKrR9PKgsmhRsNERt8zRYiaWaJRxGI
- mqjAbt81cXYpw39eAx9do1qfAlBVnrb63O9ozDPtdgQPMaFfi4LlEkLO8A1WQaQ/0B+RKLNvpwq
- STWVc8Y9oIivKLfnb3IINTHRxWDfyYcHQ6fSg8my2X7teda5CBo94TuV+Cd8RES9q6sd64KuN4/
- Gj3VGyqoqZ0pfH+aSdunRtRaJsDlUB/HKe+6hAMwaPKWtkFvpUVLnGc8HBjF8jYq4Hb/vuUlS/t
- YwsH/ea06esumq+GSMJZI4pVkUbcA9IsDr0pPbXF7KGf9DLOdu6MKM33EXsnMIwstZrS720a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=871 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050068
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] locking: Fix __clear_task_blocked_on() warning from
+ __ww_mutex_wound() path
+To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com,
+ K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Valentin Schneider <valentin.schneider@arm.com>,
+ Suleiman Souhlal <suleiman@google.com>, airlied@gmail.com,
+ mripard@kernel.org, simona@ffwll.ch, tzimmermann@suse.de,
+ dri-devel@lists.freedesktop.org, kernel-team@android.com
+References: <20250801192157.912805-1-jstultz@google.com>
+ <20250805001026.2247040-1-jstultz@google.com>
+Content-Language: en-US
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+In-Reply-To: <20250805001026.2247040-1-jstultz@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If we have a small FS where the first free space mapping is also the
-last mapping of the FS, then the following sub-test fails:
+Acked-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-  echo "test whatever came after freesp"
-  $XFS_IO_PROG -c "fsmap -d $((freesp_end + 2)) $((freesp_end + 3))" $SCRATCH_MNT
-
-since there is nothing after the freespace. Fix this by punching a 1M
-hole in a 3M file to ensure that the first free space is always
-surrounded by allocated blocks.
-
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- tests/generic/365 | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tests/generic/365 b/tests/generic/365
-index 36cb2530..bbadae71 100755
---- a/tests/generic/365
-+++ b/tests/generic/365
-@@ -32,6 +32,10 @@ if ((blksz < 2048)); then
- 	_notrun "test requires at least 4 bblocks per fsblock"
- fi
- 
-+# This makes sure there is free space surrounded by allocated blocks, which
-+# is needed for some sub tests.
-+$XFS_IO_PROG -fc 'falloc 0 3M' -c 'fpunch 1M 1M' -c 'fsync' $SCRATCH_MNT/f
-+
- $XFS_IO_PROG -c 'fsmap' $SCRATCH_MNT >> $seqres.full
- 
- find_freesp() {
--- 
-2.49.0
+Den 2025-08-05 kl. 02:10, skrev John Stultz:
+> The __clear_task_blocked_on() helper added a number of sanity
+> checks ensuring we hold the mutex wait lock and that the task
+> we are clearing blocked_on pointer (if set) matches the mutex.
+> 
+> However, there is an edge case in the _ww_mutex_wound() logic
+> where we need to clear the blocked_on pointer for the task that
+> owns the mutex, not the task that is waiting on the mutex.
+> 
+> For this case the sanity checks aren't valid, so handle this
+> by allowing a NULL lock to skip the additional checks.
+> 
+> K Prateek Nayak and Maarten Lankhorst also pointed out that in
+> this case where we don't hold the owner's mutex wait_lock, we
+> need to be a bit more careful using READ_ONCE/WRITE_ONCE in both
+> the __clear_task_blocked_on() and __set_task_blocked_on()
+> implementations to avoid accidentally tripping WARN_ONs if two
+> instances race. So do that here as well.
+> 
+> This issue was easier to miss, I realized, as the test-ww_mutex
+> driver only exercises the wait-die class of ww_mutexes. I've
+> sent a patch[1] to address this so the logic will be easier to
+> test.
+> 
+> [1]: https://lore.kernel.org/lkml/20250801023358.562525-2-jstultz@google.com/
+> 
+> Fixes: a4f0b6fef4b0 ("locking/mutex: Add p->blocked_on wrappers for correctness checks")
+> Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
+> Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Closes: https://lore.kernel.org/lkml/68894443.a00a0220.26d0e1.0015.GAE@google.com/
+> Signed-off-by: John Stultz <jstultz@google.com>
+> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+> v2:
+> * Rewording of "lock" to "mutex" in commit and comment for
+>   clarity
+> * Rework __clear_task_blocked_on() to use READ_ONCE and WRITE_ONCE
+>   so we don't trip over the WARNING if two instances race, as suggested
+>   by K Prateek Nayak and Maarten Lankhorst
+> v3:
+> * Add READ_ONCE and WRITE_ONCE to __set_task_blocked_on(), to avoid
+>   tripping similar warnings as suggested by K Prateek Nayak
+> 
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Valentin Schneider <valentin.schneider@arm.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+> Cc: Suleiman Souhlal <suleiman@google.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: airlied@gmail.com
+> Cc: mripard@kernel.org
+> Cc: simona@ffwll.ch
+> Cc: tzimmermann@suse.de
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: kernel-team@android.com
+> ---
+>  include/linux/sched.h     | 29 +++++++++++++++++------------
+>  kernel/locking/ww_mutex.h |  6 +++++-
+>  2 files changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 40d2fa90df425..62103dd6a48e0 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -2144,6 +2144,8 @@ static inline struct mutex *__get_task_blocked_on(struct task_struct *p)
+>  
+>  static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
+>  {
+> +	struct mutex *blocked_on = READ_ONCE(p->blocked_on);
+> +
+>  	WARN_ON_ONCE(!m);
+>  	/* The task should only be setting itself as blocked */
+>  	WARN_ON_ONCE(p != current);
+> @@ -2154,8 +2156,8 @@ static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
+>  	 * with a different mutex. Note, setting it to the same
+>  	 * lock repeatedly is ok.
+>  	 */
+> -	WARN_ON_ONCE(p->blocked_on && p->blocked_on != m);
+> -	p->blocked_on = m;
+> +	WARN_ON_ONCE(blocked_on && blocked_on != m);
+> +	WRITE_ONCE(p->blocked_on, m);
+>  }
+>  
+>  static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
+> @@ -2166,16 +2168,19 @@ static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
+>  
+>  static inline void __clear_task_blocked_on(struct task_struct *p, struct mutex *m)
+>  {
+> -	WARN_ON_ONCE(!m);
+> -	/* Currently we serialize blocked_on under the mutex::wait_lock */
+> -	lockdep_assert_held_once(&m->wait_lock);
+> -	/*
+> -	 * There may be cases where we re-clear already cleared
+> -	 * blocked_on relationships, but make sure we are not
+> -	 * clearing the relationship with a different lock.
+> -	 */
+> -	WARN_ON_ONCE(m && p->blocked_on && p->blocked_on != m);
+> -	p->blocked_on = NULL;
+> +	if (m) {
+> +		struct mutex *blocked_on = READ_ONCE(p->blocked_on);
+> +
+> +		/* Currently we serialize blocked_on under the mutex::wait_lock */
+> +		lockdep_assert_held_once(&m->wait_lock);
+> +		/*
+> +		 * There may be cases where we re-clear already cleared
+> +		 * blocked_on relationships, but make sure we are not
+> +		 * clearing the relationship with a different lock.
+> +		 */
+> +		WARN_ON_ONCE(blocked_on && blocked_on != m);
+> +	}
+> +	WRITE_ONCE(p->blocked_on, NULL);
+>  }
+>  
+>  static inline void clear_task_blocked_on(struct task_struct *p, struct mutex *m)
+> diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
+> index 086fd5487ca77..31a785afee6c0 100644
+> --- a/kernel/locking/ww_mutex.h
+> +++ b/kernel/locking/ww_mutex.h
+> @@ -342,8 +342,12 @@ static bool __ww_mutex_wound(struct MUTEX *lock,
+>  			 * When waking up the task to wound, be sure to clear the
+>  			 * blocked_on pointer. Otherwise we can see circular
+>  			 * blocked_on relationships that can't resolve.
+> +			 *
+> +			 * NOTE: We pass NULL here instead of lock, because we
+> +			 * are waking the mutex owner, who may be currently
+> +			 * blocked on a different mutex.
+>  			 */
+> -			__clear_task_blocked_on(owner, lock);
+> +			__clear_task_blocked_on(owner, NULL);
+>  			wake_q_add(wake_q, owner);
+>  		}
+>  		return true;
 
 
