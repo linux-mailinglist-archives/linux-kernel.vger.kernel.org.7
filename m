@@ -1,439 +1,196 @@
-Return-Path: <linux-kernel+bounces-755854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5157CB1AC8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:52:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C99AB1AC7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A7547AE429
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B3817DB3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EBE1DED49;
-	Tue,  5 Aug 2025 02:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A7C1DD877;
+	Tue,  5 Aug 2025 02:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m432VoHd"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="q2LSSGHi"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012063.outbound.protection.outlook.com [52.101.126.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1981DB92C;
-	Tue,  5 Aug 2025 02:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754362336; cv=none; b=QhWQWp/4wtt9SGntlL/8HQLj0D7AvtlE88exQTB/DnApkBfBm78jP6TdeZA0ON4DvYJrlRRBRhh3h8EGHn0D173pwVnZWyiQfjLu4hhfjSsIv8h6JPJheWAgF3CSjPSwDRoyaD7bjERveB/3Yzb2EZzmDVHVFV3y5PDaZZ2EPno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754362336; c=relaxed/simple;
-	bh=B39fHgK3SYtEtpqd5xgZA2MR5q3y0qn4Y3yBHIZ65MA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WrD00Dgg2TCnvjsUp2P+u/IPLWk+d3sISgiSMWob8MzzQOg8oN7HrmtA/86S3VnkNEWTBTZDzBaw2P0y9grCGRYF+lNvByI3donPZ8YbWdDxIht579Bhe1eP0v9cN54JlVSgeQq3raKnrOtb+i1B8kh8FzCyfkV+gV7vI/RiUI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m432VoHd; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b424d2eb139so1681701a12.1;
-        Mon, 04 Aug 2025 19:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754362334; x=1754967134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7Q4QjYSNpxpwVDXbSSDs6Eu5iYWm6cjD2TA7Bmfry0=;
-        b=m432VoHdxkeUJH8EV5xugFXeep029QXxjiGJT+fUDs2iccyOG8Nk7xeFBZUsPLG9u2
-         RShjVdW1l6AZMeSWLXOW8jksOQfdeGFiDAExlZrgFL1BuEtS/UzR6kxZrs9fzQmf0bI6
-         z3lfcbzHZ/FueXKd7WLIyfHxRZ/I07FSBw2zQrIXBGzx94iTEbReMBt2j1BMVdMD9lYc
-         i1PocVfqpGRkPAfr7XE7OjOS/oJKZxmhNfROWBvF/xG7TkNb36iLskzv+XxV7UUM+A9h
-         A07MFsxSrN+6fdMyIrcA/tXvqQFrXaJzfh3wJqHFTOmSQPekiL4PBYMuDm+M+L5kTNul
-         IQdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754362334; x=1754967134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7Q4QjYSNpxpwVDXbSSDs6Eu5iYWm6cjD2TA7Bmfry0=;
-        b=LzU1kjH9qnYqO7OpvSgcVByMGMMHVPzT8ta08A6GqKIZyYGsDTKnnitL3wpTmJk1bg
-         7EB4GaN8urAwBtEWf14cQ14899imsQx1Wvgbp7picofWNKOZLT1nV4vLragPpoQvGo5d
-         xt+W0tE4p3AByilroIlIQJz8KDkEpNMuibLPN+8aAUiKa/aDISNEw+PnwtkF2KuvpxV9
-         fCQVG54wRSghozUm9C18Oq5WiQ271KsDmt1jtORKQEoJbK6PCp5k3rDrD6+fiAnBeU1x
-         7q2V74LtVbIpGZ+rvwZJtottfnmjLsqDJNlVcirLtpen7jnbju69XkAleTQiMYcS+C7I
-         B+MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVihkKCbdG/VcZBrR3yACiJVeQrZz7AfhiUkoH+DnooSppUWqUrPNqxR6KQaKOw45jQ27Z18nuWxkeD@vger.kernel.org, AJvYcCVm2qEe4LhcxTv1YHg4POW2BSZzn+7d8G0YPp7MWZyf9r0QkZg/Wy70e1/u1Tvr8GDbPxQcoIUF/IibBPE=@vger.kernel.org, AJvYcCXq4Ok4kQWpYp+n+ETIdvqAKJa248gAL32UtBb61at+0bsu8CWH8ftPEtoaoq62MKVu8ZHo+PpQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwTbAZkoBeID2k4hXaZvWwLiCztwZo2JWFcrlvNLJk+ZDxi3ej
-	OZ7yjtzNvHGQ0g2Uz/OzRWlt+w+UP2CnDXGJYAruiqubFRBeJvdNM4fg
-X-Gm-Gg: ASbGnctKbUg/mk1Py/N3znsl8xIUdZm+8VyQOAaDUbMC/ZiRY86J9z6vZg1+QtmCmRE
-	ldS/3xfLsgIvrTy0i4EIbjv7dngpmlIEKpFqiXnx2J869ZTJAcG9gBqKKYlsbPCZHLY9BXAwsYa
-	fJcfWQjFqsKW44mrvmwArOuL8OhZ0rTtX+HbWtdXAvFAIjHC7DCzJKB7ECZjl+41XuUPxZ3iSR6
-	Aoi3/vX24sfjlMuZlU+midjnsCsakF+Tc6JEg8QdPvlfya1dX7aKDL0flxL8nEOqvvz/BPCT3tQ
-	NjdtSppFJeB0vQHh2EBn5NSBEuf6Wykb10kLK6lnf/XvZyER29+WdhBeQNL9Sj7Jislw5CfzE/v
-	ABjLrWO/RXikJ+4mD7BcGIHckxc6hAQ==
-X-Google-Smtp-Source: AGHT+IH0AIrbdXl4v8Z8wDXK5WQkxv3BeCjzVOsoUPNnfDrFhIv0ayQDAJNh09caGZUM7CuxIW/RjQ==
-X-Received: by 2002:a17:90b:1b11:b0:31e:cdbc:8d4c with SMTP id 98e67ed59e1d1-3214fbb3a9dmr2492729a91.0.1754362334150;
-        Mon, 04 Aug 2025 19:52:14 -0700 (PDT)
-Received: from localhost.localdomain ([223.166.86.22])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422dc7cfe9sm9987383a12.17.2025.08.04.19.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 19:52:13 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] ppp: remove rwlock usage
-Date: Tue,  5 Aug 2025 10:49:33 +0800
-Message-ID: <20250805024933.754-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112BD1F948;
+	Tue,  5 Aug 2025 02:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754362217; cv=fail; b=jCkYYimVfxOyUHnJi9jY3bCY4EQ3klDLiaVSVopmRFv0sBakmLm1nNpF148Q4fhlCyWL+aYULqJqUDsSCMDALzhUgVqZM967cbXsTnhq4pHkjr4YJesfamOKtvGUnG45+iZaHmtRvqUi6MME6OFQzDKyN80hn/UE3GdNASPh7Es=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754362217; c=relaxed/simple;
+	bh=by0vm03SNAg/TWt6wP1aP8zkA620MSYbzCLb1aESZBI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ehUZ6oOjFEgglgl9ymqG2tGM8PM8wRiP97ll1ZPm3dgIRHPjHRYnuYjbfE8BUoFgT6tUA7unjneizXrEwEA1mfyVyAKdfVH0d56So+L5y2qMCw2w68OXyAFHv4aSj9msA0mTUGOls4tv99yXmIHwXIbMI1keIji1BknL2a/yfSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=q2LSSGHi; arc=fail smtp.client-ip=52.101.126.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fe5fbD5w09DGbJQlJI0q21k4ZMlfUIPA9SzE8llYl6vxu0UCVqmw4iA/ORvtP1qKDJA9Sq+pxp7SaIahaOgkpBs9PTdgDW5rIbeBE3XbedU1hbAbiesnHDVVUxdlnt4JiRKsLSERyaJ8H0eExmYZ3808p2zs7zZWtbmY3eiv7bDZl5Tr99ZB1pMTSmKnf8+WRXlVJXE8KdMBZZbgar2NC5ag0AgOJkbwk6qS4E/ndfoYIsNpmovqzcTRf8DwO577naMwVttwIcXq70s/Hv3gs33sIwlaiI/fU5qLmEremxociQFaVjppWhCQEreA4OR8WvbMzEoOZ5fkOwiyt0YXrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cyODzpwGrlNlzAicTrUmSvO2+dCaMH9e4iFCa4JnlO4=;
+ b=f0d/oqqJ5qGLeIayEhwF85DusTkbunHeeDJAuzpqwK4fAOOzxP5sZYuKnIlRBX1kf9XZJBkTmZjOzl4XDGGXGqL5Mm5SSCaDYezT9dQ4w2jq9yhdmWGAe/rxBaGTSlO090PEnKhXigwOlriqNrW8CuWko7HgzuuESJ0IKD2kukbP72TXHCcRpucItd3pfjIb7Jz/DlbdNPubYat1dvbjShYUZml6I87DnTbvpVVzyA2eE898JS660pff3QOcx9fwkVTXBy/7vj7bABJkGOJwpuxEDj7xyzA3trWxh7YJhiLO/02O2U8orPATnF2APJlXJgYvvNGmQnPEXRF5QdrZzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cyODzpwGrlNlzAicTrUmSvO2+dCaMH9e4iFCa4JnlO4=;
+ b=q2LSSGHi0bcdpFgrrtTZKAd3njxvb6hUXbW0B0eYlOtxlLYcdhvrKMvmJmDHeE16CdBIlzB2vBn8MB9BJIKx/vDcB471yiMdkSZFCcR3H7HKmOpF4u9pmTTiwiVBDbhCadJMi6lSJpdgFrrvDyHh33q9SQX5blvn0PC6e6pjZTGxARSyggJux5NJkYuszXq2fLS1HQMgGjNfSD6xEZFqNZNrzpbwT5Q1dIWuJt3FUogUFtdOHWIuqZ8Yl/lmfUMZa6xSRDG7MhXhxalw6/LCBf2jUgKxEQn8q77PDR8yk2sxGnjWfLGt8fzdfBMAOhmHVQ9LyBQ5gghWIp35egQ2yQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TY1PPF94D6C05EF.apcprd06.prod.outlook.com (2603:1096:408::91e) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.11; Tue, 5 Aug 2025 02:50:11 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 02:50:11 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: willy@infradead.org,
+	Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] uprobes: Remove redundant __GFP_NOWARN
+Date: Tue,  5 Aug 2025 10:50:00 +0800
+Message-Id: <20250805025000.346647-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWPR01CA0047.jpnprd01.prod.outlook.com
+ (2603:1096:400:17f::12) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY1PPF94D6C05EF:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7bd8cc8-5ef9-42cc-766a-08ddd3cacbb4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TG47vbZXQvdGnkxjLWVP+UM0tts2+yo6qEbCgrvNbkvaxpGNclV+6BUjSvjM?=
+ =?us-ascii?Q?uqdWgN3CINQXKPGnnDqWrtxveB9tvRxGmwbTpQraz3FD/AdbeSS+G1aJJCj/?=
+ =?us-ascii?Q?XnbZTVBywGTzr20EyA6ONFeh8Dd5jJBAkb0Xde4trgM+iP7AZ7BFmo5p1sfY?=
+ =?us-ascii?Q?j1VGljiVvq62kLpzkPhXSWJQ4/XpSaNUz2+qZlIVKuTYrjiIo0BxJLllnm9j?=
+ =?us-ascii?Q?GXVlNzExB7LqCH7HTvUoN2+rE4Yfzkewb6axHjCUZXh8x0tP1oQdQkUuklAc?=
+ =?us-ascii?Q?74us4Ma+HGBAdKewfDP3Y5YSxVeu0wAWlBEX8rzNNyUIgcok4l7AeWyZjMdK?=
+ =?us-ascii?Q?ggkmhMdL9AUg6KkEo2rV/OLONqVTDKAUrsSzTuSNiwYobjKynYBeRwgWqvsD?=
+ =?us-ascii?Q?eekfLI94MkaV7bPPFTJ+1q7HZ9+idS8X6IHv3fiiqjdgWNcKzpNSP8mnAz73?=
+ =?us-ascii?Q?oaYV7VWU4tObv7udd3SVT8EMjKFq0NVJ35T2gtORo26oCQJpypGCqRoXs3LD?=
+ =?us-ascii?Q?YJRY0I/gkHWD/SUyd+Ulhr2clD+83eliW13DfcS06igsn7ypRYvXPz1YVHVa?=
+ =?us-ascii?Q?FcTglFaSSgXlRrTkaaoOxCZvO4JbJ4y80gx9Of5XyDWjhlw6CxMBmxKCYAIr?=
+ =?us-ascii?Q?sb4ZwpBhMFDEmnZkuOObcPtmlAjlwhCdc8bkqVmfj571IL2/8y86kExpMxEF?=
+ =?us-ascii?Q?436VnKta0kT67fvBKFbUDJMgfZvOWWr2gJWLVRQMaR9RHKW8uupJ0+ZHVtCT?=
+ =?us-ascii?Q?iF5yyr6AXQJmqxBLFXH428o/V9oFbrkFmvIrFQAQFyqNtMvFIh+/HlUOq1SS?=
+ =?us-ascii?Q?VeqcK61j5BymAszbyb4jOzhdvcfNmiZJ+8EMjVaUgzHCdOyzolzl/HUsUcjx?=
+ =?us-ascii?Q?qeF6yJittte9elHJxGK0U7JRictFeGj7ZYFpMK+Nk/bOMbzh/zDRPeBtzBMe?=
+ =?us-ascii?Q?hDwwxXJ3PdsZ++MUHFf/Aso4swXs1zlmfUGJb7pjDRWA0/FwYMTVIr7zB+kW?=
+ =?us-ascii?Q?xqZvdSKP/rZuVrMgMU3O16sDngPQafeuErFuvc03zicqJ3tq7PDxc0lMzMq/?=
+ =?us-ascii?Q?KbRYNcpMpHvoGRyS9C366I2rUx9pVmvWFXyPnK3XRIjFsSCsfgZnYnjMU5pe?=
+ =?us-ascii?Q?tCrUZ1wgfcGwIKoBCTDbnwqdwEevrbWeYebfFFGFzxp6sCgHZsEyCZItSvht?=
+ =?us-ascii?Q?igXTajFKG6TbVvd6DxsKzIIMX2hA4cvxXpazUB8770QXh1u3O8PO/tV8DMkJ?=
+ =?us-ascii?Q?HFrQk2jDVl+3i4vrKS7j50Ftp4ofHhxl1p77V+AzulGtnI/AfLvdP2PovuR6?=
+ =?us-ascii?Q?njBYy2lpBJEpiuPv7WcjfSWj5iaEMcRtVnyTVrXhQGlxW60zfSJBm5VcjLC7?=
+ =?us-ascii?Q?SiY8ivshUBjN4A9J32CIS5K5Tm3F9IAHCj+vfqnzZ/h9lUXrwKK7dNNkO+zZ?=
+ =?us-ascii?Q?VfPYtJtk9QBU03q7MD4h8AxcWN4wUugespwPvmWKUMzCK/9Q/VhEAyxyMOC7?=
+ =?us-ascii?Q?N8cA23qS7zikQ1Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TqhI5c/Q0B/FKH8DWxojne6ksc6hkEFnViKHziTf9+fmYpveBs1iyEg4Nfm0?=
+ =?us-ascii?Q?qsyM9QsJKA1syL+nD0Mq4Y6NSwn8/MM8h6FU2/Wmwtlj2Fynq8mHvvKROjuy?=
+ =?us-ascii?Q?B9HgxOL3XFPaP0xEzxzrHLzEHyFn6RtOGRsJ7T3jr6lr78eQXKmJR6HR4j37?=
+ =?us-ascii?Q?AEWz4MCbjbuZJ4bJ3iG+3pNAkC7Dtio5vieqIlUMr5QCq+jDPF2H1HWTASfR?=
+ =?us-ascii?Q?93I+ATD7oXG3JAAun4m9KMQ50ZWj+Ryeud867p5WVMcRBs+TlgK4oclYVIku?=
+ =?us-ascii?Q?fg11B4SoHKTD3Akjg6Go96dXO7go/J/MFOHnbGBHlMO5kXsHXPCuy9ibUf6B?=
+ =?us-ascii?Q?FEuGyfLv22pVRvHB1nkFqKlcyGu1CMQVKHs1rL1Yzl+CdBZ6o17StEk/Jv5u?=
+ =?us-ascii?Q?a7g/oboTLQ/hYckvIgZ2MzjTu0KI4p2Kt6yrI2Y4spEE/Ils61w5psOVcXEp?=
+ =?us-ascii?Q?zNLGpHd80IhumiHN7cpiz+qhFPOqEB8iKDUyPbuUnDQhHXSWLErkWx29Zetl?=
+ =?us-ascii?Q?iY8oH8hmM4ekcrJBv62LIq3fVjaPsZvZ7hdfB2Qe4jAWI2swzF8XtKHS/SPZ?=
+ =?us-ascii?Q?DBRoZfuIY16BNgM3YpsHPNceJpQmow69RFgs0S/XRzIimfzqhkgeMYr3MT6E?=
+ =?us-ascii?Q?Z+QO0JH1I1Q+Tu4FOSYdAnS/nQhVV/leiUHgOI1zJ1CMStra3kNfJFYwRYq3?=
+ =?us-ascii?Q?2vUZSfxI0V5sJM2+IdFqhULH8UPU1acPg1Aa0VRd0trNn8epseEssIceJsmj?=
+ =?us-ascii?Q?h7OyYOk121KB3VRUlPHPfmP561nVazSJWJqkVArWRT7PQbTewToStBz/mA5U?=
+ =?us-ascii?Q?USSYcnnBZF4L2Xhv/2GGQjKC8tyN7PLqya8ad/6bCZWr1lntqvLr8Ocf+838?=
+ =?us-ascii?Q?be6ac4/ikH3OE1VqdQn2nVYtrK4uMAaOWWfqeSeC76xoOotHsG2FrgGwt8a8?=
+ =?us-ascii?Q?EfCqC7ru5ddBQ9gpnuQAnmR4g0EIa/vMw9nxSg8HSdEkqZUVF18CUGL/bASa?=
+ =?us-ascii?Q?QapDbNfeC0nyO4x0xdMS/vX7h8KFArxsCkfoQKQ8CcZbB6JvyEO94LaPRzR2?=
+ =?us-ascii?Q?odZ5hydU353ZRGikzW0G/sOvH2oLvqtzDGJI1Oa6dtrCbAE4CVtktH77Ca9Q?=
+ =?us-ascii?Q?FSDHgS27k73KXFS/aBD7pcMNosv+0U+xVfN1wJgL+ZR57QGQTsSi39ydXchg?=
+ =?us-ascii?Q?MzShgLKcyF1g6RPy/nSfnH0ZmNGqgNkuULqCWDblfyT+/fcXLwt0c+s4Ty4R?=
+ =?us-ascii?Q?qbkNEsBFQwf6lpghIFKXKnSEyWLzlYpE+ZQo7qYHDtke7vVvV2yuXYR82hhi?=
+ =?us-ascii?Q?SsjAQvqP3nbnfFf4iDqAxTVxL48OtGYRDxAu8eVvYKbx7IX9io2E2NCZM8Oj?=
+ =?us-ascii?Q?q+slIEM46KM8f5nGjQ1Q4cnLmazfmDJVo4ZUEGSr4Op7PZz4DU+HhC+scryg?=
+ =?us-ascii?Q?plBH7L7eAJifipGOW30nK7hq6sIroWVrwbFmfAAuOqxjcFuoG96ySrV5VomC?=
+ =?us-ascii?Q?5RTmK19m47gSycf9Eoj09qUu3N1xxX9o9zsRd+SYg3hYMAZjQn7AL0pztVc7?=
+ =?us-ascii?Q?68azW9lnOzKY3qR/Tshgx0SBsZqIWq6GsmsdlL5W?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7bd8cc8-5ef9-42cc-766a-08ddd3cacbb4
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 02:50:11.3502
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n/iXvSkvk3Sp0EnYotvhJm2vnLDiT1q6sIrjp67TNGZmvhnsROTLU924zTXnX8yXNCZ9iM5SlSSMMZzVGKxEOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PPF94D6C05EF
 
-In struct channel, the upl lock is implemented using rwlock_t,
-protecting access to pch->ppp and pch->bridge.
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+made GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-As previously discussed on the list, using rwlock in the network fast
-path is not recommended.
-This patch replaces the rwlock with a spinlock for writers, and uses RCU
-for readers.
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+up these redundant flags across subsystems.
 
-- pch->ppp and pch->bridge are now declared as __rcu pointers.
-- Readers use rcu_dereference_bh() under rcu_read_lock_bh().
-- Writers use spin_lock() to update, followed by synchronize_rcu()
-  where required.
+No functional changes.
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-v2:
-- Replace spin_lock_bh() / spin_unlock_bh() with spin_lock() / spin_unlock()
-  as locking only occurs in process context.
-- Use rcu_read_lock() / rcu_read_unlock() instead of _bh() variants in
-  ppp_dev_name() and ppp_unit_number().
-- Move synchronize_rcu() into the if condition.
+ kernel/events/uprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/ppp/ppp_generic.c | 121 ++++++++++++++++++----------------
- 1 file changed, 64 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 8c98cbd4b06d..911e09543cb7 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -178,11 +178,11 @@ struct channel {
- 	struct ppp_channel *chan;	/* public channel data structure */
- 	struct rw_semaphore chan_sem;	/* protects `chan' during chan ioctl */
- 	spinlock_t	downl;		/* protects `chan', file.xq dequeue */
--	struct ppp	*ppp;		/* ppp unit we're connected to */
-+	struct ppp __rcu *ppp;		/* ppp unit we're connected to */
- 	struct net	*chan_net;	/* the net channel belongs to */
- 	netns_tracker	ns_tracker;
- 	struct list_head clist;		/* link in list of channels per unit */
--	rwlock_t	upl;		/* protects `ppp' and 'bridge' */
-+	spinlock_t	upl;		/* protects `ppp' and 'bridge' */
- 	struct channel __rcu *bridge;	/* "bridged" ppp channel */
- #ifdef CONFIG_PPP_MULTILINK
- 	u8		avail;		/* flag used in multilink stuff */
-@@ -644,34 +644,34 @@ static struct bpf_prog *compat_ppp_get_filter(struct sock_fprog32 __user *p)
-  */
- static int ppp_bridge_channels(struct channel *pch, struct channel *pchb)
- {
--	write_lock_bh(&pch->upl);
--	if (pch->ppp ||
-+	spin_lock(&pch->upl);
-+	if (rcu_dereference_protected(pch->ppp, lockdep_is_held(&pch->upl)) ||
- 	    rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl))) {
--		write_unlock_bh(&pch->upl);
-+		spin_unlock(&pch->upl);
- 		return -EALREADY;
- 	}
- 	refcount_inc(&pchb->file.refcnt);
- 	rcu_assign_pointer(pch->bridge, pchb);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock(&pch->upl);
- 
--	write_lock_bh(&pchb->upl);
--	if (pchb->ppp ||
-+	spin_lock(&pchb->upl);
-+	if (rcu_dereference_protected(pchb->ppp, lockdep_is_held(&pchb->upl)) ||
- 	    rcu_dereference_protected(pchb->bridge, lockdep_is_held(&pchb->upl))) {
--		write_unlock_bh(&pchb->upl);
-+		spin_unlock(&pchb->upl);
- 		goto err_unset;
- 	}
- 	refcount_inc(&pch->file.refcnt);
- 	rcu_assign_pointer(pchb->bridge, pch);
--	write_unlock_bh(&pchb->upl);
-+	spin_unlock(&pchb->upl);
- 
- 	return 0;
- 
- err_unset:
--	write_lock_bh(&pch->upl);
-+	spin_lock(&pch->upl);
- 	/* Re-read pch->bridge with upl held in case it was modified concurrently */
- 	pchb = rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl));
- 	RCU_INIT_POINTER(pch->bridge, NULL);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock(&pch->upl);
- 	synchronize_rcu();
- 
- 	if (pchb)
-@@ -685,25 +685,25 @@ static int ppp_unbridge_channels(struct channel *pch)
- {
- 	struct channel *pchb, *pchbb;
- 
--	write_lock_bh(&pch->upl);
-+	spin_lock(&pch->upl);
- 	pchb = rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl));
- 	if (!pchb) {
--		write_unlock_bh(&pch->upl);
-+		spin_unlock(&pch->upl);
- 		return -EINVAL;
- 	}
- 	RCU_INIT_POINTER(pch->bridge, NULL);
--	write_unlock_bh(&pch->upl);
-+	spin_unlock(&pch->upl);
- 
- 	/* Only modify pchb if phcb->bridge points back to pch.
- 	 * If not, it implies that there has been a race unbridging (and possibly
- 	 * even rebridging) pchb.  We should leave pchb alone to avoid either a
- 	 * refcount underflow, or breaking another established bridge instance.
- 	 */
--	write_lock_bh(&pchb->upl);
-+	spin_lock(&pchb->upl);
- 	pchbb = rcu_dereference_protected(pchb->bridge, lockdep_is_held(&pchb->upl));
- 	if (pchbb == pch)
- 		RCU_INIT_POINTER(pchb->bridge, NULL);
--	write_unlock_bh(&pchb->upl);
-+	spin_unlock(&pchb->upl);
- 
- 	synchronize_rcu();
- 
-@@ -2154,10 +2154,9 @@ static int ppp_mp_explode(struct ppp *ppp, struct sk_buff *skb)
- #endif /* CONFIG_PPP_MULTILINK */
- 
- /* Try to send data out on a channel */
--static void __ppp_channel_push(struct channel *pch)
-+static void __ppp_channel_push(struct channel *pch, struct ppp *ppp)
- {
- 	struct sk_buff *skb;
--	struct ppp *ppp;
- 
- 	spin_lock(&pch->downl);
- 	if (pch->chan) {
-@@ -2176,7 +2175,6 @@ static void __ppp_channel_push(struct channel *pch)
- 	spin_unlock(&pch->downl);
- 	/* see if there is anything from the attached unit to be sent */
- 	if (skb_queue_empty(&pch->file.xq)) {
--		ppp = pch->ppp;
- 		if (ppp)
- 			__ppp_xmit_process(ppp, NULL);
- 	}
-@@ -2185,19 +2183,21 @@ static void __ppp_channel_push(struct channel *pch)
- static void ppp_channel_push(struct channel *pch)
- {
- 	struct ppp_xmit_recursion *xmit_recursion;
-+	struct ppp *ppp;
- 
--	read_lock_bh(&pch->upl);
--	if (pch->ppp) {
--		xmit_recursion = this_cpu_ptr(pch->ppp->xmit_recursion);
--		local_lock_nested_bh(&pch->ppp->xmit_recursion->bh_lock);
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
-+	if (ppp) {
-+		xmit_recursion = this_cpu_ptr(ppp->xmit_recursion);
-+		local_lock_nested_bh(&ppp->xmit_recursion->bh_lock);
- 		xmit_recursion->owner = current;
--		__ppp_channel_push(pch);
-+		__ppp_channel_push(pch, ppp);
- 		xmit_recursion->owner = NULL;
--		local_unlock_nested_bh(&pch->ppp->xmit_recursion->bh_lock);
-+		local_unlock_nested_bh(&ppp->xmit_recursion->bh_lock);
- 	} else {
--		__ppp_channel_push(pch);
-+		__ppp_channel_push(pch, NULL);
- 	}
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /*
-@@ -2299,6 +2299,7 @@ void
- ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- {
- 	struct channel *pch = chan->ppp;
-+	struct ppp *ppp;
- 	int proto;
- 
- 	if (!pch) {
-@@ -2310,18 +2311,19 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- 	if (ppp_channel_bridge_input(pch, skb))
- 		return;
- 
--	read_lock_bh(&pch->upl);
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
- 	if (!ppp_decompress_proto(skb)) {
- 		kfree_skb(skb);
--		if (pch->ppp) {
--			++pch->ppp->dev->stats.rx_length_errors;
--			ppp_receive_error(pch->ppp);
-+		if (ppp) {
-+			++ppp->dev->stats.rx_length_errors;
-+			ppp_receive_error(ppp);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 7ca1940607bd..5d12b9fdc917 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1210,7 +1210,7 @@ build_map_info(struct address_space *mapping, loff_t offset, bool is_register)
+ 			 * reclaim. This is optimistic, no harm done if it fails.
+ 			 */
+ 			prev = kmalloc(sizeof(struct map_info),
+-					GFP_NOWAIT | __GFP_NOMEMALLOC | __GFP_NOWARN);
++					GFP_NOWAIT | __GFP_NOMEMALLOC);
+ 			if (prev)
+ 				prev->next = NULL;
  		}
- 		goto done;
- 	}
- 
- 	proto = PPP_PROTO(skb);
--	if (!pch->ppp || proto >= 0xc000 || proto == PPP_CCPFRAG) {
-+	if (!ppp || proto >= 0xc000 || proto == PPP_CCPFRAG) {
- 		/* put it on the channel queue */
- 		skb_queue_tail(&pch->file.rq, skb);
- 		/* drop old frames if queue too long */
-@@ -2330,11 +2332,11 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
- 			kfree_skb(skb);
- 		wake_up_interruptible(&pch->file.rwait);
- 	} else {
--		ppp_do_recv(pch->ppp, skb, pch);
-+		ppp_do_recv(ppp, skb, pch);
- 	}
- 
- done:
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /* Put a 0-length skb in the receive queue as an error indication */
-@@ -2343,20 +2345,22 @@ ppp_input_error(struct ppp_channel *chan, int code)
- {
- 	struct channel *pch = chan->ppp;
- 	struct sk_buff *skb;
-+	struct ppp *ppp;
- 
- 	if (!pch)
- 		return;
- 
--	read_lock_bh(&pch->upl);
--	if (pch->ppp) {
-+	rcu_read_lock_bh();
-+	ppp = rcu_dereference_bh(pch->ppp);
-+	if (ppp) {
- 		skb = alloc_skb(0, GFP_ATOMIC);
- 		if (skb) {
- 			skb->len = 0;		/* probably unnecessary */
- 			skb->cb[0] = code;
--			ppp_do_recv(pch->ppp, skb, pch);
-+			ppp_do_recv(ppp, skb, pch);
- 		}
- 	}
--	read_unlock_bh(&pch->upl);
-+	rcu_read_unlock_bh();
- }
- 
- /*
-@@ -2904,7 +2908,6 @@ int ppp_register_net_channel(struct net *net, struct ppp_channel *chan)
- 
- 	pn = ppp_pernet(net);
- 
--	pch->ppp = NULL;
- 	pch->chan = chan;
- 	pch->chan_net = get_net_track(net, &pch->ns_tracker, GFP_KERNEL);
- 	chan->ppp = pch;
-@@ -2915,7 +2918,7 @@ int ppp_register_net_channel(struct net *net, struct ppp_channel *chan)
- #endif /* CONFIG_PPP_MULTILINK */
- 	init_rwsem(&pch->chan_sem);
- 	spin_lock_init(&pch->downl);
--	rwlock_init(&pch->upl);
-+	spin_lock_init(&pch->upl);
- 
- 	spin_lock_bh(&pn->all_channels_lock);
- 	pch->file.index = ++pn->last_channel_index;
-@@ -2944,13 +2947,15 @@ int ppp_channel_index(struct ppp_channel *chan)
- int ppp_unit_number(struct ppp_channel *chan)
- {
- 	struct channel *pch = chan->ppp;
-+	struct ppp *ppp;
- 	int unit = -1;
- 
- 	if (pch) {
--		read_lock_bh(&pch->upl);
--		if (pch->ppp)
--			unit = pch->ppp->file.index;
--		read_unlock_bh(&pch->upl);
-+		rcu_read_lock();
-+		ppp = rcu_dereference(pch->ppp);
-+		if (ppp)
-+			unit = ppp->file.index;
-+		rcu_read_unlock();
- 	}
- 	return unit;
- }
-@@ -2962,12 +2967,14 @@ char *ppp_dev_name(struct ppp_channel *chan)
- {
- 	struct channel *pch = chan->ppp;
- 	char *name = NULL;
-+	struct ppp *ppp;
- 
- 	if (pch) {
--		read_lock_bh(&pch->upl);
--		if (pch->ppp && pch->ppp->dev)
--			name = pch->ppp->dev->name;
--		read_unlock_bh(&pch->upl);
-+		rcu_read_lock();
-+		ppp = rcu_dereference(pch->ppp);
-+		if (ppp && ppp->dev)
-+			name = ppp->dev->name;
-+		rcu_read_unlock();
- 	}
- 	return name;
- }
-@@ -3490,9 +3497,9 @@ ppp_connect_channel(struct channel *pch, int unit)
- 	ppp = ppp_find_unit(pn, unit);
- 	if (!ppp)
- 		goto out;
--	write_lock_bh(&pch->upl);
-+	spin_lock(&pch->upl);
- 	ret = -EINVAL;
--	if (pch->ppp ||
-+	if (rcu_dereference_protected(pch->ppp, lockdep_is_held(&pch->upl)) ||
- 	    rcu_dereference_protected(pch->bridge, lockdep_is_held(&pch->upl)))
- 		goto outl;
- 
-@@ -3517,13 +3524,13 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		ppp->dev->hard_header_len = hdrlen;
- 	list_add_tail(&pch->clist, &ppp->channels);
- 	++ppp->n_channels;
--	pch->ppp = ppp;
-+	rcu_assign_pointer(pch->ppp, ppp);
- 	refcount_inc(&ppp->file.refcnt);
- 	ppp_unlock(ppp);
- 	ret = 0;
- 
-  outl:
--	write_unlock_bh(&pch->upl);
-+	spin_unlock(&pch->upl);
-  out:
- 	mutex_unlock(&pn->all_ppp_mutex);
- 	return ret;
-@@ -3538,11 +3545,11 @@ ppp_disconnect_channel(struct channel *pch)
- 	struct ppp *ppp;
- 	int err = -EINVAL;
- 
--	write_lock_bh(&pch->upl);
--	ppp = pch->ppp;
--	pch->ppp = NULL;
--	write_unlock_bh(&pch->upl);
-+	spin_lock(&pch->upl);
-+	ppp = rcu_replace_pointer(pch->ppp, NULL, lockdep_is_held(&pch->upl));
-+	spin_unlock(&pch->upl);
- 	if (ppp) {
-+		synchronize_rcu();
- 		/* remove it from the ppp unit's list */
- 		ppp_lock(ppp);
- 		list_del(&pch->clist);
 -- 
-2.43.0
+2.34.1
 
 
