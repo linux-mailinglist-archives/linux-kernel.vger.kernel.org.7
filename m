@@ -1,152 +1,122 @@
-Return-Path: <linux-kernel+bounces-755960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8111DB1AE16
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BDCB1AE1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0281179B38
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20088179A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EEB21B9F0;
-	Tue,  5 Aug 2025 06:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466C821ABB1;
+	Tue,  5 Aug 2025 06:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMM+KOJZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ki1Yrpi/"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A20A21ADA4;
-	Tue,  5 Aug 2025 06:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD42135A1;
+	Tue,  5 Aug 2025 06:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374697; cv=none; b=Ap/Je2PBubtvm2U5qaKfnveWKxTw/O/bMFH99px2eKTTIosvdAuV1XNbAj34eEzZecik6UiuAxQnZOaM7ZkbR0ILzCvurnA6EM7bHo8hJ1Z/abrTauZSpWTO7AWV4zxqB3eJ4lCpfaWfOG9CqgBapQqud+QiSXwWN8OYb5BSsW8=
+	t=1754374727; cv=none; b=eHiC1VkZ+hF83XQENsKfDYzStqKHYlgbq1X41Wk0rVKTclab49uXpYlTITVt5YZbRbslnCYLfBdq/Djs+VSDDCw63CJJgGtJgXQ95xLMR01F1Xvq0wI6fRrvFpbceGsNTfotXkxoI31+OcC1vbEBdTYE4TmlZne0FdxZVoTx6nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374697; c=relaxed/simple;
-	bh=Fd7YkUef+1gyQvN1JPnS46Q7HZf9eZJj5bo+xtANGYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=njtKHEHHtvZgNgnlpsTKCCx9/pOK8yW0rv/12R2FLJpZxFxx9dCOUDGH/0YAlA7Ik5Pp0BnCZnomTeMHz87f002dJoVLisc2jZndfIDuOUdaTRMTIZ1+l38m35ovdjXzKIvON1WAj05LRHL0ESjI96EtfxbJe/56Yp7uH/de/hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMM+KOJZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230B3C4CEF6;
-	Tue,  5 Aug 2025 06:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754374695;
-	bh=Fd7YkUef+1gyQvN1JPnS46Q7HZf9eZJj5bo+xtANGYk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gMM+KOJZGvtibJqKsYX/Az/UK5nrCAV+tS48XoiioU0cWljlzMBpTtazPGjqm7iZr
-	 M4YonqF2NCb30JlpqjV8iKjhw852XHYiH51qbbyVL7LmWPoAo/my8H9s9K7sVE9ggo
-	 8+05qC6fd8DLQcjOXXFtnlYXeXE4jBb9S1Pf6rxZc8nQZamFFGHCsHG5wk+Yva9DsU
-	 Nip0shMNfK+XUoTGxIjqfiW1ROAQt/6veyoRtHtkRg5aAfEtEThbSvHb7UbBlqwzKX
-	 4x7oQREXfiptz7v3IB5CpYQ3tszqWSV8lvvPTq8ZOCQdM/QLSw6QT+CmK4Vf/Ax72y
-	 9JcJIscu09WSw==
-Message-ID: <e52b3630-5846-49ac-9abf-3b42e1d585f4@kernel.org>
-Date: Tue, 5 Aug 2025 08:18:08 +0200
+	s=arc-20240116; t=1754374727; c=relaxed/simple;
+	bh=kTQH6NaZ9sbv1f+Rm2ugFeEMF2AGrfqtpW2DSd2AFPQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j+HE2G/bZb7jdfhRvC2b7DcE3Px5c1H9ZLoI/QXQxRCzJHdFaxbazeRXUu4goCrpMMP1BanmAe+JOUpJVZV7B1HukEByVG8Wkml/63L4cgE7RsttlkuQmvEHPEdD1RraUfoS6Vvdnp6sFaG6O/x8VzEcaOcKU8JUDCNPW1L45/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ki1Yrpi/; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bd050184bso5886522b3a.2;
+        Mon, 04 Aug 2025 23:18:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754374725; x=1754979525; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGHZJELToikpWrlEcySa0pC3zkPCl8tzMg7YyI1CbFU=;
+        b=Ki1Yrpi/G3KVFyc0Vc2A/beUeMhgI3olOzhx1wlaK5VC3y3uez3CH5za88p/FFSwHO
+         XK1MayDxpCA3SJTsJAgnhtJ1rQZRLjRWf4refgeFUcrifi0naLN6bKhCAmKvyzbD9pCL
+         3k+ZTLMTSoQicR+ZZ3cz/S5Iak3qW4c4Oyl1oOUkVvjdJ7WjQXywMtK3bOjnPFKdR8xn
+         uPl8ANm1eQoTVZTIKDP9TTDeshYojuor8e6L3wK7MyaXS5KKvj6aZ5JSYCNU/dcWszjd
+         6SLuPIFMSxgPvOPpITiyXuSkLdnA1EPUoZZ1JZ2bnEPNBlbtxtKfR/gNNKt7quCzqUMM
+         CpLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754374725; x=1754979525;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fGHZJELToikpWrlEcySa0pC3zkPCl8tzMg7YyI1CbFU=;
+        b=HrXqq2+PvhgYdGisNXjqHFh0eWBlXVWm8DJEdIr8NyiZFwSRp7fvlueFqO1Rn95Pi1
+         m7v8FMmotxsFBzoUJ0CCrMPjnQSrOEpPHKt/y5OPioKl1tgM45jpOdIm8JxlB1vW7pbD
+         wabDDWHGSNIvxe4n9WfmQ8p700vBs0KDcznOvqY9g9AB9NjV1wmWycSvLJFWbSIKU7fB
+         pFJsbLjEGL3PESnMs9Wgh6gj+Idz9u9T1Y6KYyfdlx9xDYJSRHGdMjJXGVHRj283Zhrp
+         B2avooc/v5dE65ChFM+unAxSNSw/urLOg35DL+SWpOr04x06Kt2mGhrzINjWq+kRWX/c
+         /aVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoZmznEZa0soRcj1x2YnyzE4FcUrzVAjR8GtcbYPNeHazU+XxRTu0B4O5nE+V8gqDXCDhu2JvRbYGCDQ=@vger.kernel.org, AJvYcCUUsWX2JHOqZsOM/lfxb5NvKSe32iCYgw+L3myJy8DjN7gZ6H5J1YCI3NbVJA+GsFYBDA5O0vmbWmpwTAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcOg8MTvxQkBjrPRE7vcKHtpYjTCkP0ZuIxISg8gV+9b84IAY/
+	hKVvoo7WkdcJjHE6Nuw7bk+qNundQ3yumXtX7VvYdAOnFtGh0UwjqwZd
+X-Gm-Gg: ASbGnct4xXj2J5jy5wwmgzqjfQIwH8F2aI6tyh/Qdtx14Gq6cRO6/zwakmjBi+G52Fk
+	SzJPPlyh9rPh1I9mSvLOFzAyxLgPLhr+89bSb4YOkyJbt4W5uKLbOWGlUz5XzZ0XPrM9+V1RE0b
+	pV7TmT4UbCG+sXCH/gSiFDy7LSWev3sMs1BKlOzgoFa11LTTw0WfPo5R+0ZJj3DSO9tSuksoMny
+	WksFR9BuNU+g7NRvdyUvs06IlU1LBZ2cjjJ7GKgHSRTebweyFYUtRZUPM+ifIJY5b1cmH5+gil1
+	pW+XlRV5NrPCe48nk4BtUL5wwrY5jHVGvUeQ9fhhuyRgJVQNm16BsqYR9TE2bgkYeiiC6cwdqiV
+	WHu66x/gJGSXCtecYK4+XcY6/
+X-Google-Smtp-Source: AGHT+IE8nPyMvHh3pB8DMo8HilMGNFFOAKHrsxWK8FE8utvRKfVlcZipsi1Qi7BgLY3ug6Mpthh3cw==
+X-Received: by 2002:a05:6a00:3d47:b0:740:67aa:94ab with SMTP id d2e1a72fcca58-76bebfb33c7mr16586220b3a.0.1754374725467;
+        Mon, 04 Aug 2025 23:18:45 -0700 (PDT)
+Received: from c45b92c47440.. ([202.120.234.58])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-76be9143a4asm8058029b3a.24.2025.08.04.23.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 23:18:45 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] media: rkvdec: Fix incorrect NULL check for iommu_paging_domain_alloc
+Date: Tue,  5 Aug 2025 10:18:33 +0400
+Message-Id: <20250805061833.3670085-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
-To: Liu Ying <victor.liu@nxp.com>, Joseph Guo <qijian.guo@nxp.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, Thierry Reding <thierry.reding@gmail.com>,
- Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250804-waveshare-v2-0-0a1b3ce92a95@nxp.com>
- <20250804-waveshare-v2-3-0a1b3ce92a95@nxp.com>
- <9aca40c3-e22a-4d41-bac8-18a7cc8e3e96@nxp.com>
- <8c8d9723-bb0e-4c4b-9fcf-3e1ec46609bd@kernel.org>
- <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/08/2025 08:11, Liu Ying wrote:
-> On 08/05/2025, Krzysztof Kozlowski wrote:
->> On 05/08/2025 04:22, Liu Ying wrote:
->>> Hi Joseph,
->>>
->>> On 08/04/2025, Joseph Guo wrote:
->>>> Waveshare touchscreen consists of a DPI panel and a driver board.
->>>> The waveshare driver board consists of ICN6211 and a MCU to
->>>> convert DSI to DPI and control the backlight.
->>>> This driver treats the MCU and ICN6211 board as a whole unit.
->>>> It can support all resolution waveshare DSI2DPI based panel,
->>>> the timing table should come from 'panel-dpi' panel in the device tree.
->>>>
->>>> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
->>>
->>> For next version, you may add:
->>> Suggested-by: Liu Ying <victor.liu@nxp.com>
->>
->> Why?
-> 
-> As I replied in the cover letter, I provided general idea for this
-> patch series in NXP down stream kernel.  Same for the DT binding patches.
+iommu_paging_domain_alloc returns error pointers on failure.
+Replace the NULL check with IS_ERR to correctly handle error cases
+and avoid invalid pointer dereference.
 
-General idea to add support for new driver? So like every patch being a
-result of for example task from manager means "Suggested-by"? Since when
-new device support is treated as suggested-by?
+Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/media/platform/rockchip/rkvdec/rkvdec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I also do not understand how downstream kernel is relevant here.
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc..1d40e81f44b9 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -1162,7 +1162,7 @@ static int rkvdec_probe(struct platform_device *pdev)
+ 	if (iommu_get_domain_for_dev(&pdev->dev)) {
+ 		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
+ 
+-		if (!rkvdec->empty_domain)
++		if (IS_ERR(rkvdec->empty_domain))
+ 			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
+ 	}
+ 
+-- 
+2.35.1
 
-Best regards,
-Krzysztof
 
