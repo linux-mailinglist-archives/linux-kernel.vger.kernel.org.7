@@ -1,215 +1,174 @@
-Return-Path: <linux-kernel+bounces-755908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9B0B1AD30
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F969B1AD35
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4BE6210A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA0918A291B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B3D2066CF;
-	Tue,  5 Aug 2025 04:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51C421883F;
+	Tue,  5 Aug 2025 04:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GI1qxTS8"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYVKYGck"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0ABA927
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 04:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D9554673;
+	Tue,  5 Aug 2025 04:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754368890; cv=none; b=WM9nlRiGV9KJQnf0LLQUtW42fs/l03Zg1LQLdNQcjO+/RMtvXvUUkvKm/ysHGqP7ns4nzO0ZavB5qWI34xgos+KB14QJWc2OmqCOgde4e9qilRcdXnrOwLM8gDBC9Z4jqonbKKy11X+vVHudMHwUjX7bJDf7eB33WB2CUyZHPJw=
+	t=1754369143; cv=none; b=oJoA7SybV6cQOq6oZJy8OFKNW12s2ORCDFt5da7OFLvrfJIkILiiiwMRAQoF5IQvj9eWiigBvlC5WuvUzsgbRcg8VM+EXOVzh2g7HObx8DK7sUJJ4K0vl3hnEjw3eOZHgRZ76VVh4t9bStAfoKSAaHlDNLie5xJlmYshAW8UIfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754368890; c=relaxed/simple;
-	bh=XwifHaAO0FULAMmR+Jx8W/aCkqRF+Sul8FdJA0pQOsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LXpgIN4fDGuHyOzX/QD3396rB+w9y1wZg1cM309uUuDpRWu8oQ2Xz7Ff6O4C2uXgRb+ijRM630gOGDIRZmii0o4+sL5gbexGTmZkfPKUhAjua9hEjEzgZB7vleKb9n04q2NJa1luDivRqPzvG7gXlZFeth1y++oX62/EnwXZuK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GI1qxTS8; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d534be54-3631-45e3-8b85-267b6736c4ca@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754368874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8nQSypsZIGHauePRJUfyaGkbslrvQlPDQeZECMJjgZk=;
-	b=GI1qxTS8gqSpK/NSyc8cffrPM2ennJCr3fwhKyxMScibDVRQloNKFqu5QSZW+9tldwF0KY
-	0EvFrlrUDpD5phKkHGfeDMY+e22cmnYkAYZBojfHYXHXxiqPYgynrD5LwnznaC8dxXbsnL
-	7TwAbiGWGFNC7mPWoEoKtsWk5c2no58=
-Date: Mon, 4 Aug 2025 21:41:07 -0700
+	s=arc-20240116; t=1754369143; c=relaxed/simple;
+	bh=TAonnqb31CUIOHVN4ZjZ+xKkH5pGUDTZpo++WiRgmIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QfbbErF6n+RcXVPj0eq++ryz0QCwArORWCYh4PkPhr1kQJRz1TAbdz2v7/k9qHUZJ8KsSItkKmbJI92CvHWauTwFqU+dai6qBrSGTzwgH/tLpdABBGgNXyibWWBO8frXAITWfjN3RNaV9hk0SsQBmmZaB1y/7zsrFCXZKZ4+4gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYVKYGck; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-458ba079338so19125065e9.1;
+        Mon, 04 Aug 2025 21:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754369139; x=1754973939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5CLE/nZl0bygFLZDV8sLED9fJokVkH4Ghe8Y768YWTE=;
+        b=CYVKYGckike62RemAYPw6eEdJQ0NhtmUPDiIhFbXe2JILcIXz0Fvlp9AIGvKqxuOzD
+         w14yQFNLUjHHhtiea9JzzZ0CoCFJ4xYmvCoPyiEfS+RPscXsqTlQ5AaJ2/bKTYNrq2K+
+         sme4y8D4je0d62pa22zetkrM6+7HLIBbd7goq8kHPHw0LRXrT30juFnmNaViuFayGWCz
+         5Zas54VyZO1BNM36ktFkQmjbD7Jfvpl1RjquxwoUeC2cTZt/5cYjBnt05WjAkvtmrLWE
+         jDWn/x/bb40o+nIZ75rAxiV55mfxXKo6ZDkoMN4CkyZnV4qUzBRWrSjf6R5boL41k0GO
+         469g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754369139; x=1754973939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5CLE/nZl0bygFLZDV8sLED9fJokVkH4Ghe8Y768YWTE=;
+        b=luS8L0fxLuri43eoDomBxP2qV4Rwo7ImiH16CQLdazHQk16S4lUrKWeZgHTvMQWpYH
+         vO7qaO1cgV4BiQEmc+cqUngFrwi7h6IzuMDFoLTJ7vNoKGidvkTFa4vlK0hLVo22AbA0
+         vUGl2j/2ygxn3XTAeTpbt+kND3c6JDETnee6POm+RRwTPkJarHW8AYmbUB1T7qFwA0FG
+         aTgnvSQyD/SFEeWdoblWzro6ewheV0qrZP7wUVj5JchOll6MFQpjedYa4Vzb+fRus9wv
+         ONHbUO1k2KnA3ao9+mfZrNUAmoOzgn+KU2t1Wkw0x/RKCeoSNKAS9xw+zfE3rOyru60v
+         ndSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwaSPQkC9rhavDgRCRz9exdCKQIjrIfTEOVb8HahH5m0VzeEqyurpbr9D6OxTUsTK60Pd1Om58nvx4dGFcEu8=@vger.kernel.org, AJvYcCWZPvFWhly7HM+51q9fTycLK+32jctDe93L68ymOqs9T6zyrw47Rr46iBF3lGJRIzYCSoUyiukOO5UHAOBeJg==@vger.kernel.org, AJvYcCWZSHeXe5EbekUvdygiTFYlARPaaeCGoIuZSnMxNopq2uFz2X+JGWGwdfwSGrzICmWQgQzcUl5KCRwg7qWk@vger.kernel.org, AJvYcCXSo8h8Abo6mOp5+5LxFTvZrVYLgRl23jujVfyXtT89talU5B+YnJHcHFnPZ9up8AsH2c/ehS0T0IIU0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySHNnbeYRsS8Z2INi5dJr8GXnniyXEhd3KXXPHz3YP1A+9XCND
+	Lq8PX+g1hILKWOQgwLTa1WMk8a2STJTk/H4tzO+8702fl2KliEiWxXUqVQe8wdw79a3m11v4LE4
+	aJ+RUHmCRHpn+AQdA2PAbXHdQ4ENgk4g=
+X-Gm-Gg: ASbGncvFbr3Ui3x7izA7ttS0tIKn6f36y7LS2afOkQkd3Ui12WTkkNHRXz1pJfFhZPu
+	JvoTXAPIlAPzsd0S/RW+wEeq6y5sXGUYCfH0pLR/u70qh7tmCt04T8Xd86llT6u8z78+fTqeQdS
+	trlctafmARBze4C14g8fbmgZsEW2ovQpTq6tF9nL0q9PkyUyUoM5PRcbS/7KzGH2sHU+xi8dlHb
+	DRxfBGZBI8iFR0VQm4PlunQmxO83qd4EQmmCIsp
+X-Google-Smtp-Source: AGHT+IGc6QQ7QtZXv3oXa+s4bGCwd6H8bMMTvoIEqqGcgN+XlG495okJHTRmO9XIJ3QiavGEPE3orL1g2fonQFyeilw=
+X-Received: by 2002:a05:600c:190d:b0:439:4b23:9e8e with SMTP id
+ 5b1f17b1804b1-459e0c84849mr15581045e9.3.1754369139091; Mon, 04 Aug 2025
+ 21:45:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [trace?] [bpf?] possible deadlock in down_trylock (3)
-Content-Language: en-GB
-To: syzbot <syzbot+c3740bc819eb55460ec3@syzkaller.appspotmail.com>,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- martin.lau@linux.dev, mathieu.desnoyers@efficios.com,
- mattbobrowski@google.com, mhiramat@kernel.org, rostedt@goodmis.org,
- sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com
-References: <6890e4d6.050a0220.7f033.000e.GAE@google.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <6890e4d6.050a0220.7f033.000e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com>
+ <d7093377-a34e-4488-97c6-3d2ffcd13620@suswa.mountain>
+In-Reply-To: <d7093377-a34e-4488-97c6-3d2ffcd13620@suswa.mountain>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 5 Aug 2025 06:45:27 +0200
+X-Gm-Features: Ac12FXwGrucebm8_mWlgbEw-x_Dxh5fokdtlFvEDHDGn0BX-d4wP9-A2Gqsfb7Y
+Message-ID: <CAKXUXMzgABnN3bbV58xVwYNithcUg7fZgW0DxGCngJnNgNzrfw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: qcom: Drop dead compile guard
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, kernel-janitors@vger.kernel.org, 
+	Julia Lawall <julia.lawall@lip6.fr>, Manivannan Sadhasivam <mani@kernel.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 1, 2025 at 5:33=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> This patch removes some dead ifdeffed code because the KConfig has a
+> select which ensures that CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND is set.
+> Konrad was wondering if there are any tools to detect this sort of
+> thing.  I don't think so.  I think the only thing we detect are
+> non-existant configs.  But let me add a few more people to the CC who
+> might know.
+>
 
+I also have a simple script to search for unused configs, but that is
+just five lines of bash and then a lot of manual filtering.
 
-On 8/4/25 9:50 AM, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    84b92a499e7e Add linux-next specific files for 20250731
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11065aa2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b335f01a07f73eac
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c3740bc819eb55460ec3
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14167834580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f27cf0580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/97d9ce461c85/disk-84b92a49.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0ca812ed76e7/vmlinux-84b92a49.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0959d28a047f/bzImage-84b92a49.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c3740bc819eb55460ec3@syzkaller.appspotmail.com
->
-> FAULT_INJECTION: forcing a failure.
-> name fail_usercopy, interval 1, probability 0, space 0, times 0
-> ============================================
-> WARNING: possible recursive locking detected
-> 6.16.0-next-20250731-syzkaller #0 Not tainted
-> --------------------------------------------
-> syz.3.22/6137 is trying to acquire lock:
-> ffffffff8e12e278 ((console_sem).lock){-...}-{2:2}, at: down_trylock+0x20/0xb0 kernel/locking/semaphore.c:176
->
-> but task is already holding lock:
-> ffffffff8e12e278 ((console_sem).lock){-...}-{2:2}, at: down+0x39/0xd0 kernel/locking/semaphore.c:96
+If I would attempt to implement such already rather complex analysis,
+I would start with looking at this tool:
 
-There is a similar discussion in the following old thread:
-    https://lore.kernel.org/bpf/345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp/
+https://github.com/paulgazz/kmax
 
-In that case, the recursive lock is rq lock. Looks like there is no good solution for
-that thread.
+Possibly, there is a good way to re-use some parts of it or extend it
+to look for the pattern above.
 
-Not sure how this semaphore deadlock could be resolved.
+Lukas
 
+> regards,
+> dan carpenter
 >
-> other info that might help us debug this:
->   Possible unsafe locking scenario:
->
->         CPU0
->         ----
->    lock((console_sem).lock);
->    lock((console_sem).lock);
->
->   *** DEADLOCK ***
->
->   May be due to missing lock nesting notation
->
-> 2 locks held by syz.3.22/6137:
->   #0: ffffffff8e12e278 ((console_sem).lock){-...}-{2:2}, at: down+0x39/0xd0 kernel/locking/semaphore.c:96
->   #1: ffffffff8e139f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->   #1: ffffffff8e139f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
->   #1: ffffffff8e139f20 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2256 [inline]
->   #1: ffffffff8e139f20 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run2+0x186/0x4b0 kernel/trace/bpf_trace.c:2298
->
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 6137 Comm: syz.3.22 Not tainted 6.16.0-next-20250731-syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->   print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
->   check_deadlock kernel/locking/lockdep.c:3093 [inline]
->   validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
->   __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
->   lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
->   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->   _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
->   down_trylock+0x20/0xb0 kernel/locking/semaphore.c:176
->   __down_trylock_console_sem+0xd0/0x1e0 kernel/printk/printk.c:326
->   console_trylock kernel/printk/printk.c:2868 [inline]
->   console_trylock_spinning kernel/printk/printk.c:2009 [inline]
->   vprintk_emit+0x320/0x7a0 kernel/printk/printk.c:2449
->   _printk+0xcf/0x120 kernel/printk/printk.c:2475
->   fail_dump lib/fault-inject.c:66 [inline]
->   should_fail_ex+0x3f5/0x560 lib/fault-inject.c:174
->   strncpy_from_user+0x36/0x290 lib/strncpy_from_user.c:118
->   strncpy_from_user_nofault+0x72/0x150 mm/maccess.c:192
->   bpf_trace_copy_string kernel/bpf/helpers.c:755 [inline]
->   bpf_bprintf_prepare+0xbbc/0x13d0 kernel/bpf/helpers.c:976
->   ____bpf_trace_printk kernel/trace/bpf_trace.c:373 [inline]
->   bpf_trace_printk+0xdb/0x190 kernel/trace/bpf_trace.c:363
->   bpf_prog_7c77c7e0f6645ad8+0x3e/0x44
->   bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
->   __bpf_prog_run include/linux/filter.h:718 [inline]
->   bpf_prog_run include/linux/filter.h:725 [inline]
->   __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
->   bpf_trace_run2+0x284/0x4b0 kernel/trace/bpf_trace.c:2298
->   __bpf_trace_contention_begin+0xdc/0x130 include/trace/events/lock.h:95
->   __do_trace_contention_begin include/trace/events/lock.h:95 [inline]
->   trace_contention_begin include/trace/events/lock.h:95 [inline]
->   __down_common+0x5ad/0x6a0 kernel/locking/semaphore.c:292
->   down+0x80/0xd0 kernel/locking/semaphore.c:100
->   console_lock+0x145/0x1b0 kernel/printk/printk.c:2849
->   do_fb_ioctl+0x509/0x750 drivers/video/fbdev/core/fb_chrdev.c:123
->   vfs_ioctl fs/ioctl.c:51 [inline]
->   __do_sys_ioctl fs/ioctl.c:598 [inline]
->   __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f92c678eb69
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffda68c54f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f92c69b5fa0 RCX: 00007f92c678eb69
-> RDX: 0000200000000080 RSI: 0000000000004606 RDI: 0000000000000005
-> RBP: 00007ffda68c5550 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007f92c69b5fa0 R14: 00007f92c69b5fa0 R15: 0000000000000003
->   </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
-
+> On Thu, Jul 24, 2025 at 02:23:52PM +0200, Konrad Dybcio wrote:
+> > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >
+> > SCSI_UFSHCD already selects DEVFREQ_GOV_SIMPLE_ONDEMAND, drop the
+> > check.
+> >
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > ---
+> > Is this something that could be discovered by our existing static
+> > checkers?
+> > ---
+> >  drivers/ufs/host/ufs-qcom.c | 8 --------
+> >  1 file changed, 8 deletions(-)
+> >
+> > diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> > index 4bbe4de1679b908c85e6a3d4035fc9dcafcc0d1a..76fc70503a62eb2e747b2d4=
+cd18cc05b6f5526c7 100644
+> > --- a/drivers/ufs/host/ufs-qcom.c
+> > +++ b/drivers/ufs/host/ufs-qcom.c
+> > @@ -1898,7 +1898,6 @@ static int ufs_qcom_device_reset(struct ufs_hba *=
+hba)
+> >       return 0;
+> >  }
+> >
+> > -#if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
+> >  static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
+> >                                       struct devfreq_dev_profile *p,
+> >                                       struct devfreq_simple_ondemand_da=
+ta *d)
+> > @@ -1910,13 +1909,6 @@ static void ufs_qcom_config_scaling_param(struct=
+ ufs_hba *hba,
+> >
+> >       hba->clk_scaling.suspend_on_no_request =3D true;
+> >  }
+> > -#else
+> > -static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
+> > -             struct devfreq_dev_profile *p,
+> > -             struct devfreq_simple_ondemand_data *data)
+> > -{
+> > -}
+> > -#endif
+> >
+> >  /* Resources */
+> >  static const struct ufshcd_res_info ufs_res_info[RES_MAX] =3D {
+> >
+> > ---
+> > base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
+> > change-id: 20250724-topic-ufs_compile_check-3378996f4221
+> >
+> > Best regards,
+> > --
+> > Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
