@@ -1,62 +1,94 @@
-Return-Path: <linux-kernel+bounces-756176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6603CB1B0E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313CAB1B0EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F243AE9F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A6E1624F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290B225D1E5;
-	Tue,  5 Aug 2025 09:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECD9259CBA;
+	Tue,  5 Aug 2025 09:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R94D9elE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JKYLIDdF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W9D36PnH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNtts3JH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iBbEuD6h"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B082F257AEC;
-	Tue,  5 Aug 2025 09:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72A81B960
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754385587; cv=none; b=IQOWHZT9dLtfb6+jZ+oDPLW6JasjJ6zZlDmOpDH+qkExEOB6v64xfSBBndQTUzBy6KOKY4bHsxcmtDXkwRR9VSuK8uwFqUrOf9UEqn1+ehBrMsMSBihQcPSTXhHmX9Bjv8G3c8by0RqGKMC3g+tkHsvVZxFOKLTGSQUpVTri5hw=
+	t=1754385649; cv=none; b=b+aNgfVn/ciLfHaTKGPjKrw4wRVFn7ez57aR1cW0lYE1ZJD7v38k8sB4c7rBNA7XdHqC7YAunkrHsJG45r53YVZTUYdZwAYEMHHZzMa6APFNz3YUJENCgEt7BMvdNJ1gwig8288j6zyuAVU/cqFIoGr1Jz9dwhJLA1s/C7X7RAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754385587; c=relaxed/simple;
-	bh=7mC3wl9r2WjfTNJhBB1YZNFGNWPZwe8RJuAByGvexao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OK/X2iIAcLUw3ynwqz15B2OWK4eJsOgi/OkVHaADpkKxz8DKPV5RQR3T+AHe6stONXKw9sCT3mTtIt+LAA3iTVDzNjpEqzmhZ2O70XZytjrpUo1AicVE79AfcN3Z1ysCp9BMv+SG7x384ejwad5LvVAq0sqpTXXuZ4Ax59n4TCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R94D9elE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5751pD7c007598;
-	Tue, 5 Aug 2025 09:19:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NfI0YkisqyQiDBbFFGLao7qusuEIEbYmrnUakGa8wH4=; b=R94D9elErWGrCGCG
-	TBMGq4hZolBiawCsOUFXmNasbOucsWh2cAC0b/oHS4lnjP0ob9hrEtV377qxlfv3
-	4RsMJaprMU0ON+11DL5lC8QeuNBtkFGPhl4vedwPHwahSARtKd4WtrpMgwKxnnb8
-	+D2HRmOgZRLDXK0GzqY7+h32FtjX0KHbsjLS+ddVi+99JyFK76/low15MamqwejX
-	L5MAkY1d1SM5X3afMajQEeCxTNdOZIfPoAf6N8CfgWYCJD2rDeDCVKtZICPAQJ8L
-	WS7qzDNjk691TOPTOOcCmy8bjx0RFAq6saExOW4Tpi+Oa+tnXJO1fS6RAGy+waUk
-	itEPAA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a7sc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 09:19:39 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5759JceB012879
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Aug 2025 09:19:38 GMT
-Received: from [10.217.216.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 5 Aug
- 2025 02:19:32 -0700
-Message-ID: <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
-Date: Tue, 5 Aug 2025 14:49:29 +0530
+	s=arc-20240116; t=1754385649; c=relaxed/simple;
+	bh=+jRmFplRDzZg5mVHHRuoaGOQ8p0iT2dOVN6esIDtERE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPp/bykGuYJP6SqMyIMqZ/n1FDTcQIHuzvQhOEvrqnP2qCwJ7arzvD+lP8nUZ2MEh7GdfYpea25A1s7gyn103Nvgk9u5CTV1Vsib7472cDD6HSh991jcpvz1eR3b9F7M6WSTL7POv+CxCweoqy/nTgD+AOJi5t7BphR/KxBHjDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JKYLIDdF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W9D36PnH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNtts3JH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iBbEuD6h; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EE60221235;
+	Tue,  5 Aug 2025 09:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754385640; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PHMRVK7QVsCp1KUp4tnCghouR6JYlszhPaJzdNosRRE=;
+	b=JKYLIDdFNs3aYZsa6GvIKNRX/cwlIWnX7FxSvXIq3suGXbfTqxwOJMyuwHtpwCAM9xjFNi
+	xLCrwNc9kYYtFh4lhdCeYRWby/Zs7JEcU2EAcKoOD4kxXoZZZLqyA/97mi86LXue45vuSF
+	f8AOwB4+02DIcC3uO5T2zVh3YUJ5sqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754385640;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PHMRVK7QVsCp1KUp4tnCghouR6JYlszhPaJzdNosRRE=;
+	b=W9D36PnHk3baL7DuUyr+HqePGIz/D9842my0AB3oYO9sgmWmuNxfoifsnby6agNFoX9kEn
+	rCuEpPCAhjZi8iBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754385639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PHMRVK7QVsCp1KUp4tnCghouR6JYlszhPaJzdNosRRE=;
+	b=sNtts3JHY8JNB1Izae96sbqpsMi7G2NcXCderJkWaCw+EUDX9DXMBzWA78rKB8saNuU7HJ
+	68GHr92raH00HKny/JUEV+4bMmN8Xx54HX9t4rdwS+1KjZmZDw3PPJegpimf/ppJ2gr4M5
+	5eDHPg3bfwy33oT6H2v1v8uBgXXheb8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754385639;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PHMRVK7QVsCp1KUp4tnCghouR6JYlszhPaJzdNosRRE=;
+	b=iBbEuD6hS5eB0gMuFdHIdxCKTewxxhF+o81zBLSFRjEkFPDzRkMqNoekqYE2IdfwIPXge6
+	smG0P5aUgGKq2VDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3BA913A55;
+	Tue,  5 Aug 2025 09:20:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ci90M+fMkWhuSgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 05 Aug 2025 09:20:39 +0000
+Message-ID: <3c6100a1-78a3-4211-a62d-eea07db91b62@suse.cz>
+Date: Tue, 5 Aug 2025 11:20:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,94 +96,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
- broken capabilities
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
-        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <kernel@oss.qualcomm.com>
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
- <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
+Subject: Re: [PATCH 1/1] mm: Correct misleading comment on mmap_lock field in
+ mm_struct
+To: Adrian Huang <adrianhuang0701@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Liam.Howlett@oracle.com,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Feng Tang <feng.79.tang@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Adrian Huang <ahuang12@lenovo.com>
+References: <20250805084726.2054-1-ahuang12@lenovo.com>
 Content-Language: en-US
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-In-Reply-To: <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=6891ccab cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=1q2MIjjhIDf-Krenf6QA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Rnz1D7qDn-xKlhuAdL1WPvdsOEv87e3p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2NiBTYWx0ZWRfX4k91tHBAnPOJ
- b6sNBFEp+yKxOUnHHgZqXnYFQJ7qyD/LM2+rlv6/c9XuZ3FfaN5YzhCjwD9tM872MmKVHvTAJuz
- YC2xvV9CAtx73aKAbz1hq0OhYpRltBWzU/l3WbDM67P6PZode8xEcgux9Z8tueQTrXD3FPzgLV1
- nkqzuf00CKy4y2Nh+j2CFaKzUPce/6AsU4bMoWwg9qxDULKeQvA2LyMmrjxeeWAsDUi56xnybfv
- V/qkghpJfvWkXHHs2QFeD+jx1HdfOuHU+AvtQ5Q5DsChoeq3vSUu1GsMjbs3rbeLnWEYVTpK14x
- 1HBfoNZ42C/h8L68CrFcKadmXEKjl6mzOZ28Kf9zwWLSuI/CBgisMBxa7L2UuSmX+b4TMJ4V8st
- IGESpQj/OELcuiKCb97hCi6sKFZsJ4Na9b9j9/SmK1dZSI4E1ixPqe9PTsjrZbDzplzLjTFC
-X-Proofpoint-GUID: Rnz1D7qDn-xKlhuAdL1WPvdsOEv87e3p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=971 clxscore=1015
- phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050066
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250805084726.2054-1-ahuang12@lenovo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,oracle.com,kernel.org,google.com,suse.com,gmail.com,kvack.org,vger.kernel.org,lenovo.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-
-
-On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
-> On 01/08/2025 10:45, Sarthak Garg wrote:
->> The kernel now handles level shifter limitations affecting SD card
->> modes, making it unnecessary to explicitly disable SDR104 and SDR50
->> capabilities in the device tree.
->>
->> However, due to board-specific hardware constraints particularly related
->> to level shifter in this case the maximum frequency for SD High-Speed
->> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
->> card in HS mode. This is achieved using the max-sd-hs-frequency property
->> in the board DTS.
->>
->> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
->>   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
->>   arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
->>   arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
->>   4 files changed, 3 insertions(+), 3 deletions(-)
->>
+On 8/5/25 10:47 AM, Adrian Huang wrote:
+> From: Adrian Huang <ahuang12@lenovo.com>
 > 
-> This will break MMC for all of the users and nothing in commit msg or
-> cover letter explains that or mentions merging strategy.
+> The comment previously described the offset of mmap_lock as 0x120 (hex),
+> which is misleading. The correct value is 120 (decimal), and using '0x120'
+> could confuse readers trying to understand why the count and owner fields
+> reside in separate cachelines.
 > 
-> Exactly this case is covered by your internal guideline, no? Please read it.
+> This change also removes an unnecessary space for improved formatting.
 > 
-> Best regards,
-> Krzysztof
+> Fixes: 2e3025434a6b ("mm: relocate 'write_protect_seq' in struct mm_struct")
+> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
 
-Just to make sure I’m addressing the right concern — are you primarily 
-worried about the introduction of the max-sd-hs-frequency property in 
-the board DTS files, or about the removal of the sdhci-caps-mask
-from the common sm8550.dtsi?
+That seems all true so
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+But I wonder why we just hope this remains true "with some kernel
+config" and don't employ some explicit alignment to make sure it's true
+(except perhaps with some debug options like lockdep bloating the
+structures, but we don't care about perfmance in such configs).
+
+> ---
+>  include/linux/mm_types.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 1ec273b06691..ec90bbf22e2b 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1027,9 +1027,9 @@ struct mm_struct {
+>  					     */
+>  		/*
+>  		 * With some kernel config, the current mmap_lock's offset
+> -		 * inside 'mm_struct' is at 0x120, which is very optimal, as
+> +		 * inside 'mm_struct' is at 120, which is very optimal, as
+>  		 * its two hot fields 'count' and 'owner' sit in 2 different
+> -		 * cachelines,  and when mmap_lock is highly contended, both
+> +		 * cachelines, and when mmap_lock is highly contended, both
+>  		 * of the 2 fields will be accessed frequently, current layout
+>  		 * will help to reduce cache bouncing.
+>  		 *
+
 
