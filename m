@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-756354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD0DB1B303
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF8AB1B304
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253E518984A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 880C5175AAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3740425DCF0;
-	Tue,  5 Aug 2025 12:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="whMW4X1K"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87283269CE6;
+	Tue,  5 Aug 2025 12:04:49 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF95C1F30AD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FEB23F413
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395430; cv=none; b=j8UYCCTP08MRofRQhv7DNRtu07AMsbpX8N/fEec3uKR5qvFpE4nDAPopmAXFtFZ8WoB3yCGWMaX8+KNdQOMJDAerxeidSEyS8SdfPprDjbmKKBmh0dKpbMMle27eJubhsBnh+RWED40FiTD9P3kg3iuUOD3QR6VVnuQRogV9rkk=
+	t=1754395489; cv=none; b=RJxvELsF51azSGFVzmAnGvGW4Ihv9HPNRPa0LQNbCt+PJxdhGUpU/SRId5UDxhW6+ZzklPTlTAQDYrcJ0mEuFnU3qwX0+xha+iRnQgOoRVIDreJgqnMQ+B90CsiSpjAdw/RB6WH2/NWYq7bE59tppgoIN3VDNU/Sly5HJR6t/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395430; c=relaxed/simple;
-	bh=1NVdk8GdDMY6dJ0etVURAVdHQBQXTl0gHe6ztBZkYq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dv9FozNbR3WdLwURaWoWrejpQUSBW7pwP/f75ozDrJBLm/4yxXLJLhngLVVli2BsAH/Uj06GTZ15NkSL8M+unrYHw1iu4Y+6icXc9IwVABCgQ8XlZYZXqtVdbNgzXEGUewOge1lFMsiCaWTcdxve4u45wtkz86UHc3YlRcIELgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=whMW4X1K; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6AB151775;
-	Tue,  5 Aug 2025 14:02:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754395379;
-	bh=1NVdk8GdDMY6dJ0etVURAVdHQBQXTl0gHe6ztBZkYq8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=whMW4X1K3i/yLt5Dg2VoNm2kFbc6jUqcA5/GgtJVaqQoXHBu9ZrOP9IZXuQ0TZfgb
-	 9+CHwxLmdnc3FcNQxzhVZFkP5QZFgC7FSRyGoUj68cj2N75Dx9FdSiw0WOTbHmWQb6
-	 WTgBb9kJHKO3QEiT6D+sRTDvBV70dJcLDyTam8V8=
-Message-ID: <cc0e4cf5-1bd9-4ae3-a130-0483dbfc6335@ideasonboard.com>
-Date: Tue, 5 Aug 2025 15:03:44 +0300
+	s=arc-20240116; t=1754395489; c=relaxed/simple;
+	bh=uJBSd0RYDASFFZ/Z0ey9ZuL5lP97B4RDRI3fSG6SzW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VCVYXsacav11WRPyE1g5B9lPloCpt/AfNJHvM32m0VZezOcDH/le9MjUsk08r7m/CwJSkibdbir5SPj2hGgXOGV49BmoUCzzcbeYaTE3bCYOKXvpL0ASazwJ/OfUw14pwTfw/kCftn2K6DvVxn0TY4jENW8/754fXyDxf0QWWYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5c889e4271f411f0b29709d653e92f7d-20250805
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e08b59db-1227-415f-9524-48b789a41595,IP:0,U
+	RL:0,TC:0,Content:11,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:11
+X-CID-META: VersionHash:6493067,CLOUDID:bde39b8ec4116adce4cae47d27490bca,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|102,TC:nil,Content:4|50,EDM:-3,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5c889e4271f411f0b29709d653e92f7d-20250805
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <liqiang01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 55385721; Tue, 05 Aug 2025 20:04:38 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 71C0FE008FA2;
+	Tue,  5 Aug 2025 20:04:38 +0800 (CST)
+X-ns-mid: postfix-6891F356-36186845
+Received: from localhost.localdomain (unknown [10.42.12.14])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 53D29E008FA2;
+	Tue,  5 Aug 2025 20:04:36 +0800 (CST)
+From: Li Qiang <liqiang01@kylinos.cn>
+To: akpm@linux-foundation.org,
+	david@redhat.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com
+Subject: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for performance
+Date: Tue,  5 Aug 2025 20:04:35 +0800
+Message-Id: <20250805120435.1142283-1-liqiang01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <74580442-2a9a-4055-b92d-23f5e5664878@redhat.com>
+References: <74580442-2a9a-4055-b92d-23f5e5664878@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] phy: cdns-dphy: hs-clk improvement and a cleanup
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- Parth Pancholi <parth.pancholi@toradex.com>,
- Devarsh Thakkar <devarsht@ti.com>, Francesco Dolcini <francesco@dolcini.it>,
- Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- Jayesh Choudhary <j-choudhary@ti.com>
-References: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod, Kishon,
+Ah, missed it after the performance numbers. As Vlastimil mentioned, I=20
+would have expected a bloat-o-meter output.
 
-On 23/07/2025 13:01, Tomi Valkeinen wrote:
-> A cdns-dphy improvement to return the actual hs clock rate, and a
-> cleanup to remove leftover code.
-> 
-> These were part of a Cadence DSI series:
-> 
-> https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02%40ideasonboard.com/
-> 
-> but are now separately here for easier merging.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
-> Tomi Valkeinen (2):
->       phy: cdns-dphy: Store hs_clk_rate and return it
->       phy: cdns-dphy: Remove leftover code
-> 
->  drivers/phy/cadence/cdns-dphy.c | 24 +++++++++---------------
->  1 file changed, 9 insertions(+), 15 deletions(-)
-> ---
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> change-id: 20250723-cdns-dphy-hs-clk-rate-fix-a8857a5789dd
+>=20
+> My 2 cents is that usually it may be better to understand why it is
+> not inlined and address that (e.g., likely() hints or something else)
+> instead of blindly putting __always_inline. The __always_inline might
+> stay there for no reason after some code changes and therefore become
+> a maintenance burden. Concretely, in this case, where there is a single
+> caller, one can expect the compiler to really prefer to inline the
+> callees.
 
-Is this good to merge, and if so, do you have any estimate when? While
-this is independent from the DSI series, I'd rather push the DSI series
-into drm-misc about the same time, so both would appear in linux-next
-relatively together.
+>
+> Agreed, although the compiler is sometimes hard to convince to do the=20
+> right thing when dealing with rather large+complicated code in my=20
+> experience.
 
- Tomi
+Question 1: Will this patch increase the vmlinux size?
+Reply:
+	Actually, the overall vmlinux size becomes smaller on x86_64:
+	[root@localhost linux_old1]# ./scripts/bloat-o-meter before.vmlinux afte=
+r.vmlinux =20
+	add/remove: 6/0 grow/shrink: 0/1 up/down: 4569/-4747 (-178) =20
+	Function                                     old     new   delta =20
+	zap_present_ptes.constprop                     -    2696   +2696 =20
+	zap_pte_range                                  -    1236   +1236 =20
+	zap_pmd_range.isra                             -     589    +589 =20
+	__pfx_zap_pte_range                            -      16     +16 =20
+	__pfx_zap_present_ptes.constprop               -      16     +16 =20
+	__pfx_zap_pmd_range.isra                       -      16     +16 =20
+	unmap_page_range                            5765    1018   -4747 =20
+	Total: Before=3D35379786, After=3D35379608, chg -0.00% =20
 
+
+Question 2: Why doesn't GCC inline these functions by default? Are there =
+any side effects of forced inlining?
+Reply:
+	1) GCC's default parameter max-inline-insns-single imposes restrictions.=
+ However, since these are leaf functions, inlining them not only improves=
+ performance but also reduces code size. May we consider relaxing the max=
+-inline-insns-single restriction in this case?
+
+	2) The functions being inlined in this patch follow a single call path a=
+nd are ultimately inlined into unmap_page_range. This only increases the =
+size of the unmap_page_range assembly function, but since unmap_page_rang=
+e itself won't be further inlined, the impact is well-contained.
+
+
+
+Question 3: Does this inlining modification affect code maintainability?
+Reply: The modified inline functions are exclusively called by unmap_page=
+_range, forming a single call path. This doesn't introduce additional mai=
+ntenance complexity.
+
+
+Question 4: Have you performed performance testing on other platforms? Ha=
+ve you tested other scenarios?
+Reply:
+	1) I tested the same GCC version on arm64 architecture. Even without thi=
+s patch, these functions get inlined into unmap_page_range automatically.=
+ This appears to be due to architecture-specific differences in GCC's max=
+-inline-insns-single default values.
+
+	2) I believe UnixBench serves as a reasonably representative server benc=
+hmark. Theoretically, this patch should improve performance by reducing m=
+ulti-layer function call overhead. However, I would sincerely appreciate =
+your guidance on what additional tests might better demonstrate the perfo=
+rmance improvements. Could you kindly suggest some specific benchmarks or=
+ test scenarios I should consider?
+
+--
+Cheers,
+
+Li Qiang
 
