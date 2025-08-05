@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-756281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3BEB1B241
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:49:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A680B1B243
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B43C3AE8F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:49:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E43180CC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1B23BF96;
-	Tue,  5 Aug 2025 10:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3319823816E;
+	Tue,  5 Aug 2025 10:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXqA6Bj3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cuUOtBWU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D82A41;
-	Tue,  5 Aug 2025 10:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3264A3D544
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 10:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754390942; cv=none; b=D8PPunkwqodpaxSyHY8LKgyfDOvkNQJanDdVEgx0OrKBIbXl0kSnGbKpQZ4DsxyshfQ6XLdm4q2IGyL0qJNL44jgH0KVZnhPR5cN6IBTq5Gkf/2Tj+hQQz28vu8d17ysd0GRWHQUtYby/EfHigqXsFhnacPlcqF23rnGzdBDNVE=
+	t=1754390985; cv=none; b=IsvbvRFYu/cjoeAwvZDZZjOqfwB1Jib2UEM2RQ39UA91znwzKE2bwtRYcmMu+cFVhfCW3271Guy4bML3zKAPzhfySmj5XeLQwJvGwXVXQVUXvGL5qEUlRD4Db8J8z6K//oD7WcfUJKpWR6LLvOe44J4Y4/PFU3dhUuKv3t1SifE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754390942; c=relaxed/simple;
-	bh=1SQ374xhrVvMt2lc3PLDfYgIIhwxy2llUepDQiiaPnA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oE7Q9VW1Mmf1DdgWoO/MtnAquQ3x/i9eR5rwX142YrmEj4wGqrEq7W0zaLFjbz9X5tSk1H7ynibkaxX6gaswOHVlE0WzfImY3X7ld88mheUHjvRIPPHWLYsvbuUGil0T4ZimUcnZpzjErGrQXDddleCrQoSxNlF06LMVTLWKBYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXqA6Bj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D513C4CEF0;
-	Tue,  5 Aug 2025 10:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754390942;
-	bh=1SQ374xhrVvMt2lc3PLDfYgIIhwxy2llUepDQiiaPnA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LXqA6Bj3xLvZT4QEsEKyPzfbNz2VNnEO5JXkBqixRW5O+D6eFJiCZdQoiNeX2jJOU
-	 eOy8OUQ4LJJ1j0xNCONsfMV3ZskE0BL1DpJsaxYNLxrKWgOrl1IPnUhcFD1z6Ew8jk
-	 yHisxBMMg8qdJLFAepI5zaUxqY8cpmpW5Tu3nXCD+jrPDxb6QGp/OfT87rOSSjjmvU
-	 Lc+G9mYmCx7RHSkT+vGASXQYVKDvs5GYXHm9RRIMEtUPrvtl9jQco0g98WeNBdiKcd
-	 ONa3Bt67Yh7E8UcymKDfCc5u6tbkqK5/bOX/05qlIjOlAPl5FCpx4EPwkIB0LV3Hqr
-	 ocn12DfmeVPLg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee
- Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>
-Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for
- ITER_SOURCE
-In-Reply-To: <aHT1etvG0R648EB9@google.com>
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
- <U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
- <20250704-iov-iter-v2-1-e69aa7c1f40e@google.com>
- <878qkyoi6d.fsf@kernel.org>
- <0Y9Bjahrc6dbxzIFtBKXUxv-jQtuvM2UWShaaSUsjKBuC1KKeGIpBFTC4a89oNrOLBP66SXtC7kQx1gtt04CMg==@protonmail.internalid>
- <aG5NdqmUdvUHqUju@google.com> <87ecuplgqy.fsf@kernel.org>
- <q7QRbcFgb5yhmBOt4eLkkzqyckspc2L2g3e0pXhJxm0yBVeG2Hifi4O77gaxwpWss1Z_CUjSy1P22ppxcxo8jw==@protonmail.internalid>
- <aG5iLiUJg_cHtB8r@google.com> <87ikk1jnwi.fsf@kernel.org>
- <WVgUwLhmbElHeP5tPcNONT_9FpPV-_YhCcW3fjEerTwYFRTwOwr660BifN5WZ7Jlon5AivliY6W87qxnrn1mKw==@protonmail.internalid>
- <aHT1etvG0R648EB9@google.com>
-Date: Tue, 05 Aug 2025 12:48:52 +0200
-Message-ID: <874ium9h7v.fsf@kernel.org>
+	s=arc-20240116; t=1754390985; c=relaxed/simple;
+	bh=fqEe3cY5rnN21WNoCqtMng+k7RSLJSnRCtZjXcggtZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Skz+Qk4aVbAvg5Ze+wSaW1aiokRPdfmb9MJSvOqAw09YkwXOr+cYK2ZdgG1Kh27vFDozbdEUVU3u+ft+TL0HvV7ROQD7vbZpDBUvVXPnmLPI9HiOYi6aaSNtMFjucYqkM/N3JyiAN9weyYVKbKkomAbc/SZHq7kCXrzz8NTikYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cuUOtBWU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5757I5Ni012229
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 10:49:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LILgYy0C41MzDzL71EJVum+V
+	SwDZcGW+zNtWfWKsOEc=; b=cuUOtBWUez5snHeq8nRz24hT8XyGV5OZZBObwBMH
+	YoGuujpfcMHI5bZRrwoCdxTMjETOffNhzK5iNAkdG9gNTgh9Qobi8JI0hJNmBG6Z
+	Gza9X6gaTX4oHUCVrO6XNh6lZtZwyMmbrIiGYc4wSYlzd5mInAr7s8aAanrW8OMK
+	QTxr8PhogdnGo6uzvOYl5Xqp8WGyfsFQVnaTLX3DG9sx5d3QXrIi3Io3IMOrfegJ
+	Pgk8eAnlY6WjShD1lx/26PE3kOMAJnwuQoJdP/uXSos29DSY5iM1NIEE4NzYa7Mc
+	6nYiJdqXKxPxBxGBHigu1hTJdhcdpcf28dFiCBoLf/or4w==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48981rrcxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 10:49:40 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7074bad04efso95621806d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 03:49:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754390980; x=1754995780;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LILgYy0C41MzDzL71EJVum+VSwDZcGW+zNtWfWKsOEc=;
+        b=BBFBXYnej0Xm558xJe/HDjY8/cyKRLA36h/MeHUa1fhWaXOYe9Rcof7cNfwGvJenB5
+         vXrPsxosQAJEzAMYuU2K+5dLYAtCrhTcHwsw5zwArfdGt2o6hffVMYlmogr7i8GvUgnS
+         X+IX045gUSHOoCXpiic1XK5mH/k3x/3TID4eALAxJQSAeTsUnGM+26RpK77l3m4UjUIo
+         2lBC4ldqjuQp0t1CO8PBFy7t5/1HWnKkEw/XEzRQ2nHQlA+4Me0eYWKnObbDqS+yB8Ao
+         Th/rqxQUOWHVT+ENazRjmIywXtYdnsUDaKEBq3ULiUZGpztOCmYgdSje0E1fS4r82d5t
+         5lyA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6oJp3MFYXYY/Rk0WjsXaZfzpvsIICoH87NE7ovB0IHaw1D1UtwLXvT7OBDPvDqCVRMN2xWyYcIQhIxSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsT2TXLhfRCJMSvwXeFBWAgm1oWGmnnsibuShkZpWL2qcygnqE
+	EWRR71wLuHszHaTKaLqwWsWE/qOr5Fz7PoljqtXA/seHOMh8xa/xIIfWTwnbt5D1u28HEH8WnKS
+	M5QOEdl+GifzueSTa96bu5jpH1rttDXuuk7323RnDsNIpndhbtUtJM5gj1qUYuraB8qk=
+X-Gm-Gg: ASbGnct6E2QImgw8XWlj6FSCQwbTA3B68QuQxXyMUWaOX/n3nFWK2cpJZeCRW5Tt3rb
+	luZtZrSFFwoTn70S7kQkTGH6/fYwxIa3XYdKOX6iVYnjkm0g3CRO6zWu3FjwZuQXDKCLnotuWpq
+	ebzWJfZu2AHnL0i+jWSqigN/g79ZDKEOY0skUNhTbtcZJoOIsS/Fh2jwSg5WWyREZnkZuPxnGRG
+	aAizbI/csL55zGjhOhjiGZAZpZdSlHmmG9j8dWgtYRi5Qfgbj4MlNddKeziNjuuoLzcg/v8KU5l
+	ARTAu6m7xs83El6R2Jq6ItfrXPfN5QP1SK2950y82Y8B9hOoaRRdEXWhc6nzkvKYRQUaqK7lUF6
+	n6Vu9CyD/kOWky69ypdsCbMJTAXXZP5FyYWqcx1vvipc4t2zR61DL
+X-Received: by 2002:a05:6214:2a46:b0:707:76ad:ca75 with SMTP id 6a1803df08f44-70966a41ed7mr33963706d6.14.1754390979931;
+        Tue, 05 Aug 2025 03:49:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqYQkkoM4YKECcXArJk/1KXL78jF6AOwH67QNzaCG0gVxBltojkCrIgodg8FFNgsd6Tp9IUw==
+X-Received: by 2002:a05:6214:2a46:b0:707:76ad:ca75 with SMTP id 6a1803df08f44-70966a41ed7mr33963506d6.14.1754390979514;
+        Tue, 05 Aug 2025 03:49:39 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88db3b70sm1902054e87.182.2025.08.05.03.49.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 03:49:38 -0700 (PDT)
+Date: Tue, 5 Aug 2025 13:49:36 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Javier Garcia <rampxxxx@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+        airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: Add directive to format code in comment
+Message-ID: <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
+References: <20250804212902.22554-1-rampxxxx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804212902.22554-1-rampxxxx@gmail.com>
+X-Proofpoint-ORIG-GUID: OqPBoXmB8jj0G2g9lfw0oDbUtgt_3FKO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA3NiBTYWx0ZWRfX9/nniHFcSTeT
+ us85fwuWCLWMGEyVJczOmyKmHeTftwaOLv4DyK1FsAOGy0RqL2CNMN7aToH1Y5xgEFxOhQBQiko
+ /CFjBiRG0rJZNWe7evzo2juoI4Nl9GKXA3ug8s/uaOYIATEY0oTRtPx7sCJPKqbEH2n+BbGcM1S
+ zoy3dwoGD+3ydwYVQ+3Ck8k93KGV2NVs5hXSHWVT6Ddo2ef4MD+UryipcUiYvOKkrHLmhC54S+c
+ dCX1KI4kWzqTVAWzUXJua9aT24nmLq5uVsI69Wc5GS+ysNIJHUw65E6zkFpZz3bs9IUvBES0pLo
+ wjzRajUs7UNIzhR0tKiXlhNvVDv4ZP6OkJxx2vveOageFE6Hy9E+aXqvBzf/vz3M7bsEmP3YqXh
+ 3BqIZ35+vcuINuAEK2ojfhn/qIFW9wePBRzQlaTGhCc0dO7uyFyWvSnE/KILKMjLZGAzqPFb
+X-Proofpoint-GUID: OqPBoXmB8jj0G2g9lfw0oDbUtgt_3FKO
+X-Authority-Analysis: v=2.4 cv=a8Mw9VSF c=1 sm=1 tr=0 ts=6891e1c4 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=opqW8GeGsme4dWKjAOUA:9
+ a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
+ spamscore=0 mlxlogscore=805 mlxscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050076
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+On Mon, Aug 04, 2025 at 11:29:02PM +0200, Javier Garcia wrote:
+> Fixes the warnings:
+> 
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2444: Unexpected indentation.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2446: Block quote ends without a blank line; unexpected unindent.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2450: Definition list ends without a blank line; unexpected unindent.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2451: Definition list ends without a blank line; unexpected unindent.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2455: Unexpected indentation.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2456: Definition list ends without a blank line; unexpected unindent.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2457: Definition list ends without a blank line; unexpected unindent.
+>   Warning: ./drivers/gpu/drm/drm_gpuvm.c:2458: Definition list ends without a blank line; unexpected unindent.
+> 
+> Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_gpuvm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-> On Wed, Jul 09, 2025 at 07:05:01PM +0200, Andreas Hindborg wrote:
->> "Alice Ryhl" <aliceryhl@google.com> writes:
->>
->> > On Wed, Jul 09, 2025 at 01:56:37PM +0200, Andreas Hindborg wrote:
->> >> "Alice Ryhl" <aliceryhl@google.com> writes:
->> >>
->> >> > On Tue, Jul 08, 2025 at 04:45:14PM +0200, Andreas Hindborg wrote:
->> >> >> "Alice Ryhl" <aliceryhl@google.com> writes:
-> The iov_iter type is like a giant enum with a bunch of different
-> implementations. Some implementations just read from a simple kernel
-> buffer that must, of course, be mapped. Some implementations traverse
-> complex data structures and stitch the data together from multiple
-> buffers. Other implementations map the data into memory on-demand inside
-> the copy_from_iter call, without requiring it to be mapped at other
-> times. And finally, some implementations perform IO by reading from
-> userspace, in which case it's valid for the userspace pointer to be
-> *literally any 64-bit integer*. If the address is dangling, that's
-> caught inside the call to copy_from_iter and is not a safety issue.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-At any rate, this is a very informative paragraph. It would be great if
-you could have this information in the documentation for this type.
+Fixes tag?
 
-
-Best regards,
-Andreas Hindborg
-
-
+-- 
+With best wishes
+Dmitry
 
