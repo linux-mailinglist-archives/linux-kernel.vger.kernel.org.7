@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-756182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4C8B1B0F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:26:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D25B1B0FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DA5D7AA926
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:24:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5DD16DFD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C96A26056C;
-	Tue,  5 Aug 2025 09:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8BF25F780;
+	Tue,  5 Aug 2025 09:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AHo9CgpI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PZDUDuFJ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC545183CC3
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4025D209;
+	Tue,  5 Aug 2025 09:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754385955; cv=none; b=liqMe6IcAMIErOloESptww/0NEv0yCivxL9wiR9W90rUgZT9novm68nWZ+JPJkFfigvwCASdCRc9tv7NEuOf6GMygeX3IvKFiCoA11V/BazCg2fbK/zoZfT2UKn7f7XqMTXB7TbPdAmHJmz6aZICAofhmbqehsEkgD2ymdmBm5I=
+	t=1754385968; cv=none; b=FwgkyedMDA/PKCtEjUmcfR+3fQjMYQahlo1NIPpGaVZX2jwRLmGbmTKgJKxyE/mhHTn6JzUn0F0i5f+0QW6yjthdBqY7H/MPuD+4cRw6TgCs3piDMkIxGoNypKtgsWKdxoeW1PUwkceg35+ewe0VvU8MD4XGXGa3nZNJbmjAGro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754385955; c=relaxed/simple;
-	bh=cQTdIHf5Udxe4za40+bEJZlTM6tmWGn3FyfaCjjS3G0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwjjuBvsObu3ffUw0YMc8LRS7xUdLZh+lbKuWxaLHqLEdhCY6glZBBRKUf4DFzg7C7dt1YddfR5ZqhhxzL38Scv9xacb/As45MsUzwrO7w+U350c5DmAw8c7gruApoVzcpVZrjtXhEsG0fM7yG71cIowl0NYqkv3fRgRdvQp6nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AHo9CgpI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754385951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NUbNajW9+7Mzlutnh+I3YYq5LwnGqh5tFxG/qL2Ge0Y=;
-	b=AHo9CgpIaqzEh4jypHJXVbGML6jlpRhIRuNmyxL5PbNnVuBPcA22lQDn3p4EUfbLXlp+9o
-	DdIYX+eg3NEgKKddRbgf5K9hDCji0WfwP0pJZn9UepGnu/2piOMMd7+Eaiu7QX2XJLhdLK
-	38HXfxIrU1f8auyu80lprhi2k2Kqlk4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-428-v_eGBvsRPZKLYzOSrCINCg-1; Tue,
- 05 Aug 2025 05:25:45 -0400
-X-MC-Unique: v_eGBvsRPZKLYzOSrCINCg-1
-X-Mimecast-MFC-AGG-ID: v_eGBvsRPZKLYzOSrCINCg_1754385944
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 113021800343;
-	Tue,  5 Aug 2025 09:25:44 +0000 (UTC)
-Received: from thuth-p1g4.str.redhat.com (dhcp-192-176.str.redhat.com [10.33.192.176])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C7C51956094;
-	Tue,  5 Aug 2025 09:25:41 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Andreas Larsson <andreas@gaisler.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Laight <david.laight.linux@gmail.com>
-Subject: [PATCH] sparc: Drop the "-ansi" from the asflags
-Date: Tue,  5 Aug 2025 11:25:40 +0200
-Message-ID: <20250805092540.48334-1-thuth@redhat.com>
+	s=arc-20240116; t=1754385968; c=relaxed/simple;
+	bh=SC7kBJKgGGpXyIjZc97jxuiKeFp4ze/eQl6HVrX/jwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UHi+9GJ2JDiyo7ODAzrSDO2jj5hJ6cDzCvYJ9c0ojihp8BjY5QLdw9CkjcJ1NDI20H1h9Oa0wmtblS0NTKk87mZO87baen6d10jijM5F85mN1MOSg651fi8GVh+NNTmG0hdmAt3BM4/gVo4R4RdZRRVoERF1ebIMXoOECHSDzPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PZDUDuFJ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5754t2HG031981;
+	Tue, 5 Aug 2025 09:26:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=WW9xICsrfqoVJzFaZpY6jTtLHaZI6sQdYK4gr259q
+	q4=; b=PZDUDuFJW9i7sPgs768cuZm1oGHTG/rlyAX7r/RNfmY0OttHAd58jDe8c
+	sk0UIvkVCni33aJqXbJM38eVDtrh+81OzZiYKtrbTwKL2KcO1AdnR/CoxvgnXtvk
+	GJFURrrZCGAMC2iiLeTnyQiTY6zIUaaP9yfy4ZLEY9COFEPicnN3JgAfw9+lIlYX
+	axRAnykOFeDM5O9e0Ek/UGqiHAFOp4tOHzbJVSgZNVchCM0Qk4/ZQzW9XQa06RD4
+	KYVx8pJ4FORnNNce6+Qrd3t/t0ulBfevfJCbdPCfj2xUbpRMeEcaLPD4lF2nKPT5
+	1nPC4DQZ3azW8NWlqgoNQdH2+UzNg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq1380-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 09:26:00 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5759Q0u9004614;
+	Tue, 5 Aug 2025 09:26:00 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bbbq137w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 09:26:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5757qfj3009449;
+	Tue, 5 Aug 2025 09:25:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 489w0thx4u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Aug 2025 09:25:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5759PwZj58720674
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 5 Aug 2025 09:25:58 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 014302005A;
+	Tue,  5 Aug 2025 09:25:58 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D677620043;
+	Tue,  5 Aug 2025 09:25:56 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.in.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  5 Aug 2025 09:25:56 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] generic/365: Fix false failure when mapping ends with free space
+Date: Tue,  5 Aug 2025 14:55:56 +0530
+Message-ID: <cc80fdb62151d677809f2eb36eadebd3720c8701.1754385487.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,90 +87,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Exrh5Cltwx0qwNHbchGNTJqEizp7W3XT
+X-Authority-Analysis: v=2.4 cv=M65NKzws c=1 sm=1 tr=0 ts=6891ce28 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=L-JcgC3ReIh2akJ2wxQA:9
+X-Proofpoint-ORIG-GUID: 3ZJytAWtBMSaFd7-gO5V9GlqJuyIK2mD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA2OCBTYWx0ZWRfX/OnzmAn/XSM5
+ O833NdEsL6QfghVCUn+9itxn0y351XgSbSR3skZd5VY506A++jXXHGV89W/tVHHusnxXMzbapGQ
+ ce/RRiK+AXYTB3izf2xRefE1ZgREF1E7lPWNDGdO7lMBgNKrR9PKgsmhRsNERt8zRYiaWaJRxGI
+ mqjAbt81cXYpw39eAx9do1qfAlBVnrb63O9ozDPtdgQPMaFfi4LlEkLO8A1WQaQ/0B+RKLNvpwq
+ STWVc8Y9oIivKLfnb3IINTHRxWDfyYcHQ6fSg8my2X7teda5CBo94TuV+Cd8RES9q6sd64KuN4/
+ Gj3VGyqoqZ0pfH+aSdunRtRaJsDlUB/HKe+6hAMwaPKWtkFvpUVLnGc8HBjF8jYq4Hb/vuUlS/t
+ YwsH/ea06esumq+GSMJZI4pVkUbcA9IsDr0pPbXF7KGf9DLOdu6MKM33EXsnMIwstZrS720a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=871 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050068
 
-From: Thomas Huth <thuth@redhat.com>
+If we have a small FS where the first free space mapping is also the
+last mapping of the FS, then the following sub-test fails:
 
-In the very early kernel 1.x days, assembler files were pre-processed
-with the "-traditional" flag. With kernel 1.1.85, the sparc subsystem
-was changed to use "-ansi" instead while the other parts of the kernel
-continued to use "-traditional". That "-traditional" got removed from
-the other architectures in the course of time, but the sparc part
-kept the "-ansi" until today.
+  echo "test whatever came after freesp"
+  $XFS_IO_PROG -c "fsmap -d $((freesp_end + 2)) $((freesp_end + 3))" $SCRATCH_MNT
 
-This is bad since it comes with some disadvantages nowadays: You have
-to make sure to not include any header that contains a "//" C++ comment
-by accident (there are now some in the tree that use these for SPDX
-identifiers for example), and with "-ansi" we also do not get the
-pre-defined __ASSEMBLER__ macro which we'd like to use instead of the
-kernel-only __ASSEMBLY__ macro in the future.
+since there is nothing after the freespace. Fix this by punching a 1M
+hole in a 3M file to ensure that the first free space is always
+surrounded by allocated blocks.
 
-Since there does not seem to be any compelling reason anymore to use
-"-ansi" nowadays, let's simply drop the "-ansi" flag from the sparc
-subsystem now to get rid of those disadvantages.
-
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- Note: I've only compile-tested this patch. No runtime testing done.
+ tests/generic/365 | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- arch/sparc/kernel/Makefile | 2 --
- arch/sparc/lib/Makefile    | 2 +-
- arch/sparc/mm/Makefile     | 2 --
- arch/sparc/prom/Makefile   | 1 -
- 4 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/arch/sparc/kernel/Makefile b/arch/sparc/kernel/Makefile
-index 36f2727e1445d..22170d4f8e060 100644
---- a/arch/sparc/kernel/Makefile
-+++ b/arch/sparc/kernel/Makefile
-@@ -4,8 +4,6 @@
- # Makefile for the linux kernel.
- #
+diff --git a/tests/generic/365 b/tests/generic/365
+index 36cb2530..bbadae71 100755
+--- a/tests/generic/365
++++ b/tests/generic/365
+@@ -32,6 +32,10 @@ if ((blksz < 2048)); then
+ 	_notrun "test requires at least 4 bblocks per fsblock"
+ fi
  
--asflags-y := -ansi
--
- # Undefine sparc when processing vmlinux.lds - it is used
- # And teach CPP we are doing $(BITS) builds (for this case)
- CPPFLAGS_vmlinux.lds := -Usparc -m$(BITS)
-diff --git a/arch/sparc/lib/Makefile b/arch/sparc/lib/Makefile
-index ee5091dd67ed7..783bdec0d7be0 100644
---- a/arch/sparc/lib/Makefile
-+++ b/arch/sparc/lib/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Sparc library files..
- #
++# This makes sure there is free space surrounded by allocated blocks, which
++# is needed for some sub tests.
++$XFS_IO_PROG -fc 'falloc 0 3M' -c 'fpunch 1M 1M' -c 'fsync' $SCRATCH_MNT/f
++
+ $XFS_IO_PROG -c 'fsmap' $SCRATCH_MNT >> $seqres.full
  
--asflags-y := -ansi -DST_DIV0=0x02
-+asflags-y := -DST_DIV0=0x02
- 
- lib-$(CONFIG_SPARC32) += ashrdi3.o
- lib-$(CONFIG_SPARC32) += memcpy.o memset.o
-diff --git a/arch/sparc/mm/Makefile b/arch/sparc/mm/Makefile
-index 2d1752108d779..e9d232561c82a 100644
---- a/arch/sparc/mm/Makefile
-+++ b/arch/sparc/mm/Makefile
-@@ -2,8 +2,6 @@
- # Makefile for the linux Sparc-specific parts of the memory manager.
- #
- 
--asflags-y := -ansi
--
- obj-$(CONFIG_SPARC64)   += ultra.o tlb.o tsb.o
- obj-y                   += fault_$(BITS).o
- obj-y                   += init_$(BITS).o
-diff --git a/arch/sparc/prom/Makefile b/arch/sparc/prom/Makefile
-index a1adc75d80551..92db8bb4ad4cd 100644
---- a/arch/sparc/prom/Makefile
-+++ b/arch/sparc/prom/Makefile
-@@ -2,7 +2,6 @@
- # Makefile for the Sun Boot PROM interface library under
- # Linux.
- #
--asflags := -ansi
- 
- lib-y                 := bootstr_$(BITS).o
- lib-y                 += init_$(BITS).o
+ find_freesp() {
 -- 
-2.50.1
+2.49.0
 
 
