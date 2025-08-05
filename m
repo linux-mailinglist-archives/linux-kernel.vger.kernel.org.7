@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-757090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C8DB1BD90
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:50:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F990B1BD8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783EE182C50
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:50:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D614F7A83AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DDD2BE65F;
-	Tue,  5 Aug 2025 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ADE2BE031;
+	Tue,  5 Aug 2025 23:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w2Qiwep7"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bIsXxALN"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994DA29C344;
-	Tue,  5 Aug 2025 23:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BF2524F;
+	Tue,  5 Aug 2025 23:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754437809; cv=none; b=fuxqqIzPkF4LZgDGH/F0i9Jdrd+IJ/yAZNQRSLsA1saFnkXZVEOe8HaDoVnIir7tnsRYdKWDnNUXaWvp5rj9i6Ui4KtzacGPVH/9C7zvBLmiXAk+l7UU7MlPgBRMOTIlXuLhF+IScCcigebP65rlvvkeDMkF4a3C0ATLE8rS/mU=
+	t=1754437801; cv=none; b=kSDavQ9MZF8ZHuimz910FUvFUOsfLsLU8E//azF9WENkXLFMnXPCicZRnZ4ixaMZXtX9knSCHxXvBPOxW/aDzjJhVUecAzfeszSSUPIqenW1tF3b5vVppeDCRxcnLxSmuOPp+HSRkAZ75yssZMG0MwM4v0DN6sklB+d/JoeXTj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754437809; c=relaxed/simple;
-	bh=QoFut0sNVspIKBsVRbd5bf7YRdyQU5XMw1QWasF1wJY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ij2QrvObLEqKGBHwDeTvXQZzTTiTWZOwqIX24QeBn6jfcD12ZNlhse7Oy1l5kdiZpKbHrIR7DsRQ7wta9Jj0TlCahFBHByvqJVl7ni87isKq6f6njH9iXGIZgRbe4cqp2lit8hhg5ROHxnenl71KJufItm0phRYVSEXsPqUXDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w2Qiwep7; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1754437801; c=relaxed/simple;
+	bh=p2p4vKS5wYDCxNQLe3U+0FgrcL9pSAk87OCo+vsR5pM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j3qH1c4kaMdeuTnvHdZnjdvkkOlQbCTby5UvkgURD3jKHJIb+FYlpmXOxpR0sjO5VdQMtEu6rAtL3xPih9Zl3lFmIzwKJuKuMVc3zX/BC97C2GWA/TbmqzZgJlku2Vj/0yCvXJzHivWaaSgx2arUYLT+W8XcfLrqyRyMVwM0pK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bIsXxALN; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 575NnpKh4185345;
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 575NnpVa387998;
 	Tue, 5 Aug 2025 18:49:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1754437791;
-	bh=++94R41tQyeJMdud8WPd0oi+7jsV3EpN/nsCDMPrqME=;
-	h=From:To:CC:Subject:Date;
-	b=w2Qiwep7h4n2O+tFZMAhFUwlz/41MguqHiKzfPVXbZcznSLPSmM/1qapo2t2ePHRd
-	 q2sEw508wmFZD0lmkDHgNuumaqBp0ChVC9QYUn3o4x30f+mL9tmz2y3K6HLs8FMJwi
-	 K2hQnxAtXhioMzZMH9bM4wmlOx5Jn+xbGXVNqo/s=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 575NnpPu3796004
+	bh=OWll8aXw8aHwO/nZCoAePnctU5zQKd6s1MSx1yOQJ/c=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=bIsXxALNZCxgM9MZpL8IVa3U7/riBpqlbzXjh+MAmq05d3w1mVfrqxgkhISs2Jbpr
+	 3EuRvOOaRRhgFNMuSPQOFKdhxxXi8keEzUivJFii73yYtpQ0s/twmw1VkR4biyZto3
+	 FIrFjpiHRWI+RcVs5FjDmHqJ8NtC/AuUjBwcsqyM=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 575NnpOp3149163
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Tue, 5 Aug 2025 18:49:51 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
  Aug 2025 18:49:50 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
  Frontend Transport; Tue, 5 Aug 2025 18:49:50 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 575Nno6m2624898;
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 575Nno6n2624898;
 	Tue, 5 Aug 2025 18:49:50 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
@@ -69,10 +70,12 @@ CC: Vignesh Raghavendra <vigneshr@ti.com>,
 	<ssantosh@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-Subject: [PATCH 0/4] Add support for AM62P SR1.2
-Date: Tue, 5 Aug 2025 18:49:46 -0500
-Message-ID: <20250805234950.3781367-1-jm@ti.com>
+Subject: [PATCH 1/4] dt-bindings: hwinfo: Add second register range for GP_SW
+Date: Tue, 5 Aug 2025 18:49:47 -0500
+Message-ID: <20250805234950.3781367-2-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250805234950.3781367-1-jm@ti.com>
+References: <20250805234950.3781367-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,30 +86,44 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This patch series adds support for the AM62P SR1.2 silicon revision by
-adding logic in k3-socinfo to detect AM62P variants. Also update binding
-doc to account for second register range GP_SW.
+This adds a second register range in ti,k3-socinfo. This register
+range can also be used to detect silicon revisions.
 
-This also disables HS400 support for AM62P SR1.0 and SR1.1 in sdhci host
-driver and enable by default for AM62P SR1.2.
+AM62px SR1.0, SR1.1, and SR1.2 can only be distinguished with GP_SW
+registers, so increase maximum items to 2 for reg property and update
+the example.
 
-Tested against AM62P SR1.2, SR1.1, SR1.0 and AM62X SK.
-Log for AM62P SR1.2:
-https://gist.github.com/jmenti/5d06c60a94104a476eda9371ab6c7f37
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+ .../devicetree/bindings/hwinfo/ti,k3-socinfo.yaml        | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Judith Mendez (4):
-  dt-bindings: hwinfo: Add second register range for GP_SW
-  soc: ti: k3-socinfo: Add support for AM62P variants
-  mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and SR1.1
-  arm64: dts: ti: k3-am62p-j722s-common-wakeup: Add GP_SW reg range to
-    chipid node
-
- .../bindings/hwinfo/ti,k3-socinfo.yaml        |  9 +-
- .../dts/ti/k3-am62p-j722s-common-wakeup.dtsi  |  3 +-
- drivers/mmc/host/sdhci_am654.c                | 16 ++++
- drivers/soc/ti/k3-socinfo.c                   | 82 +++++++++++++++++--
- 4 files changed, 98 insertions(+), 12 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+index dada28b47ea0..3b656fc0cb5a 100644
+--- a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
++++ b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+@@ -24,7 +24,8 @@ properties:
+       - const: ti,am654-chipid
+ 
+   reg:
+-    maxItems: 1
++    maxItems: 2
++    minItems: 1
+ 
+ required:
+   - compatible
+@@ -34,7 +35,9 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    chipid@43000014 {
++    chipid@14 {
+         compatible = "ti,am654-chipid";
+-        reg = <0x43000014 0x4>;
++        reg = <0x43000014 0x4>,
++              <0x43000230 0x10>;
++        bootph-all;
+     };
 -- 
 2.49.0
 
