@@ -1,178 +1,310 @@
-Return-Path: <linux-kernel+bounces-756171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768ECB1B0C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F31EB1B0CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F20AC7AAD17
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A562189DD47
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA58E2641E7;
-	Tue,  5 Aug 2025 09:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25728266EEA;
+	Tue,  5 Aug 2025 09:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NYqNsA6j"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKDUGKcW"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743DA25FA10
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729D262FE9;
+	Tue,  5 Aug 2025 09:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754385354; cv=none; b=PDKqAShpruexfmeWHZckBhWDGhQvENuDDpsHlElkhsQ3aFawiKyUIpm5/thEh+Ju3zFEbbzHPljJcMMNUzjRcvSQTO+wkQFOUMJP0QKVASAwyAtLmDnaQ9hag5blM1tuAwYB0OIkqct1SYIB9yPXXbfkgo+LWcuceeyiBpwNItY=
+	t=1754385356; cv=none; b=p9uKnT4yObos/Lnw4qV/4If84k5o20y26kJrQjahKz/G77cqlc0NiOHzp6qK5ZCWxW0RqIVF9LyxkICqHGQ0DLKVgTU/LXsoRbrFstpiaAC3qetGym7tagnSHY0JftrrOVFqLDzX9BlAcyCKGmYQe5nVr5y4LkiY12G2wEuzX+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754385354; c=relaxed/simple;
-	bh=SVJLLY9b+A2Ow6Hfl6TdqTYLbgy0WRgvTvRSaRu+4i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaW+wI75Zp33Uml1vvAmJw/jq7PIdsUGFii2vjCRGyvQbTJO/Vsd3jZNYuunB1MGKaHPPNTItrP0yvYbmfmQ9qj2iK5kMvZXTFgqD8F5hNgWeaarCD9zj2mDRUmqPtUJ0g3t/kdL+5tEacdAnFakYe3PIQBFpT6IG7KKINRbD3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NYqNsA6j; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af958127df5so453951366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 02:15:51 -0700 (PDT)
+	s=arc-20240116; t=1754385356; c=relaxed/simple;
+	bh=Gm/7tQCoey1ZR++BK/jJJ1FKh0QPkAawgAkyjI0mhF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k+TkkF8NkcgS6B6N5utbFxzXPLazcMMORCGpgtvGwr1EbYYyzx9Hfk20zwsEmkOzvuEThmfIhIGXB25QwJL9VLG9OKDCVBSHuLf5Iebqt1pwXsQYe02w0YviHfp3J83M0YkRWJZwEHlWZjQ4ropl5Se07wrnmOJBQdVPvOP6ifQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKDUGKcW; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458b49c98a7so23099495e9.1;
+        Tue, 05 Aug 2025 02:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754385350; x=1754990150; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mI3NXVqyKiVG50xbkud2NPNqvmCUVZbmYL0tUjmcuaE=;
-        b=NYqNsA6jwZwjDZnE0plMfvGCcahb7ixEQlFYX6Wb2cj5rRMCEmDN+f1bxkq9vNo4Ob
-         r3nBWulQEZoOo2hD4HWDggA/Ar0vL9dae9pF8kRyCtC3GGAkAq9VT31yhWDRrxmWj0c8
-         SKSuComGv7PbFBNN1+Xb46J7WzWKliowxLqFTMsteNLfSTksSuVHx/pQp3ItEYJOT8c1
-         ruq++7oqhuJy9WkGjWt8UzSEom9Ql8CuylRxQ9aqgACPECJNnopNRTH2lSbEgSxrNllb
-         BTONAtZgYLnrx5rPj/alLja3RgXuwWTuKa5KYCrY9J1EGDs2SUydy7r3x8v+Kycc+R0k
-         KXKQ==
+        d=gmail.com; s=20230601; t=1754385353; x=1754990153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfOKFs2KSkJt6EfEJa66RtmY8SaEOtW71EvLnpkOlpQ=;
+        b=bKDUGKcWOWRRLoR18IK07vqSI81w0R192b2OrAROFF3/ryLFQeVWBUs1bW04HA8kR0
+         Gns9U70RflyiWH51g+j53ZgZYx5krvLOq6kIoTT2sL8dfxGD9JMXclihgUA2QxRBNyRJ
+         3bS7Hg/TVtEmoGKQxJNk5HbQLrmB8AqQATLioZgbz49vMCrzkqFmN/gFk/fwS9ABmYcd
+         y1HRWNwWMrdjOFoWYKIdYJrL/YABHJmjI+uix9rQunIAIzkPSapOXGnK8IQ1BYvf4DX1
+         SdWcM+hcmLX9Gm5LlFalentEVDmyi664HLW9R8tTkvlY4CqmBkLEjbZVe2h6yYZDmeZ4
+         XyKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754385350; x=1754990150;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mI3NXVqyKiVG50xbkud2NPNqvmCUVZbmYL0tUjmcuaE=;
-        b=GLqWyzK2avz8rF5c7FXM1ESNB7/JXeOpmovVhFXqqQuDRZ8GG2iAI4J/+jJOz3Wxqc
-         rTw3N484dw4m428YBm5aFPz9g0NaMEqaEdUKaV1l5xBZvgn9tTJDMOon4i5AJ55njlUl
-         fYB+q6y28Hgc3rPBMI+GM5yZ+Ac0SPI+WSRRH072jPLhoilPdApIep8z1WN41Gbmcz1N
-         whPgshJMJzXY/mzRhOn9eDW3w9CXG+p9Ik+GKTgxWXjgMrsclf+096dmAoDxth9emSxH
-         PYQ1JpYp9T+Eum1UxXTVQVHoGGwBYJvZWd1RdY0pjsfYOKwFcQZQoWWr3l/n5tOe2g7p
-         SPzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzTb+7oI8o9c5NqZaFpcIrzIHgmsDdWQvk0skCQbRvrrweLJND/dVpc/G1osKrEeJQL7rwIo9RLeg27Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNSECa6Rc8FGNVZPlFMr62yZbLrEFoKYufl63axt4nBoVkn7X3
-	cnYYliND6XqBxYClWFECfxY1IZgr9HlW83eQZBPSU7XywMB4w8sxO07j26BmI3egb+w=
-X-Gm-Gg: ASbGncvbMXcfVO3SgMqy5uLWKsEw/6waBvUCbBBqWFb2g5xOvmQHgveXIBq9vOTLfSU
-	+GFCyt99+nwAvSoKnddVr8mDEVucbPn56AxrJoT23JjGknzcVRmNY8wZBV8rkCnTK3JDLiwuiC9
-	qLJ0sszTldAhr7vfWP8Qy7xAj4iSxo5VHn0uPPCB70SrC7K4VmvMUJCiFp1dxrbvl+q1cntRMa4
-	1gWA9odB97197TSyybb43q/WLbsRE3OzCm535RhlVLUXc4qF6a0UZ/VNii/WVM1HHSqxstnY3TF
-	nuPQyP+W8wBDcctlr8UsRda3yn+MQf06KQqiZaq3Xvdex8l455lQ8Lv1ULj9/B/hlMYXx6T9XER
-	hNjK7vHt3sg5QoZkjCmSSnjM3qV0vYSR8+9ANCpwKw5BocPaokwuZFkY1b3xrWYQEaRpxdlpU4A
-	==
-X-Google-Smtp-Source: AGHT+IFSQsh79TNXqQaV19dvtSQv+eoeTCrnDui9MT29o5c/h19Vmob28lRx3aBCVAdqKf7927HIkg==
-X-Received: by 2002:a17:907:c13:b0:af9:3c68:f743 with SMTP id a640c23a62f3a-af9401ee770mr1301929566b.34.1754385349788;
-        Tue, 05 Aug 2025 02:15:49 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a2436c2sm857466266b.141.2025.08.05.02.15.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 02:15:49 -0700 (PDT)
-Message-ID: <9d770617-966b-4b84-a626-59f0ffe83605@linaro.org>
-Date: Tue, 5 Aug 2025 10:15:48 +0100
+        d=1e100.net; s=20230601; t=1754385353; x=1754990153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfOKFs2KSkJt6EfEJa66RtmY8SaEOtW71EvLnpkOlpQ=;
+        b=BCGNyzwKrHtHKL7Ea/Qt7yvthbTM3qBYO5TfoE4qs6EHhPD/wffgsIUHRz7OZ6kPGb
+         xocEx84FEIc9xyKF0UOdyk965kxM0+muOcP+B2uTB9veAjs5+eGcI9JF4Qz0CrJcWLVF
+         BnmOZYNqmyEzPaPsRl5B4I8cdvsZ7sX74PdsT/4643rhQolCVwu5GPVWoKR68tX9n2uH
+         x3EOoxXyB9RJDQOiFRnZFNdasHF6wURCmuh/cansNyu8AeRDsVU9wXY35xKeCf5ssz3v
+         snoUlsV2OdgvbXqHwB6DDoNndqy6ze5hoRy3+eB29Ip1WRsK8bwvnZasI+/Ue0WOJ3Bn
+         /H8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwcTHlZM8hygAa6uAx8NxR6qKrWwr4mY1BDBHs9wEqYDWHmyR6VB8ae8PXd+MjoZ75I3/PW4LDyO4Cguo=@vger.kernel.org, AJvYcCWsgxVCi6I+koNg1JMecBveA8By0HT5ksa2NPHhO1ApSqSp1vkJbuVYvL18ywSSbU08IByBsNpSj6Tz8U3qMHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTyV5/RNL9FOkbMBuRBD8gIUKP+Po0efOZhQp/H59cRhDdxTdl
+	R4lu/4d+2iPSzfNzlqKK15sQhb0t/Yrt6Z6cmbpFi5S4cxJt9ExhUTxlBtzXEoHI
+X-Gm-Gg: ASbGncv7WpqQRXJ6GOBaHqAK8PYHVdQxJYqEwnIkRuQdoocttn/rQMdxLMUCBuF0vyV
+	Dk9qfFOzUlvvW9r5dpD5IXzfJq7bu4VFGm4XeevVMe6NVCjnEXF8aulMO4PU9aV7OqQ6gJgupi5
+	Kfq3GgdQBNn+Km6KXUGOt0kFJiIomzE1OXBk/QFdatR85gEktBFvrW8WIXM/pNUseNKjnf2DVwu
+	6gg4PCetI370uGg5g5uIzAK/XDhojjIHgNgTV3+pSDTeUGgQcnlsa/CyLtN7hauvH0ORuID0mRW
+	x6XlSQpoeX+Y59kCm3W7DohzQR68g+sAezE4qgU6t1FZtZtO91tmmEFvhzXtJl9agYp3QV3CUWT
+	UxilQOUWSvSsLbE+lCfweOCQXkieTTph7nBIGQbMFRL0ksKa8Bym+2UQqB09Bxw==
+X-Google-Smtp-Source: AGHT+IFZc+1tFfp9jlNeO23LRnsfjZihfn9Pda8cbelddn5S+aCfl7W5T3uGHFSReyW/drO7mvQRBQ==
+X-Received: by 2002:a05:600c:788:b0:458:ba04:fe6d with SMTP id 5b1f17b1804b1-458ba04ff2bmr68189805e9.14.1754385352487;
+        Tue, 05 Aug 2025 02:15:52 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45910e182besm102478965e9.32.2025.08.05.02.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 02:15:51 -0700 (PDT)
+Date: Tue, 5 Aug 2025 10:15:50 +0100
+From: Stafford Horne <shorne@gmail.com>
+To: ChenMiao <chenmiao.ku@gmail.com>
+Cc: Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sahil Siddiq <sahilcdq0@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:OPENRISC ARCHITECTURE" <linux-openrisc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] openrisc: Add text patching API support
+Message-ID: <aJHLxmPk-5cPCnPA@antec>
+References: <20250805084114.4125333-1-chenmiao.ku@gmail.com>
+ <20250805084114.4125333-2-chenmiao.ku@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 6/7] arm64: dts: qcom: qcm2290: Add Venus video node
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
- quic_dikshita@quicinc.com, quic_vgarodia@quicinc.com,
- konradybcio@kernel.org, krzk+dt@kernel.org
-Cc: mchehab@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-7-jorge.ramirez@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250805064430.782201-7-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805084114.4125333-2-chenmiao.ku@gmail.com>
 
-On 05/08/2025 07:44, Jorge Ramirez-Ortiz wrote:
-> Add DT entries for the qcm2290 Venus encoder/decoder.
+On Tue, Aug 05, 2025 at 08:40:57AM +0000, ChenMiao wrote:
+> From: chenmiao <chenmiao.ku@gmail.com>
 > 
-> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> We need a text patching mechanism to ensure that in the subsequent
+> implementation of jump_label, the code can be modified to the correct
+> location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
+> 
+> And, I create a new file named insn-def.h to define the or1k insn macro
+> size and more define in the future.
+> 
+> Among these changes, we implement patch_map and support the
+> patch_insn_write API for single instruction writing.
+> 
+> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
 > ---
->   arch/arm64/boot/dts/qcom/qcm2290.dtsi | 55 +++++++++++++++++++++++++++
->   1 file changed, 55 insertions(+)
+>  arch/openrisc/include/asm/Kbuild          |  1 -
+>  arch/openrisc/include/asm/fixmap.h        |  1 +
+>  arch/openrisc/include/asm/insn-def.h      | 12 ++++
+>  arch/openrisc/include/asm/text-patching.h | 13 ++++
+>  arch/openrisc/kernel/Makefile             |  1 +
+>  arch/openrisc/kernel/patching.c           | 79 +++++++++++++++++++++++
+>  arch/openrisc/mm/init.c                   |  2 +-
+>  7 files changed, 107 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/openrisc/include/asm/insn-def.h
+>  create mode 100644 arch/openrisc/include/asm/text-patching.h
+>  create mode 100644 arch/openrisc/kernel/patching.c
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> index f49ac1c1f8a3..7cfacd189a10 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> @@ -1628,6 +1628,61 @@ adreno_smmu: iommu@59a0000 {
->   			#iommu-cells = <2>;
->   		};
->   
-> +		venus: video-codec@5a00000 {
-> +			compatible = "qcom,qcm2290-venus";
-> +			reg = <0 0x5a00000 0 0xf0000>;
-> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
+> index 2b1a6b00cdac..cef49d60d74c 100644
+> --- a/arch/openrisc/include/asm/Kbuild
+> +++ b/arch/openrisc/include/asm/Kbuild
+> @@ -9,4 +9,3 @@ generic-y += spinlock.h
+>  generic-y += qrwlock_types.h
+>  generic-y += qrwlock.h
+>  generic-y += user.h
+> -generic-y += text-patching.h
+> diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include/asm/fixmap.h
+> index aaa6a26a3e92..74000215064d 100644
+> --- a/arch/openrisc/include/asm/fixmap.h
+> +++ b/arch/openrisc/include/asm/fixmap.h
+> @@ -28,6 +28,7 @@
+>  
+>  enum fixed_addresses {
+>  	FIX_EARLYCON_MEM_BASE,
+> +	FIX_TEXT_POKE0,
+>  	__end_of_fixed_addresses
+>  };
+>  
+> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
+> new file mode 100644
+> index 000000000000..dc8d16db1579
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/insn-def.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
 > +
-> +			power-domains = <&gcc GCC_VENUS_GDSC>,
-> +					<&gcc GCC_VCODEC0_GDSC>,
-> +					<&rpmpd QCM2290_VDDCX>;
-> +			power-domain-names = "venus",
-> +					     "vcodec0",
-> +					     "cx";
-> +			operating-points-v2 = <&venus_opp_table>;
+> +#ifndef __ASM_INSN_DEF_H
+> +#define __ASM_INSN_DEF_H
 > +
-> +			clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
-> +				 <&gcc GCC_VIDEO_AHB_CLK>,
-> +				 <&gcc GCC_VENUS_CTL_AXI_CLK>,
-> +				 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
-> +				 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
-> +				 <&gcc GCC_VCODEC0_AXI_CLK>;
-> +			clock-names = "core",
-> +				      "iface",
-> +				      "bus",
-> +				      "throttle",
-> +				      "vcodec0_core",
-> +				      "vcodec0_bus";
+> +/* or1k instructions are always 32 bits. */
+> +#define	OPENRISC_INSN_SIZE		4
 > +
-> +			memory-region = <&pil_video_mem>;
-> +			iommus = <&apps_smmu 0x860 0x0>,
-> +				 <&apps_smmu 0x880 0x0>,
-> +				 <&apps_smmu 0x861 0x04>,
-> +				 <&apps_smmu 0x863 0x0>,
-> +				 <&apps_smmu 0x804 0xe0>;
+> +#endif /* __ASM_INSN_DEF_H */
+> diff --git a/arch/openrisc/include/asm/text-patching.h b/arch/openrisc/include/asm/text-patching.h
+> new file mode 100644
+> index 000000000000..4c3d8a6a906a
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/text-patching.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
 > +
-> +			interconnects = <&mmnrt_virt MASTER_VIDEO_P0 RPM_ALWAYS_TAG
-> +					 &bimc SLAVE_EBI1 RPM_ALWAYS_TAG>,
-> +					<&bimc MASTER_APPSS_PROC RPM_ACTIVE_TAG
-> +					 &config_noc SLAVE_VENUS_CFG RPM_ACTIVE_TAG>;
-> +			interconnect-names = "video-mem",
-> +					     "cpu-cfg";
+> +#ifndef _ASM_PATCHING_H_
+> +#define _ASM_PATCHING_H_
 > +
-> +			venus_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
+> +#include <linux/types.h>
 > +
-> +				opp-133333333 {
-> +					opp-hz = /bits/ 64 <133333333>;
-> +					required-opps = <&rpmpd_opp_low_svs>;
-> +				};
+> +int patch_insn_write(void *addr, const void *insn);
 > +
-> +				opp-240000000 {
-> +					opp-hz = /bits/ 64 <240000000>;
-> +					required-opps = <&rpmpd_opp_svs>;
-> +				};
-> +			};
-> +		};
+> +#endif /* _ASM_PATCHING_H_ */
+> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
+> index 58e6a1b525b7..f0957ce16d6b 100644
+> --- a/arch/openrisc/kernel/Makefile
+> +++ b/arch/openrisc/kernel/Makefile
+> @@ -13,5 +13,6 @@ obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
+>  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
+>  obj-$(CONFIG_MODULES)		+= module.o
+>  obj-$(CONFIG_OF)		+= prom.o
+> +obj-y	+= patching.o
+>  
+>  clean:
+> diff --git a/arch/openrisc/kernel/patching.c b/arch/openrisc/kernel/patching.c
+> new file mode 100644
+> index 000000000000..2b979a0bc584
+> --- /dev/null
+> +++ b/arch/openrisc/kernel/patching.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (C) 2020 SiFive
+> + * Copyright (C) 2025 Chen Miao
+> + */
 > +
->   		mdss: display-subsystem@5e00000 {
->   			compatible = "qcom,qcm2290-mdss";
->   			reg = <0x0 0x05e00000 0x0 0x1000>;
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> +#include <linux/mm.h>
+> +#include <linux/kernel.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include <asm/insn-def.h>
+> +#include <asm/cacheflush.h>
+> +#include <asm/page.h>
+> +#include <asm/fixmap.h>
+> +#include <asm/text-patching.h>
+> +#include <asm/sections.h>
+> +
+> +static DEFINE_RAW_SPINLOCK(patch_lock);
+> +
+> +static inline bool is_exit_text(uintptr_t addr)
+> +{
+> +	/* Now Have NO Mechanism to do */
+> +	return true;
+> +}
+> +
+> +static __always_inline void *patch_map(void *addr, int fixmap)
+> +{
+> +	uintptr_t uaddr = (uintptr_t) addr;
+> +	phys_addr_t phys;
+> +
+> +	if (core_kernel_text(uaddr) || is_exit_text(uaddr)) {
+> +		phys = __pa_symbol(addr);
+> +	} else {
+> +		struct page *page = vmalloc_to_page(addr);
+> +		BUG_ON(!page);
+> +		phys = page_to_phys(page) + offset_in_page(addr);
+> +	}
+> +
+> +	return (void *)set_fixmap_offset(fixmap, phys);
+> +}
+> +
+> +static void patch_unmap(int fixmap)
+> +{
+> +	clear_fixmap(fixmap);
+> +}
+> +
+> +static int __patch_insn_write(void *addr, const void *insn)
+> +{
+> +	void *waddr = addr;
+> +	unsigned long flags = 0;
+> +	int ret;
+> +
+> +	raw_spin_lock_irqsave(&patch_lock, flags);
+> +
+> +	waddr = patch_map(addr, FIX_TEXT_POKE0);
+> +
+> +	ret = copy_to_kernel_nofault(waddr, insn, OPENRISC_INSN_SIZE);
+
+If you change *insn to unsigned long insn, you can do:
+
+	ret = copy_to_kernel_nofault(waddr, &insn, iszeof(insn));
+
+> +	local_icache_range_inv((unsigned long)waddr,
+> +			       (unsigned long)waddr + OPENRISC_INSN_SIZE);
+> +
+> +	patch_unmap(FIX_TEXT_POKE0);
+> +
+> +	raw_spin_unlock_irqrestore(&patch_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +int patch_insn_write(void *addr, const void *insn)
+
+Does insn need to be void *?  It think it could be just unsigned long. See
+comment above.
+
+> +{
+> +	u32 *tp = addr;
+> +	int ret;
+> +
+> +	if ((uintptr_t) tp & 0x3)
+> +		return -EINVAL;
+> +
+> +	ret = __patch_insn_write(tp, insn);
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
+> index e4904ca6f0a0..b5925710f954 100644
+> --- a/arch/openrisc/mm/init.c
+> +++ b/arch/openrisc/mm/init.c
+> @@ -226,7 +226,7 @@ static int __init map_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
+>  	return 0;
+>  }
+>  
+> -void __init __set_fixmap(enum fixed_addresses idx,
+> +void __set_fixmap(enum fixed_addresses idx,
+>  			 phys_addr_t phys, pgprot_t prot)
+>  {
+>  	unsigned long address = __fix_to_virt(idx);
+> -- 
+> 2.45.2
+> 
 
