@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-755865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EB4B1ACAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C30CB1ACAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59ECB18A289F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4DC622080
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DF5201266;
-	Tue,  5 Aug 2025 03:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51EB1E0B9C;
+	Tue,  5 Aug 2025 03:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="G1rFRbYB"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kmLSzrMl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D831DED49;
-	Tue,  5 Aug 2025 03:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF5A2AF03;
+	Tue,  5 Aug 2025 03:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754363380; cv=none; b=Bh81M71Fn5k06C1NpKD+65qAPQwi3i2mkwi8Z+QK5NlXbszNWd+NpQGLG9jVoNhe+/SEchBfYN7sdxSng3oOw6a2VW/AHGYofwtUOVtRMcVMqruYpjRX7+l+bF25Txzlg+JVWacFXP2qBg5uAjtWc4IwuP8SKjVQPqB3ClF/Yf8=
+	t=1754363486; cv=none; b=NRNb+le1pmBJ0jI6d333MkDC3Dqkr4iBgAwCZlIGQxpxUMyFadj6+2+4espbOgCFVkjl5aojmjzqP0euKkNXTx5kzraG9EPKNaoqch+YRvzfTlKdfwl7BfMYH7NnQIQKK14F2AzKYgrb79KHeNuZrUPVg3uX47YRbkPZ8Ouqe4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754363380; c=relaxed/simple;
-	bh=KXRKtpIorrVSm+ENgWZSMXbBbvXp7K4wV9sI2VRsD9Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W3aqm0qyAjFhpbMRf1NtdTHddk5irY1L1Q6ZxYdLqFjZXL3huTOxfbRnUhUgpTPZnAllOXrhP400F3B8HHyV8KkJcOIaJo/VSSmOpUQDKCgui1vVsEfuZIEnmURzVyzLFKaqDqwlxfqQGgJYksAk0mOSEQzF8RcAgmQj39wQEps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=G1rFRbYB; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MAYPBEI5qE+orymxndgIHcMY+kCdXPZFTQwApjcA/OI=; b=G1rFRbYBbWZggMuAeUHsub6NNp
-	EBv2R1BInLgB+VbP5ChOi2/N/Vkcep6auP6mBCS4JV2sa6bZ5kg/B/Ucu4nRQQ/Me9E9vOoYfLy5M
-	CT5Io59c2bTv38lhReAZMikXznOm+I2Z4YXG9LFdhQczflcEsUzvSlSAsLANS/LgLN3VUQREnMoqd
-	9D1D06lQaso1ydL/42tDkHbWwROw34Y/dqy0RpZsYGkgXb/5u0Mw0INUhYE/BFVYkVhoIOEQTBSwc
-	bzvybEnU6XgTpHnX7UjDoHBPgLwK/4go7OkugenVbd20BwazSmNJ12RJf/QzeJXH9OfRhLKJ+jjzI
-	ntL/XJUw==;
-Received: from [191.204.199.202] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uj83U-009TiJ-VU; Tue, 05 Aug 2025 05:09:37 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Tue, 05 Aug 2025 00:09:12 -0300
-Subject: [PATCH RFC v2 8/8] ovl: Drop restrictions for casefolded dentries
+	s=arc-20240116; t=1754363486; c=relaxed/simple;
+	bh=x1rstI4X2NEB6u07oXWYcLQjOLFzPHSwlZVLOHXtl7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cHl4FAACbWOWXVdJ87IXGooSBKfseZ+k4WG6ZGw6ghK/qbqE65b+qnU/DusHyoEliTlsULPjvFALOqSSa6JbObh4ajk0jmabzP5bXlMrpMI+BISA3HzxwKSnybkYexlBEXhHZubBk87V2IzBZFB00yp0Qv3Q01zIM5PHESbidks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kmLSzrMl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754363478;
+	bh=3OiTv9RqNfMc/P4JCN5NATRnGjCprSQhXIfVbPH0KBc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kmLSzrMlsDsYlDx96XPiaipVnezubsb5KjunCPXqpmbxU2WG6PrYhVQInERw9EGPG
+	 vq6cvjg71KFYOF3WYQuTYgm5kg2nzv1Dz7sfEXU1lJsqveC8SxF7xP6Bjxo9yXrMxR
+	 IM/Ggd6K4nIfhmLZB4+8E7BK2zriXNphgkD6z1ms+pHMLp2bjclWQ+8HupRgN5MUNS
+	 rKv8A6WpOuz7IzKOOSNxGoj/06jmDIVkOwANsp5+7+Nft5uWrQpwriO2JIib9+lYw8
+	 69RmY3h1h3z40laynxBhST+bd8wUuosCLHNHQYfzAE5GHYO1uvepeoYaxbognUTvOC
+	 M0OT7UOobDGog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwz3B3Vr8z4wb0;
+	Tue,  5 Aug 2025 13:11:18 +1000 (AEST)
+Date: Tue, 5 Aug 2025 13:11:17 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Aurabindo Pillai
+ <aurabindo.pillai@amd.com>, Roman Li <roman.li@amd.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20250805131117.2cefb8b6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250805-tonyk-overlayfs-v2-8-0e54281da318@igalia.com>
-References: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
-In-Reply-To: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: multipart/signed; boundary="Sig_/4kgNcN3S7qUt/Ub8rJhsNWZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Drop the restriction for casefold dentries to enable support for
-casefold filesystems in overlayfs.
+--Sig_/4kgNcN3S7qUt/Ub8rJhsNWZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- fs/overlayfs/params.c | 7 -------
- fs/overlayfs/util.c   | 8 ++++----
- 2 files changed, 4 insertions(+), 11 deletions(-)
+Hi all,
 
-diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-index f4e7fff909ac49e2f8c58a76273426c1158a7472..dd3a893d37603842f7d19d90accb981f0d12e971 100644
---- a/fs/overlayfs/params.c
-+++ b/fs/overlayfs/params.c
-@@ -281,13 +281,6 @@ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
- 	if (!d_is_dir(path->dentry))
- 		return invalfc(fc, "%s is not a directory", name);
- 
--	/*
--	 * Allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories.
--	 */
--	if (ovl_dentry_casefolded(path->dentry))
--		return invalfc(fc, "case-insensitive directory on %s not supported", name);
--
- 	if (ovl_dentry_weird(path->dentry))
- 		return invalfc(fc, "filesystem on %s not supported", name);
- 
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index a33115e7384c129c543746326642813add63f060..7a6ee058568283453350153c1720c35e11ad4d1b 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -210,11 +210,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
- 		return true;
- 
- 	/*
--	 * Allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories.
-+	 * Exceptionally for casefold dentries, we accept that they have their
-+	 * own hash and compare operations
- 	 */
--	if (sb_has_encoding(dentry->d_sb))
--		return IS_CASEFOLDED(d_inode(dentry));
-+	if (ovl_dentry_casefolded(dentry))
-+		return false;
- 
- 	return dentry->d_flags & (DCACHE_OP_HASH | DCACHE_OP_COMPARE);
- }
+After merging the amdgpu tree, today's linux-next build (htmldocs)
+produced this warning:
 
--- 
-2.50.1
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:168: warning: expecting p=
+rototype for struct dm_vupdate_work. Prototype was for struct vupdate_offlo=
+ad_work instead
 
+Introduced by commit
+
+  c210b757b400 ("drm/amd/display: fix dmub access race condition")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4kgNcN3S7qUt/Ub8rJhsNWZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiRdlUACgkQAVBC80lX
+0GwwjwgAkhKU+F12WsMcen1Toimp+930ZBOQv8NfWzfXuQnBgqfECm519e6VqqlC
+3ecQC0BFEd2ywv487pPGsTRBGWtVcFM2LY7LhuZBmjIfUeyrYDjPc89I8M+kyGW5
+pdJN1x+H07BYMFsiJr2z63pUYY6Df7yCpwD4ByTg14veyBP3S1NDXVj5DdemSRwp
+PwLieUqYIJwjZt7VLvY0j6ENAIJlNMOiQO7kgn2iqt/A1YqO7vsYao9PhyA9NfDl
+uCxpYLuxNl72pJDOR3jZD7u+Mc81AYsfIjRYVvz1PYGaoRaLCzc29oeK+c9hy/Q/
+WJKpixhBX19H8AzLtkfo2XoP0Faiag==
+=WY1d
+-----END PGP SIGNATURE-----
+
+--Sig_/4kgNcN3S7qUt/Ub8rJhsNWZ--
 
