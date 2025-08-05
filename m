@@ -1,440 +1,74 @@
-Return-Path: <linux-kernel+bounces-756611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D244B1B6B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C37B1B6AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE380189343E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233E43A781F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C17F27877F;
-	Tue,  5 Aug 2025 14:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJjHggsp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEC827817A;
+	Tue,  5 Aug 2025 14:39:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042272777E5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C2023AB8E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754404777; cv=none; b=NpgQLLxVVsliKZbRpB4kD3lt2izr5QJDgSkSlm1fY9UNrp2WF4I5x02iZNpXeqZCeljuhtaD5qYuhDdaPkMwQa5g3mRYgrsZylkYWWpwbZza6Vz/88NdtKahMQ3me+AiKikoirQBB1Azwc8542p+BG4NsM3ixu6yx18Afrh9klI=
+	t=1754404765; cv=none; b=ojAf8k9t8HH1EPzxJOYuvJCTK21RC6ZQHmdPqOZmaB9GXv29IcUh/0VX1b6cX7VQHPvp7xqaepC6u+wzKouQ9rjNCOKG5Zkxhs2040TkclgHRv95cg/jGxbfzIdbKi/ZCQy5iI1CwTea5aRwe2fLdsVc0cY37qNvo7VjfCeFOcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754404777; c=relaxed/simple;
-	bh=gbokQcVVmMFKLfH6UFzF/zNCmiwRKHtvhABBZ3J6q0Q=;
+	s=arc-20240116; t=1754404765; c=relaxed/simple;
+	bh=U5eTuVE6fNkIPrpKT788ELmfmNfZJfkcMAxo3FMzxdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiMUMqIJx3NQbyoxSXeQOASM+KX9pji8EVW/kdxm51MuH1nD1qzrEXc38ZEbFKLxSroff89ZlXMJUypMYpsy0qBieQRO9lO/UkpIxIRu+dgm13UHPC/TRMkaZiiu3sPw6symR+Dl+Cq9pogsa/C/RaKBNV3MfdTcz3HNajbMs2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJjHggsp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754404773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osBUTD8AGmf3RzRhZE1d3AllWvZV7FgrCRdQPsKZtns=;
-	b=CJjHggspdhgyvWbxM/lwZxAWl0LO5Y4veADQ4DYzZku3DnoEcHdBxrcypsPnO8jyqBXoLJ
-	0OXqGSCl2CGWDx0qFnR32E6CH2heZSFcYkIvCUfBxCi8462Q5ORS4DtUFdhLJxrmEPID/D
-	xzf/OeIuOXzqMJQs2NzgkzUzbmPS4HU=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-505-kGQzCxQJMT6B0uwnoxtWSw-1; Tue, 05 Aug 2025 10:39:32 -0400
-X-MC-Unique: kGQzCxQJMT6B0uwnoxtWSw-1
-X-Mimecast-MFC-AGG-ID: kGQzCxQJMT6B0uwnoxtWSw_1754404771
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4aedcff08fdso92172851cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:39:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754404771; x=1755009571;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=osBUTD8AGmf3RzRhZE1d3AllWvZV7FgrCRdQPsKZtns=;
-        b=gas9dBKBhsBVk5jC6RZRe/K69/XyOZJCz2Hc2LlSZ7Zaf3zE9RUIxuNjAJmQO/znSa
-         Y44G5juQUwLJHdN0OvbGDB1i5aq0Qf2s2aDsMFssWYDHtiegcZPbu202jz3tDwsDGw1d
-         Mb/QhQloxIG2OrMVAbmofI/AGKDHWk3mhkicgHaVIbfcLRbgZeiRcJX5FXX9l9C9pVMa
-         gXWRHi/4NzVJYsYFtCNZgYe4k8BtrvX3fzTVAF51RPa/6OWNMOgyMZg5H2D1rNdQ9F5+
-         E3Yuu1oIZD1W0LxE+NHuTJBz4w7+O5+M9FaYaoGTj1s4fhtrmlbJulxqC49HUIy7qUWg
-         Cytg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe26+4ETuGC186szRPSFjRvCEOIzNl727yKn6oYzx0bJAmjtMttfRR4rDNWcGWWo4cVyjBzbG+pAqMJuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBAlBbz1L8n4FsJ19Nz9Ek+2nKJaO6jtyQgbu9eJV+0nalaa94
-	ymDSeCW5pCzqdFgmWEsaRfSh+VYVk3JfT84hezCONLmtKTiu47vw+D16w2edAWaqC2xYmLD5GnE
-	4k0jXEJOySoD0NiBRbNROiQXCbalRmEwJDDaShSSN5GCbvBFMmfrSnnLZSPBTQ+2AHEf03rpcpQ
-	==
-X-Gm-Gg: ASbGnctoQMjUvDYRmAPDeMZ+fXukYvKWqXrcQOTWBKCo7jJAHnXwBmNJfeEqy9tg6F+
-	O+Bixpsr6SvZqIcrhMK6TQri/0Netme07rGuWhcvIIRm15oHZflMKB7Ir9yJV+hxvaJ2GLb17UE
-	pqKw49T16XRptjBtgnbseyYdMsHOPqnGYsaD7jUWx3aSlRvmJTckWUp7CaFGQfR1jPE0OL7jIBV
-	/EhSGQdR5W7tG8HxSZWzvBPf+9Ad68HnfzlSjqAoWjHnU66zWx9rP+V+Snq47DqtkdlT3eD5Ko/
-	VyG66nKvnwCNQjryG0IySPsaTpL6lJgx
-X-Received: by 2002:a05:622a:341:b0:4b0:7372:1bcb with SMTP id d75a77b69052e-4b073722829mr97741321cf.15.1754404770905;
-        Tue, 05 Aug 2025 07:39:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbzW4UiXSJV9RVR64B6UcBQaLqjWbfSx5kR9/jhgtO/J/1mSovc/gLubrthIt8BIT18R/6Yw==
-X-Received: by 2002:a05:622a:341:b0:4b0:7372:1bcb with SMTP id d75a77b69052e-4b073722829mr97740261cf.15.1754404769737;
-        Tue, 05 Aug 2025 07:39:29 -0700 (PDT)
-Received: from x1.local ([174.89.135.171])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5c55a2sm685723885a.36.2025.08.05.07.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 07:39:28 -0700 (PDT)
-Date: Tue, 5 Aug 2025 10:39:16 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-	aarcange@redhat.com, lokeshgidra@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
- a THP hole
-Message-ID: <aJIXlN-ZD_soWdP0@x1.local>
-References: <aIzMGlrR1SL5Y_Gp@x1.local>
- <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
- <aIzp6WqdzhomPhhf@x1.local>
- <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
- <aIz1xrzBc2Spa2OH@x1.local>
- <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
- <aI0Ffc9WXeU2X71O@x1.local>
- <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
- <aI1ckD3KhNvoMtlv@x1.local>
- <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKvm0r6Vk784q4+/H9QcR/4SRsXWs3zhtll0K65rcnuD5FyxTCcQbFrIecrbXz3rcVOzB+iQhH2RYbVrVM6ESGJqJx6si8u+xJ6kBZl71Xc4zBusD/odOVt9NCxXpildmBsjl9H/RwIrd3LbJ6bEXL+LGltFwoIByFh62HAF8OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED10C4CEF0;
+	Tue,  5 Aug 2025 14:39:23 +0000 (UTC)
+Date: Tue, 5 Aug 2025 15:39:20 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+	akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
+	dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v6 0/4] arm64: support FEAT_BBM level 2 and large
+ block mapping when rodata=full
+Message-ID: <aJIXmIgCGlWlHDNK@arm.com>
+References: <20250805081350.3854670-1-ryan.roberts@arm.com>
+ <985f9d53-ea5e-4da0-9427-106a58be7f26@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
+In-Reply-To: <985f9d53-ea5e-4da0-9427-106a58be7f26@arm.com>
 
-On Mon, Aug 04, 2025 at 07:55:42AM -0700, Suren Baghdasaryan wrote:
-> On Fri, Aug 1, 2025 at 5:32 PM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Fri, Aug 01, 2025 at 07:30:02PM +0000, Suren Baghdasaryan wrote:
-> > > On Fri, Aug 1, 2025 at 6:21 PM Peter Xu <peterx@redhat.com> wrote:
-> > > >
-> > > > On Fri, Aug 01, 2025 at 05:45:10PM +0000, Suren Baghdasaryan wrote:
-> > > > > On Fri, Aug 1, 2025 at 5:13 PM Peter Xu <peterx@redhat.com> wrote:
-> > > > > >
-> > > > > > On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrote:
-> > > > > > > On Fri, Aug 1, 2025 at 9:23 AM Peter Xu <peterx@redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan wrote:
-> > > > > > > > > On Fri, Aug 1, 2025 at 7:16 AM Peter Xu <peterx@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbrand wrote:
-> > > > > > > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > Hi!
-> > > > > > > > > > >
-> > > > > > > > > > > Did you mean in you patch description:
-> > > > > > > > > > >
-> > > > > > > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-present PMDs"
-> > > > > > > > > > >
-> > > > > > > > > > > Talking about THP holes is very very confusing.
-> > > > > > > > > > >
-> > > > > > > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
-> > > > > > > > > > > > encounters a non-present THP, it fails to properly recognize an unmapped
-> > > > > > > > > > >
-> > > > > > > > > > > You mean a "non-present PMD that is not a migration entry".
-> > > > > > > > > > >
-> > > > > > > > > > > > hole and tries to access a non-existent folio, resulting in
-> > > > > > > > > > > > a crash. Add a check to skip non-present THPs.
-> > > > > > > > > > >
-> > > > > > > > > > > That makes sense. The code we have after this patch is rather complicated
-> > > > > > > > > > > and hard to read.
-> > > > > > > > > > >
-> > > > > > > > > > > >
-> > > > > > > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > > > > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-> > > > > > > > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
-> > > > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > > > > > ---
-> > > > > > > > > > > > Changes since v1 [1]
-> > > > > > > > > > > > - Fixed step size calculation, per Lokesh Gidra
-> > > > > > > > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, per Lokesh Gidra
-> > > > > > > > > > > >
-> > > > > > > > > > > > [1] https://lore.kernel.org/all/20250730170733.3829267-1-surenb@google.com/
-> > > > > > > > > > > >
-> > > > > > > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----------------
-> > > > > > > > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > > > > > > > > index cbed91b09640..b5af31c22731 100644
-> > > > > > > > > > > > --- a/mm/userfaultfd.c
-> > > > > > > > > > > > +++ b/mm/userfaultfd.c
-> > > > > > > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
-> > > > > > > > > > > >             ptl = pmd_trans_huge_lock(src_pmd, src_vma);
-> > > > > > > > > > > >             if (ptl) {
-> > > > > > > > > > > > -                   /* Check if we can move the pmd without splitting it. */
-> > > > > > > > > > > > -                   if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> > > > > > > > > > > > -                       !pmd_none(dst_pmdval)) {
-> > > > > > > > > > > > -                           struct folio *folio = pmd_folio(*src_pmd);
-> > > > > > > > > > > > +                   if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
-> > > > > > > > > >
-> > > > > > > > > > [1]
-> > > > > > > > > >
-> > > > > > > > > > > > +                           /* Check if we can move the pmd without splitting it. */
-> > > > > > > > > > > > +                           if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> > > > > > > > > > > > +                               !pmd_none(dst_pmdval)) {
-> > > > > > > > > > > > +                                   if (pmd_present(*src_pmd)) {
-> > > > > > > >
-> > > > > > > > [2]
-> > > > > > > >
-> > > > > > > > > > > > +                                           struct folio *folio = pmd_folio(*src_pmd);
-> > > > > > > >
-> > > > > > > > [3]
-> > > > > > > >
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +                                           if (!folio || (!is_huge_zero_folio(folio) &&
-> > > > > > > > > > > > +                                                          !PageAnonExclusive(&folio->page))) {
-> > > > > > > > > > > > +                                                   spin_unlock(ptl);
-> > > > > > > > > > > > +                                                   err = -EBUSY;
-> > > > > > > > > > > > +                                                   break;
-> > > > > > > > > > > > +                                           }
-> > > > > > > > > > > > +                                   }
-> > > > > > > > > > >
-> > > > > > > > > > > ... in particular that. Is there some way to make this code simpler / easier
-> > > > > > > > > > > to read? Like moving that whole last folio-check thingy into a helper?
-> > > > > > > > > >
-> > > > > > > > > > One question might be relevant is, whether the check above [1] can be
-> > > > > > > > > > dropped.
-> > > > > > > > > >
-> > > > > > > > > > The thing is __pmd_trans_huge_lock() does double check the pmd to be !none
-> > > > > > > > > > before returning the ptl.  I didn't follow closely on the recent changes on
-> > > > > > > > > > mm side on possible new pmd swap entries, if migration is the only possible
-> > > > > > > > > > one then it looks like [1] can be avoided.
-> > > > > > > > >
-> > > > > > > > > Hi Peter,
-> > > > > > > > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (!pmd_none()
-> > > > > > > > > && !pmd_present()) PMD to pass and that's when this crash is hit.
-> > > > > > > >
-> > > > > > > > First for all, thanks for looking into the issue with Lokesh; I am still
-> > > > > > > > catching up with emails after taking weeks off.
-> > > > > > > >
-> > > > > > > > I didn't yet read into the syzbot report, but I thought the bug was about
-> > > > > > > > referencing the folio on top of a swap entry after reading your current
-> > > > > > > > patch, which has:
-> > > > > > > >
-> > > > > > > >         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> > > > > > > >             !pmd_none(dst_pmdval)) {
-> > > > > > > >                 struct folio *folio = pmd_folio(*src_pmd); <----
-> > > > > > > >
-> > > > > > > > Here looks like *src_pmd can be a migration entry. Is my understanding
-> > > > > > > > correct?
-> > > > > > >
-> > > > > > > Correct.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > > If we drop the check at [1] then the path that takes us to
-> > > > > > > >
-> > > > > > > > If my above understanding is correct, IMHO it should be [2] above that
-> > > > > > > > makes sure the reference won't happen on a swap entry, not necessarily [1]?
-> > > > > > >
-> > > > > > > Yes, in case of migration entry this is what protects us.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > > split_huge_pmd() will bail out inside split_huge_pmd_locked() with no
-> > > > > > > > > indication that split did not happen. Afterwards we will retry
-> > > > > > > >
-> > > > > > > > So we're talking about the case where it's a swap pmd entry, right?
-> > > > > > >
-> > > > > > > Hmm, my understanding is that it's being treated as a swap entry but
-> > > > > > > in reality is not. I thought THPs are always split before they get
-> > > > > > > swapped, no?
-> > > > > >
-> > > > > > Yes they should be split, afaiu.
-> > > > > >
-> > > > > > >
-> > > > > > > > Could you elaborate why the split would fail?
-> > > > > > >
-> > > > > > > Just looking at the code, split_huge_pmd_locked() checks for
-> > > > > > > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
-> > > > > > > pmd_trans_huge() is false if !pmd_present() and it's not a migration
-> > > > > > > entry, so __split_huge_pmd_locked() will be skipped.
-> > > > > >
-> > > > > > Here might be the major part of where confusion came from: I thought it
-> > > > > > must be a migration pmd entry to hit the issue, so it's not?
-> > > > > >
-> > > > > > I checked the code just now:
-> > > > > >
-> > > > > > __handle_mm_fault:
-> > > > > >                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
-> > > > > >                         VM_BUG_ON(thp_migration_supported() &&
-> > > > > >                                           !is_pmd_migration_entry(vmf.orig_pmd));
-> > > > > >
-> > > > > > So IIUC pmd migration entry is still the only possible way to have a swap
-> > > > > > entry.  It doesn't look like we have "real" swap entries for PMD (which can
-> > > > > > further points to some swapfiles)?
-> > > > >
-> > > > > Correct. AFAIU here we stumble on a pmd entry which was allocated but
-> > > > > never populated.
-> > > >
-> > > > Do you mean a pmd_none()?
-> > >
-> > > Yes.
-> > >
-> > > >
-> > > > If so, that goes back to my original question, on why
-> > > > __pmd_trans_huge_lock() returns non-NULL if it's a pmd_none()?  IMHO it
-> > > > really should have returned NULL for pmd_none().
-> > >
-> > > That was exactly the answer I gave Lokesh when he theorized about the
-> > > cause of this crash but after reproducing it I saw that
-> > > pmd_trans_huge_lock() happily returns the PTL as long as PMD is not
-> > > pmd_none(). And that's because it passes as is_swap_pmd(). But even if
-> > > we change that we still need to implement the code to skip the entire
-> > > PMD.
-> >
-> > The thing is I thought if pmd_trans_huge_lock() can return non-NULL, it
-> > must be either a migration entry or a present THP. So are you describing a
-> > THP but with present bit cleared?  Do you know what is that entry, and why
-> > it has present bit cleared?
+On Tue, Aug 05, 2025 at 09:16:31AM +0100, Ryan Roberts wrote:
+> On 05/08/2025 09:13, Ryan Roberts wrote:
+> > This is a new version built on top of Yang Shi's work at [1]. Yang and I have
+> > been discussing (disagreeing?) about the best way to implement the last 2
+> > patches. So I've reworked them and am posting as RFC to illustrate how I think
+> > this feature should be implemented, but I've retained Yang as primary author
+> > since it is all based on his work. I'd appreciate feedback from Catalin and/or
+> > Will on whether this is the right approach, so that hopefully we can get this
+> > into shape for 6.18.
 > 
-> In this case it's because earlier we allocated that PMD here:
-> https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L1797
+> I forgot to mention that it applies on Linus's current master (it depends upon
+> mm and arm64 changes that will first appear in v6.17-rc1 and are already merged
+> in master). I'm using 89748acdf226 as the base.
 
-AFAIU, this line is not about allocation of any pmd entry, but the pmd
-pgtable page that _holds_ the PMDs:
-
-static inline pmd_t *pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
-{
-	return (unlikely(pud_none(*pud)) && __pmd_alloc(mm, pud, address))?
-		NULL: pmd_offset(pud, address);
-}
-
-It makes sure the PUD entry, not the PMD entry, be populated.
-
-> but wouldn't that be the same if the PMD was mapped and then got
-> unmapped later? My understanding is that we allocate the PMD at the
-> line I pointed to make UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES case the same
-> as this unmapped PMD case. If my assumption is incorrect then we could
-> skip the hole earlier instead of allocating the PMD for it.
-> 
-> >
-> > I think my attention got attracted to pmd migration entry too much, so I
-> > didn't really notice such possibility, as I believe migration pmd is broken
-> > already in this path.
-> >
-> > The original code:
-> >
-> >                 ptl = pmd_trans_huge_lock(src_pmd, src_vma);
-> >                 if (ptl) {
-> >                         /* Check if we can move the pmd without splitting it. */
-> >                         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> >                             !pmd_none(dst_pmdval)) {
-> >                                 struct folio *folio = pmd_folio(*src_pmd);
-> >
-> >                                 if (!folio || (!is_huge_zero_folio(folio) &&
-> >                                                !PageAnonExclusive(&folio->page))) {
-> >                                         spin_unlock(ptl);
-> >                                         err = -EBUSY;
-> >                                         break;
-> >                                 }
-> >
-> >                                 spin_unlock(ptl);
-> >                                 split_huge_pmd(src_vma, src_pmd, src_addr);
-> >                                 /* The folio will be split by move_pages_pte() */
-> >                                 continue;
-> >                         }
-> >
-> >                         err = move_pages_huge_pmd(mm, dst_pmd, src_pmd,
-> >                                                   dst_pmdval, dst_vma, src_vma,
-> >                                                   dst_addr, src_addr);
-> >                         step_size = HPAGE_PMD_SIZE;
-> >                 } else {
-> >
-> > It'll get ptl for a migration pmd, then pmd_folio is risky without checking
-> > present bit.  That's what my previous smaller patch wanted to fix.
-> >
-> > But besides that, IIUC it's all fine at least for a pmd migration entry,
-> > because when with the smaller patch applied, either we'll try to split the
-> > pmd migration entry, or we'll do move_pages_huge_pmd(), which internally
-> > handles the pmd migration entry too by waiting on it:
-> >
-> >         if (!pmd_trans_huge(src_pmdval)) {
-> >                 spin_unlock(src_ptl);
-> >                 if (is_pmd_migration_entry(src_pmdval)) {
-> >                         pmd_migration_entry_wait(mm, &src_pmdval);
-> >                         return -EAGAIN;
-> >                 }
-> >                 return -ENOENT;
-> >         }
-> >
-> > Then logically after the migration entry got recovered, we'll either see a
-> > real THP or pmd none next time.
-> 
-> Yes, for migration entries adding the "if (pmd_present(*src_pmd))"
-> before getting the folio is enough. The problematic case is
-> (!pmd_none(*src_pmd) && !pmd_present(*src_pmd)) and not a migration
-> entry.
-
-I thought we could have any of below here on the pmd entry:
-
-  (0) pmd_none, which should constantly have pmd_trans_huge_lock -> NULL
-
-  (1) pmd pgtable entry, which must have PRESENT && !TRANS, so
-  pmd_trans_huge_lock -> NULL,
-
-  (2) pmd migration, pmd_trans_huge_lock -> valid
-
-  (3) pmd thp, pmd_trans_huge_lock -> valid
-
-I thought (2) was broken, which we seem to agree upon.. however if so the
-smaller patch should fix it, per explanation in my previous reply.  OTOH I
-can't think of (4).
-
-Said that, I just noticed (3) can be broken as well - could it be a
-prot_none entry?  The very confusing part of this patch is it seems to
-think it's pmd_none() here as holes:
-
-	if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
-                ...
-	} else {
-		spin_unlock(ptl);
-		if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES)) {
-			err = -ENOENT;
-			break;
-		}
-		/* nothing to do to move a hole */
-		err = 0;
-		step_size = min(HPAGE_PMD_SIZE, src_start + len - src_addr);
-	}
-
-But is it really?  Again, I don't think pmd_none() could happen with
-pmd_trans_huge_lock() returning the ptl.
-
-Could you double check this?  E.g. with this line if that makes sense to
-you:
-
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 8bf8ff0be990f..d2d4f2a0ae69f 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1903,6 +1903,7 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
-                                                          dst_addr, src_addr);
-                                step_size = HPAGE_PMD_SIZE;
-                        } else {
-+                               BUG_ON(!pmd_none(*src_pmd));
-                                spin_unlock(ptl);
-                                if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES)) {
-                                        err = -ENOENT;
-
-I would expect it constantly BUG() here, if that explains my thoughts.
-
-Now I doubt it's a prot_none THP.. aka, a THP that got numa hint to be
-moved.  If so, we may need to process it / move it / .. but we likely
-should never skip it.  We can double check the buggy pmd entry you hit
-(besides migration entry) first.
-
-Thanks,
+It's fine as an RFC but, for upstream, please rebase on top of -rc1
+rather than a random commit in the middle of the merging window. Also
+note that many maintainers ignore new series posted during the merging
+window.
 
 -- 
-Peter Xu
-
+Catalin
 
