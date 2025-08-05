@@ -1,260 +1,212 @@
-Return-Path: <linux-kernel+bounces-756148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B86DB1B08D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39BBB1B091
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38837AC212
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C6C3BDFBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5242586CA;
-	Tue,  5 Aug 2025 08:58:35 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DB2594B7;
+	Tue,  5 Aug 2025 08:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jYW2eAzZ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9C523C511
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384314; cv=none; b=p0Svj5kqE/LntuMGn8UeqJ4jQprt/LYvzaSFJCcruai9BV+hOmvNrIxhih56aKY7YPumMZOQBMQDhbRq6pL/99H+H9yqrU/S1+XW4NcJWqzOPRgnw8GUMwhXNbvaDsGZu/P+CsDs6Sx0Ux3dRMsDl1ymEiEg10qCumkDPcMF4Kg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384314; c=relaxed/simple;
-	bh=ROU4usAY7FLO4IEUuf/j0jcf3HhoyxppnIrnbW9Gg4E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QxBkx1H4BtFAorB0rwFTaDH7AtkE8XVZsWqmIvQGAhFkZehgOObaGRsMCw/7+peVLGDxvGXiZoo2eEjpUJjNkzHZRQKpLMNomRxW3R7k+yGG0oYcJaY57gtrKbcGQ0Xzkzn2hrg0uk1Wsfe8hv4lmkrozqywNOkiHuXzaBFxHKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88178b5ce20so440146739f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:58:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754384312; x=1754989112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l1WNoAj0DpZzqc24ya6V8dghZm6KdpNb3dMMcndP+Qo=;
-        b=Upa3nf1V9GXxofPmA/pWSL5P6wLIUx/Ll6295DgjDIbNntWiNp0+l7CtWDnXxanCmM
-         of3V56BXIv6Jx4ov6vWTU9r+vyiZ/Vj9IZC4mbdH178Z2mP/A3sqh0OYccaTOU3r45yI
-         U7f5k0jFn/JvEqzKNUQg74JIxWPJ0H2BRD5fSBwBWer7QLmYp7TrtHe6RaB2Sf4o55HZ
-         Y0UDOKGF8OMy7D8WDKqh5hlshmxUlVs/Cua+Gw+PmrubT9+2eG3Tn48fjyuf1S2uCMMX
-         iHgFWn2ZQVmqWq3YtY0kO93o/LrGgeO0K19XHiIep5jED7axinFg9BFQn6A/dRfrlfIA
-         XTXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjA/c+HGsZH+IJNQ5e1Y8LO6b5DjSRuzrZrvdT8P+qYZ01k6UDrUHl69xNUj2z3O9Q3flqoy9Ba2GoWkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd15Xh3nBhoxyZQKidte5hS2t8JHCDrPuRz37OJ5SkgtruRpfn
-	7QV+YGldAFpBOjcaqJcph2BdA6P+HKpAN+5ltdEOSXrqfbeg4hLXKGkk8eUVUUO57VPMFlhDe2O
-	OaTSH91ewxta2gCJOoxhnEiTJYn8ZTf6u6ST1qlcjsut3/iKKTE+K5XfcL4g=
-X-Google-Smtp-Source: AGHT+IFodmuJvtVjyVs52g4C10q8nTRHjv7OPiVkaIHbKXtYdeEhfRV8PP5epOXl5W2U5ZYRS4Pif1KtqJX7qOnNnnccBhtH8Peu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFAF258CDC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754384367; cv=fail; b=XGICtR4+2Sh5vBE2h02USEEkrj7ycXeEOueyWQFPNm7iyTHf+qN1Z4hongno+7sllSR3oUbFy7uQjVjqS2i7Qo7zndPdV80+n5NWX5kF+/LV4rW02uEQbObvuxzFdaW8jmXaRuEbeHsjelhupghbiBkUTrrgPK4Y33JnqKwZDbE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754384367; c=relaxed/simple;
+	bh=9W6+1oZODM9b+VGFcLlD/+rwpyeCnxqcnVQAeqt1nEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DcZE60k5XuXg0J+JvOn0TpPlH53DsQwtuhl1rovAR0qhmYMeDPKkyYMwAj7C4wiBE+/yqU35EsBhgbBl8uWVMCkbR4+Y9PNDGf1uEAXHM7rpqs2lZEC67mABHfRflZNXK8Lo1WBbRRluyJxKWdz+fDa4jFFjoRx/u+AuEMkRmGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jYW2eAzZ; arc=fail smtp.client-ip=40.107.93.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p0NKg0DqhBkaLXRuZW1zL0dHsPE93quSpqVfoqZ10sYBSNqbVMfn+nfPcvu15/wiVNFNH7ZvCuut1EuN4LmMXRElRnQCuDpSL3JGX4Xl79EmdJJtLjCS/nmpg4ktL43MaAIqtFa+aweWXUrpIWAupT2zyg1POil3iwxPmyFEBJrl3v6qGJKp4B1wtWOBL/Tt3UQ76J1oSZna9M2WcD3zGML5CRRSrgFXUmgM7gYAV+KVqer2bWSi8LR6L5GyyqSQCqwPrueIGoLz259s2R8xdfptyC5w1t4Ho+jI1qXVJu1A6vsQ2W7+aPWKK3DkVLWkEUSCEKMZZaU3R8qnPrC6TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nVibW2pAazX7IlYNALKgk2ICIdSxZX6c1Xz3Zu2yfkE=;
+ b=c7clG/J7KLlEqgWJRP0h4oz4G81hds8Ux8E1Vxtx1Xwg96HJcbBjV0R+fH6H79p+8qRM7y20Irv3FgnBizd0FXAt6NkXxwpvYuXn71AMoiB6y0HK8fQdiUFbJ5yEgOEdLp8hjRLClWQlrnmc4oVktFLp0QCXncNsuzPt6zoh9VQOmIpgqe3xdcbVAiFnverDIgs1WPhgH6LzvgjBBV/6YTlnktwaXA1tCQAqNNPR0seJmqM3soVVEifRtiQv82UqxUw3/N32ZIrCNZcMbTtpQtqsczeaEFR/qAmaMDG3Ej+yOmE2wRn+b8NJUaiLN/5mxiatfG4yhF4argwnanwvPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nVibW2pAazX7IlYNALKgk2ICIdSxZX6c1Xz3Zu2yfkE=;
+ b=jYW2eAzZdUgRZu4eOSFiDZHlK1jYNiQniKhf5qY83AEZJ5/C/4JqXCGKzfS16be739AUlGSN7pOVRil5dohAjzuI52WbS9FhcTytLEG+0w0SYY0xepKKaFUX6vMZXWz2/3I3a9DTc6qiGfLkklKr+U7GzUuRqj13LC0tYOcntzQbouo02Lvw9FKTasDOSaPZKnRuepNa3d0hXJcxPsmBgb2tGMg9m2oTwVsyeisNRClEbLC3va5hkhro9S0FbE0EdzsOva90DLxMoIOf2UwVpaJBew+SkLlWGY1LzUmQ27Id2idtePuA8QLWwIktLq07k0+1WxFK56rxOQ85VBlTXw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by MW4PR12MB6951.namprd12.prod.outlook.com (2603:10b6:303:209::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Tue, 5 Aug
+ 2025 08:59:15 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 08:59:15 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/ext: Fix invalid task state transitions on class switch
+Date: Tue,  5 Aug 2025 10:59:11 +0200
+Message-ID: <20250805085911.164956-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ZR2P278CA0036.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:47::14) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b89:b0:881:7c17:ef2b with SMTP id
- ca18e2360f4ac-8817c17f0abmr1355865739f.6.1754384312221; Tue, 05 Aug 2025
- 01:58:32 -0700 (PDT)
-Date: Tue, 05 Aug 2025 01:58:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6891c7b8.050a0220.7f033.001f.GAE@google.com>
-Subject: [syzbot] [perf?] KASAN: slab-use-after-free Read in __task_pid_nr_ns
-From: syzbot <syzbot+e0378d4f4fe57aa2bdd0@syzkaller.appspotmail.com>
-To: acme@kernel.org, adrian.hunter@intel.com, 
-	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
-	namhyung@kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW4PR12MB6951:EE_
+X-MS-Office365-Filtering-Correlation-Id: d531b66b-3185-47b4-3bc6-08ddd3fe5aa5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WmbcO9PqA+yYMr4V2HZ0RftJXClApJhP1/PZTNxcL2t1YTWCVXAqP3TS7ill?=
+ =?us-ascii?Q?VYSjpZkRN6FsD46BLky2bjHTS3+dDhNE94LC2ncre0SuXHQBe8nnufHjhX8x?=
+ =?us-ascii?Q?/cTWtiHdQWoVJRgKKIO83HTrbA5kgtQjYpWf1WKBN+Qf27xAf1gP6kBA2IuQ?=
+ =?us-ascii?Q?ypWytGBTTfe0Ua4pGPGDC9GOkWHae3JYtAwcUoXR97Mbch31Cg8T+IyYCNw3?=
+ =?us-ascii?Q?BEDYXpz8ddyQxrNNoKbHiRwM3xnitgizfczE5vsDa3px+kLy0qLLxl6tJpf4?=
+ =?us-ascii?Q?RS3u/jZ8nfUeC68dEijR+ddT/wrEX/5G13ilvHOt3+PhzTjnYtzTaDL9J5kD?=
+ =?us-ascii?Q?5n4L4d9++FFS42DSayEVXvQrORVYsJUGxBkXKNYlro6Fo5ZQJPiMpvXYTXtp?=
+ =?us-ascii?Q?2D8/QJ6Xg3bgyEGh7W0IncLJr3uXz4DTeiCi2pLeBwI9Pjv2dasDI4b4Ru7p?=
+ =?us-ascii?Q?CcsxiYG1bWnTykAJzvlp+gSuALZvM4VOUb9y8poM7J+AmSh2HcJGxH+hK5o+?=
+ =?us-ascii?Q?Q6jOxHbc3sEBnt5Jlgfhy2mIH+H0gcSod0hx0y/d1XSUc8wYGfiSXppscF8f?=
+ =?us-ascii?Q?WUKQezwaY1z3lMIOHyy9DFH2Dxh6oYiFNEKjpTnlytYcKPIqRFaj6geYl1Mf?=
+ =?us-ascii?Q?WEmDiZBgsaD0MqRuTFj9T0ZhrUyu3W7q5lt5wqSeaIjTE62hzZUfwZhB/xXA?=
+ =?us-ascii?Q?HFreRluTGVL2yDTi0B5e6FU4mIWAsaPHoirMHjukfQ1SwHjicp5/9S4IZTIU?=
+ =?us-ascii?Q?n6qbinX7OmVwdYrpJpzrSOM6gbZFCiYQ3g6ZbDEAhoUMpXsjrMD7QZqT0Xf7?=
+ =?us-ascii?Q?fhDdRZ0iZmHbART5ZQLKc0HRBP9aTpeIPASIHGIMYkHn8jRmS7ybBCRCILx+?=
+ =?us-ascii?Q?U06ifpyPv4nlvqadtsqv+vm6EP8XeSTo0v1JvSheezdVswaSQhnX42HhDcx6?=
+ =?us-ascii?Q?mqyWkbdej3wsMG1XxTQYG/Q3RCkSpny86rJ9pvX94D8H67toZyRKQubJ5Ccn?=
+ =?us-ascii?Q?LcWrpbM7G6ZMqx1w7miHWbWRXWdkgU0fS2u9ZureOF3Us94Y1zBEJpbps0NC?=
+ =?us-ascii?Q?5RDNvLGtv37rteJ8JoLuN+jA/Kx/d6C2V4IvXS8tPa/4iXWhJDj5oBgRR0sR?=
+ =?us-ascii?Q?IRJ7EG5AHVovZRIdJ7pzOfq1ZlZGuafgPHy0fkXzir7fjO+JcMxGYyemuUdt?=
+ =?us-ascii?Q?4ObU9jix/4UnnZXN8ewbcTLyxxv3h3MI/z+xNunFQPWs0OGT71yvhrGyqhey?=
+ =?us-ascii?Q?6eAcnJfCUctcsnzOn7twLbzs6Zw0E/7EVue7JQD9lciXp3mcXFqUuwPAfIO9?=
+ =?us-ascii?Q?+ctuBY842uqNyT3zEmme0bl2Kmdicq6hW42ifAhfh7PdtpXV00c57gzZ/EkZ?=
+ =?us-ascii?Q?Kd1jJ6qziI9461YotxjaEV2Pt2IOM/mPw7FfOZmytvr1WX4KL1w8m50jBQOX?=
+ =?us-ascii?Q?016Y7wE/SwM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sQ6ZbXGFpk04/Fb1bKM1QyKVBL9Bn1tCFzup56h9DKbj9aZtGX1WlGmXl5mv?=
+ =?us-ascii?Q?yM3cp87XTfypnIOZ98ttKDTwzs1NifSRxMOwBiVAM2lymGLrtb8f9zucDp+T?=
+ =?us-ascii?Q?z/kZthTLjF3+wPWBQ6Fg9XXIRmzYKfIEQ8xmJUeYfWjYyRzn0og0tOjjeucb?=
+ =?us-ascii?Q?CqXZ0NkRt4TKXUcZbLp6g5UJHMohRouzwsQa4sfj9o3Si0zsbcrNJjDMPCxT?=
+ =?us-ascii?Q?iJypWaxWi0qE2anfyGtNkyL1nX/9haBcOW2/73pbyHA7N4xcm5PxeRhh+vL/?=
+ =?us-ascii?Q?UgcDWXIRjNfjbAhZk0p1wpfdBaG0bAPRtUl/qNJ1qYTbwN9rc51QQhWWMuNO?=
+ =?us-ascii?Q?EYdDZs2zt/IRAFdk3/JnRLEHvXrtZ+P6yaZtEl3lDFChS+b/LLyXZgYreBeo?=
+ =?us-ascii?Q?xXVDmkh438tAndryaqSwcqI8/HmWnZZCWs52CmxSbPyifKmV4SghwKInrU6S?=
+ =?us-ascii?Q?zznSb5gBczO74basj0HbPmu8BPdWHfU3Ane88vYU3PX4lNofkCDL0IZxspFo?=
+ =?us-ascii?Q?voU74cSuXGbZFwhpdTd1a6vudilruNvEBHeG9Sb/NcwqNGWMj1kgx9k0RFjZ?=
+ =?us-ascii?Q?prmQ4wwQPmXJI1cVaB+UvGuePla1rt7cxIt10wkWzy/m2ZHWnplk1hcBH5xf?=
+ =?us-ascii?Q?heGwubdEnccIUqKMM/uqOnC0PG7gTFxWs4VnUszJOg3ZXv0/lE6ckM0+mgPB?=
+ =?us-ascii?Q?AseiLYeE+meqDHDuFMnib4c/RVkuN3NJVap1fEQeoeYtd96HGGknGz1iUYK0?=
+ =?us-ascii?Q?B1bQZPHtJeCc6LnNx3X7re9WgRFBgMIoGEk/VaQ0uGeO8Dh7sqxbNXxfasSN?=
+ =?us-ascii?Q?MkgtHKRF7LWPj2ZY/aE10nBhLPYDA3Ip9qS5U81IiWoACmaBdXSHhtSqkI9v?=
+ =?us-ascii?Q?ryS5O9m9n+0gcjqOV/8ruP2phDAdpVXirtXhWEIGtugjSfsVZ/RPi8OXa/tj?=
+ =?us-ascii?Q?SguD/4OfL67USdUXFHweoopRlxNWzCMI3I6n9LEbHlrhp+lY56xb9NKSk4Ny?=
+ =?us-ascii?Q?E/cHHGrt78PDP5QVmcBTOmSv8NxZS10QWypGEamDjVVGxFwinz+yfo2QlVtF?=
+ =?us-ascii?Q?kPbgjUQpCQmdtLkVCr4wo/voPmM+6E0IOJN4ulFx/2P4488yS3QTL/yl2Y4R?=
+ =?us-ascii?Q?QR1CU7vvFAIddcqiwuR4yrf0Isl26bEmM2QgF9aCrUFXNdZwp3xZvVXR+DVL?=
+ =?us-ascii?Q?etiHyPAM5bzf79GUaPhcLElTtPRONqyTu/r9fz++qfDSyb3omVaDdS6kLLds?=
+ =?us-ascii?Q?6x9dxe+kI3uWlGvsEImviNLil+dGk3K4/HTAZkh3MRo4v8RnmRQNOOEG6tWJ?=
+ =?us-ascii?Q?uIMEF6sOIP0qJ45r0yX+rbH5+mNohHLQxf+HiHXojrZMHB9cZJsXoXQk3Xk1?=
+ =?us-ascii?Q?aO0umXgWfhNOA8KIGQio8Qu2C0jOssRptNb342MFgo9ALEXpbS9ttRiE+Kdy?=
+ =?us-ascii?Q?SlPdmBZ5OGG9oDGnbYs+fnZCGZuDguGGmT+RrriFnxjR2ocrnJFCUBzqgyIZ?=
+ =?us-ascii?Q?UVf/wTSsNv+cGzeWEI5ZfUtdnqlcxAkPX5Fm7zoF43IXKeICzWfSejmwUZc8?=
+ =?us-ascii?Q?3si2qPwhQMuW+ZdDwlCiiq2qIj41MM42OmR2FQmU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d531b66b-3185-47b4-3bc6-08ddd3fe5aa5
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 08:59:15.4676
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j1MJewFLiA3ZiTb6RIzinChZUMmoLhT1GGShfynOb+f5Ce1MvpTwp7TheJJAX0tV8y2NSpDsgg5IfKHGsnpwGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6951
 
-Hello,
+When enabling a sched_ext scheduler, we may trigger invalid task state
+transitions, resulting in warnings like the following (which can be
+easily reproduced by running the hotplug selftest in a loop):
 
-syzbot found the following issue on:
+ sched_ext: Invalid task state transition 0 -> 3 for fish[770]
+ WARNING: CPU: 18 PID: 787 at kernel/sched/ext.c:3862 scx_set_task_state+0x7c/0xc0
+ ...
+ RIP: 0010:scx_set_task_state+0x7c/0xc0
+ ...
+ Call Trace:
+  <TASK>
+  scx_enable_task+0x11f/0x2e0
+  switching_to_scx+0x24/0x110
+  scx_enable.isra.0+0xd14/0x13d0
+  bpf_struct_ops_link_create+0x136/0x1a0
+  __sys_bpf+0x1edd/0x2c30
+  __x64_sys_bpf+0x21/0x30
+  do_syscall_64+0xbb/0x370
+  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-HEAD commit:    e8d780dcd957 Merge tag 'slab-for-6.17' of git://git.kernel..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12392f82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=287afdea79829fda
-dashboard link: https://syzkaller.appspot.com/bug?extid=e0378d4f4fe57aa2bdd0
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+This happens because we skip initialization for tasks that are already
+dead (with their usage counter set to zero), but we don't exclude them
+during the scheduling class transition phase.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Fix this by also skipping dead tasks during class swiching, preventing
+invalid task state transitions.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5aa4922d60a2/disk-e8d780dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f92a03738fad/vmlinux-e8d780dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ac22ca9f709f/bzImage-e8d780dc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e0378d4f4fe57aa2bdd0@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __task_pid_nr_ns+0x1da/0x470 kernel/pid.c:517
-Read of size 8 at addr ffff888066bbaa28 by task syz.5.936/10344
-
-CPU: 0 UID: 0 PID: 10344 Comm: syz.5.936 Not tainted 6.16.0-syzkaller-ge8d780dcd957 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __task_pid_nr_ns+0x1da/0x470 kernel/pid.c:517
- perf_event_pid_type kernel/events/core.c:1431 [inline]
- perf_event_pid kernel/events/core.c:1440 [inline]
- perf_event_read_event kernel/events/core.c:8519 [inline]
- sync_child_event kernel/events/core.c:13962 [inline]
- perf_child_detach kernel/events/core.c:2339 [inline]
- __perf_remove_from_context+0x22e5/0x2a80 kernel/events/core.c:2510
- perf_remove_from_context+0x152/0x1d0 kernel/events/core.c:2559
- perf_event_release_kernel+0x2dd/0x510 kernel/events/core.c:5837
- perf_release+0x38/0x50 kernel/events/core.c:5870
- __fput+0x449/0xa70 fs/file_table.c:468
- task_work_run+0x1d1/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:208 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1fae18eb69
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff16a52328 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 00007f1fae3b7ba0 RCX: 00007f1fae18eb69
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007f1fae3b7ba0 R08: 0000000000000200 R09: 0000001d16a5261f
-R10: 00007f1fae3b7ac0 R11: 0000000000000246 R12: 000000000005b884
-R13: 00007f1fae3b6320 R14: ffffffffffffffff R15: 00007fff16a52440
- </TASK>
-
-Allocated by task 10345:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4179 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4235
- copy_signal+0x50/0x630 kernel/fork.c:1651
- copy_process+0x16a6/0x3c00 kernel/fork.c:2169
- kernel_clone+0x21e/0x840 kernel/fork.c:2602
- __do_sys_clone kernel/fork.c:2745 [inline]
- __se_sys_clone kernel/fork.c:2729 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 10345:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2416 [inline]
- slab_free mm/slub.c:4679 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4781
- copy_process+0x2953/0x3c00 kernel/fork.c:2455
- kernel_clone+0x21e/0x840 kernel/fork.c:2602
- __do_sys_clone kernel/fork.c:2745 [inline]
- __se_sys_clone kernel/fork.c:2729 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888066bba880
- which belongs to the cache signal_cache of size 1544
-The buggy address is located 424 bytes inside of
- freed 1544-byte region [ffff888066bba880, ffff888066bbae88)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x66bb8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff88807df50c01
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b6dd780 ffffea00009cb000 dead000000000002
-raw: 0000000000000000 0000000080120012 00000000f5000000 ffff88807df50c01
-head: 00fff00000000040 ffff88801b6dd780 ffffea00009cb000 dead000000000002
-head: 0000000000000000 0000000080120012 00000000f5000000 ffff88807df50c01
-head: 00fff00000000003 ffffea00019aee01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5203, tgid 5203 (S02sysctl), ts 31817104133, free_ts 28252177307
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2486 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2654
- new_slab mm/slub.c:2708 [inline]
- ___slab_alloc+0xbeb/0x1410 mm/slub.c:3890
- __slab_alloc mm/slub.c:3980 [inline]
- __slab_alloc_node mm/slub.c:4055 [inline]
- slab_alloc_node mm/slub.c:4216 [inline]
- kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4235
- copy_signal+0x50/0x630 kernel/fork.c:1651
- copy_process+0x16a6/0x3c00 kernel/fork.c:2169
- kernel_clone+0x21e/0x840 kernel/fork.c:2602
- __do_sys_clone kernel/fork.c:2745 [inline]
- __se_sys_clone kernel/fork.c:2729 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2729
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1248 [inline]
- __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
- __free_pages mm/page_alloc.c:5071 [inline]
- free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:6927
- destroy_args+0x64/0x4a0 mm/debug_vm_pgtable.c:1009
- debug_vm_pgtable+0x3a7/0x3e0 mm/debug_vm_pgtable.c:1389
- do_one_initcall+0x233/0x820 init/main.c:1269
- do_initcall_level+0x104/0x190 init/main.c:1331
- do_initcalls+0x59/0xa0 init/main.c:1347
- kernel_init_freeable+0x334/0x4a0 init/main.c:1579
- kernel_init+0x1d/0x1d0 init/main.c:1469
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff888066bba900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888066bba980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888066bbaa00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                  ^
- ffff888066bbaa80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888066bbab00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Fixes: a8532fac7b5d2 ("sched_ext: TASK_DEAD tasks must be switched into SCX on ops_enable")
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ kernel/sched/ext.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 7dedc9a16281b..4ae32ef179dd0 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5749,6 +5749,9 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 			__setscheduler_class(p->policy, p->prio);
+ 		struct sched_enq_and_set_ctx ctx;
+ 
++		if (!tryget_task_struct(p))
++			continue;
++
+ 		if (old_class != new_class && p->se.sched_delayed)
+ 			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+ 
+@@ -5761,6 +5764,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		sched_enq_and_set_task(&ctx);
+ 
+ 		check_class_changed(task_rq(p), p, old_class, p->prio);
++		put_task_struct(p);
+ 	}
+ 	scx_task_iter_stop(&sti);
+ 	percpu_up_write(&scx_fork_rwsem);
+-- 
+2.50.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
