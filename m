@@ -1,256 +1,182 @@
-Return-Path: <linux-kernel+bounces-755868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08260B1ACB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DD4B1ACBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 05:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DDD17D838
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB5C189D12A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034881DF968;
-	Tue,  5 Aug 2025 03:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F751E520F;
+	Tue,  5 Aug 2025 03:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="IIW4VlXB"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iDJ9cTlm"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCEE19D093;
-	Tue,  5 Aug 2025 03:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393971DDC35
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 03:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754364202; cv=none; b=QZOn8Df7uL6a+ukC0RKkHG3lnpVKa9kqbqm6ccjBRFwpNEDBFxlZPsczje07Puz0e5IegyOrzYfzXluf93YQy38byNY9ygIpaNHiHTGNrRSgzQ+/li6N9oncvLIgw//0NRJZf20VYY+nAPj76uhsvmhMxVtg2UG0RBsoUlc3EG8=
+	t=1754364598; cv=none; b=cTcEZzgqOr9n5nn0Ooe+Ry+mdaEt43mGAFCUONfkWm/ok0reOrNfZZ6z534ABg/AvWNIyzgzkTaqXt4ivIXeL+ap4w0AOxT636CGSo7Pmdkcjmb/TSWmvsstR5XqAOoU6BuF2WkMhWtLMsoT6QrWjeTPBpeRucphEK9pa07e4ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754364202; c=relaxed/simple;
-	bh=vT9AQs1JvRF7Eh3W0MiofWlA7/STiws+EgyOFyrS1GQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WMLCa2OJCUmWdViG4c2RiS84jRYQe3qpBJpMVlo8lD0mxrFaTUsP3AW0mPkn1iNn1s/o6GiMpW+a3JseVk7lIN+fT57bMcauTZrL0axwPRlpjV7waXxy7i1dLDw1deuE+li7CJJQeNJrJWaGDn3PKWH48iMuYXqBHg6Mjw87EjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=IIW4VlXB; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5753Mh5qA1454643, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1754364164; bh=yAOu5JL5wnfykAuhT113dv3FxNzRgEe8JxQ2jg7LQEQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=IIW4VlXBPT6PgOWQjtdVieP2UzQHyAOXxuCoi6GvXrEYy1M8gCaCIyaZzZb5LY97H
-	 V1TfoL7VtqGY4JfHDu9q3LjrRhyPoRiA6SQsGc5v/HuQMN6EOuWUaVhSqRoXEtlxam
-	 vo9dempnh6GWato70alitRllpN6+vR+nDPLATKyTJZZ2MkTicDE5t1kk539NkbpEV8
-	 jHgef1gLLyJbnE5H5e4YqZncBwXn4eU9WN+vMfkqB9cRVes+iUKYKqFFpopZZtPbjb
-	 HzAvnqbuIIXnHdJPJFKC+xpEvze0EjWfDPh2wr8RoV+RsrHbtDDQFWJj1eRiwVuPcT
-	 rkUNjjOthKrgw==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5753Mh5qA1454643
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 11:22:43 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 5 Aug 2025 11:22:44 +0800
-Received: from RTEXH36506.realtek.com.tw (172.21.6.27) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 5 Aug 2025 11:22:43 +0800
-Received: from localhost (172.22.144.1) by RTEXH36506.realtek.com.tw
- (172.21.6.27) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 5 Aug 2025 11:22:43 +0800
-From: Ricky Wu <ricky_wu@realtek.com>
-To: <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <chenhuacai@kernel.org>,
-        <ricky_wu@realtek.com>, <ulf.hansson@linaro.org>,
-        <maximlevitsky@gmail.com>
-Subject: [PATCH] misc: rtsx: usb card reader: add OCP support
-Date: Tue, 5 Aug 2025 11:22:20 +0800
-Message-ID: <20250805032220.2355160-1-ricky_wu@realtek.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754364598; c=relaxed/simple;
+	bh=hKNey2M65NfB1i5iWVZHmHR4W8oYtDhF8YeJMlTTAUc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Y4T1pJKWfEE9zf4hVeiKFMY9Oxt6gapjasPSyBxySrFcI3GlWMZn3G6O8e/KikTxpQVZkl257SDtCuzY1EORESOVUsQ8EVGOontJnSooNtlrpDy/PMgNPt7Cm4ymKyFPU2GmlsUzNbm/cqSqE/xmc2BsIOFHiBSZTqmZ1wTrUiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iDJ9cTlm; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso3699143b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 20:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754364596; x=1754969396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O4e9hLBnrm2iVH1X9AV4+u69aPgdnAgGMzmvdOS5R1s=;
+        b=iDJ9cTlmtLLZlk96Z6o3SMkkhhT+x8Es2Guvx3p9d6/VyR2zNdrGn3pzE/LK8RO8zK
+         T+18oP6d2FZFAei+Sd6Nr8nKsd7qic29lNDpiGCYm3zUQQ9L2NMEGLy9fgzsWywq6d+s
+         0F4+AUNDmJsi5DJmrBdm9dPrIJjm/IeHFAaJxFfo3rlyJOjmoEv/CVPcf+5ml9J3G1zP
+         jNagTz0k7+ChsrbnDUolFVx7sPWWYDaXU/t1WXhiANq0917USerWnrEhnnAMaT6tsU/V
+         lxTjiZxkCni7PeAO+/wDuHKkbso/VW0sccU7X5wGiRunZu1PuJ/tqldV4GoYcz3WNWT9
+         +DWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754364596; x=1754969396;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O4e9hLBnrm2iVH1X9AV4+u69aPgdnAgGMzmvdOS5R1s=;
+        b=bnh8/XmcmEiLo5NA/nqDVFdwN4wYFUtW6DctuFCBk7fdqHsSgL/I+vrXymQagxIgzk
+         s/J4859yHH/ChvLkyRXyUpHW+/6g5sidACigg+QLdk7TTLeESCgBZYYFoIFo2UZkmteG
+         7LeVDcNo8KZBXIESITIJJC9TAAxSLtM+ilMC2HBdC67iw/NGDNle/QwLMyGcG0rsbixX
+         caUPCfCgwfKSM9P0WycaxHagxaRgHPDX69NELtYMoD82YNNSgqL6oOcJ0U+Rw13G7c3i
+         YsrKHSDLEY2Jlc7LadCCV2dG9fyJNTywPgKwlGTR5hrQEv9TTUtjTNKlinx0WZ0WDo35
+         BV1A==
+X-Gm-Message-State: AOJu0YzQPzxijnHnfoLgkTwXFzK2aJVRlleRlKBuXHIVFkCuf4JXt9Kg
+	IJUtFB6stHSCb6t+n+zcgC2yIq9/Zfj9X7Pe5ZnMX1aIO0QnAWVPSfn7LGVgn/83qbx/4GSHLK7
+	s6jcLWc/L4wQ9rP5aZ7da7aMwxl4NEKmYxKlVf2vWngJ4sBCGoJfE1ItIHjG6h2/nthm9Skw6cy
+	6CJbaB+b505Iec6uEtbPHCV4pDIvgZ3Qt6AtqeosdK0XtjuMv8Nw==
+X-Google-Smtp-Source: AGHT+IHCQb17vXlV4e52P4N0dmYJzN1VGo2n3q5QjSHbjsj9Nn7wVegPuuz3ngnDNMTzTldH9NHl9VVaoIFp
+X-Received: from pfbcd26.prod.google.com ([2002:a05:6a00:421a:b0:748:ec4d:30ec])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1495:b0:74c:efae:ffae
+ with SMTP id d2e1a72fcca58-76bec2fca4bmr15187096b3a.5.1754364596278; Mon, 04
+ Aug 2025 20:29:56 -0700 (PDT)
+Date: Mon,  4 Aug 2025 20:29:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-KSE-ServerInfo: RTEXMBS01.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250805032940.3587891-4-ynaffit@google.com>
+Subject: [RFC PATCH v3 0/2] cgroup: Track time in cgroup v2 freezer
+From: Tiffany Yang <ynaffit@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
+	kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="true"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds support for Over Current Protection (OCP) to the Realtek
-USB card reader driver.
+Hello,
 
-The OCP mechanism protects the hardware by detecting and handling current
-overload conditions.
-This implementation includes:
+The cgroup v2 freezer controller is useful for freezing background
+applications so they don't contend with foreground tasks. However, this
+may disrupt any internal monitoring that the application is performing,
+as it may not be aware that it was frozen.
 
-- Register configurations to enable OCP monitoring.
-- Handling of OCP interrupt events and associated error reporting.
-- Card power management changes in response to OCP triggers.
+To illustrate, an application might implement a watchdog thread to
+monitor a high-priority task by periodically checking its state to
+ensure progress. The challenge is that the task only advances when the
+application is running, but watchdog timers are set relative to system
+time, not app time. If the app is frozen and misses the expected
+deadline, the watchdog, unaware of this pause, may kill a healthy
+process.
 
-This enhancement improves the robustness of the driver when operating in
-environments where electrical anomalies may occur, particularly with SD
-and MS card interfaces.
+This series tracks the time that each cgroup spends "freezing" and
+exposes it via cgroup.freeze.stat.local. If others prefer, I can instead
+create cgroup.stat.local and allow the freeze time accounting to be
+accessed there instead.
 
-Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+This version includes several basic selftests. I would find feedback
+especially useful here! Along with testing basic functionality, I wanted
+to demonstrate the following relationships:
+  1. Freeze time will increase while a cgroup is freezing, regardless of
+     whether it is frozen or not.
+  2. Each cgroup's freeze time is independent from the other cgroups in
+     its hierarchy.
+
+I was hoping to show (1.) with a test that freezes a cgroup and then
+checks its freeze time while cgroup.events still shows "frozen 0", but I
+am having trouble writing a case that can reliably cause this (even when
+letting a forkbomb grow for a while before attempting to
+freeze!). Ideally, I could populate a test cgroup with an unfreezable
+task. Is there an elegant way to create a process from a selftest that
+will become TASK_INTERRUPTIBLE?
+
+The main challenge in establishing (2.) is that in order to make a
+meaningful comparison between two cgroups' freeze times, they need to be
+obtained at around the same time. The test process may check one
+cgroup's freeze time, but then it may be preempted and delayed from
+checking another cgroup's for a relatively "long" time. I have tried to
+use sleeps to increase what a "long" time would be, but this possibility
+makes tests like test_cgfreezer_time_parent non-deterministic, so I am a
+bit squeamish about adding it here.
+
+Any suggestions for better tests or anything else would be welcome.
+
+Thank you!
+Tiffany
+
+Signed-off-by: Tiffany Yang <ynaffit@google.com>
 ---
- drivers/memstick/host/rtsx_usb_ms.c |  5 ++++-
- drivers/misc/cardreader/rtsx_usb.c  |  7 +++++++
- drivers/mmc/host/rtsx_usb_sdmmc.c   | 32 +++++++++++++++++++++++++----
- include/linux/rtsx_usb.h            | 11 ++++++++++
- 4 files changed, 50 insertions(+), 5 deletions(-)
+v3:
+* Use seqcount along with css_set_lock to guard freeze time accesses as
+  suggested by Michal Koutn=C3=BD
+* Add selftests
 
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index 3878136227e4..9389e9643c24 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -216,7 +216,10 @@ static int ms_power_off(struct rtsx_usb_ms *host)
- 
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_EN, MS_CLK_EN, 0);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_OE, MS_OUTPUT_EN, 0);
--
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
-+			POWER_MASK, POWER_OFF);
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
-+			POWER_MASK | LDO3318_PWR_MASK, POWER_OFF | LDO_SUSPEND);
- 	err = rtsx_usb_send_cmd(ucr, MODE_C, 100);
- 	if (err < 0)
- 		return err;
-diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardreader/rtsx_usb.c
-index d007a4455ce5..1830e9ed2521 100644
---- a/drivers/misc/cardreader/rtsx_usb.c
-+++ b/drivers/misc/cardreader/rtsx_usb.c
-@@ -552,6 +552,10 @@ static int rtsx_usb_reset_chip(struct rtsx_ucr *ucr)
- 	ret = rtsx_usb_send_cmd(ucr, MODE_C, 100);
- 	if (ret)
- 		return ret;
-+	/* config OCP */
-+	rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_DETECT_EN, MS_OCP_DETECT_EN);
-+	rtsx_usb_write_register(ucr, OCPPARA1, 0xF0, 0x50);
-+	rtsx_usb_write_register(ucr, OCPPARA2, 0x7, 0x3);
- 
- 	/* config non-crystal mode */
- 	rtsx_usb_read_register(ucr, CFG_MODE, &val);
-@@ -722,6 +726,9 @@ static int rtsx_usb_suspend(struct usb_interface *intf, pm_message_t message)
- 			if (val & (SD_CD | MS_CD)) {
- 				device_for_each_child(&intf->dev, NULL, rtsx_usb_resume_child);
- 				return -EAGAIN;
-+			} else {
-+				/* if the card does not exists, clear OCP status */
-+				rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_CLEAR, MS_OCP_CLEAR);
- 			}
- 		} else {
- 			/* There is an ongoing operation*/
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index c5f6b9df066b..0632d294b12f 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -48,7 +48,7 @@ struct rtsx_usb_sdmmc {
- 	bool			ddr_mode;
- 
- 	unsigned char		power_mode;
--
-+	u16			ocp_stat;
- #ifdef RTSX_USB_USE_LEDS_CLASS
- 	struct led_classdev	led;
- 	char			led_name[32];
-@@ -785,6 +785,9 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
- 
- 	mutex_unlock(&ucr->dev_mutex);
- 
-+	/* get OCP status */
-+	host->ocp_stat = (val >> 4) & 0x03;
-+
- 	/* Treat failed detection as non-exist */
- 	if (err)
- 		goto no_card;
-@@ -795,6 +798,11 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
- 	}
- 
- no_card:
-+	/* clear OCP status */
-+	if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+		rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_CLEAR, MS_OCP_CLEAR);
-+		host->ocp_stat = 0;
-+	}
- 	host->card_exist = false;
- 	return 0;
- }
-@@ -818,7 +826,11 @@ static void sdmmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		cmd->error = -ENOMEDIUM;
- 		goto finish_detect_card;
- 	}
--
-+	/* check OCP stat */
-+	if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+		cmd->error = -ENOMEDIUM;
-+		goto finish_detect_card;
-+	}
- 	mutex_lock(&ucr->dev_mutex);
- 
- 	mutex_lock(&host->host_mutex);
-@@ -977,9 +989,19 @@ static int sd_power_on(struct rtsx_usb_sdmmc *host)
- 
- 	usleep_range(800, 1000);
- 
-+	rtsx_usb_init_cmd(ucr);
-+	/* WA OCP issue: after OCP, there were problems with reopen card power */
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL, POWER_MASK, POWER_ON);
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, FPDCTL, SSC_POWER_MASK, SSC_POWER_DOWN);
-+	err = rtsx_usb_send_cmd(ucr, MODE_C, 100);
-+	if (err)
-+		return err;
-+	msleep(20);
-+	rtsx_usb_write_register(ucr, FPDCTL, SSC_POWER_MASK, SSC_POWER_ON);
-+	usleep_range(180, 200);
- 	rtsx_usb_init_cmd(ucr);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
--			POWER_MASK|LDO3318_PWR_MASK, POWER_ON|LDO_ON);
-+			LDO3318_PWR_MASK, LDO_ON);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_OE,
- 			SD_OUTPUT_EN, SD_OUTPUT_EN);
- 
-@@ -1029,7 +1051,8 @@ static void sd_set_power_mode(struct rtsx_usb_sdmmc *host,
- 
- 	case MMC_POWER_UP:
- 		pm_runtime_get_noresume(sdmmc_dev(host));
--		err = sd_power_on(host);
-+		if (!(host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)))
-+			err = sd_power_on(host);
- 		if (err)
- 			dev_dbg(sdmmc_dev(host), "power-on (err = %d)\n", err);
- 		/* issue the clock signals to card at least 74 clocks */
-@@ -1332,6 +1355,7 @@ static void rtsx_usb_init_host(struct rtsx_usb_sdmmc *host)
- 	mmc->max_req_size = 524288;
- 
- 	host->power_mode = MMC_POWER_OFF;
-+	host->ocp_stat = 0;
- }
- 
- static int rtsx_usb_sdmmc_drv_probe(struct platform_device *pdev)
-diff --git a/include/linux/rtsx_usb.h b/include/linux/rtsx_usb.h
-index f267a06c6b1e..276b509c03e3 100644
---- a/include/linux/rtsx_usb.h
-+++ b/include/linux/rtsx_usb.h
-@@ -99,6 +99,17 @@ extern int rtsx_usb_card_exclusive_check(struct rtsx_ucr *ucr, int card);
- #define CD_MASK		(SD_CD | MS_CD | XD_CD)
- #define SD_WP		0x08
- 
-+/* OCPCTL */
-+#define MS_OCP_DETECT_EN		0x08
-+#define	MS_OCP_INT_EN			0x04
-+#define	MS_OCP_INT_CLR			0x02
-+#define	MS_OCP_CLEAR			0x01
-+
-+/* OCPSTAT */
-+#define MS_OCP_DETECT			0x80
-+#define MS_OCP_NOW			0x02
-+#define MS_OCP_EVER			0x01
-+
- /* reader command field offset & parameters */
- #define READ_REG_CMD		0
- #define WRITE_REG_CMD		1
--- 
-2.25.1
+v2: https://lore.kernel.org/lkml/20250714050008.2167786-2-ynaffit@google.co=
+m/
+* Track per-cgroup freezing time instead of per-task frozen time as
+  suggested by Tejun Heo
+
+v1: https://lore.kernel.org/lkml/20250603224304.3198729-3-ynaffit@google.co=
+m/
+
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Koutn=C3=BD <mkoutny@suse.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Chen Ridong <chenridong@huawei.com>
+
+Tiffany Yang (2):
+  cgroup: cgroup.freeze.stat.local time accounting
+  cgroup: selftests: Add tests for freezer time
+
+ Documentation/admin-guide/cgroup-v2.rst       |  20 +
+ include/linux/cgroup-defs.h                   |  17 +
+ kernel/cgroup/cgroup.c                        |  28 +
+ kernel/cgroup/freezer.c                       |  10 +-
+ tools/testing/selftests/cgroup/test_freezer.c | 686 ++++++++++++++++++
+ 5 files changed, 759 insertions(+), 2 deletions(-)
+
+--=20
+2.50.1.565.gc32cd1483b-goog
 
 
