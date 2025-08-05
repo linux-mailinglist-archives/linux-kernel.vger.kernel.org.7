@@ -1,83 +1,103 @@
-Return-Path: <linux-kernel+bounces-756621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3121B1B6E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:52:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FDFB1B6E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364E57A8866
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A592B3B5FB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88A92264A0;
-	Tue,  5 Aug 2025 14:52:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C866B2475C3
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782AA27933F;
+	Tue,  5 Aug 2025 14:55:14 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646472264A0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754405549; cv=none; b=TSe+opSCS8B6tveXAvQF/AeQ1n3DJYqtLii2EDoHZbcEid/7tv3vOrEZosP0M3eYhjaxqjVjqrPiSB5AtZS+LG81EQMhJEU/SEpoklctjCx3J91rRi9e8drbZ8Dk6CaJNOnSlspCGthicDdIQTWPj00HfB8USynxK+uf2KjvkZA=
+	t=1754405714; cv=none; b=k3YIKmRY6vNLa7iSVArYP/lg4tsiDBzC0ptH3SiRLVq0kZEXk2MlLnTslITf5NKpen+wbu8NDhiyvhXNRLSQJ9+bf007xNDbyEig8LIvR8O0TWWwfxdBEQuAvIoyQjxQHf8Xvbl9eGe+JCjHZHLse55ZF3Bu8ZShlSdX1SmET34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754405549; c=relaxed/simple;
-	bh=VVlMtuKfvsytkCCmPMHos8d55PzPw8+2MmKLifKRtmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jbpmW6fDG6wM2YK8N3NisWS8Nof9aAwUW9dW8LUHmKXFyBkXDjIbvoc9NGJ5wgJG0QAU6ZO16WWSdo7m4vSk8EK0hVGMWB/vHE+VNLP3G01mtEcrvIqUaQCZq0xXtFWSUNzStAGx2WWnv6TZEvTqSbZc6vx4zZidWbRyIzwNzbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28E1012FC;
-	Tue,  5 Aug 2025 07:52:19 -0700 (PDT)
-Received: from [10.1.26.194] (unknown [10.1.26.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAD9C3F673;
-	Tue,  5 Aug 2025 07:52:25 -0700 (PDT)
-Message-ID: <b4ba5c9c-fc9c-435b-9110-1014127bef05@arm.com>
-Date: Tue, 5 Aug 2025 15:52:24 +0100
+	s=arc-20240116; t=1754405714; c=relaxed/simple;
+	bh=yelDPjfGZ0GU+7KgGEsKbC7zBuLGWWs0DGXI2TxJ5oQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QJSPRsSgdalCgSiOm1zmI8h4KYjI1dh4dl4WdSDrW7qNSdo9yO94WtqcuOpTgDmOmJpM4BQZDAEYKUS8FulreXiH6FV7BPepnKcJeFsJ1W+Guo+jseTmb9CmFy2Fi1TAPO16LzGJPJn3hKYWasEiFoiIbw+h52Ygonp+MTPh/hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bxGbl51hszYlngv;
+	Tue,  5 Aug 2025 22:52:03 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 5 Aug
+ 2025 22:55:04 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 5 Aug
+ 2025 22:55:04 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
+	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
+	<mingo@redhat.com>, <npache@redhat.com>, <peterz@infradead.org>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <tglx@linutronix.de>,
+	<zhongjinji@honor.com>
+Subject: Re: [[PATCH v2] 2/2] futex: Only delay OOM reaper for processes using robust futex
+Date: Tue, 5 Aug 2025 22:55:00 +0800
+Message-ID: <20250805145500.29079-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <aJGiHyTXS_BqxoK2@tiehlicka>
+References: <aJGiHyTXS_BqxoK2@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v6 0/4] arm64: support FEAT_BBM level 2 and large
- block mapping when rodata=full
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
- akpm@linux-foundation.org, Miko.Lenczewski@arm.com, dev.jain@arm.com,
- scott@os.amperecomputing.com, cl@gentwo.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250805081350.3854670-1-ryan.roberts@arm.com>
- <985f9d53-ea5e-4da0-9427-106a58be7f26@arm.com> <aJIXmIgCGlWlHDNK@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <aJIXmIgCGlWlHDNK@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a018.hihonor.com
+ (10.68.17.250)
 
-On 05/08/2025 15:39, Catalin Marinas wrote:
-> On Tue, Aug 05, 2025 at 09:16:31AM +0100, Ryan Roberts wrote:
->> On 05/08/2025 09:13, Ryan Roberts wrote:
->>> This is a new version built on top of Yang Shi's work at [1]. Yang and I have
->>> been discussing (disagreeing?) about the best way to implement the last 2
->>> patches. So I've reworked them and am posting as RFC to illustrate how I think
->>> this feature should be implemented, but I've retained Yang as primary author
->>> since it is all based on his work. I'd appreciate feedback from Catalin and/or
->>> Will on whether this is the right approach, so that hopefully we can get this
->>> into shape for 6.18.
->>
->> I forgot to mention that it applies on Linus's current master (it depends upon
->> mm and arm64 changes that will first appear in v6.17-rc1 and are already merged
->> in master). I'm using 89748acdf226 as the base.
+> On Mon 04-08-25 14:01:40, Michal Hocko wrote:
+> > On Mon 04-08-25 19:50:37, zhongjinji wrote:
+> > > >On Fri 01-08-25 23:36:49, zhongjinji@honor.com wrote:
+> > > >> From: zhongjinji <zhongjinji@honor.com>
+> > > >> 
+> > > >> After merging the patch
+> > > >> https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u,
+> > > >> the OOM reaper runs less frequently because many processes exit within 2 seconds.
+> > > >> 
+> > > >> However, when a process is killed, timely handling by the OOM reaper allows
+> > > >> its memory to be freed faster.
+> > > >> 
+> > > >> Since relatively few processes use robust futex, delaying the OOM reaper for
+> > > >> all processes is undesirable, as many killed processes cannot release memory
+> > > >> more quickly.
+> > > >
+> > > >Could you elaborate more about why this is really needed? OOM should be
+> > > >a very slow path. Why do you care about this potential improvement in
+> > > >that situation? In other words what is the usecase?
+> > > 
+> > > Well, We are using the cgroup v1 freezer. When a frozen process is
+> > > killed, it cannot exit immediately and is blocked in __refrigerator until
+> > > it is thawed. When the process cannot be thawed in time, it will result in 
+> > > increased system memory pressure.
+> > 
+> > This is an important information to be part of the changelog! It is also
+> > important to note why don't you care about processes that have robust
+> > mutexes. Is this purely a probabilistic improvement because those are
+> > less common?
+> > 
+> > TBH I find this to be really hackish and justification based on cgroup
+> > v1 (which is considered legacy) doesn't make it particularly appealing.
 > 
-> It's fine as an RFC but, for upstream, please rebase on top of -rc1
-> rather than a random commit in the middle of the merging window. Also
-> note that many maintainers ignore new series posted during the merging
-> window.
-
-Yeah understood - I'm going to be out from Saturday for 2 weeks so thought it
-was better to post an RFC now hoping to get some feedback so I can repost
-against -rc3 when I'm back and have a chance of getting it into v6.18.
-
+> Btw. have you considered to simply not impose any delay for _all_ frozen
+> tasks?
+ 
+Thank you, it seems like a good idea. I will try it.
 
