@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-757091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3570B1BD92
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4B3B1BD8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9238F6240EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3789117B0E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8DA2BE7A5;
-	Tue,  5 Aug 2025 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14882BE03F;
+	Tue,  5 Aug 2025 23:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P6mTNnb2"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ICKE89S8"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9946B291C1B;
-	Tue,  5 Aug 2025 23:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76E291C1B;
+	Tue,  5 Aug 2025 23:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754437809; cv=none; b=tJsYEZNYdl8I7gxpq8lKSMxi5cpruOe5cq0r3YuvXfsjOfUIYBPKBEx2BUik+1E9mzh53sed2MnnHp3yOWm/1zA1XBodaOloenh06IbsXKmbkSce9Y9ByXJqU+KM36BafobwEq0g1p/yjtWSD/Y/lN4F7UnQMhRpofbOR5i6J7k=
+	t=1754437802; cv=none; b=rlNnLaysiGCy6BTxf/Ukf9Wei+SXr+s25bmFVwXB2BBRxRJsWs8zcrEQRczoHCvV/gINVqaa2Dxp/O5gxx14BVUimWnB9JL6+XbHjnOEeuqYqsYW/TTbNC8859MvnqrQ7mfxd+XD8aVqJoT1WU67cOMbIx8vQaje7H/JXdyLE20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754437809; c=relaxed/simple;
-	bh=JLXzy58UcQd8g0rCtq9mbrX1qdZF9AG2ufyjsa9ap84=;
+	s=arc-20240116; t=1754437802; c=relaxed/simple;
+	bh=HDd/396e+RbMsI5D1J6ZQjO3zo16o+ODZTvSGHG19/8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gzJQmkj7fwC7mu+++25l1BtC6LzZ4WlJpimttNKO8RTR/+ET1riID9hbVAboYp25P1AQt6nbd7hOu7PKgAHXLvA/lLogXxiB5p1ka+iz4LXTCT8bmckOxifwJG1dzoPiQcc85zc2TnjnnGOosuYfE3BFxmSE9FoO/BXk7nIpE8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P6mTNnb2; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=CQzaWyuIGuZsX2y6w2cSSY10KiJii0X9ovockNj66Xa8DOS+TnThpPkx6gQ2kbutN7+/gUMpulYiYetz86SbiPklcjQFHTxjkG972bYNCdWVMcbkfx819H89HAjtVQO/wSrwb25e98hnT6CX97pWe9l9VmiwURFEV6iF/8nRnUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ICKE89S8; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 575Nnp1K4185349;
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 575Nnprk388002;
 	Tue, 5 Aug 2025 18:49:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1754437791;
-	bh=qA9A63FooiT7G8rWX/BpbOLS9McX8NxySHEi0613QRM=;
+	bh=Gl7PKzkulptD9jdg8xbxrt81Qiymr7y0BydPiYTY5VY=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=P6mTNnb2OqMY5dKBOzK0Mw5MQKV38wmjjcPOZIVDXGcUCYWR8H5l1lwMWSRLPiouZ
-	 sIPwuxxt4cLZLkeV51w6BKQWxSbCHzmpbuW/m+4RH6sh4KVwEXns0ZMhcGsGp8nHiW
-	 SeqmCNm8M2qT7ZARJCx6dkzC0gBIE5oxpJls6obg=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 575NnpW43920749
+	b=ICKE89S83xU20iJr2JZfj7Ezr65u3Z7W+PWT7TVtKNyhrwimSL+2KitaZrmOsvZbb
+	 oDJ3XW+4wyIEbdVF7jBsyqU3kWlDuNljyW+0KAD1P+frqQWFHRk7kW4b1h3sblsTvZ
+	 raFFHzK2JFfYFGc2zRGUXj1x6cGNJST3cu5Z9Qp4=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 575Nnpn63796006
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Tue, 5 Aug 2025 18:49:51 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 5
- Aug 2025 18:49:50 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2025 18:49:51 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
  Frontend Transport; Tue, 5 Aug 2025 18:49:50 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 575Nno6p2624898;
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 575Nno6q2624898;
 	Tue, 5 Aug 2025 18:49:50 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
@@ -70,9 +70,9 @@ CC: Vignesh Raghavendra <vigneshr@ti.com>,
 	<ssantosh@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-Subject: [PATCH 3/4] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and SR1.1
-Date: Tue, 5 Aug 2025 18:49:49 -0500
-Message-ID: <20250805234950.3781367-4-jm@ti.com>
+Subject: [PATCH 4/4] arm64: dts: ti: k3-am62p-j722s-common-wakeup: Add GP_SW reg range to chipid node
+Date: Tue, 5 Aug 2025 18:49:50 -0500
+Message-ID: <20250805234950.3781367-5-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250805234950.3781367-1-jm@ti.com>
 References: <20250805234950.3781367-1-jm@ti.com>
@@ -86,63 +86,27 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
-to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
-due to errata i2458 [0] so disable HS400 for these SoC revisions.
+This adds GP_SW register range to k3-am62p-j722s-common-wakeup which
+will be used to determine SoC revision.
 
-[0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- drivers/mmc/host/sdhci_am654.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index e4fc345be7e5..b7d2adff3277 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -156,6 +156,7 @@ struct sdhci_am654_data {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+index 6757b37a9de3..48778c49d8fc 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+@@ -18,7 +18,8 @@ wkup_conf: bus@43000000 {
  
- #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
- #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
-+#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
- };
- 
- struct window {
-@@ -820,6 +821,9 @@ static int sdhci_am654_init(struct sdhci_host *host)
- 	if (ret)
- 		goto err_cleanup_host;
- 
-+	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400)
-+		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
-+
- 	ret = __sdhci_add_host(host);
- 	if (ret)
- 		goto err_cleanup_host;
-@@ -883,6 +887,12 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
-+	{ .family = "AM62PX", .revision = "SR1.0" },
-+	{ .family = "AM62PX", .revision = "SR1.1" },
-+	{ /* sentinel */ }
-+};
-+
- static const struct of_device_id sdhci_am654_of_match[] = {
- 	{
- 		.compatible = "ti,am654-sdhci-5.1",
-@@ -970,6 +980,12 @@ static int sdhci_am654_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "parsing dt failed\n");
- 
-+	soc = soc_device_match(sdhci_am654_descope_hs400);
-+	if (soc) {
-+		dev_err(dev, "Disable descoped HS400 mode for this silicon revision\n");
-+		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_DISABLE_HS400;
-+	}
-+
- 	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
- 	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+ 		chipid: chipid@14 {
+ 			compatible = "ti,am654-chipid";
+-			reg = <0x14 0x4>;
++			reg = <0x14 0x4>,
++			      <0x230 0x10>;
+ 			bootph-all;
+ 		};
  
 -- 
 2.49.0
