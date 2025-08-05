@@ -1,183 +1,195 @@
-Return-Path: <linux-kernel+bounces-756112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C78B1B022
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F4BB1AF95
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A0C3B10CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D28C189DD5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229D024A07C;
-	Tue,  5 Aug 2025 08:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC961DF759;
-	Tue,  5 Aug 2025 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754382037; cv=none; b=t0Bn5RfM/EZBGfCFwZ010YB6fSz0ywXoZ8GNnEb3EsPXbIYFFdVA8vGd2dHTC6EOJeUP/umNT3G2O0rgVl20r10PiBILNiztJ+HryHxAu/WihQuftfqc3YEzWu+/Hp3bH89CmzaUDrO5dxuqvZrIWbtjsx0PdBzfw4bxsNJg8pM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754382037; c=relaxed/simple;
-	bh=HZM4ddfrpH24I++YTi0PgJXSfKIvXWqtY/jr7JoMrRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AvRH8u1rMvlPwz8x4I4RS4OxRkBX3WammJY/a2jILz8bVJluZKTbDVCOACoQh8LYtQ6rpXeOvTdQXrftjD7N714NJO/Q27G2TAQ8oSrcwi9HWOeOCpzmiyHRhCA3L9fgAqqZu21CgEFbbP4lYs18abFrY8gPkOfvVhIs6ScY8B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bx57n0CXYz9tMd;
-	Tue,  5 Aug 2025 09:45:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id IuSqCUxyKqzr; Tue,  5 Aug 2025 09:45:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bx57m6FKRz9tMS;
-	Tue,  5 Aug 2025 09:45:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD7068B765;
-	Tue,  5 Aug 2025 09:45:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id flY4ShmDsG9w; Tue,  5 Aug 2025 09:45:40 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8ACC88B763;
-	Tue,  5 Aug 2025 09:45:39 +0200 (CEST)
-Message-ID: <5af0d7d9-71cb-4977-b496-6046c2c64d52@csgroup.eu>
-Date: Tue, 5 Aug 2025 09:45:39 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE8C21CC40;
+	Tue,  5 Aug 2025 07:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="MuoADmWT"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012016.outbound.protection.outlook.com [52.101.126.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B091448D5
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754380028; cv=fail; b=VLB6sG6Nl1lFyU9pxX1ytGw43FkGoRs8veCJLp+/0+lFLlvejL0CQTHBAwoGvjYaHv9eP++Ixs5sZxW6UMVwd22FYX/5ZIPihFvptaqOKG35YANj91V+avKMAucse7j6UgC3EJg7XyOFKfJ1ZDY9sUpfnKuGWj4B/3+pyvG/Bek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754380028; c=relaxed/simple;
+	bh=Vzyd6UJLskXqm2yA/50XP+saPrh9rX4P7394o9ymcAs=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XdaDR3q+tUmhvJ5/Y3RzxK6XKK/1LNiqta18/U78S2+f0HhTJHxkUaS8cxs6zqkTxXebw5Uq33erUIxxNWOYFBnd9eBnLaIYXyZ7j0C684nONlFi5lPjymkvqj4iRxm6M/d/kbp29psuJFA/pXJ76ZLTd2+qbcMiu8fUTZ/9n5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=MuoADmWT; arc=fail smtp.client-ip=52.101.126.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jj2R8cHBWepoXr5slSaVZfLbrENfplhEJLqdGhsKfoPwqQf9Kz6ZMvcoUvEoy5EtqcKgo3A6u756trzYQmOzgHDkJiT9nB7RI7hY1P+cbzzAsdIXscM4MV8F/CWJerSizby2mh7/0aiERQkYsRxZyjjJ48hwav9zpcPCCCYzi42lotGrb9vaPj9EISNcGcr27Jy1rfFnFXW/d4LSiKIY7iX1eR+/5Jpw96w7cxRywyiNsVrnD8KN/myFwiAhlkCw/a+PJFG949CcHWZQBbwPKSotxID9NFGM4WJQdJLwxIbMMeyTrE/Pify6Dm3/xpdy40kvlbhq4A2vBX6shqVgoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kn4sW4IhzAA+ke7p+V3NUwe4u5d14gCPB2MCmX0wfkI=;
+ b=xK2RtZ6stDE/h4hOZkBf8zxZLi2XHM6GJUF0MnCvK4Qv98DypMKqeGcrVTPsbgahSnlN2SOzJZgwadAiK9/vbWOWDewbGpX6T9wfehjt/JQT4MTeyUs8xq/2H7y7LYQ5F0Zh19DNqLjyK9xqTj3aXoMx2s5leQvJ+213q+AqrnyoeIg/NyzJn6wN5fANIc+aNbEWMtIl13t96j8lQU5CWAGwSp12L07HK3w6NNQYBM8vgsogNTA9GyQ+0SIbk1h7NB7424mPcNq6vYVNq91Flvw30Faoe5VSp4cnBG1rrZVJM40P76TCbZjDwHO8KFzSjVhDV1FSEefydp7K84zD7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kn4sW4IhzAA+ke7p+V3NUwe4u5d14gCPB2MCmX0wfkI=;
+ b=MuoADmWTmL332aS4vl10wt17c8eyZ+r355vhnFWuFEjtPrOA5DAjQNewqteWsSvVjHa+9WTFk6vWJl3hcb4W2HyGtLXCLoELaLC8Ppc+mb32BGzlt5ST8q0m4QDqMrBnbmZLqI2xLj1hn+apvz7kEG31KxpjyjaI4NBCiR42EFkOKjFHK23vXWJ/PwXjP8SKyu1eaxTT7txpS23AhrZuy8D0qSj2brhnW//mkRB3GLfm1avjuzzyIXxrfFxphSOavjRPRnUw7rPjduRVTrwPD1GYQf6kk8IkUXsL2OuuNtHE6eNc7jPDqhXH23o4EWHWIYPkfmqKNLM/qE+RbH6NWQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by OSQPR06MB7278.apcprd06.prod.outlook.com (2603:1096:604:29c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 07:47:02 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
+ 07:47:02 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Nitin Gote <nitin.r.gote@intel.com>,
+	Krzysztof Niemiec <krzysztof.niemiec@intel.com>,
+	Liao Yuanhong <liaoyuanhong@vivo.com>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+Subject: [PATCH 0/4] drm: Remove goto label that are only used once
+Date: Tue,  5 Aug 2025 15:46:15 +0800
+Message-Id: <20250805074645.625911-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0017.apcprd02.prod.outlook.com
+ (2603:1096:4:194::17) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena
- atomics
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
- andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, naveen@kernel.org,
- maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
- memxor@gmail.com, iii@linux.ibm.com, shuah@kernel.org
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250805062747.3479221-1-skb99@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|OSQPR06MB7278:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5bc8477-80d7-45e6-29af-08ddd3f443a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HgO203TYbMWzwAKZ86y/G2dQmcfj6S2AO3E0lftGOZ+/KQb7kxO1jIGbWi9y?=
+ =?us-ascii?Q?AR/YdDlMZNEElFoHYkZLyc8SqyvcJN9lEkdiaEguE4/C3OE6n6D9nsENv6O5?=
+ =?us-ascii?Q?MSaUk7r7UL4StCH2kmdfcyzJTOJMrF75Bms8r1Wf5e2i0Qgc3ymCIv8uZTc9?=
+ =?us-ascii?Q?283czI9lQdEulI8jTZA0B4ZCpk2xs7F6eE6wFbO0deXJuv0P2CWfw5J53GZF?=
+ =?us-ascii?Q?3eR4iFW7V0snyShVFJN2Lsv4kgP3dvu1pf+OAKpbf2S/z0Lqnb0bR4ksjF2b?=
+ =?us-ascii?Q?jnUEMxJWnIz88bWK7hyYN5df8LK1jIguJkwQaZCSsv3t3Ej7egQf88zyViRN?=
+ =?us-ascii?Q?0HQoiiv1W2a2eCbQHQLC32ctJJ2IRNBdoc+FUIy9Z5rXcTG081F1LkbWck/v?=
+ =?us-ascii?Q?16onCwzhnLfnzWpqzSrMExWpQ1RELiptmIYZwY4u0zw2W76ItQcMWT1kNg7d?=
+ =?us-ascii?Q?4U/vJIOnB3oXTJviGvr1aGsdWU60CnSA3YKuwGFMzCvN5jm5qJjloRLUBjlx?=
+ =?us-ascii?Q?hh1YShgQefSUwJtEk0m5JqSkbK0tOj0F8DPCm4eytsxrRPZcb9VUrJJgOHnn?=
+ =?us-ascii?Q?uRGgNTSD66UTOmCdsbJMOPGV94b1FbAcHjTEi295cYoQ6iixH989t3c9b/o8?=
+ =?us-ascii?Q?jzWzTkQjCpaC2imWLLW/VhaeoKiX+OwqLcK01sVtPOAHrz6KQRwysXxKrHj2?=
+ =?us-ascii?Q?lcZPdpPGh76aVMQaJoTiEylmyt3z/QaVXMtKieKOu1qV8g9EN+0QawvyWhW7?=
+ =?us-ascii?Q?Mm+WXNN9vsx002vbBBul8DN3d7GROoMTo/GzJUy1E9zIr1je7lk7KKETgz1K?=
+ =?us-ascii?Q?4T2/e/FkvapqLgsay3MLQ8r3wy2BOGw8tVQvmjwQIYFc7VeBc5liZ+jxC0+2?=
+ =?us-ascii?Q?QeA9/6Gh+QBbs/7NdTLsEWO8Q5nNSQ9vqDcUJWbd5WqhqgVs6lQC4DsxNCKp?=
+ =?us-ascii?Q?NfhijyUTdptHT8tVaBSxNaIOi8dp1yzoPXOfmJRfY74UeWqq8cN9fadmrU5r?=
+ =?us-ascii?Q?drWRPED7eMaPcsIbdkmA/UGpFY0vmVKvyZ4nuty+1x1+d9JjzHVlKzHLZ40h?=
+ =?us-ascii?Q?zLjD4QYaVai4WaabZCxVUVm49OTP2W8WZhuRDykhIpqEJYGKMU0k9yj0pFfq?=
+ =?us-ascii?Q?DObeMtUnnWctLJIVZSMxTqgNRCn1C5akixpjH5WM2mDiQkMsfth8KmbgAceb?=
+ =?us-ascii?Q?5j1Dnksg++XkWeVYdpTe4M7KD2K1DS1EWej86qpryq6itErh7a1kx709ntPv?=
+ =?us-ascii?Q?jVEfE43t/el6+7QvP0Bg2yftMyF71XiVTehAQxU0sGW6aaXs3GWGL6kzRhQE?=
+ =?us-ascii?Q?+vb+8sCsx2KTwtI+y6tUdDn+Tl78/lqdiB28LWhdlma8fRcgtt4R4l0OEKUw?=
+ =?us-ascii?Q?zzDZ2MiS2eL0UjP7bglg7yFlCOqCmGXROQ5iT23yh/JhD9dI/uiUyUZ0gImw?=
+ =?us-ascii?Q?8ucdJzBAKILncAhx5GoMgPiwWyCi5nIwaw5a7eG+ZfLm9WPdTSnV4vY6zhfv?=
+ =?us-ascii?Q?ldQl76rj8AvOSnU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jkytGuB0iN78wvbAyci/IsOuVcdMmvHpYCTX0A5ALVkKyAguA3WMHWULBzyQ?=
+ =?us-ascii?Q?yU7Yqg10mfj6MM2HkqronAz7jOL5N4JeT3MBo1QcYZ5iDuEXQ3prb5KFzoLN?=
+ =?us-ascii?Q?RzgevZ+AvvEEB5wTuoa4BhmAgY/5TX/QMxlgZfda/kwJkRCIR/1b+L/N/vyo?=
+ =?us-ascii?Q?mMUO66dvxSQ12MwprSQ54HRe4SLYxaILIUzCMAwXWXpBo1Hl3R2CJ/uvzXvc?=
+ =?us-ascii?Q?lbZHcgd98tVsXrPjT3drNESferUqle+QD34FqVfKPFvZNuv/+SRKLbvwU4Tl?=
+ =?us-ascii?Q?4/azV+bXt0g0wbAjnceqqjCjHI2dT47dL9nMLghc1r/9j0UI0mnf4fxarLCF?=
+ =?us-ascii?Q?K57PpfVxgFK2bY4tVfzM6kPkvO6rrkRm0VyKqKZpSf/DcAcBoNc39DyIqyGV?=
+ =?us-ascii?Q?+ZVxm96wMpybvwnJ96ZnFvxn3atj7PDbTB/ROoKHBmqYUjqAm+A48CE2A80g?=
+ =?us-ascii?Q?MQXpQAVXYm8upWwcsNfZHnQZgJ/xIIpG02II7lcUUxgvkAaFSi+K/wAWaohk?=
+ =?us-ascii?Q?QFJ38KfWUpTIBQB33SA2IhufkwQMormP6Lg4V/cqJdDv/rOIl1Wk9HL6YOwn?=
+ =?us-ascii?Q?jorEaYg7g/HYcjYW1lB1I77TMVc/vA6Fl4KfHKXMwW91c9g9XF0NOq7rUl7m?=
+ =?us-ascii?Q?TLh1zaSItz2w/O3F5eM1vVNzKhe+e+PHJelnUjJDkCWz7yiO4g3k445Yz2HY?=
+ =?us-ascii?Q?CXJczMccNyQ6TnOZdM43i067RtLbkQHNONrFYnfvwzlB9tn7IqE2HxbzVSEf?=
+ =?us-ascii?Q?XhsOqLprQngp9llKtt8ZNXfW/NdAAw0Nsz2LvAZ01vDasO0wyg5J9h5rPlge?=
+ =?us-ascii?Q?hSHDeWRLEL1TQYCUria5IQ2KK/CW1gckSxm0pjpzJYqBCB2TVYPZdaPgOYG1?=
+ =?us-ascii?Q?8eRmXUz2/efC3ac/eGFf9iaenBV2yV2iERP0MOs550hSa7cNFXhMMQdt5exf?=
+ =?us-ascii?Q?uDckFA+chox12K6vKs3K7cbf0C+QZ8QuWGh610l0gc1+idgSaD3Y+V05MpPj?=
+ =?us-ascii?Q?TvGL6I9xzsinVnc69b/BoJc0qM1/sw1Wg2bG/xjlaiY/da6Z38EHnidqljad?=
+ =?us-ascii?Q?5wwtANM6SE5BXpkZWV66/6UZTkiZRc4CL8e5SZLFOd8eV5n/AMdUiMrAxpwj?=
+ =?us-ascii?Q?BdogmkBixmOKHIrStgNs+33jVy7VGN0R5Ad/tMvoOzxUL3FvOY5EziFvgJWp?=
+ =?us-ascii?Q?zP+WosJRvbQHeZaPb98NOqTEgiJX6QRuJRK7e5s/fJR+ZnJKCgR/sI0CfO2Y?=
+ =?us-ascii?Q?hqbMLiRziBlPVRnsogWtDzaRou/uKlufd+Bu6UBJdaUbDFPlZAX043YCdi0w?=
+ =?us-ascii?Q?jqKo+orfiXFGfOktAGfyCg1DhVFS0Z3vTXc0AHzGGXTDTprjCVSfd6MzzTCJ?=
+ =?us-ascii?Q?mybRCFDvVgfWqGhjgMtnHtY7VPhIUlO3z2u6a5SSrFiJYOg9czquDPYExCTV?=
+ =?us-ascii?Q?qZb0K6hf/GAkut5SztnpFID5QLJCU3eMlblnLm4gttT7jfDazE7yjeHwqnRl?=
+ =?us-ascii?Q?jMHhk/CuMJW19Rfky3drxEREcoMW9ts9sldYht8+ew6YkrATrX+4VNHXYx0e?=
+ =?us-ascii?Q?ebCVytsUs+3DWYwJB+HqCsRWxlrn9aUAieHXN2OQ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5bc8477-80d7-45e6-29af-08ddd3f443a7
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 07:47:01.9380
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ur2c35Q/0MwkLrob5uCGgxUkOzSghNk24qwDBsfZDIbW9fYMJNNqqCERA3/hyd0ivATgv43ukWNlik1nBEk1fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7278
 
+Remove unnecessary goto labels to improve code readability.
 
+Liao Yuanhong (4):
+  drm/i915/gem: Remove goto label that are only used once
+  drm/imagination: Remove goto label that are only used once
+  drm/imx: Remove goto label that are only used once
+  drm/panel: Remove goto label that are only used once
 
-Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
-> This patch series introduces support for the PROBE_MEM32,
-> bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
-> facilitating the implementation of BPF arena and arena atomics.
+ drivers/gpu/drm/i915/gem/i915_gem_region.c       | 10 ++++------
+ drivers/gpu/drm/imagination/pvr_cccb.c           |  8 ++------
+ drivers/gpu/drm/imagination/pvr_fw_startstop.c   | 13 +++++--------
+ drivers/gpu/drm/imx/dcss/dcss-drv.c              |  8 ++------
+ drivers/gpu/drm/panel/panel-innolux-ej030na.c    |  7 ++-----
+ drivers/gpu/drm/panel/panel-orisetech-ota5601a.c |  7 ++-----
+ 6 files changed, 17 insertions(+), 36 deletions(-)
 
-This series seems to be limited to powerpc64. Please make it explicit in 
-all patches subject, see exemple below:
-
-$ git log --oneline arch/powerpc/net/bpf_jit_comp64.c
-cf2a6de32cabb (tag: powerpc-6.17-2, origin/next-test, origin/next) 
-powerpc64/bpf: Add jit support for load_acquire and store_release
-59ba025948be2 powerpc/bpf: fix JIT code size calculation of bpf trampoline
-d243b62b7bd3d powerpc64/bpf: Add support for bpf trampolines
-9670f6d2097c4 powerpc64/bpf: Fold bpf_jit_emit_func_call_hlp() into 
-bpf_jit_emit_func_call_rel()
-fde318326daa4 powerpc64/bpf: jit support for signed division and modulo
-597b1710982d1 powerpc64/bpf: jit support for sign extended mov
-717756c9c8dda powerpc64/bpf: jit support for sign extended load
-a71c0b09a14db powerpc64/bpf: jit support for unconditional byte swap
-3c086ce222cef powerpc64/bpf: jit support for 32bit offset jmp instruction
-b1e7cee961274 powerpc/bpf: enforce full ordering for ATOMIC operations 
-with BPF_FETCH
-61688a82e047a powerpc/bpf: enable kfunc call
-
-
-> 
-> The last patch in the series has fix for arena spinlock selftest
-> failure.
-> 
-> This series is rebased on top of:
-> https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
-> 
-> All selftests related to bpf_arena, bpf_arena_atomic(except
-> load_acquire/store_release) enablement are passing:
-> 
-> # ./test_progs -t arena_list
-> #5/1     arena_list/arena_list_1:OK
-> #5/2     arena_list/arena_list_1000:OK
-> #5       arena_list:OK
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> # ./test_progs -t arena_htab
-> #4/1     arena_htab/arena_htab_llvm:OK
-> #4/2     arena_htab/arena_htab_asm:OK
-> #4       arena_htab:OK
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> # ./test_progs -t verifier_arena
-> #464/1   verifier_arena/basic_alloc1:OK
-> #464/2   verifier_arena/basic_alloc2:OK
-> #464/3   verifier_arena/basic_alloc3:OK
-> #464/4   verifier_arena/iter_maps1:OK
-> #464/5   verifier_arena/iter_maps2:OK
-> #464/6   verifier_arena/iter_maps3:OK
-> #464     verifier_arena:OK
-> #465/1   verifier_arena_large/big_alloc1:OK
-> #465/2   verifier_arena_large/big_alloc2:OK
-> #465     verifier_arena_large:OK
-> Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> # ./test_progs -t arena_atomics
-> #3/1     arena_atomics/add:OK
-> #3/2     arena_atomics/sub:OK
-> #3/3     arena_atomics/and:OK
-> #3/4     arena_atomics/or:OK
-> #3/5     arena_atomics/xor:OK
-> #3/6     arena_atomics/cmpxchg:OK
-> #3/7     arena_atomics/xchg:OK
-> #3/8     arena_atomics/uaf:OK
-> #3/9     arena_atomics/load_acquire:SKIP
-> #3/10    arena_atomics/store_release:SKIP
-> #3       arena_atomics:OK (SKIP: 2/10)
-> Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
-> 
-> All selftests related to arena_spin_lock are passing:
-> 
-> # ./test_progs -t arena_spin_lock
-> #6/1     arena_spin_lock/arena_spin_lock_1:OK
-> #6/2     arena_spin_lock/arena_spin_lock_1000:OK
-> #6/3     arena_spin_lock/arena_spin_lock_50000:OK
-> #6       arena_spin_lock:OK
-> Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> Saket Kumar Bhaskar (6):
->    bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
->      instructions
->    bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
->    bpf,powerpc: Implement bpf_addr_space_cast instruction
->    bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
->      instructions
->    bpf,powerpc: Implement PROBE_ATOMIC instructions
->    selftests/bpf: Fix arena_spin_lock selftest failure
-> 
->   arch/powerpc/net/bpf_jit.h                    |   6 +-
->   arch/powerpc/net/bpf_jit_comp.c               |  32 +-
->   arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
->   arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
->   .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
->   .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
->   .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
->   7 files changed, 348 insertions(+), 105 deletions(-)
-> 
-> base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
+-- 
+2.34.1
 
 
