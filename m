@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-756312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1260B1B28D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:19:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0811FB1B28B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C437E7A35DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94ECB620FA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B96259CBA;
-	Tue,  5 Aug 2025 11:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FE8262D0C;
+	Tue,  5 Aug 2025 11:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcIGHwxo"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOrOQqhB"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B263A24728B;
-	Tue,  5 Aug 2025 11:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DC425E828;
+	Tue,  5 Aug 2025 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754392728; cv=none; b=C4WNWmtQNv5nDBMrpNIEV2MJj2IXqSk8ZKEUO8yS2MfwRBoCQOuNAWjuFfY+aOnJt9D7TsdS3QW8amokQz5k02tf4ehel/ULgY9+YUZfJALD8FaVUPxSxy/sjBTb2+7du9r7n1IUCfE18qd/pTE8/qXXa80Z0fqbclaRZGV3BnQ=
+	t=1754392732; cv=none; b=hjFRVvbSVnyZ4hyhO44o53SNgbi4T4lkAjL3SfaXuc8odtMQgk6IvllG/mgW5NW6w+teBlaHFpoAgGoIEVjchzgM4AR8sIZ/NIStBUtj7D94TBim2vemGD4hDXiFwCJEAGOF2SOC3F5P33vEeWGsLqTQe0SagTm9YRD0vESBKbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754392728; c=relaxed/simple;
-	bh=HWKv7ENcWJ5P5qVVKyV90sLF4YTQf9daZ1hSHW1sMG8=;
+	s=arc-20240116; t=1754392732; c=relaxed/simple;
+	bh=wryQdfxH6n20JyHtj7sthlA3Q+wGAChxADhvmVnFQws=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pG5jL/zQoKFRrKoU4VUV1TnQSyMnEshNkXIdFgdIhBM2PL2/oW6QrST2vIeCZWRAuiJxMp1yZQgGwcMR7FO7b8+6oouitxSl8zdwPbscI3bMPXfsUewUjL3ppVeXbddh2J/WjmkQh5yuksg5+TRJiRAH9eqwfcznycqqIsY4w0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcIGHwxo; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=mik3d+3V/z7mj16MCar0xzWTasMRFkOPY3KBVEx2pdZhllN4mPRumEaiVwgmQbRyqyj7vVa8+9nZZvJtu/q9VV9Hzefu0IxCg8YFVC88MvSx9MzwpU5eNCJ3qq2H/zlXTnD+66iKwJXNpTwdUeCduKPbQg4sPzy5oZTQQNVxOKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOrOQqhB; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3322a34e84fso41861831fa.0;
-        Tue, 05 Aug 2025 04:18:46 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3323afe4804so37198371fa.0;
+        Tue, 05 Aug 2025 04:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754392725; x=1754997525; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754392729; x=1754997529; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H3jwKXNI4rekJ3bC3lnRJQ6Yd8MMqu4YCCAHk1Ogkeo=;
-        b=WcIGHwxohv4Ep5QC1hxJdkCI/K1HNWNgoe74uJARmnsztRHyngsQmsT6I+aq3VMwnR
-         BLx+hD0TjC77QTmU5uzAbAD5y+LiIPKsOkl6YdISRorJLgOThrjpMJxGq8hasvBSQZ+H
-         8xH8I2r0HKtV39EPhGubXtJIjgSOlshWcQwtKpKjDmdwTcqtUovLGG32qFFwzUiVizCt
-         edoYizUmimInnx+BgHgj1LZB4xl5wNrnCwhuxo7jCe7qt2xHdEXNYKP+hbZZS2Q9u8gv
-         VOaImBv85b+Na40KH84K4M9wai0OqFzvlkdUoAyVvApbCqgvJFFldb4TwFx/YBV26gGK
-         T3zw==
+        bh=pAyT/OJTRuY2JWhPWK5JkMm7Zn06/WfS2T6aNl4VFA0=;
+        b=HOrOQqhB3o8wELKXwOtBvq2j6IqAgbAdgq3AOI+6xYjQu0I6WyjyilRFnA6ur6F/Fr
+         k7hjhgeiAIzPeQwRWNyC08fNDrObl7aHC7uc6XYgUuJ6YgCamKPnjW7RNfJiwkjgUyxl
+         pMaN5I9zr1lLWYBq0EKD4aYCi61OXg/LEyH4+iXSLWy4+m+AKl1hQMumbriRu25brlkF
+         sZH9NY1YwbC5DRHZ/bcQRK8KYSLBmLAuIej6lBRw852BbJLvU3oj4wHnqRDlAe9nI6Oc
+         DOkygvyi4D6ePk1cCspiuQiJrCHXQUh3yoT3ldH6q7u+xZaYw1eI2nwkujchqvzDO6lz
+         iWgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754392725; x=1754997525;
+        d=1e100.net; s=20230601; t=1754392729; x=1754997529;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H3jwKXNI4rekJ3bC3lnRJQ6Yd8MMqu4YCCAHk1Ogkeo=;
-        b=LRFyx5WG3Qdkm04fun39YX9Q6AOs1mCNNU3qwcQ7n2dIrMftoQikomF3TytoKK3C+J
-         n0Bsp2tCqOl9W8b/beK6rkXCgRJgx5z6JNktT1FOR2OUu4VvJqoV3TTmcUc44GEA5jMt
-         ApgUcNrkwNAljNMe7alaOGGNXKwSmXevKiMLtyqnFU1qlgv1LKdSCFYL9mDB+PSbeuI+
-         QZayD7TALn+Uc0bX1gK9O4e21BKEMNwoWQ2JKixeBB7g5Dh+ChQVWGpiZP1FRZxpIH02
-         8pTraqRUTr7I7W4mKmC126MjhtlQdnmpufZTwN7wgjyCc9efLU0RYeS0PqK9RNPPwR6N
-         70EQ==
-X-Gm-Message-State: AOJu0Yx3nZpynIrTUadvNq7oTcY8lokcZEdAeEhDggPinXmv3SbprNSK
-	9v5ce8/4R6utpIuFmgCJEdmkiwu7/EixLGYmgGdAxxoZDsR0lPLY2M4RWZAeuSTjVuPnoA==
-X-Gm-Gg: ASbGncv98HFwAt+yPTUWmtdmD3bVoAB/RivfXeDXhNQqp2EkOmyUEQ0dfDwJGcTD7/5
-	pel6Km2JHbrwcGUGj2pXzoZUsq24VTzjrWtiUZuRMX1njqBm5z3+PviU2uVrmVXuD48cD5jj/Lu
-	BGgmWva1sD0OVkV3C4ia50YH1C9IBw7Doy/a/hhRaKjethEk7da+U243e5PrKGmzUkc9xx3WkLj
-	5oEId7VBiwFR6shcTOdC24rdFK8LWX7EOhYuzXV66UHfJBBLKYukd1r54G3jEXGmMDfDWEhh7wr
-	nDWRmdzW0yCbbl6trP4JK7qA15shw5gSN1Z99gYMbAIj5QOatTOmxBZK1CYYjb4WHT0nFppkgA7
-	EOsGbSneF/EZAiMie+Evp0GA1
-X-Google-Smtp-Source: AGHT+IGKYReSnAS/we3DqHPYR1vVqaW4RERMy1vQce2L8Zm81CShyAFEbk/EjveCAyDjT5F3Z0KRoA==
-X-Received: by 2002:a2e:83d0:0:b0:32c:bc69:e932 with SMTP id 38308e7fff4ca-33256687baamr25842891fa.7.1754392724481;
-        Tue, 05 Aug 2025 04:18:44 -0700 (PDT)
+        bh=pAyT/OJTRuY2JWhPWK5JkMm7Zn06/WfS2T6aNl4VFA0=;
+        b=WTb4nY5Lyf9t86/xjM3qzyZbimRJFtqGjT+nGJu3vvyyonTodx48/bewJvLMCQlRwp
+         3YC6RmikBrsXqaI2tnLcd83vdZwwD4pVTVDKBvPKd7/0PtE7eFJDTjOjJjFGuUVJ1QZm
+         YIiX1XS74qCbDdGqqz/jKCxJZfV/rc7Za0gP/TPQ/q6iu5R99t7M8eCYy3+W3a7II6+R
+         Q1uFWzsg6cUB1nBtaNenYA6Icm8Nj8P/V7M13E3J4QV6dm06Cz2gQ0BYjbdYfbaatnye
+         48oRioBB6TqWXKOhJ5YAT/2LhqrIGMuA7bj/tqGgCG7FCTfA4xEdRbi26WLUkeS5bUML
+         jMwg==
+X-Gm-Message-State: AOJu0YxAk+E9McQfWRTluIpaGLTsBZ+E8sH05uzJLaY7Xzxrtjkdir3F
+	Yv/QWiH6l6RHVBvd8pr0b6r6VC6RNSEimxdyvHVeSPcDe5T+6PW1njLGCvTu+wQiXe6KJQ==
+X-Gm-Gg: ASbGnct10AU1RjRPzXvz+nYtNUKFm4MGKU59UAlOtsGs+8X0PWzI467yM87A67rGshx
+	ukyrTLM0VQTUMj7gLTGbXEsN2ngr+JddFw+StyqePJcsgI+ZneJpsSvddIWlSvDAsQZzyEBuato
+	mYTVgBmp0tsItLT82zMVtebJvOhPJhAdo4r8c6bu1J633tiBZ34lN9qbDUB2c7I8x1v5W/ACPR7
+	jQ7y8Iwll4/YpzLQtuifPpp0KKojV44fxW7aayo8ghCXUAeHe94hmPRv3bFZ5U70efu+xmAuasu
+	squEJrtQ8DXTV7YkgM4r+I+HgiTCFq3aN4HbU1kHgvZRL6nDNqy5L4rr1LPDQWOQtNGZ8gKjy5W
+	Wc7DjIPTs7b7UUA66eMolMLAH/fZL7yBZgZU=
+X-Google-Smtp-Source: AGHT+IElH7b/75Ma+jBw8PKihX4HZPFXpMoR8XxP/rRa/9gSS2dzcy1NLjC6CraI2p5QLL31jSCjLA==
+X-Received: by 2002:a2e:a718:0:b0:32a:604c:504e with SMTP id 38308e7fff4ca-3325682d84bmr26666271fa.38.1754392728532;
+        Tue, 05 Aug 2025 04:18:48 -0700 (PDT)
 Received: from artem-pc.. ([88.201.168.202])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a9054sm19367161fa.28.2025.08.05.04.18.44
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a9054sm19367161fa.28.2025.08.05.04.18.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 04:18:44 -0700 (PDT)
+        Tue, 05 Aug 2025 04:18:48 -0700 (PDT)
 From: Artyom Shimko <artyom.shimko@gmail.com>
 To: linux-hwmon@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -79,9 +79,9 @@ Cc: linux-kernel@vger.kernel.org,
 	jdelvare@suse.com,
 	guenter.roeck@linux.com,
 	Artem Shimko <artyom.shimko@gmail.com>
-Subject: [PATCH v1 1/4] hwmon: scmi: Add default case with debug output
-Date: Tue,  5 Aug 2025 14:18:38 +0300
-Message-ID: <20250805111840.6472-2-artyom.shimko@gmail.com>
+Subject: [PATCH v1 2/4] hwmon: scmi: Remove redundant devm_kfree call
+Date: Tue,  5 Aug 2025 14:18:39 +0300
+Message-ID: <20250805111840.6472-3-artyom.shimko@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250805111840.6472-1-artyom.shimko@gmail.com>
 References: <20250805111840.6472-1-artyom.shimko@gmail.com>
@@ -95,47 +95,33 @@ Content-Transfer-Encoding: 8bit
 
 From: Artem Shimko <artyom.shimko@gmail.com>
 
-Improve handling of unsupported sensor types:
-- Add default case in sensor type switch statement
-- Log skipped sensors with debug information including:
-  * Sensor ID
-  * Sensor type
-  * Sensor name (if available)
-- Use rate-limited dev_dbg for safety
+Fix potential resource management issue by:
+- Removing unnecessary devm_kfree() call in error path
+- Relying on devres automatic cleanup
+- Preserving all error handling logic
 
-Debug output format:
-"Skipping unsupported sensor ID:%d Type:%d (%s)"
+Rationale:
+- Memory was allocated with devm_kzalloc()
+- devm_ thermal registration manages its own resources
+- Double-free could occur during probe failure
 
 Signed-off-by: Artem Shimko <artyom.shimko@gmail.com>
 ---
- drivers/hwmon/scmi-hwmon.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/hwmon/scmi-hwmon.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/hwmon/scmi-hwmon.c b/drivers/hwmon/scmi-hwmon.c
-index 364199b332c0..a3b5b5c0ec25 100644
+index a3b5b5c0ec25..d03174922e65 100644
 --- a/drivers/hwmon/scmi-hwmon.c
 +++ b/drivers/hwmon/scmi-hwmon.c
-@@ -275,6 +275,10 @@ static int scmi_hwmon_probe(struct scmi_device *sdev)
- 			nr_count[type]++;
- 			break;
- 		}
-+		default:
-+			dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
-+				i, sensor->type, sensor->name ? sensor->name : "unnamed");
-+			continue;
- 	}
- 
- 	if (nr_count[hwmon_temp])
-@@ -323,6 +327,10 @@ static int scmi_hwmon_probe(struct scmi_device *sdev)
- 			idx = --nr_count[type];
- 			*(scmi_sensors->info[type] + idx) = sensor;
- 			break;
-+		default:
-+			dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
-+				i, sensor->type, sensor->name ? sensor->name : "unnamed");
-+			continue;
- 		}
- 	}
+@@ -211,8 +211,6 @@ static int scmi_thermal_sensor_register(struct device *dev,
+ 	tzd = devm_thermal_of_zone_register(dev, th_sensor->info->id, th_sensor,
+ 					    &scmi_hwmon_thermal_ops);
+ 	if (IS_ERR(tzd)) {
+-		devm_kfree(dev, th_sensor);
+-
+ 		if (PTR_ERR(tzd) != -ENODEV)
+ 			return PTR_ERR(tzd);
  
 -- 
 2.43.0
