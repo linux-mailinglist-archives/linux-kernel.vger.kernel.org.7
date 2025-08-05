@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-755972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440CEB1AE36
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E6DB1AEBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C556A188A98A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF923189D98F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635DA21B9F0;
-	Tue,  5 Aug 2025 06:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fzNTvYIT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232521CA0E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993042253E1;
+	Tue,  5 Aug 2025 06:50:45 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8773F1C861A;
+	Tue,  5 Aug 2025 06:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754375054; cv=none; b=b+XHdLncBnNo6iaU4yAgfjuvdJ94Rx5YOJAi5/oz7okFkl6ULaRVW6i3OPmu9xAAYtWdlJ/rrnBQnS+mb/gghMNnXbRCpwyKrDFfgYDrPKt87tLvFu+h3WS5h/NCft4Q4d/dPw6J38yEeeYnbr4P6KV4/Sp2rKGCdzGsgxFZ6AI=
+	t=1754376645; cv=none; b=G12cWLg81s4+ho1jv6HOANoQapKPX2AArvw68rgbJtLQnJEUW4jPgw7aplFbOAsO+7v5B+HFGcvEKaip5CH+uqgUGZQEVJOAP55ACrn4xb/ErC4iahGgRhFLizdEjQVd222n3CPFr9JCN8jp8rf32KnOkL21+zbwaQpOUoKjbpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754375054; c=relaxed/simple;
-	bh=RDZ+lfeK7bnVLFbpItWQCYl5cJqk0fDJcJjg/NnHjco=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=G4CpgsN6y4kH8FZffD+syBoBWD8w1/CFFG9fzwXFagTpGIB2s2fMYtBhRJwiFONYGuOCqkEqQ2zSUUDYFaytHIusvfUH9aI+ccmPWGTnY02N756sDXZ2zPjCojw6sw10J+va57s/Cc3tWzrVLtRwR4Tx5oMFQzfOuSRsXbBU1o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fzNTvYIT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754375052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kJO5yIBXXOgt25+uyQhOeCpPCqEaTDSwq6fQ38qy9Bc=;
-	b=fzNTvYIT93IdC/zd0RW/xFuuxw76MJL6/RnQv73vwe5B7LrnDXrQqH1Lh6Z5vmmy+Wso2b
-	3L5uds0a3+MbEuKbak4c42ONdWBPztfu1SNGbEFR0fHTlnWqIxIAQ+flMRs7RhG2aIeGoa
-	iHalYMlAXBza8v8+fIu/CUPw9XZoOlQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-178-AR-aqPXUOv6YUb-9IY0KQw-1; Tue,
- 05 Aug 2025 02:24:09 -0400
-X-MC-Unique: AR-aqPXUOv6YUb-9IY0KQw-1
-X-Mimecast-MFC-AGG-ID: AR-aqPXUOv6YUb-9IY0KQw_1754375048
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0AF61800876;
-	Tue,  5 Aug 2025 06:24:07 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.136])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6C6CF1956094;
-	Tue,  5 Aug 2025 06:24:01 +0000 (UTC)
-From: Baoquan He <bhe@redhat.com>
-To: linux-mm@kvack.org
-Cc: ryabinin.a.a@gmail.com,
-	glider@google.com,
-	andreyknvl@gmail.com,
-	dvyukov@google.com,
-	vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	Baoquan He <bhe@redhat.com>
-Subject: [PATCH 4/4] mm/kasan: make kasan=on|off take effect for all three modes
-Date: Tue,  5 Aug 2025 14:23:33 +0800
-Message-ID: <20250805062333.121553-5-bhe@redhat.com>
-In-Reply-To: <20250805062333.121553-1-bhe@redhat.com>
-References: <20250805062333.121553-1-bhe@redhat.com>
+	s=arc-20240116; t=1754376645; c=relaxed/simple;
+	bh=GlMP83qOoRkreWYcN68itbSBxtM6loXtd7T4zZW7mQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioejTzPt8r0rAVO6QorjarqoX51mgna8QqYAxpaDn48fv5wr1gel6JtZeGJUrWGG9oYgkVuNvzWMoWrgOhgPd0ux3ZgzjApDrqhT21TQTi9Gqjn/NPwYZ9xJG43T1Vm7EPd+4+0Lykih5aj2M17JS2MH9/6NnXCzgKGdFFBqErs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bx3PH42tYz9sRp;
+	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id MOt6ej6e3T4G; Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bx3PH34F3z9sHR;
+	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 62F0C8B765;
+	Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id yZAG-jS96Z85; Tue,  5 Aug 2025 08:27:15 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F07C08B763;
+	Tue,  5 Aug 2025 08:27:14 +0200 (CEST)
+Message-ID: <c4191597-341d-4fd7-bc3d-13daf7666c41@csgroup.eu>
+Date: Tue, 5 Aug 2025 08:27:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
+ code
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-4-ebiggers@kernel.org>
+ <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
+ <20250804180923.GA54248@google.com>
+ <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
+ <20250804225901.GC54248@google.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250804225901.GC54248@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Now everything is ready, set kasan=off can disable kasan for all
-three modes.
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- include/linux/kasan-enabled.h | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
-index 32f2d19f599f..b5857e15ef14 100644
---- a/include/linux/kasan-enabled.h
-+++ b/include/linux/kasan-enabled.h
-@@ -8,30 +8,21 @@ extern bool kasan_arg_disabled;
- 
- DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
- 
--#ifdef CONFIG_KASAN_HW_TAGS
--
- static __always_inline bool kasan_enabled(void)
- {
- 	return static_branch_likely(&kasan_flag_enabled);
- }
- 
-+#ifdef CONFIG_KASAN_HW_TAGS
- static inline bool kasan_hw_tags_enabled(void)
- {
- 	return kasan_enabled();
- }
--
- #else /* CONFIG_KASAN_HW_TAGS */
--
--static inline bool kasan_enabled(void)
--{
--	return IS_ENABLED(CONFIG_KASAN);
--}
--
- static inline bool kasan_hw_tags_enabled(void)
- {
- 	return false;
- }
--
- #endif /* CONFIG_KASAN_HW_TAGS */
- 
- #endif /* LINUX_KASAN_ENABLED_H */
--- 
-2.41.0
+Le 05/08/2025 à 00:59, Eric Biggers a écrit :
+> On Mon, Aug 04, 2025 at 09:02:27PM +0200, Christophe Leroy wrote:
+>>
+>>
+>> Le 04/08/2025 à 20:09, Eric Biggers a écrit :
+>>> On Mon, Aug 04, 2025 at 07:42:15PM +0200, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 03/08/2025 à 22:44, Eric Biggers a écrit :
+>>>>> MD5 is insecure, is no longer commonly used, and has never been
+>>>>> optimized for the most common architectures in the kernel.  Only mips,
+>>>>> powerpc, and sparc have optimized MD5 code in the kernel.  Of these,
+>>>>> only the powerpc one is actually testable in QEMU.  The mips one works
+>>>>> only on Cavium Octeon SoCs.
+>>>>>
+>>>>> Taken together, it's clear that it's time to retire these additional MD5
+>>>>> implementations, and focus maintenance on the MD5 generic C code.
+>>>>
+>>>> Sorry, for me it is not that clear. Even if MD5 is depracated we still have
+>>>> several applications that use MD5 for various reasons on our boards.
+>>>>
+>>>> I ran the test on kernel v6.16 with following file:
+>>>>
+>>>> # ls -l avion.au
+>>>> -rw-------    1 root     root      12130159 Jan  1  1970 avion.au
+>>>>
+>>>> With CONFIG_CRYPTO_MD5_PPC:
+>>>>
+>>>> # time md5sum avion.au
+>>>> 6513851d6109d42477b20cd56bf57f28  avion.au
+>>>> real    0m 1.02s
+>>>> user    0m 0.01s
+>>>> sys     0m 1.01s
+>>>>
+>>>> Without CONFIG_CRYPTO_MD5_PPC:
+>>>>
+>>>> # time md5sum avion.au
+>>>> 6513851d6109d42477b20cd56bf57f28  avion.au
+>>>> real    0m 1.35s
+>>>> user    0m 0.01s
+>>>> sys     0m 1.34s
+>>>>
+>>>> I think the difference is big enough to consider keeping optimised MD5 code.
+>>>
+>>> But md5sum doesn't use the kernel's MD5 code.  So it's implausible that
+>>> it has any effect on md5sum.  The difference you saw must be due to an
+>>> unrelated reason like I/O caching, CPU frequency, etc.  Try running your
+>>> test multiple times to eliminate other sources of variation.
+>>
+>> md5sum uses the kernel's MD5 code:
+> 
+> What?  That's crazy.  Userspace MD5 code would be faster and more
+> reliable.  No need to make syscalls, transfer data to and from the
+> kernel, have an external dependency, etc.  Is this the coreutils md5sum?
+> We need to get this reported and fixed.
 
+
+Content of files is already buffered inside the kernel. likcapi doesn't 
+tranfer data, it uses splice().
+
+As far as I know, coreutil is not able to use the TALITOS Security 
+engine we have on the mpc885 and mpc8321 microcontroleurs. We primarily 
+use libkcapi for that.
+
+In order to keep things consistant, we use the same userspace on boards 
+which don't have a security engine, ie the mpc866, we rely on the kernel 
+providing an optimised software implementation fallback.
+
+Christophe
 
