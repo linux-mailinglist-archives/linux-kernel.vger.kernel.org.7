@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-756467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F333B1B4BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:19:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0F6B1B4D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DFB3A77C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:19:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1AB47A66BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D341275AE6;
-	Tue,  5 Aug 2025 13:19:18 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB382750E7;
+	Tue,  5 Aug 2025 13:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJtsQ6fn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C629F27584D
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8872701B1;
+	Tue,  5 Aug 2025 13:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399957; cv=none; b=A1tsv3HCgzY/2nx5yU+0O9pKGn33FDIGJN/JzTld0ph8TeBS3w/1tu184Eh8vaRMX4fBfGVp4cLnk+UpIZluaKcrcxuUNUMG9nto2IAZxyAMBbVsONqAFSe61YHC33IRZca6H4DCXY+gy+VTreMLhhHgVuX6LP2Hcbr7tfMfAi8=
+	t=1754399953; cv=none; b=Rmm1l8P+0Jb1YQHTsvPQKpJLc8IUfOxjVVVJKM/o46xLCzlBFS96eVGro14ZnT3pHSh3yJ234XMdg7Vwpqqu6PgrD2bnSNTBFNrOlTtMh8lOr1NTGiWIZoHLy9OQpWYtUvNHbU2gMjJ3gqykob2DhdOI6IDZ73k3TCYAjbY8ZD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399957; c=relaxed/simple;
-	bh=jZu3Ja/n3q2HhBA/RPQa6Fol8dxKXQ79tEfAFjFO8jc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NLHfrTym+C6rUSLRrWTYgWlqBk0b+w20SXMnL0FODrGwZJTAHHDoQCv8Sx83EMNgSQhec+TFZ0ycOUdcBpeq3H2pArJG00bLSH3c/maoh4tlXNxWurhzWT2k6O46RzdddA0+lpog212BujxWZ2iQCsRIZ1ZqWXqRA+rKHug5PTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bxDT02JhkzYl4n0;
-	Tue,  5 Aug 2025 21:16:04 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 5 Aug
- 2025 21:19:05 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 5 Aug
- 2025 21:19:04 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
-	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
-	<mingo@redhat.com>, <npache@redhat.com>, <peterz@infradead.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <tglx@linutronix.de>,
-	<zhongjinji@honor.com>
-Subject: Re: [[PATCH v2] 2/2] futex: Only delay OOM reaper for processes using robust futex
-Date: Tue, 5 Aug 2025 21:19:00 +0800
-Message-ID: <20250805131900.17075-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aJChI-LMwmuWEwpH@tiehlicka>
-References: <aJChI-LMwmuWEwpH@tiehlicka>
+	s=arc-20240116; t=1754399953; c=relaxed/simple;
+	bh=NVx/5NSxqy7K0H3uvKUc7n+U2mmfuWH5ZVQs1n0DLhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNez7YpL0simyWpOTzVyw43X2ONtTC55VlGO/L70hX8lAk6/o6YX67FaJrV11s6I0qcbS1kudNsWeNHQVaTElnSBG8ZN0TaKi2CzP1NpMzZ4LaeujliD9JRmNWQjk2H1tFiHH/K3sGYTOzT9corlALyTgXplXfxZaKfpTgtiWAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJtsQ6fn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23316C4CEF0;
+	Tue,  5 Aug 2025 13:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754399953;
+	bh=NVx/5NSxqy7K0H3uvKUc7n+U2mmfuWH5ZVQs1n0DLhI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WJtsQ6fnOFXHWK09oDUuy+4r4vicDof0NmWaZ1lT3PSQckgteoSY0mGPbLloT3kr+
+	 BqoUFqFnprruHAuXpyE9IVUKbq11vKeF/Sowkf6I5lx2Ndx8wNLmrUJ/VisNhK3aBv
+	 hKb712jiJ/V58QInFol5D4bLy6n8HfwkXYj5r8gtvooP1MGARuC9IfBsvM3tU8VXJr
+	 /9X5miGAnu86qTurWDXAlUc37VmWzQiq5bU3mC/h3iAYO4d7pUOc4gcDbqieJinFMa
+	 YeUobczK88F0lYnVMVZNr5VftuOaLaleY434hCuZdS9djdBd0XqqDbGd9G2JdcCUbZ
+	 bhaPQor5CkF+w==
+Date: Tue, 5 Aug 2025 14:19:09 +0100
+From: Lee Jones <lee@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Robert Marko <robert.marko@sartura.hr>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the mfd tree
+Message-ID: <20250805131909.GM1049189@google.com>
+References: <20250724115409.030d0d08@canb.auug.org.au>
+ <20250724100314.GW11056@google.com>
+ <20250729113548.4ad9ba1c@canb.auug.org.au>
+ <20250805133900.336fd3d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a018.hihonor.com
- (10.68.17.250)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250805133900.336fd3d9@canb.auug.org.au>
 
->On Mon 04-08-25 19:50:37, zhongjinji wrote:
->> >On Fri 01-08-25 23:36:49, zhongjinji@honor.com wrote:
->> >> From: zhongjinji <zhongjinji@honor.com>
->> >> 
->> >> After merging the patch
->> >> https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u
->> >> the OOM reaper runs less frequently because many processes exit within 2 seconds.
->> >> 
->> >> However, when a process is killed, timely handling by the OOM reaper allows
->> >> its memory to be freed faster.
->> >> 
->> >> Since relatively few processes use robust futex, delaying the OOM reaper for
->> >> all processes is undesirable, as many killed processes cannot release memory
->> >> more quickly.
->> >
->> >Could you elaborate more about why this is really needed? OOM should be
->> >a very slow path. Why do you care about this potential improvement in
->> >that situation? In other words what is the usecase?
->> 
->> Well, We are using the cgroup v1 freezer. When a frozen process is
->> killed, it cannot exit immediately and is blocked in __refrigerator until
->> it is thawed. When the process cannot be thawed in time, it will result in 
->> increased system memory pressure.
->
->This is an important information to be part of the changelog! It is also
+On Tue, 05 Aug 2025, Stephen Rothwell wrote:
 
-sorry, I will update those infos in next version.
+> Hi all,
+> 
+> On Tue, 29 Jul 2025 11:35:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Thu, 24 Jul 2025 11:03:14 +0100 Lee Jones <lee@kernel.org> wrote:
+> > >
+> > > On Thu, 24 Jul 2025, Stephen Rothwell wrote:
+> > >   
+> > > > After merging the mfd tree, today's linux-next build (arm
+> > > > multi_v7_defconfig) produced this warning:
+> > > > 
+> > > > WARNING: unmet direct dependencies detected for MFD_AT91_USART
+> > > >   Depends on [n]: HAS_IOMEM [=y] && (ARCH_MICROCHIP || COMPILE_TEST [=n])
+> > > >   Selected by [y]:
+> > > >   - SERIAL_ATMEL [=y] && TTY [=y] && HAS_IOMEM [=y] && COMMON_CLK [=y] && (ARCH_AT91 [=y] || ARCH_LAN969X || COMPILE_TEST [=n])
+> > > > 
+> > > > Probably introduced by commit
+> > > > 
+> > > >   ef37a1e24857 ("mfd: at91-usart: Make it selectable for ARCH_MICROCHIP")    
+> > > 
+> > > Thanks Stephen.
+> > > 
+> > > I have reverted this now.  
+> > 
+> > I am still (again?) getting this warning ...
+> 
+> Ping?
 
->important to note why don't you care about processes that have robust
->mutexes. Is this purely a probabilistic improvement because those are
->less common?
+Sorry, -ENOPUSH.  Hopefully it's fixed now.
 
-Yes, My device runs Android. I added a log in futex_cleanup when a
-process has a robust list, But I have never seen any process on Android
-having robust mutexes.
-
->TBH I find this to be really hackish and justification based on cgroup
->v1 (which is considered legacy) doesn't make it particularly appealing.
-
-It seems hackish to check the robust_list during the oom kill, and it
-is also hard to see the relationship between the robust_list and the 
-OOM killer from this change. However, it is indeed a simple way to
-decide whether to delay the oom reaper.
-Would it be better to use a function name like unreap_before_exit or
-unreap_before_all_exit instead of check_robust_futex?
-
+-- 
+Lee Jones [李琼斯]
 
