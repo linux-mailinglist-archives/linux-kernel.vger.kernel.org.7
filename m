@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-756216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A781BB1B150
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C0BB1B156
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B3A171F51
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03C63AFC42
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4969E26B0BE;
-	Tue,  5 Aug 2025 09:38:23 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE43264612;
+	Tue,  5 Aug 2025 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flMnhw+7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E426562D;
-	Tue,  5 Aug 2025 09:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFAC2F30;
+	Tue,  5 Aug 2025 09:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386702; cv=none; b=hFk/S3JL8X7/5Lectn+qTzCocM71bJdbD7S0LOANZcwS8Ipp6C4aYGwuleTmfsL56nrkMYJTZp6Ijg5fYJKxvivbMYm2s4kCTqdafw21RuTE/d5J1+Z7aBwjPsG7K691bzMR2cJckHyXfr2tz/sIRcol3DAcqD/asXheJIRDF6w=
+	t=1754386819; cv=none; b=M1NOkROW3wfNk70tAbUr8JuTwX3B4IWSPfvVkm08q+uHH5NE7smaK+21/VKpvN56uCkf8SWsRf5p3WYJ09iSgdWQYO518d0ONNbKjtSkAbL17tHH6Ahiirv10hMH1+CJEVX2IVfMDjw4hf0UjCgYCYrudlPNsLygUUUulHm3THc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386702; c=relaxed/simple;
-	bh=CsHmQFsEgsts7bo3tK+ycQE+LE3QQd13m41IB/xx2Z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hzUNA+uJelbeluai6rVB+NQ4lSCXWyC0NB2E8mT1DehlAsxbC1efPHihQG0A+WtH3sp20u/Q535bOH1j+d3ShqudiSZBwuaaNziVpuLhciXxieQDKWYrmvkUTHI6kLkJAT5sA3T8wlB+X2qfqfNjRFeVLFyZz13MfXKkcjh7+/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5397d436dccso1125909e0c.0;
-        Tue, 05 Aug 2025 02:38:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754386700; x=1754991500;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=79Sev+FddMWY4af3rPBzvmaRJ3mXxP5x7puvKCiTzUQ=;
-        b=X996XLjQPD1X5N824m0NtEN16bHBICHLyD8EXJYuJO7R9EONEtfLADwOvPKZtf9rSz
-         wGCf/OUizEvxxv1nb9K6bVoHVXy/S4/B+eBzj3THRJu8mhe5Nx698y80cFX3MCTptKrv
-         ezZAsIEfs1rzYXyOC9ANkWxpBjVdioDOnSczrziqV4aEyPAl1K4yseoJN8bnGsQJ/bS1
-         BS4nXeC71/UyNcJHxITaRd930hj1fg4oYok3qUOng5dKwzC+fIuHuVx9RcBZ9HSSBb/1
-         mFtLQ3BuvFbwo3GoxusnqQerPkA5eXegPGa3H7TXjlSoPIw4krL+6HhutMxJmo7Ea2qf
-         jDOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/zwnyGZzvtL+uwkFusY7VbrnesTIHQGr/R9ppd0eODx58xiwRGjXaYZCE+bdsDcCLdyXkw2pjKtOyVwY=@vger.kernel.org, AJvYcCVEoHcIVvT5XpT/4Qv/HrZq4Ac4UlXZC3RUY1eBiY44rHoJLghZi5c2HOl4nSrl0fV+qxmVU8Lt3rJvKQt8Jo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvf5UjrXuXuWxrOxKbe/LEalIT25QFi+kPjSJc30o7SB8med4F
-	/VPPmv2u95IasocqiZJqU9Svh9XGciBN2TapBfSFPWk777p8WHoZuGffbFuNrC+y
-X-Gm-Gg: ASbGncuOzyNgaSn+oheA7x6kjUqryLkOtXKwoyDXNyRdNOzLEW1z9YtQDtK5xkNHfbU
-	b+2YCE2af0beclY7oShG4FOi7LiQtBsYy/Kib0qhkDyCk/567tjZAfIXPqh3STr0ZszYIgwlM4N
-	L8T6kZ2eGYBOV3lFtzDQub85QcyQVTcpzCSiy0lrpUKeZXGvkjTCXPSvoi3bkWKz/9U0n8uoUc4
-	QNwgp/0AAl9yC0DCOjmRXwx6+9bNyUmfP8YVLNGt27q0tsXTOIJBuY2oonJ7K4ryGBNc75JoL4L
-	ExDAtNR7U7epUyqTH1f4gok8vNawzKaR8IG0OSHJ/6A40anZAON1oa7Fe4WFtLvoOPV3bPv3VHl
-	hLa2nuRG5ZoO3XfH92JyoDn1YBoSW9lJXN0GXE/HDWNq0ivD0+1Ru47aGMx1j0DISQ2cb5k0=
-X-Google-Smtp-Source: AGHT+IGiAVxrYzV3bNydyAN1Kl9RxUYBHIou5jDmgprU0itO7KReDwpiKl9LlCEDg3P/Qg1yw9qCXg==
-X-Received: by 2002:a05:6122:21a4:b0:539:4bf9:233a with SMTP id 71dfb90a1353d-5398f3794e2mr1324293e0c.5.1754386699656;
-        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d11640sm3359146e0c.24.2025.08.05.02.38.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-88ba6bb90d6so3586217241.0;
-        Tue, 05 Aug 2025 02:38:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJs5Gq0QfGqHl4RNmED/bAeFIU6m+HwtbDsfwyLSLEmKQCUQPbp0s8dj2x9HfYOrnwvibdMZNaWuyQAGt2gBw=@vger.kernel.org, AJvYcCWdVBzB53JZwGFHONCATGMwxKVlB1VFzHWgaSooTvLcD67Vgae7RMBaVBmFMAc7YuDrbjTU2Cb1iw6wie0=@vger.kernel.org
-X-Received: by 2002:a67:f5d9:0:b0:4df:e510:242e with SMTP id
- ada2fe7eead31-501df5d3a6dmr1150909137.5.1754386698952; Tue, 05 Aug 2025
- 02:38:18 -0700 (PDT)
+	s=arc-20240116; t=1754386819; c=relaxed/simple;
+	bh=M0YuOEF01PK2T/MfN+UGtDqQuxe12zRPDpYIkWPWD34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCBu6Srp/MNe3PSuuxJiBZscAxrdrQF6UbilfJTkGjt/187J2IZ3/rpyPWiGF40ArKMJ7OOkZrnYsJqGiDqOfeFpMC80cJJiqRcx21YzJ9+UbBIPcADCFZs+D44XxjTTxDnbvWTff+21CfJDZnbqMOQfkhmpWcupD6zuLXfihoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flMnhw+7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE89C4CEF0;
+	Tue,  5 Aug 2025 09:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754386818;
+	bh=M0YuOEF01PK2T/MfN+UGtDqQuxe12zRPDpYIkWPWD34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=flMnhw+7Hcp5VbdvQFgZBJ3qLty+rB3AoG10K/lacYqadGsKvOi1IsNlKuB6huTQh
+	 E3HKwSHTFIq1/f+DWtJM0TVMyP5DVV5NEA+gZUJnr/LF+xqS7eXT5M6rfHJZJuuO11
+	 wItW/6xkgLd7GxjZcYPNJsaEHdcs6w4ehqdRZbBc6SAkImc1JXKZ8Qdy1DpM6+fPRW
+	 8T4CkC6ZRbIed28q/wGua/dmo31Wy5753HdFNyOIZLh1g2i6sPwzxOvRzW/IDiRHzV
+	 emGs37i/Dxmw650lccxBMYgf2RkDSXtEMyLYqb8Xol4VVS9wiaTBqyAzC68rfuPGXw
+	 r1JyyVE6ri/Ww==
+Date: Tue, 5 Aug 2025 10:40:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	nxne.cnse.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
+Message-ID: <20250805094013.GW8494@horms.kernel.org>
+References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+ <20250730160717.28976-17-aleksander.lobakin@intel.com>
+ <20250731123734.GA8494@horms.kernel.org>
+ <202507310955.03E47CFA4@keescook>
+ <8c085ba0-29a3-492a-b9f1-e7d02b5fb558@intel.com>
+ <ff10e2a3-bd97-4c96-b7bd-f47289c9b0e4@intel.com>
+ <202508021152.AD1850CD2@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805084114.4125333-1-chenmiao.ku@gmail.com>
- <20250805084114.4125333-2-chenmiao.ku@gmail.com> <aJHLxmPk-5cPCnPA@antec>
-In-Reply-To: <aJHLxmPk-5cPCnPA@antec>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Aug 2025 11:38:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
-X-Gm-Features: Ac12FXzRUM01SIDhF_ZhDuCMxt8maDs6G-ynYu_G6MZjpQyqy23qtgVMsp7zn64
-Message-ID: <CAMuHMdX-hQ3XaQtTnbP50ngFB=wKG43m4cxFDUh++Hx7q_LnSw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] openrisc: Add text patching API support
-To: Stafford Horne <shorne@gmail.com>
-Cc: ChenMiao <chenmiao.ku@gmail.com>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Arnd Bergmann <arnd@arndb.de>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Sahil Siddiq <sahilcdq0@gmail.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:OPENRISC ARCHITECTURE" <linux-openrisc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508021152.AD1850CD2@keescook>
 
-Hi Stafford,
+On Sat, Aug 02, 2025 at 11:52:44AM -0700, Kees Cook wrote:
+> On Fri, Aug 01, 2025 at 03:17:42PM +0200, Alexander Lobakin wrote:
+> > From: Alexander Lobakin <aleksander.lobakin@intel.com>
+> > Date: Fri, 1 Aug 2025 15:12:43 +0200
+> > 
+> > > From: Kees Cook <kees@kernel.org>
+> > > Date: Thu, 31 Jul 2025 10:05:47 -0700
+> > > 
+> > >> On Thu, Jul 31, 2025 at 01:37:34PM +0100, Simon Horman wrote:
 
-On Tue, 5 Aug 2025 at 11:15, Stafford Horne <shorne@gmail.com> wrote:
-> On Tue, Aug 05, 2025 at 08:40:57AM +0000, ChenMiao wrote:
-> > From: chenmiao <chenmiao.ku@gmail.com>
-> >
-> > We need a text patching mechanism to ensure that in the subsequent
-> > implementation of jump_label, the code can be modified to the correct
-> > location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
-> >
-> > And, I create a new file named insn-def.h to define the or1k insn macro
-> > size and more define in the future.
-> >
-> > Among these changes, we implement patch_map and support the
-> > patch_insn_write API for single instruction writing.
-> >
-> > Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
+...
 
-> > --- /dev/null
-> > +++ b/arch/openrisc/include/asm/insn-def.h
+> > >> Yeah, this looks like a nice way to express this, and is way more
+> > >> descriptive than "(u64 *)&xdp->base.frame_sz" :)
+> > > 
+> > > Sounds good to me!
+> > > 
+> > > Let me send v4 where I'll fix this.
+> > 
+> > Note: would it be okay if I send v4 with this fix when the window opens,
+> > while our validation will retest v3 from Tony's tree in meantine? It's a
+> > cosmetic change anyway and does not involve any functional changes.
+> 
+> If this is directed at me, yeah, I don't see any high urgency here.
 
-> > +/* or1k instructions are always 32 bits. */
-> > +#define      OPENRISC_INSN_SIZE              4
-
-> > --- /dev/null
-> > +++ b/arch/openrisc/kernel/patching.c
-
-> > +static int __patch_insn_write(void *addr, const void *insn)
-> > +{
-> > +     void *waddr = addr;
-> > +     unsigned long flags = 0;
-> > +     int ret;
-> > +
-> > +     raw_spin_lock_irqsave(&patch_lock, flags);
-> > +
-> > +     waddr = patch_map(addr, FIX_TEXT_POKE0);
-> > +
-> > +     ret = copy_to_kernel_nofault(waddr, insn, OPENRISC_INSN_SIZE);
->
-> If you change *insn to unsigned long insn, you can do:
->
->         ret = copy_to_kernel_nofault(waddr, &insn, iszeof(insn));
-
-sizeof(*insn)?
-
->
-> > +     local_icache_range_inv((unsigned long)waddr,
-> > +                            (unsigned long)waddr + OPENRISC_INSN_SIZE);
-> > +
-> > +     patch_unmap(FIX_TEXT_POKE0);
-> > +
-> > +     raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +int patch_insn_write(void *addr, const void *insn)
->
-> Does insn need to be void *?  It think it could be just unsigned long. See
-> comment above.
-
-u32?
-
-unsigned long would be 64-bit on 64-bit platforms.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Likewise, I see no urgency.
 
