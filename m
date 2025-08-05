@@ -1,290 +1,125 @@
-Return-Path: <linux-kernel+bounces-756161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A52CB1B0AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:05:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6E2B1B0AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223C03A9801
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B34A7A55B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515BC259CBC;
-	Tue,  5 Aug 2025 09:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A80259CB9;
+	Tue,  5 Aug 2025 09:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ocd7IayW"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/sIxMDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20EEEC0;
-	Tue,  5 Aug 2025 09:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384732; cv=fail; b=kyEr+jyUMS0NChYoLiD09Up0MprsO1jmBNvyH0+0WNBuPysAk47MejNROmOhzvw0p0F3W8eJBPkdgtPn6h/jwMBaQ78uJdDau1mOW6qVdFW3HnXJkihvfs+AJE5zpMP+j5XzgMxw+ydcL7QCHvjmDKsHD/CojDfpXEuw3w82wxs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384732; c=relaxed/simple;
-	bh=V5nPXmAZtyi7ASxbzBJiHwAye2F37s7TqhS4FkH0Aa4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FI8blDi/DO1Pog4A+XCLbDD6nd5XL2eyymP2R8/zmYMiqE4qpXH9+MNphO8VV5xlIqSQATEzHPfW5G693kzksGD8rm/7RiEMseu3NO0sF0FT7ENl5KbHdOU4icH7a5DBsQ0s0fRgftxR0Ct1Fj2r2MPzgMgUqWgXEZiUtmmDNlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ocd7IayW; arc=fail smtp.client-ip=40.107.243.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FF9Mruo4ArbKWBFJZryok96/IQGn5QT5ukJUnu/EKx0YHtePePNs0Q5yAGon4JYRYPNJaiP/rDRgXbB7VnLtGqOKJ0MznIl+giloCk/gtxbnbLCn8JPfbwZTmKraY/YTN9BCBv+gZ7bkz/fnwCZQCChEer/ckwJu/QbuOtyO2ED7TG2zWzI4Kk0smdbLJ30dIuDlyoDMkkKAvnfXakUVGzJiAp8pJy0UbjlvMFBpEBSLLV8jIjaKNGFVEg+IJfk4hX3FVBrmDh2R7ePbrnZbku8oWjD041YZmzim/guSXWDgOxwaKeoPcz8s8EYUM/NUQgWQtgxbZBYSevScdMep/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fUiNhU9pME8bYZlm7TEDFJwLeqF0IA73GiwhMvwLrIE=;
- b=c+S4Vy8zIgRBeWjaOos9bkZgQAsR25hOPxQmacjRrl+8vVXe1tnzwJqfuxpIhD58GobjDmwg9gRJ5bZTT/cyIzbMCUBx9ux+sMHjz/vfyz//L8HHh/3f9lm917EnKHvhLlgGyWdonCQl2efSdB/03hulzV/4aWET0ADrwK7sYpAFe4jMSple+GDiXcetkwj8bSxpoDR4LV5hS2ldIM7gL221ACtfuYmjLrhjcFHReBzXlETPQC+tU0JbcifDvD0rSUMll7xmzITvJpc3ZkbhEON4yZIsF4dOgZITG5W89FuAJ5B6SRDOGQIK9cIy5yfkqktpax/dxHpIZA7eb35Jaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fUiNhU9pME8bYZlm7TEDFJwLeqF0IA73GiwhMvwLrIE=;
- b=ocd7IayW7X8K0u6iLADtaKnU4/dB1YQg3nKEwrDQyj3a3UDfnN4MaR0Af8IbAiS+4lX6ovHz3uIYm+T3PIbtcmkuaU+WKDJzVXmiQ/w7BCy4fnTIyATavxKBXcosSUPUSTqrNnf4L2ccMgVUEz7L0G0X/hj0PU5EYdaohDbLtZg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA0PR12MB7089.namprd12.prod.outlook.com (2603:10b6:806:2d5::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
- 2025 09:05:25 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
- 09:05:25 +0000
-Message-ID: <5fb872d0-9b0a-4398-9472-eea3fdf61940@amd.com>
-Date: Tue, 5 Aug 2025 11:05:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Extend and update documentation
-To: Philipp Stanner <pstanner@redhat.com>, Philipp Stanner
- <phasta@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Corbet <corbet@lwn.net>, Matthew Brost <matthew.brost@intel.com>,
- Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250724140121.70873-2-phasta@kernel.org>
- <f064a8c305bd2f2c0684251d3cd2470699c28d5e.camel@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <f064a8c305bd2f2c0684251d3cd2470699c28d5e.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0053.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:93::6) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB624EEC0;
+	Tue,  5 Aug 2025 09:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754384785; cv=none; b=fxxxq4Ohkx5T4YXttQimFLcwCn+1yhlLkXbPDC+lgSq+wku5vpxVuhoWCYNqPgdqxYMbjp/YWjoBUs4zMBJeauALcy0Av1PhcHYB1lT3S/bbevM+o58Lfae3kekRmPX2HwK3iJeWyAZM7ar+m8fRGayszRyD0pxO4dIZQHiQI0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754384785; c=relaxed/simple;
+	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRikTIB/PftTkwY1ocXRZ/MlRlKKP9RQIPfzUy7oYjSXfohpmzmYSvTPiEmviAVVdAlG1edxn9ZdPQbzOfOlICNut/U9lLyzVWdIzT3nUqJCZQOpWoCDgyMmevItgkfsRNK6noLyEwYxXT8rVc+r4RHGwyU+3K0Tad14xc/0cVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/sIxMDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4337EC4CEF0;
+	Tue,  5 Aug 2025 09:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754384785;
+	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F/sIxMDHzO8y3tkfbV1zC4tD0skZmoIJgbZ9W5QswezhWfvs4G9nxB9EkpqQkkevO
+	 Fur9pKF/sEBikTzIivkTt4VfkIM7s+68QZnBVOtl3282NgEuiCRfn18Qg7NiUgO9WD
+	 hlC7hXCXOwjQl9yfJhzGl+e/H+W6bWLob8N5JfzMrZ3InzmkyUTJUHNIRunGoKaThT
+	 rEuoW8bLyQlXzWPvfWkvErtWhAKrIfq07dOn12wDMcXmnr8AA/qcZW7fsU9KfXqvs/
+	 Yw06v4RBmj87jqFnV0UWW4AehY+/2Hay7lDVH5ityNnqL7mwnEkLcSaE0sZgWLlY3a
+	 X7hFfrlcy32lQ==
+Message-ID: <553ec151-14b0-4959-a04f-1b9fe5a9bbda@kernel.org>
+Date: Tue, 5 Aug 2025 11:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA0PR12MB7089:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44b26ea9-529b-45d9-1a98-08ddd3ff36e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWIrUHVBTXFiN2NOb0h6aHI4c0dGM0h4eVFqYjVJb0Z1c0RhV1p5N3lKV294?=
- =?utf-8?B?V2p6RXRmT3cva3pWWlByMU13TWU5L21wT3YrZUN6RFo2N2tWTHZmRVRyK0dB?=
- =?utf-8?B?ZmhDcTRSSkNLb0JSZVUweXVQNFJ2bFVNWXM0M3Q4R1lWZGMvWUxUajcydE14?=
- =?utf-8?B?TGRrTzBuYW5MbnFIZTNSbVlIT3JLdlM4MCthSWtMaGFsc1ZuNlFNZjQ3NThw?=
- =?utf-8?B?S2xKVjJMQ1JYcjAyYnRiaWxWcnR0QW1uVG5FOWdOVTFoSXNtZ25ZNnFZUElG?=
- =?utf-8?B?NER4Y3ExZU5jdkRJaldLMFYxeFM1bGZNYjV6Vk5CajIvNWQ2cTA5RnFJTEZu?=
- =?utf-8?B?SWdYb1RmaVBKbVNPNllVMUNMbUhyeWhaQTRVMitBQlhTNHdPV1lHdUo5empl?=
- =?utf-8?B?Y0dqVyt1OFphUTVVbWpIZGU4RFc3LzJJekhrdzBPaGpjclVWNjI1RHlxV2Qw?=
- =?utf-8?B?R0lBYytRT2dLK1B6Kzh3WndIbElrVU9uS0VuVkE4ai9yYXBtQXhOR3RpdG1V?=
- =?utf-8?B?NWI1NUpqSVNRRlZzTm1kN2d2aFVyUHNBNW9wRFNyQVFLS1BXY1E5cjJpeVQy?=
- =?utf-8?B?ZjhZekRxUEd1S0dNUXBySGlBVDJteThlY2lGOGZnV0VPZnR2QUZqejBLVlBL?=
- =?utf-8?B?Z0JPWFphUGhvS2NzcHBtMVlSOWxaRGYvZHhsM2RCMmVHTjRlWGwxeUE0ZGN2?=
- =?utf-8?B?Rm1aODBFVnMzeHRORVp0dlByS0I2bnI3LzdzUzIyNXJpZjFsdm9nOVFaOEpo?=
- =?utf-8?B?Nzc0cktNeU1iOGRiaDlDSmlxS1liV2gvTS9lY2lVT0Q0enFSWktHR09tcnRB?=
- =?utf-8?B?MUVzbEhqekhHdGh1MG5CeXRoSE5Ud09OMHEyVlZ5WVpwRmF1WGlEY0hkdVg3?=
- =?utf-8?B?K3JqUG83ZVp0WVN0RGw1Y2tSM1JCTmdsV1RsRy9YUGZpWmIwbGxWN21XVHdk?=
- =?utf-8?B?SW5yaHJkWm5xTk14ODlzNGg4dlpBVUdDZFJ6TXBSNGVXWnpMU1QwL0ZLTmRY?=
- =?utf-8?B?WTcvdzlqY2F2Z0d0SDVrbGt4TXR5TUFoU0RQNVo0MzF2azBqUmE2ZmRvYnBS?=
- =?utf-8?B?dW5ZN3Y1SDBrU0VtMCt6SnpnazlCd0VXQWRCT29oZEFOV2lRRDhrSWgzMHEw?=
- =?utf-8?B?L2lmUUZiNzhoUVpJOHZSend4Tkg5dzhrSTI3MjZLZ0t6bjZzMGVGUlRYOWpV?=
- =?utf-8?B?L2JwMk1vWVRnMURNNnhaTjg2NDZ6V0xuNm5tRngwUXE0LzRQRDRoTlFqKzZN?=
- =?utf-8?B?Y1BMTTJQc3JxQ01tS0ZiTmFUUnN0c1hNSjIxVVpESEhrNEduR0N2RXhPdTRP?=
- =?utf-8?B?dHM2YUQzbmgxalhzWEFOR3lCaklGVjdReXVqdUlWaW4yTXpydnNxc09NNW9n?=
- =?utf-8?B?dnBKQkZJdjlDUnI0LzMzYmdXb01hOXhFbnZidnVMa282NjBIMnk0U1NPSG9R?=
- =?utf-8?B?SlBUcjg1QlVEK21uV0tsQ1p1dUVKbDVtTmh0T083dWNZQ3lVdmJWbDY0dnU1?=
- =?utf-8?B?bzdtNElaQUlkd21ZMENhazN6NFVmYytVNkltNHFRamw0S1Vid3RUemhETDBm?=
- =?utf-8?B?cHVMNVZZR1FvVWVyVVZmQTFLRmNtR2NGQ2RlZk44R1g3bG95RmIvVVh2aVZN?=
- =?utf-8?B?N29NdXg5b1ExVmZNQ2o0ZDl5TkNGUUdUeHR3RVRVQ3kxbjBEUVpLM2g5Q2tw?=
- =?utf-8?B?M0RWK2x5Y0piNjJPMFZTSC9nOWp3QkVIZHhXUDE2bWZOTmJ5NlVNU29KaGVM?=
- =?utf-8?B?SHNrdHZuNmFLc3FkM1UwYVhiZ1dVVUhrQ0FkVjhlejBTL1phcVUzUEkrdTdF?=
- =?utf-8?B?T1h1N3p6a1JleTFFdEYrOE56YUVXMnFpRzE2SkFjbnU3dlE3dGc3RmJ4Z3lL?=
- =?utf-8?B?dkxScnV3cnZ2OGV2alg2dVJQQXU4N0tFZGlKWFVvc093ajBLRzVXU0kvMHhJ?=
- =?utf-8?B?cG5HZ205Vlk1cEtucExNMkc1V2dJM2JidDdNZlNxa1dPbWFVb0pMWHBrL2Fy?=
- =?utf-8?B?VUtnK0dldjFRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SzVmOXhLdnA5R2JCQ2EyYmF0WlRiVnVaRm1jcmhZZlpuekRVQ0pRZlZUczVZ?=
- =?utf-8?B?QVo1SEZ6REQyZFdkZnJXbXRxWk9INlQ1dGRwZEtMc3czdGw2dXhSWlJQR2VE?=
- =?utf-8?B?bFBIWWU4dFVGNnduL1Y0SEtvdHE0K1dwOEQ4TEtsMERTWld5TTNTUVhnQmlS?=
- =?utf-8?B?SDdTRGhWR3Z6NFRwUUwzR29zYWZZY0Rzb3FJY0pCRGVZbnlIR2tmWnBpKzRB?=
- =?utf-8?B?Skk5d3FHY0Zqa1pKM0I1dHRBeUJKMmpDSDdjMllMZ29ONmRJeDdxY2MwdXJk?=
- =?utf-8?B?QUJUUndhWEt2a2hSRHJCKzZ2R09haVNuMGkwczlSOFdYTS94QVhQNWpuelA1?=
- =?utf-8?B?ck45NFlCK1VQZ2NkY0greW1zVS81TXRhTjVGWFdHdEhjR3hGWTBYcUlCc0Fv?=
- =?utf-8?B?UThXdWhrZmlMM3QzKzZIQm1ralpJajh0V2hTejV0VCtROUZ5MzZHRHd1RDM5?=
- =?utf-8?B?aHdCajI0OENGVTRxbzRDNmVtcUZ4emtjQ2d5dTcwS2RmeWJHeUFSQ2tzL25u?=
- =?utf-8?B?MkNTY3ZHTU0yVm9ERUkvSFJQazY1MndJdytXOVdQcy8wZHZLWlh6K0llOHZN?=
- =?utf-8?B?b0U4SmJxUDkyWVJ1L2tkSXJRQ1JEVU9iL3ViNlZPeEJtMGRUQUwyY29GRFE1?=
- =?utf-8?B?Zm1tY2hia3pUUkx6emhUbnZpNWdBeUFCRlN0WTduWE5rK1JWSkEzUTZLNDYr?=
- =?utf-8?B?dkJRTUlUQ2NXaGR0NVpPazYrK3pGc2wxUnN3bUhZTTM2alhhUWtDRVFOMG9k?=
- =?utf-8?B?WjViNWs4TE92SVNudlBRVkVudUkwZmFEaitYTkdrWVhQcjN5bUJRODNSN1Iw?=
- =?utf-8?B?YWtGSlZmdG1mL3I5bjN0dHlLcXA5bXlYWmtKY0VzR3dudXIrUmNUNm1VbFR5?=
- =?utf-8?B?S0wyVWlkaWJwSHZZcG5NQTNHL3NML0pyV2pkdEFzRXMvNU9xck5VaVhWdmFC?=
- =?utf-8?B?QmpsaHNUMGlmaUJJbWYwRkVsQW5VMjI0dTN4cWpRYVhqQjU4c0phRE15WkVV?=
- =?utf-8?B?VEM3bjUrSUxxbHJOWE01WkgxMytmN3RVSW1iT25DbFFCY2M2SjFLU3QyL0th?=
- =?utf-8?B?eWVYQ3djYmhHaTNMZSs1cytLcFVCTzBiNWNXOVVoZHM2ZGNWbUJkd3IyQkhu?=
- =?utf-8?B?aklXTDNUOVRRL1pIeWZOUzZKeXdXbVdFRUhkcXR0YmJwVzRxT1NLcXBNZzA4?=
- =?utf-8?B?bndNU3hRSlNvWkxTdEI4MTN4QWhLa3BtSHZUM3dmT3NHcW9EdWtNSTc4VHNs?=
- =?utf-8?B?dG0wVm9ZVGVqWGthYlZPRlRJRDdRV245UFZNQnZ6NE41cURGRVdyZ05KS25R?=
- =?utf-8?B?b1hQNklIdHNDZm9zZGV6YWhDWUxaLzFIZUtkd2tmN0JCMVpwb0pyZDRSR0lM?=
- =?utf-8?B?d1VJQkE2dU9rTmZqdG1QaUJvU0JMdlJKdHlTZ29CRzBpZk5kZ0hSUkwvc1Zs?=
- =?utf-8?B?RWZvYVZFWkdhaGVyRUNpZDArVGpuS2hkYW1Tekt4Zi80b0JDdnM2ZVpJeUpa?=
- =?utf-8?B?NW1ML3JqT2tHQWFYeW5MNFZ6Z2xOSXpjZ3hvWE1FSmpDSXp1c2FUNnNiTTRp?=
- =?utf-8?B?ZE1RREJhRVN6Y0hISEQ2MHZLZ2MvRW9rVHpUZnJVLy9WU1ZnNEVtelhZTU9V?=
- =?utf-8?B?QlhEVWZ4SUJZdGVxeTJWblRtemtwSTQwdmZieitRakRoZDNCMW4zSlVOcklD?=
- =?utf-8?B?ZDJma0tlcEhKQkQzU2JPS3hFT0hiRDh5bTYvaGFNK2h2Z1RKMTY5VXNSV05H?=
- =?utf-8?B?Z21wSDNrQ29DMFN6T1JzY0Z0SWNxRGFJTlBEOTVPTktGM2pBMXVpWGFtWlI3?=
- =?utf-8?B?RXp5RnlLc3JsNGdtN3MwNVhSdmpVaWJnaGpDdnNuOFRLeWVmL0xoa0ZLcnpt?=
- =?utf-8?B?NFNmM1RlcUtLNi9xdE80T0dORHBKTWpBK2lNQjU0V09Gb0tvWjJXTHdJOU9Q?=
- =?utf-8?B?cUlSb043ZytMVHhKRkpvSWFPckpoK0ZEY0RjbnRKVThQNFc3YTBXQ2NhbjA1?=
- =?utf-8?B?L3liZ0hWcnZVaGtmOG54VHNrb3JXL0RKQjNtbEY5VTA3cDdzNFVEWm4wV3Np?=
- =?utf-8?B?TzNsNTlJeTdKU3paYm53dVhLa3d1anA3ditIdi8yNi9yUFNUaG8zSEJwOFJj?=
- =?utf-8?Q?nzR7d09YI4ByWwpoYqrrgp2R1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44b26ea9-529b-45d9-1a98-08ddd3ff36e7
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 09:05:24.9499
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YsIr9Wfmbv2qogTyBA0c25AqwQQQ+dk/f0JZ78MN699TMFoKhtWh0+asp5bERgLZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7089
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si5341 to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250804222034.4083410-1-robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804222034.4083410-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24.07.25 17:07, Philipp Stanner wrote:
->> +/**
->> + * DOC: Scheduler Fence Object
->> + *
->> + * The scheduler fence object (&struct drm_sched_fence) encapsulates the whole
->> + * time from pushing the job into the scheduler until the hardware has finished
->> + * processing it. It is managed by the scheduler. The implementation provides
->> + * dma_fence interfaces for signaling both scheduling of a command submission
->> + * as well as finishing of processing.
->> + *
->> + * The lifetime of this object also follows normal dma_fence refcounting rules.
->> + */
+On 05/08/2025 00:20, Rob Herring (Arm) wrote:
+> Convert the Silicon Labs SI5341 binding to DT schema format. It's a
+> straight-forward conversion.
 > 
-> The relict I'm most unsure about is this docu for the scheduler fence.
-> I know that some drivers are accessing the s_fence, but I strongly
-> suspect that this is a) unncessary and b) dangerous.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/silabs,si5341.txt          | 175 --------------
+>  .../bindings/clock/silabs,si5341.yaml         | 217 ++++++++++++++++++
+>  2 files changed, 217 insertions(+), 175 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.yaml
 
-Which s_fence member do you mean? The one in the job? That should be harmless as far as I can see.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> But the original draft from Christian hinted at that. So, @Christian,
-> this would be an opportunity to discuss this matter.
-> 
-> Otherwise I'd drop this docu section in v2. What users don't know, they
-> cannot misuse.
-
-I would rather like to keep that to avoid misusing the job as the object for tracking the submission lifetime.
-
->> +/**
->> + * DOC: Error and Timeout handling
->> + *
->> + * Errors are signaled by using dma_fence_set_error() on the hardware fence
->> + * object before signaling it with dma_fence_signal(). Errors are then bubbled
->> + * up from the hardware fence to the scheduler fence.
->> + *
->> + * The entity allows querying errors on the last run submission using the
->> + * drm_sched_entity_error() function which can be used to cancel queued
->> + * submissions in &struct drm_sched_backend_ops.run_job as well as preventing
->> + * pushing further ones into the entity in the driver's submission function.
->> + *
->> + * When the hardware fence doesn't signal within a configurable amount of time
->> + * &struct drm_sched_backend_ops.timedout_job gets invoked. The driver should
->> + * then follow the procedure described in that callback's documentation.
->> + *
->> + * (TODO: The timeout handler should probably switch to using the hardware
->> + * fence as parameter instead of the job. Otherwise the handling will always
->> + * race between timing out and signaling the fence).
-> 
-> This TODO can probably removed, too. The recently merged
-> DRM_GPU_SCHED_STAT_NO_HANG has solved this issue.
-
-No, it only scratched on the surface of problems here.
-
-I'm seriously considering sending a RFC patch to cleanup the job lifetime and implementing this change.
-
-Not necessarily giving the HW fence as parameter to the timeout callback, but more generally not letting the scheduler depend on driver behavior.
-
-Regards,
-Christian.
-
-> 
-> 
-> P.
-> 
->> + *
->> + * The scheduler also used to provided functionality for re-submitting jobs
->> + * and, thereby, replaced the hardware fence during reset handling. This
->> + * functionality is now deprecated. This has proven to be fundamentally racy
->> + * and not compatible with dma_fence rules and shouldn't be used in new code.
->> + *
->> + * Additionally, there is the function drm_sched_increase_karma() which tries
->> + * to find the entity which submitted a job and increases its 'karma' atomic
->> + * variable to prevent resubmitting jobs from this entity. This has quite some
->> + * overhead and resubmitting jobs is now marked as deprecated. Thus, using this
->> + * function is discouraged.
->> + *
->> + * Drivers can still recreate the GPU state in case it should be lost during
->> + * timeout handling *if* they can guarantee that forward progress will be made
->> + * and this doesn't cause another timeout. But this is strongly hardware
->> + * specific and out of the scope of the general GPU scheduler.
->> + */
->>  #include <linux/export.h>
->>  #include <linux/wait.h>
->>  #include <linux/sched.h>
->> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
->> index 323a505e6e6a..0f0687b7ae9c 100644
->> --- a/include/drm/gpu_scheduler.h
->> +++ b/include/drm/gpu_scheduler.h
->> @@ -458,8 +458,8 @@ struct drm_sched_backend_ops {
->>  	struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
->>  
->>  	/**
->> -	 * @timedout_job: Called when a job has taken too long to execute,
->> -	 * to trigger GPU recovery.
->> +	 * @timedout_job: Called when a hardware fence didn't signal within a
->> +	 * configurable amount of time. Triggers GPU recovery.
->>  	 *
->>  	 * @sched_job: The job that has timed out
->>  	 *
->> @@ -506,7 +506,6 @@ struct drm_sched_backend_ops {
->>  	 * that timeout handlers are executed sequentially.
->>  	 *
->>  	 * Return: The scheduler's status, defined by &enum drm_gpu_sched_stat
->> -	 *
->>  	 */
->>  	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
->>  
-> 
-
+Best regards,
+Krzysztof
 
