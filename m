@@ -1,45 +1,78 @@
-Return-Path: <linux-kernel+bounces-755996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2AEB1AE7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6568B1AE80
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D961738FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E66B173E96
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ECB21C16B;
-	Tue,  5 Aug 2025 06:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C611C861A;
+	Tue,  5 Aug 2025 06:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sIE1xJZ9"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="c9fNJW5B"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACD31B960
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEBE1EEA5D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376091; cv=none; b=g1065dilmgID5wMeFDvCGu4UFyhDF7JfHtTCLjjHeeHWWigY+XNhkoPTcRMCV55iTlsl6WPBOxKpUEgo/WcPFHCeSX/+DuUwhQCYKqRo5uBoaDm5DHejenFCOLbg4x+0RmFxpVUQFb9bfs808/Fym9KGkZDoTwaiEmqpowuNcck=
+	t=1754376190; cv=none; b=M7L3/xLwgAz9489uw0c/K2tNH+KBpO4Md8GXaKjEM7tMtEBQ86nbFaGwZffnJsjuUAPJ+RaoAYPVGiXmicJs967ULy3lJoGXB5UpRlvtg030OYtYNlqApAgHpMpwVoBSUAsPDIdzLMfh6LRcW6wX+2i8a9YH3JA+ywcDZ5+r/X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376091; c=relaxed/simple;
-	bh=QzygLQFMu2kTxxlR2qMgnqwBcyPqL2BCfiJuwFwquV4=;
+	s=arc-20240116; t=1754376190; c=relaxed/simple;
+	bh=YYGYwiRhWMF11vSAo0hpe4SgGa2dFiHZF6UrCnwZ3hk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVv42/qppqcgCJl3HvIjdtfCYsVr1Ni6YSfWByPAu84FB/QRLEcxpj1C3GYBBqDpvQ3X4gLo0SWVh0t5+74CMRts/LyCCItXYyYJ5bVvOWAmw9C4I1BCq86pCJHpEkQeDEcDwaUU1CKipm8Xv2c8Q0njEEc1F1O9x4Y7jC5SOlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sIE1xJZ9; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754376085; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=iKwb3jyiyyLlRq/hzHJCa8IJJVZNalYmdaLHaPwmwrU=;
-	b=sIE1xJZ9CIWW6fXKGycIeABlUbx7mE540ro2p3S8r9ZNkXEbOJ7vaE9vGrxwqYayyNYOW7tYlUt6T9l6Ud9msqBEJLjW55pBc/S925BTqSP3cDTUqiTRrRrv6vflZdz0NI7Y5TUa/CM2ULcoLQ1U60rc9sBaOPqWkEY3mjA8q/k=
-Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wl440vN_1754376082 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 05 Aug 2025 14:41:23 +0800
-Message-ID: <721c093c-a54a-4ccc-b784-e3634a8c2278@linux.alibaba.com>
-Date: Tue, 5 Aug 2025 14:41:22 +0800
+	 In-Reply-To:Content-Type; b=c+ZM121KQMg3imnSm4n8o4gwiYygIhjWLMR+kKKRqdYVMYmJvOC5aEtPqYJhPDncfERe7mbGMuZdU6P/t7KOZ1f67l/p3F0pfMp3GSYcaLG1WYAoH07xeK3kSPWokHsADzLiTBGHEdZnbo6w6B5gtlWNTJt8ecZIyIEqrwtnVwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=c9fNJW5B; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b424d2eb139so1778590a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1754376188; x=1754980988; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c9nhYHdVYijXwXhKsqe5CscEEMmPinucJwaX/wDudLk=;
+        b=c9fNJW5BQ8o4imag1g31HWfZlnhfx97M40aI8R2nYhgdH1qCV/BQPWcnlu0zcGk4M+
+         LfvzL68qRmQN8xmXFCuk3tYwuw10BpppW1EgEL8RaPxvr55wv1Ol4o87S7p2jRABA4mv
+         9haKS2OYvQbGOSnRBVR3jaVrCXV68DJ+BLlkvsDF6KVvcHvZSsfZrOOUzholaQ4I2MUc
+         fv00ELRIF+JCvWkDr4GfHpd26KYSeR2aSeptXr0Qwn+3tsdzLMV7m64Z1tL/89dk0+zy
+         wteu1g/HeosjFeqUc+iFH3Am2QTB8apICeZUUoaeG6B08V67Es68tXnKN9Bc2OyrPVrH
+         lBfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754376188; x=1754980988;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=c9nhYHdVYijXwXhKsqe5CscEEMmPinucJwaX/wDudLk=;
+        b=o0bVM8YENSDdZn/wBzLBEbLq1htKA24sygNq5mKIlbFYKQU59zdJdqyuF7YyS5oQr0
+         zQQXjoPCS+d9fHpasC7Frpn7wLWTJolv6d4wRgpep6mjKOgpib47Y0Fodp0pLImLk7mx
+         rTd2nJbpuL/pOR2yfHG35udkEcHWj8akomHyEz5owjmfjByFcwfrlAYHai5zYaUjPyzM
+         FGqnPT8xRuhXDATkdIfLMNgFZ++9JPL6GgMyKFeXRQhc0+Gi4cRpb011VI473RYXoXms
+         yM1vT99CLJBAJmDny8AyYAs+rghS1kcu9Lta7S00RF1AIAC1VbygzSFK6/Uw+KWO6vwy
+         Vbgw==
+X-Gm-Message-State: AOJu0YwoF3iTJLk6TydGwEfuxJxCyOfkhp1tTs9R4TiM5JS9sh+IfTCg
+	Ej03uOVlPx4r+SJ3lvQTFY2yXaXw008zX/oDvv6ac5vdGWgu9lK+p8ajdjHj1Ngycl4=
+X-Gm-Gg: ASbGncsqRfMsmqE5s6S+A8p/qnusl/63992YepETOBMFhTKskJuIBz+O1TU/umGgki8
+	BYRItooFqudf7BjzPXQAIIYXIEVMAAjcntZYUTbs/pYcTBGQPpfbLwfSA+/f2CZcrfCE5HVeRdL
+	HP0RjCiqU5VYSak+WGo7R70Wjcajz59sk2GHjYspg1MDdpBg1jAuZUfykG5CqdcGc84AQqptH2Q
+	CNsZO0w+3uLbxH3E1l+aTPRtU5fsX9uX4MBKvkLoC3xyZZcXjc9dlQXgWKtKIujbdZmCOl55rtx
+	8k9MWrDUqFcdf/48cPUYByDmOhWM+hOLaJO7Ay1nTrol/jUH2vmcbvUp4pciZX+ibzd8ET++M6K
+	+A23NFtDTj7gSaHtRZKSG5nbyeU6rUq+pFV8r/DWjDGJBtZMvSRtixR+Qp/j5
+X-Google-Smtp-Source: AGHT+IH6NKePpdklUEnERKhxy8cHNhExcNHW5IOQAP4eRTVMhTlFfu5DUYuvB7IhXb/s4ZjlKfsy4Q==
+X-Received: by 2002:a17:90b:33c4:b0:31f:35f:96a1 with SMTP id 98e67ed59e1d1-3214feb327dmr3290114a91.15.1754376187896;
+        Mon, 04 Aug 2025 23:43:07 -0700 (PDT)
+Received: from [10.4.54.91] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebc0e79sm13561149a91.10.2025.08.04.23.43.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 23:43:07 -0700 (PDT)
+Message-ID: <35417160-86bf-4580-8ae9-5cadd4f6401d@bytedance.com>
+Date: Tue, 5 Aug 2025 14:42:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,22 +87,23 @@ To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
 Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
  "Lai, Yi" <yi1.lai@linux.intel.com>, David Hildenbrand <david@redhat.com>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>, Vlastimil Babka <vbabka@suse.cz>,
- Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>,
- Lokesh Gidra <lokeshgidra@google.com>,
- Tangquan Zheng <zhengtangquan@oppo.com>, Lance Yang <ioworker0@gmail.com>,
- Zi Yan <ziy@nvidia.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra
+ <lokeshgidra@google.com>, Tangquan Zheng <zhengtangquan@oppo.com>,
+ Lance Yang <ioworker0@gmail.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
  Dev Jain <dev.jain@arm.com>
 References: <20250805035447.7958-1-21cnbao@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 In-Reply-To: <20250805035447.7958-1-21cnbao@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Hi Barry,
 
-
-On 2025/8/5 11:54, Barry Song wrote:
+On 8/5/25 11:54 AM, Barry Song wrote:
 > From: Barry Song <v-songbaohua@oppo.com>
 > 
 > The check_pmd_still_valid() call during collapse is currently only
@@ -78,6 +112,32 @@ On 2025/8/5 11:54, Barry Song wrote:
 > madvise_dontneed can now execute under a per-VMA lock, this assumption
 > is no longer valid. As a result, a race condition can occur between
 > collapse and PT_RECLAIM, potentially leading to a kernel panic.
+
+There is indeed a race condition here. And after applying this patch, I
+can no longer reproduce the problem locally (I was able to reproduce it
+stably locally last night).
+
+But I still can't figure out how this race condtion causes the
+following panic:
+
+exit_mmap
+--> mmap_read_lock()
+     unmap_vmas()
+     --> pte_offset_map_lock
+         --> rcu_read_lock()
+             check if the pmd entry is a PTE page
+             ptl = pte_lockptr(mm, &pmdval)  <-- ptl is NULL
+             spin_lock(ptl)                  <-- PANIC!!
+
+If this PTE page is freed by pt_reclaim (via RCU), then the ptl can not 
+be NULL.
+
+The collapse holds mmap write lock, so it is impossible to be concurrent
+with exit_mmap().
+
+Confusing. :(
+
+
 > 
 >   [   38.151897] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASI
 >   [   38.153519] KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
@@ -159,7 +219,25 @@ On 2025/8/5 11:54, Barry Song wrote:
 > Cc: Dev Jain <dev.jain@arm.com>
 > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
+>   mm/khugepaged.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 374a6a5193a7..6b40bdfd224c 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1172,11 +1172,11 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>   	if (result != SCAN_SUCCEED)
+>   		goto out_up_write;
+>   	/* check if the pmd is still valid */
+> +	vma_start_write(vma);
+>   	result = check_pmd_still_valid(mm, address, pmd);
+>   	if (result != SCAN_SUCCEED)
+>   		goto out_up_write;
+>   
+> -	vma_start_write(vma);
+>   	anon_vma_lock_write(vma->anon_vma);
+>   
+>   	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
