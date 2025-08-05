@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-756359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05B9B1B311
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:09:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88899B1B314
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8B127A10BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7AAE180DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DCD269CE6;
-	Tue,  5 Aug 2025 12:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8141026CE2A;
+	Tue,  5 Aug 2025 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q4YP2LTI"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fr8zsUlN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E94E23F40C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0088A25DCF0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754395735; cv=none; b=ZBX3Mzr8NAKOZExhuFjwG8r3V31zVwnhOZuNVBBs0LqPXUv2IaNe0G2gUrgeZd+V/WwHk52RhJWiRc9wmxb2ZU/qoQpn2gtivHbAZCv3qOXrPh9pj+y9ZXrmnIXqQn7bHLWAhpbXlf21IImjUl+j541F8fEFJL9bIbyNBfCv59g=
+	t=1754395760; cv=none; b=A4/r2wL/EPG2OMaaKJH8JmJsOdgOvnGMjNui4IiID+X+8OdpMkvdQYv2XbnyLGmzZMt3aQuFNmbn8LgT+H5eaeUsvhpYXET88OlWxb1KfjCVmR5NYG2TLRVEPUg595WN+bFDbDnR7ExdytkKNiAzRCUq15+AtTXvw6bzYvhNxLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754395735; c=relaxed/simple;
-	bh=0xRUA5q++5+uXcXaYRCTHesOiDk8ux0wg0iIshITagc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qgPA4HIelAlo3AvAx6pn9FcAxwqf9hlDYzYQaIW64595aiAorBUdHgoo1P6UAlnbo1juioSM88Qzxf0P5oSAf0tgBM7MV4tih/Ha12dErhnQnSeNdnJuVVsxmMs4aVyqQu/fMbaoTwVxLxS3+eMfhEH2i1rs6JfFH87/5ldwpkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q4YP2LTI; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754395713; x=1755000513; i=markus.elfring@web.de;
-	bh=0xRUA5q++5+uXcXaYRCTHesOiDk8ux0wg0iIshITagc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Q4YP2LTIfd8NxVPueXiLlAu9tWMVvJMPAZQ5lyWazwf8VbvKlvfIHZTVBzqt3S+X
-	 DIFVlf8pqkiru0im+Cu88Km1frvdfR3Lds+DtDPHUWfPfqL4AGZ7dB3QIpbtcjXwa
-	 Gbnzuib4EvMOwFQXhSd1ub0A1whxN21a5M22KFn+liYgeNqTDETSN4NiRLG/cHWPz
-	 CYhs/5jamfc10qqqhu9YoJMdavsSbQ/QAkk7jPYc1i3ZMnbMXDyLbWvQGMMXGyPla
-	 eQqi092TH1RriDZ/0+tTcN1ArgAEZsZRKPe0FlHCrg0tejWTFkSePG2sL0/SQFNST
-	 z52rCSyQ8FtbCG4vlw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.245]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKMA1-1v4NQM2XWR-00NuF0; Tue, 05
- Aug 2025 14:08:33 +0200
-Message-ID: <06347a42-7ebe-4fbb-9772-0124e308f967@web.de>
-Date: Tue, 5 Aug 2025 14:08:32 +0200
+	s=arc-20240116; t=1754395760; c=relaxed/simple;
+	bh=4YEkrQgKpa9tyVagW9cBfffSfEXxSwg1X6OxfJYO19g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aiEy/A0Qer9ayHQBPSy7H00DhisJaLVkhice+WboQo+T8pBLxCEqPQc2bMjmooaiFUrS/UXd0phn7InBSpsIkzj3drxQB512hI9pIuprDdKR1vzQFj4pp77cCN9mlDSkDMqN4N93opixjyeD3upX8L/VD+KTGvJlHqpwDk8mt9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fr8zsUlN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754395758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yHxtl1DwwIyTZIgGScRCJCvFqJGnoli7ahv7PabNDIs=;
+	b=Fr8zsUlNBBC38RM1+RR229ZhYVjwnmERn1n6jqcok2g5oiAknmSFOvh5L8xjemleHk0iHL
+	bKze3XAftlfmSnTOs9RHlt6hDwA8PBBmxTCspI5ryHhSjupLCO1Ze0LAdIPjIn/XjAAm+C
+	OJlcHEkMlNq6NZ/mAcvN5HDxMcATNT4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-79-MqqhYmnEMXKzh2lckK70Hw-1; Tue, 05 Aug 2025 08:09:14 -0400
+X-MC-Unique: MqqhYmnEMXKzh2lckK70Hw-1
+X-Mimecast-MFC-AGG-ID: MqqhYmnEMXKzh2lckK70Hw_1754395753
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45526e19f43so14062275e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 05:09:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754395753; x=1755000553;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yHxtl1DwwIyTZIgGScRCJCvFqJGnoli7ahv7PabNDIs=;
+        b=S7NgwssbXtLWyRRCj45xNLmnDsoomN8vfl98JfTkU3hoVt02qrmDsam2pv7iQPwOl+
+         5v/aWgQ7B3zdvhe2oTdVwRJuqvdtYifTWP4pUArscfU4IIw0LKkZ7HcHee7rhPqYt+V0
+         x6bLzrhhEIWL1PE0Vg2azWSJ8EuWuIkbHfBO9CFTlyqoVBj8zcTFdyxGWDHDkWiUKt2z
+         3B5hJaopT8y6LqiBTef9R4QgC27qla2g5shcng/Kc7liSPC1aJgiMb08vzlFcRi0WFZL
+         fA8TRl3thEvvH95Zqk6kt3Qsxv2NcRao7VIivOHVSe2fENbQ2n9z9NRL2eZ1klv/H1L9
+         k6eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzQ68xWJMxL+ZLUXqRdTcgw2OHlrvO90A4gVaQk9mC7ROjlPDJ+urPDhckrpEQTLRsfDKIpqm/TyKmUk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2bOxMWZxjYcbBrSBhSs334VvPuFuG/3XcARV97+wIh526EM0z
+	PeeoimBJXVUleisSOywim2RMpFFZDto2XoddJPxsuw/Yxc5qYuXfW4ro80RjLboD0D/zVdUabkU
+	+DNSNMw4hfC97cAOK2xEPcu89sGwWeL+DM4njTyDLUro2cCc16up5SDmFtrQ3wgGWOQ==
+X-Gm-Gg: ASbGnctPSPu+dxCyk7W9T/Me5AVSMLAX3tiFAseDtSBSkSHvQlSszT6gZUhyiwpbaYR
+	oCqq9io1oyl+/f3wQI5ixNlyAGySl+FLQ1cKyfXEsuk3Q5RvBIUalyStJjXtX0LXz/mdwhN84Yv
+	5b5E1VV7EdkJLjzWuOuyvRVlPnrFcb9PQRPq5IDl/CeoFDi9dn2ulKCkLq6EcxUwrffeK16rkF4
+	pwKrGEzYRPbqr7Rd0gNuVui/Rp/dhKJMSYix7+KaKKm3cTcS91rUUUsOd6IVfSdBy88uFQX0s4r
+	I5Nd9Lh19dBDvRqBoM3T9eMyeJuiDZNZL7mbVWfNNb1vaz/8wE7NQ3qrkvSyERhNKBx9nwzW/Jn
+	+NaBFr7YxlVfS8n7ADm7+1IWReTrqd5B/kfU/BhXSwPjZHbnsjSD2c4V72LaoalGZgp4=
+X-Received: by 2002:a05:600c:1394:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-458b6b551b3mr92294895e9.33.1754395753489;
+        Tue, 05 Aug 2025 05:09:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFY4u/tbqYyR0GlQ3KYjriQcoM4+gDZW9pPzBsR4N1Fxy3JYB8s/h/fvR/GiL/Mh7ntOC+ng==
+X-Received: by 2002:a05:600c:1394:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-458b6b551b3mr92294665e9.33.1754395753053;
+        Tue, 05 Aug 2025 05:09:13 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9eddsm18971490f8f.22.2025.08.05.05.09.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 05:09:12 -0700 (PDT)
+Message-ID: <0bd8a969-e8e0-4eb6-97a2-300fc322f8a2@redhat.com>
+Date: Tue, 5 Aug 2025 14:09:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,80 +89,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Qianfeng Rong <rongqianfeng@vivo.com>, dm-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>
-References: <20250805091448.124183-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] dm: Use vmalloc_array to simplify code
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250805091448.124183-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1 1/2] KVM: s390: Fix incorrect usage of
+ mmu_notifier_register()
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, frankja@linux.ibm.com,
+ seiden@linux.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
+ schlameuss@linux.ibm.com, hca@linux.ibm.com, mhartmay@linux.ibm.com,
+ borntraeger@de.ibm.com
+References: <20250805111446.40937-1-imbrenda@linux.ibm.com>
+ <20250805111446.40937-2-imbrenda@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250805111446.40937-2-imbrenda@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:6qHSEijMbNtMhsNNAFuAn8UxdPekIxbWdZL/Hekte2kZ2PAY3Gv
- pqbTUvSTKkGzrL+qRRP51gqfR5JwPZqo7UiFm9+SEq8L1U2lZTpQJOY3x6U5r5Xwt0aAIPR
- +mSvzTC8IS/5Rj5Nvt5VjZwpH1y33TnMxKQxmvrRD9c1jRM+A8pVuzF4E6Ruozdn/ocdhpG
- XjXooUkUbO5jZSd/PIduQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ucBf4im6rgI=;eL17KsriwFJmx8Rph7ZkcUv9VDr
- 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
- 7e88ZbF+kDCEhNdMRwQ6eVQ=
 
-> Remove array_size() calls and replace vmalloc() with
-> vmalloc_array() to simplify the code.
+On 05.08.25 13:14, Claudio Imbrenda wrote:
+> If mmu_notifier_register() fails, for example because a signal was
+> pending, the mmu_notifier will not be registered. But when the VM gets
+> destroyed, it will get unregistered anyway and that will cause one
+> extra mmdrop(), which will eventually cause the mm of the process to
+> be freed too early, and cause a use-after free.
+> 
+> This bug happens rarely, and only when secure guests are involved.
+> 
+> The solution is to check the return value of mmu_notifier_register()
+> and return it to the caller (ultimately it will be propagated all the
+> way to userspace). In case of -EINTR, userspace will try again.
+> 
+> Fixes: ca2fd0609b5d ("KVM: s390: pv: add mmu_notifier")
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> ---
 
-You may occasionally put more than 52 characters into text lines
-of such a change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n658
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Regards,
-Markus
+-- 
+Cheers,
+
+David / dhildenb
+
 
