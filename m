@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-755795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED34B1ABDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 02:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A442B1ABE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9EC18A12CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4CC6211C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E90318B464;
-	Tue,  5 Aug 2025 00:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E5E1917FB;
+	Tue,  5 Aug 2025 01:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jC1bDgBf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OCj9KBCa"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F520DDA9;
-	Tue,  5 Aug 2025 00:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E4F341AA;
+	Tue,  5 Aug 2025 01:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754355428; cv=none; b=YCEDaEPmy2jZZxckTx2U9bEMdwjv71cPpQwD6XzvIb+q6ztov9s0j1mmhwF+j5IfvbK36iRcKoT0iVT9T3SWpV5znGcF0psbBcTDrmtxPF4KTa8YzLyt7ft1XvD7eswgG/ex5V7d0jMTpbWsMIDpc0E3fRw36jDk4yO6u6WRTtw=
+	t=1754356119; cv=none; b=SAGJLrfncqhISXD08GaJubcr4KWtP5+HjXhWxmmcNUF9rXGqpiLWFKJd7NxGStTJYWqph9kjLMWQyByN82WF7cKGRP0Zc5+nOP/wipkpUl+fGm900vmcMAz6H1VPu9B0yeERG34Wz0pwkF/6N0Q4ezF+mpNRcHi2FlEKneyRUC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754355428; c=relaxed/simple;
-	bh=jR4n5Z37SsjlgH+HYd0zJrzEfEotbwkHeyp0LpaYVK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iCVk0fefQCxDhTpsPViErjGgC8+SSYgxgmkZ0Hi78tjn32FpLhQHhEhd40ghv7XlveC0VGJvBb1F1z3VJhWvcumGw0q3BUytNqAXlwY/Ccotx+leFj2nou73iAS0oRRHAOtR7N/14gqBuKc/VBBiESomVx4A1GVwHTBiP/s1MbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jC1bDgBf; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754355427; x=1785891427;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jR4n5Z37SsjlgH+HYd0zJrzEfEotbwkHeyp0LpaYVK8=;
-  b=jC1bDgBfM5RW5gfDWA1wXuQn52zFTpE9zke2T4uSrvPY4U9ipVTpFTjH
-   G9iQDoJIOoBZDzcdbiTwm75Hm7aGGcyKdcQqjrfKrrCWE7+pryHBkz09o
-   3nAL4sgsJcVfN4SilPN1h8wes/ymAmMIBDboUorbUlbH+50S6MY7Gfgw5
-   MOUgK53PVn63jDeMLn5GX2VBNP0Zk+6FIDqqOOfjk6v7Pf0q+pt0ohk1j
-   y0s0EeHLh9qXoCHHOD6KjshBUsTqkBluFNZSKGLV/QHQo7QSpfi5fuLtY
-   5IlZqoRLXdTqnx7IwYge+Kn39+6+qLTiPiO1tJsKgNqF14rKa1ZQabHEq
-   A==;
-X-CSE-ConnectionGUID: OS9EpY4zQDWHH7+wHayyNQ==
-X-CSE-MsgGUID: K5WBpgx5TXeru5KwYg4JCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="68004570"
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="68004570"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 17:57:07 -0700
-X-CSE-ConnectionGUID: vMLQD+YDSFSOQ8N/406zjw==
-X-CSE-MsgGUID: jaRNXvBoSaqs/NOHxJdOJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,265,1747724400"; 
-   d="scan'208";a="169606943"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 17:57:04 -0700
-Message-ID: <c1076dbd-de63-4a9e-a097-de0f64c74a95@linux.intel.com>
-Date: Tue, 5 Aug 2025 08:57:01 +0800
+	s=arc-20240116; t=1754356119; c=relaxed/simple;
+	bh=HRK77S8jj98fxjdYajHbsWPldKElX/RjHec2I/UjYD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RTD1KqpnREIXFI+7tiainN1HWCqeEbccgwIUZC6hUYtct2acX2VRJzU4WlFq3T+wqanwpiSlerS9cmIjM/U0pYABg2IrrjXQQi98gAOilBv4IGL1XQ/RfK4oQBjC7Jl7T7x0KGKxcAnsdsipNvDyrB/kUVVcyEsBRF5acyBUPnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OCj9KBCa; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8AEC31775;
+	Tue,  5 Aug 2025 03:07:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754356068;
+	bh=HRK77S8jj98fxjdYajHbsWPldKElX/RjHec2I/UjYD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OCj9KBCayppPj1P1bSZyw8bSVTMcSmTyEs7pPkLC/y9oSKN/RiCxM8DHX8xHF9DT1
+	 ntGfR6Rm6AFub/qKEuhdfR5QYghYPJ8KWEhDSF0ISH5hAgdzYKN8xJvh/layVF1/l/
+	 Gr39JmEt0BsUqq/TJQI/06JcyIwuTYunZ8StyC3I=
+Date: Tue, 5 Aug 2025 04:08:22 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Alice Yuan <alice.yuan@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Robert Chiras <robert.chiras@nxp.com>,
+	Zhipeng Wang <zhipeng.wang_1@nxp.com>
+Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
+Message-ID: <20250805010822.GC24627@pendragon.ideasonboard.com>
+References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] perf tools kvm: Use "cycles" to sample guest for "kvm
- top" on Intel
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kevin Tian <kevin.tian@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
- <20250805004633.135904-6-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250805004633.135904-6-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
 
-On 8/5/2025 8:46 AM, Dapeng Mi wrote:
-> As same reason with previous patch, use "cyles" instead of "cycles:P"
-> event by default to sample guest for "perf kvm top" command on Intel
-> platforms.
->
-> Reported-by: Kevin Tian <kevin.tian@intel.com>
-> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Hi Frank,
+
+Thank you for the patches.
+
+I've quite busy these days, and I don't believe I will have time to
+review this series before coming back from OSS Europe at the beginning
+of September. Let's see if anyone on CC could volunteer.
+
+On Tue, Jul 29, 2025 at 12:06:21PM -0400, Frank Li wrote:
+> Add parallel camera support for i.MX8 chips.
+> 
+> The below patch to add new format support to test ov5640 sensor
+>    media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+> 
+> The bindings and driver for parallel CSI
+>    dt-bindings: media: add i.MX parallel csi support
+>    media: nxp: add V4L2 subdev driver for parallel CSI
+> 
+> DTS part need depend on previous MIPI CSI patches.
+>   https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
+> 
+>   arm64: dts: imx8: add parellel csi nodes
+>   arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  tools/perf/builtin-kvm.c | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-> index 7e48d2437710..d72b40f3df12 100644
-> --- a/tools/perf/builtin-kvm.c
-> +++ b/tools/perf/builtin-kvm.c
-> @@ -2075,6 +2075,34 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
->  	return ret;
->  }
->  
-> +static int __cmd_top(int argc, const char **argv)
-> +{
-> +	int i = 0, ret;
-> +	const char **rec_argv;
-> +
-> +	/*
-> +	 * kvm_add_default_arch_event() may add 2 extra options, so
-> +	 * allocate 2 more pointers in adavance.
-> +	 */
-> +	rec_argv = calloc(argc + 2 + 1, sizeof(char *));
-> +	if (!rec_argv)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < argc; i++)
-> +		rec_argv[i] = argv[i];
-> +
-> +	BUG_ON(i != argc);
-> +
-> +	ret = kvm_add_default_arch_event(&i, rec_argv);
-> +	if (ret)
-> +		return -EINVAL;
-> +
-> +	ret = cmd_top(i, rec_argv);
-> +	free(rec_argv);
-> +
-> +	return ret;
-> +}
-> +
->  int cmd_kvm(int argc, const char **argv)
->  {
->  	const char *file_name = NULL;
-> @@ -2135,7 +2163,7 @@ int cmd_kvm(int argc, const char **argv)
->  	else if (strlen(argv[0]) > 2 && strstarts("diff", argv[0]))
->  		return cmd_diff(argc, argv);
->  	else if (!strcmp(argv[0], "top"))
-> -		return cmd_top(argc, argv);
-> +		return __cmd_top(argc, argv);
->  	else if (strlen(argv[0]) > 2 && strstarts("buildid-list", argv[0]))
->  		return __cmd_buildid_list(file_name, argc, argv);
->  #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+> Changes in v4:
+> - remove imx93 driver support since have not camera sensor module to do test now.
+>   Add it later
+> - Add new patch
+>   media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+> - See each patche's change log for detail.
+> - Link to v3: https://lore.kernel.org/r/20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com
+> 
+> Changes in v3:
+> - replace CSI with CPI.
+> - detail change see each patch's change logs
+> - Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
+> 
+> Changes in v2:
+> - remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+>   because pcif controller convert 2x8 to 1x16 to match isi's input
+> - rename comaptible string to fsl,imx8qxp-pcif
+> - See each patches's change log for detail
+> - Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
+> 
+> ---
+> Alice Yuan (2):
+>       dt-bindings: media: add i.MX parallel CPI support
+>       media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
+> 
+> Frank Li (3):
+>       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+>       arm64: dts: imx8: add camera parallel interface (CPI) node
+>       arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
+> 
+>  .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 ++++
+>  MAINTAINERS                                        |   2 +
+>  arch/arm64/boot/dts/freescale/Makefile             |   3 +
+>  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
+>  .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  83 +++
+>  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
+>  drivers/media/platform/nxp/Kconfig                 |  11 +
+>  drivers/media/platform/nxp/Makefile                |   1 +
+>  drivers/media/platform/nxp/imx-parallel-cpi.c      | 728 +++++++++++++++++++++
+>  include/media/v4l2-common.h                        |  30 +
+>  10 files changed, 1024 insertions(+)
+> ---
+> base-commit: 37a294c6211bea9deb14bedd2dcce498935cbd4e
+> change-id: 20250626-imx8qxp_pcam-d851238343c3
 
-This patch would impact powerpc platform as well. Base on the comments
-before kvm_add_default_arch_event() in
-tools/perf/arch/powerpc/util/kvm-stat.c, I suppose powerpc also needs this
-change, otherwise "perf kvm top" command can't sample guest records. But I
-have no any powerpc on my hand, so it's not tested on powerpc platform. Any
-test on powerpc is appreciated. Thanks.
+-- 
+Regards,
 
-
+Laurent Pinchart
 
