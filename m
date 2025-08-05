@@ -1,239 +1,188 @@
-Return-Path: <linux-kernel+bounces-756604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5282DB1B69A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C9BB1B69B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E79F178154
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:33:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849761786BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551952749D3;
-	Tue,  5 Aug 2025 14:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114EA278E47;
+	Tue,  5 Aug 2025 14:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kwAWZaWk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YoohEbcg"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49AB275B07
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754404380; cv=none; b=Vpm0ZPc1aKIts18BYLSDn9Gtmj3oLkLoJxnUJ5XcG8wj3nSUx3yLVzfBELQMVv6VS91+nP756AuRkxAHsVXZf/UyQU8htdaGpJo38z7D5Gnh11fesh9v3KFxCxPCTydYp3sHEJDpIklRGJiDWYSpY9klZigxk7GqxBtNU+qzrsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754404380; c=relaxed/simple;
-	bh=ubnpttMYthD7m7LTVMglNaj0LN4XBLh6t5L4snkudTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BDr80DLCrAbA562JKVVXAHO3kVDqe4smUWwpNaOljmwMkNLDvLIv7HFLZ86AU8839w6BAtX3h5iJTpPC2e1ZS6YqyXD64B9Whcqcgnq8TEMcNvh83TPs/mWdGNPTXOhXcqIDsUvNZNrRMUibz8CdzImijb9GBiV4T4URuvSawGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kwAWZaWk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575Agvfn010254
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 14:32:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=
-	qcppdkim1; bh=dcfbSdm9Ee7XiCvbdE06SqCLz4R1Y5fBAtNbrpESQsg=; b=kw
-	AWZaWkierTuS1AXQ2oj4nv289QBcA0GQMngyrYHc81/b77giiMnAX+R/KpPBHdqK
-	JWsAu89I3haARHRFsV3uE1oN2sihg2B14r6uNeVwNczAQ86FCWUjKRpR+iWa33Qq
-	IUNoJfrzTSFUHPZEQyF1r4c9HwMAn6JopfniGNwqHu2l5d7SqGQ71tHqwNTy/IJ6
-	vvmD9mkKT1fbfFv2QYgTybkdOysUfSIWlodEyoYOitz0MXmrqqTYId7EfXqcDLPT
-	Fl6+Lva69KtnX9znbjEAyEK+GkxEFjUSvN0T00mViWL1bkSW41U7DMsj0jULJlGQ
-	NvraCNVkSvRKh0X2Vw2Q==
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48avvubrnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 14:32:57 +0000 (GMT)
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-6195f7f9c0bso794139eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:32:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754404377; x=1755009177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dcfbSdm9Ee7XiCvbdE06SqCLz4R1Y5fBAtNbrpESQsg=;
-        b=rbpe5D89odS7gQnnYQNc2BM7FezwBV7SU0YcQnMWw00OwJsTk6x9UmGklxETiQnBp+
-         mVMh8Qsr9EFSyPN5WqplO18nam7hdIopqsvrgEO+0PAK64Y98RfldtEkKv9y0mntmH+9
-         QlUU6yWp+AGVhLq9r6lD+2Pmm1ZqfsOv0uC30S8Eo0yDvNEgJWEWvePfdYnBzAlYhaSK
-         GcpDdkhIix4o70H6QTc6cEQaoM6FP+4mhC231QmXqRe6j5n/NLCTM8gmzoupIgmvhV/3
-         Sp+rcmWT/ZItNoEUWszsdtDabefsYMC7bC8cpNMCgwGICjuWg4T7hO/a5nq97GecD9tH
-         Ng+g==
-X-Forwarded-Encrypted: i=1; AJvYcCURQagM+5R+Cj+L8qgOUrfdZjxW06xCicsY1eE/Dgn9YIafY1ocnYRdYJqMLQAj6pve+QqY1X5hucpPDAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjC5c63sblvyqaWnaZvMFApnlkh1E4PGlX7U6XAA+CwjY86hhd
-	DJhJJ1MJclDL8jsTo5+DFfGIBlC5nijylkrmO4tzJdIefL+uhtX84QjmXrKQrYJOekvztOoubn6
-	lkSKorOjHGfY45C0hEWH4j6TC/tbrpMy7iyjFZkO33si+Mh1kou2l87mcJANfz40UsvC7In/SyO
-	FpKBRt7g45IUvSkVzy5qjeQ1BZvlsgQdeENMSqPEzGCw==
-X-Gm-Gg: ASbGncvoVep+8AMkxqDKN/K/Ci7UZIajNpOL5qAU+9LCeZMYGpJ8YZ42TPN32JuoE2y
-	RsRMfma7uOJQyhprbtm48TV3KDNz9WMAZ2YglUUOPzeDMINX88DW8o9VttWKXmr3AqFkgdu1Ym9
-	xEmHIyZ2AbdxlrDwa2BeWxJpwTNYT26bgqlMLbdTiotMRFQdIf68UH
-X-Received: by 2002:a05:6820:1785:b0:615:9c11:a072 with SMTP id 006d021491bc7-6198f2b7469mr6807601eaf.8.1754404376653;
-        Tue, 05 Aug 2025 07:32:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgTHzGv7bbHmoZCYxU0MwfB7R6TpKmYB3jhbd70O5XW2GBJ9V6PQaJ1C7650u9P3ThXFLr3niaQ6AHhJ7ErjM=
-X-Received: by 2002:a05:6820:1785:b0:615:9c11:a072 with SMTP id
- 006d021491bc7-6198f2b7469mr6807569eaf.8.1754404376188; Tue, 05 Aug 2025
- 07:32:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83AF275B07
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754404392; cv=fail; b=fUX75naSd3MO3swPgaJZ0PPlozJiNtz7djaxSnyOGDJ3xOSwJpsA88k0Gj2lXxbvZU1zZSycovNH+PbA6Z3p1zkj3NjiqFOHBAGZn9fRbsusZNyCO6ME7MB3h6XW7kRGnYWNA1PhPPAJDcCIdVVYAOo+d8jgo6SZjh5IZ8wdg4c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754404392; c=relaxed/simple;
+	bh=NE13pcJw3JgOuN6SILB9CLahybINXLP57RkdhaE7HIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=h/GTa+PkQA98QMGfx0TYUVMqnr2hiXaR+/CQl3DTzJyuE1P4q5Fymbqzo2e2geue0yXRuhq0p4msnCPGWOEEePK7ss573BfbSNis/62SUKtiFWYzjVQByQen3EV+J/UsDJ6l8paS97NNwIbvr9F52ZZSAA0V+DY8ULaE9Do6wkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YoohEbcg; arc=fail smtp.client-ip=40.107.102.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oIASGX6iyNNtTbHvFGzLZRz58HdKhSqCtbypKIF4/auSx2njT/JXbCJRILkmXSsHVcnkVZbdeig25kzC93z+Hh6FaYoVvyeSTugnY7eMMG6lY/GUQL6jtFK/c7Xa5R2CHBXxdQC/qayF/PWKByJsdLBfo19CkpEL3TO76EysFHQrWUvT9Uypo3W9qLtxfTVGf6hcQHXjreIL0gAr1R74vv7W9SJvNPUv56XX/hZuJqE4C7LzCgBXeZvD2iPVC1Y8DuRAh9hcnG6gs9Bjc+pWq0LLhhEUFPwkt9FqB5rnxcCrekWcg3akO46v3kRQtGh1MtIkFFOS5JFCaZjTzLJvvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8PY5nwCB8yUCOFGAlE8Nd4iraVGLQGDVua8xbspSV0s=;
+ b=soTDY2N3ooldeysbmNaZFzyYd3bET3Q1AZt9k84LYDNTbwOEzTxLP5GLn5OgFeqhKvkW+G1KHYxLdP166LYcySc3WTAfZ1iqsAyXkT46AF7ZEXcMCVupQl07o5kUq23BhjyUtrFxRml8iaxJSHDTylpolEp34QO0Po9IHY5KS8ZNjrIFwJ4+zrt+Smz9qJIM+Yb+oHTrMIB1eTblXOf2oriOWHNJtobyEL05Qfoy3wQGFb4SksAwfeAoCpp4oD+JQLfN1UXPLdKSqkSe8xL5Dl4d8vqsQUW7wa9/eCkvaR+E9BSOejjDV09aV9NcPiqS0t4DjZUAW56wAT8a0OTafA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8PY5nwCB8yUCOFGAlE8Nd4iraVGLQGDVua8xbspSV0s=;
+ b=YoohEbcgxMt4F8rrRBsMFcGyLSTGLeCx+QbWCXl8J0Cmbd/zLBBYmuCBST+Aca0UJnr1Jg4pHGZkPet7cA/8wBUd7pFc/ixZFLzwginxDquj5v+AU+vL+b83SNxuIcGHg6T51lty1LqAeT9LvOWSq+PLWCCzJAooad9rdNavJilTlOeSkf7RHAcRDV81OvHNnWj6HumtHviiigpdzEy8oxV9/VWa0gUr0gs89HKm74N9ptL1oj9c40HTrEagnwLrqCinxbVIOqUmANpW9sFOldfi7CrllJyqB4IvWlmVDmLtOa4gaUGIGonqie/yxXKwDJkqUgd5VFgNfzI7FHaIJA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA1PR12MB7175.namprd12.prod.outlook.com (2603:10b6:806:2b2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
+ 2025 14:33:07 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
+ 14:33:07 +0000
+Date: Tue, 5 Aug 2025 16:33:02 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
+	mingo@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH v3 0/3] sched_ext: Harden scx_bpf_cpu_rq()
+Message-ID: <aJIWHk_4IuOxyh5d@gpd4>
+References: <20250805111036.130121-1-christian.loehle@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805111036.130121-1-christian.loehle@arm.com>
+X-ClientProxiedBy: ZR0P278CA0147.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:41::21) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804214317.658704-1-robin.clark@oss.qualcomm.com>
- <20250804214317.658704-2-robin.clark@oss.qualcomm.com> <DBUE2QU2CH9N.3C32KHT9LHMMB@kernel.org>
-In-Reply-To: <DBUE2QU2CH9N.3C32KHT9LHMMB@kernel.org>
-Reply-To: rob.clark@oss.qualcomm.com
-From: Rob Clark <rob.clark@oss.qualcomm.com>
-Date: Tue, 5 Aug 2025 07:32:45 -0700
-X-Gm-Features: Ac12FXypilQQiU00lSypaqGZbf1ZEMtpPC_1-gRbyH_0q2bmoCLhUbqnnH9WbwE
-Message-ID: <CACSVV0270Zk4ApR_pGZ+sKgoi14kvfOo_NvzVq3-QALE0mpFsQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/2] drm/gpuvm: Send in-place re-maps to the driver
- as remap
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Lyude Paul <lyude@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" <nouveau@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDEwNSBTYWx0ZWRfX/Y2qAAao7X5B
- eQLG31DMA4qDaRzgdCOSxxk3Y9b9wYIOPFsjkU0pl2sGA7OR9BMFH0B/jmeGjB3KxOD19oRKzLg
- ZI9105AtaRUr02rli9tfWFOi8gTOM4GFnGm8JUpWj/BaiuTV79EYU7NYHxrAq9y+R/eU6LbC2u6
- uMkf0+gfvGTVucH45YuGrED+s9GX/Q8YLDPOJpSXrZfD7D1cBygjxlg3dypnUE/+GIHkVTFYQTD
- S8zbiPBpuSSO9xRX3QydkDDNCGb+o64PWpxDuw5Pj207vsVNhgSZ0Q5RHGkCUbdTEFnUQMnZ1wW
- ccTkKgj86YzNHOcXCCDxdNh8Z21D/k/TIX03+PgckrhPJvnS/7wXqNgvtFfu6NaQ3kyX4b1378E
- CtO2HTijzpHJekWxp9o3t/kdlRlOF2lZuss5RqU2+PWfIyIZi6R6Zav9aSGnPGT8g/NMIRn2
-X-Proofpoint-GUID: QUHNX82tp7L-2lY8wxaMvC2Cz3QRaiv8
-X-Authority-Analysis: v=2.4 cv=OYKYDgTY c=1 sm=1 tr=0 ts=68921619 cx=c_pps
- a=wURt19dY5n+H4uQbQt9s7g==:117 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=3qJefBXy7TsPhfuKpUwA:9 a=QEXdDO2ut3YA:10
- a=-UhsvdU3ccFDOXFxFb4l:22
-X-Proofpoint-ORIG-GUID: QUHNX82tp7L-2lY8wxaMvC2Cz3QRaiv8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 phishscore=0 spamscore=0
- priorityscore=1501 mlxlogscore=973 malwarescore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050105
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB7175:EE_
+X-MS-Office365-Filtering-Correlation-Id: 509027ee-0499-4c0b-b68a-08ddd42cfea7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7OB3tgM/uGipOpnhK5fm1QJQSHlDyr4Xxyl8MnLtSwoJdrXF+j88Y+hOpIZb?=
+ =?us-ascii?Q?wQ2wVd3PVOYLI7lFlB3l/dfuLcgsdulIpfz6Oe/2blKQy0OBx1iE0PQ5qBP1?=
+ =?us-ascii?Q?h3tqOUHxnG2JPtmfU9ZP7wLyGf3UCtUHhffIeEy4CaiVGjvvwWvmvacQJfBX?=
+ =?us-ascii?Q?d9wXFaAL9R5tIdf5MbxTBuYi3ZJmb1OQPf5w9xCdooL8DKxy3LTL7WQ1XZuh?=
+ =?us-ascii?Q?I0QuZsg1OMR10S1tYp/yHWXozHMA4iV6Hq7VvcHD7z22mLNwp5sglHY53hA2?=
+ =?us-ascii?Q?guvg2VK6eBlxezcNwqm1fkD+2P0WEC7+UqpJhwZUHTiljltSxFgIwVGJQmf8?=
+ =?us-ascii?Q?M6psptKxge1HCIZdfwo8YlC8WZMwLIH1KgNm9QBoSFlVbPCWu5Mo97CbCdHD?=
+ =?us-ascii?Q?USrN1V4K628E+jkl2YveX0p67KMYskT40Vq7jaImvi6Tvc0jUoObNpihASgQ?=
+ =?us-ascii?Q?PNk0oS/hgfz1CIRjS/McZpDJTZCG94HbmApGX98sbFWM6EOjSG1XzLTDSa8s?=
+ =?us-ascii?Q?Bg7z62xbhZyiGBkZWevoD0hEhj2iz1CFdPquMRI+0hB/Bi9ttk7Pb+PczC74?=
+ =?us-ascii?Q?TJ8zZMeV5d3SdnmjY2SoHTp2rpJZWxi3NH4LoHe29EmiRNFtO+eXZg0WUrex?=
+ =?us-ascii?Q?8bGkjU4a61+KI3SQr48w3+Id7S+mEVwP6XSvDCdK/OX6l49CR6nXKq6NrbT5?=
+ =?us-ascii?Q?AjR8K/mdWGQYa6fK+ehjBXUD38pgntGmWLcIPoczEiAWkvZUQnKcHKJyUiOY?=
+ =?us-ascii?Q?MN0erHEufTUG/888qSgOhqJRFtTn1x2xsPBwDga1qoMadfWRZ6P4cOQtdYYV?=
+ =?us-ascii?Q?HFcANzA3Mq7SEAHCxrXA4cvN63fGrric2LntvWxGx4St3mh+F/nVHfBNhWz0?=
+ =?us-ascii?Q?p77kD0WWFBMHnrE3uV8YVvgkvo/nmLEf0z2SqB96jyTN8VpwpUZXMtmGNYwq?=
+ =?us-ascii?Q?IuWQ1RAM7GlAF9nYK+ISoRqejJ5glpuMHdrDrg0MGnpb6DikG2jJTX2us4ov?=
+ =?us-ascii?Q?21dBmLUw9ZptQFFSMvK9g7PHt0fkYhzF88jlPxO99hYltDEoV0cooIZC/6QC?=
+ =?us-ascii?Q?wxO0y0vsZcEa/kr+JB3mByYbHbhUk2IHZaNpI6izYIceFx/3Q+0JuWC+K2h0?=
+ =?us-ascii?Q?CBIJfZpqivnvjItWhdIIKPGeNRUuKWCkZ8v0C83n54MViYiwUM1UnbDTj7Cx?=
+ =?us-ascii?Q?KgioVEPeVSdptyOsNXBSQ/5uOzWxKpAW4yCqZLMAq+lu+3+Pn8bn1BJXzOO+?=
+ =?us-ascii?Q?8/eCZK8coBMJtsy1s8YET69qkMrS9WymK9EwFN2OOd3wG/Tsm6jlfbiEOEIS?=
+ =?us-ascii?Q?H0EHkKZp0sMKcix+vWgLVeCvT0EJcha24NoT/VQNu0LSZlhfeBNtWBKE//d5?=
+ =?us-ascii?Q?4hzRUCMSf/NTeLni/1qhzQEXOQpighFappX/EYYgKi+pdvomzvA5qebfMdx4?=
+ =?us-ascii?Q?A06q47W7TM4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nTwQ2IorVxftbj02E72QcllPGh6BPOHxpNQmBrtMeBikFxRPcAhZ1tjvVx31?=
+ =?us-ascii?Q?/vMLtAFSTGFNiO5tO0i46JwQuXxNe9vg0k4oGAAKe3TjPKCV7MZJFbp9T+rH?=
+ =?us-ascii?Q?T61a/ooFywGunFKvI8QfIxZSCIo0+HrTy+a8cr89dnB3Sf9JIITCe4RlXCpt?=
+ =?us-ascii?Q?bhuNz0k/VPS1xkdjwAKKqjz+2uJSXAy2UcHdVpZcd78cQDxEa7xkr0TVmPda?=
+ =?us-ascii?Q?uMAXyZ0lsnHVMYBUcZw+3BDNAuZEDP0XZyFoA6RFTMgTk56ioGkb7ooxydBN?=
+ =?us-ascii?Q?dWGmpSMizPFXpu7G1G3vPm/K4390ohOlPzOtpvaD5t+069InZ66oV8iOEHge?=
+ =?us-ascii?Q?mL9d4BGHWLohB6zVOIawOJvJb6r5vUnWq+tvx+DQul69pZKYszl7ffr3Sq1i?=
+ =?us-ascii?Q?qXcX9VAOgqu4XXMwUUCupxGhuMneklClcFTmdMcvXr9uQdSOjeydM343m5tq?=
+ =?us-ascii?Q?A9uUQmUHe40MJayrbRVKReUGQH/3+XYyzZrlERSnAF/zYWBQgD0Ki41BBmhq?=
+ =?us-ascii?Q?fvkh67MLOzWRmPwqhq2Yi/UR4QmR2zmPvzw/765sMI/vP8ZdU34Yq9VLjfEY?=
+ =?us-ascii?Q?GfKwD5JxxjhqyOGKF6GWKdt7BdRsNKre07gvmfSkhpDCFT2qEORi67IUox8h?=
+ =?us-ascii?Q?5PcxYuJO3kv9gaxbL0KoxrvkxfhB2evjpErY5dVlAx3ddwOKqc/gByhbCi/s?=
+ =?us-ascii?Q?t5iuK0ZxqR2+fdk5SObaLlaECyDklqlhuTkiQi+ab4rbSEGx9JDP0p2n4Yfi?=
+ =?us-ascii?Q?/pS7mhZvDUF6ileXhbuAg5qHaz+ZVq1acguEA7t+GBARp6tdfr18092LqmJC?=
+ =?us-ascii?Q?0YKlAW+ShE9haaGVIAvN9ZQWxOsoWQ8v2yAeiY6JNkisQw5lPxSrKL9Ob1qy?=
+ =?us-ascii?Q?/X1rLEijx0djf0CzKtO7EIL7b1woHapPJ0G1ZyUvdwhfLrolnwX15KDgni5i?=
+ =?us-ascii?Q?meJK7qJfG/JNFRjtlAb74tIlYeniMpo2Egu4MUryAOVMKVvM0gZ1Cd/pRALS?=
+ =?us-ascii?Q?BURwMPkwkdj0/klLe5EHdv4+g4tetW4p2f1LPydpcTHMfGe55kMojyHdHPMp?=
+ =?us-ascii?Q?OSxGwXd8fRGbnybLuRL2xuZTz9ZBalWN/1AuUdhg9iJVt6a8kw56decYwz/A?=
+ =?us-ascii?Q?nKZVs3kZoGY66kOSKgDbbcYPXQfRElzX2pYYUZMjMnrc31+Bz1E+KNYR2gBD?=
+ =?us-ascii?Q?SGRdYsjmP5BrgXBc+MB2CUOyxmwByoJkSTg53/sLYeLaZYN223/68Sv93/6g?=
+ =?us-ascii?Q?mRvl/DdcPKB/MJT5b1ng9UI97vO8K+gEK9EAkZRy+V3/+ua/cUdLX5+0dktA?=
+ =?us-ascii?Q?I+qz6KHsZrNvw4aczne3UJStewONN90ps7G7YTca+zWs+wJPDUVH64bBNxG3?=
+ =?us-ascii?Q?Fcrko+Chdk3uuXy+g4x3lmMA5RjVUvFMmhECTybFhEQnnrAay735g0wNxoFg?=
+ =?us-ascii?Q?hrK78QahdC/jo96igAKR9w7wAIe6nLZ4VfzOHj1w83HLeiGjVLOekJ+3MGwr?=
+ =?us-ascii?Q?tMdHwKbuBJctyQyo/awHJxAdbSyMOczj0qpgMn7gos/QK3tVLSoOfFlYUJkm?=
+ =?us-ascii?Q?mLl8YAtUIY/qDlA/57U5PB0kBjkb26y1i+IPk7fv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 509027ee-0499-4c0b-b68a-08ddd42cfea7
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 14:33:07.4210
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CDTEgCVyO8UberJq1y96AEnapINuemeK3LRH8z8GlKPqlHn6Jjwp9PtLcnP+7kP0+I+XSDLvK1GfZckCzR5BRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7175
 
-On Tue, Aug 5, 2025 at 2:33=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> (Cc: Thomas, Boris, Matt, Alice)
->
-> On Mon Aug 4, 2025 at 11:43 PM CEST, Rob Clark wrote:
-> > The 'keep' hint on the unmap is only half useful, without being able to
-> > link it to a map cb.  Instead combine the two ops into a remap op to
-> > give the driver a chance to figure things out.
-> >
-> > Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c            | 21 +++++++++++++++++++++
-> >  drivers/gpu/drm/nouveau/nouveau_uvmm.c |  3 ++-
-> >  2 files changed, 23 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > index bbc7fecb6f4a..e21782a97fbe 100644
-> > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > @@ -2125,6 +2125,27 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
-> >                                offset =3D=3D req_offset;
-> >
-> >                       if (end =3D=3D req_end) {
-> > +                             if (merge) {
-> > +                                     /*
-> > +                                      * This is an exact remap of the =
-existing
-> > +                                      * VA (potentially flags change)?=
-  Pass
-> > +                                      * this to the driver as a remap =
-so it can
-> > +                                      * do an in-place update:
-> > +                                      */
-> > +                                     struct drm_gpuva_op_map n =3D {
-> > +                                             .va.addr =3D va->va.addr,
-> > +                                             .va.range =3D va->va.rang=
-e,
-> > +                                             .gem.obj =3D va->gem.obj,
-> > +                                             .gem.offset =3D va->gem.o=
-ffset,
-> > +                                     };
-> > +                                     struct drm_gpuva_op_unmap u =3D {
-> > +                                             .va =3D va,
-> > +                                             .keep =3D true,
-> > +                                     };
-> > +
-> > +                                     return op_remap_cb(ops, priv, NUL=
-L, &n, &u);
-> > +                             }
->
-> I don't see why this is necessary, a struct drm_gpuva_op_unmap carries th=
-e
-> struct drm_gpuva to unmap. You can easily compare this to the original re=
-quest
-> you gave to GPUVM, i.e. req_addr, req_range, req_obj, req_offset, etc.
->
-> Which is what you have to do for any other unmap operation that has keep =
-=3D=3D true
-> anyways, e.g. if D is the exact same as A, B and C.
->
->         Cur
->         ---
->         1                       N
->         |---A---|---B---|---C---|
->
->         Req
->         ---
->         1                       N
->         |-----------D-----------|
+On Tue, Aug 05, 2025 at 12:10:33PM +0100, Christian Loehle wrote:
+> scx_bpf_cpu_rq() currently allows accessing struct rq fields without
+> holding the associated rq.
+> It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
+> scx_tickless. Fortunately it is only ever used to fetch rq->curr.
+> So provide an alternative scx_bpf_task_acquire_remote_curr() that
+> doesn't expose struct rq and harden scx_bpf_cpu_rq() by ensuring we
+> hold the rq lock.
+> 
+> This also simplifies scx code from:
+> 
+> rq = scx_bpf_cpu_rq(cpu);
+> if (!rq)
+> 	return;
+> p = rq->curr
+> if (!p)
+> 	return;
+> /* ... Do something with p */
+> 
+> into:
+> 
+> p = scx_bpf_tas_acquire_remote_curr(cpu);
+> if (!p)
+> 	return;
+> /* ... Do something with p */
+> bpf_task_release(p);
 
-Ugg, this means carrying around more state between the unmap and map
-callbacks, vs. just handing all the data to the driver in a single
-callback.  For the keep=3D=3Dtrue case, nouveau just seems to skip the
-unmap.. I guess in your case the map operation is tolerant of
-overwriting existing mappings so this works out, which isn't the case
-with io_pgtable.
+Looks good to me.
 
-I guess I could handle the specific case of an exact in-place remap in
-the driver to handle this specific case.  But the example you give
-with multiple mappings would be harder to cope with.
+Reviewed-by: Andrea Righi <arighi@nvidia.com>
 
-I still feel there is some room for improvement in gpuvm to make this
-easier for drivers.  Maybe what I proposed isn't the best general
-solution, but somehow giving the drivers info about both the unmaps
-and maps in the same callback would make things easier (and the remap
-callback is _almost_ that).
-
-BR,
--R
-
->
-> In this case you get three unmap ops with keep =3D=3D true, which you can=
- compare to
-> your request to figure out that you can keep the corresponding PTEs.
->
-> Besides that it changes the semantics that the documentation mentions and=
- that
-> drivers are allowed to rely on, i.e. a struct drm_gpuva_op_remap represen=
-ts
-> an actual change and any call to __drm_gpuvm_sm_map() results in an arbit=
-rary
-> number of unmap ops, a maximum of two remap ops and exactly one map opera=
-tion.
->
-> >                               ret =3D op_unmap_cb(ops, priv, va, merge)=
-;
-> >                               if (ret)
-> >                                       return ret;
+Thanks,
+-Andrea
 
