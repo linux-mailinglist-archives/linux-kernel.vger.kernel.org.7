@@ -1,191 +1,170 @@
-Return-Path: <linux-kernel+bounces-756853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A10EAB1BA64
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7EAB1BA66
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6DA3B94C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B62624836
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6587299944;
-	Tue,  5 Aug 2025 18:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554E3299AAB;
+	Tue,  5 Aug 2025 18:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvQ7vGRu"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hMlNCJEm"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF2225394C;
-	Tue,  5 Aug 2025 18:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2265A29993B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 18:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754419296; cv=none; b=Wc9cwTbqqCOv5OMAM52EwyPeCpaYwL8uzyNP2KTp/4WAbjgnE321X9SVEsSS8T2jHFrSNot5zUIctDa3das4FN5Ufw0aH1hJdxUvfEkCxQYL/4BiI7Hrm9K0ewT2/HMywiNctTvaXyHY3igtMDSXo9acH485DqSkmPoM/PccZZY=
+	t=1754419343; cv=none; b=DF8hDDtFIQZCw7DNG8JfSL6GnrPFBzt5VmG12/Lc4Gz+AZ+0cYWWUIa7519AdnPcHGtC2d4HbdlzLzy2hu/zYYRm4QGx4SDFj/dxDpAcDU2rSO9yXkI6vrMKbHYsFdnelJqSAAMNeTGLAn5NfSeGqDTxHmL8bzgXmGpq74BYy30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754419296; c=relaxed/simple;
-	bh=G4av0tf8j3H+vgDZMRG69qo10dZZE2uClT0Lfe5Bl/o=;
+	s=arc-20240116; t=1754419343; c=relaxed/simple;
+	bh=P46mtJ0gCpHpBEjbtuFgOf8BIfh7RrO1hxnNGIV0+78=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+LiV3EJM71rUpQpg5Dw6sO912tirerVr1dANEHtgavs15lTnjqsWNVW1xfPLyDVuxDOginJqD3a8mmLdVcF7FvQkwpNUA8aNj2Dh+Jo8oPyTQNImAZnIGCuqNza8uvhtJXr0ayJ+qPu5UrFzviULLErCoK/f6nMWE0ymP1DGc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvQ7vGRu; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74264d1832eso5553822b3a.0;
-        Tue, 05 Aug 2025 11:41:34 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gH55adoUziTNIaIppZd9qgoQABDIKoESAVpOD4uElNTi+/0mF1cLYwr5CC1Y78Pfj1yJlwPpRGFJ1YhhWPYjUTHmCYmEDcEbL20C5EqIyc9s05+r7Vvkh/Y0dpeepw1n33FlAoH/1z2+hr1O9EHXr1RFLTzhxlFtl8UxUYC0cy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hMlNCJEm; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e6696eb47bso631114985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 11:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754419294; x=1755024094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRQ1XVejo/qWVadxnYzHwmtR+oOtc0Jwo0/IudE9CjY=;
-        b=jvQ7vGRu1jykrz8qdGVf+3dSPwwExs4hB8mWAxuLyX3eP89rSsNpI/N8I5DVKJ/qCR
-         DIGIRfKW7WhA7s49/sxLgEJOsCPy4g46Ir8yIQZlA0MEfS7K6NglSXf0eRgJ3Z/Yk7Tv
-         SWDjdNWOZVaaOTD0S5U5ArjC7+obaAlD05rkTmGDBRzpdpkvKKSCy7GOo27l/Kce62Ac
-         U5i8A8LpJiMm5uPFdtNKKsHsqPCEszoh0YhP4pOS3k9UZDHe0t96YVd7kuVTlpJROUvR
-         Ob75Im6Y3ZFl0lsJlso0SZRF97X/60+pdHA2p+eEiJLBO8QmPhKTAZwm0PPocswFfh9o
-         BSIA==
+        d=ziepe.ca; s=google; t=1754419341; x=1755024141; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=U7XB7GrHToBPhXF/Sktcv3tgOaDMdGgdpINsfi2+cJw=;
+        b=hMlNCJEmvaEqVCrsynGZIbJlY+vrzldjFrEOTnECjnwIhdDMwdmtPaviVV3N8mZ9ks
+         3boGYBnyDigJ6gCw2KbmyKia1zt5E9kfHq6561LbYlpptw26sAGpn7dz4gJzzoy3MSnX
+         EfqD4HcfgZEkE/uiPaVkkay8X11+3YXJkRGfI9wqtYTJgvuyznUYJgZ3A2SSmM2IJO8R
+         zRpAzuRRvqZiM2XH0sbWYSLqJlAktF768nbUOBWI+JcN7ZANiYU7ggpDVFM1dHpQBUJ/
+         OZOCrh5gsvSVq3D0o7dEdUAZKLo8zq1qgCEjgyNXTzi9Ic0vv9rFjkMeg4HcbLzq54QA
+         ODXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754419294; x=1755024094;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rRQ1XVejo/qWVadxnYzHwmtR+oOtc0Jwo0/IudE9CjY=;
-        b=Lr0gRdYZDEWhSLAN5zDuDNBncqFCBvJMYn5X9Sa0V7dzSWdD7ImDZQN1KjpkU/1tiw
-         3GfFCxHiEDgHrrsqdol7e3fd7GHCC9ktrOU9+M8KEaNWjmUJ8YO4cUiv4zErfaNHDe1g
-         CAqFq+RDP7Vwjun/ijoMhtU8GhcNQAFpZXD4S635m0Oc2FZlV2JYTNUuJDZNvOhlr4pQ
-         gXX1p7MV9RRAKN6Xc4UMa3oWUJGvyyVP4Sm7yPgYJwJ7FK7KJJK3SRNqpZto/H4tZxtB
-         oAPigrzhL8EfJHqkBAqKFDTDSSAcV4S2dVE9oe+YFtXEFi4qnPCAisnpmB9e5YbdXGXn
-         xH/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUA6PbFt9azIUhEahKxJpM/vGRtPRD3vCWHMtPE4bJHsu1SVYbjr8VHwJYi28qTlsATdCf6fp9EjoCAT3g=@vger.kernel.org, AJvYcCUhyLfJPON3IioHC6inR4IqvNG4jJI00N5yUMgAs+2vPsZMz/57Kr9mB/A4IOp1RzHENbFEr/5k3ntBXFWn8/GL5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOMXL7IoQgrEMlcl+UQ+comwMEFZiKNzzctkn135yZpsLVclT5
-	m7JLMJ1bJfzk+T8SujJEC0pGmwoXQYOD1RZcl9ADhyRBszfAkLrIqGHQffh2kg==
-X-Gm-Gg: ASbGnct6bifxkaiLUeLl3xK0X0IARlb2MZaBd2C9GFsFO1wycJrMWyVWaUSyor3i6Iy
-	Yz8cdEfVnlekFNFC4XhFWY7+JFPQEYdzA4IlfhrjIoh5wPq7Yda6n8V8n/+o+DbPFrhiHTo4Kic
-	IxVvCsx8+PesmYKNi+30kdZwZA6gORC9L+l8i+eQkmORpMS2T4G8GruO3fUNEUzLYbk66LnNCxV
-	3cN6AFbOXF6iKMsej0GunPl4K7ATFskim2HCgIdHAT4Mm8e6o0Xy+CwPHhHq+hJb2qVSqRo5ae2
-	l+Ms0XY23Pa3mMKhKLfTATDNy/EOtBR/Yt1Pein+g3uLzja5JWjYzatw5fKqLNz9qUaVzLaAEBI
-	kbljsXEcqM75NoaanSKpn
-X-Google-Smtp-Source: AGHT+IFOwJbYZT3sPdhUa5jGGg7bp0JMNtYXQQ9TsQpEFG4Gt1bHamim9GaD/vuJ0ZOeIV6qX75hKg==
-X-Received: by 2002:a05:6a00:21d4:b0:74e:ab93:422b with SMTP id d2e1a72fcca58-76bec2f304fmr20203456b3a.4.1754419293591;
-        Tue, 05 Aug 2025 11:41:33 -0700 (PDT)
-Received: from hiagonb ([2804:1b3:a7c3:6302:da79:b882:519f:fa23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c020a4a1dsm6233457b3a.13.2025.08.05.11.41.30
+        d=1e100.net; s=20230601; t=1754419341; x=1755024141;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U7XB7GrHToBPhXF/Sktcv3tgOaDMdGgdpINsfi2+cJw=;
+        b=e9AsGhetemtiMzhu/WGsM/ua/axqNcUGC0+8zFAyaZHPYvb1i6upbOFhDcKKOJUyNE
+         zicUpEL/ppNRKSfx4bmcZMX4Jf9nTEeRNyf+6HWUXmyco4r1sZsBqr+Fx2HAK+KPhjT/
+         y/Ok0tNo9rAzlJx21qZxuooT5ZS5KowU3ESPucfzcTTQ8JFFPqLx2MkmVGgDIIrAjcVz
+         dwHZ+T5KrRpBopQ/UMdvSKJJjWNk/oKECm6DYG96HPIv2dbZg6nkrY4upTmj6V/kkyU3
+         EP7REsiCh4MFZBcCTaESKYjFl2XpRkXcEcn7nPpI4fyZbRCdFmk3l2Ip/VjFjF8u7Lcq
+         Bdgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAHyHW+AOmMWErzMpdiqApzlE9ujDlr9+lAm5yo8tPfK5hN9CykBbdqtQsgyd4ijK2dAa9URgYqbGmadw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz26RE8UZ6hfz3XWUpwBr+U1hqUiM0dx1BDcOCiUSs82RpZyo8l
+	O/0isd/Gvpx2UNq2k8zlg7bU1xb353wBNh34k682CJj/iM5VXR39uU1Td//Zy7iONIE=
+X-Gm-Gg: ASbGncsdUUQV9Cn6zexZTmb2vVZhvVAlR/ht1s/j5Ck4d6giwFpP3aVD1QBsQTPtT3L
+	as7wiOHLxwiYW5OwcfH6XNpK5GwoipDs8H7+uRuqCvW4TCdHmez4ziGVHRynTl71F7L4cQuAPww
+	VDTSoy2BqYFGTrWyitV++XvUEkUgAALtXA20MbzzWdLtgOWi/lQFKK+C9t6/qOzNE44k8a6HSBc
+	4KXjhfu71n0WY+zOIOHGNFanC81ZodqKB3gWP04GWXgFMYYDYjuOOe+UhgIGqaeb4ts5jmcjHvd
+	EsgcV3ulDJVnEWTHqNtXhQXRu3i5kCIXuTnBqTWd4Syr5IbPJMkvlRra8/RzCRosEfjN8oQfCR5
+	sDH9Tw/s1vzPfQWPSjI2/gINpgc4Gh7YWbJR9y7MWAcqIVThdoXuGN6XtqxQvLQU1zDDQ
+X-Google-Smtp-Source: AGHT+IFJzYdfGQoh/nIgvuIB92GlB+9KcosE0NpiAsp7dbUcQ9i0SxxUhRh1JZQ7lvAEKF3yp7Ujtg==
+X-Received: by 2002:a05:620a:a91a:b0:7e6:30f0:82bd with SMTP id af79cd13be357-7e814dae548mr48217385a.33.1754419340508;
+        Tue, 05 Aug 2025 11:42:20 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f594228sm692985285a.11.2025.08.05.11.42.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 11:41:32 -0700 (PDT)
-Date: Tue, 5 Aug 2025 15:41:28 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Andrew Davis <afd@ti.com>
-Cc: Beleswar Prasad Padhi <b-padhi@ti.com>, 
-	linux-remoteproc@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, 
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
-Message-ID: <prvj5e2y3ruqgn35auolaia5zwoahtfecosumwshappy32ylrq@eivdt62vp7rh>
-References: <20250726143908.ayug6dedkmzulldx@hiagonb>
- <d6ac080c-9a13-49eb-9cf5-1723df613548@ti.com>
- <20250729180420.svxtcukjlgg5sv6p@hiagonb>
- <yz2x2ywvmms6xgdvefqwr6ioi5cateagf2egqjnug7ozkcatx6@f652ifqzrm33>
- <f74d44d5-c263-4d82-b1d5-7e542e47672b@ti.com>
+        Tue, 05 Aug 2025 11:42:19 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ujMc7-00000001aDl-0KMK;
+	Tue, 05 Aug 2025 15:42:19 -0300
+Date: Tue, 5 Aug 2025 15:42:19 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: dan.j.williams@intel.com
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
+Message-ID: <20250805184219.GZ26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250801155104.GC26511@ziepe.ca>
+ <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
+ <yq5acy9a8ih6.fsf@kernel.org>
+ <20250805172741.GX26511@ziepe.ca>
+ <68924d18a68d4_55f091004d@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f74d44d5-c263-4d82-b1d5-7e542e47672b@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <68924d18a68d4_55f091004d@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Mon, Aug 04, 2025 at 04:14:26PM -0500, Andrew Davis wrote:
-> On 8/4/25 2:31 PM, Hiago De Franco wrote:
-> > Hi Andrew,
+On Tue, Aug 05, 2025 at 11:27:36AM -0700, dan.j.williams@intel.com wrote:
+> > > Clearing any of the following bits causes the TDI hosted
+> > > by the Function to transition to ERROR:
+> > > 
+> > > • Memory Space Enable
+> > > • Bus Master Enable
 > > 
-> > Sorry for the delay, I am back this week, I was testing the patches and
-> > removing the ping was not enough, there is one extra message being sent,
-> > which is the k3_rproc_kick() from ti_k3_common.c. This one is a callback
-> > from remoteproc_virtio.c.
-> > 
+> > Oh that's nice, yeah!
 > 
-> So tracing back, looks like this message will be added to the mailbox
-> when Linux tries to start communication with the remote core, and that
-> happens if the firmware advertises vrings in its resource table.
+> That is useful, but an unmodified PCI driver is going to make separate
+> calls to pci_set_master() and pci_enable_device() so it should still be
+> the case that those need to be trapped out of the concern that
+> writing back zero for a read-modify-write also trips the error state on
+> some device that fails the Robustness Principle.
 
-Got it, thanks for explaining.
-
+I hope we don't RMW BME and MSE in some weird way like that :(
+ 
+> > Here is where I feel the VMM should be trapping this and NOPing it, or
+> > failing that the guest PCI Core should NOP it.
 > 
-> > I belive this one is necessary to make the firmware works, but with the
-> > hello world demo, I still have the issue where I can not go into suspend
-> 
-> Which "hello world demo" is this? In Zephyr, we do not add the VDEV to
-> the resource table if the firmware does not intend to communicate[0].
-> But MCU+SDK firmware might add these unconditionally, I'm not sure. You
-> could check what is in the table with:
-> 
-> $ readelf -x .resource_table <your_firmware.elf>
-> 
-> and empty one might look like:
-> 
-> > Hex dump of section '.resource_table':
-> >   0xa3100000 01000000 00000000 00000000 00000000 ................
-> 
-> one with VDEV will be much longer.
+> At this point (vfio shutdown path) the VMM is committed stopping guest
+> operations with the device. So ok not to not NOP in this specific path,
+> right?
 
-Correct Andrew, indeed by removing the ping and testing with Zephyr
-Hello World example, it works fine, the resource table is empty.
+What I said in my other mail was the the T=1 state should have nothing
+to do with driver binding. So unbinding vfio should leave the device
+in the RUN state just fine.
 
-I was testing the hello world from TI mcu_plus_sdk_am62x_10_00_00_14,
-and first it was not working, I got a -22 from the remoteproc driver,
-and no .resource_table is present at all.
-
-So to fix this I enabled IPC sysconfig, which created a non-empty
-resource table into the ELF and made the hello world work, but broke
-suspend. Now it is clear why this is happening.
-
-On the AM62X Academy it mentions a empty resource table, but it
-reccomends to just enable IPC instead [0].
-
-Thanks for the help, I will then create the patch to remove the ping.
-
-[0] https://dev.ti.com/tirex/explore/node?node=A__AcD0ahYJlxouUnP8vWuDYw__AM62-ACADEMY__uiYMDcq__LATEST&placeholder=true
-
-Best regards,
-Hiago.
-
+> > With the ideal version being the TSM and VMM would be able to block
+> > the iommu as a functional stand in for BME.
 > 
-> Andrew
-> 
-> [0] https://github.com/zephyrproject-rtos/zephyr/blob/main/lib/open-amp/resource_table.h#L34
-> 
-> > mode. Removing both mbox_send_message() calls makes the suspend work
-> > again:
-> > 
-> > root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox|hfranco"
-> > [    0.000000] Kernel command line: root=PARTUUID=096221e5-02 ro rootwait console=tty1 console=ttyS2,115200 dyndb
-> > g="file ti_k3_common.c +p; file remotecore_proc.c +p; file remoteproc_virtio.c +p"
-> > [   10.520920] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
-> > [   10.711357] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
-> > [   10.753040] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
-> > [   10.793640] remoteproc remoteproc0: 5000000.m4fss is available
-> > [   10.856735] remoteproc remoteproc0: powering up 5000000.m4fss
-> > [   10.895961] remoteproc remoteproc0: Booting fw image am62-mcu-m4f0_0-fw, size 451080
-> > [   11.000752] rproc-virtio rproc-virtio.4.auto: assigned reserved memory node m4f-dma-memory@9cb00000
-> > [   11.101614] rproc-virtio rproc-virtio.4.auto: registered virtio0 (type 7)
-> > [   11.151665] remoteproc remoteproc0: remote processor 5000000.m4fss is now up
-> > [   12.123724] remoteproc remoteproc1: 30074000.pru is available
-> > [   12.171118] remoteproc remoteproc2: 30078000.pru is available
-> > [   12.337287] remoteproc remoteproc0: vring0: va 00000000cabe42be qsz 256 notifyid 0
-> > [   12.337337] remoteproc remoteproc0: vring1: va 00000000a651968a qsz 256 notifyid 1
-> > [   12.348543] remoteproc remoteproc0: kicking vq index: 0
-> > [   12.348559] hfranco: sending msg 0x0, name mbox-m4-0
-> > [ 2514.508396] remoteproc remoteproc0: stopped remote processor 5000000.m4fss
-> > [ 2518.010399] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
-> > [ 2518.010433] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
-> > [ 2518.010461] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
-> > 
-> > In this case, I was wondering if we should drop the messages for now,
-> > until we have the routine to save the messages first. Any suggestion you
-> > might have?
-> > 
-> > Thanks for the help,
-> > Hiago.
-> > 
+> The TSM block for BME is the LOCKED or ERROR state. That would be in
+> conflict with the proposal that the device stays in the RUN state on
+> guest driver unbind.
+
+This is a different thing. Leaving RUN says the OS (especially
+userspace) does not trust the device.
+
+Disabling DMA, on explict trusted request from the cVM, is entirely
+fine to do inside the T=1 state. PCI made it so the only way to do
+this is with the IOMMU, oh well, so be it.
+
+> I feel like either the device stays in RUN state and BME leaks, or the
+> device is returned to LOCKED on driver unbind. 
+
+Stay in RUN is my vote. I can't really defend the other choice from a
+linux driver model perspective.
+
+> Otherwise a functional stand-in for BME that also keeps the device
+> in RUN state feels like a TSM feature request for a "RUN but
+> BLOCKED" state.
+
+Yes, and probably not necessary, more of a defence against bugs in
+depth kind of request. For Linux we would like it if the device can be
+in RUN and have DMA blocked off during all times when no driver is
+attached.
+
+Jason
 
