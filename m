@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-756056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD02DB1AF50
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D70B1AF51
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A991899C8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BD43AF998
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 07:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F6C23815C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3D323ABB2;
 	Tue,  5 Aug 2025 07:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fK0f2rtu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RNPy6bg+"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EED43ABC;
-	Tue,  5 Aug 2025 07:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59057238179
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754378774; cv=none; b=mdi3TiQO44plrS6rUAduRWQXJWEw6OuuaNnTbBAEJv4BkTy6X/kQtApX0AjchTSbABxFRbN7uzfgAR75Vii2mshhXK97FvhCHteGbEffkNFaWiFoGTR8BSAzWdFuUGFoX3m0/1ku13vDvzAD54dpWJNt268iEG6APsRt8H3pHLk=
+	t=1754378774; cv=none; b=hXsBsCAmL9iiQQa3ZfhIetYBD8sZSA8f75qGpcNYaqKECszVFzcDdtT/riKCIq14yX4k26NPMTY0nXSGMBzjCk8q7Cx6J8CrUW7tZIzWDoNGqjelr/1WxeYCuPfdszn67oKLbXblyRfLMo5SoiGF+kVNEFY3xdmx5PZREmFq3YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754378774; c=relaxed/simple;
-	bh=PYwq5J6Qn188jtbbwXzze1QQOj7WLlrYWpzJYjArOe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZshfSV1XJkApR4niNcW/tOdjWakhTvznC1GnC/5O1C80I4QAkBP6F2Ne0pHmSYZbwNFE9z2PGZIx5aQYD1zzxNgdVfKCGSlLcnV+BD8wkzqAxYVGvOXICI+1YjisoRtBVfszUlZMNrLyu1FTqCEv3t9XecpiQkNOyuP4tV0CrH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fK0f2rtu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 688E2C4CEF4;
-	Tue,  5 Aug 2025 07:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754378773;
-	bh=PYwq5J6Qn188jtbbwXzze1QQOj7WLlrYWpzJYjArOe8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fK0f2rtu06y1CA7Vn/d7CPrELdSrhXnbdLVSimIpPcR1obohB1V/QQdWWD07JqPGf
-	 vDpaTPSWDRtbuZVoTi0NbfBOCLnHJ0LqQrI4rjF4eMGyh9IDCXipqfTKVQaryE8OMQ
-	 40dwhsfODRp+4bvVTJ8RJhxUyCwAVkrdTxomOd9Q=
-Date: Tue, 5 Aug 2025 08:26:08 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Zhen Ni <zhen.ni@easystack.cn>, linux-acpi@vger.kernel.org,
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v4] mailbox: pcc: Add missed acpi_put_table() to fix
- memory leak
-Message-ID: <2025080552-stubbly-elliptic-6fa0@gregkh>
-References: <20250804121453.75525-1-zhen.ni@easystack.cn>
- <20250805034829.168187-1-zhen.ni@easystack.cn>
- <41fdbd2b-92c5-4f11-9c58-aff9b9f35e72@web.de>
+	bh=fPHmNA5iNHVa4JmNaWVOI3ppu9LKnt/GbELSlZzLwg0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=WVH/vnIhwm/C6LwqVHpcPaSC1u+fG7NDTGaHzTSkroNX2FCdX5euBM8ZGWWpZqSVkCTh+UioJbr7fh/Y2NcH1siVnrj4sMZw83ueorfSqPkklExJMWGVpHyVUJro8wRevSvfuphVTbwjKlIaGPSmkRSnKT41SuDkI/MMg0UskEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RNPy6bg+; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250805072610epoutp015eed92bb60fe4122f4f9352d4d839b2f~YzjJV_fUv2524125241epoutp01_
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 07:26:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250805072610epoutp015eed92bb60fe4122f4f9352d4d839b2f~YzjJV_fUv2524125241epoutp01_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754378770;
+	bh=8vtyMqN7BBl94yLtrpE133kapPVMyCygmknIpKLTZQ8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=RNPy6bg+Fs/jsy4qN/qnWzqrncRwoQ4eTk7b9NqY6hEG3TZajeRK9RlVsltmHRn/o
+	 kntzv3/pogUM/z1sQRyPmKrf72DRgrfpO9UpPaD0XHnoatH+0SK+PP0r5jcMgXYE3U
+	 vEZeg1dhFWJ+nKtrk6UnkQHH/oow8fvuSrGsh+cs=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250805072609epcas2p3d840144f6c0c778395d6483e25a7c47d~YzjI2Lt0X2580225802epcas2p3R;
+	Tue,  5 Aug 2025 07:26:09 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bx4jF23Txz6B9mQ; Tue,  5 Aug
+	2025 07:26:09 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250805072608epcas2p4afbd5db258530d696c80e4007749953d~YzjHnrh3Z2393223932epcas2p4q;
+	Tue,  5 Aug 2025 07:26:08 +0000 (GMT)
+Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250805072608epsmtip13df80963802621da648f1f1b2ba181f8~YzjHjiOlZ1882618826epsmtip1i;
+	Tue,  5 Aug 2025 07:26:08 +0000 (GMT)
+From: <sw617.shin@samsung.com>
+To: "'Sam Protsenko'" <semen.protsenko@linaro.org>, "'Guenter Roeck'"
+	<linux@roeck-us.net>
+Cc: <krzk@kernel.org>, <alim.akhtar@samsung.com>, <wim@linux-watchdog.org>,
+	<khwan.seo@samsung.com>, <dongil01.park@samsung.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+Subject: RE: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+Date: Tue, 5 Aug 2025 16:26:08 +0900
+Message-ID: <008501dc05da$36362600$a2a27200$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41fdbd2b-92c5-4f11-9c58-aff9b9f35e72@web.de>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH0xghtQJzMk6eIf2JQ+3VnAplQzQKQWbtpAWsaNKYBwwrfwwEQ7YR8A5N0zr4BpLWR/LPB5rkg
+Content-Language: ko
+X-CMS-MailID: 20250805072608epcas2p4afbd5db258530d696c80e4007749953d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250724081336epcas2p38e95932ddc5c702e05a6436f05582993
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+	<20250724080854.3866566-1-sw617.shin@samsung.com>
+	<20250724080854.3866566-3-sw617.shin@samsung.com>
+	<CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+	<000a01dc05c0$9f0ab110$dd201330$@samsung.com>
+	<18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+	<CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
 
-On Tue, Aug 05, 2025 at 08:28:17AM +0200, Markus Elfring wrote:
-> > Fixes a permanent ACPI memory leak in the success path by adding
-> > acpi_put_table().
-> > Renaming generic 'err' label to 'put_table' for clarity.
-> 
-> Will a desire grow for the usage of imperative mood also in such change descriptions?
-> 
-> See also once more:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n94
-> 
-> 
-> …> Changes in v4:
-> > - Change goto target from err to put_table.
-> 
-> Thanks.
-> 
-> 
-> > - Remove goto tatget err_nomem
-> …
-> 
-> Does this adjustment indicate questionable development difficulties?
-> 
-> Regards,
-> Markus
-> 
+On Tuesday, August 5, 2025 at 2:03 PM Sam Protsenko <semen.protsenko=40lina=
+ro.org> wrote:
 
-Hi,
+>=20
+> > > +       u64 t_max =3D n_max / freq;
+> > >
+> >
+> > Make sure this compiles on 32-bit builds.
+> >
+>=20
+> Can you please elaborate what might be the possible problem -- just
+> curious? I admit I never though about 32-bit case when writing that code,
+> but don't see any immediate issues with that too.
+>=20
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+In my opinion, it seems that Gunter Reck's explanation is correct.
+I've found out that the error of =22undefined reference to '__aeabi_uldivmo=
+d'=22 may occur when compiling new code on a 32-bit architecture.
+If you don't mind, I would like to proceed with maintaining the previous re=
+vision below.
+=46rom my perspective, this approach appears to be the most reasonable solu=
+tion for supporting both 32-bit and 64-bit architectures.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+=40=40 -411,8 +411,8 =40=40 static inline unsigned int s3c2410wdt_max_timeo=
+ut(struct s3c2410_wdt *wdt)
+ =7B
+ 	const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+=20
+-	return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
+-				       / S3C2410_WTCON_MAXDIV);
++	return S3C2410_WTCNT_MAXCNT / DIV_ROUND_UP(freq,
++		(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV);
+ =7D
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
 
