@@ -1,161 +1,235 @@
-Return-Path: <linux-kernel+bounces-756474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7321AB1B4DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B69AB1B4D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAFFC7A2554
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87123B1A24
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8F02737FA;
-	Tue,  5 Aug 2025 13:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73156274B28;
+	Tue,  5 Aug 2025 13:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MppPOKAE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKGrDtIn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35C2749C4;
-	Tue,  5 Aug 2025 13:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD8D1E1E16;
+	Tue,  5 Aug 2025 13:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754400196; cv=none; b=FGJDQhQ3w3F+X0GWRQ1SpD1nkScQJU/3lW4EH04QmpVmuzo34geMNM8xphjnJ7GgAVsyz2vVMHbhhGXo+Cdxj5m0BzDx1ur7Cy/7fo+ROSiHXNPvTYwJLIuk2nGXaMHIMtYXHI7j3+AcGXG1wUOUT5PID8Pinw8gkk3xUPUXeq8=
+	t=1754400248; cv=none; b=nxZ7P2W6Kfj64Q5z5zQbwER6DHMyOQtzlAsYu5ucZClXbTVYgzRASxOuuHtx8KmUEk9aI1L2GN1V/5CGCQpcq6Cs0RXOocjvCTKCiftjny4gV3it3HGGa4iDSjMGlORto3QCkCXnO49xm6yMddfKS4ouzgJjXkf767BrHe0fzcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754400196; c=relaxed/simple;
-	bh=4XpKY+hrV//JqY5IB0jEGLiEF04z3a1ypjzN/Ip/ON0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKONJF7B+hWiPVqNU9ZiF6K4yprxvP05kQUs4OleJbRXE9RPPUS52WdiP3Hd0JVvsf/OvtMtQMvTwUg5LM13VLPvP1n2lZOEnQ3X9og5f6NYToCQwgOtMSUNkUAVqjvTkqVbOVTBtl6z1ERVFD+G8csC1LjwNN1vUpXK/iPJTFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MppPOKAE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BF7C4CEF0;
-	Tue,  5 Aug 2025 13:23:14 +0000 (UTC)
+	s=arc-20240116; t=1754400248; c=relaxed/simple;
+	bh=xZDXyAZOLBlA4/A5JnrnmHPWTOBdRw9MM15cnN+eOVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O5Si7w6+NEEZaSrh5kqfg5UMyV2Tydr2rhsDAeyTQ+9Dc0WZzsbcjQsfaQWlq2Ptn2ANpnSB19qPZbCjHA7IvZHhxSa9MIh1iLvc0J80algcYamnjlCJ4u+Ref4d3IeyHv564gSCWRQr/g1jHNuQVYqt0yhOaR3bD4iEhh7I1eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKGrDtIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E784C4CEF4;
+	Tue,  5 Aug 2025 13:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754400195;
-	bh=4XpKY+hrV//JqY5IB0jEGLiEF04z3a1ypjzN/Ip/ON0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MppPOKAETMD/BqZRdpVGHGh0jhnuJMh9KObQqr9IRR1G0wYcPe5YUe9bHfzOlG4po
-	 0SC44ly+aXPz/iMhRAM5yj4RkanAgvRO5IZ7sgNigcRJPM4OQ/ESdBLOs4DAbhmL4g
-	 nUVo8lRu4XRj+P19miwzQjWyepxUCuvk3y8h80yJz65ZWG8Mm7sZ+X1+hJV6gOgLWC
-	 XNLxrSVOcVAPGnQvDiAOOcB9UoLHf32eYEwBwriug0ierfD3VZolCZi3bwghbnfj6d
-	 fNdpad2Brd5jze6/lOtyc/y/7NyN+WXKvz1UzmkWGSOGIbB/Ay1LC9Krj1GH20Nq6d
-	 8udjMyFgWLOCw==
-Date: Tue, 5 Aug 2025 15:23:12 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, kernel@axis.com, linux-pwm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pwm: meson: Remove error print for
- devm_add_action_or_reset()
-Message-ID: <sveurgnigarzdjreweoibcxkkl7rekcpufuwqr7bxcrdx7zdrd@kz4ohstmfyjh>
-References: <pndwm7ikt8v.a.out@axis.com>
+	s=k20201202; t=1754400248;
+	bh=xZDXyAZOLBlA4/A5JnrnmHPWTOBdRw9MM15cnN+eOVk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QKGrDtInUNQP/8LL2A1lZQ1xRi88S8pZEFk9a4fQWs3++pBDHYMCHXTxWSyTeHRCN
+	 ATXk8pxh6YkiuYfWneJVkxzWLVPAoFHACxP/auOa8Gx9NtMUZzg4gHDYVMKG9QJyNn
+	 vj3FBv+vmmIWHcP1A/O/4L0j9xzcf7jO+KccOhjD/zR/wAgNEUVxtvcuhDXPpbPyo5
+	 1r0Zq1gDfCGKBBpVzkVyW/z3jwmxqkvwqeyewX9ClEfUjJBuwX1F35uz2cu936dODu
+	 9T9UNY9txsfIKobqb+frYObgU4bOI/GWVf+Fyaw9OEVjU9pZ6dNK1RTaC/r6p608KE
+	 O//yfeqQKk2DA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-619a0f2a8c9so977318eaf.0;
+        Tue, 05 Aug 2025 06:24:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUuO0V1zgWlfdxYd2bQfehex1pQtG7wkXYNfUVM+EPJ7b96jfyobikxh9nSQg0KS64Xht/1rgokwSb4sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMDwV95X/SGLiHVpbvb5JsJ4Sbmo0o9JYQeCHiSJzIBmC3YwKS
+	2cVeFl2ckOgyoIxwSxrIV1BK6x6SfOdQY7qV6c1GCT7eQvMpmhLiXqcL3OShKr/SRUPCfMEfnzi
+	Y75OQB1uwrcX2TiCstyLF7BWcDvBPVto=
+X-Google-Smtp-Source: AGHT+IF9qo1tbISogqdePZ9CIgk29+uKOQqeYONL8rODcdZ7q8tKCLX9bPjK4rD2p7p3ImOzHHA086FDEYAih5Jjb8I=
+X-Received: by 2002:a05:6820:201c:b0:61b:4073:871a with SMTP id
+ 006d021491bc7-61b40738792mr3433748eaf.7.1754400247507; Tue, 05 Aug 2025
+ 06:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qpe4lsz3c3n5r2b5"
-Content-Disposition: inline
-In-Reply-To: <pndwm7ikt8v.a.out@axis.com>
-
-
---qpe4lsz3c3n5r2b5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <1916668.tdWV9SEqCh@rjwysocki.net> <7770672.EvYhyI6sBW@rjwysocki.net>
+ <86o6sv6n94.wl-maz@kernel.org>
+In-Reply-To: <86o6sv6n94.wl-maz@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Aug 2025 15:23:56 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g=eSeAp96mHCOm+C9jis3uNRXgPhNgtT0SgP9kZ1emvw@mail.gmail.com>
+X-Gm-Features: Ac12FXx3dJRVbknhF-e_nma1gjEHxi6UwdAkbI1TjS8gTLy1hATm3AFNcQMt1m4
+Message-ID: <CAJZ5v0g=eSeAp96mHCOm+C9jis3uNRXgPhNgtT0SgP9kZ1emvw@mail.gmail.com>
+Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
+To: Marc Zyngier <maz@kernel.org>, Christian Loehle <christian.loehle@arm.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+	Aboorva Devarajan <aboorvad@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] pwm: meson: Remove error print for
- devm_add_action_or_reset()
-MIME-Version: 1.0
 
-Hello Waqar,
+On Mon, Aug 4, 2025 at 6:54=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
+>
+> [+ Thomas, Mark]
+>
+> On Thu, 06 Feb 2025 14:29:05 +0000,
+> "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> >
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > When giving up on making a high-confidence prediction,
+> > get_typical_interval() always returns UINT_MAX which means that the
+> > next idle interval prediction will be based entirely on the time till
+> > the next timer.  However, the information represented by the most
+> > recent intervals may not be completely useless in those cases.
+> >
+> > Namely, the largest recent idle interval is an upper bound on the
+> > recently observed idle duration, so it is reasonable to assume that
+> > the next idle duration is unlikely to exceed it.  Moreover, this is
+> > still true after eliminating the suspected outliers if the sample
+> > set still under consideration is at least as large as 50% of the
+> > maximum sample set size.
+> >
+> > Accordingly, make get_typical_interval() return the current maximum
+> > recent interval value in that case instead of UINT_MAX.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > --- a/drivers/cpuidle/governors/menu.c
+> > +++ b/drivers/cpuidle/governors/menu.c
+> > @@ -190,8 +190,19 @@
+> >        * This can deal with workloads that have long pauses intersperse=
+d
+> >        * with sporadic activity with a bunch of short pauses.
+> >        */
+> > -     if ((divisor * 4) <=3D INTERVALS * 3)
+> > +     if (divisor * 4 <=3D INTERVALS * 3) {
+> > +             /*
+> > +              * If there are sufficiently many data points still under
+> > +              * consideration after the outliers have been eliminated,
+> > +              * returning without a prediction would be a mistake beca=
+use it
+> > +              * is likely that the next interval will not exceed the c=
+urrent
+> > +              * maximum, so return the latter in that case.
+> > +              */
+> > +             if (divisor >=3D INTERVALS / 2)
+> > +                     return max;
+> > +
+> >               return UINT_MAX;
+> > +     }
+> >
+> >       /* Update the thresholds for the next round. */
+> >       if (avg - min > max - avg)
+>
+> It appears that this patch, which made it in 6.15, results in *a lot*
+> of extra interrupts on one of my arm64 test machines.
+>
+> * Without this patch:
+>
+> maz@big-leg-emma:~$ vmstat -y 1
+> procs -----------memory---------- ---swap-- -----io---- -system-- ------c=
+pu-----
+>  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy i=
+d wa st
+>  1  0      0 65370828  29244 106088    0    0     0     0   66   26  0  0=
+ 100  0  0
+>  1  0      0 65370828  29244 106088    0    0     0     0  103   66  0  0=
+ 100  0  0
+>  1  0      0 65370828  29244 106088    0    0     0     0   34   12  0  0=
+ 100  0  0
+>  1  0      0 65370828  29244 106088    0    0     0     0   25   12  0  0=
+ 100  0  0
+>  1  0      0 65370828  29244 106088    0    0     0     0   28   14  0  0=
+ 100  0  0
+>
+> we're idling at only a few interrupts per second, which isn't bad for
+> a 24 CPU toy.
+>
+> * With this patch:
+>
+> maz@big-leg-emma:~$ vmstat -y 1
+> procs -----------memory---------- ---swap-- -----io---- -system-- ------c=
+pu-----
+>  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy i=
+d wa st
+>  1  0      0 65361024  28420 105388    0    0     0     0 3710   27  0  0=
+ 100  0  0
+>  1  0      0 65361024  28420 105388    0    0     0     0 3399   20  0  0=
+ 100  0  0
+>  1  0      0 65361024  28420 105388    0    0     0     0 4439   78  0  0=
+ 100  0  0
+>  1  0      0 65361024  28420 105388    0    0     0     0 5634   14  0  0=
+ 100  0  0
+>  1  0      0 65361024  28420 105388    0    0     0     0 5575   14  0  0=
+ 100  0  0
+>
+> we're idling at anywhere between 3k and 6k interrupts per second. Not
+> exactly what you want. This appears to be caused by the broadcast
+> timer IPI.
+>
+> Reverting this patch on top of 6.16 restores sanity on this machine.
 
-On Tue, Aug 05, 2025 at 11:33:36AM +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
->=20
-> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
-> ---
-> Changes in v2:
->=20
-> * Split the patch to one seperate patch for each sub-system.
->=20
-> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
->=20
->  drivers/pwm/pwm-meson.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-> index 8c6bf3d49753..e90d37d4f956 100644
-> --- a/drivers/pwm/pwm-meson.c
-> +++ b/drivers/pwm/pwm-meson.c
-> @@ -520,8 +520,7 @@ static int meson_pwm_init_channels_s4(struct pwm_chip=
- *chip)
->  		ret =3D devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
->  					       meson->channels[i].clk);
->  		if (ret)
-> -			return dev_err_probe(dev, ret,
-> -					     "Failed to add clk_put action\n");
-> +			return ret;
+I don't know what is going on here, but it looks highly suspicious to me.
 
-On the other hand the call to dev_err_probe() also doesn't hurt, right?
-And when we keep it, it is clear that this error path is correctly
-handled without having to know that devm_add_action_or_reset() can only
-return success or -ENOMEM and we don't have to watch
-devm_add_action_or_reset() to not grow something like
+The only effect of the change in question should be selecting a
+shallower idle state occasionally and why would this alone cause the
+number of wakeup interrupts to increase?
 
-diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-index ae696d10faff..0876cce68776 100644
---- a/include/linux/device/devres.h
-+++ b/include/linux/device/devres.h
-@@ -156,6 +156,9 @@ static inline int __devm_add_action_or_reset(struct dev=
-ice *dev, void (*action)(
- {
- 	int ret;
-=20
-+	if (IS_ERR_OR_NULL(dev))
-+		return -EINVAL;
-+
- 	ret =3D __devm_add_action(dev, action, data, name);
- 	if (ret)
- 		action(data);
+Arguably, it might interfere with the tick stopping logic if
+predicted_ns happened to be less than TICK_NSEC sufficiently often,
+but that is not expected to happen on an idle system because in that
+case the average interval between genuine wakeups is relatively large.
+The tick itself is not counted as a wakeup event, so returning a
+shallower state at one point shouldn't affect future predictions, but
+the data above suggests that it actually does affect them.
 
-=46rom a subsystem maintainer's POV it would be great if it was easy to
-notice if a given function needs an error message or not. One excellent
-way to cover functions that can only return -ENOMEM on failure is to
-optimize out the small overhead of the devm_add_action_or_reset() call.
+It looks like selecting a shallower idle state by the governor at one
+point causes more wakeup interrupts to occur in the future which is
+really note expected to happen.
 
-See
-https://lore.kernel.org/all/ylr7cuxldwb24ccenen4khtyddzq3owgzzfblbohkdxb7p7=
-eeo@qpuddn6wrz3x/
-for a prototype of what I imagine. Oh, you were the addressee of that
-mail, so you already know.
+Christian, what do you think?
 
-To make my position here explicit: This is a nack.
+> I suspect that we're entering some deep idle state in a much more
+> aggressive way,
 
-Best regards
-Uwe
+The change actually goes the other way around.  It causes shallower
+idle states to be more likely to be selected overall.
 
---qpe4lsz3c3n5r2b5
-Content-Type: application/pgp-signature; name="signature.asc"
+> leading to a global timer firing as a wake-up mechanism,
 
------BEGIN PGP SIGNATURE-----
+What timer and why would it fire?
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiSBb0ACgkQj4D7WH0S
-/k7uTAf+IV4xlBSvJged2+TaatRIHPURN3SCK5I88TP02Cl5uM6b7hApBTqA8Ypd
-g3faAO9lFQSRxGgQ7s8VAOsXAMJbmYzc0yFsAANBo1Nx587Q9QA/sVHFNhWPF/hs
-v0wUECR915RNR3BgakctzGvtF4aS99tCgkVS8DszU4ngP9ZYtqqHi6vztBHrZgA4
-61kveQRsL2xsBv//xmoN5cDtmcns2Gr7nAC3G+8lgq/kkSWiJ6BKMhpi1Tvz/2T0
-XagBlQK6u66Aa6letKYpYuDGCAoBxre4ecvDcTHTOCiwLBaCO7/cQKBWDPMUpnYl
-lgExQoYJuwfH3aw6jq1LbSFplv2QYQ==
-=NaYJ
------END PGP SIGNATURE-----
+> and the broadcast IPI being used to kick everybody else
+> back. This is further confirmed by seeing the broadcast IPI almost
+> disappearing completely if I load the system a bit.
+>
+> Daniel, you should be able to reproduce this on a Synquacer box (this
+> what I used here).
+>
+> I'm happy to test things that could help restore some sanity.
 
---qpe4lsz3c3n5r2b5--
+Before anything can be tested, I need to understand what exactly is going o=
+n.
+
+What cpuidle driver is used on this platform?
+
+Any chance to try the teo governor on it to see if this problem can
+also be observed?
+
+Please send the output of
+
+$ grep -r '.*' /sys/devices/system/cpu/cpu*/cpuidle
+
+collected after a period of idleness from the kernel in which the
+change in question is present and from a kernel without it?
 
