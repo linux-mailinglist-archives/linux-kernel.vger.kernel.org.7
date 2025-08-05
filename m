@@ -1,185 +1,119 @@
-Return-Path: <linux-kernel+bounces-756617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B1DB1B6DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F720B1B6DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B13667A7B32
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2F017D0BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C35278E5A;
-	Tue,  5 Aug 2025 14:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF3D277026;
+	Tue,  5 Aug 2025 14:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl23PYxd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upqPGit0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51FA1BCA07;
-	Tue,  5 Aug 2025 14:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D651BCA07;
+	Tue,  5 Aug 2025 14:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754405285; cv=none; b=Ne+qHETnWCzRK7XVYiqXgaCfSsqZCtahaHbuf3kEewXTUjoGe1LudoXCNo4A87AW3vU8DLAMpvEMLTSffDcDJv6SX8USjxS5b8e7Jw6MRHmdoU/hUEgbjDTnRj4imPS+0zd04lA0L90tGJrMK57qUYeDgD29Rf+2iHIVo1R3o6k=
+	t=1754405353; cv=none; b=nH0/aRX9tdYBjal7g8AGrD6witM6N2+W5SwEsK7gxGqXoZTphiOs6QMOIIH6PRuQ3kOm9kVNJGFbY43QhJqbg5XEPGuZ0FhQDA5ujcYNuPI4/ypY6m8EADr227Ytya6sgsl+68bhxpQLoPHOhCX8Db6ikW/3buXgiHnbuy8B0vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754405285; c=relaxed/simple;
-	bh=yDTCqMbktP5T7/s/6qRHaUnSmDaSqNv3r3EwtVnqXMQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=HpmBNpWnAXVAgIchsFMHrpoALQZrbZPTeuZdk/pCzoC0fHBgbeV+USGkMgPpGalK0ll6trd2eiwM0tUNbrDmQmumM4BqQmGP6tXmgJGlpFsRwAM1xD4tO0vS/D7i2ubR8WFP78JlP5NzdZInKJHlSF3Pr6aqbJCmIpzYVXKaSp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zl23PYxd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B763C4CEF0;
-	Tue,  5 Aug 2025 14:48:02 +0000 (UTC)
+	s=arc-20240116; t=1754405353; c=relaxed/simple;
+	bh=g7knE9ug0EmLDYjRKXiNJuFaF+Il11QTq54rtre3QTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tg5tot1UorUYzVIbkDNqeqwB1zCfvcREY3hkO/odcmICnXsQrkQX+AyJTJxmIfUz2rkYFlMBDMf3P32wNUgFg5thUGA/9sNdknIVXb9tQVEhasuOmGh5dTt5PD8pE//dMHc54LDlvzlgEe1uTXoKDeqOaUcBbReHtUWSo5RCvok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upqPGit0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8177C4CEF0;
+	Tue,  5 Aug 2025 14:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754405285;
-	bh=yDTCqMbktP5T7/s/6qRHaUnSmDaSqNv3r3EwtVnqXMQ=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=Zl23PYxdyrbcMtf4QHnUXgEH+BAUYflh4vqk1AiWBRDYDwgmHTppBOdzdaSM9k9xx
-	 WTw9QBVWN2U5SIyMqY4zMZsuJGVquhLUemjqGgDSSw7amSiyGnqrJG9koeMFUUin3e
-	 1MVL1tDp4/6oPQj2O9/u/d0JxxSOcmHYnT7V82nKx1xlmz904Fwo2snoBMi60OlVgP
-	 hHXk49QPIzuMv/Vf926DbbsKu/EBXKCuFONEqQVsih2cgu9VaqwLnYl/RM7hMf33oV
-	 yGv36wMeMhVs8J8zU10eLfOfMTFrGod+AFhum9ZlHlcFfh7IvaB9dxs4enM06NskHh
-	 g01FNu3ce8a6w==
+	s=k20201202; t=1754405353;
+	bh=g7knE9ug0EmLDYjRKXiNJuFaF+Il11QTq54rtre3QTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=upqPGit0HxC6HEwZVDb3Jwfamg/tWADYMK0T14l0IR9HlXFGJpNC2chDD/mhZDOkR
+	 HlFXfopKreQpfgX8X6nWJchIqjBu34biQCrNW8JdVBPOWLhoMPkK5ruHkVlDOWDxAT
+	 soY3A4nMlhLEzZhEPAHgH9dnFasI4ICkNLEocDubp9zeCZP1tWE3e7mvivP6d2Da8M
+	 +C98jjOQ6ijGd1CgTXx/9Ku8iw+w9yKXeg9f3zMpm4UmtA4IkGUEvTQ/ll9ZLEQhtf
+	 EQUYapC684MPbPXqeNlNy++nANFWsk+a/XaYoRZjYottBvy129CEIQq1wPphQRh6cR
+	 CzLEqHlqqskLg==
+Date: Tue, 5 Aug 2025 15:49:06 +0100
+From: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: perlarsen@google.com, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v7 4/5] KVM: arm64: Bump the supported version of FF-A to
+ 1.2
+Message-ID: <aJIZ4v0X74zox1xZ@willie-the-truck>
+References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
+ <20250701-virtio-msg-ffa-v7-4-995afc3d385e@google.com>
+ <aHpP7fntDQ7SMPAC@willie-the-truck>
+ <86zfck7pys.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 05 Aug 2025 16:48:00 +0200
-Message-Id: <DBUKRNHY14ZN.95GVIGMY7RAN@kernel.org>
-Subject: Re: [PATCH RESEND 1/2] drm/gpuvm: Send in-place re-maps to the
- driver as remap
-Cc: <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
- <linux-arm-msm@vger.kernel.org>, "Danilo Krummrich" <dakr@redhat.com>,
- "Connor Abbott" <cwabbott0@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Lyude Paul"
- <lyude@redhat.com>, "open list" <linux-kernel@vger.kernel.org>, "open
- list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS"
- <nouveau@lists.freedesktop.org>
-To: "Rob Clark" <rob.clark@oss.qualcomm.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250804214317.658704-1-robin.clark@oss.qualcomm.com>
- <20250804214317.658704-2-robin.clark@oss.qualcomm.com>
- <DBUE2QU2CH9N.3C32KHT9LHMMB@kernel.org>
- <CACSVV0270Zk4ApR_pGZ+sKgoi14kvfOo_NvzVq3-QALE0mpFsQ@mail.gmail.com>
-In-Reply-To: <CACSVV0270Zk4ApR_pGZ+sKgoi14kvfOo_NvzVq3-QALE0mpFsQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86zfck7pys.wl-maz@kernel.org>
 
-On Tue Aug 5, 2025 at 4:32 PM CEST, Rob Clark wrote:
-> On Tue, Aug 5, 2025 at 2:33=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->> On Mon Aug 4, 2025 at 11:43 PM CEST, Rob Clark wrote:
->> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
->> > index bbc7fecb6f4a..e21782a97fbe 100644
->> > --- a/drivers/gpu/drm/drm_gpuvm.c
->> > +++ b/drivers/gpu/drm/drm_gpuvm.c
->> > @@ -2125,6 +2125,27 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
->> >                                offset =3D=3D req_offset;
->> >
->> >                       if (end =3D=3D req_end) {
->> > +                             if (merge) {
->> > +                                     /*
->> > +                                      * This is an exact remap of the=
- existing
->> > +                                      * VA (potentially flags change)=
-?  Pass
->> > +                                      * this to the driver as a remap=
- so it can
->> > +                                      * do an in-place update:
->> > +                                      */
->> > +                                     struct drm_gpuva_op_map n =3D {
->> > +                                             .va.addr =3D va->va.addr=
-,
->> > +                                             .va.range =3D va->va.ran=
-ge,
->> > +                                             .gem.obj =3D va->gem.obj=
-,
->> > +                                             .gem.offset =3D va->gem.=
-offset,
->> > +                                     };
->> > +                                     struct drm_gpuva_op_unmap u =3D =
-{
->> > +                                             .va =3D va,
->> > +                                             .keep =3D true,
->> > +                                     };
->> > +
->> > +                                     return op_remap_cb(ops, priv, NU=
-LL, &n, &u);
->> > +                             }
->>
->> I don't see why this is necessary, a struct drm_gpuva_op_unmap carries t=
-he
->> struct drm_gpuva to unmap. You can easily compare this to the original r=
-equest
->> you gave to GPUVM, i.e. req_addr, req_range, req_obj, req_offset, etc.
->>
->> Which is what you have to do for any other unmap operation that has keep=
- =3D=3D true
->> anyways, e.g. if D is the exact same as A, B and C.
->>
->>         Cur
->>         ---
->>         1                       N
->>         |---A---|---B---|---C---|
->>
->>         Req
->>         ---
->>         1                       N
->>         |-----------D-----------|
->
-> Ugg, this means carrying around more state between the unmap and map
-> callbacks, vs. just handing all the data to the driver in a single
-> callback.  For the keep=3D=3Dtrue case, nouveau just seems to skip the
-> unmap.. I guess in your case the map operation is tolerant of
-> overwriting existing mappings so this works out, which isn't the case
-> with io_pgtable.
+Hey Marc,
 
-There is no "your case" as far as I'm concerned. Please don't think that I =
-don't
-care about solving a problem, just because it's not relevant for any of the
-drivers or subsystems I maintain. :)
+(we discussed this very briefly offline but I wanted to reply for the
+benefit of everybody else and also because I don't recall quite where we
+ended up)
 
-> I guess I could handle the specific case of an exact in-place remap in
-> the driver to handle this specific case.  But the example you give
-> with multiple mappings would be harder to cope with.
->
-> I still feel there is some room for improvement in gpuvm to make this
-> easier for drivers.  Maybe what I proposed isn't the best general
-> solution, but somehow giving the drivers info about both the unmaps
-> and maps in the same callback would make things easier (and the remap
-> callback is _almost_ that).
+On Thu, Jul 31, 2025 at 08:56:59AM +0100, Marc Zyngier wrote:
+> On Fri, 18 Jul 2025 14:45:17 +0100,
+> Will Deacon <will@kernel.org> wrote:
+> > On Tue, Jul 01, 2025 at 10:06:37PM +0000, Per Larsen via B4 Relay wrote:
+> > > From: Per Larsen <perlarsen@google.com>
+> > > @@ -734,7 +741,10 @@ static int hyp_ffa_post_init(void)
+> > >  	if (res.a0 != FFA_SUCCESS)
+> > >  		return -EOPNOTSUPP;
+> > >  
+> > > -	switch (res.a2) {
+> > > +	if ((res.a2 & GENMASK(15, 2)) != 0 || res.a3 != 0)
+> > > +		return -EINVAL;
+> > 
+> > Why are you checking bits a2[15:2] and a3? The spec says they MBZ,
+> > so we shouldn't care about enforcing that. In fact, adding the check
+> > probably means we'll fail if those bits get allocated in future.
+> 
+> I have the exact opposite approach. If we don't check that they are 0
+> for v1.2 and previous versions, we won't be able to tell what they
+> mean when they are finally allocated to mean something in version
+> 1.337.
+> 
+> Until we support such version, MBZ should be enforced, because we
+> otherwise don't understand what the "client" is trying to say. And we
+> don't understand, we're guaranteed to do the wrong thing.
 
-I generally agree with that, my concern is more about this specific patch.
+We've lost a bunch of context in the diff here, but there are two
+important things to keep in mind at this point:
 
-There are patches on the list that replace all the req_* arguments of
-__drm_gpuvm_sm_map() with a new struct drm_gpuvm_map_req.
+  1. We've negotiated a known version of FF-A, so it won't be v1.337 and
+     we _should_ be able rely on the spec authors not breaking stuff
+     retrospectively (famous last words...)
 
-Maybe the unmap callbacks could simply provide a pointer to this object?
+  2. The response we're parsing here is something that has come back
+     from TZ after we (the hypervisor) have called FFA_FEATURES. If
+     those MBZ bits are non-zero, I think should just ignore them.
 
-> BR,
-> -R
->
->>
->> In this case you get three unmap ops with keep =3D=3D true, which you ca=
-n compare to
->> your request to figure out that you can keep the corresponding PTEs.
->>
->> Besides that it changes the semantics that the documentation mentions an=
-d that
->> drivers are allowed to rely on, i.e. a struct drm_gpuva_op_remap represe=
-nts
->> an actual change and any call to __drm_gpuvm_sm_map() results in an arbi=
-trary
->> number of unmap ops, a maximum of two remap ops and exactly one map oper=
-ation.
->>
->> >                               ret =3D op_unmap_cb(ops, priv, va, merge=
-);
->> >                               if (ret)
->> >                                       return ret;
+Cheers,
 
+Will
 
