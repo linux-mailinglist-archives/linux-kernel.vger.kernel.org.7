@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-755959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2578AB1AE13
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8111DB1AE16
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2B1620337
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0281179B38
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51F215F5C;
-	Tue,  5 Aug 2025 06:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EEB21B9F0;
+	Tue,  5 Aug 2025 06:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C0ryCdzV"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMM+KOJZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02520175A5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 06:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A20A21ADA4;
+	Tue,  5 Aug 2025 06:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374695; cv=none; b=r+KJ23dw4Ng7YFRRCJR4tEytfNqeazy1E1JVDPxRJZIJPvHbKaNJ+PFTt5SvZoedH8kC1U5sKyI9251LII0eBb1PT0E4azyapPCRGP8xu5m9MZcehBEYEMjJ56BDP9Sp2ebLMEpJXO5FjASQqnQJqbY9mzrj62mSw1Ed3w0DrmE=
+	t=1754374697; cv=none; b=Ap/Je2PBubtvm2U5qaKfnveWKxTw/O/bMFH99px2eKTTIosvdAuV1XNbAj34eEzZecik6UiuAxQnZOaM7ZkbR0ILzCvurnA6EM7bHo8hJ1Z/abrTauZSpWTO7AWV4zxqB3eJ4lCpfaWfOG9CqgBapQqud+QiSXwWN8OYb5BSsW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374695; c=relaxed/simple;
-	bh=ELBa/sGUNc+tJvR9bOcpnHCkJQaz4nnqRJREE/Yqk+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FcDfB2u4AMfcDsiT4GCziMYkSc5EunBUWE7u1LUcNel76RVOUdQ4SAlbIXpk06doWx5GP+AwkV+4xtmJd0N4UfLYiDW0vFxHbMwY1lGcdfB3KC4iiRjQxekob8xCTBSn7Gce6tdCqpqhoU+EtBTYw9teksYv6R6PEFx2BkH6CRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C0ryCdzV; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3b7825e2775so4358954f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 23:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754374691; x=1754979491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E98n+UPhL1YKduvH2BiiWo2QZBO1y2l9z08105Lom5U=;
-        b=C0ryCdzVjf5T5lNI2j70aDrsXe8DNsa0cn93ZYd/H5yCf7Tp1kkfqtM//NzJ1+ss3R
-         A0r3erGJY0YRaeU413HCzyQ8OwlAiKATs4GCn3iliVZYzGaZFQjIKvqBc8X205ckgsjz
-         hvttHVPL6xl/gahhWSGrz1NCLeFkxkUH90eW7nWfKOs/WwaHl6USsc2Fj8tI599953S9
-         G1BiNgq9BdXJ3lKqFaL3AMq57+uBxm+LDgGPL8Ilim9aeXL3LZdvV3rKrfApviWrpTTq
-         PT923qK/74r+UKant1NEhBS8+1nI3K18vPiNTaDjMYRUhagkSAImOiz2gA3io/6+H1sb
-         htsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754374691; x=1754979491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E98n+UPhL1YKduvH2BiiWo2QZBO1y2l9z08105Lom5U=;
-        b=Y28k0ZNv7wnLLGfucgV+V6lnxW9A4NudI4jTeIicdmKPH4OSZvap06UODawqza+AIp
-         UdSNszIcH1VBkK1cBIPYRIASQkHLVt6OBzlelgEzbZaDuMA5145/phZX12iPSaMguSzs
-         a88Zr4v66dTsC+R6Kelos/ZSAQcS3OJ+k9HULaOcxLLoOXBP0r7v/CfaqOXQzIo+DuMl
-         e08JlOhUaS9dbS1kSybf/P6eI+YGmcrEiMz0ONdM2+PBHY098zLFBKduqEbU8bWdsQUr
-         yxtyziZI/lSny6GnpaAQ5vqn9njqS6xyEAMsqnMxL8uyFWFltZuhJmBIT8CoxtaWzPE7
-         SBEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqgfuW4vtToQaLxQ7PTGZY7/h3kahxOgvuUdqD483Q5/u0IxemGZe95v01nUD6R7XJoq0tRCeplpXgMxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiQqtzro35aEUClK/QUhqm86oO4b5SFl+ySBO3EXJzD5W5Y6ro
-	Fm1DYADbNuldxfmiagmKTRP7i+NmIxq8lIzBt6sbK5okvGdMzfmhQQZ5qoJFRkKnV5I=
-X-Gm-Gg: ASbGncsApBVdnSWZ0fnG43JcTDl/Fi7/avj5BwitSBl9CX4EfXtyroMg0b2RnXCaPqc
-	AhKd+RSWe2/muzKiceBfCCJMDxP4X2gvw5TIR/4gocYkj58lW6Xe2VBTLADqbBtkCVvgpv1Q15+
-	L3JvSjj881Y6IWTxhQ6H5/DVvf3rspalZ4eSg6qUDByULLmOJ3GzMod3dw4tSWUTQzD2SJUFv2U
-	yo5MArjzo9DQvilvaRsTVDVT3DIAL+Hy65CitIyy5o/uy9DjSXrH7Sz63g2uwGj58K6Q2+5SwTj
-	Tg/P8rlxsXt5Hx8LBkDupjXWRONcY7dCJM+3J9/oycnuXBPuBHHTG1Q8gQe9Ta6rfIujyh1G4s8
-	yDR0hMgpRb1+VK8alEo8Zcfu3XubdJ66Uf+TK6LoCEYh3pA==
-X-Google-Smtp-Source: AGHT+IHMgt+0zW/PIgfBTzkUC4QRR2LPK2PX0oWN+ufDQrYfugv/isEt03oxqHiZLF8dQeUUNB6XLQ==
-X-Received: by 2002:a5d:5d0d:0:b0:3b8:d082:41e with SMTP id ffacd0b85a97d-3b8d94cf50fmr8805139f8f.57.1754374691331;
-        Mon, 04 Aug 2025 23:18:11 -0700 (PDT)
-Received: from localhost (109-81-28-237.rct.o2.cz. [109.81.28.237])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c48de68sm17845841f8f.67.2025.08.04.23.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 23:18:11 -0700 (PDT)
-Date: Tue, 5 Aug 2025 08:18:07 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: zhongjinji <zhongjinji@honor.com>
-Cc: akpm@linux-foundation.org, andrealmeid@igalia.com, dave@stgolabs.net,
-	dvhart@infradead.org, feng.han@honor.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	liulu.liu@honor.com, mingo@redhat.com, npache@redhat.com,
-	peterz@infradead.org, rientjes@google.com, shakeel.butt@linux.dev,
-	tglx@linutronix.de
-Subject: Re: [[PATCH v2] 2/2] futex: Only delay OOM reaper for processes
- using robust futex
-Message-ID: <aJGiHyTXS_BqxoK2@tiehlicka>
-References: <aJBKijr1nR1CleBL@tiehlicka>
- <20250804115037.19690-1-zhongjinji@honor.com>
- <aJChI-LMwmuWEwpH@tiehlicka>
+	s=arc-20240116; t=1754374697; c=relaxed/simple;
+	bh=Fd7YkUef+1gyQvN1JPnS46Q7HZf9eZJj5bo+xtANGYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njtKHEHHtvZgNgnlpsTKCCx9/pOK8yW0rv/12R2FLJpZxFxx9dCOUDGH/0YAlA7Ik5Pp0BnCZnomTeMHz87f002dJoVLisc2jZndfIDuOUdaTRMTIZ1+l38m35ovdjXzKIvON1WAj05LRHL0ESjI96EtfxbJe/56Yp7uH/de/hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMM+KOJZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230B3C4CEF6;
+	Tue,  5 Aug 2025 06:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754374695;
+	bh=Fd7YkUef+1gyQvN1JPnS46Q7HZf9eZJj5bo+xtANGYk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gMM+KOJZGvtibJqKsYX/Az/UK5nrCAV+tS48XoiioU0cWljlzMBpTtazPGjqm7iZr
+	 M4YonqF2NCb30JlpqjV8iKjhw852XHYiH51qbbyVL7LmWPoAo/my8H9s9K7sVE9ggo
+	 8+05qC6fd8DLQcjOXXFtnlYXeXE4jBb9S1Pf6rxZc8nQZamFFGHCsHG5wk+Yva9DsU
+	 Nip0shMNfK+XUoTGxIjqfiW1ROAQt/6veyoRtHtkRg5aAfEtEThbSvHb7UbBlqwzKX
+	 4x7oQREXfiptz7v3IB5CpYQ3tszqWSV8lvvPTq8ZOCQdM/QLSw6QT+CmK4Vf/Ax72y
+	 9JcJIscu09WSw==
+Message-ID: <e52b3630-5846-49ac-9abf-3b42e1d585f4@kernel.org>
+Date: Tue, 5 Aug 2025 08:18:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJChI-LMwmuWEwpH@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
+To: Liu Ying <victor.liu@nxp.com>, Joseph Guo <qijian.guo@nxp.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250804-waveshare-v2-0-0a1b3ce92a95@nxp.com>
+ <20250804-waveshare-v2-3-0a1b3ce92a95@nxp.com>
+ <9aca40c3-e22a-4d41-bac8-18a7cc8e3e96@nxp.com>
+ <8c8d9723-bb0e-4c4b-9fcf-3e1ec46609bd@kernel.org>
+ <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <901dcf27-f9b8-4c21-8012-3c77ea9bdd83@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 04-08-25 14:01:40, Michal Hocko wrote:
-> On Mon 04-08-25 19:50:37, zhongjinji wrote:
-> > >On Fri 01-08-25 23:36:49, zhongjinji@honor.com wrote:
-> > >> From: zhongjinji <zhongjinji@honor.com>
-> > >> 
-> > >> After merging the patch
-> > >> https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u,
-> > >> the OOM reaper runs less frequently because many processes exit within 2 seconds.
-> > >> 
-> > >> However, when a process is killed, timely handling by the OOM reaper allows
-> > >> its memory to be freed faster.
-> > >> 
-> > >> Since relatively few processes use robust futex, delaying the OOM reaper for
-> > >> all processes is undesirable, as many killed processes cannot release memory
-> > >> more quickly.
-> > >
-> > >Could you elaborate more about why this is really needed? OOM should be
-> > >a very slow path. Why do you care about this potential improvement in
-> > >that situation? In other words what is the usecase?
-> > 
-> > Well, We are using the cgroup v1 freezer. When a frozen process is
-> > killed, it cannot exit immediately and is blocked in __refrigerator until
-> > it is thawed. When the process cannot be thawed in time, it will result in 
-> > increased system memory pressure.
+On 05/08/2025 08:11, Liu Ying wrote:
+> On 08/05/2025, Krzysztof Kozlowski wrote:
+>> On 05/08/2025 04:22, Liu Ying wrote:
+>>> Hi Joseph,
+>>>
+>>> On 08/04/2025, Joseph Guo wrote:
+>>>> Waveshare touchscreen consists of a DPI panel and a driver board.
+>>>> The waveshare driver board consists of ICN6211 and a MCU to
+>>>> convert DSI to DPI and control the backlight.
+>>>> This driver treats the MCU and ICN6211 board as a whole unit.
+>>>> It can support all resolution waveshare DSI2DPI based panel,
+>>>> the timing table should come from 'panel-dpi' panel in the device tree.
+>>>>
+>>>> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+>>>
+>>> For next version, you may add:
+>>> Suggested-by: Liu Ying <victor.liu@nxp.com>
+>>
+>> Why?
 > 
-> This is an important information to be part of the changelog! It is also
-> important to note why don't you care about processes that have robust
-> mutexes. Is this purely a probabilistic improvement because those are
-> less common?
-> 
-> TBH I find this to be really hackish and justification based on cgroup
-> v1 (which is considered legacy) doesn't make it particularly appealing.
+> As I replied in the cover letter, I provided general idea for this
+> patch series in NXP down stream kernel.  Same for the DT binding patches.
 
-Btw. have you considered to simply not impose any delay for _all_ frozen
-tasks? 
--- 
-Michal Hocko
-SUSE Labs
+General idea to add support for new driver? So like every patch being a
+result of for example task from manager means "Suggested-by"? Since when
+new device support is treated as suggested-by?
+
+I also do not understand how downstream kernel is relevant here.
+
+Best regards,
+Krzysztof
 
