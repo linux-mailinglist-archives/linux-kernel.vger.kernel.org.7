@@ -1,157 +1,152 @@
-Return-Path: <linux-kernel+bounces-757031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFAAB1BCB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:38:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41987B1BCBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AECE182F19
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:38:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECCCC7AA323
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C4B261596;
-	Tue,  5 Aug 2025 22:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050FD26A0B9;
+	Tue,  5 Aug 2025 22:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VCKCs6Xo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="etTRpcOf"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B22E1DF759;
-	Tue,  5 Aug 2025 22:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F325135959
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 22:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754433511; cv=none; b=XtGLA5+wL3dLwHZaZk5wbrb2AMjMbbYlQfLGFAEC69EHtyBbI+HPvZYZhW8+JalNJsT5fXH6mmwEnwjhflG0dLcq2ZTnnv+TNyyqCjTBAQqgXQEJ7CfjQSX09FaLHOBJg4twAM9A6FLFo5BRYpBVF+aA2slqyaTKC4QFQWzY1Yk=
+	t=1754433658; cv=none; b=std9N2tAOPTefEQcofpzn00TyznrrgLF8LeL4VNWIGP1FpaUoNW3XV3b3psLa8zuXbWGm9lspIbbKy8gW5wnoccYA/usB/GwbXkMIN1D5whnwIKrXwo1J/jQXwuaCHoxi4QNTS7B06oSK6LCcJQO1inUIgnCbiHpOsj6yBgcnZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754433511; c=relaxed/simple;
-	bh=qkLwpsGo+NYgSsu3Musf3IN98rbXjnBj7WV7sNgrgLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VS3tnd7h9IPhmX67vpcxSZzk8rljHyEE5f51bA2quCsFvPq++4p8Js3M3KdilFy9E7ks5g2mK2POgOpoGYUrOjhH1ebDxc1l8Ov17HEPy3gpLGK/j523LK5UOORuRlwGkOK2dD8y8wvQDi53gPspy7yHvHIj3rh23aKAFTMS7Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VCKCs6Xo; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754433511; x=1785969511;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qkLwpsGo+NYgSsu3Musf3IN98rbXjnBj7WV7sNgrgLQ=;
-  b=VCKCs6XoYLJrnvzTB7ax7wDnI2gYyFx5PsA6Nbfg7zhYw7Rbh8xuWyVp
-   xcdByWTJEEchWQdZRXrivi9WoKFEWfVoOXFRDp+FB5s/Z4S44jWMZIEEF
-   tsQQkxhTlgs0VNo+vgj3DUw59MRylVlig5H0aQhzCOfyOLupuWkhQFs3l
-   +6fuM9IIM7an3AVqtcPqtE8S5UWLG1n66oA5isnHn9u2krTRZAGPHQkNE
-   r0Dg9zBT6izurvy3acjbjIZatqGmNZYh79IPXsjeK5XU1q4Psk7demzMC
-   MUOA2LuRjqomupyAEbNcDoEjn9WTu65dqb0c14Vm4UoY/vabYUv5GHvrk
-   g==;
-X-CSE-ConnectionGUID: 676Uuvp3QBSZvGFAwBJ04g==
-X-CSE-MsgGUID: 1f1fZctSQOG86nRsBWEmJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="79292833"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="79292833"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:38:31 -0700
-X-CSE-ConnectionGUID: iuzP73ZeQquPZjUWAl1WIw==
-X-CSE-MsgGUID: nghmhU06TYK5mYi+ZhT4hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="163874660"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:38:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ujQIa-00000003s0w-24fl;
-	Wed, 06 Aug 2025 01:38:24 +0300
-Date: Wed, 6 Aug 2025 01:38:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: dave.jiang@intel.com, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH] cleanup: Fix unused guard error function with
- DEFINE_CLASS_IS_COND_GUARD
-Message-ID: <aJKH4PlYXSuBua4_@smile.fi.intel.com>
-References: <20250804220955.1453135-1-dan.j.williams@intel.com>
+	s=arc-20240116; t=1754433658; c=relaxed/simple;
+	bh=zS1zWvhTT+IcSshTBcgi0LvYfFbo8Wss63zrFGwEmv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dgs8O9j/Uu5aGSEuNC6fKFfHVrfu0maJCU9MHlJIJInc7vRaP5vH4PHVtvp5W0ZO7Gbp4nn2ucUgfQRBgYaFLWY7dLOfrC3zuW69pJaydYxbooOoYuhqm4VnDOxxFjH/xeFrYe1YsAC/sURJVx/uVvj5+IX4e2GA8kGpDaNBvRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=etTRpcOf; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-615d0b11621so582838a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 15:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1754433654; x=1755038454; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X3m+xXB2nDYY2FTeCIps+Dx8G8ytYsYqX18zczPNIoE=;
+        b=etTRpcOf7pg5tQckPpSFEw6QjZ5vcwd+9l+m34Xtx2SpmlHVCRXQEhG1RgxsshqCxo
+         VNWvbV3uesJr42K974/5EYvoK9Sbir5/8SV3wQ4ppUuKnGYyEvtjoIr2SZ/+JzSPyH2P
+         V3/abqPAO8Xmz9f/QkY8uwovhVNjjwjnVqvTo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754433654; x=1755038454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X3m+xXB2nDYY2FTeCIps+Dx8G8ytYsYqX18zczPNIoE=;
+        b=OBYj9yoD5AzbbP2id4C/TJPlADDtTmsSshkD/uFE/MMDTMkmMSJ0Zipf8kyrouiJJO
+         aP2pVQhGGM9XVXo8flM5c0wrJdUurBLuN7Gp7Bsh4FuhzUTiexGKfKika9v3PgvgtvII
+         7/fBhCsknXru2VsHSfTtz643An12S5pxRcVDN+yQ0AqAQhW0sADyoa+sIHfaHhEcQrzM
+         LlkiDBtmyTozdCTZOPWYBmtSJDhIbdMIcsq2cSbjzuue/ca0woTMh3HeKdsXc4COC6uT
+         X3T2mW8tSPaibLcdFf265028IXKbOUaaaSKf7r40f7gsYj2Zs+rAXYAgnhuV5Dfobad4
+         3z5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXRLhui/UGOtcuRgvFExkOJKnt1eGtzkDuTETxM6gMhzaZ+YCYj5w0JA6r4oCrXr4wyNzFTMw171d2jsZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCnW7PQQu69oH1mGYuwXmPzbkIr+lB6hbf7qt/8NFQEqBhICMX
+	Qo4CVupbOcTAHofEg7MYS8wf0RHE1rsQ1iPtnYg5hIhdwx8xc8sKj0BA5iQLR5aCOP0YDnb9X5U
+	dq0zZM246Og==
+X-Gm-Gg: ASbGncse79ThPiqXxBglXCR9JQ6hpQHglLF9vzSLysjn4idt+nIzSdg/Qbkh6GfiLCb
+	AUtnZdt1imsAYh6fyoOQdtg9qkcxnkfuEItB8RtSiYjHfbtSuHxlBhaavtLI/lxpa1aquX5+h4h
+	BdL5xJEI+llTK7fhCyn2uib8FvWDsz1HBtR1psYs2s5yPOx1ak5Z42Y4QWqYs7XtsnuRPui31nw
+	j97/oQLRO/QD+y6XsSQZAsy4i02tcVqIRVTFnOL5nqs8w07zccsCmAp0Kj1wkNPKKJ6GTLZMZan
+	Q9cWdF4Ty5xwiaNnUpRf3O+zANmf5PE9hikk17WXYEzZJT8erhSig0O3a1IEMl4cj/PQ/frlszL
+	od7DKhvcpq4v66DQrK+eILy5PPvOGy/Rti22afUYOv2/zoUIpGKPhTLbiaLDOqVNBtxwRTsRk
+X-Google-Smtp-Source: AGHT+IGLQCxSzPbLqlEAPndsQvGfrqa0iYDnPth4pehk0RE8g2f//90R1JM7pgshExrDx2WPy3qejQ==
+X-Received: by 2002:a17:907:72c2:b0:af5:5d76:3fbd with SMTP id a640c23a62f3a-af9907c7a5emr52104566b.11.1754433654188;
+        Tue, 05 Aug 2025 15:40:54 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91b36e91dsm946968166b.69.2025.08.05.15.40.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 15:40:54 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61576e33ce9so666011a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 15:40:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTXsXQAFQyB1q/VeHIsISWk1N2aW23pZHsCIJqD/yegjHq5pMBttRPOimEHacFNEhwAk59oN4GNlYdGk8=@vger.kernel.org
+X-Received: by 2002:a50:d6da:0:b0:615:1ffe:7e13 with SMTP id
+ 4fb4d7f45d1cf-61796e84ddamr347112a12.16.1754433653535; Tue, 05 Aug 2025
+ 15:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804220955.1453135-1-dan.j.williams@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
+ <20250804100050.GQ8494@horms.kernel.org> <20250805202848.GC61519@horms.kernel.org>
+In-Reply-To: <20250805202848.GC61519@horms.kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 6 Aug 2025 01:40:37 +0300
+X-Gmail-Original-Message-ID: <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzn6xC3GEWZwV8GpsWb-o1g1X9WA5sVZ0frXqURB1sH9fEGM06GbVjXWic
+Message-ID: <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on() call placement
+To: Simon Horman <horms@kernel.org>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, Oliver Neukum <oneukum@suse.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linux Netdev Mailing List <netdev@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org, 
+	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 04, 2025 at 03:09:54PM -0700, Dan Williams wrote:
-> Andy reports that the "lock_timer" scheme in kernel/time/posix-timers.c,
-> with its custom usage of DEFINE_CLASS_IS_COND_GUARD(), results in:
-> 
-> kernel/time/posix-timers.c:89:1: error: unused function 'class_lock_timer_lock_err' [-Werror,-Wunused-function]
->    89 | DEFINE_CLASS_IS_COND_GUARD(lock_timer);
-> 
-> ...with a clang W=1 build. Per Nathan, clang catches unused "static inline"
-> functions in C files since commit 6863f5643dd7 ("kbuild: allow Clang to
-> find unused static inline functions for W=1 build").
-> 
-> There are 2 ways to solve this, either mark the class_##_lock_err()
-> function as __maybe_unused, or make sure class_##_lock_err() *is* used /
-> gets called to disposition the lock status.
-> 
-> At present __lock_timer() only indicates failure with a NULL __guard_ptr().
-> However, one could imagine that __lock_timer(), or some other custom
-> conditional locking primitive, wants to pass an ERR_PTR() to indicate the
-> reason for the lock acquisition failure.
-> 
-> Update __scoped_cond_guard() to check for ERR_PTR() in addition to NULL
-> @scope values. This allows __lock_timer(), or another open coded
-> DEFINE_CLASS_IS_COND_GUARD() user, to switch to passing an ERR_PTR() in the
-> future. In the meantime, this just silences the warning.
+On Tue, 5 Aug 2025 at 23:28, Simon Horman <horms@kernel.org> wrote:
+>
+> I have looked over the patch and it appears to me that it addresses a
+> straightforward logic error: a check was added to turn the carrier on only
+> if it is already on. Which seems a bit nonsensical. And presumably the
+> intention was to add the check for the opposite case.
+>
+> This patch addresses that problem.
 
-Hmm... It seems fixes the timer case, but left others still fail:
+So I agree that there was a logic error.
 
-drivers/pwm/core.c:54:1: error: unused function 'class_pwmchip_lock_err' [-Werror,-Wunused-function]
-   54 | DEFINE_GUARD(pwmchip, struct pwm_chip *, pwmchip_lock(_T), pwmchip_unlock(_T))
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:380:2: note: expanded from macro 'DEFINE_GUARD'
-  380 |         DEFINE_CLASS_IS_GUARD(_name)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:372:2: note: expanded from macro 'DEFINE_CLASS_IS_GUARD'
-  372 |         __DEFINE_GUARD_LOCK_PTR(_name, _T)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:358:20: note: expanded from macro '__DEFINE_GUARD_LOCK_PTR'
-  358 |         static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
-      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
-<scratch space>:81:1: note: expanded from here
-   81 | class_pwmchip_lock_err
-      | ^~~~~~~~~~~~~~~~~~~~~~
-1 error generated.
+I'm not 100% sure about the "straightforward" part.
 
-fs/namespace.c:1782:1: error: unused function 'class_namespace_lock_lock_err' [-Werror,-Wunused-function]
-  1782 | DEFINE_GUARD(namespace_lock, struct rw_semaphore *, namespace_lock(), namespace_unlock())
-       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:380:2: note: expanded from macro 'DEFINE_GUARD'
-  380 |         DEFINE_CLASS_IS_GUARD(_name)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:372:2: note: expanded from macro 'DEFINE_CLASS_IS_GUARD'
-  372 |         __DEFINE_GUARD_LOCK_PTR(_name, _T)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/cleanup.h:358:20: note: expanded from macro '__DEFINE_GUARD_LOCK_PTR'
-  358 |         static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
-      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
-<scratch space>:15:1: note: expanded from here
-   15 | class_namespace_lock_lock_err
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In particular, the whole *rest* of the code in that
 
-These I have and I dunno how many more can be detected with allyesconfig and/or
-allmodconfig on all possible architectures...
+        if (!netif_carrier_ok(dev->net)) {
 
--- 
-With Best Regards,
-Andy Shevchenko
+no longer makes sense after we've turned the link on with that
 
+                if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+                        netif_carrier_on(dev->net);
 
+sequence.
+
+Put another way - once we've turned the carrier on, now that whole
+
+                /* kill URBs for reading packets to save bus bandwidth */
+                unlink_urbs(dev, &dev->rxq);
+
+                /*
+                 * tx_timeout will unlink URBs for sending packets and
+                 * tx queue is stopped by netcore after link becomes off
+                 */
+
+thing makes no sense.
+
+So my gut feel is that the
+
+                if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+                        netif_carrier_on(dev->net);
+
+should actually be done outside that if-statement entirely, because it
+literally ends up changing the thing that if-statement is testing.
+
+And no, I didn't actually test that version, because I was hoping that
+somebody who actually knows this code better would pipe up.
+
+                Linus
 
