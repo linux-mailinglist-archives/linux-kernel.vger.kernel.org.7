@@ -1,213 +1,125 @@
-Return-Path: <linux-kernel+bounces-756983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF97B1BBC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13629B1BBC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B0C3B016A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C299318A54D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E833D24E4C3;
-	Tue,  5 Aug 2025 21:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4C825B1C4;
+	Tue,  5 Aug 2025 21:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYt1ESF9"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UmmtEqGo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8D01C8633;
-	Tue,  5 Aug 2025 21:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6581C8633;
+	Tue,  5 Aug 2025 21:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754429537; cv=none; b=f9X6qu+LjQEQeJYwOfBOl9gLWyLpQvyNnqMSrwdEtsGr65m4Puaq8Gz33ySUXgdAG4umbz+WkzC3tMzkpOZSQJN2maECL/cdo3cWcDkXpsqCGr8Gz6uH8g2WrUyg7CFxg1jR/HqlB8dITnPGRyKbJCcXuUyXGm+U0+uywKk0Do0=
+	t=1754429542; cv=none; b=mbvTCzzqOzqtH8cmFa2aN7+duFu1GmC6oj+wY76hoKk3Wc9thCYnQ1CRMJwU8OTaAQ/kLJSnrVfWUaINGikMnus3clWyMsiAvlK4YPW4pwptJNXdGK5ZvM691j1GYQHeoZubaIRj3Lh/xiax6u8tAVpi8bDWHr0AR2GeNf9F2WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754429537; c=relaxed/simple;
-	bh=+yRR+J5d7PwJm/LH7dB2AD9oTbYVRLhpMGuK7/VNCHc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G5m+Tn7mW1816G6N9bwyazKv1+dhq1vzJn3tEAHvs9ij49al/InNtzV8rB6MA/bW9m1jF6Mxk2EPHAlq/ON/1FYjRviPA2I75g4kqJFR4RYGEAQo6hIBikbyvHOFXQEOdZNSJ3+Ac+x0AAL21Auwhl0WmcQtBga6ihDY7seSX7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYt1ESF9; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32130f6cfbbso376665a91.0;
-        Tue, 05 Aug 2025 14:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754429535; x=1755034335; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8XfqBcuUbvXZzlLXlPsAW+gig/cCq9lWEta9lhp7ac=;
-        b=HYt1ESF9/g3ANcTA6fJbejV+UGDxcesfL1oicJ9aHw1H0gjNUXwTqs4jHni6WASNjJ
-         7fI20ogWEEpiT+VEZNdX2RsUO1AbLkIppka7oskXtreMuITobCVTph3/FaDph8LahioQ
-         +qS672sI3GHIiwrxsNXC2vyD0xsIS5kX12QD1rV85nxW0vEEkguGBS6l1d/iwdrM/ZXN
-         SQluuC+Dcq7ZRCrurKI719pg0+mXsqFxevubgC68S0S9Nwgf8Oh4IPqOpNA/uPdRAJc2
-         6FW529oDValu4tZeC8lQWPpZv5EWq6GNqB8izSSafhM7HFgh9mvgnlr7J/CA8Lg2lEOd
-         8JSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754429535; x=1755034335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S8XfqBcuUbvXZzlLXlPsAW+gig/cCq9lWEta9lhp7ac=;
-        b=a/RfW0dw6lYZdwniw9m5ZjoYhiHvdqHZTPPcpX0nf+aWViru7FRq5McDDwLcaTL0r7
-         AruYozMRiXc+/fc7SxfiuGhNLxnLkm5h6PRDG3VDVLEAnVPDmVeZkNOcdGqmJK1R7KHc
-         Ub217URVCn7c2zd6EitWowX/L3YCJJICuGPczC+Ri0wEv7WxLZIFLUnGfRXyHwevK15t
-         /1hEns64zhUxuHhgUIIKYuCKrLVS6zC8hDdzB0+yYsYlBdPvNtkdHogrTDtf+7w6UHnz
-         wsNtUZ88Z1Xm027Smr8uJKWWCjaB0RYvpI4LLSUtPM9un194F5vf6YZbA80mtSTub0GO
-         BrXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJphmu6d5J54hGb+1rPKYfYOjjj1KaY6+ykqqydoI0kC/OMiqHdYk/2wCJpCoqv3N655OiykU3cwxHKIf3@vger.kernel.org, AJvYcCXs3dv5uZc1DbKWWxpygEdvpS8F9eBvI/sTIyc0UPN5GjzgYYZmjMHe9VuA3BgV6RiYlgI7y/rCxt5aKfmk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEujxWvhaMY7SLN7uRrMwF8kl0HxT5lrAjmgJQ7A03NuAypVWE
-	uebz8rYcZwcA1/ZmN3d3+KUMtYEDJe2c7A9yExCKl4wiOHWYoy4yoM0IU7CEWGHyaGsllJVaqb5
-	tMw8r4/ujpmtAkyWzBW7/7+1XPJx4hFA=
-X-Gm-Gg: ASbGncuBANBUrfz2k7Hj0EwM+tpUvFJguME7NqunL++NzPWB+XfEkCE6B3dj2NrH0bs
-	dZkpZRrgC5Pjitvrp+nfPOydw4o3FbMdoCNB+5cC8n7y2a5Q+EQ8YWLSt0LTvHqWS4nzeZBDuRU
-	Ka+ouEhg0PkVepBz+lNvqkNQmF8yzyw/73XdMq8u6QRL9adb7M322MZhnyYuqVhAQvxxkGFRNqB
-	VrWblk=
-X-Google-Smtp-Source: AGHT+IE6VuwB2rMj+eNLHkOFe2PPtB5Evc/htVg7PAq1VwLveklPNKiOwKomITt+xjUHLS9CMHCCKFVpIRDlVZvK68Y=
-X-Received: by 2002:a17:90b:1d0f:b0:31f:ea:ca84 with SMTP id
- 98e67ed59e1d1-32166c0fc1bmr197960a91.2.1754429534833; Tue, 05 Aug 2025
- 14:32:14 -0700 (PDT)
+	s=arc-20240116; t=1754429542; c=relaxed/simple;
+	bh=FKMtt4C7SiHLDtPX/p8cSSP5Ihvqa+3tSZWKlaBZpqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCeIWPW0xHyr7m+bPKKugNfAXZJfguogyuUO6Xx3k60LjnFvFTjy1WrnYWzaDAhzAH8lx+/8ykJLykfkbcm4fankMUsAXsXHad8pIeVCQFAq8Lqzc+5wVb3n0zI53kAWTTHx0ETOZAsyXZWD39T2fhLDL4EBmV0QhDffGb0EHgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UmmtEqGo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ehg7mtVEZG5GkLeNFV5NybHMZ76+3RE7nNoKJBi39vM=; b=UmmtEqGoQCHJCUJD2FPuSpUcxJ
+	kEDJzF3QrGcSGTcRZP4Tm21LpfrkrbMshAqMWfQWUDCS3NDRs9oYEDR7cw+uHekZQ/MiQHVsF8B4i
+	01H8w1v0bMNseWAHoGcrzkEP7+9yNXGgHyAuJsL8MefLvCR0a0gVr/v8RGNVSOjI77v8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ujPGX-003pQr-Ib; Tue, 05 Aug 2025 23:32:13 +0200
+Date: Tue, 5 Aug 2025 23:32:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH net-next v4 6/7] net: axienet: Rearrange lifetime
+ functions
+Message-ID: <69b08e90-ae99-43fd-9779-dd5497a26e1f@lunn.ch>
+References: <20250805153456.1313661-1-sean.anderson@linux.dev>
+ <20250805153456.1313661-7-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805164431.24350-1-robin.clark@oss.qualcomm.com>
-In-Reply-To: <20250805164431.24350-1-robin.clark@oss.qualcomm.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Tue, 5 Aug 2025 17:32:02 -0400
-X-Gm-Features: Ac12FXwnTTjTLlR6ZiyVs-H5Xibje4MD5VPolzpqvzwQ7PFaf_1DWFcW5Qh9ga4
-Message-ID: <CACu1E7FoQ1djuoqmjxJFHMLx1xuqsK4+a63gw34F-K8kca3-MQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/msm: Handle in-place remaps
-To: Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805153456.1313661-7-sean.anderson@linux.dev>
 
-On Tue, Aug 5, 2025 at 12:44=E2=80=AFPM Rob Clark <robin.clark@oss.qualcomm=
-.com> wrote:
->
-> Detect and handle the special case of a MAP op simply updating the vma
-> flags of an existing vma, and skip the pgtable updates.  This allows
-> turnip to set the MSM_VMA_DUMP flag on an existing mapping without
-> requiring additional synchronization against commands running on the
-> GPU.
->
-> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+On Tue, Aug 05, 2025 at 11:34:55AM -0400, Sean Anderson wrote:
+> Rearrange the lifetime functions (probe, remove, etc.) in preparation
+> for the next commit. No functional change intended.
 
-Tested that this fixes the occasional page faults with the zink a618
-jobs on Mesa CI with my Mesa MR.
+There is a lot going on in this patch. Can it be broken up a bit more?
 
-Tested-by: Connor Abbott <cwabbott0@gmail.com>
+The phase "No functional change intended" generally means, its the
+same code, just in a different place in the files. This is not true of
+this patch.
 
-> ---
->  drivers/gpu/drm/msm/msm_gem_vma.c | 41 ++++++++++++++++++++++++++++---
->  1 file changed, 37 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_=
-gem_vma.c
-> index d1f5bb2e0a16..00d0f3b7ba32 100644
-> --- a/drivers/gpu/drm/msm/msm_gem_vma.c
-> +++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-> @@ -451,6 +451,8 @@ msm_gem_vm_bo_validate(struct drm_gpuvm_bo *vm_bo, st=
-ruct drm_exec *exec)
->  struct op_arg {
->         unsigned flags;
->         struct msm_vm_bind_job *job;
-> +       const struct msm_vm_bind_op *op;
-> +       bool kept;
->  };
->
->  static void
-> @@ -472,14 +474,18 @@ vma_from_op(struct op_arg *arg, struct drm_gpuva_op=
-_map *op)
->  }
->
->  static int
-> -msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *arg)
-> +msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *_arg)
+> +struct axienet_common {
+> +	struct platform_device *pdev;
+> +
+> +	struct clk *axi_clk;
+> +
+> +	struct mutex reset_lock;
+
+>  static inline void axienet_lock_mii(struct axienet_local *lp)
 >  {
-> -       struct msm_vm_bind_job *job =3D ((struct op_arg *)arg)->job;
-> +       struct op_arg *arg =3D _arg;
-> +       struct msm_vm_bind_job *job =3D arg->job;
->         struct drm_gem_object *obj =3D op->map.gem.obj;
->         struct drm_gpuva *vma;
->         struct sg_table *sgt;
->         unsigned prot;
->
-> +       if (arg->kept)
-> +               return 0;
-> +
->         vma =3D vma_from_op(arg, &op->map);
->         if (WARN_ON(IS_ERR(vma)))
->                 return PTR_ERR(vma);
-> @@ -599,15 +605,41 @@ msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, v=
-oid *arg)
->  }
->
->  static int
-> -msm_gem_vm_sm_step_unmap(struct drm_gpuva_op *op, void *arg)
-> +msm_gem_vm_sm_step_unmap(struct drm_gpuva_op *op, void *_arg)
->  {
-> -       struct msm_vm_bind_job *job =3D ((struct op_arg *)arg)->job;
-> +       struct op_arg *arg =3D _arg;
-> +       struct msm_vm_bind_job *job =3D arg->job;
->         struct drm_gpuva *vma =3D op->unmap.va;
->         struct msm_gem_vma *msm_vma =3D to_msm_vma(vma);
->
->         vm_dbg("%p:%p:%p: %016llx %016llx", vma->vm, vma, vma->gem.obj,
->                vma->va.addr, vma->va.range);
->
-> +       /*
-> +        * Detect in-place remap.  Turnip does this to change the vma fla=
-gs,
-> +        * in particular MSM_VMA_DUMP.  In this case we want to avoid act=
-ually
-> +        * touching the page tables, as that would require synchronizatio=
-n
-> +        * against SUBMIT jobs running on the GPU.
-> +        */
-> +       if (op->unmap.keep &&
-> +           (arg->op->op =3D=3D MSM_VM_BIND_OP_MAP) &&
-> +           (vma->gem.obj =3D=3D arg->op->obj) &&
-> +           (vma->gem.offset =3D=3D arg->op->obj_offset) &&
-> +           (vma->va.addr =3D=3D arg->op->iova) &&
-> +           (vma->va.range =3D=3D arg->op->range)) {
-> +               /* We are only expecting a single in-place unmap+map cb p=
-air: */
-> +               WARN_ON(arg->kept);
-> +
-> +               /* Leave the existing VMA in place, but signal that to th=
-e map cb: */
-> +               arg->kept =3D true;
-> +
-> +               /* Only flags are changing, so update that in-place: */
-> +               unsigned orig_flags =3D vma->flags & (DRM_GPUVA_USERBITS =
-- 1);
-> +               vma->flags =3D orig_flags | arg->flags;
-> +
-> +               return 0;
-> +       }
-> +
->         if (!msm_vma->mapped)
->                 goto out_close;
->
-> @@ -1268,6 +1300,7 @@ vm_bind_job_prepare(struct msm_vm_bind_job *job)
->                 const struct msm_vm_bind_op *op =3D &job->ops[i];
->                 struct op_arg arg =3D {
->                         .job =3D job,
-> +                       .op =3D op,
->                 };
->
->                 switch (op->op) {
-> --
-> 2.50.1
->
+> -	if (lp->mii_bus)
+> -		mutex_lock(&lp->mii_bus->mdio_lock);
+> +	mutex_lock(&lp->cp->reset_lock);
+
+This lock is different to the bus lock. This is definitely not a "no
+functional change".
+
+Please make this lock change a patch of its own, with a good commit
+message which considers the consequences of this change of lock.
+
+>  		if (!np) {
+> -			dev_err(dev, "pcs-handle (preferred) or phy-handle required for 1000BaseX/SGMII\n");
+> -			ret = -EINVAL;
+> -			goto cleanup_mdio;
+> +			dev_err(dev,
+> +				"pcs-handle (preferred) or phy-handle required for 1000BaseX/SGMII\n");
+> +			return -EINVAL;
+
+That looks like a whitespace change. This is a "No functional change
+intended" sort of patch. You can collect all such whitespace changes
+into one patch.
+
+>  		}
+>  		lp->pcs_phy = of_mdio_find_device(np);
+> -		np1 = of_find_node_by_name(NULL, "lpu");
+> +		np1 = of_find_node_by_name(NULL, "cpu");
+
+Interesting. Maybe you should review your own patches.
+
+
+    Andrew
+
+---
+pw-bot: cr
 
