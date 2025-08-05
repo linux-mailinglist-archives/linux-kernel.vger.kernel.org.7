@@ -1,278 +1,397 @@
-Return-Path: <linux-kernel+bounces-756248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6559BB1B1D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B328B1B1D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43010189DC00
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4413BC447
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C1B26CE26;
-	Tue,  5 Aug 2025 10:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F0B2580F1;
+	Tue,  5 Aug 2025 10:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BSS2KsAF"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010039.outbound.protection.outlook.com [52.101.84.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ya91Pxuu"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42ED1C6FE8;
-	Tue,  5 Aug 2025 10:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754389267; cv=fail; b=bTyNH6PMGonRYtUXaClopgMWx/SFjZWqqghg2nHqYDvb34KtysjL0jPT1vhmpDRyTChS4KtO1WVegox86Ad8OAll7+Qp5kVG1tT3yTCE5i1eCXuW3rg993qgm1Uo3v+ZPc9TOwGoP2x72xOcG1Gdy6jyTTGyGSRoSlvnACPCojA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754389267; c=relaxed/simple;
-	bh=AUVq9s9QO7cOGzKQyT99eILQ8tjqTV2WIsn9c+C/f9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=USWWQnqsF3CQidlq0HyU6suOKQwu3Jm9UJ4NfTJns0OFHM52EHVDHuxOmc6VSU2xLBa2CRH1lwDb0cXfzR6U9/gF/13xiIfYe8yjKFZgeSQWihbLqCQy3vvtyn44Yrvuc8PBBhe37VZvW8ygYGDGZtmMkgnkKASPCmOe4x50rOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BSS2KsAF; arc=fail smtp.client-ip=52.101.84.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vZl3/XbNiA1GqGcyc83Gb8HpryJ2PxMrM6Bm5ZehMuVI38dIAmttIJV21C2g6vVnSPl4hlLqOe9crSFDkuMpeNekmkroyjRDU7X8uV1hgtrSf4mLvR8rZcbWuXIp+3c9S8wKuPEQPM7ZY8m80c5DlgwT3izOsRNngh7Sj9aE0+Fjw1sRGIlCl4YK6lcbHhkteN0m9xKfUGv+g36yWvHK9LB6Xox906LMQpgL0rg4lmdR14jsWazPJLj2GXsq3cfrp9BQPVMvnKQgiqiBM5UDgns1xZiy2H3GSKWz8coIh/3MMMCla3DXjiY/+Z/cwoNQoF+PgGFE9odgqvkm7yLonA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oMzo9UFnzOZr07YqJxahYRXxCtnI0EME1HaponcRdNs=;
- b=n7OcElUA85bONewSyItlILmPB8PUYA0ILR6obUDQ5qtKfOMOnR2rN811ypmHSOV+jz3S5oOqbHpLYMhdFiX7OXhKSEVh3ow7yAl7ivBjoMpQxPeN4aW/v5PnsGJE7lLOXwOteF+XSeQSkH1mY9EMeDKNbh3Qy1uX8YG8YAiAfEvXgUexEzhDsd6MZ3Lx/XX1bw0Wecd8qS+OlqOjLFwPTNzqIfiQ+ps/96VvNdPoSrj74Lhsdx/EYD6QY4I3Je4Q718kjRE2n0x3fowQxd6L0iTHCfvdmoko40X5hY7zARl5LnBzGTkUrA3qi51FFAiPBTB5LgURsJaiZsZlQdtQ+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oMzo9UFnzOZr07YqJxahYRXxCtnI0EME1HaponcRdNs=;
- b=BSS2KsAFxcfiAzU3Dg9z1M1FMa9N5v7WlglxTqhOxfOPo4TIzj1NGWnLOSsgX5wegJHjPNTz6+yNIBSXVVDAWDAPfErmT+CtYBLevR5RSc/YjGQedQMTDNFmYh6zG2SWZ3EVRyVfSzEgBDI3kpINbarD8QePoLCixC92jWcvvg7hOVjqFTBesYK3kXPVbX2iLN9z8JTXAv97te8NsT3/5Gb2x0hX+uJS5AnqHwdH+VdUcSeAoAG5lMUcmNI7C7YM0mLzTVaSkubsgfga2ba5ffDgowvYEyB2uFomHsZ7ndDvfgRAPQRkfxpBHTJeCDYF0KhvT/9NxANz5VzS7TEayw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS8PR04MB8545.eurprd04.prod.outlook.com (2603:10a6:20b:420::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Tue, 5 Aug
- 2025 10:21:00 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.8989.020; Tue, 5 Aug 2025
- 10:21:00 +0000
-Date: Tue, 5 Aug 2025 13:20:56 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <20250805102056.qg3rbgr7gxjsl3jd@skbuf>
-References: <aJBQiyubjwFe1h27@FUE-ALEWI-WINX>
- <20250804100139.7frwykbaue7cckfk@skbuf>
- <aJCvOHDUv8iVNXkb@FUE-ALEWI-WINX>
- <20250804134115.cf4vzzopf5yvglxk@skbuf>
- <aJDH56uXX9UVMZOf@FUE-ALEWI-WINX>
- <20250804160037.bqfb2cmwfay42zka@skbuf>
- <20250804160234.dp3mgvtigo3txxvc@skbuf>
- <aJG5/d8OgVPsXmvx@FUE-ALEWI-WINX>
-Content-Type: multipart/mixed; boundary="x7cxeh2vlmult2i4"
-Content-Disposition: inline
-In-Reply-To: <aJG5/d8OgVPsXmvx@FUE-ALEWI-WINX>
-X-ClientProxiedBy: VI1PR09CA0163.eurprd09.prod.outlook.com
- (2603:10a6:800:120::17) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EB326A0A6
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 10:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754389285; cv=none; b=AhJ9NJwPlDVjGmd9RsSlhk8T6qGGg+l/b8Zuu5vbpINtD23faCUrMtTcpl+3+Iggb+0WA4mdtoz/rPnGhFn3PSj2KUtYKAphZhusK0yaCSk+8tqLAG4IjTpYTLQnl5wiXcSM6brEz+Hxqjs6fj9nWii8aVm264fTj0FVXQiooag=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754389285; c=relaxed/simple;
+	bh=SKsecL5+kgsTLvngjCuiHTZ4KUssDK3u/31CxJg18LI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EWvLK8g/+9w3Zx1xATbA+i0/pBAcWqj4uoDv07/Vrn4GERo/qmFZAIbtRR3wBUxdFWNG3dDr1qnH8rYv+41Gru8GT9bGe0FUJk0npLRBy8uosNm4OJqrWTerHbf3RaGiDU8Nt61Ev3m+8d48/uHTSKOM05qKgyR8Rn+Wh5Uf49M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ya91Pxuu; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-500006b3efdso1664007137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 03:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754389279; x=1754994079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KINrld3kBoM9uGnKfXQjYnfgm20s8mcD75wPbUpT8k0=;
+        b=Ya91PxuusBkMStqb0ED7SRVlGaWkYa7Qm4M+/OIu5zo1vTdfCWMgccgToOGlO3wlKz
+         sMk/jmN/xRNqg3TsZ2fb/EPDWhaOJ1R3XaUuitUrKkzjXY1culPJAoY1xfr+awTalSfZ
+         81BSrYdnaO6CJAbsg7pm1NNxITEcdA70Pbsac8jiTjn6A5jReb21pF4E2dxX+qAoGg0m
+         kTHfGulopjBwGpSIui/jM6QwJFKCewjNj+B7Q73NRQOdG4ICn+u26Yx+i+okBFtC1UvL
+         DAA5quRlceLQYQ+IC0oODnXGHkrL5FM2Yf7QIXSNAbUcVxNTSHrrD7scsEcrDHCe1/ZL
+         RkcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754389279; x=1754994079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KINrld3kBoM9uGnKfXQjYnfgm20s8mcD75wPbUpT8k0=;
+        b=IqKpN9gM/w716ArMbUhju4jevXwuJurfQPjfo8l7W5G9Z8Se9I++aDN5fiiIkzE0Pc
+         /fsexEuLnlYFzIkxtWLVvARBR8ZAI+hD5REOIQwK1/YYnsXatjctSdLradUjYO9Ll2pf
+         PCQi9wGlOBDnYkIAuYbl2hLHHbhfx3etT1rKTbtEgNTqd3D9H9GJR3ERzEBP+W/8i3/T
+         AE2M1XDbp962QJj5NX1Qrb6WhRwOGHR8pGDxNydhaoLA/c8jYwlGX1UtZx37Ugs2OBwp
+         vKMzg0qfGK7LuovIWBw9UrvgCKseKOkEcdsI/mXV2wZ6H6SDmJbyaSRkzbPG4fOE/5Px
+         2KUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWINy+CRB0tViNlJyUETMEm6GEoT1MLkDB+W1Wv0ACyB5LOup4SHgsYDg/AFsm5XfcT+JwESn/C32AJ4wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG3emiXh1IqalEzcXls2OKZxFyhNQakjszC7kjkrwWfC1Ydo9/
+	OVlDh2U/3/mu07fKTIN3QiUhlOH67lUOIkMUghN9TNBRkgdhVxGf4Xh2WfRR1AdeEJxagFXnrcP
+	v8pW+rR0UP+LJkqpsZZgMbM2YiRqsifw=
+X-Gm-Gg: ASbGncvUBcwubkqF/15j5Uv0wZU+hilX444XdBcH0I+9Ib26+hpRBN4OmIsP7r2qUuI
+	sTex8+zBPF+nhcbQN9JuvoRtR2basLNatD5zVaCKthodxmiF5i0A6dTHbtx6qW9ZrGKI5hDV9JL
+	UdvKsKzx+RoB7iFvPgskEjth5R8kMqCPBnYqSJcKFah39HNB1wWWTgr0M+2IotuG3Y1dimlle7R
+	UgNZxTI/nFWZJUfAw==
+X-Google-Smtp-Source: AGHT+IFiRL5PcOs1FQx48CRe5A6PcEXbWyQo/8AusmOYo9ZpAmIECE3WDqbz+GbbDlmaW/1cNGDn7nJP0to2f5oId4M=
+X-Received: by 2002:a05:6102:26d3:b0:4fc:156e:1046 with SMTP id
+ ada2fe7eead31-4fdc4212c13mr5641344137.20.1754389279324; Tue, 05 Aug 2025
+ 03:21:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB8545:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9844ca2-7a6d-4d04-35a8-08ddd409c62e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|19092799006|7416014|10070799003|4053099003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EmaNAkAV397VhtBU47ePkhN3ec3xpfRYwaVmzLBrmV8C8xHWpzPJRzU0oHN3?=
- =?us-ascii?Q?jTeKsBDMaMpOsFjgavi6VrnrXRb+HkR/dd9VrZeQkKKfDuwFFsM/TgXUH2L9?=
- =?us-ascii?Q?J2zOwzln0qJj5KocoYjGKMZkvDbCUHJG/rb9VhiLxiMcB7EKNWtpJDNglJTU?=
- =?us-ascii?Q?d31Zaj3h5mOQaVk8aKZKcvgQmEINoFwBRY1hrSpC76/RoDTikqn8VsIdduJz?=
- =?us-ascii?Q?86i9NyUJuC/4dApQ/Diry2u44Aywm/6/SMNu0/pz/PJ4V9LNAmi6yGNSvUEe?=
- =?us-ascii?Q?u73BN8ue+7RUJthuvEs371TfX+C6UMEblj0eKRcYGLafRRLsQVP6mboJ4eMK?=
- =?us-ascii?Q?L5vGJtkv6485hgYf1jMTsG0ZOhLQzugdeXzGENrIYzXKaq9VDnYiHvHu9dE6?=
- =?us-ascii?Q?KuqGBLZ7lGIgElnHVNjIOnH8iuwGYIR4OSnIdoxVWF5Ls6PvRL5ufSYfeJ5I?=
- =?us-ascii?Q?ry1C2LRThJWumzA69v0BZKhTjgJkAjKIipIij/G0XIUIC+LT0ric34qi20UX?=
- =?us-ascii?Q?6kc7+SFP9ohnmyXAMN/904hjgql0+SVJgNs5jr6dI9mmzpoJBcAUDZWlyn2+?=
- =?us-ascii?Q?RAHjEsdjUscpDINX4REKyQdDxoqKVo2bTq3lpp19LnsAaRqHP5LhJJl+IySR?=
- =?us-ascii?Q?wjmIb+01TPqn35efFfvoNgGKlFieSVnKwZcuF8GMh76iQnq5KJ4LHGJRCeAD?=
- =?us-ascii?Q?Vy3t2s2SyjLCfB+xwYw3ruYVyZNlgTk0O+9fvjwjADFKxNFtiuzI8/fBQyJE?=
- =?us-ascii?Q?PD05k4cgsYetdGKyZziJcwoRBRG38bE/MZMHLw2s+qebWOftsZokmNNcUZIK?=
- =?us-ascii?Q?BAAkIsHgyShvWpXSbyPwt9wXU+REg1SvOrXvXV/zt5x+ww6rZ/nCZ1ZbWVrZ?=
- =?us-ascii?Q?zNuXvSmmNlBmUYPzgrXtrYosCs7J3kWATjleYS7wqbW2YEW8LAD3QBCY9YMa?=
- =?us-ascii?Q?gKUCVDgXXHOw5R0p7G8kOlBa+aKhD2yYjHTmS0o1EE6q4lyaEQ8T+jgCl78z?=
- =?us-ascii?Q?81erOn1tPwBsXlASvwRKep424iKFOTFRYgmMjlzJyYHMFYLj56Etn0pUCbVY?=
- =?us-ascii?Q?eJJziaz8nJ5WLg1LhcixJuCn5X0GB9RMhH90jagkfRmO41F5k3KHDPkLqBCx?=
- =?us-ascii?Q?EJ8hn1KzNIu52QlbDOG9qyUa2IwQZIdKgnYhxIPBbpR6FD/BEPksBTBt9xJZ?=
- =?us-ascii?Q?b7jGg0ET7y4moEj+9xykJ5olVl1UPokdyNPVGKAGNL5HDMzb/CIqdJ6qTwaM?=
- =?us-ascii?Q?OGo2S+2oEYYYOPqbj5BtdVLHQ3zSnkkySmSjdb7S0SiIwPxJX/Xw+xqxHuq7?=
- =?us-ascii?Q?VWHMtB+HtJbgZpQKLNZ6Mn9QSmJQNvK5CdctX4hS5qO2QXvxmxdJyKQOm+iL?=
- =?us-ascii?Q?ZeIxhKZVpS7JOVel29tyxHYE6wCAPnYPdcMWzU1Or/d+y1Je75iJ1xcnbcm/?=
- =?us-ascii?Q?mPc0I10UgWw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(7416014)(10070799003)(4053099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gqYK1+ot4u/ove4UQKxoWtLnG/PQtFFrWdU//lwpq5A5ANiiQtrqjBgTZXUq?=
- =?us-ascii?Q?eka5PhKBQPAoqqgVRjR8SpUVJxi0z8AsxcaQes8BwptczWY39z+JCmx3vgJq?=
- =?us-ascii?Q?zyjEDXHWwldm0AV9m+7ENxXFfhQxvr+RGbtUcIyQRJklihlRvAYuu+wcz9Vk?=
- =?us-ascii?Q?zNzzKj117p+7qKY7HB3I6z415MJnfqqxlcN4r7HMF0shks2i3RuzE2spFaqP?=
- =?us-ascii?Q?AaT+6yM9LBDch7wgr8E7dCD79mMhDsj9Rh6v4V1Gqbayizi/k1OanGuDxbOr?=
- =?us-ascii?Q?n+yxrsbL3cQ0fguO6+88RBrjseieAw5/xOBPLKhoPgeAFnjkKGldA5SV99yZ?=
- =?us-ascii?Q?zv31q7wttoUBnAYAVAnAllbq/2AK9reENGGIZZbf+A6jZ5s7g/WBxtLZ5izh?=
- =?us-ascii?Q?4PjvEYcUUNLZJKUSxfE2IULuaHLOY3suH+hDVWa/cclApMcoNy3YykkZh0KM?=
- =?us-ascii?Q?RK7yd7J8SNyc8McsBLkS8del/y2bDtoVDxeeM+peYfCeCgZElH6iqunMM6c1?=
- =?us-ascii?Q?q7m8+g0e+SlIZknscUU1srPQdyaoe4Zu7l74m+VCj2OvsPLarxBPUL0j9/Bn?=
- =?us-ascii?Q?COwvVKbwFLlOVFTBfyiW8KR6apLWvi23mVzGi4W+MDk7Z8ZDlAo46pfGaMZv?=
- =?us-ascii?Q?bJDw1VaGbdgk2OSg88QPf73fUogXmsV8kzguZF09d9z9Mbf1bzIjHq5YpwBD?=
- =?us-ascii?Q?7S72j03kybJdZ2zoqhMv8pJLUgq9rtG6dE1l4ZQaDoFLzfH+rOje6dNeK1VG?=
- =?us-ascii?Q?ceZJawIvdsegHDmupVBxdhxD1hmbQPZJXqfsYqundzJFlEiXclVstg56XJq4?=
- =?us-ascii?Q?BS76PBheS1ZEGr6sMskgpoBc5kPwxujfVG5Cwr57HZQBvw0Z4vEkG6rfPNGz?=
- =?us-ascii?Q?BuosSw9oGVlLnBkZNRysVXKJ0hHHyP4EXDrVbYlTqHKeZ9mdZljXKMZoaQpu?=
- =?us-ascii?Q?4sDFBdrvn6XDtobWew1KU0K1e3bzja+S3jJRIaW6xuY6qm2N/k4dEmYnFuUo?=
- =?us-ascii?Q?oLH5HFooNdsCZzj+SUkv2/d0c9W4QD0/DDzxkgaTZD2l2InJisk//0TPjVX9?=
- =?us-ascii?Q?4Vj5qBgd6cNGc8Yn2Nl+Mn4e53K5r8CmYhWHEP1Ytnydk1O7L+lUd2rJDIWb?=
- =?us-ascii?Q?nt2gQ9T3Yf+9H2CbwjLL8mUhEWPDAmVWFmfXOCCLbmWinZi9uqER80g9nt7N?=
- =?us-ascii?Q?7tbj1PapECsXcx4053zkJK+nYFanqU0qTYEVSC1np/ezX5i9qQ/GVQWF/1y1?=
- =?us-ascii?Q?E9hBp1wxaz1+VxIp/6NAwa4uk6U+6Cr+8hJNqNitthotdgjUjTfV5GIBFHHK?=
- =?us-ascii?Q?0BxEV5YHMVD4u1mQSFS4ZY9IcELo8wmg76W3IOAoalV8d2BAvvkMpzKa7ATe?=
- =?us-ascii?Q?GEV+YNc4FZnZ5Uv6opw2+JgwyKjgn4RitIvqZqx+9XLOS4gQEY95EyKXZbuY?=
- =?us-ascii?Q?7m/vwVLW4HO00KhnvMRCgkoos4eSkxXWtrYJxVCIPjrCtaRDaaZs5kXm+tSS?=
- =?us-ascii?Q?MHr53C/K9EEGJ9KOVkztI+Lr4Gh4xfoYzwK2WN8VGjOj5YFqWW2llWcdzxVs?=
- =?us-ascii?Q?Lk1qKVZR/JS8VCAeGM48YCkDds0MoodlJxYDsIoWMyzuDL59gRWc6UfOcrKk?=
- =?us-ascii?Q?wVWOKD+TgCUFmzbMituR4yhyapuCdkv8X/HAxcRxUvG84ZEoOdJGNp4JBQyG?=
- =?us-ascii?Q?sT87Lw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9844ca2-7a6d-4d04-35a8-08ddd409c62e
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 10:21:00.4820
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1v4gT6bM+iAMNgZM5GaNImMYoqO+diF5XZNfDn3TDp4r6OLkiUEGMb7qBlSmeZ8obw2PCXLzqAxn4teswQbavA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8545
+References: <20250731104726.103071-1-lokeshgidra@google.com>
+ <CAGsJ_4yJ5mtk_mp3r=PsMZOnHdtEk2Q_UTDjwy=4cmV8mcz+mg@mail.gmail.com> <CA+EESO4d_iriWeLit6RbODxxMPLnns64cuo+gkQhbYebZdHDdA@mail.gmail.com>
+In-Reply-To: <CA+EESO4d_iriWeLit6RbODxxMPLnns64cuo+gkQhbYebZdHDdA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 5 Aug 2025 18:21:07 +0800
+X-Gm-Features: Ac12FXyQkOqRzRVUcG4YdSynxxkbngwEJT937lRNpCEpIlwwe--WfZbW0U12FOI
+Message-ID: <CAGsJ_4y7WmQaFCZsxqfLD8c6qG0NuN2Hyqxq6mgHTpCMcRuyNw@mail.gmail.com>
+Subject: Re: [PATCH] userfaultfd: opportunistic TLB-flush batching for present
+ pages in MOVE
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, ngeoffray@google.com, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---x7cxeh2vlmult2i4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Aug 5, 2025 at 2:30=E2=80=AFPM Lokesh Gidra <lokeshgidra@google.com=
+> wrote:
+>
+> On Mon, Aug 4, 2025 at 9:35=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
+te:
+> >
+> > On Thu, Jul 31, 2025 at 6:47=E2=80=AFPM Lokesh Gidra <lokeshgidra@googl=
+e.com> wrote:
+> > >
+> > > MOVE ioctl's runtime is dominated by TLB-flush cost, which is require=
+d
+> > > for moving present pages. Mitigate this cost by opportunistically
+> > > batching present contiguous pages for TLB flushing.
+> > >
+> > > Without batching, in our testing on an arm64 Android device with UFFD=
+ GC,
+> > > which uses MOVE ioctl for compaction, we observed that out of the tot=
+al
+> > > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), an=
+d
+> > > ~20% in vm_normal_folio().
+> > >
+> > > With batching, the proportion of vm_normal_folio() increases to over
+> > > 70% of move_pages_pte() without any changes to vm_normal_folio().
+> > > Furthermore, time spent within move_pages_pte() is only ~20%, which
+> > > includes TLB-flush overhead.
+> > >
+> > > Cc: Suren Baghdasaryan <surenb@google.com>
+> > > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > > Cc: Barry Song <v-songbaohua@oppo.com>
+> > > Cc: David Hildenbrand <david@redhat.com>
+> > > Cc: Peter Xu <peterx@redhat.com>
+> > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > ---
+> > >  mm/userfaultfd.c | 179 +++++++++++++++++++++++++++++++++------------=
+--
+> > >  1 file changed, 127 insertions(+), 52 deletions(-)
+> > >
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index 8253978ee0fb..2465fb234671 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -1026,18 +1026,62 @@ static inline bool is_pte_pages_stable(pte_t =
+*dst_pte, pte_t *src_pte,
+> > >                pmd_same(dst_pmdval, pmdp_get_lockless(dst_pmd));
+> > >  }
+> > >
+> > > -static int move_present_pte(struct mm_struct *mm,
+> > > -                           struct vm_area_struct *dst_vma,
+> > > -                           struct vm_area_struct *src_vma,
+> > > -                           unsigned long dst_addr, unsigned long src=
+_addr,
+> > > -                           pte_t *dst_pte, pte_t *src_pte,
+> > > -                           pte_t orig_dst_pte, pte_t orig_src_pte,
+> > > -                           pmd_t *dst_pmd, pmd_t dst_pmdval,
+> > > -                           spinlock_t *dst_ptl, spinlock_t *src_ptl,
+> > > -                           struct folio *src_folio)
+> > > +/*
+> > > + * Checks if the two ptes and the corresponding folio are eligible f=
+or batched
+> > > + * move. If so, then returns pointer to the folio, after locking it.=
+ Otherwise,
+> > > + * returns NULL.
+> > > + */
+> > > +static struct folio *check_ptes_for_batched_move(struct vm_area_stru=
+ct *src_vma,
+> > > +                                                unsigned long src_ad=
+dr,
+> > > +                                                pte_t *src_pte, pte_=
+t *dst_pte)
+> > > +{
+> > > +       pte_t orig_dst_pte, orig_src_pte;
+> > > +       struct folio *folio;
+> > > +
+> > > +       orig_dst_pte =3D ptep_get(dst_pte);
+> > > +       if (!pte_none(orig_dst_pte))
+> > > +               return NULL;
+> > > +
+> > > +       orig_src_pte =3D ptep_get(src_pte);
+> > > +       if (pte_none(orig_src_pte))
+> > > +               return NULL;
+> > > +       if (!pte_present(orig_src_pte) || is_zero_pfn(pte_pfn(orig_sr=
+c_pte)))
+> > > +               return NULL;
+> > > +
+> > > +       folio =3D vm_normal_folio(src_vma, src_addr, orig_src_pte);
+> > > +       if (!folio || !folio_trylock(folio))
+> > > +               return NULL;
+> > > +       if (!PageAnonExclusive(&folio->page) || folio_test_large(foli=
+o)) {
+> > > +               folio_unlock(folio);
+> > > +               return NULL;
+> > > +       }
+> > > +       return folio;
+> > > +}
+> > > +
+> > > +static long move_present_ptes(struct mm_struct *mm,
+> > > +                             struct vm_area_struct *dst_vma,
+> > > +                             struct vm_area_struct *src_vma,
+> > > +                             unsigned long dst_addr, unsigned long s=
+rc_addr,
+> > > +                             pte_t *dst_pte, pte_t *src_pte,
+> > > +                             pte_t orig_dst_pte, pte_t orig_src_pte,
+> > > +                             pmd_t *dst_pmd, pmd_t dst_pmdval,
+> > > +                             spinlock_t *dst_ptl, spinlock_t *src_pt=
+l,
+> > > +                             struct folio *src_folio, unsigned long =
+len)
+> > >  {
+> > >         int err =3D 0;
+> > > +       unsigned long src_start =3D src_addr;
+> > > +       unsigned long addr_end;
+> > > +
+> > > +       if (len > PAGE_SIZE) {
+> > > +               addr_end =3D (dst_addr + PMD_SIZE) & PMD_MASK;
+> > > +               if (dst_addr + len > addr_end)
+> > > +                       len =3D addr_end - dst_addr;
+> > >
+> > > +               addr_end =3D (src_addr + PMD_SIZE) & PMD_MASK;
+> > > +               if (src_addr + len > addr_end)
+> > > +                       len =3D addr_end - src_addr;
+> > > +       }
+> > > +       flush_cache_range(src_vma, src_addr, src_addr + len);
+> > >         double_pt_lock(dst_ptl, src_ptl);
+> > >
+> > >         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, orig=
+_src_pte,
+> > > @@ -1051,31 +1095,60 @@ static int move_present_pte(struct mm_struct =
+*mm,
+> > >                 err =3D -EBUSY;
+> > >                 goto out;
+> > >         }
+> > > +       /* Avoid batching overhead for single page case */
+> > > +       if (len > PAGE_SIZE) {
+> > > +               flush_tlb_batched_pending(mm);
+> >
+> > What=E2=80=99s confusing to me is that they track the unmapping of mult=
+iple
+> > consecutive PTEs and defer TLB invalidation until later.
+> > In contrast, you=E2=80=99re not tracking anything and instead call
+> > flush_tlb_range() directly, which triggers the flush immediately.
+> >
+> > It seems you might be combining two different batching approaches.
+>
+> These changes I made are in line with how mremap() does batching. See
+> move_ptes() in mm/mremap.c
+>
+> From the comment in flush_tlb_batched_pending() [1] it seems necessary
+> in this case too. Please correct me if I'm wrong. I'll be happy to
+> remove it if it's not required.
+>
+> [1] https://elixir.bootlin.com/linux/v6.16/source/mm/rmap.c#L728
 
-On Tue, Aug 05, 2025 at 09:59:57AM +0200, Alexander Wilhelm wrote:
-> I have a ping running in the background and can observe that MAC frames and
-> TX-RMON packets are continuously increasing. However, the PHY statistics remain
-> unchanged. I suspect the current SGMII frames originate from U-Boot, as I load
-> the firmware image via `netboot`. These statistics were recorded at 2.5G speed,
-> but the same behavior is also visible at 1G.
-> 
-> Do you think the issue still lies within the MAC driver, or could it be related
-> to the Aquantia driver or firmware?
+Whether we need flush_tlb_batched_pending() has nothing to do with your
+patch. It's entirely about synchronizing with other pending TLBIs, such as
+those from try_to_unmap_one() and try_to_migrate_one().
 
-So the claim is that in U-Boot, the exact same link with the exact same
-PHY firmware works, right? Yet in Linux, MAC transmit counters increase,
-but nothing comes across on the PHY side of the MII link? What about
-packets sent from the link partner (the remote board connected to the PHY)?
-Do packets sent from that board result in an increase of PHY counters,
-and MAC RX counters?
+In short, if it's needed, it's needed regardless of whether your patch is
+applied or whether you're dealing with len > PAGE_SIZE.
 
-For sure this is the correct port ("ffe4e6000.ethernet" corresponds to fm1-mac4,
-port name in U-Boot would be "FM1@DTSEC4")? What SoC is this on? T1 something?
-What SRDS_PRTCL_S1 value is in the RCW? I'd like to trace back the steps
-in order to establish that the link works at 2.5G with autoneg disabled
-on both ends. It seems to me there is either a lack of connectivity
-between the MAC used in Linux and the PHY, or a protocol mismatch.
+>
+> > From what I can tell, you're essentially using flush_range
+> > as a replacement for flushing each entry individually.
+>
+> That's correct. The idea is to reduce the number of IPIs required for
+> flushing the TLB entries. Since it is quite common that the ioctl is
+> invoked with several pages in one go, this greatly benefits.
+>
+> >
+> > > +               arch_enter_lazy_mmu_mode();
+> > > +               orig_src_pte =3D ptep_get_and_clear(mm, src_addr, src=
+_pte);
+> > > +       } else
+> > > +               orig_src_pte =3D ptep_clear_flush(src_vma, src_addr, =
+src_pte);
+> > > +
+> > > +       addr_end =3D src_start + len;
+> > > +       do {
+> > > +               /* Folio got pinned from under us. Put it back and fa=
+il the move. */
+> > > +               if (folio_maybe_dma_pinned(src_folio)) {
+> > > +                       set_pte_at(mm, src_addr, src_pte, orig_src_pt=
+e);
+> > > +                       err =3D -EBUSY;
+> > > +                       break;
+> > > +               }
+> > >
+> > > -       orig_src_pte =3D ptep_clear_flush(src_vma, src_addr, src_pte)=
+;
+> > > -       /* Folio got pinned from under us. Put it back and fail the m=
+ove. */
+> > > -       if (folio_maybe_dma_pinned(src_folio)) {
+> > > -               set_pte_at(mm, src_addr, src_pte, orig_src_pte);
+> > > -               err =3D -EBUSY;
+> > > -               goto out;
+> > > -       }
+> > > -
+> > > -       folio_move_anon_rmap(src_folio, dst_vma);
+> > > -       src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+> > > +               folio_move_anon_rmap(src_folio, dst_vma);
+> > > +               src_folio->index =3D linear_page_index(dst_vma, dst_a=
+ddr);
+> > >
+> > > -       orig_dst_pte =3D folio_mk_pte(src_folio, dst_vma->vm_page_pro=
+t);
+> > > -       /* Set soft dirty bit so userspace can notice the pte was mov=
+ed */
+> > > +               orig_dst_pte =3D folio_mk_pte(src_folio, dst_vma->vm_=
+page_prot);
+> > > +               /* Set soft dirty bit so userspace can notice the pte=
+ was moved */
+> > >  #ifdef CONFIG_MEM_SOFT_DIRTY
+> > > -       orig_dst_pte =3D pte_mksoft_dirty(orig_dst_pte);
+> > > +               orig_dst_pte =3D pte_mksoft_dirty(orig_dst_pte);
+> > >  #endif
+> > > -       if (pte_dirty(orig_src_pte))
+> > > -               orig_dst_pte =3D pte_mkdirty(orig_dst_pte);
+> > > -       orig_dst_pte =3D pte_mkwrite(orig_dst_pte, dst_vma);
+> > > +               if (pte_dirty(orig_src_pte))
+> > > +                       orig_dst_pte =3D pte_mkdirty(orig_dst_pte);
+> > > +               orig_dst_pte =3D pte_mkwrite(orig_dst_pte, dst_vma);
+> > > +               set_pte_at(mm, dst_addr, dst_pte, orig_dst_pte);
+> > > +
+> > > +               src_addr +=3D PAGE_SIZE;
+> > > +               if (src_addr =3D=3D addr_end)
+> > > +                       break;
+> > > +               src_pte++;
+> > > +               dst_pte++;
+> > >
+> > > -       set_pte_at(mm, dst_addr, dst_pte, orig_dst_pte);
+> > > +               folio_unlock(src_folio);
+> > > +               src_folio =3D check_ptes_for_batched_move(src_vma, sr=
+c_addr, src_pte, dst_pte);
+> > > +               if (!src_folio)
+> > > +                       break;
+> > > +               orig_src_pte =3D ptep_get_and_clear(mm, src_addr, src=
+_pte);
+> > > +               dst_addr +=3D PAGE_SIZE;
+> > > +       } while (true);
+> > > +
+> > > +       if (len > PAGE_SIZE) {
+> > > +               arch_leave_lazy_mmu_mode();
+> > > +               if (src_addr > src_start)
+> > > +                       flush_tlb_range(src_vma, src_start, src_addr)=
+;
+> > > +       }
+> >
+> > Can't we just remove the `if (len > PAGE_SIZE)` check and unify the
+> > handling for both single-page and multi-page cases?
+>
+> We certainly can. Initially it seemed to me that lazy/batched
+> invalidation has its own overhead and I wanted to avoid that in the
+> single-page case because the ioctl does get called for single pages
+> quite a bit. That too in time sensitive code paths. However, on a
+> deeper relook now, I noticed it's not really that different.
+>
+> I'll unify in the next patch. Thanks for the suggestion.
 
-Could you please also apply this PHY debugging patch and let us know
-what the Global System Configuration registers contain after the
-firmware applies the provisioning?
+Yes, that would be nice =E2=80=94 especially since flush_tlb_batched_pendin=
+g()
+is not needed in this patch.
 
---x7cxeh2vlmult2i4
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-net-phy-aquantia-dump-Global-System-Configuration-re.patch"
-
-From 17b74539f4f1fe2c335505443d797a9e2ae1fab8 Mon Sep 17 00:00:00 2001
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date: Tue, 5 Aug 2025 12:54:01 +0300
-Subject: [PATCH] net: phy: aquantia: dump Global System Configuration
- registers
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/phy/aquantia/aquantia.h      |  5 +++++
- drivers/net/phy/aquantia/aquantia_main.c | 18 ++++++++++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
-index 0c78bfabace5..9d02f9f0b8b7 100644
---- a/drivers/net/phy/aquantia/aquantia.h
-+++ b/drivers/net/phy/aquantia/aquantia.h
-@@ -55,10 +55,15 @@
- #define VEND1_GLOBAL_CFG_SERDES_MODE_SGMII	3
- #define VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII	4
- #define VEND1_GLOBAL_CFG_SERDES_MODE_XFI5G	6
-+#define VEND1_GLOBAL_CFG_AUTONEG_ENA		BIT(3)
-+#define VEND1_GLOBAL_CFG_TRAINING_ENA		BIT(4)
-+#define VEND1_GLOBAL_CFG_RESET_ON_TRANSITION	BIT(5)
-+#define VEND1_GLOBAL_CFG_SERDES_SILENCE		BIT(6)
- #define VEND1_GLOBAL_CFG_RATE_ADAPT		GENMASK(8, 7)
- #define VEND1_GLOBAL_CFG_RATE_ADAPT_NONE	0
- #define VEND1_GLOBAL_CFG_RATE_ADAPT_USX		1
- #define VEND1_GLOBAL_CFG_RATE_ADAPT_PAUSE	2
-+#define VEND1_GLOBAL_CFG_MACSEC_ENABLE		BIT(9)
- 
- /* Vendor specific 1, MDIO_MMD_VEND2 */
- #define VEND1_GLOBAL_CONTROL2			0xc001
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index 77a48635d7bf..72329e328f27 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -987,6 +987,15 @@ static const u16 aqr_global_cfg_regs[] = {
- 	VEND1_GLOBAL_CFG_10G
- };
- 
-+static const int aqr_global_cfg_speeds[] = {
-+	SPEED_10,
-+	SPEED_100,
-+	SPEED_1000,
-+	SPEED_2500,
-+	SPEED_5000,
-+	SPEED_10000,
-+};
-+
- static int aqr107_fill_interface_modes(struct phy_device *phydev)
- {
- 	unsigned long *possible = phydev->possible_interfaces;
-@@ -1007,6 +1016,15 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
- 		serdes_mode = FIELD_GET(VEND1_GLOBAL_CFG_SERDES_MODE, val);
- 		rate_adapt = FIELD_GET(VEND1_GLOBAL_CFG_RATE_ADAPT, val);
- 
-+		phydev_info(phydev, "Speed %d SerDes mode %d autoneg %d training %d reset on transition %d silence %d rate adapt %d macsec %d\n",
-+			    aqr_global_cfg_speeds[i], serdes_mode,
-+			    !!(val & VEND1_GLOBAL_CFG_AUTONEG_ENA),
-+			    !!(val & VEND1_GLOBAL_CFG_TRAINING_ENA),
-+			    !!(val & VEND1_GLOBAL_CFG_RESET_ON_TRANSITION),
-+			    !!(val & VEND1_GLOBAL_CFG_SERDES_SILENCE),
-+			    rate_adapt,
-+			    !!(val & VEND1_GLOBAL_CFG_MACSEC_ENABLE));
-+
- 		switch (serdes_mode) {
- 		case VEND1_GLOBAL_CFG_SERDES_MODE_XFI:
- 			if (rate_adapt == VEND1_GLOBAL_CFG_RATE_ADAPT_USX)
--- 
-2.43.0
+Whether it's needed for uffd_move is a separate matter and should be
+addressed in a separate patch, if necessary =E2=80=94 for example, if there=
+'s a
+similar race as described in Commit 3ea277194daa
+("mm, mprotect: flush TLB if potentially racing with a parallel reclaim
+leaving stale TLB entries").
 
 
---x7cxeh2vlmult2i4--
+
+            CPU0                            CPU1
+
+            ----                            ----
+
+                                            user accesses memory using RW P=
+TE
+
+                                            [PTE now cached in TLB]
+
+            try_to_unmap_one()
+
+            =3D=3D> ptep_get_and_clear()
+
+            =3D=3D> set_tlb_ubc_flush_pending()
+
+                                            mprotect(addr, PROT_READ)
+
+                                            =3D=3D> change_pte_range()
+
+                                            =3D=3D> [ PTE non-present - no =
+flush ]
+
+
+
+                                            user writes using cached RW PTE
+
+            ...
+
+            try_to_unmap_flush()
+
+Thanks
+Barry
 
