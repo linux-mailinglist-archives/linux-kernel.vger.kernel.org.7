@@ -1,221 +1,142 @@
-Return-Path: <linux-kernel+bounces-756578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EB4B1B634
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F55B1B640
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F1916A484
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFEC16C895
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7B1274FD7;
-	Tue,  5 Aug 2025 14:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB0E27510D;
+	Tue,  5 Aug 2025 14:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JLEiwTWg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="15OpfyJo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zDiNZGJ5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnbvifoH"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkNCQekX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0143274FFC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22BC274FDA;
+	Tue,  5 Aug 2025 14:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754403534; cv=none; b=tUGdGiduoYVfAkshxh5KQoJA2uvj5r1FQim0D3bhpthOBm5j5Vv411JH77xHGVbGBmzhGm/HNG//j5IwjU8ueBP2MZ76AuCIpDh0Pzi35FwCwcqD46yC8KhbGcyvIN4p+TxbPOqPyVEGAOpcw0bzVVkTEWg9fTiwlDKQ13QrhpI=
+	t=1754403678; cv=none; b=sZM+yKqm4hg+Q6kf1Rc3WZbiQQQl45oHUZ+Ir9Bb8Pq74m6w75PHcLjt3kGo/g9p2lia1jwHZMW8f59XU6Mecbq1yC8Z5MYpRjaAPZvhmQApKTMCZr+bMvn6sui1ieV+Ehr3lLf8q+vcfNwllX0QqR+9gwOJTABB2nV/muBSpqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754403534; c=relaxed/simple;
-	bh=8aRcbWkNJ7XJB7HhT/RC3DT8xiYVHSKOLO2NPWxyEFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JWlnDBwcBDdbSAy+3MZbLtYaGWsEztuKCUM7yjIHHl0InW+Hclk6+ffRD1ooJFJ2SCtNshSL6bJUCTKOB6pPF+ZZDd+yguQGhSL6ahX3Q4meWCswtNg0z4tNSgbNpxXCnM847bmsRShH39uvayUYp+mhUya568kIYMexifMFjv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JLEiwTWg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=15OpfyJo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zDiNZGJ5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnbvifoH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB6CE1F38A;
-	Tue,  5 Aug 2025 14:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754403531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=JLEiwTWgrN3FMXG6fIc7sMoJCxq1EVPmn0gw60A48lFseG+7pgp16TK0QsWp2cyVPSlB/d
-	Ax+Gw0JlK4Ic1I5p9wroVK7OffPuUuzWkwRIAtIjjJCgaMcdqyBW6T9hWmecarQgR9mpQE
-	OcoOcLoqzQ/JdIiyuaVHAe7bXMGe0cY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754403531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=15OpfyJoyk2taAkgIC4Xv+OOtyhWW4yD2jIA+HdaA0B9fKtQ5TD5UCTC0igqFmqQ3E8Gz+
-	59OI7CE+fPo/VRDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754403530; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=zDiNZGJ5si2mcehmfw2uKJsVv/5QwnJ6f3tNpjsLAoeQmqBlltQNalA9bop2V2mU6urcLB
-	1rnepXmjAR41zGBOEEQSGv/ckndF0/HNZADa6bItMJME+ydlyKB7WT+CUIj3PF6Hk3a+3d
-	hydmdVEkZp/7sEij6hxG7BWqmmO6fDs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754403530;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NfTJO6QExB/AjtZCsMzDvrCWnZLiopnMrmlLDf3JbE=;
-	b=ZnbvifoHF0Ve/E4VFWtrLfAQSaYUTFoeM8xoPnpU01Q7Mo4yP0G3GwG2rcPBIw0ZSkljNF
-	2gAHxNsZHZZYPrDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D0D8513A50;
-	Tue,  5 Aug 2025 14:18:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ysP5MMkSkmh2LwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 05 Aug 2025 14:18:49 +0000
-Message-ID: <a2fca13d-87bd-4eb3-b673-46c538f46e66@suse.cz>
-Date: Tue, 5 Aug 2025 16:20:47 +0200
+	s=arc-20240116; t=1754403678; c=relaxed/simple;
+	bh=whNVERXr8/AN2Vvfa653Gd5vcbSu7aoK+Gs6t3i+W5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PegIfl/P6xIwPU2CzseQLBmlWRNG8Yz4BRJeyVPBUF/I1YjoqlO7TRMWKIqkGwke5nlC5JHGddax46Iq8hBxZfrBfpQgMpWgYt39B5hMxIUiM4PLbni9tJm/XrLjRJsOveATVUHzZxtXLSHz/Biu/8cu456kHeKA18h9DrRdww8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkNCQekX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449B1C4CEF0;
+	Tue,  5 Aug 2025 14:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754403677;
+	bh=whNVERXr8/AN2Vvfa653Gd5vcbSu7aoK+Gs6t3i+W5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hkNCQekXfQ5zz7SFOm1X7LU/T8JpA9F6gAsS3c6+9y+qglrwIbLwFIyBWP0D7ry9L
+	 GNhbEPDSTXig2ETCkjlyEQjsdVC+Esbhv/Mb6sC4EIXYY6JR+pDMVBPqqMyLZbPmV7
+	 zCXEyHeM3myKgWKd3MxjVBE8NTyWb7P0zROsiSR2Ao8hISoyvyhrvyXOgF3UaB+Klv
+	 nppZ4E0Y9K/XyXaSW7LqmDdDoxSCWK+Fgvj0t1nTVbxwcdQp5c/QjtjWZvjgaTOo29
+	 +Qi5Lyikzld4at0TH6QtlFDyU5soOqU4XCrww1smX/qa1O+f2NrdrUwYW5PN9JBJ3u
+	 OORGr+Kr6H51w==
+Date: Tue, 5 Aug 2025 15:21:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Min Lin <linmin@eswincomputing.com>,
+	Pritesh Patel <pritesh.patel@einfochips.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Yu Chien Peter Lin <peterlin@andestech.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Darshan Prajapati <darshan.prajapati@einfochips.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
+	"rafal@milecki.pl" <rafal@milecki.pl>,
+	Anup Patel <anup@brainfault.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v4 0/7] Basic device tree support for
+ ESWIN EIC7700 RISC-V SoC
+Message-ID: <20250805-equinox-setup-cd37520d2586@spud>
+References: <20250616112316.3833343-1-pinkesh.vaghela@einfochips.com>
+ <SA3PR04MB8931098CC4A73E8FDD481DA78326A@SA3PR04MB8931.namprd04.prod.outlook.com>
+ <2ed69301-f787-4257-8d44-a8544c1a43c9@kernel.org>
+ <SA3PR04MB89312063FB96E85ABB6F3D3E8323A@SA3PR04MB8931.namprd04.prod.outlook.com>
+ <72354ec9-7dc8-4192-9c25-d37abf33b5f0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
- under per-vma locks
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
- paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
- brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
- linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
- andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
- tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20250804231552.1217132-1-surenb@google.com>
- <20250804231552.1217132-4-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250804231552.1217132-4-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="90osRGvCEAKF0z/s"
+Content-Disposition: inline
+In-Reply-To: <72354ec9-7dc8-4192-9c25-d37abf33b5f0@kernel.org>
 
-On 8/5/25 1:15 AM, Suren Baghdasaryan wrote:
-> Utilize per-vma locks to stabilize vma after lookup without taking
-> mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-> contended, we fall back to mmap_lock but take it only momentarily
-> to lock the vma and release the mmap_lock. In a very unlikely case
-> of vm_refcnt overflow, this fall back path will fail and ioctl is
-> done under mmap_lock protection.
-> 
-> This change is designed to reduce mmap_lock contention and prevent
-> PROCMAP_QUERY ioctl calls from blocking address space updates.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 65 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 843577aa7a32..1d06ecdbef6f 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, struct file *file)
->  		PROCMAP_QUERY_VMA_FLAGS				\
->  )
->  
-> -static int query_vma_setup(struct mm_struct *mm)
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +
-> +static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
->  {
-> -	return mmap_read_lock_killable(mm);
-> +	lock_ctx->locked_vma = NULL;
-> +	lock_ctx->mmap_locked = false;
-> +
-> +	return 0;
->  }
->  
-> -static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-> +static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
->  {
-> -	mmap_read_unlock(mm);
-> +	if (lock_ctx->mmap_locked)
-> +		mmap_read_unlock(lock_ctx->mm);
-> +	else
-> +		unlock_vma(lock_ctx);
->  }
->  
-> -static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-> +static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-> +						     unsigned long addr)
->  {
-> -	return find_vma(mm, addr);
-> +	struct vm_area_struct *vma;
-> +	struct vma_iterator vmi;
-> 
 
-Hm I think we can reach here with lock_ctx->mmap_locked being true via
-"goto next_vma" in query_matching_vma(). In that case we should just
-"return find_vma()" and doing the below is wrong, no?
+--90osRGvCEAKF0z/s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	unlock_vma(lock_ctx);
-> +	rcu_read_lock();
-> +	vma_iter_init(&vmi, lock_ctx->mm, addr);
-> +	vma = lock_next_vma(lock_ctx->mm, &vmi, addr);
-> +	rcu_read_unlock();
-> +
-> +	if (!IS_ERR_OR_NULL(vma)) {
-> +		lock_ctx->locked_vma = vma;
-> +	} else if (PTR_ERR(vma) == -EAGAIN) {
-> +		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-> +		mmap_read_lock(lock_ctx->mm);
-> +		vma = find_vma(lock_ctx->mm, addr);
-> +		lock_ctx->mmap_locked = true;
-> +	}
-> +
-> +	return vma;
->  }
->  
+On Mon, Aug 04, 2025 at 04:45:10PM +0200, Krzysztof Kozlowski wrote:
+> On 04/08/2025 15:10, Pinkesh Vaghela wrote:
+> > Hello Krzysztof,
+> >=20
+> > Sorry to bother you. I pinged because we addressed all the review comme=
+nts of V3 in V4. But on V4 we have not received any comments since last 6 w=
+eeks.
+> > Could you please let us know what should be the further steps?
+>=20
+> Please don't top post.
+>=20
+> That is a bit different question than you asked before: "Gentle reminder
+> to review DT patches.".
+>=20
+> Please read SoC subsystem maintainer profile document. For ARM platforms
+> you would send now pull request or patches to soc.
+>=20
+> I would suggest following standard SoC way, same as for every other new
+> SoC (but carefully observe the kernel process cycle). You can easily
+> check archives to see how people also did it...
+
+Yes, standard SoC way please. Arnd expressed recently a preference for
+the initial series for a new SoC vendor to go as a patchset to
+soc@lists.linux.dev rather than as a pull-request.
+
+> For RISC-V - not sure
+> some trees are handled by Conor, but rest go directly to soc tree.
+
+I'm only doing the canaan/sifive/microchip/starfive ones that were there
+when I started, all the "new" platforms have dedicated maintainers that
+send direct to Arnd.
+
+Cheers,
+Conor.
+
+--90osRGvCEAKF0z/s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJITVQAKCRB4tDGHoIJi
+0rfRAPsE27O+0eBI7GpGuWCrShsC8OmvPSMg1HZpeLJfBi4P4QD/dHgMhoqf1QeQ
+1euvTqb8q7cSCtui9wi8PvuYBEqxoAQ=
+=0EsT
+-----END PGP SIGNATURE-----
+
+--90osRGvCEAKF0z/s--
 
