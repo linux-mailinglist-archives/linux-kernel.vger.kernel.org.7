@@ -1,312 +1,226 @@
-Return-Path: <linux-kernel+bounces-756744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF29B1B8B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:44:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E530EB1B8B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B896181663
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00393B02FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235832571D4;
-	Tue,  5 Aug 2025 16:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4106826E70B;
+	Tue,  5 Aug 2025 16:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TeJQp+tB"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013004.outbound.protection.outlook.com [40.107.159.4])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SRIvf3C3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BC1292B52;
-	Tue,  5 Aug 2025 16:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754412284; cv=fail; b=bsQ1XELUCZw1DAgpjTIHR/2LtXJY2VzQ7SJkDAnT0hcdvXF00/BNnGXtlkgWOcHDENSC2Am3zyegNyequ6/c3Sn7+RJmVAVMU9/v1Fe5awELEllPDsYnPbrYrBhLWA07huRbETh3iEI2LwvYl9XPtJqIhygTLUp/7QJMMRNsiAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754412284; c=relaxed/simple;
-	bh=zZ49hlunI80GkiisMjSZZ4aLp6dbTqxg8KYT9ApuMKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uh6057Uk77+IGEXHh0/LamM1QZHsH5utJ6V7S+hyI/sbF7S18jlLcLfG3EPxXZBNg+iVbxKUSiq1M8Wj+nBJsO488Mh9zWWkrmgC78gzvmDg7aMZ5MZwbn6hDDy7L79W9w8oINeeQHGnwcVbGnQjRlDSvn0MZzSK/uX5OHhttuQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TeJQp+tB; arc=fail smtp.client-ip=40.107.159.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E8dkE6KZUjtp1py8BqrFzoByDcOtnIGX4HQN31C5gn9JXqghArlfC/HDsUDmNYvskmyVmhOX9TXBS2qWN5JlW7C8F39bOBdG7RsLG/e2uFE9FMithQfsWmH78U3ma2nbZbfm7rdlNj8NK87N14EFb8P2f6YzyNxbS4eldkMx3mvhjp4Y6lL8nbvou68rbAv+lSvPC4dHTuu3YgNF2xfQlyHDxQyXWHs9FNL7wRpiW4Mlxb1h8uC5I9zdv+SMlAu4xkz1p+zGdu9ynLPe6qvAw8tlxWhBd/+apAlwTR6J7RIa/7jqpmV67GHeyhICAhmAjiSd7P5kSKv7Wth3yqWxBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/9b8Jjx9AKdlaRhtRJ2sXJYh70EDIf+RteQNhWv8XTg=;
- b=MkxNYPDUfXxTXmt2HldOpWyUOoeuKahKPWsSk3vFzTMTdQFPMkR9qXPjPlnnP+yLwE9J6lI/obRU104nyDPhZu96d8v+djz/0M2fIfFYiDZUdSCWA4NfB+LLg790XM/HuPKnsRw/X8cPiiAEuRA28bdOia9utH4QbO9lXNHxyYTz5E6jBQKWwzRs6sZajE2lSUCtDrtVx42oMhZ/5JIMTipjSO1msiTftbPuL9M1xC7KP+igNH61teZMX4HlUlWA4srC+b8IpjMdoEb3okrpF7hG1eRksdQkVYhny3zbaebNmd9z2ZgQ0x/4tQyM9LIKuZp9CP+zdTI7BRD6ou0lAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/9b8Jjx9AKdlaRhtRJ2sXJYh70EDIf+RteQNhWv8XTg=;
- b=TeJQp+tBrGEGk6jYbviuO3p6hBmNgmzJt3myo8h91JxHAndNw6Rf0usNn7K8LUreLuyFUDU9PUGV2Nibc2HZnLFWdkzmWwIpl7rlxQ2FcIikVnVn6DLKWlft1Gq3JNrSzSigf4vHs9ZOkuSbQxrbhKL7WKYEz42b65sRlpAq1mbJYaIlD1GWsEY2EEDKg6WyZaRsamfVZx/HLR1paiFnzkgSc5fmPfswWagTsW+IBYP4RwcTEmra1BBLTksiU18CX2y39eENXB9ExUIKviefnaKmRuBb2KjyOpCaFy1OpXgd8i0N0z9vntYf+w4utC2dl/a0Rg3mqGxKL9jKxPKL9g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB8PR04MB6972.eurprd04.prod.outlook.com (2603:10a6:10:11c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
- 2025 16:44:38 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8989.018; Tue, 5 Aug 2025
- 16:44:38 +0000
-Date: Tue, 5 Aug 2025 12:44:30 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, yuji2.ishikawa@toshiba.co.jp
-Subject: Re: [PATCH v2 1/2] arm64: dts: toshiba: Update SoC and PCIe ranges
- to reflect hardware behavior
-Message-ID: <aJI07hBmKNrsGFv9@lizhi-Precision-Tower-5810>
-References: <1754358421-12578-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
- <1754358421-12578-2-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1754358421-12578-2-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-ClientProxiedBy: SJ0PR05CA0158.namprd05.prod.outlook.com
- (2603:10b6:a03:339::13) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1194C1BCA07
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 16:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754412279; cv=none; b=RRlgOVXykpBgex6maCu7G38DJIXhhifJlrm1edNBaN13xpr48uG+QF/yS3IIzrM0nhp4hLV5iEUF57VR0+zDh4GUe3GRMGjarJlVtD2/b7BZ+B1SCQy1WCaeEldMoFWxH+KJcYHlZaJ4oHUWX7ftq7B/N97uOBiTykHIgX8/aGU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754412279; c=relaxed/simple;
+	bh=UZnh+dF199ZuP9pVw6ybGbzBNt4HIW922tlSPmWTD/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eVD0AX057YdQVp1ZmzzR5KRpvy2G6lYcjB8reyUAUdwuFSs5gMdQof9viqL3rFq6kcfjbERacywcOGiGzFyxe2rGzs7lkGiU8Z2vksv81QFotx5SKazYvTSCpm0ga46sW3EBUKy1IK6BqDqa4wmSx/ZHcovCwsv4TdqJr9TuwdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SRIvf3C3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575Fq1Ut028458
+	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 16:44:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=xFZ6cFO6wa52HtJqwYOKHtqGz7UHtTevLTj
+	q7d3NNvg=; b=SRIvf3C3XrZjewO4zKbPO7X3F9IOLoIBzYRNbchpfa32QM2YoPm
+	QDimi+wg7WVw8qrS879CcnYVAcm8jHG6N6dWEdwt99xiHvzAVB+iORPxpDVOfFFo
+	kD09DUHvoJliAYG9UpyP2DO88sE8JyiEz+Y9IfrwFmp1ZBfFeP05ouGz2E3wjVl+
+	AftroD2NAc1/SFIw1tMTYLVqQxWVkzO+EBjXRW49LtsY2CYwZeuKHerhJ4dTojZr
+	tprPQiWbeWQ2mjabwiq/RIb0h2V8LSuokn/zaY9ogqq8WrNW/KqdQMbx20Bg8waT
+	7cxFz2i7j3hJUfHIiLwcsE73JGBfMRUgUaQ==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bd9w9ntv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 16:44:36 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b0e0c573531so4421678a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 09:44:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754412275; x=1755017075;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xFZ6cFO6wa52HtJqwYOKHtqGz7UHtTevLTjq7d3NNvg=;
+        b=lBvJUZl2QCSXyRfk4jtE2hSVMJLEy7K6DLeyEV3zSSf9P33kCADpSMD/HdauAqeq3K
+         wceImHb2C5VS7Xu8vMaoI1l+gsye1OZZAUUIFroZCkuyJfRFPgmZAfuAjUQGnkUN18XW
+         L1rElOXrEpOLsnl/V4/Bfi00ncvyKXtjclgD9Zn5eGOChTvlGlumfJNdKip5tlq+wjCz
+         w7WskSb/Xo5+Mry9tqj70LBGMH+9FTPSV87VG8gHvHHTeFbyDvGhqRQ4l/YC9PJuGx9Q
+         81KHWsgkk4QO+0Hjekl2IY5lf0j1lOBYlmSFhUFgrhDFFKDB7kwKYVzOu+tcYmd2KX9Y
+         p6tA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8LHRuP20ESY3AnsfLpnNjRsZqtvG2d5mFxP+TDd3m6XpxCQ/moVwfwODm5nER5pmtA8nl2KpmR/krvTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznSkJknDqQysDk/Vcxkgvge2G57JRnU8IKMKuHDfIfc9XB3Kri
+	IMv5ZKVJjLMGnlbulHUwktck1JrWA7Xe0bfnyJ8cokXvOX9B+m8yc9zYra9+EjuGsKu2AG903Or
+	qwqF4xMnjuGbui5fcR6UKwOCgRLmWBhrNFgLV2y6XqquQkDKYGKLtTtoG35IbspcQBkQ=
+X-Gm-Gg: ASbGnctHKVIlvBzyKAZqXqpkXFpPNS1hZBEuHCs2JmvZiGec+OPybueaYYuWJAM6UAb
+	rQ5QrZajF5qjhPg7NY8gqspQ6z2do4g6N/VA78maqklMUUPgfVvgdklsbZnIs6wjMIqVFIuylnQ
+	W+bYX8MYrTYUQRsZLiHv4p6xhJB3C6UuQQpInqiamjviKDhxgWYVPg+vUZPBnRKiZPQdBTSLAiI
+	EYQphaAdDqQ5IoIdQsvD0J6E8w52nF3jdtc/H3OjmboGByNCUcx50j/9OXL5jTn1TMsup2hXR8R
+	WhjCkQ8NjdJlJPPjb8ezfRCX4FFRDECxQWf9nyCWKXtcqm8GTbM=
+X-Received: by 2002:a05:6a20:914b:b0:240:21e1:cbbd with SMTP id adf61e73a8af0-24021e1cda9mr4886601637.26.1754412275134;
+        Tue, 05 Aug 2025 09:44:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGm/6uN6G/KVi2o9cN+/U0oUl1Y1E1Sdo+Y+NbmDyrpK8rXomnmGpne1qkC2tg1XzKix+vaGQ==
+X-Received: by 2002:a05:6a20:914b:b0:240:21e1:cbbd with SMTP id adf61e73a8af0-24021e1cda9mr4886558637.26.1754412274703;
+        Tue, 05 Aug 2025 09:44:34 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7841besm11489904a12.3.2025.08.05.09.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 09:44:34 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Danilo Krummrich <dakr@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] drm/msm: Handle in-place remaps
+Date: Tue,  5 Aug 2025 09:44:31 -0700
+Message-ID: <20250805164431.24350-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB8PR04MB6972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e3d1d37-757a-4ca2-6efa-08ddd43f5df3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmFQbEdad2RaNnNORkxxaVBKSmRNSnVuTWErVEZDa04xQ2FWTFpyV1lOT3FS?=
- =?utf-8?B?bnZMdjE4WU9vS2tRWkdKT2hTZnhJbmhqSngzclphTjFkekpBYkdWd0lXcC9T?=
- =?utf-8?B?b3dzY05NRTFEdCtQK2w0ZENjL3A4a0tUeTJLQXpjdmt3blBGOGEzL2llZG4z?=
- =?utf-8?B?c0xlTjlMY0NQamZxY2ZtUzVuTFUrRkFLWXlvcHV6QnltTWxGTlI4YSt5a3Bh?=
- =?utf-8?B?TEpxaVVYUWdnRzVwSWVXbXh6NWk4RTZMVlpkMk5jSDBrWlYrekVoQ3NiL2tk?=
- =?utf-8?B?OHZhckl0M2VpUHJJV3RMWllveVB3TmZFNkNnaXZNbUtjUk1wYnd5LzFSb3Ux?=
- =?utf-8?B?dDJPZlBnRC9FWXZKV0liVjJOT0lkVUhVZ0U3ZllpUEdzbks0SXFaSjNkYlMy?=
- =?utf-8?B?UUlBb0JWcWNXK3ZPZklua2JxTnpXS252N00rWE1aUUpCbXZESC8zdURQdWxk?=
- =?utf-8?B?V1BPcEFBQ0c2NnJhVHpGayswUDVQTXNuREFGQ24wOHB0Z0ZvdmR3SGZUdEYv?=
- =?utf-8?B?YndPR1NpbHVVbmZhNTd6WWFzNVIrTU9wQ0kyUVBNbGxpWE9FN0hacFZ3K3Mz?=
- =?utf-8?B?dUdMd01ZcGg2bndvSGlzQk50UE0yYS9PRmVJSWRGWGwxTVM4aGRMWHhPSkNs?=
- =?utf-8?B?R2ttYk1KcjlLeGc1Szh0d3ViK1Q0M0t1TENUWTFTenJrWFVOdFBZakozZitQ?=
- =?utf-8?B?WFJhb1BacGp3cXZISWpzVmNiTjR4dkU4Y2FpZVM0N3dDa0dwUDczNURDazEv?=
- =?utf-8?B?S2U3dnc3MW9XZHdVK1JIcTFKaGJNRU13S3JjV3JXZ3VBUEQ3QlpSUEw2cUo4?=
- =?utf-8?B?Nlp2N1JVc2pCTWZDdDhJaUZRb2dqK0hjZWtxcC9qWE5Ud1ZlM3pQSVpCVHZG?=
- =?utf-8?B?c3F4ajNXWmtOTWU2RkR4cWtVU3ZpZGs4T1M4WGFRdTFSUDU3T2xUVVhGVkgz?=
- =?utf-8?B?Q3JGcS9EaGh6WDc4d0lxV283VE5sVnNnb3hJWGNudGhZVkpFSlN1cFhZcWJG?=
- =?utf-8?B?S1lvL0hOaEk3dGdPakRsVmtwTlFablM3OFJ4Z3hHRFpUZzJxcmdZd0NvTFdU?=
- =?utf-8?B?Q3lIL21ybnMxL0tOYkdib2pDdWExVEgzaGhLakYvM1c0ZUlGaDI1Zy94SWVH?=
- =?utf-8?B?ckpuVFpTSUUwOGxsaHQ4Y1ozWmR1cnEwY0dQYmxDRnJzT0NwYmVwN2llU0hL?=
- =?utf-8?B?QXdSSmpJeTV2bE1UMmZtRk1TN1VyYlEwaTJucUs4bFlTZXhreFlkUXdwVW5y?=
- =?utf-8?B?K2lXUnFIUnJTeHlpTkExVGNPcmNHMUo4ZG1DMzVnNWc2NDhadEpMWFZZMmlZ?=
- =?utf-8?B?WXJOZWx1TFNUOURYSWFiS2EzWlBiUW5PUVJuOGo3Tzlmb2JTS2czZmxQOUZr?=
- =?utf-8?B?V2JRSCtpK0o1ZlU3K2QwbGdYS053Z2tmTTVhOVducmZiY3NwNDZBb1RTSkpQ?=
- =?utf-8?B?T3E1OVFnRmtwYjlUeDhFVW5HZlBJMCt2a3djQ2Y5dTF0TUQxRDNaTmc3SWtq?=
- =?utf-8?B?eUVOTVFxNVBtRGpJd0JlSDhjSk1aUXlqRGExanl5aGF3VnFCYTNiS055emxn?=
- =?utf-8?B?Qll2QmIwR1JBWlVCZ0Y0SGNJb2lRQ3psWDZjeG9vV1lNVnJ2MXJseFlONXYy?=
- =?utf-8?B?aEhCaXpzUktPL3cybTRhSklzU3lWZlRrTitxbktzak9hdXp4QVQ0dG5sRzVD?=
- =?utf-8?B?QURrL2lXalE4Tk05d3ZudGRhL2x0b2ZoTXVyN24wNkxyWVFVVGhkbFdnV0Mz?=
- =?utf-8?B?M2FMdTFCa0NVWkovcS9zMEJyTDlwODJUL3VLM0Fhb05ISC94eTg1OVQvbVFS?=
- =?utf-8?B?YzEvL1ZVNXFITVhKNmpqdjBxSjJ3RzFjWUUrcGsvdmlLMXora1J3WWUvRnNy?=
- =?utf-8?B?NFE1UUdoVzltbXBTVFh3ckF0T3ZtUmxqRE1MRDl3aHFoSWRpbFlRUlZoY2F5?=
- =?utf-8?B?YytwQzdseHBkVWZZZDVkNXRPdzM2cnM0VnBHa0NYd1U1d3dwYTJQMjRGSCsr?=
- =?utf-8?B?RnZrOHh6OXBRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RXpUVFJSeS9KT2cxYkxWcFVjWHhzaVM4bG5CQzQ2b0lFRjdjYnZSQTdrWnAz?=
- =?utf-8?B?eTJLdkRtaVg2bExPR2psd1NWOEFnL0oyUStRUG5ZSktNOUJPd2JhM2xaa1BI?=
- =?utf-8?B?c0dSa2FQT2htakY3OHMxWEw1VlM5bklRUUc2VnBEMGk0MWlEbjdBSndvMzli?=
- =?utf-8?B?SkNZUHlGbDRPYS8xVHpEQkVCYmRIM3ZaTWF2Y2ZxNXNnZjF0NXozdjc3aXhx?=
- =?utf-8?B?UXU1dUhweG03QTl2UXBWQkw4Wk1tZkJhYTVGeDF4cUZiMWFBTDg2V1RGOUFz?=
- =?utf-8?B?SG5ha1dmSTNKRHJKVVVNL1UwVVhWOFQ5YjlVYy9CVS80Q2IzT3JIbVZPMHA3?=
- =?utf-8?B?TUpBMkFTdzREMWZvYXc1dWlKS3A3ZUlQSjlsT3p6Q0dBODRXRDloZm5YZGNK?=
- =?utf-8?B?U3VnVzQvUERRYUROSm03aklHV0U0UTc5OXJWWVhkaHUyS3FNKzlBUEYyYVJQ?=
- =?utf-8?B?dVd2RXM0N2ZOVlJuTk9uRzE3WVJHTlpORU1ZU0pzR2FZRkR5bGFrY0hVUVQr?=
- =?utf-8?B?Tk10UW1PaDhTREJZNFZkRmxsRWZCVG1PQjAwd3psV2ZBb0wwbzM2TlA3cVFh?=
- =?utf-8?B?SGpaTzB3VnZFSDRBajVPWE85dU1FWitKcmFleHlXMjV0TFljc2kxZWZMc1No?=
- =?utf-8?B?djY4WmJDVkczODNaakJTWk1RVFFsQWx5R1N4N2ZiWW05MDYvdEZ3VEZzamJm?=
- =?utf-8?B?S2prR2VaQTBqQjdkYko3ZHRzMXBZdlhWbGRUUUQ2NmtrbWpCVkRDYXRFdU1N?=
- =?utf-8?B?OFNkeCtjUEg0Mlp4WDYxQUh0MnZIL2k5dkJjOTkxYTdxUkJGZnNCbTNpNjZO?=
- =?utf-8?B?UjhuOUdUaEc0QzNtUnA1UUZwUDhSQ3d5TW1pYXY5R0VPcmtUd1pmSy9zSmlV?=
- =?utf-8?B?MzdoNDJmRjdteDdqamtXd2lxTzRTbHlKRnFGWFFWUkVZYXFmYVY5N0ZYakhH?=
- =?utf-8?B?ZC8ydWE3UTBUWExGanhFR1RHOXpiejJPTE01a2ZUQlhhQUlsdCtaZUplOTFQ?=
- =?utf-8?B?cXU1WnVSa3pRL0pLQm90NDMzQXgxTkdjQ3RUNzlyeWFvWk93WklKbGRNdnV6?=
- =?utf-8?B?K0xqY0V2VkFESjE3NnZ3a1d4a1Jnb3BGSDhPdmhZaTQ4YzJ5MXM2NEY5b05M?=
- =?utf-8?B?M2RYOGRITldwdG9qaExidm5GRXg3WXdiQ3N0R2prT3ZtclpNQmppTjgxZjlv?=
- =?utf-8?B?ZGhyVHJZOWRWQWlPU0hPMGJONEFaMEFRVzNrMlE5dUZqVys4K0QxeXNhL3Fu?=
- =?utf-8?B?WUhoaW96M3lxc3NPMWZzYUliOHR6dG50ZVQ0TzNaRkUwNEdpaVYxbmppREI1?=
- =?utf-8?B?V2o1ZXoyT0FiODY4ZE1vWDRtVkpXeTc5ZWs4cERTUklxUTNuUUN3WVI4WFlq?=
- =?utf-8?B?RzBJSDRQeUtpb24zSDdCUTc3Z2RRTE1BQkMwcUh6VzlmcXcvZVRhL1prK2Jt?=
- =?utf-8?B?Nm10V3dJaGJFSmFZWUh2SEprWVBLWHJ0c3Npc2dzd0t2Z3BNUTVOcm12OHlp?=
- =?utf-8?B?c3hLSi8zOXRwUjk2eTdGeVBsdTFyZGViUEdGRGFrcGNYOXFlNEVsUnFvZEwv?=
- =?utf-8?B?bFZuZ1JGb1ZvVDlRMTNwU0FuZW5tcVF0dmZhUjJWRUFGd2cyNnFlMU1oSjV4?=
- =?utf-8?B?bTlFNWtTWEFhNk12RDFpNjgrKzF5YklpQzkzekRXYy9VYWlLRHl2ZXhBT24r?=
- =?utf-8?B?K3prOTY1bTI2L20wSCtSVERvaUJIM0o5Sm82VlczaWpWNjd6cFR0dlhIYTQz?=
- =?utf-8?B?a0VwTkRQcTBFT1cxYWxCRSt6bWY2MExpWTl3T2JSdGx0VWtqUEhCSGdkbjRF?=
- =?utf-8?B?NkF6alc2SWJvcit5cFkwSFhENXNNTExrc0RFR0ZWUGlrN0N4ZE9hb25SblFB?=
- =?utf-8?B?cU1NbGY0UDl5V2xOMlhjUVovSS80bGhFUlRPUSs0Nk1sTEFCbnFqZ05ML2tE?=
- =?utf-8?B?V1Fua0ZQWjhwOVFyRXMvRHNmc2JvWFhvU0pHMzJUSDMxUkE4YmNLTjFQOGxL?=
- =?utf-8?B?cEgwTHU5UlV3K25hTU1NT3lJQnR0RWc3U0RvZlo1NDNIQWtxS2U2T3Q1MWU2?=
- =?utf-8?B?WUhSdGFkWnpTVHBJdTZTVk96Y0NMSXJKdXJIc1NvZ3BrSjQ2eVN0Slo2UHRL?=
- =?utf-8?Q?3R6M=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e3d1d37-757a-4ca2-6efa-08ddd43f5df3
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 16:44:38.2742
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: crRPNGD18UuJye0/pWPDs4B9Jr6Kgs84xz4gPJA4T3wdTEJfPPxNLHmrYFWmR0EynPkfEvi7CKnKrdX4TKAj0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6972
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=NN7V+16g c=1 sm=1 tr=0 ts=689234f4 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=EUspDBNiAAAA:8 a=54pnWYnEFG7XCx_V-2kA:9 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-GUID: 8b14yCklaPpSHCJXrP8nndejwTlV8z2b
+X-Proofpoint-ORIG-GUID: 8b14yCklaPpSHCJXrP8nndejwTlV8z2b
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDExNiBTYWx0ZWRfX4W/Fr6KqS+nY
+ h+UkVA2utqMsOhcfLowFNF2nD/8nc2ZjINj+YMej3/WYqqA/FTrE4uXT3W8eStLIrFa/IByHygu
+ +GzzXKjL+t2VVm0YnAXqiEZYaKRBLccXmgageqpE45OIKXBo1OGxYw40sGiv6HQECBKjzzDnALb
+ 48d3t4LRzfB+M/V+WKFRfe4s372UnAm/LCLVudSuIWlHGdeUAysAfUu8FXFlGtDW5vx4AVdArO8
+ yROQNxjyonb5VCAdsfb4XP4mj1Jg6r8lzOdGXQZ21jdfNNsBtKjIgl1YuJXdAcJf96IJ+w9InN9
+ lumLzaaVgbp3wD7K1NTH4W5ONl9jisG891pgspEPyC8boc5u3x9h47KmH+61CMpFfFY92LUIWMJ
+ w8GRiJAcZPRH3wBZAT5jbV1iZDMmHK0h+JIcR69pSiF/UUer3xSd+J4EA11v/zXw+6dwY8I8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015 spamscore=0
+ phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=999
+ bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508050116
 
-On Tue, Aug 05, 2025 at 10:47:00AM +0900, Nobuhiro Iwamatsu wrote:
-> From: Frank Li <Frank.Li@nxp.com>
->
-> tmpv7708 trim address bit[31:30] in tmpv7708 before passing to the PCIe
-> controller. Since only PCIe controller needs to convert the address range
-> 0x40000000 - 0x80000000, add a bus definition, describe the ranges in it,
-> and move the PCIe definition.
->
-> Prepare for the removal of the driver’s cpu_addr_fixup().
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> Suggested-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> ---
-> v2:
->   Update commit message.
->   Fix range.
->   Set true to use_parent_dt_ranges in pcie-visconti.c.
->   move pcie under the dedicated sub-bus.
->
->  arch/arm64/boot/dts/toshiba/tmpv7708.dtsi  | 75 +++++++++++++---------
->  drivers/pci/controller/dwc/pcie-visconti.c |  2 +
->  2 files changed, 47 insertions(+), 30 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-> index 39806f0ae5133..b754965a76ca6 100644
-> --- a/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-> +++ b/arch/arm64/boot/dts/toshiba/tmpv7708.dtsi
-> @@ -478,37 +478,52 @@ pwm: pwm@241c0000 {
->  			status = "disabled";
->  		};
->
-> -		pcie: pcie@28400000 {
-> -			compatible = "toshiba,visconti-pcie";
-> -			reg = <0x0 0x28400000 0x0 0x00400000>,
-> -			      <0x0 0x70000000 0x0 0x10000000>,
-> -			      <0x0 0x28050000 0x0 0x00010000>,
-> -			      <0x0 0x24200000 0x0 0x00002000>,
-> -			      <0x0 0x24162000 0x0 0x00001000>;
-> -			reg-names = "dbi", "config", "ulreg", "smu", "mpu";
-> -			device_type = "pci";
-> -			bus-range = <0x00 0xff>;
-> -			num-lanes = <2>;
-> -			num-viewport = <8>;
-> -
-> -			#address-cells = <3>;
-> +		pcie_bus: bus@24000000 {
-> +			compatible = "simple-bus";
-> +			#address-cells = <2>;
->  			#size-cells = <2>;
-> -			#interrupt-cells = <1>;
-> -			ranges = <0x81000000 0 0x40000000 0 0x40000000 0 0x00010000
-> -				  0x82000000 0 0x50000000 0 0x50000000 0 0x20000000>;
-> -			interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-> -			interrupt-names = "msi", "intr";
-> -			interrupt-map-mask = <0 0 0 7>;
-> -			interrupt-map =
-> -				<0 0 0 1 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> -				 0 0 0 2 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> -				 0 0 0 3 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> -				 0 0 0 4 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-> -			max-link-speed = <2>;
-> -			clocks = <&extclk100mhz>, <&pismu TMPV770X_CLK_PCIE_MSTR>, <&pismu TMPV770X_CLK_PCIE_AUX>;
-> -			clock-names = "ref", "core", "aux";
-> -			status = "disabled";
-> +			ranges = /* register 1:1 map */
-> +				 <0x0 0x24000000 0x0 0x24000000 0x0 0x0C000000>,
-> +				 /*
-> +				  * bus fabric mask address bit 30 and 31 to 0
-> +				  * before send to PCIe controller.
-> +				  *
-> +				  * PCIe map address 0 to cpu's 0x40000000
-> +				  */
-> +				 <0x0 0x00000000 0x0 0x40000000 0x0 0x40000000>;
-> +
-> +			pcie: pcie@28400000 {
-> +				compatible = "toshiba,visconti-pcie";
-> +				reg = <0x0 0x28400000 0x0 0x00400000>,
-> +				      <0x0 0x30000000 0x0 0x10000000>,
-> +				      <0x0 0x28050000 0x0 0x00010000>,
-> +				      <0x0 0x24200000 0x0 0x00002000>,
-> +				      <0x0 0x24162000 0x0 0x00001000>;
-> +				reg-names = "dbi", "config", "ulreg", "smu", "mpu";
-> +				device_type = "pci";
-> +				bus-range = <0x00 0xff>;
-> +				num-lanes = <2>;
-> +				num-viewport = <8>;
-> +
-> +				#address-cells = <3>;
-> +				#size-cells = <2>;
-> +				#interrupt-cells = <1>;
-> +				ranges = <0x81000000 0 0x00000000 0 0x00000000 0 0x00010000
-> +					  0x82000000 0 0x10000000 0 0x10000000 0 0x20000000>;
-> +				interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-names = "msi", "intr";
-> +				interrupt-map-mask = <0 0 0 7>;
-> +				interrupt-map =
-> +					<0 0 0 1 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 2 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 3 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 4 &gic GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-> +				max-link-speed = <2>;
-> +				clocks = <&extclk100mhz>, <&pismu TMPV770X_CLK_PCIE_MSTR>, <&pismu TMPV770X_CLK_PCIE_AUX>;
-> +				clock-names = "ref", "core", "aux";
-> +				status = "disabled";
-> +			};
->  		};
->  	};
->  };
-> diff --git a/drivers/pci/controller/dwc/pcie-visconti.c b/drivers/pci/controller/dwc/pcie-visconti.c
-> index cdeac6177143c..2a724ab587f78 100644
-> --- a/drivers/pci/controller/dwc/pcie-visconti.c
-> +++ b/drivers/pci/controller/dwc/pcie-visconti.c
-> @@ -310,6 +310,8 @@ static int visconti_pcie_probe(struct platform_device *pdev)
->
->  	platform_set_drvdata(pdev, pcie);
->
-> +	pci->use_parent_dt_ranges = true;
-> +
+Detect and handle the special case of a MAP op simply updating the vma
+flags of an existing vma, and skip the pgtable updates.  This allows
+turnip to set the MSM_VMA_DUMP flag on an existing mapping without
+requiring additional synchronization against commands running on the
+GPU.
 
-This change belong to PATCH 2. It still works with old driver after add
-pci-bus in dts, just a warning will print.
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/msm_gem_vma.c | 41 ++++++++++++++++++++++++++++---
+ 1 file changed, 37 insertions(+), 4 deletions(-)
 
-Frank
+diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
+index d1f5bb2e0a16..00d0f3b7ba32 100644
+--- a/drivers/gpu/drm/msm/msm_gem_vma.c
++++ b/drivers/gpu/drm/msm/msm_gem_vma.c
+@@ -451,6 +451,8 @@ msm_gem_vm_bo_validate(struct drm_gpuvm_bo *vm_bo, struct drm_exec *exec)
+ struct op_arg {
+ 	unsigned flags;
+ 	struct msm_vm_bind_job *job;
++	const struct msm_vm_bind_op *op;
++	bool kept;
+ };
+ 
+ static void
+@@ -472,14 +474,18 @@ vma_from_op(struct op_arg *arg, struct drm_gpuva_op_map *op)
+ }
+ 
+ static int
+-msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *arg)
++msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *_arg)
+ {
+-	struct msm_vm_bind_job *job = ((struct op_arg *)arg)->job;
++	struct op_arg *arg = _arg;
++	struct msm_vm_bind_job *job = arg->job;
+ 	struct drm_gem_object *obj = op->map.gem.obj;
+ 	struct drm_gpuva *vma;
+ 	struct sg_table *sgt;
+ 	unsigned prot;
+ 
++	if (arg->kept)
++		return 0;
++
+ 	vma = vma_from_op(arg, &op->map);
+ 	if (WARN_ON(IS_ERR(vma)))
+ 		return PTR_ERR(vma);
+@@ -599,15 +605,41 @@ msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg)
+ }
+ 
+ static int
+-msm_gem_vm_sm_step_unmap(struct drm_gpuva_op *op, void *arg)
++msm_gem_vm_sm_step_unmap(struct drm_gpuva_op *op, void *_arg)
+ {
+-	struct msm_vm_bind_job *job = ((struct op_arg *)arg)->job;
++	struct op_arg *arg = _arg;
++	struct msm_vm_bind_job *job = arg->job;
+ 	struct drm_gpuva *vma = op->unmap.va;
+ 	struct msm_gem_vma *msm_vma = to_msm_vma(vma);
+ 
+ 	vm_dbg("%p:%p:%p: %016llx %016llx", vma->vm, vma, vma->gem.obj,
+ 	       vma->va.addr, vma->va.range);
+ 
++	/*
++	 * Detect in-place remap.  Turnip does this to change the vma flags,
++	 * in particular MSM_VMA_DUMP.  In this case we want to avoid actually
++	 * touching the page tables, as that would require synchronization
++	 * against SUBMIT jobs running on the GPU.
++	 */
++	if (op->unmap.keep &&
++	    (arg->op->op == MSM_VM_BIND_OP_MAP) &&
++	    (vma->gem.obj == arg->op->obj) &&
++	    (vma->gem.offset == arg->op->obj_offset) &&
++	    (vma->va.addr == arg->op->iova) &&
++	    (vma->va.range == arg->op->range)) {
++		/* We are only expecting a single in-place unmap+map cb pair: */
++		WARN_ON(arg->kept);
++
++		/* Leave the existing VMA in place, but signal that to the map cb: */
++		arg->kept = true;
++
++		/* Only flags are changing, so update that in-place: */
++		unsigned orig_flags = vma->flags & (DRM_GPUVA_USERBITS - 1);
++		vma->flags = orig_flags | arg->flags;
++
++		return 0;
++	}
++
+ 	if (!msm_vma->mapped)
+ 		goto out_close;
+ 
+@@ -1268,6 +1300,7 @@ vm_bind_job_prepare(struct msm_vm_bind_job *job)
+ 		const struct msm_vm_bind_op *op = &job->ops[i];
+ 		struct op_arg arg = {
+ 			.job = job,
++			.op = op,
+ 		};
+ 
+ 		switch (op->op) {
+-- 
+2.50.1
 
->  	return visconti_add_pcie_port(pcie, pdev);
->  }
->
-> --
-> 2.49.0
->
->
 
