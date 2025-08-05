@@ -1,199 +1,547 @@
-Return-Path: <linux-kernel+bounces-756623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CFAB1B6ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:57:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66ADB1B6F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D283A8535
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BC7189EB6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BB32797A3;
-	Tue,  5 Aug 2025 14:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B74279787;
+	Tue,  5 Aug 2025 14:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="LwnR5bwG"
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HJyVwZkG"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA39B2264A0;
-	Tue,  5 Aug 2025 14:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FC527933E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754405814; cv=none; b=eymTH1lMd39kdTf5MPxpdC/h4p0VyvTuynSDBMjTf2iCLJqwW7UeCOkStq/MQWktex6lzpO+trAnL1Y02ZoVfMukJGsVVolv4BYtFt1FMdgqm4L4j9nGyqUfB7QrEjqqbCrYjVdM5Vr9+xsS/JdpuLvwrBOOWhku5hfnIkCIUVA=
+	t=1754405852; cv=none; b=T/mGRvVfx45MstrxETbXKrXE9Bk01FlPfZAh83R+QXY6F4YYgXBaiRIynyTNfpq/5+uXUJTerewPPfyXnwxzxSGQzlnGxRmy6xHUeyQPVotnMGKF4ZhLSv0BwoCBsnZcnVzGY8QM72aLCDhqON6GZIU44tZ7Lm0yjtKCTjTHCFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754405814; c=relaxed/simple;
-	bh=1uW6JAFmjM9oa8YMn3oXwvBowZ/5iDKJOMwkXbv44co=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Dm7Y3TtD8Uq/MX1Q9ijHH8A+plVbKrei/jZREcuuDPqDewHhAiPz69b4OQXdYbVQbCWvPZj6f3S0FB7TIqqLfrRU4yPVmCwb9GktymOmjbys5OFeW3IIPobpmeno+ERNlZZjlrst73skfGryoXYOBJoj1xjB+MJ/ypNFUSiyq50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=LwnR5bwG; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B740F44275;
-	Tue,  5 Aug 2025 14:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1754405810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygpX4acl3ZoXdt5UguQSJswZINbjERZaJP3QHEcb5DA=;
-	b=LwnR5bwGtoLyRzkNl6Cdjnqb39MzU9Dv15v3YMRIG2IC5k2NxCc4XOecF9EbjLd9oTgJn8
-	qPV6+mpIsF8sOPK4K/30Hxy6RoG6Po3SuLC7eC0jvcoMn5zaNNR3wY8577lQec8aSeWE8H
-	GVohOg7fQWTBOzp51FiriANSbOafpgMtGlYwPMXrdhNukzFFToBDvV08D8bV6gAJcsOaHx
-	zBE2QmJrd+qWvj4QWSJQ5C2cOyHcH5sTfgT6bYxMkJ9fiFQCfhu/01K5yWuG+BlIc9MfrB
-	ZzGQ1aLG02RwIohPFdETzkVH82II8x9feDyMVDykRrmruXC0LRJhylndpXVqCg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH RFC v2 2/8] ovl: Create ovl_strcmp() with casefold support
-In-Reply-To: <20250805-tonyk-overlayfs-v2-2-0e54281da318@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Tue, 05 Aug 2025 00:09:06 -0300")
-References: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
-	<20250805-tonyk-overlayfs-v2-2-0e54281da318@igalia.com>
-Date: Tue, 05 Aug 2025 10:56:45 -0400
-Message-ID: <87o6stakb6.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754405852; c=relaxed/simple;
+	bh=NhdyBGEPT7eejNSJMcyjTlJxOm6Q6CKyxrDAtOrUNmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GWNMs8yfh8XN0kdRy0NcqcR52Ng+x4wMU1C8lgG6lpHCdHAuJ1MGai3wwWyGSeH/4zofxmhKfqBPCGJzIcYMmzmNjAM7F/CFKeC9vv0bG+FrpKQB89wPdDgglkS7uFdxsCfJgXEe0dKDCpsye0hh92sULcjO0/vN8BMkmJoQIlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HJyVwZkG; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso440461cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:57:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754405849; x=1755010649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UX5cs3lHqIbxrim0a3iEN5C2bHRmCjQDiyeRqDnGqIA=;
+        b=HJyVwZkGz7cif15IXHonIxwT1m7Lj3cfUKVI2XD1jupoPYKnYJuAGTv3ckct5h5kdh
+         XoA5sAbwggr4pjR1wcAzE2W/fNLXnNhApym8NGst6uf/BrgiU9GaQTGr5oieAIfr505y
+         d1R6iMXzWxxGcDlq/VaD2ylExtW28ZhVKS2Gugu4FVahunRtn2MV5tQ6+kJgHUHRgdp6
+         fVkCKC10osz+/7BfAO7YD0vwO6u6pywRk7p9PwvHoccVYrfvv9QVgfWKdylA/NKI5xdQ
+         3q+SfgScZ5E4cVO1qyS6OY4k8jr24PNQnZ+FypPwAAsmG4IwYi/Dm8AhOUT64p2YX/Wt
+         N+7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754405849; x=1755010649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UX5cs3lHqIbxrim0a3iEN5C2bHRmCjQDiyeRqDnGqIA=;
+        b=jv/cS9J92P897vHIlyH+oL1sptcPP3tlr7xOgPHbFzBITNCpJiR1NBww0I7bQMl0+n
+         j4ZS6HzIqWfSfWPRvbgjuSDVrsgS3IMIeyyhIY6rVZPV0lqYmYHmvDAPAnyco0qxjh6L
+         NDmMCYUFyX/lMKuu6gAfdFiOFja5MBSz7AFR5cJxkmrqU317Ci0a419djz5ISwcZuari
+         6iqKw4dQ7BvllDEaj/U+//mx3YbRz9Mdng4GdqDSTnzHclIStfvBvE+7SbIsJeaIsBc5
+         /pFkqPFu61Pfa0JgatpFsBFZEpL55XRzvYVPrGxfi3HX4DuP4cpRXXtlzFWHWRKqeoXw
+         Sgew==
+X-Forwarded-Encrypted: i=1; AJvYcCVPmpAJEag+Z/gbbG+EXW80PFOTYZILL5vHqM157m36YdWnUl8cLQgmdsaoiTf8G7pGntXH0RhZcn1kAi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpvay8ekO/O0Miyl5GYueV8ccdMCkGqpLAZLERKKgMTR0JuSsc
+	5e0v3HLU1XwZSkRATqTEbSrBnxQEALp4ONJoEro2mxNssJDHgZrumbdbVvskX40ti17ZgSJLjVw
+	FrIb5Y0m2dia3JHoJhVjae4c6tALIJwcDNweHiP69
+X-Gm-Gg: ASbGncueucwMbc1JYXdxCpjxqaXiRuZs3E9UWjFHn/RFt0wjBvyWGExJzsBTnnPrjyW
+	RM2YCRj6swwlE0XqzQiZjHa75iWJfvGoRTiporW06kPw8T7AcFKIg2EP1T5bGsgdd52x1Jpz8D0
+	NeysQDNxXbWWxTM+Azm6Se8fEJqWIFHXrE2OmQ3pZUsYsF8gkjTkaL7hXe62xmwZZAtqtGnNF+X
+	H3DOeJArYFTvcv6cSr2SrjPyUDp8lX9qKnliINMoV79dP/x
+X-Google-Smtp-Source: AGHT+IGLZKNoZY1g7Z4NbMCRTteQccrBt8PcIwP4mJ0WIiz5tnPREzcYXyX50zdXotguGwk86Au/Hdop0F1jHsOFKmo=
+X-Received: by 2002:a05:622a:180b:b0:497:75b6:e542 with SMTP id
+ d75a77b69052e-4b084f11753mr4011031cf.10.1754405848822; Tue, 05 Aug 2025
+ 07:57:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <aIzMGlrR1SL5Y_Gp@x1.local> <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
+ <aIzp6WqdzhomPhhf@x1.local> <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
+ <aIz1xrzBc2Spa2OH@x1.local> <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
+ <aI0Ffc9WXeU2X71O@x1.local> <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
+ <aI1ckD3KhNvoMtlv@x1.local> <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
+ <aJIXlN-ZD_soWdP0@x1.local>
+In-Reply-To: <aJIXlN-ZD_soWdP0@x1.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 5 Aug 2025 07:57:17 -0700
+X-Gm-Features: Ac12FXyAM_EgbCxyw_Y-VGO-izFJUCqFoQ6tTjGFrNOoAZicqFMbU-6OO5r2W8c
+Message-ID: <CAJuCfpFzP_W8i8pwL+-Uv-n+2LixgFrzqn2HsY_h-1kbP=g3JQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudehgeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
- hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
-> To add overlayfs support casefold filesystems, create a new function
-> ovl_strcmp() with support for casefold names.
+On Tue, Aug 5, 2025 at 7:39=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> If the ovl_cache_entry have stored a casefold name, use it and create
-> a casfold version of the name that is going to be compared to.
+> On Mon, Aug 04, 2025 at 07:55:42AM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Aug 1, 2025 at 5:32=E2=80=AFPM Peter Xu <peterx@redhat.com> wro=
+te:
+> > >
+> > > On Fri, Aug 01, 2025 at 07:30:02PM +0000, Suren Baghdasaryan wrote:
+> > > > On Fri, Aug 1, 2025 at 6:21=E2=80=AFPM Peter Xu <peterx@redhat.com>=
+ wrote:
+> > > > >
+> > > > > On Fri, Aug 01, 2025 at 05:45:10PM +0000, Suren Baghdasaryan wrot=
+e:
+> > > > > > On Fri, Aug 1, 2025 at 5:13=E2=80=AFPM Peter Xu <peterx@redhat.=
+com> wrote:
+> > > > > > >
+> > > > > > > On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan =
+wrote:
+> > > > > > > > On Fri, Aug 1, 2025 at 9:23=E2=80=AFAM Peter Xu <peterx@red=
+hat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasar=
+yan wrote:
+> > > > > > > > > > On Fri, Aug 1, 2025 at 7:16=E2=80=AFAM Peter Xu <peterx=
+@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hilde=
+nbrand wrote:
+> > > > > > > > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
+> > > > > > > > > > > >
+> > > > > > > > > > > > Hi!
+> > > > > > > > > > > >
+> > > > > > > > > > > > Did you mean in you patch description:
+> > > > > > > > > > > >
+> > > > > > > > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some =
+non-present PMDs"
+> > > > > > > > > > > >
+> > > > > > > > > > > > Talking about THP holes is very very confusing.
+> > > > > > > > > > > >
+> > > > > > > > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_AL=
+LOW_SRC_HOLES and it
+> > > > > > > > > > > > > encounters a non-present THP, it fails to properl=
+y recognize an unmapped
+> > > > > > > > > > > >
+> > > > > > > > > > > > You mean a "non-present PMD that is not a migration=
+ entry".
+> > > > > > > > > > > >
+> > > > > > > > > > > > > hole and tries to access a non-existent folio, re=
+sulting in
+> > > > > > > > > > > > > a crash. Add a check to skip non-present THPs.
+> > > > > > > > > > > >
+> > > > > > > > > > > > That makes sense. The code we have after this patch=
+ is rather complicated
+> > > > > > > > > > > > and hard to read.
+> > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uA=
+BI")
+> > > > > > > > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkalle=
+r.appspotmail.com
+> > > > > > > > > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a=
+0220.693ce.0050.GAE@google.com/
+> > > > > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.=
+com>
+> > > > > > > > > > > > > Cc: stable@vger.kernel.org
+> > > > > > > > > > > > > ---
+> > > > > > > > > > > > > Changes since v1 [1]
+> > > > > > > > > > > > > - Fixed step size calculation, per Lokesh Gidra
+> > > > > > > > > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_=
+SRC_HOLES, per Lokesh Gidra
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > [1] https://lore.kernel.org/all/20250730170733.38=
+29267-1-surenb@google.com/
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++=
+++++----------------
+> > > > > > > > > > > > >   1 file changed, 29 insertions(+), 16 deletions(=
+-)
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > > > > > > > > > index cbed91b09640..b5af31c22731 100644
+> > > > > > > > > > > > > --- a/mm/userfaultfd.c
+> > > > > > > > > > > > > +++ b/mm/userfaultfd.c
+> > > > > > > > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct=
+ userfaultfd_ctx *ctx, unsigned long dst_start,
+> > > > > > > > > > > > >             ptl =3D pmd_trans_huge_lock(src_pmd, =
+src_vma);
+> > > > > > > > > > > > >             if (ptl) {
+> > > > > > > > > > > > > -                   /* Check if we can move the p=
+md without splitting it. */
+> > > > > > > > > > > > > -                   if (move_splits_huge_pmd(dst_=
+addr, src_addr, src_start + len) ||
+> > > > > > > > > > > > > -                       !pmd_none(dst_pmdval)) {
+> > > > > > > > > > > > > -                           struct folio *folio =
+=3D pmd_folio(*src_pmd);
+> > > > > > > > > > > > > +                   if (pmd_present(*src_pmd) || =
+is_pmd_migration_entry(*src_pmd)) {
+> > > > > > > > > > >
+> > > > > > > > > > > [1]
+> > > > > > > > > > >
+> > > > > > > > > > > > > +                           /* Check if we can mo=
+ve the pmd without splitting it. */
+> > > > > > > > > > > > > +                           if (move_splits_huge_=
+pmd(dst_addr, src_addr, src_start + len) ||
+> > > > > > > > > > > > > +                               !pmd_none(dst_pmd=
+val)) {
+> > > > > > > > > > > > > +                                   if (pmd_prese=
+nt(*src_pmd)) {
+> > > > > > > > >
+> > > > > > > > > [2]
+> > > > > > > > >
+> > > > > > > > > > > > > +                                           struc=
+t folio *folio =3D pmd_folio(*src_pmd);
+> > > > > > > > >
+> > > > > > > > > [3]
+> > > > > > > > >
+> > > > > > > > > > > > > +
+> > > > > > > > > > > > > +                                           if (!=
+folio || (!is_huge_zero_folio(folio) &&
+> > > > > > > > > > > > > +                                                =
+          !PageAnonExclusive(&folio->page))) {
+> > > > > > > > > > > > > +                                                =
+   spin_unlock(ptl);
+> > > > > > > > > > > > > +                                                =
+   err =3D -EBUSY;
+> > > > > > > > > > > > > +                                                =
+   break;
+> > > > > > > > > > > > > +                                           }
+> > > > > > > > > > > > > +                                   }
+> > > > > > > > > > > >
+> > > > > > > > > > > > ... in particular that. Is there some way to make t=
+his code simpler / easier
+> > > > > > > > > > > > to read? Like moving that whole last folio-check th=
+ingy into a helper?
+> > > > > > > > > > >
+> > > > > > > > > > > One question might be relevant is, whether the check =
+above [1] can be
+> > > > > > > > > > > dropped.
+> > > > > > > > > > >
+> > > > > > > > > > > The thing is __pmd_trans_huge_lock() does double chec=
+k the pmd to be !none
+> > > > > > > > > > > before returning the ptl.  I didn't follow closely on=
+ the recent changes on
+> > > > > > > > > > > mm side on possible new pmd swap entries, if migratio=
+n is the only possible
+> > > > > > > > > > > one then it looks like [1] can be avoided.
+> > > > > > > > > >
+> > > > > > > > > > Hi Peter,
+> > > > > > > > > > is_swap_pmd() check in __pmd_trans_huge_lock() allows f=
+or (!pmd_none()
+> > > > > > > > > > && !pmd_present()) PMD to pass and that's when this cra=
+sh is hit.
+> > > > > > > > >
+> > > > > > > > > First for all, thanks for looking into the issue with Lok=
+esh; I am still
+> > > > > > > > > catching up with emails after taking weeks off.
+> > > > > > > > >
+> > > > > > > > > I didn't yet read into the syzbot report, but I thought t=
+he bug was about
+> > > > > > > > > referencing the folio on top of a swap entry after readin=
+g your current
+> > > > > > > > > patch, which has:
+> > > > > > > > >
+> > > > > > > > >         if (move_splits_huge_pmd(dst_addr, src_addr, src_=
+start + len) ||
+> > > > > > > > >             !pmd_none(dst_pmdval)) {
+> > > > > > > > >                 struct folio *folio =3D pmd_folio(*src_pm=
+d); <----
+> > > > > > > > >
+> > > > > > > > > Here looks like *src_pmd can be a migration entry. Is my =
+understanding
+> > > > > > > > > correct?
+> > > > > > > >
+> > > > > > > > Correct.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > > If we drop the check at [1] then the path that takes us=
+ to
+> > > > > > > > >
+> > > > > > > > > If my above understanding is correct, IMHO it should be [=
+2] above that
+> > > > > > > > > makes sure the reference won't happen on a swap entry, no=
+t necessarily [1]?
+> > > > > > > >
+> > > > > > > > Yes, in case of migration entry this is what protects us.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > > split_huge_pmd() will bail out inside split_huge_pmd_lo=
+cked() with no
+> > > > > > > > > > indication that split did not happen. Afterwards we wil=
+l retry
+> > > > > > > > >
+> > > > > > > > > So we're talking about the case where it's a swap pmd ent=
+ry, right?
+> > > > > > > >
+> > > > > > > > Hmm, my understanding is that it's being treated as a swap =
+entry but
+> > > > > > > > in reality is not. I thought THPs are always split before t=
+hey get
+> > > > > > > > swapped, no?
+> > > > > > >
+> > > > > > > Yes they should be split, afaiu.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > > Could you elaborate why the split would fail?
+> > > > > > > >
+> > > > > > > > Just looking at the code, split_huge_pmd_locked() checks fo=
+r
+> > > > > > > > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
+> > > > > > > > pmd_trans_huge() is false if !pmd_present() and it's not a =
+migration
+> > > > > > > > entry, so __split_huge_pmd_locked() will be skipped.
+> > > > > > >
+> > > > > > > Here might be the major part of where confusion came from: I =
+thought it
+> > > > > > > must be a migration pmd entry to hit the issue, so it's not?
+> > > > > > >
+> > > > > > > I checked the code just now:
+> > > > > > >
+> > > > > > > __handle_mm_fault:
+> > > > > > >                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
+> > > > > > >                         VM_BUG_ON(thp_migration_supported() &=
+&
+> > > > > > >                                           !is_pmd_migration_e=
+ntry(vmf.orig_pmd));
+> > > > > > >
+> > > > > > > So IIUC pmd migration entry is still the only possible way to=
+ have a swap
+> > > > > > > entry.  It doesn't look like we have "real" swap entries for =
+PMD (which can
+> > > > > > > further points to some swapfiles)?
+> > > > > >
+> > > > > > Correct. AFAIU here we stumble on a pmd entry which was allocat=
+ed but
+> > > > > > never populated.
+> > > > >
+> > > > > Do you mean a pmd_none()?
+> > > >
+> > > > Yes.
+> > > >
+> > > > >
+> > > > > If so, that goes back to my original question, on why
+> > > > > __pmd_trans_huge_lock() returns non-NULL if it's a pmd_none()?  I=
+MHO it
+> > > > > really should have returned NULL for pmd_none().
+> > > >
+> > > > That was exactly the answer I gave Lokesh when he theorized about t=
+he
+> > > > cause of this crash but after reproducing it I saw that
+> > > > pmd_trans_huge_lock() happily returns the PTL as long as PMD is not
+> > > > pmd_none(). And that's because it passes as is_swap_pmd(). But even=
+ if
+> > > > we change that we still need to implement the code to skip the enti=
+re
+> > > > PMD.
+> > >
+> > > The thing is I thought if pmd_trans_huge_lock() can return non-NULL, =
+it
+> > > must be either a migration entry or a present THP. So are you describ=
+ing a
+> > > THP but with present bit cleared?  Do you know what is that entry, an=
+d why
+> > > it has present bit cleared?
+> >
+> > In this case it's because earlier we allocated that PMD here:
+> > https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L1797
 >
-> For the casefold support, just comparing the strings does not work
-> because we need the dentry enconding, so make this function find the
-> equivalent dentry for a giving directory, if any.
+> AFAIU, this line is not about allocation of any pmd entry, but the pmd
+> pgtable page that _holds_ the PMDs:
 >
-> As this function is used for search and insertion in the red-black tree,
-> that means that the tree node keys are going to be the casefolded
-> version of the dentry's names. Otherwise, the search would not work for
-> case-insensitive mount points.
+> static inline pmd_t *pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned=
+ long address)
+> {
+>         return (unlikely(pud_none(*pud)) && __pmd_alloc(mm, pud, address)=
+)?
+>                 NULL: pmd_offset(pud, address);
+> }
 >
-> For the non-casefold names, nothing changes.
+> It makes sure the PUD entry, not the PMD entry, be populated.
+
+Hmm. Then I was reading this code completely wrong and need to rethink
+what is happening here.
+
 >
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> I wonder what should be done here if kmalloc fails, if the strcmp()
-> should fail as well or just fallback to the normal name?
-> ---
->  fs/overlayfs/readdir.c | 42 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 40 insertions(+), 2 deletions(-)
+> > but wouldn't that be the same if the PMD was mapped and then got
+> > unmapped later? My understanding is that we allocate the PMD at the
+> > line I pointed to make UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES case the same
+> > as this unmapped PMD case. If my assumption is incorrect then we could
+> > skip the hole earlier instead of allocating the PMD for it.
+> >
+> > >
+> > > I think my attention got attracted to pmd migration entry too much, s=
+o I
+> > > didn't really notice such possibility, as I believe migration pmd is =
+broken
+> > > already in this path.
+> > >
+> > > The original code:
+> > >
+> > >                 ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
+> > >                 if (ptl) {
+> > >                         /* Check if we can move the pmd without split=
+ting it. */
+> > >                         if (move_splits_huge_pmd(dst_addr, src_addr, =
+src_start + len) ||
+> > >                             !pmd_none(dst_pmdval)) {
+> > >                                 struct folio *folio =3D pmd_folio(*sr=
+c_pmd);
+> > >
+> > >                                 if (!folio || (!is_huge_zero_folio(fo=
+lio) &&
+> > >                                                !PageAnonExclusive(&fo=
+lio->page))) {
+> > >                                         spin_unlock(ptl);
+> > >                                         err =3D -EBUSY;
+> > >                                         break;
+> > >                                 }
+> > >
+> > >                                 spin_unlock(ptl);
+> > >                                 split_huge_pmd(src_vma, src_pmd, src_=
+addr);
+> > >                                 /* The folio will be split by move_pa=
+ges_pte() */
+> > >                                 continue;
+> > >                         }
+> > >
+> > >                         err =3D move_pages_huge_pmd(mm, dst_pmd, src_=
+pmd,
+> > >                                                   dst_pmdval, dst_vma=
+, src_vma,
+> > >                                                   dst_addr, src_addr)=
+;
+> > >                         step_size =3D HPAGE_PMD_SIZE;
+> > >                 } else {
+> > >
+> > > It'll get ptl for a migration pmd, then pmd_folio is risky without ch=
+ecking
+> > > present bit.  That's what my previous smaller patch wanted to fix.
+> > >
+> > > But besides that, IIUC it's all fine at least for a pmd migration ent=
+ry,
+> > > because when with the smaller patch applied, either we'll try to spli=
+t the
+> > > pmd migration entry, or we'll do move_pages_huge_pmd(), which interna=
+lly
+> > > handles the pmd migration entry too by waiting on it:
+> > >
+> > >         if (!pmd_trans_huge(src_pmdval)) {
+> > >                 spin_unlock(src_ptl);
+> > >                 if (is_pmd_migration_entry(src_pmdval)) {
+> > >                         pmd_migration_entry_wait(mm, &src_pmdval);
+> > >                         return -EAGAIN;
+> > >                 }
+> > >                 return -ENOENT;
+> > >         }
+> > >
+> > > Then logically after the migration entry got recovered, we'll either =
+see a
+> > > real THP or pmd none next time.
+> >
+> > Yes, for migration entries adding the "if (pmd_present(*src_pmd))"
+> > before getting the folio is enough. The problematic case is
+> > (!pmd_none(*src_pmd) && !pmd_present(*src_pmd)) and not a migration
+> > entry.
 >
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 83bca1bcb0488461b08effa70b32ff2fefba134e..1b8eb10e72a229ade40d18795=
-746d3c779797a06 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -72,6 +72,44 @@ static struct ovl_cache_entry *ovl_cache_entry_from_no=
-de(struct rb_node *n)
->  	return rb_entry(n, struct ovl_cache_entry, node);
->  }
->=20=20
-> +/*
-> + * Compare a string with a cache entry, with support for casefold names.
-> + */
-> +static int ovl_strcmp(const char *str, struct ovl_cache_entry *p, int le=
-n)
-> +{
+> I thought we could have any of below here on the pmd entry:
+>
+>   (0) pmd_none, which should constantly have pmd_trans_huge_lock -> NULL
+>
+>   (1) pmd pgtable entry, which must have PRESENT && !TRANS, so
+>   pmd_trans_huge_lock -> NULL,
+>
+>   (2) pmd migration, pmd_trans_huge_lock -> valid
+>
+>   (3) pmd thp, pmd_trans_huge_lock -> valid
+>
+> I thought (2) was broken, which we seem to agree upon.. however if so the
+> smaller patch should fix it, per explanation in my previous reply.  OTOH =
+I
+> can't think of (4).
 
-Why do you need to re-casefold str on every call to ovl_strcmp?  Isn't
-it done in a loop while walking the rbtree with a constant "str" (i.e.,
-the name being added, see ovl_cache_entry_find)? Can't you do it once,
-outside of ovl_strcmp? This way you don't repeatedly allocate/free
-memory for each node of the tree (as Viro mentioned), and you don't have
-to deal with kmalloc failures here.
+The case I was hitting is (!pmd_none && !pmd_present &&
+!is_pmd_migration_entry). My original thinking was that this entry was
+newly allocated at the line I pointed earlier but now I'm not so sure
+anymore.
 
-> +
-> +	const struct qstr qstr =3D { .name =3D str, .len =3D len };
-> +	const char *p_name =3D p->name, *name =3D str;
-> +	char *dst =3D NULL;
-> +	int cmp, cf_len;
-> +
-> +	if (p->cf_name)
-> +		p_name =3D p->cf_name;
+>
+> Said that, I just noticed (3) can be broken as well - could it be a
+> prot_none entry?  The very confusing part of this patch is it seems to
+> think it's pmd_none() here as holes:
+>
+>         if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
+>                 ...
+>         } else {
+>                 spin_unlock(ptl);
+>                 if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES)) {
+>                         err =3D -ENOENT;
+>                         break;
+>                 }
+>                 /* nothing to do to move a hole */
+>                 err =3D 0;
+>                 step_size =3D min(HPAGE_PMD_SIZE, src_start + len - src_a=
+ddr);
+>         }
+>
+> But is it really?  Again, I don't think pmd_none() could happen with
+> pmd_trans_huge_lock() returning the ptl.
 
-This should check IS_ENABLED(CONFIG_UNICODE) so it can be
-compiled out by anyone doing CONFIG_UNICODE=3Dn
+That is true, in the pmd_none() case pmd_trans_huge_lock() returns NULL.
 
-> +
-> +	if (p->map && !is_dot_dotdot(str, len)) {
-> +		dst =3D kmalloc(OVL_NAME_LEN, GFP_KERNEL);
-> +
-> +		/*
-> +		 * strcmp can't fail, so we fallback to the use the original
-> +		 * name
-> +		 */
-> +		if (dst) {
-> +			cf_len =3D utf8_casefold(p->map, &qstr, dst, OVL_NAME_LEN);
+>
+> Could you double check this?  E.g. with this line if that makes sense to
+> you:
+>
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 8bf8ff0be990f..d2d4f2a0ae69f 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1903,6 +1903,7 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, uns=
+igned long dst_start,
+>                                                           dst_addr, src_a=
+ddr);
+>                                 step_size =3D HPAGE_PMD_SIZE;
+>                         } else {
+> +                               BUG_ON(!pmd_none(*src_pmd));
+>                                 spin_unlock(ptl);
+>                                 if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_H=
+OLES)) {
+>                                         err =3D -ENOENT;
+>
+> I would expect it constantly BUG() here, if that explains my thoughts.
 
-utf8_casefold can fail, as you know and checked.  But if it does, a
-negative cf_len is passed to strncmp and cast to a very high
-value.
+I'll add this and check.
 
-> +
-> +			if (cf_len > 0) {
-> +				name =3D dst;
-> +				dst[cf_len] =3D '\0';
-> +			}
+>
+> Now I doubt it's a prot_none THP.. aka, a THP that got numa hint to be
+> moved.  If so, we may need to process it / move it / .. but we likely
+> should never skip it.  We can double check the buggy pmd entry you hit
+> (besides migration entry) first.
 
-utf8_casefold ensures the string is NULL-terminated on success already.
+Let me log the flags of the entry when this issue happens. That should
+provide more insights.
+Thanks,
+Suren.
 
-> +		}
-> +	}
-> +
-> +	cmp =3D strncmp(name, p_name, cf_len);
-> +
-> +	kfree(dst);
-> +
-> +	return cmp;
-> +}
-> +
->  static bool ovl_cache_entry_find_link(const char *name, int len,
->  				      struct rb_node ***link,
->  				      struct rb_node **parent)
-> @@ -85,7 +123,7 @@ static bool ovl_cache_entry_find_link(const char *name=
-, int len,
->=20=20
->  		*parent =3D *newp;
->  		tmp =3D ovl_cache_entry_from_node(*newp);
-> -		cmp =3D strncmp(name, tmp->name, len);
-> +		cmp =3D ovl_strcmp(name, tmp, len);
->  		if (cmp > 0)
->  			newp =3D &tmp->node.rb_right;
->  		else if (cmp < 0 || len < tmp->len)
-> @@ -107,7 +145,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(s=
-truct rb_root *root,
->  	while (node) {
->  		struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(node);
->=20=20
-> -		cmp =3D strncmp(name, p->name, len);
-> +		cmp =3D ovl_strcmp(name, p, len);
->  		if (cmp > 0)
->  			node =3D p->node.rb_right;
->  		else if (cmp < 0 || len < p->len)
-
---=20
-Gabriel Krisman Bertazi
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
 
