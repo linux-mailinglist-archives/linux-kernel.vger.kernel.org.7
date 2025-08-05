@@ -1,239 +1,188 @@
-Return-Path: <linux-kernel+bounces-756608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E73FB1B6A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DBC9B1B6A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D4623ECA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47111898EDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630F1279358;
-	Tue,  5 Aug 2025 14:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DF0278772;
+	Tue,  5 Aug 2025 14:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2fhACyV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1CwmR5ck"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E4F273D99;
-	Tue,  5 Aug 2025 14:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2603E275B07
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 14:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754404595; cv=none; b=CtR5Jq8OLmaVfONrkXsgpuJn7VIfpyZkUUPzgySIsfuNOWx+qoAmG/J6V/LTc6Iglj9O/IsVfBMrJ6DfYHfefeQIhTzKG7+uRmSpnY2I4xBFlCt8f/ZbwrLQdKsnt7Qlg29MJqPkqNQZoFmG1HmVs7mspACKHg4dk88oAeb9HTY=
+	t=1754404688; cv=none; b=UQdbwiAVbKh7R/LfLnj9/tvrqWEyXW1KhahXoQap/7Z9jctFpP2tQ5AtkByHBLBQti3PbJDtWuDv3oapwVUisaktG2avyyT+SUpQf18x8uaDaOAmzrf9CcJ60B7iLITkeNCzqsfHl9qbd+3szMzwmfanteNr4Xa4awncFOqIVec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754404595; c=relaxed/simple;
-	bh=w44VePDoslCBQmbyhcmLPxQ8EP9h0hyA++ku5mPHf3g=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=MCsS9+rcyRmddsBeoHbWNVxuqaeZ/rbYgr4X412+7/sVhvTL12BmrsfaiVoDmUeoJgsyOJXlaUiHzXKx9kb10I4h+RrRmph6pK5YNcE+x3ptOVOLeeqlNdW2o/jWLwagyD+330ADi5PSpPaurBgcSht+xJ6ZvWlf/2A//pMUiP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2fhACyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50079C4CEF0;
-	Tue,  5 Aug 2025 14:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754404594;
-	bh=w44VePDoslCBQmbyhcmLPxQ8EP9h0hyA++ku5mPHf3g=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=n2fhACyVyCVvYGuPP5yMUtOJLO69zohrl67B4qO7tkrc85q6AhS4HjOpKq0IO06bx
-	 VLOboqGBT7smqDbTFjCjnp2DG/po4EcjHpfGR+JZzM+IT6QVECop5qsXyHugSDQVn1
-	 7BxqhQncciEoyBbL90Tleof1s2k1YIBjNcc/G6VkKx9VK9DZYHWJmt0BeV8bGLwals
-	 jVcfnveLCEGmUfV72Wqta+sV+RLjN4QoW+l7EnzBS27caLKnsqRCSbbuO8ts3bESBT
-	 uZRvfvo06OiRv/fMXlJzoKPT59UHy7yOPcsip0yUx7VPtwZ/MS2HXmhai2mdCjkufK
-	 6DrQgtBEh+o6g==
-Date: Tue, 05 Aug 2025 09:36:32 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1754404688; c=relaxed/simple;
+	bh=arjCcfwEvuffPrclQ/6w1YywG85PqYHtkxOop0K6FLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PkrQ0Z0KtzZw6jcYTwHWxCeP5kqTinzc0aCECGEZTF88VuGXzjAADVtgyf8oMyylYUqUmgIniLOPaXyLDDLLEUW11te8IqTlAsfvuW45JeChsf8KAmbSkPQpcYUrnKafwabyawctzMkNEQprIBe3SCdPJSZGoe6gS7NhV6r2f5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1CwmR5ck; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4aef56cea5bso159631cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 07:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754404686; x=1755009486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aef8IAvwtLn08IdbykC4EYYFzkMHHIdInKV+pvklfuE=;
+        b=1CwmR5ckkPTgkSHhLPBs0Y9Zz9PUv0ECATdi77YkZsMg0bTn0w2csYJv6CwVSmfOz/
+         lV2SC5SWwbblyVsG5qzYHAxjKRuHlQJXm85vbbpEUkAKUuxznK2/Ni04hpwNr0cnJhDB
+         lkDHSC2s1vtYDvT8W6Q/klC/sFVHoQOju7Vq/iYlder7so4fzlFVN8vBHHh/DRDDHhFQ
+         64Qi0Z7JrPe9qmYgJF6M8nnFT70Dxh9QJL/2QjVoQNdeAFwtvLEPB8SXNlyTPQ+gSV6R
+         dYvvZ7klvczbOyV1MNXrtf948CcvXDFY7on/k4kYAWbIsgXgNwe2Y1Sj1vtLizkpxe2K
+         hnww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754404686; x=1755009486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aef8IAvwtLn08IdbykC4EYYFzkMHHIdInKV+pvklfuE=;
+        b=PmuuTSu19Uc7zw3Q58j5/eFtW2OeAZnFWInzkdx5/qTgzUjMO8gQsuF24J1Wio3dhD
+         tjfz5yvKIr0XH4YC68tXjlv8M7parNAZ3XLGJMCl4ElN822zXFe12CkruKLBr1Zx9JZs
+         rago1Et1lh4sSKTBJSEfAv0ZZ/sU2RULGUmqQROKN4P5WwfRY/aI/Oza9CNDBgjxcJWx
+         HOO2pQLaGVAXzto4NMbPyR11eNg7QnL4TYJXwesBB1WZIAvAhsbYfwBfgieBILNyfISg
+         0Yiy0At9EjhRRVz1xr69jG/hwhe/8wrokfyV6cgyiFe1cIIqralaOiN6NNvL3yRiZQiN
+         31hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEttPvG9v2uyLi+FAhNr7Lk/BNMzB0Ns6t91qFhHjtxE9g0pUNVjbIclPo5u0rRaIQ/pXG+u/W6DgR9HY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRaKB/crN7DujZeycgX22LRZ/TzomM9/GzGJMSq681hQAsF4Z0
+	kKA3Wn1xF4KZNcGlW/4kvuuXIDXiOdYeTi8j8NTkQhv/i+ikjQSNM8Vzsi0rKWuuv2B1+ahtPFT
+	RTHlNYhEKpiTKlfpMxyUtdvl23lSlmjgFyaoSCnaX
+X-Gm-Gg: ASbGncup0RJyyUE0WLS+vY4UQsJrcrpXK5u7gmaNwXbQs1pTJeRkwmNxF+q5VN0yKRc
+	IFyw3OWwznSVHSGo7XZNuJZ07ple1PEnVK5sz5w3nmyFs0+4G+91l9HLp60JTnLE38YtpFBoM6B
+	wU9GUlxGfT+qch20VUdl2Pi+7tlQgxt++2oM3N7k7Nd2xrBIJ0mcBYt4QbiVLKnfd+BvDyiAMK/
+	cfxdQQmiQjcsqog0NVc0UhXy+kDOMH6LT1Ulg==
+X-Google-Smtp-Source: AGHT+IGNgBN87aq4QIxEol6Iry1WpPeZs6N2msqSePTFM5jWMKBB+kelQvyXcVEXcEbW86sUjLIcplgHgUotOVKwENk=
+X-Received: by 2002:ac8:5e4b:0:b0:48a:ba32:370 with SMTP id
+ d75a77b69052e-4b084f396fbmr3912431cf.10.1754404685401; Tue, 05 Aug 2025
+ 07:38:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, fshao@chromium.org, 
- wenst@chromium.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mandyjh.liu@mediatek.com, mbrugger@suse.com, y.oudjana@protonmail.com, 
- devicetree@vger.kernel.org, kernel@collabora.com, conor+dt@kernel.org, 
- krzk+dt@kernel.org, lihongbo22@huawei.com, 
- linux-mediatek@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
-References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
-Message-Id: <175440455336.1687500.12826833378916085402.robh@kernel.org>
-Subject: Re: [PATCH v3 00/10] pmdomain: Partial refactor, support modem and
- RTFF
+References: <20250804231552.1217132-1-surenb@google.com> <20250804231552.1217132-4-surenb@google.com>
+ <a2fca13d-87bd-4eb3-b673-46c538f46e66@suse.cz>
+In-Reply-To: <a2fca13d-87bd-4eb3-b673-46c538f46e66@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 5 Aug 2025 07:37:53 -0700
+X-Gm-Features: Ac12FXw4MVzzUn2oCKvSzz_8aCVi1Bw7CmRaPzcL7KBJ8BbbbzRtIwg97emJVWA
+Message-ID: <CAJuCfpG7_=3cN6VrPmx1qtXq53AptNynTccG5vYUEYdfyQ71DA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
+ under per-vma locks
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, peterx@redhat.com, 
+	jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 5, 2025 at 7:18=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+>
+> On 8/5/25 1:15 AM, Suren Baghdasaryan wrote:
+> > Utilize per-vma locks to stabilize vma after lookup without taking
+> > mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
+> > contended, we fall back to mmap_lock but take it only momentarily
+> > to lock the vma and release the mmap_lock. In a very unlikely case
+> > of vm_refcnt overflow, this fall back path will fail and ioctl is
+> > done under mmap_lock protection.
+> >
+> > This change is designed to reduce mmap_lock contention and prevent
+> > PROCMAP_QUERY ioctl calls from blocking address space updates.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
+> >  1 file changed, 65 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 843577aa7a32..1d06ecdbef6f 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, str=
+uct file *file)
+> >               PROCMAP_QUERY_VMA_FLAGS                         \
+> >  )
+> >
+> > -static int query_vma_setup(struct mm_struct *mm)
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +
+> > +static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
+> >  {
+> > -     return mmap_read_lock_killable(mm);
+> > +     lock_ctx->locked_vma =3D NULL;
+> > +     lock_ctx->mmap_locked =3D false;
+> > +
+> > +     return 0;
+> >  }
+> >
+> > -static void query_vma_teardown(struct mm_struct *mm, struct vm_area_st=
+ruct *vma)
+> > +static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
+> >  {
+> > -     mmap_read_unlock(mm);
+> > +     if (lock_ctx->mmap_locked)
+> > +             mmap_read_unlock(lock_ctx->mm);
+> > +     else
+> > +             unlock_vma(lock_ctx);
+> >  }
+> >
+> > -static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct =
+*mm, unsigned long addr)
+> > +static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_=
+locking_ctx *lock_ctx,
+> > +                                                  unsigned long addr)
+> >  {
+> > -     return find_vma(mm, addr);
+> > +     struct vm_area_struct *vma;
+> > +     struct vma_iterator vmi;
+> >
+>
+> Hm I think we can reach here with lock_ctx->mmap_locked being true via
+> "goto next_vma" in query_matching_vma(). In that case we should just
+> "return find_vma()" and doing the below is wrong, no?
 
-On Tue, 05 Aug 2025 09:47:36 +0200, AngeloGioacchino Del Regno wrote:
-> Changes in v3:
->  - Dropped specified items for cells restriction as suggested by Rob
->  - Fixed an issue in patch 4 still referencing "mediatek,bus-protection"
->    as it is entirely replaced by "access-controllers"
-> 
-> Changes in v2:
->  - Added #access-controller-cells allowance for MT8188/95 infracfg_ao
-> 
-> This series is a subset of [1], leaving out the Hardware Voter specific
-> bits for MT8196 until the discussion around it reaches a conclusion.
-> 
-> Even though the proposed code was born as a preparation to support the
-> MT8196/MT6991 SoCs power domain controllers, it is a necessary cleanup
-> for all power domain controllers of all of the currently supported SoCs
-> from MediaTek.
-> 
-> You may also notice the addition of support for modem power sequences:
-> this was brought up 6 months ago (or more) by community contributors
-> (mainly Yassine Oudjana) that were trying to upstream the MediaTek
-> MT6735 Smartphone SoC and needed support to provide power to the MD
-> subsystem - so, even though in this specific series the code for the
-> modem power sequence is not yet triggered by any SoC, please please
-> please, let it in.
-> Besides, "a bunch" of upstream supported SoCs do have the MD power
-> domain even though it wasn't added to their drivers (because if there
-> was no support in the driver, it would just crash the system); the
-> addition is something that I plan to do at some point, but definitely
-> not now as I have no bandwidth for that (bar MT8196, which will have
-> this domain).
-> 
-> Compared to v1 in [1]:
->  - Changed mediatek,bus-protection to access-controllers
->    as suggested by Rob (thanks!)
->  - Added commits to document #access-controller-cells on all of
->    the access control providers
-> 
-> In the meanwhile.... relevant excerpt from the old series:
-> 
-> This series refactors the bus protection regmaps retrieval to avoid
-> searching in all power domain devicetree subnodes for vendor properties
-> to get syscons for different busses, and adds a new property which is
-> located in the power controller root node containing handles to the same.
-> 
-> Retrocompatibility is retained and was tested on multiple SoCs in the
-> Collabora lab - specifically, on Genio 350/510/700/1200, and manually
-> on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
-> Chromebooks.
-> 
-> This was tested *three times*:
->  - Before the per-SoC conversion in drivers/pmdomain/mediatek
->  - With per-SoC conversion code but with *legacy* devicetree
->  - With per-SoC conversion code and with *new* devicetree conversion
-> 
-> All of those tests were successful on all of the aforementioned SoCs.
-> 
-> This also adds support for:
->  - Modem power domain for both old and new MediaTek SoCs, useful for
->    bringing up the GSM/3G/4G/5G modem for both laptop and smartphone use
->  - RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity 9400
-> 
-> ...and prepares the pmdomain code to accomodate only the directly
-> controlled power domains for MT8196 (HW Voter support was left out).
-> 
-> [1] https://lore.kernel.org/all/20250623120154.109429-1-angelogioacchino.delregno@collabora.com
-> 
-> AngeloGioacchino Del Regno (10):
->   dt-bindings: memory: mtk-smi: Document #access-controller-cells
->   dt-bindings: clock: mediatek: Document #access-controller-cells
->   dt-bindings: power: mediatek: Document access-controllers property
->   pmdomain: mediatek: Refactor bus protection regmaps retrieval
->   pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
->   pmdomain: mediatek: Move ctl sequences out of power_on/off functions
->   pmdomain: mediatek: Add support for modem power sequences
->   pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
->   pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
->   arm64: dts: mediatek: Convert all SoCs to use access-controllers
-> 
->  .../bindings/clock/mediatek,infracfg.yaml     |   3 +
->  .../clock/mediatek,mt8186-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8188-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8192-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8195-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8365-sys-clock.yaml      |  15 +
->  .../mediatek,smi-common.yaml                  |  16 +
->  .../power/mediatek,power-controller.yaml      |  37 ++
->  arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   5 +-
->  arch/arm64/boot/dts/mediatek/mt8167.dtsi      |   6 +-
->  arch/arm64/boot/dts/mediatek/mt8173.dtsi      |   4 +-
->  arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  17 +-
->  arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  12 +-
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |  23 +-
->  arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  13 +-
->  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  20 +-
->  arch/arm64/boot/dts/mediatek/mt8365.dtsi      |  16 +-
->  drivers/pmdomain/mediatek/mt6795-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8167-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8173-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8183-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8186-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8188-pm-domains.h |   6 +
->  drivers/pmdomain/mediatek/mt8192-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8195-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8365-pm-domains.h |  14 +-
->  drivers/pmdomain/mediatek/mtk-pm-domains.c    | 399 +++++++++++++++---
->  drivers/pmdomain/mediatek/mtk-pm-domains.h    |  74 +++-
->  28 files changed, 594 insertions(+), 181 deletions(-)
-> 
-> --
-> 2.50.1
-> 
-> 
-> 
+Ah, you are quite right. I should handle mmap_locked differently in
+query_vma_find_by_addr(). I will post the fix shortly.
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250805 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250805074746.29457-1-angelogioacchino.delregno@collabora.com:
-
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-asurada-hayato-r1.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clocks: [[59, 0], [59, 7], [59, 8], [59, 6], [59, 21], [59, 1], [59, 2], [59, 4], [59, 3], [59, 5], [59, 9], [59, 10], [59, 18], [59, 19], [59, 20], [59, 22], [59, 23], [59, 24], [59, 25], [59, 26], [22, 47], [22, 58], [23, 27], [23, 28], [23, 72], [23, 47], [23, 101], [23, 48], [23, 105], [23, 43], [23, 103], [23, 44], [23, 107], [23, 59], [23, 60], [23, 61], [23, 62], [23, 63], [23, 64], [23, 65], [23, 66], [23, 67], [23, 68], [23, 142], [23, 143], [23, 144], [23, 145], [23, 146], [23, 147], [23, 148], [23, 149], [23, 150], [23, 151], [23, 152], [23, 55], [2]] is too long
-	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clocks: [[56, 0], [56, 7], [56, 8], [56, 6], [56, 21], [56, 1], [56, 2], [56, 4], [56, 3], [56, 5], [56, 9], [56, 10], [56, 18], [56, 19], [56, 20], [56, 22], [56, 23], [56, 24], [56, 25], [56, 26], [22, 47], [22, 58], [23, 27], [23, 28], [23, 72], [23, 47], [23, 101], [23, 48], [23, 105], [23, 43], [23, 103], [23, 44], [23, 107], [23, 59], [23, 60], [23, 61], [23, 62], [23, 63], [23, 64], [23, 65], [23, 66], [23, 67], [23, 68], [23, 142], [23, 143], [23, 144], [23, 145], [23, 146], [23, 147], [23, 148], [23, 149], [23, 150], [23, 151], [23, 152], [23, 55], [2]] is too long
-	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-arch/arm64/boot/dts/mediatek/mt8192-evb.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clocks: [[45, 0], [45, 7], [45, 8], [45, 6], [45, 21], [45, 1], [45, 2], [45, 4], [45, 3], [45, 5], [45, 9], [45, 10], [45, 18], [45, 19], [45, 20], [45, 22], [45, 23], [45, 24], [45, 25], [45, 26], [22, 47], [22, 58], [23, 27], [23, 28], [23, 72], [23, 47], [23, 101], [23, 48], [23, 105], [23, 43], [23, 103], [23, 44], [23, 107], [23, 59], [23, 60], [23, 61], [23, 62], [23, 63], [23, 64], [23, 65], [23, 66], [23, 67], [23, 68], [23, 142], [23, 143], [23, 144], [23, 145], [23, 146], [23, 147], [23, 148], [23, 149], [23, 150], [23, 151], [23, 152], [23, 55], [2]] is too long
-	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
-arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb: syscon@10001000 (mediatek,mt8188-infracfg-ao): #access-controller-cells: False schema does not allow 0
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8188-sys-clock.yaml#
-
-
-
-
-
+>
+> > +     unlock_vma(lock_ctx);
+> > +     rcu_read_lock();
+> > +     vma_iter_init(&vmi, lock_ctx->mm, addr);
+> > +     vma =3D lock_next_vma(lock_ctx->mm, &vmi, addr);
+> > +     rcu_read_unlock();
+> > +
+> > +     if (!IS_ERR_OR_NULL(vma)) {
+> > +             lock_ctx->locked_vma =3D vma;
+> > +     } else if (PTR_ERR(vma) =3D=3D -EAGAIN) {
+> > +             /* Fallback to mmap_lock on vma->vm_refcnt overflow */
+> > +             mmap_read_lock(lock_ctx->mm);
+> > +             vma =3D find_vma(lock_ctx->mm, addr);
+> > +             lock_ctx->mmap_locked =3D true;
+> > +     }
+> > +
+> > +     return vma;
+> >  }
+> >
 
