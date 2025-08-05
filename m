@@ -1,113 +1,174 @@
-Return-Path: <linux-kernel+bounces-756481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F2EB1B4E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:29:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2461B1B4EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B428C7AEA14
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C55B1889CDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0465274B28;
-	Tue,  5 Aug 2025 13:28:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967AA2749FE;
+	Tue,  5 Aug 2025 13:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZzS6ukd"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A8E226861;
-	Tue,  5 Aug 2025 13:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A50729D0E;
+	Tue,  5 Aug 2025 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754400532; cv=none; b=jIvplhObO+H5fIAxhT52Uf0rrR6SCLtBZgi9nFY/2qWlTWSnqahHbpz3/+VZiIYQLZE7g3gcQskt1sFnCB8QGNAnFrTR4zahL/UewScJpgrNuLxI80xHpkaHiRjxS6aAvxkL4HAovdsBsCAC1x7i0gBNAEtMQiiVAKXX4rTylsg=
+	t=1754400634; cv=none; b=WJZfoAclXIiH746KkyJM+ZrMkhpEk81JmPAx5VcMT3ScYOTtJFFYtRV0etiw0+JMsWNBCao01AXQSrVb824Nf6AD0jfiatiiXV/G1j2SQgY9lO/44f6QUhNiOmvz/np6p6NMqi4OWX+VzLdu526MRcYWAXlDf5GMAXwylhNnnck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754400532; c=relaxed/simple;
-	bh=LGCtxZGKqJ/T7fT2EX9t2uPVkHMdfcR3gXKIlv9D2us=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uTa4bGADuR0ZrXjHi+OAf0szwc9+QRxBuSgpH6J0SnQVXnOg0LtLy8cN98EaHt2OkCj+xtpC2DCLNAoyV14UUAOVBwfdQa128iPp+xS8DakdO6sDWOqNQW8hoTnGUynIbQ/xF9GsPVQwGyfb6UgPWwJ7tf9KCOWpnhPNFFlQ3Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id A33FE160431;
-	Tue,  5 Aug 2025 13:28:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 6CBBB60009;
-	Tue,  5 Aug 2025 13:28:38 +0000 (UTC)
-Date: Tue, 5 Aug 2025 09:29:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sasha Levin <sashal@kernel.org>, dan.j.williams@intel.com, Jiri Kosina
- <kosina@gmail.com>, Michal Hocko <mhocko@suse.com>, David Hildenbrand
- <david@redhat.com>, Greg KH <gregkh@linuxfoundation.org>, Vlastimil Babka
- <vbabka@suse.cz>, corbet@lwn.net, linux-doc@vger.kernel.org,
- workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
- konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250805092907.114eeb23@gandalf.local.home>
-In-Reply-To: <20250804233906.GA12087@pendragon.ideasonboard.com>
-References: <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com>
-	<2025072832-enrich-pampers-54b9@gregkh>
-	<1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
-	<aId1oZn_KFaa0R_Q@lappy>
-	<aJB8CdXqCEuitnQj@tiehlicka>
-	<aJC0ssMzX0KWnTkG@lappy>
-	<alpine.LRH.2.00.2508050000580.22517@gjva.wvxbf.pm>
-	<20250804181447.0c518b14@gandalf.local.home>
-	<689139fe23f49_55f0910076@dwillia2-xfh.jf.intel.com.notmuch>
-	<aJFCoewqTIXlhnJk@lappy>
-	<20250804233906.GA12087@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754400634; c=relaxed/simple;
+	bh=7+7YZ47xZbreRUlfOrRIzW1Rf9BBEqeEpWL2d5HMmzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JmKUm/DOGzicuZnNEBKjw5bL2ZCg4//EG2OVfA0FBK/b3PgzfoYosF/rOzbS2AIyv8wVYdQphpcBuNq05mSy1flZh8MnnTInKhUr42Z5FhHIHJvV1D1a0u7wQZ4HICLkwM6u2NBdQiPe1wb0iUAR5gVgmptdmMrNNOmHS2Cd7ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZzS6ukd; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd9d723bfso3539395b3a.1;
+        Tue, 05 Aug 2025 06:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754400632; x=1755005432; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZWweXfQATMKDZrk4sSi9lSBe6kngHTyWWLkx0Jj+bk=;
+        b=XZzS6ukdmpkjDqT1qiVHT23bJE/mbNmbuepUFgZSNHDlpVt918AcNB4Dt40yqqm6ZL
+         k/e3uVmGNtE8gACP9F8Cubsas5eYIPezc5R8w71Lu7lYgQiMoxBJpaCdUzY6FikxKX32
+         WEl5vRrD92tfQAVWNCx4WsSWGlfHT1sq1kSfGS2ZBHrmKUlCbRFQyRnP3p/jHiTVxcQD
+         A6Q7go26dYhmKOfTtsoD1X6+hPR6QETrdVENo1q0ufqhOE2WM8VCgJeRJ5FRyNawtpQQ
+         nCvO2fk3iebJSTLHiJxgKhUIXmgsTYC1xzL5rhzuTgv/67PYRBnHumSeDlayRMdlsWcI
+         28nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754400632; x=1755005432;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZWweXfQATMKDZrk4sSi9lSBe6kngHTyWWLkx0Jj+bk=;
+        b=ZXLIXFX1biRNIcwWd0hw+NHw2jg+Vaz8FBsPoYcbNhtHvkr2KTwPbgslLl3Uamw05Y
+         Z8fCCfDDlD3CAe9L35dp9XWORh4tGz/2xdLezDf0Ka1SlCyc2L1nhSAHZDbU60GH+ooy
+         ImeVq4M7AQ0UG06QNYMDDIioZMGoZf/j5e2sFUzJdog6t3KPCvGjKfS9J9durE2R885f
+         JJZwmrbK02aN8+/E0z24+wU8yRmHEUSGY/Xhj13g2+2A8hvUFkFZwckmZcwZw9i3fMzE
+         v5iuBQljJ6pEJ0+qbyzMvH7vRClnEnlLTyLtcSOSmoo//M1hqmc52+7BUe5jVJ1IiXw2
+         AKZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ/+NvjCaJpUv9wL/+YHhvAzgApC9sOSsDrkG6TTwsb6+dy7qjIu4BOLzxd2xjoeFJsc1MMxHeTmSjOHg=@vger.kernel.org, AJvYcCWqFmfAMODy544fBSvcift0cIySRin4Phqad3ozSLfPxWvuZbmw16qmuvkzHZ9Mw0kz6Zrsvg2jWCy9+ACJ3MCzA7c=@vger.kernel.org, AJvYcCXOEdU82zVc2osRmv0U+nvlO/oArBkht2ZqsarMZl+c4qdR8r4RQSn9KH8ABoIKe+kPFSGcXHJDKXeWcuKuij4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzurOwl8rECux/FNH78I/5syFG6h5IePJii0da2rVWeHXrcnqBM
+	F5PzGJ9u5ahsxYXkIcQUKTwnBVlK8mzXoA/BbrPOpLXnwZBetm5wPkgK
+X-Gm-Gg: ASbGncsXBSY7rn+uVa2j9D8kZCVkdjdMPL/CS7O8HiPDjwZSTtcrTxGfXSbL7uCrEIn
+	3OrqvnapgWk4i56SC/SE3HEQlpdRtJm9zcBA3h1yaaPbepBZ7ODPXoOS+Iv2l7RE8v4YpEsHTcW
+	VueeBqP4ZLd2sYDfqzr+BC2WDL/9zdWvHPsZa4HEjPFO+KoNfEjh5ntDhK6Q/Va1PnjLdRFecs8
+	FDeco9DfhuYYI3yy3HcJgyUTLGG+05js03jBm2iKCCKYs35E2ek8myIJAZQ2KKxOez9rlHwPmEF
+	3DS9/cODZyZa5A+fIc3M9kZs2bWIrjINcLX54HjSHlKa6bXIxZoltKsAM/y1EpKVkP0HlkeHbaU
+	iXZhUSza2oM/qnyZEX/u7Rac+t4FfFkV2CCXNmjM/It+axr+Dwoop6XHhYw33bYjhDrTplkOUGA
+	to1kmwBA==
+X-Google-Smtp-Source: AGHT+IEvnnUy8re3j4J8a2pONxFAYiEi2+s8IXa2eOgdUl/cWzHK8tCot0jxI7/XmCVPhO59t4Zp8A==
+X-Received: by 2002:a05:6a20:3d10:b0:21e:eb3a:dc04 with SMTP id adf61e73a8af0-23df8f94a47mr19694788637.3.1754400632409;
+        Tue, 05 Aug 2025 06:30:32 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bae2fe7sm11241719a12.44.2025.08.05.06.30.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 06:30:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <30e377c4-15a2-4201-98b0-f00670af1ee2@roeck-us.net>
+Date: Tue, 5 Aug 2025 06:30:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+To: sw617.shin@samsung.com, 'Sam Protsenko' <semen.protsenko@linaro.org>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+ khwan.seo@samsung.com, dongil01.park@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+ <20250724080854.3866566-1-sw617.shin@samsung.com>
+ <20250724080854.3866566-3-sw617.shin@samsung.com>
+ <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+ <000a01dc05c0$9f0ab110$dd201330$@samsung.com>
+ <18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+ <CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+ <008501dc05da$36362600$a2a27200$@samsung.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <008501dc05da$36362600$a2a27200$@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6CBBB60009
-X-Stat-Signature: ga34x1rbuidk78ckg6wninhur7qjhs6b
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX199WTIUFUacfwXt1+7g+5RNNUBC/xiBqV4=
-X-HE-Tag: 1754400518-941711
-X-HE-Meta: U2FsdGVkX1/LXeYrBOoHg13mAhKoYYR8wqCWtgfcwbQV4w73zaDSKeBVX+ZUsBEa5aLAQcBQR7qocSfRrNTC9dBvhpNQ2BGIue6CogyX0GtNwiiWTfZzUG/tuAwdxVUaBGKcPJyN4Ln93nwmDcAoopOQ6ny7+mordoCZoRVyZQL9lyEF4L/4GBqeEzpF334EzH5Wy7vQOa2qsSa8uUCNMAjYy9xZxcPxvlCtPcUXRUrVThrscqdvcryfWUjqGsB2FnKG08cGfwMTESFz7HSNY0l33BGehYaKFEy6hpa3qJAMGIYDkI1JSZK8UI3j7BPzpRa3I1TdTzQkXqxFTSN4sf6YbdpmLzbAheDfw4Ok7J3PE89UxRU/dQH/5t9RR9rS
 
-On Tue, 5 Aug 2025 02:39:06 +0300
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-
-> > >
-> > >"Be prepared to declare a confidence interval in every detail of a patch
-> > >series, especially any AI generated pieces."  
-
-Honestly, I think we need to state that.
-
-> > 
-> > Something along the lines of a Social Credit system for the humans
-> > behind the keyboard? :)
-> > 
-> > Do we want to get there? Do we not?  
+On 8/5/25 00:26, sw617.shin@samsung.com wrote:
+> On Tuesday, August 5, 2025 at 2:03 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
 > 
-> Don't we have one already ? I'm pretty sure every maintainer keeps a
-> mental list of trust scores, and uses them when reviewing patches.
-> Patch submitter who doesn't perform due diligence usually lose points,
-> especially if the offences occur repeatedly (newcomers often get a few
-> free passes thanks to their inexperience and the benefit of the doubt,
-> at least with most maintainers). 
+>>
+>>>> +       u64 t_max = n_max / freq;
+>>>>
+>>>
+>>> Make sure this compiles on 32-bit builds.
+>>>
+>>
+>> Can you please elaborate what might be the possible problem -- just
+>> curious? I admit I never though about 32-bit case when writing that code,
+>> but don't see any immediate issues with that too.
+>>
 > 
-> LLMs increase the scale of the problem, and also makes it easier to fake
-> due diligence. I believe it's important to make it very clear to
-> contributors that they will suffer consequences if they don't hold up to
-> the standards we expect.
+> In my opinion, it seems that Gunter Reck's explanation is correct.
+> I've found out that the error of "undefined reference to '__aeabi_uldivmod'" may occur when compiling new code on a 32-bit architecture.
 
-My question is, do we want to document expectations of a patch being
-submitted. It's been a while since I fully read SubmittingPatches (so much
-so, I last read it when it was called that!). Maybe it's already in there.
+Also see include/linux/math64.h. The functions implemented or declared
+in that include file do have a reason to exist.
 
-If not, perhaps we need to update the document with the idea that people
-will now be using AI more often to help them do their work. That's still
-not an excuse to not understand the code that is being submitted.
+Guenter
 
--- Steve
 
