@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-757020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C6DB1BC7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095C6B1BC7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2AF18A6400
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00327200FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE5A25A343;
-	Tue,  5 Aug 2025 22:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0C525F98E;
+	Tue,  5 Aug 2025 22:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WEst3Q9S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S4TKYGXU"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB31C8603;
-	Tue,  5 Aug 2025 22:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A1035959;
+	Tue,  5 Aug 2025 22:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754432430; cv=none; b=TPfS32jXuSmP7CVKpGCe3QREoka7NYy4BMLmgnK/zNc2Fazk4TZbXssw5wIScDPN6emA7dMPRpAC7YxoTVvLXPbJM5NjOYH3R1x7QoB+XgbjkKtpM2JIH9u43SQQK7DrKRg4a41MGqxBpBmDYlH32vdqXpQe93MV1RDRIJiKZug=
+	t=1754432684; cv=none; b=n5CxTDn73iRXZh0kplNyKLVcihItZ3QQNDdfsBLyoDzIC0mX7SRr+QNkkGXMyz0EhK1oDWQ5PWNa9svph0OHQ13hPNrxFSXYwFobZ9kxy7iNKczVkqIdzbGlAC9yHdiZUkG4bP7EjPnLE8YN6kVdx2LTHl9Nnus2EYCEUDKrr74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754432430; c=relaxed/simple;
-	bh=DvXMuKzlkswWxDWS0FNoCNN4nTMyCzShOVhB6iJKmVM=;
+	s=arc-20240116; t=1754432684; c=relaxed/simple;
+	bh=QfnuAfSIncG5cDGs2WQXDDBy6I3DO7Z42sfD8D0DoVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQK66EXlm6ytvZHEe0g2nwMJPIaU+rl0YYrOvvYkL0RPwjQpzO/1t8Xu/QXf4DHyi9JP3kscwZsehPeqUmchqAblKU2ph8w7Nc6eJ1psn1QskACjEDm4Yn5QL0E0XesHyVejmpyw+/i9iR7Y5EEAI1VH2QnxylrqwfQIRGeOotM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WEst3Q9S; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754432429; x=1785968429;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=DvXMuKzlkswWxDWS0FNoCNN4nTMyCzShOVhB6iJKmVM=;
-  b=WEst3Q9SkqciUlsUChIV3w9Wf+57QPspEvVk8cnrmnVyC5nUs13/X8Sp
-   ZjnaVABH5srEkT41tgtGssCpZffOb+mcdkYHVKnjqFgatsfb5Q/oYQiLI
-   T+DNub/7blRU6NX85nUDMfsXI+UL2/i/i1KvkuNJzHJqlDuNrUVZCM1Pg
-   WLHdKYL4GGNnVJt+QWAWmNa68FO3NAOYrwhfzzzKu3VlnACWiymqTziE1
-   yIDZGJkZI96BQgk+lJCBiOu7qXnW4lPTOHuf2Z90udugjiPgBdJkhhgVv
-   gxuZyM76xXoef21s+cqunfgW07jtnLPK6UPcPDJZZdp6k9J5YEgOLEQPi
-   A==;
-X-CSE-ConnectionGUID: RGUeiOECSH2fVSMzT5bUTA==
-X-CSE-MsgGUID: y9KU1fo7T4GOXtTlpkOCiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44335700"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="44335700"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:20:29 -0700
-X-CSE-ConnectionGUID: iUmb0UQFRFexwuq89A7bVA==
-X-CSE-MsgGUID: zK07A3/6Qz20ESVQvvpd7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164141359"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:20:27 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ujQ19-00000003rpe-2weI;
-	Wed, 06 Aug 2025 01:20:23 +0300
-Date: Wed, 6 Aug 2025 01:20:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Abinash Singh <abinashsinghlalotra@gmail.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	sunilvl@ventanamicro.com, arnd@arndb.de,
-	u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2]  tty: serial/8250: Fix build warning in
- serial8250_probe_platform()
-Message-ID: <aJKDp1LBpzswp5lX@smile.fi.intel.com>
-References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
- <20250805195155.742004-2-abinashsinghlalotra@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kD3emyAZHSzTkLywc7/7eP1RIol5BtiV0kRWclcs+FsTh+1zGQpf0yqK87ZhwHpZLyuUk3j5PZ3V/CF6efTPCnxy6m0J3bTWT4Pu1YlTQsfCYISgdcoNX8956Z5q3bLRNVG0H/cf+y8g7nrcIVyRH2h/e9OGzawFLYIIipcmSu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S4TKYGXU; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9955942E80;
+	Tue,  5 Aug 2025 22:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754432679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=odN3U5wUIKDj5D9hqrCcLp+EmyeB4OlgDk3ZQxZOpZg=;
+	b=S4TKYGXUfH31hW2weWUZO71JDvk6rqhsZQxcPW8T5sNn+sod7h7caFPj0PJ2+yKvfOsCWK
+	WVefcWIJG8YSSUhhFPPRY5Em6TeJl2qSc8t/CNjCoPksDBxlSDd2sBM3KjeveNTUiKxpZb
+	M/rnmaMWe730LXhWhTOAYb9avHWHAVN5YotelgrhriW5aZe8O4Wab0Cf+1k/WDAHFPL+v9
+	+7Q0EHtJrzIUsCxkjb48Bx23sE0sFj1LzN9mNq6FlhBqqeAl12Z+XVvb0e30wShpF6OdXt
+	8icQt4CTOKKhp2Xx1EP7zbQLO0lpeots2Oq2s1TNQDNmeeOBI+u82XrkwAGCrQ==
+Date: Wed, 6 Aug 2025 00:24:36 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: michal.simek@amd.com, srinivas.neeli@xilinx.com,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Ivan Vera <ivan.vera@enclustra.com>
+Subject: Re: [PATCH v1 1/1] rtc: zynqmp: ensure correct RTC calibration
+Message-ID: <202508052224366c9bb920@mail.local>
+References: <20250804154750.28249-1-l.rubusch@gmail.com>
+ <20250804154750.28249-2-l.rubusch@gmail.com>
+ <20250804213213d4844d4e@mail.local>
+ <CAFXKEHZn0XQMe6RBHDJzcGZy+JPpNpfidD1mT2MBmZ_WamFQKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,35 +65,96 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250805195155.742004-2-abinashsinghlalotra@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <CAFXKEHZn0XQMe6RBHDJzcGZy+JPpNpfidD1mT2MBmZ_WamFQKQ@mail.gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeifeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgheeuieeikefhgfdvhfehiedvhffgjeetfffgtefhudfgtefffeevledtleejteenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepgeehrdduuddrieekrdduudegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepgeehrdduuddrieekrdduudegpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhdrrhhusghushgthhesghhmrghilhdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimhgvkhesrghmugdrtghomhdprhgtphhtthhopehsrhhinhhivhgrshdrnhgvvghlihesgihilhhinhigrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrg
+ hdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehivhgrnhdrvhgvrhgrsegvnhgtlhhushhtrhgrrdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Aug 06, 2025 at 01:21:55AM +0530, Abinash Singh wrote:
->     The function serial8250_probe_platform() in 8250_platform.c triggered a
->         frame size warning:
->     drivers/tty/serial/8250/8250_platform.c: In function ‘serial8250_probe_platform.isra’:
-> drivers/tty/serial/8250/8250_platform.c:201:1: warning: the frame size of 1184 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+On 05/08/2025 23:56:46+0200, Lothar Rubusch wrote:
+> On Mon, Aug 4, 2025 at 11:32 PM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On 04/08/2025 15:47:50+0000, Lothar Rubusch wrote:
+> > > From: Ivan Vera <ivan.vera@enclustra.com>
+> (...)
+> > > diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+> > > index f39102b66eac..0c063c3fae52 100644
+> > > --- a/drivers/rtc/rtc-zynqmp.c
+> > > +++ b/drivers/rtc/rtc-zynqmp.c
+> > > @@ -331,9 +331,9 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
+> > >               if (ret)
+> > >                       xrtcdev->freq = RTC_CALIB_DEF;
+> > >       }
+> > > -     ret = readl(xrtcdev->reg_base + RTC_CALIB_RD);
+> > > -     if (!ret)
+> > > -             writel(xrtcdev->freq, (xrtcdev->reg_base + RTC_CALIB_WR));
+> > > +
+> > > +     /* Enable unconditional re-calibration to RTC_CALIB_DEF or DTB entry. */
+> > > +     writel(xrtcdev->freq, xrtcdev->reg_base + RTC_CALIB_WR);
+> >
+> > Doesn't this forcefully overwrite the proper value that has been set
+> > from userspace and so trashes the time at each reboot?
+> >
+> Yes, it overwrites the calibration, i.e. counting 1sec in about 1sec.
+> No, the time/date is not actually "trashed" (I double-checked that
+> with timesyncd disabled, having and not having register content and
+> over several reboots keeping a bogus date/time - it psersistet in the
+> same time space. The current patch always overwrites the calib
+> register content. So, a manual userspace setting will be lost after
+> reboot. That's true.
+
+It is about 1sec on your platform because it didn't deviate too much
+from the expected value but what if another platform needs a way
+different value? Then you are introducing the same issue as the one you
+are trying to fix but it will have it at each reboot.
+
 > 
-> This patch reduces the stack usage by dynamically allocating the
-> `uart` structure using kmalloc(), rather than placing it on
-> the stack. This eliminates the overflow warning and improves kernel
-> robustness.
+> Would it rather make sense to extend it, say, instead of merely
+> checking whether the calibration register contains any data - which
+> could potentially be incorrect - also check for the presence of a
+> calibration property in the devicetree (or a similar property, since
+> 'calibration' may be deprecated)? If such a property exists, perform a
+> re-calibration based on the devicetree at every reboot. Otherwise,
+> retain the current behavior of checking whether the register is empty?
+> 
+> > Isn't the proper way to reset it to simply set the offset from userspace
+> > again?
+> >
+> Hm.. I'm unsure if I understood you correctly. You mean the way as
+> described in AMD's link to perform the reset by executing the devmem
+> from Linux manually? If so, why is it preferable to adjust the RTC
+> calibration manually every time this happens, rather than to simply
+> put a correction value into the devicetree properties for problematic
+> setups? Or do I miss something, is there a config file for RTC
+> calibration for doing this persistently from Linux, that I'm not aware
+> of?
+> 
+> Before, the devicetree properties seemed to have generally priority
+> over userspace settings. Now, after the calibration rework, this
+> priorization seems to have changed and a devicetree calib correction
+> for such problematic cases will generally be ignored, with a
+> recommendation by Xilinx/AMD (see link in cover letter) to execute a
+> devmem command from off Linux (...). I mean, can't this be elaborated
+> a bit more to allow for a persistent correction method?
 
-Same comments as per patch 1.
-Also, here in the Subject you have an extra space. Actually, check output of
+The value depends on each manufactured machine/board as it is supposed
+to correct for imprecision on the input clock which is either a crystal
+or derived from a crystal. This crystal may be more or less accurate and
+its accuracy will change over time notably because of temperature
+changes or simply because it is aging. Having the value in the device
+tree is as good as having it hardcoded in the driver which is not far
+from what your are doing here. It makes the feature useless.
 
-git log --oneline --no-merges -- drivers/tty/serial/8250/8250_platform.c
-
-to have a hint how the Subject should look like.
-
-...
-
-The approach in general is okay to me.
+What I was suggesting is simply to do the right thing, compute the
+inaccuracy and correct it from userspace, using the proper interface
+that is sysfs or the RTC_PARAM_SET ioctl for RTC_PARAM_CORRECTION
+This has to be done regularly anyway so I guess it would catch and
+correct any corrupted value in the register.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
