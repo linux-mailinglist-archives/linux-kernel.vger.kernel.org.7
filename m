@@ -1,88 +1,138 @@
-Return-Path: <linux-kernel+bounces-757014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB14DB1BC5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41F1B1BC69
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87451859D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0613AE568
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 22:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67093594C;
-	Tue,  5 Aug 2025 22:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948C25EFBD;
+	Tue,  5 Aug 2025 22:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fXFgZYUc"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2NjuO8i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E0C23D2B4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 22:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80BD200127;
+	Tue,  5 Aug 2025 22:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754431442; cv=none; b=pAm5gL/Wo/aebnVh1bkJCsZUHyEM9e/JtPXwxsS/8E6U53TWckwIfS120wOqImnmw5tZprfqDpzrAMO2+DLchFeuHLse4rdkvpuUZT6aN7rEWuYIKcf3Izxolt7pYM88hy2FZzzVIPpQpfyDBQjPYWJi0qu0Yzljqa0qoiG+zJ8=
+	t=1754431715; cv=none; b=EpC2It5y7dcM7aqZwagOxgTyeM04F/Kw79mpFwoN06fUi1eMzE1GnP8zy0hI3IWaxTAJmaYpyp2/wo1005vm/tQNUXsv9A+S9NL009YjlDSyywHidyQ03IjpEegHa95/mvfkyfw+Igne6wXNbqeIGtsRQYYlax4fennFav8Zt7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754431442; c=relaxed/simple;
-	bh=mFFKE10cLDXmbFctA60gWhUeSp6HoOukI3ngqSAozUM=;
+	s=arc-20240116; t=1754431715; c=relaxed/simple;
+	bh=/aoxjBnanB6z5ZymLaTy2qG1GykI0n2CxoPSGTJMDc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yq75eZ+/Ts8OblOaxQMk4SNjxO7gM1BU9RNRsy35UZPyuabvQ7/nNcAvGSEAhzKjpdt6SoyzJH0jpm7zKUqCKPclN8B3/KtPia0aGz2+rgxNFFkjqaa3ymRmoj0mv6PvE2816mfzWEk22e+ugHyVJ9F3gFyqzmBDwkP0do2lQSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fXFgZYUc; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b785a69454so3039691f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 15:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754431436; x=1755036236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vG/zGpYKV8J6ufNjYuyfX0bBFqMzfGcj4WRvI8t9Tcw=;
-        b=fXFgZYUcJRbw+GJcV2FOqdEgZZPy58wSXiD5v29szpONSc/6jINTPWqE3FB8LlHSbw
-         gOTXPQ2fAgx1FbcVXyitdeRAmgiiShcbW/JEyAAT88t610HiZR38Al4Fv6fqleNAxxY+
-         8zBzl5IYtNWmoRzpyuUvXdR871QyoiQL5fivez/4HcOb9jJDPVG0KkyA6ryQEW6WRXAx
-         OHKe9WZK/MRzBFK12FzHX7PLCJ5ajfZi/OC1Bn49rrgicCrS2BElyZ7xPXf7geidhCIM
-         6WYgZmPdXfPh3x2nyPMZCuTDNieYUQuwbuBAX1d0DNVEOOoVc7a0pZ7LQKXXZgZ/1rKQ
-         DiUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754431436; x=1755036236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vG/zGpYKV8J6ufNjYuyfX0bBFqMzfGcj4WRvI8t9Tcw=;
-        b=vtUm6iQqm8MswlyMTbO+S136wE3aMMqlM9nWCiER8trk81y6cCHGezdZF6djM2L/4z
-         6ckhsyZqt2x2p3J3a+nbzMjeu6JwafcqIYI44aal3t/nG0DgXWHSnWTC2btjoZHTV6iw
-         gSeEiN/enVD5cH4DjwVMogKwmQBOl3pyiPIKUC+kjgu3+9u0DbmtFRrA37hh6uNCuhLE
-         qYTKz811qerDWHVWRnsOXVA7kyjKN6t2QrjjZvqB9WrQHUd4+TmkV+ub8tmL0eo37qsY
-         9U30J7RB7fcisLqYdB3D5sRwRjh2g7+6eSIwGoDyLsxCxUzNUjBlh7qfaRVgBfqjAqET
-         +F7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXmulF577G62GFNUYre0SHA40oEMuQ5y8gkiSN5kni/bC4yYeFOrvX8vUhV1PMFqgVaXqpXbg94EYHEf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzarcy9U3qid/c3upFwqnfOUZmfFbxmS2akZhge07fbQKXFSyCu
-	mVISzg+hVMtaxxjwmLK2SD5wGptuPUhJsET8ZtV7cK4YYn0TJUCkipnl
-X-Gm-Gg: ASbGncs9GpkL53a1U1EozoPy242tW/3uzTtAL4N975C2zxl1MPyvkShcAHDrz43PBFc
-	cScc8kIpeMTzf1usPpdjGvRimD7zCHVd6H0xqn6hfu4SbdJL2AsmVKYD7jj4JMbTq/bds2WUIgH
-	QRe4XasRAdBJGOA3uTTwqd/39ewlJer/6nZ/+7T9xlm7K9U5YEFcGK7PqbWAMRp/Ec++BAjWJr5
-	Z4cXNKpBtkrUrWhha9wsvLVDh0wzIWKeT0oLplKJiDUD7HCQVIeVTu9xcarCJ1n/InLiccJjzIv
-	Te69Ynf2ranPrLPmQVnLeKZ3dClAcgS1geQoeILqvqOiQvMCuD71ft6z8BraxEzx6P15d+7Qqyu
-	LW02Nb1tj5pEzHJ16IQIWkIZDU1yklJjs5C5IyP/0Nt0p
-X-Google-Smtp-Source: AGHT+IGDHSxB48AUBPyUKumeUaw4oelI0WVvDLFXUcYmt9BJrBy0NtTacGJ6As/c+cW4gPgeFtyCEg==
-X-Received: by 2002:a5d:5d87:0:b0:3a5:39e9:928d with SMTP id ffacd0b85a97d-3b8f4851abfmr131368f8f.0.1754431435450;
-        Tue, 05 Aug 2025 15:03:55 -0700 (PDT)
-Received: from debian.local ([90.252.123.198])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453328sm21677902f8f.46.2025.08.05.15.03.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 15:03:55 -0700 (PDT)
-Date: Tue, 5 Aug 2025 23:03:53 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server
- handling
-Message-ID: <aJJ_yaD7R2oLsyKv@debian.local>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.465086194@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyDB85tvR610tvDSoFcMTV/SyXAlh/vpyOO2ExdNNMC5lj6mmPUZIcntAoQe/O6/aT7/yEprwTK2tHGPknLuQ3Jvl3l0gRoYKsR+PKFEL3E5vMsTyBFSWqyX7Wl8ShIvC30a+kDBX9tZHroa9DvQaE0WkBDS4f4oKGwUQOwGiFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2NjuO8i; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754431714; x=1785967714;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/aoxjBnanB6z5ZymLaTy2qG1GykI0n2CxoPSGTJMDc4=;
+  b=b2NjuO8iTJIz0Qa11KYK5cBntET/zISaNwW9gGnM4qCOKwKQaFWzjRUZ
+   hlqv+3DlBUvapOVF8iKTD6fONZcj984qRGr6P43l6oWhW0ULbrfWMLayv
+   MRrBaU3zi7UTtOpdD2yYVGNP0DW9Jo0+MMixRGHLK781k/+C16X+goEY0
+   cHdLG2twL40QWhyV0/sMNTI6FllBwtQxUo0KWN2cUMGpcuFaWmzt5JcLI
+   lzPf7ZwXqxZzfp9kBBK7SKgEXqPb+fXDYArw/1K4Iw1MYgwAJJQMNxC6G
+   Jpy4vufPM89a9/u21rben3iuTNjdIMbgUcP5yH+hlnK0AnrsRrQIBotkN
+   Q==;
+X-CSE-ConnectionGUID: 7JyA5hHQQF+77Qe2lZlMPA==
+X-CSE-MsgGUID: IeyhPkPyQQSJhwRlOc8Tqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44334918"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="44334918"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:08:31 -0700
+X-CSE-ConnectionGUID: cvABU6gySmCN+nSbWkFxIg==
+X-CSE-MsgGUID: QOXnb3dlQReNBMfKeCvA3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164139100"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 15:08:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ujPpG-00000003rhU-3uHR;
+	Wed, 06 Aug 2025 01:08:06 +0300
+Date: Wed, 6 Aug 2025 01:08:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Viresh Kumar <vireshk@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?iso-8859-1?Q?Am=E9lie?= Delaunay <amelie.delaunay@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-actions@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 3/6] dmaengine: qcom: gpi: Accept protocol ID hints
+Message-ID: <aJKAxkXO7csIi5Oi@smile.fi.intel.com>
+References: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
+ <20250730-topic-dma_genise_cookie-v1-3-b505c1238f9f@oss.qualcomm.com>
+ <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,30 +141,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250702121158.465086194@infradead.org>
+In-Reply-To: <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 02, 2025 at 01:49:26PM +0200, Peter Zijlstra wrote:
-> Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
-> bandwidth control") caused a significant dip in his favourite
-> benchmark of the day. Simply disabling dl_server cured things.
-> 
-> His workload hammers the 0->1, 1->0 transitions, and the
-> dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
-> idea in hind sight and all that.
-> 
-> Change things around to only disable the dl_server when there has not
-> been a fair task around for a whole period. Since the default period
-> is 1 second, this ensures the benchmark never trips this, overhead
-> gone.
-> 
-> Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
-> Reported-by: Chris Mason <clm@meta.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250520101727.507378961@infradead.org
+On Wed, Jul 30, 2025 at 01:32:58PM +0200, Geert Uytterhoeven wrote:
+> On Wed, 30 Jul 2025 at 11:35, Konrad Dybcio <konradybcio@kernel.org> wrote:
 
-This commit causes almost every boot of my laptop (which is booted from
-USB flash/SSD drive) to log "sched: DL replenish lagged too much" around
-7 seconds in to the boot. Is this expected? Just asking as this is a
-change in behaviour - I haven't seen this warning before in several
-years of using this laptop.
+...
+
+> > +       /* The protocol ID is in the teens range, simply ignore the higher bits */
+> > +       gchan->protocol = (u32)((u64)proto);
+> 
+> A single cast "(uintptr_t)" should be sufficient.
+
+FWIW, this means (unsigned long) as Torvalds is quite against uintptr_t in the kernel.
+
+> Casing the pointer to u64 on 32-bit may trigger:
+> 
+>     warning: cast from pointer to integer of different size
+> [-Wpointer-to-int-cast]
+> 
+> >         return dma_get_slave_channel(&gchan->vc.chan);
+> >  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
