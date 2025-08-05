@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-756036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1981BB1AEFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 763DFB1AF00
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 072854E222E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:58:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D48E4E222D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C74225417;
-	Tue,  5 Aug 2025 06:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C702253E1;
+	Tue,  5 Aug 2025 06:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="feGSlOI/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRkIuO9a"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760AE21D3F1;
-	Tue,  5 Aug 2025 06:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FA021D3F1;
+	Tue,  5 Aug 2025 06:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377112; cv=none; b=QJA064VYajKX/bSZ5v1D49ZARSQjNE3Ngj8YLU/yxWrAkrMsu+zQw+lSCRo64FhHo07oiSI9bupQQG2+D7mUGowhZkYtlerATJW2UhLp7gYzVq/7pArjd1bZfx9Sr/P/Z6HCzO5phao0lg2ym6eoJ9ZsFhK3JW6NL6JA5CN1akA=
+	t=1754377162; cv=none; b=f0tUXAApwXFzAkTBfKqVSVfL/C3/lRZJXtYxM1XAEdkz8622w1HTioRY9OAW9DOn/awBxbQ1e1RrTT9QVGxcysJS/eNoNwN4pjjcOlKS2ge/PG3WRb1sYIqsTPq0CJYryIZSTlugkFjOwOeCuzygqFZ83JW6iLSuyVFM0ATW0xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377112; c=relaxed/simple;
-	bh=qksf0vLPcE49IppNKVtMY5OdGFbAJ0657ZFt7447h3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeFfPFnN285zekCsqzcNzgpqWgaxQF6EBVyLzgGf3VWU5OmeYDlxKjxZ1kS5CvKtM1a4T4oZ3osvJSsE8blRwERSH8spi+b4+r2h9GcTEpEu3Q/6Mwul9eAiahl973ZAWpwpX8dYO/M2m/I5Vx/bJVjGECiRStNWOXSNo9/cLF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=feGSlOI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABC6C4CEF6;
-	Tue,  5 Aug 2025 06:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754377110;
-	bh=qksf0vLPcE49IppNKVtMY5OdGFbAJ0657ZFt7447h3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=feGSlOI/GQMuqpegscRmFmLB5q1QsDZzFTcIrP1W/17yGlrrH+4T/SbNZ3Vb4TXkA
-	 LwgCZsKjRX1y0qIP1qeTdxmURgeNBDGyT44FRqSZRg2spMGnmLJUpxcQoOroK4c5lG
-	 ls1iodlJ2bGik2D+tYnqAcI/8lNaAhYnaj5swXYqG3/VVDf7EBTV8/ryWd0ZVgRpAR
-	 ejedjZuONVyHnG4uKpQaGbJ5AAZ3G/yt79jwCqSxIOc//uaL6RRwYUQE39BlpjFpqD
-	 EN8DLfz8ZCgSDvzxsL8dTjBJ16b3vQuk84xaxkRewjaWqsz8Y7RvqU+UgL4X0yxs1D
-	 lM6S5Oayq+NEw==
-Date: Tue, 5 Aug 2025 08:58:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: ChiShih Tsai <tomtsai764@gmail.com>, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	corbet@lwn.net, t630619@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: adm1275: add sq24905c support
-Message-ID: <20250805-ruby-earthworm-of-cubism-4d1c8a@kuoka>
-References: <20250804124806.540-1-tomtsai764@gmail.com>
- <20250804124806.540-2-tomtsai764@gmail.com>
- <48996ed0-8d5f-4bb0-ab66-8be71c0a59e4@roeck-us.net>
+	s=arc-20240116; t=1754377162; c=relaxed/simple;
+	bh=PafDn0MY0id5KpSg3gQFMOi87guULm93+RWqibEPLc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q/hOsBMDLhyL7qz6XNXut7bdzmR0VaFZZUkFlOcklNYHKXNA4DQfzvsIs4t0iwQwVJnWdfy97ZyGstfYwJcM5ZRSXKrx7OJLSFmX4C/ihYwkHYDuykdvKZMJPhNyS2yvXNb03NsgxGn98+W41wF18kOk0IgALZwAyATCRorqOPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRkIuO9a; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32106b0930eso3976336a91.0;
+        Mon, 04 Aug 2025 23:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754377156; x=1754981956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3z1vhFDjj89Av+ZDj+UBNRBdv57g+A31uU/e5tr7Iis=;
+        b=GRkIuO9aw2QF0Cff/kF3j+dBXiPlyl2yBhgaiH+U1VWUYUH5hFsLD23VPFaWBRNNop
+         3TNI+2PJFkXj39rtudBMyal3LGehQAv8qe3jqOpACH/hwMu2kOIRxuKkN5DzzQsQnAn7
+         ZYFgtUsn9YftXb5EQ1VlTB7cgSAeRF6spkKUzNrThvpgfIrxGV36ZLn8tcDGbm6rq5iX
+         4crQCusMPUj404fgn/+5ByykRa38dGjnneJTO6dwouiTfaxBvbmm5ljIbMFhERAtuoog
+         XYPMUOuM8tdAZOgB1l0Dc803KqLtOELqLTxIYsOLbqAX+wKYY8wLAi4WZUHMjBh9kxkQ
+         Uy0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754377156; x=1754981956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3z1vhFDjj89Av+ZDj+UBNRBdv57g+A31uU/e5tr7Iis=;
+        b=hNFP3VX22+hi/5/et3zsEpR7mqfLxyUeAxhTt/t/yweaHQ29roTNJ1JSVLAcV0aPqL
+         l2V8HedHWSsg5gmQbwkd5VPUAM0RkDTQuGGA17cQomK2Q0ekcoQavzvu+1cKi9LmC8Bv
+         lJB+m5OI5rQPvKYnAdX9Z1uuGlPed7XN+rQ6aIyzNbK3d3HpMpSi0trg7Vh9IqHLB9M3
+         H8sE73E4Xg8Kob4TS7ZBCQfqjFKi/tHOvmGAC+6JYbgv4YuV60My4LhC4KgGGtEunA82
+         DQX0w63MgsrRpSPZGxK3OWMEaJMB0rgVKaqIB6/XIwc+c27Zfs8yxxUBRz2DqoHtS7H8
+         rPEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBhFIqtOLB70CFR19+ZnRBqD91Gw+RyS2/LKVRSRpDnyvEd85DQPP20kmJDyc0/InESkOhOLHP3OG7SRw=@vger.kernel.org, AJvYcCXgRvfsNge+72OsRboZlctq1rNtg1YuLw/Dk4FoIOsVgbpZtrS2qqc9fL7krfwLmZRal8AKgEee3m4R2dNiliI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhXE+BQZk0iFeLh8xw+BFlQRmP1ig2FjgHJcgYAIZwLbSrhaJG
+	gqIbttul5Cy7kwAc5HCMKabOqRmPq2KWixjx1xVj8LtZahZHZdK2lfNk+PaNlO1ybmfhtND2SDj
+	Anv7MDMr8Vl+CaxXBYSqZa0B18k1JVeY=
+X-Gm-Gg: ASbGncuKJhAZClRUAdLEva8Phw1iXsCmHmFI0rUKkIY3D7brkw43/rfEli1omvL0bgw
+	3oHULqB/iiQbhh5KZAHavFII8WGYdSUFz+qbYIAtLyFwrymi2Dw/TjquCT/7BPq9pOK+OWdMKX2
+	4mXrKryQMWXAHa7LaDPUtB+UZ3hG0CS4N6hkgF/FIOnrTWloidroZ2x+an2BjmqeW/cmrVQ/753
+	1qaSg==
+X-Google-Smtp-Source: AGHT+IF5xZ1m9L9pT/4m0FTSUTfP6TxNIOYI2sJJWzFE3IWCpfZYRPvlNOPGa1ryGDdTgXYuynbYUxsgWoQg+jeaeZ0=
+X-Received: by 2002:a17:90b:3b92:b0:321:1a89:f692 with SMTP id
+ 98e67ed59e1d1-3211a89f6b2mr16547837a91.8.1754377156290; Mon, 04 Aug 2025
+ 23:59:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <48996ed0-8d5f-4bb0-ab66-8be71c0a59e4@roeck-us.net>
+References: <20250731075837.1969136-1-arnd@kernel.org>
+In-Reply-To: <20250731075837.1969136-1-arnd@kernel.org>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 5 Aug 2025 08:59:05 +0200
+X-Gm-Features: Ac12FXxUnbIHuYT86jzBVAeypGTXYEYh_3Euem7R2U5AZ5dt_NrMrOu3CkO1q-4
+Message-ID: <CAMhs-H8zVcDtbeXQ32aw2gO2D8tkykwTOfoqxxK7PVwM_QPLiA@mail.gmail.com>
+Subject: Re: [PATCH] net: wireless: rt2x00: fix CRC_CCITT dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>, Rosen Penev <rosenp@gmail.com>, 
+	Johannes Berg <johannes.berg@intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 08:59:09AM -0700, Guenter Roeck wrote:
-> >   allOf:
-> >     - $ref: hwmon-common.yaml#
-> >     - if:
-> > @@ -96,12 +109,17 @@ allOf:
-> >                 - adi,adm1281
-> >                 - adi,adm1293
-> >                 - adi,adm1294
-> > +              - silergy,sq24905c
-> >       then:
-> >         properties:
-> >           adi,volt-curr-sample-average:
-> >             default: 128
-> >           adi,power-sample-average:
-> >             default: 1
-> > +        silergy,volt-curr-sample-average:
-> > +          default: 128
-> > +        silergy,power-sample-average:
-> > +          default: 1
-> 
-> I personally don't think this warrants new properties. However, if warranted,
+On Thu, Jul 31, 2025 at 9:58=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Compile-testing this driver on Arm platforms shows a link failure
+> when the CRC functions are not part of the kernel:
+>
+> x86_64-linux-ld: drivers/net/wireless/ralink/rt2x00/rt2800lib.o: in funct=
+ion `rt2800_check_firmware':
+> rt2800lib.c:(.text+0x20e5): undefined reference to `crc_ccitt'
+>
+> Move the select statement to the correct Kconfig symbol to match
+> the call site.
+>
+> Fixes: 311b05e235cf ("wifi: rt2x00: add COMPILE_TEST")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-These are the same properties as adi ones, right? Then I agree, re-use
-existing ones.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
