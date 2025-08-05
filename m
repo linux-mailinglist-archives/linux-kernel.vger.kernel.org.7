@@ -1,85 +1,135 @@
-Return-Path: <linux-kernel+bounces-756017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54819B1AEC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:51:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC416B1AECA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4729E3AA76F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7DE616832F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA73D323E;
-	Tue,  5 Aug 2025 06:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTsEJoO3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A3221726;
+	Tue,  5 Aug 2025 06:52:22 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4802121D590;
-	Tue,  5 Aug 2025 06:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E442A927;
+	Tue,  5 Aug 2025 06:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754376698; cv=none; b=nwD2iI/1+pwbKLQo1H9MJmwNbvEfVms9M5KnwNI4K9qnQLV/ub0x/7k/orswNwhcAINDPgqzXYLqlf//Md+re4fipPCdoJdPCjNE5vimepcJquADdONOwOs1IQp6+239yFENSFpHk2eKBc+hyqNY2HZqk0gjkZjMpiuUS1IorgM=
+	t=1754376741; cv=none; b=nHyIrOUApjlmH43E8FrDL/JY3UsvL/5lrcUzt11uzUX0DwANzjbIL32/3MFHwVsRegvocGmmIe3KRyrMHhz0pIRQeR8KKy7IEIE2+AVX/LF5sC0s+B++RoGuec+d1EMF0TbDuJHRZ2Jmn8jsXkTf0B8nhIMNvYcdv1f8VzkS6EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754376698; c=relaxed/simple;
-	bh=2vhYiK9y/EgMAQMFYv1KpiYYEmofbXB6Kpl40cFvolU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCkfb/xfQO0niy03cHrmlgcQmc566g/PTzDkA86bj4Y34vkZvTQL/WggIk6n2PHsQE7P357tZEgKixfTCj2vnWsbU+FHcQhgGWL9T1eaf6mJDGa6QqVrYgfIeo3tZbZw/wUbrCTNHP3Mv7Qs2VA9WF5w1YXykJYDatxy7kZyMuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTsEJoO3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167C0C4CEF4;
-	Tue,  5 Aug 2025 06:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754376696;
-	bh=2vhYiK9y/EgMAQMFYv1KpiYYEmofbXB6Kpl40cFvolU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sTsEJoO3F8w2Eo7qxTjajp+cezhSwl9wIMjKbvGSUnrwF3fGDSCpQ+iJMRGaJxRRJ
-	 5glHnaCrHEmNtWPuM85Ob6op+nGctz1GYEEMC/+yXbNHEI6n/sp71g14PPEzaR0Opw
-	 Zp3HnmHW9SWcghyJP18Fs73OtOqCS4fsYvWMj3rorprS2oKpwnIb42CM8P4vUQxH8T
-	 Gj7TfYW+mH3oxA54x/i58s6YMAFuF7Wg2ehXWhG/3FNrfxDOlUivGvWp8BpJho0Vd9
-	 65zc7lWrq7XphfKZWu8b+VKbM8N1fdv1eso/f3UMw+l2LfJpUWhZ3KdGIDQcAHaqO7
-	 /GEc38pAh9mrw==
-Date: Tue, 5 Aug 2025 08:51:34 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, srini@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/15] ARM: dts: microchip: sama7g5: add packet tag as
- offset for calib
-Message-ID: <20250805-calm-kestrel-of-fame-a7c9b3@kuoka>
-References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
- <20250804100219.63325-6-varshini.rajendran@microchip.com>
+	s=arc-20240116; t=1754376741; c=relaxed/simple;
+	bh=EMxtRogzgzHl8PxCqJ7f7I6y9Kp68vv7fhkSHUskZEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qmdUvBRS9MWo+DZqMUQoNMtBDGws8Hlrb/PDXPzbvSwfbTPpKrVv8jp/787RiA+9/rY5yxCRU9jvxIFXFgcVIGihhqV4zjRhoSnGW9gY2de00mvetHTTkkpY0LvUlCNORnLzdIHEfVZIJUTq7SwNDwgcE9Ie2q/hpNDM/GsCgQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bx3y70j70zYQtdx;
+	Tue,  5 Aug 2025 14:52:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id B7EB61A018D;
+	Tue,  5 Aug 2025 14:52:13 +0800 (CST)
+Received: from [10.67.109.184] (unknown [10.67.109.184])
+	by APP2 (Coremail) with SMTP id Syh0CgB3N7kdqpFoblJfCg--.48321S2;
+	Tue, 05 Aug 2025 14:52:13 +0800 (CST)
+Message-ID: <00538107-08e3-4ba3-a11a-19fa9fd0a496@huaweicloud.com>
+Date: Tue, 5 Aug 2025 14:52:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250804100219.63325-6-varshini.rajendran@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 00/10] Add support arena atomics for RV64
+Content-Language: en-US
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, bpf@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Pu Lehui <pulehui@huawei.com>
+References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
+ <87v7n21deu.fsf@all.your.base.are.belong.to.us>
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <87v7n21deu.fsf@all.your.base.are.belong.to.us>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgB3N7kdqpFoblJfCg--.48321S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr1UZw43tw13uFWUJF1xAFb_yoW8Ary7pa
+	1rC3ZIkrWrGryxCasFqrW2vFyfKrs5C343Xw1DJ3yayF1jqrW2kFn7Ka48uF98AFZ3Xr1U
+	C3Wjkry3Aw1rZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	bAw3UUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 04, 2025 at 03:32:09PM +0530, Varshini Rajendran wrote:
-> Add packet tag as offset to access temperature calibration data from otp
-> memory for sama7g5.
+
+
+On 2025/8/5 14:38, Björn Töpel wrote:
+> Pu Lehui <pulehui@huaweicloud.com> writes:
 > 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
->  arch/arm/boot/dts/microchip/sama7g5.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>> From: Pu Lehui <pulehui@huawei.com>
+>>
+>> patch 1-3 refactor redundant load and store operations.
+>> patch 4-7 add Zacas instructions for cmpxchg.
+>> patch 8 optimizes exception table handling.
+>> patch 9-10 add support arena atomics for RV64.
+>>
+>> Tests `test_progs -t atomic,arena` have passed as shown bellow,
+>> as well as `test_verifier` and `test_bpf.ko` have passed.
 > 
+> [...]
+> 
+>> Pu Lehui (10):
+>>    riscv, bpf: Extract emit_stx() helper
+>>    riscv, bpf: Extract emit_st() helper
+>>    riscv, bpf: Extract emit_ldx() helper
+>>    riscv: Separate toolchain support dependency from RISCV_ISA_ZACAS
+>>    riscv, bpf: Add rv_ext_enabled macro for runtime detection extentsion
+>>    riscv, bpf: Add Zacas instructions
+>>    riscv, bpf: Optimize cmpxchg insn with Zacas support
+>>    riscv, bpf: Add ex_insn_off and ex_jmp_off for exception table
+>>      handling
+>>    riscv, bpf: Add support arena atomics for RV64
+>>    selftests/bpf: Enable arena atomics tests for RV64
+>>
+>>   arch/riscv/Kconfig                            |   1 -
+>>   arch/riscv/include/asm/cmpxchg.h              |   6 +-
+>>   arch/riscv/kernel/setup.c                     |   1 +
+>>   arch/riscv/net/bpf_jit.h                      |  70 ++-
+>>   arch/riscv/net/bpf_jit_comp64.c               | 516 +++++-------------
+>>   .../selftests/bpf/progs/arena_atomics.c       |   9 +-
+>>   6 files changed, 214 insertions(+), 389 deletions(-)
+> 
+> What a nice series! The best kind of changeset -- new feature, less
+> code! Thank you, Lehui! Again, apologies for the horrible SLA. The
+> weather in Sweden was simply Too Good this summer!
 
-Not only driver breaks users, but also stuffing DTS change in the middle
-of patchset instead of postponing it, breaks kernel.
+Sounds like a great vacation!
 
-Please learn how SoC trees are handled. This is clearly documented.
-
-Best regards,
-Krzysztof
+> 
+> Tested-by: Björn Töpel <bjorn@rivosinc.com> # QEMU only
+> Acked-by: Björn Töpel <bjorn@kernel.org>
 
 
