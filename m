@@ -1,125 +1,170 @@
-Return-Path: <linux-kernel+bounces-756162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6E2B1B0AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01625B1B0B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B34A7A55B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C0617C244
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A80259CB9;
-	Tue,  5 Aug 2025 09:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED17B25A2DA;
+	Tue,  5 Aug 2025 09:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/sIxMDH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Advo4snv"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB624EEC0;
-	Tue,  5 Aug 2025 09:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1811514DC;
+	Tue,  5 Aug 2025 09:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384785; cv=none; b=fxxxq4Ohkx5T4YXttQimFLcwCn+1yhlLkXbPDC+lgSq+wku5vpxVuhoWCYNqPgdqxYMbjp/YWjoBUs4zMBJeauALcy0Av1PhcHYB1lT3S/bbevM+o58Lfae3kekRmPX2HwK3iJeWyAZM7ar+m8fRGayszRyD0pxO4dIZQHiQI0U=
+	t=1754384833; cv=none; b=SAaoVdCymNWj6HokXx3P9KtfffW3cI44O8x9u98+4L5uFh8M+JWk2Qd/L7G/pmyG7mw282cXCGd+g68gWHN14CFsaWkI1vlA9IePgezQcUBCaEFB5fC9T9O3hBE9yvL9tUVIfMq70pd/aBO/hdhitEIhDVKLlUC5fxN9WVYhLmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384785; c=relaxed/simple;
-	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RRikTIB/PftTkwY1ocXRZ/MlRlKKP9RQIPfzUy7oYjSXfohpmzmYSvTPiEmviAVVdAlG1edxn9ZdPQbzOfOlICNut/U9lLyzVWdIzT3nUqJCZQOpWoCDgyMmevItgkfsRNK6noLyEwYxXT8rVc+r4RHGwyU+3K0Tad14xc/0cVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/sIxMDH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4337EC4CEF0;
-	Tue,  5 Aug 2025 09:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754384785;
-	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F/sIxMDHzO8y3tkfbV1zC4tD0skZmoIJgbZ9W5QswezhWfvs4G9nxB9EkpqQkkevO
-	 Fur9pKF/sEBikTzIivkTt4VfkIM7s+68QZnBVOtl3282NgEuiCRfn18Qg7NiUgO9WD
-	 hlC7hXCXOwjQl9yfJhzGl+e/H+W6bWLob8N5JfzMrZ3InzmkyUTJUHNIRunGoKaThT
-	 rEuoW8bLyQlXzWPvfWkvErtWhAKrIfq07dOn12wDMcXmnr8AA/qcZW7fsU9KfXqvs/
-	 Yw06v4RBmj87jqFnV0UWW4AehY+/2Hay7lDVH5ityNnqL7mwnEkLcSaE0sZgWLlY3a
-	 X7hFfrlcy32lQ==
-Message-ID: <553ec151-14b0-4959-a04f-1b9fe5a9bbda@kernel.org>
-Date: Tue, 5 Aug 2025 11:06:21 +0200
+	s=arc-20240116; t=1754384833; c=relaxed/simple;
+	bh=faBJaGs9C9Ph67u+bDQnOU9XnsGXvqwFp7XSvu37l+Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RkdryX2rhAzcV/ktw/OacGVVMSHzzOLwvA/1YDddu886mSZwJb6pYBDiR6iBXGwTl1EgUIyOO4Jz2X+8SVZbR5LxB2pBwYy3vl4nge1+9z0vZelySvuRwzBze+5vp4hrEysC0ZBtlwKnvkDuyMiOZN5RUO20Al97QuQ2YbFL018=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Advo4snv; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61564c06e0dso7988126a12.3;
+        Tue, 05 Aug 2025 02:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754384830; x=1754989630; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IyNh3TTSdT5ikwcTgpmj5kIoEpVgpn9sYixky6RydE0=;
+        b=Advo4snvpvGdfbLoLX8LwskAOu6BjdxArNvH8FnYPmQSDDK9KQN2yYj5DzWAki9cJL
+         ++JJGBGALjl5MsKNbjG2UJfcCE2WhmyIXBsfvjM6mUh5KXEGhtK6GQ6sYFHBtihZQq2C
+         l2fgHqWboWvv2zROrBZ4fpToDrcSO9e4UF4+bDJ8opQNmo9sl3DHU0j4sGnMhtmWYxqr
+         4ZTQbjQHrwaIibagTqtc4IiLUR4aQnid4702JRTF7NrfhHOR7xdAhjHqk5H1pb6tKVX1
+         jolkhNVLC7SKsHOLS91/VdVubvbjiNAdx4HkskhZduCHZOxkk2b54aiIQEAFqZPBFxF9
+         QP4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754384830; x=1754989630;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IyNh3TTSdT5ikwcTgpmj5kIoEpVgpn9sYixky6RydE0=;
+        b=X0juWiSctjSAuukFqMsIIw1agA/AfuWn1AZpIK/1tjm+AdYSXahcWLb02gpCbqbXi0
+         L9kBSVk8uIUjPnUFpnVA5zQBs+xhlpcBqhGujXfBC3FSU5zkEHwyoi3+Ro5ykoLj1K/+
+         xsAnuGwWtl9yI2RkXpz+0dP+og+BR6IiWDCX1nVMy1mCONcLLLdhILY5mysMLOVMLmm8
+         tuiMlHkIIoUq2ZSQbXreM/6rOkhikJti3QApzdrh4QXeZ0WEUK1PczG03ovr+AJmsj0i
+         33Mzo7gAYxccYDkmBqr0YVCrWx2xrGQl+yZV67Na19+pdWo0Usuy5Q2vFZPpC6eZjo+0
+         y0zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNaKUCrhnGbSRu6sZpnROs6aM9NbUMDrO0zpaFfmeuOoud3clXT4VZitkS976qqruJsMk=@vger.kernel.org, AJvYcCW3NCeqTKqs72TJjaK4Ug23gHxNfnbSMyB6F/paviYIb9IOsJ+Fc+k0Dh9B1UvcnLYBx3pVRRGFLrcJx6kx@vger.kernel.org, AJvYcCXnXiJ7WNTSyRJ6bzcqysT4bz2uxnyg6Evxqebe46LdggwlaTWCxc5SEW0jQ9EgyqkHj0BM1uk0EXUSq/VgRWpsuAqL@vger.kernel.org
+X-Gm-Message-State: AOJu0YydPWjT+j0YCiandvVwGsUKJRHM9XqDKhpiDw3ikzN2YkwHnLfJ
+	6SyxzbUBeiKteM+J22Ul/MZuxfkWVJktbrH8pO/26J0B++huRbaf9AAb
+X-Gm-Gg: ASbGncsb1K1pTbFyVJNg5Qslb8b+8dsqP85pyDJQedN4Ttb6g+i9p1nuUkumY4FSPiS
+	bldLhfISwgJZcoJMdJHNE85x09ZtVA3x1n2xEm/OJuXp3Cjqk7/UiKnvVPYmiXF2E9VhKHTv1Sf
+	ExliybAZWgq1uwAMNcF8AnC2/NJbCoW6YUw/AN18CnlhfrSTiMrcF0KNNWoLs20NVbnKONNZ4D2
+	KLzkn2xy4RLwjVt7H9QdCQhDbi24JO69y2Cjal4JUioGZrezTOYoSqQcyiOuc1er095C5te4jdI
+	MtgB7WpmZemu/pnh/nsTkEg5em1f06oWyq2lu9++uBRa5H9tBp432m5HfsH1n2vBDoB9nJjxEyk
+	nCBPOdP7w
+X-Google-Smtp-Source: AGHT+IEzCiSmyuLmfUx18KB60+ygqynD6yx9VZBZASLxgazQZQeay8sylzl5qh1Mwtjxao9WR3Xxaw==
+X-Received: by 2002:a17:907:9812:b0:ade:44f8:569 with SMTP id a640c23a62f3a-af94022be56mr1192403966b.42.1754384829598;
+        Tue, 05 Aug 2025 02:07:09 -0700 (PDT)
+Received: from krava ([173.38.220.35])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23fec4sm871953366b.121.2025.08.05.02.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 02:07:09 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 5 Aug 2025 11:07:07 +0200
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: Jiri Olsa <olsajiri@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf: Disable migrate when kprobe_multi attach
+ to access bpf_prog_active
+Message-ID: <aJHJu6dOeKVIc7JV@krava>
+References: <20250804121615.1843956-1-chen.dylane@linux.dev>
+ <aJCvY7G-gVR8taLh@krava>
+ <c5e66881-2fca-479b-9ef6-c9ada34e731c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si5341 to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250804222034.4083410-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804222034.4083410-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5e66881-2fca-479b-9ef6-c9ada34e731c@linux.dev>
 
-On 05/08/2025 00:20, Rob Herring (Arm) wrote:
-> Convert the Silicon Labs SI5341 binding to DT schema format. It's a
-> straight-forward conversion.
+On Mon, Aug 04, 2025 at 10:15:46PM +0800, Tao Chen wrote:
+> 在 2025/8/4 21:02, Jiri Olsa 写道:
+> > On Mon, Aug 04, 2025 at 08:16:15PM +0800, Tao Chen wrote:
+> > > The syscall link_create not protected by bpf_disable_instrumentation,
+> > > accessing percpu data bpf_prog_active should use cpu local_lock when
+> > > kprobe_multi program attach.
+> > > 
+> > > Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+> > > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> > > ---
+> > >   kernel/trace/bpf_trace.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > > index 3ae52978cae..f6762552e8e 100644
+> > > --- a/kernel/trace/bpf_trace.c
+> > > +++ b/kernel/trace/bpf_trace.c
+> > > @@ -2728,23 +2728,23 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
+> > >   	struct pt_regs *regs;
+> > >   	int err;
+> > > +	migrate_disable();
+> > >   	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
+> > 
+> > this is called all the way from graph tracer, which disables preemption in
+> > function_graph_enter_regs, so I think we can safely use __this_cpu_inc_return
+> > 
+> > 
+> > >   		bpf_prog_inc_misses_counter(link->link.prog);
+> > >   		err = 1;
+> > >   		goto out;
+> > >   	}
+> > > -	migrate_disable();
+> > 
+> > hum, but now I'm not sure why we disable migration in here then
+> > 
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/clock/silabs,si5341.txt          | 175 --------------
->  .../bindings/clock/silabs,si5341.yaml         | 217 ++++++++++++++++++
->  2 files changed, 217 insertions(+), 175 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.yaml
+> It seems that there is a cant_migrate() check in bpf_prog_run, so it should
+> be disabled before run.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+yes, but disabled preemption will take care of that
 
-Best regards,
-Krzysztof
+I think we can do change below plus some comment that Yonghong
+is suggesting in the other reply
+
+jirka
+
+
+---
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 3ae52978cae6..74e8d9543c6d 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2734,14 +2734,12 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
+ 		goto out;
+ 	}
+ 
+-	migrate_disable();
+ 	rcu_read_lock();
+ 	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
+ 	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+ 	err = bpf_prog_run(link->link.prog, regs);
+ 	bpf_reset_run_ctx(old_run_ctx);
+ 	rcu_read_unlock();
+-	migrate_enable();
+ 
+  out:
+ 	__this_cpu_dec(bpf_prog_active);
 
