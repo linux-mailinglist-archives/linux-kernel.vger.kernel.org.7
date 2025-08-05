@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-756325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAAF2B1B2B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:44:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594D3B1B2BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BCA181D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A35189E189
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96025A626;
-	Tue,  5 Aug 2025 11:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87E225A626;
+	Tue,  5 Aug 2025 11:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mRWs78ax"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJUAfxuQ"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6794C2F30;
-	Tue,  5 Aug 2025 11:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942B23FE5F;
+	Tue,  5 Aug 2025 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754394253; cv=none; b=D0rpopj8O9oXqYB9gNMM8xNZ8ID3AGbYno9zgo7/PLb7vBjKxop2CPDqq0JuASxLTgJZmMRLkNli24wyAJ+9kejbU5sbO/z42Ix7RUGKCkmPccLKhQKJyTmO2Zlu7sttEv3dEEGDe8GWnjXsgFKl9uDufDZN8mTFcUEhGordniA=
+	t=1754394464; cv=none; b=pRakfDr8FkKIccv1v7DE/Nnrdt9XC3bbmBRIQ32mAVCG8LOVEPv5WVQ4GEoAqrg0/dS6fE8hJjn/ytvRy7rWra49sIdG4VsIaLQmeWF09rI6aM8j5KSO+LmIiB2IfpdDT2VmZOev1Giz8kH6t2EWPb5TKulxK6zxLZ51u1Dhvx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754394253; c=relaxed/simple;
-	bh=tSicJJUUzwDpdZ7T9kknH0es0dyUPEUOlD/aMDWKwk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsGTqoyiIChOv1r81cWRXGDvHQroyhm3aOgVxVUKvy3LIgmE8p/lT18o2forEr2ZXBpBhr0cMRqBeL5zc6XfDckQMhnqpz8bN97sD9wFfpVUNcWcqkGQ9qlSirt255bhxbtdRfk4vBtW1wjv40g8PssB8xT7djuPzSx6nsNZXgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com; spf=pass smtp.mailfrom=de.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mRWs78ax; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5759KRgA031917;
-	Tue, 5 Aug 2025 11:44:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=VotaNn
-	gmIWAOrZVzgXH4L9e9nO0fM3kNicVc2pm8X8E=; b=mRWs78axx6+Va+AWLTXABV
-	XcTsoO3cxH2+idEcCbGcgXMl16UgcLhPyOdsrAbLzXDnu/6sCLNeljCqCuXK0ZwN
-	+5MZ/tZ3dOU3afKZNRl4vJY/9yZv+ra8wxk4zIb5U9DfHdJ9D8NVJvY9pQRIDjBX
-	wbG18YlqcB9TxrILLYbxBb4muKcuNzVC7CVYStAIrZBxVhV352S9kXlizgjShzdT
-	N+lgqKdxJpOW5iiiHHIelNglMEaptatjzF1mV+5QXd9Dg6rXcy5fpfxOyr88Kzyc
-	A6hM2RH8nCtQQZEARFXJSvimuBgu+f3koae1lmoij2SvmyKoH3kMGokCeWoH2o8A
+	s=arc-20240116; t=1754394464; c=relaxed/simple;
+	bh=6Ulxc18Rejt2tbnEykzRhkxktWHCMzeW1Hjxvu6/zL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bG9cw0aT354GJe4VDpkGeBF62oGAcnZa96WrAyUIfwlOOhFB2w5276HZw5hp6fBRLO8hoLb6o3tX1ftet3hbSCw6ofYdOixqScsRnBSUTx6Oby/Sc5XiP5rToQ9NZyoetm5IE2r4gqgU5U/X7ndqOTcT5ms79ozmNNPcjk1fP0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HJUAfxuQ; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b78d337dd9so2752449f8f.3;
+        Tue, 05 Aug 2025 04:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754394461; x=1754999261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=maoFJVEW9ssKmjyU8Wkqc3dGANom6Pn5g1YVcQUrT7o=;
+        b=HJUAfxuQuQcc870PitVTmRbP6et3ZNCTjpXcj2EJZ+crl3DqVi7U5jIn5k92t4zfk/
+         sROKOpI+X5xvj0b7GHt6oWgoGpHMrCi9Ajg2gkCdzUVBy9xTsgzSLnO9naorhLyOsfLw
+         GEJVel28lsdyMwx3GlvGfwwFE07zNq+LgMG+KrE2HU+9StyNEm8hk1fsCgJpCWDng4IV
+         LLu9FS7Ks1SusH6Alqbnt3y8jfQPW+xQh4+whcmlfBbp26YiX4uN63ZqryJSmvnrhFhZ
+         797D8iZmCnwCz7f5yLBSY3pClO/pAaC4nWbsbXhnwD0bHKHrHbZe3DeL7eyKGq3vVrsm
+         nUZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754394461; x=1754999261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=maoFJVEW9ssKmjyU8Wkqc3dGANom6Pn5g1YVcQUrT7o=;
+        b=heVBbGhiPQiQlMGamyJeDcunp2Ab7mK9s1DqRScYzZaJu9uMm6Xtzeo/VlV4hUuJ9f
+         +3f7CwZrJqnzzb/qd3AhSoGqU/2WNtaFSy6E5lTP8ICa3kSFvlhpHVArhgWcz73cxgLh
+         2M3t1XbMoAz/ppl9+iIMeOFy/pnVS3kAcaX+wbVif88kSJhLpeR2DRdg2+zqRbTS/Qby
+         Kf3xSoOeS3OXgDOhgcgMMrDyhkEJcM0Z03XwyS9+ZJxpQCy9dVuW5xBkBGU6RjPIDUPT
+         xs+pGuQS/6h5FR/PN45ZuhwrbsLaT+TIwYhcPF4//Swt6ibyff5KWWtP2LpV+R1wxHBR
+         7y9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSzfY3Y9XC9rKjRgVM6DPo8HFu76nk/0Hn5V0MBikZA04N6KNY4ug4X0+1HyEfPqMGEutCK9qxkwcsBTxrMUGplZ8=@vger.kernel.org, AJvYcCWa5n/F7xVXRpNsHikE8W8jH5qCK1X7RFvko08SomyO4EJ4x1zo5maVm9lLaKk0j2E81HDoBF7uM9r6Ml2h@vger.kernel.org, AJvYcCWnhU9LO7z1okLVHIjhZ3ICyO1vLP6OmWoSoL51AT4ruRatRr6n19/11YFFv6C5Xq9qb4K0ilFxJU8S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7stA7tpdv7Jz8maN+PqxlMx0PszlEW0+Z0Otva0jl8G+T0tGB
+	erNCCREupOYXETdcjtOzzvqVJhIgIvunElqCVR5Gny4ikaKA+3nqv3a3
+X-Gm-Gg: ASbGncs/7gEv3EuepJa4ZGlfT5sSk36+5HlR0R3IeFhNy1DbprsXd5Vev2OHaTTxFlU
+	rhmGiX1jK04qMO76WwVABrkr6u1CptoTiYzu3p/Kh8t/ugqTBWk5/ou15INpydT44qmrjq+YLBG
+	HhdrOW0DGlpOcKr5sUIpM7ANipzBwE/3olJ91vKUMzeQ3cNOoAsoUTE8ViXe1ogVMG1av6pldQ2
+	bN4bXJ/n8I++vbCK4mI/gmdQiENv5JLkJKqvIcgKOXpeiE9nTAzymUdlZigXtTQhx/DfKyosc4A
+	KfPA7NMmVmSdEDtTEJBeXsue/MgvXzSyDzFO5yqe8SqkwyLS4i9bktZNjIg0IGwaF0k1ZFf9FWl
+	C7owvgMtqDekNNKJp1PubLuUsHPQGdVMKRuQkTCIsoIIjXFiU42fbBmtX9dLH2t1eTxwA+/tAdA
 	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t6h7j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 11:44:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5759ZYGT004594;
-	Tue, 5 Aug 2025 11:44:08 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 489yq2hxq4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Aug 2025 11:44:08 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 575Bi4l058589514
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Aug 2025 11:44:04 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 607B42004B;
-	Tue,  5 Aug 2025 11:44:04 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 27FAB20040;
-	Tue,  5 Aug 2025 11:44:04 +0000 (GMT)
-Received: from [9.152.224.86] (unknown [9.152.224.86])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  5 Aug 2025 11:44:04 +0000 (GMT)
-Message-ID: <5b0b8d5e-efab-4c5b-be1e-93d8a8f155b3@de.ibm.com>
-Date: Tue, 5 Aug 2025 13:44:04 +0200
+X-Google-Smtp-Source: AGHT+IGt/bUrKs8uhXIj2/PGpHQB9l5MDY6J0LmmhB9bhruimqSDBnCqONUNAc6UwmHxYz+XFLZAag==
+X-Received: by 2002:a05:6000:2287:b0:3a4:eed9:755d with SMTP id ffacd0b85a97d-3b8d9464dabmr10172225f8f.3.1754394460484;
+        Tue, 05 Aug 2025 04:47:40 -0700 (PDT)
+Received: from iku.Home (97e54365.skybroadband.com. [151.229.67.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2187sm19593597f8f.70.2025.08.05.04.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 04:47:39 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] Add USBHS support for RZ/T2H and RZ/N2H SoCs
+Date: Tue,  5 Aug 2025 12:47:28 +0100
+Message-ID: <20250805114730.2491238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] KVM: s390: Fix FOLL_*/FAULT_FLAG_* confusion
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, david@redhat.com,
-        frankja@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com,
-        mhartmay@linux.ibm.com
-References: <20250805111446.40937-1-imbrenda@linux.ibm.com>
- <20250805111446.40937-3-imbrenda@linux.ibm.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-In-Reply-To: <20250805111446.40937-3-imbrenda@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA4MyBTYWx0ZWRfXzuh3JWpiXeje
- 3pQMynG4Q7ckIph8DM5EIAXA1IIp3XvPpflLGhORSN42Qll9Nm2YltL8e1MV0n7Rg6qGATsJJYJ
- nkR82NAPm0pJuWtKZ77NjAwQgK3CG7fC4gwOSrMtSvJa2yZAMeYKNdy1lVpx2hrKuh/Tnk7/wQH
- hjdResdRCBX8qmKVcpf5Z2JAHEgqS8qd2W77veSbrlyobTX3AUuekQ+c0A5Hfr57K3VYcrC6rPi
- zp+QdnRVdfV/bDjVBwuZU9ZPMzE0SZdHPywIDFRtZ5yxu35IAMDn954UOZshEZcOB9jHZGrRdwg
- Xpxa5wOCEAO/q9tWvAWtgGXyDV6l6CaqXfcb3+KeZM5mCk07OOlqCH1E13JSzbCAckPF4jCgGaD
- 99z8SP59+mWxDFovjl462JikWdQ6Kk5VVSpAWbLadmv3lWtj/O/bYm8wPECxN1NJylspxp4k
-X-Proofpoint-GUID: UajXKCz5t-TMix1_eBHbtmwp_9fLY6Cd
-X-Proofpoint-ORIG-GUID: UajXKCz5t-TMix1_eBHbtmwp_9fLY6Cd
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6891ee89 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=3LKg8ZfnZWUu6ZJkRk8A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050083
+Content-Transfer-Encoding: 8bit
 
-Am 05.08.25 um 13:14 schrieb Claudio Imbrenda:
-> Pass the right type of flag to vcpu_dat_fault_handler(); it expects a
-> FOLL_* flag (in particular FOLL_WRITE), but FAULT_FLAG_WRITE is passed
-> instead.
-> 
-> This still works because they happen to have the same integer value,
-> but it's a mistake, thus the fix.
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Fixes: 05066cafa925 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+Hi All,
 
-Shouldnt we rename the parameter to __kvm_s390_handle_dat_fault and
-vcpu_dat_fault_handler from flags to foll as well in their
-implementation and prototypes to keep this consistent?
+This patch series adds support for the USBHS controller on the Renesas
+RZ/T2H (r9a09g077) and RZ/N2H (r9a09g087) SoCs. The USBHS controller on
+these SoCs is functionally similar to the one found on the RZ/G2L, but
+there are some differences in terms of interrupt configuration,
+clock/reset requirements, and register bit definitions.
 
-> ---
->   arch/s390/kvm/kvm-s390.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d5ad10791c25..d41d77f2c7cd 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -4954,13 +4954,13 @@ static int vcpu_dat_fault_handler(struct kvm_vcpu *vcpu, unsigned long gaddr, un
->   
->   static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
->   {
-> -	unsigned int flags = 0;
-> +	unsigned int foll = 0;
->   	unsigned long gaddr;
->   	int rc;
->   
->   	gaddr = current->thread.gmap_teid.addr * PAGE_SIZE;
->   	if (kvm_s390_cur_gmap_fault_is_write())
-> -		flags = FAULT_FLAG_WRITE;
-> +		foll = FOLL_WRITE;
->   
->   	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
->   	case 0:
-> @@ -5002,7 +5002,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
->   			send_sig(SIGSEGV, current, 0);
->   		if (rc != -ENXIO)
->   			break;
-> -		flags = FAULT_FLAG_WRITE;
-> +		foll = FOLL_WRITE;
->   		fallthrough;
->   	case PGM_PROTECTION:
->   	case PGM_SEGMENT_TRANSLATION:
-> @@ -5012,7 +5012,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
->   	case PGM_REGION_SECOND_TRANS:
->   	case PGM_REGION_THIRD_TRANS:
->   		kvm_s390_assert_primary_as(vcpu);
-> -		return vcpu_dat_fault_handler(vcpu, gaddr, flags);
-> +		return vcpu_dat_fault_handler(vcpu, gaddr, foll);
->   	default:
->   		KVM_BUG(1, vcpu->kvm, "Unexpected program interrupt 0x%x, TEID 0x%016lx",
->   			current->thread.gmap_int_code, current->thread.gmap_teid.val);
+The first patch updates the device tree bindings to include these SoCs,
+while the second patch modifies the USBHS driver to recognize the new
+compatible strings and use the existing platform information for the
+RZ/G2L.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  dt-bindings: usb: renesas,usbhs: Add RZ/T2H and RZ/N2H support
+  usb: renesas_usbhs: Add support for RZ/T2H SoC
+
+ .../bindings/usb/renesas,usbhs.yaml           | 28 +++++++++++++++++--
+ drivers/usb/renesas_usbhs/common.c            |  4 +++
+ 2 files changed, 29 insertions(+), 3 deletions(-)
+
+-- 
+2.50.1
 
 
