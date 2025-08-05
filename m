@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-755892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C5EB1AD04
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566B5B1AD06
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A82189D237
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FF1620B98
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8111E0B9C;
-	Tue,  5 Aug 2025 04:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490C1E9B3A;
+	Tue,  5 Aug 2025 04:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b0/WvJbQ"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aq6zgoeh"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3055643ABC
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 04:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F25191;
+	Tue,  5 Aug 2025 04:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754366723; cv=none; b=MvJ81xVnOiEFXbAExVhYQLVKVPhRdEAmMW/prYOh6DJmwNJgSJlLiTB1tyfgoaF4Re+7beAtdkRgtsWEcx23BJLLJrJxHadnYU5HpBcPaMomSD2t2cY48RGwQC/S6KSdgzDhbiUpquGAWxSYaFkyHYYY58HKcA37U/AwQPfhLVM=
+	t=1754366750; cv=none; b=rJweB3CFYkemITFFbsUlFXEkxhi7fSJfLbvOS9MQEyGhO21J4MWhGh74K7C4rsjOhYm2pAOfKSRMz/StYU3+qYbVTynwk4UhKla0oQ0hLgkZqE8aP6OUNNQOQN6AxOOQ/d+fYjo6+qwNLn+2SZvfAWvjk+HTAuGZC4jmsXFdb5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754366723; c=relaxed/simple;
-	bh=EMfUCHtgs3IuqzXuNcpwRrDEplEmislVrV6AOXDDDpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ap1HumPikepZ55t5z2UqPgshvqN2R54iTfBDSXLtfrlRXFL/NhTWHpgBsfUVHWtxTvehPQs7nt6+TD1GVluZgv5MbS11TiVEXqv5HXL9b22nqrpNAfSoIwRkU7NQv0DAXUhocSsbRoCekhVJ9xyezYY4nwIWpJcSB1QOLOjXPPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b0/WvJbQ; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3cf22505-e338-4cc1-ab76-896bfc336b40@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754366708;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gyJlZNo6vE7cHWA+QVc0Ikg9XrHom96gqkhClW3dl1E=;
-	b=b0/WvJbQaEhaneW/zRlslwwvZgNmZtIZPesXUfDg9zZC0pF+7MLJcJphBhcCXaBc3BZrFT
-	4Pns7CJ8oyUtY0hEK4wSXGOlq6McaTJbyNUlYQ73svBDvXFmA7c3X5/TlsqtSS/4n5hVL6
-	5Hvfuds6nY71dAXyvszuD2KIknwt8oM=
-Date: Mon, 4 Aug 2025 21:05:00 -0700
+	s=arc-20240116; t=1754366750; c=relaxed/simple;
+	bh=4jnRD8VKhR7Gt+dJj8OLyHzW0o1KJxNGsvZD7K7uC9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QJ4u5Mk/J4tuzKK2Zki6NgZzlbTfNWxo42TNHcfo12VA2ZbGnrjiTklwzeiAVrPZctrbtIXUo6T+lCr+m0OiBcWWf/iJO0o5ZcdngmX6Is6bJaVbUIP6a/jGFPwaoLJHR+UBUDUR0x7A4nqtuMx75Rblw6sPT5ENID2adJmzfnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aq6zgoeh; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32ca160b4bcso50021051fa.3;
+        Mon, 04 Aug 2025 21:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754366747; x=1754971547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eHqsHlz1Z2CiNP2JagmW9QT4QlSkYOHQCdskJj6TcB8=;
+        b=Aq6zgoehXsGOZxqDMcjy2Bj7Y1dchFn6UROBVf73rNSf4zMBfuodeXPersVg/hp3eP
+         u44xDaRtbvkSJ2sYyH93QVP3WMTywRkM2sdoEacJImfAV9ALAud8ioyqWIT1tizs0xkm
+         WuxPCKuBMQGhGlHOtguXMCFFH1LTR3wWnx27gHLygvvittmjDjcVEbVLxVE3PiAcnIWy
+         Eue1avtBvt+ODq6g63C+CsTXgwSlXb6LP2xZmCY12bKSnRMikPe/8uu0xDar4j0Jad+l
+         CBbAUCIcTyLiZ+IW7QeVu02tNo4IaA+WAK2X7eyIjhWedE+CTRT72AMXtnkhhk34hd6m
+         iYzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754366747; x=1754971547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eHqsHlz1Z2CiNP2JagmW9QT4QlSkYOHQCdskJj6TcB8=;
+        b=jxDdpRbZBW5x/oT4K2a2fohYvM7ipFi/QjpR60M2yoe2R3v9WocAi6PnQlJLkFK8jc
+         AarH2Fcj7wXIRiWq7O8YOix/O8hFk1RmH1JTqTkqVK42ov/nKPZFeJLcBFgcCsVRZoKb
+         yB3uZtpe+v4ff9o6I3bwUThs8pkAxEtROThPpctp+SB5OZCk9IZutF3sD1hnXdysVsJr
+         QocI1Z4TcfC4SvGDrWl8w/ty01se+zlJDzfhHakcJuu+6yWJvoWa3R+86aRRYXK1XY8R
+         ovbHiTzT+j4D9msmU83yW6pdF3gA85XWtWjEgrLjADSS2Vp59EKb7W2K5ZrrcTOS34pP
+         QAZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL6PvicpaZ81U6LFlfPyMW/aMZd+bw0FaLqFg5WpPVawfcGj/yg38UEsCi2ehDJ8ZIL4T08TmyBkpN3/Oo@vger.kernel.org, AJvYcCXDcxJOTbo/rRGKoiW4e1bZrtV2hnwKNeWubXQSzBK143hmlb3k+/ALl0EQu7441rD37U5IFD42pJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzbYLOevShMppBeoZaBbSpnyMmMeC2TPLC1aZHtDosmqiU5x0M
+	81Iz5jHaxgBNcDy7160VuW6i8fg/mYNkewO+vTQrcc7QIGz32cYWStvnD+vLVnNTXOpccZdBPV2
+	sIA6On2BVOAnkBAQsC6qK8zj8EC1Xu3E=
+X-Gm-Gg: ASbGncuXj/Wzu5J8YewQ82ZC/oJfqc4YToghClq4VJktRWVWnFZIV9TNCWA9wwCwQYQ
+	vJC4tmBjCm0T9r4v5D1P6L3oWuUR+3OKG/SqYzlnWXJ4hqelsd9i75bpKjox8gzNRw2n3BNQJDc
+	R+Qf8kzTE6B7mV2s3kfQfdKugPGTPKk2OFnAZU9P4+xPbfybesmW74g56aUMfGiGBFxZSdj8qjr
+	3zU01vB
+X-Google-Smtp-Source: AGHT+IGmBENJ1t+Qvu2oPFP5zbqFeDEaup4sKrDKhOEZGixQd9xci/6aSlzwTFV83oUUvCYYKKd1l1z57uSlLOEJXVM=
+X-Received: by 2002:a05:651c:4115:b0:32c:bc69:e954 with SMTP id
+ 38308e7fff4ca-33256810aa3mr20215021fa.37.1754366746516; Mon, 04 Aug 2025
+ 21:05:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next] bpf: Disable migrate when kprobe_multi attach to
- access bpf_prog_active
-To: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250804121615.1843956-1-chen.dylane@linux.dev>
- <aJCvY7G-gVR8taLh@krava>
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aJCvY7G-gVR8taLh@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com> <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+In-Reply-To: <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Tue, 5 Aug 2025 09:35:34 +0530
+X-Gm-Features: Ac12FXzGCwERRVoXD8lubCuV_KvCHcm0UDqbcRl1VNkpqLjrtSuy-uDVzMR_wwA
+Message-ID: <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 8/4/25 6:02 AM, Jiri Olsa wrote:
-> On Mon, Aug 04, 2025 at 08:16:15PM +0800, Tao Chen wrote:
->> The syscall link_create not protected by bpf_disable_instrumentation,
->> accessing percpu data bpf_prog_active should use cpu local_lock when
->> kprobe_multi program attach.
->>
->> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   kernel/trace/bpf_trace.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index 3ae52978cae..f6762552e8e 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -2728,23 +2728,23 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
->>   	struct pt_regs *regs;
->>   	int err;
->>   
->> +	migrate_disable();
->>   	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
-> this is called all the way from graph tracer, which disables preemption in
-> function_graph_enter_regs, so I think we can safely use __this_cpu_inc_return
-
-Agree. migrate_disable() is not needed here. But it would be great to add some
-comments here since for most other prog_run, they typically have migrate_disable/enable.
-
+On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
->
->>   		bpf_prog_inc_misses_counter(link->link.prog);
->>   		err = 1;
->>   		goto out;
->>   	}
->>   
->> -	migrate_disable();
-> hum, but now I'm not sure why we disable migration in here then
+> Doesn't sound right to me. HAve you investigated PM runtime paths?
+Yes I did investigate and found that PM runtime->suspend() callback
+co-exists with remove callback.
 
-Probably a oversight.
+> Looking at what the code you added there it sounds to me like a part
+> of PM runtime ->suspend() callback.
+Yes, part of functionality will always be common, because both the
+callback implementations put
+the device into powered down or low power state which is what has been done=
+ here
+Both _suspend() and remove are called at different times in the lifecycle o=
+f the
+driver, but with respect to register setting, they put the device into
+power down state.
+Additionally .remove() can have code for:
+1. disable runtime power management (if enabled while device registration).
+2. device cleanup (disabling interrupt and cleaning up other configs done).
+2. unregister the device.
 
->
-> jirka
->
->>   	rcu_read_lock();
->>   	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
->>   	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
->>   	err = bpf_prog_run(link->link.prog, regs);
->>   	bpf_reset_run_ctx(old_run_ctx);
->>   	rcu_read_unlock();
->> -	migrate_enable();
->>   
->>    out:
->>   	__this_cpu_dec(bpf_prog_active);
->> +	migrate_enable();
->>   	return err;
->>   }
->>   
->> -- 
->> 2.48.1
->>
+For eg: another light sensor bh1750
+static void bh1750_remove(struct i2c_client *client)
+{
+    iio_device_unregister(indio_dev);
+    mutex_lock(&data->lock);
+    i2c_smbus_write_byte(client, BH1750_POWER_DOWN);
+    mutex_unlock(&data->lock);
+}
 
+static int bh1750_suspend(struct device *dev)
+{
+    mutex_lock(&data->lock);
+    ret =3D i2c_smbus_write_byte(data->client, BH1750_POWER_DOWN);
+    mutex_unlock(&data->lock);
+    return ret;
+}
+
+In drivers/iio/light, you can find similar examples in pa12203001,
+rpr0521, apds9960,
+vcnl4000, isl29028, vcnl4035. You can find many more examples in
+sensors other than light sensors.
+
+Thanks,
+Akshay
 
