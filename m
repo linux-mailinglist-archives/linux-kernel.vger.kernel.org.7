@@ -1,188 +1,128 @@
-Return-Path: <linux-kernel+bounces-755911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32738B1AD3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:48:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDC7B1AD41
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 06:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7B83B3232
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:48:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A07B27A52E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 04:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160A4217F56;
-	Tue,  5 Aug 2025 04:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJMyP2nV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AB2217F56;
+	Tue,  5 Aug 2025 04:49:49 +0000 (UTC)
+Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D584201269;
-	Tue,  5 Aug 2025 04:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1391201269;
+	Tue,  5 Aug 2025 04:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369284; cv=none; b=eUGk6mZaxWx4ryhXs0oTmXVvQJx5XyHF4pv/tyMmvU80+aln4s3nigegKE9s/kxeImeUMhX7EE5AHSykkeNzyPaSFi9MMlx2XUMDhClcplZ3tuNCl/ZwAF8q98dwlRT+swm//ze7PHv9eaE494UK0LXw+euBsbMKzT4TPwquRng=
+	t=1754369389; cv=none; b=gf8otMaktAHORa+xTDT2LAGMCY5iXhBI8FtLXpnliB9+cIxPHRykkFHL82wINBOdGcKmE2gIKdzTC5ya8TsEKbFU9GErZGTQMFQns3VplfhSGHuOC3oQNGgMKF4z5zEuRz3yaEuGryJUHR2RCB56Vn6fZspRMIE2KaIVzZpFemI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369284; c=relaxed/simple;
-	bh=LoCncB0T59vM/YkkVlcIhEh0yb/IFkNXHSj+2ArsmPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJsiwjyrrQSWbNkAWFmx1qNbEfZAqYQzgMVX3YzWC0FNsLc5IPftWNV9/KnVAihKBDnystW2lZItXOqe9J3esJOGG/9f3OrsVqdFP939bkzSzNmoq6YA+LS+S01zDiup5ZwI8UjDOUAjZtl64yrHDsfw6iRK/IscFY2+CQ8hMWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJMyP2nV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D26AC4CEF4;
-	Tue,  5 Aug 2025 04:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754369283;
-	bh=LoCncB0T59vM/YkkVlcIhEh0yb/IFkNXHSj+2ArsmPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NJMyP2nVjI/Ojpw0jHVvM/d0xQcdh27oI035+1DsLhGY/TKIo32vUwNMs4ckKFHc4
-	 axcsxLeAv1bXze6etwdJ4n1hWERU64YNBZjPSK4RjpRLHi8snQOIaUITjlfPWWTYbr
-	 p4TicsKIwuOPmfSsgbcCioAdOEVvzDjKREzufyx7LRuaBbczue4ZMejrKlnmJkyL2a
-	 v2SFWE/b8yvpjsSqQNzz2/gA/ArQxTIL+cD2nutLf/7cHWWJm5u1v1Gfg25SMyYpQA
-	 qfE/TbBlQmYuEd5VmJSDV9BN9vfFctr+aV4yq5XpbisNCX59O06ylNJFbt4DRHhYEz
-	 uSKUrKmO2twSw==
-Date: Tue, 5 Aug 2025 10:17:59 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Joris Verhaegen <verhaegen@google.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	Miller Liang <millerliang@google.com>
-Subject: Re: [PATCH v4 2/3] ALSA: compress_offload: Add
- SNDRV_COMPRESS_TSTAMP64 ioctl
-Message-ID: <aJGM2zXS6hOLDFm1@vaman>
-References: <20250801092720.1845282-1-verhaegen@google.com>
- <20250801092720.1845282-3-verhaegen@google.com>
+	s=arc-20240116; t=1754369389; c=relaxed/simple;
+	bh=RpVs470lDpe/a5lN9G8uFqnn3AXm640J77i8M+2Kf4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GXqcU8Fofu5Kq4DiIl0yckxK1of5VxsRGUBdfVW/WN2grpAW3rZZGCTPDhUiuum5ysxoOOgLED4uqASm5BLCtobizFQZI24QY2LYgGxX/bda0s8VxP/8dFEObOvQCrXSv+dSfrOx2CUebmkwgTp2Jw+Pit1GjtOuL0B49BLaP9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
+Received: from [IPV6:2400:2410:b120:f200:a1f3:73da:3a04:160d] (unknown [IPv6:2400:2410:b120:f200:a1f3:73da:3a04:160d])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by psionic.psi5.com (Postfix) with ESMTPSA id 8DD1B3F1DF;
+	Tue,  5 Aug 2025 06:49:34 +0200 (CEST)
+Message-ID: <913e23f9-d039-4de1-a0d3-d1067dcda8ac@hogyros.de>
+Date: Tue, 5 Aug 2025 13:49:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801092720.1845282-3-verhaegen@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Crypto use cases (was: Remove PowerPC optimized MD5 code)
+To: Eric Biggers <ebiggers@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-4-ebiggers@kernel.org>
+ <593b6997-9da4-439c-ba82-84e8bb2ed980@csgroup.eu>
+ <20250804180923.GA54248@google.com>
+ <187412bd-3ae0-4fe8-b526-f96af6bea6dc@csgroup.eu>
+ <20250804225901.GC54248@google.com>
+Content-Language: en-US
+From: Simon Richter <Simon.Richter@hogyros.de>
+In-Reply-To: <20250804225901.GC54248@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 01-08-25, 10:27, Joris Verhaegen wrote:
-> The previous patch introduced the internal infrastructure for handling
-> 64-bit timestamps. This patch exposes this capability to user-space.
-> 
-> Define the new ioctl command SNDRV_COMPRESS_TSTAMP64, which allows
-> applications to fetch the overflow-safe struct snd_compr_tstamp64.
-> 
-> The ioctl dispatch table is updated to handle the new command by
-> calling a new snd_compr_tstamp64 handler, while the legacy path is
-> renamed to snd_compr_tstamp32 for clarity.
-> 
-> This patch bumps the SNDRV_COMPRESS_VERSION to 0.4.0.
-> 
-> Reviewed-by: Miller Liang <millerliang@google.com>
-> Tested-by: Joris Verhaegen <verhaegen@google.com>
-> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
-> ---
->  include/uapi/sound/compress_offload.h |  5 +++--
->  sound/core/compress_offload.c         | 19 +++++++++++++------
->  2 files changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-> index abd0ea3f86ee..70b8921601f9 100644
-> --- a/include/uapi/sound/compress_offload.h
-> +++ b/include/uapi/sound/compress_offload.h
-> @@ -13,8 +13,7 @@
->  #include <sound/asound.h>
->  #include <sound/compress_params.h>
->  
-> -
-> -#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 3, 0)
-> +#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 4, 0)
->  /**
->   * struct snd_compressed_buffer - compressed buffer
->   * @fragment_size: size of buffer fragment in bytes
-> @@ -208,6 +207,7 @@ struct snd_compr_task_status {
->   * Note: only codec params can be changed runtime and stream params cant be
->   * SNDRV_COMPRESS_GET_PARAMS: Query codec params
->   * SNDRV_COMPRESS_TSTAMP: get the current timestamp value
-> + * SNDRV_COMPRESS_TSTAMP64: get the current timestamp value in 64 bit format
->   * SNDRV_COMPRESS_AVAIL: get the current buffer avail value.
->   * This also queries the tstamp properties
->   * SNDRV_COMPRESS_PAUSE: Pause the running stream
-> @@ -230,6 +230,7 @@ struct snd_compr_task_status {
->  						 struct snd_compr_metadata)
->  #define SNDRV_COMPRESS_TSTAMP		_IOR('C', 0x20, struct snd_compr_tstamp)
->  #define SNDRV_COMPRESS_AVAIL		_IOR('C', 0x21, struct snd_compr_avail)
-> +#define SNDRV_COMPRESS_TSTAMP64		_IOR('C', 0x22, struct snd_compr_tstamp64)
->  #define SNDRV_COMPRESS_PAUSE		_IO('C', 0x30)
->  #define SNDRV_COMPRESS_RESUME		_IO('C', 0x31)
->  #define SNDRV_COMPRESS_START		_IO('C', 0x32)
-> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-> index d3164aa07158..445220fdb6a0 100644
-> --- a/sound/core/compress_offload.c
-> +++ b/sound/core/compress_offload.c
-> @@ -736,18 +736,23 @@ snd_compr_set_metadata(struct snd_compr_stream *stream, unsigned long arg)
->  	return retval;
->  }
->  
-> -static inline int
-> -snd_compr_tstamp(struct snd_compr_stream *stream, unsigned long arg)
-> +static inline int snd_compr_tstamp(struct snd_compr_stream *stream,
-> +				   unsigned long arg, bool is_32bit)
->  {
->  	struct snd_compr_tstamp64 tstamp64 = { 0 };
->  	struct snd_compr_tstamp tstamp32 = { 0 };
-> +	const void *copy_from = &tstamp64;
-> +	size_t copy_size = sizeof(tstamp64);
->  	int ret;
->  
->  	ret = snd_compr_update_tstamp(stream, &tstamp64);
->  	if (ret == 0) {
-> -		snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
-> -		ret = copy_to_user((struct snd_compr_tstamp __user *)arg,
-> -				   &tstamp32, sizeof(tstamp32)) ?
-> +		if (is_32bit) {
-> +			snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
-> +			copy_from = &tstamp32;
-> +			copy_size = sizeof(tstamp32);
-> +		}
+Hi,
 
-Most of the applications and people would be 32bit right now and we
-expect this to progressively change, but then this imposes a penalty as
-default path is 64 bit, since we expect this ioctl to be called very
-frequently, should we do this optimization for 64bit here?
+On 8/5/25 07:59, Eric Biggers wrote:
 
-> +		ret = copy_to_user((void __user *)arg, copy_from, copy_size) ?
->  			      -EFAULT :
->  			      0;
->  	}
-> @@ -1327,7 +1332,9 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
->  
->  	switch (cmd) {
->  	case SNDRV_COMPRESS_TSTAMP:
-> -		return snd_compr_tstamp(stream, arg);
-> +		return snd_compr_tstamp(stream, arg, true);
-> +	case SNDRV_COMPRESS_TSTAMP64:
-> +		return snd_compr_tstamp(stream, arg, false);
->  	case SNDRV_COMPRESS_AVAIL:
->  		return snd_compr_ioctl_avail(stream, arg);
->  	case SNDRV_COMPRESS_PAUSE:
-> -- 
-> 2.50.1.565.gc32cd1483b-goog
+>> md5sum uses the kernel's MD5 code:
 
--- 
-~Vinod
+> What?  That's crazy.  Userspace MD5 code would be faster and more
+> reliable.  No need to make syscalls, transfer data to and from the
+> kernel, have an external dependency, etc.  Is this the coreutils md5sum?
+> We need to get this reported and fixed.
+
+The userspace API allows zero-copy transfers from userspace, and AFAIK 
+also directly operating on files without ever transferring the data to 
+userspace (so we save one copy).
+
+Userspace requests are also where the asynchronous hardware offload 
+units get to chomp on large blocks of data while the CPU is doing 
+something else:
+
+$ time dd if=test.bin of=/dev/zero bs=1G     # warm up caches
+real    0m1.541s
+user    0m0.000s
+sys     0m0.732s
+
+$ time gzip -9 <test.bin >test.bin.gz        # compress with the CPU
+real    2m57.789s
+user    2m55.986s
+sys     0m1.508s
+
+$ time ./gzfht_test test.bin                 # compress with NEST unit
+real    0m3.207s
+user    0m0.584s
+sys     0m2.487s
+
+$ time gzip -d <test.bin.nx.gz >test.bin.nx  # decompress with CPU
+real    1m0.103s
+user    0m57.990s
+sys     0m1.878s
+
+$ time ./gunz_test test.bin.gz               # decompress with NEST unit
+real    0m2.722s
+user    0m0.200s
+sys     0m1.872s
+
+That's why I'm objecting to measuring the general usefulness of hardware 
+crypto units by the standards of fscrypt, which has an artificial 
+limitation of never submitting blocks larger than 4kB: there are other 
+use cases that don't have that limitation, and where the overhead is 
+negligible because it is incurred only once for a few gigabytes of data.
+
+That's why I suggested changing from a priority field to "speed" and 
+"overhead" fields, and calculate priority for each application as 
+(size/speed+overhead) -- smallest number wins, size is what the 
+application expects to use as the typical request size (which for 
+fscrypt and IPsec is on the small side, so it would always select the 
+CPU unless there was a low-overhead offload engine available)
+
+This probably needs some adjustment to allow selecting a low-power 
+implementation (e.g. on mobile, I'd want to use offloading for fscrypt 
+even if it is slower), and model request batching which reduces the 
+overhead in a busy system, but it should be a good start.
+
+    Simon
 
