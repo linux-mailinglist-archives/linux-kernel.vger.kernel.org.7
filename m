@@ -1,189 +1,241 @@
-Return-Path: <linux-kernel+bounces-756235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C636B1B195
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306D9B1B19E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB87F3BDBBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8751775FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A21826B0BE;
-	Tue,  5 Aug 2025 09:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26ED26E17D;
+	Tue,  5 Aug 2025 09:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a/cKFDsv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aPIOyP3C"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9BA1AA782
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FE91AA782;
+	Tue,  5 Aug 2025 09:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754387955; cv=none; b=XNzlXRHzB/AvsyQCtVwlMCfjB0mlMjwYvYcGnvD3x0LkUOTJrAsTLL00/2/u1SUF4SW6OjK0MVE9UcRk702gD7GheqJIuXjKA1KqPWoNRRXg7i6Kh4SmyBjizZJOCmQa7uABoMsjMtHX4Yt79JUykwpvIIP0Oqe9O/OmBmVXVIY=
+	t=1754387967; cv=none; b=CVygMerksiiVdSBEET3ZMaMwL91zJUgH3cjeaNyihLFEp0GySe+onTBTDwolxR339oo6JklHi7GCacn5Q+tONuzKSHV1IWK5YgtAXv+D/7TP6G2vdSfMIKfoJ6zz+zAWuQK/2XP4u5uyOOk9C898mRGg/DUKGt+zGOHpew87Dd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754387955; c=relaxed/simple;
-	bh=6xnkcRjjaBCV9mGFQ39UJqLkd2ZbEMv3DHt3bw7xXVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFagfyOkLbcIviLo2E3aQFj3kf51sluV61WmSDIBd/aq7a4Xj9YUhBKKUpN/x0DLwfs8IGuZZ7RMDm1qP+ik5oIwHRAPAjfj2E+XokXqkuyI+DEn+fvINh0QatRGafWfjKxwZTQTKmcOVwos88hFVm7A/DPnt0VzqeR2tEU8i+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a/cKFDsv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5759w1bm016967
-	for <linux-kernel@vger.kernel.org>; Tue, 5 Aug 2025 09:59:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oFkvM2HVsX9Y21JHEp/hCHiYryvffbqt4OmpC31gI6M=; b=a/cKFDsvjeknMpcV
-	QDZ0r6yQBaPCNk7jNDdJ/aX+Ognr4LHk5faaMtRFv4C55saHwbzUGEp1Qph4yRkZ
-	VwYJEEeeGhhxq+71m+g44x3hGmCrQr8tZZ7PjtN6YbQgq8gqKmgby/xaNM92ijom
-	n6Nd+Eqp2AsqRvoaAQfOgDssOnNgQdcciVpVeFhyYeZ0OalpesYBLEyyb45qysGT
-	Lu0WoFIbOzjhdFpOPH3DfrO2fG5HvOU1SHFb4wOfxO9Tvp9B+58q1znp8ZWZkzGy
-	dElqQHtrPat2JrBWdD6epOg/jj7Ku9B+eHHi241DdozGQmn6TtNVWOIM08Nv6pBq
-	nHVj1A==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48aqyv49x1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 09:59:12 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fb5f71b363so85042306d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 02:59:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754387951; x=1754992751;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFkvM2HVsX9Y21JHEp/hCHiYryvffbqt4OmpC31gI6M=;
-        b=V/McjyCfB9HMzVlke1jD2m+3LJm5F/J1gyALCoPdrIHzsDIXdslBIj40XeGGLd5+fA
-         2kC8PZPZFZ8MdrKesc2qRS3SegEs0X9X0+14Z+WdlG9zvufRcQ10Uoyl3qLaQ9BZNo3w
-         g6aSfDmZ4H/G1KORGTS6OIeWeP8ay3pa+zomM9PcxoqMMDaaWohJYvrVXJcSndASbwba
-         XoPpo3Dp54FoXpJyQ6U1z0fqsZuH8oBAAL2xixW3jyUsalrWILzenxoXB+1BmhRl8jV0
-         6rekvS7Tr0nJGP0zf3uHQUfcYDp0Xi/9yyu5wZcgNmaUMGf/LuMmbiXDewhATo6XTFmc
-         meQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuQv4udqkmczqCaDgQKCWYK5SqqI5n3Blp0tF1lhPoBRO61RtJlZPLrr2cbqvtaeTkOXdkA+cQiPLOYUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7nEPDWsLd5Ad5yn8E9tYv2O8UhUVY+RtUAWe22HYeGQGCo5Bg
-	wsqC1OrLvs1+l7k4g6T3ua47O70TYDyF6Kzd1qxZzBk1gJSuL0hj8fP0LyUWBFaSxqk86M7LLtP
-	8/r8LIb4zS+NCZlXLBYQTj6mJAcUpeE7Ci5UunenCa/cjXpkqlohxjwmupkS0lhlrl3A=
-X-Gm-Gg: ASbGnct+z896vSe5DxweCU8aOJjUPCJQiImKcabpnImMcCxnxbMJ1BsBy3Euv7GrZU1
-	WiiVeA2rSCi3R6p1zK02duNrXsot4VN8czqWUcZ91Gma6ccuxhIpXvFFK0CSCdGhn7TZW/pF0tI
-	IfVN0oVlIXklRQzkuDIgpOXy++8iHYz+LWEo6CbgG8usMEJlqb6mSyNae6V7flrUU+We64nkNJV
-	PkhJn30P9EsxGz2kqQfFFRI943Djb3svaFtG0yttVNK1gOALlrsRCEDVA0K6FOPW8kIRqAzQBMZ
-	9zq7M+wMsd7q4QYmFl2E6Yu2YMjlUtM1pJjpk15p64I3zrg4lCTjCp2T2gwouu0iuEiL4KiMyA+
-	HgD4OFEDW5ewITY2Yd62oIkec/YnDSRVJ4Pq4PNMHajoUP7Pgq7Uv
-X-Received: by 2002:a05:6214:411:b0:706:de4c:fddf with SMTP id 6a1803df08f44-70935eeed18mr164933426d6.9.1754387951288;
-        Tue, 05 Aug 2025 02:59:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGERL535Nj+LI6rztA9IAgnP+naoieBDZmsnatDeRA4g6lNmzXFHANW7lm0JicsfOzA4t0Pqg==
-X-Received: by 2002:a05:6214:411:b0:706:de4c:fddf with SMTP id 6a1803df08f44-70935eeed18mr164933146d6.9.1754387950742;
-        Tue, 05 Aug 2025 02:59:10 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238272ff7sm19726081fa.7.2025.08.05.02.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 02:59:09 -0700 (PDT)
-Date: Tue, 5 Aug 2025 12:59:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_cang@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
-        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-        kernel@oss.qualcomm.com
-Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
- broken capabilities
-Message-ID: <lkjp2353athoi76h3j3bgkcxdwfn6akcyyweipt4g774ztmmer@vcw7ru5red3n>
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
- <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
- <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
+	s=arc-20240116; t=1754387967; c=relaxed/simple;
+	bh=RV+XSnddoBH4JRWHZZy+4T5rBIZcZFEquw455N0WQVA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=jQRoKnVO0QBKMVxUGPiuOhhHj1DfF33Pbxh6LXGsqjMrtvGDzMTkbi8zplQ/TFllOhRHBTu0HO/FWLxJrISwWGPJ2DmxD9hw3MX/WwY1jaidJYUIjRfrcERag0jPtWniAw+rbIch6ssuLGHRm87yme15TEkiLKin3upanYUFORQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aPIOyP3C; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D96F2AD0;
+	Tue,  5 Aug 2025 11:58:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754387915;
+	bh=RV+XSnddoBH4JRWHZZy+4T5rBIZcZFEquw455N0WQVA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=aPIOyP3CCN60ghQ95OYLB9emUWH/n0b6O3gtc9ZoA+uMAITK5524gPFOoFe3iPgrR
+	 PeGZgkGvvmEIfAIjVWqinSJN2vlhZuO+XIf+jbLxH1tzVI09y3TIRrSaAcZCkteW9d
+	 f9FcX+PdukMOKmU3dXioC96DYHeFg17Pwv6UxHrs=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
-X-Proofpoint-GUID: gWUL8pM1Fg2FQKWWqjtKDPBQfqqqP1s-
-X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6891d5f0 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=kKDBy8IbGvpil11uj3cA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: gWUL8pM1Fg2FQKWWqjtKDPBQfqqqP1s-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA3MiBTYWx0ZWRfXxWvNnmIjG8at
- 4fhd3eG6bHHW4aRiDCl8xbKdq4jFhJ02okxiHrMwv64iMe22d+iwH68Q+zZMDX5I5PZhxoVxJ34
- 7fpeZCv/81iMS8NE5YhxlRrYprxw9XMFUKSmFd+nKqICdxCIMvnAtLtpvpx8lhSgMJTMFkhp0eU
- qtzAibKcaFChhdUQre83PLs04x1TvLu8B51qH73BWsfX0O4OtfS1ycEbHFmvokUIKt8n+YdkGws
- X76W+Nh2atUIylIR+3RUqk7r/hQ4P2pEEpHqmZDkeayKe56YZZWEEe5JJu+PAEJiIct0DLmDoqi
- Dp0ULaw1OepAr7yvmhalWTb+/FFVaC8Nap/9kxotbsgBeupEIlCNWAhUtY3/R04MgVqB0XGzArf
- FZoj9nPO1DQzpBGJPimHpsFMfISwY06RjpUspc+iehEvo/OfxjJmYKQhFk9aj97sH/PuPjls
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
- clxscore=1015 mlxlogscore=993 priorityscore=1501 impostorscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508050072
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250802-media-private-data-v1-42-eb140ddd6a9d@ideasonboard.com>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com> <20250802-media-private-data-v1-42-eb140ddd6a9d@ideasonboard.com>
+Subject: Re: [PATCH 42/65] media: renesas: Access v4l2_fh from file
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Date: Tue, 05 Aug 2025 10:59:19 +0100
+Message-ID: <175438795943.1641235.15440393062572657340@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Tue, Aug 05, 2025 at 02:49:29PM +0530, Sarthak Garg wrote:
-> 
-> 
-> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
-> > On 01/08/2025 10:45, Sarthak Garg wrote:
-> > > The kernel now handles level shifter limitations affecting SD card
-> > > modes, making it unnecessary to explicitly disable SDR104 and SDR50
-> > > capabilities in the device tree.
-> > > 
-> > > However, due to board-specific hardware constraints particularly related
-> > > to level shifter in this case the maximum frequency for SD High-Speed
-> > > (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
-> > > card in HS mode. This is achieved using the max-sd-hs-frequency property
-> > > in the board DTS.
-> > > 
-> > > Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
-> > >   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
-> > >   arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
-> > >   arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
+Quoting Jacopo Mondi (2025-08-02 10:23:04)
+> The v4l2_fh associated with an open file handle is now guaranteed
+> to be available in file->private_data, initialised by v4l2_fh_add().
+>=20
+> Access the v4l2_fh, and from there the driver-specific structure,
+> from the file * in all ioctl handlers.
+>=20
+> While at it, remove the now unused fh_to_ctx() macro.
+>=20
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-You missed several devices which use SM8550. Please fix that.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-> > >   4 files changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > 
-> > This will break MMC for all of the users and nothing in commit msg or
-> > cover letter explains that or mentions merging strategy.
-> > 
-> > Exactly this case is covered by your internal guideline, no? Please read it.
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> Just to make sure I’m addressing the right concern — are you primarily
-> worried about the introduction of the max-sd-hs-frequency property in the
-> board DTS files, or about the removal of the sdhci-caps-mask
-> from the common sm8550.dtsi?
-
-This patch requires all previous patches to work, so it can not be
-applied in parallel. It should be applied after the previous patches are
-merged by MMC maintainers and then available in the Bjorn's tree. This
-requires either skipping a release for this patch or using an immutable
-tag for the MMC patches. All these deteails should be explained in the
-cover letter.
-
--- 
-With best wishes
-Dmitry
+> ---
+>  drivers/media/platform/renesas/rcar_fdp1.c | 11 +++--------
+>  drivers/media/platform/renesas/rcar_jpu.c  | 21 ++++++++-------------
+>  2 files changed, 11 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/renesas/rcar_fdp1.c b/drivers/media/p=
+latform/renesas/rcar_fdp1.c
+> index e78d8fb104e9544d27c8ace38888995ca170483f..84c3901a2e5dc3e7ccfb3b440=
+62e839f8f19ee02 100644
+> --- a/drivers/media/platform/renesas/rcar_fdp1.c
+> +++ b/drivers/media/platform/renesas/rcar_fdp1.c
+> @@ -630,11 +630,6 @@ struct fdp1_ctx {
+>         struct fdp1_field_buffer        *previous;
+>  };
+> =20
+> -static inline struct fdp1_ctx *fh_to_ctx(struct v4l2_fh *fh)
+> -{
+> -       return container_of(fh, struct fdp1_ctx, fh);
+> -}
+> -
+>  static inline struct fdp1_ctx *file_to_ctx(struct file *filp)
+>  {
+>         return container_of(file_to_v4l2_fh(filp), struct fdp1_ctx, fh);
+> @@ -1411,8 +1406,8 @@ static int fdp1_enum_fmt_vid_out(struct file *file,=
+ void *priv,
+> =20
+>  static int fdp1_g_fmt(struct file *file, void *priv, struct v4l2_format =
+*f)
+>  {
+> +       struct fdp1_ctx *ctx =3D file_to_ctx(file);
+>         struct fdp1_q_data *q_data;
+> -       struct fdp1_ctx *ctx =3D fh_to_ctx(priv);
+> =20
+>         if (!v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type))
+>                 return -EINVAL;
+> @@ -1589,7 +1584,7 @@ static void fdp1_try_fmt_capture(struct fdp1_ctx *c=
+tx,
+> =20
+>  static int fdp1_try_fmt(struct file *file, void *priv, struct v4l2_forma=
+t *f)
+>  {
+> -       struct fdp1_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct fdp1_ctx *ctx =3D file_to_ctx(file);
+> =20
+>         if (f->type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>                 fdp1_try_fmt_output(ctx, NULL, &f->fmt.pix_mp);
+> @@ -1660,7 +1655,7 @@ static void fdp1_set_format(struct fdp1_ctx *ctx,
+> =20
+>  static int fdp1_s_fmt(struct file *file, void *priv, struct v4l2_format =
+*f)
+>  {
+> -       struct fdp1_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct fdp1_ctx *ctx =3D file_to_ctx(file);
+>         struct v4l2_m2m_ctx *m2m_ctx =3D ctx->fh.m2m_ctx;
+>         struct vb2_queue *vq =3D v4l2_m2m_get_vq(m2m_ctx, f->type);
+> =20
+> diff --git a/drivers/media/platform/renesas/rcar_jpu.c b/drivers/media/pl=
+atform/renesas/rcar_jpu.c
+> index 058fcfb967bd98440f33272db42f0d973299d572..9c70a74a2969fce6446b0f26e=
+0637a68eade3942 100644
+> --- a/drivers/media/platform/renesas/rcar_jpu.c
+> +++ b/drivers/media/platform/renesas/rcar_jpu.c
+> @@ -480,11 +480,6 @@ static struct jpu_ctx *ctrl_to_ctx(struct v4l2_ctrl =
+*c)
+>         return container_of(c->handler, struct jpu_ctx, ctrl_handler);
+>  }
+> =20
+> -static struct jpu_ctx *fh_to_ctx(struct v4l2_fh *fh)
+> -{
+> -       return container_of(fh, struct jpu_ctx, fh);
+> -}
+> -
+>  static struct jpu_ctx *file_to_ctx(struct file *filp)
+>  {
+>         return container_of(file_to_v4l2_fh(filp), struct jpu_ctx, fh);
+> @@ -661,7 +656,7 @@ static u8 jpu_parse_hdr(void *buffer, unsigned long s=
+ize, unsigned int *width,
+>  static int jpu_querycap(struct file *file, void *priv,
+>                         struct v4l2_capability *cap)
+>  {
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+> =20
+>         if (ctx->encoder)
+>                 strscpy(cap->card, DRV_NAME " encoder", sizeof(cap->card)=
+);
+> @@ -719,7 +714,7 @@ static int jpu_enum_fmt(struct v4l2_fmtdesc *f, u32 t=
+ype)
+>  static int jpu_enum_fmt_cap(struct file *file, void *priv,
+>                             struct v4l2_fmtdesc *f)
+>  {
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+> =20
+>         return jpu_enum_fmt(f, ctx->encoder ? JPU_ENC_CAPTURE :
+>                             JPU_DEC_CAPTURE);
+> @@ -728,7 +723,7 @@ static int jpu_enum_fmt_cap(struct file *file, void *=
+priv,
+>  static int jpu_enum_fmt_out(struct file *file, void *priv,
+>                             struct v4l2_fmtdesc *f)
+>  {
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+> =20
+>         return jpu_enum_fmt(f, ctx->encoder ? JPU_ENC_OUTPUT : JPU_DEC_OU=
+TPUT);
+>  }
+> @@ -828,7 +823,7 @@ static int __jpu_try_fmt(struct jpu_ctx *ctx, struct =
+jpu_fmt **fmtinfo,
+> =20
+>  static int jpu_try_fmt(struct file *file, void *priv, struct v4l2_format=
+ *f)
+>  {
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+> =20
+>         if (!v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type))
+>                 return -EINVAL;
+> @@ -839,7 +834,7 @@ static int jpu_try_fmt(struct file *file, void *priv,=
+ struct v4l2_format *f)
+>  static int jpu_s_fmt(struct file *file, void *priv, struct v4l2_format *=
+f)
+>  {
+>         struct vb2_queue *vq;
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+>         struct v4l2_m2m_ctx *m2m_ctx =3D ctx->fh.m2m_ctx;
+>         struct jpu_fmt *fmtinfo;
+>         struct jpu_q_data *q_data;
+> @@ -868,8 +863,8 @@ static int jpu_s_fmt(struct file *file, void *priv, s=
+truct v4l2_format *f)
+> =20
+>  static int jpu_g_fmt(struct file *file, void *priv, struct v4l2_format *=
+f)
+>  {
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+>         struct jpu_q_data *q_data;
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+> =20
+>         if (!v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type))
+>                 return -EINVAL;
+> @@ -902,8 +897,8 @@ static const struct v4l2_ctrl_ops jpu_ctrl_ops =3D {
+> =20
+>  static int jpu_streamon(struct file *file, void *priv, enum v4l2_buf_typ=
+e type)
+>  {
+> -       struct jpu_ctx *ctx =3D fh_to_ctx(priv);
+>         struct jpu_q_data *src_q_data, *dst_q_data, *orig, adj, *ref;
+> +       struct jpu_ctx *ctx =3D file_to_ctx(file);
+>         enum v4l2_buf_type adj_type;
+> =20
+>         src_q_data =3D jpu_get_q_data(ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPL=
+ANE);
+> @@ -1284,8 +1279,8 @@ static int jpu_open(struct file *file)
+> =20
+>  static int jpu_release(struct file *file)
+>  {
+> -       struct jpu *jpu =3D video_drvdata(file);
+>         struct jpu_ctx *ctx =3D file_to_ctx(file);
+> +       struct jpu *jpu =3D video_drvdata(file);
+> =20
+>         v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+>         v4l2_ctrl_handler_free(&ctx->ctrl_handler);
+>=20
+> --=20
+> 2.49.0
+>
 
