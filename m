@@ -1,80 +1,54 @@
-Return-Path: <linux-kernel+bounces-756099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B71B1AFFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2E4B1AFFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 10:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7903BC5F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AD218A0169
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 08:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3D824291C;
-	Tue,  5 Aug 2025 08:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD1A2459FB;
+	Tue,  5 Aug 2025 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C1QsGGua"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jXnhIbmc"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD95207669
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 08:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7071E868;
+	Tue,  5 Aug 2025 08:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380986; cv=none; b=NiHAqVSV33wAO+dNhc2RWKxhjQmjxaj4uzBo9EZOLd3FdlvsBcAIU4RWag6Wm7LWTNOQxBLMK/kEpnmiQCyrbxYC9B4TRR5vRufPUSoNEXkfj9A+VesBcA1/SjRBDhEo8LEPE5HjIN1v0AkMENZ3Y680YYjHhU+hd7uAWlrYZL0=
+	t=1754381314; cv=none; b=PpxrYuwBq6OBZosY+Vu1A9t7YCV7o5IYsUmtMiTt+eMDaSHFhORL1aotX78jl6lEQ+b+mz/JU2HWMaFQEv1hQCytOEQ22k4mwF9qA0Z++WuZzsWmKtF4jqp0kNM+FC3505CO5zel3XycYQW3kQ92ZtmVvoBfELtQ3s4rfDSQ1HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380986; c=relaxed/simple;
-	bh=oQm/ztvGyOGwifmduBh40jvKEHQI6Sw3B8DUIu9PyT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTjcfJcgzPuriDHnPCaWAnbh2PQnYfEkA3wqbZ1wJoZO8wmasTOtOehKUZ5+CpnkX6u4r8BdwUXfL1CdqFMj4O/ASUOwPvMOxhSuh00EObEvaOG4x5IfCF6YzmI4+DyOeBCKGE+aVG+WKS+ryT5MUOUFNdfrVUgWyEVyAXpjk98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C1QsGGua; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso4462679f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 01:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754380983; x=1754985783; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
-        b=C1QsGGuaE1kPauyh3rEGbMJmlC+dcymNyu73rtoXjAzwM16mSUfC+bwje98fAeBvb6
-         vRqIwRskVI1lnY6s1HrtJF2uLmJ/7ZRptLqethwttfrV2VJxHleuYE9DN+4HGuDqeNsy
-         kK1cWedA1jvYTm6ggYPrNhVb78yVCx81ygaX04BL7GSYj3KQG2gULBMNoNZ/RD9khliD
-         jzyoCgI/ABK5PXZRFxduAZ/FiKq7v4YM7JnE6BU67SC12Wm7a3kfl8Nk8/8z5nVEphM7
-         FbhR133nhmX7mIViIhL9nYufH0407PdX2v4AP1Oe7t+EA74+JmdMHTwTWE5UisXaWGko
-         GOIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380983; x=1754985783;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
-        b=bdW740RH0w31fIZcUfGbRsenkZR7ki1X/FgvMzJirsJ5cwiUPN32jqwBJ8HFGZd7cS
-         +FomjMxuHG8qYcgcJqeF6zTtanak4cbPUtej2ww5hiOT51loK3jGM/Uva+Sb8CioPTvU
-         EoUxc9ajkJZ1F/6JMk21emiR0j8aBZYYt+nqVgLSyGIOeGpJU5t3RVTEk9l27dQbcJ+k
-         pQKABOiQVG5Rv1fr75oNxfzKQMy5yXokm4bMvUZT0IrdU/85NvoN+uKZ/WBrGNrrNw5K
-         XnN4W8VTXGrc2DIZhVC82GK6YLNVsLk7yfBkjprG5dl42r8wTYdnhJC78oI3ap19v+mk
-         OguA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/kVF40R1FsVRMgptyrbrGi4Rce5dIfFt9YRG8DvpYzTSnTgD3y0cDUhcOn1ceqwn6iyIbao/bBplnGZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmuoJ5HiHB/QrKOMWAJwxPJ75PprmN2eStrdFFnvMc+RzGLldd
-	EbqvZLMeIPg8fI0RVKPPfzS+gmoog8Tsdds2SuOHuXq4M1fEOhpinm57tL3KQiG1kbI=
-X-Gm-Gg: ASbGncskOJZInqji9iWFZtaWF+Ac5lJMdTm3vFl7EV31hZcTqbewhuzcpmFOZWMmxdB
-	P/lS/3QUyODZmVjkx45oUg7c7w6zfhRcvzYdwPGhBJlrf9VQNne0CNkvKA9+OU7VHxOFRor0Sqr
-	SBxC2PxgNt6VlIyrqJQ58i6f6x0uGb4portcy7zknIsfjXSRMAd5EMjeysosJwCfUZugA/UhK65
-	4GJfpoQfyQN0thpRfXVVeimUHocM6z0a1fzaqrkscrGHsg/++AifGJP2A2r/T8qMD2hUCxOsXGa
-	fPi6nty4M4UEhYIRjzLxw3WJfpz5mFIqEuiGjuhJBz7bYU+vq1AjZ2BytG+GpeEkJtabz7D3ble
-	Snh/dMvw3ObMfruYl7PxygWJyrIRlIVbG6k4PHaWtg+hleKN7xw==
-X-Google-Smtp-Source: AGHT+IHMG6M7h+w11+BYMtMmX8WemVMsPXxcbMHZpgW5luIfhyB84aA+NcxV5dCTd4atZPw7v8raPg==
-X-Received: by 2002:a05:6000:4027:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b8d94720e7mr8536259f8f.17.1754380982575;
-        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b9159e00sm122794765e9.9.2025.08.05.01.03.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
-Message-ID: <3be6b1c2-4b54-4107-8bdd-67d5cbcff58c@suse.com>
-Date: Tue, 5 Aug 2025 11:03:00 +0300
+	s=arc-20240116; t=1754381314; c=relaxed/simple;
+	bh=Cf5zX3DlmIEAytbYhV40xHoSLQSNZGosi+ckput3C0Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=J5yNtSQY5QalNsChV0yTXIuOHr2utRHktgmOxlNYAEXsg+jDXqyFz4GBV9zG+9q2UjdcaITn38maArjU/tD0SBIN+tNiSljwCFbMOypC8jkBTwWGAH/4JmO735/+pVh19SWdXH61RDwMf2R4earwT8BwImA8Yh5IB5WPohiSgVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jXnhIbmc; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754381296; x=1754986096; i=markus.elfring@web.de;
+	bh=Cf5zX3DlmIEAytbYhV40xHoSLQSNZGosi+ckput3C0Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jXnhIbmc4Fo7CjO+ULyOwhLvEKuap66sVIJT6u1Ij4pFtQRAn+Ma9I5lwVsjTYPY
+	 z5dsKDi4MeyrJ8pZF9SlzMGFVKPa4XO5LzPw0UHeOBVz+0PNxVZlYNzWtPKjugmrM
+	 p41SD/zM2Ftgy4MHEwdFRteoKWy3/H5zFSZRKREw5Iv8C1Oa1e0769vrhMi5uMXAG
+	 Ewme0HzPaPY5YSz2Ycol5FqOp2wopaABIoUjD4w481c/uYYpqZ+w12zsEkmA54d4x
+	 WiG2tSsc3TBDiJhnt0RhlUpi34YihbM9rpfwQY+rHRYEabZXuK+oeXxksDUmbv/1W
+	 zz0qjcaDgtf4XUC1fA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.245]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2BHw-1ue8zO1P6U-0160Tq; Tue, 05
+ Aug 2025 10:08:16 +0200
+Message-ID: <c90910d8-a4e4-4238-95e7-9a2d052cf52f@web.de>
+Date: Tue, 5 Aug 2025 10:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,127 +56,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
-To: xiujianfeng <xiujianfeng@huawei.com>,
- Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
- dan.j.williams@intel.com
-References: <20250728111517.134116-1-nik.borisov@suse.com>
- <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
- <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
- <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
-Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Henry Martin <bsdhenryma@tencent.com>, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, netdev@vger.kernel.org
+Cc: tcs_robot@tencent.com, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ huntazhang@tencent.com, Jakub Kicinski <kuba@kernel.org>,
+ Jason Wang <jasowang@redhat.com>, jitxie@tencent.com, landonsun@tencent.com,
+ "Michael S. Tsirkin" <mst@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Stefano Garzarella <sgarzare@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+References: <20250805051009.1766587-1-tcs_kernel@tencent.com>
+Subject: Re: [PATCH] VSOCK: fix Information Leak in
+ virtio_transport_shutdown()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250805051009.1766587-1-tcs_kernel@tencent.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PN7V6S5zSAmhkQy0TjSOPo+L2ivD5X8OWzYIliPIEYcG0Cw0Yft
+ nKuFjAUwNgHZa6CfikIcd9DbVnMxk1/J+vh1ameXEcjYTYN6Ldjw0PpRnPRGGvkr3aTBTmN
+ W44gUxvKqD76LvcvKiCcnrJLd28+uo3BX0+zNZPy2gN00OOuo35eLJlt8cS+BLXRQlEJwK3
+ mSjOCfw5Zqh1Pm+lkY62A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2NcbyRpYDdE=;etC1pI//OULfYjX2q8PEYgkLL7R
+ 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
+ 1Q==
 
+> The `struct virtio_vsock_pkt_info` is declared on the stack but only
+> partially initialized (only `op`, `flags`, and `vsk` are set)
+=E2=80=A6
 
+See also once more:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n94
 
-On 8/5/25 09:57, xiujianfeng wrote:
-> 
-> 
-> On 2025/7/29 20:25, Nikolay Borisov wrote:
->>
->>
->> On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
->>> Hi Nikolay,
->>>
->>> Thanks for you patch.
->>>
->>> Quoting Kees [1], Lockdown is "about creating a bright line between
->>> uid-0 and ring-0".
->>>
->>> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
->>> be activated independently. I fear this would lead to a false sense of
->>> security, locking one reason alone often permits Lockdown restrictions
->>> bypass. i.e enforcing kernel module signature verification but not
->>> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
->>> used to disable the module signature enforcement.
->>>
->>> If one wants to restrict accesses to `/dev/mem`,
->>> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
->>>
->>> My understanding of your problem is that this locks too much for your
->>> usecase and you want to restrict reasons of Lockdown independently in
->>> case it has not been enabled in "integrity" mode by default ?
->>>
->>> Can you elaborate more on the usecases for COCO ?
->>
->> Initially this patchset was supposed to allow us selectively disable
->> /dev/iomem access in a CoCo context [0]. As evident from Dan's initial
->> response that point pretty much became moot as the issue was fixed in a
->> different way. However, later [1] he came back and said that actually
->> this patch could be useful in a similar context. So This v2 is
->> essentially following up on that.
-> 
-> Hi Nikolay,
-> 
-> I share a similar view with Nicolas, namely that using a bitmap
-> implementation would compromise the goal of Lockdown.
-> 
-> After reading the threads below, I understand you aim is to block user
-> access to /dev/mem, but without having Lockdown integrity mode enabled
-> to block other reasons, right? How about using BPF LSM? It seems it
-> could address your requirements.
-> 
+Would a summary phrase like =E2=80=9CPrevent information leak in virtio_tr=
+ansport_shutdown()=E2=80=9D
+be nicer?
 
-Well the use case that my change allows  (barring the original issue) is 
-say if someone wants LOCKDOWN_INTEGRITY_MAX + 1 or 2 things from the 
-CONFIDENTIALY_MAX level.
-
->>
->>
->> [0]
->> https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
->>
->> [1]
->> https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
->>
->> <snip>
-
+Regards,
+Markus
 
