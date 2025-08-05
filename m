@@ -1,151 +1,112 @@
-Return-Path: <linux-kernel+bounces-755796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A442B1ABE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5886B1ABEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 03:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4CC6211C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8645318A21E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E5E1917FB;
-	Tue,  5 Aug 2025 01:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8C3341AA;
+	Tue,  5 Aug 2025 01:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OCj9KBCa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aJZ+NV3H"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E4F341AA;
-	Tue,  5 Aug 2025 01:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201BF189919
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 01:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754356119; cv=none; b=SAGJLrfncqhISXD08GaJubcr4KWtP5+HjXhWxmmcNUF9rXGqpiLWFKJd7NxGStTJYWqph9kjLMWQyByN82WF7cKGRP0Zc5+nOP/wipkpUl+fGm900vmcMAz6H1VPu9B0yeERG34Wz0pwkF/6N0Q4ezF+mpNRcHi2FlEKneyRUC8=
+	t=1754356368; cv=none; b=U5dKiem7nmFZZ0Ua4RjeYQf6vnIId5u5YYnbsbgB8vilW/vRr7LFYvYwlHqyzKEYmGCCCrZXLFZnINGye79A9jJBmplxT55iwoY3+T64Xi3fSCA8bbEJknhpBpT7jbXcfZzIpa+i4qMeBrQEQ6UhluAWSjReJ8WIBT8A7Hf2RXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754356119; c=relaxed/simple;
-	bh=HRK77S8jj98fxjdYajHbsWPldKElX/RjHec2I/UjYD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTD1KqpnREIXFI+7tiainN1HWCqeEbccgwIUZC6hUYtct2acX2VRJzU4WlFq3T+wqanwpiSlerS9cmIjM/U0pYABg2IrrjXQQi98gAOilBv4IGL1XQ/RfK4oQBjC7Jl7T7x0KGKxcAnsdsipNvDyrB/kUVVcyEsBRF5acyBUPnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OCj9KBCa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8AEC31775;
-	Tue,  5 Aug 2025 03:07:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754356068;
-	bh=HRK77S8jj98fxjdYajHbsWPldKElX/RjHec2I/UjYD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OCj9KBCayppPj1P1bSZyw8bSVTMcSmTyEs7pPkLC/y9oSKN/RiCxM8DHX8xHF9DT1
-	 ntGfR6Rm6AFub/qKEuhdfR5QYghYPJ8KWEhDSF0ISH5hAgdzYKN8xJvh/layVF1/l/
-	 Gr39JmEt0BsUqq/TJQI/06JcyIwuTYunZ8StyC3I=
-Date: Tue, 5 Aug 2025 04:08:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Alice Yuan <alice.yuan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Zhipeng Wang <zhipeng.wang_1@nxp.com>
-Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
-Message-ID: <20250805010822.GC24627@pendragon.ideasonboard.com>
-References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
+	s=arc-20240116; t=1754356368; c=relaxed/simple;
+	bh=IssW0J3YfD78mQWKfR9piPho3y+18KHinlVGttUM0Gw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g+xP8m8vJCM264xmOk3GE79cPZc3zz1G0PHc9p/84pdFXh8o26la5B2znkf5dm5tMDa7ZqYUK4lw2SaZcNshLPQkdjaeWxWTTRRaKm66Ehdu2CmYbo2AQacqKNcjNnYYskKN2tZm8wopNu6IDRZZ81gTM3XCdPlxIFzv0FZChR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aJZ+NV3H; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso211371cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754356366; x=1754961166; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1THODX6cXrJgsKrzLiWdmBkVFsg+xvhr1Laebx33cFU=;
+        b=aJZ+NV3HrSkt8c0tQsnoWSbrv4Pb4Qt1ZctV0lkpUdWwzTM+25T0J4mH6ojyK5fAbi
+         e+2p9MAAd4EYOB5AzAryHYPhwR5P8PsWEYRhIJhhaXV5WKkayV3N0k6KJypp9EYrjUTD
+         7kLIpGcZ60mo9NamEGYJ2C3ncGPT2H6LZLtSffX9blrzGTgFjGVW+T+Xqn2UTOHzwOwQ
+         BzqeMBOfs/rvSkWKo1opkMMq2lOBcGKtOm91YlMBlELunM/rZjWKa1J5vapkmF3mm978
+         +P4g1IsyEuodX54Ay9EUQAPStPJmF/gBh6Z7X7DRWMiV186yGq6mTMl65j9YekxsoT+P
+         Vx7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754356366; x=1754961166;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1THODX6cXrJgsKrzLiWdmBkVFsg+xvhr1Laebx33cFU=;
+        b=rfAf44zhYlInszEwP1Ou0QmvwPujNfrcJKOheZlLGpCZkx150nM2eGudEY/RNkaOhy
+         nbI01O1AxrCRbQHRyXPZJhWbWi3fi08DjQAROpV5NSxtsSRcm1+Rhpbj1gHK8b7HZtXF
+         ykWrCslAO8b/cVqmSdajRSFvppiOlV1SAz6Ji0Lt9P+72kxBE6PZ9byUjpTa0wxXsPbk
+         1nwRctyp/1MPq9Al4nik3YQjNsMzp2oHhhNK/Q+ieZDym6e1GrmM5DJ4zmH9huTteyga
+         NRE05eKabVm83Khm+a9VyFAtIGkhnwqejpBqxQLmOVgp9r8kjtyYzX4Un+1RXg0RH90H
+         PWGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVns49WVyre3IMIh9/NkqMzvj9nZzHQYFOcm1bLQ3qAs3RIiljearaSkloRGGe7ernN0gbwfy8mNTzYb0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLgHpao8Tj9EtVKGzD4p7R6xwqfXI20vTuM3iguU8jzs+MKl4V
+	Q6jWHSThTH7b4H7ghxcq/FuRygDvw7knjdkQGrmn0NOJVRiV3X7EnW8D4zxIUZCi9MtR0RI2kVH
+	e9agba76qKDoUh0YeIR2EIl9w2rI8YWdrJDDP+Jps
+X-Gm-Gg: ASbGncuCQqRKZuE/U8v7VqQ8VOFtctjXlJum2ohBZ/upGK+voS8uAMGgPRwLn+FRCJb
+	fjjgH26868cWBt/UmZI6rhwKxtyzdKuG4HBplEMyFknuFOdb6ZyuxXYOQDn0SOdYcTlq+WmKf9j
+	1h3deMLd3njiiyIfcspasIi8eiAOTQqOCPYGJxs++RaxW5e+EvxckqX3cqa2cgtsQwE0mxWWAZG
+	QgmXbKAavtsDsSS
+X-Google-Smtp-Source: AGHT+IEyQD2Cezy8/wkC7XfHIjoY6NUMH1DmfY+dK1PsKlX8IdWynIH9pDg2WV4yx3/wQ4+hxzBWtv2hVfDrwdNcDnI=
+X-Received: by 2002:a05:622a:180b:b0:497:75b6:e542 with SMTP id
+ d75a77b69052e-4b084f11753mr397691cf.10.1754356365735; Mon, 04 Aug 2025
+ 18:12:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
+References: <20250730032312.167062-1-yubowen8@huawei.com> <20250730032312.167062-3-yubowen8@huawei.com>
+ <20250730063930.cercfcpjwnfbnskj@vireshk-i7> <CAFivqmLkLn-92rMow+c7iEADCdh3-DEapVmtB_Qwk1a2JrwwWw@mail.gmail.com>
+ <9041c44e-b81a-879d-90cd-3ad0e8992c6c@hisilicon.com> <CAFivqmLr_0BDkMhD4o6box3k9ouKek8pnY7aHX36h1Q9TaT_HA@mail.gmail.com>
+ <7a9030d0-e758-4d11-11aa-d694edaa79a0@hisilicon.com>
+In-Reply-To: <7a9030d0-e758-4d11-11aa-d694edaa79a0@hisilicon.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Mon, 4 Aug 2025 18:12:34 -0700
+X-Gm-Features: Ac12FXy9xyakfz6nU1zTVwjcHt0kVuVHngyBTkjBFJgF_Kl_APh9mesLw2n5bqQ
+Message-ID: <CAFivqmJyYJ+d+TH4qYBKf_5t-AqWZuzgk2H_4nHmynTjoUHnYQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in cppc_scale_freq_workfn()
+To: Jie Zhan <zhanjie9@hisilicon.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Bowen Yu <yubowen8@huawei.com>, rafael@kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, lihuisong@huawei.com, zhenglifeng1@huawei.com, 
+	Beata Michalska <beata.michalska@arm.com>, Ionela Voinescu <ionela.voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Frank,
+On Sun, 3 Aug 2025 at 23:21, Jie Zhan <zhanjie9@hisilicon.com> wrote
+> On 01/08/2025 16:58, Prashant Malani wrote:
+> > This begs the question: why is this work function being scheduled
+> > for CPUs that are in reset or offline/powered-down at all?
+> > IANAE but it sounds like it would be better to add logic to ensure this
+> > work function doesn't get scheduled/executed for CPUs that
+> > are truly offline/powered-down or in reset.
+> Yeah good question.  We may discuss that on your thread.
 
-Thank you for the patches.
+OK.
+Quickly looking around, it sounds having in the CPPC tick function [1]
+might be a better option (one probably doesn't want to lift it beyond the
+CPPC layer, since other drivers might have different behaviour).
+One can add a cpu_online/cpu_enabled check there.
 
-I've quite busy these days, and I don't believe I will have time to
-review this series before coming back from OSS Europe at the beginning
-of September. Let's see if anyone on CC could volunteer.
-
-On Tue, Jul 29, 2025 at 12:06:21PM -0400, Frank Li wrote:
-> Add parallel camera support for i.MX8 chips.
-> 
-> The below patch to add new format support to test ov5640 sensor
->    media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
-> 
-> The bindings and driver for parallel CSI
->    dt-bindings: media: add i.MX parallel csi support
->    media: nxp: add V4L2 subdev driver for parallel CSI
-> 
-> DTS part need depend on previous MIPI CSI patches.
->   https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
-> 
->   arm64: dts: imx8: add parellel csi nodes
->   arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Changes in v4:
-> - remove imx93 driver support since have not camera sensor module to do test now.
->   Add it later
-> - Add new patch
->   media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
-> - See each patche's change log for detail.
-> - Link to v3: https://lore.kernel.org/r/20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com
-> 
-> Changes in v3:
-> - replace CSI with CPI.
-> - detail change see each patch's change logs
-> - Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
-> 
-> Changes in v2:
-> - remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
->   because pcif controller convert 2x8 to 1x16 to match isi's input
-> - rename comaptible string to fsl,imx8qxp-pcif
-> - See each patches's change log for detail
-> - Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
-> 
-> ---
-> Alice Yuan (2):
->       dt-bindings: media: add i.MX parallel CPI support
->       media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
-> 
-> Frank Li (3):
->       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
->       arm64: dts: imx8: add camera parallel interface (CPI) node
->       arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> 
->  .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 ++++
->  MAINTAINERS                                        |   2 +
->  arch/arm64/boot/dts/freescale/Makefile             |   3 +
->  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
->  .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  83 +++
->  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
->  drivers/media/platform/nxp/Kconfig                 |  11 +
->  drivers/media/platform/nxp/Makefile                |   1 +
->  drivers/media/platform/nxp/imx-parallel-cpi.c      | 728 +++++++++++++++++++++
->  include/media/v4l2-common.h                        |  30 +
->  10 files changed, 1024 insertions(+)
-> ---
-> base-commit: 37a294c6211bea9deb14bedd2dcce498935cbd4e
-> change-id: 20250626-imx8qxp_pcam-d851238343c3
+[1] https://elixir.bootlin.com/linux/v6.16/source/include/linux/cpumask.h#L1233
 
 -- 
-Regards,
-
-Laurent Pinchart
+-Prashant
 
