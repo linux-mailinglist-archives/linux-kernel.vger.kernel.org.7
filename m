@@ -1,187 +1,142 @@
-Return-Path: <linux-kernel+bounces-756430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E38B1B3DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:57:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACE3B1B3DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8439D7AB060
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F4F179E5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 12:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC927147D;
-	Tue,  5 Aug 2025 12:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4E72727E9;
+	Tue,  5 Aug 2025 12:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mGMwyyrn"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjqhAvNu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761172264DB;
-	Tue,  5 Aug 2025 12:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754398608; cv=fail; b=khGnLUX+9kFYj8VxGhzI139H0L6hFBia5pP8vgu4tA6/VkYgzaCE8YOsvSGbLmtvgzTM6AwpWD7fCAd+Uk/wOj4eTD7hpifG6fTIGZ3j359KUkG1lvmLRQJPK0Mlze2kqnFiMGKL0KB6b+0rN9n5aSXvNbnRhETGXcOv1W8SWKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754398608; c=relaxed/simple;
-	bh=o4Gk0VIkI+GjVLBdfXRrI2iWoYBv0vqItNRuIvw2MB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tUJxzpAlhOJ+pbYW+P3TwaA+90kNeO0pxl7GKjngDrLKMoCkb3+Iy3rHhvtig6VkRIwQs4gl+nXk1WwYOMbJpO9CDz4Me7edCJKQ8ZTvcL1mP938JBcM/piwt8uOTnbdXPrIXRTMd+M+m+0fPOlnwGPvCpP+DVMWclIytb8AnDI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mGMwyyrn; arc=fail smtp.client-ip=40.107.93.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WWYkAK8gJDTN9hCwYq0/O1x7D81KTZQ6hBl8h4QcGPq4ub8DMdemRCTumf96e8qUk6mkM2KXGnHZjqf7n4pctqGK5UnjFhWyr73PbFwOMV+C3kNL3dBHICCGymIMLSgfRa6l0yIKTU9ZWIvOoL6+RTwwn0AgvPQbxx9G3yg8zPA0gLXsTZTAp+y7DS/msnM8POHWbo+p0xVnNJwdz4vSB+xITluAIK5K52dkkAPLgT/TEve/ElyPMQcVu5R3v8O56SlfABTeOn7v+ppTnXbQHzL91wFJv1lxcacin6dez4nwmiXqumKQkreqX5Z84meOuPPhmCr9yQjHtIvQQmbweA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S2uaVV+TTu5pFGSwsNlD82BKS97YA4icw22fCfszKQI=;
- b=JFNyZK9SymuKsVYGgmTuWALEd+PjKaK13mb+RFE32NykLFnhzS69iY8uJ8zYfSazWwRXFDeeAF77S/zohfX8BL0PF/xkID8oCKOy689cgBvLE/BKfZQHeK1LotvvkNo2cXqi6KQ9M/edaGv3oJOrjGg0H/gypiDLQI4VG+K6cMR7oREanhPMa3Nip8RW+Voryq3DyqHITGxst0B4tA+RyZtC3CjQDXU1LqoUJcmyjnpybvbWApjpeGxdfU16YcHb4MAihsmmP/DKtyO+VUOoFCYAm++EhdUv18TRW8zao8meEgaVZ5vlGQF4n3JNPCNmSIa37/Q2p+DvlYgjovT32g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S2uaVV+TTu5pFGSwsNlD82BKS97YA4icw22fCfszKQI=;
- b=mGMwyyrnO36Ed+dbMCpEWhVu3SRR/Uldm0cv3vYfozZbGajIu+RblAY9TMzfjmHEpdeWR9b3tf//F/LMZxH7l5FqVSxKYgi20w/jxsaVFJVmx3dU8gisvZi4pfAdFc4xFeXYaaC0xdgCq6zxmz1jG9wITXNzAIWti0zHr8z4B5EUfU6VwqXtkLdqo9pc+3wylzuM8XsPqcHE9JCmPgJlCm7kbwSzlhkijKMi+HPOPFXvEBNDULM3qQIyzhiolGK1ft8n2X/OnD/iltl8KtgZGy2yY6WkJAf87/oxzK3yG+Qllt7T8Da0jNo5XzdakCUhdUuieU8O3v1jv8w3EgcYGQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS2PR12MB9591.namprd12.prod.outlook.com (2603:10b6:8:27c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.22; Tue, 5 Aug
- 2025 12:56:44 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
- 12:56:44 +0000
-Date: Tue, 5 Aug 2025 09:56:43 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-Message-ID: <20250805125643.GK184255@nvidia.com>
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com>
- <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
- <20250805114908.GE184255@nvidia.com>
- <9b447a66-7dcb-442b-9d45-f0b14688aa8c@redhat.com>
- <20250805123858.GJ184255@nvidia.com>
- <db30f547-ba98-490c-aaf7-6b141bb1b52a@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db30f547-ba98-490c-aaf7-6b141bb1b52a@redhat.com>
-X-ClientProxiedBy: YT1PR01CA0038.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2e::7) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79CC241103;
+	Tue,  5 Aug 2025 12:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754398651; cv=none; b=CGniy4r85S7XlTPkMapU514Vjr8WZj2qhM8SDSyW/Pzvcl/oHcq/zgaRovy5c5nIFEteeK0eqV9CQdjelsW59f9Ci/ajG/3ZKerHBuWKERtEhZheYSmbxxBerMzsnYmHqmcFcHDyyP/E95KdbNcm5BTGqt8Onb5dHOXjOdsojiM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754398651; c=relaxed/simple;
+	bh=/Q154M5fKuJcthmk/dvqUU0hQH0vyCaiY74Qs2fJRZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJg7HY0L2t20+4c6D7xyHenR5a7YtDuq59nWg5ePt09SD06X4pBA4ArR5L5JQtCAlPRBxO0+sC5yLc73o3kMHwhjWvJR11PYfenDhgWqYjLDnXpgyr5m0OJyQv3vOQfu2sYlO9fTW5HH5/Todh66FHWJ2nd42asbeAkAXgKrmEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjqhAvNu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66C49C4CEF7;
+	Tue,  5 Aug 2025 12:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754398651;
+	bh=/Q154M5fKuJcthmk/dvqUU0hQH0vyCaiY74Qs2fJRZE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fjqhAvNu6oOujJJPY0OdviGQKVb3TNu2d//ilddXsZp4FBOBpAtlYXxGw98C+HxHZ
+	 wKhSDzHsXGDcAXRIbL5n6A4fx8LiwVsOKGFY9D4AQvVwvQZZdFyTgZiGXVUIqAs65Y
+	 k83ET/LcdINebn86n086KqwVlSvNq3dlZ/XNebjrSJ7NllWqnb8RS4YW/ByjeTCqeW
+	 KUaa9pk9HOhCvyqM3T2Iq9qsFWcHzRsRaZpweEx8BhDYpQyFbAV9bGgAAy5YlxBxJS
+	 gEIcPDRacEaq8xsP/Av7AIivlNiN8aF5yS8BAYZbUxqFqxPZVBTG1QyCK2h5IteTMs
+	 bxA1qDKsW9zMQ==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-30b7448b777so2142617fac.0;
+        Tue, 05 Aug 2025 05:57:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsTc8ZI8IbyRA+BtZdTUVW6J0DYyUaPVNr03ozSWIJO7uwxxTPSmB/ElS7Mc08HTkhS3FX4Jjhz3/EEcY=@vger.kernel.org, AJvYcCV2LtwtxPDAoP8kG2o97xp6AAxTMVyLZNY/lDwdKl3aTWdTN0ijFxnA1it9O0y8NPJI9dGCYgbBKcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn7yXYNR5tq28nm86Kvjgr24YEnAKXId8a2BC6j5UEyF4rBRt2
+	ZyI75sTKo15+jhuWV5mXMyu+Z6QOCxzZfbs/+/QmufXqetKwzs32YAYne9FwIhGnAZ8559kJBVR
+	icURVO2Z8zQrsgoK8H01gtCS+Awq5fpY=
+X-Google-Smtp-Source: AGHT+IFPAZyhywgLQvoskIOmz2VU+10EYz63YwRwlyu84oAH2UchHeV7tpu0Rg/EeQb9g6axbf5sa7qF+zrfyTHq6AA=
+X-Received: by 2002:a05:6870:b001:b0:2ff:9224:b1c8 with SMTP id
+ 586e51a60fabf-30b67a46c62mr7931975fac.36.1754398650648; Tue, 05 Aug 2025
+ 05:57:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS2PR12MB9591:EE_
-X-MS-Office365-Filtering-Correlation-Id: c95fddb1-d656-48db-655a-08ddd41f87e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sSOk6KmqOi0xZ/TXgRKLGBjqOwhVPkLFwFKemCDo5Or6ZSE+FmZxd0RoDrXu?=
- =?us-ascii?Q?L+d5i4usoM3Apia3q7NiKS6u3rUu65WUojOAL0b4pqoP9Q1ZzWEwUGtBxzEi?=
- =?us-ascii?Q?ZTclJJT+RyasEar7kbJHPEB82w8g7OxIPPhqFIAQ5MWsESN21sw++SaClS1m?=
- =?us-ascii?Q?9oMH3E/Dig9Gs3aFJznIwhXb20oAWAAsL7r7J/c5eeGChfn8gocZW2LLb/ad?=
- =?us-ascii?Q?uGDbMcCF8rCPa58V4GGkdjV9YkhcSQs+euT539NLrs8JJ+9BMuuJZaPyYMnX?=
- =?us-ascii?Q?5QvI6EUf4ym27yKLpEHxkdCzKa2NYqQOFCj8Q1AD7saVMQ5BGqiTh+sxglxw?=
- =?us-ascii?Q?x3RmGfBbE8uxt3U+0oymnGZLbUCs9wJUApw0cXuwR+ZhkptwqsSNE8S+envG?=
- =?us-ascii?Q?7NQbZ+3jQLF9pZycjmLz0SorZ0MuwQSWmdGdLrE/uTlyDHto6VTIyCNkFgyf?=
- =?us-ascii?Q?xkJmB1VRQqZA5MReybkqZEXuhK089svSni4bc4faRnFoizaVbNlt1myIVWZL?=
- =?us-ascii?Q?E/JOoJmzBpNR2SHOSCVUbcglJJ3P8Bqdvax/hPU9J0uaeNXE4bZ4N1qvNr7L?=
- =?us-ascii?Q?fHChtxXozBQj8Fbmb7lcBr3P0pcvlVf/5R9liNHpOECONNmeFiuOsPMx4J74?=
- =?us-ascii?Q?lV9uphHdQ8GE0pDL7bUEtZQdFJpLgnkTBIxv2K/aJwwrbYQwPdn/4U29Rl6B?=
- =?us-ascii?Q?9Pe8OuQ/Fi/H3hUnanYBINb0KsSbeTEUw3uSTG5qRW2le0P1j4bBZsE+FLPB?=
- =?us-ascii?Q?fS4Jx7NnRi3shDsMmS2qN0ii33zkjBk+eNPcn0w6SkgLm8qfK3tiDPwbtqr2?=
- =?us-ascii?Q?iidpthq8j6vFADYEXF/hZ5mH5eCLf2oZs0Nqp2jgjmbKHZqazQpIPefPONQx?=
- =?us-ascii?Q?nDgn+R8ssjmu2mw+3gAZn4HNv1DPT9hEnXsBRItyFMKwPnkm/Ughyr3+Hxw5?=
- =?us-ascii?Q?zSsSZrqeHKayb1I5Scgs6MVIx0NImjAiMFSmIxgA6a5NImaWE4JbQUDaKkmF?=
- =?us-ascii?Q?r5z3l1ILYl015TZDee1rNxLo0S109FZm94oA5Tr9TtFEv30ja+5LUR/wfBaj?=
- =?us-ascii?Q?epdUYYONx0gguDzehgL0HLMMLftV1GFWfj0xO4RCGIrxjVUQi9ziJAittIYk?=
- =?us-ascii?Q?xsld1ipAlQ2A3vDAzp+JO8iWO6zhQ2zDJwIdrPli/ZbVFxWfQiMOnvW9Z6TG?=
- =?us-ascii?Q?hf86B3qMFuQWO7gLy8KRdMsGF0mt5hLLMbqnOemuSxs+5NZQMsDggvXSIubn?=
- =?us-ascii?Q?qnvw/AZjqR7cYMWtfpNUcSgaWQSoFXS3zH7ts77oez+loYaK5M3g8DBKJLSN?=
- =?us-ascii?Q?/bvQn0FEjciVGSQW+I3de47dKhq6Ezbb8fz+kJtwnucWJaADbVoq/k1IySwE?=
- =?us-ascii?Q?4Yr/z19yFgaiTb02Mu4Vb7vzQhhtNfMlBNk2Kic3hLB6XVvYSA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HZ8KIdGFrihR1N0K+zy83fT84e9Af2f4MT2G4Hk6Y0EK2Y3FLVGPBANY13wR?=
- =?us-ascii?Q?5W0fORrHLK1IWmUamWMcYWeUEl+/wKLWFXxIImgmUDfdKNZYFPffGVrWsBEb?=
- =?us-ascii?Q?a7PcH7Z5bLcS4YZQFCQXK7iUSbYXZln6OqTkiLSz2ZCOBwrRTSUX4R8nONR4?=
- =?us-ascii?Q?OUP8/QpIGY1t1KrxnbfDHB/acScQ4NKD+AOxIj0AQN7ewyYl7FXHZzlir6Jg?=
- =?us-ascii?Q?6YEcxlfLtr9/BD58fr6Pumh2hrxCERzOwAhKwurUUCwqRrHjf/++DgV4VE/9?=
- =?us-ascii?Q?oEjSUie/8S6B10fz4GHqu+CYvu4tn7Vl1XhZGPaJ95t2LTBKj5UBVkdTXvn1?=
- =?us-ascii?Q?uSODrNniR1R9E7iihWAusYIvuCg2QtZYwebc8To4jdASHnF6N+E/EPqQL/gb?=
- =?us-ascii?Q?ZJ/WUfZobuZ+VxPEDTj3P3ICporUPNAE1RDeOzBz/X43qFcq/QWp6yj9737/?=
- =?us-ascii?Q?mp4KRXqHaYh+AiUp7fq2XuiXnYRkGEwHqif4EXeWGARBtgsIXtWthjmLbcMT?=
- =?us-ascii?Q?UaBKZKYWFtGImxLcjY1/qhktSV8ulvorJt9DEMujOWoIg2VIVgaYpBiJpsmR?=
- =?us-ascii?Q?IfKbTTLOKR4WWKk4lcz+FkFoWhdC86pppf5iZBZntvFhOAibTtQIZ1ose9iz?=
- =?us-ascii?Q?ZaDb304PT+ItxrUTqKhHpKmGAteSUI2b3Zb/CLyDxNQlnlXcvc/mk2FYSwoq?=
- =?us-ascii?Q?nq/3jD6io5AUPc6qCksKbe5VWXL1c8VseTBzTSfY7LCIA676mW5W5f20pM9+?=
- =?us-ascii?Q?24APOrnQDxtAmk3LuNGd4smDPhKnprsQTZ+wluHLf4Q4XPQ37FFCvwMAjjMP?=
- =?us-ascii?Q?N9/qxg0w4Xsb4JNrpTM3VeDpzwBtZIgBC0ciKi05XhYQDGjvnIcHVXdzFB79?=
- =?us-ascii?Q?vFmpgq/2IgeVk+E81I6h8FeDBvziN/2GJLVIABtty4+dGiewCoveI0jMTv3P?=
- =?us-ascii?Q?YslcATl+j0zGmc5L6TlgSoOGdFxF6qOGErVoS54XucWaGUp5cqOO81/EgZgB?=
- =?us-ascii?Q?4LB1VNxeDWgzcBa7qVxXqX1zuXpZSuSGYZGPRl059yyFyuOn1Xj7U+kW+hFj?=
- =?us-ascii?Q?w5WoDyPL61Kq3/Kgfje1OpQQlOKQFMpbEa7TrxAiNccnenAaxuzPJJ8bplGB?=
- =?us-ascii?Q?7EMuLndprg0mzjRLpdc2Wpx7FblJNtWTQpS6Qgpon8wXZXzxojKyi6MBK9JT?=
- =?us-ascii?Q?LRYHS7R7HHwcVGDgbico9cAjBYoIPPbH5K2FcVmi0kI+jOYzrDvg7zIyYE7r?=
- =?us-ascii?Q?vJCCG7m3hQ7tZZQ4jYl2YtNN4uD87I6nDl81z86+vTEQALyRfjtiDgRif0dB?=
- =?us-ascii?Q?AXVpHOMxp8MFdgsmMj8kPI7F8hb/XYVVENFO4S4YdF1N0p6g+bTC/LI7Zq0n?=
- =?us-ascii?Q?oHZNAg0x7y/HV82TQ/GcticPbhryChgqvxLGvdXm/DelsYd+3tSrVQpPBA/Y?=
- =?us-ascii?Q?Qw1/fcHGMjlWsT2JPDpA1z8Yysl/2BKVxBooRdT4e/pst2917/B6VESmn86R?=
- =?us-ascii?Q?E7oYfaWSbssOoLt1A8nr1KvECejgafyiZ1sheRQT7F+C/NrZay3TUi8gpjY3?=
- =?us-ascii?Q?xbFF2YSME6UrOTq/HKQ=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c95fddb1-d656-48db-655a-08ddd41f87e9
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 12:56:44.7023
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6zJsd227fFkNRUT4KGhlHNwAZMBDsrZZ97g1a/Jz6IvcDgXE/jpw7sj1GrjH/5j2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9591
+References: <20250805093330.3715444-1-zhenglifeng1@huawei.com> <20250805093330.3715444-3-zhenglifeng1@huawei.com>
+In-Reply-To: <20250805093330.3715444-3-zhenglifeng1@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Aug 2025 14:57:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h3XKXAGHSrx50vt1Aho3uchiJ2kjQa7qCM8jCr03YKTA@mail.gmail.com>
+X-Gm-Features: Ac12FXz_6f4R8OhJ2KEpzWPYtfA52SizmFoqZrcEiv1xQxt4mcznPwed7XSItvs
+Message-ID: <CAJZ5v0h3XKXAGHSrx50vt1Aho3uchiJ2kjQa7qCM8jCr03YKTA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] cpufreq: Add a new function to get cpufreq policy
+ without checking if the CPU is online
+To: Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rafael@kernel.org, 
+	viresh.kumar@linaro.org, beata.michalska@arm.com, sudeep.holla@arm.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, vincent.guittot@linaro.org, 
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com, lihuisong@huawei.com, 
+	yubowen8@huawei.com, linhongye@h-partners.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 05, 2025 at 02:41:38PM +0200, David Hildenbrand wrote:
-> On 05.08.25 14:38, Jason Gunthorpe wrote:
-> > On Tue, Aug 05, 2025 at 02:07:49PM +0200, David Hildenbrand wrote:
-> > > I don't see an easy way to guarantee that. E.g., populate_section_memmap
-> > > really just does a kvmalloc_node() and
-> > > __populate_section_memmap()->memmap_alloc() a memblock_alloc().
-> > 
-> > Well, it is really easy, if you do the kvmalloc_node and you get the
-> > single unwanted struct page value, then call it again and free the
-> > first one. The second call is guarenteed to not return the unwanted
-> > value because the first call has it allocated.
-> 
-> So you want to walk all existing sections to check that? :)
+On Tue, Aug 5, 2025 at 11:34=E2=80=AFAM Lifeng Zheng <zhenglifeng1@huawei.c=
+om> wrote:
+>
+> cpufreq_cpu_get_raw() gets cpufreq policy only if the CPU is in
+> policy->cpus mask, which means the CPU is already online. But in some
+> cases, the policy is needed before the CPU is added to cpus mask. Add a
+> function to get the policy in these cases.
+>
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 11 +++++++++++
+>  include/linux/cpufreq.h   |  1 +
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index fc7eace8b65b..2de76a072893 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -198,6 +198,17 @@ struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned =
+int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw);
+>
+> +struct cpufreq_policy *cpufreq_cpu_get_raw_no_check(unsigned int cpu)
 
-We don't need to walk, compute the page-1 and carefully run that
-through page_to_pfn algorithm.
+This is not a particularly nice name.  Maybe call it cpufreq_cpu_policy()?
 
-> That's the kind of approach I would describe with the words Linus used.
+> +{
+> +       struct cpufreq_policy *policy =3D per_cpu(cpufreq_cpu_data, cpu);
+> +
+> +       if (policy)
+> +               return policy;
+> +
+> +       return NULL;
 
-Its some small boot time nastyness, we do this all the time messing up
-the slow path so the fast paths can be simple
+This could just be a one-liner with this statement in the function body:
 
-Jason
- 
+  return per_cpu(cpufreq_cpu_data, cpu);
+
+Can't it?
+
+In which case it can be called in all places reading cpufreq_cpu_data
+for a given CPU.
+
+> +}
+> +EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw_no_check);
+> +
+>  unsigned int cpufreq_generic_get(unsigned int cpu)
+>  {
+>         struct cpufreq_policy *policy =3D cpufreq_cpu_get_raw(cpu);
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index 95f3807c8c55..02ad8173dc10 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -205,6 +205,7 @@ struct cpufreq_freqs {
+>
+>  #ifdef CONFIG_CPU_FREQ
+>  struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu);
+> +struct cpufreq_policy *cpufreq_cpu_get_raw_no_check(unsigned int cpu);
+>  struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu);
+>  void cpufreq_cpu_put(struct cpufreq_policy *policy);
+>  #else
+> --
 
