@@ -1,287 +1,138 @@
-Return-Path: <linux-kernel+bounces-756213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97DBB1B143
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60752B1B108
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 11:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C1697AE965
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B50216EC81
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 09:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3926E16C;
-	Tue,  5 Aug 2025 09:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCAC25A2D2;
+	Tue,  5 Aug 2025 09:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="GJ2ytIwv";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="aVVZmfBJ"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hPJBcL5A"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347B8134AC;
-	Tue,  5 Aug 2025 09:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754386510; cv=pass; b=XItjcH+YSs+O/EVMy3YJAR5BwbXTaAAHiOV35vPjEdIPDVxiUbz2kdnr64JsVYc2CTRkA1kYjppjSFVZi8I0+RoDQWE7uJi9LsSMbYrobWX75/X9EnDCcHtuLbRpVRMBkZeil/8HePABh3Wgx+3RWEuXRGx9sSPQAHiy+Sa7j1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754386510; c=relaxed/simple;
-	bh=9MfVy+lxDrD75Ox5ECCp+msLJBjzC81QBDPWn23C6JQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=FfltaG73A5G/ljMZqC4t4lvolIphz9LaglCHfv4ygxyMba/IgFsc8Qyx2uaRfj55yb0p2C9olmjGZnsxB/+YxXah43FyBB2WULGnXq/VfHVdLLavkhUEuFCSPobzYWDoR2nYk8BPzIuNtf4XugpgUJ9XV5tdei+H5oCpJAzunkY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=GJ2ytIwv; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=aVVZmfBJ; arc=pass smtp.client-ip=85.215.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754386137; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=l/w6KcKOuIS7LUdG4Ix/jF/a9zUEXzHZ92ukmnfKVNfuR3hxpFm5BarUNBkdxb6ta8
-    YSBioEWKSRDg7cY7mhnDRo+GdXrzao8vX6OClB+d8I7MkCZOkji1lM2Qwyi2AY5XD99b
-    pxl0zkk8jz8IOF/2UaY0qfKHI2Gc3vpfw+gDsR5MEC2NMi6Wo2UaK28WXC5QukBjqwHn
-    TltYClzZnWNppw603e5mPopOxL1TEx/Cv66pUXamlhpcNvOuYXf8ETLz51Rx9d5Dr4+m
-    hg1IZ3pTMPAZX7XsqnelQx6ES99UvTASqe/yTn7aoZMG5Zce2h3N8QsuZ84zcBSQ7jgu
-    xuYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1754386137;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=8G8/k+nPGic7BC3JBra8A7ttqgGnR4V1hT1DFa/NooQ=;
-    b=Zp2kUXyNc/4Tb4Je1p9zrxn/JqIwarui7zyNVPO10rTPAi2jdLZzRloUws4g0Whrfd
-    xwdHQV09h2JbKD13uClEfH34B80DDwQu3qWGIjfImplEXTmfcCeUYPPxdCMWkjtniXJw
-    Pkxm06rHK+9dnhWu1QUJpnedu1gXpBnTgJ//zQ5UuU+d9tgNhgdbH3xIF9AzY2nbmP9U
-    TyLdpeiFgW2wPlzqBCVy2whG+75xrr1BQ1pLmlT6bobZMIcSkvFVlxbfyJ7lH35mjAaH
-    Z5KiUVfg5csf/m13nyMrvvKmXH86hmOOJZSFn8x6JNb7O05uwmQKQAcq77uahmz6DMeD
-    ScBg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754386137;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=8G8/k+nPGic7BC3JBra8A7ttqgGnR4V1hT1DFa/NooQ=;
-    b=GJ2ytIwv2wtppNHHYkPqi8gJ8cz3f6xR4iQH6OlvNRL9+4v3Oun2ORtbMtYwEgCCY2
-    KJMemsk6VMjkq5f4rzV6y7xTCVhVhwJmBdlNw5NtigJYCQUHl1Z0rkm6RZ5qdnKJ1mkb
-    P5T0NyKPgxjvbxSghYnVdtrfx7w12USQ+cqceUEXT5j8A4uIEmtq6tIkus2taVkugisG
-    9y7usO2m3BTYBG9fjdoHy9jav4Yw5jisna9Z2p9+xpIOc7yq/YtGDSMf9OPD2YgoABEC
-    8wg2l2UnKyqlXY8O9YPF5sWyOU9t0U63OQlyEPAhcxOqfp5dNI45y1vUGnLY3i6U69oH
-    kblA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754386137;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=8G8/k+nPGic7BC3JBra8A7ttqgGnR4V1hT1DFa/NooQ=;
-    b=aVVZmfBJYcCxals6j19JWh2TdATsM+QGnx3sH9asI8m0YdeytJJ2C5uYfMItOkLJFI
-    fogqAp5X4Avngv4OlmDw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjEZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
-    with ESMTPSA id Q307a41759Sujl3
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Tue, 5 Aug 2025 11:28:56 +0200 (CEST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A09251799
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 09:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754386149; cv=none; b=YfuD18r4cA+b84xQn2z55vGDX0juqM3Z0IBFC/pmccduee/jN4G8OBn4y9HzyY7eulazw56Dd1z0cjF72xe+1w9E+HEzOc5WFEArWJ6AtASE/rcB4jzNG6L4jIJe7U+S8gjeKGuUskrOZuiptinPLsWn6Qv0uCP+BTdf78a9cK0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754386149; c=relaxed/simple;
+	bh=Nu/yo03bxwSukuvoXb5drj/qxdTuJgGHnF93xhQ2c5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=getE212FFywPkW84yhwJY34qmfvtrgg6ZioUb43S2vUIO1fCJF+phNdtqBZlclYk2NzhhCd8NWuZPzH6nhmPx8lT9wgmC0drUH5LbmHq/1qhxUKbNuGnEMqQqvrpQkBNXIeJp805w+potkas/pF6JHDepMPeJKrzU5+yI4N9Y74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hPJBcL5A; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b792b0b829so4156734f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 02:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754386146; x=1754990946; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UF5Zt9voQATioY9RRbmU98WhyD6EdNV9XLQAXiUOGfY=;
+        b=hPJBcL5AcZ+KxOtM6+HrkeUPZcSRD5dWCApPCvP5moScUD8SP4XuMoJcWs3GCLsAAs
+         xxMZPNQuVDQbW+xOiOWElJJsD6gt8S+aNybf09SxI9CYMyI3+J/4X7N/Ji/h+2d0th5V
+         d9ktQbFf5LQNzr+EaXhMSgfTbb2rfNI5LvSAKC5J4e3gNfKo0k9MIZ0/W5KypABb2s33
+         YbjG6bByWzlV4oUsklP8GI1qN9sGLi8x3sjKcpJv1bIMRL1OSB8oYOi59yVCs2JJAwLu
+         /zvdySkSPDGgacdllL2J5Gpry/44y1lXxh8otx/5TgUN1wYy5phQIDdjcJ2+/jjbquAf
+         ilXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754386146; x=1754990946;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UF5Zt9voQATioY9RRbmU98WhyD6EdNV9XLQAXiUOGfY=;
+        b=WcX1rP/hrexxRBBmMeQJruykiX0pwfClyT3xRKb8txzvjZjIcua1rBA4g/j/dm3T5T
+         gqbIlpRW9pnTbzOl3g0NsADhLSVhidR7tJRS5WvAjwSd+Ok5HstEmWwIBpFkzydQyOIV
+         k8m98CDp9pDTtk4qI7mqFmsNXJIj7Im+GCLMvwXpmPMvoweB4BmEixANEVJleW6eqWMu
+         gG+7ag1eiNA2ATNqQxexWJpQww2YTALfYRD0Lt6NkO7VQ/0HGuotO6k+9FrXzJYzxQoC
+         jm6jZ6BI3ZZLhIlM5DISvCzioPx9voXIJJXBFZT0Q1NSnfJHGlG2lIJyjNL6BjeQbQzV
+         l88w==
+X-Forwarded-Encrypted: i=1; AJvYcCVf5GY7arEcmJ1kjmV7xhutXGnYw5YiCh3weN7bRoBw8psjecUCNq7NB6IRn47nGxnkeXRc+l4Q3rpZhn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsHcSag0DtCrM/XGjQR43S+SDzuqdzyUTmnPenVhT38Iq5vxqW
+	ow1Cn/gy+RwRFEgfLwWatVZOBVZ9FB42QChe4ovFChVutZihN4bSvh8cV+6SBqVmuuY=
+X-Gm-Gg: ASbGncvj7S6VvqyT35bquWqtbS/qYA2DnyWyOMn6I2iPEAG+d2rf5uEXwHuViAOM5+Y
+	Web1t3ObV9y11wrfCHPPbG7pv7mHDj7XWahgv61X8+GrLdZOqzdp9lrAMAjXiqn05gNOz778eiS
+	aBXHeKgopTt0PFSSe49na5RI0gEcU3IqBQAN/dtgrTz2CSCCgy7eG01Et4ypRvyPkzrSlS6hpDi
+	rlDIpzoo/793gDaOUXsnDMtxLH6ui2nzGGyJHdEA3Zoz5aUg9HzkIAbrnPVUlltslCr1y8iF9Tg
+	5At6c7+o6LwSZLh/kPuVZwa1IFMsb67U0KZrWs7oyUqrfTfqymIwafbHav9TatmX819IHbWCvN5
+	VfC+tYencnC/i72KhQfAYtakCmAg=
+X-Google-Smtp-Source: AGHT+IG+S8EHXkDixCfKjiD9TLmPOVJSu9nB/gnFswyFBWmlaqpq9SDKhuT/ueldL0WcRP6mU/8Ixw==
+X-Received: by 2002:a5d:5d0e:0:b0:3b7:9350:44d4 with SMTP id ffacd0b85a97d-3b8d946b3d7mr10399692f8f.11.1754386146140;
+        Tue, 05 Aug 2025 02:29:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c47ae8esm18309695f8f.61.2025.08.05.02.29.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 02:29:05 -0700 (PDT)
+Date: Tue, 5 Aug 2025 12:29:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Val Packett <val@packett.cool>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: qcom: mdt_loader: Allow empty section headers in
+ mdt_header_valid()
+Message-ID: <5d392867c81da4b667f61430d3aa7065f61b7096.1754385120.git.dan.carpenter@linaro.org>
+References: <cover.1754385120.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
- bq27000 hdq battery
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <VI1PR02MB10076D58D8B86F8FB50E59AADF422A@VI1PR02MB10076.eurprd02.prod.outlook.com>
-Date: Tue, 5 Aug 2025 11:28:46 +0200
-Cc: Sebastian Reichel <sre@kernel.org>,
- =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "letux-kernel@openphoenux.org" <letux-kernel@openphoenux.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "kernel@pyra-handheld.com" <kernel@pyra-handheld.com>,
- "andreas@kemnade.info" <andreas@kemnade.info>,
- Hermes Zhang <Hermes.Zhang@axis.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2437B077-0F51-4724-8861-7E0BEE9DB5F0@goldelico.com>
-References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
- <VI1PR02MB10076D58D8B86F8FB50E59AADF422A@VI1PR02MB10076.eurprd02.prod.outlook.com>
-To: Jerry Lv <Jerry.Lv@axis.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1754385120.git.dan.carpenter@linaro.org>
 
-Hi Jerry,
+The mdt_header_valid() function checks all the members for the elf
+header to ensure that reading the firmware doesn't lead to a buffer
+overflow or an integer overflow.  However it has a bug, in that it
+doesn't allow for firmware with no section headers and this prevents
+the firmware from loading.
 
-> Am 05.08.2025 um 10:53 schrieb Jerry Lv <Jerry.Lv@axis.com>:
->=20
->=20
->=20
->=20
-> ________________________________________
-> From: H. Nikolaus Schaller <hns@goldelico.com>
-> Sent: Monday, July 21, 2025 8:46 PM
-> To: Sebastian Reichel; Jerry Lv
-> Cc: Pali Roh=C3=A1r; linux-pm@vger.kernel.org; =
-linux-kernel@vger.kernel.org; letux-kernel@openphoenux.org; =
-stable@vger.kernel.org; kernel@pyra-handheld.com; andreas@kemnade.info; =
-H. Nikolaus Schaller
-> Subject: [PATCH] power: supply: bq27xxx: fix error return in case of =
-no bq27000 hdq battery
->=20
-> [You don't often get email from hns@goldelico.com. Learn why this is =
-important at https://aka.ms/LearnAboutSenderIdentification ]
->=20
-> Since commit
->=20
-> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when =
-busy")
->=20
-> the console log of some devices with hdq but no bq27000 battery
-> (like the Pandaboard) is flooded with messages like:
->=20
-> [   34.247833] power_supply bq27000-battery: driver failed to report =
-'status' property: -1
->=20
-> as soon as user-space is finding a /sys entry and trying to read the
-> "status" property.
->=20
-> It turns out that the offending commit changes the logic to now return =
-the
-> value of cache.flags if it is <0. This is likely under the assumption =
-that
-> it is an error number. In normal errors from bq27xxx_read() this is =
-indeed
-> the case.
->=20
-> But there is special code to detect if no bq27000 is installed or =
-accessible
-> through hdq/1wire and wants to report this. In that case, the =
-cache.flags
-> are set (historically) to constant -1 which did make reading =
-properties
-> return -ENODEV. So everything appeared to be fine before the return =
-value was
-> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, =
-triggering the
-> error condition in power_supply_format_property() which then floods =
-the
-> console log.
->=20
-> So we change the detection of missing bq27000 battery to simply set
->=20
->        cache.flags =3D -ENODEV
->=20
-> instead of -1.
->=20
-> Fixes: f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when =
-busy")
-> Cc: Jerry Lv <Jerry.Lv@axis.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
-> drivers/power/supply/bq27xxx_battery.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/bq27xxx_battery.c =
-b/drivers/power/supply/bq27xxx_battery.c
-> index 93dcebbe11417..efe02ad695a62 100644
-> --- a/drivers/power/supply/bq27xxx_battery.c
-> +++ b/drivers/power/supply/bq27xxx_battery.c
-> @@ -1920,7 +1920,7 @@ static void =
-bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
->=20
->        cache.flags =3D bq27xxx_read(di, BQ27XXX_REG_FLAGS, =
-has_singe_flag);
->        if ((cache.flags & 0xff) =3D=3D 0xff)
-> -               cache.flags =3D -1; /* read error */
-> +               cache.flags =3D -ENODEV; /* read error */
->        if (cache.flags >=3D 0) {
->                cache.capacity =3D bq27xxx_battery_read_soc(di);
->=20
-> --
-> 2.50.0
->=20
->=20
->=20
-> In our device, we use the I2C to get data from the gauge bq27z561.=20
-> During our test, when try to get the status register by bq27xxx_read() =
-in the bq27xxx_battery_update_unlocked(),=20
-> we found sometimes the returned value is 0xFFFF, but it will update to =
-some other value very quickly.
+I know from bug reports that there are firmwares which have zero
+section headers, but the same logic applies to program headers.  An
+empty program header won't lead to a buffer overflow so it's safe to
+allow it.
 
-Strange. Do you have an idea if this is an I2C communication effect or =
-really reported from the bq27z561 chip?
+Fixes: 9f35ab0e53cc ("soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()")
+Cc: stable@vger.kernel.org
+Reported-by: Val Packett <val@packett.cool>
+Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/soc/qcom/mdt_loader.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> So the returned 0xFFFF does not indicate "No such device", if we force =
-to set the cache.flags to "-ENODEV" or "-1" manually in this case,=20
-> the bq27xxx_battery_get_property() will just return the cache.flags =
-until it is updated at lease 5 seconds later,
-> it means we cannot get any property in these 5 seconds.
-
-Ok I see. So there should be a different rule for the bq27z561.
-
->=20
-> In fact, for the I2C driver, if no bq27000 is installed or accessible,=20=
-
-> the bq27xxx_battery_i2c_read() will return "-ENODEV" directly when no =
-device,
-> or the i2c_transfer() will return the negative error according to real =
-case.
-
-Yes, that is what I2C can easily report. But for AFAIK for HDQ there is =
-no -ENODEV
-detection in the protocol. So the bq27000 has this special check.
-
->=20
->        bq27xxx_battery_i2c_read() {
->                ...
->        if (!client->adapter)
->         return -ENODEV;
->                ...
->                ret =3D i2c_transfer(client->adapter, msg, =
-ARRAY_SIZE(msg));
->                ...
->                if (ret < 0)
->        return ret;
->                ...
->        }
->=20
-> But there is no similar check in the bq27xxx_battery_hdq_read() for =
-the HDQ/1-wire driver.
->=20
-> Could we do the same check in the bq27xxx_battery_hdq_read(),
-> instead of changing the cache.flags manually when the last byte in the =
-returned data is 0xFF?
-
-So your suggestion is to modify bq27xxx_battery_hdq_read to check for =
-BQ27XXX_REG_FLAGS and
-value 0xff and convert to -ENODEV?
-
-Well, it depends on the data that has been successfully reported. So =
-making bq27xxx_battery_hdq_read()
-have some logic to evaluate the data seems to just move the problem to a =
-different place.
-Especially as this is a generic function that can read any register it =
-is counter-intuitive to
-analyse the data.
-
-> Or could we just force to set the returned value to "-ENODEV" only =
-when the last byte get from bq27xxx_battery_hdq_read() is 0xFF?
-
-In summary I am not sure if that improves anything. It just makes the =
-existing code more difficult=20
-to understand.
-
-What about checking bq27xxx_battery_update_unlocked() for
-
-       if (!(di->opts & BQ27Z561_O_BITS) && (cache.flags & 0xff) =3D=3D =
-0xff)
-
-to protect your driver from this logic?
-
-This would not touch or break the well tested bq27000 logic and prevent =
-the new bq27z561
-driver to trigger a false positive?
-
-BR and thanks,
-Nikolaus
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 0ca268bdf1f8..d91c5cb325e3 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -32,14 +32,14 @@ static bool mdt_header_valid(const struct firmware *fw)
+ 	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
+ 		return false;
+ 
+-	if (ehdr->e_phentsize != sizeof(struct elf32_phdr))
++	if (ehdr->e_phentsize && ehdr->e_phentsize != sizeof(struct elf32_phdr))
+ 		return false;
+ 
+ 	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
+ 	if (phend > fw->size)
+ 		return false;
+ 
+-	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
++	if (ehdr->e_shentsize && ehdr->e_shentsize != sizeof(struct elf32_shdr))
+ 		return false;
+ 
+ 	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+-- 
+2.47.2
 
 
