@@ -1,155 +1,154 @@
-Return-Path: <linux-kernel+bounces-756449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C821B1B41D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:09:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F43AB1B480
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282CF18A1439
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CAE182E81
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F372737EF;
-	Tue,  5 Aug 2025 13:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B42797AC;
+	Tue,  5 Aug 2025 13:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBxgtV10"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="1UGnYPFj"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639F2B9B7;
-	Tue,  5 Aug 2025 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAE2275B0B;
+	Tue,  5 Aug 2025 13:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754399389; cv=none; b=ZRKjokesOs0HBI44tF1QSGgZ+RXRdEJ/SuI9KJZ2gO6gqs4tM92KRhqHJz4EdZXWed2JQTLk8ATiDGBdgpC8I64coqf1tV0IGu6mt9K4UwnKeRGnydlfyvlZAe0YDiI9QLq2YOOmgVqrw3nErWBrl96il4jFZU1WRVIpm9d+24Y=
+	t=1754399505; cv=none; b=tTTxkm3rApqFBrGey+3J0WxAICkHXlsEiC/QWSU02bY4CXr5oge1g1K4fkTt9WYBOV02ylLsa97DM2sqPQQVqf7cAH+j4/ACVdYcEMSB3HsTgtfSzWCG8j61DqkOSrgje+arvCjTZ72egY+XUEYrO5VFoxpimUFKEQQL7/vAx98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754399389; c=relaxed/simple;
-	bh=MqDN7xUWTd4Ww+dv13mq9KzDQ9G6fwr4yZInmW0+5rM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SvAAwsQFKMYMJRbr+1sn4HgQ6UJi4UKKtAOzFtJKjB+X5T6vVGQvwHeY+IArQWHFFJm6aTUc2igCIfk/TDf1FqaZjWku02/q0tyfquZq5kJ/qMcHu1uhzplPGbT7/xr3meixsveQNra77COnDx2I583jBUpXoZOqx8dd99JWRO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBxgtV10; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30B3C4CEF0;
-	Tue,  5 Aug 2025 13:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754399388;
-	bh=MqDN7xUWTd4Ww+dv13mq9KzDQ9G6fwr4yZInmW0+5rM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FBxgtV10qzcPYTL8syXlyw/QS0y6CfT69/+CT6iab1En79k8eQFham00oYVbw+mLi
-	 q0wVikflsks34hxVRvn803O2FUCKXzu9CFmHPNiJqra9ZjQnxB5W97o3/mO3uJD4wp
-	 mVswq3lKN2lliGP91kucyB+IfDiyD70h9HyK+9BgWIjMTFvyOciuKupvRvuHpTuj4I
-	 /fwAzKsiPhvd2tIRwzMllCTMFg8X5mudv9o4r3Q6n5XKiAzm7d/eC83k8XYxHA9dNQ
-	 PtUvJkJ2gzB/yjJy/uDnHm4tWB9r9tZiXB7niZLQWD2t7GDR3IU4QBPJVUk//icjD1
-	 jSPSv6ADpgVzw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Lee Jones <lee@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.16-6.6] mfd: axp20x: Set explicit ID for AXP313 regulator
-Date: Tue,  5 Aug 2025 09:08:36 -0400
-Message-Id: <20250805130945.471732-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1754399505; c=relaxed/simple;
+	bh=YLBQDy6eQNpuqYJmBuJHbdvk6W3dpGmVOLhbuzAjcJU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TTFSBvkJENWaUz/S69TWJHGe76mrBdi+XXxszLjeBBVk5HzkbptY5KZ3BFNp1Vb2d3pXOpLoTwRxB2xOICpRfXiy4W7AUDiLZXIT/wa0k9Hlhdf28EXMi0Ed37Epx0VH/si63qj0oapzcENH/g+SY4F9ZAAmr6XNQRH1rmavwbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=1UGnYPFj; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:29a1:0:640:5fbc:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id B5EF080627;
+	Tue, 05 Aug 2025 16:10:23 +0300 (MSK)
+Received: from kniv-nix.yandex-team.ru (unknown [2a02:6bf:8080:849::1:3b])
+	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 6AgoJU9GpKo0-4ePcQdmN;
+	Tue, 05 Aug 2025 16:10:22 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1754399422;
+	bh=1fhMX3tvH9apZXuDu7nTQnIUMtDysNPzl2m86b8poH0=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=1UGnYPFjO7Zh2vLJEXLFw6uSfIpf/6yERIuID+XBynFeIndBMTP9ZIQV8adLQCrYi
+	 lRenxXGknUS3kKJKSv+I6l0afbWZSX0c5Q7xrrvWC5xdnyWSlWI87G8RcF3PsSSCRy
+	 fJbLHsR1l/ZhQSlyPSCnsDVbIp/secb0ROJWvGUc=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Nikolay Kuratov <kniv@yandex-team.ru>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	kvm@vger.kernel.org,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Lei Yang <leiyang@redhat.com>,
+	Hillf Danton <hdanton@sina.com>,
+	kniv@yandex-team.ru,
+	stable@vger.kernel.org,
+	Andrey Ryabinin <arbn@yandex-team.com>
+Subject: [PATCH v3] vhost/net: Protect ubufs with rcu read lock in vhost_net_ubuf_put()
+Date: Tue,  5 Aug 2025 16:09:17 +0300
+Message-Id: <20250805130917.727332-1-kniv@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.16
 Content-Transfer-Encoding: 8bit
 
-From: Chen-Yu Tsai <wens@csie.org>
+When operating on struct vhost_net_ubuf_ref, the following execution
+sequence is theoretically possible:
+CPU0 is finalizing DMA operation                   CPU1 is doing VHOST_NET_SET_BACKEND
+                             // ubufs->refcount == 2
+vhost_net_ubuf_put()                               vhost_net_ubuf_put_wait_and_free(oldubufs)
+                                                     vhost_net_ubuf_put_and_wait()
+                                                       vhost_net_ubuf_put()
+                                                         int r = atomic_sub_return(1, &ubufs->refcount);
+                                                         // r = 1
+int r = atomic_sub_return(1, &ubufs->refcount);
+// r = 0
+                                                      wait_event(ubufs->wait, !atomic_read(&ubufs->refcount));
+                                                      // no wait occurs here because condition is already true
+                                                    kfree(ubufs);
+if (unlikely(!r))
+  wake_up(&ubufs->wait);  // use-after-free
 
-[ Upstream commit 88828c7e940dd45d139ad4a39d702b23840a37c5 ]
+This leads to use-after-free on ubufs access. This happens because CPU1
+skips waiting for wake_up() when refcount is already zero.
 
-On newer boards featuring the A523 SoC, the AXP323 (related to the
-AXP313) is paired with the AXP717 and serves as a secondary PMIC
-providing additional regulator outputs. However the MFD cells are all
-registered with PLATFORM_DEVID_NONE, which causes the regulator cells
-to conflict with each other.
+To prevent that use a read-side RCU critical section in vhost_net_ubuf_put(),
+as suggested by Hillf Danton. For this lock to take effect, free ubufs with
+kfree_rcu().
 
-Commit e37ec3218870 ("mfd: axp20x: Allow multiple regulators") attempted
-to fix this by switching to PLATFORM_DEVID_AUTO so that the device names
-would all be different, however that broke IIO channel mapping, which is
-also tied to the device names. As a result the change was later reverted.
-
-Instead, here we attempt to make sure the AXP313/AXP323 regulator cell
-does not conflict by explicitly giving it an ID number. This was
-previously done for the AXP809+AXP806 pair used with the A80 SoC.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Link: https://lore.kernel.org/r/20250619173207.3367126-1-wens@kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 0ad8b480d6ee9 ("vhost: fix ref cnt checking deadlock")
+Reported-by: Andrey Ryabinin <arbn@yandex-team.com>
+Suggested-by: Hillf Danton <hdanton@sina.com>
+Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
 ---
+v2:
+* move reinit_completion() into vhost_net_flush(), thanks
+  to Hillf Danton
+* add Tested-by: Lei Yang
+* check that usages of put_and_wait() are consistent across
+  LTS kernels
+v3:
+* use rcu_read_lock() with kfree_rcu() instead of completion,
+  as suggested by Hillf Danton
 
-LLM Generated explanations, may be completely bogus:
+ drivers/vhost/net.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Based on my analysis, here's my assessment:
-
-**Backport Status: YES**
-
-This commit is suitable for backporting to stable kernel trees for the
-following reasons:
-
-1. **Fixes a real bug**: The commit addresses a device naming conflict
-   issue when using AXP313/AXP323 PMICs alongside AXP717 as a secondary
-   PMIC. Without this fix, the kernel produces a sysfs duplicate
-   filename error and fails to properly register the secondary regulator
-   device.
-
-2. **Small and contained change**: The fix is minimal - it only changes
-   one line of code from `MFD_CELL_NAME("axp20x-regulator")` to
-   `MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1)`, which
-   explicitly sets an ID of 1 for the AXP313 regulator cell.
-
-3. **Follows established pattern**: The commit follows an existing
-   pattern already used in the same driver for the AXP806 PMIC (lines
-   1173-1174 in axp806_cells), which also sets an explicit ID (2) to
-   avoid conflicts when paired with AXP809.
-
-4. **Minimal risk of regression**: The change only affects AXP313/AXP323
-   devices and doesn't touch other PMIC configurations. The explicit ID
-   assignment is a safe approach that doesn't break existing IIO channel
-   mappings (which was the problem with the previous PLATFORM_DEVID_AUTO
-   approach mentioned in the commit message).
-
-5. **Clear problem and solution**: The commit message clearly explains
-   the issue (sysfs duplicate filename error) and references the history
-   of previous attempts to fix similar issues (commit e37ec3218870 and
-   its revert). The solution is targeted and doesn't introduce
-   architectural changes.
-
-6. **Hardware enablement fix**: This fix enables proper functioning of
-   boards with the A523 SoC that use dual PMIC configurations (AXP323 +
-   AXP717), which would otherwise fail to initialize properly.
-
-The commit meets the stable tree criteria of being an important bugfix
-with minimal risk and contained scope. It fixes a specific hardware
-configuration issue without introducing new features or making broad
-architectural changes.
-
- drivers/mfd/axp20x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index e9914e8a29a3..25c639b348cd 100644
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@ -1053,7 +1053,8 @@ static const struct mfd_cell axp152_cells[] = {
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 6edac0c1ba9b..c6508fe0d5c8 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -99,6 +99,7 @@ struct vhost_net_ubuf_ref {
+ 	atomic_t refcount;
+ 	wait_queue_head_t wait;
+ 	struct vhost_virtqueue *vq;
++	struct rcu_head rcu;
  };
  
- static struct mfd_cell axp313a_cells[] = {
--	MFD_CELL_NAME("axp20x-regulator"),
-+	/* AXP323 is sometimes paired with AXP717 as sub-PMIC */
-+	MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1),
- 	MFD_CELL_RES("axp313a-pek", axp313a_pek_resources),
- };
+ #define VHOST_NET_BATCH 64
+@@ -250,9 +251,13 @@ vhost_net_ubuf_alloc(struct vhost_virtqueue *vq, bool zcopy)
  
+ static int vhost_net_ubuf_put(struct vhost_net_ubuf_ref *ubufs)
+ {
+-	int r = atomic_sub_return(1, &ubufs->refcount);
++	int r;
++
++	rcu_read_lock();
++	r = atomic_sub_return(1, &ubufs->refcount);
+ 	if (unlikely(!r))
+ 		wake_up(&ubufs->wait);
++	rcu_read_unlock();
+ 	return r;
+ }
+ 
+@@ -265,7 +270,7 @@ static void vhost_net_ubuf_put_and_wait(struct vhost_net_ubuf_ref *ubufs)
+ static void vhost_net_ubuf_put_wait_and_free(struct vhost_net_ubuf_ref *ubufs)
+ {
+ 	vhost_net_ubuf_put_and_wait(ubufs);
+-	kfree(ubufs);
++	kfree_rcu(ubufs, rcu);
+ }
+ 
+ static void vhost_net_clear_ubuf_info(struct vhost_net *n)
 -- 
-2.39.5
+2.34.1
 
 
