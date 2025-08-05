@@ -1,188 +1,311 @@
-Return-Path: <linux-kernel+bounces-756518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359F7B1B557
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:55:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EB9B1B5E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 16:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6450B18A351C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 13:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95EF6188A467
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 14:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8C327586B;
-	Tue,  5 Aug 2025 13:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48373222560;
+	Tue,  5 Aug 2025 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iWQJiooz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B441gfQl"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC1C26CE2F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2F9277003
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 13:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754402140; cv=none; b=sQA10+yJgaERI23tPz2HbxxRZtS/bbQFf2c2rOAIEN5HGqf8NJ9NisVa+Kls0PPZGn+kQ1RMvJlfPhDesGERT43bfVHjgGivHa8euAQGnX9oxuuLJ9WBTVdoCI7UMsfg6Hjd3DMLdlizi08FqrE1of82a844oc0EDDGsGjIgYes=
+	t=1754402254; cv=none; b=UQ50ioMp9JcmUxFEpAPY/VsgW6Er8c4wqzEWMxXQ1yd0P+9nFCgraavLRx68L3KO5JlHIybBijSpd0SeeZAJf6ltTny5yZbWaUFPfk1bxJ+RPjMdFlkvFPExxJD6lCDJQpA1L4/Act2HaBEvQzbs9zkrR+uavTYXts8uzmcUOeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754402140; c=relaxed/simple;
-	bh=RCxtOYxRw8jnu+E0HL7hJ9DlWMNd2nAXNBur1Wv7+GM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oLn1Lq2cgEfhICa8IrATYjNsnRSayZJTRCEX+I4l3L9BQI9taDq7CH5+8s4qJav2j/zVSeq79H1PPW7v+xOZsgKGEL6M/cKoeFPz+hP0Z12nu+bVOzDhIAX6qrq+d+6BZp4dAAGXien5zlW0QFNafu49HF1cWIxjnVq9Y+P9z7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iWQJiooz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754402137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JNtcQKAXzpB+G+TaagoXTa6Qm2CqmP2bGFMsVRytZMs=;
-	b=iWQJioozWRndwKsvSUymEGA6wijRjdPw9Vfsp0qK+aw0XA/zRhBOMwu3FhqsX3NxKyDQYL
-	r5YF/I6uAZP5uyU0qc9vQSiNMMtJZvqZMEbFn43cn5su5QyZ3+xjcKnMTNGW8pRtMww1QW
-	8QW2l8FbRAo4dKgEvpWduid5D7suNho=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-kYX1sRyxPOy4m0PfzmWuoA-1; Tue, 05 Aug 2025 09:55:36 -0400
-X-MC-Unique: kYX1sRyxPOy4m0PfzmWuoA-1
-X-Mimecast-MFC-AGG-ID: kYX1sRyxPOy4m0PfzmWuoA_1754402135
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b8d5fc4f94so2061145f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:55:35 -0700 (PDT)
+	s=arc-20240116; t=1754402254; c=relaxed/simple;
+	bh=7mZLLojTaTNmZeT9QnUtEiyTdad0TC/+kp78K+eo16A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wz26LreLGyo1cy90Y9f2dEhVRbtV/3nJ5f7vKkyIOmUP39il4Vq8VkT9K5+9CHPckuNPuHOOLI5a/+PZ+f8ZEdgWAz87NY75x0oycJUTY4cjg5bk7bbj1Mgp+CUMcZ3KpBxa0WjTcBRBq3EUlAp/b+TkiyKkxXzeoTfOHAytasg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B441gfQl; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55b93104888so4431414e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 06:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754402250; x=1755007050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A8x1ZaMc+KsTk7oJAjVa/yFvyS0e8ToozTSSDn94vgA=;
+        b=B441gfQl95Iz/NSU24EkGozysU7eyb0so7cNQPaT6fBi6bKUCkOdxm3zjLBVlikGon
+         cwY1PBc2muI4txpzQmd2KK/TX2GAJwHFtC3+qRlXWOuBgfuBwuRSrsnqVOvyXqvf69Kh
+         +hBxLnsBYJ6v6PxuVkgCOzN9YEqALfejtCObPKXtIxJNhwEOI6aDXUxbmM7iaDYYwqqt
+         ODmXXC507E4AIPNV/5I892cCReOBc1+zl8WruKaC305nAE8+vIr6u2NHv56/lDm5K5BU
+         oIth1N3nc0uaHM5R2AvEEnSkhgQV6G2ifvUMdX2pmrrxk3Nle2bqu3PWUWqCoGE2rF0d
+         /Z6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754402135; x=1755006935;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JNtcQKAXzpB+G+TaagoXTa6Qm2CqmP2bGFMsVRytZMs=;
-        b=uF7LYD8TNZlCIN3Dtx9BQ6f6Y1D+Bn9shnfL6uisec3Jxl74LX5KTiTII5lQQfsXq6
-         7CF4i4Gsw3jRl7/OHUe9nGkYDDGiD2QJF2uYJmGYruCo1I3euCC+b3i8lkba8fAfKLFH
-         Nae29gFu54oRGmzNUuS1PuRRZuwWyi6ehwSaTR9tjAn8l7mpgS09N5ugXIWFf0rTPdML
-         OpXwfFQJdLpZghnG2A1O+D+0CnE1T91bGYQ6rOegvRHZvoEqKSdLrlL856Sm6Wm4CjMe
-         NJhzxyJTk9kN20dtFeTa78K8hAixBltixNOBTYd4bwYyCGwslXOokBChYaFQHNqQC0n9
-         jiuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHdhOQHsettmSQEo3T5Ti3RupPANQsPGdrT5b955EbyZ40YBF3uKZP773yjoyJx6FgJgbynxAZqbjc7c8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvr5D1E01ifk4YbvwFGrcy3DDv0PoOdTdYeke213xp4GiB6Wwz
-	eRO4uRwu59PK1l4qAn1/1B3+j9H/sWQqURj4wwv99kiP0hnQ8ra4hyScUotxet5BtA9F2EMk8bU
-	6C2tUaGAwUKPqBgzsgI068axBlNxiG9rpVJFH54Cj+9oOSwxDZ0cUds4VAfK4u9VXzg==
-X-Gm-Gg: ASbGncutGl1WcAUL+vDR5QzRKYSIikqi4ldL6IcQiI/6gX/xs9mq0ydi2BuXfIbmZ06
-	uPJe4vewxvHiYDr6D2EUlNdiBM6ktnr0gHOfPMWR+wqj9zXCq+E2+CAiKZ71c2uTCsju8ynd6OK
-	3ISM8mqiUDg8Nna8c7CY4oBCXL1Up8yQ4p4KpDJ2QEb0lnX0PhFr7NPYHyehKcQUT1UT36wqAxd
-	Gls31qQvd0LQP0mJBmZ8gQa40dsbRgvGREO1ZxKJ3V6STtGMlCXGajM4qtqf4x1vJ8yjH2L0lOh
-	qpa1xAi5Li5ijqNwZa42A8xEe2aR5e4ofaiZgwy8O3Ii1tDRl3+WGGGGi7VlA43lY3S9HbmeIA0
-	WaQaA6LR592AydVmISOpU/XjXOPEl8l9BsY6ErRzh3Imd6SzGJHmmxVDodVbSime2Jx4=
-X-Received: by 2002:a05:6000:2403:b0:3b7:8fc4:2f4c with SMTP id ffacd0b85a97d-3b8d9468ce7mr10064723f8f.1.1754402134778;
-        Tue, 05 Aug 2025 06:55:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/K9Q5gGrODzOMXhZkXj3VQiTGBBS22kcioNlNEcOLv5L+Wh1I5dEV9Bld7KqWwSSJQKmlPw==
-X-Received: by 2002:a05:6000:2403:b0:3b7:8fc4:2f4c with SMTP id ffacd0b85a97d-3b8d9468ce7mr10064694f8f.1.1754402134326;
-        Tue, 05 Aug 2025 06:55:34 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2b:b200:607d:d3d2:3271:1be0? (p200300d82f2bb200607dd3d232711be0.dip0.t-ipconnect.de. [2003:d8:2f2b:b200:607d:d3d2:3271:1be0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5879d76sm5430445e9.24.2025.08.05.06.55.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 06:55:33 -0700 (PDT)
-Message-ID: <839fe8af-3157-427a-b059-50eccd594d0e@redhat.com>
-Date: Tue, 5 Aug 2025 15:55:32 +0200
+        d=1e100.net; s=20230601; t=1754402250; x=1755007050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A8x1ZaMc+KsTk7oJAjVa/yFvyS0e8ToozTSSDn94vgA=;
+        b=DYK9rq6x7b5cKnWTm8EpLRIQbqtLLqvbd4zTs2RxK6sa4MhDOic45kTzhKwLDmouDX
+         oErornrPS8D3CUWNobEAyY/0F/fPflb8uiANbxvvKbI4j75aALspljmRna2qVQ6X98tk
+         23pM02FsqjcXhxmVVBPqZgc+cpGAgeOujZ76DIgRvDaHCZK9MMyjijc1cbNTo9lNKgXJ
+         1XtlZG3unpMY1W0LhzYRJYBb35mHSvQai99FjbGUVpbTx7pB7rxsxipr658Iab6nm2XT
+         r4RsLapEf6Ac11Tf4P6AVWdLYsTcyimaeWH+E7mv3+45cEMfz/9hiyKP8NfDjc6rgEeD
+         UEvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4QKggy8vc7FKJ8epY8fS8uRZXUnpIq9p47XJFi/5sIjDP++rXdNayHGe+bAP3OSfdgm1rWMG0zsvjQvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSUFctfPzSCR7DYggOsrDPRspZzyCRKsIKyuucBYkM9Z+q+LcU
+	2ULnjovfK+I4sOe4i9C5lnPXuel9I4kOhpOZG4cHchDf2YwwXOU9wxnVRItTNAKcRPawZr5hKwF
+	ZpJ73iLTPvPEyVPamxeoFrAYHN7Xv37Jl0A==
+X-Gm-Gg: ASbGnctBNSbyqq8tC2U7llyWP6fRu8iSiPBJ9jFjGe9fqVPVKS9fqLNljlH7wR57+Ed
+	A3u9gLwJQFxFYlEwV48nY2kBetIrjZhIvWrAKwLdNbGAkp2KtVMVtSyIUkUv3bVYTBSgD76feE5
+	33E4xKPDCFozkUhmwGKvNlEx67CgB/Th/kTbhD5GlTx00HRZS14phvdebU2X57hQsz5uyHyhjKK
+	LVGMie0X0ZzjblJeDrlo2UjU+yzR83i0tKqkBzYoe5MXc//9gAGBYeAZY8Umj8=
+X-Google-Smtp-Source: AGHT+IE6hEDmJq97vpjlOL7UQIlkvgomWNXiN58b4EEyHBWTB5an1DnMBan/ZHnhZYH9hPkt/AfkwC6jtltvzzDUwIo=
+X-Received: by 2002:a05:6512:31c8:b0:55b:81c4:5f22 with SMTP id
+ 2adb3069b0e04-55b97b7b1ffmr3758549e87.47.1754402249525; Tue, 05 Aug 2025
+ 06:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] VFIO updates for v6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lizhe.67@bytedance.com" <lizhe.67@bytedance.com>
-References: <20250804162201.66d196ad.alex.williamson@redhat.com>
- <CAHk-=whhYRMS7Xc9k_JBdrGvp++JLmU0T2xXEgn046hWrj7q8Q@mail.gmail.com>
- <20250804185306.6b048e7c.alex.williamson@redhat.com>
- <0a2e8593-47c6-4a17-b7b0-d4cb718b8f88@redhat.com>
- <CAHk-=wiCYfNp4AJLBORU-c7ZyRBUp66W2-Et6cdQ4REx-GyQ_A@mail.gmail.com>
- <20250805132558.GA365447@nvidia.com>
- <CAHk-=wg75QKYCCCAtbro5F7rnrwq4xYuKmKeg4hUwuedcPXuGw@mail.gmail.com>
- <4c68eb5d-1e0e-47f3-a1fc-1e063dd1fd47@redhat.com>
- <CAHk-=whoh31th2awzO02zA3=cv4QNTFjdYr73=eSDDFfW2OdOw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <CAHk-=whoh31th2awzO02zA3=cv4QNTFjdYr73=eSDDFfW2OdOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250804115533.14186-1-pranav.tyagi03@gmail.com> <871ppqgoz0.ffs@tglx>
+In-Reply-To: <871ppqgoz0.ffs@tglx>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Tue, 5 Aug 2025 19:27:17 +0530
+X-Gm-Features: Ac12FXzUzyRhwEIq9Mhys6GbNbXUuuGnNJZmpU_M14C8D3LU-CT0y5PbmBOLJJQ
+Message-ID: <CAH4c4j+1dG3523MGL5qdV2dC8OkqGN7QOn00HR0nuwQBaAz8iw@mail.gmail.com>
+Subject: Re: [PATCH v2] futex: don't leak robust_list pointer on exec race
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, 
+	dave@stgolabs.net, andrealmeid@igalia.com, linux-kernel@vger.kernel.org, 
+	jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05.08.25 15:51, Linus Torvalds wrote:
-> On Tue, 5 Aug 2025 at 16:47, David Hildenbrand <david@redhat.com> wrote:
->>
->> arch/x86/Kconfig:       select SPARSEMEM_VMEMMAP_ENABLE if X86_64
->>
->> But SPARSEMEM_VMEMMAP is still user-selectable.
-> 
-> I think you missed this confusion on x86:
+On Tue, Aug 5, 2025 at 1:49=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Mon, Aug 04 2025 at 17:25, Pranav Tyagi wrote:
+> > Take a read lock on signal->exec_update_lock prior to invoking
+> > ptrace_may_access() and accessing the robust_list/compat_robust_list.
+> > This ensures that the target task's exec state remains stable during th=
+e
+> > check, allowing for consistent and synchronized validation of
+> > credentials.
+> >
+> > changed in v2:
+> > - improved changelog
+> > - helper function for common part of the compat and native syscalls
+>
+> Please put version log below the --- line. That's not part of the change =
+log.
+>
+> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> > Suggested-by: Jann Horn <jann@thejh.net>
+> > Link: https://lore.kernel.org/linux-fsdevel/1477863998-3298-5-git-send-=
+email-jann@thejh.net/
+> > Link: https://github.com/KSPP/linux/issues/119
+> > ---
+> >  kernel/futex/syscalls.c | 110 ++++++++++++++++++++++------------------
+> >  1 file changed, 62 insertions(+), 48 deletions(-)
+> >
+> > diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+> > index 4b6da9116aa6..3278d91d95ce 100644
+> > --- a/kernel/futex/syscalls.c
+> > +++ b/kernel/futex/syscalls.c
+> > @@ -39,46 +39,81 @@ SYSCALL_DEFINE2(set_robust_list, struct robust_list=
+_head __user *, head,
+> >       return 0;
+> >  }
+> >
+> > -/**
+> > - * sys_get_robust_list() - Get the robust-futex list head of a task
+> > - * @pid:     pid of the process [zero for current task]
+> > - * @head_ptr:        pointer to a list-head pointer, the kernel fills =
+it in
+> > - * @len_ptr: pointer to a length field, the kernel fills in the header=
+ size
+> > - */
+> > -SYSCALL_DEFINE3(get_robust_list, int, pid,
+> > -             struct robust_list_head __user * __user *, head_ptr,
+> > -             size_t __user *, len_ptr)
+> > +static void __user *get_robust_list_common(int pid,
+> > +             bool compat)
+>
+> What is this random line break for?
+>
+> >  {
+> > -     struct robust_list_head __user *head;
+> > +     void __user *head;
+> >       unsigned long ret;
+> > -     struct task_struct *p;
+> >
+>
+> Stray new line and please use reverse fir tree ordering of variables:
+>
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variab=
+le-declarations
+>
+> > -     rcu_read_lock();
+> > +     struct task_struct *p;
+> >
+> > -     ret =3D -ESRCH;
+> > -     if (!pid)
+> > +     if (!pid) {
+> >               p =3D current;
+> > -     else {
+> > +             get_task_struct(p);
+> > +     } else {
+> > +             rcu_read_lock();
+> >               p =3D find_task_by_vpid(pid);
+> > +             /*
+> > +              * pin the task to permit dropping the RCU read lock befo=
+re
+> > +              * acquiring the semaphore
+> > +              */
+> > +             if (p)
+> > +                     get_task_struct(p);
+> > +             rcu_read_unlock();
+> >               if (!p)
+> > -                     goto err_unlock;
+> > +                     return ERR_PTR(-ESRCH);
+>
+>                 scoped_guard(rcu) {
+>                      p =3D find_task_by_vpid(pid);
+>                      if (!p)
+>                         return (void __user *)ERR_PTR(-ESRCH);
+>                      get_task_struct(p);
+>                 }
+>
+> No need for a comment about pinning the task. This is obvious and a
+> common pattern all over the place. And note the type case on the error
+> return.
+>
+> But you can simplify this whole thing even further:
+>
+>         struct task_struct *p =3D current;
+>
+>         scoped_guard(rcu) {
+>                 if (pid) {
+>                      p =3D find_task_by_vpid(pid);
+>                      if (!p)
+>                         return (void __user *)ERR_PTR(-ESRCH);
+>                 }
+>                 get_task_struct(p);
+>         }
+>
+> Yes, RCU is not required for the !pid case, but this is not a hot path.
+>
+> >
+> > +     /*
+> > +      * Hold exec_update_lock to serialize with concurrent exec()
+> > +      * so ptrace_may_access() is checked against stable credentials
+> > +      */
+> > +
+>
+> Stray newline.
+>
+> > +     ret =3D down_read_killable(&p->signal->exec_update_lock);
+> > +     if (ret)
+> > +             goto err_put;
+> > +
+> >       ret =3D -EPERM;
+> >       if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+> >               goto err_unlock;
+> >
+> > -     head =3D p->robust_list;
+> > -     rcu_read_unlock();
+> > +     if (compat)
+> > +             head =3D p->compat_robust_list;
+> > +     else
+> > +             head =3D p->robust_list;
+>
+> Brain compiler complains about a build fail with CONFIG_COMPAT=3Dn
+>
+> static inline void __user *task_robust_list(struct task_struct *p, bool c=
+ompat)
+> {
+> #ifdef COMPAT
+>         if (compat)
+>                 return p->compat_robust_list;
+> #endif
+>         return p->robust_list;
+> }
+>
+> So you don't have the #ifdef ugly in this function..
+>
+> > -     if (put_user(sizeof(*head), len_ptr))
+> > -             return -EFAULT;
+> > -     return put_user(head, head_ptr);
+> > +     up_read(&p->signal->exec_update_lock);
+> > +     put_task_struct(p);
+> > +
+> > +     return head;
+> >
+> >  err_unlock:
+> > -     rcu_read_unlock();
+> > +     up_read(&p->signal->exec_update_lock);
+> > +err_put:
+> > +     put_task_struct(p);
+> > +     return ERR_PTR(ret);
+> > +}
+> >
+> > -     return ret;
+> > +
+> > +/**
+> > + * sys_get_robust_list() - Get the robust-futex list head of a task
+> > + * @pid:     pid of the process [zero for current task]
+> > + * @head_ptr:        pointer to a list-head pointer, the kernel fills =
+it in
+> > + * @len_ptr: pointer to a length field, the kernel fills in the header=
+ size
+> > + */
+> > +SYSCALL_DEFINE3(get_robust_list, int, pid,
+> > +             struct robust_list_head __user * __user *, head_ptr,
+> > +             size_t __user *, len_ptr)
+> > +{
+> > +     struct robust_list_head __user *head =3D
+> > +             get_robust_list_common(pid, false);
+>
+> No line break required.
+>
+> > +     if (IS_ERR(head))
+> > +             return PTR_ERR(head);
+> > +
+> > +     if (put_user(sizeof(*head), len_ptr))
+> > +             return -EFAULT;
+> > +     return put_user(head, head_ptr);
+> >  }
+> >
+> >  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+> > @@ -455,36 +490,15 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
+> >                       compat_uptr_t __user *, head_ptr,
+> >                       compat_size_t __user *, len_ptr)
+> >  {
+> > -     struct compat_robust_list_head __user *head;
+> > -     unsigned long ret;
+> > -     struct task_struct *p;
+> > +     struct compat_robust_list_head __user *head =3D
+> > +             get_robust_list_common(pid, true);
+>
+> Ditto
+>
+> Thanks,
+>
+>         tglx
 
-Yeah ...
+Hi,
 
-> 
->          select SPARSEMEM_VMEMMAP if X86_64
-> 
-> IOW, that SPARSEMEM_VMEMMAP_ENABLE is entirely historical, I think,
-> and it's unconditional these days.
+Thanks for pointing out the shortcomings in my patch. I will
+resend a v3 for the same shortly.
 
-Same for arm64. The other seem to still allow for configuring it. 
-Probably we could really just force-enable it for the others that 
-support it.
-
-Then fence of gigantic folios and remove most of the nth_page hackery 
-when we're working within a folio.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Regards
+Pranav Tyagi
 
