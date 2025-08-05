@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-756986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A14B1BBCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 422A5B1BBCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18373189736B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B2618A5417
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9250224DCEB;
-	Tue,  5 Aug 2025 21:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D73224BD00;
+	Tue,  5 Aug 2025 21:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8MNQa+L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YH7U1HzL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F20D1E7C2D;
-	Tue,  5 Aug 2025 21:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3108519258E;
+	Tue,  5 Aug 2025 21:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754429692; cv=none; b=eYV2SpREYzfArOo4q92mzonGaCOqtFtByoA1N4Iw/+7+fPM4t2jROPpVVoAeNX/LKJCZJbsNPVBtzOBqJjSe2TFoM/+CfMptjWSo9JnSIuhX8laWgfSP5gxsdQ5IWhVW55yFZMie8g3VIzV9rtoayxq+I0P5RsytusQtahQgZok=
+	t=1754429785; cv=none; b=AVFh4ylAfQL96SPvyfc1cWxkLFT2YyjNahqhdt85n0KwwNEHIy0OhTLbBvLHQ1LdxIJmabWCf05pt/k7u/Cwb2va8r5EUfN0rCs2PmFhuNUc8w2lEJ8G8V4j2PSPkSV5XedfzJ3piwwCBN2NPSjAglMt+S9X8OJCvB7yJokbTGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754429692; c=relaxed/simple;
-	bh=U1GLvy0RfDC0fOvJ/9NF1wuUkyRXzkHh++g+56ZJGnc=;
+	s=arc-20240116; t=1754429785; c=relaxed/simple;
+	bh=bvg20eZHbAjBzTXGeTHpnNdERiU2rFxDpliw0tBwoPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nw6+eSrjjzmW1N4Pph1FJrjVpLVWoOS7mZntG9N0SSK9/kH7zvGJUbhEEWTHQ5JSlfsPKgn0YDPYRG8TTivnMXVOfEwhMZnU3+RKNMYtqW1DaKK1EmVhVB/lg0/aJJ9Pp7XbhmUTWoNxh9IquTv634CzDXXJuvx0CLsDWLpqaV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8MNQa+L; arc=none smtp.client-ip=198.175.65.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxYvqrHJNEvWbwma5tQ7msgmRjVpacB/pKDrDNCBHutffpJJ+NN2Nb5r2d4i1sl1WcNGRldXaWvuQ1tI988RuAZFQ0tHJZlnEYTDxZ7ayRlZMkzxV4FooZwz4qOdsWl6TYu9WGQczwTd0zTB0RDzjJJ4swuJV0wzomMJLbShppg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YH7U1HzL; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754429691; x=1785965691;
+  t=1754429785; x=1785965785;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=U1GLvy0RfDC0fOvJ/9NF1wuUkyRXzkHh++g+56ZJGnc=;
-  b=W8MNQa+LrVqE5kjfqdeVhV1xBO8Qw+pZj2i65JvIXlpBAISvfyBcmQ2O
-   Yhe3UuuysyRiYH09AqxDdMPqAxj1wjtr8N96s4OfoiFq8Q5cQwu8eBh08
-   mF7v/u0QMhpiH3BJFwj+Sa5SmVkBhbdtyZa/2TPLesSi+ffgvAwRgKFvn
-   PmpHjEiAJtdIfhDhysf36bv4LUtZc0QXGJNzmTCKQIQFME8Qj0fWgW87O
-   /8h607NDXMp8vW5pPMWB+7ciYioU9z8Ycg5VaCJ039rCuRNCCC6CouvYM
-   xICeJJeuUcVrVvRPz+R4NOOT+qfOCk0dbaaXjF/SSsJXKnMYX+uJofuIk
-   g==;
-X-CSE-ConnectionGUID: wOjytfivThuw88O1RI6lXQ==
-X-CSE-MsgGUID: n+6yjsWGRQaosqYwyU1u3Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="60374349"
+  bh=bvg20eZHbAjBzTXGeTHpnNdERiU2rFxDpliw0tBwoPE=;
+  b=YH7U1HzLrZpPFecm222IIjw1ooCz88aW86RF7Ma0M/w1bBsnyVdqeaka
+   8KrGNxteAh1TNINgRQBG0hgblsExwO91zz5W+ViY2CGIzOM1Whl1FkgBO
+   Gd1z9vZDPBYbbXpL8HZPqXCByIEzXAB3CNhSVeeLAXoBGufz+so4EQbb8
+   QkXKBbQgCFXoJQfmmMwYtt/fxH6NCgY2FMTfuFkKnCt1C6ExEFSiD++Ww
+   i7p6PGNi/4qRsCGgiZ2jLhqv+iD4uGV1zM4eZue4t5SmQA2+7471m9uhg
+   VsWKgVc5fxluj/UX1bNz3DeWrGYi23mHS/tyccfbY7J1QtrLqkD5jszdB
+   Q==;
+X-CSE-ConnectionGUID: 6PpLwjjqQL+bx3EsdOrnNQ==
+X-CSE-MsgGUID: yaNwdG6FSECB4Hpw3d3WZA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56701688"
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="60374349"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:34:50 -0700
-X-CSE-ConnectionGUID: BjRInXNaQYi0vhMGgv+a8w==
-X-CSE-MsgGUID: 6mpQ5sidTWWZvbKNuVeCtA==
+   d="scan'208";a="56701688"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:36:24 -0700
+X-CSE-ConnectionGUID: nOC0iUIlSl+MAHietDD5yg==
+X-CSE-MsgGUID: 9PWR2VPuRp2nQ5Sw9S/twg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164938840"
+   d="scan'208";a="169870691"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:34:48 -0700
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 14:36:21 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ujPIy-00000003rIN-49Un;
-	Wed, 06 Aug 2025 00:34:44 +0300
-Date: Wed, 6 Aug 2025 00:34:44 +0300
+	id 1ujPKU-00000003rKU-1KDk;
+	Wed, 06 Aug 2025 00:36:18 +0300
+Date: Wed, 6 Aug 2025 00:36:18 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
- default_setup function
-Message-ID: <aJJ49CSBqGZM_b1Y@smile.fi.intel.com>
-References: <aIiDf31HzRBGuMN2@monster.localdomain>
- <2025072929-distant-hardener-0e75@gregkh>
- <20250730130348.082ad53d@posteo.net>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: tiwai@suse.de, broonie@kernel.org, alsa-devel@alsa-project.org,
+	shenghao-ding@ti.com, 13916275206@139.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] ALSA: hda: Fix the wrong register was used for DVC of
+ TAS2770
+Message-ID: <aJJ5UgpSw8A5IqeG@smile.fi.intel.com>
+References: <20250729125938.54696-1-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,58 +79,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730130348.082ad53d@posteo.net>
+In-Reply-To: <20250729125938.54696-1-baojun.xu@ti.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 30, 2025 at 11:03:50AM +0000, Wilken Gottwalt wrote:
-> On Tue, 29 Jul 2025 10:48:17 +0200
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-> > > index 04a0cbab02c2..5660bb897803 100644
-> > > --- a/drivers/tty/serial/8250/8250_exar.c
-> > > +++ b/drivers/tty/serial/8250/8250_exar.c
-> > > @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
-> > >  			 struct uart_8250_port *port)
-> > >  {
-> > >  	const struct exar8250_board *board = priv->board;
-> > > +	unsigned int bar = 0;
-> > >  	unsigned char status;
-> > > -	int err;
-> > >  
-> > > -	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
-> > > -	if (err)
-> > > -		return err;
-> > > +	port->port.iotype = UPIO_MEM;
-> > > +	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
-> > > +	port->port.membase = priv->virt + offset;
-> > > +	port->port.regshift = board->reg_shift;
-> > 
-> > And so now serial8250_pci_setup_port() is never called?  Are you sure
-> > that's ok?
-> 
-> Hi Greg,
-> 
-> I will not provide a second version of this patch, because this is a bigger
-> problem involving 8250_exar, 8250_pci and 8250_pci1xxxx. With the changes from
-> kernel 6.10 to 6.11 the underlying pcim_* functions where changed. The
-> serial8250_pci_setup_port() does checks on pci_dev + BAR where resources were
-> already mapped via pcim_iomap(), pci_iomap() or even pci_ioremap_bar(). Not
-> sure if mixing this is a good idea after the kernel 6.11 changes.
-> 
-> serial8250_pci_setup_port() uses pcim_iomap() and pcim_iomap_table() for checking
-> these already mapped resources. But the pcim_iomap_table() is deprecated and
-> suggests to use pcim_iomap() function to aquire the pointer to the resources
-> while at the same time pcim_iomap() description states, don't use this function 
-> twice on the same BAR. I think the most sane approach would be to drop the
-> pcim_iomap() and pcim_iomap_table() checks from the serial8250_pci_setup_port()
-> function. But I can not fully test this, I only have access to some hardware
-> used by the 8250_exar driver. I also CC Andy and Parker, both worked on the
-> affected code.
+On Tue, Jul 29, 2025 at 08:59:38PM +0800, Baojun Xu wrote:
+> The wrong register was used for digital volume control of TAS2770,
+> The definition was changed, and usage was also updated.
 
-I'm on vacations right now and I lost context of this a long ago, please Cc me
-to any new version of this change to have a fresh look.
+> Fixes: ab29b3460c5c ("ALSA: hda: Add TAS2770 support")
+> 
+
+To make Fixes to be a tag, remove this blank line.
+
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 
 -- 
 With Best Regards,
