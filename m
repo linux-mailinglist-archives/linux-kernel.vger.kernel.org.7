@@ -1,370 +1,232 @@
-Return-Path: <linux-kernel+bounces-756804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F346B1B97D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31024B1B981
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEC818A518E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2DD18A7636
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6561293B5F;
-	Tue,  5 Aug 2025 17:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52591C7017;
+	Tue,  5 Aug 2025 17:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdPTjYnB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mlVsI6i9"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E263E1DE89B;
-	Tue,  5 Aug 2025 17:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E17D3594C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754415287; cv=none; b=CIX7S/FV5W7MbZGb+KeqE0idoqkrqcBxOqwynR+wysPSylNQmf0bFvRtr4Ackyq2gSFV35bNOz+ZqQQdyhS/YE08xhWwXFHPElYIGBWMm7bBX/oKiPl1eA9OsFk/YqEWsqKOwFIHYs35d9ek2n1ItNA51k++fvksLoX/4g0qztU=
+	t=1754415382; cv=none; b=ejXNBDmzXcShL64zq7r/HG/ycNFEtLZWEJCK1cZqrc0C8/nzsmwPNh2E+l1ZQUEOwzA1JhOsuf8l89uNT0Pap7qlJOCDpctgdlXQ8H0HcywtQbmeB6A8vuOJRY+uG0ba7/cNhWLHvENrQWc0H/D/IeenWA6489mWibYRG58XBlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754415287; c=relaxed/simple;
-	bh=WmXtBJUQBpG323CGFbVaIpu1Poo2loyOBH/IoJiJVQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZkno2OCfahNqw3nRPX9yHXEhmdCYh6AK4qlP/W7hgpepiUOe2YauDnyUGxfFIxdbMtdmhs5/551KK0J3kF854OGsBS+1sqU9Uht3EzQXNYbeulocNSHDx0qY8ImvzpaYTsl70do2pVCSjIIGCrhLel2JAFc5v5IcHxIlkNqURw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdPTjYnB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44079C4CEF6;
-	Tue,  5 Aug 2025 17:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754415286;
-	bh=WmXtBJUQBpG323CGFbVaIpu1Poo2loyOBH/IoJiJVQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PdPTjYnBHDARFDJNH43y47jNSnrtyPjJaEb8TFmk1CbmnJWrNf1H90xnd08hNl9NA
-	 h7G1vVl3Jcru8zVfm8UD7q2fLA4Y9Pb2iIgHCXJFPmZHUHQIc5IeQj3NxgpxioSYe0
-	 htEldFGSgm7EMhk4fA0XldLgStNh33tiADJ1Mt7nUMDT47C7QR6ttw/fmnN6rHmwx8
-	 ErEonhC6NUpPRAw0i8+fb13VEcghTOartxsDYLi5HjpPNqe1cEx6qyAoxHCYL77Z2E
-	 I2Gvly6kc6xl0uESUO2y0ReCRDvVXGANaV8CLcRt8KK76NC3ltIkXF7BbRcRXJmSel
-	 V5HlkMxbiDZOQ==
-Date: Tue, 5 Aug 2025 10:33:47 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] KEYS: trusted_tpm1: Move private functionality out
- of public header
-Message-ID: <20250805173347.GE1286@sol>
-References: <20250731212354.105044-1-ebiggers@kernel.org>
- <20250731212354.105044-4-ebiggers@kernel.org>
- <aJILqzhBKLMYF0P4@kernel.org>
+	s=arc-20240116; t=1754415382; c=relaxed/simple;
+	bh=eThf9JsSGG8K9eDl5Q5ixcfHZw/TOUah9xwdi3DO4jQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=l2YKRt09lE/sn2ps6zbbQUw9cy4aGaDBmJEeHUkeEJ70Aa4Vt0+dVOXJQZ2VrqaDBh98LLUgtqEoBPEdA9evWxTU7h4A2eJziUkwVYxl1Gx2jD6FOSXSbLrXjCNSGlQ7X9uAcTSWh3ttKyab4MeU+mPM+/fAYk8E0ih+Htn5ocI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mlVsI6i9; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250805173616epoutp01c27ec555b427e05b3b99646c898fbcdd~Y731wHV5a0319103191epoutp01D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 17:36:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250805173616epoutp01c27ec555b427e05b3b99646c898fbcdd~Y731wHV5a0319103191epoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754415376;
+	bh=eThf9JsSGG8K9eDl5Q5ixcfHZw/TOUah9xwdi3DO4jQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=mlVsI6i9fPELhaeDcy1tjCPFbkfYxp0KpJknByys46t6RE8VKfT6mTzo24mNfdImN
+	 otbkJeQrH8M52i2c/BWw00h2Srn6mhipkehtyhIZyCN+jA8U2lcSZmnynfMRMBY8/1
+	 cK24LbqsesPYV0MDDw1uoua/gdkUBXtmgeoajJOo=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250805173615epcas5p1226a55158c38de7a10e9ba040a1bcc01~Y730q5Mzg1218512185epcas5p1K;
+	Tue,  5 Aug 2025 17:36:15 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bxLFC0Rbzz2SSKY; Tue,  5 Aug
+	2025 17:36:15 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250805173614epcas5p3729afd6d84cb56236fe117f902422a09~Y73zVVDUt1693216932epcas5p34;
+	Tue,  5 Aug 2025 17:36:14 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250805173611epsmtip213f806fafd02fb6cec6b2e758af5ee80~Y73xGLe2i2350223502epsmtip2v;
+	Tue,  5 Aug 2025 17:36:11 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Manivannan Sadhasivam'" <mani@kernel.org>
+Cc: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Krzysztof
+ Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
+	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<andersson@kernel.org>, <konradybcio@kernel.org>,
+	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
+Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Date: Tue, 5 Aug 2025 23:06:10 +0530
+Message-ID: <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJILqzhBKLMYF0P4@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQGIhTOigFb9OSA/zLmmRAowhNFqCwJZOa1wAh4tdyIBxgZwxgI/ArKTAmrI7FMCp5bdBAEsJt2OAdY+bWECqijPQgIPv58TtFD7bNA=
+X-CMS-MailID: 20250805173614epcas5p3729afd6d84cb56236fe117f902422a09
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d
+References: <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+	<jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+	<fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+	<1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
+	<2nm7xurqgzrnffustrsmswy2rbug6geadaho42qlb7tr2jirlr@uw5gaery445y>
+	<11ea828a-6d35-4ac6-a207-0284870c28fc@oss.qualcomm.com>
+	<jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
+	<CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
+	<b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
+	<061b01dc062d$25c47800$714d6800$@samsung.com>
+	<i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
 
-On Tue, Aug 05, 2025 at 04:48:27PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Jul 31, 2025 at 02:23:54PM -0700, Eric Biggers wrote:
-> > Move functionality used only by trusted_tpm1.c out of the public header
-> > <keys/trusted_tpm.h>.  Specifically, change the exported functions into
-> > static functions, since they are not used outside trusted_tpm1.c, and
-> > move various other definitions and inline functions to trusted_tpm1.c.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > ---
-> >  include/keys/trusted_tpm.h                | 79 ----------------------
-> >  security/keys/trusted-keys/trusted_tpm1.c | 80 ++++++++++++++++++++---
-> >  2 files changed, 72 insertions(+), 87 deletions(-)
-> > 
-> > diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
-> > index a088b33fd0e3b..0fadc6a4f1663 100644
-> > --- a/include/keys/trusted_tpm.h
-> > +++ b/include/keys/trusted_tpm.h
-> > @@ -3,94 +3,15 @@
-> >  #define __TRUSTED_TPM_H
-> >  
-> >  #include <keys/trusted-type.h>
-> >  #include <linux/tpm_command.h>
-> >  
-> > -/* implementation specific TPM constants */
-> > -#define TPM_SIZE_OFFSET			2
-> > -#define TPM_RETURN_OFFSET		6
-> > -#define TPM_DATA_OFFSET			10
-> > -
-> > -#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
-> > -#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
-> > -#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
-> > -
-> >  extern struct trusted_key_ops trusted_key_tpm_ops;
-> >  
-> > -struct osapsess {
-> > -	uint32_t handle;
-> > -	unsigned char secret[SHA1_DIGEST_SIZE];
-> > -	unsigned char enonce[TPM_NONCE_SIZE];
-> > -};
-> > -
-> > -/* discrete values, but have to store in uint16_t for TPM use */
-> > -enum {
-> > -	SEAL_keytype = 1,
-> > -	SRK_keytype = 4
-> > -};
-> > -
-> > -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > -			unsigned int keylen, unsigned char *h1,
-> > -			unsigned char *h2, unsigned int h3, ...);
-> > -int TSS_checkhmac1(unsigned char *buffer,
-> > -			  const uint32_t command,
-> > -			  const unsigned char *ononce,
-> > -			  const unsigned char *key,
-> > -			  unsigned int keylen, ...);
-> > -
-> > -int trusted_tpm_send(unsigned char *cmd, size_t buflen);
-> > -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
-> > -
-> >  int tpm2_seal_trusted(struct tpm_chip *chip,
-> >  		      struct trusted_key_payload *payload,
-> >  		      struct trusted_key_options *options);
-> >  int tpm2_unseal_trusted(struct tpm_chip *chip,
-> >  			struct trusted_key_payload *payload,
-> >  			struct trusted_key_options *options);
-> >  
-> > -#define TPM_DEBUG 0
-> > -
-> > -#if TPM_DEBUG
-> > -static inline void dump_options(struct trusted_key_options *o)
-> > -{
-> > -	pr_info("sealing key type %d\n", o->keytype);
-> > -	pr_info("sealing key handle %0X\n", o->keyhandle);
-> > -	pr_info("pcrlock %d\n", o->pcrlock);
-> > -	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> > -	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> > -		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> > -}
-> > -
-> > -static inline void dump_sess(struct osapsess *s)
-> > -{
-> > -	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> > -		       16, 1, &s->handle, 4, 0);
-> > -	pr_info("secret:\n");
-> > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > -		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> > -	pr_info("trusted-key: enonce:\n");
-> > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > -		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> > -}
-> > -
-> > -static inline void dump_tpm_buf(unsigned char *buf)
-> > -{
-> > -	int len;
-> > -
-> > -	pr_info("\ntpm buffer\n");
-> > -	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> > -}
-> > -#else
-> > -static inline void dump_options(struct trusted_key_options *o)
-> > -{
-> > -}
-> > -
-> > -static inline void dump_sess(struct osapsess *s)
-> > -{
-> > -}
-> > -
-> > -static inline void dump_tpm_buf(unsigned char *buf)
-> > -{
-> > -}
-> > -#endif
-> >  #endif
-> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > index 126437459a74d..636acb66a4f69 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > @@ -22,10 +22,78 @@
-> >  #include <keys/trusted_tpm.h>
-> >  
-> >  static struct tpm_chip *chip;
-> >  static struct tpm_digest *digests;
-> >  
-> > +/* implementation specific TPM constants */
-> > +#define TPM_SIZE_OFFSET			2
-> > +#define TPM_RETURN_OFFSET		6
-> > +#define TPM_DATA_OFFSET			10
-> > +
-> > +#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
-> > +#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
-> > +#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
-> > +
-> > +struct osapsess {
-> > +	uint32_t handle;
-> > +	unsigned char secret[SHA1_DIGEST_SIZE];
-> > +	unsigned char enonce[TPM_NONCE_SIZE];
-> > +};
-> > +
-> > +/* discrete values, but have to store in uint16_t for TPM use */
-> > +enum {
-> > +	SEAL_keytype = 1,
-> > +	SRK_keytype = 4
-> > +};
-> > +
-> > +#define TPM_DEBUG 0
-> > +
-> > +#if TPM_DEBUG
-> > +static inline void dump_options(struct trusted_key_options *o)
-> > +{
-> > +	pr_info("sealing key type %d\n", o->keytype);
-> > +	pr_info("sealing key handle %0X\n", o->keyhandle);
-> > +	pr_info("pcrlock %d\n", o->pcrlock);
-> > +	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> > +	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> > +		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> > +}
-> > +
-> > +static inline void dump_sess(struct osapsess *s)
-> > +{
-> > +	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> > +		       16, 1, &s->handle, 4, 0);
-> > +	pr_info("secret:\n");
-> > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > +		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> > +	pr_info("trusted-key: enonce:\n");
-> > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > +		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> > +}
-> > +
-> > +static inline void dump_tpm_buf(unsigned char *buf)
-> > +{
-> > +	int len;
-> > +
-> > +	pr_info("\ntpm buffer\n");
-> > +	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> > +}
-> > +#else
-> > +static inline void dump_options(struct trusted_key_options *o)
-> > +{
-> > +}
-> > +
-> > +static inline void dump_sess(struct osapsess *s)
-> > +{
-> > +}
-> > +
-> > +static inline void dump_tpm_buf(unsigned char *buf)
-> > +{
-> > +}
-> > +#endif
-> > +
-> >  static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
-> >  		       unsigned int keylen, ...)
-> >  {
-> >  	struct hmac_sha1_ctx hmac_ctx;
-> >  	va_list argp;
-> > @@ -54,11 +122,11 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
-> >  }
-> >  
-> >  /*
-> >   * calculate authorization info fields to send to TPM
-> >   */
-> > -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > +static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> >  			unsigned int keylen, unsigned char *h1,
-> >  			unsigned char *h2, unsigned int h3, ...)
-> >  {
-> >  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
-> >  	struct sha1_ctx sha_ctx;
-> > @@ -92,16 +160,15 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> >  		ret = TSS_rawhmac(digest, key, keylen, SHA1_DIGEST_SIZE,
-> >  				  paramdigest, TPM_NONCE_SIZE, h1,
-> >  				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
-> >  	return ret;
-> >  }
-> > -EXPORT_SYMBOL_GPL(TSS_authhmac);
-> >  
-> >  /*
-> >   * verify the AUTH1_COMMAND (Seal) result from TPM
-> >   */
-> > -int TSS_checkhmac1(unsigned char *buffer,
-> > +static int TSS_checkhmac1(unsigned char *buffer,
-> >  			  const uint32_t command,
-> >  			  const unsigned char *ononce,
-> >  			  const unsigned char *key,
-> >  			  unsigned int keylen, ...)
-> >  {
-> > @@ -157,11 +224,10 @@ int TSS_checkhmac1(unsigned char *buffer,
-> >  
-> >  	if (crypto_memneq(testhmac, authdata, SHA1_DIGEST_SIZE))
-> >  		return -EINVAL;
-> >  	return 0;
-> >  }
-> > -EXPORT_SYMBOL_GPL(TSS_checkhmac1);
-> >  
-> >  /*
-> >   * verify the AUTH2_COMMAND (unseal) result from TPM
-> >   */
-> >  static int TSS_checkhmac2(unsigned char *buffer,
-> > @@ -242,11 +308,11 @@ static int TSS_checkhmac2(unsigned char *buffer,
-> >  
-> >  /*
-> >   * For key specific tpm requests, we will generate and send our
-> >   * own TPM command packets using the drivers send function.
-> >   */
-> > -int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > +static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> >  {
-> >  	struct tpm_buf buf;
-> >  	int rc;
-> >  
-> >  	if (!chip)
-> > @@ -268,11 +334,10 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> >  		rc = -EPERM;
-> >  
-> >  	tpm_put_ops(chip);
-> >  	return rc;
-> >  }
-> > -EXPORT_SYMBOL_GPL(trusted_tpm_send);
-> >  
-> >  /*
-> >   * Lock a trusted key, by extending a selected PCR.
-> >   *
-> >   * Prevents a trusted key that is sealed to PCRs from being accessed.
-> > @@ -322,11 +387,11 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
-> >  }
-> >  
-> >  /*
-> >   * Create an object independent authorisation protocol (oiap) session
-> >   */
-> > -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> > +static int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> >  {
-> >  	int ret;
-> >  
-> >  	if (!chip)
-> >  		return -ENODEV;
-> > @@ -339,11 +404,10 @@ int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> >  	*handle = LOAD32(tb->data, TPM_DATA_OFFSET);
-> >  	memcpy(nonce, &tb->data[TPM_DATA_OFFSET + sizeof(uint32_t)],
-> >  	       TPM_NONCE_SIZE);
-> >  	return 0;
-> >  }
-> > -EXPORT_SYMBOL_GPL(oiap);
-> >  
-> >  struct tpm_digests {
-> >  	unsigned char encauth[SHA1_DIGEST_SIZE];
-> >  	unsigned char pubauth[SHA1_DIGEST_SIZE];
-> >  	unsigned char xorwork[SHA1_DIGEST_SIZE * 2];
-> > -- 
-> > 2.50.1
-> > 
-> 
-> IMHO, this could followed (as next logical steps):
-> 
-> 1. Get rid of LOAD*() (tpm_buf_read*)
-> 2. I think we should delete dump_* given modern times and countless ways
->    to acquire that data (e.g., with eBPF).
-> 
 
-Sure, would you be interested in sending a follow-up patch?  I don't
-have much interest in this driver myself.
 
-- Eric
+> -----Original Message-----
+> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
+> Sent: Tuesday, August 5, 2025 10:52 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
+> Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
+> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
+> bvanassche=40acm.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.org;
+> James.Bottomley=40hansenpartnership.com; martin.petersen=40oracle.com;
+> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
+> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
+limit
+> properties to UFS
+>=20
+> On Tue, Aug 05, 2025 at 10:49:45PM GMT, Alim Akhtar wrote:
+> >
+> >
+> > > -----Original Message-----
+> > > From: Konrad Dybcio <konrad.dybcio=40oss.qualcomm.com>
+> > > Sent: Tuesday, August 5, 2025 10:36 PM
+> > > To: Manivannan Sadhasivam <mani=40kernel.org>
+> > > Cc: Krzysztof Kozlowski <krzk=40kernel.org>; Ram Kumar Dwivedi
+> > > <quic_rdwivedi=40quicinc.com>; alim.akhtar=40samsung.com;
+> > > avri.altman=40wdc.com; bvanassche=40acm.org; robh=40kernel.org;
+> > > krzk+dt=40kernel.org; conor+dt=40kernel.org; andersson=40kernel.org;
+> > > konradybcio=40kernel.org; James.Bottomley=40hansenpartnership.com;
+> > > martin.petersen=40oracle.com; agross=40kernel.org; linux-arm-
+> > > msm=40vger.kernel.org; linux-scsi=40vger.kernel.org;
+> > > devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org
+> > > Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and r=
+ate
+> > > limit properties to UFS
+> > >
+> > > On 8/5/25 6:55 PM, Manivannan Sadhasivam wrote:
+> > > > On Tue, Aug 05, 2025 at 03:16:33PM GMT, Konrad Dybcio wrote:
+> > > >> On 8/1/25 2:19 PM, Manivannan Sadhasivam wrote:
+> > > >>> On Fri, Aug 01, 2025 at 11:12:42AM GMT, Krzysztof Kozlowski wrote=
+:
+> > > >>>> On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
+> > > >>>>>
+> > > >>>>>
+> > > >>>>> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
+> > > >>>>>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski
+> wrote:
+> > > >>>>>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+> > > >>>>>>>> Add optional limit-hs-gear and limit-rate properties to the
+> > > >>>>>>>> UFS node to support automotive use cases that require
+> > > >>>>>>>> limiting the maximum Tx/Rx HS gear and rate due to hardware
+> constraints.
+> > > >>>>>>>
+> > > >>>>>>> What hardware constraints? This needs to be clearly
+> documented.
+> > > >>>>>>>
+> > > >>>>>>
+> > > >>>>>> Ram, both Krzysztof and I asked this question, but you never
+> > > >>>>>> bothered to reply, but keep on responding to other comments.
+> > > >>>>>> This won't help you to get this series merged in any form.
+> > > >>>>>>
+> > > >>>>>> Please address *all* review comments before posting next
+> iteration.
+> > > >>>>>
+> > > >>>>> Hi Mani,
+> > > >>>>>
+> > > >>>>> Apologies for the delay in responding.
+> > > >>>>> I had planned to explain the hardware constraints in the next
+> > > patchset=E2=80=99s=20commit=20message,=20which=20is=20why=20I=20didn=
+=E2=80=99t=20reply=20earlier.=0D=0A>=20>=20>=20>>>>>=0D=0A>=20>=20>=20>>>>>=
+=20To=20clarify:=20the=20limitations=20are=20due=20to=20customer=20board=20=
+designs,=0D=0A>=20>=20>=20>>>>>=20not=20our=0D=0A>=20>=20>=20SoC.=20Some=20=
+boards=20can't=20support=20higher=20gear=20operation,=20hence=20the=20need=
+=0D=0A>=20>=20>=20for=20optional=20limit-hs-gear=20and=20limit-rate=20prope=
+rties.=0D=0A>=20>=20>=20>>>>>=0D=0A>=20>=20>=20>>>>=0D=0A>=20>=20>=20>>>>=
+=20That's=20vague=20and=20does=20not=20justify=20the=20property.=20You=20ne=
+ed=20to=0D=0A>=20>=20>=20>>>>=20document=20instead=20hardware=20capabilitie=
+s=20or=20characteristic.=20Or=0D=0A>=20>=20>=20>>>>=20explain=20why=20they=
+=20cannot.=20With=20such=20form=20I=20will=20object=20to=20your=0D=0A>=20>=
+=20>=20>>>>=20next=0D=0A>=20>=20>=20patch.=0D=0A>=20>=20>=20>>>>=0D=0A>=20>=
+=20>=20>>>=0D=0A>=20>=20>=20>>>=20I=20had=20an=20offline=20chat=20with=20Ra=
+m=20and=20got=20clarified=20on=20what=20these=0D=0A>=20>=20>=20>>>=20proper=
+ties=0D=0A>=20>=20>=20are.=0D=0A>=20>=20>=20>>>=20The=20problem=20here=20is=
+=20not=20with=20the=20SoC,=20but=20with=20the=20board=20design.=0D=0A>=20>=
+=20>=20>>>=20On=20some=20Qcom=20customer=20designs,=20both=20the=20UFS=20co=
+ntroller=20in=20the=0D=0A>=20>=20>=20>>>=20SoC=20and=20the=20UFS=20device=
+=20are=20capable=20of=20operating=20at=20higher=20gears=20(say=0D=0A>=20G5)=
+.=0D=0A>=20>=20>=20>>>=20But=20due=20to=20board=20constraints=20like=20poor=
+=20thermal=20dissipation,=0D=0A>=20>=20>=20>>>=20routing=20loss,=20the=20bo=
+ard=20cannot=20efficiently=20operate=20at=20the=20higher=0D=0A>=20speeds.=
+=0D=0A>=20>=20>=20>>>=0D=0A>=20>=20>=20>>>=20So=20the=20customers=20wanted=
+=20a=20way=20to=20limit=20the=20gear=20speed=20(say=20G3)=0D=0A>=20>=20>=20=
+>>>=20and=20rate=20(say=20Mode-A)=20on=20the=20specific=20board=20DTS.=0D=
+=0A>=20>=20>=20>>=0D=0A>=20>=20>=20>>=20I'm=20not=20necessarily=20saying=20=
+no,=20but=20have=20you=20explored=20sysfs=20for=20this?=0D=0A>=20>=20>=20>>=
+=0D=0A>=20>=20>=20>>=20I=20suppose=20it=20may=20be=20too=20late=20(if=20the=
+=20driver=20would=20e.g.=20init=20the=0D=0A>=20>=20>=20>>=20UFS=20at=20max=
+=20gear/rate=20at=20probe=20time,=20it=20could=20cause=20havoc=20as=20it=0D=
+=0A>=20>=20>=20>>=20tries=20to=20load=20the=20userland)..=0D=0A>=20>=20>=20=
+>>=0D=0A>=20>=20>=20>=0D=0A>=20>=20>=20>=20If=20the=20driver=20tries=20to=
+=20run=20with=20unsupported=20max=20gear=20speed/mode,=0D=0A>=20>=20>=20>=
+=20it=20will=20just=20crash=20with=20the=20error=20spit.=0D=0A>=20>=20>=0D=
+=0A>=20>=20>=20OK=0D=0A>=20>=20>=0D=0A>=20>=20>=20just=20a=20couple=20relat=
+ed=20nits=20that=20I=20won't=20bother=20splitting=20into=0D=0A>=20>=20>=20s=
+eparate=20emails=0D=0A>=20>=20>=0D=0A>=20>=20>=20rate=20(mode?=20I'm=20seei=
+ng=20both=20names)=20should=20probably=20have=20dt-bindings=0D=0A>=20>=20>=
+=20defines=20while=20gear=20doesn't=20have=20to=20since=20they're=20called=
+=20G<number>=0D=0A>=20>=20>=20anyway,=20with=20the=20bindings=20description=
+=20strongly=20discouraging=20use,=0D=0A>=20>=20>=20unless=20absolutely=20ne=
+cessary=20(e.g.=20in=20the=20situation=20we=20have=20right=0D=0A>=20>=20>=
+=20there)=0D=0A>=20>=20>=0D=0A>=20>=20>=20I'd=20also=20assume=20the=20code=
+=20should=20be=20moved=20into=20the=20ufs-common=20code,=0D=0A>=20>=20>=20r=
+ather=20than=20making=20it=20ufs-qcom=20specific=0D=0A>=20>=20>=0D=0A>=20>=
+=20>=20Konrad=0D=0A>=20>=20Since=20this=20is=20a=20board=20specific=20const=
+rains=20and=20not=20a=20SoC=20properties,=20have=20an=0D=0A>=20option=20of=
+=20handling=20this=20via=20bootloader=20is=20explored?=0D=0A>=20=0D=0A>=20B=
+oth=20board=20and=20SoC=20specific=20properties=20*should*=20be=20described=
+=20in=20devicetree=0D=0A>=20if=20they=20are=20purely=20describing=20the=20h=
+ardware.=0D=0A>=20=0D=0AAgreed,=20what=20I=20understood=20from=20above=20co=
+nversation=20is=20that,=20we=20are=20try=20to=20solve=20a=20very=20*specifi=
+c*=20board=20problem=20here,=20=0D=0Athis=20does=20not=20looks=20like=20a=
+=20generic=20problem=20to=20me=20and=20probably=20should=20be=20handled=20w=
+ithin=20the=20specific=20driver.=0D=0A=0D=0A>=20-=20Mani=0D=0A>=20=0D=0A>=
+=20--=0D=0A>=20=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=
+=A3=E0=AE=A9=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=
+=B5=E0=AE=AE=E0=AF=8D=0D=0A=0D=0A
 
