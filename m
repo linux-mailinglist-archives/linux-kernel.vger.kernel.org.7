@@ -1,214 +1,162 @@
-Return-Path: <linux-kernel+bounces-756652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7DDB1B745
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:18:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB00B1B753
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3F81735B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9381B18A4A73
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E671279DB2;
-	Tue,  5 Aug 2025 15:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF740279DCF;
+	Tue,  5 Aug 2025 15:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2n697Lj9"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XatkETdD"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52063279784
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6772797A1;
+	Tue,  5 Aug 2025 15:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754407106; cv=none; b=TRTBKuYwAD8kPjAPDqfY/6HcUscd+Ec2TUAmbhOXRI5eATbir2i/yXgZHzXJVKhByGztEQkawiC29IlSPBMTiZgBTzfa0BELR0g+YvIe4kCE1iTZ7G6ll2GFcVePIRdUiHd71kTUfwpMcqS4W1PKeoKWtgp/iHrsIEB+gQzIpss=
+	t=1754407159; cv=none; b=Y2Acz84kFrFvGZiks+zWvNFhOKmL3FEsBX19BTK6kdGpA+2uD6F6mHF2uF4QpHaU21x4gUAGM1JwWKZovBI0DdMPXv7Zk7wNr+0zBDcrmvsUKQsVU05eaqcs8n7K8H2Q10lyUHH9WO8yeaWaJ6bsStpu8HscuweeZ7DmP3TSzK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754407106; c=relaxed/simple;
-	bh=1ECG87lC2qm1qN7vLX1WlO39n+HFFgTyOKI6P54s1S8=;
+	s=arc-20240116; t=1754407159; c=relaxed/simple;
+	bh=wHMHMlFPSLCN1Jyi3xsWh4m9GZ6TUcbpqIAvd989gPA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NT1r8BtpyuHA783QUB/A946d3Z4RoPiJCthjArPoAPAGk22Lh0qi9apbOSOtEFIOEOCTriroOzH6sikrDUyAMEtsrrrIi7chbVEhNcFNKLEOOaz04cfryR5lSQuntkaiWxteB7zGeau937XIgCY274wISTWYZBgo6o0u94SNPLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2n697Lj9; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b06d6cb45fso28515061cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 08:18:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=mwUCLMG0T6+UpRYsMpZjlRQVbYg1/jt91hYvzVXIR0Dz0CqnVVmdSMr7R+ik6A/vLfUY6pUDmFxzM/h3XKHwaKSylGenEe0ZT/Y65/JUOLbiHHRaY5OIrr74hhM0i/BejBOGvWQOk3gspI9gFDVc9XwAyETNbGYlQJfQyuXZvRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XatkETdD; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76bc61152d8so4745640b3a.2;
+        Tue, 05 Aug 2025 08:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754407104; x=1755011904; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754407157; x=1755011957; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ei2suQoiKM6jZ+vrvxUS6sJAz8bgwy+vg3WdcqYInd4=;
-        b=2n697Lj9RaVsbtlQOSax5ZJtzCFdCHqlhMBss7ZlvvdWSGJieP625J6Cl9TusJ432v
-         7//OLS1C1qtEjPVxhhOt07EqEhaK/oULHTKbQpiveeTxAThrMW8A9oMC4sqmbn8F4uLr
-         DaFWIvhzlDc5n9x41ygj4NHq1CAScsKyrOmkA0woDnrGi/+MlTOBN/+mIOK7k7VTgZnZ
-         bFYJuvFslh7DMYWaWr6s0U0L4j/lADIKkn0E/DEa1AFPoGWdsNEfB11hCsEFczTiQqKc
-         AQFDTYVfhsr9r7GR+Nq3s6UeDuu/2+UbH1U7RDl5zB6d+m+xYHLQEy7/V64zS1AEv4d+
-         Zh7A==
+        bh=EouBBaRl2Yz06MrDo9MABB0gPIhy3Or6WbSg/Pp0LIY=;
+        b=XatkETdDTujLlf3d0lrYpykbm677xLWdNdMgFfec5fhYMT65C400/a8rPEPok0IWL7
+         x3+vfvIOCABIgE5VUlT/+OsLlKAeEQSFOeAZHLdfVUKJnFl8XT730ik0YAipNk62GHWJ
+         hkcsAqbgHUUzo/e7Pi5jpCLV1UxIWeheLvhwbxnp+7OOoz0PRWsm4Y7Vf2trqPsA2Jqn
+         WeAJah/E8UJsM/IoU2tauLrly4Y2GbE3jSu+EHWQlRJwP4tECA1i7tKRZl54e2x/ey1z
+         nw725ev+z4AIFzeRva6E6MCVBLei27BC50+y+Y4B1iCbItoP52yqnWrsmw2qubo3eDEN
+         uPKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754407104; x=1755011904;
+        d=1e100.net; s=20230601; t=1754407157; x=1755011957;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ei2suQoiKM6jZ+vrvxUS6sJAz8bgwy+vg3WdcqYInd4=;
-        b=Z7/LOkgg4iIt+m5V9IG/69QVgvWdPOG77L2nEj82Vo26PeJYGlecnoqwnwta0Sq3qu
-         WTP/dWOJmCn82iG4IbDTFk+Q8UUYbvTDTKyz67x5LOqyahvaUgNBDnkJqTAqEXUQdVMV
-         wFV9qhQwpdc1zjxHRN8ZxKv0smmPmff/7KoKCS5LKfxqO+Qk9qhGUNtfbDX628BZA64C
-         1dTlHlaUiCSd1Q5ZOhJWtkOyLkuctMus4HzJMpwPFQtOI8NIY3kfkPxKEqlEKnlPNmFQ
-         oAwo2Dz/Otd6FMDZ7lrCXdQ0RqOv2Qqa1d6IpNyRh/n+ceUhZulTCVvxgxwKC7z0sPV4
-         u7yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLtc+6XGBSKaShT32c/GICwCDFatWcTTbtiw6+KwbDgIvfWivibDRCUb64r0WGdl0je/8QSAkS+1Hs8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6H+TPjeF7TO/2ghl2wrQ0PyBebC+CbZ2Wko3gmYm+tmTQA8/B
-	dzWkuKou4s6ObYbu7+j0NG9cCFZMPGMggpCxSIf5QAW817rxt6iynH/U+KjnQYq7pN+/rZQ7Nx6
-	42VyeKmAsGr9VRIpksQrtmCyzakw18Z6FIPQjFjuB
-X-Gm-Gg: ASbGnctnjovyqyzIYTtLCgps1kvP7tCPLnROmpHFYl79xY9HOzvObobnX7QiSiNS2vf
-	NBRBw1I0gITFNKX6IZsEuDcAM90rV4xfxdbeWQUTchb0CpsWm8TvIK+3xEbG9Q8T3MFszjBcHbK
-	tLK6Qvk+1LPe08cHfbOsXz+55HdVToZcAxv/m4aVTEdD+TC5SpUunVkq+1qcunVew9TBd59WvUt
-	RwStraJgpX3tSQSIjWvMTlQTzcbUV6lEgIDcBM2dw==
-X-Google-Smtp-Source: AGHT+IGlWdT5T+vrtEukolYStRP1zGethFLAlqa7L7jsXqEu+52gbiouMhUNWLt2Xp/Xbd7hHUETokSfoCGI9lBDsso=
-X-Received: by 2002:ad4:5c62:0:b0:707:6302:90aa with SMTP id
- 6a1803df08f44-7093626d773mr195026586d6.27.1754407103617; Tue, 05 Aug 2025
- 08:18:23 -0700 (PDT)
+        bh=EouBBaRl2Yz06MrDo9MABB0gPIhy3Or6WbSg/Pp0LIY=;
+        b=k91MR06e2LakGPoO2GLIYeH1lDz9qHDdxsYwYjl1F0adllQHEBbXDW+FbRyt1MrVca
+         QYFUotc6/NT3ea1DGBKgm1bejAKyHoFHVuIqTxtxh1onEYBGY9Ej+jVW+KGVP0m9rYul
+         4k9TOuaOuDW/L+lFo+gBEPeq3nOT7coUWluBWki+Jf8h4NKboxpjfrgj35uyYPOUGs71
+         cHG8CAfwHaE8WQjcTGPBVc0uGEO48LFEIzaYVWyZm+b/EPof9qazU2m5kAWkDfeeN6lA
+         zYfqCoBWU1jMA4XWYbzblL8GCtd1jKrcr7yK1WbhygCpyvjAktKhUQLpCF92iuzKFlOr
+         dIug==
+X-Forwarded-Encrypted: i=1; AJvYcCWCjcsAQHDj9rZ+4dj7B2vxRoqo6ESnGR7DS8CMSpycg9YFSY8KSsDdhmuzzfd8JvCFnlI7S6c9N8Ja6D+u@vger.kernel.org, AJvYcCWzbdXDUtdjAatPxa81hx3gKd5jKZxZt9AIGkbAnf1z3WyfkdNTO124sDqZarR5CLMqqqQ8YAX6+wMI@vger.kernel.org, AJvYcCXBsSW8gqrGhTrljnSiqsHFlTV5TCCl1RN/RNhNYRJymy22tqfuuzjafqfZ5axIyo7ZgLqL4R2/lcDWnZ+6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS6aZb9Oeikm4JWqJfvocYQAvek9XJDIQDacfSd09Ra3EW5gpK
+	q7vQpOyp34QLrSYIReHYERAotcfMDvoIuGFg7qniC/MpZEkXgGAFQFw1PS8wOrUGJq9RUDShVJ4
+	2UcMxJ8xdfF/GzBlzuCioujpaM2uvqIg=
+X-Gm-Gg: ASbGnctvV6Web6fs9tCRc+R5+d9r6fC5boiWEWasvOEqpCPvtPgS/TSDGjDo1SbZUBm
+	ms1Us8PMQXSTnL/d8iWzJsfEUh0YC4qUCHkT8je9LxOkjlolDLdrUR60ynk7GnK8DmLNwXTxDzT
+	WSTzjVx+JFvG71Vj7o0AvBWhcopzLcIcEQZfrCu/OVKfuzgTH8GmoRoeFqxEGuPlQ991D130zfX
+	Ueq
+X-Google-Smtp-Source: AGHT+IECB/DYjD3rcFUbi36bniwAYNzKE1+rxQqfR7kzJGIsbEQRm+ubSm4xHqTVPMzPbqx/BeIPce0p4r5uvnZHli8=
+X-Received: by 2002:a17:902:e291:b0:23f:f39b:eaf6 with SMTP id
+ d9443c01a7336-24247027a37mr144006805ad.46.1754407156944; Tue, 05 Aug 2025
+ 08:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-4-marievic@google.com>
-In-Reply-To: <20250729193647.3410634-4-marievic@google.com>
-From: Rae Moar <rmoar@google.com>
-Date: Tue, 5 Aug 2025 11:18:12 -0400
-X-Gm-Features: Ac12FXz9W5TjaYltj_nslVN8LL6euuV8WCMgJLzVdBjdaff9DG8lUm24r6Pqnn8
-Message-ID: <CA+GJov5Faik_aBzDO6QY3Rj_ycq=A6ZqOsuP-m6G1n3jtpNCYg@mail.gmail.com>
-Subject: Re: [PATCH 3/9] kunit: Pass additional context to generate_params for
- parameterized testing
-To: Marie Zhussupova <marievic@google.com>
-Cc: davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
-	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
-	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250804180525.32658-1-ltykernel@gmail.com> <20250804180525.32658-3-ltykernel@gmail.com>
+ <912536fc-15d4-4a57-91b5-ec902a93e2f4@amd.com>
+In-Reply-To: <912536fc-15d4-4a57-91b5-ec902a93e2f4@amd.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Tue, 5 Aug 2025 23:18:41 +0800
+X-Gm-Features: Ac12FXzhqn_xrfp-IxnNZn9DJb9prewdUwzeYK7uqklDB9WalMlkz_3S0dZ4mI4
+Message-ID: <CAMvTesBzQtURO1xSoUuortdEp5kPo7ds9BX+Au-8donogWZg-g@mail.gmail.com>
+Subject: Re: [RFC PATCH V5 2/4] Drivers: hv: Allow vmbus message synic
+ interrupt injected from Hyper-V
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de, 
+	kvijayab@amd.com, Tianyu Lan <tiala@microsoft.com>, linux-arch@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Kelley <mhklinux@outlook.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 3:37=E2=80=AFPM Marie Zhussupova <marievic@google.c=
-om> wrote:
+On Tue, Aug 5, 2025 at 9:59=E2=80=AFPM Neeraj Upadhyay <Neeraj.Upadhyay@amd=
+.com> wrote:
 >
-> To enable more complex parameterized test scenarios,
-> the `generate_params` function sometimes needs additional
-> context beyond just the previously generated parameter.
-> This patch modifies the `generate_params` function signature
-> to include an extra `struct kunit *test` argument, giving
-> users access to the parent kunit test's context when
-> generating subsequent parameters.
 >
-> The `struct kunit *test` argument was added as the first parameter
-> to the function signature as it aligns with the convention
-> of other KUnit functions that accept `struct kunit *test` first.
-> This also mirrors the "this" or "self" reference found
-> in object-oriented programming languages.
 >
-> Signed-off-by: Marie Zhussupova <marievic@google.com>
+> On 8/4/2025 11:35 PM, Tianyu Lan wrote:
+> > From: Tianyu Lan <tiala@microsoft.com>
+> >
+> > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> > index 308c8f279df8..2ff433cb5cc2 100644
+> > --- a/drivers/hv/hv.c
+> > +++ b/drivers/hv/hv.c
+> > @@ -314,8 +314,11 @@ void hv_synic_enable_regs(unsigned int cpu)
+> >       shared_sint.vector =3D vmbus_interrupt;
+> >       shared_sint.masked =3D false;
+> >       shared_sint.auto_eoi =3D hv_recommend_using_aeoi();
+> > +
+>
+> Nit: extra newline.
 
-Hello!
+Thanks for your review. Will remove it..
 
-Extremely happy about this change. This will provide us much more
-flexibility when defining test parameters. Thank you for this
-implementation!
+>
+> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
+64);
+> >
+> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, true);
+> > +
+> >       /* Enable the global synic bit */
+> >       sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
+> >       sctrl.enable =3D 1;
+> > @@ -342,7 +345,6 @@ void hv_synic_disable_regs(unsigned int cpu)
+> >       union hv_synic_scontrol sctrl;
+> >
+> >       shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE=
+_SINT);
+> > -
+>
+> Nit: extra newline.
+>
 
-Reviewed-by: Rae Moar <rmoar@google.com>
+Will remove it..
 
 
--Rae
+>
+> >       shared_sint.masked =3D 1;
+> >
+> >       /* Need to correctly cleanup in the case of SMP!!! */
+> > @@ -350,6 +352,9 @@ void hv_synic_disable_regs(unsigned int cpu)
+> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
+64);
+> >
+> >       simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
+> > +
+> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, false);
+> > +
+>
+> Nit: Maybe this should be above "simp.as_uint64 =3D hv_get_msr(HV_MSR_SIM=
+P)" ?
+>
 
-> ---
->  include/kunit/test.h | 9 ++++++---
->  lib/kunit/test.c     | 5 +++--
->  2 files changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/include/kunit/test.h b/include/kunit/test.h
-> index d8dac7efd745..4ba65dc35710 100644
-> --- a/include/kunit/test.h
-> +++ b/include/kunit/test.h
-> @@ -128,7 +128,8 @@ struct kunit_attributes {
->  struct kunit_case {
->         void (*run_case)(struct kunit *test);
->         const char *name;
-> -       const void* (*generate_params)(const void *prev, char *desc);
-> +       const void* (*generate_params)(struct kunit *test,
-> +                                      const void *prev, char *desc);
->         struct kunit_attributes attr;
->
->         /*
-> @@ -1701,7 +1702,8 @@ do {                                               =
-                              \
->   * Define function @name_gen_params which uses @array to generate parame=
-ters.
->   */
->  #define KUNIT_ARRAY_PARAM(name, array, get_desc)                        =
-                       \
-> -       static const void *name##_gen_params(const void *prev, char *desc=
-)                      \
-> +       static const void *name##_gen_params(struct kunit *test,         =
-                       \
-> +                                            const void *prev, char *desc=
-)                      \
->         {                                                                =
-                       \
->                 typeof((array)[0]) *__next =3D prev ? ((typeof(__next)) p=
-rev) + 1 : (array);      \
->                 if (__next - (array) < ARRAY_SIZE((array))) {            =
-                       \
-> @@ -1722,7 +1724,8 @@ do {                                               =
-                              \
->   * Define function @name_gen_params which uses @array to generate parame=
-ters.
->   */
->  #define KUNIT_ARRAY_PARAM_DESC(name, array, desc_member)                =
-                       \
-> -       static const void *name##_gen_params(const void *prev, char *desc=
-)                      \
-> +       static const void *name##_gen_params(struct kunit *test,         =
-                       \
-> +                                            const void *prev, char *desc=
-)                      \
->         {                                                                =
-                       \
->                 typeof((array)[0]) *__next =3D prev ? ((typeof(__next)) p=
-rev) + 1 : (array);      \
->                 if (__next - (array) < ARRAY_SIZE((array))) {            =
-                       \
-> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-> index d80b5990d85d..f50ef82179c4 100644
-> --- a/lib/kunit/test.c
-> +++ b/lib/kunit/test.c
-> @@ -696,7 +696,7 @@ int kunit_run_tests(struct kunit_suite *suite)
->                         /* Get initial param. */
->                         param_desc[0] =3D '\0';
->                         /* TODO: Make generate_params try-catch */
-> -                       curr_param =3D test_case->generate_params(NULL, p=
-aram_desc);
-> +                       curr_param =3D test_case->generate_params(&test, =
-NULL, param_desc);
->                         test_case->status =3D KUNIT_SKIPPED;
->                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT =
-KUNIT_SUBTEST_INDENT
->                                   "KTAP version 1\n");
-> @@ -727,7 +727,8 @@ int kunit_run_tests(struct kunit_suite *suite)
->
->                                 /* Get next param. */
->                                 param_desc[0] =3D '\0';
-> -                               curr_param =3D test_case->generate_params=
-(curr_param, param_desc);
-> +                               curr_param =3D test_case->generate_params=
-(&test, curr_param,
-> +                                                                       p=
-aram_desc);
->                         }
->                 }
->
-> --
-> 2.50.1.552.g942d659e1b-goog
->
+
+
+--
+Thanks
+Tianyu Lan
 
