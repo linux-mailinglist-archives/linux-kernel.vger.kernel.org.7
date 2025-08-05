@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-757096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D911DB1BDA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C65B1BDA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B317BE1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 23:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C279C620077
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBD82BE040;
-	Tue,  5 Aug 2025 23:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="PlEz6jxQ"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19361D61AA;
-	Tue,  5 Aug 2025 23:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B7B2BDC33;
+	Tue,  5 Aug 2025 23:59:56 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F912BDC20
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 23:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754438266; cv=none; b=G/iv/TyF4X9oyHcHWq9bV3AHIKvIOxjqi0qhpAIm/msY6RqT85QFWwMOuIfxXfVbHgIhN5xgKaQg031pFqLBMIr2SRoMHXngWMl+IEp+rdUsmEa/MbsKeTvRVSrhQ5yhtxeJyaakgTqXspGI/8SFlkh+vtAa9RPivJYZYubJUik=
+	t=1754438396; cv=none; b=Qt0P5b/YYnAdmE4c316hDYHLLPKwwUQx0jXOQ/E3HMXrKw/vNzZzsb8QIc5ZCFzIbvp6sCKCww+Ptcj2l5LyornhP6lK7mIjuWpoL6wkbmaCEEB2bZLjvsz7dh/B6i1C/3hVtyJmys7gWQdYq5tf1XohfKjyIXBSA+DapKRQ9jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754438266; c=relaxed/simple;
-	bh=Azwu2exHhvcNWSkXq+F6f+iwwZa36ojFzn02qKnZGcY=;
+	s=arc-20240116; t=1754438396; c=relaxed/simple;
+	bh=T7FWAJl2O0sB9hDVUZvzEUX1GkEPWogbdYPF7hesC38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mlfh1bDm0uHyqVsmEpAgu6nH5SA2QWJtCpTDYDYKDVNEQW10Lodfa0+07qkfBjDlahsnWxUz1nnzUQt2A9timKFMuaaXJuzyTKkRxumxOvmEDY01SUhPo0W296EGcw0eWseyNDVaqwx+CtmgPNOfvbpc5JLk2biI7ov9DYG8oX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=PlEz6jxQ; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1754438262;
-	bh=Azwu2exHhvcNWSkXq+F6f+iwwZa36ojFzn02qKnZGcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=PlEz6jxQQL/Nh626X64BFWdHp1WHNm/1f70UudtQaY/+ymVO0RPgDaWwlZp6wTNkT
-	 735uKh9QRgmJwIcLNTdEAm0xTdaLjOGCyO3Bw+x8OQoONqu+ACthmIXYidbjl7K/ec
-	 Sdxd+yZTpN8/dtS9n32KnuNYPvw3VykU5AOaYEqs8XoCiunOtANM5nkXVLSLm448fx
-	 5TJr9hMjN2Nboq/H4yFyYUPnxKKttxQoaXwuJBObb2sPf1tdAs+z8xKwa7mXlL1TWG
-	 iSgDszzE25T1fnFQnF+rsRawR2tNezN3GfkFEN1Di+QVZEAkrBgYMqfaIwVbzySPIL
-	 BWe9ahE5/Dj9Q==
-Received: from linux.gnuweeb.org (unknown [182.253.126.229])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 7D8973127C24;
-	Tue,  5 Aug 2025 23:57:39 +0000 (UTC)
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Wed, 6 Aug 2025 06:57:36 +0700
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Simon Horman <horms@kernel.org>, Oliver Neukum <oneukum@suse.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Netdev Mailing List <netdev@vger.kernel.org>,
-	Linux USB Mailing List <linux-usb@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org,
-	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
-Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on()
- call placement
-Message-ID: <aJKacDYMeggdiHxO@linux.gnuweeb.org>
-References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
- <20250804100050.GQ8494@horms.kernel.org>
- <20250805202848.GC61519@horms.kernel.org>
- <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com>
- <20250805164747.40e63f6d@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pENkm4pijnWzioHaq7hg5JYz3Y8zqzHQEPMqisS/NGfuYSHlgztsKTVqW9sAm9R3w9NjT5xxal2JYox7vrMHZPzRSXz+tN7UiQDnxEO9pOU0FEHzap7aJnB2W/oh/04Jmsho6IARRsz1fjEF68veVv3DynZM5ALhv/6G+0FZCQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-02-68929af3b516
+Date: Wed, 6 Aug 2025 08:59:41 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>, SeongJae Park <sj@kernel.org>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Gregory Price <gourry@gourry.net>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>, Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel-team@meta.com, kernel_team@skhynix.com
+Subject: Re: [PATCH v3] mempolicy: Clarify what zone reclaim means
+Message-ID: <20250805235941.GA53923@system.software.com>
+References: <20250805205048.1518453-1-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,27 +50,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250805164747.40e63f6d@kernel.org>
-X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+In-Reply-To: <20250805205048.1518453-1-joshua.hahnjy@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LhesuzSPfzrEkZBl2LhSzmrF/DZrHrRojF
+	1/W/mC1+3j3ObnF86zx2i30XgeKXd81hs7i35j+rxbc+aYvDX98wWaxek2Ex++g9dgcej52z
+	7rJ7dLddZvdYvOclk8emVZ1sHps+TWL3ODHjN4vHzoeWHucuVnj0Nr9j83i/7yqbx+dNcgHc
+	UVw2Kak5mWWpRfp2CVwZOxefZiuYKlqxa/U3xgbG6YJdjJwcEgImEncnNzN3MXKA2ctbvEDC
+	LAIqEs/bbzGD2GwC6hI3bvwEs0UENCVOtE4Csrk4mAW2M0vsOjiLDSQhLOAk0XHjPSOIzStg
+	IbFj/3x2EFtIwE5iz9v1bBBxQYmTM5+wgNjMAloSN/69ZALZyywgLbH8HwdImFPAXmLvxF2s
+	ILaogLLEgW3HmUB2SQi0s0vMe7OPGeJmSYmDK26wTGAUmIVk7CwkY2chjF3AyLyKUSgzryw3
+	MTPHRC+jMi+zQi85P3cTIzB+ltX+id7B+OlC8CFGAQ5GJR7eDNFJGUKsiWXFlbmHGCU4mJVE
+	eGPq+zOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhPLEnNTk0tSC2CyTJxcEo1MJoa
+	z3aetfW6B9OE04sbKtpWx3lu5X3qzvU/wuvbVMddnyfeXP5v2hHTPQ9/XtqxWcEqyuxmFG/m
+	HMXzZ10YfbLsGSMuPrp8QGOF+bN3a3/fbOOZXmEjfe3lEovJlilbD8Zx1R1bIHNhkd+yP0zn
+	/1k/bgm2jH6v1PnFcaezjcexTN6FZ7/t8jqpxFKckWioxVxUnAgA12be3ZsCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsXC5WfdrPt51qQMgyMTGS3mrF/DZrHrRojF
+	1/W/mC1+3j3ObnF86zx2i30XgeKH555ktbi8aw6bxb01/1ktvvVJWxy69pzV4vDXN0wWq9dk
+	WMw+eo/dgc9j56y77B7dbZfZPRbvecnksWlVJ5vHpk+T2D1OzPjN4rHzoaXHuYsVHr3N79g8
+	3u+7yubx7baHx+IXH5g8Pm+SC+CN4rJJSc3JLEst0rdL4MrYufg0W8FU0Ypdq78xNjBOF+xi
+	5OCQEDCRWN7i1cXIycEioCLxvP0WM4jNJqAucePGTzBbREBT4kTrJCCbi4NZYDuzxK6Ds9hA
+	EsICThIdN94zgti8AhYSO/bPZwexhQTsJPa8Xc8GEReUODnzCQuIzSygJXHj30smkL3MAtIS
+	y/9xgIQ5Bewl9k7cxQpiiwooSxzYdpxpAiPvLCTds5B0z0LoXsDIvIpRJDOvLDcxM8dUrzg7
+	ozIvs0IvOT93EyMwPpbV/pm4g/HLZfdDjAIcjEo8vBmikzKEWBPLiitzDzFKcDArifDG1Pdn
+	CPGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTDWq7FXTd1T
+	78/NsyvQU/fszcbwaw/Nphdqn7i87PL9wuO3PJhE3onfdDd53GUheGGqZ4B6deE/jtPXfj85
+	6rjB1Wnj9kWduu/6W6+nftsx/dIu08BGo9tcQsWhzgvDPs578e/NrN1aC5stE51mPZk7z8h7
+	shijwJu5j3Qrsj2nWyzy0DmfMvmWEktxRqKhFnNRcSIAgiVw8YsCAAA=
+X-CFilter-Loop: Reflected
 
-On Tue, Aug 05, 2025 at 04:47:47PM -0700, Jakub Kicinski wrote:
-> On Wed, 6 Aug 2025 01:40:37 +0300 Linus Torvalds wrote:
-> > So my gut feel is that the
-> > 
-> >                 if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
-> >                         netif_carrier_on(dev->net);
-> > 
-> > should actually be done outside that if-statement entirely, because it
-> > literally ends up changing the thing that if-statement is testing.
+On Tue, Aug 05, 2025 at 01:50:47PM -0700, Joshua Hahn wrote:
+> The zone_reclaim_mode API controls the reclaim behavior when a node runs out of
+> memory. Contrary to its user-facing name, it is internally referred to as
+> "node_reclaim_mode".
 > 
-> Right. I think it should be before the if (!netif_carrier_ok(dev->net))
+> This can be confusing. But because we cannot change the name of the API since
+> it has been in place since at least 2.6, let's try to be more explicit about
+> what the behavior of this API is.
 > 
-> Ammar, could you retest and repost that, since we haven't heard from
-> John?
+> Change the description to clarify what zone reclaim entails, and be explicit
+> about the RECLAIM_ZONE bit, whose purpose has led to some confusion in the
+> past already [1] [2].
+> 
+> While at it, also soften the warning about changing these bits.
+> 
+> [1] https://lore.kernel.org/linux-mm/1579005573-58923-1-git-send-email-alex.shi@linux.alibaba.com/
+> [2] https://lore.kernel.org/linux-mm/20200626003459.D8E015CA@viggo.jf.intel.com/
+> 
+> Acked-by: SeongJae Park <sj@kernel.org>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> ---
+> v2 --> v3:
+> - Fixed typos
+> - Softend wording from "never" --> "should not"
+> 
+>  include/uapi/linux/mempolicy.h | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+> index 1f9bb10d1a47..683c130782f0 100644
+> --- a/include/uapi/linux/mempolicy.h
+> +++ b/include/uapi/linux/mempolicy.h
+> @@ -66,10 +66,16 @@ enum {
+>  #define MPOL_F_MORON   (1 << 4) /* Migrate On protnone Reference On Node */
+> 
+>  /*
+> + * Enabling zone reclaim means the page allocator will attempt to fulfill
+> + * the allocation request on the current node by triggering reclaim and
+> + * trying to shrink the current node.
+> + * Fallback allocations on the next candidates in the zonelist are considered
+> + * when reclaim fails to free up enough memory in the current node/zone.
 
-OK, I'll send a v3 shortly.
+I was confused too, at the beginning.  Thanks for the explicit comment.
 
--- 
-Ammar Faizi
+Acked-by: Byungchul Park <byungchul@sk.com>
 
+	Byungchul
+
+> + *
+>   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+> - * ABI.  New bits are OK, but existing bits can never change.
+> + * ABI.  New bits are OK, but existing bits should not be changed.
+>   */
+> -#define RECLAIM_ZONE   (1<<0)  /* Run shrink_inactive_list on the zone */
+> +#define RECLAIM_ZONE   (1<<0)  /* Enable zone reclaim */
+>  #define RECLAIM_WRITE  (1<<1)  /* Writeout pages during reclaim */
+>  #define RECLAIM_UNMAP  (1<<2)  /* Unmap pages during reclaim */
+> 
+> 
+> base-commit: 6bcdbd62bd56e6d7383f9e06d9d148935b3c9b73
+> --
+> 2.47.3
 
