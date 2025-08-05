@@ -1,199 +1,153 @@
-Return-Path: <linux-kernel+bounces-756694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED9FB1B7D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CD7B1B7D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 17:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444307A3282
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BC8188CDA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A493289815;
-	Tue,  5 Aug 2025 15:59:37 +0000 (UTC)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADEA28982A;
+	Tue,  5 Aug 2025 15:57:34 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EEC2045B7;
-	Tue,  5 Aug 2025 15:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AA11C84B8
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 15:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754409577; cv=none; b=SzxEWQtKHJbTuXok8xencdyPExUldGTISwTvAcEgO4ziNDeKomX0EQAY6GnwtZHRdvaFn0cN2/vLisYEp+NCRZQ0RMzlgwiJosnDkWJBN2f+5f6wrqb4M2APY3RFSyO1tw+FBlf7uU3cDilYn4UQD/oUMNQ7gMST4XFRzW7FoAk=
+	t=1754409454; cv=none; b=dBc43gUCn30jvVaE0n0PubVxet/AXvIFbZ/h4+8G6LBVT9iMSM43ECy/z0ODCfzBdOhNaCjNVM9BijssjVoqxTfuedr8fmcP72Y1Fy33y36s+h6ollk1hMh9vLHtVNCS1g9cVyItE4iQIBPMY0fxrhHnqO6quJIhx9K9eCuEeoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754409577; c=relaxed/simple;
-	bh=m0LU1qaLRSsRPSbX0ciBnhWdZnBeXv9neFXKF8f56Ms=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jAnEoqijWvkXqzTorLDzShTRT83aMCLm5UBQ05q0ulSjej6K88exXpKuJbszneaken7zspZe2PtPpRTqt7Rzsw7MU6FpSAbjhNO5nkuBcu8gxE8wQrJrS9zbpY4hs/xotnGGzLKBNw8y0bHOE+nWj79ri9Vpvpk5HbaKRfCt4io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32116dd55dcso724445a91.3;
-        Tue, 05 Aug 2025 08:59:35 -0700 (PDT)
+	s=arc-20240116; t=1754409454; c=relaxed/simple;
+	bh=g0ecg3Q81U2CFlbsKTtZuExNs/RfX1k10w5EglLEdqo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dPFV8bqZPx9NU5/UOhGWFprOlCrZPpIz0wUIlK6rkQhx6a37qoxqY7gwSPr93zkiOoNzSD+De9TkoZPVHVcSeVA/MKjj2024uWX6xf3zrKwe6VhsqGPYj/asEkbapOu3M/rEebNkOfm5GyyyqEKEiXejGTP+m4nuKWH6PCjc/aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c3902f73fso1700739f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 08:57:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754409575; x=1755014375;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V/Od2rfppNEDbprPUwulY8XJGdzkkGhVfmvmHo9N+0g=;
-        b=rKBx1Qtclf86YmV+q0ZFlRzc8APG9tErKiLAzDok8RCzO5LDPYtU0gSdQG5GOJffOS
-         DK53Jguh7JNvpky2R8V81j2WRWAg4pb4Xv+J4e7R2m2/bXgG/N3vwpLLeMc/1I1WgdRX
-         fHQO0mx/ENnNf1ClDOfxZ5vFaDMrHnehDM7aqGg9df2hl/MoPPFmwRr7zsV0BDZNJxFM
-         8x+NA/Y4YKT9q/biYIdCpBeRkJAtDWu4INbYb0a16WG0N6aNBUa9aymKszqTVV1Z4ve3
-         DWRczAfFgJ+M4MBxxuhYuHjm6zW06yfUzJ37QFjJ7arImzrGjG2ZZBAvkhduMDJcqhGB
-         eFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEm2vXJVuLQ3rNfuXkpg/g89amPNodnRaZW7aQ9SMSalwVSDOZogSllZ0o4zqnEDoAVc2k/SgrE40YLN6b@vger.kernel.org, AJvYcCVxSWTT0bXa88RJAoKPsK0SGsv3582erCcTdxS3J2bG6iQwBQckzErHu64FmoYPgJ28NK6rBHGYCKSp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbeHIPLMUQh0GnwiiJzohO+xT/VvZbE7sRGPP8lzhKJfCDt+Ga
-	msk4ffzTaZRoawVpOhA1uNSvG43BPTDD2lDBsUujtXCEaTX23QCOBSypQHhBEw==
-X-Gm-Gg: ASbGnctJXfOF8O98R0JHBhrWQQD2mr+2JSyhvx7tT2PP4fWDVFgSej5tP3J/4ghpke8
-	ND2thSywmoHiVSROBV2VuAk29XRUS/AuACRZYG/ebsCjIReJ8+HhIDLMIyxsaqLC2s8qcPjoD3p
-	FzrvwQ5ojpD1C/GTsifXqtqLFAGB9tTlX/s4b5fJ/0NBMspSP76iT2kLsYyogukALRd9B2Wn99J
-	ESxbNujApvcVZ6/CFNolxdG7P4uSQD03lwLanNYIiV0vp2Pj0qAVH5F+n8ygU9h2/2/CXHsURwP
-	mL2pBHMCBTgxEoyWNfnGjZcCIrk6gn20bLQNcXuXUv+3RZT7sjMgZuyufBjzNBF7s6LWRsZZgY5
-	D+qmVD2jOxHOP
-X-Google-Smtp-Source: AGHT+IES1fD8irvZA4SGu2efKUtBxC9f4epdz1iAOhgYvBR/G8G/w5ox4688q4NrAUGzo/aiypeyyQ==
-X-Received: by 2002:a17:90b:1b06:b0:31f:24c2:16cb with SMTP id 98e67ed59e1d1-321162cd92dmr7989190a91.6.1754409574886;
-        Tue, 05 Aug 2025 08:59:34 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f35f90sm17375728a91.35.2025.08.05.08.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 08:59:34 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>,
-	notselwyn@pwning.tech
-Subject: [PATCH] ksmbd: add kcov remote coverage support via ksmbd_conn
-Date: Tue,  5 Aug 2025 15:56:28 +0000
-Message-ID: <20250805155627.1605911-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1754409452; x=1755014252;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f8mlwvJNmo6qdqX17K3vXEq/b8z8wXKmt9sQYJcWZQQ=;
+        b=scaZfGjfUChQLS+seXGr950qsMKSbcBxNXbOSFOZpRKvLlCqR/FwCfyFJTyJ5isGRR
+         LEQUYyQYBaKVmXdLo302spmM5KnjcxWnLxOCa65f3UQw+RsiQAezK6hJBOngVs3NwAyq
+         HnfsBs2XumHfNOg668iRmPYGymswknD9XOr8j6lmEzvI61cqEc4eElo23mJZ9uKiUEvx
+         G3rnKENnZDjCIZW0NDWDAndTj6Njj/hFA/eJbnweLeEzDyRIyMFvHtCyZRglb/YwMY+P
+         7n2ZNgr2RDFo3LSUCsNYzE9sEDk+FMDMFkq28bg4IuxuhxwKyLRfbWx0HEFuONJrZSgC
+         gjlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk2dNaos1IiNKIU9K96eglQItmoZwGWso6O3TYfMC2ZiYjEUbNWBFyPde2LCT4nHzJnfx4ffO/fU8Erlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz8jZ0YooYg4ORW9gaQIVKDnG1fXlz5MhhOBKs1di2Lz2szImn
+	3oHeIVFH9lZwRWageRfq6paV1D+0+3xDuQMHJvWOwDEvcnKFN8pH5lEaJPDQgNFlG4RjgkLWbqn
+	xP41cu9fYGPfJaGxO84BPHuleiGU2bPGXahP3P0F+bT/6IQqs1aKy8ICGUZ0=
+X-Google-Smtp-Source: AGHT+IH7KiSosg8Up/F9+Xg6br5+pgu4hBSl8CrIFlfN5oaPEvTm+11ueLjC/XCOM5H8C/jojG9KWwPymeO0F/la2YqySOy3Ardl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3fd5:b0:881:7fe8:d4ca with SMTP id
+ ca18e2360f4ac-88191b4d579mr723966639f.3.1754409452077; Tue, 05 Aug 2025
+ 08:57:32 -0700 (PDT)
+Date: Tue, 05 Aug 2025 08:57:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689229ec.050a0220.7f033.002a.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in drv_unassign_vif_chanctx (3)
+From: syzbot <syzbot+6506f7abde798179ecc4@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-KSMBD processes SMB requests on per-connection threads and then hands
-off work items to a kworker pool for actual command processing by
-handle_ksmbd_work(). Because each connection may enqueue multiple
-struct ksmbd_work instances, attaching the kcov handle to the work
-itself is not sufficient: we need a stable, per-connection handle.
+Hello,
 
-Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
-and initialize it when the connection is set up. In both
-ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
-and handle_ksmbd_work() which receives a struct ksmbd_work*, start
-kcov_remote with the per-connection handle before processing and stop
-it afterward. This ensures coverage collection remains active across
-the entire asynchronous path of each SMB request.
+syzbot found the following issue on:
 
-The kcov context tied to the connection itself, correctly supporting
-multiple outstanding work items per connection.
+HEAD commit:    7e161a991ea7 Merge tag 'i2c-for-6.17-rc1-part2' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cc7aa2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1bb6a60e53533c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6506f7abde798179ecc4
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-The related work for syzkaller support is currently being developed
-in the following GitHub PR:
-Link: https://github.com/google/syzkaller/pull/5524
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Based on earlier work by Lau.
-Link: https://pwning.tech/ksmbd-syzkaller/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c830eae67136/disk-7e161a99.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cbc8fc9ead36/vmlinux-7e161a99.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/db1e8c2fe140/bzImage-7e161a99.xz
 
-Cc: linux-cifs@vger.kernel.org
-Cc: notselwyn@pwning.tech
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6506f7abde798179ecc4@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+wlan1: Failed check-sdata-in-driver check, flags: 0x0
+WARNING: CPU: 0 PID: 6119 at net/mac80211/driver-ops.c:366 drv_unassign_vif_chanctx+0x247/0x850 net/mac80211/driver-ops.c:366
+Modules linked in:
+CPU: 0 UID: 0 PID: 6119 Comm: kworker/u8:8 Not tainted 6.16.0-syzkaller-11699-g7e161a991ea7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:drv_unassign_vif_chanctx+0x247/0x850 net/mac80211/driver-ops.c:366
+Code: 74 24 10 48 81 c6 20 01 00 00 48 89 74 24 10 e8 ff fb bb f6 8b 54 24 04 48 8b 74 24 10 48 c7 c7 60 5b 08 8d e8 4a 9a 7a f6 90 <0f> 0b 90 90 e8 e0 fb bb f6 4c 89 f2 48 b8 00 00 00 00 00 fc ff df
+RSP: 0000:ffffc9000440f5f0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8880758fcd80 RCX: ffffffff817a3308
+RDX: ffff888026cb4880 RSI: ffffffff817a3315 RDI: 0000000000000001
+RBP: ffff888076e70e40 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: fffffffffffec258 R12: ffff8880758fea28
+R13: 0000000000000000 R14: ffff8880758fd728 R15: ffff8880758fe9d0
+FS:  0000000000000000(0000) GS:ffff8881246c6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc9ef0dafe8 CR3: 000000002b620000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ieee80211_assign_link_chanctx+0x3f1/0xf00 net/mac80211/chan.c:916
+ __ieee80211_link_release_channel+0x273/0x4b0 net/mac80211/chan.c:1890
+ ieee80211_link_release_channel+0x128/0x200 net/mac80211/chan.c:2165
+ unregister_netdevice_many_notify+0x1419/0x24c0 net/core/dev.c:12177
+ unregister_netdevice_many net/core/dev.c:12219 [inline]
+ unregister_netdevice_queue+0x305/0x3f0 net/core/dev.c:12063
+ unregister_netdevice include/linux/netdevice.h:3382 [inline]
+ _cfg80211_unregister_wdev+0x64b/0x830 net/wireless/core.c:1275
+ ieee80211_remove_interfaces+0x34e/0x740 net/mac80211/iface.c:2391
+ ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1664
+ mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5674 [inline]
+ hwsim_exit_net+0x3ac/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6554
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x2eb/0xab0 net/core/net_namespace.c:251
+ cleanup_net+0x408/0x890 net/core/net_namespace.c:682
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
- fs/smb/server/connection.c |  4 +++-
- fs/smb/server/connection.h | 14 ++++++++++++++
- fs/smb/server/server.c     |  4 ++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
-index 3f04a2977ba8..6ce20aee8cc1 100644
---- a/fs/smb/server/connection.c
-+++ b/fs/smb/server/connection.c
-@@ -322,6 +322,8 @@ int ksmbd_conn_handler_loop(void *p)
- 	if (t->ops->prepare && t->ops->prepare(t))
- 		goto out;
- 
-+	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
-+
- 	max_req = server_conf.max_inflight_req;
- 	conn->last_active = jiffies;
- 	set_freezable();
-@@ -412,7 +414,7 @@ int ksmbd_conn_handler_loop(void *p)
- 			break;
- 		}
- 	}
--
-+	kcov_remote_stop();
- out:
- 	ksmbd_conn_set_releasing(conn);
- 	/* Wait till all reference dropped to the Server object*/
-diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
-index dd3e0e3f7bf0..07cd0d27ac77 100644
---- a/fs/smb/server/connection.h
-+++ b/fs/smb/server/connection.h
-@@ -15,6 +15,7 @@
- #include <linux/kthread.h>
- #include <linux/nls.h>
- #include <linux/unicode.h>
-+#include <linux/kcov.h>
- 
- #include "smb_common.h"
- #include "ksmbd_work.h"
-@@ -109,6 +110,9 @@ struct ksmbd_conn {
- 	bool				binding;
- 	atomic_t			refcnt;
- 	bool				is_aapl;
-+#ifdef CONFIG_KCOV
-+	u64				kcov_handle;
-+#endif
- };
- 
- struct ksmbd_conn_ops {
-@@ -246,4 +250,14 @@ static inline void ksmbd_conn_set_releasing(struct ksmbd_conn *conn)
- }
- 
- void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
-+
-+static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
-+{
-+#ifdef CONFIG_KCOV
-+	return conn->kcov_handle;
-+#else
-+	return 0;
-+#endif
-+}
-+
- #endif /* __CONNECTION_H__ */
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 8c9c49c3a0a4..0757cd6ef4f7 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
- 	struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
- 	struct ksmbd_conn *conn = work->conn;
- 
-+	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
-+
- 	atomic64_inc(&conn->stats.request_served);
- 
- 	__handle_ksmbd_work(work, conn);
-@@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
- 	ksmbd_conn_try_dequeue_request(work);
- 	ksmbd_free_work_struct(work);
- 	ksmbd_conn_r_count_dec(conn);
-+
-+	kcov_remote_stop();
- }
- 
- /**
--- 
-2.50.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
