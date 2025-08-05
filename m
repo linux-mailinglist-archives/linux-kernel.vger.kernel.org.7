@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-756936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E55B1BB36
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C29BB1BB39
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38BC67A5941
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6715118808B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D91E274658;
-	Tue,  5 Aug 2025 19:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A104F2750E7;
+	Tue,  5 Aug 2025 19:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dtyU/vD6"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SPVwXk9r"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4034A267AF6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9F222B5AC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754423866; cv=none; b=G3EUMwqUN5RWdR7C7uWh0tg1cJEQu5lH9oUtcA4gHNhIl6KOO8ClX3kScoqkznxya71IP8WNburNyfoV3twMafaXqsEXv8UNt5kKxf86SDmc+FS7gmYktAVK9LSv+bio8zsdONVZfYkR8G6pPJkSULm/PmUpR1QI8mALzUOOLQo=
+	t=1754423966; cv=none; b=Lk9tk8zIfTLFHqgPcwLfLW0Oix99m+/5/3HtyXXenNaSIzEOuKBH7oH96ABDvgm6AzGmawa/GZAStf4WMlo9suBFf7iDATHY3lfa6ZU2vaE8VYiSK1pQxY9CwKFGZZuPGuoGty96ly7d+C80AswUv8Mr8iBQeuU6am7aQvOb1+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754423866; c=relaxed/simple;
-	bh=bC+zFzhWtUviZ0EXWS2t+T+yocqJQ0MUviaN2AZtakU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUFqceIFh48RZ4XvBkQIi0a4sRaZSYoqJcB9aN7QBYsCrV/ChQZ5GySHhPikaNzihm8eWv2ny7bgFZ8GVB23j5Sq4Pdh8NPEoji5WHgPxAIuMszspqfeb2jphclNFBlWhzBVC4B45gs3uvxPSK/4YBpLYq7a7GoZMN54vhcO9cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dtyU/vD6; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32128c5fc44so226938a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:57:44 -0700 (PDT)
+	s=arc-20240116; t=1754423966; c=relaxed/simple;
+	bh=pXhxchSRRgtxWJx8jVY2QY92qQA379bq+J7HbDgvShU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MGki4hJIJl9NY8AUkuufPvv9HDR2XBAkqUiDAnM4jCjAv/knrfzPpGZA8nduMO6o+6ctLVfviMPxTL4dFZNZGTleuxMXlDlanO5yFsHk737f7u/il3cCPkXpIknSYJD9Fn2gmLRnjRRM9oQhpSDsTjTarkFpwbiQucqqfQfJ66Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SPVwXk9r; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f729bf733so8594711a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:59:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754423864; x=1755028664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MsxTPw5w3dvOw6Du0TNqYhfP8nKYvG4y7TuULGIfs2w=;
-        b=dtyU/vD6+eUz45Iyhye/qTCtmvMAoYhAC7zSJ0HlBeLv4YQ9+UaRn7FwQF5iW3pRYo
-         m5v8aNBBbf6Xq64Z8L+Tj7lxKh/R2L1ZsHb7GAEouqxLuAtAzrspBYseiteczUHqlFly
-         t8+Itvu7oT3b9sJDJMkMtb5Mup7NL5fcqAxMW3fFx8u56gpg7wyfCO8IWkru0rQliSM5
-         5X2GFA8zN9qovslm/EAKJMezGdw8skGJte8nMzVXoIrs3VVdXNY1+9stwGHtvkHo0Mwh
-         FByMGHDGTe11MpNxk83DqvoQjxFpu0Z918wXVrVdZtFBFO/XthIkANdrsaRPxQdxd32L
-         NZ/A==
+        d=google.com; s=20230601; t=1754423964; x=1755028764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w3Yvf2JfDXGKcx67v9ooLLvg0JCE6s5eg0KrtzPSvSI=;
+        b=SPVwXk9rlSJWnmlbW2bmHhgn1zxdmjolLq9toYnkL9Odbdz6PFCyss55pgh+ACNQ4H
+         I777PmMXBUXYAWa/nQdSh0o34s7qZpy4+v5oKhHw+01mf0ecNLEcbowx9QW2DuwqwKQW
+         TEI0U7nzF5nfKSHPH2SN5G6ICc79DUxWGRmAikcrrdcRG45gGv5EjabaMt7DJEEdU8iT
+         2VRSE/rL0gb6v7O/oHCDC6BAmWQZs2jPCxZXNlp7NVTII1usZPtiHletraIbxFUZBGDs
+         9035KSjs6KHpkuPHWZ8i1g2n/YY0gjLEiapWzwVa5l/xxAHyti25J730jxaEvL07CcDo
+         s9lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754423864; x=1755028664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MsxTPw5w3dvOw6Du0TNqYhfP8nKYvG4y7TuULGIfs2w=;
-        b=UgE0Vk9X93Uduu6lgADz/hu75RdifL4KKeb7U8t3UziYsW+wvPAsaMrlXy+ayU8l9m
-         iVLpM8oSi7O8A8owcJKg14M7SnoOym2G4M0PdYi7Vmsf7mPGjKqnafsM3/r6EED32vB0
-         ScHNFT9PBhT8AvXinglfQ1SjYyJhcKifx1tDPjeqJxIIAdSqJsmJhn+3N1qelGkAzjYN
-         yR6QhNHDKczl1D2xbkAGOlOhY173E3PLHij6gIhDA1ZQM8etsBaDMDXVTQ0kFR7Jddcd
-         2rHWX43UauxRJ11gf5COUrErQA19MBZpbkBcmsvsh2OdR1rq3I23jkvb/etQ+5iju72W
-         6fbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUohumEHdp82pzJI794NPB98J15xrcsGW9AC5gwhnzRnch+s0eXsHsCiuLCYe3QDP7lEopsgljb5i1dDKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHstS5ih9TdmM/uuUuVG44HFLa4HycktxgGcQRXPq65GCEOQfd
-	JEDyE4xRTFDeIQYYrW3PE2rRqU7DrS58KN5HDhQe+0jpZ4bHQVPVqWq3GU2j8qMHQ7o/pbIRD5t
-	c2UpoWTEPOH4KAKWiWKnlpoA9Zf1AJk2evkjdAYQJ
-X-Gm-Gg: ASbGnctbVFZtkNQykgBK6aP5wlKxR5Gcj6PE4yPvAxZ3chVPyecdtSJ9S6xAJgrGwtO
-	0zDJeacUFRkCuz0w0Zl38UhLK1AoygqVB8gXoI7Dqy93TpB+jvOK/n9GZ8GyBxsGjvtaOR4he7O
-	+yWnlVZJeae7bYq8LYMDHe5vv48ADrjYpvRy2jOic0CnSjsoKlqDeoBLaHdURx7MXgksOGVDGVK
-	muVoN8=
-X-Google-Smtp-Source: AGHT+IHKu8z9XhICdXETPTLsS+z0RRZ62+RDpW21sm8v0pPvwaiLLnpAF+0jPbMODlNzNNx8b8mybw2geegLclSoToQ=
-X-Received: by 2002:a17:90b:53c3:b0:315:9624:37db with SMTP id
- 98e67ed59e1d1-32166853c96mr228245a91.3.1754423864335; Tue, 05 Aug 2025
- 12:57:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754423964; x=1755028764;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=w3Yvf2JfDXGKcx67v9ooLLvg0JCE6s5eg0KrtzPSvSI=;
+        b=R5XtBNUCi49wTrkgPsKyAoSn9r5uMxR0f5O3C8nqOzQ8jHoLEEmSaTXR27y+BleLVX
+         6QeZeYadY3Rdgrg9x80AmVQmyQlJG6dk+enAq66YfpqWqXl7IAeTzm6KLFCpUsEWQ5vg
+         ppOyZ2tlmeoQGTSZVZzxvYKsDDkUEXBHzm0gqoCabJpcKV1b7pfuEkTAQTBqvqJkbU+3
+         8+V7ZD0ODbSMY2+I33SJn1xDiALbEHpzyNJeKRF8aV9//hPevCEFakGYDTPHgqCkiX6C
+         u+xcIymjxHZ66O6WJea3IqTt6wxbImnrMYEyoeuVFN/Yro3/ean6cv5LEhI6xfioBHK8
+         gIPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWooRDxFx3vbSEmUT/N4/bgbY0qsaifRC+wNNZvR7yUJ9WASo2EaAGkAxxXsJ4+nUIZI+/Z/XPIs3+5CvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2rFBcDC0f/Q8Q+XPzluMwu+Jh1gkeRhGkyyShEZnhv5KAkpQu
+	tKehT4QvkFNUV1sXu/78WEqrU0Y8qnNGo7MRXE6d0iAY29tfz9xMrfZIpdYLuIiT4HyZJ5q5saJ
+	PM86h1g==
+X-Google-Smtp-Source: AGHT+IEuI8KiE77OJVjXZOrcYjc8/vveaA71MtGaUeonbU64/fh8UEXUNZAQbuVlyWgScx/PDrxoAQPbFoQ=
+X-Received: from pjbpx16.prod.google.com ([2002:a17:90b:2710:b0:2e0:915d:d594])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5584:b0:312:51a9:5d44
+ with SMTP id 98e67ed59e1d1-32166c15c64mr147232a91.5.1754423963903; Tue, 05
+ Aug 2025 12:59:23 -0700 (PDT)
+Date: Tue, 5 Aug 2025 12:59:22 -0700
+In-Reply-To: <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250718203734.347091-2-thorsten.blum@linux.dev> <CAHC9VhSa_9cWiLfOUNiLPUa7PyECF-2hqzHZikYHj6QeYGMqEw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSa_9cWiLfOUNiLPUa7PyECF-2hqzHZikYHj6QeYGMqEw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 5 Aug 2025 15:57:31 -0400
-X-Gm-Features: Ac12FXxf9GFYvD_gIJTvIFf5uHVEOE2KFf8JM43Ns-i9kOgsOlIelGwqX7VSTXc
-Message-ID: <CAHC9VhS87wfk9j9_yzUNP-NaKOBL-YctvBLx_O4OQS2WVQ-OCw@mail.gmail.com>
-Subject: Re: [PATCH] audit: Replace deprecated strcpy() with strscpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Eric Paris <eparis@redhat.com>, linux-hardening@vger.kernel.org, 
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <aHUmcxuh0a6WfiVr@google.com> <aHWqkodwIDZZOtX8@yzhao56-desk>
+ <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com> <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+ <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
+ <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
+ <aJFOt64k2EFjaufd@google.com> <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
+Message-ID: <aJJimk8FnfnYaZ2j@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
+	tabba@google.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 5:52=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Jul 18, 2025 at 4:38=E2=80=AFPM Thorsten Blum <thorsten.blum@linu=
-x.dev> wrote:
+On Mon, Aug 04, 2025, Vishal Annapurve wrote:
+> On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> > : 4) For SNP, if src !=3D null, make the target pfn to be shared, copy
+> > : contents and then make the target pfn back to private.
 > >
-> > strcpy() is deprecated; use strscpy() instead.
-> >
-> > Link: https://github.com/KSPP/linux/issues/88
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > ---
-> >  kernel/audit_tree.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> This looks fine to me, but as we are at -rc6 I'm going to hold off on
-> merging this until after the upcoming merge window.
+> > Copying from userspace under spinlock (rwlock) is illegal, as accessing=
+ userspace
+> > memory might_fault() and thus might_sleep().
+>=20
+> I would think that a combination of get_user_pages() and
+> kmap_local_pfn() will prevent this situation of might_fault().
 
-Merged into audit/dev-staging for testing, audit/dev will happen after
-merge window closes.
+Yes, but if SNP is using get_user_pages(), then it looks an awful lot like =
+the
+TDX flow, at which point isn't that an argument for keeping populate()?
 
---=20
-paul-moore.com
+> Memory population in my opinion is best solved either by users asserting
+> ownership of the memory and writing to it directly or by using guest_memf=
+d
+> (to be) exposed APIs to populate memory ranges given a source buffer. IMO
+> kvm_gmem_populate() is doing something different than both of these optio=
+ns.
+
+In a perfect world, yes, guest_memfd would provide a clean, well-defined AP=
+I
+without needing a complicated dance between vendor code and guest_memfd.  B=
+ut,
+sadly, the world of CoCo is anything but perfect.  It's not KVM's fault tha=
+t
+every vendor came up with a different CoCo architecture.  I.e. we can't "fi=
+x"
+the underlying issue of SNP and TDX having significantly different ways for
+initializing private memory.
+
+What we can do is shift as much code to common KVM as possible, e.g. to min=
+imize
+maintenance costs, reduce boilerplate and/or copy+paste code, provide a con=
+sistent
+ABI, etc.  Those things always need to be balanced against overall complexi=
+ty, but
+IMO providing a vendor callback doesn't add anywhere near enough complexity=
+ to
+justify open coding the same concept in every vendor implementation.
 
