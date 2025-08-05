@@ -1,158 +1,191 @@
-Return-Path: <linux-kernel+bounces-756852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659CBB1BA5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10EAB1BA64
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 20:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF9B18A6FF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6DA3B94C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 18:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D397299944;
-	Tue,  5 Aug 2025 18:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6587299944;
+	Tue,  5 Aug 2025 18:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Sm5P3yQB"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvQ7vGRu"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DC319E98C;
-	Tue,  5 Aug 2025 18:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF2225394C;
+	Tue,  5 Aug 2025 18:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754419247; cv=none; b=QsVeql9i6jVkkqdYIE7L0FQn4iu2HHurIXPUy9lpqbChQF1mqkV5vQs7RUXQGHJYUHqMfrkc4+uQ6mw0GBV4ssWUxR6nNNUkYKF9SwY6gyB+xpuPoXrbwOLSXMvm8uw70KqgKMpoLVXmIBrUDyCTUqshZk5j6RU+eKHrOcnDCWo=
+	t=1754419296; cv=none; b=Wc9cwTbqqCOv5OMAM52EwyPeCpaYwL8uzyNP2KTp/4WAbjgnE321X9SVEsSS8T2jHFrSNot5zUIctDa3das4FN5Ufw0aH1hJdxUvfEkCxQYL/4BiI7Hrm9K0ewT2/HMywiNctTvaXyHY3igtMDSXo9acH485DqSkmPoM/PccZZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754419247; c=relaxed/simple;
-	bh=sIPUeNyn51MwQcRen63qFH0M1zxVZVeGRf5hgQsJ3fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9XZTdEk6hinu1cyoJNMTiTvf+uYZPCIVhVMHKcxPCIiMzNCQHZ7iRMWHCK+bVd92jE/d6Z89UO3WEjUQFhPdfSYxYUCuKGcOcwn8MSkVftZmqcz3gF7zld+X2owe+UXwie2h5XlYpJV0b7+7+41+01h2CDCweNVhHpI9q3ceRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Sm5P3yQB; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KciQmJIXbw07cDbx+i2HzfhTEtup2QyBKXkEWtonmtc=; b=Sm5P3yQBIShc3zbeTt7E+XdS+4
-	EvScx9z/vp+XzZyTDaceoPdtZEEONqTBWAJmzcnrq/dgKqSSfRNulm9/9u+X+DlQCXeGcG8RqgWy4
-	rOlvq4/iFI9fDTruD3xWZcU+KgQUtWRnyv4/5SvgNOhAMzkogNWL4W/a2d/wRmQ+O8I1wnUVOHzcq
-	DukqLYB7KBmY4Mjhd6aZB9JsqEKJ/8Kem+uSWZJmjPmiyxciOIKL+Tae/4vScNEe8Y4g3rGHlRcFN
-	UsqBN9+3lcGGcDBivDOfM3wXgv/DA13t+5Pl2VjWXp+dVKKw4wG/C0L63CcWeYw5M6famlVX8SdMX
-	WBpcoxpA==;
-Received: from [191.204.199.202] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1ujMaP-00A38z-Qu; Tue, 05 Aug 2025 20:40:34 +0200
-Message-ID: <f5ea7370-c8c3-47c2-88cb-9740d82e87c6@igalia.com>
-Date: Tue, 5 Aug 2025 15:40:28 -0300
+	s=arc-20240116; t=1754419296; c=relaxed/simple;
+	bh=G4av0tf8j3H+vgDZMRG69qo10dZZE2uClT0Lfe5Bl/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a+LiV3EJM71rUpQpg5Dw6sO912tirerVr1dANEHtgavs15lTnjqsWNVW1xfPLyDVuxDOginJqD3a8mmLdVcF7FvQkwpNUA8aNj2Dh+Jo8oPyTQNImAZnIGCuqNza8uvhtJXr0ayJ+qPu5UrFzviULLErCoK/f6nMWE0ymP1DGc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvQ7vGRu; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74264d1832eso5553822b3a.0;
+        Tue, 05 Aug 2025 11:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754419294; x=1755024094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rRQ1XVejo/qWVadxnYzHwmtR+oOtc0Jwo0/IudE9CjY=;
+        b=jvQ7vGRu1jykrz8qdGVf+3dSPwwExs4hB8mWAxuLyX3eP89rSsNpI/N8I5DVKJ/qCR
+         DIGIRfKW7WhA7s49/sxLgEJOsCPy4g46Ir8yIQZlA0MEfS7K6NglSXf0eRgJ3Z/Yk7Tv
+         SWDjdNWOZVaaOTD0S5U5ArjC7+obaAlD05rkTmGDBRzpdpkvKKSCy7GOo27l/Kce62Ac
+         U5i8A8LpJiMm5uPFdtNKKsHsqPCEszoh0YhP4pOS3k9UZDHe0t96YVd7kuVTlpJROUvR
+         Ob75Im6Y3ZFl0lsJlso0SZRF97X/60+pdHA2p+eEiJLBO8QmPhKTAZwm0PPocswFfh9o
+         BSIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754419294; x=1755024094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rRQ1XVejo/qWVadxnYzHwmtR+oOtc0Jwo0/IudE9CjY=;
+        b=Lr0gRdYZDEWhSLAN5zDuDNBncqFCBvJMYn5X9Sa0V7dzSWdD7ImDZQN1KjpkU/1tiw
+         3GfFCxHiEDgHrrsqdol7e3fd7GHCC9ktrOU9+M8KEaNWjmUJ8YO4cUiv4zErfaNHDe1g
+         CAqFq+RDP7Vwjun/ijoMhtU8GhcNQAFpZXD4S635m0Oc2FZlV2JYTNUuJDZNvOhlr4pQ
+         gXX1p7MV9RRAKN6Xc4UMa3oWUJGvyyVP4Sm7yPgYJwJ7FK7KJJK3SRNqpZto/H4tZxtB
+         oAPigrzhL8EfJHqkBAqKFDTDSSAcV4S2dVE9oe+YFtXEFi4qnPCAisnpmB9e5YbdXGXn
+         xH/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUA6PbFt9azIUhEahKxJpM/vGRtPRD3vCWHMtPE4bJHsu1SVYbjr8VHwJYi28qTlsATdCf6fp9EjoCAT3g=@vger.kernel.org, AJvYcCUhyLfJPON3IioHC6inR4IqvNG4jJI00N5yUMgAs+2vPsZMz/57Kr9mB/A4IOp1RzHENbFEr/5k3ntBXFWn8/GL5w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOMXL7IoQgrEMlcl+UQ+comwMEFZiKNzzctkn135yZpsLVclT5
+	m7JLMJ1bJfzk+T8SujJEC0pGmwoXQYOD1RZcl9ADhyRBszfAkLrIqGHQffh2kg==
+X-Gm-Gg: ASbGnct6bifxkaiLUeLl3xK0X0IARlb2MZaBd2C9GFsFO1wycJrMWyVWaUSyor3i6Iy
+	Yz8cdEfVnlekFNFC4XhFWY7+JFPQEYdzA4IlfhrjIoh5wPq7Yda6n8V8n/+o+DbPFrhiHTo4Kic
+	IxVvCsx8+PesmYKNi+30kdZwZA6gORC9L+l8i+eQkmORpMS2T4G8GruO3fUNEUzLYbk66LnNCxV
+	3cN6AFbOXF6iKMsej0GunPl4K7ATFskim2HCgIdHAT4Mm8e6o0Xy+CwPHhHq+hJb2qVSqRo5ae2
+	l+Ms0XY23Pa3mMKhKLfTATDNy/EOtBR/Yt1Pein+g3uLzja5JWjYzatw5fKqLNz9qUaVzLaAEBI
+	kbljsXEcqM75NoaanSKpn
+X-Google-Smtp-Source: AGHT+IFOwJbYZT3sPdhUa5jGGg7bp0JMNtYXQQ9TsQpEFG4Gt1bHamim9GaD/vuJ0ZOeIV6qX75hKg==
+X-Received: by 2002:a05:6a00:21d4:b0:74e:ab93:422b with SMTP id d2e1a72fcca58-76bec2f304fmr20203456b3a.4.1754419293591;
+        Tue, 05 Aug 2025 11:41:33 -0700 (PDT)
+Received: from hiagonb ([2804:1b3:a7c3:6302:da79:b882:519f:fa23])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c020a4a1dsm6233457b3a.13.2025.08.05.11.41.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 11:41:32 -0700 (PDT)
+Date: Tue, 5 Aug 2025 15:41:28 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Andrew Davis <afd@ti.com>
+Cc: Beleswar Prasad Padhi <b-padhi@ti.com>, 
+	linux-remoteproc@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, 
+	Hiago De Franco <hiago.franco@toradex.com>
+Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
+Message-ID: <prvj5e2y3ruqgn35auolaia5zwoahtfecosumwshappy32ylrq@eivdt62vp7rh>
+References: <20250726143908.ayug6dedkmzulldx@hiagonb>
+ <d6ac080c-9a13-49eb-9cf5-1723df613548@ti.com>
+ <20250729180420.svxtcukjlgg5sv6p@hiagonb>
+ <yz2x2ywvmms6xgdvefqwr6ioi5cateagf2egqjnug7ozkcatx6@f652ifqzrm33>
+ <f74d44d5-c263-4d82-b1d5-7e542e47672b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/8] ovl: Create ovl_strcmp() with casefold support
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com
-References: <20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com>
- <20250805-tonyk-overlayfs-v2-2-0e54281da318@igalia.com>
- <87o6stakb6.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <87o6stakb6.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f74d44d5-c263-4d82-b1d5-7e542e47672b@ti.com>
 
-Hi Gabriel!
+On Mon, Aug 04, 2025 at 04:14:26PM -0500, Andrew Davis wrote:
+> On 8/4/25 2:31 PM, Hiago De Franco wrote:
+> > Hi Andrew,
+> > 
+> > Sorry for the delay, I am back this week, I was testing the patches and
+> > removing the ping was not enough, there is one extra message being sent,
+> > which is the k3_rproc_kick() from ti_k3_common.c. This one is a callback
+> > from remoteproc_virtio.c.
+> > 
+> 
+> So tracing back, looks like this message will be added to the mailbox
+> when Linux tries to start communication with the remote core, and that
+> happens if the firmware advertises vrings in its resource table.
 
-Em 05/08/2025 11:56, Gabriel Krisman Bertazi escreveu:
-> André Almeida <andrealmeid@igalia.com> writes:
-> 
->> To add overlayfs support casefold filesystems, create a new function
->> ovl_strcmp() with support for casefold names.
->>
->> If the ovl_cache_entry have stored a casefold name, use it and create
->> a casfold version of the name that is going to be compared to.
->>
->> For the casefold support, just comparing the strings does not work
->> because we need the dentry enconding, so make this function find the
->> equivalent dentry for a giving directory, if any.
->>
->> As this function is used for search and insertion in the red-black tree,
->> that means that the tree node keys are going to be the casefolded
->> version of the dentry's names. Otherwise, the search would not work for
->> case-insensitive mount points.
->>
->> For the non-casefold names, nothing changes.
->>
->> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->> ---
->> I wonder what should be done here if kmalloc fails, if the strcmp()
->> should fail as well or just fallback to the normal name?
->> ---
->>   fs/overlayfs/readdir.c | 42 ++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 40 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
->> index 83bca1bcb0488461b08effa70b32ff2fefba134e..1b8eb10e72a229ade40d18795746d3c779797a06 100644
->> --- a/fs/overlayfs/readdir.c
->> +++ b/fs/overlayfs/readdir.c
->> @@ -72,6 +72,44 @@ static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
->>   	return rb_entry(n, struct ovl_cache_entry, node);
->>   }
->>   
->> +/*
->> + * Compare a string with a cache entry, with support for casefold names.
->> + */
->> +static int ovl_strcmp(const char *str, struct ovl_cache_entry *p, int len)
->> +{
-> 
-> Why do you need to re-casefold str on every call to ovl_strcmp?  Isn't
-> it done in a loop while walking the rbtree with a constant "str" (i.e.,
-> the name being added, see ovl_cache_entry_find)? Can't you do it once,
-> outside of ovl_strcmp? This way you don't repeatedly allocate/free
-> memory for each node of the tree (as Viro mentioned), and you don't have
-> to deal with kmalloc failures here.
-> 
+Got it, thanks for explaining.
 
-Yes, that's a more reasonable approach, I will do it for v3
+> 
+> > I belive this one is necessary to make the firmware works, but with the
+> > hello world demo, I still have the issue where I can not go into suspend
+> 
+> Which "hello world demo" is this? In Zephyr, we do not add the VDEV to
+> the resource table if the firmware does not intend to communicate[0].
+> But MCU+SDK firmware might add these unconditionally, I'm not sure. You
+> could check what is in the table with:
+> 
+> $ readelf -x .resource_table <your_firmware.elf>
+> 
+> and empty one might look like:
+> 
+> > Hex dump of section '.resource_table':
+> >   0xa3100000 01000000 00000000 00000000 00000000 ................
+> 
+> one with VDEV will be much longer.
 
->> +
->> +	const struct qstr qstr = { .name = str, .len = len };
->> +	const char *p_name = p->name, *name = str;
->> +	char *dst = NULL;
->> +	int cmp, cf_len;
->> +
->> +	if (p->cf_name)
->> +		p_name = p->cf_name;
-> 
-> This should check IS_ENABLED(CONFIG_UNICODE) so it can be
-> compiled out by anyone doing CONFIG_UNICODE=n
-> 
->> +
->> +	if (p->map && !is_dot_dotdot(str, len)) {
->> +		dst = kmalloc(OVL_NAME_LEN, GFP_KERNEL);
->> +
->> +		/*
->> +		 * strcmp can't fail, so we fallback to the use the original
->> +		 * name
->> +		 */
->> +		if (dst) {
->> +			cf_len = utf8_casefold(p->map, &qstr, dst, OVL_NAME_LEN);
-> 
-> utf8_casefold can fail, as you know and checked.  But if it does, a
-> negative cf_len is passed to strncmp and cast to a very high
-> value.
-> 
+Correct Andrew, indeed by removing the ping and testing with Zephyr
+Hello World example, it works fine, the resource table is empty.
 
-ops, that's right, thanks for the feedback!
+I was testing the hello world from TI mcu_plus_sdk_am62x_10_00_00_14,
+and first it was not working, I got a -22 from the remoteproc driver,
+and no .resource_table is present at all.
+
+So to fix this I enabled IPC sysconfig, which created a non-empty
+resource table into the ELF and made the hello world work, but broke
+suspend. Now it is clear why this is happening.
+
+On the AM62X Academy it mentions a empty resource table, but it
+reccomends to just enable IPC instead [0].
+
+Thanks for the help, I will then create the patch to remove the ping.
+
+[0] https://dev.ti.com/tirex/explore/node?node=A__AcD0ahYJlxouUnP8vWuDYw__AM62-ACADEMY__uiYMDcq__LATEST&placeholder=true
+
+Best regards,
+Hiago.
+
+> 
+> Andrew
+> 
+> [0] https://github.com/zephyrproject-rtos/zephyr/blob/main/lib/open-amp/resource_table.h#L34
+> 
+> > mode. Removing both mbox_send_message() calls makes the suspend work
+> > again:
+> > 
+> > root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox|hfranco"
+> > [    0.000000] Kernel command line: root=PARTUUID=096221e5-02 ro rootwait console=tty1 console=ttyS2,115200 dyndb
+> > g="file ti_k3_common.c +p; file remotecore_proc.c +p; file remoteproc_virtio.c +p"
+> > [   10.520920] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
+> > [   10.711357] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
+> > [   10.753040] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
+> > [   10.793640] remoteproc remoteproc0: 5000000.m4fss is available
+> > [   10.856735] remoteproc remoteproc0: powering up 5000000.m4fss
+> > [   10.895961] remoteproc remoteproc0: Booting fw image am62-mcu-m4f0_0-fw, size 451080
+> > [   11.000752] rproc-virtio rproc-virtio.4.auto: assigned reserved memory node m4f-dma-memory@9cb00000
+> > [   11.101614] rproc-virtio rproc-virtio.4.auto: registered virtio0 (type 7)
+> > [   11.151665] remoteproc remoteproc0: remote processor 5000000.m4fss is now up
+> > [   12.123724] remoteproc remoteproc1: 30074000.pru is available
+> > [   12.171118] remoteproc remoteproc2: 30078000.pru is available
+> > [   12.337287] remoteproc remoteproc0: vring0: va 00000000cabe42be qsz 256 notifyid 0
+> > [   12.337337] remoteproc remoteproc0: vring1: va 00000000a651968a qsz 256 notifyid 1
+> > [   12.348543] remoteproc remoteproc0: kicking vq index: 0
+> > [   12.348559] hfranco: sending msg 0x0, name mbox-m4-0
+> > [ 2514.508396] remoteproc remoteproc0: stopped remote processor 5000000.m4fss
+> > [ 2518.010399] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
+> > [ 2518.010433] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
+> > [ 2518.010461] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
+> > 
+> > In this case, I was wondering if we should drop the messages for now,
+> > until we have the routine to save the messages first. Any suggestion you
+> > might have?
+> > 
+> > Thanks for the help,
+> > Hiago.
+> > 
 
