@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-756881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-756882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8288BB1BAAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9328B1BAB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 21:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5450626AEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DFC62823D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 19:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105FF2BEC2A;
-	Tue,  5 Aug 2025 19:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED7C2BEFF1;
+	Tue,  5 Aug 2025 19:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BW51GNMW"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ltajJh7k"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7B42BE7A5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29692BEC22
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Aug 2025 19:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754420754; cv=none; b=Lm23k36VkOQ2zAsE+K5FM7DVjMCZ2LrIdSgDW2gKfcxbaRJMbREB/1ucxN4ptLDOlya1cEbpZcKcERsDbQBeZmX4EP/5Zld2oQtb+c4nwmCroY0U/YcXcJcN2LJehBM8TxSb9tRDiYEtAqWvX5pWIhxyhxjs4bkSg1YLcwOD6zM=
+	t=1754420756; cv=none; b=Ru3dilp3zpp7R4l6YGZk7HrMyMmPfRBBtcOZMizkVqmP7stnLhxLvB5JxsI8HoqC7TT4fexBWhCmwyiIOi6qi4B4OyalABry90o9TJ9r+CHD+M3lxCSPcwfSXtz8r/+mMwgMGTGYQPKpNIzm4VBhAweMtGJ/DaCMIWwc6NenBOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754420754; c=relaxed/simple;
-	bh=Kypk+/CIeqoZ/r5aB2dTj7/V8NMqnRxOmJHlZq0EdRE=;
+	s=arc-20240116; t=1754420756; c=relaxed/simple;
+	bh=Uf3LhARRUHUx/5ijEPMCZbQc7umhxBRmBlCRrbgyJB8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Hwfe8xmSewb7XFIckTcY5ozG4bpR6aoD43+P49uQYH3m+X/HdlTOl0zuHjAcs/k+1pP+hNNDYUmqX8A2xatH9HCbqdF2XDaoNvjtTHwGFwNVTPg2X+K3xnw+Zob4ya4VAveHdi+N8kSpVnbNOPFGAe3r7HWgoki0gR9WjkGFTGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BW51GNMW; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=JyzeCAjjJXBSd9TOBw9QyHlUopwC0jY/EUE9zgNXuHMbdCMNYO0rHFRF3UxXQGl2OUHfNU4wsmospn1AJlDb1PzFKJ0ealVZuxXW+1GMMLxlRO+QTbvgFYkHSfBTcU/z9w9/le++8tJ+ODhkC1/53Ozp2At83dPo/uKzmq0I96I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ltajJh7k; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b38fc4d8dbaso5741144a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:52 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23fc5b1c983so1827465ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 12:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754420752; x=1755025552; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754420754; x=1755025554; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDzHgBJ4HosuuKeQovaY/hyA5EBdxNO5TIzhzBsDnxo=;
-        b=BW51GNMWVH2YnQaW3EAEKBoEmp2xSsSuFdC1JyAmya3G5dvRygJX2mHw7svqqzWbgE
-         6HV3QWdYCrlSq6I1vSmG2o7xnknLcj1YkTqTr/cNXB3V8B+OyYlI77MPqJZPf41Ka9wa
-         xof8napwLg5sCt7w8nbQJvhjK+pd6oi8sxksS0V8r3PHoy/ME8c5iLnC1dCofLFEjhK0
-         cD4NqM3A/2ZZzJoU3G9nE9AHAxIOGAuhjH4CGzAtIjDb7nvYq0PAKY9YTTTha5Q9TQ7H
-         naVoZ4E3EAsvJilbDjInYGadF6E4XdB0QckCaaXA8fsJSYejV+MkBUKFjbkNjgP0GMPA
-         vVZw==
+        bh=m7pIQtdgO1Ly4runtD1BlGYWjUan7Zr3ARLYIITYVLU=;
+        b=ltajJh7ka2OJ7IlnELzoncqvpzb1jLBEG//8fpeI4FYeeS6Fl3FkPLzSR9bDckywuv
+         Lu83HzthbEMspV8eJMwyR8OU+R6DtExqQ2sGbD8q1KsMHDg9HeSXaetEeeH1UOG/hzi9
+         Mixrt31O7ObMqt9rHwO3R2pTjQwYqd2GPjXeNtlEJJt1KMsW+S/Uxe15pOzG2i9uFDwy
+         uNclZibmi+0ie03rvSDSJT2miYFHUjlDIskIRcFMijbPAImeZHH5+NmBj/uB9I9eaQO/
+         LdTcxkYEXZvigOqb6BZzUUvyEQFUr8wHDVeAJw7fSe5q1i/LUNrpBfQ2+NPIMv2+rdcJ
+         DrDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754420752; x=1755025552;
+        d=1e100.net; s=20230601; t=1754420754; x=1755025554;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fDzHgBJ4HosuuKeQovaY/hyA5EBdxNO5TIzhzBsDnxo=;
-        b=uB0VmnUn1vZydHiH9Owyh+SBhLrjU53VEJcpFfxRLkQCrQgHG9qgTz1qo1zYyO5/hA
-         DvRJAB/b97jNM0A+S6bTKnOcfNbKPQqVxJUaNoxHkproy9sRPaPoAnsn+exM2bz04BCA
-         6oodpR4KWfLJl1a+W+mB3Lhjw2lQSa98f7OqPGO2O7CTcBjKxJlZYIJ3mcc+skWeWvHI
-         HwRtkhjmYq0VEUMdADi2Z064aLoT8Ii/humbJcd8T8tbaRiQu3HMmpO99OprdkmXfuh5
-         JJPIPZGYgylH/KmwKYRbClD4FAr63Zk3nVa3R7sMUCq4C7rDeLQBy38GueSvN5y95yfd
-         rQ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVQHXFfL+bnih50spqv/VwH2ovasPXNxxxBzl5uEEWb06/1PWSAPTc+634hvMiaryGYKVYiK1v3spccgaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHy3BdsoHINr7RbDhhUv8FF0j1u6EspBxaDtC5E+SRNDidUa/q
-	ynPkfnz0cGJw4h0uDR5oSf5dlkymPpU/d15tte36DMeKfFA5unhbFnfDjxMrlKyVzLwzegCDDiA
-	70hC0Lg==
-X-Google-Smtp-Source: AGHT+IFMZ78t6jlZ4Hg4XAsyFyrTTPw2ebUp6YO0LiIwWC4Id16cUZUsvZRcvyi7Iqfg/ZZ9YEb5MYML3L8=
-X-Received: from pjbpa2.prod.google.com ([2002:a17:90b:2642:b0:311:7d77:229f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f85:b0:31f:3cfd:d334
- with SMTP id 98e67ed59e1d1-321161f06d3mr19905789a91.4.1754420752515; Tue, 05
- Aug 2025 12:05:52 -0700 (PDT)
+        bh=m7pIQtdgO1Ly4runtD1BlGYWjUan7Zr3ARLYIITYVLU=;
+        b=gQIPmNtyoCvVjeIQpTok5hxlM2BO0J0iP52+CKXiDJJvVzJbLPkiykEehA8q0fiu41
+         g0b5Wr8Dsym/AQNKs06GJvztRKJvH9VMd2T4Uz+zkWEddZQspqvnB8ss6OdjxBXq2c65
+         r0YN08LeTh+l2lWvjwaSDXpUC/euAH/x48fCADApt7whslmOYpAYeI6REcHOh0hMeZsy
+         E0g2qsNQJbLIspJ1BHhZfB9nE5LPSikiEmmw0CasZnOSPTE7Y6bmXLuxGhSKEinEn3QL
+         zrYnz3EbGl1O1MCwnkDS3jpuFKpzlf8fCkYCxjfH5hIM1Y9vr6E6ikfGXPMJoUBMhfom
+         02QA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjbd9UQg5imAKrM6I1kZMnK4HgC5De3QY41Yaz4z1Zny6R7kLPZb2QGaioebVkA7lOGH5TUz4f197XEeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwslREzrZ1TpB1/0tAy4MYxcakVTq0z8eJUP2D0PDIQs65DvyW9
+	b1FP55P1tjyAd4vVtT1bkXN49Uo9ZdcSJq3QW1Q6sAuuJGkdzJeItWlUy5HJTg+Dbb6fYa0OYzP
+	8C3ygjA==
+X-Google-Smtp-Source: AGHT+IG3+BUJeywCnhbOTBO0gZnJzDqaPsYALbJj+kP15NYqy9TsM5+IMTgOn1X2lnbVEgPLhVTAv8iMyVE=
+X-Received: from plblf6.prod.google.com ([2002:a17:902:fb46:b0:240:1be2:19ee])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef4e:b0:240:86b2:ae9c
+ with SMTP id d9443c01a7336-2429f959d4dmr859115ad.14.1754420754232; Tue, 05
+ Aug 2025 12:05:54 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  5 Aug 2025 12:05:21 -0700
+Date: Tue,  5 Aug 2025 12:05:22 -0700
 In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,62 +75,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250805190526.1453366-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250805190526.1453366-14-seanjc@google.com>
-Subject: [PATCH 13/18] KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
+Message-ID: <20250805190526.1453366-15-seanjc@google.com>
+Subject: [PATCH 14/18] KVM: x86/pmu: Drop redundant check on PMC being
+ globally enabled for emulation
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
 	Dapeng Mi <dapeng1.mi@linux.intel.com>, Sandipan Das <sandipan.das@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Open code pmc_event_is_allowed() in its callers, as kvm_pmu_trigger_event()
-only needs to check the event filter (both global and local enables are
-consulted outside of the loop).
+When triggering PMC events in response to emulation, drop the redundant
+checks on a PMC being globally and locally enabled, as the passed in bitmap
+contains only PMCs that are locally enabled (and counting the right event),
+and the local copy of the bitmap has already been masked with global_ctrl.
 
-No functional change intended.
+No true functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/pmu.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/x86/kvm/pmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index e73c2a44028b..a495ab5d0556 100644
+index a495ab5d0556..bdcd9c6f0ec0 100644
 --- a/arch/x86/kvm/pmu.c
 +++ b/arch/x86/kvm/pmu.c
-@@ -491,12 +491,6 @@ static bool check_pmu_event_filter(struct kvm_pmc *pmc)
- 	return is_fixed_event_allowed(filter, pmc->idx);
- }
- 
--static bool pmc_event_is_allowed(struct kvm_pmc *pmc)
--{
--	return pmc_is_globally_enabled(pmc) && pmc_is_locally_enabled(pmc) &&
--	       check_pmu_event_filter(pmc);
--}
--
- static int reprogram_counter(struct kvm_pmc *pmc)
- {
- 	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-@@ -507,7 +501,8 @@ static int reprogram_counter(struct kvm_pmc *pmc)
- 
- 	emulate_overflow = pmc_pause_counter(pmc);
- 
--	if (!pmc_event_is_allowed(pmc))
-+	if (!pmc_is_globally_enabled(pmc) || !pmc_is_locally_enabled(pmc) ||
-+	    !check_pmu_event_filter(pmc))
- 		return 0;
- 
- 	if (emulate_overflow)
-@@ -974,7 +969,8 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+@@ -969,7 +969,7 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
  		return;
  
  	kvm_for_each_pmc(pmu, pmc, i, bitmap) {
--		if (!pmc_event_is_allowed(pmc) || !cpl_is_matched(pmc))
-+		if (!pmc_is_globally_enabled(pmc) || !pmc_is_locally_enabled(pmc) ||
-+		    !check_pmu_event_filter(pmc) || !cpl_is_matched(pmc))
+-		if (!pmc_is_globally_enabled(pmc) || !pmc_is_locally_enabled(pmc) ||
++		if (!pmc_is_locally_enabled(pmc) ||
+ 		    !check_pmu_event_filter(pmc) || !cpl_is_matched(pmc))
  			continue;
  
- 		kvm_pmu_incr_counter(pmc);
 -- 
 2.50.1.565.gc32cd1483b-goog
 
