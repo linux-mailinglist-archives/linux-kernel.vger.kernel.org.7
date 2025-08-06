@@ -1,263 +1,136 @@
-Return-Path: <linux-kernel+bounces-758149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDE5B1CBA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:07:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B2EB1CBAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4FB18C5367
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EFE563008
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EAC1F63F9;
-	Wed,  6 Aug 2025 18:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80F31F8723;
+	Wed,  6 Aug 2025 18:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y7LOpm7S"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gUyop0RJ"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA431B960
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC381114;
+	Wed,  6 Aug 2025 18:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754503620; cv=none; b=HLDbM6DFZNkoQHSHTH2y+M5exz7TSG5LvHd56mbrybMpDP5p3lyFA3vNiepmRcpWHPlRJfHNOZ4YUksU5164NmJZZlhZwqELio1Yxfxl3ofS5MIL+42sk7jdcmpvJ/6jUL3VJEp3Dkz86tLPJyfP1GlnRmEXVRLv/1BAn5TPMD0=
+	t=1754503631; cv=none; b=ZkZc5s+EiwI5RSh5mS04nCfkt4u00wxGMk3/fcK1psCSYfLkO17Lpc+ztX+az3+3lvq9eXgI80GMvMbFAz1MsB99e2R04M/NYyMhYmpwTJOEdxZVrKnrvWXxgzAX01KsxPDZy7bgHqv4G1w3zZPLnfBt9lthijKf8KDK+XoU7ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754503620; c=relaxed/simple;
-	bh=NlUNT/FYaSKabfIetxwRs86eAKwLyl3xNP7yv81IoQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hHCogOIS/CyJggEIQYFwu+MTAQg4nFc4B8XVAIH0QtYuC+sdHXtFamflmLtoLi4DH2kKdgI30F6SDfKevhv05W1xw21YFiurlPABgkXiYtJVHXem53E6OmBhXb4+4j2IbGb2k73HgVIugqP279W7nFc9rcxwmeDmXzWUt60OizE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y7LOpm7S; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71bd9e38af7so1110477b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754503618; x=1755108418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQaJG8cyIXtb8JtDrWV4xH4gE5fz/4xlgqKKsovQNWE=;
-        b=y7LOpm7S1K6HoUGDyAeo+A4LOyKBp/7KN/o6ywY3DfnpNFY7U+fS6ZO4dJtKgK4zTH
-         BtDgXp+hAH6Tt3AC6o+ayqHBFjTT2/Sirc76TLtM8DLqYm0r/bQ6AsBwPTBZ43LpRfJ5
-         2ELMtvqv6eKTUCWRBJ7EtsRn0UIBr6vwg8T7Qact0YPKKLnvhXXWuQN2VkhjjWYIvcFE
-         +bNEz6vue57PGloWURJofevokST+TGJ234bLIWf85tWybd3GkDCg2Qdm474irZFtt1r7
-         fPCHkt/rNCnuCXMydXCGk4KNS6EkrW4Jlki8JZ8OGXX+WlKCDjfjsZqIEjs61CcFyjvN
-         2dcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754503618; x=1755108418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HQaJG8cyIXtb8JtDrWV4xH4gE5fz/4xlgqKKsovQNWE=;
-        b=O5DoCWzpDJPv/uUpMzXXGj26Fm42r8UO1xkbiQXsw2xEBRLqRQAckEurq80FDXNnC4
-         SSqoIYN6flTrip3w1J5VDFH2sDjOXEg4TLEtgIINbHWYOuJ+1G36pEYoWZPlaaFd7Oey
-         HiIr/IvueppA4FKIApQ4rHZn55/VxEaIseLgb1oahVESSOpYFpnnc5gpSatWBoN1yal+
-         5sBYIR33LAbU7GPb827u7V8N9KFhWJr8RTuwb8DVXfRbTiQxteF6tFc8SgIo06Ho+xnp
-         XfgaNBXHKsXU6chMZwSJspe08ur88SRfg3hI9Mqo+N2cJME/9Bxwm7QVOyt8JUCoMP+1
-         mfxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLxqJUZRY6pwT+EHFKakPFEkGBh1CTTO3saI4TzgLdSFJ4JGxrqLgyiNI4MWZbpYpNGKkSAPh+Ki/0RUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2RFdFXCnoJsLle7FwQN1N/hIeC1Phvi5DNq2f6KuO5KqlvJaV
-	MZ3oqiXi9urP1AuTBjHvDP3RdMOu3SzGeYY+kfRPuySSFO5NM7rTlNnQDRl843J1zWH+nGBQdJ2
-	WtXBS7rRrEQ4P5a6VJPS7nKvh4mpTesqnXKkpPhcd9w==
-X-Gm-Gg: ASbGncu1YQ5ip9qfOxSEcv0Y2SLgfBGO9ZvanFJ4xGZBu2i3l4z5msfFeqlYqfBmGjm
-	GBFRrzOc5GUOne5O4dhRDL2lGLCwjRNrsNsHSfcv7POe5+idrf0t9+dFHBmoyIQDaOGlHXW8B7T
-	MtC5bnpsSp6iMYBabxdx1EteodYjjMD1GSjhZeW4q+lHk7OfeIbsRQk0lj9xcsG5x7/7XAgmcPy
-	QMOxw==
-X-Google-Smtp-Source: AGHT+IHawplYNXt0Xk96mNtSAEAp52yUSKjVefDzMRnwkFSkTZcoaKk+ZYugied/egHWgCi9PaKRpIxtR3J4UeIUxyo=
-X-Received: by 2002:a05:690c:7202:b0:71b:69fd:2571 with SMTP id
- 00721157ae682-71bdbcfb84fmr3438637b3.32.1754503617394; Wed, 06 Aug 2025
- 11:06:57 -0700 (PDT)
+	s=arc-20240116; t=1754503631; c=relaxed/simple;
+	bh=j4xeOQsgKmvG1+Tp9JfNurlTANGK8Gppg96UJhS+iPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aeGlo4x93ecxJQz9QCAP3ZXCY1ZsZE7sDXXTkO+5/jPVbsvwwbbjVbXqZM4w+mtOVgUdycvURZLHmcL5k153JOlGgoM2g/Hd/eugsuZ8PDQSb+OUrJAHKEaAx6NbgbOOeQsT4cqxRPRiNMKtnWoNOjOs8Gea9UMfQyk+R9f6cLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gUyop0RJ; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <064cc6f1-8406-4cb4-8eb8-b02755079d7c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754503625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFW0rIXuEESEnNMQnqpbXexQinc6nJdA8zZ7nAzTptI=;
+	b=gUyop0RJPjUrkBViD4d0us0Pn/FUO9g2NV+hyOwJivBVqG6trDVTWwWH69bX8gysSKs9HD
+	c+/mCyRWe4Ua+CGAq+fpBbtkP5f9fX7qAMUYcP5UwsXMbdEmeKy9MK4bmACEOtUCc05EZp
+	+yHUkUNPWJIgHz8L960nUPdNaXZgoVM=
+Date: Wed, 6 Aug 2025 11:07:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19@epcas2p2.samsung.com>
- <20250806065514.3688485-1-sw617.shin@samsung.com> <20250806065514.3688485-4-sw617.shin@samsung.com>
-In-Reply-To: <20250806065514.3688485-4-sw617.shin@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 6 Aug 2025 13:06:46 -0500
-X-Gm-Features: Ac12FXzzprozXvP76pSORFyQ-L_jvtIZlH-PiTmfaMmvcTJCzW2IyjQ268pBDg4
-Message-ID: <CAPLW+4n=H3cPe=XqMfUJKqpPJdot9t0j_kBMkNY3W+x9buokTg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] watchdog: s3c2410_wdt: Increase max timeout value
- of watchdog
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 0/2] libbpf: fix USDT SIB argument handling causing
+ unrecognized register error
+Content-Language: en-GB
+To: Jiawei Zhao <phoenix500526@163.com>, ast@kernel.org
+Cc: daniel@iogearbox.net, andrii@kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250806092458.111972-1-phoenix500526@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250806092458.111972-1-phoenix500526@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 6, 2025 at 2:00=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.co=
-m> wrote:
->
-> Increase max_timeout value from 55s to 3665038s (1018h 3min 58s) with
-> 38400000 frequency system if the system has 32-bit WTCNT register.
->
-> cat /sys/class/watchdog/watchdog0/max_timeout
-> 3665038
->
-> [    0.330082] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=3D1099=
-511400000, timeout=3D3665038, freq=3D300000
-> [    0.330087] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3D36=
-65038, divisor=3D256, count=3D1099511400000 (fffffc87)
-> [    0.330127] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
-> [    0.330134] s3c2410-wdt 10060000.watchdog_cl0: Starting watchdog: coun=
-t=3D0xfffffc87, wtcon=3D0001ff39
-> [    0.330319] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset =
-enabled, irq disabled
->
-> If the system has a 32-bit WTCNT, add QUIRK_HAS_32BIT_CNT to its quirk fl=
-ags,
-> and it will operate with a 32-bit counter. If not, it will operate with a=
- 16-bit
-> counter like in the previous version.
->
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++++++-------
->  1 file changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 0a4c0ab2a3d6..673ab6768688 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -34,7 +34,8 @@
->  #define S3C2410_WTCNT          0x08
->  #define S3C2410_WTCLRINT       0x0c
->
-> -#define S3C2410_WTCNT_MAXCNT   0xffff
-> +#define S3C2410_WTCNT_MAXCNT_16        0xffff
-> +#define S3C2410_WTCNT_MAXCNT_32        0xffffffff
->
->  #define S3C2410_WTCON_RSTEN            BIT(0)
->  #define S3C2410_WTCON_INTEN            BIT(2)
-> @@ -124,6 +125,10 @@
->   * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting th=
-e
->   * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debu=
-g mode.
->   * Debug mode is determined by the DBGACK CPU signal.
-> + *
-> + * %QUIRK_HAS_32BIT_CNT: WTDAT and WTCNT are 32-bit registers. With thes=
-e
-> + * 32-bit registers, larger values will be set, which means that larger =
-timeouts
-> + * value can be set.
->   */
->  #define QUIRK_HAS_WTCLRINT_REG                 BIT(0)
->  #define QUIRK_HAS_PMU_MASK_RESET               BIT(1)
-> @@ -131,6 +136,7 @@
->  #define QUIRK_HAS_PMU_AUTO_DISABLE             BIT(3)
->  #define QUIRK_HAS_PMU_CNT_EN                   BIT(4)
->  #define QUIRK_HAS_DBGACK_BIT                   BIT(5)
-> +#define QUIRK_HAS_32BIT_CNT                    BIT(6)
->
->  /* These quirks require that we have a PMU register map */
->  #define QUIRKS_HAVE_PMUREG \
-> @@ -199,6 +205,7 @@ struct s3c2410_wdt {
->         struct notifier_block   freq_transition;
->         const struct s3c2410_wdt_variant *drv_data;
->         struct regmap *pmureg;
-> +       u32 max_cnt;
->  };
->
->  static const struct s3c2410_wdt_variant drv_data_s3c2410 =3D {
-> @@ -412,7 +419,7 @@ static inline unsigned int s3c2410wdt_max_timeout(str=
-uct s3c2410_wdt *wdt)
->  {
->         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
->         //(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV =3D 0x8=
-000
-> -       u64 t_max =3D div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
-> +       u64 t_max =3D div64_ul((u64)wdt->max_cnt * 0x8000, freq);
->
 
-If you rework the hard-coded 0x8000 value w.r.t. my comments for the
-previous patch, this should be changed accordingly too. So either:
 
-    u32 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV=
-;
-    u64 t_max =3D div64_ul((u64)wdt->max_cnt * div_max, freq);
+On 8/6/25 2:24 AM, Jiawei Zhao wrote:
+> When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+> optimization, the compiler will generate SIB addressing mode for global
+> array and PC-relative addressing mode for global variable,
+> e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+>
+> The current USDT implementation in libbpf cannot parse these two formats,
+> causing `bpf_program__attach_usdt()` to fail with -ENOENT
+> (unrecognized register).
+>
+> This patch series adds support for SIB addressing mode in USDT probes.
+> The main changes include:
+> - add correct handling logic for SIB-addressed arguments in
+>    `parse_usdt_arg`.
+> - add an usdt_o2 test case to cover SIB addressing mode.
+>
+> Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8)
+> argument spec and passes all validation checks.
+>
+> The modification history of this patch series:
+> Change since v1:
+> - refactor the code to make it more readable
+> - modify the commit message to explain why and how
+>
+> Change since v2:
+> - fix the `scale` uninitialized error
+>
+> Change since v3:
+> - force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+>    and pass all test cases.
+>
+> Change since v4:
+> - split the patch into two parts, one for the fix and the other for the
+>    test
+>
+> Change since v5:
+> - Only enable optimization for x86 architecture to generate SIB addressing
+>    usdt argument spec.
+>
+> Change since v6:
+> - Add an usdt_o2 test case to cover SIB addressing mode.
+> - Reinstate the usdt.c test case.
+>
+> Do we need to add support for PC-relative USDT argument spec handling in
+> libbpf? I have some interest in this question, but currently have no
+> ideas. Getting offsets based on symbols requires dependency on the symbol
+> table. However, once the binary file is stripped, the symtab will also be
+> removed, which will cause this approach to fail. Does anyone have any
+> thoughts on this?
+>
+>
+> Jiawei Zhao (2):
+>    libbpf: fix USDT SIB argument handling causing unrecognized register
+>      error
+>    selftests/bpf: Force -O2 for USDT selftests to cover SIB handling
+>      logic
+>
+>   tools/lib/bpf/usdt.bpf.h                      | 33 ++++++++-
+>   tools/lib/bpf/usdt.c                          | 43 +++++++++--
+>   tools/testing/selftests/bpf/Makefile          |  8 +++
+>   .../selftests/bpf/prog_tests/usdt_o2.c        | 71 +++++++++++++++++++
+>   .../selftests/bpf/progs/test_usdt_o2.c        | 37 ++++++++++
+>   5 files changed, 185 insertions(+), 7 deletions(-)
+>   create mode 100644 tools/testing/selftests/bpf/prog_tests/usdt_o2.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/test_usdt_o2.c
+>
+Please add proper tag like [PATCH bpf-next v7 ...] so CI can test it
+properly.
 
-...or...
-
-    u32 cnt_max =3D (u64)wdt->max_cnt * (S3C2410_WTCON_PRESCALE_MAX + 1) *
-                  S3C2410_WTCON_MAXDIV;
-    u64 t_max =3D div64_ul(cnt_max, freq);
-
-Apart from that, looks good to me:
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
->         if (t_max > UINT_MAX)
->                 t_max =3D UINT_MAX;
-> @@ -571,7 +578,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
-evice *wdd,
->  {
->         struct s3c2410_wdt *wdt =3D watchdog_get_drvdata(wdd);
->         unsigned long freq =3D s3c2410wdt_get_freq(wdt);
-> -       unsigned int count;
-> +       unsigned long count;
->         unsigned int divisor =3D 1;
->         unsigned long wtcon;
->
-> @@ -581,7 +588,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
-evice *wdd,
->         freq =3D DIV_ROUND_UP(freq, 128);
->         count =3D timeout * freq;
->
-> -       dev_dbg(wdt->dev, "Heartbeat: count=3D%d, timeout=3D%d, freq=3D%l=
-u\n",
-> +       dev_dbg(wdt->dev, "Heartbeat: count=3D%lu, timeout=3D%d, freq=3D%=
-lu\n",
->                 count, timeout, freq);
->
->         /* if the count is bigger than the watchdog register,
-> @@ -589,8 +596,8 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
-evice *wdd,
->            actually make this value
->         */
->
-> -       if (count >=3D 0x10000) {
-> -               divisor =3D DIV_ROUND_UP(count, 0xffff);
-> +       if (count > wdt->max_cnt) {
-> +               divisor =3D DIV_ROUND_UP(count, wdt->max_cnt);
->
->                 if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
->                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
-);
-> @@ -598,7 +605,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
-evice *wdd,
->                 }
->         }
->
-> -       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
-=3D%d (%08x)\n",
-> +       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
-=3D%lu (%08lx)\n",
->                 timeout, divisor, count, DIV_ROUND_UP(count, divisor));
->
->         count =3D DIV_ROUND_UP(count, divisor);
-> @@ -806,6 +813,11 @@ static int s3c2410wdt_probe(struct platform_device *=
-pdev)
->         if (IS_ERR(wdt->src_clk))
->                 return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed =
-to get source clock\n");
->
-> +       if (wdt->drv_data->quirks & QUIRK_HAS_32BIT_CNT)
-> +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
-> +       else
-> +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_16;
-> +
->         wdt->wdt_device.min_timeout =3D 1;
->         wdt->wdt_device.max_timeout =3D s3c2410wdt_max_timeout(wdt);
->
-> --
-> 2.25.1
->
 
