@@ -1,145 +1,283 @@
-Return-Path: <linux-kernel+bounces-757425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B6B1C1F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:16:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BDBB1C1FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD40F720933
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6071673C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC32D221710;
-	Wed,  6 Aug 2025 08:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6196A221FD4;
+	Wed,  6 Aug 2025 08:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzUYNT8X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBlcnILQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263E022156C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD7E1FB3;
+	Wed,  6 Aug 2025 08:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754468161; cv=none; b=mtJqiOIEq6/+TpUGHm7NkTJMMAsXjUZOoGTGyQo/JoOvKE9BVxTcRovPch3PF2U4y9tkPP12wXrRMGq29sX9vEGcVhaugVfvE561Tf0vHvhj965s03yc0HoUl6h7EZ46BB9HhO+0RxjuP7sO/KPrE72p1lKQPg2PDn5n1PdkrPo=
+	t=1754468220; cv=none; b=WMGSlCIoh2/1YRIVrUF4Y/3KghnUoIPT2idOOE0XrFCZNbFEKkd+cXtwp6WOvGoudMEAOSMRPNApywMe4RSrnu+xr8034CQPfCNk+TKhS3IvM+1IR+Abc0Ad9Fx4tgWABGUzG0h7di2Xfl/IJ3f6mp3nKcY4JhOzzBhxKnyKak8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754468161; c=relaxed/simple;
-	bh=Fbs+mcsucsTbbAfdd4KqOVe7ihhq3xMWZSnPSsrgkFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOFXkQJU7WdFo2AFOk37vHdKa3uyDsSkb5ychetCb30ArluTcQaWyMrmrqqgJwn+XlSSgQA0YmuYSr6johqc1qjCsXFJWbeXZ8x7U7l/eH2v7qk2BWiday4LYaXzW4sCxPmfosskAWPSy3on2+TsC62/BPTRteqz+wk1y0OvaJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzUYNT8X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E2A4C4CEE7;
-	Wed,  6 Aug 2025 08:15:56 +0000 (UTC)
+	s=arc-20240116; t=1754468220; c=relaxed/simple;
+	bh=mSezG6NRkxDtJlYf/ZFsHjMGCJmUaCUPnrgkbL+HJRE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RTXgsgHZ1CuANGhJNBsFqVrWzfv86fjk9NEgUHPbakFNa6NnuSZnDQ6BogoIEG0M+fK2HRAvB564Pqj3s91C4sdO09lStQ9+XvvErS8BlGKhHy394ngx6LiRuCLQnfNzFyYx1Bn1xJxfy/Nv5OoTrJjUiqqNkpBlAEGxkzODrXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBlcnILQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657BBC4CEE7;
+	Wed,  6 Aug 2025 08:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754468160;
-	bh=Fbs+mcsucsTbbAfdd4KqOVe7ihhq3xMWZSnPSsrgkFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tzUYNT8Xalxuyjn5JF7yGta6JqVi66uQJ+BbyjUmL04iS+TZaM/+LppSVJAnVg4pQ
-	 kYzdfZco3vWBTi95h50psAZoaikqE/wlh0X9bNUSdH3lLHLgF5qBIdMhdEndhaQHah
-	 u4RVYMufQmBtCcm58SIX17ENIcivOMPkNLbYClBIRRsB2vmrb1Vhbkabj9M+BgOVGg
-	 KT5U0lCMuUdvKQ4DYyNgKEK2sQMYGctCc2oMdYXLYR3gib/bXVucP9/FZ7KEAthQo0
-	 4bEU+t8p+/SqmpMlR7X8gMfI7HmKNT9UqMfV5MXQDCeiUymAXDLn56Osq3IAoMpddH
-	 bsogXwSP11smA==
-Date: Wed, 6 Aug 2025 09:15:53 +0100
-From: Will Deacon <will@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
-	ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
-	jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
-	joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
-	kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
-	christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org, hughd@google.com,
-	yang@os.amperecomputing.com, ziy@nvidia.com
-Subject: Re: [PATCH v5 6/7] mm: Optimize mprotect() by PTE batching
-Message-ID: <aJMPOTripINrafxh@willie-the-truck>
-References: <20250718090244.21092-1-dev.jain@arm.com>
- <20250718090244.21092-7-dev.jain@arm.com>
- <7567c594-7588-49e0-8b09-2a591181b24d@redhat.com>
+	s=k20201202; t=1754468219;
+	bh=mSezG6NRkxDtJlYf/ZFsHjMGCJmUaCUPnrgkbL+HJRE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=mBlcnILQJQ8itwowSPTjPYWtbmq0X3J4O4tViHMM3acfOo0gkxWlN1i8bih8TRk/D
+	 QEK88TYFCCAgRdFf8N2vcHquOSOUzegVf8WhW/Lsok7t83wbntVOKbt/9YhJ0whgx3
+	 5Pw9TjucRRgCke06GxlfRg3jM6WSnxmB2mHB5KAF2EmEO8hgceOt4Z1OmiUmUg2AaV
+	 FwUr0faqAjE7o5R8MImS6WtgvVuPDjdbXIJiJkaVw/SZsYXDBQgOf6d9ctuBZbPmCU
+	 dj5qL0frPJSAHC86jkv/ZZcGOlf7y8hBVfvg5g40mjFEZISVqZUlox2uPFHVojc+hd
+	 jTKUIqp5zZJRg==
+Message-ID: <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
+Date: Wed, 6 Aug 2025 10:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7567c594-7588-49e0-8b09-2a591181b24d@redhat.com>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
+ custom functions
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
+ <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hansg@kernel.org>,
+ Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ Christian Gromm <christian.gromm@microchip.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
+ Michael Tretter <m.tretter@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+ Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
+ <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ Jackson Lee <jackson.lee@chipsnmedia.com>,
+ Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+ Houlong Wei <houlong.wei@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Tiffany Lin <tiffany.lin@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Fabien Dessenne <fabien.dessenne@foss.st.com>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Corentin Labbe <clabbe@baylibre.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 06, 2025 at 10:08:33AM +0200, David Hildenbrand wrote:
-> On 18.07.25 11:02, Dev Jain wrote:
-> > Use folio_pte_batch to batch process a large folio. Note that, PTE
-> > batching here will save a few function calls, and this strategy in certain
-> > cases (not this one) batches atomic operations in general, so we have
-> > a performance win for all arches. This patch paves the way for patch 7
-> > which will help us elide the TLBI per contig block on arm64.
-> > 
-> > The correctness of this patch lies on the correctness of setting the
-> > new ptes based upon information only from the first pte of the batch
-> > (which may also have accumulated a/d bits via modify_prot_start_ptes()).
-> > 
-> > Observe that the flag combination we pass to mprotect_folio_pte_batch()
-> > guarantees that the batch is uniform w.r.t the soft-dirty bit and the
-> > writable bit. Therefore, the only bits which may differ are the a/d bits.
-> > So we only need to worry about code which is concerned about the a/d bits
-> > of the PTEs.
-> > 
-> > Setting extra a/d bits on the new ptes where previously they were not set,
-> > is fine - setting access bit when it was not set is not an incorrectness
-> > problem but will only possibly delay the reclaim of the page mapped by
-> > the pte (which is in fact intended because the kernel just operated on this
-> > region via mprotect()!). Setting dirty bit when it was not set is again
-> > not an incorrectness problem but will only possibly force an unnecessary
-> > writeback.
-> > 
-> > So now we need to reason whether something can go wrong via
-> > can_change_pte_writable(). The pte_protnone, pte_needs_soft_dirty_wp,
-> > and userfaultfd_pte_wp cases are solved due to uniformity in the
-> > corresponding bits guaranteed by the flag combination. The ptes all
-> > belong to the same VMA (since callers guarantee that [start, end) will
-> > lie within the VMA) therefore the conditional based on the VMA is also
-> > safe to batch around.
-> > 
-> > Since the dirty bit on the PTE really is just an indication that the folio
-> > got written to - even if the PTE is not actually dirty but one of the PTEs
-> > in the batch is, the wp-fault optimization can be made. Therefore, it is
-> > safe to batch around pte_dirty() in can_change_shared_pte_writable()
-> > (in fact this is better since without batching, it may happen that
-> > some ptes aren't changed to writable just because they are not dirty,
-> > even though the other ptes mapping the same large folio are dirty).
-> > 
-> > To batch around the PageAnonExclusive case, we must check the corresponding
-> > condition for every single page. Therefore, from the large folio batch,
-> > we process sub batches of ptes mapping pages with the same
-> > PageAnonExclusive condition, and process that sub batch, then determine
-> > and process the next sub batch, and so on. Note that this does not cause
-> > any extra overhead; if suppose the size of the folio batch is 512, then
-> > the sub batch processing in total will take 512 iterations, which is the
-> > same as what we would have done before.
-> > 
-> > For pte_needs_flush():
-> > 
-> > ppc does not care about the a/d bits.
-> > 
-> > For x86, PAGE_SAVED_DIRTY is ignored. We will flush only when a/d bits
-> > get cleared; since we can only have extra a/d bits due to batching,
-> > we will only have an extra flush, not a case where we elide a flush due
-> > to batching when we shouldn't have.
-> > 
-> > Signed-off-by: Dev Jain <dev.jain@arm.com>
+On 02/08/2025 11:22, Jacopo Mondi wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > 
+> Accessing file->private_data manually to retrieve the v4l2_fh pointer is
+> error-prone, as the field is a void * and will happily cast implicitly
+> to any pointer type.
 > 
-> I wanted to review this, but looks like it's already upstream and I suspect
-> it's buggy (see the upstream report I cc'ed you on)
+> Replace all remaining locations that read the v4l2_fh pointer directly
+> from file->private_data and cast it to driver-specific file handle
+> structures with driver-specific functions that use file_to_v4l2_fh() and
+> perform the same cast.
+> 
+> No functional change is intended, this only paves the way to remove
+> direct accesses to file->private_data and make V4L2 drivers safer.
+> Other accesses to the field will be addressed separately.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+>  drivers/media/pci/ivtv/ivtv-driver.h               |  5 ++++
+>  drivers/media/pci/ivtv/ivtv-fileops.c              | 10 +++----
+>  drivers/media/pci/ivtv/ivtv-ioctl.c                |  8 +++---
+>  drivers/media/platform/allegro-dvt/allegro-core.c  |  7 ++++-
+>  drivers/media/platform/amlogic/meson-ge2d/ge2d.c   |  8 ++++--
+>  .../media/platform/chips-media/coda/coda-common.c  |  7 ++++-
+>  .../platform/chips-media/wave5/wave5-helper.c      |  2 +-
+>  .../media/platform/chips-media/wave5/wave5-vpu.h   |  5 ++++
+>  drivers/media/platform/m2m-deinterlace.c           |  7 ++++-
+>  .../media/platform/mediatek/jpeg/mtk_jpeg_core.c   |  7 ++++-
+>  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c  |  7 ++++-
+>  .../media/platform/mediatek/mdp3/mtk-mdp3-m2m.c    |  7 ++++-
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   |  2 +-
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  5 ++++
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   |  2 +-
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h   |  5 ++++
+>  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c     |  7 ++++-
+>  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c |  7 ++++-
+>  drivers/media/platform/nxp/mx2_emmaprp.c           |  7 ++++-
+>  drivers/media/platform/renesas/rcar_fdp1.c         |  7 ++++-
+>  drivers/media/platform/renesas/rcar_jpu.c          |  7 ++++-
+>  drivers/media/platform/rockchip/rga/rga.c          |  3 +--
+>  drivers/media/platform/rockchip/rga/rga.h          |  5 ++++
+>  drivers/media/platform/rockchip/rkvdec/rkvdec.c    |  2 +-
+>  drivers/media/platform/rockchip/rkvdec/rkvdec.h    |  5 ++++
+>  .../media/platform/samsung/exynos-gsc/gsc-core.h   |  6 +++++
+>  .../media/platform/samsung/exynos-gsc/gsc-m2m.c    |  6 ++---
+>  .../media/platform/samsung/exynos4-is/fimc-core.h  |  5 ++++
+>  .../media/platform/samsung/exynos4-is/fimc-m2m.c   |  2 +-
+>  drivers/media/platform/samsung/s5p-g2d/g2d.c       |  7 +++--
+>  .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  9 +++++--
+>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   |  6 ++---
+>  .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  6 +++++
+>  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |  7 ++++-
+>  drivers/media/platform/st/sti/delta/delta-v4l2.c   | 26 +++++++++++-------
+>  drivers/media/platform/st/sti/hva/hva-v4l2.c       | 31 ++++++++++++----------
+>  drivers/media/platform/st/sti/hva/hva.h            |  2 --
+>  drivers/media/platform/st/stm32/dma2d/dma2d.c      |  7 +++--
+>  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c   |  3 +--
+>  .../platform/sunxi/sun8i-rotate/sun8i_rotate.c     |  3 +--
+>  drivers/media/platform/ti/omap3isp/ispvideo.c      |  4 +--
+>  drivers/media/platform/ti/omap3isp/ispvideo.h      |  6 +++++
+>  drivers/media/platform/verisilicon/hantro.h        |  5 ++++
+>  drivers/media/platform/verisilicon/hantro_drv.c    |  3 +--
+>  drivers/staging/media/imx/imx-media-csc-scaler.c   |  7 ++++-
+>  drivers/staging/media/meson/vdec/vdec.c            | 24 ++++++-----------
+>  drivers/staging/media/meson/vdec/vdec.h            |  5 ++++
+>  drivers/staging/media/sunxi/cedrus/cedrus.c        |  3 +--
+>  drivers/staging/media/sunxi/cedrus/cedrus.h        |  5 ++++
+>  drivers/staging/media/sunxi/cedrus/cedrus_video.c  |  5 ----
+>  50 files changed, 237 insertions(+), 100 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
+> index a6ffa99e16bc64a5b7d3e48c1ab32b49a7989242..cad548b28e360ecfe2bcb9fcb5d12cd8823c3727 100644
+> --- a/drivers/media/pci/ivtv/ivtv-driver.h
+> +++ b/drivers/media/pci/ivtv/ivtv-driver.h
+> @@ -388,6 +388,11 @@ static inline struct ivtv_open_id *fh2id(struct v4l2_fh *fh)
+>  	return container_of(fh, struct ivtv_open_id, fh);
+>  }
+>  
+> +static inline struct ivtv_open_id *file2id(struct file *filp)
+> +{
+> +	return container_of(file_to_v4l2_fh(filp), struct ivtv_open_id, fh);
 
-Please excuse my laziness, but do you have a link to the report? I've
-been looking at some oddities on arm64 coming back from some of the CI
-systems and was heading in the direction of a recent mm regression
-judging by the first-known-bad-build in linux-next.
+Why not write:
 
-https://lore.kernel.org/r/CA+G9fYumD2MGjECCv0wx2V_96_FKNtFQpT63qVNrrCmomoPYVQ@mail.gmail.com
+	return fh2id(file_to_v4l2_fh(filp));
 
-Will
+Same for all other drivers that do this. I prefer to have the contained_of()
+in just one place.
+
+> +}
+> +
+>  struct yuv_frame_info
+>  {
+>  	u32 update;
+
+<snip>
+
+> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
+> index 1f134e08923a528cc676f825da68951c97ac2f25..74977f3ae4844022c04de877f31b4fc6aaac0749 100644
+> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
+> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
+> @@ -302,6 +302,11 @@ struct allegro_channel {
+>  	unsigned int error;
+>  };
+>  
+> +static inline struct allegro_channel *file_to_channel(struct file *filp)
+> +{
+> +	return container_of(file_to_v4l2_fh(filp), struct allegro_channel, fh);
+> +}
+> +
+>  static inline int
+>  allegro_channel_get_i_frame_qp(struct allegro_channel *channel)
+>  {
+> @@ -3229,7 +3234,7 @@ static int allegro_open(struct file *file)
+>  
+>  static int allegro_release(struct file *file)
+>  {
+> -	struct allegro_channel *channel = fh_to_channel(file->private_data);
+> +	struct allegro_channel *channel = file_to_channel(file);
+
+So a file_to_channel inline function was added, but it is used in just one
+place.
+
+I would prefer to just drop the inline function and instead write:
+
+	struct allegro_channel *channel = fh_to_channel(file_to_v4l2_fh(file));
+
+If this is needed in two or more places, then the extra inline makes sense,
+but it is a fairly common pattern that it is only needed in the release function.
+
+Adding a new inline just for that seems overkill to me.
+
+>  
+>  	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
+>  
+
+Regards,
+
+	Hans
 
