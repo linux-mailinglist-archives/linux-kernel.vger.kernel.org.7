@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-757852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A90B1C769
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:13:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97856B1C771
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C826E18C3961
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71417B02FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3196C28CF69;
-	Wed,  6 Aug 2025 14:12:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9DB28CF7E;
+	Wed,  6 Aug 2025 14:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZJj1LhE3"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BA328AAE6;
-	Wed,  6 Aug 2025 14:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4AF289357;
+	Wed,  6 Aug 2025 14:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489578; cv=none; b=EvBlPvBq93AdTPWslg+pe2XKiGoI/swXE5JUvj7wtEcYxpYc9BCr0FxgNIuD6MMP6+q+zzr6lrjeqhmlL4oX/wvjLNYPy2jADrgY9pLb3KpPEtkdwzGi6M1fxXaZK9/+X7jYCzpaZyCUfPbqWH1qXcSblutThLh/cjR7jJldE8I=
+	t=1754489593; cv=none; b=kZWx1jiE642Wbpsm6Bc6NM5sPMR7E5R9gIKcB+X5224HpKqLZT56S4ViYCK1RkP0zTtMoBUz4tFcPLaEomJIWR56B8lKjQiCpXOZEXfe8lar0kkqNdKhYSGA6BX6j0FXyqEuAjtEXRnAxUMG68HRWc7qkv6b1Nnh17k6z6AxOwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489578; c=relaxed/simple;
-	bh=V/dVNsM+cmqBM7zUq1pQlgUZUed6LArBaFY9Pn5trYQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B5mSukO9ZZDEdxh1Su0dRmIOWCOLZxw7Kj04mYV9xS7Y6g3OIB8fsM8W0CJVLSgNjeoWY2wYvK+No6oC0jnrWdqQDKJONB2C+eNHgHOa2G8JEcKPnWTbiJe3kOgGRJUi8q7pLHw4zOWfKbl8513An3/4EPLcscK5C0GAL9u1HaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxsdQ5KvNz6L55m;
-	Wed,  6 Aug 2025 22:10:34 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 70CDB140446;
-	Wed,  6 Aug 2025 22:12:53 +0800 (CST)
-Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
- 2025 16:12:52 +0200
-Date: Wed, 6 Aug 2025 15:12:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Shameer Kolothum <shameerkolothum@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<alex.williamson@redhat.com>, <wangzhou1@hisilicon.com>,
-	<liulongfang@huawei.com>, <linuxarm@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH] MAINTAINERS: Update Shameer Kolothum's email address
-Message-ID: <20250806151250.0000678d@huawei.com>
-In-Reply-To: <20250805083913.55863-1-shameerkolothum@gmail.com>
-References: <20250805083913.55863-1-shameerkolothum@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1754489593; c=relaxed/simple;
+	bh=FlMpSLf2yOkuHS3jx0q7g7C74Flm3+kVPHDysv1Z34E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZblHLfC4MrkfDyu9V/M9QU6PdsVrJyn4Xp8Koqy4UoLvpyIKEl6NxOztl6BsTKGKQXTyOZPUdlzXZWkxY/YxrTfse/XxC7fNoW4aTFuUYEjZMsxQ71OsEBmvr9G0soPS7E3BSKniJ8VDdRr+yJ93hDqW+6guEVKzE8uSnWJtyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZJj1LhE3; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bxshM0w2hz9sWC;
+	Wed,  6 Aug 2025 16:13:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754489587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FlMpSLf2yOkuHS3jx0q7g7C74Flm3+kVPHDysv1Z34E=;
+	b=ZJj1LhE3XyHa5IXw8AMDjIl2cfdjHrJDmLX7MNh4WpURzMs6EDnk2iQO8/+Of3JbAM3FgA
+	4vca7881HoPDoMk4RcbzIXRG5LhGn7Vfi+GphkO86B2R4ZniIb8CgtxM5RZmmjhRzwdo9F
+	HwZvsWttmmXM0X2Z8yZVcbgSFqaAwTrUKHWXoLB2ugmmrkCUhF2q7kdDEs8CCV5TwonxA7
+	2LuAtNFNZ09YhhLzhln/F9EU4G5JgcgWoZztRsxC5/HkRjZlS2yAxgMveHe4mbx09Wbmv5
+	o+jJgikmBtHfN9u+2u84E5a6+74wAwm49j2Gh6AkmpDdredvm8p13pIV17u5PQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 7 Aug 2025 00:12:57 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: amir73il@gmail.com, brauner@kernel.org, corbet@lwn.net, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, luto@amacapital.net, 
+	shuah@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+Message-ID: <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
+References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
+ <20250806102501.75104-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vg7hvx6zdovvdlvh"
+Content-Disposition: inline
+In-Reply-To: <20250806102501.75104-1-safinaskar@zohomail.com>
+X-Rspamd-Queue-Id: 4bxshM0w2hz9sWC
 
-On Tue,  5 Aug 2025 09:39:13 +0100
-Shameer Kolothum <shameerkolothum@gmail.com> wrote:
 
-> My Huawei email will soon bounce and hence change to my personal
-> email for now.
-> 
-> Also, since I no longer have access to HiSilicon hardware, remove
-> myself from HISILICON PCI DRIVER maintainer entry.
-> 
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> Signed-off-by: Shameer Kolothum <shameerkolothum@gmail.com>
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+--vg7hvx6zdovvdlvh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+MIME-Version: 1.0
 
-Good luck with your next adventure!
+On 2025-08-06, Askar Safin <safinaskar@zohomail.com> wrote:
+> > I just realised that we probably also want to support FSCONFIG_SET_PATH
+>=20
+> I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH.
+> Moreover, fsparam_path macro is present since 5.1. And for all this
+> time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody
+> used it, so this will not break anything.
+>=20
+> If you okay with that, I can submit patch, removing it.
 
-Jonathan
+I would prefer you didn't -- "*at()" semantics are very useful to a lot
+of programs (*especially* AT_EMPTY_PATH). I would like the pidns=3D stuff
+to support it, and probably also overlayfs...
 
-> ---
->  .mailmap    | 1 +
->  MAINTAINERS | 3 +--
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index 4bb3a7f253b9..0d0f689e0912 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -700,6 +700,7 @@ Sergey Senozhatsky <senozhatsky@chromium.org> <sergey.senozhatsky@mail.by>
->  Sergey Senozhatsky <senozhatsky@chromium.org> <senozhatsky@google.com>
->  Seth Forshee <sforshee@kernel.org> <seth.forshee@canonical.com>
->  Shakeel Butt <shakeel.butt@linux.dev> <shakeelb@google.com>
-> +Shameer Kolothum <shameerkolothum@gmail.com> <shameerali.kolothum.thodi@huawei.com>
->  Shannon Nelson <sln@onemain.com> <shannon.nelson@amd.com>
->  Shannon Nelson <sln@onemain.com> <snelson@pensando.io>
->  Shannon Nelson <sln@onemain.com> <shannon.nelson@intel.com>
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0b444e5fd5a..424cb734215b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26038,7 +26038,6 @@ F:	drivers/vfio/fsl-mc/
->  
->  VFIO HISILICON PCI DRIVER
->  M:	Longfang Liu <liulongfang@huawei.com>
-> -M:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
->  L:	kvm@vger.kernel.org
->  S:	Maintained
->  F:	drivers/vfio/pci/hisilicon/
-> @@ -26067,7 +26066,7 @@ F:	drivers/vfio/pci/nvgrace-gpu/
->  VFIO PCI DEVICE SPECIFIC DRIVERS
->  R:	Jason Gunthorpe <jgg@nvidia.com>
->  R:	Yishai Hadas <yishaih@nvidia.com>
-> -R:	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> +R:	Shameer Kolothum <shameerkolothum@gmail.com>
->  R:	Kevin Tian <kevin.tian@intel.com>
->  L:	kvm@vger.kernel.org
->  S:	Maintained
+I suspect the primary issue is that when migrating to the new mount API,
+filesystem devs just went with the easiest thing to use
+(FSCONFIG_SET_STRING) even though FSCONFIG_SET_PATH would be better. I
+suspect the lack of documentation around fsconfig(2) played a part too.
 
+My impression is that interest in the minutia about fsconfig(2) is quite
+low on the list of priorities for most filesystem devs, and so the neat
+aspects of fsconfig(2) haven't been fully utilised. (In LPC last year,
+we struggled to come to an agreement on how filesystems should use the
+read(2)-based error interface.)
+
+We can very easily move fsparam_string() or fsparam_file_or_string()
+parameters to fsparam_path() and a future fsparam_file_or_path(). I
+would much prefer that as a user.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--vg7hvx6zdovvdlvh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJNi6QAKCRAol/rSt+lE
+b3F9AQCE4SkPMlgg2PcJbT8RKOExtd1DlYHS3cpgw7AFtviNkQD/dwBRoLanCy4P
+XTz8xL1cJlBrIEYb0j2KmePVf/mvUQ4=
+=0c79
+-----END PGP SIGNATURE-----
+
+--vg7hvx6zdovvdlvh--
 
