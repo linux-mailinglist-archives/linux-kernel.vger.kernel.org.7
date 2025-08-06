@@ -1,232 +1,276 @@
-Return-Path: <linux-kernel+bounces-757908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFFDB1C830
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503AAB1C83E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9A93B6EA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:05:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5173E18C4845
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F055628D832;
-	Wed,  6 Aug 2025 15:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D360C28FAB3;
+	Wed,  6 Aug 2025 15:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="CIzsY2/2";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hDiHlE3B"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="i8XwjnkI"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012042.outbound.protection.outlook.com [52.101.66.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAC928C027;
-	Wed,  6 Aug 2025 15:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492709; cv=none; b=czFK0CssLQzxCPG+FX+yTIr4fnvLck7mqD8HsHCP4ebzgprN1qdsLWCmG6vnQfyH2E/YyJyHPj3pvKLLoI2CI05OiymjD7w0kF+pmpAB4pyBjtg94ZqAnZiubCT09InZMe9AqhX5UFworas5Q6c9vb54jNtOUOiBovwmx0PLJUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492709; c=relaxed/simple;
-	bh=fuYMrpOrJ6nZYYv8eCAIvjIUrE+nnAyZf5ORW7jxh7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ib/i7wPuKipgwDS+ZVg27QMvmth4bJP4aAD3HeCsvFN/4Oocji5SDtdSAbHzuBXKTalg9ruGINeqshdfs6O92pRZ0SmpOQYcwV1RRpbjassl+todsnoC0HAj97ZHUmqqrPtmLaRhrl+za41Ug4bndoKaVfEvVHv25WcQPVvUwks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=CIzsY2/2; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hDiHlE3B; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bxtrK482Rz9sJ3;
-	Wed,  6 Aug 2025 17:05:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1754492705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0Xb1gcwOb+OUSeItxSM+cReVbxFeztwB6ynzPiFVKds=;
-	b=CIzsY2/2CjVfo4AAXd6QHgF44FBCTgikJgExkKDsstk8PnzMJOq4vki55L6So+wtMCvmZN
-	9eouqSNY3YmR68VG/sUkY3B/BKY1fCWSPFKgJFSu6lnzXMA43F77JHku6DSkyP7vXTAz2l
-	X4cYuMOfI7s2LPAq5FV9pZ+kYCloDWO/xEdDVkGnM+n9X7mjFdkZF6asacR0/fT6AzP8oy
-	Ig4MB0wl8/o+Y5rFR1iI4oatvd43v7N9HdAX3ar5u90LkSOrZRPWIQs91qk6Aoc4Fjt8eH
-	BpvjCtFstsEAv4cQ/sy8eXworv6Vknuf89p4B7xxH0ZMT4tvbxQGw3wvocCiwA==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1754492703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0Xb1gcwOb+OUSeItxSM+cReVbxFeztwB6ynzPiFVKds=;
-	b=hDiHlE3Bz+3lc6yOmzScT+/c+L9bOngw8Wa6FY6z+fAtNJwqE8ODgiF8agWM7JgX58X99B
-	sYNPlidsKTACr1ptiA+tgGnXQeZyhFwuEuKgrP1ZI+AL4l/DlgK1F9ehI9jPSt+/snaS1V
-	CuDLZVjVjcVCxQH9NAysCZGu3Xr008YG4jyGyJjRsklWOPcjQ6BUVKBBb+QmevX9G5b53G
-	SqrTXhTz5EUcvKT69kCZPL/+rtwlR+9xk8gcaALjfELWPXeKmE+ovwnvKGYrsaxsMaPPX1
-	nvleB9dYT6M5RmTcYwO8wuib42T59pJ86m0fSPbjXO6VtrfjBfp+zBVaJo7WFA==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B228D832;
+	Wed,  6 Aug 2025 15:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754492740; cv=fail; b=jdpgLp9MZDDgPipkLXwhkyxFUu06ZS2rbO3GT7ho2ocr3g3CdqakfgJj7jhnoE2ph74B13bn3Dj+pMnFjccrM+S1Ln6AKjyhKXswV3t3ltcPsEwLysWyYJMY9mNeey04rhUccjP/msB8UA+xq7h+xzZ5g0Wf/jITunBAjeIul+8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754492740; c=relaxed/simple;
+	bh=r42Yjm/njbqZuD8SmvyOrgibhwqezu3n6Pdo0N7JGBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rQG/MZfXTO387Ro+hpQYDcbvjqtb40ZQmgceGoBClh8vfHI8J09aPDBZif7wBTNi3OqnVN2bSWtA/k87b48Xv5PaTkQh7CgkU3Rxqd1o04n0Xaiyb9mygYygaBGJL7s7YWI9kUCW8HeQUKepHBFeulp9TIw0VxiDPzlaTQXaznM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=i8XwjnkI; arc=fail smtp.client-ip=52.101.66.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rB18Xz9BgRsKifexyGG3bWSyXYCTHXcK4NhuKDBIsqwDyOdjJoVm+SQfj7aT/a6vsuq3m4Wu8sr/GTfSTaMq/1kP3WaKBYWOYAmgpfgO5nlKzw5IeTbim5cXTh0pM/9liYaB/H2lEDRBIl4K3FJRfS0d4smlJJd6AwgV2trUeKIh1L7VkQ/t8JMrFeR3Vi7EQn517AEdqjNFAzhOg1yRfIkwQkWAnFcknZydUVNdDZz/wtB9fQZXusi0AIWLQa/ID+liICo8WDOU11/Ee4Z7t6EhLGhTQBicLO0qiUImDYetfYiy1Ya08Ur/pOtAYsVFqCZEP6ooikWK7jFbARJ/ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L2ncJwG8F4lF+qbb/qTu9hx6o6RgpZ7OT9v5gKAf2lA=;
+ b=E7+tdxDSdZ5Vjei7td7A8eowtl+S7OnUcjIe6mICVYBexDibd7w4DxvXqwMH2PG1hdSVHAOdYlncdCgwXpl5bU5vMaUHvdyUlrNKMzHAsTTEJ4GyOdxC1y3EsPLwioPt5BMhgNTERPU8yWOBJZ88WOrYywk1tpBuKAKyzSjIRFl3tz6ZZtKHOIQUgO95BZOsl2a2vNiKWu1gCakPs6rb3uyyX3Z2o1XLkniTfQpWJeyp5jGFZw5bS++K09TrWbsrkKzaxxp2LWKfnQvdGbAcXoLgny0Vb7vHqH16pbr9Evuhx8pw2DdYa7/FTMruZ9PIs42VT9bHW/Z5r2bt+FMU3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L2ncJwG8F4lF+qbb/qTu9hx6o6RgpZ7OT9v5gKAf2lA=;
+ b=i8XwjnkIcr8xW4zDxgqoj038/nel/rLWnQZsHkmbZDpRPuwk4u8RB5fxYTwhjIHLqur/YbGbOXW/NYX51YhhMBPgzFqVBu/Xi+cMTg2q3IJndUzLjQS8SPo4NwehMkqEIw1zW1o3YtLAOvnHI0Niv2T2K0m7vPxmq13eU0hRAiMqOi+V3i8zHDx2zx9FRJFjbTU1c6UYR3/kijmQ8u7kTqJrLQ/ioKh5xfvRvgY7Chm5lUpfqNAqjvgusVHu9YOTZgIjfBbhV1cs7JoeJTtHmjOhcGRXWhTmuXHmBeM7osR52yPrQ/MrDb/q6qbjyE/Kx5yXbZ++FDSXUyRHN3JTdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
+ by PA3PR04MB11203.eurprd04.prod.outlook.com (2603:10a6:102:4ab::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Wed, 6 Aug
+ 2025 15:05:34 +0000
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442]) by GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 15:05:34 +0000
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: imx@lists.linux.dev,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Marek Vasut <marex@denx.de>
+Cc: Frank Li <frank.li@nxp.com>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] ARM: dts: renesas: Add boot phase tags marking to Renesas RZ/A1
-Date: Wed,  6 Aug 2025 17:04:27 +0200
-Message-ID: <20250806150448.9669-1-marek.vasut+renesas@mailbox.org>
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v3 0/9] Add support for i.MX94 DCIF
+Date: Wed,  6 Aug 2025 18:05:07 +0300
+Message-Id: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM9P193CA0009.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21e::14) To GV1PR04MB9135.eurprd04.prod.outlook.com
+ (2603:10a6:150:26::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: a9ff50ae2e0858919c0
-X-MBO-RS-META: gemjm8p8bjmrjzrawdaz3m1u61rf8pm4
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|PA3PR04MB11203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15e77a08-f2a4-4ae6-87bb-08ddd4fab13e
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?rJ679M3jj5dOgruJ03GWTwY+dsqyMAPUN3i232/jK7FIqeOqm6/UQMqtxqbs?=
+ =?us-ascii?Q?U35Nbr2Y+NKy2XZwxBNKbaBRnhLlzbdTnp6xaTuYZid9vyU5NZCVBkbt0MbP?=
+ =?us-ascii?Q?Lsc6UpJRZJqs+Y88W8mQAZE2xAiRIDBxeRfPsEPukEW6rV4CxFHjbtOCf9P7?=
+ =?us-ascii?Q?u6xLbpZpHeI2x6WS8i9TsN8DNmi8rXtRl/mvzXDZEggHFp5PNRnuB4TRPCgR?=
+ =?us-ascii?Q?Ktt5Di1YXFpimryE6n/SMHo+3FJ8DQ8bXzA5armFLzZPnryVQ/QMhNDnkjpP?=
+ =?us-ascii?Q?neY262uOtioF8CbjMS3LTEAaJuk6RLYHE5N6XbL4xT3N9n3b/AyFS0CYqrXk?=
+ =?us-ascii?Q?+UYqG9LFk/tTO7UhCzNYKKOCc7YdhNA8o39wPuXE+3FG/CGr6Vc5jx3+Q4f0?=
+ =?us-ascii?Q?MIbjaVNFewMCxsxZzBQJ5aEFWIpDs/TJ3efZ1ekg56XroLMbedGHqi03++4R?=
+ =?us-ascii?Q?ZHk5dQBGijV+VPaqcJvVgfo+DY9+Jb7o/Mf+uNAKxFLh6WAvBIjiBZH6posn?=
+ =?us-ascii?Q?ZCpKdoMWXNuvSfDG3Ejt3f5SdyODBNGbm+HwjNDevD1CJ+OafTLGku5Z3F0T?=
+ =?us-ascii?Q?Nj4GT4a+fqimVw7Oc1DVHXa+PqpZdZ7G18534ZU6x8MfEJUCsKFs03oMUmWW?=
+ =?us-ascii?Q?kTJ3SSr0VpBW1iWBS4Ir0HmyWZQXZgHV/TisF1ggfNWOnLfasfPC0g073MPo?=
+ =?us-ascii?Q?LE9BBmpd2ZyFpxdEi1/fJuaKOTPvSbhTSe7ktIy1ptb6tNudeT3/m5oUeYBe?=
+ =?us-ascii?Q?fjEJOfaLQbi0bLu7c26jjziXe2enr07lalOJuUHpJdEzi/+UoLcR1Q3BvD0f?=
+ =?us-ascii?Q?w5hLumxX2fhGzfrTHi2E00iwKVxE9s8pBKWJbeqMMZUn8M8CD4T0naib3TkF?=
+ =?us-ascii?Q?wOZBJ2lQu96WsDxW7xMK0VfCvMwEmcuwXDKyA00AOM2aOND0eAmR57Cp1pV0?=
+ =?us-ascii?Q?wZ0Yi/tQO+ksdRpuTqcAcrTIWX703/6AoafPeuobrkfafJFULeBuqscLvWEz?=
+ =?us-ascii?Q?SighLWAzhA10zay7eRXIJAQFZr+sCrTa14K5fbJIH9hqTRvTRoZThyYp7iuZ?=
+ =?us-ascii?Q?X7gpoRPZ2S+t24ddINtOMtoKuQyxIGSX8XR9YVdWheZOOd1EDYEqyCyccU+h?=
+ =?us-ascii?Q?ADcRwL+TZgnct8s/nN2IV+n9SeYiNexMc/ErqL2d/6c5pMWyi+RfjMWCHwJL?=
+ =?us-ascii?Q?x3BPkEOif//c/oCXiYzwMqGfa20e7cpAHIWSiK9OchNk5ETjmyqkEUBgaYgV?=
+ =?us-ascii?Q?865I4Y768GRGjesJgF5THO3Df5b73G6ofpeslBFacuaXVBVvHfO3tQcu/n+B?=
+ =?us-ascii?Q?gJu7SplnlKTAa8csYcsrL4LBWkzOJVFwzWbKZ2SstBN/hXogoEF2aZ/MTWNo?=
+ =?us-ascii?Q?DH27XdxNno/FvA9hgm90EUj4eQ99CO3K5Xc8lntDiZih1L1B6DVkbbwlZ88X?=
+ =?us-ascii?Q?gI60dOZHi88=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?M02GA0Cz70tnHTcja8OaDuIy6PTRg7yO3pYLEI099p6S0eGzoHixFMT7ep/q?=
+ =?us-ascii?Q?31dlsmzBIBxepxyLD33VgxkzsQoQ7XBZ0UUdYRDtfiw+YantmUlAfhxZ+BXX?=
+ =?us-ascii?Q?AKFPB14fCTk09ekQmQu61ANRRi3Nl907kPML6BcrSXESvGQU9b+24/CHiBIb?=
+ =?us-ascii?Q?BEPUjQpCmmnof3xT4s3KKHwFpewYgTm91bX9THwzC9UKRBuvzFD53rTIBi7O?=
+ =?us-ascii?Q?AWXGAoZ7G62WmwniGsx+nm2aqZd9pk8mTFJfjCfia1oGR8NPMZhfaaV+zo/Y?=
+ =?us-ascii?Q?uv08bLONGtBEvEONGnYCdXlmvbHVs4Am2Hcfu7k8sVi2hMmsMB5dCYtSMJtX?=
+ =?us-ascii?Q?Ng+7uRnsTfBR2eaKZPW9PkjTlT2a2Kdiq8kK/c8jRNFHp6bB024yk737fyjX?=
+ =?us-ascii?Q?vDaG/Hf5hcJta7tPM1nUpa7SdouUVEYwn3pGMDkt0yyrUemq/ldM8INls9jq?=
+ =?us-ascii?Q?p0afiM7sCuDnDvueNFgpt1Yb1OcH6YrPenoKX01Qw0jCZ8tgrCyrjuRzLYS0?=
+ =?us-ascii?Q?u1WflW9RQYG04ZEuBzVmF6Uy1Ejebi0W3FlQr4bvjg8/W/E2AV9EdmKLlP7D?=
+ =?us-ascii?Q?0Y1DFi2F66Oh08XGvpqSVyVbYcSSIcACciweoutJw9Vz4hAbBszc4jelaZng?=
+ =?us-ascii?Q?RAU3DCXN5JKsSOWzGoeytDkPXmh6+JlOa7dpfU9QKi8dew4+v9ZTVvlw+9wm?=
+ =?us-ascii?Q?r5I+qXHLQCGtmp8Z9pHQgx+PUkLfHKZb0mDFusejtm7MIErNHUXZUENdnK5V?=
+ =?us-ascii?Q?FfIEQKmLBszlDBcgArbvVtXNFkfi1GE0KnB1I/W4f/aYcPBz/J2adBSVVWoR?=
+ =?us-ascii?Q?5y9NQ3qBTgn7zf6GuduXgRpstufu7gv2rz8vBf6/PA2v2qbc9/610AXz9ZIy?=
+ =?us-ascii?Q?bvLUzY3ab5FS3MnVV68eS9BkeZdmB3zPJn1FxAWoG4Q1xcDaTMYGjz675KyE?=
+ =?us-ascii?Q?lbRZTD4NGsechhZx0qILddzvEyXlg2/z1igE4+38b7IegPblZkG04FP0/CD0?=
+ =?us-ascii?Q?FgmPbcz7kwyWNAwcANpyqV3iGlZF9tpraEgcIdpw1HvhplzHDaGUlwUO3IV6?=
+ =?us-ascii?Q?JdACP5nK+XYV5gg85j2H/Cc9c2uPy9BVxplIX98lWSYC6Eglqy90cItct/j/?=
+ =?us-ascii?Q?u0uuuDcQFXkDlPMIAqrCgSott/2ixgfQ2vFIU+fMzb8Gk4WvzZ4WbWM76mUg?=
+ =?us-ascii?Q?lO6ODuk6Jgnfjr5PqjyYxLGT0evq/b+KH9lExSdRv0nJMQSgW9QHLCYneVUB?=
+ =?us-ascii?Q?RXVpDGWivcHHa8DaeqGB6elIgyjM1qHTMHIIZ5j3Gn+LDmv7tH6STFwd+EXp?=
+ =?us-ascii?Q?zvGxlf27bgva4FfsU1CliJagsLAAXcm+WzUx8z4LOIArlR3vss93efL0PDJh?=
+ =?us-ascii?Q?1q6lnyKMLLegTZaRNVArdqq7baQW7/GkncDK9Xt/bVEXio4hjYPosVUz3GdR?=
+ =?us-ascii?Q?iL+oDogPXh2WTRgY2htlV7iJadBKkmDH5hRvNVwliftVwqw+LO0oEGm+SFww?=
+ =?us-ascii?Q?P2Pfjlmd3lfmZcxZM0R5p3ZP5INVtFYeiaseejDBFSaT9X/VMjthwh1CB2Tb?=
+ =?us-ascii?Q?U/qlGKlmhruSQdJ0nGpC5KEiBKzvQiatltWP2Z7QSq+464ViBjgDP9z6WVcS?=
+ =?us-ascii?Q?0Q=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15e77a08-f2a4-4ae6-87bb-08ddd4fab13e
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 15:05:34.2038
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kikHJsrffo7ArR+IGKKYkfyNF0Snvj7UkiIh6c4GcBDSKOg6p1ulcfN8tkSE9Mh+NInru1yu7Q3NAC4bT56X+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR04MB11203
 
-bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
-to describe various node usage during boot phases with DT. Add bootph-all for
-all nodes that are used in the bootloader on Renesas RZ/A1 SoC.
+Hi,
 
-All SoC require BSC bus, PFC pin control and OSTM0 timer access during all
-stages of the boot process, those are marked using bootph-all property, and
-so is the SoC bus node which contains the PFC and OSTM IPs.
+This patch-set adds support for the i.MX94 Display Control Interface.
+It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
+needs the BLK CTL changes [2] that I spinned off from v2 in a different
+patchset.
 
-Each board console UART is also marked as bootph-all to make it available in
-all stages of the boot process.
+Also, included in the patch-set are a few extra patches that the DCIF
+driver depends on for functioning properly:
+ * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
+			   contains a patch (2/9) from Liu Ying that was already reviewed
+			   and was part of another patch-set ([3]), but was never merged;
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Drop blank newline arount bootph-all , move ostm bootph-all to board DTs
----
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts   | 4 +++-
- arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 4 +++-
- arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts  | 3 +++
- arch/arm/boot/dts/renesas/r7s72100.dtsi         | 3 +++
- 4 files changed, 12 insertions(+), 2 deletions(-)
+v3:
+ * Removed the BLK CTL patches and created a separate patch set [2] for them;
+ * Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
+ * Removed the DCIF QoS functionality until I find a better way to
+   implement it through syscon. QoS functionality will be added in
+   subsequent patches. Also, used devm_clk_bulk_get_all() and used
+   dev_err_probe() as suggested;
+ * Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+ * Addressed Frank's comments on dtsi and dts files;
+ * Added a new binding patch, 6/9, for adding 'ldb' optional property to
+   nxp,imx95-blk-ctl.yaml;
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index c81840dfb7da..3c3756509714 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -203,6 +203,7 @@ &mtu2 {
- };
- 
- &ostm0 {
-+	bootph-all;
- 	status = "okay";
- };
- 
-@@ -258,6 +259,7 @@ mmcif_pins: mmcif {
- 	};
- 
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
- 	};
-@@ -286,7 +288,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-index 9d29861f23f1..23ddec217685 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-@@ -59,6 +59,7 @@ led1 {
- 
- &pinctrl {
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P6_2 as RxD2; P6_3 as TxD2 */
- 		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
- 	};
-@@ -99,6 +100,7 @@ &mtu2 {
- };
- 
- &ostm0 {
-+	bootph-all;
- 	status = "okay";
- };
- 
-@@ -109,7 +111,7 @@ &ostm1 {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-index 25c6d0c78828..91178fb9e721 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-@@ -199,6 +199,7 @@ keyboard_pins: keyboard {
- 
- 	/* Serial Console */
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
- 			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
- 	};
-@@ -264,6 +265,7 @@ &sdhi1 {
- };
- 
- &ostm0 {
-+	bootph-all;
- 	status = "okay";
- };
- 
-@@ -278,6 +280,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100.dtsi b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-index 1a866dbaf5e9..a1e4e9ac8f62 100644
---- a/arch/arm/boot/dts/renesas/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-@@ -41,6 +41,7 @@ bsc: bus {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0 0x18000000>;
-+		bootph-all;
- 	};
- 
- 	cpus {
-@@ -107,6 +108,7 @@ soc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-+		bootph-all;
- 
- 		L2: cache-controller@3ffff000 {
- 			compatible = "arm,pl310-cache";
-@@ -557,6 +559,7 @@ R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
- 
- 		pinctrl: pinctrl@fcfe3000 {
- 			compatible = "renesas,r7s72100-ports";
-+			bootph-all;
- 
- 			reg = <0xfcfe3000 0x4230>;
- 
+v2:
+ * reworked the BLK_CTL patch and split in 2 to make it easier for
+   review;
+ * split the dts and dtsi patch in 2 separate ones;
+ * addressed Frank's comments in DCIF driver;
+ * addressed Rob's comments for the bindings files;
+ * addressed a couple of checkpatch issues;
+
+Thanks,
+Laurentiu
+
+[1] https://lkml.org/lkml/2025/7/7/84
+[2] https://www.spinics.net/lists/kernel/msg5791546.html
+[3] https://lkml.org/lkml/2024/11/14/262
+
+Laurentiu Palcu (7):
+  dt-bindings: display: fsl,ldb: Add i.MX94 LDB
+  drm/bridge: fsl-ldb: Add support for i.MX94
+  dt-bindings: display: imx: Add bindings for i.MX94 DCIF
+  dt-bindings: clock: nxp,imx95-blk-ctl: Add optional ldb property
+  arm64: dts: imx943: Add display pipeline nodes
+  arm64: dts: imx943-evk: Add display support using IT6263
+  MAINTAINERS: Add entry for i.MX94 DCIF driver
+
+Liu Ying (1):
+  drm/bridge: fsl-ldb: Get the next non-panel bridge
+
+Sandor Yu (1):
+  drm/imx: Add support for i.MX94 DCIF
+
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml     |   5 +
+ .../bindings/display/bridge/fsl,ldb.yaml      |   2 +
+ .../bindings/display/imx/nxp,imx94-dcif.yaml  |  82 +++
+ MAINTAINERS                                   |   9 +
+ arch/arm64/boot/dts/freescale/imx943-evk.dts  | 121 +++
+ arch/arm64/boot/dts/freescale/imx943.dtsi     |  55 +-
+ drivers/gpu/drm/bridge/fsl-ldb.c              |  47 +-
+ drivers/gpu/drm/imx/Kconfig                   |   1 +
+ drivers/gpu/drm/imx/Makefile                  |   1 +
+ drivers/gpu/drm/imx/dcif/Kconfig              |  15 +
+ drivers/gpu/drm/imx/dcif/Makefile             |   5 +
+ drivers/gpu/drm/imx/dcif/dcif-crc.c           | 211 ++++++
+ drivers/gpu/drm/imx/dcif/dcif-crc.h           |  52 ++
+ drivers/gpu/drm/imx/dcif/dcif-crtc.c          | 694 ++++++++++++++++++
+ drivers/gpu/drm/imx/dcif/dcif-drv.c           | 226 ++++++
+ drivers/gpu/drm/imx/dcif/dcif-drv.h           |  84 +++
+ drivers/gpu/drm/imx/dcif/dcif-kms.c           | 100 +++
+ drivers/gpu/drm/imx/dcif/dcif-plane.c         | 269 +++++++
+ drivers/gpu/drm/imx/dcif/dcif-reg.h           | 266 +++++++
+ 19 files changed, 2223 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
+ create mode 100644 drivers/gpu/drm/imx/dcif/Kconfig
+ create mode 100644 drivers/gpu/drm/imx/dcif/Makefile
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-crc.c
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-crc.h
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-crtc.c
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-drv.c
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-drv.h
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-kms.c
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-plane.c
+ create mode 100644 drivers/gpu/drm/imx/dcif/dcif-reg.h
+
 -- 
-2.47.2
+2.49.0
 
 
