@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-757535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F905B1C34F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9609EB1C352
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FED18A56EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4592118A5722
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010E828A410;
-	Wed,  6 Aug 2025 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C611A28A1D3;
+	Wed,  6 Aug 2025 09:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UENI7Lrf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I0tKLwO7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9B928A1CB;
-	Wed,  6 Aug 2025 09:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138128A1CE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754472411; cv=none; b=iweHS5Qw19rzir9Gn++vs/TkKuLxrGM0JGwupUSrMrfnMZCcV2rnvUm+tGYjBf6R1wltM0F8nEsFzBqe3enz179N5rCmMaFXeIqvv9Yx7dJdtmBcSP/ko2toqwT5Kg3UNrsEFk2vLDYVc/nqCv7tvVNkzldt+np67L0mqjhj5iU=
+	t=1754472483; cv=none; b=fnlyy5zTn/M7X+E8IqkVm6eMWUp99LKzF/2UMVCO70EQ+qTdoub3Urcqx7vAQ5kjKqwzTAIKZ/5bWShX8o65AcASbVP5nHM1t5DuoWRn31SjQExeiIjePyyBCk4Qtyn7P9jeQssuVzfz7UdzdyoD7aX0q8Jr8mZHKCPDEJzQwZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754472411; c=relaxed/simple;
-	bh=RFB/IBeb3TpzuBo/Adg9VqfrllD7bqoz/rEAuh1db6M=;
+	s=arc-20240116; t=1754472483; c=relaxed/simple;
+	bh=MYut1GmYrZ9pGw7AeqGr62o2kp3kOej29q5WczHLC4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9YR8eSWh+9OTZCOY/VvScn9N+kmsthuFBUzHJMw5oVvkwh/J/jqYHcuuLo3D07tbeHdWqPnBy8UAoHguopueyNojBI57alr8xMwYWOmq8CQnbBYM7CwNKeIiLV965xZEiq3s78T7i18DypTGpOsLWfgX6MDgcS9fPZ9ZiKxqTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UENI7Lrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABACDC4CEF6;
-	Wed,  6 Aug 2025 09:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754472410;
-	bh=RFB/IBeb3TpzuBo/Adg9VqfrllD7bqoz/rEAuh1db6M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UENI7LrflowbobZMC/MwyBgjjghxz9oejwHpou0dN5MgzFyvWDVSTodOVeGpcQdCj
-	 etK03axmEt/SreIdOxOT+ppmfCegJKgSjVvPv1yh0ptm0dKc6MjIEgouWqDYoDTeI0
-	 opT0ee4uajdC5dUG9lXgS3DB+dkqwMpAYbWc/BpEOhW7+RJk/twTBImgV/9/2pLRSm
-	 mV5SS6vIqEM+KOoxfR5bGU2bEL0AqO75iADEGxQZPVmTQZGmOUsnIXYzZwnCX87RfI
-	 KDDFyxeuBRlMAn7fHO7a5Y9f4aNBlAW8YWdTXWzhOip5zZoXgC6WRjPwIppNS5eOoS
-	 DfqI32Ac93sww==
-Message-ID: <4acfd68a-7350-4e3b-82b1-fff8dcbe59b6@kernel.org>
-Date: Wed, 6 Aug 2025 11:26:46 +0200
+	 In-Reply-To:Content-Type; b=HwjHIV9d6uuWqHSDDi3QbRChzoaQSaefmmQRGK1XZM6L1WgMXheQEnyle8lQi0FO2oPOqUHHhl12mjRimwGkF0eIud5gPiPofOjU+mVySRVh1ijkKQQo/QxV4kRhLIcrNdJxdE2Uvo8aaBmvoJV/PZqqu/YQUt6qenAoIKTe5eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I0tKLwO7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765Fkmx020222
+	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 09:28:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PNaqGeAKSyJlv//PcfcZiYRz0y4fARWElDbjpanQxvs=; b=I0tKLwO7wrtDlk9h
+	/cDNF8dF8+ZpcrMaqSiZn0DX10GVif/cOL4uh+ew/CnX5pz4Tvi8CkQk7g/I/Bh2
+	Z1DpMTE4k5wS5aPmCyghFvkdZFTnua6TP5v8NQQpSZvuhK+fUGFc+A8VzRI1wnOg
+	Y3sGubCN5l+xpj2tb8bJWuxIwZMWI+OyZ5QZI+w9B4LJY+txk+D8ITUhHHd/EyV4
+	6S6bujOo+YVfzLPHvf6RlhbbVLavbrMJoed9TMztVfG2fktm/lVS2BrNwZ2WkY3X
+	gjzckmWsXPSXeMUfJIWabuIxmWNT4mPg5eI4Czv3B8QS/TbGpfDo1KJCEqVuLnBx
+	lzo7Kw==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw1a86a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 09:28:00 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b3beafa8d60so8895709a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:28:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754472479; x=1755077279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNaqGeAKSyJlv//PcfcZiYRz0y4fARWElDbjpanQxvs=;
+        b=gRB9PjKcoimqsuiKAKk850INgyMiVWk2MEKWc96rW+di1WZ3FWPhrW3jq8Q1hh7vk0
+         ndM8nNA7DFWihvC1YaW6NE/vQBzPNrq0kU82Uvgo+WYzJcttueXhVI/FiGw6CzI9W4Sn
+         iroF1R5pKru9RVQsZMjpC+sBd+Eu3+3ZLSqMbH7AXOIOs95E9RUHizPF0tTq6jKv96Bk
+         z2awY2l3GoeE8liqTP7UeJADH3o+Nn6+D4U8uDZDGYVHyA4qUg5nmOJBzVykzLCGAbMP
+         t4rQy1k10UBLBORqH0rTtF0d8UlhB+GfxFpap+og31SyAyBmhPzSttw9OJZXIgh6+R1C
+         3yfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWigTOqhxmw9DQA1ibXrJhPfttVIF+E5pNRm1prgdH2pW2uxaL21hyiFGwrjDIVQVzQSHimg0yBtMGzZ2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGOjfa9pcDNKXkLS1/2LVo6NDK6AvitFy6D9IVE7uLeSKDdyfv
+	k66wua6yyy6yOkWm9I39xEGrRictrUCw2x6dOakektyRFHeXSbV5qXaxQ3unv/ejSpf4i2tzuyE
+	pQYa4f8IjUFvGTLhCMszSHJ8sZNtDjuyNfOmjWCW4uBeAjiPd9F3QAn7VVGF2kZR12e4=
+X-Gm-Gg: ASbGnctju5m6tdGz831sisREs8AsOezxXhBpJP86kVVHxabXddfQWzCpvXSv3BwgV6m
+	VZmQXOoqu7uhmUUnf5R1BcC6t8P9tVTbeIr2jxCbMEt52DMn0S7U4xIPRsaY5z2A5qQ+JGFcQzM
+	8wD5p76Aj3CtgRYzstX0K7GuXun1wqgkk1uyJeQi3xW/88BlMGwtiSZucA+MP1/uVVe5jur6T9M
+	307bksX+GUhbeRmT/FJJGRyIAi0yuvDPCNbUehOK6mEfjDiUkOG+JmBNT3rf4aPVweVLb/Sneo+
+	V35FPg1lenh9Os7KgXg6sxHEKocPkR8gESW+W9eCDTeXW4iPCF0GbjNocMYlYPZPElU=
+X-Received: by 2002:a05:6300:2189:b0:23f:52dd:2d1a with SMTP id adf61e73a8af0-2403145511fmr4473209637.46.1754472479364;
+        Wed, 06 Aug 2025 02:27:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzhMtEb/SyNlFHoanrLp8CaRrAf/5QiS39aFFc0BF9fQdyQg3b0pbGoRpmXbYkFnw+mTFqUA==
+X-Received: by 2002:a05:6300:2189:b0:23f:52dd:2d1a with SMTP id adf61e73a8af0-2403145511fmr4473172637.46.1754472478954;
+        Wed, 06 Aug 2025 02:27:58 -0700 (PDT)
+Received: from [10.217.216.26] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4230ecf8b7sm12841307a12.11.2025.08.06.02.27.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 02:27:58 -0700 (PDT)
+Message-ID: <c54e8ac4-9753-47bf-af57-47410cee8ed7@oss.qualcomm.com>
+Date: Wed, 6 Aug 2025 14:57:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,143 +88,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: dt-bindings: realtek,alc5623: convert binding to
- YAML
-To: Mahdi Khosravi <mmk1776@gmail.com>, devicetree@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250730093713.104003-1-mmk1776@gmail.com>
- <20250806090510.105731-1-mmk1776@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
+ shared_floor_ops
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
+ <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250806090510.105731-1-mmk1776@gmail.com>
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX5hlUA5Ks/bYN
+ nhdPnKYjXQeaWXT/dcNyfDiLvVC6NZtvgk6Byuo0a0aWMCZqw5USqTY7XxzLuxcvZDwLw34B3GQ
+ izwlFmi81hLyn4jtTuPQlKQWJaIQY8Ysw0lVtkxZdm7MpRxV8yn4fozWOa1sKg0WntTXsUYgHp7
+ E14Rgrv0P7lupLUlxIAYXuToibSqJ4+PZ+5hOaNrS7z3DbijHh6MIJjyV1uci+qgoeLTtzUs5uZ
+ qt+6cvq6ZSNJuzRsyxcK3i0wid3CaUjz+Qe6IFc9CKW2VO+VIzGf/kcb+MJcs3twVM+ly7w911K
+ 4fC36XObpbJyjBpVDrH6q0MLcyU/6RzL0GufAkrb4tl+jaopwZyi2IIuEv6NACqRmwpY5Dnjb5L
+ rdyOKmhu
+X-Authority-Analysis: v=2.4 cv=Ha4UTjE8 c=1 sm=1 tr=0 ts=68932020 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=h-tywKWRDzwo4R0Mf8sA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: 5nlRs7AtRFidK4p3luAbfiS7F6DEloWH
+X-Proofpoint-GUID: 5nlRs7AtRFidK4p3luAbfiS7F6DEloWH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On 06/08/2025 11:05, Mahdi Khosravi wrote:
-> I converted the alc5623 audio codec binding from text to DT schema.
-> This is my first try and I used make dt_binding_check & make dtbs_check to verify
-> without getting any errors.
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets.
 
+On 8/5/2025 10:52 AM, Dmitry Baryshkov wrote:
+> On Mon, Aug 04, 2025 at 11:59:21PM +0530, Taniya Das wrote:
+>> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
+>> boot. This happens due to the floor_ops tries to update the rcg
+>> configuration even if the clock is not enabled.
 > 
-> Changes since v1:
-
-This goes to changelog, so under ---.
-
-> - Add dai-common ref
-> - switch add-ctrl/jack-det-ctrl to allOf uint32
-> - use unevaluatedProperties
-> - fix example compatible
-
-Subject: "convert to DT Schema"
-Not to YAML.
-
+> This has been working for other platforms (I see Milos, SAR2130P,
+> SM6375, SC8280XP, SM8550, SM8650 using shared ops, all other platforms
+> seem to use non-shared ops). What's the difference? Should we switch all
+> platforms? Is it related to the hypervisor?
 > 
-> Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
-> ---
 
+If a set rate is called on a clock before clock enable, the
+rcg2_shared_floor_ops ensures that the RCG configuration is skipped
+unless the clock is ON and which is the correct behavior. Once the clock
+is enabled, the parent would be taken care to be enabled. So it is
+better to move to use shared_floor_ops.
 
-...
+Yes, I can submit to move all the shared_floor_ops.
 
-> diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-> new file mode 100644
-> index 000000000000..0b9dc324f04d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ALC5621/ALC5622/ALC5623 Audio Codec
-> +
-> +maintainers:
-> +  - Mahdi Khosravi <mmk1776@gmail.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: realtek,alc5623
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  add-ctrl:
-> +    description: >
+>> The shared_floor_ops ensures that the new parent configuration is
+>> cached in the parked_cfg in the case where the clock is off.
+>>
+>> Ensure to use the ops for the other SDCC clock instances as well.
+>>
+>> Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> ---
+>>  drivers/clk/qcom/gcc-qcs615.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+> 
 
-Why did > appear?
+-- 
+Thanks,
+Taniya Das
 
-> +      Default register value for Reg-40h, Additional Control Register.
-> +      If absent or zero, the register is left untouched.
-> +    allOf:
-
-Drop allOf, just $ref. Look at other bindings or example-schema.
-
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  jack-det-ctrl:
-> +    description: >
-> +      Default register value for Reg-5Ah, Jack Detect Control Register.
-> +      If absent or zero, the register is left untouched.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +
-
-
-
-Best regards,
-Krzysztof
 
