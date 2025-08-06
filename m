@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-757743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF28DB1C628
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AFBB1C62D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E93563E7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EB8564809
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB25A28C01D;
-	Wed,  6 Aug 2025 12:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E5528BA8B;
+	Wed,  6 Aug 2025 12:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxsItseI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+gAZvNk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5D328BAAF;
-	Wed,  6 Aug 2025 12:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33AD23E358;
+	Wed,  6 Aug 2025 12:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484232; cv=none; b=Am1425u2YHZVw2gaPi2HkfrzFw9nHKI2GEEUr8UW47/erBl+5Z1OhBoIGMGIEl4VX9UdGv125My501XnXKx2fN6kBNZ5gL2byLTObEkwmvUNz8hTeu3JSzZe9Ie7jPoChImeVHIQ2RRyPp5G9Q/n9NHygpPxKnob8SHtao9NN2w=
+	t=1754484269; cv=none; b=lZILF7J56+6gFDw2yva7SLcWZVQ3Na5AybfdPwxl19cVhi7+bT/dWvDYyVgyYBmwfsXrw4dJUfX8cG4nbsUYFKJC3Y4zG069qiJSpJHx3uc4yS5m4yZhDjtFfP+tBLTPxSqG7XpxWQtXi4m68RWyVrSkSY0BUFu3l2WAkbzdinQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484232; c=relaxed/simple;
-	bh=/7IndVma90HA7/q28zkq66FvY805P6nZspAQNyovBd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PEyhzxuCwDbQOOd4Q0AkTmRb/3cvfYvpDGIAa8oWpgMPyqBnuCIUuvjySegOVLYyKH6UKQtZdNg6kVc/NXwztH6ClpydkF3pVywEcGor9+8kNgDVp+yXnLccYdUyC0RMZerZu7Abalz7j8OZHTRkbX72Dd19o32hj6pZDYrowE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxsItseI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C9B8C4CEF6;
-	Wed,  6 Aug 2025 12:43:50 +0000 (UTC)
+	s=arc-20240116; t=1754484269; c=relaxed/simple;
+	bh=AYcRRwKF83d6LifD+7Ls/YkkCIq9XeoyHMqkAJL4NGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bg/bFICzRHfcgyOud450YcV7NejEPl7N5udzjn745/iNsF3UoxFfbiewOVPv2+N9Jllwb6j6RmzjuEzihQVtVTZ/R2Nv1DRZeE7aDuGR6acd2vjkqOXL+o4VeBX24zVVCUqc/3vatSKdZEXeWd1jvi/kwLkCpSb0wtkUvgalnqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+gAZvNk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0372AC4CEE7;
+	Wed,  6 Aug 2025 12:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754484231;
-	bh=/7IndVma90HA7/q28zkq66FvY805P6nZspAQNyovBd0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WxsItseI/3NXWPMhjClCJ64zZTR5+c6qvZrMWHcmLGFWRiVCCLml/T3/L8YWYd1kq
-	 5bDOvL0TVaED4zm3TwF5my+DDCyM/KhqfL4uHOm5zUdhZgQIp1fpjAQxjoV2MvMjj0
-	 cnJqlsPj0KfQKmCz/3vtdHmOVepjQErYy/19IGCORbJNR/Yc8jRoaVgbJAMMPmFGaI
-	 Q9MPwX6lgwaNMbxhXPecsuHDcnhgYHf/Ec5pPfzy78Kzb2V4MZGT1atGh9qnAOUV/4
-	 EN7j5sGTRx46V7NiZj9pRfqsV8lCc0uvLbNC73XtXgWf03StB683x1n7HUMmgyGo/j
-	 uXBt19yiQgN+w==
-Date: Wed, 6 Aug 2025 08:43:47 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: Douglas Raillard <douglas.raillard@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Tom
- Zanussi <zanussi@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
- Rogers <irogers@google.com>, aahringo@redhat.com
-Subject: Re: [PATCH 7/7] tracing: Add syscall_user_buf_size to limit amount
- written
-Message-ID: <20250806084347.79360a5e@batman.local.home>
-In-Reply-To: <91cd9924-aaff-404a-8be7-79a6c7452a89@arm.com>
-References: <20250805192646.328291790@kernel.org>
-	<20250805193235.747004484@kernel.org>
-	<91cd9924-aaff-404a-8be7-79a6c7452a89@arm.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1754484269;
+	bh=AYcRRwKF83d6LifD+7Ls/YkkCIq9XeoyHMqkAJL4NGI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q+gAZvNkgUJt1dE1E6dFZvaCdhTsYQ+Bw3KQkycMgrK9q7Fi58ABXyt8PefsEbcop
+	 NQFjj1NrJcbkVh1Mh2yHioHw0uHpSKkXjxGxa4vHXHU1e8mWgb+8tLMK0RJOE34jgJ
+	 mTgFzVG4lxGlND4uggyCZfQGzTyTVj+h69xIF+FjAu5hPNdTcuTLtNZSa5whx3KdWl
+	 KJKPJkdedMT3Qqs0sfVytds9dAZZ1Sb7j/4/oSC3vsIys/qrTe7kLi10VBazxUdzQd
+	 WREem4YR4QuTaVp12ifuPTwjsVjcLqhNqLnwBzWD2gEJlVdljHmO6g5snDnFKAXGM0
+	 oyJ4YUdfAl+1Q==
+Message-ID: <5924a691-2533-4856-a169-d16c3e577c42@kernel.org>
+Date: Wed, 6 Aug 2025 14:44:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: st: Add memory-region-names property for
+ stm32mp257f-ev1
+To: Patrice CHOTARD <patrice.chotard@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com>
+ <9e0c5453-b8f4-4d0a-8e8d-82014aac67dd@kernel.org>
+ <832fb088-8862-4bd7-82a4-0e7ad58efe76@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <832fb088-8862-4bd7-82a4-0e7ad58efe76@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 6 Aug 2025 11:50:06 +0100
-Douglas Raillard <douglas.raillard@arm.com> wrote:
-
-> On 05-08-2025 20:26, Steven Rostedt wrote:
-> > From: Steven Rostedt <rostedt@goodmis.org>
-> > 
-> > When a system call that reads user space addresses copy it to the ring
-> > buffer, it can copy up to 511 bytes of data. This can waste precious ring
-> > buffer space if the user isn't interested in the output. Add a new file
-> > "syscall_user_buf_size" that gets initialized to a new config
-> > CONFIG_SYSCALL_BUF_SIZE_DEFAULT that defaults to 128.  
+On 06/08/2025 14:36, Patrice CHOTARD wrote:
+>>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>>> ---
+>>>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+>>> index 2f561ad4066544445e93db78557bc4be1c27095a..16309029758cf24834f406f5203046ded371a8f9 100644
+>>> --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+>>> +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+>>> @@ -197,6 +197,7 @@ &i2c8 {
+>>>  
+>>>  &ommanager {
+>>>  	memory-region = <&mm_ospi1>;
+>>> +	memory-region-names = "mm_ospi1";
+>>
+>> It does not look like you tested the DTS against bindings. Please run
+>> `make dtbs_check W=1` (see
 > 
-> Have you considered dynamically removing some event fields ? We routinely hit
-> the same problem with some of our events that have rarely-used large fields.
+> My bad, i am preparing the v2.
+Why? I claim this is not needed according to your description. You said
+it is necessary to identify "memory-map area's configuration." but
+memory-region already tells that. What exactly is not identified?
 
-We do that already with eprobes. Note, syscall events are pseudo events
-hooked on the raw_syscall events. Thus modifying what is displayed is
-trivial as it's done manually anyway. For normal events, it's all in
-the TRACE_EVENT() macro which defines the fields at boot. Trying to
-modify it later is very difficult.
-
-> 
-> If we could have a "fields" file in /sys/kernel/tracing/events/*/*/fields
-> that allowed selecting what field is needed that would be amazing. I had plans
-> to build something like that in our kernel module based on the synthetic events API,
-> but did not proceed as that API is not exported in a useful way.
-
-Take a look at eprobes. You can make a new event based from an existing
-event (including other dynamic events and syscalls).
-
-I finally got around to adding documentation about it:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/trace/eprobetrace.rst
-
--- Steve
+Best regards,
+Krzysztof
 
