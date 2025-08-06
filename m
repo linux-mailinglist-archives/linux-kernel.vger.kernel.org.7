@@ -1,126 +1,284 @@
-Return-Path: <linux-kernel+bounces-757641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38695B1C49C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:07:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8DBB1C4A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3EF118A6D9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD033B666F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B369328A72D;
-	Wed,  6 Aug 2025 11:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q17CCEQU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0528B4EC;
+	Wed,  6 Aug 2025 11:10:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402B91F3BA9
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 11:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903F128A1EA;
+	Wed,  6 Aug 2025 11:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754478459; cv=none; b=uPQ/LTIGNzGijkFkCjukzNm1AnrXcRM36ZVMIp5tCIc/vZNEQ2PsGOjaz4kXeC5DRSni5tWQxR6ntVrsKzw4+b2KOD+T7AT4PMWSpRZtovXVomFBw7ys3L7k7V3wXJPdGqhPfyBLxBDpxwj9iMBGglPU895S0y8Xbn3ueSw/2AE=
+	t=1754478629; cv=none; b=ZK8kgTL7dUGh86T/s+jnWQki8CgAIMn66RNJnTaLUwBzzK/x+nuTWdqnvGwRtiN94D3wd3ism9CKzBHFihSmH+nio/QiDxd9rc6zBOsr1kFEdON1E+airfPwi6JLsTM05bAgUNF4DYXLfyHsQuze4QZ8xPu9DW3z1iSpCy0+DpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754478459; c=relaxed/simple;
-	bh=cZS1pffNPCIxdnQpzhHfQ1QRclK26H09sfqRT157YX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tKrdeCmuZ2UxZmsl++d94cJdPwbee7qWzzQZ8muXnMjlEW/v5DPCaI5xYkGNYPcpr+LVu6z6kr0PdImW/HiFW84IlX7zJyxfdb5sGZ+cdieB6rN+o84avp0CMKzeaq46rRP917L51bxy10D8xnBocM+lM4SmEkk3ePyk45+2KAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q17CCEQU; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754478457; x=1786014457;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=cZS1pffNPCIxdnQpzhHfQ1QRclK26H09sfqRT157YX4=;
-  b=Q17CCEQU2RUZhXQw6vCKge5+p1H28ehIk5w1guyCQNqdWTawO9b2FF3i
-   5UJ3eJ71STlM5+r0co7n8KUu4YetHa+uKftit2xdZhYD8urHN/87etq91
-   4NoQoiKyqFK3O8m10tzdiFtAx3g/tIuNinFlcO37vEHTSmJUqrWO0fyVn
-   rqw76Sdrx9s/SVhkWkOPaPPKowTDl74znJbL6KAU8Vyzyiey8INM32pZu
-   F8UEY3pAIicuECSvISMxh7H2gVZIF/pKGd0sIXHC89GfN5t5iNQYi6l4r
-   /upFw7M7ZY9M1c8e2gNa52aUT6MkpzURfYtjRt8TonvuMgMVfeiZPXMne
-   Q==;
-X-CSE-ConnectionGUID: USNums3PTBe8iEb0ZBup6g==
-X-CSE-MsgGUID: bvWQ1sbuS7+qHTewh7wUhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="79340445"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="79340445"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 04:07:36 -0700
-X-CSE-ConnectionGUID: EUpgbu0VS7WWfTCim3UMlg==
-X-CSE-MsgGUID: rZ07HN3EQduzfSpvaOGRYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="165117281"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Aug 2025 04:07:35 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujbzY-0001aS-1I;
-	Wed, 06 Aug 2025 11:07:32 +0000
-Date: Wed, 6 Aug 2025 19:06:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	Jesse Taube <mr.bossman075@gmail.com>
-Subject: ld.lld: error: Function Import: link error: linking module flags
- 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
- 861458), and 'i32 1' from vmlinux.a(net-traces.o at 1004198)
-Message-ID: <202508061842.68gt097v-lkp@intel.com>
+	s=arc-20240116; t=1754478629; c=relaxed/simple;
+	bh=gaDwBpQU47NQs8w+a+b6xuPnTg39iOigrP4eEEIssw0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N6cy9Bkg1kmVc0agyY+TVT1wxBrp/4vxF3y4ofTMUqcLAgiihSFEnJr75rvfqkipIXiMnMCBlIxFEa2b6iVMQ0YLqFAhedpgQR3/1VWGsLePkiJuPK1iHXnCxT16MZH1P1T870yskQkbNnsFa5Xf1IdkXdldjfGO26Qn72CVKCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxnXG57MRz6GDFy;
+	Wed,  6 Aug 2025 19:05:50 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A6C531402F2;
+	Wed,  6 Aug 2025 19:10:23 +0800 (CST)
+Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
+ 2025 13:10:22 +0200
+Date: Wed, 6 Aug 2025 12:10:26 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <dan.j.williams@intel.com>
+CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>
+Subject: Re: [PATCH v4 04/10] PCI/TSM: Authenticate devices via platform TSM
+Message-ID: <20250806121026.000023fe@huawei.com>
+In-Reply-To: <6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+	<20250717183358.1332417-5-dan.j.williams@intel.com>
+	<20250729155650.000017b3@huawei.com>
+	<6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Samuel,
 
-FYI, the error/warning still remains.
+> >   
+> > > diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
+> > > new file mode 100644
+> > > index 000000000000..0784cc436dd3
+> > > --- /dev/null
+> > > +++ b/drivers/pci/tsm.c
+> > > @@ -0,0 +1,554 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * TEE Security Manager for the TEE Device Interface Security Protocol
+> > > + * (TDISP, PCIe r6.1 sec 11)
+> > > + *
+> > > + * Copyright(c) 2024 Intel Corporation. All rights reserved.
+> > > + */  
+> >   
+> > > +static void tsm_remove(struct pci_tsm *tsm)
+> > > +{
+> > > +	struct pci_dev *pdev;
+> > > +
+> > > +	if (!tsm)  
+> > 
+> > You protect against this in the DEFINE_FREE() so probably safe
+> > to assume it is always set if we get here.  
+> 
+> It is safe, but I would rather not require reading other code to
+> understand the expectation that some callers may unconditionally call
+> this routine.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   479058002c32b77acac43e883b92174e22c4be2d
-commit: 2c0391b29b27f315c1b4c29ffde66f50b29fab99 riscv: Allow NOMMU kernels to access all of RAM
-date:   4 months ago
-config: riscv-randconfig-002-20250806 (https://download.01.org/0day-ci/archive/20250806/202508061842.68gt097v-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508061842.68gt097v-lkp@intel.com/reproduce)
+I think a function like remove being called on 'nothing' should
+pretty much always be a bug, but meh, up to you.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508061842.68gt097v-lkp@intel.com/
+> 
+> > > +		return;
+> > > +
+> > > +	pdev = tsm->pdev;
+> > > +	tsm->ops->remove(tsm);
+> > > +	pdev->tsm = NULL;
+> > > +}
+> > > +DEFINE_FREE(tsm_remove, struct pci_tsm *, if (_T) tsm_remove(_T))
+> > > +
+> > > +static int call_cb_put(struct pci_dev *pdev, void *data,  
+> > 
+> > Is this combination worth while?  I don't like the 'and' aspect of it
+> > and it only saves a few lines...
+> > 
+> > vs
+> > 	if (pdev) {
+> > 		rc = cb(pdev, data);
+> > 		pci_dev_put(pdev);
+> > 		if (rc)
+> > 			return;
+> > 	}  
+> 
+> I think it is worth it, but an even better option is to just let
+> scope-based cleanup handle it by moving the variable inside the loop
+> declaration.
+I don't follow that lat bit, but will look at next version to see
+what you mean!
 
-All errors (new ones prefixed by >>):
+> 
 
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(trace.o at 871118)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(memcontrol.o at 876278)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(mballoc.o at 886958)
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(net-traces.o at 1004198)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(tcp.o at 1010198)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(skbuff.o at 1001978)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(filter.o at 1003058)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(core.o at 965138)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(tun.o at 969458)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(slub.o at 875858)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(core.o at 873038)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(protocol.o at 1029638)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(inode.o at 886838)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(vmscan.o at 874418)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(ip6_output.o at 1014818)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(blk-mq.o at 912518)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(tls_sw.o at 1013618)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(ring_buffer.o at 870998)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(tcp.o at 965558)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 861458), and 'i32 1' from vmlinux.a(journal.o at 888518)
-   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+> > > +                return;
+> > > +
+> > > +        if (!is_dsm(pdev))
+> > > +                return;
+> > > +
+> > > +        pci_walk_bus(pdev->subordinate, cb, data);
+> > > +}
+> > > +
+> >   
+> > > +/*
+> > > + * Find the PCI Device instance that serves as the Device Security
+> > > + * Manger (DSM) for @pdev. Note that no additional reference is held for
+> > > + * the resulting device because @pdev always has a longer registered
+> > > + * lifetime than its DSM by virtue of being a child of or identical to
+> > > + * its DSM.
+> > > + */
+> > > +static struct pci_dev *find_dsm_dev(struct pci_dev *pdev)
+> > > +{
+> > > +	struct pci_dev *uport_pf0;
+> > > +
+> > > +	if (is_pci_tsm_pf0(pdev))
+> > > +		return pdev;
+> > > +
+> > > +	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
+> > > +	if (!pf0)
+> > > +		return NULL;
+> > > +
+> > > +	if (is_dsm(pf0))
+> > > +		return pf0;  
+> > 
+> > 
+> > Unusual for a find command to not hold the device reference on the device
+> > it returns.  Maybe just call that out in the comment.  
+> 
+> It is, "Note that no additional reference..."
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Good point :)
+
+> > > diff --git a/drivers/virt/coco/tsm-core.c b/drivers/virt/coco/tsm-core.c
+> > > index 1f53b9049e2d..093824dc68dd 100644
+> > > --- a/drivers/virt/coco/tsm-core.c
+> > > +++ b/drivers/virt/coco/tsm-core.c  
+
+> > > +static struct tsm_dev *tsm_register_pci_or_reset(struct tsm_dev *tsm_dev,
+> > > +						 struct pci_tsm_ops *pci_ops)
+> > > +{
+> > > +	int rc;
+> > > +
+> > > +	if (!pci_ops)
+> > > +		return tsm_dev;
+> > > +
+> > > +	pci_ops->owner = tsm_dev;
+> > > +	tsm_dev->pci_ops = pci_ops;
+> > > +	rc = pci_tsm_register(tsm_dev);
+> > > +	if (rc) {
+> > > +		dev_err(tsm_dev->dev.parent,
+> > > +			"PCI/TSM registration failure: %d\n", rc);
+> > > +		device_unregister(&tsm_dev->dev);  
+> > 
+> > As below. I'm fairly sure this device_unregister is nothing to do with
+> > what this function is doing, so having it buried in here is less easy
+> > to follow than pushing it up a layer.  
+> 
+> I prefer a short function with an early exit and no scope based unwind
+> for this.
+> 
+> > > +		return ERR_PTR(rc);
+> > > +	}
+> > > +
+> > > +	/* Notify TSM userspace that PCI/TSM operations are now possible */
+> > > +	kobject_uevent(&tsm_dev->dev.kobj, KOBJ_CHANGE);
+> > > +	return tsm_dev;
+> > > +}
+> > > +
+> > >  static void put_tsm_dev(struct tsm_dev *tsm_dev)
+> > >  {
+> > >  	if (!IS_ERR_OR_NULL(tsm_dev))
+> > > @@ -54,7 +109,8 @@ DEFINE_FREE(put_tsm_dev, struct tsm_dev *,
+> > >  	    if (!IS_ERR_OR_NULL(_T)) put_tsm_dev(_T))
+> > >  
+> > >  struct tsm_dev *tsm_register(struct device *parent,
+> > > -			     const struct attribute_group **groups)
+> > > +			     const struct attribute_group **groups,
+> > > +			     struct pci_tsm_ops *pci_ops)
+> > >  {
+> > >  	struct tsm_dev *tsm_dev __free(put_tsm_dev) =
+> > >  		alloc_tsm_dev(parent, groups);
+> > > @@ -73,12 +129,13 @@ struct tsm_dev *tsm_register(struct device *parent,
+> > >  	if (rc)
+> > >  		return ERR_PTR(rc);
+> > >  
+> > > -	return no_free_ptr(tsm_dev);
+> > > +	return tsm_register_pci_or_reset(no_free_ptr(tsm_dev), pci_ops);  
+> > 
+> > Having a function call that either succeeds or cleans up something it
+> > never did on error is odd.  
+> 
+> devm_add_action_or_reset() is the same pattern. Do the action, or
+> otherwise take care of cleaning up. The action in this case is
+> pci_tsm_register() and the reset is cleaning up the device_add().
+
+It's a pretty obscure pattern but I agree there is that precedence.
+In my head that one case gets to be 'special' because it is always
+calling the callback, just a question of now or later (in remove).
+Here thing callback happens in remove but it's explicit and nothing
+to do with this function (unlikely the devm version)
+
+Anyhow, not a thing I'm going to bother pushing back that hard on.
+> 
+> 
+> > The or_reset hints at that oddity but to me is not enough. If you want
+> > to use __free magic in here maybe hand off the tsm_dev on succesful
+> > device registration.
+> > 
+> > 	struct tsm_dev *registered_tsm_dev __free(unregister_tsm_dev) =
+> > 		no_free_ptr(tsm_dev);  
+> 
+> That does not look like an improvement to me.
+> 
+> The moment device_add() succeeds the cleanup shifts from put_device() to
+> device_unregister(). I considered wrapping device_add(), but I think it
+> is awkard to redeclare the same variable again vs being able to walk all
+> instances of @tsm_dev in the function.
+
+I agree it's a slightly odd construction and so might cause confusion.
+So whilst I think I prefer it to the or_reset() pattern I guess I'll just
+try and remember why this is odd (should I ever read this again after it's
+merged!) :)
+
+> 
+> [..]
+> > > + * struct pci_tsm_ops - manage confidential links and security state
+> > > + * @link_ops: Coordinate PCIe SPDM and IDE establishment via a platform TSM.
+> > > + * 	      Provide a secure session transport for TDISP state management
+> > > + * 	      (typically bare metal physical function operations).
+> > > + * @sec_ops: Lock, unlock, and interrogate the security state of the
+> > > + *	     function via the platform TSM (typically virtual function
+> > > + *	     operations).
+> > > + * @owner: Back reference to the TSM device that owns this instance.
+> > > + *
+> > > + * This operations are mutually exclusive either a tsm_dev instance
+> > > + * manages phyiscal link properties or it manages function security
+> > > + * states like TDISP lock/unlock.
+> > > + */
+> > > +struct pci_tsm_ops {
+> > > +	/*  
+> > Likewise though I'm not sure if kernel-doc deals with struct groups.  
+> 
+> It does not.
+
+Hmm. Given they are getting common maybe that's one to address, but
+obviously not in this series.
+
+Jonathan
+
 
