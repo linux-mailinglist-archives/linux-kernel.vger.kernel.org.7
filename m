@@ -1,152 +1,159 @@
-Return-Path: <linux-kernel+bounces-757746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B6BB1C630
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:45:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E35B1C63A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A966356434B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F297418C3160
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E00A28B400;
-	Wed,  6 Aug 2025 12:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBBA28B3F1;
+	Wed,  6 Aug 2025 12:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKlS7+gT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RHwfoHGk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588341DE89B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF828A40F
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484329; cv=none; b=mX1UObDe8tIEJVcp9bU3ylm2AmsvJq8OJam08pXXfD+FGRfVzTPIahTsXIChlNxgzYfjDFsPCTfOOaq5B3ofWAwmFV/mRqPg6hnvivAKB/2udGn85wY3s8UJ450elv7xV/JKXxRTCxmxm56ySVRj6BH1EnscLeaONEkMZezOdCo=
+	t=1754484344; cv=none; b=AMEd8NORkikbX6QpB37pvAN/nYIB7sZ+8ZA6sloYLggm6h4nhI9/sZk8SmnAoy8bQZDKHQ9FHiuwQP4HcNuPv7x87Jq2y0LmbNO/WmptURzkAZQE3S/cvslke0WWiPDT/fJaBcvELbSxxDYghjEp1as+M7h214IHWxT0Un1U0Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484329; c=relaxed/simple;
-	bh=Ja8eqE4UilGLkdfTXr/G4n4kO+Jow1TUt/LNR3e8WgE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nMtCBe1voUJE12q3fHOHRlALgO0DhYPldN7KD74IvRNWwZUXBndtEeCWl7MbxH+ygjxR8PAsMTxmyYrKYKMgTRUDZNrmNB+eSLbPP0eBBVPKFDUud8BXySwH9SPYfU/NlHjD3sCIdXBikzt2WxZPPIdOk7uHcbLqQfz1opPd8Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKlS7+gT; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1754484344; c=relaxed/simple;
+	bh=FcPEm8lOnxHH1CgNpU25ul24aFVZtNg3k6tJ59RoDms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SYq1MihqoVVntDU/2iLz3Bhal5QjQgbArePj4jGks3W7wqdIf/0JiVPGoDOJnVLY+0nW5LIqUkaQdsEg14vGSOzrKut3p1gYrrdAgLeCO47rUaqfKlkEOWi9pVZEj9suAjfzunzzfng1dBQnoopM781ZphNOQxcDqEc8GE7q08s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RHwfoHGk; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754484327;
+	s=mimecast20190719; t=1754484341;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jMjNHNQ0G5LG4I1RqSHiwTb0enyDrEvAe+FlJh6jMwA=;
-	b=aKlS7+gTcVXRvbrqqd54/otQisHB0JcRGAf0JUxwTNLoe+AWHMDXyMZR9r+in6pnpfi0So
-	h9mQERynPTtk2O97ILLRVI3ussB+iERay+V8pqzPfM7g1aWyvcw6IAlN57mx0GgpYd3+ci
-	pmCvvYH+DTt+8k9u8Wdmd0HK71um6Bc=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-QF__EK-EPmasoR9ggporpg-1; Wed, 06 Aug 2025 08:45:26 -0400
-X-MC-Unique: QF__EK-EPmasoR9ggporpg-1
-X-Mimecast-MFC-AGG-ID: QF__EK-EPmasoR9ggporpg_1754484326
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4aedcff08fdso112356851cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:45:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754484326; x=1755089126;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMjNHNQ0G5LG4I1RqSHiwTb0enyDrEvAe+FlJh6jMwA=;
-        b=dchSQRQf5X5dI/Re2kfXkenAtVPt3dOOtfv2H1QZybqcYZHQsNnr0OvfxD0UxJMWj5
-         IVOyzllOg+Cu7OIzbdZIS5O5yWGy5TTVTbGhzssX4Ags5Y+swMMwZ+lSZ58s77zy/bXC
-         RnLWjVbiihkI+Lr3ZzP6nZOytxU3NrN9z8qO/T9iGMbi5MdYxA9NDiHgpuvGPOP6og2l
-         RAMWMZ1rZgVQrYIUzsIkeHUKF99eviNmcuIy95RnYi/F8MlZIBMp2o3L20Im9dT1Q4Tl
-         LnsD5Mquy+WQ1bD7SvLWvlzDpU0X4Jb16ChliZDH8MxbEXq2CjXeGvISx1t+DQc5FKvS
-         APaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJa7Yo4gFLWhbzv+QAfRfEsO3JSZ61lPzqIDZuzgGFx4pyf8erM96W3ug/sUGrIDxd5BT5R+AhkqLlTqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvsNadBfgZ9gLPZf4grjOtkwl+OR0AwTbAEZAPiuTexHSrc7+/
-	2E2GJby1MZNkto3xGeyXi3iKIJU08OJbkdtD2ZYJJcgKRNDcoI7p+kigxrRW4E4KgWsD/GEldNd
-	hVbZvND/mX6BFQIWbEHZEHmQzLSOWKYsObxp7VSLJCWGusjTgKztkWV8CLAvRGjEWwA==
-X-Gm-Gg: ASbGncum1p9RjrWE3HZXW4C7UO/+Y4wBur9AcTzZ1I/hBI2AOHvQo3ngAtcP6p6c1EM
-	kMi3Swz+8AhcfRslD0LMpYLbtSe4Nh4XA2PogXlgoaReJItJLVmZ3X+PztOllalHUkq2x+uTAtX
-	/WpaGrbU5Mqgbdf5jewT0FsqR8jhVbNEg2WQ+GxK8L4vjCZlwWc2bhiEj7bYnRHl38IMfHjvcnL
-	xA/3j1MVnYqaD6+N/A7GZ5HpiuSp9KL5FB7ghoCfkvkaAaBGNDSVHsy6S+5kv2lp3X4DACi3jIA
-	I5Fz40fy9ObH0HIHqeBbx+MTKoRswUS6EN3ypJE3iFHZgdoKOQeNYVbnE0HcaADhCA==
-X-Received: by 2002:a05:622a:355:b0:4b0:8f6e:d728 with SMTP id d75a77b69052e-4b09138c9c0mr38195671cf.21.1754484325750;
-        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTMYU08BgHnXR1+czy5QcVCMHzz8YG+OtEkdxRx4oxsXU/v8COQ+2pdCxkJHBTMz4Q6mU6DQ==
-X-Received: by 2002:a05:622a:355:b0:4b0:8f6e:d728 with SMTP id d75a77b69052e-4b09138c9c0mr38195381cf.21.1754484325386;
-        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm19326441cf.53.2025.08.06.05.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
-Message-ID: <8f379f2072ee12afda37455aa0ad4e37d53c4f2d.camel@redhat.com>
-Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 06 Aug 2025 14:45:22 +0200
-In-Reply-To: <20250806120911.989365-1-namcao@linutronix.de>
-References: <20250806120911.989365-1-namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BuEYNLs8nZHaI3JfCzrkQJfzGXuaVyeyDAxWu+MXIfY=;
+	b=RHwfoHGkOxCzhb8Tl6sVLgCqDBJSWZ7Vn4MeSJd9AEEILg3l0ndN9sZJo1QURbuvHgI+Qi
+	MFcdhH2dYPcgz2yJvBMtHVdd/CqXDzKc8rKKNlWT1r6t3R/+hmv1C5q/gX6eqk2nWikaun
+	0GA2dTjoUwpRnpMZJlYuvuzW9habEx0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-OfrScW-YMkmgWUkUUZWviQ-1; Wed,
+ 06 Aug 2025 08:45:38 -0400
+X-MC-Unique: OfrScW-YMkmgWUkUUZWviQ-1
+X-Mimecast-MFC-AGG-ID: OfrScW-YMkmgWUkUUZWviQ_1754484337
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D85A1955D4F;
+	Wed,  6 Aug 2025 12:45:36 +0000 (UTC)
+Received: from thuth-p1g4.str.redhat.com (dhcp-192-176.str.redhat.com [10.33.192.176])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 178FD195608F;
+	Wed,  6 Aug 2025 12:45:33 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/headers: Replace __ASSEMBLY__ stragglers with __ASSEMBLER__
+Date: Wed,  6 Aug 2025 14:45:32 +0200
+Message-ID: <20250806124532.65176-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+From: Thomas Huth <thuth@redhat.com>
 
+After converting the __ASSEMBLY__ statements to __ASSEMBLER__ in
+commit 24a295e4ef1ca ("x86/headers: Replace __ASSEMBLY__ with
+__ASSEMBLER__ in non-UAPI headers"), some new code has been
+added that uses __ASSEMBLY__ again. Convert these stragglers, too.
 
-On Wed, 2025-08-06 at 14:09 +0200, Nam Cao wrote:
-> Argument 'p' of enabled_monitors_next() is not a pointer to struct
-> rv_monitor, it is actually a pointer to the list_head inside struct
-> rv_monitor. Therefore it is wrong to cast 'p' to struct rv_monitor *.
->=20
-> This wrong type cast has been there since the beginning. But it still
-> worked because the list_head was the first field in struct
-> rv_monitor_def.
-> This is no longer true since commit 24cbfe18d55a ("rv: Merge struct
-> rv_monitor_def into struct rv_monitor") moved the list_head, and this
-> wrong type cast became a functional problem.
->=20
-> Properly use container_of() instead.
+This is a mechanical patch, done with a simple "sed -i" command.
 
-Good catch, thanks!
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ arch/x86/include/asm/irqflags.h      | 4 ++--
+ arch/x86/include/asm/percpu.h        | 2 +-
+ arch/x86/include/asm/runtime-const.h | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-
->=20
-> Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct
-> rv_monitor")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> =C2=A0kernel/trace/rv/rv.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-> index bd7d56dbf6c2..6ce3495164d8 100644
-> --- a/kernel/trace/rv/rv.c
-> +++ b/kernel/trace/rv/rv.c
-> @@ -495,7 +495,7 @@ static void *available_monitors_next(struct
-> seq_file *m, void *p, loff_t *pos)
-> =C2=A0 */
-> =C2=A0static void *enabled_monitors_next(struct seq_file *m, void *p,
-> loff_t *pos)
-> =C2=A0{
-> -	struct rv_monitor *mon =3D p;
-> +	struct rv_monitor *mon =3D container_of(p, struct rv_monitor,
-> list);
-> =C2=A0
-> =C2=A0	(*pos)++;
-> =C2=A0
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index b30e5474c18e1..5feaac1d235f0 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -77,7 +77,7 @@ static __always_inline void native_local_irq_restore(unsigned long flags)
+ #endif
+ 
+ #ifndef CONFIG_PARAVIRT
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ /*
+  * Used in the idle loop; sti takes one instruction cycle
+  * to complete:
+@@ -95,7 +95,7 @@ static __always_inline void halt(void)
+ {
+ 	native_halt();
+ }
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ #endif /* CONFIG_PARAVIRT */
+ 
+ #ifdef CONFIG_PARAVIRT_XXL
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index b0d03b6c279be..abffb3ed9f926 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -20,7 +20,7 @@
+ 
+ #define PER_CPU_VAR(var)	__percpu(var)__percpu_rel
+ 
+-#else /* !__ASSEMBLY__: */
++#else /* !__ASSEMBLER__: */
+ 
+ #include <linux/args.h>
+ #include <linux/build_bug.h>
+diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+index 8d983cfd06ea6..8fcd2612a85c0 100644
+--- a/arch/x86/include/asm/runtime-const.h
++++ b/arch/x86/include/asm/runtime-const.h
+@@ -2,7 +2,7 @@
+ #ifndef _ASM_RUNTIME_CONST_H
+ #define _ASM_RUNTIME_CONST_H
+ 
+-#ifdef __ASSEMBLY__
++#ifdef __ASSEMBLER__
+ 
+ .macro RUNTIME_CONST_PTR sym reg
+ 	movq	$0x0123456789abcdef, %\reg
+@@ -12,7 +12,7 @@
+ 	.popsection
+ .endm
+ 
+-#else /* __ASSEMBLY__ */
++#else /* __ASSEMBLER__ */
+ 
+ #define runtime_const_ptr(sym) ({				\
+ 	typeof(sym) __ret;					\
+@@ -70,5 +70,5 @@ static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
+ 	}
+ }
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ #endif
+-- 
+2.50.1
 
 
