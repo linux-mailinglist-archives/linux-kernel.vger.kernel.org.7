@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-757521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80247B1C323
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F56B1C327
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD594189EFAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2C13B2839
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEC228A1F1;
-	Wed,  6 Aug 2025 09:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358AE28A726;
+	Wed,  6 Aug 2025 09:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ibtItotk"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IfVt6gm+"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B1289375
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3201A28A1D9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754472112; cv=none; b=bfdjfvi3bB3PkgEmeuHlpM70jJzACgKwuXsaYSXhlACnlw5CGeHMBHZIcqtnpf8vRhGtdXnsy841c5pENd++ZgjmCmWphErNA+vErqAtKwjjknA80cXTHMkdu4WL+hieOx7zECoAaXE2oOsTUJrlb53N6kYVj2DEwfFtVYKGeEM=
+	t=1754472114; cv=none; b=GFXI/yHrR1KqOqWGqrn/WTw3hyZQyPGZQUptus+2EK8S5yaIGCmgQpjHJ2qSxjyAk4bsLf7eXWVPr2oIMun+2cftJ91V5Q3A/NdM1Ylw4uC26v4uAp+oPcWHs3ldoGM/yWGm5GivlXAd1K02f69ZTD+WyjccruXSmV5vyeD0VJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754472112; c=relaxed/simple;
-	bh=/u/w7c5xtAEktNgOuWB+mNI2r/3eWtLo6I0rTb2nscI=;
+	s=arc-20240116; t=1754472114; c=relaxed/simple;
+	bh=AckFgJTdbiQxTv4ig9a0jy4griGBE8YT2uSVqnHLxuA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nNs4k7FBGOWkb6FbHQImLnk5VyxjR659QA9h8O78Zpy4cKGj2+sZSpZ848ck225QqeJOjNWlN9hDefCal2xmd/wqtWdylzA5JzvH/oIWLReEmJzBw2PuDSohjtp6g302mQKhpx07uu+m6l3H0tex0pPxi3wZBNPdOwM4QxMtXrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ibtItotk; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=ehBTHBhlewxADkq5WrsRYgGV+JOBYmJLEFj8HtpCc0ir40HcdD50X4wlv25gLHMry9a9nC2KdC2+U+suo8wW3VR427sOKc6z7e/bautA1wCF2RInyuhEz3QhW+tI9IQIlaqEkiBTKRdjbYW7s+bPpWE8fUwBPmi4R8SoDK/Rqdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IfVt6gm+; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4589b3e3820so63454275e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:21:50 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459e794b331so2576215e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:21:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754472109; x=1755076909; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1754472110; x=1755076910; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hRM6/LJlPcruvreq9KP4Mh7SIbmUYhjQOIHIt9y1GgE=;
-        b=ibtItotkuH13VL38Nb9IcI6xL0um9eQ3p/qiDSpXaAGRyt9fzysyUDd/w0rj89t/gu
-         tmxPFhbpKKYsfY2QD3efRQpPwSmr7JBngjyd5jtgo+Ywq6LYiqlmDMcmVlTzBCrdrL4S
-         NOv9YbBnYZp3KGdRVXWMIjh2btPyfNnaKKG6HOpV1CutNkp2OtSk4PGs0M0hmeivT4eX
-         JySIfBvSjyRtD70nFVsevNtCh/LXd0HBYpzvJwxEW3M0Aar2AKo8lfLCxJ3ZiPZSXInz
-         L1yYwBvIjmQ9N4xXPsKW0gH+6qsM29kfHqNvrQY+H6UZ5ZlvXAj066W7+JT7xckHaYfD
-         AhGA==
+        bh=C6vM9cRK1GxXlCwOmEZg5CpwmXUlH0wxIAh8E6fj0cA=;
+        b=IfVt6gm+p8wld26qBXdCMtQ++TzQFABjiWlgU/dJ2sI8FXtf1Jk21yi6jqDzUHoDcj
+         W/ck0lAcRKi4YZLIn9w4B2vZ9vStfs69A8m9kxBX96nJlnBE8X4FYhdrtnPDRxW0vOHq
+         VEyHHKzy6/yUve+s9CSZNy1Dw49EbSF8s2Kzo9v4zlElweg2dCQGu3zSvZnh33Nklnje
+         8FCwGHvU791bC8+Sl0ROL456tv+keRzw5p0my4/4heq/wR7DiD9wIa9gIcwZOYbTX4uF
+         V1DpA8/qY+jWoNEunZeevvd0QsI+29CiSt/NGP5fPhGEj9n0bG7BbhgQwfQZmvhZWDvm
+         UjfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754472109; x=1755076909;
+        d=1e100.net; s=20230601; t=1754472110; x=1755076910;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hRM6/LJlPcruvreq9KP4Mh7SIbmUYhjQOIHIt9y1GgE=;
-        b=Wu4BCTw25HitKQcMMXhEs3u4dMoQGatKtmWpYVzDXW1PFVvCDo2cz/8D9Y11mv2qse
-         IOn/JMRERIEY1Nf0PadthMsFBSfuw+zbSy7zkN7cIWoMcQ0TCl7fytuOHM2fS0rYMQu3
-         AL/noj2pyDrpo4jZ1re9JVkv1neSGAaQi5zEAkiOStnXpA25DzhKUcWVhTM2wwr+3m7V
-         Zrg4oFXKPhybAuBtapSNm2P7DZLhY9NC7QP08CeSwgMW2dI0DVdoon4XL+IN30/3UGvq
-         ffAAX8OOB6Gyb7OHfi43eUP8qO5RswIwFJIPii1dTVLmTNpdPfSYOckxDEDxS7WLCEBS
-         95Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzWlN0QvBGl0UGQ3CHzwcadnSlmFjGK5pcU74Qcg55vK12dv5Yj409i+nD0HjdSC4kd9bDsiofE6z5pl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzimd5ykOORyfifsAOxWcF6UrvmR0I8ImsUg/DHqO6Jq4PxShK/
-	/CpEJPufaYAn7VDrKdllhIDGk1PPPsME2M2NaM/wzWi5VA0Ks5RE+NusiJMHdEL7W10=
-X-Gm-Gg: ASbGncsOGRo4aOjxCzZqNOrlqP8b52fXH+4Va+1jTc2Rq9T1RhjZwTUYylKzMLunNtv
-	DsSwp/j+OeOaCZ/KYXLbPQRimpHOGt6HlkJLb1Elh9TSdCKZzntXSklX6OWHCiqyTMHKk57qmQh
-	vA+gLuGKpWhYhcYZ81K0OIK9qY+trbsqDIxF2bI9rMcK3LcuJ3l7+l3bV68QfcFqn2ArcH3Obj8
-	KWRGZBBmVSCb6VqPtrbT3HkTuOClN3qYIfCI+/7gsOUfhFOO0GZ5MnTPxdQlwJNw7saikeEu3z7
-	5VUeDGjZ5XGC5BUbyCEzqGmCniADWiRy+JnDvFeQ0ehFHJxL3rcq+1IPNPcYr8zRhpWzkv1BLik
-	1v+KvtLzbXvI+AER01CdOu75qlLtyYaWBWrhfzN4dcgv9/jRNyBr0
-X-Google-Smtp-Source: AGHT+IHf+/q8mL5kXeXBfuPFH9tkdLBPPDRn8q+gOCdORMDuGNSYwdVs4ImpbncTvKYiAR9QqRiK8Q==
-X-Received: by 2002:a05:6000:18a6:b0:3b7:b3f2:f8b3 with SMTP id ffacd0b85a97d-3b8f41ac8bcmr1769613f8f.38.1754472108861;
-        Wed, 06 Aug 2025 02:21:48 -0700 (PDT)
+        bh=C6vM9cRK1GxXlCwOmEZg5CpwmXUlH0wxIAh8E6fj0cA=;
+        b=UgnYGWK+NnIaGneBeX7OcNA408lDQYXfAFHNGSq9KAY6eOWUNJ7I+kshpu+6vTvG3v
+         pRB9QgyVXVVlP+ljaORZQK9VvjIvlvEROp7dvpwDaSWNxyUzauBOwevgM9URshTaBFC4
+         QHQlSMP/GOUX2anWkPt3jwkzqG067oRG3nCkhOjxHK1R71cdjs6ZpZ8EVJsRf27tZtzi
+         ohLPdksZ17/tzuRxxm7ESTjMoNEQF2/bAC6ltz9MMsm0Zqoljy3Eup4jHiKRw70IbjO1
+         gy17hXu9lxEibwttumx/DxeOFmB+cq/J6+uOLkjNm+C0W0jmNvH4NvLZSmQkl29gUdy6
+         yxEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCukAjEtRq3cawl++WWZGi24LURJsmc+f087GE4IbD9C3/sjYq8VD3eTqdavqV+h1zwzQopI3W6EB1yFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgeZmaDgUeff2NtRyOci+Z71SVdjR4dpr4tKFV/12XAozB2Ryo
+	oAnVC8O5shT1uFCMxBH8YE18hyErL6IhrZFWZhXVLz2jNv1P/ONCAbU7cMoW4xhUiII=
+X-Gm-Gg: ASbGnct0+jGaeAtaqfgTubxFnXnU7eAhcw4YYXCtO3ESD1JpcTd3ar4My8+yrEpy/ll
+	jLSosg+/vfHQBx2jY5mIHIZOntKMxPzgAOB95JCFANufe9wQfUdQiI+S9XWSC03oLGBcRFkq6go
+	hhce5bHxa3RoPn4sQfra0DWYXpnegpAD+TMcrFBKv3kW88OUqFJDxCHc47oce8BxB1gA+wdXsSC
+	YlSkOv8aOUCNk3x94ea833LDrXJLY1fzxzSMr4Zq+47Nx/0qBz7bYVl2hksChV0nu885Zfnhdp9
+	UiL7Wwn0alt+YyiikZq9t2/8VK0cj9gzIK+hsrA3Rma01ZieT+QXM9j3ZosZR3shIINfxDp7qlN
+	eWgJvL6SSJZTcHdA7wppuh+2v3iAF4vBEl/P0+PYs+haoaYTMfxKVaTC3oaiUu4s=
+X-Google-Smtp-Source: AGHT+IFKQzeo8NoqRRhAzaTuO6q0WKqiApam0PtFQOFzEV35zWZycj20WFZV52zkqJjGHGzoZ/WaGA==
+X-Received: by 2002:a05:600c:4e8e:b0:450:d3b9:4ba4 with SMTP id 5b1f17b1804b1-459e7440abfmr16122795e9.2.1754472110212;
+        Wed, 06 Aug 2025 02:21:50 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6867193sm30188445e9.6.2025.08.06.02.21.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6867193sm30188445e9.6.2025.08.06.02.21.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 02:21:48 -0700 (PDT)
+        Wed, 06 Aug 2025 02:21:49 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -82,9 +82,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 1/4] clk: renesas: r9a08g045: Add MSTOP for GPIO
-Date: Wed,  6 Aug 2025 12:21:26 +0300
-Message-ID: <20250806092129.621194-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 2/4] clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
+Date: Wed,  6 Aug 2025 12:21:27 +0300
+Message-ID: <20250806092129.621194-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250806092129.621194-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250806092129.621194-1-claudiu.beznea.uj@bp.renesas.com>
@@ -98,33 +98,276 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The GPIO module also supports MSTOP. Add it in the description of the gpio
-clock.
+Add MSTOP configuration for all the module clocks on the RZ/G2L
+based SoCs (RZ/G2L, RZ/G2LC).
 
-Fixes: c49695952746 ("clk: renesas: r9a08g045: Drop power domain instantiation")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- none; this patch is new
+- added MSTOP for GPIO
 
- drivers/clk/renesas/r9a08g045-cpg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r9a07g044-cpg.c | 154 ++++++++++++++--------------
+ drivers/clk/renesas/rzg2l-cpg.h     |   1 +
+ 2 files changed, 78 insertions(+), 77 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index ed0661997928..3b28edfabc34 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -284,7 +284,8 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(5))),
- 	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5,
- 					MSTOP(BUS_MCPU3, BIT(4))),
--	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0, 0),
-+	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0,
-+					MSTOP(BUS_PERI_CPU, BIT(6))),
- 	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0,
- 					MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1,
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index c851d4eeebbe..fdbc0635a869 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -242,163 +242,163 @@ static const struct {
+ } mod_clks = {
+ 	.common = {
+ 		DEF_MOD("gic",		R9A07G044_GIC600_GICCLK, R9A07G044_CLK_P1,
+-					0x514, 0, 0),
++					0x514, 0, MSTOP(BUS_REG1, BIT(7))),
+ 		DEF_MOD("ia55_pclk",	R9A07G044_IA55_PCLK, R9A07G044_CLK_P2,
+-					0x518, 0, 0),
++					0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
+ 		DEF_MOD("ia55_clk",	R9A07G044_IA55_CLK, R9A07G044_CLK_P1,
+-					0x518, 1, 0),
++					0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
+ 		DEF_MOD("dmac_aclk",	R9A07G044_DMAC_ACLK, R9A07G044_CLK_P1,
+-					0x52c, 0, 0),
++					0x52c, 0, MSTOP(BUS_REG1, BIT(2))),
+ 		DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+-					0x52c, 1, 0),
++					0x52c, 1, MSTOP(BUS_REG1, BIT(3))),
+ 		DEF_MOD("ostm0_pclk",	R9A07G044_OSTM0_PCLK, R9A07G044_CLK_P0,
+-					0x534, 0, 0),
++					0x534, 0, MSTOP(BUS_REG0, BIT(4))),
+ 		DEF_MOD("ostm1_pclk",	R9A07G044_OSTM1_PCLK, R9A07G044_CLK_P0,
+-					0x534, 1, 0),
++					0x534, 1, MSTOP(BUS_REG0, BIT(5))),
+ 		DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
+-					0x534, 2, 0),
++					0x534, 2, MSTOP(BUS_REG0, BIT(6))),
+ 		DEF_MOD("mtu_x_mck",	R9A07G044_MTU_X_MCK_MTU3, R9A07G044_CLK_P0,
+-					0x538, 0, 0),
++					0x538, 0, MSTOP(BUS_MCPU1, BIT(2))),
+ 		DEF_MOD("gpt_pclk",	R9A07G044_GPT_PCLK, R9A07G044_CLK_P0,
+-					0x540, 0, 0),
++					0x540, 0, MSTOP(BUS_MCPU1, BIT(4))),
+ 		DEF_MOD("poeg_a_clkp",	R9A07G044_POEG_A_CLKP, R9A07G044_CLK_P0,
+-					0x544, 0, 0),
++					0x544, 0, MSTOP(BUS_MCPU1, BIT(5))),
+ 		DEF_MOD("poeg_b_clkp",	R9A07G044_POEG_B_CLKP, R9A07G044_CLK_P0,
+-					0x544, 1, 0),
++					0x544, 1, MSTOP(BUS_MCPU1, BIT(6))),
+ 		DEF_MOD("poeg_c_clkp",	R9A07G044_POEG_C_CLKP, R9A07G044_CLK_P0,
+-					0x544, 2, 0),
++					0x544, 2, MSTOP(BUS_MCPU1, BIT(7))),
+ 		DEF_MOD("poeg_d_clkp",	R9A07G044_POEG_D_CLKP, R9A07G044_CLK_P0,
+-					0x544, 3, 0),
++					0x544, 3, MSTOP(BUS_MCPU1, BIT(8))),
+ 		DEF_MOD("wdt0_pclk",	R9A07G044_WDT0_PCLK, R9A07G044_CLK_P0,
+-					0x548, 0, 0),
++					0x548, 0, MSTOP(BUS_REG0, BIT(2))),
+ 		DEF_MOD("wdt0_clk",	R9A07G044_WDT0_CLK, R9A07G044_OSCCLK,
+-					0x548, 1, 0),
++					0x548, 1, MSTOP(BUS_REG0, BIT(2))),
+ 		DEF_MOD("wdt1_pclk",	R9A07G044_WDT1_PCLK, R9A07G044_CLK_P0,
+-					0x548, 2, 0),
++					0x548, 2, MSTOP(BUS_REG0, BIT(3))),
+ 		DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
+-					0x548, 3, 0),
++					0x548, 3, MSTOP(BUS_REG0, BIT(3))),
+ 		DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
+-					0x550, 0, 0),
++					0x550, 0, MSTOP(BUS_MCPU1, BIT(1))),
+ 		DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
+-					0x550, 1, 0),
++					0x550, 1, MSTOP(BUS_MCPU1, BIT(1))),
+ 		DEF_MOD("sdhi0_imclk",	R9A07G044_SDHI0_IMCLK, CLK_SD0_DIV4,
+-					0x554, 0, 0),
++					0x554, 0, MSTOP(BUS_PERI_COM, BIT(0))),
+ 		DEF_MOD("sdhi0_imclk2",	R9A07G044_SDHI0_IMCLK2, CLK_SD0_DIV4,
+-					0x554, 1, 0),
++					0x554, 1, MSTOP(BUS_PERI_COM, BIT(0))),
+ 		DEF_MOD("sdhi0_clk_hs",	R9A07G044_SDHI0_CLK_HS, R9A07G044_CLK_SD0,
+-					0x554, 2, 0),
++					0x554, 2, MSTOP(BUS_PERI_COM, BIT(0))),
+ 		DEF_MOD("sdhi0_aclk",	R9A07G044_SDHI0_ACLK, R9A07G044_CLK_P1,
+-					0x554, 3, 0),
++					0x554, 3, MSTOP(BUS_PERI_COM, BIT(0))),
+ 		DEF_MOD("sdhi1_imclk",	R9A07G044_SDHI1_IMCLK, CLK_SD1_DIV4,
+-					0x554, 4, 0),
++					0x554, 4, MSTOP(BUS_PERI_COM, BIT(1))),
+ 		DEF_MOD("sdhi1_imclk2",	R9A07G044_SDHI1_IMCLK2, CLK_SD1_DIV4,
+-					0x554, 5, 0),
++					0x554, 5, MSTOP(BUS_PERI_COM, BIT(1))),
+ 		DEF_MOD("sdhi1_clk_hs",	R9A07G044_SDHI1_CLK_HS, R9A07G044_CLK_SD1,
+-					0x554, 6, 0),
++					0x554, 6, MSTOP(BUS_PERI_COM, BIT(1))),
+ 		DEF_MOD("sdhi1_aclk",	R9A07G044_SDHI1_ACLK, R9A07G044_CLK_P1,
+-					0x554, 7, 0),
++					0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
+ 		DEF_MOD("gpu_clk",	R9A07G044_GPU_CLK, R9A07G044_CLK_G,
+-					0x558, 0, 0),
++					0x558, 0, MSTOP(BUS_REG1, BIT(4))),
+ 		DEF_MOD("gpu_axi_clk",	R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
+ 					0x558, 1, 0),
+ 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+ 					0x558, 2, 0),
+ 		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
+-					0x564, 0, 0),
++					0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
+-					0x564, 1, 0),
++					0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
+-					0x564, 2, 0),
++					0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
+-					0x564, 3, 0),
++					0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
+-					0x568, 0, 0),
++					0x568, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
+-					0x568, 1, 0),
++					0x568, 1, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_MOD("dsi_aclk",	R9A07G044_MIPI_DSI_ACLK, R9A07G044_CLK_P1,
+-					0x568, 2, 0),
++					0x568, 2, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_MOD("dsi_pclk",	R9A07G044_MIPI_DSI_PCLK, R9A07G044_CLK_P2,
+-					0x568, 3, 0),
++					0x568, 3, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_MOD("dsi_vclk",	R9A07G044_MIPI_DSI_VCLK, R9A07G044_CLK_M3,
+-					0x568, 4, 0),
++					0x568, 4, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_MOD("dsi_lpclk",	R9A07G044_MIPI_DSI_LPCLK, R9A07G044_CLK_M4,
+-					0x568, 5, 0),
++					0x568, 5, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+ 		DEF_COUPLED("lcdc_a",	R9A07G044_LCDC_CLK_A, R9A07G044_CLK_M0,
+-					0x56c, 0, 0),
++					0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
+ 		DEF_COUPLED("lcdc_p",	R9A07G044_LCDC_CLK_P, R9A07G044_CLK_ZT,
+-					0x56c, 0, 0),
++					0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
+ 		DEF_MOD("lcdc_clk_d",	R9A07G044_LCDC_CLK_D, R9A07G044_CLK_M3,
+-					0x56c, 1, 0),
++					0x56c, 1, MSTOP(BUS_PERI_VIDEO, BIT(9))),
+ 		DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
+-					0x570, 0, 0),
++					0x570, 0, MSTOP(BUS_MCPU1, BIT(10))),
+ 		DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
+-					0x570, 1, 0),
++					0x570, 1, MSTOP(BUS_MCPU1, BIT(10))),
+ 		DEF_MOD("ssi1_pclk",	R9A07G044_SSI1_PCLK2, R9A07G044_CLK_P0,
+-					0x570, 2, 0),
++					0x570, 2, MSTOP(BUS_MCPU1, BIT(11))),
+ 		DEF_MOD("ssi1_sfr",	R9A07G044_SSI1_PCLK_SFR, R9A07G044_CLK_P0,
+-					0x570, 3, 0),
++					0x570, 3, MSTOP(BUS_MCPU1, BIT(11))),
+ 		DEF_MOD("ssi2_pclk",	R9A07G044_SSI2_PCLK2, R9A07G044_CLK_P0,
+-					0x570, 4, 0),
++					0x570, 4, MSTOP(BUS_MCPU1, BIT(12))),
+ 		DEF_MOD("ssi2_sfr",	R9A07G044_SSI2_PCLK_SFR, R9A07G044_CLK_P0,
+-					0x570, 5, 0),
++					0x570, 5, MSTOP(BUS_MCPU1, BIT(12))),
+ 		DEF_MOD("ssi3_pclk",	R9A07G044_SSI3_PCLK2, R9A07G044_CLK_P0,
+-					0x570, 6, 0),
++					0x570, 6, MSTOP(BUS_MCPU1, BIT(13))),
+ 		DEF_MOD("ssi3_sfr",	R9A07G044_SSI3_PCLK_SFR, R9A07G044_CLK_P0,
+-					0x570, 7, 0),
++					0x570, 7, MSTOP(BUS_MCPU1, BIT(13))),
+ 		DEF_MOD("usb0_host",	R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
+-					0x578, 0, 0),
++					0x578, 0, MSTOP(BUS_PERI_COM, BIT(5))),
+ 		DEF_MOD("usb1_host",	R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
+-					0x578, 1, 0),
++					0x578, 1, MSTOP(BUS_PERI_COM, BIT(7))),
+ 		DEF_MOD("usb0_func",	R9A07G044_USB_U2P_EXR_CPUCLK, R9A07G044_CLK_P1,
+-					0x578, 2, 0),
++					0x578, 2, MSTOP(BUS_PERI_COM, BIT(6))),
+ 		DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
+-					0x578, 3, 0),
++					0x578, 3, MSTOP(BUS_PERI_COM, BIT(4))),
+ 		DEF_COUPLED("eth0_axi",	R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
+-					0x57c, 0, 0),
++					0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
+ 		DEF_COUPLED("eth0_chi",	R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
+-					0x57c, 0, 0),
++					0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
+ 		DEF_COUPLED("eth1_axi",	R9A07G044_ETH1_CLK_AXI, R9A07G044_CLK_M0,
+-					0x57c, 1, 0),
++					0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
+ 		DEF_COUPLED("eth1_chi",	R9A07G044_ETH1_CLK_CHI, R9A07G044_CLK_ZT,
+-					0x57c, 1, 0),
++					0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
+ 		DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
+-					0x580, 0, 0),
++					0x580, 0, MSTOP(BUS_MCPU2, BIT(10))),
+ 		DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
+-					0x580, 1, 0),
++					0x580, 1, MSTOP(BUS_MCPU2, BIT(11))),
+ 		DEF_MOD("i2c2",		R9A07G044_I2C2_PCLK, R9A07G044_CLK_P0,
+-					0x580, 2, 0),
++					0x580, 2, MSTOP(BUS_MCPU2, BIT(12))),
+ 		DEF_MOD("i2c3",		R9A07G044_I2C3_PCLK, R9A07G044_CLK_P0,
+-					0x580, 3, 0),
++					0x580, 3, MSTOP(BUS_MCPU2, BIT(13))),
+ 		DEF_MOD("scif0",	R9A07G044_SCIF0_CLK_PCK, R9A07G044_CLK_P0,
+-					0x584, 0, 0),
++					0x584, 0, MSTOP(BUS_MCPU2, BIT(1))),
+ 		DEF_MOD("scif1",	R9A07G044_SCIF1_CLK_PCK, R9A07G044_CLK_P0,
+-					0x584, 1, 0),
++					0x584, 1, MSTOP(BUS_MCPU2, BIT(2))),
+ 		DEF_MOD("scif2",	R9A07G044_SCIF2_CLK_PCK, R9A07G044_CLK_P0,
+-					0x584, 2, 0),
++					0x584, 2, MSTOP(BUS_MCPU2, BIT(3))),
+ 		DEF_MOD("scif3",	R9A07G044_SCIF3_CLK_PCK, R9A07G044_CLK_P0,
+-					0x584, 3, 0),
++					0x584, 3, MSTOP(BUS_MCPU2, BIT(4))),
+ 		DEF_MOD("scif4",	R9A07G044_SCIF4_CLK_PCK, R9A07G044_CLK_P0,
+-					0x584, 4, 0),
++					0x584, 4, MSTOP(BUS_MCPU2, BIT(5))),
+ 		DEF_MOD("sci0",		R9A07G044_SCI0_CLKP, R9A07G044_CLK_P0,
+-					0x588, 0, 0),
++					0x588, 0, MSTOP(BUS_MCPU2, BIT(7))),
+ 		DEF_MOD("sci1",		R9A07G044_SCI1_CLKP, R9A07G044_CLK_P0,
+-					0x588, 1, 0),
++					0x588, 1, MSTOP(BUS_MCPU2, BIT(8))),
+ 		DEF_MOD("rspi0",	R9A07G044_RSPI0_CLKB, R9A07G044_CLK_P0,
+-					0x590, 0, 0),
++					0x590, 0, MSTOP(BUS_MCPU1, BIT(14))),
+ 		DEF_MOD("rspi1",	R9A07G044_RSPI1_CLKB, R9A07G044_CLK_P0,
+-					0x590, 1, 0),
++					0x590, 1, MSTOP(BUS_MCPU1, BIT(15))),
+ 		DEF_MOD("rspi2",	R9A07G044_RSPI2_CLKB, R9A07G044_CLK_P0,
+-					0x590, 2, 0),
++					0x590, 2, MSTOP(BUS_MCPU2, BIT(0))),
+ 		DEF_MOD("canfd",	R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
+-					0x594, 0, 0),
++					0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
+ 		DEF_MOD("gpio",		R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
+-					0x598, 0, 0),
++					0x598, 0, MSTOP(BUS_PERI_CPU, BIT(6))),
+ 		DEF_MOD("adc_adclk",	R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
+-					0x5a8, 0, 0),
++					0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
+ 		DEF_MOD("adc_pclk",	R9A07G044_ADC_PCLK, R9A07G044_CLK_P0,
+-					0x5a8, 1, 0),
++					0x5a8, 1, MSTOP(BUS_MCPU2, BIT(14))),
+ 		DEF_MOD("tsu_pclk",	R9A07G044_TSU_PCLK, R9A07G044_CLK_TSU,
+-					0x5ac, 0, 0),
++					0x5ac, 0, MSTOP(BUS_MCPU2, BIT(15))),
+ 	},
+ #ifdef CONFIG_CLK_R9A07G054
+ 	.drp = {
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 0a71c5ec24b6..55e815be16c8 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -34,6 +34,7 @@
+ #define CPG_BUS_PERI_COM_MSTOP	(0xB6C)
+ #define CPG_BUS_PERI_CPU_MSTOP	(0xB70)
+ #define CPG_BUS_PERI_DDR_MSTOP	(0xB74)
++#define CPG_BUS_PERI_VIDEO_MSTOP (0xB78)
+ #define CPG_BUS_REG0_MSTOP	(0xB7C)
+ #define CPG_BUS_REG1_MSTOP	(0xB80)
+ #define CPG_BUS_TZCDDR_MSTOP	(0xB84)
 -- 
 2.43.0
 
