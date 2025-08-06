@@ -1,239 +1,239 @@
-Return-Path: <linux-kernel+bounces-758457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E05B1CF72
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E2B1CF71
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E8856703D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:38:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3053A18C297F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3D277CA4;
-	Wed,  6 Aug 2025 23:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEC9277C87;
+	Wed,  6 Aug 2025 23:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODqJWN5A"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B4NhXMfZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CAE21C179;
-	Wed,  6 Aug 2025 23:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80C127781E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 23:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754523504; cv=none; b=ZMhH4hYZRN6HhmV2ZO7HsS6Ys6b/VTiHYGmVbCQ+ONXcmV+avP8TnaRC8EyX/eY3rNfitQjnXWjsVqTOoorMG+oLNK2iqHcRy+AccWaNBYH4iHWVxoMZEBcDUKWFzaKLuJCLBiADk+fyTw54rjavi3i1rE6eNz68JQ5C8c9sq0Q=
+	t=1754523514; cv=none; b=EG05o9NX0KdHAsGxLhYCx9PJN+WHngqczzo5TtrNFDQ7luemKTNS7y2WuOnZCv9f9su9zvKpdptfalKgh57vdnLGiQUAxRk7RNG/wdM9dnKVOE+3MdkIrqcedEhQ6ke1i1gybe9gbH/oe4i4mg0NKPubVwHJEMHriaoQzi6qwuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754523504; c=relaxed/simple;
-	bh=sqI/GEwdoGremF/OUWnATYq0HOTDGAs6joghp/SU8a4=;
+	s=arc-20240116; t=1754523514; c=relaxed/simple;
+	bh=VJQWnJ0xkr9EEbnL3lXDukQbwjKMGh/hOEDMFd5Z0qg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5w4nTG11mZZwYuCBUMwoi9qZe/I8hgxc0mTnVyrIOmXoxMqIRJDzRduwdfdAyHGSWWlsXI9IpJWkjR1CtTlPmrM3J6PtC2CIgPRMnRCJUmyH8bZ40XkS6FWQmOEGxIf2PZXzf/onNMbdkyBPrvEoi/BN6XUGbceShtxoTHNf1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODqJWN5A; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af66f444488so61171766b.0;
-        Wed, 06 Aug 2025 16:38:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754523501; x=1755128301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WhqBigQF9nZyV6MxdBcrgjMBesgYA66oBZ2ceJcbdZE=;
-        b=ODqJWN5AtSIb0A5kVojl0Yy0V5g2hPqCjk3+bSOkU5h92O0GRkAIkGsjB2GOtOIUf2
-         UoO3AfhfTUMkyKXxBSxnO5dP7HLBd8RzghftDep575BBfGt7pUNClpvjdh0bR1j392k4
-         E+Ej9eoe1zBAjVS8oul/qF9xYyVFs3zIG4kJ3SyScHiaFhJq0fROUQ+DH9E5RE09+Qzr
-         a5EfKWdhHiVgc2/mf836B5As/7NBle2vb73TNKd3TOZIf8oAwNzpEeBOGvgGBG7lY5G+
-         PWMe+Hds0REuzhc4sbTQIp7yBKGaf/6Zc+6JQY9EqHh8jFaKm6+CwAMEAZy2kxEoPx9v
-         A26g==
+	 To:Cc:Content-Type; b=ls9o0PlBkibh++FF0NAY/LuDdwvO9rc11PXHa4ZyXYT8joBurBlzFZjG1zgXVgVKDhz4zMkYsv8t0G0qw0jLgMlCPiAsfz3HcYW5IRvw5kave/JAsSoKDu9nM4u12eiHNVrrgnXpesImaoGkHdwZKEDSuQmtwnr3n3PcT5coMDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B4NhXMfZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576ERq6I004180
+	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 23:38:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=Ac6klSnA9Mr53PX86rTjqGkchVoRjSTOCtS4mQwGPtg=; b=B4
+	NhXMfZIY3KWm6jV5nbmTTOhsPk0QXzDg9ZDqfcFXdh6wYO/uesBS/3C2wsO83bFJ
+	rP68H2+u/of4suW5za0If4n+6E9fC7Uaz34XB5Nzc1ipssLt297je78LzE60wx2K
+	RwQ2yF9S1SQVMo+D9/J6HWQeu7grns/0tAe7jy082gJUhvMZVhAyhUQEFBxP5OGO
+	iZ/jvb8vHLNklSATXeRZSX3kxIe/db8E4vKpF1bPsU5gK0MSdNVpGNP8ttjSaUlw
+	UAW9C/yH6s/mbvPMflLUBFBeBOI78k4GtNJ/Ha0/IWIDPFioZATiGhx4zX3GiRJ9
+	CRuq4Np6lHjjALpAKTlg==
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c8u21ank-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 23:38:32 +0000 (GMT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-433eee47614so473727b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 16:38:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754523501; x=1755128301;
+        d=1e100.net; s=20230601; t=1754523511; x=1755128311;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WhqBigQF9nZyV6MxdBcrgjMBesgYA66oBZ2ceJcbdZE=;
-        b=Y3Z7/Yuah5KWrxePZla1UmU7LWf1CGN2jLvfN4D+Th1rVrDVrSi8GY5sbCang2M4WY
-         gdDQbbnNkt0k0Tltay8qC5Nt/AZPEIddZ4wOg7Z4ej2BiCHbKTAQH9ZjXHjIxuNUDmDy
-         k2GfXDXUaxpNh2tEQ+EGfa3vcBqMGP1dD9QyDhiTkwD4AofvTFOI/omS0bBzhWnWK1hW
-         rgNj/238nHCuekuM+g6lvvTaBkDQ2QcAnjden8rGkaX5EOEhP7tlnBbz7xwkgmqwUqe6
-         9Ju8qc92En3gm7Ti/sAGmNAdJh8OCC0t+Tbsk4F5aBKBCNwYpoKUN5xokJg3MrLgnW2F
-         5Ikg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxMfPGoBI9oFbT7Cwsv30C8bWRfoCoPcY8leMHNf1gnT7r61h5/6DhFKzXJM8gptewHkI=@vger.kernel.org, AJvYcCV+rOcTP7UW/mNc7/oJlHDdrer8HPxo7DnHA9k+DWS4yxSvHcS6jK46I9867dvB7uZ1IuqqQLsfvp8Xow==@vger.kernel.org, AJvYcCWluwqtt3JlPKCW1yTyyGTQ7rM/JR5VoFOKUAwnl7514i+hRzPh5si6Mx+wC4trbTKClbvtIoVoQU98kUw1ZlgI6g==@vger.kernel.org, AJvYcCXq8EJEl36RU6HatblEDArkzadT7lizm8Xlwvrdgj2tMZgRYQf6CEZWxtP9VsqcoWi5ww/m940Zdo9UbcSI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLVkaUAAmefeH9neYA+3L6c+kLp6KeY0vL/O9kX4KT6dkUG0M6
-	UidQTx7A5VSyU/82ijZGzJ+kWO4u3+eqwFTW/oU7EeBgFkdLAOIR46H1FLzRX6f9Zox2CNO+DqX
-	mXm0QqsrYiBuEUZpeklPoi4rQro1KpVo=
-X-Gm-Gg: ASbGncvAkwv+HtNmhDNNyONKDoUF8RiPQTsuoDtZkKk1tAHyTBJO1fTRstN3h9MBS8z
-	U98vu76lb+Yzcqa1z8Rnr4/Lm229bWn5wJh4m0iAs7e1EDa6bsoX7yliewHZv5S4R6gYZ3Pa+zm
-	CM5HtdR7U317AQaOZPXclsggm+BNsDZYSA7UEO5ku3fGkGrXsfFLQ6nltlMtnQOciJRQ8MUgNYx
-	ouFIcJrcGRqO3N6b+HMyWMKVOyrDloV0yZ4xi0UUhDeXRY=
-X-Google-Smtp-Source: AGHT+IHzqZa1neiF0uyaArNjeHnGfC3u3C63toQez4cHAhPKNPYYG8lWs+NBrvtwsMA4OL/MdhBzMkD1DLcLhev3JBQ=
-X-Received: by 2002:a17:906:9f8b:b0:ae3:f299:ba47 with SMTP id
- a640c23a62f3a-af992ba59a5mr376345166b.32.1754523500252; Wed, 06 Aug 2025
- 16:38:20 -0700 (PDT)
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ac6klSnA9Mr53PX86rTjqGkchVoRjSTOCtS4mQwGPtg=;
+        b=peUaEqMyGBCK+JNUGuxqZL2fqBbTYy7IEjwZ/0fyzXsDLitIyp9LxMSJ54ywjINa4W
+         XnrzfxhfayJVKeN+a2dnbwGNa5G0IYyBbtuLgOHQuOSQ2FBMifTDTE791l9AV7/hoUjd
+         dZowGrUyeg7g7M9uG6kAG/xeBsnMp24d4g6BWl33QXjfCuSk0tOXYc4uuaRLPMqGJmTj
+         2T1gjkj32aLrwULrz23Pr6NezjvUGacGLde0Ir3GreALLY95Q0hyb7asWpeOCwIAtrIN
+         EKXUW6aoJyGu158pXghrIG3kf9hcAY67O3/sQJWpToTmNKlfr00eqHAcpBb3XPky9bA/
+         5ehg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRAy4H7lr3kcJokMnYbUUP9joQPSeHttQMPWEr5dGfeO3a7c7sd1TwO+LJ9xe7LCQcx8BrxrqpJP0yVDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo09aqUlDkVHIJRniJGfKQUTDgAfHX+aBMZzVVckJ22w2nHuMN
+	a9hnK9Vl6pTsSbCYb6A7BXQPgONKUX90XuXeYhji4Lqfa4/0RTBcBMKmSleADMnAksVvpLj4jA2
+	yACOGULc9wsNAZnXutZvJyqTOGFOrw5GLuNUGNwhMyITRSQyvCEdcWDt+CfH/Tq1WaJuWTZNS0w
+	C0EAIDsf1MlGOQRtE/eV5AgI0wXWT9fwF4HUhPeZwP7Q==
+X-Gm-Gg: ASbGncsl+OQnb58vN43LcKDp/Dx6wI25MaGhrEazcNCKYGhGw4SK7inop1X/SREujzA
+	FUpUOUAQlMUhZTiUAZijwDWy4HxdQdOu1oS7xc2y8kCU3LxRei6bYFCJxvLqmbRwNOQ6ZwLwycx
+	Aw/Zs9XCtEOTm9wAqexZpWImibybZ302m6vmiKg6EUeNGXlP1wakwj
+X-Received: by 2002:a05:6808:188e:b0:407:a0ea:a233 with SMTP id 5614622812f47-43587d4aefbmr1086830b6e.10.1754523510886;
+        Wed, 06 Aug 2025 16:38:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEajvgQwj0cA40SDmJZi443/ZvRJrXgIh9b0IEiCevFL8xUX1afj5QQsW7XjUX+4Vja9Yolv8KBFejgkt9sl+0=
+X-Received: by 2002:a05:6808:188e:b0:407:a0ea:a233 with SMTP id
+ 5614622812f47-43587d4aefbmr1086811b6e.10.1754523510491; Wed, 06 Aug 2025
+ 16:38:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806114227.14617-1-iii@linux.ibm.com> <20250806114227.14617-3-iii@linux.ibm.com>
- <aJPc2NvJqLOGaIKl@google.com>
-In-Reply-To: <aJPc2NvJqLOGaIKl@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 6 Aug 2025 16:38:09 -0700
-X-Gm-Features: Ac12FXz1F-Xdu0Kpt8aaIXgLMS8YVgSoQxycBjiK4rapVXOu8GkFrx9VZX0LA3A
-Message-ID: <CAADnVQJG6U6X1qarpbdXra12m-PhNJK5f-jyw695osnOm6AZnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] perf bpf-filter: Enable events manually
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ilya Leoshkevich <iii@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-s390 <linux-s390@vger.kernel.org>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250805225557.593192-1-sashal@kernel.org>
+In-Reply-To: <20250805225557.593192-1-sashal@kernel.org>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Wed, 6 Aug 2025 16:38:19 -0700
+X-Gm-Features: Ac12FXzyXnGkvSc4Rh5FVrwgztoGD-i80tBzbFVH33Tmk6r1gudt7__afChJygA
+Message-ID: <CACSVV02Z=4Saw=-MA6zz-Dsye8T=AcARWs1AhUbWnyA8sY7fdQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: Fix objtool warning in submit_lock_objects()
+To: Sasha Levin <sashal@kernel.org>
+Cc: lumag@kernel.org, abhinav.kumar@linux.dev, jessica.zhang@oss.qualcomm.com,
+        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
+        simona@ffwll.ch, antomani103@gmail.com, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: 0RVSiDfUNzU6fLzFSUM1hzj4ylcvN6Hi
+X-Authority-Analysis: v=2.4 cv=Q/TS452a c=1 sm=1 tr=0 ts=6893e778 cx=c_pps
+ a=yymyAM/LQ7lj/HqAiIiKTw==:117 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=VwQbUJbxAAAA:8 a=QLtsSAfmF_M2AFDG84kA:9 a=QEXdDO2ut3YA:10
+ a=efpaJB4zofY2dbm2aIRb:22
+X-Proofpoint-ORIG-GUID: 0RVSiDfUNzU6fLzFSUM1hzj4ylcvN6Hi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA5MCBTYWx0ZWRfX+px7k+qV4TCY
+ cYselgtKv5JIsEfmsqoKxiFpYoVvbq7MZQwTPViXEKRkEK2LwA6Uf0IdRHL5JZY5iU8JHATT9rs
+ hRk/7d5AiX0lUPGPYYKK1NN/cIhDf05XJiM9b9u3WENk6TuVagWEAO9T4Q5o9dBFH/jZEq6qbts
+ PoCflsPMSJrvZdn+MWXt+J9NJasCQz4jFmWDG1aIwPK0u/NcpKT4e8xsSNJ/9EX0HjaIBh753zg
+ eCVUScEGdvWOX2HG1El/1PoVBdK/sKVK02hoii0ri792Wd6VTauc0zxC4PHqMe58g8bAhd4x9OG
+ EsnCzQDJak1cTYA7/aLHaAS4klpxAPbKMEfyy+3ntewHLZrh9xlR9Kdzm4k1eNq2xSnal5AMwp5
+ luEj9cOn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060090
 
-On Wed, Aug 6, 2025 at 3:53=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
+On Tue, Aug 5, 2025 at 3:56=E2=80=AFPM Sasha Levin <sashal@kernel.org> wrot=
+e:
 >
-> Hello,
+> Restructure submit_lock_objects() to use a single loop with break
+> statements to fix objtool warning:
 >
-> On Wed, Aug 06, 2025 at 01:40:35PM +0200, Ilya Leoshkevich wrote:
-> > On s390, and, in general, on all platforms where the respective event
-> > supports auxiliary data gathering, the command:
-> >
-> >    # ./perf record -u 0 -aB --synth=3Dno -- ./perf test -w thloop
-> >    [ perf record: Woken up 1 times to write data ]
-> >    [ perf record: Captured and wrote 0.011 MB perf.data ]
-> >    # ./perf report --stats | grep SAMPLE
-> >    #
-> >
-> > does not generate samples in the perf.data file. On x86 the command:
-> >
-> >   # sudo perf record -e intel_pt// -u 0 ls
-> >
-> > is broken too.
-> >
-> > Looking at the sequence of calls in 'perf record' reveals this
-> > behavior:
-> >
-> > 1. The event 'cycles' is created and enabled:
-> >
-> >    record__open()
-> >    +-> evlist__apply_filters()
-> >        +-> perf_bpf_filter__prepare()
-> >          +-> bpf_program.attach_perf_event()
-> >              +-> bpf_program.attach_perf_event_opts()
-> >                  +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
-> >
-> >    The event 'cycles' is enabled and active now. However the event's
-> >    ring-buffer to store the samples generated by hardware is not
-> >    allocated yet.
-> >
-> > 2. The event's fd is mmap()ed to create the ring buffer:
-> >
-> >    record__open()
-> >    +-> record__mmap()
-> >        +-> record__mmap_evlist()
-> >          +-> evlist__mmap_ex()
-> >              +-> perf_evlist__mmap_ops()
-> >                  +-> mmap_per_cpu()
-> >                      +-> mmap_per_evsel()
-> >                          +-> mmap__mmap()
-> >                              +-> perf_mmap__mmap()
-> >                                  +-> mmap()
-> >
-> >    This allocates the ring buffer for the event 'cycles'. With mmap()
-> >    the kernel creates the ring buffer:
-> >
-> >    perf_mmap(): kernel function to create the event's ring
-> >    |            buffer to save the sampled data.
-> >    |
-> >    +-> ring_buffer_attach(): Allocates memory for ring buffer.
-> >        |        The PMU has auxiliary data setup function. The
-> >        |        has_aux(event) condition is true and the PMU's
-> >        |        stop() is called to stop sampling. It is not
-> >        |        restarted:
-> >        |
-> >        |        if (has_aux(event))
-> >        |                perf_event_stop(event, 0);
-> >        |
-> >        +-> cpumsf_pmu_stop():
-> >
-> >    Hardware sampling is stopped. No samples are generated and saved
-> >    anymore.
-> >
-> > 3. After the event 'cycles' has been mapped, the event is enabled a
-> >    second time in:
-> >
-> >    __cmd_record()
-> >    +-> evlist__enable()
-> >        +-> __evlist__enable()
-> >          +-> evsel__enable_cpu()
-> >              +-> perf_evsel__enable_cpu()
-> >                  +-> perf_evsel__run_ioctl()
-> >                      +-> perf_evsel__ioctl()
-> >                          +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
-> >
-> >    The second
-> >
-> >       ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-> >
-> >    is just a NOP in this case. The first invocation in (1.) sets the
-> >    event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
-> >
-> >    perf_ioctl()
-> >    +-> _perf_ioctl()
-> >        +-> _perf_event_enable()
-> >            +-> __perf_event_enable()
-> >
-> >    return immediately because event::state is already set to
-> >    PERF_EVENT_STATE_ACTIVE.
-> >
-> > This happens on s390, because the event 'cycles' offers the possibility
-> > to save auxilary data. The PMU callbacks setup_aux() and free_aux() are
-> > defined. Without both callback functions, cpumsf_pmu_stop() is not
-> > invoked and sampling continues.
-> >
-> > To remedy this, remove the first invocation of
-> >
-> >    ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
-> >
-> > in step (1.) Create the event in step (1.) and enable it in step (3.)
-> > after the ring buffer has been mapped.
-> >
-> > Output after:
-> >
-> >  # ./perf record -aB --synth=3Dno -u 0 -- ./perf test -w thloop 2
-> >  [ perf record: Woken up 3 times to write data ]
-> >  [ perf record: Captured and wrote 0.876 MB perf.data ]
-> >  # ./perf  report --stats | grep SAMPLE
-> >               SAMPLE events:      16200  (99.5%)
-> >               SAMPLE events:      16200
-> >  #
-> >
-> > The software event succeeded both before and after the patch:
-> >
-> >  # ./perf record -e cpu-clock -aB --synth=3Dno -u 0 -- \
-> >                                         ./perf test -w thloop 2
-> >  [ perf record: Woken up 7 times to write data ]
-> >  [ perf record: Captured and wrote 2.870 MB perf.data ]
-> >  # ./perf  report --stats | grep SAMPLE
-> >               SAMPLE events:      53506  (99.8%)
-> >               SAMPLE events:      53506
-> >  #
-> >
-> > Fixes: b4c658d4d63d61 ("perf target: Remove uid from target")
-> > Suggested-by: Jiri Olsa <jolsa@kernel.org>
-> > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+>   drivers/gpu/drm/msm/msm.o: warning: objtool: submit_lock_objects+0x451:
+>   sibling call from callable instruction with modified stack frame
 >
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> The drm_exec_until_all_locked() macro uses computed gotos internally
+> for its retry loop. Having return statements inside this macro, or
+> immediately after it in certain code paths, confuses objtool's static
+> analysis of stack frames, causing it to incorrectly flag tail call
+> optimizations.
 
-Do you mind if I take the whole set through the bpf tree ?
+Maybe we should instead just split out a separate
+submit_lock_objects_vmbind() and restore the error path 'goto error'
+instead of returning from within the loop?  Ie. basically revert
+submit_lock_objects to the way it was before commit 92395af63a99
+("drm/msm: Add VM_BIND submitqueue"), and then move the rest into a
+new fxn (with 'goto error' instead of 'return ret'?  In retrospect the
+vmbind case is kinda just shoehorned into the existing fxn.
 
-I'm planning to send bpf PR in a couple days, so by -rc1
-all trees will see the fix.
+I can type up this version if you have better things to do.
+
+BR,
+-R
+
+> Fixes: 92395af63a99 ("drm/msm: Add VM_BIND submitqueue")
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/gpu/drm/msm/msm_gem_submit.c | 43 ++++++++++++----------------
+>  1 file changed, 19 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/m=
+sm_gem_submit.c
+> index 5f8e939a5906..253347b6e328 100644
+> --- a/drivers/gpu/drm/msm/msm_gem_submit.c
+> +++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+> @@ -276,46 +276,41 @@ static int submit_lock_objects(struct msm_gem_submi=
+t *submit)
+>  {
+>         unsigned flags =3D DRM_EXEC_INTERRUPTIBLE_WAIT;
+>         struct drm_exec *exec =3D &submit->exec;
+> -       int ret;
+> +       int ret =3D 0;
+>
+> -       if (msm_context_is_vmbind(submit->queue->ctx)) {
+> +       if (msm_context_is_vmbind(submit->queue->ctx))
+>                 flags |=3D DRM_EXEC_IGNORE_DUPLICATES;
+>
+> -               drm_exec_init(&submit->exec, flags, submit->nr_bos);
+> +       drm_exec_init(&submit->exec, flags, submit->nr_bos);
+>
+> -               drm_exec_until_all_locked (&submit->exec) {
+> +       drm_exec_until_all_locked (&submit->exec) {
+> +               if (msm_context_is_vmbind(submit->queue->ctx)) {
+>                         ret =3D drm_gpuvm_prepare_vm(submit->vm, exec, 1)=
+;
+>                         drm_exec_retry_on_contention(exec);
+>                         if (ret)
+> -                               return ret;
+> +                               break;
+>
+>                         ret =3D drm_gpuvm_prepare_objects(submit->vm, exe=
+c, 1);
+>                         drm_exec_retry_on_contention(exec);
+>                         if (ret)
+> -                               return ret;
+> -               }
+> -
+> -               return 0;
+> -       }
+> -
+> -       drm_exec_init(&submit->exec, flags, submit->nr_bos);
+> -
+> -       drm_exec_until_all_locked (&submit->exec) {
+> -               ret =3D drm_exec_lock_obj(&submit->exec,
+> -                                       drm_gpuvm_resv_obj(submit->vm));
+> -               drm_exec_retry_on_contention(&submit->exec);
+> -               if (ret)
+> -                       return ret;
+> -               for (unsigned i =3D 0; i < submit->nr_bos; i++) {
+> -                       struct drm_gem_object *obj =3D submit->bos[i].obj=
+;
+> -                       ret =3D drm_exec_prepare_obj(&submit->exec, obj, =
+1);
+> +                               break;
+> +               } else {
+> +                       ret =3D drm_exec_lock_obj(&submit->exec,
+> +                                               drm_gpuvm_resv_obj(submit=
+->vm));
+>                         drm_exec_retry_on_contention(&submit->exec);
+>                         if (ret)
+> -                               return ret;
+> +                               break;
+> +                       for (unsigned i =3D 0; i < submit->nr_bos; i++) {
+> +                               struct drm_gem_object *obj =3D submit->bo=
+s[i].obj;
+> +                               ret =3D drm_exec_prepare_obj(&submit->exe=
+c, obj, 1);
+> +                               drm_exec_retry_on_contention(&submit->exe=
+c);
+> +                               if (ret)
+> +                                       break;
+> +                       }
+>                 }
+>         }
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  static int submit_fence_sync(struct msm_gem_submit *submit)
+> --
+> 2.39.5
+>
 
