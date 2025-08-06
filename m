@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-758062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAFCB1CA78
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:16:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E63B1CA7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D83817C3D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F49722CF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAD429E10A;
-	Wed,  6 Aug 2025 17:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ED02BE04E;
+	Wed,  6 Aug 2025 17:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtfGF0JX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVnFYxq4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57612BD580;
-	Wed,  6 Aug 2025 17:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499EE29B783;
+	Wed,  6 Aug 2025 17:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500529; cv=none; b=ZgafdR9NftJggMy9Nyl9zrvXPRM41JC2wdKw/fxOOTyHELqc65OPBEwPXN/OVHxGDtwjgtPknj5pRl+t3xW6Etn2CQchTjwrW+o7Pj07axxNGszfNWP6PAtpFcIjr06BSDgr+C4PnE9oNVfz65nRFAHvAP9ZR5VWd0cO2vkfp8A=
+	t=1754500531; cv=none; b=JSG5ofsYeyDcuWkU0uLmnDoImGv47LYH06MU2GcCdJIm3Gp7KgwWoQywNKAehJDaQatSQS5/qqBia5rBfuC4paZhLnRxMqvfLV4bLDR+RqbKiGZa/4Yfvmd4+g4VhScCSBzIBJ3EFQVNBSka40nCYbunScc3Mk5leZoQfJk07Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500529; c=relaxed/simple;
-	bh=8B0NliE6n4LX04m96CKEoounFlBMNv1G5wfUZ2Px2js=;
+	s=arc-20240116; t=1754500531; c=relaxed/simple;
+	bh=dP7LyJUuqyT/LSIjq7xZNcRuTUR3KNybdoTzyNUZlc0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O9l6vn4KijzXT1njW0QL2ooOqhpPVy8OBciZWN4fGg7EqyDeL5OtyuDOHK++XOxs8W90wP6SQvmPhwdwBDBOGwjSZSpdUGfoRwvuoccYbU/QCs1PaigsmNOJFrHKkVjFzZrrPv5MjUm6ASlGOeYeleelCpmBlxoE7Wx76kpnlXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtfGF0JX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7EFC4CEF7;
-	Wed,  6 Aug 2025 17:15:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=P4fFgAfOX7msT8sVTDI6gvbB0FAbPSp/LqtuODzdM6LmXP7K8HK2R9VPCeyU8pXXRLjTgweeqLeX1VoWu5ejF/O3m0M/EOKL9+dLseTi0B7za92Kr6O0+1+qBorvSWHTIHLCr/Ur+stvVle1FieIO/XySIiGT80sbJXviuuaJJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVnFYxq4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2350AC4CEE7;
+	Wed,  6 Aug 2025 17:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754500529;
-	bh=8B0NliE6n4LX04m96CKEoounFlBMNv1G5wfUZ2Px2js=;
+	s=k20201202; t=1754500531;
+	bh=dP7LyJUuqyT/LSIjq7xZNcRuTUR3KNybdoTzyNUZlc0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dtfGF0JXvAFud8q/t+UzlW9sRz3VRGJF87Qexg5vE4OaYMrJb2B715zgsV1A+Tk/5
-	 LBOLkfZLw/tv/rNIRNbDpiRqqXhkLjV0wMOPwUj+/09DvhKSmD07mEkaJmJOlUSllu
-	 NpsfTmECkgqyNxtezLWWdhtJv63DDOdSdsxdIcW2x6mQP5swa0xi6in0VLUV9Q7EGl
-	 nguYPEePZ/YujzBUT5O5hKBsrCK0dAc/NmHdguzZnuC+hGA4VfivNa2FtOc/5+F5OP
-	 FTUjvKqSRjcewEoFk7jTFWmDpmIatyVCt7ETPBLkMl3s7tFJKz3fj+ka130OmPEjaw
-	 DZlVrU44YrbzA==
+	b=NVnFYxq4+64ZbTuTkRxzPZd+V9z/QGfybK++rPtLHonfQu4qIXoV4XNXJDM8BsJLw
+	 Y25OUy64NbX3NbHfc7LsoGKJaC9kSP4/xazcIQ5CLBYqyW7Y/pPivZ9fhBP8pzzsj0
+	 ANBzHfSPrasxaqPbgb3QbcXyX0pzsy6iBr9Pex8Qad9X/IGhME/4UVahmBfHlu4uB3
+	 tSZZ11kygnjAiz1cae2EpqvOiLlO4Ue+eIBc1NrewxhclzTn3IFAlPuNb6y9BWq630
+	 IFzSEP1yj5huksV/s5bpDdbo4nbXBIMvuZY9AL/kA+tCsUbqY9kO+sH/6Og1SoZkIG
+	 XnYVJ4fPGtc9A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE0F383BF63;
-	Wed,  6 Aug 2025 17:15:44 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D0E383BF63;
+	Wed,  6 Aug 2025 17:15:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,48 +51,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V3 0/5] Add an optimization also raid6test for RISC-V
- support
+Subject: Re: [PATCH v5 0/7] riscv: Add support for xmipsexectl
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175450054334.2863135.1157154910946265186.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Aug 2025 17:15:43 +0000
-References: <20250718072711.3865118-1-zhangchunyan@iscas.ac.cn>
-In-Reply-To: <20250718072711.3865118-1-zhangchunyan@iscas.ac.cn>
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- charlie@rivosinc.com, song@kernel.org, yukuai3@huawei.com,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhang.lyra@gmail.com
+ <175450054474.2863135.5887102129908490866.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Aug 2025 17:15:44 +0000
+References: <20250724-p8700-pause-v5-0-a6cbbe1c3412@htecgroup.com>
+In-Reply-To: <20250724-p8700-pause-v5-0-a6cbbe1c3412@htecgroup.com>
+To: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Cc: linux-riscv@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, corbet@lwn.net, palmer@sifive.com,
+ conor@kernel.org, djordje.todorovic@htecgroup.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, conor.dooley@microchip.com,
+ alexghiti@rivosinc.com, arikalo@gmail.com, rvishwanathan@mips.com
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Alexandre Ghiti <alexghiti@rivosinc.com>:
 
-On Fri, 18 Jul 2025 15:27:06 +0800 you wrote:
-> The 1st patch is a cleanup;
-> Patch 2/4 is an optimization that takes Palmer's suggestion;
-> The last two patches add raid6test support and make the raid6 RVV code buildable on user space.
+On Thu, 24 Jul 2025 17:23:24 +0200 you wrote:
+> This patch series adds support for the xmipsexectl vendor extension.
+> A new hardware probe key has also been added to allow userspace to probe for MIPS vendor extensions.
 > 
-> V3:
-> - Rephrased the commit message of patch 3;
-> - Added Alex's Reviewed-by on patch 1-2;
+> Additionally, since the standard Zihintpause PAUSE instruction encoding is not supported on some MIPS CPUs,
+> an errata was implemented for replacing this instruction with the xmipsexectl MIPS.PAUSE alternative encoding.
+> 
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [V3,1/5] raid6: riscv: Clean up unused header file inclusion
-    https://git.kernel.org/riscv/c/37b36d582c02
-  - [V3,2/5] raid6: riscv: replace one load with a move to speed up the caculation
-    https://git.kernel.org/riscv/c/ae1e25a17cee
-  - [V3,3/5] raid6: riscv: Prevent compiler with vector support to build already vectorized code
-    https://git.kernel.org/riscv/c/eda46027e4b6
-  - [V3,4/5] raid6: riscv: Allow code to be compiled in userspace
-    https://git.kernel.org/riscv/c/e3493fde9c22
-  - [V3,5/5] raid6: test: Add support for RISC-V
-    https://git.kernel.org/riscv/c/db001a4e2eca
+  - [v5,1/7] dt-bindings: riscv: Add xmipsexectl ISA extension description
+    https://git.kernel.org/riscv/c/06d48c2c4f83
+  - [v5,2/7] riscv: Add xmipsexectl as a vendor extension
+    https://git.kernel.org/riscv/c/02b01dfaf4fa
+  - [v5,3/7] riscv: Add xmipsexectl instructions
+    https://git.kernel.org/riscv/c/d85071f97570
+  - [v5,4/7] riscv: hwprobe: Add MIPS vendor extension probing
+    https://git.kernel.org/riscv/c/20b80c735c05
+  - [v5,5/7] riscv: hwprobe: Document MIPS xmipsexectl vendor extension
+    https://git.kernel.org/riscv/c/c714fbc023df
+  - [v5,6/7] riscv: Add tools support for xmipsexectl
+    https://git.kernel.org/riscv/c/378afb53aab2
+  - [v5,7/7] riscv: errata: Fix the PAUSE Opcode for MIPS P8700
+    https://git.kernel.org/riscv/c/838218910ea3
 
 You are awesome, thank you!
 -- 
