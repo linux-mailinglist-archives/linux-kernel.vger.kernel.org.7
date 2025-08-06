@@ -1,159 +1,161 @@
-Return-Path: <linux-kernel+bounces-758199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953F3B1CC52
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:09:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F5EB1CC58
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5E18C565B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CDC562198
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B253229DB92;
-	Wed,  6 Aug 2025 19:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559E2BD015;
+	Wed,  6 Aug 2025 19:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhlIJ6sW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJObUTcV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E501D31B9;
-	Wed,  6 Aug 2025 19:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFE13C01;
+	Wed,  6 Aug 2025 19:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754507354; cv=none; b=ajB3I+kAUIjwXdxcWIfE4VyXa/KNLUdiCE9c1jnmsRp++Q+P3mm6oHZzhahvMkNmRCnbrjpjnn+4H/oBVIIcyLliV4WASo+/WPnPXVtrOtP4GgQm6qdradQmDFamhnePceeYl0bKchz/5EE0c2qx45H7cu44/58S3gF9N7ryYT0=
+	t=1754507568; cv=none; b=kZBxGPj3TCGXw4mCHd2DYWU1oSXSYyGIBmHHrYBuvcjgdXQ2a6Jxjxu1wxGWh7tmKSYe8QL33mM/LjgfX1hpKn5y9B6RoL4AU7W5oQvm4H/tmK2rHNOmV1O2AnUZF5PoswbhyZqN7d4IvMAia3xvk3gAMrjNrsFUF5lnsoyLk/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754507354; c=relaxed/simple;
-	bh=7N8Q4W4P+6iSheRgtygd3ecelGl8Z6De2VbO2stv2v0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BUPToGAPKX2Sya70il0nhI+TXhdfoWsncjpaTbiOmpRmgq1r513kSvB+Qnk1jgX1yVVJIykrAcTIRf4Cs5vIwjXn82+PuGaQtoT0ygMDl75CJvf5/mPjbYlvInNRedXcfaQr4b/5odJlgNYm+ivFhWPE7G9wp+FePdMQNh1MXxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhlIJ6sW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA30C4CEE7;
-	Wed,  6 Aug 2025 19:09:13 +0000 (UTC)
+	s=arc-20240116; t=1754507568; c=relaxed/simple;
+	bh=63oiH47TpNrKg8vSfBfA+XroUg56FkruM6tDGJa3KA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jLeiyRdACzJQVEAwQWLPbDaNJ8g2ZJ29FYdiYZ3+Vqle9Yg9DIWUKijo/mCEhjNIMrm1RYHDj3DFAInyxErmf0Mk2IKfWgAZ/n/r1u++mvLwA+Z6eApgTE+9L9kewli93C6G2HX0kowCdZDyuFXS6k6vkuSeW76ZHzTRnsoU5Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJObUTcV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5A1C4CEE7;
+	Wed,  6 Aug 2025 19:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754507353;
-	bh=7N8Q4W4P+6iSheRgtygd3ecelGl8Z6De2VbO2stv2v0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FhlIJ6sWU67KGuHY4kg17vJ/xHLHncT5RcqKqgfAAe4wgP59od2t0gwdpxQumJOoq
-	 9FLbkdA0zzJGKjl/NSUua4bMyJ2vlRBzXGWP9iJr3FUEx7JJBzkJYgxIRV9SA2QI1G
-	 I1cpET67sPVAjwOcOAKzdVYFez0zluQNS8G/x/f7MYajF8en2fyD4whBiYXse9C7Aj
-	 Rs1CNnkUaqX6eJIIrBIcyYtCFTgM0bmtyYHYHQ1ugpoexU1dyGSOzbA0Mbi2UVUE4Y
-	 lqECCF46lRHcG9QgxkRQ4YS6W624J7vb0CwvixlUS+Vw7Cd5lzooPLUCfpR8dHmatx
-	 gFp5NnkXjDd8g==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: Re: [PATCH] mm/damon/core: skip needless update of next_{aggregation,ops_update}_sis
-Date: Wed,  6 Aug 2025 12:09:10 -0700
-Message-Id: <20250806190911.49728-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250806164316.5728-1-bijan311@gmail.com>
-References: 
+	s=k20201202; t=1754507567;
+	bh=63oiH47TpNrKg8vSfBfA+XroUg56FkruM6tDGJa3KA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EJObUTcVdLBwCfMCLh2osZjFACQQgVCUtz8cfWIdVaclvA1ChLJlI9I8vLt7nk+92
+	 +WnsMFK5jMNiaUR8sOLGK2iCANup7cRV2gNXt1l9xCJK6Z4eBGmLzgViZG+kKpo9DE
+	 +qtgcGKOs2+HY+OFmuRdJlhFLw3bFAwnKQJDpFREvCy3afbps3P758/e2njEwy9T+t
+	 aIWldOBR/yr52doaCpEpmrBI73snnic5aE/MjnhDCoRZsUL7BMw0Vqn20e/ogLmWIt
+	 E6PDxPBGCqt665IGD99LE5MhtXkuLMk5dMA4Ohxcv8ArnvMTs3uY9+gJgnrq6Fveny
+	 bD9Gv+dSD6h/g==
+Date: Wed, 6 Aug 2025 20:12:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH RFC net-next v4 09/12] vsock/loopback: add netns support
+Message-ID: <20250806191239.GF61519@horms.kernel.org>
+References: <20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com>
+ <20250805-vsock-vmtest-v4-9-059ec51ab111@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805-vsock-vmtest-v4-9-059ec51ab111@meta.com>
 
-Hi Bijan,
+On Tue, Aug 05, 2025 at 02:49:17PM -0700, Bobby Eshleman wrote:
+> From: Bobby Eshleman <bobbyeshleman@meta.com>
+> 
+> Add NS support to vsock loopback. Sockets in a global mode netns
+> communicate with each other, regardless of namespace. Sockets in a local
+> mode netns may only communicate with other sockets within the same
+> namespace.
+> 
+> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
-On Wed,  6 Aug 2025 11:43:16 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+...
 
-> From: Bijan Tabatabai <bijantabatab@micron.com>
-> 
-> In damon_set_attrs(), ctx->next_{aggregation,ops_update}_sis would be
-> reset, even if the sample interval, aggregation interval, or ops update
-> interval were not changed. If damon_set_attrs() is called relatively
-> frequently, such as by frequent "commit" operations, aggregation and ops
-> update operations could be needlessly delayed.
-> 
-> This patch avoids this by only updating next_{aggregation,ops_update}_sis
-> if the relevant intervals were changed.
-> 
-> Cc: Bijan Tabatabai <bijan311@gmail.com>
-> Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
-> ---
-> This patch came from discussions in [1].
-> 
-> [1] https://lore.kernel.org/all/20250805162022.4920-1-bijan311@gmail.com/
+> diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
 
-Thank you for sending this patch as we discussed on the thread!
+...
 
-> ---
->  mm/damon/core.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index 6a2fe1f2c952..1c3d8b92257c 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -693,6 +693,12 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
->  	unsigned long sample_interval = attrs->sample_interval ?
->  		attrs->sample_interval : 1;
->  	struct damos *s;
-> +	bool sample_interval_changed = ctx->attrs.sample_interval !=
-> +		attrs->sample_interval;
-> +	bool aggr_interval_changed = ctx->attrs.aggr_interval !=
-> +		attrs->aggr_interval;
-> +	bool ops_update_interval_changed = ctx->attrs.ops_update_interval !=
-> +		attrs->ops_update_interval;
->  	bool aggregating = ctx->passed_sample_intervals <
->  		ctx->next_aggregation_sis;
+> @@ -46,7 +57,7 @@ static int vsock_loopback_cancel_pkt(struct vsock_sock *vsk)
+>  	return 0;
+>  }
 >  
-> @@ -710,10 +716,12 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
->  	if (!attrs->aggr_samples)
->  		attrs->aggr_samples = attrs->aggr_interval / sample_interval;
->  
-> -	ctx->next_aggregation_sis = ctx->passed_sample_intervals +
-> -		attrs->aggr_interval / sample_interval;
-> -	ctx->next_ops_update_sis = ctx->passed_sample_intervals +
-> -		attrs->ops_update_interval / sample_interval;
-> +	if (sample_interval_changed || aggr_interval_changed)
-> +		ctx->next_aggregation_sis = ctx->passed_sample_intervals +
-> +			attrs->aggr_interval / sample_interval;
-> +	if (sample_interval_changed || ops_update_interval_changed)
-> +		ctx->next_ops_update_sis = ctx->passed_sample_intervals +
-> +			attrs->ops_update_interval / sample_interval;
->  
->  	damon_update_monitoring_results(ctx, attrs, aggregating);
->  	ctx->attrs = *attrs;
+> -static bool vsock_loopback_seqpacket_allow(u32 remote_cid);
+> +static bool vsock_loopback_seqpacket_allow(struct vsock_sock *vsk, u32 remote_cid);
 
-Long story short, this (original) code is bit complicated and hence I suggest
-to make this change less optimum but simpler.
+This change needs to be squashed into
+PATCH 3/12 vsock: add netns to af_vsock core
 
-damon_update_monitoring_results() assumes it is called only just after
-next_{aggr,ops_update}_sis are  updated.  And the assumption is important for
-the pseudo-moving-sum access frequency maintenance.  As a result, this can make
-the monitoring results temporarily corrupted, and splat warning once.  Please
-refer to commit 591c4c78be063 ("mm/damon/core: warn and fix nr_accesses[_bp]
-corruption") or the patch thread[1] if you want more details.
+To avoid build breakage.
 
-Also damon_set_attrs() is called not only from commit situation.  So I think
-this maybe not an ideal part to modify.
+Likewise with the other change to vsock_loopback_seqpacket_allow below.
+And I think also for a number of other changes made by PATCH 3/12.
 
-What about modifying damon_commit_ctx() to check if new and old
-damon_ctx->attrs are entirely same, and skip calling damon_set_attrs() in the
-case?  Doing the entire damon_attrs comparison might be suboptimum, but would
-make the change simpler.  I assume the suboptimum comparison is not a real
-problem for your use case, so I think that could be a good tradeoff?
-
-Also, I realize the moving sum access frequencies maintenance and
-damon_set_attrs() are not well documented and organized.  I will try to make
-those better cleaned up and documented.
-
-[1] https://lkml.kernel.org/r/20250513002715.40126-2-sj@kernel.org
+Please make sure that patches don't introduce transient build failures.
+It breaks bisection.
 
 
-Thanks,
-SJ
+On the topic of vsock_loopback_seqpacket_allow, also:
 
-> -- 
-> 2.43.0
+* Please line wrap this so that the code is 80 columns wide or less,
+  as is still preferred for Networking code.
+
+  Flagged by checkpatch.pl --max-line-length=80
+
+* Can we move the definition of vsock_loopback_seqpacket_allow() here?
+  The function itself is is trivial. And doing so would avoid a forward
+  declaration.
+
+>  static bool vsock_loopback_msgzerocopy_allow(void)
+>  {
+>  	return true;
+
+...
+
+> +int vsock_loopback_init_net(struct net *net)
+> +{
+> +	net->vsock.loopback = kmalloc(GFP_KERNEL, sizeof(struct vsock_loopback));
+> +	if (!net->vsock.loopback)
+> +		return -ENOMEM;
+> +
+> +	return vsock_loopback_init_vsock(net->vsock.loopback);
+> +}
+> +
+> +void vsock_loopback_exit_net(struct net *net)
+> +{
+> +	vsock_loopback_deinit_vsock(net->vsock.loopback);
+> +	kfree(net->vsock.loopback);
+> +}
+
+I think EXPORT_SYMBOL_GPL is needed for both vsock_loopback_exit_net and
+vsock_loopback_init_net for the case where CONFIG_VSOCKETS=m
+
+Also, in Kconfig VSOCKETS_LOOPBACK depends on VSOCKETS. But this code adds
+a reverse dependency. As it stands it's possible to configure VSOCKETS
+without VSOCKETS_LOOPBACK, which will not compile.
+
+Perhaps stub implementations of vsock_loopback_init_net and
+vsock_loopback_exit_net should be implemented in af_vsock.h if
+VSOCKETS_LOOPBACK is not enabled?
+
+...
+
+-- 
+pw-bot: changes-requested
 
