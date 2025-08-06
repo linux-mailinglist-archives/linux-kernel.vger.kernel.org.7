@@ -1,168 +1,334 @@
-Return-Path: <linux-kernel+bounces-757169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA47B1BE91
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA21B1BE9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA4307AC93A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB0E168208
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDFC19ABD8;
-	Wed,  6 Aug 2025 02:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D291E18A6DB;
+	Wed,  6 Aug 2025 02:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MOplgINl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dIREp0Sd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7ADB43AA1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 02:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84BE38DDB;
+	Wed,  6 Aug 2025 02:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754445802; cv=none; b=UyoKbwhkG9Klo8L4tL4YJcwbYHk6fiDQn2Hv992dcw3NyOWXAJAf1h+as7rzs6OesX2s2MO5uJZQM0gNWx6USp6d7G0eplsfMVCySXgH3ImcCUToK3uyqfEshm5suRVI7XdM9uJ0RmYkt2bnTO3ZJFRIBwtj1Ukdcy4mZ5vWsRw=
+	t=1754445994; cv=none; b=jQDg3IQDTa9U0ItezkSSDcEm3DUHJ/6l8+SuMvQJ7IjXpC7xaNOYPLa1rm9O+yxxzPV32gvH/pVY/vX/lnCAPtH7uGbHI/dP1KjiJdiQlfrCqA4rdPzHiIIbwzoUjQYm9hc1IYWNNU7Frs4zx77u+K64t3pZGkXp68af+ULRBeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754445802; c=relaxed/simple;
-	bh=yQ0X5Sh2IRFr6+WChcckko5DuqGHABmbY7j2aD3oLhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CcetuMx6DwGPf+uhyA5wEjVD6mAARpdwC3KcdeaYbivtuje+c3nLJRwfvRl7kqOM9Lo429vaO4WKOwotBt7qt3D5KihUkhwOSPjZKmaUm4ZimDiIcQdIRLI0uHcR/f+dv5PlzK1RPu74tdKUiOyoCHiBbfBuHbxbAHZzucNrk5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MOplgINl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5761exx8022254
-	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 02:03:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Pa6eon19WOoAfQ7dFcaevq1RhDE8WqrMwPaomjOaHfE=; b=MOplgINlR29H83KC
-	016aSkAkanGrhhijQXj6ThKqAZVKR5SxiiyM2AFT2rDMJTMF0tXbkIkYYRan1hYU
-	ailacuvphKKO5w+TVFa7poLXFJ1EU/cOl3XxxSt5sM8Xz0aAMOU3j4FlF5Z6nyTD
-	V2cEL82GUfQSku7WbGp5A4ZLnPMCU5fH8ajosMYtlw40gdx3/erFner+A8Nj+ZOj
-	vGSUXignxHF30OkyRJ+XVUDK/hI03wm+SEnUUQym4uIkp5aHWAsS1+aznqa2oh9G
-	6+ro+LUyabusj7uzbMcoxvdz62YbatkIkzqVCTueJZud5FNu52luo/tib6KoiVFV
-	TBMYiQ==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw311jm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:03:19 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b42249503c4so370836a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 19:03:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754445798; x=1755050598;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pa6eon19WOoAfQ7dFcaevq1RhDE8WqrMwPaomjOaHfE=;
-        b=V4dvQh2beQP2yCaAgAAvXK3hHiHMabY8XnqXpjXGj2syeMzx21lSXrPjgIodyWnpxe
-         cKeSgihmm1XhfH+rIG6jGRKZjqj3sTUCAHVvIU8pc+7ypGpgNnGKn+TP8/5QHAKiMI8b
-         6p3XDVEy6knrXcRJwyQV3DlR15yADjWVdhzoC5MFdU/dU580mDh6IVUA4h41DEK1PoyW
-         QZ8p1XHIR4hK2Itsz7krLODQ0nH2/2GYGLTGg/bQ4ZUy3ii/PzKMEr5WGvRUM4AFWPtT
-         VtsAkoW/IBRw8G5F3UjItln+T14zaHskcxj1y1qKGfg2QIcUtlEYn+5y43gyXkjVI8WF
-         AIVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVczM203qP+Inu/wmL1CTVWFB4u2Gem4VvzFtj/Yo2aY2RpnbSJRysFveLev5G3hdK2ahECnh8qf42qGmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzgmciM4IfS+35HZTzpgARVSOzyeGQD0a0n/jwDVoJE4wHpIEY
-	TN4teP0YkD86s0aHv8AAlnHAsl7/XqN9mxPTMm3AMPbpPjoIK4NLg8pGKHl8Ljp8Zzm8uYQXZ6W
-	YHYKUPhA01jJ4T2ZgFcS0ceuriDHnw5l+/d57q0vs5xRd9555pFHwCeMiSErufr5KU4k=
-X-Gm-Gg: ASbGncu4qjJSrgZaRIo11Tfbgh5h/ZtT2eNIaRNFH7OYHn2xBVXFc7jAj/JbZtutH0+
-	9pccwKdhUZdnMhDFczNjwS8Ja6WfQkbykw+tvPOpfGt4wy268fObd2dTutpNDoUvHhNifeLFFoK
-	YVT5L/xpMphzjCulIvb132Luw4G2EjIYIc6jvz7n/pALeUwe5bUcv2Hn2mNrDv7PnJDviHJhIPI
-	H1S09waIis28N9DQj1Gl+hJumcB5cwl5fCKVuoACoqspSxf+EjeWv3HNrNuqqk1ou8uS/Lizuy+
-	pxQODXmHXdhy3yZiwfmgM4YX4fVMBwVkjfExo9e5f3PLaH+T42o1HnN1FJ6ez/Sgm5Xuo7nE7rz
-	b8eRN+znTQf8H3w7cLEUJW6T8cqKRCFM=
-X-Received: by 2002:a17:903:4b50:b0:240:1ed3:fc28 with SMTP id d9443c01a7336-2429f957616mr15542775ad.12.1754445798485;
-        Tue, 05 Aug 2025 19:03:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHL2wny7m01oo9UXpqJQf/8c7aXFeRWf4P3nmdOkRL20z1AyuApVrl5radxSkk4RNf5Mx+owA==
-X-Received: by 2002:a17:903:4b50:b0:240:1ed3:fc28 with SMTP id d9443c01a7336-2429f957616mr15542315ad.12.1754445798000;
-        Tue, 05 Aug 2025 19:03:18 -0700 (PDT)
-Received: from [10.249.10.160] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8975acbsm146214855ad.85.2025.08.05.19.03.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 19:03:17 -0700 (PDT)
-Message-ID: <972e0ef6-9068-438e-b02b-f48a2fe22e2a@oss.qualcomm.com>
-Date: Wed, 6 Aug 2025 10:03:11 +0800
+	s=arc-20240116; t=1754445994; c=relaxed/simple;
+	bh=nnBwTSC209K3q4e6ORVgVpaQQzSbHoYzuw45O30/ZkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LK48+qbiW7q4IUEzkGsmHjeHIZeVA0SfP56qa+SJjZQsG9aAfHAVNEVnsirF3vnZv0b9MUEc4huVcqWpyyIKo1alyStcQDKShENbu4Xqv2jrEPe1zdeKWQZxDNzwRQIlR/vDh1uBjayCNFOnxuJSsMfGs/Jfo2ixnacR2VWWMmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dIREp0Sd; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754445992; x=1785981992;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nnBwTSC209K3q4e6ORVgVpaQQzSbHoYzuw45O30/ZkI=;
+  b=dIREp0SdEXQXE3IIaFjXjvpUjDnMGv7IfqYnQPRRL6FPNZcwLKlFuzk7
+   aZOHY5KbYmwgb0q8S+3WFPq6SLgIg1+//a1D7Wuy2CFGJHfevWjSyMVFw
+   Kg+7kuipH4Hkhn2XeK41gCnlci0snsI00geq8K9mVXf1fs7gvX6ldsN/y
+   lapCV1ZIqoQRhWlXHbu336j4fSpj2PygzODWrT46SD158I0u+iwaHCN9t
+   3xYHVwjCu8OMccWwQJUX0cKbvMmmvX65aTznqfPsaJm/BpS+NuARUJees
+   V1RuI38S3Gl9sHHhZYlEgdzSty//6H8AIGj57T+8LfgaNDytVGTnRcqxO
+   Q==;
+X-CSE-ConnectionGUID: HK7K3lYfT5iAAQK3oh98gA==
+X-CSE-MsgGUID: BqdkSNPhTDmVDIlW3/DUvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56898857"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56898857"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 19:06:31 -0700
+X-CSE-ConnectionGUID: qqDZm+mbT+KUmvSFZA6eGw==
+X-CSE-MsgGUID: GAaq7cCFSDal7+AU0aSj3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164550223"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 05 Aug 2025 19:06:24 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujTXp-0000uo-2R;
+	Wed, 06 Aug 2025 02:06:21 +0000
+Date: Wed, 6 Aug 2025 10:04:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 2/5] phy: rockchip: phy-rockchip-typec: Add
+ typec_mux/typec_switch support
+Message-ID: <202508060926.LBB36bfZ-lkp@intel.com>
+References: <20250729090032.97-3-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] arm64: dts: qcom: Add display support for QCS615
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
-        Li Liu <quic_lliu6@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>
-References: <20250718-add-display-support-for-qcs615-platform-v5-0-8579788ea195@oss.qualcomm.com>
- <20250718-add-display-support-for-qcs615-platform-v5-1-8579788ea195@oss.qualcomm.com>
- <e2dbef3b-89b4-41cb-b94f-9b432de36802@kernel.org>
-Content-Language: en-US
-From: Fange Zhang <fange.zhang@oss.qualcomm.com>
-In-Reply-To: <e2dbef3b-89b4-41cb-b94f-9b432de36802@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX2nV8rGcUc0Kg
- BJ5rHa5atMoXXO0b0SU5WaToE/meHnuh/5w0K0D/wRAFTI2APKyfJM8ohiAVDWUSBPmVhyZyyuu
- WQ9yPhg8AKLIzJt8V9iF6UN0I84tOMkip3GEXPqrVA7W+tKbD9YF3kWbAPFrhOc32g0xIy5euTd
- HsbKXroZHEAtwRkqH5aj4Cj6t6sw04eh+AWb81AsBzQYUXP9IxbZPLG+w/iphHnPgbqD/nNZCOd
- Xjjpkt6h3l68eYOgOZrZpFAUIniK5seCJP4+2Lj+J6wEz/DCpa+Rmw2xrhWoQ5gJpWTCkgc9nXc
- a5vAKKeuO92JbOegic3bnb9Hm3z55uvBme/Q6z78D91Z+nWjK2tit3bCQgFkkn5AHkXlZe3WFqW
- +4nCMN7K
-X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=6892b7e7 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=BaePNsoVr1Wy0kwGYTwA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: f2ICyIIhgB1sVFIsVgehtHS4fGLPsFQS
-X-Proofpoint-ORIG-GUID: f2ICyIIhgB1sVFIsVgehtHS4fGLPsFQS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729090032.97-3-kernel@airkyi.com>
 
+Hi Chaoyi,
 
+kernel test robot noticed the following build warnings:
 
-On 7/29/2025 8:36 PM, Krzysztof Kozlowski wrote:
-> On 18/07/2025 14:56, Fange Zhang wrote:
->> From: Li Liu <quic_lliu6@quicinc.com>
->>
->> Add display MDSS and DSI configuration for QCS615 platform.
->> QCS615 has a DP port, and DP support will be added in a later patch.
->>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 181 ++++++++++++++++++++++++++++++++++-
->>   1 file changed, 180 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index 142338069a74cc6c263e17d84efa22ccd0c26813..24299430b195026e896c365d80a0036713f00d35 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -10,6 +10,7 @@
->>   #include <dt-bindings/clock/qcom,qcs615-videocc.h>
->>   #include <dt-bindings/clock/qcom,rpmh.h>
->>   #include <dt-bindings/dma/qcom-gpi.h>
->> +#include <dt-bindings/gpio/gpio.h>
-> 
-> Don't add completely redundant/unused headers.
-> 
-> Drop
+[auto build test WARNING on next-20250729]
+[also build test WARNING on linus/master v6.16]
+[cannot apply to robh/for-next rockchip/for-next krzk/for-next krzk-dt/for-next v6.16 v6.16-rc7 v6.16-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Got it, will remove it in next patch>
-> 
-> Best regards,
-> Krzysztof
+url:    https://github.com/intel-lab-lkp/linux/commits/Chaoyi-Chen/dt-bindings-phy-rockchip-rk3399-typec-phy-Support-mode-switch/20250729-170255
+base:   next-20250729
+patch link:    https://lore.kernel.org/r/20250729090032.97-3-kernel%40airkyi.com
+patch subject: [PATCH v3 2/5] phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
+config: loongarch-randconfig-002-20250730 (https://download.01.org/0day-ci/archive/20250806/202508060926.LBB36bfZ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508060926.LBB36bfZ-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508060926.LBB36bfZ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   vmlinux.o: warning: objtool: iov_iter_zero+0x1c4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: copy_folio_from_iter_atomic+0x3e8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_advance+0xbc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_revert+0xd4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_single_seg_count+0x78: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_is_aligned+0xe0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_alignment+0xa8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_npages+0xd8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iov_iter_extract_pages+0x1dc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rhashtable_jhash2+0x128: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: refcount_warn_saturate+0x50: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: string_unescape+0x2ac: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: string_escape_mem+0x3d4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: kstrtobool+0xa0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: vvar_fault.llvm.2652528131661753876+0x4c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: __devm_ioremap.llvm.2872827248248264962+0x78: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: zlib_inflate+0x174: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: find_poly_roots+0x5cc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_compress1X_usingCTable_internal.llvm.16785660852261606571+0x118: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_cParam_getBounds+0x84: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_CCtx_setParameter+0x144: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_CCtxParams_setParameter+0xb0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_CCtxParams_getParameter+0x8c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_CCtx_setCParams+0x184: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_buildEntropyStatisticsAndEstimateSubBlockSize+0x150: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_loadDictionaryContent+0x45c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_buildCTable+0x84: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_compressSuperBlock+0x180: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_fillDoubleHashTable+0x428: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_compressBlock_doubleFast_extDict+0x2a0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_fillHashTable+0x484: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_compressBlock_fast_extDict+0x2f4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_dedicatedDictSearch_lazy_loadDictionary+0x680: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_insertAndFindFirstIndex+0x240: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_insertBt1+0x88: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_readDTableX1_wksp+0x4d4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_decompress1X2_usingDTable_internal+0x118: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_decompress1X1_usingDTable_internal+0x128: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_decompress4X2_usingDTable_internal+0x1014: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_decompress4X1_usingDTable_internal+0xeac: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: HUF_fillDTableX2ForWeight+0x8c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: BIT_initDStream+0x104: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: BIT_initDStream+0x104: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_getFrameHeader_advanced+0x30c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_nextInputType+0x44: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decompressContinue+0x12c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_dParam_getBounds+0x40: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_DCtx_setParameter+0x84: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_DCtx_getParameter+0x50: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decompressStream+0x33c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decodeLiteralsBlock+0x108: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_buildSeqTable+0x80: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decompressSequencesLong+0x208: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decompressSequencesSplitLitBuffer+0x1e4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ZSTD_decompressSequences+0x20c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ERR_getErrorString+0xb0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: FSE_decompress_wksp_bmi2+0x3bc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: xz_dec_run+0x100: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: xz_dec_lzma2_run+0xec: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcj_apply+0x8c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: xz_dec_bcj_reset+0x4c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ei_seq_show+0x50: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: stack_depot_save_flags+0x128: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: asn1_ber_decoder+0x1a4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: msi_lib_init_dev_msi_info+0x90: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rza1_irqc_set_type+0x5c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzv2h_icu_set_type+0xe8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: lpic_get_gsi_domain_id+0x44: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: complete_irq_moving+0xbc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: liointc_set_type+0x68: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pch_pic_set_type+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mchp_eic_domain_alloc+0xc4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mchp_eic_irq_set_type+0x70: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mhi_intvec_threaded_handler+0x130: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mhi_process_ctrl_ev_ring+0x270: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: parse_xfer_event+0xf0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mhi_pm_st_worker+0x154: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mhi_async_power_up+0x14c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: phy_g12a_mipi_dphy_analog_power_on+0x8c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: brcm_sata_phy_init+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: brcm_pm_notifier+0x48: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: brcm_usb_phy_xlate+0x50: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: usb_init_xhci+0x1c0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cdns_torrent_phy_probe+0x824: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cdns_torrent_phy_configure_multilink+0x8f4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cdns_sierra_get_optional+0xf4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_phy_xlate+0xe0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_phy_xlate+0xd8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_phy_init+0x28c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_phy_init+0xb4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: phy_type_show+0x4c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: u2_phy_params_write+0xd4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: u2_phy_params_show+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: u3_phy_params_write+0xd4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: u3_phy_params_show+0x58: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_xfi_tphy_set_mode+0x88: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_hdmi_pll_set_rate+0x5e8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rockchip_usb2phy_otg_sm_work+0xe0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rockchip_chg_detect_work+0x7c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rk3588_usb2phy_tuning+0x54: sibling call from callable instruction with modified stack frame
+>> vmlinux.o: warning: objtool: tcphy_typec_mux_set+0x68: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: omap_control_phy_power+0xe4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: tusb1210_chg_det_work+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: wiz_phy_reset_deassert+0x90: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: xpsgtr_xlate+0x10c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: xpsgtr_lane_set_protocol+0x50: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: amd_gpio_dbg_show+0x144: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: amd_pinconf_get+0x8c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: amd_pinconf_set+0xdc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: amd_gpio_irq_set_type+0x80: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: alt_gpio_irq_type+0x64: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: at91_pmx_set+0x230: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: at91_pinconf_dbg_show+0x33c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: aw9523_pconf_get+0xe0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: aw9523_pconf_set+0x108: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: aw9523_pcfg_param_to_reg+0x54: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_writeable_register+0xa4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_readable_register+0xa0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_volatile_register+0x3c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_irq_set_type+0x70: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_pinconf_get+0x74: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: cy8c95x0_pinconf_set+0x110: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: eqbr_pinconf_get+0x18c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: eqbr_pinconf_set+0x14c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: funcs_utils+0x1a0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: eqbr_gpio_set_irq_type+0x88: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: lpc18xx_pconf_get+0x1dc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: lpc18xx_pconf_set+0x258: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: max77620_pinconf_get+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: max77620_pinconf_set+0x160: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: max77620_set_fps_param+0x7c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pistachio_pinconf_get+0x5c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pistachio_pinconf_set+0x124: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pistachio_gpio_irq_set_type+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pcs_pinconf_set+0x1a8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: th1520_pinconf_get+0xcc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: th1520_pinconf_set+0x11c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: owl_pin_config_get+0x7c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: owl_pin_config_set+0xcc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: owl_group_config_get+0x12c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: owl_group_config_set+0x1e4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: irq_set_type+0x68: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcm281xx_pinctrl_pin_config_set+0x354: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcm2835_gpio_irq_set_type+0x140: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcm2835_gpio_irq_config+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcm6362_pinctrl_set_mux+0xfc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: bcm63268_pinctrl_set_mux+0xfc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iproc_gpio_irq_set_type+0x74: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iproc_gpio_irq_set_type+0x7c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iproc_pin_config_get+0xec: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: iproc_pin_config_set+0x174: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: nsp_gpio_irq_set_type+0xe8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: nsp_pin_config_get+0x78: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: nsp_pin_config_set+0xc4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: madera_pin_probe+0x90: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: madera_pin_conf_get+0xd8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: madera_pin_conf_set+0xe4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pctrl_spec_pull_set_samereg+0x11c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pconf_group_set+0xdc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pconf_group_set+0x158: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pinconf_bias_set_combo+0x418: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pinconf_get+0xfc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pinconf_get+0xd4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pinconf_set+0x130: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: mtk_pctrl_show_one_pin+0x180: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: airoha_pinconf_get+0x6c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: airoha_pinconf_set+0x100: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: airoha_irq_unmask+0xa8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: npcm7xx_config_get+0xa0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: npcm7xx_config_set+0xf0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: npcmgpio_set_irq_type+0x6c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ma35_pinconf_get+0x84: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ma35_pinconf_set+0x1b8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: ma35_irq_irqtype+0x60: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: msm_config_group_get+0xfc: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: msm_config_group_set+0xec: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: msm_config_reg+0x58: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: msm_gpio_irq_set_type+0x430: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pm8xxx_pin_config_get+0x78: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pm8xxx_pin_config_get+0xa0: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pm8xxx_pin_config_set+0xc8: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pm8xxx_pin_config_set+0xec: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: pm8xxx_mpp_probe+0x1b4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: lpi_config_get+0x78: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: lpi_config_set+0x110: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: sh_pfc_config_mux+0x70: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: sh_pfc_pinconf_get+0x94: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: sh_pfc_pinconf_set+0xc4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: sh_pfc_pinconf_validate+0x6c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: r8a77990_pin_to_pocctrl+0x48: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: r8a7794_pin_to_pocctrl+0x84: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: r8a77970_pin_to_pocctrl+0x48: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: r8a779h0_pin_to_pocctrl+0x4c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzg2l_pinctrl_pinconf_get+0x164: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzg2l_pinctrl_pinconf_set+0x338: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzv2h_hw_to_bias_param+0x3c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzn1_pinconf_get+0xa4: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: rzn1_pinconf_set+0xec: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: s3c64xx_gpio_irq_set_type+0x5c: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: s3c64xx_eint0_irq_set_type+0x68: sibling call from callable instruction with modified stack frame
+   vmlinux.o: warning: objtool: sg2042_pconf_get+0xa4: sibling call from callable instruction with modified stack frame
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
