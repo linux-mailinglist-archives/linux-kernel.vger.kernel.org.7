@@ -1,186 +1,97 @@
-Return-Path: <linux-kernel+bounces-757715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77775B1C5DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:30:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58115B1C5DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9382856349C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:30:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85C437A82D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE7328BA91;
-	Wed,  6 Aug 2025 12:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DD828BA99;
+	Wed,  6 Aug 2025 12:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EW9Iebdd"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2Ox/f4I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A9D28B7C6;
-	Wed,  6 Aug 2025 12:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF69192D68;
+	Wed,  6 Aug 2025 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483442; cv=none; b=HoLBAk528Cgf1Ss3wH8xaWDoG0rBmWhJXAkPiuufsbSUUFFuc61C6J+bEEccuS3sT9CxyUUdEOXhyAvJxtQgo2M7MTpw7PWIVkTSJgMTrr/x4WkVr/nfGNt869B4ybn+a2AeO+RE/ZNAuiuvg2I83vawx9vGN0DsnQ56S1Gbn+I=
+	t=1754483466; cv=none; b=E8kgS+6xQdPq7IuyeB06sX6baH+IblbSFWkWGxp1AP0zsFlFLEcuC2/ZwwRbw7aw803/A9OmTmrICFg0BNcuSqIWn+enHzPAuCt0ZvENXinOwLnJgVO9lEHqPpgkCu7KTl2TheWtwuw6nciHGBVq7xsHjf1XLNy2/HdkJC2PZ58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483442; c=relaxed/simple;
-	bh=mSYUh+T5LKyYNPZakKmsiXm0B30JrcVYTIzk5jrro4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Geu+Bq8iQTTc1L9OjZ6NRVTo+nlKoOpJWHnWQEKfyx+D1oBArBFH72dvXc1kzhkZF002Hv19D3q6pBx2kf6tD03IvOZ9MjxJvCcAsMhaVWfXE0SWqjEORAiXovovyDl/i7ofwVAaYwDzW+1/E9k2Spoxt7n9s87/Q5piBGz7GFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EW9Iebdd; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 08CFA2578E;
-	Wed,  6 Aug 2025 14:30:37 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 4fCJ_2J-kINn; Wed,  6 Aug 2025 14:30:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754483435; bh=mSYUh+T5LKyYNPZakKmsiXm0B30JrcVYTIzk5jrro4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EW9IebddAIj6oJPaTxR3Luvi4SbR+tvpbpNMG4Xj3dp25aspX/Uy9BxH+402f6UaE
-	 Amy73reDlzOr7ogRTw8hdC/8nYocyT3fwYS+06foQVMca4qzGcPv+r6gTDSJjq8yz5
-	 tJV4IHOyYZ7bKOn8tYLXdDXN17B1zEDlrypVJamaeuPwrYTvvXz0zFPdRgZqsq9qTQ
-	 e+IDPelK0nsSE42p4lWLeL2Ak0pOe6Wb8lLl6P2tNp9n67rluJtdgfLWrUUqP6gBAj
-	 5eDP4HJNC/5YmisBT/FaBKOGvN8G1XNZSshtDlFdLxQ1aJU7arFmE+fxRQzStfjDJV
-	 yF3dYv5OFCsQg==
-Date: Wed, 6 Aug 2025 12:30:18 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: loongson2: Add Loongson
- 2K0300 compatible
-Message-ID: <aJNK2uI4HTIV99vz@pie>
-References: <20250805150147.25909-1-ziyao@disroot.org>
- <20250805150147.25909-2-ziyao@disroot.org>
- <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
+	s=arc-20240116; t=1754483466; c=relaxed/simple;
+	bh=6SYLWigHb/uhY1qfbllUFwByFgGXUgdw9SpyK/xp9QE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TXF35Er5JVonAGgVsChUYO3aktYODPizVKA+/EKj0mdZbsWgTUbTynt8FtLwVU0lXFMcausBogMSjn8Bi3wN2+8uJscyvCWq27BFKtIjnDVDdH9+vKfN2VUzAsiDKUb2Kz2U2skUWtjk7VKDEopfITZMdX/hVR0qIbMNb7lhc4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2Ox/f4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6419BC4CEEB;
+	Wed,  6 Aug 2025 12:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754483466;
+	bh=6SYLWigHb/uhY1qfbllUFwByFgGXUgdw9SpyK/xp9QE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K2Ox/f4IuqXjL167WZbkptv+L2dD5f913hdOQ13553XhwXUpcapGFS5oCOWLx/Ngo
+	 2CdZW0UTNcZr7kON2Dx46Tiu1ruNunTMc/BzedWSmX/ImCTnizndC5YqD0MtVTGn5i
+	 aUdQGjK+crRvyK8FnmX70JWd01+dILVdCFNVuAyf0P1DCCWW/aILkRyUQXu4ZxUi5J
+	 BDs24FUSjDueW7wnHrcVxNknvxpHb2RBZUMt7fTD5OOH9RdebIBt+1X35N5vBhdlvJ
+	 h/ptzvKEwUsOi7q7NJ9MW+OdLeoxA3lL9WBeupj5NTNJnzZqKWpTV/b7yJ9N2H6FpK
+	 dUeQBOScJLcSw==
+From: Mark Brown <broonie@kernel.org>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: tiwai@suse.de, andriy.shevchenko@linux.intel.com, 13916275206@139.com, 
+ alsa-devel@alsa-project.org, shenghao-ding@ti.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250801021618.64627-1-baojun.xu@ti.com>
+References: <20250801021618.64627-1-baojun.xu@ti.com>
+Subject: Re: [PATCH v1] ASoC: tas2781: Fix the wrong step for TLV on
+ tas2781
+Message-Id: <175448346413.51650.7450659009173444382.b4-ty@kernel.org>
+Date: Wed, 06 Aug 2025 13:31:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On Wed, Aug 06, 2025 at 04:36:50PM +0800, Huacai Chen wrote:
-> On Tue, Aug 5, 2025 at 11:03 PM Yao Zi <ziyao@disroot.org> wrote:
-> >
-> > Document the clock controller shipped in Loongson 2K0300 SoC, which
-> > generates various clock signals for SoC peripherals.
-> >
-> > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
-> > external clock input, and a separate dt-binding header is used for
-> > cleanness.
-> >
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  .../bindings/clock/loongson,ls2k-clk.yaml     | 21 ++++++--
-> >  MAINTAINERS                                   |  1 +
-> >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
-> >  3 files changed, 72 insertions(+), 4 deletions(-)
-> >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> >
+On Fri, 01 Aug 2025 10:16:18 +0800, Baojun Xu wrote:
+> The step for TLV on tas2781, should be 50 (-0.5dB).
+> 
+> 
 
-...
+Applied to
 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 4912b8a83bbb..7960e65d7dfc 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -14365,6 +14365,7 @@ S:      Maintained
-> >  F:     Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> >  F:     drivers/clk/clk-loongson2.c
-> >  F:     include/dt-bindings/clock/loongson,ls2k-clk.h
-> > +F:     include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> I think ls2k0300-clk.h can be merged into ls2k-clk.h
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Honestly I think a separate header makes the purpose more clear, and
-follows the convention that name of binding header matches the
-compatible, but I'm willing to change if you really consider merging
-them together is better and dt-binding maintainer agrees on this.
+Thanks!
 
-> Huacai
+[1/1] ASoC: tas2781: Fix the wrong step for TLV on tas2781
+      commit: 9843cf7b6fd6f938c16fde51e86dd0e3ddbefb12
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Yao Zi
+Mark
 
-> >
-> >  LOONGSON SPI DRIVER
-> >  M:     Yinbo Zhu <zhuyinbo@loongson.cn>
-> > diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > new file mode 100644
-> > index 000000000000..5e8f7b2f33f2
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > @@ -0,0 +1,54 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> > +/*
-> > + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
-> > + */
-> > +#ifndef _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > +#define _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > +
-> > +/* Derivied from REFCLK */
-> > +#define LS2K0300_CLK_STABLE                    0
-> > +#define LS2K0300_PLL_NODE                      1
-> > +#define LS2K0300_PLL_DDR                       2
-> > +#define LS2K0300_PLL_PIX                       3
-> > +#define LS2K0300_CLK_THSENS                    4
-> > +
-> > +/* Derived from PLL_NODE */
-> > +#define LS2K0300_CLK_NODE_DIV                  5
-> > +#define LS2K0300_CLK_NODE_PLL_GATE             6
-> > +#define LS2K0300_CLK_NODE_SCALE                        7
-> > +#define LS2K0300_CLK_NODE_GATE                 8
-> > +#define LS2K0300_CLK_GMAC_DIV                  9
-> > +#define LS2K0300_CLK_GMAC_GATE                 10
-> > +#define LS2K0300_CLK_I2S_DIV                   11
-> > +#define LS2K0300_CLK_I2S_SCALE                 12
-> > +#define LS2K0300_CLK_I2S_GATE                  13
-> > +
-> > +/* Derived from PLL_DDR */
-> > +#define LS2K0300_CLK_DDR_DIV                   14
-> > +#define LS2K0300_CLK_DDR_GATE                  15
-> > +#define LS2K0300_CLK_NET_DIV                   16
-> > +#define LS2K0300_CLK_NET_GATE                  17
-> > +#define LS2K0300_CLK_DEV_DIV                   18
-> > +#define LS2K0300_CLK_DEV_GATE                  19
-> > +
-> > +/* Derived from PLL_PIX */
-> > +#define LS2K0300_CLK_PIX_DIV                   20
-> > +#define LS2K0300_CLK_PIX_PLL_GATE              21
-> > +#define LS2K0300_CLK_PIX_SCALE                 22
-> > +#define LS2K0300_CLK_PIX_GATE                  23
-> > +#define LS2K0300_CLK_GMACBP_DIV                        24
-> > +#define LS2K0300_CLK_GMACBP_GATE               25
-> > +
-> > +/* Derived from CLK_DEV */
-> > +#define LS2K0300_CLK_USB_SCALE                 26
-> > +#define LS2K0300_CLK_USB_GATE                  27
-> > +#define LS2K0300_CLK_APB_SCALE                 28
-> > +#define LS2K0300_CLK_APB_GATE                  29
-> > +#define LS2K0300_CLK_BOOT_SCALE                        30
-> > +#define LS2K0300_CLK_BOOT_GATE                 31
-> > +#define LS2K0300_CLK_SDIO_SCALE                        32
-> > +#define LS2K0300_CLK_SDIO_GATE                 33
-> > +
-> > +#define LS2K0300_CLK_GMAC_IN                   34
-> > +
-> > +#endif // _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > --
-> > 2.50.1
-> >
-> 
 
