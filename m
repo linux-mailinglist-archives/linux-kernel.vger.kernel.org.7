@@ -1,148 +1,140 @@
-Return-Path: <linux-kernel+bounces-757867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452B7B1C7A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3397B1C817
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E903188F797
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19663A0FAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA617154BF5;
-	Wed,  6 Aug 2025 14:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABDD2918EB;
+	Wed,  6 Aug 2025 15:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1aV33IV"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX7fS+/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2CE28DB73;
-	Wed,  6 Aug 2025 14:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C189E291891;
+	Wed,  6 Aug 2025 15:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754490670; cv=none; b=qUqV7ogYe4ORAj0mNtVJk9TfdylDFdo6e9fVeDLRaRxdacnHc+h5GLSHiE43pSCXEmBn+T0RCXMR6UJVauTA0249mNXCIzMvlMz0hlC0wxD2xBEis4HgH0xe3zpwduSOS91dU2IeWKpZiu+I5RseYNfRM2M9UtZpYBpgr6lkfGo=
+	t=1754492472; cv=none; b=ic3mny06y/ia0/tuUBlbkMG2PVVQd3s3R6aOttabVA/cwghiyuKnAAHukXpXg4bUkI4jCz73jBi/Fkrz+NDmsfNisxgw0lSHkh4/Us6iWHbCtoVCmzD7sK53XeLCM4VaG5ifUOpM4HP39yKffZbYotR+YAPIFQ+rygzEd/M1k3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754490670; c=relaxed/simple;
-	bh=51iGBEZcY/EqbLoV88af8ibWcVYMdxoMAXgSf8UfsAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI5MnNdhrWpjT8NIURzBUVd0JgWGCP0/+HMaMxR7W98rBPt/pX45+DTaLZj/35zWr8ug3+hoKMNokMHvEKbDXc+JSITqlmsvnUz16wY2Y5tdSsSCDOpFPoYz5X8iSW/F0QXgniVlSA+7MgwQWGwKhfF9K+ZDbHg8AAy4w3rZjL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1aV33IV; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6156a162537so11367622a12.2;
-        Wed, 06 Aug 2025 07:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754490665; x=1755095465; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VrgGiOBYMFYIIMzsimnDnHrC9UaIdenX2JqDgAaCvnc=;
-        b=O1aV33IV/KaI18ccVstoKK1sfW1Ge/jm/zEQuifC4LN7xbEVkn9+RaTLEK8D0tY9AT
-         H7m+BBg4i7UIgjH5bd9sqeVz/5uRu2zHK/ooQjc5rKPAdyBX8gMG/hfJ+uyO1CkZhniB
-         NL39ebLLZp+BqnWZMC9K53A1cGuCCKXJlMf4hdQSbDO2OqXtIbL8qxHwmzIe4oxWXvny
-         uL+l+7eYdqnAXhl+o3t+tIMZmzh6g0C3vPqncpDHRA2SMJoTKrcLpVIIDS08xQ86rMYE
-         pVDCQi4TVSknqp9tRiqMCctInsOsYrVZvkZR4MDGgVq0WjwoJTymYYJAj7IctAPiuJmw
-         m+mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754490665; x=1755095465;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VrgGiOBYMFYIIMzsimnDnHrC9UaIdenX2JqDgAaCvnc=;
-        b=C+qkk/wh7+8XbtXsgAWtziCOsuPnabvNIJKD5jK12vWs02MmvRasnucbVKHyj4iGwp
-         LrzF+tm7dzeuwZfuxcQ7bg3Z4hWhx+dDP4CQH54lax2fxKmvXH3l945Jg7sV3VEmtEB4
-         uQlXpQN8O8DcmWGmUpZAsWXGbfbLHZoYErq2bfXaUOus0XwMHIj5pJ3NJ/zldGfI5CgY
-         GixvSMmXPvfvvLI8IEWXLjf5zyQMNMuSB6lXF9umtb4rD0i6YdTY8baHUff2oJS85h+U
-         +oCMAwCyL/AR0nL4GbRDvnIyztyHwLlvDShds3h6gbUug4nfeo0GHfbJ667Nc6MUPf6a
-         LrKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfZQxestQiPij25wJULp0U6qREtcXzl2rPoKUeO/5B2FTPRp14aGbsuJKTJqTPNz/vwJcIwH2LHVcJgNs=@vger.kernel.org, AJvYcCWRXMeykaEJfPaWqXAB96uCExWdbjO0aRxQvh5rg57g/V0QeeRz5nmLrdGVdormhDu6TSKlA/ZuH/OC8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHfyhthByHgvt0i40SqNGJ5KhH6mkoGs5qfeh+GN1BWwlicxqy
-	HWDg6n4WWK+MXNuJj0OrwyPZNgmN3xGAbnYr/ulDITcUeblCFxq8AgxP5hq0B7rH
-X-Gm-Gg: ASbGncugqj3yB7z14oS8/Iy1W5vCNMXCa47gBDfO/Rp/FY13+WHXVmKNXXMo+kMq7dL
-	9DNNCdErEGDt/aksyAFn/7a0fIu6DYZeLGdGb2FVcWU+cUZVZOM9u42qlabXzNsOXSi/E6gW+sF
-	5c/nuUCj2eX36+s1qen691vGH7f4Tow+vo5BfqiLMM11geFRfHriH1rBn+DpEcG+DlcsdbcdwjX
-	fUol7hC/3MwhIR4RBSiyHvenOU51HKfwym58K2W86k7py24pGoM0jJxgMyVMV9OJW7qbX3eFZhO
-	Bun94H7E5lUwkwlb+bPVVHVNmqCWPZsiHjPbWaWAkskX6c8btnUCZ1LTg0B59wfuWvX7cZU9aUW
-	YSZDSF6YcYNU2TRaqCwAYZ137z2EcjVbd
-X-Google-Smtp-Source: AGHT+IHgT5O0Iq3yZz68l1DnW8bbga5gPsAheej3jhuIVZ6EgFLEZ3o2jOGtaQ0DYWIboOiRFGYRmQ==
-X-Received: by 2002:a05:6402:4304:b0:608:f493:871c with SMTP id 4fb4d7f45d1cf-61797d6ad0amr2329670a12.14.1754490664668;
-        Wed, 06 Aug 2025 07:31:04 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6175ee53a1esm4730587a12.10.2025.08.06.07.31.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Aug 2025 07:31:04 -0700 (PDT)
-Date: Wed, 6 Aug 2025 14:31:03 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v2] mm: fix accounting of memmap pages for early sections
-Message-ID: <20250806143103.xkdz4sinbhcq4vyd@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250804151328.2326642-1-sumanthk@linux.ibm.com>
- <20250806090320.wdt4zsfiambtgkvy@master>
- <aJNOs0IB1d33GSSW@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+	s=arc-20240116; t=1754492472; c=relaxed/simple;
+	bh=mnWYMh0PdBIo9wnkX/skX4J305rjw8krePIvdGdb3So=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Q3H/y7xvJSad0oL2ga2RJH+WD7GPaciVOHbvkewq7Cutu1rt3+/vn/uf6/lqLbcXar+DBgmBICzn4NqaLpU3cWDBns6E48G8quQUO4M7vMf48F+VP9SDF12deFU0OeYwu80eXgHNzGYUD87+1r+nZsEXDoDm+9yA0zZhLB4BYa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX7fS+/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C0AC4CEED;
+	Wed,  6 Aug 2025 15:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754492472;
+	bh=mnWYMh0PdBIo9wnkX/skX4J305rjw8krePIvdGdb3So=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PX7fS+/t+d9ZNyU490Wss0uC80/8LydurEUkKhVRWz/B9zcypuBWOKGyAZOfLViRW
+	 z4Eix/VQFJvBn9fnlP8MA40TnxvVXaD53L0BHiMEDUJ+oAZKProy3he15nlpYZn0y/
+	 CgX5FcQri5dC/Ju94MHGsR9UlziTFGh9yvFTKS58qWlIBZkxZ34lj92C9debGUW139
+	 hU1djZqq59nhr5BH56Jj4nBXP7JgKv8S2bzNWrezxDCpjfwjbyinS084O5aVMeHDRz
+	 4sb7ayLyqo+n9juPGkVSico6J0iW8C1dxf5cU3OWQBdtv+M7akYtXfbZ3eNgPIfqiF
+	 rnnxls7xfatGQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/16] rust: str: allow `str::Formatter` to format
+ into `&mut [u8]`.
+In-Reply-To: <37C6B308-202A-48A3-9DD2-5997E0EE73C1@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-2-3a262b4e2921@kernel.org>
+ <WW8rvpPmL4xHgDorFAQ5UrdGMUWXYOH_h1c3uzXhne_7E-l_Sbe8npJDfwE6fAcLWShbTjn5Oxn-dqxC4ZLW4Q==@protonmail.internalid>
+ <37C6B308-202A-48A3-9DD2-5997E0EE73C1@collabora.com>
+Date: Wed, 06 Aug 2025 16:32:49 +0200
+Message-ID: <87cy988qr2.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJNOs0IB1d33GSSW@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 
-On Wed, Aug 06, 2025 at 02:46:43PM +0200, Sumanth Korikkar wrote:
->> The change here is reasonable. While maybe we still miss the counting at some
->> other points.
->> 
->> For example:
->> 
->> a. 
->> 
->>   sparse_init_nid()
->>     __populate_section_memmap()
->> 
->> If !CONFIG_SPARSEMEM_VMEMMAP, and sparse_buffer_alloc() return NULL, it
->> allocate extra memory from bootmem, which looks not counted.
->
->Currently, the accounting is done upfront in sparse_buffer_init(), where
->memmap_boot_pages_add() is called for !CONFIG_SPARSEMEM_VMEMMAP.
->
->The function sparse_buffer_alloc() can return NULL in two scenarios:
->
->* During sparse_buffer_init(), if memmap_alloc() fails, sparsemap_buf will be NULL.
->* Inside sparse_buffer_alloc(), if ptr + size exceeds sparsemap_buf_end,
->  then ptr is set to NULL.
->
->Considering this, perhaps memmap_boot_pages_add() could be moved into
->__populate_section_memmap(), with the accounting done only if the
->operation is successful. What do you think?
->
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Looks reasonable to me.
-
->>   section_activate()
->>     populate_section_memmap()
->> 
->> If !CONFIG_SPARSEMEM_VMEMMAP, it just call kvmalloc_node(), which looks not
->> counted.
+> Hi Andreas,
 >
->Sounds right. This means nr_memmap_pages adjustment is needed for
->!CONFIG_SPARSEMEM_VMEMMAP here. I will recheck this.
+>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Improve `Formatter` so that it can write to an array or slice buffer.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>> rust/kernel/str.rs | 19 ++++++++++++++-----
+>> 1 file changed, 14 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index 488b0e97004e..41af456a46c8 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -6,6 +6,7 @@
+>> use crate::prelude::*;
+>> use core::{
+>>     fmt::{self, Write},
+>> +    marker::PhantomData,
+>>     ops::{self, Deref, DerefMut, Index},
+>> };
+>>
+>> @@ -794,9 +795,9 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>> /// Allows formatting of [`fmt::Arguments`] into a raw buffer.
+>> ///
+>> /// Fails if callers attempt to write more than will fit in the buffer.
+>> -pub(crate) struct Formatter(RawFormatter);
+>> +pub(crate) struct Formatter<'a>(RawFormatter, PhantomData<&'a mut ()>);
+>>
+>> -impl Formatter {
+>> +impl Formatter<'_> {
+>>     /// Creates a new instance of [`Formatter`] with the given buffer.
+>>     ///
+>>     /// # Safety
+>> @@ -805,11 +806,19 @@ impl Formatter {
+>>     /// for the lifetime of the returned [`Formatter`].
+>>     pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
+>>         // SAFETY: The safety requirements of this function satisfy those of the callee.
+>> -        Self(unsafe { RawFormatter::from_buffer(buf, len) })
+>> +        Self(unsafe { RawFormatter::from_buffer(buf, len) }, PhantomData)
+>> +    }
+>> +
+>> +    /// Create a new [`Self`] instance.
+>> +    #[expect(dead_code)]
+>> +    pub(crate) fn new<'a>(buffer: &'a mut [u8]) -> Formatter<'a> {
 >
->Thank you
+> nit: the function above this one returns Self, and this one returns Formatter.
+> Perhaps this one should also return Self for consistency?
 
--- 
-Wei Yang
-Help you, Help me
+Thanks. Not sure about the explicit lifetime either, I'll
+reformat:
+
+@@ -844,7 +844,7 @@ pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
+ 
+     /// Create a new [`Self`] instance.
+     #[expect(dead_code)]
+-    pub(crate) fn new<'a>(buffer: &'a mut [u8]) -> Formatter<'a> {
++    pub(crate) fn new(buffer: &mut [u8]) -> Self {
+         // SAFETY: `buffer` is valid for writes for the entire length for
+         // the lifetime of `Self`.
+         unsafe { Formatter::from_buffer(buffer.as_mut_ptr(), buffer.len()) }
+
+
+Best regards,
+Andreas Hindborg
+
+
 
