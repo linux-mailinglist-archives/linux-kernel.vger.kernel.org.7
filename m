@@ -1,279 +1,230 @@
-Return-Path: <linux-kernel+bounces-757835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EA4B1C73E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79673B1C741
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F353BE0ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E958622631
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105828C03B;
-	Wed,  6 Aug 2025 14:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13E045038;
+	Wed,  6 Aug 2025 14:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW8nrRmM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HT/lqZZB"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E2D28C016
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E4428BAAE;
+	Wed,  6 Aug 2025 14:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489014; cv=none; b=kJzApLyyqa5Uxb4Az60JLb9ia19+Tb19EGFarThcCe4f6hhuMjVjukHApG8k+z6yWTkGRt7n9dp64G8nSTrEU9YgwBqegqg7gPU1smOtDZXNaPp6ddETcAa0bsm8+/WR+l3TscCXqQwyRpwWTlVsymKc6nhd4QED5MNE23KoP4c=
+	t=1754489035; cv=none; b=bK41SL4nUyi4PE797Mpc/uyJy8LYmWoa70lgfMubIbxK4AEpm2dc6EV3kG5cjRGGyxbUIr/Tg/Xm3fZjxR2fXUXclfV8PcUo5xlApH9AYHvpSYCVT7ct3KsJ7A85veJYZY1KORO1aH96n1QhfjuHk1leL93RydNPFV47u9S13xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489014; c=relaxed/simple;
-	bh=ICpbu6eWi8YuUN9YDghhH3v6dG09Fo1rrSV+s0Xg7G4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V7XKWVV65p6z7xX3ioDKQplZa99sP+5ro47upKgvayJmn1e2edAW9e0hB7Iu++VWpMo5mlPhO5KutsgwGebgiQjUEc7cNQvym+6v6damVPOGxh7+/7l/+AReiw7GZTlcximJA1ctx4aYkp3WxjL9HbT+RlNlf3MlPykUmZ+Pf8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW8nrRmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E28C4CEE7;
-	Wed,  6 Aug 2025 14:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754489013;
-	bh=ICpbu6eWi8YuUN9YDghhH3v6dG09Fo1rrSV+s0Xg7G4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KW8nrRmMyBVddCHFcTFzs3faCvQGoNzoxqpeCdtCgw39xEboiJqEoW8bfcjJe8mA5
-	 6ZlctH9KabvRE/RhA2Lt1yXJVI56zBizgGBB9jeukgU7DFQjmJXbCXRm/dLXtQk03Q
-	 5fpp8YRZjK01QsNOEkFBqQJpD2mMGhvbiFlkNNtmycuf8ZsME8FlBEjF1oeK3wg2Ba
-	 zRxnIDI4ksf6jSfuWSi6Pz9JaWJ82R+8FacFE29rTzCtrDlQWs9l13ZubTaJIl8dF9
-	 PZu961i507++0naQYmHvFwrBWVlWY+RMuj+Nu4OIF7HCum5JueIIM1yB6MwqPkcDsE
-	 nkdypTZthKBeA==
-From: Drew Fustini <fustini@kernel.org>
-Date: Wed, 06 Aug 2025 07:03:28 -0700
-Subject: [PATCH v2] riscv: Add sysctl to control discard of vstate during
- syscall
+	s=arc-20240116; t=1754489035; c=relaxed/simple;
+	bh=lMoTmdZAcpb38FFOUzGfB6VQb3YZTNLRnWUbMapo/9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cF0w30Ait4CSYaDtGyne8C5t60t6daBte304MRJakaACXU3X8AP0Yu6pds5fZwZldTPFgV0hkJYvOlUWXKfGAcf3mK2x3YKMU7jcEUPaFGvT3Y+YBx0QTu+l2hOdDNlniweXkna3gT1jmauBrnp6vauMQK3JfGbfg/F4zryX8Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HT/lqZZB; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so9072901a12.2;
+        Wed, 06 Aug 2025 07:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754489032; x=1755093832; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZdCn3l/Y/cDnw+eg7OBtMS2sCWl9a4rYzAAcz1Nkh/s=;
+        b=HT/lqZZBoJmbvEmNr2pMZpd+jI0bX2vfZlD+wZKD7tY6D8PS+DgiwoiUcFyINSny+v
+         qJgGXJ1P2Mcrcy0W65d9WgFQHdK85TVqN/xsvem0qX/6sZOsl7rnlfv5oo7VOrr+lHZJ
+         +yYeM9AYgJ7jm2Ac/R6E3iS4Otlp/oEtO1u+LC6jodCPNAuaRAbQ5sgYp4LH9vxW3zBP
+         5F1b++LOxEYts4mX8fWn/DSFtrGxve/49zNfW3bqn8SlaVZwMWWgyzWQnJVLp9IosxCw
+         VWjuYiG5udKVHjVB7t2ya3JYnOAFUi/KCFhR1lKUD546e1L6JeAPm1O+c3oXTToU7rDz
+         02Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754489032; x=1755093832;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZdCn3l/Y/cDnw+eg7OBtMS2sCWl9a4rYzAAcz1Nkh/s=;
+        b=tKt9YNqeUR55PwFyI1FAE/nlwZRjDEbDsbRqHhKtF4IQSJPZ6nNwTQjg/yqv52HPIr
+         XnUcaYE6V+LZ56Rym93oBnboVe0Te3oB5ZMB5vbpwerXXo++Hhw5eEXzDsA/gNMi/V9H
+         tuzobdz5MfI79n5YjF6UgcGrz8reYUGmqqxIC9qpgAJJAI4nqa779WNqkGfUpbzKdbV4
+         rMWxUalk3f4KSJcSy8fsG2IiihCFgamL/HVRkPrsRRyf9b7FAHyqmpKe4vO0m6BDGgVn
+         Saof1ufXABizOjiYZFXxqWGkRaBkmfA189snkrZnlUvEQyLpQdKPhvb16DmJ8+YKA2Zk
+         0kDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgHtme9M02CF2PRnKJUP7pK4MXOgyF79R63t6KJl59/A5zux6oImcQReWGYy888S2Cl08J30GrC9xGAcD@vger.kernel.org, AJvYcCWcSGDU5BA6yixyl9GdClLOzKf9KlTC33SP5dyy4BDwJcJqzaewEX/wMC4Ls1DLGyZGZc2jwQ61JxQAUq9MdcqmDIU=@vger.kernel.org, AJvYcCXFD1DwXsk5e/Jrq3RFDa1HOJSwQTXUxFjL9GcpCXnLLgK/n6xto35Rktos1o1suNpGlbMDjz+r96ef@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo5WI7kTc9pDfNJZsPuY/MLtTO5Rt/WbY/Bjp2Gxze426EVrTL
+	NFNGQ6p6ndAGiauDYEjBJCAPwJSR6cUkEcBZSikI9uyO+XNVx70hH518
+X-Gm-Gg: ASbGnct2cOwXwUUybcO0i0XCvksXB+K9YJ3ExLvhwMTErU5+r+kZP1D+UmSFaCmyA0I
+	h8pxX22aLIJbTHXLesswHP8yTtCuNReBTg/uAR2KF8kndrCtE/SE1mmN0CHr4O47+70ynGS3SNB
+	WYnB61Ly/RbBiftmUZlG5nl2u3wqqZZvLQocvl4aNHBaEIbShTVf2iDcHqn2cAbv+7nEAZ6hLWt
+	kjAvFZLmKUxfAAF9mywzszWQ32CYIrwTl3+izFldK5DhhsHBY1HuKw4tVeXKIKt4C4s2C7GVyGV
+	60i0OYWrJU1s0PomGzfONcpuaRE5qmQknvU3g1UCfYzgIf4XxF9W21rjFee7KPe3hE1pyosY01s
+	X7xZXv1J233qD0IHDsRiLUaY/hr2X5Ti6ap0cRjVh0Q7/Ufo1k6Gw7ywZTB6MygBpBAecLyGagA
+	qhC9WbljjdjjE=
+X-Google-Smtp-Source: AGHT+IEZN/xnmINXiJf33M2U1WyJPsMopS4IUXYnX6+rek03rsq/iuB5F0OgJMrRAGHbwh934qYWfw==
+X-Received: by 2002:a17:907:9710:b0:ae0:de30:8569 with SMTP id a640c23a62f3a-af9900f6e63mr261859666b.1.1754489031265;
+        Wed, 06 Aug 2025 07:03:51 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0f4sm1094570366b.106.2025.08.06.07.03.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 07:03:50 -0700 (PDT)
+Message-ID: <cf613367-dba6-4014-9be6-ff40de16a3a6@gmail.com>
+Date: Wed, 6 Aug 2025 17:03:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAK9gk2gC/0XMQQ6CMBCF4auQWVvSaVMFV97DGFLoABO1mGklJ
- oS727gxb/Ut3r9BImFKcK42EFo58RILzKGCYfZxIsWhGIw2TjfaKeE0rF1Zyj5TFwq9BGVs73H
- AgP2xgXJ+CY38+YWvt+JRlqfKs5D/507YamtbNDVatK1zCtX4TpkjX+4kkR71IhPs+xd6CeMhp
- gAAAA==
-X-Change-ID: 20250805-riscv_v_vstate_discard-23ba1c1d1b68
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
- Andy Chiu <andybnac@gmail.com>, Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Drew Fustini <dfustini@tenstorrent.com>, Drew Fustini <fustini@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7566; i=fustini@kernel.org;
- h=from:subject:message-id; bh=Y7GvDdAyH5eWKWL3Rtfcl6rjEuDiaFbWqc5VZCfPJ4c=;
- b=owGbwMvMwCF2+43O4ZsaG3kYT6slMWRMTtiqH/xnza5Hkxk/KHbMt7txXCRcxbbEcUFvW/dmh
- rdKFQ5mHaUsDGIcDLJiiiybPuRdWOIV+nXB/BfbYOawMoEMYeDiFICJsBkzMjTv+Tzlx+rGs38m
- H9rqp9tfXH/WLvH/ZT3Dmxfv90yZu6aEkWGi0101KfnE3gMpjG2LPGPqltU+5//Z+sPOt0d82tX
- M67wA
-X-Developer-Key: i=fustini@kernel.org; a=openpgp;
- fpr=1B6F948213EA489734F3997035D5CD577C1E6010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] arm64: dts: exynos2200: add serial_0/1 nodes
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250730074253.1884111-5-ivo.ivanov.ivanov1@gmail.com>
+ <CAPLW+4kOiBOZYQVA-ZiMEn+-_ZF1HD8QTm9AH0y34bcY+Mu92A@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CAPLW+4kOiBOZYQVA-ZiMEn+-_ZF1HD8QTm9AH0y34bcY+Mu92A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Drew Fustini <dfustini@tenstorrent.com>
+On 8/2/25 02:12, Sam Protsenko wrote:
+> On Wed, Jul 30, 2025 at 2:43 AM Ivaylo Ivanov
+> <ivo.ivanov.ivanov1@gmail.com> wrote:
+>> Add nodes for serial_0 (UART_DBG) and serial_1 (UART_BT), which
+>> allows using them.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> index bab77b442..22c6da907 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+>> @@ -336,6 +336,19 @@ pinctrl_peric1: pinctrl@10730000 {
+>>                         reg = <0x10730000 0x1000>;
+>>                 };
+>>
+>> +               serial_1: serial@10840000 {
+>> +                       compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>> +                       reg = <0x10840000 0x100>;
+>> +                       clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
+>> +                                <&cmu_peric1 CLK_DOUT_PERIC1_UART_BT>;
+>> +                       clock-names = "uart", "clk_uart_baud0";
+>> +                       interrupts = <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +                       pinctrl-0 = <&uart1_bus>;
+>> +                       pinctrl-names = "default";
+>> +                       samsung,uart-fifosize = <256>;
+>> +                       status = "disabled";
+>> +               };
+>> +
+>>                 cmu_hsi0: clock-controller@10a00000 {
+>>                         compatible = "samsung,exynos2200-cmu-hsi0";
+>>                         reg = <0x10a00000 0x8000>;
+>> @@ -458,6 +471,19 @@ pinctrl_peric2: pinctrl@11c30000 {
+>>                         reg = <0x11c30000 0x1000>;
+>>                 };
+>>
+>> +               serial_0: serial@11c40000 {
+>> +                       compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>> +                       reg = <0x11c40000 0x100>;
+>> +                       clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>> +                                <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>> +                       clock-names = "uart", "clk_uart_baud0";
+>> +                       interrupts = <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +                       pinctrl-0 = <&uart0_bus_single>;
+>> +                       pinctrl-names = "default";
+>> +                       samsung,uart-fifosize = <256>;
+>> +                       status = "disabled";
+>> +               };
+>> +
+> Shouldn't these two serial nodes be children of some corresponding USI
+> nodes?
 
-Clobbering the vector registers can significantly increase system call
-latency for some implementations. To mitigate this performance impact, a
-sysctl knob is provided that controls whether the vector state is
-discarded in the syscall path:
+Which :P
 
-/proc/sys/abi/riscv_v_vstate_discard
+>  IIUC, the downstream counterpart of this device tree is [1]? I
+> can see the corresponding USI node is missing there. And if you don't
+> have the TRM, it might get confusing. But, apart from my intuition
+> telling me that those UART blocks *should* be implemented as a part of
+> USI IP blocks in Exynos2200, there is also a fact that the downstream
+> driver is actually accessing USI registers in exynos_usi_init()
+> function, in the exynos-uart driver here: [2].
 
-Valid values are:
+Unless that does nothing and Samsung did not care enough to strip the
+code for it.
 
-0: Vector state is not always clobbered in all syscalls
-1: Mandatory clobbering of vector state in all syscalls
+>  If that's correct, it
+> means there should exist a USI block, which should be modeled like so:
+>
+> 8<------------------------------------------------------------------------->8
+>     usi_...: usi@11c400c0 {
+>         compatible = ...;
+>         reg = <0x138200c0 0x20>;
+>         samsung,sysreg = <...>;
+>         samsung,mode = <USI_MODE_UART>;
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges;
+>         clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>                  <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>         clock-names = "pclk", "ipclk";
+>         status = "disabled";
+>
+>         serial_0: serial@11c40000 {
+>             compatible = "samsung,exynos2200-uart", "google,gs101-uart";
+>             reg = <0x11c40000 0x100>;
+>             clocks = <&cmu_peric2 CLK_MOUT_PERIC2_NOC_USER>,
+>                      <&cmu_peric2 CLK_DOUT_PERIC2_UART_DBG>;
+>             clock-names = "uart", "clk_uart_baud0";
+>             interrupts = <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH 0>;
+>             pinctrl-0 = <&uart0_bus_single>;
+>             pinctrl-names = "default";
+>             samsung,uart-fifosize = <256>;
+>             status = "disabled";
+>         };
+>     };
+> 8<------------------------------------------------------------------------->8
+>
+> This way you can achieve the same behavior as in downstream kernel, by
+> making the (upstream) USI driver to initialize corresponding USI
+> registers for you.
+>
+> Does that make any sense?
 
-The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+Not really. Perhaps you could __verify__ to what USI instance it belongs?
+And is there a sysreg register for controlling the behavior of that?
 
-Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
-Changes in v2:
- - Reword the description of the abi.riscv_v_vstate_discard sysctl to
-   clarify that option '0' does not preserve the vector state - it just
-   means that vector state will not always be clobbered in the syscall
-   path.
- - Add clarification suggested by Palmer in v1 to the "Vector Register
-   State Across System Calls" documentation section.
- - v1: https://lore.kernel.org/linux-riscv/20250719033912.1313955-1-fustini@kernel.org/
-
-Test results:
--------------
-I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
-cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
-Blackhole P100 [3] card show that discarding the vector registers
-increases null syscall latency by 25%.
-
-The null syscall program [4] executes vsetvli and then calls getppid()
-in a loop. The average duration of getppid() is 198 ns when registers
-are clobbered in riscv_v_vstate_discard(). The average duration drops
-to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
-becaise riscv_v_vstate_discard is set to 0.
-
-$ sudo sysctl abi.riscv_v_vstate_discard=1
-abi.riscv_v_vstate_discard = 1
-
-$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 198 seconds
-avg latency: 198.73 ns
-
-$ sudo sysctl abi.riscv_v_vstate_discard=0
-abi.riscv_v_vstate_discard = 0
-
-$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 149 seconds
-avg latency: 149.89 ns
-
-I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
-has 13 patches, including this one, on top of v6.16-rc1. Most are simple
-yaml patches for dt bindings along with dts files and a bespoke network
-driver. I don't think the other patches are relevant to this discussion.
-
-This patch applies clean on its own to riscv/for-next.
-
-[1] https://www.sifive.com/cores/intelligence-x200-series
-[2] https://tenstorrent.com/en/hardware/blackhole
-[3] https://github.com/tenstorrent/tt-bh-linux
-[4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
-[5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
-
-Signed-off-by: Drew Fustini <fustini@kernel.org>
----
- Documentation/arch/riscv/vector.rst | 22 ++++++++++++++++++++--
- arch/riscv/Kconfig                  | 10 ++++++++++
- arch/riscv/include/asm/vector.h     |  4 ++++
- arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
- 4 files changed, 49 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
-index 3987f5f76a9deb0824e53a72df4c3bf90ac2bee1..b702c00351617165a4d8897c7df68eadcd2d562e 100644
---- a/Documentation/arch/riscv/vector.rst
-+++ b/Documentation/arch/riscv/vector.rst
-@@ -134,7 +134,25 @@ processes in form of sysctl knob:
- 3.  Vector Register State Across System Calls
- ---------------------------------------------
- 
--As indicated by version 1.0 of the V extension [1], vector registers are
--clobbered by system calls.
-+Linux adopts the syscall ABI proposed by version 1.0 of the V extension [1],
-+where vector registers are clobbered by system calls. Specifically:
-+
-+    Executing a system call causes all caller-saved vector registers
-+    (v0-v31, vl, vtype) and vstart to become unspecied.
-+
-+However, clobbering the vector registers can significantly increase system call
-+latency for some implementations. To mitigate this performance impact, a sysctl
-+knob is provided that controls whether vector state is always discarded in the
-+syscall path:
-+
-+* /proc/sys/abi/riscv_v_vstate_discard
-+
-+    Valid values are:
-+
-+    * 0: Vector state is not always clobbered in all syscalls
-+    * 1: Mandatory clobbering of vector state in all syscalls
-+
-+    Reading this file returns the current discard behavior. The initial state is
-+    controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
- 
- 1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 36061f4732b7496a9c68a9a10f9959849dc2a95c..7bb8a8513135cbc105bd94d273012486a886f724 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -656,6 +656,16 @@ config RISCV_ISA_V_DEFAULT_ENABLE
- 
- 	  If you don't know what to do here, say Y.
- 
-+config RISCV_ISA_V_VSTATE_DISCARD
-+	bool "Enable Vector state discard by default"
-+	depends on RISCV_ISA_V
-+	default n
-+	help
-+	  Say Y here if you want to always discard vector state in syscalls.
-+	  Otherwise, userspace has to enable it via the sysctl interface.
-+
-+	  If you don't know what to do here, say N.
-+
- config RISCV_ISA_V_UCOPY_THRESHOLD
- 	int "Threshold size for vectorized user copies"
- 	depends on RISCV_ISA_V
-diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
-index 45c9b426fcc52321d55d1a4a42030c3b988e53c0..77991013216b9aea1744540caef38589338717ff 100644
---- a/arch/riscv/include/asm/vector.h
-+++ b/arch/riscv/include/asm/vector.h
-@@ -40,6 +40,7 @@
- 	_res;								\
- })
- 
-+extern bool riscv_v_vstate_discard_ctl;
- extern unsigned long riscv_v_vsize;
- int riscv_v_setup_vsize(void);
- bool insn_is_vector(u32 insn_buf);
-@@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
- {
- 	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
- 
-+	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
-+		return;
-+
- 	riscv_v_enable();
- 	if (has_xtheadvector())
- 		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
-diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-index 901e67adf57608385e6815be1518e70216236eda..d81dcc86e794896dd36803d6e7540aad1dc37d79 100644
---- a/arch/riscv/kernel/vector.c
-+++ b/arch/riscv/kernel/vector.c
-@@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
- static struct kmem_cache *riscv_v_kernel_cachep;
- #endif
- 
-+bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
- unsigned long riscv_v_vsize __read_mostly;
- EXPORT_SYMBOL_GPL(riscv_v_vsize);
- 
-@@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
- 	},
- };
- 
-+static const struct ctl_table riscv_v_vstate_discard_table[] = {
-+	{
-+		.procname       = "riscv_v_vstate_discard",
-+		.data           = &riscv_v_vstate_discard_ctl,
-+		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dobool,
-+	},
-+};
-+
- static int __init riscv_v_sysctl_init(void)
- {
--	if (has_vector() || has_xtheadvector())
-+	if (has_vector() || has_xtheadvector()) {
- 		if (!register_sysctl("abi", riscv_v_default_vstate_table))
- 			return -EINVAL;
-+		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
-+			return -EINVAL;
-+	}
- 	return 0;
- }
- 
-
----
-base-commit: fda589c286040d9ba2d72a0eaf0a13945fc48026
-change-id: 20250805-riscv_v_vstate_discard-23ba1c1d1b68
+Again, I know nothing more than what downstream says.
 
 Best regards,
--- 
-Drew Fustini <fustini@kernel.org>
+Ivaylo
+
+>
+> Thanks!
+>
+> [1] https://github.com/jgudec/android_kernel_samsung_exynos2200/blob/CWAI/arch/arm64/boot/dts/exynos/s5e9925.dts#L4648
+> [2] https://github.com/jgudec/android_kernel_samsung_exynos2200/blob/CWAI/drivers/tty/serial/exynos_tty.c#L2181
+>
+>
+>>                 cmu_cmgp: clock-controller@14e00000 {
+>>                         compatible = "samsung,exynos2200-cmu-cmgp";
+>>                         reg = <0x14e00000 0x8000>;
+>> --
+>> 2.43.0
+>>
+>>
 
 
