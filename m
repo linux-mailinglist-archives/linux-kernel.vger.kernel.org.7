@@ -1,235 +1,246 @@
-Return-Path: <linux-kernel+bounces-757799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80940B1C6CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DC8B1C6D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC818A6847
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D6E560B20
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B75028BAAE;
-	Wed,  6 Aug 2025 13:27:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC6328BA92;
+	Wed,  6 Aug 2025 13:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="ycv1EeXp"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01838FB9
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 13:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754486844; cv=none; b=JCOfgAWmtLw0mNNimIXzlyNTHWRYZ0+qUVduV+odJ/5LeC0AXexQaWtkldQiZmmsdWPxq8eMoxqTJNNoQjlUNwjFiSkjWw6Jj67YpQkw70MvTPNROwqz3oWE+wCbJKXdm1Ctn4x3cPG0yNe+gwf1zodZ/nlVO2SUsP2uYh238yo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754486844; c=relaxed/simple;
-	bh=2SL2HIqFBKBgfphArow9T9jHTK03gKBHImShrrU36+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfNvEk7Eiqs2JtwDMDutdfZFQFeXnQFAkyaYHSVwVDIaCspitjlJxMm7z3H1n+Ui0EKFOTsuDWlyobd7yIQAGwlagml2KGiz/DtgENAXmDcLrh/HzXvuCfi812e/L8lgPnnOjna2XpS469cK+VxOqm9+9ZPeXDI53YGXk4nhmvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ujeAY-0007wq-Ev; Wed, 06 Aug 2025 15:27:02 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ujeAX-00CDWu-2f;
-	Wed, 06 Aug 2025 15:27:01 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ujeAX-00CH9C-2J;
-	Wed, 06 Aug 2025 15:27:01 +0200
-Date: Wed, 6 Aug 2025 15:27:01 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Frank Li <frank.li@nxp.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH v18 3/7] firmware: imx: add driver for NXP
- EdgeLock Enclave
-Message-ID: <20250806132701.fouikyuqtzdsxqwh@pengutronix.de>
-References: <20250619-imx-se-if-v18-3-c98391ba446d@nxp.com>
- <20250625105546.pxuatcnfpe7mssgs@pengutronix.de>
- <AM9PR04MB8604611B8D91B5526C9704E69545A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20250627084653.6vgwnm3llf3zknlp@pengutronix.de>
- <b02055bb-0995-4fd8-99f3-4ca5146eedd4@kontron.de>
- <20250630121722.wviidlggt7hguyt7@pengutronix.de>
- <087b8689-7443-4720-a94c-160edd31a5da@kontron.de>
- <AM9PR04MB8604C05882605EDB4913DA089549A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20250714094124.e6fnkrocnqagbm22@pengutronix.de>
- <AM9PR04MB8604EFCC5400DEBB7DF0CF49952DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B3419A;
+	Wed,  6 Aug 2025 13:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754487237; cv=pass; b=YrO8n+x7eCUptRExzYY5C8Rc0V4nBCJXX3+F46085AgQnFs+Qc1n6/VSASQ139X2Pbi5DJiIecrA0MATjT/65UZCLy/XzVBcoKU9A/ZatRWFXat/kB3sC6/gzN9AQy8LkU0Ka3C3w3WDoHFFeSIAywyJ6PIwfk7YEhGMEcrN0gk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754487237; c=relaxed/simple;
+	bh=2dOpAIADWbF4C8PVCONYvk4DELIrO2AJVZvujBeeo7M=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=NuchVGziPdDv1XZiqciojwUui3QwdvEmxG9sj5hV9UxziCkJaoR74iAWspBEbzaT4b+dl/MEaL/i4HYwnVguaxIdAuDoRRZdbNR5v1vT2I8TQod7VxsMKiQShZgfNiv12V5tdK42Fk6H0oGWz1waTDQbL2FMpjNJq5SyXM1Ezqo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=ycv1EeXp; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+ARC-Seal: i=1; a=rsa-sha256; t=1754487223; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QqrnqNINOdK12q5QUx5zBkEhg6O06NIYbwLwR17IXka+miZamWzxsSvT8Ym8S5TROOsuhMiuHZgnPjELlYcVOy8qvODgolnnWyhHB+vvKItUZSByUxd+Swtq66FF066aOEGibNQFZplZW1wu1Q4ATED7QUs18D683vShDglFaF8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754487223; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pYCTlk/GK40nYVeUtUwS5qlXulOvqUMfkNed0naDUDQ=; 
+	b=Fu+f6p//RMxGO8LhCP6kzcoP1RvvsPM1pNn4Es25dPOoUycjj6KqaTkehMd7bh9Eb7TTIiSo5sBDxb7fg+MlzXqbMYmS3Z1XmixBp4JX4jUnshQU/q1jfFdhUd+yM/qN8OW9Uxse5QfcQM4kZtONwf8MB38qff34ZbzWeV4HGWA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754487223;
+	s=zmail; d=rong.moe; i=i@rong.moe;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
+	bh=pYCTlk/GK40nYVeUtUwS5qlXulOvqUMfkNed0naDUDQ=;
+	b=ycv1EeXpYpdUiOwi7KAYBWKa/KEUInXVL0JKZQfFZvej36pQQF4OVT5zAfE+xxnz
+	PlRDC2CsPbViUBfGgrLQAF98A1L1/BhW9m4n/V+Y0fRetXZarwxI3dx15lF3HcSfFWR
+	id9ybrcPE1vylacRimfJAZj2aa6tUElYS7ooEJLM=
+Received: by mx.zohomail.com with SMTPS id 1754487219747607.5034324774383;
+	Wed, 6 Aug 2025 06:33:39 -0700 (PDT)
+Message-ID: <b7ad97009fa0a49b9229ade0af5f526057869a36.camel@rong.moe>
+Subject: Re: [PATCH 2/2] platform/x86: ideapad-laptop: Fully support auto
+ kbd backlight
+From: Rong Zhang <i@rong.moe>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Ike Panhc <ikepanhc@gmail.com>, "Derek J. Clark"
+ <derekjohn.clark@gmail.com>,  Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Hans de Goede <hansg@kernel.org>, 	platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <9a2fad3c-66d5-c877-698b-a9b5a589f081@linux.intel.com>
+References: <20250805140131.284122-1-i@rong.moe>
+	 <20250805140131.284122-3-i@rong.moe>
+	 <9a2fad3c-66d5-c877-698b-a9b5a589f081@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 06 Aug 2025 21:28:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB8604EFCC5400DEBB7DF0CF49952DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Evolution 3.56.1-1 
+X-ZohoMailClient: External
 
-On 25-08-06, Pankaj Gupta wrote:
-> > On 25-07-09, Pankaj Gupta wrote:
-> > > > Am 30.06.25 um 14:17 schrieb Marco Felsch:
+Hi Ilpo,
 
-...
+On Wed, 2025-08-06 at 14:26 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Tue, 5 Aug 2025, Rong Zhang wrote:
+>=20
+> > Currently, the auto brightness mode of keyboard backlight maps to
+> > brightness=3D0 in LED classdev. The only method to switch to such a mod=
+e
+> > is by pressing the manufacturer-defined shortcut (Fn+Space). However, 0
+> > is a multiplexed brightness value; writing 0 simply results in the
+> > backlight being turned off.
+> >=20
+> > With brightness processing code decoupled from LED classdev, we can now
+> > fully support the auto brightness mode. In this mode, the keyboard
+> > backlight is controlled by the EC according to the ambient light sensor
+> > (ALS).
+> >=20
+> > To utilize this, a sysfs node is exposed to the userspace:
+> > /sys/class/leds/platform::kbd_backlight/als_enabled. The name is chosen
+> > to align with dell-laptop, which provides a similar feature.
+> >=20
+> > Signed-off-by: Rong Zhang <i@rong.moe>
+> > ---
+> >  .../ABI/testing/sysfs-platform-ideapad-laptop | 12 ++++
+> >  drivers/platform/x86/lenovo/ideapad-laptop.c  | 65 ++++++++++++++++++-
+> >  2 files changed, 75 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop b/=
+Documentation/ABI/testing/sysfs-platform-ideapad-laptop
+> > index 5ec0dee9e707..a2b78aa60aaa 100644
+> > --- a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
+> > +++ b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
+> > @@ -50,3 +50,15 @@ Description:
+> >  		Controls whether the "always on USB charging" feature is
+> >  		enabled or not. This feature enables charging USB devices
+> >  		even if the computer is not turned on.
+> > +
+> > +What:		/sys/class/leds/platform::kbd_backlight/als_enabled
+> > +Date:		July 2025
+> > +KernelVersion:	6.17
+>=20
+> This ship has sailed.
 
-> > Lockdown: For a verified boot setup you need to burn an eFuse at some
-> point,
-> > to tell the bootROM to boot only correct verified firmware images.
-> > 
-> > After this lockdown it's no longer possible to burn eFuses from the REE
-> albeit
-> > the production line setup still requires the support.
-> > 
-> Understood. ELE access from both secure and non-secure world is fixed in Q3
-> release.
-> User can be able to modify eFuses via OPTEE.
+How time flies! It is embarrassing that I wrote this several weeks ago
+but forgot to update it before finishing the patch. Thanks for your
+reminder and I will update this in v2.
 
-Splitting the read and write between two drivers is even worse.
+>=20
+> > +Contact:	platform-driver-x86@vger.kernel.org
+> > +Description:
+> > +		This file allows to control the automatic keyboard
+>=20
+> Please avoid using "This file" entirely in the description.
+>=20
+> Start with "Controls ..."
 
-Can you please point out why you can't just move the driver parts into
-the tee? I do see many advantages if only op-tee is used:
+Sure.
 
- + Minimize the maintainer effort, because only one driver
-   implementation is used.
- + TEE code could be reused by other OSes
- + You could already start adding the support for it to OP-TEE because
-   no ELE-FW update is required.
- + TEE is used anyway for new projects due to CRA and friends
- + Concurrent access handling is done by the TEE core
+> > +		illumination mode on some systems that have an ambient
+> > +		light sensor. Write 1 to this file to enable the auto
+> > +		mode, 0 to disable it. In this mode, the actual
+>=20
+> What is "this mode" ? Did you mean, e.g., "When the auto mode is enabled,=
+"
+> ?
 
-The only downside of this approach is the integration effort for the
-TEE, but this shouldn't be an excuse. Mostly all well known buildsystems
-like: Yocto/OE, buildroot, ptxdist do have mainline support for OP-TEE.
+It does sound more understandable to describe it that way. Thanks for
+your suggestion and I will improve the wording in v2.
 
-> > > >>  - With new regulations like the EU CRA I think we need some sort of
-> > > >>    secure-enclave anyway.
-> > >
-> > > > Probably some sort of, yes. But not necessarily in the form of TEE
-> > > > or TrustZone, I guess.
-> > > To use ELE features through Linux, there is no dependency on OPTEE-OS.
-> > 
-> > Once again, still no fix available and if your system requires a TEE
-> you're forced
-> > to move the ELE communication into the TEE (at least until now).
-> > 
-> > Also the eFuse R/W access is not possible from the REE/Linux after doing
-> the
-> > device lockdown.
-> > 
-> ELE access from both secure and non-secure world will be fixed in Q3
-> release.
-> User can be able to modify eFuses via OPTEE.
+> > +		brightness level is not available and reading the
+> > +		"brightness" file always returns 0.
+> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
+tform/x86/lenovo/ideapad-laptop.c
+> > index 5014c1d0b633..49f2fc68add4 100644
+> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > @@ -1712,6 +1712,57 @@ static void ideapad_kbd_bl_notify(struct ideapad=
+_private *priv)
+> >  	ideapad_kbd_bl_notify_known(priv, brightness);
+> >  }
+> > =20
+> > +static ssize_t als_enabled_show(struct device *dev,
+> > +				struct device_attribute *attr,
+> > +				char *buf)
+> > +{
+> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> > +	struct ideapad_private *priv =3D container_of(led_cdev, struct ideapa=
+d_private, kbd_bl.led);
+> > +	int hw_brightness;
+> > +
+> > +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
+> > +	if (hw_brightness < 0)
+> > +		return hw_brightness;
+> > +
+> > +	return sysfs_emit(buf, "%d\n", hw_brightness =3D=3D KBD_BL_AUTO_MODE_=
+HW_BRIGHTNESS);
+> > +}
+> > +
+> > +static ssize_t als_enabled_store(struct device *dev,
+> > +				 struct device_attribute *attr,
+> > +				 const char *buf, size_t count)
+> > +{
+> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> > +	struct ideapad_private *priv =3D container_of(led_cdev, struct ideapa=
+d_private, kbd_bl.led);
+> > +	bool state;
+> > +	int err;
+> > +
+> > +	err =3D kstrtobool(buf, &state);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	/*
+> > +	 * Auto (ALS) mode uses a predefined HW brightness value. It is
+> > +	 * impossible to disable it without setting another brightness value.
+> > +	 * Set the brightness to 0 when disabling is requested.
+> > +	 */
+> > +	err =3D ideapad_kbd_bl_hw_brightness_set(priv, state ? KBD_BL_AUTO_MO=
+DE_HW_BRIGHTNESS : 0);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	/* Both HW brightness values map to 0 in the LED classdev. */
+> > +	ideapad_kbd_bl_notify_known(priv, 0);
+> > +
+> > +	return count;
+> > +}
+> > +
+> > +static DEVICE_ATTR_RW(als_enabled);
+> > +
+> > +static struct attribute *ideapad_kbd_bl_als_attrs[] =3D {
+> > +	&dev_attr_als_enabled.attr,
+> > +	NULL,
+> > +};
+> > +ATTRIBUTE_GROUPS(ideapad_kbd_bl_als);
+> > +
+> >  static int ideapad_kbd_bl_init(struct ideapad_private *priv)
+> >  {
+> >  	int brightness, err;
+> > @@ -1722,10 +1773,20 @@ static int ideapad_kbd_bl_init(struct ideapad_p=
+rivate *priv)
+> >  	if (WARN_ON(priv->kbd_bl.initialized))
+> >  		return -EEXIST;
+> > =20
+> > -	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type)) {
+> > +	switch (priv->kbd_bl.type) {
+> > +	case KBD_BL_TRISTATE_AUTO:
+> > +		/* The sysfs node will be /sys/class/leds/platform::kbd_backlight/al=
+s_enabled */
+> > +		priv->kbd_bl.led.groups =3D ideapad_kbd_bl_als_groups;
+> > +		fallthrough;
+> > +	case KBD_BL_TRISTATE:
+> >  		priv->kbd_bl.led.max_brightness =3D 2;
+> > -	} else {
+> > +		break;
+> > +	case KBD_BL_STANDARD:
+> >  		priv->kbd_bl.led.max_brightness =3D 1;
+> > +		break;
+> > +	default:
+> > +		/* This has already been validated by ideapad_check_features(). */
+> > +		unreachable();
+> >  	}
+> > =20
+> >  	brightness =3D ideapad_kbd_bl_brightness_get(priv);
+> >=20
 
-NACK, please see my comment above.
-
-> > > >>  - Making it optional cause more paths of potential errors e.g. by
-> not
-> > > >>    including the correct "secure.dtsi". Multiple paths also require
-> more
-> > > >>    maintain- and testing effort. IMHO I do think that one of the
-> paths
-> > > >>    get unmaintened at some point but we would need to keep it for
-> > > >>    backward compatibility.
-> > > >>
-> > > >>    Having one implementation eliminates this since.
-> > > >>
-> > > >>  - All above points assume that the ELE-FW and -HW is capable of
-> talking
-> > > >>    to both world, which is not the case. As we learned NXP doesn't
-> have
-> > > >>    a fix for the 2-MUs ELE yet and even more important there are 1-MU
-> > > >>    ELE-IPs.
-> > >
-> > > For i.MX9x SoC(s) there is at least one dedicated ELE MU(s) for each
-> > > world - Linux(one or more) and OPTEE-OS (one or more), that needs to
-> > > be shared between them.
-> > 
-> > Please mention this within your commit message.
-> Accepted & mentioned.
-> 
-> > 
-> > > As mentioned earlier, there is an issue of using MUs simultaneously,
-> > > from both worlds. Fix is in progress.
-> > 
-> > So until now no fix available and i.MX93 based products which do use a TEE
-> > are forced to move the communication into OP-TEE.
-> > 
-> > > >> I do see the (minimal) drawback of having +1 FW but I think this is
-> > > >> more an integration problem.
-> > > >> Speaking of FW files, for the new i.MX9* you already have plenty fo
-> > > >> them: bootloader, TF-A, ele-fw, scu-fw (i.MX95). So your integation
-> > > >> needs to handle multiple firmware files already.
-> > >
-> > > > Sure, but I really like to keep the complexity and therefore the
-> > > > number of FW files as low as possible. I'm not sure what has more
-> > > > weight in terms of
-> > > > security: shipping an additional firmware and therefore increasing
-> > > > the attack surface or maintaining an additional code-path.
-> > >
-> > > There is no +1 firmware in case of i.MX93.
-> > >
-> > > >>
-> > > >>> Anyway, I see your point of having a single implementation for the
-> > > >>> ELE API in the "right" place. But as far as I know other platforms
-> > > >>> like
-> > > >>> STM32MP1 also implement both ways for the HWRNG, secure access via
-> > > >>> OPTEE and non-secure access via kernel directly.
-> > > >>
-> > > >> I'm not a STM32MP1 expert but here you have this setup with the
-> > > >> *-scmi.dtsi. So you have two code paths which needs to be
-> > > >> maintained and tested. Also if one customer of yours want to use
-> > > >> OP-TEE you need the integration anyway, so you (Kontron) needs to
-> > > >> maintain multiple configuration as well. I don't see the added value.
-> > > >>
-> > > >> I think for STM32MP1 the *-scmi.dtsi support was added later
-> > > >> because it required a lot effort to support it. This is not the
-> > > >> case for the
-> > > >> i.MX9* series.
-> > >
-> > > > Anyway, thanks for elaborating. Your points are all valid and
-> > > > basically I
-> > > agree. I'm fine with either way. But I'm afraid that implementing the
-> > > ELE API in OP-TEE only will cause another tremendous delay for having
-> > > ELE access in the kernel, especially seeing how slow NXP seems to be
-> > > working on these topics right now.
-> > >
-> > > To use ELE features through Linux, there is no dependency on OPTEE-OS.
-> > 
-> > How exactly do you provide the eFuse write access after the device was
-> locked
-> > down?
-> As mentioned above by you. It will be done via OPTEE-OS (or may be via TFA).
-
-Why TF-A? Please see my comments above.
-
-At the moment I don't see why the ELE must be a Linux driver. You could
-start adding a TEE driver now, because there is no need to wait 3 months
-for a ELE-FW fix.
-
-IMHO having a dedicated normal-world driver makes only sense for
-bootlaoders which don't have support for the TEE communication but need
-access to the ELE. This is not the case for the kernel.
-
-Regards,
-  Marco
+Thanks for your review,
+Rong
 
