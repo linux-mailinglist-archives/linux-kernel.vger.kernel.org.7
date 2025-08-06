@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-758102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61522B1CADB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:33:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5430BB1CAF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048591724CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B316E562EE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7168029DB80;
-	Wed,  6 Aug 2025 17:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0732BD016;
+	Wed,  6 Aug 2025 17:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDkZLSEw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="HJwTOEJx"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5811BCA07;
-	Wed,  6 Aug 2025 17:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2877923F295;
+	Wed,  6 Aug 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501575; cv=none; b=ZxVE61mJBSsM04nnSTosNG2lhynAGugSJPM35UOirPayBzhPbMxSgNi8f1PP+eYcJaggu7jbARTVhfMMoHLEdU2Pq4NwcgmUlI7nae7WfVmJKXMF4HFap3t/nULdAWaPIjDg6TPR+kwrT+oYt1YeB56KXOfqaETWlCs4FOjQp5g=
+	t=1754501717; cv=none; b=jKsOD8uQXIXie9hX2V1CAbvjBXar3gHIC3xIp1UJVvfi+IurCeGKOR5EnK3cVVrbIImKFoUheXiKzVJhgkuP2H51ZOd19g9hkgWddBN2Bfvp0ZxDgOskPE42C05Ong84r7cVlcw5mD3q4uuu69/ajGniSbU/qN0ArdciW/UsDvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501575; c=relaxed/simple;
-	bh=Y29pIpqPF8VltcQhCn+r7xOf14Rp5KsHELKwCrx6YII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKxI3X3kfsCJy7Mxk6Jb1LRZmU4KJkEpKbG6QeOVkTARhoatfnXcXxVdz3zWtWIUa/WKpf6CNXzP3L8PHm3+6+WjNgKnDsGg80uq4ORh7SZda6WvYRZQidNbHtHWU+KUebGNWzRWz8iv95QlKdlt8lXKQ1LjaaCzxI3LGZQHZgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDkZLSEw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E52C4CEED;
-	Wed,  6 Aug 2025 17:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754501574;
-	bh=Y29pIpqPF8VltcQhCn+r7xOf14Rp5KsHELKwCrx6YII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cDkZLSEwcrXlEaafRxG87PSI2U7JAsQqavW+0Rx9wE8lrz6lL15aiSIdkM54bJbPw
-	 jX/0uGXxA2UV6TS6QZYFVTlLDCd9JAysJdRDOXnIOqixx0sC/VNXmI7fxRl1iV3jPP
-	 fyZUdecQiXzNoFd9TSgYA+ArzUhfBPk1CuArWF0SSJnGctBSrSOoindn9AqXhILrzQ
-	 C+U9n8VtfD69RDx0UEB2H6M/2l4nyeoj3TfHUrLTqHpuBM7ispK9PxWI0VsuZGoo+L
-	 7zdiTj2Z8QPtkxY3Tjygse97TEVPmPBW3cRZuTpcM5jWryxDw2QqzvNzAc+gLnIf97
-	 JDUoZ1kTGxgrA==
-Date: Wed, 6 Aug 2025 23:02:48 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vivek.Pernamitta@quicinc.com, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH v2 5/5] bus: host: mhi: Need to honor sys_err at power_up
- state
-Message-ID: <4dzypnirht6dkghyku3myuiayd5pd6v5cuprnd5owke3eclwll@vw6rzm5kcjci>
-References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
- <20250710-sriov_vdev_next-20250630-v2-5-4bd862b822e8@quicinc.com>
- <f80d4e32-0f28-4a90-9db4-05c95e260658@oss.qualcomm.com>
+	s=arc-20240116; t=1754501717; c=relaxed/simple;
+	bh=OCq12Yc0a/7Oxk3oGpeH/45uPJl+C1Cx+HEhTuUSHqU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ItShKlLAYiyUGiLhK0G6e2MqjtVdxzQpNIdOwwFfJgm1DmrMtYzVt2ccR2my/itTmEsFmZRTLZ4udgsjTDXSAxE3FG0tucDY2IhUpBx3D2L4lavnZzcw9KD/PXf00nBPmQ60MYIDagZJyNPd69rJfajjoKLKBP52wFORVaAjCf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=HJwTOEJx; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=qx2Ii0d1wljD8zsF+sV0ysqIc18W0P+YNJtBHNs6vYE=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1754501629; v=1; x=1754933629;
+ b=HJwTOEJxUjB+/QELnjFqLYBQX+JIpaWvXeeqLVvIJj1AVY59iHTPBDigBXMwQrrfr4xMH0qk
+ T3bT5cKHUXhs1X/RlWiF0ONRKcUl6PBvjemjfhnJ7on67AI3rLyQ9MzI4Qx0ooJvoD31hzK1pZa
+ Vr8i4kXyoMqkyhC3m/ccqAitSaU02qoXWE/7jjaCJK8BVKcl7MgOwmp4z3D5fdJBKrmDAZzGzEd
+ /KScdYwRAPxnICkA4A0X6t3FLlJ5RMFsXV/enWKoAJz8nk80cFlL88CHS3aKBoJWJiKsTsFvwMd
+ grfib+8lCt7LitH0/y0CujI/07yy40RNyjHcDYbS6DkZA==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 956df8b5; Wed, 06 Aug 2025 19:33:49 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Subject: [PATCH RFC 0/5] Marvell PXA1908 power domains
+Date: Wed, 06 Aug 2025 19:33:19 +0200
+Message-Id: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f80d4e32-0f28-4a90-9db4-05c95e260658@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAOCRk2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCwNj3YKKRENLAwvd9NS8ghRdQ1NLQ4uUJFMjM4NkJaCegqLUtMwKsHn
+ RSkFuzkqxtbUA71DEAGQAAAA=
+X-Change-ID: 20250803-pxa1908-genpd-15918db5260c
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1805;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=OCq12Yc0a/7Oxk3oGpeH/45uPJl+C1Cx+HEhTuUSHqU=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTJ/5+vveagHOXpQ77hDM6N5mulE4R2pU1u/O2wE2Xq
+ K9CFpUeHaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjCRJYEM//NXlgqcvt3dv/LQ
+ Xet5C40ecnn4z3dpiD4qkfD6nbNjWx8jw6Z9Z9NdBQsdTcosQnfdXBO4c+mOGT8/qG35lL3fWfX
+ IbW4A
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-On Thu, Jul 10, 2025 at 02:46:51PM GMT, Konrad Dybcio wrote:
-> On 7/10/25 10:58 AM, Vivek.Pernamitta@quicinc.com wrote:
-> > From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> > 
-> > In mhi_sync_power_up() host waits for device to enter in to mission mode
-> > but SYS_ERR is an valid state, If device sends an SYS_ERR host will bail
-> > out for wait_event_timeout() as MHI is in error state and if MHI is tear
-> > downed sys err cant't be serviced and mhi can't be recovered.
-> > 
-> > If there is any SYS_ERR, sys_err handler needs to process SYS_ERR state
-> > and queues the next state transition for device to bring in to Mission
-> > mode, so mhi_sync_power_up() needs to wait for device to enter in to
-> > mission mode.
-> 
-> This is very difficult to read, please rephrase the commit message
-> 
+Hello,
 
-+1
+This series implements support for the power domains found in Marvell's
+PXA1908 SoC. The domains control power for the graphics, video and image
+processors along with the DSI PHY.
 
-- Mani
+The series is based on master as the MAINTAINERS and device tree patches
+depend on the very recently merged initial Marvell PXA1908 support series.
+That series can be found at the following link:
+https://lore.kernel.org/all/20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz
 
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+Duje Mihanović (5):
+      dt-bindings: clock: marvell,pxa1908: Add simple-mfd, syscon compatible to apmu
+      dt-bindings: power: Add Marvell PXA1908 domains
+      pmdomain: marvell: Add PXA1908 power domains
+      MAINTAINERS: PXA1908: Add power domain controller
+      arm64: dts: marvell: pxa1908: Add power controller
+
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml |  36 ++-
+ .../power/marvell,pxa1908-power-controller.yaml    | 105 +++++++
+ MAINTAINERS                                        |   5 +
+ .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |   1 +
+ arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |  36 ++-
+ drivers/pmdomain/Kconfig                           |   1 +
+ drivers/pmdomain/Makefile                          |   1 +
+ drivers/pmdomain/marvell/Kconfig                   |  16 +
+ drivers/pmdomain/marvell/Makefile                  |   3 +
+ .../pmdomain/marvell/pxa1908-power-controller.c    | 347 +++++++++++++++++++++
+ include/dt-bindings/power/marvell,pxa1908-power.h  |  17 +
+ 11 files changed, 561 insertions(+), 7 deletions(-)
+---
+base-commit: cca7a0aae8958c9b1cd14116cb8b2f22ace2205e
+change-id: 20250803-pxa1908-genpd-15918db5260c
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Duje Mihanović <duje@dujemihanovic.xyz>
+
 
