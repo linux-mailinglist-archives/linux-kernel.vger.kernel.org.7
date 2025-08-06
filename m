@@ -1,191 +1,207 @@
-Return-Path: <linux-kernel+bounces-758095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC4CB1CAC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:28:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5CFB1CAC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E2818C4DA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:29:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D90162C0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9D6298CB6;
-	Wed,  6 Aug 2025 17:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD525293C45;
+	Wed,  6 Aug 2025 17:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH0Lum0L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="gr4dpVoI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612B9EEA6;
-	Wed,  6 Aug 2025 17:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501325; cv=none; b=sgTI8sS8EFesAIKPPD/AErB4OhpRwuh7FNBWciSJm4I3wPb+/uJX9KLNyfopzCWoCUd/n99YalOuo0myc8QGxK+W3GP1NFMuzWYxT3UH6n1pWOJuqRejYB+EMDpgDzjfKQKEwq9WNpVZub1Qf6XsQTg5Y8aUZsEYbdtBlK6Rd+M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501325; c=relaxed/simple;
-	bh=XOh7ZW934UbNE6R+YKem0b85T3g/dZjtzAE7tD6zXO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BY8zOTueEcecvr633lOmsY+jT0McLR4FjzfmiZ67TikIq15brz5f5yUu1WzI4Wkkc784vNGilTbpPLBE+KKLPTGAibrUBrUtLHXgoV6VxKBSulhNGTVriRw7xSKffUIbpZ5233rqY/71bjVPXv1SMqAKC7014EVLD795mpQ2Eik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iH0Lum0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D6DC4CEE7;
-	Wed,  6 Aug 2025 17:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754501324;
-	bh=XOh7ZW934UbNE6R+YKem0b85T3g/dZjtzAE7tD6zXO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iH0Lum0LENw7kN3xt7mfold6zbNxOFFqzvLy9h72OrLAxBXht5FEje6vG0IP2CJc8
-	 YmPF7ZpmfWcJlAJN5WFZt2FWCmGwLAumq/6Hwy6B5V8tQN4DjzSZhDRwHhLFpi5pNW
-	 GdBr6Bvvw9WMj6h5Cq9/rJghS7sULAKMlP/cotpBwWAIAAtwwq4RiNAZ7FFkLYUDqR
-	 TKv+PD21+cYPZYIVWRCiEcCoSCw3HtsAttCTyWdvl/IB2OrWCw7Nk4sFe6YcskEQxp
-	 MDIRbVfols+dM8wvpBZYoKuKEDusU+A7fao7i2pjj5FUKj+gXRzdrYd8laqp55oiip
-	 hjZejeKa0FuXg==
-Date: Wed, 6 Aug 2025 22:58:39 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vivek.Pernamitta@quicinc.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH v2 3/5] bus: mhi: host: pci_generic: Remove MHI driver
- and ensure graceful device recovery
-Message-ID: <y3bvlfxjo5thagngezv57d5jwe6uwwot2hwqwdne2p6yvogor2@obs4nls47hx3>
-References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
- <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33727EEA6;
+	Wed,  6 Aug 2025 17:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754501373; cv=pass; b=UGDk3ljtRnWZg3Fmr/B+F0qy03AzAkb3ua8VtM3zx6LhYpq17+eqWxXYf2HJ2G0Bz3VONhsMuujkLOIxhdwDWxsNcwGA0cUmNKdgNHo09qJf/7IuafpJEMrirw0Tsk7DpjtT9YacGHtsJcxZoU8JxWzVIAmcWrpByIDvMQp2dCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754501373; c=relaxed/simple;
+	bh=P5HumY1f5pqcbsSiGen3zHpVU5FyFzi7IXD83orIJ5k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=A1YPT6QrjVzQEB4va66v9TwH2rPWDWConsr5XB5EOsfdXV8r8+caZY5DtXoFPrtcTnsdX9x4bXECiN3VmDmpxFXGOMWLxhgj0v63OH08AgrjwSRjhL+VS/4+iu9szT/rGXpmN1L7nsoV0D3ipXF8vi0KPTakpNHAICLV5GBSStY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=gr4dpVoI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754501355; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nRVlUP23EhAIa3nkqn3aarUxylgokKXzhvKKc+aKnJOif3UKp2m8RKJ01tqW0ONJCJegsztMAQWCQkjon/u07MIeMUqgW/Y0jhMYOLQJ6dMAv7cNUyYnjhOuZ5eOPb9Mrjr1TgY9Cbpyi3IuxLzuEQjs6Ie+gJW0lTY/M7VnlCE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754501355; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5qQS3haJplQW3XCKKDMXBKL3UdZ6MJ+OjwYNOoSXYx0=; 
+	b=G/FjokbrZGt8dL2s82kyfDIU2Uma7Tq2/K6AZPV0X+mRX8SE6b22WrcmbBAwMiWWQvB6u1bumzPUoZ+0ApnYcMZlouhEnFYNR9KgZiCm6pRYBiUxkwNKFmlgTdzRcaBSrFxz86UUV2bbRyB/0e8KVmxGhz8P7N7X2VQn+wRJQFA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754501355;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=5qQS3haJplQW3XCKKDMXBKL3UdZ6MJ+OjwYNOoSXYx0=;
+	b=gr4dpVoISdQmYfQDNxHsQvL59FeRRsiZ5wheNd8x00aWNDCnyYtOfFNgbQxMaHln
+	FxMi0nT0I5KPViMneohQziJRtqiOyt3GzbVkj2ReViy6ykUZbkyBDutIKSZ3xzUyaxJ
+	7LQ12jm7aGvQ41h7WerET7zdPXaz9OOPcEDFI5VI=
+Received: by mx.zohomail.com with SMTPS id 175450135331155.256780099241155;
+	Wed, 6 Aug 2025 10:29:13 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 11/16] rnull: move driver to separate directory
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-11-3a262b4e2921@kernel.org>
+Date: Wed, 6 Aug 2025 14:28:58 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <B09EC7C1-1CE0-406A-9856-9FBADA662AFE@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-11-3a262b4e2921@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Thu, Jul 10, 2025 at 02:28:34PM GMT, Vivek.Pernamitta@quicinc.com wrote:
-> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+
+
+> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
 > 
-> When the MHI driver is removed from the host side, it is crucial to ensure
-> graceful recovery of the device. To achieve this, the host driver will
-> perform the following steps:
-
-Please rewrite the description in an imperative tone.
-
+> The rust null block driver is about to gain some additional modules. Rather
+> than pollute the current directory, move the driver to a subdirectory.
 > 
-> 1. Disable SRIOV for any SRIOV-enabled devices on the Physical Function.
-
-You haven't enabled SR-IOV at this point, but only in the next patch. So you
-need to swap patches 3 and 4.
-
-> 2. Perform a SOC_RESET on Physical Function (PF).
-> 
-> Disabling SRIOV ensures that all virtual functions are properly shut down,
-> preventing any potential issues during the reset process. Performing
-> SOC_RESET on each physical function guarantees that the device is fully
-
-Each physical function? How many PF does this device support? It should be
-described somewhere on the total PF and VF it supports.
-
-> reset and ready for subsequent operations.
-> 
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
->  drivers/bus/mhi/host/pci_generic.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
+> MAINTAINERS                        |  2 +-
+> drivers/block/Kconfig              | 10 +---------
+> drivers/block/Makefile             |  4 +---
+> drivers/block/rnull/Kconfig        | 13 +++++++++++++
+> drivers/block/rnull/Makefile       |  3 +++
+> drivers/block/{ => rnull}/rnull.rs |  0
+> 6 files changed, 19 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 4bafe93b56c54e2b091786e7fcd68a36c8247b8e..2d1381006293412fbc593316e5c7f0f59ac74da8 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -45,6 +45,8 @@
->   * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
->   *		   of inband wake support (such as sdx24)
->   * @no_m3: M3 not supported
-> + * @reset_on_driver_unbind: Set true for devices support SOC reset and
-> + *				 perform it when unbinding driver
-
-	reset_on_remove: Reset the device while removing the driver
-
->   */
->  struct mhi_pci_dev_info {
->  	const struct mhi_controller_config *config;
-> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
->  	unsigned int mru_default;
->  	bool sideband_wake;
->  	bool no_m3;
-> +	bool reset_on_driver_unbind;
->  };
->  
->  #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
-> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
->  	.dma_data_width = 32,
->  	.sideband_wake = false,
->  	.no_m3 = true,
-> +	.reset_on_driver_unbind = true,
->  };
->  
->  static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
-> @@ -970,6 +974,7 @@ struct mhi_pci_device {
->  	struct work_struct recovery_work;
->  	struct timer_list health_check_timer;
->  	unsigned long status;
-> +	bool reset_on_driver_unbind;
->  };
->  
->  static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
-> @@ -1270,6 +1275,11 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	mhi_cntrl->mru = info->mru_default;
->  	mhi_cntrl->name = info->name;
->  
-> +	/* Assign reset functionalities only for PF */
-
-Remove the comment.
-
-> +	if (pdev->is_physfn)
-> +		mhi_pdev->reset_on_driver_unbind = info->reset_on_driver_unbind;
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0c1d245bf7b8..29b14aec3559 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4246,7 +4246,7 @@ W: https://rust-for-linux.com
+> B: https://github.com/Rust-for-Linux/linux/issues
+> C: https://rust-for-linux.zulipchat.com/#narrow/stream/Block
+> T: git https://github.com/Rust-for-Linux/linux.git rust-block-next
+> -F: drivers/block/rnull.rs
+> +F: drivers/block/rnull/
+> F: rust/kernel/block.rs
+> F: rust/kernel/block/
+> 
+> diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+> index 0f70e2374e7f..6b50dbc0495b 100644
+> --- a/drivers/block/Kconfig
+> +++ b/drivers/block/Kconfig
+> @@ -17,6 +17,7 @@ menuconfig BLK_DEV
+> if BLK_DEV
+> 
+> source "drivers/block/null_blk/Kconfig"
+> +source "drivers/block/rnull/Kconfig"
+> 
+> config BLK_DEV_FD
+> tristate "Normal floppy disk support"
+> @@ -354,15 +355,6 @@ config VIRTIO_BLK
+>  This is the virtual block driver for virtio.  It can be used with
+>           QEMU based VMMs (like KVM or Xen).  Say Y or M.
+> 
+> -config BLK_DEV_RUST_NULL
+> - tristate "Rust null block driver (Experimental)"
+> - depends on RUST
+> - help
+> -  This is the Rust implementation of the null block driver. For now it
+> -  is only a minimal stub.
+> -
+> -  If unsure, say N.
+> -
+> config BLK_DEV_RBD
+> tristate "Rados block device (RBD)"
+> depends on INET && BLOCK
+> diff --git a/drivers/block/Makefile b/drivers/block/Makefile
+> index 097707aca725..aba3e93d5014 100644
+> --- a/drivers/block/Makefile
+> +++ b/drivers/block/Makefile
+> @@ -9,9 +9,6 @@
+> # needed for trace events
+> ccflags-y += -I$(src)
+> 
+> -obj-$(CONFIG_BLK_DEV_RUST_NULL) += rnull_mod.o
+> -rnull_mod-y := rnull.o
+> -
+> obj-$(CONFIG_MAC_FLOPPY) += swim3.o
+> obj-$(CONFIG_BLK_DEV_SWIM) += swim_mod.o
+> obj-$(CONFIG_BLK_DEV_FD) += floppy.o
+> @@ -39,6 +36,7 @@ obj-$(CONFIG_ZRAM) += zram/
+> obj-$(CONFIG_BLK_DEV_RNBD) += rnbd/
+> 
+> obj-$(CONFIG_BLK_DEV_NULL_BLK) += null_blk/
+> +obj-$(CONFIG_BLK_DEV_RUST_NULL) += rnull/
+> 
+> obj-$(CONFIG_BLK_DEV_UBLK) += ublk_drv.o
+> obj-$(CONFIG_BLK_DEV_ZONED_LOOP) += zloop.o
+> diff --git a/drivers/block/rnull/Kconfig b/drivers/block/rnull/Kconfig
+> new file mode 100644
+> index 000000000000..6dc5aff96bf4
+> --- /dev/null
+> +++ b/drivers/block/rnull/Kconfig
+> @@ -0,0 +1,13 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Rust null block device driver configuration
 > +
+> +config BLK_DEV_RUST_NULL
+> + tristate "Rust null block driver (Experimental)"
+> + depends on RUST
+> + help
+> +  This is the Rust implementation of the null block driver. Like
+> +  the C version, the driver allows the user to create virutal block
+> +  devices that can be configured via various configuration options.
 > +
-
-Extra newline.
-
->  	if (info->edl_trigger)
->  		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
->  
-> @@ -1336,7 +1346,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	return err;
->  }
->  
-> -static void mhi_pci_remove(struct pci_dev *pdev)
-> +static void mhi_pci_resource_deinit(struct pci_dev *pdev)
-
-Please do not create unsymmetric functions. There is no mhi_pci_resource_init().
-
->  {
->  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
->  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
-> @@ -1352,6 +1362,20 @@ static void mhi_pci_remove(struct pci_dev *pdev)
->  	/* balancing probe put_noidle */
->  	if (pci_pme_capable(pdev, PCI_D3hot))
->  		pm_runtime_get_noresume(&pdev->dev);
-> +}
+> +  If unsure, say N.
+> diff --git a/drivers/block/rnull/Makefile b/drivers/block/rnull/Makefile
+> new file mode 100644
+> index 000000000000..11cfa5e615dc
+> --- /dev/null
+> +++ b/drivers/block/rnull/Makefile
+> @@ -0,0 +1,3 @@
 > +
-> +static void mhi_pci_remove(struct pci_dev *pdev)
-> +{
-> +	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
-> +	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
-> +
-> +	/* Disable SRIOV */
+> +obj-$(CONFIG_BLK_DEV_RUST_NULL) += rnull_mod.o
+> +rnull_mod-y := rnull.o
+> diff --git a/drivers/block/rnull.rs b/drivers/block/rnull/rnull.rs
+> similarity index 100%
+> rename from drivers/block/rnull.rs
+> rename to drivers/block/rnull/rnull.rs
+> 
+> -- 
+> 2.47.2
+> 
+> 
+> 
 
-This one too.
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-> +	pci_disable_sriov(pdev);
-> +	mhi_pci_resource_deinit(pdev);
-> +	if (mhi_pdev->reset_on_driver_unbind) {
-> +		dev_info(&pdev->dev, "perform SOC reset\n");
-
-This is just a spam, please drop.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
