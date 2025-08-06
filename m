@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-758392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B653CB1CE65
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:28:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC2EB1CE67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E173ABC8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:28:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08ED44E0193
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C78226CE5;
-	Wed,  6 Aug 2025 21:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE37227563;
+	Wed,  6 Aug 2025 21:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1IeyHck"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOuVpqo9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB65224AF1;
-	Wed,  6 Aug 2025 21:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4EC22577E;
+	Wed,  6 Aug 2025 21:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754515701; cv=none; b=nF0H7tqwwMaqGBT9D+hhu3MRFRzCI3jD7dVw2163JGC05xqDSv86bEKOstF72tbtANPdMA7ny8xw/JY7Lm8MLYI+ZPtXiVO/hLcil5//47qKhCiATJLU4siqqv8dkN68lMhkc+OaUBkBtaGgKXcyn5k96p39VUtUlZMbRiwqipo=
+	t=1754515708; cv=none; b=BvWcbYC4ljYgsDF//b7j/j/2Le/2pYoFjT2fynEGJdg3mMe5DtgcX2owzYZSkaWZ1H8xGF0UR8A1hGX6OtvP9OBDc1Wo7APBXlTD+pJDBOGI/K4qXgMHvWeeaNE8gUO1uQfD90rsDFwr46gayFCHFQCiUV4SZZjKqFF2pKkM6LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754515701; c=relaxed/simple;
-	bh=tnVINnlcjZVyGMxUZ1JOlgx4QEfSZ+8xLfws7QFbDP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GEmzpic2qIVeM7ha/OcYvqhhGxxNilBucAS1Yek7mS16F8DfyYcg3TFZdtkIOTWR9dk6+LvY+/iiv70Ug0w9XUp3QU22pOSBOfIkaQKU2+jp6Vq3pnXgnnSvixyZ3v7UZNFJzyf5kpP1N7x7B/dJqiSmO+yf3qt62u/7sowrk/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1IeyHck; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACECC4CEE7;
-	Wed,  6 Aug 2025 21:28:19 +0000 (UTC)
+	s=arc-20240116; t=1754515708; c=relaxed/simple;
+	bh=21xpyzPK1VoPmhAptjeM1xFg2OZkfCF6vLurfNbjVkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8fBtOfzY41LxPKfuAUofiE9O59kgsF9MY15/7CPkfHFUWRClHNnkj/xD2cPpomhXTH2VmLstti+Aot3+POP3OQxqXlmZeqGVTiWBM9e8uWwsjO/qw4Yd4XJnn9jCtRA4O9N0w1deSWivmi0otQ6UFzl6zFjQUB2duSJnhbVMao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOuVpqo9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575F4C4CEE7;
+	Wed,  6 Aug 2025 21:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754515699;
-	bh=tnVINnlcjZVyGMxUZ1JOlgx4QEfSZ+8xLfws7QFbDP8=;
+	s=k20201202; t=1754515708;
+	bh=21xpyzPK1VoPmhAptjeM1xFg2OZkfCF6vLurfNbjVkQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=o1IeyHckSxws9//XGC61A8UA5c0AC6v8nRzDfW33062BQACGGalP4hmw0uH9c0mv0
-	 j6X2c4wwSa60AFvzu2tHZyWBwM3fLB4YgB1e0nJpIFkVCpIUAGilolfdgviU2/2WXU
-	 M7DEchzk17i3iBhwX+Bf+2KQ2/dLKhQ+qLXj0hncA/GaP/d4LddCxsqdHWmHAJho9o
-	 LLoAFZG/eAYPpClmUvFm+IK1eGOAeOke8wvolDSP+mMsGDdrif9cegH4sSXrdxYt9X
-	 xk8gqG8FcOfSySGMNn1INVP+M7JkB93aLFG6k135fgAruFeO8oe50nVnPv8ceNYjEj
-	 UFAuN6m2KOTOg==
+	b=NOuVpqo9s3/+DOw8hsbxuEne6c61pq/YK6G5fsAL+W8ztYLGk9xBrnu8sc0CIejyh
+	 GVNRhI3lklWnGYHTGbunYDqeqefxCIPxHAq6FLf6VADUtr73XCrCmIHhkWiraPD2gD
+	 nR2Anqo7Cok0XrSj08SBLStlHE8cY6I3s3K4FuEYA2ez6ViKkvL0qMdfGr6fOGLYkr
+	 q62NwIaYbXbkQqOE7SltOsP2Vy88oG9oOLIuMA2kemuNXP+aHKW1U4oTQt8Qq/piSG
+	 CPaKvWZNZNy832T2bgOZkZVKnZMOhcLkXp96DxRcOJiBPDaqsk1/uN/lriILzFJLeA
+	 NSewonyZzDEDA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Robert Richter <rric@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
 Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: Drop obsolete cavium-thunder2.txt
-Date: Wed,  6 Aug 2025 16:28:11 -0500
-Message-ID: <20250806212812.1634740-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: arm: Convert ti,keystone to DT schema
+Date: Wed,  6 Aug 2025 16:28:23 -0500
+Message-ID: <20250806212824.1635084-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,43 +58,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The binding is already converted to schema and is located in
-Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml.
-
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/cavium-thunder2.txt | 8 --------
- MAINTAINERS                                               | 2 +-
- 2 files changed, 1 insertion(+), 9 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/cavium-thunder2.txt
+ .../bindings/arm/keystone/keystone.txt        | 42 -------------------
+ .../bindings/arm/ti/ti,keystone.yaml          | 42 +++++++++++++++++++
+ 2 files changed, 42 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/keystone/keystone.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/cavium-thunder2.txt b/Documentation/devicetree/bindings/arm/cavium-thunder2.txt
+diff --git a/Documentation/devicetree/bindings/arm/keystone/keystone.txt b/Documentation/devicetree/bindings/arm/keystone/keystone.txt
 deleted file mode 100644
-index dc5dd65cbce7..000000000000
---- a/Documentation/devicetree/bindings/arm/cavium-thunder2.txt
+index f310bad04483..000000000000
+--- a/Documentation/devicetree/bindings/arm/keystone/keystone.txt
 +++ /dev/null
-@@ -1,8 +0,0 @@
--Cavium ThunderX2 CN99XX platform tree bindings
------------------------------------------------
+@@ -1,42 +0,0 @@
+-TI Keystone Platforms Device Tree Bindings
+------------------------------------------------
 -
--Boards with Cavium ThunderX2 CN99XX SoC shall have the root property:
--  compatible = "cavium,thunderx2-cn9900", "brcm,vulcan-soc";
+-Boards with Keystone2 based devices (TCI66xxK2H) SOC shall have the
+-following properties.
 -
--These SoC uses the "cavium,thunder2" core which will be compatible
--with "brcm,vulcan".
-diff --git a/MAINTAINERS b/MAINTAINERS
-index daf48a47f0be..8b9548bbbdea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5545,7 +5545,7 @@ CAVIUM THUNDERX2 ARM64 SOC
- M:	Robert Richter <rric@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Odd Fixes
--F:	Documentation/devicetree/bindings/arm/cavium-thunder2.txt
-+F:	Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml
- F:	arch/arm64/boot/dts/cavium/thunder2-99xx*
- 
- CBS/ETF/TAPRIO QDISCS
+-Required properties:
+- - compatible: All TI specific devices present in Keystone SOC should be in
+-   the form "ti,keystone-*". Generic devices like gic, arch_timers, ns16550
+-   type UART should use the specified compatible for those devices.
+-
+-SoC families:
+-
+-- Keystone 2 generic SoC:
+-   compatible = "ti,keystone"
+-
+-SoCs:
+-
+-- Keystone 2 Hawking/Kepler
+-   compatible = "ti,k2hk", "ti,keystone"
+-- Keystone 2 Lamarr
+-   compatible = "ti,k2l", "ti,keystone"
+-- Keystone 2 Edison
+-   compatible = "ti,k2e", "ti,keystone"
+-- K2G
+-   compatible = "ti,k2g", "ti,keystone"
+-
+-Boards:
+--  Keystone 2 Hawking/Kepler EVM
+-   compatible = "ti,k2hk-evm", "ti,k2hk", "ti,keystone"
+-
+--  Keystone 2 Lamarr EVM
+-   compatible = "ti,k2l-evm", "ti, k2l", "ti,keystone"
+-
+--  Keystone 2 Edison EVM
+-   compatible = "ti,k2e-evm", "ti,k2e", "ti,keystone"
+-
+--  K2G EVM
+-   compatible = "ti,k2g-evm", "ti,k2g", "ti-keystone"
+-
+--  K2G Industrial Communication Engine EVM
+-   compatible = "ti,k2g-ice", "ti,k2g", "ti-keystone"
+diff --git a/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+new file mode 100644
+index 000000000000..20d4084f4506
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/ti/ti,keystone.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Keystone Platforms
++
++maintainers:
++  - Nishanth Menon <nm@ti.com>
++  - Santosh Shilimkar <ssantosh@kernel.org>
++
++properties:
++  compatible:
++    oneOf:
++      - description: K2G
++        items:
++          - enum:
++              - ti,k2g-evm
++              - ti,k2g-ice
++          - const: ti,k2g
++          - const: ti,keystone
++      - description: Keystone 2 Edison
++        items:
++          - enum:
++              - ti,k2e-evm
++          - const: ti,k2e
++          - const: ti,keystone
++      - description: Keystone 2 Lamarr
++        items:
++          - enum:
++              - ti,k2l-evm
++          - const: ti,k2l
++          - const: ti,keystone
++      - description: Keystone 2 Hawking/Kepler
++        items:
++          - enum:
++              - ti,k2hk-evm
++          - const: ti,k2hk
++          - const: ti,keystone
++
++additionalProperties: true
 -- 
 2.47.2
 
