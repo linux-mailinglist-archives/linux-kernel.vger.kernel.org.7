@@ -1,138 +1,172 @@
-Return-Path: <linux-kernel+bounces-757698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE8EB1C5AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0131BB1C5B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C474218A82C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2902C5627F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEDD28A1D3;
-	Wed,  6 Aug 2025 12:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A1428A1D3;
+	Wed,  6 Aug 2025 12:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="vCHDdWya"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7mcyDtV"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C232417C3;
-	Wed,  6 Aug 2025 12:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC170244666;
+	Wed,  6 Aug 2025 12:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754482702; cv=none; b=BpIl6BiPhnY1UTUpCffVv4XtR48rJbzHan0foQHMnXALO3Q4SgGxFxeaTIA3qTeFcwANNEV9/txaZ4VmGHN5XKTCnNp28SjqwaXTzaFDTEJgeVuvzJhF9Wtxi/Fcn8JGjspYUBIPZFU20d8FGlEQlvHUFDAzLZq50LVXoSuAptc=
+	t=1754482741; cv=none; b=P+HpSkq67RVitWuwv8+vXwEJ49AExiwaEiM6JPCGBvPc/GKmAzug4QlWI5kB2uHLMMFVUYZTfY4Hvb50MB9nfoJYAPMCokFDWY6lVxHT4EtrkRh2dpNBlz7Cw3iKDZEE5cbfJ5vHaYHkTK8eYiUTHxOahcXPjg3qQCvtn9Z3rs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754482702; c=relaxed/simple;
-	bh=Gb1sbf37EVVXuRDsOk2K10OFqD9QslGQBGrH6LjwaTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kd+cN76QNQH5rhT+LBQyHN83mxQG8VnHfuUTTKzIAv14bFc7e7HBK8S2i5rcs9Gm8wNcbSZ89i17+3CRe9d3mFT6Jl/6Gs63wBLuUk/G29/Zo4RE7fN1hyXttwvqM56u4EMMhH95UB8Iv9cvT5KXtRJaAud91FxY6OdSNZshvfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=vCHDdWya; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bxq7q45K8z9tQW;
-	Wed,  6 Aug 2025 14:18:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754482695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5O1ajgOeaeiocA+1U0rfXnrWE+rOnG3cAc3QPkT9QLo=;
-	b=vCHDdWyalXiuBEyJq8kQbTmBAy2dZK+IDjgzL9AGeiz2+QY/PFSNGiGNDY3zz/6CKHp7DB
-	LVzdMTpLXPMunqiyw2H1me2Z7kL7UKcWArXCTnhH21NeuZGxQRKrKdk+JxHzXOSKaMo/LG
-	IFWNVtY5tAB9Gsb0QF3K6mGoVFREF6YB7gRjl9fy7qOjaODPvxNHKhZY/1JtAcXjJMglMv
-	pWDreyV54K+S44Q2KU5AIqBNCZmqcfJEzooJ8f5OmjPNoz0pKEDfnBpD6QKyhzU4p12kqZ
-	kEBLmNbvUyTPtcYFsd2yJZAVMIAk/EdrrlH8S/e5TuZ/Crjrb2Q3tArR1o5PXw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Wed, 6 Aug 2025 14:18:05 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
-Message-ID: <bmngjssdvffqvnfcoledenlxefdqesvfv7l6os5lfpurmczfw5@mn7jouglo72s>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
- <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
- <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
- <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
- <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
+	s=arc-20240116; t=1754482741; c=relaxed/simple;
+	bh=JNQsMgeNI7dyxfT/fCyC4blA7huvoyzVLHlWWVIRIkA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PKYJpLIm6S60K6GXmj2v56aATQsGXJSucu/oEIm6IRaI244vBKkGGkfaSniYSx10Oo7lj69TWLnt88H9DXzMwTNQ232ZorVfxqwquAIwSOyCA4CBQ9DZHt1XsYe7FWfwS666OiweQamhevUprINRypY3jFWDrfyr3Ze0+QyO6FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7mcyDtV; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b3507b63c6fso5554302a12.2;
+        Wed, 06 Aug 2025 05:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754482738; x=1755087538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJEj03wUT2DDKSynQwS/JODgRGzJkdVLdYCxcoigdhg=;
+        b=d7mcyDtVWLmvK4/kWQrZD6QC1YG7OzOgd/9ena12X/kjSppKYLdZJnEEGoV5aE8kRF
+         e2oS8MLUsMEg+Tg9CfmrW5oLpVymw9tgXZ+pVpLSankPw7wzFutXlAM7pi3+DH8NDAOJ
+         L/+u/LhdS2QJp0CPowNigV6usV//XvH35hGf8m744OiSScO5MhrMNcr7Dqo8AJJH9NlR
+         fZB/ai667eNbKmDAK6B3HQKTsg7P2iRi0IazSYX4lXveKpban3rw/vM3McGuTVBiuDGj
+         OqfKp4pq0EdisCFGAc+WBuQz+Pyvz7w3kN0eUd/kEYuZ2t6FS6gQR0MSRlKYkK3dONW4
+         HWOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754482738; x=1755087538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mJEj03wUT2DDKSynQwS/JODgRGzJkdVLdYCxcoigdhg=;
+        b=YESr2Hls6Qi/g9+ofrPjUk35yhcNCG89tBNb+ylix04eNV7sBuoVyPCX3Ok3Ll5sv4
+         WXsgYhY/rcvIi7lCqXDFSW1fMDacDZtRe45FX06zFcLzCZpyPoP8Of5GaFysw+m0vRBA
+         50YumoQvp2Xf3RnilmrAamO2sIbgFu49FhO3OcJsrh2eoiq+Om28EAV6J/QeGG0JS988
+         Rz2Ruw/+D6Ofa/5zXjbUJQI/fXu9Szh9oU49g/Kax+Ofab0dRjzwavUXZS9VhBDv/Viv
+         4NPKzEsuS4qjiqQN7qTQjCnaFLiUfEvikqNLwc83LmSinYVcxMR9sSUcye5+FxRgjb2I
+         1Zeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUIcVg7cnTCZnT7iZYXotg6JGCgdOAx5pPWJ388kWsqXWYW31ayAAWT28daCaFwbck5l4/tw9EOfQi@vger.kernel.org, AJvYcCWKxbFLcJFH122UelySGH2966RiT7k5xwJUf7gAKPelS+mlLZ/dmwQvaPwSRPylc5spdq9j+/8qL8OLXNWq@vger.kernel.org, AJvYcCWQ6anvBudKHpSfjKtTgApVpDeQtlHiT0U9t7jhdPeY8yxKhugL91W1k074SFwRrFEcM1wFYs6cJiTW24nP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8nSS5qjZXOSUshCYzgDaxnxqhkCv+4mEfge18rN76sI9T6bJo
+	StSr+WJw+kQYsnyubI4DGZiu1Krd1pDpyLMvVYicYIEUU5yn6fg+Ib5m
+X-Gm-Gg: ASbGncsj2LeFMGd+0PuYeHzto70V8fcurOL9dD33HwP814gde6+toaRBU1KvfLqtqsc
+	uXFlEHv4FLjMdNiUNkJM5lNk7MNbJIsQEbzZRyOIgXij7AWL3V5ntJSzRoQQPMTSxkCXivaRmqY
+	q9KtqR/O+J/ULyvk+blamiV2jSJNbSFzEEkA20by6hjybcJvdLXZ0qyDDvGDkZq2zQobg0jOv95
+	k+e963Hbg57ZtHy0buIfPVW7dIWlB3Ofjt8zufLbVa4dLNeiJIEU2bdpBUrdsj0tMl1Fiu2l2OG
+	OIsX6UB8c02nY3sL6owXDUuP34o6D7haR8I2iIPqebmXfArc3lYXCNkN/83Td7aGbh9Nw8L1t/K
+	ANrGh1ZNFwcmZE8ktKeB8HLG4kL53fDcFJ1Lxj8TeKi2VruQ=
+X-Google-Smtp-Source: AGHT+IFGvUmDzJ4btSsp7PGF2GZSSPgyl9tnATzWAWjkrTfUzcMGL4Q4pgNozfJwSoJd3KyNBb2biA==
+X-Received: by 2002:a17:902:e850:b0:235:f078:4746 with SMTP id d9443c01a7336-242a0b8c8c8mr37982505ad.42.1754482738140;
+        Wed, 06 Aug 2025 05:18:58 -0700 (PDT)
+Received: from ubuntu-Virtual-Machine.mshome.net ([70.37.26.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e81dsm157512705ad.46.2025.08.06.05.18.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 05:18:57 -0700 (PDT)
+From: Tianyu Lan <ltykernel@gmail.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de,
+	Neeraj.Upadhyay@amd.com,
+	kvijayab@amd.com
+Cc: Tianyu Lan <tiala@microsoft.com>,
+	linux-arch@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH V6 0/4 Resend] x86/Hyper-V: Add AMD Secure AVIC for Hyper-V platform
+Date: Wed,  6 Aug 2025 20:18:51 +0800
+Message-Id: <20250806121855.442103-1-ltykernel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
-X-Rspamd-Queue-Id: 4bxq7q45K8z9tQW
+Content-Transfer-Encoding: 8bit
 
-> We could go one step further and special case in mm_get_huge_zero_folio() +
-> mm_put_huge_zero_folio() on CONFIG_STATIC_HUGE_ZERO_FOLIO.
-> 
+From: Tianyu Lan <tiala@microsoft.com>
 
-Hmm, but we could have also failed to allocate even though the option
-was enabled.
+Secure AVIC is a new hardware feature in the AMD64
+architecture to allow SEV-SNP guests to prevent the
+hypervisor from generating unexpected interrupts to
+a vCPU or otherwise violate architectural assumptions
+around APIC behavior.
 
-2 options:
-- we could do: 
-if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO) && huge_zero_folio)
-  return huge_zero_folio;
+Each vCPU has a guest-allocated APIC backing page of
+size 4K, which maintains APIC state for that vCPU.
+APIC backing page's ALLOWED_IRR field indicates the
+interrupt vectors which the guest allows the hypervisor
+to send.
 
-or
-- As dave suggested, we could do a static key and enable it when the
-  option is enabled and the allocation succeeded. The same static key
-  can also be used in get_static_huge_zero_folio().
+This patchset is to enable the feature for Hyper-V
+platform. Patch "Drivers: hv: Allow vmbus message
+synic interrupt injected from Hyper-V" is to expose
+new fucntion hv_enable_coco_interrupt() and device
+driver and arch code may update AVIC backing page
+ALLOWED_IRR field to allow Hyper-V inject associated
+vector.
 
-I think the latter option will look more clean and slightly more
-optimal?
+This patchset is based on the AMD patchset "AMD: Add
+Secure AVIC Guest Support"
+https://lkml.org/lkml/2025/6/10/1579
 
-> Something like
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9c38a95e9f091..9b87884e5f299 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -248,6 +248,9 @@ static void put_huge_zero_page(void)
-> 
->  struct folio *mm_get_huge_zero_folio(struct mm_struct *mm)
->  {
-> +       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
-> +               return huge_zero_folio;
-> +
->         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
->                 return READ_ONCE(huge_zero_folio);
-> 
-> @@ -262,6 +265,9 @@ struct folio *mm_get_huge_zero_folio(struct mm_struct
-> *mm)
-> 
->  void mm_put_huge_zero_folio(struct mm_struct *mm)
->  {
-> +       if (IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
-> +               return huge_zero_folio;
-> +
->         if (test_bit(MMF_HUGE_ZERO_PAGE, &mm->flags))
->                 put_huge_zero_page();
->  }
-> 
---
-Pankaj
+Change since v5:
+       - Rmove extra line and move hv_enable_coco_interrupt()
+         just after hv_set_msr() in the hv_synic_disable_regs().
+	 
+Change since v4:
+        - Change the order to call hv_enable_coco_interrupt()
+          in the hv_synic_enable/disable_regs().
+        - Update commit title "Drivers/hv:" to "Drivers: hv:"
+
+Change since v3:
+        - Disable VMBus Message interrupt via hv_enable_
+          coco_interrupt() in the hv_synic_disable_regs().
+        - Fix coding style issue and update change log.
+
+Change since v2:
+       - Add hv_enable_coco_interrupt() as wrapper
+        of apic_update_vector()
+       - Re-work change logs
+
+Change since v1:
+       - Remove the check of Secure AVIC when set APIC backing page
+       - Use apic_update_vector() instead of exposing new interface
+       from Secure AVIC driver to update APIC backing page and allow
+       associated interrupt to be injected by hypervisor.
+
+
+Tianyu Lan (4):
+  x86/hyperv: Don't use hv apic driver when Secure AVIC is available
+  Drivers: hv: Allow vmbus message synic interrupt injected from Hyper-V
+  x86/hyperv: Don't use auto-eoi when Secure AVIC is available
+  x86/hyperv: Allow Hyper-V to inject STIMER0 interrupts
+
+ arch/x86/hyperv/hv_apic.c      | 9 +++++++++
+ arch/x86/hyperv/hv_init.c      | 7 +++++++
+ arch/x86/kernel/cpu/mshyperv.c | 2 ++
+ drivers/hv/hv.c                | 7 ++++++-
+ drivers/hv/hv_common.c         | 5 +++++
+ include/asm-generic/mshyperv.h | 1 +
+ 6 files changed, 30 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
 
 
