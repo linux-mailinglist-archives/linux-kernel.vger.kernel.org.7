@@ -1,131 +1,196 @@
-Return-Path: <linux-kernel+bounces-758051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0612CB1CA4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE032B1CA4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BD9B1651B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F96218906C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA4E29A9E1;
-	Wed,  6 Aug 2025 17:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5065029ACE8;
+	Wed,  6 Aug 2025 17:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Olz1ICVV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hv12eHyQ"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE962222B4;
-	Wed,  6 Aug 2025 17:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11369299AB5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500036; cv=none; b=K+6UjrIb+YZTAW4NRqWURCBHzzcflk9v8XjK2dav+QL/d2e56yZflR58lcJKNNdA+hK5/jJvBoSOzcNkBdGzSaQE9ASBVxsIVEDjLuaQW4hlbNFe62Oa4dI+HHRXeWrhJNy2bC2ST3oCcBjqbZKvEB9QLWlPa32OhbGJwpW0thc=
+	t=1754500184; cv=none; b=cwpuuUyoIxaxC5NiAlIefAd+Z8uKCZkbe5QKEdThyRv0HUYqTFbkxeism2wqyjWV26he0K2OUOcsKkXnEIa0YuCK4qLQQ7/sj4YCjJcMy/4QcznX1mMNVk1l+FZPSjtrK8juQGRXwVKxkSQErM0yLVe/J9I4k20RbCoXw+RYtRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500036; c=relaxed/simple;
-	bh=0I40zm+QW2nh0ltUf7Xu6AE4US7n+lnLRDbBI2XDTsI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NgXbOngfElKFFMKl3vwHpoA5K1ZbGqzUbNcZYaQ87BQpIQHO9YWhZuKkV+HjiHPKPjWZc/E4sAe6KXfVg+PI7ceWg/iTJwZvqpFVpPSV6ERoAx/R0KP61rx/yP+aEPqsm6ExUWMIeGYCB6dHR7qyJTUuWH8uOpVGaWgk8x8I+5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Olz1ICVV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754500035; x=1786036035;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0I40zm+QW2nh0ltUf7Xu6AE4US7n+lnLRDbBI2XDTsI=;
-  b=Olz1ICVV7nb56+SEJWxSdpo6x8nBcLq9xYmE9eouylSBFLr/Muh4qCNb
-   F5IzuLmpCz6dPkETRGkfy5lURroWSIl1MzTxyaETAc33/KSSzoqS9jnQv
-   29J2OpZNPa4qmsalzhgNV8UYWMl0p2eBzLRdWsRpwjtUIvJcDlHPjGecE
-   2ztGxcrB56lsDGaVaYN6WV8kwCst/0NqgwKKqnXCKUnzIp3qx/jexe8HE
-   Gj4G1V2fXC6e5OF8RJSNqRjF+0KlHn1NTYu6k8uNyZ13lBflQYVLZbcr1
-   Q7UwohA4LfL/WPXPuJuVc29R3F80jPliz/1RAbZmdhBZqFjr/YqC9AlaC
-   g==;
-X-CSE-ConnectionGUID: RG6QfEUGRb6cCHtRYyLZwg==
-X-CSE-MsgGUID: oLUBrYorTC+R2rCi1va0pQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="68200813"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="68200813"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:07:14 -0700
-X-CSE-ConnectionGUID: i/d/cIFWRw6EcLDqPQTb5w==
-X-CSE-MsgGUID: MUIieTzeRTGyeBiIRo/YQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="195661461"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:07:10 -0700
-Message-ID: <585a324d-3a88-42e0-b4bf-2e757dcf5108@intel.com>
-Date: Wed, 6 Aug 2025 10:07:05 -0700
+	s=arc-20240116; t=1754500184; c=relaxed/simple;
+	bh=DHc787VAHHzOpB3Zm+nvbCGuSohWxNq5LBg0ZI96YDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cfiKfhQCcf6IdcLBVPKQDCRHTQr/BJtSh3yQYP4QA5rYrO7QyUhG9nxNK2f5Y2GzpXcKkeKstyqwyLLbar1uFY1pKfQlp5G0UPjFzm8LlpZWK+AdUjLd7ejLaVI9klNdpKyNOxoD8c3SwfJoP/ywWKxDoqqVxRzST68Urw037T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hv12eHyQ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b099118fedso20061cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754500182; x=1755104982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AxfvgCasWuA+gJKWPbYYwoEtVkgTH2JoUrawg5d9Ttc=;
+        b=Hv12eHyQu4f3JRb/hRiVhvY7eXyvQ2JFdruBlCkz4CHyvBImFT48ArIcrjVX4xu63F
+         0+BI17qSEbnO+qr4Hw2Nj6Cn+ywE4H4U4vShmoWTs/T69azPmIO0HYdat++HKetsfQCf
+         vzY1jgyuBLm9rgT/nOC32E/6lhoS0+jZGkzkd73TCV9yQFz2AWj4fPUrSwYiExJMcwab
+         RNNVuDc/KRktZ6YsAw6pI+y7OwRZIsE6blsaC/GZjFSHOhuSWLHzPWmOMBZxnbkCgXdP
+         ipREymbnjKYbY61qNsf9xgomiOziQthmGkvJsbKuutVyyrbBGNA2l2Gt9nhFsEANGZ+l
+         CWAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754500182; x=1755104982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AxfvgCasWuA+gJKWPbYYwoEtVkgTH2JoUrawg5d9Ttc=;
+        b=mdUt+84UL6lyHuZfk8h/3OoepDlq2J7jP2rX7+wuTtJ7WLcC9rMauax1a/j98DERVW
+         6B2Qz2Q898jCw7svcanpeEi0vOmhuPe2HNP2nJzK0i8n/pECaLtvf5UmDTlAEl3JsJIB
+         wbC/cu8BtgDQxmwV64ggF/FPoy0eZCI5mQWDPKI2TLf1oUeyLgkDzLuztg7BHjgRkYem
+         Nv0mYYI4ZEU9UG1qBQDIcf2xUPNnyPOMPjSO0V9jEOoNY/Io0ct9a+XjprUUt2c2vbC3
+         16CUoiTEgG52ztzZRfdUk4HxovHnIIaMmbnC+Nd/Mron6WhFdEDLEi1RCn3SOH0iPPZK
+         I5nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZUtL5eKjJGcyiNvp6/ZQp58hJdWssnx8EScT1kf6vIhiTrfM0O4pqdI1fUiJclAc7D08JTeAn+X26UZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1wXzCanXTGNYR7unme5AGoJq7SaeD0xeM4qwmQHMRqPglxI1g
+	a3eP4YtmfeksmB4a6Usrb4NaxsqNkUPYm4uF+KS5ZRkNoz8BI1dLiL36VuSTOc9QlIei86BRLlI
+	XPKJWsjFRDUmR3rwDpljoOZzEzW+1lNvPVygfJzGK
+X-Gm-Gg: ASbGnctUGyH4Ft39ASZNa9e/79GfaIMltouFKQKvxVkUDPFyK399hoGIyCakTiX7ZJu
+	1edBnCh7ic6mVXBS0KWyB222GLRkExxP23Lf1705Z1tQO8lwJBht6an4ZOw/hEbFOFbwhPmhddC
+	dbm9MAdpbhcKvphdhKNAw5NZKo78LgwaYR11UAuS1oR8bEZPxaAp5ntYpcIrzr53sQbwF2cygK5
+	RjujulgmSMIU+pOXgqhT5+BFcRrmIIxXbFPO3cUhz65a2th
+X-Google-Smtp-Source: AGHT+IEMhHGLxiZthvv92hddLeh6VUsA2wNqyUMxu2FRa4/Ps+p8BXpPEcOIySKHKsvBGcHbKtUDuUxzy9tvSikqDlk=
+X-Received: by 2002:a05:622a:8319:b0:4b0:9c14:2fec with SMTP id
+ d75a77b69052e-4b09c143728mr2217691cf.8.1754500181246; Wed, 06 Aug 2025
+ 10:09:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dmaengine: idxd: Fix crash when the event log is
- disabled
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
- Fenghua Yu <fenghuay@nvidia.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
- <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-2-4e020fbf52c1@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-2-4e020fbf52c1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250806154015.769024-1-surenb@google.com> <aJOJI-YZ0TTxEzV9@x1.local>
+In-Reply-To: <aJOJI-YZ0TTxEzV9@x1.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 6 Aug 2025 10:09:30 -0700
+X-Gm-Features: Ac12FXyt05U3kXqXIXEA0tOR0TWPYJFTgr2w2Z1A_F-UmeFYAUN8QHXxx2B-yHA
+Message-ID: <CAJuCfpGGGJfnvzzdhOEwsXRWPm1nJoPcm2FcrYnkcJtc9W96gA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] userfaultfd: fix a crash in UFFDIO_MOVE with some
+ non-present PMDs
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 6, 2025 at 9:56=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Wed, Aug 06, 2025 at 08:40:15AM -0700, Suren Baghdasaryan wrote:
+> > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+>
+> The migration entry can appear with/without ALLOW_SRC_HOLES, right?  Mayb=
+e
+> drop this line?
 
+Yes, you are right. I'll update.
 
-On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
-> If reporting errors to the event log is not supported by the hardware,
-> and an error that causes Field Level Reset (FLR) is received, the
-> driver will try to restore the event log even if it was not allocated.
-> 
-> Also, only try to free the event log if it was properly allocated.
-> 
-> Fixes: 6078a315aec1 ("dmaengine: idxd: Add idxd_device_config_save() and idxd_device_config_restore() helpers")
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>
+> If we need another repost, the subject can further be tailored to mention
+> migration entry too rather than non-present.  IMHO that's clearer on
+> explaining the issue this patch is fixing (e.g. a valid transhuge THP can
+> also have present bit cleared).
+>
+> > encounters a non-present PMD (migration entry), it proceeds with folio
+> > access even though the folio is not present. Add the missing check and
+>
+> IMHO "... even though folio is not present" is pretty vague.  Maybe
+> "... even though it's a swap entry"?  Fundamentally it's because of the
+> different layouts of normal THP v.s. a swap entry, hence pmd_folio() shou=
+ld
+> not be used on top of swap entries.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/device.c | 3 +++
->  drivers/dma/idxd/init.c   | 3 ++-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-> index 5cf419fe6b4645337cf361305ca066d34763b3c2..c599a902767ee9904d75a0510a911596e35a259b 100644
-> --- a/drivers/dma/idxd/device.c
-> +++ b/drivers/dma/idxd/device.c
-> @@ -815,6 +815,9 @@ static void idxd_device_evl_free(struct idxd_device *idxd)
->  	struct device *dev = &idxd->pdev->dev;
->  	struct idxd_evl *evl = idxd->evl;
->  
-> +	if (!evl)
-> +		return;
-> +
->  	gencfg.bits = ioread32(idxd->reg_base + IDXD_GENCFG_OFFSET);
->  	if (!gencfg.evl_en)
->  		return;
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index d828d352ab008127e5e442e7072c9d5df0f2c6cf..a58b8cdbfa60ba9f00b91a737df01517885bc41a 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -959,7 +959,8 @@ static void idxd_device_config_restore(struct idxd_device *idxd,
->  
->  	idxd->rdbuf_limit = idxd_saved->saved_idxd.rdbuf_limit;
->  
-> -	idxd->evl->size = saved_evl->size;
-> +	if (idxd->evl)
-> +		idxd->evl->size = saved_evl->size;
->  
->  	for (i = 0; i < idxd->max_groups; i++) {
->  		struct idxd_group *saved_group, *group;
-> 
+Well, technically a migration entry is a non_swap_entry(), so calling
+migration entries "swap entries" is confusing to me. Any better
+wording we can use or do you think that's ok?
 
+>
+> > let split_huge_pmd() handle migration entries.
+> >
+> > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@go=
+ogle.com/
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> > Changes since v2 [1]
+> > - Updated the title and changelog, per David Hildenbrand
+> > - Removed extra checks for non-present not-migration PMD entries,
+> > per Peter Xu
+> >
+> > [1] https://lore.kernel.org/all/20250731154442.319568-1-surenb@google.c=
+om/
+> >
+> >  mm/userfaultfd.c | 17 ++++++++++-------
+> >  1 file changed, 10 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index 5431c9dd7fd7..116481606be8 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx,=
+ unsigned long dst_start,
+> >                       /* Check if we can move the pmd without splitting=
+ it. */
+> >                       if (move_splits_huge_pmd(dst_addr, src_addr, src_=
+start + len) ||
+> >                           !pmd_none(dst_pmdval)) {
+> > -                             struct folio *folio =3D pmd_folio(*src_pm=
+d);
+> > -
+> > -                             if (!folio || (!is_huge_zero_folio(folio)=
+ &&
+> > -                                            !PageAnonExclusive(&folio-=
+>page))) {
+> > -                                     spin_unlock(ptl);
+> > -                                     err =3D -EBUSY;
+> > -                                     break;
+> > +                             /* Can be a migration entry */
+> > +                             if (pmd_present(*src_pmd)) {
+> > +                                     struct folio *folio =3D pmd_folio=
+(*src_pmd);
+> > +
+> > +                                     if (!folio || (!is_huge_zero_foli=
+o(folio) &&
+> > +                                                    !PageAnonExclusive=
+(&folio->page))) {
+> > +                                             spin_unlock(ptl);
+> > +                                             err =3D -EBUSY;
+> > +                                             break;
+> > +                                     }
+> >                               }
+>
+> The change itself looks all correct, thanks.  If you agree with above
+> commit message / subject updates, feel free to take this after some
+> amendment of the commit message:
+>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+>
+> >
+> >                               spin_unlock(ptl);
+> >
+> > base-commit: 8e7e0c6d09502e44aa7a8fce0821e042a6ec03d1
+> > --
+> > 2.50.1.565.gc32cd1483b-goog
+> >
+>
+> --
+> Peter Xu
+>
 
