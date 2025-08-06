@@ -1,228 +1,198 @@
-Return-Path: <linux-kernel+bounces-757268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA304B1C017
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38D5B1C00D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A4117AE4D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84327620CFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E51FECD4;
-	Wed,  6 Aug 2025 05:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F291FF1D1;
+	Wed,  6 Aug 2025 05:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kKuoN1Y3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m4/b0Nmv"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A191715624D;
-	Wed,  6 Aug 2025 05:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFC02E36ED
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 05:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754459524; cv=none; b=jFAxXeZ6tHxjwac7l0DdSgvhC5CUV1d0sVIJ7JtgraZLPFZZuj8EO08LNyWKp31F6g1aagcWTSsIGx0Zml95ORC4Fovq7JiTGqfB0PRBmpZwS8xYrvGa49FsutDBwxfRzImmkRythFNn66zpEHtyiogP5pMW+8oQQC8FGC/b9zw=
+	t=1754459182; cv=none; b=rdjzVgpAVrD5GbiquUa2AvAQPzPDUxHlWSjdGZi1fMPa8n32SYeLZAtr9SzpfxYbAQSXxdUg6sytvUWYDFKQ7gbsSTMzftFbeX1tCqGpsqSDfzseTi2W3Y39QJpMEbArMkR+n+fIP/Nz48VxbFlokK1XUBIjkxCmo4hUM1F1ph4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754459524; c=relaxed/simple;
-	bh=av+rjzAduX/MRK5UOmKJRcuP0hOK7dbzs34PaJkia7s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SJK0kI/DDM7yQ2k4d1wa7N0SuJ3e/2I6W7RO/v2BRPINKPeQY7Siffj41izEQxZ6ENIgKxW910zHZbz1d7waUNpc+FZHpfG6PAVAk+6TXb8y9kCdDBfxD3nLRTk2G4JpaD8AU2SQPhNFuhUNd49mX5I5MPTTrtyDNu/gb1XswgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kKuoN1Y3; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1754459522; x=1785995522;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=av+rjzAduX/MRK5UOmKJRcuP0hOK7dbzs34PaJkia7s=;
-  b=kKuoN1Y33Dyw1CsGRE4lFtl7F9Fv7bWgYGmxSDRR1iVSEYcYvl6jW4DF
-   GLxdwBsuRBS5fVLuID4kEzaJGuZKUrDbSMWaAxoBltW7yo0GXp/51klPv
-   HVOoLHJUzk0ZMzSFapGNVR9nbbpxb22PU8PqnDs5bgbkLSzXg6cs7mIEG
-   tjRxTekSHlNCIBirWh9uIXVe2Yg54oB98Afkq7bG2BGdBaI0vh65iJ0F2
-   pfC8FJhbZMd+tAIkMrUjsD3+SvTbTYUOrBjASCINEvyl4r2HF7hISfvXK
-   5SlmXQIyU/qL6UE5C68dTfiAf/su3t3SPSlIys+wUcUGiPGdZkcIbuWzi
-   g==;
-X-CSE-ConnectionGUID: ucXqwNNnQ7+7OQyUEnLR+Q==
-X-CSE-MsgGUID: T/04YB/oT4mGJBo0QXgONw==
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="50299026"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Aug 2025 22:51:55 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 5 Aug 2025 22:51:18 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 5 Aug 2025 22:51:15 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <viro@zeniv.linux.org.uk>,
-	<atenart@kernel.org>, <quentin.schulz@bootlin.com>, <olteanv@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v2] phy: mscc: Fix timestamping for vsc8584
-Date: Wed, 6 Aug 2025 07:46:05 +0200
-Message-ID: <20250806054605.3230782-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754459182; c=relaxed/simple;
+	bh=okxzfA4ehROgnHZTTGa7DbT14N2ToN6xblvJZauS86s=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=YIDZ9YF+WOPgquGALDv9Z13Q+NEoshq2l+190rL35NTBRlur1ahuFW/YiJ+rviAqPKXKLpBLI6MvGaD+zEyCJEbFLK1Oo3bVsixaN/4RI4ilxdotnJ9RCbvSOeFX8b3UQcAGVnGl3rUdCDRc0ixuR64BjCFA35nLbYPYFAfGEkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m4/b0Nmv; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250806054617epoutp02ce6c3e4a6c8b20b08520dd961de30fa6~ZF1OraKyT2864428644epoutp02l
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 05:46:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250806054617epoutp02ce6c3e4a6c8b20b08520dd961de30fa6~ZF1OraKyT2864428644epoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754459178;
+	bh=okxzfA4ehROgnHZTTGa7DbT14N2ToN6xblvJZauS86s=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=m4/b0NmveHN25uhqHkwPV0Nk9ygtgU+Zf3UGqfLnBm6HAfanMVgVI/61G8MZdrERA
+	 5SxEAxrRh8cWQ9KJbcBolbQlFa88SW7KPEo4EoYLJIQSj+BwKSyFjouWmmYOOcXCQE
+	 t2DtXPTy4IlpQEh/2Ju/SGn0XxC0osUPOvjQsXyk=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250806054617epcas5p255ba667ff67703ace638e1e6388274e9~ZF1OHOEFd0123401234epcas5p2D;
+	Wed,  6 Aug 2025 05:46:17 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bxfRW26z6z6B9mH; Wed,  6 Aug
+	2025 05:46:15 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250806054614epcas5p3407494fd3bf0360c722af9c7c6ada6c5~ZF1LrX9Z32821128211epcas5p3Y;
+	Wed,  6 Aug 2025 05:46:14 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250806054612epsmtip21f6922fa6ab9f9435ba827c8073ab5b1~ZF1JdqIk70912409124epsmtip2f;
+	Wed,  6 Aug 2025 05:46:12 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Manivannan Sadhasivam'" <mani@kernel.org>
+Cc: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Krzysztof
+ Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
+	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<andersson@kernel.org>, <konradybcio@kernel.org>,
+	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
+Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Date: Wed, 6 Aug 2025 11:16:11 +0530
+Message-ID: <06f301dc0695$6bf25690$43d703b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQKnlt0Ez4U7OU6i7DDtpxZiPKvKiQEsJt2OAdY+bWECqijPQgIPv58TAQlCtSUCbRSB8gJXYzfzAduHMkYBp6Y8EQJl+KeTsiJiETA=
+X-CMS-MailID: 20250806054614epcas5p3407494fd3bf0360c722af9c7c6ada6c5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d
+References: <jogwisri2gs77j5cs3xwyezmfsotnizvlruzzelemdj5xadqh4@loe7fsatoass>
+	<CGME20250805170638epcas5p4cb0cc78c5b5d77072cec547380b9f03d@epcas5p4.samsung.com>
+	<b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
+	<061b01dc062d$25c47800$714d6800$@samsung.com>
+	<i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
+	<061c01dc062f$70ec34b0$52c49e10$@samsung.com>
+	<87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
+	<061d01dc0631$c1766c00$44634400$@samsung.com>
+	<3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
+	<06d201dc0689$9f438200$ddca8600$@samsung.com>
+	<wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
 
-There was a problem when we received frames and the frames were
-timestamped. The driver is configured to store the nanosecond part of
-the timestmap in the ptp reserved bits and it would take the second part
-by reading the LTC. The problem is that when reading the LTC we are in
-atomic context and to read the second part will go over mdio bus which
-might sleep, so we get an error.
-The fix consists in actually put all the frames in a queue and start the
-aux work and in that work to read the LTC and then calculate the full
-received time.
 
-Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
----
-v1->v2:
-- use sk_buff_head instead of a list_head and spinlock_t
-- stop allocating vsc8431_skb but put the timestamp in skb->cb
----
- drivers/net/phy/mscc/mscc.h     | 12 ++++++++
- drivers/net/phy/mscc/mscc_ptp.c | 50 +++++++++++++++++++++++++--------
- 2 files changed, 50 insertions(+), 12 deletions(-)
+> -----Original Message-----
+> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
+> Sent: Wednesday, August 6, 2025 10:35 AM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
+> Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
+> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
+> bvanassche=40acm.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.org;
+> James.Bottomley=40hansenpartnership.com; martin.petersen=40oracle.com;
+> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
+> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
+limit
+> properties to UFS
+>=20
+> On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
+>=20
+> =5B...=5D
+>=20
+> > > >> Introducing generic solutions preemptively for problems that are
+> > > >> simple in concept and can occur widely is good practice (although
+> > > >> it's sometimes hard to gauge whether this is a one-off), as if
+> > > >> the issue spreads a generic solution will appear at some point,
+> > > >> but we'll have to keep supporting the odd ones as well
+> > > >>
+> > > > Ok,
+> > > > I would prefer if we add a property which sounds like =22poor
+> > > > thermal dissipation=22 or =22routing channel loss=22 rather than ad=
+ding
+> > > > limiting UFS gear
+> > > properties.
+> > > > Poor thermal design or channel losses are generic enough and can
+> > > > happen
+> > > on any board.
+> > >
+> > > This is exactly what I'm trying to avoid through my suggestion - one
+> > > board may have poor thermal dissipation, another may have channel
+> > > losses, yet another one may feature a special batch of UFS chips
+> > > that will set the world on fire if instructed to attempt link
+> > > training at gear 7 - they all are causes, as opposed to describing
+> > > what needs to happen (i.e. what the hardware must be treated as -
+> > > gear N incapable despite what can be discovered at runtime), with
+> > > perhaps a comment on the side
+> > >
+> > But the solution for all possible board problems can't be by limiting G=
+ear
+> speed.
+>=20
+> Devicetree properties should precisely reflect how they are relevant to t=
+he
+> hardware. 'limiting-gear-speed' is self-explanatory that the gear speed i=
+s
+> getting limited (for a reason), but the devicetree doesn't need to descri=
+be
+> the
+> *reason* itself.
+>=20
+> > So it should be known why one particular board need to limit the gear.
+>=20
+> That goes into the description, not in the property name.
+>=20
+> > I understand that this is a static configuration, where it is already k=
+nown
+> that board is broken for higher Gear.
+> > Can this be achieved by limiting the clock? If not, can we add a board
+> specific _quirk_ and let the _quirk_ to be enabled from vendor specific
+> hooks?
+> >
+>=20
+> How can we limit the clock without limiting the gears? When we limit the
+> gear/mode, both clock and power are implicitly limited.
+>=20
+Possibly someone need to check with designer of the SoC if that is possible=
+ or not.
+Did we already tried _quirk_? If not, why not?=20
+If the board is so poorly designed and can't take care of the channel loses=
+ or heat dissipation etc,
+Then I assumed the gear negotiation between host and device should fail for=
+ the higher gear=20
+and driver can have a re-try logic to re-init / re-try =22power mode change=
+=22 at the lower gear. Is that not possible / feasible?
 
-diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
-index 6a3d8a754eb8d..58c6d47fbe046 100644
---- a/drivers/net/phy/mscc/mscc.h
-+++ b/drivers/net/phy/mscc/mscc.h
-@@ -362,6 +362,13 @@ struct vsc85xx_hw_stat {
- 	u16 mask;
- };
- 
-+struct vsc8531_skb_cb {
-+	u32 ns;
-+};
-+
-+#define VSC8531_SKB_CB(skb) \
-+	((struct vsc8531_skb_cb *)((skb)->cb))
-+
- struct vsc8531_private {
- 	int rate_magic;
- 	u16 supp_led_modes;
-@@ -410,6 +417,11 @@ struct vsc8531_private {
- 	 */
- 	struct mutex ts_lock;
- 	struct mutex phc_lock;
-+
-+	/* list of skbs that were received and need timestamp information but it
-+	 * didn't received it yet
-+	 */
-+	struct sk_buff_head rx_skbs_list;
- };
- 
- /* Shared structure between the PHYs of the same package.
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index 275706de5847c..d368d4fd82e17 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -1194,9 +1194,8 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
- {
- 	struct vsc8531_private *vsc8531 =
- 		container_of(mii_ts, struct vsc8531_private, mii_ts);
--	struct skb_shared_hwtstamps *shhwtstamps = NULL;
-+
- 	struct vsc85xx_ptphdr *ptphdr;
--	struct timespec64 ts;
- 	unsigned long ns;
- 
- 	if (!vsc8531->ptp->configured)
-@@ -1206,27 +1205,52 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
- 	    type == PTP_CLASS_NONE)
- 		return false;
- 
--	vsc85xx_gettime(&vsc8531->ptp->caps, &ts);
--
- 	ptphdr = get_ptp_header_rx(skb, vsc8531->ptp->rx_filter);
- 	if (!ptphdr)
- 		return false;
- 
--	shhwtstamps = skb_hwtstamps(skb);
--	memset(shhwtstamps, 0, sizeof(struct skb_shared_hwtstamps));
--
- 	ns = ntohl(ptphdr->rsrvd2);
- 
--	/* nsec is in reserved field */
--	if (ts.tv_nsec < ns)
--		ts.tv_sec--;
-+	VSC8531_SKB_CB(skb)->ns = ns;
-+	skb_queue_tail(&vsc8531->rx_skbs_list, skb);
- 
--	shhwtstamps->hwtstamp = ktime_set(ts.tv_sec, ns);
--	netif_rx(skb);
-+	ptp_schedule_worker(vsc8531->ptp->ptp_clock, 0);
- 
- 	return true;
- }
- 
-+static long vsc85xx_do_aux_work(struct ptp_clock_info *info)
-+{
-+	struct vsc85xx_ptp *ptp = container_of(info, struct vsc85xx_ptp, caps);
-+	struct skb_shared_hwtstamps *shhwtstamps = NULL;
-+	struct phy_device *phydev = ptp->phydev;
-+	struct vsc8531_private *priv = phydev->priv;
-+	struct sk_buff_head received;
-+	struct sk_buff *rx_skb;
-+	struct timespec64 ts;
-+	unsigned long flags;
-+
-+	__skb_queue_head_init(&received);
-+	spin_lock_irqsave(&priv->rx_skbs_list.lock, flags);
-+	skb_queue_splice_tail_init(&priv->rx_skbs_list, &received);
-+	spin_unlock_irqrestore(&priv->rx_skbs_list.lock, flags);
-+
-+	vsc85xx_gettime(info, &ts);
-+	while ((rx_skb = __skb_dequeue(&received)) != NULL) {
-+		shhwtstamps = skb_hwtstamps(rx_skb);
-+		memset(shhwtstamps, 0, sizeof(struct skb_shared_hwtstamps));
-+
-+		if (ts.tv_nsec < VSC8531_SKB_CB(rx_skb)->ns)
-+			ts.tv_sec--;
-+
-+		shhwtstamps->hwtstamp = ktime_set(ts.tv_sec,
-+						  VSC8531_SKB_CB(rx_skb)->ns);
-+		netif_rx(rx_skb);
-+	}
-+
-+	return -1;
-+}
-+
- static const struct ptp_clock_info vsc85xx_clk_caps = {
- 	.owner		= THIS_MODULE,
- 	.name		= "VSC85xx timer",
-@@ -1240,6 +1264,7 @@ static const struct ptp_clock_info vsc85xx_clk_caps = {
- 	.adjfine	= &vsc85xx_adjfine,
- 	.gettime64	= &vsc85xx_gettime,
- 	.settime64	= &vsc85xx_settime,
-+	.do_aux_work	= &vsc85xx_do_aux_work,
- };
- 
- static struct vsc8531_private *vsc8584_base_priv(struct phy_device *phydev)
-@@ -1567,6 +1592,7 @@ int vsc8584_ptp_probe(struct phy_device *phydev)
- 
- 	mutex_init(&vsc8531->phc_lock);
- 	mutex_init(&vsc8531->ts_lock);
-+	skb_queue_head_init(&vsc8531->rx_skbs_list);
- 
- 	/* Retrieve the shared load/save GPIO. Request it as non exclusive as
- 	 * the same GPIO can be requested by all the PHYs of the same package.
--- 
-2.34.1
 
+
+> - Mani
+>=20
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D=0D=0A=0D=0A
 
