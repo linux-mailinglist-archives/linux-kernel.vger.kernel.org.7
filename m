@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-758072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C84B1CA87
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:18:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48598B1CA86
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E5E17DFB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FAD18C4B38
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743562C08AD;
-	Wed,  6 Aug 2025 17:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933A29AB1C;
+	Wed,  6 Aug 2025 17:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmPurJYd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DZbHJGML"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC59C2BFC73
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775991E0083;
+	Wed,  6 Aug 2025 17:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500545; cv=none; b=ZlNLZLyMq8kQFAdJtNJd3Rv77/VInXrmI/83Kv+w2ZMCTd7OO2nnv0n9ifEU2Jg7D0n43B/KGLlkYopYmQB8vg4S3BE/8JqVwoKFdFO/kJ9awb3HXmxyaVPy0byIuLVyl/jbZ6iCx+3EEXHyK0Mi6FmHuFPyGtKq8huQCSF1jEc=
+	t=1754500633; cv=none; b=P03inSmStWXa3ky32BVyLpHkDMroEoZANoUkC92QCcO03F+XebFCOVqbYrvEOA11qHtdDWQ0H+JrThu8qFplFn1Ue3wjJCm2la+PNMUfik4cpW4/B2h9w7Jk1hDcl+5TxMgU/hDXyi9q/lnx4uwATMr9PJ/fTyuUg67egs4QDDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500545; c=relaxed/simple;
-	bh=1GNA7X5R51sdOSWNQYdwDRll9kG3ZCYqu+jXPiVoLSY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZFqBT7SaX6zpzl0/buEsfaIQajHrjEmWO/FIm1tjhdPWcc30K5oLoiEP3t8l0P8cMzA+0JMYrPQBtyGqSvvZYTFnDVKqO+bNJ74IfHfBk0HHLjKy/iRbFf5+86FCBSTBY9lIVZwowMXbx4O6WZzOIw0tw3VtedN0Mu+AzNEFmKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmPurJYd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6AFC4CEE7;
-	Wed,  6 Aug 2025 17:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754500545;
-	bh=1GNA7X5R51sdOSWNQYdwDRll9kG3ZCYqu+jXPiVoLSY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CmPurJYdTk0V5U8cnRscexA8IsFBsd672nd+Olltt4YaJmn+vtcYCmE0w9X0sFEDQ
-	 3rQ0eCpnqTrRfcpperyxWZQWuCFDUaFyjtcKOeSwDoEH0GaqrZ79wkKaM1v6O0ZDat
-	 ZN8sqAKOzRcOWaeweI+TXdTr3V+48gyKJcWtKovIqKePUC0CHmAdBjAKPkx5ZeDo7l
-	 oDMoyz1fEw/V/4byhzjO3ACNDTW84HSG+BnnQ1fVXKI29ztCA43qFWtSwBRIUpCG2P
-	 zvGBtD/8EfisLduG/Pu8Z57A8aRIdVBvk5NGhI+eJoECYwc6kModtovTbYMKhV0anG
-	 58ERYBMLv/PcQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE227383BF63;
-	Wed,  6 Aug 2025 17:16:00 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754500633; c=relaxed/simple;
+	bh=45DWFsBRadUm05dMAooPXmnKscrZwCQvvaxvHpq52GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEKHv2MdxTLF/U4nuZuVO+VL95qUs+7aDzp80Si62MLNXae6UA+xYwe1luIQlRXPYO/PIjUCFjikIZcYQ/oy6b3cug3ygF889NoRGz/6LV34ivzAAOULljaEKcC7seIjbtUdXtxcffILm3Hqm3zPVOwaZU1Km0q7pjd5bRWdk2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DZbHJGML; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754500631; x=1786036631;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=45DWFsBRadUm05dMAooPXmnKscrZwCQvvaxvHpq52GA=;
+  b=DZbHJGMLsNtC+hTPpbhoDnv9r5K5grRmtZfZufT3JZTVVnvpys4Yphua
+   Oz7U9nEVXWBJGAridZ2m6UZt0z1iGRypTREiw36XgM+BnMhIYT5o1H4s7
+   7ut4FMXkL0xp6HHDd8TTq5/45nkYB+b+kDf3anOUohKP+rZihT+VjYoGH
+   vYjm/T03SH+Z2kmUdkYCxWJ3+E3sqTGuoc4QCBJQfiqsXBCMQdnlEplJj
+   kW9VQBAa9lky5Sg/6xYZNXBPki9Gp5mdsnsfNFkYEUKQfIMVCzhUV1F/t
+   byky5f3D5tLPvGjY6SIousNCdL58l4meshgRTpj4t1on3jk5EaFfVgZOB
+   Q==;
+X-CSE-ConnectionGUID: BHBWzOklQqiC2NorPIedmw==
+X-CSE-MsgGUID: UodEBMLdTTuelo4ktge8Bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56744189"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56744189"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:17:11 -0700
+X-CSE-ConnectionGUID: PVfecHeJQSq/HtMcYjRMLA==
+X-CSE-MsgGUID: 36b6tu75ToOR7cglTewgSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164738714"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:17:07 -0700
+Message-ID: <006d3386-36ef-4c14-9373-7f6594a800f1@intel.com>
+Date: Wed, 6 Aug 2025 10:17:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -next] riscv: Enable ARCH_HAVE_NMI_SAFE_CMPXCHG
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <175450055949.2863135.12380729156820044095.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Aug 2025 17:15:59 +0000
-References: <20250711090443.1688404-1-pulehui@huaweicloud.com>
-In-Reply-To: <20250711090443.1688404-1-pulehui@huaweicloud.com>
-To: Pu Lehui <pulehui@huaweicloud.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- palmer@dabbelt.com, alex@ghiti.fr, pulehui@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] dmaengine: idxd: Allow DMA clients to empty the
+ pending queue
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Fenghua Yu <fenghuay@nvidia.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
+ <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-5-4e020fbf52c1@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-5-4e020fbf52c1@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to riscv/linux.git (for-next)
-by Alexandre Ghiti <alexghiti@rivosinc.com>:
 
-On Fri, 11 Jul 2025 09:04:43 +0000 you wrote:
-> From: Pu Lehui <pulehui@huawei.com>
+On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
+> Send a request to drain all pending commands from the hardware queue
+> when the DMA clients request.
 > 
-> The implement of cmpxchg() in riscv is based on atomic primitives and
-> has NMI-safe features, so it can be used safely in the in_nmi context.
-> ftrace's ringbuffer relies on NMI-safe cmpxchg() in the NMI context.
-> Currently, in_nmi() is true when riscv kprobe is in trap-based mode, so
-> this config needs to be selected, otherwise kprobetrace will not be
-> available.
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> ---
+>  drivers/dma/idxd/dma.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> [...]
+> diff --git a/drivers/dma/idxd/dma.c b/drivers/dma/idxd/dma.c
+> index dbecd699237e3ac5a73b49ed2097a897abc9a043..10356a00cbdfc2ddfeea629aa749c40e7eec0a56 100644
+> --- a/drivers/dma/idxd/dma.c
+> +++ b/drivers/dma/idxd/dma.c
+> @@ -194,6 +194,15 @@ static void idxd_dma_release(struct dma_device *device)
+>  	kfree(idxd_dma);
+>  }
+>  
+> +static int idxd_dma_terminate_all(struct dma_chan *c)
+> +{
+> +	struct idxd_wq *wq = to_idxd_wq(c);
+> +
+> +	idxd_wq_drain(wq);
 
-Here is the summary with links:
-  - [-next] riscv: Enable ARCH_HAVE_NMI_SAFE_CMPXCHG
-    https://git.kernel.org/riscv/c/9ad032ba418c
+Definition in include/linux/dmaengine.h is "Aborts all transfers on a channel." So instead of drain, I think we need to abort and clean up all the pending descriptors on the irq list as well. Perhaps drain may be only for ->device_synchronize()?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+DJ
 
+> +
+> +	return 0;
+> +}
+> +
+>  int idxd_register_dma_device(struct idxd_device *idxd)
+>  {
+>  	struct idxd_dma_dev *idxd_dma;
+> @@ -224,6 +233,7 @@ int idxd_register_dma_device(struct idxd_device *idxd)
+>  	dma->device_issue_pending = idxd_dma_issue_pending;
+>  	dma->device_alloc_chan_resources = idxd_dma_alloc_chan_resources;
+>  	dma->device_free_chan_resources = idxd_dma_free_chan_resources;
+> +	dma->device_terminate_all = idxd_dma_terminate_all;
+>  
+>  	rc = dma_async_device_register(dma);
+>  	if (rc < 0) {
+> 
 
 
