@@ -1,251 +1,298 @@
-Return-Path: <linux-kernel+bounces-758467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D12B1CF85
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:49:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02649B1CF8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFDC18C1438
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC60C3AD8CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004C024A07C;
-	Wed,  6 Aug 2025 23:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC9D277814;
+	Wed,  6 Aug 2025 23:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jElcfugC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N7lwiS3E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6549E1FAC4E;
-	Wed,  6 Aug 2025 23:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754524188; cv=fail; b=lQgo9VTFou7ROHUKIiBTO4vNqaKIIWLfusVMXAguY1Q0cI+ePQBvDTyhZfWmdX2RKp/33bpjrdDdQkwe3SpV0QqIvuu9KAmZqaIRrrKgfQ7s+MB0zqStFIXe3iEP0iNyCWE0BYZbMsSOX8Se/AIjFuxKqi15P9Swm11KB5yXtWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754524188; c=relaxed/simple;
-	bh=SRG488x6QuEXmp7L1vwOIN1agJtjdrRMukTOe41UTe8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cJm1pnXTBNP82OoJxSq+3zYdiTu7FLj4FywKsyLGppUN5iXuZLwlAJlW+M4NbNDOsBmG2wJBiMfTSJPP99zqWGQyB2JBMCIa1WCCtNcY4gn0VJyG5zxObwuzu2BmiEZGJsQ8+2LOQTk7ZJ+baOBKm8Brx3+dxYY66NMqwZkH0Go=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jElcfugC; arc=fail smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C00926B2AE;
+	Wed,  6 Aug 2025 23:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754524375; cv=none; b=NG0iFcdVQk6rsSr2SCBo86aKD2KDAUH75fK+OZYiMRYTCHmd3M5vfGDfe2zuj8Mhzp1AW8K9pzeHaU/YrOIZABpOjZH46FVWTxMqNR2a6I8xdt4RTwFVM7prmC0TjO99wzPvchvYlTTLTdu1y7WyddGXqW/WOgbzVyiMpIFCrWQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754524375; c=relaxed/simple;
+	bh=5xTtW82Mv9yRIHCO6jImfqwBSzJM//vmSGPn9K0IJ/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cB47ilV0sYMbTFDAZvd0dOci3F8a4LB75xMCHx/vcbWaAPpsxQWt+JB7bThsRCO66wHJrn5KNt2qTWdrdp7Frvum7ht9Jf+uUnQ7dDBj1jF+0421rnKRfWHEw6kXfb0PiQTTFhZDgdfvY4MTI/CGxIMzvJ4sVex3VrlXKxhMrCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N7lwiS3E; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754524187; x=1786060187;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=SRG488x6QuEXmp7L1vwOIN1agJtjdrRMukTOe41UTe8=;
-  b=jElcfugCzi/y6hSPsAEfiW3LcG1OxG+2QAy3caB2esxgOz+NzycZL6sb
-   cjMe59Zw43MD/ffHbsWkFukzErmW5RjPnNrWSX9u/ygF2NwGLqtysjU3f
-   Z6BcmYh300EDsBKJP7vBA7WidWiQJFJUSsZ4LZulCNVxzDAci8StVdS7h
-   9jRx6WqKhfzraq9ctKfOUfpbD0vJC3esEVH1eIfyKnc8zpEis6eWoW9AF
-   CvAblOG+MYdZ4PVg0IsvTNQ+YG2qL36XQCCUVjfdUDU1ILOx6oGSdpEQj
-   020mjcFfDznO6IPrYBsQB/dZHNf1p4NOdgOs6za34MYJdKyHFfna8vKaB
+  t=1754524373; x=1786060373;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5xTtW82Mv9yRIHCO6jImfqwBSzJM//vmSGPn9K0IJ/4=;
+  b=N7lwiS3EcB8xHW1DxFyUjM0gl+SvoiP9bb+IQm/ecaOxy2kpVmWufdLH
+   hSCLm7NiPhp9ernnddDR+sbavufNOPWlN3TPHVoDJ8CPT87i160CnOkf9
+   Nu2qgZujeEiYhubDg704A7sHVr1oeVpVi72X6egGfp3p84ZiA1WPcE5Kf
+   gZ8iV9pwrSoMTwg2iRoodOcP/0LazpYXmFxAUKm+KwmP1N6IsyLxv5ANy
+   YAcF1GpIvXFE9xEr4vbaPZkLDnXm5LsHKQlmPTfgrF0fPY5Rsg2mWLtgT
+   kuaHW1S2IFmEHmmocohnM3dFK1yzZuK+xevaF7IoqezMAKJNWWRsaMmEC
    g==;
-X-CSE-ConnectionGUID: HcgQ0C1LToa8GLIq8g40MA==
-X-CSE-MsgGUID: 9cDMKplRSGinSyCarX85bg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67119372"
+X-CSE-ConnectionGUID: G8YVAX0rSaKtGJDXOHvYHg==
+X-CSE-MsgGUID: 2RIa+OsrRwun8gS+khUfsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56929197"
 X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="67119372"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:49:46 -0700
-X-CSE-ConnectionGUID: pHtBqdy9R62wa9f3wULWgA==
-X-CSE-MsgGUID: duqRD9/xTnabdGeCYmlNVQ==
+   d="scan'208";a="56929197"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:52:52 -0700
+X-CSE-ConnectionGUID: Uyxsy+wiRgGG7DL8BY0JDw==
+X-CSE-MsgGUID: AZGfKwRzScChBlbB/MfCgw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164915183"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:49:46 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 6 Aug 2025 16:49:45 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 6 Aug 2025 16:49:45 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.63)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 6 Aug 2025 16:49:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=deCpOpzrIjrSzyujBvTEGm4bFYr50pnqVBBgZuifr2q3MYWtypzctjHEl/7yvPT8vJnUQFXK1Kyp2DavPnUMtQFg4CQCKNPB3/cXNoEEeNQVBuoKS2ecApSsXFv6XSmKr3XOzhTrGnDoOD67liXEpft/X8NIuscRxP089xniWc3XLpcdW7bxeXhS3vBQ6KwVv/yCSQmyNpPInly/R73LDSTVPqk2E3ZZTHC7L/3l0FwuXqtJUJ0l0FOk2NJluiqBNctlN39hovAswNF1HC1hGhIJRaHQbF4JB4DRBk+gcYPLf5kHWmK2JLJ3sazQkpxTLHojaCLZk13LSZvI5kymIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SRG488x6QuEXmp7L1vwOIN1agJtjdrRMukTOe41UTe8=;
- b=AyrWjEC1HRem6RWOZMQx0iGQFP0abHEQV3GlqHOezraBUA1ZpfiMwPGDml1umJG9dzswo8xZQSd/SHYOOfgXDRYlyAwvTe398bCxbJjKy2Sr68a+D67RF5tfo+px7WIhYsfQ+vLD2wufiCA9eYSDu3bBUyyBvsc1+NoUSk51S6ANwOJTHvkMHntltF8z5fJlChoAW7oajVD37C5599FnNTQ+EzHPQW3c0vrauu+7SUL9U0UYKsf2abanAnacbh4mbhhIDFiPC4F7oz2F0zEGjSSCIBNviM7L0rph4WOjhihl5EpNPtaY6oSptY0JWbI9hkrLMP6S1h9D+ZvrtM1mDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by SA1PR11MB5874.namprd11.prod.outlook.com (2603:10b6:806:229::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Wed, 6 Aug
- 2025 23:49:41 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%5]) with mapi id 15.20.8989.017; Wed, 6 Aug 2025
- 23:49:41 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "mingo@kernel.org"
-	<mingo@kernel.org>, "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
-	"Annapurve, Vishal" <vannapurve@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
-	"Bondarevska, Nataliia" <bondarn@google.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "Raynor, Scott" <scott.raynor@intel.com>
-Subject: Re: [PATCH v11 3/5] x86/sgx: Define error codes for use by
- ENCLS[EUPDATESVN]
-Thread-Topic: [PATCH v11 3/5] x86/sgx: Define error codes for use by
- ENCLS[EUPDATESVN]
-Thread-Index: AQHcBqojKTrcWLF/aECHrKLiELSu2bRWTDgA
-Date: Wed, 6 Aug 2025 23:49:41 +0000
-Message-ID: <0f3ce0d9c5a43a70cb119d47c71dbba36264f29d.camel@intel.com>
-References: <20250806081344.404004-1-elena.reshetova@intel.com>
-	 <20250806081344.404004-4-elena.reshetova@intel.com>
-In-Reply-To: <20250806081344.404004-4-elena.reshetova@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|SA1PR11MB5874:EE_
-x-ms-office365-filtering-correlation-id: c80cbb7e-a876-4d25-f3b4-08ddd543e97b
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UzE1WDdlNXZZb08zT0ZLN2ZEMzlzZy8vamlqdnVNK3F1OXd6T0VBaHZCajRv?=
- =?utf-8?B?TEdoQmY4eWtybyttdzEyT0kwMXJqMXdKcXF5K2x0bzQ1RnQyT1lET3hrb2ht?=
- =?utf-8?B?VzdlN0NBc3JmK2krcWZkSk9YZFNIcE1uS0xWb1VaSmY2cjZwR1FUOE9NZERh?=
- =?utf-8?B?QXNKMlVBbDRJS2hEYnppSnVON0E2WHcyYjZEWkNVOFdIdi8vRm9IQUUvMHJ4?=
- =?utf-8?B?QVlBalZGNEthak1zeVB5NmxlZkoyWmM2UDA0bWs4MkE0cmRMRkpCUlVRR1dh?=
- =?utf-8?B?NzlhSEZXUmEvYXRqSHA4cm1kNXYvckp3OTE0Wm1EOUZqeStGZWpTSlRBOFVx?=
- =?utf-8?B?KzhpdEdLSlhBWE5HZUE1K0xRTCtSQzFLUGIyaGRQSUVTam5NTkFEb3Z3M3p5?=
- =?utf-8?B?aXdweG9IQThZTTdvUVVNaXo1bnhjYTBPaGduRkhLTHJ2REt1cHJQNzRUcHli?=
- =?utf-8?B?aHRYOGxmYjAzeStScXQrbGN2TWIvVERmcDlZU09TbVdJWnFkMmRJZGF1b3da?=
- =?utf-8?B?R2xWcjFWM3ppVFNNWDJrNkF6NDFmb3BrSDlVNXFwZURBd2VrT2g5MXNReHFQ?=
- =?utf-8?B?UnkrNzVRSHdPTGtuaFUzT01nQ0tkMFpXakZGRmlLdnAxM1hJTE5VS0p1MVFz?=
- =?utf-8?B?b2hzRlpaNDVIWnVjakhBMnVhTG9oY29DQURSZlI3R21SK0M5Q1kzZFRtTnNz?=
- =?utf-8?B?NUJzejJKdnpjeXdTNVorWldHSXVhMkU3VUhhVHNGT0JOY3l2dWFTc1NNYzhO?=
- =?utf-8?B?Wmh1dGUzV1oybFpxMCt6eVo1MjUxN2swSVRTQytWMko4U0R1L1VFVzF6S0hw?=
- =?utf-8?B?UzQyRVhkbXZMbzZpZjZybkdhRWlhRTRuRHFKK3FiZEV4OWhzWU1RSEhBVXZw?=
- =?utf-8?B?VHVvMm5wd1duS0dkUlBhYUE3QVBhdFMwdzBYQmkvc1dpZzNiWndNRFpZdFpR?=
- =?utf-8?B?aFY1b3FtSGxUNW1xOTA0NDlyd05FMytMakVQWmoveHo4QmszckMrZHpVTjE4?=
- =?utf-8?B?bUdSWEdYV3d6WnFXejNsb0FtdDVEbC9VTkp1T3B2eklCcEJGNm1XckRabzNp?=
- =?utf-8?B?Vm9aY3U0Q2NUY1cyc1ZLdC9ZTFJBQVNUVDdta0VHbDdrdWg3SWQwSWhDcEhS?=
- =?utf-8?B?MXJaNktjQjdWYmY3M0ttUjE0aWxjNWxJMFJqWW5IejFncUxNc1BMSm9TNUpn?=
- =?utf-8?B?UFkyZWtkbGF0OWFtSXEybEhYQW1aUW44RXd6MTdqWWl5Y0JEb1p6Q3NtRDNK?=
- =?utf-8?B?YS83SUdCM1JkS0VPVkwrUzlwblR6dWVCWE5sWU1BR1RRQVIvQ1VBYldBM1Zp?=
- =?utf-8?B?UjFxcDlFRklmNGNydGxtL25KOWdDU2Y3QmY4bWNuM0VoSHNvZk9oNERpN2p4?=
- =?utf-8?B?d1lubWp1MjlGaUNXY1piVTBDOWpnYTNHdEttR2plSkFzVGU2UERrL0ZGNlVt?=
- =?utf-8?B?cFpvcG01a29XWHZVMUtIM1UxYTJpTGN0ODlteC9iOHN3d1AzWWR4OENoSDFh?=
- =?utf-8?B?aG1CRHRMbUhmcHYwTGM1NlVyam5xb1djcjlRTGxBSUJ1RkxIQ3RHM09UUTFI?=
- =?utf-8?B?T21XRTMwSlBLd1NtKzVXc21JQ0J5TTZyYmFWb0NRajRaOFJsZ1BMWnUrU0Jq?=
- =?utf-8?B?WERlTllwdkVXUVE0emdLZ1lsQTArOHg4Y0lOemx3VkNvbVR3OFAwTHFxVEls?=
- =?utf-8?B?TzRxVXJIY1JWaW1nb2p2azBxRE8vZnExWU4xMmlxbzdHMEdqemhHL0RuTGZx?=
- =?utf-8?B?dU9KK0Y0WmhZQVRTZE1xZzZ2aUxYVXk3RkcyVU5jUVhwMHA1eXIyYmlSeVAw?=
- =?utf-8?B?V2ZIUkFYV2sreERwMytKQmpIMkpjR2pUVnJGaXhZQ3NyS2Q3MUFJSmV1Rlpx?=
- =?utf-8?B?TWhsSEdLUEYwSGwzTWFPa2J6MUxIQkYvd3FhQUsvSjNzMERURFJoZFlaTG9E?=
- =?utf-8?B?eTlGaXQ0TmFSWXBobHFIOEZUWGZBN2dNRWVBMlFia1FnVXl3Yk4vN1pObU5o?=
- =?utf-8?B?Y0lLOUwxWWlnPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?d0tQOHB1R1lEeStxR0RVZUh1blVyazd1Vk1UV0kydUlDNDE0RDRLamJzRm9C?=
- =?utf-8?B?VlBHOHJzeEpGdUIzcHQvOWFPYkxHamk4U2pNQnhINno5MEVZdjJZYUdXaFNZ?=
- =?utf-8?B?K2RqYmVtL2ZLZkVyZ2NHUlphQ2NLWXdvSTJJcUNZbVY1TFlQZzlHMjQ4THBG?=
- =?utf-8?B?cjIyZS9DNGhqcVArdkhwNjV0ZXpSbmE2T2FSOXFKUGNFdm4xeXpQcGRwdy8x?=
- =?utf-8?B?YUFub01RRE5ZV1lZaFhaOFUyQ3RuRGZmeCtXVitRTjU4dWlvTVJZM2VIQmpD?=
- =?utf-8?B?djdldDlPMVM5NTRyN0xKVnNiM3B4NWIrbGdvVm53eWhMWTNaL0tTMXdJWlhx?=
- =?utf-8?B?cDV1YXpkS3BjUlhrRmF4ZU90MnBSbGo3b0o4YzAvRFNqaURxR2tibC9rWDRZ?=
- =?utf-8?B?bGNPSkVKb3JUWjRHa0l0V3lnNlNjOVZQWUFEYm9MSE9ha3ZJaFRXMXNrc0xK?=
- =?utf-8?B?Tm5IMU9TR1cwTXhlZVd3YkFTamJWRUM4NkdIdUgrdjR1WkUyaW9RVXNmYk03?=
- =?utf-8?B?dWEvY2IwWkEvaEtYdW9aSkpKdjRTS2RtbytwUUIycGhmYXJ5Y3NnK1kwUEdZ?=
- =?utf-8?B?anN6OStiRDNURmNpeFBMRjIrZitFOTc0U3ZZa2ZFazV4dXNTaC90ejAvZ0xW?=
- =?utf-8?B?L0JvaVREMmhXNDJTc1ZOVDQrYnZjQ0dkVyt6Ujh2TGlsTFB2NjFGckhFbjJK?=
- =?utf-8?B?dDcxSFBTalJxV2ErZnpQSnZadFBJTFB5eUxQRWYxWG5Ec2FoK0VNZjdZUDZI?=
- =?utf-8?B?UGlDUDU4Q015bmhMSklwY3dYakVHYUlMLzJDSzZTMER3dEpoUWs4UzUxVlB5?=
- =?utf-8?B?Zk0wRnpSNGN4ZE0wMEFpUmZwOWFxVE5MeHVBR2ZEb0hQV0RFbjQ5SUJvb2xT?=
- =?utf-8?B?QlhiZ2VXQndTVmpVcDZLMGJBQklvVHJ1TVJnd0t0MDI0ZjhPeWR2NkZMdk5h?=
- =?utf-8?B?R3FFOHFmTllxaW8ra29ENnVwcDk5ZlhjSUVXZGIrODZkTHdYY09PM3UvQlkr?=
- =?utf-8?B?MmVsT2k3ZVkrK0ppbzI4YVJuVzZQc1YxZnh2a2JLVXpUUktsaVBiU2d4Z3BE?=
- =?utf-8?B?S0Q4OUJzcnhEK1hIdW1yd1h1akc0Y3EzZG5rTGQ1ZGpuMDNFT3JCTllGL3Q3?=
- =?utf-8?B?WkVDQzFXbG94bit2Nk9icCtldTI0S1ZXMUpSdEFrbWd1YkN5WmpaRk50Sm5t?=
- =?utf-8?B?VExVbDMwUW9ncHpCTndtT3U0MnJTV3JpWU15NG9GaGVPOFpGcFp1ZzJ6NXMv?=
- =?utf-8?B?U2tUblF1bld4ejJJZEFTVmUrOXRWOVFOUStkS0FFL0hQNTBldHJRaktCaGxl?=
- =?utf-8?B?VTliZjFORFVVajU4UXo3VmNkVHJDQzJCbTZySmFPWVRLK3R5eVRZOGdIaHc2?=
- =?utf-8?B?MUh3aVloNDFPYXE0elRYd3QvRjcwd3dSWTVkT1BpQzQ5cEF1cVA0SEJKMXAr?=
- =?utf-8?B?ck50M2FMSVUybGN5am1kRlhtZVp4d0pOd2dBNzd4RjQvNG9lYTlJTTQwMTVZ?=
- =?utf-8?B?c0N2UnBwZG9TcnN4bE01bFUyYWVVclV6K2dzNzd2RmZyVUo4WDJPbG9FTW9U?=
- =?utf-8?B?YW45TXBqbTRkTnc0bnBES1RSd2g4TkJ2ZU9WN2xUYXN5NFgzWmVXaG13Q3lO?=
- =?utf-8?B?bmlRQXRHdFNaZ2RWTU5GQ3BLUDRwVHVzZHVSOFhhOWVDSzBtQWVlK3VGTUZ4?=
- =?utf-8?B?S1JVcXlUNUdtSkdkb3ZQV2VZd0ZvdU1aOFlqWlVXZHJSTnBUWFZYVWViSDFu?=
- =?utf-8?B?SUJTWlp0bE51c1pUT0hwb1duNVJLcDg1QkJKT2V3NUVnTGJFMXR0b3JOMlVT?=
- =?utf-8?B?TDFjcVRkVGFNVUVWdm04RnhJWWlUTzA4YWFMWFg0QnBjbDcwcU1CM0xFMnY4?=
- =?utf-8?B?M25XcHpSVTNodEV0cm50RGd1SGQ1WS92ME4zQTNwekRiU0YrSHBzb3B0UzVL?=
- =?utf-8?B?NVlldjJpVStwUW1ZSEJyS2JZL01qZFJwb0tiVVg5dlNDUzlGWmJJUGVjbE5M?=
- =?utf-8?B?K3YreWt4a2hkMXRQZXBtYVA1c1A5WnFFUkp1ZkNhVTQ2YXNkdnFLNlB3dmdL?=
- =?utf-8?B?ZVQ2VFhxai9uWGpuNDAwd3ZFNnJOUGp2UlFWNkNWUUVPNG1tOERxSnFxY05E?=
- =?utf-8?Q?AyDkmPVu59agKlxDqg99DhwYt?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2CB93A6F60D1C34AA9C2DFC8D1CA32D0@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+   d="scan'208";a="195741040"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Aug 2025 16:52:49 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujnw6-0002Bm-1s;
+	Wed, 06 Aug 2025 23:52:46 +0000
+Date: Thu, 7 Aug 2025 07:52:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ian Rogers <irogers@google.com>, aahringo@redhat.com,
+	Douglas Raillard <douglas.raillard@arm.com>
+Subject: Re: [PATCH 6/7] tracing: Allow syscall trace events to read more
+ than one user parameter
+Message-ID: <202508070706.TiTQY0Ne-lkp@intel.com>
+References: <20250805193235.582013098@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c80cbb7e-a876-4d25-f3b4-08ddd543e97b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 23:49:41.2589
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D/Gl/TuDTlmw7LxoobhfQu6rJehkf+hHf0GgeX+tlG0pmigjsF/YWWcuWq0T3MNaLLhtPo2lsGA2OdyqXSN8kw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5874
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805193235.582013098@kernel.org>
 
-T24gV2VkLCAyMDI1LTA4LTA2IGF0IDExOjExICswMzAwLCBFbGVuYSBSZXNoZXRvdmEgd3JvdGU6
-DQo+IEFkZCBlcnJvciBjb2RlcyBmb3IgRU5DTFNbRVVQREFURVNWTl0sIHRoZW4gU0dYIENQVVNW
-TiB1cGRhdGUNCj4gcHJvY2VzcyBjYW4ga25vdyB0aGUgZXhlY3V0aW9uIHN0YXRlIG9mIEVVUERB
-VEVTVk4gYW5kIG5vdGlmeQ0KPiB1c2Vyc3BhY2UuDQoNCkkgd291bGQgYWxzbyBhZGQgc29tZSB0
-ZXh0IHRvIGV4cGxhaW4gd2h5IG90aGVyIGVycm9yIGNvZGVzIGFyZSBub3QNCmRlZmluZWQ6DQoN
-CkVVUERBVEVTVk4gd2lsbCBiZSBjYWxsZWQgd2hlbiBubyBhY3RpdmUgU0dYIHVzZXIgaXMgZ3Vh
-cmFudGVlZC4gIE9ubHkgYWRkDQp0aGUgZXJyb3IgY29kZXMgdGhhdCBjYW4gbGVnYWxseSBoYXBw
-ZW4uICBFLmcuLCBpdCBjb3VsZCBhbHNvIGZhaWwgZHVlIHRvDQoiU0dYIG5vdCByZWFkeSIgd2hl
-biB0aGVyZSdzIFNHWCB1c2VycyBidXQgaXQgd291bGRuJ3QgaGFwcGVuIGluIHRoaXMNCmltcGxl
-bWVudGF0aW9uLg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBFbGVuYSBSZXNoZXRvdmEgPGVsZW5h
-LnJlc2hldG92YUBpbnRlbC5jb20+DQo+IC0tLQ0KPiAgYXJjaC94ODYvaW5jbHVkZS9hc20vc2d4
-LmggfCA2ICsrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oIGIvYXJjaC94ODYvaW5jbHVk
-ZS9hc20vc2d4LmgNCj4gaW5kZXggNmEwMDY5NzYxNTA4Li4yZGE1YjNiMTE3YTEgMTAwNjQ0DQo+
-IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oDQo+ICsrKyBiL2FyY2gveDg2L2luY2x1
-ZGUvYXNtL3NneC5oDQo+IEBAIC03Myw2ICs3MywxMCBAQCBlbnVtIHNneF9lbmNsc19mdW5jdGlv
-biB7DQo+ICAgKgkJCQlwdWJsaWMga2V5IGRvZXMgbm90IG1hdGNoIElBMzJfU0dYTEVQVUJLRVlI
-QVNILg0KPiAgICogJVNHWF9QQUdFX05PVF9NT0RJRklBQkxFOglUaGUgRVBDIHBhZ2UgY2Fubm90
-IGJlIG1vZGlmaWVkIGJlY2F1c2UgaXQNCj4gICAqCQkJCWlzIGluIHRoZSBQRU5ESU5HIG9yIE1P
-RElGSUVEIHN0YXRlLg0KPiArICogJVNHWF9JTlNVRkZJQ0lFTlRfRU5UUk9QWToJSW5zdWZmaWNp
-ZW50IGVudHJvcHkgaW4gUk5HLg0KPiArICogJVNHWF9OT19VUERBVEU6CQlFVVBEQVRFU1ZOIGNv
-dWxkIG5vdCB1cGRhdGUgdGhlIENQVVNWTiBiZWNhdXNlIHRoZQ0KPiArICoJCQkJY3VycmVudCBT
-Vk4gd2FzIG5vdCBuZXdlciB0aGFuIENQVVNWTi4gVGhpcyBpcyB0aGUgbW9zdA0KPiArICoJCQkJ
-Y29tbW9uIGVycm9yIGNvZGUgcmV0dXJuZWQgYnkgRVVQREFURVNWTi4NCj4gICAqICVTR1hfVU5N
-QVNLRURfRVZFTlQ6CQlBbiB1bm1hc2tlZCBldmVudCwgZS5nLiBJTlRSLCB3YXMgcmVjZWl2ZWQN
-Cj4gICAqLw0KPiAgZW51bSBzZ3hfcmV0dXJuX2NvZGUgew0KPiBAQCAtODEsNiArODUsOCBAQCBl
-bnVtIHNneF9yZXR1cm5fY29kZSB7DQo+ICAJU0dYX0NISUxEX1BSRVNFTlQJCT0gMTMsDQo+ICAJ
-U0dYX0lOVkFMSURfRUlOSVRUT0tFTgkJPSAxNiwNCj4gIAlTR1hfUEFHRV9OT1RfTU9ESUZJQUJM
-RQkJPSAyMCwNCj4gKwlTR1hfSU5TVUZGSUNJRU5UX0VOVFJPUFkJPSAyOSwNCj4gKwlTR1hfTk9f
-VVBEQVRFCQkJCT0gMzEsDQo+ICAJU0dYX1VOTUFTS0VEX0VWRU5UCQk9IDEyOCwNCj4gIH07DQo+
-ICANCg==
+Hi Steven,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on linus/master v6.16 next-20250806]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Replace-syscall-RCU-pointer-assignment-with-READ-WRITE_ONCE/20250806-122312
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250805193235.582013098%40kernel.org
+patch subject: [PATCH 6/7] tracing: Allow syscall trace events to read more than one user parameter
+config: x86_64-randconfig-123-20250806 (https://download.01.org/0day-ci/archive/20250807/202508070706.TiTQY0Ne-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508070706.TiTQY0Ne-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508070706.TiTQY0Ne-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> kernel/trace/trace_syscalls.c:620:53: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got char *ptr @@
+   kernel/trace/trace_syscalls.c:620:53: sparse:     expected void const [noderef] __user *from
+   kernel/trace/trace_syscalls.c:620:53: sparse:     got char *ptr
+>> kernel/trace/trace_syscalls.c:623:54: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected char const [noderef] __user *src @@     got char *ptr @@
+   kernel/trace/trace_syscalls.c:623:54: sparse:     expected char const [noderef] __user *src
+   kernel/trace/trace_syscalls.c:623:54: sparse:     got char *ptr
+   kernel/trace/trace_syscalls.c:707:20: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct trace_event_file *trace_file @@     got struct trace_event_file [noderef] __rcu * @@
+   kernel/trace/trace_syscalls.c:707:20: sparse:     expected struct trace_event_file *trace_file
+   kernel/trace/trace_syscalls.c:707:20: sparse:     got struct trace_event_file [noderef] __rcu *
+   kernel/trace/trace_syscalls.c:824:20: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct trace_event_file *trace_file @@     got struct trace_event_file [noderef] __rcu * @@
+   kernel/trace/trace_syscalls.c:824:20: sparse:     expected struct trace_event_file *trace_file
+   kernel/trace/trace_syscalls.c:824:20: sparse:     got struct trace_event_file [noderef] __rcu *
+   kernel/trace/trace_syscalls.c:871:9: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct trace_event_file [noderef] __rcu *volatile @@     got struct trace_event_file *file @@
+   kernel/trace/trace_syscalls.c:871:9: sparse:     expected struct trace_event_file [noderef] __rcu *volatile
+   kernel/trace/trace_syscalls.c:871:9: sparse:     got struct trace_event_file *file
+   kernel/trace/trace_syscalls.c:909:17: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct trace_event_file [noderef] __rcu *volatile @@     got struct trace_event_file *file @@
+   kernel/trace/trace_syscalls.c:909:17: sparse:     expected struct trace_event_file [noderef] __rcu *volatile
+   kernel/trace/trace_syscalls.c:909:17: sparse:     got struct trace_event_file *file
+
+vim +620 kernel/trace/trace_syscalls.c
+
+6bc850d6f8f730 Steven Rostedt 2025-08-05  526  
+623bd9e046f95c Steven Rostedt 2025-08-05  527  static char *sys_fault_user(struct syscall_metadata *sys_data,
+623bd9e046f95c Steven Rostedt 2025-08-05  528  			    struct syscall_buf_info *sinfo,
+623bd9e046f95c Steven Rostedt 2025-08-05  529  			    unsigned long *args,
+623bd9e046f95c Steven Rostedt 2025-08-05  530  			    unsigned int data_size[SYSCALL_FAULT_MAX_CNT])
+6bc850d6f8f730 Steven Rostedt 2025-08-05  531  {
+623bd9e046f95c Steven Rostedt 2025-08-05  532  	char *buffer = per_cpu_ptr(sinfo->sbuf, smp_processor_id())->buf;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  533  	unsigned long mask = sys_data->user_mask;
+623bd9e046f95c Steven Rostedt 2025-08-05  534  	unsigned long size = SYSCALL_FAULT_ARG_SZ - 1;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  535  	unsigned int cnt;
+b979d33ec48bbd Steven Rostedt 2025-08-05  536  	bool array = false;
+623bd9e046f95c Steven Rostedt 2025-08-05  537  	char *ptr_array[SYSCALL_FAULT_MAX_CNT];
+623bd9e046f95c Steven Rostedt 2025-08-05  538  	char *buf;
+623bd9e046f95c Steven Rostedt 2025-08-05  539  	int read[SYSCALL_FAULT_MAX_CNT];
+6bc850d6f8f730 Steven Rostedt 2025-08-05  540  	int trys = 0;
+623bd9e046f95c Steven Rostedt 2025-08-05  541  	int uargs;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  542  	int ret;
+623bd9e046f95c Steven Rostedt 2025-08-05  543  	int i = 0;
+623bd9e046f95c Steven Rostedt 2025-08-05  544  
+623bd9e046f95c Steven Rostedt 2025-08-05  545  	/* The extra is appended to the user data in the buffer */
+623bd9e046f95c Steven Rostedt 2025-08-05  546  	BUILD_BUG_ON(SYSCALL_FAULT_USER_MAX + sizeof(EXTRA) >=
+623bd9e046f95c Steven Rostedt 2025-08-05  547  		     SYSCALL_FAULT_ARG_SZ);
+623bd9e046f95c Steven Rostedt 2025-08-05  548  
+623bd9e046f95c Steven Rostedt 2025-08-05  549  	/*
+623bd9e046f95c Steven Rostedt 2025-08-05  550  	 * If this system call event has a size argument, use
+623bd9e046f95c Steven Rostedt 2025-08-05  551  	 * it to define how much of user space memory to read,
+623bd9e046f95c Steven Rostedt 2025-08-05  552  	 * and read it as an array and not a string.
+623bd9e046f95c Steven Rostedt 2025-08-05  553  	 */
+623bd9e046f95c Steven Rostedt 2025-08-05  554  	if (sys_data->user_arg_size >= 0) {
+623bd9e046f95c Steven Rostedt 2025-08-05  555  		array = true;
+623bd9e046f95c Steven Rostedt 2025-08-05  556  		size = args[sys_data->user_arg_size];
+623bd9e046f95c Steven Rostedt 2025-08-05  557  		if (size > SYSCALL_FAULT_ARG_SZ - 1)
+623bd9e046f95c Steven Rostedt 2025-08-05  558  			size = SYSCALL_FAULT_ARG_SZ - 1;
+623bd9e046f95c Steven Rostedt 2025-08-05  559  	}
+623bd9e046f95c Steven Rostedt 2025-08-05  560  
+623bd9e046f95c Steven Rostedt 2025-08-05  561  	while (mask) {
+623bd9e046f95c Steven Rostedt 2025-08-05  562  		int idx = ffs(mask) - 1;
+623bd9e046f95c Steven Rostedt 2025-08-05  563  		mask &= ~BIT(idx);
+623bd9e046f95c Steven Rostedt 2025-08-05  564  
+623bd9e046f95c Steven Rostedt 2025-08-05  565  		if (WARN_ON_ONCE(i == SYSCALL_FAULT_MAX_CNT))
+623bd9e046f95c Steven Rostedt 2025-08-05  566  			break;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  567  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  568  		/* Get the pointer to user space memory to read */
+623bd9e046f95c Steven Rostedt 2025-08-05  569  		ptr_array[i++] = (char *)args[idx];
+623bd9e046f95c Steven Rostedt 2025-08-05  570  	}
+623bd9e046f95c Steven Rostedt 2025-08-05  571  
+623bd9e046f95c Steven Rostedt 2025-08-05  572  	uargs = i;
+623bd9e046f95c Steven Rostedt 2025-08-05  573  
+623bd9e046f95c Steven Rostedt 2025-08-05  574  	/* Clear the values that are not used */
+623bd9e046f95c Steven Rostedt 2025-08-05  575  	for (; i < SYSCALL_FAULT_MAX_CNT; i++) {
+623bd9e046f95c Steven Rostedt 2025-08-05  576  		data_size[i] = -1; /* Denotes no pointer */
+623bd9e046f95c Steven Rostedt 2025-08-05  577  	}
+6bc850d6f8f730 Steven Rostedt 2025-08-05  578  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  579   again:
+6bc850d6f8f730 Steven Rostedt 2025-08-05  580  	/*
+6bc850d6f8f730 Steven Rostedt 2025-08-05  581  	 * If this task is preempted by another user space task, it
+6bc850d6f8f730 Steven Rostedt 2025-08-05  582  	 * will cause this task to try again. But just in case something
+6bc850d6f8f730 Steven Rostedt 2025-08-05  583  	 * changes where the copying from user space causes another task
+6bc850d6f8f730 Steven Rostedt 2025-08-05  584  	 * to run, prevent this from going into an infinite loop.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  585  	 * 10 tries should be plenty.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  586  	 */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  587  	if (trys++ > 10) {
+6bc850d6f8f730 Steven Rostedt 2025-08-05  588  		static bool once;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  589  		/*
+6bc850d6f8f730 Steven Rostedt 2025-08-05  590  		 * Only print a message instead of a WARN_ON() as this could
+6bc850d6f8f730 Steven Rostedt 2025-08-05  591  		 * theoretically trigger under real load.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  592  		 */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  593  		if (!once)
+6bc850d6f8f730 Steven Rostedt 2025-08-05  594  			pr_warn("Error: Too many tries to read syscall %s\n", sys_data->name);
+6bc850d6f8f730 Steven Rostedt 2025-08-05  595  		once = true;
+623bd9e046f95c Steven Rostedt 2025-08-05  596  		return buffer;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  597  	}
+6bc850d6f8f730 Steven Rostedt 2025-08-05  598  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  599  	/* Read the current sched switch count */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  600  	cnt = this_cpu_read(sched_switch_cnt);
+6bc850d6f8f730 Steven Rostedt 2025-08-05  601  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  602  	/*
+6bc850d6f8f730 Steven Rostedt 2025-08-05  603  	 * Preemption is going to be enabled, but this task must
+6bc850d6f8f730 Steven Rostedt 2025-08-05  604  	 * remain on this CPU.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  605  	 */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  606  	migrate_disable();
+6bc850d6f8f730 Steven Rostedt 2025-08-05  607  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  608  	/*
+6bc850d6f8f730 Steven Rostedt 2025-08-05  609  	 * Now preemption is being enabed and another task can come in
+6bc850d6f8f730 Steven Rostedt 2025-08-05  610  	 * and use the same buffer and corrupt our data.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  611  	 */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  612  	preempt_enable_notrace();
+6bc850d6f8f730 Steven Rostedt 2025-08-05  613  
+623bd9e046f95c Steven Rostedt 2025-08-05  614  	buf = buffer;
+623bd9e046f95c Steven Rostedt 2025-08-05  615  
+623bd9e046f95c Steven Rostedt 2025-08-05  616  	for (i = 0; i < uargs; i++, buf += SYSCALL_FAULT_ARG_SZ) {
+623bd9e046f95c Steven Rostedt 2025-08-05  617  		char *ptr = ptr_array[i];
+623bd9e046f95c Steven Rostedt 2025-08-05  618  
+b979d33ec48bbd Steven Rostedt 2025-08-05  619  		if (array) {
+b979d33ec48bbd Steven Rostedt 2025-08-05 @620  			ret = __copy_from_user(buf, ptr, size);
+b979d33ec48bbd Steven Rostedt 2025-08-05  621  			ret = ret ? -1 : size;
+b979d33ec48bbd Steven Rostedt 2025-08-05  622  		} else {
+6bc850d6f8f730 Steven Rostedt 2025-08-05 @623  			ret = strncpy_from_user(buf, ptr, size);
+b979d33ec48bbd Steven Rostedt 2025-08-05  624  		}
+623bd9e046f95c Steven Rostedt 2025-08-05  625  		read[i] = ret;
+623bd9e046f95c Steven Rostedt 2025-08-05  626  	}
+6bc850d6f8f730 Steven Rostedt 2025-08-05  627  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  628  	preempt_disable_notrace();
+6bc850d6f8f730 Steven Rostedt 2025-08-05  629  	migrate_enable();
+6bc850d6f8f730 Steven Rostedt 2025-08-05  630  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  631  	/*
+6bc850d6f8f730 Steven Rostedt 2025-08-05  632  	 * Preemption is disabled again, now check the sched_switch_cnt.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  633  	 * If it increased by two or more, then another user space process
+6bc850d6f8f730 Steven Rostedt 2025-08-05  634  	 * may have schedule in and corrupted our buffer. In that case
+6bc850d6f8f730 Steven Rostedt 2025-08-05  635  	 * the copying must be retried.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  636  	 *
+6bc850d6f8f730 Steven Rostedt 2025-08-05  637  	 * Note, if this task was scheduled out and only kernel threads
+6bc850d6f8f730 Steven Rostedt 2025-08-05  638  	 * were scheduled in (maybe to process the fault), then the
+6bc850d6f8f730 Steven Rostedt 2025-08-05  639  	 * counter would increment again when this task scheduled in.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  640  	 * If this task scheduled out and another user task scheduled
+6bc850d6f8f730 Steven Rostedt 2025-08-05  641  	 * in, this task would still need to be scheduled back in and
+6bc850d6f8f730 Steven Rostedt 2025-08-05  642  	 * the counter would increment by at least two.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  643  	 */
+6bc850d6f8f730 Steven Rostedt 2025-08-05  644  	if (this_cpu_read(sched_switch_cnt) > cnt + 1)
+6bc850d6f8f730 Steven Rostedt 2025-08-05  645  		goto again;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  646  
+623bd9e046f95c Steven Rostedt 2025-08-05  647  	buf = buffer;
+623bd9e046f95c Steven Rostedt 2025-08-05  648  	for (i = 0; i < uargs; i++, buf += SYSCALL_FAULT_ARG_SZ) {
+623bd9e046f95c Steven Rostedt 2025-08-05  649  
+623bd9e046f95c Steven Rostedt 2025-08-05  650  		ret = read[i];
+623bd9e046f95c Steven Rostedt 2025-08-05  651  		if (ret < 0)
+623bd9e046f95c Steven Rostedt 2025-08-05  652  			continue;
+623bd9e046f95c Steven Rostedt 2025-08-05  653  		buf[ret] = '\0';
+623bd9e046f95c Steven Rostedt 2025-08-05  654  
+b979d33ec48bbd Steven Rostedt 2025-08-05  655  		/* For strings, replace any non-printable characters with '.' */
+b979d33ec48bbd Steven Rostedt 2025-08-05  656  		if (!array) {
+623bd9e046f95c Steven Rostedt 2025-08-05  657  			for (int x = 0; x < ret; x++) {
+623bd9e046f95c Steven Rostedt 2025-08-05  658  				if (!isprint(buf[x]))
+623bd9e046f95c Steven Rostedt 2025-08-05  659  					buf[x] = '.';
+6bc850d6f8f730 Steven Rostedt 2025-08-05  660  			}
+6bc850d6f8f730 Steven Rostedt 2025-08-05  661  
+6bc850d6f8f730 Steven Rostedt 2025-08-05  662  			/*
+623bd9e046f95c Steven Rostedt 2025-08-05  663  			 * If the text was truncated due to our max limit,
+623bd9e046f95c Steven Rostedt 2025-08-05  664  			 * add "..." to the string.
+6bc850d6f8f730 Steven Rostedt 2025-08-05  665  			 */
+623bd9e046f95c Steven Rostedt 2025-08-05  666  			if (ret > SYSCALL_FAULT_USER_MAX) {
+623bd9e046f95c Steven Rostedt 2025-08-05  667  				strscpy(buf + SYSCALL_FAULT_USER_MAX, EXTRA,
+623bd9e046f95c Steven Rostedt 2025-08-05  668  					sizeof(EXTRA));
+623bd9e046f95c Steven Rostedt 2025-08-05  669  				ret = SYSCALL_FAULT_USER_MAX + sizeof(EXTRA);
+6bc850d6f8f730 Steven Rostedt 2025-08-05  670  			} else {
+6bc850d6f8f730 Steven Rostedt 2025-08-05  671  				buf[ret++] = '\0';
+6bc850d6f8f730 Steven Rostedt 2025-08-05  672  			}
+623bd9e046f95c Steven Rostedt 2025-08-05  673  		} else {
+623bd9e046f95c Steven Rostedt 2025-08-05  674  			ret = min(ret, SYSCALL_FAULT_USER_MAX);
+623bd9e046f95c Steven Rostedt 2025-08-05  675  		}
+623bd9e046f95c Steven Rostedt 2025-08-05  676  		data_size[i] = ret;
+b979d33ec48bbd Steven Rostedt 2025-08-05  677  	}
+6bc850d6f8f730 Steven Rostedt 2025-08-05  678  
+623bd9e046f95c Steven Rostedt 2025-08-05  679  	return buffer;
+6bc850d6f8f730 Steven Rostedt 2025-08-05  680  }
+6bc850d6f8f730 Steven Rostedt 2025-08-05  681  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
