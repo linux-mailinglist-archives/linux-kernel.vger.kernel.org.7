@@ -1,164 +1,168 @@
-Return-Path: <linux-kernel+bounces-758427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32880B1CEFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:07:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE2FB1CF02
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A611723D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451535614FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BCB2367BF;
-	Wed,  6 Aug 2025 22:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A9822AE7A;
+	Wed,  6 Aug 2025 22:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWGQg/wR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m13tuVNp"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D32233D9C;
-	Wed,  6 Aug 2025 22:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B58219A79
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 22:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754518017; cv=none; b=YgRrK2TJw6QerOFKwIENpnl7RD88W4i2gfc1iKjW7rHFcoRUZhtrtilciLQZei65CR2vEf0yZ/tyqU68l1pZ5/J6uaDI19PxU0t+7Xzd0ek7MFqybDIeitDLDJwXeH2tC9uA67Z1V8ib74ZlGZAtd62bLSxXrSvwfphgOn/Qm+4=
+	t=1754518326; cv=none; b=UD8hWNMCgysUd6pxgMsJn2JOyu3BZBiAUgP5abBG0Sps0GGGsW2LtSgFMku8srYvQtvWNYTlCEYLeZiHllXi5HIN28usnHnK5M8eEHJ5Ccb8JdOZdTeiewjHnAYNR7A4ATVvQmDEyhjZACvINC/wffbkijwDqvEY3vvZuMDhJ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754518017; c=relaxed/simple;
-	bh=W5KDX1Oo+lZSX0tbOFKjtk+FjaBNv9Ve/X9SznlVBBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=DiozhFH5rcxvmGYI/2LU/vg/jKza7gR6QxDpCG8o/AdmcHMdKRn07Ol6khf7yXJRibAmdWtwvnS27O2RoKQ/6BLadsdOZeBeDKZQQB0pZ7atFdmUld+cg2/+br9OrsyDtkvvrN0aqtNhK1IrhP6+/RHcwoLI0lRIQhkEJEqd2Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWGQg/wR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80E5C4CEE7;
-	Wed,  6 Aug 2025 22:06:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754518014;
-	bh=W5KDX1Oo+lZSX0tbOFKjtk+FjaBNv9Ve/X9SznlVBBU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fWGQg/wRiMFXJBoaCDiw2bEI6tPeGVH4K/WgBmVH6Gyz07KICeFO95Pwuxid2uO2m
-	 uzvybAuw9CB/waZUM42423hArIR2wbjWKdRmMPJ4jAQt4bYmGljl1/0CYuebizzaPR
-	 z1wTYm51FKbj/Tdv4gX9whVVTaCuRoYnHxAhvDHXkvUMwO7enbcAPGFiga+vWrI+50
-	 rFl2rvyk5ydK8lGDZRtuSQzxTEElfrPSNolj7qhucLVaR7TQSfRXSeoGDtEeE4LaDa
-	 7GRM+nqDePC3a+kbAhyMoxsfnfHDWBEZb4QdlthJN+qT1q+MHZU3ipX6JD/Tbl1nTr
-	 PA3xWDHuoNb5Q==
-Date: Wed, 6 Aug 2025 17:06:53 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: grwhyte@linux.microsoft.com
-Cc: linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com,
-	code@tyhicks.com, Okaya@kernel.org, bhelgaas@google.com,
-	linux-kernel@vger.kernel.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v3 1/2] PCI: Add flr_delay parameter to pci_dev struct
-Message-ID: <20250806220653.GA20136@bhelgaas>
+	s=arc-20240116; t=1754518326; c=relaxed/simple;
+	bh=+Ox9zRYolOnHtwT3PUcx67G94JDxZP2kTORZOpqtIMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTFYb8TIPKrWDNMaW97D6oglvFe5e5gUDb9WNWD3VzijcWbHL742SGfXgK6tLqdY4ZutwZIwS0lcLvwkLc+Y504vw+oXp9Rm14hjShk7nG8Yrlka88+6X14Cdhyu0U1Dz5ibAj1+pkO6b6hV3pxRXHjGDbT0milCxCJ74rDJ7Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m13tuVNp; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso137591cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 15:12:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754518324; x=1755123124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4FiWvRl7qqXkQNDBUdlT6ON4d+ifpSBHPrNy6qGGUHk=;
+        b=m13tuVNp4wL1iulVqvCbGipbqXBm1HmZaOy1EHfHjwqeZi9iB1ZHen8t0QolNfnkOT
+         6OdckBM4mOrUl74rxJaf6FdypPqz/fGc7Cc+4B4aAtF77sDoYTwDEdd1IvqW+UBNn9uX
+         nXKPN4n47WHj5ixzbdtUzeUCADkilBzZLDvGocZ76KWZcEJZIUMgebPMdKfy0lVWcrD8
+         YJvrdRVk6z3rCZ23x6EyaooEErvXPe8hhXmmZIl6rH+E4wJN0JuDfeZqg3t5GrpxvqYm
+         +pxiqb5pXYtUEy3DDhWAP49rO4ra1D0d9hY+dP2NLrZMULloSleudOVGLTMiaQVjWBWq
+         50xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754518324; x=1755123124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4FiWvRl7qqXkQNDBUdlT6ON4d+ifpSBHPrNy6qGGUHk=;
+        b=hgmHCkfMAZkuXcxYN1BGaTdgooc+k1A0/R7F7/KTEWracedUz04/Cdkdn9Fd7r4g/H
+         ujKKn4P8Sif6PE+J08xTx6K+cg6ca+TK19NqV+G2w8GuXpUV0b2hYpIB9GGsQxb+vwWO
+         i73Q4JAy5+i8za4SgX9erwqF1ly0K+RHnHDn1hMclWurU53baAu2F7vzyemXYJyAWs89
+         tI4VHZ8UaIiCh+d5Fc0EqSOkji49Eq9E0egkpjxhvDPa3KpSTQ0coxPeB1uZZAMrhIpm
+         16l3PljqIAWumcnIPMV5q8JSUrT7CoabwcqMr3ZVzLU4kgquLx0GNMhoR45UjGbEYw2V
+         8xaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHuOvs9/9N328fZc1Un44dnEMTc56TVBRcCv7M1qD+hwnJH6aCArZXNLzM10EuqOPLfg5cGLNfIzEVPZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVqYL+OwiSwP7Pe9c7InjSXLpNgXionJ92ojzpo0zcCt9n+QDv
+	TsVnDJMB5qfSEWdCjWOFSh2PPS4V2hjZczqubSZC15vIAojJ+cw6/uA2KzlSGsB7Vj+kDMXx7Iq
+	iq20+Z9avwC25TotvGBji77ySs3Dj9yY7trSaNmUV
+X-Gm-Gg: ASbGnctrYJFJvMr3NPSc0jxxaUy8gHlcy5CU5SHHx8j6tXSeRnTQv2SOcUlck9l9Mhu
+	aAbTT/uloI5Dvayw0fg6K7uc3Wpe5jmNILXzJqQ5cqxZ1bnwTh3mgqvwhdyJWPEk44PI7B3PH6+
+	ep4abdcFe52NJgGuzNU7eTppDKIWtZ1VDqznmuFT6F3LNqJSz/N0PlYm/pSMExw7k/gh5UPLMyf
+	7Gn/axLfv2LXo0t
+X-Google-Smtp-Source: AGHT+IE58c8RrLqWVAWSA89xnMLA58Wcvs22tjEvVXSzyBbScgVGdTpLFJhTGLaInSIHVWyChoGSfE8AA7WkFHFQ4CE=
+X-Received: by 2002:ac8:5a42:0:b0:4a6:f525:e35a with SMTP id
+ d75a77b69052e-4b0a372b51dmr520041cf.9.1754518323701; Wed, 06 Aug 2025
+ 15:12:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611000552.1989795-2-grwhyte@linux.microsoft.com>
+References: <20250806154015.769024-1-surenb@google.com> <aJOJI-YZ0TTxEzV9@x1.local>
+ <CAJuCfpGGGJfnvzzdhOEwsXRWPm1nJoPcm2FcrYnkcJtc9W96gA@mail.gmail.com>
+ <aJOaXPhFry_LTlfI@x1.local> <CAJuCfpF0RJ9w0STKFaFA7vLEA5_kEsebuowYWSVnK-=5J2wsPQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpF0RJ9w0STKFaFA7vLEA5_kEsebuowYWSVnK-=5J2wsPQ@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 6 Aug 2025 15:11:52 -0700
+X-Gm-Features: Ac12FXwLQmNTg-sw4wFVsfQATsP_wqhDZus6Cjpz3UpRH3cR-tLTiKJsZP0WDZ0
+Message-ID: <CAJuCfpFhcfK4E_Q8QMqG51GOMrJPehddeU4pt3uo1qNfVU5__w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] userfaultfd: fix a crash in UFFDIO_MOVE with some
+ non-present PMDs
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 12:05:51AM +0000, grwhyte@linux.microsoft.com wrote:
-> From: Graham Whyte <grwhyte@linux.microsoft.com>
-> 
-> Add a new flr_delay member of the pci_dev struct to allow customization of
-> the delay after FLR for devices that do not support immediate readiness.
-> 
-> Signed-off-by: Graham Whyte <grwhyte@linux.microsoft.com>
-> ---
->  drivers/pci/pci.c   | 8 ++++++--
->  drivers/pci/pci.h   | 2 ++
->  include/linux/pci.h | 1 +
->  3 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e9448d55113b..04f2660df7c4 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3233,6 +3233,8 @@ void pci_pm_init(struct pci_dev *dev)
->  	dev->bridge_d3 = pci_bridge_d3_possible(dev);
->  	dev->d3cold_allowed = true;
->  
-> +	dev->flr_delay = PCI_FLR_DELAY;
+On Wed, Aug 6, 2025 at 11:21=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Wed, Aug 6, 2025 at 11:09=E2=80=AFAM Peter Xu <peterx@redhat.com> wrot=
+e:
+> >
+> > On Wed, Aug 06, 2025 at 10:09:30AM -0700, Suren Baghdasaryan wrote:
+> > > On Wed, Aug 6, 2025 at 9:56=E2=80=AFAM Peter Xu <peterx@redhat.com> w=
+rote:
+> > > >
+> > > > On Wed, Aug 06, 2025 at 08:40:15AM -0700, Suren Baghdasaryan wrote:
+> > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES an=
+d it
+> > > >
+> > > > The migration entry can appear with/without ALLOW_SRC_HOLES, right?=
+  Maybe
+> > > > drop this line?
+> > >
+> > > Yes, you are right. I'll update.
+> > >
+> > > >
+> > > > If we need another repost, the subject can further be tailored to m=
+ention
+> > > > migration entry too rather than non-present.  IMHO that's clearer o=
+n
+> > > > explaining the issue this patch is fixing (e.g. a valid transhuge T=
+HP can
+> > > > also have present bit cleared).
+> > > >
+> > > > > encounters a non-present PMD (migration entry), it proceeds with =
+folio
+> > > > > access even though the folio is not present. Add the missing chec=
+k and
+> > > >
+> > > > IMHO "... even though folio is not present" is pretty vague.  Maybe
+> > > > "... even though it's a swap entry"?  Fundamentally it's because of=
+ the
+> > > > different layouts of normal THP v.s. a swap entry, hence pmd_folio(=
+) should
+> > > > not be used on top of swap entries.
+> > >
+> > > Well, technically a migration entry is a non_swap_entry(), so calling
+> > > migration entries "swap entries" is confusing to me. Any better
+> > > wording we can use or do you think that's ok?
+> >
+> > The more general definition of "swap entry" should follow what swp_entr=
+y_t
+> > is defined, where, for example, is_migration_entry() itself takes
+> > swp_entry_t as input.  So it should be fine, but I agree it's indeed
+> > confusing.
+> >
+> > If we want to make it clearer, IMHO we could rename non_swap_entry()
+> > instead to is_swapfile_entry() / is_real_swap_entry() / ... but that ca=
+n be
+> > discussed separately.  Here, if we want to make it super accurate, we c=
+ould
+> > also use "swp_entry_t" instead of "swap entry", that'll be 100% accurat=
+e.
+>
+> Ok, that I think is our best option. I'll post an update shortly.
 
-There are some delays mentioned in pci_pm_init(), but I don't think
-this one has anything to do with the PM Capability, so it should go
-elsewhere.  Maybe somewhere related to this recent change:
-https://git.kernel.org/linus/5c0d0ee36f16 ("PCI: Support Immediate
-Readiness on devices without PM cap abilities").
+Posted at https://lore.kernel.org/all/20250806220022.926763-1-surenb@google=
+.com/
+Thanks!
 
-This would be more attractive if we actually added support for the
-Readiness Time Reporting Capability (PCIe r7.0, sec 7.9.16).  Then
-devices that implement that would get actual benefit from this.
 
-I'm not committing to merging a quirk just for the Microsoft devices,
-but I definitely wouldn't merge it unless devices that did the work of
-supporting the standard mechanism also got the benefit.  The hardest
-part might be *finding* a device that supports Readiness Time
-Reporting so we could test it.
-
->  	dev->d1_support = false;
->  	dev->d2_support = false;
->  	if (!pci_no_d1d2(dev)) {
-> @@ -4529,9 +4531,11 @@ int pcie_flr(struct pci_dev *dev)
->  	/*
->  	 * Per PCIe r4.0, sec 6.6.2, a device must complete an FLR within
->  	 * 100ms, but may silently discard requests while the FLR is in
-> -	 * progress.  Wait 100ms before trying to access the device.
-> +	 * progress.  Wait 100ms before trying to access the device, unless
-> +	 * otherwise modified if the device supports a faster reset.
-> +	 * Use usleep_range to support delays under 20ms.
->  	 */
-> -	msleep(100);
-> +	usleep_range(dev->flr_delay, dev->flr_delay+1);
-
-As Ilpo suggested, I think fsleep() is the right thing for this.
-Readiness Time Reporting supports values down to 1ns, but I suspect we
-can live with microsecond resolution for now.
-
->  	return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
->  }
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 12215ee72afb..abc1cf6e6d9b 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -135,6 +135,8 @@ struct pci_cap_saved_state *pci_find_saved_ext_cap(struct pci_dev *dev,
->  #define PCI_PM_D3HOT_WAIT       10	/* msec */
->  #define PCI_PM_D3COLD_WAIT      100	/* msec */
->  
-> +#define PCI_FLR_DELAY           100000 /* usec */
-
-Isn't PCIE_RESET_CONFIG_WAIT_MS the right value for the default delay?
-(I think that name was probably settled on after you posted this.)
-
-Maybe it's not; I see that Readiness Time Reporting includes separate
-values for Reset Time, DL_Up Time, FLR Time, and D3Hot to D0 Time.
-I'm not sure Linux comprehends those differences yet.
-
->  void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
->  void pci_refresh_power_state(struct pci_dev *dev);
->  int pci_power_up(struct pci_dev *dev);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 05e68f35f392..4c9989037ed1 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -402,6 +402,7 @@ struct pci_dev {
->  						   bit manually */
->  	unsigned int	d3hot_delay;	/* D3hot->D0 transition time in ms */
->  	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
-> +	unsigned int    flr_delay;      /* pci post flr sleep time in us */
-
-I think this should be named to correspond with the Readiness Time
-Reporting Capability.  
-
->  	u16		l1ss;		/* L1SS Capability pointer */
->  #ifdef CONFIG_PCIEASPM
-> -- 
-> 2.25.1
-> 
+> Thanks!
+>
+> >
+> > Thanks,
+> >
+> > --
+> > Peter Xu
+> >
 
