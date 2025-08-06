@@ -1,151 +1,171 @@
-Return-Path: <linux-kernel+bounces-757434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457F8B1C218
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 504E2B1C201
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9432D3BC22C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F21D53ACBE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D41221FD4;
-	Wed,  6 Aug 2025 08:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D06E22154D;
+	Wed,  6 Aug 2025 08:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEqDPxcb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l05xR5Xp"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB905CDF1;
-	Wed,  6 Aug 2025 08:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4096E220F3E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754468620; cv=none; b=UlD/tAOeQfGVACTvXlQyIyeeMMM5NhnyY0gNndlOMgt7tWZ1rP7UDNHOwo3LowH6IZT3h4CEGEG1z5/ex1kqsQnmhIRoiYqS+zW2RVlkSIhuTPfRDfOKnLVPTC3YvDXsOWgkfGu6gj1Md7ts+iyl0Qlqhu0smCeS0Z4OaN7gQcw=
+	t=1754468339; cv=none; b=HWPrK1Q/swVJ7AvWbu39Txm6PeZU0ivZ6SkGhq1eoWXnH3siWXCxYo7VyX7OqUfhINYCxW9ZiFVYhrIXSkVhY02mxGBNa2FRe3/GO41/x7L/nanZ6tQA+M7zvrzwbKH/EPFu3t7JcfnjUPVfrAzrT/1g03txoAAlLBuRYZDB0Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754468620; c=relaxed/simple;
-	bh=0KIlz7kJZzW5bK3EEftldyY6WzqooiCe6o8X8gQ3ngA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Exd70J26ov4a0OCpYtq/MRezITm6KlLXrpgZFcnyYoN++4eFBRGOQGeor7xNSouXHQxLdbgFQas4Qdrk/iR5tazgTm/QwOqSgAJ3Y2gLelijv5JZQCncsx095lulTL+uyRw1zeRTOf/m2oXaRAyEAquADRCP8RDTcOzbn4nuo60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEqDPxcb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9292C4CEE7;
-	Wed,  6 Aug 2025 08:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754468619;
-	bh=0KIlz7kJZzW5bK3EEftldyY6WzqooiCe6o8X8gQ3ngA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MEqDPxcb34bll+TO46mOl0q3SeTqP4DKgDRnjM+nL1KADl3kfauUidFkZK/XaM7sa
-	 Yqq2SFMUP6LEoyuOvH71KD3S8rsPSoS/m1RrV2SgNHJNaUkpS+BYjnH+Sht0L7Oc4x
-	 Dd37l7djTe5ob/rF9VrVK42om3Muzr0vkeZEjzRWErqi3XGCDa91S6QeFuDtqbU1tV
-	 fmReUtZDzieHjIY7Jw6mnTQqU32hF80I1fmFCUW6P3fBhf5Iou7rp2KXp4fJ/ZUhcB
-	 aX9dR0Kd6mv1euKk8x1Sree5BaPl7Y9uW045AnPQzcvg7lGG8k6jlo9lIXBmwBEXCf
-	 fy9KdoA6Uhbng==
-Message-ID: <9e0c5453-b8f4-4d0a-8e8d-82014aac67dd@kernel.org>
-Date: Wed, 6 Aug 2025 10:23:35 +0200
+	s=arc-20240116; t=1754468339; c=relaxed/simple;
+	bh=ZIa5n0ySCAvxtZj25PvsitxDDytszLcXX9XdQwpFFD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=dO/1zhFS8AGHrE5GABzpFHKjBSVNa0RGQlBbM5EBptEl+pYPhdO6KnwD6g8lx33sFTO97ydQMCH0gpeogb4gbP2cwX9MOz+l9H7zgzUi5JX/mnwMgnDph+jex9bifeKWvjcezpIN2J83JAbf8ZjaYmZurBD/FSovw5AoqEnOC0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=l05xR5Xp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250806081854epoutp04f7b96ea7560b2de7bdecfddd2b3677c2~ZH6eF-UFN0850708507epoutp04j
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:18:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250806081854epoutp04f7b96ea7560b2de7bdecfddd2b3677c2~ZH6eF-UFN0850708507epoutp04j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754468334;
+	bh=TP9U+FTa/OPLUCiQ88VrRIyaA5FnNTXTszGwRphWeRg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l05xR5Xp1gy1BbDUV+quRdPBkYR0lLsMliFmRb6mAtPDenKzvham0CTRSG5J/VOS6
+	 1GyngqHOgmvu0rntdRJYWfoxIWfSDdV83pA3xMIiuyaZMWj0InD+wkyU38Kp58tew9
+	 hqP112/W3mmvKVG2nqiAVT/bVt91vvC87RnaDl2w=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250806081853epcas2p162cf960f7815b74e4dd14d2025e37367~ZH6dYkI6A2204222042epcas2p1e;
+	Wed,  6 Aug 2025 08:18:53 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxjqd0gLCz3hhT9; Wed,  6 Aug
+	2025 08:18:53 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250806081852epcas2p31662b77b33cb6ade6f7a5e85d53d6865~ZH6ce9IHs2605426054epcas2p3h;
+	Wed,  6 Aug 2025 08:18:52 +0000 (GMT)
+Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250806081852epsmtip2cf9190be67158c0248f7c69a11eef8bb~ZH6cbiB2B0717007170epsmtip2o;
+	Wed,  6 Aug 2025 08:18:52 +0000 (GMT)
+Date: Wed, 6 Aug 2025 17:24:02 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: paulmck@kernel.org, syzbot
+	<syzbot+ae5b16688c0c675b1a1f@syzkaller.appspotmail.com>,
+	jiangshanlai@gmail.com, josh@joshtriplett.org, linux-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com, rcu@vger.kernel.org, rostedt@goodmis.org,
+	syzkaller-bugs@googlegroups.com, youngmin.nam@samsung.com,
+	joonki.min@samsung.com, jkkkkk.choi@samsung.com, d7271.choe@samsung.com
+Subject: Re: [syzbot] [rcu?] WARNING in srcu_invoke_callbacks (2)
+Message-ID: <aJMRIm7+KlCqT5hB@perf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: st: Add memory-region-names property for
- stm32mp257f-ev1
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2c367857-e1a5-4235-94f4-724441e94968@nvidia.com>
+X-CMS-MailID: 20250806081852epcas2p31662b77b33cb6ade6f7a5e85d53d6865
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----pvtuYNBH3nxDMAsWpkvaC3wqZGu-8cOxHg_F0zl5WTIHs9AT=_112ad9_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250806081852epcas2p31662b77b33cb6ade6f7a5e85d53d6865
+References: <67b4c7af.050a0220.14d86d.000a.GAE@google.com>
+	<20250219132538.GA468969@joelnvbox>
+	<27f4ffbe-2342-484d-9924-716a799b265f@paulmck-laptop>
+	<2c367857-e1a5-4235-94f4-724441e94968@nvidia.com>
+	<CGME20250806081852epcas2p31662b77b33cb6ade6f7a5e85d53d6865@epcas2p3.samsung.com>
 
-On 06/08/2025 10:09, Patrice Chotard wrote:
-> Add memory-region-names property for stm32mp257f-ev1.
-> This allows to identify and check memory-map area's configuration.
+------pvtuYNBH3nxDMAsWpkvaC3wqZGu-8cOxHg_F0zl5WTIHs9AT=_112ad9_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-No, first entry is already identified.
-
+On Wed, Feb 19, 2025 at 10:09:06AM -0500, Joel Fernandes wrote:
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: cad2492de91c ("arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board")
 > 
-
-No blank lines.
-
-> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> ---
->  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 1 +
->  1 file changed, 1 insertion(+)
+> On 2/19/2025 8:58 AM, Paul E. McKenney wrote:
+> > On Wed, Feb 19, 2025 at 08:25:38AM -0500, Joel Fernandes wrote:
+> >> On Tue, Feb 18, 2025 at 09:47:27AM -0800, syzbot wrote:
+> >>> Hello,
+> >>>
+> >>> syzbot found the following issue on:
+> >>>
+> >>> HEAD commit:    a64dcfb451e2 Linux 6.14-rc2
+> >>> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=12398f18580000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c9c47badcd079906
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=ae5b16688c0c675b1a1f
+> >>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> >>> userspace arch: arm64
+> >>>
+> >>> Unfortunately, I don't have any reproducer for this issue yet.
+> >>>
+> >>> Downloadable assets:
+> >>> disk image: https://storage.googleapis.com/syzbot-assets/c0a862fcec77/disk-a64dcfb4.raw.xz
+> >>> vmlinux: https://storage.googleapis.com/syzbot-assets/f03793fc001b/vmlinux-a64dcfb4.xz
+> >>> kernel image: https://storage.googleapis.com/syzbot-assets/ae71c33eae14/Image-a64dcfb4.gz.xz
+> >>>
+> >>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >>> Reported-by: syzbot+ae5b16688c0c675b1a1f@syzkaller.appspotmail.com
+> >>>
+> >>> ------------[ cut here ]------------
+> >>> WARNING: CPU: 0 PID: 6430 at kernel/rcu/srcutree.c:1798 srcu_invoke_callbacks+0x368/0x3d8
+> >>
+> >> This is weird, happens to be WARN_ON_ONCE(ready_cbs.len); in
+> >> srcu_invoke_callbacks().
+> > 
+> > Thank you for tracking that down!
 > 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> index 2f561ad4066544445e93db78557bc4be1c27095a..16309029758cf24834f406f5203046ded371a8f9 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-> @@ -197,6 +197,7 @@ &i2c8 {
->  
->  &ommanager {
->  	memory-region = <&mm_ospi1>;
-> +	memory-region-names = "mm_ospi1";
+> Sure!
+> 
+> >> Perhaps, stack corruption or the SRCU cblist's ->seglen got corrupted?
+> > 
+> > That has been the usual cause.  And a double call_srcu() is a common
+> > cause of ->cblist corruption.  We have CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
+> > set up for SRCU as well as for RCU, it appears, so perhaps retry with
+> > that should this ever become reproducible?
+> Makes sense, will keep an eye out for it!
+> 
+> thanks,
+> 
+>  - Joel
+> 
+Hello all,
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
+syzbot reports that this issue is still occurring on recent kernels,
+for example 6.16 (see https://syzkaller.appspot.com/bug?extid=ae5b16688c0c675b1a1f).
 
-Best regards,
-Krzysztof
+And the "CONFIG_DEBUG_OBJECTS_RCU_HEAD=y" has been set as well.
+(see https://syzkaller.appspot.com/text?tag=KernelConfig&x=dcbf08d90aa89bca)
+
+But there were no logs related with double call_srcu().
+(see https://syzkaller.appspot.com/text?tag=CrashLog&x=13e40434580000)
+
+Unfortunately we don’t yet have a simple reproducer to reliably trigger the warning.
+
+Could you please advise whether a patch for this has already landed in mainline,
+or suggest any additional methods we could use to further validate and test it?
+
+Thanks.
+Youngmin
+
+------pvtuYNBH3nxDMAsWpkvaC3wqZGu-8cOxHg_F0zl5WTIHs9AT=_112ad9_
+Content-Type: text/plain; charset="utf-8"
+
+
+------pvtuYNBH3nxDMAsWpkvaC3wqZGu-8cOxHg_F0zl5WTIHs9AT=_112ad9_--
 
