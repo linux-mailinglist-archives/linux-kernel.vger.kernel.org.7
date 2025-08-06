@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-757896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E631B1C80C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:00:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D039B1C811
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CC954E2B0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426913A697B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B02C28EA70;
-	Wed,  6 Aug 2025 15:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2E28FA84;
+	Wed,  6 Aug 2025 15:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRM37AFo"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfZ6uI0N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1852328DF0C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BF219E992;
+	Wed,  6 Aug 2025 15:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492408; cv=none; b=k1FNffvi6Dn8h7qnW0Q/OJnrIYSup6ux3/ogGhwBTFdZKWjtrOaRw2Qiu1fMjLjzRocpvhlPgksLPFeoODOhSoC4oLQgz0wixMbuALzzqdF5zYFJSLbYPAxyArUx/jDEoYoaQjhDM8eDomf8Fo2URqfnzsg+jiD2DeTcXb+GJk4=
+	t=1754492430; cv=none; b=RWtLkmEEbmEZo5lsxDFhh3OD2HhJz9KKC/WQi7pwn/GbB+CexGU7YQVvZkiGshibcyUAUCdVv7BIjw36/TuFK52V40j+l96Ygz9bn/bHicFACelQROgoCoudSd77IbjHQ8fSv6ONZrNKe5EAhVUTkWzvrTJ0XuC3zyWyvlLPDjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492408; c=relaxed/simple;
-	bh=nhPiWTy9zCiNXlpI6QepO88Wb4tuQktJ28yjP/P9DEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SzQH8Nj4JgeZh3qrG8QTWoTlYyNh2dXbIgbyXaRKyCJPR3gdTz1iBRzj00Jv+mF/Z82zGt2UB0i/FcQGLJ5m84OpPfwZY05m/ORPPqw5s94rVVLsVMN3KdtpzoeFrvlE5Gt/GpKdTAJi0RpU6KbY/D+tJRa+yh4jUXRdNK/dpWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRM37AFo; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76aea119891so1104009b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754492406; x=1755097206; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZB7P+LR6z9Zxc9rEDL62l6M20YPI12NkjExjZ6NWpno=;
-        b=JRM37AFok+/2nuEWwpZJ22rXKRTuSc7e8lIb9t/+mLthaJbkw0GnwxcmjKqy0AMrbe
-         JUurVY2mheBhqqN4vnDXY+fluwM4R15is+/Nvx/FYvS/yRDU1qouc4osI9Vbk05yM6QF
-         X31pfMp4tlHTzjD7rcNthqPK+8Hwoek85acO9MhBg0UligHZKEOMNF2YdurEEngGNWtE
-         WxORJACmaWlzk/ZRTODvK2C9028aBxIGr4LCSV7ywarC6VrKISF/dK2KF2dc5xlGYrLh
-         PsZ0KErIbCPgeB8BLWu+vIl7VjCqvBJIfM4hzdA7rGx4CijCq9bnvVQ8ZeeUv3BMlDOg
-         hnvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754492406; x=1755097206;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZB7P+LR6z9Zxc9rEDL62l6M20YPI12NkjExjZ6NWpno=;
-        b=LCRPBEOY/mDqCF+iieGS8hkzyttpr3G9BRLwhqYkkRELzZ8wwqmobmTviXLn2CMha8
-         qKT/G6IoBNeZj1DIwM6jO3ujyqeMzJ/8oYt8HSj6QpivTmqbr9mXJxd9IioxprOftnfB
-         uKFw6UgRmGqTw2zr6PUabjm9rParaBI5Kqn0SEkAT7m0RTf2a4mSXoergjV5iuDSewdv
-         9kt+G5LBMEViTVBYMZzeZVPHOdxne2Cy8L/1DMazLu9GloZ2s5j+qOFAnGWdn5ms3pF2
-         pB5AhlABSADWAf1wOe2b4H8qVOUnc/d7OnIj6JgIF1ZgYI17tRIc+xBuzG+vZ64aPcaC
-         CZ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW7gcvcnmiQiNulyZ8TKONBEluPDEstyfSMO+EUVvnnMZyZr0jtC2gnwczJpmFF9iPqxi5Pt/NyrPxsAaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ZaIkxIQTbSQ6dXbB47aF65+SdU8woK8RSEQz6geWoyqnia8B
-	0ptA3Six83gh1qfdhTTf+VdVza0UOnojvouisvtqH4N/U1y+2J/qxO0L
-X-Gm-Gg: ASbGncvKjzhRh/2aRzqBeNsRJWOhXRS871B0veWH7Av0cEkJKshTqx07k/d41pr04Pv
-	U5invN3i6xMPqu7Sa9HWKVJ3TZ//fSml+cdzpoMj1XY0JvV7G/EJ9zPvPida4V1uE5d6zf49DUI
-	E3irjrJqoPhBoVauf++4PQEj8Ymmfcfd+72H9zyPwT4x/ffTtbqHjPMEGd1H1oy2v4QBHFMCklo
-	JuGKuCKGXvaFiPuieDCUpKnvd3UxDyrvBPaDkT1qNjMGuQGDRnLQ0qNeDeMUINrYQsWE3tJBXb9
-	aHcTjc96ViU3tFNdewtxWDxz0YIVwozUSNeot9rTdJFN/PU7WCR2A+7tdbPP6y207eAqcRPfP6N
-	VeHDWOuABIwSGochnKzUjV3vAszjtDStVRg04ZWAsoWDrEmrL0+btO3ceF6a10CtdDgeLnZUE/a
-	ICX1w8t3BlJ/nf333E4mxzDwZFlGNay8WmfHFB
-X-Google-Smtp-Source: AGHT+IF/zb4p8uMDpctBooDw3w4OO1dxizR+VfBzQU5WXXX3PuwBSvSo4mc81Nt/Sb/Ar2TwYOPqMQ==
-X-Received: by 2002:a17:903:1b30:b0:23f:b00a:d4c with SMTP id d9443c01a7336-2429f8af5d2mr38722975ad.2.1754492406205;
-        Wed, 06 Aug 2025 08:00:06 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-195-113.dynamic-ip.hinet.net. [220.143.195.113])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2429b7dfc23sm29204985ad.105.2025.08.06.08.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 08:00:05 -0700 (PDT)
-From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Liam.Howlett@oracle.com,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Feng Tang <feng.79.tang@gmail.com>,
-	ahuang12@lenovo.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Adrian Huang <adrianhuang0701@gmail.com>
-Subject: [PATCH v2 1/1] mm: Correct misleading comment on mmap_lock field in mm_struct
-Date: Wed,  6 Aug 2025 22:59:06 +0800
-Message-Id: <20250806145906.24647-1-adrianhuang0701@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754492430; c=relaxed/simple;
+	bh=NZYlaG8r3EDBWq6FZCA9fbeaAN0MEU/bf8kd/Nrn8Jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UiOVxaWOpa0Sb7wvBOOGPUIRUsXzFhoo6ozoZOcv2W/T3ihhLpbUu26BTvnIuQsuVKUNCjlCrBCMTj9/mrqCoG3nVf/Y2m4ZnKkT+Iiy0mtX7u8VQmYlblPoed0Oh+HpHh8JEOjnnxiswGQlQDyhYw3HdarFnDgoudEwCUiz47Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfZ6uI0N; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754492429; x=1786028429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NZYlaG8r3EDBWq6FZCA9fbeaAN0MEU/bf8kd/Nrn8Jo=;
+  b=cfZ6uI0NucCy4Ukzf+CEuea+05x8WpOjgkDJSKc7kiJOAipqLvT9bmwc
+   0dgWiCWpRtkdH2ZeR/8Y1Y1HgbL37jfAdV3aLt3r9UucTQ6uMUd7rDyZZ
+   umm6wYnb2k08DrhTEAZJP/Bq3scR6hn/Pe3SB/vhLJLH6/zY1y4r3Kp3O
+   2+DoP5eAF3dgXpIb1yi78Gkp064mN4ADivnM8u1Ot6Jo+Zwrx9Os3EH5/
+   9kIj9aj7T7hXl+8p2F54wgrdNaMWcGElhHjScR9HpDm2E/Dm/UUlxGOSV
+   yEhRCCNSL3yGuZJ4Z9OCILuhCnX8QJOv8bC5Kukt3chdzDLC92NxejzJ+
+   Q==;
+X-CSE-ConnectionGUID: tOLrWuXJSXu4U44GQQ4EWw==
+X-CSE-MsgGUID: Rao2NrYHQNKrg5KcVNCYaw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56777527"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56777527"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 08:00:28 -0700
+X-CSE-ConnectionGUID: EFG0lXBJRwGYYfFXh00xUQ==
+X-CSE-MsgGUID: OtciXMZiSfSxMhaLID6L1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="170168899"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa005.jf.intel.com with ESMTP; 06 Aug 2025 08:00:26 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id D0CB493; Wed, 06 Aug 2025 17:00:24 +0200 (CEST)
+Date: Wed, 6 Aug 2025 17:00:24 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andreas.noever@gmail.com, michael.jamet@intel.com,
+	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
+	Sanath.S@amd.com
+Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
+ dynamically
+Message-ID: <20250806150024.GF476609@black.igk.intel.com>
+References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
+ <20250728064743.GS2824380@black.fi.intel.com>
+ <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
+ <20250806085118.GE476609@black.igk.intel.com>
+ <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
 
-The comment previously described the offset of mmap_lock as 0x120 (hex),
-which is misleading. The correct offset is 56 bytes (decimal) from the
-last cache line boundary. Using '0x120' could confuse readers trying to
-understand why the count and owner fields reside in separate cachelines.
+On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
+> On 8/6/2025 3:51 AM, Mika Westerberg wrote:
+> > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
+> > > 
+> > > 
+> > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
+> > > > Hi,
+> > > > 
+> > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
+> > > > > This patch series aims to update vendor properties for XDomain
+> > > > > dynamically for vendors like AMD, Intel and ASMedia.
+> > > > 
+> > > > The XDomain properties pretty much describe "software" not the underlying
+> > > > hardware so I don't understand why this is needed? We could have some USB
+> > > > IF registered Linux specific ID there but I don't see why this matters at
+> > > > all.
+> > > 
+> > > Currently, it is showing up as "Intel" on AMD host controllers during
+> > > inter-domain connection. I suppose an alternative is to just call it "Linux"
+> > > or "Linux Connection Manager" to ensure we accurately represent the
+> > > connections across different systems.
+> > > 
+> > > I appreciate your guidance on this and suggestions you might have.
+> > 
+> > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
+> > though but I don't think that matters. AFAIK we have other "donated" IDs in
+> > use in Linux. Let me check on our side if that's okay.
+> 
+> Having looked through this discussion I personally like "Linux" for this
+> string too.
+> 
+> As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
+> Would it make sense to use that?
 
-This change also removes an unnecessary space for improved formatting.
+AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
+here at least:
 
-Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
----
-Changes in v2: Per Lorenzo's suggestion, use "56 bytes" instead of 120.
+  https://www.usb.org/members
 
- include/linux/mm_types.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If it really matters we can sure register one.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 1ec273b06691..c9c3d0307f8c 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1026,10 +1026,10 @@ struct mm_struct {
- 					     * counters
- 					     */
- 		/*
--		 * With some kernel config, the current mmap_lock's offset
--		 * inside 'mm_struct' is at 0x120, which is very optimal, as
-+		 * Typically the current mmap_lock's offset is 56 bytes from
-+		 * the last cacheline boundary, which is very optimal, as
- 		 * its two hot fields 'count' and 'owner' sit in 2 different
--		 * cachelines,  and when mmap_lock is highly contended, both
-+		 * cachelines, and when mmap_lock is highly contended, both
- 		 * of the 2 fields will be accessed frequently, current layout
- 		 * will help to reduce cache bouncing.
- 		 *
--- 
-2.34.1
+> I was also thinking about the device ID, should we consider encoding the
+> VERSION, PATCHLEVEL, and SUBLEVEL into the ID?  The reason I'm thinking
+> about that is let's say there is some bug found in the CM on Linux and
+> another implementation decides to work around it.  We get wind of it and fix
+> the bug but in Linux but now what about the other end?  If we give them a
+> hint on the version by putting it in the device ID they can potentially key
+> off that to decide to tear out the workaround.
 
+I'm not sure that's a good idea. Then we expose also all the known
+vulnerabilities.
 
