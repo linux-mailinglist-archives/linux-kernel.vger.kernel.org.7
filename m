@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-758407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3368B1CE97
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E4AB1CE9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF0918C608A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB25563C0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E64422D7B1;
-	Wed,  6 Aug 2025 21:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8821822D78A;
+	Wed,  6 Aug 2025 21:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoZBgTYL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E965520B7F4;
-	Wed,  6 Aug 2025 21:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0PVb53zm"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE88119DFAB
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 21:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754516561; cv=none; b=bxlIgOMcZbVv9tKBjA2vKsR423JseecAXoDjLMX8td4/dQ13Gku4FcaMDooovHjzh7QsrKH+JSAdgyyrCIFPi1VoS/sCpBFKKyzyzM4DXXcoB3WmaQZfLtAYP9K6zjQuyG9yVU9kXJJFmxrKMkazwBBGcEjL58JSQ757lqKI3TA=
+	t=1754516705; cv=none; b=pofmmOsW9rui/uwadDNKSSRZCoDfueYuFvTaUDD98FyLxcItBajurOzu8TkMcUhccN5HsRl3zv11hAEy0KN452lFMuV5uZIDMQkO5HbzncyXHJ7wzDiGJIYAbVWIo0TVHjHflk/qWQ8vL+0UuCJlyDKhV0QIXFna66zRw3JveE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754516561; c=relaxed/simple;
-	bh=IP16fbf+G7a/uqZxnRnGz9p5iDyRqDGWV+tCxJaT6wM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B8t0S3/GlfISMFPj9lnDVhZdiQNZHlVslVH+oIWLcamgZ9q5yNLvLH6hID4LauH093js5SCtaSHTH7bPODTdLfcOzJ0Zghvb4SB5O5no/sTP2EGGz7cYBGIdOwpiFjVX8tagqiUdmF29UE6LwPTzsXrxEiCIab8xTkxa2CsqqaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoZBgTYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6E9C4CEE7;
-	Wed,  6 Aug 2025 21:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754516560;
-	bh=IP16fbf+G7a/uqZxnRnGz9p5iDyRqDGWV+tCxJaT6wM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hoZBgTYLM6S0Wb3uTTK/zr1aZiRs8bMg4/aU2jXIiSNqOVtcvYlphmsB980gRLlKb
-	 0dOIDeqTC5dF1SJULftMQYAC33Rc4+0KcPKvKu9P6N+3IInpvK2tB5WWK7eht0FU/j
-	 8qye/pqfqzyh/Dgb9uAmVqrpWK68lUQ2M3fEUpBTlAwQsZ1vAH3Oj0lCBZzjBMOOnO
-	 0XiwATuqShtv5PzcxWFMx3ZpJLbUYKEmpKT9a70esnRdbCouu46kSrOpGBLao1xMVU
-	 /C52wzKoBdtarOgFPIEXtg23YhK/GbI9wOalubYH2qUdZUFPJEwhCYNjmdyo5KfVet
-	 dahrD9AGky5kA==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: Re: [PATCH] mm/damon/core: skip needless update of next_{aggregation,ops_update}_sis
-Date: Wed,  6 Aug 2025 14:42:37 -0700
-Message-Id: <20250806214237.51484-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAMvvPS7Anh4qZu-VewZ61_QqfU9PDCaUpGjxZWeCdioTWkr5vA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1754516705; c=relaxed/simple;
+	bh=hSvhgcIPSMVKVVrDV9A6ow1mnFI3XEVqUK6kLXNTlDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9GMPsYqQwn81D2Tnii1TqxFHlqGi7ksCqkPc4OJ2TASzr5w2sAyC7OrOgOz4JQ4Gf1WUsUshXD5Ad/pnUm0MlIWZwiECQOj70cGs0U4vWQCpoCmPhr2jDwtXcE04dTfO9+xgYbgblTyg+NYLwj3ZBiuUvu8DgYHdLtkspiUaBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0PVb53zm; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 6C40814C2D3;
+	Wed,  6 Aug 2025 23:44:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1754516693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MDXslEXUyYlkqYWgbAu1NHBDx3cXJY158gt4ax7R09M=;
+	b=0PVb53zm4I8zjKfCBSpErkqzpTqr1o75ceMU4+LQkbKSZpHjYw68/W/TGFoxzmwT8Ia6Tx
+	Sbj663B4KtmG4SUBFNF8vZs68dYsJaTb4W6xUbewk/0WzsPEemvTVHFmtQe9aHcxNaric+
+	tipcUEjHHwwogGuoEUjWZaZPo6jipY+t9AnSs4uimis4SJQSrKrHwCoOEShECYUlpM6m50
+	D1ZW0qVcJRKC/RTdHZ+XZefOUYNBEXbXwNu0PJxExoiSyLxpcRKnqRuouJu6y10l+ojlyV
+	2PwZuebFvRVKz5T/UYyutE3bR0c+TiLKqbcCQKFAXq26ZBp+qL4hKM5WgxVqEA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id f1e66d28;
+	Wed, 6 Aug 2025 21:44:49 +0000 (UTC)
+Date: Thu, 7 Aug 2025 06:44:34 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Pierre Barre <pierre@barre.sh>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, ericvh@kernel.org, lucho@ionkov.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
+Message-ID: <aJPMwqqchOaZFSqn@codewreck.org>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <2989343.ydHz1Oe0dO@silver>
+ <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
+ <2026737.7mX0AZtNi0@silver>
+ <bbf2ae2f-d0e6-4f8f-b359-128cd8d5539f@app.fastmail.com>
+ <aIqXi6uBaWXtvgm3@codewreck.org>
+ <e42edd55-2559-437b-a2e3-2773b18d0cc5@app.fastmail.com>
+ <f08d5585-0a26-4c98-be1a-c0fd89ccd916@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On Wed, 6 Aug 2025 14:49:21 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
-
-> On Wed, Aug 6, 2025 at 2:09 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > Hi Bijan,
-> >
-> > On Wed,  6 Aug 2025 11:43:16 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
-> >
-> > > From: Bijan Tabatabai <bijantabatab@micron.com>
-> > >
-> > > In damon_set_attrs(), ctx->next_{aggregation,ops_update}_sis would be
-> > > reset, even if the sample interval, aggregation interval, or ops update
-> > > interval were not changed. If damon_set_attrs() is called relatively
-> > > frequently, such as by frequent "commit" operations, aggregation and ops
-> > > update operations could be needlessly delayed.
-> > >
-> > > This patch avoids this by only updating next_{aggregation,ops_update}_sis
-> > > if the relevant intervals were changed.
-[...]
-> > What about modifying damon_commit_ctx() to check if new and old
-> > damon_ctx->attrs are entirely same, and skip calling damon_set_attrs() in the
-> > case?  Doing the entire damon_attrs comparison might be suboptimum, but would
-> > make the change simpler.  I assume the suboptimum comparison is not a real
-> > problem for your use case, so I think that could be a good tradeoff?
-> 
-> I can definitely do this. Checking a few extra fields is no big deal.
-> 
-> Silly question, but think it's best to get it out of the way before
-> sending another patch: do you think there's a more elegant way of just
-> having a dumb comparison function like
-> 
-> bool damon_attrs_equal(struct damon_attrs *a, struct damon_attrs *b)
-> {
->         return a->sample_interval == b->sample_interval &&
->             a->aggr_interval == b->aggr_interval &&
->             ...
-> }
-> 
-> And I assume I shouldn't compare the aggr_samples field because it's
-> private, is that right?
-
-Ah, you're right, thank you for asking this!
-
-Maybe we can copy src->attrs to a local damon_attrs variable, overwrite
-aggr_samples of the copy and dst, and memcmp() the copy and dst?
-
-I wouldn't mind the dumb comparison function, though, if you prefer.  I'll
-defer the decision to you!
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f08d5585-0a26-4c98-be1a-c0fd89ccd916@app.fastmail.com>
 
 
-Thanks,
-SJ
+Pierre Barre wrote on Wed, Aug 06, 2025 at 05:50:42PM +0200:
+> If I submit a patch based on what has been discussed above, is it
+> likely to be accepted? Unfortunately, in my current setup, I am
+> encountering this issue quite frequently, and users of my servers are
+> having a hard time making sense of the error.
 
-[...]
+Yes, sorry it wasn't clear.
+
+I still have no idea what's the "best" allocation method that we'll be
+able to use as either a vmalloc buffer or split into a scatterlist, but
+there's little point in worrying too much about it, so please go ahead.
+
+If it's restricted to trans_fd and there's a chance we can make use of
+it with (at least) virtio later I think everyone will be happy :)
+
+-- 
+Dominique
 
