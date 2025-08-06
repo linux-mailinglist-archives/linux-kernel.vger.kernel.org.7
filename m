@@ -1,284 +1,146 @@
-Return-Path: <linux-kernel+bounces-757642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8DBB1C4A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:10:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5497B1C4AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD033B666F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13612560C42
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0528B4EC;
-	Wed,  6 Aug 2025 11:10:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA68D28B3F9;
+	Wed,  6 Aug 2025 11:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlbv/7NT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903F128A1EA;
-	Wed,  6 Aug 2025 11:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BAE1DE89B;
+	Wed,  6 Aug 2025 11:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754478629; cv=none; b=ZK8kgTL7dUGh86T/s+jnWQki8CgAIMn66RNJnTaLUwBzzK/x+nuTWdqnvGwRtiN94D3wd3ism9CKzBHFihSmH+nio/QiDxd9rc6zBOsr1kFEdON1E+airfPwi6JLsTM05bAgUNF4DYXLfyHsQuze4QZ8xPu9DW3z1iSpCy0+DpQ=
+	t=1754478861; cv=none; b=bVjedaClkuXuug/7gbXJTptuiglH8XrH2koXuPmW41tJ9bU0RuuKzJGajZ7sh1Yd71XXKwh9IRhRhHeAwvQ+i3xKuhK8QZWRn71UmSsNJykk9iBksVhG6Jdaie5Zd8ELPPWmj9vqs35YM3AX7naiAntYWM6aju4UpGHVyVeJnAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754478629; c=relaxed/simple;
-	bh=gaDwBpQU47NQs8w+a+b6xuPnTg39iOigrP4eEEIssw0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6cy9Bkg1kmVc0agyY+TVT1wxBrp/4vxF3y4ofTMUqcLAgiihSFEnJr75rvfqkipIXiMnMCBlIxFEa2b6iVMQ0YLqFAhedpgQR3/1VWGsLePkiJuPK1iHXnCxT16MZH1P1T870yskQkbNnsFa5Xf1IdkXdldjfGO26Qn72CVKCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxnXG57MRz6GDFy;
-	Wed,  6 Aug 2025 19:05:50 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A6C531402F2;
-	Wed,  6 Aug 2025 19:10:23 +0800 (CST)
-Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
- 2025 13:10:22 +0200
-Date: Wed, 6 Aug 2025 12:10:26 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 04/10] PCI/TSM: Authenticate devices via platform TSM
-Message-ID: <20250806121026.000023fe@huawei.com>
-In-Reply-To: <6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
-	<20250717183358.1332417-5-dan.j.williams@intel.com>
-	<20250729155650.000017b3@huawei.com>
-	<6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1754478861; c=relaxed/simple;
+	bh=mNe25aTo3XYao1BlrSYDRvkkEi8DqHgrJvgLOBQ+9H8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGW6fP/a9XAamfjHjugxvNtJ0SdXOAvL2wI6WnsBsTr5CJ26Mm73rfC06TYlPdAMJK9N2iosFCTy0tx/NzFchc09t67dciWfP3EemW121l4MMGaTNbZLBFayGa8byik29bj6BFXsvDKDx8B9coMilVajTpz/YsqKUXcrHPLgsl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlbv/7NT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB80C4CEE7;
+	Wed,  6 Aug 2025 11:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754478861;
+	bh=mNe25aTo3XYao1BlrSYDRvkkEi8DqHgrJvgLOBQ+9H8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mlbv/7NTFliu1A7FMJ+jSoONJT/l4Gf9kt5Eo/nee7UHqFPtxqIMkID15z06ePOX6
+	 5rLDYr9lyZ+HJ7Tqfi6/kULPztklxU3uNgG8G6JUFyV9ZW8see3TT6haBvMZ1VXqWL
+	 0Ac4vNDwLBxOVGFga33yV2VQivJDputwTcECBFG9B9UNu+e8HbMgdjMJZ6SbD0FQ7f
+	 TZcRb+CTDFBdslFxFL4njQxpxX8U8wzJFyBOmIjNcZXAwWKgvRqEMX8LoT8pGkeMsT
+	 S/bpGElHajhHaT3nPj4+7gIkOK1xugc2p3kdgFTr+qSohoUZbHYrfKqb8vT+AC3eMi
+	 av2XtHJiVdy5Q==
+Date: Wed, 6 Aug 2025 16:44:14 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH v1] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for  UFS controller v5
+Message-ID: <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
+References: <20250806063409.21206-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250806063409.21206-1-quic_pkambar@quicinc.com>
 
-
-> >   
-> > > diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
-> > > new file mode 100644
-> > > index 000000000000..0784cc436dd3
-> > > --- /dev/null
-> > > +++ b/drivers/pci/tsm.c
-> > > @@ -0,0 +1,554 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * TEE Security Manager for the TEE Device Interface Security Protocol
-> > > + * (TDISP, PCIe r6.1 sec 11)
-> > > + *
-> > > + * Copyright(c) 2024 Intel Corporation. All rights reserved.
-> > > + */  
-> >   
-> > > +static void tsm_remove(struct pci_tsm *tsm)
-> > > +{
-> > > +	struct pci_dev *pdev;
-> > > +
-> > > +	if (!tsm)  
-> > 
-> > You protect against this in the DEFINE_FREE() so probably safe
-> > to assume it is always set if we get here.  
+On Wed, Aug 06, 2025 at 12:04:09PM GMT, Palash Kambar wrote:
+> Disable of AES core in Shared ICE is not supported during power
+> collapse for UFS Host Controller V5.0.
 > 
-> It is safe, but I would rather not require reading other code to
-> understand the expectation that some callers may unconditionally call
-> this routine.
-
-I think a function like remove being called on 'nothing' should
-pretty much always be a bug, but meh, up to you.
-
+> Hence follow below steps to reset the ICE upon exiting power collapse
+> and align with Hw programming guide.
 > 
-> > > +		return;
-> > > +
-> > > +	pdev = tsm->pdev;
-> > > +	tsm->ops->remove(tsm);
-> > > +	pdev->tsm = NULL;
-> > > +}
-> > > +DEFINE_FREE(tsm_remove, struct pci_tsm *, if (_T) tsm_remove(_T))
-> > > +
-> > > +static int call_cb_put(struct pci_dev *pdev, void *data,  
-> > 
-> > Is this combination worth while?  I don't like the 'and' aspect of it
-> > and it only saves a few lines...
-> > 
-> > vs
-> > 	if (pdev) {
-> > 		rc = cb(pdev, data);
-> > 		pci_dev_put(pdev);
-> > 		if (rc)
-> > 			return;
-> > 	}  
+> a. Write 0x18 to UFS_MEM_ICE_CFG
+> b. Write 0x0 to UFS_MEM_ICE_CFG
 > 
-> I think it is worth it, but an even better option is to just let
-> scope-based cleanup handle it by moving the variable inside the loop
-> declaration.
-I don't follow that lat bit, but will look at next version to see
-what you mean!
-
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++++
+>  drivers/ufs/host/ufs-qcom.h |  2 ++
+>  2 files changed, 26 insertions(+)
 > 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 444a09265ded..2744614bbc32 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -744,6 +744,8 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+>  	if (ufs_qcom_is_link_off(hba) && host->device_reset)
+>  		ufs_qcom_device_reset_ctrl(hba, true);
+>  
+> +	host->vdd_hba_pc = true;
 
-> > > +                return;
-> > > +
-> > > +        if (!is_dsm(pdev))
-> > > +                return;
-> > > +
-> > > +        pci_walk_bus(pdev->subordinate, cb, data);
-> > > +}
-> > > +
-> >   
-> > > +/*
-> > > + * Find the PCI Device instance that serves as the Device Security
-> > > + * Manger (DSM) for @pdev. Note that no additional reference is held for
-> > > + * the resulting device because @pdev always has a longer registered
-> > > + * lifetime than its DSM by virtue of being a child of or identical to
-> > > + * its DSM.
-> > > + */
-> > > +static struct pci_dev *find_dsm_dev(struct pci_dev *pdev)
-> > > +{
-> > > +	struct pci_dev *uport_pf0;
-> > > +
-> > > +	if (is_pci_tsm_pf0(pdev))
-> > > +		return pdev;
-> > > +
-> > > +	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
-> > > +	if (!pf0)
-> > > +		return NULL;
-> > > +
-> > > +	if (is_dsm(pf0))
-> > > +		return pf0;  
-> > 
-> > 
-> > Unusual for a find command to not hold the device reference on the device
-> > it returns.  Maybe just call that out in the comment.  
-> 
-> It is, "Note that no additional reference..."
+What does this variable correspond to?
 
-Good point :)
+> +
+>  	return ufs_qcom_ice_suspend(host);
+>  }
+>  
+> @@ -759,6 +761,27 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  	return ufs_qcom_ice_resume(host);
+>  }
+>  
+> +static void ufs_qcom_hibern8_notify(struct ufs_hba *hba,
+> +				    enum uic_cmd_dme uic_cmd,
+> +				    enum ufs_notify_change_status status)
+> +{
+> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> +
+> +	/* Apply shared ICE WA */
 
-> > > diff --git a/drivers/virt/coco/tsm-core.c b/drivers/virt/coco/tsm-core.c
-> > > index 1f53b9049e2d..093824dc68dd 100644
-> > > --- a/drivers/virt/coco/tsm-core.c
-> > > +++ b/drivers/virt/coco/tsm-core.c  
+Are you really sure it is *shared ICE*?
 
-> > > +static struct tsm_dev *tsm_register_pci_or_reset(struct tsm_dev *tsm_dev,
-> > > +						 struct pci_tsm_ops *pci_ops)
-> > > +{
-> > > +	int rc;
-> > > +
-> > > +	if (!pci_ops)
-> > > +		return tsm_dev;
-> > > +
-> > > +	pci_ops->owner = tsm_dev;
-> > > +	tsm_dev->pci_ops = pci_ops;
-> > > +	rc = pci_tsm_register(tsm_dev);
-> > > +	if (rc) {
-> > > +		dev_err(tsm_dev->dev.parent,
-> > > +			"PCI/TSM registration failure: %d\n", rc);
-> > > +		device_unregister(&tsm_dev->dev);  
-> > 
-> > As below. I'm fairly sure this device_unregister is nothing to do with
-> > what this function is doing, so having it buried in here is less easy
-> > to follow than pushing it up a layer.  
-> 
-> I prefer a short function with an early exit and no scope based unwind
-> for this.
-> 
-> > > +		return ERR_PTR(rc);
-> > > +	}
-> > > +
-> > > +	/* Notify TSM userspace that PCI/TSM operations are now possible */
-> > > +	kobject_uevent(&tsm_dev->dev.kobj, KOBJ_CHANGE);
-> > > +	return tsm_dev;
-> > > +}
-> > > +
-> > >  static void put_tsm_dev(struct tsm_dev *tsm_dev)
-> > >  {
-> > >  	if (!IS_ERR_OR_NULL(tsm_dev))
-> > > @@ -54,7 +109,8 @@ DEFINE_FREE(put_tsm_dev, struct tsm_dev *,
-> > >  	    if (!IS_ERR_OR_NULL(_T)) put_tsm_dev(_T))
-> > >  
-> > >  struct tsm_dev *tsm_register(struct device *parent,
-> > > -			     const struct attribute_group **groups)
-> > > +			     const struct attribute_group **groups,
-> > > +			     struct pci_tsm_ops *pci_ops)
-> > >  {
-> > >  	struct tsm_dev *tsm_dev __free(put_tsm_dev) =
-> > >  		alloc_tsm_dev(parent, groups);
-> > > @@ -73,12 +129,13 @@ struct tsm_dev *tsm_register(struct device *parent,
-> > >  	if (rc)
-> > >  		return ERR_PTR(rc);
-> > >  
-> > > -	return no_free_ptr(tsm_dev);
-> > > +	return tsm_register_pci_or_reset(no_free_ptr(tsm_dev), pci_ops);  
-> > 
-> > Having a function call that either succeeds or cleans up something it
-> > never did on error is odd.  
-> 
-> devm_add_action_or_reset() is the same pattern. Do the action, or
-> otherwise take care of cleaning up. The action in this case is
-> pci_tsm_register() and the reset is cleaning up the device_add().
+> +	if (uic_cmd == UIC_CMD_DME_HIBER_EXIT &&
+> +	    status == POST_CHANGE &&
+> +	    host->hw_ver.major == 0x5 &&
+> +	    host->hw_ver.minor == 0x0 &&
+> +	    host->hw_ver.step == 0x0 &&
+> +	    host->vdd_hba_pc) {
+> +		host->vdd_hba_pc = false;
+> +		ufshcd_writel(hba, 0x18, UFS_MEM_ICE);
 
-It's a pretty obscure pattern but I agree there is that precedence.
-In my head that one case gets to be 'special' because it is always
-calling the callback, just a question of now or later (in remove).
-Here thing callback happens in remove but it's explicit and nothing
-to do with this function (unlikely the devm version)
+Define the actual bits instead of writing magic values.
 
-Anyhow, not a thing I'm going to bother pushing back that hard on.
-> 
-> 
-> > The or_reset hints at that oddity but to me is not enough. If you want
-> > to use __free magic in here maybe hand off the tsm_dev on succesful
-> > device registration.
-> > 
-> > 	struct tsm_dev *registered_tsm_dev __free(unregister_tsm_dev) =
-> > 		no_free_ptr(tsm_dev);  
-> 
-> That does not look like an improvement to me.
-> 
-> The moment device_add() succeeds the cleanup shifts from put_device() to
-> device_unregister(). I considered wrapping device_add(), but I think it
-> is awkard to redeclare the same variable again vs being able to walk all
-> instances of @tsm_dev in the function.
+> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> +		ufshcd_writel(hba, 0x0, UFS_MEM_ICE);
+> +		ufshcd_readl(hba, UFS_MEM_ICE);
 
-I agree it's a slightly odd construction and so might cause confusion.
-So whilst I think I prefer it to the or_reset() pattern I guess I'll just
-try and remember why this is odd (should I ever read this again after it's
-merged!) :)
+Why do you need readl()? Writes to device memory won't get reordered.
 
-> 
-> [..]
-> > > + * struct pci_tsm_ops - manage confidential links and security state
-> > > + * @link_ops: Coordinate PCIe SPDM and IDE establishment via a platform TSM.
-> > > + * 	      Provide a secure session transport for TDISP state management
-> > > + * 	      (typically bare metal physical function operations).
-> > > + * @sec_ops: Lock, unlock, and interrogate the security state of the
-> > > + *	     function via the platform TSM (typically virtual function
-> > > + *	     operations).
-> > > + * @owner: Back reference to the TSM device that owns this instance.
-> > > + *
-> > > + * This operations are mutually exclusive either a tsm_dev instance
-> > > + * manages phyiscal link properties or it manages function security
-> > > + * states like TDISP lock/unlock.
-> > > + */
-> > > +struct pci_tsm_ops {
-> > > +	/*  
-> > Likewise though I'm not sure if kernel-doc deals with struct groups.  
-> 
-> It does not.
+> +	}
+> +}
+> +
+>  static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
+>  {
+>  	if (host->dev_ref_clk_ctrl_mmio &&
+> @@ -2258,6 +2281,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
+>  	.hce_enable_notify      = ufs_qcom_hce_enable_notify,
+>  	.link_startup_notify    = ufs_qcom_link_startup_notify,
+>  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
+> +	.hibern8_notify		= ufs_qcom_hibern8_notify,
 
-Hmm. Given they are getting common maybe that's one to address, but
-obviously not in this series.
+This callback is not called anywhere. Regardeless of that, why can't you use
+ufs_qcom_clk_scale_notify()?
 
-Jonathan
+- Mani
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
