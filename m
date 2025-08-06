@@ -1,96 +1,159 @@
-Return-Path: <linux-kernel+bounces-758198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F3DB1CC51
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:08:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953F3B1CC52
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852063B1286
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5E18C565B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1042BD015;
-	Wed,  6 Aug 2025 19:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B253229DB92;
+	Wed,  6 Aug 2025 19:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BgCUrZDX"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhlIJ6sW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFE826E146;
-	Wed,  6 Aug 2025 19:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E501D31B9;
+	Wed,  6 Aug 2025 19:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754507278; cv=none; b=tNbOM+a4F/m2WPVjE8Q9LBpFOfBCWmiMh02eKPfJEqyVDVTUJdDB9b5EqimNOf5YdBfh6ajRF3FV3HkdoV6decyk4szP5ok6xFM2Ku8kvb0LPuZmyURCDfs+yGpyUDOW8wwAG/ZU9T6lM7GwsVlWQZB0kKhLCpq7jrviPlVLkMU=
+	t=1754507354; cv=none; b=ajB3I+kAUIjwXdxcWIfE4VyXa/KNLUdiCE9c1jnmsRp++Q+P3mm6oHZzhahvMkNmRCnbrjpjnn+4H/oBVIIcyLliV4WASo+/WPnPXVtrOtP4GgQm6qdradQmDFamhnePceeYl0bKchz/5EE0c2qx45H7cu44/58S3gF9N7ryYT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754507278; c=relaxed/simple;
-	bh=jmimWuNcqknVwhXUmpqEa5mi8TRiO/cSWqnEwfDINsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LlUUrbN6eLuQIpHljAoHczKtln38Y0cYfbtrx8tY57o9LcVlLVCkX+MDktvvUQupCIQwu0RBXn+F1SZLWOCQje0rxqrGPf9N+lY5eyQZj2N7QIn2ch8nsEEWS4pFum5yuz1I3Z6OKyv9MPp6y6uyRN1ptOmgHzYh0FKcj30jyAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BgCUrZDX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EXAP3aa/vPgba/QaTkBMehKxqQb1QYUqRQFCYaCyzQE=; b=BgCUrZDX0lIPPqClVkKnnrmsb6
-	VWquIg1weHpD4IopANIur1D5bstkjL9VBP9q/yLvgDslaQMLXw/GBtmWQYLIDHrY6BdWFd+ddFHd2
-	8YugzjVE8p+uFM8iue1YxmQEvJIUQ2gyoyepqDyJvjA0m0fC16ryNw5fCTkuab+DpwSk2AfpceDPi
-	HvCDo+lzs0dwFIrdqr5FlXKCAkHbMvqDwz3wxbMqCaKM8XKe79PepmOqMekbxUoKFfDB6ALBhs7Pq
-	SvBPFsr8RZhtDO1u2AL1Q7t/uG9+a9Ze7AMyif0nw3oKq3TjJE3AGYCOYjk7CKHuoZ2eVggQ3tm38
-	PKYMZHwQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujjUN-0000000EJY4-2HYA;
-	Wed, 06 Aug 2025 19:07:51 +0000
-Date: Wed, 6 Aug 2025 20:07:51 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
- returning -EMSGSIZE
-Message-ID: <20250806190751.GG222315@ZenIV>
-References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
- <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
+	s=arc-20240116; t=1754507354; c=relaxed/simple;
+	bh=7N8Q4W4P+6iSheRgtygd3ecelGl8Z6De2VbO2stv2v0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BUPToGAPKX2Sya70il0nhI+TXhdfoWsncjpaTbiOmpRmgq1r513kSvB+Qnk1jgX1yVVJIykrAcTIRf4Cs5vIwjXn82+PuGaQtoT0ygMDl75CJvf5/mPjbYlvInNRedXcfaQr4b/5odJlgNYm+ivFhWPE7G9wp+FePdMQNh1MXxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhlIJ6sW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA30C4CEE7;
+	Wed,  6 Aug 2025 19:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754507353;
+	bh=7N8Q4W4P+6iSheRgtygd3ecelGl8Z6De2VbO2stv2v0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FhlIJ6sWU67KGuHY4kg17vJ/xHLHncT5RcqKqgfAAe4wgP59od2t0gwdpxQumJOoq
+	 9FLbkdA0zzJGKjl/NSUua4bMyJ2vlRBzXGWP9iJr3FUEx7JJBzkJYgxIRV9SA2QI1G
+	 I1cpET67sPVAjwOcOAKzdVYFez0zluQNS8G/x/f7MYajF8en2fyD4whBiYXse9C7Aj
+	 Rs1CNnkUaqX6eJIIrBIcyYtCFTgM0bmtyYHYHQ1ugpoexU1dyGSOzbA0Mbi2UVUE4Y
+	 lqECCF46lRHcG9QgxkRQ4YS6W624J7vb0CwvixlUS+Vw7Cd5lzooPLUCfpR8dHmatx
+	 gFp5NnkXjDd8g==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bijan Tabatabai <bijantabatab@micron.com>
+Subject: Re: [PATCH] mm/damon/core: skip needless update of next_{aggregation,ops_update}_sis
+Date: Wed,  6 Aug 2025 12:09:10 -0700
+Message-Id: <20250806190911.49728-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250806164316.5728-1-bijan311@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 07, 2025 at 03:55:23AM +1000, Aleksa Sarai wrote:
+Hi Bijan,
 
-> -		goto err_free;
-> -	ret = -EFAULT;
-> -	if (copy_to_user(_buf, p, n) != 0)
-> -		goto err_free;
-> +	if (copy_to_user(_buf, p, n))
-> +		n = -EFAULT;
->  	ret = n;
-> -
-> -err_free:
->  	if (need_free)
->  		kfree(p);
->  	return ret;
+On Wed,  6 Aug 2025 11:43:16 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
 
-Minor nit: seeing that there's only one path to that return, I would
-rather turn it into
-	return n;
-and dropped the assignment to ret a few lines above.  Anyway, that's
-trivially done when applying...
+> From: Bijan Tabatabai <bijantabatab@micron.com>
+> 
+> In damon_set_attrs(), ctx->next_{aggregation,ops_update}_sis would be
+> reset, even if the sample interval, aggregation interval, or ops update
+> interval were not changed. If damon_set_attrs() is called relatively
+> frequently, such as by frequent "commit" operations, aggregation and ops
+> update operations could be needlessly delayed.
+> 
+> This patch avoids this by only updating next_{aggregation,ops_update}_sis
+> if the relevant intervals were changed.
+> 
+> Cc: Bijan Tabatabai <bijan311@gmail.com>
+> Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+> ---
+> This patch came from discussions in [1].
+> 
+> [1] https://lore.kernel.org/all/20250805162022.4920-1-bijan311@gmail.com/
 
-Anyway, who's carrying fscontext-related stuff this cycle?  I've got
-a short series in that area, but there won't be much from me around
-there - a plenty of tree-in-dcache stuff, quite a bit of mount-related
-work, etc., but not a lot around the options-parsing machinery.
+Thank you for sending this patch as we discussed on the thread!
 
-Christian, do you have any plans around that area?
+> ---
+>  mm/damon/core.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index 6a2fe1f2c952..1c3d8b92257c 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+> @@ -693,6 +693,12 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
+>  	unsigned long sample_interval = attrs->sample_interval ?
+>  		attrs->sample_interval : 1;
+>  	struct damos *s;
+> +	bool sample_interval_changed = ctx->attrs.sample_interval !=
+> +		attrs->sample_interval;
+> +	bool aggr_interval_changed = ctx->attrs.aggr_interval !=
+> +		attrs->aggr_interval;
+> +	bool ops_update_interval_changed = ctx->attrs.ops_update_interval !=
+> +		attrs->ops_update_interval;
+>  	bool aggregating = ctx->passed_sample_intervals <
+>  		ctx->next_aggregation_sis;
+>  
+> @@ -710,10 +716,12 @@ int damon_set_attrs(struct damon_ctx *ctx, struct damon_attrs *attrs)
+>  	if (!attrs->aggr_samples)
+>  		attrs->aggr_samples = attrs->aggr_interval / sample_interval;
+>  
+> -	ctx->next_aggregation_sis = ctx->passed_sample_intervals +
+> -		attrs->aggr_interval / sample_interval;
+> -	ctx->next_ops_update_sis = ctx->passed_sample_intervals +
+> -		attrs->ops_update_interval / sample_interval;
+> +	if (sample_interval_changed || aggr_interval_changed)
+> +		ctx->next_aggregation_sis = ctx->passed_sample_intervals +
+> +			attrs->aggr_interval / sample_interval;
+> +	if (sample_interval_changed || ops_update_interval_changed)
+> +		ctx->next_ops_update_sis = ctx->passed_sample_intervals +
+> +			attrs->ops_update_interval / sample_interval;
+>  
+>  	damon_update_monitoring_results(ctx, attrs, aggregating);
+>  	ctx->attrs = *attrs;
+
+Long story short, this (original) code is bit complicated and hence I suggest
+to make this change less optimum but simpler.
+
+damon_update_monitoring_results() assumes it is called only just after
+next_{aggr,ops_update}_sis are  updated.  And the assumption is important for
+the pseudo-moving-sum access frequency maintenance.  As a result, this can make
+the monitoring results temporarily corrupted, and splat warning once.  Please
+refer to commit 591c4c78be063 ("mm/damon/core: warn and fix nr_accesses[_bp]
+corruption") or the patch thread[1] if you want more details.
+
+Also damon_set_attrs() is called not only from commit situation.  So I think
+this maybe not an ideal part to modify.
+
+What about modifying damon_commit_ctx() to check if new and old
+damon_ctx->attrs are entirely same, and skip calling damon_set_attrs() in the
+case?  Doing the entire damon_attrs comparison might be suboptimum, but would
+make the change simpler.  I assume the suboptimum comparison is not a real
+problem for your use case, so I think that could be a good tradeoff?
+
+Also, I realize the moving sum access frequencies maintenance and
+damon_set_attrs() are not well documented and organized.  I will try to make
+those better cleaned up and documented.
+
+[1] https://lkml.kernel.org/r/20250513002715.40126-2-sj@kernel.org
+
+
+Thanks,
+SJ
+
+> -- 
+> 2.43.0
 
