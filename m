@@ -1,116 +1,230 @@
-Return-Path: <linux-kernel+bounces-758037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1921DB1CA07
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:51:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7B3B1CA09
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724EC189E30C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:51:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AD5F4E2D9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6BA29B799;
-	Wed,  6 Aug 2025 16:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954F129ACF1;
+	Wed,  6 Aug 2025 16:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q69bAhWE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLZeppBQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FF3296141;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D71273D94;
 	Wed,  6 Aug 2025 16:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754499072; cv=none; b=KwGyD5y3LRC3MiARq6/z59po0WhukUSCtDthoNuglDjJemlKK8Y59iyjQvQylAfr8EwTgejfjoWTS5elcdG0BPl9oXtVKQyjhuXR2pBlcWKlfcVvYOXsf59bgIyhIUia9NOSkTPcgmZNncgMYwDeYbp4WLqb25rceSC9qxOLTOg=
+	t=1754499077; cv=none; b=T7xwmdphNInHuGVf7IdWDD4XsBffyweBZRnRtGrQm2NpAKC6aQU1PtiQ93MWWcn2Oa8bM7ODQ4m/ndpJG6RG9Rbu8dZv0FlL0dbLpelgv7/EKFj0ZiZMCmOLKpI/cUWDlRqn+UBOnBuF+qoAzd3rTTPqUG6vbp2OVfLnnUtpHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754499072; c=relaxed/simple;
-	bh=URXTslLlgt9LuOCY77NXwIANbMuWh4Ebark9d01DQi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIlQdB9GURfyRKZXofipJpJDKjmOYFZlAGa3jQOMrW3eR78n9D2loIcRjhUJNhgfKgR5F1cAYFi/Xvt055dUWUaoXL2r9XgqXI2gqQjvncqmKQ+f57YItZaVTbantp8JI5sU2IeqHJD4Wc8xuSff49OYR0QoDnroyKM+yuyI5Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q69bAhWE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D81C4CEE7;
-	Wed,  6 Aug 2025 16:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754499071;
-	bh=URXTslLlgt9LuOCY77NXwIANbMuWh4Ebark9d01DQi4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q69bAhWEJvXQo1WKYVksF6TV+05YhJAeFp8toPMf/RA39fFVtk5Txfkw7UnBRTfDX
-	 qkySvTuS9YezAItuwAIVWNTxnfRD6SYcG9LJr4ieBjka6KLj+JcZOgbW1uruVnfSof
-	 Xe1XZEuT556kMQjKVLu9WXibJGCkkwgjwQfYhOxuqMYh7E4OkXjM5xkcCkz3q7ZnJt
-	 59u7nBuLJvFMk2xThRmw5Ov6rPKc5UL/lcLXEAvn4VdtqIUZnKuvyg9vFN+p3m+3OW
-	 ayUaUxoJ1TR1TDzghUKoxmyOGpXDLB3oG1elILX03Ve1rsDSlsAn5ldU26zFUYlJYk
-	 0P13cVBnkbs5A==
-Date: Wed, 6 Aug 2025 17:51:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
-	kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
-	bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
-	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
-	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
- device tree
-Message-ID: <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-5-quic_nitirawa@quicinc.com>
- <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+	s=arc-20240116; t=1754499077; c=relaxed/simple;
+	bh=A0xa5i96PIllfGCTzfkXV4LSPt+MHLSdXHqImCTZmp4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gQVlwmv0GTiK1Rjwt2hniTRhYKxyzIIAa/FQQdX7t4HpTvPA6OUth20UOEKXH228KCrMa/+OzO0vxo6ncZguDcB7cnR0+8DCZR68oLGZfErA0lXfdM9n9RX6LqdeHfsvDSNzcX6tpymDago2Lm4ieLnVbtw/NgE9ru23ARPF48A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLZeppBQ; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754499072; x=1786035072;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=A0xa5i96PIllfGCTzfkXV4LSPt+MHLSdXHqImCTZmp4=;
+  b=bLZeppBQshTLishvkd+mqccyb+QrF6wOHSqGKQqM1f955QNt1k/r3BCR
+   vMPBqGOJi4LOv9C7m4Ch8Y+Dz44DwIkrms4qv9qCpl3RTOWzJDPV3wJlh
+   s9sqDvGSRA70kQPo33JiK1EC6YjY+soXIek0Kg25gY58QWavHzMwFNvoG
+   uDiw4LC9oRILxMrLgBneu03Lniem0z/QR5ocBHkwbI+NEV7QP0mtPtonA
+   I3GCPoEEyqC+PD6aZET8jWU682WeMV4CU7tTh9YLKdWIN3wbhnNJwZbIv
+   /v/ZoEcPwTEfDz4mdNVdI6/K6aZB5atzOK6ATWuuYlDCKASdanMBlyu16
+   w==;
+X-CSE-ConnectionGUID: YCYT/nibTWmyvoFg2/x0pA==
+X-CSE-MsgGUID: BIa+NmHYSjm98dzZU++/Nw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67412100"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67412100"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 09:51:09 -0700
+X-CSE-ConnectionGUID: aEryVM7uRKGnlQ/A0jvnjw==
+X-CSE-MsgGUID: BJcGohUGQeil1h6yXy9rZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="195801861"
+Received: from gabaabhi-mobl2.amr.corp.intel.com ([10.125.110.157])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 09:51:08 -0700
+Message-ID: <32f7aef379b3dcc51c0bc91854b718abc9fbbe13.camel@linux.intel.com>
+Subject: Re: [PATCH] platform/x86/intel-uncore-freq: Present unique domain
+ ID per package
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org,  LKML <linux-kernel@vger.kernel.org>
+Date: Wed, 06 Aug 2025 09:51:06 -0700
+In-Reply-To: <f762f6a9-74cc-0299-0bea-6d1ab6c88e41@linux.intel.com>
+References: <20250727211051.2898789-1-srinivas.pandruvada@linux.intel.com>
+	 <f762f6a9-74cc-0299-0bea-6d1ab6c88e41@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HlUTHESa6Nmwz3GM"
-Content-Disposition: inline
-In-Reply-To: <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
-X-Cookie: New customers only.
+
+On Wed, 2025-08-06 at 12:17 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Sun, 27 Jul 2025, Srinivas Pandruvada wrote:
+>=20
+> > In partitioned systems, the domain ID is unique in the partition
+> > and a
+> > package can have multiple partitions.
+> >=20
+> > Some user-space tools, such as turbostat, assume the domain ID is
+> > unique
+> > per package. These tools map CPU power domains, which are unique to
+> > a
+> > package. However, this approach does not work in partitioned
+> > systems.
+> >=20
+> > There is no architectural definition of "partition" to present to
+> > user
+> > space.
+> >=20
+> > To support these tools, set the domain_id to be unique per package.
+> > For
+> > compute die IDs, uniqueness can be achieved using the platform info
+> > cdie_mask, mirroring the behavior observed in non-partitioned
+> > systems.
+> >=20
+> > For IO dies, which lack a direct CPU relationship, any unique
+> > logical
+> > ID can be assigned. Here domain IDs for IO dies are configured
+> > after all
+> > compute domain IDs. During the probe, keep the index of the next IO
+> > domain ID after the last IO domain ID of the current partition.
+> > Since
+> > CPU packages are symmetric, partition information is same for all
+> > packages.
+> >=20
+> > The Intel Speed Select driver has already implemented a similar
+> > change
+> > to make the domain ID unique, with compute dies listed first,
+> > followed
+> > by I/O dies.
+> >=20
+
+[...]
+
+> > +	/* For non partitioned system or invalid partition number,
+> > return */
+>=20
+> non-partitioned
+>=20
+Will correct that.
+
+> > +	if (!plat_info->cdie_mask || max_dies <=3D 1 || plat_info-
+> > >partition >=3D MAX_PARTITIONS)
+> > +		return;
+> > +
+> > +	if (cluster_info->uncore_data.agent_type_mask &
+> > AGENT_TYPE_CORE) {
+> > +		cluster_info->uncore_data.domain_id =3D
+> > cluster_info->cdie_id;
+> > +		return;
+> > +	}
+> > +
+> > +	cdie_cnt =3D fls(plat_info->cdie_mask) - ffs(plat_info-
+> > >cdie_mask) + 1;
+>=20
+> Is it intentional that you didn't use hweight here? (unfortunately,
+> I don't recall details of the cdie_mask).
+>=20
+Although unlikely but nothing stops of being holes in the die mask. But
+for usage here it will not make difference.
+
+> > +	guard(mutex)(&domain_lock)
+> > +
+> > +	if (!io_die_index_next)
+> > +		io_die_index_next =3D max_dies;
+> > +
+> > +	if (!io_die_start[plat_info->partition]) {
+> > +		io_die_start[plat_info->partition] =3D
+> > io_die_index_next;
+> > +		io_die_index_next +=3D (num_resource - cdie_cnt);
+> > +	}
+> > +
+> > +	cluster_info->uncore_data.domain_id +=3D
+> > (io_die_start[plat_info->partition] - cdie_cnt);
+>=20
+> I failed to wrap my head around what this math aims to do (mainly
+> what=20
+> cdie_cnt has to do with this). Can you explain (might be useful to
+> have a=20
+> comment if it's something particularly tricky / non-obvious)?
+>=20
+Seems not obvious but something like below in #if 0
+
+#if 0
+/*
+Index from IO die start with in the partition
+
+For example the current resource index 5 (cluster_info-
+>uncore_data.domain_id) and compute dies end at index 3 (cdie_cnt =3D 4).
+then the io only index 5 - 4 =3D 1
+*/
+u8 part_io_index =3D cluster_info->uncore_data.domain_id - cdie_cnt;
+
+/* Add to the IO die start index for this partition in this package to
+make unique in the package */
+u8 pkg_io_index =3D io_die_start[plat_info->partition] + part_io_index;
+
+/* Assign this to domain ID */
+cluster_info->uncore_data.domain_id =3D pkg_io_index;
+#endif
+
+In one line the above whole #if block
+"cluster_info->uncore_data.domain_id =3D io_die_start[plat_info-
+>partition] + cluster_info->uncore_data.domain_id - cdie_cnt;"
+which is
+cluster_info->uncore_data.domain_id +=3D (io_die_start[plat_info-
+>partition] - cdie_cnt)
+}
 
 
---HlUTHESa6Nmwz3GM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> It could be that to make this simpler, one shouldn't assign value in=20
+> uncore_probe() to .domain_id at all but pass the index here (and
+> rename=20
+> this function to set_domain_id()).
+>=20
+Can do if that is any simpler here.
 
-On Wed, Aug 06, 2025 at 05:58:30PM +0200, Konrad Dybcio wrote:
-> On 8/6/25 5:43 PM, Nitin Rawat wrote:
+Thanks,
+Srinivas
 
-> > Add support in QMP PHY driver to read optional vdda-phy-max-microamp
-> > and vdda-pll-max-microamp properties from the device tree.
+> > +}
+> > +
+> > =C2=A0/* Callback for sysfs write for TPMI uncore data. Called under
+> > mutex locks. */
+> > =C2=A0static int uncore_write(struct uncore_data *data, unsigned int
+> > value, enum uncore_index index)
+> > =C2=A0{
+> > @@ -614,6 +655,7 @@ static int uncore_probe(struct auxiliary_device
+> > *auxdev, const struct auxiliary_
+> > =C2=A0			cluster_info->uncore_data.cluster_id =3D j;
+> > =C2=A0
+> > =C2=A0			set_cdie_id(i, cluster_info, plat_info);
+> > +			update_domain_id(cluster_info, plat_info,
+> > num_resources);
+> > =C2=A0
+> > =C2=A0			cluster_info->uncore_root =3D tpmi_uncore;
+> > =C2=A0
+> >=20
+>=20
 
-> > These properties define the expected maximum current (in microamps) for
-> > each supply. The driver uses this information to configure regulators
-> > more accurately and ensure they operate in the correct mode based on
-> > client load requirements.
-
-> > If the property is not present, the driver defaults load to
-> > `QMP_VREG_UNUSED`.
-
-> do you think having this in regulator core would make sense?
-
-I'm not clear why the driver is trying to do this at all, the driver is
-AFAICT making no other effort to manage the load at all.  We already
-impose any constraints that are defined for a regulator while initially
-parsing them so it's not clear to me what this is supposed to
-accomplish, and it'll be broken if the supply is ever shared since it'll
-set the load from this individual consumer to the maximum that's
-permitted for the regulator as a whole.
-
---HlUTHESa6Nmwz3GM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiTh/cACgkQJNaLcl1U
-h9BVEQf+Lx5n5FpPrf79MAF8jaJp37RXoLV6s7wH2llwQPEvWIrtLEg4jNRuV6IY
-k9VEh+MCIB7BiC/DPphhdV34+/s4PVMiuKQ/v7CWoZco78ci8INgWou4U4Wx5tyC
-CUEBE92Ss/+l01t2te+bDovSBFtankrBz1qktTf6DII/RWTUoW6SyDHYhQmiHeLR
-IGDnkuzRH1j5L9qPN02nRhVf1jfQ4bOmhnr0Z24LqtjzIDPPwBkDiOOt11tVC26i
-HA/RQmT8bniL6dWHcT6MrBDQBXnr4GQVASNOEjpEimMrh8cY/7CF5px+M8rPyuOs
-91zPXG6hFwaCaJ2J2OfsZCgtFK8SDg==
-=NQmr
------END PGP SIGNATURE-----
-
---HlUTHESa6Nmwz3GM--
 
