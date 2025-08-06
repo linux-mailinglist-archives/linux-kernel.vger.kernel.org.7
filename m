@@ -1,172 +1,102 @@
-Return-Path: <linux-kernel+bounces-758056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2950B1CA58
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:12:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19189B1CA66
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BF13B1600
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E539F18C074E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08E629ACE8;
-	Wed,  6 Aug 2025 17:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34229AB1D;
+	Wed,  6 Aug 2025 17:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ICP9dNR4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJ0K6HTZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930D27FB1B;
-	Wed,  6 Aug 2025 17:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAEC35898;
+	Wed,  6 Aug 2025 17:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500331; cv=none; b=Z76DyNqa9ubeOtCmR2P6zXQmJxz1VbskynHfXs4UN+ouHb0JxZ3WE3IXJuTFj08JgzhgvU8AaGYgvmDK09+aUw2NgWeEKIVdLQKE4HyAM8ohHa/GTuMF7XfRePZXtfwHlGwoHinivTzYiMQPLEh5jz6o8ogBBR8uCr5bVTv1p5g=
+	t=1754500523; cv=none; b=ZM0xHSKEV7QDixOSGeHXEEJFTF+blL+/T5r1csWHs1H9NauhiOlLw9Ne5KUd8UMKgLFuLfXVNIF63jC7ZRFpUNcJ9FBDu24U185fMBcFgpHw/NHUJCnQY2o/PfCCBjdZvZhlLmOVShKoeZIuS1R56k/8QBZWt9qi0KK1n2tDhZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500331; c=relaxed/simple;
-	bh=58Xff+YfPpEecPo403tXukV8PAcxoY083yMvOgVF2SY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJaxTzVMc63QJQwkxbP2xw5GnX2c6Y7WuMH4jagQkGT8avUG/It6R9Ifu7z82QTGcxY3dST5MMyP/g0Xsxt8XboJpaB9bxiqDQYbB0GkPfPLdZLF4fJA0LyqF2O4PZRN6YxQGckPQutvUQ1wmQjGmxYMg1EGRNMeyyY3J4HFLe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ICP9dNR4; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754500330; x=1786036330;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=58Xff+YfPpEecPo403tXukV8PAcxoY083yMvOgVF2SY=;
-  b=ICP9dNR4mZGAkUgUhLzWUlTQpvlLiURJs6cSL3DjmgN6DcM0sigAb3Gw
-   jRfxBc2Laz1cWHbAibt4dR4HJqsfEO3qCCjiz3WpbNgfIUanLRZg3Iu5e
-   IQTG4O1zblDWD0ge8wAsUxSts97PR1VBtPxenRZ6ZJ70dl7CoomJRqRPL
-   DNEeiYqOwSc93PgtDEQOz9SJCDR4VNY6XWU9076invr2/jGemFojcr7dv
-   BHbP2yG5GjcyU/90gg9f02m/p8zX0eTtvUNtFkobWBi6GyZEJ4zLtTDV1
-   MDjb9l10ZgUB+3cRqTCOE9byBT4tvrKrvyyBFRygpsfUtOPid8uRY9K/v
-   g==;
-X-CSE-ConnectionGUID: 7r3+51NTRBK0zctU5RZNuw==
-X-CSE-MsgGUID: jfzuw3GlS3ujWnspVYL2Lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56905276"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56905276"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:12:09 -0700
-X-CSE-ConnectionGUID: 50jEJsOsS9SSczH2AjY9oA==
-X-CSE-MsgGUID: MHurXFj5RY2RWEfFx6IjUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="169002597"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:12:05 -0700
-Message-ID: <0814df45-15b2-4dc3-98fd-8f30befc800a@intel.com>
-Date: Wed, 6 Aug 2025 10:12:00 -0700
+	s=arc-20240116; t=1754500523; c=relaxed/simple;
+	bh=I3R0ZZuPVZjnQiFgtmFRVCZ2r5++kREGhtzLYMxzees=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g4nFu53h8cAZrvQNv1tkBaJQZt7N4qAbCmKV4IUnJCGyQwpgorpyDvxBOIKJofnsbln+jzprLQbsQ/lqJ7XkoNkf+/knvpi82+SDwl4Kn6CzuxfXapXcO9rIQRftOrl8uSg3h/KXqkGn+vSF+16BSDYUg7wJn02Xy+L1JJEp9T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJ0K6HTZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CE8C4CEE7;
+	Wed,  6 Aug 2025 17:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754500522;
+	bh=I3R0ZZuPVZjnQiFgtmFRVCZ2r5++kREGhtzLYMxzees=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WJ0K6HTZEfT8BNH+os9kpt9pf57Ww0MKKW5Q7tRMASQtIpPlQvkgZtJGsw3KeEdBK
+	 BaretPZGh8nFdv8U5zaWt1OzwhKxoJ/IkUeZPYDzwBy08EJGVTNbKkcbH2X8J81Bl+
+	 21pdP1RoBJTIjViiGoDvOqsFOk0J250MYa855KdnLPkSAN5fW+l5PCNRAocBooOQJd
+	 ijz9vEfwOt0CurH2++NyCsU+zuubaqSiZDz6GiTYBAV/K4DmuHSOdm9A0yC3KXDUwt
+	 DdIvUQUmIwjvd/OCQc5uEfiC6otmfcVZXBuEDT9eCIYmSOCPwtX8P6YDl4Km+UYygT
+	 xfKN+B9hO+jeg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDD6383BF63;
+	Wed,  6 Aug 2025 17:15:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] dmaengine: idxd: Flush kernel workqueues on Field
- Level Reset
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
- Fenghua Yu <fenghuay@nvidia.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
- <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-4-4e020fbf52c1@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-4-4e020fbf52c1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 0/3] RISC-V: Add ACPI support for IOMMU
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <175450053651.2863135.8588545093021909171.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Aug 2025 17:15:36 +0000
+References: <20250716104059.3539482-1-sunilvl@ventanamicro.com>
+In-Reply-To: <20250716104059.3539482-1-sunilvl@ventanamicro.com>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, iommu@lists.linux.dev, apatel@ventanamicro.com,
+ tjeznach@rivosinc.com, alex@ghiti.fr, rafael@kernel.org,
+ robin.murphy@arm.com, joro@8bytes.org, atishp@rivosinc.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, ajones@ventanamicro.com,
+ will@kernel.org, lenb@kernel.org
 
+Hello:
 
+This series was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@dabbelt.com>:
 
-On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
-> When a Field Level Reset (FLR) happens terminate the pending
-> descriptors that were issued by in-kernel users and disable the
-> interrupts associated with those. They will be re-enabled after FLR
-> finishes.
+On Wed, 16 Jul 2025 16:10:56 +0530 you wrote:
+> This series adds support for RISC-V IOMMU on ACPI based platforms.
+> RISC-V IO Mapping Table (RIMT) is a new static ACPI table [1] introduced
+> to communicate IOMMU information to the OS.
 > 
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> [1] - https://github.com/riscv-non-isa/riscv-acpi-rimt/releases/download/v1.0/rimt-spec.pdf
+> 
+> Changes since v4:
+> 	1) Rebased to 6.16-rc6
+> 	2) Addressed Anup's feedback on formatting.
+> 	3) Added RB tag from Will and Anup.
+> 
+> [...]
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/device.c | 24 ++++++++++++++++++++++++
->  drivers/dma/idxd/idxd.h   |  1 +
->  drivers/dma/idxd/irq.c    |  5 +++++
->  3 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-> index c599a902767ee9904d75a0510a911596e35a259b..287cf3bf1f5a2efdc9037968e9a4eed506e489c3 100644
-> --- a/drivers/dma/idxd/device.c
-> +++ b/drivers/dma/idxd/device.c
-> @@ -1315,6 +1315,11 @@ void idxd_wq_free_irq(struct idxd_wq *wq)
->  
->  	free_irq(ie->vector, ie);
->  	idxd_flush_pending_descs(ie);
-> +
-> +	/* The interrupt might have been already released by FLR */
-> +	if (ie->int_handle == INVALID_INT_HANDLE)
-> +		return;
-> +
->  	if (idxd->request_int_handles)
->  		idxd_device_release_int_handle(idxd, ie->int_handle, IDXD_IRQ_MSIX);
->  	idxd_device_clear_perm_entry(idxd, ie);
-> @@ -1323,6 +1328,25 @@ void idxd_wq_free_irq(struct idxd_wq *wq)
->  	ie->pasid = IOMMU_PASID_INVALID;
->  }
->  
-> +void idxd_wqs_flush_descs(struct idxd_device *idxd)
-> +{
-> +	struct idxd_wq *wq;
-> +	int i;
-> +
-> +	for (i = 0; i < idxd->max_wqs; i++) {
-> +		wq = idxd->wqs[i];
-> +		if (wq->state == IDXD_WQ_ENABLED && wq->type == IDXD_WQT_KERNEL) {
-> +			struct idxd_irq_entry *ie = &wq->ie;
-> +
-> +			idxd_flush_pending_descs(ie);
-> +			if (idxd->request_int_handles)
-> +				idxd_device_release_int_handle(idxd, ie->int_handle, IDXD_IRQ_MSIX);
-> +			idxd_device_clear_perm_entry(idxd, ie);
-> +			ie->int_handle = INVALID_INT_HANDLE;
-> +		}
-> +	}
-> +}
-> +
->  int idxd_wq_request_irq(struct idxd_wq *wq)
->  {
->  	struct idxd_device *idxd = wq->idxd;
-> diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-> index 74e6695881e6f1684512601ca2c2ee241aaf0a78..6ccca3c56556dbffe0a7c983a2f11f6c73ff2bfd 100644
-> --- a/drivers/dma/idxd/idxd.h
-> +++ b/drivers/dma/idxd/idxd.h
-> @@ -737,6 +737,7 @@ static inline void idxd_desc_complete(struct idxd_desc *desc,
->  int idxd_register_devices(struct idxd_device *idxd);
->  void idxd_unregister_devices(struct idxd_device *idxd);
->  void idxd_wqs_quiesce(struct idxd_device *idxd);
-> +void idxd_wqs_flush_descs(struct idxd_device *idxd);
->  bool idxd_queue_int_handle_resubmit(struct idxd_desc *desc);
->  void multi_u64_to_bmap(unsigned long *bmap, u64 *val, int count);
->  int idxd_load_iaa_device_defaults(struct idxd_device *idxd);
-> diff --git a/drivers/dma/idxd/irq.c b/drivers/dma/idxd/irq.c
-> index 74059fe43fafeb930f58db21d3824f62b095b968..26547586fcfaa1b9d244b678bf8e209b7b14d35a 100644
-> --- a/drivers/dma/idxd/irq.c
-> +++ b/drivers/dma/idxd/irq.c
-> @@ -417,6 +417,11 @@ static irqreturn_t idxd_halt(struct idxd_device *idxd)
->  		} else if (gensts.reset_type == IDXD_DEVICE_RESET_FLR) {
->  			idxd->state = IDXD_DEV_HALTED;
->  			idxd_mask_error_interrupts(idxd);
-> +			/* Flush all pending descriptors, and disable
-> +			 * interrupts, they will be re-enabled when FLR
-> +			 * concludes.
-> +			 */
-> +			idxd_wqs_flush_descs(idxd);
->  			dev_dbg(&idxd->pdev->dev,
->  				"idxd halted, doing FLR. After FLR, configs are restored\n");
->  			INIT_WORK(&idxd->work, idxd_device_flr);
-> 
+Here is the summary with links:
+  - [v5,1/3] ACPI: RISC-V: Add support for RIMT
+    https://git.kernel.org/riscv/c/ea35561bc965
+  - [v5,2/3] ACPI: scan: Add support for RISC-V in acpi_iommu_configure_id()
+    https://git.kernel.org/riscv/c/0d7c16d0df92
+  - [v5,3/3] iommu/riscv: Add ACPI support
+    https://git.kernel.org/riscv/c/368ed89f7ac9
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
