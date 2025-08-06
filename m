@@ -1,114 +1,228 @@
-Return-Path: <linux-kernel+bounces-757209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD91DB1BF1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869DAB1BF2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0670F18532B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:16:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8C618A7234
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7971E2823;
-	Wed,  6 Aug 2025 03:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75381C84DE;
+	Wed,  6 Aug 2025 03:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="h05wGF6O"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CH4KyWXF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C3038D;
-	Wed,  6 Aug 2025 03:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2233538D;
+	Wed,  6 Aug 2025 03:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754450178; cv=none; b=cLxu3SlHDGXRVvZAPPcM8xRKfNazY4b+uPlnWnUdmComqmeII9UfwYEsiHhpxIx9W28HyBuXTuqIY17UdptUgDEu6vsjNkQBkGKzjN0i4hd9Uzb8fksfFKTmGDrERBxVq3knuanfzNmk/JaQ0d8LFBl7C4Nb89VGUVo8alW8/Mg=
+	t=1754450285; cv=none; b=R/iNZ2eSjJZXoyAbxK99lszdlBKLuUjueoQ1q3XWiYIOGnLL7X69AuD52OuXbHTOJxfbnvYOylGBhzxXgWu7kjQ4ubHC01h9pzVdXxxfWeWlFUloAy/Wl6mg+wqrxBwwg5WWP/v89ZaTCMHuqTuf9YdbMwujl3jKaItqiN/k3A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754450178; c=relaxed/simple;
-	bh=/Lt5w42fF9wMCQs6mfW0Xkukw3A4F+bDrwbejlz3VXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVvLjFnDxABIY1VCJyahHyxRbF4kT49albHV25GVjtBwj+RhK/7Muq83QmNidTLEnDXyzgvJPLsxN4PhT2jY0mUQVvNtj5MdfEensUZQhHjHSSzk3swiTaZpDSiO59265trB/2xePflJoUHXd6e2B76O7qdrYGuokEpEWzA69Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=h05wGF6O; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 57A3520D0B;
-	Wed,  6 Aug 2025 05:16:15 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Y0YvT30L4neM; Wed,  6 Aug 2025 05:16:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754450174; bh=/Lt5w42fF9wMCQs6mfW0Xkukw3A4F+bDrwbejlz3VXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=h05wGF6O5cben5j51nJWkcMh77hcqdsagVPkiDV/zJRmu220SzL6F+fdqCuZqqjxQ
-	 XtzEKhUSTIy22bA8wuaZl0DaVgZZXMpCoKRNn26VP6RI0gjF5EpYOMS1zuEKGFLA7G
-	 jeeI74GZFF1DCEWFzGT0D5AFS2DIEmtEGqaK6qnXiba19UqbFB+uFr0maM5NJrTX+g
-	 SCqX/FHgJAa0m5uGyNhQ9qv5fFvIQG0UCtS6jc2O6a3y23nsmVg98qSOgPqLAMafXK
-	 Biw1qd+Wd1FnNXGPMwA1OZHaI0HkXghPMo35d6ZtECtfFR76+N3wmoQENd2hwJD5mo
-	 tpq9LPfQoP7yg==
-Date: Wed, 6 Aug 2025 03:16:05 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, nux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: stmmac: thead: Enable TX clock before MAC
- initialization
-Message-ID: <aJLI9WCK5kPA1qZ3@pie>
-References: <20250801094507.54011-1-ziyao@disroot.org>
- <20250805173825.0f70f9cd@kernel.org>
+	s=arc-20240116; t=1754450285; c=relaxed/simple;
+	bh=zyEHq+SsGfd1r8KY8nj2AXUlL7cvjBDfG/yNO39pRLI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=bJ15jfwVapgoFtM2j8A/iMkTPfyDN7/YOxx+xOl3QxOLxyepd1eBYeeNSYDbM2voAk4SS9e69LyKvZpxQ2aXACkreTcR7EFUzg3N7Jp09/3CkRzYT1OEl8EWxSLfcHCVP887eNew/aj3uWRRwBjMudFW6cJvkO0mdSTznI6vd0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CH4KyWXF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5761ekpH008619;
+	Wed, 6 Aug 2025 03:17:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yOT2CnCbTagf5bPAOGbBwo
+	kc8ZhH7hgxro3rWIgHyoM=; b=CH4KyWXFRAavuJiruaL9DggzB1P8ROhTfXEQId
+	3ZIU/shjfLxNfQA2USfxSLvGr2jgTnz+XqbLCbXVV4clORtCa5zZ1sYxwIVBkeCO
+	1YTMJBPk6D1SYdYSap7dZKw6n1RtwK3PZ8vd6e/wiuMAXAEe1W1+BibWWxR+4LwJ
+	QsDzVsa7pVxDG7AQ+jz1lmffJ6Ub9m3RmmnjkCpb55u52LRfYJfgc2xAHC7b0S0l
+	UW9t8chFsu+sQyuWDqqWNzZSlAY16vgJnjle10MeTTaiMVWLVwEfazSbMztJBCh9
+	FKgmtnvWQFMsqJSo4LrqXemEf2CfSsy9qiFBipj2EcHJE2dQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy897tv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 03:17:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5763HgUI028449
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Aug 2025 03:17:42 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 5 Aug 2025 20:17:36 -0700
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+Subject: [PATCH v6 0/6] Display enablement changes for Qualcomm QCS8300
+ platform
+Date: Wed, 6 Aug 2025 11:16:44 +0800
+Message-ID: <20250806-mdssdt_qcs8300-v6-0-dbc17a8b86af@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805173825.0f70f9cd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACvJkmgC/23R227CMAwG4FdBvV5QEudUNE28xzRVObgQaW2hK
+ dUQ4t2XAttg5dKW/i+2cyoS9hFTsVqcih7HmGLX5kK9LAq/te0GSQy5LjjlgnEuSBNSCkO198k
+ ApYQxp42B4BV1RQ7teqzj1wV8/7jWPe4P2R2uzaLBlOzFXS1eMyupzpDmmsslEwCgskpyxFfHr
+ t003WE9FbH1S981b9MjTwimSdhVTRoqF9sQ200iIxBKNPdIDTdSU1h3KS33B/uZneYXczYhmTp
+ xWC3ylkhLFEK4wB1VFrEMrIYatQMGXlseauZcMe22jWno+uPldiO/LHc7k/x/ppHnWRj13tWA0
+ vjyfqdpiltQPQ1a7ywNTgJ4fAhOU4zw87KkjMEMmK6gvMEShCwVpXNA3AGczgAxja6MRm0EZ1z
+ OAfkH5L+cATIDLk9gQTqHQT0C5/P5G9vOJMmGAgAA
+X-Change-ID: 20241224-mdssdt_qcs8300-11b7883dc60b
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>,
+        Kuogee Hsieh
+	<quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Yongxing Mou <quic_yongmou@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754450254; l=4482;
+ i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
+ bh=zyEHq+SsGfd1r8KY8nj2AXUlL7cvjBDfG/yNO39pRLI=;
+ b=oiVSCXOJkKybOHTuUT9fj8sJF81hZezmmcICcPKT40MsLM9TUs3nlJ0La5kAOqDyXKARmjBTX
+ pbTdLtw/KZgBc3j5Q84qMzce+tbIguNjP+xVtr7vHfl7Uw7GEI97KLf
+X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
+ pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1phOKCwgY35JWdeO6CEZk4oCFbKEG7uC
+X-Proofpoint-ORIG-GUID: 1phOKCwgY35JWdeO6CEZk4oCFbKEG7uC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX52jHx08skMla
+ 5xnjfUoLlzXPTr6FNXybFpXuIWUvJAO/Qd47qAILmmkhaz99Pgr+v8AxpBYhVlJWSwZGMVZ8Axv
+ CuADYKIXuWUaRPYwsLEVVdBoSGuoiP1k2UqL94VbQjXfjjTZ5BAjj3ylWM+qxQzAqbsXLBCNMxd
+ fSwJFWddkJnY838EJqI9NSkenAAtoorbziW4SrN8YQ0S2esO6vC4Jjok5TpOzRSg7EJEsdbZPqG
+ Na029A0cfUslGw+aQ5pjv+gy2ZH1IrigXCXhfcoJqk3zusxB90JciEmZoAjTfSixYrfG1Pfdvjx
+ RBTU2VvE2fInSmbRFlFdiIzRtdCGKm0Zo0J9WBdSpfwgzLIbTK+axDyQlvkzCxQLGrn2PjIHeE3
+ N3392xi+
+X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=6892c957 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=iD6vXzWbp0dc2yQZ6nwA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Tue, Aug 05, 2025 at 05:38:25PM -0700, Jakub Kicinski wrote:
-> On Fri,  1 Aug 2025 09:45:07 +0000 Yao Zi wrote:
-> > The clk_tx_i clock must be supplied to the MAC for successful
-> > initialization. On TH1520 SoC, the clock is provided by an internal
-> > divider configured through GMAC_PLLCLK_DIV register when using RGMII
-> > interface. However, currently we don't setup the divider before
-> > initialization of the MAC, resulting in DMA reset failures if the
-> > bootloader/firmware doesn't enable the divider,
-> > 
-> > [    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-> > [    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
-> > [    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
-> > [    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
-> > [    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
-> > 
-> > Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
-> > divider before MAC initialization. The rate doesn't matter, which we
-> > could reclock properly according to the link speed later after link is
-> > up.
-> 
-> All the possible DIV values are valid?
-> I think it's safer to set the DIV to some well known constant, 
-> just to be on the safe side.
+This series introduces support to enable the Mobile Display Subsystem (MDSS)
+, Display Processing Unit (DPU), DisplayPort controller for the Qualcomm 
+QCS8300 target. It includes the addition of the hardware catalog, compatible
+string, and their YAML bindings.
 
-Oops, this statement seems misleading. I was going to say "the exact
-rate isn't critical for MAC initialization". The patch actually sets
-the divider to zero, which works according to my test.
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+Changes in v6: Fixed review comments from Konrad, Dmitry.
+- Rewrite commit msg in dp-controller dt-binding change.[Dmitry]
+- Optimize the description in MDSS dt-binding.[Dmitry]
+- Pass the sc8280xp_data as fallback in the UBWC change.[Konrad]
+- Add the DP controller driver change.
+- Link to v5: https://lore.kernel.org/r/20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com
 
-And I realized the divider's behavior isn't well-documented when DIV is
-set to zero. Will set the clock to RGMII speed in v2, and adjust the
-commit message like
+Changes in v5:Fixed review comments from Krzysztof, Dmitry.
+- Rebase to next-20250717.
+- Change DP compatible to qcs8300-dp due to add 4 streams support.
+- Add QCS8300 UBWC config change due to rebase.
+- Add 4 streams clk and phy in the mdss yaml.
+- Link to v4: https://lore.kernel.org/r/20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com
 
-	Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to
-	enable the divider before MAC initialization. The exact rate
-	doesn't affect MAC's initialization according to my test. It's
-	set to the speed required by RGMII and could be reclocked
-	later after link is up if necessary.
+Changes in v4:Fixed review comments from Krzysztof, Dmitry.
+- Use the common style for the dt-bindings commits.[Dmitry]
+- Update the commits msg for the mdss binding patch, explain why they
+  reuse different platform drivers.[Krzysztof]
+- Link to v3: https://lore.kernel.org/r/20250113-mdssdt_qcs8300-v3-0-6c8e93459600@quicinc.com
 
-Thanks,
-Yao Zi
+Changes in v3:Fixed review comments from Krzysztof, Dmitry.
+- Fix the missing space issue in commit message.[Krzysztof]
+- Separate the patch for the phy from this series.[Dmitry]
+- Remove unused dependencies and update in the cover letter.[Dmitry][Krzysztof]
+- Link to v2: https://lore.kernel.org/r/20241226-mdssdt_qcs8300-v2-0-acba0db533ce@quicinc.com
+
+Changes in v2:Fixed review comments from Krzysztof, Dmitry, Rob.
+- Decouple the devicetree changes from this series.[Dmitry][Krzysztof]
+- Drop the dpu driver changes and reuse SA8775P DPU driver.[Dmitry]
+- Fix compilation issues in MDSS bindings.[Rob][Krzysztof]
+- Correct formatting errors and remove unnecessary status in MDSS
+  bindings.[Krzysztof]
+- Add the the necessary information in MDSS changes commit msg.[Dmitry]
+- Rebase MDSS driver changes to https://lore.kernel.org/dri-devel/
+  20241127-msm-mdss-ubwc-v3-0-9782a7c2b023@linaro.org/.[Dmitry]
+- Package the DisplayPort controller and eDP PHY bindings document to
+  this patch series.
+- Collecting MDSS changes reviewd-by Dmitry.
+- Reuse the sa8775p eDP PHY as a fallback compat.[Dmitry]
+- Reuse the sm8650 DP controller as a fallback compat.[Dmitry]
+- Link to v1: https://lore.kernel.org/r/20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com
+---
+This series depend on 4 pixel streams dt-binding series:
+https://lore.kernel.org/all/20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com/
+
+and separate eDP PHY binding:
+https://lore.kernel.org/all/20250730072725.1433360-1-quic_yongmou@quicinc.com/
+
+---
+Yongxing Mou (6):
+      dt-bindings: display/msm: Document the DPU for QCS8300
+      dt-bindings: display/msm: dp-controller: document QCS8300 compatible
+      dt-bindings: display/msm: Document MDSS on QCS8300
+      drm/msm: mdss: Add QCS8300 support
+      soc: qcom: ubwc: Add QCS8300 UBWC cfg
+      drm/msm/dp: Add DisplayPort controller for QCS8300
+
+ .../bindings/display/msm/dp-controller.yaml        |   2 +
+ .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 282 +++++++++++++++++++++
+ .../bindings/display/msm/qcom,sm8650-dpu.yaml      |  15 +-
+ drivers/gpu/drm/msm/dp/dp_display.c                |   1 +
+ drivers/gpu/drm/msm/msm_mdss.c                     |   1 +
+ drivers/soc/qcom/ubwc_config.c                     |   1 +
+ 6 files changed, 297 insertions(+), 5 deletions(-)
+---
+base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+change-id: 20241224-mdssdt_qcs8300-11b7883dc60b
+prerequisite-message-id: <20250730072725.1433360-1-quic_yongmou@quicinc.com>
+prerequisite-patch-id: 2ea89bba3c9c6ba37250ebd947c1d4acedc78a5d
+prerequisite-message-id: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
+prerequisite-patch-id: 4782272bb7d2403e2f2dbf762586d4570e6b6ba6
+prerequisite-patch-id: cfdd5c37d38b2a4f1386af4021ba3920c6d8dcf8
+prerequisite-patch-id: c874bf64aec8cb2ff0bc91051620ac771cbeeeea
+prerequisite-patch-id: 63defbfb812a2f9c6365a98538421aea374e0e13
+prerequisite-patch-id: 0ffa9d544d516d4e14700229a4ab6a9c7751823f
+
+Best regards,
+-- 
+Yongxing Mou <quic_yongmou@quicinc.com>
+
 
