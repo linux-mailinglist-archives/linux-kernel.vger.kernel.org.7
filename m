@@ -1,346 +1,152 @@
-Return-Path: <linux-kernel+bounces-757747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F02CB1C638
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:45:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B6BB1C630
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0671882859
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A966356434B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6DF28C021;
-	Wed,  6 Aug 2025 12:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E00A28B400;
+	Wed,  6 Aug 2025 12:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piY2QrqA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKlS7+gT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C163522F767;
-	Wed,  6 Aug 2025 12:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588341DE89B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484337; cv=none; b=mVw/oRqRCUx/osPnNHzSYfm+m+BiWXCsJKsBJh+dUeeIVK/pyfncyIF9aWa5L1yDrnUJPFR8WG5cmLOdhDlawiTuEUDrnRdNTpIKmfBECzh9QIkC+dV4hWBlG9n4cXZu+47QnjCOwVwGfm3n80Bi9ptgbOfSrG8arp2OykSQV08=
+	t=1754484329; cv=none; b=mX1UObDe8tIEJVcp9bU3ylm2AmsvJq8OJam08pXXfD+FGRfVzTPIahTsXIChlNxgzYfjDFsPCTfOOaq5B3ofWAwmFV/mRqPg6hnvivAKB/2udGn85wY3s8UJ450elv7xV/JKXxRTCxmxm56ySVRj6BH1EnscLeaONEkMZezOdCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484337; c=relaxed/simple;
-	bh=vrDmqWuCtRp3CsCvQLuDwTzU8RUf2CvrKumyU6zb3Ok=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GQt9y32V/YIvM8Tsq38lXlG8gur83roUnDgRAtXyaTHmiP8nbeJ/CmfDkotjsK/UPWMqFhVWyCjVsd2b1oTA4EHudB8R/4MTJYliapOtRYOZWRhZoLQFuXZmK44kSVWRg6PXyBBsFvaXWCPlj+a3oxcG+GLOL1bEGt7SSvzpzrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piY2QrqA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4AAC4CEE7;
-	Wed,  6 Aug 2025 12:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754484336;
-	bh=vrDmqWuCtRp3CsCvQLuDwTzU8RUf2CvrKumyU6zb3Ok=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=piY2QrqAz8Re20EZatq7znUbw5pHCiVHNr0AmhNRPE0MDM10HmfpdWd02d9i8tbdW
-	 E75PTNGi/w0FYgFIJnvX/BXnS/SvXPyQ9seXxkOyOZ7zJ0aOfRRVdb4s/IB6OlYGWX
-	 eGzXx+834KiDOoCU+8nK8fwVzqTKOTwSyOvq/we5j7dBgmFBvFnhVcaikg4QxsG3Ow
-	 eNHI0m7J7krY4D/AW4W0Ic/ki873otG6+qi8XZAxpJKL+nl6ve+/h5UhD3smasksSI
-	 31GfEPq8TJIP3QV/nzR3fqXJ0rFvGtrMjgIfsvva9ewHG8nil9RVHiEcnK1j0r7efu
-	 ou/p/iGbORZsA==
-Message-ID: <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
-Date: Wed, 6 Aug 2025 14:45:14 +0200
+	s=arc-20240116; t=1754484329; c=relaxed/simple;
+	bh=Ja8eqE4UilGLkdfTXr/G4n4kO+Jow1TUt/LNR3e8WgE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nMtCBe1voUJE12q3fHOHRlALgO0DhYPldN7KD74IvRNWwZUXBndtEeCWl7MbxH+ygjxR8PAsMTxmyYrKYKMgTRUDZNrmNB+eSLbPP0eBBVPKFDUud8BXySwH9SPYfU/NlHjD3sCIdXBikzt2WxZPPIdOk7uHcbLqQfz1opPd8Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKlS7+gT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754484327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jMjNHNQ0G5LG4I1RqSHiwTb0enyDrEvAe+FlJh6jMwA=;
+	b=aKlS7+gTcVXRvbrqqd54/otQisHB0JcRGAf0JUxwTNLoe+AWHMDXyMZR9r+in6pnpfi0So
+	h9mQERynPTtk2O97ILLRVI3ussB+iERay+V8pqzPfM7g1aWyvcw6IAlN57mx0GgpYd3+ci
+	pmCvvYH+DTt+8k9u8Wdmd0HK71um6Bc=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-QF__EK-EPmasoR9ggporpg-1; Wed, 06 Aug 2025 08:45:26 -0400
+X-MC-Unique: QF__EK-EPmasoR9ggporpg-1
+X-Mimecast-MFC-AGG-ID: QF__EK-EPmasoR9ggporpg_1754484326
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4aedcff08fdso112356851cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:45:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754484326; x=1755089126;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jMjNHNQ0G5LG4I1RqSHiwTb0enyDrEvAe+FlJh6jMwA=;
+        b=dchSQRQf5X5dI/Re2kfXkenAtVPt3dOOtfv2H1QZybqcYZHQsNnr0OvfxD0UxJMWj5
+         IVOyzllOg+Cu7OIzbdZIS5O5yWGy5TTVTbGhzssX4Ags5Y+swMMwZ+lSZ58s77zy/bXC
+         RnLWjVbiihkI+Lr3ZzP6nZOytxU3NrN9z8qO/T9iGMbi5MdYxA9NDiHgpuvGPOP6og2l
+         RAMWMZ1rZgVQrYIUzsIkeHUKF99eviNmcuIy95RnYi/F8MlZIBMp2o3L20Im9dT1Q4Tl
+         LnsD5Mquy+WQ1bD7SvLWvlzDpU0X4Jb16ChliZDH8MxbEXq2CjXeGvISx1t+DQc5FKvS
+         APaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJa7Yo4gFLWhbzv+QAfRfEsO3JSZ61lPzqIDZuzgGFx4pyf8erM96W3ug/sUGrIDxd5BT5R+AhkqLlTqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvsNadBfgZ9gLPZf4grjOtkwl+OR0AwTbAEZAPiuTexHSrc7+/
+	2E2GJby1MZNkto3xGeyXi3iKIJU08OJbkdtD2ZYJJcgKRNDcoI7p+kigxrRW4E4KgWsD/GEldNd
+	hVbZvND/mX6BFQIWbEHZEHmQzLSOWKYsObxp7VSLJCWGusjTgKztkWV8CLAvRGjEWwA==
+X-Gm-Gg: ASbGncum1p9RjrWE3HZXW4C7UO/+Y4wBur9AcTzZ1I/hBI2AOHvQo3ngAtcP6p6c1EM
+	kMi3Swz+8AhcfRslD0LMpYLbtSe4Nh4XA2PogXlgoaReJItJLVmZ3X+PztOllalHUkq2x+uTAtX
+	/WpaGrbU5Mqgbdf5jewT0FsqR8jhVbNEg2WQ+GxK8L4vjCZlwWc2bhiEj7bYnRHl38IMfHjvcnL
+	xA/3j1MVnYqaD6+N/A7GZ5HpiuSp9KL5FB7ghoCfkvkaAaBGNDSVHsy6S+5kv2lp3X4DACi3jIA
+	I5Fz40fy9ObH0HIHqeBbx+MTKoRswUS6EN3ypJE3iFHZgdoKOQeNYVbnE0HcaADhCA==
+X-Received: by 2002:a05:622a:355:b0:4b0:8f6e:d728 with SMTP id d75a77b69052e-4b09138c9c0mr38195671cf.21.1754484325750;
+        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTMYU08BgHnXR1+czy5QcVCMHzz8YG+OtEkdxRx4oxsXU/v8COQ+2pdCxkJHBTMz4Q6mU6DQ==
+X-Received: by 2002:a05:622a:355:b0:4b0:8f6e:d728 with SMTP id d75a77b69052e-4b09138c9c0mr38195381cf.21.1754484325386;
+        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm19326441cf.53.2025.08.06.05.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 05:45:25 -0700 (PDT)
+Message-ID: <8f379f2072ee12afda37455aa0ad4e37d53c4f2d.camel@redhat.com>
+Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 06 Aug 2025 14:45:22 +0200
+In-Reply-To: <20250806120911.989365-1-namcao@linutronix.de>
+References: <20250806120911.989365-1-namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
- v4l2_fh_del()
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
- <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
- <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
- Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
- Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
- <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 02/08/2025 11:22, Jacopo Mondi wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
-> the file->private_data pointer to NULL in their video device .release()
-> file operation handler. Move the code to the v4l2_fh_del() function to
-> avoid direct access to file->private_data in drivers. This requires
-> adding a file pointer argument to the function.
-> 
-> Changes to drivers have been generated with the following coccinelle
-> semantic patch:
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	filp->private_data = NULL;
-> 	...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...>
-> }
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...
-> -	filp->private_data = NULL;
-> 	...>
-> }
-> 
-> @@
-> expression fh;
-> identifier filp;
-> identifier release;
-> type ret;
-> @@
-> ret release(..., struct file *filp, ...)
-> {
-> 	<...
-> -	v4l2_fh_del(fh);
-> +	v4l2_fh_del(fh, filp);
-> 	...>
-> }
-> 
-> Manual changes have been applied to Documentation/ to update the usage
-> patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
-> v4l2_fh_del() prototype and reset file->private_data, and to
-> include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
-> and its documentation.
-> 
-> Additionally, white space issues have been fixed manually in
-> drivers/usb/gadget/function/uvc_v4l2.c
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+
+On Wed, 2025-08-06 at 14:09 +0200, Nam Cao wrote:
+> Argument 'p' of enabled_monitors_next() is not a pointer to struct
+> rv_monitor, it is actually a pointer to the list_head inside struct
+> rv_monitor. Therefore it is wrong to cast 'p' to struct rv_monitor *.
+>=20
+> This wrong type cast has been there since the beginning. But it still
+> worked because the list_head was the first field in struct
+> rv_monitor_def.
+> This is no longer true since commit 24cbfe18d55a ("rv: Merge struct
+> rv_monitor_def into struct rv_monitor") moved the list_head, and this
+> wrong type cast became a functional problem.
+>=20
+> Properly use container_of() instead.
+
+Good catch, thanks!
+
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+
+>=20
+> Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct
+> rv_monitor")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 > ---
->  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
->  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
->  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
->  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
->  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
->  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
->  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
->  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
->  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
->  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
->  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
->  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
->  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
->  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
->  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
->  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
->  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
->  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
->  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
->  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
->  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
->  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
->  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
->  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
->  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
->  drivers/media/platform/qcom/venus/core.c                           | 2 +-
->  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
->  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
->  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
->  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
->  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
->  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
->  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
->  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
->  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
->  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
->  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
->  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
->  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
->  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
->  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
->  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
->  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
->  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
->  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
->  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
->  drivers/media/test-drivers/vim2m.c                                 | 2 +-
->  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
->  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
->  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
->  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
->  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
->  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
->  drivers/staging/most/video/video.c                                 | 4 ++--
->  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
->  include/media/v4l2-fh.h                                            | 5 ++++-
->  57 files changed, 89 insertions(+), 90 deletions(-)
-> 
-
-<snip>
-
-> diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
-> --- a/drivers/media/v4l2-core/v4l2-fh.c
-> +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
->  }
->  EXPORT_SYMBOL_GPL(v4l2_fh_open);
->  
-> -void v4l2_fh_del(struct v4l2_fh *fh)
-> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
-
-Instead of adding a second argument, perhaps it is better to
-just provide the filp pointer. After all, you can get the v4l2_fh
-from filp->private_data.
-
-It simplifies the code a bit.
-
-Regards,
-
-	Hans
-
->  {
->  	unsigned long flags;
->  
-> @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
->  	list_del_init(&fh->list);
->  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
->  	v4l2_prio_close(fh->vdev->prio, fh->prio);
-> +
-> +	filp->private_data = NULL;
->  }
->  EXPORT_SYMBOL_GPL(v4l2_fh_del);
->  
-> @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
->  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
->  
->  	if (fh) {
-> -		v4l2_fh_del(fh);
-> +		v4l2_fh_del(fh, filp);
->  		v4l2_fh_exit(fh);
->  		kfree(fh);
-> -		filp->private_data = NULL;
->  	}
->  	return 0;
->  }
-
-<snip>
-
-> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
-> --- a/include/media/v4l2-fh.h
-> +++ b/include/media/v4l2-fh.h
-> @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
->   * v4l2_fh_del - Remove file handle from the list of file handles.
->   *
->   * @fh: pointer to &struct v4l2_fh
-> + * @filp: pointer to &struct file associated with @fh
-> + *
-> + * The function resets filp->private_data to NULL.
->   *
->   * .. note::
->   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
->   *    uses &struct v4l2_fh.
->   */
-> -void v4l2_fh_del(struct v4l2_fh *fh);
-> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
->  
->  /**
->   * v4l2_fh_exit - Release resources related to a file handle.
-> 
+> =C2=A0kernel/trace/rv/rv.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+> index bd7d56dbf6c2..6ce3495164d8 100644
+> --- a/kernel/trace/rv/rv.c
+> +++ b/kernel/trace/rv/rv.c
+> @@ -495,7 +495,7 @@ static void *available_monitors_next(struct
+> seq_file *m, void *p, loff_t *pos)
+> =C2=A0 */
+> =C2=A0static void *enabled_monitors_next(struct seq_file *m, void *p,
+> loff_t *pos)
+> =C2=A0{
+> -	struct rv_monitor *mon =3D p;
+> +	struct rv_monitor *mon =3D container_of(p, struct rv_monitor,
+> list);
+> =C2=A0
+> =C2=A0	(*pos)++;
+> =C2=A0
 
 
