@@ -1,112 +1,195 @@
-Return-Path: <linux-kernel+bounces-758139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D8FB1CB84
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F577B1CB93
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B8A24E2606
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1589A627182
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2466029B8D8;
-	Wed,  6 Aug 2025 17:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5051F9F51;
+	Wed,  6 Aug 2025 18:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSPedcTn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="yNHRukNS"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7288F1E7C03;
-	Wed,  6 Aug 2025 17:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239691B960;
+	Wed,  6 Aug 2025 18:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754503102; cv=none; b=J26pYj9rIa0CZLXDJi9KbTCs1XlnIOPVZORf6B+FF8iuoK+yKlhtIb1onKenVTvQIHipqLz7M9xaQAAwzWuM2KJGsEul0Bq4RmNgEMdWc+JajQw8oQEJC8hOdvEtyuWZelWN3nNd5mlNJRK/LqF2CFd9/zeoZX5IumLMpNMCfOY=
+	t=1754503378; cv=none; b=rCxlnfRgbrHXRIToLfN56iD50PVdhpwzhOGzvVkNMsSyp2boZajsljKbRvqIpWfFOark4pFR0C3OXG4TtROy8PVAZxU2RmsH3Tf4xKofEtMw0en3HtelXG5uW3seTDZbN/hdfIuhb9fkTQTA7yCIncJXPrLbNseaFkYCieF3evA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754503102; c=relaxed/simple;
-	bh=QRv/wMrnx6kdm9+dkuQm+1R6GRmMJS9e4RFnl9DCqgg=;
+	s=arc-20240116; t=1754503378; c=relaxed/simple;
+	bh=i+HIYjZwsSEIApmr8/P/PkZHmqlNO0ko8SgjKiB8jOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIVX2pt9n9DYm9jvjjQkGMQoC+npyEaq6/LX51P4ymn93AnRifKKtfNGzLZWV1a6LgUFSNozNkQ8rGST+wsbxNlEIi7ig6crgy2zZMRPjqPcCKuFycvEAaeeq601tnvSH5NGrdL3YKT+6of+DTHJWW8l0vzz3cjoyE9VMRY7FDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSPedcTn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82CCC4CEF7;
-	Wed,  6 Aug 2025 17:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754503102;
-	bh=QRv/wMrnx6kdm9+dkuQm+1R6GRmMJS9e4RFnl9DCqgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSPedcTnb9PNFJz5BquW88b7de3lTQAmDba8eXMpQiteJlXzluzbH2j45kR4N6RQz
-	 o10imlbS0xV9f/PuyG69RxEB1PHVyBVxEpHnNok/8mEkS/Wi3qJVEyrzf3gnXks46i
-	 rwHjVx9dBKw85guTrX7GccXznHPudxj2Tt7xh3coZVn2MifKXj1OgBxe10KW8xIFM0
-	 u/VRZElnuJU6cQE/CXgFKclWAkzNk23uoZPHI4lcRcKgGpdVh01d/YvVWu2kWt6HcH
-	 a6aRbLFJWadwqOAELuptKiaB1ZjO7RQFYo2sgbtn0RCB+KyonKHnvlU/tMb5dI4iLT
-	 CQTaR+dOoA60A==
-Date: Wed, 6 Aug 2025 20:58:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Abhijit Gangurde <abhijit.gangurde@amd.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Simon Horman <horms@kernel.org>, shannon.nelson@amd.com,
-	brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, corbet@lwn.net, andrew+netdev@lunn.ch,
-	allen.hubbe@amd.com, nikhil.agarwal@amd.com,
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/14] net: ionic: Export the APIs from net driver to
- support device commands
-Message-ID: <20250806175818.GV402218@unreal>
-References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
- <20250723173149.2568776-4-abhijit.gangurde@amd.com>
- <20250725164106.GI1367887@horms.kernel.org>
- <20250801170014.GG26511@ziepe.ca>
- <20250801132128.69940aab@kernel.org>
- <5d495e57-71f5-e465-cba0-d727c6b36167@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha78W8GFQ5yt1+CYil79GUP9/brDMtmd/270MrDj4SwyGk3RLg1wubGs7MhKUOKNiCTORhGbxexr5T6ZF9QqTsD4nvChWycyvbtoT6EraPT1U0gXChdUvanNVMCGbtCinIIc07YtNPKQevu+oGBReaBiRVutTMZvtCeyv34Q1WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=yNHRukNS; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bxynS0p1Rz9tfY;
+	Wed,  6 Aug 2025 20:02:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754503372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gcSx0xTYEEub8lUPdI8CKTyYuFBsdUD5lOH8ZHS1BNM=;
+	b=yNHRukNSHwxPGXF7LNLhxt6HKY68gCvSULsDcf8q+hnTM1+ZohhyS4kN9CzjZlViOC2ynJ
+	DdeZXJIbYCv4XuIvPSVwk1hZjM1bFhtfqKzqu96XYtVpZNQsdwz0PSui1NW905vWk1RBYp
+	RtUyZ5NdG3Xw3Dc3C/1hEPeJsOA8av4c30uuCfXYRSu1IkF0nRb12FKjUzzpHI3x6t6WhC
+	QufLlwTusMUSgdkXE1azuFpluAS9i91LLLmSFkITteeNaDLzefknPOmT01Wd6ztMADFQnG
+	VtRdkYDiPyPzIPoKFF0KkCPVb8//lhvsmvt/Hc05GgOTvEaVYl09lyzPJYLH5A==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 7 Aug 2025 04:02:41 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+Message-ID: <2025-08-06.1754503216-vulgar-pinch-more-tasks-meager-grader-93KeQn@cyphar.com>
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
+ <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eu46eil6qrlqkmuz"
 Content-Disposition: inline
-In-Reply-To: <5d495e57-71f5-e465-cba0-d727c6b36167@amd.com>
+In-Reply-To: <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
+X-Rspamd-Queue-Id: 4bxynS0p1Rz9tfY
 
-On Wed, Aug 06, 2025 at 01:24:04PM +0530, Abhijit Gangurde wrote:
-> 
-> On 8/2/25 01:51, Jakub Kicinski wrote:
-> > On Fri, 1 Aug 2025 14:00:14 -0300 Jason Gunthorpe wrote:
-> > > > Perhaps I misunderstand things, or otherwise am on the wrong track here.
-> > > > But this seems to open the possibility of users of ionic_adminq_post_wait(),
-> > > > outside the Ethernet driver, executing a wide range or admin commands.
-> > > > It seems to me that it would be nice to narrow that surface.
-> > > The kernel is monolithic, it is not normal to spend performance
-> > > aggressively policing APIs.
-> > > 
-> > > mlx5 and other drivers already have interfaces almost exactly like this.
-> > Which is not to say that it's a good idea.
-> 
-> Thank you for the feedback, and apologies for the delay. This discussion
-> prompted a thorough internal review.
-> Although a precedent for similar interfaces exists in other RDMA drivers,
-> the point is well-taken and we understand the concern about a wide API. To
-> address this, two potential approaches are being considered,
-> 1. The function can be documented as a privileged, clarifying that it
-> performs no input sanitization and making the caller responsible for device
-> access.
-> 2. Alternatively, a new, narrower function could be introduced specifically
-> for RDMA use that validates commands against an explicit allow list.
-> 
-> We are open to either approach and would appreciate a guidance on the
-> preferred direction.
 
-I suggest you to take standard kernel coding pattern and create
-in-kernel API which suits your "in-kernel customers". There is no
-need in any "allow list" for in-kernel APIs. Let's don't bring
-complexity and defense programming style where it is not needed
-and here it is not needed.
+--eu46eil6qrlqkmuz
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+MIME-Version: 1.0
 
-Thanks
+On 2025-08-05, Randy Dunlap <rdunlap@infradead.org> wrote:
+>=20
+>=20
+> On 8/4/25 10:45 PM, Aleksa Sarai wrote:
+> > /proc has historically had very opaque semantics about PID namespaces,
+> > which is a little unfortunate for container runtimes and other programs
+> > that deal with switching namespaces very often. One common issue is that
+> > of converting between PIDs in the process's namespace and PIDs in the
+> > namespace of /proc.
+> >=20
+> > In principle, it is possible to do this today by opening a pidfd with
+> > pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+> > contain a PID value translated to the pid namespace associated with that
+> > procfs superblock). However, allocating a new file for each PID to be
+> > converted is less than ideal for programs that may need to scan procfs,
+> > and it is generally useful for userspace to be able to finally get this
+> > information from procfs.
+> >=20
+> > So, add a new API to get the pid namespace of a procfs instance, in the
+> > form of an ioctl(2) you can call on the root directory of said procfs.
+> > The returned file descriptor will have O_CLOEXEC set. This acts as a
+> > sister feature to the new "pidns" mount option, finally allowing
+> > userspace full control of the pid namespaces associated with procfs
+> > instances.
+> >=20
+> > The permission model for this is a bit looser than that of the "pidns"
+> > mount option (and also setns(2)) because /proc/1/ns/pid provides the
+> > same information, so as long as you have access to that magic-link (or
+> > something equivalently reasonable such as being in an ancestor pid
+> > namespace) it makes sense to allow userspace to grab a handle. Ideally
+> > we would check for ptrace-read access against all processes in the pidns
+> > (which is very likely to be true for at least one process, as
+> > SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set by most
+> > programs), but this would obviously not scale.
+> >=20
+> > setns(2) will still have their own permission checks, so being able to
+> > open a pidns handle doesn't really provide too many other capabilities.
+> >=20
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  Documentation/filesystems/proc.rst |  4 +++
+> >  fs/proc/root.c                     | 68 ++++++++++++++++++++++++++++++=
+++++++--
+> >  include/uapi/linux/fs.h            |  4 +++
+> >  3 files changed, 74 insertions(+), 2 deletions(-)
+> >=20
+>=20
+>=20
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index 0bd678a4a10e..68e65e6d7d6b 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -435,8 +435,12 @@ typedef int __bitwise __kernel_rwf_t;
+> >  			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+> >  			 RWF_DONTCACHE)
+> > =20
+> > +/* This matches XSDFEC_MAGIC, so we need to allocate subvalues careful=
+ly. */
+> >  #define PROCFS_IOCTL_MAGIC 'f'
+> > =20
+> > +/* procfs root ioctls */
+> > +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
+>=20
+> Since the _IO() nr here is 32, Documentation/userspace-api/ioctl/ioctl-nu=
+mber.rst
+> should be updated like:
+>=20
+> -'f'   00-0F  linux/fs.h                                                c=
+onflict!
+> +'f'   00-1F  linux/fs.h                                                c=
+onflict!
 
-> 
-> Abhijit
-> 
-> 
+Should this be 00-20 (or 00-2F) instead?
+
+Also, is there a better value to use for this new ioctl? I'm not quite
+sure what is the best practice to handle these kinds of conflicts...
+
+> (17 is already used for PROCFS_IOCTL_MAGIC somewhere else, so that probab=
+ly should
+> have update the Doc/rst file.)
+>=20
+> > +
+> >  /* Pagemap ioctl */
+> >  #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
+> > =20
+> >=20
+> Thanks.
+> --=20
+> ~Randy
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--eu46eil6qrlqkmuz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJOYwQAKCRAol/rSt+lE
+b52DAP9rIrvzDbmNWooTppIvB6Vs+2oyk+y2Sxown5C5ATO0CQD/TQ/lk5cTOfxc
+D2lZstD5/hT/9cMIIbLE7OIfp3stEwA=
+=Dzjt
+-----END PGP SIGNATURE-----
+
+--eu46eil6qrlqkmuz--
 
