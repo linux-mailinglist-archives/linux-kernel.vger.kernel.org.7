@@ -1,378 +1,210 @@
-Return-Path: <linux-kernel+bounces-758448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832E6B1CF48
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6331B1CF4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7915633C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2023BBB64
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54A42356C7;
-	Wed,  6 Aug 2025 23:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A2236429;
+	Wed,  6 Aug 2025 23:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3yD00CH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EKvq2quM"
+Received: from sonic.asd.mail.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA3A2E36E7;
-	Wed,  6 Aug 2025 23:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754522181; cv=fail; b=RXFhnxFOkSZjXhdET9Q3Lm0CoWGy87/VxElf3UTJiz3HX7snJ3FVSG8t5xRkKpD3pk4tL1ax9yMH0sIpT5YN0YF2FxFg3jcll3bjhr4sLzF43/dVGBFT9A+EW50p6tJtkBTa6l6fyz+aTEK/9mx3645ug5sUz4yYcUEfCEkJHbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754522181; c=relaxed/simple;
-	bh=WRRjb0S2UiGdsMQlfvzw/bbcR8NSXuIiMWsPUJtYdp0=;
-	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
-	 Content-Type:MIME-Version; b=B1PsViaHzgsdI0NYHbvGp+Gb6xPvlGp7C+jB5x+Ll4nN37r4u/Tp7fUZey/Z1ZVXE4a48AIL2Iq10h18eLaTPf7LcyCvjb6IaMKznqGuf/4a1JKEbR7g4m7bAONbm57o6ZEY3aZG1h3dn5FzI5WlFpgvoDSMad8e5aPLC6H0k7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3yD00CH; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754522180; x=1786058180;
-  h=from:date:to:cc:message-id:in-reply-to:references:
-   subject:content-transfer-encoding:mime-version;
-  bh=WRRjb0S2UiGdsMQlfvzw/bbcR8NSXuIiMWsPUJtYdp0=;
-  b=g3yD00CHbekdcVvaLF6Tc60uoClQ+Tn7ikwzlywa02W4ybbARJkest5u
-   5abE3qfVPghMGnTlMegG/X1j0g0FYzSi7G03Uqmv4kLPtUl4/SFKeLHCU
-   BGSktl1DzZFhnSPGsU++M60fEZzHxMMDOxVcP/FJhmUDixCfAiL90miTi
-   yc3NrVGWNLK19nuGUz3DIUz5hEDMNPWd5FBIuvKJ9ButqirP2JZewRiAt
-   EMj2o7PKxMTxIelUsJG1bLkZXJ8nlSEdmOm7ov8z78ACPgcYtlXbAsRnE
-   +XEnlmBWkYl4a4Pu5kR53L1X89l66V5pPD2IKUB0M11C8QOXvjdm75xFY
-   A==;
-X-CSE-ConnectionGUID: bCDeacYTSu+zl06+V+4E2A==
-X-CSE-MsgGUID: 8iLpW+nnQD+cZF8xiNT7pQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="44444376"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="44444376"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:16:20 -0700
-X-CSE-ConnectionGUID: JJT5hYbSQOGmuAze9W8bTw==
-X-CSE-MsgGUID: i2IMbXo3RUuAPSMHFV7xGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="195736198"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:16:19 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 6 Aug 2025 16:16:19 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 6 Aug 2025 16:16:19 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.46) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 6 Aug 2025 16:16:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qzaPjWPboFz2Zwl9wrLH7B9vCamlyo4F1vjy53QLwjmuwxM7NmxnvxE2rl0YkIsyqzTcw7HsOiTwsSdXhxOTMbknSCQJBP+454rcoFq5ubu3sWk/30ofzeI+AzvtNS8crcwlEsogSu+Z5Dqh4/2aVlq3flYVs0ODaBpCM9vQUwUpYUjKg+BI7g27yziu9rjjbLqLuL8U5OsqhUUA97LGLV8A+vhi7ZtFB9xui2RZr5iGmc8eC4vUAqr8hc7DzT5YQtDA9idbRqs/tpylFbfG/MYyXKooFKp2qxLiQe4aLwJOdLYuTK/AzTfMpj/hvBv+1daV3CdA5NCSAd3JMy/kkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FjrDiyFSQiCj95p1feM1Kueon/waHG9tmwXUpFDFY6Y=;
- b=JUPm9GytBg6YFOlOTLv7XH5dEkfK6b4U/0wMaC+EFrnadfvFHtmkzUzzEQAxn4ibGCPljbEpQvuEQYcp2VLr8ETLkij4yNBRpqymT1Pi2urmcsibVgavyWiwaGC4aVviGc9UYciXNpqLgLFhTE82pO3npCSLAkTJs0cXhG/XGJiKxyahOOuwRM2hZkNkWutcqIiZr4EmT+XAaSF81I7BYDGOBs+7U/1tNz639mX7ct5e9vawD1o7CFnenHRP3omeDcmg48fH+SX/Zetxi0v12S8E/8yzieF+vTR49eyQz8wwIyh+hVJ6d+tI7AiNufiFIeEkCiWNcHIzXyTSLBx4PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SA3PR11MB7977.namprd11.prod.outlook.com (2603:10b6:806:2f3::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 23:16:17 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 23:16:17 +0000
-From: <dan.j.williams@intel.com>
-Date: Wed, 6 Aug 2025 16:16:15 -0700
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>
-Message-ID: <6893e23f35349_55f0910072@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <20250806121026.000023fe@huawei.com>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
- <20250717183358.1332417-5-dan.j.williams@intel.com>
- <20250729155650.000017b3@huawei.com>
- <6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
- <20250806121026.000023fe@huawei.com>
-Subject: Re: [PATCH v4 04/10] PCI/TSM: Authenticate devices via platform TSM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0136.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::21) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED2F1401B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 23:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754522198; cv=none; b=sVfp2ZTQ4y4ywgM3bMMr5tPytHwL9ObCVMOO88rHHr1Ozf1pEpgb2EHtix/6lGb40/JGPrEb+oIbFnGmYzeUFp2dARpEUWabn4SsYnfK5Ko2DNijZKLnrmRzQt4SQ28KcJ9NuRT+m27RQ4Ym9ohh/7hNftWzNNf9PmA1euE/EBo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754522198; c=relaxed/simple;
+	bh=cJl4At+1cXXYug9GtLBmkxDFdTibYeN0XuD6qJlLMJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8GUGBWxCvzH4nUDxB4uz1MSFIfiBjp9O5MHxJgPGpDvRiUTgiPG7dP/9+yvmH7Y02Vky2MDTJOe41qMDdZdu0Ltq98DrFeggI5qzoljPUz9KQQ61l6NrFguvgwKMq5CXy6IwShPS1SYA6gIYWtA/CjsxRX0mODUAqO6IRJDMIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EKvq2quM; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754522194; bh=HkvgS4SbiUOpqGxoegOo03fYCtOsJFgBfX5j5w+YXUY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=EKvq2quMrV2JBhF6hZh6sqWDP6lSLswwqjOqZvR56/WKwjrOMcTWQdRAwd123CM26Ckj+f3tWmcg8UT81kst+BnGmCOW+TOwYjPUHk8i2mwQyDMgsA3Gr+Df6ocbHY21Spf0dobsaWhkEZ6zuOG85v/FKWGpYoPwYQzIwbsMlazVJCXj+ujKPFVj2xXFnyFuBmpBBtD4LT83DE0sNsxGVC01tfPPef0geau+pioqEG973wyO6Wy6KRxAKGHC95kDCaBwt++rnsvRKc2wGkIOcmrQttX5c9a7EX3Szgz3YeeeLBgbLJW60PCUMNS7vZfK5sdYgU1iHQWQyts9fvmtBw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754522194; bh=QICMMo0gp/PvXWOz2m+vJg/+hzHvlUicoPijRI9U7TS=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VByQ32/zED11Iaa0n3ySfhs1SPBq3g0LEPSwAfBHSiAavawBUU7shb25E+bYhvs4nfAzDyTUCHBKV5/mW66LZqiiToZGLMHlsfLhmTD7VIgbre1EjHRvRAbJzyIX4oYfY5fGwHTtbcvgWuizczOx3Jxyo8I/ImSzhrCwIUHszvaxTo/CEsU5lp28No14UsLUFcLIiAM32fDVOa8oRatRza2TW4zPTgGCATKAdJ5EuMFyQPwfsUvPaKmdAq8dSVOosCD48eZbillph+Do3ocKq0IvLE5VFLipbtJSBMYz79GeA1wKtlYtbH4LNz7I/SXBEIPiu7tc/u/APTwLIV4LRQ==
+X-YMail-OSG: CHRBBxUVM1l_twm2XTZ7Or3KxBS9VJAFaZCbzgLl8jzXjFQi7NGXp5kIVJzBxCb
+ uHFIjKOGlxDbhfKorbScrG3cRD3ZoRlVEt345ttrIAtLQtGGWgJZiQFcgxjtEk8La2O9hZHwjO6t
+ bDcOrWaRqAoWVrdkqgvQlxxs29cvknCultinMa27XfPEWCA0SxqTGQ9QIrKg70ov9eiTug9BC6kx
+ 7znv6he4.MHvtn3jcfsUEAkdrgUBGvH6g2QG.bdXue8iLfLFysXOZen89RCF3dRnN_jDLxzF_ZA3
+ qMDoFlkewmtyeFfPqVKjdooMfKerqeaXcYUHlE1y78efnqdtbAJyTZo4WVpLgD2RDnUPP4G04nG0
+ 3n1.RiFj28ErIt2RgXfvxci27kmUClGVtgFANQm6CWCDFyHXEIgWjlV.OGf4CqqlKB1D0wUAJab6
+ 9Q1.vG1zrXaT0sCKTzCZf8hqFRQwXjqC9NAcDBUPuAU25ivbl.u5Nu6RgNXWb9VWUw6BDS_1Xbnu
+ ChO8OtmaXP0CxcKppu8w0ziiVL0jSbPLWvU40dsL4kvk3YfNs40l0KU_F5eYHr7Qcu9omAl7Ugwa
+ aTQXb_h20ez5Fw0sAQMtz6Q0Mo05NSL6hi2t9uMBzO5FcVClBTr7.94RcPyC6L9Ko55lu2REPtE5
+ dWp.dAltUAJmQLfsmLb.kpShBuUKEpOC.I1zmO9Jyerx1GHu4X4Ing9uulRBknOC.g2sxocRhQnq
+ pZ6suO07fd95zyVErh1uakAJKnJme2QazcStVmu_aNsSbsH7mQOt8DvE1Uwxej2.aydb2MtHBsxA
+ UPEYsLcVMBZZcWO16Ir6QGrHiE71mp7.m6G2FnFkEwR_jJo8S6cK7vmFh3l7YvqUrgtSGiOYKXLP
+ KRbOkYIy6mRAmN3cBXQNRAEVQ0NoNuFhOtIdlUbgt2MuE8B889w6gVshrMDYhLkUorU6Co3fPl6y
+ hBkDIU3Z0uF7oY3mpWJsfcLRMbTAJrCzOwsCjRVI78QDChSIsyFP8rJzpKYQaGnjaDGlwGJ.tnZA
+ wR2zg2s0D0Q.7qYqs90p3vw_M.JdY6orrDZmrWhUKkiKc09vQ.eIshgHDyTbeEfmRVc5ezQDZGvn
+ aBGvbSIkSlw3jheETn_BeUGG2TXFHeH4QjdrZ7DK.fYhn45v3NlelX4maZbm58dZhrakQVzIAZsw
+ ENH4Bo0oO1PLF8bxssXcJuLoXBx8nG1o42DPOagaP09.QR033AfiC1bs.CdgPwfhY0If4PRy7hUg
+ v9OsOFl_GNA.fmcwjYmOwU_RGdcYDKTiyLlx9Z8NG5Acts37WQuJOBbM0XYOJn6kkkDLKRjWYBD7
+ k.uk1UYgzDn9D0PliPDSkPYPf4Xq3ft411qnUoivodKusvK1BabpZfe1umlk0I9._f.vpMw6ntge
+ feIpTTjGfsy0sd.TcJcV80REKAnOQ5qLolr0QAM9UNXu.2phXCS8RKB.YUwO8QgtWcb0or.v.JLn
+ TFG7cpcd9Ua_2NZqkpEUR9iwkiUmX0r7INvULuK_jqdHlyqGUVxx7KNj2Okbq_ZWzct0oG0OJ34N
+ sI1147IfWkV_JwihSZht_Nj_fFwFwWOHEQ1RolAEYsaPeFjzFtPRwFa_rXmHL0KW4IUiYzZXTJDZ
+ AGRF2._Ek6Pt97.aXSMBH.stlaz.Td78toIUxE2fbVyv.Eibx1GFH1QYkKucmTjFDg1i6hG0cLhV
+ qdUxxNSVSY1K9shmNSJj5uUhVqK8l0YkE4CyE.TzcY3ayCUpa_QWWpjMk7Qt9legg91Mkw9DjGB0
+ S_QdsGbVLq5qhSl6As0ygafmb48Qe1FLXAitBoUBUpRyegaUsuxq57BBPIyzknOH43i8JANrPP1I
+ DoUAej93SbO6G9hJYn.15iCsGemguf1EKSypYZwdZRh26xiNDQ0.4ELmd9a_xWWDXBPzS0bgcXp4
+ q6TbgluGIQjN52SNb2Xy6x7ooblnS_NCPkTZNqfoQF1VAfY60eG8z_fXeQGF9dg5hLVH5SogSbgp
+ azkijnWblKiuOq_whBqxref.p34bs.5xZzf2Y8STm0KtVDv8Tt6dcltFyetvo61vh_TU2NYX.05m
+ i7OtjEYM.CoOjfTRlqPsbLkPdrwX436EkWerHjiU9BwelXAQ.lSi2mF0fym7OokDdzmsAQiiidJV
+ wquMW4sAEjcjxI.C9Hd69bJUeDbkeHwSeWJJ7xjs0Kz7wv7bncpKt78XL7U_zohZSWf2uel3Ge6O
+ TOoJFeeklxbSRDI0T4fbUw93bqkoV_h2tYU0mdoH2h1uaiOe0lxGk2pBBgsrpVKEb6gEVUyloznd
+ WdXd2QoS720xHsc60mb14Tdtgjg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4924f168-a661-4c96-87bc-3b4d4db3576a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 6 Aug 2025 23:16:34 +0000
+Received: by hermes--production-gq1-74d64bb7d7-w6q4t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b7ef53b8b4b8be522c44d02d81cf19fa;
+          Wed, 06 Aug 2025 23:16:30 +0000 (UTC)
+Message-ID: <f3a8cbc4-069f-4ec2-8bb5-708b90360b05@schaufler-ca.com>
+Date: Wed, 6 Aug 2025 16:16:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA3PR11MB7977:EE_
-X-MS-Office365-Filtering-Correlation-Id: e070c7d3-4cf9-4bdb-bfa4-08ddd53f3ec3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?LzNrQktjSStiaTVZUkl0S3I5MFpHQVdaK2RUOWI5dzNPOUcrNWN6OVlqMW15?=
- =?utf-8?B?c1NaWnlLeGcvYzRjSUNDaFcwSkFXcy9sbVM0NXVjS29vZ1lzQjBINGxKaUlG?=
- =?utf-8?B?RU1WNFdGazdndmxKSGJyZUlTYWg5SFh0L2NPRzdIQmwzUk0vUFlWTlhhU0Y0?=
- =?utf-8?B?SWxEMVNrQXMxSkI0blM1bHpZRmxTQ09EeGJXUG1hcElQRDJsOFNmZmNEckEv?=
- =?utf-8?B?YlVQY3hLYzVGMWJaYVdtSDdzOW5vY1V0Um9rUEFocDcyK3JKWHExTEhFMzM2?=
- =?utf-8?B?S0dsL0g3NGY4N0kranoybXBDMkp6SWViMXFvWld3U2I5QVNzUVRnOHBVanp5?=
- =?utf-8?B?VlNxdEQ4bFptMDBSM3hLVUtZb0VsajFtakxQSVkyZHRzVGE2WE5NK3lMc1Zp?=
- =?utf-8?B?M2xqbTFsR3k5VHJtMjVyMnQ3Y052ZXdBZzBSbkovbjZvNDB4N3lJbXBaTis2?=
- =?utf-8?B?QlhwT3VKRXRKRzVNeVZxMHYzc2xyV2YrQWNpV3NWQVRtMnhvazN2NjhzREZF?=
- =?utf-8?B?Sk9SUWQxZXhtVzlvNWpMdVlDNzJaNTAvblFlNXBhc3dCSnBjckxsWldBZ0hi?=
- =?utf-8?B?OFdvMkh1c1ljY2tMbWN3Tks5SHpKZWg0aDIwQXhoajJpUGVueUh0M0s4SkU1?=
- =?utf-8?B?c0RsNjZDTTVpN1ZxSWRHNC9CS2o5enBqQ1dZeThOMjQxK0JWZU1FWmdsN1g1?=
- =?utf-8?B?KzJYdDhQRFYwUUMwUDEzMU8xcldOclVsMituYllrUFk4cVdValA5S1c1blZF?=
- =?utf-8?B?UjRhTHVpaW1vZ01pZk1nOE5YbkUxNmppVHJST0FUMjlIUnZkbHNiV2lWdFpn?=
- =?utf-8?B?UTlDOTkxUThBZjVXNW5TejFkR0QzNEM3YUZ3d0JnYlhLR0RjNDQ3SUFSMmpH?=
- =?utf-8?B?WlUvTHFtUkxEQ05vamVUUVA0ZC8veitwcS94Z28rdUdMZGtIcnN6aWlQMXVR?=
- =?utf-8?B?dXRSeUpPQ3ZWUkN6OEJwWThLejRacFI4eFJnVnlOVk5UbkdLWEliSnRHNXB4?=
- =?utf-8?B?RnBoNDFxUWdRbU5iL04zTzlDZEM5Zy9jMDRVUG1HUkdxYjhJMFdHallkaEVt?=
- =?utf-8?B?MEpja3VuOXpPdkZmUmpGc3gwcEVrbnNSSDlBbmozWU5LM0tuenBKWFVyMkY0?=
- =?utf-8?B?bkhUVFN2dlAvUWtZRm5rOUovazJudWN0M3dUNmhxMTF5UFc0bm5tTmpId1FE?=
- =?utf-8?B?OC9hcDNpS1FJUXRhVjlNZXJua3ZUQktiOG43RHRwbzljQ0RHTmpVZmlmVkc5?=
- =?utf-8?B?WWFNWWRpRHphRVJvZHBCT2JzMkcvc1FSTlNPQVI4blhObm1oQ0Q3ZXg3RlY4?=
- =?utf-8?B?VVNHd3Z1Q3BrSU4yVEhERzU0bll3aUdkTmZMbi9xSm1PV2RDMm9sY212QU1i?=
- =?utf-8?B?M1NyenplUkpiVFNhSjh2VTFuUnpOWjVMUGhra2xpQmZNMkRhM0Z6d0l3YWxO?=
- =?utf-8?B?RzhUZXdpVjhaSzZyL29pLzJ6WlQrVFE0SkNWTDdkTmVVTCtIYUdPRTdjSXpS?=
- =?utf-8?B?RHZnOXBzM2dXYWM0Z1NxdnRpdHFPMCtHeUdsQUxxMVJKeGJsZ3Npam9admVZ?=
- =?utf-8?B?VzkyNU5mbGkvbFM1amNvRkN1d0FGTEQwakdnN3czMm8vbkdJQll6Q1FsRG1I?=
- =?utf-8?B?YUlIVmVpblZVVXZSSzdDN3dyYmhZOVRVR25rMFVPb3dZUENQN3JxTDZsT2ho?=
- =?utf-8?B?SGxEbDVWbU5PS2pxSEtQQkgyUnZPWjdFS2JPUEFyRHZYRkcrUUhKSngyMXoy?=
- =?utf-8?B?S3cwMEVCblR0S3BYTElmVkhJRXJEb2FYTnJnTFA3cndxbzNhVlNxNlpkbGh2?=
- =?utf-8?B?YldZUEhaNEk2TFE5cXd1MS9kMTMzbXJmMkQ2bTFjbVpqaXkwY1U1czVKaXMy?=
- =?utf-8?B?Zk9FWWdCd2lGS3haK0JDejZqaDNFaXFZRnZmL2N6a3JRYVFkOWNiU21LV09M?=
- =?utf-8?Q?LaYmbHjLjAQ=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S1pRSkdidFNQRjJxTHhpcW80ZWZoMGxrZUhTVlJ4VXBpS1VCZThlWmlsSnE3?=
- =?utf-8?B?SW91TlBaLzB5SlcyV2R0V29SL3JHUlhJdU5GMXRHVUpFaTlUMVN4ZVN0cVV6?=
- =?utf-8?B?U0tybzIrNk1tb004MW5rcVM2SGNIcTRFT3ZpbDA3a1B6M3AzSmZHeEo2YldN?=
- =?utf-8?B?dTlvMjZTMmx4TTg0VkhGNkpwemFOWnRDb1pwRzRienJtVjBGV2d3c1JWN0Y4?=
- =?utf-8?B?dlVnbWNBRFA4bSs1SVZqWWZnc0RsUHNtNTJmZmVSOWpHVnpzQTgzbmtITmh1?=
- =?utf-8?B?UkQ0MEcrTm1La1hPV3o3K29qdWhGWE9QYlNpTklkVkV3ZjZnaE5Ba2lOQjZr?=
- =?utf-8?B?bkp6UnR1Q0RaMDNQK3kzNTFvY2NWY293R2RIWTNDOFpIRjhBMmo1emprdjNo?=
- =?utf-8?B?ckk3RnNOTUVBSklkRzVUbUZNNVh0ZERuYWEwTGhLU1AvZlhsWXBlWEpjNi91?=
- =?utf-8?B?YmMyVHNnNFQ0dTJseHR1SG9zL3NTOUJNeU10V0REMWthQlpNeng3SDhobERE?=
- =?utf-8?B?Y2ZDRXZUbEtseldIMDlucm9rMUpvanZqeXcwMG9Gdzh2QW1YUC9sOXFwblRy?=
- =?utf-8?B?U2ZsbVFwV01Od3BkcSt0b2pwZkpGUnB4V2xQbExycVVWSWNRTDJhdVZaaXRp?=
- =?utf-8?B?SEloYXZtRlh2UGpoNWdsS0x2TXIzbWVMNC80eXlFcW9qazVydWtKNGhBOGtZ?=
- =?utf-8?B?bGZiRkMvSng5SS94NGtBNGRBSEZ2ZnRLMVdXeE5NblFlemt0Vk5ZSEFVYi9D?=
- =?utf-8?B?OW9oTFdoV0VMNHZlc05BcTNMcmhnQmZZVUJkWW56dEg5SGdKN2x1VHcwUlp1?=
- =?utf-8?B?YWxSZ0dHTHJMSitYUlFMTEZrYllpU0g4ck50SjNEWGwyZVNFRzFEb2VqZUdB?=
- =?utf-8?B?WmtzUDdCMVcyRndsemR4MGVESlk4N0RQeTQwTWZYLy9sUEdJY1Y2NG1pVC9E?=
- =?utf-8?B?bmg4MmxEK1BvdnhFUnZSbVowSVpmUGdzalFQRGxKY0Mvc1diaGNPVXZpaWhD?=
- =?utf-8?B?SkpQeTNNQ1drTUlvbEFSTjVjUWZNYjlzNFowa0NpOWJ3U0VYSnY3czMybExL?=
- =?utf-8?B?dG83dEhUSU9HZkNCNGZuNXcwNFZTbDdhZk9HY01wdW9jYmRPR09aOXZlVW9k?=
- =?utf-8?B?VTZ4cVhIWGFScllYdnhTTnhXdXNKRnU3QVJZRGt0ckpWUFhZbzV6ZmhCL0gw?=
- =?utf-8?B?SFZtdzd6T25GU0dtWG1mT2xtQnBtS0I1eWZXQWRpSlNWM01Qb1ZuOXJ5UEgy?=
- =?utf-8?B?cEJEdFZpaVprcUNGcEJLV2pxQjBRTndEQXRTVWs5OUhnV1ExSGlqMG5yVzVN?=
- =?utf-8?B?dnNnRDJCK2JBUmMwNzZLV0ZkNXgyNnErZVgzc3Z0TlRGOThjSmxKYjNNOTJS?=
- =?utf-8?B?RE4xeWlYTmgwMnVTSUFDMys0am9weG9jOVdiYTU5SEJtSjFPajkyZnVaQ0hF?=
- =?utf-8?B?MzhYcERsc1dmdUZHSFN5eE1PQWtKc2daSG84eGJFTkZmMTZkRDZtZHAzeHhD?=
- =?utf-8?B?OTVkaUpqb2hLT1dnbWZOeG1rQW9mdmZ1bHBZd01HYVNYWXlySGF3Z1V2V21h?=
- =?utf-8?B?dmxxNDVIUkExVnRxVWJNQWRKM3hkdW5JUzN0cWxvTzdMcG9Ic1dxT2V3cGJU?=
- =?utf-8?B?KzIvN2ZqZU5ycmVnZkFjZ3pJU2FvRjQyaldzaEoxblpFQjBDUTVoRzJqTTdm?=
- =?utf-8?B?THdJYW9VTys4NHRTUlBoTXVJZWk2Q3JWQ212dFo3K2xIbE5RRFFGQk9hTjds?=
- =?utf-8?B?MnFWbWl3Mzk4Sy80N2FoMTZiMTV3TTZ2RWRKVmM3N0hGbHJPUUM4aURKMThr?=
- =?utf-8?B?MWJrU0JiQzBFbEhUM2c1bzNreEk3cml3UnBtblBVbGg1WEpRbHhRMm5iMjlr?=
- =?utf-8?B?WDAzWSsvcjJNNzZHcVI2QTlWVzF1MmVUOWE2VFVNcUk4MlF4ZWhrNEVWb2Jp?=
- =?utf-8?B?OFFpNVRBVXhZcFZ6SWZ4V3Zyb3NvbGVEeDRZOGkxR25zTURVOHhJclZISys2?=
- =?utf-8?B?RzJ2TjQ1VFhGMGNOOEttWVZUNkVNREFLbm1RYTJlYXRBREZROHdwQXQxd3A1?=
- =?utf-8?B?MXFRMGVheTVieUNLRzZQcjF5MzV3YzFZUUZKZ2RoZGVrVXJTUmdwcFhwaVBP?=
- =?utf-8?B?c3EvVVNMbkpZMjg5eGVWQjlqaytvczZ4ZklQRUs0RDZ4NEpUMnh1SXMxM2Vw?=
- =?utf-8?B?UHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e070c7d3-4cf9-4bdb-bfa4-08ddd53f3ec3
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 23:16:17.0826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EYGeaaytSn55eBjaSdv3CnvzNg8S4PHzz3EEukRCJpMvd+s8uMj1YJpnnR8Qybq3yGZKW+InCDiVYA2YUvORkNZShtx2PG8DSLnuCnku/vQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7977
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] LSM: allocate mnt_opts blobs instead of module
+ specific data
+To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+ linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250617210105.17479-3-casey@schaufler-ca.com>
+ <f7e03785a79a0ac8f034cd38e263b84f@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <f7e03785a79a0ac8f034cd38e263b84f@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Jonathan Cameron wrote:
-> > > You protect against this in the DEFINE_FREE() so probably safe
-> > > to assume it is always set if we get here.  
-> > 
-> > It is safe, but I would rather not require reading other code to
-> > understand the expectation that some callers may unconditionally call
-> > this routine.
-> 
-> I think a function like remove being called on 'nothing' should
-> pretty much always be a bug, but meh, up to you.
+On 8/6/2025 3:06 PM, Paul Moore wrote:
+> On Jun 17, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Replace allocations of LSM specific mount data with the
+>> shared mnt_opts blob.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h  |  1 +
+>>  security/security.c        | 12 ++++++++++++
+>>  security/selinux/hooks.c   | 10 +++++++---
+>>  security/smack/smack_lsm.c |  4 ++--
+>>  4 files changed, 22 insertions(+), 5 deletions(-)
+> ..
+>
+>> diff --git a/security/security.c b/security/security.c
+>> index 8a4e0f70e49d..ec61fb7e6492 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -904,6 +904,18 @@ void security_sb_free(struct super_block *sb)
+>>  	sb->s_security = NULL;
+>>  }
+>>  
+>> +/**
+>> + * lsm_mnt_opts_alloc - allocate a mnt_opts blob
+>> + * @priority: memory allocation priority
+>> + *
+>> + * Returns a newly allocated mnt_opts blob or NULL if
+>> + * memory isn't available.
+>> + */
+>> +void *lsm_mnt_opts_alloc(gfp_t priority)
+>> +{
+>> +	return kzalloc(blob_sizes.lbs_mnt_opts, priority);
+>> +}
+> It's probably better to use lsm_blob_alloc() here so we have some
+> allocator consistency.
+>
+> Also, make this private/static as we should just handle the blob
+> allocation in the LSM framework (see below) just like everything else,
+> unless you can explain why the mount options need to be handled
+> differently?
 
-...inspired by kfree(NULL). Potentially saves "if (tsm) tsm_remove(tsm)"
-checks down the road, but yes, all of those are obviated by the
-DEFINE_FREE() at present.
+The mount blob is different from the other blobs in that it is
+only used if there are LSM specific mount options. If there aren't
+LSM specific mount options there is no reason to have a blob.
+I know it's not a huge deal, but there is a performance cost in
+allocating a blob that isn't used.
 
-> > > > +	pdev = tsm->pdev;
-> > > > +	tsm->ops->remove(tsm);
-> > > > +	pdev->tsm = NULL;
-> > > > +}
-> > > > +DEFINE_FREE(tsm_remove, struct pci_tsm *, if (_T) tsm_remove(_T))
-> > > > +
-> > > > +static int call_cb_put(struct pci_dev *pdev, void *data,  
-> > > 
-> > > Is this combination worth while?  I don't like the 'and' aspect of it
-> > > and it only saves a few lines...
-> > > 
-> > > vs
-> > > 	if (pdev) {
-> > > 		rc = cb(pdev, data);
-> > > 		pci_dev_put(pdev);
-> > > 		if (rc)
-> > > 			return;
-> > > 	}  
-> > 
-> > I think it is worth it, but an even better option is to just let
-> > scope-based cleanup handle it by moving the variable inside the loop
-> > declaration.
-> I don't follow that lat bit, but will look at next version to see
-> what you mean!
+If you'd really rather accept the overhead, I can make the blob
+always allocated. Let me know. 
 
-Here is new approach (only compile tested) after understanding that loop
-declared variables do trigger cleanup on each iteration.
 
-static void pci_tsm_walk_fns(struct pci_dev *pdev,
-			     int (*cb)(struct pci_dev *pdev, void *data),
-			     void *data)
-{
-	/* Walk subordinate physical functions */
-	for (int i = 0; i < 8; i++) {
-		struct pci_dev *pf __free(pci_dev_put) = pci_get_slot(
-			pdev->bus, PCI_DEVFN(PCI_SLOT(pdev->devfn), i));
-
-		if (!pf)
-			continue;
-
-		/* on entry function 0 has already run @cb */
-		if (i > 0)
-			cb(pf, data);
-
-		/* walk virtual functions of each pf */
-		for (int j = 0; j < pci_num_vf(pf); j++) {
-			struct pci_dev *vf __free(pci_dev_put) =
-				pci_get_domain_bus_and_slot(
-					pci_domain_nr(pf->bus),
-					pci_iov_virtfn_bus(pf, j),
-					pci_iov_virtfn_devfn(pf, j));
-
-			if (!vf)
-				continue;
-
-			cb(vf, data);
-		}
-	}
-
-	/*
-	 * Walk downstream devices, assumes that an upstream DSM is
-	 * limited to downstream physical functions
-	 */
-	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM && is_dsm(pdev))
-		pci_walk_bus(pdev->subordinate, cb, data);
-}
-
-static void pci_tsm_walk_fns_reverse(struct pci_dev *pdev,
-				     int (*cb)(struct pci_dev *pdev,
-					       void *data),
-				     void *data)
-{
-	/* Reverse walk downstream devices */
-	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM && is_dsm(pdev))
-		pci_walk_bus_reverse(pdev->subordinate, cb, data);
-
-	/* Reverse walk subordinate physical functions */
-	for (int i = 7; i >= 0; i--) {
-		struct pci_dev *pf __free(pci_dev_put) = pci_get_slot(
-			pdev->bus, PCI_DEVFN(PCI_SLOT(pdev->devfn), i));
-
-		if (!pf)
-			continue;
-
-		/* reverse walk virtual functions */
-		for (int j = pci_num_vf(pf) - 1; j >= 0; j--) {
-			struct pci_dev *vf __free(pci_dev_put) =
-				pci_get_domain_bus_and_slot(
-					pci_domain_nr(pf->bus),
-					pci_iov_virtfn_bus(pf, j),
-					pci_iov_virtfn_devfn(pf, j));
-
-			if (!vf)
-				continue;
-			cb(vf, data);
-		}
-
-		/* on exit, caller will run @cb on function 0 */
-		if (i > 0)
-			cb(pf, data);
-	}
-}
-
-[..]
-> I agree it's a slightly odd construction and so might cause confusion.
-> So whilst I think I prefer it to the or_reset() pattern I guess I'll just
-> try and remember why this is odd (should I ever read this again after it's
-> merged!) :)
-
-However, I am interested in these "the trouble with cleanup.h" style
-discussions.
-
-I recently suggested this [1] in another thread which indeed uses
-multiple local variables of the same object to represent the different
-phases of the setup. It was easier there because the code was
-straigtforward to convert to an ERR_PTR() organization.
-
-If there was already an alternative device_add() like this:
-
-struct device *device_add_or_reset(struct device *dev)
-
-That handled the put_device() then you could write:
-
-struct device *devreg __free(device_unregister) = device_add_or_reset(no_free_ptr(dev))
-
-...and help that common pattern of 'struct device' setup transitions
-from put_device() to device_unregister() at device_add() time.
-
-[1]: http://lore.kernel.org/688bcf40215c3_48e5100d6@dwillia2-xfh.jf.intel.com.notmuch
-
-[..]
-> > > > + * struct pci_tsm_ops - manage confidential links and security state
-> > > > + * @link_ops: Coordinate PCIe SPDM and IDE establishment via a platform TSM.
-> > > > + * 	      Provide a secure session transport for TDISP state management
-> > > > + * 	      (typically bare metal physical function operations).
-> > > > + * @sec_ops: Lock, unlock, and interrogate the security state of the
-> > > > + *	     function via the platform TSM (typically virtual function
-> > > > + *	     operations).
-> > > > + * @owner: Back reference to the TSM device that owns this instance.
-> > > > + *
-> > > > + * This operations are mutually exclusive either a tsm_dev instance
-> > > > + * manages phyiscal link properties or it manages function security
-> > > > + * states like TDISP lock/unlock.
-> > > > + */
-> > > > +struct pci_tsm_ops {
-> > > > +	/*  
-> > > Likewise though I'm not sure if kernel-doc deals with struct groups.  
-> > 
-> > It does not.
-> 
-> Hmm. Given they are getting common maybe that's one to address, but
-> obviously not in this series.
-
-CXL could use it too...
+>
+>>  /**
+>>   * security_free_mnt_opts() - Free memory associated with mount options
+>>   * @mnt_opts: LSM processed mount options
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 88cd1d56081a..f7eda0cce68f 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -2808,7 +2808,7 @@ static int selinux_fs_context_submount(struct fs_context *fc,
+>>  	if (!(sbsec->flags & (FSCONTEXT_MNT|CONTEXT_MNT|DEFCONTEXT_MNT)))
+>>  		return 0;
+>>  
+>> -	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+>> +	opts = lsm_mnt_opts_alloc(GFP_KERNEL);
+> See above.
+>
+>>  	if (!opts)
+>>  		return -ENOMEM;
+>>  
+>> @@ -2830,8 +2830,12 @@ static int selinux_fs_context_dup(struct fs_context *fc,
+>>  	if (!src)
+>>  		return 0;
+>>  
+>> -	fc->security = kmemdup(src, sizeof(*src), GFP_KERNEL);
+>> -	return fc->security ? 0 : -ENOMEM;
+>> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
+>> +	if (!fc->security)
+>> +		return -ENOMEM;
+> Another case where we should do the allocation in the LSM framework.
+>
+>> +	memcpy(fc->security, src, sizeof(*src));
+>> +	return 0;
+>>  }
+>>  
+>>  static const struct fs_parameter_spec selinux_fs_parameters[] = {
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index 44bd92410425..1d456df40096 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -622,7 +622,7 @@ static int smack_fs_context_submount(struct fs_context *fc,
+>>  	struct smack_mnt_opts *ctx;
+>>  	struct inode_smack *isp;
+>>  
+>> -	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>> +	ctx = lsm_mnt_opts_alloc(GFP_KERNEL);
+>>  	if (!ctx)
+>>  		return -ENOMEM;
+>>  	fc->security = ctx;
+>> @@ -673,7 +673,7 @@ static int smack_fs_context_dup(struct fs_context *fc,
+>>  	if (!src)
+>>  		return 0;
+>>  
+>> -	fc->security = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
+>> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
+>>  	if (!fc->security)
+>>  		return -ENOMEM;
+> Same thing in Smack.
+>
+> --
+> paul-moore.com
+>
 
