@@ -1,67 +1,75 @@
-Return-Path: <linux-kernel+bounces-757459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97255B1C260
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:45:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628E4B1C264
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E1E1883556
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392AB1889582
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CE289351;
-	Wed,  6 Aug 2025 08:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bE/+XvaY"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D0F270EC1;
+	Wed,  6 Aug 2025 08:46:03 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965A9288CBF;
-	Wed,  6 Aug 2025 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA181E0DE3;
+	Wed,  6 Aug 2025 08:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754469910; cv=none; b=L3cGQ2jM2S+xUQvxVXHfae1CRb3bucbK6ssbOpTqp438mgkRPVlj5XZ92SL6X+1a/RsdkFwXu5y2Lj13Yuf/2pby16twbPlkBK7F/53xO5MlgKfi8/VaF67wTV7nBrAD2C1KKWoEX0iOnUP9DPA8qGcSVXwMaTtY/SNb4pqFLzo=
+	t=1754469963; cv=none; b=VP0xi+kmTSQ3RS59FKNgMkn/dmvysoKPTtVHBC8+golE9dAjH3OrLhYk/8DFlZMIwsqpVeHUiQzwputhkorLf8YW8mz5XsBsWznLe6ceRd1DDcFPy3FCrTl/a1ZN0U5uyXQlsWDuPo/odUVeFiHIGd1+CXiqWiPLCQ0gWvA6QYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754469910; c=relaxed/simple;
-	bh=3d9f4l7PO0vDDtyzHzbcGD08FIZfF4ZXjGWshLpX/GQ=;
+	s=arc-20240116; t=1754469963; c=relaxed/simple;
+	bh=DMKHc/OcPpL/dIcwYvCZvK5qO/kk+G6il6zwvKHzlGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYwFKPjhhIo0/PcUIN8ssX7n7utZNQSuSp+SAfZu//a6U+twhHBUUwnYSDZbSAdSv+6BjG/Ppv2Y0s4a0Jjk8wZWoNhmpBzYcEbS3gD6uC7WQmuZbk4/eu+wMB1fWQIfaaor4F/DfAYMJB5FW0LfqU9Donu8aVy81mPcO6Q5tfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bE/+XvaY; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=swHaUJ7AXoaoTt2usNQa3DarHLliNZPFDd/ULUkX7KI=; b=bE/+XvaYPli8pisc3yNyCb1OJC
-	9FRTct6wopSk4Sz2zK0Xf0gAJU5DfHyhEpT9xESASlB93jcGtf5TSoQzR9vfJkLnWR2C09L/RYMd0
-	Ywm0eYxMxCCB0dlA2KRUIW+aLjdNMH+UJ/tYJTnA3C/hUxX5D4S1U8YsYK69m4tRekQ6dRNtVv/dN
-	DiUgsu5yHYZtPTMPSbcdS52JZdP+xtE4HR4a7Zt4Z50eHbC1jaXLnxwZx0sddzyqUDOBLVYAwLCAY
-	7DpKU4XmiR4toZh/q3Z/HdzHlGRFJROXOQMdL4OM24WFUOSoWAhDocRx2tnemJIZyzMiaJZFdgafb
-	yV6dJV3Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48480)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ujZlf-0004He-1d;
-	Wed, 06 Aug 2025 09:45:03 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ujZld-0006yA-1V;
-	Wed, 06 Aug 2025 09:45:01 +0100
-Date: Wed, 6 Aug 2025 09:45:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, o.rempel@pengutronix.de,
-	pabeni@redhat.com, netdev@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
-References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=frR2ZUg5zZPchekfm17fFb5MsCD38Zr99w8/pt0JTJN6ZodN6zCBT7cS+o2iygIdcCiy7R0MZPfa2kLiYV7LS2VJfXNqRDRkp+JiMu6HuXj2ze2ww04h4D/yNKh2jd7oybN+HS26Eert/CPkC26d//pEe8TVsaBwWy3eKpmGUUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61592ff5df8so8339388a12.1;
+        Wed, 06 Aug 2025 01:46:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754469960; x=1755074760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bGdLgPBfdNd2lcOHu+m8zalmwEjID7ryVJYk/Ek3kTw=;
+        b=xEvCw07Go2TjjWfW89sVD2KFL8Ho6rC5uHoTV28JmCFsraXu78JR3zIhef89kMK3rB
+         OFTH7aBKv8XEjgbv+u+tEQyXFUWKp6XO7Kw+HS5XkFDytPsBw8as07wDW/xzn3Ud8on3
+         0eaZE/erfcBNmVvSRYAzWLXPibSK5Bp65XMRffu6k7PSUNAvL1X7rzq0RWxvb3+75ct7
+         U+pXDhs5Ko6OR3S5Frlzq405w6brrw9zo0L4e+rcad6qX5aS+oC0QvcsBV7V9jqIvIEV
+         yfa7L4sV4j2yeUDLVUZQG8tOsn+vrAEtv66cfWhjeG90+Hjs1SMirlCCcbY18mgSvT2p
+         lljA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZVwr3iEMtxuRZ3COM9fD13p7FPUWNOYgFpkzR+YoskufLGouSW8e5IExG/DG2hqatMb+80kOpzkDawqI=@vger.kernel.org, AJvYcCVKKVdZ2UGFPmpCdOhNNZqpsUgKTRY2SEXrlqWkp8PCBvSqP2zwTb+R4lBj1GwheYgpWVcQ0ZIBLsnI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3sDSEx5++M+b/r4jf1fYLvZ3hWJsG7ChXV4ln42bCGejQ6jvQ
+	Y/TWDUmYXNQ+6wCi/Vf+NGOa/eVDg8Ph210VvIQG9Oe37n6aaZ0i8xaM
+X-Gm-Gg: ASbGnctOpuXu3TQ/sOf2yxYRxE/0VVh5Z4QSmGUiPqo+rWsezSTy2ccwBcWBkqgIkc2
+	pFmD2vlD5iSKcCVoF5btZfaf/QkDCfzkLQ9vj7YhtglnbCQFVDpJxepw/HPaWgFOQL5wBNn5jp1
+	S4DaoZ0gB98TTT+Rjppsb0SGguG+VfOObCnwNpdQ/9Y/XkzTXxz1QNXUFRvqr9hRxyf8GGUX7a/
+	uuN23sp3++8aQbJ0rY+r3dhXelhhtQsTTSe0iSaJkIWpi/wBsHE9tRVIhhN246qvzmphS+vA2r+
+	Z1tX9borIxoOMtimWNPW7yOwx+jAn65OJ/kUCeiIYbPiMIt2ZQCFlrrxuAFIiAHho5TfuN7tPLc
+	wapPkY+le+ZvWkpmxZEZryzx5
+X-Google-Smtp-Source: AGHT+IEgxGF83pTNvuz25yjpVEb2gIljmSEM8tHNjy6l5+Gv3v5isQ/xzUBDq6Js7w2Ab+lMighSsQ==
+X-Received: by 2002:a50:f692:0:b0:612:b150:75f3 with SMTP id 4fb4d7f45d1cf-617960d0d02mr1098790a12.8.1754469959884;
+        Wed, 06 Aug 2025 01:45:59 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6175ee53a1esm4253825a12.10.2025.08.06.01.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 01:45:59 -0700 (PDT)
+Date: Wed, 6 Aug 2025 01:45:57 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Ethan Zhao <etzhao1900@gmail.com>
+Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Jon Pan-Doh <pandoh@google.com>, linuxppc-dev@lists.ozlabs.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
+ pci_print_aer()
+Message-ID: <umpfhbh2eufgryjzngc7kyvjlqf3d6fgzftgeb44yf4bbtizb6@x7iqbksbbcot>
+References: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
+ <50f6c23f-1f46-4be1-813a-c11f2db3ec4f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,17 +78,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250806082931.3289134-1-xu.yang_2@nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <50f6c23f-1f46-4be1-813a-c11f2db3ec4f@gmail.com>
 
-On Wed, Aug 06, 2025 at 04:29:31PM +0800, Xu Yang wrote:
-> Not all phy devices have phy driver attached, so fix the NULL pointer
-> dereference issue in phy_polling_mode() which was observed on USB net
-> devices.
+Hello Ethan,
 
-See my comments in response to your first posting.
+On Wed, Aug 06, 2025 at 09:55:05AM +0800, Ethan Zhao wrote:
+> On 8/4/2025 5:17 PM, Breno Leitao wrote:
+> > Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
+> > when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
+> > calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
+> > does not rate limit, given this is fatal.
+> > 
+> > This prevents a kernel crash triggered by dereferencing a NULL pointer
+> > in aer_ratelimit(), ensuring safer handling of PCI devices that lack
+> > AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
+> > which already performs this NULL check.
+> > 
+> The enqueue side has lock to protect the ring, but the dequeue side no lock
+> held.
+> 
+> The kfifo_get in
+> static void aer_recover_work_func(struct work_struct *work)
+> {
+> ...
+> while (kfifo_get(&aer_recover_ring, &entry)) {
+> ...
+> }
+> should be replaced by
+> kfifo_out_spinlocked()
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The design seems not to need the lock on the reader side. There is just
+one reader, which is the aer_recover_work. aer_recover_work runs
+aer_recover_work_func(). So, if we just have one reader, we do not need
+to protect the kfifo by spinlock, right?
+
+In fact, the code documents it in the aer_recover_ring_lock.
+
+	/*
+	* Mutual exclusion for writers of aer_recover_ring, reader side don't
+	* need lock, because there is only one reader and lock is not needed
+	* between reader and writer.
+	*/
+	static DEFINE_SPINLOCK(aer_recover_ring_lock);
 
