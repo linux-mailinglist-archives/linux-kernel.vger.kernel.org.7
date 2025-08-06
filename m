@@ -1,118 +1,175 @@
-Return-Path: <linux-kernel+bounces-757784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFED1B1C691
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB378B1C696
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A9417FE66
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979AF722420
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDF1244EA1;
-	Wed,  6 Aug 2025 13:02:50 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7401F28BA9C;
+	Wed,  6 Aug 2025 13:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="X2mPjNxH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CAE1E4AB;
-	Wed,  6 Aug 2025 13:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485370; cv=none; b=M9yZ6LsxqBl14R6ssii5PXPaVgMlQ7U2t1QApP5L+MjYjywABUuB0L5eSTbz4q5lA3W2fcQdDDRm7ZypB7cWK/gkzbE5dQ3YDLe6WN7UONRyxEFfgGF6PwhRxm1sRTD7QhRVw+sd5F/bkw2FiPo0V/hDgvQ2PszqXFK8eroG/Ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485370; c=relaxed/simple;
-	bh=gf94OiMkm3S/JLJrkkvV5+xjnSn/omegnQjLVx5FPCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=of4llOJvTet9Qc1vOED6GaxsvStLnJ66uKrfDoqi4NTzSAQj1aQ+CLCGqxxHbPOM/keXNMvy8C18dCx0KH6KZWzZY9MufZciJerzmkyMBqIUCC65bOozpaDFTD/FtTWLL7aKIO1ovwmTw6eL4triDHsKPz3+q1IcuslDUJT/ACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-539425e3719so669476e0c.0;
-        Wed, 06 Aug 2025 06:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754485368; x=1755090168;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=42mfrRH+zgUmkjXnbnSk1JPPaXIKn/Wu7/y2XQ/8EoM=;
-        b=NviiABYVDRU1Td8keiXCcs+AK4oj8q3V4uTobP0qL3i15uhJT1lsnsu+mONhKMJT4g
-         pZZWwyREa2XFJXV0kkBG/1Qf0XAHfMeAwOhmdRaN9R1eHTaUJzZ3VOxPmImEnNKFXXsN
-         /3E4JRdG/pIBHEVD+VimCsbG/3meS/43/JBSnbHutyYhYd+bGmL0UanuaqhrE0r6MHln
-         fdWYm7HvIZI4BEA+tPdx6DbP/kGxb9qRrVD6uvtYsDKfY2Pxeyar/Vf5VvoyNovbSi5o
-         iGmv6et7+dxdIyfssqnGPVvG/MaawEPypwtqWjDjcm6HUXgIjePY0d3gumEjG0oKzLdS
-         guww==
-X-Forwarded-Encrypted: i=1; AJvYcCUmI94l5A5a1DuBEea0CwcVaCW+TZPJbNzyQ3tWnBok+euKCO0ffNuU8sOpHgUHFD2OGrTKnBHezMSos8vk@vger.kernel.org, AJvYcCVhCCXrAiO+Gf1XJkCVIc65MQY+NxJw7aHyDQDGfC46i3/ITJoTt5CzTHd55BbnILKVkraHLP7MYhsL@vger.kernel.org, AJvYcCWct0HQ/0S2bkT6uuGNw1Whm2/CGXy3YcX1Q3NO6cil1G8KbQxRfhUtXWKHp5N4eN6JEaqtjPapiCQacfGQLvlArD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNi0H+Y59Fs0zStvWPcXzlMHnRuaclNNkOQVebEGj6iOApK+ad
-	xLvyMGQpj4G4NvVH5pPYl1j7Cbg7heK/dOjCz1+i0ropsCDZFB37vZED6yJQc/Lsv8w=
-X-Gm-Gg: ASbGncvel2hHoe8xIZmwKrxQuB97zmfnx2Zl9Ajn4n3314EKyczCnHRqBTUsV9f2sOG
-	glUcuwm05pPrwUHGpHFBVteCGvPp+mgqqF8ai2jrSxVX7A902AnZDr8RpiHahDWP7F01IipzaO2
-	tcEMNexOdDxaYjeNbaeVae7/PX1a8s3uMj8FWIFlLeaF8F4sUuFwsjDXqobu5iIzgsE4eU2+Hit
-	fdexgsa+dyo6q5cU8l7IWAellPb2bC2PqhORGxAxVlo4RgL0QmG88n5KvsoyJ+uhkznDMarZiJw
-	6UCj61cMtbSxs5SAUYfXSgQ67gnZ+uCx0WR9zPucMlrFw/Qedd+XICw2HzxWHrlXa2v66hSvbjv
-	4ydt6GlJEkiCD4H71botXNlDIMgrEMpIvYd29U/YO8KFFvxCvFyztoLERfcWp
-X-Google-Smtp-Source: AGHT+IGI18P3OOBvZe/7L+2Zms+/TssYEOTY0dDIqLN6fh06hBqlvdRyEN9duoM0fqHonQZWuCBUdQ==
-X-Received: by 2002:a05:6122:8193:b0:537:8017:b9d4 with SMTP id 71dfb90a1353d-539a04b3b9amr1001943e0c.3.1754485367331;
-        Wed, 06 Aug 2025 06:02:47 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936b15ea5sm4164023e0c.5.2025.08.06.06.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 06:02:47 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4febcc4c93dso812027137.0;
-        Wed, 06 Aug 2025 06:02:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIknj3/ugWxJ913TfJJsYRzB4w7TQGNB8O87ey4+6hBk1UxLxiMesLL24Z9p84FJbLg/kOFGbenjIW@vger.kernel.org, AJvYcCVZtK0N//8/RLZRnRHFwJEwpCgZqm5orW67aNEzTaodgj0PT8YomrNTzmkUfFmRc8fVgBIkS/F///9s7OX3Mz5L6aY=@vger.kernel.org, AJvYcCWam5AO+4HI4ALy7NTJqwUTf2SL6UAwxJMC9+eXGprna1yghl3MM7HKDS/XIEBFpCI+YdnXd8FfQLEIcQPS@vger.kernel.org
-X-Received: by 2002:a05:6102:6cf:b0:4e9:963f:286a with SMTP id
- ada2fe7eead31-503682a6f7bmr1121903137.5.1754485306273; Wed, 06 Aug 2025
- 06:01:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3854E1E4AB;
+	Wed,  6 Aug 2025 13:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754485557; cv=pass; b=M0oTumgt6r81fj67esihg0hRZ8BB8N2CK1VKJd3pNzEXw0RfKhvLKoRKP6im7zNE9CI5dmtpqKfA0x9WUgQk96ANKfHLlru06nM7zsG0BvmMX0wVBoctPU+SUNL7+4soiM69YB98PLM+dXCgiQX+n4KyZu2ekPWK8ip0dLlgxYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754485557; c=relaxed/simple;
+	bh=KCi3QWUXdTFSX8eO5dvBRbPPiB+FxOKhdrzJ47NWJyM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Mxq25JC3mW1iDX17gy0APpUhLLdbECWrH+9tJ305ibpPTUtZvOJ2voBN3nkB2VH4PwJgUubYgkRI30NeMNiLGE9B2FBE6ETaERiXcotXyfqJwbwx5vTfruqoj6YOvcT+i/fPXBanwwgrI8TIPSvGTi4ouL8NFpYQ5TwaRGwg4SM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=X2mPjNxH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754485539; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VuJ8LzEvSXcj2YseI/GgF9esaTPJECxyt6VF0fylyd6Enb0E3YLuh23ksr+7IM52t3b+06Ppk3SQfRjpR8+S26LCdMu+2EFxqFFlW1mqaS/3idAKWyaofLyw4ZF7tidtabQoR0wGR3lzY3HFlgJ/Y7v764MRrXR3PqsSN9L9uak=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754485539; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/8UD+cB4J4VFNhxsPDFFhLfzWHUaeyWLBiVmS5SXZng=; 
+	b=DZJiL25dWSHxlzOH/Ius/vpwJIhmhxtrb8QeiRoBif7eMg8VRZ1RG6vgl+jUg7X8rsV5hY7WnrgwZ3EtAgkF3AigzxTjD0MizBt9rP7q38EQ2k3VlT7ZoAv1QwAe7BzQOPrDCk2jWB5bbLRmlwLuYvN6Li8Yhk1CkOxdm4CwYps=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754485539;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=/8UD+cB4J4VFNhxsPDFFhLfzWHUaeyWLBiVmS5SXZng=;
+	b=X2mPjNxHbdefisirHOyvHunleT8nM2isBGHU5cUxOanvYzuZBMSmBMw6mQznx+kc
+	tdH8xbzqPCBunbUmMm2yp0TV9Dkm3A2LWBWYmAoFw42qn/1f2sqI6jT7ArY9GhNT1Df
+	uXFUtjM7oKX6eiFvWO1UuOOb+RN3upPlm10u1uDo=
+Received: by mx.zohomail.com with SMTPS id 1754485537501917.2930354698001;
+	Wed, 6 Aug 2025 06:05:37 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250709160819.306875-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250709160819.306875-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Aug 2025 15:01:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXisBDff0nrJOZN__oBTv=m6C-2sAJjHa2m=5gLSwQ4sw@mail.gmail.com>
-X-Gm-Features: Ac12FXwvQsjxrCrYX5rf1GblZeCx8K0jaZte6gPMdI18lRbf_LKRTU8-7HjX_2s
-Message-ID: <CAMuHMdXisBDff0nrJOZN__oBTv=m6C-2sAJjHa2m=5gLSwQ4sw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] pinctrl: renesas: rzg2l: Drop oen_read and
- oen_write callbacks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 02/16] rust: str: allow `str::Formatter` to format into
+ `&mut [u8]`.
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-2-3a262b4e2921@kernel.org>
+Date: Wed, 6 Aug 2025 10:05:22 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <37C6B308-202A-48A3-9DD2-5997E0EE73C1@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-2-3a262b4e2921@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Wed, 9 Jul 2025 at 18:08, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Remove oen_read and oen_write callbacks from rzg2l_pinctrl_data as
-> all SoCs now use the same rzg2l_read_oen() and rzg2l_write_oen()
-> functions directly.
->
-> Change rzg2l_read_oen() return type to int for proper error reporting
-> and update callers to handle errors consistently.
->
-> This simplifies the code by removing redundant callbacks and ensures
-> uniform OEN handling across all supported SoCs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Andreas,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Improve `Formatter` so that it can write to an array or slice buffer.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 19 ++++++++++++++-----
+> 1 file changed, 14 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 488b0e97004e..41af456a46c8 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -6,6 +6,7 @@
+> use crate::prelude::*;
+> use core::{
+>     fmt::{self, Write},
+> +    marker::PhantomData,
+>     ops::{self, Deref, DerefMut, Index},
+> };
+>=20
+> @@ -794,9 +795,9 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+> /// Allows formatting of [`fmt::Arguments`] into a raw buffer.
+> ///
+> /// Fails if callers attempt to write more than will fit in the =
+buffer.
+> -pub(crate) struct Formatter(RawFormatter);
+> +pub(crate) struct Formatter<'a>(RawFormatter, PhantomData<&'a mut =
+()>);
+>=20
+> -impl Formatter {
+> +impl Formatter<'_> {
+>     /// Creates a new instance of [`Formatter`] with the given buffer.
+>     ///
+>     /// # Safety
+> @@ -805,11 +806,19 @@ impl Formatter {
+>     /// for the lifetime of the returned [`Formatter`].
+>     pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self =
+{
+>         // SAFETY: The safety requirements of this function satisfy =
+those of the callee.
+> -        Self(unsafe { RawFormatter::from_buffer(buf, len) })
+> +        Self(unsafe { RawFormatter::from_buffer(buf, len) }, =
+PhantomData)
+> +    }
+> +
+> +    /// Create a new [`Self`] instance.
+> +    #[expect(dead_code)]
+> +    pub(crate) fn new<'a>(buffer: &'a mut [u8]) -> Formatter<'a> {
 
-Gr{oetje,eeting}s,
+nit: the function above this one returns Self, and this one returns =
+Formatter.
+Perhaps this one should also return Self for consistency?
+=20
+> +        // SAFETY: `buffer` is valid for writes for the entire length =
+for
+> +        // the lifetime of `Self`.
+> +        unsafe { Formatter::from_buffer(buffer.as_mut_ptr(), =
+buffer.len()) }
+>     }
+> }
+>=20
+> -impl Deref for Formatter {
+> +impl Deref for Formatter<'_> {
+>     type Target =3D RawFormatter;
+>=20
+>     fn deref(&self) -> &Self::Target {
+> @@ -817,7 +826,7 @@ fn deref(&self) -> &Self::Target {
+>     }
+> }
+>=20
+> -impl fmt::Write for Formatter {
+> +impl fmt::Write for Formatter<'_> {
+>     fn write_str(&mut self, s: &str) -> fmt::Result {
+>         self.0.write_str(s)?;
+>=20
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
 
-                        Geert
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
