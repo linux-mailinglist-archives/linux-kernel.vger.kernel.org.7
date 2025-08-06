@@ -1,130 +1,138 @@
-Return-Path: <linux-kernel+bounces-757683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1FCB1C558
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:48:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67841B1C55F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD5E3AFB69
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A303A8145
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69DE28CF43;
-	Wed,  6 Aug 2025 11:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578FF28C5A1;
+	Wed,  6 Aug 2025 11:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwef8aU7"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzqf0A5S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668A628C842;
-	Wed,  6 Aug 2025 11:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A653289E2A;
+	Wed,  6 Aug 2025 11:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754480792; cv=none; b=MTeds0zUaHeN8nJbLS9D32zM8VppTGhcgSi1B1OJNPKMf+1V+Nfd0MmmIHn2+fyzwxPdo54BeZU/sJKICPsbTdSpwSLAJQx13NJLVzb/Gy7miO7nA2ve0GaBjPCrIXLrusY1RQZ1W0SchPddAAHPbtLwghsMrOmMCelk7Mj4H2E=
+	t=1754480861; cv=none; b=gF09/ryVzfQ1//hG1SFa2Jjdo09d+n98zM2arfCIq67fkSZ2yWlJvBJu4t3hmQiBCEmMZz4xrMi8d5SzH3i8KY0XYW0yvcgi+M9zye/1u/SdelcdFe9LoA4FIRALG+oA3DDehIHyI5YyxFRxLEOGHEAT9k++2tbA80X6zJbqHaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754480792; c=relaxed/simple;
-	bh=AeTg3n2+36U1bKKUxTj3cnvi0+ymaUvU/tCDhqRpp98=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b71HUZHv2F6dpIiHKk6CxNAgSDvWltYBzkT9QfbdAVAqnHUHd8r03YLgZYSG3b0RYF6vnZddJLoDuT5OFu6ONziruZcqTwwEVOuKwIwaur+2pH61E89OEcYaIA5VQtR5hMMcp/TPMOgW2wqlNjtSJUFG/KvJoCFccmsNPSpmzo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwef8aU7; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b3220c39cffso5279053a12.0;
-        Wed, 06 Aug 2025 04:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754480789; x=1755085589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QvQ3K/B+PsFDhSqERlrqC+tEsNJAT5qOCzxTgrGl7VU=;
-        b=hwef8aU7/Y8SAbd9sEhEbTK0Tx/ladvDEoB4Bqw8PjIFzrb1Ki0MgJmDzuoL7XbJfb
-         c/83Poq/QexnE33nslK78Se2dGcVGwtXRaz0iFkHIJ7+df6fjQ+7vajnW4sW6Wh1IjQ4
-         RaIQAU5J4WIFS0cFczQNbUOtkZLhm8LISxJytCMHLA94DrlehBnb+dD1drvMKJ6k7SWY
-         6AxiUFRYP2wb6XsQQb7M6lr0coiYw0mSEjyeiOZ060jnghf5+KjXyZvZfL5pZobk7+Mj
-         wWeNeca+rAoGItvARhsXmVHGBFp5u1gX5CXimnP0bVwfnCsbGTDmkezEYfYmlONqeCXS
-         oB3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754480789; x=1755085589;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QvQ3K/B+PsFDhSqERlrqC+tEsNJAT5qOCzxTgrGl7VU=;
-        b=MnDZSM7rmE8lzOs8l9x+Gz/xJ5z5nuDPaNsyVRTeFUT7xl91ureMT2lOkovPo3YdFI
-         XaISEhIQajeWLGd+senFZgbXqfyYBRHzGAnf6OY1Z/To9wXEDQ7bunpzm78xoaFwDlEL
-         2Hpb0/mMqg2dsN3cEi5CVSgJWdf9xJQB9wA4PHBJpfbKfGoRF1pE9Ap7rdHwHovIpFm1
-         qRvgp229Uv6sjdKJi4fm+o/KBPYlzD4lSlkOuXsWP0B3WC/0ampXm4WehUZqyaIP3ooy
-         E49nKHLjwKIxld7qD/SrjxUohZ/yqjj92oiYOsGEN6/X61LyH2dxGh2Xg3TiJr0WGoA7
-         GUOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2TsvvtxDlS3RgOMovTLqbQn0gRYnp8FgfA95fNmTteEzihmI4PF9qG7zjGz0sq/5hy0o=@vger.kernel.org, AJvYcCVRzEl1jWOcKQ1eXTEmO2LLEjkgY0hKSoCzYNshRE/P2wN+f+ukF9VOEOyYnoGNDh11GkkkaCy9@vger.kernel.org, AJvYcCW0zYLoXkLG9TMl7oPI7NJljJ1VUbR5TSe/veKygzEDa1eWCY/RMev1u+4Q6xjgIO9mejQFECTZIQsUKE6U@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+lJ478rJpPpHXhoem0z3Udk9BAMAWumZxbLgSOW7XyFcMZ25
-	IjPl0EfkqghXJ+fm5lsDLy4TsF04FWeS4xeU7vb6f8/kDrrCsYWwg1uKqxB0cpzK9txm3w==
-X-Gm-Gg: ASbGnctC+bDdKCjuJIneNxf5HgNUJSPAMXYJ3BxtQbR7Z35qck2ZoF5YOJf6SjUpsYo
-	Xf6bDnIOx66/X7Rxq2c+WfHhsNOgXwnV66qGhPvxsM1IdjQ/Qbquu5/95saky2GhCV7eeVXHeXr
-	IGsL3rJvrYupT8mLndVm+b5Gz25QbrSFzwggCoCy6uZPFo4dydlxb/Z9iXVCgXuqIORqKM4Mpdz
-	06kZLZossPLUpr27ULWfVkZ4bP6UnlgHz2g5pBSay30sbzE9jBqZ8wJiQa/CSCfnEV8AlsPW/gj
-	NAGy2T1u6u78o7mDe4keXkLFL8jV+vhD4uoAb/PL728nB5rXoMmBHd/B55nq+EqMvUx8GmkTqSy
-	ca37Kx8yCeY8Yoh63tPAXwrEHYsxzvh1UO8f/qIRHtXr9b0Lfq2cuae1tg7RpnKso/FSQf4g=
-X-Google-Smtp-Source: AGHT+IGYnNnkqbBejCEa738PL68HMyteeGMcVERAvjm5Y65paJqZqI9HTxHastRunZ+7mQnAMKeaEQ==
-X-Received: by 2002:a17:902:f687:b0:240:aa0:1584 with SMTP id d9443c01a7336-242a0b8bc9fmr32866005ad.38.1754480789428;
-        Wed, 06 Aug 2025 04:46:29 -0700 (PDT)
-Received: from localhost.localdomain ([14.116.239.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f6fesm15190656b3a.26.2025.08.06.04.46.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 04:46:28 -0700 (PDT)
-From: bsdhenrymartin@gmail.com
-X-Google-Original-From: tcs_kernel@tencent.com
-To: huntazhang@tencent.com,
-	jitxie@tencent.com,
-	landonsun@tencent.com,
-	mst@redhat.com,
-	jasowang@redhat.com
-Cc: eperezma@redhat.com,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bsdhenrymartin@gmail.com,
-	Henry Martin <bsdhenryma@tencent.com>,
-	TCS Robot <tcs_robot@tencent.com>
-Subject: [PATCH v1] vhost: fix missing descriptor reclaim on copy_to_iter failure
-Date: Wed,  6 Aug 2025 19:46:20 +0800
-Message-ID: <20250806114620.2696386-1-tcs_kernel@tencent.com>
-X-Mailer: git-send-email 2.41.3
+	s=arc-20240116; t=1754480861; c=relaxed/simple;
+	bh=RheRVwO2FUpu0rsXqKFB0Lfg7HiZelCTGFoLKDQeza0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TtWRnvVAR1NPn9pLvYyVs7qzybnJCwufKiQA0OhYXkBIkcRko4hk6bRPfL3lYfNj64dG/AESwta1UmXZEjnR7eEfQ5NgBFKnAs0+7wjdVukQCOG9kJcvyxVQ/8T5hsptXi4Lr8o842nRRqqhWwEeKBnud/E8qyHYPs7ZcMNvJtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzqf0A5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7675C4CEE7;
+	Wed,  6 Aug 2025 11:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754480861;
+	bh=RheRVwO2FUpu0rsXqKFB0Lfg7HiZelCTGFoLKDQeza0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jzqf0A5SwGAQSZMDlWO9vYFStboxN1q7RIlaqsxZR1JXlCz2JJI6eObw5YnajiSqX
+	 AIvx5Xo5HJELRn8eqVYMSbRvD3gYJxStIk5JE0BWTFVhXuIqEV28h7nK0unDv9E+Zr
+	 hSgaaDQhnx/gEJ/UKuXrRk5u94+KaUyAQWicron54Vv8VlFZSWguG2GqS8chhS1RjW
+	 VlfJEAMJTMd8HNQI/g/8SHippEdfxoz4hqAWx8wrhdn71bAj9PwmD21rwUhUAaHjxY
+	 0wvQ6AhuYvU5bUNjcNLi1jC22EAB24VGiIAUkSVf1CJ6BKr1TLWca+9PzDIKjI6Ppv
+	 Nb5TmLUr/5K2A==
+Message-ID: <70bd9beb-2f7f-4132-88a4-8d81d70ac50b@kernel.org>
+Date: Wed, 6 Aug 2025 13:47:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+ djakov@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Md Sadre Alam <quic_mdalam@quicinc.com>
+References: <20250806112807.2726890-1-quic_varada@quicinc.com>
+ <20250806112807.2726890-2-quic_varada@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250806112807.2726890-2-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Henry Martin <bsdhenryma@tencent.com>
+On 06/08/2025 13:28, Varadarajan Narayanan wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> The RCG and PLL have a separate register space from the GCC.
+> Also the L3 cache has a separate pll and needs to be scaled along
+> with the CPU.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-If copy_to_iter(&hdr, sizeof(hdr), &fixup) fails, the descriptor is not
-reclaimed via vhost_discard_vq_desc(), leading to potential resource
-leaks.
+This is oddly placed. Did you use b4 that it appeared here?
 
-Fix it by explicitly calling vhost_discard_vq_desc() on failure.
+> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> [ Added interconnect related changes ]
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v6: Add 'Reviewed-by: Krzysztof Kozlowski'
+>     Drop 'clock-names'
 
-Fixes: 4c5a84421c7d ("vhost: cleanup iterator update logic")
-Reported-by: TCS Robot <tcs_robot@tencent.com>
-Signed-off-by: Henry Martin <bsdhenryma@tencent.com>
----
- drivers/vhost/net.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 6edac0c1ba9b..7b4be344b8af 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1238,6 +1238,7 @@ static void handle_rx(struct vhost_net *net)
- 					 &fixup) != sizeof(hdr)) {
- 				vq_err(vq, "Unable to write vnet_hdr "
- 				       "at addr %p\n", vq->iov->iov_base);
-+				vhost_discard_vq_desc(vq, headcount);
- 				goto out;
- 			}
- 		} else {
--- 
-2.41.3
-
+Best regards,
+Krzysztof
 
