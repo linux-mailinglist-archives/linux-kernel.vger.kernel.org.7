@@ -1,227 +1,145 @@
-Return-Path: <linux-kernel+bounces-758454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC27B1CF68
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7C1B1CF6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D761956625A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795D9566345
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FCD2777FD;
-	Wed,  6 Aug 2025 23:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0870F277C82;
+	Wed,  6 Aug 2025 23:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m7Y6pxEy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ehnrsl9h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D34238C19;
-	Wed,  6 Aug 2025 23:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754523120; cv=fail; b=jvG9FKMyJhjhwLhi/grkE7Rp9nDx5gtwAhRNx5cvfU0rVEkcyD9ISp65wgAfeExpX/4iae5iAL+w4iwRN/8I7Ql1md3GCSu9ASaLyjRzXgClcsr9x/A+6oGx2TSeBV1xi9ohsDMvLJQqHYlExmsNYgAjmUBzvQ/8mrkz2FYHsIk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754523120; c=relaxed/simple;
-	bh=tb4nYAEWH03lUzTaoTrsKhRwxls6gJhXOtrgVJhh3Tg=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lt/v7+FREXgOOSEkbKzH++rXQ2wxifjL4Gr3l8YQAWvEEI6kov7QMUQd0wcYEElK4Tac4Oi8mtZ6H4CXkGM8QlJSbevdDV3qqjN4dznXT28vT9/20ARmB7+hjxTcc3NLjYHYZ8jZuV0zM4Dt0qjNmZoKqdGwIoccsBJuEBjwywU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m7Y6pxEy; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754523119; x=1786059119;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=tb4nYAEWH03lUzTaoTrsKhRwxls6gJhXOtrgVJhh3Tg=;
-  b=m7Y6pxEycGvdoJzQQMT449szBnADtqL4z/pwf97p4MIlbl55AKZqlDhR
-   uG/we56468xCqlq8wjYF/Z+qjIz5IWoli6Yy6xNQxLqOnmCua9gF+6LUh
-   yp2lZhbng3GoPJd38lPL7+lPfuhk3/h3kC2w3GeZDWZYSWOmTsupbMG9B
-   sGZSpJ72u9YEcS5jJCKFr0nQCbPDtQ6jvRRu2rfHyxAy5dT3H2OKqaIBe
-   0nyU5Orfbkeu7HbyobqIF4+BCuvmfqg9QcNPpXEYfUHVg2a24tLiSDnAJ
-   t7XyXc6XoLTJwt8Z3psKvUmcAmbZis/w3nzs3BZVdtRgOZ0QGOMas7qi3
-   Q==;
-X-CSE-ConnectionGUID: pJbg0+blRj6pbi0nTHRiyw==
-X-CSE-MsgGUID: AgXeV0IqRIq2HYLDwIAHqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60690792"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="60690792"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:31:58 -0700
-X-CSE-ConnectionGUID: 60M4Bk3WTFqTSqay8ixtpg==
-X-CSE-MsgGUID: 6FHbsb3FQ9SXTRGOT9s4rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="165700141"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 16:31:58 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 6 Aug 2025 16:31:57 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 6 Aug 2025 16:31:57 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.64)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 6 Aug 2025 16:31:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Iwy3rFDHUm6fV6N5ubVfqC9fgyar/caq1dfTuW7U6OPvjRHTLIOLvPpRAHQjuFugLxRqatlMWJ8CX2gNBmJT2Qq2CchpDgoaFb2jp9FGO+Ovpr9PlNMCKCD6UIkda8VaPKbYoFHideyR3LCFTDtUcvGO4Y21I9OXAqt46A8cVsvE/R2IXeR5yppXH3yqlAptuWfHbO7VTTAgbwkExnTXYpe88q5G3TWTJzVRjkB5PMuPzANYKRHB0fTJHyZYo+yCPkCGRdDWnPbd4jgEIrwv42OTq/EVPYG9cxgAPOGzcTcvKPfx25Z1PH6ktYTY2cfFWzZzwHXC0qgs420WGDqDWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6tUgp7PICNKFRL2TbCFm7RHssfJUirqLKaEJvsSAxb4=;
- b=OJuLkVUEV92FbC8mcuNXmAQPlIPQN+zswyUFkO83TUxNxcXofktAzsVMfgO2atcHnPuLYmJ8vWgljBjqtAEkos5xn+Y9tOoPoU6U+2qHZ0sWEKKu1vCXRB+2lqusFUjVyxIY/4TgygJKXSfQkcTU0ZZ2xuBRZDxMS47VcYhjCCbJOK+MWnExLP34vk1MraPuJ1+StzLr77BRLDicGqGu/2tXHmHUN/gfgiFNsByInWQCX8xvS3iknpbG1Zv5Uq0S3kR2iOPRdk63NjJZKcolOrDxYao0FmKH6oJ12EUFbuVyJ2ULk1+JFiqAh3fNrqNram3cEE/FNk3aVOoOn8iWKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by IA4PR11MB9035.namprd11.prod.outlook.com (2603:10b6:208:55e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Wed, 6 Aug
- 2025 23:31:55 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%7]) with mapi id 15.20.8989.020; Wed, 6 Aug 2025
- 23:31:55 +0000
-Message-ID: <f8f1faa6-d35d-439f-b5c3-2c20f2e2bb8d@intel.com>
-Date: Wed, 6 Aug 2025 16:31:54 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] x86/cpu/intel: Fix the constant_tsc model check for
- Pentium 4
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <darwi@linutronix.de>, <peterz@infradead.org>,
-	<ravi.bangoria@amd.com>
-CC: <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20250806153433.9070-1-suchitkarunakaran@gmail.com>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20250806153433.9070-1-suchitkarunakaran@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR01CA0071.prod.exchangelabs.com (2603:10b6:a03:94::48)
- To BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D37B1FCF41;
+	Wed,  6 Aug 2025 23:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754523234; cv=none; b=MMhOK/0+zqR1DOCIug+8e2uc4Zwrn/CE2mYZvuOcd/nbWjMuzmNKU6nXJAbNvej4P8acp9LB9XevucRijyayIAnWdtcB5aQQZ9HswnzQlKweR1WhfT1/I9HAA21+JleiC848CrWIXy1LQ5cHTVC0QeNDMkBDDqheUzU1rwYbc4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754523234; c=relaxed/simple;
+	bh=LwOsg5Phvym95NqHXVw0T6HmV6LxD1ZVx665EdoVQ8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkZYGpbOa0tRWUQHFCJDPj6p0GhFhSwMQ6ebjfqr1/r6VU+BuIEFNVhYcT1CgcDOKihxFmpg3sws0dPwe7qdGTui9GU+lGJc2i1vj7P7bobRUIS1N4Xu4F8qJ8Bcx67pL7VitAQ0PlD5H1jJ1CvXScsxb7lSyJuhPTAJzFtp0rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ehnrsl9h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FFEC4CEE7;
+	Wed,  6 Aug 2025 23:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754523233;
+	bh=LwOsg5Phvym95NqHXVw0T6HmV6LxD1ZVx665EdoVQ8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ehnrsl9htemG79QSVa2feSbQMp2F1BAMTaPhyd3JIGxJ3+ahsvfHL8JaaqPngzhfl
+	 QGVicQlqvyHH3T0t05j662gEl0RGPg+8DOzteW7/TY1aVlOa8UKgEn5cqMFM0NAM0Q
+	 YGoCEk2A0q5Ha0iHuoFAwFDjW9bxgnrklHo3plw0+UXFG46N0wPDwab5wDhHurFIzf
+	 +cbILmaE8LLXL/phUseMZGODessCxSwGK9QrImp1o/q/tNVtREHyYXDjobaR9XaleO
+	 z5FtYE9OPt03qOJ3mTlOIxGlXWhc0owd+m5ICwsG2HIuIqje6RP5+zb/9HXldDM0IF
+	 5Yn1ejufUy+dQ==
+Date: Wed, 6 Aug 2025 16:33:51 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Sam James <sam@gentoo.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Pinski <quic_apinski@quicinc.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] perf: use __builtin_preserve_field_info for GCC
+ compatibility
+Message-ID: <aJPmX8xc5x0W_r0y@google.com>
+References: <fea380fb0934d039d19821bba88130e632bbfe8d.1754438581.git.sam@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|IA4PR11MB9035:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0d40aff-3d52-4af0-7790-08ddd5416e29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aTBPOURhQ1NaU3BjaG9ieHhkZytNaityVEc1OWNTanJYNkkrY2ZKU3EyTVRM?=
- =?utf-8?B?T0lYNUZGSDV3NHNmQ2pxN3FMNjF4SVpERjJCVjhYejliNHIwRS8rcVhiVEgy?=
- =?utf-8?B?WVYvOG1FT2ZORjJPZC9WVEJqanMxR1BvRlFZTDhGbW9FT3B2RG1PM1lsL0FI?=
- =?utf-8?B?NEJCeSsxM1R3T2dpMUgzMVkwLzc4K25pdUg4a1c4cmNJd1d4V0k3TGNUbUVq?=
- =?utf-8?B?NzIvMVAzeUIrQVM0eUpaZzk0TkdhdFgvTlJJclZJeHNGcE1RTktweFVvSlVL?=
- =?utf-8?B?VmRSWjMyNnVNMzBWSHRhRHhoZ01kd0xkVWZlUzFST0V3cy9WR01OQ0FrcEJ3?=
- =?utf-8?B?NERMZ3ptNC9icy9TL1pFWTBQc3JhQWlmSDl5UGhtT0xyNG0vOXJOMDRVdzBD?=
- =?utf-8?B?bDV1MkQyNlllVEhpY1BWc0J1cmxDUmFpVjRjdkR4UmsrcWsrSWRHWjh6WE93?=
- =?utf-8?B?S0RJYUxzUURxTlp4Q0tnUHF3a1B4NVM4NFNxcmJrcjVQNDlqOGhtSkNJcTNV?=
- =?utf-8?B?S2ZPZ3FSeG9uZEVWakhZZFNFdEhmcXduSzhWWU9CMWRGSUNNejVZd1pkZUJp?=
- =?utf-8?B?VExPYUhXUlpWbGIyV2NFRlB5YWFZRFpOMkhZR3ltTnRySjE3Tnh1b2pmem4v?=
- =?utf-8?B?dlAyUTBSUzJILy9hTWhuYXpHRUdhL0JUUVpzRlRFUVRtZFdxVzJuanhqRk1K?=
- =?utf-8?B?OVhIZXNsWXgvdW9HUThzZFNaRVNINGlybXJYODd0OXh4eEhodStsK1g4YWtz?=
- =?utf-8?B?VklxL21yQWNSc2dLZWpUQ2JGSmhXdEtZalhOdDlRVHN5YWtER2hsekt1MHFl?=
- =?utf-8?B?czIyQjFkMzZNdEc0VWQrTzd2KzVCRVYzM3YwNkRiQ0FPMVUvUVdsZjVWbTI3?=
- =?utf-8?B?cHFwSHNDMUJBN2N1eFdPT0dMTXY4dldDVGZ6MjJDdW9nZXBPcDJPUmtQU3V5?=
- =?utf-8?B?NG80QkJqR2YyVHRwUE9HNE04NExOLzM1ajBaRFg4K3RFNXJtTTdrckpUMDRQ?=
- =?utf-8?B?QWY4bFpPMVRvUlkvKzhLc0JQSVZUNUZmc0pMM29qRnNEN05JSVdxbXBWQkFl?=
- =?utf-8?B?YjdYbEcwcFRETTRyRzBVaFNpY1RQUjBHZU9UN3Nob082YWp5TkV2aS9iWWdx?=
- =?utf-8?B?WUVmS2xwbktTOTlHU3cxSWExb056emw2dWQzMEN3dngreEp6cXJJa0dMVVJ6?=
- =?utf-8?B?UE1RUHQwWHRWYk9LRCtPdHZxZWppN1M0VERHaGU3S0N1L21YQ3VtVjNYS1RM?=
- =?utf-8?B?Sk1KUkdicGxYdG5mUExEenkrQVMvUzh2VkQ3bVR6R1hnb3FGa0FQL3o3dlB2?=
- =?utf-8?B?eWpTYmpjMlRaOSsxVHd2RFRtZjk4d252OGl1WVVMcHQ0OUFpOTZHWlFhODZo?=
- =?utf-8?B?cEYxcEd0TWxCZmlJQjk2anJsVTNubjF3anZRc3ZHSFlEcllDdTBXMytiNVZR?=
- =?utf-8?B?bnY4aXg0Vm5DQVM5TjRPT01kM05iTjZLeVM0clQ1dDBTOHc1cTV4cmN5NzRT?=
- =?utf-8?B?dUcxZlFWTUlVVjlHQzMvWXRWTG81NHEvUTlwdmRZRVBRYjhQWmRoUmZjZmxo?=
- =?utf-8?B?ZitKYTZIR3hlZXdSZVpTaFNHeWQ0TlpnTnVKeTJBN1RhVno1aVYrRjllN3Rn?=
- =?utf-8?B?NlJZWWdveHk1OTdhaVJzd2FJbWxvWStmZWpQc2JrZFBsMkttb0wxWDhnRGVy?=
- =?utf-8?B?OWh1MmtkcStIbm4vTHRIZDA1NldHK2ZYMUI3cjczMmdPOURkdDh2cTB0VnJa?=
- =?utf-8?B?Y3hiSEhLU205VjEyVnJQazVxZ3ZGaEM3V3h1TUNUakkvdlhEYi9LZUZPaGdo?=
- =?utf-8?B?aXo2ejR6NVlOV1NWRVZmbTN3MldVQUpCM2FzK1dHMzV4blpRREQ2aGxBbXBY?=
- =?utf-8?B?eG5nRlVoZGxCLzJ6Z0w4a0VlNEJsWC9GOG9ZVjZKU3BVbjRpamlpSlJYcnZN?=
- =?utf-8?Q?n5TQXx0iO1M=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y0tKL2VqUnc3alNHQVZINERNbDRaajZFMkJMalBnTnZITWtxNUJodE9BR2ZT?=
- =?utf-8?B?R3JGOFdGQWFHNHNlTGpsQlE4TjRaTTBIc0NUNWJBZVQrOGU5ZDFUL1VVSENo?=
- =?utf-8?B?YS9JN2hiUFNGYjRtWkJjUXl2RFg1WVJLbHJHRmhJV1dCbmgzT21laTNEa21t?=
- =?utf-8?B?SlhKQ2NQME9tUnBMeWJqTjNFNE50WWFwMTFpOE1jOHNxckFCTFRobVMzaEZo?=
- =?utf-8?B?cTA5V09mUU1QU1daUHhBb1ZlYkp3VmIvdzBqYlgwMkEwYy8rRWh4UkRBNDhr?=
- =?utf-8?B?UVpGRzFXdDNBdjNFVDFIN3hJZVhSaTVQa0ZKY29BUEZhSDFmbmd5eE9xUUQv?=
- =?utf-8?B?eGJZUGFOTERFak1IcTQ1alZaYWlONE05eHZCZE1SZ1FvQ3F5MFFYa0wraEFk?=
- =?utf-8?B?R1FCMGdHeUJIVXR6bG9NVURNM2J3cnREaG5yanBPMHBzNEZYLzlBZjJqL2Jn?=
- =?utf-8?B?YytReEF6d1V0REdQUmdUVTRBUUhZSHpheEswZzZvdzNlRGhvUEY0bnZFeUJp?=
- =?utf-8?B?elQ5T1poYm1UQm52Y2xRUktuUmljZ1dNY0w2aVV4Y3Z1bk1sNzVxUCs3aFhn?=
- =?utf-8?B?aEJxeVFuWCt0ZWY4OXd3NmVoZW5rN1c3aGJ6dWlZQndVbGlTU3ZESllhWDF2?=
- =?utf-8?B?Vkd0WklEN2l6TnVaNGZJcFlIN1pkSTVHeG5sOG5FYTh4MTZJTnRHT3o3THVM?=
- =?utf-8?B?WTc4T3Vyc1RJbmVCMUFxWXFuN0xtZm1lMEpUa0d3VEp2eEFIRTdrL0dPZ096?=
- =?utf-8?B?S28xY3FiNml4WVY2YnU4S1FwK1dNL3J1cDYzMFNTZ3VNYnFvRWhEbDBGN0pE?=
- =?utf-8?B?UlBmTXNPdzJtdUx3OEg2OWsyN2l5VzF2N0tkdmRTaXNVY2c0T3c5bmdLVXZE?=
- =?utf-8?B?MHZua3QvUGFUdm5Xc2xCZGRSOTEvRE1DWlNxRDZmMEl5dTdnSWFrcnVjTnox?=
- =?utf-8?B?eE02RStsWWJDK1RDMGlCNGVRcVNLTDNETU1YOGdFNEg3ZHk3dURyUUQ2UXNS?=
- =?utf-8?B?eTZ5cC9xSWdlRE96Tk1sTWxuVTA4RVRtZDhFYnl4VWRETVNvMVdQT3orYmVI?=
- =?utf-8?B?ZVdscGwvaWdENnpsSXR6Z2FQTWEyaFRmL2p4c2h1VzB0OXFoQlVjWGdLaEs2?=
- =?utf-8?B?UXM2WmYycGJLQ2h5ZWswNjZZcHhEcUl4UW1DQmJCb0U0SVlGNEZhRXNOcG04?=
- =?utf-8?B?UmJtUi9CMS8zUUNHdGtGQmxmVDFLK1VSZnZhUW5pVjJSMHIxNXhYQWk3blFi?=
- =?utf-8?B?eE4zeEltTlg5Y3lrU0QrN1pwdlFtQ2NqNy9pVHBtVERwTmkxS0lUREFpQ3VS?=
- =?utf-8?B?YlVnVGcrSnkyenB2MVpEQ3RzYXhScE1tWjNZK0x6aHlnMzZCSU1pV0QvS3p2?=
- =?utf-8?B?SGVLTlJjVHI2Z2lDeVhKL3MzT1hXRkp2emNMdjlxZ1JSN09JbjVhQ2VUeXc5?=
- =?utf-8?B?R2YyR1RadE1EUEJDR1E0Y05SU2JjOGtUTEdXaUV4a0x0cUJ3dFR1bTBSaXhO?=
- =?utf-8?B?QVJRbFJPZlhFQVJYQWVGTVA2c2JBR3pNN294Nk1kTW1qRGx4cnBBQTYzckJF?=
- =?utf-8?B?Mlh1T3ZicnhOMmo0dkR2R0tvWG44eHR3YmdxeWI2dC80a1Jwckg3cWpIcUs2?=
- =?utf-8?B?QmxUZVNYYktxRkpqeEI3WWdMdytFdGRZU3VhaCt5MkgyTSs5dmNSd01uR0RZ?=
- =?utf-8?B?L1d5ekFkQ25KMW1FdFBHalNpWTFtQzdEamdTZWxFdktMeFVUZFhPcW9hbC9G?=
- =?utf-8?B?Z1E5L0xNd1RiUEt6SXpPZ1V1S3dhYW9DLzdRWWhxblI5TTBjRjA1OWlVaW5B?=
- =?utf-8?B?eG9OdnZrZC9vL2RsU2Z3WTU3dXdOcFMvZWJ5OGZ2L2ZyM1lNZ2FsMHppVGRj?=
- =?utf-8?B?c0hBOUQzN2pvUGprMElaYWdTTDJUUWtib09IRXVDbEZuVnZHRlgxL3JuMHdz?=
- =?utf-8?B?RWtmR0ZvMWRHQXdiS25qN2ZYWGxVVEVqZElzTi9KUWxsb2RDV0FLSDFIMVQr?=
- =?utf-8?B?YTVud3IxNEpEMld6UlJhVHg3RTBDNFBvTzNSNW55aVIweVRLSzNFcmZwQU5D?=
- =?utf-8?B?UDJ3Tlc3N3A3WjFjbE1iQUxybEJnaDgrRjVHYnVvakVSTzkyK2g3d3BaMmxh?=
- =?utf-8?Q?rTvdH4eP92IH0yTCBUogb5CVl?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0d40aff-3d52-4af0-7790-08ddd5416e29
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 23:31:55.6074
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jlRwIgvPpPijLbM+K5LKYJem/39fqbuBFvjgVeW3tAcx5ehLgBqJpgaZENghnGhs/MKZa9r6jmAbgrvS/VE9xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9035
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fea380fb0934d039d19821bba88130e632bbfe8d.1754438581.git.sam@gentoo.org>
 
-On 8/6/2025 8:34 AM, Suchit Karunakaran wrote:
-> Pentium 4's which are INTEL_P4_PRESCOTT (model 0x03) and later have
-> a constant TSC. This was correctly captured until commit fadb6f569b10
-> ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks").
+Hello,
+
+On Wed, Aug 06, 2025 at 01:03:01AM +0100, Sam James wrote:
+> When exploring building bpf_skel with GCC's BPF support, there was a
+> buid failure because of bpf_core_field_exists vs the mem_hops bitfield:
+> ```
+>  In file included from util/bpf_skel/sample_filter.bpf.c:6:
+> util/bpf_skel/sample_filter.bpf.c: In function 'perf_get_sample':
+> tools/perf/libbpf/include/bpf/bpf_core_read.h:169:42: error: cannot take address of bit-field 'mem_hops'
+>   169 | #define ___bpf_field_ref1(field)        (&(field))
+>       |                                          ^
+> tools/perf/libbpf/include/bpf/bpf_helpers.h:222:29: note: in expansion of macro '___bpf_field_ref1'
+>   222 | #define ___bpf_concat(a, b) a ## b
+>       |                             ^
+> tools/perf/libbpf/include/bpf/bpf_helpers.h:225:29: note: in expansion of macro '___bpf_concat'
+>   225 | #define ___bpf_apply(fn, n) ___bpf_concat(fn, n)
+>       |                             ^~~~~~~~~~~~~
+> tools/perf/libbpf/include/bpf/bpf_core_read.h:173:9: note: in expansion of macro '___bpf_apply'
+>   173 |         ___bpf_apply(___bpf_field_ref, ___bpf_narg(args))(args)
+>       |         ^~~~~~~~~~~~
+> tools/perf/libbpf/include/bpf/bpf_core_read.h:188:39: note: in expansion of macro '___bpf_field_ref'
+>   188 |         __builtin_preserve_field_info(___bpf_field_ref(field), BPF_FIELD_EXISTS)
+>       |                                       ^~~~~~~~~~~~~~~~
+> util/bpf_skel/sample_filter.bpf.c:167:29: note: in expansion of macro 'bpf_core_field_exists'
+>   167 |                         if (bpf_core_field_exists(data->mem_hops))
+>       |                             ^~~~~~~~~~~~~~~~~~~~~
+> cc1: error: argument is not a field access
+> ```
 > 
-> In that commit, an error was introduced while selecting the last P4
-> model (0x06) as the upper bound. Model 0x06 was transposed to
-> INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
-> simple typo, probably just copying and pasting the wrong P4 model.
+> ___bpf_field_ref1 was adapted for GCC in 12bbcf8e840f40b82b02981e96e0a5fbb0703ea9
+> but the trick added for compatibility in 3a8b8fc3174891c4c12f5766d82184a82d4b2e3e
+> isn't compatible with that as an address is used as an argument.
 > 
-> Fix the constant TSC logic to cover all later P4 models. End at
-> INTEL_P4_CEDARMILL which accurately corresponds to the last P4 model.
+> Workaround this by calling __builtin_preserve_field_info directly as the
+> bpf_core_field_exists macro does, but without the ___bpf_field_ref use.
+
+IIUC GCC doesn't support bpf_core_fields_exists() for bitfield members,
+right?  Is it gonna change in the future?
+
 > 
-> Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks")
-> Cc: <stable@vger.kernel.org> # v6.15
-> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> Link: https://gcc.gnu.org/PR121420
+> Co-authored-by: Andrew Pinski <quic_apinski@quicinc.com>
+> Signed-off-by: Sam James <sam@gentoo.org>
 > ---
+>  tools/perf/util/bpf_skel/sample_filter.bpf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/bpf_skel/sample_filter.bpf.c b/tools/perf/util/bpf_skel/sample_filter.bpf.c
+> index b195e6efeb8be..e5666d4c17228 100644
+> --- a/tools/perf/util/bpf_skel/sample_filter.bpf.c
+> +++ b/tools/perf/util/bpf_skel/sample_filter.bpf.c
+> @@ -164,7 +164,7 @@ static inline __u64 perf_get_sample(struct bpf_perf_event_data_kern *kctx,
+>  		if (entry->part == 8) {
+>  			union perf_mem_data_src___new *data = (void *)&kctx->data->data_src;
+>  
+> -			if (bpf_core_field_exists(data->mem_hops))
+> +			if (__builtin_preserve_field_info(data->mem_hops, BPF_FIELD_EXISTS))
+
+I believe those two are equivalent (maybe worth a comment?).  But it'd
+be great if BPF/clang folks can review if it's ok.
+
+Anyway, I can build it with clang.
+
+Tested-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
 
 
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+>  				return data->mem_hops;
+>  
+>  			return 0;
+> -- 
+> 2.50.1
+> 
 
