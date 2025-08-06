@@ -1,183 +1,164 @@
-Return-Path: <linux-kernel+bounces-757692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44D1B1C592
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:07:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868E0B1C594
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3CC18C0A8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2037F3AEB38
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BF2288CA4;
-	Wed,  6 Aug 2025 12:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F5B26E146;
+	Wed,  6 Aug 2025 12:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dvGZB10n"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="afPxRGHA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MXTLAyPL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F31241686;
-	Wed,  6 Aug 2025 12:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5112D241686
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754482043; cv=none; b=n+fGw4XPZGBrtvPckUP/3Pi0G2ani6TwJERbxGscPt6IMfvhxa6ZVSZjmyGJe4LGSEl1reD+B8F9emYcBPWIBRx2ykC+jS0Xv3u0H+rWDzyuwlflUzV21HlM0GQBg06jYdUvfqfRJM1sCYnCEstmDiTP/+Av7W9Kx3H7Z5+iqLg=
+	t=1754482100; cv=none; b=u48uC33VZr+xOiq4mU4CA0ERdV3hghR/JyYLkDPwk+Qyk+l8lhHjwVzEsF+d6MTm511FN329OAe0Cdf4oWyBFw8CpPB4lhQ5OZqMYZeIh0nSA4s7rQW7EdMrep9IxDz2U7hR8y79aDakzkAN5QrQqvNKY8iCktzt42I8MkoXKuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754482043; c=relaxed/simple;
-	bh=uMLS3kl181+zJ2KZz7stLl3uqTez7wEpxx0Rw9KU3xo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
-	 References:In-Reply-To; b=q95M2JEnqogJTQGH4bqMi4ba3F57YH10paUmEXnLNDycMbJqhiIy/akoGHqSrbbvCGbHAi2AdqIEkqV1mIhiZN0mWC5PG5YTjFo0MyXNA9W1YieOCmkYgGpaEG/TbzRwkEVAwZfARu8W1ftlBsTD0i3b/s5M1lRzweDghpvM2HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dvGZB10n; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0707543192;
-	Wed,  6 Aug 2025 12:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754482037;
+	s=arc-20240116; t=1754482100; c=relaxed/simple;
+	bh=nX8cnF21cavGmAToVevK6ofOqz6ek6ad1pzX6iYRwBY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Wl78ko6pGcxvMxPf3CQEE4E17tjFU4l5je2+zn3nYtVfZDqq3BcZ4WbQvQwb2h55EtiszBGWFa+brfpKqWcWn57q5aJkhPClL7W+r1F/tmOgR+Qa3k9EonruSLsDFkzBAzHOnN2P7ZuQYSabaMYB18u12QJnVF8birsxDUiUywg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=afPxRGHA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MXTLAyPL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754482097;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1ieCQkax/o1sbLwS9rDmJAq1iaG9KJ313X0JbnZ9CIE=;
-	b=dvGZB10nvi0gl9A/a/kN6PwObcOU/1bqsnUaMHFRuTpsuFjXnJNJk45EH+a47K3cUNGIWF
-	S4oBeVvM3ki78LOIrCg7Ph70Bhb4FLE5rYyPssuGr36qGfzpUpBF+hXbNvSf5P0qF/mIZk
-	HxSD2YWXAzNH+DCh0/Lj1ihPE64IJkmKIwSomK/RPrCf4wV4OKnb2ZSyU0jszFHVqOEjc/
-	GjmqfrUKUXPvm+hf2zKpAVQ3gKQuNKDpiPAV33fj2YnaL/rtGYaZXQAuw4EBFODdyDLWuL
-	ylQ4FU1NNPQ5sjVgkY+20oTNJE8VA7RMJBYUXufJ1Ts1vIcq5meGpk7c1dccpQ==
+	bh=nARV5rtz8CjMLkrWEZibNlw4GiyGVYsSYfJk4mKkeI8=;
+	b=afPxRGHAR7qQFcaHkIbzx1MAXuMdkQukeMam8nN/tgcCJfM1mDDNt/e5gyKHFQwwIdDrJa
+	HswZxyURvZrnZgEEpI7/9KNOJdlHv3lQgFQyQw1nw3xXJAtiFOeX9EVkrz5bP5r0jC/AJc
+	I4xvbvEyaAiCM2wUi22l9y1ou+7/l58VUNHKs43tdqs+qUm2ukSSNAEQGrRDQaBTi+TaHd
+	ddjFTIyRNCN80i3EBHZhqrzB6AYaGosC/MQlva6zvJg4XO0vR9CQUdPmO+U2Suvy6VrjM5
+	fFXD7kWGCei9PWbYH86P0NIPxSARF3ihJPD89caJ0LfHG+ZbTukQxz8C9EdfIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754482097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nARV5rtz8CjMLkrWEZibNlw4GiyGVYsSYfJk4mKkeI8=;
+	b=MXTLAyPLMxFpIK1fMcBTqx5v0+pFNi/6wNxA/li4uyxT6du576vBcfv56gP27D0OZnj3MT
+	/2XUulBgrE97IlCQ==
+To: Nick Hu <nick.hu@sifive.com>, anup@brainfault.org, Alexandre Ghiti
+ <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Nick Hu <nick.hu@sifive.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH v2 1/2] irqchip/riscv-imsic: Restore the IMSIC registers
+In-Reply-To: <20250806082726.8835-2-nick.hu@sifive.com>
+References: <20250806082726.8835-1-nick.hu@sifive.com>
+ <20250806082726.8835-2-nick.hu@sifive.com>
+Date: Wed, 06 Aug 2025 14:08:16 +0200
+Message-ID: <878qjwejpr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 06 Aug 2025 14:07:15 +0200
-Message-Id: <DBVBZ48R7DNR.850O5X7MLMEF@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH v12 04/10] pwm: max7360: Add MAX7360 PWM support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250722-mdb-max7360-support-v12-0-3747721a8d02@bootlin.com>
- <20250722-mdb-max7360-support-v12-4-3747721a8d02@bootlin.com>
- <2msg7e7q42ocjewv35rytdtxwrfqrndpm2y5ustqeaeodencsd@nfdufgtevxte>
-In-Reply-To: <2msg7e7q42ocjewv35rytdtxwrfqrndpm2y5ustqeaeodencsd@nfdufgtevxte>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudektdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkhffvufevofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehvedtkeffueelheektddvjefhiefhgedtudevgeehvdevlefgveetkeevleelteenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpt
- hhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri Aug 1, 2025 at 12:11 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> On Tue, Jul 22, 2025 at 06:23:48PM +0200, Mathieu Dubois-Briand wrote:
->> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
->> +					   struct pwm_device *pwm,
->> +					   const struct pwm_waveform *wf,
->> +					   void *_wfhw)
->> +{
->> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
->> +	u64 duty_steps;
->> +
->> +	/*
->> +	 * Ignore user provided values for period_length_ns and duty_offset_ns=
-:
->> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of=
- 0.
->> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/25=
-6
->> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
->> +	 */
->> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
->> +		duty_steps =3D MAX7360_PWM_MAX;
->> +	} else {
->> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX7360_=
-PWM_PERIOD_NS;
->> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
->> +			duty_steps =3D MAX7360_PWM_MAX - 1;
->> +	}
->> +
->> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
->> +	wfhw->enabled =3D !!wf->period_length_ns;
->> +
->> +	return 0;
->
-> The unconditional return 0 is wrong and testing with PWM_DEBUG enabled
-> should tell you that.
->
+On Wed, Aug 06 2025 at 16:27, Nick Hu wrote:
 
-When you say should, does that mean the current version of PWM core will
-tell me that with PWM_DEBUG enabled, or does that mean we should modify
-the code so it does show a warning? As I did not see any warning when
-specifying a wf->period_length_ns > MAX7360_PWM_PERIOD_NS, even with
-PWM_DEBUG enabled.
+"Restore the IMSIC registers" does not tell me anything useful. When are
+they restored?
 
-On the other hand, if I specify a wf->period_length_ns value below
-MAX7360_PWM_PERIOD_NS, I indeed get an error:
-pwm pwmchip0: Wrong rounding: requested 1000000/1000000 [+0], result 100000=
-0/2000000 [+0]
+> When the system woken up from the low power state, the IMSIC might be in
 
-> I think the right thing to do here is:
->
-> 	if (wf->period_length_ns > MAX7360_PWM_PERIOD_NS)
-> 		return 1;
-> 	else
-> 		return 0;
+is woken up from a low power state
 
-I can definitely do that, but now I'm a bit confused by the meaning of
-this return value: is it 0 on success, 1 if some rounding was made,
--errno on error? So I believe I should only return 0 if
-wf->period_length_ns =3D=3D MAX7360_PWM_PERIOD_NS, no?
+> the reset state.
 
-Or reading this comment on pwm_round_waveform_might_sleep(), maybe we
-only have to return 1 if some value is rounded UP. So I believe the test
-should be (wf->period_length_ns < MAX7360_PWM_PERIOD_NS).
+The real important information is:
 
->  * Returns: 0 on success, 1 if at least one value had to be rounded up or=
- a
->  * negative errno.
+   When the system enters a low power state the IMSIC might be reset,
+   but on exit nothing restores the registers, which prevents interrupt
+   delivery.
 
-This is kinda confirmed by this other comment, in the code checking the
-above returned value in __pwm_apply(), even its just typical examples:
+Or something like that.
 
-> if (err > 0)
-> 	/*
-> 	 * This signals an invalid request, typically
-> 	 * the requested period (or duty_offset) is
-> 	 * smaller than possible with the hardware.
-> 	 */
-> 	return -EINVAL;
+> Therefore adding the CPU PM callbacks to restore the IMSIC register
+> when the cpu resume from the low power state.
 
-So, yeah, sorry, but I'm really confused about what is the correct
-return value here.
+This is not a valid sentence.
 
->
-> Otherwise looks fine.
->
-> Best regards
-> Uwe
+  Solve this by registering a CPU power management notifier, which
+  restores the IMSIC on exit.
 
-Thanks again for your time.
+Or such.
 
-Best regards,
-Mathieu
+See
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
 
+for further explanation.
+
+> diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
+> index d9ae87808651..62bcbcae8bd4 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-early.c
+> +++ b/drivers/irqchip/irq-riscv-imsic-early.c
+> @@ -7,6 +7,7 @@
+>  #define pr_fmt(fmt) "riscv-imsic: " fmt
+>  #include <linux/acpi.h>
+>  #include <linux/cpu.h>
+> +#include <linux/cpu_pm.h>
+>  #include <linux/interrupt.h>
+
+This does neither apply against Linus tree nor against tip 
+
+> -static int imsic_starting_cpu(unsigned int cpu)
+> +static void imsic_restore(void)
+
+This function is used for both setup _and_ restore, so naming it
+restore() is misleading at best.
+
+>  {
+> -	/* Mark per-CPU IMSIC state as online */
+> -	imsic_state_online();
+> -
+> -	/* Enable per-CPU parent interrupt */
+> -	enable_percpu_irq(imsic_parent_irq, irq_get_trigger_type(imsic_parent_irq));
+> -
+>  	/* Setup IPIs */
+>  	imsic_ipi_starting_cpu();
+>  
+> @@ -128,6 +123,19 @@ static int imsic_starting_cpu(unsigned int cpu)
+>  
+>  	/* Enable local interrupt delivery */
+>  	imsic_local_delivery(true);
+> +}
+> +
+> +static int imsic_starting_cpu(unsigned int cpu)
+> +{
+> +	/* Mark per-CPU IMSIC state as online */
+> +	imsic_state_online();
+> +
+> +	/* Enable per-CPU parent interrupt */
+> +	enable_percpu_irq(imsic_parent_irq,
+> +			  irq_get_trigger_type(imsic_parent_irq));
+
+No line break required. You have 100 characters.
+
+> +
+> +	/* Restore the imsic reg */
+
+One IMSIC register? Can you please write proper sentences and write
+words out? This is not twitter. Also use IMSIC uppercase as the rest of
+the code does in the comments.
+
+Thanks,
+
+        tglx
 
