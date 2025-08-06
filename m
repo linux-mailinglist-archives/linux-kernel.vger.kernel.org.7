@@ -1,157 +1,117 @@
-Return-Path: <linux-kernel+bounces-757278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCE3B1C037
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:03:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE58B1C039
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5529818C08BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0180D189E7ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783AF1FBE80;
-	Wed,  6 Aug 2025 06:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770EF202997;
+	Wed,  6 Aug 2025 06:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ypjr/18T";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4RwLqGNl";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fAwcgvi4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vGWHRAY9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="J0hMM8ls"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AD01C7017
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 06:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004F32BCF5;
+	Wed,  6 Aug 2025 06:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754460230; cv=none; b=BmDRrUNAjAkqN83y698/Bq296ZKZh69uQpoY38iUSRH3IydGZca2psDrxxr6TSMQP9IxZ9SPJKmrsa3JSHS0/s3sWJLPXuQT+yUsmuGuOtTJttJNPZuG99OqO5DycCfzN0eA8sx2H63QMikC2kqNGaISgLpcgMHHgaxNALXu+aY=
+	t=1754460403; cv=none; b=VjvGB6jn05bqN6cdgm9HpiuxrnldLERNxmD9Ull/itSLWpq2nInMjtIgf55yF04CZCg0Lxo3vmZVOqPBboYzKCmNShzoj2o6OpZx/7lq/e7/7TuPcOcwmjtqg6Y0cyQrz++UGH69WejwZxhhaGyhmxPHpTaLt8x9AsMM8jkZw20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754460230; c=relaxed/simple;
-	bh=e2msHwlFYRouZRxAqe3ltQ8g6qHBzNqDLkerXhQOkpE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nsUbyv/3BrLlZ1MGuU5SRSyWiscGbu6q4g4x+vQ0uSYn+5LwkhYDSzOgrlwU2+R/pKs4Bxoy8Llu/EsqZP2HUxGWIxTotPIaGcKkwcHL/tDOGdUV5V15QcfF51l9DJo8kCKxSChTspHVJ52tY2vkEqbHFb8g6n+kB+RlHgjhdL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ypjr/18T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4RwLqGNl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fAwcgvi4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vGWHRAY9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1754460403; c=relaxed/simple;
+	bh=Uyp/hwAtSj9mNIQo3obU6b0vPzN5bqdhduVEfNnkYZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+ueK1lzqCa008WNpRm+DvSaEieU7Q0iMAseW/Qo8lmB8SNsmpFvkvcGBagC33wDNOXItIO0JrfRIOnPxOfrZFcfh55CO3hqEdurJ8FBdRdmS8hi0MsIyUXkMd3qJjw7CwauSAOdcRx5sVDhRAMCpUs+M4ft58H99Be2kmrE6ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=J0hMM8ls; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 28D5D1F393;
-	Wed,  6 Aug 2025 06:03:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754460221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bxfv06z22z9t7F;
+	Wed,  6 Aug 2025 08:06:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754460397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IjZE9wwxw6BCjITPoKrGX8JutzOLwFdJDZI4E93oHt0=;
-	b=ypjr/18TEIBYVFUKsF+2ojNqOzZLRkjmgBLl9MwqGDBulpiT5kE04sa6tfN9zGyeml0ywk
-	bEKGYMAKFp51XLrG/0yvMkU2RtXNMylYRvS75G1crutFuoMQ7HVOaPRkmVKqdyox1MIOYi
-	mK1OoxQfIYJI4GfdO7jESbZP4bZA4yI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754460221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjZE9wwxw6BCjITPoKrGX8JutzOLwFdJDZI4E93oHt0=;
-	b=4RwLqGNllWsOuX7EIgm+MTiPpxZ5oXJNbTC9Z1Dk6A/26yRCK8MFJGgNHE33wrQXJ2AJe1
-	UbIbY4C7K0DxKeBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754460220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjZE9wwxw6BCjITPoKrGX8JutzOLwFdJDZI4E93oHt0=;
-	b=fAwcgvi4UH4ffj87+nHqznEGMSTky38l4DCCERgn0VsFruiAgQF/W/Z/atjnkH+8mbvcaX
-	qCpDQgdSci8l1T+nnefOnKYtuWuHd5GOacC1CP5g+S/Z6pe61deyiV46MddEU0iHBIM12h
-	UEu8CJdfQ6iWDA3tiKbObi7hUNURonw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754460220;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjZE9wwxw6BCjITPoKrGX8JutzOLwFdJDZI4E93oHt0=;
-	b=vGWHRAY9FcNH3fjICSH5Ha0jJYtCSkBW0pp12hVwt7pbMVnDqIHxd0J/W/FdS+B+ItoctL
-	pjOizGhO+obXkyCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D60D313AB5;
-	Wed,  6 Aug 2025 06:03:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /C3PMjvwkmhdWwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 06 Aug 2025 06:03:39 +0000
-Date: Wed, 06 Aug 2025 08:03:39 +0200
-Message-ID: <87jz3hrnpg.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Joe Perches <joe@perches.com>,
-	Mark Brown <broonie@kernel.org>,
-	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: intel_hdmi: Fix off-by-one error in __hdmi_lpe_audio_probe()
-In-Reply-To: <20250805234156.60294-1-thorsten.blum@linux.dev>
-References: <20250805234156.60294-1-thorsten.blum@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=tWGw+MqcaJwpm2eZf0xXjZFgzKUTXlAI5B5hrd4w16o=;
+	b=J0hMM8lsR4+LICqo3o73kgSqqEg64JQhVbGFB8NSS6VvD4kOAkixPmObk5gQuD72kAg7jV
+	c6umHHkEbd4aFtlK6ft3ZGckGRyBq3bA2nhYbf9IhqmrgXeKvHjSV8p0HmC3S8JQaAte/Y
+	HViFLaA+q9FtaoKrEVMrHV0KDclPa06L5RtKiVHximtcU2754KlbNedcmMEmUfrQgo6D7h
+	YnveOae+SdGzrbl1ais5UN1cpnFeqKzk91UQ/KSRjPwlr70poFrqpiZFxbUDmGl7xdRv1L
+	9+2vxq8+pgANqIZhXIzIpRUmzVFmMEIyrGvrZWgySIp2FD/IO0aiHishEd4QFA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 6 Aug 2025 16:06:26 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] vfs: output mount_too_revealing() errors to fscontext
+Message-ID: <2025-08-06.1754460368-noisy-refuge-smug-prawn-butch-motel-aC7jBh@cyphar.com>
+References: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
+ <20250806-errorfc-mount-too-revealing-v1-2-536540f51560@cyphar.com>
+ <20250806054116.GE222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid,linux.dev:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
-
-On Wed, 06 Aug 2025 01:41:53 +0200,
-Thorsten Blum wrote:
-> 
-> In __hdmi_lpe_audio_probe(), strscpy() is incorrectly called with the
-> length of the source string (excluding the NUL terminator) rather than
-> the size of the destination buffer. This results in one character less
-> being copied from 'card->shortname' to 'pcm->name'.
-> 
-> Use the destination buffer size instead to ensure the card name is
-> copied correctly.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 75b1a8f9d62e ("ALSA: Convert strlcpy to strscpy when return value is unused")
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v2:
-> - Use three parameter variant of strscpy() for backporting as suggested
->   by Sakari Ailus <sakari.ailus@linux.intel.com>
-> - Link to v1: https://lore.kernel.org/lkml/20250805190809.31150-1-thorsten.blum@linux.dev/
-
-Applied now.  Thanks.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eyrb2zn4om7t3wfb"
+Content-Disposition: inline
+In-Reply-To: <20250806054116.GE222315@ZenIV>
+X-Rspamd-Queue-Id: 4bxfv06z22z9t7F
 
 
-Takashi
+--eyrb2zn4om7t3wfb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] vfs: output mount_too_revealing() errors to fscontext
+MIME-Version: 1.0
+
+On 2025-08-06, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Wed, Aug 06, 2025 at 02:48:30PM +1000, Aleksa Sarai wrote:
+>=20
+> >  	error =3D security_sb_kern_mount(sb);
+> > -	if (!error && mount_too_revealing(sb, &mnt_flags))
+> > +	if (!error && mount_too_revealing(sb, &mnt_flags)) {
+> >  		error =3D -EPERM;
+> > +		errorfcp(fc, "VFS", "Mount too revealing");
+> > +	}
+>=20
+> Hmm...  For aesthetics sake, I'd probably do logging first; otherwise
+> fine by me.
+
+Good point, I'll send a v2.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--eyrb2zn4om7t3wfb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJLw4gAKCRAol/rSt+lE
+bx0sAQCJIBvgtzUFuI6m65xu+otz0kwLnDDkqJNCVWbZQTjfIQEA6QYACdvvXHCp
+RcLUYEYnrardXGDALugPC9O3K9S9hAM=
+=Mmre
+-----END PGP SIGNATURE-----
+
+--eyrb2zn4om7t3wfb--
 
