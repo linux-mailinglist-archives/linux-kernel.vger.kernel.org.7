@@ -1,233 +1,109 @@
-Return-Path: <linux-kernel+bounces-758046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D57B1CA37
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDEFB1CA39
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12A718C47E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CBE218C4853
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9293A290D85;
-	Wed,  6 Aug 2025 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603B829B204;
+	Wed,  6 Aug 2025 17:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKenndtz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VgViXboK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A682194137;
-	Wed,  6 Aug 2025 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499AC27FB1B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754499762; cv=none; b=mKeBBvj3LcGdPPhUasElcOGkIfWkrnoYGS16iykSfs2qBCHJHjk3iW2f9Xbx0dY9bvTWuPB0hXMy45Ar+srpEMGb5Ki94AW6ZnfkHPSIIqH+g1mMh5mdriAyycuDDvew//UfywQ/N333pHSFeG33YNTwb4Z8TRLV1cm8XqWYsR0=
+	t=1754499811; cv=none; b=UoTiqBnTArjRWB6L9Ho/+U6xHjjYEY05S9SkwbEiyqkNNgBGbsiCtjefLhMVWGi70nitrYxnWMfTNLARrnWYwxQ6u5a6BjFr2ZXRbxkKJNc42zI96l/FMsHrHTCsrNAUyfa+wyEGXMeBIOJp5C8t821Qjickw9GKwHvCB2QANtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754499762; c=relaxed/simple;
-	bh=U8vJgPVZluP1iDndAeHFYCVFRdufbsSnmWNcXnt3vaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P5Ka7uk/t2APsl4vxqH00MUoN8llwast7MUeJRyJV+BR3Dj3HLreEvxX6eCMkHzzecvA4bgCZeFTmnEM1fUxQAniT0dEHHfrAMV98HcTbJ4pEoKHSsOUqLbnHh5yV16A6mivgVf5rQIZ7Cc4uv5mjYXic98EBqWFOBxYEgWQf7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKenndtz; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754499760; x=1786035760;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=U8vJgPVZluP1iDndAeHFYCVFRdufbsSnmWNcXnt3vaw=;
-  b=nKenndtzjjKh9ZOm+JtFURQfp8PfCUUOFgFsJ3/CJ/n0CHFGBvr+A4dQ
-   PgK4/a1tuj7WFWG/5Aah/cQpiByZ4d7p9YzFzIvbSY0M05aNkDJWRtzcV
-   ODAXuXyrHeTtR737DWxDi1iPGX4VpExcv+fof+sT3zTNvK8cPxXdM+1vC
-   H3aX3ZqHEhg2nCainCuNATQOx1sw7i7VU1FOoGdPWberkaeyAx08LFa/i
-   fNGVUSZ4zkOWm4mREDrhdBE8mXd87Y+xnwWE60VS6Dx2c5zq4zcabH6vH
-   RCY+Sv9D46fmV5/BxGY51u7nESec4E6vO+dEapn6nwyL4vS91AQuZ910i
-   g==;
-X-CSE-ConnectionGUID: MmfXAP9cQpa51pJPab+G1g==
-X-CSE-MsgGUID: IWk47S62SH+/purMM/qJ6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60457007"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="60457007"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:02:39 -0700
-X-CSE-ConnectionGUID: HnoXLbE0RN+LLujYDXLaLw==
-X-CSE-MsgGUID: 778Glej6QYyBcmVY+EGHvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="165167785"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:02:35 -0700
-Message-ID: <b0023322-2605-4189-83f8-d1cba64c6b39@intel.com>
-Date: Wed, 6 Aug 2025 10:02:30 -0700
+	s=arc-20240116; t=1754499811; c=relaxed/simple;
+	bh=vdcd5YalhwXfabTe89vnmf/6PjoRuQzUY38aCn303vI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PKBXouLvw6hACovtONgLdMhdR/qcN33cfJQrSPkuXlYK1wXRmDyZlWHNf9SWYIL7o/Krxr2++Kt1Zj/hvuZK03VQlf6W9hdC6alY83t4Ni6sv5syjXs0BO4c/b0Fd/xsO9i8BIFlH3+FJoBy/l7JWE0Utm9Ay8uFr/nAghLw0oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VgViXboK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754499809;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b10VcHJdtGe6RLfFmaHbkOGwrL+Hpk9E2OZqBdENHnM=;
+	b=VgViXboKdiqE1+AcJTgF5Fafejsz6u1sATQGs2TY6QkumIjH1BehhgAnkpi8nAYToGHxGQ
+	D2F+NkKp5TxFido+9U/eARtKlHmdwPjwg/foWpfemxPJpJ4cuES3YJP+cIMOj+WAx2eX+J
+	f3UOV3wHO5rc/j2zCjuDGy5zLLB+UD8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-662dq8N0Mp2KuUy0rZN1HA-1; Wed,
+ 06 Aug 2025 13:03:25 -0400
+X-MC-Unique: 662dq8N0Mp2KuUy0rZN1HA-1
+X-Mimecast-MFC-AGG-ID: 662dq8N0Mp2KuUy0rZN1HA_1754499804
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C18D5180035F;
+	Wed,  6 Aug 2025 17:03:24 +0000 (UTC)
+Received: from omen.home.shazbot.org (unknown [10.22.66.8])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5F54C1800282;
+	Wed,  6 Aug 2025 17:03:23 +0000 (UTC)
+From: Alex Williamson <alex.williamson@redhat.com>
+To: alex.williamson@redhat.com,
+	kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	eric.auger@redhat.com,
+	clg@redhat.com
+Subject: [PATCH 0/2] vfio: Deprecate fsl-mc, platform, and amba
+Date: Wed,  6 Aug 2025 11:03:10 -0600
+Message-ID: <20250806170314.3768750-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] dmaengine: idxd: Fix lockdep warnings when calling
- idxd_device_config()
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
- <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-1-4e020fbf52c1@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-1-4e020fbf52c1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+The vfio-fsl-mc driver has been orphaned since April 2024 after the
+maintainer became unresponsive.  More than a year later, the driver
+has only received community maintenance.  Let's take the next step
+towards removal by marking it obsolete/deprecated.
 
+The vfio-platform and vfio-amba drivers have an active maintainer,
+but even the maintainer has no ability to test these drivers anymore.
+The hardware itself has become obsolete and despite Eric's efforts to
+add support for new devices and presenting on the complexities of
+trying to manage and support shared resources at KVM Forum 2024, the
+state of the driver and ability to test it upstream has not advanced.
+The experiment has been useful, but seems to be reaching a conclusion.
+QEMU intends to remove vfio-platform support in the 10.2 release.
+Mark these drivers as obsolete/deprecated in the kernel as well.
 
-On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
-> idxd_device_config() should only be called with idxd->dev_lock held.
-> Hold the lock to the calls that were missing.
-> 
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Thanks,
+Alex
 
-Patch looks fine. What about doing something like this:
+Alex Williamson (2):
+  vfio/fsl-mc: Mark for removal
+  vfio/platform: Mark for removal
 
----
+ MAINTAINERS                           |  4 ++--
+ drivers/vfio/fsl-mc/Kconfig           |  5 ++++-
+ drivers/vfio/fsl-mc/vfio_fsl_mc.c     |  2 ++
+ drivers/vfio/platform/Kconfig         | 10 ++++++++--
+ drivers/vfio/platform/reset/Kconfig   |  6 +++---
+ drivers/vfio/platform/vfio_amba.c     |  2 ++
+ drivers/vfio/platform/vfio_platform.c |  2 ++
+ 7 files changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-index 5cf419fe6b46..06c182ec3c04 100644
---- a/drivers/dma/idxd/device.c
-+++ b/drivers/dma/idxd/device.c
-@@ -1103,11 +1103,15 @@ static int idxd_wqs_setup(struct idxd_device *idxd)
- 	return 0;
- }
- 
--int idxd_device_config(struct idxd_device *idxd)
-+int idxd_device_config_locked(struct idxd_device *idxd)
- {
- 	int rc;
- 
- 	lockdep_assert_held(&idxd->dev_lock);
-+
-+	if (!test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-+		return -EPERM;
-+
- 	rc = idxd_wqs_setup(idxd);
- 	if (rc < 0)
- 		return rc;
-@@ -1129,6 +1133,12 @@ int idxd_device_config(struct idxd_device *idxd)
- 	return 0;
- }
- 
-+int idxd_device_config(struct idxd_device *idxd)
-+{
-+	guard(spinlock)(&idxd->dev_lock);
-+	return idxd_device_config_locked(idxd);
-+}
-+
- static int idxd_wq_load_config(struct idxd_wq *wq)
- {
- 	struct idxd_device *idxd = wq->idxd;
-@@ -1434,11 +1444,7 @@ int idxd_drv_enable_wq(struct idxd_wq *wq)
- 		}
- 	}
- 
--	rc = 0;
--	spin_lock(&idxd->dev_lock);
--	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
--		rc = idxd_device_config(idxd);
--	spin_unlock(&idxd->dev_lock);
-+	rc = idxd_device_config(idxd);
- 	if (rc < 0) {
- 		dev_dbg(dev, "Writing wq %d config failed: %d\n", wq->id, rc);
- 		goto err;
-@@ -1521,7 +1527,7 @@ EXPORT_SYMBOL_NS_GPL(idxd_drv_disable_wq, "IDXD");
- int idxd_device_drv_probe(struct idxd_dev *idxd_dev)
- {
- 	struct idxd_device *idxd = idxd_dev_to_idxd(idxd_dev);
--	int rc = 0;
-+	int rc;
- 
- 	/*
- 	 * Device should be in disabled state for the idxd_drv to load. If it's in
-@@ -1534,10 +1540,7 @@ int idxd_device_drv_probe(struct idxd_dev *idxd_dev)
- 	}
- 
- 	/* Device configuration */
--	spin_lock(&idxd->dev_lock);
--	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
--		rc = idxd_device_config(idxd);
--	spin_unlock(&idxd->dev_lock);
-+	rc = idxd_device_config(idxd);
- 	if (rc < 0)
- 		return -ENXIO;
- 
-diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-index 74e6695881e6..f15bc2281c6b 100644
---- a/drivers/dma/idxd/idxd.h
-+++ b/drivers/dma/idxd/idxd.h
-@@ -760,6 +760,7 @@ int idxd_device_disable(struct idxd_device *idxd);
- void idxd_device_reset(struct idxd_device *idxd);
- void idxd_device_clear_state(struct idxd_device *idxd);
- int idxd_device_config(struct idxd_device *idxd);
-+int idxd_device_config_locked(struct idxd_device *idxd);
- void idxd_device_drain_pasid(struct idxd_device *idxd, int pasid);
- int idxd_device_load_config(struct idxd_device *idxd);
- int idxd_device_request_int_handle(struct idxd_device *idxd, int idx, int *handle,
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 80355d03004d..193b9282e30f 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -1091,12 +1091,10 @@ static void idxd_reset_done(struct pci_dev *pdev)
- 	idxd_device_config_restore(idxd, idxd->idxd_saved);
- 
- 	/* Re-configure IDXD device if allowed. */
--	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags)) {
--		rc = idxd_device_config(idxd);
--		if (rc < 0) {
--			dev_err(dev, "HALT: %s config fails\n", idxd_name);
--			goto out;
--		}
-+	rc = idxd_device_config(idxd);
-+	if (rc < 0) {
-+		dev_err(dev, "HALT: %s config fails\n", idxd_name);
-+		goto out;
- 	}
- 
- 	/* Bind IDXD device to driver. */
-
-
-> ---
->  drivers/dma/idxd/init.c | 2 ++
->  drivers/dma/idxd/irq.c  | 2 ++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 35bdefd3728bb851beb0f235fae7c6d71bd59239..d828d352ab008127e5e442e7072c9d5df0f2c6cf 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -1091,7 +1091,9 @@ static void idxd_reset_done(struct pci_dev *pdev)
->  
->  	/* Re-configure IDXD device if allowed. */
->  	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags)) {
-> +		spin_lock(&idxd->dev_lock);
->  		rc = idxd_device_config(idxd);
-> +		spin_unlock(&idxd->dev_lock);
->  		if (rc < 0) {
->  			dev_err(dev, "HALT: %s config fails\n", idxd_name);
->  			goto out;
-> diff --git a/drivers/dma/idxd/irq.c b/drivers/dma/idxd/irq.c
-> index 1107db3ce0a3a65246bd0d9b1f96e99c9fa3def6..74059fe43fafeb930f58db21d3824f62b095b968 100644
-> --- a/drivers/dma/idxd/irq.c
-> +++ b/drivers/dma/idxd/irq.c
-> @@ -36,7 +36,9 @@ static void idxd_device_reinit(struct work_struct *work)
->  	int rc, i;
->  
->  	idxd_device_reset(idxd);
-> +	spin_lock(&idxd->dev_lock);
->  	rc = idxd_device_config(idxd);
-> +	spin_unlock(&idxd->dev_lock);
->  	if (rc < 0)
->  		goto out;
->  
-> 
+-- 
+2.50.1
 
 
