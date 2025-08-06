@@ -1,271 +1,117 @@
-Return-Path: <linux-kernel+bounces-757928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4DCCB1C86B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A641B1C86D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E0F18C319B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2426218C3169
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89510290BCD;
-	Wed,  6 Aug 2025 15:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YDyWJ/EU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E68428FFDA;
+	Wed,  6 Aug 2025 15:12:44 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF5228B3FD;
-	Wed,  6 Aug 2025 15:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3613AC1C;
+	Wed,  6 Aug 2025 15:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493141; cv=none; b=dSL8/oWiqQ7dIIR3oMFljBmHp0NYFrI9LlY9K8dVqU7efkXnbMkf9/374eu2ZIAy9ZxhZvTMtTgt08IiupMG8LpnlndF/aEXiVyhTzsepRUEk5XbdEvPgnHuzMr4w+ZW8GBCg1WLjNJIY0Miu6PPqoYGlUVTytdXxkAVlydauRQ=
+	t=1754493163; cv=none; b=OMRsRas6uDGYxU5P+5hAgtxbrJiiv3DRdw9ilFZ8EAtbTBqaxTEQVV6lqNCf+e+Xb0fzvUz+nrbch9pOREni24kFgzvIXtT/1O4M//tszvlTEpRenu2/4SCa0ikFM/06VI+j9qMmAJqHnDIxhMUORjLZLjfUNMi81jQUa+ZUnbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493141; c=relaxed/simple;
-	bh=z0GZ2itZ2i6se6vN/uwlmzSn0GLQ1L0gKV7qLJ9Ot0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amoykVMSj9xCLiykWDvTvQhfEq8x2E/qt0glfSnsfpniNU4B6UbwdKlgvm4KJIWiB1uiYxa2IUfzCpx9CQgBeTTLRyFjmEyZ2EJFH1yUVZpDeuqv91Z/1qWzSEm7vWgpC62/ksX0JCBARgKlvmUDXTCVVY6xmPVKqwkmk8V9zZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YDyWJ/EU; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754493140; x=1786029140;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z0GZ2itZ2i6se6vN/uwlmzSn0GLQ1L0gKV7qLJ9Ot0A=;
-  b=YDyWJ/EUHadnsFym7//i1Uzp1v/i8Sp4VCu6DgGrSUiXGjhkclg59x7M
-   QyEkmpVFbpZcPWb23+2mRp7VmZuiDTBYEGS1R7x68NqvuaLbUbqAf2QoM
-   dDLZbfQW+kct0AyU+i23viehQsquKyn0wF57+0T4SkXLEFshE2hJZjVnI
-   glKenjZCuAaORB710s1u83Nuj2xMlYBRA40U4JoIoTAyFBaUvM4+A0DqK
-   F4E1mC+gQGG9jyvxVwn30/TJx/2f8J0nHqss7/gi/UPCxBoa6a7Fvo3s4
-   BEtqrbG2poyiI7ZnwXzwIW/bn1xbIB9fu3OOMSB8l+P61yCceZPnK7QDo
-   Q==;
-X-CSE-ConnectionGUID: NxwLgabBR1uWaTv/vQHhwg==
-X-CSE-MsgGUID: 3yIjg3NhS5+FctsJXBX8rQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67510058"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="67510058"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 08:12:17 -0700
-X-CSE-ConnectionGUID: BAtTOpw7R7mkNp+FPRptAA==
-X-CSE-MsgGUID: ZjHK3kmaSZej6Qvc1WOpVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="201964384"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 06 Aug 2025 08:12:13 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujfoI-0001oO-2p;
-	Wed, 06 Aug 2025 15:12:10 +0000
-Date: Wed, 6 Aug 2025 23:12:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ian Rogers <irogers@google.com>, aahringo@redhat.com,
-	Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [PATCH 5/7] tracing: Display some syscall arrays as strings
-Message-ID: <202508062215.aRvDXrBA-lkp@intel.com>
-References: <20250805193235.416382557@kernel.org>
+	s=arc-20240116; t=1754493163; c=relaxed/simple;
+	bh=84ZjDEvpUnPWXscyd+askxffizzYTapWmVAhSR6l6Qw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U/2wXGvck2rbacAuNCXgvc+BjMkVkogZXGZZEElZYfDEJjqFjUBCaEmq2rHNm7ONyZwqQ7HA/EF4RRd0QuN8n6r/56DC3wcWVk6TXm43W+jy96/Ucsf80xxDastUpR4L6FzWvvLt6nj1uZyfSfmExjElc8mJ7Ka0lhPfSWNdPU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-539360cc274so3508103e0c.3;
+        Wed, 06 Aug 2025 08:12:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754493160; x=1755097960;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8idSeLj0k9V+7xL+wl7mu5nbsyyJQs8y+AkCxOVjYl8=;
+        b=Z150O4QuP+G8q2YBtsFyiueTmzbo3bEmOXVvd4BDUcxB2PMEPVwr2sqQJlXKmmGwNM
+         4Yb2lKDVGxXI16zsgAEWcJN7wubyUpgCao0vnyn+HMJ1bgIHm5MCkWiU6USP4nleGi27
+         a4RLe6meVmeoesmhWlIyqJvQQyY3Tbcsn+6fcY+vCe6qTtSCC6v6CQwkePbjTAA+Lnyu
+         ewQl3wfmlb4M3S1XEH8OQ4ul7UJPdMMK4VmecmkIicqWyJ3fpUuBzJaWE8EDw61xqe22
+         2UInBDfLz6F71uxt/13onj+0KPGichqlpqmCJXvllIBPrnpM48kdYGtIsPy6g2aUKyVc
+         mixw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/M9KuF9NA8SLBdFjKb32lTYARPt/2cv3Ftlk4frZ+uox/mU9z21p6uJencQToKlCPn5OF0YdF1R9LgsWOiuntc8o=@vger.kernel.org, AJvYcCVt4hjpTFCm8NYuAeRC6P8uYGaPxnGpa57iG4SvD7o2DRyNKYA8t1SA3xxVHoEftHu/6tAire8eN9AT@vger.kernel.org, AJvYcCXyXZcv102Xv3V/P4xuHBcCr6cekLdnyOVQHhZdEQ4llzhJURAJLj/FmN9WDvnajJ/mg8YJTvtJpPB7Gh7F@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHiDe7W0RuNjX7hAStguSq+jFyLK+yMq1iBoM8SIAFXsFfp8Zd
+	14eN6OpmhSgC12vN/Y45zi7pUEqsnD/MVKloSJ8Q349Bm/ppkuuBjs7mpUtNbOLM96g=
+X-Gm-Gg: ASbGncvWnog//gu4rUZTJmPD7sMIu7OuPmSl4cuhGUknG9DDWAZExRQzJH3Ee4u4+7S
+	qC+a0REXseyB/rz/HcC35J66t/OMI6LLZpCysiclBftacyBsAdWpK8NeUsiniM8XbgPLXyUx1GW
+	MGkSDAjoggJ8Re7Y5TMa8sSnhUep/Ir0eX6k9OUK8P8jFdykSpEURzefmtzHu11hzyB8A/qsOCU
+	/qvTuCqRZ/0K/5Y9jpAiPGL8FjYl2K6Bw/k6Fz7u1w9f/WfCN8A5l++cUhH7Yt+a86nuzh2pmvl
+	vZNqpX45Ux2RkCpNou80r/C0ahH71pLOA6DmBV+eVVc0hFb9d3YxC7NijtH8z2BMMHik7d/0AJ8
+	IzFMk2Il3+OzhjiEhDf7k3z9fdlzHZ/U2tBeThWAZTo4oXflQc948fAyEJ5rT
+X-Google-Smtp-Source: AGHT+IHDj7n7dchNp/V15uqZkW0nb+WRcaGCQYAbhePs3WC4xG8W6mCpKWts00ilpFGzzZSk5hyS7A==
+X-Received: by 2002:a05:6122:65a3:b0:539:38a4:3bc2 with SMTP id 71dfb90a1353d-539a03a61c3mr1762071e0c.3.1754493160087;
+        Wed, 06 Aug 2025 08:12:40 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936b718e2sm4294855e0c.10.2025.08.06.08.12.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 08:12:39 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-88dc40608c1so1808942241.2;
+        Wed, 06 Aug 2025 08:12:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7djSt2GcFJ6YLvnXicj51LH1CvLP2HY5EF4zHzUQxShQ50j6e5Uec+mBXIIpNj0WW/7/RlWoVj2XuCFY/AbR7ZNc=@vger.kernel.org, AJvYcCVkcwMVON5iJLLzZMYrisCeidM0Ayp6miwgzPdVaGXo2xKYTDv6cfALFJ1nspFesTujSp0KZZTRyXYA@vger.kernel.org, AJvYcCW6w6K9Xu4R+dNhcKgHIXwvSp17STSU4HwLmJ8SMQxF+7hJpm2fdugPAgrNHg8NOdVw5oFtYpJ9WZ0aGuM5@vger.kernel.org
+X-Received: by 2002:a05:6102:1620:b0:4e5:9c40:824d with SMTP id
+ ada2fe7eead31-50373e1e391mr1744378137.16.1754493159652; Wed, 06 Aug 2025
+ 08:12:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805193235.416382557@kernel.org>
+References: <20250629220502.935717-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdVUscsQEOiVUdwszM8LsiSx4FScHC+MY8hH7B_xtQHcUA@mail.gmail.com> <99ffa8fd-d2b5-402f-8a59-59d60ab49afd@mailbox.org>
+In-Reply-To: <99ffa8fd-d2b5-402f-8a59-59d60ab49afd@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 17:12:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWJDBVJHGruL_kCssVC9n44pbYGDiZK3ks2D00NCp87Vw@mail.gmail.com>
+X-Gm-Features: Ac12FXxwMUfhcnL6gXfoRu0Fr2bYb2TG-DcGkDV_8GtDXgKEbO9nbJMpzliWA74
+Message-ID: <CAMuHMdWJDBVJHGruL_kCssVC9n44pbYGDiZK3ks2D00NCp87Vw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: renesas: Add boot phase tags marking to Renesas RZ/A1
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Steven,
+Hi Marek,
 
-kernel test robot noticed the following build errors:
+On Wed, 6 Aug 2025 at 17:06, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 8/6/25 11:11 AM, Geert Uytterhoeven wrote:
+> >> @@ -639,6 +643,7 @@ ostm0: timer@fcfec000 {
+> >>                          interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
+> >>                          clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
+> >>                          power-domains = <&cpg_clocks>;
+> >> +                       bootph-all;
+> >
+> > Please move this to the board-specific .dts files, where this node
+> > is enabled.
+> Shouldn't we rather enable OSTM0 by default , it is enabled in all RZA1
+> upstream board DTs it seems.
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.16 next-20250806]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Perhaps.  We used to have issues with enabling all timers by default,
+as some may be used by (secure) firmware or another OS.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Replace-syscall-RCU-pointer-assignment-with-READ-WRITE_ONCE/20250806-122312
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250805193235.416382557%40kernel.org
-patch subject: [PATCH 5/7] tracing: Display some syscall arrays as strings
-config: i386-randconfig-141-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062215.aRvDXrBA-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508062215.aRvDXrBA-lkp@intel.com/reproduce)
+Gr{oetje,eeting}s,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508062215.aRvDXrBA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/trace/trace_syscalls.c: In function 'check_faultable_syscall':
->> kernel/trace/trace_syscalls.c:883:14: error: '__NR_kexec_file_load' undeclared (first use in this function)
-     883 |         case __NR_kexec_file_load:
-         |              ^~~~~~~~~~~~~~~~~~~~
-   kernel/trace/trace_syscalls.c:883:14: note: each undeclared identifier is reported only once for each function it appears in
-   kernel/trace/trace_syscalls.c:957:14: error: '__NR_newfstatat' undeclared (first use in this function)
-     957 |         case __NR_newfstatat:
-         |              ^~~~~~~~~~~~~~~
-
-
-vim +/__NR_kexec_file_load +883 kernel/trace/trace_syscalls.c
-
-   851	
-   852	/*
-   853	 * For system calls that reference user space memory that can
-   854	 * be recorded into the event, set the system call meta data's user_mask
-   855	 * to the "args" index that points to the user space memory to retrieve.
-   856	 */
-   857	static void check_faultable_syscall(struct trace_event_call *call, int nr)
-   858	{
-   859		struct syscall_metadata *sys_data = call->data;
-   860	
-   861		/* Only work on entry */
-   862		if (sys_data->enter_event != call)
-   863			return;
-   864	
-   865		sys_data->user_arg_size = -1;
-   866	
-   867		switch (nr) {
-   868		/* user arg 1 with size arg at 2 */
-   869		case __NR_write:
-   870		case __NR_mq_timedsend:
-   871		case __NR_pwrite64:
-   872			sys_data->user_mask = BIT(1);
-   873			sys_data->user_arg_size = 2;
-   874			break;
-   875		/* user arg 0 with size arg at 1 as string */
-   876		case __NR_setdomainname:
-   877		case __NR_sethostname:
-   878			sys_data->user_mask = BIT(0);
-   879			sys_data->user_arg_size = 1;
-   880			sys_data->user_arg_is_str = 1;
-   881			break;
-   882		/* user arg 4 with size arg at 3 as string */
- > 883		case __NR_kexec_file_load:
-   884			sys_data->user_mask = BIT(4);
-   885			sys_data->user_arg_size = 3;
-   886			sys_data->user_arg_is_str = 1;
-   887			break;
-   888		/* user arg at position 0 */
-   889		case __NR_access:
-   890		case __NR_acct:
-   891		case __NR_add_key: /* Just _type. TODO add _description */
-   892		case __NR_chdir:
-   893		case __NR_chown:
-   894		case __NR_chmod:
-   895		case __NR_chroot:
-   896		case __NR_creat:
-   897		case __NR_delete_module:
-   898		case __NR_execve:
-   899		case __NR_fsopen:
-   900		case __NR_getxattr: /* Just pathname, TODO add name */
-   901		case __NR_lchown:
-   902		case __NR_lgetxattr: /* Just pathname, TODO add name */
-   903		case __NR_lremovexattr: /* Just pathname, TODO add name */
-   904		case __NR_link: /* Just oldname. TODO add newname */
-   905		case __NR_listxattr: /* Just pathname, TODO add list */
-   906		case __NR_llistxattr: /* Just pathname, TODO add list */
-   907		case __NR_lsetxattr: /* Just pathname, TODO add list */
-   908		case __NR_open:
-   909		case __NR_memfd_create:
-   910		case __NR_mount: /* Just dev_name, TODO add dir_name and type */
-   911		case __NR_mkdir:
-   912		case __NR_mknod:
-   913		case __NR_mq_open:
-   914		case __NR_mq_unlink:
-   915		case __NR_pivot_root: /* Just new_root, TODO add old_root */
-   916		case __NR_readlink:
-   917		case __NR_removexattr: /* Just pathname, TODO add name */
-   918		case __NR_rename: /* Just oldname. TODO add newname */
-   919		case __NR_request_key: /* Just _type. TODO add _description */
-   920		case __NR_rmdir:
-   921		case __NR_setxattr: /* Just pathname, TODO add list */
-   922		case __NR_shmdt:
-   923		case __NR_statfs:
-   924		case __NR_swapon:
-   925		case __NR_swapoff:
-   926		case __NR_symlink: /* Just oldname. TODO add newname */
-   927		case __NR_truncate:
-   928		case __NR_unlink:
-   929		case __NR_umount2:
-   930		case __NR_utime:
-   931		case __NR_utimes:
-   932			sys_data->user_mask = BIT(0);
-   933			break;
-   934		/* user arg at position 1 */
-   935		case __NR_execveat:
-   936		case __NR_faccessat:
-   937		case __NR_faccessat2:
-   938		case __NR_finit_module:
-   939		case __NR_fchmodat:
-   940		case __NR_fchmodat2:
-   941		case __NR_fchownat:
-   942		case __NR_fgetxattr:
-   943		case __NR_flistxattr:
-   944		case __NR_fsetxattr:
-   945		case __NR_fspick:
-   946		case __NR_fremovexattr:
-   947		case __NR_futimesat:
-   948		case __NR_getxattrat: /* Just pathname, TODO add name */
-   949		case __NR_inotify_add_watch:
-   950		case __NR_linkat: /* Just oldname. TODO add newname */
-   951		case __NR_listxattrat: /* Just pathname, TODO add list */
-   952		case __NR_mkdirat:
-   953		case __NR_mknodat:
-   954		case __NR_mount_setattr:
-   955		case __NR_move_mount: /* Just from_pathname, TODO add to_pathname */
-   956		case __NR_name_to_handle_at:
-   957		case __NR_newfstatat:
-   958		case __NR_openat:
-   959		case __NR_openat2:
-   960		case __NR_open_tree:
-   961		case __NR_open_tree_attr:
-   962		case __NR_readlinkat:
-   963		case __NR_renameat: /* Just oldname. TODO add newname */
-   964		case __NR_renameat2: /* Just oldname. TODO add newname */
-   965		case __NR_removexattrat: /* Just pathname, TODO add name */
-   966		case __NR_quotactl:
-   967		case __NR_setxattrat: /* Just pathname, TODO add list */
-   968		case __NR_syslog:
-   969		case __NR_symlinkat: /* Just oldname. TODO add newname */
-   970		case __NR_statx:
-   971		case __NR_unlinkat:
-   972		case __NR_utimensat:
-   973			sys_data->user_mask = BIT(1);
-   974			break;
-   975		/* user arg at position 2 */
-   976		case __NR_init_module:
-   977		case __NR_fsconfig:
-   978			sys_data->user_mask = BIT(2);
-   979			break;
-   980		/* user arg at position 4 */
-   981		case __NR_fanotify_mark:
-   982			sys_data->user_mask = BIT(4);
-   983			break;
-   984		default:
-   985			sys_data->user_mask = 0;
-   986		}
-   987	}
-   988	
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
