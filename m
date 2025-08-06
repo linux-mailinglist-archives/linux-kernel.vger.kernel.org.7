@@ -1,168 +1,96 @@
-Return-Path: <linux-kernel+bounces-757902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B31FB1C81D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:02:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AB8B1C823
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3B318C3F89
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30DE67B17AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F828FAB9;
-	Wed,  6 Aug 2025 15:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D1C28DB77;
+	Wed,  6 Aug 2025 15:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xfjbSbKw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="leIuBUx0"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE0428F958;
-	Wed,  6 Aug 2025 15:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982FF221F15;
+	Wed,  6 Aug 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492493; cv=none; b=NFdQUPjAKj0mGhdDrqTWCZeZphteE1Y8J9q2CA3csW9cTKL91Jwdv/krWjb6roQBZIsaV5cZhiLU4XXLOPkDLoU067DjrrV4udDa+Rbdk8BGes5iaOfSWdDc0CJ3A2rmZxyrOfGdlNlTTB2iI/rA6Ww+xF8huJ9qXtv3e1cWt1Y=
+	t=1754492603; cv=none; b=K5OWy/cJDjbkTmpwXjOo75TmPwHB1Hmw67xFpUF4dusCVlwz4zbc2A/gBUpHH9rWivtnANtNei7FpNerY7BudDMRcRqFM30okEegJesFGyQ+JOZVil+avoDC4IaJeGTW4/6qXz2DiHCNOY6ilYxmUprDSD5xXQhsueFucabgM0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492493; c=relaxed/simple;
-	bh=rQNIJlHRHG4C4FgpSDwf66MC/i7tJ+Xz17XeBAYuppg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXIzG8MrBnwrqAc3rSR0e8WPzpEBy54KYoUWcUJ8/AYAq67AP1flCDv0Ol/5CY/2f9fx7Br4rogUQMEx5+v32aglJnvZB/vRYqHqka/nKLpu3UtO4GpF53bMTfkjsnmTGQr8iv4xNgol3LC5rOHS/ERGGyOtFTqfrgmsu116lTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xfjbSbKw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ryoa+Ztf111PO2c6Sqsua4pClHmpT5cAMCQqHL/qJjY=; b=xfjbSbKwbPlNkpJVFJlfUR23Tw
-	i3hDZ6cZZgt2wxW38lWbp3fQuJIms89XGInfbcyuvw7m/OcPaNFemqGVxHKnz48S85CGCdaRJyxOO
-	Er8/xi7Ewr13KUYVqOkpIFuJWs7+asspOM2lOPLID72aIMFL8Cy1jW/twCYr+NigEQlk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ujfdq-003tJZ-IS; Wed, 06 Aug 2025 17:01:22 +0200
-Date: Wed, 6 Aug 2025 17:01:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, hkallweit1@gmail.com,
-	o.rempel@pengutronix.de, pabeni@redhat.com, netdev@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
-References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
- <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
- <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
- <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
- <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
+	s=arc-20240116; t=1754492603; c=relaxed/simple;
+	bh=iFu0pWsfcILZb8LZ/l3Tb7SolyPesNFvt5mBj5bdVrg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YVE6IkrtK+RGsdxiQdi+QnW1bOdKk1NCArX2eCIgIIcf58lIvqL92QFK3ACrRXXL5eAbRpcFtGAdKozUr/HHq5EsOcbMVNRcTTDyFBKqmlHk226xLS8Ayxh4ZzHDH0hVhaFS3N/CxnRsmJ1GC7ldJ6Oaw3zDV6Z3oxHNgTyjpfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=leIuBUx0; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acb5ec407b1so1025129566b.1;
+        Wed, 06 Aug 2025 08:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754492600; x=1755097400; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iFu0pWsfcILZb8LZ/l3Tb7SolyPesNFvt5mBj5bdVrg=;
+        b=leIuBUx0ZESHw6icIrWHfbMxmK7Kjs01d1nWCaIpEfZm5RvO4AlftZb9UVEMFpJcTP
+         A4qRrtZtsS15908BB74Po3MgrOi5cQqa3M+13eoeH8Mqr/QwTEwI/cRmfdtZgwdYIoWC
+         GOR/D904korZ8s2KhhlgoGBbXQzdxyEzUazcoAj1FRc0TMHuM2Bg817aaHWasxg1YqQ6
+         P1xqjmAM30EhWUgMsgRYsJqY23702N0SvT5PZKqDLIQMpZr6NpFXET8HhXy8ms4zQLSI
+         uGtI9OozeJt6ZyIHKJE+/ATmnJJxVfjfqTtvYCjZ+z5V0X8Sc0STkt+gTBABYnB5v4qy
+         O/Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754492600; x=1755097400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iFu0pWsfcILZb8LZ/l3Tb7SolyPesNFvt5mBj5bdVrg=;
+        b=aweahux/SjkacXSvV3hA3g9CPiUdk9a72soD4f7lqmiKLWVGgt0sa1S3ofQEt6xYa4
+         SPRGbiLeSTgkBjbFzCAqhrmndDRRiK+G+fw9IA7ujY87inpXbsmDIUcBCT9/4tGjg4Lj
+         HF7QMVVv20MDZGsrJrAnHCMtRB76euwY/tsZAFv92vqteCJq1qrsMIJwzWEhWTv94XQf
+         CkkDIHbFiO5onOQwi6vDCfru1EDz2ia9Fy5Cwz530vfAxCxvUOjqFQhyQ+EQH1THSI8l
+         BJFQsaP3jyU3iQNTGFN6kmiSBQw9ZWEtxnc1MyisA6FKIQHHaN+OfweZ5Ofsg/Dy0Yls
+         l4bA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+mphohSgC/U8VL8vna19BBLXW9f0kw1t2rTICx6UHGgkVzmJM5QsJLitwv9ZK2a34UMpo4yt3ynesrib/MNyO@vger.kernel.org, AJvYcCXUXhjH132oaS2RUaRoduHVAQQOu6JCWkykLhkk1ZrEahEwPFoEPAPFuyhH2q8C2guoD+LSifAqDD3swC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr6qvapkLvorO0pkwtSh3LBtfkMm/Pgjc6b3nplpSVNq0gzm3b
+	74zFodLU0iNERT6fRhj0sH54l4B1g1fAvLVBsR6/X2tNsmY1uKnr7J1sxd61jax9BVqkkq5zbPK
+	vb98qFxI+LGkwPilJIsksdQjPiB7oAPSE11U=
+X-Gm-Gg: ASbGncuAUhIrlQUy9Y9Pb6PySwGRadK3zdj6H19SdnV4hroFtTOzyNjDflehVh+GbPL
+	fIJuvqvfmaWjBKgmoRMk/EUf3JVl4hRQcEcO4TO8doiYTAGwQd8U3y6Cb83/hdcE5tIvGyGXHQ6
+	Ti0fPSxpzNAk2UMUZyy8CQLYMlEb+PsztWNq9wMhL9VwKg8tjh54HOwYzTrICFDlBqE3sm8oE7C
+	/L2gVW/
+X-Google-Smtp-Source: AGHT+IEZYVBGGdm7ifa/677lkbqiMDvUOGxIoRGGZKM7VIEDoaDXaXHDOKNKwB3i6BTpzO0ipF/19F6/rdK3/B66Aac=
+X-Received: by 2002:a17:907:1c0c:b0:af9:61b1:e180 with SMTP id
+ a640c23a62f3a-af99042fb75mr332188266b.41.1754492599426; Wed, 06 Aug 2025
+ 08:03:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
+References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250702152057.4067-1-ujwal.kundur@gmail.com>
+ <aGf_W_ZgIf63dmAz@x1.local> <CALkFLLJua-LeS+S5GpiXORA-3wNSR0DTzbh2bvU=Vg-Uzd2VFA@mail.gmail.com>
+In-Reply-To: <CALkFLLJua-LeS+S5GpiXORA-3wNSR0DTzbh2bvU=Vg-Uzd2VFA@mail.gmail.com>
+From: Ujwal Kundur <ujwal.kundur@gmail.com>
+Date: Wed, 6 Aug 2025 20:33:06 +0530
+X-Gm-Features: Ac12FXyBN9EIPVNc1w1eJK7DrGiyYTVGlwIjmM8qS18Y2yez0bBv1aehsTuPYTs
+Message-ID: <CALkFLLLoXfTNtigbcyD4RdJfY+b5Rh5-5Zta1QM9dBQxZd19cQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/1] selftests/mm/uffd: Refactor non-composite global
+ vars into struct
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, jackmanb@google.com, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> > > Reproduce step is simple:
-> > > 
-> > > 1. connect an USB to Ethernet device to USB port, I'm using "D-Link Corp.
-> > >    DUB-E100 Fast Ethernet Adapter".
+Ping -- please let me know if there's anything else I must address.
+I've ensured v6 still applies on mm-new.
 
-static const struct driver_info dlink_dub_e100_info = {
-        .description = "DLink DUB-E100 USB Ethernet",
-        .bind = ax88172_bind,
-        .status = asix_status,
-        .link_reset = ax88172_link_reset,
-        .reset = ax88172_link_reset,
-        .flags =  FLAG_ETHER | FLAG_LINK_INTR,
-        .data = 0x009f9d9f,
-};
-
-{
-        // DLink DUB-E100
-        USB_DEVICE (0x2001, 0x1a00),
-        .driver_info =  (unsigned long) &dlink_dub_e100_info,
-}, {
-
-Is this the device you have?
-
-> > > 2. the asix driver (drivers/net/usb/asix_devices.c) will bind to this USB
-> > >    device.
-> > > 
-> > > root@imx95evk:~# lsusb -t
-> > > /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ci_hdrc/1p, 480M
-> > >     |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=asix, 480M
-> > > 
-> > > 3. then the driver will create many mdio devices. 
-> > > 
-> > > root@imx95evk:/sys/bus/mdio_bus# ls -d devices/usb*
-> > > devices/usb-001:005:00  devices/usb-001:005:04  devices/usb-001:005:08  devices/usb-001:005:0c  devices/usb-001:005:10  devices/usb-001:005:14  devices/usb-001:005:18  devices/usb-001:005:1c
-> > > devices/usb-001:005:01  devices/usb-001:005:05  devices/usb-001:005:09  devices/usb-001:005:0d  devices/usb-001:005:11  devices/usb-001:005:15  devices/usb-001:005:19  devices/usb-001:005:1d
-> > > devices/usb-001:005:02  devices/usb-001:005:06  devices/usb-001:005:0a  devices/usb-001:005:0e  devices/usb-001:005:12  devices/usb-001:005:16  devices/usb-001:005:1a  devices/usb-001:005:1e
-> > > devices/usb-001:005:03  devices/usb-001:005:07  devices/usb-001:005:0b  devices/usb-001:005:0f  devices/usb-001:005:13  devices/usb-001:005:17  devices/usb-001:005:1b  devices/usb-001:005:1f
-> > 
-> > This looks broken - please check what
-> > /sys/bus/mdio_bus/devices/usb*/phy_id contains.
-> 
-> root@imx95evk:~# cat /sys/bus/mdio_bus/devices/usb*/phy_id
-> 0x00000000
-> 0x00000000
-> 0x00000000
-> 0x02430c54
-> 0x0c540c54
-> 0x0c540c54
-> 0x0c540c54
-> 0x0c540c54
-
-This suggests which version of the asix device has broken MDIO bus
-access.
-
-The first three 0x00000000 are odd. If there is no device at an
-address you expect to read 0xffffffff. phylib will ignore 0xffffffff
-and not create a device. 0x00000000 suggests something actually is on
-the bus, and is responding to reads of registers 2 and 3, but
-returning 0x0000 is not expected.
-
-And then 0x02430c54 for all other addresses suggests the device is not
-correctly handling the bus address, and is mapping the address
-parameter to a single bus address.
-
-What does asix_read_phy_addr() return?
-
-This is completely untested, not even compiled:
-
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 9b0318fb50b5..e136b25782d9 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -260,13 +260,20 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
-        dev->mii.dev = dev->net;
-        dev->mii.mdio_read = asix_mdio_read;
-        dev->mii.mdio_write = asix_mdio_write;
--       dev->mii.phy_id_mask = 0x3f;
-        dev->mii.reg_num_mask = 0x1f;
- 
-        dev->mii.phy_id = asix_read_phy_addr(dev, true);
-        if (dev->mii.phy_id < 0)
-                return dev->mii.phy_id;
- 
-+       if (dev->mii.phy_id > 31) {
-+               netdev_err(dev->net, "Invalid PHY address %d\n",
-+                          dev->mii.phy_id);
-+               return -EINVAL;
-+       }
-+
-+       dev->mii.phy_id_mask = BIT(dev->mii.phy_id);
-+
-        dev->net->netdev_ops = &ax88172_netdev_ops;
-        dev->net->ethtool_ops = &ax88172_ethtool_ops;
-        dev->net->needed_headroom = 4; /* cf asix_tx_fixup() */
-
-The idea is to limit the scanning of the bus to just the address where
-we expect the PHY to be.  See if this gives you a single PHY, and that
-PHY actually works.
-
-	Andrew
+Thanks,
+Ujwal
 
