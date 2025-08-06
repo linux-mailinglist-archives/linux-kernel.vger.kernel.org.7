@@ -1,139 +1,168 @@
-Return-Path: <linux-kernel+bounces-757897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D039B1C811
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:00:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B31FB1C81D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426913A697B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3B318C3F89
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2E28FA84;
-	Wed,  6 Aug 2025 15:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F828FAB9;
+	Wed,  6 Aug 2025 15:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfZ6uI0N"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xfjbSbKw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BF219E992;
-	Wed,  6 Aug 2025 15:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE0428F958;
+	Wed,  6 Aug 2025 15:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492430; cv=none; b=RWtLkmEEbmEZo5lsxDFhh3OD2HhJz9KKC/WQi7pwn/GbB+CexGU7YQVvZkiGshibcyUAUCdVv7BIjw36/TuFK52V40j+l96Ygz9bn/bHicFACelQROgoCoudSd77IbjHQ8fSv6ONZrNKe5EAhVUTkWzvrTJ0XuC3zyWyvlLPDjc=
+	t=1754492493; cv=none; b=NFdQUPjAKj0mGhdDrqTWCZeZphteE1Y8J9q2CA3csW9cTKL91Jwdv/krWjb6roQBZIsaV5cZhiLU4XXLOPkDLoU067DjrrV4udDa+Rbdk8BGes5iaOfSWdDc0CJ3A2rmZxyrOfGdlNlTTB2iI/rA6Ww+xF8huJ9qXtv3e1cWt1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492430; c=relaxed/simple;
-	bh=NZYlaG8r3EDBWq6FZCA9fbeaAN0MEU/bf8kd/Nrn8Jo=;
+	s=arc-20240116; t=1754492493; c=relaxed/simple;
+	bh=rQNIJlHRHG4C4FgpSDwf66MC/i7tJ+Xz17XeBAYuppg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UiOVxaWOpa0Sb7wvBOOGPUIRUsXzFhoo6ozoZOcv2W/T3ihhLpbUu26BTvnIuQsuVKUNCjlCrBCMTj9/mrqCoG3nVf/Y2m4ZnKkT+Iiy0mtX7u8VQmYlblPoed0Oh+HpHh8JEOjnnxiswGQlQDyhYw3HdarFnDgoudEwCUiz47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfZ6uI0N; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754492429; x=1786028429;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NZYlaG8r3EDBWq6FZCA9fbeaAN0MEU/bf8kd/Nrn8Jo=;
-  b=cfZ6uI0NucCy4Ukzf+CEuea+05x8WpOjgkDJSKc7kiJOAipqLvT9bmwc
-   0dgWiCWpRtkdH2ZeR/8Y1Y1HgbL37jfAdV3aLt3r9UucTQ6uMUd7rDyZZ
-   umm6wYnb2k08DrhTEAZJP/Bq3scR6hn/Pe3SB/vhLJLH6/zY1y4r3Kp3O
-   2+DoP5eAF3dgXpIb1yi78Gkp064mN4ADivnM8u1Ot6Jo+Zwrx9Os3EH5/
-   9kIj9aj7T7hXl+8p2F54wgrdNaMWcGElhHjScR9HpDm2E/Dm/UUlxGOSV
-   yEhRCCNSL3yGuZJ4Z9OCILuhCnX8QJOv8bC5Kukt3chdzDLC92NxejzJ+
-   Q==;
-X-CSE-ConnectionGUID: tOLrWuXJSXu4U44GQQ4EWw==
-X-CSE-MsgGUID: Rao2NrYHQNKrg5KcVNCYaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56777527"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56777527"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 08:00:28 -0700
-X-CSE-ConnectionGUID: EFG0lXBJRwGYYfFXh00xUQ==
-X-CSE-MsgGUID: OtciXMZiSfSxMhaLID6L1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="170168899"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 06 Aug 2025 08:00:26 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id D0CB493; Wed, 06 Aug 2025 17:00:24 +0200 (CEST)
-Date: Wed, 6 Aug 2025 17:00:24 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andreas.noever@gmail.com, michael.jamet@intel.com,
-	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
-	Sanath.S@amd.com
-Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
- dynamically
-Message-ID: <20250806150024.GF476609@black.igk.intel.com>
-References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
- <20250728064743.GS2824380@black.fi.intel.com>
- <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
- <20250806085118.GE476609@black.igk.intel.com>
- <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXIzG8MrBnwrqAc3rSR0e8WPzpEBy54KYoUWcUJ8/AYAq67AP1flCDv0Ol/5CY/2f9fx7Br4rogUQMEx5+v32aglJnvZB/vRYqHqka/nKLpu3UtO4GpF53bMTfkjsnmTGQr8iv4xNgol3LC5rOHS/ERGGyOtFTqfrgmsu116lTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xfjbSbKw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ryoa+Ztf111PO2c6Sqsua4pClHmpT5cAMCQqHL/qJjY=; b=xfjbSbKwbPlNkpJVFJlfUR23Tw
+	i3hDZ6cZZgt2wxW38lWbp3fQuJIms89XGInfbcyuvw7m/OcPaNFemqGVxHKnz48S85CGCdaRJyxOO
+	Er8/xi7Ewr13KUYVqOkpIFuJWs7+asspOM2lOPLID72aIMFL8Cy1jW/twCYr+NigEQlk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ujfdq-003tJZ-IS; Wed, 06 Aug 2025 17:01:22 +0200
+Date: Wed, 6 Aug 2025 17:01:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, hkallweit1@gmail.com,
+	o.rempel@pengutronix.de, pabeni@redhat.com, netdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
+ phy_polling_mode()
+Message-ID: <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
+References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
+ <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
+ <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
+ <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
+ <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
+In-Reply-To: <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
 
-On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
-> On 8/6/2025 3:51 AM, Mika Westerberg wrote:
-> > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
+> > > Reproduce step is simple:
 > > > 
+> > > 1. connect an USB to Ethernet device to USB port, I'm using "D-Link Corp.
+> > >    DUB-E100 Fast Ethernet Adapter".
+
+static const struct driver_info dlink_dub_e100_info = {
+        .description = "DLink DUB-E100 USB Ethernet",
+        .bind = ax88172_bind,
+        .status = asix_status,
+        .link_reset = ax88172_link_reset,
+        .reset = ax88172_link_reset,
+        .flags =  FLAG_ETHER | FLAG_LINK_INTR,
+        .data = 0x009f9d9f,
+};
+
+{
+        // DLink DUB-E100
+        USB_DEVICE (0x2001, 0x1a00),
+        .driver_info =  (unsigned long) &dlink_dub_e100_info,
+}, {
+
+Is this the device you have?
+
+> > > 2. the asix driver (drivers/net/usb/asix_devices.c) will bind to this USB
+> > >    device.
 > > > 
-> > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
-> > > > Hi,
-> > > > 
-> > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
-> > > > > This patch series aims to update vendor properties for XDomain
-> > > > > dynamically for vendors like AMD, Intel and ASMedia.
-> > > > 
-> > > > The XDomain properties pretty much describe "software" not the underlying
-> > > > hardware so I don't understand why this is needed? We could have some USB
-> > > > IF registered Linux specific ID there but I don't see why this matters at
-> > > > all.
+> > > root@imx95evk:~# lsusb -t
+> > > /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ci_hdrc/1p, 480M
+> > >     |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=asix, 480M
 > > > 
-> > > Currently, it is showing up as "Intel" on AMD host controllers during
-> > > inter-domain connection. I suppose an alternative is to just call it "Linux"
-> > > or "Linux Connection Manager" to ensure we accurately represent the
-> > > connections across different systems.
+> > > 3. then the driver will create many mdio devices. 
 > > > 
-> > > I appreciate your guidance on this and suggestions you might have.
+> > > root@imx95evk:/sys/bus/mdio_bus# ls -d devices/usb*
+> > > devices/usb-001:005:00  devices/usb-001:005:04  devices/usb-001:005:08  devices/usb-001:005:0c  devices/usb-001:005:10  devices/usb-001:005:14  devices/usb-001:005:18  devices/usb-001:005:1c
+> > > devices/usb-001:005:01  devices/usb-001:005:05  devices/usb-001:005:09  devices/usb-001:005:0d  devices/usb-001:005:11  devices/usb-001:005:15  devices/usb-001:005:19  devices/usb-001:005:1d
+> > > devices/usb-001:005:02  devices/usb-001:005:06  devices/usb-001:005:0a  devices/usb-001:005:0e  devices/usb-001:005:12  devices/usb-001:005:16  devices/usb-001:005:1a  devices/usb-001:005:1e
+> > > devices/usb-001:005:03  devices/usb-001:005:07  devices/usb-001:005:0b  devices/usb-001:005:0f  devices/usb-001:005:13  devices/usb-001:005:17  devices/usb-001:005:1b  devices/usb-001:005:1f
 > > 
-> > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
-> > though but I don't think that matters. AFAIK we have other "donated" IDs in
-> > use in Linux. Let me check on our side if that's okay.
+> > This looks broken - please check what
+> > /sys/bus/mdio_bus/devices/usb*/phy_id contains.
 > 
-> Having looked through this discussion I personally like "Linux" for this
-> string too.
-> 
-> As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
-> Would it make sense to use that?
+> root@imx95evk:~# cat /sys/bus/mdio_bus/devices/usb*/phy_id
+> 0x00000000
+> 0x00000000
+> 0x00000000
+> 0x02430c54
+> 0x0c540c54
+> 0x0c540c54
+> 0x0c540c54
+> 0x0c540c54
 
-AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
-here at least:
+This suggests which version of the asix device has broken MDIO bus
+access.
 
-  https://www.usb.org/members
+The first three 0x00000000 are odd. If there is no device at an
+address you expect to read 0xffffffff. phylib will ignore 0xffffffff
+and not create a device. 0x00000000 suggests something actually is on
+the bus, and is responding to reads of registers 2 and 3, but
+returning 0x0000 is not expected.
 
-If it really matters we can sure register one.
+And then 0x02430c54 for all other addresses suggests the device is not
+correctly handling the bus address, and is mapping the address
+parameter to a single bus address.
 
-> I was also thinking about the device ID, should we consider encoding the
-> VERSION, PATCHLEVEL, and SUBLEVEL into the ID?  The reason I'm thinking
-> about that is let's say there is some bug found in the CM on Linux and
-> another implementation decides to work around it.  We get wind of it and fix
-> the bug but in Linux but now what about the other end?  If we give them a
-> hint on the version by putting it in the device ID they can potentially key
-> off that to decide to tear out the workaround.
+What does asix_read_phy_addr() return?
 
-I'm not sure that's a good idea. Then we expose also all the known
-vulnerabilities.
+This is completely untested, not even compiled:
+
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 9b0318fb50b5..e136b25782d9 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -260,13 +260,20 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
+        dev->mii.dev = dev->net;
+        dev->mii.mdio_read = asix_mdio_read;
+        dev->mii.mdio_write = asix_mdio_write;
+-       dev->mii.phy_id_mask = 0x3f;
+        dev->mii.reg_num_mask = 0x1f;
+ 
+        dev->mii.phy_id = asix_read_phy_addr(dev, true);
+        if (dev->mii.phy_id < 0)
+                return dev->mii.phy_id;
+ 
++       if (dev->mii.phy_id > 31) {
++               netdev_err(dev->net, "Invalid PHY address %d\n",
++                          dev->mii.phy_id);
++               return -EINVAL;
++       }
++
++       dev->mii.phy_id_mask = BIT(dev->mii.phy_id);
++
+        dev->net->netdev_ops = &ax88172_netdev_ops;
+        dev->net->ethtool_ops = &ax88172_ethtool_ops;
+        dev->net->needed_headroom = 4; /* cf asix_tx_fixup() */
+
+The idea is to limit the scanning of the bus to just the address where
+we expect the PHY to be.  See if this gives you a single PHY, and that
+PHY actually works.
+
+	Andrew
 
