@@ -1,248 +1,223 @@
-Return-Path: <linux-kernel+bounces-757875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFFEB1C7BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBF7B1C7CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC14D18C18AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAEBD62238F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916F028D8E9;
-	Wed,  6 Aug 2025 14:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HUiBI2+G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74F128EA4B;
+	Wed,  6 Aug 2025 14:41:03 +0000 (UTC)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB3F215F4A;
-	Wed,  6 Aug 2025 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957E228C5BF;
+	Wed,  6 Aug 2025 14:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491207; cv=none; b=VqeONS2O1Yh/OpxipQqoI+rCJUkkY9WCnwH6MchRMxnzUSbEvunGE4y2JArzF0dgEXhn1Pz0QmAMYqXmAOKscvwWO4GwND51IAHiN+/UjC/48XzZrrbWQ+j/mQzen/yN6h8/VvJr7BMD7+4x+Axkb6LwiMN3jbHNmd4ZzvgKGD4=
+	t=1754491263; cv=none; b=baDMbQ/j3vd3WfJaXFVCnN2gpyEe4QnXDRVuE+gXa8YutADcjL/3Alg4v0teyRUdVu06WvrjT8FOESQMBNB+f8BKZbRNEnjKQ0CcqPOcDWKjz0uS0yl32oxIvzZHkKsGOmsHpahfobcUGPJcTegP31bLjO+xnOLXi+KHtO4IXQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491207; c=relaxed/simple;
-	bh=aLheObBNOVd5wWcfX/UlmeZiWYAW9l+I+b/18Y/UWsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuYgWD5AsC/tOoecV/T202QcV6MQsKe+XV7EJVGGVfXHeMzjHn4uH0sLMOHDGf5r0yYN7rzgHGSxrP2MrjFqKFrMj2/1i1P511OKujrX8KDgJH7Ik6plTIk4nLEIVQfmewyMKrmrgHB0ZkD5x2qtruMRYbm6Iqa3TI58LkVtaaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HUiBI2+G; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754491205; x=1786027205;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aLheObBNOVd5wWcfX/UlmeZiWYAW9l+I+b/18Y/UWsk=;
-  b=HUiBI2+GTtL5ii4QgrJl1fixrXv4ZSM8MoKJAgt0DhJemkSflUOAVlzx
-   Ac790g17R8dltPS1plVJTGNYTQSNje/zcOR1dFaF56mqdfJWXy2WehOGG
-   VwzNjwQxrROslM/M4fToNowlqec+YYKNIVd4Z0R01uYhxbev41Jgr/9Pc
-   jNCZk846/4Pgybjb+yGPmJH2A3bs8u4bAftRMIPOyiOAeYAE2qu2lvCd/
-   u0nMtGdUI8yFlhzs9zrENHGcYianQAmmEtN7yuGTARIWnCszABcbseoFA
-   f5tOf/Gz9pqubY1GJlQuEaB5Ffnn6C6QotlkOz+KJKCNUxApePcGpaDIj
-   Q==;
-X-CSE-ConnectionGUID: oj9t9v83RgWRNJarMe+YPg==
-X-CSE-MsgGUID: mrjFQZDJQXqzSUGh4qjm8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56889862"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56889862"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 07:40:04 -0700
-X-CSE-ConnectionGUID: 5NGPTsi5QaGcZR7dOLyoKw==
-X-CSE-MsgGUID: shcTRVviTBSO32SyPM8lpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="188461741"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 06 Aug 2025 07:40:01 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujfJ3-0001m2-0O;
-	Wed, 06 Aug 2025 14:39:54 +0000
-Date: Wed, 6 Aug 2025 22:39:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ian Rogers <irogers@google.com>, aahringo@redhat.com,
-	Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [PATCH 3/7] tracing: Have syscall trace events read user space
- string
-Message-ID: <202508062230.puMRaDdE-lkp@intel.com>
-References: <20250805193235.080757106@kernel.org>
+	s=arc-20240116; t=1754491263; c=relaxed/simple;
+	bh=DUrtWE8w60cUrEBMPI4sXJxMrkOvHiZk/N1yViMIaRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bm/k4+Eorf3rYhOhHD/a3GYboJwfalyesop2hr4vDWe/6kMiaWcPMRYVB+AQ/l6ANYOA09/JyxNyDTEOzjf/t4yfdWMZWBelWuYSuNI+0JrGYXh3yNW56kb66gHva2h5fx7K4iPwzisuWPkUWDxI8eUCAyh1PYyz7q6++Zek+98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31ec291f442so1783a91.1;
+        Wed, 06 Aug 2025 07:41:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754491261; x=1755096061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F08hZsevekdSZCocnoE12EBoNB3pI1zChMqieF5ghrY=;
+        b=qImesxpjaINqGNTOEXip4cFnz8+RMi+Qd9bKN8+0l0CocMbAYh2ZGqS0HYgFhIxYuP
+         w1n97/jF3UcFNYh2B++DxeQlz62xUTaw2c5525ael8hEte2P5CzsqDbOafo6E22vzP/c
+         sb9kdikX33y5t7XFAugI4ooz1NFu8Pk22rez3ysE1wKNzX5lIb0DLOwjbfqxguokSsvs
+         4CuWCXgWDGrJDxT3bzA2jzKu7qRtOmgYJB+OoIszfHtttnl9mP1mW1OGWTaFmJr7DPxf
+         aBawnQx0T9V2LmQyb0C6QpemHp869yYy/dFqv7uNg6NP/vWwfAgaY3HvWQNp8MT4ukT8
+         ThIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUleB1YOb08Mza8yUOnS0Am+RisyGjWbpc5SxRb/UiwOU3lBPNwWadJx/aYy3dK/Pv5E713Zohk82wa@vger.kernel.org, AJvYcCWrpOkmrrs+kf9/kuBCogmoMgcUBS5EXJHfNoRbuaSz0wrZPtq4YrYEA5Ym4Vr2OQpdmaQONV/eHoppuU3x@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGQxpNQbEBoK8vz8KyFaxvEkfpPMeqru3YTBOL4odmifBPcFpN
+	0CAh2L1tdQVRZhQ8TOT7fCuCuSOasOYDtGPGtavEovWJ1BXileKcpnt9
+X-Gm-Gg: ASbGnctCVERudfZ2qnUtNPIzFCsexdYPZTfmRP67FbYV8aw5FVAZfkyCmd4sLYn0uzm
+	2wfqbWmH5tKjWCd1hDP/eh6RdFOy+gdJnm2R10xWEEoGqWtr34AvTAAhJef7pHuMv0lypxcXzTn
+	miRxcGHDisezxIqITtHVr/MkWE85+i0bRQuKxXDYX3yaYE0/YZiJyIfgZNH0b9n3oVpTIjPg4U1
+	lXLsbPMlXNkXeCBMqW5tpNC6JlNgC77wyBePINy2wUI0avwb3VL4k9Ms/nIQ2lfyx1HMSiXh1iG
+	hHfrGUKH4TD3yUfiRD7YCdtOM6VAv6wAvzXoX3J0wCxepPIBAdZFPcSn4d8ywJPaTenviah2Due
+	5IWJizdwHpT7n
+X-Google-Smtp-Source: AGHT+IFmn5Bk81y6ZMDAcgo+VIHfOH12f8k0LVa12jVhmpe0TppCkQyp0W/7neMNg32Rmj5yWh4qoQ==
+X-Received: by 2002:a17:90b:1c0d:b0:312:e9d:4001 with SMTP id 98e67ed59e1d1-32166d1ed4amr1870004a91.8.1754491260892;
+        Wed, 06 Aug 2025 07:41:00 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee4f42sm20025929a91.23.2025.08.06.07.40.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 07:41:00 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: Stefan Metzmacher <metze@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>,
+	notselwyn@pwning.tech
+Subject: [PATCH v3] ksmbd: add kcov remote coverage support via ksmbd_conn
+Date: Wed,  6 Aug 2025 14:39:56 +0000
+Message-ID: <20250806143955.122816-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805193235.080757106@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Steven,
+KSMBD processes SMB requests on per-connection threads and then hands
+off work items to a kworker pool for actual command processing by
+handle_ksmbd_work(). Because each connection may enqueue multiple
+struct ksmbd_work instances, attaching the kcov handle to the work
+itself is not sufficient: we need a stable, per-connection handle.
 
-kernel test robot noticed the following build errors:
+Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
+and initialize it when the connection is set up. In both
+ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
+and handle_ksmbd_work() which receives a struct ksmbd_work*, start
+kcov_remote with the per-connection handle before processing and stop
+it afterward. This ensures coverage collection remains active across
+the entire asynchronous path of each SMB request.
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.16 next-20250806]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The kcov context tied to the connection itself, correctly supporting
+multiple outstanding work items per connection.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Replace-syscall-RCU-pointer-assignment-with-READ-WRITE_ONCE/20250806-122312
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250805193235.080757106%40kernel.org
-patch subject: [PATCH 3/7] tracing: Have syscall trace events read user space string
-config: parisc-randconfig-r071-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062230.puMRaDdE-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508062230.puMRaDdE-lkp@intel.com/reproduce)
+In patch v2, I added the missing initialization of kcov_handle. In v3,
+I fixed an kcov_hanlde argument was previously unused on
+ksmbd_conn_set_kcov_handle().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508062230.puMRaDdE-lkp@intel.com/
+The related work for syzkaller support is currently being developed
+in the following GitHub PR:
+Link: https://github.com/google/syzkaller/pull/5524
 
-All errors (new ones prefixed by >>):
+Based on earlier work by Lau.
+Link: https://pwning.tech/ksmbd-syzkaller/
 
-   kernel/trace/trace_syscalls.c: In function 'check_faultable_syscall':
->> kernel/trace/trace_syscalls.c:886:14: error: '__NR_newfstatat' undeclared (first use in this function); did you mean 'sys_newfstatat'?
-     886 |         case __NR_newfstatat:
-         |              ^~~~~~~~~~~~~~~
-         |              sys_newfstatat
-   kernel/trace/trace_syscalls.c:886:14: note: each undeclared identifier is reported only once for each function it appears in
+Cc: linux-cifs@vger.kernel.org
+Cc: notselwyn@pwning.tech
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+---
+ fs/smb/server/connection.c |  7 ++++++-
+ fs/smb/server/connection.h | 22 ++++++++++++++++++++++
+ fs/smb/server/server.c     |  4 ++++
+ 3 files changed, 32 insertions(+), 1 deletion(-)
 
-
-vim +886 kernel/trace/trace_syscalls.c
-
-   802	
-   803	/*
-   804	 * For system calls that reference user space memory that can
-   805	 * be recorded into the event, set the system call meta data's user_mask
-   806	 * to the "args" index that points to the user space memory to retrieve.
-   807	 */
-   808	static void check_faultable_syscall(struct trace_event_call *call, int nr)
-   809	{
-   810		struct syscall_metadata *sys_data = call->data;
-   811	
-   812		/* Only work on entry */
-   813		if (sys_data->enter_event != call)
-   814			return;
-   815	
-   816		switch (nr) {
-   817		/* user arg at position 0 */
-   818		case __NR_access:
-   819		case __NR_acct:
-   820		case __NR_add_key: /* Just _type. TODO add _description */
-   821		case __NR_chdir:
-   822		case __NR_chown:
-   823		case __NR_chmod:
-   824		case __NR_chroot:
-   825		case __NR_creat:
-   826		case __NR_delete_module:
-   827		case __NR_execve:
-   828		case __NR_fsopen:
-   829		case __NR_getxattr: /* Just pathname, TODO add name */
-   830		case __NR_lchown:
-   831		case __NR_lgetxattr: /* Just pathname, TODO add name */
-   832		case __NR_lremovexattr: /* Just pathname, TODO add name */
-   833		case __NR_link: /* Just oldname. TODO add newname */
-   834		case __NR_listxattr: /* Just pathname, TODO add list */
-   835		case __NR_llistxattr: /* Just pathname, TODO add list */
-   836		case __NR_lsetxattr: /* Just pathname, TODO add list */
-   837		case __NR_open:
-   838		case __NR_memfd_create:
-   839		case __NR_mount: /* Just dev_name, TODO add dir_name and type */
-   840		case __NR_mkdir:
-   841		case __NR_mknod:
-   842		case __NR_mq_open:
-   843		case __NR_mq_unlink:
-   844		case __NR_pivot_root: /* Just new_root, TODO add old_root */
-   845		case __NR_readlink:
-   846		case __NR_removexattr: /* Just pathname, TODO add name */
-   847		case __NR_rename: /* Just oldname. TODO add newname */
-   848		case __NR_request_key: /* Just _type. TODO add _description */
-   849		case __NR_rmdir:
-   850		case __NR_setxattr: /* Just pathname, TODO add list */
-   851		case __NR_shmdt:
-   852		case __NR_statfs:
-   853		case __NR_swapon:
-   854		case __NR_swapoff:
-   855		case __NR_symlink: /* Just oldname. TODO add newname */
-   856		case __NR_truncate:
-   857		case __NR_unlink:
-   858		case __NR_umount2:
-   859		case __NR_utime:
-   860		case __NR_utimes:
-   861			sys_data->user_mask = BIT(0);
-   862			break;
-   863		/* user arg at position 1 */
-   864		case __NR_execveat:
-   865		case __NR_faccessat:
-   866		case __NR_faccessat2:
-   867		case __NR_finit_module:
-   868		case __NR_fchmodat:
-   869		case __NR_fchmodat2:
-   870		case __NR_fchownat:
-   871		case __NR_fgetxattr:
-   872		case __NR_flistxattr:
-   873		case __NR_fsetxattr:
-   874		case __NR_fspick:
-   875		case __NR_fremovexattr:
-   876		case __NR_futimesat:
-   877		case __NR_getxattrat: /* Just pathname, TODO add name */
-   878		case __NR_inotify_add_watch:
-   879		case __NR_linkat: /* Just oldname. TODO add newname */
-   880		case __NR_listxattrat: /* Just pathname, TODO add list */
-   881		case __NR_mkdirat:
-   882		case __NR_mknodat:
-   883		case __NR_mount_setattr:
-   884		case __NR_move_mount: /* Just from_pathname, TODO add to_pathname */
-   885		case __NR_name_to_handle_at:
- > 886		case __NR_newfstatat:
-   887		case __NR_openat:
-   888		case __NR_openat2:
-   889		case __NR_open_tree:
-   890		case __NR_open_tree_attr:
-   891		case __NR_readlinkat:
-   892		case __NR_renameat: /* Just oldname. TODO add newname */
-   893		case __NR_renameat2: /* Just oldname. TODO add newname */
-   894		case __NR_removexattrat: /* Just pathname, TODO add name */
-   895		case __NR_quotactl:
-   896		case __NR_setxattrat: /* Just pathname, TODO add list */
-   897		case __NR_syslog:
-   898		case __NR_symlinkat: /* Just oldname. TODO add newname */
-   899		case __NR_statx:
-   900		case __NR_unlinkat:
-   901		case __NR_utimensat:
-   902			sys_data->user_mask = BIT(1);
-   903			break;
-   904		/* user arg at position 2 */
-   905		case __NR_init_module:
-   906		case __NR_fsconfig:
-   907			sys_data->user_mask = BIT(2);
-   908			break;
-   909		/* user arg at position 4 */
-   910		case __NR_fanotify_mark:
-   911			sys_data->user_mask = BIT(4);
-   912			break;
-   913		default:
-   914			sys_data->user_mask = 0;
-   915		}
-   916	}
-   917	
-
+diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
+index 3f04a2977ba8..21352f37384f 100644
+--- a/fs/smb/server/connection.c
++++ b/fs/smb/server/connection.c
+@@ -93,6 +93,9 @@ struct ksmbd_conn *ksmbd_conn_alloc(void)
+ 	down_write(&conn_list_lock);
+ 	list_add(&conn->conns_list, &conn_list);
+ 	up_write(&conn_list_lock);
++
++	ksmbd_conn_set_kcov_handle(conn, kcov_common_handle());
++
+ 	return conn;
+ }
+ 
+@@ -322,6 +325,8 @@ int ksmbd_conn_handler_loop(void *p)
+ 	if (t->ops->prepare && t->ops->prepare(t))
+ 		goto out;
+ 
++	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
++
+ 	max_req = server_conf.max_inflight_req;
+ 	conn->last_active = jiffies;
+ 	set_freezable();
+@@ -412,7 +417,7 @@ int ksmbd_conn_handler_loop(void *p)
+ 			break;
+ 		}
+ 	}
+-
++	kcov_remote_stop();
+ out:
+ 	ksmbd_conn_set_releasing(conn);
+ 	/* Wait till all reference dropped to the Server object*/
+diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
+index dd3e0e3f7bf0..a90bd1b3e1df 100644
+--- a/fs/smb/server/connection.h
++++ b/fs/smb/server/connection.h
+@@ -15,6 +15,7 @@
+ #include <linux/kthread.h>
+ #include <linux/nls.h>
+ #include <linux/unicode.h>
++#include <linux/kcov.h>
+ 
+ #include "smb_common.h"
+ #include "ksmbd_work.h"
+@@ -109,6 +110,9 @@ struct ksmbd_conn {
+ 	bool				binding;
+ 	atomic_t			refcnt;
+ 	bool				is_aapl;
++#ifdef CONFIG_KCOV
++	u64				kcov_handle;
++#endif
+ };
+ 
+ struct ksmbd_conn_ops {
+@@ -246,4 +250,22 @@ static inline void ksmbd_conn_set_releasing(struct ksmbd_conn *conn)
+ }
+ 
+ void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
++
++static inline void ksmbd_conn_set_kcov_handle(struct ksmbd_conn *conn,
++				       const u64 kcov_handle)
++{
++#ifdef CONFIG_KCOV
++	conn->kcov_handle = kcov_handle;
++#endif
++}
++
++static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
++{
++#ifdef CONFIG_KCOV
++	return conn->kcov_handle;
++#else
++	return 0;
++#endif
++}
++
+ #endif /* __CONNECTION_H__ */
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 8c9c49c3a0a4..0757cd6ef4f7 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+ 	struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
+ 	struct ksmbd_conn *conn = work->conn;
+ 
++	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
++
+ 	atomic64_inc(&conn->stats.request_served);
+ 
+ 	__handle_ksmbd_work(work, conn);
+@@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+ 	ksmbd_conn_try_dequeue_request(work);
+ 	ksmbd_free_work_struct(work);
+ 	ksmbd_conn_r_count_dec(conn);
++
++	kcov_remote_stop();
+ }
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.0
+
 
