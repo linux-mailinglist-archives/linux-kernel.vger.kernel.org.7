@@ -1,99 +1,63 @@
-Return-Path: <linux-kernel+bounces-757891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCFAB1C7FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B673AB1C815
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E00C5625EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E31618C3E53
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4112586EA;
-	Wed,  6 Aug 2025 14:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B0828FFF3;
+	Wed,  6 Aug 2025 15:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6Yr3zQB"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXJFY6eZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9391D63C7;
-	Wed,  6 Aug 2025 14:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C3128FAAB;
+	Wed,  6 Aug 2025 15:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492076; cv=none; b=fMshoMcnP1gGks/PliFMHkaOhKaPDwQWwyLOGsQbTfyMbk+DnkX7yPyxMZuDWtpLMUIQfO6deomQmAzxkcmgi0kOx437PpR/XucO3WJnCsm/z68rAs8xVw7MjWcMhsxss/BgNTTxDCgO9Az8oT5YhEejNVw31dCX7QTdXyFX+U4=
+	t=1754492469; cv=none; b=mnrRYoBFNctYRr4lhRYcG2/QtA+K3g5fd5OJF/xgNiZWBvlc+xBH0TFTGtY5/4rD/zmCnxqJmeSpb2c+GEwH9VdeFKJ+Fx1xah8NWP4Gw+eQtq6u9JkJRP4Pjhc7EqD69KS1FZe4oYyto4l1r9yGLrTvd87POO5+pNWulcr90v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492076; c=relaxed/simple;
-	bh=20UlBhFxiM7AmMKXTe391uusOsHNWtrdHst1H5qTpqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+MYhsLqbVEWxNKE0NcgunEqKtnVHBvSdUbKQRfvJiJaVsmlUZacK860LUYBrOyVyQpQWm0cnANPP9pJXkme/mFFisOAdyqsmM3iKM3pHqTopENaS07XbXbZ4ihf7fmm8hzMe9nUjo11JBY79CC1OQbTQIh3LFQbfWpbD9XXoC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6Yr3zQB; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so1505162366b.3;
-        Wed, 06 Aug 2025 07:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754492073; x=1755096873; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l/rb74Rn4CUT7usZvguA3GJ62ZV1pluEnH5A6t2WngA=;
-        b=U6Yr3zQBhyDBFvSh2F2gyChz359lbMcF/lXwnUNejSEq0WSKpGxSqQvkx5cqqOvLGS
-         XlXccT80rDJvQL1iRpXB9X6zQpg0StTC6fbVywmJfWzwE0tfsQtlaF9m9/jzRc2ijCr2
-         e8zeciGEJvaJfS+Tgg/JTjpuI+qbG5pmj76oZwCKfIBWG/sOxQLWmAfsG6BEQeYZ9PYf
-         A+Fjj6eAisrZWPHG+DpXcrgBqOWrdoqQ+97mkGKYl5yG1lOIufDXVkFEYrvV+44AtHFk
-         mkW9dNafT+ZADoTVD9dOUMBgNlytw6ibneyUSw+2Hoki8syd6jcMWnIXj42OmL+epP64
-         UG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754492073; x=1755096873;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l/rb74Rn4CUT7usZvguA3GJ62ZV1pluEnH5A6t2WngA=;
-        b=bWcrTtjrZu+57nVsnw7OQ7+hrWnWqS/NxBsO1i6im4jSq6P+D9TkEOxzvjxYf/SIq4
-         Xdy4GiovwbaRoYlX1Zupu1zPIykchr0k+6Vcu6wrpcwQwTAEcoS+3uUxJC8Wr8cG5/jb
-         rW9ssuLLZkCINFm0g2b6WgSiypSIPPjs4zxuK5FxgatznlVgLdaZQEndcho2rqUOlnKY
-         2qBKxeSzm9oMojBWXpuqmCoSpC1a7tE6Xy7ExsGjVqkwML170exNKl2jy2rmdTOCwuru
-         0bm9VIUI1NViXEyI2LTPPcm++JGci/DUg8sigCnvsMyxe2ewFZkr/GfRkKdcyppWzn8Z
-         9fXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKkKBEBA4KecoUTbR9ELTNFc07tZDFfP++UwnoyybW5/X3jmaTbKdAOp+jNAnJI9Spx6xyTDVDCF4Pt/SvIcCL@vger.kernel.org, AJvYcCXxSYHbyrtC02WSOIFuJO//oNex9sKYz/t03U0tcbftPI+g8rkC1U4/+dQ6T0Lcm7QIo4xznENPzBqcQ4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGpa4pO7uRUmAFHqJReGYiOL3JewDqmYdG0ZooOiTgFyXoY5Fh
-	oJzf0rOr1DjL/ai857r1weU24P3utsFoHig/N4nN5ZxNENwV8lpruomg
-X-Gm-Gg: ASbGnctSBnFCCw6JYQEPYbK7PwSpLrX9lZwZ/3j7JytxJFPLUDoyJ67u95vY0prUOKo
-	q+9LFKdCLRoL+Z9TPZeTGgLyGPNl+IhkPTNhIbrrcFBSlS+01mGLo4EHasiRSPanOrLOk4sUKbo
-	K+ecPStUMorshihA4H5qCshu2Alzt/IukyLtwdEODoXSbLfhWYwCPRFwIK+S5ABSJ+2z9zrvO2D
-	zk2tYpXNWQiE/LYucV9zDSEfBNhE+nulRGZn1zhaLmdfXNPPssjiNLXQYgQ6Or84+m3/9N22Wrc
-	L+Nyt6kM0QMSsF7sWAshqBUsdwQbUCI4/kdNDR2pS9PImB8TTg+cdJ14mA8XcI/dY9Dj7i96cic
-	6IzKiuyY1u4fwhxnfrVU21w==
-X-Google-Smtp-Source: AGHT+IFS6g0g1OqUDi72LqUCVo/ND5e7JBrkMGvo/NtwvaBttPCiw1Ma69w75ETAugGec2ZHXmvHzA==
-X-Received: by 2002:a17:907:3f8c:b0:ad5:2e5b:d16b with SMTP id a640c23a62f3a-af990350c69mr348859766b.27.1754492073165;
-        Wed, 06 Aug 2025 07:54:33 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766f9sm1139997566b.24.2025.08.06.07.54.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Aug 2025 07:54:32 -0700 (PDT)
-Date: Wed, 6 Aug 2025 14:54:32 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
-Message-ID: <20250806145432.nygrslkiyvzulujn@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
- <20250729053403.1071807-4-aboorvad@linux.ibm.com>
- <20250804091141.ifwryfmgjepwrog4@master>
- <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
- <20250805170353.6vlbyg6qn5hv4yzz@master>
- <e9079694-1e30-46b6-97e7-b79be01c65a6@linux.ibm.com>
+	s=arc-20240116; t=1754492469; c=relaxed/simple;
+	bh=NaiA8W9/tf9ZqklAa969sv6kZ2CMk3Z3s8Ryo+amXdM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GJY3xHuyOEvLKRwI/TgfCVxN1oIHEQR5T5Z2RivcmPclEMjZZmBuIc3QpNM2rjEWfi6rhsmLfe89XGXm7cG0NO7CNFzgvbfFIstCvxS2/Ozo+P0iHOrFk+DQHDddq6guSW8ICKzuo1jsstWPNjgEQn4ZQRnPHl9DyQdFmYuV38k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXJFY6eZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFFCC4CEEB;
+	Wed,  6 Aug 2025 15:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754492469;
+	bh=NaiA8W9/tf9ZqklAa969sv6kZ2CMk3Z3s8Ryo+amXdM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=eXJFY6eZsuxOMo0s8vRHIaNyA2GF9Qy5/ERe+VUpHabDwXnDF9VRqRSfUfH3BOTnO
+	 keAfAzuijw2EbAFjxlOb2PYVGmEDnYgk59I9AyCvemQ//r2v8in542PLOTFdnVSVgq
+	 UWYeweJKI4CkC8qId2RNwNOWF/tRe1EEeH1XWzMv156uEcoBKFVCYRnce77NMKzn93
+	 AqecY0S3Lmo3vRfFtpkvjXYYgb16m2E63JFZhcfHEboJx6Q7kddg3SHeuvKrO9vLmA
+	 mwa2YTIYzmkjcNobldrvs9JC6/IWJNpaW93qZ8aIzSMV6gtI4HrtMTyXhVJEzAEUCU
+	 3cpmoX3OECGTQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/16] rust: block: use `NullTerminatedFormatter`
+In-Reply-To: <2B209DA7-1989-40EF-9535-2A9CC98E0980@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-7-3a262b4e2921@kernel.org>
+ <eGPVmCI_u7iqmBeEFQw7IXRxqDNDy2_J6CrTuRHTC9akfGRRKpJjGLPLiuW9dU7cp11syc47QuVJvqDpG-SaMQ==@protonmail.internalid>
+ <2B209DA7-1989-40EF-9535-2A9CC98E0980@collabora.com>
+Date: Wed, 06 Aug 2025 16:54:36 +0200
+Message-ID: <874iuk8pqr.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,112 +65,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e9079694-1e30-46b6-97e7-b79be01c65a6@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 06:30:37PM +0530, Donet Tom wrote:
-[...]
->> Child process inherit the ksm_merging_pages from parent, which is reasonable
->> to me. But I am confused why ksm_unmerge() would just reset ksm_merging_pages
->> for parent and leave ksm_merging_pages in child process unchanged.
->> 
->> ksm_unmerge() writes to /sys/kernel/mm/ksm/run, which is a system wide sysfs
->> interface. I expect it applies to both parent and child.
->
->I am not very familiar with the KSM code, but from what I understand:
->
->The ksm_merging_pages counter is maintained per mm_struct. When
->we write to /sys/kernel/mm/ksm/run, unmerging is triggered, and the
->counters are updated for all mm_structs present in the ksm_mm_slot list.
->
->A mm_struct gets added to this list  when MADV_MERGEABLE is called.
->In the case of the child process, since MADV_MERGEABLE has not been
->invoked yet, its mm_struct is not part of the list. As a result,
->its ksm_merging_pages counter is not reset.
->
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Would this flag be inherited during fork? VM_MERGEABLE is saved in related vma
-I don't see it would be dropped during fork. Maybe missed.
-
+> Hi Andreas,
 >
->> > value remained unchanged. That’s why get_my_merging_page() in the child was
->> > returning a non-zero value.
->> > 
->> I guess you mean the get_my_merging_page() in __mmap_and_merge_range() return
->> a non-zero value. But there is ksm_unmerge() before it. Why this ksm_unmerge()
->> couldn't reset the value, but a ksm_unmerge() in parent could.
->> 
->> > Initially, I fixed the issue by calling ksm_unmerge() before the fork(), and
->> > that
->> > resolved the problem. Later, I decided it would be cleaner to move the
->> > ksm_unmerge() call to the test cleanup phase.
->> > 
->> Also all the tests before test_prctl_fork(), except test_prctl(), calls
->> 
->>    ksft_test_result(!range_maps_duplicates());
->> 
->> If the previous tests succeed, it means there is no duplicate pages. This
->> means ksm_merging_pages should be 0 before test_prctl_fork() if other tests
->> pass. And the child process would inherit a 0 ksm_merging_pages. (A quick test
->> proves it.)
+>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Use the new `NullTerminatedFormatter` to write the name of a `GenDisk` to
+>> the name buffer. This new formatter automatically adds a trailing null
+>> marker after the written characters, so we don't need to append that at =
+the
+>> call site any longer.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>> rust/kernel/block/mq/gen_disk.rs   | 11 ++++++-----
+>> rust/kernel/block/mq/raw_writer.rs |  1 +
+>> rust/kernel/str.rs                 |  1 -
+>> 3 files changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen=
+_disk.rs
+>> index 679ee1bb2195..39be2a31337f 100644
+>> --- a/rust/kernel/block/mq/gen_disk.rs
+>> +++ b/rust/kernel/block/mq/gen_disk.rs
+>> @@ -7,9 +7,10 @@
+>>
+>> use crate::{
+>>     bindings,
+>> -    block::mq::{raw_writer::RawWriter, Operations, TagSet},
+>> +    block::mq::{Operations, TagSet},
+>>     error::{self, from_err_ptr, Result},
+>>     static_lock_class,
+>> +    str::NullTerminatedFormatter,
+>>     sync::Arc,
+>> };
+>> use core::fmt::{self, Write};
+>> @@ -143,14 +144,14 @@ pub fn build<T: Operations>(
+>>         // SAFETY: `gendisk` is a valid pointer as we initialized it abo=
+ve
+>>         unsafe { (*gendisk).fops =3D &TABLE };
+>>
+>> -        let mut raw_writer =3D RawWriter::from_array(
+>> +        let mut writer =3D NullTerminatedFormatter::from_array(
+>>             // SAFETY: `gendisk` points to a valid and initialized insta=
+nce. We
+>>             // have exclusive access, since the disk is not added to the=
+ VFS
+>>             // yet.
+>>             unsafe { &mut (*gendisk).disk_name },
+>> -        )?;
+>> -        raw_writer.write_fmt(name)?;
+>> -        raw_writer.write_char('\0')?;
+>> +        )
+>> +        .ok_or(error::code::EINVAL)?;
+>> +        writer.write_fmt(name)?;
+>>
+>>         // SAFETY: `gendisk` points to a valid and initialized instance =
+of
+>>         // `struct gendisk`. `set_capacity` takes a lock to synchronize =
+this
+>> diff --git a/rust/kernel/block/mq/raw_writer.rs b/rust/kernel/block/mq/r=
+aw_writer.rs
+>> index 7e2159e4f6a6..0aef55703e71 100644
+>> --- a/rust/kernel/block/mq/raw_writer.rs
+>> +++ b/rust/kernel/block/mq/raw_writer.rs
+>> @@ -24,6 +24,7 @@ fn new(buffer: &'a mut [u8]) -> Result<RawWriter<'a>> {
+>>         Ok(Self { buffer, pos: 0 })
+>>     }
+>>
+>> +    #[expect(dead_code)]
 >
+> Not sure I understand, is this superseded by..
 >
->If I understand correctly, all the tests are calling MADV_UNMERGEABLE,
->which internally calls break_ksm() in the kernel. This function replaces the
->KSM page with an exclusive anonymous page. However, the
->ksm_merging_pages counters are not updated at this point.
+>>     pub(crate) fn from_array<const N: usize>(
+>>         a: &'a mut [crate::ffi::c_char; N],
+>>     ) -> Result<RawWriter<'a>> {
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index c58925438c6e..7396c49174cd 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -858,7 +858,6 @@ pub(crate) fn new(buffer: &'a mut [u8]) -> Option<Nu=
+llTerminatedFormatter<'a>> {
+>>         Some(Self { buffer })
+>>     }
+>>
+>> -    #[expect(dead_code)]
 >
->The function range_maps_duplicates(map, size) checks whether the pages
->have been unmerged. Since break_ksm() does perform the unmerge, this
->function returns false, and the test passes.
+> =E2=80=A6 this?
 >
->The ksm_merging_pages update happens later via the ksm_scan_thread().
->That’s why we observe that ksm_merging_pages values are not reset
->immediately after the test finishes.
->
+>>     pub(crate) fn from_array<const N: usize>(
+>>         buffer: &'a mut [crate::ffi::c_char; N],
+>>     ) -> Option<NullTerminatedFormatter<'a>> {
+>>
 
-Not familiar with ksm internal. But the ksm_merging_pages counter still has
-non-zero value when all merged pages are unmerged makes me feel odd.
-
->If we add a sleep(1) after the MADV_UNMERGEABLE call, we can see that
->the ksm_merging_pages values are reset after the sleep.
->
->Once the test completes successfully, we can call ksm_unmerge(), which
->will immediately reset the ksm_merging_pages value. This way, in the fork
->test, the child process will also see the correct value.
->> 
->> So which part of the story I missed?
->> 
->
->So, during the cleanup phase after a successful test, we can call
->ksm_unmerge() to reset the counter. Do you see any issue with
->this approach?
->
-
-It looks there is no issue with an extra ksm_unmerge().
-
-But one more question. Why an extra ksm_unmerge() could help.
-
-Here is what we have during test:
+Yes. Alice suggested combining patch 8/16 that removes
+`block::mq::raw_writer` with this one.
 
 
-  test_prot_none()
-      !range_maps_duplicates()
-      ksm_unmerge()                  1) <--- newly add
-  test_prctl_fork()
-      >--- in child
-      __mmap_and_merge_range()
-          ksm_unmerge()              2) <--- already have
+Best regards,
+Andreas Hindborg
 
-As you mentioned above ksm_unmerge() would immediately reset
-ksm_merging_pages, why ksm_unmerge() at 2) still leave ksm_merging_pages
-non-zero? And the one at 1) could help.
 
-Or there is still some timing issue like sleep(1) you did?
-
--- 
-Wei Yang
-Help you, Help me
 
