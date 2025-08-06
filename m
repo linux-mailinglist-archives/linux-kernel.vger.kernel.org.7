@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-757944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049C4B1C8A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:24:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2877AB1C8A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA09318C3EAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:24:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6245188F67F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142B3290D95;
-	Wed,  6 Aug 2025 15:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B222918D5;
+	Wed,  6 Aug 2025 15:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ucujOpHq"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hzsO1BXe"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBAD28FABC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B4428FABC;
+	Wed,  6 Aug 2025 15:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493834; cv=none; b=cnYT08X26TeqfeJlYI/9gHNgBq3DEUtjZzOIQorkZ+Hksa3gA6cJfBoyiVFl50Edm7+o07YN9zoNvs7d4IQIMX/LMnp0WLDIjPSzfZgc3uKusxL1dHa5lXvryjcq5zB4Hb00hMq957U/q1Ey9AKdxwG2rSrnFBTir7Yt6Gsov+0=
+	t=1754493879; cv=none; b=a4j05PnMVYVtwRRg3hXn/Zk9B/C0tKufkoXfSZdK+NXd+89LixdjWHk5ZlKsz+8x7asNXcV/Yv4Z2KxhfuYCwDByVsQSYIt6XJ0H349Ir840latyPlv2vzcrBeuasGel0NRr2QJRXPmyYBqayLd8OYaycWMt43KN7rhKi7+GD9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493834; c=relaxed/simple;
-	bh=OszhbkdMPupIjgX6yom83SUovUXe0uwBPDhBdYx0RxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbzLd7hsSJu6936Hi/LE5Gk7Lj34Kw6kt6ACv7ob6TlHWbfOhRKxpZzzWXdI82fVIlDbL7YKXNNNRpCI+dKkrU+AsIsKRVWT8Bze94LrZS68LIV/z6Q2aGLysFsOhcWXMGR8VZ+dJXZRsnF1xuK4eGNfhPIDGjDGZP/Kn14Tiss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ucujOpHq; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-610cbca60cdso2749378eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754493830; x=1755098630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dXHVs/s25sxmyveilQOMZ/f0ZmdI0gCsYXlfGVaBTKE=;
-        b=ucujOpHqII0Z6fNJ5FT4l8+Qe2kvfuK5RhHdwLGqsY8ZaWI0p8/X+grzJkVQubSf+E
-         QRfPKvvnycGJhOD5x+s5787UUYvq+55bGZkpbKHpXjj6lRBbeUTvKB8NfACMjUtdmd/C
-         w2P4AW2+VIqoS+fKlTpRggbRLTROJ12BYYutaoFaBZ7eclmAClEL2IcDO68TnqfDlrDL
-         yr/qXaTe8gygbg300LvknLQW2F0cLdMyAl/bC2jgbgZALCS8UhyS/74TzNXm9xBwBfyY
-         s5i4LUd6QI0kFwZaw8uqX00JxldTlXgbbhn7h/3j8fZY+/FlJyJ7lh8fn/dFhs3cnE0G
-         6b8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493830; x=1755098630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXHVs/s25sxmyveilQOMZ/f0ZmdI0gCsYXlfGVaBTKE=;
-        b=U5xLyDh9FEIH9jnM4hPr1SS9vomSiDbGcZ5eBtXGrqPlrwSmHbZYziC0YlV4AVTVEs
-         o1vB+TOqeZ6B8e7HlWlpabwUrf5oyJvmr6O1b/cfNiD1Z1eCnErIVlTWNyM4gHOtibs/
-         p70QJsCzE9R5tb40798ofNiCsbYi+eT1bAsqHgQTCa4T81j1rqGkH8Gj0+4G0HkBjrTA
-         AfmWRvpS5yXmPbWnMh+5ZeShH1FVzYTYLB2auI1oY3PxbRNx8gtdONsOhq4s7nHmghKV
-         yriQnaly99Dc+q/lBRRD+3BEBkdm7Jg9zjZjTk9kCz2wHYXNfghJN87tAhQwqcUWy8jX
-         M7Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7CEsx1Ai8zxudeXbiGzZCsruz+QtuVhEbmTV47Zbk+e0a1OXoHv4yhXcsYhsY71e4HII/r3g/y0iCliE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwldnGa/lmGOJKeG3bXgXwz77Pbx8g2jX1ckS9HYQTlVyNFLAvq
-	wiNdFOJJj4f0uikW7dc3RIpkF/wHDRObNkys4IZRZtHdXa9jvzMk/kCFneI6iXQ9TEw=
-X-Gm-Gg: ASbGnctDj0VIeQU341Lydij1v/VIWRQF1wRU6AvzHNUN8ztVOavaranI1ur/jtgdQ3G
-	BRwyDkRMby0NMNarLuA9nGK6AcJxPClMHf5hG+TMR0uTfhDB7LxfkNhQhl8nMxochGFcPzJCsnK
-	VaCm5ZkMj4F3B91PzqV3TqActCuYVPKMe8bt3D/I+t9KJSpR/SVR9kARVt1Dmcu0Hqn+jOU0peE
-	w9bA5bjBJZQj4wnSLAufJcHahS7It3p4pCJToIQ8NJRk/tNcTkKFhUtX41qYdKFMEDngomSy+Ks
-	KdxSrK3DyJAaMgeUo9K4MybFQnXvmkyOBQETMjbdJiI8smwfExpo9YnFz2w8pRUyFx2/pPtlKRG
-	W4FmK3elyfdJVZ7taV+EkZOM7Al/DsA+mmExp8DToMNNQA8FPKHuW3wXmmGGkwrxuHEUTsINWsO
-	g=
-X-Google-Smtp-Source: AGHT+IFRRNsxY9jM0PL1twblGzQQGuLGeS2INiCJOTVywPv49wcXz1VVskJdMLJuJJdCFjkXNsqYsQ==
-X-Received: by 2002:a05:6820:1993:b0:619:7d9b:3f0b with SMTP id 006d021491bc7-61b60dfd7afmr2085950eaf.5.1754493830285;
-        Wed, 06 Aug 2025 08:23:50 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-619bdc80b34sm1036807eaf.9.2025.08.06.08.23.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 08:23:49 -0700 (PDT)
-Message-ID: <629801b8-a647-442b-83ba-6328ecf7a977@baylibre.com>
-Date: Wed, 6 Aug 2025 10:23:48 -0500
+	s=arc-20240116; t=1754493879; c=relaxed/simple;
+	bh=IPrjJM0iNDTDA9YSrop9GNcDQsARPADzizUa+drioNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rWcNmB9he6exm8Mfyt3TudOzixQ00FM+1C57vhWK670NKfwRrQDZLCtWeW/IDuvVGAfa2PTe6/nGpZmWpsMxxsFkt6uLBlT6L0CjRVmWsldRICUeafEuqDgQIlquPQyH6l9awXxbuVinGK1zU0h3N/A8X55QU/jzDHti7Mhkgjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hzsO1BXe; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576FORiO603713;
+	Wed, 6 Aug 2025 10:24:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754493867;
+	bh=7RsgK39bZGGSX6h47xkhxWwFZ1ITqr8yrpYQjfJ5U7g=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=hzsO1BXe0Wzvoo9dSBV6u7zuoy/ZcmqIENibhejADzSxWaFki3CNbIurssoKE8dD4
+	 Ia5BMXZdr87A0hKdGXlE82F8wmtPzv+nShj5MkTPS76O2m22G0hikaTcLgN1w82z81
+	 YLuGVEo/iKGes8G1thXOAJTRimOpXrbKPf+J7cI0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576FOQe7122291
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 6 Aug 2025 10:24:26 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
+ Aug 2025 10:24:26 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 6 Aug 2025 10:24:26 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576FOQI53740880;
+	Wed, 6 Aug 2025 10:24:26 -0500
+Message-ID: <e9394117-996c-4134-b9f2-50accf633601@ti.com>
+Date: Wed, 6 Aug 2025 10:24:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,149 +64,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] iio: adc: ad7476: Support ROHM BD79105
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1754463393.git.mazziesaccount@gmail.com>
- <c7f94cdf9bdc6882953f6a074db3fd87570fa98b.1754463393.git.mazziesaccount@gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: hwinfo: Add second register range for
+ GP_SW
+To: Krzysztof Kozlowski <krzk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian
+ Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+References: <20250805234950.3781367-1-jm@ti.com>
+ <20250805234950.3781367-2-jm@ti.com>
+ <0f1cbec6-6032-48f6-8887-e526484c0d20@kernel.org>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <c7f94cdf9bdc6882953f6a074db3fd87570fa98b.1754463393.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <0f1cbec6-6032-48f6-8887-e526484c0d20@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 8/6/25 2:04 AM, Matti Vaittinen wrote:
-> The ROHM BD79105 is a simple 16-bit ADC accessible via SPI*.
+Hi Krystoff,
+
+On 8/6/25 1:40 AM, Krzysztof Kozlowski wrote:
+> On 06/08/2025 01:49, Judith Mendez wrote:
+>> This adds a second register range in ti,k3-socinfo. This register
 > 
-> The BD79105 has a CONVSTART pin, which must be set high to start the ADC
-> conversion. Unlike with the ad7091 and ad7091r which also have a
-> CONVSTART pin, the BD79105 requires that the pin must remain high also
-> for the duration of the SPI access.
+> Please do not use "This commit/patch/change", but imperative mood. See
+> longer explanation here:
+> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+I can reword this.
+
 > 
-> (*) Couple of words about the SPI. The BD79105 has pins named as
-> CONVSTART, SCLK, DIN and DOUT. For the curious reader, DIN is not SPI
-> ISO.
 > 
-> DIN is a signal which can be used as a chip-select. When DIN is pulled
-> low, the ADC will output the completed measurement via DOUT as SCLK is
-> clocked. According to the data-sheet, the DIN can also be used for
-> daisy-chaining multiple ADCs. Also, DOUT can be used also for a
-
-Leave out one of the "also"s.
-
-> 'data-ready' -IRQ. These modes aren't supported by this driver.
+>> range can also be used to detect silicon revisions.
+>>
+>> AM62px SR1.0, SR1.1, and SR1.2 can only be distinguished with GP_SW
+>> registers, so increase maximum items to 2 for reg property and update
+>> the example.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>>   .../devicetree/bindings/hwinfo/ti,k3-socinfo.yaml        | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+>> index dada28b47ea0..3b656fc0cb5a 100644
+>> --- a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+>> +++ b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+>> @@ -24,7 +24,8 @@ properties:
+>>         - const: ti,am654-chipid
+>>   
+>>     reg:
+>> -    maxItems: 1
+>> +    maxItems: 2
+>> +    minItems: 1
 > 
-> Support reading ADC scale and data from the BD79105 using SPI, when DIN
-> is used as a chip-select.
+> They always come with reversed order... but anyway, you instead must
+> list the items with minItems.
 > 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
->  drivers/iio/adc/ad7476.c | 36 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
+> another problem is that this is not supposed to be per register. I
+> already complained more than once about some of TI bindings: stop
+> creating device nodes or address spaces per register.
 > 
-> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-> index 1f736be09663..fc98aadc4077 100644
-> --- a/drivers/iio/adc/ad7476.c
-> +++ b/drivers/iio/adc/ad7476.c
-> @@ -33,6 +33,7 @@ struct ad7476_chip_info {
->  	struct iio_chan_spec		convst_channel[2];
->  	void (*reset)(struct ad7476_state *);
->  	void (*conversion_pre_op)(struct ad7476_state *st);
-> +	void (*conversion_post_op)(struct ad7476_state *st);
->  	bool				has_vref;
->  	bool				has_vdrive;
->  };
-> @@ -64,6 +65,23 @@ static void ad7091_convst(struct ad7476_state *st)
->  	udelay(1); /* Conversion time: 650 ns max */
->  }
->  
-> +static void bd79105_convst_disable(struct ad7476_state *st)
-> +{
-> +	if (!st->convst_gpio)
-> +		return;
-> +
-> +	gpiod_set_value(st->convst_gpio, 0);
-> +}
-> +
-> +static void bd79105_convst_enable(struct ad7476_state *st)
-> +{
-> +	if (!st->convst_gpio)
-> +		return;
-> +
-> +	gpiod_set_value(st->convst_gpio, 1);
-> +	udelay(1); /* 10ns required for conversion */
+> That's one address space.
 
-So ndelay(10)?
+That does not really make sense. Registers jtag vs gp_sw have a
+different back-end, one from silicon and another from efuse. Not even
+sure if the memory map will always be the same across processors.
 
-> +}
-> +
->  static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
->  {
->  	struct iio_poll_func *pf = p;
-> @@ -81,6 +99,8 @@ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
->  	iio_push_to_buffers_with_ts(indio_dev, st->data, sizeof(st->data),
->  				    iio_get_time_ns(indio_dev));
->  done:
-> +	if (st->chip_info->conversion_post_op)
-> +		st->chip_info->conversion_post_op(st);
->  	iio_trigger_notify_done(indio_dev->trig);
->  
->  	return IRQ_HANDLED;
-> @@ -278,6 +298,20 @@ static const struct ad7476_chip_info ltc2314_14_chip_info = {
->  	.has_vref = true,
->  };
->  
-> +static const struct ad7476_chip_info bd79105_chip_info = {
-> +	.convst_channel[0] = AD7091R_CONVST_CHAN(16),
-> +	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> +	/*
-> +	 * The BD79105 starts ADC data conversion when thw CONVSTART is set
+> 
+>>   
+>>   required:
+>>     - compatible
+>> @@ -34,7 +35,9 @@ additionalProperties: false
+>>   
+>>   examples:
+>>     - |
+>> -    chipid@43000014 {
+>> +    chipid@14 {
+> 
+> And this was never even checked :/ You have clear warnings here.
 
-s/thw/the/
+I will double check this.
 
-Also s/CONVSTART/CONVSTART line/ would be a bit more clear.
 
-> +	 * HIGH. The CONVSTART must be kept HIGH until the data has been
-> +	 * read from the ADC.
-> +	 */
-> +	.conversion_pre_op = bd79105_convst_enable,
-> +	.conversion_post_op = bd79105_convst_disable,
-> +	.has_vref = true,
-> +	.has_vdrive = true,
-> +};
-> +
->  static const struct iio_info ad7476_info = {
->  	.read_raw = &ad7476_read_raw,
->  };
-> @@ -347,7 +381,6 @@ static int ad7476_probe(struct spi_device *spi)
->  	if (st->convst_gpio)
->  		indio_dev->channels = st->chip_info->convst_channel;
->  	/* Setup default message */
-> -
-
-Random whitespace change.
-
->  	st->xfer.rx_buf = &st->data;
->  	st->xfer.len = indio_dev->channels[0].scan_type.storagebits / 8;
->  
-> @@ -393,6 +426,7 @@ static const struct spi_device_id ad7476_id[] = {
->  	{ "ads7866", (kernel_ulong_t)&ads7866_chip_info },
->  	{ "ads7867", (kernel_ulong_t)&ads7867_chip_info },
->  	{ "ads7868", (kernel_ulong_t)&ads7868_chip_info },
-> +	{ "bd79105", (kernel_ulong_t)&bd79105_chip_info },
->  	/*
->  	 * The ROHM BU79100G is identical to the TI's ADS7866 from the software
->  	 * point of view. The binding document mandates the ADS7866 to be
-
-Unrelated to this patch, but interesting that we don't also have
-an of_ lookup table.
+~ Judith
 
 
