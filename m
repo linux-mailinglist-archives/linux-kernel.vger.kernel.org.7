@@ -1,210 +1,200 @@
-Return-Path: <linux-kernel+bounces-757860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EBDB1C783
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C16BB1C784
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D969318A7217
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FF8E7B10B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAC128DB7E;
-	Wed,  6 Aug 2025 14:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C937528C867;
+	Wed,  6 Aug 2025 14:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=epam.com header.i=@epam.com header.b="PFlK4T/6"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011038.outbound.protection.outlook.com [40.107.130.38])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nRj1cGqe"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB828D85F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489887; cv=fail; b=bB9uTRTiJ1/efNAPYAGkSxA+EnhYWgyIOXIsAjFvne7S5mlAbflScVIevNowcTQyZa5X5Xx1dqJrjNuSA0v5vwP/H5c0gLSnlYCt2ENMlLl0EHGynuXl4y9mFQfGncIXWy1eV696RplLvmhAU+T60rDPZeF34dHsOiB48sCebRE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489887; c=relaxed/simple;
-	bh=zEDiocEwBTh1KQwx0S+VQYBU3VJ/UyEfTvs1OCGAQOw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EWlZDgwgU3vt2W9xANn8HmpUnEFfmJDkDve12ZfYmfNIA71HLRJ9oWj7wwKyTA3Oka2LJiXBWEll+fqBARbLLzjex9K2UeyA9mREwyqJY95UQTzGEwVVfz9ChetkG4Vcxt2v6ic3a/Amk+iTg55q6lLfmHO9EZyHsvjlyZ+PNhc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epam.com; spf=pass smtp.mailfrom=epam.com; dkim=pass (2048-bit key) header.d=epam.com header.i=@epam.com header.b=PFlK4T/6; arc=fail smtp.client-ip=40.107.130.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epam.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epam.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xuTCLn2UBaIxgmxsze2VE4jzqxjFJ5kJA2azhQzyFGh2UMEJmX6t5QS8O7/Xe++MSaiBKWrUi4/ZE4HD1enD9LjVMAxZkMEhnDHTJhnoPeLd8QbKbQgZNRLNtuepY5bU0QBkruFJyboCxvnz9w9cEJGtn5ZBFNy4UoSKk/G6aObLDkFp76g1+Npq8zwFfcB2Bd+Z3VcOgVgTzEdLFeL+T7yZUM9vECUlqToGMBk8y9iAQVyPn0VcFNqTmNHgBCpdtaVcCRGdA4BxrGcFHNtGzhhKuLYxsIhNSrK4weCmmi4sL9cXvnS/AQYVF4ZQd0xR+gl9ynvb9RKxUIzJ1bE/MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aPNqhp2ZeLAhxVb/ptukObIOmLXgRNPXDKZQs/viGXM=;
- b=AJJ3NAnoJF2P5bDHrgfFU853II/h4knQEsOVboaCqPLAhoiCLjjYeSc4wcBezXpKHUx81YYuFhjQqiXWdSaDcW8QgmEt98I3oDl8emaVC5HQx8Y+zCbc++v4TQTl682RuFrQrcICFVFZuzUZRY7JnBRCNbmR3FIbmfYid2dNg6mgSmoRNp4YF5mhpklCdelUnxELW2HhDdfhaBia+mcOM8uE9gviGK1LPEBfuK/XPROkwAuJKITAUFU5NWgPIfzfjxeKGySY91FzHixOsmFfKco83YrRjgPca7CDsA3SSTS0vWQLWfMxLyoTrwmLmM3Pyw6hWoMrnCdPU1MUjdvqfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=epam.com; dmarc=pass action=none header.from=epam.com;
- dkim=pass header.d=epam.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epam.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aPNqhp2ZeLAhxVb/ptukObIOmLXgRNPXDKZQs/viGXM=;
- b=PFlK4T/6tmthklgwF3LiNEQkLX4eP7KGQbPPC41+BlHOp9IFso5d7/NwbmrgJmteo5cHXH3GfYLsAUwJlv5NeBprsgQQHBXzZgdiqsY1LD59x4zU3F4x/vs4hNTln3fyjC4gAg5Dnw8fSQaBDhvdAvnAj0iUEZQFPl3guuBsMhXMUp5n7VTCXIgq2Ab2e6+y/JapeaMJHhO7Sh8Tnp/LiPOjqctsFqiWo9zrnux9PSd8Pei2aaW67ovzWXCrGEeRjKZT4YlPid4yEd81AxRBo0w715tWA9H3+ewtTVbz2z6Wboh0Ba+fuaJazSqfcU932kXVo2So1NpsCAcTzS9VUw==
-Received: from GV1PR03MB10456.eurprd03.prod.outlook.com
- (2603:10a6:150:16a::21) by GV2PR03MB8803.eurprd03.prod.outlook.com
- (2603:10a6:150:b7::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Wed, 6 Aug
- 2025 14:17:55 +0000
-Received: from GV1PR03MB10456.eurprd03.prod.outlook.com
- ([fe80::a41e:5aa8:e298:757e]) by GV1PR03MB10456.eurprd03.prod.outlook.com
- ([fe80::a41e:5aa8:e298:757e%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 14:17:55 +0000
-From: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-To: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>, Marc Zyngier
-	<maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Joey Gouly
-	<joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
-	<yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>
-Subject: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after 'at
- s*'
-Thread-Topic: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after
- 'at s*'
-Thread-Index: AQHcBtznfZx1EzPMhEmSJJRNthoKUw==
-Date: Wed, 6 Aug 2025 14:17:55 +0000
-Message-ID: <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
-References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
-In-Reply-To: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: git-send-email 2.50.1
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=epam.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV1PR03MB10456:EE_|GV2PR03MB8803:EE_
-x-ms-office365-filtering-correlation-id: 5fd5048a-a160-4474-5301-08ddd4f409cc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|42112799006|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?UCftlAVPmzB214YyKwE4r4PPt4jeYeZYAmixokfBP6rA2+j0wHuZFa54uP?=
- =?iso-8859-1?Q?C1BbxgljiXS4dIxWYX31gM0sJfI2oubnaXBTrKwE91bCPUQBSicx0pypJT?=
- =?iso-8859-1?Q?JIDFu+LlkEHHK+bwe7nG6QpCj3VvZC1DVAi5+6C53ZLsGzhyDgDpX4qZLE?=
- =?iso-8859-1?Q?HV1WMgWURCAWO2OqeaJPHAnX2vcIlWrV3+rYqZKEmjh3qukDE1SFxDnfDX?=
- =?iso-8859-1?Q?z33FIXHcf2rx1Jyn8t36QDrJBL6t/6iy0kyh7bgwDmTcvbpoxCAh1DZ0RM?=
- =?iso-8859-1?Q?vDyK7MGrQmSdmXqokqzajZK08Vgft9NUP3e9txA5EdEi8ZozhyeoCcNiwc?=
- =?iso-8859-1?Q?0l0ualELEVtXNx+q9kfQs2dfn5y3aid0qdZL15QNn6GC/uerLYeXjFquTb?=
- =?iso-8859-1?Q?2/dOly3nQoSaEDSV0k9BgtjuzTb/x2LNkXmVh8eN1l+6hjHm/A4FXf3VEb?=
- =?iso-8859-1?Q?KrQSTr6wjkeQ6Rc0jZNigMbiSY9Wzr1LbWGxCo76NfyjtKSSWNnn5aMlcb?=
- =?iso-8859-1?Q?+NuJAEj4hgrsiMfnA0ngYbP8E7nW9iMaNyCf70fJN9S7N/RpIC8p54FTJR?=
- =?iso-8859-1?Q?SMmxsVqlf3zKVf8Uor0+JSEPayn4gdwEpmCyBNmv5e//UMtG1H79rlgkHi?=
- =?iso-8859-1?Q?boLxPdavET3Gdo8iZsOlB0oGGNUqb7DiKd2aWzj6SbJ7q98Jzfw0ivPi9/?=
- =?iso-8859-1?Q?yakOqzSafclYtG8B3iL6ZHtWvycdOfbGBTbaDimxcuE1Gv99jNqHy4gPvm?=
- =?iso-8859-1?Q?OS9acVL26SGmLa63lXD7EoCwX3O80M6fTuWsDGkAY5ctWZT0YPFC6te2iP?=
- =?iso-8859-1?Q?6BmS97MWSTnUA7BFZd/NnjkP7ucuArzmJ+FfZeVuZLJt8+Guf7uMDZrkFr?=
- =?iso-8859-1?Q?MPaWrDQs4wNGPEOvB0i2Asd5WEq/v9ATUgWAkKkbhR3KTCUkLchKYCQe3u?=
- =?iso-8859-1?Q?azKIIeVXcRg2tyueiiTGg2/uLG4GhDN3Oue8r0O+HQwtWPH+SyDQKnQIrz?=
- =?iso-8859-1?Q?iZEtBseaYDt1QuYnlcmPp5qilYzxfodAtc8b+j32i/Cvc7z+G6u3A8pPp1?=
- =?iso-8859-1?Q?CwDuS6gmoAIU4729oP9FcnQbW/Rbk1GsuzTVc7YPcoS4zBa4G5bnkO99T5?=
- =?iso-8859-1?Q?7Kqk3QLz0Hs4gtTcSR68mxXo6TjH2suv+uPI2IbJHqxYpudoBrj3bMR1lb?=
- =?iso-8859-1?Q?TGF2ZMcqQqizRdwnH8ri7iRLmBhNImia1mInVUAxjbJQKsVcvAk8Jky/ux?=
- =?iso-8859-1?Q?IpXgPl/tGZynrMyIgvBRdvfD0BJzpzbHDwo1AG+bqLQwbyZCmafD/w7lsO?=
- =?iso-8859-1?Q?fziabVPY8iusWUKjFPQandxv7R9FXnPsHxdAeEV+ArgNQHzbX43dK98zWH?=
- =?iso-8859-1?Q?sa/uQ3ETv/DgX9F2Ms74w2TUPc8f3Vj7Lstg8qVocgChUdVawSbHMzLJgs?=
- =?iso-8859-1?Q?W54i2fJGcmAaZfeXkUr3b3GS7eVeG/r6OYeOTSW7WJBpwY/JMkyYnxmxkt?=
- =?iso-8859-1?Q?+QGucEYdl/i2DUkdkJTh2zvUNK1Pdi/MdeDQYy/qguZw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR03MB10456.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(42112799006)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?o1Dqn+mE7F1rOcMMQAiBMhIx81mikWfRNT56ZH4g3M5T1yXLNb8/hE70XW?=
- =?iso-8859-1?Q?7DEvkMnnTgBqsJZ6MREs2ES30hrdDBmz3im6vsSY4ogMNiFtbC/2HdqOLs?=
- =?iso-8859-1?Q?OXD00z5FFJ2Wq78GVT2UhO0S6FRhJLq0kWZKWS8PvWaTEut+v2qKvQHmE9?=
- =?iso-8859-1?Q?gwpM8999e0uKV37QAP6sqKaaBeWlVddFc1XsSoKbY4tH6Fgc1dvBbPx8sH?=
- =?iso-8859-1?Q?lJ3h7ZaQFGjBrgqMTqs+jDB/Wq194STfHNMyts47UbGW69K0ise4EhNZVL?=
- =?iso-8859-1?Q?/Wmja/VSnCE9lOKZGoQVO5kE6vv6IuI0diIIZWpcTRaGkLqYMGbuImopYN?=
- =?iso-8859-1?Q?MSDfIBfij8MOW/X28AIZRuS5i9s528ex90tyquCOa+mynIFeb7Nf2SFy2P?=
- =?iso-8859-1?Q?953B1Zcvq0CHv6U3wEgT4B6jmSNrQ5J3KBDVoZtAS/+/AQNExvpdQIG1i8?=
- =?iso-8859-1?Q?ABLMkzo9b5wC8pv8GoT/dAYuVqB811bHWD00p00Kbq19ZWQZCi88UdRI+E?=
- =?iso-8859-1?Q?N/PHLQuU4l4wH6FVkkLplEB9awM6BWkavvjYkMv0KY4XtrKy0aoZN5x2nS?=
- =?iso-8859-1?Q?j8cDUitv5YWNXxNxbn3lQG8KzFkPM5q4VfjCTxgalYpjxe8UJZ1qOS8+uB?=
- =?iso-8859-1?Q?XWMXxjzfok1bbnpkHuvXlqbT20LjclkJyuIaVjIlFJffDk626c+t/bhKEe?=
- =?iso-8859-1?Q?BL1+Z4XRsFZKwi/rsTjllIvC1xKaI217jKoE8v+ilDhhvuajuXGgavDM2p?=
- =?iso-8859-1?Q?XTRZ+LakCOHvqot1BeAXw5OrLVVfwnElDq6RANK65UHixlv//gykm1FnKz?=
- =?iso-8859-1?Q?xGHD7d+4z4DMTLtgglEnQ8VD79aLs4DT9w6sRRUE2a/W+JaLbs4/4+f3HN?=
- =?iso-8859-1?Q?fjcWwm4nFVf7oYeQVPu+y8F2BO52gWA9SsJP8woyE5sIXzLzgRcUfy4xmN?=
- =?iso-8859-1?Q?Izcg2pmjLrYp9epJuWPYkCoMRmcU/w8klyAgv/B0yJrkMEkfrjq2on28Up?=
- =?iso-8859-1?Q?bmAX0VxRGr/X9n3u1UqILoJteNPI8R/dOQMkIYofvIB3dbrEl7/ZlNuI6q?=
- =?iso-8859-1?Q?j9+Oht08Jg4Bg8Ox1ERL+EpC5QwxlRPLv4RlebK+QVQYQisuTxLeYNjUvB?=
- =?iso-8859-1?Q?Sc/MF0oS3YXS9TCfBDYOYvBZ5zRbD59c5e1eFDqNLhTlLncok0wvZPj7dm?=
- =?iso-8859-1?Q?DOKxU954MYplmNxm+U22FnquatFK6ksIeJvTkVe4FyM0lGkkZveJh4dG52?=
- =?iso-8859-1?Q?ctaf/85S2A4jKQXxUa2wkKucaT6mUjzCjwFvLbLCHiDFnLojwJGjldiBGQ?=
- =?iso-8859-1?Q?4HKEwGnYXjeDCpF1H4/7YyXo7+jKTtpzuBrOS7SJzZy6wx05YPtT0OENCB?=
- =?iso-8859-1?Q?dxwW84Ijul2t9s3sVyFsuefgMrVOjueDIH5tPbaK49DwZuqy22dOQCr2aS?=
- =?iso-8859-1?Q?BUmRPJGU7jMI7Tlm7asT6q+CgJEtSQhHhXJUVk3EDT614Z2jTdppJKyIMC?=
- =?iso-8859-1?Q?qM99u6m6/Ow/l/jWuZkh/rwUeYBwOs5/+88PPrHkuXDZbH6lsoeCJsyij6?=
- =?iso-8859-1?Q?7jZd+rhx+LEWEPmrFlvLcd+oEHK+O1Bviv5u94rk44tXYhUEYOnZYJACef?=
- =?iso-8859-1?Q?CyJeFL1qW03A7QmdZIUzRYK5XLTQE20xbz3qtPd+4+HYksMQ5LD0pUcQ?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0723828A71E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754489912; cv=none; b=hadzl+PPFXf9Uqb53srTcvth5xAwbDfz9cztzANAfbxq9AJl65zTtgq22Qgy7IL29nM7XWlG5+V4ZdWytinc1HALVZL7TPljWK0hV8K70o2zrry8bhbs6aeDF7rWFNV+qe2EWktp6WwoGe/EhFmR4c+rQtqbmOORPBbwGbiOdvw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754489912; c=relaxed/simple;
+	bh=Sfg0GSbou+8V/x0l0JpzQXAfO2yUmEE4nmZ8Dwn/SaE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T0rf/OyQlOyvPLFgPj3yweLT8gqq67GzKHcsaN5qoNO2Z0qqcqBCJdSU/Rws/dzfh5nwolMqVaVsvPP8s03k+D9GNB3Y+Rbwtd8aZ/qHzcgGsgzGro4TuQb/K7tAzxcWtm2/mjIpRyXtTQmUxuDjSh6wAJ2Sgg4+Yu8uKDOn9mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nRj1cGqe; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576EIDHA533654;
+	Wed, 6 Aug 2025 09:18:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754489893;
+	bh=0mZGzS0QWiURQ97XlwTObgVhbrqqFm/z0cPMS39Y0vE=;
+	h=From:To:CC:Subject:Date;
+	b=nRj1cGqe8DYiEDPHF2IosYaKiP71l85wdJR+izXf8Yk3Q52Hm9HcZAs9Rp5Lf7NBs
+	 msyjOAex7wZBUGyuJpQVU/1IMB4Yl6lvhO+QovtOgky3x3z305T2QWHqq1mK6sXNdm
+	 ejwit472wZRvb2OMEMnkyWcHZ6fpazjfkKSoOrN8=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576EICJL3625938
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 6 Aug 2025 09:18:12 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
+ Aug 2025 09:18:12 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 6 Aug 2025 09:18:12 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576EI9EM3951059;
+	Wed, 6 Aug 2025 09:18:09 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <linux@armlinux.org.uk>, <arnd@arndb.de>
+CC: <krzk@kernel.org>, <afd@ti.com>, <u-kumar1@ti.com>, <praneeth@ti.com>,
+        <b-padhi@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] arm: multi_v7_defconfig: Enable more OMAP related configs
+Date: Wed, 6 Aug 2025 19:48:08 +0530
+Message-ID: <20250806141808.4013462-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: epam.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR03MB10456.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fd5048a-a160-4474-5301-08ddd4f409cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 14:17:55.7599
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZFy+OSmPr/jeAKM2xd+sWZH8RwWTEyE42UQK0luFewEdGBWNMxorAdIl+Pm0KLs0tMX2qfDwak6pcBffHKKcOx2BZpaR0CzVjNWmKyeso2w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR03MB8803
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Previously this code update only vCPU's in-memory value, which is good,
-but not enough, as there will be no context switch after exiting
-exception handler, so in-memory value will not get into actual
-register.
+From: Sinthu Raja <sinthu.raja@ti.com>
 
-It worked good enough for VHE guests because KVM code tried fast path,
-which of course updated real PAR_EL1.
+This allows us to enable various peripherals in the TI OMAP family
+platforms like AM571X-IDK, AM572X-IDK, AM574X-IDK, AM57XX-BEAGLE-X15,
+AM57XX-EVM using the multi_v7_defconfig, instead of only with the
+OMAP specific defconfigs.
 
-Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+IKCONFIG*:
+Allows reading the current kernel configuration through /proc/config.gz
+
+{TI/DRA752}_THERMAL:
+Enables TI's bandgap temperature sensor and thermal zone framework for
+thermal management on the OMAP SoC family.
+
+THERMAL_EMULATION:
+Adds emul_temp sysfs node under thermal zones to allow emulating
+temperature changes.
+
+DRM_PANEL_OSD_OSD101T2587_53TS:
+TOUCHSCREEN_EDT_FT5X06:
+Enables OSD LCD panel and capacitive touchscreen support used in AM57XX
+evaluation modules.
+
+SPI_TI_QSPI:
+Enables TI's QSPI master controller driver for accessing flash devices
+on OMAP5 platforms.
+
+FANOTIFY:
+Allows sending open file descriptors to userspace listeners along with
+file access events.
+
+USER_NS:
+NAMESPACES:
+Enable user NS to provide user info of different users for different
+process.
+
+POSIX_MQUEUE:
+Supports POSIX message queues for priority-based IPC.
+
+BSD_PROCESS_ACCT:
+Enables BSD process accounting to allow user space program to write
+process accounting information to a file.
+
+bloat-o-meter:
+Total: Before=24537037, After=24640034, chg +0.42%
+
+Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+Co-developed-by: Carlos Hernandez <ceh@ti.com>
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- arch/arm64/kvm/sys_regs.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 7b8a0a6f26468..ab2b5e261d312 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -3463,6 +3463,9 @@ static bool handle_at_s1e2(struct kvm_vcpu *vcpu, str=
-uct sys_reg_params *p,
-=20
- 	__kvm_at_s1e2(vcpu, op, p->regval);
-=20
-+	/* No context switch happened, so we need to update PAR_EL1 manually */
-+	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
-+
- 	return true;
- }
-=20
-@@ -3473,6 +3476,9 @@ static bool handle_at_s12(struct kvm_vcpu *vcpu, stru=
-ct sys_reg_params *p,
-=20
- 	__kvm_at_s12(vcpu, op, p->regval);
-=20
-+	/* No context switch happened, so we need to update PAR_EL1 manually */
-+	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
-+
- 	return true;
- }
-=20
---=20
-2.50.1
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f2822eeefb95..d88177cbf2ce 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1,7 +1,13 @@
+ CONFIG_SYSVIPC=y
++CONFIG_POSIX_MQUEUE=y
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BSD_PROCESS_ACCT=y
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
+ CONFIG_CGROUPS=y
++CONFIG_NAMESPACES=y
++CONFIG_USER_NS=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_EXPERT=y
+ CONFIG_PERF_EVENTS=y
+@@ -333,7 +339,7 @@ CONFIG_TOUCHSCREEN_ADC=m
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=m
+ CONFIG_TOUCHSCREEN_ELAN=m
+ CONFIG_TOUCHSCREEN_MMS114=m
+-CONFIG_TOUCHSCREEN_EDT_FT5X06=m
++CONFIG_TOUCHSCREEN_EDT_FT5X06=y
+ CONFIG_TOUCHSCREEN_WM97XX=m
+ CONFIG_TOUCHSCREEN_ST1232=m
+ CONFIG_TOUCHSCREEN_STMPE=y
+@@ -453,6 +459,7 @@ CONFIG_SPI_GXP=m
+ CONFIG_SPI_GPIO=m
+ CONFIG_SPI_FSL_DSPI=m
+ CONFIG_SPI_OMAP24XX=y
++CONFIG_SPI_TI_QSPI=y
+ CONFIG_SPI_ORION=y
+ CONFIG_SPI_PL022=y
+ CONFIG_SPI_ROCKCHIP=m
+@@ -547,6 +554,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
+ CONFIG_SENSORS_INA2XX=m
+ CONFIG_CPU_THERMAL=y
+ CONFIG_DEVFREQ_THERMAL=y
++CONFIG_THERMAL_EMULATION=y
+ CONFIG_IMX_THERMAL=y
+ CONFIG_QORIQ_THERMAL=m
+ CONFIG_ROCKCHIP_THERMAL=y
+@@ -555,6 +563,8 @@ CONFIG_ARMADA_THERMAL=y
+ CONFIG_BCM2711_THERMAL=m
+ CONFIG_BCM2835_THERMAL=m
+ CONFIG_BRCMSTB_THERMAL=m
++CONFIG_TI_THERMAL=y
++CONFIG_DRA752_THERMAL=y
+ CONFIG_ST_THERMAL_MEMMAP=y
+ CONFIG_TEGRA_SOCTHERM=m
+ CONFIG_TEGRA30_TSENSOR=m
+@@ -747,6 +757,7 @@ CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_DRM_PANEL_EDP=y
+ CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
+ CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
++CONFIG_DRM_PANEL_OSD_OSD101T2587_53TS=y
+ CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
+ CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=m
+ CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
+@@ -1260,6 +1271,7 @@ CONFIG_COUNTER=m
+ CONFIG_STM32_LPTIMER_CNT=m
+ CONFIG_STM32_TIMER_CNT=m
+ CONFIG_EXT4_FS=y
++CONFIG_FANOTIFY=y
+ CONFIG_AUTOFS_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
+-- 
+2.34.1
+
 
