@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-757731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60366B1C610
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5F1B1C601
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388103A4860
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C25218A810B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA2428BA9B;
-	Wed,  6 Aug 2025 12:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C44288C8F;
+	Wed,  6 Aug 2025 12:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LiNE6aQT"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ssBivf58"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197D1274FFE;
-	Wed,  6 Aug 2025 12:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483938; cv=pass; b=OErruVie09mVe+uKFKlNMJMxrHkwaNaDEydPE9acbPPsOdtACm6rP1t/O32BVIblW6az+Xuogxgtm25aj7uNxYFFCo+6tKPTOBtLc0INy6KmANk6Le8wwvr1pC1uZJ17ESgewAOEm0SR/Qiced4Ms+Qdmgz6eivCOcULCdOldPQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483938; c=relaxed/simple;
-	bh=ul4jt73laQuUUeS57wBdx0u9qiIGtkm72JDJIULLJ5o=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=r1fmBfyEJ3tfuJikEM9gaEv0IC8UDSSs6Y+jPs2opmY1jrsqw8yCQ5MOfjr3KAMBXkitC+UUDayLYWXvciRVrPqDSTgLtxOSGG0jvKZlqrl+sChJH65ietTufwfbo5Ljb/12jTJbpJ5WUzamfFBCVZm6Pj4KLlk4Q2ES4iJQXrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LiNE6aQT; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754483923; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ygvyy5nOVvE+lE9Gom1RsNmzjqUlaxHap58D8rp81Dbs7QMSZ8PJDJb9mckH8Xq7riuw+eaUWrHwIT24z8pOHs+C8NiHE7goCtF9aNKEWhi7q8V7QAsqIRPqqXB3z7GPr5HfHqadfq1rzHNvBosxl5gPEXBuLnPvDXtIBriWBn0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754483923; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=o2qE/1romGU48U4T9i8557cOr/JyU6sS9Hngmv6iYfE=; 
-	b=KgkjNG/m0oAPX/wmuaPwAhLxf8xiEnMmsFIwR/xYE9B8/jlfKXco1jfykG6pNC/G7FDquicca2mC0R2Xx8oGf3uFC4KL4XDI330ibL9EzIroycsR28WYyiYqHwuB+MN0ytEdb/eW7vWdC75tyqLFuZ++gg8qO0IdXGlk34VrfFY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754483923;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=o2qE/1romGU48U4T9i8557cOr/JyU6sS9Hngmv6iYfE=;
-	b=LiNE6aQTVfiw6tWqjJ4e+l5oKkQ2u8rE7LiRqM+83Ux+KNJe79EIEUk6SY3S3IUh
-	0adGcefu1t9GstHHFblk+ey5f0QO4a/GqM5JodRSAKNKPKm24DJFeI/cV1dq0M46SNB
-	N7PEh2oSELyqc6vjjxkQ5sB5h6Wj+n3EzDLOXg7A=
-Received: by mx.zohomail.com with SMTPS id 1754483919865747.4839862466861;
-	Wed, 6 Aug 2025 05:38:39 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C0F274FE5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754483926; cv=none; b=IOW/SnBZaJianYJDWmoK66+ZPFSBOZeKOlQslznun66gohLUDNAHbYEjYwNDhaaDujWyNtlG1tPlPkkfgjs1YDtqii/uhhRPUfUsBSZs656XcYyZCiQXKp8mBssuCiawdWvCZnGi9mSnTu5ZNQ9CqkAmJRGoE9lFZ/VsP+gbcCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754483926; c=relaxed/simple;
+	bh=fHoREgnkeV5Y1pWz2nlv1aPFFEoGrGcTrhj4czujmNM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ewruMgnqWkn3Vrvb/aqyktTdRlqvqAJUJx6v8o7RjBVP/Tq6qqkkQ5gw1H1wgIuHwty9KjYTylR3KJTL2VoEpGTyIlzmeOTHhXSnGEuAkYvjHgP9WWQixLAcs3Bs4d9DmiVcsaaX/aqJOR/Ay+8x+DD/Ea9XPgeCK86TahsYAis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ssBivf58; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af95a5989a2so84016366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754483923; x=1755088723; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4VaZtENKZm/tfRAOtyUeeFdRLhWpnVE+rI9+LmA8k0o=;
+        b=ssBivf58pmuWj71EU9ByooSLZ7S2wyR2J+oAaYWv9ZZ9gauEDPgvCMx13JW80lRl7w
+         9ENNCO24j0ghKVyjLc6rvDCCTFDt5zS6aUlx2oZiu8QeJz76JpLcUfy5IkW9YreGEnBw
+         cHbGShU4Vw3cHSFsPRCkkUyc91GZ4Q/WzpvsiltbCTo0H8daPsDtfZURFHEyMZIUj44a
+         vYVZnsOHivrKiKdHZpolzM1IFx0lN603laMa+RKCxAYSbb8ilCmb6yYJdVRdL5DbsPY0
+         W7FO1BBZ62JDl9RECRVwGju3xVx91u/DSiN4yPQ1PjlzEs9noTfZ9cASn+Mo3TMq86lr
+         J9QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754483923; x=1755088723;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4VaZtENKZm/tfRAOtyUeeFdRLhWpnVE+rI9+LmA8k0o=;
+        b=UHNUSO9x9yxmJALGJjD/GwzPcg4SQtNl27PJ94XLRdk2stxpikGZOTeY1FmWJ6GyPW
+         7s+vhiYkJsT4yjktE7c1Y1bkzsiJhRG39FADxhDRaLY9Z6dbcblCQTxgSF9ip9RRUlza
+         6uqjC3X3PKKC2fjIXnPiSiGcI+paKYgzhHbUyDD+YSDJ3jKVScbtwo/LfzKtWp82YAT1
+         m1J/mpRwEBrGxCDAQDyXdpIHF7ncIzhUtwg6XoXmY6ZSSeDViQWOKpNuMa56GNfMBnf1
+         H8eJw7D0l9d8iTCaxQaRX95hLv1SYtqU+4fQXxqdwgv8DmFF04OIldM3z/rinUzCvdSu
+         kPSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZC0KO9tKPRB+3x+khjKys9iizu+71kid4biOWmcaGXfIf5a/gsAaODXINwQC2tHjpzsmzXeeSot2mJfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6bfC5lr0BtqxqwbX7d9pewvFxILfQVscDJQ950bYVfbGMAdMa
+	mrsOwOfehage4A+uSQdm9/TrDImFL4BMWVgQnYAy3eYl3vG9Vn68PPNoq3wbnVoME0s=
+X-Gm-Gg: ASbGncuo7q7wfCxNtPj8AGdwesy4CWgwQbCqErvD+an3BH2aB+LncNOTyfWL3mEhai5
+	COPHq9CRsw6v3vHzqxZ8SyT5XB6DgjEjI7iz43eqeEgH+kf7dv4W20bZ0UB7zPRaSyRIfOIMIiT
+	25lCjQC/omFK9ym8cKeBoH2z6oeggsKv/J4rBZ8XCOVviXSqNhDgKNbpk69hfskxUcs+0Tvjg8d
+	LLayeu2+VexRbvsLgATZaS599FffbfNbopzkErsZ1GOkYXyMUdk2Vpz7dGxrAcdkrBPIis8Q9k2
+	0PcM8MZd8/6jyL3GsxxFEsRKPhc4rTTom3LYqcn48i3nqiQstXWWRRDRm5qHg8R7RfJ8v1s47lU
+	AmeIBzBHhF8QavgdG83V3f4MM4ECdK6nd460CQMI=
+X-Google-Smtp-Source: AGHT+IEcOjlxhis8dtk4Llzt7HCqXzOLdN/tQl26ZuPjoBL3T0vFFNKR7gAuorxk95mAuj6zOSlFFA==
+X-Received: by 2002:a17:907:3d9f:b0:af9:8a71:e090 with SMTP id a640c23a62f3a-af99041c6f3mr103342666b.9.1754483922931;
+        Wed, 06 Aug 2025 05:38:42 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.218.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c081sm1083866766b.97.2025.08.06.05.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 05:38:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RFC v2 0/3] arm64: dts: qcom: sm8750: Add Iris VPU v3.5
+Date: Wed, 06 Aug 2025 14:38:29 +0200
+Message-Id: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
-Date: Wed, 6 Aug 2025 09:38:25 -0300
-Cc: Sidong Yang <sidong.yang@furiosa.ai>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMVMk2gC/32Py04DMQxFf2WUNa4yJjNDu6qExAewRRXKw7SWO
+ gnEYVRUzb8TQtmyvLZ8ju9VCWUmUbvuqjItLJxiDXjXKX+y8UjAoWaFGgc99QacAZkfpkEDZxY
+ IRYBccEPwhggnVQ/fM73xpUFf1PPTozr8DjN9fFZBuW2cFQKf5pnLrot0KfAn+YHMJGKbvn6j0
+ fSox5v5deFAyXtYetAwBDvSRGTRhX0VeI5+U7HNemIpKX+1ekvftP81acDt/Yhbh2YMSPszR5v
+ TJuWjOqzr+g0j7PBzMAEAAA==
+X-Change-ID: 20250714-b4-sm8750-iris-dts-ebdb5dc4ee27
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1549;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=fHoREgnkeV5Y1pWz2nlv1aPFFEoGrGcTrhj4czujmNM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBok0zLArheMhBgD78cBVzQyLrjFfeUzBZPB4S8Z
+ 6FzaaE8EfyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaJNMywAKCRDBN2bmhouD
+ 1x55D/4pDVkVmS9JwVg9IjwJD6IHSnSpcG7AZ1lSE0TJPbFXy6lRaMmDRbKroz/x164SCoxLZtz
+ Qq39a6YpCvjopnwUVnjhlGGAAICyfMs3lkkCyNjSvDzNA+/zKJt0MaO7XbDNuga8rdWOtmpWV2B
+ w5OLMEF+bX5LXXITi4aNlZchjs8VBtbSvK/IZ0iA9cPCR0/BXvjWS+1hk6R7M7xKo4taoixAWyP
+ fdXbrG7vqiO7/q183+iNjvgjFrTI2PF5L7Wjy1hWVPeNyg7bvZmw1KIoF4Dud2U785geJ7K8DSb
+ CapNBD05VZc6KIGJnET+zizljUy9bk/HDPaLg8cnf+rALdYyemkd1pi9o7EGAbm7QkfiykpVxl2
+ S0iyYiZ1vRbPY0e7gLbMJ44N3qQiJxRANy3llrpvkxt+nsBKNL0D4s38MkA6YQSWExs4zedcE+K
+ 0Pny1CHOCT8OOUZ+yDp7kWMmXSrjHSC5O8/DaXxcA66zMcZbX5WtbNbdN2ZD/K3rApW9StpSUKk
+ IksPnvFa37GEWPV4CbdAtWbt1nJgL4ZcgwJmL9ZuXQ4r/s772pdQmxhU95PdtF+QE2NUX1jPK58
+ CW2VHXNwFud7jR8dp8Q6fTmmrihwa+zGfEU/9Gs2OoSOs7NGN8fpEUHscswZgaKRaH6BlOhLc8w
+ eI5gI/SXVs+srEg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi Benno,
+Hi,
 
-> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
->=20
-> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
->>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> =
-wrote:
->>> +    #[inline]
->>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
->>=20
->> Why MaybeUninit? Also, this is a question for others, but I don=E2=80=99=
-t think
->> that `u8`s can ever be uninitialized as all byte values are valid for =
-`u8`.
->=20
-> `u8` can be uninitialized. Uninitialized doesn't just mean "can take =
-any
-> bit pattern", but also "is known to the compiler as being
-> uninitialized". The docs of `MaybeUninit` explain it like this:
->=20
->    Moreover, uninitialized memory is special in that it does not have =
-a
->    fixed value (=E2=80=9Cfixed=E2=80=9D meaning =E2=80=9Cit won=E2=80=99=
-t change without being written
->    to=E2=80=9D). Reading the same uninitialized byte multiple times =
-can give
->    different results.
->=20
-> But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
-> instead.
+Changes in v2:
+- Patch #1: Add RPMHPD_MXC (Konrad)
+- Link to v1: https://lore.kernel.org/r/20250714-b4-sm8750-iris-dts-v1-0-93629b246d2e@linaro.org
 
+RFC because depends on old series (6 months old!) which received
+feedback and nothing happened since that time.  I assume author
+abandoned that series, but unfortunately unmerged bindings for
+qcom,sm8750-videocc block this patchset:
+https://lore.kernel.org/all/20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com/
 
-Right, but I guess the question then is why would we ever need to use
-MaybeUninit here anyways.
+The bindings for new compatible qcom,sm8750-iris:
+https://lore.kernel.org/r/20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org
 
-It's a reference to a C array. Just treat that as initialized.
+Best regards,
+Krzysztof
 
-=E2=80=94 Daniel=
+---
+Krzysztof Kozlowski (3):
+      arm64: dts: qcom: sm8750: Add Iris VPU v3.5
+      [DO NOT MERGE] arm64: dts: qcom: sm8750-mtp: Enable Iris codec
+      [DO NOT MERGE] arm64: dts: qcom: sm8750-qrd: Enable Iris codec
+
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts |   4 ++
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts |   4 ++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi    | 113 ++++++++++++++++++++++++++++++++
+ 3 files changed, 121 insertions(+)
+---
+base-commit: 709a73d51f11d75ee2aee4f690e4ecd8bc8e9bf3
+change-id: 20250714-b4-sm8750-iris-dts-ebdb5dc4ee27
+prerequisite-message-id: 20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com
+prerequisite-patch-id: ada17af875101625f7754335fabc909c8ab9cd20
+prerequisite-patch-id: 3cb47a7c47cd96e02b5a4a05490088541f97c629
+prerequisite-patch-id: 8c77b8e0c611b5e28086a456157940d773b323ab
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
