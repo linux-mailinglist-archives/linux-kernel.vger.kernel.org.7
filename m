@@ -1,184 +1,134 @@
-Return-Path: <linux-kernel+bounces-757709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD51B1C5CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:24:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5E6B1C5D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A083ABC77
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:24:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5A824E23EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B365928A1D3;
-	Wed,  6 Aug 2025 12:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B167028B7F3;
+	Wed,  6 Aug 2025 12:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YaskYnvr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C09woFrC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DA726E17D
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113D228A3EC;
+	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483076; cv=none; b=BRtAaouD5BPFlLQTZYGQ110OYt1/P/7c8P9aynZO1rBRvb88gMSe+1DDVHzRiC4+JFmazEzAbcA7VCXKWmbKpFoxWwnu39dMMegO+G9Az+/gq3HSMhHai+KMEQx3TVMub37IPQsBlwiyNz0cD+OCFxVs2cCXYlTSQW8lzt7pqIw=
+	t=1754483241; cv=none; b=iNU3X6RzHwW5AYZamCpRabBiZnnnvW5EDAnhqyMvrJSI9TpEYxCSBexb2kJYi+MzHKfKgMfjETdi0vZF6DHlNsQ4wRz+WbRpTnxmO39IlBg23Lzvyu8g0B+THgOjQgNTufwZ7VxESszp/nAnsnqrz/mVAiDYPqw/rCxJCGiq0q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483076; c=relaxed/simple;
-	bh=LaljGpMWj+4OiaGSSJjJcPcWCUIs8VI4+fvYOgA21Og=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJ3k9hVddgAJlAubY5DskxZ/UPrHXuM1AmMGSYLrjgO5SWQLGP1BuP7fBmphUBC9UYQ2Dj65IXv6599K3Cl9qfKWe9E6s255LzEckFo2GNrQAJwyK5lpmJzoCA4xJDuRcw93TTJfRgTFsYAns69CmHTY6JB+luKYKTqqxx2W8rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YaskYnvr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754483073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MIyj2Wn/9XHAni6aZsxrY9Shasga7/OI8hKW0Eid1vw=;
-	b=YaskYnvralkchzlM6QNLsmGMCvm4YXQey1Yftyagk0/UNbc5E/JTq9crHzoKPmDKi8Z39u
-	q2lHgmvQZFjlIgCy/jqpKG1lXJiHYU40oiAo1bo+RAMFTDXIZSpfZBb4V5DxFz2+3CvK5B
-	62lShQ8qCQ5rPt8JUmrOrGV3Gg6UxfI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-1-X7BrFPPrOr6aely5-JszrA-1; Wed, 06 Aug 2025 08:24:32 -0400
-X-MC-Unique: X7BrFPPrOr6aely5-JszrA-1
-X-Mimecast-MFC-AGG-ID: X7BrFPPrOr6aely5-JszrA_1754483071
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b780da0ab6so2921533f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:24:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754483071; x=1755087871;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MIyj2Wn/9XHAni6aZsxrY9Shasga7/OI8hKW0Eid1vw=;
-        b=jnS+mZKb0nUvGGXrHJWlYvjawwX6Ztj3cQi2+yfFh4uUHJmkV+LM2w9dbfnzXMIQDc
-         zLvp7j2mX+WRAc5YrND5R7wzlMa15f0NOn0h9HfE9DvUhlW1MGya4QRT/m1wBbj3Q+ar
-         xUo58EY8kiQZefhOOh7s210l5JWojNUxSLfHE5ha3g4INKgjOrmjJ7bJlYlOg8jEjhMp
-         QLhPvKP7QwYAkV1IUog6FqjSgY171g2/w8cdUq2tTsrwVMQjAFKUk6G3QfqvKl1dhpvG
-         /RkXQxaPtW4G5Jkbgorpvchv/fuKR5ibiAmlNtyMtv5JGZXwwD91V3araIK2VVcLGfx4
-         0pDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXHM6xl2qylLoc783abpdfyBw0FQMk9jtked3TkeWlKNUQXX8jVR+M54RDxfi1N46Rd//dLKiBKNQFnes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkRTG2M0OoQXPYUYxLAON34zQvdCEykTnBAEN1dhfQgNTKhIGG
-	6wpf8DHSrvPRVtWYSi3bL2zjt3yZJihIXXQBteNr79wbhm8fLoCmgDD0VyuBY3f1tSMrjPv/rwU
-	Z6LEluIQholHrXGDVEsVqw4Mnr2sP1qnbVk7ABM1jUttsBPGCmcPMJA7/lE6zLI0uhg==
-X-Gm-Gg: ASbGnctazaUfmFwm6B1CYBgm8MADyimw4lIdircqqOsbb9K59Z9mpBWNrpK9IIr4Y2V
-	R0qs3h0Cdy1j1u/kekzwq6TOlg8Aw9DvOhswL2+2axJWUpdxQWGr1H1VllGmYpdqh+OqG/3+Bn6
-	KM1YOn9TU3IwuhL4tMYZd+nVVfHup9bDU6SbN6wFh7wGccg8qHkPawlAOCoK43037P8Sx8aWF/T
-	CVkqeuwXLdssDKLn/8vfDfWRG4EayK312pot7Gies5a+1C1x3zPemEke/ma3d5lLwIKI6LkWiTA
-	Bdo50+vuu9VOYW6yWusvR7nZjag/Bn9BHuljdWqPnaKRbkF+FG/s94DDO6VkF79IeWV2c8AfFqd
-	Piv73G7kYdYcYYnCrsgswcYDwJw1KqQ2MIezg5UgxYs5eJcfTia90YZqJ+axpmzEUuD4=
-X-Received: by 2002:a05:6000:4027:b0:3b7:8b2e:cc5a with SMTP id ffacd0b85a97d-3b8f41b503dmr2340142f8f.40.1754483071339;
-        Wed, 06 Aug 2025 05:24:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbbEMbCT2awtezRB1880Ia/u3kJMAjx+ivYlRRgkF2JNcEjHJ04sShVIDm9LiLrdVjbATLeQ==
-X-Received: by 2002:a05:6000:4027:b0:3b7:8b2e:cc5a with SMTP id ffacd0b85a97d-3b8f41b503dmr2340112f8f.40.1754483070912;
-        Wed, 06 Aug 2025 05:24:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:8a00:42f7:2657:34cc:a51f? (p200300d82f358a0042f7265734cca51f.dip0.t-ipconnect.de. [2003:d8:2f35:8a00:42f7:2657:34cc:a51f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bc12csm23360857f8f.28.2025.08.06.05.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 05:24:30 -0700 (PDT)
-Message-ID: <e67479f5-e8ed-43a7-8793-c6bff04ff1f4@redhat.com>
-Date: Wed, 6 Aug 2025 14:24:28 +0200
+	s=arc-20240116; t=1754483241; c=relaxed/simple;
+	bh=doBgBoI1eDAhaG6OMnM5npExQ5Xq3oY1DJugrOTICDs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nMwOCL8CZ5JmDDMKTty86snbdIOaeCA8stEotPfHV7quHbmXC37AwLAJQO3t9RamMxHLaPevTyT4k4yVwZhJHNOGwaZ0o0xx5/QeNbM7aGUptjsoypLirM+9+09b0sPDRo9AGdH028AHY5mQRrbF1KqHpmvwVpaHL9BrpTQp8MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C09woFrC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9048AC4CEE7;
+	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754483240;
+	bh=doBgBoI1eDAhaG6OMnM5npExQ5Xq3oY1DJugrOTICDs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=C09woFrCUEGZq0FbmDxDUaIgiO2R0r/q0+PB0meps7jh9RuSWjZgf73bA7Acnb/x8
+	 t6J3ueNK/UKdvAW2bizxWXofnA/t2/TXiXXZxXPn4833o/HXQfmqEE1zwlExk0JUz2
+	 a9l/010lMy7729O0uOPohIbpduebLBsI0RSAttveDOVLPFM/VPmpsIRmvvg3f6jr71
+	 ymYtPGmNM3ShzoL84TRVtnRE9wituw8udPjlpKzJvrcYO2I5Fk62OCuswTt0gdLCzS
+	 QLy5CgZ2KWMFU1/hJ1NFGnqkSAahuQwo66oz9PokBl5VG17oL6DeBuMXqflOFGyxv0
+	 AV3Hs5oawPD4w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6D9C87FCA;
+	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
+From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
+Subject: [PATCH v6 0/2] riscv: Use GCR.U timer device as clocksource
+Date: Wed, 06 Aug 2025 14:26:38 +0200
+Message-Id: <20250806-riscv-time-mmio-v6-0-2df0e8219998@htecgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, x86@kernel.org,
- linux-block@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
- <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
- <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
- <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
- <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
- <bmngjssdvffqvnfcoledenlxefdqesvfv7l6os5lfpurmczfw5@mn7jouglo72s>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <bmngjssdvffqvnfcoledenlxefdqesvfv7l6os5lfpurmczfw5@mn7jouglo72s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP5Jk2gC/2XNQQ7CIBCF4asY1mKAALauvIdxgTC0s6A0UImm6
+ d2ldWFil/9L5puZZEgImVwOM0lQMGMcaujjgdjeDB1QdLWJYEIxKSRNmG2hEwagIWCkSosGmLe
+ mMZ7UqzGBx9cm3u61e8xTTO/tQZHr+rUU31tFUkbtg1kvWiGc1td+Atul+BxPNgayekX9jDPne
+ 0NVowXHfSOUcQr+jWVZPgdTiCT2AAAA
+X-Change-ID: 20250424-riscv-time-mmio-5628e0fca8af
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, 
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
+ Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754483238; l=2047;
+ i=aleksa.paunovic@htecgroup.com; s=20250806; h=from:subject:message-id;
+ bh=doBgBoI1eDAhaG6OMnM5npExQ5Xq3oY1DJugrOTICDs=;
+ b=9DPdV5c9qizD7HjzGYQ8LKXMZ8Fn/tvCYTz34vZBapVKFt+CdKe2JKRgd4pIoZ8l/X4tZUFPb
+ 99CMc541WKPC/CYMLlzCWsSAC3wwKlWrsVhrmL2gAi6thDEqvJr/eKW
+X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
+ pk=Dn4KMnDdgyhlXJNspQQrlHJ04i7/irG29p2H27Avd+8=
+X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250806
+ with auth_id=476
+X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Reply-To: aleksa.paunovic@htecgroup.com
 
-On 06.08.25 14:18, Pankaj Raghav (Samsung) wrote:
->> We could go one step further and special case in mm_get_huge_zero_folio() +
->> mm_put_huge_zero_folio() on CONFIG_STATIC_HUGE_ZERO_FOLIO.
->>
-> 
-> Hmm, but we could have also failed to allocate even though the option
-> was enabled.
+This series adds bindings for the GCR.U timer device and corresponding
+driver support. Accessing the memory mapped mtime register in the GCR.U
+region should be faster than trapping to M mode each time the timer
+needs to be read.
 
-Then we return huge_zero_folio, which is NULL?
+Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+---
+Changes in v6:
+- Rename mti,gcru to mips,p8700-gcru
+- Link to v5: https://lore.kernel.org/r/20250711-riscv-time-mmio-v5-0-9ed1f825ad5e@htecgroup.com
 
-Or what are you concerned about?
+Changes in v5:
+- Fixed build issues on 32-bit RISC-V and sparse warnings
+- Remove clint_time_val and clint.h, replace with riscv_time_val
+- Depend on RISCV_TIMER in Kconfig
+Changes in v4:
+- Remove "select" from mti,gcru.yaml.
+- Refactor the driver to use function pointers instead of static keys.
 
+Previous versions:
+v1: https://lore.kernel.org/lkml/20241227150056.191794-1-arikalo@gmail.com/#t
+v2: https://lore.kernel.org/linux-riscv/20250409143816.15802-1-aleksa.paunovic@htecgroup.com/
+v3: https://lore.kernel.org/linux-riscv/DU0PR09MB61968695A2A3146EE83B7708F6BA2@DU0PR09MB6196.eurprd09.prod.outlook.com/
+v4: https://lore.kernel.org/r/20250514-riscv-time-mmio-v4-0-cb0cf2922d66@htecgroup.com
+v5: https://lore.kernel.org/r/20250711-riscv-time-mmio-v5-0-9ed1f825ad5e@htecgroup.com
+
+---
+Aleksa Paunovic (2):
+      dt-bindings: timer: mips,p8700-gcru
+      riscv: Allow for riscv-clock to pick up mmio address.
+
+ .../devicetree/bindings/timer/mips,p8700-gcru.yaml | 38 +++++++++++++
+ arch/riscv/include/asm/clint.h                     | 26 ---------
+ arch/riscv/include/asm/timex.h                     | 63 ++++++++++++----------
+ drivers/clocksource/Kconfig                        | 12 +++++
+ drivers/clocksource/timer-clint.c                  | 20 ++++---
+ drivers/clocksource/timer-riscv.c                  | 34 ++++++++++++
+ 6 files changed, 128 insertions(+), 65 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250424-riscv-time-mmio-5628e0fca8af
+
+Best regards,
 -- 
-Cheers,
+Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
 
-David / dhildenb
 
 
