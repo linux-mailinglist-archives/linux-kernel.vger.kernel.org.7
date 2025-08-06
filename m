@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-757581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26381B1C3DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:56:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40D3B1C3E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6711F3A3BE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0FF16A4DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8FF28A1D2;
-	Wed,  6 Aug 2025 09:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8272328A402;
+	Wed,  6 Aug 2025 09:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MNy6BW9c"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpLxhWyW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916A227470
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F781DF256
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754474209; cv=none; b=uB/51JzwKKuzBaQ13vyATAO3U6IYzRNrHeJnoG0sA1PstOvGM9Pjt4KMx8U5M6yRPoZB14Aje9l0Uz7AjCwxES2ZeOLBF0dogn92hSLvb3FZIFVB2MyeSzIORkXvLfWC8EMDjl7IOuxvGKRK8ZPQK949UjKypmcOAivaAN7mVXo=
+	t=1754474223; cv=none; b=PQVyw62PqBgScoLpbx2iFrgdzGsw8aHLWf2NsPhbZZ12zXQghe1oakUaBCZ8/4CGEeigDO+6YN4smJbtKDGfZ+7USptrqDckDTM4zFdN7i2XXZBHF3/zr7La58wfjjyvMyZNlgXhVlQg+UAWLzQsBchD7Z7dBZuKu2yM4d8U3bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754474209; c=relaxed/simple;
-	bh=SovqiRTwNHkCLcpBLH3EnEJkUe49rgR8N935dMmvlLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lIEuo8TEXkyYgcrPCRX6FTYRSjMdXJEMqK8AuvZ4N14zbGZW50+h7gxW87FeQXebANF9iqeRiThpYB/vec8IpqS7itjS8lL6X2HO1aGRwP7CF5nDb+HqKL8VziTl3cz4I2iUyOnoG66IsBWf7o4gGr//t7c2WSFk6rCHNNNIdO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MNy6BW9c; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0AAB51FD33;
-	Wed,  6 Aug 2025 09:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754474199;
+	s=arc-20240116; t=1754474223; c=relaxed/simple;
+	bh=UnRhCBGz/g5M0sDRDevsbQoDZqubHqeSfzdgXcUdUSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F34jTshX5FV7Lr6B8qsWJlUuKr5qzXoLFRAOOKgwn3qRDDvLuP792DBF7yCwR8Z6vojy2XXRA4GlUUC9rFhK9wImcLKl+s1ZP4EeTTrVmtUgfhyEBR6bG25Sy9ojvzBUL6QqV7AKsHzj3E3irSviX9jn7DqRTb2v0Dal7xzafW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpLxhWyW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754474221;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=URKB1mHsqhAynryiTP+/5gH3zHuLJzJnR0Qk30y2VY0=;
-	b=MNy6BW9cqY/rzWePMhe4LstzwcW0lFTrwQ8Pe+ponNzzOS0JNFX3LuvQSXN9sdrwBqylEW
-	u1VlzkGQjtw2lwAURUBO6Bg4qDzMUnIqwiZakTC+ojDEviDwezrmDBr5PXeazeDfyCvhes
-	pm5ebXjwEnfwZguJazaJaA/AHyir6I2CFDplDGmyXIyqV9K+uLRLFK+BaPTfAKaRsREcbA
-	RZRYcJjRlVWTJBJv3HtIwkgAVbARiW/HkHeENdcwNE3S7JsYIW4qF2joDB5WYuhg3IYRRK
-	84gKJW072y+pjRJrw1U4k8kImNLfsywhjTjA1IaPX7XNapDAfa51JeIF+ioJXQ==
-Date: Wed, 6 Aug 2025 11:56:35 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
- damon.ding@rock-chips.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH v2] drm/bridge: analogix_dp: Fix bailout for
- devm_drm_bridge_alloc()
-Message-ID: <20250806115635.58fb5ae2@booty>
-In-Reply-To: <20250806095224.527938-1-victor.liu@nxp.com>
-References: <20250806095224.527938-1-victor.liu@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	bh=UnRhCBGz/g5M0sDRDevsbQoDZqubHqeSfzdgXcUdUSU=;
+	b=DpLxhWyWvKk6KSvW39PraU/8DUTauEI+aUC96gGUFbfQjThLUBe3cAwqK6RhEA9aBhNcSO
+	M5EPqLphNPDDHu8oePlpvPytak4L/JUdCfwzq124L2JX8H1ILfvELoZ5i7cydfVxsFIZne
+	PugJrFLsDNC8+FkktlsccIoTcI+TguA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-361-wOlEm1BNMOuXS81yNaiZFg-1; Wed, 06 Aug 2025 05:57:00 -0400
+X-MC-Unique: wOlEm1BNMOuXS81yNaiZFg-1
+X-Mimecast-MFC-AGG-ID: wOlEm1BNMOuXS81yNaiZFg_1754474219
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b7806a620cso2927153f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:56:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754474218; x=1755079018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UnRhCBGz/g5M0sDRDevsbQoDZqubHqeSfzdgXcUdUSU=;
+        b=loubGves3qodkERlpX4lZOCySDmAUWkUjJbHuZAzvAD4XJ6SLinE7sMvIjGb95bvIt
+         /5JlWHaUem/CFltcbq4oCOkJvQgCPfD4iG2O9A1TOrMb+k9E/2hYd8cDJkMsHKeZF9BX
+         SDARRuz1ncytbuE7yPYIv29UHInUPD/2XwfXgQWwrabqVRj5cFMyIiCbRvfDM6eyg3C0
+         2A876cxLWQd9alEkUPVqg5Xi8epqNsdymWjl9HliiOVl+QB/KimgKWWqnEfG2rsswNxb
+         i32wS3xJikzji2OZIAH0HChxXhOozGARBfJJzfO+fmbrkhpyihFDJRVEmJbyGwhb54TE
+         yY8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmeycitIQJODPd/pFk/VrruHf656EDVPoOpoCLDzUidzIb55E0/+zDnsMFKVY5jswmVbEuvcoepvhkc5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUkYBUiSEKEWjlk+pdo0qAM6/ei+MvfB7GMlu91pulFIki1BGq
+	4xfTY2yfH63pLdNBwmlLwVW5eTzPwdIQFCv9AB1JhPw/jyCkMHc0bij1ckqRNfnQaLri1i1Y58T
+	MRGMERmaAeaq1CXAqfWTU1uPSGaepvQYx6BT6mv+dxoVP3bLsVs8qE1nTGsBO+PxW90KIFp1I7v
+	BOysDoia8SpQofKIapAXJJxy2baYm/UBritz8KmkFfOPqI/Gpm
+X-Gm-Gg: ASbGncuakNPpiuOt2gvXaaQscSgzIBj+5g2qixl745eigz4YptsIbdc/yoMtbIQwWpl
+	C3WUXJMAUVhpwqM1eEqKXg6Vx2wzpF9H+iptA/ItPgLobV8Kd9WR6CZYyr60923dob58+6M/jEp
+	LI3gV1M0aTv+HdYOuvHRdJBw==
+X-Received: by 2002:a5d:5849:0:b0:3b7:92ec:68ec with SMTP id ffacd0b85a97d-3b8f41bb8c4mr1730023f8f.14.1754474218395;
+        Wed, 06 Aug 2025 02:56:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmkIlZiBIO0pxwuhv5ZEuhlp3NbgCJIQMCznSJgwMIdEJJHMlTE317CHbrVdWmT1WXyuHGPX1pWe6egu5BZuE=
+X-Received: by 2002:a5d:5849:0:b0:3b7:92ec:68ec with SMTP id
+ ffacd0b85a97d-3b8f41bb8c4mr1729994f8f.14.1754474217980; Wed, 06 Aug 2025
+ 02:56:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudejjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehvihgtthhorhdrlhhiuhesnhigphdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrt
- ghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgv
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
+ <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
+ <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com> <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
+ <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com>
+ <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com> <CACTEcX7hsRkzYEBg4pQd5s36p_ZXJM=dtxSGmBjfkt5sWrXP8g@mail.gmail.com>
+In-Reply-To: <CACTEcX7hsRkzYEBg4pQd5s36p_ZXJM=dtxSGmBjfkt5sWrXP8g@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 6 Aug 2025 11:56:45 +0200
+X-Gm-Features: Ac12FXxUD7IfHIB3LF4bE0A3e_MF7VVLU9X5HEvxDOG2SUB9XsZW8ohxIfMVMqA
+Message-ID: <CABgObfZagg8_w100tEnbU0_adUWPcnQYzxy8aAyUqVASjxWujQ@mail.gmail.com>
+Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
+ 6.8+ on ThinkPad X1 Carbon Gen 10
+To: Andy Mindful <andy.mindful@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, 
+	rafael@kernel.org, ville.syrjala@linux.intel.com, tglx@linutronix.de, 
+	Christian Brauner <brauner@kernel.org>, Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Liu,
+On Wed, Aug 6, 2025 at 10:40=E2=80=AFAM Andy Mindful <andy.mindful@gmail.co=
+m> wrote:
+>
+> Hello,
+>
+> Can somebody advise how to properly bisect issues in linux-stable
+> repository between v6.7.11 to v6.8-rc1 tags?
 
-On Wed,  6 Aug 2025 17:52:24 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+If you can test 6.7 and bisect between 6.7 and 6.8-rc1 that would be
+the easiest.
 
-> devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
-> NULL pointer, so use IS_ERR() to check the returned pointer.
-> While at it, on failure, return ERR_CAST(dp) instead of
-> ERR_PTR(-ENOMEM) in order not to depend on devm_drm_bridge_alloc()
-> error code implementation.
-> 
-> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v2:
-> - Return ERR_CAST(dp) on failure.  (Luca)
-> 
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index ed35e567d117..efe534977d12 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1474,8 +1474,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
->  
->  	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
->  				   &analogix_dp_bridge_funcs);
-> -	if (!dp)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (IS_ERR(dp))
-> +		return ERR_CAST(dp);
+Paolo
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
