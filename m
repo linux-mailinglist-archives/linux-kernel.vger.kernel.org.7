@@ -1,208 +1,178 @@
-Return-Path: <linux-kernel+bounces-757317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85E8B1C0BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90FEB1C0E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551283A45FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A074624CA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D402135DD;
-	Wed,  6 Aug 2025 06:57:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0446F21773F;
+	Wed,  6 Aug 2025 07:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GmOxT1cx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WAgkFVd3"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA254431;
-	Wed,  6 Aug 2025 06:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F54E8821;
+	Wed,  6 Aug 2025 07:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463474; cv=none; b=fLFyP1gmqcXVhtkZ0EuETeNtdoX0yGhnHXGxoUvTKAJUuiml3h2hfZpPQWubi74JbwA//t20F8rjHNpcqG+iWgYujJ76XTxVbBg4NL0OXuM57zQZ6p6FbazUdw8TNBU/uLfDKDyclbnnSHxB5d/ST6nkSmN4CutghUSV47xZUzM=
+	t=1754463755; cv=none; b=Oa/OVE4RUlNC9j2ro9+wtN63tWgjHyuH67yBkPKXzLrh1XeQxaF0hgoyei24933CpCmj/5qrXCCXpRF1QYd6DaiSyG79kJUiWlpIq/OfcHH55gtP0FBYM/Xu4K3IA0BjRsjRDm4nBJzuHnVvwabAOkiku7eAk63Rh8CRt0pWwbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463474; c=relaxed/simple;
-	bh=2jYIU+XRvLJDbG7/RHlYFG1mX5xPXlzCIJa6FWLLdkg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UXb0rO7rFKvI6C5lbP+s8c9NtCIUvm3NNSjM98gpz4L9I17sAeLPQOaGAPRJMrhHPuaFhX69awK1sXlAhXX/jUh6SYshcus76ZlnAYcqfYdrnqlNOZF+dA8TEHQkz/k1jw7HVoqCpvLE7rF0HbCTKtFkA3MDs1OJ8I9DZ05WL9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bxh250NmszYQtHC;
-	Wed,  6 Aug 2025 14:57:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B13411A154F;
-	Wed,  6 Aug 2025 14:57:47 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP4 (Coremail) with SMTP id gCh0CgCHTg_p_JJokoH5Cg--.33530S2;
-	Wed, 06 Aug 2025 14:57:46 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [PATCH v2] tracing: Limit access to parser->buffer when trace_get_user failed
-Date: Wed,  6 Aug 2025 07:01:09 +0000
-Message-Id: <20250806070109.1320165-1-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754463755; c=relaxed/simple;
+	bh=lRvMfkUTF/iL3sQd9aV66ysujH7eIaME+hHG2kMFQ28=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jc3m6jhHUs1FD0E+/slzPSdWvLaax4lJHUdMibITe0Bp0QzSJLaE1u6mDaFQY76vNW93n7zBsaJUs4Ws/ckp1r5fchzoVxs4rNKigKLyEIpeDsGNwbT75Mkk7PlIxgDfZGWUJ0LN+s3UDWz+zFkqnT2NPtpHPiAedGxjVdxp91A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GmOxT1cx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WAgkFVd3; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 690FA1D00140;
+	Wed,  6 Aug 2025 03:02:31 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 06 Aug 2025 03:02:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754463751;
+	 x=1754550151; bh=r+4PwzMnGw4Uw6l+sBKPiWlio2oiOPyjsfxXua3yWu8=; b=
+	GmOxT1cxJpTyHHYDUuJQUxCQwJNZnYrE3rBTZZYz+Uhh1UpcLP7Fu5gzleDcN7Kc
+	9joF5VEPKt/qSoeJj8f2JcgiUEsU4vXG6vjMCXnaaBA4HsYGkQFZI+VlrlRFLwSP
+	O5JYEhZmH1/tGQmFhjO6Vw60miG5zR+x3LUviPz1LKWeE2aImi0w/cqMbWhI3U0v
+	K+3OjlMjPr3jGGjlRIudD6vmKUUJ6XEJ1RQnZy069kOm93tqlqjvBXsiyWUn6kWv
+	+SiwY92zqfE2nxGpotzEBdlqlBSeLMMQ6eIsU9B+AfB7xyDfLtJvXqdKH63IgZg3
+	gnMVYjloLZJVy7w5JCplJg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754463751; x=
+	1754550151; bh=r+4PwzMnGw4Uw6l+sBKPiWlio2oiOPyjsfxXua3yWu8=; b=W
+	AgkFVd3ieSSr6qnsHlrE1puWSODy/bTP5d7cxte4XYpT+q2P0+E6hlKo7+YogAJe
+	vPfS0bzkwjxYhZnump6Jx6usxHx0s6xmVHKf6Pn04iQxQMbWIKDVGXOKaxlyN79i
+	PYUhdFD1VtfSUdENzxfXJRQ7FoLSURiLXi9wHVbaarsuAimVyR0Xk4Pf0olmPftJ
+	lmXRbJjg2BooHLIwKZ/xPwuLzWArz2uX3auHGVZrVb35yTbWmSoprMc8XQWKqcGT
+	cU2Un6GFOm89uePIB1VpG4VeSXko9p0PXXPeZZmOSkXwNGDjDjH1HUfPnXAhgNDh
+	+SQVUVoM/TOMYxbnbLK5A==
+X-ME-Sender: <xms:Bf6SaJeyrOrsR9fxzY42W0fka_hv06HEvA5VGXFcFWicJEU2ogVLtg>
+    <xme:Bf6SaHPQJfG8NlMoI-t_x-N5o0MVcgBKnTDCmaskW8edjRqne8AFs1sBCBEpnyGH_
+    4hNQd4xxTiKjLRSPkA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudejgedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggrhihlihgsrhgvrdgtoh
+    hmpdhrtghpthhtoheprggsihhnrghshhhsihhnghhhlhgrlhhothhrrgesghhmrghilhdr
+    tghomhdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgt
+    ohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtohepshhunhhilhhvlhesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Bv6SaA9MVygZHlgPSknmVwyZ4cfLPjQ-Rur4rgEUXSH3gNbHVYJhtQ>
+    <xmx:Bv6SaFmxckKembnvtB_5bGLNzQxIoGhkSY9mIvWuDuMdofEC1xQqng>
+    <xmx:Bv6SaFwuxA_tI3k82uPUpcKOHHBKGtXGzT4r706NusGJNZXiB8JNig>
+    <xmx:Bv6SaP6Ufv5ELt8kaHhKPf9KNJtl36tKNH2Ntsw_BXp6mAVh8iD7vw>
+    <xmx:B_6SaGkbtbbHtZQqVhJr9LS5jx_Aed0KNNZrr3nsD0Fjwtg0XJlJWraz>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DF429700065; Wed,  6 Aug 2025 03:02:29 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHTg_p_JJokoH5Cg--.33530S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw13Xw45GFyxZw1DGw13twb_yoWrJFykpF
-	W3Krs7GwsFqF4IyF4rZr18CF95X393JryUGF4kJw1Yvr9xtr1q9rWxuFnF9w1fKryrG3y3
-	AFWYvrW8Kr1jvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+X-ThreadId: T1663be770c67d725
+Date: Wed, 06 Aug 2025 09:01:46 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Abinash Singh" <abinashsinghlalotra@gmail.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Jiri Slaby" <jirislaby@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Sunil V L" <sunilvl@ventanamicro.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Message-Id: <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
+In-Reply-To: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
+References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
+Subject: Re: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in
+ serial8250_probe_acpi()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Pu Lehui <pulehui@huawei.com>
+On Tue, Aug 5, 2025, at 21:51, Abinash Singh wrote:
+> The function serial8250_probe_acpi() in 8250_platform.c triggered a
+>     frame size warning:
+> drivers/tty/serial/8250/8250_platform.c: In function=20
+> =E2=80=98serial8250_probe_acpi=E2=80=99:
+> drivers/tty/serial/8250/8250_platform.c:152:1: warning: the frame size=20
+> of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=3D]
 
-When the length of the string written to set_ftrace_filter exceeds
-FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
+Hi Abinash,
 
-BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
-Read of size 1 at addr ffff0000d00bd5ba by task ash/165
+I've seen this one as well in some configurations, thanks
+for helping out addressing it!
 
-CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- show_stack+0x34/0x50 (C)
- dump_stack_lvl+0xa0/0x158
- print_address_description.constprop.0+0x88/0x398
- print_report+0xb0/0x280
- kasan_report+0xa4/0xf0
- __asan_report_load1_noabort+0x20/0x30
- strsep+0x18c/0x1b0
- ftrace_process_regex.isra.0+0x100/0x2d8
- ftrace_regex_release+0x484/0x618
- __fput+0x364/0xa58
- ____fput+0x28/0x40
- task_work_run+0x154/0x278
- do_notify_resume+0x1f0/0x220
- el0_svc+0xec/0xf0
- el0t_64_sync_handler+0xa0/0xe8
- el0t_64_sync+0x1ac/0x1b0
+> This patch reduces the stack usage by dynamically allocating the
+>     `uart` structure using kmalloc(), rather than placing it on
+>     the stack. This eliminates the overflow warning and improves kernel
+>     robustness.
 
-The reason is that trace_get_user will fail when processing a string
-longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer to 0.
-Then an OOB access will be triggered in ftrace_regex_release->
-ftrace_process_regex->strsep->strpbrk. We can solve this problem by
-limiting access to parser->buffer when trace_get_user failed.
+The same problem does show up in a lot of 8250 driver variants,
+plus a couple that have it in theory but don't run into the
+1024 byte limit:
 
-Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
+drivers/char/mwave/mwavedd.c-static int register_serial_portandirq(unsig=
+ned int port, int irq)
+drivers/char/mwave/mwavedd.c-{
+drivers/char/mwave/mwavedd.c:   struct uart_8250_port uart;
 
-v2:
-- Add `fail` field to struct trace_parser to indicate parsing failed.
+drivers/ptp/ptp_ocp.c-ptp_ocp_serial_line(struct ptp_ocp *bp, struct ocp=
+_resource *r)
+drivers/ptp/ptp_ocp.c-{
+drivers/ptp/ptp_ocp.c-  struct pci_dev *pdev =3D bp->pdev;
+drivers/ptp/ptp_ocp.c:  struct uart_8250_port uart;
 
-v1:
-https://lore.kernel.org/all/20250805151203.1214790-1-pulehui@huaweicloud.com/
+drivers/tty/serial/8250/8250_acorn.c-serial_card_probe(struct expansion_=
+card *ec, const struct ecard_id *id)
+drivers/tty/serial/8250/8250_acorn.c-{
+drivers/tty/serial/8250/8250_acorn.c:   struct uart_8250_port uart;
 
- kernel/trace/trace.c | 20 ++++++++++++++------
- kernel/trace/trace.h |  3 ++-
- 2 files changed, 16 insertions(+), 7 deletions(-)
+drivers/tty/serial/8250/8250_bcm2835aux.c-static int bcm2835aux_serial_p=
+robe(struct platform_device *pdev)
+drivers/tty/serial/8250/8250_bcm2835aux.c-{
+drivers/tty/serial/8250/8250_bcm2835aux.c:      struct uart_8250_port up=
+ =3D { };
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4283ed4e8f59..138212f4ecde 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1814,9 +1814,11 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 	if (!*ppos)
- 		trace_parser_clear(parser);
- 
-+	parser->fail = false;
-+
- 	ret = get_user(ch, ubuf++);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	read++;
- 	cnt--;
-@@ -1830,7 +1832,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		while (cnt && isspace(ch)) {
- 			ret = get_user(ch, ubuf++);
- 			if (ret)
--				return ret;
-+				goto fail;
- 			read++;
- 			cnt--;
- 		}
-@@ -1848,12 +1850,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 	while (cnt && !isspace(ch) && ch) {
- 		if (parser->idx < parser->size - 1)
- 			parser->buffer[parser->idx++] = ch;
--		else
--			return -EINVAL;
-+		else {
-+			ret = -EINVAL;
-+			goto fail;
-+		}
- 
- 		ret = get_user(ch, ubuf++);
- 		if (ret)
--			return ret;
-+			goto fail;
- 		read++;
- 		cnt--;
- 	}
-@@ -1868,11 +1872,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		/* Make sure the parsed string always terminates with '\0'. */
- 		parser->buffer[parser->idx] = 0;
- 	} else {
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto fail;
- 	}
- 
- 	*ppos += read;
- 	return read;
-+fail:
-+	parser->fail = true;
-+	return ret;
- }
- 
- /* TODO add a seq_buf_to_buffer() */
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 1dbf1d3cf2f1..5072bb25a860 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
-  */
- struct trace_parser {
- 	bool		cont;
-+	bool		fail;
- 	char		*buffer;
- 	unsigned	idx;
- 	unsigned	size;
-@@ -1299,7 +1300,7 @@ struct trace_parser {
- 
- static inline bool trace_parser_loaded(struct trace_parser *parser)
- {
--	return (parser->idx != 0);
-+	return !parser->fail && parser->idx != 0;
- }
- 
- static inline bool trace_parser_cont(struct trace_parser *parser)
--- 
-2.34.1
+In total, I see 34 drivers using this exact pattern for=20
+their probe function, and ideally we would to to fix them
+all to do it some other way.
 
+Note how serial8250_register_8250_port() ands up just copying
+individual members of the passed uart_8250_port structure into
+the global array of the same type, so one way of addressing
+this would be to use a structure for initialization that only
+contains a subset of the uart_8250_port members and can still
+be allocated on the stack, or possibly be constant.
+
+There is already a 'struct plat_serial8250_port', which some
+(mostly ancient) drivers use to register a 8250 compatible
+uart through the 8250_platform driver. That driver has
+a number of problems, so I don't really want to expand its
+usage, but it may be possible to use a single structure
+for both purposes.
+
+      Arnd
 
