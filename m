@@ -1,305 +1,337 @@
-Return-Path: <linux-kernel+bounces-757377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4198FB1C16C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2F8B1C170
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A142A3AD839
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7541620E23
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379C421A94F;
-	Wed,  6 Aug 2025 07:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7A21C18D;
+	Wed,  6 Aug 2025 07:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4Cz4PzC"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UPmu5qmF"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DA1FC8;
-	Wed,  6 Aug 2025 07:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A183E217723
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 07:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754466135; cv=none; b=qMQjs0Jejnedi6ZyrI94f8prnhaidVd4S/cb+dckeeMiBjLuObfAiqfbBR3kE4CaemFIoz4Ayv39ndEioWaSkKjzFd7KsOuDXMYCEPDUo4uJsbgyFzMKf3o2QYQGmwKigpT+JNj8yK2AO2GExdkT4mEw4nhsmUCsrjq7P1CQOE4=
+	t=1754466176; cv=none; b=R+YX+LGRFNR6JdcbG85tlWFOwbIzevTM1Vik7XUo1ar4alje95pmLOM/tsYwN4dZxR+0jynRjumZZcyq6tK6TV9QKwldG7+nvWuLiO8FprX1vBksP1wJrRGhilUn9OxKTLzqYgBEBpMv293SB/xFSfTvq/28sQIeZTGnt2FdYMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754466135; c=relaxed/simple;
-	bh=ki+85WZZErf2h8qeAmHmY+ki0OS4XjOJXt0lI5UvJA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EvfWNAYSbMN9mh/3dADi4gZ9RzCCCV1CDXJl8ccdcrXiu6KeTu7Rc0IQWDx+YpOKSLQIgRtml0N86NvvGsgxzoueQRde7k/Ww7vcP4aRQ8Wc/DGPyKdrpDZlgQCq+8SjqMMgL5dqgAsmHQeFUZfhcDdhaTzSQA1sdrOU7O+CPN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4Cz4PzC; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so46347785e9.3;
-        Wed, 06 Aug 2025 00:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754466132; x=1755070932; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6FT24UNbMHeaORvKTfTuqFUto6VDI1Q4PAbvNaBHL8w=;
-        b=X4Cz4PzCGgzU/Roq5UJaJtxvgflW4CtJQn5S7Oeh7gzzc/qO85yoz7hnzkitUP6zbF
-         cyUd0hkBPrG54S95pZ62V0gsZyDYwmsyjaEOGBQliyV/BRDo9hkvp7EHt38PofmtZw/+
-         E/H1gQs9Bcq3+5qax9C7NMjg7NaYK5+r7AlFQ6kkeCbF/aFxrH9Dw9t2yvVY+1Vu8icV
-         etduZINKlhcvKX3coBRhvnJF3X75A8ELFbdBcLAcgtO2GVb4I2agWKlYqmBGjAtFkHa7
-         5E28J42ySnIZHkDZCNikM5FW1XYrFNxDFMaGlr5WDQBU8qYkioPbCPgbvHk75HnNWmyW
-         sUtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754466132; x=1755070932;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FT24UNbMHeaORvKTfTuqFUto6VDI1Q4PAbvNaBHL8w=;
-        b=epk/Z9dFnWmfPgPj7+HEgZjRdlcznkVaTqpbkZ21H1zy5jIbEa/3r4t/NncFhgp+y9
-         xypkMbtNxuv9JlYPDarPTjnsPPXj7b+d+Gw0Xc3TslmndCa/5O5/pJWMDtZo8+XBRgZF
-         5mMumWcHlqSL11dDLhHn2td//RfDukgdf1pXrSxxtVk6fGaNM/U5CfOF39gQCfNYpo4a
-         TuGnyj9fDLvvXV6YJSNh+s5UfreCV0G7aKolD12gcv4DEG9uHkSgLFzJcINHu4pHQkWN
-         /gxt3TWtVzEhOoKAqiLCaTqbSYSXWWApvhLtLVmJvkJroYMLw6p+jwdc3VDhmgidZGCj
-         8JKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmvFcIT2G9KSWGLgWFgdpVNX2Eb7JO8wXV3JdzjFGZuxKlpSPeOkqaw8wYOrJjUUQm5Ogx2dPC4zTmMA==@vger.kernel.org, AJvYcCXqutZQ4jmlT0n1o+nhDnNPLSDpIPFuibMwnELTmlwlZHqAMMwTpE5i7CTv0W5S63EJQtBk4x65bK2rTKG8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOpjN4vU7rfZD57GLbkDrnW+jdBiMcz3tNZELqGAVswfaLbIrg
-	H7NjGOiFKffzr1GHNpjq3b4wrP9MikUYCWigeA+AyN/Mv0hg2S6jyvZ1k564HA==
-X-Gm-Gg: ASbGncsrWRWdJ7bMG5MH8RNVShbkDC/N66VSV9Mp6UIhJ8W82yi+zUf4fQVb0OP9WxC
-	9DXteskJFkSWl9vLDoKC60kSLKtmpXLTLJ5kvTHFSe4t/cI8hweHu6PgcjwnOtRlzqZUn3qI5DZ
-	H1Mcc1yVwNy7j57LgJ0FuEZC9PbT4KqPEEPO3dcuSwHS04CsFA6/aaT82p3S+VqUM5+yMfN96pL
-	qR30M55M3l40Z4mHV/PaysmfDkxe8chFNAUgQMbxw3yJmRFp5IKIyKgqaebcVrWb6SzRu2s1yH+
-	tyrKN4dGNl+Saa4j4j4IFTcA5fX1wfuOIypsdKcFVFkcy0CcJNSCPgmK8odSw81gopZ/LOzfVGx
-	N5rTIQGLrL+llhqnV+Hk=
-X-Google-Smtp-Source: AGHT+IHPYrArLENkrYpyT+ebS9Hl1NiNdjOvdG5F1ChQY+7/LnRIlSa14LZSdOIcB3sE1c1D6Bz6+w==
-X-Received: by 2002:a05:600c:4689:b0:458:bfb1:1fb6 with SMTP id 5b1f17b1804b1-459e7440b43mr12701065e9.2.1754466131400;
-        Wed, 06 Aug 2025 00:42:11 -0700 (PDT)
-Received: from fedora ([94.73.32.0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e588144fsm34288725e9.28.2025.08.06.00.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 00:42:10 -0700 (PDT)
-Date: Wed, 6 Aug 2025 09:42:09 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>
-Cc: "jikos@kernel.org" <jikos@kernel.org>,
-	"bentiss@kernel.org" <bentiss@kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
- =?utf-8?B?5aSNOiBbRXh0ZXJuYWwgTWFpbF1bUEFUQw==?= =?utf-8?Q?H?= 2/2] HID:
- input: report battery status changes immediately
-Message-ID: <aJMHUTyeaE0Q_yUA@fedora>
-References: <20250804091215.6637-1-jose.exposito89@gmail.com>
- <20250804091215.6637-2-jose.exposito89@gmail.com>
- <a235549c5cf24205bb7ce7f05737c403@xiaomi.com>
- <aJHEAHH6KCAGxs8N@fedora>
- <b5aa18342f42420093db90ee2ead88ba@xiaomi.com>
- <aJH7T7_8p0GT3f2L@fedora>
- <6454c36ced0140df978f29a7b4208f4a@xiaomi.com>
- <9dbdee5aa8fa4b899bfbb8be3b4cd6c5@xiaomi.com>
+	s=arc-20240116; t=1754466176; c=relaxed/simple;
+	bh=vbk/1ya0s+23u3l8tqgTy+9vEFiT8Zx3cbDlSmRjE6M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
+	 References; b=UvjYy7m/31G84rR3uEhdio2Jd2p1uo5KHPPonWt4GCT93uPGEuG+yUNClsQmpuDg0YOXU3pKtgKh6SeUegTBahgsoBgmTrvW/70QoKA+8TOiZd3Pm7/2vmCUt13MEoZ3mHV/DPdsWYfGmGeNT7/rFBPoTpMrk5I2bDhcYPc6fas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UPmu5qmF; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250806074252euoutp01d1e0d3d3413dcd90b26be9202d2b7b17~ZHbBNoqHu2812928129euoutp01K
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 07:42:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250806074252euoutp01d1e0d3d3413dcd90b26be9202d2b7b17~ZHbBNoqHu2812928129euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754466172;
+	bh=sFlBOWp8PPR4NWlarWjxkWyh95PaOKBaxJz7SB8ymGc=;
+	h=From:Subject:Date:To:Cc:References:From;
+	b=UPmu5qmFpSr21OYU57XHKNTc1/3/BSyr0CX8EDBWRl2TENz1PZ05yAaaQQGlZzESD
+	 3hMwxKmXWAj4nh3VVsMQBu8X5/+eAtiZ69LLp5EYY/CT8VqjvDuPjTQ45icWZeABxX
+	 IiyO8BLlvvSzTVPnxQTAeePMnS4rzmr7PkNGHhuI=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c~ZHbAvGyV11469114691eucas1p12;
+	Wed,  6 Aug 2025 07:42:52 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250806074251eusmtip22b18587d911cb7c312589256fae93fcd~ZHa-llNeF1964419644eusmtip2D;
+	Wed,  6 Aug 2025 07:42:51 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v13 0/7] Rust Abstractions for PWM subsystem with TH1520 PWM
+ driver
+Date: Wed, 06 Aug 2025 09:42:45 +0200
+Message-Id: <20250806-rust-next-pwm-working-fan-for-sending-v13-0-690b669295b6@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9dbdee5aa8fa4b899bfbb8be3b4cd6c5@xiaomi.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHUHk2gC/5XUTW7cMAwF4KsEXkcFSf1ZXfUeRRayJE6MYOzUn
+	pkkCObupZMAEepZqEtq8T0tHvnerWUZy9r9vHvvlnIZ13GeZEB9f9elxzgdihqzPHQEZMGSUct
+	5PampvJ7U88tRvczL0zgdFMdJ8byotUx5m62lmCnjgEF3Yj0vhcfXj6DfDzI/jutpXt4+ci+4v
+	f5vwgUVqCFLiIVgmP2vNR7X83T4keZjt2Vc6Nt1CK0uieutLhSsZUTYu7p2faurxcWUYm98chx
+	475ra7VtdI250kXqmweU+7l1buaRbXSsupEjay4dJl73rvl0P2Oo6cckjBE3s2A1719cutbpeX
+	OcL68CMmcLe7Wu3uWe9uMFisaanFDjv3VC7rtUN4hoabEyEgOlGfxFquLloUnVQGZJNrA0BmBt
+	ytXK+fTVw27mgezIRpcIl3ZCpltv/vG2dAfY6F44F/pGvnydkKX/OcqJOX3fkev0L8JkwV8AEA
+	AA=
+X-Change-ID: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
+	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
+	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
+	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
+	Turquette <mturquette@baylibre.com>,  Drew Fustini <fustini@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,  Drew Fustini <fustini@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c
+X-EPHeader: CA
+X-CMS-RootMailID: 20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c
+References: <CGME20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c@eucas1p1.samsung.com>
 
-Hi 卢国宏,
+This patch series introduces Rust support for the T-HEAD TH1520 PWM
+controller and demonstrates its use for fan control on the Sipeed Lichee
+Pi 4A board.
 
-On Wed, Aug 06, 2025 at 07:03:05AM +0000, 卢国宏 wrote:
-> 
-> Hello, Jose!
-> I've completed testing on our devices. Your patch works fine for charging status reporting.
-> Below is the switching log between partially charged state and uncharged state：
-> 
-> ...
-> Xiaomi handler POWER_SUPPLY_STATUS=Charging
-> ...
-> Xiaomi handler POWER_SUPPLY_STATUS=Discharging
-> ...
-> Xiaomi handler POWER_SUPPLY_STATUS=Charging
-> 
-> In addition, the handle battery level can also be reported normally.
-> Now you should be able to submit your patch to the Linux kernel. After submitting,
-> please send me a copy of the official patch so I can contact Google to merge it into
-> their GKI and enable this feature in our products first. Thank you very much!
+The primary goal of this patch series is to introduce a basic set of
+Rust abstractions for the Linux PWM subsystem. As a first user and
+practical demonstration of these abstractions, the series also provides
+a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+of its PWM channels and ultimately enables temperature controlled fan
+support for the Lichee Pi 4A board. This work aims to explore the use of
+Rust for PWM drivers and lay a foundation for potential future Rust
+based PWM drivers.
 
-Thanks a lot for testing it. Here is the link to the patch:
-https://lore.kernel.org/linux-input/20250806073944.5310-1-jose.exposito89@gmail.com/T/
+The core of this series is a new rust/kernel/pwm.rs module that provides
+abstractions for writing PWM chip provider drivers in Rust. This has
+been significantly reworked from v1 based on extensive feedback. The key
+features of the new abstraction layer include:
 
-Best wishes,
-Jose
+ - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+   by ARef, correctly tying its lifetime to its embedded struct device
+   reference counter. Chip registration is handled by a pwm::Registration
+   RAII guard, which guarantees that pwmchip_add is always paired with
+   pwmchip_remove, preventing resource leaks.
 
-> 
-> luguohong
-> 
-> ________________________________
-> 发件人: 卢国宏
-> 发送时间: 2025年8月6日 9:41
-> 收件人: José Expósito
-> 抄送: jikos@kernel.org; bentiss@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Fei1 Jiang 蒋飞; 卢国宏
-> 主题: 答复: 答复: 答复: [External Mail][PATCH 2/2] HID: input: report battery status changes immediately
-> 
-> 
-> 
-> 
-> OK! I'll use your patch and finish testing it soon and let you know the results, thanks!
-> 
-> 
-> ________________________________
-> 发件人: José Expósito <jose.exposito89@gmail.com>
-> 发送时间: 2025年8月5日 20:38
-> 收件人: 卢国宏
-> 抄送: jikos@kernel.org; bentiss@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Fei1 Jiang 蒋飞
-> 主题: Re: 答复: 答复: [External Mail][PATCH 2/2] HID: input: report battery status changes immediately
-> 
-> [外部邮件] 此邮件来源于小米公司外部，请谨慎处理。若对邮件安全性存疑，请将邮件转发给misec@xiaomi.com进行反馈
-> 
-> Hi,
-> 
-> On Tue, Aug 05, 2025 at 12:25:17PM +0000, 卢国宏 wrote:
-> > ________________________________
-> > 发件人: José Expósito <jose.exposito89@gmail.com>
-> > 发送时间: 2025年8月5日 16:42
-> > 收件人: 卢国宏
-> > 抄送: jikos@kernel.org; bentiss@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Fei1 Jiang 蒋飞
-> > 主题: Re: 答复: [External Mail][PATCH 2/2] HID: input: report battery status changes immediately
-> >
-> > [外部邮件] 此邮件来源于小米公司外部，请谨慎处理。若对邮件安全性存疑，请将邮件转发给misec@xiaomi.com进行反馈
-> >
-> > Hi!
-> >
-> > On Tue, Aug 05, 2025 at 01:43:30AM +0000, 卢国宏 wrote:
-> > > ________________________________
-> > > 发件人: José Expósito <jose.exposito89@gmail.com>
-> > > 发送时间: 2025年8月4日 17:11
-> > > 收件人: jikos@kernel.org
-> > > 抄送: bentiss@kernel.org; 卢国宏; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; José Expósito
-> > > 主题: [External Mail][PATCH 2/2] HID: input: report battery status changes immediately
-> > >
-> > > [外部邮件] 此邮件来源于小米公司外部，请谨慎处理。若对邮件安全性存疑，请将邮件转发给misec@xiaomi.com进行反馈
-> > >
-> > > When the battery status changes, report the change immediately to user
-> > > space.
-> > >
-> > > Fixes: a608dc1c0639 ("HID: input: map battery system charging")
-> > > Reported-by: 卢国宏 <luguohong@xiaomi.com>
-> > > Closes: https://lore.kernel.org/linux-input/aI49Im0sGb6fpgc8@fedora/T/
-> > > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> > > ---
-> > >  drivers/hid/hid-input.c | 17 ++++++++++-------
-> > >  1 file changed, 10 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-> > > index 262787e6eb20..277538a17b57 100644
-> > > --- a/drivers/hid/hid-input.c
-> > > +++ b/drivers/hid/hid-input.c
-> > > @@ -609,13 +609,19 @@ static bool hidinput_update_battery_charge_status(struct hid_device *dev,
-> > >         return false;
-> > >  }
-> > >
-> > > -static void hidinput_update_battery(struct hid_device *dev, int value)
-> > > +static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
-> > > +                                   int value)
-> > >  {
-> > >         int capacity;
-> > >
-> > >         if (!dev->battery)
-> > >                 return;
-> > >
-> > > +       if (hidinput_update_battery_charge_status(dev, usage, value)) {
-> > > +               power_supply_changed(dev->battery);
-> > > +               return;
-> > > +       }
-> > > +
-> > >
-> > > > Hi, José. Shouldn't the return statement in this code be removed?
-> > > > Otherwise, if both the battery level and the charging status change
-> > > > simultaneously, the code following the if statement that updates the
-> > > > battery level won't run, and the battery level won't be updated.
-> > > > Thanks!
-> >
-> > At least on the hardware I have access to, changes are reported independently.
-> >
-> > I added a log at the beginning of this function to illustrate it.
-> > This is the output when the battery of my device goes from 99% to 95%:
-> >
-> >     New EV_PWR report:
-> >         usage = 8716389
-> >         value = 99
-> >     New EV_PWR report:
-> >         usage = 8716356 (HID_BAT_CHARGING)
-> >         value = 0       (POWER_SUPPLY_STATUS_DISCHARGING)
-> >     [...]
-> >     New EV_PWR report:
-> >         usage = 8716389
-> >         value = 95
-> >     New EV_PWR report:
-> >         usage = 8716356 (HID_BAT_CHARGING)
-> >         value = 0       (POWER_SUPPLY_STATUS_DISCHARGING)
-> >
-> > If we remove that return, then "value" (0 or 1) would be used as battery level,
-> > reporting wrong battery levels to user-space.
-> >
-> > Isn't your device reporting its battery information in a similar way?
-> >
-> > > --->>>
-> > > Hello, Jose!
-> > > You're right, this return can't be removed. I had previously only
-> > > theoretically assumed they would be reported simultaneously, but
-> > > that turned out to be incorrect. It seems your solution should be fine.
-> > > Finally, when will your patch be merged into the Linux kernel?
-> > > We're looking forward to using this feature. Thank you very much!
-> 
-> Would you be able to test that the patches work on your device?
-> 
-> I assume there won't be surprises, but better to double check if
-> you have access to the affected device.
-> 
-> Once you test it, I'll send a second version of the code fixing a
-> warning and adding you as tester of the patch. Then it is up to
-> the maintainers to merge it.
-> 
-> Looking forward for your testing,
-> Jose
-> 
-> >
-> > Jose
-> >
-> > PS - I'll fix the warning in v2 and add a Tested-by: 卢国宏 tag once
-> >      this is confirmed to work on the affected hardware.
-> >
-> > >
-> > >
-> > >         if (value == 0 || value < dev->battery_min || value > dev->battery_max)
-> > >                 return;
-> > >
-> > > @@ -648,7 +654,8 @@ static bool hidinput_update_battery_charge_status(struct hid_device *dev,
-> > >         return false;
-> > >  }
-> > >
-> > > -static void hidinput_update_battery(struct hid_device *dev, int value)
-> > > +static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
-> > > +                                   int value)
-> > >  {
-> > >  }
-> > >  #endif /* CONFIG_HID_BATTERY_STRENGTH */
-> > > @@ -1515,11 +1522,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
-> > >                 return;
-> > >
-> > >         if (usage->type == EV_PWR) {
-> > > -               bool handled = hidinput_update_battery_charge_status(hid, usage->hid, value);
-> > > -
-> > > -               if (!handled)
-> > > -                       hidinput_update_battery(hid, value);
-> > > -
-> > > +               hidinput_update_battery(hid, usage->hid, value);
-> > >                 return;
-> > >         }
-> > >
-> > > --
-> > > 2.50.1
-> > >
-> > > #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
-> > #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
-> #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
+ - Modern and Safe API: The PwmOps trait is now based on the modern
+   waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+   by the subsystem maintainer. It is generic over a driver's
+   hardware specific data structure, moving all unsafe serialization logic
+   into the abstraction layer and allowing drivers to be written in 100%
+   safe Rust.
+
+ - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+   types (State, Args, Device, etc.) and uses standard kernel error
+   handling patterns.
+
+The series is structured as follows:
+ - Expose static function pwmchip_release.
+ - Rust PWM Abstractions: The new safe abstraction layer.
+ - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+   top of the new abstractions.
+ - Device Tree Bindings & Nodes: The remaining patches add the necessary
+   DT bindings and nodes for the TH1520 PWM controller, and the PWM fan
+   configuration for the Lichee Pi 4A board.
+
+Testing:
+Tested on the TH1520 SoC. The fan works correctly. The duty/period
+calculations are correct. Fan starts slow when the chip is not hot and
+gradually increases the speed when PVT reports higher temperatures.
+
+The patches doesn't contain any dependencies that are not currently in
+the mainline kernel anymore.
+
+---
+Changes in v13:
+- Re-add the T-HEAD TH1520 PWM driver and its device tree bindings, as
+  Iomem series got merged into mainline kernel.
+- Fix Args struct to be consistent with State - no Opaque needed for
+  copies.
+- Replace tuple retur type in the PwmOps trait with dedicated struct
+  for improved clarity.
+- Use build_assert for WfHw size, as it doesn't have to be runtime
+  check.
+- Various cosmetic changes.
+- Link to v12: https://lore.kernel.org/r/20250717-rust-next-pwm-working-fan-for-sending-v12-0-40f73defae0c@samsung.com
+
+Changes in v12:
+ - Reworked the PWM abstractions to use the subclassing pattern as
+   suggested by reviewers.
+ - pwm::Chip and its driver data are now allocated in a single, contiguous
+   memory block via pwmchip_alloc() sizeof_priv argument.
+ - Chip::new() now uses the pin init API to construct the driver data
+   in place, removing the need for a separate allocation.
+ - The  PwmOps trait is now implemented directly by the driver data struct
+   itself, removing the DrvData associated type and the ForeignOwnable
+   trait.
+ - The custom release handler has been updated to call drop_in_place on the driver
+   data, ensuring destructors are run correctly before the underlying
+   memory is freed.
+ - Moved the pwmchip_release prototype in the C header to a separate
+   section to clarify it is for FFI use only, as requested.
+ - Added a Prerequisite-patch-id trailer to the cover letter to declare
+   the dependency on the PWM_WFHWSIZE patch.
+
+- Link to v11: https://lore.kernel.org/r/20250710-rust-next-pwm-working-fan-for-sending-v11-0-93824a16f9ec@samsung.com
+
+Changes in v11:
+- Dropped driver and DT commits, as they don't compile based on publicly
+  known commit.
+- Re-based on top of pwm/for-next.
+- Reverted back to devres::Devres::new_foreign_owned, as pwm/for-next
+  doesn't contain 'register' re-factor, which is present in linux-next,
+  queued for the next merge window. The conflict is trivial, simply
+  change 'new_foreign_owned' -> 'register'.
+- Added list to MAINTAINERS entry as requested.
+- Link to v10: https://lore.kernel.org/r/20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com
+
+Changes in v10:
+ - Exported the C pwmchip_release function and called it from the custom
+   Rust release_callback to fix a memory leak of the pwm_chip struct.
+ - Removed the PwmOps::free callback, as it is not needed for idiomatic
+   Rust resource management.
+ - Removed the redundant is_null check for drvdata in the release handler,
+   as the Rust API guarantees a valid pointer is always provided.
+
+- Link to v9: https://lore.kernel.org/r/20250706-rust-next-pwm-working-fan-for-sending-v9-0-42b5ac2101c7@samsung.com
+
+Changes in v9:
+ - Encapsulated vtable setup in Chip::new(): The Chip::new() function is
+   now generic over the PwmOps implementation. This allows it to create and
+   assign the vtable internally, which simplifies the public API by
+   removing the ops_vtable parameter from Registration::register().
+ - Fixed memory leak with a release handler: A custom release_callback is
+   now assigned to the embedded struct device's release hook. This
+   guarantees that driver specific data is always freed when the chip is
+   destroyed, even if registration fails.
+ - The PwmOpsVTable is now defined as a const associated item to ensure
+   it has a 'static lifetime.
+ - Combined introductory commits: The Device, Chip, and PwmOps abstractions
+   are now introduced in a single commit. This was necessary to resolve the
+   circular dependencies between them and present a clean, compilable unit
+   for review.
+
+- Link to v8: https://lore.kernel.org/r/20250704-rust-next-pwm-working-fan-for-sending-v8-0-951e5482c9fd@samsung.com
+
+Changes in v8:
+ - Dropped already accepted commit, re-based on top of linux-next
+ - Reworked the Chip and PwmOps APIs to address the drvdata() type-safety
+   comment. Chip is now generic, and PwmOps uses an associated type
+   to provide compile-time guarantees.
+ - Added a parent device sanity check to Registration::register().
+ - Updated drvdata() to return the idiomatic T::Borrowed<'_>.
+ - added temporary unsafe blocks in the driver, as the current
+   abstraction for Clk is neiter Safe nor Sync. I think eventually
+   proper abstraction for Clk will be added as in a current state it's
+   not very useful.
+
+- Link to v7: https://lore.kernel.org/r/20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com
+
+Changes in v7:
+- Made parent_device function private and moved casts to Device<Bound>
+  there as well.
+- Link to v6: https://lore.kernel.org/r/20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com
+
+Changes in v6:
+ - Re-based on top of linux-next, dropped two already accepted commits.
+ - After re-basing the IoMem dependent patchset stopped working,
+   reworked it to use similar API like the PCI subsystem (I think it
+   will end up the same). Re-worked the driver for it as well.
+ - Remove the apply and get_state callbacks, and most of the State as
+   well, as the old way of implementing drivers should not be possible
+   in Rust. Left only enabled(), since it's useful for my driver.
+ - Removed the public set_drvdata() method from pwm::Chip
+ - Moved WFHWSIZE to the public include/linux/pwm.h header and renamed it
+   to PWM_WFHWSIZE, allowing bindgen to create safe FFI bindings.
+ - Corrected the ns_to_cycles integer calculation in the TH1520 driver to
+   handle overflow correctly.
+ - Updated the Kconfig entry for the TH1520 driver to select the Rust
+   abstractions for a better user experience.
+
+- Link to v5: https://lore.kernel.org/r/20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com
+
+Changes in v5:
+- Reworked `pwm::Chip` creation to take driver data directly, which
+  allowed making the `chip.drvdata()` accessor infallible
+- added missing `pwm.c` file lost during the commit split (sorry !)
+- Link to v4: https://lore.kernel.org/r/20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com
+
+Changes in v4:
+ - Reworked the pwm::Registration API to use the devres framework,
+   addressing lifetime issue.
+ - Corrected the PwmOps trait and its callbacks to use immutable references
+   (&Chip, &Device) for improved safety.
+ - Applied various code style and naming cleanups based on feedback
+
+- Link to v3: https://lore.kernel.org/r/20250617-rust-next-pwm-working-fan-for-sending-v3-0-1cca847c6f9f@samsung.com
+
+Changes in v3:
+ - Addressed feedback from Uwe by making multiple changes to the TH1520
+   driver and the abstraction layer.
+ - Split the core PWM abstractions into three focused commits to ease
+   review per Benno request.
+ - Confirmed the driver now works correctly with CONFIG_PWM_DEBUG enabled
+   by implementing the full waveform API, which correctly reads the
+   hardware state.
+ - Refactored the Rust code to build cleanly with
+   CONFIG_RUST_BUILD_ASSERT_ALLOW=n, primarily by using the try_* family of
+   functions for IoMem access.
+ - Included several cosmetic changes and cleanups to the abstractions
+   per Miguel review.
+
+- Link to v2: https://lore.kernel.org/r/20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com
+
+Changes in v2:
+ - Reworked the PWM abstraction layer based on extensive feedback.
+ - Replaced initial devm allocation with a proper ARef<Chip> lifetime model
+   using AlwaysRefCounted.
+ - Implemented a Registration RAII guard to ensure safe chip add/remove.
+ - Migrated the PwmOps trait from the legacy .apply callback to the modern
+   waveform API.
+ - Refactored the TH1520 driver to use the new, safer abstractions.
+ - Added a patch to mark essential bus clocks as CLK_IGNORE_UNUSED to fix
+   boot hangs when the PWM and thermal sensors are enabled.
+- Link to v1: https://lore.kernel.org/r/20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com
+
+---
+Michal Wilczynski (7):
+      pwm: Export `pwmchip_release` for external use
+      rust: pwm: Add Kconfig and basic data structures
+      rust: pwm: Add complete abstraction layer
+      pwm: Add Rust driver for T-HEAD TH1520 SoC
+      dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM controller
+      riscv: dts: thead: Add PWM controller node
+      riscv: dts: thead: Add PWM fan and thermal control
+
+ .../devicetree/bindings/pwm/thead,th1520-pwm.yaml  |  48 ++
+ MAINTAINERS                                        |  10 +
+ arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  |  67 ++
+ arch/riscv/boot/dts/thead/th1520.dtsi              |   7 +
+ drivers/pwm/Kconfig                                |  24 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/core.c                                 |   3 +-
+ drivers/pwm/pwm_th1520.rs                          | 355 +++++++++
+ include/linux/pwm.h                                |   6 +
+ rust/bindings/bindings_helper.h                    |   1 +
+ rust/helpers/helpers.c                             |   1 +
+ rust/helpers/pwm.c                                 |  20 +
+ rust/kernel/lib.rs                                 |   2 +
+ rust/kernel/pwm.rs                                 | 790 +++++++++++++++++++++
+ 14 files changed, 1334 insertions(+), 1 deletion(-)
+---
+base-commit: eacf91b0c78a7113844830ed65ebf543eb9052c5
+change-id: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
+
 
