@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-757854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97856B1C771
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837A6B1C76E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71417B02FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B40C17F3F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9DB28CF7E;
-	Wed,  6 Aug 2025 14:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB1028CF70;
+	Wed,  6 Aug 2025 14:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZJj1LhE3"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w1fGSZkX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4AF289357;
-	Wed,  6 Aug 2025 14:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434F628D823;
+	Wed,  6 Aug 2025 14:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489593; cv=none; b=kZWx1jiE642Wbpsm6Bc6NM5sPMR7E5R9gIKcB+X5224HpKqLZT56S4ViYCK1RkP0zTtMoBUz4tFcPLaEomJIWR56B8lKjQiCpXOZEXfe8lar0kkqNdKhYSGA6BX6j0FXyqEuAjtEXRnAxUMG68HRWc7qkv6b1Nnh17k6z6AxOwI=
+	t=1754489581; cv=none; b=P5M7d5wjeqJpviUVaSVg2LDFr29yR7ni8F0bOgPa6Ub7lsRcP8d2zj+JOlwSH15YozZ5T1qiV7jPDLFKOTIyedZAtneSC+YBonSX5uHjyanY6Uk2ppOV/+zUQjudcP/6e1a1VgCSwt29LtDeExEJeVe3LU7FBPyF6LZ49jq7MbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489593; c=relaxed/simple;
-	bh=FlMpSLf2yOkuHS3jx0q7g7C74Flm3+kVPHDysv1Z34E=;
+	s=arc-20240116; t=1754489581; c=relaxed/simple;
+	bh=8MVy6EylKNibNveZN4B5Hj6JDT+ojFqfW1JhErGuHZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZblHLfC4MrkfDyu9V/M9QU6PdsVrJyn4Xp8Koqy4UoLvpyIKEl6NxOztl6BsTKGKQXTyOZPUdlzXZWkxY/YxrTfse/XxC7fNoW4aTFuUYEjZMsxQ71OsEBmvr9G0soPS7E3BSKniJ8VDdRr+yJ93hDqW+6guEVKzE8uSnWJtyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZJj1LhE3; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bxshM0w2hz9sWC;
-	Wed,  6 Aug 2025 16:13:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754489587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FlMpSLf2yOkuHS3jx0q7g7C74Flm3+kVPHDysv1Z34E=;
-	b=ZJj1LhE3XyHa5IXw8AMDjIl2cfdjHrJDmLX7MNh4WpURzMs6EDnk2iQO8/+Of3JbAM3FgA
-	4vca7881HoPDoMk4RcbzIXRG5LhGn7Vfi+GphkO86B2R4ZniIb8CgtxM5RZmmjhRzwdo9F
-	HwZvsWttmmXM0X2Z8yZVcbgSFqaAwTrUKHWXoLB2ugmmrkCUhF2q7kdDEs8CCV5TwonxA7
-	2LuAtNFNZ09YhhLzhln/F9EU4G5JgcgWoZztRsxC5/HkRjZlS2yAxgMveHe4mbx09Wbmv5
-	o+jJgikmBtHfN9u+2u84E5a6+74wAwm49j2Gh6AkmpDdredvm8p13pIV17u5PQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 7 Aug 2025 00:12:57 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: amir73il@gmail.com, brauner@kernel.org, corbet@lwn.net, jack@suse.cz, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, luto@amacapital.net, 
-	shuah@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-Message-ID: <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
-References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
- <20250806102501.75104-1-safinaskar@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9LaKOrvJkdUb/R5EJddvUNAcBgK0+pqNhYv9lgbfCNqqhJ4A27Dcu0bZCATVO3OgUIiA6ZhxRmFJui2NH5CDJ1WLxypYEtfUWTmrpLbJ2eHS51yXW8IYzcZXFjJyxC29eFTQHsBKKlXDcllJJmLP7Af5rwwq5bSR6PtJybn1VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w1fGSZkX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901CAC4CEED;
+	Wed,  6 Aug 2025 14:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754489580;
+	bh=8MVy6EylKNibNveZN4B5Hj6JDT+ojFqfW1JhErGuHZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=w1fGSZkXqkwAcXnMRt6k9AhE3oKMp38J7v+GiP9Pme/bvynHtUDGOIAsulZzZW5K/
+	 s4xXZR1UbVLV98HQKKr/N9MKiF7Wsqtau+9efDoP2Uy4pFkeRhxAUmchYWlovav/Zz
+	 LL0IIaD7mOJr3A1Umpuh/7F5CE+SKzhTNrmg2Wrk=
+Date: Wed, 6 Aug 2025 10:12:59 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
+	josh@joshtriplett.org, kees@kernel.org, linux-kernel@vger.kernel.org, 
+	rostedt@goodmis.org
+Subject: Re: [PATCH 4/4] agents: add legal requirements and agent attribution
+ guidelines
+Message-ID: <20250806-impetuous-rainbow-octopus-2dcaab@lemur>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-5-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vg7hvx6zdovvdlvh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250806102501.75104-1-safinaskar@zohomail.com>
-X-Rspamd-Queue-Id: 4bxshM0w2hz9sWC
+In-Reply-To: <20250727195802.2222764-5-sashal@kernel.org>
 
+On Sun, Jul 27, 2025 at 03:58:02PM -0400, Sasha Levin wrote:
+> +- ``Co-developed-by: Claude claude-3-opus-20240229``
+> +- ``Co-developed-by: GitHub-Copilot GPT-4 v1.0.0``
+> +- ``Co-developed-by: Cursor gpt-4-turbo-2024-04-09``
 
---vg7hvx6zdovvdlvh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-MIME-Version: 1.0
+FYI, this will break tools that expect Co-developed-by: to be in the address
+header format. I will add exceptions in b4, but it *is* going to be annoying
+that this trailer can be in both formats and I expect other tooling will also
+have similar problems.
 
-On 2025-08-06, Askar Safin <safinaskar@zohomail.com> wrote:
-> > I just realised that we probably also want to support FSCONFIG_SET_PATH
->=20
-> I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH.
-> Moreover, fsparam_path macro is present since 5.1. And for all this
-> time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody
-> used it, so this will not break anything.
->=20
-> If you okay with that, I can submit patch, removing it.
+If it's not too late, I recommend picking a wholly new trailer instead of
+overloading Co-developed-by. Examples:
 
-I would prefer you didn't -- "*at()" semantics are very useful to a lot
-of programs (*especially* AT_EMPTY_PATH). I would like the pidns=3D stuff
-to support it, and probably also overlayfs...
+    | Assisted-by: Claude claude-3-opus-20240229
+    | Auxiliary-tooling: GitHub-Copilot GPT-4 v1.0.0
 
-I suspect the primary issue is that when migrating to the new mount API,
-filesystem devs just went with the easiest thing to use
-(FSCONFIG_SET_STRING) even though FSCONFIG_SET_PATH would be better. I
-suspect the lack of documentation around fsconfig(2) played a part too.
+I like the latter, because this also allows listing multiple tools.
 
-My impression is that interest in the minutia about fsconfig(2) is quite
-low on the list of priorities for most filesystem devs, and so the neat
-aspects of fsconfig(2) haven't been fully utilised. (In LPC last year,
-we struggled to come to an agreement on how filesystems should use the
-read(2)-based error interface.)
-
-We can very easily move fsparam_string() or fsparam_file_or_string()
-parameters to fsparam_path() and a future fsparam_file_or_path(). I
-would much prefer that as a user.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---vg7hvx6zdovvdlvh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJNi6QAKCRAol/rSt+lE
-b3F9AQCE4SkPMlgg2PcJbT8RKOExtd1DlYHS3cpgw7AFtviNkQD/dwBRoLanCy4P
-XTz8xL1cJlBrIEYb0j2KmePVf/mvUQ4=
-=0c79
------END PGP SIGNATURE-----
-
---vg7hvx6zdovvdlvh--
+-K
 
