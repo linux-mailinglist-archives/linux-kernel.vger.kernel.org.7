@@ -1,204 +1,197 @@
-Return-Path: <linux-kernel+bounces-757662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7DCB1C4FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:35:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04FEB1C4FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8617E189B348
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D53B189A989
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA73C19AD70;
-	Wed,  6 Aug 2025 11:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E042275867;
+	Wed,  6 Aug 2025 11:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FsyrbbPn"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meP8tYEj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38982A1BF
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 11:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5757B2A1BF;
+	Wed,  6 Aug 2025 11:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754480115; cv=none; b=rTJta33RZxyiuKqpnOuXnTQmMpkNTIrDdITdSfC0eO54857quVQIblunv96UZc5VUeXCjfF5UCVzK6jWrqtZUB9y83BrwuzMP2gbuh1zximw0fHV9bPDyXazRXvte3fVwJjJteobxhcPYZ0SLSGLZgvrwn5BO/CSzjhxRlsXwU4=
+	t=1754480172; cv=none; b=tWXAL9P5T/67rF0x4fwcZDcF1XIG5RMo5fOvMJ2b/VxH3IHYyGufKDXra9zcfhaGh1P7b7veFneqnLRwP2bD27CrgynnXA6Zi2BqW3ToIDgNamtqiaHGU/D8Pq+sUhARl/GAZ8sxJX6PutrLUtLiPGV+lemnhV+c2TftaqZUN0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754480115; c=relaxed/simple;
-	bh=OAEJQJFlxySSV2AVq32vuflGdzBiXmboQK9Lpss4XF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=akfnpLiKxcK1UKwU659df24L2vgWt9MMiIPJ1xZtMvxDwcoGXc6igHRsqhDywsdNisdut1C6c9pl6IDy/FBvg/B4+84h+CGgQwScEoAJ6scRmBw8sioLyPPvec8jBxJoWGABnHN+b1sweyfLFk6kfd5aEbXcfKkRl1JPAgWSSaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FsyrbbPn; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2406fe901c4so43185655ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 04:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754480113; x=1755084913; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bWQWyYoXiLLkZAoiIB5sdcKmoITnPW5rVyw8e/6D4rw=;
-        b=FsyrbbPn+cJS/9JPJDxsAiTWazEuvEZAQn7M78K+izxC1PDqpR7WerOlLa/aNO3gyu
-         qeqO5CDE0d5231WVZd3Ndz8Ppn+xLL5uHgOTN1n3JplmXTN9xxy/Vq1KRBiL4dLLfZdH
-         AVxNbFH/i1FPkFqrKQNV2fzlXctHjXpo5s3xPclGt6olu1HvN2xjsMc73Ggqnu30LnvQ
-         YUKGrKrf8ABDWCi7kvhzM5u6fT3rglJuaUwFoUZxVfIF992CsTz/5nTxUCO5iKEjXTTB
-         naoQPZwfaFfp9zkj/CJnP8CKUj8heSuDxSaxqNVtUpeZJglprvwPWoULShXiIV0pHL8b
-         6A+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754480113; x=1755084913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bWQWyYoXiLLkZAoiIB5sdcKmoITnPW5rVyw8e/6D4rw=;
-        b=i1EkOyl7nnDE2YZIAX7OPiDgQGlZZMi0keSEGEQ8Tf8CAsrqQEF4ARa0tEBJzccdHB
-         YOjlJgUro2rd0USw9hUCQ3LTG58v+rVGGLIoVswQrd8xZc0L3W/0dhNbUOAhxIjU5jZi
-         fWHJxPKxur6ic4PMoo28uNHtgXFwoVBI7UYQtQyba1CwWiZNzJ7MFogOuzAnmXEjuBIA
-         AVI2FyijKd5lGYSi1LlGyyHi3BFn+7QwA7Ezvr3nNbUI5AmcMkJOFvJzRWCBgmvsQOxx
-         9Uv5lSqIzA/8L+Atl27gklxUByEdsVBOzkTyvE5mfpfdFviwiMpSmRfuOF06gUexT4p8
-         DFWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkTRqcanyurVx7eTW4OHe4//4uPNCfzOc+5OqarnunhHRADJVbFgzzwAl3mYocXvkrj3+l7+pu9fKtTzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBVQ0cwXLl4025+rVfCoH6vY7OWEjQQpWGVDfieby8t9W6WFCf
-	JLz9ndCeN2A/qktKqCdVknTU0CO1xjD0zt38vph8xckRrUfV4Vz7TJMxc9j52FQWNF9bMSD2kdp
-	q9YodSiRbzxicYWgNUJHOy89JAT0WpVHoxnUr+uYo
-X-Gm-Gg: ASbGncudwyXzc52inJvIN01kP+0ScbAIkqFcC3Xh5iByauGiCv4SPGpMVy5Q5Fe+fyE
-	5CmhyqxuEDGh05MPQKkx4+av50drr74qACCxogxX7dawbbDKi0cnm5hSt+lr9pwqS3xPjhlHmfl
-	aJ2X7i9lDz21SXN3ZccrllaTeYVug1qmUM/3NTZFLEAhYP12Ofzq+P08jgPJ6V9z0BbQiMJzbLN
-	o0nIQ8WgWm8eRVbTXKxWB9J+8vzwKum1zD5ThxA0CBzKgxOf68=
-X-Google-Smtp-Source: AGHT+IHC937rfNHLj2Ketv7dG7aNMCiksImoAukkEKJ9dvpFLVmtwt42vPOJP0hdb3k7rsxJhY51EU50UuhO23sAjZg=
-X-Received: by 2002:a17:902:f543:b0:23f:f96d:7581 with SMTP id
- d9443c01a7336-2429f57624bmr34189925ad.20.1754480112491; Wed, 06 Aug 2025
- 04:35:12 -0700 (PDT)
+	s=arc-20240116; t=1754480172; c=relaxed/simple;
+	bh=/c1JkBuOtHBojzROFpxkTsgPYzfasN63MXct1wNxB+o=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VyrW7RzR2fGhpV3BQWFDCAotQELLUOrEmYRwzOj34ede4trGmEaFslBlx7iyhBarxT6XEHSDA3/JIi1QJVT6k1WNfX5q995pBTJ06Ev4AzkRKIzmU+UOPS9PM8qKGQ7DE7w8n9BL1fv3jCOK9xDETY5CKnEV8MrJIZmbtG6TxSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meP8tYEj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754480172; x=1786016172;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/c1JkBuOtHBojzROFpxkTsgPYzfasN63MXct1wNxB+o=;
+  b=meP8tYEjLwJRWiHmj6ZfukL/rtNTOhp+FJeQOgV07Ap7rHz9Q04x4cPU
+   pSd0eb+Yiqtpqau4AqLT7rYMnptFAg7b6QdvhHHsiXPhfho6zCDgDDDz1
+   6/V8fWx6xSWwy2LM3tQThuUgPOnc6lEpqHiZgiCOpWwqQSX7U8i1L8JP9
+   agdirvbuWI2EdsMyxFfgk9vH+DLcRNJt5R3BQPsr/641/Cg85SSZFgE07
+   ObLKxILilPKmWL4DLBbchxxiE3iRUElad88XT6QKoJCcvz/nze65HPlK3
+   P46MgVTQzIr1x4i439b52VyxKeOGCjpJMsJbUTLNL+8SBmVEl7GXLHawE
+   A==;
+X-CSE-ConnectionGUID: RrA854ZWQ7eQ6qE4Uiph4A==
+X-CSE-MsgGUID: DG/8RZPCSOSgCU/0l1qGzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74252799"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="74252799"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 04:36:11 -0700
+X-CSE-ConnectionGUID: Za+yqn57RX2aa3DtHcSe+Q==
+X-CSE-MsgGUID: /4MHrO2WSrO74i95X9L+1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="195719009"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.170])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 04:36:07 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 6 Aug 2025 14:35:56 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>
+Subject: Re: [PATCH v1] platform/x86: asus-wmi: Fix ROG button mapping, tablet
+ mode on ASUS ROG Z13
+In-Reply-To: <20250803155713.9301-1-lkml@antheas.dev>
+Message-ID: <2c7476d5-2a1b-5f1a-9c75-76f74752d0da@linux.intel.com>
+References: <20250803155713.9301-1-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801092720.1845282-1-verhaegen@google.com>
- <20250801092720.1845282-3-verhaegen@google.com> <aJGM2zXS6hOLDFm1@vaman>
-In-Reply-To: <aJGM2zXS6hOLDFm1@vaman>
-From: George Verhaegen <verhaegen@google.com>
-Date: Wed, 6 Aug 2025 12:34:46 +0100
-X-Gm-Features: Ac12FXxWf93J7w4DWWOw2n4oH9fFRZLDWbJIwgwctng7o16PPG-OqeOwbdPfDf8
-Message-ID: <CAAntYmLYVeMEpEtzhhMZ_kyAuwqv5suQK=rjF4ixgu1QH3yk=w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] ALSA: compress_offload: Add SNDRV_COMPRESS_TSTAMP64
- ioctl
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Cezary Rojewski <cezary.rojewski@intel.com>, 
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Srinivas Kandagatla <srini@kernel.org>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	kernel-team@android.com, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
-	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org, 
-	linux-arm-kernel@lists.infradead.org, Miller Liang <millerliang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, 05 Aug 2025 06:47:59 +0200,
-Vinod Koul wrote:
+On Sun, 3 Aug 2025, Antheas Kapenekakis wrote:
+
+> On commit 9286dfd5735b ("platform/x86: asus-wmi: Fix spurious rfkill on
+> UX8406MA"), Mathieu adds a quirk for the Zenbook Duo to ignore the code
+> 0x5f (WLAN button disable). On that laptop, this code is triggered when
+> the device keyboard is attached.
+> 
+> On the ASUS ROG Z13 2025, this code is triggered when pressing the side
+> button of the device, which is used to open Armoury Crate in Windows.
+> 
+> As this is becoming a pattern, where newer Asus laptops use this keycode
+> for emitting events, let's convert the wlan ignore quirk to instead
+> allow emitting codes, so that userspace programs can listen to it and
+> so that it does not interfere with the rfkill state.
+> 
+> With this patch, the Z13 wil emit KEY_PROG3 and the Duo will remain
+> unchanged and emit no event.
+
+> This patch also removes the override for
+> codes 0x5d and 0x5e, as those were added for completeness in the
+> previous patch.
+
+This sounds like it warrants own patch.
+
+> While at it, add a quirk for the Z13 to switch into tablet mode when
+> removing the keyboard.
 >
-> On 01-08-25, 10:27, Joris Verhaegen wrote:
-> > The previous patch introduced the internal infrastructure for handling
-> > 64-bit timestamps. This patch exposes this capability to user-space.
-> >
-> > Define the new ioctl command SNDRV_COMPRESS_TSTAMP64, which allows
-> > applications to fetch the overflow-safe struct snd_compr_tstamp64.
-> >
-> > The ioctl dispatch table is updated to handle the new command by
-> > calling a new snd_compr_tstamp64 handler, while the legacy path is
-> > renamed to snd_compr_tstamp32 for clarity.
-> >
-> > This patch bumps the SNDRV_COMPRESS_VERSION to 0.4.0.
-> >
-> > Reviewed-by: Miller Liang <millerliang@google.com>
-> > Tested-by: Joris Verhaegen <verhaegen@google.com>
-> > Signed-off-by: Joris Verhaegen <verhaegen@google.com>
-> > ---
-> >  include/uapi/sound/compress_offload.h |  5 +++--
-> >  sound/core/compress_offload.c         | 19 +++++++++++++------
-> >  2 files changed, 16 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-> > index abd0ea3f86ee..70b8921601f9 100644
-> > --- a/include/uapi/sound/compress_offload.h
-> > +++ b/include/uapi/sound/compress_offload.h
-> > @@ -13,8 +13,7 @@
-> >  #include <sound/asound.h>
-> >  #include <sound/compress_params.h>
-> >
-> > -
-> > -#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 3, 0)
-> > +#define SNDRV_COMPRESS_VERSION SNDRV_PROTOCOL_VERSION(0, 4, 0)
-> >  /**
-> >   * struct snd_compressed_buffer - compressed buffer
-> >   * @fragment_size: size of buffer fragment in bytes
-> > @@ -208,6 +207,7 @@ struct snd_compr_task_status {
-> >   * Note: only codec params can be changed runtime and stream params cant be
-> >   * SNDRV_COMPRESS_GET_PARAMS: Query codec params
-> >   * SNDRV_COMPRESS_TSTAMP: get the current timestamp value
-> > + * SNDRV_COMPRESS_TSTAMP64: get the current timestamp value in 64 bit format
-> >   * SNDRV_COMPRESS_AVAIL: get the current buffer avail value.
-> >   * This also queries the tstamp properties
-> >   * SNDRV_COMPRESS_PAUSE: Pause the running stream
-> > @@ -230,6 +230,7 @@ struct snd_compr_task_status {
-> >                                              struct snd_compr_metadata)
-> >  #define SNDRV_COMPRESS_TSTAMP              _IOR('C', 0x20, struct snd_compr_tstamp)
-> >  #define SNDRV_COMPRESS_AVAIL               _IOR('C', 0x21, struct snd_compr_avail)
-> > +#define SNDRV_COMPRESS_TSTAMP64            _IOR('C', 0x22, struct snd_compr_tstamp64)
-> >  #define SNDRV_COMPRESS_PAUSE               _IO('C', 0x30)
-> >  #define SNDRV_COMPRESS_RESUME              _IO('C', 0x31)
-> >  #define SNDRV_COMPRESS_START               _IO('C', 0x32)
-> > diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-> > index d3164aa07158..445220fdb6a0 100644
-> > --- a/sound/core/compress_offload.c
-> > +++ b/sound/core/compress_offload.c
-> > @@ -736,18 +736,23 @@ snd_compr_set_metadata(struct snd_compr_stream *stream, unsigned long arg)
-> >     return retval;
-> >  }
-> >
-> > -static inline int
-> > -snd_compr_tstamp(struct snd_compr_stream *stream, unsigned long arg)
-> > +static inline int snd_compr_tstamp(struct snd_compr_stream *stream,
-> > +                              unsigned long arg, bool is_32bit)
-> >  {
-> >     struct snd_compr_tstamp64 tstamp64 = { 0 };
-> >     struct snd_compr_tstamp tstamp32 = { 0 };
-> > +   const void *copy_from = &tstamp64;
-> > +   size_t copy_size = sizeof(tstamp64);
-> >     int ret;
-> >
-> >     ret = snd_compr_update_tstamp(stream, &tstamp64);
-> >     if (ret == 0) {
-> > -           snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
-> > -           ret = copy_to_user((struct snd_compr_tstamp __user *)arg,
-> > -                              &tstamp32, sizeof(tstamp32)) ?
-> > +           if (is_32bit) {
-> > +                   snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
-> > +                   copy_from = &tstamp32;
-> > +                   copy_size = sizeof(tstamp32);
-> > +           }
->
-> Most of the applications and people would be 32bit right now and we
-> expect this to progressively change, but then this imposes a penalty as
-> default path is 64 bit, since we expect this ioctl to be called very
-> frequently, should we do this optimization for 64bit here?
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/platform/x86/asus-nb-wmi.c | 25 +++++++++++++++++++------
+>  drivers/platform/x86/asus-wmi.h    |  3 ++-
+>  2 files changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+> index f84c3d03c1de..6928bb6ae0f3 100644
+> --- a/drivers/platform/x86/asus-nb-wmi.c
+> +++ b/drivers/platform/x86/asus-nb-wmi.c
+> @@ -147,7 +147,12 @@ static struct quirk_entry quirk_asus_ignore_fan = {
+>  };
+>  
+>  static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
+> -	.ignore_key_wlan = true,
+> +	.key_wlan_event = ASUS_WMI_KEY_IGNORE,
+> +};
+> +
+> +static struct quirk_entry quirk_asus_z13 = {
+> +	.key_wlan_event = ASUS_WMI_KEY_ARMOURY,
+> +	.tablet_switch_mode = asus_wmi_kbd_dock_devid,
+>  };
+>  
+>  static int dmi_matched(const struct dmi_system_id *dmi)
+> @@ -539,6 +544,15 @@ static const struct dmi_system_id asus_quirks[] = {
+>  		},
+>  		.driver_data = &quirk_asus_zenbook_duo_kbd,
+>  	},
+> +	{
+> +		.callback = dmi_matched,
+> +		.ident = "ASUS ROG Z13",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "ROG Flow Z13"),
+> +		},
+> +		.driver_data = &quirk_asus_z13,
+> +	},
+>  	{},
+>  };
+>  
+> @@ -636,6 +650,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+>  	{ KE_IGNORE, 0xCF, },	/* AC mode */
+>  	{ KE_KEY, 0xFA, { KEY_PROG2 } },           /* Lid flip action */
+>  	{ KE_KEY, 0xBD, { KEY_PROG2 } },           /* Lid flip action on ROG xflow laptops */
+> +	{ KE_KEY, ASUS_WMI_KEY_ARMOURY, { KEY_PROG3 } },
+>  	{ KE_END, 0},
+>  };
+>  
+> @@ -655,11 +670,9 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
+>  		if (atkbd_reports_vol_keys)
+>  			*code = ASUS_WMI_KEY_IGNORE;
+>  		break;
+> -	case 0x5D: /* Wireless console Toggle */
+> -	case 0x5E: /* Wireless console Enable */
+> -	case 0x5F: /* Wireless console Disable */
+> -		if (quirks->ignore_key_wlan)
+> -			*code = ASUS_WMI_KEY_IGNORE;
+> +	case 0x5F: /* Wireless console Disable / Special Key */
+> +		if (quirks->key_wlan_event)
+> +			*code = quirks->key_wlan_event;
+>  		break;
+>  	}
+>  }
+> diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
+> index 018dfde4025e..5cd4392b964e 100644
+> --- a/drivers/platform/x86/asus-wmi.h
+> +++ b/drivers/platform/x86/asus-wmi.h
+> @@ -18,6 +18,7 @@
+>  #include <linux/i8042.h>
+>  
+>  #define ASUS_WMI_KEY_IGNORE (-1)
+> +#define ASUS_WMI_KEY_ARMOURY	0xffff01
+>  #define ASUS_WMI_BRN_DOWN	0x2e
+>  #define ASUS_WMI_BRN_UP		0x2f
+>  
+> @@ -40,7 +41,7 @@ struct quirk_entry {
+>  	bool wmi_force_als_set;
+>  	bool wmi_ignore_fan;
+>  	bool filter_i8042_e1_extended_codes;
+> -	bool ignore_key_wlan;
+> +	int key_wlan_event;
+>  	enum asus_wmi_tablet_switch_mode tablet_switch_mode;
+>  	int wapf;
+>  	/*
+> 
+> base-commit: 186f3edfdd41f2ae87fc40a9ccba52a3bf930994
+> 
 
-Valid point about optimizing the common path. But since the underlying
-.pointer op was changed in the patch V3 to always return a 64-bit
-snd_compr_tstamp64, there is no longer a "native" 32-bit path to fetch.
+-- 
+ i.
 
-Any call to the legacy SNDRV_COMPRESS_TSTAMP ioctl must fetch the 64-bit
-value and then truncate it down. The current patch reflects this by sharing the
-common 64-bit fetch and then conditionally performing the truncation to 32-bit.
-Splitting the function would result in two functions that both call
-snd_compr_update_tstamp() to get the 64-bit data, so there would be code
-duplication with no performance gain.
-
-Thanks,
-George
 
