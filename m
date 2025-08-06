@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-758465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BA1B1CF82
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:43:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0929B1CF81
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3616318C5E18
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF3C56730E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387D5277CAB;
-	Wed,  6 Aug 2025 23:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CBB277CBB;
+	Wed,  6 Aug 2025 23:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVCpH+2u"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqgTzIer"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AC419DF6A
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 23:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F546277C8D;
+	Wed,  6 Aug 2025 23:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754523797; cv=none; b=F6UqnByeJ18RAE93mDBfINr3CUq2ne72T1AH4p6AHUvhohd+aeWFEWbd+1Z9Ouhqr4i4lQdcBjBpmEKkY2EkKTRyyiEuC9pcafrSA1GeVwRxmyNHW8qQ2KFsHkHVt8tkiJib5BGAVlY/tLbKWTGQbVoy8aUbL8xar1OqVwpuWGY=
+	t=1754523791; cv=none; b=IWF62aYgUnkj4G3PNGvKqeeEu4ImEwT6pjEbeEu9sKAyAUuMN1iAnqJpsU68XmE6b/9a8E5tldsUS7ZoesR66yNGTpGl/CXv4Oob7mmgGb/yPOrYDKlcLySTsAurEEGPcgl8gfiBwvPbyAf46II0pBf9nd3+Ofkijf+n5PUOsKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754523797; c=relaxed/simple;
-	bh=/W92kUb+TXnluRqaL68VPO0zwa9YeUOvdI55X1iPeMc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wf2IW2lml2cTjwN52KjxyaYn26uESMdQ6cEmKplEyC99ZmlSFRRnbdU5eC8mspKmmkVfDF4N+PdXm2qmLOMNrRhXgETUJ0JlM00h5QmGsuKtQqkQ2I7pCUEypnZ6GS3GaNQ/JX1hkpweccO8Id72OMIRFbV30PBsLfuRGC9aqvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVCpH+2u; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8e014c1d19so357573276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 16:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754523793; x=1755128593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cfT15tOepazFTL2Lg8MMF8cCYjiRwORhTnogRj+tN3g=;
-        b=EVCpH+2udjH+aWH/vCJexIZNfyF6/s4AYU/+l8GouOSYOSdS0SxteE8F/tDiMiNqdh
-         CAuLwnArmxLMOKXWg+b8grxbJzWKvs8UpHgcELlol6Uy+vwQVK2xJmm2eumg/R9F82Md
-         rZx70PYYIQd1gJAT2htVxh9qMyQp/TdxSyghhD5AwW9JjFApTSOjI9gVmp2+0ypZOfOY
-         tW3bhDqbgAZYbT+CVkzRSINonNgy0zw4epwWXEzdC670EsC5aFC53zUngef3IwSRMKDh
-         LRYbBOw0IR5ktNqQk9EG5BfQQojam38xY5IEfLPq2Z8gdrNDJI1nrn+H5QKVdelSfYaa
-         yUbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754523793; x=1755128593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cfT15tOepazFTL2Lg8MMF8cCYjiRwORhTnogRj+tN3g=;
-        b=Ai5ui21nGhimpTI4o2BoUqtlJMvgySr6ouawAxUr61W8Ik33OP31opIG7BJE1S0T4Z
-         +D7Ws5LP2oOQJKbvCxvzw+F85aid8BZk6FeFo3u77dZ0jPpisOpouNUaFR89EWnxvvvZ
-         B5saymM7lUPvd+tuh6vht+vW8dKdx4MBYgHWXNoQilYGCARLaGN7hMkaaVMYeGHMBQ5Z
-         6MxjVDU5gPQSh1hfHmk1DNayz+HfSlhfXegKF4RCZey+hTEg2gBLMHuwnZeJ19lMhIk7
-         RoEN/234ZqOIZDkV8FpgEUXRiV7k2mVWAzuiQ8sPnGPMVeFnD6bobYfVaRmL5lys4kL4
-         rF4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqwiD94/7V0g/qwfVUiyPVnBsl9MH2E92CbJbvVN/62KalXqdk48DtIJHA3IGtzuq8lhcvvE19aXzkp90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHoepJRjgVsT+JKec3zvIT6Yk+wUZjX8Y7JTMSFU+BdLqX1AZ5
-	Ezxn8Epw2U4f0BZn6gPlsMkWf8c/E6sg1WaBVcjRasVANnUL80djHq4DST2Mnw==
-X-Gm-Gg: ASbGnctF8abvar3VyIscHpfPx2k/vQCyQZzKlgAd82znTM8vCkiFKGYijmSoOhzy8i3
-	H0jTJx/sknqu12+1JRwO5b2BDHbCBe/fhKQqV8rOF0bEB0BDD7U2qsmOsOP6g24uNDV9N8qjIhw
-	dF5uOlJu2s3kz9N5A2vtSVPAuvhmkgPyHbWzLJPXDoxCqR5XdlTGDuikHvVIxSWejkfWodHAI8N
-	wsPZ5UbkTyc3wfFLdU8OKmnzqHV8TFHPHsnwzh1QONZbbAqganNXLTA+NPGGulAONbqI1gj2n82
-	awgKzrtEENk+stnSMeNxiLmYzBh2HdOUjfD32z5cTpaXg/iyNRqhjss6J5aw+Ctxhq3aA0FzdHE
-	F9gcNAfFIl2Z5pbYwQgt7lswvyo2dGPg/Mt/rX2Yp8Af5tWt2AlRb
-X-Google-Smtp-Source: AGHT+IErqUmAYFMk9ex7yBFNFktwhE0CW7kYKo02zKyww8eNDXZVT5/FhMr+He7/ul7nzCXLh9hJVw==
-X-Received: by 2002:a05:6902:4389:b0:e90:235f:6c1 with SMTP id 3f1490d57ef6-e902ac7df0amr4638106276.25.1754523792936;
-        Wed, 06 Aug 2025 16:43:12 -0700 (PDT)
-Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:9e66:4583:8a9c:a62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e900da4155csm2593946276.39.2025.08.06.16.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 16:43:12 -0700 (PDT)
-From: Bijan Tabatabai <bijan311@gmail.com>
-To: damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: sj@kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijantabatab@micron.com>,
-	Bijan Tabatabai <bijan311@gmail.com>
-Subject: [PATCH v2] mm/damon/core: skip needless update of damon_attrs in damon_commit_ctx()
-Date: Wed,  6 Aug 2025 18:42:54 -0500
-Message-ID: <20250806234254.10572-1-bijan311@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754523791; c=relaxed/simple;
+	bh=XvKaSBjQUK3Lb4uJy6GhrqjQJdMOVbIiQ9JzMOob2KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q/9D+nAbCP2WPVDdFeU5LNRUkJSp9bdig0SrEUjTs7DpNuH4ZnO0nfrfrhZxc6g/K+QzzZdl26NjLR3Di/7zfKDHq1rdl/qhckt7nMtHCY+yvNyb+p4d+g1ImXkuxIBXhjnPANmeMurjHvD58pYAXj19Ccy11GhyIfau7L2e1LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqgTzIer; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDFFC4CEE7;
+	Wed,  6 Aug 2025 23:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754523790;
+	bh=XvKaSBjQUK3Lb4uJy6GhrqjQJdMOVbIiQ9JzMOob2KQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AqgTzIerTzEYEvnC3+PF40eUaqMe6OKuvfEPihBe2N0abgzpfioGzdVfFXvFN2dvu
+	 Q2iwTTnN5I6UiOYccj2rFT6D0aG7B95IA6n58G8fDp5YTn1a43yCPJ7AMt4gVTPEWz
+	 Gw/zoIwOFb1RyzjoJkdUx9T1WMHQLsBH42XnP0ofm1dceoJ+XFBUfgCMxLUXtqEOm6
+	 T0DQyN/pf+Qc4z46KItB9dSNv9bS+CGUrgA7g3w0/Smuv1/ruT49+ojdciQs9lpB2m
+	 Ka7z2UYYgunxy/Nx9yDk/yIFz/7W1EI+PPiL6zNoT8kB3oQkfVAocqeeICLIqlN7b4
+	 Xup7U5VzQN6Wg==
+Date: Wed, 6 Aug 2025 18:43:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com,
+	andre.draszik@linaro.org, peter.griffin@linaro.org,
+	kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+	igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
+	s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+	dev.tailor@samsung.com, faraz.ata@samsung.com,
+	muhammed.ali@samsung.com, selvarasu.g@samsung.com
+Subject: Re: [PATCH v5 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Message-ID: <20250806234309.GA2032999-robh@kernel.org>
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+ <CGME20250805114320epcas5p3968288f8d01944d3d730b3094a7befe4@epcas5p3.samsung.com>
+ <20250805115216.3798121-6-pritam.sutar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805115216.3798121-6-pritam.sutar@samsung.com>
 
-From: Bijan Tabatabai <bijantabatab@micron.com>
+On Tue, Aug 05, 2025 at 05:22:15PM +0530, Pritam Manohar Sutar wrote:
+> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+> "phy" and "ref". The required supplies for USB3.1 are named as
+> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+> 
+> Add schemas for combo ssphy found on this SoC.
+> 
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> ---
+>  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> index 4a84b5405cd2..7a71cff10fb5 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> @@ -34,6 +34,7 @@ properties:
+>        - samsung,exynos7870-usbdrd-phy
+>        - samsung,exynos850-usbdrd-phy
+>        - samsung,exynos990-usbdrd-phy
+> +      - samsung,exynosautov920-usb31drd-combo-ssphy
+>        - samsung,exynosautov920-usbdrd-combo-hsphy
+>        - samsung,exynosautov920-usbdrd-phy
+>  
+> @@ -118,6 +119,12 @@ properties:
+>    vdd18-usb20-supply:
+>      description: 1.8V power supply for the USB 2.0 phy.
+>  
+> +  dvdd075-usb30-supply:
+> +    description: 0.75V power supply for the USB 3.0 phy.
+> +
+> +  vdd18-usb30-supply:
+> +    description: 1.8V power supply for the USB 3.0 phy.
+> +
+>  required:
+>    - compatible
+>    - clocks
+> @@ -227,6 +234,7 @@ allOf:
+>                - samsung,exynos7870-usbdrd-phy
+>                - samsung,exynos850-usbdrd-phy
+>                - samsung,exynos990-usbdrd-phy
+> +              - samsung,exynosautov920-usb31drd-combo-ssphy
+>                - samsung,exynosautov920-usbdrd-combo-hsphy
+>                - samsung,exynosautov920-usbdrd-phy
+>      then:
+> @@ -258,6 +266,17 @@ allOf:
+>          - vdd18-usb20-supply
+>          - vdd33-usb20-supply
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynosautov920-usb31drd-combo-ssphy
+> +    then:
+> +      required:
+> +        - dvdd075-usb30-supply
+> +        - vdd18-usb30-supply
 
-Currently, damon_commit_ctx() always calls damon_set_attrs() even if the
-attributes have not been changed. This can be problematic when the DAMON
-state is committed relatively frequently because damon_set_attrs() resets
-ctx->next_{aggregation,ops_update}_sis, causing aggregation and ops
-update operations to be needlessly delayed.
-
-This patch avoids this by only calling damon_set_attrs() in
-damon_commit_ctx when the attributes have been changed.
-
-Cc: Bijan Tabatabai <bijan311@gmail.com>
-Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
----
-Changes from v1[1]:
-  - Compare entirety of struct damon_attrs
-  - Apply logic in damon_commit_ctx() instead of damon_set_attrs()
-
-[1] https://lore.kernel.org/all/20250806164316.5728-1-bijan311@gmail.com/
----
- mm/damon/core.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 6a2fe1f2c952..80aaeb876bf2 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -570,6 +570,24 @@ void damon_destroy_ctx(struct damon_ctx *ctx)
- 	kfree(ctx);
- }
- 
-+static bool damon_attrs_equals(const struct damon_attrs *attrs1,
-+		const struct damon_attrs *attrs2)
-+{
-+	const struct damon_intervals_goal *ig1 = &attrs1->intervals_goal;
-+	const struct damon_intervals_goal *ig2 = &attrs2->intervals_goal;
-+
-+	return attrs1->sample_interval == attrs2->sample_interval &&
-+		attrs1->aggr_interval == attrs2->aggr_interval &&
-+		attrs1->ops_update_interval == attrs2->ops_update_interval &&
-+		attrs1->min_nr_regions == attrs2->min_nr_regions &&
-+		attrs1->max_nr_regions == attrs2->max_nr_regions &&
-+		ig1->access_bp == ig2->access_bp &&
-+		ig1->aggrs == ig2->aggrs &&
-+		ig1->min_sample_us == ig2->min_sample_us &&
-+		ig1->max_sample_us == ig2->max_sample_us;
-+
-+}
-+
- static unsigned int damon_age_for_new_attrs(unsigned int age,
- 		struct damon_attrs *old_attrs, struct damon_attrs *new_attrs)
- {
-@@ -1198,9 +1216,11 @@ int damon_commit_ctx(struct damon_ctx *dst, struct damon_ctx *src)
- 	 * 2. ops update should be done after pid handling is done (target
- 	 *    committing require putting pids).
- 	 */
--	err = damon_set_attrs(dst, &src->attrs);
--	if (err)
--		return err;
-+	if (!damon_attrs_equals(&dst->attrs, &src->attrs)) {
-+		err = damon_set_attrs(dst, &src->attrs);
-+		if (err)
-+			return err;
-+	}
- 	dst->ops = src->ops;
- 
- 	return 0;
--- 
-2.43.0
-
+Similar issue here.
 
