@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-757591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94579B1C3FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EC7B1C403
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CB51872C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2BB7A2E62
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A12B28A72D;
-	Wed,  6 Aug 2025 10:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED00289810;
+	Wed,  6 Aug 2025 10:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAOOH79I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o5UKKG95"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F09228A707;
-	Wed,  6 Aug 2025 10:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42F721CC79
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754474407; cv=none; b=vFED0Q0iiRkeTRGUk4eYNvq8ozZVBPwksjDElWSsAEjZFb3Dt0PfpMpbAB3u2r1XO+wXf5+H2qqMOkxF1P2OPbnWVceBWiGc1DIF5724m8VP50bWQaZdRmFRIJAmoMJLxrvjtqAOrFL3Y8QCTtFh8bVAzWX8Wx31CSfqaIQODH4=
+	t=1754474648; cv=none; b=pUwH16iY8jo9W3L6Ttq60+ah1ZtZ8xoR6uAMvGZ3XaQPbTodqJgq8nifN76nvX7liHIbTa0iU0aI/eCk7qlpuxbuAxVCIEE8mac5IPb+wRMUvbQViGyp6IFY4h2EtmnlZkS+4d844kq3zcoU/7/aTtHckZCtWqrBT3GM1FTtYAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754474407; c=relaxed/simple;
-	bh=5OJEca6/tvGxIaNUzv2gYSq7D9PtSBD0SKlu6ZL1peA=;
+	s=arc-20240116; t=1754474648; c=relaxed/simple;
+	bh=Nfg8ZV5S9dd/rRMBz2rWxYkRdNNUygm0/QvzT0BF+uQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QhyiVedBrfbK0h86C5487uOZNXNuOzOTzsPz+/qVkFnDChF6GTiqVLbe8+y3oiLW8H4R0Wx+fVRZxvGXEI2TSsyEj4pFXd+6c4xXh6w3xYoOrO+1PVZMMGWA/1Wnd+2xXe6zbfBoQ06mixGBp0aKqiqKO0u9i+S05PdKYkspAG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAOOH79I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BB7C4CEE7;
-	Wed,  6 Aug 2025 10:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754474407;
-	bh=5OJEca6/tvGxIaNUzv2gYSq7D9PtSBD0SKlu6ZL1peA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dAOOH79I6yj1Yh2sUEG7V+YELC7o48by/hSz1UyOMB/lSp4p+MWSw9CnfphJ1nadt
-	 VQIJA/LyMUD8OQNFQZyt8Ee4yND1Nrb0xDBWtvtw124vAYt6YkYxe94Pu75WkMteCT
-	 3Osq4NtTeAZav8BpLpFs0qyJEvMmrhPTr10/HLMkVxqSz/gD/ZrJygYvfeWe/XBb4r
-	 Eb32uWvYOd9hMka+rQYGPzkIEjHjGqtThWFKzEh3YjcvsrU95tQ3Y8aDrdj36rcvxp
-	 94Zs0LmZl5BAPNgnVnWceaPi+SvoJ3otuzuwHb9V1xJA0SN5jlePxeVno2DbpieyMX
-	 yjrD+8Re2g/Rg==
-Message-ID: <15287fcf-6deb-43fe-b03c-3bb019943509@kernel.org>
-Date: Wed, 6 Aug 2025 12:00:01 +0200
+	 In-Reply-To:Content-Type; b=HriZ4totkCmUzYLJFafF4HDgeK2eSoMUaMPePGAoyPfDmoxPXa4Yc19CI3yy99yk/WZ8GRHa9xoRpTKqB0iQi+xxkNiu9eeBslYT1qi8YB5c4hq3A5GPJIKTgMkm9W0zrpOsugI6URUhfj1BgJ8L8Ek0mizq8Z6tIrkAa/C5XoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o5UKKG95; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765Fe80019919
+	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 10:04:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oH0wyHvL/nCeJrABEE6IBIqEp4r0L7EIKpUAEvO9+wo=; b=o5UKKG95Q5yUM+mz
+	NZuWdcHD3OvOB4UZ5PNhLVK9C404h6tZmbkL70mxsguk7R4Ir5vlDlyHDDmdm/DS
+	sWd0viLicRTNFVKGiZn/2FsdgTDK8OhVy7G4PjL0qjVhW8i/X4BD7mKUnF5dopvM
+	PKydHHasD6GYBGESX506yd0I4VtR7KN3sSS72jFBj5QrG1p1HdGzgvKUupadUnd7
+	2sSrUb+f4udAd7DMwQYwZCjtm4x5Hj9NCljepjBwyxADM2FymZtbQq1AUk5rK2Nc
+	UeASzRfcErIfFE5ManV+p1sJYUh0JI8i9oypzgF+Ipt2pKY4EFDxm9unwEhsDbwP
+	8bqfLQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw1abss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:04:05 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f539358795so19560476d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 03:04:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754474645; x=1755079445;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oH0wyHvL/nCeJrABEE6IBIqEp4r0L7EIKpUAEvO9+wo=;
+        b=DBYKzVqJU2EpZlliwB8VInbZLZNH3FmVNtbovZZ8M+XVOnsKBVOuwHLWDSDD4Tbf6K
+         +j4MkYB+lDZjdoj/6RVC6s+ffP+Iy1qal7f8RnLm+YOcuKoTrO80EiGLebmg10U7PuwG
+         uV+hjkWsL2U+LdOU5T9FhtaBsaKRb8IfIUnuxCaLBI6SPLM64046uaSQFsmYQsGmgbPX
+         uWTy9BULuL5qkEUETWQH0Zw2zM58Ou90JIvsxg47pmfptFRtJkSzW3BQ+yCR5rajXQd6
+         Eun0b+2kjfwBmi0f39i5dlaJ30EAt17zkwgekL13S0/51G5B0shjtGZTSevCf3mEMFU6
+         SnoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTibNb/UJUr0sJaB41z/n8CIv9lfIMn/mHpjoDPc2acG/Nz4T9ISDSo1eGSl9SJeDIDf51x4ddPDYdg8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH68XA0RqU9HGG+SBhlpil/qgj+OLlkFZTT/EMYVYaNF8h12Aq
+	DLl7W0nm3MXo7LJOFg3q5vzUszo1nIfJwqkNQFPobOL+8r5PwBtIv6y80qmA2+nl4JkJ+VD4AI0
+	M7h0oguLtTpbjU0CW9W6wzXW8Dfpwox34I6zVKQ+Drpu7TTjlw6S0D2Y1/axWt4Xj7Po=
+X-Gm-Gg: ASbGncv8Fton2IoukCoS64/ok3PaS1MoLqL0fYJrqT9lS+fwqfVFG+oZkOdhTO+e/c+
+	D0Mz15rbOufME14bHFTzQHoSHbI1O8SyMp7uJP0dvqSwSw+f5UGoiUmkDF4BSdKKLMUK6Yqlfq5
+	fWCXRe7ramZ5AMyqhNL+GIZVI+UYP8ku8Vz0k+WdHBKJ/ShMWHCCJcLlAurnXXkU4d7Cs3va4De
+	jr1ivuoYJ97Je/u8ErE19DTSHZng/cV2p94JC6KfgCTCdYY67u7gqngJs+lvkLcRHyAruJMmrz6
+	o9b+Y/HIK/YsWx7ODHHfx5QKd50AuZdasR2iNxtmIIhLsqk6S77AKtlYNW5A3DKXoXlS2n3i3ot
+	BUTHsHkocsXdz+nVLWw==
+X-Received: by 2002:ac8:5888:0:b0:4b0:8a0b:5dc1 with SMTP id d75a77b69052e-4b09141c634mr13322071cf.7.1754474644619;
+        Wed, 06 Aug 2025 03:04:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCC204sGp2lAh4JdpyVcbNWgkbVjvoq6ZF9ArXM/l5nXMta/9k4mQLlGTUdhT1lX3+nZ0M8Q==
+X-Received: by 2002:ac8:5888:0:b0:4b0:8a0b:5dc1 with SMTP id d75a77b69052e-4b09141c634mr13321711cf.7.1754474643981;
+        Wed, 06 Aug 2025 03:04:03 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af994cbb883sm86231066b.28.2025.08.06.03.04.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 03:04:03 -0700 (PDT)
+Message-ID: <9e3b4706-c61a-4d69-be84-a5b6fc90eb35@oss.qualcomm.com>
+Date: Wed, 6 Aug 2025 12:04:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,81 +89,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] dt-bindings: clock: qcom: Document the Glymur TCSR
- Clock Controller
-To: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
+To: Taniya Das <taniya.das@oss.qualcomm.com>, Abel Vesa <abel.vesa@linaro.org>
 Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
- <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-2-227cfe5c8ef4@oss.qualcomm.com>
- <20250730-mottled-myrtle-bull-3ae03c@kuoka>
- <9cb06263-2a61-4acd-a9cc-157abb832d62@oss.qualcomm.com>
- <48610dd9-16c0-48ec-9997-2de9e0f7b3b6@kernel.org>
- <5d75904a-05f5-4cee-9ff3-821b692f6a6f@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
+ <aIoBFeo00PPZncCs@linaro.org>
+ <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
+ <aIxRKHKdBHDefDs2@linaro.org>
+ <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+ <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
+ <3fc425fd-39fa-4efc-bc98-da86a88bfb1a@oss.qualcomm.com>
+ <c2f39786-5780-4124-9e41-6971428aa267@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <5d75904a-05f5-4cee-9ff3-821b692f6a6f@oss.qualcomm.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <c2f39786-5780-4124-9e41-6971428aa267@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX1ZZnsJIvEQcD
+ hfSfMODrlBesryBopm01ORC68xUMj/iSd8SD1bXAHRYZVIJqfC96UBKQTiU3fSX1EkxNsBLj5xA
+ V2T2G4mwuu2fguAzYePXYSpPnngcy+PcfofQe1EDOY1HVxEXrDw02nmM2olGUh45HKQgQPWqUEs
+ QbIwqFsCsoFQxRxKSFYU5YXOse7MjdOrC0Y++Sjq86/8VvKLuC4Wl6N3kV/qcPWfMlj0uJKQojS
+ 3hzdGLkqXRyGMfDKDO9V+YHVjl4+mspXAtZ/gsuDXjHsT85ulNgfz8LnUgKaXJgQxine+IYwZcg
+ nfHC/aCxarKgHl2aIlftDSgCi1YNwu9uToAJErJ+JREKmp+tGym/TtJH5+YKo0mST6ijaaCbPY9
+ NsX0cAto
+X-Authority-Analysis: v=2.4 cv=Ha4UTjE8 c=1 sm=1 tr=0 ts=68932895 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=pLAVxPC-hiG7cL8D95sA:9
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: jLBqSQbLfEJVqvTpOp6AQiU2KuS0eNmP
+X-Proofpoint-GUID: jLBqSQbLfEJVqvTpOp6AQiU2KuS0eNmP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On 06/08/2025 11:57, Taniya Das wrote:
+On 8/4/25 4:21 PM, Taniya Das wrote:
 > 
-> Sorry for the confusion, Krzysztof. What I meant to convey is that we
-> plan to post the DTS after the public announcement of the SoC, which is
-> expected to happen within the next couple of months. In the meantime,
-> we’re hoping to get the code reviewed.
+> 
+> On 8/4/2025 6:40 PM, Konrad Dybcio wrote:
+>> On 8/4/25 11:00 AM, Taniya Das wrote:
+>>>
+>>>
+>>> On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
+>>>> On 8/1/25 7:31 AM, Abel Vesa wrote:
+>>>>> On 25-08-01 10:02:15, Taniya Das wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
+>>>>>>> On 25-07-29 11:12:37, Taniya Das wrote:
+>>>>>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
+>>>>>>>> provides refclks for PCIE, USB, and UFS.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>>>>>>> ---
+>>>>>>>>  drivers/clk/qcom/Kconfig         |   8 ++
+>>>>>>>>  drivers/clk/qcom/Makefile        |   1 +
+>>>>>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
+>>>>>>>>  3 files changed, 266 insertions(+)
+>>>>>>>>
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>> +
+>>>>>>>> +static struct clk_branch tcsr_edp_clkref_en = {
+>>>>>>>> +	.halt_reg = 0x1c,
+>>>>>>>> +	.halt_check = BRANCH_HALT_DELAY,
+>>>>>>>> +	.clkr = {
+>>>>>>>> +		.enable_reg = 0x1c,
+>>>>>>>> +		.enable_mask = BIT(0),
+>>>>>>>> +		.hw.init = &(const struct clk_init_data) {
+>>>>>>>> +			.name = "tcsr_edp_clkref_en",
+>>>>>>>> +			.ops = &clk_branch2_ops,
+>>>>>>>
+>>>>>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
+>>>>>>>
+>>>>>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
+>>>>>>> which is obviously not the case.
+>>>>>>>
+>>>>>>> Bringing this here since there is a disconnect between X Elite and
+>>>>>>> Glymur w.r.t this now.
+>>>>>>
+>>>>>>
+>>>>>> The ref clocks are not required to be have a parent of bi_tcxo as these
+>>>>>> ideally can be left enabled(as a subsystem requirement) even if HLOS
+>>>>>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
+>>>>>> HLOS/APSS will not allow APSS to collapse.
+>>>>>
+>>>>> Is there a scenario where the APSS is collapsed and still the ref clock
+>>>>> needs to stay enabled ? Sorry, this doesn't make sense to me.
+>>>>
+>>>> MDSS is capable of displaying things from a buffer when the CPU is off,
+>>>> AFAICU
+>>>>
+>>>> We can do CXO_AO instead to have it auto-collapse if it's just Linux
+>>>> requesting it to stay on, I think.
+>>>>
+>>>
+>>> Thanks Konrad for adding the display use case.
+>>> Abel, we earlier also had some PCIe, USB use cases where we had to leave
+>>> the ref clocks ON and APSS could collapse.
+>>
+>> XO votes will prevent CX collapse, not APSS collapse. CX also powers
+>> USB and PCIe so that only makes sense.
+>>
+>> I think it's fair to just stick XO as the parent of every refclock
+>> today and think about the what-ifs (such as the mdss case I mentioned
+>> above) later - especially since we have no infra to take full advantage
+>> of it today (non-APSS RSCs etc.)
+>>
+> 
+> When ref clock have been part of GCC, then also they didn't have any xo
+> as the parent, similar design we kept when it was moved to TCSR as well.
 
-Thanks, please briefly mention it in the cover letter.
+Perhaps we've been running on luck (i.e. XO votes being cast through
+another device / clock as a second order effect) all this time.. I'd
+happily move towards formal correctness.
 
-Best regards,
-Krzysztof
+Konrad
 
