@@ -1,151 +1,179 @@
-Return-Path: <linux-kernel+bounces-757886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1BAB1C7E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C50B1C7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D23F188E895
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BDC189B4AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93E1DD9D3;
-	Wed,  6 Aug 2025 14:50:03 +0000 (UTC)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80A51DDC37;
+	Wed,  6 Aug 2025 14:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fgY0F7ht"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128BF1A3166;
-	Wed,  6 Aug 2025 14:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DA8944F;
+	Wed,  6 Aug 2025 14:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491803; cv=none; b=E495HQZQ5v7VQtNnYnZZ283u/SDMcwFm/QYDqfSvAc/+HK478BQlPIhAmr4vaH57g00DSgf5nnhibCeb7uKlrT6ZcUiGyhLAdz4MZ102wkh2FUXubx2pAAEfuyLOGe5j3SkH+Ncubh/cdwCworiE24bD3qqmd/lE3jzHay1kvwY=
+	t=1754491867; cv=none; b=rWmSIdAOsCOkVKZI9QUYmmABfysxx4UCPy32b6mFqKw8HvLPJPesSLTecUT4aQ0dcIrUgiJ4RFrLPMaGuLLxjPwM4dG3Ec/gN6MalU3/PQ44tWNcGAPrTUG7C8LWG2FAlZUB7akFipgYfGvZ6EOKgxWqiMeeydX7B7Tg+ebYZnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491803; c=relaxed/simple;
-	bh=+6SyK8ZmrEFbUZ/+rmzwEs3ygGgK9fzB69pfZ674ek0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ohyF8hKqSbIf5y5Wkt+KNPEd8pu4hrDIRSBDL90d1XQ8hcHOfqOvhRPBu4sDSavcycDKUwPV9EZK1USmOUa7YQCUpmAKLJs/2xSbrMjiREQX5Z8hDMwv48XO68FU+eAUe8eTjh/zrabsLhFhMj5yEZ/VriNYoK8TR5FsT1bUsNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4febcc4c93dso3480137.0;
-        Wed, 06 Aug 2025 07:50:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754491799; x=1755096599;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=omW+pjCKzU3olfxaX/yXl31LwCdljgRa62TIZGNkUZ8=;
-        b=xCRd0tXgW0O9kHUj89cRg7kcAYECJmp39cRwR95qR3IGG/xJ8hqMoX0GbT/+I3qlOX
-         /t+qo0rxGcy3QQVOMNhX6bP8UFLKWFNm540oFggSza9apmO9lHOLSgleSn3tNY2wK22M
-         zaz9FbhWykmm5gtZZl+SUKOcdesI3ufLbVcypcRiTXOvjxfGFDuUNXaNjs7rt6FtHDj1
-         GZiQJaajrjyqGFUXZl8+9yKtXDJy19b58ZMZTf1/V9f3cXimPVH9VD9L9nldMoN1/Fi3
-         1ff5VJPsl1kVUvesAIj70sC+3qfLia4JDD1Cwh8eOv2RCew2MrrzDkMrAZi6lxi1pYBK
-         WZLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUBlZ5Dhbhyp7VgiGynd/9miFX1GA1XcWhdbCS4qi05wirLnpjeqeHhFh0tp64A/DCLB7HeyPBFNGH@vger.kernel.org, AJvYcCW8+hkHVODQFgHeZS3QTu1aZep0MMZ9nfWIaMSFy2u299B2+Jxf/MXMK5ayH6en2R6XXX0mYSNfrT26RSdz@vger.kernel.org, AJvYcCWqMYHR7rliLRnOvKn+R46cJz1iqysHkXhd58gYeIUXI6e4nvQLLmmLnISaotsHuWXgEEoJtf3gKc2W9Q==@vger.kernel.org, AJvYcCXssJJ4oLhgeLCkJoAHxVKwWJVeRPACEBoRXhS7iQSiQL6wNqqQq58+Y/XYAQYZdEtSbOn0rCDHFV6V5YkeowmS+wY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynLAikv6z0XFDrHmCg1OyxyFJrIT1ukKaQQVUXwwsGAyIFcPft
-	7raSQQw9Svjud7qBJk8oaGTS6rQdWuBztxRhD7GBnPzVWuZWdgEuThQ75mrGCUh+Idg=
-X-Gm-Gg: ASbGncurqjxiHshucyBF7XqV7He2rXNZu8tE3EcH8OjggcQPfshHsj0BC9TDWqVkk2f
-	0n8W6kw2rmRnDlZiRLVsz1ZYTfF3LNrQkYTf2KuOflLhVZYIVxDoEV9J32RZT2+C9iCIEy1DPzI
-	fSAxvjQEXw6Nx0KbsgHMKewcSU37Njx+HJPA7Bs8pEAPIu5NEC3H+QiThTPGLP77V1klUl5QaEc
-	wv9BMJ7WcMn91Wj/FFuLZFHR64qNGP7YjSklauEpsMcP8ga13EnwyIDFo5xGAd0tUZ3dAcc+ZXY
-	pf5rObGY8CmjlkkLoNukB+7ck9QlWUA+CMIwFKSZAM0b3cGJecbT4AlxtQvUXMjh9Eyelp7Gmq0
-	buLiaYf3z/OIJPEFO4Cifl88gTXi2u5ZXL5od4hpFg4HnTzHlckNQzbuJhGE5X5NwbhlrpHc=
-X-Google-Smtp-Source: AGHT+IHXZJt/Qh5JbVY77STVGSBzEQZ98pK6NdWrzDI2Z901fvoz/2pkv7cLkExrLB1NBxwaqo+wvQ==
-X-Received: by 2002:a05:6102:4a8d:b0:4f9:69aa:60d with SMTP id ada2fe7eead31-5036a05a1bfmr1517463137.13.1754491799447;
-        Wed, 06 Aug 2025 07:49:59 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fca3aea9fesm3123237137.21.2025.08.06.07.49.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 07:49:58 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-88bc19ddfe3so252018241.1;
-        Wed, 06 Aug 2025 07:49:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCyR3BXuOmsMrDyj32Tq+4SI4RrjigL07fOvqTe7ftss+uEPSWO5EzJJtHIvKh53NTjj8yj3juaZOKMA==@vger.kernel.org, AJvYcCUykiynGtqJkjdwhYMpstNMUJraDG7w8GegvGiYjsnNAucbaoSf2WxEkynGobuDNmjNcQD/nEwTpWADldEVTAwTuKk=@vger.kernel.org, AJvYcCX9YP75tXnY/pfaG9CMpR/ucT/KcKBRelpJp6CG1YUvzzybHi3d+kcJ8MCQXWv3yjfP6MS/IlfBnkvt6Tar@vger.kernel.org, AJvYcCXh2wDRSNr/kzrOHucngZCTeh8ZZG9Vn4TMVlKXNYGRYfSR/swjn6oEVg+h8HYnP4b9uk6vAw+BDRrz@vger.kernel.org
-X-Received: by 2002:a05:6122:1a85:b0:539:15fb:9f20 with SMTP id
- 71dfb90a1353d-539a04e5f8dmr1146613e0c.6.1754491798208; Wed, 06 Aug 2025
- 07:49:58 -0700 (PDT)
+	s=arc-20240116; t=1754491867; c=relaxed/simple;
+	bh=jYOf2US5bWDo7NlujX8N73KHv16qVgm8SXDzuRBuNuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ao9/cRvyR0L8kzMqblCIFYGP6PZAOGdkzH7d2ye6hhmynw9N94o5WYjZR3syhSbsG2rjr1QG6ez1MBSvJrIzutE+kmw/LSoS1qVBF7DvUaQhOEl+c6GsSJnqBo9WzYEcNnoW3arD9pNo5NkJS7kQzTq0RBGfZSTfm1xsgkBXBvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fgY0F7ht; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754491866; x=1786027866;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jYOf2US5bWDo7NlujX8N73KHv16qVgm8SXDzuRBuNuI=;
+  b=fgY0F7htysJ76xADQTIm37ixlrod3hVQ9/cI+9p29UyoFyJLq0idjAE3
+   hga88jI70l3nKx0IlMvgYRk5SKIUhjbAFLltD+P3XmdTzFnp7IgeNFUUz
+   eriv+xWb7FR9paDHPwCGe9z86IOe/pquN0+R1suWWYCVy8bDTruO4EBZ7
+   nrL50ns++tJeV0NsaJ3Xw8Qa6yboOTZp0rfbHR4Y7eblutls83Dg8d3OM
+   gxJgnJmtYdHevDwFNg2ebYm6UCWqk3Qu09rtR6uIxEPv7gmsbOgF3P2sW
+   mmMiwFouxQNNUY0sNpyAHxE3tyh4STRUqkIIt00l9F+ezUUGP61IygEGy
+   A==;
+X-CSE-ConnectionGUID: lKoal4YPSYq5+U6jixQrjA==
+X-CSE-MsgGUID: +Qclt1ThRCCqcQ3q98MP3g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67078669"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67078669"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 07:51:05 -0700
+X-CSE-ConnectionGUID: XH6+x08qTfGWxhF0zUB9XA==
+X-CSE-MsgGUID: acmb15dRTzSsSmXqlb9RyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="165567416"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 06 Aug 2025 07:51:01 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujfTn-0001n8-00;
+	Wed, 06 Aug 2025 14:50:59 +0000
+Date: Wed, 6 Aug 2025 22:50:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ian Rogers <irogers@google.com>, aahringo@redhat.com,
+	Douglas Raillard <douglas.raillard@arm.com>
+Subject: Re: [PATCH 7/7] tracing: Add syscall_user_buf_size to limit amount
+ written
+Message-ID: <202508062211.cwYqtLu0-lkp@intel.com>
+References: <20250805193235.747004484@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250801154550.3898494-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250801154550.3898494-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Aug 2025 16:49:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVv=AT3G8njFfGU8=gwwGX6G55TdTpspdwX=HBWdsGGNg@mail.gmail.com>
-X-Gm-Features: Ac12FXzDu_XNp_pKm2ix0bDrwXxG4DjSW-bObHyakoC8eSP3EW4syyh4bhxCJ_k
-Message-ID: <CAMuHMdVv=AT3G8njFfGU8=gwwGX6G55TdTpspdwX=HBWdsGGNg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] pinctrl: renesas: rzt2h: Add support for RZ/N2H SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805193235.747004484@kernel.org>
 
-Hi Prabhakar,
+Hi Steven,
 
-On Fri, 1 Aug 2025 at 17:46, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The RZ/N2H (R9A09G087) SoC from Renesas shares a similar pin controller
-> architecture with the RZ/T2H (R9A09G077) SoC, differing primarily in the
-> number of supported pins-576 on RZ/N2H versus 729 on RZ/T2H.
->
-> Add the necessary pin configuration data and compatible string to enable
-> support for the RZ/N2H SoC in the RZ/T2H pinctrl driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+kernel test robot noticed the following build errors:
 
-Thanks for your patch!
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on linus/master v6.16 next-20250806]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> --- a/drivers/pinctrl/renesas/Kconfig
-> +++ b/drivers/pinctrl/renesas/Kconfig
-> @@ -304,7 +305,7 @@ config PINCTRL_RZN1
->           This selects pinctrl driver for Renesas RZ/N1 devices.
->
->  config PINCTRL_RZT2H
-> -       bool "pin control support for RZ/T2H" if COMPILE_TEST
-> +       bool "pin control support for RZ/N2H and RZ/T2H" if COMPILE_TEST
+url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Replace-syscall-RCU-pointer-assignment-with-READ-WRITE_ONCE/20250806-122312
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250805193235.747004484%40kernel.org
+patch subject: [PATCH 7/7] tracing: Add syscall_user_buf_size to limit amount written
+config: hexagon-randconfig-002-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062211.cwYqtLu0-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7b8dea265e72c3037b6b1e54d5ab51b7e14f328b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508062211.cwYqtLu0-lkp@intel.com/reproduce)
 
-Do you plan to update this for each new SoC?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508062211.cwYqtLu0-lkp@intel.com/
 
->         depends on 64BIT && OF
->         select GPIOLIB
->         select GENERIC_PINCTRL_GROUPS
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> index 877f6d00830f..55c64d74cb54 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> @@ -764,6 +764,12 @@ static const u8 r9a09g077_gpio_configs[] = {
->         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
->  };
->
-> +static const u8 r9a09g087_gpio_configs[] = {
-> +       0x1f, 0xff, 0xff, 0x1f, 0, 0xfe, 0xff, 0, 0x7e, 0xf0, 0xff, 0x1,
-> +       0xff, 0xff, 0xff, 0, 0xe0, 0xff, 0xff, 0, 0xff, 0xff, 0xff, 0x1,
-> +       0xe0, 0xff, 0xff, 0x7f, 0, 0xfe, 0xff, 0x7f, 0, 0xfc, 0x7f,
+All errors (new ones prefixed by >>):
 
-Please always use 0xXX for consistent formatting.
+>> kernel/trace/trace.c:11128:32: error: use of undeclared identifier 'CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT'
+    11128 |         global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
+          |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
-> +};
 
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+vim +/CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT +11128 kernel/trace/trace.c
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ 11110	
+ 11111		init_trace_flags_index(&global_trace);
+ 11112	
+ 11113		register_tracer(&nop_trace);
+ 11114	
+ 11115		/* Function tracing may start here (via kernel command line) */
+ 11116		init_function_trace();
+ 11117	
+ 11118		/* All seems OK, enable tracing */
+ 11119		tracing_disabled = 0;
+ 11120	
+ 11121		atomic_notifier_chain_register(&panic_notifier_list,
+ 11122					       &trace_panic_notifier);
+ 11123	
+ 11124		register_die_notifier(&trace_die_notifier);
+ 11125	
+ 11126		global_trace.flags = TRACE_ARRAY_FL_GLOBAL;
+ 11127	
+ 11128		global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
+ 11129	
+ 11130		INIT_LIST_HEAD(&global_trace.systems);
+ 11131		INIT_LIST_HEAD(&global_trace.events);
+ 11132		INIT_LIST_HEAD(&global_trace.hist_vars);
+ 11133		INIT_LIST_HEAD(&global_trace.err_log);
+ 11134		list_add(&global_trace.marker_list, &marker_copies);
+ 11135		list_add(&global_trace.list, &ftrace_trace_arrays);
+ 11136	
+ 11137		apply_trace_boot_options();
+ 11138	
+ 11139		register_snapshot_cmd();
+ 11140	
+ 11141		return 0;
+ 11142	
+ 11143	out_free_pipe_cpumask:
+ 11144		free_cpumask_var(global_trace.pipe_cpumask);
+ 11145	out_free_savedcmd:
+ 11146		trace_free_saved_cmdlines_buffer();
+ 11147	out_free_temp_buffer:
+ 11148		ring_buffer_free(temp_buffer);
+ 11149	out_rm_hp_state:
+ 11150		cpuhp_remove_multi_state(CPUHP_TRACE_RB_PREPARE);
+ 11151	out_free_cpumask:
+ 11152		free_cpumask_var(global_trace.tracing_cpumask);
+ 11153	out_free_buffer_mask:
+ 11154		free_cpumask_var(tracing_buffer_mask);
+ 11155		return ret;
+ 11156	}
+ 11157	
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
