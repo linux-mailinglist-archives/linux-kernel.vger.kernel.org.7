@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-757732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A14EB1C614
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:40:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE8EB1C5FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E03D72163B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2044016FC0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF6E28C007;
-	Wed,  6 Aug 2025 12:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ALOz9sx/"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60178274FFE;
-	Wed,  6 Aug 2025 12:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0F128B400;
+	Wed,  6 Aug 2025 12:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F71CA5E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483949; cv=none; b=dIgQC2oBQ9GeqXDZyjz4NRO1Coo+rnFIZGHfpqE/LLuvEJYQpXkSBkUMGLQJ9vJM9SwT6AxPBYgGVaytl4cXuz0ZESLHpFw3DEf3sHJRgsTBjHTD2J0UdNo9d3oDvq3sXLeAEME3XWCrr8D7kWEfrXqYjOQvuA7xbf3DYFl+Fq0=
+	t=1754483850; cv=none; b=QFHMQXp59OX+feEfejGQAe8ASIWlkCvl6I8AyuKapQbgXX9l8kM09oqVHACrmx4D0HRKP6/wEJKl5IN+GtSByfh3SSqZFqCxsv1jvfAHbNFhN6p156bVxAoHPWNgm6MwSPuTsN7dvKgXrWpH56VnhiMH4e+kUsbHUw0WqD0LUNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483949; c=relaxed/simple;
-	bh=vrLWGOXRH2r0hNZhUQBXvjB68J36/G9jl4obAQfpRLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LIRcM/2kBOfCSjxBh6L19YkpJANS7F9alHRC4JetXsP3hrPk0FoBQ3axMqnSmnTXETE1bfNuikyhWml25OARhs5jqJi7NP5GnNsOmmyYZaG6IBwKXgihF70YsE+NkCzYaQ5KUWfqIr9Vs9ABldTR4QbOj5zoeG8Qswux5BIpl3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ALOz9sx/; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576CC3qH008508;
-	Wed, 6 Aug 2025 14:38:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	+9IsvCzYMDK0gCqL2cCxHQLQ+DlESL1F/sd9l2UbGxI=; b=ALOz9sx/aoS4LcZj
-	Jv6BgZX6lM2lEyEM4mykxHVI7EkOCuKkdL9NWek0jfa+QN+KWCJNMlB54vR/4CU2
-	gv34OkICK/Oo1dSWTnHLsJiCnrI0/sTov+Gaf4Rgx258D4b4Cfq+l4pwbEgSHmS0
-	3pKHOlRdQiUVccAq8hybkfFn66waaXm8aEryafELGWtxmhoYHjvPLeF5rnoHOG0Q
-	zPTxxGmVt2ItBW1MJVSUjnbRAwIhL3/QbPBxkkfrZg3WnrPIGMLUVwpAMuA5CIJE
-	EGJXiv+vEvyR+aJvmeC0Yl98+Hy6L0uqn2uJGcH5ri8TgPHtAJPJvrfu37jpN6qD
-	gVXYiQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx63ddb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 14:38:49 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CFECC40050;
-	Wed,  6 Aug 2025 14:37:39 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C83B2718A8F;
-	Wed,  6 Aug 2025 14:36:56 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Aug
- 2025 14:36:56 +0200
-Message-ID: <832fb088-8862-4bd7-82a4-0e7ad58efe76@foss.st.com>
-Date: Wed, 6 Aug 2025 14:36:55 +0200
+	s=arc-20240116; t=1754483850; c=relaxed/simple;
+	bh=bhG0RFNtYTVRTzy7O4uppFs8+/k9rPPwWKBzuWcVMzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYcZXmYRURAG/75huWDrviODULQOODvoRRnynYDpaDTXbvbJ3S2b855YiY8p3OvNzRX7+M2FYhze1yXZIv1N1e04tKGjxQ1kREhh01OgffPLrD2t3hvvmjdLT9UF3tbNng3QC3y/CDbutfG7YRTuGlQER/d81EZl+wrTKOquPXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9912119F0;
+	Wed,  6 Aug 2025 05:37:18 -0700 (PDT)
+Received: from [10.57.6.125] (unknown [10.57.6.125])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4545A3F5A1;
+	Wed,  6 Aug 2025 05:37:24 -0700 (PDT)
+Message-ID: <1d57d1b3-cbaa-41d1-baf1-fa2fec1fd285@arm.com>
+Date: Wed, 6 Aug 2025 13:37:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,80 +41,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: st: Add memory-region-names property for
- stm32mp257f-ev1
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com>
- <9e0c5453-b8f4-4d0a-8e8d-82014aac67dd@kernel.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <9e0c5453-b8f4-4d0a-8e8d-82014aac67dd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] cdx: don't select CONFIG_GENERIC_MSI_IRQ
+To: Arnd Bergmann <arnd@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+ Nikhil Agarwal <nikhil.agarwal@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuu?= <linux@weissschuh.net>,
+ Qiu-ji Chen <chenqiuji666@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Rob Herring (Arm)" <robh@kernel.org>,
+ Abhijit Gangurde <abhijit.gangurde@amd.com>,
+ Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250805161059.4006484-1-arnd@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250805161059.4006484-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
 
-
-
-On 8/6/25 10:23, Krzysztof Kozlowski wrote:
-> On 06/08/2025 10:09, Patrice Chotard wrote:
->> Add memory-region-names property for stm32mp257f-ev1.
->> This allows to identify and check memory-map area's configuration.
+On 2025-08-05 5:10 pm, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> No, first entry is already identified.
-
-ok
-
+> x86 does not use CONFIG_GENERIC_MSI_IRQ, and trying to enable it anyway
+> results in a build failure:
 > 
->>
->> Cc: stable@vger.kernel.org
->> Fixes: cad2492de91c ("arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board")
->>
+> In file included from include/linux/ssb/ssb.h:10,
+>                   from drivers/ssb/pcihost_wrapper.c:18:
+> include/linux/gpio/driver.h:41:33: error: field 'msiinfo' has incomplete type
+>     41 |         msi_alloc_info_t        msiinfo;
+>        |                                 ^~~~~~~
+> In file included from include/linux/kvm_host.h:19,
+>                   from arch/x86/events/intel/core.c:17:
+> include/linux/msi.h:528:33: error: field 'alloc_info' has incomplete type
+>    528 |         msi_alloc_info_t        alloc_info;
 > 
-> No blank lines.
+> Change the driver to actually build without this symbol and remove the
+> incorrect 'select' statements.
 
-ok
+Looks OK to me, the Makefile is clearly trying to support building 
+without this force-enabled anyway. In fact I'd go as far as saying that 
+this also deserves a
+
+Fixes: e8b18c11731d ("cdx: Fix missing GENERIC_MSI_IRQ on compile test")
+
+And FWIW,
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/cdx/Kconfig                     | 1 -
+>   drivers/cdx/cdx.c                       | 2 +-
+>   drivers/cdx/controller/Kconfig          | 1 -
+>   drivers/cdx/controller/cdx_controller.c | 3 ++-
+>   4 files changed, 3 insertions(+), 4 deletions(-)
 > 
->> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->> ---
->>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
->> index 2f561ad4066544445e93db78557bc4be1c27095a..16309029758cf24834f406f5203046ded371a8f9 100644
->> --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
->> +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
->> @@ -197,6 +197,7 @@ &i2c8 {
->>  
->>  &ommanager {
->>  	memory-region = <&mm_ospi1>;
->> +	memory-region-names = "mm_ospi1";
-> 
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=1` (see
+> diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
+> index 3af41f51cf38..1f1e360507d7 100644
+> --- a/drivers/cdx/Kconfig
+> +++ b/drivers/cdx/Kconfig
+> @@ -8,7 +8,6 @@
+>   config CDX_BUS
+>   	bool "CDX Bus driver"
+>   	depends on OF && ARM64 || COMPILE_TEST
+> -	select GENERIC_MSI_IRQ
+>   	help
+>   	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
+>   	  exposes Fabric devices which uses composable DMA IP to the
+> diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
+> index 092306ca2541..1a5c95ba09ba 100644
+> --- a/drivers/cdx/cdx.c
+> +++ b/drivers/cdx/cdx.c
+> @@ -310,7 +310,7 @@ static int cdx_probe(struct device *dev)
+>   	 * Setup MSI device data so that generic MSI alloc/free can
+>   	 * be used by the device driver.
+>   	 */
+> -	if (cdx->msi_domain) {
+> +	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
+>   		error = msi_setup_device_data(&cdx_dev->dev);
+>   		if (error)
+>   			return error;
+> diff --git a/drivers/cdx/controller/Kconfig b/drivers/cdx/controller/Kconfig
+> index 0641a4c21e66..a480b62cbd1f 100644
+> --- a/drivers/cdx/controller/Kconfig
+> +++ b/drivers/cdx/controller/Kconfig
+> @@ -10,7 +10,6 @@ if CDX_BUS
+>   config CDX_CONTROLLER
+>   	tristate "CDX bus controller"
+>   	depends on HAS_DMA
+> -	select GENERIC_MSI_IRQ
+>   	select REMOTEPROC
+>   	select RPMSG
+>   	help
+> diff --git a/drivers/cdx/controller/cdx_controller.c b/drivers/cdx/controller/cdx_controller.c
+> index fca83141e3e6..5e3fd89b6b56 100644
+> --- a/drivers/cdx/controller/cdx_controller.c
+> +++ b/drivers/cdx/controller/cdx_controller.c
+> @@ -193,7 +193,8 @@ static int xlnx_cdx_probe(struct platform_device *pdev)
+>   	cdx->ops = &cdx_ops;
+>   
+>   	/* Create MSI domain */
+> -	cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
+> +	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ))
+> +		cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
+>   	if (!cdx->msi_domain) {
+>   		ret = dev_err_probe(&pdev->dev, -ENODEV, "cdx_msi_domain_init() failed");
+>   		goto cdx_msi_fail;
 
-My bad, i am preparing the v2.
-
-Thanks
-
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-> for instructions).
-> Maybe you need to update your dtschema and yamllint. Don't rely on
-> distro packages for dtschema and be sure you are using the latest
-> released dtschema.
-> 
-> Best regards,
-> Krzysztof
 
