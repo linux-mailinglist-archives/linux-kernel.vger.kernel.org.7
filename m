@@ -1,265 +1,149 @@
-Return-Path: <linux-kernel+bounces-757996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7992FB1C97F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E963BB1C982
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B63189E284
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:00:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C072175F65
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2355292B35;
-	Wed,  6 Aug 2025 15:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC24298CC3;
+	Wed,  6 Aug 2025 16:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Budp1pRU"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="O0T11VSC"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE23A29A9D3
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A29233D9E;
+	Wed,  6 Aug 2025 16:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754495957; cv=none; b=UBN0Hz+BHu/82UJzU0eaSZQw40GdSW8yBYRSZ6BXBdzgq/0OESZ9gDFkcgQMHU4eqDe0iGBFS2cqNv5OHDJwO9QDpU7/SZ9bRdfSEEKNObRbnmTDLq4LqrXlF8koWEDZbnDjKaoweUd6QoEsyYq23XiISBhNoSy71FzCsLWsyuw=
+	t=1754496015; cv=none; b=Vhsy0cpgK6Bz9jMUX37Gw93mukguHaPrwJiXdcAIYBpGOt+C5uTpNT5MwRCYc8/3h2Lnooz4gc/JXqMAuiDH+ll6cUIAxCDuLHXBkD5wRUc534IErnDdb/TheCf9YmuBKh3NvJf14QTkK8tCLX799vlGztuxTIRoyw38i3YWkoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754495957; c=relaxed/simple;
-	bh=JRfgX1mdsRBhfL5iUYnonjqsaZrBRF+pfu+2IoIqfMs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q9f492Pb+x8JZldO+behoOKXCLGsPiSmn8JSOUzHTmpBPoWpaZUama2FTLYS8nCBuJT7DK39HvrxI3yZuzjiRfHPI5occVUk0Z3kdTn7bcI4zjuZiWNf8AO2XEPLx4VVqwvpsVVZT/CGhpRx3jwWl+GDaOL+p0HlOFm29kWCc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Budp1pRU; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b4227538a47so4828777a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754495954; x=1755100754; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=79cST+DpT8JLjhSc853c7Vp44fp4YLe4km92lxkzOhQ=;
-        b=Budp1pRUx6mYa0epyo7zbp+kkDKr3RN/i8el8R7Gka6OmrHe2dFDFDdc+iDTLUKKiC
-         iq40KT4Z5+N9+8HmW49DP/HxNSsTFIzoP30ciMT9uw8AeFodCJqI6ZEdtg9hnks+JGHl
-         xZoBMksg8rh0B18GhOcwGnnPUsoKD54LGiyKNA3erREfPj6wpwDRuMrPdDoFPXgCrh0q
-         Lo0mJa3l3ezZkJrQ9XJPpiSLn0TwfCXe/2ffk5VJZXxr8LYJF29c9J5g6v9woFjbRH+8
-         Ryz0j8obquz+9LqjwKt+gymvn94TrB4q8xSYgGRCXLW7KO3UMTw2Aas+6mWmJKGs5X1s
-         9U7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754495954; x=1755100754;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=79cST+DpT8JLjhSc853c7Vp44fp4YLe4km92lxkzOhQ=;
-        b=wUwQmJxv1wAEvVtVZ+HIg/1GoZV1eI2mfkTiV2YhEHds0whrZVOr7uA7EuX/yP2AcD
-         8ZNpTqWA1g41yqqegbra+z3rlq6h+/C90lF+lkB3g9P/hrHH0oVaUXGbG+joqxo1yE7K
-         FDPCUqCcZqlw2uTWRm+9ecp5s2DodHiBHt9o1V0xWYIYjXaLT4gVN0VMYJ2S8XuD0V6d
-         T2EOhWn7u4uPcQ5WindBZ8DG5abj/ROm8WL5ukRxIdF/Z/69/SSTwtI+Nqmyb1xAm5BC
-         455WDpEOgQ33vN1eAfKDROB9Za61GLbQvUk/XRMBpr17I+3eFoSMw40gsMnwscBZDTYi
-         gffQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTCyQF3aujYCICsJZNdbpgZOcRzDgaZRlKm64a39JoIlSIhtEv2sURn5tf320h/X2AU/GpuQe/FV0WGrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzjocDXsbpwFjAOR04AJ27FXPhUa+3FFGfO8HPqVOfg2Veobtr
-	sHNQFp5KimC9KlOtirFJCOJJyMro4pnO/LNnCYFladO/c+zaYirFXFjDmjakW4LI7FnAcJ4YXHR
-	w2rTqUQ==
-X-Google-Smtp-Source: AGHT+IFlS+JvIsWnRvs7bTfyfgC/5w+RmEgonVOp9GJDKi3AshY2Fhxqa2lT8Ee9l8rZG2GebQuiHk0ZMyQ=
-X-Received: from pjboe1.prod.google.com ([2002:a17:90b:3941:b0:31e:c61e:663b])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dacc:b0:240:92cc:8fcf
- with SMTP id d9443c01a7336-2429f496c6bmr47463745ad.49.1754495954146; Wed, 06
- Aug 2025 08:59:14 -0700 (PDT)
-Date: Wed,  6 Aug 2025 08:59:04 -0700
-In-Reply-To: <20250806155905.824388-1-surenb@google.com>
+	s=arc-20240116; t=1754496015; c=relaxed/simple;
+	bh=7NFTKIe3/VQCS3Nbyce0H93IhVAXXs7NaSBgSzlZyjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lPuAeXZ97RFufUGkZe8BCra0lk6Idx7cldK8fYmleN2v9yjfa5IOqK9umUwT2KDhAo98PPGM82tQD79UwkG6sysUN0xWgCg3lnQYCtjmPJmmOBbH+OLigLZJpkQzvZlCdeQNxjmGwNaJc2zEbOpOOy30NadoVkiL2qwl2PPOKZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=O0T11VSC; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 576FxNnP2828793
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 6 Aug 2025 08:59:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 576FxNnP2828793
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1754495964;
+	bh=HaY5VKZj2CDqllLrNOP/8GbDuoOF/aJGU3i5GF+ptDU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O0T11VSCmFTbIxvLi3sB7dCbnWaTDjaBGygjXrtPM+v8lTnw9Tful2/e6/ZNNvdCg
+	 Ru3XxSgfQ8RgZP4tlBcIQ49RJ2Pgyo4oC/UJyZAXxtJGYINJ1/IBSW7lmVxU2bQLfN
+	 u/dFSJNtZSiyDk44R2dihFQeQf9mvnXB/kVprJ3PMIe6RYjH3WuyIRB7SOq6HDujqJ
+	 TaVgvyHoiUueE3GrkGXHzeUy1HebH4sN8yxWuWnMzgmZM+uAo3mh2yXLgUMWQjLdRg
+	 5qhY0gxYta4QSYHOitsCREWQoyxY4g+jA+6erntu715vASIw2qqj3Oa2PZxUoMfkeR
+	 KbBjvAyPG6YxA==
+Message-ID: <10eb00d1-36d8-449e-90a6-a315544c53e1@zytor.com>
+Date: Wed, 6 Aug 2025 08:59:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250806155905.824388-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250806155905.824388-4-surenb@google.com>
-Subject: [PATCH v3 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under
- per-vma locks
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] KVM: VMX: Handle the immediate form of MSR
+ instructions
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        chao.gao@intel.com
+References: <20250802001520.3142577-1-xin@zytor.com>
+ <20250802001520.3142577-3-xin@zytor.com> <aJJjjGWFL-Ju2Efw@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aJJjjGWFL-Ju2Efw@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Utilize per-vma locks to stabilize vma after lookup without taking
-mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-contended, we fall back to mmap_lock but take it only momentarily
-to lock the vma and release the mmap_lock. In a very unlikely case
-of vm_refcnt overflow, this fall back path will fail and ioctl is
-done under mmap_lock protection.
+On 8/5/2025 1:03 PM, Sean Christopherson wrote:
+> On Fri, Aug 01, 2025, Xin Li (Intel) wrote:
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index f19a76d3ca0e..c5d0082cf0a5 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -978,6 +978,7 @@ struct kvm_vcpu_arch {
+>>   	unsigned long guest_debug_dr7;
+>>   	u64 msr_platform_info;
+>>   	u64 msr_misc_features_enables;
+>> +	u32 cui_rdmsr_imm_reg;
+> 
+> This should be an "int", mostly because that's how KVM tracks it throughout the
+> various accessors, but also because it'd let us use "-1" for an "invalid" value,
+> e.g. if we ever want to add sanity checks to the completion callback (I don't
+> think that's worth doing).
 
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls from blocking address space updates.
+Sigh, using u32 was a dumb move on my part.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/task_mmu.c | 84 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 68 insertions(+), 16 deletions(-)
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index a1c49bc681c4..fe12aae7089c 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -1968,6 +1968,13 @@ static void complete_userspace_rdmsr(struct kvm_vcpu *vcpu)
+>>   	}
+>>   }
+>>   
+>> +static void complete_userspace_rdmsr_imm(struct kvm_vcpu *vcpu)
+> 
+> No need for this helper, the few lines can be open coded in complete_fast_rdmsr_imm().
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 45134335e086..0396315dfaee 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -517,28 +517,81 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
- {
--	return mmap_read_lock_killable(mm);
-+	lock_ctx->locked_vma = NULL;
-+	lock_ctx->mmap_locked = false;
-+
-+	return 0;
- }
- 
--static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
- {
--	mmap_read_unlock(mm);
-+	if (lock_ctx->mmap_locked)
-+		mmap_read_unlock(lock_ctx->mm);
-+	else
-+		unlock_vma(lock_ctx);
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
-+{
-+	struct vm_area_struct *vma;
-+	struct vma_iterator vmi;
-+
-+	if (lock_ctx->mmap_locked)
-+		return find_vma(lock_ctx->mm, addr);
-+
-+	unlock_vma(lock_ctx);
-+	rcu_read_lock();
-+	vma_iter_init(&vmi, lock_ctx->mm, addr);
-+	vma = lock_next_vma(lock_ctx->mm, &vmi, addr);
-+	rcu_read_unlock();
-+
-+	if (!IS_ERR_OR_NULL(vma)) {
-+		lock_ctx->locked_vma = vma;
-+	} else if (PTR_ERR(vma) == -EAGAIN) {
-+		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-+		mmap_read_lock(lock_ctx->mm);
-+		vma = find_vma(lock_ctx->mm, addr);
-+		lock_ctx->mmap_locked = true;
-+	}
-+
-+	return vma;
-+}
-+
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
-+{
-+	return mmap_read_lock_killable(lock_ctx->mm);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
- {
--	return find_vma(mm, addr);
-+	mmap_read_unlock(lock_ctx->mm);
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
-+{
-+	return find_vma(lock_ctx->mm, addr);
-+}
-+
-+#endif  /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_locking_ctx *lock_ctx,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(lock_ctx, addr);
-+	if (IS_ERR(vma))
-+		return vma;
-+
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -579,11 +632,11 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- 	return ERR_PTR(-ENOENT);
- }
- 
--static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-+static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
- {
-+	struct proc_maps_locking_ctx lock_ctx = { .mm = mm };
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
--	struct mm_struct *mm;
- 	const char *name = NULL;
- 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
- 	__u64 usize;
-@@ -610,17 +663,16 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!!karg.build_id_size != !!karg.build_id_addr)
- 		return -EINVAL;
- 
--	mm = priv->lock_ctx.mm;
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(&lock_ctx);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(&lock_ctx, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
-@@ -705,7 +757,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	}
- 
- 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
-@@ -725,7 +777,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 	kfree(name_buf);
- 	return err;
-@@ -738,7 +790,7 @@ static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, unsigned l
- 
- 	switch (cmd) {
- 	case PROCMAP_QUERY:
--		return do_procmap_query(priv, (void __user *)arg);
-+		return do_procmap_query(priv->lock_ctx.mm, (void __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
--- 
-2.50.1.565.gc32cd1483b-goog
+Yes, the change in v3 is simpler.
+
+> 
+>> +{
+>> +	if (!vcpu->run->msr.error)
+>> +		kvm_register_write(vcpu, vcpu->arch.cui_rdmsr_imm_reg,
+>> +				   vcpu->run->msr.data);
+>> +}
+>> +
+> 
 
 
