@@ -1,189 +1,279 @@
-Return-Path: <linux-kernel+bounces-757834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE05EB1C73D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EA4B1C73E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1D618C376D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F353BE0ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA98728C845;
-	Wed,  6 Aug 2025 14:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105828C03B;
+	Wed,  6 Aug 2025 14:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nk0w+Mq+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW8nrRmM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B86E45038;
-	Wed,  6 Aug 2025 14:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E2D28C016
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754488978; cv=none; b=sHKwfsrTmFRfjemzTQXDJ6YDyl6lkgLwsDDxijekSYtQsLLllNd5JcoMWctA76zHmOqgvbkoOKje2pmNotpO9iUdlPC50WfZtbnAJjld3u+hMs9N5rm/nYWIep69gjiRJ4W1oDY3vH1m9DIyzvBp7fIFaDgrpspnquWSfnCr3Ec=
+	t=1754489014; cv=none; b=kJzApLyyqa5Uxb4Az60JLb9ia19+Tb19EGFarThcCe4f6hhuMjVjukHApG8k+z6yWTkGRt7n9dp64G8nSTrEU9YgwBqegqg7gPU1smOtDZXNaPp6ddETcAa0bsm8+/WR+l3TscCXqQwyRpwWTlVsymKc6nhd4QED5MNE23KoP4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754488978; c=relaxed/simple;
-	bh=Ld10HX6wcdjfxV5yipYWv01NFSUYgG22JBf72BAdDas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LK1JBU8F0ck50GabG5hz4ggq3wEcjVCutTsTfhfYxLN/B2shy0qN8uA/Vaxb8EUx+nO0LTGJNdpAp9+r6ro888uWd4OA0P4Ff0JB2Oc80MXgrJKB3LOTcPIgU7gX31d6KouTkDIAWqRl8cMYljQH8nZ+lWfLrNdBlovJx6pGrDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nk0w+Mq+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27CE5C4CEE7;
-	Wed,  6 Aug 2025 14:02:56 +0000 (UTC)
+	s=arc-20240116; t=1754489014; c=relaxed/simple;
+	bh=ICpbu6eWi8YuUN9YDghhH3v6dG09Fo1rrSV+s0Xg7G4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V7XKWVV65p6z7xX3ioDKQplZa99sP+5ro47upKgvayJmn1e2edAW9e0hB7Iu++VWpMo5mlPhO5KutsgwGebgiQjUEc7cNQvym+6v6damVPOGxh7+/7l/+AReiw7GZTlcximJA1ctx4aYkp3WxjL9HbT+RlNlf3MlPykUmZ+Pf8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW8nrRmM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E28C4CEE7;
+	Wed,  6 Aug 2025 14:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754488977;
-	bh=Ld10HX6wcdjfxV5yipYWv01NFSUYgG22JBf72BAdDas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nk0w+Mq+QoCcYJy7kSTNbI/5ViGQHX3jC7m7Y899CwwtidK440N++gOQZJUH4PXnB
-	 LIr91wt8hGhocNtVqVzuRKzuBwNKp0TcMb7QcfvzKSbNYvCJYO+QQC2D3MaXaRuDV+
-	 O/OzGb0jOId5i7b8Qzr36wcy8bdzBHjdBI05Ov2Bg1+6/yPeLGZn6ivaa6fR46f35X
-	 p2689VS7/YeiL46YGee6KZkoEnElNCIz/BEgkdhoSSWGcP32BIkFyordMa/RIjWbEM
-	 LhN+xnuxLOkao2PobEYAn1N5lA6M/Nm7vsqxymbf40qHNDpk4sgAt4yWTiz+7pTskC
-	 oNUlY3nLrU3Xg==
-Date: Wed, 6 Aug 2025 16:02:54 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v12 04/10] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <praujgmc3c63j6brecp5kwn7tbdd7rcxmrxn67kxhxcr7rpyhw@pfbsgycx4aop>
-References: <20250722-mdb-max7360-support-v12-0-3747721a8d02@bootlin.com>
- <20250722-mdb-max7360-support-v12-4-3747721a8d02@bootlin.com>
- <2msg7e7q42ocjewv35rytdtxwrfqrndpm2y5ustqeaeodencsd@nfdufgtevxte>
- <DBVBZ48R7DNR.850O5X7MLMEF@bootlin.com>
+	s=k20201202; t=1754489013;
+	bh=ICpbu6eWi8YuUN9YDghhH3v6dG09Fo1rrSV+s0Xg7G4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=KW8nrRmMyBVddCHFcTFzs3faCvQGoNzoxqpeCdtCgw39xEboiJqEoW8bfcjJe8mA5
+	 6ZlctH9KabvRE/RhA2Lt1yXJVI56zBizgGBB9jeukgU7DFQjmJXbCXRm/dLXtQk03Q
+	 5fpp8YRZjK01QsNOEkFBqQJpD2mMGhvbiFlkNNtmycuf8ZsME8FlBEjF1oeK3wg2Ba
+	 zRxnIDI4ksf6jSfuWSi6Pz9JaWJ82R+8FacFE29rTzCtrDlQWs9l13ZubTaJIl8dF9
+	 PZu961i507++0naQYmHvFwrBWVlWY+RMuj+Nu4OIF7HCum5JueIIM1yB6MwqPkcDsE
+	 nkdypTZthKBeA==
+From: Drew Fustini <fustini@kernel.org>
+Date: Wed, 06 Aug 2025 07:03:28 -0700
+Subject: [PATCH v2] riscv: Add sysctl to control discard of vstate during
+ syscall
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zq2dttqccfhukbbe"
-Content-Disposition: inline
-In-Reply-To: <DBVBZ48R7DNR.850O5X7MLMEF@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAK9gk2gC/0XMQQ6CMBCF4auQWVvSaVMFV97DGFLoABO1mGklJ
+ oS727gxb/Ut3r9BImFKcK42EFo58RILzKGCYfZxIsWhGIw2TjfaKeE0rF1Zyj5TFwq9BGVs73H
+ AgP2xgXJ+CY38+YWvt+JRlqfKs5D/507YamtbNDVatK1zCtX4TpkjX+4kkR71IhPs+xd6CeMhp
+ gAAAA==
+X-Change-ID: 20250805-riscv_v_vstate_discard-23ba1c1d1b68
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
+ Andy Chiu <andybnac@gmail.com>, Conor Dooley <conor.dooley@microchip.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Drew Fustini <dfustini@tenstorrent.com>, Drew Fustini <fustini@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7566; i=fustini@kernel.org;
+ h=from:subject:message-id; bh=Y7GvDdAyH5eWKWL3Rtfcl6rjEuDiaFbWqc5VZCfPJ4c=;
+ b=owGbwMvMwCF2+43O4ZsaG3kYT6slMWRMTtiqH/xnza5Hkxk/KHbMt7txXCRcxbbEcUFvW/dmh
+ rdKFQ5mHaUsDGIcDLJiiiybPuRdWOIV+nXB/BfbYOawMoEMYeDiFICJsBkzMjTv+Tzlx+rGs38m
+ H9rqp9tfXH/WLvH/ZT3Dmxfv90yZu6aEkWGi0101KfnE3gMpjG2LPGPqltU+5//Z+sPOt0d82tX
+ M67wA
+X-Developer-Key: i=fustini@kernel.org; a=openpgp;
+ fpr=1B6F948213EA489734F3997035D5CD577C1E6010
 
+From: Drew Fustini <dfustini@tenstorrent.com>
 
---zq2dttqccfhukbbe
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v12 04/10] pwm: max7360: Add MAX7360 PWM support
-MIME-Version: 1.0
+Clobbering the vector registers can significantly increase system call
+latency for some implementations. To mitigate this performance impact, a
+sysctl knob is provided that controls whether the vector state is
+discarded in the syscall path:
 
-On Wed, Aug 06, 2025 at 02:07:15PM +0200, Mathieu Dubois-Briand wrote:
-> On Fri Aug 1, 2025 at 12:11 PM CEST, Uwe Kleine-K=F6nig wrote:
-> > On Tue, Jul 22, 2025 at 06:23:48PM +0200, Mathieu Dubois-Briand wrote:
-> >> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
-> >> +					   struct pwm_device *pwm,
-> >> +					   const struct pwm_waveform *wf,
-> >> +					   void *_wfhw)
-> >> +{
-> >> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> >> +	u64 duty_steps;
-> >> +
-> >> +	/*
-> >> +	 * Ignore user provided values for period_length_ns and duty_offset_=
-ns:
-> >> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset =
-of 0.
-> >> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/=
-256
-> >> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
-> >> +	 */
-> >> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
-> >> +		duty_steps =3D MAX7360_PWM_MAX;
-> >> +	} else {
-> >> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX736=
-0_PWM_PERIOD_NS;
-> >> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
-> >> +			duty_steps =3D MAX7360_PWM_MAX - 1;
-> >> +	}
-> >> +
-> >> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
-> >> +	wfhw->enabled =3D !!wf->period_length_ns;
-> >> +
-> >> +	return 0;
-> >
-> > The unconditional return 0 is wrong and testing with PWM_DEBUG enabled
-> > should tell you that.
-> >
->=20
-> When you say should, does that mean the current version of PWM core will
-> tell me that with PWM_DEBUG enabled, or does that mean we should modify
-> the code so it does show a warning? As I did not see any warning when
-> specifying a wf->period_length_ns > MAX7360_PWM_PERIOD_NS, even with
-> PWM_DEBUG enabled.
->=20
-> On the other hand, if I specify a wf->period_length_ns value below
-> MAX7360_PWM_PERIOD_NS, I indeed get an error:
-> pwm pwmchip0: Wrong rounding: requested 1000000/1000000 [+0], result 1000=
-000/2000000 [+0]
+/proc/sys/abi/riscv_v_vstate_discard
 
-Yes, that's how I expect it.
+Valid values are:
 
-> > I think the right thing to do here is:
-> >
-> > 	if (wf->period_length_ns > MAX7360_PWM_PERIOD_NS)
-> > 		return 1;
-> > 	else
-> > 		return 0;
->=20
-> I can definitely do that, but now I'm a bit confused by the meaning of
-> this return value: is it 0 on success, 1 if some rounding was made,
-> -errno on error? So I believe I should only return 0 if
-> wf->period_length_ns =3D=3D MAX7360_PWM_PERIOD_NS, no?
->=20
-> Or reading this comment on pwm_round_waveform_might_sleep(), maybe we
-> only have to return 1 if some value is rounded UP. So I believe the test
-> should be (wf->period_length_ns < MAX7360_PWM_PERIOD_NS).
+0: Vector state is not always clobbered in all syscalls
+1: Mandatory clobbering of vector state in all syscalls
 
-Right,
+The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
 
-	if (wf->period_length_ns < MAX7360_PWM_PERIOD_NS)
-		return 1;
-	else
-		return 0;
+Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+---
+Changes in v2:
+ - Reword the description of the abi.riscv_v_vstate_discard sysctl to
+   clarify that option '0' does not preserve the vector state - it just
+   means that vector state will not always be clobbered in the syscall
+   path.
+ - Add clarification suggested by Palmer in v1 to the "Vector Register
+   State Across System Calls" documentation section.
+ - v1: https://lore.kernel.org/linux-riscv/20250719033912.1313955-1-fustini@kernel.org/
 
-So 0 =3D request could be matched by only rounding down, 1 =3D request could
-be matched but rounding up was needed, negative value =3D error.
+Test results:
+-------------
+I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
+cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
+Blackhole P100 [3] card show that discarding the vector registers
+increases null syscall latency by 25%.
 
-> >  * Returns: 0 on success, 1 if at least one value had to be rounded up =
-or a
-> >  * negative errno.
->=20
-> This is kinda confirmed by this other comment, in the code checking the
-> above returned value in __pwm_apply(), even its just typical examples:
+The null syscall program [4] executes vsetvli and then calls getppid()
+in a loop. The average duration of getppid() is 198 ns when registers
+are clobbered in riscv_v_vstate_discard(). The average duration drops
+to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
+becaise riscv_v_vstate_discard is set to 0.
 
-pwm_apply() has different rules. (.apply() fails when .period is too
-small. This has the downside that finding a valid period is hard. For
-that reason the waveform callbacks round up and signal that by returning
-1.)
+$ sudo sysctl abi.riscv_v_vstate_discard=1
+abi.riscv_v_vstate_discard = 1
 
-Best regards
-Uwe
+$ ./null_syscall --vsetvli
+vsetvli complete
+ iterations: 1000000000
+   duration: 198 seconds
+avg latency: 198.73 ns
 
---zq2dttqccfhukbbe
-Content-Type: application/pgp-signature; name="signature.asc"
+$ sudo sysctl abi.riscv_v_vstate_discard=0
+abi.riscv_v_vstate_discard = 0
 
------BEGIN PGP SIGNATURE-----
+$ ./null_syscall --vsetvli
+vsetvli complete
+ iterations: 1000000000
+   duration: 149 seconds
+avg latency: 149.89 ns
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiTYIQACgkQj4D7WH0S
-/k727wf8Cn26RaEXwkMI8JYfUk9FVhUwgJHCUzDgN2ENtdhCyWse7bHI3dIHY0w1
-/c4hyw9YGVbZVv3jKebuHDdbRA8z7XMIYc6ZpqwGiOhzwUTXh91zZBzgcqKrt0yq
-xIHJsLT/8YxFMb8g5cGnoX145K22M9ciuwCbaHCXj8NB7plu7zsYvbkJxxRErxAC
-F0AihAj6BDXOSFUKy8ZsPDo5joj3PTxwpff+oNXRHokuPnmdKlkb0nB0mWKVDwkC
-jKU9+qRLp1uda+EtDEydpASkY5tbuO4JMSTcSxcaxwWS8YY0+i/dJYBxRaK1vZ/u
-02o36rGywRxJMVpXb+KOVrz/fr+OnA==
-=4kNb
------END PGP SIGNATURE-----
+I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
+has 13 patches, including this one, on top of v6.16-rc1. Most are simple
+yaml patches for dt bindings along with dts files and a bespoke network
+driver. I don't think the other patches are relevant to this discussion.
 
---zq2dttqccfhukbbe--
+This patch applies clean on its own to riscv/for-next.
+
+[1] https://www.sifive.com/cores/intelligence-x200-series
+[2] https://tenstorrent.com/en/hardware/blackhole
+[3] https://github.com/tenstorrent/tt-bh-linux
+[4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
+[5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
+
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+---
+ Documentation/arch/riscv/vector.rst | 22 ++++++++++++++++++++--
+ arch/riscv/Kconfig                  | 10 ++++++++++
+ arch/riscv/include/asm/vector.h     |  4 ++++
+ arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
+ 4 files changed, 49 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+index 3987f5f76a9deb0824e53a72df4c3bf90ac2bee1..b702c00351617165a4d8897c7df68eadcd2d562e 100644
+--- a/Documentation/arch/riscv/vector.rst
++++ b/Documentation/arch/riscv/vector.rst
+@@ -134,7 +134,25 @@ processes in form of sysctl knob:
+ 3.  Vector Register State Across System Calls
+ ---------------------------------------------
+ 
+-As indicated by version 1.0 of the V extension [1], vector registers are
+-clobbered by system calls.
++Linux adopts the syscall ABI proposed by version 1.0 of the V extension [1],
++where vector registers are clobbered by system calls. Specifically:
++
++    Executing a system call causes all caller-saved vector registers
++    (v0-v31, vl, vtype) and vstart to become unspecied.
++
++However, clobbering the vector registers can significantly increase system call
++latency for some implementations. To mitigate this performance impact, a sysctl
++knob is provided that controls whether vector state is always discarded in the
++syscall path:
++
++* /proc/sys/abi/riscv_v_vstate_discard
++
++    Valid values are:
++
++    * 0: Vector state is not always clobbered in all syscalls
++    * 1: Mandatory clobbering of vector state in all syscalls
++
++    Reading this file returns the current discard behavior. The initial state is
++    controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+ 
+ 1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 36061f4732b7496a9c68a9a10f9959849dc2a95c..7bb8a8513135cbc105bd94d273012486a886f724 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -656,6 +656,16 @@ config RISCV_ISA_V_DEFAULT_ENABLE
+ 
+ 	  If you don't know what to do here, say Y.
+ 
++config RISCV_ISA_V_VSTATE_DISCARD
++	bool "Enable Vector state discard by default"
++	depends on RISCV_ISA_V
++	default n
++	help
++	  Say Y here if you want to always discard vector state in syscalls.
++	  Otherwise, userspace has to enable it via the sysctl interface.
++
++	  If you don't know what to do here, say N.
++
+ config RISCV_ISA_V_UCOPY_THRESHOLD
+ 	int "Threshold size for vectorized user copies"
+ 	depends on RISCV_ISA_V
+diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+index 45c9b426fcc52321d55d1a4a42030c3b988e53c0..77991013216b9aea1744540caef38589338717ff 100644
+--- a/arch/riscv/include/asm/vector.h
++++ b/arch/riscv/include/asm/vector.h
+@@ -40,6 +40,7 @@
+ 	_res;								\
+ })
+ 
++extern bool riscv_v_vstate_discard_ctl;
+ extern unsigned long riscv_v_vsize;
+ int riscv_v_setup_vsize(void);
+ bool insn_is_vector(u32 insn_buf);
+@@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
+ {
+ 	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
+ 
++	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
++		return;
++
+ 	riscv_v_enable();
+ 	if (has_xtheadvector())
+ 		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
+diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+index 901e67adf57608385e6815be1518e70216236eda..d81dcc86e794896dd36803d6e7540aad1dc37d79 100644
+--- a/arch/riscv/kernel/vector.c
++++ b/arch/riscv/kernel/vector.c
+@@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
+ static struct kmem_cache *riscv_v_kernel_cachep;
+ #endif
+ 
++bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
+ unsigned long riscv_v_vsize __read_mostly;
+ EXPORT_SYMBOL_GPL(riscv_v_vsize);
+ 
+@@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
+ 	},
+ };
+ 
++static const struct ctl_table riscv_v_vstate_discard_table[] = {
++	{
++		.procname       = "riscv_v_vstate_discard",
++		.data           = &riscv_v_vstate_discard_ctl,
++		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
++		.mode           = 0644,
++		.proc_handler   = proc_dobool,
++	},
++};
++
+ static int __init riscv_v_sysctl_init(void)
+ {
+-	if (has_vector() || has_xtheadvector())
++	if (has_vector() || has_xtheadvector()) {
+ 		if (!register_sysctl("abi", riscv_v_default_vstate_table))
+ 			return -EINVAL;
++		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
++			return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+
+---
+base-commit: fda589c286040d9ba2d72a0eaf0a13945fc48026
+change-id: 20250805-riscv_v_vstate_discard-23ba1c1d1b68
+
+Best regards,
+-- 
+Drew Fustini <fustini@kernel.org>
+
 
