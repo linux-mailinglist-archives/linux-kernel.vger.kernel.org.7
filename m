@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-757870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDEEB1C7AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584FFB1C7AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA2118A3CDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A8987A74C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D6828D8EE;
-	Wed,  6 Aug 2025 14:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEEB28DEE7;
+	Wed,  6 Aug 2025 14:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ncGQH0HZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p03coX4q"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38452AE74
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213A728DEE3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754490951; cv=none; b=o1L7twQqNR65CjVKxz/daUMNNNT04Cnm83RNTA0vx1e2hShLVX/cXEnyj0zAUAcc8w+S0Tes6E1nBAvprC/QX3YP9y7I7oHqhjwT/A5RT873Ww8plnaVER9wnt2uHW9bXXOJQugNLlciJ3YJbeC8YhjEyoS3fmievZRv/Mk4Rh8=
+	t=1754490956; cv=none; b=UfpGfvA4038/NUFGIO6ralooXFKe4/Rc2IrM42bXvSylPY1DPyF1SJTEX5OVSEjT2d0pfIzrJSpRZpogAY+3RvkjsUY+80nMW5Xz3WOtSjImLEdJHU0j3PpbHxy8nX5sVvauJwfiYg2jYM1Ir6F7qCxd+PL57wa03kUEDQ9cJOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754490951; c=relaxed/simple;
-	bh=IzAyAJfpY0pHbWneABeVrlnmE6GZCoVRzfOeZKBvWZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lITkaxsG3naXCLimpF10Zncs0FKzkFHXHBK3Q15LncLLuOUbpwH7FO3v6PB0OwEru9XhrZV5pEXMrJDqIHzBHnnhaJ7xL0iXvK9Krcj589wAb5pIxWK0xtkoopXfAhL7CPcJoPXnHDjAMRvpOKDWOu2F5pgAy3NN1pCvLiLv5MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ncGQH0HZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576CQ2LO025047
-	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 14:35:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TwlR+oMZlALuIJKmyusyfjuF4+MmPOO9KSk2h10iAKA=; b=ncGQH0HZlicVhpPT
-	+V8slmxae8bXQI5IjyQAeE4LbwHJ3NsovDM3FpX2x2G+flTtwLNqS2UG97JVK3y2
-	xKPS71sxRvd8CxnU9Q3lC1IUOqDYwCKpSus6RHPE/Gxp6Zglh1/mOi/yzF8xO2M7
-	t4OPUd7qW4vS7v7mSKenSHB1vFq93Z0d1d1FRIqC8PWzniK/EMqoMiWLYKDE/dfz
-	z2uIqjBt+SIouVtAGCJAsBHYDL3Zfa13N/BlDrIbsM39Z31aXmUXgZ54eLZtUgUQ
-	QUdbpPMJmh3OOEtTJFJ7lk7HdCWQakskfICL8KpW3XbfrAt6RyBELfF6CfJBpnnk
-	cdjUPg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvyu3xj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 14:35:48 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fc5b1c983so11417835ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:35:48 -0700 (PDT)
+	s=arc-20240116; t=1754490956; c=relaxed/simple;
+	bh=dY/tO0jgG3YpNcuWPR2EGMa/x0QbG9DwwPYBjTtd6l4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SdSBY2VSEgrMA93AQ+rWH5gmA52oOY8qV+rykVNrAxMyMeHpifZSsPzMpUkhHYvamlqigAOT9slnW82OPaXEHoLoLJG11LcWNrwyJxqOejfICdsW4xxW8M1ReLojjDC6MuX0TFw3073TgLksY7eT5kbvum9RBwdSJQop4OC6TqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p03coX4q; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso35697805e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754490953; x=1755095753; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WY4HFaq47tlT3tpQq6GZ2l+firWxt4pgUV7KeO9v8lI=;
+        b=p03coX4qmqzLs2vNzvHO+V14IiA2ftNuezYYmVTWjbStyzNS/ltv7GLZD6BiGJAkOL
+         MzFTgQyaeZfs71U9NTWMaCebz4kyYhkuwoStcHPzuEIX6tsixoUxsv6KfWZz017N3zjQ
+         sSAIP5qEBBB7F7zGwSJ6XbuaZ54VXT4hgg1Vad+YO5TZG34ErZDUHJ4yEsZZNPOYB2fh
+         jRDIsW0AL6ygusQN91frukI4ePmNGV+22ZwAB4SV1SDTU1k7OoNh20LBkJKf/2WISNW9
+         msWyvwTycu0gPkVyt1nLWfn6xmg1upgicQV/ba7KO5nJ638QyddS9vtwtSMABLCc6rLG
+         TLvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754490947; x=1755095747;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TwlR+oMZlALuIJKmyusyfjuF4+MmPOO9KSk2h10iAKA=;
-        b=aCSprAhHGkKOZDs9VNQi4S5TtmX7mEK6QFbC7Xn4DOi0qL7v5kJQp61zvyDeAzOpSX
-         GcGQIsU+C1boWbUk3LncODxDO+KVk2rOrrxvjgRViuiPYS0PGnJDfo1plvy9POQKLina
-         A7P5PbqLZxJigCOw4fJwX12H1JhlrPuE1zyrC4rGcapEtbM1DzdGtRYe/CgVmvJfwW3X
-         zS38Qua0P6om5q285TSovKfB/UecK9Ytk0FlHTDDT1z/+uZcgkgbMBvGGKgNuvXn475A
-         YMeGE317tf8YkrZEzUEF7eSiqT68jX0ibbQNOwaUsZ4Vq8wgrH2hLW/jgRsFWKyvMsW6
-         Aexg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6kymsehoeAmnGxqvdU/NssQ29LeVc1cIDQg0dlNEFXE3/sIs4xHuRB+vfah99ucTi36ckF0C6DzIl1BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6ZTSXVcUjFZTpyCPoO5EOWEnGPRWrgsxvQUYjuosdiX/1KEkX
-	JYH91N9BLrrCAuYpUdAJHDyhZS+WCrX6m/VlnrMIEMTDfYgL92RJ+WPZ/WdGOJeYPCbn+sOLXIN
-	+wrS3esGP++ba6AhAS7KGhhXT2y40BisC41hAA2JB4PytUe9pkkfO83ENrBueEvAmsug=
-X-Gm-Gg: ASbGnct5I7J/hlNd6yxsyiZdR2li7PM6rk6/G6iFDw28D9h60eU8kpJdXTlGFPIq8t/
-	37BkqDilO1W66MVQtAXzUI7Zd+7oZAmdgIk+7NY+sRZFlrC4ovu7OZYZq0JWSwKbJk2HUZ6ZxfF
-	YcCFT3Ez4rwnkWA6Z4x7qZ+27fUuQtUnMDkvHbSCKUIdDxPOf/wN67Wfcs1PUUM83lOxZVNA+QX
-	QjRJ5Ext8VmZKyZ8mDMwdNQHhWrdOfen1ZVGO26lXUGawCWVo14kAqR1/J5RW5J7H4T6S65lXFW
-	Jw+A7i9S5tzrhClsuoPav97l0TbnqniX97JGdpQ2RbVGlflJUcCKNyWnCGgds8/62NEbYwCDJ8V
-	rDdI=
-X-Received: by 2002:a17:903:1250:b0:240:3cab:a57a with SMTP id d9443c01a7336-2429f9869cbmr43861745ad.12.1754490947347;
-        Wed, 06 Aug 2025 07:35:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+NPjGR/ioIEs8rIKpi433E6HkfZN/NsX24RQq9faA59sT+8283L0e/mv+qkQqKGbp1uO9ww==
-X-Received: by 2002:a17:903:1250:b0:240:3cab:a57a with SMTP id d9443c01a7336-2429f9869cbmr43861085ad.12.1754490946675;
-        Wed, 06 Aug 2025 07:35:46 -0700 (PDT)
-Received: from [192.168.1.4] ([110.227.163.12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef75bdsm160361515ad.11.2025.08.06.07.35.39
+        d=1e100.net; s=20230601; t=1754490953; x=1755095753;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WY4HFaq47tlT3tpQq6GZ2l+firWxt4pgUV7KeO9v8lI=;
+        b=tcDVm1EJnlL6Rc9nZQttHVAgvnhSRJCUPNUT7WSDxuSteIF8FoLkAzPiPGHEoAVsCc
+         kZMDTBsutoO4WYORdfMFyZTSc5Rc0Alxio1/Eba6vrrRv5c1YBVRGputl4c8qro3279X
+         0CeWvFf9VG6j51m5jwSGFu3eiJtxpgkVYpdU9OB0oM8lsXMDhrH0eY4b4gngErZMWy1b
+         g1by9W1RwTb7IG4MrnDgYjZvIGHV+6IcZ0ZzKWfytSVu0XA/uNtCrLCJxuqeLHkDSVlT
+         NyCHGv3ZGVfldpp50JLx3NorD/oq4votJJXCFPI8PsbDqLuINeyTEGN3GO3Xs/E5yMmI
+         42kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEK1dsYga4xGY2Tustb09zWHxwWX1Zx6DRYVHHPp/lNHVZkNUeC41DrmANMwHder1GLRQJ493KbxHj2WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCfBNDvL75Jc1TdvQbbkGMU+bPkSTkYRYm57hZ2Aa50fV/6yy4
+	cdiTx6XdqxDiLGhrQvP2Udf6XzlAQ8oJShiU7q59I0VCvVpJ5SnQFVqmL/bFXATA+Ys=
+X-Gm-Gg: ASbGncugfzZLzV6INHSJbkSX88cxm0wTFqRqUuDHAHTyXW8OIGCqsF1nRSSfGbMpUIx
+	GootGtSReCgz90MSyrUtLuNajCeplYUPSJ5F5pXFu1UcPRqr14QMk6Tj7F5SCelvR4/r6Js9Hxl
+	xfnx0cuLeogJNTPy1ShcOksm9aJPIIg4GQzRmJ9yjceIf/lQNMRnljms+IUlmskjEVSf9RTzifF
+	sNbcw+JhM8KX8hqzLQR+QEMDwIRzaD0w3H8w6OWEPNK08MetF81SuK2HBy8k0XXMqHZFYMOUkZp
+	wM5M/B7aSSVfeThRXp5d5kk1tjUusI5IcUqGqGVoiwVpx6lir+zJe07S43gGGXURjqexPFtN6+g
+	Swj/qGp5dVqkaIzK0xNxxPmc/gXiVPY+e/JAPYZua1IQt5au0ZQtqzXavrhcQ3ZlcfaDQx8SzQs
+	R19E/AiHftjA==
+X-Google-Smtp-Source: AGHT+IH16nZWd2JHtG04hD19AjAYcqMi0iTN0EJI8ZCyo5tiebO/fARHN9WAimBG+QbIgV0IeHxScw==
+X-Received: by 2002:a05:600c:1c02:b0:459:df07:6db7 with SMTP id 5b1f17b1804b1-459e70800e9mr26588945e9.6.1754490953363;
+        Wed, 06 Aug 2025 07:35:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:96df:e381:55b8:1990? ([2a01:e0a:3d9:2080:96df:e381:55b8:1990])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bc12csm23780039f8f.28.2025.08.06.07.35.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 07:35:46 -0700 (PDT)
-Message-ID: <6d2f71a5-72a6-4ba6-956d-19f053d73c2e@oss.qualcomm.com>
-Date: Wed, 6 Aug 2025 20:05:37 +0530
+        Wed, 06 Aug 2025 07:35:52 -0700 (PDT)
+Message-ID: <ede3c0a2-d174-4893-9550-6dcb51457053@linaro.org>
+Date: Wed, 6 Aug 2025 16:35:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,163 +84,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] ASoC: codecs: wsa883x: Add devm action to safely
- disable regulator on device removal
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
-        kernel@oss.qualcomm.com
-References: <20250727083117.2415725-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250727083117.2415725-3-mohammad.rafi.shaik@oss.qualcomm.com>
- <07faf0cc-a8e6-426d-b397-dfc321a7f3df@kernel.org>
- <aae92260-5169-4af1-97b0-48f364612dca@oss.qualcomm.com>
- <4bc486cb-9d94-4bad-ae07-e9a7aeed481a@kernel.org>
-Content-Language: en-US
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-In-Reply-To: <4bc486cb-9d94-4bad-ae07-e9a7aeed481a@kernel.org>
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] phy: ti: omap-usb2: enable compile testing
+To: Johan Hovold <johan@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724131623.2662-1-johan@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250724131623.2662-1-johan@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: eJTExOX6w9zb6vNSY3Pi02Upx4tGu6fB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfXzHoKuCpX4AIL
- eQXYd7VaFRuG67lLamJGF/TnDK270WTgFGvOVrk6aL2b7n+Yq1QxbS3EN4GHU+VY0rwFBPHl9rX
- gSslcGGpNqyivLT9p99yMgMndiKhKdm0grklkJXMO4XRAxVTP6MQtZR7/wv9y4HJD6xVtPt/s7Q
- fjmzB+kCyC9U6o8uJcpbBCyusQ53FcpyTk/T9UJjxbjZ0ZXP1LVltpIv3SmRbfC2oJRC1gQh3i1
- zvDNM/C0L95vSMvx5wsKxfb2KJC4L1R8cCVUFCX8Z5NgOnYaQBijbmUrSBjtTHcagOSwCI8PA1t
- KUaUiUxz8/bTnnAHwyLtANVGFIiQJFutXM+WEf9ATnzduCkrhLOJWQrNreJQBTQqxxcQlBLMG7P
- ZKeJnoM3
-X-Proofpoint-ORIG-GUID: eJTExOX6w9zb6vNSY3Pi02Upx4tGu6fB
-X-Authority-Analysis: v=2.4 cv=NsLRc9dJ c=1 sm=1 tr=0 ts=68936844 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Q/58bkKydBp6VmYC+FnXRg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=usrlyX-CWiNRApQyylIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_04,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
- adultscore=0 malwarescore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+Content-Transfer-Encoding: 7bit
 
-
-
-On 7/28/2025 6:32 PM, Krzysztof Kozlowski wrote:
-> On 28/07/2025 14:36, Mohammad Rafi Shaik wrote:
->>
->>
->> On 7/27/2025 3:00 PM, Krzysztof Kozlowski wrote:
->>> On 27/07/2025 10:31, Mohammad Rafi Shaik wrote:
->>>> To prevent potential warnings from _regulator_put() during device
->>>
->>> Warning is either there or not. Either you fix real, specific issue or
->>> not. The code looks correct at first glance, so please describe exactly
->>> how these warnings happen or how what is the bug being fixed.
->>>
->>
->> The current wsa883x codec driver manually enables and disables
->> regulators during probe and remove.
->> In patch v3-0003, reset functionality was added using
->> devm_reset_control_get_optional_shared_deasserted() for shared gpios.
+On 24/07/2025 15:16, Johan Hovold wrote:
+> Nothing seems to prevent the driver from being built on non-TI platforms
+> so enable compile testing for wider build coverage.
 > 
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>   drivers/phy/ti/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> There is no such code at this point. Each patch is a separate commit and
-> must stand on its own. With its own explanation. You cannot say that you
-> add bugs later, so you need to fix something now.
-> 
-> Describe actual problem here. If there is no problem here, describe why
-> you are doing this.
-> 
+> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
+> index b905902d5750..b40f28019131 100644
+> --- a/drivers/phy/ti/Kconfig
+> +++ b/drivers/phy/ti/Kconfig
+> @@ -62,7 +62,7 @@ config OMAP_CONTROL_PHY
+>   
+>   config OMAP_USB2
+>   	tristate "OMAP USB2 PHY Driver"
+> -	depends on ARCH_OMAP2PLUS || ARCH_K3
+> +	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
+>   	depends on USB_SUPPORT
+>   	select GENERIC_PHY
+>   	select USB_PHY
 
-Identified the actual root cause of the issue observed in the reset changes.
-
-The failure condition was not properly handled in the reset patch.
-
-I will update the patch to include error handling for failure scenarios 
-and ensure regulators are disabled appropriately.
-
-will Drop this patch for next version, only will keep the reset changes.
-
-Thanks & Regards,
-Rafi.
-
->>
->> However, during cleanup, this led to a warning:
->> "WARNING: CPU: 2 PID: 195 at drivers/regulator/core.c:2450
->> _regulator_put+0x50/0x58"
->>
->> This occurs because the regulator is still enabled/released when the
->> devm-managed cleanup path attempts to release it.
-> 
-> So that patch was broken? You just did not properly clean up there?
-> 
->>
->> To resolve this, remove the manual regulator disable logic and instead
->> register a devm-managed cleanup action using devm_add_action_or_reset().
->> This ensures proper cleanup and avoids regulator misuse warnings.
->>
->> For reference, the wsa884x codec driver already follows this approach by
->> using devm actions for regulator management.
->>
->>>> removal, register a devm-managed cleanup action using
->>>> devm_add_action_or_reset() to safely disable the regulator
->>>> associated with the WSA883x codec, ensuring that the regulator
->>>> is properly disabled when the device is removed, even if the
->>>
->>> Device cannot be removed/unloaded, AFAIK, because of suppressed bind.
->>> Regulator is already disabled during error paths, so that part of above
->>> sentences is just misleading.
->>>
->>> How can one trigger the warnings?
->>>
->>
->> The warning in _regulator_put() can be triggered by applying patch
->> v3-0003, which introduces reset functionality using
->> devm_reset_control_get_optional_shared_deasserted().
-> 
-> 
-> There is no such code now. You say "potential warnings" are here.
-> 
->>
->> Since the existing driver handles regulator enable/disable manually, the
->> devm-managed reset cleanup path may attempt to release regulators that
->> are still enabled, leading to the warning.
->>
->> This issue highlights the need to replace manual regulator handling with
->> devm_add_action_or_reset() to ensure proper cleanup and avoid such warnings.
->>
->>>
->>>> probe fails or the driver is unloaded unexpectedly.
->>>
->>> How driver can be unloaded unexpectedly?
->>>
->>
->> "Unloaded" might not be the most accurate term here. What I meant is
->> that the driver’s probe can fail due to an error—such as missing
->> resources or improper regulator handling.
-> 
-> 
-> Use standard Linux terms, e.g. probe failure, probe deferral etc.
-
-Ack,
-
-will ensure all upcoming changes are managed effectively.
-
-Thanks & Regards,
-Rafi.
-
-
-> 
-> Best regards,
-> Krzysztof
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
