@@ -1,212 +1,256 @@
-Return-Path: <linux-kernel+bounces-757763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32905B1C65B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB7EB1C65E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A490564FA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFC83564E54
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B62028C2A4;
-	Wed,  6 Aug 2025 12:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8392B9A7;
+	Wed,  6 Aug 2025 12:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ikWs6J5d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="NNL+i1UD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C9B28BAAE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484525; cv=none; b=CECXVrIL4qTmGu02GOsNlzg758kpZkpLxh513lbEeHvsA6fkEZSzDjsY/khj6iC9KOmr3eit6rzdizQXGGETrtfd7mD+Pi9vDhq7aeg3wS6ubUjITQZNOjz7CcfE+lDQvuNjAEB1xjM9p1MTXt6Kxsyt8FHbg8b8ocrQdOMAvAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484525; c=relaxed/simple;
-	bh=/CwT3ye57xrzmTFKOJsEykyxmMNNDq/+ChRIJ14zvms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBqmSE/37IdxWqk2apmUXxMPqY16Ddlmw/rza9BnGn8CA+Rw1WdYnFk4imBOLOprKyY6D4EJ64GOsKNaRynXzFCE8qyesFPVTG9N6Ylh5EO+SOLRDMVBOR9R3Otsvlp5mPIanu07u3Ljbz+eIvNFmIZaJ7njXPzJI/r4llk+Evo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ikWs6J5d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754484523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kd9TtjMY9qlGHRoxZCwU+VUHOBngdR5vc0FuqtfK3A0=;
-	b=ikWs6J5dlwUdbqWSJA3pMcD04PqQL6jtkBnPOP1qg+XIZ5l3k42FV7oUeIg/t0tSjZFkOl
-	MxRFfMuu/Ii+Z5mXk5eoXyRni8sL53lDNaBlRhZEsS07Dzcqph5vvCvjJcsMPgBvnxWcY3
-	oZghBCEPW/DECScydcp+KXpARU0G/wk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-288-Qhd6uEnQPjurvXaSU56Oeg-1; Wed, 06 Aug 2025 08:48:42 -0400
-X-MC-Unique: Qhd6uEnQPjurvXaSU56Oeg-1
-X-Mimecast-MFC-AGG-ID: Qhd6uEnQPjurvXaSU56Oeg_1754484521
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-459e4b85895so7706665e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:48:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754484521; x=1755089321;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kd9TtjMY9qlGHRoxZCwU+VUHOBngdR5vc0FuqtfK3A0=;
-        b=TAnKtYZHUgNCqv9B1ZQp7E3jl2/KCmJ5yXrB13+TjFmNv48jT6VmORvPZxo233JjqP
-         yv+uBQ9JkagcDk6uXfmrBI5q0aiflahLAh6KKEsxI2ZIhMNM78aciNW3G6FQFyyeX2q3
-         hhDRmwiDzBfzcqEczwIaAT3I1SHTK/ozq6RFgDUbs+VSvXdyYfF4IrHZcdmdlz0ynTBL
-         sxPwObaX3WGnVYW6ZTzMOKkF/5TR2SR2oHOPYJ9ur2IQuJom4t1xT1sqI9c0SsO4/4EJ
-         5gkQvDcAV9Jxd2fGAFNwKwT9f5YpE0pEejYKb5VLzModxMk6A51w/ASpHzDdhlGjeJi7
-         aVtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNIVKQ72WjRZzwc8R6q7zlGXtyHV56HeGBhQytIZhWx022aYt8XSFbaA9Myo8lp1QbWtLdoENHv1/A5Bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvohRSqMxVNzGYNqy/cdlcBXUtk9m8PuYpEbjr7Q29fGuvH6ib
-	62n1PZC6UfzCAaJB1MnWbtMB0ZT2BuRMLGIMWiFp+61lH5EEmG9CJslYE7mvZ3izWReTMFSk1tP
-	VDXymY7iMv7uvzoHcAP89u+jYwgUQqpWQZxTSzG/s0VKwzT/Sx5DvL+2zhzgKTzGM9g==
-X-Gm-Gg: ASbGncuEFfeyOSKxaccRk9Kogrsdkps8VLizauztyYiffztcGmbKuYkWJ5LD66tNa/J
-	B7LzVoudC+537DLXQTpSl6yX/4H9wZ4WBNKD67Z+aXDzkl/paj1ThHy4p7LbW0Uy8TCVgJ2RP86
-	+Qwf3yUdeGJ7DczAnUMPEqPjgnwRxfO8Yo19TuQVSLwdQxNZthNB1axZPtbBhWNz6l3gS7HU2hO
-	hZzEAIo0HQVWZEouXPzedmHSZJbwjDqau48fGqPLzdQzVrB6vdpFv6fv4KutBh1vF1j7isLoq7k
-	9Ch3jNb85snSOVsf3TXt52PurOagpirmbya90nTgWu3XT4o19fhFpG3umrVkNPn+xQY9Zpe4gaN
-	UM6nebEydmOBCJsA11TN2c+oGRi8gsOLPQaZpMwlupQxh6RF1Wqd1YPVHpJBQP2InAyg=
-X-Received: by 2002:a05:600c:4f06:b0:459:d451:3364 with SMTP id 5b1f17b1804b1-459eb99cf40mr6834405e9.24.1754484520823;
-        Wed, 06 Aug 2025 05:48:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/0rN2yIF2agG/vG81ip1EWBrfms9ZbUi9pJdD+2A9S9B+Yl3xnrI2Tl8AjbH/66V9kuLDCw==
-X-Received: by 2002:a05:600c:4f06:b0:459:d451:3364 with SMTP id 5b1f17b1804b1-459eb99cf40mr6833975e9.24.1754484520361;
-        Wed, 06 Aug 2025 05:48:40 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:8a00:42f7:2657:34cc:a51f? (p200300d82f358a0042f7265734cca51f.dip0.t-ipconnect.de. [2003:d8:2f35:8a00:42f7:2657:34cc:a51f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587ed97sm47763195e9.25.2025.08.06.05.48.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 05:48:39 -0700 (PDT)
-Message-ID: <76e26491-e91a-49fc-9a5b-eb6d840a066e@redhat.com>
-Date: Wed, 6 Aug 2025 14:48:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC86E18035;
+	Wed,  6 Aug 2025 12:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754484613; cv=pass; b=Wr+ejYL/9fEI5mqDTy62oYPF1nfsGk5J2ZN0j2jae0SvFFuuKB+4PowspZPxVTn8LLouWV8gUSyV7Hg/8Qc7i8JonkWJ66IkA27uzzp4as4wEkgj/V5RBGwroFkv26s1kJLqqvKNtjijlpMPHAJfpPVy25QxCySE3MH+T3oFSMI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754484613; c=relaxed/simple;
+	bh=qsNPYd7JE3LVhYFm81593Z/HO+ZNsVr6ff5n10xfmqM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kHUqBgj7NVtZm6naATX3ibp6PrmeaHvgvlKOVVaFWXFAVqQyrk4gNz/INlD0vtzWe9dgbfUJh4TwtxzP8LmMH6Y8kzt2NQEkj+VB0s6cZ101gNtnUS72K1f82uGH3BEF1Hbi4jUUDW3mGKhOEPYRNfguGBerIopJ4c1y94dVF14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=NNL+i1UD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754484581; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TdIYSsrpWIPTG1jidR1iuSPofUBS7dA1PyO7N+53KeFo91HY/CU5M81cEjLj16G20LoN18ziCK0qtw6J1NHw2pVD75q/+GLYYuZzypgX+9TdwWw8lXNHt4nJqF06vQHPz0WXyLukwUtQQDKfOlCtfCU7rJGGgmMXGdPOvcJNHlI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754484581; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bJtLcKeKURRlW9n36AmDiYBFj9adzcRfgds4/JvblNc=; 
+	b=U9H9GMvUxhBuK2Fauj81NTtTMjiLs9x7S+F3+4VNd1oEVb6kQys0eDwnvDdydOfq5MjdMvyIzqRuPgpbRRx4ALN2XrZzR3N+P4j0f5BB/tbPQ5u11QhAvo9I83maLxs3NkfEZmgElVvDMdKzG5FpP89LttIhYub1J1lrjvhevFs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754484581;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=bJtLcKeKURRlW9n36AmDiYBFj9adzcRfgds4/JvblNc=;
+	b=NNL+i1UDcH2FhizRgwdMRIzcKnkcnBXUCwN39+K/lO4hsc994E/1kkmEwesytZN8
+	DtWMIlr1wF20rszBl9U0PkJ/A1ZYewGvBJ0thoKP0WmDTKVI3QRzxC1JmQ5iedm3NSL
+	GQj1AMDpR2e96zpfTyfo6e09f7gWBsinvEBk9Kv0=
+Received: by mx.zohomail.com with SMTPS id 1754484579257241.02773267205032;
+	Wed, 6 Aug 2025 05:49:39 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, x86@kernel.org,
- linux-block@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
- <4463bc75-486d-4034-a19e-d531bec667e8@lucifer.local>
- <70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com>
- <6ff6fc46-49f1-49b0-b7e4-4cb37ec10a57@lucifer.local>
- <bc6cdb11-41fc-486b-9c39-17254f00d751@redhat.com>
- <bmngjssdvffqvnfcoledenlxefdqesvfv7l6os5lfpurmczfw5@mn7jouglo72s>
- <e67479f5-e8ed-43a7-8793-c6bff04ff1f4@redhat.com>
- <iputzuntgitahlu3qu2sg5zbzido43ncykcefqawjpkbnvodtn@22gzzl5t77ct>
- <9a657c84-99fe-41ba-88ca-097acab4b96b@redhat.com>
- <lyfgmdjehtfjb2gmj5ciao6l5lmkvlfe54wtlnlhjjf7ge65sa@2dyo3tb6ka4i>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <lyfgmdjehtfjb2gmj5ciao6l5lmkvlfe54wtlnlhjjf7ge65sa@2dyo3tb6ka4i>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v12 3/3] rust: pwm: Add complete abstraction layer
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <8ad10cc3-6e7d-4a8b-b6f6-9568403ee2b3@samsung.com>
+Date: Wed, 6 Aug 2025 09:49:21 -0300
+Cc: =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Drew Fustini <drew@pdp7.com>,
+ Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Drew Fustini <fustini@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8C20C615-DBF2-4DF9-9AB3-E78C4B1E7493@collabora.com>
+References: <20250717-rust-next-pwm-working-fan-for-sending-v12-0-40f73defae0c@samsung.com>
+ <CGME20250717090833eucas1p16c916450b59a77d81bd013527755cb21@eucas1p1.samsung.com>
+ <20250717-rust-next-pwm-working-fan-for-sending-v12-3-40f73defae0c@samsung.com>
+ <42C9DF97-2E0F-453B-800A-1DA49BF8F29F@collabora.com>
+ <8ad10cc3-6e7d-4a8b-b6f6-9568403ee2b3@samsung.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On 06.08.25 14:43, Pankaj Raghav (Samsung) wrote:
-> On Wed, Aug 06, 2025 at 02:36:51PM +0200, David Hildenbrand wrote:
->> On 06.08.25 14:28, Pankaj Raghav (Samsung) wrote:
->>> On Wed, Aug 06, 2025 at 02:24:28PM +0200, David Hildenbrand wrote:
->>>> On 06.08.25 14:18, Pankaj Raghav (Samsung) wrote:
->>>>>> We could go one step further and special case in mm_get_huge_zero_folio() +
->>>>>> mm_put_huge_zero_folio() on CONFIG_STATIC_HUGE_ZERO_FOLIO.
->>>>>>
->>>>>
->>>>> Hmm, but we could have also failed to allocate even though the option
->>>>> was enabled.
->>>>
->>>> Then we return huge_zero_folio, which is NULL?
->>>>
->>>> Or what are you concerned about?
->>>
->>> But don't we want to keep the "dynamic" allocation part be present even
->>> though we failed to allocate it statically in the shrinker_init?
->>>
->>> Mainly so that the existing users of mm_get_huge_zero_folio() are not affected by
->>> these changes.
->>
->> I would just keep it simple and say that if we fail the early allocation
->> (which will be extremely unlikely that early during boot!), just don't ever
->> try to reallocate, even not when we could through mm_get_huge_zero_folio().
->>
->> That sounds as simple as it gets. Again, failing to allocate that early and
->> then succeeding to allocate later is a fairly unlikely scenario.
-> 
-> Ok. I will also document this as a comment just so that people are aware of
-> this behaviour.
-> 
-> Thanks a lot David for the comments and feedback!
+Hi Michal,
 
-Sure, as always, feel free to object if you think I am talking nonsense :)
+> On 4 Aug 2025, at 19:29, Michal Wilczynski <m.wilczynski@samsung.com> =
+wrote:
+>=20
+>=20
+> On 7/25/25 17:56, Daniel Almeida wrote:
+>>> +
+>>> +    /// Gets the label for this PWM device, if any.
+>>> +    pub fn label(&self) -> Option<&CStr> {
+>>> +        // SAFETY: self.as_raw() provides a valid pointer.
+>>> +        let label_ptr =3D unsafe { (*self.as_raw()).label };
+>>> +        if label_ptr.is_null() {
+>>> +            None
+>>> +        } else {
+>>> +            // SAFETY: label_ptr is non-null and points to a C =
+string
+>>> +            // managed by the kernel, valid for the lifetime of the =
+PWM device.
+>>> +            Some(unsafe { CStr::from_char_ptr(label_ptr) })
+>>> +        }
+>>> +    }
+>>=20
+>> nit: this can be written more concisely, but I personally don=E2=80=99t=
+ mind.
+>=20
+> Do you have something specific in mind ? I think the alternative way =
+of
+> expressing this would use NonNull, but somehow this feels less =
+readable
+> for me.
 
--- 
-Cheers,
+Yes, an early return, i.e.:
 
-David / dhildenb
+if label_ptr.is_null() {
+  return None
+}
+
+It saves you one level of indentation by removing the else branch.
+
+>=20
+>=20
+>>> +
+>>> +/// Trait defining the operations for a PWM driver.
+>>> +pub trait PwmOps: 'static + Sized {
+>>> +    /// The driver-specific hardware representation of a waveform.
+>>> +    ///
+>>> +    /// This type must be [`Copy`], [`Default`], and fit within =
+`PWM_WFHWSIZE`.
+>>> +    type WfHw: Copy + Default;
+>>=20
+>> Can=E2=80=99t you use a build_assert!() here? i.e.:
+>>=20
+>>    #[doc(hidden)]
+>>    const _CHECK_SZ: () =3D {
+>>        build_assert!(core::mem::size_of::<Self::WfHw>() <=3D =
+bindings::PWM_WFHWSIZE as usize);
+>>    };
+>=20
+> This doesn't work i.e the driver using oversized WfHw compiles
+> correctly, but putting the assert inside the serialize did work, =
+please
+> see below.
+
+Can you show how it looks like with the build_assert included? Just as a =
+sanity check.
+
+>=20
+>=20
+>>=20
+>>> +        Err(ENOTSUPP)
+>>> +    }
+>>> +
+>>> +    /// Convert a hardware-specific representation back to a =
+generic waveform.
+>>> +    /// This is typically a pure calculation and does not perform =
+I/O.
+>>> +    fn round_waveform_fromhw(
+>>> +        _chip: &Chip<Self>,
+>>> +        _pwm: &Device,
+>>> +        _wfhw: &Self::WfHw,
+>>> +        _wf: &mut Waveform,
+>>> +    ) -> Result<c_int> {
+>>> +        Err(ENOTSUPP)
+>>> +    }
+>>=20
+>> Please include at least a description of what this returns.
+>=20
+> Instead I think it should just return Result, reviewed the code and =
+it's
+> fine.
+>=20
+
+Ack.
+
+>>=20
+>>> +/// Bridges Rust `PwmOps` to the C `pwm_ops` vtable.
+>>> +struct Adapter<T: PwmOps> {
+>>> +    _p: PhantomData<T>,
+>>> +}
+>>> +
+>>> +impl<T: PwmOps> Adapter<T> {
+>>> +    const VTABLE: PwmOpsVTable =3D create_pwm_ops::<T>();
+>>> +
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// `wfhw_ptr` must be valid for writes of =
+`size_of::<T::WfHw>()` bytes.
+>>> +    unsafe fn serialize_wfhw(wfhw: &T::WfHw, wfhw_ptr: *mut c_void) =
+-> Result {
+>>> +        let size =3D core::mem::size_of::<T::WfHw>();
+>>> +        if size > bindings::PWM_WFHWSIZE as usize {
+>>> +            return Err(EINVAL);
+>>> +        }
+>>=20
+>> See my previous comment on using build_assert if possible.
+>=20
+> So I did try this and it does work, however it results in a cryptic
+> linker error:
+> ld.lld: error: undefined symbol: rust_build_error
+>>>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
+>>>>              =
+drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1520::Th1520PwmDrive=
+rData>>::read_waveform_callback) in archive vmlinux.a
+>>>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
+>>>>              =
+drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1520::Th1520PwmDrive=
+rData>>::round_waveform_tohw_callback) in archive vmlinux.a
+> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>=20
+> I assume this could be fixed at some point to better explain what
+> failed? I think putting the assert in serialize functions is fine and
+> the proposed _CHECK_SZ isn't really required.
+>=20
+> I would love to do some debugging and find out why that is myself if
+> time allows :-)
+
+There is nothing wrong here. A canonical Rust-for-Linux experience is =
+stumbling
+upon the error generated by build_assert and being rightly confused. =
+People ask
+about this every few months :)
+
+This just means that the build_assert triggered and the build failed as =
+a
+result. IOW, it means that your build_assert is working properly to =
+catch
+errors.
+
+=E2=80=94 Daniel
 
 
