@@ -1,196 +1,231 @@
-Return-Path: <linux-kernel+bounces-757893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A755B1C805
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B563CB1C808
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C505217F82E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E2D189614F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A93D220F25;
-	Wed,  6 Aug 2025 14:56:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE183AC1C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FBF26A1B5;
+	Wed,  6 Aug 2025 14:59:02 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6D942A99;
+	Wed,  6 Aug 2025 14:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492208; cv=none; b=QqwM9Xkch4yniK8aSLPcOKKuBHVNJnSTXERlMNBXIWAPHrEtiLSgaSjSmB5GHFyq6OesFN42cGkV0nHCPEQXpIuj66SuF5Jcj3rf4yB0Hc9rys6rOIBt+tfyYn0zC4JiJauKa3MPa2Mj8Bso05DgSwNxjpOdbW9Lj6MHcY8scns=
+	t=1754492342; cv=none; b=I6M3cu3d46CdtP4ZkxFnQAj6zPo0mmoc67jEAK1sZQ9rU3KCRsrotKRvV5WSEaijShtfE5s+mz2c789RERG1mR4VoOXtEwZ6QKhoHbyLfgIHl/+sOGur6B/ONNlfPBvBjkdhTyiuN3WZFbIWRrmwrCLHMbQbYYGR+i0EElCt2pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492208; c=relaxed/simple;
-	bh=z9N0pdW5aUSaW+CCYFmrf3qMex3EgippXieTrTkuJCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qNAuYAds6ZbFt064zC0yMrrj9kAaFJkhSnwT2/GhjHXyeHV3PNRkqVmalV+ZykcniieZ8XIdC1mF//YicFVCl//36bp2q+ojmmAHdL6OnVuWS0OeNUSqG8eMaxKSyT5qwBRH8QZVBc9vEg0g48XXyyBj1oN859A6fR/rqItrve8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBC72176C;
-	Wed,  6 Aug 2025 07:56:36 -0700 (PDT)
-Received: from localhost.localdomain (unknown [10.163.64.125])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 532773F5A1;
-	Wed,  6 Aug 2025 07:56:34 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com,
-	david@redhat.com,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	anshuman.khandual@arm.com,
-	peterx@redhat.com,
-	joey.gouly@arm.com,
-	ioworker0@gmail.com,
-	baohua@kernel.org,
-	kevin.brodsky@arm.com,
-	quic_zhenhuah@quicinc.com,
-	christophe.leroy@csgroup.eu,
-	yangyicong@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org,
-	hughd@google.com,
-	yang@os.amperecomputing.com,
-	ziy@nvidia.com,
-	Dev Jain <dev.jain@arm.com>,
-	syzbot+57bcc752f0df8bb1365c@syzkaller.appspotmail.com
-Subject: [PATCH mm-hotfixes-unstable] mm: Pass page directly instead of using folio_page
-Date: Wed,  6 Aug 2025 20:26:11 +0530
-Message-Id: <20250806145611.3962-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1754492342; c=relaxed/simple;
+	bh=8lh07oe3MB8WKmJHDb2YTbmF7VrfefsF/Uss67nAQg8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r8xfPxp3zibfYRneA/XR7D8hqZV4JOmEIcNvuuKPhZJCv5ZrQuQK7pRDQIFPLMdzrQAex2O6qz82LFmKyJ4Kh4MlaYdK0j8KQw7Lm3Xd7n4Od+Ho4yQLxrtpiTeVQownprAr67f5+La2MO7JxQeNcb9phd0dQKpEJx6h2JY7knw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxtfY4ymcz6L5RZ;
+	Wed,  6 Aug 2025 22:56:37 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C5BA1402EC;
+	Wed,  6 Aug 2025 22:58:56 +0800 (CST)
+Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
+ 2025 16:58:55 +0200
+Date: Wed, 6 Aug 2025 15:58:53 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Stefano Manni <stefano.manni@gmail.com>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] iio: adc: ad799x: add reference voltage capability
+ to chip_info
+Message-ID: <20250806155853.00003f0b@huawei.com>
+In-Reply-To: <20250806090158.117628-2-stefano.manni@gmail.com>
+References: <20250806090158.117628-1-stefano.manni@gmail.com>
+	<20250806090158.117628-2-stefano.manni@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-In commit_anon_folio_batch(), we iterate over all pages pointed to by the
-PTE batch. Therefore we need to know the first page of the batch;
-currently we derive that via folio_page(folio, 0), but, that takes us
-to the first (head) page of the folio instead - our PTE batch may lie
-in the middle of the folio, leading to incorrectness.
+On Wed,  6 Aug 2025 11:01:57 +0200
+Stefano Manni <stefano.manni@gmail.com> wrote:
 
-Bite the bullet and throw away the micro-optimization of reusing the
-folio in favour of code simplicity. Derive the page and the folio in
-change_pte_range, and pass the page too to commit_anon_folio_batch to
-fix the aforementioned issue.
+> If the chip supports an external reference voltage
+> on REFIN pin then the "vref-supply" regulator may be used.
+> 
+> This commit partially refactors 6b104e7895ab16b9b7f466c5f2ca282b87f661e8
+> to add the capability of the chip to have an external
+> voltage reference and then remove the ugly conditional check
+> on chip id.
+> 
+> Signed-off-by: Stefano Manni <stefano.manni@gmail.com>
 
-Reported-by: syzbot+57bcc752f0df8bb1365c@syzkaller.appspotmail.com
-Fixes: cac1db8c3aad ("mm: optimize mprotect() by PTE batching")
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/mprotect.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+Hi Stefano,
+`
+A few minor things inline.
 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 78bded7acf79..113b48985834 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -120,9 +120,8 @@ static int mprotect_folio_pte_batch(struct folio *folio, pte_t *ptep,
- 
- static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
- 			   pte_t oldpte, pte_t *pte, int target_node,
--			   struct folio **foliop)
-+			   struct folio *folio)
- {
--	struct folio *folio = NULL;
- 	bool ret = true;
- 	bool toptier;
- 	int nid;
-@@ -131,7 +130,6 @@ static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
- 	if (pte_protnone(oldpte))
- 		goto skip;
- 
--	folio = vm_normal_folio(vma, addr, oldpte);
- 	if (!folio)
- 		goto skip;
- 
-@@ -173,7 +171,6 @@ static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
- 		folio_xchg_access_time(folio, jiffies_to_msecs(jiffies));
- 
- skip:
--	*foliop = folio;
- 	return ret;
- }
- 
-@@ -231,10 +228,9 @@ static int page_anon_exclusive_sub_batch(int start_idx, int max_len,
-  * retrieve sub-batches.
-  */
- static void commit_anon_folio_batch(struct vm_area_struct *vma,
--		struct folio *folio, unsigned long addr, pte_t *ptep,
-+		struct folio *folio, struct page *first_page, unsigned long addr, pte_t *ptep,
- 		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
- {
--	struct page *first_page = folio_page(folio, 0);
- 	bool expected_anon_exclusive;
- 	int sub_batch_idx = 0;
- 	int len;
-@@ -251,7 +247,7 @@ static void commit_anon_folio_batch(struct vm_area_struct *vma,
- }
- 
- static void set_write_prot_commit_flush_ptes(struct vm_area_struct *vma,
--		struct folio *folio, unsigned long addr, pte_t *ptep,
-+		struct folio *folio, struct page *page, unsigned long addr, pte_t *ptep,
- 		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
- {
- 	bool set_write;
-@@ -270,7 +266,7 @@ static void set_write_prot_commit_flush_ptes(struct vm_area_struct *vma,
- 				       /* idx = */ 0, set_write, tlb);
- 		return;
- 	}
--	commit_anon_folio_batch(vma, folio, addr, ptep, oldpte, ptent, nr_ptes, tlb);
-+	commit_anon_folio_batch(vma, folio, page, addr, ptep, oldpte, ptent, nr_ptes, tlb);
- }
- 
- static long change_pte_range(struct mmu_gather *tlb,
-@@ -305,15 +301,19 @@ static long change_pte_range(struct mmu_gather *tlb,
- 			const fpb_t flags = FPB_RESPECT_SOFT_DIRTY | FPB_RESPECT_WRITE;
- 			int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
- 			struct folio *folio = NULL;
-+			struct page *page;
- 			pte_t ptent;
- 
-+			page = vm_normal_page(vma, addr, oldpte);
-+			if (page)
-+				folio = page_folio(page);
- 			/*
- 			 * Avoid trapping faults against the zero or KSM
- 			 * pages. See similar comment in change_huge_pmd.
- 			 */
- 			if (prot_numa) {
- 				int ret = prot_numa_skip(vma, addr, oldpte, pte,
--							 target_node, &folio);
-+							 target_node, folio);
- 				if (ret) {
- 
- 					/* determine batch to skip */
-@@ -323,9 +323,6 @@ static long change_pte_range(struct mmu_gather *tlb,
- 				}
- 			}
- 
--			if (!folio)
--				folio = vm_normal_folio(vma, addr, oldpte);
--
- 			nr_ptes = mprotect_folio_pte_batch(folio, pte, oldpte, max_nr_ptes, flags);
- 
- 			oldpte = modify_prot_start_ptes(vma, addr, pte, nr_ptes);
-@@ -351,7 +348,7 @@ static long change_pte_range(struct mmu_gather *tlb,
- 			 */
- 			if ((cp_flags & MM_CP_TRY_CHANGE_WRITABLE) &&
- 			     !pte_write(ptent))
--				set_write_prot_commit_flush_ptes(vma, folio,
-+				set_write_prot_commit_flush_ptes(vma, folio, page,
- 				addr, pte, oldpte, ptent, nr_ptes, tlb);
- 			else
- 				prot_commit_flush_ptes(vma, addr, pte, oldpte, ptent,
--- 
-2.30.2
+Mostly looks good to me. 
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ad799x.c | 45 +++++++++++++++++++++++-----------------
+>  1 file changed, 26 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
+> index 9c02f9199139..955d845407b9 100644
+> --- a/drivers/iio/adc/ad799x.c
+> +++ b/drivers/iio/adc/ad799x.c
+> @@ -114,11 +114,13 @@ struct ad799x_chip_config {
+>   * @num_channels:	number of channels
+>   * @noirq_config:	device configuration w/o IRQ
+>   * @irq_config:		device configuration w/IRQ
+> + * @has_vref:		device supports external reference voltage
+>   */
+>  struct ad799x_chip_info {
+>  	int				num_channels;
+>  	const struct ad799x_chip_config	noirq_config;
+>  	const struct ad799x_chip_config	irq_config;
+> +	bool has_vref;
+>  };
+>  
+>  struct ad799x_state {
+> @@ -604,6 +606,7 @@ static const struct iio_event_spec ad799x_events[] = {
+>  static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	[ad7991] = {
+>  		.num_channels = 5,
+> +		.has_vref = true,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 12),
+> @@ -617,6 +620,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7995] = {
+>  		.num_channels = 5,
+> +		.has_vref = true,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 10),
+> @@ -630,6 +634,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7999] = {
+>  		.num_channels = 5,
+> +		.has_vref = true,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 8),
+> @@ -643,6 +648,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7992] = {
+>  		.num_channels = 3,
+> +		.has_vref = false,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 12),
+> @@ -663,6 +669,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7993] = {
+>  		.num_channels = 5,
+> +		.has_vref = false,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 10),
+> @@ -687,6 +694,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7994] = {
+>  		.num_channels = 5,
+> +		.has_vref = false,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 12),
+> @@ -711,6 +719,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7997] = {
+>  		.num_channels = 9,
+> +		.has_vref = false,
+
+Seems like 'not' having a vref is a reasonable default, so you could just not
+set it at all in those cases and rely on the default being false.
+
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 10),
+> @@ -743,6 +752,7 @@ static const struct ad799x_chip_info ad799x_chip_info_tbl[] = {
+>  	},
+>  	[ad7998] = {
+>  		.num_channels = 9,
+> +		.has_vref = false,
+>  		.noirq_config = {
+>  			.channel = {
+>  				AD799X_CHANNEL(0, 12),
+> @@ -809,34 +819,31 @@ static int ad799x_probe(struct i2c_client *client)
+>  		return ret;
+>  
+>  	/* check if an external reference is supplied */
+> -	st->vref = devm_regulator_get_optional(&client->dev, "vref");
+> -
+> -	if (IS_ERR(st->vref)) {
+> -		if (PTR_ERR(st->vref) == -ENODEV) {
+> -			st->vref = NULL;
+> -			dev_info(&client->dev, "Using VCC reference voltage\n");
+> -		} else {
+> -			ret = PTR_ERR(st->vref);
+> -			goto error_disable_reg;
+> +	if (chip_info->has_vref) {
+> +		st->vref = devm_regulator_get_optional(&client->dev, "vref");
+> +
+> +		if (IS_ERR(st->vref)) {
+> +			if (PTR_ERR(st->vref) == -ENODEV) {
+> +				st->vref = NULL;
+> +				dev_info(&client->dev, "Using VCC reference voltage\n");
+> +			} else {
+> +				ret = PTR_ERR(st->vref);
+> +				goto error_disable_reg;
+> +			}
+>  		}
+> -	}
+>  
+> -	if (st->vref) {
+> -		/*
+> -		 * Use external reference voltage if supported by hardware.
+> -		 * This is optional if voltage / regulator present, use VCC otherwise.
+> -		 */
+> -		if ((st->id == ad7991) || (st->id == ad7995) || (st->id == ad7999)) {
+> +		if (st->vref) {
+>  			dev_info(&client->dev, "Using external reference voltage\n");
+>  			extra_config |= AD7991_REF_SEL;
+>  			ret = regulator_enable(st->vref);
+>  			if (ret)
+>  				goto error_disable_reg;
+> -		} else {
+> -			st->vref = NULL;
+> -			dev_warn(&client->dev, "Supplied reference not supported\n");
+>  		}
+>  	}
+> +	else {
+
+	} else {
+
+> +		st->vref = NULL;
+> +		dev_dbg(&client->dev, "Supplied reference not supported\n");
+> +	}
+>  
+>  	st->client = client;
+>  
 
 
