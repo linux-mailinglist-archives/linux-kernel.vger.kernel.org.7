@@ -1,193 +1,212 @@
-Return-Path: <linux-kernel+bounces-758304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFBFB1CD64
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9239DB1CD6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E79F174854
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8464D17A2E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3DB21B9F1;
-	Wed,  6 Aug 2025 20:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541D220694;
+	Wed,  6 Aug 2025 20:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Afd9eIxc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E61EFFB7
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bZ52YILX"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B03145038;
+	Wed,  6 Aug 2025 20:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754511697; cv=none; b=EiMQDfsNWMdgrPaMCgA3lBFjMyo5H2rEox7j4YzQCYQQ3cAzi3gd2ofP8uDOBOpar1lII/W/bQWY4mnwyOvatDummchxoeO1rnHOEOjcj0tTEwWRsMF8BoUvxNIzYyB9hCqAKiwsBCXKfp4onsJu1fNl+HfFVdhCx3Q0W7SLJI4=
+	t=1754511859; cv=none; b=HtzVY++nJPxb9iN/D5+kYJamUl/YZDnhzwHYevncLD1KfWdl90F4I96WvDUEWTGKct8SEZZdB0/LA+rGPWM/S6eFreatXPCqeI9AY1Oh+fq6XyewTqhO8WCyKh1GfaT5GdkLFN6QPMlaZ5pVcaTQpEmYfq55/+BXtW+cSkmoWIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754511697; c=relaxed/simple;
-	bh=tUxVY2un84plNGc0k5hdFTI5nut0oV3TwVMgtbTNrwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYNQ7qH/WW8Z3hkxzk7HBe9ZHQLLganx0DAl1jBqfCKYZZUxYZuYXbOfM/sbIx2jR1T2yXhicR7cL/kehGnzvCZAEgpvnkoCECaUUiUNBFJD2PWE+1e+pmMzDTsR1aSiXlHp3KfrG9HyjMG2h3x2FeQA67IUBjrRnchVc7QIwOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Afd9eIxc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754511694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lq3p/AP2ehM2TE8laSRpSoByadMgmXpnPOPj4urYp8A=;
-	b=Afd9eIxcvlYSCoYiNGR5rEuFmGRcYrb6QHFu410jtDbrFAoGGQ4gLpOuqj4ZVX94+Mp4An
-	USUilEKScsWhDTxO53EPAAyiK1R2P3hZA9f1MzyD+SIeBWr72UK5T0DNPs2MaySKqG+dUt
-	tYuiZ7Z8AvJSdNNjLecgccd389cCpBI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-496-DteoeOlDOyW-_uE8ltn_zA-1; Wed, 06 Aug 2025 16:21:32 -0400
-X-MC-Unique: DteoeOlDOyW-_uE8ltn_zA-1
-X-Mimecast-MFC-AGG-ID: DteoeOlDOyW-_uE8ltn_zA_1754511691
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459e4b85895so1295245e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 13:21:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754511691; x=1755116491;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lq3p/AP2ehM2TE8laSRpSoByadMgmXpnPOPj4urYp8A=;
-        b=M6xMiwAxOAvvYRVTwjlC1+A06nikFOZuh2X8Ug4/YUnTDwRVObuExI9dOnfAmVUBkE
-         J3w5QrwxCiQj2rDf/zWNvzAoAzdpXusT5N2BPmicmc9kiwVCgtMfHDqNs1Vbx4oz9ua4
-         6d1YQCTQhWESjmzEi8JEdh5Wafz0UXzZdX9DvdkJeN33SDtmxM5VuyVbCQcQFDbx3oX8
-         3+4P5ucyhN2PulL6N8lslTscRw1XEZYV+qkEnZ3p2WQTMZeT52kr/TsOJB9weI110y/F
-         8OVOtoYYslXzS0K9f6S5dIiUnVL58jhkJfpb2cjteG5IuOwMsKLVc4I/uGdkeUjOL4LM
-         hmLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEcRmkuvHZxsm0b2kzShYjPBn55W2iooRHPVXc8gXE2BiAjA84p5OWf4Onw/90uoI63hAgc8OzKdUzy6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk+jafR+G6efVazO2xviDHv/GjKDHko6fRIdfHbvNBf4C6bVvP
-	g0pHkYbPXw6nUgfg8ORWUialh5yp8TYIrZI1lWawrHLca8oWXNQeBqSrEG6csjSz2n+E06bw/ba
-	xgmzVNWC4DnXDA9MGArSP2mnXNiXvxoC/OMilSulf2Qli7sVasL0HbZac8p7bPvvJyw==
-X-Gm-Gg: ASbGnctsNwTvhzcswC1Dlt42YPja62lHCX/vJf9PgxwD1sL2XiZfpRe+0cKIlyDB/4t
-	MvYr45XXj0R29vNhehjUu/6rkPRnSnl5doe6mtyBcYlotNf5E4IaUjeuUmp0awbKIGN80qmO79G
-	Hltb5uWOYe2nJb+tGsIPZKg2/vmj44VfdClSGdw6EDuRWUQfx7uOAtzrx9n7pQLfrec6KeO+X9l
-	Gfwpem269Y47lec7Bc4fCswz4SJvqymfFRNwP/264EpA7QFPh4z4ZCzqDY1aUJRNx8fp0ErqMvQ
-	g+D8ttEiYFNdH79fJODD1d3pg5Y7tHE3Ycc+/mO0IOgBjONLV5qspUlsOiuAP/uQB0Od8RaNNCV
-	jbUBPKQQJzS6WaKu/F6oUaCAIlvE+Ej/ajaBx9j3GCcFV/aFVu3xCq+CryVOVlGFsaHo=
-X-Received: by 2002:a05:600c:46c8:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-459e748fbafmr42832645e9.17.1754511690833;
-        Wed, 06 Aug 2025 13:21:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFz9L54Y8dv3ZQQQ5zpImfkqY1bGBCy7DJowT7QpPPwDnagA1P2KPKg47yvDFrtnPzdqTms+A==
-X-Received: by 2002:a05:600c:46c8:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-459e748fbafmr42832425e9.17.1754511690266;
-        Wed, 06 Aug 2025 13:21:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f42:da00:badf:cc55:23d5:1679? (p200300d82f42da00badfcc5523d51679.dip0.t-ipconnect.de. [2003:d8:2f42:da00:badf:cc55:23d5:1679])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458bbf91b69sm106335825e9.3.2025.08.06.13.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 13:21:29 -0700 (PDT)
-Message-ID: <0de8d37e-5977-43f4-8e21-0ad47130d62f@redhat.com>
-Date: Wed, 6 Aug 2025 22:21:27 +0200
+	s=arc-20240116; t=1754511859; c=relaxed/simple;
+	bh=JVXedN0YzwVxacnO2vsgzYamqB/szo5YHrWDAURYETQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=srwJSsTCyTqwy2pLUQf8ZK9VQ+YpS6c46q80bUbrGR0YDoE78noz1VmB1xNCu0UQuEP5b7GVWJB8yHJmJCNZXD/T6yROjF3HSIxB1TKsq3ZD484vIXRFBzDWcnCvnsh8V0jT7xASTaF81H9mH1tZ+zq+K2e+55j5uKlwR7KVsPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bZ52YILX; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1006)
+	id A4AD12030EAC; Wed,  6 Aug 2025 13:22:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A4AD12030EAC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1754511857;
+	bh=KdToqvqVO3gNQw38sRKKvDdonhSef0op7Pd8H8o1HD0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bZ52YILXizZM8YzEFXgWo9spB8DOvnZGPzIKm0J50/h6Hz0Pifg55+PqH1JMoyms2
+	 38ExPG74fEOB2dW6ADW8RZlisKZn2s36nmiXqzbceHVNAAqhAWKRlCO0hZpk0A7H8w
+	 yQDqCl3mNg+U7HhmQ+S3AefJMDRSVrGvN2oJgDDc=
+From: Haiyang Zhang <haiyangz@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	kys@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	davem@davemloft.net,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net,v2] hv_netvsc: Fix panic during namespace deletion with VF
+Date: Wed,  6 Aug 2025 13:21:51 -0700
+Message-Id: <1754511711-11188-1-git-send-email-haiyangz@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-hotfixes-unstable] mm: Pass page directly instead of
- using folio_page
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com,
- syzbot+57bcc752f0df8bb1365c@syzkaller.appspotmail.com
-References: <20250806145611.3962-1-dev.jain@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250806145611.3962-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 06.08.25 16:56, Dev Jain wrote:
-> In commit_anon_folio_batch(), we iterate over all pages pointed to by the
-> PTE batch. Therefore we need to know the first page of the batch;
-> currently we derive that via folio_page(folio, 0), but, that takes us
-> to the first (head) page of the folio instead - our PTE batch may lie
-> in the middle of the folio, leading to incorrectness.
-> 
-> Bite the bullet and throw away the micro-optimization of reusing the
-> folio in favour of code simplicity.
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-Huh? We are still reusing the folio. There is a single 
-vm_normal_page()+page_folio() lookup in that code.
+The existing code move the VF NIC to new namespace when NETDEV_REGISTER is
+received on netvsc NIC. During deletion of the namespace,
+default_device_exit_batch() >> default_device_exit_net() is called. When
+netvsc NIC is moved back and registered to the default namespace, it
+automatically brings VF NIC back to the default namespace. This will cause
+the default_device_exit_net() >> for_each_netdev_safe loop unable to detect
+the list end, and hit NULL ptr:
 
-Maybe what you meant is "Simplify the code by moving the folio lookup 
-out of prot_numa_skip() such that we only have a single page+folio lookup."
+[  231.449420] mana 7870:00:00.0 enP30832s1: Moved VF to namespace with: eth0
+[  231.449656] BUG: kernel NULL pointer dereference, address: 0000000000000010
+[  231.450246] #PF: supervisor read access in kernel mode
+[  231.450579] #PF: error_code(0x0000) - not-present page
+[  231.450916] PGD 17b8a8067 P4D 0
+[  231.451163] Oops: Oops: 0000 [#1] SMP NOPTI
+[  231.451450] CPU: 82 UID: 0 PID: 1394 Comm: kworker/u768:1 Not tainted 6.16.0-rc4+ #3 VOLUNTARY
+[  231.452042] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 11/21/2024
+[  231.452692] Workqueue: netns cleanup_net
+[  231.452947] RIP: 0010:default_device_exit_batch+0x16c/0x3f0
+[  231.453326] Code: c0 0c f5 b3 e8 d5 db fe ff 48 85 c0 74 15 48 c7 c2 f8 fd ca b2 be 10 00 00 00 48 8d 7d c0 e8 7b 77 25 00 49 8b 86 28 01 00 00 <48> 8b 50 10 4c 8b 2a 4c 8d 62 f0 49 83 ed 10 4c 39 e0 0f 84 d6 00
+[  231.454294] RSP: 0018:ff75fc7c9bf9fd00 EFLAGS: 00010246
+[  231.454610] RAX: 0000000000000000 RBX: 0000000000000002 RCX: 61c8864680b583eb
+[  231.455094] RDX: ff1fa9f71462d800 RSI: ff75fc7c9bf9fd38 RDI: 0000000030766564
+[  231.455686] RBP: ff75fc7c9bf9fd78 R08: 0000000000000000 R09: 0000000000000000
+[  231.456126] R10: 0000000000000001 R11: 0000000000000004 R12: ff1fa9f70088e340
+[  231.456621] R13: ff1fa9f70088e340 R14: ffffffffb3f50c20 R15: ff1fa9f7103e6340
+[  231.457161] FS:  0000000000000000(0000) GS:ff1faa6783a08000(0000) knlGS:0000000000000000
+[  231.457707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  231.458031] CR2: 0000000000000010 CR3: 0000000179ab2006 CR4: 0000000000b73ef0
+[  231.458434] Call Trace:
+[  231.458600]  <TASK>
+[  231.458777]  ops_undo_list+0x100/0x220
+[  231.459015]  cleanup_net+0x1b8/0x300
+[  231.459285]  process_one_work+0x184/0x340
 
-> Derive the page and the folio in
-> change_pte_range, and pass the page too to commit_anon_folio_batch to
-> fix the aforementioned issue.
-> 
-> Reported-by: syzbot+57bcc752f0df8bb1365c@syzkaller.appspotmail.com
-> Fixes: cac1db8c3aad ("mm: optimize mprotect() by PTE batching")
+To fix it, move the ns change to a workqueue, and take rtnl_lock to avoid
+changing the netdev list when default_device_exit_net() is using it.
 
-Fell free to add a
+Cc: stable@vger.kernel.org
+Fixes: 4c262801ea60 ("hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-Debugged-by: David Hildenbrand <david@redhat.com>
+---
+v2:
+  Moved the ns change to a workqueue as suggested by Jakub Kicinski.
 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ drivers/net/hyperv/hyperv_net.h |  3 +++
+ drivers/net/hyperv/netvsc_drv.c | 29 ++++++++++++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
+index cb6f5482d203..7397c693f984 100644
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -1061,6 +1061,7 @@ struct net_device_context {
+ 	struct net_device __rcu *vf_netdev;
+ 	struct netvsc_vf_pcpu_stats __percpu *vf_stats;
+ 	struct delayed_work vf_takeover;
++	struct delayed_work vfns_work;
+ 
+ 	/* 1: allocated, serial number is valid. 0: not allocated */
+ 	u32 vf_alloc;
+@@ -1075,6 +1076,8 @@ struct net_device_context {
+ 	struct netvsc_device_info *saved_netvsc_dev_info;
+ };
+ 
++void netvsc_vfns_work(struct work_struct *w);
++
+ /* Azure hosts don't support non-TCP port numbers in hashing for fragmented
+  * packets. We can use ethtool to change UDP hash level when necessary.
+  */
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index f44753756358..39c892e46cb0 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2522,6 +2522,7 @@ static int netvsc_probe(struct hv_device *dev,
+ 	spin_lock_init(&net_device_ctx->lock);
+ 	INIT_LIST_HEAD(&net_device_ctx->reconfig_events);
+ 	INIT_DELAYED_WORK(&net_device_ctx->vf_takeover, netvsc_vf_setup);
++	INIT_DELAYED_WORK(&net_device_ctx->vfns_work, netvsc_vfns_work);
+ 
+ 	net_device_ctx->vf_stats
+ 		= netdev_alloc_pcpu_stats(struct netvsc_vf_pcpu_stats);
+@@ -2666,6 +2667,8 @@ static void netvsc_remove(struct hv_device *dev)
+ 	cancel_delayed_work_sync(&ndev_ctx->dwork);
+ 
+ 	rtnl_lock();
++	cancel_delayed_work_sync(&ndev_ctx->vfns_work);
++
+ 	nvdev = rtnl_dereference(ndev_ctx->nvdev);
+ 	if (nvdev) {
+ 		cancel_work_sync(&nvdev->subchan_work);
+@@ -2707,6 +2710,7 @@ static int netvsc_suspend(struct hv_device *dev)
+ 	cancel_delayed_work_sync(&ndev_ctx->dwork);
+ 
+ 	rtnl_lock();
++	cancel_delayed_work_sync(&ndev_ctx->vfns_work);
+ 
+ 	nvdev = rtnl_dereference(ndev_ctx->nvdev);
+ 	if (nvdev == NULL) {
+@@ -2800,6 +2804,27 @@ static void netvsc_event_set_vf_ns(struct net_device *ndev)
+ 	}
+ }
+ 
++void netvsc_vfns_work(struct work_struct *w)
++{
++	struct net_device_context *ndev_ctx =
++		container_of(w, struct net_device_context, vfns_work.work);
++	struct net_device *ndev;
++
++	if (!rtnl_trylock()) {
++		schedule_delayed_work(&ndev_ctx->vfns_work, 1);
++		return;
++	}
++
++	ndev = hv_get_drvdata(ndev_ctx->device_ctx);
++	if (!ndev)
++		goto out;
++
++	netvsc_event_set_vf_ns(ndev);
++
++out:
++	rtnl_unlock();
++}
++
+ /*
+  * On Hyper-V, every VF interface is matched with a corresponding
+  * synthetic interface. The synthetic interface is presented first
+@@ -2810,10 +2835,12 @@ static int netvsc_netdev_event(struct notifier_block *this,
+ 			       unsigned long event, void *ptr)
+ {
+ 	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
++	struct net_device_context *ndev_ctx;
+ 	int ret = 0;
+ 
+ 	if (event_dev->netdev_ops == &device_ops && event == NETDEV_REGISTER) {
+-		netvsc_event_set_vf_ns(event_dev);
++		ndev_ctx = netdev_priv(event_dev);
++		schedule_delayed_work(&ndev_ctx->vfns_work, 0);
+ 		return NOTIFY_DONE;
+ 	}
+ 
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
