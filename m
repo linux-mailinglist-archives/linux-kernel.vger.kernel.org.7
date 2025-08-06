@@ -1,198 +1,428 @@
-Return-Path: <linux-kernel+bounces-757738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71F3B1C623
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:42:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAE9B1C624
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4CA3A14BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771DF563F5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838292882C1;
-	Wed,  6 Aug 2025 12:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2254428BA92;
+	Wed,  6 Aug 2025 12:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RCMRIFH7"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012015.outbound.protection.outlook.com [52.101.126.15])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="QLUSGTXs";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="iTQxPsYz"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2237825A2DE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484099; cv=fail; b=J4rTh+xztQWSK6qJM1lY/Tq/NbiZ3ZDhB2Tpg3xRU9q3Nyf5AhApdFL+LqMGqv7+Yn/mpndsOI4HZMmQmgPtDj/VxkYZ+oFJzvdNqBhHTYu5IUd2prsyAmyRCkrWRjaVRuTUnyRk0dxYd/qT1zzmX2EzELPq5IUeixaB9mPhLFQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484099; c=relaxed/simple;
-	bh=MwqvW0ry+oQgJcR5B7aYebhJosZ69rsRtq1+YOoIbto=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jGpRH6AbqWDN51gw57VOKd3BKjuX0hDBYhcJek7qKAXK0tq/ScPs66GfaFXSH8zxXDkH904t2pcLBQ9qHXH9P9YcuSX2KZGXs1ygNHb33au1UUmq61Q0V8xRkLdMP75ljI8DDM9QHUGB2I97VB5ODLRVoTRxy5Wk43I0x34eoyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RCMRIFH7; arc=fail smtp.client-ip=52.101.126.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ga1n354gbYLyCTs1DBG3uqZUal5jUIlveJ4/ti2Wni7OAaRsyZcX7Rbs7R0/I6sBJkt+HiNjM+Ixaao7j8SSNez+6xsw2hiGpzSco4rSuzYx3hScRMMbIH3wzDNe4ILwfubpatFqZuibjt5ADGZqUuhmnLFgUtbYdhqKyk0bLdPH9FOUVpwpzIWKItCkket6b283o1xw80Q4NZZfp9/lSPVVSX/5NemsV2F7uAHsG5/fR6ddjDUQogIvtf07SP+RnIR0X+MBzkOfgB/QmRKHEw1e2npbjMZ442uNOQqtN+jQYbdh3hsfpVZne4C8WyoZqAm2/zA6JhslwVynxBJnWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=axdOaOolG8kZtj/LcZGfejwF+YZpW5txVVPTBVaHB6o=;
- b=VvFZdjl6R5xn23AbmgsWQNNnm7cCJdfzXmQA4hMxlEtXj4RgXHLp9aMtp33SOwSyeQfz6Vay6BtZsMOyXgLKsh8m8Fap/Aia2l1w3BV7nhCtjYh4aU2rW4irouzzcYM1mI00F7Tm69IixrxYhK65GexX1IKMhglyg5xSI0yfZCFjhysQ77Z9KFZZQAjjrYAnGIKuu/NHEd2ZaMIwiEACCW1Go5COIrUEKn9E5KCDAJfRkHe3rkAYCFeofU13Rbtb0VcrbnJN+Ui4NujAGJudaT3ZwiHBwswOS8qdZZh6KL9UzAV0uxa+MPPC5fLup4pXWuSQRTCccK58uMsUOPXQFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=axdOaOolG8kZtj/LcZGfejwF+YZpW5txVVPTBVaHB6o=;
- b=RCMRIFH7UsBZdnf4mZS2MVg8sVbBONQtOzQTtxyC1LrCzo3xp5HEgI5rwRgDnepQIHK/0Lg9leQQgSQP4PxrT9XVOQUahIES6wKoF4p33rrAf7qw+YbvBoiOcqLAVv5RR+pXHxlzGgtypPhBdvjB3bxBQZKXRl36TtncCglg28z4NosYblRrcZD9XiQKoH8B3KJTDzBuXP+mfTneoYtZKXSoSmaGCl9SBFWXF64tPcixzPHFT+ZU7c6EB9BSwcJUe6ar25j3+F/NLPVio0sGMiuxuOXVTpGQxVf8BQk0L9VVkYfxBnmVeg/W67qCORI1b6y9t8UwfZv97db39GmT4w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com (2603:1096:400:32f::14)
- by TY0PR06MB5305.apcprd06.prod.outlook.com (2603:1096:400:210::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 12:41:33 +0000
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263]) by TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 12:41:32 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Austin Zheng <austin.zheng@amd.com>,
-	Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org (open list:AMD DISPLAY CORE),
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: liaoyuanhong@vivo.com
-Subject: [PATCH] drm/amd/display: Use swap() to simplify code
-Date: Wed,  6 Aug 2025 20:41:20 +0800
-Message-Id: <20250806124120.381818-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0009.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::18) To TY0PR06MB5579.apcprd06.prod.outlook.com
- (2603:1096:400:32f::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6D628A707
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754484116; cv=none; b=ZlJz8sgcYar1eqbofAjmSW+e6YkOGozi66De4cO5sJjG/PIO4msjMzNZOnO3YiuvSJwNYYvatHASJNtcNmDLgEHau2u7IonV7npQugBCdodPYXyByNT+vXWLDQEj7V9q7ZcJdMw71OcGv33nhk3l/tkoRgkerCcYg5nO/htKUkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754484116; c=relaxed/simple;
+	bh=tDnIk1nsk7d2myv/RhIrCyjK/WPTakd3dPeWmKrQbDI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=G+AVPql047MFUpB/9T8Hwn4F+mQFOcccbjQ7kMHzOkXYUQxj0ZXcatmsuDnUy9MGM3TVcyizZTThumTkbyBSzN21o/K54g5auCja1YvvkGVC/0qiPoGBDSVQbeBNMLpPm7a5/dKkeEHT2jUyWD370EGsXEBQuyUKnG8/tfn83jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=QLUSGTXs; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=iTQxPsYz; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754484111; x=1755088911;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=pjAfZVitxErZt1vrAjky7Diqv9MECrtNO3aybwOppWM=;
+	b=QLUSGTXsUL+Tm8j0wA6JYfkbPDriRX2GdqD4uZEnx8yTfZ1xuz++jLyVyXeOXo5HwuEOkz6fDXTEr
+	 LSWAr3QbZTCZy/8mhd+shQZi0KIWzYaSA2Qapd5BkSoTPVtQsDDtNrOGU17h5afXxe0lT0DpFvG/yq
+	 DH83x7vh8KnJih+te/fMD3uqXWDwk4ZOmZHQcoRnzvz3aGlul8LbmywTDP9dy4dyZ6EqVsiTGVH7Lc
+	 kSBhISQci/I6Fzcrwl/IqP9lQ5A7AfoOdpCHVibt7jQFRBHirtvXERQZJpAuoHZ4GrBozp/Czdq6wL
+	 FA1oF11j0u8vwfBpXpRyHcC1W2MV1Kg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754484111; x=1755088911;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=pjAfZVitxErZt1vrAjky7Diqv9MECrtNO3aybwOppWM=;
+	b=iTQxPsYzR0MXlyDzpqHrU1teSRa1uHSFmwOBDYdRfUKqWbv6vcBDT8xbBlvagvCMbt1iWJ8x2PbEA
+	 t9XG+otBQ==
+X-HalOne-ID: b8ecdef9-72c2-11f0-bda4-e90f2b8e16ca
+Received: from localhost.localdomain (c188-150-224-8.bredband.tele2.se [188.150.224.8])
+	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id b8ecdef9-72c2-11f0-bda4-e90f2b8e16ca;
+	Wed, 06 Aug 2025 12:41:50 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v15 2/4] mm/slub: allow to set node and align in k[v]realloc
+Date: Wed,  6 Aug 2025 14:41:47 +0200
+Message-Id: <20250806124147.1724658-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
+References: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR06MB5579:EE_|TY0PR06MB5305:EE_
-X-MS-Office365-Filtering-Correlation-Id: 200dd8f9-6474-45d8-2153-08ddd4e69277
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xexaq5KUa/TRuydfbu+SdgBpcsXAKZzul40Oi6lJRSvIzTgjgzrZ8CoThHH3?=
- =?us-ascii?Q?MLTIHyVWk78AYE977SWSRVlOAfguJdNGYkLU18rW9Kjtx3jpUrwVxk6uI55S?=
- =?us-ascii?Q?r/t/LYLvECgwVzq9T1wkXufyTLMVHGBaSP9PfCnuqKxEoJCe0zJzeex0E1dv?=
- =?us-ascii?Q?1/YmWwBhz5Bq2xgqjF0cKCNmYPcTqDM3Vm4ZI6DML81jv0Gy+PbacaBaFlVW?=
- =?us-ascii?Q?XxjP3A4ftLsqYDFGTtkjsgbrIbZYb+96sIkj/JOv9mOhnpC0kj1jouBJz172?=
- =?us-ascii?Q?NxIG6QQij7sFmBur4spPoISQs7Zo6623WYOzbDjHsMMxquGnRGyipoHR5DEk?=
- =?us-ascii?Q?i5WtrmictMMOI8gNNH/qiI/ZYBFyVF8bRMKFfNF0yI671fzejvZ7w/bAfnpS?=
- =?us-ascii?Q?TcqT/7a5fK6DJiIVODNCaRRQd9epIOjbBTL1rd6Ilx2PbNsf87IA6xb3QbHf?=
- =?us-ascii?Q?1gKl7L+QeV2czJX/I3WLBSX/nW3pbwERjqPIdvfWdjRPdnj6IZ62WHYUBmjw?=
- =?us-ascii?Q?1yW7EyrqXDUhaYW7uqZ6KLnjHTHjOr46eVYfM4XcwEhkvGl2SdW/hQ19mpra?=
- =?us-ascii?Q?fHRJkjIkZmjE8tPmzF9debryXGIacVEWA0BAoAOaDTAmr7l8kOAK/jW4QX+o?=
- =?us-ascii?Q?v2Ge4G6dFIGvwIwUqXyw7gog+dBIElzZrStLMwXVcAgJpwtvhbBdYwTWTi3g?=
- =?us-ascii?Q?8YeXewzMa3T1rmTmcOwZnNJLE0yAXQT+AyzbIPoN9oA3q1XMFwxC8v/7Za9n?=
- =?us-ascii?Q?kpI29A3YovD97m3DzKpRZAp5r3b4sImaWoKOw65BLJ+594AOhpt6lGyE/8ek?=
- =?us-ascii?Q?c+ZC4VSA+KG/kLFh1jEoWyc2gBhLjVNXaluC0TX4ld5NGVax4MMgbkWh8FBe?=
- =?us-ascii?Q?UuyKu1VTxo1kJorAG7KbOxpiFHLYvfbPdTWtIf6ouoiaSKtt0YzOdb9mfzrc?=
- =?us-ascii?Q?ntWtWTmJcoW1v4C/HqtEm5Vq0ilYCesuGdBxQ9nDYFCcalOJWTXTa82WStu5?=
- =?us-ascii?Q?LFV4Wm9Zx188IUOyAb9N3Hp06SJqnzxzzTkNmHYbS/n+1ps7kuYkUvvcXniA?=
- =?us-ascii?Q?Hf+nSHzt1ddQGBa2WesCA/wucppHRUnV7LIzswNn58q4DxMJ8YwkbPYkP3Dn?=
- =?us-ascii?Q?nCPWksaR6Fm+2M1/KjQ3vX/X/7yXUvignvPOLo8Keu7v5qCEuUBj9k5iUNcZ?=
- =?us-ascii?Q?uwyaJnDjVwRffnYj2CGtdIivroZzv1S6Z5N0cKeI27Q5Cg1jVTBGTUZreXO3?=
- =?us-ascii?Q?8zZVbXB5d6IpES9OSwY99jyhP+g8f86ucBQRxbScLIqv12zVHcHFXsoR6Awv?=
- =?us-ascii?Q?REiNkO+zZ4jtiYQC9k5KmvY1Ae+5gmmUjPeoqyIl1FmgPLq/KHgjFjU/YBdS?=
- =?us-ascii?Q?0Wf0fyHIc1eI5+Ok435/GYVpwbmnI3q9Lf1ObUEOB0/2ocS5OsqdBFtj1wrq?=
- =?us-ascii?Q?FwEkmUyfKJSY1my1XRoEqjDn4lmAllNqyzmT8exHSoACg37ogVu3eYd5/5DD?=
- =?us-ascii?Q?c/mgukEa/f+qffs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR06MB5579.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eKjmz0hyfP54Azs0fjClhkaVcx2ZIIvECe/hyV0E2PEFSz4waWMESuth8FPZ?=
- =?us-ascii?Q?xTslrmvEefFbbdoAZMPv0FyeOzL/cXJZHMZgTmTjutfYiLHNBGDHFRZF+nIv?=
- =?us-ascii?Q?o+tY0Dti4gTztrmMghPqrX3KWTIVyax6kyRm8oDIUzJCa00j0xMKLI/NpMd4?=
- =?us-ascii?Q?cmWCMtXEA3mfkpO2M8LWbEnkz5KdA/2wuPSqp5Vl1b7vZZQ24rcnr1Y94wVG?=
- =?us-ascii?Q?wBXcme0rrxhGhmMHSPPa9GZqh/cSgeTRuwrha3Fd8hndwjO4JsWY/xVR03D4?=
- =?us-ascii?Q?ziUblOtNJQkP6ydO4CLdyXT/kywSWMwGIUmdU8M/aL2ZDBNLBBZCIzTKAl1L?=
- =?us-ascii?Q?asq+rl548OAdpCRZkxYd1t3qmvaxtghKqMpXnZhbY/BUcTb8kjbk72yDw4L2?=
- =?us-ascii?Q?X4yjIl9sZRdvzxxiyvvKTtAUzqjFK0T++5svzVXauSPJEdIvaIJ+SDOdIzaa?=
- =?us-ascii?Q?TKQ7KO8/fN6ljc1VNIPHMtcOlnDNyo66kScnbqHKzYn04zt/HGiWxWt+C600?=
- =?us-ascii?Q?15RBFy7tWLDN/d9kH/3PIQngKSqetmeQBF6sp96NmN7jCpCuvuSDLuzW1qdl?=
- =?us-ascii?Q?EDhlGgUCo4JsXHPPnxaB17bA/HAa+5WJAiDjotFxYV88TRIzS4cim34yQ2+3?=
- =?us-ascii?Q?mw0Qpe4M4+V63TyfcBCMshp1QPG+/OwKeuZuYsHlXLp3Mf/a4FRIM0p8dWk0?=
- =?us-ascii?Q?/2W6Xb7itLD4SyPxsTvr5LOLaKcOZ5s8ntn8egyd8G3KqFJJcNHAitZ8VETA?=
- =?us-ascii?Q?qNXm6ARGzOWxgZCuCGtdvNB/uwpRa8Ejx97jVRC3+fVs/jkbfOuW9Ewykez0?=
- =?us-ascii?Q?GQ9xv8CNKUPjo0FH7ZAVT6T+EoEoox2QZrv8HHOyFAK1Of1MALXHyvWmdpnS?=
- =?us-ascii?Q?iqRWf4Z5y/B2DRnEXqibXcDxVi9CksHcQBKN9/lKvB9dO3fukm8RKS19bMHp?=
- =?us-ascii?Q?KafTTGJbhT+7TUz4EKN/2rrwont2jOIaul/P4XAZswYcbTqICwss/XdU/AsI?=
- =?us-ascii?Q?UXBBAHpRMAZgHulDgR7ANWM9UElACJO5aVlipXX3239bSDcol4SPNz3BL+90?=
- =?us-ascii?Q?oUcM6TkOboAY6OWaAwtInIosCQAvtpkqK99o1xa1F+vOz0QDxrKJ6mlgH4Rc?=
- =?us-ascii?Q?Xuc+slIA2HPa2U4oIzgKKHuAx99IQSD57/kc+PA0r+QAKRCZOZJgXMnQ85bS?=
- =?us-ascii?Q?IgCXy9J2uTZv+eMIrubJpFNNbR15H++nvQw6goa9RezyeEW7bql3TxvTdYmO?=
- =?us-ascii?Q?ij9ykL1d4pLja067ILFxwKt0VjzJ6TGUcc8un3AUa2c/GVNesk4VACAHlNWX?=
- =?us-ascii?Q?4DF9tEDJ3bvjj1G9JQNuYJ0qD0cFeuHvHS6HxOybRZLaYF8pRQV4DxSE4Ybx?=
- =?us-ascii?Q?jkGngUtF/LHXHw4P28SrkuM/3X8ETnhoN0Bwb+7fwnVUJJiz+c2klSS7xQBm?=
- =?us-ascii?Q?s0d8udz/RGfRerfL433ov6nwY+7BjpVJG1yEUL9zWj1+8CcPgT+FDw0YGIMj?=
- =?us-ascii?Q?rk6YChXv3ZsbVQAGmLeDIXif7xm686hHNjRw+pcLeePs2WTLY4D9M0x5+MKz?=
- =?us-ascii?Q?Q4/rGW2WHcgfbgorLEaiLiq+LIRoZ63VyWGtl0Nr?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 200dd8f9-6474-45d8-2153-08ddd4e69277
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5579.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 12:41:32.3050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CewzuPwOlHRU1sUwPr0rWlwIYM3g2hr7gjdhder7khXx9Yy+nkWKVTYunK5HdBWqF0q9q8BfPklSJCyVZPjiJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5305
+Content-Transfer-Encoding: 8bit
 
-Replace the original swapping logic with swap() to improve readability and
-remove temporary variables
+Reimplement k[v]realloc_node() to be able to set node and
+alignment should a user need to do so. In order to do that while
+retaining the maximal backward compatibility, add
+k[v]realloc_node_align() functions and redefine the rest of API
+using these new ones.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+While doing that, we also keep the number of  _noprof variants to a
+minimum, which implies some changes to the existing users of older
+_noprof functions, that basically being bcachefs.
+
+With that change we also provide the ability for the Rust part of
+the kernel to set node and alignment in its K[v]xxx
+[re]allocations.
+
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/bcachefs/darray.c   |  2 +-
+ fs/bcachefs/util.h     |  2 +-
+ include/linux/bpfptr.h |  2 +-
+ include/linux/slab.h   | 39 +++++++++++++++++-----------
+ lib/rhashtable.c       |  4 +--
+ mm/slub.c              | 59 ++++++++++++++++++++++++++++++++----------
+ 6 files changed, 74 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-index 5f1b49a50049..4cfe64aa8492 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-@@ -473,7 +473,6 @@ static void sort_pipes_for_splitting(struct dc_plane_pipe_pool *pipes)
+diff --git a/fs/bcachefs/darray.c b/fs/bcachefs/darray.c
+index e86d36d23e9e..928e83a1ce42 100644
+--- a/fs/bcachefs/darray.c
++++ b/fs/bcachefs/darray.c
+@@ -21,7 +21,7 @@ int __bch2_darray_resize_noprof(darray_char *d, size_t element_size, size_t new_
+ 			return -ENOMEM;
+ 
+ 		void *data = likely(bytes < INT_MAX)
+-			? kvmalloc_noprof(bytes, gfp)
++			? kvmalloc_node_align_noprof(bytes, 1, gfp, NUMA_NO_NODE)
+ 			: vmalloc_noprof(bytes);
+ 		if (!data)
+ 			return -ENOMEM;
+diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+index 6488f098d140..7112fd40ee21 100644
+--- a/fs/bcachefs/util.h
++++ b/fs/bcachefs/util.h
+@@ -61,7 +61,7 @@ static inline void *bch2_kvmalloc_noprof(size_t n, gfp_t flags)
  {
- 	bool sorted, swapped;
- 	unsigned int cur_index;
--	unsigned int temp;
- 	int odm_slice_index;
+ 	void *p = unlikely(n >= INT_MAX)
+ 		? vmalloc_noprof(n)
+-		: kvmalloc_noprof(n, flags & ~__GFP_ZERO);
++		: kvmalloc_node_align_noprof(n, 1, flags & ~__GFP_ZERO, NUMA_NO_NODE);
+ 	if (p && (flags & __GFP_ZERO))
+ 		memset(p, 0, n);
+ 	return p;
+diff --git a/include/linux/bpfptr.h b/include/linux/bpfptr.h
+index 1af241525a17..f6e0795db484 100644
+--- a/include/linux/bpfptr.h
++++ b/include/linux/bpfptr.h
+@@ -67,7 +67,7 @@ static inline int copy_to_bpfptr_offset(bpfptr_t dst, size_t offset,
  
- 	for (odm_slice_index = 0; odm_slice_index < pipes->num_pipes_assigned_to_plane_for_odm_combine; odm_slice_index++) {
-@@ -489,9 +488,8 @@ static void sort_pipes_for_splitting(struct dc_plane_pipe_pool *pipes)
- 		swapped = false;
- 		while (!sorted) {
- 			if (pipes->pipes_assigned_to_plane[odm_slice_index][cur_index] > pipes->pipes_assigned_to_plane[odm_slice_index][cur_index + 1]) {
--				temp = pipes->pipes_assigned_to_plane[odm_slice_index][cur_index];
--				pipes->pipes_assigned_to_plane[odm_slice_index][cur_index] = pipes->pipes_assigned_to_plane[odm_slice_index][cur_index + 1];
--				pipes->pipes_assigned_to_plane[odm_slice_index][cur_index + 1] = temp;
-+				swap(pipes->pipes_assigned_to_plane[odm_slice_index][cur_index + 1],
-+					 pipes->pipes_assigned_to_plane[odm_slice_index][cur_index]);
+ static inline void *kvmemdup_bpfptr_noprof(bpfptr_t src, size_t len)
+ {
+-	void *p = kvmalloc_noprof(len, GFP_USER | __GFP_NOWARN);
++	void *p = kvmalloc_node_align_noprof(len, 1, GFP_USER | __GFP_NOWARN, NUMA_NO_NODE);
  
- 				swapped = true;
- 			}
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index d5a8ab98035c..6dc300bac2a1 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -465,9 +465,13 @@ int kmem_cache_shrink(struct kmem_cache *s);
+ /*
+  * Common kmalloc functions provided by all allocators
+  */
+-void * __must_check krealloc_noprof(const void *objp, size_t new_size,
+-				    gfp_t flags) __realloc_size(2);
+-#define krealloc(...)				alloc_hooks(krealloc_noprof(__VA_ARGS__))
++void * __must_check krealloc_node_align_noprof(const void *objp, size_t new_size,
++					       unsigned long align,
++					       gfp_t flags, int nid) __realloc_size(2);
++#define krealloc_noprof(_o, _s, _f)	krealloc_node_align_noprof(_o, _s, 1, _f, NUMA_NO_NODE)
++#define krealloc_node_align(...)	alloc_hooks(krealloc_node_align_noprof(__VA_ARGS__))
++#define krealloc_node(_o, _s, _f, _n)	krealloc_node_align(_o, _s, 1, _f, _n)
++#define krealloc(...)			krealloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ 
+ void kfree(const void *objp);
+ void kfree_sensitive(const void *objp);
+@@ -1041,18 +1045,20 @@ static inline __alloc_size(1) void *kzalloc_noprof(size_t size, gfp_t flags)
+ #define kzalloc(...)				alloc_hooks(kzalloc_noprof(__VA_ARGS__))
+ #define kzalloc_node(_size, _flags, _node)	kmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
+ 
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node) __alloc_size(1);
+-#define kvmalloc_node_noprof(size, flags, node)	\
+-	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, node)
+-#define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
+-
+-#define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_NODE)
+-#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _flags, NUMA_NO_NODE)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node) __alloc_size(1);
++#define kvmalloc_node_align_noprof(_size, _align, _flags, _node)	\
++	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, NULL), _align, _flags, _node)
++#define kvmalloc_node_align(...)		\
++	alloc_hooks(kvmalloc_node_align_noprof(__VA_ARGS__))
++#define kvmalloc_node(_s, _f, _n)		kvmalloc_node_align(_s, 1, _f, _n)
++#define kvmalloc(...)				kvmalloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ #define kvzalloc(_size, _flags)			kvmalloc(_size, (_flags)|__GFP_ZERO)
+ 
+ #define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
++
+ #define kmem_buckets_valloc(_b, _size, _flags)	\
+-	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
++	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), 1, _flags, NUMA_NO_NODE))
+ 
+ static inline __alloc_size(1, 2) void *
+ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+@@ -1062,7 +1068,7 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ 	if (unlikely(check_mul_overflow(n, size, &bytes)))
+ 		return NULL;
+ 
+-	return kvmalloc_node_noprof(bytes, flags, node);
++	return kvmalloc_node_align_noprof(bytes, 1, flags, node);
+ }
+ 
+ #define kvmalloc_array_noprof(...)		kvmalloc_array_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
+@@ -1073,9 +1079,12 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ #define kvcalloc_node(...)			alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
+ #define kvcalloc(...)				alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
+ 
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+-		__realloc_size(2);
+-#define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid) __realloc_size(2);
++#define kvrealloc_node_align(...)		\
++	alloc_hooks(kvrealloc_node_align_noprof(__VA_ARGS__))
++#define kvrealloc_node(_p, _s, _f, _n)		kvrealloc_node_align(_p, _s, 1, _f, _n)
++#define kvrealloc(...)				kvrealloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ 
+ extern void kvfree(const void *addr);
+ DEFINE_FREE(kvfree, void *, if (!IS_ERR_OR_NULL(_T)) kvfree(_T))
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 3e555d012ed6..fde0f0e556f8 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -184,8 +184,8 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+ 	static struct lock_class_key __key;
+ 
+ 	tbl = alloc_hooks_tag(ht->alloc_tag,
+-			kvmalloc_node_noprof(struct_size(tbl, buckets, nbuckets),
+-					     gfp|__GFP_ZERO, NUMA_NO_NODE));
++			kvmalloc_node_align_noprof(struct_size(tbl, buckets, nbuckets),
++					     1, gfp|__GFP_ZERO, NUMA_NO_NODE));
+ 
+ 	size = nbuckets;
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index c4b64821e680..d01441ea0522 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4845,7 +4845,7 @@ void kfree(const void *object)
+ EXPORT_SYMBOL(kfree);
+ 
+ static __always_inline __realloc_size(2) void *
+-__do_krealloc(const void *p, size_t new_size, gfp_t flags)
++__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 	size_t ks = 0;
+@@ -4859,6 +4859,16 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	if (!kasan_check_byte(p))
+ 		return NULL;
+ 
++	/*
++	 * If reallocation is not necessary (e. g. the new size is less
++	 * than the current allocated size), the current allocation will be
++	 * preserved unless __GFP_THISNODE is set. In the latter case a new
++	 * allocation on the requested node will be attempted.
++	 */
++	if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
++		     nid != page_to_nid(virt_to_page(p)))
++		goto alloc_new;
++
+ 	if (is_kfence_address(p)) {
+ 		ks = orig_size = kfence_ksize(p);
+ 	} else {
+@@ -4881,6 +4891,10 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	if (new_size > ks)
+ 		goto alloc_new;
+ 
++	/* If the old object doesn't satisfy the new alignment, allocate a new one */
++	if (!IS_ALIGNED((unsigned long)p, align))
++		goto alloc_new;
++
+ 	/* Zero out spare memory. */
+ 	if (want_init_on_alloc(flags)) {
+ 		kasan_disable_current();
+@@ -4903,7 +4917,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	return (void *)p;
+ 
+ alloc_new:
+-	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
++	ret = kmalloc_node_track_caller_noprof(new_size, flags, nid, _RET_IP_);
+ 	if (ret && p) {
+ 		/* Disable KASAN checks as the object's redzone is accessed. */
+ 		kasan_disable_current();
+@@ -4915,14 +4929,19 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ }
+ 
+ /**
+- * krealloc - reallocate memory. The contents will remain unchanged.
++ * krealloc_node_align - reallocate memory. The contents will remain unchanged.
+  * @p: object to reallocate memory for.
+  * @new_size: how many bytes of memory are required.
++ * @align: desired alignment.
+  * @flags: the type of memory to allocate.
++ * @nid: NUMA node or NUMA_NO_NODE
+  *
+  * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
+  * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+  *
++ * Only alignments up to those guaranteed by kmalloc() will be honored. Please see
++ * Documentation/core-api/memory-allocation.rst for more details.
++ *
+  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+  * initial memory allocation, every subsequent call to this API for the same
+  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
+@@ -4947,7 +4966,8 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
++void *krealloc_node_align_noprof(const void *p, size_t new_size, unsigned long align,
++				 gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 
+@@ -4956,13 +4976,13 @@ void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+ 		return ZERO_SIZE_PTR;
+ 	}
+ 
+-	ret = __do_krealloc(p, new_size, flags);
++	ret = __do_krealloc(p, new_size, align, flags, nid);
+ 	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(krealloc_noprof);
++EXPORT_SYMBOL(krealloc_node_align_noprof);
+ 
+ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+ {
+@@ -4993,9 +5013,13 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+  * @size: size of the request.
+  * @b: which set of kmalloc buckets to allocate from.
++ * @align: desired alignment.
+  * @flags: gfp mask for the allocation - must be compatible (superset) with GFP_KERNEL.
+  * @node: numa node to allocate from
+  *
++ * Only alignments up to those guaranteed by kmalloc() will be honored. Please see
++ * Documentation/core-api/memory-allocation.rst for more details.
++ *
+  * Uses kmalloc to get the memory but if the allocation fails then falls back
+  * to the vmalloc allocator. Use kvfree for freeing the memory.
+  *
+@@ -5005,7 +5029,8 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  *
+  * Return: pointer to the allocated memory of %NULL in case of failure
+  */
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node)
+ {
+ 	void *ret;
+ 
+@@ -5035,7 +5060,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
+ 	 * about the resulting pointer, and cannot play
+ 	 * protection games.
+ 	 */
+-	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
++	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
+ 			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+ 			node, __builtin_return_address(0));
+ }
+@@ -5079,14 +5104,19 @@ void kvfree_sensitive(const void *addr, size_t len)
+ EXPORT_SYMBOL(kvfree_sensitive);
+ 
+ /**
+- * kvrealloc - reallocate memory; contents remain unchanged
++ * kvrealloc_node_align - reallocate memory; contents remain unchanged
+  * @p: object to reallocate memory for
+  * @size: the size to reallocate
++ * @align: desired alignment
+  * @flags: the flags for the page level allocator
++ * @nid: NUMA node id
+  *
+  * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
+  * and @p is not a %NULL pointer, the object pointed to is freed.
+  *
++ * Only alignments up to those guaranteed by kmalloc() will be honored. Please see
++ * Documentation/core-api/memory-allocation.rst for more details.
++ *
+  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+  * initial memory allocation, every subsequent call to this API for the same
+  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
+@@ -5100,17 +5130,18 @@ EXPORT_SYMBOL(kvfree_sensitive);
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid)
+ {
+ 	void *n;
+ 
+ 	if (is_vmalloc_addr(p))
+-		return vrealloc_noprof(p, size, flags);
++		return vrealloc_node_align_noprof(p, size, align, flags, nid);
+ 
+-	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
++	n = krealloc_node_align_noprof(p, size, align, kmalloc_gfp_adjust(flags, size), nid);
+ 	if (!n) {
+ 		/* We failed to krealloc(), fall back to kvmalloc(). */
+-		n = kvmalloc_noprof(size, flags);
++		n = kvmalloc_node_align_noprof(size, align, flags, nid);
+ 		if (!n)
+ 			return NULL;
+ 
+@@ -5126,7 +5157,7 @@ void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 
+ 	return n;
+ }
+-EXPORT_SYMBOL(kvrealloc_noprof);
++EXPORT_SYMBOL(kvrealloc_node_align_noprof);
+ 
+ struct detached_freelist {
+ 	struct slab *slab;
 -- 
-2.34.1
+2.39.2
 
 
