@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-758154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F3FB1CBB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:08:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1939BB1CBB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5E73B9689
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F4F97A1B5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E471FF5EC;
-	Wed,  6 Aug 2025 18:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F2A1F9F51;
+	Wed,  6 Aug 2025 18:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDSyCmDu"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NhQjEvVt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB91FF1B5
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9981D47B4
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754503702; cv=none; b=DZIuPkB0AGf/GDdEXzs4ll1w8SZv4VrZvOeZZAaqXkuSEFs0CVge8dja+SZO3rUoz28Jv//TNJmARm5k4UfPWksixr56FkF0XZkd/O3idarF6P0XDVN0UHQYfquCQQW+RTTBBuWA+U6f99w4MHSGhaiiW41e/pKHk/BJJsabJVg=
+	t=1754503780; cv=none; b=h2GcADsGb3YwS7E+lb0T6MZCDbHu5sn5KsGH8tgoOjyKteNnfrs4wvLxp7f8JtculoKD2usQZku9llrvWjuLGVJMVMDhGaj/iOYzWE0xuNf/51OAqe3K7r5aVPpkPRYAX/Q7TRnlIuto/1vRsSKa1I0Xp2rKqd+8EmqAJNlpPlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754503702; c=relaxed/simple;
-	bh=kc9keBH0hvOHfAXjDx3bZTlAEhj8hxPUYfFUTHJ+WOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uBqbxQYmpfcBGE0dOvdT/lVZCQ49oh6VSjp3B3puL3MkvWN6giAnOIYVZqCoNr2xGpeVWFZzdQruaRnhJuckw0taqEZn5aR0CHd4UrKcbpMarTNPBYXCk8XbPfI4GpFY3iMUbZyfMkHHaz7LMqGvXfYLJA66y0hFvVQZLAh3CGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nDSyCmDu; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8ffb1c5f3cso163797276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754503700; x=1755108500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zeiw/igg3VRkIFQpTb1DWvr2tgsyqZV4hPeCuzYTAzA=;
-        b=nDSyCmDujpVKfvvXxzQ2fa+N9sXdlrTXqtYX8hVwMR26kYaTYEYuxLWVVVjQMZXCXc
-         qRFDfGmQ0YDFRy5CXjU5Y0LCxke8k368+L3sQK7u2cJJ6MiZ4yrj4vud3HLt16mIfkVQ
-         +nr+BmdhlxFZbuSm2r6MrwPGUAP7EQ95km3Of2TU5THSuGyN2YaR2Ye4Sx1GC7IexSCR
-         1Lx9FnBBgwZ8sJ2Vk5ZiR6xoTb/k09spwpK2AkPJ+0XxaOqmeXQnMBJZI20IN9y7ykLe
-         asqM8XioOla0/7J7AT9uRMCQdltmVAJttI+WkbPohG2YEnWh0R4iDNl0Bw/Wjid14gnn
-         iFag==
+	s=arc-20240116; t=1754503780; c=relaxed/simple;
+	bh=XW4fJQKhpVWtLLRbURa2n6uS1OoOotVI/AulaQSKDw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiKRFakgqTgcIwTLK3pZydfO8HQje42tKMokDNJ75O6PPZXZ4VaNdmeF1nOs+4I8Us6oRzg5H0Et9vxm+b+7EnkpjedfdbdnHvevDSmKQWbp+DihrjBt1tI9zuX1fXxvT+2FzTDgHyghiG6yLqjfDEwENZzPLjOzwkEiIvv33vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NhQjEvVt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754503778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lp/xzAZFz2QzCUmaidxOhS/oOucGpdCu8iObUTLz2sI=;
+	b=NhQjEvVtUDelv1HZkaP5yzM2xlBgW8hgsI+9tJW8jzEuMyy5gIEA8W4B9gw2jNKq6CsOjz
+	6ejNkYPGkUudJC5VDDZTeo3DcqvxrlZ0oHvBpAf2q7//W22bXCAkoFmKyWMtPOWS3oid0R
+	wX5nin7lh5/quWWjLpBsDP9v1h3gDPY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-384-z01_Ie7uOFu0lPEMcgdx5Q-1; Wed, 06 Aug 2025 14:09:36 -0400
+X-MC-Unique: z01_Ie7uOFu0lPEMcgdx5Q-1
+X-Mimecast-MFC-AGG-ID: z01_Ie7uOFu0lPEMcgdx5Q_1754503776
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e7fc5f1e45so28480785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:09:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754503700; x=1755108500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zeiw/igg3VRkIFQpTb1DWvr2tgsyqZV4hPeCuzYTAzA=;
-        b=JOBYvAlvjLWMDJzOKUurbu4Fd/ltftyTXlo9jVIDWYosm06QZlcVvctUWZv3YnfGb9
-         p0XSycmgA1yVdrG7qLMUbRGi2J0EciMrUvu23KBLn25kZ9Uag8wT8vy95o8xqSo49ePk
-         ofSmWQ5KQoZWq9GQYtgRaBytuWe3prNqMdcJV7HbjH3StYl57gaN4mdnT7/ZTp/fbU9N
-         v+Lyuo81k7MRa/m4kLQ8IzgHjDmlbgygNxfUyJUaqzakOC7MBVKdRjEUsPERFGPJl7wJ
-         KKR1/sv5uTyVHxPeZYkVxSw2fDPGh4WOOoxzDMc1f+JTvUwBkqKgZtmk+P0hbW7xP9u2
-         CM1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXPXDcbXLgkLCNYVIS10Xni/k05GuwTCbQwES1zh2Z+RgdqLqZo2BelN9EYYNa/n+uG/tv9D9XwmaCxxgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrIbUE0SaSQw4UcSZBp+VjPG9EMotnI8p6l/nHLIK+ZdNsfPjT
-	+vlfPEbIull4QTOaq6T1ALBBajvdzU7WurW3FkZ/BuKksXix23ZWFSwdzP15JWwuHlNIELHTxq5
-	s+ySAiIxIJmBuqIEZoScPUvIMhd5JXYE1cxAFeUeB3Q==
-X-Gm-Gg: ASbGnct64Q4jIfHgNaM+HV2CRjSB3FSLIQvpWXHzPD2ZkFr3UYst8h+MukW6PBfCS1m
-	LKc0zDD2aT3Rnr8exrHi4YMSC4RIan6zmYQtUml4vZwzTMO6A0upVT7zzSpTY1wSIqCZfWQFTWI
-	yEFG7sFFUWrGEVX9AgALY258enNGgy2GFb4y/GCDmasMoU2tYy+nOFEICNs1LFXRmTZTQ4Tw0XI
-	P320Q==
-X-Google-Smtp-Source: AGHT+IFljVcbKKiD4Y8odlIXjBBnYAePfAKr/sOc5LqjcBRdGaAhcUOQ5sCog6SPAwBGoi0fdvXwkpzJhgdnQl3q8ms=
-X-Received: by 2002:a05:6902:4310:b0:e85:ea52:8b with SMTP id
- 3f1490d57ef6-e902abde969mr3799149276.22.1754503699782; Wed, 06 Aug 2025
- 11:08:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754503776; x=1755108576;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lp/xzAZFz2QzCUmaidxOhS/oOucGpdCu8iObUTLz2sI=;
+        b=k91EhdDvyK6k0qA0hD7kakVKpmJmZbS340d2Eyu+YbqcEod2yW4eLpWThOtFHkiTiV
+         zEI2rlo1ZZKiD8k1Udz8qR7VasfFFB+OF3rxBeNMnvHgIZf8XRkeuGTib20gQrkftEzs
+         QAGZA69bJVOfkMWicbV0v0Zg1VW3YRKGOK3Se97lh5hyI9wzT5yCCaH/J24LawtQVIES
+         j26nXVSq63avLTElWZyOhC55E4prI35llJgLBYGLDBVTE3U9SJOrbE2tQM9SeMmki+hb
+         XiWvGFNyjMfQNgyTs6B76LfNRfJ+MvLUyjdj/VQYu9dB6e3iWmkNEm9xnIw0TCKuSy+9
+         bOQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsMz1h5GwnqoMkTHtxBE1cNeHjA/hkU0YVrcu055hJtNSHNhC2pFrl41tQx7V0J68dfP4zPUaIVJaJW1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0FpiC5ZMyWgZzFTWWpITuofDuoBC5DUmO6+NIYeGE+mO6oCSm
+	3FK5iRor4Nz+pibRCSKViPjbRPedSy7pOH/x2tULvAi//R6/AlepsBMlHZlXZESxyQrkSDzH6Cl
+	eqX7iqIhERfm5EMUxv0wk4gBdReaIJdsyW/3enmAKsWmSeahEJEwFb/zqGxZgEV6NGA==
+X-Gm-Gg: ASbGncukD0Li6x7HM7K1d1glm/Ku6LGtpvaPTNIw9qoNrXhyzPYiAPnEa/1bBXgYOcd
+	BL11upuC0FeM3dfzjrKxm1kddWW+wvT7TUpFxZtSzrhOVkpCtPhXj790q0X3GvkA3BDWXMwCQTT
+	8rxb7jcGqfTJp4D4q/6VLbt7kY0TEviWUR6fdTw8VY200FSo915AAabny6tmMkMToNf21kiG0fs
+	5LUABvn7KWDZpVujDWRlyzL26gV0aE5kphiRsMtGsy6zRwTAosD/SbIXIprAtfhFg0xFmLQCyst
+	YtkN5t5GxSAuDyZPX3pc5pAywEm/AbYzfg7oPbIZa5UoJ6kBdIdHi/2kXaAYAwj7RQEH4M6JiiZ
+	o4A95Y6fBbXwl8SzeEJfyqA==
+X-Received: by 2002:a37:f506:0:b0:7e6:4fc9:6457 with SMTP id af79cd13be357-7e820b11efdmr25046785a.54.1754503776317;
+        Wed, 06 Aug 2025 11:09:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZUienyzEiTH73cCxQzcvtLeEUdg0Wbv5ywibHSA1otSIptcZDf2H9J5vbyp5qib/Hnxqflw==
+X-Received: by 2002:a37:f506:0:b0:7e6:4fc9:6457 with SMTP id af79cd13be357-7e820b11efdmr25042985a.54.1754503775800;
+        Wed, 06 Aug 2025 11:09:35 -0700 (PDT)
+Received: from x1.local (bras-base-aurron9134w-grc-11-174-89-135-171.dsl.bell.ca. [174.89.135.171])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e81542b0d3sm145980085a.21.2025.08.06.11.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 11:09:35 -0700 (PDT)
+Date: Wed, 6 Aug 2025 14:09:32 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, aarcange@redhat.com,
+	lokeshgidra@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] userfaultfd: fix a crash in UFFDIO_MOVE with some
+ non-present PMDs
+Message-ID: <aJOaXPhFry_LTlfI@x1.local>
+References: <20250806154015.769024-1-surenb@google.com>
+ <aJOJI-YZ0TTxEzV9@x1.local>
+ <CAJuCfpGGGJfnvzzdhOEwsXRWPm1nJoPcm2FcrYnkcJtc9W96gA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250806070030epcas2p3f2b0c36b6c492629e50e76be469b2db3@epcas2p3.samsung.com>
- <20250806065514.3688485-1-sw617.shin@samsung.com> <20250806065514.3688485-5-sw617.shin@samsung.com>
-In-Reply-To: <20250806065514.3688485-5-sw617.shin@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 6 Aug 2025 13:08:08 -0500
-X-Gm-Features: Ac12FXwS1WG6f5yuQagZd9mQDHAbqfGJ1tb9fpDSgy50MD5AWOvIXyjEOgbaPAg
-Message-ID: <CAPLW+4m2S5jAJ4xas_r69AUHFENOrr=4-ZYUgtrqQ5aJgetDng@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_CNT
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpGGGJfnvzzdhOEwsXRWPm1nJoPcm2FcrYnkcJtc9W96gA@mail.gmail.com>
 
-On Wed, Aug 6, 2025 at 2:00=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.co=
-m> wrote:
->
-> Enable QUIRK_HAS_32BIT_CNT to ExynosAutov920 SoC which has 32-bit WTCNT.
->
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> ---
+On Wed, Aug 06, 2025 at 10:09:30AM -0700, Suren Baghdasaryan wrote:
+> On Wed, Aug 6, 2025 at 9:56 AM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Wed, Aug 06, 2025 at 08:40:15AM -0700, Suren Baghdasaryan wrote:
+> > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+> >
+> > The migration entry can appear with/without ALLOW_SRC_HOLES, right?  Maybe
+> > drop this line?
+> 
+> Yes, you are right. I'll update.
+> 
+> >
+> > If we need another repost, the subject can further be tailored to mention
+> > migration entry too rather than non-present.  IMHO that's clearer on
+> > explaining the issue this patch is fixing (e.g. a valid transhuge THP can
+> > also have present bit cleared).
+> >
+> > > encounters a non-present PMD (migration entry), it proceeds with folio
+> > > access even though the folio is not present. Add the missing check and
+> >
+> > IMHO "... even though folio is not present" is pretty vague.  Maybe
+> > "... even though it's a swap entry"?  Fundamentally it's because of the
+> > different layouts of normal THP v.s. a swap entry, hence pmd_folio() should
+> > not be used on top of swap entries.
+> 
+> Well, technically a migration entry is a non_swap_entry(), so calling
+> migration entries "swap entries" is confusing to me. Any better
+> wording we can use or do you think that's ok?
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+The more general definition of "swap entry" should follow what swp_entry_t
+is defined, where, for example, is_migration_entry() itself takes
+swp_entry_t as input.  So it should be fine, but I agree it's indeed
+confusing.
 
->  drivers/watchdog/s3c2410_wdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 673ab6768688..541870b4d01a 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -357,7 +357,7 @@ static const struct s3c2410_wdt_variant drv_data_exyn=
-osautov920_cl0 =3D {
->         .cnt_en_bit =3D 8,
->         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
->                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> -                 QUIRK_HAS_DBGACK_BIT,
-> +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->
->  static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 =3D =
-{
-> @@ -370,7 +370,7 @@ static const struct s3c2410_wdt_variant drv_data_exyn=
-osautov920_cl1 =3D {
->         .cnt_en_bit =3D 8,
->         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
->                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> -                 QUIRK_HAS_DBGACK_BIT,
-> +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->
->  static const struct of_device_id s3c2410_wdt_match[] =3D {
-> --
-> 2.25.1
->
+If we want to make it clearer, IMHO we could rename non_swap_entry()
+instead to is_swapfile_entry() / is_real_swap_entry() / ... but that can be
+discussed separately.  Here, if we want to make it super accurate, we could
+also use "swp_entry_t" instead of "swap entry", that'll be 100% accurate.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
