@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-758059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89BFB1CA71
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1603B1CA73
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9DC1736BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9914216A94C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3929E0F2;
-	Wed,  6 Aug 2025 17:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B1C2BCF5D;
+	Wed,  6 Aug 2025 17:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGo5p72z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua+YVdet"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E241B29DB8B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5563D29E10A;
+	Wed,  6 Aug 2025 17:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500526; cv=none; b=h3Mc+8nHqLJ1f+TctEkBgmao39pWDF5GCcig7T23QQzxe+ZZIDTfSQBa07RVKFsDVrKFaATRxShj2F0ooAkLQvhL5vSqpDOWKAVTFamshdeBM/UX9pDq4v+K7LfB41On8/Z/8nScu4e0uejdvIcz7BUysUpeXHZqtNWV40Q9mfk=
+	t=1754500527; cv=none; b=Qb7Da/u17aWzvofreyMbQY78+jq+XyDI+VUOgp0MqVUd2T6VIrJ2MgiHuoC3d0pXgkp8LrWhjvr+oVff5hdBGWpe9SMN0d+On7Taz54yakLWYkhafFEVhigVbFC2oCApq9xsYYV4XGQEx+rC/N2fXhntWGdB8Ghh+IjPybiIkkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500526; c=relaxed/simple;
-	bh=9gHLl9tgdN6m1xyHwJYn8Gcm+hsXzo1alXOLXcT0Rmc=;
+	s=arc-20240116; t=1754500527; c=relaxed/simple;
+	bh=4O0lpFS2A9Ol5YCPqBXxI2WeTeZTQ0FHJZhde9pVFxY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=o0ij9I/RT2tLyd5fTvHZ5EElBtzuFA9VpKMw2wLhS5ft0JlQFYDltmguD2zVRn5Q53yYUBD6t4qQkI4AsPi1UeS3lJUm/S857ig3xVfR2MtfSeEcZ64lvo+YagfX51o6IU/hLUavPS29Gb0bmBfY46iioQmugYR0yCheqfZiFl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGo5p72z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63EBBC4CEF7;
-	Wed,  6 Aug 2025 17:15:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ZGmpVGmpgNct0bqYKhxGvvIG+/tAw1YdMxbmWUYtcnJs1CTZAT9GJSdD1OOEm12k3qa20kqO8acEZdJaha2kbkfDZoRPPlAONhOX++Szg+lcmpeO8HSm0f/ViLTlYZikuaVRozjw9bNY5NKjpcleUhbH0WXIwsmtKwsNabYRoqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua+YVdet; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6EEC4CEF7;
+	Wed,  6 Aug 2025 17:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754500525;
-	bh=9gHLl9tgdN6m1xyHwJYn8Gcm+hsXzo1alXOLXcT0Rmc=;
+	s=k20201202; t=1754500526;
+	bh=4O0lpFS2A9Ol5YCPqBXxI2WeTeZTQ0FHJZhde9pVFxY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uGo5p72z/YSNwZ1I6UbTVcz27GhocJbrNBWOLq4Q/oXPYdFdGMaJPh9zdmagyrPcj
-	 N6CmkPqP3I2MZA7GgMPF8S4OHbWMvuQYgpnIqZ517XA6nWpyacgW111JLoI00BaQxm
-	 55j57tW4ccBXx9IiifkbRVf2/74FGgvvheKWQ0G6pWk49X4v+IXeNe7PWIdICv9JVZ
-	 KBJyNkxFSz7xrKfV+0Q4NNf6fThrnnyTNeOPxClUtZbEcDAv+E0HzMnkguwGoheZXE
-	 uuMMUGGf1UnQkry94v/jE2f1+4/i5qpJ+tSWJ3P9TGssXz8QNYIOejMyBcwbo0UIv8
-	 R+8m1sljJFHtA==
+	b=Ua+YVdetR6avGAde1rm4P69RtWpZrn3naIzqZLCt7YA4lFX3NtNGCM860Wb8Nuybh
+	 O2zmBGVlXQjcfqy4Jr8bn7oK0FCRC4oUjLQHFaGY21TpdrBNZKE2eExTRIp4iOt4uW
+	 ImA1sS5tqs/GByK9CyiXaaB1wwi0wMaXUrjIQ/et8yvJgdGcFSk2pzzfuy3g3pUQu0
+	 iB16CLr60MtF1xWHRhGIJjNS8O0x/7un/8iEaZ850e4ZBuvOuyszhlcKppX6mnvjAR
+	 6jUpi5NFr2QSVMAO44hI8sQR+yCyg5VJ2uYjNBRFw6OxmMjeFxmvws3WVX3+RoX9Wh
+	 ONbYZvSauIbfQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F97383BF63;
-	Wed,  6 Aug 2025 17:15:40 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD6E383BF63;
+	Wed,  6 Aug 2025 17:15:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] riscv: mm: Use mmu-type from FDT as SATP mode limit
+Subject: Re: [PATCH v2 0/2] Few timer and AIA fixes for KVM RISC-V
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175450053927.2863135.18156029900049802152.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Aug 2025 17:15:39 +0000
-References: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech>
-In-Reply-To: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- linux-kernel@vger.kernel.org
+ <175450054049.2863135.4614852920454002653.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Aug 2025 17:15:40 +0000
+References: <20250707035345.17494-1-apatel@ventanamicro.com>
+In-Reply-To: <20250707035345.17494-1-apatel@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, atish.patra@linux.dev,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, alex@ghiti.fr,
+ ajones@ventanamicro.com, anup@brainfault.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
-by Alexandre Ghiti <alexghiti@rivosinc.com>:
+by Anup Patel <anup@brainfault.org>:
 
-On Tue, 22 Jul 2025 00:53:09 +0800 you wrote:
-> This patch series improves RISC-V kernel compatibility and robustness by
-> refining how the SATP mode is determined during early boot. Some RISC-V
-> implementations, such as the Anlogic DR1V90 FPSoC with a UX900 RISC-V
-> core designed by Nuclei, which I am currently attempting to run the
-> mainline kernel on [1], may hang when attempting to write an unsupported
-> SATP mode.
+On Mon,  7 Jul 2025 09:23:42 +0530 you wrote:
+> The RISC-V Privileged specificaiton says the following: "WFI is also
+> required to resume execution for locally enabled interrupts pending
+> at any privilege level, regardless of the global interrupt enable at
+> each privilege level."
+> 
+> Based on the above, if there is pending VS-timer interrupt when the
+> host (aka HS-mode) executes WFI then such a WFI will simply become NOP
+> and not do anything. This result in QEMU RISC-V consuming a lot of CPU
+> time on the x86 machine where it is running. The PATCH1 solves this
+> issue by adding appropriate cleanup in KVM RISC-V timer virtualization.
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/2] riscv: mm: Return intended SATP mode for noXlvl options
-    https://git.kernel.org/riscv/c/75ede0a8e07b
-  - [2/2] riscv: mm: Use mmu-type from FDT to limit SATP mode
-    https://git.kernel.org/riscv/c/a870d4f78f11
+  - [v2,1/2] RISC-V: KVM: Disable vstimecmp before exiting to user-space
+    https://git.kernel.org/riscv/c/57f576e860d3
+  - [v2,2/2] RISC-V: KVM: Move HGEI[E|P] CSR access to IMSIC virtualization
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
