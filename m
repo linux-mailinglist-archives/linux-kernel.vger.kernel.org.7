@@ -1,94 +1,225 @@
-Return-Path: <linux-kernel+bounces-757363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB328B1C143
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62B6B1C145
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497166260A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F86A3B96F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1BD21A428;
-	Wed,  6 Aug 2025 07:25:04 +0000 (UTC)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0C521A94F;
+	Wed,  6 Aug 2025 07:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DSu5/tJk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F134720468E;
-	Wed,  6 Aug 2025 07:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3112020468E;
+	Wed,  6 Aug 2025 07:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754465103; cv=none; b=BLSLHB2Yu0D3Zsvp5opfLsQNoMSCEmk7q0SE0xpm2ydiscIkOLasAQ4gI+InuIGazkuUaDAC8Ho4XfidH81fYAmkjFzewAmbXL2zfarypmX3bUiGMncV9u2SW68DrJ64h1sJpqUTA4IEgKkkARS1igHZoZQK8UJqms+6TBGDWwg=
+	t=1754465114; cv=none; b=srfYePOPXDfSwj4tYY5VmtRKImqjFN/gaZxy1hA/7Rt3oRdwBtZr4MoA9uEH94CmcchusGiMgiEBv6gnbeFikl08CVHA4S1nXa0jtneJonOYo/xOxrZEPlEnA/R1vpgjhkpkXuXZv4NlfoEVZWsUJWJ29e0dH+2zkKk3Hc4U3pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754465103; c=relaxed/simple;
-	bh=vAyQjzdKloag6yEo57pIpIcddwUakldw+0v9sT0viuU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pjvs9RWi9jLMDNy7UG3nMzCvJGbeUTg4l8tKqzb8hGVHgXYHwBanSBcHr2tOvM6NMcnqBLh5Qzn06Qt1/ph15h1XArRfyE90k1Ko4SqjpRRp1ZedFcTEKtd4irBiazlBQvbG1Wgwgu2wn7ZGVX1V6IcGVhZKfw8j2DBEzSBKfkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b783d851e6so5450879f8f.0;
-        Wed, 06 Aug 2025 00:25:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754465100; x=1755069900;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vAyQjzdKloag6yEo57pIpIcddwUakldw+0v9sT0viuU=;
-        b=dEGd+/PpTvjtqSXKqzbgb99snw8/iAosb/OMig+6WR9fkYh8kI5q2OkIq0v2PilGM1
-         dsULqbtZu80M4pNfYStcoFk8py45rqPpS1Xs80UTKBNoKX7LP2PKhkA4csQbFWduOOYP
-         ASicDvK6METF4RIlPU+XdzMkVufy34qIS2ss/xrVKo8u9CVn1+VXR6D66LJW2+XmPzDV
-         1hbIJp7DkSd1BFOYNgAaOPIzedEcShHrk9iB2EhOm3YOR++hRCnJem2zcE2rSTnESEKf
-         h/prQJnzOrvoCX3j96Trut9hAxLbdBNYRCJ3IG/0uYF0ldh7DDO84CpP/20MZ8dSW6dX
-         4ueQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3XLDQWCAumDvTjGVdOqMzwZNpp4yQ1DPAYta7jMiJUMZXwugYgnlVLpGXQdz8nqCJ0izcmY4D@vger.kernel.org, AJvYcCXLMMcfJLxJAQgd0lljpWC8wGJpfggfmBWmFRdvaunO39ZUo98OudREqxNvhcFzlUOE64JWyY3wUrI1sC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzayNF6pH/kMnnoRLuL9kYJgId6lzhdABZCCyoL7M5hhOJLnWlP
-	o1Pq4Exd5fnLx4ZjpAGHZp1Rzlw7XXOI2LB+kDH0XB4Rqv9RWM6GQb4A
-X-Gm-Gg: ASbGncvr5SRdZTQ1umcpKgmyyXY6gBYeOd26Rm2gfXFtXQdAfpS9/rhgmCDl+EB5nfZ
-	B6OUVa5K8JbnQppZPuZM6R5i9pvPiCIwdJlOt8eGefnKJDwIRB7byQ0n1Ge5V6iJLGOekScY1tF
-	KPHvhTcgrQcuXOqq/FMGJyeSsGArzvqg5tGMCgA2LsRhBJkXaLyCBKB0a2zW1tamo7elvSOW7Ka
-	BO4hIpjcVDd6D52Xxbgb9T/kwJ+VPZT35c0Qj33+RQRi3VdagKoXqPSygsJXt4C8fQfFJkG0VcS
-	oXdUWFndBXRH8v9ARnW7fxrRDNYuwtvijMUkIadZ6XCu92zsfwoEGCJSDGbfLi7CJfsQxt9aCZ/
-	XqIAQ+994JQw+u5Z/RfFSpTJ3n0nbfZ6YspPSI52DyZNI
-X-Google-Smtp-Source: AGHT+IGR8ny0IPp42f3jE50MGwGkyEI6LYFeLbcDfeA5cPuxu0SLfdY4qVa4wH4utZ38yPEyQhDFlw==
-X-Received: by 2002:a05:6000:2305:b0:3b7:7936:e7fb with SMTP id ffacd0b85a97d-3b8f49162f6mr915780f8f.30.1754465099959;
-        Wed, 06 Aug 2025 00:24:59 -0700 (PDT)
-Received: from [10.148.80.226] ([195.228.69.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9160sm21998702f8f.21.2025.08.06.00.24.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 00:24:58 -0700 (PDT)
-Message-ID: <2fb8917d59b22dd78fe1ff216157eea7128e5990.camel@fejes.dev>
-Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
-From: Ferenc Fejes <ferenc@fejes.dev>
-To: Xin Zhao <jackzxcui1989@163.com>, willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, 	horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 06 Aug 2025 09:24:57 +0200
-In-Reply-To: <20250806055210.1530081-1-jackzxcui1989@163.com>
-References: <20250806055210.1530081-1-jackzxcui1989@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1754465114; c=relaxed/simple;
+	bh=FReDocDPYCnAv9Lw8bKXkH6S2UNEamnQtGsEnUKJ3D8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJNnVHKfZxXYdfIb10PFBDuyfZZ78XOv8FY1WidYTbXpcmbxU4OMdyyq+beuGj/Igxd4jvBXyc1hcBiAUspTxVfUYpPQrlIF4kMqXv+TPGJ50aZy4i4fE9zpX2ZILQEkEAxFj4de21FnP/SHF4BkA8EB4AZVntMACwWyHqdfFAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DSu5/tJk; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754465113; x=1786001113;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FReDocDPYCnAv9Lw8bKXkH6S2UNEamnQtGsEnUKJ3D8=;
+  b=DSu5/tJkvGkuKyHBpi02xOcp5yTfcFKvWdaXpZx7kEFl34QJLDRs9F3T
+   oLoPdn5SaKE+tr1xCnfyNhptTLaNsAnHChHi1xqcwnlIa/N88SNzs3rgm
+   yVws5OIWRPhw91PfX255bUr+OnpDFeEthNmlpvvgmZ9NjHZnWfDnYo6ID
+   12jcoR6DoYPC3vz2WGFnyx6+qpX3mktTOCyjuABmX2L7HLK4+DTu8y7tj
+   5sTEkHtztv4sKAiDjh/EoHOsUbfgPjISIWDkOn1wWaP7UmWAM9j6L8Gy3
+   O2/NLiGHh+E0SGkMrcqHAtkBE3s7zkWfFvzCqggNrJJ/QpUI96Zasrgkx
+   Q==;
+X-CSE-ConnectionGUID: aGR/q+pcT3CxQgZOb4iCLg==
+X-CSE-MsgGUID: sfZFEDW9S+6vZtHu45qy7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56910088"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56910088"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 00:25:13 -0700
+X-CSE-ConnectionGUID: gTev9yaiSRWFyf7RjThVZg==
+X-CSE-MsgGUID: BvyXXFSgTiik9NjtJaUQjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="195667189"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 00:25:11 -0700
+Message-ID: <06607e2f-f785-4d62-9bdd-9874aa665341@linux.intel.com>
+Date: Wed, 6 Aug 2025 15:25:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/18] KVM: x86/pmu: Add wrappers for counting emulated
+ instructions/branches
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li
+ <xin@zytor.com>, Sandipan Das <sandipan.das@amd.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
+ <20250805190526.1453366-11-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250805190526.1453366-11-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-08-06 at 13:52 +0800, Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Add hrtimer mode to help
-> compensate for the shortcomings in real-time performance.
 
-Do you have performance numbers? It would be nice to see the test environme=
-nt,
-measurements carried out and some latency/jitter numbers.
+On 8/6/2025 3:05 AM, Sean Christopherson wrote:
+> Add wrappers for triggering instruction retired and branch retired PMU
+> events in anticipation of reworking the internal mechanisms to track
+> which PMCs need to be evaluated, e.g. to avoid having to walk and check
+> every PMC.
+>
+> Opportunistically bury "struct kvm_pmu_emulated_event_selectors" in pmu.c.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/pmu.c        | 22 ++++++++++++++++++----
+>  arch/x86/kvm/pmu.h        |  9 ++-------
+>  arch/x86/kvm/vmx/nested.c |  2 +-
+>  arch/x86/kvm/x86.c        |  6 +++---
+>  4 files changed, 24 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> index eb17d90916ea..e1911b366c43 100644
+> --- a/arch/x86/kvm/pmu.c
+> +++ b/arch/x86/kvm/pmu.c
+> @@ -29,8 +29,11 @@
+>  struct x86_pmu_capability __read_mostly kvm_pmu_cap;
+>  EXPORT_SYMBOL_GPL(kvm_pmu_cap);
+>  
+> -struct kvm_pmu_emulated_event_selectors __read_mostly kvm_pmu_eventsel;
+> -EXPORT_SYMBOL_GPL(kvm_pmu_eventsel);
+> +struct kvm_pmu_emulated_event_selectors {
+> +	u64 INSTRUCTIONS_RETIRED;
+> +	u64 BRANCH_INSTRUCTIONS_RETIRED;
+> +};
+> +static struct kvm_pmu_emulated_event_selectors __read_mostly kvm_pmu_eventsel;
+>  
+>  /* Precise Distribution of Instructions Retired (PDIR) */
+>  static const struct x86_cpu_id vmx_pebs_pdir_cpu[] = {
+> @@ -907,7 +910,7 @@ static inline bool cpl_is_matched(struct kvm_pmc *pmc)
+>  							 select_user;
+>  }
+>  
+> -void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+> +static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+>  {
+>  	DECLARE_BITMAP(bitmap, X86_PMC_IDX_MAX);
+>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+> @@ -944,7 +947,18 @@ void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+>  		kvm_pmu_incr_counter(pmc);
+>  	}
+>  }
+> -EXPORT_SYMBOL_GPL(kvm_pmu_trigger_event);
+> +
+> +void kvm_pmu_instruction_retired(struct kvm_vcpu *vcpu)
+> +{
+> +	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.INSTRUCTIONS_RETIRED);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_pmu_instruction_retired);
+> +
+> +void kvm_pmu_branch_retired(struct kvm_vcpu *vcpu)
+> +{
+> +	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.BRANCH_INSTRUCTIONS_RETIRED);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_pmu_branch_retired);
+>  
+>  static bool is_masked_filter_valid(const struct kvm_x86_pmu_event_filter *filter)
+>  {
+> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
+> index 13477066eb40..740af816af37 100644
+> --- a/arch/x86/kvm/pmu.h
+> +++ b/arch/x86/kvm/pmu.h
+> @@ -23,11 +23,6 @@
+>  
+>  #define KVM_FIXED_PMC_BASE_IDX INTEL_PMC_IDX_FIXED
+>  
+> -struct kvm_pmu_emulated_event_selectors {
+> -	u64 INSTRUCTIONS_RETIRED;
+> -	u64 BRANCH_INSTRUCTIONS_RETIRED;
+> -};
+> -
+>  struct kvm_pmu_ops {
+>  	struct kvm_pmc *(*rdpmc_ecx_to_pmc)(struct kvm_vcpu *vcpu,
+>  		unsigned int idx, u64 *mask);
+> @@ -178,7 +173,6 @@ static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
+>  }
+>  
+>  extern struct x86_pmu_capability kvm_pmu_cap;
+> -extern struct kvm_pmu_emulated_event_selectors kvm_pmu_eventsel;
+>  
+>  void kvm_init_pmu_capability(const struct kvm_pmu_ops *pmu_ops);
+>  
+> @@ -227,7 +221,8 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu);
+>  void kvm_pmu_cleanup(struct kvm_vcpu *vcpu);
+>  void kvm_pmu_destroy(struct kvm_vcpu *vcpu);
+>  int kvm_vm_ioctl_set_pmu_event_filter(struct kvm *kvm, void __user *argp);
+> -void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel);
+> +void kvm_pmu_instruction_retired(struct kvm_vcpu *vcpu);
+> +void kvm_pmu_branch_retired(struct kvm_vcpu *vcpu);
+>  
+>  bool is_vmware_backdoor_pmc(u32 pmc_idx);
+>  
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index b8ea1969113d..db2fd4eedc90 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -3690,7 +3690,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+>  		return 1;
+>  	}
+>  
+> -	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.BRANCH_INSTRUCTIONS_RETIRED);
+> +	kvm_pmu_branch_retired(vcpu);
+>  
+>  	if (CC(evmptrld_status == EVMPTRLD_VMFAIL))
+>  		return nested_vmx_failInvalid(vcpu);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a4441f036929..f2b2eaaec6f8 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -8824,7 +8824,7 @@ int kvm_skip_emulated_instruction(struct kvm_vcpu *vcpu)
+>  	if (unlikely(!r))
+>  		return 0;
+>  
+> -	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.INSTRUCTIONS_RETIRED);
+> +	kvm_pmu_instruction_retired(vcpu);
+>  
+>  	/*
+>  	 * rflags is the old, "raw" value of the flags.  The new value has
+> @@ -9158,9 +9158,9 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  		 */
+>  		if (!ctxt->have_exception ||
+>  		    exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
+> -			kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.INSTRUCTIONS_RETIRED);
+> +			kvm_pmu_instruction_retired(vcpu);
+>  			if (ctxt->is_branch)
+> -				kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.BRANCH_INSTRUCTIONS_RETIRED);
+> +				kvm_pmu_branch_retired(vcpu);
+>  			kvm_rip_write(vcpu, ctxt->eip);
+>  			if (r && (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
+>  				r = kvm_vcpu_do_singlestep(vcpu);
 
-Thanks,
-Ferenc
+LGTM. Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
+
 
