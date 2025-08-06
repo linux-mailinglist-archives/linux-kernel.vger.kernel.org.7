@@ -1,193 +1,96 @@
-Return-Path: <linux-kernel+bounces-757468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D663B1C280
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EEEB1C282
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B709E17C9FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B392189FDC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F7C288C9F;
-	Wed,  6 Aug 2025 08:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A033A289340;
+	Wed,  6 Aug 2025 08:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UdzySc30"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013015.outbound.protection.outlook.com [52.101.83.15])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kuKMWxgl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vwj/fp/7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C061FCFFC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754470399; cv=fail; b=RpZrIB8av81eKooPcxh4g8AzxO3+Q2y7oK2kxcUKEoCi1FmWyxEPdI9xtjxJWUOmYJ7HF4F/n+KuFK/tIv+l+AmDVigIuQfQO158ODgkOovggoNK7F7XJJBH0Leyza1dTN1XiT4mvctYvKwfD2e8kVK3uVVQhlDHxIy/aEvzdKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754470399; c=relaxed/simple;
-	bh=SmxIIScHIdzuT2lqXpOeWF+22tacQ4YSqNJXtdNO3ac=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GdrUDHbMpbr6Sa9kQoCMkBGt730cUFyhXXotaC5QYDHXhdDpNoLTu0ZvhCwTYrm7q/UGYhc9kYBLXYO4IplPhb4pXApdnQO0LhdiMvmCDkmMX7W6RfQxqpxAVrTtD4Y/xdOZGgVZUKnpet5Jg/Zfx9bY2JYEircHUOYEaa/4M4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UdzySc30; arc=fail smtp.client-ip=52.101.83.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jrqJtnjuukO6lI+zqpApISS9y2fw17vkvlMd34tn9WGbe+OHFLfN13kterS7zn2QjJbl1/jxvW8FARQ7YPbLDHpKArLtRLUY2vmAkszabRlGUgbf+Y15DUXVWB+kAV4ng0Ad3onl4tNeutMMey7Ho/WacKoYRYYi+pByCkOu+agg43Z3ok/7n133YwQPkg0YpZaqWdw3iWCEX9z0OcYV+/KIJ/JuF1goEytoLtvSdg1p13Yoaz4/OU/n11cBZKTtiigLzCI5dzHgJTnnc+9EthIFJa9Ma3jusghpSOiTgZ9faFwS6+E+Ft6T71qEd9s5eKiPWm6ntiFhyeKxKCsc5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3ixxZg4D0guRbMBDqxYZcF0Onif7QOjVE+hdZYTX/mI=;
- b=JHQLQgcKunMyGd4fMYSQYnK+vEEdwTHH25ewngkPbpf0uqkZMYsIE18HxvPvxwTYj2YPQEwQRScHWZFCZ75eKHydxPdyjEtffCL0v5iwpM+ZsBRE3JJ+Gg/YtFGqDvd/SPTcVLV9ExZbOLbhAMkM9BxAwP1z2/E7JoEuvdobWhQKIMQ89bsrt/DmVF27aQ4J3lrNrqYlJmiaCsd6GO1R4V6SNuV5CCmQmqc2kKu47VKJtg8n7GV9Hk6JRO/Dm1Zr1FzAMqqyoJpXr5PDLdJb5ivH8UIogordaoBz90Y2X++EhWj20MfkxHBkwtKhGNdTGypsUkRm3pRYjKdgDAgVxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ixxZg4D0guRbMBDqxYZcF0Onif7QOjVE+hdZYTX/mI=;
- b=UdzySc30i/4dG1NGZGQxwL18+y+8u7V6epyeqYTpwckwVohAZBVnldMXqybodo0+l2pnwv9eh5LCcoDf2UVxEcM0eYLIITJ6RNgCZ3T3EWyRRnzsUs5W+8iATt8Hb0gPFPAfdCZLP8AQr7ncZFrhZozksswxfwDsmzpE7DhxgLDo39u8SIG5mjPaX+4EHZrQmnk+ZomFepLOa5nphVQdRBQWHR5ctqgIykxXbarpzj+SrR/k4DS1pD0H2atvDYlBoYjUhZpRbDMVUATlPsOklKTnSk/9ktyf0FLUIaiI1rzCAFlNn9uEUNsLsb77hkmY6bsw+MFnIcSotoNmPM7RAg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DBBPR04MB7945.eurprd04.prod.outlook.com (2603:10a6:10:1f3::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
- 2025 08:53:14 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 08:53:14 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	damon.ding@rock-chips.com,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com
-Subject: [PATCH] drm/bridge: analogix_dp: Fix bailout for devm_drm_bridge_alloc()
-Date: Wed,  6 Aug 2025 16:54:24 +0800
-Message-Id: <20250806085424.518274-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0024.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::13) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1B288CAE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754470504; cv=none; b=OU8N2kC8YZuS+oFUvTFYk+gITVVIyqwuI3wIBPxs/0pO2meCN98n0EqsBkQ9wYzArLD9V+i/2iZvgqJfr4YhhCjjFMcnMj/lc/XqR38/GBBT5THKqz9yxc4PTXpUMoQhpa2Te+Qv7CINak0KNw+HybjZFQEOp0a6naJMXoQzfng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754470504; c=relaxed/simple;
+	bh=gVwPR3snMG5z9Mmx0I5Mldi9kbEf5Rnud0QzDzODnLc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f/KoHjQcEzS6HgI0ctX+3uAH3xct+Lu0mAymu62mfh3R+Y3phyRMqvjXAXt8y8ZklS1RPDBpHw/8EFnBjeSCscVxq+TcXC1Gg4puwGI8BuE+q+T5QcH7WbW//sbldYI+9nsRqkXEikqVpXOj8Q/Suil+br3I9RRx5F0JPp2gj+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kuKMWxgl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vwj/fp/7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754470500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2x/EJ2urZ6IAqF2Ig0DqZ3Dwxv6ZyE8NU8q2OJUYXuc=;
+	b=kuKMWxglA0AS0jiiHS86UK/G6JTdOoVNTBJgFdgY/iNh3Xxf8qPEAAvxi0Ofzql7VuZXnK
+	mDrs/i5dx0k6MAGgqyL4Jocu3KX+k/IXomayTh0w0paXgrXCi+Ph6zEm/113t0O1E+5mXJ
+	nd7lcwipNPUyXe8uqNrrJOmV/FeVDWWd0X7BkETs55qf5jBerKYKmPcyqRMvI6eKklOaQD
+	spY8Ld0+dL8U3N+EWwXITHgAx0F0FVc+VWO3hxS57bOdY3oh8L6tJDrGXTq3axq2kz7gQy
+	WiJDe/XZCr/nAl+LgkReOwJlLZZaXZcAKXdgEI7J4vEneiwZNUVhUpqz114tVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754470500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2x/EJ2urZ6IAqF2Ig0DqZ3Dwxv6ZyE8NU8q2OJUYXuc=;
+	b=vwj/fp/7gXXwh/41SxCFPtaXtDf7hRz08od3HmRmC7/+b7SAO4Kx2TxGWXCWPNBnhbj7PP
+	R5VjX5WCDDIH8lCA==
+To: Wake Liu <wakel@google.com>, Andy Lutomirski <luto@kernel.org>, Vincenzo
+ Frascino <vincenzo.frascino@arm.com>
+Cc: linux-kernel@vger.kernel.org, wakel@google.com
+Subject: Re: [PATCH] vdso: Define NSEC_PER_SEC as 64-bit to prevent overflow
+In-Reply-To: <20250805162153.952693-1-wakel@google.com>
+References: <20250805162153.952693-1-wakel@google.com>
+Date: Wed, 06 Aug 2025 10:55:00 +0200
+Message-ID: <87ikj0esnv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DBBPR04MB7945:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2a3cc7b-584a-4ae8-90af-08ddd4c6ad8d
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?ToNxabzccJoXtIAE1A7B2xSuQEn4gKQ2zFW6adu27B5c7izwEJbEq2MTDZu9?=
- =?us-ascii?Q?aKSMcGP5kK4G8XOG8uaK7fJP5rv2B2y2NrMPgxLRGTmi/jx4olrXLMmiHC0o?=
- =?us-ascii?Q?W+TDwvA78HJm9dWgGr0Pc8xPLb6Hc+NQcJhBN0FR0lUS3kdk3Phfeur5aSUH?=
- =?us-ascii?Q?YO+H4IcYtePqn779qI5ef1MnQL/hIIis9JZ4O/CMPkdjG5jsPIue2henKAqp?=
- =?us-ascii?Q?+FQZqns6qn/wp7KeLxKlQoRmcg4wREGzcYt7w1p2cRhiBW2sEbyjNU/Ydx2T?=
- =?us-ascii?Q?KPkglFfdUOMDI2ffIneDPg3AEekeUs1npn6h79t95aOZelH/rRWjxSneVj3l?=
- =?us-ascii?Q?SsR2uetWKRLO1bUMkCajR70jITu3RM/G4oVqVk94g2XFGE9dAvNiKGoyUUc3?=
- =?us-ascii?Q?IvC/gtqjkSsG3/ZVF6go7Z2hg5AyaDJgkRgb54EOgZFK8bqCAbI85LBBdMEW?=
- =?us-ascii?Q?R6cgW0+tvtrbFGlZp6FP/5GisUB+bUTu72to22UTSM6qgF2WqytuKc1l691L?=
- =?us-ascii?Q?M4tRYssn9HB/pcSHyrp66lL7ZhQdQNUgI+NbypZubRDQn1Z6u+XPZoR6ICCY?=
- =?us-ascii?Q?nrMEGpKPleAk7crmTRnQ8gQHHEp9Z0JRtomv3WcEixkuTJ0aURtH2DHXYlG2?=
- =?us-ascii?Q?KB4TS6gS5dl3YNic6GIpFYfpR1eHrQFmBUxkrbfPEL1VXRUtG6KR2C75htpO?=
- =?us-ascii?Q?JgafG0g3eAMO0wJFFia5QRNVWRdAXfLWsjmipWlXqnj2O3ElADrCJwng7rEz?=
- =?us-ascii?Q?PmvnfWuYi7NIL37wYoO++fe/w7meQlyX65BvRFpxovVhqW41lytRoAnlDWiF?=
- =?us-ascii?Q?tk1VD1NCvvN3eKuMABYWOyaGKPCn/3Yd5QADFBKLtsl+yB3MtxAV+2j35qCu?=
- =?us-ascii?Q?SjKYGJkEzD9J5Dy6uKtJToeWGirHp+SscuaNaCYj04+cKLsS0skiomPfI0Ls?=
- =?us-ascii?Q?MhyB9n4PDoMMyBszzp6z8wBRkMFkO07MO5Y7bpkJzEFp4Z65YRyjmxfALK85?=
- =?us-ascii?Q?M2dxf8+Xl3wrG37L62fxZ86EbFMHmRjDoLyA8Zaz+IRnZIlYcZ+d5CKOY41d?=
- =?us-ascii?Q?ysjutfeGYXOsT3jZmcLhmd8VsCkHkGcPeWYwUOUYiooUKUFIHn3JuL/xvksW?=
- =?us-ascii?Q?mCx8AK3suFxMO3ID7rXdrJNMD3wYxydJmKgmajMkp1u6Sbxb1E4zKU4HQLST?=
- =?us-ascii?Q?sa1e6w2uE3IlQSWWtIFdvu4njjOuyQIYxepMXgE/PdBNwNOH6Y/PJYGGY5B0?=
- =?us-ascii?Q?7yvMiCWNvFxaGxX9bR1VOyL5pduLesnpmyqzJsB+Ccr/9Hqx67wSZ+MB6ShW?=
- =?us-ascii?Q?tNAkzNQxc4oH+ybV0M6D/Aqt9/ff3snzhpDbS++GjlfC5ga8LAmbZLEqbZ7u?=
- =?us-ascii?Q?Q9FhXCHzGMryEyPcvSHl6oFEVkOUhA++tsvhzxf3y05i4/8dg7bkyTfD/cWB?=
- =?us-ascii?Q?Ni+RkRZhkiwXJEQKEZ+93kNx9S3eBiiD7/8+ODcTsxNiNk4tD4tqgA=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?mVmtvfWYC9Qate+tevyEFtttH8rLS5rclQkFpff/XYbreQ+ksUeSU9BUfjgr?=
- =?us-ascii?Q?5bLcvpt4RDJlw4kvtHPyas9px54jTws879kyzGHFBGKyRoZGAWlUId3izqwp?=
- =?us-ascii?Q?Nsk21UbObmjdEpHKnvw+yI4yMV1mZUlSbWj3d6T6gkqKjlXcY6OtcRSOEl/G?=
- =?us-ascii?Q?SN9Qi5OqEZedIfUdvRdVw1iTH6dhJeu+C7oqj8spkpn/qtR+cRzCVntbTh8q?=
- =?us-ascii?Q?kzHgiilHAg1LVFVh5LGKZ4oilyleVN6qNj98U7s790v+JyPUXuZV9BUyx4kA?=
- =?us-ascii?Q?QUL8UTjeemQCXf0hgGiWQcMFPs8BsD62bXWfK9QMQoQ0CFIrsjolv1Ec/qtR?=
- =?us-ascii?Q?R7g3oeR9xFqsAgXhsO1drp1Ldgpi7EL4FUUsqAh2uPH50k4os4JU7FAhx7xZ?=
- =?us-ascii?Q?RrO2BmP6hF2YwqYBeIrj6eU0vQwnPl6wpo77ZBHYFUsBmaUOqp8gfJ+NU1eG?=
- =?us-ascii?Q?TQwapvDkCT6Kqc6BjQsTdOzFPxoF4tJQ9X4HeePm49MtlJBlHcrx7IXQyvGK?=
- =?us-ascii?Q?ENYmwby85LHletVyv93jA1Kd/SghBjz5DsMD1HRA6YbeU9mkbqZvthiW3XC5?=
- =?us-ascii?Q?vOxZIDz1KtMuqKTymJwX9gEshrb44Re8ANVOiieCtNyJ+C65xN5BcjHFyYsH?=
- =?us-ascii?Q?zoH14c4x2c4a8Tb+0NSeP0wjvZMjXwXSH6q0bn4J0oT72K3kE37mqKh2KICP?=
- =?us-ascii?Q?BPJ1c9OCLRDPdP+IA01gcXeQ1b/ITU7x0NxvVP9+qSLImg2j+6H+Xwt2cs49?=
- =?us-ascii?Q?XRqv5Jxl3J45mm8djhYI77KMZAEFQRFyrMlDc24kl/70Stg33glD+HRto6cx?=
- =?us-ascii?Q?4vF68HNi+0DgcRyvWNI3apsjG9Fyuslm5+HNdYbXfumDEu9my1K214mf6mAq?=
- =?us-ascii?Q?jodcQF2HdKlApl0hNOrxrLJIzVxNhEqjCQSqxotEFiwkGN+VZpeUvaOB9iNV?=
- =?us-ascii?Q?61juxV9aqHrqBFXddkQRHDj0iN70QtO/V1WXV3KdgUN7thaWXlxruW1rcdl/?=
- =?us-ascii?Q?H2xRVJnCY3d/7TyIC6RpOn6Z+p0r20oxFmyhE2FJSqaUijc9Bkqikd2A97sK?=
- =?us-ascii?Q?WxvJqgurYWa4mBwqKLSwJRKDS+DHT+1xc8Wyf9IagganVXaT8XaZxYqr0bKl?=
- =?us-ascii?Q?NibbMhQa54iP5rsj7NnLBLG0Ieq6sAtLwGas4ibJesDmWj+N5C2bW1THlOYa?=
- =?us-ascii?Q?aqIwqOblYomsyllDHFs3u59VMGgLl6putFBlDUHf81AZrK69p3IJfdelgL/0?=
- =?us-ascii?Q?cfALBPPDot3G3xxNBf8J/N2PJrTzQAZYYWZQ2JVNbe57PoVi6h5cIU0cTdij?=
- =?us-ascii?Q?VnnG8TExIzpxKT6UfQcftdE0V5WJ7AsiJyTeUW6PpKolHXFLBKms0kT+PfGU?=
- =?us-ascii?Q?T3RpwN6jDA+kys755s7OTUL4TPWxXZToJSEzLdXPC/CLdzAD8sXZFdi9U4uq?=
- =?us-ascii?Q?FqviBAJojmCA+dt+9Ki2dfAPQGYFhBjYZFaVcl9numJ019GxYrGMPKJW7DSs?=
- =?us-ascii?Q?CqHKAqR8KUwBFqgF9sX5R9fEYLtFQw6K2dKO5WJj7uyoRUDYi6g73uLSjyRV?=
- =?us-ascii?Q?prCypK624lbo1/182jXa3iZ3NCOxEcsJXuPjDv/k?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2a3cc7b-584a-4ae8-90af-08ddd4c6ad8d
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 08:53:14.0326
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vB58qJUvdm31LGvXV/+M1WwBQ+kuLO3VxEqkOZQ+5HSC7caPWaeI4hwT4ZXYrpRrXsQDLa68DkN6unq1w36q2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7945
+Content-Type: text/plain
 
-devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
-NULL pointer, so use IS_ERR() to check the returned pointer.
+On Wed, Aug 06 2025 at 00:21, Wake Liu wrote:
+> The constant NSEC_PER_SEC (1,000,000,000) is defined as a long literal.
+> On 32-bit systems like arm32, where long is 32 bits, this value can
+> overflow when used in 64-bit calculations.
 
-Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How so? Where is the overflow exactly?
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index ed35e567d117..86cf898a09bb 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1474,7 +1474,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 
- 	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
- 				   &analogix_dp_bridge_funcs);
--	if (!dp)
-+	if (IS_ERR(dp))
- 		return ERR_PTR(-ENOMEM);
- 
- 	dp->dev = &pdev->dev;
--- 
-2.34.1
+The only usage of NSEC_PER_SEC in the VDSO is:
+
+# git grep NSEC_PER_SEC lib/vdso/
+lib/vdso/gettimeofday.c:        ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+
+and __iter_div_u64_rem() is an inline:
+
+static __always_inline u32
+__iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
+
+So how exactly is this causing an overflow?
+
+Also by your description this would be a problem throughout the kernel.
+
+Thanks,
+
+        tglx
+
 
 
