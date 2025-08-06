@@ -1,271 +1,153 @@
-Return-Path: <linux-kernel+bounces-757637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7286B1C493
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F50B1C494
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59765607A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E229F18C13D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E456F28AAFC;
-	Wed,  6 Aug 2025 10:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0528AB11;
+	Wed,  6 Aug 2025 10:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q95c3k26"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fk+8h164"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2927928AAE6
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7413023C8AE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754477891; cv=none; b=Wp7Qc9hbQ5ih2+BC/dDkRwvWsXKxpPBIWRr1Uczs0z0C3eQEU5NecSIl842tFif7UhBioa0XEPSQ5ifj0fCr6vbnzNsigtFbAhOPmVwFz6oM5wFAfTf3b9hAgVyqp4l9ULO75Y/ZS+3Iybfr+fM1/HXsFiuuBzkAgSZNbB1TbzM=
+	t=1754477899; cv=none; b=itGkMbDjMQn1lEyOTxBUsq1OB4mmGN/L3qUzdPEXV9JvOgL84qtUA7DoebRvT0OiMO3SH9lUpg6bpC9fXQ+W/qt1Og5t3ivMO4p/T3OUBw5KD2QFjWidtQ7rYznFR8iJUamYynZJmb+gYBMNyqlIfSmsKmWOa/upqLmJ8O5nd6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754477891; c=relaxed/simple;
-	bh=z8GYCyAVv8Y4wWeN8izDuoifjHdbxLP+rh9guv80GFA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H0zqwP3YgNvwq4Q5fhc5JYj9dQv1foW3h43aJkqoXsmAcfOtDqRhai2Kr7ZzAzaR8yRSokx6L28I7cYArI2E8k1sDjg9ixgAec+47V2LQn2j1iCSjRFsPCyYrM6eNTjpq89XomYDhLZN80y+HArjcEN1a2RKMFzRR2/Gr+DBiqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q95c3k26; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c8c870e25c07aee5c84c84aa62cebd655ff53f50.camel@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754477876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vNROiky5WQWNyX8i1Lin0xM/vtQO7Q82V16OYUAfCxM=;
-	b=q95c3k26iia3cRM0I4Dnd1gzmoM0yr3JevffrUOq3zzpvwP3oUQCTV7e/0YGWFwH/5Udom
-	+h7mr6nGUUItZ6F5kVhkdrShJgExBu/VjapfObHQ5+E0ydcoLxWFtQiahF4kEJjCCB+Tfn
-	f4OIxcQSb1WL/Ar4A9hy/a31I1RDwww=
-Subject: Re: [PATCH bpf-next 1/1] bpf: Allow fall back to interpreter for
- programs with stack size <= 512
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: KaFai Wan <kafai.wan@linux.dev>
-To: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org, 
- daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org, 
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- kpsingh@kernel.org,  sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mrpre@163.com,  bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>
-Date: Wed, 06 Aug 2025 18:57:43 +0800
-In-Reply-To: <401418b7-248c-42a3-ba74-9b2b2959e36c@linux.dev>
-References: <20250805115513.4018532-1-kafai.wan@linux.dev>
-	 <401418b7-248c-42a3-ba74-9b2b2959e36c@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1754477899; c=relaxed/simple;
+	bh=9vV6D9rZRafX6ErINmAAiDv16ZiuY96suxd9anC9tBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayT8h4RIgWd0V/R5iT4XVOEQyEd29DtNH/ZBdTUwdiabVz77hwgx6ACIL82+LgSVyKd0BVrwzw1mNjRaFadEgyhhWsCUqV5aisz+sTufxt5ztgM+nvv03TUedWRFSuZ1sHl9H97FCS4ERSYUYkSEme8VAZbKt/XEiz0EOfSK4gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fk+8h164; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F20C4CEE7;
+	Wed,  6 Aug 2025 10:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754477898;
+	bh=9vV6D9rZRafX6ErINmAAiDv16ZiuY96suxd9anC9tBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fk+8h164x2QfKL8pa/aGXhnMZKIXXQ4Lb9ckBtxZNIqewwf9BEdIC4CLImZlBTqWl
+	 XuIxFHV4Q6jBI+7MqUL3SmY42VUCcF2b9NxuiOVuygrM/qcVfdVbxv+f9qf3qXASo+
+	 kZO7voTduRFa+6rfVotePbUG6lzOS5DFD+gg1M8OCTXdvkU+J23t9sunL0i6mBS+Hj
+	 U+L11I0/CMWAdwFN/vLSceqIXuTjt0ZiWL+ptJwuftj0FZs3/fvSLm8UeQA9vdTzaf
+	 7v8jldJ4g/5jwrqgzhbowcTn/F5ucIoQZ5u1JxL2c6aLsj7U4P1eDjIzLeWUArCrQM
+	 r5OADw0rWBXmg==
+Date: Wed, 6 Aug 2025 13:58:12 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: mawupeng <mawupeng1@huawei.com>
+Cc: ardb@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
+Message-ID: <aJM1RFjpQxQzfASv@kernel.org>
+References: <20250717085723.1875462-1-mawupeng1@huawei.com>
+ <aHjQp9zPVPuPyP3B@kernel.org>
+ <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
+ <aHj8mfecDhJJZW1Y@kernel.org>
+ <8d604308-36d3-4b55-8ddb-b33f8b586c1a@huawei.com>
+ <aHzjOxg_oPp06blC@kernel.org>
+ <CAMj1kXGKGXeKGKWT3VzkBtACtjFyz8ntiyoTU26DA4aR6mi88g@mail.gmail.com>
+ <aH9JMT93itrztZ+m@kernel.org>
+ <113b914f-1597-41ca-b714-7ea048c3c6df@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <113b914f-1597-41ca-b714-7ea048c3c6df@huawei.com>
 
-On Tue, 2025-08-05 at 10:45 -0700, Yonghong Song wrote:
->=20
->=20
-> On 8/5/25 4:55 AM, KaFai Wan wrote:
-> > OpenWRT users reported regression on ARMv6 devices after updating
-> > to latest
-> > HEAD, where tcpdump filter:
-> >=20
-> > tcpdump -i mon1 \
-> > "not wlan addr3 3c37121a2b3c and not wlan addr2 184ecbca2a3a \
-> > and not wlan addr2 14130b4d3f47 and not wlan addr2 f0f61cf440b7 \
-> > and not wlan addr3 a84b4dedf471 and not wlan addr3 d022be17e1d7 \
-> > and not wlan addr3 5c497967208b and not wlan addr2 706655784d5b"
-> >=20
-> > fails with warning: "Kernel filter failed: No error information"
-> > when using config:
-> > =C2=A0 # CONFIG_BPF_JIT_ALWAYS_ON is not set
-> > =C2=A0 CONFIG_BPF_JIT_DEFAULT_ON=3Dy
-> >=20
-> > The issue arises because commits:
-> > 1. "bpf: Fix array bounds error with may_goto" changed default
-> > runtime to
-> > =C2=A0=C2=A0=C2=A0 __bpf_prog_ret0_warn when jit_requested =3D 1
-> > 2. "bpf: Avoid __bpf_prog_ret0_warn when jit fails" returns error
-> > when
-> > =C2=A0=C2=A0=C2=A0 jit_requested =3D 1 but jit fails
-> >=20
-> > This change restores interpreter fallback capability for BPF
-> > programs with
-> > stack size <=3D 512 bytes when jit fails.
-> >=20
-> > Reported-by: Felix Fietkau <nbd@nbd.name>
-> > Closes:
-> > https://lore.kernel.org/bpf/2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.na=
-me/
-> > Fixes: 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
-> > Fixes: 86bc9c742426 ("bpf: Avoid __bpf_prog_ret0_warn when jit
-> > fails")
-> > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > ---
-> > =C2=A0 kernel/bpf/core.c | 12 +++++++-----
-> > =C2=A0 1 file changed, 7 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> > index 5d1650af899d..2d86bd4b0b97 100644
-> > --- a/kernel/bpf/core.c
-> > +++ b/kernel/bpf/core.c
-> > @@ -2366,8 +2366,8 @@ static unsigned int
-> > __bpf_prog_ret0_warn(const void *ctx,
-> > =C2=A0=C2=A0					 const struct bpf_insn
-> > *insn)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	/* If this handler ever gets executed, then
-> > BPF_JIT_ALWAYS_ON
-> > -	 * is not working properly, or interpreter is being used
-> > when
-> > -	 * prog->jit_requested is not 0, so warn about it!
-> > +	 * or may_goto may cause stack size > 512 is not working
-> > properly,
-> > +	 * so warn about it!
-> > =C2=A0=C2=A0	 */
-> > =C2=A0=C2=A0	WARN_ON_ONCE(1);
-> > =C2=A0=C2=A0	return 0;
-> > @@ -2478,10 +2478,10 @@ static void bpf_prog_select_func(struct
-> > bpf_prog *fp)
-> > =C2=A0=C2=A0	 * But for non-JITed programs, we don't need bpf_func, so
-> > no bounds
-> > =C2=A0=C2=A0	 * check needed.
-> > =C2=A0=C2=A0	 */
-> > -	if (!fp->jit_requested &&
-> > -	=C2=A0=C2=A0=C2=A0 !WARN_ON_ONCE(idx >=3D ARRAY_SIZE(interpreters))) =
-{
-> > +	if (idx < ARRAY_SIZE(interpreters)) {
-> > =C2=A0=C2=A0		fp->bpf_func =3D interpreters[idx];
-> > =C2=A0=C2=A0	} else {
-> > +		WARN_ON_ONCE(!fp->jit_requested);
-> > =C2=A0=C2=A0		fp->bpf_func =3D __bpf_prog_ret0_warn;
-> > =C2=A0=C2=A0	}
->=20
-> Your logic here is to do interpreter even if fp->jit_requested is
-> true.
-> This is different from the current implementation.
->=20
-> Also see below code:
->=20
-> static unsigned int __bpf_prog_ret0_warn(const void *ctx,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 const struct bpf_insn
-> *insn)
-> {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* If this handler ever =
-gets executed, then
-> BPF_JIT_ALWAYS_ON
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is not working p=
-roperly, or interpreter is being used
-> when
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * prog->jit_reques=
-ted is not 0, so warn about it!
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE(1);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> }
->=20
->=20
-> It mentions to warn if the interpreter is being used when
-> prog->jit_requested is not 0.
->=20
-> So if prog->jit_requested is not 0, it is expected not to use
-> interpreter.
->=20
+On Tue, Aug 05, 2025 at 04:47:31PM +0800, mawupeng wrote:
+> 
+> On 2025/7/22 16:17, Mike Rapoport wrote:
+> > Hi Ard,
+> > 
+> > On Mon, Jul 21, 2025 at 03:08:48PM +1000, Ard Biesheuvel wrote:
+> >> On Sun, 20 Jul 2025 at 22:38, Mike Rapoport <rppt@kernel.org> wrote:
+> >>>
+> >> ...
+> >>>
+> >>>> w/o this patch
+> >>>> [root@localhost ~]# lsmem --output-all
+> >>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+> >>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   67584-67839    0 Movable
+> >>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   68096-68607    0 Movable
+> >>>>
+> >>>> w/ this patch
+> >>>> [root@localhost ~]# lsmem --output-all
+> >>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+> >>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   8448-8479    0  Normal
+> >>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   8512-8575    0 Movable
+> >>>
+> >>> As I see the problem, you have a problematic firmware that fails to report
+> >>> memory as mirrored because it reserved for firmware own use. This causes
+> >>> for non-mirrored memory to appear before mirrored memory. And this breaks
+> >>> an assumption in find_zone_movable_pfns_for_nodes() that mirrored memory
+> >>> always has lower addresses than non-mirrored memory and you end up wiht
+> >>> having all the memory in movable zone.
+> >>>
+> >>
+> >> That assumption seems highly problematic to me on non-x86
+> >> architectures: why should mirrored (or 'more reliable' in EFI speak)
+> >> memory always appear before ordinary memory in the physical memory
+> >> map?
+> > 
+> > It's not really x86, although historically it probably comes from there.
+> > ZONE_NORMAL is always before ZONE_MOVABLE, so in order to have ZONE_NORMAL
+> > with mirrored (more reliable) memory, the mirrored memory should be before
+> > non-mirrored.
+> >  
+> >>> So to workaround this firmware issue you propose a hack that would skip
+> >>> NOMAP regions while calculating zone_movable_pfn because your particular
+> >>> firmware reports the reserved mirrored memory as NOMAP.
+> >>>
+> >>
+> >> NOMAP is a Linux construct - the particular firmware reports a
+> >> 'reserved' memory region, but other more widely used memory types such
+> >> as EfiRuntimeServicesCode or *Data would result in an omitted region
+> >> as well, and can appear anywhere in the physical memory map. There is
+> >> no requirement for the firmware to do anything here wrt the
+> >> MORE_RELIABLE attribute even though such regions may be carved out of
+> >> a block of memory that is reported as such to the OS.
+> >>
+> >> So I agree with Wupeng Ma that there is an issue here: reporting it as
+> >> mirrored even though it is reserved should not be needed to prevent
+> >> the kernel from mishandling it.
+> > 
+> > But a check for NOMAP won't actually fix it in the general case, especially
+> > if it can appear anywhere in the physical memory map. E.g. if there's an MR
+> > region followed by two reserved regions and one of these regions is not
+> > NOMAP and then MR region again, ZONE_NORMAL will only include the first MR
+> > region.
+> 
+> What kind of memory is reserved and is not nomap.
 
-The commit 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
-[1] this patch fix change the code to that, before this commit it was:
+EFI_ACPI_RECLAIM_MEMORY is surely reserved and it won't be nomap if it can
+be mapped WB. I believe other types may be treated the same, I don't
+familiar with efi code enough to tell.
 
-static unsigned int __bpf_prog_ret0_warn(const void *ctx,
-					 const struct bpf_insn *insn)
-{
-	/* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
-	 * is not working properly, so warn about it!
-	 */
-	WARN_ON_ONCE(1);
-	return 0;
-}
+> > We may want to consider scanning the entire memblock.memory to find all
+> > mirrored regions in a and than make a decision where to cut ZONE_NORMAL
+> > based on that.
+> 
+> AFICT, mirrored memory should always locate at the top of numa memory
+> region due the linux's zone management. there maybe no good decision
+> based on memblock.memory rather that use the the first non-mirror
+> usable memory pfn to cut.
 
-And=20
+Thinking out loud, if nomap is not usable to Linux why would efi add it to
+memblock.memory at all? 
 
-static void bpf_prog_select_func(struct bpf_prog *fp)
-{
-#ifndef CONFIG_BPF_JIT_ALWAYS_ON
-	u32 stack_depth =3D max_t(u32, fp->aux->stack_depth, 1);
-
-	fp->bpf_func =3D interpreters[(round_up(stack_depth, 32) / 32) -
-1];
-#else
-	fp->bpf_func =3D __bpf_prog_ret0_warn;
-#endif
-}
-
-so it can fall back to the interpreter when jit fails. And this fit the
-intent of bpf_prog_select_runtime(), see comment:
-
-/**
- *	bpf_prog_select_runtime - select exec runtime for BPF program
- *	@fp: bpf_prog populated with BPF program
- *	@err: pointer to error variable
- *
- * Try to JIT eBPF program, if JIT is not available, use interpreter.
- * The BPF program will be executed via bpf_prog_run() function.
- *
- * Return: the &fp argument along with &err set to 0 for success or
- * a negative errno code on failure
- */
-struct bpf_prog *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
-
-
-And this:
-
-	bpf_prog_select_func(fp);
-
-	/* eBPF JITs can rewrite the program in case constant
-	 * blinding is active. However, in case of error during
-	 * blinding, bpf_int_jit_compile() must always return a
-	 * valid program, which in this case would simply not
-	 * be JITed, but falls back to the interpreter.
-	 */
-	if (!bpf_prog_is_offloaded(fp->aux)) {
-
-
-The commit [1] mismatch the intent of bpf_prog_select_runtime(), so it
-should be fixed.
-
-
-[1] https://lore.kernel.org/all/20250214091823.46042-2-mrpre@163.com/
-
->=20
-> > =C2=A0 #else
-> > @@ -2505,7 +2505,7 @@ struct bpf_prog
-> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
-> > =C2=A0=C2=A0	/* In case of BPF to BPF calls, verifier did all the prep
-> > =C2=A0=C2=A0	 * work with regards to JITing, etc.
-> > =C2=A0=C2=A0	 */
-> > -	bool jit_needed =3D fp->jit_requested;
-> > +	bool jit_needed =3D false;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	if (fp->bpf_func)
-> > =C2=A0=C2=A0		goto finalize;
-> > @@ -2515,6 +2515,8 @@ struct bpf_prog
-> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
-> > =C2=A0=C2=A0		jit_needed =3D true;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	bpf_prog_select_func(fp);
-> > +	if (fp->bpf_func =3D=3D __bpf_prog_ret0_warn)
-> > +		jit_needed =3D true;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	/* eBPF JITs can rewrite the program in case constant
-> > =C2=A0=C2=A0	 * blinding is active. However, in case of error during
->=20
-
---=20
-Thanks,
-KaFai
+-- 
+Sincerely yours,
+Mike.
 
