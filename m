@@ -1,394 +1,209 @@
-Return-Path: <linux-kernel+bounces-758401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAF3B1CE83
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:36:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DA1B1CE85
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C633A716D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9571E18C5A2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B2222A4EA;
-	Wed,  6 Aug 2025 21:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4864B21FF51;
+	Wed,  6 Aug 2025 21:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Yh03PgIq"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mpOUATMI"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6D721FF33
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 21:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754516207; cv=none; b=ohq3xI/Q1PGXN4B+Ed15PuGhFcr5ooEDw7ZsQte3g1p4GZcK6DeNdaPjITU/uYz+eTVvljqsXRDonMFBKuNgnktNS0oZHM798AxOAyihE01B4rtlRpUNAYAv3H43Ju5HJJtEhA1xXQ651CSErQyGurKePe7pAQEMICKpgyhQYi4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754516207; c=relaxed/simple;
-	bh=D5CWzeaboxx4WtBllB2qKb0/t6n3FLAPYczJ2vB2qwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p95WrTsH1EcL9hbEWuQtmZqx35BqLvRaKPiDqh+GOmPuBuebzc0c7fpVPpHL8nQbdA9pE6aAdnCD+w+lbS44U2TgYVDkmlyb6pPGxJPHRZ7/fc96ix/BWrKH12wIrz3Sn5nSFHWDzMAH1+Uw3WadHG/01vqSPwLJZZCYFIDaoAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Yh03PgIq; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8817f851294so17117039f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 14:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1754516204; x=1755121004; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d/B8Rq2kyZtqE13mmV0SoQzZPhcskK+XOs5SAYdX29c=;
-        b=Yh03PgIqi477EseRF0dZdn9N3mSe7wrer4Kh+qjHAlVUxelXnnZZmFV1SxyUcM/M32
-         UNRhJAfP/K8aArM4VQsZ3J3Rs71quwWa7O/ZK1PvGR4rD7ulsK0EdOPiK/0h5kOQLwrn
-         3twm1vkV4MMBOIeWppYIte1C9sJiSG7jhiOuS2Y5wRxIjdBVoC0kMeyjFtzcSSg3BtKN
-         5s5JENeU/mFaa3aCrb7P0MC4WFgf0IWezSnp3nMh1/PJl7VmmDViWcdsh/2Kf7+qhM7u
-         bMhldDwR2in3ryvuBnfwusjdS/IWvbe24e2IyKdAEio9kkEjKyCmWvXUaHtvj3lo2Zy0
-         Y41g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754516204; x=1755121004;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/B8Rq2kyZtqE13mmV0SoQzZPhcskK+XOs5SAYdX29c=;
-        b=M18qEdGZdSSH9zPrQfbrm9bZKYWkoGMd8Cb4iF1hGOKVcfvY58Q2ndoVtFGVq6p/qZ
-         aKnYVpIwbIjlZlo5s+rtG+CD0lAqxfwiHrXJr10IYNfTS2UKAbDSujFSSr8TVOiv2s0X
-         pPCXdH07EANq7QvCZuBvosmnEJ7QKZRrv4zAa0EeQwxkgRqYkyw+4nwPk66TWx9V6aOE
-         5bPz1m+uh5sItZ8e07BW0/F9FgeiE+cudTcq2z2qmTze6waxnvGy14oYgU/La999x+3B
-         OPRH1FKssN0n5GBF25k+DS6XdpXvOqMbZIICq4WuGm2Fzla1u/1bpyUWEwITowYp+FvQ
-         vwbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAfhy4P7skrFdwkJ9n/SGESDF3N6i1xKNcb3ck5Iw3Y297v3AuOXzNb2SAC1MdUzH0Z+6c/YtIfQZQLGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFtTwxCoZMnnhYTmGCNEq4r2q97+LMqnZYIWMOHa+F0+A9foaP
-	C5Xq4lLqWi1eGrggvs8TkNJwF/iJ3a0JCfTpJl/zAIZ+roGHt43b+Dx34GKrxlwx2OQ=
-X-Gm-Gg: ASbGnctTC9SPNxrfBY68pTdRrikqzo1zG/D8aFc7H6X7ppdaNJhXcrB6KlBy6NcY32l
-	+Gpd8mkaukt8+aPt9fNDXOpAv3kuN965Zq9tYQqlLAv0XarmtoAP41tOH3OrmjLWEBsVYoXwkUN
-	hKTTaSKMYk8WHFXUB/b7ZXDIL9siTUr1hsQ246tXq+vuCXTp0hDUgkpSE/mf5n0QRh7g6jIP/67
-	bjiLqLIHLOiSafPNaDoDq6eMosIrF9z9uR99XD7vEdgGyxeGz/QkEQdFjRfM5N02qtS37Sri6tM
-	2tWE9+odIOe55rkW266q8JLBK6o9xUsZDjFus3x2vsOYZa0O0guv75usxp8/5IGu2MEmXczAgOO
-	Tkw==
-X-Google-Smtp-Source: AGHT+IEjGjC1AvEBiETD/HROMycikInXSuvbH3fEDiW+JsXc3FFWH+vUWhcNurMfwUmOWIN/rjYHzA==
-X-Received: by 2002:a05:6602:1508:b0:87c:1a21:4d17 with SMTP id ca18e2360f4ac-8819f2dc2a6mr745897339f.1.1754516204314;
-        Wed, 06 Aug 2025 14:36:44 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8255:4e6::7d:4b])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8817fb36052sm265287539f.19.2025.08.06.14.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 14:36:43 -0700 (PDT)
-Date: Wed, 6 Aug 2025 16:36:41 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Corey Minyard <corey@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: Re: [BUG] ipmi_si: watchdog: Watchdog detected hard LOCKUP
-Message-ID: <aJPK6Vuxc1jL-uu_@CMGLRV3>
-References: <aJO3q8JiVXKewMjW@CMGLRV3>
- <CA+QrTELaLFRGn1ynG5dG+KB_40aPA31hU5QgLn7ikh2Zbk3Hpg@mail.gmail.com>
- <aJPGItElGBN3nilX@mail.minyard.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BD021FF33;
+	Wed,  6 Aug 2025 21:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754516240; cv=fail; b=YHulXUmHfpM/QNlGTJolfo/FOCRxr8l93xBg4WPRIVdk0lWQFlUFwCXYpLLP4VxQspCALxcUeMGYBxErO8qupXwZt/XPfrU10cuHgpX02PF1gALOnUZaLHhomTpbKkIIXes8BZOnNvrZnySSLmAajn1y185HLroAsrMIMjGyp6A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754516240; c=relaxed/simple;
+	bh=MjlK2NahbFlzVJ/x90oPpGbJg0+dvOJGnhnPmzrkN5M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XeLpbCdEZl4VNLzPXthNMXSv0Tn36OkAg6DbuHQYWWh//o2U/pjiRePPT8ybDMWaT+nXy+eLhp25pQ4dVjqiv6pF6TnUtprGHCpN4UnTqteZmpdOg9oeLWB2tX0XANB5jaLEqXPDNbWPCssWNhKGubfEUvhA/SNQc8OE33fb0WI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mpOUATMI; arc=fail smtp.client-ip=40.107.92.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MNf+EA+NHpc93ifBhNcjF6/s7AcPi3x5FiQtbbb7BgXb9bqTVame7hmPGG8AqhE/kAv0Fad/YyUwcibgsBgDpPF8h7zrnBN5aLlktot0JP9UY1U7BEr47jzFWUJ3VVDMDDnhmrvpH/8fmi8VqmyM4dSh8wdX8daypPbagKO05rGM8K94c+v/ea4F0aewLkzfIaIuNBWm7PqxMNxl6w0NbKD6Rck8or4qUF2RU2VYuqLWb4yK6/oPASl/Py5QciWdOqbkjed1bxoJDIjRS0SQ28kTz+IpAjZnFH8V3ipfjVG7NQcHREtIMggquwE9olMhvP5uO7o8dkOl94mBBEANFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DnJfsfki2mtwTjbNp7es7+Wwy4UknPtcOv9thdqqsUk=;
+ b=fjfLZtqbdt+tIUl+Hxi2aWVkwuk+HMlg5pWpMeKPEXDgW69dd2NMyWzG4OWPUZ9iN7HZyLENf8XrvhcFUpMeSBJ26/elWUvgcvAFUClDnh5HgD7IA+ZyXOpFSAxZBpctAEko/j9mha8wWOQwSGRoLZvKcFmSn7S22Mc/tLpfKFrEL5IXaVxZBgMSHDuGYrGxZilkNM7QYn2k7JgSGJsR68JNGSBN168jIWlyTNmk7IbWfQ3H6+ktLFYeKiaCjkbR2qSn4h582EE6gfzl6OIwSMezt6UbCk0cLM5TstnL5zOT+asAA0e5FJ+KSFJUlbG+MsXN0+l/PDHE0ZD5RQwXtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DnJfsfki2mtwTjbNp7es7+Wwy4UknPtcOv9thdqqsUk=;
+ b=mpOUATMIlnII0L0EM/ByxUXEiHuqC+N7leI7wXfjj+w7NWVtadcC1lg+gACOezzchRHMbOzpmTd7B1xEimGWa9RPLoUitSTT1wCTxlCgqOzVScUj9ndDL1N5v3H03+h21s0Kruh3/5RIbu9x+1XoXBT+bs0MVD2SSW1hgUSYqtg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5378.namprd12.prod.outlook.com (2603:10b6:208:31d::16)
+ by DM4PR12MB6010.namprd12.prod.outlook.com (2603:10b6:8:6a::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.14; Wed, 6 Aug 2025 21:37:15 +0000
+Received: from BL1PR12MB5378.namprd12.prod.outlook.com
+ ([fe80::9cf4:a6ba:b42f:d135]) by BL1PR12MB5378.namprd12.prod.outlook.com
+ ([fe80::9cf4:a6ba:b42f:d135%5]) with mapi id 15.20.8989.015; Wed, 6 Aug 2025
+ 21:37:15 +0000
+Message-ID: <080cf3e7-6422-4149-8c5c-f2a6762c385d@amd.com>
+Date: Wed, 6 Aug 2025 16:37:09 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] EDAC/amd64: Incorporate DRAM Address in EDAC message
+To: Borislav Petkov <bp@alien8.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Avadhut Naik
+ <avadhut.naik@amd.com>, linux-edac@vger.kernel.org, john.allen@amd.com,
+ linux-kernel@vger.kernel.org
+References: <20250717165622.1162091-1-avadhut.naik@amd.com>
+ <20250717165622.1162091-3-avadhut.naik@amd.com>
+ <20250728151440.GB33292@yaz-khff2.amd.com>
+ <c9ae8b26-e254-47a7-8e2f-b5da90f50030@amd.com>
+ <20250806211524.GFaJPF7Bk2dooZOVzc@fat_crate.local>
+Content-Language: en-US
+From: "Naik, Avadhut" <avadnaik@amd.com>
+In-Reply-To: <20250806211524.GFaJPF7Bk2dooZOVzc@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1PR01CA0163.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:68::33) To BL1PR12MB5378.namprd12.prod.outlook.com
+ (2603:10b6:208:31d::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aJPGItElGBN3nilX@mail.minyard.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5378:EE_|DM4PR12MB6010:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f1b5f19-5043-4688-fe56-08ddd53168e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aUtUenNhWEVlZWNpRWlVTFBKUWtXS1dNU0V3MmViTTFReWgvWHp3bGNaVE5Q?=
+ =?utf-8?B?ZUkxVk9KdUFzRVFDVlRja2hGckIyS2dhSTR5L1UrenZIVDNuWUtxd1plZzdT?=
+ =?utf-8?B?T0h4S3RYS0Vudk5mamFQdmZhMzVQd2pVc2dLVkw4UkM3aTRiKzlLRmZSUXhN?=
+ =?utf-8?B?VEZkUXpJTXp0OU9LcVRXSlRYNjZxZ2o1R3lhQi9rTHpNS0lJQWlpZmx0WHBy?=
+ =?utf-8?B?ZU5TSERNSEpWWWNFdlk3dnpPQStYMGVjbkdmOFlDVlRROENDNmJGbkVqeENn?=
+ =?utf-8?B?ZEFvRzZNcTJEbDJPd1MrZnYya3czNjd5b3ZDaDJvV0FnUFRYemNYaE5TQXJS?=
+ =?utf-8?B?dml3cldxVi9hcnROcmVmN25tSVo5Q0ZtWk9EVmdhbllzRFV5QW5RZitjSWdF?=
+ =?utf-8?B?Tkthamg2MlEvRjk5K0NNYnF4aGJNRWRiOXlkanJCY2d4N0JkTE1NblRyTitL?=
+ =?utf-8?B?d1AxL3BRQkRTb0pYZVdDWlcwMmM4TjNvRUNub1BxZ1M3cXNETENpT2t1c3E4?=
+ =?utf-8?B?cE5xbUh6WlVvaXVhNjR3K1lOV3dZckNJUHhNYnJoakxsYUZqTFlpVHNRWWkx?=
+ =?utf-8?B?NmpGQnl2OVlwaHdTcVZUK2o5K0RrMk5QeG5yb0xYZW9DdkczYjZ5KzJBd0N1?=
+ =?utf-8?B?emllVUtYTnJhT3hKc2pmeGVjeXJpOHdTY0M3WXFKSHRNZFlFUWFvUmxLSEhM?=
+ =?utf-8?B?ZjdmbUZkb1ZjZ3paVW9NUk8zZFh0dk4rZ1U0djg0c2J1N1Y5VFJ3bWovVGRj?=
+ =?utf-8?B?VUlKT3RBYWhLTldQclk5VS9ZcG55ajVXOC9uTjE5SjErdkpGVHRxTDg0OEdE?=
+ =?utf-8?B?V0NoVWJ1UmdiMHhzYm5vUGJmdXRFQ0g5cDJRMlpVcTNlK0FpNWdKL2hLMzVn?=
+ =?utf-8?B?UmlOVUlGcCtmVjIvV2pPN3ZKN1VVc1NqaXdrSGlGcVpDMk0yUUZLSnFPRzc4?=
+ =?utf-8?B?a09qRzJGeXpCMXlZUW10TWh3VnFKVkhwblN3SXJuUFJaSUhxSHNCRjA5MGs5?=
+ =?utf-8?B?b3NSVmlZbWpGVlN6Tm1pVHB6azY2YzdrN1FRNUg1b1ZVSTNybUZiSk5hSElM?=
+ =?utf-8?B?OWxzcFNIelcvcGE1VEMyaDM4VEY2TmE4NnM3NDk0K3FLQW5HeFFPWE5Gd3BP?=
+ =?utf-8?B?d0QraSt6SDNDTHRPdDlsbEJTRzJBUlVVWEp3VVpkdUVKLzJpWHcyMUJablNH?=
+ =?utf-8?B?WUIxdFN0OTZkUmhwMmZhaHpyaXprK0sza1RRVThlelJXLytwQmFVNWliTVZD?=
+ =?utf-8?B?U2FkME1mRVFJUFB2NUhLaEJsNGRSdG4wZVU5NmtoNkppUnUxRU02dVZVbGt4?=
+ =?utf-8?B?UCtUd012M3k1eXNDL3BQbVZpZGZmeE9iMXNtM3F2NXlpcjU1YWNNeFNNZ21V?=
+ =?utf-8?B?R2lOVWlOZVJrcUF5WG1iU29UZk81NWM2L2d2M29TakhMWnoyeS8wV0NNUTN4?=
+ =?utf-8?B?T1pUaUtHcVN1ODI0VUxISGlHM2k2QmFrZXRRWjBrejQyY1VZV2J5UWpIVDV6?=
+ =?utf-8?B?dnBhaDlzWi93L0JEaUlpTWpoczhwZGdvOXdhQzlhNkZRL0theDdTS3EwL3Nr?=
+ =?utf-8?B?Q0JsTTNSakRVeUMwRExNOUJkZFlvUnFWMXBwM29kMW1HaWErRmgxV01PNWtj?=
+ =?utf-8?B?aXBaUHdNWE9yQldZS1ZwanFEbEUwWVJRdlIwMkYxM0d1dmZKMXpuVkRLZEY4?=
+ =?utf-8?B?WTF2N2lJbzBCS0hGZWlPTG1TUVd2VForZUQvbDlQUmhhOTFLbWpReUEwdTRP?=
+ =?utf-8?B?bmtJWVlnSit0YWZ1YmVKUUtDOTlLSjIyUWpVNkp0M0VSaHN2T2F1eVhuY0dD?=
+ =?utf-8?B?dGpTKytoWm5VQUlKK2dTU251M0xZRm5GcGJXNjhCd3FIbFBod0ZER1M5K3hk?=
+ =?utf-8?B?U2V5bDlnZ0dFd2lraG5NUjIzbW9kUk1xcGN0Umh6Vm1vMXc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5378.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c1ZRaVdFakIyQTJaTW92M3BCNWlLZFcxclFkNzc3RHVoamUzTXpZc1Vndng2?=
+ =?utf-8?B?TzNRT2hlVmo4eTR1Sm1Eang5cjVkdDhDZzRTWHdBOWZrTlhzVUdmQmZqWU9L?=
+ =?utf-8?B?L2tNM29GU2g1NUViTmZqMFV6ZU5KNDZIR2t2NmFkeE9BYmlSejZSeUxEMFAy?=
+ =?utf-8?B?bEpiVThrSFJKMFZsQkVEQnFNbFdFZ2hVTWNoV28xNE1ZZTJFMnlQWFh2SXhJ?=
+ =?utf-8?B?UXN2dit3bDl2NFdXZThkcTQ3QVNXU0JsMWtFTmJXeE1WejZneVpFc2FqdjI5?=
+ =?utf-8?B?LzVqNGZJdG85N0RNNmU5LzhVVDhPZ0l2dDg5TEJhWldMV0ZzTE9LUVRDM1ZC?=
+ =?utf-8?B?U0I5eUhBakZ6cjBFaEN1aG5CU1R2cGRKcHAyWlpNOTZ3SWl6RUwvZG1rV2pp?=
+ =?utf-8?B?Q3FZOEdWNHQ3bDRHaGRoTFhKdm96WGw1MFdWdExkUXBTbG9yR3N5ZExueUJl?=
+ =?utf-8?B?dE9zR21ra3dqSlNmMVJZSHZXa3Fyck16Zkh6S0xHeENSQ0I1U0FyTTRGYXBW?=
+ =?utf-8?B?MURSeG5yQi9uVkh0QWdkQWZFV3ZtSmZaUDdlWEZsU0lVbWl1amFPbkFYc0px?=
+ =?utf-8?B?aTZDZ0g2eG8yMS9LSEdvbTV6RDdFdHQ3YVlzMGhSU1lVdFhIVUR6MWcrcUxV?=
+ =?utf-8?B?eGo0SHREVzkxTFFROEdXL0poVWtVaEhwWGV4bkRrbm1tTnRZNm9kUlB2ZFgy?=
+ =?utf-8?B?UzRaNkZvc0dRb1RSRUxDOTFoaDY0dVlMNjNOSVVURVUzbXdhTndQVHdELzhW?=
+ =?utf-8?B?alFrMjBIVWdweEd3aWhJa05HZzl0RGRPSUl6QXk2NVh1eVZRMDJUL0tvRmVE?=
+ =?utf-8?B?ekdNVDJZMkxXeUkwRHlFNG51WDk0eFM4c1p3Y2RRdjgrT2I4T252UkVweUcw?=
+ =?utf-8?B?RTR6ZFNQdVA4NVQ1SUNGMlp0aWw3dms4bDQ4MGVSZUhLY2wrNFpvSGlpb1dL?=
+ =?utf-8?B?VWNnL0xhTFkvYlVlMXZHLzVqUlBibTYvYllUK1pxY29VNmxlZUVYYWJETmkr?=
+ =?utf-8?B?TE1haitNUklFU3MzTjNyNDE4M2o0WDZyQkJWM3h1YnRKQXVaNVZaNTZpeXFS?=
+ =?utf-8?B?WWhFTDJGTjV4NGFobnVYVkUxeHkwaXRiVUJONmJHdnhCejRFMTE4MGFIZUx6?=
+ =?utf-8?B?ajRqb2JQTEgzOEc1clBWaU1rN0I1cG1NZ0Q5ODNFdnBKR2RmeWJYYVlzeDIz?=
+ =?utf-8?B?eHdsUXVBSXJSaEtXYkhrbkN6UHpLV01oekpBWEhVYTd6aVgxN0U4ZzlxMmJs?=
+ =?utf-8?B?Q3FtdU90OG8wKzlOdUV3LzlEQUZRSEJqUFJoYWFrTXNWdHRmdVp0MHRPZDRu?=
+ =?utf-8?B?WVhPRVhoN2t0aXhwdlB4L215MW50T2IxVm1SOVBDSG1pR29nYnFrcGR1ZGtG?=
+ =?utf-8?B?d3p2aTlGdHZGVzVjbkRnUDhnT2MwWU9zSDRvN3hGQ3JXb0ZSOFRERkVVSVZh?=
+ =?utf-8?B?Z3RVbzNmVWU2dE1PcUZPQktSVFliUWY0VEJucVpKQ2JFWVQwa0djR3d1SGs3?=
+ =?utf-8?B?ZG9kbm1KbjVpbFA2S0Z3WkpkU0lxVDQvT2pYNUhUMk10b0liQnpvM1Y0dXlv?=
+ =?utf-8?B?NTVaOE1JNFNXbjJMck42YktZWGdqTVVjcjF5NCt4NyszdjQxWFQ3ejJESm91?=
+ =?utf-8?B?T3A5ekY2RGdRZ2trQlNtcmlCSlZXdmorMjhHK2gzSUcrVWlBQm90VG94YjJQ?=
+ =?utf-8?B?N1dSTjlTUThGQzArNEpqbHduN21IWC8vekd0VWVJbDAvVjhXYjBUbUlqTjBa?=
+ =?utf-8?B?VktHbWk1cFhWdEI1VFJwTlBFN0wvd25ZZXFlclBXS0M2SjZiUWpuVjVLNjli?=
+ =?utf-8?B?VzM0M0ZjMHB2d05aNXRjaVJwY2NuVG5LNUZKd3JDVFh1MHQ4SWp2dHFIRFJP?=
+ =?utf-8?B?Ni9yakFlcU9XNEZ3TUNhKytCdGs2VEExM25HeExuOHFVaUtTOFVKYzQ0Znpn?=
+ =?utf-8?B?V0FLR2VaN1Q2R2xLNDBWMnpCYlkzSEZERWNRc3lrZGhRNWtoQ3ZybmJrVWli?=
+ =?utf-8?B?dk1lSjliRXpWRmdvRG0yWFQ0dW9kRDR1TW0yMFMvN2wzN0N3OFQ1RnluWTRw?=
+ =?utf-8?B?cGk0ZWdMeXRpWm5NcWhEMlQreFEwNllHTjB3ZE1LU0lLYXJ1MmxtejVUeWMz?=
+ =?utf-8?Q?808RkwA+tHJr4pb4qTYMyxP0Q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1b5f19-5043-4688-fe56-08ddd53168e7
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5378.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 21:37:14.9508
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FvLifSsNyXBMxcYK1aP2nDiNNLkyNuu2hh8ApSp8P9slvvRscEwp8I/Y/YsZ0Bf2vcAjrvVscByLPB2wWl1Nyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6010
 
-On Wed, Aug 06, 2025 at 04:16:18PM -0500, Corey Minyard wrote:
-> On Wed, Aug 06, 2025 at 03:19:02PM -0500, Fred Lawler wrote:
-> > + CC: Corey Minyard <corey@minyard.net>
-> >=20
-> > Misspelled the email address.
-> >=20
-> > On Wed, Aug 6, 2025 at 3:14=E2=80=AFPM Frederick Lawler <fred@cloudflar=
-e.com> wrote:
-> > >
-> > > Hi Corey,
-> > >
-> > > In kernel 6.12.y, while resetting the BMC, we can sometimes hit a har=
-d LOCKUP
-> > > watchdog event, especially so while querying the BMC for basic device
-> > > information via sysfs.
-> > >
-> > > I havn't been able to create a consistent reproducer yet, but I suspe=
-ct
-> > > that these occur during high traffic, BMC is resetting, and reading
-> > > from the sysfs files in parallel. We're also using KCS to interface
-> > > with the BMC.
-> > >
-> > > I can consistently reproduce hung tasks trivially with the following,
-> > > during a BMC reset:
-> > >
-> > > while true; do cat aux_firmware_revision &>/dev/null; done &
->=20
-> I looked through the code around this and didn't see anything obvious.
->=20
-> Looking at the logs a bit more:
->=20
-> [  904.196122] [     C33] watchdog: Watchdog detected hard LOCKUP on cpu =
-33
-> [  904.196127] [     C97] Uhhuh. NMI received for unknown reason 3d on CP=
-U 97.
->=20
-> So there's a lockup on CPU 33, but the backtrace shows it's in the ACPI
-> idle function.  That's wierd.  For that to really happen, it would have
-> to lock up in ACPI.
->=20
-> The unknown NMIs are also wierd.  Are you using the IPMI NMI watchdog?
->
 
-It looks like we do have the module enabled in our config, but we aren't
-loading it:
 
-fred@251m103:~$ lsmod | grep -i ipmi
-ipmi_ssif              40960  0
-acpi_ipmi              16384  0
-ipmi_si                81920  1
-ipmi_devintf           16384  0
-ipmi_msghandler        81920  4 ipmi_devintf,ipmi_si,acpi_ipmi,ipmi_ssif
+On 8/6/2025 16:15, Borislav Petkov wrote:
+> On Wed, Aug 06, 2025 at 04:08:07PM -0500, Naik, Avadhut wrote:
+>>>> +			sprintf(s, "Cs: 0x%x Bank Grp: 0x%x Bank Addr: 0x%x"
+>>>> +					   " Row: 0x%x Column: 0x%x"
+>>>> +					   " RankMul: 0x%x SubChannel: 0x%x",
+>>>
+>>> There's a checkpatch warning here about splitting user-visible strings.
+>>>
+>>> Why not use scnprintf() or the like?
+>>>
+>> Had noticed the checkpatch warning initially.
+>> IIRC, it was for splitting the quoted string across multiple lines.
+>> Can use scnprintf here. But wont the warning still prevail?
+> 
+> Just do one long line. The idea is to be able to grep the code when you see
+> the string issued in dmesg.
+> 
+Okay, sounds good! Will change it to something like below:
 
-> I'm wondering if something is happening with the BMC resetting and
-> interactions with ACPI involved in that.  Adding the extra part of
-> trying to talk to the BMC while it's being reset could cause the BMC to
-> get confused and do bad things?
->=20
+scnprintf(s, 100, "Cs: 0x%x Bank Grp: 0x%x Bank Addr: 0x%x Row: 0x%x Column: 0x%x RankMul: 0x%x SubChannel: 0x%x",
+          err->dram_addr->chip_select,
+          err->dram_addr->bank_group,
+          err->dram_addr->bank_addr,
+          err->dram_addr->row_addr,
+          err->dram_addr->col_addr,
+          err->dram_addr->rank_mul,
+          err->dram_addr->sub_ch);
 
-Sure, it's a possibility we explored. We have a lot of automation.
-Predominately of which is a prometheus module exporting IPMI information
-=66rom the sysfs files. And we also have config management that's querying
-sysfs files to regulate updates etc... Sometimes, the config management
-automation will attempt to reset the BMC.
+-- 
+Thanks,
+Avadhut Naik
 
-> > >
-> > > I tried also tried to load the CPUs with stress-ng, but the best I ca=
-n do
-> > > are the hung tasks.
-> > >
-> > > I identified that sni_send()[1] could be locked behind the
-> > > spin_lock_irqsave() and within the KCS send handler, there's another =
-irq
-> > > save lock. I suspect this is where we're getting hung up. Below is a
-> > > sample stack trace + log output.
->=20
-> Yeah, I don't see that in the traceback.  There is a lock in the KCS
-> sender, but I don't see how that could do anything.
->=20
-> Maybe you could try changing the cpuidle handler?  That would be at
-> least something to try.
->=20
-
-Would that help in forming a reproducer? I'd need to deploy any kernel
-modifications fleet wide to cast a wide enough net. The lockups arn't
-extremely consistent. We may get a couple or more a week.
-
-Lastly, I have the rate limit patch backported. I'll be able to start
-testing with that tomorrow, and same with loading the IPMI watchdog
-module.
-
-> -corey
->=20
-> > >
-> > > I'm happy to provide traces and additional information, let me know.
-> > >
-> > > Links:
-> > > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git=
-/tree/drivers/char/ipmi/ipmi_msghandler.c?h=3Dlinux-6.12.y#n1899
-> > >
-> > > [  499.564572] [  T27255] ip6_tunnel: pni_gre_814 xmit: Local address=
- not yet configured!
-> > > [  499.588176] [  T27255] ip6_tunnel: pni_gre_868 xmit: Local address=
- not yet configured!
-> > > [  499.605284] [  T27255] ip6_tunnel: pni_gre_871 xmit: Local address=
- not yet configured!
-> > > [  805.906999] [  T12765] usb 1-1: USB disconnect, device number 2
-> > > [  845.346020] [  T12765] usb 1-1: new high-speed USB device number 3=
- using xhci_hcd
-> > > [  845.485453] [  T12765] usb 1-1: New USB device found, idVendor=3D1=
-d6b, idProduct=3D0107, bcdDevice=3D 1.00
-> > > [  845.496823] [  T12765] usb 1-1: New USB device strings: Mfr=3D3, P=
-roduct=3D2, SerialNumber=3D1
-> > > [  845.507242] [  T12765] usb 1-1: Product: USB Virtual Hub
-> > > [  845.514946] [  T12765] usb 1-1: Manufacturer: Aspeed
-> > > [  845.522363] [  T12765] usb 1-1: SerialNumber: 00000000
-> > > [  845.530454] [  T12765] usb 1-1: Device is not authorized for usage
-> > > [  853.774910] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.783794] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.792649] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.801461] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.810291] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.819069] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.827816] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.836581] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.845326] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.854074] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  853.862813] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-> > > [  863.934436] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  863.943420] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  863.952363] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  863.961296] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  878.616336] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  878.624905] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  878.633427] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  878.641954] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  880.310112] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  880.318682] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  880.327083] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  880.335483] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-> > > [  904.196122] [     C33] watchdog: Watchdog detected hard LOCKUP on =
-cpu 33
-> > > [  904.196127] [     C97] Uhhuh. NMI received for unknown reason 3d o=
-n CPU 97.
-> > > [  904.196126] [      C6] Uhhuh. NMI received for unknown reason 3d o=
-n CPU 6.
-> > > [  904.196130] [     C33] Modules linked in:
-> > > [  904.196129] [    C101] Uhhuh. NMI received for unknown reason 3d o=
-n CPU 101.
-> > > [  904.196131] [     C97] Dazed and confused, but trying to continue
-> > > [  904.196131] [     C33]  nft_fwd_netdev
-> > > [  904.196131] [     C99] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 99.
-> > > [  904.196133] [      C6] Dazed and confused, but trying to continue
-> > > [  904.196133] [    C102] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 102.
-> > > [  904.196134] [     C33]  nf_dup_netdev
-> > > [  904.196134] [     C35] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 35.
-> > > [  904.196135] [    C101] Dazed and confused, but trying to continue
-> > > [  904.196137] [     C99] Dazed and confused, but trying to continue
-> > > [  904.196137] [     C33]  xfrm_interface
-> > > [  904.196136] [     C69] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 69.
-> > > [  904.196140] [    C102] Dazed and confused, but trying to continue
-> > > [  904.196140] [     C33]  xfrm6_tunnel
-> > > [  904.196138] [    C121] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 121.
-> > > [  904.196140] [    C123] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 123.
-> > > [  904.196142] [     C35] Dazed and confused, but trying to continue
-> > > [  904.196143] [     C69] Dazed and confused, but trying to continue
-> > > [  904.196143] [     C33]  nft_numgen
-> > > [  904.196143] [     C61] Uhhuh. NMI received for unknown reason 2d o=
-n CPU 61.
-> > > [  904.196144] [     C62] Uhhuh. NMI received for unknown reason 3d o=
-n CPU 62.
-> > > [  904.196146] [    C123] Dazed and confused, but trying to continue
-> > > [  904.196147] [    C121] Dazed and confused, but trying to continue
-> > > [  904.196148] [     C58] Dazed and confused, but trying to continue
-> > > [  904.196150] [     C33]  nft_log nft_limit sit dummy ipip tunnel4 i=
-p_gre gre xfrm_user xfrm_algo tls mpls_iptunnel mpls_router nft_ct nf_table=
-s iptable_raw iptable_nat iptable_mangle ipt_REJECT nf_reject_ipv4 ip6table=
-_security xt_CT ip6table_raw xt_nat ip6table_nat nf_nat xt_TCPMSS xt_owner =
-xt_DSCP xt_NFLOG xt_connbytes xt_connlabel xt_statistic xt_connmark ip6tabl=
-e_mangle xt_limit xt_LOG nf_log_syslog xt_mark xt_conntrack ip6t_REJECT nf_=
-reject_ipv6 xt_multiport xt_set xt_tcpmss xt_comment xt_tcpudp ip6table_fil=
-ter ip6_tables nfnetlink_log udp_diag dm_thin_pool dm_persistent_data dm_bi=
-o_prison dm_bufio iptable_filter veth tcp_diag inet_diag mpls_gso act_mpls =
-cls_flower cls_bpf sch_ingress ip_set_hash_ip ip_set_hash_net ip_set tcp_bb=
-r sch_fq tun xt_bpf nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 fou6 fou ip_=
-tunnel ip6_udp_tunnel udp_tunnel ip6_tunnel tunnel6 nvme_fabrics raid0 md_m=
-od essiv dm_crypt trusted asn1_encoder tee dm_mod dax 8021q garp mrp stp ll=
-c ipmi_ssif amd64_edac kvm_amd kvm irqbypass crc32_pclmul crc32c_intel
-> > > [  904.196247] [     C33]  sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni=
-_intel crypto_simd xhci_pci binfmt_misc acpi_ipmi cryptd ipmi_si nvme rapl =
-ipmi_devintf i2c_piix4 tiny_power_button bnxt_en xhci_hcd nvme_core ccp i2c=
-_smbus ipmi_msghandler button fuse configfs nfnetlink efivarfs ip_tables x_=
-tables bcmcrypt(O)
-> > > [  904.196281] [     C33] CPU: 33 UID: 0 PID: 0 Comm: swapper/33 Kdum=
-p: loaded Tainted: G           O       6.12.34-cloudflare-2025.6.9 #1
-> > > [  904.196286] [     C33] Tainted: [O]=3DOOT_MODULE
-> > > [  904.196287] [     C33] Hardware name: GIGABYTE R162-Z12-CD-G11P5/M=
-Z12-HD4-CD, BIOS M10-sig 02/17/2025
-> > > [  904.196290] [     C33] RIP: 0010:io_idle+0x3/0x30
-> > > [  904.196298] [     C33] Code: 8b 00 a8 08 75 07 e8 2c e4 ff ff 90 f=
-a e9 c0 b3 1a 00 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 9=
-0 90 89 fa ec <48> 8b 05 96 42 d4 01 a9 00 00 00 80 75 11 80 3d 4a 42 d4 01=
- 00 75
-> > > [  904.196301] [     C33] RSP: 0018:ffff9afa88307e70 EFLAGS: 00000093
-> > > [  904.196304] [     C33] RAX: 0000000000000000 RBX: ffff8abdf2b5d898=
- RCX: 0000000000000040
-> > > [  904.196306] [     C33] RDX: 0000000000000814 RSI: ffff8abdf2b5d800=
- RDI: 0000000000000814
-> > > [  904.196308] [     C33] RBP: 0000000000000002 R08: ffffffffa9dff860=
- R09: 0000000000000007
-> > > [  904.196309] [     C33] R10: 000000e65239d580 R11: 071c71c71c71c71c=
- R12: ffffffffa9dff860
-> > > [  904.196311] [     C33] R13: ffffffffa9dff948 R14: 0000000000000002=
- R15: 0000000000000000
-> > > [  904.196313] [     C33] FS:  0000000000000000(0000) GS:ffff8aadcf68=
-0000(0000) knlGS:0000000000000000
-> > > [  904.196316] [     C33] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080=
-050033
-> > > [  904.196318] [     C33] CR2: 00005632ce239000 CR3: 0000003944f72004=
- CR4: 0000000000770ef0
-> > > [  904.196320] [     C33] PKRU: 55555554
-> > > [  904.196322] [     C33] Call Trace:
-> > > [  904.196324] [     C33]  <TASK>
-> > > [  904.196326] [     C33]  acpi_idle_do_entry+0x22/0x50
-> > > [  904.196336] [     C33]  acpi_idle_enter+0x7b/0xd0
-> > > [  904.196340] [     C33]  cpuidle_enter_state+0x79/0x420
-> > > [  904.196345] [     C33]  cpuidle_enter+0x2d/0x40
-> > > [  904.196352] [     C33]  do_idle+0x176/0x1c0
-> > > [  904.196358] [     C33]  cpu_startup_entry+0x29/0x30
-> > > [  904.196362] [     C33]  start_secondary+0xf7/0x100
-> > > [  904.196366] [     C33]  common_startup_64+0x13e/0x141
-> > > [  904.196374] [     C33]  </TASK>
-> > > [  904.196377] [     C33] Kernel panic - not syncing: Hard LOCKUP
-> > > [  904.196379] [     C33] CPU: 33 UID: 0 PID: 0 Comm: swapper/33 Kdum=
-p: loaded Tainted: G           O       6.12.34-cloudflare-2025.6.9 #1
-> > > [  904.196383] [     C33] Tainted: [O]=3DOOT_MODULE
-> > > [  904.196384] [     C33] Hardware name: GIGABYTE R162-Z12-CD-G11P5/M=
-Z12-HD4-CD, BIOS M10-sig 02/17/2025
-> > > [  904.196385] [     C33] Call Trace:
-> > > [  904.196387] [     C33]  <NMI>
-> > > [  904.196389] [     C33]  dump_stack_lvl+0x4b/0x70
-> > > [  904.196394] [     C33]  panic+0x106/0x2c4
-> > > [  904.196401] [     C33]  nmi_panic.cold+0xc/0xc
-> > > [  904.196404] [     C33]  watchdog_hardlockup_check.cold+0xc6/0xe8
-> > > [  904.196409] [     C33]  __perf_event_overflow+0x15a/0x450
-> > > [  904.196416] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > [  904.196421] [     C33]  x86_pmu_handle_irq+0x18a/0x1c0
-> > > [  904.196436] [     C33]  ? set_pte_vaddr+0x40/0x50
-> > > [  904.196439] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > [  904.196442] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > [  904.196445] [     C33]  ? native_set_fixmap+0x63/0xb0
-> > > [  904.196448] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > [  904.196451] [     C33]  ? ghes_copy_tofrom_phys+0x7a/0x100
-> > > [  904.196457] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > [  904.196460] [     C33]  ? __ghes_peek_estatus.isra.0+0x49/0xa0
-> > > [  904.196465] [     C33]  amd_pmu_handle_irq+0x4b/0xc0
-> > > [  904.196469] [     C33]  perf_event_nmi_handler+0x2a/0x50
-> > > [  904.196473] [     C33]  nmi_handle.part.0+0x59/0x110
-> > > [  904.196479] [     C33]  default_do_nmi+0x127/0x180
-> > > [  904.196483] [     C33]  exc_nmi+0x103/0x180
-> > > [  904.196486] [     C33]  end_repeat_nmi+0xf/0x53
-> > > [  904.196489] [     C33] RIP: 0010:io_idle+0x3/0x30
-> > > [  904.196493] [     C33] Code: 8b 00 a8 08 75 07 e8 2c e4 ff ff 90 f=
-a e9 c0 b3 1a 00 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 9=
-0 90 89 fa ec <48> 8b 05 96 42 d4 01 a9 00 00 00 80 75 11 80 3d 4a 42 d4 01=
- 00 75
-> > > [  904.196495] [     C33] RSP: 0018:ffff9afa88307e70 EFLAGS: 00000093
-> > > [  904.196497] [     C33] RAX: 0000000000000000 RBX: ffff8abdf2b5d898=
- RCX: 0000000000000040
-> > > [  904.196499] [     C33] RDX: 0000000000000814 RSI: ffff8abdf2b5d800=
- RDI: 0000000000000814
-> > > [  904.196501] [     C33] RBP: 0000000000000002 R08: ffffffffa9dff860=
- R09: 0000000000000007
-> > > [  904.196502] [     C33] R10: 000000e65239d580 R11: 071c71c71c71c71c=
- R12: ffffffffa9dff860
-> > > [  904.196504] [     C33] R13: ffffffffa9dff948 R14: 0000000000000002=
- R15: 0000000000000000
-> > > [  904.196510] [     C33]  ? io_idle+0x3/0x30
-> > > [  904.196515] [     C33]  ? io_idle+0x3/0x30
-> > > [  904.196519] [     C33]  </NMI>
-> > > [  904.196520] [     C33]  <TASK>
-> > > [  904.196521] [     C33]  acpi_idle_do_entry+0x22/0x50
-> > > [  904.196526] [     C33]  acpi_idle_enter+0x7b/0xd0
-> > > [  904.196529] [     C33]  cpuidle_enter_state+0x79/0x420
-> > > [  904.196535] [     C33]  cpuidle_enter+0x2d/0x40
-> > > [  904.196539] [     C33]  do_idle+0x176/0x1c0
-> > > [  904.196544] [     C33]  cpu_startup_entry+0x29/0x30
-> > > [  904.196548] [     C33]  start_secondary+0xf7/0x100
-> > > [  904.196552] [     C33]  common_startup_64+0x13e/0x141
-> > > [  904.196559] [     C33]  </TASK>
-> > >
-> > > Best, Fred
 
