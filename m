@@ -1,214 +1,217 @@
-Return-Path: <linux-kernel+bounces-757234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC894B1BF87
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89215B1BF89
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CF6184271
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16B21844A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D691DE2C2;
-	Wed,  6 Aug 2025 04:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49321C5F10;
+	Wed,  6 Aug 2025 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9tKBhyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHPdlzbA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400BE43146;
-	Wed,  6 Aug 2025 04:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081532F30
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754453727; cv=none; b=CxV5K6Obufb5NJWrx1BgZyEQKhfIGG1dAIZBd7M5yY5ZLxI8iZoUyUIzIvUR/gd8hiKFUogkeo3YtHTSMydzcc9QbhdjiBkThONY4krOEdMsWd4N/ZtDTF+EVIr9A0LQ4yEg2ewcXCBU1nbRnGCUKuFC5tlZYjThs5SMGcxHz4g=
+	t=1754453866; cv=none; b=QVzpPEIxlBPv1HCO4ZlL0HdkWZWP7uYTadEwlv3rdM0A53kCqGQWQWQl1qxyIqp5e8HsXZBz/njp8BOk19IfvK7itVMTOhKi94An2FwCa/GdNSvZ0juvk5+CLCJJEhd75B1XU7txSAqQ5Q/xBkkviFNTqnLLf/qdUIBjy98fGKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754453727; c=relaxed/simple;
-	bh=lixsbVjRKbA2M2sbx8UeuLMLOOp/6eUO40vsAH+a5LY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZR7+vUWAkuRLQ6PBFp0Hr5nvdlh/KguKudPko+mI0MaexwUnsTPnR+JUumSzDzsgwI281T4yIJHtpSzTW32AIe0He/wOhGexpB/8fQZLB67uGh8qCRuWRtT5HLqZOWxFyk4DY/430KS257zM8nF+QNVumjlq3rJa/zHrf3G5Kn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9tKBhyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7945BC4CEE7;
-	Wed,  6 Aug 2025 04:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754453726;
-	bh=lixsbVjRKbA2M2sbx8UeuLMLOOp/6eUO40vsAH+a5LY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V9tKBhytuodqEZxedPiCOH4+GHEEDTBFk1rnP38/kSvFuoPbRem5F5lhTwjA+7fsr
-	 ig6tgd4pRttkI/nmaO33Dzr5D0zL1efo7QPMHVVuimFZciajkMy5af+A0kqvBCB/rA
-	 kdJjTUt/M0yLDPOESiXLj3m+t1/jh/mv61xJI7EqLvD9EZQLFm0tmW5QuT9mKObx+z
-	 WfMHgAFJ7ErAOkBNG6j5pPFfDPhJL56cXwMOeCmt5Q2c9h/bxpd4rnz4mnL/Iv4azC
-	 2KiQctviETGhdXewkqyeJLodwmZUnnvVxbGEMtD9b1JvLWrz+CxEkxWemw3AxxJ8LK
-	 w7LvnVKD9lpqQ==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	corbet@lwn.net,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: Re: [PATCH 0/5] mm/damon/sysfs: Add commands useful for using migration dests
-Date: Tue,  5 Aug 2025 21:15:23 -0700
-Message-Id: <20250806041523.54394-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAMvvPS6hfCRh1fQh5zU5_quswPFVp0zWyS9N-Zikc0K-nSZd_g@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1754453866; c=relaxed/simple;
+	bh=00U7DSuV9P3VvwqQLgqiwoIg9ymAxukyuMqE+9aRfaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=KBlzVwf8Ugd7opPF6aLXE9nlUxak7yPn034c5jwxGdKSC/Yse8zEmO81131Av/QblLtC487m5TtXhCzLA4wQIv0N6roanoGDNPla5rvWeuIRSVCVBsluSEZ8Nic4MRU7Axrgi7/DTzsIO4p/87xomAdI0KvkBpp23KryM7jXz44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHPdlzbA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754453864; x=1785989864;
+  h=date:from:to:cc:subject:message-id;
+  bh=00U7DSuV9P3VvwqQLgqiwoIg9ymAxukyuMqE+9aRfaQ=;
+  b=dHPdlzbAMuEIep1BXsMgjnspdM2+nH94mtbFeOkUUjAgEsunUPSiuQbo
+   4cmmfvQNT/9AtO6o8czafYVHBVJ3Wxm5QfbneJfqp52fQ9U4PQewks3c0
+   V/oZtyNc/kAXIiZjeGvLQbX5Cl/wAsWwjrM/X+Jr9oUUdBn6eQH6PMQy3
+   t2EcHEJt1PkU33UzM7NY+wCrOnoXW/gUIskDMrpv2eXp1xz6v2rvBoZI/
+   twrJ1zxlN4jsJ5fYTbE88Qe0p9mPd3+ZM1VChu+Dv/D9iH0pihUJs3E6m
+   EQVuooq2AdQcNG1U0+k2Nx1EkkbDk5Dve0sLCB6DMW+WCtKZvPMOpmv6q
+   Q==;
+X-CSE-ConnectionGUID: 1yhqfwVQSXSfPI/R6moqQA==
+X-CSE-MsgGUID: Qd9ECFrGTu+Kq9e0tTVC1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="60575143"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="60575143"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 21:17:44 -0700
+X-CSE-ConnectionGUID: i2LivhUzTDuVbIazCGdGWA==
+X-CSE-MsgGUID: eJ5Ngm1iT9W1ilYucp4r+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="168806540"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 05 Aug 2025 21:17:42 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujVau-0001B0-1J;
+	Wed, 06 Aug 2025 04:17:40 +0000
+Date: Wed, 06 Aug 2025 12:16:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 71cf24469613172b9b7e0fc9c7f52c9f7b22d3b3
+Message-ID: <202508061240.pQFfgTdM-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On Tue, 5 Aug 2025 20:27:52 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 71cf24469613172b9b7e0fc9c7f52c9f7b22d3b3  Merge branch into tip/master: 'timers/clocksource'
 
-> Hi SJ,
-> 
-> 
-> On Tue, Aug 5, 2025 at 7:40 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > Hi Bijan,
-> >
-> > Subjects of patches usually be converted into lowercase when be merged into mm
-> > tree.  I'd suggest using lowercase even in patches stage, if those aim to be
-> > merged into mm tree.
-> 
-> Noted, thanks.
-> 
-> [...]
-> > > The commit_schemes_dests command, similar to the existing
-> > > commit_schemes_quota_goals, is used to commit only the dests fields of
-> > > schemes. This has a couple of benefits:
-> > > 1) It is more efficient than recommitting all the DAMON data.
-> > > 2) Doing a full commit resets the aggregation and ops_update intervals. If
-> > > a user sends the full commit command frequently (relatively to those
-> > > intervals) the aggregation and ops_update events will be prevented from
-> > > triggering. Having a separate commit command side steps this problem.
-> >
-> > I agree the commit command of DAMON sysfs interface is inefficient, and could
-> > make the infinite intervals delay problem.  But, I didn't expect there could be
-> > use cases that use commit feature frequently enough to make the inefficiency
-> > and the intervals delay be real problems.  Could you please let me know more
-> > details about your use case and how severe problem DAMON is causing?
-> 
-> In my use case, I am trying to optimize the interleave ratio of
-> applications to maximize their performance without prior knowledge of
-> their behavior. To do this, we take the steps of updating the ratio,
-> observing how the system reacts to the change in ratio, and update the
-> ratio again accordingly. Because we want to approach the ideal
-> interleave ratio quickly, we update the weights frequently, motivating
-> the commit_schemes_dests. Similarly, we want to observe how the system
-> reacts to the change only after the change has been applied,
-> motivating wait_for_schemes_apply.
+elapsed time: 1125m
 
-Thank you for sharing these details!
+configs tested: 125
+configs skipped: 4
 
-It sounds like you are using DAMOS without any quota, and the target workload
-has static memory mapping.  Hence all migrations for the new weights can be
-completed after one DAMOS schemes apply interval, and no more migration will
-happen until new weights are given.  And that's why you want
-wait_for_schemes_apply, since when the command is finished is when all new
-weights based interleaving is done.  Am I understanding correctly?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> 
-> The consequences are not very severe. The problem can be worked around
-> by either updating less frequently, at the cost of converging slower,
-> or decreasing the maximum aggregation period, which from what I
-> understand may affect the access monitoring behavior.
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                     nsimosci_hs_defconfig    gcc-15.1.0
+arc                   randconfig-001-20250805    gcc-8.5.0
+arc                   randconfig-002-20250805    gcc-10.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                         lpc32xx_defconfig    clang-17
+arm                   randconfig-001-20250805    gcc-11.5.0
+arm                   randconfig-002-20250805    clang-22
+arm                   randconfig-003-20250805    gcc-12.5.0
+arm                   randconfig-004-20250805    clang-18
+arm                         vf610m4_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250805    gcc-12.5.0
+arm64                 randconfig-002-20250805    clang-20
+arm64                 randconfig-003-20250805    gcc-11.5.0
+arm64                 randconfig-004-20250805    gcc-13.4.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250805    gcc-12.5.0
+csky                  randconfig-002-20250805    gcc-10.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250805    clang-20
+hexagon               randconfig-002-20250805    clang-22
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250805    clang-20
+i386        buildonly-randconfig-002-20250805    gcc-12
+i386        buildonly-randconfig-003-20250805    gcc-12
+i386        buildonly-randconfig-004-20250805    gcc-12
+i386        buildonly-randconfig-005-20250805    gcc-12
+i386        buildonly-randconfig-006-20250805    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250805    gcc-15.1.0
+loongarch             randconfig-002-20250805    gcc-12.5.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250805    gcc-11.5.0
+nios2                 randconfig-002-20250805    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250805    gcc-10.5.0
+parisc                randconfig-002-20250805    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc               randconfig-001-20250805    clang-22
+powerpc               randconfig-002-20250805    clang-22
+powerpc               randconfig-003-20250805    gcc-9.5.0
+powerpc64             randconfig-001-20250805    clang-22
+powerpc64             randconfig-002-20250805    clang-19
+powerpc64             randconfig-003-20250805    clang-22
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250805    clang-18
+riscv                 randconfig-002-20250805    gcc-9.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250805    clang-22
+s390                  randconfig-002-20250805    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250805    gcc-9.5.0
+sh                    randconfig-002-20250805    gcc-14.3.0
+sh                          rsk7203_defconfig    gcc-15.1.0
+sh                   sh7770_generic_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250805    gcc-8.5.0
+sparc                 randconfig-002-20250805    gcc-15.1.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250805    gcc-9.5.0
+sparc64               randconfig-002-20250805    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250805    gcc-12
+um                    randconfig-002-20250805    gcc-12
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250805    gcc-12
+x86_64      buildonly-randconfig-002-20250805    gcc-12
+x86_64      buildonly-randconfig-003-20250805    clang-20
+x86_64      buildonly-randconfig-004-20250805    gcc-12
+x86_64      buildonly-randconfig-005-20250805    clang-20
+x86_64      buildonly-randconfig-006-20250805    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250805    gcc-14.3.0
+xtensa                randconfig-002-20250805    gcc-15.1.0
 
-Sounds suboptimal work arounds for you...
-
-> 
-> > Depending on the real problem, I'm wondering if optimizing commit command can
-> > be a solution.  For example, skipping the update of next_aggregation_sis and
-> > next_ops_update_sis when the intervals are not changed might be able to solve
-> > the intervals delay problem.
-> 
-> This would work for my use case.
-
-Great to hear this, and I agree.  The commit operation internally uses
-damon_call(), which takes up to one sampling interval.  Also the migration
-operation that you will wait for would also take no small time, depending on
-the amount of pages to migrate.  Compared to those, I think the commit speed
-increase due to committing unnecessary paramters may relatively short.
-deal.
-
-Meanwhile, I was concerning the continuous next_{aggregation,ops_update_}sis
-delay could be a real problem.  And this option should solve the real problem.
-
-> Another option might be to have a
-> more general commit_schemes command, which may be useful to other use
-> cases. I'll defer to your judgement on which would be better.
-
-If my above theory is not wrong, I'd suggest making the commit operation
-optimization.  If it turns out to be not enough for your or others' use cases,
-we can further consider commit_schemes.
-
-> 
-> > >
-> > > The wait_for_schemes_apply command causes the calling thread to wait until
-> > > all schemes have been applied. It does this by calling damos_walk() with a
-> > > NULL walk_fn. This can be useful, for example, if a user wants to know when
-> > > new scheme parameters they've committed have been applied. Another use case
-> > > could be if a user wants to record the system state every time a scheme is
-> > > applied for debuging purposes.
-> > >
-> > > The functionality of wait_for_schemes_apply can be achieved with the
-> > > existing update_schemes_tried_bytes and update_schemes_tried_regions
-> > > commands. However, having a separate command avoids extra work and makes
-> > > user intent clearer when used in scripts.
-> >
-> > I agree extra works are always better to be avoided.  But is the overhead large
-> > enough to be a real problem for your use case?  I also agree it could make the
-> > user script cleaner, but adding a kernel feature only for user scripts
-> > readabilities sounds like too much, since the user script could have its own
-> > abstract layers for its readability.
-> 
-> Totally fair. I will drop wait_for_apply_schemes in any future versions.
-> 
-> > Also, even if the new command is implemented, since the DAMOS schemes continue
-> > running, the system status will keep changing.  If you cannot do the recording
-> > of the system state in a restricted time, the recorded information might not be
-> > that reliable.  So I'm not sure if you really need this strict waiting in this
-> > way.
-> 
-> Fair. That was not something I was personally using the command for,
-> just another possible use case I thought of. Regardless of the
-> usefulness of that, the existing commands using damos_walk would work
-> well enough.
-
-I'm glad to hear we found a way to go.  As you may know,
-update_schemes_tried_bytes would be more efficient, so I would suggest that
-more than update_schemes_tried_regions.
-
-If the wait is not strictly need to be accurate, maybe monitoring the DAMOS
-scheme stats in auto-update mode[1] until any change is made could also be a
-way.  The stat update for a scheme will be done only after the scheme is
-applied to all applicable regions for a round.
-
-> 
-> > Could you please share more details about what you want to do with the new
-> > command, and how much problem you are seeing?  I'm particularly curious what
-> > system state you want to record, and why you need to wait the exact time
-> > interval.
-> 
-> I mentioned this above, but I am using this to wait for new migration
-> weights to be applied before monitoring how the change affects
-> applications, but again, this can be done with existing commands.
-
-Thank you again for kindly sharing your use case and participate in this
-constructive discussion :)
-
-[1] https://lore.kernel.org/20250717055448.56976-1-sj@kernel.org
-
-
-Thanks,
-SJ
-
-[...]
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
