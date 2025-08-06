@@ -1,311 +1,287 @@
-Return-Path: <linux-kernel+bounces-758173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D56B1CBF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:31:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FB9B1CBF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8567C18C443E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3CD71699F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0AB29CB24;
-	Wed,  6 Aug 2025 18:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104B51114;
+	Wed,  6 Aug 2025 18:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+Y1evul"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lJG5E4IW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B246329B8E1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754505061; cv=none; b=Uu+rqgFQVmg4I8FodvOijn00MRDOtU/eSbQJ+egAUqlAVZe9BRxA9ig3rnMmdnGWNktM5vc4Sdn6X2ym9GPBxrxyNsrAzfXvz8NWthISGZ1+Gg1D5S17HjLiTcPvSoHv6sWi0ss1gAhPoUMKs0BJUTNwryvDOqv8+RR0RjthR2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754505061; c=relaxed/simple;
-	bh=clnDQmsEY8lWrEJelqgi+xfG57VwXFythWYwGl2tIkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OGBGAyTnT8UqOuxlbGj/dfB1hnbTsCgyP2upeA9VoSUmLWLFy2Zw83dlPmhn4Lddj4amozcAP7qd0+r7UZj5Gan5GW0oMsz7Z5ZqatsegCnwylA7u9z9lglukIRqwUJwhvpV3Da9uSjv/+qjq8i+m6DxQeOQyu4l1Gmb/oqarZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+Y1evul; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b7834f2e72so51709f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754505058; x=1755109858; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMoxd/Dtadzsy2TCiR8kFe7kGYsf87uO6nSdEOT8I+M=;
-        b=g+Y1evul7sZ8i0OiA1aBHn9uH/0VD/eBq18wMHERZmTXEUO8kFvlKaZeziRftvcMlp
-         Y9Hp15L/2MPB2z5MSdWxsogIE0cp8yiOmggab3Az/vyDt7lB0mktuXohRdw4I2u+5hbW
-         LYBu7/PwKW4wFHHbqBoJ4VEh55hrOQIeSTwR4/B84shopBWficwPikyaLBR73VrNMQgt
-         5GknP5bvsZa7XG1u3lnljFk4jl1TNcuK9gFnur41HGuS3xAGRZcmnzRPq3zao/71rTQG
-         iFOPfRLR5/2gtqZKABNPjIcsPJj04+cn6BUmmISYjQRugkPOvG5+vuOmLzjS2ky9vzDg
-         w8+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754505058; x=1755109858;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KMoxd/Dtadzsy2TCiR8kFe7kGYsf87uO6nSdEOT8I+M=;
-        b=Nk/mLWis/0KMk3f4yaUt7ByA+Uo5AguntaQTUOB1GGeGEKb4+jcignPofWfztbvLEB
-         xoRFvZB1uZRswZ7nE1kX+9vjXmCNuB+EHOGpSAHqJ/DhV962OX7sFYqOF9dsw9qF+vIN
-         Jsq0KSJXhRz8hIJZKZLKe9iNovmlxjRQME6zEl4Ejhp2bvJ3eTMoGtOn5XNe2bum2Dfp
-         Kcq59kkzb6qnCQNlX72M92tHdf8MqrtsopV3bcgLoKOxSlwSDLxh1eum9xiUpLX8dx+/
-         0+bRcdbiqz1/e7xlJFG5vQEdj3W7cvvcGcRFgMfSLN8wrkKj9KCR5ieoWWlMw+gBjYFc
-         5aNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdOWu4qdgsECof91/mw3IowC/SMuHPQlZSz1CVbd8a4Nm2I+S6pMV3lffcFNcn+/nJZOqYDA/kCAHN3bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ2IwSo14gqBQ2IfGXdl0T2F9B79DASbkKV4rZ7rhHix5KsDmU
-	OjEXDacMLQHrGr97MUhwFFTG4+uV/p7hfEy1XjSP7KwJB4WtwrBv1taF
-X-Gm-Gg: ASbGncu7E2l9iMNxe5KytKOjon+p4GEZ/QTiA/t/N68KLFzrU2ETdFpNLeSnxvBaql6
-	6S6njE9ed7DTBLwESyxE/OjwUIoHboRkwWnXC2Ofd2UCXt7jGzveZY0m2QodhhJVmhUzfPFwSjH
-	5c49tOCX6OQdFsczY/0FEf07fg2T2K5gPk9gyqJbwYWDk7KYkIm2+knU+/3B21PmeC1RSN8xV8v
-	iGcg2AXh+ZlWpLXnTnhzaFU6eq4Ai0cc8mnx4/d1J6UyJo+OiDSWnCxdxVRor1/zD4wWupCEnDB
-	NjE1UnTCUDutEyIQrjDqBrjhw0/PPM9CntgRt/OePOEbf2kK61CkqWK1xKQ2ABxexyVcUVB0eMB
-	vZpC3Nv3GQ/ZYq8iHjBeG9wm+x016lVhCEw/ABtYI/IPqmy6e8Ov6RqBCd59aA7jI4HD5MxG5bA
-	0=
-X-Google-Smtp-Source: AGHT+IFV6VxxjKWucmbCsDSr/60Mju0iKC0OAZ6zMp3uTJRxh8IJaaXS1z0E5eQ2EA47SgnGxXvy9w==
-X-Received: by 2002:a05:6000:2312:b0:3a6:c923:bc5f with SMTP id ffacd0b85a97d-3b8f4165fb2mr3101027f8f.17.1754505057803;
-        Wed, 06 Aug 2025 11:30:57 -0700 (PDT)
-Received: from ekhafagy-ROG-Zephyrus-M16-GU603HR-GU603HR.. ([156.204.172.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm156104065e9.22.2025.08.06.11.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 11:30:57 -0700 (PDT)
-From: Eslam Khafagy <eslam.medhat1993@gmail.com>
-To: 
-Cc: skhan@linuxfoundation.com,
-	Eslam Khafagy <eslam.medhat1993@gmail.com>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Dharma Balasubiramani <dharma.b@microchip.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] drm: atmel-hlcdc: replace dev_* print funtions with drm_* variants
-Date: Wed,  6 Aug 2025 21:30:41 +0300
-Message-ID: <20250806183049.52112-2-eslam.medhat1993@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250806183049.52112-1-eslam.medhat1993@gmail.com>
-References: <20250806183049.52112-1-eslam.medhat1993@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788191C7017;
+	Wed,  6 Aug 2025 18:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754505207; cv=fail; b=L/mXkEyIFvp6yabUy709g8U4X8NVONEsHJAgghG42n3/1YE790uVpOqiyCphymSFifSv0trHtnp2GdScs8ixOyhaAw32T4+mfaPTw17NCsZmMRx9eQv7FVNF0XPEp0iUsIYQ7va7YusnbPr1ogMJDspDFkFneTbUD4O3OIRKXEE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754505207; c=relaxed/simple;
+	bh=Vm1mh+1pXFXzWwFnlrkeq0KHXRRnwL8Ma844zQjHmuE=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=OCFfdHuRQqGePzt9vBb5FqtVSD2gwNAyHfyCeUxExrVCevjrHGmvS7CsXxyXLM5g94S03py7Qf5iFVkgjSoyN2QzcTC3KXI5Txi3xCuBPwVHzaaGXEuyvyOwiKCem+VQet6H2qjeOsshBqMA2JeEPmVIhdABt72XlWjEggGJQWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lJG5E4IW; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754505205; x=1786041205;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=Vm1mh+1pXFXzWwFnlrkeq0KHXRRnwL8Ma844zQjHmuE=;
+  b=lJG5E4IW3icQx6PVDKAkYV9dg2Q7RhwgT1HjGai3cRa9vmObGnCvUTOd
+   o323YKE/BY4X2VrA6YY++sX2HNqoglZn3RIFnWPgQbAteHD2D7yBEAc5x
+   kkxa8AcrzIvPNf9pXiaFEptDbbh9onmu2DF5XtRYpHwuqyO8QvWooNvEu
+   X5bOhD3FxYcJub87vHRIF+K9sg7pqYtjg2w0VL+YYmp7SN0vRIo5OfBN8
+   PmOw1aaDl/AdS/vqnSZdxHh++IquDrs7S0uTKprLIzPkGuPzPfyoM8Hly
+   yVn8DTIN2VIcu6u+6J4q+zaPmrvZvegJKKy9ZxMpgeYmKs+5nsgXfIr0X
+   g==;
+X-CSE-ConnectionGUID: eIYJxQ0LTJOrNKGQtrLmYw==
+X-CSE-MsgGUID: ErnoDVm9RXiMMIo6RoEbTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="82279757"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="82279757"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 11:33:24 -0700
+X-CSE-ConnectionGUID: ZSCbBmHKTtW3lQxQLBFe/A==
+X-CSE-MsgGUID: QewnGGJXTzm58B0EWCdjIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="165256541"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 11:33:25 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 6 Aug 2025 11:33:24 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 6 Aug 2025 11:33:24 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.55) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 6 Aug 2025 11:33:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R80VkhD7xdIP/ccGApjA9eLyAwlgR7BcxVzMHKtRbRywIRkduFVdjGrfDT56vKeKhVomiFhBSZXvyjL9n62d2LR3sbG8myJ9u9d+M9XE3rJEAKhE1hpQeO6bhl/YrUhgttlmOX+9EB/nUYcF1OcNKQSCx+iyVAHqe51iBsHVpyN/jS/Zd9Z83ssNp2L9Mqg3yzo37yQai9VI9Zr0uiR0UbsdRrjkAY+j/pYPDQW7IPycbT0+y0dlmVM7ZrlozA+PuXvZnDWvNSvi+l3do4r7+m7QG3RxrFB7SCTMKVr9VWsS6w4Z9JSwwwjIP8/hhwL2IepNsnaD2stDmVwDZAx4Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8EQRzkAoOEzHbM9AzdGG9Wu9Jear16obEarp83QAr0g=;
+ b=GgadUEGoUzDk2rpOnErJTdwjSSTlEb43AbLvS/8/mV+IDMjI3YHG45k2YsrkfXUBN3xPEHOsCkEU9flJBjzo3YK+sVSfgzTfVEJ+z7SVkdNotxFFgvUgdp636JRSpEI79/ganmqWNWIjiXf2fSvhWdkxFtvzvzpRLpKJqlwCK7HTb+G+acfpEP+6O/PF5jkhPmf1vOQBn6jdRxwCKujHgUQvt6cf7aSq9Ala3uc+/oLihbtrLSfEfYgyz8U7JPE5uQ36JLJgioTTC5kL5u4vGH22mC2udg+WyXnhCNe5DdujfZ/nQ/jF0uX53mVH9y9EXWgpRH3zlf2hd34JXifMpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by MW3PR11MB4713.namprd11.prod.outlook.com (2603:10b6:303:2f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
+ 2025 18:33:21 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 18:33:21 +0000
+From: <dan.j.williams@intel.com>
+Date: Wed, 6 Aug 2025 11:33:18 -0700
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, <dan.j.williams@intel.com>
+CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Gerd Hoffmann <kraxel@redhat.com>
+Message-ID: <68939feeef7d9_55f09100c7@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20250806121625.00001556@huawei.com>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+ <20250717183358.1332417-6-dan.j.williams@intel.com>
+ <20250729161643.000023e7@huawei.com>
+ <6892c9fe760_55f09100d4@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250806121625.00001556@huawei.com>
+Subject: Re: [PATCH v4 05/10] samples/devsec: Introduce a PCI device-security
+ bus + endpoint sample
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR20CA0011.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::24) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MW3PR11MB4713:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5da696f-9ad4-4857-c702-08ddd517b870
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MzVFZEZETzA0SFpna0FpR0hyTWF5K3VqQTc0NEJ4NE5aWTBzRGtoNFg0azBC?=
+ =?utf-8?B?YlZaK0RlZE90N2lCMXpBOFRqbUl3T29YR0lLbkNFNy9ncjBNMnFJWkNVUjhz?=
+ =?utf-8?B?YnN5bmJKMi80aDVaNXR3ekhmWElqZzVDbDhMc0c4ZGdIT1lGVWZJTzdGVHd1?=
+ =?utf-8?B?MkRnRHM1bCtkcmdHNitMb0xIbThyeDMyZlRIdzd3NVZlSmJHeTlqUG5pQTFw?=
+ =?utf-8?B?VE1OZGlPQkhNdkRMSk1aOWZZV2UwMldadDB1L3NIcnBtTTZQM05xa2hLM3kw?=
+ =?utf-8?B?dW92RHdOdjh1T21BQmlNd3A5N2kyZ1pwdmdVZlpCc0tod1pIeldBeW5rWUNP?=
+ =?utf-8?B?L01yTHoxdHJFUkdicEhQZjJoMTJHbHVjcDNVOHJNaWRCVDlWUjZVc3g5NG10?=
+ =?utf-8?B?ZVliTVB1NEJNU0lIdzV4M25pQnpPNEdWVXVsMkhoRXZVNXA3UHVaWHZkR1BS?=
+ =?utf-8?B?T0k3eWdBYlE4Y0ovRXB4VStjMzJnbXdnaHE4VUxzR0VtcFFvRVBsQitNeThu?=
+ =?utf-8?B?UVRSU2ErT3FjYkwvTktzUjlUa1AyeFpmN1R6UnBtczRrNmtmQnZTWWxXRWFJ?=
+ =?utf-8?B?OGwzVGFnQVg5MCt2UEVCbGZpck5QNGZCVVVLZjVUQVo1cnBUYjFKTnhoRVEz?=
+ =?utf-8?B?N0s4Rm8zdTY2bWloVmVPZEpZK05BTEkweFRST0x2N2N6NWoyRjEwd1RFdndX?=
+ =?utf-8?B?dGdjWlJ2OUp1dmhETGp0Y04rbnZIS1NWd2pFeEp1eWJqcXBINUZ4d0J2YjNY?=
+ =?utf-8?B?eThzM3pLVVIyMlhiblZnUlZVUEVXV2FUNmc1RDFKODQybEI3VmhsckluRkxz?=
+ =?utf-8?B?V2xFTEJ1ektLNW9wbTk2N0cxR3piOUt2WnNxL0FFMGF0UGd2VkVlVlptZWQ5?=
+ =?utf-8?B?dEYxWlRVOTRXdVN1Z0lyWXMwUHRaanhMQUNvc3gxZVZBRmh4SlhlNXRwVytI?=
+ =?utf-8?B?TjFXNVp3cjZWUVllYnVUdXJsbkdnMVdsTUZUOWVidU9QaUtHeGJxTnpPR05s?=
+ =?utf-8?B?b2w5aDlFd0xWQ21RNGZuWjQ0ckxkTitpUDNQZml6SVUwS2liZXhTcC9XcXlC?=
+ =?utf-8?B?SDcveHZCQ2RqVU43K1NJU2N3dWM3VEFtaFBVUmJ0ZlJJSGlCZVg1REpaVEl4?=
+ =?utf-8?B?WFE2andWWU4xcytRRjV6d0c2UHltb2FIWDlYcXF6cElJaFg0WGJabngvUkhX?=
+ =?utf-8?B?VzRoa2VpcllCZkQ4aDMvQ1FBbll5ampYM3JtdjRqNUhBQ0NZbS9zb2lWYnFV?=
+ =?utf-8?B?S3B1RWFqUy9ocXJTSVZkcFFDaXBoOXBVZ2lHMDRZQ25CQUJydHFEY2FQNXlU?=
+ =?utf-8?B?dldnL3B6VDJQNEVOUnc1cGx4dlo4S0RIekhrbEhDR25pc3kzeG9jRnZJTjh2?=
+ =?utf-8?B?R252RkVRekp6SGJDanFVbERUZ3VnVm5yZHZtYStIcnhxU1k0TDEydENtSjRO?=
+ =?utf-8?B?NTZiYjEyN1NUOTAzWlNHdGQ4dUl0K3VYZWJjTVA4Mk5sb2JVZWpKbXRmYXhR?=
+ =?utf-8?B?Q2t1R0pyTkphTmMxMGFkd0dBQ1B0aFBXbE5QWjJ4bFBnczJ5bzBXREZoUzNU?=
+ =?utf-8?B?VnRzUWF6RVNXQ0N1TGZjSzRkNEZlc3VIUmFZLzNpYVhyR0RxelIwdFlzaTY0?=
+ =?utf-8?B?SGRVaU5vWWdSTCs2TllxWGVkRWZiQ2UxVU9MZlZVWGJGS1FVRmwxeEFMc1pU?=
+ =?utf-8?B?ajVmbnNHanFtRG1id3JUeERxODJ2R0MydW90NHlLRk9neDNPSlhYVU9XYnFl?=
+ =?utf-8?B?Y2J0b0FxbzlJUVhoOWhwK1ZtSWZJVjQyMXhWYWJ3ZWYxT2RmY0IwdHJCWS9x?=
+ =?utf-8?B?elo0aFVHc1JhRjBPWm5CRTMwamZydzdadFlLZTR2NUVQMjJ4OXNseDlhcHUx?=
+ =?utf-8?B?NVlkcDRtUklRdEt6azJpd3J4a3hRR093bUVRWHpHMjZWaExyL1h5b1YxeWJC?=
+ =?utf-8?Q?qDSmqSASCe4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?czNGbHk3eXJIdnM4YnNtYjVBbUF4b1BDWHRtR2RDT0IrZWliaFlqQWZwVTlJ?=
+ =?utf-8?B?eGxnSWRTUlorVlozRzN5M1lua1RhS2VBY3c0cjRPckJiMFU4dWJCNXcrNHFJ?=
+ =?utf-8?B?UzB0amVpdHdyZm1icUlsZ2Q3Smd1clhlcHVENkJOSUs0SENZdVFKOVdjcHVT?=
+ =?utf-8?B?R0wvYjRoSHZzYmQ1ZGRxVDgvRzUyUC84V0daQ3hLa3lJVjBtK1lmazRERnB5?=
+ =?utf-8?B?Q1RrNE8vYUtyTDExMTM0c0dXWU9IS1pwY01RemxvV0Z5RXdQMU8vU2svN3E2?=
+ =?utf-8?B?MFlaR2VPZU5Da2RlaFVreUJNR05wWGpFU2c0TWpuL1BJSE5wT1ZVK0hGRW9h?=
+ =?utf-8?B?RFJTb3lpY1doa2hWcVFlaExpcjNCWUxyYmdSUFUwcEh0c1VENnRjSDFGdnQz?=
+ =?utf-8?B?c0dyMmlMdlRISTFKZkpMTWRoZzV0TkJyN0pUaWJvZWt4eEROMXE2d0gvS3BC?=
+ =?utf-8?B?cUljYkZNY2pwQkpjOTAvM2p5byt1VTE4SDRTS3QrT3g1SDFlaWZJYW56QVVm?=
+ =?utf-8?B?S1pmbmIzZ0RPQ3FQUnY2aFAwMkVxbjdJSktNK0tlNG1INUFPUkxiOUhEdlF2?=
+ =?utf-8?B?dHVuMnorWm5Bdkg1UVB1T0NSb2pub3dMc1Bsai9TNDlvZjBSOGJyNVZiMHcy?=
+ =?utf-8?B?VE81Y2hwTWRscWpSMzBsTXNWSFdreHNlMVVSTVpYZmZ6eFVzd2txT0VBOG5J?=
+ =?utf-8?B?RXFwajcvZ1QxZ2hla3FlQ3lLYzg5dzk1MkE2NDcyVkt1UmlmT0tadVB2TWZu?=
+ =?utf-8?B?WDRYQjFzM3F0YVEydFRKK3lrNnRJR0lKRm8vQ28wSkVvU2YzNERsbDRDTlhK?=
+ =?utf-8?B?MDV3MjFXWG80aDFnaWF2NFFpSFFhOGo5dFNvd2xNVWFVaTEvZTc0TVJ0bDQy?=
+ =?utf-8?B?d0J1T1I1MmFMOFBNaU5tWE1mL0VUTWRTQStlMUJQYVRieVd0ZzQ4UzRxVmIv?=
+ =?utf-8?B?eFUySnNONWExcXB6VHNqcmZJVjk0Sm5UWEhvY0IxdnErbWxXREdTVkdmNWNt?=
+ =?utf-8?B?MEdqeWJBcVYwMi9uVUV1eXE2VTJ3ZTlQZ0NJMUNFSjNSNlgyenRtSXhnd1pn?=
+ =?utf-8?B?MEEwYi9HbXZVc0I2NktEdXIyOStnd041bk00bk5NNVVjUWhmak8rYVVPRW5Q?=
+ =?utf-8?B?Wldrem9JSUJ3bUFma2ZvTm9WL2l5UDBReWE3L2Y4eDRYVkJOYVlQTys0S1Nl?=
+ =?utf-8?B?WlhWSlAzYVU5alRMZ3NKbWl3dHNHMzAwczgxcEJKSTRSeXBOL3NUTTJEL096?=
+ =?utf-8?B?RGV5dmxvT1piZGcvYXlLR1FWUWtpVGhickowYXVyQ2RqdWlUUElIMTF5UG9S?=
+ =?utf-8?B?WEpCK24zcE5YSzBtOHFPNXBEQUpNYXpYVHhLWng3WG9LM01OTmRYUGNWV3FL?=
+ =?utf-8?B?cXpQL1R3U0pmSjFIWWQ2K0VzU2hXdjRwd2V3RGR5Q1liYXcxZkRrOUVxSm1x?=
+ =?utf-8?B?TGlGNTJ3RE9mM1psOG1JeHVaR0NLcjN6QzZoWUEvZGtZbVQ5ZE5uWHdOc28x?=
+ =?utf-8?B?SGx4UGp3RnFETzRzUnNHcnNjMlBGQUZDeXhIYjZPZng2SXZ3UVpIY1lpRHJS?=
+ =?utf-8?B?UmhpTnZnRjZrSlovYmVXZGkyaDZCRkt6VGh5bHY3NnU0YVVPSzkyREJ3dkk0?=
+ =?utf-8?B?enJXYkZkbXBJS1ZnOUx1VXJsNmEyOTFkbllMWi90TWFCdmg0SFlnWDJwK3hY?=
+ =?utf-8?B?TTVzNStRbUhzcjFXR21mRTYxUnpGdjRPaXNmdkcxR1Y2WDZXbHlzTC9CWUdF?=
+ =?utf-8?B?RWxUOGh0THN1QWc0Y0czekM4K0xCYUdsWHpLQTJrRkIwOXBQTFptU1JodFlq?=
+ =?utf-8?B?VlJOK2ZNQmZvcTRQajIyb1VPSGljNGdId0hpT1BjaXVPeHV3R2Irc1RmU1pt?=
+ =?utf-8?B?ZXJWVEZQeVd6cEdnUnRMQ0pHQTZmc2RPeXpzT09yYmRoUzQ0aVQ3MVdxMUwz?=
+ =?utf-8?B?QWJXNUtLbkFTcG50YlQyeFAzTXQ1NHU0SXJnK3JzRGlUUUtBSCtENTlkS2Js?=
+ =?utf-8?B?QjdudVpjMlZsUjEvaXhkWmR5OExPODdqWm1vL2Ntem1tZGh3eGhlYUtZa1lj?=
+ =?utf-8?B?MEhaSzVvQzhEZ0ZmbW9ST0NIWnBNRCt6U2RhSWFNdk9tYk05b2U3QklJc1pv?=
+ =?utf-8?B?R1lMNEJNQlNOVnhma3IrWUpnYWw0bGJIYmJYM21PODJCUkdzY0xnaE5LZ1ha?=
+ =?utf-8?B?d1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5da696f-9ad4-4857-c702-08ddd517b870
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 18:33:21.4819
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CFlR2zmJhJKp6SojZpiZXdYSEg8ZFHq3KCPvi7KVEMRMnZmGfktNx1iIgzwB8TQzAcvCTus8m3tBd7mDB4pNC4Pd/WzDoHGWvAt4CQeWEv8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4713
+X-OriginatorOrg: intel.com
 
-According to documentation[1] drm_* variants are preferred over dev_*
-print functions.
+Jonathan Cameron wrote:
+> 
+> +CC Gerd, of off chance we can use a Redhat PCI device ID for kernel
+> emulation similar to those they let Qemu use.
+> 
+[..]
+> > > Emulating something real?  If not maybe we should get an ID from another space
+> > > (or reserve this one ;)  
+> > 
+> > I am happy to switch to something else, but no, I do not have time to
+> > chase this through PCI SIG. I do not expect this id to cause conflicts,
+> > but no guarantees.
+> 
+> Nothing to do with the SIG - you definitely don't want to try talking them
+> into giving a Vendor ID for the kernel.  That's an Intel ID so you need to find
+> the owner of whatever tracker Intel uses for these.
 
-[1] https://docs.kernel.org/gpu/todo.html#convert-logging-to-drm-functions-with-drm-device-parameter
+About the same level of difficulty...
 
-v1->v2
-replace dev_dbg with drm_dbg  in atmel_hlcdc_plane.c
+> Or maybe we can ask for one of the Redhat ones (maintained by Gerd).
 
-Signed-off-by: Eslam Khafagy <eslam.medhat1993@gmail.com>
----
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c    | 20 +++++++++----------
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  | 14 ++++++-------
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c  |  2 +-
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   |  6 +++---
- 4 files changed, 21 insertions(+), 21 deletions(-)
+In the meantime I added this to the Kconfig because I also received a
+report of an AMD platform being confused about this extra PCI domain.
+This protects against allyesconfig builds autoloading this thing which
+should only be used with unit tests.
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index 0f7ffb3ced20..da94ab0540bb 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -215,32 +215,32 @@ static void atmel_hlcdc_crtc_atomic_disable(struct drm_crtc *c,
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     !(status & ATMEL_XLCDC_CM),
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
+diff --git a/samples/Kconfig b/samples/Kconfig
+index 8441593fb654..9ad822d4e808 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -327,6 +327,7 @@ source "samples/damon/Kconfig"
  
- 		regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_XLCDC_SD);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     status & ATMEL_XLCDC_SD,
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
- 	}
+ config SAMPLE_DEVSEC
+ 	tristate "Build a sample TEE Security Manager with an emulated PCI endpoint"
++	depends on m
+ 	depends on PCI
+ 	depends on VIRT_DRIVERS
+ 	depends on PCI_DOMAINS_GENERIC || X86
+@@ -339,7 +340,11 @@ config SAMPLE_DEVSEC
+ 	  devsec_bus and devsec_tsm, exercise device-security enumeration, PCI
+ 	  subsystem use ABIs, device security flows. For example, exercise IDE
+ 	  (link encryption) establishment and TDISP state transitions via a
+-	  Device Security Manager (DSM).
++	  Device Security Manager (DSM). Note the emulation uses a device-id
++	  (vendor: 0x8086 device: 0x7075) that is *assumed* unused and some
++	  architectures may be confused by this emulated PCI domain.
++
++	  If unsure, say N
  
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_DISP);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_DISP),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
+ endif # SAMPLES
  
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_SYNC);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_SYNC),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_PIXEL_CLK);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_PIXEL_CLK),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
- 
- 	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
- 	pinctrl_pm_select_sleep_state(dev->dev);
-@@ -269,32 +269,32 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_PIXEL_CLK,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_SYNC);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_SYNC,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_DISP);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_DISP,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
- 
- 	if (crtc->dc->desc->is_xlcdc) {
- 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_CM);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     status & ATMEL_XLCDC_CM,
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
- 
- 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_SD);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     !(status & ATMEL_XLCDC_SD),
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
- 	}
- 
- 	pm_runtime_put_sync(dev->dev);
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index fa8ad94e431a..acb017a2486b 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -724,19 +724,19 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
- 
- 	ret = atmel_hlcdc_create_outputs(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create HLCDC outputs: %d\n", ret);
-+		drm_err(dev, "failed to create HLCDC outputs: %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = atmel_hlcdc_create_planes(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create planes: %d\n", ret);
-+		drm_err(dev, "failed to create planes: %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = atmel_hlcdc_crtc_create(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create crtc\n");
-+		drm_err(dev, "failed to create crtc\n");
- 		return ret;
- 	}
- 
-@@ -778,7 +778,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 
- 	ret = clk_prepare_enable(dc->hlcdc->periph_clk);
- 	if (ret) {
--		dev_err(dev->dev, "failed to enable periph_clk\n");
-+		drm_err(dev, "failed to enable periph_clk\n");
- 		return ret;
- 	}
- 
-@@ -786,13 +786,13 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 
- 	ret = drm_vblank_init(dev, 1);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to initialize vblank\n");
-+		drm_err(dev, "failed to initialize vblank\n");
- 		goto err_periph_clk_disable;
- 	}
- 
- 	ret = atmel_hlcdc_dc_modeset_init(dev);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to initialize mode setting\n");
-+		drm_err(dev, "failed to initialize mode setting\n");
- 		goto err_periph_clk_disable;
- 	}
- 
-@@ -802,7 +802,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 	ret = atmel_hlcdc_dc_irq_install(dev, dc->hlcdc->irq);
- 	pm_runtime_put_sync(dev->dev);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to install IRQ handler\n");
-+		drm_err(dev, "failed to install IRQ handler\n");
- 		goto err_periph_clk_disable;
- 	}
- 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-index 50fee6a93964..945a475c33ac 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-@@ -92,7 +92,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
- 	output->bus_fmt = atmel_hlcdc_of_bus_fmt(ep);
- 	of_node_put(ep);
- 	if (output->bus_fmt < 0) {
--		dev_err(dev->dev, "endpoint %d: invalid bus width\n", endpoint);
-+		drm_err(dev, "endpoint %d: invalid bus width\n", endpoint);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 4a7ba0918eca..817284509b57 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -1034,7 +1034,7 @@ static void atmel_hlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
- 	if (isr &
- 	    (ATMEL_HLCDC_LAYER_OVR_IRQ(0) | ATMEL_HLCDC_LAYER_OVR_IRQ(1) |
- 	     ATMEL_HLCDC_LAYER_OVR_IRQ(2)))
--		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
-+		drm_dbg(plane->base.dev, "overrun on plane %s\n",
- 			desc->name);
- }
- 
-@@ -1051,7 +1051,7 @@ static void atmel_xlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
- 	if (isr &
- 	    (ATMEL_XLCDC_LAYER_OVR_IRQ(0) | ATMEL_XLCDC_LAYER_OVR_IRQ(1) |
- 	     ATMEL_XLCDC_LAYER_OVR_IRQ(2)))
--		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
-+		drm_dbg(plane->base.dev, "overrun on plane %s\n",
- 			desc->name);
- }
- 
-@@ -1140,7 +1140,7 @@ static void atmel_hlcdc_plane_reset(struct drm_plane *p)
- 	if (state) {
- 		if (atmel_hlcdc_plane_alloc_dscrs(p, state)) {
- 			kfree(state);
--			dev_err(p->dev->dev,
-+			drm_err(p->dev,
- 				"Failed to allocate initial plane state\n");
- 			return;
- 		}
--- 
-2.43.0
+> 
+> > 
+> > > > +			.class_revision = cpu_to_le32(0x1),
+> > > > +			.pref_mem_base = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
+> > > > +			.pref_mem_limit = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
+> > > > +		},  
+> > > 
+> > >   
+> 
+> ...
+> > > > +static int __init devsec_tsm_init(void)
+> > > > +{
+> > > > +	__devsec_pci_ops = &devsec_pci_ops;  
+> > > 
+> > > I'm not immediately grasping why this global is needed.
+> > > You never check if it's set, so why not just move definition of devsec_pci_ops
+> > > early enough that can be directly used everywhere.  
+> > 
+> > Because devsec_pci_ops is used inside the ops it declares. So either
+> > forward declare all those ops, or do this pointer assigment dance. I
+> > opted for the latter as it is smaller.
+> Ok. I guess in emulation that's a reasonable compromise.  Maybe leave
+> a comment somewhere to avoid repeat of this feedback.
 
+I expect all the low-level tsm drivers will struggle with this, so
+expect to see this pattern repeat outside of emulation.
 
