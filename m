@@ -1,245 +1,311 @@
-Return-Path: <linux-kernel+bounces-758315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8B4B1CD80
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:36:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B58BB1CD83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49DA518C545A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373C63B5123
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E97921D00A;
-	Wed,  6 Aug 2025 20:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706C721D00A;
+	Wed,  6 Aug 2025 20:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8ZhisKz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3MTZOPu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8BF1D7E31;
-	Wed,  6 Aug 2025 20:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AB62153D8
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754512574; cv=none; b=TVzhcsSPXeCpj84NAHRWK1stfsIeuos/DKmPqta5IZWXYFZo4lOn4ZRwb33PkRXfTU7jioyVZ1cBm5X4T3bN8JvOZdHnOEs4T3q0yZu0rOBR3ujCUUcTrBabHDx//PBMEhTPQ1+GsY7TSj0st2IC6EB7Aj3BHvoTAEmRT9CJwZ8=
+	t=1754512644; cv=none; b=OUHwL8eC6Wm+4LXX3e6VMMQWy1f9aFg349IZq1wbtj2lk2WxMz5D2me8VEBL8MsYaYeVIjlEq0G09qrMHW0mrL7wn9DNDA0BPLqK6e2ShH/xlHTQDB/Q8q5fwRG2rZzYPto1TEZJ/NiEO9aTVD245TgLI21DjahoFuFQrwu2peI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754512574; c=relaxed/simple;
-	bh=omoGFr9ZQ8SroH5Srh+gk6QS+mi6a7nb1tSnLJs20D8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTO0B1I3Or5oTAvIa+UFhzXgBAe2a5Wq/li6PIKB1zjOmP8dDlY1QxiNE6JOflKLJmefhmm4ShMSdzNEGxokca8XPQRfq4xdwVei9i0vmWzWXEact8g/br4/0sXvCFosf8Q2SRicXU91NDO8+kJVxgI1h4yNAayw5oOvqvqWnaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8ZhisKz; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754512574; x=1786048574;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=omoGFr9ZQ8SroH5Srh+gk6QS+mi6a7nb1tSnLJs20D8=;
-  b=U8ZhisKzQ2v//Om82BYKpMm+nfpwkYmsg1IF1nMzTrJL4fktdOlQjDZD
-   DlERkHtZa3SKW9PVi5QDPqaprdG+mTsT3Z1EklDPZebvN631Fx3weTmO7
-   haJHYb0hWtbx7rVqUbRVP1y1xG2Nh7oBk1yDAwLiP1C6paFVDY6ONHG2/
-   1C2p9UPmoeh3EPzd+z2X3VZqbwD3QcyBpXRsVyWpLDkbfRwIeAj3+2WnO
-   O8FkEkVGtybSqShkxmTeDF6af0RHjvl9tjnyvpFGi2PEeAYM0IBs4b1+i
-   4uIZJQ42FukfGHw/gjWZQ3Iv43MF1fBw39pP7BrJFLcuBaFAVS9wBkDfu
-   Q==;
-X-CSE-ConnectionGUID: YS44eP2wSXqePd2oSKcKxA==
-X-CSE-MsgGUID: AZtVbyGvSNubBbuXjyoC3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56917939"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="56917939"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:36:13 -0700
-X-CSE-ConnectionGUID: fliheRZYSE+quFMNHOZiVw==
-X-CSE-MsgGUID: oywvH5iiSHy/ztXORqSLWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="170138177"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:36:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ujkrm-000000046qy-1dOc;
-	Wed, 06 Aug 2025 23:36:06 +0300
-Date: Wed, 6 Aug 2025 23:36:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ramona Nechita <ramona.nechita@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1754512644; c=relaxed/simple;
+	bh=156EHPjhWzUxzJB/4SYjHDeRq2mO+UxugzR7hwf+WMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DxkqcDblbvI0YsB4uSpN/6wfOJVjoBmZamsoS6pG6LtrNatrfY1GXdvz8bIX8a6ngY/djoqhxsZLxTdxbazbV4RI219Lyld03ERfjyopbL5PDDlrSL8zckC8J875Uz65cz/LcO5EvJ3m+5BXqaw5pWqsK8Q183ba+64Yc12YY88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3MTZOPu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754512640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jeuEbb8zJCtpDnK+vT4c/1frCm+lprzodC4xYiTtKIQ=;
+	b=S3MTZOPuYldl5PZvGqt7mjw0EhWmPJEwM/tLM09yhcOHTaQxaHIxYjJ/XbX1wX3MlJsJWo
+	TvdRbU5TEB7Bj2sVCS/p5HF3OUpn0/9DJNyAohJdp9J4l55F8Hn80zR168UoJ7WdQH+ISh
+	uVcQxqdVJgBnacDnyhw4fXgbTyIsCl4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-aNBpNrxBMSeZZnRFT-wnzQ-1; Wed,
+ 06 Aug 2025 16:37:17 -0400
+X-MC-Unique: aNBpNrxBMSeZZnRFT-wnzQ-1
+X-Mimecast-MFC-AGG-ID: aNBpNrxBMSeZZnRFT-wnzQ_1754512635
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1365719560BD;
+	Wed,  6 Aug 2025 20:37:15 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.17])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1DF171800447;
+	Wed,  6 Aug 2025 20:37:11 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Wang Zhaolong <wangzhaolong@huaweicloud.com>,
+	Stefan Metzmacher <metze@samba.org>,
+	Mina Almasry <almasrymina@google.com>,
+	linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] iio: adc: update ad7779 to use IIO backend
-Message-ID: <aJO8thsrIgS3YGj2@smile.fi.intel.com>
-References: <20250806192502.10120-1-Ioana.Risteiu@analog.com>
- <20250806192502.10120-4-Ioana.Risteiu@analog.com>
+Subject: [RFC PATCH 00/31] netfs: [WIP] Allow the use of MSG_SPLICE_PAGES and use netmem allocator
+Date: Wed,  6 Aug 2025 21:36:21 +0100
+Message-ID: <20250806203705.2560493-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806192502.10120-4-Ioana.Risteiu@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Aug 06, 2025 at 10:25:00PM +0300, Ioana Risteiu wrote:
-> Add a new functionality to ad7779 driver that streams data through data
-> output interface using IIO backend interface.
+Hi Steve et al,
 
-...
+[!] NOTE: These patches are NOT FULLY WRITTEN, won't necessarily compile
+    all the way through and haven't been fully tested and this is intended
+    as a preview of what I'm working on.  Basic SMB1 and SMB2+ work as far
+    as "cifs: Rewrite base TCP transmission".  Encrypted, signed and RDMA
+    may work but haven't been tested; compressed is disabled.  Assume that
+    anything beyond the specified point won't work.
 
-> +enum ad7779_data_lines {
-> +	AD7779_4LINES = 4,
-> +	AD7779_2LINES = 2,
-> +	AD7779_1LINE = 1,
+I'm trying to work towards the network filesystems being able to use
+zerocopy facilities such as MSG_SPLICE_PAGES and, in doing so, I think the
+cifs driver can be simplified quite a bit.
 
-Reversed ordering in enum is not a thing I see everyday in C, maybe a bit
-confusing to the reader.
+However, making it possible to use the zerocopy facilities is probably
+going to mean moving away from storing the data to be transmitted in slab
+pages as slab pages don't have refcounts and their lifetime rules are
+unsuitable for splicing.
 
-> +};
+So what I'd like to do is to allocate protocol bufferage from the netmem
+allocator.  The netmem allocator, if I understand it correctly, manages DMA
+mapping and IOMMU wrangling in bulk, and works as a bump/page fragment
+allocator - which has the potential to improve performance a bit.
 
-Seems like it's 1:1, why enum at all?
+The aim is to build up a list of fragments for each request using a bvecq.
+These form a segmented list and can be spliced together when assembling a
+compound request.  The segmented list can then be passed to sendmsg() with
+MSG_SPLICE_PAGES in a single call, thereby only having a single loop (in
+the TCP stack) to shovel data, not loops-over-loops.  Possibly we can
+dispense with corking also, provided we can tell TCP to flush the record
+boundaries.  (Note that this also simplifies smbd_send() for RDMA).
 
-...
+To make this easier, I want to introduce a "request descriptor", which I'm
+calling "struct smb_message" and allocate it at a higher level, notably the
+PDU encoding routines in cifssmb.c and smb2pdu.c and then hand that down
+into the transport.  It will contain the list of fragments that form the
+message.
 
-> -#define AD777x_CHAN_S(index, _ext_info)					\
-> +#define AD777X_CHAN_S(index, _ext_info)					\
->  	{								\
->  		.type = IIO_VOLTAGE,					\
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE)  |	\
+smb_message then replaces mid_q_struct, absorbing its contents.  The
+transport then doesn't allocate these, but uses the ones that it is given
+and the I/O thread gets to simplify its refcounting and do less of it.  The
+rule is that smb_message gets an extra ref when it is enqueued and whoever
+dequeues it gets this ref and either puts it or hands it on.  The PDU
+encoding routines get a ref when allocating them and keep the refs until
+they complete.
 
-Unneeded change.
+smb_message is then given a next pointer to allow compounds to be trivially
+assembled, with the protocol wrangling being done in the transport.  This
+next pointer also allows a bunch of fixed-size arrays to be got rid of
+(which were imposing weird restrictions like reducing the maximum component
+count of a compound if we stole a kvec[] slot for the transform header).
 
-...
+To this end, I make the following significant changes.  Note that some of
+the changes are a way to transit to a later stage.
 
-> -#define AD777x_CHAN_NO_FILTER_S(index)					\
-> -	AD777x_CHAN_S(index, NULL)
-> +#define AD777X_CHAN_NO_FILTER_S(index)					\
-> +	AD777X_CHAN_S(index, NULL)
+ (1) Make SMB1 transport use the SMB2 transport rather than having parallel
+     dispatch code.
 
-Why?!
+     (a) Get rid of the separation of the message buffer into two kvecs,
+     	 one for the rfc1002 header and one for the rest.  This seems to be
+     	 only to simplify the signing code - but at the expense of making a
+     	 bunch of other places more complex.
 
-> +#define AD777X_CHAN_FILTER_S(index)					\
-> +	AD777X_CHAN_S(index, ad7779_ext_filter)
->  
-> -#define AD777x_CHAN_FILTER_S(index)					\
-> -	AD777x_CHAN_S(index, ad7779_ext_filter)
+     (b) Make SendReceive() wrap cifs_send_recv() as does SendReceive2().
 
-Ditto.
+     (c) Get rid of SendReceiveBlockingLock() in favour of using
+     	 SendReceive() and a couple of flags to request interruptible
+     	 waiting and to indicate Windows-type unlock rather than lock
+     	 cancellation.
 
->  static const struct iio_chan_spec ad7779_channels[] = {
-> -	AD777x_CHAN_NO_FILTER_S(0),
-> -	AD777x_CHAN_NO_FILTER_S(1),
-> -	AD777x_CHAN_NO_FILTER_S(2),
-> -	AD777x_CHAN_NO_FILTER_S(3),
-> -	AD777x_CHAN_NO_FILTER_S(4),
-> -	AD777x_CHAN_NO_FILTER_S(5),
-> -	AD777x_CHAN_NO_FILTER_S(6),
-> -	AD777x_CHAN_NO_FILTER_S(7),
-> +	AD777X_CHAN_NO_FILTER_S(0),
-> +	AD777X_CHAN_NO_FILTER_S(1),
-> +	AD777X_CHAN_NO_FILTER_S(2),
-> +	AD777X_CHAN_NO_FILTER_S(3),
-> +	AD777X_CHAN_NO_FILTER_S(4),
-> +	AD777X_CHAN_NO_FILTER_S(5),
-> +	AD777X_CHAN_NO_FILTER_S(6),
-> +	AD777X_CHAN_NO_FILTER_S(7),
->  	IIO_CHAN_SOFT_TIMESTAMP(8),
->  };
+ (2) Replace mid_q_struct with smb_message and also include credits and
+     smb_rqst therein.
 
-Ditto.
+ (3) Rewrite the base TCP transmission to be able to use MSG_SPLICE_PAGES.
 
->  static const struct iio_chan_spec ad7779_channels_filter[] = {
-> -	AD777x_CHAN_FILTER_S(0),
-> -	AD777x_CHAN_FILTER_S(1),
-> -	AD777x_CHAN_FILTER_S(2),
-> -	AD777x_CHAN_FILTER_S(3),
-> -	AD777x_CHAN_FILTER_S(4),
-> -	AD777x_CHAN_FILTER_S(5),
-> -	AD777x_CHAN_FILTER_S(6),
-> -	AD777x_CHAN_FILTER_S(7),
-> +	AD777X_CHAN_FILTER_S(0),
-> +	AD777X_CHAN_FILTER_S(1),
-> +	AD777X_CHAN_FILTER_S(2),
-> +	AD777X_CHAN_FILTER_S(3),
-> +	AD777X_CHAN_FILTER_S(4),
-> +	AD777X_CHAN_FILTER_S(5),
-> +	AD777X_CHAN_FILTER_S(6),
-> +	AD777X_CHAN_FILTER_S(7),
->  	IIO_CHAN_SOFT_TIMESTAMP(8),
->  };
+     (a) Copy all the data involved in a message into a big buffer formed
+     	 of a sequence of pages attached to a bvecq.
 
-Ditto.
+     (b) If encrypting the message just encrypt this buffer.  Converting
+     	 this to a scatterlist is much simpler (and uses less memory) than
+     	 encrypting from the protocol elements.
 
-...
+     (c) As the pages in the bvecq are just that, they have refcounts and
+     	 can be passed to MSG_SPLICE_PAGES - thereby avoiding the copy in
+     	 TCP.
 
-> +static int ad7779_conf_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
-> +{
-> +	struct iio_chan_spec *channels;
-> +	struct device *dev = &st->spi->dev;
-> +	int num_channels = ARRAY_SIZE(ad7779_channels);
-> +
-> +	channels = devm_kcalloc(dev, num_channels, sizeof(*channels), GFP_KERNEL);
+     (d) Compression should be a matter of vmap()'ing these pages to form
+     	 the source buffer, allocating a second buffer of pages to form a
+     	 dest buffer, also in a bvecq, vmapping that and then doing the
+     	 compression.  The first buffer can then just be replaced by the
+     	 second.
 
-Doesn't sound like a right place for devm. Is this function called only at probe stage?
+     (e) __smb_send_rqst() can then do a single sendmsg() with
+     	 MSG_SPLICE_PAGES() from an ITER_BVECQ-type iterator.
 
-> +	if (!channels)
-> +		return -ENOMEM;
-> +
-> +	memcpy(channels, st->chip_info->channels, num_channels * sizeof(struct iio_chan_spec));
+     (f) smbd_send() can push the same buffer to smbd_post_send_iter() from
+     	 the same iterator.
 
-kmemdup_array()?
+ (4) Clean up mid->callback_data.  Replace it with a waitqueue in
+     smb_message (for most commands) and a cifs_io_subrequest pointer (for
+     read and write).  Make request completion wait on the smb_message
+     waitqueue rather than on server->response_q to avoid thundering herd
+     issues.
 
-> +	for (int i = 0; i < 8; i++)
+     (Also, I note that under some circumstances, cifs just wakes up the
+     first thing on server->response_q without any reference to *what* it
+     is waking up).
 
-Why i is signed?
-What is the magic 8? ARRAY_SIZE()?
+ (5) Add some more bits to smb_message to hold the buffers in a bvecq with
+     the intent of killing of the smb_rqst struct.
 
-> +		channels[i].scan_type.endianness = IIO_CPU;
-> +
-> +	indio_dev->channels = channels;
-> +
-> +	return 0;
-> +}
+     (a) The PDU encoders will have to work out how much memory they need
+     	 for the request protocol bits in advance and tell the smb_message
+     	 allocator their requirements.  This will get the requested amount
+     	 from the netmem allocator, so it needs to be correctly sized.  A
+     	 pointer is then set in smb->request to the buffer.
 
-...
+     (b) The smb_message is given a pointer (->next) to chain to another
+     	 message to be compounded after it.
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
+     (c) smb_send_recv_messages() will be used to dispatch a synchronous
+     	 request.  If the head smb_message's ->next pointer is not NULL, it
+     	 will set the appropriate compound chaining stuff and insert
+     	 appropriate padding.  Then it will link the bvecq structs of those
+     	 messages together.
 
-return ...
+ (6) Convert PDU encoders to allocate and use smb_message and pass it down.
 
+     (a) So far, SMB2 Negotiate Protocol, Session Setup, Logoff, Tree
+     	 Connect and Tree Disconnect have been done - and though they build
+     	 if SMB1 and compression are disabled, they won't work yet and so
+     	 haven't been tested.
 
-...
+     (b) SMB2 Posix Mkdir has been attempted and will compile, but is
+     	 likely to need rejigging as it's a close associate of Create.
 
-> +	st->back = devm_iio_backend_get(dev, NULL);
-> +	if (IS_ERR(st->back)) {
-> +		dev_err_probe(dev, ret, "failed to get iio backend");
+     (c) SMB2 Create/Open is partially done and won't compile.  This gets
+     	 complicated because it's used in a lot of places and also gets
+     	 compounded - so anything that gets compounded with it must also be
+     	 converted.
 
-Huh?!
+The patches can be found here also:
 
-> +		return PTR_ERR(st->back);
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-experimental
 
-Pattern is
+Thanks,
+David
 
-		return dev_err_probe(...);
+David Howells (31):
+  iov_iter: Move ITER_DISCARD and ITER_XARRAY iteration out-of-line
+  iov_iter: Add a segmented queue of bio_vec[]
+  netfs: Provide facility to alloc buffer in a bvecq
+  cifs, nls: Provide unicode size determination func
+  cifs: Introduce an ALIGN8() macro
+  cifs: Move the SMB1 transport code out of transport.c
+  cifs: Rename mid_q_entry to smb_message
+  cifs: Keep the CPU-endian command ID around
+  cifs: Rename SMB2_xxxx_HE to SMB2_xxxx
+  cifs: Make smb1's SendReceive() wrap cifs_send_recv()
+  cifs: Fix SMB1 to not require separate kvec for the rfc1002 header
+  cifs: Replace SendReceiveBlockingLock() with SendReceive() plus flags
+  cifs: Institute message managing struct
+  cifs: Split crypt_message() into encrypt and decrypt variants
+  cifs: Use netfs_alloc/free_folioq_buffer()
+  cifs: Rewrite base TCP transmission
+  cifs: Rework smb2 decryption
+  cifs: Pass smb_message structs down into the transport layer
+  cifs: Clean up mid->callback_data and kill off mid->creator
+  cifs: Don't need state locking in smb2_get_mid_entry()
+  cifs: [DEBUG] smb_message refcounting
+  cifs: Add netmem allocation functions
+  cifs: Add more pieces to smb_message
+  cifs: Convert SMB2 Negotiate Protocol request
+  cifs: Convert SMB2 Session Setup request
+  cifs: Convert SMB2 Logoff request
+  cifs: Convert SMB2 Tree Connect request
+  cifs: Convert SMB2 Tree Disconnect request
+  cifs: Rearrange Create request subfuncs
+  cifs: Convert SMB2 Posix Mkdir request
+  cifs: Convert SMB2 Open request
 
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+ fs/netfs/Makefile             |    1 +
+ fs/netfs/buffer.c             |  102 ++
+ fs/nls/nls_base.c             |   33 +
+ fs/smb/client/Makefile        |    2 +-
+ fs/smb/client/cached_dir.c    |   41 +-
+ fs/smb/client/cifs_debug.c    |   15 +-
+ fs/smb/client/cifs_unicode.c  |   39 +
+ fs/smb/client/cifs_unicode.h  |    2 +
+ fs/smb/client/cifsencrypt.c   |   77 +-
+ fs/smb/client/cifsfs.c        |   31 +-
+ fs/smb/client/cifsglob.h      |  254 ++--
+ fs/smb/client/cifsproto.h     |   91 +-
+ fs/smb/client/cifssmb.c       |  123 +-
+ fs/smb/client/cifstransport.c |  251 ++++
+ fs/smb/client/compress.c      |    4 +-
+ fs/smb/client/compress.h      |    6 +-
+ fs/smb/client/connect.c       |  158 +-
+ fs/smb/client/netmisc.c       |   15 +-
+ fs/smb/client/ntlmssp.h       |   20 +-
+ fs/smb/client/reparse.c       |    2 +-
+ fs/smb/client/sess.c          |  271 ++--
+ fs/smb/client/smb1ops.c       |  101 +-
+ fs/smb/client/smb2file.c      |    2 +-
+ fs/smb/client/smb2inode.c     |    6 +-
+ fs/smb/client/smb2misc.c      |   80 +-
+ fs/smb/client/smb2ops.c       |  570 +++----
+ fs/smb/client/smb2pdu.c       | 2616 +++++++++++++++++----------------
+ fs/smb/client/smb2proto.h     |   65 +-
+ fs/smb/client/smb2transport.c |  229 ++-
+ fs/smb/client/smbdirect.c     |   88 +-
+ fs/smb/client/smbdirect.h     |    5 +-
+ fs/smb/client/trace.h         |   61 +
+ fs/smb/client/transport.c     | 1372 +++++++----------
+ fs/smb/common/smb2pdu.h       |   92 +-
+ fs/smb/server/connection.c    |    2 +-
+ fs/smb/server/oplock.c        |    4 +-
+ fs/smb/server/smb2misc.c      |   14 +-
+ fs/smb/server/smb2ops.c       |   38 +-
+ fs/smb/server/smb2pdu.c       |   66 +-
+ fs/smb/server/smb_common.c    |    2 +-
+ include/linux/bvec.h          |   13 +
+ include/linux/iov_iter.h      |   77 +-
+ include/linux/netfs.h         |    4 +
+ include/linux/nls.h           |    1 +
+ include/linux/uio.h           |   11 +
+ lib/iov_iter.c                |  406 ++++-
+ lib/tests/kunit_iov_iter.c    |  196 +++
+ 47 files changed, 4177 insertions(+), 3482 deletions(-)
+ create mode 100644 fs/netfs/buffer.c
+ create mode 100644 fs/smb/client/cifstransport.c
 
 
