@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-758393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC2EB1CE67
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:28:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACE4B1CE69
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08ED44E0193
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7B93B001F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE37227563;
-	Wed,  6 Aug 2025 21:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7E3226CE5;
+	Wed,  6 Aug 2025 21:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOuVpqo9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArNiiRcR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4EC22577E;
-	Wed,  6 Aug 2025 21:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2771E224AF1;
+	Wed,  6 Aug 2025 21:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754515708; cv=none; b=BvWcbYC4ljYgsDF//b7j/j/2Le/2pYoFjT2fynEGJdg3mMe5DtgcX2owzYZSkaWZ1H8xGF0UR8A1hGX6OtvP9OBDc1Wo7APBXlTD+pJDBOGI/K4qXgMHvWeeaNE8gUO1uQfD90rsDFwr46gayFCHFQCiUV4SZZjKqFF2pKkM6LA=
+	t=1754515743; cv=none; b=symznTTLAaAr9eYDr4r6Mio1NalV4r32bYbA0zIs3RoByFuLKfASLZizRpxU942Tp+wLNEX17zNMCA74G0RH55w7Mu7WO41kY6Id8GBlka/TBqjT3LpSyu8gYwEIFk8hjClhUXNufO571Tgtm6YrFP8LmIBon6VKmJ6WdYD/0ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754515708; c=relaxed/simple;
-	bh=21xpyzPK1VoPmhAptjeM1xFg2OZkfCF6vLurfNbjVkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8fBtOfzY41LxPKfuAUofiE9O59kgsF9MY15/7CPkfHFUWRClHNnkj/xD2cPpomhXTH2VmLstti+Aot3+POP3OQxqXlmZeqGVTiWBM9e8uWwsjO/qw4Yd4XJnn9jCtRA4O9N0w1deSWivmi0otQ6UFzl6zFjQUB2duSJnhbVMao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOuVpqo9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575F4C4CEE7;
-	Wed,  6 Aug 2025 21:28:28 +0000 (UTC)
+	s=arc-20240116; t=1754515743; c=relaxed/simple;
+	bh=Fq/MOI2IKGG/4kPRJlehFii6lGQAeZnINeDyXd2WKs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UYtJVLlae1yGy+zUZhzKxlJEgDc/U3/FSyJQ8nsqpo1NZ6+vImKPu0E8SBFshWQK4fpfFsHb58S3+AICTpb8I2IfDZLOyyPojGfiYGekqU4+mqwY9mtwvTUJRd/nIxIOHRcEcKeHrOXHBMwTdEQG4Ima9e6l/sHqwurgPvk/SWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArNiiRcR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7E9C4CEE7;
+	Wed,  6 Aug 2025 21:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754515708;
-	bh=21xpyzPK1VoPmhAptjeM1xFg2OZkfCF6vLurfNbjVkQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NOuVpqo9s3/+DOw8hsbxuEne6c61pq/YK6G5fsAL+W8ztYLGk9xBrnu8sc0CIejyh
-	 GVNRhI3lklWnGYHTGbunYDqeqefxCIPxHAq6FLf6VADUtr73XCrCmIHhkWiraPD2gD
-	 nR2Anqo7Cok0XrSj08SBLStlHE8cY6I3s3K4FuEYA2ez6ViKkvL0qMdfGr6fOGLYkr
-	 q62NwIaYbXbkQqOE7SltOsP2Vy88oG9oOLIuMA2kemuNXP+aHKW1U4oTQt8Qq/piSG
-	 CPaKvWZNZNy832T2bgOZkZVKnZMOhcLkXp96DxRcOJiBPDaqsk1/uN/lriILzFJLeA
-	 NSewonyZzDEDA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: Convert ti,keystone to DT schema
-Date: Wed,  6 Aug 2025 16:28:23 -0500
-Message-ID: <20250806212824.1635084-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1754515742;
+	bh=Fq/MOI2IKGG/4kPRJlehFii6lGQAeZnINeDyXd2WKs8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ArNiiRcRKorpVO7z+DunHSF3hxUwxK1EDgvBb0KT5vuGoa2JxHw4Hiaw1jIzkcn/o
+	 l6F0dgqDxDXC2uQcXCFC5MnqwdeR0xzuzO3rfzI7SkQ8sGhRG2wfo5Z+wHuMMbeM1J
+	 zimEjSX1KoMR5gu8jqbdNa2KZ9HmhDXHDusk5BiYoRJR728drUcex1rGiViuqjqo4J
+	 E5it6p4zZSmW86oUo7idBi9RYF8w3U1h1o0tZHAWPRS2VNCTPiZ3Ay1iAnJ1X/VTj3
+	 sJ8XQMWzQqOQ3JNlpQlSI5Ef7XrlYwRmV9P53J6AtenIBJlpMCv3a0a4IeM9rbT2B+
+	 0DV5Mmst4abnw==
+From: SeongJae Park <sj@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takero Funaki <flintglass@gmail.com>
+Subject: Re: [RFC PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page as-is
+Date: Wed,  6 Aug 2025 14:28:59 -0700
+Message-Id: <20250806212859.51259-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <055a8a69-731d-43b8-887e-54d8718877cb@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/arm/keystone/keystone.txt        | 42 -------------------
- .../bindings/arm/ti/ti,keystone.yaml          | 42 +++++++++++++++++++
- 2 files changed, 42 insertions(+), 42 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/keystone/keystone.txt
- create mode 100644 Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+On Wed, 6 Aug 2025 22:14:39 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-diff --git a/Documentation/devicetree/bindings/arm/keystone/keystone.txt b/Documentation/devicetree/bindings/arm/keystone/keystone.txt
-deleted file mode 100644
-index f310bad04483..000000000000
---- a/Documentation/devicetree/bindings/arm/keystone/keystone.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--TI Keystone Platforms Device Tree Bindings
-------------------------------------------------
--
--Boards with Keystone2 based devices (TCI66xxK2H) SOC shall have the
--following properties.
--
--Required properties:
-- - compatible: All TI specific devices present in Keystone SOC should be in
--   the form "ti,keystone-*". Generic devices like gic, arch_timers, ns16550
--   type UART should use the specified compatible for those devices.
--
--SoC families:
--
--- Keystone 2 generic SoC:
--   compatible = "ti,keystone"
--
--SoCs:
--
--- Keystone 2 Hawking/Kepler
--   compatible = "ti,k2hk", "ti,keystone"
--- Keystone 2 Lamarr
--   compatible = "ti,k2l", "ti,keystone"
--- Keystone 2 Edison
--   compatible = "ti,k2e", "ti,keystone"
--- K2G
--   compatible = "ti,k2g", "ti,keystone"
--
--Boards:
---  Keystone 2 Hawking/Kepler EVM
--   compatible = "ti,k2hk-evm", "ti,k2hk", "ti,keystone"
--
---  Keystone 2 Lamarr EVM
--   compatible = "ti,k2l-evm", "ti, k2l", "ti,keystone"
--
---  Keystone 2 Edison EVM
--   compatible = "ti,k2e-evm", "ti,k2e", "ti,keystone"
--
---  K2G EVM
--   compatible = "ti,k2g-evm", "ti,k2g", "ti-keystone"
--
---  K2G Industrial Communication Engine EVM
--   compatible = "ti,k2g-ice", "ti,k2g", "ti-keystone"
-diff --git a/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
-new file mode 100644
-index 000000000000..20d4084f4506
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/ti/ti,keystone.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI Keystone Platforms
-+
-+maintainers:
-+  - Nishanth Menon <nm@ti.com>
-+  - Santosh Shilimkar <ssantosh@kernel.org>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - description: K2G
-+        items:
-+          - enum:
-+              - ti,k2g-evm
-+              - ti,k2g-ice
-+          - const: ti,k2g
-+          - const: ti,keystone
-+      - description: Keystone 2 Edison
-+        items:
-+          - enum:
-+              - ti,k2e-evm
-+          - const: ti,k2e
-+          - const: ti,keystone
-+      - description: Keystone 2 Lamarr
-+        items:
-+          - enum:
-+              - ti,k2l-evm
-+          - const: ti,k2l
-+          - const: ti,keystone
-+      - description: Keystone 2 Hawking/Kepler
-+        items:
-+          - enum:
-+              - ti,k2hk-evm
-+          - const: ti,k2hk
-+          - const: ti,keystone
-+
-+additionalProperties: true
--- 
-2.47.2
+> On 05.08.25 18:56, Nhat Pham wrote:
+> > On Tue, Aug 5, 2025 at 3:47 AM David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 05.08.25 02:29, SeongJae Park wrote:
+> >>> When zswap writeback is enabled and it fails compressing a given page,
+> >>> the page is swapped out to the backing swap device.  This behavior
+> >>> breaks the zswap's writeback LRU order, and hence users can experience
+> >>> unexpected latency spikes.  If the page is compressed without failure,
+> >>> but results in a size of PAGE_SIZE, the LRU order is kept, but the
+> >>> decompression overhead for loading the page back on the later access is
+> >>> unnecessary.
+> >>>
+> >>> Keep the LRU order and optimize unnecessary decompression overheads in
+> >>> the cases, by storing the original content in zpool as-is.
+> >>
+> >> Does this have any effect on the movability of the given page? IOW, does
+> >> page migration etc. still work when we store an ordinary page of an
+> >> shmem/anon folio here?
+> > 
+> > Good question. This depends on the backend allocator of zswap, but the
+> > only backend allocator remaining (zsmalloc) does implement page
+> > migration.
+> 
+> Right, but migration of these pages works completely different than 
+> folio migration.
+> 
+> But I think the part I was missing: we are still performing a copy to 
+> another page, it's just that we don't perform any compression.
+> 
+> So I guess *breaking* movability of folios is not a concern.
+> 
+> But yeah, whether these "as is" pages are movable or not is a good 
+> question as well -- in particular when zsmalloc supports page migration 
+> and the "as is" pages would not.
 
+Maybe I'm missing some of your points.  But there is no difference for "as is"
+pages.
+
+Before this patch, zswap asks zpool (backed by zsmalloc) to allocate memoy and
+store the content of the page in the "compressed" form, if the content was able
+to be compressed.  After that, the original page becomes same to any pages
+that swapped out.
+
+After this patch, if the content was unable to be compressed, the content is
+saved "as is" _in_ the zpool, in a way same to those "compressible" case,
+except the content is not changed.  After the saving is done, the original page
+becomes same to any pages that swapped out.
+
+Zsmalloc will support migration of pages that backing the internal contents,
+regardless of whether those are compressed or saved "as is".  From perspectives
+other than that of zsmalloc, hence, I think no difference is introduced by this
+patch.
+
+Again, I'm not sure if I'm really understanding your points.  If so, please let
+me know.
+
+
+Thanks,
+SJ
+
+[...]
 
