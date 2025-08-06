@@ -1,224 +1,337 @@
-Return-Path: <linux-kernel+bounces-758312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86593B1CD78
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63F9B1CD7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F24E7A67D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C443721CC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77395218EA1;
-	Wed,  6 Aug 2025 20:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EF221B196;
+	Wed,  6 Aug 2025 20:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=epam.com header.i=@epam.com header.b="ifQi1JOT"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013034.outbound.protection.outlook.com [52.101.83.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MTzOUv+M";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SnczAjWb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEC1215043
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754512226; cv=fail; b=J1H5/ObBDFE8R92L/ekfBNSOmYP1AJ89eEXt49iT+Dwec3LUesAIJRnbysqSXqqubXP2cDEJRj2UVd5sdij3YzxXH86Ay0pCVlSyZlTVZM0P9sPAYw1ezYaay8kKBY6iFeo2Jv54Xn6i5BEMpvBF5D84lNdsMbylLvR+/nkQCCU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754512226; c=relaxed/simple;
-	bh=wIXF044wOcuXo9aJbj9bSjEbUfBUbDGN6f/YqAQuzZo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VYdUb3onOKOUrxV7p4yvsqrf/tUWeutXR4PIRA2qw0VdFs6T4+yZrSwa0zAcTr72D8i77bDx1trHPG62QLOd21dh8n6iNsAGE1DbaYi5MOWxc6HULazr0paswl4pKZLVBBSqfmVjNlXQTvdyKxyii7wrhNBejTYZ/Z9kLnY6PeU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epam.com; spf=pass smtp.mailfrom=epam.com; dkim=pass (2048-bit key) header.d=epam.com header.i=@epam.com header.b=ifQi1JOT; arc=fail smtp.client-ip=52.101.83.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epam.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epam.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pSe49j5XlSCKvombrAV32yMQzsvBsFSLfImefoxqmItIPuAWe7JJm+KmwVMwmQfD9GLgclxDMtypjOwL4d/1QqvSsihPy2dVqJGeXiThe88Ybh77Khl83juoRWPOEX6BUw0BDLGk4LWgsSaUVrq1j6hAqX20Oha/4c8MgGt1LwD04UMrUlPnwOwGAVeYBiqY3MxaSDs0Hk7eHIun26LeI4wKT+f8mu+AnYslxxFns5d0h0lX28y+DJEjBaNB7U59aLXwQ/WDfOWQE5d1ewd/8XtsJJwTdNzYem/Zd6uU2WzuDhp6IO4/7jeQQdSBmS+DTR9wc+YOR3wlfA64UdcT/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oyPELrYiRcHqMBEopSVX2pu3JHB/KfdDhddqMMzwfcg=;
- b=leicA6Oat6gMtVoNY/89pwCbfncqsUFnVOrf+yLgAe4jNlk1swMuNhurzD2jMhoYo92G3mY3mRUA7Cnf0ZlM9T3z3si9gg0U2P1JV0vbzjVUVMxIB/4J1h7CvVP31DjyofbITOV4enISIqQUFZR6j1v/mzR4J5dKnfGdnaUx6e6d4ah1WJgM9XAzMIzzhG74+iUjGScpi2KkhMLXUDVkXH3IjlAQ5ae1adB6C7LjezLqTh+/uEAct8R8456F9raw86v1pMx4hE3tH1N/Oc2SQUA0M+68msYhxBF5f16vd7i75Et9JuFWx9Nxpgf8t1yuCTutA5lG+EtfrJPaclGNCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=epam.com; dmarc=pass action=none header.from=epam.com;
- dkim=pass header.d=epam.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epam.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oyPELrYiRcHqMBEopSVX2pu3JHB/KfdDhddqMMzwfcg=;
- b=ifQi1JOTl95GJFtYhlnbu+YEMyeWi5HDBYUQzhh/75HqGXExFEtfEDFiP7nl/qlWA4JN2KXW07s+aF5zwh8Btx1SzidlVbESpbuqDl2k00MIzSh7zrUgPMJjYcyHMHiMts7AL6F/OICupflNYryjwAeMxUo7H8aUv3cuYtJRKBEcg3BJKKosmfVORbPMRTWNp37Mw6IAUOMJI0akazxQrxi867sVD3WAENH0ovxun4ei8MX5wmfUez4MA2b4vgvHKdf2gYoLrbgxVSILiC1yvTQOVtlB3miTKE/rX1DSFPwgWMO3O2zd4p56yZzEKGThjGVIDAQCfCt0BGWYtm4hHA==
-Received: from GV1PR03MB10456.eurprd03.prod.outlook.com
- (2603:10a6:150:16a::21) by AM9PR03MB7107.eurprd03.prod.outlook.com
- (2603:10a6:20b:280::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 20:30:20 +0000
-Received: from GV1PR03MB10456.eurprd03.prod.outlook.com
- ([fe80::a41e:5aa8:e298:757e]) by GV1PR03MB10456.eurprd03.prod.outlook.com
- ([fe80::a41e:5aa8:e298:757e%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 20:30:20 +0000
-From: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>, Joey Gouly
-	<joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
-	<yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>
-Subject: Re: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after
- 'at s*'
-Thread-Topic: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after
- 'at s*'
-Thread-Index: AQHcBtznfZx1EzPMhEmSJJRNthoKUw==
-Date: Wed, 6 Aug 2025 20:30:20 +0000
-Message-ID: <87ldnwfb1g.fsf@epam.com>
-References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
-	<20250806141707.3479194-3-volodymyr_babchuk@epam.com>
-	<aJOhnHCUR0Af4XJt@linux.dev>
-In-Reply-To: <aJOhnHCUR0Af4XJt@linux.dev> (Oliver Upton's message of "Wed, 6
-	Aug 2025 11:40:28 -0700")
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=epam.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV1PR03MB10456:EE_|AM9PR03MB7107:EE_
-x-ms-office365-filtering-correlation-id: 8dd6900c-157a-43a8-3ccb-08ddd5281029
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|42112799006|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?2Y73DLBB0YtuVhFos0QOVStWPPK8pSWCiCA9Tl44krUK7yLojCaWmRrCVH?=
- =?iso-8859-1?Q?kXuILxooWTJRdy5oX3QilznM8cKv14yR7JYM668LoOQF+fKobhB2AKJd/s?=
- =?iso-8859-1?Q?6ptKfJB9iUewyz/MvSuIDfwRMGjyydrluZgRPtbx2b372BGiH8lvDJR89y?=
- =?iso-8859-1?Q?k+eggKpuFFXxXw9tjcmH5kLF5JYPkQLxnU/BMCzYhS8Zwca1YXRIXQPnq4?=
- =?iso-8859-1?Q?ALQ72VZw3rf7PN1DT3iW0KI1+8bvEwPcLwyl5CAU7NR0/vWAz+RVIkRrrg?=
- =?iso-8859-1?Q?5c3qpRx7wAWQAARjKv64tmHKh8azjTPZvkMlR/dKji/w192B5iXi/c4KmH?=
- =?iso-8859-1?Q?Fry5zBWs/9nnVtXkHKEE4mjNm2F9aRUdRPuVZDTuPKMMANoLPM2qyv8jc3?=
- =?iso-8859-1?Q?zNIMYfIsx/SKPbq5WLNBgyjvlk6Oz6xLcL4mHG6xCzqlOYWSYgYa8Lgd4b?=
- =?iso-8859-1?Q?b7ThsmynTySbw8lD5+EYPmOt40aDHLm7avy2DdXIr9uD3YrUKfteQP6xjB?=
- =?iso-8859-1?Q?TuBd/3ZC1wg7STyD721rEeXpcmo6pAS7kDol1KXdHplcV3uyvyMdlI+I+K?=
- =?iso-8859-1?Q?vGq+cecJGJi2Dc3xoVGSPMUB2pvJdchuaeXmpGcTosUMghBh3/teEsR9aM?=
- =?iso-8859-1?Q?wFpwZ9HPEDTNAhCst7w1tunM/t2zp0cohhh4dvLngzDPFQztoWbzyCm6wJ?=
- =?iso-8859-1?Q?CtBwVBfBcvYer1pUlCJrqCuS4kACdLYP7iJOtsA3kgMDF0gEdAgxpzdUer?=
- =?iso-8859-1?Q?VpijwRwKFD9jSUQ7mSGxKbxQk3kg0G8x2LBImi0Bd4oobR0HgG6go/2sOG?=
- =?iso-8859-1?Q?Hj6/Wjr0fxfIqL16F1rAZPkmNxJVXdTTinNxAkSsEOkvFvQC/M9Imvnatx?=
- =?iso-8859-1?Q?3/2xLc6oi4wHPAVGorD5WFg+hROr9dxADFOLEo6HwaNgqKgC6R73pXHZoi?=
- =?iso-8859-1?Q?diK2mt7nQc0VG1AAKvBjmRNMz8HbDfYtg4Lcvxb34hkZo/BErdb1AVIH0o?=
- =?iso-8859-1?Q?pjthngYsWPSS8XAHFVpTreu+EFoggwLZSfTDi8qi7dsJc57TxzOakgt3GI?=
- =?iso-8859-1?Q?OOLN+nVI0HUBIafLC0cFSAPE3vfQK8Gi9WsVktBZAPgec8y3NzFX8LYSxq?=
- =?iso-8859-1?Q?T+lrbOHwhrb3uFaqXSplbtDD9ZdBvKOkOH2MHvm/DDgMzvvkOSpPtt02GC?=
- =?iso-8859-1?Q?IXlyuolsOiaOSIBL3Kde6tYfDmDiQjJG0UmzwMRWR6DleuKycl+/2Ujmqy?=
- =?iso-8859-1?Q?fOlw2oPLJdE89fc4VYMEK9NpwyvLjNLjcGD6RMczZU1us9rpYRyIAyC3bf?=
- =?iso-8859-1?Q?muMF7l3F7wHx5PwpZYbH4JwKLPqzJpuEy4TkYAgwucvkLpqRgfRfNBB5d+?=
- =?iso-8859-1?Q?2rXJdz05t7fKgSYjUV7ZT6EQnbPsoLMVgolgbpEawSB7etAE4w/2lPUr44?=
- =?iso-8859-1?Q?hUFmw7yLMmpeBlUueNDkfBQKbggEfn2IggO6tfH6tqPJgVxCm2UMvzNeHU?=
- =?iso-8859-1?Q?n5fm4fS0v3DC+jn5CIy82P7EjM+Am0wKLyMoXwjCYBPg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR03MB10456.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(42112799006)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?6V3heE1YjMhQr1WCPwoNwUwfdU+PR8iIepMw3UCaQ/6Rg+3glQzg9z923s?=
- =?iso-8859-1?Q?NK+1PtKhLwV40IsYNqJbznnx/zLcNMHmmNgOTj9MmHDcvIkFxOCLvh/N0G?=
- =?iso-8859-1?Q?NERr+BaUqSHod5YnyxKJHfd4wsvZ7E48XoTx9RNoWlUfCJ6lr+Lcim45Vw?=
- =?iso-8859-1?Q?h019VW5FfUseyB3SoBxhMD1vPLrH8UpNBLqN1DHsQJyrr+GUBMqXNgdfjK?=
- =?iso-8859-1?Q?co0Up53HUYZB8ql6Jz+7UA/iC2bFxEe/fxEOYbw8/nStb3ys8lYcarVES3?=
- =?iso-8859-1?Q?Q/E+uKwq61kIU0nfYfdQQMNZTcRflVfSBW8knopMD1YgD25ZoXoXqByI7F?=
- =?iso-8859-1?Q?FRAK6PSoEH2eC7WUDrt2lwoHu8VUuH5CpDi4CtBO+bOAbwyioYE34WUmdU?=
- =?iso-8859-1?Q?LWEIMgmZJkpfde+5m4PBG4aWkBwlMlg3PML1Nwlt2lU9Np8p7gOwqxq10f?=
- =?iso-8859-1?Q?eY3MHevciyPqTKIrkD6U0dUiLSHyNJAibI+IaAya5uK3FrWQZbYtLV2aN2?=
- =?iso-8859-1?Q?nlt4ibkpT200Tl3ArGpsxYyv6T3Xm5LAVt9U8Z1Js28iWxw8IP+JrfLRkI?=
- =?iso-8859-1?Q?wOuGqzifE+QF90gxHQbfPTcCucMc3AEk5m92Qcv0mRAkRo87ulNje8zatA?=
- =?iso-8859-1?Q?Sr9begst+/L9VAlHoTBajjP5vHqNrBrQIIVTcYjjBhXr/IhkuXKjtlK+J4?=
- =?iso-8859-1?Q?PCGCGBmrksdJiLrn6dDgIf0OQFqWEc2w6KdoVlrfvGxG65MMWi6lC8K/ir?=
- =?iso-8859-1?Q?Wq6iVrN113MVv9WA4T01dSrwUIa6n3BKdZzKfQxQcZMa5pRvvBaSigV/hb?=
- =?iso-8859-1?Q?gfY6r2R61fR4WSI/Xg4l813uYVDv3j/A9aMkvauS51mn0K5WqeUCAbYPcj?=
- =?iso-8859-1?Q?7vV2tfXbd2JTMoIgm2CrtiUj/D3Q5JzgjPk9hqQoKMSxurp9pQLHG1g0eJ?=
- =?iso-8859-1?Q?DrgTImeHFp6rmQJ+A8aLeCPfdhxSomkV+j8ME7ZMSmjfuivlE8zr4AFUk6?=
- =?iso-8859-1?Q?bmto+rrLHI+tCPM0wVvRzfQQz40oA2rWdkvIcMrtJqaPb2t17oVV/XvBOC?=
- =?iso-8859-1?Q?qp0fHCI/C7fgMeqwj6IfMr9OeuCcYNQ99GafW6IWrbz6IdPOzavMf505yZ?=
- =?iso-8859-1?Q?N0KXIzgTZg6gBgXjbW/4/AdlFk0FJAKGIozIVEETYqbApVo+9RV2OQBBwh?=
- =?iso-8859-1?Q?MajTgkvhp5DUbz5jhWTLlOIrkg7yZye/ilqsK2wrsEMiNis75298Zrp6Xu?=
- =?iso-8859-1?Q?lFUwwm/BaWKqRNp0tpsXj9IiitiYoc4hSZf7Acem/KMcVBXrcPgIqZdrsj?=
- =?iso-8859-1?Q?RHx4lSQHH59NXRakRZgAEsq67ecH5OKqhFnDfid9XKmALLAm1h+4tn32l6?=
- =?iso-8859-1?Q?zU/WSmgv79VYhhTB+J3YCzITEXyiEmT7bIHp+RMx3uCa04XWupITeHbyDz?=
- =?iso-8859-1?Q?eosvwlNt/FBoAN/I6lQLaRXZ5NQnFIHecBlKzSR6aiXZqAsq4CHuhSTJik?=
- =?iso-8859-1?Q?0j1D5SmggCVh5Z+4cqJOnbgenXyb2nlTFyRcoFSfri4jeSQ6vJgpmjlKr8?=
- =?iso-8859-1?Q?33o9kF8HhgQsUMbZIG9qa3c3x4yKrPaSwi+qaS4qw3InfkVyIIWG+Fx0CL?=
- =?iso-8859-1?Q?z992x5rgdI1wuCjNp4bxv70QOflUR/nCLZjRnLlLwzCaoeeGJbmeQ6Ww?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C897F1A08BC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754512444; cv=none; b=BRSbS3jsh4TIObs+5NRD/lhEeJ+FzuWdq/APVdSKFtUkDoxXQZYKgJuHs+a57S7EqPSPwx+pPfVk3V8lDRC7pztLYkkHnnXie0dtm+KdsPRy5Qwd3dOyzcl71svy9fxgAOGSn5/EVEqCnYMrI7Uks0md5O5X6PsY8mnPmTm1zZg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754512444; c=relaxed/simple;
+	bh=732xNOI9lDW7wosAvZKiAD+0V1bnfWPInKwUoKwJBbU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=rTTzPa6yMKib/jfCV0smjnL6+GxH7z3hSy7GO4kQH5vVIUVtroe4ojMg2o4wup5DnSWMFi0lgW+0tvE4SoAUNIZcqBCQWBkV9Vq992iLby5JfK3Osc8d+aKqt1HkjiK90ejWJuBuRbxgYhySHhtT9u3hlvmoM3SD33ZzQoMtjFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MTzOUv+M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SnczAjWb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754512441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=5o9d0B3vWx4XvoPEwqJ67ZUHr/gSPghmkPH9XGmO9Lg=;
+	b=MTzOUv+MPdx+9swT2KIdWTkMBGpzhtkKbnniOUE7QRWLfdeMpJyZ1Nr+cHELAalEBL7Prq
+	nI7EEXm5/q3e/K9HsceNVarmuFoyue1L9Oc/0KJsXSkYpk0kPlWO+CptD3txojtVcH8/pr
+	AqBNCu4V0XGCvEtaa9W4hdwYK27oj2XgshQxDPmTXmE3Yw1IeZQpz02R9MDfgXSP2vBozv
+	4Kh/9vP102GWVD4XD+q4rKx+EEm5l7kdUWEsovIASv228gFz0UXntyjKN9MOQd8JTLTV6l
+	X7LhErpO+/t6O4ROOdmzlUHK3XsazZ2uEgjA/8+I9ysilz+XKa6/ZNYx2vudQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754512441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=5o9d0B3vWx4XvoPEwqJ67ZUHr/gSPghmkPH9XGmO9Lg=;
+	b=SnczAjWb6EkkEIRMwyFX172te8OvbE14jw92BWj6YJl3ras+SZuUJQlDim2bkkomatqDJL
+	c10NwtIGys34uKAA==
+To: Prakash Sangappa <prakash.sangappa@oracle.com>,
+ linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, bigeasy@linutronix.de,
+ kprateek.nayak@amd.com, vineethr@linux.ibm.com,
+ prakash.sangappa@oracle.com
+Subject: Re: [PATCH V7 01/11] sched: Scheduler time slice extension
+In-Reply-To: <20250724161625.2360309-2-prakash.sangappa@oracle.com>
+Date: Wed, 06 Aug 2025 22:34:00 +0200
+Message-ID: <87ms8cchqf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: epam.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR03MB10456.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dd6900c-157a-43a8-3ccb-08ddd5281029
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 20:30:20.2914
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pHjC9thHKoMwWWpaFY36bz8QECUktdd1Aaw6L590iqlGZ0aivOWb7h/stAjRqSZjFB/xCefuvhYjC8xc6rEoihfk3nD94TbEsDsi5O7T/jE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7107
+Content-Type: text/plain
 
+On Thu, Jul 24 2025 at 16:16, Prakash Sangappa wrote:
+> @@ -304,7 +304,7 @@ void arch_do_signal_or_restart(struct pt_regs *regs);
+>   * exit_to_user_mode_loop - do any pending work before leaving to user space
+>   */
+>  unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+> -				     unsigned long ti_work);
+> +				     unsigned long ti_work, bool irq);
 
-Hi Oliver,
+I know the kernel-doc already lacks the description for the existing
+arguments, but adding more undocumented ones is not the right thing
+either.
 
-Oliver Upton <oliver.upton@linux.dev> writes:
+Also please name this argument 'from_irq' to make it clear what this is
+about.
 
-> On Wed, Aug 06, 2025 at 02:17:55PM +0000, Volodymyr Babchuk wrote:
->> Previously this code update only vCPU's in-memory value, which is good,
->> but not enough, as there will be no context switch after exiting
->> exception handler, so in-memory value will not get into actual
->> register.
->>=20
->> It worked good enough for VHE guests because KVM code tried fast path,
->> which of course updated real PAR_EL1.
->>=20
->> Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
->> ---
->>  arch/arm64/kvm/sys_regs.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>=20
->> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
->> index 7b8a0a6f26468..ab2b5e261d312 100644
->> --- a/arch/arm64/kvm/sys_regs.c
->> +++ b/arch/arm64/kvm/sys_regs.c
->> @@ -3463,6 +3463,9 @@ static bool handle_at_s1e2(struct kvm_vcpu *vcpu, =
-struct sys_reg_params *p,
->> =20
->>  	__kvm_at_s1e2(vcpu, op, p->regval);
->> =20
->> +	/* No context switch happened, so we need to update PAR_EL1 manually *=
-/
->> +	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
->> +
->
-> Ok, this had me thoroughly confused for a moment. The bug is actually in
-> kvm_write_sys_reg() which is supposed to update the sysreg value when
-> things are loaded on the CPU. __kvm_at_s1e2() is doing the right thing
-> by calling this accessor.
->
-> For registers like PAR_EL1 that don't have an EL2->EL1 mapping we assume
-> they belong to the EL1 context and thus are in-memory when in a hyp
-> context. TPIDR(RO)_EL0 is similarly affected.
->
-> This is a bit of an ugly hack, but something like the following should
-> get things working if you're able to test it:
+>  /**
+>   * exit_to_user_mode_prepare - call exit_to_user_mode_loop() if required
+> @@ -316,7 +316,7 @@ unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+>   *    EXIT_TO_USER_MODE_WORK are set
+>   * 4) check that interrupts are still disabled
+>   */
+> -static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
+> +static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs, bool irq)
 
-Yep, it is working pretty good. Will you send the patch? I'll add my
-Tested-by.
+New argument not documented in kernel-doc.
 
-Or will you prefer that I'll send the patch with your Suggested-by: ?
+>  {
+>  	unsigned long ti_work;
+>  
+> @@ -327,7 +327,10 @@ static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
+>  
+>  	ti_work = read_thread_flags();
+>  	if (unlikely(ti_work & EXIT_TO_USER_MODE_WORK))
+> -		ti_work = exit_to_user_mode_loop(regs, ti_work);
+> +		ti_work = exit_to_user_mode_loop(regs, ti_work, irq);
+> +
+> +	if (IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY) && irq)
+> +		rseq_delay_resched_arm_timer();
 
-[...]
+This is still an unconditional function call which is a NOOP for
+everyone who does not use this. It's not that hard to inline the
+check. How often do I have to explain that?
 
---=20
-WBR, Volodymyr=
+>  	arch_exit_to_user_mode_prepare(regs, ti_work);
+>  
+> @@ -396,6 +399,9 @@ static __always_inline void syscall_exit_to_user_mode_work(struct pt_regs *regs)
+>  
+>  	CT_WARN_ON(ct_state() != CT_STATE_KERNEL);
+>  
+> +	/* Reschedule if scheduler time delay was granted */
+
+This is not rescheduling. It sets NEED_RESCHED, which is a completely
+different thing.
+
+> +	rseq_delay_set_need_resched();
+
+I fundamentally hate this hack as it goes out to user space with
+NEED_RESCHED set and absolutely zero debug mechanism which validates
+it. Currently going out with NEED_RESCHED set is a plain bug, rigthfully
+so.
+
+But now this muck comes along and sets the flag, which is semantically
+just wrong and ill defined.
+
+The point is that NEED_RESCHED has been cleared by requesting and
+granting the extension, which means the task can go out to userspace,
+until it either relinquishes the CPU or hrtick() whacks it over the
+head.
+
+And your muck requires this insane hack with sched_yield():
+
+>  SYSCALL_DEFINE0(sched_yield)
+>  {
+> +	/* Reschedule if scheduler time delay was granted */
+> +	if (rseq_delay_set_need_resched())
+> +		return 0;
+> +
+>  	do_sched_yield();
+>  	return 0;
+>  }
+
+That's just completely wrong. Relinquishing the CPU should be possible
+by any arbitrary syscall and not require to make sched_yield() more
+ill-defined as it is already.
+
+The obvious way to solve both issues is to clear NEED_RESCHED when
+the delay is granted and then do in syscall_enter_from_user_mode_work()
+
+        rseq_delay_sys_enter()
+        {
+             if (unlikely(current->rseq_delay_resched == GRANTED)) {
+		    set_tsk_need_resched(current);
+                    schedule();
+             }       
+        }     	
+
+No?
+
+It's debatable whether the schedule() there is necessary. Removing it
+would allow the task to either complete the syscall and reschedule on
+exit to user space or go to sleep in the syscall. But that's a trivial
+detail.
+
+The important point is that the NEED_RESCHED semantics stay sane and the
+problem is solved right on the next syscall entry.
+
+This delay is not for extending CPU time accross syscalls, it's solely
+to allow user space to complete a _user space_ critical
+section. Everything else is just wrong and we don't implement it as an
+invitation for abuse.
+
+For the record: I used GRANTED on purpose, because REQUESTED is
+bogus. At the point where __rseq_delay_resched() is invoked _AND_
+observes the user space request, it grants the delay, no?
+
+This random nomenclature is just making this stuff annoyingly hard to
+follow.
+
+> +static inline bool rseq_delay_resched(unsigned long ti_work)
+> +{
+> +	if (!IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
+> +		return false;
+> +
+> +	if (unlikely(current->rseq_delay_resched != RSEQ_RESCHED_DELAY_PROBE))
+> +		return false;
+
+Why unlikely? The majority of applications do not use this.
+
+> +
+> +	if (!(ti_work & (_TIF_NEED_RESCHED|_TIF_NEED_RESCHED_LAZY)))
+> +		return false;
+
+The caller already established that one of these flags is set, no?
+
+> +	if (__rseq_delay_resched()) {
+> +		clear_tsk_need_resched(current);
+
+Why has this to be inline and is not done in __rseq_delay_resched()?
+
+> +		return true;
+> +	}
+> +	return false;
+
+>  /**
+>   * exit_to_user_mode_loop - do any pending work before leaving to user space
+>   * @regs:	Pointer to pt_regs on entry stack
+>   * @ti_work:	TIF work flags as read by the caller
+>   */
+>  __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+> -						     unsigned long ti_work)
+> +						     unsigned long ti_work, bool irq)
+>  {
+
+Same comments as above.
+
+> +#ifdef	CONFIG_RSEQ_RESCHED_DELAY
+> +bool __rseq_delay_resched(void)
+> +{
+> +	struct task_struct *t = current;
+> +	u32 flags;
+> +
+> +	if (copy_from_user_nofault(&flags, &t->rseq->flags, sizeof(flags)))
+> +		return false;
+> +
+> +	if (!(flags & RSEQ_CS_FLAG_DELAY_RESCHED))
+> +		return false;
+> +
+> +	flags &= ~RSEQ_CS_FLAG_DELAY_RESCHED;
+> +	if (copy_to_user_nofault(&t->rseq->flags, &flags, sizeof(flags)))
+> +		return false;
+> +
+> +	t->rseq_delay_resched = RSEQ_RESCHED_DELAY_REQUESTED;
+> +
+> +	return true;
+> +}
+> +
+> +void rseq_delay_resched_arm_timer(void)
+> +{
+> +	if (unlikely(current->rseq_delay_resched == RSEQ_RESCHED_DELAY_REQUESTED))
+> +		hrtick_local_start(30 * NSEC_PER_USEC);
+> +}
+> +
+> +void rseq_delay_resched_tick(void)
+> +{
+> +	if (current->rseq_delay_resched == RSEQ_RESCHED_DELAY_REQUESTED)
+> +		set_tsk_need_resched(current);
+
+Small enough to inline into hrtick() with a IS_ENABLED() guard, no?
+
+> +}
+> +#endif /* CONFIG_RSEQ_RESCHED_DELAY */
+> +
+>  #ifdef CONFIG_DEBUG_RSEQ
+>  
+>  /*
+> @@ -493,6 +527,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+>  		current->rseq = NULL;
+>  		current->rseq_sig = 0;
+>  		current->rseq_len = 0;
+> +		if (IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
+> +			current->rseq_delay_resched = RSEQ_RESCHED_DELAY_NONE;
+
+What's that conditional for?
+
+t->rseq_delay_resched is unconditionally available. Your choice of
+optimizing the irrelevant places is amazing.
+
+>  		return 0;
+>  	}
+>  
+> @@ -561,6 +597,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+>  	current->rseq = rseq;
+>  	current->rseq_len = rseq_len;
+>  	current->rseq_sig = sig;
+> +	if (IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
+> +		current->rseq_delay_resched = RSEQ_RESCHED_DELAY_PROBE;
+
+Why is this done unconditionally for rseq?
+
+So that any rseq user needs to do a function call and a copy_from_user()
+just for nothing?
+
+A task, which needs this muck, can very well opt-in for this and leave
+everybody else unaffected, no?
+
+prctl() exists for a reason and that allows even filtering out the
+request to enable it if the sysadmin sets up filters accordingly.
+
+As code which wants to utilize this has to be modified anyway, adding
+the prctl() is not a unreasonable requirement.
+
+>  	clear_preempt_need_resched();
+> +	if (IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY) &&
+> +	    prev->rseq_delay_resched == RSEQ_RESCHED_DELAY_REQUESTED)
+> +		prev->rseq_delay_resched = RSEQ_RESCHED_DELAY_PROBE;
+
+Yet another code conditional for no reason. These are two bits and you can
+use them smart:
+
+#define ENABLED		1
+#define GRANTED		3
+
+So you can just go and do
+
+   prev->rseq_delay_resched &= RSEQ_RESCHED_DELAY_ENABLED;
+
+which clears the GRANTED bit without a conditional and that's correct
+whether the ENABLED bit was set or not.
+
+In the syscall exit path you then do:
+
+static inline bool rseq_delay_resched(void)
+{
+   if (prev->rseq_delay_resched != ENABLED)
+   	return false;
+   return __rseq_delay_resched();
+}
+
+and __rseq_delay_resched() does:
+
+    rseq_delay_resched = GRANTED;
+
+No?
+
+Thanks,
+
+        tglx
 
