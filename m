@@ -1,59 +1,98 @@
-Return-Path: <linux-kernel+bounces-757604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4DAB1C41D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E30CB1C41E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915C33BEFCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E0D62366F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D128AAE9;
-	Wed,  6 Aug 2025 10:20:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916BE1922C0;
-	Wed,  6 Aug 2025 10:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C89628A71C;
+	Wed,  6 Aug 2025 10:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VTF7ly1E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vnYqMu7f";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A4qB39q1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nfq0QB6H"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A530D1922C0
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754475619; cv=none; b=OriULYYK4vDFCB9VKH9LoUmN60IFA8xvkDGiRvYix+7b1rsIvtPZUy4McDx/KGjES39cH/4d9dN148Yz3ve3OoiwiB9st7xFHbJi75NFyVm/9FU4Af+7+0PdvwShnF5WOplecjTrmftJNLrZdIgRL+q5egILC4J3zuNd5kB4ZCw=
+	t=1754475626; cv=none; b=TE1lZyzZM1YjlMbHIsO+LK7xjaWDuGSodiNSphNO52t6uzVJVuXxeHEfDj0hbe7O+Vlnsssew1+jcbOE2DBjT7mOu7tbYtgwt6DqLqCNc68xYMiwst1AXK+6TgyRdF6MXepnGkBb75TRQF61Pa2zHLaeinLprIabbGwVOKYnGNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754475619; c=relaxed/simple;
-	bh=COvGXp7LtjUshMDg0yELE6cQAN8nXPTRktokIYkICsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5ZKHf4DjDqeLzfdg+8W1CoIG7DyPTymTxm1aKGcuNlhDSLuotGWABS/UEdQyEYmOsqV/+XHQf+Y4N1wGo33JbzupgT46JndKOhXJxRT3Y9G9mU3L2J9Ld+xMV/g0g9UEUheyHY/1YIEk3z3R88w6BroseZar6PsETeyQwik7Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE8981E8D;
-	Wed,  6 Aug 2025 03:20:08 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 115603F738;
-	Wed,  6 Aug 2025 03:20:13 -0700 (PDT)
-Date: Wed, 6 Aug 2025 11:20:08 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Steven Rostedt <rostedt@kernel.org>, Florent Revest <revest@google.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
-Message-ID: <aJMsWB2Sxb7-66zs@J2N7QTR9R3>
-References: <aIn_12KHz7ikF2t1@krava>
- <aIyNOd18TRLu8EpY@J2N7QTR9R3>
- <aI6CltnCRbVXwyfm@krava>
+	s=arc-20240116; t=1754475626; c=relaxed/simple;
+	bh=hz65t57/m1x5fjEO+8+5AT6u36mGdtC/uLbFmKdXfOo=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+/IGZh+txUBK2jzRrCVqq5gAM1ThIs8Ol41XV9flnxlte0CSkC2mMBJnQ/ovA8NOltWskyEi06TljQTVCgZREixt+Jj8FZqQWimgu5rXDs/xG9jcWQQ82v+yBtgDcx0Z5pXZXxWXLZm+C+KzTJsXcf1jFnJqq8WWBUWWIKhhzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VTF7ly1E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vnYqMu7f; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A4qB39q1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nfq0QB6H; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 76F0C21241;
+	Wed,  6 Aug 2025 10:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754475622; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aFFPp9EM3GvVUWkraSvSCTNKuPEXbGOhmRF4SL4Qq+U=;
+	b=VTF7ly1EO9zrWehsk9qKEe9JxCW1R7d+UoxP+66022gZB+27a2j2rXVWtyc7LqlYYCxdyH
+	jo5a3oaU3zXxfYbrs3bzWmNsyKv4XyzgYlnDPwzth3YwdcfqJskMn5DuZSweJDA+iuknBH
+	UzihOCAD6MriZ4QLhW7PHZkTjNYKZyk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754475622;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aFFPp9EM3GvVUWkraSvSCTNKuPEXbGOhmRF4SL4Qq+U=;
+	b=vnYqMu7fP+d6QyGNbxRZRM6e5HOJyHi662W2Vm/XTwhSRZ7ummqQlF7YZ9m6OoIZFk6IJB
+	ZhbGcX4aVjyPKNBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=A4qB39q1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Nfq0QB6H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754475621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aFFPp9EM3GvVUWkraSvSCTNKuPEXbGOhmRF4SL4Qq+U=;
+	b=A4qB39q1dGl+vsB7xAfD1t9vfyVWbXmJZj8xaPmkLvS5DsU0VZXS1TX4uym37Wl3V+qyEs
+	uc7k4mY0Q8ao7YDjt4jf13HwxQTRQvjJpuByE9M8x+MPtG2kq2UXN3EW4C9XN8NqOcHLXJ
+	bMEyNSD/frH8xmC6nMMnx8KApfirRtM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754475621;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aFFPp9EM3GvVUWkraSvSCTNKuPEXbGOhmRF4SL4Qq+U=;
+	b=Nfq0QB6HhnG6zWDyL/rnkJuJ2vY677m91UbqU5RrVqTraEwFnc0rxCuYd8vXJjaekofTXW
+	91Ne26eUbzVmiwAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00FB313AFB;
+	Wed,  6 Aug 2025 10:20:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2JJaOGQsk2heMAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 06 Aug 2025 10:20:20 +0000
+Date: Wed, 6 Aug 2025 11:20:19 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] maple_tree: Use kfree_rcu in ma_free_rcu
+Message-ID: <tbm6emntje2lcwmg5xa6whlhsghwflbyb6p7m4y72dffenttqz@g2hftzczixxx>
+References: <20250718172138.103116-1-pfalcato@suse.de>
+ <l7kladnev3bfxcg2n2rk6hdi757vro5warlwp44ripj3qmnsfr@2jlwi7hhsfot>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,113 +101,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aI6CltnCRbVXwyfm@krava>
+In-Reply-To: <l7kladnev3bfxcg2n2rk6hdi757vro5warlwp44ripj3qmnsfr@2jlwi7hhsfot>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 76F0C21241
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On Sat, Aug 02, 2025 at 11:26:46PM +0200, Jiri Olsa wrote:
-> On Fri, Aug 01, 2025 at 10:49:56AM +0100, Mark Rutland wrote:
-> > On Wed, Jul 30, 2025 at 01:19:51PM +0200, Jiri Olsa wrote:
-> > > On Tue, Jul 29, 2025 at 06:57:40PM +0100, Mark Rutland wrote:
-> > > > 
-> > > > On Tue, Jul 29, 2025 at 12:28:03PM +0200, Jiri Olsa wrote:
-> > > > > hi,
-> > > > > while poking the multi-tracing interface I ended up with just one
-> > > > > ftrace_ops object to attach all trampolines.
-> > > > > 
-> > > > > This change allows to use less direct API calls during the attachment
-> > > > > changes in the future code, so in effect speeding up the attachment.
-> > > > 
-> > > > How important is that, and what sort of speedup does this result in? I
-> > > > ask due to potential performance hits noted below, and I'm lacking
-> > > > context as to why we want to do this in the first place -- what is this
-> > > > intended to enable/improve?
-> > > 
-> > > so it's all work on PoC stage, the idea is to be able to attach many
-> > > (like 20,30,40k) functions to their trampolines quickly, which at the
-> > > moment is slow because all the involved interfaces work with just single
-> > > function/tracempoline relation
+On Tue, Aug 05, 2025 at 09:25:13PM -0400, Liam R. Howlett wrote:
+> * Pedro Falcato <pfalcato@suse.de> [250718 13:21]:
+> > kfree_rcu is an optimized version of call_rcu + kfree. It used to not be
+> > possible to call it on non-kmalloc objects, but this restriction was
+> > lifted ever since SLOB was dropped from the kernel, and since commit
+> > 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()").
 > > 
-> > Do you know which aspect of that is slow? e.g. is that becuase you have
-> > to update each ftrace_ops independently, and pay the synchronization
-> > overhead per-ops?
-> > 
-> > I ask because it might be possible to do some more batching there, at
-> > least for architectures like arm64 that use the CALL_OPS approach.
+> > Thus, replace call_rcu + mt_free_rcu with kfree_rcu.
+> [snip]
+> >  static void mt_set_height(struct maple_tree *mt, unsigned char height)
+> > @@ -5281,7 +5274,7 @@ static void mt_free_walk(struct rcu_head *head)
+> >  	mt_free_bulk(node->slot_len, slots);
+> >  
+> >  free_leaf:
+> > -	mt_free_rcu(&node->rcu);
+> > +	mt_free_one(node);
 > 
-> IIRC it's the rcu sync in register_ftrace_direct and ftrace_shutdown
-> I'll try to profile that case again, there  might have been changes
-> since the last time we did that
+> Why are we still using mt_free_one()?  Couldn't this also be dropped in
+> favour of kfree() or does kfree() not work for kmem_cache?
 
-Do you mean synchronize_rcu_tasks()?
+kfree() also works (since SLOB was dropped). I thought you wanted mt_free_one
+for style points, but I can replace all calls with a direct kfree() if you prefer.
 
-The call in register_ftrace_direct() was removed in commit:
-
-  33f137143e651321 ("ftrace: Use asynchronous grace period for register_ftrace_direct()")
-
-... but in ftrace_shutdown() we still have a call to synchronize_rcu_tasks(),
-and to synchronize_rcu_tasks_rude().
-
-The call to synchronize_rcu_tasks() is still necessary, but we might be
-abel to batch that better with API changes.
-
-I think we might be able to remove the call to
-synchronize_rcu_tasks_rude() on architectures with ARCH_WANTS_NO_INSTR,
-since there shouldn't be any instrumentable functions called with RCU
-not watching. That'd need to be checked.
-
-[...]
-
-> > > sorry I probably forgot/missed discussion on this, but doing the fast path like in
-> > > x86_64 is not an option in arm, right?
-> > 
-> > On arm64 we have a fast path, BUT branch range limitations means that we
-> > cannot always branch directly from the instrumented function to the
-> > direct func with a single branch instruction. We use ops->direct_call to
-> > handle that case within a common trampoline, which is significantly
-> > cheaper that iterating over the ops and/or looking up the direct func
-> > from a hash.
-> > 
-> > With CALL_OPS, we place a pointer to the ops immediately before the
-> > instrumented function, and have the instrumented function branch to a
-> > common trampoline which can load that pointer (and can then branch to
-> > any direct func as necessary).
-> > 
-> > The instrumented function looks like:
-> > 
-> > 	# Aligned to 8 bytes
-> > 	func - 8:
-> > 		< pointer to ops >
-> 
-> stupid question.. so there's ftrace_ops pointer stored for each function at
-> 'func - 8` ?  why not store the func's direct trampoline address in there?
-
-Once reason is that today we don't have trampolines for all ops. Since
-branch range limitations can require bouncing through the common ops,
-it's simpler/better to bounce from that to the regular call than to
-bounce from that to a trampoline which makes the regular call.
-
-We *could* consider adding trampolines, but that comes with a jump in
-complexity that we originally tried to avoid, and a potential
-performance hit for regular ftrace calls. IIUC that will require similar
-synchronization to what we have today, so it's not clearly a win
-generally.
-
-I'd like to better understand what the real bottleneck is; AFAICT it's
-the tasks-rcu synchronization, and sharing the hash means that you only
-need to do that once. I think that it should be possible to share that
-synchronization across multiple ops updates with some API changes (e.g.
-something like the batching of text_poke on x86).
-
-If we can do that, it might benefit other users too (e.g.
-live-patching), even if trampolines aren't being used, and would keep
-the arch bits simple/maintainable.
-
-[...]
-
-> thanks for all the details, I'll check if both the new change and ops->direct_call
-> could live together for x86 and other arch, but it will probably complicate
-> things a lot more
-
-Thanks; please let me know if there's any challenges there!
-
-Mark.
+-- 
+Pedro
 
