@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-758061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ECFB1CA74
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:16:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAFCB1CA78
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BB7722C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D83817C3D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450072BD02A;
-	Wed,  6 Aug 2025 17:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAD429E10A;
+	Wed,  6 Aug 2025 17:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+6+RCle"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtfGF0JX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38362BD011
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57612BD580;
+	Wed,  6 Aug 2025 17:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500528; cv=none; b=NcvsW28uautosoe/9qge+S7NgVsdfp5FYrQmU8FcNQV5ysJ45kttrSRdDI/bohywsBEA+Rcq7IvmwJFzYkwopE6QyOJYZFBcuqi3KqE+Vqy22OkYV4C4YXQjC/10m0yE+bhgXscqyC83q9CJcNYYDgGJfVdbSqBuTPYX+v8M6B8=
+	t=1754500529; cv=none; b=ZgafdR9NftJggMy9Nyl9zrvXPRM41JC2wdKw/fxOOTyHELqc65OPBEwPXN/OVHxGDtwjgtPknj5pRl+t3xW6Etn2CQchTjwrW+o7Pj07axxNGszfNWP6PAtpFcIjr06BSDgr+C4PnE9oNVfz65nRFAHvAP9ZR5VWd0cO2vkfp8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500528; c=relaxed/simple;
-	bh=Ff2V9hy6utcP0CCY2uNq0RzaFNn4ugm5oNFnC12dD1E=;
+	s=arc-20240116; t=1754500529; c=relaxed/simple;
+	bh=8B0NliE6n4LX04m96CKEoounFlBMNv1G5wfUZ2Px2js=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sxzCD7YWuqkI0djRr9mfl0ueoJ4EtWxYn89UGPm14zA6mHTH5yWnk6rA34hyEEsDJNmO5kXVDNTVtfngrCyES/vBGHop7BdEjZakCoVXziMsgc4AVTo89btJBOWMG3kBlOAU2Vr2UhHoYQue17CHdUyorPIOOdHqHGSYaHQDx54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+6+RCle; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7D8C4CEF1;
-	Wed,  6 Aug 2025 17:15:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=O9l6vn4KijzXT1njW0QL2ooOqhpPVy8OBciZWN4fGg7EqyDeL5OtyuDOHK++XOxs8W90wP6SQvmPhwdwBDBOGwjSZSpdUGfoRwvuoccYbU/QCs1PaigsmNOJFrHKkVjFzZrrPv5MjUm6ASlGOeYeleelCpmBlxoE7Wx76kpnlXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtfGF0JX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7EFC4CEF7;
+	Wed,  6 Aug 2025 17:15:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754500528;
-	bh=Ff2V9hy6utcP0CCY2uNq0RzaFNn4ugm5oNFnC12dD1E=;
+	s=k20201202; t=1754500529;
+	bh=8B0NliE6n4LX04m96CKEoounFlBMNv1G5wfUZ2Px2js=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=S+6+RClezduuYHOrMuwc5cHo83I4YylhhQOHQFrZopB8tYgZvc0fuBHgjLTVg1o+J
-	 qT9GcoseKGxuscYoE/KJmR0w1Cg0Cezb5JongGISFGRTKvrTs3Q+qq8FrONH/pOc7g
-	 oX2HW5de53IC9aH5GuZafVVBGx4g/aB1xXklIv1exxKsmbNap4tE9gYRtBJXBgBJJK
-	 5pG1HsYrxYSU4k1Udh6ZJM93gSHZFP71kTUt8j1p6298DtitU95taXPq43Gjjgdk50
-	 9Fn6m5rTyzYNCOiw2/RHWP85y3UOUFOm5/Vz/kyShu2eIFB8llK9aLL9ub3rQ22fhu
-	 e/RjVLy6SQOsg==
+	b=dtfGF0JXvAFud8q/t+UzlW9sRz3VRGJF87Qexg5vE4OaYMrJb2B715zgsV1A+Tk/5
+	 LBOLkfZLw/tv/rNIRNbDpiRqqXhkLjV0wMOPwUj+/09DvhKSmD07mEkaJmJOlUSllu
+	 NpsfTmECkgqyNxtezLWWdhtJv63DDOdSdsxdIcW2x6mQP5swa0xi6in0VLUV9Q7EGl
+	 nguYPEePZ/YujzBUT5O5hKBsrCK0dAc/NmHdguzZnuC+hGA4VfivNa2FtOc/5+F5OP
+	 FTUjvKqSRjcewEoFk7jTFWmDpmIatyVCt7ETPBLkMl3s7tFJKz3fj+ka130OmPEjaw
+	 DZlVrU44YrbzA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CAB383BF63;
-	Wed,  6 Aug 2025 17:15:43 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE0F383BF63;
+	Wed,  6 Aug 2025 17:15:44 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/4] riscv: minor thread_info.cpu improvements
+Subject: Re: [PATCH V3 0/5] Add an optimization also raid6test for RISC-V
+ support
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175450054199.2863135.9619865736779982038.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Aug 2025 17:15:41 +0000
-References: <20250725165410.2896641-3-rkrcmar@ventanamicro.com>
-In-Reply-To: <20250725165410.2896641-3-rkrcmar@ventanamicro.com>
-To: =?utf-8?b?UmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHZlbnRhbmFtaWNyby5jb20+?=@codeaurora.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, debug@rivosinc.com
+ <175450054334.2863135.1157154910946265186.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Aug 2025 17:15:43 +0000
+References: <20250718072711.3865118-1-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250718072711.3865118-1-zhangchunyan@iscas.ac.cn>
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ charlie@rivosinc.com, song@kernel.org, yukuai3@huawei.com,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhang.lyra@gmail.com
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Alexandre Ghiti <alexghiti@rivosinc.com>:
 
-On Fri, 25 Jul 2025 18:54:08 +0200 you wrote:
-> Hello,
+On Fri, 18 Jul 2025 15:27:06 +0800 you wrote:
+> The 1st patch is a cleanup;
+> Patch 2/4 is an optimization that takes Palmer's suggestion;
+> The last two patches add raid6test support and make the raid6 RVV code buildable on user space.
 > 
-> I noticed that we give thread_info.cpu two different names in the
-> assembly, load it as a wider type, and store it suboptimally.
-> 
-> v2 is split for easy backporting.
+> V3:
+> - Rephrased the commit message of patch 3;
+> - Added Alex's Reviewed-by on patch 1-2;
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/4] riscv: use lw when reading int cpu in new_vmalloc_check
-    https://git.kernel.org/riscv/c/5fcea028d8b8
-  - [v2,2/4] riscv: use lw when reading int cpu in asm_per_cpu
-    https://git.kernel.org/riscv/c/47e006cf9789
-  - [v2,3/4] riscv: use TASK_TI_CPU instead of TASK_TI_CPU_NUM
-    https://git.kernel.org/riscv/c/a1984b2541b0
-  - [v2,4/4] riscv: pack rv64 thread_info better
-    https://git.kernel.org/riscv/c/9b3a86b7b14c
+  - [V3,1/5] raid6: riscv: Clean up unused header file inclusion
+    https://git.kernel.org/riscv/c/37b36d582c02
+  - [V3,2/5] raid6: riscv: replace one load with a move to speed up the caculation
+    https://git.kernel.org/riscv/c/ae1e25a17cee
+  - [V3,3/5] raid6: riscv: Prevent compiler with vector support to build already vectorized code
+    https://git.kernel.org/riscv/c/eda46027e4b6
+  - [V3,4/5] raid6: riscv: Allow code to be compiled in userspace
+    https://git.kernel.org/riscv/c/e3493fde9c22
+  - [V3,5/5] raid6: test: Add support for RISC-V
+    https://git.kernel.org/riscv/c/db001a4e2eca
 
 You are awesome, thank you!
 -- 
