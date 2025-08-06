@@ -1,251 +1,134 @@
-Return-Path: <linux-kernel+bounces-758158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC7CB1CBC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B293B1CBC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 845527AAE3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:16:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCBEC56534C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B480D1F3B85;
-	Wed,  6 Aug 2025 18:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024CE29ACE5;
+	Wed,  6 Aug 2025 18:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EOSBM5z3"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZfFaFrw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369A32E36ED
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A902E36ED;
+	Wed,  6 Aug 2025 18:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754504265; cv=none; b=XUH0VhJcp22SmlaVQqUDmcchI3DHJHZC+PJ/HlFwAflvQDv6DnbWb4dHCQPkybkYvvGYRAJ+isTw9ucpiNv83CuJeGcQMViICUACtFlOMN/Uucv0v/1fblOOp3+zax1EGNniRJ6hMUr03WWE7Oy0E0HKn3OTh6HYM6etPOE0O8o=
+	t=1754504270; cv=none; b=f40VD/TJT8yNqZVQ/QmaCU4Z94rurVne0Nsp78P1np0Dhw6YZ5IhI+Gz7TSup1f7+NI/2fGxL5WeTGw/2q+yRJd+wuIt1z/mzcBkBHKIiq3nrE9r76DQbgkfjK++sHElNTrEaqf0LuZErzKnGUbdjQoEpvcF+OrMhlQ8YtZfPgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754504265; c=relaxed/simple;
-	bh=3FKNH/2j/7yu+W35gTHHG3ks/5yRV+BkQeegHY/jpjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZYnwcV1XBxiP75eZ+H5B7KW3LK2F2xY7VR5E3c2Z2G1aWM+vN6KqSBU74a5qJ1chrRJwX56shzqOB8m90H5HXIRGsidg6WKi3DuQ+c27sCd5ddAwNYpMRcn+rCfS6uSAGeatPLvot7jgpG4eDBkF3nUhoYOnTSGoqd0FE3ResOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EOSBM5z3; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754504259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OhCFOoWcGKQbx95VvRl2b6bWCAnvya8JVL9ii3cAoDE=;
-	b=EOSBM5z3ZJOmEo9Ixd9QAEvaEPUKcZfPlRtc+NfPXufXiYchRCLelhonbA7+Q6stWN31n3
-	L6cY8LibCK76zwAVQXfYFdmVXcZ9kbQ5hP+H96hD4EDn7giULPUOG8jDB7jgxCoqA3VU43
-	tmZvRZoTMZos8h5DeBY6UiA5YqbntRM=
-Date: Wed, 6 Aug 2025 11:17:34 -0700
+	s=arc-20240116; t=1754504270; c=relaxed/simple;
+	bh=tVIrd2LQ/c5yfLuLbK0Jf7K+0CkcqrpV21ilXh3nK5k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qbh0yL8I0G/Xw3OOtjhQbsXcK6qrx4IhwL85/5XyU1RgQb32p8STomSt6IKRk6pfkSN/jRHFGS9IAMJKQO6ZQIs8jbmE+uKf9x2F8Zy2PgcucxZAHcPOrqilpUYn2bgTt81/xPuTg3GXedOEqGOxtixQWjyycjZHPypQdaZihQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZfFaFrw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE12C4CEE7;
+	Wed,  6 Aug 2025 18:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754504269;
+	bh=tVIrd2LQ/c5yfLuLbK0Jf7K+0CkcqrpV21ilXh3nK5k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rZfFaFrwU6qL+9ZE0ASZ5cNSr6koitnX281KevotnTPKlJE233FzggbjHqabqwmzg
+	 5NLhs5hKzeArAkmK/7swlRbw3dK4PZkemlJSZiqn3LQy870E/EJNjWrZ6gVE+Hp6c/
+	 lBK8n57cR0dC2bu0geA4+XXbK9N6iiNGGiatGJz+N9uU9QLUYQxurXNo1z7YlL/Oxa
+	 Ee2qlKpw280FaqWBnqKOX0T4G4KrVEdVnc6keWFE9EsEzhcPFIm1WHm9R28DlcSQ3d
+	 L3CoTg+q0OAavRIy9f+KT2LgnEpDScREfHMGjerwd2DMJEdrJRzvNx6W1dqaX8gFYq
+	 y+oOJn3Fbwvhg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ujihv-004bCc-Ka;
+	Wed, 06 Aug 2025 19:17:47 +0100
+Date: Wed, 06 Aug 2025 19:17:47 +0100
+Message-ID: <867bzg9uwk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v1 1/2] KVM: arm64: nv: fix S2 translation for nVHE guests
+In-Reply-To: <aJOS3oOwUWeRLS4j@linux.dev>
+References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
+	<20250806141707.3479194-2-volodymyr_babchuk@epam.com>
+	<aJOS3oOwUWeRLS4j@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
- cover SIB handling logic
-Content-Language: en-GB
-To: Jiawei Zhao <phoenix500526@163.com>, ast@kernel.org
-Cc: daniel@iogearbox.net, andrii@kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250806092458.111972-1-phoenix500526@163.com>
- <20250806092458.111972-3-phoenix500526@163.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250806092458.111972-3-phoenix500526@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, Volodymyr_Babchuk@epam.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Wed, 06 Aug 2025 18:37:34 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> Hi Volodymyr,
+> 
+> Thanks for catching this.
+> 
+> On Wed, Aug 06, 2025 at 02:17:55PM +0000, Volodymyr Babchuk wrote:
+> > According to ARM architecture specification (ARM DDI 0487 L.a, section
+> > C5.4.3), Stage 2 translation should be skipped when VHE is active, or,
+> > in other words, E2H bit is set. Fix the code by inverting both check
+> > and comment.
+> > 
+> > Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+> > ---
+> >  arch/arm64/kvm/at.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+> > index a25be111cd8f8..5e7c3fb01273c 100644
+> > --- a/arch/arm64/kvm/at.c
+> > +++ b/arch/arm64/kvm/at.c
+> > @@ -1412,10 +1412,10 @@ void __kvm_at_s12(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
+> >  		return;
+> >  
+> >  	/*
+> > -	 * If we only have a single stage of translation (E2H=0 or
+> > +	 * If we only have a single stage of translation (E2H=1 or
+> >  	 * TGE=1), exit early. Same thing if {VM,DC}=={0,0}.
+> >  	 */
+> > -	if (!vcpu_el2_e2h_is_set(vcpu) || vcpu_el2_tge_is_set(vcpu) ||
+> > +	if (vcpu_el2_e2h_is_set(vcpu) || vcpu_el2_tge_is_set(vcpu) ||
+> 
+> The check should be HCR_EL2.<E2H,TGE> == '11'. Maybe instead:
+> 
+> 	/*
+> 	 * Exit early if we only have a single stage of translation
+> 	 * either because we're in the EL2&0 translation regime or
+> 	 * stage-2 translation is disabled (i.e. HCR_EL2.{VM,DC}=={0,0}).
+> 	 */
+> 	 if (compute_translation_regime(vcpu, op) == TR_EL20 ||
+> 	     !(vcpu_read_sys_reg(vcpu, HCR_EL2) & (HCR_VM | HCR_DC)))
+> 	     return;
 
+Ah, same solution, just way better written!
 
-On 8/6/25 2:24 AM, Jiawei Zhao wrote:
-> When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-> optimization, the compiler will generate SIB addressing mode for global
-> array and PC-relative addressing mode for global variable,
-> e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
->
-> In this patch:
-> - add usdt_o2 test case to cover SIB addressing usdt argument spec
->    handling logic
->
-> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
-> ---
->   tools/testing/selftests/bpf/Makefile          |  8 +++
->   .../selftests/bpf/prog_tests/usdt_o2.c        | 71 +++++++++++++++++++
->   .../selftests/bpf/progs/test_usdt_o2.c        | 37 ++++++++++
->   3 files changed, 116 insertions(+)
->   create mode 100644 tools/testing/selftests/bpf/prog_tests/usdt_o2.c
->   create mode 100644 tools/testing/selftests/bpf/progs/test_usdt_o2.c
->
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index 910d8d6402ef..68cf6a9cf05f 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -759,6 +759,14 @@ TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
->   TRUNNER_BPF_CFLAGS :=
->   $(eval $(call DEFINE_TEST_RUNNER,test_maps))
->   
-> +# Use -O2 optimization to generate SIB addressing usdt argument spec
-> +# Only apply on x86 architecture where SIB addressing is relevant
-> +ifeq ($(ARCH), x86)
-> +$(OUTPUT)/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-> +$(OUTPUT)/cpuv4/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-> +$(OUTPUT)/no_alu32/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-> +endif
+Thanks,
 
-I tried your selftest with gcc14 and llvm20 in my environment. See below:
+	M.
 
-llvm20:
-Displaying notes found in: .note.stapsdt
-   Owner                Data size        Description
-   stapsdt              0x0000002f       NT_STAPSDT (SystemTap probe descriptors)
-     Provider: test
-     Name: usdt1
-     Location: 0x00000000000003ac, Base: 0x0000000000000000, Semaphore: 0x0000000000000000
-     Arguments: 8@-64(%rbp)
-
-gcc14:
-Displaying notes found in: .note.stapsdt
-   Owner                Data size        Description
-   stapsdt              0x00000034       NT_STAPSDT (SystemTap probe descriptors)
-     Provider: test
-     Name: usdt1
-     Location: 0x0000000000000334, Base: 0x0000000000000000, Semaphore: 0x0000000000000000
-     Arguments: 8@array(,%rax,8)
-
-llvm20 and gcc14 generate different usdt patterns. '8@-64(%rbp)' already supports so
-with SIB support, the test should pass CI, I think.
-
-> +
->   # Define test_verifier test runner.
->   # It is much simpler than test_maps/test_progs and sufficiently different from
->   # them (e.g., test.h is using completely pattern), that it's worth just
-> diff --git a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-> new file mode 100644
-> index 000000000000..f04b756b3640
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-> @@ -0,0 +1,71 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2025 Jiawei Zhao <phoenix500526@163.com>. */
-> +#include <test_progs.h>
-> +
-> +#define _SDT_HAS_SEMAPHORES 1
-> +#include "../sdt.h"
-> +#include "test_usdt_o2.skel.h"
-> +
-> +int lets_test_this(int);
-> +
-> +#define test_value 0xFEDCBA9876543210ULL
-> +#define SEC(name) __attribute__((section(name), used))
-> +
-> +
-> +static volatile __u64 array[1] = {test_value};
-> +unsigned short test_usdt1_semaphore SEC(".probes");
-> +
-> +static __always_inline void trigger_func(void)
-> +{
-> +	/* Base address + offset + (index * scale) */
-> +	if (test_usdt1_semaphore) {
-> +		for (volatile int i = 0; i <= 0; i++)
-> +			STAP_PROBE1(test, usdt1, array[i]);
-> +	}
-> +}
-> +
-> +static void basic_sib_usdt(void)
-> +{
-> +	LIBBPF_OPTS(bpf_usdt_opts, opts);
-> +	struct test_usdt_o2 *skel;
-> +	struct test_usdt_o2__bss *bss;
-> +	int err;
-> +
-> +	skel = test_usdt_o2__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "skel_open"))
-> +		return;
-> +
-> +	bss = skel->bss;
-> +	bss->my_pid = getpid();
-> +
-> +	err = test_usdt_o2__attach(skel);
-> +	if (!ASSERT_OK(err, "skel_attach"))
-> +		goto cleanup;
-> +
-> +	/* usdt1 won't be auto-attached */
-> +	opts.usdt_cookie = 0xcafedeadbeeffeed;
-> +	skel->links.usdt1 = bpf_program__attach_usdt(skel->progs.usdt1,
-> +						     0 /*self*/, "/proc/self/exe",
-> +						     "test", "usdt1", &opts);
-> +	if (!ASSERT_OK_PTR(skel->links.usdt1, "usdt1_link"))
-> +		goto cleanup;
-> +
-> +	trigger_func();
-> +
-> +	ASSERT_EQ(bss->usdt1_called, 1, "usdt1_called");
-> +	ASSERT_EQ(bss->usdt1_cookie, 0xcafedeadbeeffeed, "usdt1_cookie");
-> +	ASSERT_EQ(bss->usdt1_arg_cnt, 1, "usdt1_arg_cnt");
-> +	ASSERT_EQ(bss->usdt1_arg, test_value, "usdt1_arg");
-> +	ASSERT_EQ(bss->usdt1_arg_ret, 0, "usdt1_arg_ret");
-> +	ASSERT_EQ(bss->usdt1_arg_size, sizeof(array[0]), "usdt1_arg_size");
-> +
-> +cleanup:
-> +	test_usdt_o2__destroy(skel);
-> +}
-> +
-> +
-> +
-> +void test_usdt_o2(void)
-> +{
-> +	basic_sib_usdt();
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/test_usdt_o2.c b/tools/testing/selftests/bpf/progs/test_usdt_o2.c
-> new file mode 100644
-> index 000000000000..14602aa54578
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/test_usdt_o2.c
-> @@ -0,0 +1,37 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2022 Meta Platforms, Inc. and affiliates. */
-> +
-> +#include "vmlinux.h"
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/usdt.bpf.h>
-> +
-> +int my_pid;
-> +
-> +int usdt1_called;
-> +u64 usdt1_cookie;
-> +int usdt1_arg_cnt;
-> +int usdt1_arg_ret;
-> +u64 usdt1_arg;
-> +int usdt1_arg_size;
-> +
-> +SEC("usdt")
-> +int usdt1(struct pt_regs *ctx)
-> +{
-> +	long tmp;
-> +
-> +	if (my_pid != (bpf_get_current_pid_tgid() >> 32))
-> +		return 0;
-> +
-> +	__sync_fetch_and_add(&usdt1_called, 1);
-> +
-> +	usdt1_cookie = bpf_usdt_cookie(ctx);
-> +	usdt1_arg_cnt = bpf_usdt_arg_cnt(ctx);
-> +
-> +	usdt1_arg_ret = bpf_usdt_arg(ctx, 0, &tmp);
-> +	usdt1_arg = (u64)tmp;
-> +	usdt1_arg_size = bpf_usdt_arg_size(ctx, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +char _license[] SEC("license") = "GPL";
-
+-- 
+Without deviation from the norm, progress is not possible.
 
