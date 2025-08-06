@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-757511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A02B1C300
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:12:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772E4B1C302
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297723BD2BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:12:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A71847AAE1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B9228B4F3;
-	Wed,  6 Aug 2025 09:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvumqQnl"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5D328A3FA;
+	Wed,  6 Aug 2025 09:11:41 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FF0289E3F;
-	Wed,  6 Aug 2025 09:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D644289E3F;
+	Wed,  6 Aug 2025 09:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754471493; cv=none; b=GWyx+1ENZyqhJjIYlobhilKmuKH31/zpJtMyYNnHYYQVMVYtk7G7HmonGanMGCUExx0sfJyFIe6SQQvSkx4M+tVNyopl7hG+9JlKj70RrELpoAasWxxyXrYp3dQncsX9sQXcG5Co/PiSL4ProJ2e31qQQG8yyBuzb4LU5g7FNNU=
+	t=1754471501; cv=none; b=q2sefN2DtySnmQnsKyW8hQWfXIKfgn+sMSUnqx2G2tn10yixi9YhCEiPmXxcLuYprC8uvQVBk40Y2/T4l0G0sh0E90Xc516ukrTPnXD1+DpNO5wPxUNnlgQQQsKGTjI+fWqYQULi9v7h9VXSoCpS4JjXOPbhUVo/YCqJhTinW/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754471493; c=relaxed/simple;
-	bh=hSFA8qtVfzMc5s9jfMNEqt+3cXNT7uR7K30ErKjltc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uJuwMji8eDdLa3zWD6aShfwS5fbwK9oVsOFFdRh7geUKKVDsUIEAsGdrp/K4yEjvaofrf1IUzaeE8ldcMGn1nCG/9ybGX+Qf5OFpQvzgL1dEQYymBnU6qrNnqG0WLpGze5rTSEAMYjkaGeQ1+juOtdyNJLv7i+28lFdP0osY+Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvumqQnl; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1754471501; c=relaxed/simple;
+	bh=Fc+NuSJ8sTbe/qqphy+mVsy/5Ttay2x978Cfkhs1/uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qR90iYkLt0O02C31S8ftAS/NsY3XiuT9dwt/PgBvK2MXHDU/LsErO/t0Q0c9htogi/dCT44C4oZwCIFeunviIMZNgsxn/kvoNrFY5n6lqaaXUvBMkOk+5WyrFzgxfauPW1F73IYL4VakK5VO6NhdlOHRa0WyymrK3OvNecc2GTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31eb40b050bso5406476a91.0;
-        Wed, 06 Aug 2025 02:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754471491; x=1755076291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jgc038c2v6U/eJUJ8uwSr0YExE6QXlfF5ru9RBAi2LQ=;
-        b=dvumqQnl4ZKC2SeaYp4SER+bWMZhChjoF7oCBjWtx3grwqNqwqr1ZzIN6RMRF3Ackw
-         5iTagrisYF0OTAXBRhSsw6y726D2T1Sa7tireYHJy3ocvwcaXPfsU4WYANmovIzA4FEt
-         H/Xnkk8Bti31fJKXMC9rI6NSszZ7oDUP3j97ngorAsiugcpAaJQ9D3baugY9LMry93A6
-         nNNBF3DJWhK4uNg4ZouSs6HTYQnVASttvESU4LIc6W86n5Y+n1OreZSRtxTgxyaX39MC
-         XRwwkYC7w14vN3lUCr2wliSopGvZj9022P+qUxDVeFVJLIVYD3bNUyPtUSHomJlwM94c
-         /3RA==
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-88dc7abaf5cso898185241.3;
+        Wed, 06 Aug 2025 02:11:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754471491; x=1755076291;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jgc038c2v6U/eJUJ8uwSr0YExE6QXlfF5ru9RBAi2LQ=;
-        b=Vlj00zeAZC3UJAy5S1AxM6m8OjsywlV39AkwnWwgXEfLDYhggNFNv8l7cgqI9Aoa9F
-         mh/jwlW3hGBf4gVWWhcwHTwVsXaBtFg13L1wcoRnyPEvjnKe3Z+Fj8WlZasHL7D0HFaM
-         mNnNAiHI586gXzo/pkFVJFOUXX1aR02WkXM+dNidPQuOCUpOKxAwpQWV6rJAVEWn7qFE
-         T5zUfbMnYwq/wpbW8lzp3TeU8Y3X7E4n9dHbC6qvqcn23ALWWMdDWUSeZW5AbCaoRUyN
-         iREcbQN3hGrReURdFAkQ3nci96itkjIf15LQkMrt3YQuB/uqCB6WLkK0KXKGjf19Ycnn
-         Jt0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMfmdj0E8kMQFghSRRLLkoAh+aiwF/mwPEb13vcH0nZH4j5bBxV1RK6IByZ/iqu1ofHtPKOXnBHaKj@vger.kernel.org, AJvYcCWkAXB0fS+KLFEb7nb5hgdEVtPGw1mcH1TMhYzgTC8QZTkHc2ekiNMmx75OS58kAsbke5xtXKVSASfUafus@vger.kernel.org, AJvYcCWsED8Aa+an//CDrkLmNzWAU69G5W0qyN2/N67jbG+usQ9NsQfPAFEh9otENDWgDjlSHLJHrXP+3IWhWHLQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPa6SNMigSimK3umvScb5ta30JOeXu6u63Eb8JrvpQZ11Lips8
-	u2IdNNk02y+D2wla+5c7vMA+W36bJRGabKoLB9LPWRuylduyQKisbxK4
-X-Gm-Gg: ASbGnct3eSJ58fmxcQu3lDzT6YJKpYZOm/WJ4HmPPyRKL1pfhG5zsggkqkrI/gz2Bql
-	86lzOfeu22Y/n315/qsfDGSO6pXHAt/zdbxwnFoqJVuaITCZjS4QBxcrZck7J1jHy6zOgngq/S9
-	RiV5rDVm3b5j9XbOQ7fANZgL7zw7YbKb+dqArXmkjCtIJTfIvzP4V7RmGIDfEaXkmZg4mgR2qhO
-	dbJvnNLmZGLuPlw/H8//t5OVUz2YinCSIWh7yijmi+JXw8RUJJm0p5JkpFLd4TonKLym+vG9hj5
-	LCz+JdhT4VsNpyhAkb/GJYveC33/SYV9Z+zmNShs/X6eSN7QcSRVnAWPB61RVJ1YwdpwOoOBl9D
-	n4YkfzhdaKlOnz1x+PQYEM1aCjmjyHjYJVJSeZflBIQEhYks=
-X-Google-Smtp-Source: AGHT+IEgjHhyWY1hXPfacxW300tut+YuMBH6Lo69k+KqgBnHI3oRDYcoNoRIvBXIKaALWr0yyLDuBg==
-X-Received: by 2002:a17:90b:3a85:b0:31e:8203:4b9d with SMTP id 98e67ed59e1d1-32166ced9fcmr2445166a91.29.1754471490971;
-        Wed, 06 Aug 2025 02:11:30 -0700 (PDT)
-Received: from ubuntu-Virtual-Machine.mshome.net ([70.37.26.61])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321612950c7sm2255568a91.31.2025.08.06.02.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 02:11:30 -0700 (PDT)
-From: Tianyu Lan <ltykernel@gmail.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de,
-	Neeraj.Upadhyay@amd.com,
-	kvijayab@amd.com
-Cc: Tianyu Lan <tiala@microsoft.com>,
-	linux-arch@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: [RFC PATCH V6 1/4] x86/hyperv: Don't use hv apic driver when Secure AVIC is available
-Date: Wed,  6 Aug 2025 17:11:24 +0800
-Message-Id: <20250806091127.441323-2-ltykernel@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250806091127.441323-1-ltykernel@gmail.com>
-References: <20250806091127.441323-1-ltykernel@gmail.com>
+        d=1e100.net; s=20230601; t=1754471498; x=1755076298;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xm7RyDlMo9WT+Jn3TQ7VCvAt66o0eLzEm8Xyy1akUbQ=;
+        b=W+wKriP4hJUBAXN4e55uWHKHilCCDlbHI+3waFg79KRgHiof3/RBnmOZmTkwUfA6hj
+         q6kGKiiDQIBy1SkCK7XsF6aPUkkzG37dREj6wKCPI20qUPlZWWKukru9ArNwH7ys1Xg1
+         C2CmuKNx1cYOkB1GvrRPkrg/OsnIJAXjMtAnoUejDnu/3Jnm4suCbBn/5sCBBxYmXUa0
+         rY/noU0MjfC0LYHp4lA+558V150yHa27O3lkDg9Tjipb7yilJOgHA6j/CfhEJQ3c0uqz
+         rMO5okgTSPQdPVhvDeO+KLqMoHeyX/hA6enC6K+/bEJ+Qz3MPlBQLZgWcSfzwkdA8UrB
+         tZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5KlIWdzyIQ/N58mMCFbLkyh6/GsbHRJFppQ5e1Xbg6wtopahGrLnHhhOopa1Sjl5C//LPTjio9bJ70gS@vger.kernel.org, AJvYcCX74VK3ij5hDy8xpOz8zpRmUu4oSDouMyiDztG8TwoYqBtnhdLFQXvOx4OzdbgcdsM9QFmZ/8CCa7F3@vger.kernel.org, AJvYcCXnH2ccT4hcsreRKxBLUdq4qwt5yFeD9mdK2+i/UlAxZzM59lVrVkT92vyhWhJ4HUCkCDZnifoLUEROE3GfDhVghTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkP4uozromUFzBaon0sxzpsmqT1MPwwVlRjbbrWXH6Re60NJAm
+	wlIg33Nao+1PSi0l2ez1xcgR7PJaj5gqraBEWg+lFOQpFIy9pKUPv5MzYsqdnbgU
+X-Gm-Gg: ASbGnct8TOdXyOqqzRtYDQcsqOcDKjQpQlDiKVMQzbUOFSBfgCpOJisZPvUQULHPOrq
+	P9zgDCTOuRmaoEXjR/67npcrQW+m4iTcN7IMfYIGfwwi+gQPJONPxSqsIpE+N4QTbEUyLhEJ4ey
+	vtDQPIw7FOSZRP2k5LvD1QqWwpp0wyWpHeLZmhqc17dj+QClEL2y0lvhtvQWsUq1CaVXJE361yk
+	vRIM4jXL5ImUQ9Z6wyPt3uBt71Ny9LRhRIvOQ0AopA5LbTPxGoqGR/SpTwi85veubOXeCEn41x9
+	NIAjt6E4FAx1vIw+Hpbz6rVyMuZiBL0NWa5qFAIB6+OSoCQ2WQ8droZcUBBVBQKbezxyfEqFTme
+	FW8eMaOgFVIXNAZ19/kgDjBmPkufBTGO5BYP9tjdCwF07TByt83J3s7c2tmQFkniF3cK4Xfg=
+X-Google-Smtp-Source: AGHT+IEo9/AftlsC8iOEVLs0wdLMt2XdtTThqXjHvP7kyKBVRC1ko58Ig9FsT7zY7qAc97fy36ei3A==
+X-Received: by 2002:a05:6122:7c8:b0:530:72da:d13d with SMTP id 71dfb90a1353d-539a1353375mr572534e0c.1.1754471497843;
+        Wed, 06 Aug 2025 02:11:37 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936b169ffsm4080042e0c.6.2025.08.06.02.11.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 02:11:37 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5006f7e71aeso1246167137.1;
+        Wed, 06 Aug 2025 02:11:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCA6yEjir4ASJRnBmiANU04pkxbMAuUl98n3VYgqSU3UMf3qDUtP8ECS/Iz29KEkeJwK/7CL+M3MAciGBw@vger.kernel.org, AJvYcCVq5bMk2x8B1/qeFbtTdnafCDl5iDdPdvrO+SGHIrRVIR9CuduSEGBEqmBQ1M/WQZy3SP3ZZXFUsPkv@vger.kernel.org, AJvYcCXj9EHciU2RjXDpM3enAYlijW3+/1+AdOsiQOZQLZZomiGAArKy4b5kAMyXb+fuQAv9YuLkppFASqYF45drWzzzOk0=@vger.kernel.org
+X-Received: by 2002:a05:6102:e13:b0:4e6:d784:3f7 with SMTP id
+ ada2fe7eead31-5037aae01f0mr648606137.15.1754471497092; Wed, 06 Aug 2025
+ 02:11:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250629220502.935717-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250629220502.935717-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 11:11:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVUscsQEOiVUdwszM8LsiSx4FScHC+MY8hH7B_xtQHcUA@mail.gmail.com>
+X-Gm-Features: Ac12FXyTLkQ8Fim5zNUDUaYka6FZ4b931A7kHxZ4txshhqX1WT490uS4CUxX-bc
+Message-ID: <CAMuHMdVUscsQEOiVUdwszM8LsiSx4FScHC+MY8hH7B_xtQHcUA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: renesas: Add boot phase tags marking to Renesas RZ/A1
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Tianyu Lan <tiala@microsoft.com>
+Hi Marek,
 
-When Secure AVIC is available, the AMD x2apic Secure
-AVIC driver will be selected. In that case, have hv_apic_init()
-return immediately without doing anything.
+On Mon, 30 Jun 2025 at 00:05, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
+> to describe various node usage during boot phases with DT. Add bootph-all for
+> all nodes that are used in the bootloader on Renesas RZ/A1 SoC.
+>
+> All SoC require BSC bus, PFC pin control and OSTM0 timer access during all
+> stages of the boot process, those are marked using bootph-all property, and
+> so is the SoC bus node which contains the PFC and OSTM IPs.
+>
+> Each board console UART is also marked as bootph-all to make it available in
+> all stages of the boot process.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Signed-off-by: Tianyu Lan <tiala@microsoft.com>
----
-Change since RFC V3:
-       - Update Change log and fix coding style issue.
----
- arch/x86/hyperv/hv_apic.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks for your patch!
 
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index bfde0a3498b9..01bc02cc0590 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -25,6 +25,7 @@
- #include <linux/clockchips.h>
- #include <linux/slab.h>
- #include <linux/cpuhotplug.h>
-+#include <linux/cc_platform.h>
- #include <asm/hypervisor.h>
- #include <asm/mshyperv.h>
- #include <asm/apic.h>
-@@ -293,6 +294,9 @@ static void hv_send_ipi_self(int vector)
- 
- void __init hv_apic_init(void)
- {
-+	if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
-+		return;
-+
- 	if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
- 		pr_info("Hyper-V: Using IPI hypercalls\n");
- 		/*
+> --- a/arch/arm/boot/dts/renesas/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/renesas/r7s72100.dtsi
+> @@ -41,6 +41,7 @@ bsc: bus {
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>                 ranges = <0 0 0x18000000>;
+> +               bootph-all;
+>         };
+>
+>         cpus {
+> @@ -108,6 +109,8 @@ soc {
+>                 #size-cells = <1>;
+>                 ranges;
+>
+
+Please drop this blank line.
+
+> +               bootph-all;
+> +
+>                 L2: cache-controller@3ffff000 {
+>                         compatible = "arm,pl310-cache";
+>                         reg = <0x3ffff000 0x1000>;
+> @@ -639,6 +643,7 @@ ostm0: timer@fcfec000 {
+>                         interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
+>                         clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
+>                         power-domains = <&cpg_clocks>;
+> +                       bootph-all;
+
+Please move this to the board-specific .dts files, where this node
+is enabled.
+
+>                         status = "disabled";
+>                 };
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
