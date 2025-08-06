@@ -1,360 +1,125 @@
-Return-Path: <linux-kernel+bounces-757571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCA1B1C3B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA60EB1C3B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B756D186F8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:48:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7169186FBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6DD25B1F4;
-	Wed,  6 Aug 2025 09:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44068242D9D;
+	Wed,  6 Aug 2025 09:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="2R/iuoHe"
-Received: from va-1-20.ptr.blmpb.com (va-1-20.ptr.blmpb.com [209.127.230.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C55324E4D4
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.20
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="c54s3wP2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C422904;
+	Wed,  6 Aug 2025 09:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473705; cv=none; b=bd43kxPvh2cKg57dqii4mF5mUs1Fo1BEk3pLLg98tKS+ZuovkVAHlFiXITaiwhMzTB14thWkKJXZJpF9yzuNIY8CWrQgzzUDrurdqqZ7qbyDAI/dDOJL9u0MZnScTMckviiIHLpVzhSF4L8RtMERtYL+OfFu0QB6ima+U+iydQc=
+	t=1754473693; cv=none; b=KJbauVr0/45K7y/otp38O7Lky2BkWIGJ5KYQZ2tDdHork6lQ9foO9uhsLvltJe2g66i0jQUx9nHaHFUQhJtHCZlFDaKeOlfiPlmV6Zl3UQoYScRku5eoY7qI1UFNsRwjDKB89d+AxNhUZUX8IyFZezeg9Pt7ar9muiXoy3E69sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473705; c=relaxed/simple;
-	bh=TEsIKnBsCktk6RJ28Mqo4VSt/4/wL8gN/g8z98ikFfQ=;
-	h=References:In-Reply-To:Message-Id:Subject:To:Date:Cc:Mime-Version:
-	 Content-Type:From; b=cde3x3823oRcJECvGATp2Wo6THHRX8m0ddV6nPW1rQMwFrggLpmAJwRemVpNZnVMZHhkK/kU5Spw9CGejha/Pgp3sDQw0DSaJq+DrCaSc3j3UzCq0t38vYOldXCQgJ/HaZXkw0VVQGlB/tUQK35K6OBdwudTBB2NpPxH/wfrduw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=2R/iuoHe; arc=none smtp.client-ip=209.127.230.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1754473657;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=MOxyGAUvtGsG+BpRNS5MGijddPl/igFFVF2ruJUQHXg=;
- b=2R/iuoHeTBR+GXWSqwsZbQTZoTUlLX8H03/xv0o98LvdugWL/lAu/l5DYPT8W6dveQpvSS
- yBU+3XTpAySErdw2i5op51DBl+zOH1Dcfv2bj7yWVIH/B9M7OJjNEbJM/8w6ubxFdbbpP0
- 3H/bvJj23vn3kmnEjj9y5kc4rzWa/4+lAczhAlTyfls3wraFl8tpFOtgiiAl/C2szjF0LK
- gBIOGhEnhRKzuLRcmVB/ooxPLWvRf6EYMPZgD98tgKmeULDMpd8oJ/iKjZ1a3lfCKS5k74
- VkGSxSBeoByJJMzTWnXHICEuLxsyH85Une01M94cwaORqES+TyObOrTALQ3o6Q==
-References: <20250806082726.8835-1-nick.hu@sifive.com> <20250806082726.8835-3-nick.hu@sifive.com>
-In-Reply-To: <20250806082726.8835-3-nick.hu@sifive.com>
-X-Lms-Return-Path: <lba+2689324b7+33711e+vger.kernel.org+liujingqi@lanxincomputing.com>
-Message-Id: <08667f67-7821-4a93-afc1-72e6575e866a@lanxincomputing.com>
-Subject: Re: [PATCH v2 2/2] irqchip/riscv-aplic: Save and restore APLIC registers
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Nick Hu" <nick.hu@sifive.com>, <anup@brainfault.org>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>, <linux-riscv@lists.infradead.org>, 
-	<linux-kernel@vger.kernel.org>
-Date: Wed, 6 Aug 2025 17:47:33 +0800
-X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
-Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Wed, 06 Aug 2025 17:47:34 +0800
-Content-Transfer-Encoding: 7bit
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, 
-	"Albert Ou" <aou@eecs.berkeley.edu>
+	s=arc-20240116; t=1754473693; c=relaxed/simple;
+	bh=L18x3n0Qgl4lVs+Z9ZFglVRU0vLUp/CruW8wFiT1QfI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=IQjo/uIqepo7chE6EFgeggo1KO2/UGnO9UiUk0txRVKigGCEhXJS9d6J+qQ7cLcTqyj2YZ9oh+348tHCFp3tmXkTra//0WoID6kS/utbNa26DUJ/bu/bp/5SxE4mHRcDl+wOCTA4IEOBzhQuwsGLrBOe0nuhdEHkcseiqxDK4r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=c54s3wP2 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=QzKGHkQdK0bBRBUTozmgAfsqu4s3xVI4zk+6kEWtcVQ=; b=c
+	54s3wP2ww5tR5bh9A31RvZAgGZpX10TLpTSyUMkPuHwHnB2Kc6YCAp6jFJvr1WKA
+	/LM7BrelO+XRPYYa1dJL4aiQeE1gT1FCq0OF0P11za+iEimD9QPncHtRjEUen5Tr
+	xguMl/NG3alS2l6UjMv9OfslXGo9mBO5JpI2y6HksE=
+Received: from phoenix500526$163.com ( [120.230.124.59] ) by
+ ajax-webmail-wmsvr-40-108 (Coremail) ; Wed, 6 Aug 2025 17:47:36 +0800 (CST)
+Date: Wed, 6 Aug 2025 17:47:36 +0800 (CST)
+From: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+To: "Yonghong Song" <yonghong.song@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v6 2/2] selftests/bpf: Force -O2 for USDT selftests
+ to cover SIB handling logic
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <058d4d74-23ff-444b-a773-9d45204900f2@linux.dev>
+References: <20250802084803.108777-1-phoenix500526@163.com>
+ <20250802084803.108777-3-phoenix500526@163.com>
+ <058d4d74-23ff-444b-a773-9d45204900f2@linux.dev>
+X-NTES-SC: AL_Qu2eBvicvE4u4CSdbOkfmUsVh+o9X8K1vfsk3oZfPJp+jCLp1yY+THNTMH/b4cWDNTqunQiHQiJp+uZHV6V3YawLZvTuhmOs4NaAknJTr1/35Q==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+MIME-Version: 1.0
+Message-ID: <393dae7e.9b04.1987ec77091.Coremail.phoenix500526@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bCgvCgD313O5JJNoRQoUAA--.51653W
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAOhiGiTGhWjkQABs5
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 8/6/2025 4:27 PM, Nick Hu wrote:
-> The APLIC may be powered down when the CPUs enter a deep sleep state.
-> Therefore adding the APLIC save and restore functions to save and
-> restore the states of APLIC.
->
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> Reviewed-by: Cyan Yang <cyan.yang@sifive.com>
-> ---
->   drivers/irqchip/irq-riscv-aplic-direct.c |  11 ++
->   drivers/irqchip/irq-riscv-aplic-main.c   | 158 ++++++++++++++++++++++-
->   drivers/irqchip/irq-riscv-aplic-main.h   |  11 ++
->   3 files changed, 179 insertions(+), 1 deletion(-)
-Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
-
-Thanks,
-Nutty
-> diff --git a/drivers/irqchip/irq-riscv-aplic-direct.c b/drivers/irqchip/irq-riscv-aplic-direct.c
-> index 205ad61d15e4..61b9ac2e1b7b 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-direct.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-direct.c
-> @@ -8,6 +8,7 @@
->   #include <linux/bitfield.h>
->   #include <linux/bitops.h>
->   #include <linux/cpu.h>
-> +#include <linux/cpumask.h>
->   #include <linux/interrupt.h>
->   #include <linux/irqchip.h>
->   #include <linux/irqchip/chained_irq.h>
-> @@ -171,6 +172,16 @@ static void aplic_idc_set_delivery(struct aplic_idc *idc, bool en)
->   	writel(de, idc->regs + APLIC_IDC_IDELIVERY);
->   }
->   
-> +void aplic_direct_restore(struct aplic_priv *priv)
-> +{
-> +	struct aplic_direct *direct =
-> +			container_of(priv, struct aplic_direct, priv);
-> +	int cpu;
-> +
-> +	for_each_cpu(cpu, &direct->lmask)
-> +		aplic_idc_set_delivery(per_cpu_ptr(&aplic_idcs, cpu), true);
-> +}
-> +
->   static int aplic_direct_dying_cpu(unsigned int cpu)
->   {
->   	if (aplic_direct_parent_irq)
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
-> index 93e7c51f944a..91fe3305934d 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
-> @@ -12,10 +12,143 @@
->   #include <linux/of.h>
->   #include <linux/of_irq.h>
->   #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/printk.h>
-> +#include <linux/syscore_ops.h>
->   
->   #include "irq-riscv-aplic-main.h"
->   
-> +static LIST_HEAD(aplics);
-> +
-> +static void aplic_restore(struct aplic_priv *priv)
-> +{
-> +	int i;
-> +	u32 clrip;
-> +
-> +	writel(priv->saved_domaincfg, priv->regs + APLIC_DOMAINCFG);
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	writel(priv->saved_msiaddr, priv->regs + APLIC_xMSICFGADDR);
-> +	writel(priv->saved_msiaddrh, priv->regs + APLIC_xMSICFGADDRH);
-> +#endif
-> +	for (i = 1; i <= priv->nr_irqs; i++) {
-> +		writel(priv->saved_sourcecfg[i - 1],
-> +		       priv->regs + APLIC_SOURCECFG_BASE +
-> +		       (i - 1) * sizeof(u32));
-> +		writel(priv->saved_target[i - 1],
-> +		       priv->regs + APLIC_TARGET_BASE +
-> +		       (i - 1) * sizeof(u32));
-> +	}
-> +
-> +	for (i = 0; i <= priv->nr_irqs; i += 32) {
-> +		writel(-1U, priv->regs + APLIC_CLRIE_BASE +
-> +			    (i / 32) * sizeof(u32));
-> +		writel(priv->saved_ie[i / 32],
-> +		       priv->regs + APLIC_SETIE_BASE +
-> +		       (i / 32) * sizeof(u32));
-> +	}
-> +
-> +	if (priv->nr_idcs) {
-> +		aplic_direct_restore(priv);
-> +	} else {
-> +		/* Re-trigger the interrupts */
-> +		for (i = 0; i <= priv->nr_irqs; i += 32) {
-> +			clrip = readl(priv->regs + APLIC_CLRIP_BASE +
-> +				      (i / 32) * sizeof(u32));
-> +			writel(clrip, priv->regs + APLIC_SETIP_BASE +
-> +				      (i / 32) * sizeof(u32));
-> +		}
-> +	}
-> +}
-> +
-> +static void aplic_save(struct aplic_priv *priv)
-> +{
-> +	int i;
-> +
-> +	for (i = 1; i <= priv->nr_irqs; i++) {
-> +		priv->saved_target[i - 1] = readl(priv->regs +
-> +						  APLIC_TARGET_BASE +
-> +						  (i - 1) * sizeof(u32));
-> +	}
-> +
-> +	for (i = 0; i <= priv->nr_irqs; i += 32) {
-> +		priv->saved_ie[i / 32] = readl(priv->regs +
-> +					       APLIC_SETIE_BASE +
-> +					       (i / 32) * sizeof(u32));
-> +	}
-> +}
-> +
-> +static int aplic_syscore_suspend(void)
-> +{
-> +	struct aplic_priv *priv;
-> +
-> +	list_for_each_entry(priv, &aplics, head) {
-> +		aplic_save(priv);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void aplic_syscore_resume(void)
-> +{
-> +	struct aplic_priv *priv;
-> +
-> +	list_for_each_entry(priv, &aplics, head) {
-> +		aplic_restore(priv);
-> +	}
-> +}
-> +
-> +static struct syscore_ops aplic_syscore_ops = {
-> +	.suspend = aplic_syscore_suspend,
-> +	.resume = aplic_syscore_resume,
-> +};
-> +
-> +static int aplic_pm_notifier(struct notifier_block *nb, unsigned long action, void *data)
-> +{
-> +	struct aplic_priv *priv = container_of(nb, struct aplic_priv, genpd_nb);
-> +
-> +	switch (action) {
-> +	case GENPD_NOTIFY_PRE_OFF:
-> +		aplic_save(priv);
-> +		break;
-> +	case GENPD_NOTIFY_ON:
-> +		aplic_restore(priv);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void aplic_remove(void *data)
-> +{
-> +	struct aplic_priv *priv = data;
-> +
-> +	list_del(&priv->head);
-> +	dev_pm_genpd_remove_notifier(priv->dev);
-> +}
-> +
-> +static int aplic_add(struct device *dev, struct aplic_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	list_add(&priv->head, &aplics);
-> +	/* Add genpd notifier */
-> +	priv->genpd_nb.notifier_call = aplic_pm_notifier;
-> +	ret = dev_pm_genpd_add_notifier(dev, &priv->genpd_nb);
-> +	if (ret && ret != -ENODEV && ret != -EOPNOTSUPP) {
-> +		list_del(&priv->head);
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_add_action_or_reset(dev, aplic_remove, priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_pm_runtime_enable(dev);
-> +}
-> +
->   void aplic_irq_unmask(struct irq_data *d)
->   {
->   	struct aplic_priv *priv = irq_data_get_irq_chip_data(d);
-> @@ -59,6 +192,7 @@ int aplic_irq_set_type(struct irq_data *d, unsigned int type)
->   	sourcecfg = priv->regs + APLIC_SOURCECFG_BASE;
->   	sourcecfg += (d->hwirq - 1) * sizeof(u32);
->   	writel(val, sourcecfg);
-> +	priv->saved_sourcecfg[d->hwirq - 1] = val;
->   
->   	return 0;
->   }
-> @@ -95,6 +229,8 @@ void aplic_init_hw_global(struct aplic_priv *priv, bool msi_mode)
->   		valh |= FIELD_PREP(APLIC_xMSICFGADDRH_HHXS, priv->msicfg.hhxs);
->   		writel(val, priv->regs + APLIC_xMSICFGADDR);
->   		writel(valh, priv->regs + APLIC_xMSICFGADDRH);
-> +		priv->saved_msiaddr = val;
-> +		priv->saved_msiaddrh = valh;
->   	}
->   #endif
->   
-> @@ -106,6 +242,7 @@ void aplic_init_hw_global(struct aplic_priv *priv, bool msi_mode)
->   	writel(val, priv->regs + APLIC_DOMAINCFG);
->   	if (readl(priv->regs + APLIC_DOMAINCFG) != val)
->   		dev_warn(priv->dev, "unable to write 0x%x in domaincfg\n", val);
-> +	priv->saved_domaincfg = val;
->   }
->   
->   static void aplic_init_hw_irqs(struct aplic_priv *priv)
-> @@ -176,7 +313,24 @@ int aplic_setup_priv(struct aplic_priv *priv, struct device *dev, void __iomem *
->   	/* Setup initial state APLIC interrupts */
->   	aplic_init_hw_irqs(priv);
->   
-> -	return 0;
-> +	/* For power management */
-> +	priv->saved_target = devm_kzalloc(dev, priv->nr_irqs * sizeof(u32),
-> +					  GFP_KERNEL);
-> +	if (!priv->saved_target)
-> +		return -ENOMEM;
-> +
-> +	priv->saved_sourcecfg = devm_kzalloc(dev, priv->nr_irqs * sizeof(u32),
-> +					     GFP_KERNEL);
-> +	if (!priv->saved_sourcecfg)
-> +		return -ENOMEM;
-> +
-> +	priv->saved_ie = devm_kzalloc(dev,
-> +				      DIV_ROUND_UP(priv->nr_irqs, 32) * sizeof(u32),
-> +				      GFP_KERNEL);
-> +	if (!priv->saved_ie)
-> +		return -ENOMEM;
-> +
-> +	return aplic_add(dev, priv);
->   }
->   
->   static int aplic_probe(struct platform_device *pdev)
-> @@ -209,6 +363,8 @@ static int aplic_probe(struct platform_device *pdev)
->   	if (rc)
->   		dev_err_probe(dev, rc, "failed to setup APLIC in %s mode\n",
->   			      msi_mode ? "MSI" : "direct");
-> +	else
-> +		register_syscore_ops(&aplic_syscore_ops);
->   
->   #ifdef CONFIG_ACPI
->   	if (!acpi_disabled)
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.h b/drivers/irqchip/irq-riscv-aplic-main.h
-> index b0ad8cde69b1..f27d5ff1c741 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.h
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.h
-> @@ -24,6 +24,7 @@ struct aplic_msicfg {
->   };
->   
->   struct aplic_priv {
-> +	struct list_head	head;
->   	struct device		*dev;
->   	u32			gsi_base;
->   	u32			nr_irqs;
-> @@ -31,6 +32,15 @@ struct aplic_priv {
->   	u32			acpi_aplic_id;
->   	void __iomem		*regs;
->   	struct aplic_msicfg	msicfg;
-> +	struct notifier_block	genpd_nb;
-> +	u32 *saved_target;
-> +	u32 *saved_sourcecfg;
-> +	u32 *saved_ie;
-> +	u32 saved_domaincfg;
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	u32 saved_msiaddr;
-> +	u32 saved_msiaddrh;
-> +#endif
->   };
->   
->   void aplic_irq_unmask(struct irq_data *d);
-> @@ -39,6 +49,7 @@ int aplic_irq_set_type(struct irq_data *d, unsigned int type);
->   int aplic_irqdomain_translate(struct irq_fwspec *fwspec, u32 gsi_base,
->   			      unsigned long *hwirq, unsigned int *type);
->   void aplic_init_hw_global(struct aplic_priv *priv, bool msi_mode);
-> +void aplic_direct_restore(struct aplic_priv *priv);
->   int aplic_setup_priv(struct aplic_priv *priv, struct device *dev, void __iomem *regs);
->   int aplic_direct_setup(struct device *dev, void __iomem *regs);
->   #ifdef CONFIG_RISCV_APLIC_MSI
+CgpPSywgSeKAmXZlIGFscmVhZHkgYWRkZWQgYW4gdXNkdF9vMiB0ZXN0IGFuZCBwYXNzZWQgaXQu
+wqAKCgoKCkF0IDIwMjUtMDgtMDYgMDM6NDI6MjIsICJZb25naG9uZyBTb25nIiA8eW9uZ2hvbmcu
+c29uZ0BsaW51eC5kZXY+IHdyb3RlOgo+Cj4KPk9uIDgvMi8yNSAxOjQ4IEFNLCBKaWF3ZWkgWmhh
+byB3cm90ZToKPj4gV2hlbiB1c2luZyBHQ0Mgb24geDg2LTY0IHRvIGNvbXBpbGUgYW4gdXNkdCBw
+cm9nIHdpdGggLU8xIG9yIGhpZ2hlcgo+PiBvcHRpbWl6YXRpb24sIHRoZSBjb21waWxlciB3aWxs
+IGdlbmVyYXRlIFNJQiBhZGRyZXNzaW5nIG1vZGUgZm9yIGdsb2JhbAo+PiBhcnJheSBhbmQgUEMt
+cmVsYXRpdmUgYWRkcmVzc2luZyBtb2RlIGZvciBnbG9iYWwgdmFyaWFibGUsCj4+IGUuZy4gIjFA
+LTk2KCVyYnAsJXJheCw4KSIgYW5kICItMUA0K3QxKCVyaXApIi4KPj4KPj4gSW4gdGhpcyBwYXRj
+aDoKPj4gLSBmb3JjZSAtTzIgb3B0aW1pemF0aW9uIGZvciB1c2R0LnRlc3QubyB0byBnZW5lcmF0
+ZSBTSUIgYWRkcmVzc2luZyB1c2R0Cj4+ICAgIGFyZ3VtZW50IHNwZWMuCj4+IC0gY2hhbmdlIHRo
+ZSBnbG9iYWwgdmFyaWFibGUgdDEgdG8gYSBsb2NhbCB2YXJpYWJsZSwgdG8gYXZvaWQgY29tcGls
+ZXIKPj4gICAgZ2VuZXJhdGluZyBQQy1yZWxhdGl2ZSBhZGRyZXNzaW5nIG1vZGUgZm9yIGl0Lgo+
+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBKaWF3ZWkgWmhhbyA8cGhvZW5peDUwMDUyNkAxNjMuY29tPgo+
+PiAtLS0KPj4gICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvTWFrZWZpbGUgICAgICAgICAg
+fCAgOCArKysrKysrKwo+PiAgIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9wcm9nX3Rlc3Rz
+L3VzZHQuYyB8IDE4ICsrKysrKysrKysrKy0tLS0tLQo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgMjAg
+aW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL3Rvb2xzL3Rl
+c3Rpbmcvc2VsZnRlc3RzL2JwZi9NYWtlZmlsZSBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2Jw
+Zi9NYWtlZmlsZQo+PiBpbmRleCA5MTBkOGQ2NDAyZWYuLjRiNzdkMDZkNWM0MiAxMDA2NDQKPj4g
+LS0tIGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL01ha2VmaWxlCj4+ICsrKyBiL3Rvb2xz
+L3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9NYWtlZmlsZQo+PiBAQCAtNzU5LDYgKzc1OSwxNCBAQCBU
+UlVOTkVSX0JQRl9CVUlMRF9SVUxFIDo9ICQkKGVycm9yIG5vIEJQRiBvYmplY3RzIHNob3VsZCBi
+ZSBidWlsdCkKPj4gICBUUlVOTkVSX0JQRl9DRkxBR1MgOj0KPj4gICAkKGV2YWwgJChjYWxsIERF
+RklORV9URVNUX1JVTk5FUix0ZXN0X21hcHMpKQo+PiAgIAo+PiArIyBGb3JjZSB1c2R0LmMgdG8g
+dXNlIC1PMiBvcHRpbWl6YXRpb24gdG8gZ2VuZXJhdGUgU0lCIGFkZHJlc3NpbmcKPj4gKyMgT25s
+eSBhcHBseSBvbiB4ODYgYXJjaGl0ZWN0dXJlIHdoZXJlIFNJQiBhZGRyZXNzaW5nIGlzIHJlbGV2
+YW50Cj4+ICtpZmVxICgkKEFSQ0gpLCB4ODYpCj4+ICskKE9VVFBVVCkvdXNkdC50ZXN0Lm86IENG
+TEFHUzo9JChzdWJzdCBPMCxPMiwkKENGTEFHUykpCj4+ICskKE9VVFBVVCkvY3B1djQvdXNkdC50
+ZXN0Lm86IENGTEFHUzo9JChzdWJzdCBPMCxPMiwkKENGTEFHUykpCj4+ICskKE9VVFBVVCkvbm9f
+YWx1MzIvdXNkdC50ZXN0Lm86IENGTEFHUzo9JChzdWJzdCBPMCxPMiwkKENGTEFHUykpCj4+ICtl
+bmRpZgo+Cj5UaGlzIGlzIG5vIGdvb2QuIFlvdSBzaG91bGQgbm90IGNoYW5nZSBmcm9tIC1PMCB0
+byAtTzIuIFRoZSBleGlzdGluZyB1c2R0LmMKPnRlc3Qgc2hvdWxkIGJlIGtlcHQuIEkgYXNzdW1l
+IGF0IC1PMCBsZXZlbCwgdGhlIGNvbXBpbGVyIHByb2JhYmx5Cj53b24ndCBnZW5lcmF0ZSBTSUIg
+cGF0dGVybi4KPgo+WW91IGNvdWxkIGFkZCBhbm90aGVyIHVzZHQgdGVzdCBlLmcuIHVzZHRfbzIu
+YyBhbmQgZm9yY2UKPnVzZHRfbzIgaXMgY29tcGlsZWQgd2l0aCAtTzIgb3B0aW1pemF0aW9ucyBh
+bmQgaW4gdXNkdF9vMiBmb2N1c2luZyBvbgo+U0lCIHByb2JlLgo+Cj4+ICsKPj4gICAjIERlZmlu
+ZSB0ZXN0X3ZlcmlmaWVyIHRlc3QgcnVubmVyLgo+PiAgICMgSXQgaXMgbXVjaCBzaW1wbGVyIHRo
+YW4gdGVzdF9tYXBzL3Rlc3RfcHJvZ3MgYW5kIHN1ZmZpY2llbnRseSBkaWZmZXJlbnQgZnJvbQo+
+PiAgICMgdGhlbSAoZS5nLiwgdGVzdC5oIGlzIHVzaW5nIGNvbXBsZXRlbHkgcGF0dGVybiksIHRo
+YXQgaXQncyB3b3J0aCBqdXN0Cj4+IGRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0
+cy9icGYvcHJvZ190ZXN0cy91c2R0LmMgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJv
+Z190ZXN0cy91c2R0LmMKPj4gaW5kZXggNDk1ZDY2NDE0YjU3Li44NmYzNTRkMjVhZWYgMTAwNjQ0
+Cj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9wcm9nX3Rlc3RzL3VzZHQuYwo+
+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0cy91c2R0LmMKPj4g
+QEAgLTE0LDEwICsxNCwxNSBAQCBzdGF0aWMgdm9sYXRpbGUgaW50IGlkeCA9IDI7Cj4+ICAgc3Rh
+dGljIHZvbGF0aWxlIF9fdTY0IGJsYSA9IDB4RkVEQ0JBOTg3NjU0MzIxMFVMTDsKPj4gICBzdGF0
+aWMgdm9sYXRpbGUgc2hvcnQgbnVtc1tdID0gey0xLCAtMiwgLTMsIC00fTsKPj4gICAKPj4gLXN0
+YXRpYyB2b2xhdGlsZSBzdHJ1Y3Qgewo+PiAtCWludCB4Owo+PiAtCXNpZ25lZCBjaGFyIHk7Cj4+
+IC19IHQxID0geyAxLCAtMTI3IH07Cj4+ICsvKgo+PiArICogVE9ETzogIEF0IE8yIG9wdGltaXph
+dGlvbiBsZXZlbCwgdDEncyBVU0RUIGFyZ3VtZW50IHNwZWMgYmVjb21lcyAtMUA0K3QxKCVyaXAp
+Lgo+PiArICogU2luY2UgbGliYnBmIGRvZXNuJ3Qgc3VwcG9ydCBSSVAgYWRkcmVzc2luZyBtb2Rl
+IHlldCwgdGhpcyBjYXVzZXMgInVucmVjb2duaXplZCByZWdpc3RlciIgZXJyb3JzLgo+PiArICog
+VGhpcyB0ZXN0IHdpbGwgYmUgcmUtZW5hYmxlZCBvbmNlIGxpYmJwZiBzdXBwb3J0cyBSSVAgYWRk
+cmVzc2luZyBtb2RlLgo+PiArICovCj4+ICsvLyBzdGF0aWMgdm9sYXRpbGUgc3RydWN0IHsKPj4g
+Ky8vCWludCB4Owo+PiArLy8Jc2lnbmVkIGNoYXIgeTsKPj4gKy8vIH0gdDEgPSB7IDEsIC0xMjcg
+fTsKPj4gICAKPgo+Wy4uLl0K
 
