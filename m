@@ -1,126 +1,174 @@
-Return-Path: <linux-kernel+bounces-758180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2527B1CC0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:40:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6A5B1CC0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6C318C24BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B8617B9B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0774529CB49;
-	Wed,  6 Aug 2025 18:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B058829C33C;
+	Wed,  6 Aug 2025 18:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WiUH4U8I"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="USMrL2Od"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA11029C344
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAACB29CB48
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754505623; cv=none; b=AtUafiVfCsBgX5MlQZEOWzyOnGXT0ePvvGUwq98sOir7Q3jUaOMOB9DRnfli2AeU+kJ65Sp140+i8uKTn3EOcxYcHzCtIHfakkcEqqSgqHU1dUp0dloR9JY+PP5b0j4GHwfcgAX0q/912C99EglUekOCZeeC5F1O9thky0QdDPQ=
+	t=1754505645; cv=none; b=Ot8cKO+d0lVJXWURit+MlVsy7WmQKSFHRl3QvNmry+MZyKZWi5rTkMZv6ZyhTmF9WiCQ4CibRJFAzMUnfpew1zFYL2QdcgD52mfFW6eO02JEkUtQQaiOrNQSs9vfBWqeZWWGOuN05DZIP5xh1GG2ec6eJU07YxDpoQd/8aBIJlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754505623; c=relaxed/simple;
-	bh=8ANG09BXwUJaoIXi1mJ0w22aJFvE+4j3gy12dJ5Wq34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgXAf7ftQd4m8s6UiRogyXBFrGFoG+Ga5WgROydKGAeeH1swN8KC1iozQXbxbDhiUteittc8ccQlgRGcL3OLfeM1RAuKpSXJaLvNve9GPYTgT77qFGkv/is0fqNIX8ACjQxN886HAtVexjzTz+I7UMPrUKepkBdAadvWSEZ6k+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WiUH4U8I; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459ddada9b1so2222235e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754505620; x=1755110420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mNr8/snCMDeN3hnWgTzW7w5ASTFc/odDoWi1wihy0vo=;
-        b=WiUH4U8IJ2SE24oQ9t9WvORbc3BudLFYNkEubFbtpyhuKSkHFnU+AdqCrz7oXuamy9
-         duY/f6UnZYgDVuHfOjDHJY/bAtGoBQYhcoBWfDQzDx8VczqRfOvjiQCtMm3B2y2Ajq2p
-         kZ/Lkop6eVzG/Gd4mMgb7oGjd2MdK8ZGHAT2tDXNPqjfmVfSmXM+Iwi74+5UAb7E8Q6O
-         9dFSxh2zkuBC8scp/PlXPymmzqtmiqXAc7sjcywfhxKyz75eqiEuvBCzl/GkoI9LagIu
-         8dNCwGsGlSEmWUGyvsZQ60R4CbTo28OZEK6w62dqC7D3Tts5ZYsRj19PZV9HPMJ+Tz40
-         NuPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754505620; x=1755110420;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mNr8/snCMDeN3hnWgTzW7w5ASTFc/odDoWi1wihy0vo=;
-        b=NOOzc/x8V6ZaE8fjiw4iuCESb1CGOsL040jTVWGkafjUFbO/QceVeUHX3eF1zNOdHj
-         G+F64zRDYyyyZAOtqQXwb8PVuVX/bO5EjaHG9DpYUTJ2OSxgMdHRbDfRDotefLsOlb1U
-         RX8SYR3DgDo0JQ/a/ZMJeqspcgNpmV5CdoAJT9kkdnpXxAz3U9BejFo3X8FT01O1a1pP
-         vDhOYga/uzfsJUAHgQVxOzsoYYJz5RDwwdIHwD96xiHpfEglQ+SD+gvAWmAeD/aK6kY7
-         1RIU0vbu09SrQc/QeWZswGbRNuoHJB0x+JnEC5XiWzooGcRMz39zbnA7eaaeqZMLrsD+
-         6oCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPWaHcUS48V1vyRkx0DAc0dQNkaH+WwUzZrSXg5s++SsvSsoLspxa86uLsUa3H6vliEsyFK+2Akzk1ppw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXknuHK9JkAWAF78uUKS6ZoYc3eGxHy/tVoaKeD1aind4RfjnU
-	OGxLUHYl+GqA6vVxC0IJEgDQJxzpw5v1dxqnd0VazOqpA1L5m2APFo48
-X-Gm-Gg: ASbGncs6y4OywJrsM++YMYPGKTro30KyfJzIk/WxoUCfuLSaZH8i5i4nYvTY4skOVtm
-	/9k6PLemsGchZk6rrglPPuwXRwSxE5K+BDJhb8+FuLZW2pdIcxI97gcDF3Do/mBclm5BE60Va2Z
-	sNdvplMei+MFV/YO42vrCWwht5JxKiM+bVncgJp6yB/v5Hefxu0FVQn3ihws08JMfLyDs87v27W
-	TBmFXOcTGUMsF1Wgk9YBTZTi3/08NBiTVECnfRlrZpAMf2muF4V0T5KaxL/LZekvQgOmwxejRJU
-	XDxRRzWYkW0t5mSeyoabDtDrMIO7QDky9PZ8u1tpIPDMzot4c+S1znSxhUR44OsCjeO5ZFDOCdu
-	ck7SmyCFvckfqm0VaztJ2gx7bQD+loiFSCFM72+UJU4L7Q5j4G8tDchS1mbpCJn4=
-X-Google-Smtp-Source: AGHT+IFCDKHBNM5kd667rpnROYOoMUbhrX6INHHFpN704TYBAwda9yAk9b+asOk7lKATso1Pm/Zinw==
-X-Received: by 2002:a05:600c:3b1b:b0:456:43d:1198 with SMTP id 5b1f17b1804b1-459e74b8340mr30220515e9.32.1754505619467;
-        Wed, 06 Aug 2025 11:40:19 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e075805csm104393635e9.4.2025.08.06.11.40.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 11:40:18 -0700 (PDT)
-Message-ID: <25dcf103-3cd3-400a-b402-cbb5f23006c9@gmail.com>
-Date: Wed, 6 Aug 2025 20:40:21 +0200
+	s=arc-20240116; t=1754505645; c=relaxed/simple;
+	bh=FmgVduqyFQrrDuTkN7hPJDhYuDQHId3NQC+lreC3wvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVCq+MZO7lUw1pDbx1CBpgRftSSgVRr5k0ES1cCKc4ahS6+EDTUn6EpdU0icZjHKMAynwjA8DMNenGMI3SJPO+Bdh7J2F+NV2jatGUKHkM5pdkCzlM/T8RyxZczeN2RYlMiRykwZisiG0h65QRAExpQe21g2X/TW00pOKCCScv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=USMrL2Od; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Aug 2025 11:40:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754505639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/FXfno0W+qkpNiKxLIrH/CR0MHBmoVI+HrerVsQ0Cgk=;
+	b=USMrL2Odl7Ei5b5TqPKxvz+HtGXYtu/kKIKKNcerxJkN8b2z5ic0tmfV6bChFP2sHI3jq4
+	ekTWF6YMSsjzqv8UfnHfloXaJJO57ckvtMzNvW2edwhG2ZZZhnMkzm1ExBxozG8ZY0JpST
+	KmUqbaAD2hGhdHywq49wBLXp4eYV218=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after
+ 'at s*'
+Message-ID: <aJOhnHCUR0Af4XJt@linux.dev>
+References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
+ <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: expose ooblayout information via sysfs
-Content-Language: hu
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-References: <20250719-mtd-ooblayout-sysfs-v1-1-e0d68d872e17@gmail.com>
- <87tt2ley48.fsf@bootlin.com>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <87tt2ley48.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Miquel,
-
-2025. 08. 06. 8:57 keltezéssel, Miquel Raynal írta:
-> Hello Gabor,
+On Wed, Aug 06, 2025 at 02:17:55PM +0000, Volodymyr Babchuk wrote:
+> Previously this code update only vCPU's in-memory value, which is good,
+> but not enough, as there will be no context switch after exiting
+> exception handler, so in-memory value will not get into actual
+> register.
 > 
-> On 19/07/2025 at 14:06:48 +02, Gabor Juhos <j4g8y7@gmail.com> wrote:
+> It worked good enough for VHE guests because KVM code tried fast path,
+> which of course updated real PAR_EL1.
 > 
->> Add two new sysfs device attributes which allows to determine the OOB
->> layout used by a given MTD device. This can be useful to verify the
->> current layout during driver development without adding extra debug
->> code. The exposed information also makes it easier to analyze NAND
->> dumps without the need of cravling out the layout from the driver
->> code.
+> Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+> ---
+>  arch/arm64/kvm/sys_regs.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> I would prefer a debugfs entry, as this is mostly focusing on
-> development and debugging purposes. sysfs has a stable API, which makes
-> it a less relevant place in this case.
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 7b8a0a6f26468..ab2b5e261d312 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -3463,6 +3463,9 @@ static bool handle_at_s1e2(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  
+>  	__kvm_at_s1e2(vcpu, op, p->regval);
+>  
+> +	/* No context switch happened, so we need to update PAR_EL1 manually */
+> +	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
+> +
 
-Sorry, it seems that I misunderstood the ABI documentation.
+Ok, this had me thoroughly confused for a moment. The bug is actually in
+kvm_write_sys_reg() which is supposed to update the sysreg value when
+things are loaded on the CPU. __kvm_at_s1e2() is doing the right thing
+by calling this accessor.
 
-Since the 'sysfs-class-mtd' file is under the 'testing' directory within
-'Documentation/ABI' I thought that it can be extended by attributes used for
-testing purposes. Additionally, the 'oobavail' and 'oobsize' attributes are
-exposed via sysfs, so it seemed to be a logical place for the new oob related ones.
+For registers like PAR_EL1 that don't have an EL2->EL1 mapping we assume
+they belong to the EL1 context and thus are in-memory when in a hyp
+context. TPIDR(RO)_EL0 is similarly affected.
 
-Nevertheless, I will check what can I do with the debugfs based approach.
+This is a bit of an ugly hack, but something like the following should
+get things working if you're able to test it:
 
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index ad2548477257..32f8d1de8f1a 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -149,6 +149,22 @@ static bool get_el2_to_el1_mapping(unsigned int reg,
+ 	}
+ }
+ 
++/*
++ * Special-cased registers that do not have an ELx mapping and are always
++ * loaded on the CPU.
++ */
++static bool reg_has_elx_mapping(int reg)
++{
++	switch (reg) {
++	case TPIDR_EL0:
++	case TPIDRRO_EL0:
++	case PAR_EL1:
++		return false;
++	default:
++		return true;
++	}
++}
++
+ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
+ {
+ 	u64 val = 0x8badf00d8badf00d;
+@@ -158,6 +174,9 @@ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
+ 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
+ 		goto memory_read;
+ 
++	if (!reg_has_elx_mapping(reg))
++		goto sysreg_read;
++
+ 	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
+ 		if (!is_hyp_ctxt(vcpu))
+ 			goto memory_read;
+@@ -204,6 +223,7 @@ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
+ 	if (unlikely(is_hyp_ctxt(vcpu)))
+ 		goto memory_read;
+ 
++sysreg_read:
+ 	if (__vcpu_read_sys_reg_from_cpu(reg, &val))
+ 		return val;
+ 
+@@ -219,6 +239,9 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
+ 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
+ 		goto memory_write;
+ 
++	if (!reg_has_elx_mapping(reg))
++		goto sysreg_write;
++
+ 	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
+ 		if (!is_hyp_ctxt(vcpu))
+ 			goto memory_write;
+@@ -259,6 +282,7 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
+ 	if (unlikely(is_hyp_ctxt(vcpu)))
+ 		goto memory_write;
+ 
++sysreg_write:
+ 	if (__vcpu_write_sys_reg_to_cpu(val, reg))
+ 		return;
+ 
+-- 
 Thanks,
-Gabor
+Oliver
 
