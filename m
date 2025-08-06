@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-757270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3659EB1C01B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CADB1BF56
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A640118C024C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3391C18379B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F86E200112;
-	Wed,  6 Aug 2025 05:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D81DEFF5;
+	Wed,  6 Aug 2025 03:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hPZq8Ego"
-Received: from mail-m49208.qiye.163.com (mail-m49208.qiye.163.com [45.254.49.208])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XIDjR8lF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15BB273FE;
-	Wed,  6 Aug 2025 05:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C03B85260
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 03:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754459733; cv=none; b=YUH58ZiBJ+N2EhcEQsFxTxVz83eDbTHNuS20rRUr+8wu/XfbIHz666jTg65jME1UAII5KM5ITBKAzaS+JZ9133BVGaIRomt3NkRW1gER4Khr0LjEQPBef1ksIoB+V9wbeGO+QE/G1J7MB4f22r+vEUXumBhBcbjnEYJUh+S071g=
+	t=1754451186; cv=none; b=NkKmJiRyejB7ozxbeyLRORLJhKn8tVwE/rgNdn5UjEvkYS9JZdFKrywjGCdNjXSGWskSrWZ+PcUetxXh9VsVXayWDo5XXf/KYZAw3X+csBZDpQ5wsEabsN3Q/NVOlBkUZd8H+sMuEaO6/rRqCaXB9Eh8hbER8E3KZ3JskPjC+t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754459733; c=relaxed/simple;
-	bh=tRu2MOTYT8KJYDw5bOFLBDKdTceUlMhJ4Mr7ocKZQiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y9K+cy0nFL8jdGOFoDWFPoi99sWpo0MZvK8H2E1Ygl/fkD9Q7J1UMTyPeBmlUikato+s7EQKgtN22AbVKtRUufLrbquAPJaqoGX4rwd9EtEjiTlvAkrPzhuFoTAMXgeGP18+Qu6kCkK27oY0reKxZnGtikakw1/qBLFByVHyCVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hPZq8Ego; arc=none smtp.client-ip=45.254.49.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1e71dd486;
-	Wed, 6 Aug 2025 11:32:50 +0800 (GMT+08:00)
-Message-ID: <d99c50ed-797b-4086-b1b5-d3df281d3c2a@rock-chips.com>
-Date: Wed, 6 Aug 2025 11:32:47 +0800
+	s=arc-20240116; t=1754451186; c=relaxed/simple;
+	bh=f7pG9H4432qS9R1r/kzZomzIOKpZCgtoTOoxePgpyUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7x2ELrPvp0cRc0lIeg4NVvrb66179Nluf5rh58TZFbVEJFKatT9GaP21hpuTQD1+i2mOJNxnm22znmurUUbLbbgDgL0qJjUMQjGOTj4kGJtT02kCwDEL48Fex31TjIB6SER+RqaGmTXY9jDIN35wCSwlURnqHnAjMXlzvBnDQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XIDjR8lF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5761g9rq031863
+	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 03:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=E6ZxrCjqBVtepsO7mQAejcOr
+	0b+KcgjVHvwf5asrNsQ=; b=XIDjR8lFhqErTT2U2/ak4Yt42dRDv7vBONTj+97u
+	HsrGQ3g4IvW4ZSyI0r23vHX6ok1b67UEs45SnOuTSELlmLEGOJlIc/YMpqHcefsV
+	u2z6FgrkxFmC2mdHwESRRX5LNZuZumSWaglAwCSUlYpqrUcMUupwSC/KHz8T2ObT
+	6KY2xphjdwjuU6WI9mZBXW4h6Sn5lpuATBOa9WzHNPt0SvqSQqVG8/997ltZ/2ax
+	KvYufXxdKxDZ45aZjaIyvBDUHSWB+udPrRWXM5pSrygQJTLJElmqi28jmxwuhDKu
+	L6fGrpe+tIkbKAfQhSiUzW0ugDSw/uHyMAzDfWiSkG5DNw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw198sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 03:33:04 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab7464e3bfso67323121cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 20:33:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754451184; x=1755055984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E6ZxrCjqBVtepsO7mQAejcOr0b+KcgjVHvwf5asrNsQ=;
+        b=eD2nhuDHYInm4iorJy836//yUjB+NOk47tDRZxgOS+uUsyZ5e5oExna943U5GD8vwV
+         Red5qZX8HHC6uTGnVkTXw3Nm1BlgAqcjBjooFMTpK3ff5dwdX5H2zgdREMtmkLVkBy6M
+         fui7J7L2mw6YQ4cOk4hBnPuy6KLnT9zFlDsX9y3vMAQPsY7xkbZxT76vk6uCAszltUOZ
+         Ep+azFk6TDCat3KVFg3z+zjFeMXZAUG/hK/Swuec48vqTmBxBTCRTxMpVMTjYPJVUUvM
+         +7XTB6Ib9m8zkAObAzGOE+psYiqoN+5zdN/00cGlMlhkGh8MqwqBU5jubl11eNvRcFOL
+         LN9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUB160rTJR6ph/wqwQGOX05xIzThsDFkkpMhIqCBgZSLsALf6Ci2bJJA/hvndvAHw6kzMlRxr2Iwl3MuFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgD2xfjgaFWjDQzmxQdc5No5T/M2tSQ5Avc6VsZil/ugXFRGm3
+	l/GGy4C4igDSJskYBzYZEAiVLhHgfGCo8NlPXIBaf1ja0gwM+QpQ20ONJ42j7A/DQNKL2Xja/tJ
+	n3UeFalE+dKq56zDvAielf3lgDcYdYYT2uwWmNACcbFvMe/QvdagvWUNdoctF/ocjFJo=
+X-Gm-Gg: ASbGnctEIXEsPXM3I/cV3HgS6JotmRYFCJ/tW/iDmKGC+MfQmu47gf3Zoto1LjbQ0Tx
+	FtnNAKl4YiyBOoJQm+TxGM+5SfvezqHZZzUAf2HhrDOtPPZ22Zh/bclWRJKczJZoZ0SxtDtx0Oq
+	hSbQj6TfnEXYGZyZncDpYh2kOWaFmyEJo16icsX9YaCgUhCFPxSXVzHSueTgew3WVmRjbHMPzXN
+	Mr30h/D0nq4eZIltQwoHNl+7L63dssjXllKvGcd7nDmraNIJO8/Pw8kR8aLHuep2NikUoriUeRF
+	aJa+IXhxMQKgNb6iP1JIFF+K2IPl89lAANw+7OzEigc0MRdKFM1u6/dVE+EtINV2z1mTV1tXi6i
+	FmMmfrgNaYDNNWriz04jkxwA+v0RK3fYbJ/u+4UJ2wc9+MCjIveAv
+X-Received: by 2002:a05:622a:11d6:b0:4ae:cc29:82a2 with SMTP id d75a77b69052e-4b0916256a9mr15640381cf.59.1754451183443;
+        Tue, 05 Aug 2025 20:33:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIwhF9FkF6BS9ElI024cVRv19Q5ymyMG2vkjQdqC5u3HaOqDL9TDsvnsZAVpO/+YTwS4Uowg==
+X-Received: by 2002:a05:622a:11d6:b0:4ae:cc29:82a2 with SMTP id d75a77b69052e-4b0916256a9mr15640001cf.59.1754451182812;
+        Tue, 05 Aug 2025 20:33:02 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bdaesm2164581e87.9.2025.08.05.20.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 20:33:02 -0700 (PDT)
+Date: Wed, 6 Aug 2025 06:33:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 6/6] drm/msm/dp: Add DisplayPort controller for QCS8300
+Message-ID: <akeglwafbtldzbqwudwsogrdw6zsxua7ohzkkjxqrw4d5uwhdt@fdbqudkqwpe3>
+References: <20250806-mdssdt_qcs8300-v6-0-dbc17a8b86af@quicinc.com>
+ <20250806-mdssdt_qcs8300-v6-6-dbc17a8b86af@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: ethernet: stmmac: dwmac-rk: Make the clk_phy could
- be used for external phy
-To: Andrew Lunn <andrew@lunn.ch>, Chaoyi Chen <kernel@airkyi.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250806011405.115-1-kernel@airkyi.com>
- <3c401e82-169f-4540-9c12-175798ac72a6@lunn.ch>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <3c401e82-169f-4540-9c12-175798ac72a6@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a987d70527103abkunmabbf8f177f0aa3
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ00YSVZPT01CTElDHR9MGkpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=hPZq8Ego38BXBeFh0nPLyfRxD634qAt3/p9YeuZs7mlvK3zqz2UF8JDVcd7x7Iu0ISGWD9ysDjHYSPFFWBw1dte+CwZssdF8F7luxfAtg/yPugeeE0IgJXf027Jg2ikOFGz4g0yofKftPXIpJx14vM5GyRvP0o9O3dLUnYsBFH4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=a1MobyGLfI/GmuK0n7WO7Oiwrjqt/Y28chaKKbEzA5U=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806-mdssdt_qcs8300-v6-6-dbc17a8b86af@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfXzU8RsLPpVtWq
+ MH1uXlW4ymb2S3i+MaNhIvWU/GQeq2cKo2K4pnRZE+YcsqXohhAlkuHx0t2iwQYrmWpccM9xSV3
+ qXJFJmCy2yygOAESivKyQn532XQyHd30Ji1UBnNc5uPZl9EBGsbYOTb1rzFIzJaDXwLWSeIcYKU
+ QNnN9M3baDYaC/GA1MKqKd8bVKTekvekRFB2Sa+V8Cevevn0q/jgMs8HtaehKSfG1Os5t++E8bi
+ vSHdt8X/PhIMQPKR0V6XY4N27V5GQebJwWoi9ajfMCPU1D71Qla10s2ubnRqoMHnKY7wTNyKN9C
+ gmU6gXRNTKmv8PCY+qriG/0GFtffhgaloXzYqstEmq69fnYzGzvKKhvU83esIXlmnv8HFtQOp7m
+ PrZGjI/1
+X-Authority-Analysis: v=2.4 cv=Ha4UTjE8 c=1 sm=1 tr=0 ts=6892ccf0 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=2iKMfItpbZzF_GTDK0UA:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 1AduwZZ7lieaP4NSZmMXK4TAyKcTcqkI
+X-Proofpoint-GUID: 1AduwZZ7lieaP4NSZmMXK4TAyKcTcqkI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-Hi Andrew,
-
-On 8/6/2025 11:14 AM, Andrew Lunn wrote:
-> On Wed, Aug 06, 2025 at 09:14:05AM +0800, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> For external phy, clk_phy should be optional, and some external phy
->> need the clock input from clk_phy. This patch adds support for setting
->> clk_phy for external phy.
->>
->> Signed-off-by: David Wu <david.wu@rock-chips.com>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> Please take a read of:
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
->
-> net-next is closed at the moment for the merge window.
->
-> You also need the indicate the tree in the Subject: line.
-
-Sorry for that, I will send v2 at an appropriate time.
-
-
->
->> ---
->>   drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 16 ++++++++++++----
->>   1 file changed, 12 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> index 700858ff6f7c..703b4b24f3bc 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> @@ -1558,6 +1558,7 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
->>   	struct device *dev = &bsp_priv->pdev->dev;
->>   	int phy_iface = bsp_priv->phy_iface;
->>   	int i, j, ret;
->> +	unsigned int rate;
-> Reverse Christmas tree. Longest to shortest.
-
-Will fix in v2.
-
-
->
->>   
->>   	bsp_priv->clk_enabled = false;
->>   
->> @@ -1595,12 +1596,19 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
->>   		clk_set_rate(bsp_priv->clk_mac, 50000000);
->>   	}
->>   
->> -	if (plat->phy_node && bsp_priv->integrated_phy) {
->> +	if (plat->phy_node) {
->>   		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
->>   		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
->> -		if (ret)
->> -			return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
->> -		clk_set_rate(bsp_priv->clk_phy, 50000000);
->> +		/* If it is not integrated_phy, clk_phy is optional */
->> +		if (bsp_priv->integrated_phy) {
->> +			if (ret)
->> +				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
->> +
->> +			ret = of_property_read_u32(plat->phy_node, "clock-frequency", &rate);
-> Is this property already in the DT binding?
-
-I didn't see explicit binding, but make dtbs_check W=1 didn't generate 
-any warning. I will drop this in v2.
-
-
->
->
->      Andrew
->
+On Wed, Aug 06, 2025 at 11:16:50AM +0800, Yongxing Mou wrote:
+> The Qualcomm QCS8300 platform comes with one DisplayPort controller
+> with same base offset as SM8650. But it requires new compatible string
+> because QCS8300 controller supports 4 MST streams. 4 MST streams will
+> be enabled as part of MST feature support. Currently, using SM8650 as
+> fallback to enable SST on QCS8300.
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
 > ---
-> pw-bot: cr
->
->
+>  drivers/gpu/drm/msm/dp/dp_display.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
