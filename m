@@ -1,318 +1,201 @@
-Return-Path: <linux-kernel+bounces-758297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5846CB1CD4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CDFB1CD50
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3050F3B425E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B791C3B9D79
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234DA2BCF7F;
-	Wed,  6 Aug 2025 20:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC6C2BE7A6;
+	Wed,  6 Aug 2025 20:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="bvh9ziR/"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IGBWDV3K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4E11E25ED
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843D52BE64C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754511280; cv=none; b=efs2W5aSYGAuvzVw/d/Jg0dyrh0vrGKuLph+j5AgcZ3nSwnlay+LNjMDUEAIItLzy3gkIilgwKKUg6VEqfLkaWJX1AyLLgBuu8UqpTCPimsFQmmLe8gtNgwqDR75SEYvieW5X9wGaLFDEueEXozzeeUkG4lPGShBp2l10R0m6uk=
+	t=1754511288; cv=none; b=OX8PSKBLsR9vZ4DhfzpDflBqUsrQyNK6yJCUOnzeUNpQzADnif3vA8ugc8+xReT6uVUkhwc5Awz6PcrVtRYV+HITp8DGpw3sdHtomHu9Gh69AId9EOSaPN2xwADmO5yuPpSMECnV71XvZB5VQ72yQsmqi5wzudy2eiC4JSd8Or0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754511280; c=relaxed/simple;
-	bh=dCxqB//gwUwgTR12Qoho75B28ViZx3tykADK91mU/PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bJ1h1IAtkVw9/Vp39YrLopUlVYyJ/SGIvTKMcW19dBdMVcXZwCB/nmyu2cIxOthKyf06goylqNhzx5iLzbOi6stnsnJy57GJH90J8bIBgzaL20YvY0D7oKB59tokJPKzHiKoqWNUPvIJiyHmnFp2AYyih4FXo+8NK+aeioVSGGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=bvh9ziR/; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e5128c53abso1669035ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 13:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1754511278; x=1755116078; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9aWxeIE7clpNj3Kg2wErxbmnJsmkohsNyCbg7cDHykI=;
-        b=bvh9ziR/wqvi+hKBoGNvQ5FQbYsseQ9Vs7Ih6EpOJCXJuzIX1XJxNC4pU9PoWcw4W8
-         1LQh1nO1OmFVvCYnU5DrGa6F1cJNeVmXKhSPkbKO2BXh4ifjE8oR6Yne3HPUgF2ulbKS
-         NZwOTePNTb8ioS5qic+WIzXKjzYMWst3ECtYqph4rtlxIvq97RIZ5Rvxss7BX+fQQo2q
-         HW55/tSjowcq4Cnl+pYCMXLgxyVDz/hZwLJWdBdJ0vot3nH7LPUMCTJcitC00/2Lmj62
-         qLs8hWio2PyT3KmsM3BJeRnD8URVMbE+JXKUPH7/WFKbymU5wqb4/v4LMWFePJslxe+I
-         T3WQ==
+	s=arc-20240116; t=1754511288; c=relaxed/simple;
+	bh=NgXUl4YxXuF66+PoNM170cp1mBj+O8qZdlaedoWYNHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ejYJqEMnge1/6nqUt0Xzcty8Nf7UOReKPUdk7f9zAwe5Dmx0kGJij1de5GSQxKXbIexNHMtLqKfVZcqh3I1KqFkTDesRt++kPShCajkyb4BlRgxUUfaBC6dL5Lr3yTUswh3yyE14j5o+/wy2qd626O2GF6P2y5ydF/qKLGQXNR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IGBWDV3K; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754511285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=d5P3sES8n4ihLK1cm4EwCWnvXovipYsvkDDRkGH7Rt8=;
+	b=IGBWDV3KuShD3n1w1IoeJfniyTqzgVSLnYaG12yBdHkJuwz4KczOYUYXtDMq78G1Qpa2OX
+	y6hXHS2Tz11iojB/T/SgUyV89KpIYs7zfRkaGn2bYLTzVXXLA1irqDUaXVxUManD6aNDpR
+	qw53AsPV65ncdlK1WRS/7EwRI9IPgp4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-41-xOmm69ofM8uCCYquF6-HWA-1; Wed, 06 Aug 2025 16:14:44 -0400
+X-MC-Unique: xOmm69ofM8uCCYquF6-HWA-1
+X-Mimecast-MFC-AGG-ID: xOmm69ofM8uCCYquF6-HWA_1754511283
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7806a620cso79990f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 13:14:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754511278; x=1755116078;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9aWxeIE7clpNj3Kg2wErxbmnJsmkohsNyCbg7cDHykI=;
-        b=BrHo+uBYXF4mTBCb+SYeXShZZEzzh5aD2IesyQOlBr8GSm7ihJT+fe4TudsROvJ2b5
-         v96ITqbUlEd0HicvaMi4EJEMdiDQy/c4VyN4YHDBCvfy643VqiO7M3+3GLtwAxsl/h8S
-         TTZ/jVh+yaX4B9YW7wlVtp68nXiQCYRAYCd7q+b6NpuC9DvAeADEjFhLCZGSRARJkIwD
-         n2cgE75NJu1B8OxcLPYCZdrwiXZBIfQo9j1Y/GLRO46tpUjMKGKVNDoqyDrtLn9tXI2J
-         K3IxXA1of5LmXsV2Pz1omypVSXot/QNpPXcuoF/u8AWgY6M+pT+a+yBZEeRWReIfB19m
-         SKHw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6YYVYokmm4IlQbcOy7QHBpVTHk8aWmmPrfz6wIDQyoYpN2dHs+Q/T0y0rMEhvi/6p8O80Po6SZ/yYMvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5ecGpJCjgOJtnRshSsUSK/e+huKq8E36DBFauFlmCGjEZxCNQ
-	7vNHneDwASlVbvfxJ+IIPOH/SsxLpxZt1yEx9ZmzAj33Kg5D3do6biqnr2aN6jJijwZRFCVPRh8
-	axetdD/8=
-X-Gm-Gg: ASbGnctkdJmz1yNqPZAvWhN5ST02sWw30aMQUqS0WMUDgyQQSTLplEpRfFnKpbBCzsD
-	NJn/j8OY/GxJ83AMTBNoMt5FsltvvmLSNdIAiS56ebDdd4SmEvKy2mBKVeg3vUA1aENylxWi/gL
-	drvmtY7qVeg0imcIJcEHY+wllKXTIVjUtE9COBUOTSDsU4//1yLIEaQ11Uj+QCIxcgfTTHNe/aN
-	P9qhfnRwRzQp1iTWuWI2HvP6bqmh8+WniXEPHR9LmEgsG+AlSR59eR8DsCrtpex5YweUSz5w3Pr
-	/V4WcupTlh6K11c3fZmSsecu+cAyyww3tRS7wzapmBg2PJBEtoroIqVq9bjhu3QK2Xfv0u4L2B5
-	E3w==
-X-Google-Smtp-Source: AGHT+IEg5SaCs6h4UqYkteW0vvnDB6L6c5niiqchQ55MRZyLoT+gYdHShcCNtC47ANZUSOz/ovYBLQ==
-X-Received: by 2002:a05:6e02:2284:b0:3e3:bcd7:590 with SMTP id e9e14a558f8ab-3e51b892f60mr71014875ab.7.1754511277631;
-        Wed, 06 Aug 2025 13:14:37 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8255:4e6::7d:4b])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e402b12e8asm65199675ab.48.2025.08.06.13.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 13:14:37 -0700 (PDT)
-Date: Wed, 6 Aug 2025 15:14:35 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Corey Minyard <cory@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: [BUG] ipmi_si: watchdog: Watchdog detected hard LOCKUP
-Message-ID: <aJO3q8JiVXKewMjW@CMGLRV3>
+        d=1e100.net; s=20230601; t=1754511283; x=1755116083;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d5P3sES8n4ihLK1cm4EwCWnvXovipYsvkDDRkGH7Rt8=;
+        b=XKfFU/fq89q0cHawaAyStpqr0y6He8pqCqBkEUNe4zGmTck9unfTjY1zqA2WklThG+
+         kngSVDFHv0s67K/x6STEUj8cu8i3x4Rpv6qWi4+pcslkS6RgZP11Y/rrh1sgs4OsOoCQ
+         hXN61K+eJs5hjHyoz8mSMe+TqxD1I6GKdMbx0gr56sGfloprnEezUxD+BWgVAJhx+5rj
+         6alXnmxkyTe4eCQ6JHJWETIGHzbgCcyVl+etwcumuKzAAk9i/H3Rlj0vGWBLLf+nnU3i
+         wSO5o06Vy31uGkKiZOXUIw3QjHRVqt5kRy6nT96mqDwREcP7a7J2MSZEdywkKG8V+WuD
+         6fFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1EPuV2hy7vozD4NADyoAnX0O+EZkgmdbGfY0Y+8y9vC6EyCl4+2Ccx1hxoCkbceTRWvP8KqNb5TCrFpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ymnVs4/gN8rE448vs4cSpfzXtEqnt0Ttn0JTME+sYK3U+k/a
+	ll6y9ZSpcTsD7GKKrm55BG7AaToYgusnCmrDh8bprYxeCswy9dsWKxwipLI1kAIzpmhLFAJwIpB
+	IYQB9/d6Ibyz7ILbQnsR43wcWcXO338xHnidh+/bz5bK9H+pLZ9PhThf4BxwOscxzjQ==
+X-Gm-Gg: ASbGncsik8IHwv/4Vv4rOmIZszta8yDKvoWmmatJoxBol4gDZZRD5hIWEjOoykKe1aC
+	js009tmLMQU18OScvOL8oqP+QERkgnCOSx9rupbBUAAxHQN1VnEHoJOXXcE7qJillCPJuTbMK8p
+	VM7WMfU9KFUlF9HffyxHWMhQFyJslkNNndUlEjsQG9RIFG2qKb6IwtY87IAzsLwaqPlHEjIDtP3
+	nm+TAhfyFHq0ws/bj9zIDuiTxm7YpaMo8fn9MYzQqEj2mwPnCakqDJaadfrSMTQOYZZyU+lw2x5
+	v0CtsmWQF8LM1bTY9uhCG1yRh3J2iiI5KWztP9Gijz3hJCznTUEIT8UlxegzvQj5jb2Wc9cWa6q
+	kxnJXV4Rl68PzsdTuRjt85eTOpKEjIfKxV5F/iXBWUhwXdXIlyZoJPMYDZixlB2SZZgI=
+X-Received: by 2002:a05:6000:2388:b0:3b7:8146:4640 with SMTP id ffacd0b85a97d-3b8f9f79c9emr193999f8f.56.1754511282644;
+        Wed, 06 Aug 2025 13:14:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHG0bY644qbBT42RA/yeTwcYjH2tuKmM7gFFv+ZX33Fj0TwtCMSS0ZQLo9cfyNEiDWpFtTRyg==
+X-Received: by 2002:a05:6000:2388:b0:3b7:8146:4640 with SMTP id ffacd0b85a97d-3b8f9f79c9emr193986f8f.56.1754511282226;
+        Wed, 06 Aug 2025 13:14:42 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f42:da00:badf:cc55:23d5:1679? (p200300d82f42da00badfcc5523d51679.dip0.t-ipconnect.de. [2003:d8:2f42:da00:badf:cc55:23d5:1679])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed0ecsm81898565e9.4.2025.08.06.13.14.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 13:14:41 -0700 (PDT)
+Message-ID: <055a8a69-731d-43b8-887e-54d8718877cb@redhat.com>
+Date: Wed, 6 Aug 2025 22:14:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page
+ as-is
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Takero Funaki <flintglass@gmail.com>
+References: <20250805002954.1496-1-sj@kernel.org>
+ <761a2899-6fd9-4bfe-aeaf-23bce0baa0f1@redhat.com>
+ <CAKEwX=MVBJ+Okfsob4Z30_5Y4P8c2DWoS1dYN4dF5dgp4+CexA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <CAKEwX=MVBJ+Okfsob4Z30_5Y4P8c2DWoS1dYN4dF5dgp4+CexA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Corey,
+On 05.08.25 18:56, Nhat Pham wrote:
+> On Tue, Aug 5, 2025 at 3:47 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 05.08.25 02:29, SeongJae Park wrote:
+>>> When zswap writeback is enabled and it fails compressing a given page,
+>>> the page is swapped out to the backing swap device.  This behavior
+>>> breaks the zswap's writeback LRU order, and hence users can experience
+>>> unexpected latency spikes.  If the page is compressed without failure,
+>>> but results in a size of PAGE_SIZE, the LRU order is kept, but the
+>>> decompression overhead for loading the page back on the later access is
+>>> unnecessary.
+>>>
+>>> Keep the LRU order and optimize unnecessary decompression overheads in
+>>> the cases, by storing the original content in zpool as-is.
+>>
+>> Does this have any effect on the movability of the given page? IOW, does
+>> page migration etc. still work when we store an ordinary page of an
+>> shmem/anon folio here?
+> 
+> Good question. This depends on the backend allocator of zswap, but the
+> only backend allocator remaining (zsmalloc) does implement page
+> migration.
 
-In kernel 6.12.y, while resetting the BMC, we can sometimes hit a hard LOCK=
-UP
-watchdog event, especially so while querying the BMC for basic device
-information via sysfs.
+Right, but migration of these pages works completely different than 
+folio migration.
 
-I havn't been able to create a consistent reproducer yet, but I suspect
-that these occur during high traffic, BMC is resetting, and reading
-=66rom the sysfs files in parallel. We're also using KCS to interface
-with the BMC.
+But I think the part I was missing: we are still performing a copy to 
+another page, it's just that we don't perform any compression.
 
-I can consistently reproduce hung tasks trivially with the following,
-during a BMC reset:
+So I guess *breaking* movability of folios is not a concern.
 
-while true; do cat aux_firmware_revision &>/dev/null; done &
+But yeah, whether these "as is" pages are movable or not is a good 
+question as well -- in particular when zsmalloc supports page migration 
+and the "as is" pages would not.
 
-I tried also tried to load the CPUs with stress-ng, but the best I can do
-are the hung tasks.
+Maybe someone familiar with the code could shed a light on that.
 
-I identified that sni_send()[1] could be locked behind the
-spin_lock_irqsave() and within the KCS send handler, there's another irq
-save lock. I suspect this is where we're getting hung up. Below is a
-sample stack trace + log output.
+-- 
+Cheers,
 
-I'm happy to provide traces and additional information, let me know.
+David / dhildenb
 
-Links:
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/=
-drivers/char/ipmi/ipmi_msghandler.c?h=3Dlinux-6.12.y#n1899
-
-[  499.564572] [  T27255] ip6_tunnel: pni_gre_814 xmit: Local address not y=
-et configured!
-[  499.588176] [  T27255] ip6_tunnel: pni_gre_868 xmit: Local address not y=
-et configured!
-[  499.605284] [  T27255] ip6_tunnel: pni_gre_871 xmit: Local address not y=
-et configured!
-[  805.906999] [  T12765] usb 1-1: USB disconnect, device number 2
-[  845.346020] [  T12765] usb 1-1: new high-speed USB device number 3 using=
- xhci_hcd
-[  845.485453] [  T12765] usb 1-1: New USB device found, idVendor=3D1d6b, i=
-dProduct=3D0107, bcdDevice=3D 1.00
-[  845.496823] [  T12765] usb 1-1: New USB device strings: Mfr=3D3, Product=
-=3D2, SerialNumber=3D1
-[  845.507242] [  T12765] usb 1-1: Product: USB Virtual Hub
-[  845.514946] [  T12765] usb 1-1: Manufacturer: Aspeed
-[  845.522363] [  T12765] usb 1-1: SerialNumber: 00000000
-[  845.530454] [  T12765] usb 1-1: Device is not authorized for usage
-[  853.774910] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.783794] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.792649] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.801461] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.810291] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.819069] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.827816] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.836581] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.845326] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.854074] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  853.862813] [    C119] ipmi_si IPI0001:00: KCS in invalid state 6
-[  863.934436] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-[  863.943420] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-[  863.952363] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-[  863.961296] [ T124929] ipmi_si IPI0001:00: KCS in invalid state 7
-[  878.616336] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-[  878.624905] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-[  878.633427] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-[  878.641954] [ T126542] ipmi_si IPI0001:00: KCS in invalid state 7
-[  880.310112] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-[  880.318682] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-[  880.327083] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-[  880.335483] [ T126681] ipmi_si IPI0001:00: KCS in invalid state 7
-[  904.196122] [     C33] watchdog: Watchdog detected hard LOCKUP on cpu 33
-[  904.196127] [     C97] Uhhuh. NMI received for unknown reason 3d on CPU =
-97.
-[  904.196126] [      C6] Uhhuh. NMI received for unknown reason 3d on CPU =
-6.
-[  904.196130] [     C33] Modules linked in:
-[  904.196129] [    C101] Uhhuh. NMI received for unknown reason 3d on CPU =
-101.
-[  904.196131] [     C97] Dazed and confused, but trying to continue
-[  904.196131] [     C33]  nft_fwd_netdev
-[  904.196131] [     C99] Uhhuh. NMI received for unknown reason 2d on CPU =
-99.
-[  904.196133] [      C6] Dazed and confused, but trying to continue
-[  904.196133] [    C102] Uhhuh. NMI received for unknown reason 2d on CPU =
-102.
-[  904.196134] [     C33]  nf_dup_netdev
-[  904.196134] [     C35] Uhhuh. NMI received for unknown reason 2d on CPU =
-35.
-[  904.196135] [    C101] Dazed and confused, but trying to continue
-[  904.196137] [     C99] Dazed and confused, but trying to continue
-[  904.196137] [     C33]  xfrm_interface
-[  904.196136] [     C69] Uhhuh. NMI received for unknown reason 2d on CPU =
-69.
-[  904.196140] [    C102] Dazed and confused, but trying to continue
-[  904.196140] [     C33]  xfrm6_tunnel
-[  904.196138] [    C121] Uhhuh. NMI received for unknown reason 2d on CPU =
-121.
-[  904.196140] [    C123] Uhhuh. NMI received for unknown reason 2d on CPU =
-123.
-[  904.196142] [     C35] Dazed and confused, but trying to continue
-[  904.196143] [     C69] Dazed and confused, but trying to continue
-[  904.196143] [     C33]  nft_numgen
-[  904.196143] [     C61] Uhhuh. NMI received for unknown reason 2d on CPU =
-61.
-[  904.196144] [     C62] Uhhuh. NMI received for unknown reason 3d on CPU =
-62.
-[  904.196146] [    C123] Dazed and confused, but trying to continue
-[  904.196147] [    C121] Dazed and confused, but trying to continue
-[  904.196148] [     C58] Dazed and confused, but trying to continue
-[  904.196150] [     C33]  nft_log nft_limit sit dummy ipip tunnel4 ip_gre =
-gre xfrm_user xfrm_algo tls mpls_iptunnel mpls_router nft_ct nf_tables ipta=
-ble_raw iptable_nat iptable_mangle ipt_REJECT nf_reject_ipv4 ip6table_secur=
-ity xt_CT ip6table_raw xt_nat ip6table_nat nf_nat xt_TCPMSS xt_owner xt_DSC=
-P xt_NFLOG xt_connbytes xt_connlabel xt_statistic xt_connmark ip6table_mang=
-le xt_limit xt_LOG nf_log_syslog xt_mark xt_conntrack ip6t_REJECT nf_reject=
-_ipv6 xt_multiport xt_set xt_tcpmss xt_comment xt_tcpudp ip6table_filter ip=
-6_tables nfnetlink_log udp_diag dm_thin_pool dm_persistent_data dm_bio_pris=
-on dm_bufio iptable_filter veth tcp_diag inet_diag mpls_gso act_mpls cls_fl=
-ower cls_bpf sch_ingress ip_set_hash_ip ip_set_hash_net ip_set tcp_bbr sch_=
-fq tun xt_bpf nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 fou6 fou ip_tunnel=
- ip6_udp_tunnel udp_tunnel ip6_tunnel tunnel6 nvme_fabrics raid0 md_mod ess=
-iv dm_crypt trusted asn1_encoder tee dm_mod dax 8021q garp mrp stp llc ipmi=
-_ssif amd64_edac kvm_amd kvm irqbypass crc32_pclmul crc32c_intel
-[  904.196247] [     C33]  sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel=
- crypto_simd xhci_pci binfmt_misc acpi_ipmi cryptd ipmi_si nvme rapl ipmi_d=
-evintf i2c_piix4 tiny_power_button bnxt_en xhci_hcd nvme_core ccp i2c_smbus=
- ipmi_msghandler button fuse configfs nfnetlink efivarfs ip_tables x_tables=
- bcmcrypt(O)
-[  904.196281] [     C33] CPU: 33 UID: 0 PID: 0 Comm: swapper/33 Kdump: loa=
-ded Tainted: G           O       6.12.34-cloudflare-2025.6.9 #1
-[  904.196286] [     C33] Tainted: [O]=3DOOT_MODULE
-[  904.196287] [     C33] Hardware name: GIGABYTE R162-Z12-CD-G11P5/MZ12-HD=
-4-CD, BIOS M10-sig 02/17/2025
-[  904.196290] [     C33] RIP: 0010:io_idle+0x3/0x30
-[  904.196298] [     C33] Code: 8b 00 a8 08 75 07 e8 2c e4 ff ff 90 fa e9 c=
-0 b3 1a 00 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 8=
-9 fa ec <48> 8b 05 96 42 d4 01 a9 00 00 00 80 75 11 80 3d 4a 42 d4 01 00 75
-[  904.196301] [     C33] RSP: 0018:ffff9afa88307e70 EFLAGS: 00000093
-[  904.196304] [     C33] RAX: 0000000000000000 RBX: ffff8abdf2b5d898 RCX: =
-0000000000000040
-[  904.196306] [     C33] RDX: 0000000000000814 RSI: ffff8abdf2b5d800 RDI: =
-0000000000000814
-[  904.196308] [     C33] RBP: 0000000000000002 R08: ffffffffa9dff860 R09: =
-0000000000000007
-[  904.196309] [     C33] R10: 000000e65239d580 R11: 071c71c71c71c71c R12: =
-ffffffffa9dff860
-[  904.196311] [     C33] R13: ffffffffa9dff948 R14: 0000000000000002 R15: =
-0000000000000000
-[  904.196313] [     C33] FS:  0000000000000000(0000) GS:ffff8aadcf680000(0=
-000) knlGS:0000000000000000
-[  904.196316] [     C33] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  904.196318] [     C33] CR2: 00005632ce239000 CR3: 0000003944f72004 CR4: =
-0000000000770ef0
-[  904.196320] [     C33] PKRU: 55555554
-[  904.196322] [     C33] Call Trace:
-[  904.196324] [     C33]  <TASK>
-[  904.196326] [     C33]  acpi_idle_do_entry+0x22/0x50
-[  904.196336] [     C33]  acpi_idle_enter+0x7b/0xd0
-[  904.196340] [     C33]  cpuidle_enter_state+0x79/0x420
-[  904.196345] [     C33]  cpuidle_enter+0x2d/0x40
-[  904.196352] [     C33]  do_idle+0x176/0x1c0
-[  904.196358] [     C33]  cpu_startup_entry+0x29/0x30
-[  904.196362] [     C33]  start_secondary+0xf7/0x100
-[  904.196366] [     C33]  common_startup_64+0x13e/0x141
-[  904.196374] [     C33]  </TASK>
-[  904.196377] [     C33] Kernel panic - not syncing: Hard LOCKUP
-[  904.196379] [     C33] CPU: 33 UID: 0 PID: 0 Comm: swapper/33 Kdump: loa=
-ded Tainted: G           O       6.12.34-cloudflare-2025.6.9 #1
-[  904.196383] [     C33] Tainted: [O]=3DOOT_MODULE
-[  904.196384] [     C33] Hardware name: GIGABYTE R162-Z12-CD-G11P5/MZ12-HD=
-4-CD, BIOS M10-sig 02/17/2025
-[  904.196385] [     C33] Call Trace:
-[  904.196387] [     C33]  <NMI>
-[  904.196389] [     C33]  dump_stack_lvl+0x4b/0x70
-[  904.196394] [     C33]  panic+0x106/0x2c4
-[  904.196401] [     C33]  nmi_panic.cold+0xc/0xc
-[  904.196404] [     C33]  watchdog_hardlockup_check.cold+0xc6/0xe8
-[  904.196409] [     C33]  __perf_event_overflow+0x15a/0x450
-[  904.196416] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  904.196421] [     C33]  x86_pmu_handle_irq+0x18a/0x1c0
-[  904.196436] [     C33]  ? set_pte_vaddr+0x40/0x50
-[  904.196439] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  904.196442] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  904.196445] [     C33]  ? native_set_fixmap+0x63/0xb0
-[  904.196448] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  904.196451] [     C33]  ? ghes_copy_tofrom_phys+0x7a/0x100
-[  904.196457] [     C33]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  904.196460] [     C33]  ? __ghes_peek_estatus.isra.0+0x49/0xa0
-[  904.196465] [     C33]  amd_pmu_handle_irq+0x4b/0xc0
-[  904.196469] [     C33]  perf_event_nmi_handler+0x2a/0x50
-[  904.196473] [     C33]  nmi_handle.part.0+0x59/0x110
-[  904.196479] [     C33]  default_do_nmi+0x127/0x180
-[  904.196483] [     C33]  exc_nmi+0x103/0x180
-[  904.196486] [     C33]  end_repeat_nmi+0xf/0x53
-[  904.196489] [     C33] RIP: 0010:io_idle+0x3/0x30
-[  904.196493] [     C33] Code: 8b 00 a8 08 75 07 e8 2c e4 ff ff 90 fa e9 c=
-0 b3 1a 00 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 8=
-9 fa ec <48> 8b 05 96 42 d4 01 a9 00 00 00 80 75 11 80 3d 4a 42 d4 01 00 75
-[  904.196495] [     C33] RSP: 0018:ffff9afa88307e70 EFLAGS: 00000093
-[  904.196497] [     C33] RAX: 0000000000000000 RBX: ffff8abdf2b5d898 RCX: =
-0000000000000040
-[  904.196499] [     C33] RDX: 0000000000000814 RSI: ffff8abdf2b5d800 RDI: =
-0000000000000814
-[  904.196501] [     C33] RBP: 0000000000000002 R08: ffffffffa9dff860 R09: =
-0000000000000007
-[  904.196502] [     C33] R10: 000000e65239d580 R11: 071c71c71c71c71c R12: =
-ffffffffa9dff860
-[  904.196504] [     C33] R13: ffffffffa9dff948 R14: 0000000000000002 R15: =
-0000000000000000
-[  904.196510] [     C33]  ? io_idle+0x3/0x30
-[  904.196515] [     C33]  ? io_idle+0x3/0x30
-[  904.196519] [     C33]  </NMI>
-[  904.196520] [     C33]  <TASK>
-[  904.196521] [     C33]  acpi_idle_do_entry+0x22/0x50
-[  904.196526] [     C33]  acpi_idle_enter+0x7b/0xd0
-[  904.196529] [     C33]  cpuidle_enter_state+0x79/0x420
-[  904.196535] [     C33]  cpuidle_enter+0x2d/0x40
-[  904.196539] [     C33]  do_idle+0x176/0x1c0
-[  904.196544] [     C33]  cpu_startup_entry+0x29/0x30
-[  904.196548] [     C33]  start_secondary+0xf7/0x100
-[  904.196552] [     C33]  common_startup_64+0x13e/0x141
-[  904.196559] [     C33]  </TASK>
-
-Best, Fred
 
