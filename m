@@ -1,160 +1,274 @@
-Return-Path: <linux-kernel+bounces-757365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36CBB1C14B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:26:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2CFB1C14F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CAF626571
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B6F165B8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA70A219A67;
-	Wed,  6 Aug 2025 07:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E54221ABA2;
+	Wed,  6 Aug 2025 07:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cdb9xuXb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3y9lrwB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E62219311;
-	Wed,  6 Aug 2025 07:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E35C72639;
+	Wed,  6 Aug 2025 07:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754465148; cv=none; b=qg/a8WsguTBXuHWNNTsQSibpXFK1cRc0wq8s2c9XIB7iNX09HuM3xnhrZdgcFH6UgDmOXfc89aH3kzXNk1bhs+t4JbgJhAi+Bb/hGMjdvAb5X/lXcb7yvKw5R+ll6yoAw08752eftbiXbthpHaw/fxHi1WCFU0eurV0cBwOaO1Y=
+	t=1754465304; cv=none; b=Yi9UCcWj6nP18wKdIL1/h36UIjW88fQPD2HXIP1D1XpUGJgZ9h4KuoFLTDF4KJLlrR2ccehIaAhGV/4jUfefPrcZxoYQeIRPMFiJbiViNvDVvZmhNVVFTp5lWKbp9bHH8jx9cCSU7TDJb2BrtCtZReTtxGQa31M+kwGLFWgO9ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754465148; c=relaxed/simple;
-	bh=3q3CjfbHSWlzB+JVF2qlhl+e9zHvaojcn0S6SvoA5Jk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gL3BuLaVqgCNZXDfr6gDekX76U/2YRAMPBemIdAUGJSC0DxipfeK2Rpxmzi+4UoDkLSWxl9MRiRGvBZG00RyOGVVI08+jdgfOklZpCRD/+LHhKq4T3112nzPlXyV9HohG07OUBEs09vwz3SlnZDi/cFEB1Ra4c3ii92nmKSMzIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cdb9xuXb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5766PgmD022277;
-	Wed, 6 Aug 2025 07:25:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2nqQ0K0cV3yjbvs90QWBSQ0QBNQ/gxQbHXc2pXA4sAo=; b=Cdb9xuXbEqfoUEj2
-	tdCBIe/nh8BUqzavgGsUib2caarmcLxi7GPshpciioGfvUiWvYSlr9rQitTH72j8
-	6i4f7C/az29HPUJt6toCTrmeL3vNthFwaB6XwKdjMceg1RXfKGAQTPtzoNusyeEf
-	nv5B8F+6hqJzRPjePal2EIWruYXVlwcYtC6hXreLLjOdaxZ5L3scloXZbf074oKx
-	9HEk0skE/q8uYFEYgwTaw1055r/X4Y9tC7G8GyAcqL8S3ptP1LPJKd483u72qvrq
-	13n1MhRfo34Xtw+/xwv7sTFIlS1G0nEYa16F0lpxTIKe2ejXmqilCLs5roe+O9cu
-	7Tk8RA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy89q7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 07:25:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5767PaYX002896
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Aug 2025 07:25:36 GMT
-Received: from [10.50.25.73] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 6 Aug
- 2025 00:25:31 -0700
-Message-ID: <ac14b632-91ec-58a7-26cc-23d0056222b9@quicinc.com>
-Date: Wed, 6 Aug 2025 12:55:19 +0530
+	s=arc-20240116; t=1754465304; c=relaxed/simple;
+	bh=650raWchrSWRUx800gcvjjUK1G/JfwlwMC9g8/yL2h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ikwZEDY+Akklk+43XDxJ4SEUDAECzx169mzaTVPPQ/wU3Qg95jetnz3OIUjf2Sf3QBeOO9aTYqKiKSmb1MeEj20EEtg+IV9P4NQhsODmkLZBQlTs2o6uKWp4WkAmUZrfU2SEfH2x7pzKmaTXJ6gjo1qSgpB0KcZvwEUy4elGRtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3y9lrwB; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754465303; x=1786001303;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=650raWchrSWRUx800gcvjjUK1G/JfwlwMC9g8/yL2h8=;
+  b=N3y9lrwBuf1NLnPHfhngOhauK+4JmSdWtZJxUUJ5Z/KXN0803+RFOY0s
+   yR8zDLbAfBNCYZrVlVFFmGEMiOZhhSPQj04adWUymtSj+dbPqeoYADHrX
+   fCKKd3w88RMKvIqJArIFsnYN0SIkSepJNFipGI16OCPVo+EqcNko079lH
+   Ch6hSECmOWklDaxv3VTqSYDDhs74VUlJOk0wiBdcKC5Sv5FziG8A+ZAxQ
+   cUo7iPsND3o/Yy37FOzyV5b1ysuBdEq95uFyHcZwXfDqfjp1attmMPjZj
+   ZnxC1UJLj33GgRENZt4pDWyXssza6Fubr6c5xg6esIW64rAClNCpZg7Ay
+   w==;
+X-CSE-ConnectionGUID: uuNVtSKySTmxA6uSJbocBQ==
+X-CSE-MsgGUID: iqcR+D/mSHCHJnp8qNPzDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="55809701"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="55809701"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 00:28:22 -0700
+X-CSE-ConnectionGUID: /ScpE/9CSTGHfUqEy8prYQ==
+X-CSE-MsgGUID: FaG8iS7bRWOqqIOU/zSJJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164720449"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 00:28:21 -0700
+Message-ID: <d5da58b3-6010-46c5-bca0-818b2cee16d7@linux.intel.com>
+Date: Wed, 6 Aug 2025 15:28:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Remove pas id parameter
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Vikash
- Garodia" <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <ath12k@lists.infradead.org>, <linux-remoteproc@vger.kernel.org>,
-        "Bjorn
- Andersson" <bjorn.andersson@oss.qualcomm.com>
-References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
- <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/18] KVM: x86/pmu: Calculate set of to-be-emulated PMCs
+ at time of WRMSRs
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li
+ <xin@zytor.com>, Sandipan Das <sandipan.das@amd.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
+ <20250805190526.1453366-12-seanjc@google.com>
 Content-Language: en-US
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250805190526.1453366-12-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KOi4YqLNCKZAqLXV9R7gOyrdCUchfY9H
-X-Proofpoint-ORIG-GUID: KOi4YqLNCKZAqLXV9R7gOyrdCUchfY9H
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX0TQ9K+31ta3c
- t63cut98vJ4sgHPI43G//saEJRq/ZyO5GPLiLgBOwUW09EuKlJTiihKQW+cUcPbDRLCpia7+f5K
- kJDAcAv3J9UapI+be22L40HnaJQl3OzsoKb0LrgPCJADMXOQl4GnSKR4CmEdPtfldS8E85t03uS
- OOL2Y+bS0GyPYpHivZnkCDFgs6po2qzp8vL5TAYtG00plNETpXrehVi8cPOth+U7YC1oE4NLVU6
- ucUP/75CScU0FnOdDlrEdZ2GFa+w1GcuOCVQ6RecHh2nXDk7LOIk4CJxRKo7Pj1cPEVtEM03vRs
- UKHU5NbWCV64q1KXjbklPJ/4kYX0kFQ3smV2F2xWzM9BC5PHZXsApD3oQz+WcYP478vXczV3sS6
- 6WgiEJTJ
-X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=68930371 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=iBbKO0qNdUk1ZPghfYAA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_01,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 clxscore=1011 suspectscore=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
 
 
-
-On 8/4/2025 6:11 PM, Mukesh Ojha wrote:
-> pas id is not used in qcom_mdt_load_no_init() and it should not
-> be used as it is non-PAS specific function and has no relation
-> to PAS specific mechanism.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On 8/6/2025 3:05 AM, Sean Christopherson wrote:
+> Calculate and track PMCs that are counting instructions/branches retired
+> when the PMC's event selector (or fixed counter control) is modified
+> instead evaluating the event selector on-demand.  Immediately recalc a
+> PMC's configuration on writes to avoid false negatives/positives when
+> KVM skips an emulated WRMSR, which is guaranteed to occur before the
+> main run loop processes KVM_REQ_PMU.
+>
+> Out of an abundance of caution, and because it's relatively cheap, recalc
+> reprogrammed PMCs in kvm_pmu_handle_event() as well.  Recalculating in
+> response to KVM_REQ_PMU _should_ be unnecessary, but for now be paranoid
+> to avoid introducing easily-avoidable bugs in edge cases.  The code can be
+> removed in the future if necessary, e.g. in the unlikely event that the
+> overhead of recalculating to-be-emulated PMCs is noticeable.
+>
+> Note!  Deliberately don't check the PMU event filters, as doing so could
+> result in KVM consuming stale information.
+>
+> Tracking which PMCs are counting branches/instructions will allow grabbing
+> SRCU in the fastpath VM-Exit handlers if and only if a PMC event might be
+> triggered (to consult the event filters), and will also allow the upcoming
+> mediated PMU to do the right thing with respect to counting instructions
+> (the mediated PMU won't be able to update PMCs in the VM-Exit fastpath).
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  drivers/media/platform/qcom/venus/firmware.c |  4 ++--
->  drivers/net/wireless/ath/ath12k/ahb.c        |  2 +-
->  drivers/remoteproc/qcom_q6v5_adsp.c          |  2 +-
->  drivers/remoteproc/qcom_q6v5_pas.c           |  7 +++----
->  drivers/remoteproc/qcom_q6v5_wcss.c          |  2 +-
->  drivers/soc/qcom/mdt_loader.c                | 14 ++++++--------
->  include/linux/soc/qcom/mdt_loader.h          |  7 +++----
->  7 files changed, 17 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 66a18830e66d..862d0718f694 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -136,8 +136,8 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->  		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
->  				    mem_va, *mem_phys, *mem_size, NULL);
->  	else
-> -		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
-> -					    mem_va, *mem_phys, *mem_size, NULL);
-> +		ret = qcom_mdt_load_no_init(dev, mdt, fwname, mem_va,
-> +					    *mem_phys, *mem_size, NULL);
+>  arch/x86/include/asm/kvm_host.h |  3 ++
+>  arch/x86/kvm/pmu.c              | 75 ++++++++++++++++++++++++---------
+>  arch/x86/kvm/pmu.h              |  4 ++
+>  3 files changed, 61 insertions(+), 21 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..d7680612ba1e 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -579,6 +579,9 @@ struct kvm_pmu {
+>  	DECLARE_BITMAP(all_valid_pmc_idx, X86_PMC_IDX_MAX);
+>  	DECLARE_BITMAP(pmc_in_use, X86_PMC_IDX_MAX);
 >  
->  	memunmap(mem_va);
->  err_release_fw:
+> +	DECLARE_BITMAP(pmc_counting_instructions, X86_PMC_IDX_MAX);
+> +	DECLARE_BITMAP(pmc_counting_branches, X86_PMC_IDX_MAX);
+> +
+>  	u64 ds_area;
+>  	u64 pebs_enable;
+>  	u64 pebs_enable_rsvd;
+> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> index e1911b366c43..b0f0275a2c2e 100644
+> --- a/arch/x86/kvm/pmu.c
+> +++ b/arch/x86/kvm/pmu.c
+> @@ -542,6 +542,47 @@ static int reprogram_counter(struct kvm_pmc *pmc)
+>  				     eventsel & ARCH_PERFMON_EVENTSEL_INT);
+>  }
+>  
+> +static bool pmc_is_event_match(struct kvm_pmc *pmc, u64 eventsel)
+> +{
+> +	/*
+> +	 * Ignore checks for edge detect (all events currently emulated by KVM
+> +	 * are always rising edges), pin control (unsupported by modern CPUs),
+> +	 * and counter mask and its invert flag (KVM doesn't emulate multiple
+> +	 * events in a single clock cycle).
+> +	 *
+> +	 * Note, the uppermost nibble of AMD's mask overlaps Intel's IN_TX (bit
+> +	 * 32) and IN_TXCP (bit 33), as well as two reserved bits (bits 35:34).
+> +	 * Checking the "in HLE/RTM transaction" flags is correct as the vCPU
+> +	 * can't be in a transaction if KVM is emulating an instruction.
+> +	 *
+> +	 * Checking the reserved bits might be wrong if they are defined in the
+> +	 * future, but so could ignoring them, so do the simple thing for now.
+> +	 */
+> +	return !((pmc->eventsel ^ eventsel) & AMD64_RAW_EVENT_MASK_NB);
+> +}
+> +
+> +void kvm_pmu_recalc_pmc_emulation(struct kvm_pmu *pmu, struct kvm_pmc *pmc)
+> +{
+> +	bitmap_clear(pmu->pmc_counting_instructions, pmc->idx, 1);
+> +	bitmap_clear(pmu->pmc_counting_branches, pmc->idx, 1);
+> +
+> +	/*
+> +	 * Do NOT consult the PMU event filters, as the filters must be checked
+> +	 * at the time of emulation to ensure KVM uses fresh information, e.g.
+> +	 * omitting a PMC from a bitmap could result in a missed event if the
+> +	 * filter is changed to allow counting the event.
+> +	 */
+> +	if (!pmc_speculative_in_use(pmc))
+> +		return;
+> +
+> +	if (pmc_is_event_match(pmc, kvm_pmu_eventsel.INSTRUCTIONS_RETIRED))
+> +		bitmap_set(pmu->pmc_counting_instructions, pmc->idx, 1);
+> +
+> +	if (pmc_is_event_match(pmc, kvm_pmu_eventsel.BRANCH_INSTRUCTIONS_RETIRED))
+> +		bitmap_set(pmu->pmc_counting_branches, pmc->idx, 1);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_pmu_recalc_pmc_emulation);
+> +
+>  void kvm_pmu_handle_event(struct kvm_vcpu *vcpu)
+>  {
+>  	DECLARE_BITMAP(bitmap, X86_PMC_IDX_MAX);
+> @@ -577,6 +618,9 @@ void kvm_pmu_handle_event(struct kvm_vcpu *vcpu)
+>  	 */
+>  	if (unlikely(pmu->need_cleanup))
+>  		kvm_pmu_cleanup(vcpu);
+> +
+> +	kvm_for_each_pmc(pmu, pmc, bit, bitmap)
+> +		kvm_pmu_recalc_pmc_emulation(pmu, pmc);
+>  }
+>  
+>  int kvm_pmu_check_rdpmc_early(struct kvm_vcpu *vcpu, unsigned int idx)
+> @@ -910,7 +954,8 @@ static inline bool cpl_is_matched(struct kvm_pmc *pmc)
+>  							 select_user;
+>  }
+>  
+> -static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+> +static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+> +				  const unsigned long *event_pmcs)
+>  {
+>  	DECLARE_BITMAP(bitmap, X86_PMC_IDX_MAX);
+>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+> @@ -919,29 +964,17 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+>  
+>  	BUILD_BUG_ON(sizeof(pmu->global_ctrl) * BITS_PER_BYTE != X86_PMC_IDX_MAX);
+>  
+> +	if (bitmap_empty(event_pmcs, X86_PMC_IDX_MAX))
+> +		return;
+> +
+>  	if (!kvm_pmu_has_perf_global_ctrl(pmu))
+> -		bitmap_copy(bitmap, pmu->all_valid_pmc_idx, X86_PMC_IDX_MAX);
+> -	else if (!bitmap_and(bitmap, pmu->all_valid_pmc_idx,
+> +		bitmap_copy(bitmap, event_pmcs, X86_PMC_IDX_MAX);
+> +	else if (!bitmap_and(bitmap, event_pmcs,
+>  			     (unsigned long *)&pmu->global_ctrl, X86_PMC_IDX_MAX))
+>  		return;
+>  
+>  	kvm_for_each_pmc(pmu, pmc, i, bitmap) {
+> -		/*
+> -		 * Ignore checks for edge detect (all events currently emulated
+> -		 * but KVM are always rising edges), pin control (unsupported
+> -		 * by modern CPUs), and counter mask and its invert flag (KVM
+> -		 * doesn't emulate multiple events in a single clock cycle).
+> -		 *
+> -		 * Note, the uppermost nibble of AMD's mask overlaps Intel's
+> -		 * IN_TX (bit 32) and IN_TXCP (bit 33), as well as two reserved
+> -		 * bits (bits 35:34).  Checking the "in HLE/RTM transaction"
+> -		 * flags is correct as the vCPU can't be in a transaction if
+> -		 * KVM is emulating an instruction.  Checking the reserved bits
+> -		 * might be wrong if they are defined in the future, but so
+> -		 * could ignoring them, so do the simple thing for now.
+> -		 */
+> -		if (((pmc->eventsel ^ eventsel) & AMD64_RAW_EVENT_MASK_NB) ||
+> -		    !pmc_event_is_allowed(pmc) || !cpl_is_matched(pmc))
+> +		if (!pmc_event_is_allowed(pmc) || !cpl_is_matched(pmc))
+>  			continue;
+>  
+>  		kvm_pmu_incr_counter(pmc);
+> @@ -950,13 +983,13 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu, u64 eventsel)
+>  
+>  void kvm_pmu_instruction_retired(struct kvm_vcpu *vcpu)
+>  {
+> -	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.INSTRUCTIONS_RETIRED);
+> +	kvm_pmu_trigger_event(vcpu, vcpu_to_pmu(vcpu)->pmc_counting_instructions);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_pmu_instruction_retired);
+>  
+>  void kvm_pmu_branch_retired(struct kvm_vcpu *vcpu)
+>  {
+> -	kvm_pmu_trigger_event(vcpu, kvm_pmu_eventsel.BRANCH_INSTRUCTIONS_RETIRED);
+> +	kvm_pmu_trigger_event(vcpu, vcpu_to_pmu(vcpu)->pmc_counting_branches);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_pmu_branch_retired);
+>  
+> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
+> index 740af816af37..cb93a936a177 100644
+> --- a/arch/x86/kvm/pmu.h
+> +++ b/arch/x86/kvm/pmu.h
+> @@ -176,8 +176,12 @@ extern struct x86_pmu_capability kvm_pmu_cap;
+>  
+>  void kvm_init_pmu_capability(const struct kvm_pmu_ops *pmu_ops);
+>  
+> +void kvm_pmu_recalc_pmc_emulation(struct kvm_pmu *pmu, struct kvm_pmc *pmc);
+> +
+>  static inline void kvm_pmu_request_counter_reprogram(struct kvm_pmc *pmc)
+>  {
+> +	kvm_pmu_recalc_pmc_emulation(pmc_to_pmu(pmc), pmc);
+> +
+>  	set_bit(pmc->idx, pmc_to_pmu(pmc)->reprogram_pmi);
+>  	kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
+>  }
 
-Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-Thanks,
-Dikshita
+
 
