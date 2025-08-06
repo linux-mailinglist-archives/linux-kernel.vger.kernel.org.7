@@ -1,210 +1,208 @@
-Return-Path: <linux-kernel+bounces-757357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74C5B1C134
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:21:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85E8B1C0BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632783BA110
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:20:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551283A45FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098E0219E8F;
-	Wed,  6 Aug 2025 07:20:54 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25D3211A11;
-	Wed,  6 Aug 2025 07:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D402135DD;
+	Wed,  6 Aug 2025 06:57:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA254431;
+	Wed,  6 Aug 2025 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754464853; cv=none; b=HMCz/RVeQW/FvT8SHRydUCXQJI0sZKjSzPTp6ZwKmoM3KoFkFv+PnQsnrERxVdcXSmeWY8xUtVFYvba5krasT2G1s18fnDPpiz74UM1du0kRmQQNDAhImimA7sXyGNF/rX2dnPaBJ4S1heSUSEbfAzDOE5yuZcDy1IYFXjYVDXI=
+	t=1754463474; cv=none; b=fLFyP1gmqcXVhtkZ0EuETeNtdoX0yGhnHXGxoUvTKAJUuiml3h2hfZpPQWubi74JbwA//t20F8rjHNpcqG+iWgYujJ76XTxVbBg4NL0OXuM57zQZ6p6FbazUdw8TNBU/uLfDKDyclbnnSHxB5d/ST6nkSmN4CutghUSV47xZUzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754464853; c=relaxed/simple;
-	bh=vIFlUEQ8duZaV++ql5qnFXORdx14T1OmC8rb2hvrisw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DrfZzU13tCEqmtEpKSf1sp3WzaK8BErkYiOYv75GLEXQWSkYaO5yFetpkO7rKWrF5r0/HKQk9P2piqSLjNLM/U9aXzMqN4rbDFlypQ99YVvEDqltux8RPLeQAisCBJQ1BZUtxhVMfacmrDlQxOl6BE3FZELg4I8awqOHXZj6heQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4bxh4d2QtTz9sRh;
-	Wed,  6 Aug 2025 09:00:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id EE6QsNR5sOkc; Wed,  6 Aug 2025 09:00:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4bxh4d1G7Tz9sRg;
-	Wed,  6 Aug 2025 09:00:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 119908B765;
-	Wed,  6 Aug 2025 09:00:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 4moU8TC_Njvz; Wed,  6 Aug 2025 09:00:00 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D0D438B763;
-	Wed,  6 Aug 2025 08:59:59 +0200 (CEST)
-Message-ID: <e8c39250-e9a0-4075-92b2-ffa2344a9212@csgroup.eu>
-Date: Wed, 6 Aug 2025 08:59:59 +0200
+	s=arc-20240116; t=1754463474; c=relaxed/simple;
+	bh=2jYIU+XRvLJDbG7/RHlYFG1mX5xPXlzCIJa6FWLLdkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UXb0rO7rFKvI6C5lbP+s8c9NtCIUvm3NNSjM98gpz4L9I17sAeLPQOaGAPRJMrhHPuaFhX69awK1sXlAhXX/jUh6SYshcus76ZlnAYcqfYdrnqlNOZF+dA8TEHQkz/k1jw7HVoqCpvLE7rF0HbCTKtFkA3MDs1OJ8I9DZ05WL9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bxh250NmszYQtHC;
+	Wed,  6 Aug 2025 14:57:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B13411A154F;
+	Wed,  6 Aug 2025 14:57:47 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgCHTg_p_JJokoH5Cg--.33530S2;
+	Wed, 06 Aug 2025 14:57:46 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	pulehui@huawei.com
+Subject: [PATCH v2] tracing: Limit access to parser->buffer when trace_get_user failed
+Date: Wed,  6 Aug 2025 07:01:09 +0000
+Message-Id: <20250806070109.1320165-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bpf-next 1/6] bpf,powerpc: Introduce
- bpf_jit_emit_probe_mem_store() to emit store instructions
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
- eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, naveen@kernel.org, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com, iii@linux.ibm.com,
- shuah@kernel.org
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
- <20250805062747.3479221-2-skb99@linux.ibm.com>
- <e65548d0-14aa-4b9c-8051-7c91c5dffd1f@csgroup.eu>
- <8cfa1cb2-57bf-4984-a64e-53c82440e87f@linux.ibm.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <8cfa1cb2-57bf-4984-a64e-53c82440e87f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHTg_p_JJokoH5Cg--.33530S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw13Xw45GFyxZw1DGw13twb_yoWrJFykpF
+	W3Krs7GwsFqF4IyF4rZr18CF95X393JryUGF4kJw1Yvr9xtr1q9rWxuFnF9w1fKryrG3y3
+	AFWYvrW8Kr1jvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
+From: Pu Lehui <pulehui@huawei.com>
 
+When the length of the string written to set_ftrace_filter exceeds
+FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
 
-Le 05/08/2025 à 13:59, Venkat Rao Bagalkote a écrit :
-> 
-> On 05/08/25 1:04 pm, Christophe Leroy wrote:
->>
->>
->> Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
->>> bpf_jit_emit_probe_mem_store() is introduced to emit instructions for
->>> storing memory values depending on the size (byte, halfword,
->>> word, doubleword).
->>
->> Build break with this patch
->>
->>   CC      arch/powerpc/net/bpf_jit_comp64.o
->> arch/powerpc/net/bpf_jit_comp64.c:395:12: error: 
->> 'bpf_jit_emit_probe_mem_store' defined but not used [-Werror=unused- 
->> function]
->>  static int bpf_jit_emit_probe_mem_store(struct codegen_context *ctx, 
->> u32 src_reg, s16 off,
->>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:287: arch/powerpc/net/ 
->> bpf_jit_comp64.o] Error 1
->>
-> I tried this on top of bpf-next, and for me build passed.
+BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
+Read of size 1 at addr ffff0000d00bd5ba by task ash/165
 
-Build of _this_ patch (alone) passed ?
+CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ show_stack+0x34/0x50 (C)
+ dump_stack_lvl+0xa0/0x158
+ print_address_description.constprop.0+0x88/0x398
+ print_report+0xb0/0x280
+ kasan_report+0xa4/0xf0
+ __asan_report_load1_noabort+0x20/0x30
+ strsep+0x18c/0x1b0
+ ftrace_process_regex.isra.0+0x100/0x2d8
+ ftrace_regex_release+0x484/0x618
+ __fput+0x364/0xa58
+ ____fput+0x28/0x40
+ task_work_run+0x154/0x278
+ do_notify_resume+0x1f0/0x220
+ el0_svc+0xec/0xf0
+ el0t_64_sync_handler+0xa0/0xe8
+ el0t_64_sync+0x1ac/0x1b0
 
-This patch defines a static function but doesn't use it, so the build 
-must breaks because of that, unless you have set CONFIG_PPC_DISABLE_WERROR.
+The reason is that trace_get_user will fail when processing a string
+longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer to 0.
+Then an OOB access will be triggered in ftrace_regex_release->
+ftrace_process_regex->strsep->strpbrk. We can solve this problem by
+limiting access to parser->buffer when trace_get_user failed.
 
-Following patch starts using this function so then the build doesn't 
-break anymore. But until next patch is applied the build doesn't work. 
-Both patches have to be squashed together in order to not break 
-bisectability of the kernel.
+Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
 
-Christophe
+v2:
+- Add `fail` field to struct trace_parser to indicate parsing failed.
 
-> 
-> Note: I applied https://eur01.safelinks.protection.outlook.com/? 
-> url=https%3A%2F%2Flore.kernel.org%2Fbpf%2F20250717202935.29018-2- 
-> puranjay%40kernel.org%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C0468473019834e07ef2b08ddd4179b9c%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638899920058624267%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=iZLg9NUWxtH3vO1STI8wRYLzwvhohd2KKTAGYDe3WnM%3D&reserved=0 before applying current patch.
-> 
-> gcc version 14.2.1 20250110
-> 
-> uname -r: 6.16.0-gf2844c7fdb07
-> 
-> bpf-next repo: https://eur01.safelinks.protection.outlook.com/? 
-> url=https%3A%2F%2Fkernel.googlesource.com%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fbpf%2Fbpf-next&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C0468473019834e07ef2b08ddd4179b9c%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638899920058644309%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=OrMauttrzPbaFYhzKdkH5l%2FltISc95MwitnUC7YLhJQ%3D&reserved=0
-> 
-> HEAD:
-> 
-> commit f3af62b6cee8af9f07012051874af2d2a451f0e5 (origin/master, origin/ 
-> HEAD)
-> Author: Tao Chen <chen.dylane@linux.dev>
-> Date:   Wed Jul 23 22:44:42 2025 +0800
-> 
->      bpftool: Add bash completion for token argument
-> 
-> 
-> Build Success logs:
-> 
->    TEST-OBJ [test_progs-cpuv4] xdp_vlan.test.o
->    TEST-OBJ [test_progs-cpuv4] xdpwall.test.o
->    TEST-OBJ [test_progs-cpuv4] xfrm_info.test.o
->    BINARY   bench
->    BINARY   test_maps
->    BINARY   test_progs
->    BINARY   test_progs-no_alu32
->    BINARY   test_progs-cpuv4
-> 
-> 
-> Regards,
-> 
-> Venkat.
-> 
->>
->>>
->>> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
->>> ---
->>>   arch/powerpc/net/bpf_jit_comp64.c | 30 ++++++++++++++++++++++++++++++
->>>   1 file changed, 30 insertions(+)
->>>
->>> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/ 
->>> bpf_jit_comp64.c
->>> index 025524378443..489de21fe3d6 100644
->>> --- a/arch/powerpc/net/bpf_jit_comp64.c
->>> +++ b/arch/powerpc/net/bpf_jit_comp64.c
->>> @@ -409,6 +409,36 @@ asm (
->>>   "        blr                ;"
->>>   );
->>>   +static int bpf_jit_emit_probe_mem_store(struct codegen_context 
->>> *ctx, u32 src_reg, s16 off,
->>> +                    u32 code, u32 *image)
->>> +{
->>> +    u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
->>> +    u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
->>> +
->>> +    switch (BPF_SIZE(code)) {
->>> +    case BPF_B:
->>> +        EMIT(PPC_RAW_STB(src_reg, tmp1_reg, off));
->>> +        break;
->>> +    case BPF_H:
->>> +        EMIT(PPC_RAW_STH(src_reg, tmp1_reg, off));
->>> +        break;
->>> +    case BPF_W:
->>> +        EMIT(PPC_RAW_STW(src_reg, tmp1_reg, off));
->>> +        break;
->>> +    case BPF_DW:
->>> +        if (off % 4) {
->>> +            EMIT(PPC_RAW_LI(tmp2_reg, off));
->>> +            EMIT(PPC_RAW_STDX(src_reg, tmp1_reg, tmp2_reg));
->>> +        } else {
->>> +            EMIT(PPC_RAW_STD(src_reg, tmp1_reg, off));
->>> +        }
->>> +        break;
->>> +    default:
->>> +        return -EINVAL;
->>> +    }
->>> +    return 0;
->>> +}
->>> +
->>>   static int emit_atomic_ld_st(const struct bpf_insn insn, struct 
->>> codegen_context *ctx, u32 *image)
->>>   {
->>>       u32 code = insn.code;
->>
+v1:
+https://lore.kernel.org/all/20250805151203.1214790-1-pulehui@huaweicloud.com/
+
+ kernel/trace/trace.c | 20 ++++++++++++++------
+ kernel/trace/trace.h |  3 ++-
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..138212f4ecde 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1814,9 +1814,11 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 	if (!*ppos)
+ 		trace_parser_clear(parser);
+ 
++	parser->fail = false;
++
+ 	ret = get_user(ch, ubuf++);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	read++;
+ 	cnt--;
+@@ -1830,7 +1832,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		while (cnt && isspace(ch)) {
+ 			ret = get_user(ch, ubuf++);
+ 			if (ret)
+-				return ret;
++				goto fail;
+ 			read++;
+ 			cnt--;
+ 		}
+@@ -1848,12 +1850,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 	while (cnt && !isspace(ch) && ch) {
+ 		if (parser->idx < parser->size - 1)
+ 			parser->buffer[parser->idx++] = ch;
+-		else
+-			return -EINVAL;
++		else {
++			ret = -EINVAL;
++			goto fail;
++		}
+ 
+ 		ret = get_user(ch, ubuf++);
+ 		if (ret)
+-			return ret;
++			goto fail;
+ 		read++;
+ 		cnt--;
+ 	}
+@@ -1868,11 +1872,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		/* Make sure the parsed string always terminates with '\0'. */
+ 		parser->buffer[parser->idx] = 0;
+ 	} else {
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
+ 
+ 	*ppos += read;
+ 	return read;
++fail:
++	parser->fail = true;
++	return ret;
+ }
+ 
+ /* TODO add a seq_buf_to_buffer() */
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 1dbf1d3cf2f1..5072bb25a860 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
+  */
+ struct trace_parser {
+ 	bool		cont;
++	bool		fail;
+ 	char		*buffer;
+ 	unsigned	idx;
+ 	unsigned	size;
+@@ -1299,7 +1300,7 @@ struct trace_parser {
+ 
+ static inline bool trace_parser_loaded(struct trace_parser *parser)
+ {
+-	return (parser->idx != 0);
++	return !parser->fail && parser->idx != 0;
+ }
+ 
+ static inline bool trace_parser_cont(struct trace_parser *parser)
+-- 
+2.34.1
 
 
