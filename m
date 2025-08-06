@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-758143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02C3B1CB97
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:04:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B2B1CB98
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EEB67A01CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC6B626C77
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59CC1F4CBC;
-	Wed,  6 Aug 2025 18:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9CC1F0E26;
+	Wed,  6 Aug 2025 18:04:17 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603A386337
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9161EA7CF
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754503437; cv=none; b=jFUTOCRQ/BL0CDobYDV6SgmwOBqRDLWSnuJ8V7734SIGDHkKFj+2pr/oZf/8KQmXkSeTeFghbVcnLk1RGw8k1xb+/URKBSEOOWaSywA7IdHk7/a1LYvkVWMLgnwLDvXPu52Ffd5YKD9IC+JYC0P6Z32/IbA3wQwFOXbB3C5F4/w=
+	t=1754503457; cv=none; b=Btb5aQ1DI5NqcWw/bbqETXYqbIpDGNYlTtoGxbghRuJ6QvDKGrA7S1D9Y8b/pjbB1PUHglAnnAMMIwGpIsOBjOb9H7/hau3bfksDPgqar9289bNfqEPW7g9vwGYQVtwgox2qlXjNpGGORcuksAO1YJz+8LwOXbyTQM52RiO/1n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754503437; c=relaxed/simple;
-	bh=ibpUQ1coV6tRyIxNGU5Bd1s4KJas5vEQ2u4Ja9tAZx0=;
+	s=arc-20240116; t=1754503457; c=relaxed/simple;
+	bh=85QX/kG+EB2oGh7pLPRIpkxE6/0C+8XGuHFXj07ZXJg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adYLLskeu3TwC8alHziZ4VrQzjz4df28YRiMlxdoSptbiAKYt6ysyFxLxnrhQ0xlmd5uVlof9cgvwV6VCkrTSXkJ5arPnIX2Q2gL/qx8Ts3Dtxyv4rgbG/WifBndDfOUlGKxK4iDUhgNVcHcJ7NtMKC4XMYqFb/R9WOCLOcIzQY=
+	 In-Reply-To:Content-Type; b=j7jOjp0+wzbri38Ej19V5E+48yCcDJs7R6vAhuP+N1AdaucZecSp2I42CGCmvpTUNFmmeufHOsYZRA+CMgvdTVqCjMb3D5nviuO4/UWRoyzUr1r1I5G78hV+VNPLxHoyK8odIno//CGYKpiOviZNd2Kb1WfVzAohObcFBKldzl8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB46F176C;
-	Wed,  6 Aug 2025 11:03:46 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04131176C;
+	Wed,  6 Aug 2025 11:04:07 -0700 (PDT)
 Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A412A3F738;
-	Wed,  6 Aug 2025 11:03:43 -0700 (PDT)
-Message-ID: <13398823-bcef-4bda-a6ea-c5ccde49ef6a@arm.com>
-Date: Wed, 6 Aug 2025 19:03:23 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B85C3F738;
+	Wed,  6 Aug 2025 11:04:09 -0700 (PDT)
+Message-ID: <6a77726d-1881-4590-8021-623c877bb5d7@arm.com>
+Date: Wed, 6 Aug 2025 19:04:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,9 +43,10 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH 13/36] arm_mpam: Add probe/remove for mpam msc driver
  and kbuild boiler plate
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+ Rohit Mathew <rohit.mathew@arm.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
  <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
  Carl Worth <carl@os.amperecomputing.com>,
@@ -58,18 +59,17 @@ Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
  David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
  Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-14-james.morse@arm.com>
- <347c93ec-a645-43fa-a648-88a3d9ace733@arm.com>
+ <20250711183648.30766-14-james.morse@arm.com> <aIIiazUK4S_G6loe@arm.com>
 Content-Language: en-GB
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <347c93ec-a645-43fa-a648-88a3d9ace733@arm.com>
+In-Reply-To: <aIIiazUK4S_G6loe@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Ben,
+Hi Catalin,
 
-On 24/07/2025 12:02, Ben Horgan wrote:
-> On 11/07/2025 19:36, James Morse wrote:
+On 24/07/2025 13:09, Catalin Marinas wrote:
+> On Fri, Jul 11, 2025 at 06:36:25PM +0000, James Morse wrote:
 >> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
 >> only be accessible from those CPUs, and they may not be online.
 >> Touching the hardware early is pointless as MPAM can't be used until
@@ -78,34 +78,38 @@ On 24/07/2025 12:02, Ben Horgan wrote:
 >>
 >> Start with driver probe/remove and mapping the MSC.
 
->> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/
->> mpam_devices.c
->> new file mode 100644
->> index 000000000000..5b886ba54ba8
->> --- /dev/null
->> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
->> @@ -0,0 +1,336 @@
+>>  arch/arm64/Kconfig                          |   1 +
+>>  drivers/platform/arm64/Kconfig              |   1 +
+>>  drivers/platform/arm64/Makefile             |   1 +
+>>  drivers/platform/arm64/mpam/Kconfig         |  10 +
+>>  drivers/platform/arm64/mpam/Makefile        |   4 +
+>>  drivers/platform/arm64/mpam/mpam_devices.c  | 336 ++++++++++++++++++++
+>>  drivers/platform/arm64/mpam/mpam_internal.h |  62 ++++
+>>  7 files changed, 415 insertions(+)
+>>  create mode 100644 drivers/platform/arm64/mpam/Kconfig
+>>  create mode 100644 drivers/platform/arm64/mpam/Makefile
+>>  create mode 100644 drivers/platform/arm64/mpam/mpam_devices.c
+>>  create mode 100644 drivers/platform/arm64/mpam/mpam_internal.h
 
->> +static int mpam_dt_count_msc(void)
->> +{
->> +    int count = 0;
->> +    struct device_node *np;
->> +
->> +    for_each_compatible_node(np, NULL, "arm,mpam-msc")
+> Bikeshedding: why not drivers/resctrl to match fs/resctrl? We wouldn't
+> need the previous patch either to move the arm64 platform drivers.
 
-> This will count even 'status = "disabled"' nodes. Add a check for that.
-> 
-> if (of_device_is_available(np))> +        count++;
+Initially because I don't see any other architecture having an MMIO interface to this
+stuff, and didn't want a 'top level' driver directory for a single driver. But, re-reading
+RISC-Vs CBQRI[0] it turns out that theirs is memory mapped...
 
-Good spot, fixed - thanks.
+
+> I'm not an expert on resctrl but the MPAM code looks more like a backend
+> for the resctrl support, so it makes more sense to do as we did for
+> other drivers like irqchip, iommu.
+
+Only because there are many irqchip or iommu. I'm not a fan of drivers/mpam, but
+drivers/resctrl would suit RISC-V too. (I'll check with Drew)
 
 
 Thanks,
 
 James
 
-
->> +
->> +    return count;
->> +}
+[0] https://patchew.org/linux/20230419111111.477118-1-dfustini@baylibre.com/
 
