@@ -1,225 +1,155 @@
-Return-Path: <linux-kernel+bounces-757653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F230EB1C4D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:27:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD7AB1C4DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A408018C0D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38BE5617A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C826A0D5;
-	Wed,  6 Aug 2025 11:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AC128AAFC;
+	Wed,  6 Aug 2025 11:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i7DgaPdr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ccu1gR6r"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75576433C8;
-	Wed,  6 Aug 2025 11:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD5B25B66A;
+	Wed,  6 Aug 2025 11:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754479639; cv=none; b=LGuAxS+3ORbJB/EMXHmBV3NQR/SCeRndVYYWVe/RE7/a7aOd2XBAtxC2WuD0BIx6G5lrZCWdVMcCejRQ9I9d3ZM7YrCYs2FQqETqHVCw/nKKgDs+i/FlP0P7hi4/tSaELwA+CGSLltdRUADEhQEsE2SxS3vTEaustGmUTrCpxkY=
+	t=1754479717; cv=none; b=JIZaFKpYO5H5jMgb5odizRBHTly8br0P2lq6B4a15poQOi50CpOhyeqSO974uD7nOfTpGMBmUGX+0FhebR6g/jG03O9kofBs+FCWx6cmPYHRFmks34P/miyiZDTvjsEmbPg5UFJ6DurzYFML2ATGoT8wkkb/qis+twnCX2YJvy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754479639; c=relaxed/simple;
-	bh=SUL12yiALrrYQVurDqvFUFZvMfjm0vQJNdkY7p2+v7o=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KXfwa++IGA/EOsc/fIBEmConsfbAQfsZVpLi4xJfOvkJSYsv5hzePmVhuPCo3r3ShjmsSGIRhxLvxQ512Bm5hQ4XwZlLtYPhuTMVA62AYQ0di7A+MCAFzYw1LLmHnbQfuIOC4JZtJLrzZqj3PqYZKwvGr3guj96McVNTPgti2gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i7DgaPdr; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754479638; x=1786015638;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=SUL12yiALrrYQVurDqvFUFZvMfjm0vQJNdkY7p2+v7o=;
-  b=i7DgaPdr+DK4FnX5VtFG++MUbEF/wDe8va3T7bbMm5FsUjRQyxbaJT8z
-   zexSa9wCwFxI6JrQU07SP5X4W0TxSg/pFhN6+KBiTyZa05Eo/DvXqCPFD
-   dEpXU4RHL6h7fDgqhIao8+bMVsjRl7WOmoIZQblrP0aFFmHfWJro5AYm1
-   uVBTGcv2ySI2c5dL+xEUqZ3uybc4//qL0vOiUpKBCxnn/gU2jAkQRcsen
-   VMiJV7ncoVagjr1ZuHbNBhwG03Ti4Lh2SQu8NWphCQY7PwkkSvrspcDqp
-   qZ5sMzFTMYoQuFC2/k2d9qzqKEAvRYIwe1XRBFy5ihFT0NmVOXSQUdiBg
-   Q==;
-X-CSE-ConnectionGUID: HRMKU2S+RxyESxB1W7y1gg==
-X-CSE-MsgGUID: sKN+sS4IQ4uvwOMUMgwDLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56506899"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56506899"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 04:27:17 -0700
-X-CSE-ConnectionGUID: xvThYN9ASSS/aYE6CCy/8w==
-X-CSE-MsgGUID: ZX25GWJHTCa3/JTKFsaICQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="165121799"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.170])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 04:27:13 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 6 Aug 2025 14:26:59 +0300 (EEST)
-To: Rong Zhang <i@rong.moe>
-cc: Ike Panhc <ikepanhc@gmail.com>, 
-    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, Hans de Goede <hansg@kernel.org>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] platform/x86: ideapad-laptop: Fully support auto
- kbd backlight
-In-Reply-To: <20250805140131.284122-3-i@rong.moe>
-Message-ID: <9a2fad3c-66d5-c877-698b-a9b5a589f081@linux.intel.com>
-References: <20250805140131.284122-1-i@rong.moe> <20250805140131.284122-3-i@rong.moe>
+	s=arc-20240116; t=1754479717; c=relaxed/simple;
+	bh=oaiu44qJ+xCgX9y524WCfJYwAShfvp1cYbnsRYleUQ8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u/T6IMNQX8iOL4AwYNc7vje6Q9CvXUgZIo11eezZUseZlsQ1ldAQ1kJFv59VKqnZHf2MZ6rSBlsdymiTIAVXP3Q6CjzHm1xSuM3SaBgN4z6ZV2uF9uTbSa/QgfI1BitkxIROHiI7H3aOLtLSCnzEIyIPrF4lVFbpObGQR7HUOzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ccu1gR6r; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765fhNs031614;
+	Wed, 6 Aug 2025 11:28:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7nPIi4UTi5rRXxVLQziK1a
+	GhMiR6sWzcqWJyxgZMFl4=; b=Ccu1gR6rDIJhlOZBiB8ZANSC/G5NSlabKJAstF
+	2zS00Rb/vsIU5vnA4FGT2KDThWzjD7ONQAn0/m3egNtO4WEg15R4r2/31SdmovY9
+	AT5DLHPsQZX/rNMDtiHJQz72zgfdC+qBAUcRwpe0b564Ducw+SsAnVPqfBBLnHaD
+	NQjq0JMcVLm7Bj5ToTjFmlZFf2BRFPHlU2ngs8QAk0fnioC5U1GvfgybS6WjrfXI
+	M90NZVZRJaV5+3yO+0Bv5xATUvbUGMjKgJY9iWxr4HRTR4kSqwXq2R6UyYXL7KIp
+	JKpP1EMXFq7JZ4Gy9OBhalVYIG/7L+w9Zjtwj9ppP4Kvfr/A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpybajy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 11:28:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 576BSOrK013704
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Aug 2025 11:28:24 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 6 Aug 2025 04:28:19 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v6 0/4] Enable cpufreq for IPQ5424
+Date: Wed, 6 Aug 2025 16:58:03 +0530
+Message-ID: <20250806112807.2726890-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX6j6Vsja/XFWg
+ Z8V/yPjPjCsR5xmzJQbm7N15pu1Af1bVt2XqFhLbsVH2kwffxAo+u5ygZ1IgXqQVVOzdRZzK7D8
+ am2WadJ47fOokzmQEkFpv4voVdgljIdEprJ5/Thvb2Mm7x51rFX8CmsvK2evm8DrcMi8o1i1YwU
+ BSHZDFsFNQRlGF1TDoO6iXiWz7iMHdR3vvmJ6yMjjO2cbtGXKBFk+zUj4EtZakGj6BLApaw6rBt
+ OBUb9f/jKPl92oouriWW3UcxRszDMGClC5Nt9Xwd3bTxueBg8mOJo3Tp2GxHKjIxQ9sqKyzXaSA
+ iyzdmIkH3ZqFfWSVlM3T+JH8Y+DhfxCELqKdtG4bTMY7+JGAG09s8OrU1Ofg8ekPCmk/3wp+/ZM
+ dRhLexAA
+X-Proofpoint-GUID: hpCuZZ5aFXIHgkKkwtPYMjiSP3VQghFo
+X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=68933c59 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=hYIGFNv7twnpuLpzv7MA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: hpCuZZ5aFXIHgkKkwtPYMjiSP3VQghFo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Tue, 5 Aug 2025, Rong Zhang wrote:
+CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+Add support for the APSS PLL, RCG and clock enable for ipq5424.
+The PLL, RCG register space are clubbed. Hence adding new APSS driver
+for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
 
-> Currently, the auto brightness mode of keyboard backlight maps to
-> brightness=0 in LED classdev. The only method to switch to such a mode
-> is by pressing the manufacturer-defined shortcut (Fn+Space). However, 0
-> is a multiplexed brightness value; writing 0 simply results in the
-> backlight being turned off.
-> 
-> With brightness processing code decoupled from LED classdev, we can now
-> fully support the auto brightness mode. In this mode, the keyboard
-> backlight is controlled by the EC according to the ambient light sensor
-> (ALS).
-> 
-> To utilize this, a sysfs node is exposed to the userspace:
-> /sys/class/leds/platform::kbd_backlight/als_enabled. The name is chosen
-> to align with dell-laptop, which provides a similar feature.
-> 
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
->  .../ABI/testing/sysfs-platform-ideapad-laptop | 12 ++++
->  drivers/platform/x86/lenovo/ideapad-laptop.c  | 65 ++++++++++++++++++-
->  2 files changed, 75 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> index 5ec0dee9e707..a2b78aa60aaa 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> +++ b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> @@ -50,3 +50,15 @@ Description:
->  		Controls whether the "always on USB charging" feature is
->  		enabled or not. This feature enables charging USB devices
->  		even if the computer is not turned on.
-> +
-> +What:		/sys/class/leds/platform::kbd_backlight/als_enabled
-> +Date:		July 2025
-> +KernelVersion:	6.17
+v6:	* Drop clock-names in bindings, dts and driver and use index instead
+	* Fix 'opp-microvolt'
 
-This ship has sailed.
+v5: https://lore.kernel.org/linux-arm-msm/20250804112041.845135-1-quic_varada@quicinc.com/
+	* Remove previous maintainers from bindings file
+	* Use enums instead of clock names in clock struct
+	* Add '.sync_state = icc_sync_state'
+	* Add opp-816000000
 
-> +Contact:	platform-driver-x86@vger.kernel.org
-> +Description:
-> +		This file allows to control the automatic keyboard
+v4: https://lore.kernel.org/linux-arm-msm/20250730081316.547796-1-quic_varada@quicinc.com/
+	* Address bindings related comments
 
-Please avoid using "This file" entirely in the description.
+v3: https://lore.kernel.org/linux-arm-msm/20250724102540.3762358-1-quic_varada@quicinc.com/
+	* Use the qcom_cc_driver_data framework to trim down apss_ipq5424_probe
 
-Start with "Controls ..."
+v2: https://lore.kernel.org/linux-arm-msm/20250723110815.2865403-1-quic_varada@quicinc.com/
+	* Use icc-clk framework for l3 pll
 
-> +		illumination mode on some systems that have an ambient
-> +		light sensor. Write 1 to this file to enable the auto
-> +		mode, 0 to disable it. In this mode, the actual
+v1: https://lore.kernel.org/linux-arm-msm/20250127093128.2611247-1-quic_srichara@quicinc.com/
 
-What is "this mode" ? Did you mean, e.g., "When the auto mode is enabled,"
-?
+Md Sadre Alam (1):
+  cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
 
-> +		brightness level is not available and reading the
-> +		"brightness" file always returns 0.
-> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
-> index 5014c1d0b633..49f2fc68add4 100644
-> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-> @@ -1712,6 +1712,57 @@ static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
->  	ideapad_kbd_bl_notify_known(priv, brightness);
->  }
->  
-> +static ssize_t als_enabled_show(struct device *dev,
-> +				struct device_attribute *attr,
-> +				char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
-> +	int hw_brightness;
-> +
-> +	hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
-> +	if (hw_brightness < 0)
-> +		return hw_brightness;
-> +
-> +	return sysfs_emit(buf, "%d\n", hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS);
-> +}
-> +
-> +static ssize_t als_enabled_store(struct device *dev,
-> +				 struct device_attribute *attr,
-> +				 const char *buf, size_t count)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
-> +	bool state;
-> +	int err;
-> +
-> +	err = kstrtobool(buf, &state);
-> +	if (err)
-> +		return err;
-> +
-> +	/*
-> +	 * Auto (ALS) mode uses a predefined HW brightness value. It is
-> +	 * impossible to disable it without setting another brightness value.
-> +	 * Set the brightness to 0 when disabling is requested.
-> +	 */
-> +	err = ideapad_kbd_bl_hw_brightness_set(priv, state ? KBD_BL_AUTO_MODE_HW_BRIGHTNESS : 0);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Both HW brightness values map to 0 in the LED classdev. */
-> +	ideapad_kbd_bl_notify_known(priv, 0);
-> +
-> +	return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(als_enabled);
-> +
-> +static struct attribute *ideapad_kbd_bl_als_attrs[] = {
-> +	&dev_attr_als_enabled.attr,
-> +	NULL,
-> +};
-> +ATTRIBUTE_GROUPS(ideapad_kbd_bl_als);
-> +
->  static int ideapad_kbd_bl_init(struct ideapad_private *priv)
->  {
->  	int brightness, err;
-> @@ -1722,10 +1773,20 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
->  	if (WARN_ON(priv->kbd_bl.initialized))
->  		return -EEXIST;
->  
-> -	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type)) {
-> +	switch (priv->kbd_bl.type) {
-> +	case KBD_BL_TRISTATE_AUTO:
-> +		/* The sysfs node will be /sys/class/leds/platform::kbd_backlight/als_enabled */
-> +		priv->kbd_bl.led.groups = ideapad_kbd_bl_als_groups;
-> +		fallthrough;
-> +	case KBD_BL_TRISTATE:
->  		priv->kbd_bl.led.max_brightness = 2;
-> -	} else {
-> +		break;
-> +	case KBD_BL_STANDARD:
->  		priv->kbd_bl.led.max_brightness = 1;
-> +		break;
-> +	default:
-> +		/* This has already been validated by ideapad_check_features(). */
-> +		unreachable();
->  	}
->  
->  	brightness = ideapad_kbd_bl_brightness_get(priv);
-> 
+Sricharan Ramabadhran (3):
+  dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock
+    controller
+  clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
+  arm64: dts: qcom: ipq5424: Enable cpufreq
 
+ .../bindings/clock/qcom,ipq5424-apss-clk.yaml |  55 ++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  69 +++++
+ drivers/clk/qcom/Kconfig                      |   7 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/apss-ipq5424.c               | 264 ++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   1 +
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   5 +
+ include/dt-bindings/clock/qcom,apss-ipq.h     |   6 +
+ .../dt-bindings/interconnect/qcom,ipq5424.h   |   3 +
+ 9 files changed, 411 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+ create mode 100644 drivers/clk/qcom/apss-ipq5424.c
+
+
+base-commit: 5c5a10f0be967a8950a2309ea965bae54251b50e
 -- 
- i.
+2.34.1
 
 
