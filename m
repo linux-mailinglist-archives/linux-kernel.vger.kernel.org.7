@@ -1,134 +1,155 @@
-Return-Path: <linux-kernel+bounces-758365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBFEB1CE0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0ABB1CE1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA727A2388
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378AD18C16B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB23238D5A;
-	Wed,  6 Aug 2025 20:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7901FF1B5;
+	Wed,  6 Aug 2025 20:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SdvM1hoz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="nFa0vurz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JIcUNrAT"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13D42248AE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBC31C5D72;
+	Wed,  6 Aug 2025 20:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754513256; cv=none; b=Mz2z0J2apy311yKwuMRFSDYkmZI7Y49UCk01aPb2MJagzP2bTqQmqkH+zYl7voTrKDxM/bDaH3Stmcw0BjDzAsMXydioBhZiQpasbruYE14YMWQaVAm/WWMny7KNqnJVtKCKCHMKgThcg/cnFeKU3+5Jnu4NEsX4Nvq67ZpNMGU=
+	t=1754513722; cv=none; b=jkMMv/M4imC6E7JlXMXeQG48ebOe//L0VgLcEyNbp6SB+aM4ruvmtw88dZYxSbGWbQG0v7atbpjbyBz7lb1szb7fWzo6aRVEWPHWrmK0BJa/xiNi9hpyHsTCMcRsSvZhnhFFiIzXzKoRBEzHab35FsUK2ARHCu80aIRJ0Nu5aDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754513256; c=relaxed/simple;
-	bh=K32KMutlu0ueMIlLxLbh57mXUrOlGxR7duFPs825SlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BarUtmKt0VurRRl0qGhLdouWg9KaJAykqqejp0OhKIOTrpiv7vJLzAXSZRuyZw0rpOgcujrlIyWdmiSdDVyuskXDBUCYGtzSLa4IgpO/vBXWFe5NYXmNGjdY7ewAZSS1aJV+gGS529tV9JIc7xHWIOWtwLivW+Jh1TDm5342Kmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SdvM1hoz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754513253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TlwNsvbEYjfHRGNVKi2/h04wG5TuQNP/hEP/Uihzto4=;
-	b=SdvM1hozmcpB3hfl1lVqYinZxEvZyaPwBZjQUhOFUjAgaJNkF1D7+sVcMpp+dgt/VxZs1/
-	h4+Pml3kEQxKHBMJ7xbgVCCNbft7yJiWMm42PfnHVx4WJwxdITqEfgglj9kzlU07gCXUP/
-	vEc8AOqOTITyhLRZYWyup8fYfZv5z48=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-zfNoNBiyOUiP4RNjLiY7dg-1; Wed, 06 Aug 2025 16:47:32 -0400
-X-MC-Unique: zfNoNBiyOUiP4RNjLiY7dg-1
-X-Mimecast-MFC-AGG-ID: zfNoNBiyOUiP4RNjLiY7dg_1754513251
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-459dde02e38so1025955e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 13:47:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754513251; x=1755118051;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TlwNsvbEYjfHRGNVKi2/h04wG5TuQNP/hEP/Uihzto4=;
-        b=cr6rSvsqCZtUdAu3/o2g995Ezn4J5LlQ/KWPWsljawlKKk7pZuEcFHnTEwe1/Tp3P3
-         ucth9rfqvPJVYOb7O1khfbz+FLU2xot5MQ3px5Vy+kS/vZKV0gab2Zl2PIGYz11JGZxI
-         gWBTI/sjNAwbGBafqR/WeiByrotNeIUWmG9bs6qT7xdlhJE099rI9PnQ0DUM9LuPsiza
-         udVHOYsViXI0hIfOd6Unr10IDRlZhkM2apNv935t4tQ1dDpKW+M6xl6Uf+OnFA5GWVLd
-         LSJ0W13O8rMIso83C1A0BENRBi8FqYYjMYf2+ZDBDTMMapcO1DH1U77/vC74kCJypUOr
-         hAog==
-X-Forwarded-Encrypted: i=1; AJvYcCVJtpdVOcUi6RtTQ2tJnJPFbLR3wJhvrG1g30oEAEaqVRQrjFUBtFLU84UmUevhJYj+K4XH5/g8giLDR2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ2N2GNZT7U16kP2fMI7wmbVg9mx4UxXP+WPvS+UKiw9imAXa9
-	dzO7KCywbMMMR3W4TnQkgW5ETmwMiKBENAYyKBYnF270mYXiHs/AfuUWqqJWoRg2LUQwwFFk0FX
-	HFnk+rksTwufoYI/P7UDJFepNGbX8wB9O6L8p8SH6dfjWtEqmPM73xadoeA7fQ7fPpA==
-X-Gm-Gg: ASbGncsEiYktIo9wqX0HZhHGXhT6iZWVzggIzPq4c8L3gcBVk+U+W8o/RjQHWRy+oF+
-	S94GBWE+RJaF67s+AiotGqMLDTxWjxNtuU3XAqRxrw2ksb+NZI/ZbkvgfXY6G9MLhhxVDaO3t5A
-	MBcyjFOFzs9cdIPFZ1HZDknDMJbdAWqidXwgUxl1+aJakjoj1WfZR+q29zpsevrrtwSzdea6eHc
-	/zIIkqkFcSJmpz5WxDULyPpfT+ykiQinAk72kHSCjq3KpCdtVvzKRIC/5NArR8PsCaAuQb5N7B5
-	OpGb7LN/sXamn3xyKNzAF0YGvbYlxVIc
-X-Received: by 2002:a05:600c:6305:b0:458:b7d1:99f9 with SMTP id 5b1f17b1804b1-459e709aae6mr37799215e9.11.1754513251199;
-        Wed, 06 Aug 2025 13:47:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbRLRaL7K60EhkRWSlXNixh8uPd6V6yEGxqI0NMw0jyPpuYmGLkX16WFH/BvDKnaRCqACLiQ==
-X-Received: by 2002:a05:600c:6305:b0:458:b7d1:99f9 with SMTP id 5b1f17b1804b1-459e709aae6mr37799045e9.11.1754513250752;
-        Wed, 06 Aug 2025 13:47:30 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f5d7deaasm3285773f8f.65.2025.08.06.13.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 13:47:29 -0700 (PDT)
-Date: Wed, 6 Aug 2025 16:47:27 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Igor Torrente <igor.torrente@collabora.com>
-Cc: samimdko <sami.md.ko@gmail.com>,
-	virtualization <virtualization@lists.linux.dev>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	eperezma <eperezma@redhat.com>,
-	xuanzhuo <xuanzhuo@linux.alibaba.com>,
-	jasowang <jasowang@redhat.com>,
-	Dmitrii Osipenko <dmitry.osipenko@collabora.com>
-Subject: Re: `virtio: reject shm region if length is zero` breaks virtio-gpu
- host_visible feature
-Message-ID: <20250806164708-mutt-send-email-mst@kernel.org>
-References: <19880aa3804.3aa8c0311540629.5527706858754550702@collabora.com>
+	s=arc-20240116; t=1754513722; c=relaxed/simple;
+	bh=54xUB62CplasX1mx7fisyZ9P9WgcorjVVjt8KXvW9l4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qnR4O8+weyYLArYBjYTZmtbU/25hvli7lTIpQcDOQqRSi0csyLa0J0sW8Eouvb9VnC9+Fb3BsD/nn950on6DDQoQ1qgOClVKoxm8aiSB8leDUedj7iSRqgs4oTMVQWRisZlC5a5+vrPTI6CgRloyIQksNktSl1dcZ3yZq2CFeNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=nFa0vurz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JIcUNrAT; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 896791D000A4;
+	Wed,  6 Aug 2025 16:55:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 06 Aug 2025 16:55:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754513716;
+	 x=1754600116; bh=b3EiBgD+zq+pGmznr4aVpdajsWWFZnlVn4Kp2x4xaTI=; b=
+	nFa0vurzXxGtrfXFFJS7wr5ObjcLdQ8p+zOcIjKRtphgMqRNYXn+1dQXSF8HnhQK
+	UnIoNV1VYIUFjg+RlVw1MXPYeet++mfmLn/f9cH0tR85TN1Lasn1QTpcDlQF7OSq
+	JpU5/AgWVp+NK1/4oIG3NYw0cyjoz7mjGBYyTtMXQQh29BnuhWXA9R8euI1bLT6w
+	4+lE/QWwgLaPON8oyCPHkbCMkvhRRgshoIVEMuCixre1fa+OEo5kjRDhtxXAnZbG
+	wwCbZOVlmMxglWe3Vzo4ZEcAWNPo9wf0ltW71z6qeAjO9RP/kvCMBaO3/9hBUPtC
+	eRmkD4aVF5uk44kX4o8M5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754513716; x=
+	1754600116; bh=b3EiBgD+zq+pGmznr4aVpdajsWWFZnlVn4Kp2x4xaTI=; b=J
+	IcUNrATng/QXGa9rYqrlP7octHStvo0rhv5DA/2UUD2KJgpHz5e9oQcQIcIBrvZz
+	I7I5ExKXGlBZ0XRhd9hTskywIx9IbtMpquNgq8eKElsNz0O1y1FKWQfWjpJPKl2r
+	oz5y2B8VEenL1YFyGgg6sQ+KDUxgh846XXCV9t5p/9rnjptxF0cVyzjNt9Oxjc5W
+	oBdVrP8Utkudr8SITSqc0BnP3+YL2A2M/vLSLYafcZ5tu2+Pv930EuMafOsZn3As
+	p6LF9HNAh2y4muDs2CHgRJouvsiSKY1ATERHxKvnudloFPfBsF138ivtNSAjwXlh
+	9pFQSKR5VZBOQtPxwrwFA==
+X-ME-Sender: <xms:M8GTaL5x_TPdKKcqVfeJ1_xTgIJ0HjjSLp4lRffEtn1pefyDlNpQzg>
+    <xme:M8GTaKVXgyMiWMyWpLPIfZ6xBxXaRpbNzv9s_YFJqvecsrz5LCosTJ-vNmKuvbj1m
+    UNVMcqTnv4_AMjE>
+X-ME-Received: <xmr:M8GTaCDdXFBNC-0yqNKUQexiVGSIlc0OlJFpwfoXpZt6GKS08CEwTahUWjq0O4rlNpt92eZAFRauELi69ktE1ENpgIB7GWcuAec4Wr_bIpuhuMWyM_blVhEY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeltdejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeegpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehluhhotghhuhhnshhhvghnghesuhhsthgtrdgvug
+    hupdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehl
+    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:M8GTaB76n8d-_wcV7mVcK8ji80SXo8kK8ZTVxe1heUup78XJXAgvUQ>
+    <xmx:M8GTaFxZqWwSEkbMXRl4N3OmZ052TIJW5H5nR3TD7YE9FC-wK-JOUw>
+    <xmx:M8GTaAxHRjbtViUtFdWJiuLqaFMIlkT7y8kTGdGV-1oL887SriHDrg>
+    <xmx:M8GTaFwycqzadVPdXF_PZTLv665N-xxZP5resnWlpo4Q6H2GQ_ShQw>
+    <xmx:NMGTaF6I06UBQ5DGcU8YXD7MPLPb6GX7QnEcKouZsPNSkTDvB3lIQlRg>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 6 Aug 2025 16:55:13 -0400 (EDT)
+Message-ID: <7b8d5689-1024-4c36-80c9-1cbffcc43dc0@bsbernd.com>
+Date: Wed, 6 Aug 2025 22:55:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19880aa3804.3aa8c0311540629.5527706858754550702@collabora.com>
-
-On Wed, Aug 06, 2025 at 03:34:55PM -0300, Igor Torrente wrote:
-> Hello,
-> 
-> The commit `206cc44588f7 virtio: reject shm region if length is zero` breaks the Virtio-gpu `host_visible` feature.
-> 
-> As you can see in the snippet below, host_visible_region is zero because of the `kzalloc`. 
-> It's using the `vm_get_shm_region` (drivers/virtio/virtio_mmio.c:536) to read the `addr` and `len` from qemu/crosvm.
-> 
-> ```
-> drivers/gpu/drm/virtio/virtgpu_kms.c
-> 132         vgdev = drmm_kzalloc(dev, sizeof(struct virtio_gpu_device), GFP_KERNEL);
-> [...]
-> 177         if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region, 
-> 178                                   VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
-> ```
-> Now it always fails.
-> 
-> I don't know exactly what issue this patch is trying to solve, but right now Virtio-gpu relies upon the previous behavior. 
-> Can we just revert it?
-> 
-> BR,
-> ----
-> Igor Torrente
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: Move same-superblock check to fuse_copy_file_range
+To: Chunsheng Luo <luochunsheng@ustc.edu>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250806135254.352-1-luochunsheng@ustc.edu>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250806135254.352-1-luochunsheng@ustc.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Pls go ahead and post the revert. We'll see what happens.
 
--- 
-MST
+On 8/6/25 15:52, Chunsheng Luo wrote:
+> The copy_file_range COPY_FILE_SPLICE capability allows filesystems to
+> handle cross-superblock copy. However, in the current fuse implementation,
+> __fuse_copy_file_range accesses src_file->private_data under the assumption
+> that it points to a fuse_file structure. When the source file belongs to a
+> non-FUSE filesystem, it will leads to kernel panics.
+> 
+> To resolve this, move the same-superblock check from __fuse_copy_file_range
+> to fuse_copy_file_range to ensure both files belong to the same fuse
+> superblock before accessing private_data.
+> 
+> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+> ---
+>  fs/fuse/file.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 95275a1e2f54..a29f1b84f11b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2984,9 +2984,6 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+>  	if (fc->no_copy_file_range)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> -		return -EXDEV;
+> -
+>  	inode_lock(inode_in);
+>  	err = fuse_writeback_range(inode_in, pos_in, pos_in + len - 1);
+>  	inode_unlock(inode_in);
+> @@ -3066,9 +3063,12 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
+>  {
+>  	ssize_t ret;
+>  
+> +	if (file_inode(src_file)->i_sb != file_inode(dst_file)->i_sb)
+> +		return splice_copy_file_range(src_file, src_off, dst_file,
+> +					     dst_off, len);
+> +
+>  	ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+>  				     len, flags);
+> -
+>  	if (ret == -EOPNOTSUPP || ret == -EXDEV)
+>  		ret = splice_copy_file_range(src_file, src_off, dst_file,
+>  					     dst_off, len);
+
+I guess you can remove the check EXDEV here?
 
 
