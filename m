@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-757126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CB1B1BE08
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA860B1BE0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470ED6275B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A15F628024
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E40AD2C;
-	Wed,  6 Aug 2025 00:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2859C1547CC;
+	Wed,  6 Aug 2025 00:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KL7wxIz8"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="HWG913fG"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D89113957E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 00:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA9481CD
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 00:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754441443; cv=none; b=AxRh6TusHXormWx3OehlmBMj2pMRH2ca8heGa86dDMglgFkx005LzV6fGEaOZMBqqRtPsZxuXTlqhidYKwCNw9IUCWo17d/2IaQw7AvYOOI1VuzUqFiH1cLLBEszHyUljGRDwziVdqe6AQ5vo4xK17gKet9FdKqhoYkahjGPtCY=
+	t=1754441505; cv=none; b=A75BoWKEy31NI+lQvttt6ThIry+zOveij0av6O8MAZ7SdPWp3VXKyG5cz/pMbUiLky0CdlQNA2zicXALEgO9d5+0WU+HCLlrwnySNLNPFlqgr+BjWn8ypsN079DO+WtZcTH9X/GV5m0aXKKpc5g8rn+CULox3GQbyTvHxhB5vcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754441443; c=relaxed/simple;
-	bh=IeVA0NaJz5e3d8CujHkpUIBK8kfZWpMLR45yOgnHLRA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IX5xuq3IHiIY9j7iwXPQhb+SaB2bb2AoV/GPncX5p9VQjJ+RmIPoft8VV0VqSNgz71vfafmlUiZq38Lml6AHmkF1pphYREzu3f7EVladHPQOAblIXn1OXQGr4ewT4EEog4rASn+B/dNRhDiRH01lGA2cCrCX3u0XI3untrMeCy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KL7wxIz8; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b425a67c64bso236639a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 17:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754441440; x=1755046240; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wkVY/voLoVdW57wTp815+eh0ROGJmnXwTEje5ztA/CM=;
-        b=KL7wxIz8Hw//BJ6zUTYP6gAHaJY8+v7hHdSfNE+UFyeLo2LxPpT32laO2S4SbKJuHe
-         1KTdeepe5HfNaESlgRyhBii1e8Cbw+ivPXqyXRB3yjDWrI9ozzlaAzbtF/3u037pVyTZ
-         6Fme2APVbmU0Mnz3YWYjMY58FEVsxg8yOH7XEvTfoLZ0FChj0qJTzbxL9j1hAKaakpeV
-         tNsPcUVVLOnkMcBVXnjlovtRhPBwShjgzai2WhhI1D0vwTxX6rc2zCbqeRoIcRxUycGq
-         1/OVBU2rO1068itXLCkxpJ+6zA0wsI+RsnR5YgWefKdgawpH0i6Z3HX2ffvGbpXRFLCA
-         4RQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754441440; x=1755046240;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wkVY/voLoVdW57wTp815+eh0ROGJmnXwTEje5ztA/CM=;
-        b=uoy27k5vYJfqKkJs63cw4s1exToJIP1yxOr2n/VHtWrVgskB/1Nra1DsMnfPSrqWhS
-         ohOb8xxNu6V5jVebhPY7TfW6H67CCfw90pOCe7KVDV2DKipOMkC3HP+J+rqCWQOgR3bK
-         BbQOyBctUPuJ4dv2BmRWwouzquXvLXANEu3Q92SaWICZXrGYrIK4qVf1LQR1Ml5555mL
-         wni/Wie0PzU2vQ1T0CFCM3rl1dDVOGuIMzYldeelQYSwMw6EifOijJYkiltqx0Y5LSQh
-         F5CP4I9bELrzoW1AITiMnFenFi/PCAGvH7Q+3PdFwfrL4qFM+m/g3K/f6mYwQl9N07sL
-         AHmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQUFVT89wOD17Zl30FPmv/lPqBMz9G/IerlQ+C7ffletBObD7g5lwj/OYR34Kw4oIztFbwho3wsAAmEi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk9uSvxsrXFsR5b03QnqPeEjIMRJJdiQj6Ki0NJ7p9bIGPWIae
-	4/FYaip0r8BKCHULM/DaT4W2Un71MXC5p82sOZN7SEeyfK93a2KBRrfPuoII+sSWZzZwmzQSqyi
-	2OnbniA==
-X-Google-Smtp-Source: AGHT+IHwbSUlGzQdJh5v7u8nF3mi6DLtG6ynJApkXTSM8sjtJ0k70c50LW/04rw/1spWGkR16CWnSmVQgAk=
-X-Received: from pjbsg14.prod.google.com ([2002:a17:90b:520e:b0:31e:cdb5:aa34])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d606:b0:321:1348:4438
- with SMTP id 98e67ed59e1d1-32166969b3amr1026957a91.7.1754441440558; Tue, 05
- Aug 2025 17:50:40 -0700 (PDT)
-Date: Tue, 5 Aug 2025 17:50:39 -0700
-In-Reply-To: <aJFWK-EiGgH5aiw1@google.com>
+	s=arc-20240116; t=1754441505; c=relaxed/simple;
+	bh=xmeqXOs37C2Uo6fJropR0xPJ6eHARpct22W1Mr+ErrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FfpOB+OVMomyU4rrmv9+QyvKL8tQcUS+V6pB/L/37iYAoJ8jzgtQCA5w52liVX8JbmScJ3DkYdZuaPO6zZDZ1NGHbXNUzFeuFhYhgLogoTpPhAi3rAC/IamirzBld6fXEsdSZqU64ZRj0XLGjRsNdFfIKvQYdPf+lQJSplP5GPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=HWG913fG; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B84452C0117;
+	Wed,  6 Aug 2025 12:51:34 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1754441494;
+	bh=274Pjly+eIg7z3TSRuymxG/YIXr8M4S/eYN36UIcutk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HWG913fGVNDVGTHW4YVpLXWcRCKnkhhyow1uQshXNxkChD6vP6f38dN6Cceq7gi0F
+	 fcxinMxsqhi6ToqVEI60XF8aO+ezd4jCULeiZpNZbv/OwWEVqmPCOjz7AZXOyaDGQI
+	 TzeNPedHr5oDw429PXOqqhthn19n2dpvR/JqIjY8xVmg27YnnXXBuLUhlhyzAJfMNX
+	 2hrFO9Bx6bTTcR05FjCLwmfegbUmlFkPxurmfbq/efxu1drZN7cL4hv0kA6v2tj6tB
+	 DmkttkXXGCk7ktoypM/ExHJT/pIVIpf6KQ+lFBlq6AzdthvJ8d/VpInZeITRITrlBi
+	 1F99V+9T1ZM0A==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6892a7160000>; Wed, 06 Aug 2025 12:51:34 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 3D40413EE2B;
+	Wed,  6 Aug 2025 12:51:34 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 38531280564; Wed,  6 Aug 2025 12:51:34 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: jdelvare@suse.com,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 1/2] dt-bindings: hwmon: ti,ina780a: Add INA780 device
+Date: Wed,  6 Aug 2025 12:51:26 +1200
+Message-ID: <20250806005127.542298-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-21-mizhang@google.com>
- <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com> <aG6QeTXrd7Can8PK@google.com>
- <7dc97db7-5eea-4b65-aed3-4fc2846e13a6@linux.intel.com> <aIlpaL-yEU_0kgrD@google.com>
- <7de2b6ed-af39-4434-9ead-5b06ed4761c5@linux.intel.com> <aI1OefS8b9vfHyu9@google.com>
- <aJFWK-EiGgH5aiw1@google.com>
-Message-ID: <aJKm3zawEkrHT6Ms@google.com>
-Subject: Re: [PATCH v4 20/38] KVM: x86/pmu: Check if mediated vPMU can
- intercept rdpmc
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Sandipan Das <sandipan.das@amd.com>, Mingwei Zhang <mizhang@google.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=dtt4CEg4 c=1 sm=1 tr=0 ts=6892a716 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=sozttTNsAAAA:8 a=0gANWJHp95hC6gXnOXgA:9 a=3ZKOabzyN94A:10 a=sptkURWiP4Gy88Gu7hUp:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Trimmed the Cc substantially, I'm guessing most folks don't need a play-by-play
-update of misguided optimism. 
+Add dtschema for TI INA780 Digital Power Monitor
 
-On Mon, Aug 04, 2025, Sean Christopherson wrote:
-> On Fri, Aug 01, 2025, Sean Christopherson wrote:
-> > On Wed, Jul 30, 2025, Dapeng Mi wrote:
-> > > 
-> > > On 7/30/2025 8:38 AM, Sean Christopherson wrote:
-> > > > On Tue, Jul 29, 2025, Dapeng Mi wrote:
-> > > >> BTW, Sean, may I know your plan about the mediated vPMU v5 patch set? Thanks.
-> > > > I'll get it out this week (hopefully tomorrow).
-> > > 
-> > > Thumbs up! Thanks.
-> > 
-> > I lied, I'm not going to get it out until Monday.  Figuring out how to deal with
-> > instruction emulation in the fastpath VM-Exit handlers took me longer than I was
-> > hoping/expecting.
-> > 
-> > It's fully tested, and I have all but one changelog written, but I'm out of time
-> > for today (I made a stupid goof (inverted a !) that cost me an ~hour today, *sigh*).
-> > 
-> > Unless I get hit by a meteor, I'll get it out Monday.
-> 
-> *sigh*
-> 
-> Wrong again (fortunately, I didn't get hit by a meteor).  Long story short, I
-> revisited (yet again) how to deal with enabling the mediated PMU.  I had been
-> doing almost all of my testing with a hack to force-enable a mediated PMU, and
-> when it came time to rip that out, I just couldn't convince myself that requiring
-> userspace to enable KVM_CAP_PMU_CAPABILITY was the best behavior (I especially
-> hated that PMU support would silently disappear).
-> 
-> So, bad news is, v5 isn't happening today.  Good news is that I think I figured
-> out a not-awful solution for enabling the mediated PMU.  I'll post details (and
-> hopefully v5) tomorrow.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ .../devicetree/bindings/hwmon/ti,ina780a.yaml | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ina780a.ya=
+ml
 
-Too hopeful yet again.  I realized at the last minute that I neglected to add
-support for disabling PMU MSR interception for L2 after rebasing on the MSR
-interception cleanups.  Adding the code back was easy, but I need to test it.
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina780a.yaml b/Do=
+cumentation/devicetree/bindings/hwmon/ti,ina780a.yaml
+new file mode 100644
+index 000000000000..fa19d621b27b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/ti,ina780a.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/ti,ina780a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments INA780 Digital Power Monitor
++
++maintainers:
++  - Chris Packham <chris.packham@alliedtelesis.co.nz>
++
++description: |
++  The INA780x is a digital power monitor with an integrated current sens=
+ing
++  element.
++
++  Datasheets:
++    https://www.ti.com/lit/gpn/ina780a
++
++properties:
++  compatible:
++    enum:
++      - ti,ina780a
++      - ti,ina780b
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: hwmon-common.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells =3D <1>;
++        #size-cells =3D <0>;
++
++        hwmon@40 {
++          compatible =3D "ti,ina780a";
++          reg =3D <0x40>;
++        };
++    };
+--=20
+2.50.1
 
-I'm buried in meetings tomorrow, but there's a small chance I'll be able to squeak
-out v5.
 
