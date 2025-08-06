@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-757610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1616DB1C433
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:24:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25A2B1C439
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45C947A2CE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FDB187294
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2328AB11;
-	Wed,  6 Aug 2025 10:24:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAE728A417;
-	Wed,  6 Aug 2025 10:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754475880; cv=none; b=Fs2E7yOOKqNO6w8FTDwnOrMjse1S00bpJdO1ZDdHgvXcEdlOxlcmZoQQp+vTQyo7F9H5HOYe3Aq3/uluIXOfzzRZLeBOkN59H4LIa0IpUJyoDOBEvR/xSUoqqgKPBtFcgjR+S0f0x8ibe7LFDh19KP8ElbGe0LsgS9n/seyaVKk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754475880; c=relaxed/simple;
-	bh=5yGYo6ZdZt+LHxya/chgqlmuAM6976MZ+YA5qh6OG4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tHITF3v7xCHu4rUzKN1tWOHG7MfTOZGfr8rX3Z9NDlYWfmIVOV/c3F0vWfFnU+sdPQfXW6GJG6cygRIEvWb4G/Lk8Ms82SZrC6nZGZ8jRX7m6y9WAfrghBEediTA2ZyuEcc3GsebJ5/NqHkZXCXhJF0WjkD8MujL6ZwV7VW4pr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82E011E8D;
-	Wed,  6 Aug 2025 03:24:29 -0700 (PDT)
-Received: from [192.168.1.127] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B41793F738;
-	Wed,  6 Aug 2025 03:24:34 -0700 (PDT)
-Message-ID: <c4f1b8d4-774f-42c1-a828-42c79756503d@arm.com>
-Date: Wed, 6 Aug 2025 11:24:33 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691C328B3F9;
+	Wed,  6 Aug 2025 10:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="U3I5F5KD"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAE5207A22;
+	Wed,  6 Aug 2025 10:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754475939; cv=pass; b=pvzf4/FS/95vtAoGrRA8fEUpj+MXj8MGlnFhWT98zssD/P3otK8QqaxlnV6oVpsjDIVIVJT3GR80FAaveh/RKwj1A/FLE6IPClJ7euTOdyaOiyICnwWwly0RKpXvICZ3wx7mnxylPj5KX504fxTAvKdYLW0SO6uens68UDlm/aw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754475939; c=relaxed/simple;
+	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gmvyG/sc1cn8eEyPOBPBtRQN+Suzj5QJmuEiFbcjkMvkoxhT9/vVESia8v3ET+plvrYeDTb75B3cWRayRA6wloTOa7H4cmJH9oF8nlfCTkFDHHJ5UG3Y45DMIUMjQK990CZPtQwjHNC/WxtPa+GCPlZntUC2FdBPCKIqybHUt+I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=U3I5F5KD; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754475910; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fepJ8qRfgN4zCRlmQcXewJjX7ndwkr9ZErcwug1fF/Qm4DmSeg0CtFZXIJbYf+F0xfwH7f/CECvYQPanzhikWH8O/BjUqDef0G9p41zZKS3zwx8o9HWSCtjm5koJhUTATq32wNwln4xbiCrj24wmFmfcGZAS/93DgCViOLuRcIA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754475910; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=; 
+	b=hVATTcTbTnrdSRZYHokKzVn89UaAZFwSJiHoVgn25NRuEf9eaZydmSHv8+FY1BByvl0yZZPq8dgcb1ghDlZ/FgDz1ZZdaNcWkFy5hZGJlnz4xFwlFGZPt4v+dEFf9sTiW4q7wIyQaI3yYItV/AA3lh4qJpH9URv93h6skV3OOSY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754475910;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=;
+	b=U3I5F5KDYBTv3/hL6pjdw8mRCB0ECyCmCoRP/aqriH0MSxXaWoFSIv1w8BmYmWLz
+	e4V+2FbB/iEiLnq9uTfVGKgrFCzK14RYT1Ns0kLmSQHWUdXS+E0AfpUZj+IM2FkTgCV
+	/q0+57F21dqblHR/PNOwAZcgpHgsMiIgVhhH9/hk=
+Received: by mx.zohomail.com with SMTPS id 1754475907706352.8426825833187;
+	Wed, 6 Aug 2025 03:25:07 -0700 (PDT)
+From: Askar Safin <safinaskar@zohomail.com>
+To: cyphar@cyphar.com
+Cc: amir73il@gmail.com,
+	brauner@kernel.org,
+	corbet@lwn.net,
+	jack@suse.cz,
+	linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	luto@amacapital.net,
+	shuah@kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
+Date: Wed,  6 Aug 2025 13:25:01 +0300
+Message-ID: <20250806102501.75104-1-safinaskar@zohomail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
+References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] tracing: Have syscall trace events show "0x" for
- values greater than 10
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
- aahringo@redhat.com
-References: <20250805192646.328291790@kernel.org>
- <20250805193234.915257520@kernel.org>
-Content-Language: en-US
-From: Douglas Raillard <douglas.raillard@arm.com>
-In-Reply-To: <20250805193234.915257520@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227cd007dd0b9c9dcb652e3ba8400007454c63885fa4739e1a2448e2dfcd94715a18ae97a0dffae61:zu08011227eb8290984d483d5d1a43e04000005dc1ce89a5e53403a5117830c5dff694efbf2d6162e2802556:rf0801122c8cf1f5d05d0e16bf0447132600008990b2a0cdb4e3567989e390629257cc551dc8fb0a863a8c551d183331cc:ZohoMail
+X-ZohoMailClient: External
 
-On 05-08-2025 20:26, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Currently the syscall trace events show each value as hexadecimal, but
-> without adding "0x" it can be confusing:
-> 
->     sys_write(fd: 4, buf: 0x55c4a1fa9270, count: 44)
-> 
-> Looks like the above write wrote 44 bytes, when in reality it wrote 68
-> bytes.
-> 
-> Add a "0x" for all values greater or equal to 10 to remove the ambiguity.
-> For values less than 10, leave off the "0x" as that just adds noise to the
-> output.
+> I just realised that we probably also want to support FSCONFIG_SET_PATH
 
-I'm on the fence for the value-dependent format. This looks like
-it could easily make life harder for quick&dirty scripts, but then both
-awk's strtonum() and Python's int(x, base=16) seem to handle
-the presence/absence of the 0x prefix so maybe it's a non-issue.
+I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH. Moreover, fsparam_path macro is present since 5.1. And for all this time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody used it, so this will not break anything.
 
-OTH, a hand-crafted regex designed after a small set of input may start
-to randomly fail if one field unexpectedly goes beyond 10 ...
+If you okay with that, I can submit patch, removing it.
 
-Just using explicit hex may be the best here, as the actual proper fix
-(type-level display hints) is harder. It could probably be implemented
-using btf_decl_tag() and __builtin_btf_type_id() to retrieve the BTF info.
-
-> 
-> Also change the iterator to check if "i" is nonzero and print the ", "
-> delimiter at the start, then adding the logic to the trace_seq_printf() at
-> the end.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->   kernel/trace/trace_syscalls.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-> index 3a0b65f89130..0f932b22f9ec 100644
-> --- a/kernel/trace/trace_syscalls.c
-> +++ b/kernel/trace/trace_syscalls.c
-> @@ -153,14 +153,20 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
->   		if (trace_seq_has_overflowed(s))
->   			goto end;
->   
-> +		if (i)
-> +			trace_seq_puts(s, ", ");
-> +
->   		/* parameter types */
->   		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
->   			trace_seq_printf(s, "%s ", entry->types[i]);
->   
->   		/* parameter values */
-> -		trace_seq_printf(s, "%s: %lx%s", entry->args[i],
-> -				 trace->args[i],
-> -				 i == entry->nb_args - 1 ? "" : ", ");
-> +		if (trace->args[i] < 10)
-> +			trace_seq_printf(s, "%s: %lu", entry->args[i],
-> +					 trace->args[i]);
-> +		else
-> +			trace_seq_printf(s, "%s: 0x%lx", entry->args[i],
-> +					 trace->args[i]);
->   	}
->   
->   	trace_seq_putc(s, ')');
-
--- 
-Douglas
+--
+Askar Safin
 
