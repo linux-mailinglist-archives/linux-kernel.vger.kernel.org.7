@@ -1,215 +1,139 @@
-Return-Path: <linux-kernel+bounces-757454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C78BB1C255
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D00B1C26D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5353F17CCE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7F518A344B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CAD28934D;
-	Wed,  6 Aug 2025 08:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BCC275855;
+	Wed,  6 Aug 2025 08:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6Grod9H"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iwz43wOF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28340288CB2;
-	Wed,  6 Aug 2025 08:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED701E766E;
+	Wed,  6 Aug 2025 08:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754469623; cv=none; b=obrQTrTgOvM6cnOmVDFzidFfKoIKWw00bIoOVGPfeXVOykTfCNv0GIORYJhkrORJcrlJMPkeHShhF8IvDi24HfA2BaG38Jc0pPXah7gWVlqJmPNw9Rl1WIaF9cxtBHDra4k7CxKtHK3ruSSJ25sJ2RE5SjUddJqx1FQHzDQrYhI=
+	t=1754470237; cv=none; b=ZkR8O1kf3+nGvim0BYXHZHsOE4FIvmiS65IxNn35tqCyUtXnWRvmOaZbju5d/QWJkKtnuOntsqe3TX7pBNuIxCYwGw3hAGJPGZFW6rSQp/IingqOnxqF03z/JTZr8vC8RI8gTHxcmLeSeYED5+d+MXh2gGNMrc4f7YmKETI6YNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754469623; c=relaxed/simple;
-	bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FxexyABWZsfEk6rZVjrrXvM3LhoLo9rUD5YMSAAwnu+mtYoE+Oe0eS59xiOiNGfSVWW8lWrQtvvIqMoI0EeyMj77x2HKrj/31QybT1QIzMCvTUloV6p8H8RZtlwMso+Yovd/TqwfTVH/GlEjoGiRbx7u/HebDC2rimO1S1EglxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6Grod9H; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af66d49daffso934203466b.1;
-        Wed, 06 Aug 2025 01:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754469619; x=1755074419; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
-        b=X6Grod9HcCQPgzJy6rojKkqdSfOw7yiWKX75pm7En2HfXr9GbjGMeaH4L/Mm0+aKNd
-         HT/SJARE8Cto4fHvDGUUBRjAojFlkBTfHDJNSFNxhwk2G6FBcSfyZX3HItXGDq1eJtP1
-         RuF93+DxCrgHoXdxEpjHyfanZkQeT68sI6Xm+icXCdW/qyLeJw3y1zVGbBsoRn9aSaSX
-         Okr72Yy0FImdMLZ1zJkzx2jmeizY8+sNwJ0P+hNy/3b34yOMvdcb4uhxvfhaaqt8bolE
-         z8S8Uwx8iYSqF8VvN3GbWOyX1VAckfJIQklINs65jIfUaxtVGjm+mSKe+P0ocl9o3vW8
-         l8UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754469619; x=1755074419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
-        b=jtfh4EaMsk9Ej1dfdGC1PZ+XtJf/XmP6hn4xm1p3WrSBnIn9E25EUH2+NJb2rVmFTm
-         ttaoWtYzx1bSBW6wb1uC/Q9Eah2KoC1LKwaLcsbNhdmVi7HeK2XcZYYIMyu6tWNkk89e
-         BchtM2tz7xY87nrY5s7lfwd+pKgVcyoZtCvgVlkGt2AiL4P61pbPJEwSyJzbwfPQWNQc
-         TIJX9lMeUdgDWAvNLMEC6PeEWAUjJ/DrLg0zz8sGallUdqFfTSXk7EMI348qJc7G525s
-         dRMiz0Dd67a1YJ/at+VGA8DLomyvCV5pzQ1O43MYeczAP/WyIQBHnDHqXYpOYpa29qJP
-         FKKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHjiWFhPRzNHXmc2Mooo+SLOm1diJyG/efdycnfrdw7ID6oIlW2oROtVLLJScY/Te93eYnZmK+QEA=@vger.kernel.org, AJvYcCWx3Dy2N8BUUurr5IqOmZj7DxYfWkEV753QB47d+r3taiHqu1cI6HWjd01+9+hFjnfzIQ4XATinLIfi@vger.kernel.org
-X-Gm-Message-State: AOJu0YypfkyFmIxVrww5Otql6u/7yCc0mTqEi5Nz+Fb+4S9RukxfCQvj
-	bDybxOf1ThF5vLmxbH4mAIZ85nUu6yHzq8YK+IdzXK7NEDztedojotsPsfvTXCfD9Gc6vSoChzK
-	c6LPbVpwPK9gXxBOxHpZPqSPU1InMK6E=
-X-Gm-Gg: ASbGncuRxJGLMFTR/56D1SjnC5WZQ01JkE8ev2l7rTyEup3VwOkwV1XjEj17kUtRH6Y
-	+KlrypdRyyZeATbOmyFy83ZX45iy0sVvJN/m3mglCbZblxcdHrlvvJwSOm5dLeZIboSR52EYegW
-	c1i4xnhHpTEkdZerRjf25qVGTYn5G4o9IM+OHHzqtoCfl7JhBfhAgeh7iNcnWfZ+ZW4kGfQv5+j
-	HrcLKXM
-X-Google-Smtp-Source: AGHT+IHfJ9svIzWODa8rgbvEIq584AUL0oyBljvd+PygocMjYZHjM2aXI+fyfYg0JbEiFEnyH4qTbculH1RSbuT6U5U=
-X-Received: by 2002:a17:907:980f:b0:aec:6600:dbe3 with SMTP id
- a640c23a62f3a-af992bc3acfmr138428466b.56.1754469619115; Wed, 06 Aug 2025
- 01:40:19 -0700 (PDT)
+	s=arc-20240116; t=1754470237; c=relaxed/simple;
+	bh=NsHZR6WcK1x2Kavd0OOKi+xCCiUlX6GuvSFuWPYw4j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdBO91DnCoj92yD8P/VaDcsTr1NSKGxkrfR5aQ7BtS7wSBcev/VYzqFvHe36haKf12FcFc/1eaNqxlgt3wdcu//w1vxwIs6S+ZbXTaDeJtsYMCJW+VnoM6OR8ur48PCWMs/thVyLU+RwuwH0ou7FLd8FTnAWGFoIO+Dj6SPgYfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iwz43wOF; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754470235; x=1786006235;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NsHZR6WcK1x2Kavd0OOKi+xCCiUlX6GuvSFuWPYw4j8=;
+  b=Iwz43wOFtaGGqiqgLi6jD4oQ2WcPnahj4zQsTE7iDg/mFGs96pQ+xWN6
+   di/Z2WyFhfDgVeWmWJEP6xbwX3Hy8nB/NCTiDpwFt7inhsy17+6ttmUy4
+   mKL5iINimNIoONMut3FP6M6DGX4b1Yp4fs5atHL6PWzJNLoFMl7ZIvyKm
+   A5ps7rAQqewnBP2prwMigWVPQGCyGzGdswC/3FTzt6ekbVu5BLiPgd1y8
+   4+aJQYaCAt0uVD/CJZsDYl50i6XGePPSeSNjyIse30KLhl/vFLNc6rwb5
+   0kNfkxp2KSBJi36aiafptDUCRepWbVpzveWLgEXKWMxT1PtQTzJ+bs0CG
+   w==;
+X-CSE-ConnectionGUID: zVwCHwZ1S+6LPbyO42/AGQ==
+X-CSE-MsgGUID: ltSAz7m3QIOx/VRasCJCNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="68154723"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="68154723"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:50:35 -0700
+X-CSE-ConnectionGUID: qyn0KyoUSAK5R7721BaHTQ==
+X-CSE-MsgGUID: vcNEnXMjTmOhoPsta+HjOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169172084"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa004.jf.intel.com with ESMTP; 06 Aug 2025 01:50:33 -0700
+Date: Wed, 6 Aug 2025 16:40:53 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: xiehongyu1@kylinos.cn
+Cc: yilun.xu@intel.com, trix@redhat.com, linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org, mdf@kernel.org
+Subject: Re: [PATCH v1] fpga: afu: fix potential intege overflow
+Message-ID: <aJMVFUQXdMPo+l3i@yilunxu-OptiPlex-7050>
+References: <20250804082523.419159-1-xiehongyu1@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
- <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
- <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com> <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
- <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com> <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com>
-In-Reply-To: <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com>
-From: Andy Mindful <andy.mindful@gmail.com>
-Date: Wed, 6 Aug 2025 11:40:07 +0300
-X-Gm-Features: Ac12FXxTKMWG1pZklTF0P1qlwOqSdhMr6Q33eeVUrsVUud3FdPfuQWhVKcJIN3Y
-Message-ID: <CACTEcX7hsRkzYEBg4pQd5s36p_ZXJM=dtxSGmBjfkt5sWrXP8g@mail.gmail.com>
-Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
- 6.8+ on ThinkPad X1 Carbon Gen 10
-To: regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-acpi@vger.kernel.org, rafael@kernel.org, ville.syrjala@linux.intel.com, 
-	tglx@linutronix.de, Christian Brauner <brauner@kernel.org>, 
-	Jani Nikula <jani.nikula@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804082523.419159-1-xiehongyu1@kylinos.cn>
 
-Hello,
+On Mon, Aug 04, 2025 at 04:25:23PM +0800, xiehongyu1@kylinos.cn wrote:
+> From: Hongyu Xie <xiehongyu1@kylinos.cn>
+> 
+> Overflow Scenarios:
+> 1, region->offset + region->size Overflow:
+>   When region->offset is close to U64_MAX and region->size is
+> sufficiently large, the addition result may wrap around to a
+> very small value (e.g., 0 or near 0).
+>   In this case, even if the target range [offset, offset+size)
+> falls within the region, the condition region->offset +
+> region->size >= offset + size will fail due to the wrapped
+> value being small. This causes the function to erroneously
+> return -EINVAL.
+> 
+> 2, offset + size Overflow:
+>   When offset is close to U64_MAX and size is large, offset +
+> size wraps around to a small value.
+> 
+>   Here, region->offset + region->size (which would be a large
+> value if not overflowing) might incorrectly satisfy
+> region->offset + region->size >= offset + size due to the
+> wrapped small value. This leads to a false match, even though
+> the actual range [offset, offset+size) spans the wrap-around
+> boundary and does not belong to this region.
+> 
+> So fix these two scenarios.
+> 
+> Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
+> ---
+>  drivers/fpga/dfl-afu-region.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/fpga/dfl-afu-region.c b/drivers/fpga/dfl-afu-region.c
+> index b11a5b21e666..449c2ae809bd 100644
+> --- a/drivers/fpga/dfl-afu-region.c
+> +++ b/drivers/fpga/dfl-afu-region.c
+> @@ -157,7 +157,8 @@ int afu_mmio_region_get_by_offset(struct dfl_feature_dev_data *fdata,
+>  	afu = dfl_fpga_fdata_get_private(fdata);
+>  	for_each_region(region, afu)
+>  		if (region->offset <= offset &&
+> -		    region->offset + region->size >= offset + size) {
+> +		    region->size >= size &&
+> +		    (offset - region->offset) <= (region->size - size)) {
 
-Can somebody advise how to properly bisect issues in linux-stable
-repository between v6.7.11 to v6.8-rc1 tags?
+You don't have to use these tricks, they make the code hard to
+understand. If you care about the overflow, just pick some helpers from
+overflow.h
 
-I tried two options:
+And don't check region->offset + region->size for every get, they should
+be properly initialized at the very beginning.
 
-1. No skip
+Thanks,
+Yilun
 
-git checkout v6.7.11
-git bisect start
-git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
-git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
-
-Leads to:
-The merge base 0dd3ee31125508cd67f7e7172247f05b7fd1753a is bad.
-This means the bug has been fixed between
-0dd3ee31125508cd67f7e7172247f05b7fd1753a and
-[6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1].
-
-What should be done next?
-
-2. Skip
-git checkout v6.7.11
-git bisect start
-git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
-git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
-git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
-git bisect good ba5afb9a84df2e6b26a1b6389b98849cd16ea757
-git bisect good 61da593f4458f25c59f65cfd9ba1bda570db5db7
-git bisect bad e38f734add21d75d76dbcf7b214f4823131c1bae
-git bisect bad 5d197e97fb106c09d3d013be341e5961fd70ec8a
-git bisect good 1b1934dbbdcf9aa2d507932ff488cec47999cf3f
-git bisect bad 8c9244af4dc8680a453e759331f0c93d5bde1898
-git bisect bad 783288010035e4c250a0b6491a4642cdb8d30548
-git bisect bad 1c3c87d720cbd1ff86dc1bfc6df8ee9adce5879b
-git bisect good 8d99e347c097ab3f9fb93d0f88dddf20051d7c88
-git bisect bad 6c370dc65374db5afbc5c6c64c662f922a2555ad
-git bisect good 43f623f350ce1c46c53b6b77f4dbe741af8c44f3
-git bisect good 8a89efd43423cb3005c5e641e846184e292c1465
-git bisect good 5d74316466f4aabdd2ee1e33b45e4933c9bc3ea1
-
-Leads to:
-
-# first bad commit: [6c370dc65374db5afbc5c6c64c662f922a2555ad] Merge
-branch 'kvm-guestmemfd' into HEAD
-
-Which is incorrect as per Paolo Bonzini comment.
-
-I'd like to test this thing, because hibernation is quite crucial in a
-multi-boot environment and may save a lot of time while working with
-different systems.
-
-Thank you in advance.
-
-=D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 22:49=
- Andy Mindful <andy.mindful@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Can you please advise on how to bisect further?
->
-> andy@lenovo:~/linux-stable$ git bisect bad
-> The merge base 0dd3ee31125508cd67f7e7172247f05b7fd1753a is bad.
-> This means the bug has been fixed between
-> 0dd3ee31125508cd67f7e7172247f05b7fd1753a and
-> [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1].
->
-> andy@DESKTOP-0R165CF:~/linux-stable$ git bisect log
-> git bisect start
-> # status: waiting for both good and bad commits
-> # good: [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1] Linux 6.7.11
-> git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-> # status: waiting for bad commit, 1 good commit known
-> # bad: [6613476e225e090cc9aad49be7fa504e290dd33d] Linux 6.8-rc1
-> git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
-> # bad: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
-> git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
->
-> andy@lenovo:~/linux-stable$ git status
-> HEAD detached at 0dd3ee311255
-> You are currently bisecting, started from branch '6fc5460ed8dd'.
-> (use "git bisect reset" to get back to the original branch)
->
-> It is not moving further.
->
-> =D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 17:=
-50 Paolo Bonzini <pbonzini@redhat.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Mon, Aug 4, 2025 at 12:57=E2=80=AFPM Andy Mindful <andy.mindful@gmai=
-l.com> wrote:
-> > > Double-checked bisect, looks like I've have found broken commit:
-> > >
-> > > > > git bisect bad
-> > > > > The merge base ba5afb9a84df2e6b26a1b6389b98849cd16ea757 is bad.
-> > > > > This means the bug has been fixed between
-> > > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757 and
-> > > > > [1b1934dbbdcf9aa2d507932ff488cec47999cf3f
-> > > > > 61da593f4458f25c59f65cfd9ba1bda570db5db7
-> > > > > 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-> > > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757].
-> >
-> > This skip is messing up the results:
-> >
-> > # skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
-> > git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
-> >
-> > and there are still 3858 commits in
-> > ba5afb9a84df2e6b26a1b6389b98849cd16ea757..{1b1934dbbdcf9aa2d507932ff488=
-cec47999cf3f,61da593f4458f25c59f65cfd9ba1bda570db5db7,ba5afb9a84df2e6b26a1b=
-6389b98849cd16ea757}
-> >
-> > Any chance you can get 6.7 to work and restrict the range further?
-> >
-> > Thanks,
-> >
-> > Paolo
-> >
+>  			*pregion = *region;
+>  			goto exit;
+>  		}
+> -- 
+> 2.25.1
+> 
+> 
 
