@@ -1,103 +1,193 @@
-Return-Path: <linux-kernel+bounces-757790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD25FB1C6A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:12:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B3FB1C6AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8160C18A57F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10CC43A2781
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2028A41E;
-	Wed,  6 Aug 2025 13:12:00 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A515661;
+	Wed,  6 Aug 2025 13:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="g2jw1miM"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE8B244691;
-	Wed,  6 Aug 2025 13:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485920; cv=none; b=GfxMpVnMphBlI+9AhjM9xoGQ57WNTGMRhlSzj0w/Pehu2dfqzCyG+fptqZXlTOXkNr2kcGfT9ZtErcb6vINxbHDvIdTceDXJ1czGCGDQUPdmXVpFrQl+LsK+eG+tRmleEGjhkukOFLBC3D8GpTSIsC/sJvFz0Ev833rWS2TYN8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485920; c=relaxed/simple;
-	bh=up6HznFRCo4Kwue6phlQROxxqBLCthAji6XRDD7kZc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V5aGyxxM4NYPr891Mj/7eqKtMhrF8TNp/7ad1qFIFDyUU/vWE/PwBaHNXYUNSULCua2AJ1Mt5CdUGjCAPMCVE76kkHGhuKAFGwnZq7q1688nVC2Om5usYQ1+r0IqljJxcbJX3nPCvzDbilC6zp3q1Kcb3AzL7Yb6YmmGwyVAqMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24049e42f37so6052135ad.2;
-        Wed, 06 Aug 2025 06:11:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754485918; x=1755090718;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pyO3bEIx87RK0J8Y5zDIpZVaRTgChtksd99Tn6a74Mc=;
-        b=SM4LVfPFit7ezyZPZHhFqV0thcNVabuqoOAusKSKsH02Tw02xqFDrhxPHpXPAciiNy
-         SWAtRKO/7qJ5zIJzkh2yQFE0MLDzQjeysd4df9Rp2q/hYbchzzgu8djYqxEneu1NY9iR
-         L/iU+/S4vx3PsHERPgvVsQVHofn6NktOeO/O5tXbgiwEPGiKv4sKXzKNtes3NsEgaoYs
-         MmpPcLzU72fqaBc2Si14IybFjlcEjAhD1f6U/O7j71pOb+AurKjZbV8i/sO+zqI3/wis
-         wyLqfZhFQTAbjZqF+foV+0vKD60fNX4KLm1ZS3wNFi7gmD8qCQzgFTsvQcP2B0OhjTPr
-         okLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNr9UIIRx37lcNBBxk2ryFCxiQdMxH1DLUY6iMGsb1FEVD7Lhz8IKqlGL6Sf79fgqAQmJzphOdFlka@vger.kernel.org, AJvYcCXxgYpxzvb/I1X02Mt7JZFaiswdRxUSswG2DPPjgmIDVHCX9p/lsIS6vbVx5CpHHMgmNDOqFv8YnOne/Rie@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV1vOuBrJ6oaXS7Ur7ivtkOebA2AUC5036ZL4kDrAbNVWMlAHz
-	wxFcUQPrwRh8gkhhzCrVYI+bUyUME1IetwHVRicbTL5FjpeE+9lrw5sF
-X-Gm-Gg: ASbGncuCAYW+6oJxqEG7f9MwvOtesA1HrUNT1rzVivfDJf0KeKsEvIhOR4yv5GrXfY9
-	jcrU5O5Q3YLvT86gqSHR3PDQx+yErR/RkPTJkvhzEMJnXuoTFn3cmKOlxRky/BYlDCb5I9a6jXM
-	Xe02wjxyAIyrob0c9sS5PTs8vXT0wqmw2C2rNmWZbU7fnnxYRdY3K/CXo96yg9zIVBnzeqEiLvs
-	M6lvnohk/ixwY+oEQ/Oduds9wopsVReUDdqAUhIT4w289FRf9/0PIkqVofBJl0iidBHxxilsrsK
-	82IkswIB+EdWvZ+s/eTBt2404iDAUD4qI8lNIwmaKKDSNi076wQebCW7ca/6KZQDycLiHw5/2Ip
-	WvmBBehuQz7ID8SNGO6n+58FK/pKo/eGoeQ599TfFcho=
-X-Google-Smtp-Source: AGHT+IFSqw8CaSRoNU335WEu5gn+pCRxtQcb4ASN0QjLJMqlu5hcoW8AY/KvD+4w4PhQ8l7o6U1qpw==
-X-Received: by 2002:a17:902:db08:b0:234:bfcb:5c0a with SMTP id d9443c01a7336-2429f47b92fmr17984715ad.5.1754485917472;
-        Wed, 06 Aug 2025 06:11:57 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef6a8fsm157686225ad.23.2025.08.06.06.11.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 06:11:57 -0700 (PDT)
-Message-ID: <e99617c4-2481-4cae-a80c-2f55e41506dd@kzalloc.com>
-Date: Wed, 6 Aug 2025 22:11:52 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65162D7BF;
+	Wed,  6 Aug 2025 13:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754486193; cv=pass; b=SKu6E6EG1EfLjVl6cHvNu4JZcRuhPqoAdcSGeWFNMZJE5ZT32iNkhOtCjqAhloY3ycroc7JDhihBn4/C9k+nWgvojyn3Cj79vq1ghOw9Hy2MF3axFW7IYa81eIOSSKVzTlW92/OeKnR48aeDWqQA3hDj1zA66fnzZgxPzAD4se8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754486193; c=relaxed/simple;
+	bh=ez37Ibbz5dtRuOcR/6LAaIgmyERaVqHwZ0Yy2TDMwwM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KzacCbNjkSpUusgd2KejzqsbKt9QasprvPRNNTTfs+3sc+fqmkLneT0GWFk/o/MsqtrxlKKdI7GIMuNHIdYLsQxwC0huXwH80YstLKjTosljsMbuFxb0ZpsLvs71v4qyHQoIG+yevFVuaRb7gXk6c0WFmp6F8M+IIpsIjDASRK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=g2jw1miM; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754486175; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fziszNXFr0YNOqbYjB5/gCcqFNi2aF8pw/2Tw8xoyP6Y8LUps/sHnybdVjJRtTPgNXU+vnu56RmFSj2R/K7/SzRervtyu02osnndCQdahhtwlQML7eqhVIxUDdpfU9Kdlns5KdaZoSsH1xHYcHSbLg8Vr1VBwVIcZ3bc4AaNgYs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754486175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ugatb8Lju39e82m8xw2MzulazQ7H2RroEEK3NjtHRCg=; 
+	b=Uq/Bm6R29D3l4QRcQebHRHr6zpMyEb/8qtlFEqWnhi8PrwFt0nK0V39AdBjCin01Y85hQvML+O+Y5INU+G3/dF8qLeNcFmIYHgqaXOGzkVpu8T+Q2qydxZ5eyiaUQglfghK8VZ76S1gv1Mv01XKZyZlu0c6eeQGpec+7jx4NKo4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754486174;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ugatb8Lju39e82m8xw2MzulazQ7H2RroEEK3NjtHRCg=;
+	b=g2jw1miMUICHe/FGYWo1qm4EuYwe/r76o17ZO16Dpd96BF1UY6nD298KMx4vUn1N
+	BPO02GPSzvLGb0LauotT9lcoVVl56FCgxmWDLzcG+i6ObFh2wYkc4060cDEjGvwG9zo
+	eQARTHPybTkBqcHnKmNariPnrYOB5PA1C8nL1HsU=
+Received: by mx.zohomail.com with SMTPS id 1754486173123349.7910615471999;
+	Wed, 6 Aug 2025 06:16:13 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ksmbd: add kcov remote coverage support via ksmbd_conn
-To: Stefan Metzmacher <metze@samba.org>, Namjae Jeon <linkinjeon@kernel.org>,
- Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey
- <tom@talpey.com>, linux-cifs@vger.kernel.org, syzkaller@googlegroups.com,
- linux-kernel@vger.kernel.org, notselwyn@pwning.tech
-References: <20250805155627.1605911-2-ysk@kzalloc.com>
- <d12e1d6a-d9e8-4bb3-abe4-9bcef1cb8f77@samba.org>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <d12e1d6a-d9e8-4bb3-abe4-9bcef1cb8f77@samba.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 05/16] rust: str: introduce `NullTerminatedFormatter`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-5-3a262b4e2921@kernel.org>
+Date: Wed, 6 Aug 2025 10:15:57 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9A4DD7C-D9C2-4D91-B6C3-684BA1C100C0@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-5-3a262b4e2921@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hi Stefan,
 
-Thank you for the code review!
 
-On 8/6/25 9:14 오후, Stefan Metzmacher wrote:
-> Hi Yunseong,
+> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Add `NullTerminatedFormatter`, a formatter that writes a null =
+terminated
+> string to an array or slice buffer. Because this type needs to manage =
+the
+> trailing null marker, the existing formatters cannot be used to =
+implement
+> this type.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 50 =
+++++++++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 50 insertions(+)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index b1bc584803b0..c58925438c6e 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -838,6 +838,56 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>     }
+> }
+>=20
+> +/// A mutable reference to a byte buffer where a string can be =
+written into.
+> +///
+> +/// The buffer will be automatically null terminated after the last =
+written character.
 
-> conn->kcov_handle is a new element in ksmbd_conn
-> and I can't find the place in this patch where it is initialized...
-> 
-> metze
+Hmm, I suppose you want this to be the only null? See below.
 
-Thanks for pointing out that important part — I absolutely missed it!
-I’ll add initialization of the conn->kcov_handle in ksmbd_conn_alloc().
+> +///
+> +/// # Invariants
+> +///
+> +/// `buffer` is always null terminated.
+> +pub(crate) struct NullTerminatedFormatter<'a> {
+> +    buffer: &'a mut [u8],
+> +}
+> +
+> +impl<'a> NullTerminatedFormatter<'a> {
+> +    /// Create a new [`Self`] instance.
+> +    pub(crate) fn new(buffer: &'a mut [u8]) -> =
+Option<NullTerminatedFormatter<'a>> {
+> +        *(buffer.first_mut()?) =3D 0;
+> +
+> +        // INVARIANT: We null terminated the buffer above.
+> +        Some(Self { buffer })
+> +    }
+> +
+> +    #[expect(dead_code)]
+> +    pub(crate) fn from_array<const N: usize>(
+> +        buffer: &'a mut [crate::ffi::c_char; N],
+> +    ) -> Option<NullTerminatedFormatter<'a>> {
+> +        Self::new(buffer)
+> +    }
+> +}
+> +
+> +impl Write for NullTerminatedFormatter<'_> {
+> +    fn write_str(&mut self, s: &str) -> fmt::Result {
+> +        let bytes =3D s.as_bytes();
+> +        let len =3D bytes.len();
+> +
+> +        // We want space for a null terminator. Buffer length is =
+always at least 1, so no overflow.
 
-Best regards,
-Yunseong Kim
+Perhaps this should be a type invariant? I know this is a logical =
+conclusion
+from saying =E2=80=9Cbuffer is always NULL terminated=E2=80=9D, but =
+it=E2=80=99s always
+nice to be even more explicit.
+
+> +        if len > self.buffer.len() - 1 {
+> +            return Err(fmt::Error);
+> +        }
+> +
+> +        let buffer =3D core::mem::take(&mut self.buffer);
+> +        // We break the null termination invariant for a short while.
+> +        buffer[..len].copy_from_slice(bytes);
+> +        self.buffer =3D &mut buffer[len..];
+
+As I said in my first comment, if you want this to be the only null, I
+don=E2=80=99t think the copy above enforces it?
+
+> +
+> +        // INVARIANT: We null terminate the buffer.
+> +        self.buffer[0] =3D 0;
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> /// An owned string that is guaranteed to have exactly one `NUL` byte, =
+which is at the end.
+> ///
+> /// Used for interoperability with kernel APIs that take C strings.
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
+
+=E2=80=94 Daniel=
 
