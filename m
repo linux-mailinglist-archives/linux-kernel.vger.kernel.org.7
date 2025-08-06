@@ -1,181 +1,140 @@
-Return-Path: <linux-kernel+bounces-757660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EACB1C4F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE5CB1C4F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5397218C1B74
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0CE1894D2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FE528A726;
-	Wed,  6 Aug 2025 11:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F589275B02;
+	Wed,  6 Aug 2025 11:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fJBEF5vG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lMiMLYjl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D3925B66A;
-	Wed,  6 Aug 2025 11:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29000433C8;
+	Wed,  6 Aug 2025 11:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754479800; cv=none; b=CTKam3yYB9sn3qh3htSq2uX9Xxvww0+BLffEMXO3YDH8gXvIa3bvdqNdazvjcezhbtEFk6XOdubMMBqgnEW5S8oZqyW63ZFqdHzKAeUpiqZdogPgdetPRBqHTVQwsHFNMV+naN9R7vnboChCADosO5gn63cugNi5xhl/CKMFPdE=
+	t=1754479886; cv=none; b=fXV3a2kGsPJl1wLBlpJUUJDtmCzdfjlgW9eghb9kpZdM8JpFsGpVSKLJUu2jF5UL59ZVHCGkOzUTPktoIK2Jo6aj6rakHlimVcoNNSk4KH7pJda9uP4u1M83nfyNMKn7e9Q1L8IM0z/l8kG1iICDEYGhOh6crACSmszITDvrhH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754479800; c=relaxed/simple;
-	bh=lXxGjaqxd4CR1EycdnQYnZEdyBTLW4aFYI0WMkr8IDU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G607ycwe1eUtIymLh/MgrJEUjmRSvw48HxFtEywamdwOXnJ19viEvT2ywq8PNXmlYmRDP6cjrhuS9JOVSsaV9rDtXVXP7GNapiBW5I0aSb0b7Ps04BBD5TZ0WyJOImy78RDMS/Mz29AVm0e1cL10XYE5feESPvUQ7mbXmp3v8Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fJBEF5vG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57684lUB028218;
-	Wed, 6 Aug 2025 11:29:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=lXxGja
-	qxd4CR1EycdnQYnZEdyBTLW4aFYI0WMkr8IDU=; b=fJBEF5vGQYKG9qB/YDwoxM
-	MNTHafF3RQ24jE+uO1aYs4jhjNxqk7fSpBfJXmuc6kCY3J+VfRUWvikreZbScDBY
-	5EwrJdTsplilqYw5WqWNYr8jSW8eqYAbCGf80RRJJF3CZHnan1357YPoAfTIRJyB
-	7Lk4JTfiNXdmr1Hk5bLQbk2WxPfoV61+67JYev9d6NCETCNKvsX2pXVDDhu6UTSr
-	pC43DOduP49IIpEXvk+m6Duk7A1dogU2eQeMw+VsQkman1BF+BXP+Ugh/LF6BXsA
-	QpFH2bgjPuyL0PZcaeQ/sIiLig1d/dR7NjgNTLH8mVDRwJH+6+gZCKePFj0OWDeA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq60uva4-1
+	s=arc-20240116; t=1754479886; c=relaxed/simple;
+	bh=ZuxRBd6jJ7SUjIF8DFJPPL4k5uJidCXY8nKkfs7swsw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPoPKTr7wKn9Hp60wWCq50WfEtc/UTWdnYQewWAGdrVXG/5NAO6PZ09zg+kO9vQR53ro5KyOwbMO5c19UTXQM2Rq+keJW+mgzyo/fwZljQm7Sf7esHKkmfccbV4BHdGpcHV6AUlq/9Qem2IhVOcWiCN17RYg5RzyGfbnJofPi4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lMiMLYjl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765Fg3D011200;
+	Wed, 6 Aug 2025 11:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9uIL7Z9DYCMYxSkLuJ07zDMK
+	DKvnjcJjKrLAyq9rKgw=; b=lMiMLYjlapsV3WkwpN35Q/IpqpPh+pnF62Ia1qk4
+	35LP8PTeI0Z3Je4dbYm8GM1eFI05Y0sPRA7QL/SklmoLmES1wFM95/ewuONVKIoj
+	JQKZIC28x1j9ukfxp2cBHu8+MG4ttk6f8piw9R+XGdRRnhcA6gPChRiRo1HinSia
+	PWksAoJAMLMl8wRVUubi3FJh00Y7inpl6gLwt7GyoOd2Frqvs//aez0kaGMDqLyS
+	XTezBqRkJiw6LMgkw4byCG7Ihb/6qFyBbtubh586lr0jBUg8idsy2cDoIc2XjYtP
+	xEe1jXHkmKlpLk6+Is8Gi41sHeYE2mXvLLPZ4zNMzm7Ymw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw32jvf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:29:58 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 576805q6001574;
-	Wed, 6 Aug 2025 11:29:57 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwqubmt-1
+	Wed, 06 Aug 2025 11:31:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 576BVJ5I010229
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:29:57 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 576BTrIf46465348
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Aug 2025 11:29:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E28C820040;
-	Wed,  6 Aug 2025 11:29:52 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 035DF2004B;
-	Wed,  6 Aug 2025 11:29:52 +0000 (GMT)
-Received: from [127.0.0.1] (unknown [9.152.108.100])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Aug 2025 11:29:51 +0000 (GMT)
-Message-ID: <560548ac0ca1f7be7cfb77e34745f86075df2f41.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/2] perf bpf-filter: Enable events manually
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Thomas Richter <tmricht@linux.ibm.com>,
-        Alexander Gordeev
-	 <agordeev@linux.ibm.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann
- <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Ian Rogers
- <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Jiri Olsa	
- <jolsa@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik	
- <gor@linux.ibm.com>
-Date: Wed, 06 Aug 2025 13:29:51 +0200
-In-Reply-To: <1094385e-6f86-453f-a48e-fa284dcae385@linux.ibm.com>
-References: <20250805130346.1225535-1-iii@linux.ibm.com>
-	 <20250805130346.1225535-3-iii@linux.ibm.com>
-	 <4a7fc5ab-682d-4fac-a547-9e4b1263dba7-agordeev@linux.ibm.com>
-	 <1094385e-6f86-453f-a48e-fa284dcae385@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	Wed, 6 Aug 2025 11:31:19 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 6 Aug 2025 04:31:13 -0700
+Date: Wed, 6 Aug 2025 17:01:10 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>,
+        "Sricharan
+ Ramabadhran" <quic_srichara@quicinc.com>
+Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: ipq5424: Enable cpufreq
+Message-ID: <aJM8/pA7X5KH1eJ/@hu-varada-blr.qualcomm.com>
+References: <20250804112041.845135-1-quic_varada@quicinc.com>
+ <20250804112041.845135-5-quic_varada@quicinc.com>
+ <4890c832-3b78-4294-aaba-b62735f7934e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 97x1FuJDSp1d4OU08MjnD0Zz4dogtLNu
-X-Proofpoint-ORIG-GUID: 97x1FuJDSp1d4OU08MjnD0Zz4dogtLNu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA3MSBTYWx0ZWRfXx+1Jgl1bZtfN
- hWg/n2yPk9ikIhV+KpGJ833xX4WNg3Kp2YSdQrRUUs7Q92zj+5mi2RWcBfioY+v73fwIetdTMDq
- jKUJblciv6aeQRVvTF1uIim2ofNEaeC5yA+FNnjuEy548DLc4MyYLuM8n+HlQMSGNQWC2vLUVzt
- +MHgL38uStopU1+L1vNFso33RxiODnEM1a5rpOXr4Q7JO+vN5VIQ4eFH0shI03jKbctdSuwRgIE
- JJq59ZE1XDR2MQDQCkuNRIL0qL+xwHkQnnEWnq44mrg7ZOxzoFpGqDuRPXd9n4My/o8TLu3EIFN
- xaE1mZCUAm7lm6MCI+766TGNSAyo4oyDppdwDDrw/jq2PhCRoIAlbC9l5Tj3PxUw4YgHJyA2bZ0
- bI0Jp0rsfytdp1I3xMjaz2eWlGHNUBl3LLU92dXesUGZWitpNU37TuXDrZd+AUL5vfA0Yoqy
-X-Authority-Analysis: v=2.4 cv=TayWtQQh c=1 sm=1 tr=0 ts=68933cb6 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=UvtTZARwlCIvicOQcdAA:9
- a=QEXdDO2ut3YA:10
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4890c832-3b78-4294-aaba-b62735f7934e@oss.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfXyAFyDBk6tXP8
+ lQs9NcSwiuhUJi93i4rFxCt/P3WqG++qc73/D8UXHVrG6bqVutSJueNZRhdmQnvI3MAlpvh1gvZ
+ bAIiLtt8pjqk/EEtVvPVuxhpndKCLVLqdLtAWi5brDIt9O48htyvYFhpYx/SW/fKE+xLJEX6G/Z
+ WVFC1DJUKF3oQLBdC2qSCiy6PUrzfK+pI3vpHMH3B5oJRLAwlW/V467SE4kWTIiTePwrVMZBw4o
+ rbq8uiQTYJGHuIJrO1dxO0LIsXKHf48Mhfc/gB20HFFl/ue6yqdh9tAfmRW8HRmubX+Sy4ugje8
+ QHaRZD71dJb2FMsj+vlf4J9gJ0IxJ2dDC6YHXUHI46ohJhqZiIiJjAI1tLLjjGR/SxjJBJYMjvi
+ 41FamGDU
+X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=68933d08 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=s_Oo--g7qLRG9Z0-HlQA:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: LHdlWfO724hTdmmN09zZKZNMSS5JTkKK
+X-Proofpoint-ORIG-GUID: LHdlWfO724hTdmmN09zZKZNMSS5JTkKK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508060071
+ spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
-On Wed, 2025-08-06 at 11:29 +0200, Thomas Richter wrote:
-> On 8/5/25 16:14, Alexander Gordeev wrote:
-> > On Tue, Aug 05, 2025 at 02:54:05PM +0200, Ilya Leoshkevich wrote:
-> >=20
-> > Hi Thomas,
-> >=20
-> > The below comments date to the initial version, so the question is
-> > rather to you:
-> >=20
-> > > On linux-next
-> >=20
-> > This line is extra.
->=20
-> I just wanted to let readers know which repo to look at.
->=20
-> >=20
-> > > commit b4c658d4d63d61 ("perf target: Remove uid from target")
-> > > introduces a regression on s390. In fact the regression exists
-> > > on all platforms when the event supports auxiliary data
-> > > gathering.
-> >=20
-> > So which commit it actually fixes: the above, the below or the
-> > both?
-> >=20
-> > > Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF
-> > > program to perf event")
-> >=20
-> > Thanks!
-> >=20
->=20
-> Good question!=C2=A0 Pick what you like... :-)
->=20
-> The issue in question originates from a patch set of 10 patches.
-> The patch set rebuilds event sample with filtering and migrates
-> from perf tool's selective process picking to more generic eBPF
-> filtering using eBPF programs hooked to perf events.
->=20
-> To be precise, the issue Ilya's=C2=A0 patch fixes is this:
-> Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF
-> program to perf event")
->=20
-> However the issue (perf failure) does *NOT* show up until this patch
-> is applied:
-> commit b4c658d4d63d61 ("perf target: Remove uid from target")
+On Mon, Aug 04, 2025 at 02:33:12PM +0200, Konrad Dybcio wrote:
+> On 8/4/25 1:20 PM, Varadarajan Narayanan wrote:
+> > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> >
+> > Add the qfprom, cpu clocks, A53 PLL and cpu-opp-table required for
+> > CPU clock scaling.
+> >
+> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > [ Added interconnect related entries, fix dt-bindings errors ]
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+>
+> [...]
+>
+> > +	cpu_opp_table: opp-table-cpu {
+> > +		compatible = "operating-points-v2-kryo-cpu";
+> > +		opp-shared;
+> > +		nvmem-cells = <&cpu_speed_bin>;
+> > +
+> > +		opp-816000000 {
+> > +			opp-hz = /bits/ 64 <816000000>;
+> > +			opp-microvolt = <1>;
+>
+> I just noticed this.. I don't think we have CPUs this efficient just yet
+>
+> Do we know some real values for these?
 
-I think I will switch the Fixes: tag to b4c658d4d63d61 then, because
-IIUC it is one of the factors that drives backporting decisions, and
-it does not make too much sense to backport it to earlier kernels.
+Have fixed these and other comments and posted v6. Please take a look.
 
-> There are some patches in between the two (when you look at the
-> complete patch set),
-> but they do not affect the result.
->=20
-> Hope that helps.
+Thanks
+Varada
 
