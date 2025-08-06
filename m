@@ -1,208 +1,198 @@
-Return-Path: <linux-kernel+bounces-757984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2CDB1C951
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5E0B1C954
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5AA3A9C2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34111888625
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072D296141;
-	Wed,  6 Aug 2025 15:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B6E292B3F;
+	Wed,  6 Aug 2025 15:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="H6vEQJp0"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011027.outbound.protection.outlook.com [52.101.70.27])
+	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="feGCiIK3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NG3Ziujv"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D1772615;
-	Wed,  6 Aug 2025 15:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754495454; cv=fail; b=B242d9DfnhANX6+5mXwkI1X2QXfGR6FQu96JXZkFig5COf8AXcPuiBnfFtAJDUbstelerPWU6OrMNI728z8RpFh3gLEQ73C9madPLfmW94g6wpy0STDs6qvTUYQ3SOj7QIacanZcOAl5q1UVJFc8HST1cahNGgqSqOYlRqWDiA0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754495454; c=relaxed/simple;
-	bh=4r1EdSXHG+Zw+hKN1mH1yw3oX4qp7fUNJAVLn427Frg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hezeOfEw0o7u/iqblaPgn8lY2zzbXgYr/n3pPbZur/qGZgPpQ2BPvyyItZhqmn3EspcjI0DL/TWSARBdY+1PzUw512dQt1FVfTjETvKPaZaW46qlxrN8Iipp+YTmZ2+tXJigF+mzYNE7zq/cBSwwxplOD8KkgEMeb2Ck4HcOFQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=H6vEQJp0; arc=fail smtp.client-ip=52.101.70.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IW+5dT3LwgFLLuEpzuFGkfIZuLBuTVotakY5zQ4T6PZMOs+b+85v8unl2AGPw28t9mhZpxyPSWTxtiGpS0FNrhvAbSpClbXbMU4ul0wbzQVjFHaAK3twvhFqlhu42BqzACEnoWrhbri04mIJA/UZHpvqPqTZvEPMJjvmtx+D/SvodegF7YRYbw5jG94nuPSHKvMECFjPbSVjYuDFKpsXPYonMwN4Ti7uEAG4adYBRdAkp3UpYrxZaRi0i7J2lQdfQBV9t4f9yu0B+Zxf0q/BXBlM/hysjaOi3gEmiv6eqT6CJWyChg7TeQ4v42xO24V6JnHzBFx+5konCLN+WjMXCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5oDx8oIarS8trZV+VCVuofz0Wkim2qQdsuC46h9LcCM=;
- b=PB6bUNg/EbuuYLE3bu31O1OKcoCC9RqzEO5RIpc9tbHPm4zhTZaJQetOeOI4TPmfkvr6yGfXlKbqnLe9IsFLl5vLhmQu9hZSIAx107OTqyLkBBZ6PoBIXRMTwqRdqTNGyItZt1aSPt3fRW6lxrAOcB6ccbZ7tY+5bJWw3USYYUB0E1+TaYpaz3bRBnpW0K90Oe3o4N2E3qVd0qsmtMSKBWQuy26zJn5Qj9AldtV2qC5yb3qYgjFNn33hRQEm91VvWcUgiZ0vNx8GlILCtbps5YYnOcm5dk+ouGhFIPft1CNfzkj/7v+HPP18BkmSxZlV3TxgNgPvbchX1PMtSM6+Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5oDx8oIarS8trZV+VCVuofz0Wkim2qQdsuC46h9LcCM=;
- b=H6vEQJp0fK2WLyJWDs9u/1/bABL3Ug4y/s2I+SyOC4y3M9jRdMQv0i1YkuG//8b5/2rVFp9YsbDRpSZBTO4l+k0YW9uzfoXCJIqJ5/O1J7TTzYJcFxxbYpAt9/DqDZlvXsOHFMZtcekSwNY+1YHAvboD3yv6d+hnqmpAQHh95jNdoPvZBMFTcQp9ULBJph8GXczrSQHhs/tCcpi/6obT8c5ebM8rNgE4gNGSg//rRUPlxUCMBMUVBUxQm0fAQIvJq5uDzb6EuT3sCAD65Sji+wo15MRJDyEDpk393BaatNoKcRZUuB6VE3clQirN/WLaja4P90zKIo4aFw2CJSY7/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB7776.eurprd04.prod.outlook.com (2603:10a6:102:c4::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
- 2025 15:50:50 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 15:50:50 +0000
-Date: Wed, 6 Aug 2025 11:50:38 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Joy Zou <joy.zou@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, peng.fan@nxp.com, richardcochran@gmail.com,
-	catalin.marinas@arm.com, will@kernel.org, ulf.hansson@linaro.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, frieder.schrempf@kontron.de,
-	primoz.fiser@norik.com, othacehe@gnu.org,
-	Markus.Niebel@ew.tq-group.com, alexander.stein@ew.tq-group.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux@ew.tq-group.com, netdev@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v8 01/11] dt-bindings: arm: fsl: add i.MX91 11x11 evk
- board
-Message-ID: <aJN5zggEETZYUPIC@lizhi-Precision-Tower-5810>
-References: <20250806114119.1948624-1-joy.zou@nxp.com>
- <20250806114119.1948624-2-joy.zou@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806114119.1948624-2-joy.zou@nxp.com>
-X-ClientProxiedBy: SJ0PR13CA0211.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::6) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32A0296141
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754495470; cv=none; b=ElpOKQpETc1KFXGOT4B35hV/V4CX0KtNRFTE3IlMVZF1jmbYD5Vjz98qjpyu7fPVDH9k14Na1a+XcCRuWM9YVj4KRcgTStykny23f1HCh/M0noEaZQz2e9gpZafRsJReyZAaqN7WO8J1Aof5lWbM7mmATNnKcp/sgVcTqVi9WWg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754495470; c=relaxed/simple;
+	bh=IDSlojlj/P5UhxYr7GGWRqRIZthRZrEWCqxkGAawL8E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ZojgAZDKYXThsIgdw+L5d0i3rsdnMGbqjSBoDUkm9nWbvCdCy2Dj9CjA/clB2E6Cf1rWqNGYGCQ0vftiJ2ZxqpJJFDGT9civz5TJBH+9kA3Jve9cKW8hs3vwGM3KfPg9aK+N7bzjMWQAgNwH+48MqQ7M58FTbO7VJMITBmEelFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=feGCiIK3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NG3Ziujv; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id BF3CC1D001A1;
+	Wed,  6 Aug 2025 11:51:04 -0400 (EDT)
+Received: from phl-imap-04 ([10.202.2.82])
+  by phl-compute-01.internal (MEProxy); Wed, 06 Aug 2025 11:51:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754495464;
+	 x=1754581864; bh=IaqvCFRZQRnYawxKT71RrgJ5OBa2wbh5jJ2w0t8ChIo=; b=
+	feGCiIK360Zpqd0eAJf8NX2qNY0v5AL76y2uCyunAuCuTPUZXdOcRrAf/ROsf8EK
+	yK7mNIlEY6sTMUR98GpFFSSxB9pHM+yDTFGaJl7XW+Po+tGvvFJljQTunbXjR3Lq
+	e9nO41lM9mOdgw6tG78seyuEsQeHwbf19TUqkO0BAmD1SsoT7cx+eHggqaWutUee
+	IQoBkySp3hZcrJbOeXQuVWWVWw6c0PRqWKZZwVg/Ij69vj6NGGOr+72OEwIJYAtz
+	DDnl5PFhhXxiMSBLVIPCFbj9AqXKqV4rB+4KfvS1mMhBFfL2yWgcCraYjBMzAS+U
+	+uXI6Qx184DfnLoVpkHs/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754495464; x=
+	1754581864; bh=IaqvCFRZQRnYawxKT71RrgJ5OBa2wbh5jJ2w0t8ChIo=; b=N
+	G3Ziujv+5eD/Ra3kFjb5cBm7sTSXWfVQgstU4kgqL8HLjsazeL+btasDUU0/gLZG
+	gPI54QNlLzTUchl5SZXARu/cS0eQWR6q7pyljy5Ej30B5CpQFwz7dcPCBm031AQa
+	5F/Bq3KSPom6conr+uAOKSG7XSg2jhbLOLVX/jzAvK7qttbFWcpYmqsCGw5FmQ9c
+	7hS60J6UtlXn/RPTM+VpILqVKhfv9apEid5mQNzEdnMaob+tIRQ1oC/nXiaZ0X5x
+	y/NlWms7sO92Q7E+lCMKBZ/9ADC3KF/k5opxpR8v50yWv0/lbbh1XWWV4BgQVK2d
+	Nuz0B/czSBnbeFUU4nOdA==
+X-ME-Sender: <xms:53mTaLhZSP8p0w6qPLzTZXzoAM9UAembYJu7A3HxOoIzhIym7XqfUQ>
+    <xme:53mTaICf_z9OqFAfYlE_uay_zGqMWJ8sw0nrQruN1Y6lUUQixK6H3ucJz-hMIMWTT
+    ipXgGK6l1I_po-vhUE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudekgeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthejre
+    dtredttdenucfhrhhomhepfdfrihgvrhhrvgcuuegrrhhrvgdfuceophhivghrrhgvsegs
+    rghrrhgvrdhshheqnecuggftrfgrthhtvghrnhepteegiedvfffhieehvdekfeeukeegie
+    dvkeehkeejueeijeeitdfftdejtedvffejnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomhepphhivghrrhgvsegsrghrrhgvrdhshhdpnhgspghrtg
+    hpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghsmhgruggvuhhs
+    segtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtoheplhhinhhugigpohhsshestghruh
+    guvggshihtvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdho
+    rhhgpdhrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepvg
+    hrihgtvhhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvlehfsheslhhishhtshdr
+    lhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:53mTaD7OpPyOSxepSYcUwIt4n-qBw4jkRNd3XX9aIvEX6xRacSDaNA>
+    <xmx:53mTaAjgefxWSKGEO6ds2HnYeZL2rTn3eHu7Q8f_O5y_uPgkkblOiw>
+    <xmx:53mTaIGO9ATzSiTgcfWzf2BFGOEpprRHrmCdlq66Z5iBN5QuaebKKA>
+    <xmx:53mTaORQoaRPUZ4e4fuWiWo-q1uPKbncOK9QnP4RnNXrG9DDT1l5xQ>
+    <xmx:6HmTaL7eYZ4NkdtfqX1n5Nj3_pnkXwMsAQEFZR0b1-nSm1qFpcvD9brm>
+Feedback-ID: i97614980:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D0B2EB6006B; Wed,  6 Aug 2025 11:51:03 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7776:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a22b56b-cc5a-4e42-8a2d-08ddd5010445
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|52116014|376014|19092799006|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HK8tQbQyMphttEfdIKpzMZNU8UOl6DSGEX+BKUkraQlM/B10kf4OsMCw9lM2?=
- =?us-ascii?Q?qOKkHPYB/DcHBJ8noG52FQx2hV0eGHml58vkU+rdr8OPapuQ06K4MwFYcAUR?=
- =?us-ascii?Q?neT61yWx/5MXUtxrkiYv1hz2U2Z5Be1pXh4tTgXS4osT++yoEh1OH6ZBflZp?=
- =?us-ascii?Q?G6jYXcJ6TyCD+1+vK8Al4NmUvvtKqOsHEwWsrT74ygg5thWPG8iQIOyb8L2h?=
- =?us-ascii?Q?Vt0J89AViRxBFzJe6fp4GiTcKScuDMYMUrdsIiWs0WciQ77c8JCg53Y/ISjC?=
- =?us-ascii?Q?ea/Vvb1tmH+hKO3Bj+lMNeSS+nuv8nsiuNcLANAVwoZLRoUh8oJA5qWQYI7i?=
- =?us-ascii?Q?nZq/cS2PVn6Ct7F4+FPFTddIy0gfqhO9YObmxJ+Dwhcvgo6kx6+YPjWYyZb8?=
- =?us-ascii?Q?+xNBlNf76JA5H+u3rMysMuTAuoE9SXktp8PUDPuCCFX/AT0H7SCi7bSZb2e+?=
- =?us-ascii?Q?OxQ5TLbTxVW9iZS1V6OGbmpW0uaF4uJwClqHtRFMvx99nnUO6DKngVkL45mF?=
- =?us-ascii?Q?4ZYDNG2goPCqGdzgTvMYUkqsqO4kTqQeQXRIsZ8KEMRQa7Cy2wz8/cEkjCI9?=
- =?us-ascii?Q?pSGf91Vg23F/N9zFtOLZIz2BzhFdcpCbrTy4QEyBMhH/FsXcE8ct452J4Vll?=
- =?us-ascii?Q?5J3UVQm6nlTkSXep9RlNmKgEgfN+0YM8Wb272/wsdY6yFai7YKKlQVpY+1xI?=
- =?us-ascii?Q?mbDCYVPmyX4x4I8FSdBnygQBwtZRH6YJDlekve3GgzS4OPF60AaXL7yzwQYa?=
- =?us-ascii?Q?X6ZOOqfs7puyqSmzq81dQDSX45uqS+778Li1kWrOGVpCOUSOk1q73ucI7BFy?=
- =?us-ascii?Q?cxsK+gJh9oBIfHh1SCO6R2FfscC5mDxfZ0Pci3oSy0TuD+uF75Os1tDyk3zi?=
- =?us-ascii?Q?ztL2IiL4be3ZV9/QoZCWS2qdKk+n7GBcOhcwhGi2Szv+BYwY7dJPomT++ZS0?=
- =?us-ascii?Q?GqrB4g2UqiyJfp2/fhkuUpYk1LAcQyzvnZqtd3HVeCMJcgNIhHCg5s1o+e6l?=
- =?us-ascii?Q?6kO4a+BeyunAHEavmg4rdpwJhV8Nvo6jfmvgIKO6auEZAk/qxpQehigomALt?=
- =?us-ascii?Q?uaXCKrALAgGYNZMB/iYE5Yo3rMtJ9kiNZmJie7xGiuyrtNZC5eZLrCNl1V+h?=
- =?us-ascii?Q?jKXjBHHEQqoEfRl4l0BW284+GyRG+maCsocbiGCWo+NHamN5Npj/ZDlPrDPN?=
- =?us-ascii?Q?RVUOit5zCjo8iS2NK9BliSOuby75T+JRxuaT1psZffjt259pz0Zkhlj4l9Ad?=
- =?us-ascii?Q?mnXNkg9GZLxDfr93HDeUeNqGl3Jv2G3uN3qQxt0+XNws4T0Gkb+2pEr8pEBc?=
- =?us-ascii?Q?GChQn7uWeSOJDHhLXkNsTgOYdrYLaJSHolfCRGAWsJSuJQUwb0NmR4Lb9C8b?=
- =?us-ascii?Q?kshHIt/w5AOaj+vMsUDhR95edZyAgxE/2GNAnsieYow38D/iEToA2OlXAn5c?=
- =?us-ascii?Q?6LLPaC4TRvk8SXxkDfQOzXn3yTLQWc7OoanStheH0Zzp+e3ntXw10w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(52116014)(376014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eWYYyzvXy4MeKxKd5SKgqPqcg9P/LQajJl+ZzJnhk2AoAFw64fUdZhdNG86Z?=
- =?us-ascii?Q?qQgwO/nDLqGNMRc+NfILTIJ8l3iGWLd21MeTA7rICa2tl8U2IQkIZOTP2Qlv?=
- =?us-ascii?Q?6KtHyaA++2rH5ATMB2l2lFG0wEcRgR2QVC5h6RVl+/Y2op3tEPN0Ezq4r7D4?=
- =?us-ascii?Q?CsZt3ul59/Mu/a9fPXmwu/jJQLnI+LM5dU2V1WeEpnqX+BcsB3DdSe0vCtQA?=
- =?us-ascii?Q?yRCrG2mWmXBh2kKulyAIEutmQqWfJEri/sUwR5qau+KxqXeyWKubS7brt+PF?=
- =?us-ascii?Q?a5iKZCIPbCKJ9AfvQ9X5DGqajiwaAjtgJ9GU0afHctl/9aW504G96sJJrtr4?=
- =?us-ascii?Q?Iwdyt0TGmsDw3kO3X/H+B4mIKonqEnhY2V/qHiD8AjtKvNdOlTX8NiOVdtPO?=
- =?us-ascii?Q?jBINTOdeSMihjkoq/eQAvQR8agzv68KuxlQpBMa3O6/QXXaOjwTLc5YbbWZd?=
- =?us-ascii?Q?NHO3uMnNJp0vYJ/+XnxlcO4SYUOcAHQrjFhqPS2T/waE8BQeaB2zOZM/dGp4?=
- =?us-ascii?Q?cHPUkm+lF952at4Qri/LoQ6D+7hig+NmY0Ntj/ERJy1dm8Oa3o+f1OImXP4N?=
- =?us-ascii?Q?XkkMyz/OJaOYz95sKl7GloY9/VtK7ZoApF5qD0tjCFq2R1S5Lgj8pIs+uxtb?=
- =?us-ascii?Q?9y9fI0if6C0vUcKnWpQ9yUrcGCtNjjy4IfIkmE1UKKK7dElWXDsP1d72le3M?=
- =?us-ascii?Q?ZGF6+EfaPcZZsXWO5l4NtqjUP7fmgre22amSUc6KV+CPggZfmogP/+Db1jlO?=
- =?us-ascii?Q?1CCN/mD4vaLt1yVYymHo2l71rAdzVJI5eigaYVxmKrJvIgOFT5EhfA7RNp2r?=
- =?us-ascii?Q?uZp/+aZTKfVk0PC/SSFld/veUWARH0aqQ1rBTeeS6Um5Trjj60fd6VD7FjDM?=
- =?us-ascii?Q?+By0JuVdQmE10IW39yR4XpmBR5aPBT4IzywC4K0HjJN/PK2TOUvN6+2Af7Zf?=
- =?us-ascii?Q?GqC9fgFq0crgO0bfM6pB3gdwTsma3HwXR8rS/H1fy0ego8qw5kEklAgzlo1h?=
- =?us-ascii?Q?eNtX/ZndnLykffY7xfe+WYVoRARcZadgtK7JVSNTXgN8YkyeXnLQXVXvee4X?=
- =?us-ascii?Q?to2CcODOrrOqGs89ao5d0KwKqNO0KEr7PuumSNT5LD/igvguKQRtiT11GKnQ?=
- =?us-ascii?Q?F0sjkPq3aNz9lSqpWYG3M2L6IsFev4Jax22duQdifHg89FgCj0nObMWBf9lu?=
- =?us-ascii?Q?LtM+ToPoKc8d+eU+VGqJt4ouRH4jGvR1FvD+bdiLuOu8+6BLXx/8D5/512V4?=
- =?us-ascii?Q?2Gc0Y3PWwXhYab1OSWFIrnhEYa0JMRpUegUKoT6KIxfSZYl0jej7H/o8aWbc?=
- =?us-ascii?Q?p3Yx19Z0A4P0oMJJcQtnz/80GhGVZtfkgD13BJl6DJ7OA0vXj4YL86VarpmW?=
- =?us-ascii?Q?EBdxcbdacQKmzNJXhXhsSJz8FNAf/43lK0efPYR0X1wuDZSKG3bhMHIOB735?=
- =?us-ascii?Q?7ehogdkn8ZbD/7vpCUwvkwk8wotbAbB+txY/EIsZVx4jHMtoVadSgEZhGFqC?=
- =?us-ascii?Q?lBArnEgQJMSys+3TFTZIe4ixzyJ7phJlyOvXCApKDw2r5+dLeHUPg2HE4q8N?=
- =?us-ascii?Q?fSj20CrNPzAs4aIP77PUWHON9vLw1n6YCxriXyvY?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a22b56b-cc5a-4e42-8a2d-08ddd5010445
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 15:50:50.1235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d1Aez/rNi1aor4W+uaTYHeqjsMdD25YVr2g0kAMUtnKqfjKh7IKD9rKAwJA9MYwUBvW3J+/TuuUP3g3Ko5Stsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7776
+X-ThreadId: Tea62be34c8f8a220
+Date: Wed, 06 Aug 2025 17:50:42 +0200
+From: "Pierre Barre" <pierre@barre.sh>
+To: asmadeus <asmadeus@codewreck.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Christian Schoenebeck" <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
+ ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+Message-Id: <f08d5585-0a26-4c98-be1a-c0fd89ccd916@app.fastmail.com>
+In-Reply-To: <e42edd55-2559-437b-a2e3-2773b18d0cc5@app.fastmail.com>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <2989343.ydHz1Oe0dO@silver>
+ <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
+ <2026737.7mX0AZtNi0@silver>
+ <bbf2ae2f-d0e6-4f8f-b359-128cd8d5539f@app.fastmail.com>
+ <aIqXi6uBaWXtvgm3@codewreck.org>
+ <e42edd55-2559-437b-a2e3-2773b18d0cc5@app.fastmail.com>
+Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 06, 2025 at 07:41:09PM +0800, Joy Zou wrote:
-> From: Pengfei Li <pengfei.li_1@nxp.com>
->
-> Add the board imx91-11x11-evk in the binding document.
->
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> Signed-off-by: Joy Zou <joy.zou@nxp.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Everyone,
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+If I submit a patch based on what has been discussed above, is it likely to be accepted? Unfortunately, in my current setup, I am encountering this issue quite frequently, and users of my servers are having a hard time making sense of the error.
 
-> ---
-> Changes for v6:
-> 1. correct the commit message spell.
+Thank you.
+
+Best,
+Pierre
+
+On Thu, Jul 31, 2025, at 02:36, Pierre Barre wrote:
+>> First - thanks for starting this thread, large contiguous allocations
+>> has been a problem reported regularly in the past, and no-one has had
+>> the energy to address it yet, but it's definitely something worth
+>> tackling.
 >
-> Changes for v3:
-> 1. add Acked-by tag.
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Glad that I didn't just create noise. I implemented 9P in addition to 
+> NFS in my server because fsyncing on NFS didn't give me what I wanted 
+> (fsync doesn't call commit when write is communicated to be "durable" 
+> by the server, but that's a story for an other day...). 
 >
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index d3b5e6923e41..a778666b1d42 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -1374,6 +1374,12 @@ properties:
->                - fsl,imx8ulp-evk           # i.MX8ULP EVK Board
->            - const: fsl,imx8ulp
+> I am very grateful that this client implementation exists.
 >
-> +      - description: i.MX91 based Boards
-> +        items:
-> +          - enum:
-> +              - fsl,imx91-11x11-evk       # i.MX91 11x11 EVK Board
-> +          - const: fsl,imx91
-> +
->        - description: i.MX93 based Boards
->          items:
->            - enum:
-> --
-> 2.37.1
->
+> On Thu, Jul 31, 2025, at 00:07, asmadeus@codewreck.org wrote:
+>> (Added Willy in To, if you have time to advise on what's appropriate
+>> wrt. memory allocation here to use either as a contiguous virtual memory
+>> buffer or a scatterlist for various kind of dma used by transports
+>> that'd be appreciated)
+>>
+>>
+>> First - thanks for starting this thread, large contiguous allocations
+>> has been a problem reported regularly in the past, and no-one has had
+>> the energy to address it yet, but it's definitely something worth
+>> tackling.
+>>
+>>
+>> Pierre Barre wrote on Wed, Jul 30, 2025 at 10:16:13PM +0200:
+>>> As a middle-ground, would it be acceptable to add a transport
+>>> capability flag indicating whether the transport requires contiguous
+>>> memory for DMA?
+>>
+>> I think such a flag will be needed even if we do what Christian suggested:
+>>>> So a more reasonable solution instead might be using kvmalloc(), as suggested
+>>>> by you, and adjusting the individual transports such that they translate a
+>>>> virtual memory address to a list of physical addresses via e.g.
+>>>> vmalloc_to_page() if needed.
+>>
+>> Start with a requires contiguous flag set for all transports except
+>> trans_fd (I'm not sure about usb, but I'm pretty sure all the rest need
+>> it); then each transport can figure out how to get a scatterlist or
+>> something they need from the allocation, so we don't need to have a big
+>> bang that breaks everything at the same time.
+>>
+>> I'm sure virtio's implem will come soon enough, but I don't see anyone
+>> working on RDMA or xen so fast.
+>>
+>>> 1. Add a P9_TRANS_REQUIRES_CONTIGUOUS flag to struct p9_trans_module
+>>> 2. Set this flag for virtio, xen, and rdma transports
+>>
+>> This is a nit but I'd rather the flag go the other way around, e.g. no
+>> flag means requires contiguous and it's only set after confirming the
+>> transport works
+>> (I just looked at usb and struct usb_request makes me think some drivers
+>> use dma, so, yeah..)
+>>
+>> We can always turn it around later if the majority of transports handle
+>> it.
+>>
+>>
+>>> 3. Modify p9_fcall_init to check the flag:
+>>>      if (c->trans_mod->caps & P9_TRANS_REQUIRES_CONTIGUOUS)
+>>>         fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>>>      else
+>>>         fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+>>
+>> I'm also curious if there's something more appropriate than kvmalloc wrt
+>> using either as a contiguous virtual memory buffer or a scatterlist, but
+>> I think this is fine for now unless someone knows of something more
+>> appropriate.
+>>
+>>
+>> Thanks,
+>> -- 
+>> Dominique Martinet | Asmadeus
 
