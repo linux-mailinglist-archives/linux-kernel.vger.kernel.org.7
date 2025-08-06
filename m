@@ -1,161 +1,140 @@
-Return-Path: <linux-kernel+bounces-757945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2877AB1C8A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6700CB1C8A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6245188F67F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35030563CC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B222918D5;
-	Wed,  6 Aug 2025 15:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9DD29116E;
+	Wed,  6 Aug 2025 15:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hzsO1BXe"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FwfM+kmF"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B4428FABC;
-	Wed,  6 Aug 2025 15:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CFB28FABC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493879; cv=none; b=a4j05PnMVYVtwRRg3hXn/Zk9B/C0tKufkoXfSZdK+NXd+89LixdjWHk5ZlKsz+8x7asNXcV/Yv4Z2KxhfuYCwDByVsQSYIt6XJ0H349Ir840latyPlv2vzcrBeuasGel0NRr2QJRXPmyYBqayLd8OYaycWMt43KN7rhKi7+GD9E=
+	t=1754493928; cv=none; b=UR0piLOEZrEyRQhAm36K9W0Qxrjx0nPuWdKbaTn0ETjOdbndrZEZG/TerTidwhQurSggXJQd8mN60Ivs1QAEoQQ9ErcmKV2ummTPdhBEKiogqZAm6ya+FsHB4C7JYjEiBolrMUSv8fM4/wNTxdyOuzZQkQZ3CYpyEqI317zHJLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493879; c=relaxed/simple;
-	bh=IPrjJM0iNDTDA9YSrop9GNcDQsARPADzizUa+drioNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rWcNmB9he6exm8Mfyt3TudOzixQ00FM+1C57vhWK670NKfwRrQDZLCtWeW/IDuvVGAfa2PTe6/nGpZmWpsMxxsFkt6uLBlT6L0CjRVmWsldRICUeafEuqDgQIlquPQyH6l9awXxbuVinGK1zU0h3N/A8X55QU/jzDHti7Mhkgjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hzsO1BXe; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576FORiO603713;
-	Wed, 6 Aug 2025 10:24:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754493867;
-	bh=7RsgK39bZGGSX6h47xkhxWwFZ1ITqr8yrpYQjfJ5U7g=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=hzsO1BXe0Wzvoo9dSBV6u7zuoy/ZcmqIENibhejADzSxWaFki3CNbIurssoKE8dD4
-	 Ia5BMXZdr87A0hKdGXlE82F8wmtPzv+nShj5MkTPS76O2m22G0hikaTcLgN1w82z81
-	 YLuGVEo/iKGes8G1thXOAJTRimOpXrbKPf+J7cI0=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576FOQe7122291
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 6 Aug 2025 10:24:26 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
- Aug 2025 10:24:26 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 6 Aug 2025 10:24:26 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576FOQI53740880;
-	Wed, 6 Aug 2025 10:24:26 -0500
-Message-ID: <e9394117-996c-4134-b9f2-50accf633601@ti.com>
-Date: Wed, 6 Aug 2025 10:24:26 -0500
+	s=arc-20240116; t=1754493928; c=relaxed/simple;
+	bh=ULcIH6BVggBswLQbNkZJSrb/oMgsGp5NCCrIzHSDbOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jE1d2Lfzx4uEXn37QinL05YiLkUJ4TYYytJSTLB9xLZJYlDpfE4meSeweE03w5UTSBJ7/yGGvnnrCLimjpIwMkQXuzz1xUhZ+2ovEtwkt7M/Pa4BnJkrmKbg1Fa046CFU+mGi/B7eZYlaSfchlLEfgog43JHNztalQesaPVI5HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FwfM+kmF; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d6cf6faf-f6bf-41f6-b2fd-2694bc62753e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754493915;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Q5/YSD3ttDTfg15v6aPsPKmNRREHnIKb5KKPhEjA5M=;
+	b=FwfM+kmFqPhFxjT2oEfZtDKcoTmexlOlozpqKwp+AepwL+qgle74fQYK8CdA5OXa0L/x6u
+	H9BTZFkTtHDQJEFdXfDpnEyk786eSmY81nkgWbSb6h6iYCG6MuEFdKYKlCnxoPWKHXYdRt
+	JW/xQk5eQHvgPRSTtxkadtcAiQsEmc0=
+Date: Wed, 6 Aug 2025 08:25:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: hwinfo: Add second register range for
- GP_SW
-To: Krzysztof Kozlowski <krzk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian
- Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-References: <20250805234950.3781367-1-jm@ti.com>
- <20250805234950.3781367-2-jm@ti.com>
- <0f1cbec6-6032-48f6-8887-e526484c0d20@kernel.org>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <0f1cbec6-6032-48f6-8887-e526484c0d20@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v4 1/2] libbpf: Add the ability to suppress perf event
+ enablement
+Content-Language: en-GB
+To: Ilya Leoshkevich <iii@linux.ibm.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Ian Rogers <irogers@google.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ Thomas Richter <tmricht@linux.ibm.com>, Jiri Olsa <jolsa@kernel.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Eduard Zingerman <eddyz87@gmail.com>
+References: <20250806114227.14617-1-iii@linux.ibm.com>
+ <20250806114227.14617-2-iii@linux.ibm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250806114227.14617-2-iii@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-
-Hi Krystoff,
-
-On 8/6/25 1:40 AM, Krzysztof Kozlowski wrote:
-> On 06/08/2025 01:49, Judith Mendez wrote:
->> This adds a second register range in ti,k3-socinfo. This register
-> 
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-
-I can reword this.
-
-> 
-> 
->> range can also be used to detect silicon revisions.
->>
->> AM62px SR1.0, SR1.1, and SR1.2 can only be distinguished with GP_SW
->> registers, so increase maximum items to 2 for reg property and update
->> the example.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->>   .../devicetree/bindings/hwinfo/ti,k3-socinfo.yaml        | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
->> index dada28b47ea0..3b656fc0cb5a 100644
->> --- a/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
->> +++ b/Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
->> @@ -24,7 +24,8 @@ properties:
->>         - const: ti,am654-chipid
->>   
->>     reg:
->> -    maxItems: 1
->> +    maxItems: 2
->> +    minItems: 1
-> 
-> They always come with reversed order... but anyway, you instead must
-> list the items with minItems.
-> 
-> another problem is that this is not supposed to be per register. I
-> already complained more than once about some of TI bindings: stop
-> creating device nodes or address spaces per register.
-> 
-> That's one address space.
-
-That does not really make sense. Registers jtag vs gp_sw have a
-different back-end, one from silicon and another from efuse. Not even
-sure if the memory map will always be the same across processors.
-
-> 
->>   
->>   required:
->>     - compatible
->> @@ -34,7 +35,9 @@ additionalProperties: false
->>   
->>   examples:
->>     - |
->> -    chipid@43000014 {
->> +    chipid@14 {
-> 
-> And this was never even checked :/ You have clear warnings here.
-
-I will double check this.
+X-Migadu-Flow: FLOW_OUT
 
 
-~ Judith
+
+On 8/6/25 4:40 AM, Ilya Leoshkevich wrote:
+> Automatically enabling a perf event after attaching a BPF prog to it is
+> not always desirable.
+>
+> Add a new no_ioctl_enable field to struct bpf_perf_event_opts. While
+
+no_ioctl_enable =>  dont_enable
+
+> introducing ioctl_enable instead would be nicer in that it would avoid
+> a double negation in the implementation, it would make
+> DECLARE_LIBBPF_OPTS() less efficient.
+>
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
+>   tools/lib/bpf/libbpf.c | 13 ++++++++-----
+>   tools/lib/bpf/libbpf.h |  4 +++-
+>   2 files changed, 11 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index fb4d92c5c339..8f5a81b672e1 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -10965,11 +10965,14 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
+>   		}
+>   		link->link.fd = pfd;
+>   	}
+> -	if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
+> -		err = -errno;
+> -		pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
+> -			prog->name, pfd, errstr(err));
+> -		goto err_out;
+> +
+> +	if (!OPTS_GET(opts, dont_enable, false)) {
+> +		if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
+> +			err = -errno;
+> +			pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
+> +				prog->name, pfd, errstr(err));
+> +			goto err_out;
+> +		}
+>   	}
+>   
+>   	return &link->link;
+> diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+> index d1cf813a057b..455a957cb702 100644
+> --- a/tools/lib/bpf/libbpf.h
+> +++ b/tools/lib/bpf/libbpf.h
+> @@ -499,9 +499,11 @@ struct bpf_perf_event_opts {
+>   	__u64 bpf_cookie;
+>   	/* don't use BPF link when attach BPF program */
+>   	bool force_ioctl_attach;
+> +	/* don't automatically enable the event */
+> +	bool dont_enable;
+>   	size_t :0;
+>   };
+> -#define bpf_perf_event_opts__last_field force_ioctl_attach
+> +#define bpf_perf_event_opts__last_field dont_enable
+>   
+>   LIBBPF_API struct bpf_link *
+>   bpf_program__attach_perf_event(const struct bpf_program *prog, int pfd);
 
 
