@@ -1,129 +1,320 @@
-Return-Path: <linux-kernel+bounces-757906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F37B1C826
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:04:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88945B1C82D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7510216D2F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:04:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A1507A63C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472D8291882;
-	Wed,  6 Aug 2025 15:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB9E2900AF;
+	Wed,  6 Aug 2025 15:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/skAZHI"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EO6B1sa5"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872928A3EF;
-	Wed,  6 Aug 2025 15:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC428DB77
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492636; cv=none; b=i0aedQFfSWhjbjbQh+lsb70kehhH8uxY/G9s888+2fNXeYedw6PZ9jaIjPpQMTnPXSlSStARoVhMLvP6vFbm85DFR1J62fms3IPXjvQqCJGEH4FODrSzs9/NKro1F5GGIwRC3STTytAic/5LuhsHF4ioJawundqkuUNjbFxbCoA=
+	t=1754492635; cv=none; b=Lw4QEjl6BWLoi04NsRZyzqtiA9r8L8BKs2HpAIq1N5juIvYDQskPO8CYex1Oe3OTW1wLSlHMB2ocr+MbrvyzYjGBU8gB4tqLBgM+CkKNb5ZnN9rmAIsGo6wabazjnH+MYj9lTfNQOtb99UvIO3IaAgKSOyYy3l6ieqArEESoeoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492636; c=relaxed/simple;
-	bh=584uXeN9jsBXBHMuwddffGCP8OVlQsZ+Xp3CN2antyQ=;
+	s=arc-20240116; t=1754492635; c=relaxed/simple;
+	bh=0pkcvBT3e4XZc7ShBEniMBWN3q1RI9VEAouZGjIeY2Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQTQUuMbvfGj5neVRKH0hWXr6NYGAZa1wCc5jlw/7V3v9s7eYEbrk+oLHR96VtOkm6lEy+vIi2sEwXfWjhreL0/qvSJ0Mm/cTktGTCL99Ch2CxCeKUMIdTbF1i9N6UXwtwOMUBRhy00iEEJbuOWyGQHUCPTV/w6aoXMjBPAvD0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/skAZHI; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af958127df5so707805066b.2;
-        Wed, 06 Aug 2025 08:03:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=CRLi+64sfd+GLw02PwVaJxkRzyGSO1Nwo1w/xv/R8HIqTivvDsxnFYwwZbliCUQ+TwGHeQxhFrQh8EaFBbleg0z4BLSOjOBs3Ta5RHRfIoChC+/f+L2stobmPLxIJEbgbNXoGX9CFxgd+8lCYR2s7F987JoAvzHDhd+sAPqD+vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EO6B1sa5; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459e497776cso95795e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754492631; x=1755097431; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754492632; x=1755097432; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ck5YtWxsbH5j6ULV7+hpajLj2ON81F2VLpNH+npiJkQ=;
-        b=l/skAZHIE23xFtzgeuxwjRsUw3049bR/2j5qSvrkbT5bvbIWsSP/1JUc3UcwhzHaz4
-         AuazwYtg+YBJfbg7bZcaLcQQ7A8Iezl4RTefwdEgGudnozM19cImMMcr7haTsbYeAohB
-         NPtpzZX0G9LsziSB6S5wRgcjbJkkDaPuaX8haEfzeD+3OSM2fjWuA3uXTUv0nat4titu
-         vCQU4mI59biakGYPb2glAuF8NdbNvFKwX5r06sjclcMyHX1wjPTX2olsVNbG80g5P/El
-         bl7mNDPGwGU1Dr3F0oq12PHIVwGEwe+2EeSDL3MPrHXuxYLgDFcr/OwXwcLh2k3ftBab
-         1b0Q==
+        bh=C9hzpMymLHd0tOskj55BKws7W4GFUy+vHJNe1oPqssU=;
+        b=EO6B1sa5jQbDKgE97A3vbaKlh85hCX2TusyKoD1m9XCmFL1KxJnvl1uU1X6jcGWwhz
+         4Q4Ky/Z7rmxiVu24HV70pgq65vhQo0qf6sXuSUjDkXEY+7Sknqof4WoHCSQDSKSElvmX
+         MKUuLz5weJ6ZnESbY/L1Dg0kHUAVf2bMfcqmvVgBNQgq2T5F/uFMZrgPKPSzaDoJGHYu
+         C4UA3v3WLBY8cVFlHhkAfrt/q7EottaLIR/zmTl/RIKfOA1yHOe7mI9mwSwVq6Ow5Orw
+         IkNG0pqo9DhB1sMJw6gUfWpUaF4XVtcbcB2NIXEtZmYg31scC8vrJVxdVPhrSJyij3SD
+         HTug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754492631; x=1755097431;
+        d=1e100.net; s=20230601; t=1754492632; x=1755097432;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ck5YtWxsbH5j6ULV7+hpajLj2ON81F2VLpNH+npiJkQ=;
-        b=MbvMRKHZWYAXkOzSuiBPgzHB8pMlEhmqlrNZXxCqWdqT12NVi4KvekHPkGeDNudNr+
-         yBDBemSiLB/fGJVErMQm302TPhPcGOyL0ZLe8reRcJA55bGqlc/k1jTpK0nQvqdmOxIy
-         v0cGBQiF2xOnjeRGOPp8Z0qjFT7rvBjjz8g4tZzG0pbf9i6jhr2Aqgf5JT9GS0O0Hds/
-         AzjBYouL74oxTrjTgo5aco/+monC31SyxeS2GT5pf31uTpEx5hAeqcJUh6ok1yymkX2K
-         HZqf5eVUJb0vqwfEt6a3+GsxysYTJ5pCGcsyOvLRaNT2SW+RLx/M5W8FhBtpgVwg3mDX
-         +l0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJWge8uxNxb4BvrpSgtjE+5IfkxyVMIiH6NYey0d+3AxR3VG1REEKYG0agIo4W2AtlWf0=@vger.kernel.org, AJvYcCUbwHbIEFH3Zfxcl48EkhanE81tAFWhDSbhvqDh4C5M3ujWhAszMriwWXLiAHb0NZOt+E17WctmptVv7fBu@vger.kernel.org, AJvYcCVerr6ipjFY03mv74YskNliLitNegssSZHUD5uaQ7DkIdqCBgoDeYo/ZGO+lMthlw836MWP8D9asQil+7E39CP+@vger.kernel.org, AJvYcCWlbEy+39J3r9tuYs9DgE6THwEi67Pcex/DU5jintHDnxanLv+1ZtWWI1P+WN6g+Qxl9P1i3imK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRwUAWHZihAKr+ueRrLD5e7K06q4du8B8hpE1Zt67JC4TtjKyD
-	uSu7rCuGCNxpfnKOnZUUTinqAurIwfA+rtomt1ASVxvMtqV48eUY8vCImT67AEXdNgcPE8bj0l0
-	q9QXEpVhn0B3MbB/yWWobjAVQJV9Pn+s=
-X-Gm-Gg: ASbGncvuw/8kBRLCTLdvRBvqo+z5ft+zyzPtzZMX2R5eG0cG+Nlt7uINET4cozlGPDN
-	G8ZQnSRzQqOc1O06/fMncXsWWb8B0RBwAgdyondxnCp8U1rIF4eDAfaqLTRaYu7l8B0k9mHAvgr
-	yIE2ECCgLPhSQXrpD8UY2cr6fCgKsTxmrV9lPAGLRs/+4bnzU9ZthRrQShMOD2JFVBmj5dW+Npl
-	S0x5O2wtXO2aMjlsmmtlj9pxbmVudO27MR1
-X-Google-Smtp-Source: AGHT+IFz4XsMafOE7B2cRECu6PsWWMxUp0yBdUzi6JtgASelC8/9mtyaERSLeB8R2LFMi4+R+vaDYy1LHdKJjr/ADtI=
-X-Received: by 2002:a17:906:f58d:b0:af2:b9b5:1c06 with SMTP id
- a640c23a62f3a-af992aa4a38mr252953366b.14.1754492630424; Wed, 06 Aug 2025
- 08:03:50 -0700 (PDT)
+        bh=C9hzpMymLHd0tOskj55BKws7W4GFUy+vHJNe1oPqssU=;
+        b=KrpnQ4RPf/pX4WOjIKQehUfJK1KAEBigQV0dZkVYP4T7LCeMGu5ThPqcc8VizfvBo/
+         zQqdZmRApOf/WdrBklxDBi8olyBuHvqwUiG+x+Vaj5ILMJPFZ/LRQzMvamgvzsr1v4K/
+         93M7Qm2rxptm4Sg4bmLJwfcsX8JLj/b2LBcUH+y+tdnWYRu4qbE9s8KagAnLTgRaTuov
+         tQJCamOAjs0txPTwVjMZwM4xBynnE+PB3W8UTvlz5zqsLxeH71bU+JmjvuLVOiwbRq0P
+         vPcjw4Vlyah2IjUUSh1d1Lg4qqFYkt76q+Fjx01V+RYsqVw02A9aWCHuojbZzTBsY7+q
+         y7iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVxmVD1f3JRET3eSv30L1kI7tLmRcIaM3DJqxXYnZbfBGD4aVRUbuNfG1/suZid2YV+4uE/YRGTeNA8Jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv7V3KolPzFP/3efBTI9wgBKjpxNDaLNzp2FnIXymn94eg87nB
+	bOXHmjG39rMmi1WHkZNdfZP3na2CgBEZwX3XVnhuuNTZsji1oN5GlWEQR6X7WH2wCKoJlJmKhlq
+	ehWDu0xHb2QgFnqGnkWqwL4cxMISfUJ0aGWWTNgG3
+X-Gm-Gg: ASbGncsdUc7+dFxClL62hP79D7FieSWt3qrLfp14ln3cmCVWwHjY+N+CRA9NsdfIK1B
+	hT6M2mfcfkuyJpIAQR56/mZN+EYzGYrJsH5wHvERIV5lz+Ad1VNCgtLEhAYfyLgtHdaWtmg/MYq
+	u3OiB13fuSpIvaZgFMOYR3jweIKuAyevjCECobYDaVQa5xzroVOH6NG3H6AzKvYcuQWjeAZjdx7
+	J+hGCCon7J1HeeG41sOsQ+zg4o7ouphGg5QMmT6
+X-Google-Smtp-Source: AGHT+IFRSHXB1edxE24M2cr8EagNxoS3Umr3ekhDunEvzG71eZ1BXAYU7hknAAcoq+dJ3w6ps9DyZyBPQWpQnPYmDrs=
+X-Received: by 2002:a05:600d:18:b0:453:65e6:b4a6 with SMTP id
+ 5b1f17b1804b1-459e6c8b7ccmr1554045e9.6.1754492631287; Wed, 06 Aug 2025
+ 08:03:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806110230.23949-1-pranav.tyagi03@gmail.com>
-In-Reply-To: <20250806110230.23949-1-pranav.tyagi03@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 6 Aug 2025 08:03:15 -0700
-X-Gm-Features: Ac12FXwMSvnTnW4mpFr34H5Rcz9AOXGEYUwrsVyBOhRLZUjpNGcPOgXLwZWKDDM
-Message-ID: <CAADnVQJQV5Z_LsrBCa2=UwQ9NhPbkpNvZ9N7nf1sv-QunEj1FQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/bpf/progs: use __auto_type in swap() macro
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Mykola Lysenko <mykolal@fb.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-kernel-mentees@lists.linux.dev
+References: <20250731205844.1346839-1-jiaqiyan@google.com> <20250731205844.1346839-2-jiaqiyan@google.com>
+In-Reply-To: <20250731205844.1346839-2-jiaqiyan@google.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Wed, 6 Aug 2025 08:03:39 -0700
+X-Gm-Features: Ac12FXxJqYpQQ--vvuonDndHyeTf3i5rlJy2TpzkQAYWmQtSnPZvo6WJzUZ-3Qo
+Message-ID: <CACw3F53dQmeLjwc4LG5SipiEhB7jj9hK+C_XWrT2eFQghMHXQg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] KVM: arm64: VM exit to userspace to handle SEA
+To: maz@kernel.org, oliver.upton@linux.dev
+Cc: joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	duenwen@google.com, rananta@google.com, jthoughton@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 6, 2025 at 4:02=E2=80=AFAM Pranav Tyagi <pranav.tyagi03@gmail.c=
-om> wrote:
+Friendly ping for review
+
+On Thu, Jul 31, 2025 at 1:58=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com> wro=
+te:
 >
-> Replace typeof() with __auto_type in xdp_synproxy_kern.c.
-> __auto_type was introduced in GCC 4.9 and reduces the compile time for
-> all compilers. No functional changes intended.
+> When APEI fails to handle a stage-2 synchronous external abort (SEA),
+> today KVM directly injects an async SError to the VCPU then resumes it,
+> which usually results in unpleasant guest kernel panic.
 >
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> One major situation of guest SEA is when vCPU consumes recoverable
+> uncorrected memory error (UER). Although SError and guest kernel panic
+> effectively stops the propagation of corrupted memory, guest may
+> re-use the corrupted memory if auto-rebooted; in worse case, guest
+> boot may run into poisoned memory. So there is room to recover from
+> an UER in a more graceful manner.
+>
+> Alternatively KVM can redirect the synchronous SEA event to VMM to
+> - Reduce blast radius if possible. VMM can inject a SEA to VCPU via
+>   KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
+>   consumption or fault is not from guest kernel, blast radius can be
+>   limited to the triggering thread in guest userspace, so VM can
+>   keep running.
+> - Allow VMM to protect from future memory poison consumption by
+>   unmapping the page from stage-2, or to interrupt guest of the
+>   poisoned page so guest kernel can unmap it from stage-1 page table.
+> - Allow VMM to track SEA events that VM customers care about, to restart
+>   VM when certain number of distinct poison events have happened,
+>   to provide observability to customers in log management UI.
+>
+> Introduce an userspace-visible feature to enable VMM handle SEA:
+> - KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
+>   when host APEI fails to claim a SEA, userspace can opt in this new
+>   capability to let KVM exit to userspace during SEA if it is not
+>   owned by host.
+> - KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
+>   KVM fills kvm_run.arm_sea with as much as possible information about
+>   the SEA, enabling VMM to emulate SEA to guest by itself.
+>   - Sanitized ESR_EL2. The general rule is to keep only the bits
+>     useful for userspace and relevant to guest memory.
+>   - Flags indicating if faulting guest physical address is valid.
+>   - Faulting guest physical and virtual addresses if valid.
+>
+> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> Co-developed-by: Oliver Upton <oliver.upton@linux.dev>
+> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 > ---
->  tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm64/include/asm/kvm_host.h |  2 +
+>  arch/arm64/kvm/arm.c              |  5 +++
+>  arch/arm64/kvm/mmu.c              | 68 ++++++++++++++++++++++++++++++-
+>  include/uapi/linux/kvm.h          | 10 +++++
+>  4 files changed, 84 insertions(+), 1 deletion(-)
 >
-> diff --git a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c b/tool=
-s/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> index 62b8e29ced9f..b08738f9a0e6 100644
-> --- a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> +++ b/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> @@ -58,7 +58,7 @@
->  #define MAX_PACKET_OFF 0xffff
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/k=
+vm_host.h
+> index d373d555a69ba..8b4133a5aacf3 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -349,6 +349,8 @@ struct kvm_arch {
+>  #define KVM_ARCH_FLAG_GUEST_HAS_SVE                    9
+>         /* MIDR_EL1, REVIDR_EL1, and AIDR_EL1 are writable from userspace=
+ */
+>  #define KVM_ARCH_FLAG_WRITABLE_IMP_ID_REGS             10
+> +       /* Unhandled SEAs are taken to userspace */
+> +#define KVM_ARCH_FLAG_EXIT_SEA                         11
+>         unsigned long flags;
 >
->  #define swap(a, b) \
-> -       do { typeof(a) __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } while=
- (0)
-> +       do { __auto_type __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } whi=
-le (0)
-
-Sorry, not doing this churn. The code is fine as-is.
-
---
-pw-bot: cr
+>         /* VM-wide vCPU feature set */
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 7a1a8210ff918..aec6034db1e75 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -133,6 +133,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>                 }
+>                 mutex_unlock(&kvm->lock);
+>                 break;
+> +       case KVM_CAP_ARM_SEA_TO_USER:
+> +               r =3D 0;
+> +               set_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags);
+> +               break;
+>         default:
+>                 break;
+>         }
+> @@ -322,6 +326,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, lon=
+g ext)
+>         case KVM_CAP_IRQFD_RESAMPLE:
+>         case KVM_CAP_COUNTER_OFFSET:
+>         case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
+> +       case KVM_CAP_ARM_SEA_TO_USER:
+>                 r =3D 1;
+>                 break;
+>         case KVM_CAP_SET_GUEST_DEBUG2:
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 9a45daf817bfd..f6a545700c15b 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1812,8 +1812,48 @@ static void handle_access_fault(struct kvm_vcpu *v=
+cpu, phys_addr_t fault_ipa)
+>         read_unlock(&vcpu->kvm->mmu_lock);
+>  }
+>
+> +/*
+> + * Returns true if the SEA should be handled locally within KVM if the a=
+bort
+> + * is caused by a kernel memory allocation (e.g. stage-2 table memory).
+> + */
+> +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
+> +{
+> +       /*
+> +        * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abo=
+rt
+> +        * taken from a guest EL to EL2 is due to a host-imposed access (=
+e.g.
+> +        * stage-2 PTW).
+> +        */
+> +       if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> +               return true;
+> +
+> +       /* KVM owns the VNCR when the vCPU isn't in a nested context. */
+> +       if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
+> +               return true;
+> +
+> +       /*
+> +        * Determine if an external abort during a table walk happened at
+> +        * stage-2 is only possible when S1PTW is set. Otherwise, since K=
+VM
+> +        * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. accessing t=
+he
+> +        * PA of the stage-1 descriptor) can reach here and are reported
+> +        * with a TTW ESR value.
+> +        */
+> +       return (esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW));
+> +}
+> +
+>  int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+>  {
+> +       struct kvm *kvm =3D vcpu->kvm;
+> +       struct kvm_run *run =3D vcpu->run;
+> +       u64 esr =3D kvm_vcpu_get_esr(vcpu);
+> +       u64 esr_mask =3D ESR_ELx_EC_MASK  |
+> +                      ESR_ELx_IL       |
+> +                      ESR_ELx_FnV      |
+> +                      ESR_ELx_EA       |
+> +                      ESR_ELx_CM       |
+> +                      ESR_ELx_WNR      |
+> +                      ESR_ELx_FSC;
+> +       u64 ipa;
+> +
+>         /*
+>          * Give APEI the opportunity to claim the abort before handling i=
+t
+>          * within KVM. apei_claim_sea() expects to be called with IRQs en=
+abled.
+> @@ -1822,7 +1862,33 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+>         if (apei_claim_sea(NULL) =3D=3D 0)
+>                 return 1;
+>
+> -       return kvm_inject_serror(vcpu);
+> +       if (host_owns_sea(vcpu, esr) ||
+> +           !test_bit(KVM_ARCH_FLAG_EXIT_SEA, &vcpu->kvm->arch.flags))
+> +               return kvm_inject_serror(vcpu);
+> +
+> +       /* ESR_ELx.SET is RES0 when FEAT_RAS isn't implemented. */
+> +       if (kvm_has_ras(kvm))
+> +               esr_mask |=3D ESR_ELx_SET_MASK;
+> +
+> +       /*
+> +        * Exit to userspace, and provide faulting guest virtual and phys=
+ical
+> +        * addresses in case userspace wants to emulate SEA to guest by
+> +        * writing to FAR_ELx and HPFAR_ELx registers.
+> +        */
+> +       memset(&run->arm_sea, 0, sizeof(run->arm_sea));
+> +       run->exit_reason =3D KVM_EXIT_ARM_SEA;
+> +       run->arm_sea.esr =3D esr & esr_mask;
+> +
+> +       if (!(esr & ESR_ELx_FnV))
+> +               run->arm_sea.gva =3D kvm_vcpu_get_hfar(vcpu);
+> +
+> +       ipa =3D kvm_vcpu_get_fault_ipa(vcpu);
+> +       if (ipa !=3D INVALID_GPA) {
+> +               run->arm_sea.flags |=3D KVM_EXIT_ARM_SEA_FLAG_GPA_VALID;
+> +               run->arm_sea.gpa =3D ipa;
+> +       }
+> +
+> +       return 0;
+>  }
+>
+>  /**
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index e4e566ff348b0..b2cc3d74d769c 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -179,6 +179,7 @@ struct kvm_xen_exit {
+>  #define KVM_EXIT_LOONGARCH_IOCSR  38
+>  #define KVM_EXIT_MEMORY_FAULT     39
+>  #define KVM_EXIT_TDX              40
+> +#define KVM_EXIT_ARM_SEA          41
+>
+>  /* For KVM_EXIT_INTERNAL_ERROR */
+>  /* Emulate instruction failed. */
+> @@ -469,6 +470,14 @@ struct kvm_run {
+>                                 } get_tdvmcall_info;
+>                         };
+>                 } tdx;
+> +               /* KVM_EXIT_ARM_SEA */
+> +               struct {
+> +#define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID        (1ULL << 0)
+> +                       __u64 flags;
+> +                       __u64 esr;
+> +                       __u64 gva;
+> +                       __u64 gpa;
+> +               } arm_sea;
+>                 /* Fix the size of the union. */
+>                 char padding[256];
+>         };
+> @@ -957,6 +966,7 @@ struct kvm_enable_cap {
+>  #define KVM_CAP_ARM_EL2_E2H0 241
+>  #define KVM_CAP_RISCV_MP_STATE_RESET 242
+>  #define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
+> +#define KVM_CAP_ARM_SEA_TO_USER 244
+>
+>  struct kvm_irq_routing_irqchip {
+>         __u32 irqchip;
+> --
+> 2.50.1.565.gc32cd1483b-goog
+>
 
