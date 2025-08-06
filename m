@@ -1,86 +1,57 @@
-Return-Path: <linux-kernel+bounces-757887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C50B1C7EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:51:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB383B1C7ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BDC189B4AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CD316FD54
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80A51DDC37;
-	Wed,  6 Aug 2025 14:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636F9221729;
+	Wed,  6 Aug 2025 14:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fgY0F7ht"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Keyo+QW4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DA8944F;
-	Wed,  6 Aug 2025 14:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEC4944F;
+	Wed,  6 Aug 2025 14:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491867; cv=none; b=rWmSIdAOsCOkVKZI9QUYmmABfysxx4UCPy32b6mFqKw8HvLPJPesSLTecUT4aQ0dcIrUgiJ4RFrLPMaGuLLxjPwM4dG3Ec/gN6MalU3/PQ44tWNcGAPrTUG7C8LWG2FAlZUB7akFipgYfGvZ6EOKgxWqiMeeydX7B7Tg+ebYZnE=
+	t=1754491903; cv=none; b=uzSd4gMQGidYxI22kcbP5yXWKqo4bRvs/JftEKUzPP02rv/9IiAqmdoKp3JxmDoHNt6fmrKsV0bmOo7JiHlWYBG+Mt4h+M4NWYByIG5yhrDoxbCiM/vxMPChrgyk8RF/Rp3RFaQLe9fF119+uYjln62vx87EQYWLaKQ1/u6CFho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491867; c=relaxed/simple;
-	bh=jYOf2US5bWDo7NlujX8N73KHv16qVgm8SXDzuRBuNuI=;
+	s=arc-20240116; t=1754491903; c=relaxed/simple;
+	bh=uvBDByLweRe4L0+0bNxfGe3e9GlYbMP9yIrYw/RwM24=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ao9/cRvyR0L8kzMqblCIFYGP6PZAOGdkzH7d2ye6hhmynw9N94o5WYjZR3syhSbsG2rjr1QG6ez1MBSvJrIzutE+kmw/LSoS1qVBF7DvUaQhOEl+c6GsSJnqBo9WzYEcNnoW3arD9pNo5NkJS7kQzTq0RBGfZSTfm1xsgkBXBvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fgY0F7ht; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754491866; x=1786027866;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jYOf2US5bWDo7NlujX8N73KHv16qVgm8SXDzuRBuNuI=;
-  b=fgY0F7htysJ76xADQTIm37ixlrod3hVQ9/cI+9p29UyoFyJLq0idjAE3
-   hga88jI70l3nKx0IlMvgYRk5SKIUhjbAFLltD+P3XmdTzFnp7IgeNFUUz
-   eriv+xWb7FR9paDHPwCGe9z86IOe/pquN0+R1suWWYCVy8bDTruO4EBZ7
-   nrL50ns++tJeV0NsaJ3Xw8Qa6yboOTZp0rfbHR4Y7eblutls83Dg8d3OM
-   gxJgnJmtYdHevDwFNg2ebYm6UCWqk3Qu09rtR6uIxEPv7gmsbOgF3P2sW
-   mmMiwFouxQNNUY0sNpyAHxE3tyh4STRUqkIIt00l9F+ezUUGP61IygEGy
-   A==;
-X-CSE-ConnectionGUID: lKoal4YPSYq5+U6jixQrjA==
-X-CSE-MsgGUID: +Qclt1ThRCCqcQ3q98MP3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67078669"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="67078669"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 07:51:05 -0700
-X-CSE-ConnectionGUID: XH6+x08qTfGWxhF0zUB9XA==
-X-CSE-MsgGUID: acmb15dRTzSsSmXqlb9RyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="165567416"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 06 Aug 2025 07:51:01 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujfTn-0001n8-00;
-	Wed, 06 Aug 2025 14:50:59 +0000
-Date: Wed, 6 Aug 2025 22:50:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ian Rogers <irogers@google.com>, aahringo@redhat.com,
-	Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [PATCH 7/7] tracing: Add syscall_user_buf_size to limit amount
- written
-Message-ID: <202508062211.cwYqtLu0-lkp@intel.com>
-References: <20250805193235.747004484@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZeyW6W5kXIRiswQjUxUluuX7cyp8VdrdVV/V5OJzJVFOHcfLJ3ni7PdioE4dWL4g8imdH+g4YnlhUJAIy8QUm+ZVnrpUyzOUJRHcGlStl6oFAMJuzQBmFMA4LgT4mfwMt6f2Wp20bCBTi+0XX9dLVWMiaMoFNeJwZbvZ84V3GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Keyo+QW4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=S3wdBIOLGEb/dP4L+k9B4Zn54dlvDvbbF5Vrp6IEWAE=; b=Keyo+QW4qD4sSKo5MwOJ7rpWON
+	AzJ8xbNru1fyVHVJV2lDT/G3tmHeYXHQzk63MQDCl8JO/TkJVTarNd5KHWeDuQGez9IAsTQj6AdkA
+	mEg88q7La1upTIhV+/PHr7WqceDh6/fxq57CdNZKlIZdUHX3PAoDHL74NqCtpxUeeDI/pfKM8YDBz
+	jVk3cFqde6eNnnVRCZS519HiUTynHZBfgrneKVlba9R7jsF1+HMRP44a1wjsBRofqx6WCo5PfMaU+
+	J+0Q8P9OP4Tf19hJvpr/hr0xv0YY89Yc++Cie1o4KuVwOYnHCImZ7hNaf+iSX+aKGCqGYPEEPbJZZ
+	bQiRZMsA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujfUM-0000000FUPY-0hUG;
+	Wed, 06 Aug 2025 14:51:34 +0000
+Date: Wed, 6 Aug 2025 07:51:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
+	dw@davidwei.uk, brauner@kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv2 0/7] direct-io: even more flexible io vectors
+Message-ID: <aJNr9svJav0DgZ-E@infradead.org>
+References: <20250805141123.332298-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,91 +60,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250805193235.747004484@kernel.org>
+In-Reply-To: <20250805141123.332298-1-kbusch@meta.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Steven,
+Just jumping in while travelling with almost time available:  I like the
+idea, but you have to be really, really careful for writes through file
+systems with this.  Deferred errors happening after bio submission are
+nasty and we tend to get things wrong there too often.
 
-kernel test robot noticed the following build errors:
+So this needs to come with an xfstests to actually hit the alignment
+errors, including something that is not the first bio submitted.
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.16 next-20250806]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Even with that it will change behavior quite a bit, e.g. for file
+systems that can do direct I/O write without the exclusive i_rwsem will
+leak newly allocated space on errors asynchronously reported through bio
+completions, so you'll need to get fs maintainer buy in for that.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Replace-syscall-RCU-pointer-assignment-with-READ-WRITE_ONCE/20250806-122312
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250805193235.747004484%40kernel.org
-patch subject: [PATCH 7/7] tracing: Add syscall_user_buf_size to limit amount written
-config: hexagon-randconfig-002-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062211.cwYqtLu0-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7b8dea265e72c3037b6b1e54d5ab51b7e14f328b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508062211.cwYqtLu0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508062211.cwYqtLu0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> kernel/trace/trace.c:11128:32: error: use of undeclared identifier 'CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT'
-    11128 |         global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
-          |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +/CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT +11128 kernel/trace/trace.c
-
- 11110	
- 11111		init_trace_flags_index(&global_trace);
- 11112	
- 11113		register_tracer(&nop_trace);
- 11114	
- 11115		/* Function tracing may start here (via kernel command line) */
- 11116		init_function_trace();
- 11117	
- 11118		/* All seems OK, enable tracing */
- 11119		tracing_disabled = 0;
- 11120	
- 11121		atomic_notifier_chain_register(&panic_notifier_list,
- 11122					       &trace_panic_notifier);
- 11123	
- 11124		register_die_notifier(&trace_die_notifier);
- 11125	
- 11126		global_trace.flags = TRACE_ARRAY_FL_GLOBAL;
- 11127	
- 11128		global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
- 11129	
- 11130		INIT_LIST_HEAD(&global_trace.systems);
- 11131		INIT_LIST_HEAD(&global_trace.events);
- 11132		INIT_LIST_HEAD(&global_trace.hist_vars);
- 11133		INIT_LIST_HEAD(&global_trace.err_log);
- 11134		list_add(&global_trace.marker_list, &marker_copies);
- 11135		list_add(&global_trace.list, &ftrace_trace_arrays);
- 11136	
- 11137		apply_trace_boot_options();
- 11138	
- 11139		register_snapshot_cmd();
- 11140	
- 11141		return 0;
- 11142	
- 11143	out_free_pipe_cpumask:
- 11144		free_cpumask_var(global_trace.pipe_cpumask);
- 11145	out_free_savedcmd:
- 11146		trace_free_saved_cmdlines_buffer();
- 11147	out_free_temp_buffer:
- 11148		ring_buffer_free(temp_buffer);
- 11149	out_rm_hp_state:
- 11150		cpuhp_remove_multi_state(CPUHP_TRACE_RB_PREPARE);
- 11151	out_free_cpumask:
- 11152		free_cpumask_var(global_trace.tracing_cpumask);
- 11153	out_free_buffer_mask:
- 11154		free_cpumask_var(tracing_buffer_mask);
- 11155		return ret;
- 11156	}
- 11157	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Given all that I'm not sure converting the legacy fs/direct-io.c path
+is such a good idea as the only file systems left using it are those
+that are more less unmaintained (or at least severely undermaintained).
 
