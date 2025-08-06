@@ -1,106 +1,79 @@
-Return-Path: <linux-kernel+bounces-757156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8417B1BE6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C44B1BE6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F895183789
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9AE625E55
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990D1922C0;
-	Wed,  6 Aug 2025 01:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD380165F16;
+	Wed,  6 Aug 2025 01:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETZWtoZ1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRSpdYWQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D127455;
-	Wed,  6 Aug 2025 01:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2684D2E3717
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754444890; cv=none; b=iOZpyY5dsH2l6hXYyMmFSbdAzNLl2oTunKsid95TRq5OBEIImJ25Ovi8DpgdtUI8W32jjyveqXt9UfHeIO95pytwKIQdUmIv9AmJz3bKok1aEWUkINpJ/+Qg9AQ0ikDLcad4iHa1IlAMitQQplUema4kekSpSRwJtOWalrLqhq4=
+	t=1754445085; cv=none; b=AqKBAYr32YAzttcs2X/JYWA0hng0HpvPL7XBHGmmapKfJk61DbPAucARffFPw6yMVyWqNHZqvVKXvukfjJbrJApqeOdlkj0DOEdAL03FUpxjSYJtIQgOZKLmqoHnJ4iIJQq3QQgD18c/wJAN+TJ243eC3rIlU+hMCJ+s4F6hqmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754444890; c=relaxed/simple;
-	bh=yOgUNYB83bxvih5HrdZGDPp9Csblycjbfn9C0Jfhjys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsHpWrUeQ2was6tI7fm51341YJIMlkMBRrTXCOqEB239JTchUlEUJr74RsuhKmkQyjlnA13GuZwc9cXbGL8kQlFYGcK4dGp2YD1vOYkLnDQsU/txw0O1RaSJGQI/udJ9H0IS+QIdY2sER8nxzL4NAGGWoCYJsNz0wAsUaBjK52c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETZWtoZ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FDE7C4CEF0;
-	Wed,  6 Aug 2025 01:48:09 +0000 (UTC)
+	s=arc-20240116; t=1754445085; c=relaxed/simple;
+	bh=PQZc/q65JiHh2RcepehYW3OIxX4IWqymq4kCk+fM0AQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=okKPUUEisAp6uZntR3VuX0Mur5uMm5g5iMMsN4U7tAQO3dTJjD4TVprueHZUJqiwFpVwlpQk4zJP8NFIwvTblO7YUQ+SWa43Nb6Cf0IDwBFE0aHgNX1R/idN5u4K556ndrr9F5W9fC5RBUBmkalaHaPFtg8S/S0JR21xQ6bYapI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRSpdYWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C37C4CEF0;
+	Wed,  6 Aug 2025 01:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754444889;
-	bh=yOgUNYB83bxvih5HrdZGDPp9Csblycjbfn9C0Jfhjys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETZWtoZ1J1U6vPeKwtuBZ1llMNu5mGOu/Yn+4kgTVskXtRfvIMTC2GRZ4freoa01B
-	 U+mmSXTCvtkkjBuOnyIeXsIT1LV8CDltqYwl6X17lwyUENbA3mUcq9H1G4dlCwujft
-	 ZMi05QOzSuhzbCC8zsUPGT2KAkB0Az46SYYvkuD9Cday+/yqXk90QXSMvBzMA1PzOh
-	 Y4yn0pMkOLDGz6YQg/0E/0zO/cA1vZLqx6AWgKpAvBYSIh8ONqzIQgKslgPViKxKKJ
-	 3fcASWwtvkQc9tfS/TvofUr69/zA/wdXr2Ip4iOQLyTY3vCYKpKxaAPB7c6oFCr2O2
-	 WtOCaru9GQnMQ==
-Date: Tue, 5 Aug 2025 18:48:07 -0700
-From: Bjorn Andersson <andersson@kernel.org>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel@axis.com, linux-arm-msm@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: misc: eud: Remove error print for
- devm_add_action_or_reset()
-Message-ID: <5bgmxatzdgkxvuko56siujzlokyie5ru53rgozxrdaey6awmqy@u5pzyrfc7ve3>
-References: <pndo6sukt8u.a.out@axis.com>
+	s=k20201202; t=1754445084;
+	bh=PQZc/q65JiHh2RcepehYW3OIxX4IWqymq4kCk+fM0AQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=QRSpdYWQYR+w2LYdyxUXBtmuhF+9HbKn3Z3mvkANZVtnTi6SlnkfF8Byb8fwAwQmi
+	 X+L13NeutfFEbr+1dLnBbf3V6u6tYDEhxuRPLshqI1EctW4H8YopKIY25a1gVTU5S9
+	 pUMB1NcdP8Q/xaSWlWAwsKhAJtlQHc5AziSU3B7YLcd1HEna+BV0En/NjPQCtZ4ZYD
+	 VjRTkoanJPiUWPSTlMXPOpovqOOnSaAvtNaPj/QJYspUSXpf/t49tFyWtvqj9eeJ9a
+	 RgB1GP9ZGnziWOBW+Oj8SN3GgIJxSCgv2gBiqwSYTdqupaZ2jOyUClR09a+RWnYgOY
+	 UjfBwJeJLnv6g==
+Message-ID: <9c7ef111-548c-4751-af9f-335563bda263@kernel.org>
+Date: Wed, 6 Aug 2025 09:51:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pndo6sukt8u.a.out@axis.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Qi Han <hanqi@vivo.com>
+Subject: Re: [PATCH v2] f2fs: fix to return -EOPNOTSUPP for uncached write
+To: Jens Axboe <axboe@kernel.dk>, jaegeuk@kernel.org
+References: <20250805061914.3067747-1-chao@kernel.org>
+ <587aaee2-8d84-4eb5-9b87-22947abd0752@kernel.dk>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <587aaee2-8d84-4eb5-9b87-22947abd0752@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 05, 2025 at 11:33:37AM +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+On 8/5/25 23:37, Jens Axboe wrote:
+> On 8/5/25 12:19 AM, Chao Yu wrote:
+>> f2fs doesn't support uncached write yet, for write() w/ IOCB_DONTCACHE
+>> flag, let's return -EOPNOTSUPP instead of ignoring IOCB_DONTCACHE flag
+>> and write w/o uncached IO.
 > 
-> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> Didn't we agree that write support should be pursued first before
+> bifurcating the read/write DONTCACHE support?
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Yeah, no worries, this is just used for test purpose, will drop this once
+Qi Han prepare the new patchset supporting dontcache in both read and write
+path. :)
 
-Regards,
-Bjorn
+Thanks,
 
-> ---
-> Changes in v2:
-> 
-> * Split the patch to one seperate patch for each sub-system.
-> 
-> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
-> 
->  drivers/usb/misc/qcom_eud.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
-> index 83079c414b4f..67832790acad 100644
-> --- a/drivers/usb/misc/qcom_eud.c
-> +++ b/drivers/usb/misc/qcom_eud.c
-> @@ -193,8 +193,7 @@ static int eud_probe(struct platform_device *pdev)
->  
->  	ret = devm_add_action_or_reset(chip->dev, eud_role_switch_release, chip);
->  	if (ret)
-> -		return dev_err_probe(chip->dev, ret,
-> -				"failed to add role switch release action\n");
-> +		return ret;
->  
->  	chip->base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(chip->base))
-> 
-> base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
-> -- 
-> 2.39.5
-> 
 
