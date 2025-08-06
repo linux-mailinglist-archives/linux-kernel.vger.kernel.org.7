@@ -1,91 +1,193 @@
-Return-Path: <linux-kernel+bounces-758118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD0EB1CB2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:42:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40E6B1CB37
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C227756298F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:42:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DD818A5921
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3312729C33A;
-	Wed,  6 Aug 2025 17:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088829CB4F;
+	Wed,  6 Aug 2025 17:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="goQlNm06"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="iHBRD9Ma"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BCF29ACC2
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6E428AAE9;
+	Wed,  6 Aug 2025 17:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754502150; cv=none; b=GEKzdKi9Jb3zEwXo48d4/+5625KNt8bFX2yl9aDWqoXe0SZKSpFD49Jc4gjeCt6US2DTbJo80VMnxI3j/XB0Zsy5QHMS6CjsG01k9KaTKPfw15ysI/5yrEtkiGPtcYxJkg+J7fw8t2qoz8zdeMLqkyb/euQlGRw0MHEGoSzbt5Q=
+	t=1754502300; cv=none; b=uaTXr0fTT6Gn0GOIrV0FnH3+HVJTyl09oosxIuaKD2WiQi0683kNxanjplm3HyKPnIMwLb644eqrfUV1ccJ3C9WwQK8rAZiHlUb/1YWHQbr0YPTGd7+aT2oGHmxmwyoe0d3/hx74krn5zdyjp8z3RoeFn1/49DXZjQNzyWMMUm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754502150; c=relaxed/simple;
-	bh=1CPu9lCy0nvdi/L1p1/8uO3fkzxuerfbGvnecx5wZ3E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=iQd4mUOC7+jJX1k88di1cS2DdX3xUbIAzSy1E1ZUD8+zjMtkEYPPrtbCIYB44BMdYOPByfjw7qtXGaB7XXp7TV/ynda+srQspdEzcENvXk8f4YyUDTM0JDRvYVgh+Jf3pfcfLJ+EuO4is8si5SsihPkniV6MwsNEyDNlqGZRVt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=goQlNm06; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31ea430d543so200035a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754502148; x=1755106948; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kF9bpK1qdUp80ZClzRswKI8Qf4Ua9KldMhdifkuZo5A=;
-        b=goQlNm06WHZgJRapjTxt7R/TcRyiYavrMYBtU4hmo4uzkAlMJbeCxB8csRwzAolnN8
-         ZPP9NIY5cRfYYFplGmGxSempalR2O8dG3LqmC9fjh8daHyrXw8lHwdOrOjMyBuBI/z5h
-         URx7jDzp2kDdknl4430tJud1f8asOCruSHZKnZAJg1+lu9Qz8Uo5xrA99PoXRgXUdpB/
-         SJS4aHJcbiMIz61P+Vb76QYkNHL4JKa1GyFQtmVMcTylJmdbsh4hU/9VQzrAJzwaowfA
-         VKd2ilHFkvRAfQA+WlTkCTuxdcwBjnzQGMRzkQX3C9GlTCcH0UH2ZrG3pOJvQppveL7+
-         6mpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754502148; x=1755106948;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF9bpK1qdUp80ZClzRswKI8Qf4Ua9KldMhdifkuZo5A=;
-        b=Qly1r5WkqfHKZd7WnuOusUf/wk9XVGt+bbp4N07Gk5ENhVR75xjNnAm7crwp0q9ymC
-         SGoCl/dZZLanxfKUOoipeGzZSxkW1EHkCO3/KHu6JUetzJS65HaesO/12gFfARNB6W5A
-         PBe+enqeYU/dos85sbBX9hD/5Qr2B6JAn5tj/Zsi884VD9L+pFxWtm0lRMO+qYKk2gMO
-         iUA1mbZrR+fAGW+5V4yGR8Vx7MHWh9R64eAyEONGjUzuj9i+swKBvpbpwXxDocW5CV+9
-         yaf2oK+h1mJbKSfFYhVUn61MZXE8a9dsb2OyF88o5ozCXyjBPIMsFLDa/MhIHzgf2Krg
-         EZ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUnJ6px7kS68mdklMjWr3Iw8nU7rvEHQ599h3qLUqDbEPeRpSTRAyjBBPVVDdXnzScF8afcHr07RzGtj80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ysc3ucxn5kknknCjOhlmBGzSblHq1c7FZ/zAKWQYFskqo5HU
-	dbFV2G7ygnD2f1gJZx6MN2xGy1OGwTAzZ3/YXrSMyqUJwFsHyWdAllYVfAVWEzrxGQuA1ZLbtxr
-	oQbIHEw==
-X-Google-Smtp-Source: AGHT+IGxbih1aPqy3gB/PvUjHaW+i+ljUGZQWDmJCtPz45aIX373xGbdvRWIDafeWxu+TILTrn0k5Ma/L1w=
-X-Received: from pjg13.prod.google.com ([2002:a17:90b:3f4d:b0:31c:2fe4:33ba])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:52c8:b0:321:1680:e056
- with SMTP id 98e67ed59e1d1-32166e093f3mr4752885a91.9.1754502148561; Wed, 06
- Aug 2025 10:42:28 -0700 (PDT)
-Date: Wed, 6 Aug 2025 10:42:27 -0700
-In-Reply-To: <20250805190526.1453366-6-seanjc@google.com>
+	s=arc-20240116; t=1754502300; c=relaxed/simple;
+	bh=U2/2UCTKfdzYU7Vs2Xj+qWBuAQMgG6FdCzWdcxQCboI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VCKXCelLhnr8Xw6Y4f81N+ul1GdhY1V8jIm760sQQxwjdb3EK3opJ98QCriCZ54RTtwD/ClOvN06osQzkgwkVGOu0URdtA7JK2Ai5UW1++r8fehpSdgh9PkUDznUJakEafPnYJz6E5h7mLNePhPsCfn0iLouClEGe6NvYt8fbEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=iHBRD9Ma; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bxyNc5j5jz9snx;
+	Wed,  6 Aug 2025 19:44:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754502288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=unovipNBV+SHJmYU0KEMKrMHFAnD9x3er82aqfKIVuI=;
+	b=iHBRD9MaRYpISA6JNREFryNHn4dqIbi7XTU0+EWo65nQ5lLwPGHSmhavwxMKTbMIue0j89
+	9LieVEBmcWs0LyGRIm8VEuVD8tB6NtwjB5Az0XIQPOuvZPJZ1UUETdkaLQE8VksUpXccY9
+	SFssOR12QsoTL27t1mFWbP4RZ2L7qgR7PwbvoF9l8bXulHAserIXasTLtjeUQGpc4wWtCy
+	v5dHEJyxQBD5cLvul1hZcQzhEHWQiG2RpHVtXUpPPnP7ZjYy/4U/EqpHu0V2vrlMnTZSDR
+	3AGjwVY1UyV20wh7XIls8G9EDU63vGkWiFS6O3uwRLXiAlsNKHzAYjb5Tca5pg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+From: Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v2 00/11] man2: add man pages for 'new' mount API
+Date: Thu, 07 Aug 2025 03:44:34 +1000
+Message-Id: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250805190526.1453366-1-seanjc@google.com> <20250805190526.1453366-6-seanjc@google.com>
-Message-ID: <aJOUA36kOYklPzXt@google.com>
-Subject: Re: [PATCH 05/18] KVM: x86: Unconditionally handle
- MSR_IA32_TSC_DEADLINE in fastpath exits
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xin Li <xin@zytor.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIKUk2gC/13MQQ6CMBCF4auQWTumFKjVlfcwLGqZyixoSYsoI
+ dzdSuLG5f+S962QKDIluBQrRJo5cfA55KEA2xv/IOQuN0ghG6GFRE8vHMLTT2hGxrpS3f2sa1d
+ XEvJnjOT4vXu3NnfPaQpx2fm5/K4/Sf1Jc4kCtTpp1yiriMTVLmNv4tGGAdpt2z5UHm78qwAAA
+ A==
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Askar Safin <safinaskar@zohomail.com>, 
+ "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+ linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+ Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5263; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=U2/2UCTKfdzYU7Vs2Xj+qWBuAQMgG6FdCzWdcxQCboI=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMntJacvLEtzLv1VGKHo8kZK/trz+14m9fYfnXkqdCa
+ 4L7pTybOkpZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBExBsZ/ueaymoZt0SoXBKb
+ cMvu14apOxe/7WjsfbDFxt78ukH21AqG//XxMYvFv3C5n1xXIbDna8Ss3R+u7F3P9v1Awhr5xjP
+ Ck/kB
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-Rspamd-Queue-Id: 4bxyNc5j5jz9snx
 
-On Tue, Aug 05, 2025, Sean Christopherson wrote:
-> Stating the obvious, this allows handling MSR_IA32_TSC_DEADLINE writes in
-> the fastpath on AMD CPUs.
+Back in 2019, the new mount API was merged into mainline[1]. David Howells
+then set about writing man pages for these new APIs, and sent some
+patches back in 2020[2]. Unfortunately, these patches were never merged,
+which meant that these APIs were practically undocumented for many
+years -- arguably this may have been a contributing factor to the
+relatively slow adoption of these new (far better) APIs. I have often
+discovered that many folks are unaware of the read(2)-based message
+retrieval interface provided by filesystem context file descriptors.
 
-Got around to measuring this via the KUT vmexit "tscdeadline_immed" test.  Without
-the mediated PMU, the gains are very modest: ~2550 => ~2400 cycles.  But with the
-mediated PMU and its heavy context switch, the gains are ~6100 => ~2400 cycles.
+In 2024, Christian Brauner set aside some time to provide some
+documentation of these new APIs and so adapted David Howell's original
+man pages into the easier-to-edit Markdown format and published them on
+GitHub[3]. These have been maintained since, including updated
+information on new features added since David Howells's 2020 draft pages
+(such as MOVE_MOUNT_BENEATH).
+
+While this was a welcome improvement to the previous status quo (that
+had lasted over 6 years), speaking personally my experience is that not
+having access to these man pages from the terminal has been a fairly
+common painpoint.
+
+So, this is a modern version of the man pages for these APIs, in the hopes
+that we can finally (7 years later) get proper documentation for these
+APIs in the man-pages project.
+
+One important thing to note is that most of these were re-written by me,
+with very minimal copying from the versions available from Christian[2].
+The reasons for this are two-fold:
+
+ * Both Howells's original version and Christian's maintained versions
+   contain crucial mistakes that I have been bitten by in the past (the
+   most obvious being that all of these APIs were merged in Linux 5.2,
+   but the man pages all claim they were merged in different versions.)
+
+ * As the man pages appear to have been written from Howells's
+   perspective while implementing them, some of the wording is a little
+   too tied to the implementation (or appears to describe features that
+   don't really exist in the merged versions of these APIs).
+
+I decided that the best way to resolve these issues is to rewrite them
+from the perspective of an actual user of these APIs (me), and check
+that we do not repeat the mistakes I found in the originals.
+
+I have also done my best to resolve the issues raised by Michael Kerrisk
+on the original patchset sent by Howells[1].
+
+In addition, I have also included a man page for open_tree_attr(2) (as a
+subsection of the new open_tree(2) man page), which was merged in Linux
+6.15.
+
+[1]: https://lore.kernel.org/all/20190507204921.GL23075@ZenIV.linux.org.uk/
+[2]: https://lore.kernel.org/linux-man/159680892602.29015.6551860260436544999.stgit@warthog.procyon.org.uk/
+[3]: https://github.com/brauner/man-pages-md
+
+Co-developed-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+Changes in v2:
+- `make -R lint-man`. [Alejandro Colomar]
+- `sed -i s|Glibc|glibc|g`. [Alejandro Colomar]
+- `sed -i s|pathname|path|g` [Alejandro Colomar]
+- Clean up macro usage, example code, and synopsis. [Alejandro Colomar]
+- Try to use semantic newlines. [Alejandro Colomar]
+- Make sure the usage of "filesystem context", "filesystem instance",
+  and "mount object" are consistent. [Askar Safin]
+- Avoid referring to these syscalls without an "at" suffix as "*at()
+  syscalls". [Askar Safin]
+- Use \% to avoid hyphenation of constants. [Askar Safin, G. Branden Robinson]
+- Add a new subsection to mount_setattr(2) to describe the distinction
+  between mount attributes and filesystem parameters.
+- (Under protest) double-space-after-period formatted commit messages.
+- v1: <https://lore.kernel.org/r/20250806-new-mount-api-v1-0-8678f56c6ee0@cyphar.com>
+
+---
+Aleksa Sarai (11):
+      mount_setattr.2: document glibc >= 2.36 syscall wrappers
+      mount_setattr.2: move mount_attr struct to mount_attr.2type
+      fsopen.2: document 'new' mount api
+      fspick.2: document 'new' mount api
+      fsconfig.2: document 'new' mount api
+      fsmount.2: document 'new' mount api
+      move_mount.2: document 'new' mount api
+      open_tree.2: document 'new' mount api
+      mount_setattr.2: mirror opening sentence from fsopen(2)
+      open_tree_attr.2, open_tree.2: document new open_tree_attr() api
+      fsconfig.2, mount_setattr.2: add note about attribute-parameter distinction
+
+ man/man2/fsconfig.2           | 566 +++++++++++++++++++++++++++++++++++++++
+ man/man2/fsmount.2            | 209 +++++++++++++++
+ man/man2/fsopen.2             | 319 ++++++++++++++++++++++
+ man/man2/fspick.2             | 305 +++++++++++++++++++++
+ man/man2/mount_setattr.2      | 105 ++++----
+ man/man2/move_mount.2         | 609 ++++++++++++++++++++++++++++++++++++++++++
+ man/man2/open_tree.2          | 479 +++++++++++++++++++++++++++++++++
+ man/man2/open_tree_attr.2     |   1 +
+ man/man2type/mount_attr.2type |  58 ++++
+ 9 files changed, 2600 insertions(+), 51 deletions(-)
+---
+base-commit: f23e8249a6dcf695d38055483802779c36aedbba
+change-id: 20250802-new-mount-api-436db984f432
+
+Best regards,
+-- 
+Aleksa Sarai <cyphar@cyphar.com>
+
 
