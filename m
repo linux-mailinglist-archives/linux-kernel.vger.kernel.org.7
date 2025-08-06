@@ -1,125 +1,239 @@
-Return-Path: <linux-kernel+bounces-758456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AF9B1CF6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:37:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E05B1CF72
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164E9627C07
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E8856703D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A793D21C179;
-	Wed,  6 Aug 2025 23:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3D277CA4;
+	Wed,  6 Aug 2025 23:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hc7JZeXO"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODqJWN5A"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D34B230BCC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 23:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CAE21C179;
+	Wed,  6 Aug 2025 23:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754523459; cv=none; b=FwPonaQAhO67xpLTOXJQRhqUmrjQUBTI9OzqE2HO9w6ADZoXns+OrF/MNjxzi7+Jr9bg2LA+1NSWFJay+kuG2eAUJtanThPm16kkbEq7GyjvDzO2zhjKixbAjh9utNRQkCx+XZQbeV5DDviCN8bwkGV4L0HLH/BKMWNjNu53ocY=
+	t=1754523504; cv=none; b=ZMhH4hYZRN6HhmV2ZO7HsS6Ys6b/VTiHYGmVbCQ+ONXcmV+avP8TnaRC8EyX/eY3rNfitQjnXWjsVqTOoorMG+oLNK2iqHcRy+AccWaNBYH4iHWVxoMZEBcDUKWFzaKLuJCLBiADk+fyTw54rjavi3i1rE6eNz68JQ5C8c9sq0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754523459; c=relaxed/simple;
-	bh=Uf9dtk59gFzJjlH8ShXanMDOj+0+ZVxzHKwT8GoMWBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0uoofSovdAKkbDmjDSpGsh5wNX0JrCtckT0/JhoJLVjZ84G/9dt9Kex1I9FPfj+ujYVA3yQGQ82HwbQ46mBdY/zHwrJF0wxTOgyw8NX4WbYhk6L9A4OnP0mTa8SNzFIM84CEF/5F6k2MUYtcaC6rMcrqOqnmYOb8uQjuS4d1p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hc7JZeXO; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e3ea9e8154so1731305ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 16:37:36 -0700 (PDT)
+	s=arc-20240116; t=1754523504; c=relaxed/simple;
+	bh=sqI/GEwdoGremF/OUWnATYq0HOTDGAs6joghp/SU8a4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k5w4nTG11mZZwYuCBUMwoi9qZe/I8hgxc0mTnVyrIOmXoxMqIRJDzRduwdfdAyHGSWWlsXI9IpJWkjR1CtTlPmrM3J6PtC2CIgPRMnRCJUmyH8bZ40XkS6FWQmOEGxIf2PZXzf/onNMbdkyBPrvEoi/BN6XUGbceShtxoTHNf1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODqJWN5A; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af66f444488so61171766b.0;
+        Wed, 06 Aug 2025 16:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1754523456; x=1755128256; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uw+3hQa1gfaYBGKUs7YEQ5o4Ob+RRHGwFhvrqOMiO6I=;
-        b=hc7JZeXOMuwSTkXWpfDbfnEeLmiZCuCGH0yqIUjOnukaYjVUka1zWX8zv8tNFqkkyN
-         25l8hWYsBHEmNiyFfntj1MGlDLUGu1z+gpD0h+PxvdqhzPMRNzqdtDKTV7sLEd86jYgT
-         2xSjrI3J3wnulQWwzse5X4KV4gysAnWA4kQ8I=
+        d=gmail.com; s=20230601; t=1754523501; x=1755128301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WhqBigQF9nZyV6MxdBcrgjMBesgYA66oBZ2ceJcbdZE=;
+        b=ODqJWN5AtSIb0A5kVojl0Yy0V5g2hPqCjk3+bSOkU5h92O0GRkAIkGsjB2GOtOIUf2
+         UoO3AfhfTUMkyKXxBSxnO5dP7HLBd8RzghftDep575BBfGt7pUNClpvjdh0bR1j392k4
+         E+Ej9eoe1zBAjVS8oul/qF9xYyVFs3zIG4kJ3SyScHiaFhJq0fROUQ+DH9E5RE09+Qzr
+         a5EfKWdhHiVgc2/mf836B5As/7NBle2vb73TNKd3TOZIf8oAwNzpEeBOGvgGBG7lY5G+
+         PWMe+Hds0REuzhc4sbTQIp7yBKGaf/6Zc+6JQY9EqHh8jFaKm6+CwAMEAZy2kxEoPx9v
+         A26g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754523456; x=1755128256;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uw+3hQa1gfaYBGKUs7YEQ5o4Ob+RRHGwFhvrqOMiO6I=;
-        b=YYeYAWw0odBf4RveFzDuhEpSgGw3doaE2J/sv50SRVksTEl7mV0pHX+IoHgLF80qP8
-         xIPFad3+zF0Yp2fM+CJz2crD+KVI0a3QDhqgRvzxN9FPobhudPXLGv4+EW6kd553g35w
-         F6uIqdW9U/ftK03HklOYo0AN3NYMgho08w9Rmtl9SOIEPmjdJv0gbacYUa5u7r1FKwhB
-         OgHo0qcu2aIBuqpqyjBjH3uu1I4VUs2Ls7AXZsUh7zU0gR+r20Ywv8rsAhAYuc6Aq7qe
-         wZfB0m8kiBkPZKCG1z3am1pOzHR3m/zYRLy66ey+0aG2//2XUveOC3htt7j8QTQa55qG
-         Y9pA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Ai5GZUtQ6ITQKA8aPO8q4KyE3zXiCMZcglCu2vkk/JNWjFZyML3xsE2CSt+v3yLbmAN8NEbrDpYNQo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiwdpfvIXgloz8QdSUuilNCN8vLjVWGLQzeukrloSCHA9XLiRT
-	+ibzkwPR6EzTmrgnyDc3KxGs6I2YYaVKjv63LmMKo/NDEarB3eeIMkft3RONa5mjMnEetwBc9ye
-	Y2qLt
-X-Gm-Gg: ASbGncsLUIFgUmnsezO2iJ8w0b2BjRfkEvAdH/FsRE0acRViMNFHNsQqrGpH1Reicnp
-	OAY81JPL8T4IeoTDqP7gHcDKAbKZEvq1sZnhxxH7f5ntr+HqATkQH2QEEgxfvxipFO6/FWQRXeV
-	EkaOVe974Lvn2HVHcFFiH1N5AZwxB/LhcSGfOQiCu/I1xVZ7XI7syxNjAW5SX4ezn82IlA/jPsB
-	3mIci62srcbv4AK7lAJLNGwyhpTC2u0mvQw/mXiIl7NqOC3mSAjLE4KXpZQHlLR/b3WCCuFekps
-	3gDsDdWOivKgGF3o2VBRAgS7IqFKFZHtnS5DN+evopMetLAKE1iCuWxvt1PijYiBtcPCN53TiAc
-	5Dx1G1rsUiRky7ye9fHxFM9AGmF7JDVuDdMhkVN7k1bwExlfQM3CV8EU=
-X-Google-Smtp-Source: AGHT+IGqqJVTA2htapTaUHkMpzxdklgfTGVquWo2AJSzNnJfbuGn+Zh7vo/Di0EaQuQx1JtIkMQcKQ==
-X-Received: by 2002:a92:cdac:0:b0:3e3:f67a:7dfb with SMTP id e9e14a558f8ab-3e51b882074mr75481485ab.4.1754523456246;
-        Wed, 06 Aug 2025 16:37:36 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e4029a1553sm66302015ab.14.2025.08.06.16.37.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 16:37:35 -0700 (PDT)
-Message-ID: <b89a0377-2a1c-418f-a897-966cf1cd4789@linuxfoundation.org>
-Date: Wed, 6 Aug 2025 17:37:35 -0600
+        d=1e100.net; s=20230601; t=1754523501; x=1755128301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WhqBigQF9nZyV6MxdBcrgjMBesgYA66oBZ2ceJcbdZE=;
+        b=Y3Z7/Yuah5KWrxePZla1UmU7LWf1CGN2jLvfN4D+Th1rVrDVrSi8GY5sbCang2M4WY
+         gdDQbbnNkt0k0Tltay8qC5Nt/AZPEIddZ4wOg7Z4ej2BiCHbKTAQH9ZjXHjIxuNUDmDy
+         k2GfXDXUaxpNh2tEQ+EGfa3vcBqMGP1dD9QyDhiTkwD4AofvTFOI/omS0bBzhWnWK1hW
+         rgNj/238nHCuekuM+g6lvvTaBkDQ2QcAnjden8rGkaX5EOEhP7tlnBbz7xwkgmqwUqe6
+         9Ju8qc92En3gm7Ti/sAGmNAdJh8OCC0t+Tbsk4F5aBKBCNwYpoKUN5xokJg3MrLgnW2F
+         5Ikg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxMfPGoBI9oFbT7Cwsv30C8bWRfoCoPcY8leMHNf1gnT7r61h5/6DhFKzXJM8gptewHkI=@vger.kernel.org, AJvYcCV+rOcTP7UW/mNc7/oJlHDdrer8HPxo7DnHA9k+DWS4yxSvHcS6jK46I9867dvB7uZ1IuqqQLsfvp8Xow==@vger.kernel.org, AJvYcCWluwqtt3JlPKCW1yTyyGTQ7rM/JR5VoFOKUAwnl7514i+hRzPh5si6Mx+wC4trbTKClbvtIoVoQU98kUw1ZlgI6g==@vger.kernel.org, AJvYcCXq8EJEl36RU6HatblEDArkzadT7lizm8Xlwvrdgj2tMZgRYQf6CEZWxtP9VsqcoWi5ww/m940Zdo9UbcSI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLVkaUAAmefeH9neYA+3L6c+kLp6KeY0vL/O9kX4KT6dkUG0M6
+	UidQTx7A5VSyU/82ijZGzJ+kWO4u3+eqwFTW/oU7EeBgFkdLAOIR46H1FLzRX6f9Zox2CNO+DqX
+	mXm0QqsrYiBuEUZpeklPoi4rQro1KpVo=
+X-Gm-Gg: ASbGncvAkwv+HtNmhDNNyONKDoUF8RiPQTsuoDtZkKk1tAHyTBJO1fTRstN3h9MBS8z
+	U98vu76lb+Yzcqa1z8Rnr4/Lm229bWn5wJh4m0iAs7e1EDa6bsoX7yliewHZv5S4R6gYZ3Pa+zm
+	CM5HtdR7U317AQaOZPXclsggm+BNsDZYSA7UEO5ku3fGkGrXsfFLQ6nltlMtnQOciJRQ8MUgNYx
+	ouFIcJrcGRqO3N6b+HMyWMKVOyrDloV0yZ4xi0UUhDeXRY=
+X-Google-Smtp-Source: AGHT+IHzqZa1neiF0uyaArNjeHnGfC3u3C63toQez4cHAhPKNPYYG8lWs+NBrvtwsMA4OL/MdhBzMkD1DLcLhev3JBQ=
+X-Received: by 2002:a17:906:9f8b:b0:ae3:f299:ba47 with SMTP id
+ a640c23a62f3a-af992ba59a5mr376345166b.32.1754523500252; Wed, 06 Aug 2025
+ 16:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpupower: repair mangled powercap comment
-To: cryolitia@uniontech.com, Thomas Renninger <trenn@suse.com>,
- Shuah Khan <shuah@kernel.org>, "John B. Wyatt IV" <jwyatt@redhat.com>,
- John Kacur <jkacur@redhat.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Wangyuli@uniontech.com, Guanwentao@uniontech.com, Zhanjun@uniontech.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250806-mangled_cpupower-v1-1-1a559130326b@uniontech.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250806-mangled_cpupower-v1-1-1a559130326b@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250806114227.14617-1-iii@linux.ibm.com> <20250806114227.14617-3-iii@linux.ibm.com>
+ <aJPc2NvJqLOGaIKl@google.com>
+In-Reply-To: <aJPc2NvJqLOGaIKl@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 6 Aug 2025 16:38:09 -0700
+X-Gm-Features: Ac12FXz1F-Xdu0Kpt8aaIXgLMS8YVgSoQxycBjiK4rapVXOu8GkFrx9VZX0LA3A
+Message-ID: <CAADnVQJG6U6X1qarpbdXra12m-PhNJK5f-jyw695osnOm6AZnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] perf bpf-filter: Enable events manually
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ilya Leoshkevich <iii@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-s390 <linux-s390@vger.kernel.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/25 01:08, Cryolitia PukNgae via B4 Relay wrote:
-> From: Cryolitia PukNgae <cryolitia@uniontech.com>
-> 
-> The current comment exhibits clear patch application artifacts:
-> 1. A stray '-' prefix indicating failed line removal
-> 2. Broken sentence structure from improper context patching
-> 
-> What appears to be version control residue has persisted since its
-> initial introduction and through the 2022 kernel submission[1]. While
-> my archaeological efforts only trace back to the 2017 openSUSE patch[2],
-> the corrupted syntax suggests even older origins that remain elusive -
-> perhaps maintainers with longer institutional memory could shed light
-> on its provenance.
-> 
-> Restore grammatical sanity by:
-> - Removing the redundant second line with its leading '-'
-> - Preserving only the primary statement about RAPL hardcoding
-> - Eliminating the fragmented "should show up" clause
-> 
-> The result reflects reality without speculative future-proofing.
-> 
-> 1. https://lore.kernel.org/all/20221123111810.16017-2-trenn@suse.de/
-> 2. https://build.opensuse.org/request/show/535512
+On Wed, Aug 6, 2025 at 3:53=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Hello,
+>
+> On Wed, Aug 06, 2025 at 01:40:35PM +0200, Ilya Leoshkevich wrote:
+> > On s390, and, in general, on all platforms where the respective event
+> > supports auxiliary data gathering, the command:
+> >
+> >    # ./perf record -u 0 -aB --synth=3Dno -- ./perf test -w thloop
+> >    [ perf record: Woken up 1 times to write data ]
+> >    [ perf record: Captured and wrote 0.011 MB perf.data ]
+> >    # ./perf report --stats | grep SAMPLE
+> >    #
+> >
+> > does not generate samples in the perf.data file. On x86 the command:
+> >
+> >   # sudo perf record -e intel_pt// -u 0 ls
+> >
+> > is broken too.
+> >
+> > Looking at the sequence of calls in 'perf record' reveals this
+> > behavior:
+> >
+> > 1. The event 'cycles' is created and enabled:
+> >
+> >    record__open()
+> >    +-> evlist__apply_filters()
+> >        +-> perf_bpf_filter__prepare()
+> >          +-> bpf_program.attach_perf_event()
+> >              +-> bpf_program.attach_perf_event_opts()
+> >                  +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
+> >
+> >    The event 'cycles' is enabled and active now. However the event's
+> >    ring-buffer to store the samples generated by hardware is not
+> >    allocated yet.
+> >
+> > 2. The event's fd is mmap()ed to create the ring buffer:
+> >
+> >    record__open()
+> >    +-> record__mmap()
+> >        +-> record__mmap_evlist()
+> >          +-> evlist__mmap_ex()
+> >              +-> perf_evlist__mmap_ops()
+> >                  +-> mmap_per_cpu()
+> >                      +-> mmap_per_evsel()
+> >                          +-> mmap__mmap()
+> >                              +-> perf_mmap__mmap()
+> >                                  +-> mmap()
+> >
+> >    This allocates the ring buffer for the event 'cycles'. With mmap()
+> >    the kernel creates the ring buffer:
+> >
+> >    perf_mmap(): kernel function to create the event's ring
+> >    |            buffer to save the sampled data.
+> >    |
+> >    +-> ring_buffer_attach(): Allocates memory for ring buffer.
+> >        |        The PMU has auxiliary data setup function. The
+> >        |        has_aux(event) condition is true and the PMU's
+> >        |        stop() is called to stop sampling. It is not
+> >        |        restarted:
+> >        |
+> >        |        if (has_aux(event))
+> >        |                perf_event_stop(event, 0);
+> >        |
+> >        +-> cpumsf_pmu_stop():
+> >
+> >    Hardware sampling is stopped. No samples are generated and saved
+> >    anymore.
+> >
+> > 3. After the event 'cycles' has been mapped, the event is enabled a
+> >    second time in:
+> >
+> >    __cmd_record()
+> >    +-> evlist__enable()
+> >        +-> __evlist__enable()
+> >          +-> evsel__enable_cpu()
+> >              +-> perf_evsel__enable_cpu()
+> >                  +-> perf_evsel__run_ioctl()
+> >                      +-> perf_evsel__ioctl()
+> >                          +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
+> >
+> >    The second
+> >
+> >       ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
+> >
+> >    is just a NOP in this case. The first invocation in (1.) sets the
+> >    event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
+> >
+> >    perf_ioctl()
+> >    +-> _perf_ioctl()
+> >        +-> _perf_event_enable()
+> >            +-> __perf_event_enable()
+> >
+> >    return immediately because event::state is already set to
+> >    PERF_EVENT_STATE_ACTIVE.
+> >
+> > This happens on s390, because the event 'cycles' offers the possibility
+> > to save auxilary data. The PMU callbacks setup_aux() and free_aux() are
+> > defined. Without both callback functions, cpumsf_pmu_stop() is not
+> > invoked and sampling continues.
+> >
+> > To remedy this, remove the first invocation of
+> >
+> >    ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
+> >
+> > in step (1.) Create the event in step (1.) and enable it in step (3.)
+> > after the ring buffer has been mapped.
+> >
+> > Output after:
+> >
+> >  # ./perf record -aB --synth=3Dno -u 0 -- ./perf test -w thloop 2
+> >  [ perf record: Woken up 3 times to write data ]
+> >  [ perf record: Captured and wrote 0.876 MB perf.data ]
+> >  # ./perf  report --stats | grep SAMPLE
+> >               SAMPLE events:      16200  (99.5%)
+> >               SAMPLE events:      16200
+> >  #
+> >
+> > The software event succeeded both before and after the patch:
+> >
+> >  # ./perf record -e cpu-clock -aB --synth=3Dno -u 0 -- \
+> >                                         ./perf test -w thloop 2
+> >  [ perf record: Woken up 7 times to write data ]
+> >  [ perf record: Captured and wrote 2.870 MB perf.data ]
+> >  # ./perf  report --stats | grep SAMPLE
+> >               SAMPLE events:      53506  (99.8%)
+> >               SAMPLE events:      53506
+> >  #
+> >
+> > Fixes: b4c658d4d63d61 ("perf target: Remove uid from target")
+> > Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Lots of information for a simple comment spacing change.
-What are we fixing here? What happens if we don't fix it?
+Do you mind if I take the whole set through the bpf tree ?
 
-thanks,
--- Shuah
+I'm planning to send bpf PR in a couple days, so by -rc1
+all trees will see the fix.
 
