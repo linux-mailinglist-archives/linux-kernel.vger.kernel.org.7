@@ -1,170 +1,376 @@
-Return-Path: <linux-kernel+bounces-758074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356D2B1CA8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A82AB1CA8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B25E565E27
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E9E167CD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F86829CB3E;
-	Wed,  6 Aug 2025 17:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D611946A0;
+	Wed,  6 Aug 2025 17:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="snZU1FjK"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JrXs+Uw3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bjWm/yyn"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826F429C337
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500680; cv=none; b=hXrX9SU5cZ4mTOaCgop15pi+LVHsOs+Www3gUdtzLDH4dKmbeF4piSNWurmVy0GrRJEv2iVXyhO5J4wy1ks4GcjglR2NcHuxwSPewpo9jChUOyK2xyTrUz67nGEyy99nNaxOlQ1CDT4BmNfVjp7gRdV2USaM0ehVAialeDE9pNc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500680; c=relaxed/simple;
-	bh=Y0fD4MpRo3g7NK5y3s9VeqYtv1/oJ4ikGjJ95epd7uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SRxlg72mHBZr0i56dNpwLa52Gkmv9RWB0RPoCUOUzZp6eOXbgS9HBQ3ob3+jM2YcKIV+61ls9qiYuRp12xh/xbC5nueKXZzs5bumMdq2SjVW5faIkWCtJ2X+9O7WFf3nz8uaAR2XFAa+/dHv5bGEBgqc75hmCM2heGY9ughD+8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=snZU1FjK; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71b4fc462ddso522537b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:17:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364E21EE7B9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754500754; cv=fail; b=X9WEeHN0c2VZsBkw/wUJC8kmfRzjAtzuwjK1lyk9Me/0ob34j3B9UTm8kCymn7hisLxqFBkgV8GOML9tHmLJ8hbikv2pP20C1GSdSk2m3Y4j2bQ9hV4CVcOtHHH4FrkdZJc51RkdTKohs/xMVBA+1q9pA1gynq+Rck5hocMX5tM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754500754; c=relaxed/simple;
+	bh=SPiBTVsDmBUJF//ga0sDeKkRjbe0kMSu5QmFfMig3n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tKxT6Wvf23z9KDP18ypHnoQh7axlP1O191dRs8V9S8G7V5mMYc6/7Dyy/5+NUA95g3xh99plifbHBCByXjr+ws+mVXZ4iWbSjXGlWdrdkyaVBSns3rKbSv8Zo5Ex/1dDJIs8N5bIhWuobqA6r7jFOaEDc1ENGtaydSRaBx2xMos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JrXs+Uw3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bjWm/yyn; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576GRMhT001599;
+	Wed, 6 Aug 2025 17:18:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=fgdXnUuZIVR7CXnUDB
+	C2GUEuOGWr7A8AJ8BO/Pse4Mw=; b=JrXs+Uw3v43zBbkPc/lDzcvnPk8MpJPlyI
+	q3j790xpY7gHQV0mtQuvCbPLRAOHXr14a+3huQgkExlQAuiBvj2KPN1HH5az66mE
+	EQ9S9FdVyVyikUfRGrgGvV5Fpfx5fjtLm2FAZ3wAma0w4F6pfgxTidWy7Bd7iVwt
+	w8oZ+bJn5cyGWIyLrFAFlgWZOe2tRL3Emo4D0lBP73eCqnQns//O6/WbXPWpaLEc
+	I1vRWS4i/AiRcFQzSEfgMZa2B9go/BL/ZUjdZ/QbHXgMo2/KWlgkrNT/W84W/6nA
+	FSarjZwdzlL94iVHNFi55Lr63ov3vUWX47u3tzIeOB9611Y1GkPQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvd297x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 06 Aug 2025 17:18:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 576GoOFc028197;
+	Wed, 6 Aug 2025 17:18:56 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwmj2fa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 06 Aug 2025 17:18:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k0x7QRnqxzkogvzb/43+x1ZwCkleS3y1u5hUN9rN8sG7HWUna+XT/M3ULlzEFM29WESnE61vxUQXAxPStIrTYpFegLt+PRev+mVy58/sWiwZNlegauBsiLqHQ4mcuNIP8xBE/sq3NTHgWqK4jc6X+Q3hA6BCDYuoFZH7ugGoOF+SlwxE9WDVLjUdkINt1QECxYakxCu1x+m69oVW2X6C46R8/uH3AldSXlABX1Xv36hX5I5KouObXwFoyAw+MLqo3+Z8NK+JzLFL9msmzCj/ce9+xH1OS7hu3YLSbJMk9O+xAs0zp81O6t/feRVq9s2PBY1nIs/52Eh9NF+G491yoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fgdXnUuZIVR7CXnUDBC2GUEuOGWr7A8AJ8BO/Pse4Mw=;
+ b=Hg4ABhY824gt2c2/Tis/445mWIh/ZHE79/w/0wEEZtqfm2LlfK9OCsTMyTfrbIjdBNdoxJQQJy7rIz0AD35lr2rpa1nQbVAjwnxXT8voQKoKUv4ZAABXh98kRIg0GaY9pZLapN+VAEgORVxAyTB0/REGWTnva2NoFvxmfa2lDhsXVqK9+edxnSoyklt1SHQEhzmyQWg0mpHTu+BvLfOXq11SCfCcEHcnkU47ROkHL/VFlzuYN40l761vJm+5QT9VRWcWw6cRxCtiscn82wsZhvsy1vV88tQRGooOWKfFll6agfPEx+HH3Fi8dsKABZU7S7jHYKgAFGxBQ2DsCZFIzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754500677; x=1755105477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eCJFY1Ry1l45cujmFWN8iUaZroZ2v+N4zhO/u5g0qWo=;
-        b=snZU1FjKYXt9Xjr3LWONV8Z5qsaR+qsU3ZZ8DUO2IxnBmbXN+ci4hKywQpjvIOdZgz
-         Jx8P9J0wteBg9JhbPUpxI/fh5Q9PVnqh0XtKgr/2S5YZE3jhEHhiIzG++vXXdccWt03e
-         OmLMAgxzIeo5p7C3/joiOxauQ0LYPI1YFAcE2jlF0l5F+1diqR6W0LWnIUxG7ArcFp4D
-         +upo7BrtWilipH/UOlIrOAwAOcwDDP+oB7CdWWTnZmov+4c5rpGEJnymnE7u71M2aXpY
-         2TjKCBySiYDFIg2h3QqqqE5g03nGcVTLuF/7ysX6rUdV13sUGHQV4bfOY9dcE4wLpS4s
-         jRXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754500677; x=1755105477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eCJFY1Ry1l45cujmFWN8iUaZroZ2v+N4zhO/u5g0qWo=;
-        b=UMViMy9YWIBI4KfYiV1ekDfyV4jcisdPHGJ14UkcgvKviAy6jvA9WgLQsFA6/pn1lZ
-         tGB5/RIFM5hQPLvMU6r3Fr6t1nODueHe70ghe0F7ljb+K+eog/tlrm6XUNtUVHiCs04m
-         tY8vYJQmGSTk9kAZKBqpo1XqdCJGuiPRF2Fajoxpwug5NYqED/7iKK8E476IpR7R5I4k
-         eM4jjGrkNJ26Hmn1D5l4CFcbqcPyQ2PZ/B4XEapCcDrXzzRBZfo/YsHZBpJhSgGHuj/J
-         bsnuIVqUqM6aSTZl9ia25GBLzaNkMohjDCY7PiQpvcf4EF9R9v/3vHwr2NdHpv8kQ+ay
-         qo3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiM7WqzsXzpatcF1hbM+AtvLTmgzqzZPp9HLpzdjMh958WczezjzXp80T0dNFPFa+FfQOqMcmYd2y/c/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV2ppRGq2n+Rzli+TNGsz/Y8xjhrmEPGg6dFtHC8W5YztKf+qu
-	+innIqpB7aalGEH0BhEkmpcHb82rNecIEzXxsGxlZZgrLqYZJDsGDV/djb4fdU0XslEWhHgHMls
-	xqWUmtjRPOteVEQf72VprQetqhOgr7CJyIl6DZ+zqnA==
-X-Gm-Gg: ASbGncs/6WqPoHbCNTUQprZ1bf/rFd+WrZRBYu0tLj7688zUcQBdfoljMesBV88cYcC
-	J4IUsNe2qjYfttkSy0Aj/+4SiuzrfFABJ0hBpQC6pLN0688NnYH8GeL+XG4tqkZGd5Cw54UqTWw
-	agPtKp3NfgV4aGQOHZTC43ogEAQQeTeeaVpv6Nj0EF0mgMsBLvY+oP78dfVtijCRJpjJrgvv41Z
-	kobzefFSmA26hvMrlsPVVoQohY=
-X-Google-Smtp-Source: AGHT+IF/PATUAgO1kyiILLwJ2Hz+mfCVgzAsnenKM/M4eB9tFIphDugm0X2Ki4Larr5HlLbqkJkCKKOb501IL1PCi98=
-X-Received: by 2002:a05:690c:f03:b0:71a:3484:abe8 with SMTP id
- 00721157ae682-71bc98866fbmr51496647b3.34.1754500677372; Wed, 06 Aug 2025
- 10:17:57 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fgdXnUuZIVR7CXnUDBC2GUEuOGWr7A8AJ8BO/Pse4Mw=;
+ b=bjWm/yynqncB9PCdxWXqTcKjzLB2Sc5HsxZrhg9+j4yfzJI1QlyHPn6qgfFcl3bV8dSLF7sdkJ2s9lbw3keHQMt30o2N1A79TDBhfNtiWNuRA7P300egk3qw/hMj6Xpl1v8voYo56pZQDEGvWUm+orBC+RAcKdsYqHy/r07AeHQ=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH0PR10MB5820.namprd10.prod.outlook.com (2603:10b6:510:146::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Wed, 6 Aug
+ 2025 17:18:51 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 17:18:50 +0000
+Date: Wed, 6 Aug 2025 18:18:48 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, 21cnbao@gmail.com, ngeoffray@google.com,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Barry Song <v-songbaohua@oppo.com>,
+        David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Subject: Re: [PATCH v2] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+Message-ID: <a00a8cca-e435-434f-855c-a3b56f2aece4@lucifer.local>
+References: <20250805121410.1658418-1-lokeshgidra@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805121410.1658418-1-lokeshgidra@google.com>
+X-ClientProxiedBy: LO2P265CA0008.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:62::20) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250806070029epcas2p1f764301b115b766f88b422b0dbdd68f1@epcas2p1.samsung.com>
- <20250806065514.3688485-1-sw617.shin@samsung.com> <20250806065514.3688485-3-sw617.shin@samsung.com>
-In-Reply-To: <20250806065514.3688485-3-sw617.shin@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 6 Aug 2025 12:17:46 -0500
-X-Gm-Features: Ac12FXyGsSXeAvPSWY26uUPOsx4RabuRz1OCuoO1ZxYtOJ0aBX2ZDz4rGIPWY70
-Message-ID: <CAPLW+4=Lf5rs3p3+D17HDGYd1FHk-PDghOq4fygRzZi7VZXcHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB5820:EE_
+X-MS-Office365-Filtering-Correlation-Id: 386712ad-a7cb-4b83-6b29-08ddd50d4fd4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Pe19i+hQegO0mxDneAqbxGqrEi3f+rXBJJnA0BcTg4UME/IU42fdqaGUv0EQ?=
+ =?us-ascii?Q?KRWAeboWQodgPEOSbjTrfiMddt9umIGMLYiaZpcd2wwvcnts8e+4pkhV3pwa?=
+ =?us-ascii?Q?ajqKM8QXlfoq3cxYSET1q1VhhlTiZUsdY3PIwZAQEVP8xrGpC/oNwV9ZgNsH?=
+ =?us-ascii?Q?aOMP73XKU+Jujw2aJQWw+HOpsrar6nqzg7lmxEpPuC4BwhQxOXmqwd1wbKIN?=
+ =?us-ascii?Q?v4AmO4w2m3tnyfV84xCQYFGOB8XK1E5kburQ1Cru9opoZswUk0Ep9K/1OEgI?=
+ =?us-ascii?Q?6xQXFZQ+Fx78WcQ3LhHs9LpaVQd1OkXwODr2K4abPzxRRpIsDU1Ax5cUbRL8?=
+ =?us-ascii?Q?xEQmxpNwEwDTbQCxIIfOwN/ZOsWhMKLqBxrLLGFj0+xwqsd76Q6/vfCxjNwT?=
+ =?us-ascii?Q?5MYK9Lqjz2CpuqHsqGMkh6OTZFcJSnEGlRT2m8o6rwbUyV2HZ5qqJW1b8C3P?=
+ =?us-ascii?Q?XmmkyBLPytSz8TB48uOlK7pxbnYYLhLjLJ4x+IumLCKSgQY/EDAyhJwJKe3C?=
+ =?us-ascii?Q?wE3bvLxwi6N7yR3qgDG23RkFUhX/HZVmzV/gETX2W+lPgp6v/Ub3s+5U+ZkJ?=
+ =?us-ascii?Q?zknabcnwGfxTBZG92EG8yhSfgoQnfxRpDGOjdC9r6UXCvfWyqoJ9YoTywfu+?=
+ =?us-ascii?Q?ktAJna+lTeWhwrN318a2tj5leYAONv9GLA6nyxz6JcThEa/nSIUc86E5We7r?=
+ =?us-ascii?Q?4j7+A6mNayRh61pz7rf6SZwVTPy9B//80LTdGqMgJwjbItvztBVV7xv0ZPFR?=
+ =?us-ascii?Q?rRfO+uoocdqg7oxEd2UiICfxgQZmaV7ZEufcjIkuMnnT2XcRPR5QEZLeYn+9?=
+ =?us-ascii?Q?Vjp/F+3ss8fDHkGFCryYm+0YfpGUbvApgPyS8P2XsBHwv0SN4bhJmFKZwibE?=
+ =?us-ascii?Q?1loGE6tTsGUPS+KAv1albLMP+ydNkscGWDcZu7jeuwFqhKrbfTxhzDB4NI0i?=
+ =?us-ascii?Q?oShW8rLTmpWg1y1QwYa6/ChPGescwqKmwh5Y8XvPMxyJZRmkdFHYOs0xWdXF?=
+ =?us-ascii?Q?bnQc8zJOtW+NSHMoVdCdBLeb3VFUZTHlBHn0oz0Pe8bbI7tNzy8vZiBWCUwi?=
+ =?us-ascii?Q?5d9ElNdEzsrY+KCtswOv8z7DknfO/7CGDaEuCjNZ81tNp6X6tcY5FqEOWEhl?=
+ =?us-ascii?Q?D0dwU1X7i5sBynR0CDQkI2TerxI6pN4YmuxEO4t+bs4tA4o6rEQ0fGR06CyJ?=
+ =?us-ascii?Q?Nk5OE2AbStJ3gPy89ed8EaH0lnpUrUgnTnobVGq6P07H0D34JBMORYaV+Fiw?=
+ =?us-ascii?Q?1Cl9OBEVhVjRs2kFohWWiVr0Lov9J1M7SFRqV7d6LzKpM8oGRdzI7NMYASsu?=
+ =?us-ascii?Q?9N0iMEQu6U33NaK31reUDWcP5jGXYjNhbsbuZ6hUyk/aZgw2gBHm6rpbeTRQ?=
+ =?us-ascii?Q?jnZjyxERS9232EF9c0SUnJvn6yS+HX4snOhjdD8i2p+jgZu5EMudf8rOGVxT?=
+ =?us-ascii?Q?uDkFB6hNu0I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WwYdInfL9vgQTpO79j6aU0+6E6QH9NP+wDyP1HlaE90rcCxzg+Ww2U8uuGyN?=
+ =?us-ascii?Q?pU/pH9piY1NpDbEX/pn+Mu1MZIMizpHSitRnWukFf/fJ6R+r346+/f7/xMx3?=
+ =?us-ascii?Q?gfI8zfAaB41c6geUC4XZ25Z4m2eEd2e9DdJ3BQH8haWtWBkiHjuK3E2fT4jQ?=
+ =?us-ascii?Q?dyC31gk818BxrycHRsKFrsUjq8xE1Dtfswcqza0G2rny5TiS4O4ufltpoCtv?=
+ =?us-ascii?Q?mdqdYsORqDMJWQsza/oxOnMsWOrcHssAaLqFpHlfx/zGFbW9VWXS64ch4x3C?=
+ =?us-ascii?Q?DbQX+rem6YTRYj1aitmmjweNv8OkwnCkIp8AM81xhhhi3lMdWsFnA4GY6rKu?=
+ =?us-ascii?Q?lw1JBzh3ot5iwc5Aeaqf5oDK4nPj0DePyl8hhVPnpXrjPUvgbCgickxTesKh?=
+ =?us-ascii?Q?dXiDgn4j1ZFdT7PqT6Koe7G08hCqJa4U1d/ll8hLFb/6aG+Bttz/y+bEwG6W?=
+ =?us-ascii?Q?C8LDEilMA/tjT+Enq2MAuOTxB3wSHQtmiWVzlS4IGDRT7QZHSGloPtW2Zi9Y?=
+ =?us-ascii?Q?96xfZBnjXLNXsLwkApJFXDm+Xum0ycFB+jQIFKt7sYbNXi9mR5Scpx5QqWfY?=
+ =?us-ascii?Q?Mtv/XWNO0Yvvthz7suqIdcPsG3rcXucZqntLuxtmHMN248Hq4aHuFORBg+5X?=
+ =?us-ascii?Q?bnnFGo4Eb9d2QW0bEqVypXzzkQubx1k7jgZruEXXTmQi9Bkzd5zMV0ppXn/C?=
+ =?us-ascii?Q?1THjICuTFjFisHWGJWsjpFcSYWFTiOIREGkSpCNwCbq0PGJF0Tx5AAjVvRNQ?=
+ =?us-ascii?Q?jEi0FY4unX1ZyldqAB3H08Mmc9tGAVYVx0PkiwSi8DDly4OnEqYEOux6Aoq5?=
+ =?us-ascii?Q?i5xJDJ7zw9Pzp+izZE/uHXtktA+skxpUYv9q/ubI2V9sTsHwIGFW8GS3+XA6?=
+ =?us-ascii?Q?vO7RJ2Y/L8Y6aeiQV6J+vXGVuQLosTcDwJQa1TWENtdqH24EKgq9Fyogc8oB?=
+ =?us-ascii?Q?qiuRweWH3jhu9Ff5uAUpnMbXjOn3ENH4DATOLab5V8sD21gp/RaZZlRIaK1M?=
+ =?us-ascii?Q?TVZIiSG3d74Neh7tzETKyJriTsrgxO5Zm7dMxpwcWR/byVOQHPcdiUwc1tPV?=
+ =?us-ascii?Q?ORw60+5W1Q4P8qM54a0n9VmyVEdvR9c1uVLtUtvawxBvbTD8/JhRJtusQKWg?=
+ =?us-ascii?Q?ofOWQC1xT2KY1Amx7DgFTvTtB1IdM6HfhSyx+WhfDBen4aIPE6jb2L6xob7S?=
+ =?us-ascii?Q?EsLHGjFwFluS3p9UtUgqbjhRY3Bxcpy9aYjq5kG8TdTEoKjBqJ6uWKUjnjIY?=
+ =?us-ascii?Q?FPlsQCLZfE3R7lvugqgEUVzd2/GK5rYDjg2QIJKTjzpt6HyRbcAFzEA0oLet?=
+ =?us-ascii?Q?WH25iwyC21cy0BfCRbD8ZyHsbrweztnNcwh7DV8UeEWDJ4Cwk4TSaS5AqdFV?=
+ =?us-ascii?Q?YxKVOkYxGiTaZgN6YteZlVUJ0fwauWq+TE6vm+Oyy1sMe5Jbid24/8a5Onw9?=
+ =?us-ascii?Q?wE4s7ZIczW6dAxXOgzr6AAXPwxmikjk6RKXIJMir847tJjhKb+TVRkSrTwBa?=
+ =?us-ascii?Q?oMW59mgjLRAtRzfD+jMJ/o+G4shxG79zJT5rhPcIXndIfXAwaPmzrxd52Gp5?=
+ =?us-ascii?Q?oIOp/zVsuF84KrquTQo0gTIsYN7tb4skYia8b6bLr9oxq6tEim6AzSZohMGB?=
+ =?us-ascii?Q?Dg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	kR9TrLGFahGzf3oROVKWgoPRqIMk6JGpO09zOAkSjRMc7cHeDJyo2sW4t5h/3x7BRicCiNTMmS6k6ExVLSRJcL4Ue83yBmqdbR5Dq1NoC1cn3KsN9elD5fLBeomiGwO/3PN2xpZk4jP0koKTGZ27heiT/tiMKZP1DZWT47+b14QP4bwuwPohSrIwNm2n+uFGdLeVd0sRY6a95UwLM3SOp1MbFqtln3s6hT1D/+mCd1ZjOxscQeW26CJRiamHlw1mguWm2RxoqJlufjcrfEK9kPuAgifSkAcGPSqN+REUiWXO1kLOQ0f/6B3nYzjRF51ITHFh778CE+p7UsYXOpVaaV33XE//gcF979L6Ym3Ok+CAa0ixhSBaXsbAxlzVjCJdZ5kAOOSjZzTfwBLKWCWkAAmwX7aIev0ffEgxQ7md1ayOl3tivNx9aNWE2D+J1xCsfGxR9Ez2vHS5/tiiRHQiqQuqQuOWBXVRytbU79mDCQ0xUPv2PSL4X5BBjIHXaiVdJrRqwKYJgH61Lvtu1vWZB9vl9EOgopHxANIx3aBIHMCtxQ0kA7WpG4zn4+g0ttkZdmvQCi98y5LNwutJPTsVgJqkyb904OIJmFb+zcuKT78=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 386712ad-a7cb-4b83-6b29-08ddd50d4fd4
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 17:18:50.7904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dbuYC8/Zwrj1jLoVmOnlmhnLjyMkqdhL+YL/K+oNk/NN6vDA+BvlBmSMBHF+c9Pd9icb+ZNqOf5mpHFU0nOFz4qgW5fahnsX2cHA8on24Gw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5820
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508060112
+X-Authority-Analysis: v=2.4 cv=fYaty1QF c=1 sm=1 tr=0 ts=68938e81 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=1XWaLZrsAAAA:8 a=A2pY-5KRAAAA:8
+ a=20KFwNOVAAAA:8 a=hQ-OD_F_bcHfIMsC9RgA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: fx8uIUe9IlT5JzHxnki__gcMvaw-QalD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDExMiBTYWx0ZWRfX7lBqOacrnw+H
+ JT00bT2z7Ng3pQDYim3Fd8pQqrZDs9/h8olZJa9dRrWIYFv7jVKNms7K+OoDVvX+4DOutNty8BW
+ apCRZujk1/NfJxvIrzfU6Hk4S0XBn+QmBaPlejVIb9gwZGW9O45DdiUC/5Pd3OP5wmgPVx+7IH8
+ Cj6QC2SkC6nJYTisz/PKKmN6PZgXR/HxgGV2L+F/vtcqM+1Mw/REcVHAUTJLmWuaMEW9Upixm01
+ vRWzsMQ+CeM8gBe8t+bny2vQqfcBvr332ZnbcO2VLGNPUAlG7+PCfJ6lte4OrnuiBZIrmmsHXeA
+ t3HId9guFXbtGzN739xKKSjxJ3pS3d38rhbOosgqlxpqTouGK6go4BxdkHbhEDmmDLnfeFrxji+
+ kkem/BY+B4lCWHmseaMO2wI6ckDVQEl8098R0gFvrcmP4LfX9WrXW0SYrqaFs8Ip+XEF4caV
+X-Proofpoint-GUID: fx8uIUe9IlT5JzHxnki__gcMvaw-QalD
 
-On Wed, Aug 6, 2025 at 2:00=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.co=
-m> wrote:
+Andrew - Could we drop this for now, please, it's splatting and has broken
+mm-new.
+
+Lokesh - could you make sure to run the mm self tests with CONFIG_DBUG_VM
+set before you submit please? As this is splat is occurring immediately on
+uffd-unit-tests.
+
+On Tue, Aug 05, 2025 at 05:14:10AM -0700, Lokesh Gidra wrote:
+> MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
+> for moving present pages. Mitigate this cost by opportunistically
+> batching present contiguous pages for TLB flushing.
 >
-> Fix the issue of max_timeout being calculated larger than actual value.
-> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
-> S3C2410_WTCON_MAXDIV is smaller than the actual value because the remaind=
-er
-> is discarded during the calculation process. This leads to a larger
-> calculated value for max_timeout compared to the actual settable value.
-> To resolve this issue, the order of calculations in the computation proce=
-ss
-> has been adjusted.
+> Without batching, in our testing on an arm64 Android device with UFFD GC,
+> which uses MOVE ioctl for compaction, we observed that out of the total
+> time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
+> ~20% in vm_normal_folio().
 >
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> With batching, the proportion of vm_normal_folio() increases to over
+> 70% of move_pages_pte() without any changes to vm_normal_folio().
+> Furthermore, time spent within move_pages_pte() is only ~20%, which
+> includes TLB-flush overhead.
+>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kalesh Singh <kaleshsingh@google.com>
+> Cc: Barry Song <v-songbaohua@oppo.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 > ---
->  drivers/watchdog/s3c2410_wdt.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 95f7207e390a..0a4c0ab2a3d6 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -27,6 +27,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
->  #include <linux/delay.h>
-> +#include <linux/math64.h>
->
->  #define S3C2410_WTCON          0x00
->  #define S3C2410_WTDAT          0x04
-> @@ -410,9 +411,13 @@ static inline unsigned long s3c2410wdt_get_freq(stru=
-ct s3c2410_wdt *wdt)
->  static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wd=
-t)
->  {
->         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
-> +       //(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV =3D 0x8=
-000
+> Changes since v1 [1]
+> - Removed flush_tlb_batched_pending(), per Barry Song
+> - Unified single and multi page case, per Barry Song
 
-This single-line comment style (//) is usually not used in the kernel
-code. Prefer multi-line comment style instead (/* */). More
-importantly, this comment is not needed: using the raw 0x8000 value
-below is still hard-coding it, and this comment is not the best way to
-fix that. So declare either a proper constant or a define, and use it
-further. I'd go with this:
+Splat, decoded via scripts/decode_stacktrace.sh:
 
-    const u64 cnt_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
-                        S3C2410_WTCON_MAXDIV * S3C2410_WTCNT_MAXCNT;
+$ sudo ./uffd-unit-tests
+Testing UFFDIO_API (with syscall)... done
+Testing UFFDIO_API (with /dev/userfaultfd)... done
+Testing register-ioctls on anon... done
+Testing register-ioctls on shmem... done
+Testing register-ioctls on shmem-private... done
+Testing register-ioctls on hugetlb... skipped [reason: memory allocation failed]
+Testing register-ioctls on hugetlb-private... skipped [reason: memory allocation failed]
+Testing zeropage on anon... done
+Testing zeropage on shmem... done
+Testing zeropage on shmem-private... done
+Testing zeropage on hugetlb... skipped [reason: memory allocation failed]
+Testing zeropage on hugetlb-private... skipped [reason: memory allocation failed]
+Testing move on anon... [   12.230740] Kernel panic - not syncing: kernel: panic_on_warn set ...
+[   12.231322] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
+[   12.231655] Call Trace:
+[   12.231748]  <TASK>
+[   12.231830] dump_stack_lvl (lib/dump_stack.c:122)
+[   12.231963] vpanic (kernel/panic.c:448)
+[   12.232088] panic (kernel/panic.c:312 kernel/panic.c:303)
+[   12.232199] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
 
-and then:
+Appears to be:
 
-    u64 t_max =3D div64_ul(cnt_max, freq);
+	VM_WARN_ON_ONCE(err > 0);
 
-Sorry I didn't catch your related comment earlier in v4!
+[   12.232341] check_panic_on_warn.cold (kernel/panic.c:327)
+[   12.232502] __warn.cold (kernel/panic.c:839)
+[   12.232628] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+[   12.232764] report_bug (lib/bug.c:176 lib/bug.c:215)
+[   12.232891] handle_bug (arch/x86/kernel/traps.c:338 (discriminator 1))
+[   12.233034] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+[   12.233174] exc_invalid_op (arch/x86/kernel/traps.c:392 (discriminator 3))
+[   12.233312] asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
+[   12.233460] RIP: 0010:move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+[ 12.233615] Code: 5e 41 5f c3 cc cc cc cc 49 89 c5 e9 e1 fe ff ff eb c4 e9 6d ff ff ff 90 0f 0b 90 45 31 ff eb cf 90 0f 0b 90 48 85 d2 7e c6 90 <0f> 0b 90 eb b9 90 0f 0b 90 f7 c1 ff 0f 00 00 0f 84 4e fe ff ff 90
+All code
+========
+   0:	5e                   	pop    %rsi
+   1:	41 5f                	pop    %r15
+   3:	c3                   	ret
+   4:	cc                   	int3
+   5:	cc                   	int3
+   6:	cc                   	int3
+   7:	cc                   	int3
+   8:	49 89 c5             	mov    %rax,%r13
+   b:	e9 e1 fe ff ff       	jmp    0xfffffffffffffef1
+  10:	eb c4                	jmp    0xffffffffffffffd6
+  12:	e9 6d ff ff ff       	jmp    0xffffffffffffff84
+  17:	90                   	nop
+  18:	0f 0b                	ud2
+  1a:	90                   	nop
+  1b:	45 31 ff             	xor    %r15d,%r15d
+  1e:	eb cf                	jmp    0xffffffffffffffef
+  20:	90                   	nop
+  21:	0f 0b                	ud2
+  23:	90                   	nop
+  24:	48 85 d2             	test   %rdx,%rdx
+  27:	7e c6                	jle    0xffffffffffffffef
+  29:	90                   	nop
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	90                   	nop
+  2d:	eb b9                	jmp    0xffffffffffffffe8
+  2f:	90                   	nop
+  30:	0f 0b                	ud2
+  32:	90                   	nop
+  33:	f7 c1 ff 0f 00 00    	test   $0xfff,%ecx
+  39:	0f 84 4e fe ff ff    	je     0xfffffffffffffe8d
+  3f:	90                   	nop
 
-With that addressed, feel free to add:
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	90                   	nop
+   3:	eb b9                	jmp    0xffffffffffffffbe
+   5:	90                   	nop
+   6:	0f 0b                	ud2
+   8:	90                   	nop
+   9:	f7 c1 ff 0f 00 00    	test   $0xfff,%ecx
+   f:	0f 84 4e fe ff ff    	je     0xfffffffffffffe63
+  15:	90                   	nop
+[   12.234294] RSP: 0018:ffffafeb00483d70 EFLAGS: 00010206
+[   12.234484] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
+[   12.234738] RDX: 0000000000001000 RSI: ffff90afbb433078 RDI: ffff90afbc7f0080
+[   12.234997] RBP: ffff90afbc7f0000 R08: ffff90b037cae540 R09: 0000000000000001
+[   12.235255] R10: ffffffffffffffff R11: 0000000000000003 R12: ffff90af01acb980
+[   12.235508] R13: ffff90afbc7f0240 R14: ffffefc386e80b00 R15: 0000000000001000
+[   12.235764] userfaultfd_ioctl (fs/userfaultfd.c:1925 fs/userfaultfd.c:2046)
+[   12.235917] __x64_sys_ioctl (fs/ioctl.c:51 fs/ioctl.c:598 fs/ioctl.c:584 fs/ioctl.c:584)
+[   12.236065] ? ksys_read (./include/linux/file.h:63 ./include/linux/file.h:80 ./include/linux/file.h:85 fs/read_write.c:706)
+[   12.236202] do_syscall_64 (arch/x86/entry/syscall_64.c:63 (discriminator 1) arch/x86/entry/syscall_64.c:94 (discriminator 1))
+[   12.236345] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[   12.236524] RIP: 0033:0x7f457600fecd
+[ 12.236658] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+All code
+========
+   0:	04 25                	add    $0x25,%al
+   2:	28 00                	sub    %al,(%rax)
+   4:	00 00                	add    %al,(%rax)
+   6:	48 89 45 c8          	mov    %rax,-0x38(%rbp)
+   a:	31 c0                	xor    %eax,%eax
+   c:	48 8d 45 10          	lea    0x10(%rbp),%rax
+  10:	c7 45 b0 10 00 00 00 	movl   $0x10,-0x50(%rbp)
+  17:	48 89 45 b8          	mov    %rax,-0x48(%rbp)
+  1b:	48 8d 45 d0          	lea    -0x30(%rbp),%rax
+  1f:	48 89 45 c0          	mov    %rax,-0x40(%rbp)
+  23:	b8 10 00 00 00       	mov    $0x10,%eax
+  28:	0f 05                	syscall
+  2a:*	89 c2                	mov    %eax,%edx		<-- trapping instruction
+  2c:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+  31:	77 1a                	ja     0x4d
+  33:	48 8b 45 c8          	mov    -0x38(%rbp),%rax
+  37:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+  3e:	00 00
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> +       u64 t_max =3D div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
->
-> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX=
- + 1)
-> -                                      / S3C2410_WTCON_MAXDIV);
-> +       if (t_max > UINT_MAX)
-> +               t_max =3D UINT_MAX;
-> +
-> +       return t_max;
->  }
->
->  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool ma=
-sk)
-> --
-> 2.25.1
->
+Code starting with the faulting instruction
+===========================================
+   0:	89 c2                	mov    %eax,%edx
+   2:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+   7:	77 1a                	ja     0x23
+   9:	48 8b 45 c8          	mov    -0x38(%rbp),%rax
+   d:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+  14:	00 00
+[   12.237333] RSP: 002b:00007f4569dfed20 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   12.237599] RAX: ffffffffffffffda RBX: 0000000000001000 RCX: 00007f457600fecd
+[   12.237854] RDX: 00007f4569dfeda0 RSI: 00000000c028aa05 RDI: 0000000000000009
+[   12.238129] RBP: 00007f4569dfed70 R08: 0000000000000000 R09: 0000000000000000
+[   12.238384] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffb974ba60
+[   12.238636] R13: 00007fffb974b830 R14: 00007f4569dffcdc R15: 00007fffb974b937
+[   12.238890]  </TASK>
+[   12.239094] Kernel Offset: 0x33000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[   12.239480] ---[ end Kernel panic - not syncing: kernel: panic_on_warn set ... ]---
 
