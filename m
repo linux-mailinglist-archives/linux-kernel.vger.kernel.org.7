@@ -1,144 +1,134 @@
-Return-Path: <linux-kernel+bounces-757639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EC8B1C496
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D15AB1C49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9D6625E5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 131493B912A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF6028B4F9;
-	Wed,  6 Aug 2025 11:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1296028B400;
+	Wed,  6 Aug 2025 11:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXhWhPTo"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNJk+oys"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FA728A719
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 11:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1396920F067;
+	Wed,  6 Aug 2025 11:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754478010; cv=none; b=BZL3nZTLA+tcTOmLMFpZpH1AK2gYcqBJ1UmbQH/BIlNsh+XQkDub6IHph6PBfM6O6WaoIgUUy6tTCToTiuzNxeLAZRGBKP5OiyzYcJMQ67FI8QgdZsX/uAadvXRSb6cZEJSAQ/+q80o66nQ+QSnjqNWLSzev4xX1y9PcNFMZ9zo=
+	t=1754478165; cv=none; b=oefTkx52x15YBEdp04xrT/jyQR2KJyZjbiRTWkKILB2vYZ3J1Nm8hut0FhCslOeSVhRs5M4aarfx9GDi4wxwlqka8cfU1G+Ac+tCbHqRwOZs7SQhyGWFwUyEMpaMZ7zw7FKgUMGe+kt5pQeVHxoLcwqv9dxTT9Uvk8Am+6xvcvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754478010; c=relaxed/simple;
-	bh=ztmA5grMhynCFB2kUGWvxLZcBQdunX1Q6gK/ADIuAQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TP6H5+XEAYJRIH2KYFq5k4lCBFh2s8ypgmff0Q7Yqvn3yQL4NT6fiszuG7tQsL0/gfax9ALsp5J1YWmzp4eyuBEGngfxqWMWGgDzzSarnaZgBLP8t1PMV5ILNX435F6kotmHCt904hlJwysgBr3o0R/E4QQrajnjpeQx+OsXECc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXhWhPTo; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b780bdda21so4565756f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 04:00:07 -0700 (PDT)
+	s=arc-20240116; t=1754478165; c=relaxed/simple;
+	bh=fGwQvuZekVYWNVp+xHF2By/+OhCeDXLdr6UFjCBMrmU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tl9xh8+4IAabuAyuimm/B8qyenuV+41KEgEeScupcGc3FPnj+B7K0Z/+KSSmAQhEP3P7otfmFTnUlpJS96z+MmjRnsjHTF9/HnTQRoT//uk8omVOVXr1wvsWg8P2dbMVkLN572g+LkCekXEkzDzryVBuwU2tsQhi+y7FAQ66VcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNJk+oys; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7426c44e014so5901751b3a.3;
+        Wed, 06 Aug 2025 04:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754478006; x=1755082806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YCmVre5gjeM4nS/wqXusx4xVtaJFxkhLqF5sa87a9kc=;
-        b=zXhWhPTonY0/LNpKu0zP/6GZrHtMMsNMHG2zeLcGcIRxxjfVIuRJUQHg2C2wC7+zz/
-         jtBlY0fW7pYM276izuSRcz5uLs9p3adLSijYtdxJmUn+ArA4A/J/Hy4Q05Uq0fjgEQJp
-         4LbtZdrXYBH+45VKWuvJV0mDSa+EX5YPG5Iyn5xZC/6lz4gaMHkPEVAAmfZR84AR51VY
-         W37SJhdVfr6TbhijppYsTFmmJihvg5OOS75ZGi93HssHr8isI+ZwLajLPVplbhiL+dst
-         BlsrL6iD2VrYBgUya7FCSohs63Bn3SiPmNA3s8xA1s58XXhjylGLly841ksn0NbvXyob
-         MKow==
+        d=gmail.com; s=20230601; t=1754478163; x=1755082963; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rnS6VYdGfdFt/krsus/FgbrkiOQovzavFwfxL0kycI4=;
+        b=lNJk+oysPEIxA2BkMzFeaDgFAnNLy1VegqLvjQLQUv4ML6OCkKxR6Z0tE0WYxH9teh
+         awzT/PVAdhbcYmzhhcMA9sqn49bnnDRSJqO2IPEnFm8yhfb21Woc7mDGiNyhyIVeiOG2
+         1lsQUFUM+B/VZrr+KptSJFOoAD+tMFrxhEZJ/0/hMqfUAfj5LKq7qNTIFQqjv5ox8dbT
+         IFkrNzaCfWAcDx7BoGQUmkLF7yn4YXaIJ/Rhj7PkrUjfap6yrsAeaZ0sSfBSn5+dBL7a
+         lyTvL+GKoEn71az9Ypx1JceA3h6Z9SdQpz6T06B/k2vXwo3PkPWiUcXW+KhonjdBX5q3
+         x6Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754478006; x=1755082806;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YCmVre5gjeM4nS/wqXusx4xVtaJFxkhLqF5sa87a9kc=;
-        b=biFw+M6H855Su7QqCBAR/aROAVHE0NM3xOk8o51A3sQHHyAiPMzmdnFuWIIi4og22G
-         DNUrCKo39grb6C6QQTAI08/9AmdU2AhXLXjHnvbHzjgP51a/p0wSZYCMHDrPv5t1Zd5O
-         c7OBWP/Qkb1gJ+7q1QntHoQVDLJwgJxd0Ftd2A4s2sdB3R5lNksiLvxFaNPkg0ZBVWz4
-         ksx3kchR+vFVk9AKIkW2FaLCH9Ena//2u1zDNhKra8eYzk5VcIZABYg/hacxN7ZhXhZo
-         znCRJ+G3L5psah04HpDKnQFvUblsJf6HyPSWN/k1jmZIMhLTuJTQdG4V4GyIuABIW/PO
-         XDBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrXS7Sl01L6zB8GTOMGZsdLz8NL9Mwc9Af3lh6ReBS3bS1H0fQLLFdu3NMkgkxAxTbeMIIkTLGGueutOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzr3KC4X+l3/e5RBNSwZe8Ap8SEzl6chF3wqpdCpKPdDUK1fid
-	jECuhjZgy8XAfLmtglDqWHk3Z8Q0yoiwVZNLzlr5VVg8Kg6wkK1D0LghKK+CarUdEMg=
-X-Gm-Gg: ASbGncsF/fPM2bWJ8ywqmm4ljK91ve5KLGXYc4gwL+i8VF/3aaj6RweiaqbZF5dzuNN
-	LDv8navHa/JK5Hndopga02OIozVIJv5goVUULh83A8vCvwzTVNrme2mM1V8pugcnleZ9vgIgDoH
-	DHtWr1Gvk+8afPGqA/bisqvuu3EQuYuhv3x9TdC88Or+WnSUq6v96UFRvDh+3esu6KGBZ7XzgtR
-	oaN6kduTm9P+l+JcgpJC6IR0E/bR1mdOCqVieTQlGg739VyiiXof0fwIFP3Oe4zPkylamMznl9g
-	VLg688aoxmpryA+Bk2tkLLxWtYrmmmjjSLasmU/gtEgOiQhLVSD6z9GBhJm8CkeGHG6/4oLwW6z
-	WEMYQcbVIlehmn81/sdpCY0DBmlQ=
-X-Google-Smtp-Source: AGHT+IED1ObJfhfJTF9IANk5X4B6IPDP0k6oF3FpmB8DzDbBAJ47RdFvv8Mlx8ZmKpcul2JbAtAwiA==
-X-Received: by 2002:a05:6000:2001:b0:3b7:8d70:dac5 with SMTP id ffacd0b85a97d-3b8f48de435mr1517659f8f.2.1754478006344;
-        Wed, 06 Aug 2025 04:00:06 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e585430csm43379465e9.11.2025.08.06.04.00.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 04:00:05 -0700 (PDT)
-Message-ID: <e08322f9-3bce-468f-b951-21eff63cde4d@linaro.org>
-Date: Wed, 6 Aug 2025 12:00:04 +0100
+        d=1e100.net; s=20230601; t=1754478163; x=1755082963;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rnS6VYdGfdFt/krsus/FgbrkiOQovzavFwfxL0kycI4=;
+        b=cQ/EzbnW8yb9NIB6rsNikuzqmsXS98m0WLl4l9iac8f4IaE7rg4hHFHrE0CG7YcZ1W
+         WfJV94zhb0ctiShxaRNiSCjr/Kwo5bIdtY9sLBW7RMnxR6WB3tgEJjDUvVgz0lblEPj3
+         aaou0JDk2DwR9jHzxwWESnPPbPudtvpoxMVPnOPetuNKM7vDQYZL6c8Z/bTjwxiAlwXI
+         K5E6MWBWVEkaICBhj7nJCqUIY2uKdbhXFZMp+NrojSIUloWEOSl8bv327Y0dVS+YTu/Z
+         tIUKrDnLQ9UQZi6cJxF2dmDntojbSBvadTWxlVSVyFkLBUaftsT4+WPKnj8V3vUh6is4
+         SKFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvs13vFN0mswKy7LTkRToB7o4XxsqQ0LTUR2iUCrqT7jXU9+R7TzlmfUIhEPY1G8ggBZXqKMeFjVrpn9Va73VI@vger.kernel.org, AJvYcCWsrQ2QLJlQgtDvQgTlc/hZIegceYCCvgMrPVWqhxSktFIaqE4ar53ke0CKKIAVlNX9chHhkSty@vger.kernel.org, AJvYcCXZ1kjUXjXXIqQooEBCMFksND6oPm3UHXL6zDBtR+wDy8H6SB4L3JZr0Ed948hdZaQ7avU8TQ5JrMpwDGH8@vger.kernel.org, AJvYcCXgCuAwuTDiuNllIY72F1It56AYXwyDT5S3SAqy9zdwNmpUHFW1dXc0U6AhU1Zm9oo8Jcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0lI/HWcLmPJZKejlsEIjvKvxiVmOJnEYLMYMEyMcI0qO8ttDl
+	aRxYtR+UBpvr25XLe/S01THwW7735yoQdVH4xCxL3DIy5RlF06gojdEw
+X-Gm-Gg: ASbGncs55/BlIDlCD0m/iT1y2aVC0LCJHYHehAkxBNoUmidLhj9lrTuE+QuQLxY6Smd
+	jfoglMYiSUXyLACDJM4fCLUudYYCvJhOgtMNHemcKJf+Eo33e+BJB+2uxH2YjnEyMTzJekCAhOg
+	v5roVJ/mp+LweQOtkWBtud8xmC+RfzhgpLISj3MZ4zeZkDFqp1WNjd8FPvaw//mPBQHWGcqUQbp
+	V1jFXiEZqa9aPUt4xCenyAvDpNG5p6CRThUSqFNxkRDQGXISWRmvjvxkmnnVtpDkLJsBoe9VAOS
+	XjaMhGO/zAWhpFgqS29jFAY/bQxhP9XwmVrXGRSDSjPvAsixIN02lCpuZgnJ+1B0mHJ8jKPS+CL
+	dI/YJxC9RN8dSUpwbfyGxrKpiZ1yDPt7t8yfZqNYhE0M=
+X-Google-Smtp-Source: AGHT+IFjR517vCAUNyZmP/NtQ6JbvJmH4KhkzCA3/4f876CAu+LnOExtfNWpNrpMCkeAqIM3e2h6Sw==
+X-Received: by 2002:a05:6a20:7487:b0:240:30c:276a with SMTP id adf61e73a8af0-24031463e79mr4059373637.39.1754478163258;
+        Wed, 06 Aug 2025 04:02:43 -0700 (PDT)
+Received: from manjaro.domain.name ([2401:4900:1c30:7b0d:6527:282d:9edd:5f40])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8de28sm15074948b3a.39.2025.08.06.04.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 04:02:42 -0700 (PDT)
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	shuah@kernel.org
+Cc: sdf@fomichev.me,
+	mykolal@fb.com,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Pranav Tyagi <pranav.tyagi03@gmail.com>
+Subject: [PATCH] selftests/bpf/progs: use __auto_type in swap() macro
+Date: Wed,  6 Aug 2025 16:32:30 +0530
+Message-ID: <20250806110230.23949-1-pranav.tyagi03@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] coresight: tpda: fix the logic to setup the element
- size
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: tingwei.zhang@oss.qualcomm.com, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Tao Zhang <quic_taozha@quicinc.com>, Mao Jinlong <quic_jinlmao@quicinc.com>
-References: <20250806080931.14322-1-jie.gan@oss.qualcomm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250806080931.14322-1-jie.gan@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Replace typeof() with __auto_type in xdp_synproxy_kern.c.
+__auto_type was introduced in GCC 4.9 and reduces the compile time for
+all compilers. No functional changes intended.
 
+Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+---
+ tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 06/08/2025 9:09 am, Jie Gan wrote:
-> Some TPDM devices support both CMB and DSB datasets, requiring
-> the system to enable the port with both corresponding element sizes.
-> 
-> Currently, the logic treats tpdm_read_element_size as successful if
-> the CMB element size is retrieved correctly, regardless of whether
-> the DSB element size is obtained. This behavior causes issues
-> when parsing data from TPDM devices that depend on both element sizes.
-> 
-> To address this, the function should explicitly fail if the DSB
-> element size cannot be read correctly.
-> 
-> Fixes: e6d7f5252f73 ("coresight-tpda: Add support to configure CMB element")
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
-> ---
->   drivers/hwtracing/coresight/coresight-tpda.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-> index 0633f04beb24..333b3cb23685 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpda.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
-> @@ -71,6 +71,8 @@ static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
->   	if (tpdm_data->dsb) {
->   		rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
->   				"qcom,dsb-element-bits", &drvdata->dsb_esize);
-> +		if (rc)
-> +			goto out;
->   	}
->   
->   	if (tpdm_data->cmb) {
-> @@ -78,6 +80,7 @@ static int tpdm_read_element_size(struct tpda_drvdata *drvdata,
->   				"qcom,cmb-element-bits", &drvdata->cmb_esize);
->   	}
->   
-> +out:
->   	if (rc)
->   		dev_warn_once(&csdev->dev,
->   			"Failed to read TPDM Element size: %d\n", rc);
-
-Reviewed-by: James Clark <james.clark@linaro.org>
+diff --git a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c b/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
+index 62b8e29ced9f..b08738f9a0e6 100644
+--- a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
++++ b/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
+@@ -58,7 +58,7 @@
+ #define MAX_PACKET_OFF 0xffff
+ 
+ #define swap(a, b) \
+-	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
++	do { __auto_type __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
+ 
+ #define __get_unaligned_t(type, ptr) ({						\
+ 	const struct { type x; } __attribute__((__packed__)) *__pptr = (typeof(__pptr))(ptr); \
+-- 
+2.49.0
 
 
