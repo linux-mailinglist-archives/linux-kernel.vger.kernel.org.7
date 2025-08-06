@@ -1,233 +1,224 @@
-Return-Path: <linux-kernel+bounces-757545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D698B1C372
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1405B1C375
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BAB2161DFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E4818A57E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEAB28937A;
-	Wed,  6 Aug 2025 09:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB4E289353;
+	Wed,  6 Aug 2025 09:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hSztVLXq"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013059.outbound.protection.outlook.com [52.101.72.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T/SD6BrS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F118275B08
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473012; cv=fail; b=Dv9d1PJ1gnbQPppxkPhHplEyY4AnqBSAo6Iw7Ikw3M22rqVPZigt7etus5hjHEBlU+RPQ5A6LMKVQzwvYQyCOmXFN+6pA0snBWB9nchDnJIMPbd46os8fUFXwzzrGGX9DtTHV3o+h4iXwIxwVXZK7fgvWJ+5FDzN12X8NsS3kAI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473012; c=relaxed/simple;
-	bh=hr2tBAB2AsWnaCt+Wv/7u5NDa4fTsm7q9IvJf5k5Ibs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iC8FfvkUev4W5I9bFq0pwC29YmfM23zO4K6WsA0B8SmCU28quwOEVP9wJgWrUED6IuFMd+jn6a9m974Vd7Ew7FeP6CgsMKxx1bPDY7l1Atg33vmP9hCqi8MnuSpNswFz2d5eKD7aqo4sIUnIWsBgTfc07ieNi68l7P46mlslBVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hSztVLXq; arc=fail smtp.client-ip=52.101.72.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wr8HVjKeuLBP14W8hpEMjQXOmtpDGTyuBs83RhF7OHHu+ZIiVX8EfJGrtUkqKndkYkTY6SbfwK8D4vEe2A4rHMUIw6tFC8/vZyxwuMEZDtKE89noGe14vQTdn0YIeeUG5OiJOBF6aYM1F1DY6GAbgDCCxMSfYPRmAZrYZnr+mdk6IDVPBVuvxAZHXFVqC4Pe7XnQWExRDNhs19i/mSKDyWtRcby0gQP5+OI0C0l6f2IsqYd4ftu5DcxG5exLwgtygEuqGNt6hkX/ZuxGCmx02Bb667qvLZZVFNOG7dENmQcpHHV+xmaQo9WUWJkNAhGN+cF5Xj+AgzP+fVWBBhaTog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uJQ3m011zPO2bHIBrtIJGIcT1XbJD6TVPGePlK7jkyA=;
- b=twq1AYxVIpey3OxKJyepm3cgTnWDviP4JkWOzu8eCtsxHRnOWQOkOZKFj45ECwjcR0UH4d1mpLMy6qv0j7g/dqh+maCeAq6eubWJNCLP9zbx9oBsk6SURWVOW4kEaRWwDRrv8IhjZs7/EkzCYnOWQ4oO7TXP0mVSc+ENY8G2sLVbzMAZsTQPYCCrX0kUoWOwYET2yF6ElRBtNVVr/CxLSjLzGrq+1vGsQpAfl48ujkk8YeptAQl1ixPd/NQRRAvNNQAPaFQ93NpOpgb8wTySxjf8IBoLU3F6dmkRMjoKB7fKnJQqZ6X80imSuiM6D8hIJ08t9TmLt6BCmRkN/O8zoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uJQ3m011zPO2bHIBrtIJGIcT1XbJD6TVPGePlK7jkyA=;
- b=hSztVLXqm6y1YBJnyfySKI8EGy6cZyfvcVYYY4iGk0iibdRJ+t4fbiz+pR1wWYn47i9VK8a5RIgCv5d9XiQwB31tBiNtRrz4UvFcYb5a79w0Z8RgUz18zDRVKiw89C5waXLxv1iRNlTCw6dcQ3z7c7Os73CYKjCHNLq6DXaCxmE7hhCJ5FjWw0w33WiZrsP9AcZUl2SulFFvWQsGulpwwPuSudxJPCE8swidyacdO0Xn06GZdpfCMTf0iXywBpChzOnpyuY9gJdsws9LVLNdtdPr3QpjOk7U+RpyC+tsCdUZIJzntHLYIZ9CZ3K+fSIoFd3LtZYiVGr7po68c9BVeA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS8PR04MB7512.eurprd04.prod.outlook.com (2603:10a6:20b:29e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 09:36:47 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 09:36:47 +0000
-Message-ID: <b5556cbe-76ed-4ddd-9b76-5896c2e1520c@nxp.com>
-Date: Wed, 6 Aug 2025 17:38:17 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix bailout for
- devm_drm_bridge_alloc()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
- damon.ding@rock-chips.com, m.szyprowski@samsung.com
-References: <20250806085424.518274-1-victor.liu@nxp.com>
- <20250806112641.7af982e3@booty>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20250806112641.7af982e3@booty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0012.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::8) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588681FBE80
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754473154; cv=none; b=aJkOoQakx8j+I6mNq4jIv4ijOGpAphdwea5BM6JeB7x5VHUgVjfyiBnljuQoVyokWZ6WrBvw+2Xr8l32KDHd/15sleowxpstKfCYQ6pCNyCFY0rHfk0BH9X4FLtepkE0PfG81OZJ7hHY/QVcsbWoY/GWb3Kxi0l5NZJ3dwcVIM8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754473154; c=relaxed/simple;
+	bh=lI1Emkccm+R6JQsa5DrYKXL5j0oVUDpQRIk89WBqsJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=siDsM1Ry1TlKtbpTRn7HjfhNoIZ+3PjvOrrZ/ydzlRcEkiLguCOy4nsi2cccOQzC++8ARbqgOQWcVa5fvgFjUDKLf8++ofSA82SyytF38tIbsBbMmeFdmbCCqhuioIK01/ie/3CxraIuH+KVUg09jS+nRAv7apKnaEPFqpQ/k0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T/SD6BrS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754473151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4aY0odU//3/cTPWcGAYaqAi6X4ACSFonv2Rd8kh7Qq4=;
+	b=T/SD6BrS01lMNig/24iKU6ePd6rwTIf6LHDmC8AL4Zjr9qs2YikLBOY2Ohp8JQaORbsAdX
+	ssB7P9wbNyKw/pXwDrR4XrvicMHTZ+htnMVcfw5L8jgYsb4S0A5vCV/PqxKQLp98Dn/WHA
+	1Emj9bYoudQbMFyqmhmRDorq3v7eYIE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-7-BB_VedNQ6DGOkBmPyPDw-1; Wed,
+ 06 Aug 2025 05:39:07 -0400
+X-MC-Unique: 7-BB_VedNQ6DGOkBmPyPDw-1
+X-Mimecast-MFC-AGG-ID: 7-BB_VedNQ6DGOkBmPyPDw_1754473147
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5D2B195608F;
+	Wed,  6 Aug 2025 09:39:06 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.173])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CBF621800446;
+	Wed,  6 Aug 2025 09:39:03 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v10 0/8] timers: Exclude isolated cpus from timer migration
+Date: Wed,  6 Aug 2025 11:38:47 +0200
+Message-ID: <20250806093855.86469-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB7512:EE_
-X-MS-Office365-Filtering-Correlation-Id: d45ef84f-c704-4965-48b8-08ddd4ccc313
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|19092799006|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?TzJSWi9jUjdhcXRKd1N3b3F2aVFqK2RZamExaHcyS2FuSC9uTmh3K2pJR1Zj?=
- =?utf-8?B?N1VUelhTWlJ2QnpYMzkrNmRPVU5OWlpHWXM2ZlVPbnlNS0pyUEJsTmxNdGhU?=
- =?utf-8?B?M2Jid1V4VG9YeGdIQTZRNGtoSDlocFlhWnB4V29WNk9kMmpkNGZFQWRCdFNE?=
- =?utf-8?B?S2dhQk9qVmVMeDB5bkJER1pqbDNrcjZUTmhEVlFGN1pMNDFoT28rTzkzNlh0?=
- =?utf-8?B?QzQ0YndKZ0s0bEMxUENkVHRWRUliY25xc3pYUDhreE1wOTNnVFBOSzNlNVJV?=
- =?utf-8?B?bk9kaEVYVVo4ZUdmcnh0TEZVa3BnUHh6UUh5aFRvTGRTMTRuNTJVdk5zcFRx?=
- =?utf-8?B?UzhoRm5VRjlEU1YyWXJjUURwdlVIZWRnRHlHNnlqbmdYRThpYThJd1BBS2c2?=
- =?utf-8?B?ZFdjUmlORm5GUGViOFFvSDVoYTlFVVNKQnRFREtuRnUzdUVnck9CbWh0NVRw?=
- =?utf-8?B?eUd3Y0tOeGxsNTAyVStWZTE5UmsyUG1BdkFpOC8wSDNoUHg5QmNpTTZIYTJl?=
- =?utf-8?B?aXhKb3hJRDdubno5bjh1QXVpSm1jOXp2NDNnRHR2aDU0SUdBNERRdDgycGc5?=
- =?utf-8?B?Zno1aFN2LzBDRlh6VzdtNk1LZ0xzb2w2Y0xxa3NTMDgycHpNT0dPNUhjWGIv?=
- =?utf-8?B?akRpbi9xeWpIM3VzWVFDSDdzMDhEanlaU1V0ZGExQnlVV1hiTGxObzAxN2pD?=
- =?utf-8?B?dnBaYkVSNFFIcU1ZRXVvL0VtUXlvUW9hMXovbmpMOEVHdE5yZWVRM3MyN2dO?=
- =?utf-8?B?azdoY24wcklVcFdMUVpGYk1qdlB4b1R5c3hieGlFdGhIYlVKV3doZzJVYjB3?=
- =?utf-8?B?R3FxaWxXdmwzWGc5MWttU1M4cm94WHM5aTdqL1o3dmJJNExzNHIwNC9vQTZ0?=
- =?utf-8?B?TkFHNDJVV1dncjduNWdmZU41S2loWTlCVFhMVURNUndEa3RYczAxdThZK0p2?=
- =?utf-8?B?a1EvNklZcEFRQzZORnFTVW1zV1A0cGNQNS96ajZOcmJrc3hSdWxZMU9pNTlq?=
- =?utf-8?B?V0orMVZnekJ0b1F5MHVDVU5ycXpaOTJTMkRUMTg1cEVKM0lMOGp5aDlvaFRj?=
- =?utf-8?B?RVhScGdqUmlrNlpKRnQrUGhjRlp6QzltVUxrOWZZdHA5dUNoY2kxb1g4RUJF?=
- =?utf-8?B?R012ZFgyNlh4R3VBdVdnUzJLMS94VUgwOGg2V1psVkZ4N2FJU1ZWbnpJVEFk?=
- =?utf-8?B?dVIrRnlDUHJzL2E0OFhISHR3OVhsZ3ROYVVacmpOMFpXV004cGZ0ZktkalFH?=
- =?utf-8?B?ZVdERkl2aUoyNlVhSGJ1cjVCbXZYMk11SG80TmpTeG4yWXovL3MrcUlrR0lN?=
- =?utf-8?B?bDExYXZ0dmJiNFlFWjdqd015OXBJYkVPSzBpZVhWMTlwT1ludHZGM000TFBl?=
- =?utf-8?B?RkVCSEk4dTJZeFY3ZjZva3dlWGZTSXFtcUp0ai91enVnM08wbzQwdFI0eUJK?=
- =?utf-8?B?ZmxISXNJbTBkdzZFVDN4anRKanRtZ1UxT25lL0VYOU94T1YydEw2ejJaTlVS?=
- =?utf-8?B?aDh0aFVmR3hOVTd0dXNqWGhhaExrRFBRQmx6WlhOWkRKclZrS1ZPNDRyeG5F?=
- =?utf-8?B?bkl6T09iN2F3aE1HYkw2S2hxcWxTMmNUc3ZlU2RPZXNHMmVPQ1hWRHhwdG5Z?=
- =?utf-8?B?MDRyTk96S2JJTXJkMVMyRzlzUmlic0ZlZWpoek9jQ2FjS2g3ajByUWZla2xS?=
- =?utf-8?B?WmRzNjFMODhXNncyR0c3b2NvY2JMb2x3T3QyekNGMCtDVWVBQ2pPYkRkd08r?=
- =?utf-8?B?UW5nSW83UVUyMWZ2RXIvdVRzWkhlYVlCLzlVQjRUeWdVdjAwUUl6elhHMm14?=
- =?utf-8?B?VWM1NDIrWGY3ajF3KzlybU5aNE92NVFOVEdwZ2xEL1lRYkVlQWgwNWdyOEFz?=
- =?utf-8?B?MVh2ZFRndmtiVWNqbWlubE1RMGl1OTEySm5tTXQ0SzEyei90Mm9jZmxoR2dL?=
- =?utf-8?Q?v1HYtIBa258=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?SGFCSk0vdHp0bkFUd2VteWFqVEpjMExyN0dMUk1EdHJYc0V3d3Voakl0WDYz?=
- =?utf-8?B?Y2U3NGl4Qk9Wa3hxb0JHNXdueFlYTG9xc2lZZ2tjNDZZeXprUmh4bVRvZWFx?=
- =?utf-8?B?eFhXdFlKZnZNc2E1OXhCSkt6NTRud1ljY0tFczZDU0hDY2hpbnppdFNEVWFI?=
- =?utf-8?B?UU1PZlBiL0w3VkNrSURjSGlLd21xTkRiNkxuQndCd1ZXRDdCZTFGQ1NPRFFj?=
- =?utf-8?B?dDRKSlhGRFNBODliUlZnRnVYTkJTRUhSdm55c0lkQ29kQ3BYOTdBOWZKWWFX?=
- =?utf-8?B?Um1UZndHU0RxaUF0K3U2V2NmYTRia1dmdjdTbkx2aXRlUmVHWWoyZXFIQUc1?=
- =?utf-8?B?OW5sdkNzZHljUDFQSllIbEpwU3JCYzNMT3FBMkJpaEpReDlGZHZvYUkxWGNI?=
- =?utf-8?B?ZlVNa1Rjd1Q1d3p6UXAzcGpBR0U3TnNvWGZycDJSaGljS1QxUUh6UkNIZi83?=
- =?utf-8?B?bThCVmsrSDdmVlVqdmo0Y3ErNVVMWU1wbzJQWWU4L0tVQjhEVnNITkVkbnAr?=
- =?utf-8?B?ZzNQWitQNkpFQ3NhTlJIRFFWdk1keklVeTF0ZDJsTVJCcnpmeG9yeDY4aDJw?=
- =?utf-8?B?dklxSHFxK3Z5UmVwVGpFa1Y3LzhIWDZTa0FFQ0oxdk5wWWg5V1hWRmFtWWxo?=
- =?utf-8?B?Z2U4NTlscSt6UVJYOXBRb3JDZG1icG5UMUJkMUxUcXRrUzhnN3ZYbUVnbTdu?=
- =?utf-8?B?TVVyWVlGZllUN212TlRjd0dwNm5sMklYbkZNT2l2WncycE45NUVFeS80bWVM?=
- =?utf-8?B?UzFnc3crUVRnOEF2SG8zMkF2RFpjcytsWnU3NE1WRnN3Y2dWeWpPWVZTUHhH?=
- =?utf-8?B?NGFxQ3YrRnVWMllSTm8vSVJlNmFHZXhIOC91dzdQeFk0SkJUV2pVU0tSZEh6?=
- =?utf-8?B?citWd0syWTlhdENYYUZJalAxa2VpTEhzM0ZJRU5oWmlGcVdLNGxmNWdzNW03?=
- =?utf-8?B?NzFiM3JHbXRLRlZLaEJUOUJhRTR4K2Z0Z0MyTXVaMjlkRzNCWDc0SHZJTXpq?=
- =?utf-8?B?Q2RNLzAwTFpzWDhvbU5KOVJDYTRNTk9BY3J0Mm80YjFWZEFabkNTaEdqalJq?=
- =?utf-8?B?MmRGc0dUKzdaSm9lL1hjYlRUclNhSDZRWmFDYmpXR0M2SE1DMlZzYVl0RUl0?=
- =?utf-8?B?Vm5JbWFLNldvOTFlR2FYY3Bpenp5cFJSUW8vUG9BTnJFcUVsSklONjJqQW1G?=
- =?utf-8?B?T3R5dTZRejhvR0tTRFpRZXVxTEZORFBSVDVENmJiaWxoQnlRN1QxWVBaODEw?=
- =?utf-8?B?a0pNbTRBblJJd3l0WkROc0t5SHZWeTJUdEF1Y0NiWjE5ZTl0OEJqSkhuZlRX?=
- =?utf-8?B?cW1hVWVWbGFmSFgrekhTaG9kK2l5WlVsZmVJR1I2dGY0Rmh4NDludFdtLzg2?=
- =?utf-8?B?am5QVkt1MUhmbUNIRTJDR3VVQ1NWSGt2QThKMW40WHZ2VzhYWEhURkp4em1F?=
- =?utf-8?B?UDM4bkFDeTdTeWFyT1RId1BQMm9YeGNNbnhBZm8wTXlEV2liUmFXTTlaV2N6?=
- =?utf-8?B?OFVVeFlGdnlSNklDRGcrSlNIQzBRdWJWaFVLTlRPa2F0Y3p1UE5rNWxuV0l2?=
- =?utf-8?B?QmdkR3RjekdNL2lQTWcrUFAwMnJVdGF1TjVoRjFvdVBmWFlJS2RtMExGcjh2?=
- =?utf-8?B?ZnlQOUhLRGlueDZLVkp6UUt0V0hldzc1QXNHdi9XNElPSmRYMW5tbWhFb3pD?=
- =?utf-8?B?YlBycE1GWWw3eVZSWmtMWDc0LzA2Z3BpSjZZNzV3TVcvVTd3c2w4eVM2UDdL?=
- =?utf-8?B?dHpmOExHd2s3VHhyWEQwRjQ1NElXckJwL2JhejhRRnRuQzlWWWtoZ2llWlps?=
- =?utf-8?B?akRPS1hVaSszUjFKM2oxTnpKRk1UMWw0c2NER25ZS2RUaU5OT3hLTkZlZDRm?=
- =?utf-8?B?L0JCM1Fhbk5QOHF6OWlzNFpoT0RJRDNqYndIczhHV2FMTUJZTkY4cHhNNENT?=
- =?utf-8?B?eldySFVUOUl6VUxjVkh5L1BGYVRkL0poSk5TVmx2blczUFU5ckx5Uzl1MlpE?=
- =?utf-8?B?ZThBWW5iWVlCVEZXZU9QTGZaMzV1TERVaU14ZG9rNHp1bktDeXA4cE9wUkcy?=
- =?utf-8?B?MU1vb0M4ZzJ6cmRKZklKWmFFd1BDcjBCRk1UNjlzWmJCQ1pCV2RUQjRuWnVV?=
- =?utf-8?Q?UkbLtVGu0WZ+nywf2BuiBrihc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d45ef84f-c704-4965-48b8-08ddd4ccc313
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 09:36:47.0833
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +yfnUKhlFKwdxReg01cufTw9jGxqXJZZw45n5876EA73oUgHIAq6PXMqvJ1Gs05ESWKSYsCBaCuALep3qwPzpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7512
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 08/06/2025, Luca Ceresoli wrote:
-> Hello Liu,
-> 
-> On Wed,  6 Aug 2025 16:54:24 +0800
-> Liu Ying <victor.liu@nxp.com> wrote:
-> 
->> devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
->> NULL pointer, so use IS_ERR() to check the returned pointer.
->>
->> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index ed35e567d117..86cf898a09bb 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1474,7 +1474,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
->>  
->>  	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
->>  				   &analogix_dp_bridge_funcs);
->> -	if (!dp)
->> +	if (IS_ERR(dp))
->>  		return ERR_PTR(-ENOMEM);
-> 
-> Good catch, thanks!
-> 
-> You fix is correct but now I realized one additional fix is needed in
-> the following line:
-> 
-> -		return ERR_PTR(-ENOMEM);
-> +		return ERR_PTR(dp);
+The timer migration mechanism allows active CPUs to pull timers from
+idle ones to improve the overall idle time. This is however undesired
+when CPU intensive workloads run on isolated cores, as the algorithm
+would move the timers from housekeeping to isolated cores, negatively
+affecting the isolation.
 
-You mean ERR_CAST(dp)?
+Exclude isolated cores from the timer migration algorithm, extend the
+concept of unavailable cores, currently used for offline ones, to
+isolated ones:
+* A core is unavailable if isolated or offline;
+* A core is available if non isolated and online;
 
-> 
-> Can you send a v2 with that fixed?
+A core is considered unavailable as isolated if it belongs to:
+* the isolcpus (domain) list
+* an isolated cpuset
+Except if it is:
+* in the nohz_full list (already idle for the hierarchy)
+* the nohz timekeeper core (must be available to handle global timers)
 
-I find devm_drm_bridge_alloc() always returns ERR_PTR(-ENOMEM) in this
-driver context, so it seems fine to keep the existing ERR_PTR(-ENOMEM).
-If you prefer ERR_CAST(dp), I may send v2 to use ERR_CAST(dp).
+CPUs are added to the hierarchy during late boot, excluding isolated
+ones, the hierarchy is also adapted when the cpuset isolation changes.
 
-> 
-> Luca
-> 
+Due to how the timer migration algorithm works, any CPU part of the
+hierarchy can have their global timers pulled by remote CPUs and have to
+pull remote timers, only skipping pulling remote timers would break the
+logic.
+For this reason, prevent isolated CPUs from pulling remote global
+timers, but also the other way around: any global timer started on an
+isolated CPU will run there. This does not break the concept of
+isolation (global timers don't come from outside the CPU) and, if
+considered inappropriate, can usually be mitigated with other isolation
+techniques (e.g. IRQ pinning).
+
+This effect was noticed on a 128 cores machine running oslat on the
+isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+and the CPU with lowest count in a timer migration hierarchy (here 1
+and 65) appears as always active and continuously pulls global timers,
+from the housekeeping CPUs. This ends up moving driver work (e.g.
+delayed work) to isolated CPUs and causes latency spikes:
+
+before the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:     1203 10 3 4 ... 5 (us)
+
+after the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:      10 4 3 4 3 ... 5 (us)
+
+The first 5 patches are preparatory work to change the concept of
+online/offline to available/unavailable, keep track of those in a
+separate cpumask cleanup the setting/clearing functions and change a
+function name in cpuset code.
+
+Patch 6 and 7 adapt isolation and cpuset to prevent domain isolated and
+nohz_full from covering all CPUs not leaving any housekeeping one. This
+can lead to problems with the changes introduced in this series because
+no CPU would remain to handle global timers.
+
+Patch 8 extends the unavailable status to domain isolated CPUs, which
+is the main contribution of the series.
+
+Changes since v9:
+* Fix total housekeeping enforcement to focus only on nohz and domain
+* Avoid out of bound access in the housekeeping array if no flag is set
+* Consider isolated_cpus while checking for nohz conflicts in cpuset
+* Improve comment about why nohz CPUs are not excluded by tmigr
+
+Changes since v8 [1]:
+* Postpone hotplug registration to late initcall (Frederic Weisbecker)
+* Move main activation logic in _tmigr_set_cpu_available() and call it
+  after checking for isolation on hotplug and cpusets changes
+* Call _tmigr_set_cpu_available directly to force enable tick CPU if
+  required (this saves checking for that on every hotplug change).
+
+Changes since v7:
+* Move tmigr_available_cpumask out of tmc lock and specify conditions.
+* Initialise tmigr isolation despite the state of isolcpus.
+* Move tick CPU check to condition to run SMP call.
+* Fix descriptions.
+
+Changes since v6 [2]:
+* Prevent isolation checks from running during early boot
+* Prevent double (de)activation while setting cpus (un)available
+* Use synchronous smp calls from the isolation path
+* General cleanup
+
+Changes since v5:
+* Remove fallback if no housekeeping is left by isolcpus and nohz_full
+* Adjust condition not to activate CPUs in the migration hierarchy
+* Always force the nohz tick CPU active in the hierarchy
+
+Changes since v4 [3]:
+* use on_each_cpu_mask() with changes on isolated CPUs to avoid races
+* keep nohz_full CPUs included in the timer migration hierarchy
+* prevent domain isolated and nohz_full to cover all CPUs
+
+Changes since v3:
+* add parameter to function documentation
+* split into multiple straightforward patches
+
+Changes since v2:
+* improve comments about handling CPUs isolated at boot
+* minor cleanup
+
+Changes since v1 [4]:
+* split into smaller patches
+* use available mask instead of unavailable
+* simplification and cleanup
+
+[1] - https://lore.kernel.org/lkml/20250714133050.193108-9-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250530142031.215594-1-gmonaco@redhat.com
+[3] - https://lore.kernel.org/lkml/20250506091534.42117-7-gmonaco@redhat.com
+[4] - https://lore.kernel.org/lkml/20250410065446.57304-2-gmonaco@redhat.com
+
+Frederic Weisbecker (1):
+  timers/migration: Postpone online/offline callbacks registration to
+    late initcall
+
+Gabriele Monaco (7):
+  timers: Rename tmigr 'online' bit to 'available'
+  timers: Add the available mask in timer migration
+  timers: Use scoped_guard when setting/clearing the tmigr available
+    flag
+  cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+    update_exclusion_cpumasks()
+  sched/isolation: Force housekeeping if isolcpus and nohz_full don't
+    leave any
+  cgroup/cpuset: Fail if isolated and nohz_full don't leave any
+    housekeeping
+  timers: Exclude isolated cpus from timer migration
+
+ include/linux/timer.h                  |   9 ++
+ include/trace/events/timer_migration.h |   4 +-
+ kernel/cgroup/cpuset.c                 |  72 +++++++++-
+ kernel/sched/isolation.c               |  23 ++++
+ kernel/time/timer_migration.c          | 182 ++++++++++++++++++++-----
+ kernel/time/timer_migration.h          |   2 +-
+ 6 files changed, 248 insertions(+), 44 deletions(-)
 
 
+base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 -- 
-Regards,
-Liu Ying
+2.50.1
+
 
