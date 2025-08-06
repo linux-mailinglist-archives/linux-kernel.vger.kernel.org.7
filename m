@@ -1,158 +1,165 @@
-Return-Path: <linux-kernel+bounces-758030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CE8B1C9EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:47:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B0FB1C9EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0006E3A94B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E553A7F43
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4729A303;
-	Wed,  6 Aug 2025 16:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D9F29AB1A;
+	Wed,  6 Aug 2025 16:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSdUI9aH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="I5K9k/CK"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFEE260569
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 16:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7DA1E0E0B;
+	Wed,  6 Aug 2025 16:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754498819; cv=none; b=WHxRmm2g1WHFujk88f4lN3jofcZT+I2hE8J6cetXNbfrs3iQ3ankB3x0baqhB+iE/WG9HpumXw+TbHpU+v62P4mIuveOixLuBBQCz/iEgSKPAMFkqrDDhgjcRiC0ocae5z96L1e0aE/Yp//5glQnU5pxefeJfvnSRYgBAA/Wfu8=
+	t=1754498885; cv=none; b=owVHEbSFPt8owpXGuerZ5eAXVJH0CQuMvWYa/Eqj4UYm4p1bEOTd6oxv4qWZJdKYF48tzMtVj7yAS5ENZO9kO5Y+8iMzRQpVY84CQxQKg7F6V4QArUjRWvw9Fgn6K04FeWC3Fp3G+X3IoT6gBiqcyI/R1gOd5MHIC32XKhDXczY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754498819; c=relaxed/simple;
-	bh=Fxy1GsxFgTmyC+DciW6Y5utDV003qXLrD39oL6xyDK0=;
+	s=arc-20240116; t=1754498885; c=relaxed/simple;
+	bh=ciYWewOVMgSPCSH7WY07nuIbN1qGHOZw1W7rusM5pOM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fL+Fi9yUHPEyLbfHGi5MUJqKQEFFoJqtdMwpCPEONOGdu3v+PSqjb30jM88QBGNoeXYOsesY4r5RPRk21tQdf/40Dmwu9me+EKqNtb/mouXrgQgjto83fRaex6gvxe8E2A8PD3QIydjIuEfchFS1BZ4XldIjkaGYQDyF9geLy80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSdUI9aH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754498815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Nd9MFnTlr7WVrR7s+mCfQ91mGkWMSL7YSOVN2ZEGg4=;
-	b=MSdUI9aHx+JMWzY3IlS5JbXUJxNTkfv7w1Xr5jkua4u4PVemvQeWm/1MPPEt49nDY+IRiU
-	WYoiMhS1muP+VcB7Ti61+2PNb7Ihno19ZKbd70wO2EWqqXafJ8IXEfcB+Ziby3n/okasrF
-	5UKGeX5e7yc0RbOnnb+wKnIo1nnUv6U=
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
- [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-Y4knSa8hNaCaZi5EAwznqQ-1; Wed, 06 Aug 2025 12:46:54 -0400
-X-MC-Unique: Y4knSa8hNaCaZi5EAwznqQ-1
-X-Mimecast-MFC-AGG-ID: Y4knSa8hNaCaZi5EAwznqQ_1754498813
-Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e8e28e1d66cso134641276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 09:46:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754498813; x=1755103613;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Nd9MFnTlr7WVrR7s+mCfQ91mGkWMSL7YSOVN2ZEGg4=;
-        b=gz2x2Jmfy8cXJJMEyTRWfTWRcBaieGGGSnUU2XhBttcGzXWdPi1yUOiDFly341WmRX
-         BPN5DTTuquFiMMMx7dovwkWo1g9ajtVdOVJuo3GkzQ25ekuw7zhfQkyd9W2JZ0n0Y10r
-         moStSExFMw9wqrD1xwye63TfivW4xsqa81j18Xi0hK/28O/4DVCHXAi4YtIQmfxZIM5E
-         0UrfCxt+4VUJlAAF6aV1Xe+71SakWKrenm1yjoTwdeEMKWL1gTKd9dZGAY2/M/ua9vWA
-         pcTSy1uQic02zef9Afz4GLNap04L7HF7bM6aQM/bCKH+i589VguXqKrC8nAkqxdUpdC4
-         FX7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX30ZIEmyf4jfGUC+rC+xq2+Lsqtu/ZBNwZqS+rwcXdmM5KDaxRzlBpk3gmnOPclmHMPfivZWdzjAhMWrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+o1aGdnpwRwqhA1GMJotnTijoPV81Cu56ONZ5zpf6VkltT+pW
-	GzAuUlPUHYnkwD7b/E3w9EsqRH7JsZOl/Hc6lxsvRjYM8k2et98+NnNFMjPrljDZApVTq93V3ko
-	Y5vCHFdTNwYgT05kMRZMcHBizzRzLn4ARVXIn4CazJHY4yEpZNoMZ3J25S+VqaSdo4A==
-X-Gm-Gg: ASbGncuOcsZyIw0lRkQjCdyZmFpIAvgiWlfR9vvlkzbgzQyBQPi3A5UelY9wiIpVLIE
-	Dt6963TAlrro6rpWjKVtSxqoiNruEOFBQ7CxusbpYNZWhRHkdAIu7J2mSoqaTGTbmLAIFvGngw4
-	msRFg6Bd/5kXVpn1HpOtkNKIGlKPG9cVYtRjwHcui5O9zRnx5Tk/jH2KV0iLVFKz1J5XDLIjsgn
-	xZ3nJPUAaIAIeJI+/l+hmaQGRHkJFYIOx7r6pmoxopt9ySZp7+n9EzaneL3Qvz4kg9n+qLVemSc
-	Nn3QeeZrXYEjg7OKSGgcH9MhtBCh9zr+mCNBFhdrIGj+L/Qsu805oIjE+ZielwdsVsjN1s0VDrZ
-	7xzIZy4M4nC8CqI/OgaDqFA==
-X-Received: by 2002:a05:6902:1442:b0:e8e:2535:5ce with SMTP id 3f1490d57ef6-e902b825c10mr3495165276.34.1754498813146;
-        Wed, 06 Aug 2025 09:46:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE53Eqc4ZZr2AAoa1BkY+1WkbLTnrnGZkrw+oh/AutRhwg1BqQQfEJzXdO3LO6YcxGkkHaG8Q==
-X-Received: by 2002:a05:6902:1442:b0:e8e:2535:5ce with SMTP id 3f1490d57ef6-e902b825c10mr3495120276.34.1754498812599;
-        Wed, 06 Aug 2025 09:46:52 -0700 (PDT)
-Received: from x1.local (bras-base-aurron9134w-grc-11-174-89-135-171.dsl.bell.ca. [174.89.135.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8fd3714cb1sm5654298276.2.2025.08.06.09.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 09:46:51 -0700 (PDT)
-Date: Wed, 6 Aug 2025 12:46:48 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] selftests/mm: use __auto_type in swap() macro
-Message-ID: <aJOG-IAmYhjoYVf-@x1.local>
-References: <20250730142301.6754-1-pranav.tyagi03@gmail.com>
- <CAH4c4jJ8VywRUfn2z8HnA73vNxviZ53DZttcR3JaPULF3JFkQA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrjbJn6a4p8DIdVQheBx+G66vrmHRXVBv4TpvfR4tjLnOV0Q3OK53DQP2q4AK37jK17hMz5d2ElI0qLA6vJiQJHaufy1n5m+TcqwxdCypQnTYXOunsdsbg4fTYW9BeHiOOaglMEyp0LeUt/b/ERfUo3D5xLI7UddD0Ua5ciPVg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=I5K9k/CK; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FJqi3W+1W9dANvOzW3UBzJD8P0EsYpYh1y8mcChjELA=; b=I5K9k/CKsHcahDPxkA5oE9oF7p
+	9qd84S+DBBvjzxuaHkdMD8IGDHzuk+0I4iUDtJjeGIKMCgloPa52uC5kGiyLpu4rxHWRNqJbJBF79
+	sRzLGWfcoDKyPel3MVjW26++GOXShF0yBORhqakvSLYTCCo3I9TsBosTVgOS6p5L97KnHLVZuP5y7
+	jmxcxRFAnLDfxIUeMwstUBHI4el/kdaBUl2rH7/BNwivmuLRkM4JZLPXXxKUiCefXAw9adye7w/SN
+	PttT7PU/Ojk5fyRzr0sqnELpglKB802VAmWY0ENBu7USnrZ7NHnCYyCMp4wQAhlgZYxr59IaVs0RX
+	/N2T4VoQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45100)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ujhIy-0004qT-1C;
+	Wed, 06 Aug 2025 17:47:56 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ujhIv-0007GE-2c;
+	Wed, 06 Aug 2025 17:47:53 +0100
+Date: Wed, 6 Aug 2025 17:47:53 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Xu Yang <xu.yang_2@nxp.com>, hkallweit1@gmail.com,
+	o.rempel@pengutronix.de, pabeni@redhat.com, netdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
+ phy_polling_mode()
+Message-ID: <aJOHObGgfzxIDzHW@shell.armlinux.org.uk>
+References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
+ <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
+ <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
+ <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
+ <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
+ <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH4c4jJ8VywRUfn2z8HnA73vNxviZ53DZttcR3JaPULF3JFkQA@mail.gmail.com>
+In-Reply-To: <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Aug 06, 2025 at 09:15:50PM +0530, Pranav Tyagi wrote:
-> On Wed, Jul 30, 2025 at 7:53 PM Pranav Tyagi <pranav.tyagi03@gmail.com> wrote:
-> >
-> > Replace typeof() with __auto_type in the swap() macro in uffd-stress.c.
-> > __auto_type was introduced in GCC 4.9 and reduces the compile time for
-> > all compilers. No functional changes intended.
-> >
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > ---
-> >  tools/testing/selftests/mm/uffd-stress.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-> > index 40af7f67c407..c0f64df5085c 100644
-> > --- a/tools/testing/selftests/mm/uffd-stress.c
-> > +++ b/tools/testing/selftests/mm/uffd-stress.c
-> > @@ -51,7 +51,7 @@ static char *zeropage;
-> >  pthread_attr_t attr;
-> >
-> >  #define swap(a, b) \
-> > -       do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
-> > +       do { __auto_type __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
-> >
-> >  const char *examples =
-> >         "# Run anonymous memory test on 100MiB region with 99999 bounces:\n"
-> > --
-> > 2.49.0
-> >
+On Wed, Aug 06, 2025 at 05:01:22PM +0200, Andrew Lunn wrote:
+> > > > Reproduce step is simple:
+> > > > 
+> > > > 1. connect an USB to Ethernet device to USB port, I'm using "D-Link Corp.
+> > > >    DUB-E100 Fast Ethernet Adapter".
 > 
-> Hi,
+> static const struct driver_info dlink_dub_e100_info = {
+>         .description = "DLink DUB-E100 USB Ethernet",
+>         .bind = ax88172_bind,
+>         .status = asix_status,
+>         .link_reset = ax88172_link_reset,
+>         .reset = ax88172_link_reset,
+>         .flags =  FLAG_ETHER | FLAG_LINK_INTR,
+>         .data = 0x009f9d9f,
+> };
 > 
-> Just a gentle follow-up on this cleanup patch. From what I could find,
-> this is the only use of
-> typeof() left in the mm selftests, so this should be the only instance
-> needing this change.
+> {
+>         // DLink DUB-E100
+>         USB_DEVICE (0x2001, 0x1a00),
+>         .driver_info =  (unsigned long) &dlink_dub_e100_info,
+> }, {
 > 
-> Thanks for considering!
+> Is this the device you have?
+> 
+> > > > 2. the asix driver (drivers/net/usb/asix_devices.c) will bind to this USB
+> > > >    device.
+> > > > 
+> > > > root@imx95evk:~# lsusb -t
+> > > > /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ci_hdrc/1p, 480M
+> > > >     |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=asix, 480M
+> > > > 
+> > > > 3. then the driver will create many mdio devices. 
+> > > > 
+> > > > root@imx95evk:/sys/bus/mdio_bus# ls -d devices/usb*
+> > > > devices/usb-001:005:00  devices/usb-001:005:04  devices/usb-001:005:08  devices/usb-001:005:0c  devices/usb-001:005:10  devices/usb-001:005:14  devices/usb-001:005:18  devices/usb-001:005:1c
+> > > > devices/usb-001:005:01  devices/usb-001:005:05  devices/usb-001:005:09  devices/usb-001:005:0d  devices/usb-001:005:11  devices/usb-001:005:15  devices/usb-001:005:19  devices/usb-001:005:1d
+> > > > devices/usb-001:005:02  devices/usb-001:005:06  devices/usb-001:005:0a  devices/usb-001:005:0e  devices/usb-001:005:12  devices/usb-001:005:16  devices/usb-001:005:1a  devices/usb-001:005:1e
+> > > > devices/usb-001:005:03  devices/usb-001:005:07  devices/usb-001:005:0b  devices/usb-001:005:0f  devices/usb-001:005:13  devices/usb-001:005:17  devices/usb-001:005:1b  devices/usb-001:005:1f
+> > > 
+> > > This looks broken - please check what
+> > > /sys/bus/mdio_bus/devices/usb*/phy_id contains.
+> > 
+> > root@imx95evk:~# cat /sys/bus/mdio_bus/devices/usb*/phy_id
+> > 0x00000000
+> > 0x00000000
+> > 0x00000000
+> > 0x02430c54
+> > 0x0c540c54
+> > 0x0c540c54
+> > 0x0c540c54
+> > 0x0c540c54
+> 
+> This suggests which version of the asix device has broken MDIO bus
+> access.
+> 
+> The first three 0x00000000 are odd. If there is no device at an
+> address you expect to read 0xffffffff. phylib will ignore 0xffffffff
+> and not create a device. 0x00000000 suggests something actually is on
+> the bus, and is responding to reads of registers 2 and 3, but
+> returning 0x0000 is not expected.
+> 
+> And then 0x02430c54 for all other addresses suggests the device is not
+> correctly handling the bus address, and is mapping the address
+> parameter to a single bus address.
 
-Hi,
+Notice that the following return the PHY 3 register 3 value, so
+I suspect for anything that isn't PHY 3, it just returns whatever
+data was last read from PHY 3. This makes it an incredibly buggy
+USB device.
 
-Andrew should have queued this one in branch akpm/mm-nonmm-unstable (even
-though I'm not familiar with the branch).
+Looking at usbnet_read_cmd(), the above can be the only explanation,
+as usbnet_read_cmd() memcpy()'s the data into &res, so the value
+in the kmalloc()'d buf (which likely be poisoned on free, or if not
+unlikely to reallocate the same memory - that needs to be verified)
+must be coming from firmware on the device itself.
 
-Said that, I'm also not familiar with __auto_type.  Looks like it's more
-efficiently processed by the compiler in some special use cases, however
-it's also new so maybe some tools (sparse?) may not recognize it.
+asix_read_cmd() will catch a short read, and usbnet_read_cmd() will
+catch a zero-length read as invalid.
 
-Is it the plan that the whole Linux kernel is moving towards __auto_type?
-I still see quite a few of typeof() usages (not "a few", but 2966 instances).
-
-Thanks,
+So, my conclusion is... broken firmware on this device.
 
 -- 
-Peter Xu
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
