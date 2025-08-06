@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-757938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2983B1C88C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DA2B1C890
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5443BA71A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BDC3BFED4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5587C28D85D;
-	Wed,  6 Aug 2025 15:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B7F28DEE1;
+	Wed,  6 Aug 2025 15:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="R9CC+6TS"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Gw1k75gR"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B783D218AAB
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BCD28F926
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493611; cv=none; b=CS6WNqoByxntNODwJu3kj4zOUg6lb2nMbPofVmPyc0+2Fd0jmmzIGm9T9SMq1sX7Yd38/gBAMLv+2+YnCMrcce8Qc2xGNx18mVrXyT+DfeQ+zFu2Ce+LxAuF7wRTgE0KGXB9Xk+Nl2fxx7tEcH6Fxhm+g1bmptRaBsdoLJCrPFc=
+	t=1754493638; cv=none; b=szsB2MpX04HnUrQ0OGE2r+Npes9L08xOGN6wUVgGp9q54ZOhsAmEsW7DnJME2TrDixlZ0qdPQ0EdFlmjpMCZvW9lCri0th6g/Z0QAZvx1urAk1fL137PBC0kaWQA8rvqTpzRnXOWwlu6nr9LC9vkRu62iRohQlXMjJBAM4AUR6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493611; c=relaxed/simple;
-	bh=XeQ4LyBFuYf/lAfwUZjLXpPrasqdVwQUMQNjXbI29Vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lb1bJiQsMj8m4rzQW02rl1vrwk46QcawyFx7AvbgvL1k6puONxEZ455vqgTGTqNnpsQ49zCxkMIro/nVNr0OUCGrdwTidBa8QxfCzUGV0MhJd8uQeVrVbPnTAL+wLsqPiWBLadYA+AHjARFCjBkT1e1lITxkOiTT13uqdKZ4u8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=R9CC+6TS; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-88dab9ca6e3so1505211241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:20:09 -0700 (PDT)
+	s=arc-20240116; t=1754493638; c=relaxed/simple;
+	bh=THJ4mY6JP9KzINol5ozU48RD2OdXbU6gAFvUJe70Dtg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Iq5BVD8sNCHXQi6W95Gj0znk37KhkuFAyc69bXYU9PwYTqXwwtXTGXeOgCs4nNsQVkzCKl2f2+x3wvkMKfF458JHp53ivJyXieckCSWAJWZEWIvoYdjnhbNUgaH8aGzE47Y2wAvbwslarfg/KoTOA1VaLEttK7N1sa0gaDInKUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Gw1k75gR; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-af91a6b7a06so1232462266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1754493608; x=1755098408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=fairphone.com; s=fair; t=1754493633; x=1755098433; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=805K6fvtdokSqfEHjnN7vRqDDCTH7wpXcqcu6F316LE=;
-        b=R9CC+6TSBmseLHQJ/C3w5MJSPT8nDX/blXoTmZAF11N1cLTKcg5Gk7cFR5kZzsIeiM
-         Ej3+3iX9Anb1e/MATo3kKg9opj1t4Gvjp60CICmiiDruQFeEOE9XeacdnK2DWvTqBFrm
-         JMc9/Tu9DQ8KzMD3uP2LSBhPtmmfVknbPWb31DggfHt14ON6/I31NKO+eaus8pUR9z3p
-         Mvy/RKuPWf2vGR2u9kSykm6IGu4XE40aopIGhh2YOQKkg0pBgiQbzOl7SS+aTTQbFCHE
-         QF39hxk9CuPg4PEj4MCEpHfGb6huM5ZZmJzlGOyYbCPLx90wMGpFRuhoJC5KjKk4HL9e
-         35IA==
+        bh=8Zzi1nGGRA6XzeMW1fYOZMZYBNySqK5zZKNEMrIG1tQ=;
+        b=Gw1k75gRHdeOS4nYwMld9weI1h/fRv528ATi+0VeTQygCopcVpUzRD3YbZWV/MM5Kc
+         axvmf9/IrkqDXgUE281bOM2dRociS+cdlxeSAr1f+pzd8YkRWxDMjIrU/15LSGcVpQ2l
+         mDx3x6wUsrwwPY/lGMPZ5oWlaA/BPjKiKrTR+PJW/p3qTBCrxrYSSWVhV6w+8DgWl846
+         5snG8TQwQam9sKzWxxeXWR3h1zs7BJ+nw0GUjutSWK6DcafCDF6bXwQ74gESJmBmIIed
+         GoaeOp+lZTrQwMnEc4EsQ9Lg7EixKjrWjbJWnO8sbrQmhg83tZdv4guM0C6ECtvXaMeH
+         tFdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493608; x=1755098408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=805K6fvtdokSqfEHjnN7vRqDDCTH7wpXcqcu6F316LE=;
-        b=Mjyti7Z/IUIK19rUjnbM+sr5eLD1COpPVeDVHTe6Q4dqmXbCMVwDSHamWzEJ7poMcG
-         ehOS5B7t13IfwHCbHzFiGtkdIK+0L6381VGa1oKeXi9lAnt3i+xnxkkjwWV/Z1H7Mfj7
-         /s7yAK1VhyAmL1ughHJy+/wZeoHWKZ9DMmp8LGRDLSdnl40SaL2TEsW2B1jA8nDwajnA
-         UhNN8yvEaYs+aCeSrq8F5J85VEEJbgLvWYrV0bM5ne2lD4kbBv1p9+3jFJ6tb3J8ZaqA
-         0lqFVipWRJ9wvn+l6qoZrqxjl6fooXsZmZJ6i40fF+1ryS6iA7xHnvWBbqaH+ecU49UA
-         2WqQ==
-X-Gm-Message-State: AOJu0YyfLhzDaihKa0z43qzMP9YBdoCnKQFE16clTBirigs7osbs/YRM
-	Ijw2+sB2PIg5e5bNKmTo+/9Xi56AudfLSd/2tIpN1wTuZLERUeVWnjZAWOt2faEMXM3GAdMsTt0
-	j5D7+pcuwx75/jkS8aGK6jDGYGwFsN3gi2R0CduggoA==
-X-Gm-Gg: ASbGncvvvPZ2pzE4CBRvZ+qNppzpttcmC2a6Ra/fvR6tntbFe22yEAmgIdzCIvVbsHk
-	iepySopDfzuvpYdU/8lknn4prDTlEJbdiOstXw4N+h3OVLfHRDuoKtux8E8zMAl+okvy8j3MBOY
-	afC65r3Km4jqydB1WswRFO2A2Psp+Pc9LutV2IsUbdjvSOx031RoTHcEZpT2x96+CEn7RhmTuDN
-	4g8
-X-Google-Smtp-Source: AGHT+IEwtib/MiSSe6PyJvzqzeOSOjkXKPFo4O7cvuV5C+3dwyYliOiUE4LGgYQXOufi1bsGFYsJcYEM5+C9sofisDk=
-X-Received: by 2002:a05:6102:dc7:b0:4de:d08f:6727 with SMTP id
- ada2fe7eead31-503731b8172mr1694875137.13.1754493608384; Wed, 06 Aug 2025
- 08:20:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754493633; x=1755098433;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8Zzi1nGGRA6XzeMW1fYOZMZYBNySqK5zZKNEMrIG1tQ=;
+        b=Okb/atLwtgCCHbhnD1b82QvWWjkTVv8Sd4QNJCPCyaQXvrVBJqxc9D7+ft27MQTXyj
+         AfzXVdvocO1hwFVIGVUyszowDWD8FkbXVqF/rTBGIo8C1Ww761QetwMp0IOJCiAHlQzE
+         u7F2rlWr6iZ06qigYY9t8WrM68bzX6EpCuH/XBUZo1cDVb9OJX61XS/rryyEu+shnR1P
+         fBlFmRdIRpbslZ0htr4ZjyKGc1Z6do1T+LTgyLCRMqNRUnhhG+SV7YHxR6C4JVeTurdy
+         N2KTtmJD0AtaKWDQyFsO6uwkNJfOsuGMth9J/SLnuxrNTe5BeWJp7ceLX6qji261kKzb
+         S5jA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVtyjjqRwOY4wQuAeztHIlW/OltEfWJlyRItbrC8lzafUsjHfCbL8hRZx84i0thR0Pvkcwepkw+OKNL5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkHQdCWLQ9nFQGB7NXdfDMWJoVMcI2XZ6juvA0Irxfwn2zg8tD
+	Wjp0P+KcifuBqxLL+DSkVrBttZqtY+9YR8UtWC+pD/ZxDiDmhXQxk+dSLvQuRLmRFPY=
+X-Gm-Gg: ASbGncv85kMz6JBU9VS5FQDydDb9gnA/IXq0s9VjOwtHLvfH2YVtPCeurXW46Z7n1UY
+	ljCRWwBWrZYP5H97B+M5UQsJPfr3JgigQWasgyDsCSvusDQXqh9K+7zGCj4NtzUH2mmBdz9PpMu
+	h84BR27O+SKzT5kooeJYAN4fuzheXVDqTI0tjWu79DyeVq2uBZypR8V6QpAnZYPlrgnrulsSMqn
+	YldqiiJ17dRqqTlBXAIPw+f9ymRIcQhu7rVzj8UftFg9VZauWa3vysHbYnl+9XXTtPwzDGmMeH9
+	rjgSLjpq2NJo5u7aoeTXdPh7mPc5eM/1u3NayDjb/HKr4z0lD90J6b8LMWaom/z/y60fO3+P35N
+	yjMFP1+VL2C8bdv6DEGNn6MG6PhUj1DttUpMyDAVaFcIR9AMsanzWk1Dm1CLfYaTygOg=
+X-Google-Smtp-Source: AGHT+IG3qV4kZGqVo4ZddiejaabwSclW0B+23L/UCpPE6bS90enQp5m3ugBwQEPInkFSiN2kcHunLA==
+X-Received: by 2002:a17:906:c10b:b0:af9:71c2:9c3 with SMTP id a640c23a62f3a-af99034427amr353234866b.35.1754493633472;
+        Wed, 06 Aug 2025 08:20:33 -0700 (PDT)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23bedcsm1118814066b.120.2025.08.06.08.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 08:20:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250731173534.3494324-1-adrian.larumbe@collabora.com>
-In-Reply-To: <20250731173534.3494324-1-adrian.larumbe@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 6 Aug 2025 16:19:56 +0100
-X-Gm-Features: Ac12FXyX3LGMeD1c7gpkSiDZahsXCZ1jgp3yTJhhAYZ-wv0f2moDW31lBHHWdaw
-Message-ID: <CAPj87rPrGX2c3RQKJ6NxGYWbzbNp-9zCC=twCN4OLcD4aXcuHg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panfrost: Print RSS for tiler heap BO's in debugfs
- GEMS file
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, 
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 06 Aug 2025 17:20:32 +0200
+Message-Id: <DBVG33X1DW3S.R29ELIG25SN3@fairphone.com>
+Cc: <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: qcm6490-fairphone-fp5: Add
+ vibrator support
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Griffin
+ Kroah-Hartman" <griffin.kroah@fairphone.com>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com>
+ <20250806-aw86927-v1-3-23d8a6d0f2b2@fairphone.com>
+ <581aaa8f-9e08-475e-ad23-3369fa05e53e@oss.qualcomm.com>
+In-Reply-To: <581aaa8f-9e08-475e-ad23-3369fa05e53e@oss.qualcomm.com>
 
-Hi Adri=C3=A1n,
-
-On Thu, 31 Jul 2025 at 18:36, Adri=C3=A1n Larumbe
-<adrian.larumbe@collabora.com> wrote:
-> @@ -432,7 +432,8 @@ static void panfrost_gem_debugfs_bo_print(struct panf=
-rost_gem_object *bo,
->         if (!refcount)
->                 return;
+On Wed Aug 6, 2025 at 5:13 PM CEST, Konrad Dybcio wrote:
+> On 8/6/25 5:10 PM, Griffin Kroah-Hartman wrote:
+>> Add the required node for haptic playback (Awinic AW86927).
+>>=20
+>> Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 18 +++++++++++++++=
+++-
+>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/a=
+rm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+>> index 4c6cb4a644e2..9576efdf1e8d 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+>> @@ -866,7 +866,16 @@ ocp96011_sbu_mux: endpoint {
+>>  		};
+>>  	};
+>> =20
+>> -	/* AW86927FCR haptics @ 5a */
+>> +	vibrator@5a {
+>> +		compatible =3D "awinic,aw86927";
 >
-> -       resident_size =3D bo->base.pages ? bo->base.base.size : 0;
-> +       resident_size =3D bo->base.pages ?
-> +               (bo->is_heap ? bo->heap_rss_size : bo->base.base.size) : =
-0;
+> I noticed the suffix is absent in the compatible - does it matter
+> for discerning the particular chip and other variants?
+> Anyway, so long as you and the bindings folks agree on it:
 
-Just use panfrost_gem_rss() here, though you'll need to make it non-static.
+According to the datasheet, the main name is AW86927, while the part
+number of this particular one is AW86927FCR.
 
-With that:
-Reviewed-by: Daniel Stone <daniels@collabora.com>
+I'm not aware of any other variants of the 86927 though. At least for
+some audio chip from Awinic there seems to be different variants with
+the same number with a different suffix that have a different amount of
+pins, but I really don't know 100%.
 
-Cheers,
-Daniel
+https://www.awinic.com/en/search/all?titleSearch=3DAW86927
+
+At least I don't find any non-FCR variants here.
+
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>
+> Konrad
+
 
