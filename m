@@ -1,50 +1,49 @@
-Return-Path: <linux-kernel+bounces-757565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A555B1C3A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EAFB1C39D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E7D3A9901
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915D23A7084
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2387428B3E2;
-	Wed,  6 Aug 2025 09:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8581A275B08;
+	Wed,  6 Aug 2025 09:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="EdB5gs+k"
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="XHIPL7oJ"
 Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1101C3027;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1C8289345;
 	Wed,  6 Aug 2025 09:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473471; cv=none; b=EgW9EF9IoVjiOqpUGr9xOw8BF4hFcHXgIz5dcPPFfo73RBj9ql3cpQeoZsCuCr1YjdaD0OaKQpJE9a+J9J8IsGaKrm78XwYic3z+gW0r4sZo8XRk/iwjvP8rkmSRJS0QYRNgUhpPffGSoMhJNKjjwYvLZP4jQF9KRlH9sHnA0xk=
+	t=1754473470; cv=none; b=dRFdh+YlBEapRp8GW9QtqIe4spB6+G1SU8k3MiBzQkNrLM7c+gD0yNB/Cb9w2MVtrnKymkHAqTjXpPZO4zURujExp+KpRq+1bz6I0u+NzOMzevC1gqUf8U+KYN4fK9WOcpJE0al7PXaNXZPDNj5uimzzKU5ZfGIW7L8omP1qsi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473471; c=relaxed/simple;
-	bh=FtOtGKaRTRC/oyJoG1gUBX7YVLK7Bsb9LiRigwuWFxU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vDjEKCVd9f7rK0NoVromzVZu3BrhC+nqTUeemgTFInyyimwajAePF6b8YCXkm0P/sH9AaZOyKjVZkji/Hcz7OL6oljfaf59ffY5wk7U2VcwG9fT2EhmmLabqa9tSpEUyaxdJ6814BmoIzCvg1pUigoD79s5bsXTuKW0rAKjQe34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=EdB5gs+k; arc=none smtp.client-ip=37.205.8.231
+	s=arc-20240116; t=1754473470; c=relaxed/simple;
+	bh=j+r7ZNKSzw9uym9kO0+ZjrP7HOEkHWldRcIktkLhAuc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Q8XxTSAUI1+z7E0UFB7/UPat+T/xmf5NWaUKRkdrfWgl7MjuzDxp4n2Jm1Fn7Q6YsR3Y/7vS5HaBcdic+01Ggqi7CQiUXb0fBXO4M99WxdNxVYKO5kVpQLbe7ZDzuQALHHsgYnpxRn6ULQwy26OCGt03SQBFQX8Nleq3MpoUxNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=XHIPL7oJ; arc=none smtp.client-ip=37.205.8.231
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=QHl8Wzj/uqBwnumJOCDGSmLhk5tflD1ODmw6Mh2NOQA=;
+DKIM-Signature: a=rsa-sha256; bh=IqBCgikWo4wY7MmIWTdFlv0AJR1TxS9Xh2+FP3Wsxd0=;
  c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
  i=@dujemihanovic.xyz; s=default; t=1754473444; v=1; x=1754905444;
- b=EdB5gs+knki6UTebyYR2nzHvmqostr4TTdljTpn8aTK97Wre0iNqiF+FpOogXJ3zgGAq34wo
- +uSxHp+XiM3+fr2BhFJCti2L0/aRG+lMs8hNzrqtpl8GphN5y8Pjf2EQBdLlsf3MHg/pHFZGX2a
- +tVtABKQEinprZywmBq4uDgKDc59982K273ooI+VsxkdDEUX9wLjaozT6ZA4r392vyvTMDGGzlS
- eUTlPg+ETrYnneZXqtJMvOcWwMVeCYzY6hEcBDuugBypml2IoA+4y12tIZH0+r+uRV76b4RSVw+
- 7itUoDpXk/+E9vDHxmzqLEQvzSQFeLA1OTotWKnAOK2Kg==
+ b=XHIPL7oJnqmT+IpcGbWPZsDFivF54k1isvPM+PN5q+0B1pI0Yf/y91NrQrESsODfTFwVNGF2
+ wRoH60AkJvxBP9Hyh71p7u0O+WQunfaUpM7Iq+kjpvLJFjTDU3KPYzdXm/dSb2fLULPFBSa9PC6
+ ceIfpoSYZd5FbnZjKWkZKg5ivamCV7mYkr5iDZD2mCY3JuFnfKak3S7XogJdiDxEkdOb9z8hn1v
+ kpNsxHUI5CeP0iMnw6PPwFrbuujg4EtJsNOkdxoIQPHe9r7CwIKrZ5nqVsBtRjmHXEQs2Z42+S4
+ wxvEHNm9+NFkyTZ1sKE2dM14XK/OVj8aL1DeFZweQ3tXg==
 Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 400c2629; Wed, 06 Aug 2025 11:44:04 +0200
+ ESMTPS id bb930501; Wed, 06 Aug 2025 11:44:04 +0200
 From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Subject: [PATCH v3 0/2] mmc: sdhci-pxav3: pinctrl setting for fast bus
- clocks
-Date: Wed, 06 Aug 2025 11:43:52 +0200
-Message-Id: <20250806-pxav3-uhs-v3-0-2f03fee380b0@dujemihanovic.xyz>
+Date: Wed, 06 Aug 2025 11:43:53 +0200
+Subject: [PATCH v3 1/2] dt-bindings: mmc: sdhci-pxa: add state_uhs pinctrl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,11 +52,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANgjk2gC/23NQQ6CMBCF4auQrq3pFAroynsYF9hOZUykpJUGJ
- NzdwkYXLP+XyTczC+gJAztnM/MYKZDrUuSHjOm26R7IyaRmUkglKqh5PzYx50MbuDmp8m7RQG4
- FS/e9R0vjZl1vqVsKb+enjY6wrntKBC64xEKBVKUFW17M8MQXpecukj6O04etWpQ/oRbwL8gkN
- FaDLmStq2pXWJblCwwW+djsAAAA
-X-Change-ID: 20250718-pxav3-uhs-d956bfed13f0
+Message-Id: <20250806-pxav3-uhs-v3-1-2f03fee380b0@dujemihanovic.xyz>
+References: <20250806-pxav3-uhs-v3-0-2f03fee380b0@dujemihanovic.xyz>
+In-Reply-To: <20250806-pxav3-uhs-v3-0-2f03fee380b0@dujemihanovic.xyz>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>
@@ -67,57 +64,104 @@ Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
  ~postmarketos/upstreaming@lists.sr.ht, 
  =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1530;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2717;
  i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=FtOtGKaRTRC/oyJoG1gUBX7YVLK7Bsb9LiRigwuWFxU=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTlR+zTjs1yzBaaOb75MJ/sm8P/D7q81v+/SfGGSEB1
- TcLw9fGdJSyMIhxMciKKbLk/ne8xvtZZOv27GUGMHNYmUCGMHBxCsBEPlsxMuxX19se5cTAtTr7
- YKnZvYqny1/3Jl1gr7LpO+fca2rgcpzhr2igxuSuDek79ln/F98SdTRv0i9N42vbinZ9tbs69VS
- aGQ8A
+ bh=j+r7ZNKSzw9uym9kO0+ZjrP7HOEkHWldRcIktkLhAuc=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTlR/vf2CemnamdkLPcYnQd99VBJa+2BQz93dlSaL13
+ kmf3u9p6ihlYRDjYpAVU2TJ/e94jfezyNbt2csMYOawMoEMYeDiFICJfMtn+KeSbvk45f7/q7kP
+ zmQLT7yucvZzipz/BdHZMTEPjng8l/vG8D/iUhnb+wXblkd8qLirZjN1SXp0xqcptytmha6eNp1
+ p9z1OAA==
 X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-Hello,
+On the pxav3 controller, increasing the drive strength of the data pins
+might be required to maintain stability on fast bus clocks (above 100
+MHz). Add a state_uhs pinctrl to allow this.
 
-This small series adds a pinctrl setting for fast MMC bus clocks to the
-pxav3 driver. On bus clocks above 100 MHz, driving the data pins at a
-higher current helps maintain signal quality.
+The existing state_cmd_gpio pinctrl is changed to apply only on pxav1 as
+it's unneeded on the other controllers.
 
-This series is related to Marvell PXA1908 SoC support; the latest
-version of that patchset (v16 as of now) can be found at
-https://lore.kernel.org/20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 ---
-Changes in v3:
-- Address maintainer comments:
-  - Refactor driver patch
-- Remove RFC tag
-- Update trailers
-- Link to v2: https://lore.kernel.org/r/20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz
-
 Changes in v2:
-- Address maintainer comments:
-  - Newline between properties in if:
-  - Don't try to lookup pinstates if pinctrl is NULL
-  - Only change pinstates if both are valid
-  - Replace dev_warn() with dev_dbg()
-- Link to v1: https://lore.kernel.org/r/20250718-pxav3-uhs-v1-0-2e451256f1f6@dujemihanovic.xyz
-
+- Newlines between properties in if:
 ---
-Duje Mihanović (2):
-      dt-bindings: mmc: sdhci-pxa: add state_uhs pinctrl
-      mmc: sdhci-pxav3: add state_uhs pinctrl setting
-
  .../devicetree/bindings/mmc/sdhci-pxa.yaml         | 47 +++++++++++++++++-----
- drivers/mmc/host/sdhci-pxav3.c                     | 40 +++++++++++++++++-
- 2 files changed, 76 insertions(+), 11 deletions(-)
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250718-pxav3-uhs-d956bfed13f0
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+index 4869ddef36fd89265a1bfe96bb9663b553ac5084..fba1cc50fdf07cc25d42f45512c385a9b8207b9b 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+@@ -30,6 +30,41 @@ allOf:
+           maxItems: 1
+         reg-names:
+           maxItems: 1
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mrvl,pxav1-mmc
++    then:
++      properties:
++        pinctrl-names:
++          description:
++            Optional for supporting PXA168 SDIO IRQ errata to switch CMD pin between
++            SDIO CMD and GPIO mode.
++          items:
++            - const: default
++            - const: state_cmd_gpio
++
++        pinctrl-1:
++          description:
++            Should switch CMD pin to GPIO mode as a high output.
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mrvl,pxav3-mmc
++    then:
++      properties:
++        pinctrl-names:
++          description:
++            Optional for increasing stability of the controller at fast bus clocks.
++          items:
++            - const: default
++            - const: state_uhs
++
++        pinctrl-1:
++          description:
++            Should switch the drive strength of the data pins to high.
+ 
+ properties:
+   compatible:
+@@ -62,21 +97,13 @@ properties:
+       - const: io
+       - const: core
+ 
+-  pinctrl-names:
+-    description:
+-      Optional for supporting PXA168 SDIO IRQ errata to switch CMD pin between
+-      SDIO CMD and GPIO mode.
+-    items:
+-      - const: default
+-      - const: state_cmd_gpio
++  pinctrl-names: true
+ 
+   pinctrl-0:
+     description:
+       Should contain default pinctrl.
+ 
+-  pinctrl-1:
+-    description:
+-      Should switch CMD pin to GPIO mode as a high output.
++  pinctrl-1: true
+ 
+   mrvl,clk-delay-cycles:
+     description: Specify a number of cycles to delay for tuning.
+
 -- 
-Duje Mihanović <duje@dujemihanovic.xyz>
+2.50.1
 
 
