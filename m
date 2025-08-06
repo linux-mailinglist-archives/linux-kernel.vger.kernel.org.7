@@ -1,83 +1,135 @@
-Return-Path: <linux-kernel+bounces-758185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE21B1CC2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F92B1CC2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5C318C2399
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:50:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6AE18C03CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1BF29C33C;
-	Wed,  6 Aug 2025 18:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474729CB4B;
+	Wed,  6 Aug 2025 18:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBNshinW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzWAfBgn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFBA298CB6;
-	Wed,  6 Aug 2025 18:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E269729A9C3;
+	Wed,  6 Aug 2025 18:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754506193; cv=none; b=lHdcMhVCbo8WQa7AnzlkJHcegx8a0x7Ft+DX6wc/v8Errz9Lq4S9bZ9SKVjnQX5tIfBc1cTk+jyYsf/1IFztH8uOtRAh4Kkh5dVHY0a7umyd1DJeMyzyA+ZIKhr9ue+hjSdFavosHkzD8Y/5s4fbm32hkfpbOqn4edVQJEFBRIo=
+	t=1754506254; cv=none; b=Rg61rT1k8s0Sd5grn8JmrQ6m8rlcY6jDl+5on5PfIvgyniHS9vBiwhi7CfYyMNElP/A3IkUa+8gZ4lBacXq+pT2PXWpuuew31nJlD7IB6WxuIAvs9rbGYtj6Nij5WoNH5pFao/Cr1diNwKLWHcvSUHcNnm8Ov6zvA6btbvQI/XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754506193; c=relaxed/simple;
-	bh=Fq3lCenJdcFbBPGsBCYGH9j0A7GaUKJaPYK+8MGwrFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPue/ROBuVy3RpNtTVErkBOjk7Wv1KujycUzkerNX6tGIBLB2KMinZo0FySyCyeuYicA7mWhSOWCtgvAj9jQDKNSR1GuJArSxDdbrFVWDaq/BX5Dv4ZzzJipzQYKXCbRgMME9FCM9n9T7XIJ1zsuvzod3RlVbGpDJlLOJ6WdrCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBNshinW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEFDC4CEE7;
-	Wed,  6 Aug 2025 18:49:50 +0000 (UTC)
+	s=arc-20240116; t=1754506254; c=relaxed/simple;
+	bh=kEM5vhXrSGvpRyllOZTd+MbG9Yt0asgCP/TMhfdeB48=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=XS9UMRni9ei0mMABHuYFeivnPo14n+n+rV+LeZg8lCHdAzhMxZWg4nh+TkUoEvUKVYk1oERm6Jhmn/VjihV+sQEgFNYypWL7TPu0zkXj8G/4aq1TmOrDrkfRflaXs35EnaO2Tm6l9TC9WBIaIaje7CJQw4EeyRjPYXb/jZsmVpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzWAfBgn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD03C4CEE7;
+	Wed,  6 Aug 2025 18:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754506192;
-	bh=Fq3lCenJdcFbBPGsBCYGH9j0A7GaUKJaPYK+8MGwrFU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hBNshinW1rnUFB0o4Si2zgGSOP/IP78XUiCJDginX06F1KGRNz1j55sJezeLHVZIT
-	 w+XFGy1HU53pbqmwxSShdWT3x289hy8VECUD9Zf43WDu2qCF3NGLZVxi1+m9+8JThv
-	 5K7L1sIXatNl/G8UJrHzynyblSrCuZFBFqybQYJbRefZinuKj5YetQfpLqELxQ6feP
-	 29TV8wgGKDELrFcxNoX47IQAZsxN3QtIdqhXHgYLhiL8sKtB0KnpeWBV6k1OQTCDsn
-	 GUmic3fO/zrqiTDlMFdS5HNG0098MbM6KHCy4HyFbUUhLG67uYNf3It4jNRfBmMXzD
-	 FtrRyybW8m0Tw==
-Message-ID: <fab1f878-f174-4b21-985c-abd2e6369847@kernel.org>
-Date: Wed, 6 Aug 2025 20:49:48 +0200
+	s=k20201202; t=1754506253;
+	bh=kEM5vhXrSGvpRyllOZTd+MbG9Yt0asgCP/TMhfdeB48=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BzWAfBgnwZpfljD/W+CsHOSwzED3vJWVnHj6/SK/MH3U9Wv4RpRV6oxiCtte0LY3C
+	 yJBDmwZa2u2+nad+38+KrVw//p1RFTwpzlU7WdtGoPifWOIgJA+zlfRF9eFPg3EuDw
+	 k32XLonHhU5Iqy6hmeDzKf1ZidUwKDUQFOOZwUHxUegZrCMI/R0BjbAlxqN3T6FzHb
+	 /T/EmUJBnHVcvpNmyCEJY7E0gMo3VQmTwucIVB33R1BsQAgWZkXO+NdrwR1YYnOia3
+	 hPZVUp8e12wRkxTOrGJ0wU3xugkQafUNoTL0Sw3dtMIsWqKoP7q0Rlz9UIalcj+GRJ
+	 PYgVcLbQYzrJg==
+Date: Wed, 6 Aug 2025 13:50:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] PCI: brcmstb: Add panic/die handler to driver
+Message-ID: <20250806185051.GA10150@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mfd: macsmc: Remove error prints for
- devm_add_action_or_reset()
-To: Waqar Hameed <waqar.hameed@axis.com>, Janne Grunau <j@jannau.net>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Lee Jones <lee@kernel.org>
-Cc: kernel@axis.com, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <pnd8qjym7td.a.out@axis.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <pnd8qjym7td.a.out@axis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+-6iNzq_BV_fK9T4LK0ncZuufqp9E9+DUyFU3jKCnSCjN8n-w@mail.gmail.com>
 
-On 05.08.25 11:33, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+On Wed, Aug 06, 2025 at 02:38:12PM -0400, Jim Quinlan wrote:
+> On Wed, Aug 6, 2025 at 2:15 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >
+> > On Fri, Jun 13, 2025 at 06:08:43PM -0400, Jim Quinlan wrote:
+> > > Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
+> > > by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
+> > > 7216 and its descendants -- have new HW that identifies error details.
+> >
+> > What's the long term plan for this?  This abort is a huge problem that
+> > we're seeing across arm64 platforms.  Forcing a panic and reboot for
+> > every uncorrectable error is pretty hard to deal with.
 > 
-> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
-> ---
+> Are you referring to STB/CM systems, Rpi, or something else altogether?
 
-Reviewed-by: Sven Peter <sven@kernel.org>
+Just in general.  I saw this recently with a Nuvoton NPCM8xx PCIe
+controller.  I'm not an arm64 guy, but I've been told that these
+aborts are basically unrecoverable from a kernel perspective.  For
+some reason several PCIe controllers intended for arm64 seem to raise
+aborts on PCIe errors.  At the moment, that means we can't recover
+from errors like surprise unplugs and other things that *should* be
+recoverable (perhaps at the cost of resetting or disabling a PCIe
+device).
 
+> > Is there a plan to someday recover from these aborts?  Or change the
+> > hardware so it can at least be configured to return ~0 data after
+> > logging the error in the hardware registers?
+> 
+> Some of our upcoming chips will have the ability to do nothing on
+> errant PCIe writes and return 0xffffffff on errant PCIe reads.   But
+> none of our STB/CM chips do this currently.   I've been asking for
+> this behavior for years but I have limited influence on what happens
+> in HW.
 
-Thanks,
+Fingers crossed for either that or some other way to make these things
+recoverable.
 
-Sven
+> > > This simple handler determines if the PCIe controller was the
+> > > cause of the abort and if so, prints out diagnostic info.
+> > > Unfortunately, an abort still occurs.
+> > >
+> > > Care is taken to read the error registers only when the PCIe
+> > > bridge is active and the PCIe registers are acceptable.
+> > > Otherwise, a "die" event caused by something other than the PCIe
+> > > could cause an abort if the PCIe "die" handler tried to access
+> > > registers when the bridge is off.
+> >
+> > Checking whether the bridge is active is a "mostly-works"
+> > situation since it's always racy.
+> 
+> I'm not sure I understand the "racy" comment.  If the PCIe bridge is
+> off, we do not read the PCIe error registers.  In this case, PCIe is
+> probably not the cause of the panic.   In the rare case the PCIe
+> bridge is off  and it was the PCIe that caused the panic, nothing
+> gets reported, and this is where we are without this commit.
+> Perhaps this is what you mean by "mostly-works".  But this is the
+> best that can be done with SW given our HW.
 
+Right, my fault.  The error report registers don't look like standard
+PCIe things, so I suppose they are on the host side, not the PCIe
+side, so they're probably guaranteed to be accessible and non-racy
+unless the bridge is in reset.
+
+Bjorn
 
