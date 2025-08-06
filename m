@@ -1,550 +1,257 @@
-Return-Path: <linux-kernel+bounces-758213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90DDB1CC92
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2591DB1CCA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02D6B565B4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B7DF5663DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E237F2BCF51;
-	Wed,  6 Aug 2025 19:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B5A2BD597;
+	Wed,  6 Aug 2025 19:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jCM04/sE"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=utah.edu header.i=@utah.edu header.b="L2xAg2kf";
+	dkim=pass (1024-bit key) header.d=UofUtah.onmicrosoft.com header.i=@UofUtah.onmicrosoft.com header.b="BrIP2P6r"
+Received: from ipo2.cc.utah.edu (ipo2.cc.utah.edu [155.97.144.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEBD1FF1B5;
-	Wed,  6 Aug 2025 19:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A35621ABDD;
+	Wed,  6 Aug 2025 19:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=155.97.144.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754508993; cv=pass; b=KLtpFbf7ml32eE4JDPRYNMACuGMYFnJ2FYQ+RQVHX+LtmZL6+xG0mDcQEF0oFDpoUdE/I0UBY7ARRSEJkrHMnbvHSTGL8xXerT/4uK9qg6wFGYbIcbCRcd1+WO9J0ai59RNtT9OYdeuCfLBJjs21WwYm3hlKYHikEP2wBjyKoow=
+	t=1754509942; cv=fail; b=udPdfWPb9eXLCzYiw3vIjbAwcs77h8S4pYD7QlJMdaPQh3dh7ehQ/tbMM4p8d7mjsYnuv0DH0TeYGhW4M1w+dJSAPHc0KLDS5rs4FCjhg0I9VMSLZ7yE24x31+nxrEHolAw3NjWcX+WeyIApFI+s6f+iI4T2JR6OVTiRRP4llTM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754508993; c=relaxed/simple;
-	bh=1cOkmZJkB0uHYNjR5I9uMLGbyaJg6tg2a+VXSC/TTUs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=nVcvqFnII3a8tFQmoRDoom/F8FuRQyI4X3djcNUK2ChjCvR+Txun/Nay9xzCeSrWQlmrtKD/1Yk5OJMUw5AROE/cXyIkcR511yp/vReitZ1uTjVTqb1Rg9Xng6RQUKzmHiMQSSpHOok84T6mKsRi14Xkh9eGPmVEtSgqVlzP3xQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jCM04/sE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754508973; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dlIc3qcQhKiUlm5a0yCRbhrlYuFAWymDypWbT6Ip2LtuuDirvVAcng9VbcSPPy+hFKjH74tFmnO9V3VcQdOnOThKpRahN89+ozGzQgX9sIB8cfMLxgIsbBrwBqCaWRn+JOcrHW2J58k6lbq19ju1KXePqw8q4Rwa97aDS/o6cEE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754508973; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=o5Z5QH9Q2M8oNoEfEvJfM14eQoMIrZAJ2fEy/12QmyQ=; 
-	b=L4awVM2YyHr4pBkJlPT4lkoPFcPDwxD6EGyGBbZpjEZuXgUlj8NojDwhAstuMrMRmRZGzVzr6pOt1ze+AM4EnCHUn3rTTnSpKmyrQHW8uD32uHZ54+WUqQlrexgjIHLFdeJKbJh4oHSWZ5ZvNS2Vk54W7i+Evoc8dy9Vb/VfHyY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754508973;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=o5Z5QH9Q2M8oNoEfEvJfM14eQoMIrZAJ2fEy/12QmyQ=;
-	b=jCM04/sE5U0Zy58VpT+3TlFr7Yr7irmohiL6M2N7vcSeUdR/m3S+C9AMhgRxo1Uj
-	vdhW9btgq6wsmEmfU9bcfFBRz/CkGzcGdpFtkYP+EEVcViQ+Yge2FrDmrpMi5usMdSG
-	3ZWpY36Vfrdn1tZCoSwlYCfV/RN7kpyZcgXWgROM=
-Received: by mx.zohomail.com with SMTPS id 1754508970819867.341545264823;
-	Wed, 6 Aug 2025 12:36:10 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1754509942; c=relaxed/simple;
+	bh=0pSVZazb1ZFrDhG9xIt0MpHzJX4gQNkHFBzvBB1//TY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=T+jjlkrDnXdERA1HWiDiMRCKBOaB+n4Dsozh+mV6gk3zBcrKfy8ogvENIIpVJtkCcGIxT7eCksFSs+lf2jpwb2J1nHmQb5aVeymSCpl9BKtJQBOwNsiKDWJht/e9UJ5xBYmrZDwrSB3n/FzX6JKVPoBIj6OZNVlvA2GMXFp71FE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utah.edu; spf=pass smtp.mailfrom=utah.edu; dkim=pass (2048-bit key) header.d=utah.edu header.i=@utah.edu header.b=L2xAg2kf; dkim=pass (1024-bit key) header.d=UofUtah.onmicrosoft.com header.i=@UofUtah.onmicrosoft.com header.b=BrIP2P6r; arc=fail smtp.client-ip=155.97.144.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utah.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=utah.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=utah.edu; i=@utah.edu; q=dns/txt; s=UniversityOfUtah;
+  t=1754509940; x=1786045940;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0pSVZazb1ZFrDhG9xIt0MpHzJX4gQNkHFBzvBB1//TY=;
+  b=L2xAg2kfhqd1zkio9df0AZzbdGLCHfuDuBDwLH4vT6C3q1Bv+YibR5kr
+   fbQiYb37Rr++w/TdmT9P6j1eOfs8H9gwDPbQ//xWc0I7OOc1rgGiVG+u4
+   Hz3h9DAoX0J9PH/heBYssI62pK34PHxzyDgmBC6M1u9UYeppGrIQrze+H
+   mslgCgVRIDldoQUqobYIh6p/53wRby4HcqaxCiGxKwLZJRZ4QF7qpIZcY
+   6rDdwdA3HyikKkFPQOF8NtZ0+ek8s/TvFl/h6gKfku4rAQuy6mKEdjHUh
+   NFS2mJh3brhxEfER9E4lXTOIGkHriRsiNgAXGuPvLYPyKq1AfRXWlQY4W
+   Q==;
+X-CSE-ConnectionGUID: Y3WbVVAyTV6CjbllX8TLAA==
+X-CSE-MsgGUID: h9C892hmTlWEDEOys+t/Pg==
+X-IronPort-AV: E=Sophos;i="6.16,209,1744092000"; 
+   d="scan'208";a="92966484"
+Received: from iso-dlpep-p04.iso.utah.edu ([10.71.25.167])
+  by ipo2smtp.cc.utah.edu with ESMTP; 06 Aug 2025 13:51:03 -0600
+Received: from iso-dlpep-p04.iso.utah.edu (iso-dlpep-p04.iso.utah.edu [127.0.0.1])
+	by iso-dlpep-p04.iso.utah.edu (Service) with ESMTP id 164BF4065D6C;
+	Wed,  6 Aug 2025 13:43:23 -0600 (MDT)
+Received: from UMAILX-M201.xds.umail.utah.edu (unknown [172.31.233.10])
+	by iso-dlpep-p04.iso.utah.edu (Service) with ESMTP id E5C814063D00;
+	Wed,  6 Aug 2025 13:43:22 -0600 (MDT)
+Received: from UMAILX-M200.xds.umail.utah.edu (155.97.144.200) by
+ UMAILX-M201.xds.umail.utah.edu (155.97.144.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Wed, 6 Aug 2025 13:43:24 -0600
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.48) by
+ UMAILX-M200.xds.umail.utah.edu (155.97.144.200) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57 via Frontend Transport; Wed, 6 Aug 2025 13:43:24 -0600
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mxcxb4x5e6hjK0CZaGhKp8tdMINiOr7JQx4XuNbzLeycIG5Ct/k6/VNWRt9Gq529Z0tZAYqIX/dUdtzgsL/jUthOOvoEpo8Z9jd1mPrss9E0k87kDalhPCFASmfsgY3geB/vSxll7qRw2eglheHFH18ioKStkhUsDquaptnvqR9fSI0e4ngjgwTUjox/ZMMM33VLCJgvyhPGWghdaKFbHjNAtKMMjbOzpG/WFJb289LivsVHAT7NWi7SobjLwnG8WyeFbDMzT3TVRB/vU2ysUCBAF3aN/ibXChUVhYq6HjVh6wlRCZQx6Z5yj/I+r1ycNVBgsUBzUaLEp6wFtAYr8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0pSVZazb1ZFrDhG9xIt0MpHzJX4gQNkHFBzvBB1//TY=;
+ b=wK6sM0ICPdfkeLHW0gDOsze4IZcrfXkbmNsUJYdcHOiferJTwcwPlHKP8XnQM05LeQATk2CJNrLpbMhV9IeOTBR3h8GPgDTg0lLlkTm1LK0cWJG/k2o5IugJ+Hk6GecYPpBziJYbpF41L6KVADygEx6cIFALmY5xUhb/uQUq9L5MtTk4ytqa2rSzlRcx4lpxu125dDcxQxALbDLWu6Qo8wxIKbPTYB7uDslUpnVcjXKOVtlWM3MAWUMGqIRdahhMbLDj7BPFrlw2UoJNvB1EiO2gmaw/a8wqbVDfIwW6hn+JjS9y9Qs+as/Q3qtD1BYu4b5AQx3xjOOw+MrIUad4NA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=utah.edu; dmarc=pass action=none header.from=utah.edu;
+ dkim=pass header.d=utah.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=UofUtah.onmicrosoft.com; s=selector2-UofUtah-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0pSVZazb1ZFrDhG9xIt0MpHzJX4gQNkHFBzvBB1//TY=;
+ b=BrIP2P6rkZAFRczAQlev8qZLPSL1bMQ5GUie8a4S7PkeLj9M5f4pcZR6gvUL+xZwrtFTYCHzU3ZrBrsb08AC6x60TF2EURDUUloStk8/aji3WONn2OAY2r/KxIUG0//Nbp/db+bVqCrqGTZiO5Oq+aCvVKbEI2hOEue+qHDa3es=
+Received: from SJ0PR11MB8296.namprd11.prod.outlook.com (2603:10b6:a03:47a::12)
+ by DM4PR11MB8226.namprd11.prod.outlook.com (2603:10b6:8:182::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
+ 2025 19:43:21 +0000
+Received: from SJ0PR11MB8296.namprd11.prod.outlook.com
+ ([fe80::4b77:8603:59d9:7b58]) by SJ0PR11MB8296.namprd11.prod.outlook.com
+ ([fe80::4b77:8603:59d9:7b58%5]) with mapi id 15.20.8964.024; Wed, 6 Aug 2025
+ 19:43:21 +0000
+From: Soham Bagchi <soham.bagchi@utah.edu>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+	<martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu
+	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Soham Bagchi
+	<sohambagchi@outlook.com>
+Subject: Re: [PATCH] bpf: relax acquire for consumer_pos in
+ ringbuf_process_ring()
+Thread-Topic: [PATCH] bpf: relax acquire for consumer_pos in
+ ringbuf_process_ring()
+Thread-Index: AQHcAYMoNQzamUe4NUWtaJRKzuFVkbRMcmwAgAl8djU=
+Date: Wed, 6 Aug 2025 19:43:20 +0000
+Message-ID: <SJ0PR11MB82960FC0F6259C67733F8415F82DA@SJ0PR11MB8296.namprd11.prod.outlook.com>
+References: <20250730185218.2343700-1-soham.bagchi@utah.edu>
+ <CAADnVQJqbYN1VGoSqsHMqvMoZgTw1+PPS87zqsKhUtPgSarY1g@mail.gmail.com>
+In-Reply-To: <CAADnVQJqbYN1VGoSqsHMqvMoZgTw1+PPS87zqsKhUtPgSarY1g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=utah.edu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB8296:EE_|DM4PR11MB8226:EE_
+x-ms-office365-filtering-correlation-id: 99106110-8dbb-4db8-96c1-08ddd5217fb4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RlIzYmo4VHlZeXE1R1BhNWdmc2lXeElSRDFOejRxSHpaUWU5Q0lSQ1V5QUJT?=
+ =?utf-8?B?RXAvSWpZVklqTG5zNFZocG1FK1hGMFNhZXBselcxUUxoUTZqUjFqTmgvTjMx?=
+ =?utf-8?B?c2dLZyt3TTBaS0JzZUVFeWV5Z2crcmZRV1VqdVNkQU5ma1lIdnJ4Z2JNdE9P?=
+ =?utf-8?B?a3ZxRm9aMGExeDY5ZVdabmgvT2VBV0N5QUp0TFRwdmZJNlh0cEQwbC8zOHRz?=
+ =?utf-8?B?ZjlsNVE5TUJpRGRWTFdqNDJoVGNhZFZKVzNFVGdoOE5icSs2bWtBZWVnMHhm?=
+ =?utf-8?B?S2R2VVVFS2R5Sk5pZzFtSVFHdXdIN3FnMzhYOGRZczI1dGF1b3ZBR1hWY25G?=
+ =?utf-8?B?R3FMSi9hblc0TUE0T3B3bE13QzZlYXE4cnROR2tCRDgxbkZPZ1Q2cnpJU2pJ?=
+ =?utf-8?B?dHBCSVFFYWpPYzVOVWpvSGxTNlhHNHBWeXNZYUxNSlJ6dnZaaThMamNHQWhy?=
+ =?utf-8?B?MDBoeU5ubmQyWUpvWTNOSE1lUHZNWTN2ejFUblpGSWY3QzhoSGJEWjA4Y3p6?=
+ =?utf-8?B?TDJweE4yYXhKY1RLOFF4SDRhcjRxZ1RicG1kM0M3MGJIaFF2U0xaZmo2QlBn?=
+ =?utf-8?B?OVkrTUF0WDhpRVJrNlRGZDFBRFRUdXRpN0lhMXJ5NDR3YnpBRnZyZE4vYnlZ?=
+ =?utf-8?B?MWNjdjhUeVNVUDZ1VXpobnFHUkcxS0Q3UHJMYU1RNTgrTDUzOFJndDVaZURu?=
+ =?utf-8?B?ZmdGREtUTjkyRFNQUTFJOEFWelRjMUV4R3Bsd0VMZW4yWVJxNnRMeFNycnkr?=
+ =?utf-8?B?WmpwNGdLK3RLVFIzZVhxT2ZXSCtvYmxpTThrbkxpSjJubVVoZGc2VnZYS1VG?=
+ =?utf-8?B?MGI0bVZMWEFadjdLOUZ6a2lxRkkveGFacVIvdXpNR3JjWHVoT2xqc05IUUE0?=
+ =?utf-8?B?T2gxdkwwc0M0VUlGZWRENGV6dkRxVTdIYkxBQ2YzakE3OHkvVXhKVXlVTC9M?=
+ =?utf-8?B?Ukp4WVZzdW9EMXBkYVY5aFdYN2RHc0pPdFkwaUFHaE5yNElYL0VJZ01oMysr?=
+ =?utf-8?B?bWFIR1lsN0pFQnpkNm9IblFHa2IzTkt4ZnVHM3VmTTlqWTdnUnl3WVpaZEpV?=
+ =?utf-8?B?QnRidzBDSi9Fc1RSaXJmWkRRUjViZ2hHblgzRkp0U1NDUkQ1dTFsRTNWRis3?=
+ =?utf-8?B?T3I1OVRnVTNHbWxGNnYwa0xlODFvOS9oODh3anVVS2RiNkVUa3R5R1ZwcWds?=
+ =?utf-8?B?bGtrcGprd1c0c296bVJVVHpSTzVkK0pXSStLeDlNa3dyVGVwWGlEQUhXTytO?=
+ =?utf-8?B?NVhPMUJLMlQ5T0ZwRFYwdTN6cEN6cXc0MG1hZkhBV3VKbUdZaDkyOVhZeGpG?=
+ =?utf-8?B?dDBMV25yT3AxdW4yM2VYSHgxVG1pVmY1dVBVR0psYXJ6azBGcXk3bHA2UzFW?=
+ =?utf-8?B?RUVtblI4YUx3ZlNTbzFIU1o5M3NJK2F1dngvQWMxNVk2cmV0cTlHbVk5TW42?=
+ =?utf-8?B?dFQxTWR1RktXUDJCN0JYVHhvUDl2NkJNbzlrOVQ2V2pwY1VtQXMyZUVuOTdm?=
+ =?utf-8?B?VWpnRDVNZDgxZERFQ01LOG85R2psSGNMQ1lGazhvSGNBRGhkcHVSOTd5SDB2?=
+ =?utf-8?B?Rlh0VWZCYmRheXF2dS9KSmN1MHVtOG9pRVpNdlBlR3dlWmxrUEVtRmVTWDhI?=
+ =?utf-8?B?T2pGQ2M1SElwT3V3UHNadTFUelFRZmhTQkh6UGswdktCemxQdFRuQ3g3MWtJ?=
+ =?utf-8?B?RXp2b3cxZFVRZzloaHpEMFlHQlYydXlIWW5FU2drZ3ZLVlVRdVBEYVp0N3Y0?=
+ =?utf-8?B?WFZQQnBzeHVZYnhvRnZqckl1Q0ExMFdZWU5MbThmWnJPNDVjQlAxa0s0REMz?=
+ =?utf-8?B?T1Jrbzl4MmdTS0htb3o5UkdIY0tpVjJkLzVWbjljQ3dKaUtvTW9PZGgyUDFx?=
+ =?utf-8?B?YWdYNVdZN1JQMWV6VVhndU9GMks4bnpQQkNhVjI4T0Y1MzBFempyb3ZBclF3?=
+ =?utf-8?Q?zR94QN3/hwo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB8296.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y1lUc21YZ0RWOEV3T3hzMElxejlZVU0yRzhtMStKM1UxQ1FpakxsRWprNzVZ?=
+ =?utf-8?B?MzRMV0dvMjVBdmNIRnJ2dFJka0dyNVFsRDVqNElhck03MEtYaW9BblhkZ2VY?=
+ =?utf-8?B?TWZ4YmFhYVcrczJEQUd2UWVXRm5VNEViOEhwSFZUV2M1cUFVOGFXb3BPRTBX?=
+ =?utf-8?B?SjluVUt2TlJMSTRuNHlIcFIxTFlIalVOUExERnhwUlRtWUFkeFpieGkvK2ZZ?=
+ =?utf-8?B?cnZ5dnJvZmw0L0hpVHltZjR2UGxPb0tBV25xY1U5MXpSRHczWEZHdHBpNE95?=
+ =?utf-8?B?NUluNjh2ZjFwY1Y5WUtvN0J4SGp4UVkyd3JBMU9JQTl0WG0yMEV4Q0tzNjR6?=
+ =?utf-8?B?cm9ESWJHQTFJKzd3Q3FzL0s0a2NSUCsrYSs1YXRZNXFERzRDMEM3bFdIVDBV?=
+ =?utf-8?B?MldjV25jVDZkNUFnNzJybVdyR0lhenYxa0tmUWtPRUtZVERDU2hYQkZxWHFR?=
+ =?utf-8?B?NHZKcnRNejFoNEpIRDBnbEdHUjladHFLMnRhTEpSNFRpdWtVa0NVbk1HUUNL?=
+ =?utf-8?B?UzFhMU9ySm5LNnJiVlhFak9XeXZENFFER1A4d3pLdFZ0OE1NKzRqQUNtd29U?=
+ =?utf-8?B?eW44ZGVRdzU2Ui8xQ21EZ0FQM29SREhHeGlya2N6bG5pUGlxQmNpRTVONEpi?=
+ =?utf-8?B?VFZjTzJaa0lPcDZ6L3M1MjMxdEd4LzRTN2RaaXlnb3JHeExqUk9HcE1COW5I?=
+ =?utf-8?B?Vk8rSUVSK0JPRm44U2prTTVBRElSOTlFeGo5dmlFUSt3bE52RUkvbE96UWpo?=
+ =?utf-8?B?a3FTS3Y4VXVUTHlZWitRUE90U09Td0E1SXE5aU1DL3VNWGQ2YUlvUW5lR1p2?=
+ =?utf-8?B?eUFweGhtU0RIWmhPWGJMWkNramUxcGszc21CU1VZVU1sRU1aL2daaSs2amtV?=
+ =?utf-8?B?MjNGbi8ySVhEN0VJb0hkZENqS0IvQWQ0bTV4T0dhMXNzeWkycFpiOVNTaUpz?=
+ =?utf-8?B?dHMvOFBQVTFIdnMzOFdHclAwN3Z1M3BEUzU1L3F3YW54czBYTUhQYStjdDFX?=
+ =?utf-8?B?UzBiZTJ6eENXUVorazNRZy9EOVQ4SHhSWEVHUlVNQlhzSHh5WElGR01NSW5s?=
+ =?utf-8?B?bm94MlI4Q29hblRLNGFRMzloUFhkRlR5Z2tCRnpmaERKQ2JCUzBlTjR0MjA2?=
+ =?utf-8?B?eERROHp1dFZFWWc2QmZENGszWUdHQ2lSNURCT2NrTDkyaUIxemV0d1dlVkNW?=
+ =?utf-8?B?QXcxMVpTWFpmOENYenpBckVZOTU4TkREbnU5dXRRRkZVc2Vqc082WVQzTWlF?=
+ =?utf-8?B?eGFzSkg2RFZmNytVZmlCd1hjaUtBOFliZTVjSmtCWmJnYmRYWVIvbGZSMTRT?=
+ =?utf-8?B?ZzVQRjJpbGlIM1BDaEU0WWtXcks4ZnFsUVJYWlBOaGFJNUVQY1lwaVhOYnZj?=
+ =?utf-8?B?QklnU29sL3lMelBrL2JSaG1YQUFaSlg2WDE3RkVKd1RRUms5RmducEFRT2ZW?=
+ =?utf-8?B?Nk81UWxiVENTTDR3QldBaDBHQU9CVU9tM0ltT1VNaEhVVmsxN1JYRFZoeFJY?=
+ =?utf-8?B?clU4QTkvV3dzc0lIZ3EydUNqdExDcU1xTDVLZ1lZeEVWZTBkTExpS3Q4WktV?=
+ =?utf-8?B?aUdnTE9DdXhQeE1pZUhoNk9OZUZRNCt5VWc0TGNEbGlJcUJ1MmxQVWhzdDll?=
+ =?utf-8?B?RldERGpwM3RFandSSDQyOEhBS3Izc1NhcVJqb1hiU2YwTTQxWEFiVmRoSkxN?=
+ =?utf-8?B?V2tJNWticVBDOHh5SzNNR3NJOWJhV1dBZzZQNU50cUt3TnVtUGFLVTFzQzRu?=
+ =?utf-8?B?ekNOaDM2N1FzZDBDbWVWMEJFQVBjNTk3dFZ5STdQV3NwUnVqbXh2MldHZlg0?=
+ =?utf-8?B?NWozcjdURkRLUG9NMXZCSHg1ditVMVNXbHpBb3BBZnJlc052OE1ZRXYxWG9G?=
+ =?utf-8?B?VWdMQ3lVaU9nbEhHaG92dWk2dUh6MGh5dTlLQTNnZDUyN3dxdVRmL3BuMzVQ?=
+ =?utf-8?B?bDlGYytma1JLbzkxSisyOGszbkJMN0d5ZmJueUtYRVhtcFFvNTM1bzdObFVu?=
+ =?utf-8?B?ak92TUVlUVNZUnBRc25aYXF3UDRFcytlQkVNZ1JRekVXN3hXTGUwalUySU5T?=
+ =?utf-8?B?RjExSjhlYlFVV2FMY21sVjJtWFBPeE9DYmVzT1JOWEN4TmlCVlFrK3p0aW8x?=
+ =?utf-8?Q?BQWy9A46WV50WxwreWi0acgF7?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 12/16] rnull: enable configuration via `configfs`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250711-rnull-up-v6-16-v3-12-3a262b4e2921@kernel.org>
-Date: Wed, 6 Aug 2025 16:35:55 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <03D084B5-5844-4BC5-902C-14E53AC13DC9@collabora.com>
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
- <20250711-rnull-up-v6-16-v3-12-3a262b4e2921@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB8296.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99106110-8dbb-4db8-96c1-08ddd5217fb4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 19:43:20.9557
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5217e0e7-539d-4563-b1bf-7c6dcf074f91
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SrWVeZsqTfYEOEesjQiAJvh8OPj/ot/HNc0ebpSNv4qNBpu9PK1m99Nz50CznAbGSSsFEfkdxg5Qm77puCUDnQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8226
+X-OriginatorOrg: utah.edu
 
-
-
-> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Allow rust null block devices to be configured and instantiated via
-> `configfs`.
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> drivers/block/rnull/Kconfig      |   2 +-
-> drivers/block/rnull/configfs.rs  | 220 =
-+++++++++++++++++++++++++++++++++++++++
-> drivers/block/rnull/rnull.rs     |  58 ++++++-----
-> rust/kernel/block/mq/gen_disk.rs |   2 +-
-> 4 files changed, 253 insertions(+), 29 deletions(-)
->=20
-> diff --git a/drivers/block/rnull/Kconfig b/drivers/block/rnull/Kconfig
-> index 6dc5aff96bf4..7bc5b376c128 100644
-> --- a/drivers/block/rnull/Kconfig
-> +++ b/drivers/block/rnull/Kconfig
-> @@ -4,7 +4,7 @@
->=20
-> config BLK_DEV_RUST_NULL
-> tristate "Rust null block driver (Experimental)"
-> - depends on RUST
-> + depends on RUST && CONFIGFS_FS
-
-Should this really be a dependency? IIUC, the driver still works with =
-this
-unset, it just doesn=E2=80=99t have this feature?
-
-> help
->  This is the Rust implementation of the null block driver. Like
->  the C version, the driver allows the user to create virutal block
-> diff --git a/drivers/block/rnull/configfs.rs =
-b/drivers/block/rnull/configfs.rs
-> new file mode 100644
-> index 000000000000..6c0e3bbb36ec
-> --- /dev/null
-> +++ b/drivers/block/rnull/configfs.rs
-> @@ -0,0 +1,220 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +use super::{NullBlkDevice, THIS_MODULE};
-> +use core::fmt::Write;
-> +use kernel::{
-> +    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
-> +    c_str,
-> +    configfs::{self, AttributeOperations},
-> +    configfs_attrs, new_mutex,
-> +    page::PAGE_SIZE,
-> +    prelude::*,
-> +    str::CString,
-> +    sync::Mutex,
-> +};
-> +use pin_init::PinInit;
-> +
-> +pub(crate) fn subsystem() -> impl =
-PinInit<kernel::configfs::Subsystem<Config>, Error> {
-> +    let item_type =3D configfs_attrs! {
-> +        container: configfs::Subsystem<Config>,
-> +        data: Config,
-> +        child: DeviceConfig,
-> +        attributes: [
-> +            features: 0,
-> +        ],
-> +    };
-> +
-> +    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, =
-try_pin_init!(Config {}))
-> +}
-> +
-> +#[pin_data]
-> +pub(crate) struct Config {}
-
-This still builds:
-
-diff --git a/drivers/block/rnull/configfs.rs =
-b/drivers/block/rnull/configfs.rs
-index 3ae84dfc8d62..2e5ffa82e679 100644
---- a/drivers/block/rnull/configfs.rs
-+++ b/drivers/block/rnull/configfs.rs
-@@ -24,10 +24,9 @@ pub(crate) fn subsystem() -> impl =
-PinInit<kernel::configfs::Subsystem<Config>, E
-         ],
-     };
-=20
--    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, =
-try_pin_init!(Config {}))
-+    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, Config =
-{})
- }
-=20
--#[pin_data]
- pub(crate) struct Config {}
-
-Perhaps due to:
-
-// SAFETY: the `__pinned_init` function always returns `Ok(())` and =
-initializes every field of
-// `slot`. Additionally, all pinning invariants of `T` are upheld.
-unsafe impl<T> PinInit<T> for T {
-    unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), =
-Infallible> {
-        // SAFETY: `slot` is valid for writes by the safety requirements =
-of this function.
-        unsafe { slot.write(self) };
-        Ok(())
-    }
-}
-
-
-> +
-> +#[vtable]
-> +impl AttributeOperations<0> for Config {
-> +    type Data =3D Config;
-> +
-> +    fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        let mut writer =3D kernel::str::Formatter::new(page);
-> +        writer.write_str("blocksize,size,rotational\n")?;
-> +        Ok(writer.bytes_written())
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::GroupOperations for Config {
-> +    type Child =3D DeviceConfig;
-> +
-> +    fn make_group(
-> +        &self,
-> +        name: &CStr,
-> +    ) -> Result<impl PinInit<configfs::Group<DeviceConfig>, Error>> {
-> +        let item_type =3D configfs_attrs! {
-> +            container: configfs::Group<DeviceConfig>,
-> +            data: DeviceConfig,
-> +            attributes: [
-> +                // Named for compatibility with C null_blk
-> +                power: 0,
-> +                blocksize: 1,
-> +                rotational: 2,
-> +                size: 3,
-> +            ],
-> +        };
-> +
-> +        Ok(configfs::Group::new(
-> +            name.try_into()?,
-> +            item_type,
-> +            // TODO: cannot coerce new_mutex!() to impl PinInit<_, =
-Error>, so put mutex inside
-
-Isn=E2=80=99t this related to [0] ?
-
-
-> +            try_pin_init!( DeviceConfig {
-> +                data <- new_mutex!( DeviceConfigInner {
-> +                    powered: false,
-> +                    block_size: 4096,
-> +                    rotational: false,
-> +                    disk: None,
-> +                    capacity_mib: 4096,
-> +                    name: name.try_into()?,
-> +                }),
-> +            }),
-> +        ))
-> +    }
-> +}
-> +
-> +#[pin_data]
-> +pub(crate) struct DeviceConfig {
-> +    #[pin]
-> +    data: Mutex<DeviceConfigInner>,
-> +}
-> +
-> +#[pin_data]
-> +struct DeviceConfigInner {
-> +    powered: bool,
-> +    name: CString,
-> +    block_size: u32,
-> +    rotational: bool,
-> +    capacity_mib: u64,
-> +    disk: Option<GenDisk<NullBlkDevice>>,
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<0> for DeviceConfig {
-> +    type Data =3D DeviceConfig;
-> +
-> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        let mut writer =3D kernel::str::Formatter::new(page);
-> +
-> +        if this.data.lock().powered {
-> +            writer.write_fmt(fmt!("1\n"))?;
-> +        } else {
-> +            writer.write_fmt(fmt!("0\n"))?;
-> +        }
-> +
-> +        Ok(writer.bytes_written())
-> +    }
-> +
-> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-> +        let power_op: bool =3D core::str::from_utf8(page)?
-> +            .trim()
-> +            .parse::<u8>()
-> +            .map_err(|_| kernel::error::code::EINVAL)?
-
-nit: I=E2=80=99d import that if I were you, but it=E2=80=99s your call.
-
-> +            !=3D 0;
-> +
-> +        let mut guard =3D this.data.lock();=20
-> +
-> +        if !guard.powered && power_op {
-> +            guard.disk =3D Some(NullBlkDevice::new(
-> +                &guard.name,
-> +                guard.block_size,
-> +                guard.rotational,
-> +                guard.capacity_mib,
-> +            )?);
-> +            guard.powered =3D true;
-> +        } else if guard.powered && !power_op {
-> +            drop(guard.disk.take());
-> +            guard.powered =3D false;
-> +        }
-
-nit: the guard is not used here, but it is still alive. This is harmless =
-in
-this case, but as I general pattern, I find that using closures cuts =
-back on
-the scope, i.e.:
-
-this.with_locked_data(|data| {
-    // use the guard
-});
-
-// Guard is already free here, no surprises.=20
-=20
-> +
-> +        Ok(())
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<1> for DeviceConfig {
-> +    type Data =3D DeviceConfig;
-> +
-> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        let mut writer =3D kernel::str::Formatter::new(page);
-> +        writer.write_fmt(fmt!("{}\n", this.data.lock().block_size))?;
-> +        Ok(writer.bytes_written())
-> +    }
-> +
-> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-> +        if this.data.lock().powered {
-> +            return Err(EBUSY);
-> +        }
-> +
-> +        let text =3D core::str::from_utf8(page)?.trim();
-> +        let value =3D text
-> +            .parse::<u32>()
-> +            .map_err(|_| kernel::error::code::EINVAL)?;
-> +
-> +        GenDiskBuilder::validate_block_size(value)?;
-> +        this.data.lock().block_size =3D value;
-> +        Ok(())
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<2> for DeviceConfig {
-> +    type Data =3D DeviceConfig;
-> +
-> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        let mut writer =3D kernel::str::Formatter::new(page);
-> +
-> +        if this.data.lock().rotational {
-> +            writer.write_fmt(fmt!("1\n"))?;
-> +        } else {
-> +            writer.write_fmt(fmt!("0\n"))?;
-> +        }
-> +
-> +        Ok(writer.bytes_written())
-> +    }
-> +
-> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-> +        if this.data.lock().powered {
-> +            return Err(EBUSY);
-> +        }
-> +
-> +        this.data.lock().rotational =3D core::str::from_utf8(page)?
-> +            .trim()
-> +            .parse::<u8>()
-> +            .map_err(|_| kernel::error::code::EINVAL)?
-> +            !=3D 0;
-> +
-> +        Ok(())
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<3> for DeviceConfig {
-> +    type Data =3D DeviceConfig;
-> +
-> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> =
-Result<usize> {
-> +        let mut writer =3D kernel::str::Formatter::new(page);
-> +        writer.write_fmt(fmt!("{}\n", =
-this.data.lock().capacity_mib))?;
-> +        Ok(writer.bytes_written())
-> +    }
-> +
-> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-> +        if this.data.lock().powered {
-> +            return Err(EBUSY);
-> +        }
-> +
-> +        let text =3D core::str::from_utf8(page)?.trim();
-> +        let value =3D text
-> +            .parse::<u64>()
-> +            .map_err(|_| kernel::error::code::EINVAL)?;
-> +
-> +        this.data.lock().capacity_mib =3D value;
-> +        Ok(())
-> +    }
-> +}
-> diff --git a/drivers/block/rnull/rnull.rs =
-b/drivers/block/rnull/rnull.rs
-> index d07e76ae2c13..d09bc77861e4 100644
-> --- a/drivers/block/rnull/rnull.rs
-> +++ b/drivers/block/rnull/rnull.rs
-> @@ -1,28 +1,26 @@
-> // SPDX-License-Identifier: GPL-2.0
->=20
-> //! This is a Rust implementation of the C null block driver.
-> -//!
-> -//! Supported features:
-> -//!
-> -//! - blk-mq interface
-> -//! - direct completion
-> -//! - block size 4k
-
-Why are these three removed?
-
-> -//!
-> -//! The driver is not configurable.
-> +
-> +mod configfs;
->=20
-> use kernel::{
->     alloc::flags,
-> -    block::mq::{
-> +    block::{
->         self,
-> -        gen_disk::{self, GenDisk},
-> -        Operations, TagSet,
-> +        mq::{
-> +            self,
-> +            gen_disk::{self, GenDisk},
-> +            Operations, TagSet,
-> +        },
->     },
->     error::Result,
-> -    new_mutex, pr_info,
-> +    pr_info,
->     prelude::*,
-> -    sync::{Arc, Mutex},
-> +    sync::Arc,
->     types::ARef,
-> };
-> +use pin_init::PinInit;
->=20
-> module! {
->     type: NullBlkModule,
-> @@ -35,33 +33,39 @@
-> #[pin_data]
-> struct NullBlkModule {
->     #[pin]
-> -    _disk: Mutex<GenDisk<NullBlkDevice>>,
-> +    configfs_subsystem: =
-kernel::configfs::Subsystem<configfs::Config>,
-> }
->=20
-> impl kernel::InPlaceModule for NullBlkModule {
->     fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> =
-{
->         pr_info!("Rust null_blk loaded\n");
->=20
-> -        // Use a immediately-called closure as a stable `try` block
-> -        let disk =3D /* try */ (|| {
-> -            let tagset =3D Arc::pin_init(TagSet::new(1, 256, 1), =
-flags::GFP_KERNEL)?;
-> -
-> -            gen_disk::GenDiskBuilder::new()
-> -                .capacity_sectors(4096 << 11)
-> -                .logical_block_size(4096)?
-> -                .physical_block_size(4096)?
-> -                .rotational(false)
-> -                .build(format_args!("rnullb{}", 0), tagset)
-> -        })();
-> -
->         try_pin_init!(Self {
-> -            _disk <- new_mutex!(disk?, "nullb:disk"),
-> +            configfs_subsystem <- configfs::subsystem(),
->         })
->     }
-> }
->=20
-> struct NullBlkDevice;
->=20
-> +impl NullBlkDevice {
-> +    fn new(
-> +        name: &CStr,
-> +        block_size: u32,
-> +        rotational: bool,
-> +        capacity_mib: u64,
-> +    ) -> Result<GenDisk<Self>> {
-> +        let tagset =3D Arc::pin_init(TagSet::new(1, 256, 1), =
-flags::GFP_KERNEL)?;
-> +
-> +        gen_disk::GenDiskBuilder::new()
-> +            .capacity_sectors(capacity_mib << (20 - =
-block::SECTOR_SHIFT))
-> +            .logical_block_size(block_size)?
-> +            .physical_block_size(block_size)?
-> +            .rotational(rotational)
-> +            .build(fmt!("{}", name.to_str()?), tagset)
-> +    }
-> +}
-> +
-> #[vtable]
-> impl Operations for NullBlkDevice {
->     #[inline(always)]
-> diff --git a/rust/kernel/block/mq/gen_disk.rs =
-b/rust/kernel/block/mq/gen_disk.rs
-> index 39be2a31337f..7ab049ec591b 100644
-> --- a/rust/kernel/block/mq/gen_disk.rs
-> +++ b/rust/kernel/block/mq/gen_disk.rs
-> @@ -50,7 +50,7 @@ pub fn rotational(mut self, rotational: bool) -> =
-Self {
->=20
->     /// Validate block size by verifying that it is between 512 and =
-`PAGE_SIZE`,
->     /// and that it is a power of two.
-> -    fn validate_block_size(size: u32) -> Result {
-> +    pub fn validate_block_size(size: u32) -> Result {
->         if !(512..=3Dbindings::PAGE_SIZE as u32).contains(&size) || =
-!size.is_power_of_two() {
->             Err(error::code::EINVAL)
->         } else {
->=20
-> --=20
-> 2.47.2
->=20
->=20
->=20
-
-=E2=80=94 Daniel
-
-[0]: https://github.com/Rust-for-Linux/linux/issues/1181
-
+SSBoYXZlIHRoZSBmb2xsb3dpbmcgcmVhc29uczoNCg0KMS4gcmluZ2J1ZiBpcyBhbiBNUFNDLCB0
+aGVyZSB3aWxsIG9ubHkgYmUgYSBzaW5nbGUNCmNvbnN1bWVyIHRocmVhZC4gVGhlcmVmb3JlLCBv
+bmx5IGEgc2luZ2xlIHRocmVhZA0KaXMgbW9kaWZ5aW5nIHRoZSBjb25zdW1lcl9wb3MgdmFyaWFi
+bGUuIFRoZSBvbmx5DQpmdW5jdGlvbnMgdGhhdCBtb2RpZnkgY29uc3VtZXJfcG9zIGFyZSBfcGVl
+aygpLA0KX3NhbXBsZV9yZWxlYXNlKCkgYW5kIF9wcm9jZXNzKCkgaW4gbGliYnBmLg0KDQoyLiBU
+aGUgcHJvZHVjZXIgZnVuY3Rpb25zIHNob3VsZCBjb250aW51ZSB0bw0KbG9hZC1hY3F1aXJlIHRo
+ZSBjb25zdW1lcl9wb3MgdmFyaWFibGUgc2luY2UgaXQNCmNvdWxkIGJlIGV4ZWN1dGluZyBvbiBh
+IGRpZmZlcmVudCB0aHJlYWQuIFRoZXNlDQp3b3VsZCBwYWlyIHdpdGggdGhlIHN0b3JlX3JlbGVh
+c2VzIG1lbnRpb25lZCBpbiAoMSkuDQpFdmVuIHdoaWxlIHRoZSBCVVNZX0JJVCBpcyBzZXQsIGNv
+bmZsaWN0aW5nIGZ1bmN0aW9ucw0KYXJlIHByb2R1Y2VyIGZ1bmN0aW9ucywgd2hpY2ggZG9uJ3Qg
+bW9kaWZ5IHRoZQ0KY29uc3VtZXJfcG9zIHZhcmlhYmxlIGFueXdheSwgdGhleSBtb2RpZnkNCnBy
+b2R1Y2VyX3BvcyBbMV0uDQoNCjMuIFNpbmNlIHRoZSBzaW5nbGUgdXNlciBjb25zdW1lciB0aHJl
+YWQgaXMgbW9kaWZ5aW5nDQpjb25zdW1lcl9wb3MsIGFuZCB0aGUgY29kZSBsaW5lcyBpbiBxdWVz
+dGlvbiBhcmUNCmxpbmVzIHdoZXJlIHRoZSBzYW1lIHVzZXIgY29uc3VtZXIgdGhyZWFkIHdvdWxk
+DQpyZWFkIGNvbnN1bWVyX3BvcywgdGhlIHRocmVhZC1sb2NhbGl0eSBvZiB0aGUgbG9hZHMNCmFu
+ZCBzdG9yZXMgbWl0aWdhdGUgdGhlIG5lZWQgZm9yIHVzZXItc2lkZQ0KbG9hZC1hY3F1aXJlcy4N
+Cg0KUmVmczoNClsxXSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
+L2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9rZXJuZWwvYnBmL3JpbmdidWYuYz9oPXY2LjE2
+I240NTYNCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KRnJvbTog
+QWxleGVpIFN0YXJvdm9pdG92IDxhbGV4ZWkuc3Rhcm92b2l0b3ZAZ21haWwuY29tPg0KU2VudDog
+VGh1cnNkYXksIEp1bHkgMzEsIDIwMjUgMTA6NDYgQU0NClRvOiBTb2hhbSBCYWdjaGkNCkNjOiBB
+bGV4ZWkgU3Rhcm92b2l0b3Y7IERhbmllbCBCb3JrbWFubjsgQW5kcmlpIE5ha3J5aWtvOyBNYXJ0
+aW4gS2FGYWkgTGF1OyBFZHVhcmQ7IFNvbmcgTGl1OyBZb25naG9uZyBTb25nOyBKb2huIEZhc3Rh
+YmVuZDsgS1AgU2luZ2g7IFN0YW5pc2xhdiBGb21pY2hldjsgSGFvIEx1bzsgSmlyaSBPbHNhOyBi
+cGY7IExLTUw7IFNvaGFtIEJhZ2NoaQ0KU3ViamVjdDogUmU6IFtQQVRDSF0gYnBmOiByZWxheCBh
+Y3F1aXJlIGZvciBjb25zdW1lcl9wb3MgaW4gcmluZ2J1Zl9wcm9jZXNzX3JpbmcoKQ0KDQpPbiBX
+ZWQsIEp1bCAzMCwgMjAyNSBhdCAxMTo1M+KAr0FNIFNvaGFtIEJhZ2NoaSA8c29oYW0uYmFnY2hp
+QHV0YWguZWR1PiB3cm90ZToNCj4NCj4gU2luY2Ugci0+Y29uc3VtZXJfcG9zIGlzIG1vZGlmaWVk
+IG9ubHkgYnkgdGhlIHVzZXIgdGhyZWFkDQo+IGluIHRoZSBnaXZlbiByaW5nYnVmIGNvbnRleHQg
+KGFuZCBhcyBzdWNoLCBpdCBpcyB0aHJlYWQtbG9jYWwpDQo+IGl0IGRvZXMgbm90IHJlcXVpcmUg
+YSBsb2FkLWFjcXVpcmUuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFNvaGFtIEJhZ2NoaSA8c29oYW0u
+YmFnY2hpQHV0YWguZWR1Pg0KPiAtLS0NCj4gIHRvb2xzL2xpYi9icGYvcmluZ2J1Zi5jIHwgMiAr
+LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+DQo+
+IGRpZmYgLS1naXQgYS90b29scy9saWIvYnBmL3JpbmdidWYuYyBiL3Rvb2xzL2xpYi9icGYvcmlu
+Z2J1Zi5jDQo+IGluZGV4IDk3MDJiNzBkYTQ0Li43NzUzYTY1NzBjZiAxMDA2NDQNCj4gLS0tIGEv
+dG9vbHMvbGliL2JwZi9yaW5nYnVmLmMNCj4gKysrIGIvdG9vbHMvbGliL2JwZi9yaW5nYnVmLmMN
+Cj4gQEAgLTI0MSw3ICsyNDEsNyBAQCBzdGF0aWMgaW50NjRfdCByaW5nYnVmX3Byb2Nlc3Nfcmlu
+ZyhzdHJ1Y3QgcmluZyAqciwgc2l6ZV90IG4pDQo+ICAgICAgICAgYm9vbCBnb3RfbmV3X2RhdGE7
+DQo+ICAgICAgICAgdm9pZCAqc2FtcGxlOw0KPg0KPiAtICAgICAgIGNvbnNfcG9zID0gc21wX2xv
+YWRfYWNxdWlyZShyLT5jb25zdW1lcl9wb3MpOw0KPiArICAgICAgIGNvbnNfcG9zID0gKnItPmNv
+bnN1bWVyX3BvczsNCg0KSSBkb24ndCB0aGluayBpdCdzIGNvcnJlY3QuDQpTZWUgY29tbWVudCBp
+biBfX2JwZl91c2VyX3JpbmdidWZfc2FtcGxlX3JlbGVhc2UoKQ0KDQotLQ0KcHctYm90OiBjcg0K
 
