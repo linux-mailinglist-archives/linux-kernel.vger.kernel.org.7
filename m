@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-757620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76ACDB1C464
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:35:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE41BB1C473
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528A73B3B2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:35:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACF854E24A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B7E28A72D;
-	Wed,  6 Aug 2025 10:35:19 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319CF28AAE6;
+	Wed,  6 Aug 2025 10:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx9Ir5n4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7842571AA;
-	Wed,  6 Aug 2025 10:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FF1433C8;
+	Wed,  6 Aug 2025 10:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754476518; cv=none; b=kVQR6O1IXNxTnCBGK8cClKKdeGOpdt8elyjzugC12n/ZEUSdN+54avxxjS1Zo8UK8r0CW8E6MYgPjPfERqiE1FxeHqZu1vVNWUrK1rApV6+SYCt7Zxl2xKgzmXQfK2IiBROMGkSV6jIRgnEcVht16hdasiEyAfitzxgbP7YzSTs=
+	t=1754476794; cv=none; b=EhYHMSZ1sq4svF28i0JG3AGgLoG7OKuJ3TzB3R9HqErz55MjzB1nnJ6geBaBhhjECnvtHJzDHK5lcamf7XJPILx2Xqr2yXB4f5BRJXWLUtHrFnfu5hUecGIivyRhUAHDFMbSQ4xu4TjNF3GlyEy9v0Mp6q8x+G+jGMC6ndm1yLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754476518; c=relaxed/simple;
-	bh=aBRqLh7e6J8eZ6mrUnRKX3siBTezwokCwCBIJemL6Dw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DCOTdF7fer9Xz6pkSEQ7ijk5XET6ANKD6YND3NIkFj/SmA3/11oP6nVWG+5Pa8hYhmzAWnWcYHxfWMlYBMmt99QlW30XcduQz8D1HdzOMQgyIplr6UhBnxZwBdgOk5jJdisMGfTGTJCc1BQK6sGES2QO2IHgkwU08KpcJfgvty4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bxmlF548lz14MCN;
-	Wed,  6 Aug 2025 18:30:17 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id EFC59140155;
-	Wed,  6 Aug 2025 18:35:13 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 6 Aug 2025 18:35:13 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH V3 net 3/3] net: hibmcge: fix the np_link_fail error reporting issue
-Date: Wed, 6 Aug 2025 18:27:58 +0800
-Message-ID: <20250806102758.3632674-4-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250806102758.3632674-1-shaojijie@huawei.com>
-References: <20250806102758.3632674-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1754476794; c=relaxed/simple;
+	bh=prVC3lxppRrhOCtUCxmwBpaVitYSrJeH5aa/qfTq7qw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bA9HcVgXOzWTHLM0PkD1m+xZr9C7arjgx1zo1Gpn0Hzpsy4E3Mc3KkSl+km1ha3DET+248PnOG229hPnUc1SNdhXmgCA4bHmCIaY4hZTYeiDaA/OnV8CeU7mc3BxaMy+eaz8LgDvfznVZh0B5gmnmj5U4z1F6RO9t8euCdqqkX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx9Ir5n4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A58AC4CEE7;
+	Wed,  6 Aug 2025 10:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754476794;
+	bh=prVC3lxppRrhOCtUCxmwBpaVitYSrJeH5aa/qfTq7qw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sx9Ir5n4UaugNe7R6F49AobZrroStIGqDxaA8Ax7Y4AfSBCb1z72lD60N+CenmYwG
+	 AMjQismZkwC+F/b5S1F2KQEvX5kuoSdlTrStmn2Q/NeaetSWhEP7zx/7Yixu7+IzUC
+	 oleNfHI5P4mBGM6UoO/niHk5u1FWTPOu+4GVIgZ6ic7ZBOzHivm5kdBWewZa3p2D2O
+	 K2Sl93MUc10VRWFGjOByECnwuqML1h9gbVbUqZi+ofyckPjeUhnJ240pbBeDf3CcJf
+	 tW950k7sDgpIgtBcJeGznBuGKX9H8v9eDCYdOrz6kw3lDNDdySZln2ocJEeopwMRPW
+	 8NZkpwmwOSwDQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/16] rust: block: add block related constants
+In-Reply-To: <aHYi-PRsEQ-YpeYm@google.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
+ <hCVxhbCxZksAYFB75R-sGCzmJWrbFU_dP4ABVoqVebSiLPiO-rC3MnJVN4vZRLiUO3io-p2wJM-rxjxK-AX4uA==@protonmail.internalid>
+ <aHYi-PRsEQ-YpeYm@google.com>
+Date: Wed, 06 Aug 2025 12:28:47 +0200
+Message-ID: <87fre4921s.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-Currently, after modifying device port mode, the np_link_ok state
-is immediately checked. At this point, the device may not yet ready,
-leading to the querying of an intermediate state.
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-This patch will poll to check if np_link is ok after
-modifying device port mode, and only report np_link_fail upon timeout.
+> On Fri, Jul 11, 2025 at 01:43:11PM +0200, Andreas Hindborg wrote:
+>> Add a few block subsystem constants to the rust `kernel::block` name space.
+>> This makes it easier to access the constants from rust code.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/block.rs | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/rust/kernel/block.rs b/rust/kernel/block.rs
+>> index 150f710efe5b..7461adf4d7e0 100644
+>> --- a/rust/kernel/block.rs
+>> +++ b/rust/kernel/block.rs
+>> @@ -3,3 +3,15 @@
+>>  //! Types for working with the block layer.
+>>
+>>  pub mod mq;
+>> +
+>> +/// Bit mask for masking out [`SECTOR_SIZE`]
+>> +pub const SECTOR_MASK: u32 = bindings::SECTOR_MASK;
+>> +
+>> +/// Sectors are size `1 << SECTOR_SHIFT`.
+>> +pub const SECTOR_SHIFT: u32 = bindings::SECTOR_SHIFT;
+>> +
+>> +/// Size of a sector.
+>> +pub const SECTOR_SIZE: u32 = bindings::SECTOR_SIZE;
+>> +
+>> +/// Power of two difference in size of a page and size of a sector.
+>> +pub const PAGE_SECTORS_SHIFT: u32 = bindings::PAGE_SECTORS_SHIFT;
+>
+> I was looking for the user to double-check whether u32 was the right
+> choice, but I can't find it. It looks like you don't use these yet?
 
-Fixes: e0306637e85d ("net: hibmcge: Add support for mac link exception handling feature")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Only `SECTOR_SHIFT` is used in this series, the rest will be used in the
+future. They are used for memory backing rnull, still out of tree [1].
+Do you want me to split the patch and delay the rest of the constants? I
+fully intend to upstream the user as soon as I can.
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-index 8cca8316ba40..d0aa0661ecd4 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-@@ -12,6 +12,8 @@
- 
- #define HBG_HW_EVENT_WAIT_TIMEOUT_US	(2 * 1000 * 1000)
- #define HBG_HW_EVENT_WAIT_INTERVAL_US	(10 * 1000)
-+#define HBG_MAC_LINK_WAIT_TIMEOUT_US	(500 * 1000)
-+#define HBG_MAC_LINK_WAIT_INTERVAL_US	(5 * 1000)
- /* little endian or big endian.
-  * ctrl means packet description, data means skb packet data
-  */
-@@ -228,6 +230,9 @@ void hbg_hw_fill_buffer(struct hbg_priv *priv, u32 buffer_dma_addr)
- 
- void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
- {
-+	u32 link_status;
-+	int ret;
-+
- 	hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
- 
- 	hbg_reg_write_field(priv, HBG_REG_PORT_MODE_ADDR,
-@@ -239,8 +244,14 @@ void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
- 
- 	hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
- 
--	if (!hbg_reg_read_field(priv, HBG_REG_AN_NEG_STATE_ADDR,
--				HBG_REG_AN_NEG_STATE_NP_LINK_OK_B))
-+	/* wait MAC link up */
-+	ret = readl_poll_timeout(priv->io_base + HBG_REG_AN_NEG_STATE_ADDR,
-+				 link_status,
-+				 FIELD_GET(HBG_REG_AN_NEG_STATE_NP_LINK_OK_B,
-+					   link_status),
-+				 HBG_MAC_LINK_WAIT_INTERVAL_US,
-+				 HBG_MAC_LINK_WAIT_TIMEOUT_US);
-+	if (ret)
- 		hbg_np_link_fail_task_schedule(priv);
- }
- 
--- 
-2.33.0
+It is a #define on C side used as a shift operator on usize in Rust code
+like so:
+
+  let sector: usize = something;
+  let page_offset = (sector & block::SECTOR_MASK as usize) << block::SECTOR_SHIFT;
+
+Best regards,
+Andreas Hindborg
+
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git/tree/drivers/block/rnull/rnull.rs?h=rnull-v6.15#n211
 
 
