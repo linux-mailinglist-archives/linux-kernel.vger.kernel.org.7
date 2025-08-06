@@ -1,73 +1,154 @@
-Return-Path: <linux-kernel+bounces-757600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58A7B1C413
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFF2B1C416
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E186F1856C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E541F18C0B02
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2425A28A414;
-	Wed,  6 Aug 2025 10:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="PBnTemmG"
-Received: from va-1-15.ptr.blmpb.com (va-1-15.ptr.blmpb.com [209.127.230.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F63A24DCEC;
+	Wed,  6 Aug 2025 10:15:27 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C47289377
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E741EDA1B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754475280; cv=none; b=KTgWH3Z56Y+snZ07IWWf89cEbz3DuHYvpiqIhGOqNLecs+PiiyUT8Z5PmBORCd/WDlEkq6MtB3owNmeFYFL2Ft7mnD05M9/UkcRnS2vfd8l2VzNyKcH0PZkPJe5NS7YwMkwCKqoCLU7UwoXKRMJiXJE9vZE9CfhwcPa7y5wchJA=
+	t=1754475327; cv=none; b=W4izTDHi2hHIG1fAqGmalVYjSJjzgjF9c5CxPKFFv6EntxyuLy61ItJxw1OoA5aXISIYTSJssBy6lr7/CONxm9hn2iaLhOPIIKEn7bZiOgdwxzkXe1pWlt7lrMlcCugV15uAVZMpRc/zMkoS1KxkW3eH0g4JNdAMsOEGzydKA8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754475280; c=relaxed/simple;
-	bh=N6l+1yHhMqXCPPSV577+GHyz1ZJez474BAHAo4bn/W0=;
-	h=In-Reply-To:Message-Id:Mime-Version:References:Date:Subject:
-	 Content-Type:Cc:From:To; b=OVlZVUFE1JLY8y7gm3LG5o6FOgSW3nxKdYBGUZ1hiQQ/HVMelKt3zVEeGS6EQyjPHraSQvxUeWodddCHnnPxl9DTgYZV6bZNjcoLmyJPv30EIpAI3zj2YBhlvwGnRdbJVLW7S3lpbPwu35dgSX1K64ZehWNBybHD3zqQi6qh1+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=PBnTemmG; arc=none smtp.client-ip=209.127.230.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1754475226;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=N6l+1yHhMqXCPPSV577+GHyz1ZJez474BAHAo4bn/W0=;
- b=PBnTemmGDtL8WKUAg4buc23CSkgO2ucFQD5y3zZ2aM+7kiOoyfsiKt5TuyfEfbmRsH9r3V
- M4/rV30WLymf1TX1b1z7A/kB9vN+hCX4e1w4+EJo2Rsp1c5udE7h6KWW9xkw84QbIUOwre
- YDY5g13myROwr+OLymIqYWp7YG0iLzEJql/ckASP+hmQyMcj8z0EDUyPSSbrEveYrZm0cV
- ouovMlgCksGzDUsVpG9E0WmoKfHxHiQB2AmMx+VrnZozTPkUDO2omfcjBOSNtcKqyGxAE4
- 7OGhdRAzmioLO9NhRNqe9Iqtsb/T/J7AFAC1bmiBRDDi8m32m/1OegA0DudRwA==
-In-Reply-To: <1f419739-4233-474d-b00a-4e1237352691@web.de>
-X-Mailer: git-send-email 2.34.1
-Message-Id: <20250806101337.3350-1-huangxianliang@lanxincomputing.com>
+	s=arc-20240116; t=1754475327; c=relaxed/simple;
+	bh=qAFftSbiUIueK7+K9HYn59Wqe8NdbxwzxxndmF7SLM0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j2IXBP/lyTe/KLEi8YjO/ElJrJs1SkagWH4VYH3Hpdh+Oau3i40swWWfReN3EJuIUlux+eHOw5tQZRyTdHlX56K1PbRPSzHhrXVBpB5/pfPn28P9pJs4C2KK6es+q6rrnDR+psyEJsYMSDw9ys/H3nrayGGINc5j8K0ADK/Glg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ujbAy-0002kc-Ip; Wed, 06 Aug 2025 12:15:16 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ujbAx-00CBzX-0r;
+	Wed, 06 Aug 2025 12:15:15 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ujbAx-0009Bg-0a;
+	Wed, 06 Aug 2025 12:15:15 +0200
+Message-ID: <41b37595c42e4f492704a31970936d52b96dae97.camel@pengutronix.de>
+Subject: Re: [PATCH RFC 0/6] amdgpu: Avoid powering on the dGPU on
+ vkEnumeratePhysicalDevices()
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
+ Zabel <philipp.zabel@gmail.com>, Alex Deucher <alexander.deucher@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "Pelloux-Prayer, Pierre-Eric" <Pierre-eric.Pelloux-prayer@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 06 Aug 2025 12:15:15 +0200
+In-Reply-To: <601a40fd-e508-4e9d-8dd3-14329f3a637b@amd.com>
+References: <20250731-b4-dont-wake-next-v1-0-e51bdc347fa3@gmail.com>
+	 <601a40fd-e508-4e9d-8dd3-14329f3a637b@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Received: from LeonHXL.localdomain ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Wed, 06 Aug 2025 18:13:44 +0800
-References: <1f419739-4233-474d-b00a-4e1237352691@web.de>
-Date: Wed,  6 Aug 2025 18:13:37 +0800
-Subject: Re: Re: [PATCH] iommu/riscv: check pte null pointer before use
-X-Original-From: XianLiang Huang <huangxianliang@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Cc: <alex@ghiti.fr>, <aou@eecs.berkeley.edu>, 
-	<huangxianliang@lanxincomputing.com>, <iommu@lists.linux.dev>, 
-	<joro@8bytes.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>, <palmer@dabbelt.com>, 
-	<paul.walmsley@sifive.com>, <robin.murphy@arm.com>, 
-	<tjeznach@rivosinc.com>, <will@kernel.org>
-From: "XianLiang Huang" <huangxianliang@lanxincomputing.com>
-X-Lms-Return-Path: <lba+268932ad8+86d4b4+vger.kernel.org+huangxianliang@lanxincomputing.com>
-Content-Transfer-Encoding: 7bit
-To: <markus.elfring@web.de>
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Sure, will change to "Check the pointer before..." in a new version, thanks.
+On Mi, 2025-08-06 at 10:58 +0200, Christian K=C3=B6nig wrote:
+> On 31.07.25 07:36, Philipp Zabel wrote:
+> > This is an attempt at fixing amd#2295 [1]:
+> >=20
+> >   On an AMD Rembrandt laptop with 680M iGPU and 6700S dGPU, calling
+> >   vkEnumeratePhysicalDevices() wakes up the sleeping dGPU, even if all
+> >   the application wants is to find and use the iGPU. This causes a dela=
+y
+> >   of about 2 seconds on this system, followed by a few seconds of
+> >   increased power draw until runtime PM turns the dGPU back off again.
+> >=20
+> > [1] https://gitlab.freedesktop.org/drm/amd/-/issues/2295
+> >=20
+> > Patch 1 avoids power up on some ioctls that don't need it.
+> > Patch 2 avoids power up on open() by postponing fpriv initialization to
+> > the first ioctl() that wakes up the dGPU.
+> > Patches 3 and 4 add AMDGPU_INFO to the list of non-waking ioctls,
+> > returning cached values for some queries.
+> > Patch 5 works around an explicit register access from libdrm.
+> > Patch 6 shorts out the syncobj ioctls while fpriv is still
+> > uninitialized. This avoids waking up the dGPU during Vulkan syncobj
+> > feature detection.
+>=20
+> This idea came up multiple times now but was never completed.
+>=20
+> IIRC Pierre-Eric last worked on it, it would probably be a good idea to d=
+ig up his patches from the mailing list.
 
-Regards,
-XianLiang
+Thank you, I wasn't aware of those patches [1]. Pierre-Eric did mention
+them in https://gitlab.freedesktop.org/mesa/mesa/-/issues/13001, but I
+didn't pick up on that back then.
+
+[1] https://lore.kernel.org/all/20240618153003.146168-1-pierre-eric.pelloux=
+-prayer@amd.com/
+
+Is that the latest version? It looks to me like the review stalled out
+on a disagreement whether the GB_ADDR_CONFIG query should be a separate
+ioctl or whether it should be added to drm_amdgpu_info_device. The
+discussion was later continued at
+https://gitlab.freedesktop.org/mesa/libdrm/-/merge_requests/368,
+seemingly coming to the conclusion that keeping the register read (but
+cached) is the way to go? I didn't find a newer series with that
+implemented.
+
+> >=20
+> > regards
+> > Philipp
+> >=20
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > ---
+> > Alex Deucher (1):
+> >       drm/amdgpu: don't wake up the GPU for some IOCTLs
+> >=20
+> > Philipp Zabel (5):
+> >       drm/amdgpu: don't wake up the GPU when opening the device
+> >       drm/amdgpu: don't query xclk in AMDGPU_INFO_DEV_INFO
+> >       drm/amdgpu: don't wake up the GPU for some AMDGPU_INFO queries
+> >       drm/amdgpu: don't wake up the GPU for mmGB_ADDR_CONFIG register r=
+ead
+>=20
+> That is both unnecessary an insufficient. Unnecessary because we already =
+have a mechanism to cache register values and insufficient because IIRC you=
+ need to add a bunch of more registers to the cached list.
+
+This series was (just barely) sufficient for my purpose, which was only
+to make vkEnumeratePhysicalDevices() not wake the dGPU on my Laptop.
+I didn't realize there already was a caching mechanism in the lower
+layers.
+
+> See Pierre-Erics latest patch set, I think we already solved that but I'm=
+ not 100% sure.
+
+If I found the correct version, it seems Sima's suggestion of pushing
+runtime pm handling down from amdgpu_drm_ioctl into the amdgpu ioctl
+callbacks [2] would be the best first next step?
+
+[2] https://lore.kernel.org/amd-gfx/ZnvJHwnNAvDrRMVG@phenom.ffwll.local/
+
+regards
+Philipp
 
