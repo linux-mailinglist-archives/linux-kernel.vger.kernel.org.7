@@ -1,223 +1,146 @@
-Return-Path: <linux-kernel+bounces-757880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBF7B1C7CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:41:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D90BB1C7C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAEBD62238F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020CC18C1AE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74F128EA4B;
-	Wed,  6 Aug 2025 14:41:03 +0000 (UTC)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA3628DB64;
+	Wed,  6 Aug 2025 14:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4DTWTcF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957E228C5BF;
-	Wed,  6 Aug 2025 14:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E633428C5BF;
+	Wed,  6 Aug 2025 14:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491263; cv=none; b=baDMbQ/j3vd3WfJaXFVCnN2gpyEe4QnXDRVuE+gXa8YutADcjL/3Alg4v0teyRUdVu06WvrjT8FOESQMBNB+f8BKZbRNEnjKQ0CcqPOcDWKjz0uS0yl32oxIvzZHkKsGOmsHpahfobcUGPJcTegP31bLjO+xnOLXi+KHtO4IXQs=
+	t=1754491231; cv=none; b=tiCUfdPptMgGCCRkkPIg2wJYP0A5AcfYJ2CwD2GkZrtcCgBwtO329U2rMrxYD+cPuAnsp3fC7Rlx9yqMHa7lrjt4Ak8avEzcmoWJ3x1lYh3EVSImQyqiYw1srkPnUecZk9ZWXSMzOzhDPBtzrTJXQfOxVvTYJdOw6yr3CYXO9O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491263; c=relaxed/simple;
-	bh=DUrtWE8w60cUrEBMPI4sXJxMrkOvHiZk/N1yViMIaRQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bm/k4+Eorf3rYhOhHD/a3GYboJwfalyesop2hr4vDWe/6kMiaWcPMRYVB+AQ/l6ANYOA09/JyxNyDTEOzjf/t4yfdWMZWBelWuYSuNI+0JrGYXh3yNW56kb66gHva2h5fx7K4iPwzisuWPkUWDxI8eUCAyh1PYyz7q6++Zek+98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31ec291f442so1783a91.1;
-        Wed, 06 Aug 2025 07:41:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754491261; x=1755096061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F08hZsevekdSZCocnoE12EBoNB3pI1zChMqieF5ghrY=;
-        b=qImesxpjaINqGNTOEXip4cFnz8+RMi+Qd9bKN8+0l0CocMbAYh2ZGqS0HYgFhIxYuP
-         w1n97/jF3UcFNYh2B++DxeQlz62xUTaw2c5525ael8hEte2P5CzsqDbOafo6E22vzP/c
-         sb9kdikX33y5t7XFAugI4ooz1NFu8Pk22rez3ysE1wKNzX5lIb0DLOwjbfqxguokSsvs
-         4CuWCXgWDGrJDxT3bzA2jzKu7qRtOmgYJB+OoIszfHtttnl9mP1mW1OGWTaFmJr7DPxf
-         aBawnQx0T9V2LmQyb0C6QpemHp869yYy/dFqv7uNg6NP/vWwfAgaY3HvWQNp8MT4ukT8
-         ThIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUleB1YOb08Mza8yUOnS0Am+RisyGjWbpc5SxRb/UiwOU3lBPNwWadJx/aYy3dK/Pv5E713Zohk82wa@vger.kernel.org, AJvYcCWrpOkmrrs+kf9/kuBCogmoMgcUBS5EXJHfNoRbuaSz0wrZPtq4YrYEA5Ym4Vr2OQpdmaQONV/eHoppuU3x@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGQxpNQbEBoK8vz8KyFaxvEkfpPMeqru3YTBOL4odmifBPcFpN
-	0CAh2L1tdQVRZhQ8TOT7fCuCuSOasOYDtGPGtavEovWJ1BXileKcpnt9
-X-Gm-Gg: ASbGnctCVERudfZ2qnUtNPIzFCsexdYPZTfmRP67FbYV8aw5FVAZfkyCmd4sLYn0uzm
-	2wfqbWmH5tKjWCd1hDP/eh6RdFOy+gdJnm2R10xWEEoGqWtr34AvTAAhJef7pHuMv0lypxcXzTn
-	miRxcGHDisezxIqITtHVr/MkWE85+i0bRQuKxXDYX3yaYE0/YZiJyIfgZNH0b9n3oVpTIjPg4U1
-	lXLsbPMlXNkXeCBMqW5tpNC6JlNgC77wyBePINy2wUI0avwb3VL4k9Ms/nIQ2lfyx1HMSiXh1iG
-	hHfrGUKH4TD3yUfiRD7YCdtOM6VAv6wAvzXoX3J0wCxepPIBAdZFPcSn4d8ywJPaTenviah2Due
-	5IWJizdwHpT7n
-X-Google-Smtp-Source: AGHT+IFmn5Bk81y6ZMDAcgo+VIHfOH12f8k0LVa12jVhmpe0TppCkQyp0W/7neMNg32Rmj5yWh4qoQ==
-X-Received: by 2002:a17:90b:1c0d:b0:312:e9d:4001 with SMTP id 98e67ed59e1d1-32166d1ed4amr1870004a91.8.1754491260892;
-        Wed, 06 Aug 2025 07:41:00 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee4f42sm20025929a91.23.2025.08.06.07.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 07:41:00 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Stefan Metzmacher <metze@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>,
-	notselwyn@pwning.tech
-Subject: [PATCH v3] ksmbd: add kcov remote coverage support via ksmbd_conn
-Date: Wed,  6 Aug 2025 14:39:56 +0000
-Message-ID: <20250806143955.122816-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1754491231; c=relaxed/simple;
+	bh=IkP5zCNemQYmyt6yqGgfOTiHen1wjFgC2/LbB4Hw44E=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=QN4HXcIu72sbz5c0AJPUhikbAP1aJ/8VTdz5D9jcv1qapN62WmqS2x+T0zfij67LY9xmuZmYJLMXIRP6ONkFjnWq8O/gy8XtBM3v1Z+XQVqxWsdZD4JdG9U1wqy9knCCS3YWM53Za0vDre0U1YJLXezNTL9/OR0rIhLcuxnOLs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4DTWTcF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641E4C4CEE7;
+	Wed,  6 Aug 2025 14:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754491230;
+	bh=IkP5zCNemQYmyt6yqGgfOTiHen1wjFgC2/LbB4Hw44E=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=o4DTWTcFbeng2GWjWaxI9OPPL63VAhk6K7TaGazUGEXOqvTfDJUTEEPVkC7M0Dll0
+	 K7hIW+bXdcw1ZrA0fxa1oBcuOZOjDSMnAY7UpAj9mi3dsc4va37qles+2N6dO2NTuw
+	 lxYrjx3VL1ns4ePqf6964Sp5O9Jdnl/u7sXlW9Zuu50LyE/5D011JJFLdjPT9MJdHc
+	 q+p/oANBwEdiXE76BMB59tE7m/1v1h+3v2n76fTzePtNZpIKyZUhMVlYFA67465kwe
+	 Hw4LD2hZi3C2t3zPbkfe0pK591XsEYGK3G1AlGD7rksDAY3Yy9IB2dNrsE+EIaxUuM
+	 JTc1lIL0l4y7A==
+Date: Wed, 06 Aug 2025 09:40:29 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
+References: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
+Message-Id: <175449112353.639494.1882304081892662235.robh@kernel.org>
+Subject: Re: [PATCH RFC v2 0/3] arm64: dts: qcom: sm8750: Add Iris VPU v3.5
 
-KSMBD processes SMB requests on per-connection threads and then hands
-off work items to a kworker pool for actual command processing by
-handle_ksmbd_work(). Because each connection may enqueue multiple
-struct ksmbd_work instances, attaching the kcov handle to the work
-itself is not sufficient: we need a stable, per-connection handle.
 
-Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
-and initialize it when the connection is set up. In both
-ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
-and handle_ksmbd_work() which receives a struct ksmbd_work*, start
-kcov_remote with the per-connection handle before processing and stop
-it afterward. This ensures coverage collection remains active across
-the entire asynchronous path of each SMB request.
+On Wed, 06 Aug 2025 14:38:29 +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Changes in v2:
+> - Patch #1: Add RPMHPD_MXC (Konrad)
+> - Link to v1: https://lore.kernel.org/r/20250714-b4-sm8750-iris-dts-v1-0-93629b246d2e@linaro.org
+> 
+> RFC because depends on old series (6 months old!) which received
+> feedback and nothing happened since that time.  I assume author
+> abandoned that series, but unfortunately unmerged bindings for
+> qcom,sm8750-videocc block this patchset:
+> https://lore.kernel.org/all/20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com/
+> 
+> The bindings for new compatible qcom,sm8750-iris:
+> https://lore.kernel.org/r/20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (3):
+>       arm64: dts: qcom: sm8750: Add Iris VPU v3.5
+>       [DO NOT MERGE] arm64: dts: qcom: sm8750-mtp: Enable Iris codec
+>       [DO NOT MERGE] arm64: dts: qcom: sm8750-qrd: Enable Iris codec
+> 
+>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts |   4 ++
+>  arch/arm64/boot/dts/qcom/sm8750-qrd.dts |   4 ++
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi    | 113 ++++++++++++++++++++++++++++++++
+>  3 files changed, 121 insertions(+)
+> ---
+> base-commit: 709a73d51f11d75ee2aee4f690e4ecd8bc8e9bf3
+> change-id: 20250714-b4-sm8750-iris-dts-ebdb5dc4ee27
+> prerequisite-message-id: 20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com
+> prerequisite-patch-id: ada17af875101625f7754335fabc909c8ab9cd20
+> prerequisite-patch-id: 3cb47a7c47cd96e02b5a4a05490088541f97c629
+> prerequisite-patch-id: 8c77b8e0c611b5e28086a456157940d773b323ab
+> 
+> Best regards,
+> --
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> 
+> 
 
-The kcov context tied to the connection itself, correctly supporting
-multiple outstanding work items per connection.
 
-In patch v2, I added the missing initialization of kcov_handle. In v3,
-I fixed an kcov_hanlde argument was previously unused on
-ksmbd_conn_set_kcov_handle().
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-The related work for syzkaller support is currently being developed
-in the following GitHub PR:
-Link: https://github.com/google/syzkaller/pull/5524
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Based on earlier work by Lau.
-Link: https://pwning.tech/ksmbd-syzkaller/
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Cc: linux-cifs@vger.kernel.org
-Cc: notselwyn@pwning.tech
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- fs/smb/server/connection.c |  7 ++++++-
- fs/smb/server/connection.h | 22 ++++++++++++++++++++++
- fs/smb/server/server.c     |  4 ++++
- 3 files changed, 32 insertions(+), 1 deletion(-)
+  pip3 install dtschema --upgrade
 
-diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
-index 3f04a2977ba8..21352f37384f 100644
---- a/fs/smb/server/connection.c
-+++ b/fs/smb/server/connection.c
-@@ -93,6 +93,9 @@ struct ksmbd_conn *ksmbd_conn_alloc(void)
- 	down_write(&conn_list_lock);
- 	list_add(&conn->conns_list, &conn_list);
- 	up_write(&conn_list_lock);
-+
-+	ksmbd_conn_set_kcov_handle(conn, kcov_common_handle());
-+
- 	return conn;
- }
- 
-@@ -322,6 +325,8 @@ int ksmbd_conn_handler_loop(void *p)
- 	if (t->ops->prepare && t->ops->prepare(t))
- 		goto out;
- 
-+	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
-+
- 	max_req = server_conf.max_inflight_req;
- 	conn->last_active = jiffies;
- 	set_freezable();
-@@ -412,7 +417,7 @@ int ksmbd_conn_handler_loop(void *p)
- 			break;
- 		}
- 	}
--
-+	kcov_remote_stop();
- out:
- 	ksmbd_conn_set_releasing(conn);
- 	/* Wait till all reference dropped to the Server object*/
-diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
-index dd3e0e3f7bf0..a90bd1b3e1df 100644
---- a/fs/smb/server/connection.h
-+++ b/fs/smb/server/connection.h
-@@ -15,6 +15,7 @@
- #include <linux/kthread.h>
- #include <linux/nls.h>
- #include <linux/unicode.h>
-+#include <linux/kcov.h>
- 
- #include "smb_common.h"
- #include "ksmbd_work.h"
-@@ -109,6 +110,9 @@ struct ksmbd_conn {
- 	bool				binding;
- 	atomic_t			refcnt;
- 	bool				is_aapl;
-+#ifdef CONFIG_KCOV
-+	u64				kcov_handle;
-+#endif
- };
- 
- struct ksmbd_conn_ops {
-@@ -246,4 +250,22 @@ static inline void ksmbd_conn_set_releasing(struct ksmbd_conn *conn)
- }
- 
- void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
-+
-+static inline void ksmbd_conn_set_kcov_handle(struct ksmbd_conn *conn,
-+				       const u64 kcov_handle)
-+{
-+#ifdef CONFIG_KCOV
-+	conn->kcov_handle = kcov_handle;
-+#endif
-+}
-+
-+static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
-+{
-+#ifdef CONFIG_KCOV
-+	return conn->kcov_handle;
-+#else
-+	return 0;
-+#endif
-+}
-+
- #endif /* __CONNECTION_H__ */
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 8c9c49c3a0a4..0757cd6ef4f7 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
- 	struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
- 	struct ksmbd_conn *conn = work->conn;
- 
-+	kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
-+
- 	atomic64_inc(&conn->stats.request_served);
- 
- 	__handle_ksmbd_work(work, conn);
-@@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
- 	ksmbd_conn_try_dequeue_request(work);
- 	ksmbd_free_work_struct(work);
- 	ksmbd_conn_r_count_dec(conn);
-+
-+	kcov_remote_stop();
- }
- 
- /**
--- 
-2.50.0
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 709a73d51f11d75ee2aee4f690e4ecd8bc8e9bf3
+ Deps: looking for dependencies matching 3 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/3] clk: qcom: branch: Extend invert logic for branch2 mem clocks
+ Deps: Applying prerequisite patch: [PATCH 2/3] dt-bindings: clock: qcom: Add SM8750 video clock controller
+ Deps: Applying prerequisite patch: [PATCH 3/3] clk: qcom: videocc-sm8750: Add video clock controller driver for SM8750
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org:
+
+arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: /soc@0/video-codec@aa00000: failed to match any schema with compatible: ['qcom,sm8750-iris']
+arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: clock-controller@aaf0000 (qcom,sm8750-videocc): 'required-opps' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: /soc@0/video-codec@aa00000: failed to match any schema with compatible: ['qcom,sm8750-iris']
+arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: clock-controller@aaf0000 (qcom,sm8750-videocc): 'required-opps' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+
+
+
+
 
 
