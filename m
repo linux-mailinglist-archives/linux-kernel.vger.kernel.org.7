@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-758109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1357B1CAF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89989B1CAE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D93C720FB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B85918892B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC3A2BD029;
-	Wed,  6 Aug 2025 17:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E6A293C67;
+	Wed,  6 Aug 2025 17:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="BACPZPJE"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koUIqyXf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B41928A41C;
-	Wed,  6 Aug 2025 17:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DABE1A23A9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501718; cv=none; b=u76UVCMbRYcHIP2hk4g0oTZ3bd1tHF6qSfRWCUiOteL1JqLdf84hBLUv4xDnhqKWBAWZwUq3LkSpwHTHIPvEpi9pGjYuDPZRDkuZ0uNgAkyJX5iXJQI96l8mwENNoU7GgLWGoHm/xA3ywxIFpzZNpLzYlV1FDwDCLKaf9FGmH74=
+	t=1754501697; cv=none; b=h5hO4r+z2+vUcKVtpbH1V+BSRmmPxx0d/pmKZL7GmtTtUsCS1/kpQONG9O+QGEuMRlGbmGI6DApgtpavzLOg6ff/4GU8DsTZHXVcFObcuBLPD4bU9WAJKaLlyzPn6ut3IgLYpx+sDvsfUn0ELOahfrNraYVLwBe6DHg2fMrYKls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501718; c=relaxed/simple;
-	bh=r71dXU2Xc5Ubgu7RiIpKZnrZBJi4GnFBtADrF7xkhxA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m3cuMYx0Xk7ng6CS7mMu17IKWCrV7QvGFJkZefQl18I5ZmyRZ0j+ZrhFsMbIav5u1m/Z8fU6nhh163ZR3hmCoqtzMLYBrDjBF+5eDO/7UEbGPnxNRRujHRrPCWzH3uitt3LQ/O0NHfh8LetbzaDwVSrJIxfVmI+J3rt2zvrlq8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=BACPZPJE; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=5EbWJqb/4DQjpXk7DGdlXqTWFl1RcFeqMA81OaV2jIo=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1754501633; v=1; x=1754933633;
- b=BACPZPJEum2eh/RUaHF9aC9eREO6BSmTetkPH28gaiwtw1FenJ4q09Fv9iZg/K2cKXZoYDbI
- MtyhXzJqW+AladUj+zPVkQi6PXv5n4rW5FYQ09/BQYjfUsy2rvFb1J8sUSguamwsIoM+IrtHqYj
- c+8pBsGEaJWP2bSM/zr0lZtQDOfQMYFGA2HW2UQ/iE+ADu559t3PTZZJ+Lp6vDyZekjMSbLXQfp
- ke4DMTWp5r0glj7/Gd91u5Z7ckSm8wV1pKuB9uxa/jx+YAWEmxVl2h+RW2dpQRxGnIw5bxjpupc
- nooIOSbwJVQgr35MFUwdOaUdlFWiO6Jq6F9dlXy44Zc7A==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id f43a9c5f; Wed, 06 Aug 2025 19:33:53 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Wed, 06 Aug 2025 19:33:24 +0200
-Subject: [PATCH RFC 5/5] arm64: dts: marvell: pxa1908: Add power controller
+	s=arc-20240116; t=1754501697; c=relaxed/simple;
+	bh=H9iAkhsw1Agl3S7e1PFnp6CwoDmmLNQlA/6GK67NT7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mzX2opavmB+ub2Kq02o4F9CdJYcWaLY8XbBWUc1HkQspE5D0JV9XvfNZBbSTIL9yfTByrAThWzmtrYKI5FNE0cKQ73CQnq9/LazOuY7UhHh3PMh0YruB9YipF/MYY1ht04zXFm2dhpOBgVkw5Jdccb05/vZcy6FO/VRXkhIENBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koUIqyXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F9CC4CEF9;
+	Wed,  6 Aug 2025 17:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754501697;
+	bh=H9iAkhsw1Agl3S7e1PFnp6CwoDmmLNQlA/6GK67NT7E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=koUIqyXfpTa3JMKqwdtSBFa9g3iuB1UE1pCv2rSEtEobKOnH1Tsh+qDvouuej1VXc
+	 K9edqcTJEjNIAe5muuXKGEbU+lzlBPKaKWkxLvnHk8ODs6CIOnaBEqDKsvbqjhqgjc
+	 01pbNTpU+zSeiKm5dwLXLRaw2/GQZwrC7BWefgL1vS1637bTcdYkvS6DB7KzhaIFLR
+	 Dpv355pg8HPo5fRmuRsKvtCv4z1U877sq9rTfciMGzyPMxg5DlXpS8xv/Fbav5kixS
+	 rdxjJLS6f3slVY55UsXvXUPw9y2gLKiqyiigXErq3tkXf3NUDoAGV9ubun9x5WS4Q9
+	 LyB8ItdL/32Sw==
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 06 Aug 2025 10:34:45 -0700
+Subject: [PATCH] mm/swapfile.c: introduce function alloc_swap_scan_list()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,118 +49,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250806-pxa1908-genpd-v1-5-16409309fc72@dujemihanovic.xyz>
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
-In-Reply-To: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3014;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=r71dXU2Xc5Ubgu7RiIpKZnrZBJi4GnFBtADrF7xkhxA=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTJ/6pnXBOdlbNHyWGuEoz91lLbK4zHM7cOL1uSf4nG
- fkOG5u1HaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjCR6WyMDHdZLaVifnivnSG1
- Y4NwJoudZe2Sx4dN18zQ5mu7Nm2KlAEjw8vnsS4aSRuYcpM+bAmpf/j/ufXxZCOdj9IK+R92sZW
- 3swMA
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250806-swap-scan-list-v1-1-a5fe2d9340a2@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADSSk2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCwMz3eLyxALd4uTEPN2czOISXaMkC8tUYxMjkySDRCWgpoKi1LTMCrC
+ B0bG1tQD+B9tBYAAAAA==
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+ Barry Song <baohua@kernel.org>, 
+ "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Chris Li <chrisl@kernel.org>
+X-Mailer: b4 0.13.0
 
-Add a node for the newly implemented power domain controller. Also add
-the first two power domain consumers: IOMMU (fixes probing) and
-framebuffer.
+This the alloc_swap_scan_list() will scan the whole list or the first
+cluster.
 
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+This reduces the repeat patterns of isolating a cluster then scanning
+that cluster. As a result, cluster_alloc_swap_entry() is shorter and shallower.
+
+No functional change.
+
+Signed-off-by: Chris Li <chrisl@kernel.org>
 ---
- .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |  1 +
- arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       | 36 +++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 1 deletion(-)
+This patch goes on top of Kairui's swap improve cluster scan series:
+https://lore.kernel.org/linux-mm/20250806161748.76651-1-ryncsn@gmail.com/
+---
+ mm/swapfile.c | 86 ++++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 47 insertions(+), 39 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-index 47a4f01a7077bfafe2cc50d0e59c37685ec9c2e9..2f175ae48c6a2371c407b3a6ffd3cdd577f44e56 100644
---- a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-+++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-@@ -23,6 +23,7 @@ chosen {
- 		fb0: framebuffer@17177000 {
- 			compatible = "simple-framebuffer";
- 			reg = <0 0x17177000 0 (480 * 800 * 4)>;
-+			power-domains = <&pd PXA1908_POWER_DOMAIN_DSI>;
- 			width = <480>;
- 			height = <800>;
- 			stride = <(480 * 4)>;
-diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi b/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-index cf2b9109688ce560eec8a1397251ead68d78a239..630e99f2c309dca0872d824a098ac93b6e55c3a4 100644
---- a/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-+++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-@@ -3,6 +3,7 @@
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 4a0cf4fb348d..fcb1e57d8108 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -820,6 +820,29 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si,
+ 	return found;
+ }
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/marvell,pxa1908.h>
-+#include <dt-bindings/power/marvell,pxa1908-power.h>
++static unsigned int alloc_swap_scan_list(struct swap_info_struct *si,
++					 struct list_head *list,
++					 unsigned int order,
++					 unsigned char usage,
++					 bool scan_all)
++{
++	int found = SWAP_ENTRY_INVALID;
++
++	do {
++		struct swap_cluster_info *ci = isolate_lock_cluster(si, list);
++		unsigned long offset;
++
++		if (!ci)
++			break;
++		offset = cluster_offset(si, ci);
++		found = alloc_swap_scan_cluster(si, ci, offset, order, usage);
++		if (found)
++			return found;
++	} while (scan_all);
++
++	return found;
++}
++
+ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
+ {
+ 	long to_scan = 1;
+@@ -913,32 +936,24 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 	 * to spread out the writes.
+ 	 */
+ 	if (si->flags & SWP_PAGE_DISCARD) {
+-		ci = isolate_lock_cluster(si, &si->free_clusters);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
++					     false);
++		if (found)
++			goto done;
+ 	}
  
- / {
- 	model = "Marvell Armada PXA1908";
-@@ -79,6 +80,7 @@ smmu: iommu@c0010000 {
- 			#iommu-cells = <1>;
- 			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&pd PXA1908_POWER_DOMAIN_VPU>;
- 			status = "disabled";
- 		};
+ 	if (order < PMD_ORDER) {
+-		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->nonfull_clusters[order],
++					     order, usage, 0);
++		if (found)
++			goto done;
+ 	}
  
-@@ -291,9 +293,41 @@ sdh2: mmc@81000 {
- 			};
+ 	if (!(si->flags & SWP_PAGE_DISCARD)) {
+-		ci = isolate_lock_cluster(si, &si->free_clusters);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
++					     false);
++		if (found)
++			goto done;
+ 	}
  
- 			apmu: clock-controller@82800 {
--				compatible = "marvell,pxa1908-apmu";
-+				compatible = "marvell,pxa1908-apmu", "simple-mfd", "syscon";
- 				reg = <0x82800 0x400>;
- 				#clock-cells = <1>;
-+
-+				pd: power-controller {
-+					compatible = "marvell,pxa1908-power-controller";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					#power-domain-cells = <1>;
-+
-+					power-domain@PXA1908_POWER_DOMAIN_VPU {
-+						reg = <PXA1908_POWER_DOMAIN_VPU>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					power-domain@PXA1908_POWER_DOMAIN_GPU {
-+						reg = <PXA1908_POWER_DOMAIN_GPU>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					power-domain@PXA1908_POWER_DOMAIN_GPU2D {
-+						reg = <PXA1908_POWER_DOMAIN_GPU2D>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					power-domain@PXA1908_POWER_DOMAIN_DSI {
-+						reg = <PXA1908_POWER_DOMAIN_DSI>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					power-domain@PXA1908_POWER_DOMAIN_ISP {
-+						reg = <PXA1908_POWER_DOMAIN_ISP>;
-+						#power-domain-cells = <0>;
-+					};
-+				};
- 			};
- 		};
- 	};
+ 	/* Try reclaim full clusters if free and nonfull lists are drained */
+@@ -952,13 +967,10 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		 * failure is not critical. Scanning one cluster still
+ 		 * keeps the list rotated and reclaimed (for HAS_CACHE).
+ 		 */
+-		ci = isolate_lock_cluster(si, &si->frag_clusters[order]);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->frag_clusters[order], order,
++					     usage, true);
++		if (found)
++			goto done;
+ 	}
+ 
+ 	/*
+@@ -977,19 +989,15 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		 * Clusters here have at least one usable slots and can't fail order 0
+ 		 * allocation, but reclaim may drop si->lock and race with another user.
+ 		 */
+-		while ((ci = isolate_lock_cluster(si, &si->frag_clusters[o]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							0, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->frag_clusters[o],
++					     0, usage, true);
++		if (found)
++			goto done;
+ 
+-		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[o]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							0, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->nonfull_clusters[o],
++					     0, usage, true);
++		if (found)
++			goto done;
+ 	}
+ done:
+ 	if (!(si->flags & SWP_SOLIDSTATE))
 
+---
+base-commit: f89484324d5876ee10765fa61da0332899fa1a6a
+change-id: 20250806-swap-scan-list-2b89e3424b0a
+
+Best regards,
 -- 
-2.50.1
+Chris Li <chrisl@kernel.org>
 
 
