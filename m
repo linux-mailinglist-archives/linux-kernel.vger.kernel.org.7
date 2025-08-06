@@ -1,162 +1,262 @@
-Return-Path: <linux-kernel+bounces-758167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B2BB1CBE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DACBB1CBE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14D017AA7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:24:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C649562BC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13328DEE1;
-	Wed,  6 Aug 2025 18:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1547229AB1A;
+	Wed,  6 Aug 2025 18:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4rDuf4/"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b="s0tTe+KM"
+Received: from www3579.sakura.ne.jp (www3579.sakura.ne.jp [49.212.243.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200DC26CE13
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB46273D94;
+	Wed,  6 Aug 2025 18:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.243.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754504689; cv=none; b=unbASvGmQifAh9Pw3kGoQw4QJtfnszYLPtfniD4ZI7HJdmZOs48KF2CDhvWugr75JCMvmJBeFqEb3BB2Pgj4thZKduirfuir0R+dBi5ubkn2w5WR0AWhFUfSUJRPjx6u6cvd0VAzMVRI5NBacxuTuEYlEjesKYT2HetVHXm8ejE=
+	t=1754504738; cv=none; b=mdAsH869+dOlcqTxLmD+9SRqfNfbywCO8xeGebWzcN9isHPNT7w7A+YXozBj0n1QhkxWli/LPBt1iAQ7zrOOaz/J54l+MlsZhOSJgvL3xP/yH9CGYQvkyFhd09yhzslVqp7Zi7u9FKnVwcgnb/sswSaCLK9hMJuzDDHXZtU1nYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754504689; c=relaxed/simple;
-	bh=f6yxQ2gQsQor871N/yqTOIwNuZ8L2WbH+4dUAORaV1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hHH59VqnX1j0Xekoo2unLaCU/mY7kNljmh8BCiHEWuM2PaU5trvv0UJcyLiiw21AgqIMMxBs4TnE6uTlDJd05bQrTjBZHg3PhgeYXj4W7u03hvRZVFr96Y6AFnpnGqw5Njr2IsJAAJTv2DyLEOFUNWbN1CCcn/o3na9qm+TkQ1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4rDuf4/; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55b88369530so236984e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754504686; x=1755109486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jzfnt4fl4r2JAvr3EQAhX7jF93WfuTFzsNkMkN0wipE=;
-        b=j4rDuf4/4D1DIoENghPEDBRpUbTH1KP3fkuzUAtb+n83AtRKPCdHQWaCeXm4eCmyZV
-         fmkgktzRdFCyQfcHSKXAYYeU9Xbm913odwonveF0pNff84NucK5qwNaEs0Zw24enXcTB
-         Hj4aM8smGFJacxGnZZ5S6cmNgFS7FpJQmlNG/mrnMf00YbLJ76TKxyRcMZG6yn0XC2Pl
-         IFcaIuOWXTnMXvdAdXAd3bt7fkl0lwxqITHxqihfoIX4l7d3LbW7lFloum8Yda8UvSM5
-         bz3GhPKOjqXv0p+IpLWZYFTjOUpvdVl3do2BnHtSd6ZlWh90YtkS+atLS0gnXhtHnj3U
-         jg7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754504686; x=1755109486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jzfnt4fl4r2JAvr3EQAhX7jF93WfuTFzsNkMkN0wipE=;
-        b=iKAvZEzEI/KIPZ/eimDpvUVBiISIWQ0jUmzB7ZbaBDcBFVA71tUSh1AsEE2zj8bp3U
-         gayPJ5dl9IM17VWN6+epVQfKzlpA2UqaZwYuh2FlmGeAFJZGk1FmgZUBKRjxGxt/NLiO
-         wJnUfUg5HC6wx5LJqDnD244v7NXMMUx3Pi+K5sJmSI6uog2QuQ2ziY69X6iRU/gj+8EJ
-         ieWUKTfGNgje/yUKZhDWUXSMern8hIojLBohv2ZBLQlsII8nG4EEJsn5FN4pNRQjDOt1
-         pBWHsVFq9HkS2Ki8Bjq/JuzHGuDuiYoCURyXhLwQkhahFizsceFkYbv+Pdy0ERtX3dAV
-         LFHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbsiswIt/D3Q9oeoZEyQrvG6EiC8p20wkYnb3XyveiXL6gBxcxi5a76Zu2bNOSBXVBJCHOCT81dgTiIy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFyYAL2PZ/wgGzSHmSEr7V+YZPRZMzAuMcVpwIF34b4U2i3Drt
-	HqCRcbFpfKXRKPh/oorx8B2qrNuJaPvt/wC4wiELUuZUxZ2weNIVczxqUifiV3yFnImTmT1mnWD
-	Ie+xFC4a1UfpIiqWye/2D9zCeObCyKShHvYwX/mW0pQ==
-X-Gm-Gg: ASbGncsT3GAHx2H27uskfzYuADlscO0ME6X6ZYvMAywD0DWvGF7VUuR71v0U0MiS+Zg
-	mSIGdGOY/n3g6KyjRzOOx2TvkcHOhkiJhZZPFFj36rwre959trVh1oFPVe5DdjI7YSUyISkY0+P
-	wfj1qmeMVWxM+BbQHs83qrPixv6LKm4fiAS6+zmKyaWCrgXw1GiP0IQQCw1q/bWKq1SmLiUCLv4
-	U7lqvM=
-X-Google-Smtp-Source: AGHT+IF0PXQZi9vqVnGtQAW+0IZx7w81vI5Y5ZNTHdf+iKVApDbJ4sFRSLR1PHAs1LlJtYMmoHssgB5z97iQcbR/02I=
-X-Received: by 2002:a05:6512:224d:b0:55b:7cb7:f57c with SMTP id
- 2adb3069b0e04-55cb69c0452mr37793e87.57.1754504685766; Wed, 06 Aug 2025
- 11:24:45 -0700 (PDT)
+	s=arc-20240116; t=1754504738; c=relaxed/simple;
+	bh=lLiMUbc8zLGH56UCBmIp7ECag9C43ts/2sCxH5ypZOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bsfyzGWHucRmWEgQfRqqCikWIH1b+laa0fewnaSrbILqU6p4iFxrcdAs1Cnb0zg/fuv4Jxhr0aOl/trIcnm8oUlOJoggYVmBF0RgjHrm4w1d+GcTj1furOVdAJT4lSSFA7LyWMZtXtiRjkdlqfnOcfAy95iKXmnKHnstkfkFCPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp; dkim=fail (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b=s0tTe+KM reason="key not found in DNS"; arc=none smtp.client-ip=49.212.243.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp
+Received: from [192.168.10.111] (p865013-ipoe.ipoe.ocn.ne.jp [153.242.222.12])
+	(authenticated bits=0)
+	by www3579.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 576IOhK2054951
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 7 Aug 2025 03:24:43 +0900 (JST)
+	(envelope-from odaki@rsg.ci.i.u-tokyo.ac.jp)
+DKIM-Signature: a=rsa-sha256; bh=phX34nUYLjHESXOAqkOcxwCZETbFegwkz1f4cCdWzzU=;
+        c=relaxed/relaxed; d=rsg.ci.i.u-tokyo.ac.jp;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250326; t=1754504684; v=1;
+        b=s0tTe+KMI7swBAP+Xt3bupx/k9JygXTou5eGqet3hy78WwzAvwG1SEDUkFmJGKPm
+         Fmt1e2dmZ/6uqTJCyxyx7OKvs+36JfYyb+5vNIrCdRnWbBwiOBsvMo8ip/+h8uUa
+         W9iuQh0EGDAjQ/Kh3yRFezjno6q6ySoWUdO3rBWBtqbFzP1qd42be8gifZ+wE4s1
+         l0st77DdTCQazNwWW4YnxkDeAOHCt7rS3l1EkcErRWYpFE9FniE9fskIAB+mLZAV
+         +SoeBkfdAgu4MxJfQiCaTtgBLsqDSUko1PpPKlXc6EnigstQE8M4uOgF+38XxVnC
+         xxaZlbY4fLVTMYeXJyWZWA==
+Message-ID: <276fdfb8-f1ca-44ad-b310-a811684b265a@rsg.ci.i.u-tokyo.ac.jp>
+Date: Thu, 7 Aug 2025 03:24:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805062333.121553-1-bhe@redhat.com> <20250805062333.121553-5-bhe@redhat.com>
-In-Reply-To: <20250805062333.121553-5-bhe@redhat.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Wed, 6 Aug 2025 23:24:28 +0500
-X-Gm-Features: Ac12FXwvECclFxV4j0m2efvjg_nqG0wG27nQYV0fVI0B5ZHzOZg6GczwOHM9vRs
-Message-ID: <CACzwLxivXFYXuF1OkqcP9THar7UGQ3VVAQgQm=PU9Tohb8hnRQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] mm/kasan: make kasan=on|off take effect for all three modes
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com, 
-	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, 
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/2] KVM: arm64: PMU: Introduce
+ KVM_ARM_VCPU_PMU_V3_COMPOSITION
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu
+ <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, devel@daynix.com, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250806-hybrid-v2-0-0661aec3af8c@rsg.ci.i.u-tokyo.ac.jp>
+ <20250806-hybrid-v2-1-0661aec3af8c@rsg.ci.i.u-tokyo.ac.jp>
+ <aJOO99xUrhsrvLwl@linux.dev>
+Content-Language: en-US
+From: Akihiko Odaki <odaki@rsg.ci.i.u-tokyo.ac.jp>
+In-Reply-To: <aJOO99xUrhsrvLwl@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 5, 2025 at 11:34=E2=80=AFAM Baoquan He <bhe@redhat.com> wrote:
->
-> Now everything is ready, set kasan=3Doff can disable kasan for all
-> three modes.
->
+On 2025/08/07 2:20, Oliver Upton wrote:
+> Hi Akihiko,
+> 
+> This is an unreasonably large patch that needs to be broken down into
+> smaller patches, ideally one functional change per patch. We need this
+> even for an RFC for the sake of reviews.
+> 
+> On Wed, Aug 06, 2025 at 06:09:54PM +0900, Akihiko Odaki wrote:
+>> +static u64 kvm_pmu_get_pmc_value(struct kvm_vcpu *vcpu, u8 idx)
+>>   {
+>> -	struct kvm_vcpu *vcpu = kvm_pmc_to_vcpu(pmc);
+>> +	struct kvm_pmc *pmc = *kvm_vcpu_idx_to_pmc(vcpu, idx);
+>>   	u64 counter, reg, enabled, running;
+>> +	unsigned int i;
+>>   
+>> -	reg = counter_index_to_reg(pmc->idx);
+>> +	reg = counter_index_to_reg(idx);
+>>   	counter = __vcpu_sys_reg(vcpu, reg);
+>>   
+>>   	/*
+>>   	 * The real counter value is equal to the value of counter register plus
+>>   	 * the value perf event counts.
+>>   	 */
+>> -	if (pmc->perf_event)
+>> -		counter += perf_event_read_value(pmc->perf_event, &enabled,
+>> -						 &running);
+>> +	if (pmc)
+>> +		for (i = 0; i < pmc->nr_perf_events; i++)
+>> +			counter += perf_event_read_value(pmc->perf_events[i],
+>> +							 &enabled, &running);
+> 
+> I'm concerned that this array of events concept you're introducing is
+> going to be error-prone. An approach that reallocates a new PMU event in
+> the case of a vCPU migrating to a new PMU implementation would be
+> desirable.
 
-Hello,
+I avoided allocation at migration because I was worried with disabled 
+preemption. perf_event_create_kernel_counter() internally takes a mutex 
+so it cannot be used if preemption is disabled.
 
-I've been working on this already and a different approach
-with the Kconfig ARCH_DEFER_KASAN has been proposed.
+I wonder if it is guaranteed that kvm_arch_vcpu_load() executes with 
+preemption. If so, I can add a hook there to call 
+perf_event_create_kernel_counter().
 
-Please see v4 thread.
-https://lore.kernel.org/all/20250805142622.560992-1-snovitoll@gmail.com/
+> 
+>> +static void reset_sample_period(struct perf_event *perf_event)
+>> +{
+>> +	struct kvm_pmc **pmc = perf_event->overflow_handler_context;
+>> +	struct kvm_vcpu *vcpu = kvm_pmc_to_vcpu(pmc);
+>> +	struct arm_pmu *cpu_pmu = to_arm_pmu(perf_event->pmu);
+>> +	u64 period;
+>> +
+>> +	cpu_pmu->pmu.stop(perf_event, PERF_EF_UPDATE);
+>> +
+>> +	/*
+>> +	 * Reset the sample period to the architectural limit,
+>> +	 * i.e. the point where the counter overflows.
+>> +	 */
+>> +	period = compute_period(pmc, kvm_pmu_get_pmc_value(vcpu, (*pmc)->idx));
+>> +
+>> +	local64_set(&perf_event->hw.period_left, 0);
+>> +	perf_event->attr.sample_period = period;
+>> +	perf_event->hw.sample_period = period;
+>> +
+>> +	cpu_pmu->pmu.start(perf_event, PERF_EF_RELOAD);
+>> +}
+> 
+> No, we can't start calling into the internal driver interfaces. The fact
+> that we have a pointer to the PMU is an ugly hack and shouldn't be used
+> like this.
 
-It also covers the printing in a single KASAN codebase, instead of
-printing "KASAN intiilaized" in arch/* code.
-Also covers the enabling KASAN via kasan_enable() for all 3 modes.
+This function was extracted from kvm_pmu_perf_overflow() and is not a 
+new addition (which should have been clear if I would have split the 
+patch as you noted).
 
-It's up to KASAN maintainers to choose either version.
-I just need the confirmation now if I should proceed with v5,
-or your version if it covers all arch and cases should be picked up.
+I thought of replacing it with perf_event_period(), but there is a 
+catch: it returns -EINVAL if the 63th bit of the sample period number is 
+set. Perhaps we can just specify ((1ULL << 63) - 1) if the sample period 
+is going to be so long, but I conservatively avoided that. I can change 
+it if you prefer that way or have an alternative idea.
 
-Thanks
+> 
+>> @@ -725,8 +729,8 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
+>>   	attr.type = arm_pmu->pmu.type;
+>>   	attr.size = sizeof(attr);
+>>   	attr.pinned = 1;
+>> -	attr.disabled = !kvm_pmu_counter_is_enabled(pmc);
+>> -	attr.exclude_user = !kvm_pmc_counts_at_el0(pmc);
+>> +	attr.disabled = !kvm_pmu_counter_is_enabled(vcpu, (*pmc)->idx);
+>> +	attr.exclude_user = !kvm_pmc_counts_at_el0(vcpu, (*pmc)->idx);
+>>   	attr.exclude_hv = 1; /* Don't count EL2 events */
+>>   	attr.exclude_host = 1; /* Don't count host events */
+>>   	attr.config = eventsel;
+> 
+> Can we just special-case the fixed CPU cycle counter to use
+> PERF_TYPE_HARDWARE / PERF_COUNT_HW_CPU_CYCLES? That _should_ have the
+> intended effect of opening an event on the PMU for this CPU.
 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  include/linux/kasan-enabled.h | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
->
-> diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.=
-h
-> index 32f2d19f599f..b5857e15ef14 100644
-> --- a/include/linux/kasan-enabled.h
-> +++ b/include/linux/kasan-enabled.h
-> @@ -8,30 +8,21 @@ extern bool kasan_arg_disabled;
->
->  DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
->
-> -#ifdef CONFIG_KASAN_HW_TAGS
-> -
->  static __always_inline bool kasan_enabled(void)
->  {
->         return static_branch_likely(&kasan_flag_enabled);
->  }
->
-> +#ifdef CONFIG_KASAN_HW_TAGS
->  static inline bool kasan_hw_tags_enabled(void)
->  {
->         return kasan_enabled();
->  }
-> -
->  #else /* CONFIG_KASAN_HW_TAGS */
-> -
-> -static inline bool kasan_enabled(void)
-> -{
-> -       return IS_ENABLED(CONFIG_KASAN);
-> -}
-> -
->  static inline bool kasan_hw_tags_enabled(void)
->  {
->         return false;
->  }
-> -
->  #endif /* CONFIG_KASAN_HW_TAGS */
->
->  #endif /* LINUX_KASAN_ENABLED_H */
-> --
-> 2.41.0
->
->
+I have an impression that perhaps this emulation can be more generic by 
+converting eventsel to PERF_COUNT_HW_* numbers with armv8_pmuv3_perf_map 
+in drivers/perf/arm_pmuv3.c, but it is not in scope of this change. The 
+current code is sufficient for now.
+
+> 
+>> +	/*
+>> +	 * If we have a filter in place and that the event isn't allowed, do
+>> +	 * not install a perf event either.
+>> +	 */
+>> +	if (vcpu->kvm->arch.pmu_filter &&
+>> +	    !test_bit(eventsel, vcpu->kvm->arch.pmu_filter))
+>> +		return;
+>> +
+>> +	if (arm_pmu) {
+>> +		*pmc = kvm_pmu_alloc_pmc(idx, 1);
+>> +		if (!*pmc)
+>> +			goto err;
+>> +
+>> +		kvm_pmu_create_perf_event(pmc, arm_pmu, eventsel);
+>> +	} else {
+>> +		guard(mutex)(&arm_pmus_lock);
+> 
+> This is a system-wide lock, the need for which is eliminated if you go
+> for the reallocation approach I mention.
+> 
+>> +static int kvm_arm_pmu_v3_set_pmu_composition(struct kvm_vcpu *vcpu)
+>> +{
+>> +	struct kvm *kvm = vcpu->kvm;
+>> +	struct arm_pmu_entry *entry;
+>> +	struct arm_pmu *arm_pmu;
+>> +
+>> +	lockdep_assert_held(&kvm->arch.config_lock);
+>> +
+>> +	if (kvm_vm_has_ran_once(kvm) ||
+>> +	    (kvm->arch.pmu_filter && !kvm->arch.nr_composed_host_pmus))
+>> +		return -EBUSY;
+> 
+> I'm not sure there's much value in preventing the user from configuring
+> the PMU event filter. Even in the case of the fixed CPU cycle counter we
+> allow userspace to filter the event.
+
+It is possible to configure the PMU event filter, but it needs to be 
+done after setting the attribute. This behavior is aligned with 
+KVM_ARM_VCPU_PMU_V3_SET_PMU.
+
+> 
+> It is much more important to have mutual exclusion between this UAPI and
+> userspace explicitly selecting a PMU implementation.
+
+They are mutually exclusive and the latest configuration takes effect.
+
+If you set SET_PMU after COMPOSITION, SET_PMU will take effect.
+If you set COMPOSITION after SET_PMU, COMPOSITION will take effect.
+
+I'll note that in the documentation.
+
+> 
+>> @@ -1223,6 +1328,8 @@ int kvm_arm_pmu_v3_set_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr)
+>>   
+>>   		return kvm_arm_pmu_v3_set_nr_counters(vcpu, n);
+>>   	}
+>> +	case KVM_ARM_VCPU_PMU_V3_COMPOSITION:
+>> +		return kvm_arm_pmu_v3_set_pmu_composition(vcpu);
+> 
+> I'd prefer naming this something like 'KVM_ARM_VCPU_PMU_V3_FIXED_COUNTERS_ONLY'.
+> We will have the fixed instruction counter eventually which is another
+> event we could potentially provide system-wide.
+
+The design decision to expose the cycle counter is driven by the 
+motivation to satisfy FEAT_PMU for the guest rather than the host 
+capability.
+
+When we implement FEAT_PMUv3_ICNTR in the future, I think we will need 
+to add KVM_ARM_VCPU_PMU_V3_COMPOSITION_ICNTR or something. The resultig 
+emulated PMU will work only on host CPUs that have instruction counters; 
+a host CPU may lack one because it doesn't implement FEAT_PMUv3_ICNTR or 
+has a third-party PMU like apple-m1-cpu-pmu (this particular PMU has an 
+instruction counter fortunately).
+
+Regards,
+Akihiko Odaki
 
