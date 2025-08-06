@@ -1,247 +1,263 @@
-Return-Path: <linux-kernel+bounces-758147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4EDB1CB9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:05:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDE5B1CBA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C2D62789B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4FB18C5367
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06421B960;
-	Wed,  6 Aug 2025 18:05:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D671990A7
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EAC1F63F9;
+	Wed,  6 Aug 2025 18:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y7LOpm7S"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA431B960
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754503514; cv=none; b=rJmsp3qdP2gn8DFD/e/143hhTV5QuKUGbhRuSA1mJ3xrqp5q8vxwXpesRCTrNtIozC2C08TeM3lQBTnIIYKua1k52aKoT/tYlo5wvhuZsW5CDdW3nbiAXoBwO5VifOUyLDjB1VXDPT0s1vebN0priXYbux/YTRqfQlKw+LKCRsM=
+	t=1754503620; cv=none; b=HLDbM6DFZNkoQHSHTH2y+M5exz7TSG5LvHd56mbrybMpDP5p3lyFA3vNiepmRcpWHPlRJfHNOZ4YUksU5164NmJZZlhZwqELio1Yxfxl3ofS5MIL+42sk7jdcmpvJ/6jUL3VJEp3Dkz86tLPJyfP1GlnRmEXVRLv/1BAn5TPMD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754503514; c=relaxed/simple;
-	bh=0odYW7NrJf/7bf5B9VU2KsGbVt4XzOOmDlQQWtZXDFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lc41MT74ngTMQjQR296YVGgi91NZBUM2dPDL+Ow0w5nmYxPQRgmtyyW6Fr4Se73muW6QRV+6WG+8xU6fSjgxcQ//UjtYo6DKO0AbDgIddZqweBVHuqIXR1egnc1n25sAHz99LON+lXu+QsMBuYLNbGRkdhisDpKKtNY4drAb1nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071A6176C;
-	Wed,  6 Aug 2025 11:05:04 -0700 (PDT)
-Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDF313F738;
-	Wed,  6 Aug 2025 11:05:08 -0700 (PDT)
-Message-ID: <8860287d-3f3c-4079-b72a-63e8569e8f9a@arm.com>
-Date: Wed, 6 Aug 2025 19:05:07 +0100
+	s=arc-20240116; t=1754503620; c=relaxed/simple;
+	bh=NlUNT/FYaSKabfIetxwRs86eAKwLyl3xNP7yv81IoQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHCogOIS/CyJggEIQYFwu+MTAQg4nFc4B8XVAIH0QtYuC+sdHXtFamflmLtoLi4DH2kKdgI30F6SDfKevhv05W1xw21YFiurlPABgkXiYtJVHXem53E6OmBhXb4+4j2IbGb2k73HgVIugqP279W7nFc9rcxwmeDmXzWUt60OizE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y7LOpm7S; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71bd9e38af7so1110477b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754503618; x=1755108418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HQaJG8cyIXtb8JtDrWV4xH4gE5fz/4xlgqKKsovQNWE=;
+        b=y7LOpm7S1K6HoUGDyAeo+A4LOyKBp/7KN/o6ywY3DfnpNFY7U+fS6ZO4dJtKgK4zTH
+         BtDgXp+hAH6Tt3AC6o+ayqHBFjTT2/Sirc76TLtM8DLqYm0r/bQ6AsBwPTBZ43LpRfJ5
+         2ELMtvqv6eKTUCWRBJ7EtsRn0UIBr6vwg8T7Qact0YPKKLnvhXXWuQN2VkhjjWYIvcFE
+         +bNEz6vue57PGloWURJofevokST+TGJ234bLIWf85tWybd3GkDCg2Qdm474irZFtt1r7
+         fPCHkt/rNCnuCXMydXCGk4KNS6EkrW4Jlki8JZ8OGXX+WlKCDjfjsZqIEjs61CcFyjvN
+         2dcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754503618; x=1755108418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HQaJG8cyIXtb8JtDrWV4xH4gE5fz/4xlgqKKsovQNWE=;
+        b=O5DoCWzpDJPv/uUpMzXXGj26Fm42r8UO1xkbiQXsw2xEBRLqRQAckEurq80FDXNnC4
+         SSqoIYN6flTrip3w1J5VDFH2sDjOXEg4TLEtgIINbHWYOuJ+1G36pEYoWZPlaaFd7Oey
+         HiIr/IvueppA4FKIApQ4rHZn55/VxEaIseLgb1oahVESSOpYFpnnc5gpSatWBoN1yal+
+         5sBYIR33LAbU7GPb827u7V8N9KFhWJr8RTuwb8DVXfRbTiQxteF6tFc8SgIo06Ho+xnp
+         XfgaNBXHKsXU6chMZwSJspe08ur88SRfg3hI9Mqo+N2cJME/9Bxwm7QVOyt8JUCoMP+1
+         mfxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLxqJUZRY6pwT+EHFKakPFEkGBh1CTTO3saI4TzgLdSFJ4JGxrqLgyiNI4MWZbpYpNGKkSAPh+Ki/0RUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2RFdFXCnoJsLle7FwQN1N/hIeC1Phvi5DNq2f6KuO5KqlvJaV
+	MZ3oqiXi9urP1AuTBjHvDP3RdMOu3SzGeYY+kfRPuySSFO5NM7rTlNnQDRl843J1zWH+nGBQdJ2
+	WtXBS7rRrEQ4P5a6VJPS7nKvh4mpTesqnXKkpPhcd9w==
+X-Gm-Gg: ASbGncu1YQ5ip9qfOxSEcv0Y2SLgfBGO9ZvanFJ4xGZBu2i3l4z5msfFeqlYqfBmGjm
+	GBFRrzOc5GUOne5O4dhRDL2lGLCwjRNrsNsHSfcv7POe5+idrf0t9+dFHBmoyIQDaOGlHXW8B7T
+	MtC5bnpsSp6iMYBabxdx1EteodYjjMD1GSjhZeW4q+lHk7OfeIbsRQk0lj9xcsG5x7/7XAgmcPy
+	QMOxw==
+X-Google-Smtp-Source: AGHT+IHawplYNXt0Xk96mNtSAEAp52yUSKjVefDzMRnwkFSkTZcoaKk+ZYugied/egHWgCi9PaKRpIxtR3J4UeIUxyo=
+X-Received: by 2002:a05:690c:7202:b0:71b:69fd:2571 with SMTP id
+ 00721157ae682-71bdbcfb84fmr3438637b3.32.1754503617394; Wed, 06 Aug 2025
+ 11:06:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 16/36] arm_mpam: Add MPAM MSC register layout
- definitions
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-17-james.morse@arm.com>
- <45acead9-d734-42b2-a1cc-a565dbf5fe60@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <45acead9-d734-42b2-a1cc-a565dbf5fe60@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20250806070030epcas2p24cc79e6dd3e505afd980fc05ee9e4f19@epcas2p2.samsung.com>
+ <20250806065514.3688485-1-sw617.shin@samsung.com> <20250806065514.3688485-4-sw617.shin@samsung.com>
+In-Reply-To: <20250806065514.3688485-4-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 6 Aug 2025 13:06:46 -0500
+X-Gm-Features: Ac12FXzzprozXvP76pSORFyQ-L_jvtIZlH-PiTmfaMmvcTJCzW2IyjQ268pBDg4
+Message-ID: <CAPLW+4n=H3cPe=XqMfUJKqpPJdot9t0j_kBMkNY3W+x9buokTg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] watchdog: s3c2410_wdt: Increase max timeout value
+ of watchdog
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, dongil01.park@samsung.com, khwan.seo@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+On Wed, Aug 6, 2025 at 2:00=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.co=
+m> wrote:
+>
+> Increase max_timeout value from 55s to 3665038s (1018h 3min 58s) with
+> 38400000 frequency system if the system has 32-bit WTCNT register.
+>
+> cat /sys/class/watchdog/watchdog0/max_timeout
+> 3665038
+>
+> [    0.330082] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=3D1099=
+511400000, timeout=3D3665038, freq=3D300000
+> [    0.330087] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3D36=
+65038, divisor=3D256, count=3D1099511400000 (fffffc87)
+> [    0.330127] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
+> [    0.330134] s3c2410-wdt 10060000.watchdog_cl0: Starting watchdog: coun=
+t=3D0xfffffc87, wtcon=3D0001ff39
+> [    0.330319] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset =
+enabled, irq disabled
+>
+> If the system has a 32-bit WTCNT, add QUIRK_HAS_32BIT_CNT to its quirk fl=
+ags,
+> and it will operate with a 32-bit counter. If not, it will operate with a=
+ 16-bit
+> counter like in the previous version.
+>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++++++-------
+>  1 file changed, 19 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 0a4c0ab2a3d6..673ab6768688 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -34,7 +34,8 @@
+>  #define S3C2410_WTCNT          0x08
+>  #define S3C2410_WTCLRINT       0x0c
+>
+> -#define S3C2410_WTCNT_MAXCNT   0xffff
+> +#define S3C2410_WTCNT_MAXCNT_16        0xffff
+> +#define S3C2410_WTCNT_MAXCNT_32        0xffffffff
+>
+>  #define S3C2410_WTCON_RSTEN            BIT(0)
+>  #define S3C2410_WTCON_INTEN            BIT(2)
+> @@ -124,6 +125,10 @@
+>   * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting th=
+e
+>   * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debu=
+g mode.
+>   * Debug mode is determined by the DBGACK CPU signal.
+> + *
+> + * %QUIRK_HAS_32BIT_CNT: WTDAT and WTCNT are 32-bit registers. With thes=
+e
+> + * 32-bit registers, larger values will be set, which means that larger =
+timeouts
+> + * value can be set.
+>   */
+>  #define QUIRK_HAS_WTCLRINT_REG                 BIT(0)
+>  #define QUIRK_HAS_PMU_MASK_RESET               BIT(1)
+> @@ -131,6 +136,7 @@
+>  #define QUIRK_HAS_PMU_AUTO_DISABLE             BIT(3)
+>  #define QUIRK_HAS_PMU_CNT_EN                   BIT(4)
+>  #define QUIRK_HAS_DBGACK_BIT                   BIT(5)
+> +#define QUIRK_HAS_32BIT_CNT                    BIT(6)
+>
+>  /* These quirks require that we have a PMU register map */
+>  #define QUIRKS_HAVE_PMUREG \
+> @@ -199,6 +205,7 @@ struct s3c2410_wdt {
+>         struct notifier_block   freq_transition;
+>         const struct s3c2410_wdt_variant *drv_data;
+>         struct regmap *pmureg;
+> +       u32 max_cnt;
+>  };
+>
+>  static const struct s3c2410_wdt_variant drv_data_s3c2410 =3D {
+> @@ -412,7 +419,7 @@ static inline unsigned int s3c2410wdt_max_timeout(str=
+uct s3c2410_wdt *wdt)
+>  {
+>         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+>         //(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV =3D 0x8=
+000
+> -       u64 t_max =3D div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
+> +       u64 t_max =3D div64_ul((u64)wdt->max_cnt * 0x8000, freq);
+>
 
-On 24/07/2025 15:02, Ben Horgan wrote:
-> On 11/07/2025 19:36, James Morse wrote:
->> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
->> (MSCs) with an identity/configuration page.
->>
->> Add the definitions for these registers as offset within the page(s).
+If you rework the hard-coded 0x8000 value w.r.t. my comments for the
+previous patch, this should be changed accordingly too. So either:
 
->> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/
->> mpam_internal.h
->> index d49bb884b433..9110c171d9d2 100644
->> --- a/drivers/platform/arm64/mpam/mpam_internal.h
->> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
->> @@ -150,4 +150,272 @@ extern struct list_head mpam_classes;
->>   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->>                      cpumask_t *affinity);
->>   +/*
->> + * MPAM MSCs have the following register layout. See:
->> + * Arm Architecture Reference Manual Supplement - Memory System Resource
->> + * Partitioning and Monitoring (MPAM), for Armv8-A. DDI 0598A.a
+    u32 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV=
+;
+    u64 t_max =3D div64_ul((u64)wdt->max_cnt * div_max, freq);
 
-> I've been checking this against https://developer.arm.com/documentation/ihi0099/latest/ as
-> that looks to be the current document although hopefully the contents are non-
-> contradictory.
+...or...
 
-Yeah, A.a was the first release, they then split that document up and the CPU half got
-consumed by the arm-arm. (pacman, but in pdf form).
-I've updated this comment to point to the more modern 'system component specification',
-aka "all the mmio stuff".
+    u32 cnt_max =3D (u64)wdt->max_cnt * (S3C2410_WTCON_PRESCALE_MAX + 1) *
+                  S3C2410_WTCON_MAXDIV;
+    u64 t_max =3D div64_ul(cnt_max, freq);
 
+Apart from that, looks good to me:
 
->> +/* MPAMF_IDR - MPAM features ID register */
->> +#define MPAMF_IDR_PARTID_MAX            GENMASK(15, 0)
->> +#define MPAMF_IDR_PMG_MAX               GENMASK(23, 16)
->> +#define MPAMF_IDR_HAS_CCAP_PART         BIT(24)
->> +#define MPAMF_IDR_HAS_CPOR_PART         BIT(25)
->> +#define MPAMF_IDR_HAS_MBW_PART          BIT(26)
->> +#define MPAMF_IDR_HAS_PRI_PART          BIT(27)
->> +#define MPAMF_IDR_HAS_EXT               BIT(28)
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> MPAMF_IDR_EXT. The field name is ext rather than has_ext.
-
-Making it the odd one out!
-I'll change this in the hope that one day this sort of thing can be generated.
-
-
->> +#define MPAMF_IDR_HAS_IMPL_IDR          BIT(29)
->> +#define MPAMF_IDR_HAS_MSMON             BIT(30)
->> +#define MPAMF_IDR_HAS_PARTID_NRW        BIT(31)
->> +#define MPAMF_IDR_HAS_RIS               BIT(32)
->> +#define MPAMF_IDR_HAS_EXT_ESR           BIT(38)
-
-> MPAMF_IDR_HAS_EXTD_ESR. Missing D.
-
-Fixed.
-
-
->> +#define MPAMF_IDR_HAS_ESR     BIT(39)
->> +#define MPAMF_IDR_RIS_MAX               GENMASK(59, 56)
->> +
->> +/* MPAMF_MSMON_IDR - MPAM performance monitoring ID register */
->> +#define MPAMF_MSMON_IDR_MSMON_CSU               BIT(16)
->> +#define MPAMF_MSMON_IDR_MSMON_MBWU              BIT(17)
->> +#define MPAMF_MSMON_IDR_HAS_LOCAL_CAPT_EVNT     BIT(31)
->> +
->> +/* MPAMF_CPOR_IDR - MPAM features cache portion partitioning ID register */
->> +#define MPAMF_CPOR_IDR_CPBM_WD                  GENMASK(15, 0)
->> +
->> +/* MPAMF_CCAP_IDR - MPAM features cache capacity partitioning ID register */
->> +#define MPAMF_CCAP_IDR_HAS_CMAX_SOFTLIM         BIT(31)
->> +#define MPAMF_CCAP_IDR_NO_CMAX                  BIT(30)
->> +#define MPAMF_CCAP_IDR_HAS_CMIN                 BIT(29)
->> +#define MPAMF_CCAP_IDR_HAS_CASSOC               BIT(28)
->> +#define MPAMF_CCAP_IDR_CASSOC_WD                GENMASK(12, 8)
->> +#define MPAMF_CCAP_IDR_CMAX_WD                  GENMASK(5, 0)
-
-> nit: Field ordering differs from the other registers.
-
-Fixed,
-
-[..]
-
->> +/* MPAMF_ESR - MPAM Error Status Register */
-
->> +#define MPAMF_ESR_PARTID_OR_MON GENMASK(15, 0)
-
-Probably a better name but PARTID_MON is in the specification.
-
-Fixed,
-
-[..]
-
->> +/*
->> + * MSMON_CFG_CSU_CTL - Memory system performance monitor configure cache storage
->> + *                    usage monitor control register
->> + * MSMON_CFG_MBWU_CTL - Memory system performance monitor configure memory
->> + *                     bandwidth usage monitor control register
->> + */
->> +#define MSMON_CFG_x_CTL_TYPE           GENMASK(7, 0)
->> +#define MSMON_CFG_x_CTL_OFLOW_STATUS_L BIT(15)
-
-> No OFLOW_STATUS_L for csu.
-
-You're suggesting there shouldn't be an 'x' in the middle? Sure.
-
-Overflow is nonsense for the CSU 'counters' as they don't count up, so can't overflow.
-(and yet they have an overflow status bit!)
-
-
->> +#define MSMON_CFG_x_CTL_MATCH_PARTID   BIT(16)
->> +#define MSMON_CFG_x_CTL_MATCH_PMG      BIT(17)
->> +#define MSMON_CFG_x_CTL_SCLEN          BIT(19)
-
->> +#define MSMON_CFG_x_CTL_SUBTYPE        GENMASK(23, 20)
-> GENMASK(22,20)> +#define MSMON_CFG_x_CTL_OFLOW_FRZ      BIT(24)
->> +#define MSMON_CFG_x_CTL_OFLOW_INTR     BIT(25)
-
-(Are you using Outlook?)
-
-
->> +#define MSMON_CFG_x_CTL_OFLOW_STATUS   BIT(26)
->> +#define MSMON_CFG_x_CTL_CAPT_RESET     BIT(27)
->> +#define MSMON_CFG_x_CTL_CAPT_EVNT      GENMASK(30, 28)
->> +#define MSMON_CFG_x_CTL_EN             BIT(31)
->> +
->> +#define MSMON_CFG_MBWU_CTL_TYPE_MBWU            0x42
->> +#define MSMON_CFG_MBWU_CTL_TYPE_CSU            0x43
->> +
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_NONE                 0
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_READ                 1
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_WRITE                2
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_BOTH                 3
-
-> I'm not sure where these come from? SUBTYPE is marked unused in the spec. Remove?> +
-
-Looks like an earlier version of RWBW feature. I'll rip these out.
-
-
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_MAX                  3
->> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_MASK                 0x3
-
-> Remove for same reason.
-
-
->> +
->> +/*
->> + * MSMON_CFG_MBWU_FLT - Memory system performance monitor configure memory
->> + *                     bandwidth usage monitor filter register
->> + */
->> +#define MSMON_CFG_MBWU_FLT_PARTID               GENMASK(15, 0)
->> +#define MSMON_CFG_MBWU_FLT_PMG                  GENMASK(23, 16)
->> +#define MSMON_CFG_MBWU_FLT_RWBW                 GENMASK(31, 30)
->> +
->> +/*
->> + * MSMON_CSU - Memory system performance monitor cache storage usage monitor
->> + *            register
->> + * MSMON_CSU_CAPTURE -  Memory system performance monitor cache storage usage
->> + *                     capture register
->> + * MSMON_MBWU  - Memory system performance monitor memory bandwidth usage
->> + *               monitor register
->> + * MSMON_MBWU_CAPTURE - Memory system performance monitor memory bandwidth usage
->> + *                     capture register
->> + */
->> +#define MSMON___VALUE          GENMASK(30, 0)
->> +#define MSMON___NRDY           BIT(31)
->> +#define MSMON_MBWU_L_VALUE     GENMASK(62, 0)
-
-> This gets renamed in the series. I think all registers layout definitions can be added in
-> this commit.
-
-Yup, I've pulled that hunk in. (and spotted there is another)
-Adding them all here was the plan. (and there will be a few that don't get used)
-
-
-Thanks for going through all those!
-
-James
+>         if (t_max > UINT_MAX)
+>                 t_max =3D UINT_MAX;
+> @@ -571,7 +578,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>  {
+>         struct s3c2410_wdt *wdt =3D watchdog_get_drvdata(wdd);
+>         unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> -       unsigned int count;
+> +       unsigned long count;
+>         unsigned int divisor =3D 1;
+>         unsigned long wtcon;
+>
+> @@ -581,7 +588,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>         freq =3D DIV_ROUND_UP(freq, 128);
+>         count =3D timeout * freq;
+>
+> -       dev_dbg(wdt->dev, "Heartbeat: count=3D%d, timeout=3D%d, freq=3D%l=
+u\n",
+> +       dev_dbg(wdt->dev, "Heartbeat: count=3D%lu, timeout=3D%d, freq=3D%=
+lu\n",
+>                 count, timeout, freq);
+>
+>         /* if the count is bigger than the watchdog register,
+> @@ -589,8 +596,8 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>            actually make this value
+>         */
+>
+> -       if (count >=3D 0x10000) {
+> -               divisor =3D DIV_ROUND_UP(count, 0xffff);
+> +       if (count > wdt->max_cnt) {
+> +               divisor =3D DIV_ROUND_UP(count, wdt->max_cnt);
+>
+>                 if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
+>                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
+);
+> @@ -598,7 +605,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>                 }
+>         }
+>
+> -       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
+=3D%d (%08x)\n",
+> +       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
+=3D%lu (%08lx)\n",
+>                 timeout, divisor, count, DIV_ROUND_UP(count, divisor));
+>
+>         count =3D DIV_ROUND_UP(count, divisor);
+> @@ -806,6 +813,11 @@ static int s3c2410wdt_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(wdt->src_clk))
+>                 return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed =
+to get source clock\n");
+>
+> +       if (wdt->drv_data->quirks & QUIRK_HAS_32BIT_CNT)
+> +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
+> +       else
+> +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_16;
+> +
+>         wdt->wdt_device.min_timeout =3D 1;
+>         wdt->wdt_device.max_timeout =3D s3c2410wdt_max_timeout(wdt);
+>
+> --
+> 2.25.1
+>
 
