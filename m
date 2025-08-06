@@ -1,248 +1,126 @@
-Return-Path: <linux-kernel+bounces-757298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB0AB1C073
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:32:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A5FB1C077
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F70F182D21
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1943B9FC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA769202F7B;
-	Wed,  6 Aug 2025 06:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5699E1F4CB7;
+	Wed,  6 Aug 2025 06:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="TH8XNkpu"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013065.outbound.protection.outlook.com [40.107.44.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGLYSOKC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8CE7346F;
-	Wed,  6 Aug 2025 06:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754461930; cv=fail; b=ZYmzyUjQT1UXGxbXr8psl9gR2t5+9xfS0hfQlKppqCCnOuf7+V8geZAFKSCqLwpwgmhUcuS1Cn1QBnltP0qxsbHbcrNkf8U+x/QDo3g8S20BtVsVRbnpu4Uj7v6PVki6dagI0kRLl7FsUexWDPbUlwRzmNxskfVXySCtbEOIvoo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754461930; c=relaxed/simple;
-	bh=Ewzq3b2SqiOfKoT/ZuaN9IMa3CUWkRbE97AqzxSF9k4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aKqcwzkE+YrH3hT9PGrafINYBWtzk+LnLyJxY1GOXoM3q+FM6TE+9Cc6rTaK66z4C+uXeC8Jm26jtyCfNHUiLkMun8lDy9FFPN1lI4MlWOiZ9Vg7m4CDAtxi+QxzZRoq1jClZhSLCyM/EStgIR7XoVqQPLNgHmbP2FPz9KHslb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=TH8XNkpu; arc=fail smtp.client-ip=40.107.44.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CGWTuSKAw4lophcIjEYOFnU8vGU/5QEqUrcCj7YM/ZHalVFcn/aRm0EG2KBYqMXKj/lvjKwrCp2IBJrUXrvPdDDb0/FtuRkv1R2XyDVjTZsUplhK1kLV+hXgmv1ajLGxmWODVP8hnuj/gw5J5wOvuj0UlC06WLINWptKIcxiuJmsP95vJ0iGO4ZJeGbSGabT/1nOQlgrXGGWg/qgSJKtIQxiPmqA0IUEBWxG5UbaoCeByt9vW1seVWKKHSNl3jtnf9Xpl1LTZjQ2oCboJqTM2mNxMTwtHvOoh6J13MFyApWxAoq/xozCDnxb5yNqW7yEG218iB0vgvEcDxRoKlr/Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hNHjWskjiPr0A1Q5ql2puxmqii3H9/Xins+B5SdZ0XM=;
- b=wTVUcgPq1C7LQYQ/4RToI1wSakggtbh3wev2S23omcpcts7GCSXN5wR+jm6AibIiG9YiDwSlaY7svLEqDRBgiwXJr3EhTLvc4ajbSLNShL/UG3IZsNMSG3oBqfsFt3Rp462ty47HaFTJ1fA0MQ+ffX4ifEF/U2aoF6MJBUN77radazWDcQqIt2+U7mCaLepXgxAbY/1GLhiBub3XdFT8/2OhhkAO+78xVFIhfN0wX+YAwLiYgLsPef/4WdakpF4oizfrMZ87JAfQRKF5r+zUNbeU6NJMWDEbcAXTOKBBN77CBooBh9kkY3OJV2xdYc0mqysucQ6VjbVjvWGA6DNaFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linaro.org smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hNHjWskjiPr0A1Q5ql2puxmqii3H9/Xins+B5SdZ0XM=;
- b=TH8XNkpu47KTYb+IEUdxt7O1mamfrrQiR1GFk8uMEihEuWx+fCr7WfOc1On3mUKEFtB2kjbJNrC6LoiSpYRd9jh6g+1vRosC0WsFgASLEPe2oTOTgZVOWQMQPuZZM2mEp7Hqac7J7i238ULBBhfcdKpjiemdiNznZz/bnzuZCwc=
-Received: from TY2PR0101CA0025.apcprd01.prod.exchangelabs.com
- (2603:1096:404:8000::11) by KUZPR02MB8823.apcprd02.prod.outlook.com
- (2603:1096:d10:4b::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Wed, 6 Aug
- 2025 06:32:05 +0000
-Received: from OSA0EPF000000C7.apcprd02.prod.outlook.com
- (2603:1096:404:8000:cafe::29) by TY2PR0101CA0025.outlook.office365.com
- (2603:1096:404:8000::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.21 via Frontend Transport; Wed,
- 6 Aug 2025 06:32:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- OSA0EPF000000C7.mail.protection.outlook.com (10.167.240.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9009.8 via Frontend Transport; Wed, 6 Aug 2025 06:32:04 +0000
-Received: from localhost.localdomain (172.16.40.118) by mailappw30.adc.com
- (172.16.56.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Aug
- 2025 14:32:03 +0800
-From: xupengbo <xupengbo@oppo.com>
-To: <vincent.guittot@linaro.org>
-CC: <bsegall@google.com>, <cgroups@vger.kernel.org>,
-	<dietmar.eggemann@arm.com>, <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <mgorman@suse.de>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <rostedt@goodmis.org>, <vschneid@redhat.com>,
-	<xupengbo@oppo.com>, <ziqianlu@bytedance.com>
-Subject: Re: [PATCH v2] sched/fair: Fix unfairness caused by stalled tg_load_avg_contrib when the last task migrates out.
-Date: Wed, 6 Aug 2025 14:31:58 +0800
-Message-ID: <20250806063158.25050-1-xupengbo@oppo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAKfTPtDexWX5N0jaMRqVQEnURSaPhVa6XQr_TexpU2SGU-e=9A@mail.gmail.com>
-References: <CAKfTPtDexWX5N0jaMRqVQEnURSaPhVa6XQr_TexpU2SGU-e=9A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FBB202F7B;
+	Wed,  6 Aug 2025 06:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754461962; cv=none; b=TIL22mSCAVYQLF30UnRIgXiA/pyxHhluopmLDbLqLS8wnVj+fDq2nVSZwWNkhgFzZ65+O7qU1e0iwmQhhSzUKYnk+SjpHspYp/nFxRkts8hSNVck3zia2rwRRElfzVqDNZGQkeUVSjT7StwngdsUoMxIpMwguZemvHZmQGdiKAw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754461962; c=relaxed/simple;
+	bh=jDKC/syZWU1n1ppwCNuDOAfWflzfkOXA/+26B+/ivyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CBQpiIPaS+3jZtEq30dKtFDWj7Hf+RBWcUX6hEQQ5stsSeM8k4WjtDBwChARZ9LAuk4QvA98ZzdDw8sWtjUmuwZiVjQ1ZrsSI+7urnfNYZqiZLdN3FxwUy6IbZQ0p2j7hzl4TX9tqGeNK+UyF+SneU0vH2slbxzBgWcbLJtllR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGLYSOKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B348C4CEE7;
+	Wed,  6 Aug 2025 06:32:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754461962;
+	bh=jDKC/syZWU1n1ppwCNuDOAfWflzfkOXA/+26B+/ivyc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RGLYSOKCVJNuqWxsi8c+xGOLXG+1rbBoRpeFexn5UhvAPPUtQ3xBggB5xJisGwYVe
+	 4ZJTefHP0xJ2aLCB6WExKz5jWCTka9C/aA7HabFqt+AkYwL7druUkRg4LtAJxuTNSV
+	 StiDbkQDBw1EDATElgCHwpRJcWm9dkHNt9fVNKBDSQMJvb+Y2VMcuYURJGSBVFjw4e
+	 6kH5Jsnnfc/nqCDkEmkZwEJm78QRXs3E4TEFTRokwrD5hm2glVKM2sYKIpFP8SanGp
+	 qITmI1GeiSO/tWydcjC+E9KnJrHWsS0v/3ExvoCi1CP7BoU4csHwojyPkpoo0F4ria
+	 LWDweIR4cH0sg==
+Message-ID: <f2972a86-f58d-4360-b43a-486377b101e1@kernel.org>
+Date: Wed, 6 Aug 2025 08:32:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
- (172.16.56.197)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C7:EE_|KUZPR02MB8823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b70786b-0878-4e74-fad2-08ddd4b2f5a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ry3SAZe3omE0xX3JA6xRVNM5k+Bu1QM6BMcKtzmWhOIvdsy2PXHzddIfx6zv?=
- =?us-ascii?Q?YzJJE1LSwZbRkQ2x90+bWTgBArgeiOvcTm5TMxxQQ3RxuJunsjRaZJeQEFGt?=
- =?us-ascii?Q?Im1K0sEFiAa5kmbnBAY3sch1zUegLd69pzygOdvLmqUhRvlqsST7TuOCXZFS?=
- =?us-ascii?Q?11SH5i9Rw1bW47RCryWC1MkinzdSvysljTcVmy3ggy7pCxaYFIMnUggD0qUB?=
- =?us-ascii?Q?OkN7ACYo6vTlV57XNWmSfC91+4M9+twuk1hFn30S9oNG21Iuhe+uWFdH+AoU?=
- =?us-ascii?Q?oO3jBxX5MiRhcrXaklEP/D3hXFZkts0WUbuwKGgLOtHAlXgYrtH5TXQoM65v?=
- =?us-ascii?Q?Je25xaiy94Q60kRyZ/ZULy9cp61euFb78HxpQGpSH+WbrVymkRZfFojVe68G?=
- =?us-ascii?Q?lI+jZG6QH9YWdpk27REswc5eG77UoXx+wA/909CAtiJkjrUu0LZJWlJgumAF?=
- =?us-ascii?Q?H7XYvlmlG/wNRKL3LZehBlq7Odnww1dnuWpK6WkTSlUBsoidj6iTS4wh6ctU?=
- =?us-ascii?Q?FwwSseAlACjDQaGgZfyyBZ/IBqgElquMiVK41e9nz5oX4sH37z/S8NgCLu6S?=
- =?us-ascii?Q?R2n3y2qbyFvE+nZ4XV2+ca77Dh4UZiZNTpUgEK1yO+jSXnYd3RQBn/ihgLnd?=
- =?us-ascii?Q?cJNQi0YIPwFwqMW9T+bIjQK25fyX8+LzFfseObRCWXh7xFZiXMZVUK5SuSIw?=
- =?us-ascii?Q?9lapURBE8opXI2f+FJqlDsoPnu2Tgl31s5Fsp7UIiyYvIJPTi9IGaDufGQbq?=
- =?us-ascii?Q?lj6tXSy5/Eki4ZT96eXlwV5K6o4dAUSh5omzr8gwdkCQZ0G9dmOiGZavznnr?=
- =?us-ascii?Q?biaeT31btdcMRLOvjBkDsGDdDzjjnqpYegYEtgqNBmAAyfEZZ+EFF88I370P?=
- =?us-ascii?Q?CREqMUN9zxv07p/2jCDP5lPeuLjmlIh7tOlLelbVM2RndkEIqxU3g9C7Z/6M?=
- =?us-ascii?Q?3v0aeOLdH1dKehuT/W/+4zZTk8n3MkPYPuqfKDbOyQpXWkT9yNhVc5RSXbFT?=
- =?us-ascii?Q?inKScjx3ZoCCBHjOYI03AN70gVxHmkh/9Fw3gG3tP/Uw6zY+uIXpq5WAovzm?=
- =?us-ascii?Q?I5warV4N8g5mzua9FnQUuA+OXGTH6p1y0v0uuTX2E6IsIfAf2KyGBYVqEkaF?=
- =?us-ascii?Q?V6lG3mHjuXwpuevTBaA0YH2DqsIOfW37SVLeP9WLihNf+4bG5pjA50gYmjIE?=
- =?us-ascii?Q?s4oTW51i50FMA7kNabuZ0eUrJsAe3r90uTk30N5ylqwF7dMKkmjcSCIu6UEf?=
- =?us-ascii?Q?kYJN0HR4wdu5iXLlqSI9ltRqA7pjA42cJLxM0uz7DCNdDqGSfFOURSHkqc4s?=
- =?us-ascii?Q?Z6Itq8k881aNMBbO1GD3Zm5tzCywq0g42i2DR9kg6aLqJ9ucT430HFgIeUvz?=
- =?us-ascii?Q?dyMMuyOli8h6PDMMIZBqBHVZcqzXSCP4TEEIfuZ+P8cXszQLYP1UiDqdeuxn?=
- =?us-ascii?Q?x2pUt+7MV2qGljbSlNVL/L89kT95ZUQ+bryClG/ta7yQ1M6CD3uuHw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 06:32:04.5130
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b70786b-0878-4e74-fad2-08ddd4b2f5a6
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000C7.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR02MB8823
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,ina780a: Add INA780 device
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806005127.542298-1-chris.packham@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250806005127.542298-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> >On Tue, 5 Aug 2025 at 16:42, xupengbo <xupengbo@oppo.com> wrote:
-> >
-> > When a task is migrated out, there is a probability that the tg->load_avg
-> > value will become abnormal. The reason is as follows.
-> >
-> > 1. Due to the 1ms update period limitation in update_tg_load_avg(), there
-> > is a possibility that the reduced load_avg is not updated to tg->load_avg
-> > when a task migrates out.
-> > 2. Even though __update_blocked_fair() traverses the leaf_cfs_rq_list and
-> > calls update_tg_load_avg() for cfs_rqs that are not fully decayed, the key
-> > function cfs_rq_is_decayed() does not check whether
-> > cfs->tg_load_avg_contrib is null. Consequently, in some cases,
-> > __update_blocked_fair() removes cfs_rqs whose avg.load_avg has not been
-> > updated to tg->load_avg.
-> >
-> > I added a check of cfs_rq->tg_load_avg_contrib in cfs_rq_is_decayed(),
-> > which blocks the case (2.) mentioned above. I follow the condition in
-> > update_tg_load_avg() instead of directly checking if
-> > cfs_rq->tg_load_avg_contrib is null. I think it's necessary to keep the
-> > condition consistent in both places, otherwise unexpected problems may
-> > occur.
-> >
-> > Thanks for your comments,
-> > Xu Pengbo
-> >
-> > Fixes: 1528c661c24b ("sched/fair: Ratelimit update to tg->load_avg")
-> > Signed-off-by: xupengbo <xupengbo@oppo.com>
-> > ---
-> > Changes:
-> > v1 -> v2:
-> > - Another option to fix the bug. Check cfs_rq->tg_load_avg_contrib in
-> > cfs_rq_is_decayed() to avoid early removal from the leaf_cfs_rq_list.
-> > - Link to v1 : https://lore.kernel.org/cgroups/20250804130326.57523-1-xupengbo@oppo.com/T/#u
-> >
-> >  kernel/sched/fair.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index b173a059315c..a35083a2d006 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -4062,6 +4062,11 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
-> >         if (child_cfs_rq_on_list(cfs_rq))
-> >                 return false;
-> >
-> > +       long delta = cfs_rq->avg.load_avg - cfs_rq->tg_load_avg_contrib;
-> > +
-> > +       if (abs(delta) > cfs_rq->tg_load_avg_contrib / 64)
-> 
->I don't understand why you use the above condition instead of if
->(!cfs_rq->tg_load_avg_contrib). Can you elaborate ?
-> 
->strictly speaking we want to keep the cfs_rq in the list if
->(cfs_rq->tg_load_avg_contrib != cfs_rq->avg.load_avg) and
->cfs_rq->avg.load_avg == 0 when we test this condition
+On 06/08/2025 02:51, Chris Packham wrote:
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,ina780a
+> +      - ti,ina780b
+> +
+> +  reg:
+> +    maxItems: 1
 
 
-I use this condition primarily based on the function update_tg_load_avg().
-I want to absolutely avoid a situation where cfs_rq_is_decay() returns 
-false but update_tg_load_avg() cannot update its value due to the delta 
-check, which may cause the cfs_rq to remain on the list permanently. 
-Honestly, I am not sure if this will happen, so I took this conservative 
-approach. 
+This looks a bit incomplete. Where is a supply? No shunt resistor
+choice? No other properties from ina2xx apply?
 
-In fact, in the second if-condition of cfs_rq_is_decay(), the comment in 
-the load_avg_is_decayed() function states:"_avg must be null when _sum is 
-null because _avg = _sum / divider". Therefore, when we check this newly 
-added condition, cfs_rq->avg.load_avg should already be 0, right?
 
-After reading your comments, I carefully considered the differences 
-between these two approaches. Here, my condition is similar
-to cfs_rq->tg_load_avg_contrib != cfs_rq->avg.load_avg but weaker. In 
-fact, when cfs_rq->avg.load_avg is already 0, 
-abs(delta) > cfs_rq->tg_load_avg_contrib / 64 is equivalent to 
-cfs_rq->tg_load_avg_contrib > cfs_rq->tg_load_avg_contrib / 64,
-Further reasoning leads to the condition cfs_rq->tg_load_avg_contrib > 0.
-However if cfs_rq->avg.load_avg is not necessarily 0 at this point, then
-the condition you propose is obviously more accurate, simpler than the
-delta check, and requires fewer calculations.
 
-I think our perspectives differ. From the perspective of 
-update_tg_load_avg(), the semantics of this condition are as follows: if
-there is no 1ms update limit, and update_tg_load_avg() can continue 
-updating after checking the delta, then in cfs_rq_is_decayed() we should
-return false to keep the cfs_rq in the list for subsequent updates. As 
-mentioned in the first paragraph, this avoids that tricky situation. From
-the perspective of cfs_rq_is_decayed(), the semantics of the condition you
-proposed are that if cfs_rq->avg.load_avg is already 0, then it cannot be
-removed from the list before all load_avg are updated to tg. That makes 
-sense to me, but I still feel like there's a little bit of a risk. Am I 
-being paranoid?
-
-How do you view these two lines of thinking?
-
-It's a pleasure to discuss this with you, 
-xupengbo.
-
-> > +               return false;
-> > +
-> >         return true;
-> >  }
-> >
-> > --
-> > 2.43.0
-> >
+Best regards,
+Krzysztof
 
