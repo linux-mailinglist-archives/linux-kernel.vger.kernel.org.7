@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-757922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89A0B1C867
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79636B1C85A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C92037B3136
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65D53A4AC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF86291880;
-	Wed,  6 Aug 2025 15:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB781DF261;
+	Wed,  6 Aug 2025 15:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uk9ZeFMv"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="scYpNwRr"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604E829B8C6
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE142AA5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754492779; cv=none; b=g4TvH+fNW/wu46kGioFBGyzDDZdSfme33BmG4CjeiiFqW5gz8a3sF85Rz2hqvcWR2cIJN7BznZZyJBIwAhDXQ7ete3xokFHwR/QGvhw/kbX64Rv3eSRwvpA17t1JRnnc/1YzwNX8n248VmrqkjeD7gk3QVYe7fyxefTfskCQJ6c=
+	t=1754493023; cv=none; b=tVBJ3WRZNTzs2AY5IRXsTeLhi4+J9n1MAtVk1mUbZgxAswA4MwdVxinEDH8TupRxCPmLYzTbxFFIxM3Kwl89GDyBlNx851uu+mSvzMRYfoOTj7Gff84Ts8hBdBxQsOHgUnsXz2UPyu/hmL/SV5Vca26+M5WTzUzgYX8sifZuW4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754492779; c=relaxed/simple;
-	bh=1etKNrE0vlDHhfFeOKLaDNQ1jROjCc/S5wBeTrc5uNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m/vamdNh61qM2lO8ObFH0fQGKsb4pUFmHN4q7SOfTiCPSuA3EDonW09WyGFfQoiazGNencx94QuwE237nhVHY0vO+puIO21Tbuh4vSfRJnTt6D8m0cobvUl6aWGffIJFBuidF5PMA5bJrP/ONe/y3+b3kap9Pd8mABefDQ1lGTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uk9ZeFMv; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso474711cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:06:18 -0700 (PDT)
+	s=arc-20240116; t=1754493023; c=relaxed/simple;
+	bh=XJj/+Ii9ne9FVPI/eszO2aSskv5085eVs2yaTGWarcc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iYgL4aed0qesWyWvYWsiE4A7OYGciSLiwwNav1M7ifyS5Gi2kDgKm22zVbGq6GEQteFr/u3KzrEqgO7+quydIcEJzFyGW5Bnt8B1JwGVnYmqzGEk6x0FMHtQ7cl5q0Pnykjc+14wERg9GsjYGI7oWqjPA9AQfP3l7FZhRgHQ1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=scYpNwRr; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af66d49daffso1006135766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754492777; x=1755097577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMkdALPxV5bI1ddOoCXO/TX3xqYimqA7Ocq/kfBYHfw=;
-        b=uk9ZeFMvMsilObK61ab9Jl1Io8oULrrCTX5SI8y2qbYsiy7dx8pt1PMOynd6lcyT+2
-         XXHdMl12Of+NgByIo7DiJYGyhtm9tltnTy3AlI8tNupflqzAL9gYJXKJNhU1GJeKk8Ta
-         /5Pvird8Syf4Z8K559jplU13anj4ebXW/YPeulnN5OdAsZdyhZ0MMhDajNCCwzZFJRGJ
-         PMRViLOFhY1INFWJgDVwv8PkokNoV1e5TZtXmSC2O0h9AbhFhlRDuOrgMyz8OTuI8dUi
-         F5n1F2tmtCabGGnPQVDZqdKOwwjm4qSySHocwNROKH6Itxp9Fq3Wp/xMiv5I1ZuRrePy
-         gRZQ==
+        d=fairphone.com; s=fair; t=1754493020; x=1755097820; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lXNDxz+vD1qrumGSjygzCNxB/cloZERXqd/svDy5PxU=;
+        b=scYpNwRrI3m+cydN9NbfpAbpYxG2Gj3p6jVHu06y7Nm/h3ip44dvKfkup8WIZwV0ha
+         i8W4j9YL5zDbEPXK1qVpFvG7R+yRBnGpLFaydGKOVXwPldkrm7gG3SCHKVvZby7dBMTk
+         qfMP5rwcehqi24w900h5To/Tym9bv5pbKxaqO5mOzbxXMvSFWqGyITVhE+A6o+I++GME
+         1aip0poL4zqErGbZDPKGyAW8v99U9gDYmaGGnZEFeNfCom5p2tgSgmHio1XstCzoS/2C
+         mBmosHeVLSL3q60+iB4vaiRPG7SnRv50xbXCdD7cz4OpWbuE5FQdkVUhFKwAfZtBKqyz
+         RaTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754492777; x=1755097577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cMkdALPxV5bI1ddOoCXO/TX3xqYimqA7Ocq/kfBYHfw=;
-        b=px7TiC3Uz8FZhE9Ie7spSNYlrQeDrWw+dowTZFIa4YywACIAiRFzkxcnB4TbWp2vzd
-         iwCx2TNJ/oAVKo8x237XwNI2PkVnoZZDaNtnWeKa3HGLQ7VKgxJvimNUhTKlzPY7RcfQ
-         wCAxLb1s8LKvW53OuswiJJYSWu7+6CxL4Hrzez81VSbeAsz3jE3XECt+Ad2KU+1fNX1R
-         04BUxj/XVFCuepGF1I4wolM6ZqNCCuckcV9RWCiGE0r/nSQVKoitSt0P4BHiIvxKjXoB
-         7F9KlPXIw8L61wg6N/BQwNRA4KQIQYywykfD+KaRYxii3xVw0Rac4mp4T0haE86aIYth
-         x3bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrRp4gfpBzz+oLtGUepnueMqwiZuZ78jOTAA9PBX0M23ZBkMIZvd6fpMY4z1e79dZQn46vi/YpX4CehbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHfILCTgMca3xV6i2q8pF8eDVTJKKu1F6h/yI9eLibZUAGFGDi
-	mJzytTUHy5F8vmxrmoqQ8Jib3SDoEn+ZbfNnGlq/RLKXCK3pzcxxW++oRNHvwc3TqcI5+ZuaMSz
-	H1eof3LSLxX09NMR2iPPM+8XWaF0eM0zFuFkgp4jv
-X-Gm-Gg: ASbGncuDjTTkirhZJEpoDEshZFfB39Rqvbzm5ef+D0p/Sku3BQVkMjKDAimjzscsbIE
-	RhRDVb2FlDjGH1K18bKF044UC+uGtMR4BNYjw1zb0yZ0nWre5gLQUk532GepXM8v2YF7l0XZxlq
-	Mfblv+458iWDNSiIy69El4aF16TVuciSNSE1tf0kaRPNBg64usQTNsoLlYXH4WXogLBpq8T/BUY
-	LXNH5f9dmNvwGmAkHezFJQI6X/BWYLnSHk9TA==
-X-Google-Smtp-Source: AGHT+IFxjgJYfLtCzxTqC2qd/VGsYO0V9QbHxfH3kUKXYt+WP9H5eIIUksOBWWr2ADiUXznJbKHJFYhIUDbkwryBSWk=
-X-Received: by 2002:a05:622a:38b:b0:4b0:8318:a95 with SMTP id
- d75a77b69052e-4b0904dbb54mr5571461cf.8.1754492776656; Wed, 06 Aug 2025
- 08:06:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754493020; x=1755097820;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lXNDxz+vD1qrumGSjygzCNxB/cloZERXqd/svDy5PxU=;
+        b=ak/kh0l5a0m5P0eNH4et5yb4wJM4JGBh32g73SjmVEhQ9LqfYtyMlWO+eY8yQds7z3
+         werfEcfN3LCgNZprjJq2vSyGiS2/hjztTcN7ACWV8XXRN1+HTJAMgkHkljQogZ0NNWn+
+         BRqTqEbPkxZPeE7j7esXws6P0beORcuGqRRqoS3hh7lItVuc9uIbqjxdJJzT2TglPh72
+         1EMVut+/4WkTFfGSWQBqTgP6FuF1jGMKaxty8BnHxtMeRGW0g6V/4mtfhi1navoDUwIE
+         U0WkugUbZocPmsfZ7RrsHiTrNeERQEEySTvZaKztNZYhA4iCzhzuGjpBRgyRViD//jBK
+         gB2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUuSWGbVl9Gge+iUY/9inmGQym0jqG8Jpy45BWKCPJvuvTovjsQRQmyB4No6wZVXB07HBzGeD9sWSOQ7nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdyZmUVa+G6F1AC+ojhrzFcYzc+JI71zXMBVO6mZXIjzG6PzQr
+	7ae+jKsd9PrjhCd49or9gkW+MWaSBNqmLG5QELuMD2JUHAJrLyn3NyPQd8maEyFyJJk=
+X-Gm-Gg: ASbGncva50HcNTBdPCjxTsDA7FRGfe94o/pYlseEitTwFG6Ab8aqSFvGbfCeWyOlseO
+	198rY9Z0l4VUMjiNScCXx5GCB2jpohIHqGe2LCbD8VNXSHm+Rab2LTLRTw30zj0iSG0gISTWLAO
+	rUUQzMUq7gW9rT0Cj1MW0LuNYpBBOfDRjpneRzlPScrQ+u89jgltNK1e+0eTi/hofxmenZelfn+
+	4Ov1yfQn1sijBkcVAsOkPrpvfb3fbpS+t3j5tSy00DZRpUQLxtlfbuP4wMQcfHgJl4SvXf2ugdM
+	KnOFAKXkqh2MYvVuw5DYUuGA5IzZnxpUOE4wZPkZD8cLI6JX8ZU/wkuKtn0V6gNwCMQJiAyhmjM
+	vyuz+z00125xnzET7ZKpASF9zoYTJfUP8HxqHV5NhKLeHyXXBrx+vPyY0ugF25PiQS10N+QFGAN
+	usmPhA6RTxXrEo9A==
+X-Google-Smtp-Source: AGHT+IFGxksQxksr9gdwZChs5Q7bTY2ry/u6i3uopbyTI4KkbR/QSULpJPg3RPcCg7fhSoD/RX3RLw==
+X-Received: by 2002:a17:907:7f18:b0:af9:2502:7772 with SMTP id a640c23a62f3a-af992bc37femr303160166b.54.1754493020271;
+        Wed, 06 Aug 2025 08:10:20 -0700 (PDT)
+Received: from [172.16.220.71] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b77sm1120100666b.51.2025.08.06.08.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 08:10:19 -0700 (PDT)
+From: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+Subject: [PATCH 0/3] Add support for Awinic AW86927 haptic driver
+Date: Wed, 06 Aug 2025 17:10:07 +0200
+Message-Id: <20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aIz1xrzBc2Spa2OH@x1.local> <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
- <aI0Ffc9WXeU2X71O@x1.local> <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
- <aI1ckD3KhNvoMtlv@x1.local> <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
- <aJIXlN-ZD_soWdP0@x1.local> <CAJuCfpFzP_W8i8pwL+-Uv-n+2LixgFrzqn2HsY_h-1kbP=g3JQ@mail.gmail.com>
- <CAJuCfpFEf92gTR+Jw+1wcCcT0fEt-SP193NHzpyxVXJA=VAwng@mail.gmail.com>
- <CAJuCfpFeSVq+hq4JRJStLgFfQgmS6SQ7zoFsj4=SeQT89r3TTw@mail.gmail.com> <aJKkjEYmeq93w35-@x1.local>
-In-Reply-To: <aJKkjEYmeq93w35-@x1.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 6 Aug 2025 08:06:04 -0700
-X-Gm-Features: Ac12FXyjlXEiW5mf5x6iYKFmYX_DWMhNB6rnZ5RUsIFipgSWRnXVMmPjiayC93I
-Message-ID: <CAJuCfpGpEOaKdqpqTpfbw1cdHEEWhiu6KRFQFWaM-AKODiDFcg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
- a THP hole
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE9wk2gC/3XMTQ6CMBCG4auQrq3pz1DAlfcwLsZhKl0IpBjUE
+ O5ucaNRXH6Ted5JDBwDD2KXTSLyGIbQtWnoTSaowfbMMtRpC6NMrkoFEm+lq0whq7quyRpPyCT
+ Sdx/Zh/urdDim3YTh2sXHKzzq5frbGLVU0hnUTLrwHmHvMcS+6VreUncRS2c0nzZ/W7PYwvkUd
+ ApOtGbtp3Vva5MFAMITFInimoU/FpKlXClrqhKt5m87z/MTH5SnElYBAAA=
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754493019; l=1235;
+ i=griffin.kroah@fairphone.com; s=20250804; h=from:subject:message-id;
+ bh=XJj/+Ii9ne9FVPI/eszO2aSskv5085eVs2yaTGWarcc=;
+ b=bdtHg4oKQcgns5dedD3nEjg/wB17OzGg5zzZbVVTORzPqFBn4Q/wt7aXuBTPE7Pq0fa0CN+CN
+ XlnMIvCr7uSBsuHZZZUpFgzhBW7tuaWKKIMZykbrRCv3BKVqL0J6pe+
+X-Developer-Key: i=griffin.kroah@fairphone.com; a=ed25519;
+ pk=drSBvqKFiR+xucmLWONHSq/wGrW+YvcVtBXFYnYzn8U=
 
-On Tue, Aug 5, 2025 at 5:41=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Aug 05, 2025 at 04:41:18PM -0700, Suren Baghdasaryan wrote:
-> > Ok, I let the reproducer run for half a day and it did not hit this
-> > case, so I must have done something wrong during my initial
-> > investigation. Sorry for the confusion. I could have sworn that I saw
-> > this case but now it just does not happen.
->
-> I'm wildly guessing you might have hit the numa balancing bug I mentioned=
-,
-> that might explain what you mentioned previously on the testing results.
-> It might just be tricky to reproduce:
->
->   - We'll need a valid THP (pmd) first in the MOVE source region
->
->   - THP needs to be selected by numa balancing for a check (marking
->     prot_none)
->
->   - (before any further access..) UFFDIO_MOVE needs to happen on top tryi=
-ng
->     to move the whole THP being marked as prot_none.
->
-> AFAICT, task_numa_work() is the only place that can mark the THP, and whe=
-n
-> it happens, should see change_huge_pmd(cp_flags=3DMM_CP_PROT_NUMA) and th=
-en
-> returns with HPAGE_PMD_NR.
->
-> [sorry I am still pretty occupied with other things.  I can try to reprod=
-uce
->  together with you after I get more time back]
->
-> > With migration entry being the only case that leads to that
-> > pmd_folio(), the only check we need to add is the "if
-> > (pmd_present(*src_pmd))" before pmd_folio(). Would you like me to
-> > check anything else or should I go ahead and post that fix?
->
-> We could fix the migration entry first, then if any of us can reproduce t=
-he
-> above numa balancing issue then it can be a 2nd patch on top.
->
-> After all, so far we didn't yet prove it, either some unreproduceable tes=
-t,
-> or pure code analysis.  Meanwhile it might also be cleaner if we have one
-> patch fix one issue, rather than having one patch fix two bugs.
->
-> What do you think?
+Add devicetree bindings and a driver for the AW86927 haptic driver, and
+add it to the devicetree for the Fairphone 5 smartphone.
 
-Agree, that seems reasonable. I'll post the new fix today.
-Thanks,
-Suren.
+This driver does not enable all capabilities of the AW86927, features
+such as f0 detection, rtp mode, and cont mode are not included.
 
->
-> Thanks,
->
-> --
-> Peter Xu
->
+Note: This is my first driver I have ever worked on so if there is
+anything I can do to improve it please let me know!
+
+Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+---
+Griffin Kroah-Hartman (3):
+      dt-bindings: input: Add bindings for Awinic AW86927
+      Input: aw86927 - add driver for Awinic AW86927
+      arm64: dts: qcom: qcm6490-fairphone-fp5: Add vibrator support
+
+ .../devicetree/bindings/input/awinic,aw86927.yaml  |  48 ++
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts |  18 +-
+ drivers/input/misc/Kconfig                         |  11 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/aw86927.c                       | 841 +++++++++++++++++++++
+ 5 files changed, 918 insertions(+), 1 deletion(-)
+---
+base-commit: 3624e9a34b36d64a7037946eda28ae9599363a3b
+change-id: 20250804-aw86927-9dddc32fcaec
+
+Best regards,
+-- 
+Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+
 
