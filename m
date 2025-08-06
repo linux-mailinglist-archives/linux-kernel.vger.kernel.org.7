@@ -1,164 +1,177 @@
-Return-Path: <linux-kernel+bounces-758131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D463B1CB66
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6703B1CB4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8DE5169240
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:48:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706AF721F78
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A3D2C0307;
-	Wed,  6 Aug 2025 17:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DC62BE054;
+	Wed,  6 Aug 2025 17:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="vfoKcSgz"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYpRT03m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D532BFC9B;
-	Wed,  6 Aug 2025 17:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B6529E0F7;
+	Wed,  6 Aug 2025 17:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754502362; cv=none; b=QYwFByM0ZdIdRBtZASNXDJop/IMHFQgLrjgXXfV1rS3ghCSX231j5WdG7jOwfq78DW69LOoW9tQ8DxtBD+xlqb+al570RSeQiEtG26io/6hPAWL24in1nf8MvI4EYBM352qanBJgekJ4x4rGmbfWA998q8vIELbfGo+VuEO4ZYo=
+	t=1754502327; cv=none; b=kOKhYSmJ12ga3TQp/XGt5wSnVkeklvmDn0YJP4K9oR0mk7CN9YYaIkEzF3vJnsxVkAzJdnCja4zwssEoNA4rsQseiXBnBZ5IWahz2i9rn/zhLrHXkuTuyQ+FXakCr0OQGxq+ZSwI7tJouij7frw4xBlnb8UHYX3JfENJlvJUKe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754502362; c=relaxed/simple;
-	bh=PA7loxIPBLGOhG+xaEAeoYFr7UKxY5keNiex8tkAodM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iqQYyAXdd2ODyGcFXeQkXxplcXBD2IM29ATDdLephOpahD69cq6bbZ4YyywuGGFCvRxWJZ+CfK2dkM8j7ncHp4j505ke80YO6989qSVtRJJQOU+QGbeoioeRzqabnRDAzYXZEQt4Ad0W8xc35h7CfNikV58U5pbXhTdvTtqv8XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=vfoKcSgz; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bxyPw1FZhz9snx;
-	Wed,  6 Aug 2025 19:45:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754502356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2YYCu5R1XiGIudL58R408XKwHqQ+bXkM+6ufvf1daHo=;
-	b=vfoKcSgzG6rLa0oQk5oIFzsv/K/YkgPlfIhc5iZKQ43Doy2DR91KiJtbyDN0tKnwdjUjbt
-	QkH+E3cGpcefF3pIEKKBRhn2nLRIzcMQH2gF5rhD99T0ZB8XjetqtjMAkvyu7/WBDiHtHQ
-	Egw5eFq1g12a79/rdtYACxRkEiwMIwkg+Ojcn/wlB03zZS9Ztxt+3rFNFd7lavuR6ChS+t
-	2s3Z5F8Y1mMxmJOUvA4Cchln8SUQ4rdLMrpCJe5VtXnkT71EKZsj7CFihodVL8Y0mlXeQd
-	UFkVrFQJSn1gxjIfi1SakBDbbqtmcxzDTkqnHOdPL+lPvsFAGZVCbj0rMGvv7g==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 07 Aug 2025 03:44:45 +1000
-Subject: [PATCH v2 11/11] fsconfig.2, mount_setattr.2: add note about
- attribute-parameter distinction
+	s=arc-20240116; t=1754502327; c=relaxed/simple;
+	bh=YArr/JaGktAlQo2hhqkApDSBj81iHH0IBqI1ORILAs8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RvlBDPiFL3fsSWwTRq3XjzfqysNJkV1qdgl8vg+wCU3q7VI2Xq67zJxYTTKATT5LB3O/tbjkmdrW63FUQtxWhKwazQqggPHzbXspkZyQpfjaml+VFUZoZSrTO3V7fmrnDezRMabKBPXtmo1UK1e5S4IK448k6oUC/McJ0A0gFys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYpRT03m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B65C4CEE7;
+	Wed,  6 Aug 2025 17:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754502327;
+	bh=YArr/JaGktAlQo2hhqkApDSBj81iHH0IBqI1ORILAs8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tYpRT03mnnqOtMQ6R+vTn0wc835RggQSPt2fZIIQU/Zadp9aQR37hlIWpF7NgLmmk
+	 EfOjr7sjJ8DWAdunY/eEKRyDrc/BTIMvMWb2NeNdzzsMJ7pGlW2IM043kefpikqybc
+	 SiMNkhCJHosIcnMW9hdeefRWzJnknD7UIBSSwta4YmqOf8fgjqwMx6LoxjEr5Pg7Oq
+	 973bucMF1cSsK6xrWSdlFLH/EnG0KG71bYmcLEnUBVSg0plctwjEu/fsPftkMzOh/B
+	 YIAq4mJVWA7LSaASTYeZVP6zqldY9uft2xbA7ulUze5vgOlxhEbftg8pl0hvWinyMg
+	 sZbwIDQFLNM8w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ujiCb-004acx-0S;
+	Wed, 06 Aug 2025 18:45:25 +0100
+Date: Wed, 06 Aug 2025 18:45:24 +0100
+Message-ID: <868qjw9wej.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly
+	<joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu
+	<yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will
+ Deacon <will@kernel.org>
+Subject: Re: [PATCH v1 1/2] KVM: arm64: nv: fix S2 translation for nVHE guests
+In-Reply-To: <20250806141707.3479194-2-volodymyr_babchuk@epam.com>
+References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
+	<20250806141707.3479194-2-volodymyr_babchuk@epam.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250807-new-mount-api-v2-11-558a27b8068c@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
-In-Reply-To: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Askar Safin <safinaskar@zohomail.com>, 
- "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
- linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2475; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=PA7loxIPBLGOhG+xaEAeoYFr7UKxY5keNiex8tkAodM=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMntKxe6X44h89CyT2NLpaf9kTt+BQ6cL8H5sjrL3+s
- fzOXy8g3lHKwiDGxSArpsiyzc8zdNP8xVeSP61kg5nDygQyhIGLUwAm0tnP8Ifb2m9NzMTFEd+E
- d6y4/ELkS4SjctPn1S67t3y5enBC1/d5jAyP+U1YK34tkpKfl1+sfuMP16SjivO5FS1WJqYZLne
- ZxsgCAA==
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Volodymyr_Babchuk@epam.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-This was not particularly well documented in mount(8) nor mount(2), and
-since this is a fairly notable aspect of the new mount API, we should
-probably add some words about it.
+Hi Volodymyr,
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- man/man2/fsconfig.2      |  7 +++++++
- man/man2/mount_setattr.2 | 37 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+Thanks for looking into this.
 
-diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-index e2121b7a6b68..9e0e25acff3b 100644
---- a/man/man2/fsconfig.2
-+++ b/man/man2/fsconfig.2
-@@ -448,6 +448,13 @@ .SH HISTORY
- Linux 5.2.
- .\" commit ecdab150fddb42fe6a739335257949220033b782
- glibc 2.36.
-+.SH NOTES
-+.SS Mount attributes and filesystem parameters
-+For a description of the distinction between
-+mount attributes and filesystem parameters,
-+see the "Mount attributes and filesystem paramers" subsection
-+of
-+.BR mount_setattr (2).
- .SH EXAMPLES
- To illustrate the different kinds of flags that can be configured with
- .BR fsconfig (),
-diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-index b9afc21035b8..3e6b59e5b57a 100644
---- a/man/man2/mount_setattr.2
-+++ b/man/man2/mount_setattr.2
-@@ -790,6 +790,43 @@ .SS ID-mapped mounts
- .BR chown (2)
- system call changes the ownership globally and permanently.
- .\"
-+.SS Mount attributes and filesystem parameters
-+Some mount attributes
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+are also filesystem parameters.
-+For example, the
-+.I -o ro
-+option to
-+.BR mount (8)
-+can refer to the
-+"read-only" filesystem parameter,
-+or the "read-only" mount attribute.
-+.P
-+The distinction between these two kinds of option is that
-+mount object attributes are applied per-mount-object
-+(allowing different mount objects
-+derived from a given filesystem instance
-+to have different attributes),
-+while filesystem instance parameters
-+("superblock flags" in kernel developer parlance)
-+apply to all mount objects
-+derived from the same filesystem instance.
-+.P
-+When using
-+.BR mount (2),
-+the line between these two types of mount options was blurred.
-+However, with
-+.BR mount_setattr ()
-+and
-+.BR fsconfig (2),
-+the distinction is made much clearer.
-+Mount attributes are configured with
-+.BR mount_setattr (),
-+while filesystem parameters can be configured using
-+.BR fsconfig (2).
-+.\"
- .SS Extensibility
- In order to allow for future extensibility,
- .BR mount_setattr ()
+On Wed, 06 Aug 2025 15:17:55 +0100,
+Volodymyr Babchuk <Volodymyr_Babchuk@epam.com> wrote:
+> 
+> According to ARM architecture specification (ARM DDI 0487 L.a, section
+> C5.4.3), Stage 2 translation should be skipped when VHE is active, or,
+> in other words, E2H bit is set. Fix the code by inverting both check
+> and comment.
+> 
+> Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+> ---
+>  arch/arm64/kvm/at.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+> index a25be111cd8f8..5e7c3fb01273c 100644
+> --- a/arch/arm64/kvm/at.c
+> +++ b/arch/arm64/kvm/at.c
+> @@ -1412,10 +1412,10 @@ void __kvm_at_s12(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
+>  		return;
+>  
+>  	/*
+> -	 * If we only have a single stage of translation (E2H=0 or
+> +	 * If we only have a single stage of translation (E2H=1 or
+>  	 * TGE=1), exit early. Same thing if {VM,DC}=={0,0}.
+>  	 */
+> -	if (!vcpu_el2_e2h_is_set(vcpu) || vcpu_el2_tge_is_set(vcpu) ||
+> +	if (vcpu_el2_e2h_is_set(vcpu) || vcpu_el2_tge_is_set(vcpu) ||
+>  	    !(vcpu_read_sys_reg(vcpu, HCR_EL2) & (HCR_VM | HCR_DC)))
+>  		return;
+
+The code we have here is clearly bogus, but what you are suggesting
+doesn't look correct to me either. Here's what the spec says:
+
+<quote>
+
+Performs stage 1 and 2 address translation, with permissions as if
+reading from the given virtual address from EL1, or from EL2 if the
+Effective value of HCR_EL2.{E2H, TGE} is {1, 1}, using the following
+translation regime:
+
+  * When EL2 is implemented and enabled in the Security state
+    described by the current Effective value of SCR_EL3.{NSE, NS}:
+
+    - If the Effective value of HCR_EL2.{E2H, TGE} is not {1, 1}, the
+      EL1&0 translation regime, accessed from EL1.
+
+    - If the Effective value of HCR_EL2.{E2H, TGE} is {1, 1}, the
+      EL2&0 translation regime, accessed from EL2.
+
+  * Otherwise, the EL1&0 translation regime, accessed from EL1.
+
+</quote>
+
+We're obviously in the first bullet, so we need to work out whether
+this is applying to the EL1&0 or the EL2&0 translation regime. By the
+letter of the spec, we need to check for E2H+TGE being both set to
+elide the S2 final walk.
+
+I suspect what you really want is the hack below, though I think the
+DC handling has always been broken (who cares anyway?).
+
+Thanks,
+
+	M.
+
+diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+index 0e56105339493..3e591979f947e 100644
+--- a/arch/arm64/kvm/at.c
++++ b/arch/arm64/kvm/at.c
+@@ -1420,10 +1420,10 @@ void __kvm_at_s12(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
+ 		return;
+ 
+ 	/*
+-	 * If we only have a single stage of translation (E2H=0 or
+-	 * TGE=1), exit early. Same thing if {VM,DC}=={0,0}.
++	 * If we only have a single stage of translation ({E2H,TGE}={1,1}),
++	 * exit early. Same thing if {VM,DC}=={0,0}.
+ 	 */
+-	if (!vcpu_el2_e2h_is_set(vcpu) || vcpu_el2_tge_is_set(vcpu) ||
++	if ((vcpu_el2_e2h_is_set(vcpu) && vcpu_el2_tge_is_set(vcpu)) ||
+ 	    !(vcpu_read_sys_reg(vcpu, HCR_EL2) & (HCR_VM | HCR_DC)))
+ 		return;
+ 
 
 -- 
-2.50.1
-
+Without deviation from the norm, progress is not possible.
 
