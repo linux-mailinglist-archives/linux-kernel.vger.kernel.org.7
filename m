@@ -1,134 +1,147 @@
-Return-Path: <linux-kernel+bounces-757947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0078DB1C8AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A9AB1C8AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E75AE4E35A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E43B188D8E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E41D291C1B;
-	Wed,  6 Aug 2025 15:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/pKhilf"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA96291882;
+	Wed,  6 Aug 2025 15:26:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC678290BAB;
-	Wed,  6 Aug 2025 15:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13D21DAC95;
+	Wed,  6 Aug 2025 15:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493947; cv=none; b=fngdYKyL2ujs2nm0LKO6e9XXeYMrtnO/0gGunXvdx7PIMmga0PeWfZCO3kExliFgF7RFrvs+ONz8Wrg/HpF2E7E1Com+QcsWhw0SdOPxU6BIpgzAvMyEfbqUiwGkWlpzRIapuGBLy4f9374B9QgHktzqOoVo03QvUOOLOhk6Ka0=
+	t=1754493993; cv=none; b=BOKrQ8J8N/plf2bM/HElKKKHH7quONUKA8L7wDVZ213lfTVccjEAPYZJD0c86nqb3ZJfsOdciXbClMzj3QSkyo8HnrUYdzgByoa5Vh8C2fR8qwAdQyJ8g+lZO8MXE9m4EUjo79tsaguE+NZTOOQHGVJ2+lMKIhLiKQeIZ330ETk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493947; c=relaxed/simple;
-	bh=mKodv+sKlayKFfKvzNuhrQzdX3PKR6NGBRJMnFiQnVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQyeGqyX10KX8NlF7HTpSV+GLH33Ql0UNvman0keh+9hDZPtN8iY2anjOQsyiYHZJM7YGxPeyY5lyvesmrrPjQ2lVEmz442x6MOVYH8A3uCHB9VPbZGsePlowGmUd5BQe1EcnxQMiSNinxXwUrwKyuT+JH8pA+3psbvtL6uv+88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/pKhilf; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55b79ea50f8so2953e87.0;
-        Wed, 06 Aug 2025 08:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754493944; x=1755098744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Ak6kkG0Gr5ILhCz9qlDe4Tz2QPMgdqhFKKAgptHzkg=;
-        b=L/pKhilf9irSpygotaDCsaM/tcGbqCXD60babCIKq/vtquCAqJNckxjtqEwGt+aHy9
-         1YV9Lq4g3zGiE0AeQ5g3SQUNoqCn9Xv9YQUBB7heYnuAdSjk0k3cM6bXXBys6t3IL3HK
-         xmr/qyeTSe8Q7fFHm8iiN9f8SaVVcqaWSNCLyxmti4YNGX/BMT/zBpxzdXopRcy89wf0
-         Nwd/b1hJnBRgziogttQxPLtXOaEcXEkS2i357SDzF7usMD4sV7JzqqA584A1JJEJzIbL
-         Lvfz0RpIILxua1TCvR2n8OY1VD5yo9q123CZMWGBVITEtFCj3h/ueTopTgQ6NkIoWyxO
-         JTPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493944; x=1755098744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Ak6kkG0Gr5ILhCz9qlDe4Tz2QPMgdqhFKKAgptHzkg=;
-        b=HAZUPS0GzryJRJ0usX7mW6zzyyJL7B1WoyCnl0FuziHyzyC+UmBHkxQVCXC6W4HoHa
-         vRaaaK8wsdyuAe2GXCYVf4YYpK+QsA33Fm9HY5buc7gL2HmrYPlaqc/wfiFPXB3B/6xX
-         RCL4cLh98Bfb/pyfax652jd5xW/ONpMUquFnz9QFQOLPEzuyxm6gr01HPpTwuq6fdmKP
-         67/2Xv3RAEgb34x/4LMo57XkpIOohHJc3739l7gWTPjQj37u8A7NBl3R1LRqRklJqaKS
-         JZHadEvo93mLVEuimIHKpHFGAtMZHBs4ZnJLw6ZCUptQt3fJAAKxbO7Z4AAzwjHK1q2s
-         6K/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrB2+OESANrEUplQhDIzMIMGXw/yFw+vCG43gHlklHXPPN2nAHPeZO7FK0OYaTP9TUAr+Stz2Z@vger.kernel.org, AJvYcCX6hKlW0XX4+DnIIemF4bkv7pDtw1fxQ5BzVZh6rlT6LJJ6I1/xsl8quT/GM4suHtk4+j8=@vger.kernel.org, AJvYcCXCk/5Fo8hXdkCOwDqmcsfkX03W5PPOex26SInLUEFAhxxZ2N5aF2+6OjZM/LqQMtzKdLoEloKm4sM8bt2y@vger.kernel.org, AJvYcCXGg3rolZlhXZX6HSGKf0HKsPEotFVyT9fmx2+jTypK7qKNelewoliSOiHDOebxppJB9IoRPS9Cp1xnVT7TN1mY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9kn5B2jKAFs5jDLkdFRohWi4QOa3pM5lFbm3dL1lH786IBAN+
-	GleUcbCWCcF7EZX6xalL5tY7jGVxgcdjOA4G0ednyr4KDGW0EEY0MvGaYpNPx71bwNxnE0pawWc
-	cetCz1lx7/znaPTRunXgRVhuVwTDpy80=
-X-Gm-Gg: ASbGncvNsNv6Zkw3pBiF8QAjRxHwbCrNKb6+HQILW3Ov58+JJCrx5ZwBvzORMUPeHP3
-	+3KwnpHpJyjE8GVVwFsXvwB4qslN03WGIuRMV6gUaF/+2uGHpWzIjBbMJDK8UmxOuAjzjJz2DqF
-	NPe4rwkveu8NUy1V7Vr9g2AHGEzLJuti+BOnp6d9QRcdMQuka9wP10cx5L7wwyVyQTx+uQbZxxn
-	pDOxGAlA8uZSP4TR6LADzw+Pqy0PMOfDc+R2Xit2w==
-X-Google-Smtp-Source: AGHT+IFuXucBMEFtpCtDsz4YxIbE8W+P3+as9anTHGHj6dyv4YdatbL3BW3rJ6ST71SpMX9C+9AlGI3nNgbMQZCuM6E=
-X-Received: by 2002:a05:6512:1589:b0:55b:920c:33eb with SMTP id
- 2adb3069b0e04-55caf35898amr981949e87.42.1754493943616; Wed, 06 Aug 2025
- 08:25:43 -0700 (PDT)
+	s=arc-20240116; t=1754493993; c=relaxed/simple;
+	bh=1pXe9ouFkczo8c71RCreN6c7fcZdupZNH78GTdN1B+o=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iEDU94Wkam2ezo68Ei9hl1aVyfH5BWCPBI6UmgEXBA7x9SSSiJLDYTH38aCEVtjuXeHDbmvrpq3HdhX/AWsjo0Su4nEDZ0rIc9q3n+lk0Qm2BqRzEzNbhgVx3ddTnsmCIrXhrezAXtMxVDpx72/KJpaHV63cc1KWZLhwjZTyNMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxvGL02Q1z6L5W7;
+	Wed,  6 Aug 2025 23:24:10 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D388414027A;
+	Wed,  6 Aug 2025 23:26:28 +0800 (CST)
+Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
+ 2025 17:26:27 +0200
+Date: Wed, 6 Aug 2025 16:26:24 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+CC: <eugen.hristev@linaro.org>, <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<srini@kernel.org>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 04/15] iio: adc: at91-sama5d2_adc: update calibration
+ index, validation condition
+Message-ID: <20250806162624.000044ce@huawei.com>
+In-Reply-To: <20250804100219.63325-5-varshini.rajendran@microchip.com>
+References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
+	<20250804100219.63325-5-varshini.rajendran@microchip.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806110230.23949-1-pranav.tyagi03@gmail.com> <CAADnVQJQV5Z_LsrBCa2=UwQ9NhPbkpNvZ9N7nf1sv-QunEj1FQ@mail.gmail.com>
-In-Reply-To: <CAADnVQJQV5Z_LsrBCa2=UwQ9NhPbkpNvZ9N7nf1sv-QunEj1FQ@mail.gmail.com>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Wed, 6 Aug 2025 20:55:31 +0530
-X-Gm-Features: Ac12FXz2S0kDjSFEJFEpV8_XL9LeoNM4mZxNsuwnlSJbqILHu0d2FLO1xgfQ7Tw
-Message-ID: <CAH4c4jKvMBfaRaAoHbBn45vKzCHMBRjJ7UCOqa8FDXXQ7c_L2w@mail.gmail.com>
-Subject: Re: [PATCH] selftests/bpf/progs: use __auto_type in swap() macro
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Mykola Lysenko <mykolal@fb.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Aug 6, 2025 at 8:33=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Wed, Aug 6, 2025 at 4:02=E2=80=AFAM Pranav Tyagi <pranav.tyagi03@gmail=
-.com> wrote:
-> >
-> > Replace typeof() with __auto_type in xdp_synproxy_kern.c.
-> > __auto_type was introduced in GCC 4.9 and reduces the compile time for
-> > all compilers. No functional changes intended.
-> >
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > ---
-> >  tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c b/to=
-ols/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> > index 62b8e29ced9f..b08738f9a0e6 100644
-> > --- a/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> > +++ b/tools/testing/selftests/bpf/progs/xdp_synproxy_kern.c
-> > @@ -58,7 +58,7 @@
-> >  #define MAX_PACKET_OFF 0xffff
-> >
-> >  #define swap(a, b) \
-> > -       do { typeof(a) __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } whi=
-le (0)
-> > +       do { __auto_type __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } w=
-hile (0)
->
-> Sorry, not doing this churn. The code is fine as-is.
->
-> --
-> pw-bot: cr
+On Mon, 4 Aug 2025 15:32:08 +0530
+Varshini Rajendran <varshini.rajendran@microchip.com> wrote:
 
-I understand. Thanks
+> Add additional condition for validating the calibration data read from
+> the OTP through nvmem device interface. Adjust the calibration indexes
+> of sama7g5 according to the buffer received from the OTP memory.
+Changing those indexes looks to me like either this was broken previously
+or we are supporting something new (possibly at the expense of the older
+support)
+
+Or is this 'broken' by patch 2 and you are fixing it up here?
+If so we normally try not to do that sort of change in multiple steps
+because the patches may go via different trees and potentially only
+part of it make it to upstream in a particular cycle.
+
+Messy though it is, if you need to change indexes because something
+broke doe it all in one patch.
+
+> 
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  drivers/iio/adc/at91-sama5d2_adc.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+> index c3450246730e..d952109a64a9 100644
+> --- a/drivers/iio/adc/at91-sama5d2_adc.c
+> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+> @@ -445,6 +445,14 @@ static const struct at91_adc_reg_layout sama7g5_layout = {
+>  #define at91_adc_writel(st, reg, val)					\
+>  	writel_relaxed(val, (st)->base + (st)->soc_info.platform->layout->reg)
+>  
+> +/*
+> + * The calibration data has a TAG to recognize the packet
+> + * The tag has a constant value "ACST" with the ASCII
+> + * equivalent 0x41435354. This is used to validate the
+> + * calibration data obtained from the OTP.
+> + */
+> +#define AT91_TEMP_CALIB_TAG	0x41435354
+
+Could we treat it as a string and do a strcmp?  Main advantage
+is this comment may become unneeded if the code is clear enough.
+
+> +
+>  /**
+>   * struct at91_adc_platform - at91-sama5d2 platform information struct
+>   * @layout:		pointer to the reg layout struct
+> @@ -504,10 +512,10 @@ struct at91_adc_temp_sensor_clb {
+>   * @AT91_ADC_TS_CLB_IDX_MAX: max index for temperature calibration packet in OTP
+>   */
+>  enum at91_adc_ts_clb_idx {
+> -	AT91_ADC_TS_CLB_IDX_P1 = 2,
+> -	AT91_ADC_TS_CLB_IDX_P4 = 5,
+> -	AT91_ADC_TS_CLB_IDX_P6 = 7,
+> -	AT91_ADC_TS_CLB_IDX_MAX = 19,
+> +	AT91_ADC_TS_CLB_IDX_P1 = 1,
+> +	AT91_ADC_TS_CLB_IDX_P4 = 4,
+> +	AT91_ADC_TS_CLB_IDX_P6 = 6,
+> +	AT91_ADC_TS_CLB_IDX_MAX = 18,
+>  };
+>  
+>  /* Temperature sensor calibration - Vtemp voltage sensitivity to temperature. */
+> @@ -2281,7 +2289,7 @@ static int at91_adc_temp_sensor_init(struct at91_adc_state *st,
+>  		dev_err(dev, "Failed to read calibration data!\n");
+>  		return PTR_ERR(buf);
+>  	}
+> -	if (len < AT91_ADC_TS_CLB_IDX_MAX * 4) {
+> +	if (len < AT91_ADC_TS_CLB_IDX_MAX * 4  || buf[0] != AT91_TEMP_CALIB_TAG) {
+>  		dev_err(dev, "Invalid calibration data!\n");
+>  		ret = -EINVAL;
+>  		goto free_buf;
+Not related to this patch, but this would be excellent place to deploy __free
+u32 *buf __free(kfree) = nvmem_cell_read(temp_calib, &len);
+
+then can directly return on error here and drop the kfree(buf) below.
+
+
+
 
