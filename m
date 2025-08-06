@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-757108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2DDB1BDD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:20:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F33FB1BDD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A5C3A8178
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:20:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7E33AAF31
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C685464F;
-	Wed,  6 Aug 2025 00:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1259F3D984;
+	Wed,  6 Aug 2025 00:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TUPNyQX3"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jdpvXhla"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95F19A;
-	Wed,  6 Aug 2025 00:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50A113AF2;
+	Wed,  6 Aug 2025 00:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754439596; cv=none; b=OyDNdH+Xy4lqVeBVG2Q/8lbB45U3i/29CEEBPNDGUk7boAo3yBrUKSmF7Jm/38OplFrjcHvu8qZCHGpXr2HP+x3C0cxhTChvFpbdVQYz9VRtKQJSt8dL2OISMGJD4iYOJj4yAxsPnmzCOCzMAwpM9cmtAI+OdBuNb5LCXz/tAh4=
+	t=1754439865; cv=none; b=chYRI6UA6IJ7N1hMKSr9BMbT6Kum2gHs+WAA0rQTpSZ5n9FRkrPKwCSMxYZYvlq9GGojk+/Zl5VT0/Mt5o769tzRZmbGsJQV27naxM5/WiRMOIvfJFuSx141s5CbwJuylMEYvSQznwYBqHVBZ2MrhICAjPLzne4laXTc6XljWlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754439596; c=relaxed/simple;
-	bh=OT3f/U4DpV8q91l9jRxEsTYFN/WOPBcjG9NXESoXWrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUQVGmjIJ4fuJx935Pi1E3V10FYxJ4zdVotbKbE+SkWEJhWTmFNDiu6yNakesvLhW7nX1iAHKPK5a/3j6GApCrG0QXO+u4sq3xAqwjA4CSFVbfliN883PMJ5JuMS66GeM9zjSVI3LWRGUKqKRzz3u2UDTHiVbBumCXrMxNoYOrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TUPNyQX3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=nZYwsKOptSUZO0neyK/l0Qf2ovJ/CTbLtLm7FCTYX5s=; b=TUPNyQX3WyRtkdwpmO7RZqOyAo
-	WQMlt77Ff95hM004vnyaI6qjzqGPl4GufiP6o/4tEvS3XUVJpvn1kO3pzYRrWjSO5E454b802yoZm
-	oLiEUgEeQFUAfH+Pb7xC96Rgq5E9Wx16sY6NCvNtF9Dm+INNGPVRg18tqRZjXlPt9VkBEO3O6U104
-	7p52IsEO327eDPsZRW7D2bWUzGX0QaNELvDyH6K51qMbioYWFqMKZwqQRAJcXDQSc4GAYffRKF9wA
-	M5oQClEteyQL5XTcf/4PUe23ScgeDO2AcEtong/vrPmTCq4Ufml+0F0WbT0oK11ZJxjFXPOlzRkFc
-	07v8Ka0w==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujRsg-0000000E3K1-3O8k;
-	Wed, 06 Aug 2025 00:19:46 +0000
-Message-ID: <c1ba0f8d-6b3c-4c2b-863c-2ce374df723c@infradead.org>
-Date: Tue, 5 Aug 2025 17:19:45 -0700
+	s=arc-20240116; t=1754439865; c=relaxed/simple;
+	bh=NiDxZsY547/dYaQ+I07KrcgaTx4wOefvN+uysj//JVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Svx4HOJlO05QqJJsnSIp9WpS/1SefG6p9pKHoOJZ6QC17RvIjWF0XWwr/EQU0VUknKwsVg157k3q2ah5995/VeKV+dO39EYFpJIBbztEDXEXgxDc1Lnb/jUUchp/OhsV0lTQ3jarHFwgs1ExiHC7/whYBEuoNKNf+1DxeoAvSwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jdpvXhla; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754439864; x=1785975864;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NiDxZsY547/dYaQ+I07KrcgaTx4wOefvN+uysj//JVg=;
+  b=jdpvXhlaLSCX0VNan+CHDZlCD0ki6MKHCkML9sK5xo+pgo2UddM94Cty
+   mnP92+6t+jKbRvn6JtH+t69nnWrw8m6pD1FW1+bipt1kzxGoC9Oqhilm9
+   H8L1AjZVvdBBTGSFxcVm0N4REHv1Mju979KjfFq68TDfuayoA/jHHLHGF
+   WiuL/n02i7Hgqi+jxQhR+2P+/O061kWpTEsoU+6uAlweHZnV77+UbchUq
+   34/rBlArkC9XiBwnaQ2MEqKE9NJ+fLWDhLTx2MMsu2IPZmMmuDSqinmrm
+   XDoqqKsBLiFJF8276+hM2/ppjmeEsyeQ0wOJf7q2gyqEaNN0YZzHTdpi1
+   w==;
+X-CSE-ConnectionGUID: 1uayUPStSwG6wjpdy7rNTA==
+X-CSE-MsgGUID: SG9X1+NSRICqYxu34srrng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74326411"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="74326411"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:24:23 -0700
+X-CSE-ConnectionGUID: 9O4T3e7/QeiZ0gjjq8UODg==
+X-CSE-MsgGUID: iIbob0mFSXS4KoXZm0GVvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169897799"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Aug 2025 17:24:21 -0700
+From: Even Xu <even.xu@intel.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: srinivas.pandruvada@linux.intel.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Even Xu <even.xu@intel.com>,
+	Rui Zhang <rui1.zhang@intel.com>
+Subject: [PATCH] Hid: Intel-thc-hid: Intel-quicki2c: Enhance driver re-install flow
+Date: Wed,  6 Aug 2025 08:23:32 +0800
+Message-Id: <20250806002332.1487447-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
- <20250805-procfs-pidns-api-v4-2-705f984940e7@cyphar.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250805-procfs-pidns-api-v4-2-705f984940e7@cyphar.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+After driver module is removed and during re-install stage, if there
+is continueous user touching on the screen, it is a risk impacting
+THC hardware initialization which causes driver installation failure.
 
-On 8/4/25 10:45 PM, Aleksa Sarai wrote:
-> Since the introduction of pid namespaces, their interaction with procfs
-> has been entirely implicit in ways that require a lot of dancing around
-> by programs that need to construct sandboxes with different PID
-> namespaces.
-> 
-> Being able to explicitly specify the pid namespace to use when
-> constructing a procfs super block will allow programs to no longer need
-> to fork off a process which does then does unshare(2) / setns(2) and
-> forks again in order to construct a procfs in a pidns.
-> 
-> So, provide a "pidns" mount option which allows such users to just
-> explicitly state which pid namespace they want that procfs instance to
-> use. This interface can be used with fsconfig(2) either with a file
-> descriptor or a path:
-> 
->   fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
->   fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0);
-> 
-> or with classic mount(2) / mount(8):
-> 
->   // mount -t proc -o pidns=/proc/self/ns/pid proc /tmp/proc
->   mount("proc", "/tmp/proc", "proc", MS_..., "pidns=/proc/self/ns/pid");
-> 
-> As this new API is effectively shorthand for setns(2) followed by
-> mount(2), the permission model for this mirrors pidns_install() to avoid
-> opening up new attack surfaces by loosening the existing permission
-> model.
-> 
-> In order to avoid having to RCU-protect all users of proc_pid_ns() (to
-> avoid UAFs), attempting to reconfigure an existing procfs instance's pid
-> namespace will error out with -EBUSY. Creating new procfs instances is
-> quite cheap, so this should not be an impediment to most users, and lets
-> us avoid a lot of churn in fs/proc/* for a feature that it seems
-> unlikely userspace would use.
-> 
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  Documentation/filesystems/proc.rst |  8 ++++
->  fs/proc/root.c                     | 98 +++++++++++++++++++++++++++++++++++---
->  2 files changed, 100 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 5236cb52e357..5a157dadea0b 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -2360,6 +2360,7 @@ The following mount options are supported:
->  	hidepid=	Set /proc/<pid>/ access mode.
->  	gid=		Set the group authorized to learn processes information.
->  	subset=		Show only the specified subset of procfs.
-> +	pidns=		Specify a the namespace used by this procfs.
+This patch enhances this flow by quiescing the external touch
+interrupt after driver is removed which keeps THC hardware
+ignore external interrupt during this remove and re-install stage.
 
-			drop ^^ a
+Signed-off-by: Even Xu <even.xu@intel.com>
+Tested-by: Rui Zhang <rui1.zhang@intel.com>
+Fixes: 66b59bfce6d9 ("HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver")
+---
+ drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  	=========	========================================================
->  
->  hidepid=off or hidepid=0 means classic mode - everybody may access all
-> @@ -2392,6 +2393,13 @@ information about processes information, just add identd to this group.
->  subset=pid hides all top level files and directories in the procfs that
->  are not related to tasks.
->  
-> +pidns= specifies a pid namespace (either as a string path to something like
-> +`/proc/$pid/ns/pid`, or a file descriptor when using `FSCONFIG_SET_FD`) that
-> +will be used by the procfs instance when translating pids. By default, procfs
-> +will use the calling process's active pid namespace. Note that the pid
-> +namespace of an existing procfs instance cannot be modified (attempting to do
-> +so will give an `-EBUSY` error).
-> +
->  Chapter 5: Filesystem behavior
->  ==============================
->  
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+index e944a6ccb776..854926b3cfd4 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+@@ -419,6 +419,7 @@ static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __io
+  */
+ static void quicki2c_dev_deinit(struct quicki2c_device *qcdev)
+ {
++	thc_interrupt_quiesce(qcdev->thc_hw, true);
+ 	thc_interrupt_enable(qcdev->thc_hw, false);
+ 	thc_ltr_unconfig(qcdev->thc_hw);
+ 	thc_wot_unconfig(qcdev->thc_hw);
 -- 
-~Randy
+2.40.1
 
 
