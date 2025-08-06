@@ -1,250 +1,111 @@
-Return-Path: <linux-kernel+bounces-757240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FAFB1BFA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E566B1BFA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31B7188BE3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9855B6230A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833D61EE03B;
-	Wed,  6 Aug 2025 04:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD301E5B82;
+	Wed,  6 Aug 2025 04:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vDrvf9iw"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="raC8khgk"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A67E1E51FE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E652BA3F;
+	Wed,  6 Aug 2025 04:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754455469; cv=none; b=lGXTg5b54BM9JdNX+gDYUmsGosOL0v/6gH6AW6LjVsVSngCLrelyz56IWp46zY3GcgIcgp9nwjB717pYrVNv6HDre0oII4PZcfjb0axNL7dRPSC1CbAkSNOqN1mGMJNxi/H0i7j8LM25QjnEluo+ut+tmbYlQSNEy3I0DJEvjqE=
+	t=1754455734; cv=none; b=BypJWEURrgm/6RpiuZo3fOhNIijIaGj+IS15veVxBa0SPymUnKGB0PV79/XrQBgepKkWBBJiMEc9KcWfQrkzj1jP3zk+fjledlu6msFDT92f6v7U2Xgqb4gy7no417nCDflQo3Ku1mHL8trBWCgNZ7q/H2HwFumUyLQ99t+QOrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754455469; c=relaxed/simple;
-	bh=clBZjVsM4riD1Jdr5EByIVbrzbJYrHxQ8DbI2snliuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=uhE55CaKXx4dTwxuo234N+hiEIQRrmguaxxmbLbIXYpe6cFe3Vb4qZGU9ABCv3hqIyty1Lq53JepmlRXlUI80tqwR29nNYa9fKgSevaX+104l5QcSJPVrqllnv4vCMthZBjYEN9TUrRlKhZ77PVeO30PUTq+U/WQ/rSFZEYHD7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vDrvf9iw; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250806044424epoutp04974580981896d345104325367d256632~ZE-L5eaFg1738817388epoutp046
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:44:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250806044424epoutp04974580981896d345104325367d256632~ZE-L5eaFg1738817388epoutp046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754455464;
-	bh=Ln69oVBXuHCu0TfnNFV5fRdjx0LD6IMCcRIsNkoyWhE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=vDrvf9iw5oWwNYOqyqsW1KZ7KxqcvG3LvgWJDTp1/clesHaSurbQJvhSDxGMPQWbH
-	 95sUWWmjyCJl4bK2am5Y/xMH9va9LV1MyclG5iHuPa8t571WPslZm10WYHNKZTp/SN
-	 M5+LrTihduwtf2XxaN0YfwCVTR+zCnaergMo3yQM=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250806044423epcas5p3a4d86812c586a7640dd24fef985a501f~ZE-LKdHPj1146811468epcas5p3V;
-	Wed,  6 Aug 2025 04:44:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bxd463gy3z6B9m4; Wed,  6 Aug
-	2025 04:44:22 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250806044421epcas5p37549884b5c64b50c525ea2f64b7ef047~ZE-JhiVKo0387103871epcas5p3u;
-	Wed,  6 Aug 2025 04:44:21 +0000 (GMT)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250806044419epsmtip228d167ce40210f0053f002a58f1e8853~ZE-HVupbJ0383403834epsmtip2s;
-	Wed,  6 Aug 2025 04:44:19 +0000 (GMT)
-Message-ID: <99fa41ed-dee0-499f-8827-67e1e1c70e60@samsung.com>
-Date: Wed, 6 Aug 2025 10:14:18 +0530
+	s=arc-20240116; t=1754455734; c=relaxed/simple;
+	bh=stOywZDoIU0FaZ/HagCupK5dlv3tKXwhDvsLXMZLl1c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nj/Jg7l04Q42v/V6931/HiBTlniOyJXkNnSUVsoOPP5zwXvvxnIul3/rT0hJgLM6c6uAfLdisXMGLvicZqAcOufnW5s5BkoXsHvPxvxEJBoaSUxXZZjGLtMgX+zwWf6qEP8d99F5/FHvCKvkxJNJf9u/QbZAAh8j5CyvSW9MwPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=raC8khgk; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bxd9D39Bcz9tF7;
+	Wed,  6 Aug 2025 06:48:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754455728;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4gNXonq3IuDgcBCcXQEGzxyOr4rIqlPjiQqPdv91WTg=;
+	b=raC8khgkTlQHbhuinFmhZbVfXQmzKX/L5T97sCacsTBlROFGPHUN+fxL2SN7ldUb6PAhPs
+	9/iz+Dy1XZnyVThraRcj0s6WhKXzIOdlsqtHYBDLCwyt1OP01h+Hhwx7JcxJ0kxGkUMtg6
+	fttknt5nzw1tcqKlAjrvOR0YGGkDwqhxFnBpLbhgIu/iHk/RCB6ADqoXqI/cr3Tq2A34Uc
+	oNyyDyL7pYvLovJeKYLJuIAwUQrCVWh0rK5FSEe+/h0oJ8X6uQURpiTP5gVVhhX5hjP/kN
+	4aARdnt7IhHGIwecvXKKYzIwadkbZco4yMiFwjiN0Q+SyjW6zMaG7FhbkobhXw==
+From: Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH 0/2] vfs: output mount_too_revealing() errors to fscontext
+Date: Wed, 06 Aug 2025 14:48:28 +1000
+Message-Id: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: Remove WARN_ON for device endpoint command
- timeouts
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>, "balbi@ti.com"
-	<balbi@ti.com>, "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
-	<dh10.jung@samsung.com>, "akash.m5@samsung.com" <akash.m5@samsung.com>,
-	"hongpooh.kim@samsung.com" <hongpooh.kim@samsung.com>,
-	"eomji.oh@samsung.com" <eomji.oh@samsung.com>, "shijie.cai@samsung.com"
-	<shijie.cai@samsung.com>, "alim.akhtar@samsung.com"
-	<alim.akhtar@samsung.com>, "muhammed.ali@samsung.com"
-	<muhammed.ali@samsung.com>, "thiagu.r@samsung.com" <thiagu.r@samsung.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <20250805233832.5jgtryppvw2xbthq@synopsys.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250806044421epcas5p37549884b5c64b50c525ea2f64b7ef047
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e
-References: <CGME20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e@epcas5p3.samsung.com>
-	<20250804142258.1577-1-selvarasu.g@samsung.com>
-	<20250805233832.5jgtryppvw2xbthq@synopsys.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJzekmgC/x3MwQqDMAyA4VeRnA1kQu3cq4iHTlMXmI2kKgPx3
+ S07fof/PyGzCWd4VScYH5JFU8GjrmD8hDQzylQMDTWOnuSQzdTiiIvuacNNFUvG4StpRjd1sfX
+ 0Dt4TlMNqHOX3v/fDdd2VGirWbQAAAA==
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1190; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=stOywZDoIU0FaZ/HagCupK5dlv3tKXwhDvsLXMZLl1c=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMurdyy8RI7hCz8r2etke0MqIVCn6KRPmLTj+X6bXvl
+ rR6wJQZHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiGlqMDM9yXv+9MdV046Eo
+ Vg/NXt2T4vzFPyfm16g+PWOwWNlVJ5nhf8oswVNtHCv+RNyR1fp6dsK2N+57/b9GPVzZfNLv2YX
+ rUiwA
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
+It makes little sense for fsmount() to output the warning message when
+mount_too_revealing() is violated to kmsg. Instead, the warning should
+be output (with a "VFS" prefix) to the fscontext log. In addition,
+include the same log message for mount_too_revealing() when doing a
+regular mount for consistency.
 
-On 8/6/2025 5:08 AM, Thinh Nguyen wrote:
-> On Mon, Aug 04, 2025, Selvarasu Ganesan wrote:
->> From: Akash M <akash.m5@samsung.com>
->>
->> This commit addresses a rarely observed endpoint command timeout
->> which causes kernel panic due to warn when 'panic_on_warn' is enabled
->> and unnecessary call trace prints when 'panic_on_warn' is disabled.
->> It is seen during fast software-controlled connect/disconnect testcases.
->> The following is one such endpoint command timeout that we observed:
->>
->> 1. Connect
->>     =======
->> ->dwc3_thread_interrupt
->>   ->dwc3_ep0_interrupt
->>    ->configfs_composite_setup
->>     ->composite_setup
->>      ->usb_ep_queue
->>       ->dwc3_gadget_ep0_queue
->>        ->__dwc3_gadget_ep0_queue
->>         ->__dwc3_ep0_do_control_data
->>          ->dwc3_send_gadget_ep_cmd
->>
->> 2. Disconnect
->>     ==========
->> ->dwc3_thread_interrupt
->>   ->dwc3_gadget_disconnect_interrupt
->>    ->dwc3_ep0_reset_state
->>     ->dwc3_ep0_end_control_data
->>      ->dwc3_send_gadget_ep_cmd
->>
->> In the issue scenario, in Exynos platforms, we observed that control
->> transfers for the previous connect have not yet been completed and end
->> transfer command sent as a part of the disconnect sequence and
->> processing of USB_ENDPOINT_HALT feature request from the host timeout.
->> This maybe an expected scenario since the controller is processing EP
->> commands sent as a part of the previous connect. It maybe better to
->> remove WARN_ON in all places where device endpoint commands are sent to
->> avoid unnecessary kernel panic due to warn.
->>
->> Fixes: e192cc7b5239 ("usb: dwc3: gadget: move cmd_endtransfer to extra function")
->> Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
->> Fixes: c7fcdeb2627c ("usb: dwc3: ep0: simplify EP0 state machine")
->> Fixes: f0f2b2a2db85 ("usb: dwc3: ep0: push ep0state into xfernotready processing")
->> Fixes: 2e3db064855a ("usb: dwc3: ep0: drop XferNotReady(DATA) support")
->> Cc: stable@vger.kernel.org
-> I don't think this is a fix patch. You're just replacing WARN* with
-> dev_warn* without doing any recovery. Let's remove the Fixes and table
-> tag. Also, can we replace dev_warn* with dev_err* because these are
-> critical errors that may put the controller in a bad state.
->
-> Thanks,
-> Thinh
+With the newest fsopen()-based mount(8) from util-linux, the error
+messages now look like
 
+  # mount -t proc proc /tmp
+  mount: /tmp: fsmount() failed: VFS: Mount too revealing.
+	 dmesg(1) may have more information after failed mount system call.
 
-Hi Thinh,
+which could finally result in mount_too_revealing() errors being easier
+for users to detect and understand.
 
-Thanks for your review comments.
-Yeah we agree. This is not a fix patch. Sure we will update new patchset 
-with replace dev_warn* with dev_err*.
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+Aleksa Sarai (2):
+      fscontext: add custom-prefix log helpers
+      vfs: output mount_too_revealing() errors to fscontext
 
-As for dropping the stable tag,  It would be better these changes to be 
-applied across all stable kernels, so shall we keep stable tag in place?
+ fs/namespace.c             |  6 ++++--
+ include/linux/fs_context.h | 18 ++++++++++++++----
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+---
+base-commit: 66639db858112bf6b0f76677f7517643d586e575
+change-id: 20250805-errorfc-mount-too-revealing-5d9f670ba770
 
-Thanks,
-Selva
->
->> Signed-off-by: Akash M <akash.m5@samsung.com>
->> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
->> diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
->> index 666ac432f52d..7b313836f62b 100644
->> --- a/drivers/usb/dwc3/ep0.c
->> +++ b/drivers/usb/dwc3/ep0.c
->> @@ -288,7 +288,9 @@ void dwc3_ep0_out_start(struct dwc3 *dwc)
->>   	dwc3_ep0_prepare_one_trb(dep, dwc->ep0_trb_addr, 8,
->>   			DWC3_TRBCTL_CONTROL_SETUP, false);
->>   	ret = dwc3_ep0_start_trans(dep);
->> -	WARN_ON(ret < 0);
->> +	if (ret < 0)
->> +		dev_warn(dwc->dev, "ep0 out start transfer failed: %d\n", ret);
->> +
->>   	for (i = 2; i < DWC3_ENDPOINTS_NUM; i++) {
->>   		struct dwc3_ep *dwc3_ep;
->>   
->> @@ -1061,7 +1063,9 @@ static void __dwc3_ep0_do_control_data(struct dwc3 *dwc,
->>   		ret = dwc3_ep0_start_trans(dep);
->>   	}
->>   
->> -	WARN_ON(ret < 0);
->> +	if (ret < 0)
->> +		dev_warn(dwc->dev, "ep0 data phase start transfer failed: %d\n",
->> +				ret);
->>   }
->>   
->>   static int dwc3_ep0_start_control_status(struct dwc3_ep *dep)
->> @@ -1078,7 +1082,12 @@ static int dwc3_ep0_start_control_status(struct dwc3_ep *dep)
->>   
->>   static void __dwc3_ep0_do_control_status(struct dwc3 *dwc, struct dwc3_ep *dep)
->>   {
->> -	WARN_ON(dwc3_ep0_start_control_status(dep));
->> +	int	ret;
->> +
->> +	ret = dwc3_ep0_start_control_status(dep);
->> +	if (ret)
->> +		dev_warn(dwc->dev,
->> +			"ep0 status phase start transfer failed: %d\n", ret);
->>   }
->>   
->>   static void dwc3_ep0_do_control_status(struct dwc3 *dwc,
->> @@ -1121,7 +1130,10 @@ void dwc3_ep0_end_control_data(struct dwc3 *dwc, struct dwc3_ep *dep)
->>   	cmd |= DWC3_DEPCMD_PARAM(dep->resource_index);
->>   	memset(&params, 0, sizeof(params));
->>   	ret = dwc3_send_gadget_ep_cmd(dep, cmd, &params);
->> -	WARN_ON_ONCE(ret);
->> +	if (ret)
->> +		dev_warn_ratelimited(dwc->dev,
->> +			"ep0 data phase end transfer failed: %d\n", ret);
->> +
->>   	dep->resource_index = 0;
->>   }
->>   
->> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->> index 321361288935..50e4f667b2f2 100644
->> --- a/drivers/usb/dwc3/gadget.c
->> +++ b/drivers/usb/dwc3/gadget.c
->> @@ -1774,7 +1774,11 @@ static int __dwc3_stop_active_transfer(struct dwc3_ep *dep, bool force, bool int
->>   		dep->flags |= DWC3_EP_DELAY_STOP;
->>   		return 0;
->>   	}
->> -	WARN_ON_ONCE(ret);
->> +
->> +	if (ret)
->> +		dev_warn_ratelimited(dep->dwc->dev,
->> +				"end transfer failed: ret = %d\n", ret);
->> +
->>   	dep->resource_index = 0;
->>   
->>   	if (!interrupt)
->> @@ -4041,7 +4045,9 @@ static void dwc3_clear_stall_all_ep(struct dwc3 *dwc)
->>   		dep->flags &= ~DWC3_EP_STALL;
->>   
->>   		ret = dwc3_send_clear_stall_ep_cmd(dep);
->> -		WARN_ON_ONCE(ret);
->> +		if (ret)
->> +			dev_warn_ratelimited(dwc->dev,
->> +				"failed to clear STALL on %s\n", dep->name);
->>   	}
->>   }
->>   
->> -- 
->> 2.17.1
+Best regards,
+-- 
+Aleksa Sarai <cyphar@cyphar.com>
+
 
