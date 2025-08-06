@@ -1,181 +1,211 @@
-Return-Path: <linux-kernel+bounces-758190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ED2B1CC37
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A80B1CC3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137FD18A5855
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD5118A5C83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B1429DB88;
-	Wed,  6 Aug 2025 18:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF9129E101;
+	Wed,  6 Aug 2025 18:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sb5UxwWM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5DgpZMb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A43C8EB;
-	Wed,  6 Aug 2025 18:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E2DC8EB;
+	Wed,  6 Aug 2025 18:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754506614; cv=none; b=JUsTmprko80qNerCb1nWykI/dn8w9+m0ml9QW4mdfpBx57paWEpR2D8/PQ03FfIxJuEhohesxVh4+pu6oNoWagkDxBs2D3w9HJaNf32hb7dTb4Z9y34o1alaUcebcNA7RJilZeUnnbTEjC2+f5584/keNd0aC9CrZSD2A149lec=
+	t=1754506653; cv=none; b=R2a7mOmuPTEh4EiFDzREYUyPU5zEJejYW/gEgzdwi4PFTPWJFtFH7htW0uVRrhB6W4bL8aZCe45d9CZFYwUtgvvbFWnLbB3mn0upQPLYbWdImhmu6wjo0jM2mZqRGoTP4FEeNP/YMlJANhWfKjlsuzh54RW44nzV48dVTYn16GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754506614; c=relaxed/simple;
-	bh=om1aWa/B7Oy/fsSLhs55XzyydC9EjqsVE/7K+ztsDSs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iUa+xt0hLCtumgR6oNb5Qx4DM+5jdhsox7Ex0JJ4FzvlfY2oSOZ10qOTltqAQ31A/8ad8X4QaHU5dm+jJQ7TRGHLIW1OORcT0WncgwcJMBuRC1gSch44KgKaFcyRuq3WzVajvr6n3pcS+/oCixZ0ELnPixpaWlsoOeykmWtgw6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sb5UxwWM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECA3C4CEE7;
-	Wed,  6 Aug 2025 18:56:52 +0000 (UTC)
+	s=arc-20240116; t=1754506653; c=relaxed/simple;
+	bh=S1tpOXHvVmGvkkUcDTVIht6ckWqyaRnBwEeo7jDPZu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcYKk9Hefu9GBKvmaFc9r1/KYd5EWdzNi7y4GpWmVWhBCgSh4DvMtqGgVYaNjS7nL/y0RyNZC+RQ0hoYyeq5u3ihitrOevM6GSs/oHVIONtWXsZFnaOHa6P2yU9otb9MWepejLU4f/5TkMzzcR0qYbhF0b95NTcpE6PZrq6ud7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5DgpZMb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC07C4CEE7;
+	Wed,  6 Aug 2025 18:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754506612;
-	bh=om1aWa/B7Oy/fsSLhs55XzyydC9EjqsVE/7K+ztsDSs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sb5UxwWMSQUxbLB7MzB5pEw56XpOE1zygr73grW+FdGaVGx2g3qeoP/jp+H8oqTK+
-	 pQXnW7KR5mKYtvtBZLmlSOUpLMa0jTStxgV6peAMyAOFeIrjpOT/BWtVOJxLQfqYlg
-	 85vb4+xbkeOoM9PREQGug3Gi3lpLzv5n7QKk0HrVlTbZEGD1JosaDjpJHJH4yX+YgB
-	 wsgFbZCMfGmb04wRyMGkbWEGM+G59T+zB+tg6Ew/EA9EnlPk4S6G9SVCFSVGB1SgN5
-	 VlU4JiQ5zoCrudWrWmjkwQS7He0ehkVGdoN63KR+XD5R9qtx79BuHhTjPigr5Af45c
-	 AWZYis9BefrDQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ujjJi-004by9-1y;
-	Wed, 06 Aug 2025 19:56:50 +0100
-Date: Wed, 06 Aug 2025 19:56:49 +0100
-Message-ID: <865xf09t3i.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly
-	<joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu
-	<yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will
- Deacon <will@kernel.org>
-Subject: Re: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after 'at s*'
-In-Reply-To: <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
-References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
-	<20250806141707.3479194-3-volodymyr_babchuk@epam.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1754506653;
+	bh=S1tpOXHvVmGvkkUcDTVIht6ckWqyaRnBwEeo7jDPZu4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u5DgpZMbBrMlEHCD0U2XV9oAFeSNwqE2saBD4NroNIwSwfQOb6fR/e+Hj+9dkXYza
+	 GSdnwVTypo0RrO1uPIi9p5Gqgw4zsLp9qhaHYpo0fGtuA457QbxgTpNfPio863LrTQ
+	 eE/2/ZbnCVJ75QckPgb1x3qVBiirfktGC62Y/rdLagTJEQ1cwOQrfn77EHN7tACR6k
+	 bOOrjC0euY0CI30rXkLWpEgVVxW8u1x8ZX5SED+CC6sycNRZn8b0Rl7vZF3GvgW088
+	 63MpRrSxhEIoxOV5Y40cqoToFFG/aWeNYTEWMcnI74UVv+t4xrHm5jhdGDglSVCJ2Q
+	 mlvn4La0hLeiw==
+Date: Wed, 6 Aug 2025 11:57:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com
+Subject: Re: [RFC RESEND] binfmt_elf: preserve original ELF e_flags in core
+ dumps
+Message-ID: <202508061152.6B26BDC6FB@keescook>
+References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Volodymyr_Babchuk@epam.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
 
-On Wed, 06 Aug 2025 15:17:55 +0100,
-Volodymyr Babchuk <Volodymyr_Babchuk@epam.com> wrote:
+On Wed, Aug 06, 2025 at 10:18:14PM +0600, Svetlana Parfenova wrote:
+> Preserve the original ELF e_flags from the executable in the core dump
+> header instead of relying on compile-time defaults (ELF_CORE_EFLAGS or
+> value from the regset view). This ensures that ABI-specific flags in
+> the dump file match the actual binary being executed.
 > 
-> Previously this code update only vCPU's in-memory value, which is good,
-> but not enough, as there will be no context switch after exiting
-> exception handler, so in-memory value will not get into actual
-> register.
+> Save the e_flags field during ELF binary loading (in load_elf_binary())
+> into the mm_struct, and later retrieve it during core dump generation
+> (in fill_note_info()). Use this saved value to populate the e_flags in
+> the core dump ELF header.
 > 
-> It worked good enough for VHE guests because KVM code tried fast path,
-> which of course updated real PAR_EL1.
+> Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS, to guard
+> this behavior. Although motivated by a RISC-V use case, the mechanism is
+> generic and can be applied to all architectures.
 
-Nothing to do with VHE, I'm afraid. We can take the slow path for any
-odd reason, even on VHE. This is more of a structural problem, see
-below.
+In the general case, is e_flags mismatched? i.e. why hide this behind a
+Kconfig? Put another way, if I enabled this Kconfig and dumped core from
+some regular x86_64 process, will e_flags be different?
 
+> This change is needed to resolve a debugging issue encountered when
+> analyzing core dumps with GDB for RISC-V systems. GDB inspects the
+> e_flags field to determine whether optional register sets such as the
+> floating-point unit are supported. Without correct flags, GDB may warn
+> and ignore valid register data:
 > 
-> Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+>     warning: Unexpected size of section '.reg2/213' in core file.
+> 
+> As a result, floating-point registers are not accessible in the debugger,
+> even though they were dumped. Preserving the original e_flags enables
+> GDB and other tools to properly interpret the dump contents.
+> 
+> Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
 > ---
->  arch/arm64/kvm/sys_regs.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  fs/Kconfig.binfmt        |  9 +++++++++
+>  fs/binfmt_elf.c          | 26 ++++++++++++++++++++------
+>  include/linux/mm_types.h |  5 +++++
+>  3 files changed, 34 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 7b8a0a6f26468..ab2b5e261d312 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -3463,6 +3463,9 @@ static bool handle_at_s1e2(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+> diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+> index bd2f530e5740..45bed2041542 100644
+> --- a/fs/Kconfig.binfmt
+> +++ b/fs/Kconfig.binfmt
+> @@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
+>  	  This builds the exec KUnit tests, which tests boundary conditions
+>  	  of various aspects of the exec internals.
 >  
->  	__kvm_at_s1e2(vcpu, op, p->regval);
->  
-> +	/* No context switch happened, so we need to update PAR_EL1 manually */
-> +	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
+> +config CORE_DUMP_USE_PROCESS_EFLAGS
+> +	bool "Preserve ELF e_flags from executable in core dumps"
+> +	depends on BINFMT_ELF && ELF_CORE && RISCV
+> +	default n
+> +	help
+> +	  Save the ELF e_flags from the process executable at load time
+> +	  and use it in the core dump header. This ensures the dump reflects
+> +	  the original binary ABI.
 > +
+>  endmenu
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index caeddccaa1fe..e5e06e11f9fc 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1290,6 +1290,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	mm->end_data = end_data;
+>  	mm->start_stack = bprm->p;
+>  
+> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+> +	/* stash e_flags for use in core dumps */
+> +	mm->saved_e_flags = elf_ex->e_flags;
+> +#endif
 
-This looks like the wrong fix, as it papers over another issue.
+Is this structure actually lost during ELF load? I thought we preserved
+some more of the ELF headers during load...
 
-The core problem is vcpu_write_sys_reg() (resp. read) does the wrong
-thing with registers such as PAR_EL1, which are not translated between
-EL1 and EL2, and therefore are always live, no matter what.
+> +
+>  	/**
+>  	 * DOC: "brk" handling
+>  	 *
+> @@ -1804,6 +1809,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+>  	struct elf_thread_core_info *t;
+>  	struct elf_prpsinfo *psinfo;
+>  	struct core_thread *ct;
+> +	u16 machine;
+> +	u32 flags;
+>  
+>  	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
+>  	if (!psinfo)
+> @@ -1831,17 +1838,24 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+>  		return 0;
+>  	}
+>  
+> -	/*
+> -	 * Initialize the ELF file header.
+> -	 */
+> -	fill_elf_header(elf, phdrs,
+> -			view->e_machine, view->e_flags);
+> +	machine = view->e_machine;
+> +	flags = view->e_flags;
+>  #else
+>  	view = NULL;
+>  	info->thread_notes = 2;
+> -	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
+> +	machine = ELF_ARCH;
+> +	flags = ELF_CORE_EFLAGS;
+>  #endif
+>  
+> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+> +	flags = dump_task->mm->saved_e_flags;
+> +#endif
 
-Can you please try the hack below? I don't like it, but at least it
-shows where the actual problem lies.
+This appears to clobber the value from view->e_flags. Is that right? It
+feels like this change should only be needed in the default
+ELF_CORE_EFLAGS case. How is view->e_flags normally set?
 
-Thanks,
+> +
+> +	/*
+> +	 * Initialize the ELF file header.
+> +	 */
+> +	fill_elf_header(elf, phdrs, machine, flags);
+> +
+>  	/*
+>  	 * Allocate a structure for each thread.
+>  	 */
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index d6b91e8a66d6..39921b32e4f5 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1098,6 +1098,11 @@ struct mm_struct {
+>  
+>  		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+>  
+> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+> +		/* the ABI-related flags from the ELF header. Used for core dump */
+> +		unsigned long saved_e_flags;
+> +#endif
+> +
+>  		struct percpu_counter rss_stat[NR_MM_COUNTERS];
+>  
+>  		struct linux_binfmt *binfmt;
+> -- 
+> 2.50.1
+> 
 
-	M.
-
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index ad25484772574..167f0d411a708 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -95,7 +95,13 @@ static bool write_to_read_only(struct kvm_vcpu *vcpu,
- 		return true;						\
- 	}
- 
--static bool get_el2_to_el1_mapping(unsigned int reg,
-+#define COMMON_SYSREG(r)						\
-+	case r: {							\
-+		 *el1r = __INVALID_SYSREG__;				\
-+		 return is_hyp_ctxt(vcpu);					\
-+	}
-+
-+static bool get_el2_to_el1_mapping(const struct kvm_vcpu *vcpu, unsigned int reg,
- 				   unsigned int *el1r, u64 (**xlate)(u64))
- {
- 	switch (reg) {
-@@ -119,6 +125,7 @@ static bool get_el2_to_el1_mapping(unsigned int reg,
- 		PURE_EL2_SYSREG(  HAFGRTR_EL2	);
- 		PURE_EL2_SYSREG(  CNTVOFF_EL2	);
- 		PURE_EL2_SYSREG(  CNTHCTL_EL2	);
-+		COMMON_SYSREG(	  PAR_EL1	);
- 		MAPPED_EL2_SYSREG(SCTLR_EL2,   SCTLR_EL1,
- 				  translate_sctlr_el2_to_sctlr_el1	     );
- 		MAPPED_EL2_SYSREG(CPTR_EL2,    CPACR_EL1,
-@@ -158,7 +165,7 @@ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
- 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
- 		goto memory_read;
- 
--	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
-+	if (unlikely(get_el2_to_el1_mapping(vcpu, reg, &el1r, &xlate))) {
- 		if (!is_hyp_ctxt(vcpu))
- 			goto memory_read;
- 
-@@ -219,7 +226,7 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
- 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
- 		goto memory_write;
- 
--	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
-+	if (unlikely(get_el2_to_el1_mapping(vcpu, reg, &el1r, &xlate))) {
- 		if (!is_hyp_ctxt(vcpu))
- 			goto memory_write;
- 
+-Kees
 
 -- 
-Without deviation from the norm, progress is not possible.
+Kees Cook
 
