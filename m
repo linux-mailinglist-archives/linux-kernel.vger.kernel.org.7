@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-757538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272F1B1C359
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2355AB1C360
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F682172FE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FA43A800A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E0828A407;
-	Wed,  6 Aug 2025 09:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872D522173F;
+	Wed,  6 Aug 2025 09:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fjqQ76cf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hbf31e5q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7D22E370A;
-	Wed,  6 Aug 2025 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F720010C;
+	Wed,  6 Aug 2025 09:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754472586; cv=none; b=byMSZvjAIFD7KirLFux5owMsixv9SaWvVCgXqV1orpEhCr3LYjnyY3ftE1Uy+TiCQG1iGu3nG6fVcDySzSLxP/zjfQriBtu/LSbLf6/hmmxzBEvOC6qWV0yHodX3Pzpe5r+4YfT0UVZoVAo4Hq3WEJMt5rvaYBFIUYNzwONCQ4o=
+	t=1754472626; cv=none; b=AttWxcVOcgaziZU60VXUQN/V9UCEAig1Na8l9WBMqC7fdLpz6Xz+EmTjzVpsoAk2ffUPBP35BjvNNSluXeIvUdpaf8rbFnWLjbAGptlw5yS8ZuhzVIl6cCRKm8zid9MfT5vFuOTcr+mi5T3ypLxjMhydvrtxW5Fl4R2B1roMzvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754472586; c=relaxed/simple;
-	bh=ES0F2THCOf5A+FV6j3r4XDV+ugLcrg5Fj4j2x6zvoVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OYVXZF72Hni4UtBqPxNtbhrw/c02tNAYcWZ26HmeVycW2gojy1h34msFe3D93l14Rt+uaqkNY4jQ8WZ3x3UagC9AKo9diYhgecsnV/0G/cQA7tyW5HbKXpQRknl2dRxVTyYOIc5Q0eRU8rd9GBkBCj+RiZkY9+FNcUVjIurFMSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fjqQ76cf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5766tFcu019444;
-	Wed, 6 Aug 2025 09:29:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=B1T9N3
-	DRA/VCZIWhWg7LmWynZ3xyLENJ07dyfWBpZFU=; b=fjqQ76cf2x2t4NVcP8fgzr
-	LaFBEfj+UCr8zHPImEuVsbHeOalOMu7aLBkm6TUNQc72ofXUewOMuhoZpohnvs5n
-	blW8Y59qJ7dCaz8L9JV/B9Wp6GQoTjETd8edxIPnYoo/6y78owXPHvq/Hkqr+0Rv
-	+LnW63jcH7yYToeHn0HUkyWF+7jiczBzFK+cnnRcJqHGPvhFQMYjKBAh4JY0tREc
-	i1k0UdKdYrXY9P8cIzjQnBbZnJRH3DnlQz3cf5/FmVEk3XmkckAic5WNoGDfgHSX
-	A44dxVr/6XizSN0aNtD13z8c/CJYL4SOPGYXrIykeOq1IAZGz+iVHnsCOD1dCZFg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26trn1y-1
+	s=arc-20240116; t=1754472626; c=relaxed/simple;
+	bh=trAz6IMmnt3xSk8UF9MF5v5y+HOBioT5gUIqu2ciTnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FKxHo/LYrRJ1ewwBrhl7x5GSvd6xXoXqKLcHoR/dyjWc0Lkqq/t6bAy5P6ugDp4/euKrv/84dYw91JKDl5h2bY1mZ5RR/3mpH+AH91EAkwBrso9A6KBbicajnShcRWyL9j8IY77VqVhd+OJIZI7AKR+5nEt9JEazpgIGl8qpyw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hbf31e5q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5766LNdO010353;
+	Wed, 6 Aug 2025 09:30:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nhlzl9xJTaja9TjhpOytlAtNv+97XEVdOQl6HdQYUas=; b=Hbf31e5q2B1+198f
+	/EwhM38g4etaVun6v3/P0Zy787m6xG4Fz9HUtYuxu66M7ygUO8rWuqlVW66xCTlh
+	5kETO+HnKFSz0BPe4m+H3Fg67LAt47NeKVsMhmmEEluh4uuR68saowsf+JsMTz51
+	a0DRGPqvxnT2YoVXliCdkUh/pt9xKZNw4yReiTEwtWD7MLwNapSUbc/5bTIEiu1e
+	Fg4nmbESJ6kT4Rnvo7gSJd/KdmnHQDLBOPaC3Cu/+DmorLktnRDKNnxWmyH1rwm8
+	y0G/uExfxRGqiNFs06gjjY9eM5Sz/qbqsP5Db3NHrkkbguQBeq2XfTwThC4E7YDH
+	sMXAMQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy7t6qg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 09:29:31 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5769SaT4007367;
-	Wed, 6 Aug 2025 09:29:30 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26trn1x-1
+	Wed, 06 Aug 2025 09:30:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5769UFt2020110
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 09:29:30 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5767vKZK020600;
-	Wed, 6 Aug 2025 09:29:29 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwmty5h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 09:29:29 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5769TPs950069950
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Aug 2025 09:29:25 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 554962004B;
-	Wed,  6 Aug 2025 09:29:25 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D41F20049;
-	Wed,  6 Aug 2025 09:29:25 +0000 (GMT)
-Received: from [9.152.212.130] (unknown [9.152.212.130])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Aug 2025 09:29:25 +0000 (GMT)
-Message-ID: <1094385e-6f86-453f-a48e-fa284dcae385@linux.ibm.com>
-Date: Wed, 6 Aug 2025 11:29:24 +0200
+	Wed, 6 Aug 2025 09:30:15 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 6 Aug
+ 2025 02:30:11 -0700
+Message-ID: <6272a053-7499-454a-aa64-820e7a2a3a78@quicinc.com>
+Date: Wed, 6 Aug 2025 17:30:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,100 +64,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] perf bpf-filter: Enable events manually
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Ian Rogers <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <20250805130346.1225535-1-iii@linux.ibm.com>
- <20250805130346.1225535-3-iii@linux.ibm.com>
- <4a7fc5ab-682d-4fac-a547-9e4b1263dba7-agordeev@linux.ibm.com>
+Subject: Re: [PATCH v2 04/38] drm/msm/dp: re-arrange dp_display_disable() into
+ functional parts
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-4-a54d8902a23d@quicinc.com>
+ <ikvsacoatahnmjff4c762cpq6lvmr6cavlbjw6z7oyrvuno5hp@mykq3ts2hhbw>
 Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <4a7fc5ab-682d-4fac-a547-9e4b1263dba7-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: kp9R7gzU3Zi2X7pQoZH8W3IiFwi5wq4p
-X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6893207b cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=G2SI-qYk9hsPBJNDFb0A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: ByIXSOgnBIEuNgtdSnszCEELpYo7LbV2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA1NyBTYWx0ZWRfX9KfYdHqR9GDI
- Y2nmdZvmxcwpHVRRulqqUvZ/FZDuaJdIwkz0Y49tMESj0+S4foX1OPBQODR/GBsGCZiZWOV83Jg
- 4MHJtU0tnHYnzRRqTJxPTRZN+NjejH5JlO9TvxoSeHdc6/WUj8mVU4OgiY0TY4dHbytC31VHenu
- bYuRTzMeoeEDlHNUrDA4hkTZhGd39n5xvGIjh/ZGyzl04OEiQCaPQrKRTyuWo17nLwvgCtOYF0N
- sEHjrwGYun/eXu5tzHekJbAV/DBJcI5YBrrYPqdMVS0+8GH9BjY8kdR3yIfi1v5OyJPkb9WJoRy
- FEMzme1beyqrWepAiCHI5tZ1QpcRJYMegIKnaw8U+b1R3CdW0cle3VuL+zbG/9q9uOplNJFgC9x
- 9U2fWXqD1febnrQrbnHXJe87s6Mcmf51xTteJ7roawXuUuJ1AYu83JtOdAuwAnedbXSFWubo
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <ikvsacoatahnmjff4c762cpq6lvmr6cavlbjw6z7oyrvuno5hp@mykq3ts2hhbw>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Mftsu4/f c=1 sm=1 tr=0 ts=689320a8 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=fKRfGShLRux2cQhKBnAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 6QUst3N_yEtk5f4XynE9Jk9QbfktMR9O
+X-Proofpoint-GUID: 6QUst3N_yEtk5f4XynE9Jk9QbfktMR9O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX74INzkJMykrh
+ xiuVs09VjyV2YXdvE64bzG0rB51TXarWNqFWuMQVHbogReco3fgfmeBHQHGVPQ5KcFILAbFgIQt
+ 6M30Z95ztLE6gSMi7X8HXb+OAJQfhvbqbVE7d+tw8wnTMcNk30EmHOXnOFZ0ksKZlD/i9NStQxS
+ 2p8Yal64IWCcabfYrcBm1kCSYs+5m16m2IIfZvhV1tN73HhF+QnALn/Tht7uQW/Ji8xk5yDCYzg
+ X8iIDG6vA9MXgPHc4eUFz4n4GE2n7uZ96iGMPx+37dA6ofg9fudAhPL1VbD0ChOIAQhMSraOI3/
+ c/FMQl0lHRyaI/ZaQLFuaTMoLoeq93jHAHQXkgjJSRtVOXXeWSa7FFvZKHWjanlJJWpGD20gS2T
+ A97MAXEX
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060057
+ impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On 8/5/25 16:14, Alexander Gordeev wrote:
-> On Tue, Aug 05, 2025 at 02:54:05PM +0200, Ilya Leoshkevich wrote:
+
+
+On 2025/6/9 21:05, Dmitry Baryshkov wrote:
+> On Mon, Jun 09, 2025 at 08:21:23PM +0800, Yongxing Mou wrote:
+>> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>
+>> dp_display_disable() handles special case of when monitor is
+>> disconnected from the dongle while the dongle stays connected
+>> thereby needing a separate function dp_ctrl_off_link_stream()
+>> for this. However with a slight rework this can still be handled
+>> by keeping common paths same for regular and special case.
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 29 +++++++++++++++--------------
+>>   drivers/gpu/drm/msm/dp/dp_ctrl.h    |  5 ++++-
+>>   drivers/gpu/drm/msm/dp/dp_display.c | 16 +++++++---------
+>>   3 files changed, 26 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> index 1e13ca81b0155a37a4ed7a2e83c918293d703a37..1ce3cca121d0c56b493e282c76eb9202371564cf 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> @@ -2081,30 +2081,31 @@ int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl)
+>>   	return ret;
+>>   }
+>>   
+>> -void msm_dp_ctrl_off_link_stream(struct msm_dp_ctrl *msm_dp_ctrl)
+>> +void msm_dp_ctrl_clear_vsc_sdp_pkt(struct msm_dp_ctrl *msm_dp_ctrl)
+>>   {
+>>   	struct msm_dp_ctrl_private *ctrl;
+>> -	struct phy *phy;
+>>   
+>>   	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
+>> -	phy = ctrl->phy;
+>> -
+>>   	msm_dp_catalog_panel_disable_vsc_sdp(ctrl->catalog);
+>> +}
+>>   
+>> -	/* set dongle to D3 (power off) mode */
+>> -	msm_dp_link_psm_config(ctrl->link, &ctrl->panel->link_info, true);
+>> +void msm_dp_ctrl_psm_config(struct msm_dp_ctrl *msm_dp_ctrl)
 > 
-> Hi Thomas,
+> I'm not a fan of (almost) one-line wrappers.
+> after reabse to latest code. Here can remove wrappers..
+
+>> +{
+>> +	struct msm_dp_ctrl_private *ctrl;
+>>   
+>> -	msm_dp_catalog_ctrl_mainlink_ctrl(ctrl->catalog, false);
+>> +	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
+>>   
+>> -	if (ctrl->stream_clks_on) {
+>> -		clk_disable_unprepare(ctrl->pixel_clk);
+>> -		ctrl->stream_clks_on = false;
+>> -	}
+>> +	/* set dongle to D3 (power off) mode */
+>> +	msm_dp_link_psm_config(ctrl->link, &ctrl->panel->link_info, true);
+>> +}
+>>   
+>> -	dev_pm_opp_set_rate(ctrl->dev, 0);
+>> -	msm_dp_ctrl_link_clk_disable(&ctrl->msm_dp_ctrl);
+>> +void msm_dp_ctrl_reinit_phy(struct msm_dp_ctrl *msm_dp_ctrl)
+>> +{
+>> +	struct msm_dp_ctrl_private *ctrl;
+>> +	struct phy *phy;
+>>   
+>> -	phy_power_off(phy);
+>> +	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
+>> +	phy = ctrl->phy;
+>>   
+>>   	/* aux channel down, reinit phy */
+>>   	phy_exit(phy);
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.h b/drivers/gpu/drm/msm/dp/dp_ctrl.h
+>> index 42745c912adbad7221c78f5cecefa730bfda1e75..edbe5766db74c4e4179141d895f9cb85e514f29b 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.h
+>> @@ -20,7 +20,6 @@ struct phy;
+>>   int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   int msm_dp_ctrl_prepare_stream_on(struct msm_dp_ctrl *dp_ctrl, bool force_link_train);
+>> -void msm_dp_ctrl_off_link_stream(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   void msm_dp_ctrl_off_link(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   void msm_dp_ctrl_off(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   void msm_dp_ctrl_push_idle(struct msm_dp_ctrl *msm_dp_ctrl);
+>> @@ -42,4 +41,8 @@ void msm_dp_ctrl_config_psr(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   int msm_dp_ctrl_core_clk_enable(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   void msm_dp_ctrl_core_clk_disable(struct msm_dp_ctrl *msm_dp_ctrl);
+>>   
+>> +void msm_dp_ctrl_clear_vsc_sdp_pkt(struct msm_dp_ctrl *msm_dp_ctrl);
+>> +void msm_dp_ctrl_psm_config(struct msm_dp_ctrl *msm_dp_ctrl);
+>> +void msm_dp_ctrl_reinit_phy(struct msm_dp_ctrl *msm_dp_ctrl);
+>> +
+>>   #endif /* _DP_CTRL_H_ */
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+>> index 5ac5dcf35b789f2bda052a2c17aae20aa48d8e18..a5ca498cb970d0c6a4095b0b7fc6269c2dc3ad31 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+>> @@ -925,17 +925,15 @@ static int msm_dp_display_disable(struct msm_dp_display_private *dp)
+>>   	if (!msm_dp_display->power_on)
+>>   		return 0;
+>>   
+>> +	msm_dp_ctrl_clear_vsc_sdp_pkt(dp->ctrl);
+>> +
+>> +	/* dongle is still connected but sinks are disconnected */
+>>   	if (dp->link->sink_count == 0) {
+>> -		/*
+>> -		 * irq_hpd with sink_count = 0
+>> -		 * hdmi unplugged out of dongle
+>> -		 */
+>> -		msm_dp_ctrl_off_link_stream(dp->ctrl);
+>> +		msm_dp_ctrl_psm_config(dp->ctrl);
+>> +		msm_dp_ctrl_off(dp->ctrl);
+>> +		/* re-init the PHY so that we can listen to Dongle disconnect */
+>> +		msm_dp_ctrl_reinit_phy(dp->ctrl);
+>>   	} else {
+>> -		/*
+>> -		 * unplugged interrupt
+>> -		 * dongle unplugged out of DUT
+>> -		 */
+>>   		msm_dp_ctrl_off(dp->ctrl);
+>>   		msm_dp_display_host_phy_exit(dp);
+>>   	}
+>>
+>> -- 
+>> 2.34.1
+>>
 > 
-> The below comments date to the initial version, so the question is
-> rather to you:
-> 
->> On linux-next
-> 
-> This line is extra.
 
-I just wanted to let readers know which repo to look at.
-
-> 
->> commit b4c658d4d63d61 ("perf target: Remove uid from target")
->> introduces a regression on s390. In fact the regression exists
->> on all platforms when the event supports auxiliary data gathering.
-> 
-> So which commit it actually fixes: the above, the below or the both?
-> 
->> Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
-> 
-> Thanks!
-> 
-
-Good question!  Pick what you like... :-)
-
-The issue in question originates from a patch set of 10 patches.
-The patch set rebuilds event sample with filtering and migrates
-from perf tool's selective process picking to more generic eBPF
-filtering using eBPF programs hooked to perf events.
-
-To be precise, the issue Ilya's  patch fixes is this:
-Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
-
-However the issue (perf failure) does *NOT* show up until this patch is applied:
-commit b4c658d4d63d61 ("perf target: Remove uid from target")
-
-There are some patches in between the two (when you look at the complete patch set),
-but they do not affect the result.
-
-Hope that helps.
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
-
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
