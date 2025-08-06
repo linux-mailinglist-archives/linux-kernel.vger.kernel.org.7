@@ -1,307 +1,117 @@
-Return-Path: <linux-kernel+bounces-757572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A975BB1C3C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D803B1C3C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C1E3B863B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:48:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D43B62446A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D8628A41F;
-	Wed,  6 Aug 2025 09:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E63D2904;
+	Wed,  6 Aug 2025 09:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BVgd+rZs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="EsiiedlG"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355781FBE80;
-	Wed,  6 Aug 2025 09:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340AB27146F
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473724; cv=none; b=s3lz4ELO/egHrc1IpPcRoVpnXILNW9o8ys3A7eWKRWUPy5CGcJNmTeMXrAcwLfYcv79gRTjAqVfvP4MLbCQXiYriVX2ZHmH8Ejrq5jWB+rr7wFu6DrfJTep0/gQwnVX6FYNWCzpkKPZFaqxKhYsYKASeykAqHUkpJNDuGg4i+GI=
+	t=1754473744; cv=none; b=aOwzjLDQF0pP75o/9FiRA2riLGvCEBMleELOHiaOK5RlSDmTCcdEw+68IIIe146X+/LJYo47MwnePIdap033k/NxmP3Rs2YgNlBP0RMMRHQ6GEp44sZgudmfADrj7Paqf1cvF6zVIUa7kr2NEV1kcS6/9ixD6oJTtAX/SlXE93o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473724; c=relaxed/simple;
-	bh=dBB2uil8xdYuqq7KSR4GUD8VnaNZFEk4RwnSQxJK8VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bXxfF5fO+ywVUFyJ9npAQjlMi1axc/aUcVzBJ5zfHplN6TyXxZU54dpJncL4fqjoue2Gx0BX4DUaDWmg+FzeI4zGItryNy/BG5rcG4nhJ5xMoh4Hb1fu1ogry3JFmphoNWmRYbFipU6zO01xJR1lOWBFe7/Q1ymdTAJwMr/53aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BVgd+rZs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AD44511EB;
-	Wed,  6 Aug 2025 11:47:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754473669;
-	bh=dBB2uil8xdYuqq7KSR4GUD8VnaNZFEk4RwnSQxJK8VA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BVgd+rZsh/ZxoGPA94UhjQapWLxk+gRiwJX2O0VIWWSiN8SZXjLCSOE6MZ8Brh1lv
-	 8XpLo+euerZ1zpRgloZxPxWGh/ChUK6DJKXc9a9m4Y+VmYiVxNuicDSagQBdkuQpE4
-	 LSv8nzfk6MdHfJRD3zCZIOhReZsK2sp0LHv5o6aI=
-Date: Wed, 6 Aug 2025 12:48:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
- custom functions
-Message-ID: <20250806094822.GA24768@pendragon.ideasonboard.com>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
- <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
+	s=arc-20240116; t=1754473744; c=relaxed/simple;
+	bh=5SYIq03Ap7x2Vsl94fmiL13UixJr8VmYZKJRW/hsK6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DhdskHIPEqCz7RcSGeowZ9Hl7sZtFTxQM4yt43QYoA5G30GPwRjvPWkud1ldlcZcVBjEV0dvSDIL/c1o59zo3Oodca8DQfVvOug+36IuBKznsPo73zI8RR9ZDJNmZRtYV21zsZgdXDfE3UI4h1C+f3fiYtfJ94sgjaep/ohco1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=EsiiedlG; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so11865245a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1754473740; x=1755078540; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M1Kr1PaQ/sCS57W91WJtkhDKLb3SosYr+Qg8wrL3X54=;
+        b=EsiiedlGOxmygdNwU3L33lBU6q/lr+sskRAwdbIFjQIDj/LTMDkQzgVqFpewWfXmAn
+         rXLnrfaZHoRXr2Q6ZaWv0kuTGz1H54rsJRzDu/Zlc+5s7G0K3kXPUkQtir/N6QFtcwlh
+         zu+3XuctRrNX3qLIs8Qs5+8Mg/AkCCuzfYlNAUJQJub5cKTHCzZp+hx8Fo0Azl8iPDQ3
+         bNQ9DlPjijhOeBAAHI0bxXbZ9mEtV0O0UKfQUkHQiCdwxOePX42q7mzPiyAssimmLna2
+         VGi3bQSJHzZ2vTRXo0qfnFFQAd7FYlXOwYnQlvXK6KK81SFiyq5PvRaN4lc4LxdkiuA3
+         O9rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754473740; x=1755078540;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M1Kr1PaQ/sCS57W91WJtkhDKLb3SosYr+Qg8wrL3X54=;
+        b=wxpMjHzQaKbSgCGgBl0b64501EPpGfMZSLMJLM2GENIwSCD2/CnP5dY8YKdO0qvth4
+         OG5nbbbCYlXUgzo05R1+RoAJHZn7GVrNFSjuMg7oOM2QXDardIjWRcZcGpxjwzBWHFlI
+         386hTcHk1tKuz9s+t9UKMyRjG5aa1REcZwNdzJCL7sQCHuAu5Pqg3UI6UleqK4mSkTp/
+         p7jkM+wWZtjZqkdvpcbG4VjkHu9OpSRA1QOLe0Hmt9vKPM3++yPZYiuC4Rh5eTGvP1bK
+         flJ29jloUapYsySbIryQ9Xg8uJCl5CjhnaZP0fGA4zD1cITaBigq2MHB/Ef6sK9zOV19
+         SaYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNqaK/clk1p/luDH5RYKfKR4pNKJIp93io3owTE+cNY8t/PM7csIwwxhEHrwE1H6k5YmGP+qA8zKnQdWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysY5bT9TROJnIc+VtXo+h2mA8B/Em0QNTZhANjzW6dPQIDxgo2
+	fE3+jLHp5zOJO7v77072T+yuQxgAxydmhEHZ28iC4VVm8FG7ODDZj3Wkmt+r7Vzz4qc=
+X-Gm-Gg: ASbGncv93UzVlDi4hszAAK2xsoiySNrCk7rT9PHUcu1O1WJOCxoXQGIc2YX9xEifdSu
+	PRZ8Nkahkp5oZojDENwIZ5AKSx8gruXxfxIoNKOJl/8u3xKav/i8e1fnl9shFrvX1S+XvN7og/9
+	TPsYRn/7Emx8oZhq8lbc+nHqZ9rqHF7Duboqlp5Ut9AvtebVjSzt0FU0+M8e4aF663xP6m0Em1J
+	Vfn+cRIh13t6n8SM7GWfBQzRB7cfgiEMdWPtq1bAeDZanDs+XUlyD3LDzRqfNHOD5AhzG8FRxkZ
+	4fd8YHwlLRReJp7fg26d5pO/3pcA7QVTHr3xw1JZEtcwpFP+Fw8bLzgWyST7ehdl+EbgBUN9wcW
+	w8H6HWsNuvz0olq6+rfVyexJ3s+XxRWu/oUdoKajmAisz/O+IeARawdD3vPu9XQfYemTmK2cIsN
+	3Qx9hrBKZO5maYFQIlIRMn9ZHnWg4T/gE0
+X-Google-Smtp-Source: AGHT+IFd7IMVkyVKga4jKFbVEM74esML9mbnuaKUTJXLq/SVH85ZAtHNie1WOgAgCuoAVfu+725UvQ==
+X-Received: by 2002:a05:6402:4401:b0:606:ebd9:c58b with SMTP id 4fb4d7f45d1cf-617960b28b1mr1742918a12.1.1754473740332;
+        Wed, 06 Aug 2025 02:49:00 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f12d500023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f12:d500:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f00247sm10139093a12.9.2025.08.06.02.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 02:48:59 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	amarkuze@redhat.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH 0/3] net/ceph/messenger: micro-optimizations for out_msg
+Date: Wed,  6 Aug 2025 11:48:52 +0200
+Message-ID: <20250806094855.268799-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <49e753f4-f626-49ae-bf23-d2aecfcc6282@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
+These patches reduce reloads of con->out_msg by passing pointers that
+we already have in local variables (i.e. registers) as parameters.
 
-On Wed, Aug 06, 2025 at 10:16:37AM +0200, Hans Verkuil wrote:
-> On 02/08/2025 11:22, Jacopo Mondi wrote:
-> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > Accessing file->private_data manually to retrieve the v4l2_fh pointer is
-> > error-prone, as the field is a void * and will happily cast implicitly
-> > to any pointer type.
-> > 
-> > Replace all remaining locations that read the v4l2_fh pointer directly
-> > from file->private_data and cast it to driver-specific file handle
-> > structures with driver-specific functions that use file_to_v4l2_fh() and
-> > perform the same cast.
-> > 
-> > No functional change is intended, this only paves the way to remove
-> > direct accesses to file->private_data and make V4L2 drivers safer.
-> > Other accesses to the field will be addressed separately.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > ---
-> >  drivers/media/pci/ivtv/ivtv-driver.h               |  5 ++++
-> >  drivers/media/pci/ivtv/ivtv-fileops.c              | 10 +++----
-> >  drivers/media/pci/ivtv/ivtv-ioctl.c                |  8 +++---
-> >  drivers/media/platform/allegro-dvt/allegro-core.c  |  7 ++++-
-> >  drivers/media/platform/amlogic/meson-ge2d/ge2d.c   |  8 ++++--
-> >  .../media/platform/chips-media/coda/coda-common.c  |  7 ++++-
-> >  .../platform/chips-media/wave5/wave5-helper.c      |  2 +-
-> >  .../media/platform/chips-media/wave5/wave5-vpu.h   |  5 ++++
-> >  drivers/media/platform/m2m-deinterlace.c           |  7 ++++-
-> >  .../media/platform/mediatek/jpeg/mtk_jpeg_core.c   |  7 ++++-
-> >  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c  |  7 ++++-
-> >  .../media/platform/mediatek/mdp3/mtk-mdp3-m2m.c    |  7 ++++-
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c   |  2 +-
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h   |  5 ++++
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   |  2 +-
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h   |  5 ++++
-> >  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c     |  7 ++++-
-> >  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c |  7 ++++-
-> >  drivers/media/platform/nxp/mx2_emmaprp.c           |  7 ++++-
-> >  drivers/media/platform/renesas/rcar_fdp1.c         |  7 ++++-
-> >  drivers/media/platform/renesas/rcar_jpu.c          |  7 ++++-
-> >  drivers/media/platform/rockchip/rga/rga.c          |  3 +--
-> >  drivers/media/platform/rockchip/rga/rga.h          |  5 ++++
-> >  drivers/media/platform/rockchip/rkvdec/rkvdec.c    |  2 +-
-> >  drivers/media/platform/rockchip/rkvdec/rkvdec.h    |  5 ++++
-> >  .../media/platform/samsung/exynos-gsc/gsc-core.h   |  6 +++++
-> >  .../media/platform/samsung/exynos-gsc/gsc-m2m.c    |  6 ++---
-> >  .../media/platform/samsung/exynos4-is/fimc-core.h  |  5 ++++
-> >  .../media/platform/samsung/exynos4-is/fimc-m2m.c   |  2 +-
-> >  drivers/media/platform/samsung/s5p-g2d/g2d.c       |  7 +++--
-> >  .../media/platform/samsung/s5p-jpeg/jpeg-core.c    |  9 +++++--
-> >  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   |  6 ++---
-> >  .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  6 +++++
-> >  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |  7 ++++-
-> >  drivers/media/platform/st/sti/delta/delta-v4l2.c   | 26 +++++++++++-------
-> >  drivers/media/platform/st/sti/hva/hva-v4l2.c       | 31 ++++++++++++----------
-> >  drivers/media/platform/st/sti/hva/hva.h            |  2 --
-> >  drivers/media/platform/st/stm32/dma2d/dma2d.c      |  7 +++--
-> >  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c   |  3 +--
-> >  .../platform/sunxi/sun8i-rotate/sun8i_rotate.c     |  3 +--
-> >  drivers/media/platform/ti/omap3isp/ispvideo.c      |  4 +--
-> >  drivers/media/platform/ti/omap3isp/ispvideo.h      |  6 +++++
-> >  drivers/media/platform/verisilicon/hantro.h        |  5 ++++
-> >  drivers/media/platform/verisilicon/hantro_drv.c    |  3 +--
-> >  drivers/staging/media/imx/imx-media-csc-scaler.c   |  7 ++++-
-> >  drivers/staging/media/meson/vdec/vdec.c            | 24 ++++++-----------
-> >  drivers/staging/media/meson/vdec/vdec.h            |  5 ++++
-> >  drivers/staging/media/sunxi/cedrus/cedrus.c        |  3 +--
-> >  drivers/staging/media/sunxi/cedrus/cedrus.h        |  5 ++++
-> >  drivers/staging/media/sunxi/cedrus/cedrus_video.c  |  5 ----
-> >  50 files changed, 237 insertions(+), 100 deletions(-)
-> > 
-> > diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
-> > index a6ffa99e16bc64a5b7d3e48c1ab32b49a7989242..cad548b28e360ecfe2bcb9fcb5d12cd8823c3727 100644
-> > --- a/drivers/media/pci/ivtv/ivtv-driver.h
-> > +++ b/drivers/media/pci/ivtv/ivtv-driver.h
-> > @@ -388,6 +388,11 @@ static inline struct ivtv_open_id *fh2id(struct v4l2_fh *fh)
-> >  	return container_of(fh, struct ivtv_open_id, fh);
-> >  }
-> >  
-> > +static inline struct ivtv_open_id *file2id(struct file *filp)
-> > +{
-> > +	return container_of(file_to_v4l2_fh(filp), struct ivtv_open_id, fh);
-> 
-> Why not write:
-> 
-> 	return fh2id(file_to_v4l2_fh(filp));
-> 
-> Same for all other drivers that do this. I prefer to have the contained_of()
-> in just one place.
+Access to con->out_queue is now gone completely from v1/v2 and only
+few references to con->out_msg remain.  In the long run, I'd like to
+get rid of con->out_msg completely and instead send the whole
+con->out_queue in one kernel_sendmsg() call.  This patch series helps
+with preparing that.
 
-Because fh2id gets removed in "[PATCH 57/65] media: ivtv: Access v4l2_fh
-from file". I can use it in this patch and drop it later, would you
-prefer that ?
+Max Kellermann (3):
+  net/ceph/messenger: ceph_con_get_out_msg() returns the message pointer
+  net/ceph/messenger_v[12]: pass ceph_msg* instead of loading
+    con->out_msg
+  net/ceph/messenger: add empty check to ceph_con_get_out_msg()
 
-> > +}
-> > +
-> >  struct yuv_frame_info
-> >  {
-> >  	u32 update;
-> 
-> <snip>
-> 
-> > diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
-> > index 1f134e08923a528cc676f825da68951c97ac2f25..74977f3ae4844022c04de877f31b4fc6aaac0749 100644
-> > --- a/drivers/media/platform/allegro-dvt/allegro-core.c
-> > +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
-> > @@ -302,6 +302,11 @@ struct allegro_channel {
-> >  	unsigned int error;
-> >  };
-> >  
-> > +static inline struct allegro_channel *file_to_channel(struct file *filp)
-> > +{
-> > +	return container_of(file_to_v4l2_fh(filp), struct allegro_channel, fh);
-> > +}
-> > +
-> >  static inline int
-> >  allegro_channel_get_i_frame_qp(struct allegro_channel *channel)
-> >  {
-> > @@ -3229,7 +3234,7 @@ static int allegro_open(struct file *file)
-> >  
-> >  static int allegro_release(struct file *file)
-> >  {
-> > -	struct allegro_channel *channel = fh_to_channel(file->private_data);
-> > +	struct allegro_channel *channel = file_to_channel(file);
-> 
-> So a file_to_channel inline function was added, but it is used in just one
-> place.
-> 
-> I would prefer to just drop the inline function and instead write:
-> 
-> 	struct allegro_channel *channel = fh_to_channel(file_to_v4l2_fh(file));
-> 
-> If this is needed in two or more places, then the extra inline makes sense,
-> but it is a fairly common pattern that it is only needed in the release function.
-> 
-> Adding a new inline just for that seems overkill to me.
-
-file_to_channel() gets used in more places in "[PATCH 29/65] media:
-allegro: Access v4l2_fh from file", where fh_to_channel() is dropped.
-I'd rather keep it in this patch instead of having to modify the
-allegro_release() function in patch 29/65.
-
-> >  
-> >  	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
-> >  
+ include/linux/ceph/messenger.h |   6 +-
+ net/ceph/messenger.c           |  12 +--
+ net/ceph/messenger_v1.c        |  59 ++++++------
+ net/ceph/messenger_v2.c        | 160 ++++++++++++++++-----------------
+ 4 files changed, 119 insertions(+), 118 deletions(-)
 
 -- 
-Regards,
+2.47.2
 
-Laurent Pinchart
 
