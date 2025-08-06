@@ -1,257 +1,370 @@
-Return-Path: <linux-kernel+bounces-757863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4443B1C78A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0458FB1C777
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F3C7222D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A70A17FF35
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D38928D83C;
-	Wed,  6 Aug 2025 14:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F209D28C2D4;
+	Wed,  6 Aug 2025 14:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FGqSUVS/"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013027.outbound.protection.outlook.com [52.101.83.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKQecTvN"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED20A23CB;
-	Wed,  6 Aug 2025 14:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489972; cv=fail; b=BygkRFlY1XiGqeTeXu8VzPOR5y75bP00m7t1OGgYucH8V9kyVX7/KW9u4Rx9dkFu5oXP7AZE6yVjUK/fo3/qYkuhS4oZWUY3UtDb5tVp/HGjw7guG8NTtfQb9+sDKjJYePqPR4bXiMPXbID1HFIT3G4Xh4elu5ElxBh6/J0KJSY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489972; c=relaxed/simple;
-	bh=a21syyz0SXD5wXc9lfeHxkm5P9P7A/BkM0Tp6JHYF9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JVPx1vE1OHbCK2zLOKZLYQQoZ37A5J/CU9JdlCgSIkyasc5CbF+XJgHRtFwnZ8wJX/v3U2nS+ytdZdwg65Vm2599yv6bdGbeSEVK5Vw1eqF/b5iukZaik1Jmfgrvhha41q9Cojo/5FUaxGfopseIq2vSFQeNTHn7EMjPkmmWxC0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FGqSUVS/; arc=fail smtp.client-ip=52.101.83.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NbkXDuSA5E1GzzfsfhbNkxZ4OwU/7S5nRBLHu3kfY6TaHuSI7H7CelsmmcQ7sPldvL+0EJLcIrIEucS/H1A+l+JMMwlNb2v1OBoM7YqzoaIiSpnb2Khp83et0aY2PEquNokfUs0DCRmq7CsTuQC8cP1nWSBpp6TDQ0k1Sk4FFBzxm9hjPUMxXW3CT87Lmvd5OEzA1jDDb2Mdq8/BboN6Na57qRnEmDFwVQ7FXyEd+ls2Hhll19FS8wXKaKlH1Y0dxQncRKQOFStaVYGfz8iHBQKLvni8jM+4crVciJyW8hx0ALT3NIliusmdzmD8ZHmTfdK7WmHqb/ynhJCM8qrBLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/2oMegg6FdjdCGsJzrtEe3eRTP6aHczC3fVhucY9wv4=;
- b=ftGNJKdOpBAw7kYd6kKyh+PoFh2uQitBpb4HQQDTrA4HlbpXaz2gSi/+si8j8X0YGM4xPB8pKOir4ltO8xGs2ftOGqbS+Qep5HKFs5LF+uVuKO76IgfZjNSqqBRUnofyBvFH659bTVfE8aMH6ZZV8yfWLkALaBRiDuhO+eM8SOej4nWwa9/S3rPlTSXGviE2dO+lDKpxAX4HOZlZXXyqW/R5kmo1Zvt6ULbhYuyu0wysv+RIK17LVhy5od2E4YTmbuxtlIAP/17xbTbIa1GHZhm+swcW99v7Ws8TdlrgTAm6e4Te8NJm+GR8wIGybiVYdKVMb3clXlMcNjE6d0rlOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/2oMegg6FdjdCGsJzrtEe3eRTP6aHczC3fVhucY9wv4=;
- b=FGqSUVS/QUWPWyxyh92uQz3rEvNU4Sthljg6xRc9OjLKvofhvgW+J75jRmF9EsWlRS75eIgS9/1fvytzmQJUEeFRy7kNC0DSlEXVGxFfvKGIwguDtdLlUhLQn6qIWYimWEO0/CGKtIm06eFpKapMK91FVQI0bFrOkQ5AKvxuIc7WzJrCyvZTiTxLddc/h6f2qkr728ry14qmKl7Uw1SpxHGI+lT+jwUumpwb85vUaQ5p5UpkYg1EvZL3ffqBLu1oAJKgxVinDk7NB/XKu3dQDnqxadYjf3ZNqndB/PgnE3VePwyZ7Kcqg0+M4CWPf0O/rlW+pLJjohwpU6CyoyYS2g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by GVXPR04MB10947.eurprd04.prod.outlook.com (2603:10a6:150:216::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 14:19:25 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%4]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 14:19:25 +0000
-Date: Wed, 6 Aug 2025 22:14:03 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, o.rempel@pengutronix.de, 
-	pabeni@redhat.com, netdev@vger.kernel.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
-References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
- <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
- <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
- <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
-X-ClientProxiedBy: SI2PR01CA0027.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::7) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F00428D8EB;
+	Wed,  6 Aug 2025 14:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754489725; cv=none; b=NYNAsn52vN3vdUL3C0RlWI1vfpzsRkZmxgv8nsgxRXtEZwbQhXOCzjXIVg1NPhEI65/XAzYM906UqKZ509jQzIArwcgxFlab/NtYsFWiYtBc/SqULcN5o5CcPsO/jQuW9j44KVmrZoz4N0nhCj4gMhvxYyC8CSTe0cpk746c6dg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754489725; c=relaxed/simple;
+	bh=U7dlzHue4VhWRIDqsRai/aSFudxQE0s2ZhnoNyUgtAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kuHOkP/YvADIoqxf9CA83TWZSYxNhRwVghkqmHTdF1N8ohi/xVqp7RKT3Wnnbv7Jrzm4DSOVLmc/bufy4LE+kEmiLN6aPPA1qA4WpGTBXI8bIx44/si3VaEMgl86Ago36vh6OUx9ZTTs5ORMkp0/euc+vTzov5QFlrorsXW440g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKQecTvN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55b975b459aso5528233e87.3;
+        Wed, 06 Aug 2025 07:15:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754489718; x=1755094518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HHHtXBq5WO+vvcc0f+jtGoFoRXRDF9tjNLE6vwGhp98=;
+        b=VKQecTvNTGoIfTL1WP+PzFxkt9bjctekdguwMxH51jYXXlfNFkCEdlAWH6GR+Vh5Ot
+         RHlAwbOwdB0qtBUifPNG5kTN3MJ5GeRITY0znmRpRvU/6IPkXfkb3pNRlPpwilZlJ4/X
+         26Mlmhv5xzFxmJ+Zlw/O+w3mwDaXLDOTHL4ALG15Aq09Oct1lN1mqx4kEcbTQFjMtB18
+         /MMSw+micH8xcZJO928hGW2C6CLVzY1IjBRwfsPsFAI6BZgXcK9EBqaAm2HHFVbigSL2
+         nHg3yWQKAXoJlOn6kk0fRZWv5lnOtityi+DSsfh9NmI/IZUoEBfgs0+88B00s2HG2N27
+         8JVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754489718; x=1755094518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HHHtXBq5WO+vvcc0f+jtGoFoRXRDF9tjNLE6vwGhp98=;
+        b=mD9vaQvRhCrPkviLoU5Nmpae/9bcXEKEbH0Megpgm/oFXU9XFd5nrAi6EUARMSCqTp
+         s7I5X+TAXoPkETqyjiplh8Qf50o9HgU1EeTfWoPEATPxI8SgFugR9RLJVce3ET0Yj257
+         4KqtvFSYIig75vIJeWvOVasaA3dDNdyyOmd0DTWWSx5DoR9D9LL+hAaOJoy4Gk6t7PQD
+         lNeWcJaGGaBG3qkGTIdJrbUwZOMyXZfO8L8v5/iPjHsbwFlnqlqw6BYG+cJWWnto2zUP
+         uSW0UOc92oroqhDY4qSkp943aAeTljrgDHr8L5Akd2pPQ+Kq2JOm2kRuG0xPnmjFoLCO
+         i+Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWF9U1l94CCxwe55PCpgELpwqprOtQrhf/GqhCiVDvd9xcdcSUH/wLBNCznQji0sa9Q/MAoR36rgwqktMw=@vger.kernel.org, AJvYcCWG6YX23Eijs7ckjBRLfJ5TxGw516cOKqO3lxXBgHEGZWRQsQNjMjTJ6df7mDDzpEQ8lSwAx5osKgWaPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtdWPoCV04jPVQx666smxyKPiJu+0eu+1Ij3lndxXSeigaZUfd
+	9rdE67ba5b7vC0UYWA3ejk+fBHEyG+CofKYMe+lDvjbmmO0a14/AibGOvLnG1KrGtJggC5ocsfM
+	B64iKUlLWmM9u84viLaxIPSrNguMIZbk=
+X-Gm-Gg: ASbGncuK4ANhzAsZDrzgi+oboBlTUWdT9oqtGPU8ncve2TNejaNOkO4+3pfm+1xEnAN
+	Ap0A6pKmdpZ3CceMeMw8Wr0NWItz2tONf4YaYWPQlijyGUgp98iC0SZL1JmzpCktvX3nONVkHKe
+	5bhcv5HgW6uMTk45Ar2AZVI95FhQI375zSoyNnPeGfW5x4j8nQll14DbsUEPt8oWBF2YrsIcRJX
+	63PWC4pomL2QHi3rw==
+X-Google-Smtp-Source: AGHT+IGJIXTvnACCtHBTy4xxxFNjsKAhes5Wv7IRo3RcAz7+56gG6smaMf7pNYbDbu4cgI3F5Fzl+OIwDZB8GhsMAoI=
+X-Received: by 2002:a05:6512:144c:10b0:55a:90b:7a37 with SMTP id
+ 2adb3069b0e04-55caf3b36c2mr652245e87.50.1754489718011; Wed, 06 Aug 2025
+ 07:15:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|GVXPR04MB10947:EE_
-X-MS-Office365-Filtering-Correlation-Id: f54bf43c-6620-45c0-1ff8-08ddd4f43f15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|376014|52116014|366016|38350700014|27256017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XAl14thYUdCBV4wgAPdKYF0s7Mp+04yxEmyhKX3kO5GFPcOq2F+WeZ3zDU1X?=
- =?us-ascii?Q?U4OvPvjY7FdqAMq4HywVhiE1kwTD863BKM75gLCRxufbCzFWBLjGkSboTMmf?=
- =?us-ascii?Q?L3jLVS68Uy7vDnNZV6jMOZE7lUZ7AI9jBd7lDLeJ8jxvnJmfYCCBrmb+2jlt?=
- =?us-ascii?Q?jiB5NQJK+y/bYG0d6y/DYt1l4lnBhIaUJZdKf/VC/3jJZ7MuYvXUd8/ZNB/h?=
- =?us-ascii?Q?x7d/UHQpB/+u0HV3hUIo937lmKyw9YerCNLJVySCwbKhG50RBw9OHSlv1GK8?=
- =?us-ascii?Q?ABSms984x7JBQgy2pSLAecdbWu7wS35twJY7Lrg0ja6lkcfkQU50yIe/8/uQ?=
- =?us-ascii?Q?bc/LftYHr80jthFg880F8S2EhRO70UFpejDovywOdXlMQgB8hSvF9VkNbDCy?=
- =?us-ascii?Q?bifXvwpZGL/ewFOqDvw7tjcxtQHX4G8YluUR/RJL2URctrDLtH1/fREfcMha?=
- =?us-ascii?Q?1tRGzYPyvHWiJ25I7c5HVxqNq3VJXK3+O4hJ55LWwci8u863mBtJuvSkkMFw?=
- =?us-ascii?Q?dYRPZaLT75NPklShzaFv7pdKHJ5nPYVrF61DXkdesA1yXZK1ZaxblViOWllM?=
- =?us-ascii?Q?eg1APvFoYRci5jf8ESYZQtJljfHMMjajxq9l9403nDv+LcQw1cHJ3/nrMy+P?=
- =?us-ascii?Q?1LnqleCMUUksWP1YciBHMMdLJRcSzTNaUtuTQbavCbc4ANIwIvwKXY5td3no?=
- =?us-ascii?Q?8nWXheE2GQhVymgHUHp62OYZVrpPhi+a9xD9ftoVTOACWW1f/f25k8H1P/Wb?=
- =?us-ascii?Q?vDnsH+rmLy2EeOHzG7Q0V3tAywdRZJYSRxEr2HYce0oU/iUiNq5sSprJqnLc?=
- =?us-ascii?Q?a/Pk4WVxBktl4qSyBCkghCAkXHwWwk6i9M4wUHFZkjcgrlCHMTw5Ur58vFc/?=
- =?us-ascii?Q?zsW5AZ+ZrFZtMWfEeGCLV2jyah3ysee6/vQlA9Xvvw2heQTqIGkFitkQXDva?=
- =?us-ascii?Q?vM6IhppideyLY1Tp9XncY8m2v8BvRin0AgOJTckSTQ8LbGy2Wxdw9RJ9j+q8?=
- =?us-ascii?Q?/7y+/WzATZJf6TbH8HyAuQ80IK9Q06H6+aM0PQV4vljQMdrOYlzkNsq359fX?=
- =?us-ascii?Q?T/3wJwARzDjczYgnqlSAPI54riAqNIJAgDKsZrGxQt2qZNhcwdx2JgwyxNCD?=
- =?us-ascii?Q?pll+B4+90Ngj3M8B7LO1it0xWERF4JCCESamDocZvv3igwwUiko+uUTlgkbi?=
- =?us-ascii?Q?yyYhjEleNYWh+pWPXh6/1UJcOmNxtc89cnXCqNyymnqgLgzERjboAJhSlwGr?=
- =?us-ascii?Q?FDJwgbtQqaO7972zTkByIHsB2ubg174o5/aDtSqi9Jbe3M4XY1NPSzfrUEbp?=
- =?us-ascii?Q?9Vg/QiL/ocPO/FumD6GxlWWzLm4BE0h2LmvgIzwVx+1/pPOCNRWv/WK7hu0q?=
- =?us-ascii?Q?LeZzl7Vjq4LG0LHlcIuBETdibNmCHjL8xBcp1Rrj+FRdXKAHfcwgCi9qe9/s?=
- =?us-ascii?Q?tcMgaiSKSOuO8RpU5Ki7NR+E4yD6PYj1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(52116014)(366016)(38350700014)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PDLCGyo7wUMxQYXnZAcSGzjdenvOpVv7Gw0u2ZyRAANtq+UAvFk8mmca4qmp?=
- =?us-ascii?Q?Gf/7/u+nmGzOoAeKmWxA43HU20G/gZ/FoMQ9Hp8VfcnL7VVvaEUe0n7Yp/wQ?=
- =?us-ascii?Q?fZpTXhG47xnhPkbUykEt45MLJAn9UcqDskMrdueqb0XDMm+CTWW/BFFm/3Ul?=
- =?us-ascii?Q?F2R/J/KMQddzwoIV1IxlcCLBf5bj2HvvZrhiFjrOKfmu1KGU6qYFaI9rUV+6?=
- =?us-ascii?Q?ub3SLEfe09aatSDA/11l4xnHZRzNfdcGguaxu2Q6zsMcLUwy3JSo6FKb0qVH?=
- =?us-ascii?Q?Czx0I7enIC9fI1fx06aF2hPOhb42qHakV06XWq4wo2c/qXJ6D41K/m+Ttk5q?=
- =?us-ascii?Q?OmLTZ2r1eGJb/ijkPHO93neWUGwB9MHWLczYNZmrZ4N8yoV9oRkmEyPirzDg?=
- =?us-ascii?Q?EV5tUO3tRGddhcLs4kSFYOR1/WpJqNCjH67tuMs6xpDp2gnilvJOQU/Fe714?=
- =?us-ascii?Q?eqRpCGEEMi0yNhrCG99ACGPteeWHHH6gXfXIKCfdhAOzUs2rAtj02g+0dAM+?=
- =?us-ascii?Q?/0fkebToK3oFDquyl6PEQiNSuYa9wybD8Sg2RUl04wrLtuGqG5IZkIcDswTL?=
- =?us-ascii?Q?33TjcrprJ6k+g311avWlhAHgF5h28B4v8hvqW4KKV7xnFV7VhS2ig0nP4KLV?=
- =?us-ascii?Q?l0Jwm5UPeCCAVr3D/nX6iAiNYcxnEweM1xrQ153Mn1PFZAFYaZ4OsQcFl7oC?=
- =?us-ascii?Q?PTQKbnYM0+VobeCzIW/lAZYX7iYFcY05an+V7xzp2Y6QekoEQ1EFAZtnDh/L?=
- =?us-ascii?Q?XsNc/XQA0IRN6m8j8w9kaRFtzwwive11y4MX/0K3yBPhMjRVnck4Xc0y3f9g?=
- =?us-ascii?Q?Q+75BBVZA9GkTBx1Ektv7SCXWaF3s28Osp4VjzZpwUSXl8GMSpwLw3+mYK4V?=
- =?us-ascii?Q?AJheF/Gr1Bcv/pLY+0sEVSG66ZfKsRH/AvSfkDKU1RuFUD9rde4SptcJrQ67?=
- =?us-ascii?Q?ryeAws3xUBeWSGjSPSLMZOCHeayHXIheTb0ZOBq+1CjUVkJokBfNfULXs78x?=
- =?us-ascii?Q?ZsZszqbJvmP3o3d3cYTv3I2/f6jxAeFn/oBCM4ehH7K910ypvkLx/t95/BgZ?=
- =?us-ascii?Q?Fj0Pe/w+rCniddH6TFUj4IOno2zNm/NE9Tq56t5GhatqdMIxRRzqZZSA07r1?=
- =?us-ascii?Q?aBbtpvn4ziVR4knxyJGF9ZohmJB0KvtZ0WTPxlGtD8eM+/4gU0wVgnrN96B8?=
- =?us-ascii?Q?duYtn/aK+32Nhq0DCJPL78yrYZ1E29H3C8Xa1bEKE90mPAr2WzCpIXrk6Ars?=
- =?us-ascii?Q?inkqORWw75tx+uDuFaXDo99M9QFViu1EKSNIz6kOjx2VSvR8Bhu/r0HjFQ97?=
- =?us-ascii?Q?9eAeWO765a6cMdS/WDXCL2YszAVq/ex/wP5BGvHZvwWZcJR4b8SZipVnyyra?=
- =?us-ascii?Q?dbzz59f9pPuLt3/i/z/Vsjq3vJ7cG1BPfHhYQwqE+hrdHjKbtBjMT7BWdq6Q?=
- =?us-ascii?Q?qq1SgZax3/gr4Apk+g2kOeB0MeA61bYT6xvqP5AMaRk9QYg/b6d2OLkRXhFD?=
- =?us-ascii?Q?j6An+QAVrVNptDM/gSjvOKmMNFiIHBynEz7vGhY757ZkA5iHDqQeV40VbgOk?=
- =?us-ascii?Q?AdAqmPo/1OF/tHQ4t8Ul3zLEOcx1Clu0Tvkqxf7w?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f54bf43c-6620-45c0-1ff8-08ddd4f43f15
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 14:19:25.5955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qVBC6loQfl7dEMlhwvYw/kQjbm6CxYD2VfY5FXBevsCRhcxKVSuNo+MBNxWCW1JTnbKxnQFBF7rvzmbnXsXsrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10947
+References: <20250805142622.560992-1-snovitoll@gmail.com> <20250805142622.560992-2-snovitoll@gmail.com>
+ <5a73e633-a374-47f2-a1e1-680e24d9f260@gmail.com>
+In-Reply-To: <5a73e633-a374-47f2-a1e1-680e24d9f260@gmail.com>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Wed, 6 Aug 2025 19:15:01 +0500
+X-Gm-Features: Ac12FXyPyQ2NShErRdFgyvw5rZUg2mPvtAtIHmw2QjkFVe_vIUdzA6ST_4dfZTU
+Message-ID: <CACzwLxg=zC-82sY6f-z0VOnmbpN2E8tQxe7RyOnynpbJEFP+NA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] kasan: introduce ARCH_DEFER_KASAN and unify static
+ key across modes
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com, 
+	agordeev@linux.ibm.com, akpm@linux-foundation.org, zhangqing@loongson.cn, 
+	chenhuacai@loongson.cn, trishalfonso@google.com, davidgow@google.com, 
+	glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+On Wed, Aug 6, 2025 at 6:35=E2=80=AFPM Andrey Ryabinin <ryabinin.a.a@gmail.=
+com> wrote:
+>
+>
+>
+> On 8/5/25 4:26 PM, Sabyrzhan Tasbolatov wrote:
+> > Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures that need
+> > to defer KASAN initialization until shadow memory is properly set up,
+> > and unify the static key infrastructure across all KASAN modes.
+> >
+> > Some architectures (like PowerPC with radix MMU) need to set up their
+> > shadow memory mappings before KASAN can be safely enabled, while others
+> > (like s390, x86, arm) can enable KASAN much earlier or even from the
+> > beginning.
+> >
+> > Historically, the runtime static key kasan_flag_enabled existed only fo=
+r
+> > CONFIG_KASAN_HW_TAGS mode. Generic and SW_TAGS modes either relied on
+> > architecture-specific kasan_arch_is_ready() implementations or evaluate=
+d
+> > KASAN checks unconditionally, leading to code duplication.
+> >
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D217049
+> > Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> > ---
+> > Changes in v4:
+> > - Fixed HW_TAGS static key functionality (was broken in v3)
+>
+> I don't think it fixed. Before you patch kasan_enabled() esentially
+> worked like this:
+>
+>  if (IS_ENABLED(CONFIG_KASAN_HW_TAGS))
+>         return static_branch_likely(&kasan_flag_enabled);
+>  else
+>         return IS_ENABLED(CONFIG_KASAN);
+>
+> Now it's just IS_ENABLED(CONFIG_KASAN);
 
-On Wed, Aug 06, 2025 at 02:01:01PM +0100, Russell King (Oracle) wrote:
-> On Wed, Aug 06, 2025 at 04:56:58PM +0800, Xu Yang wrote:
-> > Hi Russell,
-> > 
-> > On Wed, Aug 06, 2025 at 09:45:01AM +0100, Russell King (Oracle) wrote:
-> > > On Wed, Aug 06, 2025 at 04:29:31PM +0800, Xu Yang wrote:
-> > > > Not all phy devices have phy driver attached, so fix the NULL pointer
-> > > > dereference issue in phy_polling_mode() which was observed on USB net
-> > > > devices.
-> > > 
-> > > See my comments in response to your first posting.
-> > 
-> > Thanks for the comments!
-> > 
-> > Reproduce step is simple:
-> > 
-> > 1. connect an USB to Ethernet device to USB port, I'm using "D-Link Corp.
-> >    DUB-E100 Fast Ethernet Adapter".
-> > 2. the asix driver (drivers/net/usb/asix_devices.c) will bind to this USB
-> >    device.
-> > 
-> > root@imx95evk:~# lsusb -t
-> > /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ci_hdrc/1p, 480M
-> >     |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=asix, 480M
-> > 
-> > 3. then the driver will create many mdio devices. 
-> > 
-> > root@imx95evk:/sys/bus/mdio_bus# ls -d devices/usb*
-> > devices/usb-001:005:00  devices/usb-001:005:04  devices/usb-001:005:08  devices/usb-001:005:0c  devices/usb-001:005:10  devices/usb-001:005:14  devices/usb-001:005:18  devices/usb-001:005:1c
-> > devices/usb-001:005:01  devices/usb-001:005:05  devices/usb-001:005:09  devices/usb-001:005:0d  devices/usb-001:005:11  devices/usb-001:005:15  devices/usb-001:005:19  devices/usb-001:005:1d
-> > devices/usb-001:005:02  devices/usb-001:005:06  devices/usb-001:005:0a  devices/usb-001:005:0e  devices/usb-001:005:12  devices/usb-001:005:16  devices/usb-001:005:1a  devices/usb-001:005:1e
-> > devices/usb-001:005:03  devices/usb-001:005:07  devices/usb-001:005:0b  devices/usb-001:005:0f  devices/usb-001:005:13  devices/usb-001:005:17  devices/usb-001:005:1b  devices/usb-001:005:1f
-> 
-> This looks broken - please check what
-> /sys/bus/mdio_bus/devices/usb*/phy_id contains.
+In v4 it is:
 
-root@imx95evk:~# cat /sys/bus/mdio_bus/devices/usb*/phy_id
-0x00000000
-0x00000000
-0x00000000
-0x02430c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
-0x0c540c54
+        #if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAG=
+S)
+        static __always_inline bool kasan_shadow_initialized(void)
+        {
+                return static_branch_likely(&kasan_flag_enabled);
+        }
+        #else
+        static __always_inline bool kasan_shadow_initialized(void)
+        {
+                return kasan_enabled(); // which is IS_ENABLED(CONFIG_KASAN=
+);
+        }
+        #endif
 
-> 
-> However, this patch should stop the oops. Please test and let me know
-> whether it works. Thanks.
-> 
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 7556aa3dd7ee..e6a673faabe6 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -288,7 +288,7 @@ static bool phy_uses_state_machine(struct phy_device *phydev)
->  		return phydev->attached_dev && phydev->adjust_link;
->  
->  	/* phydev->phy_link_change is implicitly phylink_phy_change() */
-> -	return true;
-> +	return !!phydev->phy_link_change;
->  }
->  
->  static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+So for HW_TAGS, KASAN is enabled in kasan_init_hw_tags().
 
-It works for me.
+>
+> And there are bunch of kasan_enabled() calls left whose behavior changed =
+for
+> no reason.
 
-Thanks,
-Xu Yang
+By having in v5 the only check kasan_enabled() and used in current mainline=
+ code
+should be right. I've addressed this comment below. Thanks!
 
-> -- 
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>
+>
+> > - Merged configuration and implementation for atomicity
+> > ---
+> >  include/linux/kasan-enabled.h | 36 +++++++++++++++++++++++-------
+> >  include/linux/kasan.h         | 42 +++++++++++++++++++++++++++--------
+> >  lib/Kconfig.kasan             |  8 +++++++
+> >  mm/kasan/common.c             | 18 ++++++++++-----
+> >  mm/kasan/generic.c            | 23 +++++++++++--------
+> >  mm/kasan/hw_tags.c            |  9 +-------
+> >  mm/kasan/kasan.h              | 36 +++++++++++++++++++++---------
+> >  mm/kasan/shadow.c             | 32 ++++++--------------------
+> >  mm/kasan/sw_tags.c            |  4 +++-
+> >  mm/kasan/tags.c               |  2 +-
+> >  10 files changed, 133 insertions(+), 77 deletions(-)
+> >
+> > diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enable=
+d.h
+> > index 6f612d69ea0..52a3909f032 100644
+> > --- a/include/linux/kasan-enabled.h
+> > +++ b/include/linux/kasan-enabled.h
+> > @@ -4,32 +4,52 @@
+> >
+> >  #include <linux/static_key.h>
+> >
+> > -#ifdef CONFIG_KASAN_HW_TAGS
+> > +/* Controls whether KASAN is enabled at all (compile-time check). */
+> > +static __always_inline bool kasan_enabled(void)
+> > +{
+> > +     return IS_ENABLED(CONFIG_KASAN);
+> > +}
+> >
+> > +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
+> > +/*
+> > + * Global runtime flag for KASAN modes that need runtime control.
+> > + * Used by ARCH_DEFER_KASAN architectures and HW_TAGS mode.
+> > + */
+> >  DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> >
+> > -static __always_inline bool kasan_enabled(void)
+> > +/*
+> > + * Runtime control for shadow memory initialization or HW_TAGS mode.
+> > + * Uses static key for architectures that need deferred KASAN or HW_TA=
+GS.
+> > + */
+> > +static __always_inline bool kasan_shadow_initialized(void)
+>
+> Don't rename it, just leave as is - kasan_enabled().
+> It's better name, shorter and you don't need to convert call sites, so
+> there is less chance of mistakes due to unchanged kasan_enabled() -> kasa=
+n_shadow_initialized().
+
+I actually had the only check "kasan_enabled()" in v2, but went to
+double check approach in v3
+after this comment:
+https://lore.kernel.org/all/CA+fCnZcGyTECP15VMSPh+duLmxNe=3DApHfOnbAY3NqtFH=
+ZvceZw@mail.gmail.com/
+
+Ok, we will have the **only** check kasan_enabled() then in
+kasan-enabled.h which
+
+        #if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAG=
+S)
+        static __always_inline bool kasan_enabled(void)
+        {
+                return static_branch_likely(&kasan_flag_enabled);
+        }
+        #else
+        static inline bool kasan_enabled(void)
+        {
+                return IS_ENABLED(CONFIG_KASAN);
+        }
+
+And will remove kasan_arch_is_ready (current kasan_shadow_initialized in v4=
+).
+
+So it is the single place to check if KASAN is enabled for all arch
+and internal KASAN code.
+Same behavior is in the current mainline code but only for HW_TAGS.
+
+Is this correct?
+
+>
+>
+> >  {
+> >       return static_branch_likely(&kasan_flag_enabled);
+> >  }
+> >
+> > -static inline bool kasan_hw_tags_enabled(void)
+> > +static inline void kasan_enable(void)
+> > +{
+> > +     static_branch_enable(&kasan_flag_enabled);
+> > +}
+> > +#else
+> > +/* For architectures that can enable KASAN early, use compile-time che=
+ck. */
+> > +static __always_inline bool kasan_shadow_initialized(void)
+> >  {
+> >       return kasan_enabled();
+> >  }
+> >
+>
+> ...
+>
+> >
+> >  void kasan_populate_early_vm_area_shadow(void *start, unsigned long si=
+ze);
+> > -int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
+> > -void kasan_release_vmalloc(unsigned long start, unsigned long end,
+> > +
+> > +int __kasan_populate_vmalloc(unsigned long addr, unsigned long size);
+> > +static inline int kasan_populate_vmalloc(unsigned long addr, unsigned =
+long size)
+> > +{
+> > +     if (!kasan_shadow_initialized())
+> > +             return 0;
+>
+>
+> What's the point of moving these checks to header?
+> Leave it in C, it's easier to grep and navigate code this way.
+
+Andrey Konovalov had comments [1] to avoid checks in C
+by moving them to headers under __wrappers.
+
+: 1. Avoid spraying kasan_arch_is_ready() throughout the KASAN
+: implementation and move these checks into include/linux/kasan.h (and
+: add __wrappers when required).
+
+[1] https://lore.kernel.org/all/CA+fCnZcGyTECP15VMSPh+duLmxNe=3DApHfOnbAY3N=
+qtFHZvceZw@mail.gmail.com/
+
+>
+>
+> > +     return __kasan_populate_vmalloc(addr, size);
+> > +}
+> > +
+> > +void __kasan_release_vmalloc(unsigned long start, unsigned long end,
+> >                          unsigned long free_region_start,
+> >                          unsigned long free_region_end,
+> >                          unsigned long flags);
+> > +static inline void kasan_release_vmalloc(unsigned long start,
+> > +                        unsigned long end,
+> > +                        unsigned long free_region_start,
+> > +                        unsigned long free_region_end,
+> > +                        unsigned long flags)
+> > +{
+> > +     if (kasan_shadow_initialized())
+> > +             __kasan_release_vmalloc(start, end, free_region_start,
+> > +                        free_region_end, flags);
+> > +}
+> >
+>
+> ...> @@ -250,7 +259,7 @@ static inline void poison_slab_object(struct kme=
+m_cache *cache, void *object,
+> >  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+> >                               unsigned long ip)
+> >  {
+> > -     if (!kasan_arch_is_ready() || is_kfence_address(object))
+> > +     if (is_kfence_address(object))
+> >               return false;
+> >       return check_slab_allocation(cache, object, ip);
+> >  }
+> > @@ -258,7 +267,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache=
+, void *object,
+> >  bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool in=
+it,
+> >                      bool still_accessible)
+> >  {
+> > -     if (!kasan_arch_is_ready() || is_kfence_address(object))
+> > +     if (is_kfence_address(object))
+> >               return false;
+> >
+> >       poison_slab_object(cache, object, init, still_accessible);
+> > @@ -282,9 +291,6 @@ bool __kasan_slab_free(struct kmem_cache *cache, vo=
+id *object, bool init,
+> >
+> >  static inline bool check_page_allocation(void *ptr, unsigned long ip)
+> >  {
+> > -     if (!kasan_arch_is_ready())
+> > -             return false;
+> > -
+>
+>
+> Well, you can't do this yet, because no arch using ARCH_DEFER_KASAN yet, =
+so this breaks
+> bisectability.
+> Leave it, and remove with separate patch only when there are no users lef=
+t.
+
+Will do in v5 at the end of patch series.
+
+>
+> >       if (ptr !=3D page_address(virt_to_head_page(ptr))) {
+> >               kasan_report_invalid_free(ptr, ip, KASAN_REPORT_INVALID_F=
+REE);
+> >               return true;
+> > @@ -511,7 +517,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsig=
+ned long ip)
+> >               return true;
+> >       }
+> >
+> > -     if (is_kfence_address(ptr) || !kasan_arch_is_ready())
+> > +     if (is_kfence_address(ptr))
+> >               return true;
+> >
+> >       slab =3D folio_slab(folio);
+>
+>
 
