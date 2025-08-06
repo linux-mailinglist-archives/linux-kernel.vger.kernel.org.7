@@ -1,150 +1,195 @@
-Return-Path: <linux-kernel+bounces-757110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF54B1BDDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2264FB1BDDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23543AC62C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78F5626AFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90E60DCF;
-	Wed,  6 Aug 2025 00:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3892127455;
+	Wed,  6 Aug 2025 00:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H8R01tOn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjM4uejl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3F7171C9;
-	Wed,  6 Aug 2025 00:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547B2E36EC;
+	Wed,  6 Aug 2025 00:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754439924; cv=none; b=I6hi5Mhfv53sX/A9F5n5bytarsGAaCH6EL3JHr67NMwTc/g2aNY7k/azPOxGVwneZ0kqt3Y7tMsnd4xlBv/OQedAZ+aI+0AMxW9v+1K3KckIugIiM0cx99n1vdsrtA4o/F8QaZZeQxyWd+Bfw9F33XkAzXetGqvVPP6RpSG3xEI=
+	t=1754439958; cv=none; b=r6RkiHUkOdBNDJZN00+8wwqC5cjynwz/g9T/klpPvF2SzOdIN9N+kVLGIzWgiJoCvy97SPOkdS4GL756MGb1r2vTtN9WWxS93lQ7qxG2sBRjxGaPDhSr/ZpZIkizR37H7Zbj9IRpbPtRaPhtpIpR7QUDbtAsOmj4QfwHKVqt8yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754439924; c=relaxed/simple;
-	bh=Xa8K2I92uLyO484B0qkAfsO5WwTjl3NToPDEdFw7lcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wjtwq6tBw5ge/E46UTDs6102S5txoXSxpQZtN9IorDsfI3dkdDFVOeUGpOi5v2tYq7tT2/qP+dRhc7BykzPbcCI/7KAfM2nRs0T/Cv+zfgokHGDSS2HVBpUOGxK/Uyy3J/3zMw5MYs9g6MxVh+zq31vEj4QwP+9gYhI3ZkIM4EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H8R01tOn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=zYA8n4MidVExydv3/JxDVqPaTJImy9qKxpLFRRwzZo0=; b=H8R01tOndR7j5SuRFu/C4Cwen/
-	qLz3YG25lqRLqoW6M+4RKs+nHpyWcdKTRyr0ZP5nxnd3D6HmKyoWDxmWXgRHGOUc1FW46lewgrfJ0
-	LSEMLCNC/IH9zpuV4kFdU5ByyPyffXWewCwvfb1ebK7EiQWMyfPZCLw9Yip1A6yH/v00SuK/Aqs9r
-	yWWWVYTuX6LZ/bobuRQDVZ5+aXzrH98yhIA2PePmC4XhJOeiyU8kpCGxyxKyfzMP+fo/jovz2+9tZ
-	lUUp2RUxQXVNT8j9kIlvm2bvsq+hkYJm/litTEgfQNXMZfHmBjQ/e3Ua0f38lvrIVRUjZ3fUNdyg0
-	clkeqPxw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ujRy4-0000000E3ZF-3ciz;
-	Wed, 06 Aug 2025 00:25:20 +0000
-Message-ID: <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
-Date: Tue, 5 Aug 2025 17:25:19 -0700
+	s=arc-20240116; t=1754439958; c=relaxed/simple;
+	bh=BZWVK6HRJ5+01HiPDOE1XEhAursR2L9D85LdW4mMBS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=koYDYYO7HqROm8db7iBOEOXqxNE9RxwrDui58n7+iHD9VhCz1Lo1cDSRY9zNt8x4l2C/SdE7UtNt8qKafNitZX8wDaQUbWv+wDySRz6DsmRmHpvdhg4S/BhT4pjQt94IsN0m3RimytqTnUy5nVQ6sMgOD4YozmxjDWbDuEolAjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjM4uejl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E509C4CEF0;
+	Wed,  6 Aug 2025 00:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754439958;
+	bh=BZWVK6HRJ5+01HiPDOE1XEhAursR2L9D85LdW4mMBS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IjM4uejlYOmFN+tNzGvXanK9a6PGNv4CRB9KjYQ75Ur6sW0ci6w9wMeDDvbzrqESd
+	 rjNGcSzdWN81NEyfYNZ01jllaIK5aneglY5SwQ50WuqJrRosUX3jlQh4tAW5rgrctH
+	 7+QTrXXPqObsISepzXzy4rLUKjx4sw919LDEZMZ2/lnuEgxpkEU7yTswTjUygKDoP5
+	 jEYLogHrOUHL63yr14EgwJHjFgeVokLqLo8H6w53H6gL5NDizA8CULb8fSKWcv3EOx
+	 b2vumnVpKNiPqHPtA0lZE2zn73c0u+fZpfrp+50mPUv+iFez5Qtn+av6jiGa6orQQN
+	 rYnjldakL1RoA==
+Date: Tue, 5 Aug 2025 17:25:55 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: konradybcio@kernel.org, linux-arm-msm@vger.kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, srini@kernel.org, quic_ekangupt@quicinc.com, 
+	krzysztof.kozlowski@linaro.org, dmitry.baryshkov@oss.qualcomm.com
+Subject: Re: [PATCH v2] arm64: dts: qcom: sm8750: Add adsp fastrpc
+ nodes/support
+Message-ID: <ovlwlyuwj3q2g4eudesq7qtc3q6omylvnnriagd2nfsrbkbldk@zwdw2yovumeh>
+References: <20250805162041.47412-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
-To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
- <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805162041.47412-1-alexey.klimov@linaro.org>
 
+On Tue, Aug 05, 2025 at 05:20:41PM +0100, Alexey Klimov wrote:
+> While at this, also add required memory region for adsp fastrpc.
 
+Please https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+rather than lazily continue the subject.
 
-On 8/4/25 10:45 PM, Aleksa Sarai wrote:
-> /proc has historically had very opaque semantics about PID namespaces,
-> which is a little unfortunate for container runtimes and other programs
-> that deal with switching namespaces very often. One common issue is that
-> of converting between PIDs in the process's namespace and PIDs in the
-> namespace of /proc.
+Also, the way you wrote this makes me believe adsp_rpc_remote_heap_mem
+is optional, and as I don't know what it's for I don't understand why
+that would be part of this patch.
+
 > 
-> In principle, it is possible to do this today by opening a pidfd with
-> pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
-> contain a PID value translated to the pid namespace associated with that
-> procfs superblock). However, allocating a new file for each PID to be
-> converted is less than ideal for programs that may need to scan procfs,
-> and it is generally useful for userspace to be able to finally get this
-> information from procfs.
+> Tested on sm8750-mtp device with adsprpdcd.
+
+Just adsprpdcd? Is that sufficient to say that fastrpc is functional? Or
+at least that the information here is sufficiently tested?
+
+Regards,
+Bjorn
+
 > 
-> So, add a new API to get the pid namespace of a procfs instance, in the
-> form of an ioctl(2) you can call on the root directory of said procfs.
-> The returned file descriptor will have O_CLOEXEC set. This acts as a
-> sister feature to the new "pidns" mount option, finally allowing
-> userspace full control of the pid namespaces associated with procfs
-> instances.
-> 
-> The permission model for this is a bit looser than that of the "pidns"
-> mount option (and also setns(2)) because /proc/1/ns/pid provides the
-> same information, so as long as you have access to that magic-link (or
-> something equivalently reasonable such as being in an ancestor pid
-> namespace) it makes sense to allow userspace to grab a handle. Ideally
-> we would check for ptrace-read access against all processes in the pidns
-> (which is very likely to be true for at least one process, as
-> SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set by most
-> programs), but this would obviously not scale.
-> 
-> setns(2) will still have their own permission checks, so being able to
-> open a pidns handle doesn't really provide too many other capabilities.
-> 
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> Cc: Srinivas Kandagatla <srini@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
->  Documentation/filesystems/proc.rst |  4 +++
->  fs/proc/root.c                     | 68 ++++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/fs.h            |  4 +++
->  3 files changed, 74 insertions(+), 2 deletions(-)
 > 
-
-
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 0bd678a4a10e..68e65e6d7d6b 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -435,8 +435,12 @@ typedef int __bitwise __kernel_rwf_t;
->  			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
->  			 RWF_DONTCACHE)
->  
-> +/* This matches XSDFEC_MAGIC, so we need to allocate subvalues carefully. */
->  #define PROCFS_IOCTL_MAGIC 'f'
->  
-> +/* procfs root ioctls */
-> +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
-
-Since the _IO() nr here is 32, Documentation/userspace-api/ioctl/ioctl-number.rst
-should be updated like:
-
--'f'   00-0F  linux/fs.h                                                conflict!
-+'f'   00-1F  linux/fs.h                                                conflict!
-
-(17 is already used for PROCFS_IOCTL_MAGIC somewhere else, so that probably should
-have update the Doc/rst file.)
-
+> v2:
+> - removed qcom,non-secure-domain flag as requested by Srini.
+> 
+> Prev version: https://lore.kernel.org/linux-arm-msm/20250502011539.739937-1-alexey.klimov@linaro.org/
+> 
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 69 ++++++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index 4643705021c6..cc74fb2e27de 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -7,6 +7,7 @@
+>  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
+>  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+> +#include <dt-bindings/firmware/qcom,scm.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interconnect/qcom,icc.h>
+>  #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
+> @@ -523,6 +524,14 @@ llcc_lpi_mem: llcc-lpi@ff800000 {
+>  			reg = <0x0 0xff800000 0x0 0x800000>;
+>  			no-map;
+>  		};
 > +
->  /* Pagemap ioctl */
->  #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
+> +		adsp_rpc_remote_heap_mem: adsp-rpc-remote-heap {
+> +			compatible = "shared-dma-pool";
+> +			alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
+> +			alignment = <0x0 0x400000>;
+> +			size = <0x0 0xc00000>;
+> +			reusable;
+> +		};
+>  	};
 >  
+>  	smp2p-adsp {
+> @@ -2234,6 +2243,66 @@ q6prmcc: clock-controller {
+>  						};
+>  					};
+>  				};
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "adsp";
+> +					memory-region = <&adsp_rpc_remote_heap_mem>;
+> +					qcom,vmids = <QCOM_SCM_VMID_LPASS
+> +						      QCOM_SCM_VMID_ADSP_HEAP>;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x1003 0x80>,
+> +							 <&apps_smmu 0x1043 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <4>;
+> +						iommus = <&apps_smmu 0x1004 0x80>,
+> +							 <&apps_smmu 0x1044 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <5>;
+> +						iommus = <&apps_smmu 0x1005 0x80>,
+> +							 <&apps_smmu 0x1045 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <6>;
+> +						iommus = <&apps_smmu 0x1006 0x80>,
+> +							 <&apps_smmu 0x1046 0x20>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@7 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <7>;
+> +						iommus = <&apps_smmu 0x1007 0x40>,
+> +							 <&apps_smmu 0x1067 0x0>,
+> +							 <&apps_smmu 0x1087 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@8 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <8>;
+> +						iommus = <&apps_smmu 0x1008 0x80>,
+> +							 <&apps_smmu 0x1048 0x20>;
+> +						dma-coherent;
+> +					};
+> +				};
+>  			};
+>  		};
+>  
+> -- 
+> 2.47.2
 > 
-Thanks.
--- 
-~Randy
-
 
