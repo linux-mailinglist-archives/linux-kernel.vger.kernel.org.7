@@ -1,118 +1,162 @@
-Return-Path: <linux-kernel+bounces-757965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48F6B1C8E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:40:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55891B1C91D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E52626B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271C756693C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D2B292B45;
-	Wed,  6 Aug 2025 15:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC68029616A;
+	Wed,  6 Aug 2025 15:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p95Pv6kX"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IRHh2zqo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="euB77sI5"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916AE19A
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F13293C45
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494834; cv=none; b=JFW+8O5JrqDL0jihh1evpSqi77SwJsgei+l56ok1HqOlj2Hd9dDZtrERU8i1yuh1OQDwg7ah6x/0BtKuAOKLv5hHCFvR0+UPPu90LT3wk3H79d6hEGIBVhhLAsIFaNE4sj8ODr0g+IHRbHsFWlAhSXNdpGSqvsJsxRozlZv5WSI=
+	t=1754494917; cv=none; b=cYE2mR+WvUhWXPf7UN1csSdYFK5uHVTcRA/GQBL67N4/cKRIDs8BeNg7gQbEL2tttlJHZVxRuOrieQb4TCKpoTXgx8CCezu8xNQ2Me5QAsD7y9FxiEGxI/86L427qn6RdgULZvbyM/elY1xT531SFDqdLi+mOMLfeOtAHRXgU64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494834; c=relaxed/simple;
-	bh=EeT0WZ+eBX99CaEowyMa9N2mX+gmwtjO7hXeuDnKxuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DpDE5p2D8BDtw7UxkVytV4TeOIpXRVUJfmXHsXe76DuQW7GhG+dqMjCfj1jrKWyKQ9iGizpFdey5MbTz9kwluiUS24ljkCTTAXEYYTdCni35ULPioUdoKxkFsAkOTnfBBNL0iWg76OeqG4ItkkZc4aSF2Ns7Ep8yDcLDQfoyfEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p95Pv6kX; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2ea080f900cso23145fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754494830; x=1755099630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XQBK2IwZMWMMUUwJMnG9AhYt75ddXd1X11p/6lNi7YY=;
-        b=p95Pv6kXTjTDsxOxBsMpHJY4Y7y/PHFK+2NwFWSdbD/rvv/B2IbdWYQU842zzvANXd
-         PbDcMhqzH9wIYg/HiDBsPzJ50NlGSRuPVzmUg0JJqRTqXSyR0uVJGbLLJqulD7q5dCch
-         nXfpfT/9F8hf2lRycb0862I4Pd0DoCk7EkHEdLuoOqAjNHOVqQ8UuLsJbnd/5lwfzOe4
-         pckE8gJZtw8LvvzTzEJGgjbH/OPV/8HhhYZwRgeYP+5NDzUnQi38VPr7aDNxxGunQ/bp
-         /KJMEl+sMP2Pdjp8MZnFxDUhDYOsCipmEbbgASKK/4Y/TmAzED/SmoJp2kuMWqIqbILh
-         z2Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754494830; x=1755099630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQBK2IwZMWMMUUwJMnG9AhYt75ddXd1X11p/6lNi7YY=;
-        b=gKHxapLScvPZKylqt88kNSD3ZzxRG9HYU/yn9DXuMoMRj/H6G3o3CJaNsXPRc0htYS
-         EvFqhCIhKAcGdl6WUoOyI0qiijrNewvvdM+XIJ1ON/MD1KWxJadAC7f3hBGgy6kE8hUi
-         23IGHu5czFEuMd5peMlQOpQ55quFHvqRcglrQyZBUWKL5s4sJ+LBU8hraPicxRSg4wX4
-         s50s5pFZcWdo3FuFpVhBRjxo/RFLL66NFlvyBmkMlcnykFBLyLVzybdaAcPX6yp9VgcF
-         L53UpYSJAcCzdGi03ayk1swNgRLXjBwHndcpVWA/KSBnX9HwEsUekBqlKWaT5WQYp0sb
-         9L0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2frORPslaGg6UUQ4k/5XOjrtLLyA1Mo955VFHA4Z0PXc1NCYel/eSrS016ZTXRoD3QU4vRNwEix70b+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTz/mfxIT89RoFpvYUzxr+LgOOGl6TVyqEeiMUdXMdaXjWXoH4
-	geczv3Ck6b2mGZVimonLQlW0NbvIu+yGfELEDxSjj5YfwViHml6YmqTfjxE0VPauyWw=
-X-Gm-Gg: ASbGncvef2m49n6JUU01mNpc3Fp1FP7Ccs9E2TPXtReBkb2c8cevBF8x2q3irEAGK0Y
-	U1+Dd7loA0KYMr+ss4m0pN3nr5RYM75RFFHb9mxF6AQ/UD+xv7A7ZVPvwQxZ8A4JFwkHPsw26ET
-	GZYKYaPs5iHVmI8Ch+LTXyZGSAmNMpa8gsMzdMY2WT/sLDFuTrXSo4STEKEPsKJnWJ++QQnqYCP
-	6BPpk0bf6V77tI/05O+XLyswiYcSUebQXvH6kgRrALKxAQ7JpcLMcJHNBjxV3x70GF9EAamEooa
-	XzUfVVZyCDtWhusKLWBYmm52yhxfpJKTIrpn2gHCKOdLlUpazAEWzwKn0HLrBQYuZtIz/5CVWL8
-	0NF2s0bVPx9kqi61L9SEVgO9g9PQEI10A9VxLWW/b1Vk4dzNDiuD5P9bTNcjOpwpn5NAZe/lklX
-	Q=
-X-Google-Smtp-Source: AGHT+IGyhhBDynpJJBPXpYSNWmJwFA6wI2gd1r9MWG+zv3b0rnP9HU9ECWIyhKY0YTr/FgxMV5AtGw==
-X-Received: by 2002:a05:6871:7583:b0:30b:d2f7:5dca with SMTP id 586e51a60fabf-30be2ce6df9mr2375124fac.35.1754494830642;
-        Wed, 06 Aug 2025 08:40:30 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-742f6a3fb1csm1211295a34.37.2025.08.06.08.40.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 08:40:29 -0700 (PDT)
-Message-ID: <29bac7ef-c9b2-4e37-b4a9-08a0120e6083@baylibre.com>
-Date: Wed, 6 Aug 2025 10:40:28 -0500
+	s=arc-20240116; t=1754494917; c=relaxed/simple;
+	bh=lelOgTU9HHxUWn76YpmuMRtET3Ukt3sPsFFgD7YPzVY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=oCso09Z1Fx6Hxj/ujsF217lMRRQYLEtTSZmcFSNjZKoBi/bMoRRw1YLyVhAoReBloVSv+lpfeNaWXvPOYw0uVXd8hj0EvdKvMjvbraIDnJOuaAVOqTu6n08LiV+3QhOzZr4tiJ8uluzk86hr/Mhq/beyWWMbdNvVg3Je8DRUp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IRHh2zqo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=euB77sI5; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 02A977A00A9;
+	Wed,  6 Aug 2025 11:41:53 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 06 Aug 2025 11:41:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754494913;
+	 x=1754581313; bh=QWr4d7FdEbOlGE3vrG07XOxnFjq0nNHsAsokSmwJO1M=; b=
+	IRHh2zqojx8PoMn8cGUFKso+3zgg/P3V2+tsP0G7wfSrK0raZ+sBj1ppVbU6B2Gt
+	yK67/J2hnOt6nSSP09sgiTpfg96QFkJfmLMwhpZpBA6DtH/Z1XzNLO4XR+Z1ict/
+	KtFnWhMwmkI0Rxn2V1Gtn6+mCelPuyp22wF0LrgMWpZcMvx3BPIe5mPIZpsSyitw
+	993VNiWaZ3KS5IqF8QTEXJI6uTd5FM/Tjxuz+wqXnEBvoiqIwK4WAfJsAwTZAkEr
+	EPRMYpGajcmzjbGwx15ZUreGaqncUXz1FqSp5gIha72M3qrZHVEyjekc7HL9KLh5
+	4H36vHQGgKY8mMPKe5PjtQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754494913; x=
+	1754581313; bh=QWr4d7FdEbOlGE3vrG07XOxnFjq0nNHsAsokSmwJO1M=; b=e
+	uB77sI5ewUzYFfNNaPiYWZzRkcWvJa5+sof97mQc369i8G7xoYvjx8zaGmkLI1T9
+	Ytg/jqVKMk46Eg7UiPR/hSPhi006ES8IwBxoKSD4jwbD8pDHnrDlyXoJkBOpZvAf
+	e7wzrsvKo8mDAe3u+7wlCBNy0/flSiiTkzD0tyrgZNJXb5GhgvB0CB55ziL38hWW
+	xCwdN9BZsrfLVt9tnsfXgAPm4YIj8riu0n/fdE1qRTP0YRVsnF9ve+UPG+xxoogP
+	oJhXhIp8S+SeY76C3zG39s4GZsm+zw8qKf//2u7Js+nN3Un5uqyL16yEY08yj1gL
+	dBRvvc3BeRz0TQKulJQlw==
+X-ME-Sender: <xms:wXeTaFP5k2z0ayqg1PpMRsU5qEbPmqpy8Jj75Ih3i82MxnR3TJ_2ag>
+    <xme:wXeTaH_We0fjQKaCOB8xZJ44MZiTkJkwDnQN-eLbgL3z79S5o3Yuw4HgD_E7s90kI
+    dX5EUF5qjz7kttZnG8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudekgeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
+    hopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdq
+    khgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprg
+    hfugesthhirdgtohhmpdhrtghpthhtohepsgdqphgrughhihesthhirdgtohhmpdhrtghp
+    thhtohepphhrrghnvggvthhhsehtihdrtghomhdprhgtphhtthhopehuqdhkuhhmrghrud
+    esthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:wXeTaEuDqAuHDDLpPonCoUv8hyo8xHw0fUKCaWbKxDksU6jjI-RgEQ>
+    <xmx:wXeTaOUd9_Zpc4js60U_kgvcED3bCa9kuQhff0M4kUY6H6LMoM7tMg>
+    <xmx:wXeTaPgtvF6S0lIEPw-hYGOfTjarLD6UVgJdcLRxxmzOsm0aGihQcw>
+    <xmx:wXeTaGqSjFnBd2kKjLtUqwsvs2_w8UYC9hk1kLPp2c-G726Vww-cng>
+    <xmx:wXeTaHaZy5UgXD-fRQfipAyOXEe8R6IApNQLFTi_kRRpKFnbz85FGLlh>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 61F57700068; Wed,  6 Aug 2025 11:41:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] iio: adc: ad799x: reference voltage capability
-To: Stefano Manni <stefano.manni@gmail.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250806090158.117628-1-stefano.manni@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250806090158.117628-1-stefano.manni@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: Tab3d7ddbd4694d8e
+Date: Wed, 06 Aug 2025 17:41:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Beleswar Padhi" <b-padhi@ti.com>, "Russell King" <linux@armlinux.org.uk>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Andrew Davis" <afd@ti.com>,
+ "Udit Kumar" <u-kumar1@ti.com>, "Praneeth Bajjuri" <praneeth@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <133a5da2-d161-411c-9cc9-0bad46ab981d@app.fastmail.com>
+In-Reply-To: <20250806141808.4013462-1-b-padhi@ti.com>
+References: <20250806141808.4013462-1-b-padhi@ti.com>
+Subject: Re: [PATCH] arm: multi_v7_defconfig: Enable more OMAP related configs
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 8/6/25 4:01 AM, Stefano Manni wrote:
-> This patch series refactors 6b104e7895ab16b9b7f466c5f2ca282b87f661e8
-> in order to add the capability of the chip to have an
-> external reference voltage into the chip_info struct.
-> And so avoid ugly conditional checks on the chip id.
-> 
-> In addition the AD7994 is marked to have the external
-> reference voltage as well.
-> 
-> Stefano Manni (2):
->   iio: adc: ad799x: add reference voltage capability to chip_info
->   iio: adc: ad799x: add reference voltage to ad7994
-> 
->  drivers/iio/adc/ad799x.c | 45 +++++++++++++++++++++++-----------------
->  1 file changed, 26 insertions(+), 19 deletions(-)
-> 
+On Wed, Aug 6, 2025, at 16:18, Beleswar Padhi wrote:
+> From: Sinthu Raja <sinthu.raja@ti.com>
+>
+> This allows us to enable various peripherals in the TI OMAP family
+> platforms like AM571X-IDK, AM572X-IDK, AM574X-IDK, AM57XX-BEAGLE-X15,
+> AM57XX-EVM using the multi_v7_defconfig, instead of only with the
+> OMAP specific defconfigs.
 
-Something to keep in mind if you send more patches: this
-should have been [PATCH v2] with a link to (implicit) v1 [1].
+Hi Beleswar,
 
-[1]: https://lore.kernel.org/linux-iio/20250805142423.17710-1-stefano.manni@gmail.com/
+It's fine to enable drivers that are only used on a specific
+platform, but those should generally be loadable modules, not
+built-in.
+
+For the generic (platform-independent) options, I would
+suggest splitting them out into a separate patch, so you
+can describe better what the purpose is, since this is
+clearly not just for OMAP.
+
+> IKCONFIG*:
+> Allows reading the current kernel configuration through /proc/config.gz
+
+This one seems particularly unnecessary in a "defconfig" build
+since the configuration is already known based on the version.
+
+> THERMAL_EMULATION:
+> Adds emul_temp sysfs node under thermal zones to allow emulating
+> temperature changes.
+
+The documentation for this option suggests that we probably
+don't want it enabled.
+
+> FANOTIFY:
+> Allows sending open file descriptors to userspace listeners along with
+> file access events.
+>
+> USER_NS:
+> NAMESPACES:
+> Enable user NS to provide user info of different users for different
+> process.
+>
+> POSIX_MQUEUE:
+> Supports POSIX message queues for priority-based IPC.
+>
+> BSD_PROCESS_ACCT:
+> Enables BSD process accounting to allow user space program to write
+> process accounting information to a file.
+
+I assume these are all in order to run a particular userspace
+distro?
+
+      Arnd
 
