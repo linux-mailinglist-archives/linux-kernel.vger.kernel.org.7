@@ -1,241 +1,162 @@
-Return-Path: <linux-kernel+bounces-758307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C18CB1CD6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:25:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D77AB1CD70
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BE73B2774
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:25:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 174234E10F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64C221C177;
-	Wed,  6 Aug 2025 20:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419C621D3C9;
+	Wed,  6 Aug 2025 20:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqoUXbLD"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ds6/czIO"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830E345038;
-	Wed,  6 Aug 2025 20:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FCF10E4;
+	Wed,  6 Aug 2025 20:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754511916; cv=none; b=qI9XBvdpzknFfRZzkEWIbgWoj4jy/zEs7Q9TeoIgHEsYuzZOpaQcncvDI398CRHo5s1OAuqtn8pynGuvnngavK7/M0GtIz4ACpiikdOrOZZYcuIj/BfrBPt+XT1+48L5HHMQUIS+FpWDXxII5FAExy7+hPYhPGGGaG+H11nlCbM=
+	t=1754512023; cv=none; b=A4yFWtSb7HItyam4Hlpu/UYPzH+mfX2sOYeNQ6AvbVWNLvzNZpzm4mZs6ncaLMECT63YLlUnZ45qCelUChNVKHhuwMecrpwKl1h9tZPOGGQv/IeqxyL9yoFz0Y8Lw+Rl77F1Zgk+gn6fIxDnDObiaKSnPGjw/VLxaUyM03XvhkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754511916; c=relaxed/simple;
-	bh=asmxH9BxAkFD6RulxTbYIjtbh8OyxQm8dhYQSRVJ2NE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u7L195jRrQSVsX61YwsbHmGIq6JeUdWXTtFCRrjxZ/czmw6I3SujtNLCOVB+au8yQ5T3gyYWQgpofe7hn0PVFC9edAgDIGY8rEuqbpbJqYR6wmC4NsXe6GS0nPdb824s8w4Kqq5TY9yEB8ABdoM5uN1hGOPYWKZGofNl9XNSlZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqoUXbLD; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1754512023; c=relaxed/simple;
+	bh=I5YWQeBrQwcESC8lhNQmpERBji1Y5dvijPiuccEW5cY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJpug2pwP4vxbdWH3gKHkHXUXQfSTKrHqLpXm0ZBzmeZ2teSZQn47TJ1V50WqkihsGMov2pvDhoO17m0nshvsdYeWYkZ2nwxFGWJL4vf0l0PX/3fK0NBUoDuiTxn0hA1MIdvoAW0ETafLfMdxBqtvDbn+6qVkkLNoIV3EgvdvQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ds6/czIO; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754511915; x=1786047915;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=asmxH9BxAkFD6RulxTbYIjtbh8OyxQm8dhYQSRVJ2NE=;
-  b=aqoUXbLD4VbpkWWG20nrshqKtHkpBpRMz/ExFmZJ2NnaRsamRTE1ahWo
-   Tm9iZdxlQEDdGawmPeX9gEiB+h6PMBiujTJ/9bQqQBmiuvloYcWAz9fpM
-   16CW7TgCtndO17XeXrOnFWtxK/V/7ZSvTCAxLwyTiBv2acXqcKmVxs5zl
-   BIrm2ftD5WMZ7J8tnqb9/eTar6Ud0wnXVhG3L32CEsUlM5JDfTUc29/C7
-   tXpTYtpeNDtnPCSy+hzkQQqAKpJ0H99d1vJqwAxYHUi0ZYnQ0HdkybOPj
-   qM00B0V7kuQnIN7ghOJEFUFV75Z9IN/wdSX1BtjwGaeRjJsc2p1VidvF0
-   g==;
-X-CSE-ConnectionGUID: 0s22XWZLRWSUIWsFxkWAgA==
-X-CSE-MsgGUID: 4aaQN5BvSmCtavx/Lp22lw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56805738"
+  t=1754512022; x=1786048022;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I5YWQeBrQwcESC8lhNQmpERBji1Y5dvijPiuccEW5cY=;
+  b=ds6/czIOQFfAw8fSCSoCHVo5OTgo0b5BUpicryZMtYfXNhj3Y9Jdeqhm
+   BXjb2UH1V6J/2zm+uYHKsQWVJD9CDGH48DxVACfeML+hJHJqMcB42s0ye
+   WPRjr3G2GbTPVntxJ8p9/u8LwwqqJKFUdfR4WDInXokZDnkJr4HufEE7c
+   XVpJ+b+pVpzv3HMNZLkCIOqgjXF/nt9blrZBRUxpH63QhBuAwf0IJmCCb
+   ShV3iLO2smBHzXr0P9g+Pz34mK50NIv35CDVcuMLkhQxnH7YdmPK2CiFW
+   7L2AG3MStKvTgApzCZ8zpzjazuSIJSo7P0UtCQqcAK97zlCh6aw9FbD3X
+   w==;
+X-CSE-ConnectionGUID: dRqlXpISRxS/PWnM0cTK5w==
+X-CSE-MsgGUID: WTRK6dw9TZWlMlAe8Ip+Ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56805863"
 X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="56805738"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:25:14 -0700
-X-CSE-ConnectionGUID: ylb72ZZ/QpGteRWJ6LNHxA==
-X-CSE-MsgGUID: k9crn3DjSLGE1291i2PEMA==
+   d="scan'208";a="56805863"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:27:01 -0700
+X-CSE-ConnectionGUID: TWmLGizuQ4GzfGyyrDVajw==
+X-CSE-MsgGUID: 1zfEMnxsQFaGDv+JYYwEtg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="165276016"
-Received: from vcostago-mobl3.jf.intel.com (HELO vcostago-mobl3) ([10.98.32.147])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:25:13 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghua.yu@intel.com>, Dan Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] dmaengine: idxd: Fix lockdep warnings when calling
- idxd_device_config()
-In-Reply-To: <b0023322-2605-4189-83f8-d1cba64c6b39@intel.com>
-References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
- <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-1-4e020fbf52c1@intel.com>
- <b0023322-2605-4189-83f8-d1cba64c6b39@intel.com>
-Date: Wed, 06 Aug 2025 13:25:12 -0700
-Message-ID: <87y0rwtcyf.fsf@intel.com>
+   d="scan'208";a="169039605"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:26:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ujkis-000000046mN-03Qa;
+	Wed, 06 Aug 2025 23:26:54 +0300
+Date: Wed, 6 Aug 2025 23:26:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/8] iio: adc: ad7476: Support ROHM BD79105
+Message-ID: <aJO6jVcITlOXp0YB@smile.fi.intel.com>
+References: <cover.1754463393.git.mazziesaccount@gmail.com>
+ <c7f94cdf9bdc6882953f6a074db3fd87570fa98b.1754463393.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7f94cdf9bdc6882953f6a074db3fd87570fa98b.1754463393.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Dave Jiang <dave.jiang@intel.com> writes:
+On Wed, Aug 06, 2025 at 10:04:43AM +0300, Matti Vaittinen wrote:
+> The ROHM BD79105 is a simple 16-bit ADC accessible via SPI*.
+> 
+> The BD79105 has a CONVSTART pin, which must be set high to start the ADC
+> conversion. Unlike with the ad7091 and ad7091r which also have a
+> CONVSTART pin, the BD79105 requires that the pin must remain high also
+> for the duration of the SPI access.
+> 
+> (*) Couple of words about the SPI. The BD79105 has pins named as
+> CONVSTART, SCLK, DIN and DOUT. For the curious reader, DIN is not SPI
+> ISO.
+> 
+> DIN is a signal which can be used as a chip-select. When DIN is pulled
+> low, the ADC will output the completed measurement via DOUT as SCLK is
+> clocked. According to the data-sheet, the DIN can also be used for
+> daisy-chaining multiple ADCs. Also, DOUT can be used also for a
+> 'data-ready' -IRQ. These modes aren't supported by this driver.
+> 
+> Support reading ADC scale and data from the BD79105 using SPI, when DIN
+> is used as a chip-select.
 
-> On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
->> idxd_device_config() should only be called with idxd->dev_lock held.
->> Hold the lock to the calls that were missing.
->> 
->> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->
-> Patch looks fine. What about doing something like this:
->
-> ---
->
-> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-> index 5cf419fe6b46..06c182ec3c04 100644
-> --- a/drivers/dma/idxd/device.c
-> +++ b/drivers/dma/idxd/device.c
-> @@ -1103,11 +1103,15 @@ static int idxd_wqs_setup(struct idxd_device *idxd)
->  	return 0;
->  }
->  
-> -int idxd_device_config(struct idxd_device *idxd)
-> +int idxd_device_config_locked(struct idxd_device *idxd)
->  {
->  	int rc;
->  
->  	lockdep_assert_held(&idxd->dev_lock);
-> +
-> +	if (!test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> +		return -EPERM;
-> +
->  	rc = idxd_wqs_setup(idxd);
->  	if (rc < 0)
->  		return rc;
-> @@ -1129,6 +1133,12 @@ int idxd_device_config(struct idxd_device *idxd)
->  	return 0;
->  }
->  
-> +int idxd_device_config(struct idxd_device *idxd)
+...
+
+> +static void bd79105_convst_disable(struct ad7476_state *st)
 > +{
-> +	guard(spinlock)(&idxd->dev_lock);
-> +	return idxd_device_config_locked(idxd);
+> +	if (!st->convst_gpio)
+> +		return;
+
+Dup code, please remove.
+
+> +	gpiod_set_value(st->convst_gpio, 0);
 > +}
 > +
+> +static void bd79105_convst_enable(struct ad7476_state *st)
+> +{
 
-This gave me the idea that moving the lock to idxd_device_config() might
-be a better idea. As the _locked() variant doesn't seem to be used, I
-don't see why we should keep it around. Will give it a try and see how
-it looks.
+> +	if (!st->convst_gpio)
+> +		return;
 
-Thanks.
+With 10ns sleep in mind this is also unneeded check.
 
->  static int idxd_wq_load_config(struct idxd_wq *wq)
->  {
->  	struct idxd_device *idxd = wq->idxd;
-> @@ -1434,11 +1444,7 @@ int idxd_drv_enable_wq(struct idxd_wq *wq)
->  		}
->  	}
->  
-> -	rc = 0;
-> -	spin_lock(&idxd->dev_lock);
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> -		rc = idxd_device_config(idxd);
-> -	spin_unlock(&idxd->dev_lock);
-> +	rc = idxd_device_config(idxd);
->  	if (rc < 0) {
->  		dev_dbg(dev, "Writing wq %d config failed: %d\n", wq->id, rc);
->  		goto err;
-> @@ -1521,7 +1527,7 @@ EXPORT_SYMBOL_NS_GPL(idxd_drv_disable_wq, "IDXD");
->  int idxd_device_drv_probe(struct idxd_dev *idxd_dev)
->  {
->  	struct idxd_device *idxd = idxd_dev_to_idxd(idxd_dev);
-> -	int rc = 0;
-> +	int rc;
->  
->  	/*
->  	 * Device should be in disabled state for the idxd_drv to load. If it's in
-> @@ -1534,10 +1540,7 @@ int idxd_device_drv_probe(struct idxd_dev *idxd_dev)
->  	}
->  
->  	/* Device configuration */
-> -	spin_lock(&idxd->dev_lock);
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> -		rc = idxd_device_config(idxd);
-> -	spin_unlock(&idxd->dev_lock);
-> +	rc = idxd_device_config(idxd);
->  	if (rc < 0)
->  		return -ENXIO;
->  
-> diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-> index 74e6695881e6..f15bc2281c6b 100644
-> --- a/drivers/dma/idxd/idxd.h
-> +++ b/drivers/dma/idxd/idxd.h
-> @@ -760,6 +760,7 @@ int idxd_device_disable(struct idxd_device *idxd);
->  void idxd_device_reset(struct idxd_device *idxd);
->  void idxd_device_clear_state(struct idxd_device *idxd);
->  int idxd_device_config(struct idxd_device *idxd);
-> +int idxd_device_config_locked(struct idxd_device *idxd);
->  void idxd_device_drain_pasid(struct idxd_device *idxd, int pasid);
->  int idxd_device_load_config(struct idxd_device *idxd);
->  int idxd_device_request_int_handle(struct idxd_device *idxd, int idx, int *handle,
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 80355d03004d..193b9282e30f 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -1091,12 +1091,10 @@ static void idxd_reset_done(struct pci_dev *pdev)
->  	idxd_device_config_restore(idxd, idxd->idxd_saved);
->  
->  	/* Re-configure IDXD device if allowed. */
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags)) {
-> -		rc = idxd_device_config(idxd);
-> -		if (rc < 0) {
-> -			dev_err(dev, "HALT: %s config fails\n", idxd_name);
-> -			goto out;
-> -		}
-> +	rc = idxd_device_config(idxd);
-> +	if (rc < 0) {
-> +		dev_err(dev, "HALT: %s config fails\n", idxd_name);
-> +		goto out;
->  	}
->  
->  	/* Bind IDXD device to driver. */
->
->
->> ---
->>  drivers/dma/idxd/init.c | 2 ++
->>  drivers/dma/idxd/irq.c  | 2 ++
->>  2 files changed, 4 insertions(+)
->> 
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index 35bdefd3728bb851beb0f235fae7c6d71bd59239..d828d352ab008127e5e442e7072c9d5df0f2c6cf 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -1091,7 +1091,9 @@ static void idxd_reset_done(struct pci_dev *pdev)
->>  
->>  	/* Re-configure IDXD device if allowed. */
->>  	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags)) {
->> +		spin_lock(&idxd->dev_lock);
->>  		rc = idxd_device_config(idxd);
->> +		spin_unlock(&idxd->dev_lock);
->>  		if (rc < 0) {
->>  			dev_err(dev, "HALT: %s config fails\n", idxd_name);
->>  			goto out;
->> diff --git a/drivers/dma/idxd/irq.c b/drivers/dma/idxd/irq.c
->> index 1107db3ce0a3a65246bd0d9b1f96e99c9fa3def6..74059fe43fafeb930f58db21d3824f62b095b968 100644
->> --- a/drivers/dma/idxd/irq.c
->> +++ b/drivers/dma/idxd/irq.c
->> @@ -36,7 +36,9 @@ static void idxd_device_reinit(struct work_struct *work)
->>  	int rc, i;
->>  
->>  	idxd_device_reset(idxd);
->> +	spin_lock(&idxd->dev_lock);
->>  	rc = idxd_device_config(idxd);
->> +	spin_unlock(&idxd->dev_lock);
->>  	if (rc < 0)
->>  		goto out;
->>  
->> 
->
+> +	gpiod_set_value(st->convst_gpio, 1);
+
+> +	udelay(1); /* 10ns required for conversion */
+
+We have ndelay(). But I believe toggling GPIO is much longer operation.
+
+> +}
+
+...
+
+> @@ -347,7 +381,6 @@ static int ad7476_probe(struct spi_device *spi)
+>  	if (st->convst_gpio)
+>  		indio_dev->channels = st->chip_info->convst_channel;
+>  	/* Setup default message */
+> -
+>  	st->xfer.rx_buf = &st->data;
+>  	st->xfer.len = indio_dev->channels[0].scan_type.storagebits / 8;
+
+Stray change.
+
 
 -- 
-Vinicius
+With Best Regards,
+Andy Shevchenko
+
+
 
