@@ -1,228 +1,109 @@
-Return-Path: <linux-kernel+bounces-757222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCFEB1BF60
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7086B1BF64
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B563B8D9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCF018A4F52
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AD1C8633;
-	Wed,  6 Aug 2025 03:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004511E1A3B;
+	Wed,  6 Aug 2025 03:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNfA+/ee"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="eRBQ6UIP"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7631F3FC7
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 03:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4741C8610
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 03:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754451545; cv=none; b=FfMtsRtbRmenFnbK/idpAkcpLuoYL+G/iQyHV8jIlqr6PNRtFwGtVOmCIklvOIi4PYKvBwcOhLEVAJ8xahBH1vcMcEj7vOP8/7xeu1HKBS8g9icxAt8odfZA/QaB32QsV0F65f8CV3SM9irYYsiUwUFihC1Okirs5pXJbYrekyU=
+	t=1754451707; cv=none; b=NewJB6d3Bd82uIaHtQlinAr9qdxSq9TniRz+vOjSN8mIv3lvkPDMf8v2bUcWdmrc5UkASWmOkN47uLPr+sclJEei+s2tl7dZB1K6PgXe/fag1zCc4NBsl+hXUmNz2vVKLKrsZYPOm8G8tYMDPy65mBIF1mjJUvXT0ASAvdxSiRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754451545; c=relaxed/simple;
-	bh=wKpbvesH5uwc3ZDqC7L74CN76b9fwUBYaAvVuNr0oeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5BgKanLMmWo5BWqt7xM4DDAfDmHxtuffdPMBnhN8zsJm1ptffyi/Y7KgJLKrwKcuttNkkdOCbW/SxLumA8wo5XdPjR2tbbcNEzmbZJsAL5JBqYJhIJEu9F6Q0otWXR629WVMFijC5u/zsFADIVAWcUyabQ3d865pvSSDNc8mMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mNfA+/ee; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-33243562752so35470671fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 20:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754451542; x=1755056342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pT8gPUg++PGfeMd5QsLj4CoRRQLdIXbXj3kUkk+1RlU=;
-        b=mNfA+/eesHUCfOKlJ5CXzBIK8BHvQQRYSGAcJJtrblftUaHkzuMXvG6CcAupTssSeU
-         3jkWjAcsZk6KWhLwOW5LdZBESPqDUTLq3UEo3q6tehotOc+sXqo9FepwV3PsHNRv2k72
-         G+jxmtNInddJNVJaliCrVrgNCLNIEdy59jKm9vYBZn6QXfUmg84G3ur+1/W0tpEQixcK
-         eidjcqSpn9hh1lqt7fYZZuxYXh5XdRwP0jpT2vXzz8hWzPMrM4bnsDgB4+8FphLYlJLF
-         SMxu2tAqyADvBZinqlnG+7xT+azIv9RYK7HEDGUU/QCu6syMGM01SAR6lpuXYSgpw+9P
-         prWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754451542; x=1755056342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pT8gPUg++PGfeMd5QsLj4CoRRQLdIXbXj3kUkk+1RlU=;
-        b=EojY7HQuSfYjorhL6eFYegd2bnj0IZEQmPne2MAg3O1Xmpppqrfv9u/46OCdIQfxPq
-         1FJatr/pCzlhjjq4ZQRMNVR/JpemzxYVkP7iZ+rxhhCZpXYAvY6+T4ePe1v0jw6655mo
-         OwIV+7qiYg/QjLVLf02aCXPc160QBKo1FbqVTIlNyEaRk0t9+kCePdDtnIl0Z/tutWa6
-         lFc8kK9HzFCH9r7xRriHcvyn4GL9aawpWmmD9S6CPKR+FoFTunTSmeLLQArab6RWZFA2
-         R7xd8IN9itasRUSRTxWmT2KLcVgQXqFqozpMkMzFVUZa7aGi3fBrTz3vd7iaFXDI/KNg
-         H5DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfsniQYAkJ1MS5+m5fhQZTA5oiQ4K63K90ZrrZ/JlHm38lmgwBohGedT4fesiUYiVOockKnZRveRw7Ai8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHalnrlk6QtEyfsGJ7cjShmgzmU/l9q3DZcLfy+qEpJPIpzjtH
-	lRWxyUwOsKATGfq1kc6WCMRPh/dlgtfWorI/jZOa4wM8R/gGbRqAaVtlvfEpq2E9GsCxUs+RyAE
-	ZjY/XIHamkSl5lcDvrbsiAsZpEObOsBY=
-X-Gm-Gg: ASbGncvOuK1in5SQENRWpRoF+3AZx6OkbltMCKh3PVWzwhFw7PjKoUBgaFFv7q9iQ2b
-	I9suIMhzzMcIkgIm/wrfm0jG3QlYvQO/1vrPTxFyyhzcno9gHJ+hIEq0Y6pz9N4UdpuROybmtf/
-	6MIrB26I5Ohi8EhlEy3KEd26xdMdZbj5GRsFga3/zyoV4ODMcdwaY84TuyuJ3IIp57ATupb0YLh
-	xuTP/M=
-X-Google-Smtp-Source: AGHT+IHBglAwtqm4z8yQjqRQOQCSCAmCv05JxtHTKVaBxejjFoGIwClaEp5JLlQx8mxDV/3A3dGBJkVF8V5tSxeBUcc=
-X-Received: by 2002:a05:651c:e0b:b0:332:8187:f837 with SMTP id
- 38308e7fff4ca-333814040f2mr2549651fa.27.1754451541451; Tue, 05 Aug 2025
- 20:39:01 -0700 (PDT)
+	s=arc-20240116; t=1754451707; c=relaxed/simple;
+	bh=d75mbpsX8RQ3NybfUutsz/AWNUxpxg7TXiUsHrhVkGg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aBHCUFwVk/muRjhM18O26oWiU80YrbTs5vkeKow9+9LIqb9C3omfb6QYIPTYvHkwTxZjmleJKAR6mbP/5MMJkbqHCbGJYcG4jUWosAMrnaNGcmb6SCXPzOI98PGfwX6fno4ffvWdri0OV1eLenMBb8m4HayHydPkZEFclmAyefA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=eRBQ6UIP; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D12C52C00FE;
+	Wed,  6 Aug 2025 15:41:41 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1754451701;
+	bh=d75mbpsX8RQ3NybfUutsz/AWNUxpxg7TXiUsHrhVkGg=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=eRBQ6UIPJTZC0trG+YnrkQZqcnBUVqBCd9+uu4mwGY24ngo2j5yzqYblXz2VLeU1+
+	 265ZrShHK+MoxnQrjkIeEsB4ZUSLRIEwhs2h9ghi7aBvnugwl36onlvp8Lb4M8B6Up
+	 y2mJYrtuLmP8NnZeavHHC0FbVRSBP4qX4FoJDmhhiqSsQJ8gKG6fDzFolV3hMRE1hx
+	 SvN3m5g9jIwlqgOKLDjJ4YI6B5Vv5oBmQNH3Sly6EX0p4cmIXw3WjbTqM5M/cWaX9A
+	 tJQRQHKnuScMkSykYpS3qMvf1TXneLloIrM+GaNfwhvXb7ISh0cwIYLZPWwazba3nL
+	 6Ncwsx4mcgktA==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6892cef50001>; Wed, 06 Aug 2025 15:41:41 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 6 Aug 2025 15:41:41 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Wed, 6 Aug 2025 15:41:41 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Guenter Roeck <linux@roeck-us.net>, "jdelvare@suse.com"
+	<jdelvare@suse.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: (ina780) Add driver for TI INA780
+Thread-Topic: [PATCH 2/2] hwmon: (ina780) Add driver for TI INA780
+Thread-Index: AQHcBmxCTEWvZ5TWkkCoS1XTid0nk7RUKo+AgAAHdwA=
+Date: Wed, 6 Aug 2025 03:41:41 +0000
+Message-ID: <7f621788-372b-4a0b-a126-4c2d1d9a926c@alliedtelesis.co.nz>
+References: <20250806005127.542298-1-chris.packham@alliedtelesis.co.nz>
+ <20250806005127.542298-2-chris.packham@alliedtelesis.co.nz>
+ <fa1b8f0f-23a3-4baa-a424-9b1506a9699c@roeck-us.net>
+In-Reply-To: <fa1b8f0f-23a3-4baa-a424-9b1506a9699c@roeck-us.net>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <90294AC783469245A47949C90DB2C716@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804172439.2331-1-ryncsn@gmail.com> <20250804172439.2331-3-ryncsn@gmail.com>
- <CAKEwX=PkJdz3Um9j4m2bPahN9NbQpn7QnOvEAxDdWUHTqSvchg@mail.gmail.com>
-In-Reply-To: <CAKEwX=PkJdz3Um9j4m2bPahN9NbQpn7QnOvEAxDdWUHTqSvchg@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 6 Aug 2025 11:38:25 +0800
-X-Gm-Features: Ac12FXzGr6EunkglBI1a6aoXX9TZJeqjSvqs_Z6HQHT5Ue_7xnXoMTR827GcYFQ
-Message-ID: <CAMgjq7CSRrjLYF=7ckieNsAhDX_Fqp0OkHxrGHB0gQG7=_RdOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm, swap: prefer nonfull over free clusters
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=dtt4CEg4 c=1 sm=1 tr=0 ts=6892cef5 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=JIY_GJIoiM6udwNnU9sA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Wed, Aug 6, 2025 at 8:06=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote:
->
-> On Mon, Aug 4, 2025 at 10:24=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > We prefer a free cluster over a nonfull cluster whenever a CPU local
-> > cluster is drained to respect the SSD discard behavior [1]. It's not
-> > a best practice for non-discarding devices. And this is causing a
-> > chigher fragmentation rate.
-> >
-> > So for a non-discarding device, prefer nonfull over free clusters. This
-> > reduces the fragmentation issue by a lot.
-> >
-> > Testing with make -j96, defconfig, using 64k mTHP, 8G ZRAM:
-> >
-> > Before: sys time: 6121.0s  64kB/swpout: 1638155  64kB/swpout_fallback: =
-189562
-> > After:  sys time: 6145.3s  64kB/swpout: 1761110  64kB/swpout_fallback: =
-66071
-> >
-> > Testing with make -j96, defconfig, using 64k mTHP, 10G ZRAM:
-> >
-> > Before: sys time 5527.9s  64kB/swpout: 1789358  64kB/swpout_fallback: 1=
-7813
-> > After:  sys time 5538.3s  64kB/swpout: 1813133  64kB/swpout_fallback: 0
-> >
-> > Performance is basically unchanged, and the large allocation failure ra=
-te
-> > is lower. Enabling all mTHP sizes showed a more significant result:
-> >
-> > Using the same test setup with 10G ZRAM and enabling all mTHP sizes:
-> >
-> > 128kB swap failure rate:
-> > Before: swpout:449548 swpout_fallback:55894
-> > After:  swpout:497519 swpout_fallback:3204
-> >
-> > 256kB swap failure rate:
-> > Before: swpout:63938  swpout_fallback:2154
-> > After:  swpout:65698  swpout_fallback:324
-> >
-> > 512kB swap failure rate:
-> > Before: swpout:11971  swpout_fallback:2218
-> > After:  swpout:14606  swpout_fallback:4
-> >
-> > 2M swap failure rate:
-> > Before: swpout:12     swpout_fallback:1578
-> > After:  swpout:1253   swpout_fallback:15
-> >
-> > The success rate of large allocations is much higher.
-> >
-> > Link: https://lore.kernel.org/linux-mm/87v8242vng.fsf@yhuang6-desk2.ccr=
-.corp.intel.com/ [1]
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
->
-> Nice! I agree with Chris' analysis too. It's less of a problem for
-> vswap (because there's no physical/SSD implication over there), but
-> this patch makes sense in the context of swapfile allocator.
->
-> FWIW:
-> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-
-Thanks!
-
->
-> > ---
-> >  mm/swapfile.c | 38 ++++++++++++++++++++++++++++----------
-> >  1 file changed, 28 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index 5fdb3cb2b8b7..4a0cf4fb348d 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -908,18 +908,20 @@ static unsigned long cluster_alloc_swap_entry(str=
-uct swap_info_struct *si, int o
-> >         }
-> >
-> >  new_cluster:
-> > -       ci =3D isolate_lock_cluster(si, &si->free_clusters);
-> > -       if (ci) {
-> > -               found =3D alloc_swap_scan_cluster(si, ci, cluster_offse=
-t(si, ci),
-> > -                                               order, usage);
-> > -               if (found)
-> > -                       goto done;
-> > +       /*
-> > +        * If the device need discard, prefer new cluster over nonfull
-> > +        * to spread out the writes.
-> > +        */
-> > +       if (si->flags & SWP_PAGE_DISCARD) {
-> > +               ci =3D isolate_lock_cluster(si, &si->free_clusters);
-> > +               if (ci) {
-> > +                       found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > +                                                       order, usage);
-> > +                       if (found)
-> > +                               goto done;
-> > +               }
-> >         }
-> >
-> > -       /* Try reclaim from full clusters if free clusters list is drai=
-ned */
-> > -       if (vm_swap_full())
-> > -               swap_reclaim_full_clusters(si, false);
-> > -
-> >         if (order < PMD_ORDER) {
-> >                 while ((ci =3D isolate_lock_cluster(si, &si->nonfull_cl=
-usters[order]))) {
-> >                         found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > @@ -927,7 +929,23 @@ static unsigned long cluster_alloc_swap_entry(stru=
-ct swap_info_struct *si, int o
-> >                         if (found)
-> >                                 goto done;
-> >                 }
-> > +       }
-> >
-> > +       if (!(si->flags & SWP_PAGE_DISCARD)) {
-> > +               ci =3D isolate_lock_cluster(si, &si->free_clusters);
-> > +               if (ci) {
-> > +                       found =3D alloc_swap_scan_cluster(si, ci, clust=
-er_offset(si, ci),
-> > +                                                       order, usage);
-> > +                       if (found)
-> > +                               goto done;
-> > +               }
-> > +       }
->
-> Seems like this pattern is repeated a couple of places -
-> isolate_lock_cluster from one of the lists, and if successful, then
-> try to allocate (alloc_swap_scan_cluster) from it.
-
-Indeed, I've been thinking about it but there are some other issues
-that need to be cleaned up before this one.
+SGkgR3VlbnRlciwNCg0KT24gMDYvMDgvMjAyNSAxNToxNCwgR3VlbnRlciBSb2VjayB3cm90ZToN
+Cj4gT24gOC81LzI1IDE3OjUxLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gQWRkIHN1cHBvcnQg
+Zm9yIHRoZSBUSSBJTkE3ODAgRGlnaXRhbCBQb3dlciBNb25pdG9yLg0KPj4NCj4+IFNpZ25lZC1v
+ZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4N
+Cj4NCj4gTG9va2luZyBhdCB0aGUgcmVnaXN0ZXJzLCB0aGUgY2hpcCBzZWVtcyB0byBiZSBhbG1v
+c3QgaWRlbnRpY2FsIHRvIA0KPiBJTkEyMzcvMjM4Lg0KPiBXaHkgYSBuZXcgZHJpdmVyID8NCg0K
+WWVzIEknZCBub3RpY2VkIHRoZSBzYW1lIHRoaW5nIGFzIEkgd2VudCBhbG9uZy4gVGhlIElOQTc4
+MCBoYXMgdGhlIA0KZXpzaHVudCB0aGluZyAobm90IHN1cmUgaWYgdGhhdCdzIHRoZSBzYW1lIGFz
+IHRoZSBpbnRlcm5hbCBzaHVudCBvbiB0aGUgDQpJTkEyNjApIHdoaWNoIG1lYW5zIHRoYXQgYSBs
+b3Qgb2YgdGhlIHBsYWNlcyB3aGVyZSB0aGluZ3MgYXJlIGNhbGN1bGF0ZWQgDQpieSB0aGUgc2h1
+bnQgcmVzaXN0b3IgdmFsdWUgYXJlbid0IGFwcGxpY2FibGUgYW5kIHRoZXJlJ3Mgb25lIGxlc3Mg
+DQp2b2x0YWdlIHNlbnNvci4gSSBkaWQgY29uc2lkZXIgYWRkaW5nIGl0IHRvIHRoZSBpbmEyeHgu
+YyBidXQgaXQgc2VlbWVkIA0KZGlmZmVyZW50IGVub3VnaCB0byB0aG9zZSBjaGlwcyB0byB3YXJy
+YW50IGEgc2VwYXJhdGUgZHJpdmVyLg0KDQpJIHRoaW5rIEkgY2FuIGtpbmQgb2Ygc3F1aW50IGFu
+ZCBzZWUgaG93IEkgbWlnaHQgZm9sZCB0aGUgaW5hNzgwIHN1cHBvcnQgDQppbnRvIHRoZSBpbmEy
+MzggZHJpdmVyIGFsdGhvdWdoIHRoYXQgbWF5IG1ha2UgdGhpbmdzIGEgYml0IG1lc3NpZXIuIElm
+IA0KdGhhdCdzIHRoZSBkaXJlY3Rpb24geW91J2QgbGlrZSB0byBoZWFkIEkgY2FuIGdpdmUgaXQg
+YSBnby4NCg==
 
