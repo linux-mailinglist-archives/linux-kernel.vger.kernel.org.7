@@ -1,329 +1,257 @@
-Return-Path: <linux-kernel+bounces-757515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B61B1C30A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5E2B1C30D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75AC01792CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C1516533C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B0328A3E1;
-	Wed,  6 Aug 2025 09:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69459289347;
+	Wed,  6 Aug 2025 09:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxTfxvvd"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i7OTrukN";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vzyb2/kN"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B637289816;
-	Wed,  6 Aug 2025 09:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754471714; cv=none; b=Kc1IHvRX99DTt9aAPKhNmHqYkQkEddT7NAMdC4t6YunM/9PNLxzIapae7EOl1XgCYPhaPbG822Cp4gtNIRp2cAo9lcTBxSsg0LssazLbYPytx2LPCjZRUyK8jenIjf5uiI+EFTatavA9M4CthZTr38ZFEJDtfqgKVscEZoigESA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754471714; c=relaxed/simple;
-	bh=cPjYo8AzqMspg2tYIoGyVRHz8/SiTlbD302+YRatmOo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GmArbBfQ5BJapb/ZB30nAL1HzCbLN6Kyo/ejOZp+XkDv80fmb3neXijR4AcbhdQaJOMD2RHNTpv9QvGnUMomK0ZI2/RBxdgOR+2JTx82uzpdvjl+w6HJKCMtsbGrkFHsEDO2c3Q/wi1N18R8rU2G0dlkCRRkTNiEp/suuH6T1ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxTfxvvd; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458b49c98a7so31011365e9.1;
-        Wed, 06 Aug 2025 02:15:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0507242D9D;
+	Wed,  6 Aug 2025 09:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754471755; cv=fail; b=GcumEJwtu+VPpjElgJrORfVVVMHLxsL2W7Ro47ZGo0voBCQvT+vhvMSHSjCV8hyzYP6u40wmdxh7agNDKxjueC7U02xdgo6vwB/vJrH1CyvrTOTC0C3HJSCiiX/IgB3BscaoQ3Nt/r0PNmVANHLLyQZAklwD18oDdzKPxnKtLV0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754471755; c=relaxed/simple;
+	bh=icLvU9mcvNCT1P86rkhmw5LU5aTz0Um70TK4aWT6v1E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d4iTLIsb0EOA4DgD69WKCsoXE5zONYYfXDcQc9m01CdI3Trwp00Z2BUkZoEyDX4zc4rlwAvHuGqLdQdvTWPZDQeRUlPyf7zeZBkr1Ch13W+s+yszMZ/yrZGiUbAbcZvvzDNT+Z33plS8byKsStIgLIEKQAJUlo6g4cwkW5gi9Hk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=i7OTrukN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vzyb2/kN; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5768RWbm014655;
+	Wed, 6 Aug 2025 09:15:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=ZbBWvR4J9F5mxyu9IwA3LdHKFZAgcqE7FL+2+cNeuSc=; b=
+	i7OTrukNJbGxR85JzoLKjxQ6/ANh5asnpByX7E+NLZyj+4EUkLHWWwnlMb1YWcDg
+	hLjl9F/jDmaCPKo/aktCXo1n7bx23NKqL5x0OCeFy2iAFWoDN6LVT3knadzL49pE
+	9WnZSr5a2r5cxzc05eoMjKOV45UCaWWS5Zuu9ka08IrMP+ebmOGeQX0nH4pgj6d5
+	H72/XV1jLCnenNHCc//Vx0Gc1AUk3gnLdrdABYsRWKqKCgW6qP8oWJDn2trNqsiT
+	JLW9WuUIRYPVDVNWxH6RXXwrT+Yw7cdrDiMvXcaCSnJ4Bgw/pSWcsPMIOLaGdJCK
+	/7aQXiLdD6zHQLEVcUkH+w==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvd17c5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 06 Aug 2025 09:15:37 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5767dIiL018441;
+	Wed, 6 Aug 2025 09:15:36 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwqs8x7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 06 Aug 2025 09:15:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oM6AK81yM0ea3aKScj6FyvXZ6y2p/U2+H+/Qknc/QAep2nbjLlHA8q0qetkFKVy7qYHzHcC4aROPAbrIa3iHLdJnEEd0D26/yvAY9CfR6C8vLOkZS6PuyiCOZWmQQPxGzzh96uH4IpEK1+nb9vaLuHr5Fe30HsHD6poYxaiHDwpiZPlX3WrBtDGZIieyVdpR794/cDws6fe9VsOq/hKJtBZYkI1tnilJWa6EV54w8WOza0cjob1FrdhbVpa7JQ1gFV7CVLqWKfRPShviyrsVaetAB8WJvBSXtzwCDOpbJ7fn2kZDiCtflbeMf3hAmQW9Aw6Sv5Lm0aSASbGS3jHwNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZbBWvR4J9F5mxyu9IwA3LdHKFZAgcqE7FL+2+cNeuSc=;
+ b=ZIsEvAYL09gt7kqmY8IT4JYmvpL2wE2Ow+HelF3pLbVMaOagE7LwxoxS+VXrRF4CSYLPgcO6bcx8jnE8eVYckHeG35yFacYMHdIMa3HJOivZAQPrhD6eKGV29PbQJOrJxd65uan5OigKUidHnW8Zuq6I8bZrrhzWgCxzC5NwSU/IfZhbz/gXZNdHbg59MZFg6FEQubeKf/otBJQ4M0863a9inEXszoikpviuXotZQdQvNMQD+x4NrfGVulL1gg103bEGmP/k/KBmGFje+1ma27oreViK6F3P3T/1agPUc4RZbu5WY6+C9IG0UkPA95Gvaj+J61IvR8qmNxr6FsmIcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754471711; x=1755076511; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DX5JM4nBPkjLGOnJNcCxJJtxAF6mVlk/OhtjFp+9kBA=;
-        b=VxTfxvvdcjS6PYY+9cyxvWiqhiNrdhwQ/ohbFrTr5ou5IqghSFLAmsCy7fod04VVfz
-         bIvcjNcE6cU6Mrca4SxXx07aS3nUadGadY7mT+AdK1msoKX/4cHHNeOX85K5x1H92tfV
-         If+PMiPyxNDP8dTTNifjj1avI0L8HVp0Jh9HjThxprHumr+NavPPey/dyEGHiHN2rCL7
-         txdPKXUN88UM0c0QV5QqJLiIwjU1kdsHpt8VqtXpUSgoGUJEo0sYH6DWcgqd4YwF4b2d
-         qIAcU9ZPCNEXQ01J6thFzlcsSrcffsbCb14ik3bErLtRaVmAdpMvwNhBaGl5KIcljlk4
-         5b3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754471711; x=1755076511;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DX5JM4nBPkjLGOnJNcCxJJtxAF6mVlk/OhtjFp+9kBA=;
-        b=FuI7IDny4SDlxBeIM5xg/Nr6eI8t7asLNp/83NHaMReEt0C2qO4qKrdNMZbDKFuPy4
-         n3cpkwkfXvs3bLwGD3nYEJ//m3G88BfS1VJleqfMZYmrY1DAG758CrgzJVPnrNdTPa0n
-         7pdazjrgVEvJIS3XJYNmfXPE+jnbmIYm6CAP8Lj4TfoMMSyk4HiCZHQ6kSwyYcSQWDCT
-         0sUgtxPho/jovzkrl+d67XEelXTBq1xzCN92zO/sEk6gul1e8f5zjAaNCyg6kpUSfAUN
-         dxoTatIpXNx8IfQuXXXepkZ/fqjvgpf8kkAl25EBtLwwGGRorqrTPttPa31StuqFBv2Q
-         KYAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN8PSdn4fgYjNj6pEYr1LHn4/qXE5D8WiW4FA9FsN5IDFuNbvHGr0CxWtXK0mJm7oI1Lttit6mO8Viy9A=@vger.kernel.org, AJvYcCX0Q8FaFjIUDfWzymKsKZoygze64EvzI/YG3w8RLNUq+/B02zkeb0PocwkzB80ckqyMZ6Ow45AnFEZSEROQTioO7HPs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJR3azvl54dUulNPtSErcM8Szz5ekkBBnJ/jOr8cP9j7F/LLiV
-	hq7VaBVSg70ZWRqbzy5d2MEyml2j6l6FvMa0sx7hfwXMR2wXPwuHsW7Y
-X-Gm-Gg: ASbGncsvRenTJisHD2oq00mnRJnP4SkT9iUqBdG32A6Yqftc/KaZfTCmmLrAC/ooGWM
-	r3r64687jSVHKd6pe6akJK3Gp0YdH01UjVS3QB3AYQ9GG9ISJPNl2q8kUP8uZraLSkviOjtKJ2B
-	4D54UUpYVDjlIIyY49sPzGUMUtVUgUaE8DcnR7ZbzW0afShOdKUwjFpV1OALEPcSKW4XkDy4kXR
-	RORhk/w4aOj9rmdrfousFYtkjUQCpp53Meegng9NpMfbq5YsxUINFlV0mnlC+6Zw6LsRm7b3Xzv
-	6c82sQQ3rLCApBCb4kBZiARbUGn7uA8feXBRw5AHKvWZiR6I9O435wvBBi2gyZc54HaQ6OmPUmB
-	ZtmZ2ToTEcJcapH5pspCS/lt0tZhbIBaiuF4=
-X-Google-Smtp-Source: AGHT+IFqjqdS7Cg957mc1iR3Hqs7wjBVpFaj/fLbsLMX3mD8qlUCvm1PZ6Ku4y+Bx8nKg0TA6FQ3cQ==
-X-Received: by 2002:a05:600c:c0c3:20b0:456:2698:d4d9 with SMTP id 5b1f17b1804b1-459e73a9797mr13116665e9.3.1754471711085;
-        Wed, 06 Aug 2025 02:15:11 -0700 (PDT)
-Received: from [127.0.1.1] ([102.47.32.49])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dbba5210sm109451925e9.2.2025.08.06.02.15.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 02:15:10 -0700 (PDT)
-From: Mohammad Gomaa <midomaxgomaa@gmail.com>
-Date: Wed, 06 Aug 2025 12:14:32 +0300
-Subject: [PATCH WIP] i2c: add tracepoints to aid debugging in i2c-core-base
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZbBWvR4J9F5mxyu9IwA3LdHKFZAgcqE7FL+2+cNeuSc=;
+ b=vzyb2/kNzK+YsIJiwx00SMqw/UgjZjWIl3LaZqTZIQOCbokYiUyM+HxQxo9MkZIoMzDeYNKnIe3HWUX6d04HnatrVHu5E7XgPulcJT8wBNDe7SiWFbK/Q69TnbTZnCqQP0O/81XQmOhDjYHoPFSclFv9poPV/94nRSxXs76xkvE=
+Received: from CH2PR10MB4312.namprd10.prod.outlook.com (2603:10b6:610:7b::9)
+ by BY5PR10MB4339.namprd10.prod.outlook.com (2603:10b6:a03:20a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
+ 2025 09:15:34 +0000
+Received: from CH2PR10MB4312.namprd10.prod.outlook.com
+ ([fe80::fd5e:682a:f1ac:d0a2]) by CH2PR10MB4312.namprd10.prod.outlook.com
+ ([fe80::fd5e:682a:f1ac:d0a2%3]) with mapi id 15.20.8989.018; Wed, 6 Aug 2025
+ 09:15:33 +0000
+Message-ID: <32397cf6-6c6a-4091-9100-d7395450ae02@oracle.com>
+Date: Wed, 6 Aug 2025 10:15:10 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] xfs and DAX atomic writes changes
+To: djwong@kernel.org, hch@lst.de, cem@kernel.org, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, brauner@kernel.org,
+        viro@zeniv.linux.org.uk
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250724081215.3943871-1-john.g.garry@oracle.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20250724081215.3943871-1-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0079.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:190::12) To MN2PR10MB4320.namprd10.prod.outlook.com
+ (2603:10b6:208:1d5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-refactor-add-i2c-tracepoints-v1-1-d1d39bd6fb57@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPcck2gC/x3MsQrCQAyA4VcpmQ1cgxbrG3RzcxCHa5LWLHcld
- 4hQ+u4ejh/8/DsUddMCt24H148Vy6mhP3XA75hWRZNmoECXcA0Dui6Ra3aMImjEWD2ybtlSLTg
- PSvNIcmYZoS22Vtv3v3/CY7rD6zh+HUdp23MAAAA=
-X-Change-ID: 20250806-refactor-add-i2c-tracepoints-b6e2b92d4cd9
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, kenalba@google.com, 
- hbarnor@chromium.org, rayxu@google.com, 
- Mohammad Gomaa <midomaxgomaa@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754471709; l=7303;
- i=midomaxgomaa@gmail.com; s=20250806; h=from:subject:message-id;
- bh=cPjYo8AzqMspg2tYIoGyVRHz8/SiTlbD302+YRatmOo=;
- b=Krha1sCWef0rBBZ+bAOkdbb/yMmrE95AhvKb65Io7TpUVQu+Fn844AqaTHgZNfUMsN2asFd4T
- bkTdd+5r5NmCEjD3H0Bt98uqOWGFWdhBN1EFtvwO/vO2LE8Ha0wbxJc
-X-Developer-Key: i=midomaxgomaa@gmail.com; a=ed25519;
- pk=I6wR1OynGsrkha14RX3loo3BZsP8pVrK45bErJtcxZE=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR10MB4312:EE_|BY5PR10MB4339:EE_
+X-MS-Office365-Filtering-Correlation-Id: 700f4d59-cdfe-405d-c0d0-08ddd4c9c2f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cWN3K3hLcmxJQmpUVXRkQ0JISXAwQWZFbElPWFRsenJvNlBTN2oyQkV4dU9m?=
+ =?utf-8?B?Q1hoRUNkSUtCWkl4dEppYnZEUGl6cyswUEFKNXVRS1FFSDRHRi9LNHFKUDhT?=
+ =?utf-8?B?WVcwVWZ3OGltaklhSW5FL0R5dE5GV1Azakl4NkQ4V1hkUkMySXFKSTU0QUgx?=
+ =?utf-8?B?c0N1azZxemNieWFkMks0QWcwM2h5aU1RQitFRTBSRnBqRmZyV01CM25VOEdv?=
+ =?utf-8?B?ZTVTclJqcFI3OXplYnVqR0FwZkdEY3ViKzAyWitxZWlkV1NWanpwakQ0MmQ2?=
+ =?utf-8?B?V2J0SzJ5aFQvWkdnY0lFUTRGZkNKelBqeGNZc01CcXhJVkJ0QTlrQ2pOS1ps?=
+ =?utf-8?B?RTViQ3p5WUVUdTMvOUxwd0dwQmhjK05CY0xHclh3N2xRK0hhVVV6bDN2Y2lC?=
+ =?utf-8?B?VStZRVVGOWFFNjRCL2pKOERldmNXWDZaemNncGNWaWVabVdWMXExcTg4ZFZX?=
+ =?utf-8?B?ejBUSkRUdDZIeDUxSFV3SW1ZbG9XTjhaRVhuenRGTDVjdjBNbUQzL3Y4S0U4?=
+ =?utf-8?B?V3pKTVkwUFlDa2JVWlZicW9hcWNsQVdrdmh4MFVvek1sVHZucU5rM3JUdE5B?=
+ =?utf-8?B?N1hkY2hlM2VYdW5aWitjRnNsTklmWG1mdzlvZGJXaWRaWUNtQVdMSlB2SUpM?=
+ =?utf-8?B?UG9FU05jZkVJV1h1MFlqazRlV0E2NlhYYzA2NDFzbGZtVDhOWGpQZzNJOC9x?=
+ =?utf-8?B?Njg5OUtDTG9IWUF0SWhUcVNCVzRyMzlGam9PQTRTTDFoVDVRQjVYdmFHZXR4?=
+ =?utf-8?B?N2NWcm9DeVZFbUpCMzBQRTJZSVZML1ptN3ozL1BtbHdyb3lIK3lOVGVKT01H?=
+ =?utf-8?B?eDhTTm10cU1wSWR1UTlySW4vNEc2ZE1KeTZGQ1Jha1ZxQUhZTXgyK21TTWFs?=
+ =?utf-8?B?OWZmdWxNTHNZdGZGUURMdllyWU02T3JjaW95bkZjZnpwSWR3OXVEbGZyZHZ4?=
+ =?utf-8?B?QllTSk9nTnVWbWJqOWFrUk9BU2w3aEh0TXBwQzIwc3FKUjlxVUpYVjVGdGxo?=
+ =?utf-8?B?UjNVb3F3UjllbTgrcU5kM253ZmJGSHJpMnZlRlNEWTJ3L2UzRlM3bHZMd3VL?=
+ =?utf-8?B?N1lLTDZuT3NZZ3lJeENTRzNPNk5zT3RHTjJNaG8wNzUwVG1LV3dSMHhJK3hh?=
+ =?utf-8?B?WkFjbFdiU0pHZzJ6UmkweTFrNTF0M1kvRXl4cURlcmYyWlNraWRvVHhRNmdP?=
+ =?utf-8?B?M3FzWXpIbjhIb01jUWZRQmlpMDJUTnBiNUZQZkZ3ZjBGUFJRTU4yMnFxY0Nj?=
+ =?utf-8?B?WGRmaUtTMWtxQ01XaTRhL2VwejlHYWFIdmIxRm4wdlVnNGkxaVZqdXpyVG53?=
+ =?utf-8?B?VVZubHpMN3ZKK3FJZlVhYS9kMUxkNjB0dmFHM3o5SmdNZ21jSGxLanZiRDJw?=
+ =?utf-8?B?cjJ2TG1xcENyOWdNSFdNY0VWdGcycUJMMnAwN3BMeHhKNjVhTjJKZi9CUFZm?=
+ =?utf-8?B?OFVVN2ZHVXQyM2N6ekp5eVIyMFFxS29PazV4Nk9HTWIvWUFyNGN0U1NVV2c1?=
+ =?utf-8?B?R3RhV1VidENDdXZnVXNnZEdpSW5HR2RCem9kQ1pqTVpNY0NjZ3A1cVE1Q3ln?=
+ =?utf-8?B?ZEpkNzNTdG1XU0FrMVQyMWRybE1QZkxZTFJyNzhrcnlCYmZYR25SNTJhYnds?=
+ =?utf-8?B?NTdGWFFjVHgwOVNkNlNlNTFKSU5vZGhMT2lzNjZ1ZDRXak9GV0VSUFQzcG1P?=
+ =?utf-8?B?Z3BiRDh6QjBtSUozd2N6bVkydHorbDdCQ3kvOGMySEtNNnBRNzd5cWs1Ty9R?=
+ =?utf-8?B?UitEUVNKU2FiSnplelgvQ2k1b1FNRys2VFNoQTRKQ3BiZFFodW01dTUyeGVO?=
+ =?utf-8?B?Y1h0dUY1aTRmWWZ0MGhNbXk2dmhFbWIxMk81Tjg0RmtDWmpEcTJwU3hxcXVC?=
+ =?utf-8?B?Wk4wZDkyU2ZqUktsaGEvTGVBK1dPUUZ6NzRRT1hPbmpjOGtTZWUyREJ2OWlJ?=
+ =?utf-8?Q?xOCPj9VEzgY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4312.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NU9VTjdobnkwR3VxdUtzc0lMU25LWEhlWmY0YitJWTRucDkrUXFKaGthdmpY?=
+ =?utf-8?B?c0oxbitzMlBwaEhic1dTWExLWGtyeGlyQWZ5V1hFbmRXSEFjSUxZRFJqeUt4?=
+ =?utf-8?B?MU1XWU5nUnJ6VzhpSGl5d2JnZWVKY0VQYllZWmhRNExjSkYyRTJBZmxzbGRk?=
+ =?utf-8?B?SlVmUGdyQ2Q5UTc2NUFtdVRxSzZDcTJWQU8xdWkvUjhOejJPTDlSbENuTjkw?=
+ =?utf-8?B?MkQ0VFN3d1JEcmlsYTlTMU9pbndMOG1OVkpRRGtMVFVoSC8rSUFyb3kvN25a?=
+ =?utf-8?B?eEllQ1lpVDBkYWVSbWRUZ0cwUjRrSXRQdjhuZ1B6L1ZvdG1qRHdUTk1ydk1R?=
+ =?utf-8?B?M1hPN2JOa1JSaVFxVll1U0I2TndEMmNNYWZXTmFHdXYxR1dyOHdpN2xJNW1O?=
+ =?utf-8?B?R2ViUEZjSGd6dkc3bUV0WkVDTUE3U2NReXd0cWJ3WUxTTXBmQzk5M3A3bWNI?=
+ =?utf-8?B?SFRFRDBJemtteFBGbkVTd1UySUt6bEV0REN6OFR0c1BwMm1QY1JnbnhNaWlj?=
+ =?utf-8?B?M0REVUZpU3E1eW4xT1lXNFdzZC8xQjhPc01lT2pBSzRpY09jTWlhVU1IamZs?=
+ =?utf-8?B?R2FFeFFoUWlteVYvTEsyWmNFcmx1MmZmM2Vad3JaUkZRWkdnTXhCcEhQSHYw?=
+ =?utf-8?B?TGJuNVI4TGsyNThHNUJhbkVuMXVOMFZGd09qeVhGWWhObndhNWRJN0xSdWVD?=
+ =?utf-8?B?VnQ0WWFMcytpeFdxZitnSWJoME54cnFFcURWQmtDSFVaTXlheGlyc0Fqd2pG?=
+ =?utf-8?B?d2VrcDU3dG4xODVhSUVsb3hJaFdnUFlOaWRsUVVndFVMSmVDTEIvMTJoQUZY?=
+ =?utf-8?B?aFl5R3Z3Ymo3RzRaK29CSGc5emZCYlY4UzZjS2hKT3R3ZjhjdkZySEdRcm1I?=
+ =?utf-8?B?Ym9JNC82VXU2S3lxOFJHK0pvcFJpRzIzREErck5hSFhmcHBaYjlUbDJCbEhJ?=
+ =?utf-8?B?bkZGZ3pyL2p1M3ZrRGVVcjdlR1dkeUJMNHpla3R2R3VPS3dXUEllekhscVRE?=
+ =?utf-8?B?RlpqTE9OQTI1SVFNU2grckY2TWZBd3NEeThZc3I5MUhubUZDNVgvQU13N3d6?=
+ =?utf-8?B?eElHUXZ5eXBiUFRIV1NiZlIreVlpcEwyM2RiWXlsa000YjRqazJ5TEJINzJj?=
+ =?utf-8?B?UTYvanhacVB4c2REVDk3Tlh0WTA2a0Y5SHlpMERJaHcwQk1EUVZEN1BoWEts?=
+ =?utf-8?B?ZE40WERvVm12QmpHUkwyT3d5RzRMU2ZoaTJhTEgzUWtKaXFDNjZTWVJjR2Nu?=
+ =?utf-8?B?UStDbEJLWmJFbXFNeFdrd2JGQTNwT2JSWW5ieTlIZDlsYXFWZkJna3FJWll5?=
+ =?utf-8?B?a3lGaStseWFwRmZ0M1F1M3dZaFNWNDNCTnZ4cFB2OUtJSk5GZFRlNHBuYmI3?=
+ =?utf-8?B?Ry9Yeno1dUNOY3JuTHBsL1Z3STZ2ZkVvUVpNcld2U0FveWkwZW5FZEZyMm5H?=
+ =?utf-8?B?V3BxMll6Z1FOdlBmbUxBenBBZ3MrRzJnVE5zRFJ4SXpUcVlJenNCTkh1dWRV?=
+ =?utf-8?B?Y3FYL3NlbWhXYVJTbTlHcUI1RVN2bGJxNmlvQmw0OXFZRGQwR214YjlYVVFY?=
+ =?utf-8?B?V25zOHAyVHljM0dYakxmUEovRy9sS1hYdkMzYUZFR2o0ZU5NRFFwMCtQQ1dZ?=
+ =?utf-8?B?UWpzUCtqUU05L0FxSVh6T0pnZkdHUlo1SkZVbWFqNTVEY21UaU90UEZRU3BU?=
+ =?utf-8?B?dkRwbXh0bWJ3WnJCK3VMQ1U1R0tyUkhDdDMyWDdoTVA0SDlwMHNzek04Wlli?=
+ =?utf-8?B?TUd1MWVySEhuWVpUdm56Z1QyRTVVQXBieEJjT0lPUU1VS1JrQXhqcVNKamtR?=
+ =?utf-8?B?ZzIvcyt2NWUxbmFKRyt6SDVEUTlXVGNNLzVDV0k2U1ptSU9LOE9xajNwQmF1?=
+ =?utf-8?B?QTM3cmFEc2h5RVRPZWd1bk11ODhTd3kzbVNhdnlnd3NWQnRMVVd3UGpVc0hk?=
+ =?utf-8?B?YzUyWmFrMlRVblNXVEs0WGhLTzExTDZUMHVhN084Rm5QUGJZcVFzZG1zaGVO?=
+ =?utf-8?B?Wk0rdzBMWWUxdXR3QnNBRnBCaXRseXp6eVFsWnFZeE8vZ0QrekppQ2VrU2JW?=
+ =?utf-8?B?UnQycTJTZjFsS1VxNDFldGtJMittNkpqSkFXWGJISmRMT2FPTFRXMkc4eHpL?=
+ =?utf-8?Q?9PxZNbNsUAUyyHqCYmYDWT6pg?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	HeeaZgO07B6K8DHK5F8XJ+jYYYG8PyAdZuFDHxrEtTwYQytoYmLhsTjOR33qDlP4sWUFfECoqS0IMCrNntg6M0dIVTO7w7ly4cYT2QvSxEn+kJKXWlaA/cXw83qTR494FXdSSVcnQfSaLTftLqR6QesUK5siSbkCV7iTT5vBvYLPAseNxCQCfhMYvkE0ccgZ99eJgeqc2pIky568m4DZ+inX9/6r/TUhTQtFVmtSt4uQ+lPnjQVhcav5O3KqkE5ri6ASLcZ8OoemlAm7LvVr22/xdDnWaUzRcOtQjdMRrMPu3jscA1lndHbtP1r8PSyWknYAD3GvpGXNq6evfR9eY6E0bSnPjftOINZr5nA809ypQZm/v6XVLMx2FHZGoqh3q4ARitW5JVBXOl+ELJLxf5OjBDfGODfQOV1y8aFKZLIVdejahXgJRoDU9i2/5GlaeFrRqpZSEyBH8ks5V7vtCPjfW2orw6bWJDbkN3wwUPGohgeqE6VhoinUKkBu2dOs2b9QilSIYSX0FamAwDppBi+BEbMiiE/lmCOqAgYfPrRSD88ZLKz774nwBBAIHdDy00X82xGZPubNLxFR19PAYBCVHZuwkVlbEgMnS7hkV1o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 700f4d59-cdfe-405d-c0d0-08ddd4c9c2f6
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 09:15:33.6486
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8cg1u/JYyyOS0l0P3yisMJQs4+9h0sSGvoZRNF4ovmtkrH5oMmUIL2rwbfVkueNpDPJ2+Fmf85kGp6InfRVelA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4339
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
+ definitions=main-2508060056
+X-Authority-Analysis: v=2.4 cv=fYaty1QF c=1 sm=1 tr=0 ts=68931d39 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=_7Kw5TVXa_LTN56mlfEA:9
+ a=QEXdDO2ut3YA:10 cc=ntf awl=host:12066
+X-Proofpoint-ORIG-GUID: jqEW5AuU_XBWMIcVCT3kuP_0Fv6NPEOY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA1NiBTYWx0ZWRfX+BtG71NwmTDT
+ kCs4Ltm6rGrs1nTo42lkaxaT46o3XfAqMgvr4oD10M/HrhoTE95CIUT8SOrY+Kj9cBQVZtxkl5j
+ 5MeMfwO6xWDFNJ7AN31LafxMSZtTGmfIfyfbTJJXl76+5Yx3ZiLW9E/rp7in8ZPu9PztUIcBq6H
+ sa4a8D1nQ8GPECGW1wWavWe7VieReuYWGUr7MP+JG4JWR8aC87NmIEM8EQCjverH35HGlgNI8Lc
+ RbZEMvyei5AdfapsghFGoseMgWLwcsr3jXXm1zFHIltSSvTVa75XDb6/jKR+eZt8aoajz0Tbp3w
+ MlhjmTFohfr8mRKQzeYwq//wiJuggnX5U46HDmWvfp4k46p9GzaG4l8dPZS8crHqmZ1lahOn3E0
+ TfOQBtve8zIR0aJL/VfMZPve9rDvwIy0bDJQMvyFjvt/W87KbdKvCH3/DUDuS7jzADkYn2V1
+X-Proofpoint-GUID: jqEW5AuU_XBWMIcVCT3kuP_0Fv6NPEOY
 
-Add tracepoints to i2c-core-base.c file to help trace
-and debug I2C device probe failures.
+On 24/07/2025 09:12, John Garry wrote:
 
-The new trace points are:
-- i2c_device_probe_debug: records non-failure routines
-  e.g. IRQ 0.
-- i2c_device_probe_failed: records failure routines e.g.
-  failure to set default clocks.
+Hi Carlos,
 
-To support operation of these tracepoints a variable
-was added to record reason for debug and failure.
+I was expecting you to pick these up.
 
-Signed-off-by: Mohammad Gomaa <midomaxgomaa@gmail.com>
----
-Hello,
+Shall I resend next week after v6.17-rc1 is released?
 
-This patch adds tracepoints to i2c-core-base to aid with debugging I2C probing failrues.
+Thanks,
+John
 
-The motivation for this comes from my work in Google Summer of Code (GSoC) 2025:
-"ChromeOS Platform Input Device Quality Monitoring"
-https://summerofcode.withgoogle.com/programs/2025/projects/uCdIgK7K
-
-This is my first submission to the Linux kernel, so any feedback is welcome.
----
- drivers/i2c/i2c-core-base.c | 61 ++++++++++++++++++++++++++++++++++-----------
- include/trace/events/i2c.h  | 23 +++++++++++++++++
- 2 files changed, 70 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index ecca8c006b020379fb53293b20ab09ba25314609..c145af56a17d74117985430d04b75fff5b45b9b2 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -495,6 +495,8 @@ static int i2c_device_probe(struct device *dev)
- 	struct i2c_driver	*driver;
- 	bool do_power_on;
- 	int status;
-+	const char *reason = NULL;
-+	bool has_id_table, has_acpi_match, has_of_match;
- 
- 	if (!client)
- 		return 0;
-@@ -509,38 +511,54 @@ static int i2c_device_probe(struct device *dev)
- 			/* Keep adapter active when Host Notify is required */
- 			pm_runtime_get_sync(&client->adapter->dev);
- 			irq = i2c_smbus_host_notify_to_irq(client);
-+			reason = "IRQ 0: could not get irq from Host Notify";
- 		} else if (is_of_node(fwnode)) {
- 			irq = fwnode_irq_get_byname(fwnode, "irq");
- 			if (irq == -EINVAL || irq == -ENODATA)
- 				irq = fwnode_irq_get(fwnode, 0);
-+			reason = "IRQ 0: could not get irq from OF";
- 		} else if (is_acpi_device_node(fwnode)) {
- 			bool wake_capable;
- 
- 			irq = i2c_acpi_get_irq(client, &wake_capable);
- 			if (irq > 0 && wake_capable)
- 				client->flags |= I2C_CLIENT_WAKE;
-+			reason = "IRQ 0: could not get irq from ACPI";
- 		}
- 		if (irq == -EPROBE_DEFER) {
- 			status = dev_err_probe(dev, irq, "can't get irq\n");
-+			reason = "IRQ 0: could not get IRQ due to EPROBE_DEFER";
- 			goto put_sync_adapter;
- 		}
- 
--		if (irq < 0)
-+		if (irq < 0) {
-+			trace_i2c_device_probe_debug(dev, reason);
- 			irq = 0;
-+		}
- 
- 		client->irq = irq;
- 	}
- 
- 	driver = to_i2c_driver(dev->driver);
- 
-+	has_id_table = driver->id_table;
-+	has_acpi_match = acpi_driver_match_device(dev, dev->driver);
-+	has_of_match = i2c_of_match_device(dev->driver->of_match_table, client);
-+
-+	if (!has_id_table)
-+		trace_i2c_device_probe_debug(dev, "no I2C ID table");
-+	if (!has_acpi_match)
-+		trace_i2c_device_probe_debug(dev, "ACPI ID table mismatch");
-+	if (!has_of_match)
-+		trace_i2c_device_probe_debug(dev, "OF ID table mismatch");
-+
- 	/*
- 	 * An I2C ID table is not mandatory, if and only if, a suitable OF
- 	 * or ACPI ID table is supplied for the probing device.
- 	 */
--	if (!driver->id_table &&
--	    !acpi_driver_match_device(dev, dev->driver) &&
--	    !i2c_of_match_device(dev->driver->of_match_table, client)) {
-+	if (!has_id_table && !has_acpi_match && !has_of_match) {
- 		status = -ENODEV;
-+		reason = "no I2C ID table and no ACPI/OF match";
- 		goto put_sync_adapter;
- 	}
- 
-@@ -550,47 +568,60 @@ static int i2c_device_probe(struct device *dev)
- 		wakeirq = fwnode_irq_get_byname(fwnode, "wakeup");
- 		if (wakeirq == -EPROBE_DEFER) {
- 			status = dev_err_probe(dev, wakeirq, "can't get wakeirq\n");
-+			reason = "get wake IRQ due to EPROBE_DEFER";
- 			goto put_sync_adapter;
- 		}
- 
- 		device_init_wakeup(&client->dev, true);
- 
--		if (wakeirq > 0 && wakeirq != client->irq)
-+		if (wakeirq > 0 && wakeirq != client->irq) {
- 			status = dev_pm_set_dedicated_wake_irq(dev, wakeirq);
--		else if (client->irq > 0)
-+			reason = "failed to set dedicated wakeup IRQ";
-+		} else if (client->irq > 0) {
- 			status = dev_pm_set_wake_irq(dev, client->irq);
--		else
-+			reason = "failed to set wakeup IRQ";
-+		} else {
- 			status = 0;
-+			reason = "no IRQ";
-+		}
- 
--		if (status)
-+		if (status) {
- 			dev_warn(&client->dev, "failed to set up wakeup irq\n");
-+			trace_i2c_device_probe_debug(&client->dev, reason);
-+		}
- 	}
- 
- 	dev_dbg(dev, "probe\n");
- 
- 	status = of_clk_set_defaults(to_of_node(fwnode), false);
--	if (status < 0)
-+	if (status < 0) {
-+		reason = "set default clocks";
- 		goto err_clear_wakeup_irq;
--
-+	}
- 	do_power_on = !i2c_acpi_waive_d0_probe(dev);
- 	status = dev_pm_domain_attach(&client->dev, do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0);
--	if (status)
-+	if (status) {
-+		reason = "attach PM domain";
- 		goto err_clear_wakeup_irq;
--
-+	}
- 	client->devres_group_id = devres_open_group(&client->dev, NULL,
- 						    GFP_KERNEL);
- 	if (!client->devres_group_id) {
- 		status = -ENOMEM;
-+		reason = "open devres group";
- 		goto err_detach_pm_domain;
- 	}
- 
- 	client->debugfs = debugfs_create_dir(dev_name(&client->dev),
- 					     client->adapter->debugfs);
- 
--	if (driver->probe)
-+	if (driver->probe) {
- 		status = driver->probe(client);
--	else
-+		reason = "specific driver probe failed";
-+	} else {
- 		status = -EINVAL;
-+		reason = "no probe defined";
-+	}
- 
- 	/*
- 	 * Note that we are not closing the devres group opened above so
-@@ -617,6 +648,8 @@ static int i2c_device_probe(struct device *dev)
- 	if (client->flags & I2C_CLIENT_HOST_NOTIFY)
- 		pm_runtime_put_sync(&client->adapter->dev);
- 
-+	trace_i2c_device_probe_failed(&client->dev, status, reason);
-+
- 	return status;
- }
- 
-diff --git a/include/trace/events/i2c.h b/include/trace/events/i2c.h
-index 142a23c6593c611de9abc2a89a146b95550b23cd..1a08800dcdd760e2a5a40b76c4a244e1b4ef3b1e 100644
---- a/include/trace/events/i2c.h
-+++ b/include/trace/events/i2c.h
-@@ -16,6 +16,29 @@
- /*
-  * drivers/i2c/i2c-core-base.c
-  */
-+TRACE_EVENT(i2c_device_probe_debug,
-+	    TP_PROTO(struct device *dev, const char *message),
-+	    TP_ARGS(dev, message),
-+	    TP_STRUCT__entry(__string(devname, dev_name(dev)) __string(message, message)),
-+	    TP_fast_assign(__assign_str(devname); __assign_str(message);),
-+	    TP_printk("device=%s: %s", __get_str(devname), __get_str(message))
-+);
-+
-+TRACE_EVENT(i2c_device_probe_failed,
-+	    TP_PROTO(struct device *dev, int status, const char *reason),
-+	    TP_ARGS(dev, status, reason),
-+	    TP_STRUCT__entry(__string(dev_name, dev_name(dev))
-+			     __field(int, status)
-+			     __string(reason, reason)),
-+	    TP_fast_assign(__assign_str(dev_name);
-+		__entry->status = status;
-+		__assign_str(reason);),
-+	    TP_printk("failed to probe %s: %d (%s)",
-+		      __get_str(dev_name),
-+		      __entry->status,
-+		      __get_str(reason))
-+);
-+
- extern int i2c_transfer_trace_reg(void);
- extern void i2c_transfer_trace_unreg(void);
- 
-
----
-base-commit: 7e161a991ea71e6ec526abc8f40c6852ebe3d946
-change-id: 20250806-refactor-add-i2c-tracepoints-b6e2b92d4cd9
-
-Best regards,
--- 
-Mohammad Gomaa <midomaxgomaa@gmail.com>
+> This series contains an atomic writes fix for DAX support on xfs and
+> an improvement to WARN against using IOCB_ATOMIC on the DAX write path.
+> 
+> Also included is an xfs atomic writes mount option fix.
+> 
+> Based on xfs -next at ("b0494366bd5b Merge branch 'xfs-6.17-merge' into
+> for-next")
+> 
+> John Garry (3):
+>    fs/dax: Reject IOCB_ATOMIC in dax_iomap_rw()
+>    xfs: disallow atomic writes on DAX
+>    xfs: reject max_atomic_write mount option for no reflink
+> 
+>   fs/dax.c           |  3 +++
+>   fs/xfs/xfs_file.c  |  6 +++---
+>   fs/xfs/xfs_inode.h | 11 +++++++++++
+>   fs/xfs/xfs_iops.c  |  5 +++--
+>   fs/xfs/xfs_mount.c | 19 +++++++++++++++++++
+>   5 files changed, 39 insertions(+), 5 deletions(-)
+> 
 
 
