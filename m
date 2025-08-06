@@ -1,76 +1,90 @@
-Return-Path: <linux-kernel+bounces-757199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A024B1BF00
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6F3B1BF11
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C4062776B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:04:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5F6181588
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB421E0DD9;
-	Wed,  6 Aug 2025 03:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0371E0E0B;
+	Wed,  6 Aug 2025 03:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="w+3l+Dsi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xuk2v2hZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6F3190676;
-	Wed,  6 Aug 2025 03:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AEE1DEFF5;
+	Wed,  6 Aug 2025 03:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754449428; cv=none; b=tij0Qo5FqJcApXdwiaUipNnLwGui65Zsz0hZETso70xUBmBD7ENFuRdq3sj7I/4vbc1HS4ITok3ZnkZlnCqUlT0pkBoa4eW4eydwDFcH31d+b1xWi77u+2uR3VdcbSEdO6PCLnkr79Z4BOHPDKhI/hO2ECK9EOw2jW2jtoHKXo0=
+	t=1754450021; cv=none; b=p4JDC6AjK6cew9h5u4U/dzAWY+/KMe4LqK2L/Cymtz5T/NculxvQtaXyrkGt43vIemPgc5qsWZMZdoarrHQfJF0WkWB16f9r6kr3T5pq1uUl1lZDjSOCm6cPuibEHiTsv4YY3K5rm7mz9eczg6bsmb2uWlU/heJ1YphlDAe1Jlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754449428; c=relaxed/simple;
-	bh=0ANyj2k6YdrkOVdwRG1Q2t1sdgmZXj1r7jhRTU/J5e8=;
+	s=arc-20240116; t=1754450021; c=relaxed/simple;
+	bh=FIcC/HNmPTiAO+Z06G95G1OuS8Y+G39qJToe+fbZl1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFXctRRJ+EtXz2hrwlvwm/k6UZ4/VrIuWnJsgLZhDzdNwE1BYsT+Ng0qsc2NwKS8WkdP2tmJvsuAjwSXlSElXdwm+YrP37g9EZpbvre2ifXAyNMuSF2bSJiqVdrdKQvsAcUUahV6FfSxeQrNyyqhc/P7nDYFYu/JgyY2HyM8GXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=w+3l+Dsi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Tr7NN2jphfR6xHA/UzGXZWi6sl0YOUmnWotym5mZwz4=; b=w+3l+DsiNEdtl4SdPo25MfoSwx
-	6zeqoaeDGmSxgzZ9JnskLH7Dz9SULlis8/dRT0QOqH/Y1EtVKBrEC3uQEsYfEYxYKm1c3ZEDnWwk5
-	DHX5iBtN23GQB1oNZdi/GBgRSA0gned3RSnZrlzpkmj1vuZxQlxck5hyU2fafIu61at4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ujUR3-003qp3-Fc; Wed, 06 Aug 2025 05:03:25 +0200
-Date: Wed, 6 Aug 2025 05:03:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Mo Elbadry <elbadrym@google.com>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rom Lemarchand <romlem@google.com>,
-	William Kennington <wak@google.com>,
-	Yuxiao Zhang <yuxiaozhang@google.com>,
-	"wthai@nvidia.com" <wthai@nvidia.com>,
-	"leohu@nvidia.com" <leohu@nvidia.com>,
-	"dkodihalli@nvidia.com" <dkodihalli@nvidia.com>,
-	"spuranik@nvidia.com" <spuranik@nvidia.com>
-Subject: Re: [PATCH v12 3/3] clk: aspeed: add AST2700 clock driver
-Message-ID: <e53edafb-bfb0-45ab-8224-7b393af4e0ad@lunn.ch>
-References: <20250708052909.4145983-1-ryan_chen@aspeedtech.com>
- <20250708052909.4145983-4-ryan_chen@aspeedtech.com>
- <OS8PR06MB7541E7FCB367AE610EBBE121F249A@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <CAOO6b=tEigCRXZ47BMgsTvxiZdO0P32+jFhQ313O044VALgaWA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rohU18+okR6Vvm8cC9SixWsogxePXVWw+9oabm41WlZ+OSsaJvH0MqBLRO5N4VP69PdIUgHv2PqaS7bG/7PfT5kXciH1N7IqfASUYK94FLghwr3K/PMTFbqusAjD6+2c/z4df8r1MCebyPfqCYqLWyDxa5Ap3DWXlHo1t88eVog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xuk2v2hZ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754450018; x=1785986018;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FIcC/HNmPTiAO+Z06G95G1OuS8Y+G39qJToe+fbZl1A=;
+  b=Xuk2v2hZfhl9SZGK3Ao0qdKxdyxyiXcapotM5bhO/q1Pg1MgTcY7kfdN
+   MEf9oRIWKK6LueE/A3pqft2bu/C2MQucs5W+GTV1l5vQsFfa9zIByEoYg
+   4yRrLh5eW8F0R47rV8cSOVdd+9ClIQCXSijSJ4Pq1lCVe6idySo/CGnSH
+   dURd+k0eYpJn/1DSMYaBtmyIVWBEcs3bBlu3GzB3tXZWJfaOR2wnRce5N
+   pkuPHHAmQxYAy/3vvlS4saJtXc68AA+0d8rPSDtgQcL1zqac1MkLPv/XP
+   lIgds8sZNPfZ/xyNTY4S+W0jZm/1iqasfjMjr0xYDUw/ez+uQEYvcXct1
+   w==;
+X-CSE-ConnectionGUID: imhHRvqbTauuOhPYFkLV3g==
+X-CSE-MsgGUID: Dt5fEP8oTuuIRUerDvXS4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74218271"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="74218271"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 20:13:38 -0700
+X-CSE-ConnectionGUID: 5KGgxhw7TpuNy/uWze/qsA==
+X-CSE-MsgGUID: XFQl7BZ+SOSfoo6JUSuPLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169924374"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Aug 2025 20:13:33 -0700
+Date: Wed, 6 Aug 2025 11:03:54 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: dan.j.williams@intel.com
+Cc: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>,
+	linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org,
+	pbonzini@redhat.com, eddie.dong@intel.com,
+	kirill.shutemov@intel.com, dave.hansen@intel.com,
+	kai.huang@intel.com, isaku.yamahata@intel.com,
+	elena.reshetova@intel.com, rick.p.edgecombe@intel.com,
+	Farrah Chen <farrah.chen@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/20] x86/virt/tdx: Expose SEAMLDR information via
+ sysfs
+Message-ID: <aJLGGoleGIEwb8Ee@yilunxu-OptiPlex-7050>
+References: <20250523095322.88774-1-chao.gao@intel.com>
+ <20250523095322.88774-8-chao.gao@intel.com>
+ <aIhUVyJVQ+rhRB4r@yilunxu-OptiPlex-7050>
+ <688bd9a164334_48e5100f1@dwillia2-xfh.jf.intel.com.notmuch>
+ <aIwhUb3z9/cgsMwb@yilunxu-OptiPlex-7050>
+ <688cdc169163a_32afb100b3@dwillia2-mobl4.notmuch>
+ <aJBamtHaXpeu+ZR6@yilunxu-OptiPlex-7050>
+ <68914d8f61c20_55f0910074@dwillia2-xfh.jf.intel.com.notmuch>
+ <aJFUspObVxdqInBo@google.com>
+ <6891826bbbe79_cff99100f7@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,29 +93,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOO6b=tEigCRXZ47BMgsTvxiZdO0P32+jFhQ313O044VALgaWA@mail.gmail.com>
+In-Reply-To: <6891826bbbe79_cff99100f7@dwillia2-xfh.jf.intel.com.notmuch>
 
-> > > +static const struct clk_div_table ast2700_rgmii_div_table[] = {
-> > > +     { 0x0, 4 },
-> > > +     { 0x1, 4 },
-> > > +     { 0x2, 6 },
-> > > +     { 0x3, 8 },
-> > > +     { 0x4, 10 },
-> > > +     { 0x5, 12 },
-> > > +     { 0x6, 14 },
-> > > +     { 0x7, 16 },
-> > > +     { 0 }
-> > > +};
+On Mon, Aug 04, 2025 at 09:02:51PM -0700, dan.j.williams@intel.com wrote:
+> Sean Christopherson wrote:
+> > On Mon, Aug 04, 2025, dan.j.williams@intel.com wrote:
+> > > Xu Yilun wrote:
+> > > > So my idea is to remove tdx_tsm device (thus disables tdx_tsm driver) on
+> > > > vmxoff.
+> > > > 
+> > > >   KVM                TDX core            TDX TSM driver
+> > > >   -----------------------------------------------------
+> > > >   tdx_disable()
+> > > >                      tdx_tsm dev del
+> > > >                                          driver.remove()
+> > > >   vmxoff()
+> > > > 
+> > > > An alternative is to move vmxon/off management out of KVM, that requires
+> > > > a lot of complex work IMHO, Chao & I both prefer not to touch it.
+> > 
+> > Eh, it's complex, but not _that_ complex.
+> > 
+> > > It is fine to require that vmxon/off management remain within KVM, and
+> > > tie the lifetime of the device to the lifetime of the kvm_intel module*.
+> > 
+> > Nah, let's do this right.  Speaking from experience; horrible, make-your-eyes-bleed
+> > experience; playing games with kvm-intel.ko to try to get and keep CPUs post-VMXON
+> > will end in tears.
+> > 
+> > And it's not just TDX-feature-of-the-day that needs VMXON to be handled outside
+> > of KVM, I'd also like to do so to allow out-of-tree hypervisors to do the "right
+> > thing"[*].  Not because I care deeply about out-of-tree hypervisors, but because
+> > the lack of proper infrastructure for utilizing virtualization hardware irks me.
+> > 
+> > The basic gist is to extract system-wide resources out of KVM and into a separate
+> > module, so that e.g. tdx_tsm or whatever can take a dependency on _that_ module
+> > and elevate refcounts as needed.  All things considered, there aren't so many
+> > system-wide resources that it's an insurmountable task.
+> >
+> > I can provide some rough patches to kickstart things.  It'll probably take me a
+> > few weeks to extract them from an old internal branch, and I can't promise they'll
+> > compile.  But they should be good enough to serve as an RFC.
+> > 
+> > https://lore.kernel.org/all/ZwQjUSOle6sWARsr@google.com
+> 
+> Sounds reasonable to me.
+> 
+> Not clear on how it impacts tdx_tsm implementation. The lifetime of this
+> tdx_tsm device can still be bound by tdx_enable() / tdx_cleanup(). The
 
-> > > +     DIVIDER_CLK(SCU1_CLK_RGMII, "rgmii", soc1_hpll,
-> > > +                 SCU1_CLK_SEL1, 25, 3, ast2700_rgmii_div_table),
+I assume with VMXON outside of KVM, tdx tsm driver could actively call
+tdx_bringup(), which includes VMXON, tdx_enable() and cpuhp handling.
+I.e, tdx_tsm device lifetime won't have to be bound to any other
+component, it could keep living until tdx_tsm module ends.
 
+> refactor removes the need for the autoprobe hack below. It may also
+> preclude async vmxoff cases by pinning? Or does pinning still not solve
 
-Historically, aspeed has got RGMII delays wrong. Could you confirm
-this has nothing to do with the 2ns delay needed by RGMII.
+not by pinning, by cpuhp handling async vmxoff won't affect seamcall
+execution.
 
-What exactly is this clock used for? RGMII needs 2.5MHz, 25MHz and
-125MHz, which none of these dividers seems to provide.
+> the reasons for bouncing vmx on suspend/shutdown?
 
-	Andrew
+Thanks,
+Yilun
 
