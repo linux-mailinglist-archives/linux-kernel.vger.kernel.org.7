@@ -1,180 +1,124 @@
-Return-Path: <linux-kernel+bounces-757353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1C1B1C128
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:18:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87394B1C12E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF0418A174A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE0AD7A9C02
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061CF213E94;
-	Wed,  6 Aug 2025 07:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC91218ACC;
+	Wed,  6 Aug 2025 07:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uh88DQL+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTDMb+Ns"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6851EB9F2
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 07:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA91E1D63F7;
+	Wed,  6 Aug 2025 07:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754464724; cv=none; b=bwpd90Syz89nrR/o3cCiN1tojACYpxgHS+C7jDW2SMOrMQpZ1EL3HfHNf5wAP3l9OJaTm9TWwfgIk5Qw4dvISAr8bKMHWstGiNGh63zyje3b09GmGETaSAzN17RW2NGrePjmhiXS+xXvZEt2ITqqngciI5csWMoZOiTzSxCCC34=
+	t=1754464787; cv=none; b=o+IrQMYNGiETsjR/ie+OIJIYK4nrGELje3dAlcfJ2rgFbAuH79Wq79uRsL80Eb9cCLP6v03UT6mWaojLx2f2JhN2rXroJjXCz3KTgXRv/qhJEBmSfNpquXjJybQ/AK70Ft/Fge9YVyBN1Z6zNztAhdAz3f1EGWKLL5zTgtm42z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754464724; c=relaxed/simple;
-	bh=nNxhoKULW/u7Nvh1p4ZhOqCELveHSO6eUylzpEfTeqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hN7zeiYJBoekz4XBhM/UQTFcNgRJZOGznnIkRL2gdO/3vBz7pmjRiuLga4s+it/+tuQwJpA6fCC2Kt3YM1Asb/6pF68zRrEQWX6E59fFh/9oCq2nLgGBPUR+5VMyPKaMepFzBsDrYGCPDUcwN9Zt41zMUFRRNqpxMADH3wlpoDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uh88DQL+; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754464722; x=1786000722;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nNxhoKULW/u7Nvh1p4ZhOqCELveHSO6eUylzpEfTeqE=;
-  b=Uh88DQL+b1jBCpc8VmN7AffcryBteb0nU1dPwVMIGk9MikCqZJlT9uYp
-   UggS+NybswtPxzSFrx/oF+hFpNJJQ6jEjASIFve+su1Cl057vhy+pKQbO
-   OgMEkZvKznJmUGZPP/JnhamiyAwUMVPcSwtfkN6vGbiLufQjKs47hbMZc
-   nL6hXMK2Pz22AlVobwnRhNqoHKwbxK/gCM1sijbHSa/Bn/MO6o0QTnEPJ
-   svw2bhHdk+OZ2RQz7I36+3/aUBvKF4Tl7MNaVVMx1FlJ/MGyksewB1z1U
-   8/LMs/0UQ+I7nrz8TbsYJEILlaahiGyh+45Pi5O9x1ptVtJzjc6Lm5uIK
-   w==;
-X-CSE-ConnectionGUID: YPMSJwaFRZmGH/ommQl9ZA==
-X-CSE-MsgGUID: +EcAAhJ6QIC1fiZPj/xa9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="68147896"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="68147896"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 00:18:40 -0700
-X-CSE-ConnectionGUID: CqvA096ZSvWDZuOfLE9yzg==
-X-CSE-MsgGUID: 8AqaE68FQEWjiOwfSZkBHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="201879694"
-Received: from igk-lkp-server01.igk.intel.com (HELO b3b7d4258b7c) ([10.91.175.65])
-  by orviesa001.jf.intel.com with ESMTP; 06 Aug 2025 00:18:38 -0700
-Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujYPz-00029j-2C;
-	Wed, 06 Aug 2025 07:18:35 +0000
-Date: Wed, 6 Aug 2025 09:18:07 +0200
-From: kernel test robot <lkp@intel.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: lib/maple_tree.c:4206:20: warning: stack frame size (1064) exceeds
- limit (1024) in 'mas_wr_store_entry'
-Message-ID: <202508060948.H36grbYA-lkp@intel.com>
+	s=arc-20240116; t=1754464787; c=relaxed/simple;
+	bh=KOWpcG7TXgMilyda7kVhOJeX0oxi6CCnLzWaPn4H7J4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HeD0P5lqNd93Ism+ADThFRkCqLvqDdX4x34V+IbKf1aOSKCjs2FKHHFzRs2H2ztphSeRdxUD/4Ik3qNrM1AeG7o4za5PRJfU5zlmBQrCcvAHw3z71ffXtS76vwm7SOGTmcs9YWhqXejyNyaDzhNS8fc7pW8le3VrXH6uoJeniwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTDMb+Ns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F56CC4CEE7;
+	Wed,  6 Aug 2025 07:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754464787;
+	bh=KOWpcG7TXgMilyda7kVhOJeX0oxi6CCnLzWaPn4H7J4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cTDMb+NspX+pIpgFqI9MX6ws8Ozh56adhg/6OtfoW9I6GkG3Pcs1evfnH3fnJlcBa
+	 AIHOH8Skcgqjzj3PJ7VAyvWfo4lgM3ZSAMesXALT7DRf2pB/YmzmIfeiXnL2aQXA1o
+	 23yLvrwpsK0ZgR89gOsudefLeXksNGsZe69xYPaFO4P3sr3X44RuF2ouFKdEvHSJCj
+	 yTc/7LOqBo/q3FsUFqR/cxQDMS8wAMWIejeNChAoTCZxhQrcISfd2ddYxIttVPJ+rS
+	 yaUBWvd75Lc9633P7m4AKyMMbtY8ZmNIP69gPhaVVd+cSM5u1uIMs4SCucZPaLi3UW
+	 P1hDkLf1BiUDA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ujYR6-004O92-Jc;
+	Wed, 06 Aug 2025 08:19:44 +0100
+Date: Wed, 06 Aug 2025 08:19:44 +0100
+Message-ID: <86bjosapdb.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
+In-Reply-To: <CAJZ5v0jnSwkOHuq5QjvVN7RLk=BV1Oi6Jbv1SvP5TCbAERq0yw@mail.gmail.com>
+References: <1916668.tdWV9SEqCh@rjwysocki.net>
+	<7770672.EvYhyI6sBW@rjwysocki.net>
+	<86o6sv6n94.wl-maz@kernel.org>
+	<CAJZ5v0g=eSeAp96mHCOm+C9jis3uNRXgPhNgtT0SgP9kZ1emvw@mail.gmail.com>
+	<86ectpahdj.wl-maz@kernel.org>
+	<CAJZ5v0jnSwkOHuq5QjvVN7RLk=BV1Oi6Jbv1SvP5TCbAERq0yw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: rafael@kernel.org, christian.loehle@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, artem.bityutskiy@linux.intel.com, aboorvad@linux.ibm.com, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   479058002c32b77acac43e883b92174e22c4be2d
-commit: 1fd7c4f3228e9775c97b25a6e5e2420df8cf0e76 maple_tree: convert mas_insert() to preallocate nodes
-date:   11 months ago
-config: um-alldefconfig (https://download.01.org/0day-ci/archive/20250806/202508060948.H36grbYA-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project faa4c4c2dc804c31845d8f036345fac00e016f2d)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508060948.H36grbYA-lkp@intel.com/reproduce)
+On Tue, 05 Aug 2025 19:50:21 +0100,
+"Rafael J. Wysocki" <rafael@kernel.org> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508060948.H36grbYA-lkp@intel.com/
+[...]
 
-All warnings (new ones prefixed by >>):
+> > > Any chance to try the teo governor on it to see if this problem can
+> > > also be observed?
+> >
+> > Neither ladder nor teo have this issue. The number of broadcast timer
+> > IPIs is minimal, and so is the number of interrupts delivered from the
+> > backup timer. Only menu exhibits the IPI-hose behaviour on this box
+> > (and only this one).
+> 
+> Good to know, thanks!
+> 
+> <shameless plug>Switch over to teo?</shameless plug>
 
-   lib/maple_tree.c:351:21: warning: unused function 'mte_set_full' [-Wunused-function]
-     351 | static inline void *mte_set_full(const struct maple_enode *node)
-         |                     ^~~~~~~~~~~~
-   lib/maple_tree.c:356:21: warning: unused function 'mte_clear_full' [-Wunused-function]
-     356 | static inline void *mte_clear_full(const struct maple_enode *node)
-         |                     ^~~~~~~~~~~~~~
-   lib/maple_tree.c:361:20: warning: unused function 'mte_has_null' [-Wunused-function]
-     361 | static inline bool mte_has_null(const struct maple_enode *node)
-         |                    ^~~~~~~~~~~~
-   lib/maple_tree.c:4161:20: warning: unused function 'mas_wr_modify' [-Wunused-function]
-    4161 | static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
-         |                    ^~~~~~~~~~~~~
->> lib/maple_tree.c:4206:20: warning: stack frame size (1064) exceeds limit (1024) in 'mas_wr_store_entry' [-Wframe-larger-than]
-    4206 | static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
-         |                    ^
-   lib/maple_tree.c:3783:21: warning: stack frame size (1032) exceeds limit (1024) in 'mas_wr_spanning_store' [-Wframe-larger-than]
-    3783 | static noinline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
-         |                     ^
-   6 warnings generated.
+Sure thing. Just start with:
 
+	git rm drivers/cpuidle/governors/menu.c
 
-vim +/mas_wr_store_entry +4206 lib/maple_tree.c
+and I'll gladly switch to something else! ;-)
 
-54a611b605901c Liam R. Howlett 2022-09-06  4198  
-54a611b605901c Liam R. Howlett 2022-09-06  4199  /*
-54a611b605901c Liam R. Howlett 2022-09-06  4200   * mas_wr_store_entry() - Internal call to store a value
-54a611b605901c Liam R. Howlett 2022-09-06  4201   * @mas: The maple state
-54a611b605901c Liam R. Howlett 2022-09-06  4202   * @entry: The entry to store.
-54a611b605901c Liam R. Howlett 2022-09-06  4203   *
-54a611b605901c Liam R. Howlett 2022-09-06  4204   * Return: The contents that was stored at the index.
-54a611b605901c Liam R. Howlett 2022-09-06  4205   */
-739820a6178b03 JaeJoon Jung    2024-06-14 @4206  static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
-54a611b605901c Liam R. Howlett 2022-09-06  4207  {
-54a611b605901c Liam R. Howlett 2022-09-06  4208  	struct ma_state *mas = wr_mas->mas;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4209  	unsigned char new_end = mas_wr_new_end(wr_mas);
-54a611b605901c Liam R. Howlett 2022-09-06  4210  
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4211  	switch (mas->store_type) {
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4212  	case wr_invalid:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4213  		MT_BUG_ON(mas->tree, 1);
-739820a6178b03 JaeJoon Jung    2024-06-14  4214  		return;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4215  	case wr_new_root:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4216  		mas_new_root(mas, wr_mas->entry);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4217  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4218  	case wr_store_root:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4219  		mas_store_root(mas, wr_mas->entry);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4220  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4221  	case wr_exact_fit:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4222  		rcu_assign_pointer(wr_mas->slots[mas->offset], wr_mas->entry);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4223  		if (!!wr_mas->entry ^ !!wr_mas->content)
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4224  			mas_update_gap(mas);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4225  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4226  	case wr_append:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4227  		mas_wr_append(wr_mas, new_end);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4228  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4229  	case wr_slot_store:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4230  		mas_wr_slot_store(wr_mas);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4231  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4232  	case wr_node_store:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4233  		mas_wr_node_store(wr_mas, new_end);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4234  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4235  	case wr_spanning_store:
-54a611b605901c Liam R. Howlett 2022-09-06  4236  		mas_wr_spanning_store(wr_mas);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4237  		break;
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4238  	case wr_split_store:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4239  	case wr_rebalance:
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4240  		mas_wr_bnode(wr_mas);
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4241  		break;
-54a611b605901c Liam R. Howlett 2022-09-06  4242  	}
-54a611b605901c Liam R. Howlett 2022-09-06  4243  
-580fcbd67ce2cd Sidhartha Kumar 2024-08-14  4244  	return;
-54a611b605901c Liam R. Howlett 2022-09-06  4245  }
-54a611b605901c Liam R. Howlett 2022-09-06  4246  
+[...]
 
-:::::: The code at line 4206 was first introduced by commit
-:::::: 739820a6178b03b1b6b99a467c85e9e7146d51c1 maple_tree: modified return type of mas_wr_store_entry()
+> The attached patch (completely untested) causes menu to insert an
+> "invalid interval" value to the array of recent intervals after the
+> idle state selected previously got rejected.  It basically should
+> prevent get_typical_interval() from returning small values if deeper
+> idle states get rejected all the time.
 
-:::::: TO: JaeJoon Jung <rgbi3307@gmail.com>
-:::::: CC: Andrew Morton <akpm@linux-foundation.org>
+Yup, this does the trick, thanks. When you get to post this, please
+add my:
+
+Tested-by: Marc Zyngier <maz@kernel.org>
+
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
