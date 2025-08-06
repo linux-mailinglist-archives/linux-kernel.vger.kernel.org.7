@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-757493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA41B1C2C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EB9B1C0F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156AA174139
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F49418A5416
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F88528A1DD;
-	Wed,  6 Aug 2025 09:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F26219A8A;
+	Wed,  6 Aug 2025 07:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m1h55Hf8"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUz3IkfC"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81052E370A;
-	Wed,  6 Aug 2025 09:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E153121773F;
+	Wed,  6 Aug 2025 07:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754471035; cv=none; b=MEfXOcX+0Jww6Q5ARIBIaQdB/e57LgeUIYRpZhpLhU+DgGoxW8IplPxiCED8Qu5CpTAnsIC2Lwp7/IiuwLEqSmCQR51IKVNBFlaCmZTuH7PCtQYdcPQPP3V5d3yKn7Azi4RVrRnJOmkzofB12UTBl5lqjpvRe4Ghlbg20KQwCtM=
+	t=1754463851; cv=none; b=Z304kWhwfzOOGUmNL4cwHNdHaU+JA5DHlE6ua6rk0mZUxixoITkhyFYenhoXRMRQqjAkAFvt8Z5fg77yB6JCB1fLvKPW7uKV5H4nXLO2XCiSfW2nf+4vYYruPDgehKUW3bW2fmJ0mOX+oPoruORqDJxmfPGB6poFnYys571lrdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754471035; c=relaxed/simple;
-	bh=vg4Rrt/6beAYpsaDobMRwP84DTVCO2vyvlG9w+YZJx0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F2Gq1L4TiyD7JdXh4akldLrlWD3Jyzvv3JNR/OsQRpxC+WUY+gYA87mG8oSHCdhT3AsEv+StuMjZh+mkWgWGTZadyH4CgpE6d4wYxVCeJggiKcmpBPAqH/6KiOH9zwPZAfZShCw+5wKBsMaTfKobrsDjDy8ahMiYwnZNLByb62c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m1h55Hf8; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3BC1A42E80;
-	Wed,  6 Aug 2025 09:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754471025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q2SJZ+WkY9JJeEOIvvNfCty+u80yCMpablRY/xpxidc=;
-	b=m1h55Hf8VZKSJxHXFh9xDevBv211iW+KdfELcDweNdedMwQTyjFCgPBdxYGqo8tRNcQlfR
-	81Ub7UJjEPC3WwYXwArokgCufykW4OTShM5w778954lVUssyGkw7XGZ3gmMiauiv+mDvOg
-	pGT4fChW9kWLrWG6Mtfdtn3t4cKuK8ahYxRb29T7v0gaO+yHJWWYxfDjICR4JUo8LsaTbL
-	2F35PG4l7NzS8EwwWwe14hKyjxQ4ntouLF/5ap4rbNgq5juZwPJ/JcqP/n5SKdKbTE+fHc
-	A6vQltP2e0YGTjoYf8Ga5V9B85+7x74zG3ltQasDqI9wWgOLkIwr5fSbUomVfg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Lorenzo Bianconi <lorenzo@kernel.org>,  Ray Liu
- <ray.liu@airoha.com>,  Mark Brown <broonie@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Martin Kurbanov
- <mmkurbanov@salutedevices.com>,  Takahiro Kuwano
- <Takahiro.Kuwano@infineon.com>,  Cheng Ming Lin
- <chengminglin@mxic.com.tw>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/4] drivers: mtd: spi-nand: try a regular dirmap if
- creating a dirmap for continuous reading fails
-In-Reply-To: <74646064-0c8c-46b9-8ec3-653c4f80b70f@iopsys.eu> (Mikhail
-	Kshevetskiy's message of "Tue, 5 Aug 2025 18:35:32 +0300")
-References: <20250804192132.1406387-1-mikhail.kshevetskiy@iopsys.eu>
-	<20250804192132.1406387-3-mikhail.kshevetskiy@iopsys.eu>
-	<87jz3hhjlj.fsf@bootlin.com>
-	<74646064-0c8c-46b9-8ec3-653c4f80b70f@iopsys.eu>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Wed, 06 Aug 2025 11:03:43 +0200
-Message-ID: <87cy98g6ts.fsf@bootlin.com>
+	s=arc-20240116; t=1754463851; c=relaxed/simple;
+	bh=8UXkdIj2KKTxghd+Ie/sybWZyOAN/ou5VGvye1L/CQA=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gfAw66zdEQT9GnT9IpSSUoC01YWmhPhiqXRxy8/8+DywP91goAJbB0ihWZDK8r4Z0Q9nbNkuto7FqbMg7ivg7UN/P4bop0MYtxDfxk3KsiRB84/8vFqamAndKbVTcveOmLXQBwxMT5gGNUUu1jb+iWD6HuS4pzUoFGbJeu3lr5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUz3IkfC; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459ddb41539so10161695e9.2;
+        Wed, 06 Aug 2025 00:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754463848; x=1755068648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:cc:to:subject:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmZ/6RCWVOtcwdLcrSjqIJKUrn7Zsl9ifaiHRynfve4=;
+        b=EUz3IkfCED5pD6CxQBBOT63GmqZHHqYFW7zGwu10Y372QhVLhhCcGrkg7STKIjpKSw
+         ObGPOF3n0Ec31hPK+ldGBqPNxFF79NjY6XBB2V69AwFi5guFx0UcguhOJfBtSylk+YJZ
+         81wkHI2D8YgWdobtckfakn62jIkirTjUZzSG8Mn+tJFUbAkWGKOl3UNr2iwQbjGtET+q
+         vSdYrVWLrxQRDso7FOdYUs1Sce8FHOYZIZ3ja1r64Y9H2zdV4PdNgbZAcE5V1OxifROD
+         46HELugDEFnkfKl0HTXjKjMbO8JwGOXgKE42pS1LTrQV/Pw2hbRAGDG7whxZwuagop2+
+         t8OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754463848; x=1755068648;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:cc:to:subject:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmZ/6RCWVOtcwdLcrSjqIJKUrn7Zsl9ifaiHRynfve4=;
+        b=W09DMUFVH2XTNwZpxcdk+0ml+zQMAA6qr/hJ9P4E21nETznOsiXx0qGO5oBXn9A+nO
+         Q8QRMR6tpV8IwRQtgb+iTXQKlCFYzVAa7etPnq5F785EIv5X2LGsb/xBaIOp4oYQJHlp
+         FkDvLkCE3U/Aj54OBeruPbGpVRunm0AV135tOvS1kPx/psJXCbviniuk4vaSC99VgozZ
+         7Zet5PzV2eQhLu2L0i56RtHYOG8iQdbgFXnXDG5QxjkhhgGEzZI8eG1xxBY8uILy+Mnl
+         5rmYOlQyl/KuONkgNW+uHCkYxsedjm47gYixn3gj3gd057KVx3XwBFbHhOnUwSBI4HCq
+         7tlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfMS6A0lmrFtcC6y1U1csaW2lPSnkwVQ3q/xEkWaLGtgcaZ1cfDjUFGBQcUIKkr/HHmDG9VwDNg+M=@vger.kernel.org, AJvYcCX0R6mRUGc/n8kFFf8Tmdg8Z2a6k75P1cZbDA7siiPTiYSM3RtN2SshRKInoBrbA821PTlUbOuadj3hwQSh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMMLJY8YkxKy1wNMNnzwxypGC2YbcUmdzYY3sXiLEt27kinHT/
+	KZpl9JG0QCcq5mkpXW6SCIVjfL6ogvCn5KSF02qsZ4BB/+uARLwxVLdt
+X-Gm-Gg: ASbGnctw+o4HrQDRqsNdFHTo4afbBEo9EcwNJKv6iZV+B0JBFbd9uTCSEoKC+bRHoqg
+	9zPUKV9spibEIbv84YLL7g7GB27j95t41Vsxjj44LmcrJxAdicSGPO1HwfV7Jla+yS2/NBjCGSu
+	N9iSstm82cLiFxUyrzpfwwp33G/+fljnYK+5D/zr74gK0E2IjHtBKtt0K7QQbzJ/hsLinuDuIgj
+	WF+BooPo1yXjmYqMGg7DZGv9/XxKtq1hNQr7sB9vX2kRptvxn6vKTYOvBNcYvbGMNnQvhtJRyAv
+	AfdsReC67zJfGfYqwxgt5ZIlV+wUiMIP/UaMC4t6TlpEbLEyy02KHV/kRVDPPpZw82pd6UAMpeT
+	5bftBhpZcCz9uDpsU5KKVIn9+XijOTnDONNgGDU1Z6U3cxZW8m74bng4pPhAkoJA=
+X-Google-Smtp-Source: AGHT+IE5XexZbuxfSVv6NlHh2TsciIJIhOErVnDMu7opONBWHe8EiMXmL23fwmPcEW/qBEMLyiVLlw==
+X-Received: by 2002:a05:600c:1d08:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-459e7450e71mr11984785e9.11.1754463847709;
+        Wed, 06 Aug 2025 00:04:07 -0700 (PDT)
+Received: from [10.14.5.169] (93-38-186-193.ip71.fastwebnet.it. [93.38.186.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dcb86d6asm93686345e9.5.2025.08.06.00.04.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 00:04:07 -0700 (PDT)
+Date: Wed, 06 Aug 2025 11:03:45 +0200
+From: Stefano Manni <stefano.manni@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad799x: add reference supply for ad7994
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <9IEK0T.R3JGMPI97ET21@gmail.com>
+In-Reply-To: <CAHp75VfCL88GMSRYnJ+wh85Yj_RrBztSLWOvQJTapVdgFerMyg@mail.gmail.com>
+References: <20250805142423.17710-1-stefano.manni@gmail.com>
+	<CAHp75VfCL88GMSRYnJ+wh85Yj_RrBztSLWOvQJTapVdgFerMyg@mail.gmail.com>
+X-Mailer: geary/46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudejieegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehmihhkhhgrihhlrdhkshhhvghvvghtshhkihihsehiohhpshihshdrvghupdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlohhrvghniihosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrgihrdhlihhusegrihhrohhhrgdrtghomhdprhgtphhtthhopegsrhhoohhnihgvs
- ehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtuhguohhrrdgrmhgsrghruhhssehlihhnrghrohdrohhrghdprhgtphhtthhopehmmhhkuhhrsggrnhhovhesshgrlhhuthgvuggvvhhitggvshdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+Hi Andy,
 
->>> @@ -1114,11 +1114,32 @@ static int spinand_create_dirmap(struct spinand=
-_device *spinand,
->>>=20=20
->>>  	spinand->dirmaps[plane].wdesc =3D desc;
->>>=20=20
->>> -	if (spinand->cont_read_possible)
->>> +	desc =3D NULL;
->>> +	if (spinand->cont_read_possible) {
->>> +		/*
->>> +		 * spi-controllers may return an error if info.length is
->>> +		 * too large
->>> +		 */
->>>  		info.length =3D nanddev_eraseblock_size(nand);
->>> -	info.op_tmpl =3D *spinand->op_templates.read_cache;
->>> -	desc =3D devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
->>> -					  spinand->spimem, &info);
->>> +		info.op_tmpl =3D *spinand->op_templates.read_cache;
->>> +		desc =3D devm_spi_mem_dirmap_create(&spinand->spimem->spi->dev,
->>> +						  spinand->spimem, &info);
->>> +	}
->>> +
->>> +	if (IS_ERR_OR_NULL(desc)) {
->> Here if the problem is continuous reading, I expect an error and not a
->> NULL pointer.
-> NULL is possible if flash does not supports continuous reading
->>
->>> +		/*
->>> +		 * continuous reading is not supported by flash or
->> Not by the flash, here if we get an error, it is the spi controller
->> (still without '-' ;) ) that fails (please fix the comment).
->
-> we can go here in 2 cases:
+On mar, ago 5 2025 at 15:13:06 +02:00:00, Andy Shevchenko=20
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Aug 5, 2025 at 2:28=E2=80=AFPM Stefano Manni=20
+> <stefano.manni@gmail.com> wrote:
+>>=20
+>>  AD7994 supports the external reference voltage on pin REFIN.
+>=20
+> ...
+>=20
+>>  -               if ((st->id =3D=3D ad7991) || (st->id =3D=3D ad7995) ||=
+=20
+>> (st->id =3D=3D ad7999)) {
+>>  +               if ((st->id =3D=3D ad7991) || (st->id =3D=3D ad7995) ||=
+=20
+>> (st->id =3D=3D ad7999)
+>>  +                       (st->id =3D=3D ad7994)) {
+>=20
+> Instead of making this conditional longer and uglier, it is better to
+> add a boolean field to chip_info and just check it instead. This will
+> remove the churn when any new chip will require the same change in the
+> future.
+>=20
+> So, please make it two patches:
+> - introducing a field in chip_info and use it for the existing cases
+> - add this field to be true for the ad7994 case.
+>=20
+> Is it doable?
+>=20
 
-Yes, and that is misleading. It feels like the code is unclear this
-way. Could we find a better organization?
+Yes, it is. A patch series is coming.
 
-> 1) spinand->cont_read_possible is false (flash does not supports
-> continuous reading)
->
-> 2) spi controller returns an error (spi controller does not like
-> continuous reading)
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-Thanks,
-Miqu=C3=A8l
+
 
