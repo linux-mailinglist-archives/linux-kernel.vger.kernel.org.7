@@ -1,480 +1,193 @@
-Return-Path: <linux-kernel+bounces-757469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B652FB1C281
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D663B1C280
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45FB17CE26
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B709E17C9FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656F1289340;
-	Wed,  6 Aug 2025 08:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F7C288C9F;
+	Wed,  6 Aug 2025 08:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="NoMQYcNp";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="NoMQYcNp"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011006.outbound.protection.outlook.com [52.101.65.6])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UdzySc30"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013015.outbound.protection.outlook.com [52.101.83.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF0E202980
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.6
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754470486; cv=fail; b=Abm+sOJfP7lVkcYvLteC6Svf3N+tmmnWzAIwjeLRmkwpVIpFCilKOAgjaenbC4VVau/jMkkbCVogKADuQ9bWguB17R8iwao2U8Gb3XRu4pkzTGZ+kM5+jNQs/lQlvBi2BWfOMh6qR+mhJ0p5+spfSp3/nSQfTRelf3okiaHFFeM=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754470486; c=relaxed/simple;
-	bh=O9ZtK3XCNYvBPbf5Q1UPQertG93UtBuxl6i9mrcxDxw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jE1sHz30xtCkSaKaHJepSkLO6j7vkr/VOMOA38Azyqq3u6rR6GXDVBMD5cx06FF8MwHroaeWvVuuucZ8HqGu+UOlWCrTAiMGr8OXJE3CTfbbxQpi9s6VohJBMnESsI3h3WgMeh7f/AytclwWA+feYuV5t5Xj2UIhsUMWf5dkZiw=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=NoMQYcNp; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=NoMQYcNp; arc=fail smtp.client-ip=52.101.65.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=RESArMbBOmlXk1jB/sti4zyVStvbi3UmF13Fpv259aMLBRNaJoSLlkvmcfpnwY+OPMzwntAPJyt3jYG2HJi/mNExkbIZKCQ9hxYYFp9vqO/rm/pxPndkjN31utFVkOuCWfy2lKs+8AyyX+rb4UuuTovKhRztwwrgBVc2ZM9Rld0qVKBAbJcv1Yc5gyJiygw8D7+UmCX5Ixeura9LGeXCRzTmbr8SyxXFV7POZfN2j/GJMZXe5WYV7LSBhx2ntWSgRH35xrRBMxH4tYVzDlhmkyUaUzrRq2N91ucpz+qdB2lmpeuLhE2DqCf6/q7Brk2gnN4c2FhdtIBoHlrrtzn+dw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dx8r21bufv4FNtcDnUI2GbSxAU2Xl5P+14JBQBfOT5Q=;
- b=j6bzJ4a/BG0UCZWg4Bg99XW/BRKVPAaz6hrNvQLw9pfoJahsiFMxz6Mnad3cb6J4gWmanK3lXP/+rYwKilQ7IGpG15xEe61cf7vS6xEsxhqeWphLSIVBwVthHOmzrxnr4npe2FAP+E33M1t/++ug+WbOYkj6DP23fY26oa0e7PTmEhu708IKy7UJGaFOpB+c3RbJzdy49OwNG5DcwPzxKcY5SJb1tqVqAawmnZWHFkEpocyexNMxf/om3k5EaLRpGzRZNf/w+PtWCHOCmQGl4NUu/mmvxMpm5fmjLwBgj/vYRxCOrHwXz6dQCB8BX8s4h7KHSIbAtVCAxYKg15Ifdw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=redhat.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dx8r21bufv4FNtcDnUI2GbSxAU2Xl5P+14JBQBfOT5Q=;
- b=NoMQYcNp9Pn9brB6Uz2Thf7lNeIZP5MVd7udiwUmYGrGVzDWf42/Xvix6Q0uoTV6qIt49LJLcsho1g4rOK0HSX73ZfCsVa7DJDk5podE+fx4VmFvcqCotGscIUeqzDnnpG1jW4Kg7sQryi1FQbRWspukldZE5rz5HSg3EKWIftM=
-Received: from AM0PR04CA0138.eurprd04.prod.outlook.com (2603:10a6:208:55::43)
- by AS8PR08MB6086.eurprd08.prod.outlook.com (2603:10a6:20b:29d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 08:54:39 +0000
-Received: from AM3PEPF0000A79B.eurprd04.prod.outlook.com
- (2603:10a6:208:55:cafe::8e) by AM0PR04CA0138.outlook.office365.com
- (2603:10a6:208:55::43) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.13 via Frontend Transport; Wed,
- 6 Aug 2025 08:54:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF0000A79B.mail.protection.outlook.com (10.167.16.106) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
- via Frontend Transport; Wed, 6 Aug 2025 08:54:38 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C061FCFFC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754470399; cv=fail; b=RpZrIB8av81eKooPcxh4g8AzxO3+Q2y7oK2kxcUKEoCi1FmWyxEPdI9xtjxJWUOmYJ7HF4F/n+KuFK/tIv+l+AmDVigIuQfQO158ODgkOovggoNK7F7XJJBH0Leyza1dTN1XiT4mvctYvKwfD2e8kVK3uVVQhlDHxIy/aEvzdKU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754470399; c=relaxed/simple;
+	bh=SmxIIScHIdzuT2lqXpOeWF+22tacQ4YSqNJXtdNO3ac=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GdrUDHbMpbr6Sa9kQoCMkBGt730cUFyhXXotaC5QYDHXhdDpNoLTu0ZvhCwTYrm7q/UGYhc9kYBLXYO4IplPhb4pXApdnQO0LhdiMvmCDkmMX7W6RfQxqpxAVrTtD4Y/xdOZGgVZUKnpet5Jg/Zfx9bY2JYEircHUOYEaa/4M4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UdzySc30; arc=fail smtp.client-ip=52.101.83.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ls11avupe6em6OhvRqGREHk4JPYtyBZW6oXEaqilaLJAUgx4ObMcraC7i4M7aMALYRcjlk28cr0Z9oxnzrZpAvXIarTW1XCEVEiB3rZUeKVNBvZryg9YaqN+Kdq+fdMLtNcEcYc/DqRyQGM8KZHxwqEaCWTZ71SN7Zjrbir6SL4A/hD9Jjreybhacnv1gY5Ejdeu7eUi8ty67qhylxBnJrVDYQiU8Q/qUOaUwcnLIhO0FpUMGMzaqUOuTKdAvc9v4lrLuN9roPzsqF/Ace+sDiG1OQfTODBJYdl+vhnAHRsfPpE6n6MKZFDE1EdMau47e4Eb8583sczIPWvJ39509g==
+ b=jrqJtnjuukO6lI+zqpApISS9y2fw17vkvlMd34tn9WGbe+OHFLfN13kterS7zn2QjJbl1/jxvW8FARQ7YPbLDHpKArLtRLUY2vmAkszabRlGUgbf+Y15DUXVWB+kAV4ng0Ad3onl4tNeutMMey7Ho/WacKoYRYYi+pByCkOu+agg43Z3ok/7n133YwQPkg0YpZaqWdw3iWCEX9z0OcYV+/KIJ/JuF1goEytoLtvSdg1p13Yoaz4/OU/n11cBZKTtiigLzCI5dzHgJTnnc+9EthIFJa9Ma3jusghpSOiTgZ9faFwS6+E+Ft6T71qEd9s5eKiPWm6ntiFhyeKxKCsc5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dx8r21bufv4FNtcDnUI2GbSxAU2Xl5P+14JBQBfOT5Q=;
- b=LpYQ/YSYmhNQWTznLAJ0bxwNi+CiuaHdyRx/rTvLUUfQiWa/brsSx61HoVod3Loiq0g3pMZzgvPiUmETv2MOfw4/g/Qh6KlM1npLAbbD3gxfbjbkd4qTjTfU88eve1mEABljOYpmrcWYwLHq53GlaZfJg/0AwBLD9qxSOgs/2030eVajpgdHWImtXNCHQ/2zVmq37saROajZlGX+iK4CInZbKcdqKTg8GSPFLC0/pPZ061LoCm2eTtEeihPFkAKyP387lDaBrmwi6TAEnhJgPKcfFxp8CGmzW2SwQcUiaevOzDDkcNj8xBIwNNa/XEln0wHrUlzcVsG54UYtC95jNA==
+ bh=3ixxZg4D0guRbMBDqxYZcF0Onif7QOjVE+hdZYTX/mI=;
+ b=JHQLQgcKunMyGd4fMYSQYnK+vEEdwTHH25ewngkPbpf0uqkZMYsIE18HxvPvxwTYj2YPQEwQRScHWZFCZ75eKHydxPdyjEtffCL0v5iwpM+ZsBRE3JJ+Gg/YtFGqDvd/SPTcVLV9ExZbOLbhAMkM9BxAwP1z2/E7JoEuvdobWhQKIMQ89bsrt/DmVF27aQ4J3lrNrqYlJmiaCsd6GO1R4V6SNuV5CCmQmqc2kKu47VKJtg8n7GV9Hk6JRO/Dm1Zr1FzAMqqyoJpXr5PDLdJb5ivH8UIogordaoBz90Y2X++EhWj20MfkxHBkwtKhGNdTGypsUkRm3pRYjKdgDAgVxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dx8r21bufv4FNtcDnUI2GbSxAU2Xl5P+14JBQBfOT5Q=;
- b=NoMQYcNp9Pn9brB6Uz2Thf7lNeIZP5MVd7udiwUmYGrGVzDWf42/Xvix6Q0uoTV6qIt49LJLcsho1g4rOK0HSX73ZfCsVa7DJDk5podE+fx4VmFvcqCotGscIUeqzDnnpG1jW4Kg7sQryi1FQbRWspukldZE5rz5HSg3EKWIftM=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
- by GV2PR08MB9423.eurprd08.prod.outlook.com (2603:10a6:150:df::22) with
+ bh=3ixxZg4D0guRbMBDqxYZcF0Onif7QOjVE+hdZYTX/mI=;
+ b=UdzySc30i/4dG1NGZGQxwL18+y+8u7V6epyeqYTpwckwVohAZBVnldMXqybodo0+l2pnwv9eh5LCcoDf2UVxEcM0eYLIITJ6RNgCZ3T3EWyRRnzsUs5W+8iATt8Hb0gPFPAfdCZLP8AQr7ncZFrhZozksswxfwDsmzpE7DhxgLDo39u8SIG5mjPaX+4EHZrQmnk+ZomFepLOa5nphVQdRBQWHR5ctqgIykxXbarpzj+SrR/k4DS1pD0H2atvDYlBoYjUhZpRbDMVUATlPsOklKTnSk/9ktyf0FLUIaiI1rzCAFlNn9uEUNsLsb77hkmY6bsw+MFnIcSotoNmPM7RAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DBBPR04MB7945.eurprd04.prod.outlook.com (2603:10a6:10:1f3::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
- 2025 08:54:04 +0000
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 08:54:03 +0000
-Message-ID: <a2fdcb87-9223-4091-8bda-9d9316c84cf4@arm.com>
-Date: Wed, 6 Aug 2025 14:23:56 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] mm: Optimize mprotect() by PTE batching
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250718090244.21092-1-dev.jain@arm.com>
- <20250718090244.21092-7-dev.jain@arm.com>
- <7567c594-7588-49e0-8b09-2a591181b24d@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <7567c594-7588-49e0-8b09-2a591181b24d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ 2025 08:53:14 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 08:53:14 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	damon.ding@rock-chips.com,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com
+Subject: [PATCH] drm/bridge: analogix_dp: Fix bailout for devm_drm_bridge_alloc()
+Date: Wed,  6 Aug 2025 16:54:24 +0800
+Message-Id: <20250806085424.518274-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MAXP287CA0004.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:49::14) To AM9PR08MB7120.eurprd08.prod.outlook.com
- (2603:10a6:20b:3dc::22)
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0024.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::13) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB7120:EE_|GV2PR08MB9423:EE_|AM3PEPF0000A79B:EE_|AS8PR08MB6086:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f250552-31d6-4848-6ffd-08ddd4c6e06f
-x-checkrecipientrouted: true
-NoDisclaimer: true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DBBPR04MB7945:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2a3cc7b-584a-4ae8-90af-08ddd4c6ad8d
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?dDdsUWlkMXpKREhXZGd3dGp0bExaTDAwWnNXRkVUS3RQU2NzM1hBd0RmRnZO?=
- =?utf-8?B?NGl3SEd1NUVIQUJuS2ltbHBNMjJ2OU1IR0d0dTN4RXd0Y01EL09BN2VyejRq?=
- =?utf-8?B?ZnF0WHl4TVVxTFhqOENZVWQ2R1kwMzM4ZU12eTFrajNKdnRCMWJQOUl2bmEv?=
- =?utf-8?B?Q3pQYnJtc0lMa0NZNXcyZEhFMW1aVWxBelhSUlQ5VjR6N0Q0VHdBQzhjeGJv?=
- =?utf-8?B?VHFBMW1TTjlxbDNWVnU3V2todTNvUjVXa2gxRENpeG0wSzJEbnhwK2s0TWZ5?=
- =?utf-8?B?QjlkUzRSQjRORGNVNzhnS0dJcU1TbXoyZW9IOGNudXkrQThxeXhCWG1Ma1NW?=
- =?utf-8?B?TUJVeEtmR1BxYjRmRS96d1ZwMTJqTHdZWGlGOVI3cXI4TFkvTitLbTNGTEUz?=
- =?utf-8?B?aVpmL0I0SkpTN01pd3BpSkVxcXlmL3pNc2d6WGZFR3Yxd1lmTFMxTVRCM1pp?=
- =?utf-8?B?NjJLY2NJeENJcHhMWUF3TEIvOUNrRVVtMlZVMnJXemhSclQxSzBnMTR6Szkx?=
- =?utf-8?B?TGo1cmpMdWNvaGZ2ZlZ0WHJzL1ZJb0ZhWFMwL3BPQk5mdE9nVHZ0VW83VXFt?=
- =?utf-8?B?TU0zdzFhTGJIaXBYZ1hpNlhvTjVablI2YWRkVVJ3aVhLSFJZa3RoTlRHbTg0?=
- =?utf-8?B?NmtHcmNGR1cyZ3pCZy9wbGFQYTFVUUpzYWFRdE1tLzlRelk0dUpHV05FdGJF?=
- =?utf-8?B?WmF5SEgwTGZ6aFJ5cm1LSWlxY3pIVUl3aVR6NTAwb256SkVCWVFkeWo2MnhR?=
- =?utf-8?B?Z1ZpclFCMVlUZzJLRFN2Z1RNRUdZdGgrRmdiSGt2cGRocXd6NmY1V2NTckJ6?=
- =?utf-8?B?YjBtMVhOVWlFeVpFRE9lYkJpVnRxbVFUd3ZwYXFQRUt2WGdITWdPS043Rlc2?=
- =?utf-8?B?N0dnWXNLVVBzLzRra2p5K1JSWW5Qbk83WGZ5SXhwMnZjbGNYcGJYdGh1MDJW?=
- =?utf-8?B?amJqejJLM01Icm5CQ3JVUi9VTDdXV1lWSURGUTJGZTdRb1JqVVJJZU9tTGxs?=
- =?utf-8?B?elpyVHl4UXFuTlFHL1NDRWc2cmlUTlBXQkJKTnlxMi9pYkVrZmtkYXVzU0pN?=
- =?utf-8?B?NkJGM21Lb1VhRzZobkJFQVNoZGM0NGpDRWhzZmI4cVVpVkw4Sll1NjVWTm5q?=
- =?utf-8?B?WmtMUVJYNEErR1RIa016WkY5am1ZYUZYOWFQcmNYNCtMbFAyU01vN2ZXckhx?=
- =?utf-8?B?Rkh2QjNrWkFvNDRyT1kwNTZMQ0xWREtMS0IyK1RYNmhRa2dVNHJraTZtblN6?=
- =?utf-8?B?bGY4MGxSWVUydklHcDY5c01icURGaUZrQi9PdEEzMVBwVzNZR2JTbC9oVGNq?=
- =?utf-8?B?QnZqMWp5VW5qRDBEc0hlUzNLbXhwWFJJaVN4cVNuYTROUkZ6MEpPWDlpNVQ1?=
- =?utf-8?B?RC9xajhSV0lJZnZOQVR6VzljaFIvcExJZ0NYNVJkRHREZ3RGeHJTaHlPVld5?=
- =?utf-8?B?d1dUaFk0VzVSUW1MQmlUNnRKaitINE93eDkzeUpidnd6Z1lxZ09OdlBFdXF5?=
- =?utf-8?B?TTN5ZG5nZGMzdWJrU1lYYXNVSDZ0WklybWtNMUFVRWFwNElQM1M4TVdDaER0?=
- =?utf-8?B?SnhqSXdWc2hNM2tpb0NMdHo2L2IvWVdnVjNqUDF3Nno0Wlhrb2VtNFc3VUlO?=
- =?utf-8?B?Y1dxQkpKOHYvRTZOQ1dOcXRxQTgvL2RMLzNHQ1Q5RWtIUFUrR2lQcjczR3Zz?=
- =?utf-8?B?RHhyaXNsdmtvbDZQR09pRVJIREpXSlhQekdVem9Sc0p0NDVjakZXaHhVTmxW?=
- =?utf-8?B?b255K3huMjlhblVxOTAycEhPUnBDdWx0ZlMvQUs3eEkya1ZIcExPdFB2Z2R1?=
- =?utf-8?B?TEV0NUlpV3pXWThXdisrLzVkV21xWXpEY3JDczR4OU9sVHo3Nk5PR2l0VEJ5?=
- =?utf-8?B?YVpXMy95a3VSN1RQUjQ3dGhtTEFFNVlFRWIwamRYNC9jcmVFZUdtNjhYN3BQ?=
- =?utf-8?Q?ZwnWmIjFAME=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9423
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF0000A79B.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	86218396-404a-454f-a2de-08ddd4c6cb29
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|36860700013|82310400026|35042699022|7416014|376014|1800799024;
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eHU3ZjRrSTdQQ3JiMUhQK2htQ2haN2NkNkpjbUtYcWVsbWNqODJaZ0dVU0VL?=
- =?utf-8?B?T0ljMk5JbDBMWWYzaXdkZFpvdWYwbFZINktDSjJZM1VPaVZVckk0MTFvb0Z3?=
- =?utf-8?B?RkNmeHBZUVRCZC9TNEMvZVlmL1lGdVRMM25ON29JOGJYNWFzVlB0RGZTVjc0?=
- =?utf-8?B?RTFBam80YjR0eHRYN3dCNk5JMm5IZXdTcVJsOTBsMWxqUnZIejlUakM5Nm41?=
- =?utf-8?B?V05qV1JPdzQveFR5U0ZuOHVrWFh3SjJseWh2V1NieEw1WmNzUmp0bENmWnVF?=
- =?utf-8?B?Q2tTV2FpYWhYUWxLVHRWWjgwZ25VS3p3UU5LYzdOMk0rcGNVaFpjYzRFT3py?=
- =?utf-8?B?VkNCVjl2dG1iUEpEdzF4dHdaZGtVSWZuZnNIbStCVDRYQ2lDZExOYkNLZjlE?=
- =?utf-8?B?YVRDMEpuVWY1ZDRlR3IrV3RtaHJ1YjdQWUUycmRuUndxbUJGYXNUcjYza0Zk?=
- =?utf-8?B?bWdPWkN4VUFPUElyMERkWDBWMlNORnpDaHc3cG5WQUcwd2FPRXgrYUNvWHlQ?=
- =?utf-8?B?KzlmbExmeVR6VVc3NElRRUNOam5TbXlDTUFEZU10OHlOVElSSVhES1FoMmRC?=
- =?utf-8?B?YUFKK3lRVkQzOEFGNDEzdXlIaFpSRTJCOC9NZFZlc0R1c05ITEdaU2czMnNn?=
- =?utf-8?B?VWxSZ0ZFWTVQajlKRWFLOThEM2E3b21XNWVsSjNzN3BCckxaaHVxNlBGYUZY?=
- =?utf-8?B?ZXEwcTVhTEE0d0FtejFLaUttTGdEaUNQWUNuTkVNQmd0WWNHTUUyaHNjTHNs?=
- =?utf-8?B?Sm4yc1lCT04vZjA1UFNXRnBGanh6dkpRY1g2ZWRvK2NtWjZVY2JXOGV2VWVC?=
- =?utf-8?B?UzV1cUVwayswVWVDMEdvRWdjOW05QmxOWUw1VlN1bGxzbU16Nlh2VHNrQktN?=
- =?utf-8?B?NVIyNUNEUkRvSHJiSFowNlJsN0puMVV1MDhCUEx1VHI2WnM0cGJoRzd3aVpG?=
- =?utf-8?B?M0pNNG1GYzBGMnNKSUtJUzcveCsvTUpIR0RYcnF0TVB6NWRkMnAyTkNhaC9E?=
- =?utf-8?B?WEdsREhSb2NUWE85K0JjV3VtbU9vaEtoRFZYa1ZGNFB4cTdwSkk0SGQrVFFW?=
- =?utf-8?B?eFBydjVEVk9lYWhkSjlTQW9zUUN0RnhqeGhSSk1Ma01jcEkrZ0lLdHc0RWgw?=
- =?utf-8?B?RkR4SlJiNEFuVkFEV3RxaGhrVUZ5V0FveHhHM2lXRDE4RVliMXRHdlFoT0tU?=
- =?utf-8?B?NWl4OEE1SEhiczRrNXZUbGdlWjc3R0VkZEw0dm1JZHc4b2p3NWF6NjJ1VDg0?=
- =?utf-8?B?N1Z5ZlA4MW9tM0FsSnhEYndYY2VVaE4zWkl1NDFvUTZ0T1AycjR6aC9MSDlp?=
- =?utf-8?B?UGZ5bFhEZ2Y1bXBsUmwrQi9RUFhjZGorUkxuMVdIc3puVS9lSWthMWh1dXlk?=
- =?utf-8?B?N3c4NUdRbUh4UWJYZFJ2TXBpOVZqOGhrSEwzUGhYVUlNWWFVMThvdFM3L2Y2?=
- =?utf-8?B?VjMzdnl2K2R0YVBqdjhEYUM1RXQ1K2tNRXhvMmZCOGgyNWlzWE1iYms3Y1JW?=
- =?utf-8?B?MzBoYVZ0dW4zRWdOamgzVnZTa3BVcHIxQ25XRXJxVG9waUdTc1RNVWVqeW5h?=
- =?utf-8?B?RURRSlcvYkdROTM0VnIzU2J4UjYyZ1pEeGNSbWxkTlIyaTlPcFpyK3E3Mzlr?=
- =?utf-8?B?Q282S3c3cDlTRG5pMVc5bldvQml3VlpKNjdhank1RUlZeUJvY2dmZ0tVU245?=
- =?utf-8?B?aDRKTnU2VnJKVnZHdG1MSlVhSXMvRGZad2tmaTZ6TEdPNTNtQ1JINldHWUJw?=
- =?utf-8?B?Q0pydWNEZGUycURTTHFzZzRhYXl5a2hqVit0SUh3SkdheUtYWDkyUzRwdHp5?=
- =?utf-8?B?STBsRVppTERsQkl3ZWFwcVQ5RzFoRHFZTjlXWm1HaTZvczY0cHFmRG9qUGU3?=
- =?utf-8?B?R0ZTcXlTcDc5b0ZQZlNxVWpkZ0FRek9HVHFDZExHRlRmRUd1Mm1pbXQ1WEN3?=
- =?utf-8?B?blNCQXhGUjIyTm5UQnJOaklkRDIxTjFXUXIyVHBoYk5QMUFvSm9BU01HNSsw?=
- =?utf-8?B?aTY1MzdSK0dLSmlZZzlPMFBob0E1NmsydFZrWG1xRGRCaVRyckNZdTFib3Jk?=
- =?utf-8?Q?RzPYq7?=
+ =?us-ascii?Q?ToNxabzccJoXtIAE1A7B2xSuQEn4gKQ2zFW6adu27B5c7izwEJbEq2MTDZu9?=
+ =?us-ascii?Q?aKSMcGP5kK4G8XOG8uaK7fJP5rv2B2y2NrMPgxLRGTmi/jx4olrXLMmiHC0o?=
+ =?us-ascii?Q?W+TDwvA78HJm9dWgGr0Pc8xPLb6Hc+NQcJhBN0FR0lUS3kdk3Phfeur5aSUH?=
+ =?us-ascii?Q?YO+H4IcYtePqn779qI5ef1MnQL/hIIis9JZ4O/CMPkdjG5jsPIue2henKAqp?=
+ =?us-ascii?Q?+FQZqns6qn/wp7KeLxKlQoRmcg4wREGzcYt7w1p2cRhiBW2sEbyjNU/Ydx2T?=
+ =?us-ascii?Q?KPkglFfdUOMDI2ffIneDPg3AEekeUs1npn6h79t95aOZelH/rRWjxSneVj3l?=
+ =?us-ascii?Q?SsR2uetWKRLO1bUMkCajR70jITu3RM/G4oVqVk94g2XFGE9dAvNiKGoyUUc3?=
+ =?us-ascii?Q?IvC/gtqjkSsG3/ZVF6go7Z2hg5AyaDJgkRgb54EOgZFK8bqCAbI85LBBdMEW?=
+ =?us-ascii?Q?R6cgW0+tvtrbFGlZp6FP/5GisUB+bUTu72to22UTSM6qgF2WqytuKc1l691L?=
+ =?us-ascii?Q?M4tRYssn9HB/pcSHyrp66lL7ZhQdQNUgI+NbypZubRDQn1Z6u+XPZoR6ICCY?=
+ =?us-ascii?Q?nrMEGpKPleAk7crmTRnQ8gQHHEp9Z0JRtomv3WcEixkuTJ0aURtH2DHXYlG2?=
+ =?us-ascii?Q?KB4TS6gS5dl3YNic6GIpFYfpR1eHrQFmBUxkrbfPEL1VXRUtG6KR2C75htpO?=
+ =?us-ascii?Q?JgafG0g3eAMO0wJFFia5QRNVWRdAXfLWsjmipWlXqnj2O3ElADrCJwng7rEz?=
+ =?us-ascii?Q?PmvnfWuYi7NIL37wYoO++fe/w7meQlyX65BvRFpxovVhqW41lytRoAnlDWiF?=
+ =?us-ascii?Q?tk1VD1NCvvN3eKuMABYWOyaGKPCn/3Yd5QADFBKLtsl+yB3MtxAV+2j35qCu?=
+ =?us-ascii?Q?SjKYGJkEzD9J5Dy6uKtJToeWGirHp+SscuaNaCYj04+cKLsS0skiomPfI0Ls?=
+ =?us-ascii?Q?MhyB9n4PDoMMyBszzp6z8wBRkMFkO07MO5Y7bpkJzEFp4Z65YRyjmxfALK85?=
+ =?us-ascii?Q?M2dxf8+Xl3wrG37L62fxZ86EbFMHmRjDoLyA8Zaz+IRnZIlYcZ+d5CKOY41d?=
+ =?us-ascii?Q?ysjutfeGYXOsT3jZmcLhmd8VsCkHkGcPeWYwUOUYiooUKUFIHn3JuL/xvksW?=
+ =?us-ascii?Q?mCx8AK3suFxMO3ID7rXdrJNMD3wYxydJmKgmajMkp1u6Sbxb1E4zKU4HQLST?=
+ =?us-ascii?Q?sa1e6w2uE3IlQSWWtIFdvu4njjOuyQIYxepMXgE/PdBNwNOH6Y/PJYGGY5B0?=
+ =?us-ascii?Q?7yvMiCWNvFxaGxX9bR1VOyL5pduLesnpmyqzJsB+Ccr/9Hqx67wSZ+MB6ShW?=
+ =?us-ascii?Q?tNAkzNQxc4oH+ybV0M6D/Aqt9/ff3snzhpDbS++GjlfC5ga8LAmbZLEqbZ7u?=
+ =?us-ascii?Q?Q9FhXCHzGMryEyPcvSHl6oFEVkOUhA++tsvhzxf3y05i4/8dg7bkyTfD/cWB?=
+ =?us-ascii?Q?Ni+RkRZhkiwXJEQKEZ+93kNx9S3eBiiD7/8+ODcTsxNiNk4tD4tqgA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(36860700013)(82310400026)(35042699022)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 08:54:38.9430
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?mVmtvfWYC9Qate+tevyEFtttH8rLS5rclQkFpff/XYbreQ+ksUeSU9BUfjgr?=
+ =?us-ascii?Q?5bLcvpt4RDJlw4kvtHPyas9px54jTws879kyzGHFBGKyRoZGAWlUId3izqwp?=
+ =?us-ascii?Q?Nsk21UbObmjdEpHKnvw+yI4yMV1mZUlSbWj3d6T6gkqKjlXcY6OtcRSOEl/G?=
+ =?us-ascii?Q?SN9Qi5OqEZedIfUdvRdVw1iTH6dhJeu+C7oqj8spkpn/qtR+cRzCVntbTh8q?=
+ =?us-ascii?Q?kzHgiilHAg1LVFVh5LGKZ4oilyleVN6qNj98U7s790v+JyPUXuZV9BUyx4kA?=
+ =?us-ascii?Q?QUL8UTjeemQCXf0hgGiWQcMFPs8BsD62bXWfK9QMQoQ0CFIrsjolv1Ec/qtR?=
+ =?us-ascii?Q?R7g3oeR9xFqsAgXhsO1drp1Ldgpi7EL4FUUsqAh2uPH50k4os4JU7FAhx7xZ?=
+ =?us-ascii?Q?RrO2BmP6hF2YwqYBeIrj6eU0vQwnPl6wpo77ZBHYFUsBmaUOqp8gfJ+NU1eG?=
+ =?us-ascii?Q?TQwapvDkCT6Kqc6BjQsTdOzFPxoF4tJQ9X4HeePm49MtlJBlHcrx7IXQyvGK?=
+ =?us-ascii?Q?ENYmwby85LHletVyv93jA1Kd/SghBjz5DsMD1HRA6YbeU9mkbqZvthiW3XC5?=
+ =?us-ascii?Q?vOxZIDz1KtMuqKTymJwX9gEshrb44Re8ANVOiieCtNyJ+C65xN5BcjHFyYsH?=
+ =?us-ascii?Q?zoH14c4x2c4a8Tb+0NSeP0wjvZMjXwXSH6q0bn4J0oT72K3kE37mqKh2KICP?=
+ =?us-ascii?Q?BPJ1c9OCLRDPdP+IA01gcXeQ1b/ITU7x0NxvVP9+qSLImg2j+6H+Xwt2cs49?=
+ =?us-ascii?Q?XRqv5Jxl3J45mm8djhYI77KMZAEFQRFyrMlDc24kl/70Stg33glD+HRto6cx?=
+ =?us-ascii?Q?4vF68HNi+0DgcRyvWNI3apsjG9Fyuslm5+HNdYbXfumDEu9my1K214mf6mAq?=
+ =?us-ascii?Q?jodcQF2HdKlApl0hNOrxrLJIzVxNhEqjCQSqxotEFiwkGN+VZpeUvaOB9iNV?=
+ =?us-ascii?Q?61juxV9aqHrqBFXddkQRHDj0iN70QtO/V1WXV3KdgUN7thaWXlxruW1rcdl/?=
+ =?us-ascii?Q?H2xRVJnCY3d/7TyIC6RpOn6Z+p0r20oxFmyhE2FJSqaUijc9Bkqikd2A97sK?=
+ =?us-ascii?Q?WxvJqgurYWa4mBwqKLSwJRKDS+DHT+1xc8Wyf9IagganVXaT8XaZxYqr0bKl?=
+ =?us-ascii?Q?NibbMhQa54iP5rsj7NnLBLG0Ieq6sAtLwGas4ibJesDmWj+N5C2bW1THlOYa?=
+ =?us-ascii?Q?aqIwqOblYomsyllDHFs3u59VMGgLl6putFBlDUHf81AZrK69p3IJfdelgL/0?=
+ =?us-ascii?Q?cfALBPPDot3G3xxNBf8J/N2PJrTzQAZYYWZQ2JVNbe57PoVi6h5cIU0cTdij?=
+ =?us-ascii?Q?VnnG8TExIzpxKT6UfQcftdE0V5WJ7AsiJyTeUW6PpKolHXFLBKms0kT+PfGU?=
+ =?us-ascii?Q?T3RpwN6jDA+kys755s7OTUL4TPWxXZToJSEzLdXPC/CLdzAD8sXZFdi9U4uq?=
+ =?us-ascii?Q?FqviBAJojmCA+dt+9Ki2dfAPQGYFhBjYZFaVcl9numJ019GxYrGMPKJW7DSs?=
+ =?us-ascii?Q?CqHKAqR8KUwBFqgF9sX5R9fEYLtFQw6K2dKO5WJj7uyoRUDYi6g73uLSjyRV?=
+ =?us-ascii?Q?prCypK624lbo1/182jXa3iZ3NCOxEcsJXuPjDv/k?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2a3cc7b-584a-4ae8-90af-08ddd4c6ad8d
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 08:53:14.0326
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f250552-31d6-4848-6ffd-08ddd4c6e06f
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A79B.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6086
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vB58qJUvdm31LGvXV/+M1WwBQ+kuLO3VxEqkOZQ+5HSC7caPWaeI4hwT4ZXYrpRrXsQDLa68DkN6unq1w36q2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7945
 
+devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
+NULL pointer, so use IS_ERR() to check the returned pointer.
 
-On 06/08/25 1:38 pm, David Hildenbrand wrote:
-> On 18.07.25 11:02, Dev Jain wrote:
->> Use folio_pte_batch to batch process a large folio. Note that, PTE
->> batching here will save a few function calls, and this strategy in 
->> certain
->> cases (not this one) batches atomic operations in general, so we have
->> a performance win for all arches. This patch paves the way for patch 7
->> which will help us elide the TLBI per contig block on arm64.
->>
->> The correctness of this patch lies on the correctness of setting the
->> new ptes based upon information only from the first pte of the batch
->> (which may also have accumulated a/d bits via modify_prot_start_ptes()).
->>
->> Observe that the flag combination we pass to mprotect_folio_pte_batch()
->> guarantees that the batch is uniform w.r.t the soft-dirty bit and the
->> writable bit. Therefore, the only bits which may differ are the a/d 
->> bits.
->> So we only need to worry about code which is concerned about the a/d 
->> bits
->> of the PTEs.
->>
->> Setting extra a/d bits on the new ptes where previously they were not 
->> set,
->> is fine - setting access bit when it was not set is not an incorrectness
->> problem but will only possibly delay the reclaim of the page mapped by
->> the pte (which is in fact intended because the kernel just operated 
->> on this
->> region via mprotect()!). Setting dirty bit when it was not set is again
->> not an incorrectness problem but will only possibly force an unnecessary
->> writeback.
->>
->> So now we need to reason whether something can go wrong via
->> can_change_pte_writable(). The pte_protnone, pte_needs_soft_dirty_wp,
->> and userfaultfd_pte_wp cases are solved due to uniformity in the
->> corresponding bits guaranteed by the flag combination. The ptes all
->> belong to the same VMA (since callers guarantee that [start, end) will
->> lie within the VMA) therefore the conditional based on the VMA is also
->> safe to batch around.
->>
->> Since the dirty bit on the PTE really is just an indication that the 
->> folio
->> got written to - even if the PTE is not actually dirty but one of the 
->> PTEs
->> in the batch is, the wp-fault optimization can be made. Therefore, it is
->> safe to batch around pte_dirty() in can_change_shared_pte_writable()
->> (in fact this is better since without batching, it may happen that
->> some ptes aren't changed to writable just because they are not dirty,
->> even though the other ptes mapping the same large folio are dirty).
->>
->> To batch around the PageAnonExclusive case, we must check the 
->> corresponding
->> condition for every single page. Therefore, from the large folio batch,
->> we process sub batches of ptes mapping pages with the same
->> PageAnonExclusive condition, and process that sub batch, then determine
->> and process the next sub batch, and so on. Note that this does not cause
->> any extra overhead; if suppose the size of the folio batch is 512, then
->> the sub batch processing in total will take 512 iterations, which is the
->> same as what we would have done before.
->>
->> For pte_needs_flush():
->>
->> ppc does not care about the a/d bits.
->>
->> For x86, PAGE_SAVED_DIRTY is ignored. We will flush only when a/d bits
->> get cleared; since we can only have extra a/d bits due to batching,
->> we will only have an extra flush, not a case where we elide a flush due
->> to batching when we shouldn't have.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->
->
-> I wanted to review this, but looks like it's already upstream and I 
-> suspect it's buggy (see the upstream report I cc'ed you on)
+Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for CCing, and quickly spotting the problem!
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index ed35e567d117..86cf898a09bb 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1474,7 +1474,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 
+ 	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
+ 				   &analogix_dp_bridge_funcs);
+-	if (!dp)
++	if (IS_ERR(dp))
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	dp->dev = &pdev->dev;
+-- 
+2.34.1
 
-
->
-> [...]
->
->> +
->> +/*
->> + * This function is a result of trying our very best to retain the
->> + * "avoid the write-fault handler" optimization. In 
->> can_change_pte_writable(),
->> + * if the vma is a private vma, and we cannot determine whether to 
->> change
->> + * the pte to writable just from the vma and the pte, we then need 
->> to look
->> + * at the actual page pointed to by the pte. Unfortunately, if we 
->> have a
->> + * batch of ptes pointing to consecutive pages of the same anon 
->> large folio,
->> + * the anon-exclusivity (or the negation) of the first page does not 
->> guarantee
->> + * the anon-exclusivity (or the negation) of the other pages 
->> corresponding to
->> + * the pte batch; hence in this case it is incorrect to decide to 
->> change or
->> + * not change the ptes to writable just by using information from 
->> the first
->> + * pte of the batch. Therefore, we must individually check all pages 
->> and
->> + * retrieve sub-batches.
->> + */
->> +static void commit_anon_folio_batch(struct vm_area_struct *vma,
->> +        struct folio *folio, unsigned long addr, pte_t *ptep,
->> +        pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
->> +{
->> +    struct page *first_page = folio_page(folio, 0);
->
-> Who says that we have the first page of the folio mapped into the 
-> first PTE of the batch?
-
-Oops, I thought I had taken care of this. We make the folio from 
-vm_normal_folio(vma, addr, oldpte),
-
-which makes the struct page from the actual pte, but then I missed that 
-page_folio() will reset the folio->page
-
-to the head page, I was under the impression it will retain the original 
-page. And indeed, if it didn't do that
-
-then the purpose of vm_normal_folio() is nullified, should have thought 
-about that :(  Lemme send a fix patch.
-
-
->
->> +    bool expected_anon_exclusive;
->> +    int sub_batch_idx = 0;
->> +    int len;
->> +
->> +    while (nr_ptes) {
->> +        expected_anon_exclusive = PageAnonExclusive(first_page + 
->> sub_batch_idx);
->> +        len = page_anon_exclusive_sub_batch(sub_batch_idx, nr_ptes,
->> +                    first_page, expected_anon_exclusive);
->> +        prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, len,
->> +                       sub_batch_idx, expected_anon_exclusive, tlb);
->> +        sub_batch_idx += len;
->> +        nr_ptes -= len;
->> +    }
->> +}
->> +
->> +static void set_write_prot_commit_flush_ptes(struct vm_area_struct 
->> *vma,
->> +        struct folio *folio, unsigned long addr, pte_t *ptep,
->> +        pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
->> +{
->> +    bool set_write;
->> +
->> +    if (vma->vm_flags & VM_SHARED) {
->> +        set_write = can_change_shared_pte_writable(vma, ptent);
->> +        prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
->> +                       /* idx = */ 0, set_write, tlb);
->> +        return;
->> +    }
->> +
->> +    set_write = maybe_change_pte_writable(vma, ptent) &&
->> +            (folio && folio_test_anon(folio));
->> +    if (!set_write) {
->> +        prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
->> +                       /* idx = */ 0, set_write, tlb);
->> +        return;
->> +    }
->> +    commit_anon_folio_batch(vma, folio, addr, ptep, oldpte, ptent, 
->> nr_ptes, tlb);
->> +}
->> +
->>   static long change_pte_range(struct mmu_gather *tlb,
->>           struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
->>           unsigned long end, pgprot_t newprot, unsigned long cp_flags)
->> @@ -206,8 +302,9 @@ static long change_pte_range(struct mmu_gather *tlb,
->>           nr_ptes = 1;
->>           oldpte = ptep_get(pte);
->>           if (pte_present(oldpte)) {
->> +            const fpb_t flags = FPB_RESPECT_SOFT_DIRTY | 
->> FPB_RESPECT_WRITE;
->>               int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
->> -            struct folio *folio;
->> +            struct folio *folio = NULL;
->>               pte_t ptent;
->>                 /*
->> @@ -221,11 +318,16 @@ static long change_pte_range(struct mmu_gather 
->> *tlb,
->>                         /* determine batch to skip */
->>                       nr_ptes = mprotect_folio_pte_batch(folio,
->> -                          pte, oldpte, max_nr_ptes);
->> +                          pte, oldpte, max_nr_ptes, /* flags = */ 0);
->>                       continue;
->>                   }
->>               }
->>   +            if (!folio)
->> +                folio = vm_normal_folio(vma, addr, oldpte);
->> +
->> +            nr_ptes = mprotect_folio_pte_batch(folio, pte, oldpte, 
->> max_nr_ptes, flags);
->> +
->>               oldpte = modify_prot_start_ptes(vma, addr, pte, nr_ptes);
->>               ptent = pte_modify(oldpte, newprot);
->>   @@ -248,14 +350,13 @@ static long change_pte_range(struct 
->> mmu_gather *tlb,
->>                * COW or special handling is required.
->>                */
->>               if ((cp_flags & MM_CP_TRY_CHANGE_WRITABLE) &&
->> -                !pte_write(ptent) &&
->> -                can_change_pte_writable(vma, addr, ptent))
->> -                ptent = pte_mkwrite(ptent, vma);
->> -
->> -            modify_prot_commit_ptes(vma, addr, pte, oldpte, ptent, 
->> nr_ptes);
->> -            if (pte_needs_flush(oldpte, ptent))
->> -                tlb_flush_pte_range(tlb, addr, PAGE_SIZE);
->> -            pages++;
->> +                 !pte_write(ptent))
->> +                set_write_prot_commit_flush_ptes(vma, folio,
->> +                addr, pte, oldpte, ptent, nr_ptes, tlb);
->
-> While staring at this:
->
-> Very broken indentation.
-
-Indeed, but then in order to fix the indentation if we start positioning
-
-every argument just below the opening bracket then it will take at least 
-four lines :)
-
-
->
->> +            else
->> +                prot_commit_flush_ptes(vma, addr, pte, oldpte, ptent,
->> +                    nr_ptes, /* idx = */ 0, /* set_write = */ false, 
->> tlb);
->
-> Semi-broken intendation.
-
-Yup I can position nr_ptes below vma and set_write below nr_ptes. But this
-
-should probably not be a part of the fix patch.
-
-
->
->> +            pages += nr_ptes;
->>           } else if (is_swap_pte(oldpte)) {
->>               swp_entry_t entry = pte_to_swp_entry(oldpte);
->>               pte_t newpte;
->
->
 
