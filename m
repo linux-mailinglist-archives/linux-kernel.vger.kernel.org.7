@@ -1,196 +1,115 @@
-Return-Path: <linux-kernel+bounces-758052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE032B1CA4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DABB1CA50
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F96218906C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D183AD3A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5065029ACE8;
-	Wed,  6 Aug 2025 17:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9EB29AAF9;
+	Wed,  6 Aug 2025 17:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hv12eHyQ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EKmqaiPf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11369299AB5
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137C529AB1A;
+	Wed,  6 Aug 2025 17:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500184; cv=none; b=cwpuuUyoIxaxC5NiAlIefAd+Z8uKCZkbe5QKEdThyRv0HUYqTFbkxeism2wqyjWV26he0K2OUOcsKkXnEIa0YuCK4qLQQ7/sj4YCjJcMy/4QcznX1mMNVk1l+FZPSjtrK8juQGRXwVKxkSQErM0yLVe/J9I4k20RbCoXw+RYtRY=
+	t=1754500198; cv=none; b=LwVbhQtX3ycktgRCCroUM6lxeQpNfyuUIFS9GxiWbYV1GLJgUi7Oc9UqYwwBR9F0bqVjm9Vzb5jXR7gnjlLcSCoRXu+ed/DvVYJd+ohWHEZcPN8eM+to5Vyvo//WDImUQqCtYVESHafpG29z0cgq8JYFbYxOR3AC1U3H2V8epHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500184; c=relaxed/simple;
-	bh=DHc787VAHHzOpB3Zm+nvbCGuSohWxNq5LBg0ZI96YDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cfiKfhQCcf6IdcLBVPKQDCRHTQr/BJtSh3yQYP4QA5rYrO7QyUhG9nxNK2f5Y2GzpXcKkeKstyqwyLLbar1uFY1pKfQlp5G0UPjFzm8LlpZWK+AdUjLd7ejLaVI9klNdpKyNOxoD8c3SwfJoP/ywWKxDoqqVxRzST68Urw037T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hv12eHyQ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b099118fedso20061cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754500182; x=1755104982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AxfvgCasWuA+gJKWPbYYwoEtVkgTH2JoUrawg5d9Ttc=;
-        b=Hv12eHyQu4f3JRb/hRiVhvY7eXyvQ2JFdruBlCkz4CHyvBImFT48ArIcrjVX4xu63F
-         0+BI17qSEbnO+qr4Hw2Nj6Cn+ywE4H4U4vShmoWTs/T69azPmIO0HYdat++HKetsfQCf
-         vzY1jgyuBLm9rgT/nOC32E/6lhoS0+jZGkzkd73TCV9yQFz2AWj4fPUrSwYiExJMcwab
-         RNNVuDc/KRktZ6YsAw6pI+y7OwRZIsE6blsaC/GZjFSHOhuSWLHzPWmOMBZxnbkCgXdP
-         ipREymbnjKYbY61qNsf9xgomiOziQthmGkvJsbKuutVyyrbBGNA2l2Gt9nhFsEANGZ+l
-         CWAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754500182; x=1755104982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AxfvgCasWuA+gJKWPbYYwoEtVkgTH2JoUrawg5d9Ttc=;
-        b=mdUt+84UL6lyHuZfk8h/3OoepDlq2J7jP2rX7+wuTtJ7WLcC9rMauax1a/j98DERVW
-         6B2Qz2Q898jCw7svcanpeEi0vOmhuPe2HNP2nJzK0i8n/pECaLtvf5UmDTlAEl3JsJIB
-         wbC/cu8BtgDQxmwV64ggF/FPoy0eZCI5mQWDPKI2TLf1oUeyLgkDzLuztg7BHjgRkYem
-         Nv0mYYI4ZEU9UG1qBQDIcf2xUPNnyPOMPjSO0V9jEOoNY/Io0ct9a+XjprUUt2c2vbC3
-         16CUoiTEgG52ztzZRfdUk4HxovHnIIaMmbnC+Nd/Mron6WhFdEDLEi1RCn3SOH0iPPZK
-         I5nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZUtL5eKjJGcyiNvp6/ZQp58hJdWssnx8EScT1kf6vIhiTrfM0O4pqdI1fUiJclAc7D08JTeAn+X26UZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1wXzCanXTGNYR7unme5AGoJq7SaeD0xeM4qwmQHMRqPglxI1g
-	a3eP4YtmfeksmB4a6Usrb4NaxsqNkUPYm4uF+KS5ZRkNoz8BI1dLiL36VuSTOc9QlIei86BRLlI
-	XPKJWsjFRDUmR3rwDpljoOZzEzW+1lNvPVygfJzGK
-X-Gm-Gg: ASbGnctUGyH4Ft39ASZNa9e/79GfaIMltouFKQKvxVkUDPFyK399hoGIyCakTiX7ZJu
-	1edBnCh7ic6mVXBS0KWyB222GLRkExxP23Lf1705Z1tQO8lwJBht6an4ZOw/hEbFOFbwhPmhddC
-	dbm9MAdpbhcKvphdhKNAw5NZKo78LgwaYR11UAuS1oR8bEZPxaAp5ntYpcIrzr53sQbwF2cygK5
-	RjujulgmSMIU+pOXgqhT5+BFcRrmIIxXbFPO3cUhz65a2th
-X-Google-Smtp-Source: AGHT+IEMhHGLxiZthvv92hddLeh6VUsA2wNqyUMxu2FRa4/Ps+p8BXpPEcOIySKHKsvBGcHbKtUDuUxzy9tvSikqDlk=
-X-Received: by 2002:a05:622a:8319:b0:4b0:9c14:2fec with SMTP id
- d75a77b69052e-4b09c143728mr2217691cf.8.1754500181246; Wed, 06 Aug 2025
- 10:09:41 -0700 (PDT)
+	s=arc-20240116; t=1754500198; c=relaxed/simple;
+	bh=cZ1Z55OakBzymc2XNbJRmhXQLhcZ3OEX5Xx1bQ/QyXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YiB/Z0ENrn4tOWEwR53G8tgYF4PaZ4qzqVYEZ/Vh/8flupu7Fiz7LJ6kWaK3dHy3h9mgoE0gePF+2XfCByPRQSyEwE2CiZTIQWrAKenYZ2Jy72Tu8SobIGydg+2ifbsknZsSZBQ3GHsmKeGTVvC2tq1uqDJq+P387tQnGsgPqWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EKmqaiPf; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754500197; x=1786036197;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cZ1Z55OakBzymc2XNbJRmhXQLhcZ3OEX5Xx1bQ/QyXU=;
+  b=EKmqaiPfrQ4/3oHXKeTrmwydeKqQjERnWZGpqlPSOJLFTuAkDqh7XTGU
+   XUKRMSeC8AkB8FxOrKC+wiBRPB3Js2kzQT+ZC5ezW2JgJWoXYnNZS4koV
+   Ey9cYM6M/x7oNKhAjAytjK3VKgMi45he7lU/OHwz1hwwebMJZNXFXD+rH
+   hd1Cc/zJZW+VNDDiJn7R43nh/wTt59IHLjFfClBdEGPNna2aVz9hyCElZ
+   pLXtlhzXmODCAa03MndCwMvM6f/FohqZcjggyUE02sJ7c3lxITC14xLa8
+   7OJL5HrjV7JtYIFPTv4m2Acads0Dk0cfS1l8vhskXqOnC5lEUm9UXa/na
+   g==;
+X-CSE-ConnectionGUID: LwxUwAfUTCe4ydQVezcxdQ==
+X-CSE-MsgGUID: cFEZDWH5Twqidm5Jc82W1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60636037"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="60636037"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:09:57 -0700
+X-CSE-ConnectionGUID: Gd6KdXKqTlqLc6i7l8ZOnQ==
+X-CSE-MsgGUID: b81DbpytQZOPb7meGkNrZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="201992498"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:09:53 -0700
+Message-ID: <ab033580-de87-4dc4-990d-0a0334bc67f0@intel.com>
+Date: Wed, 6 Aug 2025 10:09:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806154015.769024-1-surenb@google.com> <aJOJI-YZ0TTxEzV9@x1.local>
-In-Reply-To: <aJOJI-YZ0TTxEzV9@x1.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 6 Aug 2025 10:09:30 -0700
-X-Gm-Features: Ac12FXyt05U3kXqXIXEA0tOR0TWPYJFTgr2w2Z1A_F-UmeFYAUN8QHXxx2B-yHA
-Message-ID: <CAJuCfpGGGJfnvzzdhOEwsXRWPm1nJoPcm2FcrYnkcJtc9W96gA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] userfaultfd: fix a crash in UFFDIO_MOVE with some
- non-present PMDs
-To: Peter Xu <peterx@redhat.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, aarcange@redhat.com, 
-	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] dmaengine: idxd: Fix possible invalid memory access
+ after FLR
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Fenghua Yu <fenghuay@nvidia.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
+ <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-3-4e020fbf52c1@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-3-4e020fbf52c1@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 6, 2025 at 9:56=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
->
-> On Wed, Aug 06, 2025 at 08:40:15AM -0700, Suren Baghdasaryan wrote:
-> > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
->
-> The migration entry can appear with/without ALLOW_SRC_HOLES, right?  Mayb=
-e
-> drop this line?
 
-Yes, you are right. I'll update.
 
->
-> If we need another repost, the subject can further be tailored to mention
-> migration entry too rather than non-present.  IMHO that's clearer on
-> explaining the issue this patch is fixing (e.g. a valid transhuge THP can
-> also have present bit cleared).
->
-> > encounters a non-present PMD (migration entry), it proceeds with folio
-> > access even though the folio is not present. Add the missing check and
->
-> IMHO "... even though folio is not present" is pretty vague.  Maybe
-> "... even though it's a swap entry"?  Fundamentally it's because of the
-> different layouts of normal THP v.s. a swap entry, hence pmd_folio() shou=
-ld
-> not be used on top of swap entries.
+On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
+> In the case that the first Field Level Reset (FLR) concludes
+> correctly, but in the second FLR the scratch area for the saved
+> configuration cannot be allocated, it's possible for a invalid memory
+> access to happen.
+> 
+> Always set the deallocated scratch area to NULL after FLR completes.
+> 
+> Fixes: 98d187a98903 ("dmaengine: idxd: Enable Function Level Reset (FLR) for halt")
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-Well, technically a migration entry is a non_swap_entry(), so calling
-migration entries "swap entries" is confusing to me. Any better
-wording we can use or do you think that's ok?
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/dma/idxd/init.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index a58b8cdbfa60ba9f00b91a737df01517885bc41a..31e00af136a7e13887d3ffd00efbb05864712a80 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -1136,6 +1136,7 @@ static void idxd_reset_done(struct pci_dev *pdev)
+>  	}
+>  out:
+>  	kfree(idxd->idxd_saved);
+> +	idxd->idxd_saved = NULL;
+>  }
+>  
+>  static const struct pci_error_handlers idxd_error_handler = {
+> 
 
->
-> > let split_huge_pmd() handle migration entries.
-> >
-> > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@go=
-ogle.com/
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> > Changes since v2 [1]
-> > - Updated the title and changelog, per David Hildenbrand
-> > - Removed extra checks for non-present not-migration PMD entries,
-> > per Peter Xu
-> >
-> > [1] https://lore.kernel.org/all/20250731154442.319568-1-surenb@google.c=
-om/
-> >
-> >  mm/userfaultfd.c | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index 5431c9dd7fd7..116481606be8 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx,=
- unsigned long dst_start,
-> >                       /* Check if we can move the pmd without splitting=
- it. */
-> >                       if (move_splits_huge_pmd(dst_addr, src_addr, src_=
-start + len) ||
-> >                           !pmd_none(dst_pmdval)) {
-> > -                             struct folio *folio =3D pmd_folio(*src_pm=
-d);
-> > -
-> > -                             if (!folio || (!is_huge_zero_folio(folio)=
- &&
-> > -                                            !PageAnonExclusive(&folio-=
->page))) {
-> > -                                     spin_unlock(ptl);
-> > -                                     err =3D -EBUSY;
-> > -                                     break;
-> > +                             /* Can be a migration entry */
-> > +                             if (pmd_present(*src_pmd)) {
-> > +                                     struct folio *folio =3D pmd_folio=
-(*src_pmd);
-> > +
-> > +                                     if (!folio || (!is_huge_zero_foli=
-o(folio) &&
-> > +                                                    !PageAnonExclusive=
-(&folio->page))) {
-> > +                                             spin_unlock(ptl);
-> > +                                             err =3D -EBUSY;
-> > +                                             break;
-> > +                                     }
-> >                               }
->
-> The change itself looks all correct, thanks.  If you agree with above
-> commit message / subject updates, feel free to take this after some
-> amendment of the commit message:
->
-> Reviewed-by: Peter Xu <peterx@redhat.com>
->
-> >
-> >                               spin_unlock(ptl);
-> >
-> > base-commit: 8e7e0c6d09502e44aa7a8fce0821e042a6ec03d1
-> > --
-> > 2.50.1.565.gc32cd1483b-goog
-> >
->
-> --
-> Peter Xu
->
 
