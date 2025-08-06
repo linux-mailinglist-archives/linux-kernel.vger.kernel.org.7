@@ -1,88 +1,74 @@
-Return-Path: <linux-kernel+bounces-758055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68FC6B1CA54
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BB2B1C9FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A7607AC5E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E255639A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED6929B78F;
-	Wed,  6 Aug 2025 17:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95FA29B8D8;
+	Wed,  6 Aug 2025 16:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="gzN4MJEJ"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2105.outbound.protection.outlook.com [40.107.94.105])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="MaklA8EZ"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013061.outbound.protection.outlook.com [40.107.44.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDEE28B7ED;
-	Wed,  6 Aug 2025 17:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539E8295D86;
+	Wed,  6 Aug 2025 16:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754500258; cv=fail; b=AUs6f279RoinqyoZbbK8FDancqanyzuJFJme237Xv6xhQqKmHpFTFyf7mMFkEVqm2S4z9D1uTM2golJHeeomFUKuympuT+KSgg5ai6T44mFsq2YiTsR9By5Omu8rlqK63l+embMCLOlE8SpY9fKN+yeeyfayYTXp3lSLmbPZO80=
+	t=1754498979; cv=fail; b=YGN2XNT09VWz2L4xmRj8H9g6fcGLEZKoCJGQNS/sGc83g8l9V28qov9kB5fA2do4aFcRCjYkIh3PU7hoxSI7CsripmkGx/yABJck2KEpj/6+3hj2rGEsdL7obC5Ayzk6uIOoaDxhogLG912R/YrcUgQ6LN5om9xRodqi+aEjIew=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754500258; c=relaxed/simple;
-	bh=oLhJTPptjmsCaz7VHRt2aO8I4nLHydK60gXoNweUcEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uj5e3fuRliGc+6NJMHH+TdnI/THKdM94RADIFJiIoiIUSJngBQ9olP80/8ZbSO4FzJzn9lFZHLLiP7wVZ0GzOlyI5pMNdmZFb5paNfgpSRmpNG89Jm/TBzn+TrsqGbl8r7E6ezBReqCaRLaKqOrktDFnxXTK8GTEEMnSwQ30NEY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=gzN4MJEJ; arc=fail smtp.client-ip=40.107.94.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
+	s=arc-20240116; t=1754498979; c=relaxed/simple;
+	bh=cyTiw/vNBjG7r+hLUfkb+DhhiC1maF9kujKKkdtZuPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mmG4Zw/uhz4J76ihIpU+DD5FXm41pKpVgX8fmARpFSSSNUhgLVY2ovxngigS6Fgwr8y7najL2ivMZw01szmGFh0nNqCLOhceuZPGR7X+LlETqECiqOwLO9WelqInvRWxsscsL7S6sBr1vnXDTGjyl7LHdhkMigVIDGhd94wIo5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=MaklA8EZ; arc=fail smtp.client-ip=40.107.44.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QTQjVlO/xorfGWmzTRQIEWaKi4qNC7e87+OQiDfNFPNJsRW+p/rACnc5LSpgCwHxcDDtDcokcDMIjc6HMoBl8K4xgZwhH/Mz8NYdlDn4foIXWXq0LdRygnkNAlIEjRafgg6k5hLw+mPTeHyIiOIEoxggnQE5UBabqNIf+5GeB5DmR3nD8aItd1YtCUv+RinwssJjJ5qJtsVI4VaxBZciAp+9yCUeSW2QqmaTP4WUTXO3JBJ4PJEGpYxoeJDbg6W1soT3NPwDPvcvcVVfHSgr0j3C90NoqvhczMVWOI+uJVAha5UPtV+zsyqEcJ7kM9uRN5py00Ed/oojRiRHtULDBQ==
+ b=Y/fCrSYOMbSjZcZRaKieq7mmk8Dem1Gc06sntZ+vaJfUQ0BqS5z/eKJtvdm9BUfQl7VAJD001I0ET59edCuYAl2DWiRIz/YWTepraGLkvAG3HQCqt4dhrYAWgj1jXYk0za8g3+yuXVAPEHAIHR3WIAaNJqLGHtdnriUFSHqOr1wB38DjHZCgoERWX76bcBBHA6sixRjzB8nuPQDwz8iSCIcu1A5LfNhzUu0Xu9P2PAybzkFjMSGqb5BRNlrgNOnU/g84WwqfYUKU1xsjX1vFYSb5WRAXUviTODwF0BmbIuTN8zY17cGdDDZ8V/ov4t9QEz3gwWlFLCTjcrJadW0uEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o5f8Ho4StLRZh8DkXn/CGGPfa+ygdg42nexttHsVcis=;
- b=dP7jn68URsqp1tIb1w5yOm5iFr+ECpT9gmGoQI8aCZiM/MKXA3gdpf1W8qfW6NWyR6undZKI1/UHFdzMIae5sHXAJ97bTFkjJVgcwkZ1DVPGW3yiOU14LqWebuakprWp+x1V5Pkm+6UEWi68RnhrGroyq1iXGrWgFB0hZYf6kLJ9w1KJ8T6KqXMi6XvL3TGgamkaz6iQoQnPo104rUcpeApanKBGF9CNYCY+vWDqqCMcTq0UEbeKBdG6kc1PlICV5vX8VMluoJ5F7UBa/nakoFhmC8/008tEaNmmMCvlTqVn3pb/Cx+oaAs1IuY+88gtesGaGsxARz3gcLVE8E8E6Q==
+ bh=87Wp8uYCuSIPQRT2Uaz045ReplMY7YJLiBXH+t1L1BE=;
+ b=WnfmRlIXXmlX7HWOC7lusoR7f9UyTNKitSQ72qjHS+3R/xs7kPKnfNKlI9B8TqyGJY+LiVOY7OO651Uvh5pdHi/Z8RlCHSU5ddixCXpbNEgoeReP7ICVABsErt+3v2D3xMb96UWE4WtGZxEGabaLmoLy20beeGXnxwy2hIZb3C1vWBIfa1CbOF23Q1KI1+H99UFHStwGjJ/fF58W3en3Sg8K2a9nrgOuKz5ci1COpZKr3xKbOaJYiN/W3TdzWn+yqvYdd4z9g3PSLlXpFaKwdYVKsA3WVXBbLw8lTFPhXogP6tS1+nHWdsR7dl3b0f04WfvB4oMdLcKqct3jUNrZOA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
- header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
- s=selector2;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o5f8Ho4StLRZh8DkXn/CGGPfa+ygdg42nexttHsVcis=;
- b=gzN4MJEJdN65IXkhgWxXTpK6NFp4WODi0uhBM/tovbV3DyosnVUL5qdIemqG3zu16PGCsAF3KqMGe9Cn/inKRlfD480jqPpuDrOnGlE4SvFDJvJeYlC/LNeTT7Mecxmmzyvv/o7NWyzqRU32UYmvYl6vcF43MfqzZWwcD4U6Jxw=
+ bh=87Wp8uYCuSIPQRT2Uaz045ReplMY7YJLiBXH+t1L1BE=;
+ b=MaklA8EZj0h4JNh1z1iwLkUSzBgjExYKPzicfUbQBOTAEoRTbu7QQHQRLWu8ilkR4vwZu/Qm2hEyVZmFY869f5slWeXXwWCGw2lymngoY9Qdn3gBxTrOV7kofvfb7gT1/XlYx1URXW+QSN9S99IUDVzJl+tdlcaGfwLaOF2FejHx7nLJ920NUs0869jkZfSzmZiLU/6eYah/btEkX5y1Ljn/dy/TjWhP7kpb6PJr5SegeS9638mTW3rQLYcWjAoUkDCi3hRX3GtrXKPMX1Fa8zekaFCuhYVSp8ouvF55fphD1q94FNpHADuxTC02kuQssPnQkW3vtCvMNBH4E/PT+Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
- by BN0PR08MB7502.namprd08.prod.outlook.com (2603:10b6:408:159::9) with
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYSPR06MB6337.apcprd06.prod.outlook.com (2603:1096:400:42b::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Wed, 6 Aug
- 2025 17:10:51 +0000
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401%7]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 17:10:51 +0000
-Date: Wed, 6 Aug 2025 18:10:43 +0100
-From: John Keeping <jkeeping@inmusicbrands.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC/PATCH 1/2] usb: dwc3: disable for USB_ROLE_NONE
-Message-ID: <aJOMk_PVasn-tvV6-jkeeping@inmusicbrands.com>
-References: <20250710152252.2532020-1-jkeeping@inmusicbrands.com>
- <20250710152252.2532020-2-jkeeping@inmusicbrands.com>
- <20250712001131.ax3rw24h3deekxfv@synopsys.com>
- <aHUfFGnGZP4z7UgK-jkeeping@inmusicbrands.com>
- <20250729221027.jvg3bpqhc3z5j7xn@synopsys.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729221027.jvg3bpqhc3z5j7xn@synopsys.com>
-X-ClientProxiedBy: LO2P265CA0235.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:b::31) To MW4PR08MB8282.namprd08.prod.outlook.com
- (2603:10b6:303:1bd::18)
+ 2025 16:49:30 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 16:49:29 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH 0/2] hfs&hfsplus: abort for unexpected name length
+Date: Wed,  6 Aug 2025 11:11:28 -0600
+Message-Id: <20250806171132.3402278-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0051.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::6) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,205 +76,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|BN0PR08MB7502:EE_
-X-MS-Office365-Filtering-Correlation-Id: d921b688-daf5-4093-466d-08ddd50c31fd
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYSPR06MB6337:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6535ea4f-0b35-47e0-e9a9-08ddd509357d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ks2lJUWbLS+VT9+2FjkoMMHFs9m3Ny8hdqJH4pkqM9zyI83qij+Dp0abbpIj?=
- =?us-ascii?Q?ZUDjQ2YILSFSpiAlumDPbH85YGzx/t/ZYjUdQ96zApQc93+UE40iu+xDM2o4?=
- =?us-ascii?Q?hMqgyl90+svHqMbX0plSN8TnQ2I+w7ITKFPWGSV7DRHrKRKYPTL+/JzGgrsu?=
- =?us-ascii?Q?/4Ym38AA/8wYyvnXl3lGXXNCNQk5KyzF+aKxWhUFbjcjkfAg6qe5/MWKu6jm?=
- =?us-ascii?Q?zprgPeGK9TWYC4k5pPXbWLgtFO7KyfcVSW108CiTyicGjjLh54XBc5B3Fedw?=
- =?us-ascii?Q?PRSkpJXTTLAJ/SjAPGUXbeB9KpD+TvuqSCI01DeHSxgCoejQ93/9uX6sa9DM?=
- =?us-ascii?Q?aJPMNGPkvCbMDyyeFvXBhaeDCo0N8fx8hi3Cx26769CN3UY2sUN9yXQctvUl?=
- =?us-ascii?Q?YT2vj9GShIlEOt4NrDgjPKCtYmHalV2SW1VhdfSMQee2q72KD2p3wsAJ7IvJ?=
- =?us-ascii?Q?T7qTSqkQAtjXMyp7uMDi7FcT7VJoDrgbQQKqPiu4DnS2frDDOhVvjk/bpOGq?=
- =?us-ascii?Q?FnC9xVMlQYf1WZWsg3bJ8UQiU6u+HPXDXAN0Z0dtYNtP6qpmFoSpABOB+p0n?=
- =?us-ascii?Q?663rH5TCCWcMPjod/tI8rX89gnXGSqp8OaYfzvd196dRsLUMXkDkx8XgyplM?=
- =?us-ascii?Q?z/gQU9d2QjQFj9vlLWUqdgiidwrjQDE/cnVv+//paGUolNSyApZltOY7+VHQ?=
- =?us-ascii?Q?6FroT179Fbx9WXWMk3MNjWE7VgFFLacpP0cirAP5VGpi/Oo+qXgwXODl3dZk?=
- =?us-ascii?Q?QLShe9rJkc+iJrH+lYi8caXoLorI3ipbAxw32qlf2Z1hFcSD0/Q9Ai/vt/MZ?=
- =?us-ascii?Q?W3YcplEnm3DRczfcFkyYaQOz/T79zZnu62/1diDbbqGZ87WyG22w6MoY4KnJ?=
- =?us-ascii?Q?fbnv19erpc/BClrH4ifN554sCRIXCqjNTDTdag8Zwg2cnssGPrcxrjnEWxRZ?=
- =?us-ascii?Q?MOmQxefufihvF3JKVQ+4ShtUYYhbaCOdrWqWqWBsaAlgSNdQ996nZkfO/meN?=
- =?us-ascii?Q?U8QyWoJ6B7Q0YlJNYvcSFatDtZWK8TygubG2dgQoH7o2hEMUOrAEPqWO87hk?=
- =?us-ascii?Q?DyV3/c8b3mzQydbuhY9YMFVHslrGx93igCu+FXxegljCai60jwdKKa/LElNc?=
- =?us-ascii?Q?z3PREKik3XWAeKeDLamQn93mFduL77RGvIU2PWZODCEUw6y1HvDYNLxlJ/T0?=
- =?us-ascii?Q?TpccpFhiXzOW4ePkFhMGpH7fDJNuo/z9mAxy0rlV13dnE0BFdBzZ/gcCNmWL?=
- =?us-ascii?Q?kQ/ZEwU2iPAn7B6YnU6lEp1Omt6yX/0NOMezhWdCluhrUFOXutTYvw7byJMJ?=
- =?us-ascii?Q?y8hTl3wVQK59dFmOL0SY6KsfTR2P+Mhd6FByWyV6/4tx3R6NvMlhiVFHrDXn?=
- =?us-ascii?Q?XXtYaQG7i80WQxodh0S5rNB7MPiRBRNRX7Xg+x9svvNTpVEzYG+598BVXTYy?=
- =?us-ascii?Q?dSFsOChYbXyLKzFEs6xorYUeUq5G9Bz7N7i34+KocMC+onvqRlR8/w=3D=3D?=
+	=?us-ascii?Q?bKelNXv6/n4+iJIBinHkGoWnrVtGsOCI+H1KOU0hwl7yFfQHzBLqTa64HSoE?=
+ =?us-ascii?Q?1LapBWJ7PO+aNp7KN0L29yIIxkKg9fmr3FHPKbv2zozqX6v8bnmkQMv8gFFa?=
+ =?us-ascii?Q?jpLwcYtWrEu+w0GxniTT4Wk1nehfotqa+B3l90uUn2MU7s0p4zJyMWfTpBKp?=
+ =?us-ascii?Q?pO+uCW99IoyiTZgoxncyNKHz/1UvcQ2UnT/GJ//biNfWnpSJztiEsY1rBFRF?=
+ =?us-ascii?Q?87JuMuoquBt5QqEEElZrmABgo4f9T91sv1SEljZ0itphMHxrzkLmkAq1lpJF?=
+ =?us-ascii?Q?IdA2NsheZTXFQlrzkKoYRsmjTETsczS8JdcLr2WKHxcY8nVnFkslpJoxv582?=
+ =?us-ascii?Q?wbqdQTk+Z96j/R5XaaiYHhoIyctCLRRitcOmlJmst3IqLRcjzUFmdsgNVN2+?=
+ =?us-ascii?Q?azBNBz57VAm4lY9WvnB+hxgbwGQ+iY/3i9uCTWkuLTeVxQc+KQx/5UULkqEQ?=
+ =?us-ascii?Q?Daav1zAqzoBidMkebX5KMAhabLdQhsfKPd/NUQUVcPhJHd3pLeUfWfJUE9A3?=
+ =?us-ascii?Q?NR5VpEAryLa8LCoNVbUaKIs39EyA4P6TkIec+57uhj/guuGG4who6rqOonhr?=
+ =?us-ascii?Q?ifxfHqK+7NnUI+cp5fCDDzC+Rqv/K+6rAqCCKF+lqfG86OPbfP3XWRDWkrwX?=
+ =?us-ascii?Q?SbVqsaUaeRVgv/h+ly0JszxsrlkzZ2GQ+R0NULXQJhRduPkbvjtvZOEnCfBm?=
+ =?us-ascii?Q?iynqSZrfBxHGtCyKd2ulnI3yuZzfj6gkAUrVFCk/X8BeS+wdHBfK63oDGI9z?=
+ =?us-ascii?Q?/GHu6zBRqEalI3T40Ut+G/hpI3bzmTKvZw1hgCuu9jGbAo0qzDlv0GeUR3q+?=
+ =?us-ascii?Q?nFyhYTXV1q9fJCrDI/IMhNm6Oou4z0Ahg/UA6iczOKL+IU7kvkHBh6YQXm4f?=
+ =?us-ascii?Q?NdGUinm8+QCyj0LQ4fzt7omLU4NnfVRQs5vp0FrGf8gfLeFkiCS5piGRZCRf?=
+ =?us-ascii?Q?hKCQ3KIDN3SAsuInRBDWhe7tRweSoUdbK3G/lfC8yITdHReXtRAxzzuIKnL1?=
+ =?us-ascii?Q?2v/6JZH869p27Gmi2NGHn1bX2Y20YRTP8FSAr8LPF8Rg9woZpFsPVja5ymhp?=
+ =?us-ascii?Q?ZH+NDfSaFZX/II1LWFZHQDyz8GYUxrqAHbqx3MW/7Flsk3LqKZU06ihs0ZI0?=
+ =?us-ascii?Q?eKb3dYARvxQJAFdizQCIYSRhkE8CmKQP46Lf4IbfZKu0DPhW0TmXHfBR8qaM?=
+ =?us-ascii?Q?9Iz9gCb8whNP7raeJX0tYgmQmE8WEM4pfS3hxqv4kXRq1CX4Gk/EWCLmAD9n?=
+ =?us-ascii?Q?3RFioaYEH+bIo8nPv0uBk9MXnVvFztXJiEKtP3C71t5Gpi3t1xJggi0CT/Rq?=
+ =?us-ascii?Q?L0jpC5JbKL7AqJ/E4iZfo5hrpeyABBn2/s3adzz36jEaWVseeh0gsyS5RFcU?=
+ =?us-ascii?Q?p5YglhzVcMM+F064eiZL/Jhh/RiWtTtH1nVcgDzLs+rfW/+Zx1eQMQtk+fZP?=
+ =?us-ascii?Q?CcnLjHHfPkYKyIEh+AXQiWBV/etdfzBdR2uEVVYNl58lEo6KEXdgZA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hehQ9BgYnSXwzJqbFFEiS2By8Ar8xJj31i2fCpfq1g8DClrj8pkWwxcgx5/N?=
- =?us-ascii?Q?DZjtAMfB/C82ypQBycmShZXsQyJU+UViGhArxsbCvkYxf1puvCwWazyKTsOF?=
- =?us-ascii?Q?P+eNLxqvl0FobJRjEWwhMn4wFOxPlDAZNP5i2Fiy+wnLlvFUOG/zgqW5iXOQ?=
- =?us-ascii?Q?ChMgagYKGNW/d6rOuJWKkbh/aiCoorukmCVxaB3nKulqOACruwSLU0LQQXTy?=
- =?us-ascii?Q?+KL2GY2NZNOfAhRbqcCgvGBMhfmE3jqVZE8SJOVW3i63BxZST8iINSgtonHy?=
- =?us-ascii?Q?2TfUTpe3yu6Dc9UcDB80fHdxbn0vuqZMijuRzcthWcukja4TzQjf8wdtlRZ+?=
- =?us-ascii?Q?zBRdoRXhQ/cn8Ae3YFCRhanjAxxP6GT/IEZg3qad2HxGioJgeOdOudN+zbfT?=
- =?us-ascii?Q?4xn+u8ViODkyXPZmeT/NJweY6vhZ56zaqMDbdQk4uEzjldoXg3ow/XNW83lm?=
- =?us-ascii?Q?SNRMuD0aVzoKrdHGPVNPVhi5xOOreSGAxfwamA1fLZDBJ1tMJsHIqw1GFkyy?=
- =?us-ascii?Q?X9exyYDcMnOHXuWEg7YoEi1tURLMXxzB6NYpQXJH6EM9+pBXoWhGVgMaGqIQ?=
- =?us-ascii?Q?r7zgUa3le+wvQ+vk+fte+88Ws+shg3+tfSKGjwY2wKWapMUdgYdlCsAex6+G?=
- =?us-ascii?Q?RrRUw1xOtnw5bXwDAGt+BRC1HUN4nJ2wH3BCUqYhjCVv3QPwkiQske7Wx86y?=
- =?us-ascii?Q?XpN0ens5+tHi8BVdwj2Id4cDhLcAqzHlGH81TzxVB72XeXGgcevYymJw1sZB?=
- =?us-ascii?Q?uYeYJzoFRDopss2sCJVcMaFH9UPnPBTzuSOiGz8nsA3jf0wTdMgjOjr0aaS4?=
- =?us-ascii?Q?x8wjtkz7ZjWD4SVErGpFkJTBgxm5HFSNubVgf90egeqnvNGMHxPtmbXUGaNf?=
- =?us-ascii?Q?Xc9YfKgDt0FanGkmn5jlinstV8WEwiYCsJQZho2gCnYuex0WAqxzyxav1GTF?=
- =?us-ascii?Q?auPmxB/nXbghQ41/OJ6rShaJGbSfkialAZKn1lZJHPHJ45Qh1AHfkMU+ttk4?=
- =?us-ascii?Q?xjrb2pUtpt2+i7UKv2FO9XH88wKQ8aIRNry20GFBH6xSw3tOm4MZV37MhWl9?=
- =?us-ascii?Q?SVebYC43lJIZRfbNeoRsieM8MYQ+aVDLQxhyYamLu7VcshukREZvchCInf0O?=
- =?us-ascii?Q?boZEFq8DCbDS3SkEW5lSuVWYDinqRBu8O5SxszNYg3Y5M+eOI9joRmBJUf+r?=
- =?us-ascii?Q?POawtuFHwurxjWoHpEsWbth/zpzRstItrqop4fhQlxkjXYjjuTK+fQqfcRCA?=
- =?us-ascii?Q?WAwQ1kliWO+LNPXur5SXzFY2hJBdfCVQwvGgwlmhZZszR1lUw9frY6R4XcmE?=
- =?us-ascii?Q?m/Qd5kGe+/eMC0V0OJHlD0R2GqVndBEqTq/lqBe3vgfmBvjfU5LAWwobt3+i?=
- =?us-ascii?Q?j15LRweyCF9JXIOqX+9EUexJl0PcwQRUTJ3WQQBY8Wmz+52TyB57NzboNkJj?=
- =?us-ascii?Q?He94d0D2W+DUqDz1eW7o2vFewtKum2nhgbmSX1yez2V2LHW8w0yyUtQqZPBA?=
- =?us-ascii?Q?dcbK/w3/U87xKh5TK/BIBkAGjgvwPR++AKDv7/4bDEpGfdBCHPMLazf0tRSj?=
- =?us-ascii?Q?sllZ8TXEltjRPS32fNQIKuX0RIa5qpDZXBuDRS4kJPw0XNkVHOP3QuxvX00m?=
- =?us-ascii?Q?Uw=3D=3D?=
-X-OriginatorOrg: inmusicbrands.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d921b688-daf5-4093-466d-08ddd50c31fd
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
+	=?us-ascii?Q?CTe7zEhXv+H/RCr1rHF8klHnbS9qeVa9bAenyQolC96FxSTtgl8lIXUO3buL?=
+ =?us-ascii?Q?/Eg3NwAvrvzK0sTmeXmw6JXCcOv41JT+4SOOJZSyVVyM4wQTQGz5nRztEjH9?=
+ =?us-ascii?Q?UMGHRmTeVeqWqMAJT96GpBXq/u57GHdwZ/3u6OxOb6u62N0tqh8hq4vU/1bp?=
+ =?us-ascii?Q?dtFJW6xBOcmxNBwfQfx9m1sTovn6lJu4PxknxoBekUFNIudyQG3T7sSrnWuA?=
+ =?us-ascii?Q?w9LsqxQ3egMGbYEnqzLfR78n3gKJyMOFQCNHOZimnGI/0y3YykEVuXDDHNLo?=
+ =?us-ascii?Q?CCX8icKKmxXlyUrgfreufafTDSQgb9ysBgvX37xYxy9Mv0p5R5VLxDOsFpkn?=
+ =?us-ascii?Q?LkWdFxjmhMk7ikpJSf/1U+CN30Lhb3eRv2Z+SWJpYMPyGed3qdJXDMR08ep8?=
+ =?us-ascii?Q?0spCZoEZzOIiaQ4YWz3dnS71GsFtObRZu5UvG8ArkygG9dgJXpv3fgl361Vs?=
+ =?us-ascii?Q?4FTpdeBA3aZ3HuT0osQXVD5tXYsAQ01OEGgjfHB/tOTQhUs9YcWyWvZO1yic?=
+ =?us-ascii?Q?VzQITj7+gUScs9hWK7tJBYyQ2+1U2FWrCMHAtN3Pvwoj4EsRuhaTTDTOsw9F?=
+ =?us-ascii?Q?YbiAjnDq3dPAFwOtlC+jQhGsvXkboXkYFlebw8hAx/QoBG/q+UOSqB4B7eeg?=
+ =?us-ascii?Q?Jsdm4wIBlwIoZFlWCfXjHXvvjkyAPAlHcE8a8nPDrxzTQappGNQJjscQy9tZ?=
+ =?us-ascii?Q?/AkV2KFAR/PhYa1OUMmdnnXTn5vN10CsekoeDdQ10cugMZPY/i0EXJvYxMe2?=
+ =?us-ascii?Q?iA3bq5dST56SnnyUKGOPtt1xJNfGtB8aJEh2p8TZ0rxsjK8wrDDDduSNTaBo?=
+ =?us-ascii?Q?vZCrYixCiI0s5KIXCw4lQDcdjhRCtyJ9WEJO/VeANH1cFO2ZCQH4708a4ui5?=
+ =?us-ascii?Q?Sy53WrudK5xWgCqB5n28Kobnq+Mosp0DQRbNCc3QZC9CMfex/4GbkVJGYLD1?=
+ =?us-ascii?Q?KjYE8AIfMxoyUX9v4f3g3fIfaK4PqshlmZu/v0TGAjU4MXuQ7jIBb0kKii/z?=
+ =?us-ascii?Q?RohsNopogSN75XqPncK/d13lvMV8rCM/WMh0cekxiMmHcJdX/bW63/7ufuJg?=
+ =?us-ascii?Q?o/1sIk2btyzmCR6geX1M283Ftyz3K45o0iItOqmJJlC5X8phQFZnF2OO7EkH?=
+ =?us-ascii?Q?qNbN3EicxyOx0u+HtQVqA0pyTQn/uuDEceVN18kEifu3WSbBLsiKY7UG+wfB?=
+ =?us-ascii?Q?XG3dWbP4kThOjQRWtWPYSv0Kyz5ICk14JJUx8UiOR/X9dBvFgplg9Q8jaJcX?=
+ =?us-ascii?Q?c0VMwfilaXCu48MhPSKI2edEIRZZwxlgi76Mz6LzJaGQ3EyARpkzhdzXle1m?=
+ =?us-ascii?Q?5/eVvWVUEg38fmZlJSj9O15lxZKvC7TO5vSxJfom7DgQTIPm8QzD0xhb/gRk?=
+ =?us-ascii?Q?1BPV3gnXhcHmmze9zRDsIDir2CoXY5Rii7Ptx070OEmsqFQNrh7w4obLI5NB?=
+ =?us-ascii?Q?m3onjg2kZBtMGMFfnhfyp1ZW3ucgedOk6IFUf57avUuMO8JVKjncfWiWqYCp?=
+ =?us-ascii?Q?091qDREFNeXW0qXUm9DLJfde44dqrpVh02HfKEasI6JGVgOMIA+muMuVl4I9?=
+ =?us-ascii?Q?SFmJYg7scn4X+m2ZVSCTXtVOpND4MdihhEuDyJF7?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6535ea4f-0b35-47e0-e9a9-08ddd509357d
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 17:10:51.4180
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 16:49:28.9813
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tA2/2TZBHkwUOUT+QOK2bUTfvV3osNHavN1Ti7RfhAK4WQ84pvnZjLRk9r+9uKs4iFZzWiCv/SSDGRJmuQHFo//xjriio1xQQnP+V5SZJmM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR08MB7502
+X-MS-Exchange-CrossTenant-UserPrincipalName: MagZlqgTh7R7YaNUOfVdHIf849BppSYOeF+4uMGZrLDwFkjEaLkfle54zCMTPY0kau0XI6bs48+9JmSlHU+ocQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6337
 
-On Tue, Jul 29, 2025 at 10:10:35PM +0000, Thinh Nguyen wrote:
-> On Mon, Jul 14, 2025, John Keeping wrote:
-> > On Sat, Jul 12, 2025 at 12:11:38AM +0000, Thinh Nguyen wrote:
-> > > On Thu, Jul 10, 2025, John Keeping wrote:
-> > > > When the phy is acting as a Type C mux, it may need to reset when the
-> > > > cable direction changes.  But this should not happen while DWC3 is
-> > > > trying to use the USB connection.
-> > > > 
-> > > > In this case, there must be a connection manager to notify the phy of
-> > > > the orientation change and tcpm_mux_set() ensures this happens before
-> > > > DWC3's role switch is informed of a change.
-> > > > 
-> > > > It should not be possible to go directly from device->device or
-> > > > host->host with a change in orientation without transitioning through
-> > > > the "none" role as the cable is unplugged.  So ensuring that DWC3 always
-> > > 
-> > > The controller is either host or device mode. It's odd to use "none" to
-> > > indicate connection.
-> > 
-> > There is no connection in this state.  When the type C controller
-> > indicates that the role is "none" then there cannot be a USB connection.
-> > 
-> 
-> It's not about connection. It's about the current mode of the USB
-> controller. The mode of the controller isn't "none" on disconnection
-> even if you try to role-switch to that via the typec switch.
-> 
-> > > > informs the phy of the new mode whenever a plug is detected should be
-> > > > sufficient for the phy to safely reset itself at a time that is safe for
-> > > > DWC3.
-> > > 
-> > > Couldn't the phy do this as it detects connection/disconnection.
-> > 
-> > I don't think the phy can detect a connection.  If it is configured for
-> > the wrong orientation then it will not monitor the correct data lines.
-> > The phy hardware does not signal any interrupts to the CPU for the
-> > driver to react to.
-> 
-> Ok.
-> 
-> > 
-> > > It seems what you need is a full controller initialization upon new
-> > > connection on orientation change, and you're using role_switch selecting
-> > > "none" to do so.
-> > 
-> > I'm not sure whether a complete initialization is necessary, but what I
-> > want to avoid is the phy resetting while the controller is part-way
-> > through device enumeration or setting up a gadget configuration.
-> > 
-> > It may be that simply avoiding resetting the phy if the orientation is
-> > unchanged is enough to avoid some of this problem, but I suspect there
-> > are still problems if the clocks from the phy to the controller are
-> > stopped unexpectedly.  However, I have run some tests of this change and
-> > it looks promising.
-> 
-> That sounds like the the phy reset is done after asserting the vbus
-> valid line indicating connection to the controller. Can this be fixed in
-> the phy or type-c driver?
+We need to prevent to create unexpected files, which name length over
+NAMELEN_MAX.
 
-I don't think so.  I've tried implementing this in the phy driver and it
-does not work reliably.
+Yangtao Li (2):
+  hfs: abort hfs_lookup if name is too long
+  hfsplus: abort hfsplus_lookup if name is too long
 
-> > > I'm not sure if role-switch has the right interface to do so. Perhaps we
-> > > can introduce one? I don't think we should change the behavior of the
-> > > current flow and apply that to all other platforms.
-> > 
-> > I don't think it's unreasonable for the controller to be idle when there
-> > is an external type C controller notifying the connection state.
-> > 
-> > The hardware setup looks like this, with the Linux type C code notifying
-> > the phy driver of the orientation change and the DWC3 driver of the role
-> > change:
-> > 
-> >                       +------+          
-> >                       | DWC3 |<----+    
-> >                       +--^---+     |    
-> >                          |         |    
-> >                       +--v--+      |    
-> >                 +---->| PHY |      |Role
-> >                 |     +--^--+      |    
-> >     Orientation |        |         |    
-> >                 |   +----v----+    |    
-> >                 +---+ FUSB302 +----+    
-> >                     +---------+
-> > 
-> > The advantage of using the role hook is that we are guaranteed that it
-> > is called after the phy has been notified of the orientation change.
-> > 
-> > Do you have an idea of a new interface?  Or do you think it is safe to
-> > reset the phy underneath the controller when that will halt the clocks
-> > from the phy to the controller for some period of time?
-> 
-> The proper fix should be in the phy where it should only assert vbus
-> valid after processing orientation and phy reset. I'm not familiar on
-> the communication between your PHY and FUSB302. There should be some
-> indication from the phy that it's ready before you can assert vbus-valid
-> (that can be from a callback, a status register etc).
+ fs/hfs/dir.c     | 3 +++
+ fs/hfsplus/dir.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-The FUSB302 is connected to the CPU via I2C, there is no direct
-communication between it and the phy, it all goes via the kernel's tcpm
-subsystem.
+-- 
+2.48.1
 
-The problem with re-initializing the phy is that this causes dwc3 gadget
-configuration to fail with "failed to enable ep0out", and this happens
-when VBUS valid is de-asserted.  This is 100% reproducible on boot for
-me where the init scripts are setting up a gadget via configfs.
-
-So it seems the timing of the phy setup needs to coordinate with the
-dwc3 controller.
-
-> What you've done is a teardown and reinit of the driver, triggering a
-> soft-reset. This can re-sync the phy. That probably takes long enough
-> that a phy-reset after orientation change will be completed before the
-> initialization complete.
-> 
-> If there's no way for you to know when the phy complete its reset, we
-> can add a quirk for your platform to always reinit on role-switch call.
-> 
-> Let me know if this is reasonable.
-
-I'm happy to test patches.
-
-
-Kind regards,
-John
 
