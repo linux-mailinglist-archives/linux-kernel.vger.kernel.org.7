@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-757644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CF2B1C4AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:14:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F72B1C4B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4F91892647
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0384D7AEB16
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A445E28B3F9;
-	Wed,  6 Aug 2025 11:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mtgm75Lq";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mtgm75Lq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A7623BF83;
+	Wed,  6 Aug 2025 11:16:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D7289803
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 11:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFD3AC1C;
+	Wed,  6 Aug 2025 11:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754478883; cv=none; b=BXm/Fhhl/wgcyhnyJ1lCShZ2pzXXJ4vhlqSTPhXR8+ZzVh2USbu/PWTIACmuAOIMRmVUfRJjrVw0DdMSyfHeWx82ynY3MoWE6Tj7u7A3SWbI07eKz9OSxCCFXrnQRLSmM5Gw/+1eBILqxOAVOB4VlLD71zxL6XM5+qvg9yo71eI=
+	t=1754478986; cv=none; b=eVuIaRFEVz2+QP7vIZ1LQENAibwwHIAPfG7ICDJfEQevlTgB5AfEv8BmoCXv/+lKAyaWuF+PZScoI3kYDVIpp3vm9HoQMXckkHUdyjl4AKM6Y3yr481Z8WYiHWnVwprOH/pSmbiCO6s9TpxJ3BlVRsOZOMGjPqwHHeK33ReUJjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754478883; c=relaxed/simple;
-	bh=gkLSb1+9KhRSJRm+nk8x89DyxO209uh9NGB1tf39aRA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C35YJKre4q/mkgm+3yirl7mXZWRDd3O4wTUIoXfzI/KBGv4FewLj0PInY65UvWjRCZL6VHIJpkBMLC35vYbbXONSCzEBGXTqZRmWZl/P46cl12+4ME1C0nwsoF5k/3l+0NO5GIjJrlWk/wRGvTpVgBGcXN4SFfzWkTNHxLopHY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mtgm75Lq; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mtgm75Lq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 303C421AD9;
-	Wed,  6 Aug 2025 11:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1754478879; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=iNyrjRZm8VSFFq66QlpAiNsQN1L6TCrewJyfxPV1uGY=;
-	b=mtgm75LqnmQRwk4vcgZ6xXrJSUnBj5Bo4qZBGlbitCnfGfVMUAsOxkx3VZBNKEtloHRMpH
-	Mkc237VzJSXuJszNgzqBmUf/Pmcw7Upxy/8SmIOQDeAmbKH52B7bnEfmbp1yFxJtExw7pZ
-	E83ho7uLXifHrIL3hoH65i0X3QRjLo8=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=mtgm75Lq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1754478879; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=iNyrjRZm8VSFFq66QlpAiNsQN1L6TCrewJyfxPV1uGY=;
-	b=mtgm75LqnmQRwk4vcgZ6xXrJSUnBj5Bo4qZBGlbitCnfGfVMUAsOxkx3VZBNKEtloHRMpH
-	Mkc237VzJSXuJszNgzqBmUf/Pmcw7Upxy/8SmIOQDeAmbKH52B7bnEfmbp1yFxJtExw7pZ
-	E83ho7uLXifHrIL3hoH65i0X3QRjLo8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25B0913AA8;
-	Wed,  6 Aug 2025 11:14:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0nDrCB85k2g4QgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Wed, 06 Aug 2025 11:14:39 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs urgent fix for 6.17
-Date: Wed,  6 Aug 2025 13:14:26 +0200
-Message-ID: <cover.1754478249.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1754478986; c=relaxed/simple;
+	bh=zxm5bDbzQmHdqSW1nHMqa3d8zuFaL0CYxhmDbUIdf20=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HU63q5HXWHvIHg0Vlqxo58UX7BuamoGJuUfvqesOiy2wVCDiEVKnWGhxX1aZfdh2RjPSOXsDFWRGZw16kT7fY7H9D6iuDt6oVDjrp6wWP+XcEhFCi9bmcxCszlj/eOUwrAmD2Fw1DnzPmSJ3gXuDoM23VOAA1MEukngYKLswvbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxnkM5Ylqz6M4PP;
+	Wed,  6 Aug 2025 19:14:35 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BE206140159;
+	Wed,  6 Aug 2025 19:16:22 +0800 (CST)
+Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
+ 2025 13:16:21 +0200
+Date: Wed, 6 Aug 2025 12:16:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <dan.j.williams@intel.com>
+CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Gerd Hoffmann <kraxel@redhat.com>
+Subject: Re: [PATCH v4 05/10] samples/devsec: Introduce a PCI
+ device-security bus + endpoint sample
+Message-ID: <20250806121625.00001556@huawei.com>
+In-Reply-To: <6892c9fe760_55f09100d4@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+	<20250717183358.1332417-6-dan.j.williams@intel.com>
+	<20250729161643.000023e7@huawei.com>
+	<6892c9fe760_55f09100d4@dwillia2-xfh.jf.intel.com.notmuch>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 303C421AD9
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi,
 
-please pull a single btrfs commit. It fixes a problem that people
-started to hit since 6.15.3 during log replay (e.g. after a crash).
-The bug is old but got more likely to happen since 5e85262e542d6da got
-backported to stable (6.15 only). The summer vacation time caused delays
-of the fix delivery, apologies to everyone. Thanks.
++CC Gerd, of off chance we can use a Redhat PCI device ID for kernel
+emulation similar to those they let Qemu use.
 
-----------------------------------------------------------------
-The following changes since commit 005b0a0c24e1628313e951516b675109a92cacfe:
+> 
+> > > +	for (int i = 0; i < ARRAY_SIZE(devsec->devsec_devs); i++) {
+> > > +		struct devsec_dev *devsec_dev = devsec_dev_alloc(devsec);
+> > > +		int rc;
+> > > +
+> > > +		if (IS_ERR(devsec_dev))
+> > > +			return PTR_ERR(devsec_dev);
+> > > +		rc = devm_add_action_or_reset(dev, destroy_devsec_dev,
+> > > +					      devsec_dev);
+> > > +		if (rc)
+> > > +			return rc;
+> > > +		devsec->devsec_devs[i] = devsec_dev;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}  
+> > 
+> >   
+> > > +static int init_port(struct devsec_port *devsec_port)
+> > > +{
+> > > +	struct pci_bridge_emul *bridge = &devsec_port->bridge;
+> > > +
+> > > +	*bridge = (struct pci_bridge_emul) {
+> > > +		.conf = {
+> > > +			.vendor = cpu_to_le16(0x8086),
+> > > +			.device = cpu_to_le16(0x7075),  
+> > 
+> > Emulating something real?  If not maybe we should get an ID from another space
+> > (or reserve this one ;)  
+> 
+> I am happy to switch to something else, but no, I do not have time to
+> chase this through PCI SIG. I do not expect this id to cause conflicts,
+> but no guarantees.
 
-  btrfs: send: use fallocate for hole punching with send stream v2 (2025-07-22 01:23:14 +0200)
+Nothing to do with the SIG - you definitely don't want to try talking them
+into giving a Vendor ID for the kernel.  That's an Intel ID so you need to find
+the owner of whatever tracker Intel uses for these.  Or maybe we can ask for
+one of the Redhat ones (maintained by Gerd).
 
-are available in the Git repository at:
+> 
+> > > +			.class_revision = cpu_to_le32(0x1),
+> > > +			.pref_mem_base = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
+> > > +			.pref_mem_limit = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
+> > > +		},  
+> > 
+> >   
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.17-fix-tag
+...
+> > > +static int __init devsec_tsm_init(void)
+> > > +{
+> > > +	__devsec_pci_ops = &devsec_pci_ops;  
+> > 
+> > I'm not immediately grasping why this global is needed.
+> > You never check if it's set, so why not just move definition of devsec_pci_ops
+> > early enough that can be directly used everywhere.  
+> 
+> Because devsec_pci_ops is used inside the ops it declares. So either
+> forward declare all those ops, or do this pointer assigment dance. I
+> opted for the latter as it is smaller.
+Ok. I guess in emulation that's a reasonable compromise.  Maybe leave
+a comment somewhere to avoid repeat of this feedback.
 
-for you to fetch changes up to 0a32e4f0025a74c70dcab4478e9b29c22f5ecf2f:
+Jonathan
 
-  btrfs: fix log tree replay failure due to file with 0 links and extents (2025-08-06 13:01:38 +0200)
+> 
 
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: fix log tree replay failure due to file with 0 links and extents
-
- fs/btrfs/tree-log.c | 48 ++++++++++++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 18 deletions(-)
 
