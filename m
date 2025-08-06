@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-757116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B46FB1BDEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC54B1BDEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6824B7AF6B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF6F626479
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F7E7082A;
-	Wed,  6 Aug 2025 00:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEAC7DA66;
+	Wed,  6 Aug 2025 00:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2z0onBo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gjlQtiz3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C051E49F;
-	Wed,  6 Aug 2025 00:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB52171C9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 00:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754440318; cv=none; b=XhWrWMqJM65Gx5tf3gF6lYQ58x9b5MW9SdeqLmEXwG83kej9ZuU8HouUfRkA4Mjwr8WD07/f/8Yp+x7QfiYq86n4/RY7qj+HiAnZ8uzJxbmF3nbSlyBquYqTyD31zWG2DSK77l8d5tZYP29l3BpcCZJfCLDlrwhfhZiyT1J6ufE=
+	t=1754440365; cv=none; b=Nd7oek2NJEji0Zf38C+cNP3Bb9+uSaVA3KIZlofPZwO+67h7Tq26CV+sCr46/MDHVQSRGoJHqYZ8X3cHKW90SoDI0p+Fr7PwyxcA/6ID6sRy9ZEOtXT4mvldRr08gs8ZG3JRLzAR4OOnuAmzwqM7V1RvLLIfGkS8x2BvFwaGIOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754440318; c=relaxed/simple;
-	bh=4zmQW9P3pk7Gnm2G3ECHQv/n2CS39Br075AHVDBqKPU=;
+	s=arc-20240116; t=1754440365; c=relaxed/simple;
+	bh=z/pkgbDTk4xjPzL4wm6uTA32U5+mI7SVR6rXpU8vsls=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGxiOfdxux+9p+9K7s68ecJJMc7rxIvuP5wvvlwY8qLkMkVFwXgClHdrVOTi+MpPe8nHijSAsDATuEAForDSfon97zaAq//ul+Vxabpn9U2Ph8Zjf6OYN5fLf1jZZtV1c2+9rpd86n1+imVjnufOZrtNwcyOsij/DBOmgxnaYSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2z0onBo; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754440317; x=1785976317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4zmQW9P3pk7Gnm2G3ECHQv/n2CS39Br075AHVDBqKPU=;
-  b=V2z0onBozTa4y65aP9fs6CiHmS95aIHaJLo35RL8DsgjFBkttrL9J9bj
-   r/aQniMwgNBoW9DBXgbE43lT25od3anjq0Gn5Ez8drLN/Q12/5ppRE4pz
-   dhEAqSTerv4EpjBxT2UZgWPyaMXiM/rNmzWBXuYCu+ycU/mKhaBMsRQov
-   Fr+XUiabKXpj8ipOepueLhY7txZY+inPNLOLjskprlraOoto7LDqfB13+
-   d31MOHUb8dwDWFcx0WdLuOwWrvDtG6k14/160t54rGupP2y8w+F5eBItU
-   U+a2mP4Sq+oLl7pSQl4z6m8hWm9Iprb/czcDgxGVSlyfP+wdMuBK23eA3
-   A==;
-X-CSE-ConnectionGUID: IqY3+tiAQOaXn2vn08pq4w==
-X-CSE-MsgGUID: /y+FLtIESL2mdEaJIOE1bQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="59366365"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="59366365"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:31:56 -0700
-X-CSE-ConnectionGUID: Phc5g1kVSdi2CFHRSBlJ0A==
-X-CSE-MsgGUID: pL+ThEXdTTSscRrNvjJcow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="168889109"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:31:53 -0700
-Message-ID: <58f01b41-5acb-47d1-a68e-d496d45bb298@linux.intel.com>
-Date: Wed, 6 Aug 2025 08:31:51 +0800
+	 In-Reply-To:Content-Type; b=NuH9+3KbCOeyIAmfAWCa9gHL8XKWh58nTnpOdtbloPo8wBC699zybpuv7uK9IJEA9GVa67NL8KOhyooqmz9q2ZAwLzeVoApYwoPwv30YNRvWDD/fs8jbTUywymfJdT7vN0k2UgtWFSFmn69qnxx7FivdUgJZeJFR07FkE2DAqrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gjlQtiz3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575I8Qcp000519
+	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 00:32:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nCm1tUegqx7mcpc1Z5HobyZbVzfa+XlUJ4BJ6xj5K20=; b=gjlQtiz3V+w3xX4V
+	6Qlfa6EC744X3TiAjzDrPMi7Y1X7eva4XAjQcp/4Nq3NXtGs6o7sLLLGs3I2hUbw
+	o9wBHNAflOXDalxaM19AtYUnb8/fyu+7Ef6tgni2f9tt9UWmNqoctzoNjpRNnIbg
+	tYEOokrh+dMS22M2+G/a8tv30UYEDhpnAc8eh4RcEDOANUDKYHBu8ET3Yy/ESrdS
+	AjfQSZjB/TLD3v5QlcZkbhtVgi/8pq8Z7RiVSu/K88OqqVRP+d99Zi4+IkN2vloa
+	Lx84ub7o4mKTGcYt5AQwwLWbmJFBHRAyngFCaTHOOdXqmfxziTpGjFBMbXG5bfut
+	3oHI3g==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpya8ukq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 00:32:42 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23fc5b1c983so4196685ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 17:32:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754440361; x=1755045161;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nCm1tUegqx7mcpc1Z5HobyZbVzfa+XlUJ4BJ6xj5K20=;
+        b=CDK2oCzLANiYEDHDoZVFibglkqx3SMbUP1UbtPy7DMjchyjlvs9KJwpZx3h03MWHg2
+         zUNZA61jdywVePZAygMpEhKz6iMn9a0rR0SupiPxToPSreVWasHC+NEzWd8zggyqdIqd
+         mCZQ/Fu/0QfDmat9UeXwFiKjVyqfJLBrbAxLHquWdFOEJWNnyd0NkLJmwn3IO6d9gp/8
+         tlz4A0UKVfYINyHFkNWjLDYXEqk2fbtFQYudqu+AKNgqX3NUnfEKtPMzK3AvVWy8sLCo
+         jCJqSl3/bnJMZuy069GQGPilC6u/LsuV3xySFNP3LxPXt1uiCsQ7VWcNiwTbCufQfu1O
+         rSLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI3WLBOefzguChy77fETfTRuWLpqtBJUaHt6xeShiZBXhMJ78AaApG8OEM6jpSgKPwb1OL9g8Kx4izh6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsHpV2UkiqbHtk3yRhihaIsaTa+BnXFTkJTeJR0HL6pTDxBZmA
+	evuKnU1l4boYaDP4xvEglHVH6wtbEa1DFGduUgVmOhzZUVJdhxE5kA9UOL0AaM5laan4Yzf0irV
+	4KjxfScUWO5uHPjrIsv+ePFQhgsDiMfSvfudPNX4lr4dqbwbpaP8lItOYvorq9mvYhxI=
+X-Gm-Gg: ASbGnct70ghQdqjX/+CazKyLkFvksY+JqpiCEaYvmUtIZx8k18DovdJUcO+eXhr7l+m
+	Et1RR8iAkerCzbu9fTjakIT/NCelxOpBhZOfaWSUes5yzQq4PE9i23BuhyRrtD3blFTICMlyDs5
+	vq8FC+HZl/IThFbs5ZeIF5yIi8nwsyPcnJxZXUZyg+nVLiLs0d7j2SOvy+m6cx3LKjuP8zgVvuG
+	HJIy7DThc9Mq+pXj4j252r2dIjZ//a8harUp6lrzv8lBb1qxAwNBxUcrbXiM0CN7AfRkQXWumbd
+	hrSjx/loGlTzvY3Wl18YibCiGwIYi+/K19+QPnSlxkapE29HCQdmk9bY0ije/K8otlrIV2DHhvr
+	IgilfembDldC4bw9eelqIbsLp
+X-Received: by 2002:a17:902:e550:b0:240:4d19:8774 with SMTP id d9443c01a7336-2429f98fc5amr10815615ad.24.1754440361518;
+        Tue, 05 Aug 2025 17:32:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGr1EmLymPDG9f6dSPFvoN/hEjN48sinKuRQr7dOOX0ZYPmD4JaThfNyEnAqIxOJ6qOmxz6bg==
+X-Received: by 2002:a17:902:e550:b0:240:4d19:8774 with SMTP id d9443c01a7336-2429f98fc5amr10815335ad.24.1754440361082;
+        Tue, 05 Aug 2025 17:32:41 -0700 (PDT)
+Received: from [10.133.33.195] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f21be9sm144969375ad.72.2025.08.05.17.32.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 17:32:40 -0700 (PDT)
+Message-ID: <ae3a482b-2b8c-4390-a950-f9612303003d@oss.qualcomm.com>
+Date: Wed, 6 Aug 2025 08:32:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,100 +89,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] perf tools kvm: Use "cycles" to sample guest for "kvm
- top" on Intel
-To: Aditya Bodkhe <adityab1@linux.ibm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kevin Tian <kevin.tian@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
- <20250805004633.135904-6-dapeng1.mi@linux.intel.com>
- <c1076dbd-de63-4a9e-a097-de0f64c74a95@linux.intel.com>
- <5b4882dc-c90d-409b-8355-45d8b96df93f@linux.ibm.com>
+Subject: Re: [PATCH v4 03/10] coresight: tmc: add etr_buf_list to store
+ allocated etr_buf
+To: Mike Leach <mike.leach@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+        Jinlong Mao <jinlong.mao@oss.qualcomm.com>, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Jie Gan <quic_jiegan@quicinc.com>
+References: <20250725100806.1157-1-jie.gan@oss.qualcomm.com>
+ <20250725100806.1157-4-jie.gan@oss.qualcomm.com>
+ <CAJ9a7VijwFKiaZzKsSKPynWapA3ik9d7JLeE+yVNFB0T62iH-Q@mail.gmail.com>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <5b4882dc-c90d-409b-8355-45d8b96df93f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <CAJ9a7VijwFKiaZzKsSKPynWapA3ik9d7JLeE+yVNFB0T62iH-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: oFMUDAoudj63mQJBzQDbp5uO_5cOkJy6
+X-Authority-Analysis: v=2.4 cv=MrlS63ae c=1 sm=1 tr=0 ts=6892a2aa cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=U2YxrCIlBwdvewSZISMA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwMCBTYWx0ZWRfX/1ShUEEQsvrx
+ TU78TokS35k/7f481mo9/oZpEfqRGm1WB9ISwOsaDc799A2HOfNwv7XxObFC+Cz6YIvfHUNOG9Y
+ vkKUrMT46/6zAOQisnoEJDSlGtyrPIiPArGa0tsLC87WOTYoDL2Blcf5qiZPpv8IVHGXQT+H12/
+ zpiG6DyF0OBrKT4OwbdLLxcG7JCNeyaTCxB+v799RoGyzbR4PjQbkICDPfpVQ2M8XED0q/fmSeh
+ F6f0QcHUVdSI98yuF6q104KeRPDMvQCwSSxSqhWHTp3dgAQlto8DscX7NrdtlwLEBRqGC/6jeMp
+ VblQZ2ujDE2AsaqfSZgMBO/fel7Vg7hQsttFkrnOTt/+h2K+JwO4GpeYNOEj+EDKouvyi3l3RL5
+ r1PMcqoNgOvmyFwoVisWFLJ8M3A/JDTMalNpg3DIKLUtcQzxJobCFjhGzQ+nHbLeqv4YliMf
+X-Proofpoint-GUID: oFMUDAoudj63mQJBzQDbp5uO_5cOkJy6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060000
 
 
-On 8/5/2025 7:32 PM, Aditya Bodkhe wrote:
-> On 05/08/25 6:27 am, Mi, Dapeng wrote:
->> On 8/5/2025 8:46 AM, Dapeng Mi wrote:
->>> As same reason with previous patch, use "cyles" instead of "cycles:P"
->>> event by default to sample guest for "perf kvm top" command on Intel
->>> platforms.
->>>
->>> Reported-by: Kevin Tian <kevin.tian@intel.com>
->>> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
->>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>> ---
->>>   tools/perf/builtin-kvm.c | 30 +++++++++++++++++++++++++++++-
->>>   1 file changed, 29 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
->>> index 7e48d2437710..d72b40f3df12 100644
->>> --- a/tools/perf/builtin-kvm.c
->>> +++ b/tools/perf/builtin-kvm.c
->>> @@ -2075,6 +2075,34 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
->>>   	return ret;
->>>   }
->>>   
->>> +static int __cmd_top(int argc, const char **argv)
->>> +{
->>> +	int i = 0, ret;
->>> +	const char **rec_argv;
->>> +
->>> +	/*
->>> +	 * kvm_add_default_arch_event() may add 2 extra options, so
->>> +	 * allocate 2 more pointers in adavance.
->>> +	 */
->>> +	rec_argv = calloc(argc + 2 + 1, sizeof(char *));
->>> +	if (!rec_argv)
->>> +		return -ENOMEM;
->>> +
->>> +	for (i = 0; i < argc; i++)
->>> +		rec_argv[i] = argv[i];
->>> +
->>> +	BUG_ON(i != argc);
->>> +
->>> +	ret = kvm_add_default_arch_event(&i, rec_argv);
->>> +	if (ret)
->>> +		return -EINVAL;
->>> +
->>> +	ret = cmd_top(i, rec_argv);
->>> +	free(rec_argv);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>>   int cmd_kvm(int argc, const char **argv)
->>>   {
->>>   	const char *file_name = NULL;
->>> @@ -2135,7 +2163,7 @@ int cmd_kvm(int argc, const char **argv)
->>>   	else if (strlen(argv[0]) > 2 && strstarts("diff", argv[0]))
->>>   		return cmd_diff(argc, argv);
->>>   	else if (!strcmp(argv[0], "top"))
->>> -		return cmd_top(argc, argv);
->>> +		return __cmd_top(argc, argv);
->>>   	else if (strlen(argv[0]) > 2 && strstarts("buildid-list", argv[0]))
->>>   		return __cmd_buildid_list(file_name, argc, argv);
->>>   #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
->> This patch would impact powerpc platform as well. Base on the comments
->> before kvm_add_default_arch_event() in
->> tools/perf/arch/powerpc/util/kvm-stat.c, I suppose powerpc also needs this
->> change, otherwise "perf kvm top" command can't sample guest records. But I
->> have no any powerpc on my hand, so it's not tested on powerpc platform. Any
->> test on powerpc is appreciated. Thanks.
-> I have powerpc systems . I will test can share the results .
 
-Thanks.
-
-
+On 8/5/2025 6:15 PM, Mike Leach wrote:
+> Hi
+> 
+> On Fri, 25 Jul 2025 at 11:08, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
 >>
+>> Add a list to store allocated etr_buf.
+>>
+>> The byte-cntr functionality requires two etr_buf to receive trace data.
+>> The active etr_buf collects the trace data from source device, while the
+>> byte-cntr reading function accesses the deactivated etr_buf after is
+>> has been filled and synced, transferring data to the userspace.
+>>
+>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> ---
+>>   .../hwtracing/coresight/coresight-tmc-core.c  |  1 +
+>>   drivers/hwtracing/coresight/coresight-tmc.h   | 19 +++++++++++++++++++
+>>   2 files changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> index be964656be93..4d249af93097 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+>> @@ -830,6 +830,7 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+>>                  idr_init(&drvdata->idr);
+>>                  mutex_init(&drvdata->idr_mutex);
+>>                  dev_list = &etr_devs;
+>> +               INIT_LIST_HEAD(&drvdata->etr_buf_list);
+>>                  break;
+>>          case TMC_CONFIG_TYPE_ETF:
+>>                  desc.groups = coresight_etf_groups;
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+>> index 6541a27a018e..52ee5f8efe8c 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+>> @@ -208,6 +208,21 @@ struct tmc_resrv_buf {
+>>          s64             len;
+>>   };
+>>
+>> +/**
+>> + * @sysfs_buf: Allocated sysfs_buf.
+>> + * @is_free:   Indicates whether the buffer is free to choose.
+>> + * @reading:   Indicates whether the buffer is reading.
+>> + * @pos:       Position of the buffer.
+>> + * @node:      Node in etr_buf_list.
+>> + */
+>> +struct etr_buf_node {
+>> +       struct etr_buf          *sysfs_buf;
+>> +       bool                    is_free;
+>> +       bool                    reading;
+>> +       loff_t                  pos;
+>> +       struct list_head        node;
+>> +};
+>> +
+>>   /**
+>>    * struct tmc_drvdata - specifics associated to an TMC component
+>>    * @pclk:      APB clock if present, otherwise NULL
+>> @@ -242,6 +257,8 @@ struct tmc_resrv_buf {
+>>    *             (after crash) by default.
+>>    * @crash_mdata: Reserved memory for storing tmc crash metadata.
+>>    *              Used by ETR/ETF.
+>> + * @etr_buf_list: List that is used to manage allocated etr_buf.
+>> + * @reading_node: Available buffer for byte-cntr reading.
+>>    */
+>>   struct tmc_drvdata {
+>>          struct clk              *pclk;
+>> @@ -271,6 +288,8 @@ struct tmc_drvdata {
+>>          struct etr_buf          *perf_buf;
+>>          struct tmc_resrv_buf    resrv_buf;
+>>          struct tmc_resrv_buf    crash_mdata;
+>> +       struct list_head        etr_buf_list;
+>> +       struct etr_buf_node     *reading_node;
+> 
+> Potential simplification:-
+> do you need both reading_node here and reading in the etr_buf_node?
+> reading_node handles the logic for which buffer is being read, while
+> is_free handles the empty/full logic - reading seems unneeded?
+
+Yes, you are right. I checked the usage of reading. It can be replaced 
+by reading_node in switch function.
+
+I will simplify this patch in next version.
+
+Thanks,
+Jie
+
+> 
+>>   };
+>>
+>>   struct etr_buf_operations {
+>> --
+>> 2.34.1
+>>
+> 
+> regards
+> 
+> Mike
+> 
+
 
