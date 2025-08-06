@@ -1,365 +1,124 @@
-Return-Path: <linux-kernel+bounces-758430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E20B1CF09
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:25:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92C0B1CF0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABC718C05D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48BD17339A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF2C233736;
-	Wed,  6 Aug 2025 22:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B5523504B;
+	Wed,  6 Aug 2025 22:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bh9a1F/Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZVZtpHc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0AE226D18
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 22:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D8835898;
+	Wed,  6 Aug 2025 22:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754519105; cv=none; b=PRrkLOs3xAzAxBNZ8t5iii/CuolhH0RW9a8Gy8D2xntEvjuBf/1tDYKuBmwop+qqnQM5U0K5nIQKcclRifb7WCa2F94QhN5v4dm4hl/TjNuF9Jh/Wec2dlV19tJ5xtRBwltnjKuagiqUgwd2pZKWziBNnRAGGKAX1hnqQf3tpaU=
+	t=1754519163; cv=none; b=OQ8HwK9JdAADoV69Nje8XTJacFXpclfAEaMj8Ct19OcGTZiFD+NPznK4xqV4GrhldKjMh7AsX8uzkdlZN+osgpNPNakgYDUHzjem96MqLKDXSPreFDo6NmIYInvKQgWtCNM4K55pmqtuadEwa5DdITO1yRM4p/rgbGIJX0VmY8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754519105; c=relaxed/simple;
-	bh=E8mVSJu/tMPT+RCSYBB/JKwAzVd4GM2qVRUojQoI5Yk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AsWbx3Bt/SnjkDMEu9gx/iWgenb4tNlNfylL0ukwOU0Kk8u9L5wiB9irygb/4lE1I6QETSqTbo/dQAoVzqsK95KV37TX9r6Q0vDB2HLtyX9xATNdo8VTFgraVjhiMT80awbclSx8M/HbZWw3pbR0qZJXjtf0JH1RuM3SC4cPrMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bh9a1F/Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754519102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2KWudinkIbXD4F4ulzK9/+oUi2avXDJW6sBf89lUWmU=;
-	b=bh9a1F/QQZqimR8naHWs7xCUacLE+AxSbAHAEijZVyyquS0D9T2eFJ0G0hp0DDa1n9qNXp
-	YJmz395QE9CrfZJ8Mqk+Fh/sa7Coqbv4/P3Mmrk2l3YyYXIOgIEN9dros7cP28LKQGa+eL
-	HAC4VmznYjuYblq7jM72edaJ8bmTtvk=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-9-eqaHei_KPuKIW-qlQ7-14A-1; Wed, 06 Aug 2025 18:25:01 -0400
-X-MC-Unique: eqaHei_KPuKIW-qlQ7-14A-1
-X-Mimecast-MFC-AGG-ID: eqaHei_KPuKIW-qlQ7-14A_1754519101
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e40b2750eeso920705ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 15:25:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754519101; x=1755123901;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2KWudinkIbXD4F4ulzK9/+oUi2avXDJW6sBf89lUWmU=;
-        b=U00I3+O1kKLM8773bWpVnvx5uDoeWT2zRwtDtFJP8qOh5ZEYUBVXjMI9rZXp5D38Wt
-         YIV55MXhkGauwBQSfiaEWMZRGXFQUpYojmRDQU2SQu83vDUqaqHQweVoP6klxPRtP4i8
-         r0sIhr5+wL+IzxQwHwAk6MkUlpyJK1JsLL9yAns4GndEeHtES7E/aBSfzYkSUcNfBYzQ
-         7tXUu1TCpH20amXoKMR0GUEgFY/ZY7t2NTeTDMpcg2/YR6D2ZJyGj3hNqnoPdgW7joEy
-         Ab4lOvtHLuM8p+XDvHBAdqhxc5mUu9/fOPuV85DP33AO7GBVBeURW2cjT2ZVJwEbk1Gs
-         p14w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAVeDGYnkab2YaoTRiErW+I2kYepS9iDKqje+SHCBNz2HO5wttjjeWKGlJOmBTOuXj+JubuYRzWH8f4zE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhviSYstlAdhH4PDHKewIG/IxSCmvMAHsql2e64Aayzmy40h2f
-	RN6C2UyKF27G/J3wsses+9CnIhTzXBwLFw3U00/ytUAlLo+JQaCGLx1HJXDMLgubnQYW6HzXYWe
-	YtpkpIPKmCC5csPzFvWTfDTubCEFADKJqHdSuBl2pJ12NpZDxiKRPzR4WOKew5Ns6BQ==
-X-Gm-Gg: ASbGncsAk4lCbV7Hj4ulqWPPlf7K1LB6xhoX8vKezalU6cqXbnI0WGnZAizgIH4fDJ3
-	t2sVbF3zAwCv+SN3cU3YzoJtfuQ+QyP2K4CUNGnS3wBk9o81JmmRJwSzTICkIucPB62xMGicZxQ
-	4x86DHL+5FO2x8FOGeWKs1FaAMQJC/2eD4VXOyB2a2t28/PchvpLRB1z3oPIo27pbuKczt++qle
-	v6W/XdUcj/2ewYxFZr48iQV43mZ0IhGp7KbxrHtZW28V9h2frZa+8j3sEYobnaCu2FVro6GVmf+
-	a/P8Ed6jkouTNqLooyjoNgsNgeeFDfaQgCX09iPDCPk=
-X-Received: by 2002:a05:6602:148a:b0:85d:9793:e0d8 with SMTP id ca18e2360f4ac-8819eddca30mr265751439f.0.1754519100571;
-        Wed, 06 Aug 2025 15:25:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJbvSuwj5vna+ENO4HZHTFh+EQIF6Bqd2408Pfz1T06ISMEQUJO+65aGvhO/KGJJ7KSEu0KQ==
-X-Received: by 2002:a05:6602:148a:b0:85d:9793:e0d8 with SMTP id ca18e2360f4ac-8819eddca30mr265749739f.0.1754519100087;
-        Wed, 06 Aug 2025 15:25:00 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-88175b2e0c6sm314280239f.31.2025.08.06.15.24.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 15:24:59 -0700 (PDT)
-Date: Wed, 6 Aug 2025 16:24:55 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Christoph Hellwig <hch@lst.de>,
- dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, Jens Axboe
- <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, Logan Gunthorpe
- <logang@deltatee.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin
- Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v1 10/10] vfio/pci: Add dma-buf export support for MMIO
- regions
-Message-ID: <20250806162455.350f73a4.alex.williamson@redhat.com>
-In-Reply-To: <5e043d8b95627441db6156e7f15e6e1658e9d537.1754311439.git.leon@kernel.org>
-References: <cover.1754311439.git.leon@kernel.org>
-	<5e043d8b95627441db6156e7f15e6e1658e9d537.1754311439.git.leon@kernel.org>
-Organization: Red Hat
+	s=arc-20240116; t=1754519163; c=relaxed/simple;
+	bh=wSP/FnjATYBkD9tjSijm87GKcLGQ9Dv8hJCzfo90h/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbbPQJwcc2cAWRYMqvaOFjhP1PlLsQCwMv2f7xABJE/7t4C4cIOF4dU/Y2p8nje5lXcz0oFSafZZLBEngAix3h1QeX7ljfkucagZ5SFkhmpOulxjM4LrSS2BMTevY4ZqOK/Y1oGz265ljcdwzqyGtNUBozayk6JqENMTq3BgRJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZVZtpHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487F9C4CEE7;
+	Wed,  6 Aug 2025 22:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754519163;
+	bh=wSP/FnjATYBkD9tjSijm87GKcLGQ9Dv8hJCzfo90h/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iZVZtpHcJ84kPEusQRbGh0yw0RjPpg0xx99EEBSWIBT7fatVExcSR13RCFr0P/Am9
+	 f2rvIpIy9szjA5QOgilFY47ledEhI6DZBUnBeVsHIa6foNSKny7oPvL/byTHW/fhTr
+	 UnwXixzezWxz5XRhtEWzuk1Ypp9tdH5bYTc9opJToSJ/fx2bbRqIebIzkKbNENvG1W
+	 NJsvHnXcqdajLfRfpjWXrBzmSSTm5hIwNg4NCzwwUmkZyCA8zHEis15KZ4E///gMeC
+	 XEO+0WBvsRRHw7PazG7Z22ryiE+ERSdb085I8LV78NiNdQmClZ/9uAxCOAHac92DHo
+	 97Th+tup2Yegw==
+Date: Wed, 6 Aug 2025 15:25:57 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Tom Rix <trix@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 6.1.y] KVM: arm64: sys_regs: disable
+ -Wuninitialized-const-pointer warning
+Message-ID: <20250806222557.GA1654483@ax162>
+References: <20250728-stable-disable-unit-ptr-warn-v1-1-958be9b66520@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728-stable-disable-unit-ptr-warn-v1-1-958be9b66520@google.com>
 
-On Mon,  4 Aug 2025 16:00:45 +0300
-Leon Romanovsky <leon@kernel.org> wrote:
-
-> From: Leon Romanovsky <leonro@nvidia.com>
+On Mon, Jul 28, 2025 at 02:07:36PM -0700, Justin Stitt wrote:
+> A new warning in Clang 22 [1] complains that @clidr passed to
+> get_clidr_el1() is an uninitialized const pointer. get_clidr_el1()
+> doesn't really care since it casts away the const-ness anyways -- it is
+> a false positive.
 > 
-> Add support for exporting PCI device MMIO regions through dma-buf,
-> enabling safe sharing of non-struct page memory with controlled
-> lifetime management. This allows RDMA and other subsystems to import
-> dma-buf FDs and build them into memory regions for PCI P2P operations.
+> |  ../arch/arm64/kvm/sys_regs.c:2978:23: warning: variable 'clidr' is uninitialized when passed as a const pointer argument here [-Wuninitialized-const-pointer]
+> |   2978 |         get_clidr_el1(NULL, &clidr); /* Ugly... */
+> |        |                              ^~~~~
 > 
-> The implementation provides a revocable attachment mechanism using
-> dma-buf move operations. MMIO regions are normally pinned as BARs
-> don't change physical addresses, but access is revoked when the VFIO
-> device is closed or a PCI reset is issued. This ensures kernel
-> self-defense against potentially hostile userspace.
+> Disable this warning for sys_regs.o with an iron fist as it doesn't make
+> sense to waste maintainer's time or potentially break builds by
+> backporting large changelists from 6.2+.
 > 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> This patch isn't needed for anything past 6.1 as this code section was
+> reworked in Commit 7af0c2534f4c ("KVM: arm64: Normalize cache
+> configuration").
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7c8c5e6a9101e ("arm64: KVM: system register handling")
+> Link: https://github.com/llvm/llvm-project/commit/00dacf8c22f065cb52efb14cd091d441f19b319e [1]
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
 > ---
->  drivers/vfio/pci/Kconfig           |  20 ++
->  drivers/vfio/pci/Makefile          |   2 +
->  drivers/vfio/pci/vfio_pci_config.c |  22 +-
->  drivers/vfio/pci/vfio_pci_core.c   |  25 +-
->  drivers/vfio/pci/vfio_pci_dmabuf.c | 390 +++++++++++++++++++++++++++++
->  drivers/vfio/pci/vfio_pci_priv.h   |  23 ++
->  include/linux/dma-buf.h            |   1 +
->  include/linux/vfio_pci_core.h      |   3 +
->  include/uapi/linux/vfio.h          |  25 ++
->  9 files changed, 506 insertions(+), 5 deletions(-)
->  create mode 100644 drivers/vfio/pci/vfio_pci_dmabuf.c
+
+Yes, I think this is an appropriate way to address this for stable.
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+> ---
+>  arch/arm64/kvm/Makefile | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-> index 2b0172f546652..55ae888bf26ae 100644
-> --- a/drivers/vfio/pci/Kconfig
-> +++ b/drivers/vfio/pci/Kconfig
-> @@ -55,6 +55,26 @@ config VFIO_PCI_ZDEV_KVM
+> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
+> index 5e33c2d4645a..5fdb5331bfad 100644
+> --- a/arch/arm64/kvm/Makefile
+> +++ b/arch/arm64/kvm/Makefile
+> @@ -24,6 +24,9 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
 >  
->  	  To enable s390x KVM vfio-pci extensions, say Y.
+>  kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
 >  
-> +config VFIO_PCI_DMABUF
-> +	bool "VFIO PCI extensions for DMA-BUF"
-> +	depends on VFIO_PCI_CORE
-> +	depends on PCI_P2PDMA && DMA_SHARED_BUFFER
-> +	default y
-> +	help
-> +	  Enable support for VFIO PCI extensions that allow exporting
-> +	  device MMIO regions as DMA-BUFs for peer devices to access via
-> +	  peer-to-peer (P2P) DMA.
+> +# Work around a false positive Clang 22 -Wuninitialized-const-pointer warning
+> +CFLAGS_sys_regs.o := $(call cc-disable-warning, uninitialized-const-pointer)
 > +
-> +	  This feature enables a VFIO-managed PCI device to export a portion
-> +	  of its MMIO BAR as a DMA-BUF file descriptor, which can be passed
-> +	  to other userspace drivers or kernel subsystems capable of
-> +	  initiating DMA to that region.
-> +
-> +	  Say Y here if you want to enable VFIO DMABUF-based MMIO export
-> +	  support for peer-to-peer DMA use cases.
-> +
-> +	  If unsure, say N.
-> +
->  source "drivers/vfio/pci/mlx5/Kconfig"
+>  always-y := hyp_constants.h hyp-constants.s
 >  
->  source "drivers/vfio/pci/hisilicon/Kconfig"
-> diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
-> index cf00c0a7e55c8..f9155e9c5f630 100644
-> --- a/drivers/vfio/pci/Makefile
-> +++ b/drivers/vfio/pci/Makefile
-> @@ -2,7 +2,9 @@
->  
->  vfio-pci-core-y := vfio_pci_core.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
->  vfio-pci-core-$(CONFIG_VFIO_PCI_ZDEV_KVM) += vfio_pci_zdev.o
-> +
->  obj-$(CONFIG_VFIO_PCI_CORE) += vfio-pci-core.o
-> +vfio-pci-core-$(CONFIG_VFIO_PCI_DMABUF) += vfio_pci_dmabuf.o
->  
->  vfio-pci-y := vfio_pci.o
->  vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
-> diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-> index 8f02f236b5b4b..7e23387a43b4d 100644
-> --- a/drivers/vfio/pci/vfio_pci_config.c
-> +++ b/drivers/vfio/pci/vfio_pci_config.c
-> @@ -589,10 +589,12 @@ static int vfio_basic_config_write(struct vfio_pci_core_device *vdev, int pos,
->  		virt_mem = !!(le16_to_cpu(*virt_cmd) & PCI_COMMAND_MEMORY);
->  		new_mem = !!(new_cmd & PCI_COMMAND_MEMORY);
->  
-> -		if (!new_mem)
-> +		if (!new_mem) {
->  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> -		else
-> +			vfio_pci_dma_buf_move(vdev, true);
-> +		} else {
->  			down_write(&vdev->memory_lock);
-> +		}
->  
->  		/*
->  		 * If the user is writing mem/io enable (new_mem/io) and we
-> @@ -627,6 +629,8 @@ static int vfio_basic_config_write(struct vfio_pci_core_device *vdev, int pos,
->  		*virt_cmd &= cpu_to_le16(~mask);
->  		*virt_cmd |= cpu_to_le16(new_cmd & mask);
->  
-> +		if (__vfio_pci_memory_enabled(vdev))
-> +			vfio_pci_dma_buf_move(vdev, false);
->  		up_write(&vdev->memory_lock);
->  	}
->  
-> @@ -707,12 +711,16 @@ static int __init init_pci_cap_basic_perm(struct perm_bits *perm)
->  static void vfio_lock_and_set_power_state(struct vfio_pci_core_device *vdev,
->  					  pci_power_t state)
->  {
-> -	if (state >= PCI_D3hot)
-> +	if (state >= PCI_D3hot) {
->  		vfio_pci_zap_and_down_write_memory_lock(vdev);
-> -	else
-> +		vfio_pci_dma_buf_move(vdev, true);
-> +	} else {
->  		down_write(&vdev->memory_lock);
-> +	}
->  
->  	vfio_pci_set_power_state(vdev, state);
-> +	if (__vfio_pci_memory_enabled(vdev))
-> +		vfio_pci_dma_buf_move(vdev, false);
->  	up_write(&vdev->memory_lock);
->  }
->  
-> @@ -900,7 +908,10 @@ static int vfio_exp_config_write(struct vfio_pci_core_device *vdev, int pos,
->  
->  		if (!ret && (cap & PCI_EXP_DEVCAP_FLR)) {
->  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> +			vfio_pci_dma_buf_move(vdev, true);
->  			pci_try_reset_function(vdev->pdev);
-> +			if (__vfio_pci_memory_enabled(vdev))
-> +				vfio_pci_dma_buf_move(vdev, true);
-
-@revoked true -> true seems wrong.
-
->  			up_write(&vdev->memory_lock);
->  		}
->  	}
-> @@ -982,7 +993,10 @@ static int vfio_af_config_write(struct vfio_pci_core_device *vdev, int pos,
->  
->  		if (!ret && (cap & PCI_AF_CAP_FLR) && (cap & PCI_AF_CAP_TP)) {
->  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> +			vfio_pci_dma_buf_move(vdev, true);
->  			pci_try_reset_function(vdev->pdev);
-> +			if (__vfio_pci_memory_enabled(vdev))
-> +				vfio_pci_dma_buf_move(vdev, true);
-
-Same.
-
->  			up_write(&vdev->memory_lock);
->  		}
->  	}
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index b1863d84b11aa..8e840ac413e9b 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -28,7 +28,9 @@
->  #include <linux/nospec.h>
->  #include <linux/sched/mm.h>
->  #include <linux/iommufd.h>
-> +#ifdef CONFIG_VFIO_PCI_DMABUF
->  #include <linux/pci-p2pdma.h>
-> +#endif
->  #if IS_ENABLED(CONFIG_EEH)
->  #include <asm/eeh.h>
->  #endif
-> @@ -287,6 +289,8 @@ static int vfio_pci_runtime_pm_entry(struct vfio_pci_core_device *vdev,
->  	 * semaphore.
->  	 */
->  	vfio_pci_zap_and_down_write_memory_lock(vdev);
-> +	vfio_pci_dma_buf_move(vdev, true);
-> +
->  	if (vdev->pm_runtime_engaged) {
->  		up_write(&vdev->memory_lock);
->  		return -EINVAL;
-> @@ -370,6 +374,8 @@ static void vfio_pci_runtime_pm_exit(struct vfio_pci_core_device *vdev)
->  	 */
->  	down_write(&vdev->memory_lock);
->  	__vfio_pci_runtime_pm_exit(vdev);
-> +	if (__vfio_pci_memory_enabled(vdev))
-> +		vfio_pci_dma_buf_move(vdev, false);
->  	up_write(&vdev->memory_lock);
->  }
->  
-> @@ -690,6 +696,8 @@ void vfio_pci_core_close_device(struct vfio_device *core_vdev)
->  #endif
->  	vfio_pci_core_disable(vdev);
->  
-> +	vfio_pci_dma_buf_cleanup(vdev);
-> +
->  	mutex_lock(&vdev->igate);
->  	if (vdev->err_trigger) {
->  		eventfd_ctx_put(vdev->err_trigger);
-> @@ -1222,7 +1230,10 @@ static int vfio_pci_ioctl_reset(struct vfio_pci_core_device *vdev,
->  	 */
->  	vfio_pci_set_power_state(vdev, PCI_D0);
->  
-> +	vfio_pci_dma_buf_move(vdev, true);
->  	ret = pci_try_reset_function(vdev->pdev);
-> +	if (__vfio_pci_memory_enabled(vdev))
-> +		vfio_pci_dma_buf_move(vdev, false);
->  	up_write(&vdev->memory_lock);
->  
->  	return ret;
-> @@ -1511,6 +1522,8 @@ int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
->  		return vfio_pci_core_pm_exit(vdev, flags, arg, argsz);
->  	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
->  		return vfio_pci_core_feature_token(vdev, flags, arg, argsz);
-> +	case VFIO_DEVICE_FEATURE_DMA_BUF:
-> +		return vfio_pci_core_feature_dma_buf(vdev, flags, arg, argsz);
->  	default:
->  		return -ENOTTY;
->  	}
-> @@ -2085,9 +2098,13 @@ int vfio_pci_core_init_dev(struct vfio_device *core_vdev)
->  	INIT_LIST_HEAD(&vdev->dummy_resources_list);
->  	INIT_LIST_HEAD(&vdev->ioeventfds_list);
->  	INIT_LIST_HEAD(&vdev->sriov_pfs_item);
-> +#ifdef CONFIG_VFIO_PCI_DMABUF
->  	vdev->provider = pci_p2pdma_enable(vdev->pdev);
->  	if (IS_ERR(vdev->provider))
->  		return PTR_ERR(vdev->provider);
-> +
-> +	INIT_LIST_HEAD(&vdev->dmabufs);
-> +#endif
->  	init_rwsem(&vdev->memory_lock);
->  	xa_init(&vdev->ctx);
->  
-> @@ -2470,11 +2487,17 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
->  	 * cause the PCI config space reset without restoring the original
->  	 * state (saved locally in 'vdev->pm_save').
->  	 */
-> -	list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
-> +	list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list) {
-> +		vfio_pci_dma_buf_move(vdev, true);
->  		vfio_pci_set_power_state(vdev, PCI_D0);
-> +	}
-
-The revoke should have happened at the time the BARs were zapped.
-Thanks,
-
-Alex
-
->  
->  	ret = pci_reset_bus(pdev);
->  
-> +	list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
-> +		if (__vfio_pci_memory_enabled(vdev))
-> +			vfio_pci_dma_buf_move(vdev, false);
-> +
->  	vdev = list_last_entry(&dev_set->device_list,
->  			       struct vfio_pci_core_device, vdev.dev_set_list);
->  
-
+>  define rule_gen_hyp_constants
+> 
+> ---
+> base-commit: 830b3c68c1fb1e9176028d02ef86f3cf76aa2476
+> change-id: 20250728-stable-disable-unit-ptr-warn-281fee82539c
+> 
+> Best regards,
+> --
+> Justin Stitt <justinstitt@google.com>
+> 
 
