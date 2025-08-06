@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-757956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECBBB1C8CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:34:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDF0B1C8D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 136B04E34B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAE6E7A3B56
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72C8291C18;
-	Wed,  6 Aug 2025 15:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11AE294A0B;
+	Wed,  6 Aug 2025 15:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="skleuETo"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJJzJ5m4"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97756AD5A;
-	Wed,  6 Aug 2025 15:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19524503C;
+	Wed,  6 Aug 2025 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494467; cv=none; b=oKmit+y5L26yOXK7OhA8vK++ZH7IKVrqUm8XsoClxsqqT4neETmk9pC/FHs1kFngip0tBr3+ICeTtM5/XG+sGKblAe2L6Hcom3tr+YzRveN8hGcj0lSz3sQ+5Wzv2HZhFqLWkLGaWg5M2uxFp7S+gmDS4mXfc9HBzXnonnOopL4=
+	t=1754494468; cv=none; b=WiaD2KKFlxO9MlwD1NG4jOdXbdDlAXvqTcnI6mdorakJvQo6/coFzDiMYeFsRPBPcOzuAwZNyKvkHAIqWPpzHNmrurLoGIijaPwLCZMATp4tUgYApDjAnhH9jrQzyGrLUa/l8rdxGL2Xm/Ucu7aSj2OJqHAeEW4A/3l+hEDIpwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494467; c=relaxed/simple;
-	bh=Jit/bnNHlQMDo9ewLxqU4Bc5KKfUzRCxyJ/cLnh1YNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eBZLXAyWPtmMvwC9f/FNO11/rOVCxxCEr2eICtMFXCgsBZFYL1EgE7DNxOP0zhbL49LPOFmFkIeEJ98iybWDieAzD+byryTamsIZBMJY0Vsx9jX9aPFZ+5ohHyJGbdv2MQTmOAIoolq+TRi4jamkNFnK8AXXJCMAVs2egGSxkp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=skleuETo; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576FTZjq001991;
-	Wed, 6 Aug 2025 17:34:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=VGM4i/YY8L3GxVbjbzZ+E1
-	wPLPAJDd6KHMtwpJhsXpg=; b=skleuEToU7r5Casj+OZTYun99QOB8DFNTFQ4gF
-	yLZwcardz6CLAhXNpoFWCTjttw94meQyIvM0uUQQLkFzq0RLYX7Eh2QldUct1v1U
-	LH5M7mMW7AUO2ceaRvyXOTuQmZsPChxoKmryoh5QA1okx2yKksGkG2Tx3oDVJItv
-	SBxhNnvMiMKvUhecO0siRRIm4A9jcFl6+EGhd5Hdy8g+ufpHewostoxOEaaimwT9
-	EDCVS3EApwDVWtrv3Sr7PwcF7J/RHT9MApWwNcl8QPilLpumde8stW2lxMSKsP5L
-	apKUvkID04kAmGSIijAdsB47yYTqP6d8B447BtSxoVP8defg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx8c1b1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 17:34:12 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 551D240053;
-	Wed,  6 Aug 2025 17:33:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1A45D7385C3;
-	Wed,  6 Aug 2025 17:32:43 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Aug
- 2025 17:32:42 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Wed, 6 Aug 2025 17:32:42 +0200
-Subject: [PATCH] memory: stm32_omm: Fix req2ack update test
+	s=arc-20240116; t=1754494468; c=relaxed/simple;
+	bh=9k5FqnoKkgBQy4Bx9d/Hz1VRfIa6e+0sJLuBBqzZUKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=elcrqjRiNvyB6S4bj1owW20MrIIsZz/XEQfCnDk5BAWvM0hMQYqVHH6mBlTyreqBIzr/idisDOQu81mTqvKbWO9sCnQoUDEOu/EXvotN8/Y/rS7ODDvNf566au9YmyHne3gnKkG3UaNTYZ102PGv0tRD7WW/8RLX+lR1dnefuyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJJzJ5m4; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55b823c9129so6847902e87.3;
+        Wed, 06 Aug 2025 08:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754494465; x=1755099265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dr2iD/x5RNPmf2/wZEirrgdGMAy27l5lk2Wo0A6tpXk=;
+        b=nJJzJ5m4BN0Q2AqdOZ36CW/wdCvynCkbRrIEIfGt4yM1WlE55pDaJf4lVVp3qFQ9Fw
+         KB7FMbVMaQTPRfbHlANGk+QHB721D7/PKZcBUnRIxQLI2kAbTElwoZscjlEwyF45jldQ
+         iWOsstU9Za3/ApPjWPjaAomTWaflIePE5ODF71Eu/mYD5LTm5AGl+6AA7rmEPZKDS/WD
+         jXA2xKMqHuU0MsxnFh8lHdsNW7VWTKAqo+/UYSo9o0CZvfDybWxLPR0C4FS5wnsK6rXD
+         3HWaC+xGVZFAQIvkp1wegVjyzSzsewkq4ltGTW+8L+Ibrk+ioIrmOIcQ3G9mm52/dbh9
+         ZayA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754494465; x=1755099265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dr2iD/x5RNPmf2/wZEirrgdGMAy27l5lk2Wo0A6tpXk=;
+        b=slK28Ck0hEnTvh4cbq3UDB9bEKKa7x6HZ2NKhqk0TXVQJ9YAf+bS4LfiXmo2xl/koN
+         TB6BUMP9yfVpnK70Ve7vIz5VG7f1NW//POxvV/LCfL3OedIHWVZcqCfzOskPNU9/OJW1
+         Zb4YI0hsAB54YRK7G2VhDxUtaoDfzzMH+7digs2zRrVD6Oh18pSSdqBLmsM3HjuVsraQ
+         y87gqDSsQxFGtBk+cmdRVSOpIpo5ZdIZQeMbYZrKUJ5hLpee/ptUnPUov4bLfejBSMZ1
+         Fknb7v4pI7hml7QsupNKTKfgV1PReRlNtlvv4w/bPviQmd8BOMDD2PY0VWKBiC1o3nVV
+         zS3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfENQVhaktTcTvyk3JVoHv0lQeT+2dJ+XDgfrMNS5ZdbpqQZTKXsy6jcwlFs1+xzNPdECKrLgOOjGOliuuJBHI@vger.kernel.org, AJvYcCV2foRLVS54Tm0qeAKCKghCk7TBZvsNeQxxvHO4IVU6jR0egbPR5uKhzK39nbspA0AtGyXhhqEN@vger.kernel.org, AJvYcCWO3pajrqLaBCy4SzSdnCMXvaWfAe2qgg88PTp1HD3w0ioQe+umlCnXG9VBdoMXVevgbwpaLOk3NvrLgsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx26TTgAN8NoGNQbdJ+CMmxXOWc3U0lHRMYz4ifXh06VfPCUY0+
+	Tz7jQefJaV+u4yjtgxC0mHY8DFpTwv5UMZSb+1PV7PxYI0WDiVW/paLIuRQVQ10WdduRqjRaKhI
+	l1eWPij3KC2IvrSQGLnhMURIDmjF1k55augDw
+X-Gm-Gg: ASbGncsCpitM9Zm2XVb8f/wc2mtMcOJsyd2ji76ybvDvMkuPXcEP6+4h+faA9ZgNf0m
+	YgctlDi24YVfEOl4aN8k3diG7WDD+794aCaW0hP1TWud9ISvpYJ8/wSgR/LF5rzQTB/75jYPjXv
+	xTUK50aaPo4o5athf+hSVTTK6qWapWskHLnJkzvASbvtrw+LbizXOr9cC80w1eoD1WEyOb8zyzu
+	BUJ6KIo45HQ6gBlkGamqNh3GQIVp3hFbg5fbq70cQ==
+X-Google-Smtp-Source: AGHT+IHzYnj2t0StXyiHnTT7AmBDLHvyVs5VmB+AUx/CTQwaqmFE5NjD51Ls4fjvngJ3ybeRwbshDtvTMQF8qgnMbII=
+X-Received: by 2002:a05:6512:3c8e:b0:55b:8f40:32bd with SMTP id
+ 2adb3069b0e04-55caf34c5bfmr1035444e87.33.1754494464775; Wed, 06 Aug 2025
+ 08:34:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250806-upstream_omm_fix_req2ack_test_condition-v1-1-4879a1d7f794@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIAJl1k2gC/x2N0QrCMAwAf2Xk2UJX0RV/RSTUNtMgbWfSiTD27
- xYfD467DZSESeEybCD0YeVaOoyHAeIzlAcZTp3BWXey3p7NumgTChlrzjjzF4XeLsQXNtKGsZb
- ErTfMNJGf7zaNx+Sh1xahbv9P19u+/wBG27kLeQAAAA==
-X-Change-ID: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <stable@vger.kernel.org>,
-        Patrice
- Chotard <patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_04,2025-08-06_01,2025-03-28_01
+References: <20250806082016.14891-1-pranav.tyagi03@gmail.com> <20250806082933.4c1240c1@kernel.org>
+In-Reply-To: <20250806082933.4c1240c1@kernel.org>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 6 Aug 2025 21:04:12 +0530
+X-Gm-Features: Ac12FXyFmqPogFZVuBbAAVtJwDwboWX38L2kXniEux0YesnBsfKWjaAg2UPcZOc
+Message-ID: <CAH4c4jKB_oTHDN6tp_ujBY_mNOyY_J60RrNFiFKXf=H_OCMPEA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/drivers/net: replace typeof() with __auto_type
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, shuah@kernel.org, dw@davidwei.uk, haiyuewa@163.com, 
+	axboe@kernel.dk, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix test which allows to compute req2ack value.
+On Wed, Aug 6, 2025 at 8:59=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Wed,  6 Aug 2025 13:50:16 +0530 Pranav Tyagi wrote:
+> > Replace typeof() with __auto_type in iou-zcrx.c.
+> > __auto_type was introduced in GCC 4.9 and reduces the compile time for
+> > all compilers. No functional changes intended.
+>
+> Yet another unnecessary compiler feature. Please no.
 
-Cc: stable@vger.kernel.org
-Fixes: 8181d061dcff ("memory: Add STM32 Octo Memory Manager driver")
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- drivers/memory/stm32_omm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
-index 79ceb1635698f6bc8bd4a39fdeaced1ec318e1f6..9efc56a85b5ecca49eb6dfc0ef83880f89591cd1 100644
---- a/drivers/memory/stm32_omm.c
-+++ b/drivers/memory/stm32_omm.c
-@@ -247,7 +247,7 @@ static int stm32_omm_configure(struct device *dev)
- 		if (mux & CR_MUXEN) {
- 			ret = of_property_read_u32(dev->of_node, "st,omm-req2ack-ns",
- 						   &req2ack);
--			if (!ret && !req2ack) {
-+			if (!ret && req2ack) {
- 				req2ack = DIV_ROUND_UP(req2ack, NSEC_PER_SEC / clk_rate_max) - 1;
- 
- 				if (req2ack > 256)
-
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
-
-Best regards,
--- 
-Patrice Chotard <patrice.chotard@foss.st.com>
-
+I understand. Thanks
 
