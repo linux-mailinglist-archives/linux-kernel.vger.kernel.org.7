@@ -1,261 +1,189 @@
-Return-Path: <linux-kernel+bounces-757437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EACB1C221
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E584B1C227
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C418D3AF1CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B11762201F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7B52253A0;
-	Wed,  6 Aug 2025 08:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F722248B3;
+	Wed,  6 Aug 2025 08:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="UPHt9F6E"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="HHoCLFf+"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1750F221FC4;
-	Wed,  6 Aug 2025 08:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0564717597
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754468836; cv=none; b=OEiUwBEC1U+KrIEe6ob027m1YMTTVNKBmXOu/KGcW22pF4EcOOGzx9LDs+D2q4T9OR/9pYs5dU0crKvNjRvTuCebqVk5Lh28EGy3MKB5zOXxIyhPwBPGA1J4cBFll3lJAq2XnP9z5C/Cs9fglsbzfNfEwRIWw1wsfH20TmH5u1E=
+	t=1754468864; cv=none; b=dLNR06kFVsEV2XOYNuqDpQke2kKTxc4aZLtueZnOJIPPRN2dHq1eiXUVpy0ldliA05unGKN1adIPwsIEpNjwnkXqTVmHqQNqdOdF0De+RnVq2Cds8ttFd9DFumXkN5IlgDNH181czLqbY39qRATzVWlnCB93ItE5qx4g11D5G54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754468836; c=relaxed/simple;
-	bh=pgQpHodpkhcojeyNKdD5BkOcegUZkhw2SfdPkwwilJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVVEDl0BaAGn+A8Za/CZ6i6fU0r90RxKg+4pkWE8B++7Lg9KrW4algy3b4HhOWfHsddBwwiCvsEC12czLf1Tej/0Sy/msixu/mmhc9F1t/yEJRBuu6iwV5hmI3vnRrlXBDj77AiVgVYHCDnxuOLT0PBpmY5IOi8jjH01BIVkGUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=UPHt9F6E; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bxk196VNwz9srK;
-	Wed,  6 Aug 2025 10:27:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754468830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JYF+CftJKgFMgDaCOhrQT1FCHgVWsqIPp5y9Z4UMf48=;
-	b=UPHt9F6EtzExdOuIYi1Ccy7Bf1XqtaljYjxNNI6TLSxDSk0tFj0UH5gexbuveR4L1UBI+n
-	82EHQynVP3NGTZWK/JA3Wb2RpLa3LFp9GcqB0GBvhni6eAxyP+nIcFA5lTT/JEAxM7TTI9
-	x8KdJOXHNK26wYwkajZXLy7UJ496uGF1tV8TCuhan7XZRQZwBqsnHcv4eG4C+LegnefdR0
-	SrNUGNQCeJYmhfCJxq5XjHqxr5Xd3wVYDlybEUJQYYL9fD4L7LD3Iaue2pGgk+TmEAU+UQ
-	OJp0utGZt0Lcm1wxxt7ngHrqd2/VuKLXFvoUJIbKxngnezf5Y2VHTFFrLUzhSg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Wed, 6 Aug 2025 10:26:59 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 3/5] mm: add static huge zero folio
-Message-ID: <v45bpb4aj734gb4i7bp2fgzo33mapn3oljprkvtrzk2r2f5p24@5uibrp7a5wfh>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-4-kernel@pankajraghav.com>
- <558da90d-e43d-464d-a3b6-02f6ee0de035@intel.com>
+	s=arc-20240116; t=1754468864; c=relaxed/simple;
+	bh=3S3a+SX5VmO05Maec9eRE6RoCy+xO8z8HXOAJuFHZik=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WSu/bwlaKtta0Rgw+UZmGaEsjar4iJy0AibxsBp7MLm06vQj2GzIFqP4PfQCbIWEmS/jL13PmySpvwzl8NILHbxYQsfSoZkA7AEShCSg00QLtZCDNStNZmIbKCA7qSviS8U/PrpljbXb+z2TiprVdNbiKufVtFu87zU4DZPHPNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=HHoCLFf+; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so6107460a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 01:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1754468862; x=1755073662; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ICquv6ryhz4yGvAhRfrCL5GzjO2ttknExu9gWXkhufM=;
+        b=HHoCLFf+zjep5c848W2lw0G3JOHjqP22h/v4TIZSITY+4sd9S5Ia024PU84/hyousk
+         Vaa52XA6SFjgN4iz2gHKsqXtvCQgJHpW3TAhSe6RSQp1i+MrSo+uQuyxl8RS9K5eY/Ga
+         OIpwnhDMijfdh9qFI607JgEnX/IUwGuHXHVAzB0Z/0x3Tj2I1S7S2RtPPQrJuQSA5Dqf
+         VYmvU35wB9Kc81UO/hIbtImiwBVl+2zYNhyK4x6ZQ8pjnUK60JZjAe4l2sUuqRl0XzYJ
+         0AAJLEdmsfPb5fu4ecL1++YJ4PYgJecBopO7lJ4ue8nsJ6UvOHZ0HjSF0CyHq8XCiYA4
+         bx1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754468862; x=1755073662;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICquv6ryhz4yGvAhRfrCL5GzjO2ttknExu9gWXkhufM=;
+        b=NQT5D7bAvMGgzmgNj4FlrfUM9PJ2+FuhYJy86YdVpfGpQKVCUX/zfejVq+BBKsCcci
+         gN7O8BzJfZmYpBBUuURPXbBrZ3UsMLcz4tFi1hS0knnMTw65rirHuJHjyWS5+mG81tvf
+         kpzOKBjT9wlZSKV+jwBrIifHEx14mQPQqPtVYUriwAuXXEQ6YxgaaQP/qrns5OXg4RKN
+         5IVOT8wDw1ZUvOURWI2D6WCmJekOTDFZDD0YYC8Ze3SLv5UXFsL3Oy1kIuj6opt2RZR6
+         aGmHYpOrE/v5Qt4iZlbJ56oh/mDtb396oVI/wi8DWp3PqsTRamu2uN3T9uZExC3g/kjO
+         kehw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqbkP795zUTZyzm6XtUYmIx3v90ZAHAJytuJXQIxWL7gjJdJJFpslmW1qaAn4zkCPng5Rz6DynJqSaEAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygb2DrW5jVOUkozxuiRuW+NAdJSpx27Go6N7slJtZQFV6ymVid
+	RzCFQgBRtnpEGbcalQzVFDDny6KiQrjpgv+0dqrgXyC9hCPg9GoxnO5e3mPyONfq44Y=
+X-Gm-Gg: ASbGncuySjc2fGlvIj6H0gpkQ/kYnF3dabjX1/bBhHiZZ+CihRc/MSId0LkaZhagACi
+	tJPpX3iOujs6ATjzmiW1lL380MK8OYnaD/7yDhs/lQqxEhXBndLIMboYb7ptf3WGchnHr28V8vV
+	0kuPjO/6IcwA2P0FM/Wlpzmt1ecpEBgxCdpK9Z4uH2c8oq4+plP4rKIgEvEtenIbe/mZ0a8nglK
+	/ZH4nqBHSPQSoBI4oRxDy6mFaRI3oZtMOQZPGe7N0AV6+htGHqB2IR1ewhkNO2AGC8BoIGiqxbp
+	Uqs38/m8hASRDzDkjyLu6g6b1InwdtaDt+rGK/XdTIs73bgzjPGxxhHkuUAtpmJHZ4BZIr0H4lJ
+	GjowrDZhkx3ADoYVoKv2iXIGfHgCvKzdqasjdHbuqaNCB
+X-Google-Smtp-Source: AGHT+IF733iTc0Ba1nKB+UFJNP5eZARUzQJ+6hiLMhjJTjgT2pG+RpgGeiBuUhrNLaGjp6P8GrowlQ==
+X-Received: by 2002:a17:903:950:b0:242:9bca:863c with SMTP id d9443c01a7336-2429f583a0cmr28973785ad.54.1754468862355;
+        Wed, 06 Aug 2025 01:27:42 -0700 (PDT)
+Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897690csm151958645ad.99.2025.08.06.01.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 01:27:42 -0700 (PDT)
+From: Nick Hu <nick.hu@sifive.com>
+To: anup@brainfault.org,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Nick Hu <nick.hu@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: [PATCH v2 1/2] irqchip/riscv-imsic: Restore the IMSIC registers
+Date: Wed,  6 Aug 2025 16:27:25 +0800
+Message-Id: <20250806082726.8835-2-nick.hu@sifive.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250806082726.8835-1-nick.hu@sifive.com>
+References: <20250806082726.8835-1-nick.hu@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <558da90d-e43d-464d-a3b6-02f6ee0de035@intel.com>
-X-Rspamd-Queue-Id: 4bxk196VNwz9srK
 
-On Tue, Aug 05, 2025 at 09:33:10AM -0700, Dave Hansen wrote:
-> On 8/4/25 05:13, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > There are many places in the kernel where we need to zeroout larger
-> > chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> > is limited by PAGE_SIZE.
-> ...
-> 
-> In x86-land, the rules are pretty clear about using imperative voice.
-> There are quite a few "we's" in the changelog and comments in this series.
-> 
-> I do think they're generally good to avoid and do lead to more clarity,
-> but I'm also not sure how important that is in mm-land these days.
+When the system woken up from the low power state, the IMSIC might be in
+the reset state. Therefore adding the CPU PM callbacks to restore the
+IMSIC register when the cpu resume from the low power state.
 
-Yeah, I will change it to imperative to stay consistent.
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Reviewed-by: Cyan Yang <cyan.yang@sifive.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+---
+ drivers/irqchip/irq-riscv-imsic-early.c | 40 ++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
-<snip>
-> >  static inline int split_folio_to_list_to_order(struct folio *folio,
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index e443fe8cd6cf..366a6d2d771e 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -823,6 +823,27 @@ config ARCH_WANT_GENERAL_HUGETLB
-> >  config ARCH_WANTS_THP_SWAP
-> >  	def_bool n
-> >  
-> > +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
-> > +	def_bool n
-> > +
-> > +config STATIC_HUGE_ZERO_FOLIO
-> > +	bool "Allocate a PMD sized folio for zeroing"
-> > +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
-> > +	help
-> > +	  Without this config enabled, the huge zero folio is allocated on
-> > +	  demand and freed under memory pressure once no longer in use.
-> > +	  To detect remaining users reliably, references to the huge zero folio
-> > +	  must be tracked precisely, so it is commonly only available for mapping
-> > +	  it into user page tables.
-> > +
-> > +	  With this config enabled, the huge zero folio can also be used
-> > +	  for other purposes that do not implement precise reference counting:
-> > +	  it is still allocated on demand, but never freed, allowing for more
-> > +	  wide-spread use, for example, when performing I/O similar to the
-> > +	  traditional shared zeropage.
-> > +
-> > +	  Not suitable for memory constrained systems.
-> 
-> IMNHO, this is written like a changelog, not documentation for end users
-> trying to make sense of Kconfig options. I'd suggest keeping it short
-> and sweet:
-> 
-> config PERSISTENT_HUGE_ZERO_FOLIO
-> 	bool "Allocate a persistent PMD-sized folio for zeroing"
-> 	...
-> 	help
-> 	  Enable this option to reduce the runtime refcounting overhead
-> 	  of the huge zero folio and expand the places in the kernel
-> 	  that can use huge zero folios.
-> 
-> 	  With this option enabled, the huge zero folio is allocated
-> 	  once and never freed. It potentially wastes one huge page
-> 	  worth of memory.
-> 
-> 	  Say Y if your system has lots of memory. Say N if you are
-> 	  memory constrained.
-> 
-This looks short and to the point. I can fold this in the next version.
-Thanks.
+diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
+index d9ae87808651..62bcbcae8bd4 100644
+--- a/drivers/irqchip/irq-riscv-imsic-early.c
++++ b/drivers/irqchip/irq-riscv-imsic-early.c
+@@ -7,6 +7,7 @@
+ #define pr_fmt(fmt) "riscv-imsic: " fmt
+ #include <linux/acpi.h>
+ #include <linux/cpu.h>
++#include <linux/cpu_pm.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -109,14 +110,8 @@ static void imsic_handle_irq(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static int imsic_starting_cpu(unsigned int cpu)
++static void imsic_restore(void)
+ {
+-	/* Mark per-CPU IMSIC state as online */
+-	imsic_state_online();
+-
+-	/* Enable per-CPU parent interrupt */
+-	enable_percpu_irq(imsic_parent_irq, irq_get_trigger_type(imsic_parent_irq));
+-
+ 	/* Setup IPIs */
+ 	imsic_ipi_starting_cpu();
+ 
+@@ -128,6 +123,19 @@ static int imsic_starting_cpu(unsigned int cpu)
+ 
+ 	/* Enable local interrupt delivery */
+ 	imsic_local_delivery(true);
++}
++
++static int imsic_starting_cpu(unsigned int cpu)
++{
++	/* Mark per-CPU IMSIC state as online */
++	imsic_state_online();
++
++	/* Enable per-CPU parent interrupt */
++	enable_percpu_irq(imsic_parent_irq,
++			  irq_get_trigger_type(imsic_parent_irq));
++
++	/* Restore the imsic reg */
++	imsic_restore();
+ 
+ 	return 0;
+ }
+@@ -143,6 +151,22 @@ static int imsic_dying_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
++static int imsic_pm_notifier(struct notifier_block *self, unsigned long cmd, void *v)
++{
++	switch (cmd) {
++	case CPU_PM_EXIT:
++		/* Restore the imsic reg */
++		imsic_restore();
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block imsic_pm_notifier_block = {
++	.notifier_call = imsic_pm_notifier,
++};
++
+ static int __init imsic_early_probe(struct fwnode_handle *fwnode)
+ {
+ 	struct irq_domain *domain;
+@@ -180,7 +204,7 @@ static int __init imsic_early_probe(struct fwnode_handle *fwnode)
+ 	cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_IMSIC_STARTING, "irqchip/riscv/imsic:starting",
+ 			  imsic_starting_cpu, imsic_dying_cpu);
+ 
+-	return 0;
++	return cpu_pm_register_notifier(&imsic_pm_notifier_block);
+ }
+ 
+ static int __init imsic_early_dt_init(struct device_node *node, struct device_node *parent)
+-- 
+2.17.1
 
-> >  config MM_ID
-> >  	def_bool n
-> >  
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index ff06dee213eb..e117b280b38d 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -75,6 +75,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
-> >  static bool split_underused_thp = true;
-> >  
-> >  static atomic_t huge_zero_refcount;
-> > +atomic_t huge_zero_folio_is_static __read_mostly;
-> >  struct folio *huge_zero_folio __read_mostly;
-> >  unsigned long huge_zero_pfn __read_mostly = ~0UL;
-> >  unsigned long huge_anon_orders_always __read_mostly;
-> > @@ -266,6 +267,45 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
-> >  		put_huge_zero_folio();
-> >  }
-> >  
-> > +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
-> > +
-> > +struct folio *__get_static_huge_zero_folio(void)
-> > +{
-> > +	static unsigned long fail_count_clear_timer;
-> > +	static atomic_t huge_zero_static_fail_count __read_mostly;
-> > +
-> > +	if (unlikely(!slab_is_available()))
-> > +		return NULL;
-> > +
-> > +	/*
-> > +	 * If we failed to allocate a huge zero folio, just refrain from
-> > +	 * trying for one minute before retrying to get a reference again.
-> > +	 */
-> > +	if (atomic_read(&huge_zero_static_fail_count) > 1) {
-> > +		if (time_before(jiffies, fail_count_clear_timer))
-> > +			return NULL;
-> > +		atomic_set(&huge_zero_static_fail_count, 0);
-> > +	}
-> 
-> Any reason that this is an open-coded ratelimit instead of using
-> 'struct ratelimit_state'?
-> 
-> I also find the 'huge_zero_static_fail_count' use pretty unintuitive.
-> This is fundamentally a slow path. Ideally, it's called once. In the
-> pathological case, it's called once a minute.
-> 
-> I'd probably just recommend putting a rate limit on this function, then
-> using a plain old mutex for the actual allocation to keep multiple
-> threads out.
-> 
-> Then the function becomes something like this:
-> 
-> 	if (__ratelimit(&huge_zero_alloc_ratelimit))
-> 		return;
-> 
-> 	guard(mutex)(&huge_zero_mutex);
-> 
-> 	if (!get_huge_zero_folio())
-> 		return NULL;
-> 
-> 	static_key_enable(&huge_zero_noref_key);
-> 
-> 	return huge_zero_folio;
-> 
-> No atomic, no cmpxchg, no races on allocating.
-
-David already reworked this part based on Lorenzo's feedback (he also
-did not like the ratelimiting part like you). The reworked diff is
-here[1]. No ratelimiting, etc.
-
-> 
-> 
-> ...
-> >  static unsigned long shrink_huge_zero_folio_count(struct shrinker *shrink,
-> >  						  struct shrink_control *sc)
-> >  {
-> > @@ -277,7 +317,11 @@ static unsigned long shrink_huge_zero_folio_scan(struct shrinker *shrink,
-> >  						 struct shrink_control *sc)
-> >  {
-> >  	if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
-> > -		struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
-> > +		struct folio *zero_folio;
-> > +
-> > +		if (WARN_ON_ONCE(atomic_read(&huge_zero_folio_is_static)))
-> > +			return 0;
-> > +		zero_folio = xchg(&huge_zero_folio, NULL);
-> >  		BUG_ON(zero_folio == NULL);
-> >  		WRITE_ONCE(huge_zero_pfn, ~0UL);
-> >  		folio_put(zero_folio);
-
-> 
-> This seems like a hack to me. If you don't want the shrinker to run,
-> then deregister it. Keeping the refcount elevated is fine, but
-> repeatedly calling the shrinker to do atomic_cmpxchg() when you *know*
-> it will do nothing seems silly.
-> 
-
-The new version[1] deregisters instead of having this condition. :)
-
-> If you can't deregister the shrinker, at least use the static_key
-> approach and check the static key instead of doing futile cmpxchg's forever.
-
---
-Pankaj
-
-[1] https://lore.kernel.org/linux-mm/70049abc-bf79-4d04-a0a8-dd3787195986@redhat.com/
 
