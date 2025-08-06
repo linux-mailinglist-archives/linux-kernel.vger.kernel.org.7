@@ -1,283 +1,318 @@
-Return-Path: <linux-kernel+bounces-757671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E00B1C52C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC86FB1C50B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916E05620B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:44:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E35497B06AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B23128C5BA;
-	Wed,  6 Aug 2025 11:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE2328B3EF;
+	Wed,  6 Aug 2025 11:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aSAq6H+T"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cS2ZX9H9"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011043.outbound.protection.outlook.com [52.101.70.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E478D28C030;
-	Wed,  6 Aug 2025 11:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754480573; cv=none; b=BUhA2LGUnD2Sqye9+MZD4ZFxh37c4HUcUqvcK+dZ8znuT8GKbw5BBIySY70oCwcToSc9GQyJ4BwUJU4rcDns7Dx8CIOyG2s2KM8Y49fTyQHC5pd5JOAm7vh8uWcKtJtS6ysFyROkXsTlhpJQ7Vr+Ao+5X1iHO8T02t1ZCuO73ME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754480573; c=relaxed/simple;
-	bh=AIGTeJYxg5f5rTF9J6Yr1pP2uX496go7egdBTNpDEjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sPMRuQ8OwUDZNmCfdjUF0fNTsUBi5+7EworwF32hSId9ETT3N/QT7j3cuJbEvdAODeWpmJg6ZVAybcETX1sXAShIkah5lhyUYXipQ6Od7WRS2jTw8ZgLx3aY6fyKSW3zXom5O9C1zzARAibmi/sEDlXnFAw+Iu2HFqTJLJOTeFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aSAq6H+T; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57692NVB018065;
-	Wed, 6 Aug 2025 11:42:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=kCizlyGIBjEVHLJ2i
-	2UgIfg7sJkeCUGZArvHbQj6wec=; b=aSAq6H+TVYDtBlIgytuIv7xyS1MJ/AIuJ
-	2Tm5zmjTP99oIw8o0iTj8gZGnKJ7+IkVb7me6Sh760ULzZlINNQ1wtKfIyzPVrQL
-	xIkRRte/ZF/2ozBzLm6jiRbeGrsZThNfraSRrkgW7DWR/dy75XfF68GndAXdBzuM
-	I542mDKYlKk7RMsYGwqCy2DF44j6D9Srl0mbqbrLcedGZVQF/Vo9J8XVp6QpmEMm
-	HrOwxO5wk471iDm6rbOr/2QT3JpFdICkQ/b9ElLWAkJFjjQvJIfoIuXag3sgiXEf
-	eLn052FK9KAix8QiWeRxNHHjrhU2zTjIZ4DWYqtCpNIfKaT6yDhlw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq633ukb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:42:37 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 576BbGqG026883;
-	Wed, 6 Aug 2025 11:42:37 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq633uk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:42:37 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57681YJN022687;
-	Wed, 6 Aug 2025 11:42:36 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqbcsc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:42:36 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 576BgWk250659818
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Aug 2025 11:42:32 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 836B420043;
-	Wed,  6 Aug 2025 11:42:32 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D680F20040;
-	Wed,  6 Aug 2025 11:42:31 +0000 (GMT)
-Received: from heavy.ibm.com (unknown [9.111.29.38])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Aug 2025 11:42:31 +0000 (GMT)
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Ian Rogers <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Thomas Richter <tmricht@linux.ibm.com>, Jiri Olsa <jolsa@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v4 2/2] perf bpf-filter: Enable events manually
-Date: Wed,  6 Aug 2025 13:40:35 +0200
-Message-ID: <20250806114227.14617-3-iii@linux.ibm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250806114227.14617-1-iii@linux.ibm.com>
-References: <20250806114227.14617-1-iii@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01803274FFE;
+	Wed,  6 Aug 2025 11:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754480534; cv=fail; b=Co7BnP2XXtogni4TPhaoHhMzCcuiiXxTb+sfHOKIjPTQxSDO+KMvxSGWIBWPNeuSVS37OfttEbE++z6snkf76JmS018706VDIITp9wSyxdetnbMjWf3tgUsUhJTlykqWVHii/nPWyANCR3Pe1XTmBc6nL3+PaE1TDWNyO8nlHtI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754480534; c=relaxed/simple;
+	bh=VDMIlyZR1wUosGCWlSVapeVA1zbEUwC2hLR4V/m5B8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AGCF/3HhjaLJXar3PWPYmLMITDvSF7PUaOlfTOCBFFRdrAMlkex1P8rMY7TEx5p1zSgftAyyITlT/TCRxcOocDE3MGZIgb3chnTOageR2LTVcA4s73yZ5QV7KaXap+NQUN6Oyh3DiolB9/OQ/14T5wcjfoBOSqz6TiemL+zXUxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cS2ZX9H9; arc=fail smtp.client-ip=52.101.70.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RxGUIARjq4CZMMqQk27QqdjuQFMXf1BELXF0YDn/sqkSCWoBrWey8yQy2pGMyzjIMX2Bsv2/h6NSvpZSD6FCKhofdBCKR8Wj0QGbSw8mqEFSgHWC8lWsLpJAkaVYGlXdidX6lplxwlv17IYGMnOIkDXilwQLqre6r4M3gGpjOQ4AQgHgUmBBihHIao5oI7BYLfJwzx5J5f8iTp0Q8/7kzIaCuKUDVu0qESswXcGMxkOJTyEjvI5RT1Zoretf/0LVpL74GhIs843y0TRXdjEIgwcUgQXfWq/h+pB0YJWPE4TaBq/HykoU3VSEARihPTllf5bHJwvSt6fVtWLibnUIpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rqKHWw1mwSPS9FPjSAMko+hyTgzgjMm5s7ZkeYCv9jQ=;
+ b=d0UZV+avoFhXHkTfPG1WGuYlONrrR4GoTtd65czrMlOLchruQz3VrMZs7XcbiisJvTQczSofqnhjt3Mvqugeh8AXCpK63Z8j29NoX7zqjipGdgCzGF1ibU8Wc1bzLOHO+MMTlsHZDHihelC1mk5Hn509bMCw1B21WKRvg23v4CUNSsikeCB7kyb/Nj74CWsCiqHCiZnq2tL3Xo8x86t0PWPg1UY3C1jVW8gvBIiRBAq4GZtNg7wUsmBSPv4jqPLp6NR3XDGZ0knExikjWx6yYXBclyQboZ8W/nreIGAjaWvpmcLX4dxVSM7ntQrPUHFuaFau7KSoj++EKl1UVCHLNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rqKHWw1mwSPS9FPjSAMko+hyTgzgjMm5s7ZkeYCv9jQ=;
+ b=cS2ZX9H9Q4000B829iMQ5kPwosO4T8+3LSbBLjPfhFOIN4sA5Z0LIwG6VFOygq55vCApSpFnDzpBW1znp9COssioi0blEbCoEhiKdZRdeb93itR693WkXjMrHjeen6786yvjJDy4K5poltibBkghmghBz8yThJywtybq4+DO9pT4hi3mcFjHq/NZ1rfApUnl1+MJufuQdg14ASg3/ljAg38ICDZr7nS45KozDezoIIL/wrPFWh2+bkKutV3s9fBwdG1BMYJoC/YRznX5idqkLnYAUQhTQmzOot0H/3I3EnaelrTzqqy8U4KITwA4rwGSw0I85dyeCexO6QbAPunxUA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
+ by AS8PR04MB8312.eurprd04.prod.outlook.com (2603:10a6:20b:3f1::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
+ 2025 11:42:08 +0000
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c%7]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 11:42:07 +0000
+From: Joy Zou <joy.zou@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	peng.fan@nxp.com,
+	richardcochran@gmail.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	ulf.hansson@linaro.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	frieder.schrempf@kontron.de,
+	primoz.fiser@norik.com,
+	othacehe@gnu.org,
+	Markus.Niebel@ew.tq-group.com,
+	alexander.stein@ew.tq-group.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com,
+	netdev@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Frank.Li@nxp.com
+Subject: [PATCH v8 00/11] Add i.MX91 platform support
+Date: Wed,  6 Aug 2025 19:41:08 +0800
+Message-Id: <20250806114119.1948624-1-joy.zou@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0031.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::11) To AS4PR04MB9386.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4e9::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2OCBTYWx0ZWRfX1EZA0dnykXKF
- kxr+0U5eNc1nrJcoVH3WWb/Xfh6cPPnE/0KgSsscLVMJhnWAnYsMwOLtXZluIWm1udgfY6qbCQU
- qbT5T8zR7F9U1YtxJ8wDsHxOo0rW6Vh/CoaK/OPytFZ2shO3IZ8ANDeUnLzQ75yaqgHhEgpZN/0
- 9GkzA4jZMk9JsviizY1zLBLmkac+eWp4l9dZphr1r4eVmIYPylXfLDzDHEjbJu/0ANdKn183Eeq
- A6JQsb2jOr3IzEeumWpdzPgauqiyjuEunEj587M9Ny+UOYizxGt4FReHLsrEDgU4g6pQYa4DHs2
- YV7toJSA/Yn8LM8ExokS+DjZ6sovj9la+tk3XXobmsJWl0Xuahexhy2shMG7t6FO64OUVzrBxho
- 7/NX+aL5QBUlLbGuknBj1z+g7pjmawIN0ZNUEVUQIssTNhX3cIaDkQHHQhCz2JNfMnR5+pDg
-X-Proofpoint-GUID: FgBIBnTGOEFzoYAjWcROHYtQV1Q3R7vG
-X-Authority-Analysis: v=2.4 cv=PoCTbxM3 c=1 sm=1 tr=0 ts=68933fae cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=w8wHeiwaHs5MaTQqMIoA:9
-X-Proofpoint-ORIG-GUID: J2WZsTn9MnauYsWfMsbgbFbpSmkH3uA2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508060068
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|AS8PR04MB8312:EE_
+X-MS-Office365-Filtering-Correlation-Id: b537854b-4377-49cc-ce7d-08ddd4de45c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|1800799024|52116014|7416014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZhTpALJwGdWzAUzrpO4Xso5/pS5jOJz0QG8ndbuzznsfAJBpRcb4xWALcAZF?=
+ =?us-ascii?Q?J/8QSjTzXi72vUNzWvs0JzoxxZJhdzhcUb2MqXMgleDiLW9VRBqHoYKoLima?=
+ =?us-ascii?Q?P6AMxvnHB1xN/mWbhZ9nbzL1So9W08aNGhL4Fs3rOxuO3/75k0eArL2okS82?=
+ =?us-ascii?Q?O3MhQQEDQXHsvOCQIr6OALSh9PH1DNdrXicB4ik1tXJXCSfqqCg6sB8TerzL?=
+ =?us-ascii?Q?MqSFNjG15uv8V5UAU0TucXHPoCcPo+a4CZB2fnokynv3z4CNevatOHy09As5?=
+ =?us-ascii?Q?OQ3Sqn0zHySuXus0V4gYto+QG9TGrwis8cCKwZg2jYg8PgwQBiiEumjj5uMF?=
+ =?us-ascii?Q?qe1rSkod//iKvmmddMzrsS9SkaQvDt+It7oEZajnRZuIEv3k9jpltJOgE5vJ?=
+ =?us-ascii?Q?2jPO8sBqlBqpvd528tm+xZ6KDjj58V/uPdGOkTwU5YzLHwIO93If2HIMLhnI?=
+ =?us-ascii?Q?bzVQqw/VRDqfQo+23YxW4F0CWo9WV/xL7rcRb4bmwJM5vYASHgLCINHSONi+?=
+ =?us-ascii?Q?oZpTmrhR69QACgSe57pZVJ1IAX/DJaxHVNJmLDy0/qxQAGul6wn0tUD3CO8A?=
+ =?us-ascii?Q?b/M7SKWhq5IlRA5z3I/nBqgnU8wH7SIe9hf0LAwdnIRNLI+50jJbfDvzgdIy?=
+ =?us-ascii?Q?VrZxVXHusKDpeDxasXPLa7i2c6T2zwdsSCg+yG5+kcfRphZTXoW4Ax1aq4XB?=
+ =?us-ascii?Q?Or3OCbyylAY6A/K9w2H2nh7XZTbpiwUAjD/CVN+zrgFkwrLEozBxhtM9ZETF?=
+ =?us-ascii?Q?LX2Nq/AHOwVxQqf402CXbAUOCs+CZKaf/KshxzEyPUOk/GlLZoMwKnVPO2mI?=
+ =?us-ascii?Q?ddtK+pID7Dc4P7f2D4opu96rQUBWazFjGQ5hSwhhmWBtkG9qBP1RHehqafwa?=
+ =?us-ascii?Q?blmdON/KhtFpcTetRyqvZxL9tu9N7qg5sZ9hDVbnKBLjkIUfVcdklsphHkrQ?=
+ =?us-ascii?Q?joeTNQdBZc2njXKJ2caVyiyDIG/mZbB6+x8195VbXg8h03izgmY6jS0EoAGs?=
+ =?us-ascii?Q?Rv7alg+OurOnpVAKXsXL+vhWcNSB+LXyeXlFK6IK4jczPp2zCgZRls+A/AgL?=
+ =?us-ascii?Q?21BQRmvOQv6Xj37pnOjLtUjTDH19S42rcCC8tJ7gnlVfGtbdPhAz6g+ohxFB?=
+ =?us-ascii?Q?cBFLVgvWjSjrqAymV3f2Rs7hfvTxrLwooFSeEPXalFAi9Rx0bEKA48hBEFyf?=
+ =?us-ascii?Q?6r3oCUo7QKuxhmt9Wi1X33eU/uL3dFpEaFH2WXeIKiEN4rR2pjQJa9/PTfkv?=
+ =?us-ascii?Q?2xOOj2wBv+E5p1u17I0HmkdFm0L9xKL4NSKwinTHfrr3R68gBUtFVn+zvEKF?=
+ =?us-ascii?Q?WmYix7R3NyqDCn63E7BD9h+veWNZCVvqE9vWY2cHCtE0BEZZH/RLl5b0eg21?=
+ =?us-ascii?Q?LZf5Duc065OKO03r+I5XjVZO+zcm6Pn2mzhEhz8OKfYL00sOLtDse/vnb3nv?=
+ =?us-ascii?Q?Ovrs8cg72O1F/Qqyb04MfaQGvtuqynH2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MHEprWjcmExKaDTYKNjTKgJ9iO4I2g0qYQwF/bcdeOVu0eeGPrn5P9j4M+6C?=
+ =?us-ascii?Q?pmbxWSgyntq605ulPlWjmT6NGpHG0/7866uNErIy/oVuXKE2QdQXo7TTL46l?=
+ =?us-ascii?Q?4DDzHVpPZCYReZvcBTedmroMsokwhTGSKR2xF+SxcX9S2T4eC3Zjm4VFZy4g?=
+ =?us-ascii?Q?nEuaU0AMFvlwXxc9rz7yfpdnHHZEuFcN/o6ESyMHaxU8Og4dY4x4bkOfWrO5?=
+ =?us-ascii?Q?e+UR89zV0PWDZ6fY9gUx9NN3ZYsKY3OG9p//LzTKfWbfjpmj/fjynbJL5K0C?=
+ =?us-ascii?Q?DuayVpd26KaHp80ssKipjHh3bGHd9rx1m9Uiemf+L4gf4mmk/crN5AjH3RK+?=
+ =?us-ascii?Q?8aEs8Mozc0/eBJnzHl/bcLOBYEQ517+B7qhpk0U/bYncvDp0Qqp8dHF4Xw+l?=
+ =?us-ascii?Q?C/zbBlpSHBsmhm9qZsQumtlX3efI/vX1XN4ADNlUCh05oBZniuzbDZrdA+bO?=
+ =?us-ascii?Q?wTTs1RuIqvjPUf5oZ4iLzE7mDgI528DSyvzMQZ0vmV0u1KlYV58VqRvExT5a?=
+ =?us-ascii?Q?144CpKqKJDPYOFzdVGFLmY6ZaPq3oHQTVqsNLCsdjn9YDGwhYaeX3gq5qPSs?=
+ =?us-ascii?Q?c+7JXsM85daBtANafO71YPh1e/CpJRieuvCq+vek4umYOVfwmLIjKWiOdo6J?=
+ =?us-ascii?Q?IhStqIKsvwOorFncYPT9ERx5XBRuzA1zonmHrA8TaQq9MJBBI7gmQB75Hq/W?=
+ =?us-ascii?Q?ouJtLhtGDC5YqshtdlKQpHwRPq88oABzitd5Dci/u4lxAaQQ1S01b0zhE7Qr?=
+ =?us-ascii?Q?ZVxikqrlYasO9U65n8TPvJXDL1cEapt0yEaUqTsfsIKAVbR1+GqrxP61034F?=
+ =?us-ascii?Q?pUKsC8G5fmiv5FuBR3kG67CYtLThMcUPnYtn9ZrkYGL4cGKh7OeQYc32Y/st?=
+ =?us-ascii?Q?iUi0D/SEbwiDAMr/oE0X0/cowl8vvcOBcHYN+3mUKHkSckXmBG0Kx/AFnt9H?=
+ =?us-ascii?Q?ZYy5dQ9Z2EIlckAQk+7FbVGNrXFVV6GV9B0UYUDjl/99AGusCr//FwIsxQ7i?=
+ =?us-ascii?Q?aoSnFPnq20L+kB7qLMnAX9y7RJ+Fwrq9T3vTbzl3NmieYRv+YZLhRJG0PKR/?=
+ =?us-ascii?Q?LcQnnTP8JA5jIDkfkKx2Iy2MD/79juo0HTUUZWbh/MJ0NL0pxDElCUbjNXz+?=
+ =?us-ascii?Q?XLeeE7ElE6l8kMBW3OHhPB/psLybamyP6A8hvz2pMcQLjd+/9rP2jGEOn1iK?=
+ =?us-ascii?Q?5Hv1kJUlzdfVk2m2tWYIQz7WPtAb087leC+NbCOF9YlwGOtfMTUIUleKLf/V?=
+ =?us-ascii?Q?k0hH3buDe9FtItWealMI3tSk2TjJLhhB25cwc+AEsCxOqmsSx8o/ags7g9NE?=
+ =?us-ascii?Q?vBvhSmPootTowxQ7fkaNumCPqtM3HL7LMeA6oB0Ov3wJyr5Dd7PIoyY0PlHn?=
+ =?us-ascii?Q?It/b2VmCEI6/vxeOt5uvDS60VpcBrxnAQdn44JFQhQaS+1SRWz5JTf56YBKd?=
+ =?us-ascii?Q?lk1KF9VQwKiK3AYCauSlQI1tIWCNaIE25rAFsEO3yhw2q81OAe2olSIf+RnN?=
+ =?us-ascii?Q?LcRzGw8UdVaRvQKWEXaS3jt+uw+jBovw7LCz7+JQNCueG1eORL75PoZOxBUR?=
+ =?us-ascii?Q?p/1UWvVvqdo6bPUKRXf9QkJPmTEKCE8CvQqjpKjV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b537854b-4377-49cc-ce7d-08ddd4de45c1
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 11:42:07.7403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: my6sGuj44jZYkpfxnGNXmCgcZsXt1wUPNb8A8SgTsSmfSLlILeLIrXSUCFHLyexD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8312
 
-On s390, and, in general, on all platforms where the respective event
-supports auxiliary data gathering, the command:
+The design of i.MX91 platform is very similar to i.MX93.
+Extracts the common parts in order to reuse code.
 
-   # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
-   [ perf record: Woken up 1 times to write data ]
-   [ perf record: Captured and wrote 0.011 MB perf.data ]
-   # ./perf report --stats | grep SAMPLE
-   #
+The mainly difference between i.MX91 and i.MX93 is as follows:
+- i.MX91 removed some clocks and modified the names of some clocks.
+- i.MX91 only has one A core.
+- i.MX91 has different pinmux.
 
-does not generate samples in the perf.data file. On x86 the command:
-
-  # sudo perf record -e intel_pt// -u 0 ls
-
-is broken too.
-
-Looking at the sequence of calls in 'perf record' reveals this
-behavior:
-
-1. The event 'cycles' is created and enabled:
-
-   record__open()
-   +-> evlist__apply_filters()
-       +-> perf_bpf_filter__prepare()
-	   +-> bpf_program.attach_perf_event()
-	       +-> bpf_program.attach_perf_event_opts()
-	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
-
-   The event 'cycles' is enabled and active now. However the event's
-   ring-buffer to store the samples generated by hardware is not
-   allocated yet.
-
-2. The event's fd is mmap()ed to create the ring buffer:
-
-   record__open()
-   +-> record__mmap()
-       +-> record__mmap_evlist()
-	   +-> evlist__mmap_ex()
-	       +-> perf_evlist__mmap_ops()
-	           +-> mmap_per_cpu()
-	               +-> mmap_per_evsel()
-	                   +-> mmap__mmap()
-	                       +-> perf_mmap__mmap()
-	                           +-> mmap()
-
-   This allocates the ring buffer for the event 'cycles'. With mmap()
-   the kernel creates the ring buffer:
-
-   perf_mmap(): kernel function to create the event's ring
-   |            buffer to save the sampled data.
-   |
-   +-> ring_buffer_attach(): Allocates memory for ring buffer.
-       |        The PMU has auxiliary data setup function. The
-       |        has_aux(event) condition is true and the PMU's
-       |        stop() is called to stop sampling. It is not
-       |        restarted:
-       |
-       |        if (has_aux(event))
-       |                perf_event_stop(event, 0);
-       |
-       +-> cpumsf_pmu_stop():
-
-   Hardware sampling is stopped. No samples are generated and saved
-   anymore.
-
-3. After the event 'cycles' has been mapped, the event is enabled a
-   second time in:
-
-   __cmd_record()
-   +-> evlist__enable()
-       +-> __evlist__enable()
-	   +-> evsel__enable_cpu()
-	       +-> perf_evsel__enable_cpu()
-	           +-> perf_evsel__run_ioctl()
-	               +-> perf_evsel__ioctl()
-	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
-
-   The second
-
-      ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-
-   is just a NOP in this case. The first invocation in (1.) sets the
-   event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
-
-   perf_ioctl()
-   +-> _perf_ioctl()
-       +-> _perf_event_enable()
-           +-> __perf_event_enable()
-
-   return immediately because event::state is already set to
-   PERF_EVENT_STATE_ACTIVE.
-
-This happens on s390, because the event 'cycles' offers the possibility
-to save auxilary data. The PMU callbacks setup_aux() and free_aux() are
-defined. Without both callback functions, cpumsf_pmu_stop() is not
-invoked and sampling continues.
-
-To remedy this, remove the first invocation of
-
-   ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
-
-in step (1.) Create the event in step (1.) and enable it in step (3.)
-after the ring buffer has been mapped.
-
-Output after:
-
- # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
- [ perf record: Woken up 3 times to write data ]
- [ perf record: Captured and wrote 0.876 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      16200  (99.5%)
-              SAMPLE events:      16200
- #
-
-The software event succeeded both before and after the patch:
-
- # ./perf record -e cpu-clock -aB --synth=no -u 0 -- \
-					  ./perf test -w thloop 2
- [ perf record: Woken up 7 times to write data ]
- [ perf record: Captured and wrote 2.870 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      53506  (99.8%)
-              SAMPLE events:      53506
- #
-
-Fixes: b4c658d4d63d61 ("perf target: Remove uid from target")
-Suggested-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- tools/perf/util/bpf-filter.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes for v8:
+- add Reviewed-by tag for patch #2/3/4/5/6/7/8/9/11.
+- modify commit message for patch #10.
+- move imx91 before imx93 in Makefile for patch #6.
+- modify the commit message to keep wrap at 75 chars for patch #5.
+- Link to v7: https://lore.kernel.org/imx/20250728071438.2332382-1-joy.zou@nxp.com/
 
-diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
-index d0e013eeb0f7..a0b11f35395f 100644
---- a/tools/perf/util/bpf-filter.c
-+++ b/tools/perf/util/bpf-filter.c
-@@ -451,6 +451,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
- 	struct bpf_link *link;
- 	struct perf_bpf_filter_entry *entry;
- 	bool needs_idx_hash = !target__has_cpu(target);
-+	DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts,
-+			    .dont_enable = true);
- 
- 	entry = calloc(MAX_FILTERS, sizeof(*entry));
- 	if (entry == NULL)
-@@ -522,7 +524,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
- 	prog = skel->progs.perf_sample_filter;
- 	for (x = 0; x < xyarray__max_x(evsel->core.fd); x++) {
- 		for (y = 0; y < xyarray__max_y(evsel->core.fd); y++) {
--			link = bpf_program__attach_perf_event(prog, FD(evsel, x, y));
-+			link = bpf_program__attach_perf_event_opts(prog, FD(evsel, x, y),
-+								   &pe_opts);
- 			if (IS_ERR(link)) {
- 				pr_err("Failed to attach perf sample-filter program\n");
- 				ret = PTR_ERR(link);
+Changes for v7:
+- Optimize i.MX91 num_clks hardcode with ARRAY_SIZE()for patch #10.
+- Add new patch in order to optimize i.MX93 num_clks hardcode
+  with ARRAY_SIZE() for patch #9.
+- remove this unused comments for patch #6.
+- align all pinctrl value to the same column for patch #6.
+- add aliases because remove aliases from common dtsi for patch #6.
+- remove fec property eee-broken-1000t from imx91 and imx93 board dts
+  for patch #6 and #7.
+- The aliases are removed from common.dtsi because the imx93.dtsi
+  aliases are removed for patch #4.
+- Add new patch that move aliases from imx93.dtsi to board dts for
+  patch #3.
+- These aliases aren't common, so need to drop in imx93.dtsi for patch #3.
+- Only add aliases using to imx93 board dts for patch #3.
+- patch #3 changes come from review comments:
+  https://lore.kernel.org/imx/4e8f2426-92a1-4c7e-b860-0e10e8dd886c@kernel.org/
+- add clocks constraints in the if-else branch for patch #2.
+- reorder the imx93 and imx91 if-else branch for patch #2.
+- patch #2 changes come from review comments:
+  https://lore.kernel.org/imx/urgfsmkl25woqy5emucfkqs52qu624po6rd532hpusg3fdnyg3@s5iwmhnfsi26/
+- add Reviewed-by tag for patch #2.
+- Link to v6: https://lore.kernel.org/imx/20250623095732.2139853-1-joy.zou@nxp.com/
+
+Changes for v6:
+- add changelog in per patch.
+- correct commit message spell for patch #1.
+- merge rename imx93.dtsi to imx91_93_common.dtsi and move i.MX93
+  specific part from imx91_93_common.dtsi to imx93.dtsi for patch #3.
+- modify the commit message for patch #3.
+- restore copyright time and add modification time for common dtsi for
+  patch #3.
+- remove unused map0 label in imx91_93_common.dtsi for patch #3.
+- remove tmu related node for patch #4.
+- remove unused regulators and pinctrl settings for patch #5.
+- add new modification for aliases change patch #6.
+- Link to v5: https://lore.kernel.org/imx/20250613100255.2131800-1-joy.zou@nxp.com/
+
+Changes for v5:
+- rename imx93.dtsi to imx91_93_common.dtsi.
+- move imx93 specific part from imx91_93_common.dtsi to imx93.dtsi.
+- modify the imx91.dtsi to use imx91_93_common.dtsi.
+- add new the imx93-blk-ctrl binding and driver patch for imx91 support.
+- add new net patch for imx91 support.
+- change node name codec and lsm6dsm into common name audio-codec and
+  inertial-meter, and add BT compatible string for imx91 board dts.
+- Link to v4: https://lore.kernel.org/imx/20250121074017.2819285-1-joy.zou@nxp.com/
+
+Changes for v4:
+- Add one imx93 patch that add labels in imx93.dtsi
+- modify the references in imx91.dtsi
+- modify the code alignment
+- remove unused newline
+- delete the status property
+- align pad hex values
+- Link to v3: https://lore.kernel.org/imx/20241120094945.3032663-1-pengfei.li_1@nxp.com/
+
+Changes for v3:
+- Add Conor's ack on patch #1
+- format imx91-11x11-evk.dts with the dt-format tool
+- add lpi2c1 node
+- Link to v2: https://lore.kernel.org/imx/20241118051541.2621360-1-pengfei.li_1@nxp.com/
+
+Changes for v2:
+- change ddr node pmu compatible
+- remove mu1 and mu2
+- change iomux node compatible and enable 91 pinctrl
+- refine commit message for patch #2
+- change hex to lowercase in pinfunc.h
+- ordering nodes with the dt-format tool
+- Link to v1: https://lore.kernel.org/imx/20241108022703.1877171-1-pengfei.li_1@nxp.com/
+
+Joy Zou (10):
+  dt-bindings: soc: imx-blk-ctrl: add i.MX91 blk-ctrl compatible
+  arm64: dts: freescale: move aliases from imx93.dtsi to board dts
+  arm64: dts: freescale: rename imx93.dtsi to imx91_93_common.dtsi and
+    modify them
+  arm64: dts: imx91: add i.MX91 dtsi support
+  arm64: dts: freescale: add i.MX91 11x11 EVK basic support
+  arm64: dts: imx93-11x11-evk: remove fec property eee-broken-1000t
+  arm64: defconfig: enable i.MX91 pinctrl
+  pmdomain: imx93-blk-ctrl: use ARRAY_SIZE() instead of hardcode number
+  pmdomain: imx93-blk-ctrl: mask DSI and PXP PD domain register on
+    i.MX91
+  net: stmmac: imx: add i.MX91 support
+
+Pengfei Li (1):
+  dt-bindings: arm: fsl: add i.MX91 11x11 evk board
+
+ .../devicetree/bindings/arm/fsl.yaml          |    6 +
+ .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     |   59 +-
+ arch/arm64/boot/dts/freescale/Makefile        |    1 +
+ .../boot/dts/freescale/imx91-11x11-evk.dts    |  674 ++++++++
+ arch/arm64/boot/dts/freescale/imx91-pinfunc.h |  770 +++++++++
+ arch/arm64/boot/dts/freescale/imx91.dtsi      |   71 +
+ .../{imx93.dtsi => imx91_93_common.dtsi}      |  176 +-
+ .../boot/dts/freescale/imx93-11x11-evk.dts    |   20 +-
+ .../boot/dts/freescale/imx93-14x14-evk.dts    |   15 +
+ .../boot/dts/freescale/imx93-9x9-qsb.dts      |   18 +
+ .../dts/freescale/imx93-kontron-bl-osm-s.dts  |   21 +
+ .../dts/freescale/imx93-phyboard-nash.dts     |   21 +
+ .../dts/freescale/imx93-phyboard-segin.dts    |    9 +
+ .../freescale/imx93-tqma9352-mba91xxca.dts    |   11 +
+ .../freescale/imx93-tqma9352-mba93xxca.dts    |   25 +
+ .../freescale/imx93-tqma9352-mba93xxla.dts    |   25 +
+ .../dts/freescale/imx93-var-som-symphony.dts  |   17 +
+ arch/arm64/boot/dts/freescale/imx93.dtsi      | 1512 ++---------------
+ arch/arm64/configs/defconfig                  |    1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-imx.c   |    2 +
+ drivers/pmdomain/imx/imx93-blk-ctrl.c         |   23 +-
+ 21 files changed, 1938 insertions(+), 1539 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+ create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
+ copy arch/arm64/boot/dts/freescale/{imx93.dtsi => imx91_93_common.dtsi} (90%)
+ rewrite arch/arm64/boot/dts/freescale/imx93.dtsi (97%)
+
 -- 
-2.50.1
+2.37.1
 
 
