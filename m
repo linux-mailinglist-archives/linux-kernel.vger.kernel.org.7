@@ -1,142 +1,211 @@
-Return-Path: <linux-kernel+bounces-757557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B0EB1C387
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:41:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863ECB1C390
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D85186047
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090213ACE8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C4D199E89;
-	Wed,  6 Aug 2025 09:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980F328A416;
+	Wed,  6 Aug 2025 09:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="huTiya0X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BcWPGh9A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE275288519
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF741C3027;
+	Wed,  6 Aug 2025 09:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473300; cv=none; b=nptrV8+7wgtbs5qjm9MwJYuXaKZtdzzQhYnXDQL3XtKGLuOmGplgJcx0VAjp4p2LHETI55/mk5qiVgalHDmD9zQvKu1ZME3sLa4ANDI4rLzLGo7koZEMh7RHssCOo+ORu1FU28cN/PjWyx7SgCZKTzzBGe84M0J6zhNUYpuMKzk=
+	t=1754473327; cv=none; b=PqBMqditraHHDL9RJK2cWXIonGZIWD771MGj0Pc58NAY/S1EmZJSYWyEf89BT5fdaqDtgOZW+2dpYYAnVioojd2FBKWKRIW+ddJKe/OhEZmDhmWBowK63IiA23sfpFbx4eTWeP67VfJVzzOx+9l5eriqP8G/2MIT4jeV13fL4uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473300; c=relaxed/simple;
-	bh=pgv0yQkNz/DBClC/IvaptKaPbaQzzYBOnrzrNVwFKnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V6cOyIsSQekgB50SBCMM6gy7N4vTn9DAVUJXHQTmJOUqZ11er7aV5VKPAKT3RPgogo7nLOSJLqiSY6F8vyZkzWMnWD8IUb+2N9v44vAuzZ79EXCbPU91ojh/2h/6VsY9kHN9AZzmvjOF+ITLpLoerN2QYbVF+5TDuYzZ7DWp6Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=huTiya0X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765fomw031808
-	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 09:41:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7VakF4VB+aL+NaS1MnqeG+4TxHm+weWhZ7lip1w6QDk=; b=huTiya0X94aXfKGs
-	P5deAgB+8aDXBQ8MSQLYApgbol2kiwjgdDqxq/R6KQIVl+a6Vo80w9YWE9nu+bg+
-	47objIpX+U4R4fBiSCVgz16uf0wEb0zKikT+eZoY7sBhkHqlQZmUruEvKopWIUl4
-	hygomckaxoPnDh9L0A8OlqwKDnnTmrTkaCCp0qjIdLtUuAyWCS/EknqVCn7i47Ke
-	q8LHW2mvDXg8JqPojNE4Ytfh3pOi0ubsD6TzBOO+6rXH2xIGEWduRDIJVK3wgptg
-	Na31JYnDJUAzM8XaLDWuOHh5u2d0dphm0mDWVA39BLMRixlDyl1be9QUPuh3JNqJ
-	uygLuw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpybaac1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 09:41:37 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fafb22f5daso15968716d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:41:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754473297; x=1755078097;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VakF4VB+aL+NaS1MnqeG+4TxHm+weWhZ7lip1w6QDk=;
-        b=h3JRe4pDdbMC8CkOYxyaKdD5zg+lLrUvl6+goVXUUdgPonfTghJyp1JUYNaup0MXZX
-         GFbWoruJkjTUMqklW9L2kp1FkWhkByMG4p30AGaOlOle//6+cHwsp+vgt9LP0zw86RMg
-         0gEGfDNM4GkHvWk0/bSVEKac1JBUvGYfBGGN1hTwBt2rD6ODd3koAVxczPObJxLAcywW
-         +5Dtm3I4+4xBYCgWrcbpU1nPxz0LrbVKgmE4CJeKzdQHMWlRLj/EBQDzG0P0xlj6nOHl
-         F5CQuqIBSpQ8+8CKrfFfpEOvU9Ga5wCt4I8m/Rs8W1jWFG244s9QvhVMJicHnmxppvNx
-         3V7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUbJlU96jlIkeh+K1HDf3B4eHHudOpV0bbKsdBgKIhSdMjO9m3ddWx3Wsl6K2l3M73Y7Z8kx9MiqQlI0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL1xtZicx72Fk2sy11pB1ctS2cqXnwZpufUNarYnqrxzTpiNpz
-	5X4p2R18pVhN/7sfeXo7gIU0Bq7ABZUFRpjRBuogFagHuuq/KkTBHEgmx6wP5dZUz8Eu0+envIo
-	izP7iPeOZN9IYRsRpEP6mwkwoyIdI7Gb0SZ+1khUIWzKXRpUy3iepG95gBD3+CYfv4dA=
-X-Gm-Gg: ASbGncsf+OhlyZtzAyUa84NOjzpRoHwRX24LE3BMCP1oux7iM6h4v0eZiHfZXqy6eWe
-	UhmSrhl/OAa4YEkNRGzB8yOTYoN/FLJDgC9WevA+tmfNO7bEzl/XzG3KCg8n7t1apirTVzXg0Gd
-	DGe/Qt+NbE6q+7++GaD7LRTlYsm30nEynfYSHgFfw7QhmgLone8SCpAZRZYsVMBrmPPaEWJSxw7
-	FTUdc6ZJz8MN/BUadnGrjUmoZ6MJgef1rb/kCfLX/WSYE8VwojxWvXMP1cCRylwC+zi5gt+B7lR
-	39NdGF97hptV3K31HKACDspWtm5xdV+Rtw0sLP34Ho3HfH+RqtVN9f/Coeqf2V3nmZnv5azME0g
-	4zn/kcq7FV5JI+7iI1A==
-X-Received: by 2002:a05:6214:226f:b0:707:40d4:44e1 with SMTP id 6a1803df08f44-70979352168mr17998156d6.0.1754473296874;
-        Wed, 06 Aug 2025 02:41:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnpjpBA0gv0Qyb9rFEQ373wlImQP3wj+mzhJoMbEtEK39NrrxF/4L/FOwxD6DmpkrQ47JJFw==
-X-Received: by 2002:a05:6214:226f:b0:707:40d4:44e1 with SMTP id 6a1803df08f44-70979352168mr17997986d6.0.1754473296303;
-        Wed, 06 Aug 2025 02:41:36 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe7c88sm9857004a12.41.2025.08.06.02.41.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 02:41:35 -0700 (PDT)
-Message-ID: <55e9cac5-3803-40b1-8431-52510a8932fe@oss.qualcomm.com>
-Date: Wed, 6 Aug 2025 11:41:33 +0200
+	s=arc-20240116; t=1754473327; c=relaxed/simple;
+	bh=EP/2nbnxkVQbVU2omhh0DFzLJaZBfDQ/1aC8njt6IuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bsM7DqMcbF7Kw3gIC0pKoU4XjcxErEMsP9EJgf6bP6qjLPPqT2jCkf5v45jZtcSkJXloCySyfTM1XD7hjWFfwXSG/RodRRruHfpsNyNoEhQpoJsKyEBo3rAiFjsQ9iYmxgmC+rvp7yoSpWAbf2M42D4IDG3dw5cxvTrgvHg0FaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BcWPGh9A; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754473326; x=1786009326;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EP/2nbnxkVQbVU2omhh0DFzLJaZBfDQ/1aC8njt6IuQ=;
+  b=BcWPGh9ARFEAeZeavTj65ZAkE0EaijhtDQbjuI1N1Yc3BlcAY8zn9yTR
+   zHluwMNGsHoFbmGzNrKHUytOZXVi2Jz56K49+LJ99jM5ldlhm09N8+jDa
+   SNW3rXXk/jwmNUVkD54fIStuWcBWM32VgzyBmlJ4Fp6ZsKY9LB/9WsSas
+   7RZ2oVit8K+xnZ7aLOQT3HwZ8nyLF93IqUolJl6T05J2yVw559uH8SN3r
+   VUAs1e6lVxl+rRYJwWFNC3plHNpr7ogn7Ps/mZ6jPdJYtxrj91KRVfl19
+   /7Zo8PSBYmnxr0ROH99LlQC6K8jz6I1TUvlW5WQDCd9T3boofJSl8ku0p
+   g==;
+X-CSE-ConnectionGUID: aQZ0uHwrSZmZBB3n5zSgtQ==
+X-CSE-MsgGUID: f6M9eK/8QQGfxBH4iS/yWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="67862281"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67862281"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 02:42:05 -0700
+X-CSE-ConnectionGUID: wqJnxfUNR3e2Nnv3NYwAZg==
+X-CSE-MsgGUID: nHxQ1/O0TCac0jLf/m1d5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="170003161"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 06 Aug 2025 02:42:02 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujaed-0001U6-0p;
+	Wed, 06 Aug 2025 09:41:58 +0000
+Date: Wed, 6 Aug 2025 17:41:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
+	akpm@linux-foundation.org, ming.lei@redhat.com, dlemoal@kernel.org,
+	jack@suse.cz
+Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH v3 1/2] lib/sbitmap: convert shallow_depth from one word
+ to the whole sbitmap
+Message-ID: <202508061722.0vTVFHLe-lkp@intel.com>
+References: <20250805073748.606294-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] arm64: dts: qcom: qcs8300: add display dt nodes
- for MDSS, DPU, DisplayPort and eDP PHY
-To: Yongxing Mou <quic_yongmou@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250806-dts_qcs8300-v5-0-60c554ec3974@quicinc.com>
- <20250806-dts_qcs8300-v5-1-60c554ec3974@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250806-dts_qcs8300-v5-1-60c554ec3974@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX8/VAC7sedvOX
- ZsDKHvj1ysVidPhn2SAvQQRyibGkJihymjufciRFmzjMNQYpNNJgn7uXMXC6OfbTBzL1Re/oERU
- xFr35tIUUlGuUNQEAAvBbUGUc70Bd/IC2W/gK2z/9T0mfEZBgCOIVcWTVZ9hS6Jo+CDZDmO3hh/
- tgzerAEfaRaHf2exOLi/YfjNbT38udKup0wy4TspwbPCP/TDMVZv2V30cjdbgj2dluL9phoIrF0
- 0DASyYu+7ASumP2WlKZG6qaZmSdpKQPEsRPdeT9uUJTHakpOvnxgDgY7ANHtkmP3EvU8opXNs9u
- caBpyfuSBhyFKeoBbksMMgw8bZL9BY/KIx+7O9NG0rWAE/RV/RiUiOOqPah9hfJai3RN6FkrOQ5
- mIRts0DU
-X-Proofpoint-GUID: ggZoZjKK185hluZ9eafgkIEDklk7_Xl-
-X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=68932351 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=ggSMAipNaOlLgWN-UjYA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ggZoZjKK185hluZ9eafgkIEDklk7_Xl-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805073748.606294-2-yukuai1@huaweicloud.com>
 
-On 8/6/25 9:12 AM, Yongxing Mou wrote:
-> Add devicetree changes to enable MDSS display-subsystem,
-> display-controller(DPU), DisplayPort controller and eDP PHY for
-> Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
+Hi Yu,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+kernel test robot noticed the following build errors:
 
-Konrad
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on linus/master v6.16 next-20250806]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/lib-sbitmap-convert-shallow_depth-from-one-word-to-the-whole-sbitmap/20250806-100430
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20250805073748.606294-2-yukuai1%40huaweicloud.com
+patch subject: [PATCH v3 1/2] lib/sbitmap: convert shallow_depth from one word to the whole sbitmap
+config: sparc-randconfig-001-20250806 (https://download.01.org/0day-ci/archive/20250806/202508061722.0vTVFHLe-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508061722.0vTVFHLe-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508061722.0vTVFHLe-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from ./arch/sparc/include/generated/asm/div64.h:1,
+                    from include/linux/math.h:6,
+                    from include/linux/kernel.h:27,
+                    from include/linux/cpumask.h:11,
+                    from arch/sparc/include/asm/smp_32.h:15,
+                    from arch/sparc/include/asm/smp.h:7,
+                    from arch/sparc/include/asm/switch_to_32.h:5,
+                    from arch/sparc/include/asm/switch_to.h:7,
+                    from arch/sparc/include/asm/ptrace.h:120,
+                    from arch/sparc/include/asm/thread_info_32.h:19,
+                    from arch/sparc/include/asm/thread_info.h:7,
+                    from include/linux/thread_info.h:60,
+                    from arch/sparc/include/asm/current.h:15,
+                    from include/linux/sched.h:12,
+                    from lib/sbitmap.c:7:
+   lib/sbitmap.c: In function '__map_depth_with_shallow':
+   include/asm-generic/div64.h:183:35: warning: comparison of distinct pointer types lacks a cast
+     183 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+         |                                   ^~
+   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
+     222 |         reminder = do_div(shallow_word_depth, sb->depth);
+         |                    ^~~~~~
+   In file included from arch/sparc/include/asm/bug.h:6,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from arch/sparc/include/asm/current.h:15,
+                    from include/linux/sched.h:12,
+                    from lib/sbitmap.c:7:
+>> include/asm-generic/div64.h:195:32: warning: right shift count >= width of type [-Wshift-count-overflow]
+     195 |         } else if (likely(((n) >> 32) == 0)) {          \
+         |                                ^~
+   include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+      76 | # define likely(x)      __builtin_expect(!!(x), 1)
+         |                                             ^
+   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
+     222 |         reminder = do_div(shallow_word_depth, sb->depth);
+         |                    ^~~~~~
+   In file included from ./arch/sparc/include/generated/asm/div64.h:1,
+                    from include/linux/math.h:6,
+                    from include/linux/kernel.h:27,
+                    from include/linux/cpumask.h:11,
+                    from arch/sparc/include/asm/smp_32.h:15,
+                    from arch/sparc/include/asm/smp.h:7,
+                    from arch/sparc/include/asm/switch_to_32.h:5,
+                    from arch/sparc/include/asm/switch_to.h:7,
+                    from arch/sparc/include/asm/ptrace.h:120,
+                    from arch/sparc/include/asm/thread_info_32.h:19,
+                    from arch/sparc/include/asm/thread_info.h:7,
+                    from include/linux/thread_info.h:60,
+                    from arch/sparc/include/asm/current.h:15,
+                    from include/linux/sched.h:12,
+                    from lib/sbitmap.c:7:
+>> include/asm-generic/div64.h:199:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     199 |                 __rem = __div64_32(&(n), __base);       \
+         |                                    ^~~~
+         |                                    |
+         |                                    unsigned int *
+   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
+     222 |         reminder = do_div(shallow_word_depth, sb->depth);
+         |                    ^~~~~~
+   include/asm-generic/div64.h:174:38: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'unsigned int *'
+     174 | extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
+         |                            ~~~~~~~~~~^~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/__div64_32 +199 include/asm-generic/div64.h
+
+^1da177e4c3f415 Linus Torvalds     2005-04-16  176  
+^1da177e4c3f415 Linus Torvalds     2005-04-16  177  /* The unnecessary pointer compare is there
+^1da177e4c3f415 Linus Torvalds     2005-04-16  178   * to check for type safety (n must be 64bit)
+^1da177e4c3f415 Linus Torvalds     2005-04-16  179   */
+^1da177e4c3f415 Linus Torvalds     2005-04-16  180  # define do_div(n,base) ({				\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  181  	uint32_t __base = (base);			\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  182  	uint32_t __rem;					\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  183  	(void)(((typeof((n)) *)0) == ((uint64_t *)0));	\
+911918aa7ef6f86 Nicolas Pitre      2015-11-02  184  	if (__builtin_constant_p(__base) &&		\
+911918aa7ef6f86 Nicolas Pitre      2015-11-02  185  	    is_power_of_2(__base)) {			\
+911918aa7ef6f86 Nicolas Pitre      2015-11-02  186  		__rem = (n) & (__base - 1);		\
+911918aa7ef6f86 Nicolas Pitre      2015-11-02  187  		(n) >>= ilog2(__base);			\
+c747ce4706190ef Geert Uytterhoeven 2021-08-11  188  	} else if (__builtin_constant_p(__base) &&	\
+461a5e51060c93f Nicolas Pitre      2015-10-30  189  		   __base != 0) {			\
+461a5e51060c93f Nicolas Pitre      2015-10-30  190  		uint32_t __res_lo, __n_lo = (n);	\
+461a5e51060c93f Nicolas Pitre      2015-10-30  191  		(n) = __div64_const32(n, __base);	\
+461a5e51060c93f Nicolas Pitre      2015-10-30  192  		/* the remainder can be computed with 32-bit regs */ \
+461a5e51060c93f Nicolas Pitre      2015-10-30  193  		__res_lo = (n);				\
+461a5e51060c93f Nicolas Pitre      2015-10-30  194  		__rem = __n_lo - __res_lo * __base;	\
+911918aa7ef6f86 Nicolas Pitre      2015-11-02 @195  	} else if (likely(((n) >> 32) == 0)) {		\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  196  		__rem = (uint32_t)(n) % __base;		\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  197  		(n) = (uint32_t)(n) / __base;		\
+c747ce4706190ef Geert Uytterhoeven 2021-08-11  198  	} else {					\
+^1da177e4c3f415 Linus Torvalds     2005-04-16 @199  		__rem = __div64_32(&(n), __base);	\
+c747ce4706190ef Geert Uytterhoeven 2021-08-11  200  	}						\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  201  	__rem;						\
+^1da177e4c3f415 Linus Torvalds     2005-04-16  202   })
+^1da177e4c3f415 Linus Torvalds     2005-04-16  203  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
