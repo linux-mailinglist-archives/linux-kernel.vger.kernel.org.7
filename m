@@ -1,216 +1,239 @@
-Return-Path: <linux-kernel+bounces-758443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2E3B1CF2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB576B1CF38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE733ACCF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB923AC597
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56D2367DA;
-	Wed,  6 Aug 2025 22:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBDE2367DA;
+	Wed,  6 Aug 2025 22:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rW7oFrSm"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIM0ppN8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74C321C161
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 22:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A1D13A3F2;
+	Wed,  6 Aug 2025 22:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754520723; cv=none; b=lpUMCkbz7TcJpohD8ieC3Xju3r+aNFFrhzZGF1f16iZ+w6wh+sCd2r8lTY/TQ4pLG+f2M/UcA6Hl3yryDyboUa6i4Es3MrNWWC4yIU75DCZsRmfWey41xGvOW6uCC+LEsKjTNs+H1aJc/9VwmkzHqnmtbgRapoIj/u3GPUq0pJk=
+	t=1754520794; cv=none; b=TAzR9fBYvllJZ09sbu+bWizZAaHWNZhDiZPz/+Jd2RMLjkiCazarZSp9e53fgf0r+VND2q2a3rtVyfzeOaOfe4WQxWNxhA408vkaeI6z+FLG0uxj60fsY0jjnIuOynAd9p9o+QRE5lZmQ2PFskOp1l5OMKPtSLWuRU4e1/D0ezg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754520723; c=relaxed/simple;
-	bh=S0khaiV2Yjbn0vrnETjyIgfSHs7y3d46GzkAPO4gkk8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=N8axAwbG7AlBrXc/Wwt2IRnsimGrMsVh1WCCt2iWf2XjE0NK3qeAOX87S1QaJCkMQYFcJ35IWQ7FcOyfPxO7PdfEP/SOqZTbZgN03oLqykZpaGeI44YGI6PSLf6HaNAdWH1BZqpByGIMrPEJYmcia9xzEOhEMyFaKHeS5iuP6kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rW7oFrSm; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3141f9ce4e2so694489a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 15:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754520721; x=1755125521; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nb/+hiSIBqzVp6CSex90Vi5aXgUoBso6lv3HIdZ3rLE=;
-        b=rW7oFrSmwKPZEvrLM7LNn25xNZlRuAPz73NkK8FexQPbl2SBYUfz2sU2xlfLiEYHiq
-         HuIdeYMfqJoZHOfWgfQl7ViUXDu1Mtl6SNmPw+evMTFXBNfEWoly+X7lS1/WpLAD4qSY
-         Cj1CTw8ctWHj9Fwv5PKvnTqY+VOyAy+5/dQ6F426+DoS7UFXtOQ6f3K9CElmIccHhQdG
-         glpt0v3hPNqi07yj5TOMPY+7V6thOizbSm4PzWQ72GVhVrUmcPD6bGzkl6NGFN3iA1TH
-         DUiBJDbyqOWFBz6Cy2ZSNUjP3mhlxuVOmON2+xwmSXDc10cMNoY8hxF/LjsJszLZYTvy
-         pQhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754520721; x=1755125521;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nb/+hiSIBqzVp6CSex90Vi5aXgUoBso6lv3HIdZ3rLE=;
-        b=uxpnvUZEDguJboY4kAi/PYjE3rtFO2e9hUBofznWZV1ZbBIuAzNDfwytRurs++c8on
-         p0n+7qoHFObpPiYZr/9OY/VIxhYFaVp3yhmuY2okzwR7KvgrUQoOpaeZgCmMCxeE7Dyk
-         DlZjK86RW9klXmOhLzAB1reVVx+Um411MvbofsNW041ZsKZ1rsm7JaqmnwWddYCVvuIp
-         DO5XQ7jf/CEXrQddj3GueM9sLVeOG6t1B6UAv68A1umIae+6lCUq8Njwc4+weUoqcsJK
-         kC1gA69MKfa4BrjZOzPeqo/Fp7/8A0qyExiSuGtlUXI1JwYfBTSQnvxW3MPrguBFTMjX
-         wNaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXJx8AHQ+x4A+8p/OlmUbWgW8YEBlI361cs25KLfCNPbeQhEbxf6IxcvIcwRfTYGAUB8d1ZjsBkScwqXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFmlUsO8TrWzRFeC1v0qoA5qKQBa/A7d+PXEObkhVPcEDKPhy9
-	lsRIulr0oWXQ/RkNsdvngC8AJ/laX43iarjTCIC+ooWyN+ywqD+y73d01ZCSIh+t5AYraA3dxnF
-	z4VNCAg==
-X-Google-Smtp-Source: AGHT+IEW0Iq87ZeOVm0vGfsBGLoOolJN4ayD/9hByHJThL7Q0jxR2SZQ2q7ZCQ+ffQ8GezO+fBMLEhiVT8U=
-X-Received: from pjpq9.prod.google.com ([2002:a17:90a:a009:b0:31e:cee1:4d04])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4cc1:b0:31f:59d1:85be
- with SMTP id 98e67ed59e1d1-3216756d193mr5768264a91.24.1754520721324; Wed, 06
- Aug 2025 15:52:01 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  6 Aug 2025 15:51:59 -0700
+	s=arc-20240116; t=1754520794; c=relaxed/simple;
+	bh=aQ/0Dh3y8KRuO5nNN3e4yGDJrs5zHxpjrom8VAttomI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6tF1Fcnxvx+RhuSL/swA8l9oua6pyJ4MTXKhNLbdLJTH70QbITMptP37Q3Kb+lH1ZhVRSvrJyjA0VkOmRtZg0txE80V4CTBqxMbh2WdtF9ZPS+5Ns5rUTJ1dWyce0XKw/WDhyT1Y1o3DvFgsP18ijSM59RALIMytv2jJIVYJp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIM0ppN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1FEC4CEE7;
+	Wed,  6 Aug 2025 22:53:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754520794;
+	bh=aQ/0Dh3y8KRuO5nNN3e4yGDJrs5zHxpjrom8VAttomI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FIM0ppN88Z7flsAgbKGOZcK6GIwviab7UaqjGLaSnHIRa1Yup7lsN5JZzecYTk/7j
+	 OcxABp1dPJ4Iw7UTtcHJCYD4eWVhHBvZwljJAH+ntNK1xpKRatojIViTxBKtKBV4+C
+	 np8iZu46T7YEkqoZgPMBC/Neb19nESIsqf5GB5IZkLd1dpvK3m7BNVB3shuSRR1MS+
+	 82CG69YMAAFg37R6qV6tp1X2aXm7Nm4VNyoif9+WxUGwsBLDl+G4e5DVb3EESqvD6q
+	 K/cq/0R/XJXpGMDOtdmqDqKkG7+EvG444pIHwJCXL4H9DG9Qy1PVgiL8eEVm8M3UpE
+	 k5CI8GNw/nqOg==
+Date: Wed, 6 Aug 2025 15:53:12 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+	Jiri Olsa <jolsa@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v4 2/2] perf bpf-filter: Enable events manually
+Message-ID: <aJPc2NvJqLOGaIKl@google.com>
+References: <20250806114227.14617-1-iii@linux.ibm.com>
+ <20250806114227.14617-3-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250806225159.1687326-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Move Intel and AMD module param helpers to x86/processor.h
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250806114227.14617-3-iii@linux.ibm.com>
 
-Move the x86 specific helpers for getting kvm_{amd,intel} module params to
-x86 where they belong.  Expose the module-agnostic helpers globally, there
-is nothing secret about the logic.
+Hello,
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- .../testing/selftests/kvm/include/kvm_util.h  | 17 ++++++----
- .../selftests/kvm/include/x86/processor.h     | 20 +++++++++++
- tools/testing/selftests/kvm/lib/kvm_util.c    | 34 ++-----------------
- 3 files changed, 33 insertions(+), 38 deletions(-)
+On Wed, Aug 06, 2025 at 01:40:35PM +0200, Ilya Leoshkevich wrote:
+> On s390, and, in general, on all platforms where the respective event
+> supports auxiliary data gathering, the command:
+> 
+>    # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
+>    [ perf record: Woken up 1 times to write data ]
+>    [ perf record: Captured and wrote 0.011 MB perf.data ]
+>    # ./perf report --stats | grep SAMPLE
+>    #
+> 
+> does not generate samples in the perf.data file. On x86 the command:
+> 
+>   # sudo perf record -e intel_pt// -u 0 ls
+> 
+> is broken too.
+> 
+> Looking at the sequence of calls in 'perf record' reveals this
+> behavior:
+> 
+> 1. The event 'cycles' is created and enabled:
+> 
+>    record__open()
+>    +-> evlist__apply_filters()
+>        +-> perf_bpf_filter__prepare()
+> 	   +-> bpf_program.attach_perf_event()
+> 	       +-> bpf_program.attach_perf_event_opts()
+> 	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
+> 
+>    The event 'cycles' is enabled and active now. However the event's
+>    ring-buffer to store the samples generated by hardware is not
+>    allocated yet.
+> 
+> 2. The event's fd is mmap()ed to create the ring buffer:
+> 
+>    record__open()
+>    +-> record__mmap()
+>        +-> record__mmap_evlist()
+> 	   +-> evlist__mmap_ex()
+> 	       +-> perf_evlist__mmap_ops()
+> 	           +-> mmap_per_cpu()
+> 	               +-> mmap_per_evsel()
+> 	                   +-> mmap__mmap()
+> 	                       +-> perf_mmap__mmap()
+> 	                           +-> mmap()
+> 
+>    This allocates the ring buffer for the event 'cycles'. With mmap()
+>    the kernel creates the ring buffer:
+> 
+>    perf_mmap(): kernel function to create the event's ring
+>    |            buffer to save the sampled data.
+>    |
+>    +-> ring_buffer_attach(): Allocates memory for ring buffer.
+>        |        The PMU has auxiliary data setup function. The
+>        |        has_aux(event) condition is true and the PMU's
+>        |        stop() is called to stop sampling. It is not
+>        |        restarted:
+>        |
+>        |        if (has_aux(event))
+>        |                perf_event_stop(event, 0);
+>        |
+>        +-> cpumsf_pmu_stop():
+> 
+>    Hardware sampling is stopped. No samples are generated and saved
+>    anymore.
+> 
+> 3. After the event 'cycles' has been mapped, the event is enabled a
+>    second time in:
+> 
+>    __cmd_record()
+>    +-> evlist__enable()
+>        +-> __evlist__enable()
+> 	   +-> evsel__enable_cpu()
+> 	       +-> perf_evsel__enable_cpu()
+> 	           +-> perf_evsel__run_ioctl()
+> 	               +-> perf_evsel__ioctl()
+> 	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
+> 
+>    The second
+> 
+>       ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
+> 
+>    is just a NOP in this case. The first invocation in (1.) sets the
+>    event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
+> 
+>    perf_ioctl()
+>    +-> _perf_ioctl()
+>        +-> _perf_event_enable()
+>            +-> __perf_event_enable()
+> 
+>    return immediately because event::state is already set to
+>    PERF_EVENT_STATE_ACTIVE.
+> 
+> This happens on s390, because the event 'cycles' offers the possibility
+> to save auxilary data. The PMU callbacks setup_aux() and free_aux() are
+> defined. Without both callback functions, cpumsf_pmu_stop() is not
+> invoked and sampling continues.
+> 
+> To remedy this, remove the first invocation of
+> 
+>    ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
+> 
+> in step (1.) Create the event in step (1.) and enable it in step (3.)
+> after the ring buffer has been mapped.
+> 
+> Output after:
+> 
+>  # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
+>  [ perf record: Woken up 3 times to write data ]
+>  [ perf record: Captured and wrote 0.876 MB perf.data ]
+>  # ./perf  report --stats | grep SAMPLE
+>               SAMPLE events:      16200  (99.5%)
+>               SAMPLE events:      16200
+>  #
+> 
+> The software event succeeded both before and after the patch:
+> 
+>  # ./perf record -e cpu-clock -aB --synth=no -u 0 -- \
+> 					  ./perf test -w thloop 2
+>  [ perf record: Woken up 7 times to write data ]
+>  [ perf record: Captured and wrote 2.870 MB perf.data ]
+>  # ./perf  report --stats | grep SAMPLE
+>               SAMPLE events:      53506  (99.8%)
+>               SAMPLE events:      53506
+>  #
+> 
+> Fixes: b4c658d4d63d61 ("perf target: Remove uid from target")
+> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> Co-developed-by: Thomas Richter <tmricht@linux.ibm.com>
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 23a506d7eca3..652ac01e1adc 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -260,13 +260,18 @@ int __open_path_or_exit(const char *path, int flags, const char *enoent_help);
- int open_path_or_exit(const char *path, int flags);
- int open_kvm_dev_path_or_exit(void);
- 
--bool get_kvm_param_bool(const char *param);
--bool get_kvm_intel_param_bool(const char *param);
--bool get_kvm_amd_param_bool(const char *param);
-+int kvm_get_module_param_integer(const char *module_name, const char *param);
-+bool kvm_get_module_param_bool(const char *module_name, const char *param);
- 
--int get_kvm_param_integer(const char *param);
--int get_kvm_intel_param_integer(const char *param);
--int get_kvm_amd_param_integer(const char *param);
-+static inline bool get_kvm_param_bool(const char *param)
-+{
-+	return kvm_get_module_param_bool("kvm", param);
-+}
-+
-+static inline int get_kvm_param_integer(const char *param)
-+{
-+	return kvm_get_module_param_integer("kvm", param);
-+}
- 
- unsigned int kvm_check_cap(long cap);
- 
-diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-index 2efb05c2f2fb..488d516c4f6f 100644
---- a/tools/testing/selftests/kvm/include/x86/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86/processor.h
-@@ -1314,6 +1314,26 @@ static inline uint8_t xsetbv_safe(uint32_t index, uint64_t value)
- 
- bool kvm_is_tdp_enabled(void);
- 
-+static inline bool get_kvm_intel_param_bool(const char *param)
-+{
-+	return kvm_get_module_param_bool("kvm_intel", param);
-+}
-+
-+static inline bool get_kvm_amd_param_bool(const char *param)
-+{
-+	return kvm_get_module_param_bool("kvm_amd", param);
-+}
-+
-+static inline int get_kvm_intel_param_integer(const char *param)
-+{
-+	return kvm_get_module_param_integer("kvm_intel", param);
-+}
-+
-+static inline int get_kvm_amd_param_integer(const char *param)
-+{
-+	return kvm_get_module_param_integer("kvm_amd", param);
-+}
-+
- static inline bool kvm_is_pmu_enabled(void)
- {
- 	return get_kvm_param_bool("enable_pmu");
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index c3f5142b0a54..b20d242ddcbe 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -95,7 +95,7 @@ static ssize_t get_module_param(const char *module_name, const char *param,
- 	return bytes_read;
- }
- 
--static int get_module_param_integer(const char *module_name, const char *param)
-+int kvm_get_module_param_integer(const char *module_name, const char *param)
- {
- 	/*
- 	 * 16 bytes to hold a 64-bit value (1 byte per char), 1 byte for the
-@@ -119,7 +119,7 @@ static int get_module_param_integer(const char *module_name, const char *param)
- 	return atoi_paranoid(value);
- }
- 
--static bool get_module_param_bool(const char *module_name, const char *param)
-+bool kvm_get_module_param_bool(const char *module_name, const char *param)
- {
- 	char value;
- 	ssize_t r;
-@@ -135,36 +135,6 @@ static bool get_module_param_bool(const char *module_name, const char *param)
- 	TEST_FAIL("Unrecognized value '%c' for boolean module param", value);
- }
- 
--bool get_kvm_param_bool(const char *param)
--{
--	return get_module_param_bool("kvm", param);
--}
--
--bool get_kvm_intel_param_bool(const char *param)
--{
--	return get_module_param_bool("kvm_intel", param);
--}
--
--bool get_kvm_amd_param_bool(const char *param)
--{
--	return get_module_param_bool("kvm_amd", param);
--}
--
--int get_kvm_param_integer(const char *param)
--{
--	return get_module_param_integer("kvm", param);
--}
--
--int get_kvm_intel_param_integer(const char *param)
--{
--	return get_module_param_integer("kvm_intel", param);
--}
--
--int get_kvm_amd_param_integer(const char *param)
--{
--	return get_module_param_integer("kvm_amd", param);
--}
--
- /*
-  * Capability
-  *
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-base-commit: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
--- 
-2.50.1.565.gc32cd1483b-goog
+Thanks,
+Namhyung
 
+> ---
+>  tools/perf/util/bpf-filter.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
+> index d0e013eeb0f7..a0b11f35395f 100644
+> --- a/tools/perf/util/bpf-filter.c
+> +++ b/tools/perf/util/bpf-filter.c
+> @@ -451,6 +451,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+>  	struct bpf_link *link;
+>  	struct perf_bpf_filter_entry *entry;
+>  	bool needs_idx_hash = !target__has_cpu(target);
+> +	DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts,
+> +			    .dont_enable = true);
+>  
+>  	entry = calloc(MAX_FILTERS, sizeof(*entry));
+>  	if (entry == NULL)
+> @@ -522,7 +524,8 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+>  	prog = skel->progs.perf_sample_filter;
+>  	for (x = 0; x < xyarray__max_x(evsel->core.fd); x++) {
+>  		for (y = 0; y < xyarray__max_y(evsel->core.fd); y++) {
+> -			link = bpf_program__attach_perf_event(prog, FD(evsel, x, y));
+> +			link = bpf_program__attach_perf_event_opts(prog, FD(evsel, x, y),
+> +								   &pe_opts);
+>  			if (IS_ERR(link)) {
+>  				pr_err("Failed to attach perf sample-filter program\n");
+>  				ret = PTR_ERR(link);
+> -- 
+> 2.50.1
+> 
 
