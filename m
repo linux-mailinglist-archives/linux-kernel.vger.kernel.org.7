@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-757988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A1CB1C95E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:53:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE646B1C964
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6102F3A1F3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:53:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C615E1748DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86232293B48;
-	Wed,  6 Aug 2025 15:53:40 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC85293B5F;
+	Wed,  6 Aug 2025 15:57:19 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A47828C010;
-	Wed,  6 Aug 2025 15:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC581B040B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754495620; cv=none; b=Ihk7eIlchgEQC/ofo+vdHWMlL+/94LAe/dnLqGE4syRZTQZr2A/Azo6aEtW+W1bfvM9GjmsG0zX1Ve9rzQ0edIoHudJaA8TYU19yINjBYSvjuM/u7r7offgq2AD6HvDuFp3tVXr3uLigBNYvkY7RRj83PqxXOQWQ5EH/Wfs+VGg=
+	t=1754495839; cv=none; b=Q3cKfi/eo19nrRJncGoNFvCb1KGK/O8/8o+npKnyoOyOHrlwUv93/WvxA3KlFf753I2RkhN0lecau9fU0DDKoxUyDifOVu2a3vC6BWLwlG5bkOC9MCbp7VnneZo0gQiQ4chy2YMorxQUfOsmeZ4xAmNHtPVgUEXjGcoIAejkKtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754495620; c=relaxed/simple;
-	bh=8lntTrIv1EF6S0OVC6oVHi+a8/05DS+HMH/xwWZDzFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpbCZZI0F3WAcac3KLrf/eYOEccYUB/1k8uMDYS5ombIkTXKmgsTtghAC+HBvuLnJi2QCaI7hax0rcHKbGlS2SvvuXSOFe8xGtqOAFCLn7wQdopw82t0+SwyC96HPZq0eu2/s+K0FJ+HgSVx0T5mRFpMWa1KiNfBOH/1js4FHRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-615d1865b2dso83307a12.0;
-        Wed, 06 Aug 2025 08:53:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754495617; x=1755100417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lSAeQ8xKPoGHZfbgMhDEnJIjE+pmVuNSBbErMj5IbBU=;
-        b=YCuhIaKpOnJLdYQ9M+w/P7ARH4iBasaixR4d53DJrh5fXQn3zjex2jdDT4dppnP+b8
-         w6vKDVATOJ5spinf3U2QX9IxHj56B/qTf+Gbs/kf5PFn54oSoJAUcW6CotQ1nCa/CVJN
-         nUKCoNWq5M4BHXpcUtINLQT9yNkqVjPMCKqClZUQTpiLuujKurF1eCq+KLA469Cjq+GE
-         7lDd1dJa8TIFUPMFUFgqu7H7aoFFvj0FqbpY5FbQMEl0hmRMkc7Hlcr2tpmb7iJzr6ex
-         VrzO6SB53GjOL4tPyEr94WgwQ+X2ZpOxdcC8kcZJKJ2kftuoyMHm4hqADcp+MoR1CVBZ
-         EQyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRm9MZzuGSnyM8V9XeJrlCLBPFlTmh1FejhUQDD8xCPhYU4sEOkKiApITYlvlPFSKKoZJRa3M2V3bONItW@vger.kernel.org, AJvYcCXZBjctuSl90bmQfFFZxjwlTr73kG0vNAHDvb9HLOfr43uSeJqAtb3T+MDrvJqyhNEdtsIj7zMCZapPhjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNHF7oAWEKtwuYyprf9IZyYH25OFMqr/DIAO3gPhj5GOpaaZrj
-	RoUJsJX1YpJu4kJTDjRRABa1F6J9E3D2+Qik55MbSF9F1nzeToqnJFhn
-X-Gm-Gg: ASbGnctKtUBsPEg2hFSCB1ZC79safkd9iX6hN3ZuQ68Cf8saqdjKj/5q95174ZPjiZ/
-	5dWx5cjhVQz9xsr5YCH65Eg+2jvAjpouaNikptO58H5BrS2Nf18/dN8reTVYTHfF+dbDR1+YxKU
-	anwe6cn2B5ZtQDmXd7cGwjKxOi73PpUgp7QQrNorM/6jLu8KGkYqaU32i1olg0XyeSVLB80CxS/
-	dcRInhSVm2RlQfVxjFnfkHbP4D12XwAN+3Abf6JfadX8mfHn3mI4syAqL9o2r90ZWJwgUWw8p8+
-	En71eHlubwMQLiibcoF1vrr4f0bGC+ENglAVRLdHvBcSWe1YBnXphe8THkMKQFZpFYGznPi3CVq
-	dQ/7XTcNExkKv
-X-Google-Smtp-Source: AGHT+IHuBBGXbLT6LQjSZys1BSvev5Nwmr6rX2z0GgBOu+Uy6QESOe3NVaVXCJ6mKYT5g9BD1FbwFA==
-X-Received: by 2002:a05:6402:1d49:b0:615:78c6:7aed with SMTP id 4fb4d7f45d1cf-617961be368mr2723204a12.32.1754495616673;
-        Wed, 06 Aug 2025 08:53:36 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8ffd72esm10214364a12.55.2025.08.06.08.53.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 08:53:36 -0700 (PDT)
-Date: Wed, 6 Aug 2025 08:53:33 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Nirmoy Das <nirmoyd@nvidia.com>
-Cc: catalin.marinas@arm.com, cov@codeaurora.org, leo.yan@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	mark.rutland@arm.com, paulmck@kernel.org, rmikey@meta.com, rmk+kernel@armlinux.org.uk, 
-	usamaarif642@gmail.com
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <d6frpsfybjhdu6m77icrduuiqu6p7zfx3sbzfz62dvafkpaj56@sa5y7lvbvivu>
-References: <aGVn/SnOvwWewkOW@gmail.com>
- <20250806114441.1605047-1-nirmoyd@nvidia.com>
+	s=arc-20240116; t=1754495839; c=relaxed/simple;
+	bh=2nVU5PwuIL29+F1jgg3rp77asR55/ez/tKz1J7VjRr8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aS+fMJ/owXBiI/1Ca1UBsOFXHrano8Uw6rzy0lBC1YA23Uq5CgTSyxUX1CaTSxc+hcXVHb3WdQsFgNKZxGhWHEtU2MTnf136XtAzCQwefkg+RFWB1iOunfAG3Dcl1mXO2/6tNwYHjTUtAHeZ7W9Rs9GtECYRI0qH3HGY/fQ8Mt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<peterz@infradead.org>, <xin@zytor.com>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] x86/tsc: Use cpumask_next_wrap() in tsc_sync_check_timer_fn()
+Date: Wed, 6 Aug 2025 23:55:35 +0800
+Message-ID: <20250806155535.34338-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806114441.1605047-1-nirmoyd@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc3.internal.baidu.com (172.31.3.13) To
+ bjhj-exc17.internal.baidu.com (172.31.4.15)
+X-FEAS-Client-IP: 172.31.4.15
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hello Nirmoy,
+Replace the manual sequence of cpumask_next() and cpumask_first()
+with a single call to cpumask_next_wrap() in tsc_sync_check_timer_fn().
 
-On Wed, Aug 06, 2025 at 04:44:41AM -0700, Nirmoy Das wrote:
-> Hi Breno,
-> 
-> I tried the latest kernel which seems to contain a fix. Bisecting it led me to https://patch.msgid.link/20250604142045.253301-1-pmladek@suse.com and that indeed fixes it for me.
-> Could you please give it a try.
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ arch/x86/kernel/tsc_sync.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-That is awesome. I've played a little bit with it, and I see it solving
-my problem as well.
+diff --git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kernel/tsc_sync.c
+index ec3aa340d351..ef6ebf2bf7aa 100644
+--- a/arch/x86/kernel/tsc_sync.c
++++ b/arch/x86/kernel/tsc_sync.c
+@@ -99,9 +99,7 @@ static void tsc_sync_check_timer_fn(struct timer_list *unused)
+ 	tsc_verify_tsc_adjust(false);
+ 
+ 	/* Run the check for all onlined CPUs in turn */
+-	next_cpu = cpumask_next(raw_smp_processor_id(), cpu_online_mask);
+-	if (next_cpu >= nr_cpu_ids)
+-		next_cpu = cpumask_first(cpu_online_mask);
++	next_cpu = cpumask_next_wrap(raw_smp_processor_id(), cpu_online_mask);
+ 
+ 	tsc_sync_check_timer.expires += SYNC_CHECK_INTERVAL;
+ 	add_timer_on(&tsc_sync_check_timer, next_cpu);
+-- 
+2.36.1
 
-The machine is booting very fast now, taking 0.8 seconds to hit init.
-
-	[    0.811320] Run /init as init process
-
-Thanks for the heads-up!
---breno
 
