@@ -1,222 +1,165 @@
-Return-Path: <linux-kernel+bounces-757866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1970B1C79C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:29:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2993DB1C7A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63325188CADC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD66169232
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C28528CF74;
-	Wed,  6 Aug 2025 14:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F6A28C022;
+	Wed,  6 Aug 2025 14:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FbKfDW/9"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUja34AL"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFDEC8EB;
-	Wed,  6 Aug 2025 14:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754490573; cv=fail; b=gZIexBudmAUvboTGV4bRAwWB0FB0g3O3Fn8XUyK9VYAmTXb+zZ0OujDc3zHgmR873CI/72fZI5QYLlmcPZltsmbRyPRv1loSrsqfL2D4d1D45a1WM+arhv9qMLoQichq7+OkXqLFykYqZLZDpfHfI4gdbjhyk9/2nGtQ+O4W07M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754490573; c=relaxed/simple;
-	bh=enXazQoPKDr5lGmLFMgqPHRJae+BFjd6W3KcWvJVAfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ilZZ3xaU9ZainIWLCw4A0m+z/TTm0370Zg7dWxuMe2wOZKJVBCLnf+fgP8BHHTmLHyjQdPKLd1CK+0mw3OZ0pvmdZK7yUjmXdRX7LaX941CYx8oBOUBTwaIlbmHx4SSXYrtY0sBS9E+Nf/4vc3e9Pvqv1iORVIXl94S7773dMY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FbKfDW/9; arc=fail smtp.client-ip=40.107.92.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VqqCLNyRJoJ+57C6QrtyJo1jUA8e0sZ8Z9VEzd6I/HJGsm5mJyLU1D/XcHj7Pf9x+g7GtZHknh8aiQfb2hU2WlI6rsxZHFrHi6Bhjhx1qsneHqNPXw5tFcLBAzZRiN3vmy79m5Iyv6qaEWmvG+Yo4VAekgLUWNPrFPID13UaWwoWf/62grcC+n662OUI9xYIqSJbenplfN4Eycm8dX7JHBKKSg4o1Rv47VeRBeUDNjhqZvqgApcmMdL7tlVSxeqOHAxeDzWJRXkukfO0ebK3g0j5PsN6ALytLmnjz4u8IHgpcWTYFnYnAZzaDkqWD6rVPH4IAq9gv4xEjGOmMr+5gA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+5nokKLSKvQaO+OVEv5lwLReUQo18ediOrfd4kcViq8=;
- b=HjkmPnQTHXYwFKG+clpE+CeAxGHAvQLZd9BkMfHCskk4yqrVY9WjW1G0AgCu9lycM0C5gaJLDLt6ukzvGSvIq4FFdQmgB9eetOn4aOA/01efSnSDwNI4QZVElBALZHY++wB/GI4dtdHODUzl4AZaEn/dHKwEeJDMHiGsdm8fWhjkDUT5bMBD0qd1LEODrp/oDB8VzIiOdYBQttKj1ddxE5dWrrLgdVzDVkLRl0DOvl4kZOHwQ6OgQyyvkHVba0cph+Rf/WYbcMezL9bhM0opZ5YzxEnCpbtu/yfesw68JsCbn+jTVRrcXrnH1bPIVaNMZrv7wDdbkMk+bv8TNv8y4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+5nokKLSKvQaO+OVEv5lwLReUQo18ediOrfd4kcViq8=;
- b=FbKfDW/95ZVMsJcR+FumzRcUI1lOJRvnwfi/DZLDU9HWvxeptpAGbq2r6fdLYfQUUT9XWA4LY5loIIZHUPY+Sj/pbbonG8gysZyRlazVkFt4TQ9IOxPm83DTzPCQsyQVLebRdO6ewN3C78lELvNctB5jjyl9aMU4jUa6ORswA5KN+fpQVHjqKHGmF37/UEg03G2NdepbNsRm+h7dHRRxHZw1rHTXWvFIVmwufWrt6T6L9gUXwB1FnI4sRJHGJQb/mWSB4PTU1kLGL3WTEB98Lv0g+ML/0gLT9jJIgfZYnkwGpg273JWlnBE1g0G2SQO61JOVpIUwg+daH59o+CK2yw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH8PR12MB7304.namprd12.prod.outlook.com (2603:10b6:510:217::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Wed, 6 Aug
- 2025 14:29:28 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 14:29:27 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/huge_memory: move to next folio after
- folio_split() succeeds.
-Date: Wed, 06 Aug 2025 10:29:25 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <87B76D39-9673-4C3C-9B0E-375A677205C4@nvidia.com>
-In-Reply-To: <60b6c458-e3d0-4123-9815-44e8e8ae0e60@redhat.com>
-References: <20250806022045.342824-1-ziy@nvidia.com>
- <20250806022045.342824-3-ziy@nvidia.com>
- <60b6c458-e3d0-4123-9815-44e8e8ae0e60@redhat.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL6PEPF00013DFC.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1001:0:21) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61C1A262D
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754490859; cv=none; b=qqxswg1uWI/CUSU9hC7eoBe1vcUzZe5KDMcRzybkisoFes56ltDDk3Tj8pUL8DT5MkO24QsuRSmbpHOMHbNxq6abq81utZRAcYUx7XvrtQUj/ycQr/hc9IhkFtxDmIT2O8iQUeGfx/VFm7/6PP9WFZ0AI2FFTPxtzWGCMbQamaw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754490859; c=relaxed/simple;
+	bh=U7uoxerm/sdlzPSvG+diWIIGv6JePPL+tR38XvDQwBk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nqaadwyq71q4hBfbZy12GNA8HGETn4tn5QXe4H9ZKObknTSmWW1cxa5s5ukajq0cJBol1I/xAw238D9H7YWmk6XGA1y2ACYSOUWqLWas/p6CUyxMFmbM1ARxDX4v6BB1apWd2ybb4z3e2P4wFjgtFpLY9QEKt65nhr+UmfjF3CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tUja34AL; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b7886bee77so5624019f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754490856; x=1755095656; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96W7uwKlHpbfRFLEo9z4md6wRw17C44cZB3jokXIckE=;
+        b=tUja34ALxUqwK/B8iLvy6fi60W4UI287t2cBGoV6eH20umwkDfNaQQRtpDo4oSHxig
+         woKMLDb0nFMorfpjyRGPR0NCD6ZVLw2YjMfRz3R4gkF3Jb8ms+Y1l1cQkvxZhdrkOYxT
+         3VOwBv0iCj0AZrmlmju2c4gC77hP64rZ8AFmgckLi/Bc2Duay6mwJ7ixgpWdn2pMCesu
+         xZhdE7JU9VauHd3PUBWs2QVU4zF9li5u4WvGBUf+zkwDng5OGFK7lNb1koScEoVY9EHO
+         5hCiwPNMeoLXbFkzqC/aYKLmrCnHd/mnBgywL7cElcUXnjVoN8SW5tYjWNDKPYglJ9bs
+         035g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754490856; x=1755095656;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=96W7uwKlHpbfRFLEo9z4md6wRw17C44cZB3jokXIckE=;
+        b=v4d+Q/gSXKhjt22z7hYEed+KN7ms2ocb5jC8CPbG3e9HwxDhNecNfiuy0YDwXxU4ez
+         nD0JYpz3rOcyr50XALrTwdi5sZIYp/0yV7UQaTI2ZkM4hTe+ki/bw/jRKY63mtNOsnup
+         8PqbfTFgVJR9koq9Ph1A9GlAdNTDKQVhBAJsSnzfHduXzJhiTZyRhRQkB4SOAgaEXDL0
+         BN6SPec3SEdGohlQUMdEp2DxYeajR7VQEI82Hx1YNQGWH5qtYiCwUhhrKOxPGnWML/jW
+         /b1VBd8Ovosqv2tJM9cUKfo5ALb4Bgte840WTsI8I2xZB+Z+RgS58QdGbZI6GRZKItSG
+         2FSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVL8o1BgG7OHNm397JtGV5z0rh7GaWn3JQd0WdCiqqGNxkucZrZCn0rOp/svQ3svWMy7Jgrs1SZKZm5QfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8giJiwDoikGj3YP4EL5F4B1BpGGKd6wTklNGlHnhrSHV9qsaO
+	NUTAq8OFsejsQJKlivvVq6+kou2YWcv8IkhvWrmFQI2LS9YYn0CiWIrv5FYEjHfhJGw=
+X-Gm-Gg: ASbGncvPHePByIYDnmujajHJljxwkmsvSIxZ+tn5wP7K6W2kcDR8DstN1JUO4azSsul
+	2bbmvUYGSogBUEsM58dhQJyXMbmQ5PcBIfT8UbWTHdeTNDN5nNe3xsYdxqDYUkmCk+/zDRYyNkH
+	RbNyWLtE8SbgOulRJPSFOHTYAZog2Dr7ueZf5unQBTryE1DS77U9Fe5ASXR2nIp9I9oi9vTQUO9
+	dP7ZgO+2NiH668RErc/nKQtVB3ACv7t9a059LLxQAGbacsZWltqwktPlqkd8/gVwAWYYgMUMYYs
+	rNTiENly3CKjX+202INkIeQ8GrEljFWd6HyKqaBpYeDpC+XoFsMLJXtVzOyNW5kohvU/P0mjqdp
+	HDUKeNLQIRnEEqhLP+EC94WRXk6ZzBPkgOhWJ9HHb8gr1h0FR28SBKpfaB50VdhYLx6wKhv4/3o
+	Q=
+X-Google-Smtp-Source: AGHT+IH5NdVXeu1oZSdfbgFBpXIoYLhYEjIi4XFRmFUbfUSxI7TR/XoNEjgGb0ZYv271ynVnNLSc3Q==
+X-Received: by 2002:a5d:5f8a:0:b0:3b7:9aff:db60 with SMTP id ffacd0b85a97d-3b8f4160c8fmr2393490f8f.10.1754490855942;
+        Wed, 06 Aug 2025 07:34:15 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:96df:e381:55b8:1990? ([2a01:e0a:3d9:2080:96df:e381:55b8:1990])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458f713eb44sm165058795e9.14.2025.08.06.07.34.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 07:34:15 -0700 (PDT)
+Message-ID: <0befef79-561d-4b8b-827b-e6258f0d7a89@linaro.org>
+Date: Wed, 6 Aug 2025 16:29:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH8PR12MB7304:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86de2f6f-a0db-4a96-043e-08ddd4f5a625
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ANKLMo6DRiP0VY8wpiq6hYSTDXYrxNtNguKlnnx67gg2bUIl/JVQlR9+XFk2?=
- =?us-ascii?Q?exxiPqdF9Cio0ahKVMITPUYj/ahrijckPrOMPx+12Ba3hzdV3GGVdPuVI+fA?=
- =?us-ascii?Q?5F/yrOslChTb3/WR5rpWGA34aU1uEIMstXfA+WYq1CRUv78EQzg0a1D50DJn?=
- =?us-ascii?Q?TOrAyz7vzrpw42cKk5LrjHBkRYYnX28RnCS+c0GKYwvlusbAi6RDajDxv8ks?=
- =?us-ascii?Q?ObIrLHdjQZeNIgb1XqOQAaNxvDuToZNQw5pw9M2lfl2W2fs9eF+5/TdiMG40?=
- =?us-ascii?Q?OA3equEy+cZgNND1sKKT5qqc9VaRWCVftsvGdUFJ/CDv9lDSkJGOEhV8p2q2?=
- =?us-ascii?Q?KiUDrlqDw+RrWF8UUXeGPG+JwpIFEKqu3ynWlfQ/n7hfI1EPLDn8LmIEhGQi?=
- =?us-ascii?Q?sxGbtWrkJGiMrQc0hd45mDQNoOSw0OJCoAa++EUClxzz79FI3ZvXrhzdhnzi?=
- =?us-ascii?Q?fdML453F/6XY/W5yFszYRFfcurJr3inX1bPcvYln0B/s+DtsaLzuZKFTn5D5?=
- =?us-ascii?Q?Wh44ImRKFSoEWL3G+7G1yrKkq6kuai65s8fnd0yBItX5auxi2zFGSYJxmaul?=
- =?us-ascii?Q?Z0cXZjjZ3oMBH8GqAf+p/cqrUqrliCUyNRwrj6lYDBbDAHlpl27otF/DledN?=
- =?us-ascii?Q?Ilkvv0DoPb5WZ7ua9Jgbqt2fHhlqS8RJUVOMgrJhKlBZK3F618cEi69WsWVn?=
- =?us-ascii?Q?sHIXnl+N/1XB4qChIQqHfRl3cSEUuh38A7hPswe5S99ULuzclAMxsp+lnnho?=
- =?us-ascii?Q?SYa+Vna3xcB3mnKeBzjJ2kyiyjGHj1m/KAVVc8orCdIAHBlfMtlQ+073GG+6?=
- =?us-ascii?Q?Xgms/qUNx3K4ZtAnx80t84dHPNuL76awFq8nuYQT3HWxv+N1Bil5b2GKcqYA?=
- =?us-ascii?Q?n6t+hF0mcbuAJ+G/lkZ0t1O56z4vvSpQ+gKlMyIphgcIetGCYE/0EdG6CrR0?=
- =?us-ascii?Q?69Dwnnaj49Ay8Ppw1X+1feL7WoDwgfM5F61XOM3MzEwT7or9/uCOYRezvkli?=
- =?us-ascii?Q?NIRQTPOdymz4aguvxWIRF2udSgS+QFz+l8cgtTFslW+q1ARY3Sn6aGNDXgbz?=
- =?us-ascii?Q?a7eIYmQp7aVnTJFGrAoFkgHiUVyYbOZIRv9M2jEOB9KiVg0aw+WxBQZKmx2X?=
- =?us-ascii?Q?ZNDgEzeXsuyAetGmg9NVQQy+bbgqBYThwZeab0Q8tQ8M916WpSF9Ze6b6nTv?=
- =?us-ascii?Q?h9BXQNDNBrjqQ02njE5CQsePE0ChIJ2lP8VzTBMMlaZ4PNllnMiXbdRm6rnh?=
- =?us-ascii?Q?q6m8ewGJuLhCpV8rAEqVjSwBW550CgbsXF+re9vfe2/CIquGoyNo82Pw7ffz?=
- =?us-ascii?Q?2rDIBWKYRLmwrjlgWXhfDxJLhvm534UMGubUlnuPddQDrXPFmiiOE9nv99H8?=
- =?us-ascii?Q?UCsBrE86ydlcBBIVR2jrGlRDGvn+XJKl/2XXJMbMOG9ADTxcoa1wdmOh+SVa?=
- =?us-ascii?Q?SQU5bAHtc78=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?raTqxp5naUNMU760sizWcFGbjTGcRx9wedQ7lQh9IVRMIkrBVlmqmsH4vblS?=
- =?us-ascii?Q?e2XF/cZf8J92Qw3gOdBMwL3m4Si/7yAcM+3qvV/zEZjN/ENkP/4qFusT5pn0?=
- =?us-ascii?Q?4AhWPotpii0YdvAoe3tsudtrLVZVUFR+7q8KiuLOeSk3S08VnedyVAhI5sKx?=
- =?us-ascii?Q?m5Q0+OI8C6TKnEHDquICFRYkcceLUpEgBWhX1N8l+k0sZI2NV2rltRnMnpHw?=
- =?us-ascii?Q?jNdmsfFYKzam6uQsRuGC/AlcfAJOIp/F+a+qdND7n+dRMA8r79rJIvirZ2Rh?=
- =?us-ascii?Q?yQ3D/cAOqKLS3AAWAcGwctJ7npQRe91lfHqIy4s7EiTxqcFM/jRqaVFhqAor?=
- =?us-ascii?Q?GioER/aVft16WU/QPouFwZ/H7y3uyMqfg6EoPdzvBromIYL+fcI8kEbfacrL?=
- =?us-ascii?Q?ob/VWovUcEawFEhYNv0WsnfbQzpPI7SVsazH1oJ3i+aq2uay3D+Xr5ZAzbSu?=
- =?us-ascii?Q?yX91BV/q//Kn+onk7FtClSDlGzhaGIqV7CeD91G72QaMNOFA2rjfy5F/sxx5?=
- =?us-ascii?Q?xTi4aG3NF10EF23ZaFUmN9xqUfQAw9R2UnM0TAhrmyYJo0nVUORTA2A1QM8F?=
- =?us-ascii?Q?+Hy0W37oDBR9CHyEyxpvKF98gUq/QMNkGfqrMdy/F4uDiOHbxBspWKCx/3Ol?=
- =?us-ascii?Q?rdbd91yQKmo3k7pDKemk+HEETjhVsE5EVh2MxYmy/qWAeO+a9a2BfA5ttVgP?=
- =?us-ascii?Q?OcsMwm0MaPrALlKoKKhWNro4ldT8WAb305p2y/hOF0Jw3gcYvN2hRvz/YIkU?=
- =?us-ascii?Q?4F7p386yeDDnJlTDhRs2mfpwjcoSaV2OMOI+kz7QyzYQY5CoInMYZvIpeqrD?=
- =?us-ascii?Q?eGcQlAxtnQEGmPhy0avzSynlrvmaQN/8O+RdBnvoXirW+Yc0AKafwy7K11a+?=
- =?us-ascii?Q?aav8IjEDi7WLwXdh3bAJbcHB4arQSHol45e/owr3Z50SnWb3PXkOaOgvAYje?=
- =?us-ascii?Q?Cdb7QJFwtFoQUXYKUy1uAwkPly0ZvQBHCqMDsENDUScgu9LZNp30VpLCsZOr?=
- =?us-ascii?Q?BynSmaRM4v78iHT2i+YXuxV6VVxvqjMCNMLpGdB2OfsQnGBwoCov/yNBtQaP?=
- =?us-ascii?Q?nb4pGTfR06zro5lpSNZc5jWXktVWuerdCb2cOWOdJ7N8JisT5689NlFPvMGR?=
- =?us-ascii?Q?jXd66uFArajnG15tm+fHuvPoM4Z6J+q/kTH5uMvtuAAGkfRCLrFRwJmpPKLt?=
- =?us-ascii?Q?hs46hQvJsL9yBEyrs2QRI8GHalcp+tlcLhxMhqAYrrLjirGyrDb5vPVbaGPO?=
- =?us-ascii?Q?5zEY9KD0YnzIK3IA3lcgBww3YS7w2/PB3hRGpcMoQAtx7p2P0+t4JLCCe2kD?=
- =?us-ascii?Q?PmfNBRUxeaYT4KfagIVCSHaoqVBZjsZQeRe+N+WF9G/JLRZ/Op6GRpJbvtif?=
- =?us-ascii?Q?kxK6eA/q5unDfE87dwWL8auqOpAgtjwYD9JEphQrMtKhSbg8md3HY7Vm7acP?=
- =?us-ascii?Q?PQmMd/jfv+lZ09h69WXGuQfwDGEBFIyKQF66WHvDjHGvJzPHeEfxz25p5HmH?=
- =?us-ascii?Q?TRj4F0fiOkHSa+1dtEM3ijySUM+BumAD0wbvI8VTaAtyB3CSmZFvMtSGkoDs?=
- =?us-ascii?Q?Xl4J/rK27uTeS7ixYaruTR3Er07skgAC0MNocJWT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86de2f6f-a0db-4a96-043e-08ddd4f5a625
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 14:29:27.7148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0Str24LBYMlQ743mzQ1vDuqFEtfqq2iUH7JjoM1iZSJ9j4XtqOJ+D6gTkHF8iy6O
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7304
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 00/11] phy: drop unused module aliases
+To: Johan Hovold <johan@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+ Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250724154823.15998-1-johan@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250724154823.15998-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 6 Aug 2025, at 8:47, David Hildenbrand wrote:
+On 24/07/2025 17:48, Johan Hovold wrote:
+> When fixing up some device leaks in the TI drivers I noticed that the
+> commits introducing the leaks had also converted the drivers to only
+> support OF probe.
+> 
+> This series drops the unused platform module alias from the PHY drivers
+> that never have supported or no longer supports anything but OF probing.
+> 
+> Johan
+> 
+> 
+> Johan Hovold (11):
+>    phy: broadcom: brcm-sata: drop unused module alias
+>    phy: broadcom: brcm-usb: drop unused module alias
+>    phy: cadence: Sierra: drop unused module alias
+>    phy: hisilicon: hi6220-usb: drop unused module alias
+>    phy: qualcomm: ipq806x-usb: drop unused module alias
+>    phy: samsung: exynos5-usbdrd: drop unused module alias
+>    phy: samsung: usb2: drop unused module alias
+>    phy: ti: omap-usb2: drop unused module alias
+>    phy: ti: ti-pipe3: drop unused module alias
+>    phy: ti: dm816x-usb: drop unused module alias
+>    phy: ti: omap-control: drop unused module alias
+> 
+>   drivers/phy/broadcom/phy-brcm-sata.c        | 1 -
+>   drivers/phy/broadcom/phy-brcm-usb.c         | 1 -
+>   drivers/phy/cadence/phy-cadence-sierra.c    | 1 -
+>   drivers/phy/hisilicon/phy-hi6220-usb.c      | 1 -
+>   drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 1 -
+>   drivers/phy/samsung/phy-exynos5-usbdrd.c    | 1 -
+>   drivers/phy/samsung/phy-samsung-usb2.c      | 1 -
+>   drivers/phy/ti/phy-dm816x-usb.c             | 1 -
+>   drivers/phy/ti/phy-omap-control.c           | 1 -
+>   drivers/phy/ti/phy-omap-usb2.c              | 1 -
+>   drivers/phy/ti/phy-ti-pipe3.c               | 1 -
+>   11 files changed, 11 deletions(-)
+> 
 
-> On 06.08.25 04:20, Zi Yan wrote:
->> Current behavior is to move to next PAGE_SIZE and split, but that make=
-s it
->> hard to check after-split folio orders. This is a preparation patch to=
-
->> allow more precise split_huge_page_test check in an upcoming commit.
->>
->> split_folio_to_order() part is not changed, since split_pte_mapped_thp=
- test
->> relies on its current behavior.
->>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->
-> [...]
->
->>  +		nr_pages =3D folio_nr_pages(folio);
->> +
->>   		if (!folio_test_anon(folio)) {
->>   			mapping =3D folio->mapping;
->>   			target_order =3D max(new_order,
->> @@ -4385,15 +4388,16 @@ static int split_huge_pages_pid(int pid, unsig=
-ned long vaddr_start,
->>   		if (!folio_test_anon(folio) && folio->mapping !=3D mapping)
->>   			goto unlock;
->>  -		if (in_folio_offset < 0 ||
->> -		    in_folio_offset >=3D folio_nr_pages(folio)) {
->> +		if (in_folio_offset < 0 || in_folio_offset >=3D nr_pages) {
->>   			if (!split_folio_to_order(folio, target_order))
->>   				split++;
->>   		} else {
->> -			struct page *split_at =3D folio_page(folio,
->> -							   in_folio_offset);
->> -			if (!folio_split(folio, target_order, split_at, NULL))
->> +			struct page *split_at =3D
->> +				folio_page(folio, in_folio_offset);
->
-> Can we add an empty line here, and just have this in a single line, ple=
-ase (feel free to exceed 80chars if it makes the code look less ugly).
-
-Sure.
-
->
->> +			if (!folio_split(folio, target_order, split_at, NULL)) {
->>   				split++;
->> +				addr +=3D PAGE_SIZE * nr_pages;
->
-> Hm, but won't we do another "addr +=3D PAGE_SIZE" in the for loop?
-
-You are right. Will fix it with addr +=3D PAGE_SIZE * (nr_pages - 1);
-
-Thanks.
-
-Best Regards,
-Yan, Zi
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
