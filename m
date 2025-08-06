@@ -1,201 +1,109 @@
-Return-Path: <linux-kernel+bounces-757575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AB7B1C3C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:49:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870A1B1C3D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED3218818FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B6972117B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4012E28B3F7;
-	Wed,  6 Aug 2025 09:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="P2FQjxdU"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB8428A1FB;
+	Wed,  6 Aug 2025 09:49:12 +0000 (UTC)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4431D21CC4E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC03E28B514;
+	Wed,  6 Aug 2025 09:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473746; cv=none; b=Xxk1kPthxuRtPVE/yMCOxaa9ZQhv+n9wy5NZbg7dEJUHmJ3pqBs/yRL+6+WKxdCCrSDWVnlnRkkMDlXIeYN5ukNwrTI8oeoaahZGk9YyowfDDwVCUK6ZcurNtkLmMYBDsakRWrJPpxviWyI2mxQAgnuC73ekiwQztGeJANkFUKE=
+	t=1754473752; cv=none; b=Qd5QPtQJ1JfehThfoGINc4IRCTIiO4BpKutZeEVybtdHM0675Zsm7Y+8HFqFPiBpFaiL9Zh+biQpybtD6Bs8mm+ktWnZlLq2W0hZFomYsHgF3EFl3Rn8wPiakspEhtcag6jP1almfSS5LdHXtZOWBp1BuDyZnEZxfikbko2Lwqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473746; c=relaxed/simple;
-	bh=OUNTpGpOyHEACCY3f52sli6ZIozk/y/E+v4cvUaJRQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RuFXWiAPjc/Q9hxB06LMHp3kgHOVOTNy/e6xmaCqDM6ddd96F4jn9VYkSWcYheDs4W5lqe++8R4fkMU4IdcY7hFi50cL9Z+o+ksqNSLAvMqIhXJNXfHTjPFh58JMqFpyP9RRKbF0kBOvPwxhP/TRCu2ZDWAKvSeEp6cDhm+RLPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=P2FQjxdU; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-615c8ca53efso10898932a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 02:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1754473742; x=1755078542; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3DlDihxHSTEJD5Q+/V0RYrSEM7+zdm1rlpG9EF1SpuY=;
-        b=P2FQjxdUFLRRtCD7kDlfFpL9SaQ1KZqrswWj1VSPctb2X8Hk3oZh8RYy0ugr9uHAgc
-         ClXu+HtKP5nMkKe+SH5qvKA/CpwZ4suk3q/55g6bQbW7LfGT6EpdXOK7SV26VuSU6lVe
-         Ctr11lVOt+FMWGZUrPKIPbGWpAJzBEqBAG2uS3ROrsKhnCzJYvPuG0UcHlR8Z5BhKiel
-         rg/oXUAA6OcEbm0KiLKwBcUkiLObZ8tkAMSRoIZMVBFXKHd0pjLHUQHUuqy/3MDVS39G
-         cOAHhnSfDNPR6wPQZ77nSFiOQflY5z5WtEvJSOOpF4aChD829rZyWjUXJRA0lKqIMEEP
-         SnjQ==
+	s=arc-20240116; t=1754473752; c=relaxed/simple;
+	bh=KgpeG4/8kIZi+Q5pZBGORmIM9sqvgWvdhd9ciu1Zz/g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N/3FLxp2SEcj47HS4MDb7Sgai5A8UwMePB7L5pKWcSf/j3A42Pz1jPTwYdYBlKEGff/C/5KpFUAJmqWUDLoLkM1+y8M8u3Pg5eoGb3ohEqEZHZQhtWz6dPV6go4CGFgoW+s1+jO052IoxNstQ0+EfqCngHNn5fpwyzILaiQO8UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fbf83972d4so2034084137.1;
+        Wed, 06 Aug 2025 02:49:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754473742; x=1755078542;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3DlDihxHSTEJD5Q+/V0RYrSEM7+zdm1rlpG9EF1SpuY=;
-        b=PwAj/32YhDsL9Z48TMfJ190hf5rNqKhTyyCoSc/4hRRiSwbmJsivo9njv2Ud/wQS/q
-         v6ODERzxPRLiE7biPH+0byboDYUhYLbRaGgrktcw1B0x6wwXWXI98h11jMsu9TMWsG8v
-         M2u79Tfgfw/gPTu9FIs3kt0n52cAjupu+NK+VdceK4ZQEQZ0agTuwA6x3NcAoLVxQQrN
-         4lTXIAAuqgU3kYLwxrP9El/6xnjR6v4LlJwXVG+o2MVXYsGswdDPUV2qJRYK6UIOhNYc
-         oVxYE3o0L9ahI6sWgNW8vWFcGNikTyJb4omYA4OyaOFlxc/MoGjaSXe8LBo/bRlXeqhJ
-         f02w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzgozFe8sj1Q8MDXs2JiIJ+oJ1SeqT5ndxy3uXWefjqriNEGh9wOgo/h3FvzqgZOK4nIEVPR7sLOBNExg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6S60elTfy49Cu6qTEd2b2cPwXPmNO5YegzhH+xMUbq4URxczj
-	/Fs2qEbrX3WLB/JuBnMitQcMI7ARkidgvW3GBdwFKLyuVco+HOldgDZZ47NCD0qa9fg=
-X-Gm-Gg: ASbGnct5QToKXU5UUpLl8hVotwHakZZIWY/a59wTvoNeXhmbwO356fyIy9vVBX/W6f5
-	20kD9cAK7ODRWic4Ya8sTlrBK+pjDbKPENqtkIomAJUfzPABfWdh5AxsxyGElKCIUABuRaOyn5+
-	JnCJ97SfJWSVqjoD+HVHaKh3PzBd/6OvDWatqaz8hOA/O6oALZX4E4c38eKLMzes24SEjaYfnrW
-	eWbG3+1ZOsFHWMMTH99G8YMQlZBurSXLIVpCcLttSHOinANu6uFXQJYhheBVSpo+0MRdR3sKlpu
-	ud0/atqJKraCYDRUMIHJqJg/Uo6xY2+2uxiClIbH1XBjeNJz4vtCk+sWapUCzrLny1bqK+KC8eC
-	5MJVZNrJEJqgR53nHHdX6DhB55+2Sk7rmw7QilcBaewLikFAMvho2dWfnUeQ+RZmpFPzqFd6DNo
-	1v8XZZFfs6ZS6TZjPHe975zQ==
-X-Google-Smtp-Source: AGHT+IHw49tgHJW7XSDygJR2NggxiIk7qwiHB6yykI13Vvyz+84jOeZsCm6cwy4/ZwWs/cmFRcBtTg==
-X-Received: by 2002:a05:6402:268a:b0:615:7047:4efd with SMTP id 4fb4d7f45d1cf-617960c735amr2019608a12.13.1754473742414;
-        Wed, 06 Aug 2025 02:49:02 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f12d500023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f12:d500:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f00247sm10139093a12.9.2025.08.06.02.49.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 02:49:02 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	amarkuze@redhat.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH 3/3] net/ceph/messenger: add empty check to ceph_con_get_out_msg()
-Date: Wed,  6 Aug 2025 11:48:55 +0200
-Message-ID: <20250806094855.268799-4-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250806094855.268799-1-max.kellermann@ionos.com>
-References: <20250806094855.268799-1-max.kellermann@ionos.com>
+        d=1e100.net; s=20230601; t=1754473749; x=1755078549;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ohW4yi6GOrjKp+9BF6Pd1f4PnxwG1hBCVQESPIRW15I=;
+        b=mvzRlmNzBJk+1JSp8XbKq4Z+8RGQdjygK85yQI6Fx4UnM0hfu6QkKeKnPXTFZSmAsv
+         kANIShD4oIESUMsH+fY8N36lPnWqIOtYWcclHHzwKuNYvLhPL+4+NGrf6Ylly0KxYe5o
+         itxyDP3qI8NGG4mGQNsGgKdaQcx2k8xnZVqnwZYzK8ywHePuyJXIjTfxfPirLPMsmPro
+         +ZoBb2Uo9Xm+wUOcg1xQnzMFIm4b+QNa0Aaj8cfFqn3V+QNM060CAeObIPEYO5t9e3Xg
+         JU/KthCdarnpavfhDQLTxHNWcHMxmQHitnXQTgCxEahwAn3mFxPPDVW12Ssx+16M0+xW
+         /OxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoX6BFIZpvxjGqVawrcwQTGnQTqMlX/TAotKrW/vsiui2m6oeSl0PTjodByMa5hJVJP7sRpO7HNWOBUCyRoLuFjj4=@vger.kernel.org, AJvYcCWnlJ6XujqgbTj68wYfE4sy+kfjW5Q7SNrlfbQgA/TIhaKhbTgwGsOGRr2N+tMgk3vsp/0xMjCTC554oePW@vger.kernel.org, AJvYcCXXSNCo6BijPVTxt4lFw+dQqzwnW78SDUDVmbU0BzdLc22A+VFBcFgMPgRy0y2eG/bOCsr48cuo7Sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQXPbJajr7wrCB/udmRn1SByvIuG7mb6qVRF9GJ8aRzmoLISjE
+	oLh2l7RekI3ApovPvVHVcaTBi/k+Tn4sMHFzdMEGygZq2i3VCTeFloJewOIUkVlj
+X-Gm-Gg: ASbGnctReWcFmCeJcFfT3jpdHh9YthzuZ+Kc397hkVc4R3JWVb5wA6i/8r8o3iWEQq2
+	obHnhudOSYvWr1pSoekm+CqTb81LzkRgb3Pl0i0T/3aR6o8rxAOM90qQAuq8TqmolO7zemoJSw/
+	uj4uit9R98xnxj0uFXOT26BB1TRpZtygm5Xr8Uq+AkfYkd+Z7DL67dXDmYxasvL74szih2SLIW3
+	WAGB/U03vWssUXotuZbAU+X9fQn4UsaM/3uR/rOdU15eDNjw9DRqRo5JmqPW3oB7MeImXH0gH5N
+	oXPkjuItzGP7qgsIUQbycFMCzFDIBfbPMHXwrX4Fu3j9Me797/0T4z39fuWi4geq+cfrHB8WnrX
+	QkWNJcUnjOQs2jwdu6xWenujFDO+v5zL71ytFTawUHuQGhdcppoYjagkjMEC+
+X-Google-Smtp-Source: AGHT+IGmP3SxaQVS5gDa2okN+Mt6UVN3osYAZwoX4LtTeCy6dTbrS7DSKUfWCQ88aS+B12DekbwseA==
+X-Received: by 2002:a05:6102:d93:b0:4e5:aa74:ac0 with SMTP id ada2fe7eead31-503715d0ff0mr648138137.8.1754473749440;
+        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4befsm3395572137.4.2025.08.06.02.49.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4fc83dda10bso1696222137.0;
+        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPIMNJtUrGl/QRvdwW9WVXK+aLydTsi4PLKPQZ+nHJFQ0CuLqUJfCpJPp96N553QgXuKl9V0mXlq6kfGw+@vger.kernel.org, AJvYcCWRiBhjzcWL3/qZrc+aPxhMSLZdJHsjWXG2OvnV6Wd/AWhocIHyIPPcFln+eLRi0m33C/tPfR9tQUs=@vger.kernel.org, AJvYcCWdx2tEc9rCLyTkDtJxBbKDRPj49IUQv5l7YSmxZncL47L4T2TzjMiCFHKORQTfWpNRW3OkDxC8waLgrQRgHKIz1D0=@vger.kernel.org
+X-Received: by 2002:a05:6102:5111:b0:4e9:add0:2816 with SMTP id
+ ada2fe7eead31-503710c71b4mr715537137.5.1754473748972; Wed, 06 Aug 2025
+ 02:49:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250806092129.621194-1-claudiu.beznea.uj@bp.renesas.com> <20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 11:48:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV5Ws+ADfQKM9fFS24B4aznN1DJwL0bsZ9268+afFkCog@mail.gmail.com>
+X-Gm-Features: Ac12FXwbzlNBQPuwzzfANplLaHQV3rogC4lb4UusjcCTRyRThDnCEQB2JILSN80
+Message-ID: <CAMuHMdV5Ws+ADfQKM9fFS24B4aznN1DJwL0bsZ9268+afFkCog@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] clk: renesas: r9a07g04[34]: Use tabs instead of spaces
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This moves the list_empty() checks from the two callers (v1 and v2)
-into the base messenger.c library.  Now the v1/v2 specializations do
-not need to know about con->out_queue; that implementation detail is
-now hidden behind the ceph_con_get_out_msg() function.
+On Wed, 6 Aug 2025 at 11:21, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Use tabs instead of spaces in the CRU clock descriptions to match the
+> formatting used in the rest of the clock definitions.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- net/ceph/messenger.c    |  4 +++-
- net/ceph/messenger_v1.c | 15 ++++++++++-----
- net/ceph/messenger_v2.c |  4 ++--
- 3 files changed, 15 insertions(+), 8 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.18.
 
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 424fb2769b71..8886c38a55d2 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2113,7 +2113,9 @@ struct ceph_msg *ceph_con_get_out_msg(struct ceph_connection *con)
- {
- 	struct ceph_msg *msg;
- 
--	BUG_ON(list_empty(&con->out_queue));
-+	if (list_empty(&con->out_queue))
-+		return NULL;
-+
- 	msg = list_first_entry(&con->out_queue, struct ceph_msg, list_head);
- 	WARN_ON(msg->con != con);
- 
-diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-index 516f2eeb122a..5eb6cfdbc494 100644
---- a/net/ceph/messenger_v1.c
-+++ b/net/ceph/messenger_v1.c
-@@ -189,12 +189,18 @@ static void prepare_write_message_footer(struct ceph_connection *con, struct cep
- 
- /*
-  * Prepare headers for the next outgoing message.
-+ *
-+ * @return false if there are no outgoing messages
-  */
--static void prepare_write_message(struct ceph_connection *con)
-+static bool prepare_write_message(struct ceph_connection *con)
- {
- 	struct ceph_msg *m;
- 	u32 crc;
- 
-+	m = ceph_con_get_out_msg(con);
-+	if (m == NULL)
-+		return false;
-+
- 	con_out_kvec_reset(con);
- 	con->v1.out_msg_done = false;
- 
-@@ -208,8 +214,6 @@ static void prepare_write_message(struct ceph_connection *con)
- 			&con->v1.out_temp_ack);
- 	}
- 
--	m = ceph_con_get_out_msg(con);
--
- 	dout("prepare_write_message %p seq %lld type %d len %d+%d+%zd\n",
- 	     m, con->out_seq, le16_to_cpu(m->hdr.type),
- 	     le32_to_cpu(m->hdr.front_len), le32_to_cpu(m->hdr.middle_len),
-@@ -256,6 +260,8 @@ static void prepare_write_message(struct ceph_connection *con)
- 	}
- 
- 	ceph_con_flag_set(con, CEPH_CON_F_WRITE_PENDING);
-+
-+	return true;
- }
- 
- /*
-@@ -1543,8 +1549,7 @@ int ceph_con_v1_try_write(struct ceph_connection *con)
- 			goto more;
- 		}
- 		/* is anything else pending? */
--		if (!list_empty(&con->out_queue)) {
--			prepare_write_message(con);
-+		if (prepare_write_message(con)) {
- 			goto more;
- 		}
- 		if (con->in_seq > con->in_seq_acked) {
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index 90109fa0fe60..e0b5f2e2582d 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -3292,6 +3292,7 @@ static void finish_message(struct ceph_connection *con)
- 
- static int populate_out_iter(struct ceph_connection *con)
- {
-+	struct ceph_msg *msg;
- 	int ret;
- 
- 	dout("%s con %p state %d out_state %d\n", __func__, con, con->state,
-@@ -3337,8 +3338,7 @@ static int populate_out_iter(struct ceph_connection *con)
- 			pr_err("prepare_keepalive2 failed: %d\n", ret);
- 			return ret;
- 		}
--	} else if (!list_empty(&con->out_queue)) {
--		struct ceph_msg *msg = ceph_con_get_out_msg(con);
-+	} else if ((msg = ceph_con_get_out_msg(con)) != NULL) {
- 		ret = prepare_message(con, msg);
- 		if (ret) {
- 			pr_err("prepare_message failed: %d\n", ret);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.47.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
