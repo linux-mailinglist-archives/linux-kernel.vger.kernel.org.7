@@ -1,258 +1,250 @@
-Return-Path: <linux-kernel+bounces-757239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FA1B1BFA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FAFB1BFA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE6118A3F43
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31B7188BE3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D568B1E1A3D;
-	Wed,  6 Aug 2025 04:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833D61EE03B;
+	Wed,  6 Aug 2025 04:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpAwiErY"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vDrvf9iw"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A3C4431;
-	Wed,  6 Aug 2025 04:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A67E1E51FE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754455079; cv=none; b=hibSMP//TbZJuR10asDfVUJxgWcigsA5C6jMXons8MaT0sfzGE4HjvbsPFHuSCaPpjpZcv2CqbZmFEGOqQvWXeem/izcovUJtgXoZVz81MBhgeZQLoBl1dYpPUuW3kLeOppt7ifktDNTmIAPDztRTZF0+AuD275ATkhCnDKMPRs=
+	t=1754455469; cv=none; b=lGXTg5b54BM9JdNX+gDYUmsGosOL0v/6gH6AW6LjVsVSngCLrelyz56IWp46zY3GcgIcgp9nwjB717pYrVNv6HDre0oII4PZcfjb0axNL7dRPSC1CbAkSNOqN1mGMJNxi/H0i7j8LM25QjnEluo+ut+tmbYlQSNEy3I0DJEvjqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754455079; c=relaxed/simple;
-	bh=9nHRt5BtZeZhDnL6jV7L7PCFuH5fnkwqdN9wXO/76Hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o0UXHRYDhp8h9s7haD96kolf6na9vBIffQG7gLw4R1HPQtf3o2oQ973/T2xLlk9L5hNW2eSMUGxKpSHMr/5DLqpQKyvysCAgxRhUDEHz8uBz+TR2CocH+zsR2ZwDEG3wACm8+/Gtwqn4FGv4judFXsv4LWYu34i3OswinsAloMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpAwiErY; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3338252b2e6so1641931fa.2;
-        Tue, 05 Aug 2025 21:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754455075; x=1755059875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qo/Viw2qcvpv/MoBS3iI99BxX9ghV/qd2Tz3ezwRf/E=;
-        b=DpAwiErYR3KOt8t4CA0PiH8l25PYG6pBYcIa5YKjnOIt9nA5OBSF17+fetojwoEqb8
-         vT+RdGI8C2bEJq2l52n/7lEr3ksZBWi141EDzo3xNHxMatbe87H1yy+NeD+CsAa8moCh
-         OKKxhIzuZaki3gzCJ/Mx3JigYiZ71iw7LSVwk/WnQ88sGgJa/0YLsxoU+UqZdVsZqa2a
-         txXkK57g0WghJdXOkaJwZ8+1qimdbHWv89PgRXjAM8sDocSDpOyZEhn2c6DjmIpZY/rn
-         SrDSfZYfmW4+AK+C1NJzYfljI8jOMihPcJ8TrDorryK3Dcif2sZB7XxqaXjFw7nL/SFD
-         iHLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754455075; x=1755059875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qo/Viw2qcvpv/MoBS3iI99BxX9ghV/qd2Tz3ezwRf/E=;
-        b=YWVrmACFIX7qyKrkL6Eu0gx4bJRHNuSxf+LmZqUyjG5aRN604iULE0LtxVI5li6mem
-         /l0MVtBqQdx1mKR2j2ddVy0DBUOYnfnnyImbRXo1ZeSGCUlZzkm6RWhRwdzuLuXmQzv+
-         mNQtJtsIEOMK108k/8bHMY6QxOdPHimqb7gcYcWBAweb2Nloz9TXOMVSpSv9T3bj2YKq
-         yLciXYqO5bghjLlIZa5YIFh3QhdQXGyP8jXQOKjNDdcTeqvbCGHEZtuo0NuVFU/MqL9/
-         XFhw3d8L3p0pp8Yiy5IFBf/+VY6CKgcK/esgQS2BNPTsr+FIEDuu/j7l7IKkE9yGZ7mr
-         pl0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQGATaC8cFIpc/jS9WqInGn0FA4NIsvxg7uw8VzR0ekYfzH3ISncPr+zuAtlHQij1s2vHp/wSOuiTCDtI=@vger.kernel.org, AJvYcCXICTevFFTePIH9xtDutIn63G7xsW7Mc4zse0iPpdsUtTo1EGrh60QeCBqjH/ePkqUU9m0a0HosObIxtg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXUKdhztjUIaaSRixSxnoSOpp9AxSYitiLyMknJdbwBmc4kQPa
-	urOkcTTvgz8QoLhpLmzlm37/DC3ub1wPIWjOuxmgjjJ8IfCSHOMHpJXSFw/SlUvzHVCF88DmNNj
-	JWagOXyvnXWGBsOtUxK+xP4Nvx98TMEo=
-X-Gm-Gg: ASbGncs869ErVRHt0KbDF/A6e9kOptnKMmyVE87ij5hLybTUZfT4Vzym9jua6wWiaAn
-	jsfuD94kOebuKit770qtgD0uCbZBauo2Vl9cNpwNeYBQeBAr4/Kcm23K9684A+XM9RFMhScE1Al
-	u8Wig3BWMvLUiqDnv0Uku36UxzLwCXY+7emfQfJreUVQ14A3nWABSoT8X59FwUXfIsZujbVd1Eq
-	OvrA/c=
-X-Google-Smtp-Source: AGHT+IFdsEW+IENwPRijll82h/DPiknLKACQZ/o9KWIJ/PhoBk1+OGng4Q7CbEgSQ8dHEzo+wdS/ckXYJp2kTJF5j88=
-X-Received: by 2002:a05:651c:1509:b0:32a:739d:fac with SMTP id
- 38308e7fff4ca-3338144cd8fmr3796161fa.36.1754455075078; Tue, 05 Aug 2025
- 21:37:55 -0700 (PDT)
+	s=arc-20240116; t=1754455469; c=relaxed/simple;
+	bh=clBZjVsM4riD1Jdr5EByIVbrzbJYrHxQ8DbI2snliuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=uhE55CaKXx4dTwxuo234N+hiEIQRrmguaxxmbLbIXYpe6cFe3Vb4qZGU9ABCv3hqIyty1Lq53JepmlRXlUI80tqwR29nNYa9fKgSevaX+104l5QcSJPVrqllnv4vCMthZBjYEN9TUrRlKhZ77PVeO30PUTq+U/WQ/rSFZEYHD7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vDrvf9iw; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250806044424epoutp04974580981896d345104325367d256632~ZE-L5eaFg1738817388epoutp046
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:44:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250806044424epoutp04974580981896d345104325367d256632~ZE-L5eaFg1738817388epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754455464;
+	bh=Ln69oVBXuHCu0TfnNFV5fRdjx0LD6IMCcRIsNkoyWhE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=vDrvf9iw5oWwNYOqyqsW1KZ7KxqcvG3LvgWJDTp1/clesHaSurbQJvhSDxGMPQWbH
+	 95sUWWmjyCJl4bK2am5Y/xMH9va9LV1MyclG5iHuPa8t571WPslZm10WYHNKZTp/SN
+	 M5+LrTihduwtf2XxaN0YfwCVTR+zCnaergMo3yQM=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250806044423epcas5p3a4d86812c586a7640dd24fef985a501f~ZE-LKdHPj1146811468epcas5p3V;
+	Wed,  6 Aug 2025 04:44:23 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bxd463gy3z6B9m4; Wed,  6 Aug
+	2025 04:44:22 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250806044421epcas5p37549884b5c64b50c525ea2f64b7ef047~ZE-JhiVKo0387103871epcas5p3u;
+	Wed,  6 Aug 2025 04:44:21 +0000 (GMT)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250806044419epsmtip228d167ce40210f0053f002a58f1e8853~ZE-HVupbJ0383403834epsmtip2s;
+	Wed,  6 Aug 2025 04:44:19 +0000 (GMT)
+Message-ID: <99fa41ed-dee0-499f-8827-67e1e1c70e60@samsung.com>
+Date: Wed, 6 Aug 2025 10:14:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805142622.560992-1-snovitoll@gmail.com> <20250805142622.560992-6-snovitoll@gmail.com>
- <e15e1012-566f-45a7-81d5-fd504af780da@gmail.com>
-In-Reply-To: <e15e1012-566f-45a7-81d5-fd504af780da@gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Wed, 6 Aug 2025 09:37:38 +0500
-X-Gm-Features: Ac12FXyJN7pElMlaw_o-aZoTkQ3byDjTMvUiVf1-1J0u8uF_nrAwTbgiBAXxjhE
-Message-ID: <CACzwLxj0nOQT0+Z+AFDG3Cvun5jGaET6C3mp9PnLbCHjdw51Pg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/9] kasan/loongarch: select ARCH_DEFER_KASAN and call kasan_init_generic
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com, 
-	agordeev@linux.ibm.com, akpm@linux-foundation.org, zhangqing@loongson.cn, 
-	chenhuacai@loongson.cn, trishalfonso@google.com, davidgow@google.com, 
-	glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: Remove WARN_ON for device endpoint command
+ timeouts
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>, "balbi@ti.com"
+	<balbi@ti.com>, "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
+	<dh10.jung@samsung.com>, "akash.m5@samsung.com" <akash.m5@samsung.com>,
+	"hongpooh.kim@samsung.com" <hongpooh.kim@samsung.com>,
+	"eomji.oh@samsung.com" <eomji.oh@samsung.com>, "shijie.cai@samsung.com"
+	<shijie.cai@samsung.com>, "alim.akhtar@samsung.com"
+	<alim.akhtar@samsung.com>, "muhammed.ali@samsung.com"
+	<muhammed.ali@samsung.com>, "thiagu.r@samsung.com" <thiagu.r@samsung.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <20250805233832.5jgtryppvw2xbthq@synopsys.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250806044421epcas5p37549884b5c64b50c525ea2f64b7ef047
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e
+References: <CGME20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e@epcas5p3.samsung.com>
+	<20250804142258.1577-1-selvarasu.g@samsung.com>
+	<20250805233832.5jgtryppvw2xbthq@synopsys.com>
 
-On Tue, Aug 5, 2025 at 10:18=E2=80=AFPM Andrey Ryabinin <ryabinin.a.a@gmail=
-.com> wrote:
->
->
->
-> On 8/5/25 4:26 PM, Sabyrzhan Tasbolatov wrote:
-> > LoongArch needs deferred KASAN initialization as it has a custom
-> > kasan_arch_is_ready() implementation that tracks shadow memory
-> > readiness via the kasan_early_stage flag.
-> >
-> > Select ARCH_DEFER_KASAN to enable the unified static key mechanism
-> > for runtime KASAN control. Call kasan_init_generic() which handles
-> > Generic KASAN initialization and enables the static key.
-> >
-> > Replace kasan_arch_is_ready() with kasan_enabled() and delete the
-> > flag kasan_early_stage in favor of the unified kasan_enabled()
-> > interface.
-> >
-> > Note that init_task.kasan_depth =3D 0 is called after kasan_init_generi=
-c(),
-> > which is different than in other arch kasan_init(). This is left
-> > unchanged as it cannot be tested.
-> >
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D217049
-> > Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> > ---
-> > Changes in v4:
-> > - Replaced !kasan_enabled() with !kasan_shadow_initialized() in
-> >   loongarch which selects ARCH_DEFER_KASAN (Andrey Ryabinin)
-> > ---
-> >  arch/loongarch/Kconfig             | 1 +
-> >  arch/loongarch/include/asm/kasan.h | 7 -------
-> >  arch/loongarch/mm/kasan_init.c     | 8 ++------
-> >  3 files changed, 3 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> > index f0abc38c40a..f6304c073ec 100644
-> > --- a/arch/loongarch/Kconfig
-> > +++ b/arch/loongarch/Kconfig
-> > @@ -9,6 +9,7 @@ config LOONGARCH
-> >       select ACPI_PPTT if ACPI
-> >       select ACPI_SYSTEM_POWER_STATES_SUPPORT if ACPI
-> >       select ARCH_BINFMT_ELF_STATE
-> > +     select ARCH_DEFER_KASAN
-> >       select ARCH_DISABLE_KASAN_INLINE
-> >       select ARCH_ENABLE_MEMORY_HOTPLUG
-> >       select ARCH_ENABLE_MEMORY_HOTREMOVE
-> > diff --git a/arch/loongarch/include/asm/kasan.h b/arch/loongarch/includ=
-e/asm/kasan.h
-> > index 62f139a9c87..0e50e5b5e05 100644
-> > --- a/arch/loongarch/include/asm/kasan.h
-> > +++ b/arch/loongarch/include/asm/kasan.h
-> > @@ -66,7 +66,6 @@
-> >  #define XKPRANGE_WC_SHADOW_OFFSET    (KASAN_SHADOW_START + XKPRANGE_WC=
-_KASAN_OFFSET)
-> >  #define XKVRANGE_VC_SHADOW_OFFSET    (KASAN_SHADOW_START + XKVRANGE_VC=
-_KASAN_OFFSET)
-> >
-> > -extern bool kasan_early_stage;
-> >  extern unsigned char kasan_early_shadow_page[PAGE_SIZE];
-> >
-> >  #define kasan_mem_to_shadow kasan_mem_to_shadow
-> > @@ -75,12 +74,6 @@ void *kasan_mem_to_shadow(const void *addr);
-> >  #define kasan_shadow_to_mem kasan_shadow_to_mem
-> >  const void *kasan_shadow_to_mem(const void *shadow_addr);
-> >
-> > -#define kasan_arch_is_ready kasan_arch_is_ready
-> > -static __always_inline bool kasan_arch_is_ready(void)
-> > -{
-> > -     return !kasan_early_stage;
-> > -}
-> > -
-> >  #define addr_has_metadata addr_has_metadata
-> >  static __always_inline bool addr_has_metadata(const void *addr)
-> >  {
-> > diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_i=
-nit.c
-> > index d2681272d8f..57fb6e98376 100644
-> > --- a/arch/loongarch/mm/kasan_init.c
-> > +++ b/arch/loongarch/mm/kasan_init.c
-> > @@ -40,11 +40,9 @@ static pgd_t kasan_pg_dir[PTRS_PER_PGD] __initdata _=
-_aligned(PAGE_SIZE);
-> >  #define __pte_none(early, pte) (early ? pte_none(pte) : \
-> >  ((pte_val(pte) & _PFN_MASK) =3D=3D (unsigned long)__pa(kasan_early_sha=
-dow_page)))
-> >
-> > -bool kasan_early_stage =3D true;
-> > -
-> >  void *kasan_mem_to_shadow(const void *addr)
-> >  {
-> > -     if (!kasan_arch_is_ready()) {
-> > +     if (!kasan_shadow_initialized()) {
-> >               return (void *)(kasan_early_shadow_page);
-> >       } else {
-> >               unsigned long maddr =3D (unsigned long)addr;
-> > @@ -298,8 +296,6 @@ void __init kasan_init(void)
-> >       kasan_populate_early_shadow(kasan_mem_to_shadow((void *)VMALLOC_S=
-TART),
-> >                                       kasan_mem_to_shadow((void *)KFENC=
-E_AREA_END));
-> >
-> > -     kasan_early_stage =3D false;
-> > -
->
-> There is a reason for this line to be here.
-> Your patch will change the result of the follow up kasan_mem_to_shadow() =
-call and
-> feed the wrong address to kasan_map_populate()
 
-Thanks, I've missed it. Here the upcoming v5 for this:
+On 8/6/2025 5:08 AM, Thinh Nguyen wrote:
+> On Mon, Aug 04, 2025, Selvarasu Ganesan wrote:
+>> From: Akash M <akash.m5@samsung.com>
+>>
+>> This commit addresses a rarely observed endpoint command timeout
+>> which causes kernel panic due to warn when 'panic_on_warn' is enabled
+>> and unnecessary call trace prints when 'panic_on_warn' is disabled.
+>> It is seen during fast software-controlled connect/disconnect testcases.
+>> The following is one such endpoint command timeout that we observed:
+>>
+>> 1. Connect
+>>     =======
+>> ->dwc3_thread_interrupt
+>>   ->dwc3_ep0_interrupt
+>>    ->configfs_composite_setup
+>>     ->composite_setup
+>>      ->usb_ep_queue
+>>       ->dwc3_gadget_ep0_queue
+>>        ->__dwc3_gadget_ep0_queue
+>>         ->__dwc3_ep0_do_control_data
+>>          ->dwc3_send_gadget_ep_cmd
+>>
+>> 2. Disconnect
+>>     ==========
+>> ->dwc3_thread_interrupt
+>>   ->dwc3_gadget_disconnect_interrupt
+>>    ->dwc3_ep0_reset_state
+>>     ->dwc3_ep0_end_control_data
+>>      ->dwc3_send_gadget_ep_cmd
+>>
+>> In the issue scenario, in Exynos platforms, we observed that control
+>> transfers for the previous connect have not yet been completed and end
+>> transfer command sent as a part of the disconnect sequence and
+>> processing of USB_ENDPOINT_HALT feature request from the host timeout.
+>> This maybe an expected scenario since the controller is processing EP
+>> commands sent as a part of the previous connect. It maybe better to
+>> remove WARN_ON in all places where device endpoint commands are sent to
+>> avoid unnecessary kernel panic due to warn.
+>>
+>> Fixes: e192cc7b5239 ("usb: dwc3: gadget: move cmd_endtransfer to extra function")
+>> Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
+>> Fixes: c7fcdeb2627c ("usb: dwc3: ep0: simplify EP0 state machine")
+>> Fixes: f0f2b2a2db85 ("usb: dwc3: ep0: push ep0state into xfernotready processing")
+>> Fixes: 2e3db064855a ("usb: dwc3: ep0: drop XferNotReady(DATA) support")
+>> Cc: stable@vger.kernel.org
+> I don't think this is a fix patch. You're just replacing WARN* with
+> dev_warn* without doing any recovery. Let's remove the Fixes and table
+> tag. Also, can we replace dev_warn* with dev_err* because these are
+> critical errors that may put the controller in a bad state.
+>
+> Thanks,
+> Thinh
 
-diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.=
-c
-index d2681272d8f..0e6622b57ce 100644
---- a/arch/loongarch/mm/kasan_init.c
-+++ b/arch/loongarch/mm/kasan_init.c
-@@ -40,11 +40,9 @@ static pgd_t kasan_pg_dir[PTRS_PER_PGD] __initdata
-__aligned(PAGE_SIZE);
-#define __pte_none(early, pte) (early ? pte_none(pte) : \
-((pte_val(pte) & _PFN_MASK) =3D=3D (unsigned long)__pa(kasan_early_shadow_p=
-age)))
--bool kasan_early_stage =3D true;
--
-void *kasan_mem_to_shadow(const void *addr)
-{
-- if (!kasan_arch_is_ready()) {
-+ if (!kasan_shadow_initialized()) {
-return (void *)(kasan_early_shadow_page);
-} else {
-unsigned long maddr =3D (unsigned long)addr;
-@@ -298,7 +296,10 @@ void __init kasan_init(void)
-kasan_populate_early_shadow(kasan_mem_to_shadow((void *)VMALLOC_START),
-kasan_mem_to_shadow((void *)KFENCE_AREA_END));
-- kasan_early_stage =3D false;
-+ /* Enable KASAN here before kasan_mem_to_shadow() which checks
-+ * if kasan_shadow_initialized().
-+ */
-+ kasan_init_generic();
-/* Populate the linear mapping */
-for_each_mem_range(i, &pa_start, &pa_end) {
-@@ -329,5 +330,4 @@ void __init kasan_init(void)
-/* At this point kasan is fully initialized. Enable error messages */
-init_task.kasan_depth =3D 0;
-- pr_info("KernelAddressSanitizer initialized.\n");
-}
---=20
-2.34.1
 
+Hi Thinh,
+
+Thanks for your review comments.
+Yeah we agree. This is not a fix patch. Sure we will update new patchset 
+with replace dev_warn* with dev_err*.
+
+As for dropping the stable tag,  It would be better these changes to be 
+applied across all stable kernels, so shall we keep stable tag in place?
+
+Thanks,
+Selva
 >
->
-> >       /* Populate the linear mapping */
-> >       for_each_mem_range(i, &pa_start, &pa_end) {
-> >               void *start =3D (void *)phys_to_virt(pa_start);
-> > @@ -329,5 +325,5 @@ void __init kasan_init(void)
-> >
-> >       /* At this point kasan is fully initialized. Enable error message=
-s */
-> >       init_task.kasan_depth =3D 0;
-> > -     pr_info("KernelAddressSanitizer initialized.\n");
-> > +     kasan_init_generic();
-> >  }
->
+>> Signed-off-by: Akash M <akash.m5@samsung.com>
+>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>> diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
+>> index 666ac432f52d..7b313836f62b 100644
+>> --- a/drivers/usb/dwc3/ep0.c
+>> +++ b/drivers/usb/dwc3/ep0.c
+>> @@ -288,7 +288,9 @@ void dwc3_ep0_out_start(struct dwc3 *dwc)
+>>   	dwc3_ep0_prepare_one_trb(dep, dwc->ep0_trb_addr, 8,
+>>   			DWC3_TRBCTL_CONTROL_SETUP, false);
+>>   	ret = dwc3_ep0_start_trans(dep);
+>> -	WARN_ON(ret < 0);
+>> +	if (ret < 0)
+>> +		dev_warn(dwc->dev, "ep0 out start transfer failed: %d\n", ret);
+>> +
+>>   	for (i = 2; i < DWC3_ENDPOINTS_NUM; i++) {
+>>   		struct dwc3_ep *dwc3_ep;
+>>   
+>> @@ -1061,7 +1063,9 @@ static void __dwc3_ep0_do_control_data(struct dwc3 *dwc,
+>>   		ret = dwc3_ep0_start_trans(dep);
+>>   	}
+>>   
+>> -	WARN_ON(ret < 0);
+>> +	if (ret < 0)
+>> +		dev_warn(dwc->dev, "ep0 data phase start transfer failed: %d\n",
+>> +				ret);
+>>   }
+>>   
+>>   static int dwc3_ep0_start_control_status(struct dwc3_ep *dep)
+>> @@ -1078,7 +1082,12 @@ static int dwc3_ep0_start_control_status(struct dwc3_ep *dep)
+>>   
+>>   static void __dwc3_ep0_do_control_status(struct dwc3 *dwc, struct dwc3_ep *dep)
+>>   {
+>> -	WARN_ON(dwc3_ep0_start_control_status(dep));
+>> +	int	ret;
+>> +
+>> +	ret = dwc3_ep0_start_control_status(dep);
+>> +	if (ret)
+>> +		dev_warn(dwc->dev,
+>> +			"ep0 status phase start transfer failed: %d\n", ret);
+>>   }
+>>   
+>>   static void dwc3_ep0_do_control_status(struct dwc3 *dwc,
+>> @@ -1121,7 +1130,10 @@ void dwc3_ep0_end_control_data(struct dwc3 *dwc, struct dwc3_ep *dep)
+>>   	cmd |= DWC3_DEPCMD_PARAM(dep->resource_index);
+>>   	memset(&params, 0, sizeof(params));
+>>   	ret = dwc3_send_gadget_ep_cmd(dep, cmd, &params);
+>> -	WARN_ON_ONCE(ret);
+>> +	if (ret)
+>> +		dev_warn_ratelimited(dwc->dev,
+>> +			"ep0 data phase end transfer failed: %d\n", ret);
+>> +
+>>   	dep->resource_index = 0;
+>>   }
+>>   
+>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>> index 321361288935..50e4f667b2f2 100644
+>> --- a/drivers/usb/dwc3/gadget.c
+>> +++ b/drivers/usb/dwc3/gadget.c
+>> @@ -1774,7 +1774,11 @@ static int __dwc3_stop_active_transfer(struct dwc3_ep *dep, bool force, bool int
+>>   		dep->flags |= DWC3_EP_DELAY_STOP;
+>>   		return 0;
+>>   	}
+>> -	WARN_ON_ONCE(ret);
+>> +
+>> +	if (ret)
+>> +		dev_warn_ratelimited(dep->dwc->dev,
+>> +				"end transfer failed: ret = %d\n", ret);
+>> +
+>>   	dep->resource_index = 0;
+>>   
+>>   	if (!interrupt)
+>> @@ -4041,7 +4045,9 @@ static void dwc3_clear_stall_all_ep(struct dwc3 *dwc)
+>>   		dep->flags &= ~DWC3_EP_STALL;
+>>   
+>>   		ret = dwc3_send_clear_stall_ep_cmd(dep);
+>> -		WARN_ON_ONCE(ret);
+>> +		if (ret)
+>> +			dev_warn_ratelimited(dwc->dev,
+>> +				"failed to clear STALL on %s\n", dep->name);
+>>   	}
+>>   }
+>>   
+>> -- 
+>> 2.17.1
 
