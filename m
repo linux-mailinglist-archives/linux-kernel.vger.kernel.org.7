@@ -1,193 +1,340 @@
-Return-Path: <linux-kernel+bounces-757796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FB0B1C6C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:23:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22D7B1C6CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CAA417D806
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BEBF3B879E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC2C279794;
-	Wed,  6 Aug 2025 13:23:53 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A628C002;
+	Wed,  6 Aug 2025 13:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="XCAXcjz/"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0122D7BF;
-	Wed,  6 Aug 2025 13:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754486633; cv=none; b=GGl8myhNlQBpH2MnHf9PwuI8wynEzxB6epSPt65E7hw3F6B48gkzOG3deAAieVDBDEYeqbaEgC1dTXZL9lQY47HR5uofJfBJwtuEB8NPZohLTyOzPG0+sD5OExMXnR/QZtBSx6U7CROUSkgzrl3UPPyQZW8Bk8li5KfmAFNY/ng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754486633; c=relaxed/simple;
-	bh=yp2hRT4Xo+ztxRvI7HeplkR/VFn3RG+IanX7yIuTJKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KKRhkrUF/tVLmoMC08Gy4x4XG39PjTTY86ag4nHlCldf5X/5jbfFIPdlcjOGTaOf2hwJ04Zeo2EUAEOLNeF0kc+IRh1YGhdZs9Gbkjh1pZrjLywaC58jNzeri6AMZwMFOUAH+PTRKHNKLEhupchR7IMxCIT1NdN5m1IBGMyxAsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24050da1b9eso8126815ad.3;
-        Wed, 06 Aug 2025 06:23:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754486630; x=1755091430;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8BaH77pTATgomb0f+TIsMr75eWE+v8rXetnzgd5rHns=;
-        b=JRqntDyAcBql07+do4MoFWQVH1NlJJIfU6kESFW4l8Vlzc2z5PHdEURMS6vMcUPrgI
-         ocuG97mI9CxUXduRCLTfEDw+V0LKZrAx9lDTFOy0K2qUFz5xFePlMT2zR9J/AU+hTbrd
-         6/YOAIs88Anf/lTCOLVpAQfDR5pE+WiHUjtHrMvLAMztPcGqVae+z97up46hzTKt0ZIC
-         5trseKk6qP8cCt4uBEgrv0wUy8R+UMWcd3gv9VPj9tLn2yncgftfEjazcqNpv/umL3qr
-         /MV5dtiU+RJ6AtCkWR7fyD0Lb2uLzrzRI3xBl+Li841hlrlzzK9hD33H6gtQeoJ9aVoN
-         MGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnQBmQWLOXxO4hdvtwJ0SGppBlxp8EXVw57zc2ZIH6GxlcVjB7Nr09iV4eSpddTnKzGaqQnsSfjE/p@vger.kernel.org, AJvYcCX60tHezYTcbWjhP5atqylhlZ2nqoTvK5jqtU657iIJ8IzM/cT35SZXGv0T0xhP37BZSqSKet/dCbMt1X/n@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvhkpwVLaIiKP+z+ofb9In38km4i24D6B8IZzKro7PguPI97U5
-	CGrrW/gs9hF3n4DYK6jchtLHCtjLU54Zx8tRhNSj33vKNcGk90u1mLBC
-X-Gm-Gg: ASbGncviVLl6qFrBlwCHsuMLTCbNJ3VcdAUpclTfiVAQmnOAjvrJZmpxUfkrq6TmhVq
-	ZNwEBR5O4F9GEBoWDWFLSoLsLI165GmXyMLhT8imFUJ61EH9bOtfyDWkcT0BZv8urjVcFD/hRaW
-	+Mq0BV8N/hgtwWbCErPxWsKV6vdcHxNexXEYu+4oiKrqlwknLfF3lEhKeyTJqMUPod9xr9VS5jo
-	EOgO0Z6tAq06S6e09ShWAJzHlO7N0fg68XXgZmSicRbK+VgYjeQGiR/L+pdUEz0dzVVjh/Hvh6T
-	by9emVwagnn8gnUZ57jayqsfbSF6mEnzx8SlxECzDqhszabP2XSDWKlx8gaYAAR7dIWqd9U6A5R
-	kubSiBXme35ul
-X-Google-Smtp-Source: AGHT+IE4TcwdrU6bM5i5hIrrZz+iLVM3raL5GuRMMILGR4J/MfMACcLYUJrF6k1kLQwalUqcEQ7tpg==
-X-Received: by 2002:a17:902:c40c:b0:240:4cf6:b07b with SMTP id d9443c01a7336-2429f5c32e8mr22341975ad.9.1754486629916;
-        Wed, 06 Aug 2025 06:23:49 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef7557sm158126335ad.19.2025.08.06.06.23.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 06:23:49 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH] cifs: Fix null-ptr-deref by static initializing global lock
-Date: Wed,  6 Aug 2025 13:22:12 +0000
-Message-ID: <20250806132211.94686-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9DD38FB9;
+	Wed,  6 Aug 2025 13:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754486880; cv=pass; b=L6I8v2oZ1Nm7JuaPiUSw7Q18YJs0pyM3fdXOczM/1rOtcwour/Vzl7deB3KaIIKckiwUmfIec4HKpc6l/zY29rJvSFFfp+nNAmr6GybD6p3v4x5QHJm7s4BN0XDaUtGiXjgtQZ0/2qmnePg1JKPVcfQx+25Jkpw5ciVHtZV6YH4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754486880; c=relaxed/simple;
+	bh=uwod64cGD3t3MPodVFrneCut/Qm+kw5RrWEjqJ4ExrI=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=Ufur/9x8P5C2QOEy8SRcAdJaFyTGxQfngCronsTgRrCjFjxK2PHjYJHKaj+YiWcDPiVwys/EWDaC8Rbv0LDzlHWdvgvvTa/JCLf5Ft6JDUj4RDodzc/kjnUF/X0wEdV6qz68SLVv2uD1dQ9UiWtDd+x0jHGsti27Z/TewussDec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=XCAXcjz/; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+ARC-Seal: i=1; a=rsa-sha256; t=1754486868; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=f1GEXlLRHeT8A0lYYL/9IXMl4mWE5bscHBPDZ3Wu04CltVP9MxmgK4JuvEMCaXeUTGfThupYBMhHrZ2+ttT33Um4roktjsF62/0nt8PhrIXoNI8i2vYhZuNxZVNgm/tmu8F54KvZeBddxDspJ3MHzbn1WdzdtQbszxOxsPTnKjw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754486868; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Sjf1hR4mIQuk6UWa+bJ6/t1YFxeBe65cSA7XMVutELs=; 
+	b=cgat9LO7C0HXBhQo8IOF+ALpQTdNHhYWIk0bsYLwgswh80WyCQ1NXdU9BCSTVxiZiC23xgB7jHtqVTOF3frOBNLbjzSb6jjte2Gb3aQJOq+iTVHjC13YbGOfhklRXdJRegwC6Uvz2f3TXdphwRUPw543LKaGEbeNl+Idm6zSR1Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754486867;
+	s=zmail; d=rong.moe; i=i@rong.moe;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
+	bh=Sjf1hR4mIQuk6UWa+bJ6/t1YFxeBe65cSA7XMVutELs=;
+	b=XCAXcjz/ChR76acIMNgXP46EqRX2DiP0Jie7AbFHYXyLmaPSsNvblhq0FqgFRmjh
+	2wmewukpE5g4J4ZGRh14uRTMeTtzE/aRbdn1et5Einl4AUCXYlyw+TeETxSUyXn54D6
+	ivjuRUqZyYYSxdGUKkLSqbSIsPCHbymVpx2lAdtE=
+Received: by mx.zohomail.com with SMTPS id 1754486864431704.8281568358202;
+	Wed, 6 Aug 2025 06:27:44 -0700 (PDT)
+Message-ID: <f99671f46a7c534f017fbe8912acde95e3186407.camel@rong.moe>
+Subject: Re: [PATCH 1/2] platform/x86: ideapad-laptop: Decouple HW & cdev
+ brightness for kbd backlight
+From: Rong Zhang <i@rong.moe>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Ike Panhc <ikepanhc@gmail.com>, "Derek J. Clark"
+ <derekjohn.clark@gmail.com>,  Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Hans de Goede <hansg@kernel.org>, 	platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <21b856ae-eec2-ac32-fd2f-12a505e8e539@linux.intel.com>
+References: <20250805140131.284122-1-i@rong.moe>
+	 <20250805140131.284122-2-i@rong.moe>
+	 <21b856ae-eec2-ac32-fd2f-12a505e8e539@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 06 Aug 2025 21:22:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.56.1-1 
+X-ZohoMailClient: External
 
-A kernel panic can be triggered by reading /proc/fs/cifs/debug_dirs.
-The crash is a null-ptr-deref inside spin_lock(), caused by the use of the
-uninitialized global spinlock cifs_tcp_ses_lock.
+Hi Ilpo,
 
-init_cifs()
- └── cifs_proc_init()
-      └── // User can access /proc/fs/cifs/debug_dirs here
-           └── cifs_debug_dirs_proc_show()
-                └── spin_lock(&cifs_tcp_ses_lock); // Uninitialized!
+On Wed, 2025-08-06 at 14:19 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Tue, 5 Aug 2025, Rong Zhang wrote:
+>=20
+> > Some recent models come with an ambient light sensor (ALS). On these
+> > models, their EC will automatically set the keyboard backlight to an
+> > appropriate brightness when the effective "HW brightness" is 3. The ter=
+m
+> > "HW brightness" means that it cannot be perfectly mapped to an LED
+> > classdev brightness, but the EC does use this predefined brightness
+> > value to represent such a mode.
+> >=20
+> > Currently, the code processing keyboard backlight is coupled with LED
+> > classdev, making it hard to expose the auto brightness (ALS) mode to th=
+e
+> > userspace.
+> >=20
+> > As the first step toward the goal, decouple HW brightness from LED
+> > classdev brightness, and update comments about corresponding backlight
+> > modes.
+> >=20
+> > Signed-off-by: Rong Zhang <i@rong.moe>
+> > ---
+> >  drivers/platform/x86/lenovo/ideapad-laptop.c | 125 +++++++++++++------
+> >  1 file changed, 90 insertions(+), 35 deletions(-)
+> >=20
+> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
+tform/x86/lenovo/ideapad-laptop.c
+> > index fcebfbaf0460..5014c1d0b633 100644
+> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > @@ -119,17 +119,40 @@ enum {
+> >  };
+> > =20
+> >  /*
+> > - * These correspond to the number of supported states - 1
+> > - * Future keyboard types may need a new system, if there's a collision
+> > - * KBD_BL_TRISTATE_AUTO has no way to report or set the auto state
+> > - * so it effectively has 3 states, but needs to handle 4
+> > + * The enumeration has two purposes:
+> > + *   - as an internal identifier for all known types of keyboard backl=
+ight
+> > + *   - as a mandatory parameter of the KBLC command
+> > + *
+> > + * For each type, the HW brightness values are defined as follows:
+> > + * +--------------------------+----------+-----+------+------+
+> > + * |            HW brightness |        0 |   1 |    2 |    3 |
+> > + * | Type                     |          |     |      |      |
+> > + * +--------------------------+----------+-----+------+------+
+> > + * | KBD_BL_STANDARD          |      off |  on |  N/A |  N/A |
+> > + * +--------------------------+----------+-----+------+------+
+> > + * | KBD_BL_TRISTATE          |      off | low | high |  N/A |
+> > + * +--------------------------+----------+-----+------+------+
+> > + * | KBD_BL_TRISTATE_AUTO     |      off | low | high | auto |
+> > + * +--------------------------+----------+-----+------+------+
+> > + *
+> > + * We map LED classdev brightness for KBD_BL_TRISTATE_AUTO as follows:
+> > + * +--------------------------+----------+-----+------+
+> > + * |  LED classdev brightness |        0 |   1 |    2 |
+> > + * | Operation                |          |     |      |
+> > + * +--------------------------+----------+-----+------+
+> > + * | Read                     | off/auto | low | high |
+> > + * +--------------------------+----------+-----+------+
+> > + * | Write                    |      off | low | high |
+> > + * +--------------------------+----------+-----+------+
+> >   */
+> >  enum {
+> > -	KBD_BL_STANDARD      =3D 1,
+> > -	KBD_BL_TRISTATE      =3D 2,
+> > -	KBD_BL_TRISTATE_AUTO =3D 3,
+> > +	KBD_BL_STANDARD		=3D	1,
+> > +	KBD_BL_TRISTATE		=3D	2,
+> > +	KBD_BL_TRISTATE_AUTO	=3D	3,
+>=20
+> Pure space change for no reason. Please leave as is.
 
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-Mem abort info:
-ESR = 0x0000000096000005
-EC = 0x25: DABT (current EL), IL = 32 bits
-SET = 0, FnV = 0
-EA = 0, S1PTW = 0
-FSC = 0x05: level 1 translation fault
-Data abort info:
-ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000000] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] SMP
-Modules linked in:
-CPU: 3 UID: 0 PID: 16435 Comm: stress-ng-procf Not tainted 6.16.0-10385-g79f14b5d84c6 #37 PREEMPT
-Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
-pstate: 23400005 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : do_raw_spin_lock+0x84/0x2cc
-lr : _raw_spin_lock+0x24/0x34
-sp : ffff8000966477e0
-x29: ffff800096647860 x28: ffff800096647b88 x27: ffff0001c0c22070
-x26: ffff0003eb2b60c8 x25: ffff0001c0c22018 x24: dfff800000000000
-x23: ffff0000f624e000 x22: ffff0003eb2b6020 x21: ffff0000f624e768
-x20: 0000000000000004 x19: 0000000000000000 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff8000804b9600 x15: ffff700012cc8f04
-x14: 1ffff00012cc8f04 x13: 0000000000000004 x12: ffffffffffffffff
-x11: 1ffff00012cc8f00 x10: ffff80008d9af0d2 x9 : f3f3f304f1f1f1f1
-x8 : 0000000000000000 x7 : 7365733c203e6469 x6 : 20656572743c2023
-x5 : ffff0000e0ce0044 x4 : ffff80008a4deb6e x3 : ffff8000804b9718
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
-do_raw_spin_lock+0x84/0x2cc (P)
-_raw_spin_lock+0x24/0x34
-cifs_debug_dirs_proc_show+0x1ac/0x4c0
-seq_read_iter+0x3b0/0xc28
-proc_reg_read_iter+0x178/0x2a8
-vfs_read+0x5f8/0x88c
-ksys_read+0x120/0x210
-__arm64_sys_read+0x7c/0x90
-invoke_syscall+0x98/0x2b8
-el0_svc_common+0x130/0x23c
-do_el0_svc+0x48/0x58
-el0_svc+0x40/0x140
-el0t_64_sync_handler+0x84/0x12c
-el0t_64_sync+0x1ac/0x1b0
-Code: aa0003f3 f9000feb f2fe7e69 f8386969 (38f86908)
----[ end trace 0000000000000000 ]---
+Sure. Will remove the change in v2.
 
-The root cause is an initialization order problem. The lock is declared
-as a global variable and intended to be initialized during module startup.
-However, the procfs entry that uses this lock can be accessed by userspace
-before the spin_lock_init() call has run. This creates a race window where
-reading the proc file will attempt to use the lock before it is
-initialized, leading to the crash.
+> >  };
+> > =20
+> > +#define KBD_BL_AUTO_MODE_HW_BRIGHTNESS	3
+> > +
+> >  #define KBD_BL_QUERY_TYPE		0x1
+> >  #define KBD_BL_TRISTATE_TYPE		0x5
+> >  #define KBD_BL_TRISTATE_AUTO_TYPE	0x7
+> > @@ -1559,7 +1582,25 @@ static int ideapad_kbd_bl_check_tristate(int typ=
+e)
+> >  	return (type =3D=3D KBD_BL_TRISTATE) || (type =3D=3D KBD_BL_TRISTATE_=
+AUTO);
+> >  }
+> > =20
+> > -static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
+> > +static int ideapad_kbd_bl_brightness_parse(struct ideapad_private *pri=
+v,
+> > +					   unsigned int hw_brightness)
+> > +{
+> > +	/* Off, low or high */
+> > +	if (hw_brightness <=3D priv->kbd_bl.led.max_brightness)
+> > +		return hw_brightness;
+> > +
+> > +	/* Auto (controlled by EC according to ALS), report as off */
+> > +	if (priv->kbd_bl.type =3D=3D KBD_BL_TRISTATE_AUTO &&
+> > +	    hw_brightness =3D=3D KBD_BL_AUTO_MODE_HW_BRIGHTNESS)
+> > +		return 0;
+>=20
+> There seems to be code move/function refactoring (split to get+parse)=20
+> and changes mixed up in here as this doesn't match to what was there=20
+> beforehand AFAICT.
+>=20
+> Could you please try to separate the pure function refactoring from the=
+=20
+> changes to make the real changes easier to understand/see.
 
-For a global lock with a static lifetime, the correct and robust approach
-is to use compile-time initialization.
+Sure. Will move real changes into [PATCH v2 2/2]. Besides, the macro
+KBD_BL_AUTO_MODE_HW_BRIGHTNESS will then be unused in [PATCH v2 1/2],
+so I will also move it into [PATCH v2 2/2].
 
-Fixes: 844e5c0eb176 ("smb3 client: add way to show directory leases for improved debugging")
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- fs/smb/client/cifsfs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> > +	/* Unknown value */
+> > +	dev_warn(&priv->platform_device->dev,
+> > +		 "Unknown keyboard backlight value: %u", hw_brightness);
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +static int ideapad_kbd_bl_hw_brightness_get(struct ideapad_private *pr=
+iv)
+> >  {
+> >  	unsigned long value;
+> >  	int err;
+> > @@ -1573,21 +1614,7 @@ static int ideapad_kbd_bl_brightness_get(struct =
+ideapad_private *priv)
+> >  		if (err)
+> >  			return err;
+> > =20
+> > -		/* Convert returned value to brightness level */
+> > -		value =3D FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
+> > -
+> > -		/* Off, low or high */
+> > -		if (value <=3D priv->kbd_bl.led.max_brightness)
+> > -			return value;
+> > -
+> > -		/* Auto, report as off */
+> > -		if (value =3D=3D priv->kbd_bl.led.max_brightness + 1)
+> > -			return 0;
+> > -
+> > -		/* Unknown value */
+> > -		dev_warn(&priv->platform_device->dev,
+> > -			 "Unknown keyboard backlight value: %lu", value);
+> > -		return -EINVAL;
+> > +		return FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
+> >  	}
+> > =20
+> >  	err =3D eval_hals(priv->adev->handle, &value);
+> > @@ -1597,6 +1624,16 @@ static int ideapad_kbd_bl_brightness_get(struct =
+ideapad_private *priv)
+> >  	return !!test_bit(HALS_KBD_BL_STATE_BIT, &value);
+> >  }
+> > =20
+> > +static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
+> > +{
+> > +	int hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
+> > +
+> > +	if (hw_brightness < 0)
+> > +		return hw_brightness;
+> > +
+> > +	return ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
+> > +}
+> > +
+> >  static enum led_brightness ideapad_kbd_bl_led_cdev_brightness_get(stru=
+ct led_classdev *led_cdev)
+> >  {
+> >  	struct ideapad_private *priv =3D container_of(led_cdev, struct ideapa=
+d_private, kbd_bl.led);
+> > @@ -1604,24 +1641,37 @@ static enum led_brightness ideapad_kbd_bl_led_c=
+dev_brightness_get(struct led_cla
+> >  	return ideapad_kbd_bl_brightness_get(priv);
+> >  }
+> > =20
+> > -static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv,=
+ unsigned int brightness)
+> > +static int ideapad_kbd_bl_hw_brightness_set(struct ideapad_private *pr=
+iv,
+> > +					    unsigned int hw_brightness)
+> >  {
+> >  	int err;
+> >  	unsigned long value;
+> >  	int type =3D priv->kbd_bl.type;
+> > =20
+> >  	if (ideapad_kbd_bl_check_tristate(type)) {
+> > -		if (brightness > priv->kbd_bl.led.max_brightness)
+> > -			return -EINVAL;
+> > -
+> > -		value =3D FIELD_PREP(KBD_BL_SET_BRIGHTNESS, brightness) |
+> > +		value =3D FIELD_PREP(KBD_BL_SET_BRIGHTNESS, hw_brightness) |
+> >  			FIELD_PREP(KBD_BL_COMMAND_TYPE, type) |
+> >  			KBD_BL_COMMAND_SET;
+> >  		err =3D exec_kblc(priv->adev->handle, value);
+> >  	} else {
+> > -		err =3D exec_sals(priv->adev->handle, brightness ? SALS_KBD_BL_ON : =
+SALS_KBD_BL_OFF);
+> > +		err =3D exec_sals(priv->adev->handle,
+> > +				hw_brightness ? SALS_KBD_BL_ON : SALS_KBD_BL_OFF);
+> >  	}
+> > =20
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv,=
+ unsigned int brightness)
+> > +{
+> > +	int err;
+> > +
+> > +	if (brightness > priv->kbd_bl.led.max_brightness)
+> > +		return -EINVAL;
+> > +
+> > +	err =3D ideapad_kbd_bl_hw_brightness_set(priv, brightness);
+> >  	if (err)
+> >  		return err;
+> > =20
+> > @@ -1638,6 +1688,16 @@ static int ideapad_kbd_bl_led_cdev_brightness_se=
+t(struct led_classdev *led_cdev,
+> >  	return ideapad_kbd_bl_brightness_set(priv, brightness);
+> >  }
+> > =20
+> > +static void ideapad_kbd_bl_notify_known(struct ideapad_private *priv, =
+unsigned int brightness)
+> > +{
+> > +	if (brightness =3D=3D priv->kbd_bl.last_brightness)
+> > +		return;
+> > +
+> > +	priv->kbd_bl.last_brightness =3D brightness;
+> > +
+> > +	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightne=
+ss);
+> > +}
+> > +
+> >  static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
+> >  {
+> >  	int brightness;
+> > @@ -1649,12 +1709,7 @@ static void ideapad_kbd_bl_notify(struct ideapad=
+_private *priv)
+> >  	if (brightness < 0)
+> >  		return;
+> > =20
+> > -	if (brightness =3D=3D priv->kbd_bl.last_brightness)
+> > -		return;
+> > -
+> > -	priv->kbd_bl.last_brightness =3D brightness;
+> > -
+> > -	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightne=
+ss);
+> > +	ideapad_kbd_bl_notify_known(priv, brightness);
+> >  }
+> > =20
+> >  static int ideapad_kbd_bl_init(struct ideapad_private *priv)
+> >=20
 
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 31930b7266db..3bd85ab2deb1 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -77,7 +77,7 @@ unsigned int global_secflags = CIFSSEC_DEF;
- unsigned int GlobalCurrentXid;	/* protected by GlobalMid_Lock */
- unsigned int GlobalTotalActiveXid; /* prot by GlobalMid_Lock */
- unsigned int GlobalMaxActiveXid;	/* prot by GlobalMid_Lock */
--spinlock_t GlobalMid_Lock; /* protects above & list operations on midQ entries */
-+DEFINE_SPINLOCK(GlobalMid_Lock); /* protects above & list operations on midQ entries */
- 
- /*
-  *  Global counters, updated atomically
-@@ -97,7 +97,7 @@ atomic_t total_buf_alloc_count;
- atomic_t total_small_buf_alloc_count;
- #endif/* STATS2 */
- struct list_head	cifs_tcp_ses_list;
--spinlock_t		cifs_tcp_ses_lock;
-+DEFINE_SPINLOCK(cifs_tcp_ses_lock);
- static const struct super_operations cifs_super_ops;
- unsigned int CIFSMaxBufSize = CIFS_MAX_MSGSIZE;
- module_param(CIFSMaxBufSize, uint, 0444);
-@@ -1863,8 +1863,6 @@ init_cifs(void)
- 	GlobalCurrentXid = 0;
- 	GlobalTotalActiveXid = 0;
- 	GlobalMaxActiveXid = 0;
--	spin_lock_init(&cifs_tcp_ses_lock);
--	spin_lock_init(&GlobalMid_Lock);
- 
- 	cifs_lock_secret = get_random_u32();
- 
--- 
-2.50.0
-
+Thanks for your review,
+Rong
 
