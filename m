@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-757717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18888B1C5DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E61B1C5E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0795C7A8FDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:29:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 119137A9D61
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDBF28A3EC;
-	Wed,  6 Aug 2025 12:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8EA28B7FF;
+	Wed,  6 Aug 2025 12:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEiz7hM4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFJ/g13i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B886228BAB9;
-	Wed,  6 Aug 2025 12:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD78192D68;
+	Wed,  6 Aug 2025 12:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483472; cv=none; b=e5UA+xjCT5IzJAC2h4DpWlIpKgfcNk1BVQ4G8YeBViolISuZ7YruFjzKYBilf8TQdkOzLVTyhHiBr9Ek1s/lWEZ8lulnY0uzLBK+vYmsi47U6us0MXjDxUSk/WmxCMTbzgrwP9UDWKvwaIm4WO0busvY297H1Dq07GIZaD8oMII=
+	t=1754483490; cv=none; b=Ux+2F7HdcfO7tyKL00LVgGJWDeNgHVVwiHveS4mfSNH/YPN8JNytzREzZsLxNdvXyRnFTZ1fkEmevtT+8JAkHiuxNNvYggmFvYeoMmP+cLw/NXr7EWagi+2aZLsLEbDHua6PWUG659ainqdqvp9aU7thuV3h0oYo9E5MQjA2Lso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483472; c=relaxed/simple;
-	bh=FKdyRWwzqXaF6ZtDiJsHCZwmwHHIK1mymCHN0JZer18=;
+	s=arc-20240116; t=1754483490; c=relaxed/simple;
+	bh=pddWyPwjs2fOn7Jr05/MG2ACl0zA9Y4SSHMKsBzkDy8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H3qleCgoyPc5AtVzZSwxXXYx5UNeRWyoNcBif1zejXjwaCxJUF3jNIuk+lb/HhHT8KuA3QutWQh+oNt5N9zqg9Ma7fNEvFY8cuyFtMB0QPKa4M1RHvB1ZMZpwZagnan85CljAguZqAS5lQ3mE2RAT+5bROGAfOKHrkiLrcVpN9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEiz7hM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D25C4CEEB;
-	Wed,  6 Aug 2025 12:31:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Vc+HKLeMCJua97Ec3A4eyfMVpRCiHOLisP1l7dROBXWKan999Lwb4bC4cdZ+fi2a9XBfZqDda+XQxwhcl90yfFf8toKULQSeCPkzhlfZDZxS9PKgjdnNqF8oKtwm1uC74phKGhSuP6kuCNlBcgHWdWMvfGICnp+L4DOF50Rrrmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFJ/g13i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4665C4CEF7;
+	Wed,  6 Aug 2025 12:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754483472;
-	bh=FKdyRWwzqXaF6ZtDiJsHCZwmwHHIK1mymCHN0JZer18=;
+	s=k20201202; t=1754483490;
+	bh=pddWyPwjs2fOn7Jr05/MG2ACl0zA9Y4SSHMKsBzkDy8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PEiz7hM4DtnwF3QkGNsaH/hAGbYekb6lIrmzxi8DCF0FOQk9RFYBaU4IXl01YeEpf
-	 o9pZFOt69wV1AjAogvpSE5NOfC7wTrN53Rm7An8BdczB8YXZwo6bpAkXbsywuiLqmA
-	 WcOORYXEvv0ZmzJjBjqDsHn82z7c5D9MCsMTaSY5nx0YX9cspXszvbhnjW/8mIkaGK
-	 wfFehS4e0ksNPh8/1EHBkZMG2xjMIHBPZcLjuR7w2Uq3AsOOJnS+wGIJf/kMAz5Mo+
-	 QcuEpDkkJ8ZaDlkVFJRrX9lc6YnIEPA0266swCf3YyNCfHYlqe7KpqYc/Cb+PmgqKi
-	 80Cz/6lSVEB4A==
+	b=WFJ/g13iFNkaHr2ywCr9SJjhaz+5pikuyhff1olloeRcHEszoBfd6GjeLMNBN3IDL
+	 HIyBIZp77EEgz4E/RcZ9pU/AnOmxutrgAWP4XYGQsABk7My9W7279xSBw4vSyZcrL1
+	 ZYEjplmCBrxt9r4DylI4d8nh1eyDZYq/VfdZ586lgDaOQEkbvWPpbMazpSjecLHxqo
+	 7iEqIRBgoR2DV3S8/DatxIY4SE/kWMtLr2tbTBgBSxRI9/THGBP005p9XK85JMCw1r
+	 MYL3xADx07My/pFHLIZ5cDqt18z6cXqt4WUTu0oKird956Dpdh1IBQYbBivvLp11Ve
+	 bl1cf5xgiEuJQ==
 From: Mark Brown <broonie@kernel.org>
-To: cezary.rojewski@intel.com, Peter Jakubek <peterjakubek@gmail.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250731172104.2009007-1-peterjakubek@gmail.com>
-References: <20250731172104.2009007-1-peterjakubek@gmail.com>
-Subject: Re: [PATCH v2] ASoC: Intel: sof_sdw: Add quirk for Alienware Area
- 51 (2025) 0CCC SKU
-Message-Id: <175448346880.51650.10478557821363425570.b4-ty@kernel.org>
-Date: Wed, 06 Aug 2025 13:31:08 +0100
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Gabor Juhos <j4g8y7@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250801-qpic-snand-oob-cwpp-fix-v1-1-f5a41b86af2e@gmail.com>
+References: <20250801-qpic-snand-oob-cwpp-fix-v1-1-f5a41b86af2e@gmail.com>
+Subject: Re: [PATCH] spi: spi-qpic-snand: use correct CW_PER_PAGE value for
+ OOB write
+Message-Id: <175448348842.51843.4908652099889522195.b4-ty@kernel.org>
+Date: Wed, 06 Aug 2025 13:31:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +63,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 31 Jul 2025 18:21:04 +0100, Peter Jakubek wrote:
-> Add DMI quirk entry for Alienware systems with SKU "0CCC" to enable
-> proper speaker codec configuration (SOC_SDW_CODEC_SPKR).
+On Fri, 01 Aug 2025 09:58:35 +0200, Gabor Juhos wrote:
+> The qcom_spi_program_oob() function uses only the last codeword to write
+> the OOB data into the flash, but it sets the CW_PER_PAGE field in the
+> CFG0 register as it would use all codewords.
 > 
-> This system requires the same audio configuration as some existing Dell systems.
-> Without this patch, the laptop's speakers and microphone will not work.
-> 
+> It seems that this confuses the hardware somehow, and any access to the
+> flash fails with a timeout error after the function is called. The problem
+> can be easily reproduced with the following commands:
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] ASoC: Intel: sof_sdw: Add quirk for Alienware Area 51 (2025) 0CCC SKU
-      commit: 1b03391d073dad748636a1ad9668b837cce58265
+[1/1] spi: spi-qpic-snand: use correct CW_PER_PAGE value for OOB write
+      commit: 6bc829220b33da8522572cc50fdf5067c51d3bf3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
