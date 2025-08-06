@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-757131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BA8B1BE15
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:58:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61E4B1BE18
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F08622FF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:58:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F92316C829
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3C11482E7;
-	Wed,  6 Aug 2025 00:58:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9CC13957E;
+	Wed,  6 Aug 2025 01:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="barlQ94n"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EACFAD2C;
-	Wed,  6 Aug 2025 00:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67002D27E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754441917; cv=none; b=mIS9LvX9UZ+x7yCexuXQbWwb9cqjx9/DAGSB3wFKlAsey0xp2CVxk7PvUeev1kzp9UDEOI66poxlz/TfHtP6m5ELCvYayz8Zx6xbOVYxh01pErNaQvYaDHJiLdMbNVVvvnNyp6JqKFvP3sqxUwHMNUPm7dSfdQF8dFeEwAnxfyw=
+	t=1754442024; cv=none; b=m01UkkZBjsrAL4KZZp7F/b18RPmQKfZxrozTixbX2xlU6Ix29jwZqRbKaYC6e+zYS1pdGD9NYY67z2YUjvji8qHA2LoPd7gE54nr2PpEx1NqMlZcf1UkkaVZ+y1vt+DBO5Cq+PEUlfh/8b1lk4dv9sxOSdT7+psTULtLn2oPfUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754441917; c=relaxed/simple;
-	bh=YV3P0WrF2xxL6MMhSPAdxp5AVr3TClpAXVq0Kl3GCJo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eSJ7MYP/xwLXiJxdpMPJlOVqOOGs0awWdt38fc9XOT7yC9s1SKtJV8Fqe42nEWQw9RH9suHk5jzxRBcK76ADU1OCx2PMe8hUlpJq49rhXZ3kPIzKkW4YnFrLsusyYqzHKp2jooW0YqeUiAafkWZgKNvjWyP0wBiBddCIV4cBFu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bxX3Q4ZJpzYQv79;
-	Wed,  6 Aug 2025 08:58:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 490C81A0A27;
-	Wed,  6 Aug 2025 08:58:25 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgA3sxOtqJJoRnLcCg--.39504S3;
-	Wed, 06 Aug 2025 08:58:23 +0800 (CST)
-Subject: Re: [PATCH] block: prevent deadlock in del_gendisk()
-To: Hillf Danton <hdanton@sina.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Ujwal Kundur <ujwal.kundur@gmail.com>, axboe@kernel.dk,
- ming.lei@redhat.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250803134114.2707-1-ujwal.kundur@gmail.com>
- <20250805120001.3990-1-hdanton@sina.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <8f1183d0-dfee-9448-446e-2a8846987319@huaweicloud.com>
-Date: Wed, 6 Aug 2025 08:58:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754442024; c=relaxed/simple;
+	bh=p1mRerMEHgeNuo8Gmi2HzaVtdWrvQbrDxXm8DmzOiqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmHRTSUYLrzfv3IuH3CRMi1NcdUPyoL6RRzYx0QX00sVlbOr4qZTu3xDpkMPKvfTSSpmh64WEWXvAbAekrbU7PWQlR8cQ/K018108ue5b/JHuaCXKAp1+AXzYeNFy00FnqBBxMmSpi2yeL7NvMEtscR0oZXmEGoHD2KY6ow+Ojo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=barlQ94n; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b0673b0a7cso282211cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754442022; x=1755046822; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bX8EsWN8G5GL6UrgORFQI2HBOvhhV7DfKPKAupHsb3k=;
+        b=barlQ94nlrlmRHjnzAYTLjyJxMyAxMMrwVtitk03aFbBIQ1d/bK8DkfrWcG8H2svXq
+         iK1Ptu7AEoFbkoH6UCU5qj9RafRw7Ixgr7SS2Wb5tHdRio8fcv3Y5ju7kuF8xvTH/uDo
+         cK265zWIDv5qL25opBciHCkjaTUi+VHOPI3BV808jAEA046Ur+UB362NAKSxRFLwt6p8
+         SiYpIJrRYCbIYUnfNdyNapex752z/vinto8KJ/hqD2NkDJmOgAnl6D4pKXerLlMfXDJu
+         NnEwW9zJDdRT3S/gFIjssCk98Uh8KyWDnOzL3fQkZ6z7xQ51Bf4fvwF+RQhjPC1alxsw
+         Dtuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754442022; x=1755046822;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bX8EsWN8G5GL6UrgORFQI2HBOvhhV7DfKPKAupHsb3k=;
+        b=VeX6wRWBx2eGRC2T1JiW4fgjXiXOD7jQd3OFGL+VdWED1FdxPOyoVmT+qCQLqx4o/f
+         KhaUfBLmUloBvNs4OX4tlsbfNZceqtioksZ1BmAeWOHom7yIbbFECEv38wldznrmQ8uo
+         iU8CK/9BGsW8LigC37FKJ15OYq7QfthuLpaZNO4dZqo/hWoGflQkSFqp9kdA7AQGJi5b
+         VLlf3NxMZdJf5ixxKwu28BTWMz41Zebo37LMJ3TH84VXXcGMs8AwdmZdvbCUFTColvp0
+         xBa4jCy0EUCK2DGu6GYd1maCruBDKcuR1o5MMNNiva1IPrfYqqXQPxd3Ki5xZ4W9Z52G
+         u+5g==
+X-Gm-Message-State: AOJu0Ywt4VwSSR43y6a6FjxavqwcPjjxl/lv97tGytOHnYB0XEZBLDyR
+	v61q90kSGjTEqnOPH7sK6eBhbTVLQpj8HBncn579ZTNlC6ZyIO7HXgSxkwqQZpVSrjBh+8WLLnB
+	f5HhCDFco0D06XkQJvgwECYmw9ASO1CCgH01uOdYz
+X-Gm-Gg: ASbGncuuP4eeOsb3DvAJ6pPVQIxvFcOn9YaJcczWiURg+VMwPbvEoGJoMEhQ6c+31xa
+	OaPv4mFUsoadtM0+sC3q34t8LDrkyDLYQe+ysxMhZV/+Y4M7rrUVrYmd6LDPvfmXBxo/35WDJN9
+	AJnI7cnDtdCt/tXPSBrlFzj3JIiA3UgvgyL71RUAtrPp71CUbgoQJRtAF+SnS2ejxF2zGkcr0Gt
+	jujcQ==
+X-Google-Smtp-Source: AGHT+IEYZXFlvLRTmvPHs3BhJmh1UNSqPuk5tHmGvJQ6E4hzMgUc2DFs9BUi1j7G902TGr1aF4a8qL7YBJk9bs+bEQs=
+X-Received: by 2002:a05:622a:10a:b0:48d:8f6e:ece7 with SMTP id
+ d75a77b69052e-4b09261a067mr1532851cf.3.1754442022008; Tue, 05 Aug 2025
+ 18:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250805120001.3990-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3sxOtqJJoRnLcCg--.39504S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFy8Zw18KF4kCrWfXw4xWFg_yoW3urXE9a
-	4xCay8Jr15tw4SkF4YqF93Grn2kF1rAF48WF4rAFZ5uwnxZas8Jan8CrWruwsagF48J34v
-	yr13C342gr4agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
-	r21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250730220812.53098-1-pmalani@google.com> <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
+In-Reply-To: <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Tue, 5 Aug 2025 18:00:09 -0700
+X-Gm-Features: Ac12FXxCfIuM-Yd1FZB6zRpfVYWwqRzEGG2J-R3Y7u-oTDt1TL5FFE9U-zeRXnQ
+Message-ID: <CAFivqmKZcipdc1P1b7jkNTBAV-WE4bSeW8z=eHHmtHBxuErZiQ@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Increase delay between perf counter reads
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, beata.michalska@arm.com, 
+	Catalin Marinas <catalin.marinas@arm.com>, Ionela Voinescu <Ionela.Voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+
+Thanks Yang,
+
+On Tue, 5 Aug 2025 at 17:26, Yang Shi <yang@os.amperecomputing.com> wrote:
+> Thank you for cc'ing me the patch. I posted the similar patch ago and
+> had some discussion on the mailing list. Then someone else from ARM
+> pursued a different way to solve it. But I didn't follow very closely.
+> If I remember correctly, a new sysfs interface, called cpuinfo_avg_freq
+> was added. It should be the preferred way to get cpu frequency. Please
+> see
+> https://github.com/torvalds/linux/commit/fbb4a4759b541d09ebb8e391d5fa7f9a5a0cad61.
+>
+> Added Beata Michalska in the loop too, who is the author of the patch.
+> Please feel free to correct me, if I'm wrong.
+
+Thanks for the additional context. Yeah, the issue is that :
+- The new sysfs node is sampling period is too long (20ms) [1]
+That makes it problematic for userspace use cases, so we need something
+which takes less time.
+- The central accuracy issue behind cpuinfo_cur_freq still needs to be handled.
+
+[1] https://elixir.bootlin.com/linux/v6.16/source/arch/arm64/kernel/topology.c#L283
 
 
-
-在 2025/08/05 19:59, Hillf Danton 写道:
-> On Mon, 4 Aug 2025 15:51:48 +0800 Yu Kuai wrote:
->> �� 2025/08/03 21:41, Ujwal Kundur д��:
->>> A potential unsafe locking scenario presents itself when
->>> mutex_lock(&disk->open_mutex) is called with reader's lock held on
->>> update_nr_hwq_lock:
->>>          CPU0                    CPU1
->>>          ----                    ----
->>> rlock(&set->update_nr_hwq_lock)
->>>                                  lock(&nbd->config_lock);
->>>                                  lock(&set->update_nr_hwq_lock);
->>> lock(&disk->open_mutex)
->>>
->> This problem is already fixed inside nbd by:
->> 8b428f42f3ed ("nbd: fix lockdep deadlock warning")
->>
-> Deadlock still exists [1].
-> 
-This deadlock is a different problem, not what you claimed to fix in
-this patch.
-
-Thanks,
-Kuai
-
-> [1] https://lore.kernel.org/lkml/6891742c.050a0220.7f033.001a.GAE@google.com/
-> .
-> 
-
+-- 
+-Prashant
 
