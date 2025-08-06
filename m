@@ -1,236 +1,190 @@
-Return-Path: <linux-kernel+bounces-757865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61702B1C78E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B50B1C78C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9CF1897EC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F9F56537C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2D128D821;
-	Wed,  6 Aug 2025 14:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837D428C86F;
+	Wed,  6 Aug 2025 14:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a5JLCDEY"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="nnbpHnao"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010013.outbound.protection.outlook.com [52.101.69.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB42B28C86F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489999; cv=none; b=WibcuF5NBZRRzesXlx0jeBSHfFtu0TMhwCMTQDLoGmSBcJC6F91axKFa8bUIRceGti3W1z8KmI5bU1Es7BiMBXOlqfvV1yQNNbwyAUDtTtglBAkKYA8Jvq3xhEzwByxVovQavgKrO8sFoqeRwa2AMTRwlO4ONqOojumyBUhQ5bQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489999; c=relaxed/simple;
-	bh=/4HcZ8C/DLFhYlHPzudguMjtzYtd7nqZrVkkpMN56sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pd1Ld4jvdTcCweMF139iGXZpjIBrmUF1faX06+r2PVRHkJiWt/EOhKy9IZVdmmRf6cPd6fWkca0UONlGTdTdcKzPXk06Szs6gz3Rc6DkYaYxznkkhscDTg+0TqaNceQubL5LqLTKnnZaXNLsn/ETdRtapWKFtJ2jq7N7l6PNLWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a5JLCDEY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5769094I012310;
-	Wed, 6 Aug 2025 14:19:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=va3UJ4
-	4dXitPu9NfbgSPLyc0EPutVrF40nR7sMnql8c=; b=a5JLCDEYR8sbmW3Z3At6kY
-	ckfg00e7rNzTCaZAu652IwWqYOdHXE2bYNr7dhJLwElBhLfZzPXD5fC2PqiQVDhi
-	oNJkgpna0AJDZnIljHOfD91yN8AJiNh66lOK1Mj4pGYjFBH0ywJFvnB2Vu2k5Q/H
-	AIUW5VIVqJhXFsWBQ3IDhLXyZupneRgj5Yizsl5nPWIUD9c/MX78UMvQe61IjACS
-	cQCqw5oVrxCGKzy2SORA5v5qQQWmVpWTY55QqOGX8o8keIWERdwT/r7XxRJTE6oO
-	KZ2V2sdOjZH5WmwBmasRBuXOQHbFCxHYGxrGPSOLBsyjDPBsDSqfCi9UEsuPi8Dg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63mmy8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 14:19:22 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 576EJ26r008182;
-	Wed, 6 Aug 2025 14:19:22 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63mmy5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 14:19:21 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 576CNfaB031444;
-	Wed, 6 Aug 2025 14:19:21 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwnbyj4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 14:19:21 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 576EJGp451708356
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Aug 2025 14:19:17 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D261520040;
-	Wed,  6 Aug 2025 14:19:16 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8F84620043;
-	Wed,  6 Aug 2025 14:19:14 +0000 (GMT)
-Received: from [9.39.27.18] (unknown [9.39.27.18])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Aug 2025 14:19:14 +0000 (GMT)
-Message-ID: <b2e88230-84ed-4b2a-b097-1b813fb42e2a@linux.ibm.com>
-Date: Wed, 6 Aug 2025 19:49:13 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F8E23CB;
+	Wed,  6 Aug 2025 14:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754489982; cv=fail; b=TvnEc4/jZA86PE2aGp/vN/OFiHSa3GDH1i9YxKzsRNqfL4poD2FsQMQhM2SfZt4S3wBxHq3r1TIodnz4qcgM8eFkuU0K4fgaodp9owYs5+nhHJaNCLNvi1IbkQw7ykEI33GOk1yb7vievMvV1bc3jEKiDj6TmhQ8B0K00XgFy6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754489982; c=relaxed/simple;
+	bh=m8NQJd/UBebd2gHXrFaKUZe1SAAo+9IzfaUrNb9JcPE=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NHdkxiWDElP8Am9woaLQeRTIz45TvGF9olC2bow2HHjrNA4cvWyFpw0NDXibNVP9Bq5rhA+7jJpS5ibHobN+raIZ1HJdYIaifniNv61He+OsTSq6qDC6q50r4VCNEiu49Iuibu4NYKAdw4CMRTfVvcXUEDKVSh+TiPHXcCbNa5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=nnbpHnao; arc=fail smtp.client-ip=52.101.69.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZPzdCQ9nhKGLTMVhXncCBcIiIsjCOVLVg6mtbk/em0/IR22/73LQ6FXyPr+f0eC060xrdtoueF8k5bXa8DZjukxod33A8k6Tar376KgFidrte1jQSQQwIdodp6gNtFFpp7t6KrXnlXzUC7WA9LROj8SrN03kXV7E0Hd8+d83W6HO/OGzKxQlYscPpXCu3at0VI6GOOrDzrfG9DMzL3HKxYlhUs8ba0dxxSC5sGNJ7fZ/x+w8ZKE0aIo8yt9qfTCcHF07d3ck76jdTGGDjDXzf5EMfy/nrc1cT6Dq9idcWbCRaQWae+k5bOmZbMvmLyk2vt4NkHWtBJWD2D2fx/Lx1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=97EQIsBX2ywPhopjt/ixeEJVRHsWxgssSO3AStKwdes=;
+ b=X6J/lLMufTI/OsV4vTABu9+7Koc1XHgskwoT57FYXXCevB+u02BhUFIlRwzQu5/GEcGGnOqtUzCku53olKQxA5ozPckAegy4WsQI57ydH0LUjvNUdbOC9vlgJmFPI+8zkdloAQLPBrQkdlofNZGHccabIABoHUoeJnPGuytSOZ7/z54wNc2OlxJWv2omEogov3ZqHR9BbWZaLtS/5EfyljS5qi91jpiHP12YGgKs/kRA9UaCe3cqQKeVxoV7rAoAK2lC0k0O+CxGHya0uT/+Yh7FhFPKNW3mZhYMdUBmpMLwofyAIRzwlZVBMDGeT5d5auzcRB9uhAWcDXgThehxQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=97EQIsBX2ywPhopjt/ixeEJVRHsWxgssSO3AStKwdes=;
+ b=nnbpHnaotPwGAOv8kMvPWJRmxYyIzy1RUp2Io4Gns+o+eAEwItiEwXOeQwXQts9p0jwoySFBUIiNWZ5eGs0Re1Kewcsyaggj5aFNErU65rOUStDul+1ozqgPr7EjnBmTY3jVd8D5sCso13H6OSOAFQY4nJtAecKIRE4Mr52dcBs=
+Received: from DUZPR01CA0060.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::18) by DBAPR02MB6182.eurprd02.prod.outlook.com
+ (2603:10a6:10:18e::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
+ 2025 14:19:35 +0000
+Received: from DB1PEPF00039230.eurprd03.prod.outlook.com
+ (2603:10a6:10:469:cafe::60) by DUZPR01CA0060.outlook.office365.com
+ (2603:10a6:10:469::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.21 via Frontend Transport; Wed,
+ 6 Aug 2025 14:19:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB1PEPF00039230.mail.protection.outlook.com (10.167.8.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9009.8 via Frontend Transport; Wed, 6 Aug 2025 14:19:35 +0000
+Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Wed, 6 Aug
+ 2025 16:19:32 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Andrew Davis <afd@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Julien Panis <jpanis@baylibre.com>,
+	William Breathitt Gray <wbg@kernel.org>, <kernel@axis.com>,
+	<linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] counter: ti-ecap-capture: Remove error print for
+ devm_add_action_or_reset()
+In-Reply-To: <e0670467-65cb-441b-b14d-9775609ced8b@ti.com> (Andrew Davis's
+	message of "Tue, 5 Aug 2025 13:10:11 -0500")
+References: <pndms8em7tf.a.out@axis.com>
+	<e0670467-65cb-441b-b14d-9775609ced8b@ti.com>
+User-Agent: a.out
+Date: Wed, 6 Aug 2025 16:19:32 +0200
+Message-ID: <pnd7bzgleh7.a.out@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pseries/lparcfg: Add resource group monitoring
-To: Srikar Dronamraju <srikar@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>
-References: <20250716104600.59102-1-srikar@linux.ibm.com>
- <da3a0717-fe3a-49db-bebd-f231a7fdedb7@linux.ibm.com>
- <aJGZ5_Sf4c1ByCeb@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <aJGZ5_Sf4c1ByCeb@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA4NyBTYWx0ZWRfX5unnUC4QjhC+
- AjaZVB2KZACWpep0PN8acXLSRZSEhXrQMr5CjqdpPXiMhbasvdEYkCStFBm6722AQ7186nXBP5/
- KPsdGky7xWvDMImXlqt9jWVwHOjxZlOEwETeV/jJSVaWjmFwBjDwuJKlB2cNfRpVE/zjXJZIBYl
- bYK0Rfl+7GUY/8IEJ6Qk/HAkuxlqmLzR6kzJ/JgXCLuIie30Q2J9HGFs5uIsD5pzcDYD79HTVZ6
- mO5Hmy6m1wcxNAOiee+592IvKbVrYBMy986PjFzk6f3Gwu3CF2tjIR7ciJF5oszksy9zkftVNvP
- +p7at2PavPH982vEwKeToiVObDEmykZnUlEvQnNK5cSnjXDT4a8KeTut8WiFQKgmsnrAgARnR77
- on6K32CjX6ZPwzWMC4tf76BhKntBa9y9viIsYnwQFG93Cbdw4vh5k/NZCfTPr9FP+ZjV62x6
-X-Proofpoint-ORIG-GUID: rwMKSs5zUQ6bXX4hwsnEtCdXh9y6FnjI
-X-Authority-Analysis: v=2.4 cv=LreSymdc c=1 sm=1 tr=0 ts=6893646a cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8
- a=6vAR2VqdJ3ZSXxe2e28A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 2hLZv3NO1cIkpNeh5d4agVK7AtFDZDeC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 spamscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508060087
+Content-Type: text/plain
+X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF00039230:EE_|DBAPR02MB6182:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57cdccf5-6746-46f7-72d6-08ddd4f4454c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AHDAJpV6I1j/9XTP6aByIXws+3oXdU69VNTJOLjXawZJbfFxloIxCLEgJou0?=
+ =?us-ascii?Q?haD436zStoTn8UNlK9lA9t8ObRMbmjo4wV+EDnLFGpdZ6KPa3l4HAKKW9lvM?=
+ =?us-ascii?Q?P6rX9iAIuV2acUpzvkK7QuowDAjyw835BEXoeBmrShLcYIrwhAcw+krJCkKR?=
+ =?us-ascii?Q?PUBlgoSaCdAD4UHGBwVfsKntDzSbvteuZX38tZOvHv0h6PCPeloav2jZmlqQ?=
+ =?us-ascii?Q?XnbwzYW2VN2QREPWM/DClLFkUZNg7TB2a9gETr/Vxk9k4dp9oHQ8euOKxPRc?=
+ =?us-ascii?Q?QoPn64u6x6QMvUcZsZAifIL2aLJDjBT1T0Fn74DpdrjNoylYBkxdQJJ6/zaU?=
+ =?us-ascii?Q?rTrHy9gQUuLC6TwpoTTL4pjvxn5NeaAtDw10fLkHLpEH5a1q49d4QtHw3mwy?=
+ =?us-ascii?Q?ukKMB988nMFhADbqI6vNAmtJ6qvn6sXAMTpXx4c8HfJI9sj157ErofCrqXYa?=
+ =?us-ascii?Q?2nk22d7z4a9zcET75K3KvBUtAZPS3PTXSa1bUzfAykJXa0OStGprNv9fyQVQ?=
+ =?us-ascii?Q?SQaxdCjgSB5cqfgxjxNogNPEViNBU+2X9tJMY4UBnWoLcXC5rl0bUtWckVu2?=
+ =?us-ascii?Q?UOAKGKcbQQcpVcsVubem4HGMt5QxCx0xVR74Ujk9j71wW18d8CXNvNPsMAFo?=
+ =?us-ascii?Q?ARsSisRQPlPp3pZbYmcgzic5mjjf8AvHK7pso9dgTBnT1hH3dLXieyJnIWiw?=
+ =?us-ascii?Q?9EPMG5NzVx6KE5Zg74ImQGE7+7FilS8QatN54MSZtLCrTTPZcb8lZKaKRLzi?=
+ =?us-ascii?Q?ii1DSYNg/pRCCDuw7Mr+7+Xm8Cy6EjedB1krd7TjPfrZ7IEOIJ0GBCn1TOl3?=
+ =?us-ascii?Q?PHIGKMynQqDO/jfwmvCveX3nqEHURs4tENmCk7QRCvMRR43Tjs7a8C5/vhJg?=
+ =?us-ascii?Q?yz7nDteH/Wq2terPV9iT2WCxPt1uF3Poaevz9G6tWNkex8SNAZVSWv8eHyP4?=
+ =?us-ascii?Q?Y/grN3fwZyyfaCaTBpKk1ztvGfaZBABBQMrEZOOgtrg/LgVQEzgVOqHnCtM8?=
+ =?us-ascii?Q?7jVXGVT7o+nqN/wGm8hqqkExax8gb35yiWAiFVNWImuJOxf65+GysOPGNduA?=
+ =?us-ascii?Q?qmMRicdnWaj0DnTBv0iDkUSW8kejO8wxhBm5V1IL2Gn2GBPUC9WZswqoKZk7?=
+ =?us-ascii?Q?3ZqawYrSufby923vq3/PzVQ1Io4yRVmulPkpVmKmceM6A+gz5hvvVm6aZvQt?=
+ =?us-ascii?Q?JHwCz54CoSc6Ifv0REGlsYY+5KMVvMfqYWkmhdu3Xe8Lj+PAFJikTlcHwpIV?=
+ =?us-ascii?Q?GHK+G91dphfgZoYmla+sj2744zdRNdZMiJuyvYRlhEKf0hzXQCdyUP9DWYYs?=
+ =?us-ascii?Q?PEb8MJtwTNgzQNzqm5owimna96aF+RqIM+3eS81NOdoZzqr7NxW44Huk9/n1?=
+ =?us-ascii?Q?8aJGo9HKc8ZJuVDE6+UtNcNi+WpiR0u6ChViFdqP+rYsvtdvzXVdGSBL78CR?=
+ =?us-ascii?Q?28kIV2KmxxX11ugJ5UdRoUbltyaZ04T9tCLdxxfTRcxtuPUwMme79mA09xX8?=
+ =?us-ascii?Q?dyz94SRzX1UiynFCb6raj1xJ8mg/G4tfo3CQuSKWW43wl7lITqK/R+x4Cg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 14:19:35.5686
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57cdccf5-6746-46f7-72d6-08ddd4f4454c
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF00039230.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR02MB6182
 
+On Tue, Aug 05, 2025 at 13:10 -0500 Andrew Davis <afd@ti.com> wrote:
 
-
-On 8/5/25 11:13, Srikar Dronamraju wrote:
-> * Shrikanth Hegde <sshegde@linux.ibm.com> [2025-08-01 19:27:22]:
-> 
-
+> On 8/5/25 4:33 AM, Waqar Hameed wrote:
+>> When `devm_add_action_or_reset()` fails, it is due to a failed memory
+>> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+>> anything when error is `-ENOMEM`. Therefore, remove the useless call to
+>> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+>> return the value instead.
 >>
->> Could you please add a link to patch on power utils on how it is being consumed?
-> 
-> I am not sure I understood your query, it looks a bit ambiguous.
-> 
-> If your query is on how lparcfg data is being consumed.
-> All tools that are consuming lparcfg will continue to use the same way.
-> Since this is not changing the way lparcfg is being consumed, I think it is
-> redundant information that need not be carried in all the changes/commits to
-> lparcfg. Such an information would be required when lparcfg file was
-> created.
-
-I was saying you could point to power utils patch that you have sent which says how
-one would consume this.
-
-https://groups.google.com/g/powerpc-utils-devel/c/8b2Ixk8vk2w
-
-> 
-> If your query is on how resource group data is being consumed by users.
-
+>> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+>> ---
+>> Changes in v2:
 >>
->> Does MODULE_VERS need to increased?
-> 
-> All tools that are consuming lparcfg will continue to use the same way.
-> If there was some conditional changes that need to be done by the tools,
-> then we should have updated the same.
-> Hence there is not need to update MODULE_VERS.
-> 
-
-Since there are two new fields user scripts might need change is why i was suggesting
-we might need to increase MODULE_VERS
-
+>> * Split the patch to one seperate patch for each sub-system.
 >>
->>> @@ -78,6 +78,8 @@ struct hvcall_ppp_data {
->>>    	u8	capped;
->>>    	u8	weight;
->>>    	u8	unallocated_weight;
->>> +	u8      resource_group_index;
->>> +	u16     active_procs_in_resource_group;
->>>    	u16	active_procs_in_pool;
->>>    	u16	active_system_procs;
->>>    	u16	phys_platform_procs;
->>> @@ -86,7 +88,7 @@ struct hvcall_ppp_data {
->>>    };
->>>    /*
->>> - * H_GET_PPP hcall returns info in 4 parms.
->>> + * H_GET_PPP hcall returns info in 5 parms.
->>>     *  entitled_capacity,unallocated_capacity,
->>>     *  aggregation, resource_capability).
->>>     *
->>> @@ -94,11 +96,11 @@ struct hvcall_ppp_data {
->>>     *  R5 = Unallocated Processor Capacity Percentage.
->>>     *  R6 (AABBCCDDEEFFGGHH).
->>>     *      XXXX - reserved (0)
->>> - *          XXXX - reserved (0)
->>> + *          XXXX - Active Cores in Resource Group
->>>     *              XXXX - Group Number
->>>     *                  XXXX - Pool Number.
->>>     *  R7 (IIJJKKLLMMNNOOPP).
->>> - *      XX - reserved. (0)
->>> + *      XX - Resource group Number
->>>     *        XX - bit 0-6 reserved (0).   bit 7 is Capped indicator.
->>>     *          XX - variable processor Capacity Weight
->>>     *            XX - Unallocated Variable Processor Capacity Weight.
->>> @@ -120,9 +122,11 @@ static unsigned int h_get_ppp(struct hvcall_ppp_data *ppp_data)
->>>    	ppp_data->entitlement = retbuf[0];
->>>    	ppp_data->unallocated_entitlement = retbuf[1];
->>> +	ppp_data->active_procs_in_resource_group = (retbuf[2] >> 4 * 8) & 0xffff;
->>>    	ppp_data->group_num = (retbuf[2] >> 2 * 8) & 0xffff;
->>>    	ppp_data->pool_num = retbuf[2] & 0xffff;
->>> +	ppp_data->resource_group_index = (retbuf[3] >> 7 *  8) & 0xff;
->>>    	ppp_data->capped = (retbuf[3] >> 6 * 8) & 0x01;
->>>    	ppp_data->weight = (retbuf[3] >> 5 * 8) & 0xff;
->>>    	ppp_data->unallocated_weight = (retbuf[3] >> 4 * 8) & 0xff;
->>> @@ -236,6 +240,13 @@ static void parse_ppp_data(struct seq_file *m)
->>>    	seq_printf(m, "unallocated_capacity=%lld\n",
->>>    		   ppp_data.unallocated_entitlement);
->>> +	if (ppp_data.active_procs_in_resource_group)  {
+>> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
 >>
->> ppp_data.active_procs_in_resource_group can ever be zero?
+>>   drivers/counter/ti-ecap-capture.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> If the entry is absent in lparcfg, then lparstat will print it as 0 (which happens to be
->> default RG, while default RG may have processors)
-> 
-> If active_procs_in_resource_group is 0, then we are not printing the
-> resource group information. If active_procs_in_resource_group is non-zero
-> and resource_group_index is wrong, we need to report a bug to the firmware
-> to update it. Kernel is very transparent with respect to this information.
-> It can neither verify the information received nor should we even be doing
-> this.
-> 
+>> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+>> index 3faaf7f60539..114f2d33f193 100644
+>> --- a/drivers/counter/ti-ecap-capture.c
+>> +++ b/drivers/counter/ti-ecap-capture.c
+>> @@ -528,7 +528,7 @@ static int ecap_cnt_probe(struct platform_device *pdev)
+>>       /* Register a cleanup callback to care for disabling PM */
+>>       ret = devm_add_action_or_reset(dev, ecap_cnt_pm_disable, dev);
+>
+> Now that we have devm_pm_runtime_enable(), you can just turn the pm_enable()
+> call 3 lines above this into that, and not need this manual devm action at all.
+
+That's true! However, `devm_pm_runtime_enable` also runs
+`pm_runtime_dont_use_autosuspend()` on exit. I'm guessing we are fine
+with that extra side-effect so I'll change to that instead.
+
+>
+>>       if (ret)
+>> -             return dev_err_probe(dev, ret, "failed to add pm disable action\n");
+>> +             return ret;
 >>
-The comment was more on the necessity of if statement there.
-
-+	if (ppp_data.active_procs_in_resource_group)  {
-
-If one runs lparstat in the LPAR, that means ppp_data.active_procs_in_resource_group is non zero. and when
-ppp_data.active_procs_in_resource_group is zero, i don't think one can run lparstat in any of such LPAR.
-
-btw, ppp_data.active_procs_in_resource_group can be fraction between 0,1 or is it always an integer number?
-
+>>       ret = devm_counter_add(dev, counter_dev);
+>>       if (ret)
+>>
+>> base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 
