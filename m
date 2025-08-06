@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-757392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E8B1C1AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D66DB1C1B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CEA6240EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37245189F5CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A8321CA1C;
-	Wed,  6 Aug 2025 07:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD5321D3C9;
+	Wed,  6 Aug 2025 08:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0b2IpAP4"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDyPiXYo"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C621B196;
-	Wed,  6 Aug 2025 07:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7B017E0;
+	Wed,  6 Aug 2025 08:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754467179; cv=none; b=QPSymd7h+QqCqwNE7TxFB6pi9QqQxe2d34yJyYhYxcigp2F3ipVducKQCN/W9uDJQaSiDdnj6gQ1Cy2OgBupuOP/T0pghhvmLDBiXFvq7mm3Emo27PDisaMXe5UamdHJJ+rAtQ4ZtS+FTEMO/WNrS5/cOjNffBiSZQ0pDbKVn+w=
+	t=1754467210; cv=none; b=JpJdPdkuAIWF/DZxIK436mJs+7lhDJyaawjb/g9m/uVb5GD++wlAla790Q4inWpdZgKVGbYYdcYzOrZzCudOZe5TT5WVrV+m1y/W5rYiFYthnAbaSkgq2WbRNJa4nXUlZKSsbKrQ20HFxq4t3sBEvhWN2zVvdJBGbegL/3nmd+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754467179; c=relaxed/simple;
-	bh=trhDUCIG43TQqInyEvd9Cbwg7kM97yUh+fTLm/66F68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZAp2fPOHa4GMA6CNAF3MMlHwF1WnEtRI5+b95vy/Q/gk3ZBLtH5nTMvKk8JFwuppxzTGoHMS3Sq//++QW4mbWqskyHS0TODGYq+/lJt1LRZjFCSDujiA6QS7HddE96GxNdU+vc9AHVaaW1ASXlZ/HvxMBcG7dgzmJYMjvPFvO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0b2IpAP4; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bxjPH4Y4lz9tBc;
-	Wed,  6 Aug 2025 09:59:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754467171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Izcp9KuJI+N7osGOh6Vm4q57YAFEIRc/7Ly3D8UvEW0=;
-	b=0b2IpAP4U2GqYHCfS3+UCXCCMobCaNQBdn2HGjCQ6RNQQ9gNcDTGQUO+CZEO3246QD63Ni
-	fh6mCF9nihlKauPvY082zw9Nfx4EO6h2h/BpmtFKHsIkVLKZBLADDsL+VoinXKZhDSpX7c
-	NU4zLg/9psNKroMwzfLs92f0IM/SBfNKzzfHi0l1Cw9z7R1hwpfuBtJxbZOR75G1TcreIz
-	XtHEEsg404RxpgElhPyVSFsoWaJ6CRRgvKXkddHZ1XwHujLWm4ShBv/5oS3P8YELj1mb27
-	MrRivpRTh+BcvvaumZ/v9iQ9sGZmesjimdBkYzHEfwFzC0wiy/CslvUT6CX2FA==
-Date: Wed, 6 Aug 2025 09:59:15 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 4/5] mm: add largest_zero_folio() routine
-Message-ID: <ib67jxoli3qaw4ntmgrhhumlkrn4hicjnjzbocmwwi7t2vls73@fczc5msyhy37>
-References: <20250804121356.572917-1-kernel@pankajraghav.com>
- <20250804121356.572917-5-kernel@pankajraghav.com>
- <b810103c-ee95-4cc9-8b59-4dc6b1847d1e@intel.com>
+	s=arc-20240116; t=1754467210; c=relaxed/simple;
+	bh=CnHwwat3DsZ5w80ktAM6bSW2BL8Kdx6DHBhQ7Q7i7jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQ44JGEqd2W1OM2/pNaK17L8djp5dnk3GP5Mi9M0gms40bQI3NLYSO6x4s9i6h6tlnhG0PPFI1q1tHFDw3UUIccALGi0jD082EmbCinRaySd51UeejR8d3Y0dLrw/fQwpRlxvsNtA/HLyLyGZDXd5+jqpFXyKuRuQT0gk18dZ/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDyPiXYo; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459e7ea3ebeso812135e9.0;
+        Wed, 06 Aug 2025 01:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754467207; x=1755072007; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ol1AUB0va8lveXJEC3LVdXGnsCA1nHu3yUD0vxeORd4=;
+        b=kDyPiXYosiREuze39vpy8VkQk7+7PINHoNQ/55l2euve89K5UHa9Jg4PeQsxLaAyQ7
+         uAldsdj2LRCiLDq0pi+h/fSdZu+i9E9Ao02aUK66Y5xu/orfZS3z9rwBIbITfTSk1Ifp
+         gcLHu+eE3qwMw43IY6vaJQu7xmtm+UHFKfhL/px9ltnbHEQGSGk3sTEcnQPSbpmq/JaD
+         jm2nTpMItOC2ZkWPY6nZ8+VRSKjRwD5enmDXlojrOZO1242lDnYmU4BJKfEFFAM3T6en
+         ktouvbB1pGLktRj7vjJLeeATcm2Ug3+h+tCMPXkqt82YvJ3Qs5rdg12AZlKn3igYY4T1
+         Bwzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754467207; x=1755072007;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ol1AUB0va8lveXJEC3LVdXGnsCA1nHu3yUD0vxeORd4=;
+        b=kdvmxaVO7zZuznS91/Wy1kxhFqfalixt0p6mZtBH1KnBwuBtJjvNq5wZufTpxKjjFP
+         LBGDGzotJA1CPdbt8+RTC40DrZ7rgB4LLUNfWmj0wkAMcaUNMC2QpDdV+CHIH72aVa+4
+         elxtpkRfO0SDkyKCBRWVjKak3tJcaJ/rBmk1yl8Zpwkc1jJJuHmr1OkhYpmiU+7psRvr
+         IgFze340t8B//Ssis9+80CpDDlpNi5WcMhckT44yxMaf8gQUFfmBa4QscztEJ9QgHW/2
+         GC5h7XS0sgUuhEWf9vG8HPciLYiFnwRUTGR0bUFwdoO8Ngue7MTgTz0WJSPGpTaYKytD
+         N37g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2cXT7IEv3Cw07eshmj2O5pvbmPtckbW3SiS3Wabs4txFP3yCrnb4fpkAg7MIzttlKm4K/Lb5F/X6vKQ==@vger.kernel.org, AJvYcCUK+DpMkmv1Ljazl4b4kU0E5CWtQAzcnyNCr7T9AvghSSgGs63NJ+PvH+2lB1QigocRO+qJsj2J@vger.kernel.org, AJvYcCUsmrLy9BOwEx+Q7CJQJu0nzI3xqi9Wrnpvx2VibYpBlTx7A44dTe5n6e6HKVvgDEOORcGHn4csKjJ9Whg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwERFeouUN7/uyHGyt+/1un7BySqB6LX3jf22PWJCtmo007+ODQ
+	j8A71NkKgkWKp9Qwu0x2vJuv5BBwLy9lkMeO9YlYBZddkmInq66ZcHf3
+X-Gm-Gg: ASbGncu1Powvp17dtvfoDskS1hWwy/bsLdpplsYA4lJAdzvC4H2O5Fh6XRYx3+033X0
+	gUd5DRGPHONW6POULehd+NpUB1YomqUmB+omWm0TWP4TJtz1mAzz1kExsc7ynEECY/wSoms3EPY
+	th8ANwLayERzLGB1kSKj+NKS2KsCQFpHHRzsRn7Wbsh24ffsP8C8lIjipx8RpZCPjvUc6S3EzIf
+	kFPqjn361pgKu3AN2cgCFj2gdFMWFG/NHy6y/v87OsLxmyGzIexHrmFsFCojL+x4OdPFCUQ+Fjp
+	z25cWKAm8dHFQLQWv8e5qMTVhYElv+2ewPAxQR3kKwZv0eXgVVIGsfXZoxpY5BQbjrXrPlYpi2H
+	1lMbAI6Qs48CU4e5zuDVzH8eSLGTUM/L1J1Hb0Gv16G0=
+X-Google-Smtp-Source: AGHT+IGWyh5Ktnnnqyl4cD5bU3LRVX6XvSe6gqv2EDBHyQSp1zEQdILfTRY92fltUKYyY6loOZeflA==
+X-Received: by 2002:a05:600c:4ec6:b0:456:29ae:3dbe with SMTP id 5b1f17b1804b1-459e7103684mr13252115e9.24.1754467206999;
+        Wed, 06 Aug 2025 01:00:06 -0700 (PDT)
+Received: from [10.80.3.86] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c469582sm21683126f8f.52.2025.08.06.01.00.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 01:00:06 -0700 (PDT)
+Message-ID: <7fe7a7ad-4e32-4435-a93d-0f3b182ef90b@gmail.com>
+Date: Wed, 6 Aug 2025 11:00:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b810103c-ee95-4cc9-8b59-4dc6b1847d1e@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] eth: mlx4: Fix IS_ERR() vs NULL check bug in
+ mlx4_en_create_rx_ring
+To: Jakub Kicinski <kuba@kernel.org>, Miaoqian Lin <linmq006@gmail.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250805025057.3659898-1-linmq006@gmail.com>
+ <20250805160720.0187e36d@kernel.org>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250805160720.0187e36d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 05, 2025 at 09:42:14AM -0700, Dave Hansen wrote:
-> On 8/4/25 05:13, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > Add largest_zero_folio() routine so that huge_zero_folio can be
-> > used directly when CONFIG_STATIC_HUGE_ZERO_FOLIO is enabled. This will
-> > return ZERO_PAGE folio if CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled or
-> > if we failed to allocate a huge_zero_folio.
-> 
-> This changelog is telling a lot of the "what" but none of the "why".
-> 
-> The existing huge zero folio API is for users that have an mm. This is
-> *only* for folks that want a huge zero folio but don't have an mm.
-> That's _why_ this function is needed. It's in this series because there
-> was no way to get a huge zero folio before the permanent one was
-> introduced in this series.
-> 
-> Can we please get some of that into the function comment and changelog?
-> It's critical.
 
-Valid point. I will include that in the next version.
 
+On 06/08/2025 2:09, Jakub Kicinski wrote:
+> On Tue,  5 Aug 2025 06:50:57 +0400 Miaoqian Lin wrote:
+>>   	ring->pp = page_pool_create(&pp);
+>> -	if (!ring->pp)
+>> +	if (IS_ERR(ring->pp))
+>>   		goto err_ring;
 > 
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 78ebceb61d0e..c44a6736704b 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -716,4 +716,21 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
-> >  	return split_folio_to_list_to_order(folio, NULL, new_order);
-> >  }
-> >  
-> > +/*
-> > + * largest_zero_folio - Get the largest zero size folio available
-> > + *
-> > + * This function will return huge_zero_folio if CONFIG_STATIC_HUGE_ZERO_FOLIO
-> > + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-> > + *
-> > + * Deduce the size of the folio with folio_size instead of assuming the
-> > + * folio size.
-> > + */
+> Thanks for fixing! Looks we previously depended on err being initialized
+> to -ENOMEM, but since we have an errno now, I think it'd be better to
+> use it:
 > 
-> This comment needs to get fleshed out. It at _least_ needs to say
-> something along the lines of:
-> 
-> 	Use this when a huge zero folio is needed but there is no mm
-> 	lifetime to tie it to. Basically, use this when you can't use
-> 	mm_get_huge_zero_folio().
+> 	if (IS_ERR(ring->pp)) {
+> 		err = PTR_ERR(ring->pp);
+> 		goto err_ring;
+> 	}
 > 
 
-Agreed.
-
-> > +static inline struct folio *largest_zero_folio(void)
-> > +{
-> > +	struct folio *folio = get_static_huge_zero_folio();
-> > +
-> > +	if (folio)
-> > +		return folio;
-> 
-> There needs to be a newline in here.
-> 
-> > +	return page_folio(ZERO_PAGE(0));
-> > +}
-> >  #endif /* _LINUX_HUGE_MM_H */
-> 
-> The code is fine, but the changelog and comments need quite a bit of work.
-
-Sounds good to me. I will make the changes. Thanks Dave.
-
---
-Pankaj
++1
 
