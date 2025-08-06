@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-758005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B08FB1C99F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D74B1C9A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FF418C130D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B796518C2077
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CC7299AB5;
-	Wed,  6 Aug 2025 16:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC81522F767;
+	Wed,  6 Aug 2025 16:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYmXYE2A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfULq2hg"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3A318A6AB;
-	Wed,  6 Aug 2025 16:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277DB2E36FE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 16:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754496656; cv=none; b=Vh378qhgXRC9X1F9e/x7GCM8BZPfECrenP2UCt4xpsU7GrGyBAC6dGuC46d+NdQaew6RBht6jAC492oSEo/XMOo7AwQUWbBBF+rsQqJakaUbXdfcje7m9+M2nOtg4bPFxwxC1aYtipVk7dZtEtDw8zzAEHR8iy9v3oMrSJIg8WQ=
+	t=1754497117; cv=none; b=Sw7aHcI65UDklZ0Swzv/zREmZjgu+aZa2qBwtyW9oSvPnKiEpFdHG9U4u9g5pDyqztNxh7xoH/hFHr3+SlBnhiR3HlXKK6aOMgey/KcFE+pyHCk9/HCVLFdfaQqHsWC+b+MuDfFTp2YQsqYeryVWnVMJ9ujwKSh/2QWNePpOR3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754496656; c=relaxed/simple;
-	bh=WqURAroBlot3BKcRkU57tPw+uTst8u/HvzLlwfACFxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJdprHWWJAFXbtagFAjQcr7x63YQz61Y2BtoCaQsLWDJQG22pEh33ZzYGH3JP7PSgB6bOl3TQStipWwGaiY+wlxWxeGFE3TomSxRzTB2AvpHhSg3G4mPP+TgS8MqdM2kARt7oTlutlcJaXM7UksA3OAElwCgOvjU5uPpH/3Dw0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYmXYE2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0471EC4CEE7;
-	Wed,  6 Aug 2025 16:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754496655;
-	bh=WqURAroBlot3BKcRkU57tPw+uTst8u/HvzLlwfACFxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kYmXYE2AfPcc3M5icsim0mDqdiZQuLqBgY2TqDXrtz+rGU77FlgOpanCshl/bjtKd
-	 Tk7UVWn4uflLxA7GjuESUmCom0SMp/wNTn1PIEo9ajPtD7DReWpbl2XUS3eH7kqK/a
-	 HdWXZ7wCB4ktLlcsYiXpztFDTPk/i1ULmmqqKGixxGkrhZb9dZ/hCiQvaPeoZfHuiz
-	 RfkXkm7xf7L9tDOUmaliPnfsBd0Hg9SKONukUGPeTNjz/VklTiirCJyFsoO/cjbLS5
-	 k2bSvaBcPFQrcQo2XguOqALJBUX0O1J8Az6uXvpcEXCrJVDBzDxGJEzO2UAqrLlOQM
-	 /I6wevf864rNw==
-Date: Thu, 7 Aug 2025 00:10:50 +0800
-From: Coly Li <colyli@kernel.org>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Cc: "kent.overstreet" <kent.overstreet@linux.dev>,
-	linux-bcache <linux-bcache@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
-Message-ID: <20250806161050.iggmpp4mdmcysegn@P16.>
-References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
- <20250805045745.iu4ukc6tfdm3j7xn@P16.>
- <tencent_29AAD4111647BCD160DCFD85@qq.com>
- <20250805162915.3kaqbxjbwfuj6u6w@P16.>
- <tencent_59A1DBB462115B77340A389D@qq.com>
+	s=arc-20240116; t=1754497117; c=relaxed/simple;
+	bh=naVnFxDk3uReKELnYSZtlUkGZf8C6x9xgQeQnB2kXos=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VHr+GThCUYxxlUOHvZKbFcAJnb0JmkJc/Ta2+sYOClE+JraX7ac7trl68Ft3htc6xCsx3/ueSdRTqjaPI9zE+E8UmGisqTq+ng2KtH1QbxYS9Bv0sDGK2mP6p+RNdMNnk2kTJa9AEW4TLGnKsuk6wEXo/sYDJ4RaUI9pGMS5sTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lfULq2hg; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e81074ae83so3785485a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 09:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754497114; x=1755101914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m7Uvcgab86Z6ZLa6sJF+QuCkUEpCn18pclHA8j6Pkpo=;
+        b=lfULq2hgAM3yxGGiCSshOP+BqbDux+6Z0kj7GmZgOGo+h0qDJ6y3XbrIz212Bix3LB
+         CY2zGQNGDEgLN6SYQzKhdxyNugFSnKLZW4elEAU4aMuTi8janXROvJmD9VYAiQpv974k
+         EqFhp0NiLc1UIaNoS/C8rUmVpm8PgIRx1EgNjTFcmT/k1ve3BBzxZqGCyRNABtfPywRA
+         +QPnOpJeppRTuyliQug1c67PyK7h9ggqWo91eTsysFaUYO3z5hq1/BGRVdB/xPZGclX6
+         Cp/9MlZZ8+KrBTdItPmVG6WX3JaQ9OgC5xZCqvthJb3fLmrj1vNfBkoqouva96NgULOq
+         rUrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754497114; x=1755101914;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m7Uvcgab86Z6ZLa6sJF+QuCkUEpCn18pclHA8j6Pkpo=;
+        b=kOzvvGp6RwhgN77Vas7ccHUWbHOUgyi0CQWsWLJMx5APoj/K8vjh4RUlwQ6EEqY23Z
+         8b1KvNnEE/9HIr0H8tulyQXsr+A3nVPXSBTu/Fy7J2MZZ0dNJxX9GFNcbvnSMwlLcH0Q
+         6eqx6DpOFaG7L9Tow0XUZU9uhiOnMc9zdPOWoyPdEKVsbPbUvNjfvjzHffjvTRWn5Hbz
+         Lz1kA1d3bMt6M+j9UQzK8ug8hBXRDl6kcr04tKMSX0Pqi1yzUW7AS3HP1y77z+NZEd2k
+         F9apHGnlhPjLsZt6VFU8wT5X0ADqMW0nFtF2qOC2WiOdcAMxCV6kPDDwbxtx01Jmmd1T
+         vWJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKKbKsrOJNM8JLM7sYRIZ0xzPYnBfEns+TG4r4//6DryETexpHzq6LBbMFRzXpeApke9j82ZTMtIRcuQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdwONH+wS40iC9aIIOtNxhRS2rUBCYV36gE7IFPULyC8h9UPmr
+	Cw6zddBLMnPx2xwog+hVMz/vy8mHU1l5KurmuHaDD6DlZMQabx1r+8COvmhSlsbZuTw=
+X-Gm-Gg: ASbGncuAWvWxqjQug/aEJDZkHGXvUMlcQSGnnB1DiQ2iQMzYwEzr0nSmvN1+XUU+1rw
+	IClNKY77mGZziCVR6GaivoK0Vb7CIrRJc40eoRTjPlQm/dKl/e/hwFcIV7wnXTc/OU+awpK/TS7
+	k/s2khu5qLlxguOhZ5KALrHtR9If5QHnupdrUrw68+WZRX3nCldbiVuTtDv1GbxrPZxJVSRYOa6
+	Y9rfyo255JZLCWSck4rcLT+OuScaHSE6niZ3htDQTTHZ8htmC4kR56qLUaOGrQ4oBcV1WMwOwfL
+	Hs0cYfyOLyGD1oxrExQTI+OwKahyvwId21tGqTaZ3jMQ8siZ+8KgvTQ8z0XKBpIF/q2biUCup5H
+	+vJlSHPBJEOJXj8xpQx+R7BfPgs4=
+X-Google-Smtp-Source: AGHT+IEQ2Law8vL1y7Vuz+VNuoQ/RSeFNfbn3pHNy90CB+MigBUyaVvg/Ws06nsyrs4igPZnHH5M9w==
+X-Received: by 2002:a05:620a:268f:b0:7e3:37b6:bec8 with SMTP id af79cd13be357-7e814eebf69mr588609885a.33.1754497113784;
+        Wed, 06 Aug 2025 09:18:33 -0700 (PDT)
+Received: from KASONG-MC4 ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e7fa35144esm464081885a.48.2025.08.06.09.18.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 06 Aug 2025 09:18:33 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Chris Li <chrisl@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v2 0/3] mm, swap: improve cluster scan strategy
+Date: Thu,  7 Aug 2025 00:17:45 +0800
+Message-ID: <20250806161748.76651-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.50.1
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tencent_59A1DBB462115B77340A389D@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 06, 2025 at 07:19:49PM +0800, Zhou Jifeng wrote:
-> On Wed, 6 Aug 2025 at 00:29, Coly Li <colyli@kernel.org> wrote:
-> >
-> > On Tue, Aug 05, 2025 at 05:37:44PM +0800, Zhou Jifeng wrote:
-> > > On Tue, 5 Aug 2025 at 13:00, Coly Li <colyli@kernel.org> wrote:
-> > > >
-> > > > On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
-> > > > > There is a potential data consistency risk in bcache's writeback mode:when
-> > > > > the application calls fsync, bcache returns success after completing the
-> > > > > log write, persisting the cache disk data, and persisting the HDD internal
-> > > > > cache. However, at this point, the actual application data may still be in
-> > > > > a dirty state and remain stuck in the cache disk. when these data are
-> > > > > subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
-> > > > > there is no forced refresh mechanism to ensure physical placement on the
-> > > > > disk, and there may be no power-off protection measures, which poses a risk
-> > > > > of data loss. This mechanism may cause the application to misjudge that the
-> > > > > data has been persisted, which is different from the actual storage state,
-> > > > > and also violates the semantic agreement that fsync should ensure data
-> > > > > persistence.
-> > > > >
-> > > >
-> > > > [snipped]
-> > > >
-> > > >
-> > > >
-> > > > If before the cleared key inserted into the btree, there are new write
-> > > > into overlapped LBA range of the cleared key and a dirty key inserted.
-> > > > Then the cleared key is inserted and overwrites the dirty key, but the
-> > > > dirty data on cache is not written back to backing device yet. How to
-> > > > handle such situation?
-> > > >
-> > >
-> > > There are indeed some issues here. I have initially come up with a
-> > > solution: Utilize the existing dc->writeback_keys mechanism for
-> > > protection. The general processing flow is as follows:
-> > > 1. In the write_dirty_finish() function, remove the operation of
-> > > updating bkey insertion, and delete the code bch_keybuf_del(&dc
-> > > ->writeback_keys, w).
-> > > 2. After executing the read_dirty(dc) code, perform flush, then
-> > > insert the updated bkey, and finally remove the bkey from dc->
-> > > writeback_keys. This process is equivalent to sending a flush
-> > > every KEYBUF_NR bkeys are written back.
-> > > 3. Support configurable KEYBUF_NR to indirectly control the
-> > > frequency of flush.
-> > >
-> > > Is this plan appropriate? Or are there any better ways to handle it?
-> >
-> > No, I won't suggest this way. It sounds complicaed and changes the main
-> > code flow too much in an implicit way, this should be avoided.
-> >
-> > So it seems Kent's suggestion to flush backing device before committing
-> > jset is the proper method I can see now.
-> >
-> > Coly Li
-> >
-> 
-> Sorry, my previous response was not rigorous enough. I have carefully
-> considered your question about "the bkey being overwritten". In fact,
-> there is no issue of being overwritten. The bcache has ingeniously
-> designed a replace mechanism. In my code, the bkey with the dirty flag
-> cleared is inserted using the replace method. This method handles
-> address overlaps ingeniously during the insertion of the bkey and will
-> not overwrite the bkey generated by concurrent writes. The main code
-> for the replace mechanism is located in bch_btree_insert_key->bch_extent_insert_fixup
-> , which calls the bch_bkey_equal_header function, which is also a
-> crucial checkpoint.
+From: Kairui Song <kasong@tencent.com>
 
-I am not able to make judgement by the above description, can you post a patch
-then I can see how you insert the key with replace parameter.
+This series improves the large allocation performance and reduces
+the failure rate. Some design of the cluster alloactor was later
+found to be improvable after thorough testing.
 
-Coly Li
+The allocator spent too much effort scanning the fragment list, which
+is not helpful in most setups, but causes serious contention of the
+list lock (si->lock). Besides, the allocator prefers free clusters
+when searching for a new cluster due to historical reasons, which
+causes fragmentation issues.
+
+So make the allocator only scan one cluster for high order allocation,
+and prefer nonfull cluster. This both improves the performance and
+reduces fragmentation.
+
+For example, build kernel test with make -j96 and 10G ZRAM with 64kB
+mTHP enabled shows better performance and a lower failure rate:
+
+Before: sys time: 11609.69s  64kB/swpout: 1787051  64kB/swpout_fallback: 20917
+After:  sys time: 5587.53s   64kB/swpout: 1811598  64kB/swpout_fallback: 0
+
+System time is cut in half, and the failure rate drops to zero. Larger
+allocations in a hybrid workload also showed a major improvement:
+
+512kB swap failure rate:
+Before: swpout:11663  swpout_fallback:1767
+After:  swpout:14480  swpout_fallback:6
+
+2M swap failure rate:
+Before: swpout:24     swpout_fallback:1442
+After:  swpout:1329   swpout_fallback:7
+
+Kairui Song (3):
+  mm, swap: only scan one cluster in fragment list
+  mm, swap: remove fragment clusters counter
+  mm, swap: prefer nonfull over free clusters
+
+ include/linux/swap.h |  1 -
+ mm/swapfile.c        | 68 +++++++++++++++++++++++---------------------
+ 2 files changed, 36 insertions(+), 33 deletions(-)
+
+---
+
+V1: https://lore.kernel.org/linux-mm/20250804172439.2331-1-ryncsn@gmail.com/
+Changelog:
+- Split into 3 patches, no code change [ Chris Li ]
+- Rebase and rerun the test to see if removing the fragment cluster counter
+  helps to improve the performance, as expected, it's marginal.
+- Collect Ack/Review-by [ Nhat Pham, Chris Li ]
+
+-- 
+2.50.1
+
 
