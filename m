@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-757132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61E4B1BE18
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:00:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B794CB1BE19
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F92316C829
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:00:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E1E18A634B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9CC13957E;
-	Wed,  6 Aug 2025 01:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0906570824;
+	Wed,  6 Aug 2025 01:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="barlQ94n"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhegWB7u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67002D27E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6C18024
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754442024; cv=none; b=m01UkkZBjsrAL4KZZp7F/b18RPmQKfZxrozTixbX2xlU6Ix29jwZqRbKaYC6e+zYS1pdGD9NYY67z2YUjvji8qHA2LoPd7gE54nr2PpEx1NqMlZcf1UkkaVZ+y1vt+DBO5Cq+PEUlfh/8b1lk4dv9sxOSdT7+psTULtLn2oPfUI=
+	t=1754442088; cv=none; b=UiW6UKic0++iWgfCk9rqzjdf61V8ECHD2CCjqOZuzzUj7XssPqxQYTVHcSaTQlqfU+3dUcix7aCBX/bG0WFOEfdmN/vh9h3LWqI+xOUb1Pm7Exw/qUiHMWfYDTxtFyCWF6fSoiUwYa9nn2yRCt8ssP7ILPET9j+7zykbVOiOW6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754442024; c=relaxed/simple;
-	bh=p1mRerMEHgeNuo8Gmi2HzaVtdWrvQbrDxXm8DmzOiqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DmHRTSUYLrzfv3IuH3CRMi1NcdUPyoL6RRzYx0QX00sVlbOr4qZTu3xDpkMPKvfTSSpmh64WEWXvAbAekrbU7PWQlR8cQ/K018108ue5b/JHuaCXKAp1+AXzYeNFy00FnqBBxMmSpi2yeL7NvMEtscR0oZXmEGoHD2KY6ow+Ojo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=barlQ94n; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b0673b0a7cso282211cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754442022; x=1755046822; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bX8EsWN8G5GL6UrgORFQI2HBOvhhV7DfKPKAupHsb3k=;
-        b=barlQ94nlrlmRHjnzAYTLjyJxMyAxMMrwVtitk03aFbBIQ1d/bK8DkfrWcG8H2svXq
-         iK1Ptu7AEoFbkoH6UCU5qj9RafRw7Ixgr7SS2Wb5tHdRio8fcv3Y5ju7kuF8xvTH/uDo
-         cK265zWIDv5qL25opBciHCkjaTUi+VHOPI3BV808jAEA046Ur+UB362NAKSxRFLwt6p8
-         SiYpIJrRYCbIYUnfNdyNapex752z/vinto8KJ/hqD2NkDJmOgAnl6D4pKXerLlMfXDJu
-         NnEwW9zJDdRT3S/gFIjssCk98Uh8KyWDnOzL3fQkZ6z7xQ51Bf4fvwF+RQhjPC1alxsw
-         Dtuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754442022; x=1755046822;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bX8EsWN8G5GL6UrgORFQI2HBOvhhV7DfKPKAupHsb3k=;
-        b=VeX6wRWBx2eGRC2T1JiW4fgjXiXOD7jQd3OFGL+VdWED1FdxPOyoVmT+qCQLqx4o/f
-         KhaUfBLmUloBvNs4OX4tlsbfNZceqtioksZ1BmAeWOHom7yIbbFECEv38wldznrmQ8uo
-         iU8CK/9BGsW8LigC37FKJ15OYq7QfthuLpaZNO4dZqo/hWoGflQkSFqp9kdA7AQGJi5b
-         VLlf3NxMZdJf5ixxKwu28BTWMz41Zebo37LMJ3TH84VXXcGMs8AwdmZdvbCUFTColvp0
-         xBa4jCy0EUCK2DGu6GYd1maCruBDKcuR1o5MMNNiva1IPrfYqqXQPxd3Ki5xZ4W9Z52G
-         u+5g==
-X-Gm-Message-State: AOJu0Ywt4VwSSR43y6a6FjxavqwcPjjxl/lv97tGytOHnYB0XEZBLDyR
-	v61q90kSGjTEqnOPH7sK6eBhbTVLQpj8HBncn579ZTNlC6ZyIO7HXgSxkwqQZpVSrjBh+8WLLnB
-	f5HhCDFco0D06XkQJvgwECYmw9ASO1CCgH01uOdYz
-X-Gm-Gg: ASbGncuuP4eeOsb3DvAJ6pPVQIxvFcOn9YaJcczWiURg+VMwPbvEoGJoMEhQ6c+31xa
-	OaPv4mFUsoadtM0+sC3q34t8LDrkyDLYQe+ysxMhZV/+Y4M7rrUVrYmd6LDPvfmXBxo/35WDJN9
-	AJnI7cnDtdCt/tXPSBrlFzj3JIiA3UgvgyL71RUAtrPp71CUbgoQJRtAF+SnS2ejxF2zGkcr0Gt
-	jujcQ==
-X-Google-Smtp-Source: AGHT+IEYZXFlvLRTmvPHs3BhJmh1UNSqPuk5tHmGvJQ6E4hzMgUc2DFs9BUi1j7G902TGr1aF4a8qL7YBJk9bs+bEQs=
-X-Received: by 2002:a05:622a:10a:b0:48d:8f6e:ece7 with SMTP id
- d75a77b69052e-4b09261a067mr1532851cf.3.1754442022008; Tue, 05 Aug 2025
- 18:00:22 -0700 (PDT)
+	s=arc-20240116; t=1754442088; c=relaxed/simple;
+	bh=2/Vkfm3l6h3A0cqiPVA7pX5VJg8HcqOTfMh2rmM6OLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MaiS4BVbtWhYlKbmIQRAfdzYKQCSvAANk8NXxt+GOcIk58K8nQwiyOl7P+NdDDPs6fpN1vN15zswrr41AViXnz8OtdT7IUVeacStjhBYLZ2hnnTrwJCH8dkHG0p2sE/Ih/vWI9hnu+20WN+mI0DubZBojjZv6Vf3DEeEgjw81aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhegWB7u; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754442087; x=1785978087;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=2/Vkfm3l6h3A0cqiPVA7pX5VJg8HcqOTfMh2rmM6OLc=;
+  b=NhegWB7uWAvD13yd0JsFEcISs1bMrUQs6CkPK49rIk9tqtKg2FTP2uSj
+   /XCDtHnKdpkhtcgdT3tuhdThSWW2SjZ5Z7ymowwxjHeGCo5m1UQuPylsX
+   tiP5rijUH9j9Bi5cpSYVfckZB48PYeHr6sVZrpCgCa7ApILCi0WKHC+OO
+   huSUJvVJdNFj7rEZMuIJFkbChwexmoziarCN0FEeNmGmluu36ZuB65eE6
+   B+YsMoYGC0+FOzyOIwzQR9wKVDcmrI+GfzaGKts27FlV3N56T/dKP8b78
+   zGHB3s2ACPzB0iwqOoxwXvW4dBpwjplaxs0W2QEorkrmdteMyba7acmlz
+   w==;
+X-CSE-ConnectionGUID: Xg6+0SZWRQGGJTdoscJJ2A==
+X-CSE-MsgGUID: FH6yHz8sQ5OjNQar5EgP8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="44344597"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="44344597"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 18:01:26 -0700
+X-CSE-ConnectionGUID: wa2bQiXGQZa6pIPrMSkaKA==
+X-CSE-MsgGUID: nmfKwJ2HSMe+GPvsF/CDWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169087381"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 05 Aug 2025 18:01:24 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujSWt-0000rO-0q;
+	Wed, 06 Aug 2025 01:01:19 +0000
+Date: Wed, 6 Aug 2025 09:01:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18144000
+ (img,pistachio-clk): compatible: ['img,pistachio-clk', 'syscon'] is too long
+Message-ID: <202508060831.IvkZDvx3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730220812.53098-1-pmalani@google.com> <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
-In-Reply-To: <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
-From: Prashant Malani <pmalani@google.com>
-Date: Tue, 5 Aug 2025 18:00:09 -0700
-X-Gm-Features: Ac12FXxCfIuM-Yd1FZB6zRpfVYWwqRzEGG2J-R3Y7u-oTDt1TL5FFE9U-zeRXnQ
-Message-ID: <CAFivqmKZcipdc1P1b7jkNTBAV-WE4bSeW8z=eHHmtHBxuErZiQ@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: CPPC: Increase delay between perf counter reads
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, beata.michalska@arm.com, 
-	Catalin Marinas <catalin.marinas@arm.com>, Ionela Voinescu <Ionela.Voinescu@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks Yang,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6bcdbd62bd56e6d7383f9e06d9d148935b3c9b73
+commit: 46dba2e6a3eeac025d7331f4a6f85d6a04b62185 dt-bindings: clock: Convert img,pistachio-clk to DT schema
+date:   7 weeks ago
+config: mips-randconfig-052-20250806 (https://download.01.org/0day-ci/archive/20250806/202508060831.IvkZDvx3-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 8.5.0
+dtschema version: 2025.6.2.dev4+g8f79ddd
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508060831.IvkZDvx3-lkp@intel.com/reproduce)
 
-On Tue, 5 Aug 2025 at 17:26, Yang Shi <yang@os.amperecomputing.com> wrote:
-> Thank you for cc'ing me the patch. I posted the similar patch ago and
-> had some discussion on the mailing list. Then someone else from ARM
-> pursued a different way to solve it. But I didn't follow very closely.
-> If I remember correctly, a new sysfs interface, called cpuinfo_avg_freq
-> was added. It should be the preferred way to get cpu frequency. Please
-> see
-> https://github.com/torvalds/linux/commit/fbb4a4759b541d09ebb8e391d5fa7f9a5a0cad61.
->
-> Added Beata Michalska in the loop too, who is the author of the patch.
-> Please feel free to correct me, if I'm wrong.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508060831.IvkZDvx3-lkp@intel.com/
 
-Thanks for the additional context. Yeah, the issue is that :
-- The new sysfs node is sampling period is too long (20ms) [1]
-That makes it problematic for userspace use cases, so we need something
-which takes less time.
-- The central accuracy issue behind cpuinfo_cur_freq still needs to be handled.
-
-[1] https://elixir.bootlin.com/linux/v6.16/source/arch/arm64/kernel/topology.c#L283
-
+dtcheck warnings: (new ones prefixed by >>)
+   	from schema $id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: mmc@18142000 (img,pistachio-dw-mshc): Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: sram@1b000000 (mmio-sram): '#address-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: sram@1b000000 (mmio-sram): '#size-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: sram@1b000000 (mmio-sram): 'ranges' is a required property
+   	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: /dma-controller@18143000: failed to match any schema with compatible: ['img,pistachio-mdc-dma']
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18144000 (img,pistachio-clk): compatible: ['img,pistachio-clk', 'syscon'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18148000 (img,pistachio-cr-periph): 'reset-controller' does not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18148000 (img,pistachio-cr-periph): compatible: ['img,pistachio-cr-periph', 'syscon', 'simple-bus'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: /clk@18148000/reset-controller: failed to match any schema with compatible: ['img,pistachio-reset']
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18149000 (img,pistachio-cr-top): compatible: ['img,pistachio-cr-top', 'syscon'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18149000 (img,pistachio-cr-top): 'clocks' is a required property
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+>> arch/mips/boot/dts/img/pistachio_marduk.dtb: clk@18149000 (img,pistachio-cr-top): 'clock-names' is a required property
+   	from schema $id: http://devicetree.org/schemas/clock/img,pistachio-clk.yaml#
+   arch/mips/boot/dts/img/pistachio_marduk.dtb: /usb-phy: failed to match any schema with compatible: ['img,pistachio-usb-phy']
 
 -- 
--Prashant
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
