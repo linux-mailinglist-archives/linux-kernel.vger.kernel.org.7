@@ -1,228 +1,299 @@
-Return-Path: <linux-kernel+bounces-758439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CAFB1CF25
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:38:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5261B1CF28
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A66D18C56F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1350567921
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0726E239E7F;
-	Wed,  6 Aug 2025 22:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2407D2356B9;
+	Wed,  6 Aug 2025 22:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iw5FpPOk"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lF1G4E16"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC60923717F;
-	Wed,  6 Aug 2025 22:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8A822D9E9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 22:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754519872; cv=none; b=prvjdyKkUl5nXenlbGV5agr5eJWsFfJQ83rBeva5zllOBB6M88DpNhGTUMH42pB2jsSvFcFmyGYnXi/wmCgYU92XXT0AIG9GyBFEa6gBnEhMlnnNxfufUhpS2Nwa7dwQOplC4jAGKhXhjSemiv05DQYnEVs71ADfbY/QI74W6ts=
+	t=1754519905; cv=none; b=tcSU/tqnF3QWP9KMUWEWlUUeSM2JggmZg6nl0oFrk8G9KsTNzkRogF1JE6bxelAZ8odpH/WJUzjYpit/Wk7buBjKn+W6ly/85hql0HdI4RPmiOwdiOoiHc0OffzcDuj08KIPT1bjYDCCzZju12Hqoan9SnelA5mIQIIBk0rYU10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754519872; c=relaxed/simple;
-	bh=ur0+FtE7C1sln/WEU2uVKhxyCP/viV94oTeRyrrapFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uqpkgr38FaGsyfJ+mO96ALVLoy/oMGoPrwTCYtBH3mhzyeqQRonGCAKf1xoFRSglrJgCBcKWJ7CJcclQPpo8Y76+UpYH9AzYigLrcE9R2XxN3mcXza1unNwM0Xr0qrdAEeK+IS+pKD6ZrbtwPjLb98/soiAvoL/puqUzDHcjzdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iw5FpPOk; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b390136ed88so250614a12.2;
-        Wed, 06 Aug 2025 15:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754519870; x=1755124670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gowrAGAtt/8PGy3ltcInMP14/WjUgpF9Gx6AgOeagC0=;
-        b=Iw5FpPOka5QTUybv5E43QSPfaS7IMimUUlem9dgxzw844b1EBqCfed5TCJHxJyI1Aa
-         8iMxFzLac4jn9SGBfVG/2nwyGK7W4V20BE7Plri1oRpyERyUGqC5mZMJ+mM2wgPmiffB
-         Q+zZyENQn1xXhVRwvjCqAsiC/tdQXhIQJaAHkaCiJdVdenY/v1zufkugU4wPgm962c9S
-         b0hty2qh2o3fGVMjQ3kQYSVF/w8f+Dg+Co8lSPXhIvW1fUQ2kpPyChmSTTzXdIOu6Sbd
-         uDJ7G6Zpq8esj6sfNXug8e1YUUGRC1NcY2gKTGEs37PTwfQfEdhM7cSiYhBXQTFTQEpS
-         e/6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754519870; x=1755124670;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gowrAGAtt/8PGy3ltcInMP14/WjUgpF9Gx6AgOeagC0=;
-        b=ZkDgQZoWFR8CHr0a5WRxNYIjhMARJgPCkJW0s64HTvvRFVtHRP3KeLYkzdxsd2/lL6
-         ZjIFAWLwcs6MBO8TAAu/Mg2qu0Gks6FNbIQsQlL1ddKkboRZ4j9XXXVUc7+xWBQyCoJW
-         5r50eWGaw2EFkINL7+sXRlNJiNuTRgU1+iVCWtxBasM5TLQXE/hA7bNx3G11ggcC4xsK
-         gDQ/H3tA37z2z6E4EWN5nH12rOA/bUQYMtJbBLUB85Ri3tStE2IB21iqX1WJzFvTceeO
-         YMdJuVDS15eCXIZb1xhOydHLHWsFfZokEzZ1RYi2vAyMZd5AIR8IElP43vN8zOU3V/zu
-         oVtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnOiO1kJzEaQR8TOCwTQrKj+gD++zAf9SAO1cEyKeMiOB2awRw7vf2zxbgFda5KghFcRiBNwIZ3m/n@vger.kernel.org, AJvYcCX4ScEaBVtD1HwnJJRvNhjqQBKiR3jMEkxcToj62TT8MZFrIzKUEroSdcjHnkVLnScOFfGyXdA/B890@vger.kernel.org, AJvYcCXtrFBtIuF85rEKFq3ozILQQhz5ib7ckTZTD4tC5f3dSmXh2MUHEFp9Akr9o8pt8c1BkINi0hQCPOTFfvGR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiF/104NsInwl072V5gKoaoW/U5hZxSXVM/107OJaKuUvnIbEL
-	XHxu0E4G/0iDVEZQGj2U7iclMluj56TUKNf3dHrImt2eVqJKext1gwT3a084pQ==
-X-Gm-Gg: ASbGncsCaPez5RaP7yKiEN14ygugPGoGbr0xteidHCa2mCFYo76nzc5woCP3NBnYh5c
-	HiI9wqJmjtRwNUTqkDen+jEveePIpH75+oisv7f+QY4yl+ss1AEt1ppfHKsTm1bsU88EwkFS2d5
-	Q5lqEFVTqDouOK76K6sJcmBBlWOTJBHx9DcelATrwEVd2O0/uDIpzJurT93yTSwY7zGbCa8aPN/
-	kLTS8SRdKwnMqZIMFQAY6CsQvCTKIz3rbdWpbOWaOgNZGjx5+reuVI7ftnC8TUNG5U/PJWzqcFS
-	3nFBzu0zCGK33j59jPMATrPXOUkoU4WuS/RJEdsXg2eK/CknVOYItowJK9qYSVxocnTEa6AwUaX
-	W3NTsOoOzlZu8TKVWhgPC1K9/fzDkfCDQkjuP8eti5LQoNmY9Gsd7lU/MPdAB6s5YqRwoSVtt3a
-	rUHwaf5KZlepw4FPU=
-X-Google-Smtp-Source: AGHT+IGGXIpRu+MQH1UWjvwqaza58EkYTHdYw+0FEeF28d/J6xAbeGY+wjFULLY4bZu8CragxcxhpA==
-X-Received: by 2002:a17:903:2a83:b0:240:70d4:85d9 with SMTP id d9443c01a7336-2429edeedc7mr62203175ad.0.1754519869742;
-        Wed, 06 Aug 2025 15:37:49 -0700 (PDT)
-Received: from CNTWS00427A.itotolink.net (111-242-118-39.dynamic-ip.hinet.net. [111.242.118.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2426dec66desm86776775ad.54.2025.08.06.15.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 15:37:49 -0700 (PDT)
-From: ChiShih Tsai <tomtsai764@gmail.com>
-To: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	corbet@lwn.net,
-	t630619@gmail.com,
-	ChiShih Tsai <tomtsai764@gmail.com>
-Subject: [PATCH v3 2/2] hwmon: (pmbus/adm1275) add sq24905c support
-Date: Thu,  7 Aug 2025 06:37:24 +0800
-Message-ID: <20250806223724.1207-3-tomtsai764@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250806223724.1207-1-tomtsai764@gmail.com>
-References: <20250806223724.1207-1-tomtsai764@gmail.com>
+	s=arc-20240116; t=1754519905; c=relaxed/simple;
+	bh=UsuoGBHjwewP1sIpW3nwpG6GLzYey9B8ms9eNCHQpgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=vFreWf53K/CFDDcj1sSe4Mzg0p5FAcET4JoI9omvZCOO1BD9E59q+yHQYmsObGbDZB4x10gUyB024OJE0NoEm6j2j9vxTw0jIwPmJzxQ581o5T79N0cllXd5zdQHR8zfhCmQV83XTprsLVxgMblRp6OhBXnc890uMqSIKQdFziw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lF1G4E16; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754519903; x=1786055903;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=UsuoGBHjwewP1sIpW3nwpG6GLzYey9B8ms9eNCHQpgY=;
+  b=lF1G4E16YND8p1R/5L53SxUtAlhhnuW62cYtcomUs1EulbvqE5TUi99a
+   0JsGHMYL2vocaeIFc21n2ZsFxWOIsE9a79F9LZ2jBhb+UD43IVCSGCPow
+   IvhzA0w2RF5uXpWXe8GPNV2bqRLquN7qYS2aMxLaz3JyOPF71toeTmQZ4
+   SxwTQRfbH8YiG0gtga3rJc1Q5oywfsaKt0BxRhBM09h/f/vUyliWDwBlx
+   NP7F5jnEDn334vxVIlWvCA+ZkV0fmAGtmL9/fyzg23oLhxF9Ndga7jpPW
+   p08JAyrwrq7fm1SY91ZLe+K1m1Nly89Rmx3RuywZpmk4g74FS0NUBEWmr
+   w==;
+X-CSE-ConnectionGUID: 2FzCL6KPTjuYcSu6Em0KhQ==
+X-CSE-MsgGUID: rQkyxlxlQM2yzuzkHhc9Yg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56929073"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="56929073"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 15:38:22 -0700
+X-CSE-ConnectionGUID: 8m00+apCTBmu4Lz2CDHf1A==
+X-CSE-MsgGUID: hH0MaZIxQvG8kYE6QXfNqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="188563345"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 06 Aug 2025 15:38:21 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujmlx-00029q-1A;
+	Wed, 06 Aug 2025 22:38:15 +0000
+Date: Thu, 7 Aug 2025 06:37:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [tip:irq/urgent 6/8] ERROR: modpost: __ex_table+0x1584 references
+ non-executable section '.rodata.__func__.103779'
+Message-ID: <202508070607.QKVa8DiU-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for sq24905c which is similar to adm1275 and other chips
-of the series.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
+head:   9f7488f24c7571d349d938061e0ede7a39b65d6b
+commit: 5b65258229117995eb6c4bd74995e15fb5f2cfe3 [6/8] genirq/test: Resolve irq lock inversion warnings
+config: riscv-randconfig-002-20250807 (https://download.01.org/0day-ci/archive/20250807/202508070607.QKVa8DiU-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508070607.QKVa8DiU-lkp@intel.com/reproduce)
 
-Signed-off-by: ChiShih Tsai <tomtsai764@gmail.com>
----
- Documentation/hwmon/adm1275.rst | 24 ++++++++++++++++--------
- drivers/hwmon/pmbus/Kconfig     |  3 ++-
- drivers/hwmon/pmbus/adm1275.c   | 11 ++++++++---
- 3 files changed, 26 insertions(+), 12 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508070607.QKVa8DiU-lkp@intel.com/
 
-diff --git a/Documentation/hwmon/adm1275.rst b/Documentation/hwmon/adm1275.rst
-index 57bd7a850558..cf923f20fa52 100644
---- a/Documentation/hwmon/adm1275.rst
-+++ b/Documentation/hwmon/adm1275.rst
-@@ -67,6 +67,14 @@ Supported chips:
- 
-     Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADM1293_1294.pdf
- 
-+  * Silergy SQ24905C
-+
-+    Prefix: 'mc09c'
-+
-+    Addresses scanned: -
-+
-+    Datasheet: https://www.silergy.com/download/downloadFile?id=5669&type=product&ftype=note
-+
- Author: Guenter Roeck <linux@roeck-us.net>
- 
- 
-@@ -74,14 +82,14 @@ Description
- -----------
- 
- This driver supports hardware monitoring for Analog Devices ADM1075, ADM1272,
--ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, and ADM1294 Hot-Swap
--Controller and Digital Power Monitors.
-+ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, ADM1294, and SQ24905C
-+Hot-Swap Controller and Digital Power Monitors.
- 
--ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293, and
--ADM1294 are hot-swap controllers that allow a circuit board to be removed from
--or inserted into a live backplane. They also feature current and voltage
--readback via an integrated 12 bit analog-to-digital converter (ADC), accessed
--using a PMBus interface.
-+ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281, ADM1293,
-+ADM1294 and SQ24905C are hot-swap controllers that allow a circuit board to be
-+removed from or inserted into a live backplane. They also feature current and
-+voltage readback via an integrated 12 bit analog-to-digital converter (ADC),
-+accessed using a PMBus interface.
- 
- The driver is a client driver to the core PMBus driver. Please see
- Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
-@@ -160,5 +168,5 @@ temp1_highest		Highest observed temperature.
- temp1_reset_history	Write any value to reset history.
- 
- 			Temperature attributes are supported on ADM1272,
--			ADM1273, ADM1278, and ADM1281.
-+			ADM1273, ADM1278, ADM1281 and SQ24905C.
- ======================= =======================================================
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 55e492452ce8..77add0c6ee53 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -52,7 +52,8 @@ config SENSORS_ADM1275
- 	help
- 	  If you say yes here you get hardware monitoring support for Analog
- 	  Devices ADM1075, ADM1272, ADM1273, ADM1275, ADM1276, ADM1278, ADM1281,
--	  ADM1293, and ADM1294 Hot-Swap Controller and Digital Power Monitors.
-+	  ADM1293, ADM1294 and SQ24905C Hot-Swap Controller and
-+	  Digital Power Monitors.
- 
- 	  This driver can also be built as a module. If so, the module will
- 	  be called adm1275.
-diff --git a/drivers/hwmon/pmbus/adm1275.c b/drivers/hwmon/pmbus/adm1275.c
-index 7d175baa5de2..bc2a6a07dc3e 100644
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -18,7 +18,8 @@
- #include <linux/log2.h>
- #include "pmbus.h"
- 
--enum chips { adm1075, adm1272, adm1273, adm1275, adm1276, adm1278, adm1281, adm1293, adm1294 };
-+enum chips { adm1075, adm1272, adm1273, adm1275, adm1276, adm1278, adm1281,
-+	 adm1293, adm1294, sq24905c };
- 
- #define ADM1275_MFR_STATUS_IOUT_WARN2	BIT(0)
- #define ADM1293_MFR_STATUS_VAUX_UV_WARN	BIT(5)
-@@ -486,6 +487,7 @@ static const struct i2c_device_id adm1275_id[] = {
- 	{ "adm1281", adm1281 },
- 	{ "adm1293", adm1293 },
- 	{ "adm1294", adm1294 },
-+	{ "mc09c", sq24905c },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, adm1275_id);
-@@ -532,7 +534,8 @@ static int adm1275_probe(struct i2c_client *client)
- 		dev_err(&client->dev, "Failed to read Manufacturer ID\n");
- 		return ret;
- 	}
--	if (ret != 3 || strncmp(block_buffer, "ADI", 3)) {
-+	if ((ret != 3 || strncmp(block_buffer, "ADI", 3)) &&
-+	    (ret != 2 || strncmp(block_buffer, "SY", 2))) {
- 		dev_err(&client->dev, "Unsupported Manufacturer ID\n");
- 		return -ENODEV;
- 	}
-@@ -558,7 +561,8 @@ static int adm1275_probe(struct i2c_client *client)
- 
- 	if (mid->driver_data == adm1272 || mid->driver_data == adm1273 ||
- 	    mid->driver_data == adm1278 || mid->driver_data == adm1281 ||
--	    mid->driver_data == adm1293 || mid->driver_data == adm1294)
-+	    mid->driver_data == adm1293 || mid->driver_data == adm1294 ||
-+	    mid->driver_data == sq24905c)
- 		config_read_fn = i2c_smbus_read_word_data;
- 	else
- 		config_read_fn = i2c_smbus_read_byte_data;
-@@ -708,6 +712,7 @@ static int adm1275_probe(struct i2c_client *client)
- 		break;
- 	case adm1278:
- 	case adm1281:
-+	case sq24905c:
- 		data->have_vout = true;
- 		data->have_pin_max = true;
- 		data->have_temp_max = true;
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: vmlinux: section mismatch in reference: xp_destroy+0xa (section: .text.xp_destroy) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_create_and_assign_umem+0x2a6 (section: .text.xp_create_and_assign_umem) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x136 (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x16c (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x174 (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x236 (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x264 (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x26c (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_assign_dev+0x274 (section: .text.xp_assign_dev) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: xp_release_deferred+0x64 (section: .text.xp_release_deferred) -> .L0  (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: fdt_nop_property+0x1e (section: .text.fdt_nop_property) -> ics932s401_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: fdt_nop_property+0x2a (section: .text.fdt_nop_property) -> ics932s401_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: fdt_node_end_offset_+0x10 (section: .text.fdt_node_end_offset_) -> lkdtm_module_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: fdt_node_end_offset_+0x20 (section: .text.fdt_node_end_offset_) -> lkdtm_module_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: idr_alloc_u32+0x26 (section: .text.idr_alloc_u32) -> .LVL28 (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: idr_alloc_u32+0x2a (section: .text.idr_alloc_u32) -> .LVL29 (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: idr_alloc_u32+0x52 (section: .text.idr_alloc_u32) -> .LVL30 (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: idr_alloc_u32+0x9e (section: .text.idr_alloc_u32) -> .LVL31 (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0x52 (section: .text.logic_pio_register_range) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0xb0 (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0xbe (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0xde (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0x11c (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0x136 (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_register_range+0x14c (section: .text.logic_pio_register_range) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: find_io_range_by_fwnode+0xc6 (section: .text.find_io_range_by_fwnode) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_to_hwaddr+0xdc (section: .text.logic_pio_to_hwaddr) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x7c (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x118 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x122 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x132 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x146 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x170 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: logic_pio_trans_cpuaddr+0x1c4 (section: .text.logic_pio_trans_cpuaddr) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x426 (section: .text.mas_empty_area) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x548 (section: .text.mas_empty_area) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x55e (section: .text.mas_empty_area) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x574 (section: .text.mas_empty_area) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x57a (section: .text.mas_empty_area) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_root_expand+0x11c (section: .text.mas_root_expand) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_root_expand+0x128 (section: .text.mas_root_expand) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_root_expand+0x12c (section: .text.mas_root_expand) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mas_new_root+0x116 (section: .text.mas_new_root) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __mt_destroy+0xa6 (section: .text.__mt_destroy) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x1ce (section: .text.mt_validate) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x1da (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x220 (section: .text.mt_validate) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x228 (section: .text.mt_validate) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x360 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x36e (section: .text.mt_validate) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x376 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x386 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x394 (section: .text.mt_validate) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x3b8 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x5f8 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x61e (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x648 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x65e (section: .text.mt_validate) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0x6f2 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xbbe (section: .text.mt_validate) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xbcc (section: .text.mt_validate) -> fpc202_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xbe6 (section: .text.mt_validate) -> bh1770_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xc26 (section: .text.mt_validate) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xc40 (section: .text.mt_validate) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xc8c (section: .text.mt_validate) -> fpc202_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mt_validate+0xdd8 (section: .text.mt_validate) -> bh1770_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: seq_buf_putmem_hex+0x30 (section: .text.seq_buf_putmem_hex) -> wm8994_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: ip6_string+0xa (section: .text.ip6_string) -> wm8994_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: ip6_compressed_string+0xe8 (section: .text.ip6_compressed_string) -> wm8994_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: mac_address_string+0x52 (section: .text.mac_address_string) -> wm8994_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: uuid_string+0x4c (section: .text.uuid_string) -> wcd934x_slim_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: uuid_string+0x5c (section: .text.uuid_string) -> wm8994_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: uuid_string+0x10c (section: .text.uuid_string) -> wcd934x_slim_driver_init (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x234 (section: .text.vbin_printf) -> tps6594_esm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x26a (section: .text.vbin_printf) -> tps6594_pfsm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x27e (section: .text.vbin_printf) -> tps6594_pfsm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x2b6 (section: .text.vbin_printf) -> tps6594_pfsm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x2c2 (section: .text.vbin_printf) -> tps6594_esm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: vbin_printf+0x2ce (section: .text.vbin_printf) -> tps6594_esm_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.efi_pe_entry) -> pm800_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.efi_pe_entry) -> pm800_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_pe_entry) -> pm800_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.efi_pe_entry) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_pe_entry) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.exit_boot_func) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.exit_boot_func) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.exit_boot_func) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.exit_boot_func) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.exit_boot_func) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.get_fdt) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.get_fdt) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.get_fdt) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x4 (section: .init.text.efi_boot_kernel) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm805_i2c_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: __efistub_.L0 +0x0 (section: .init.text.efi_boot_kernel) -> pm886_i2c_driver_exit (section: .exit.text)
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1584 (section: __ex_table) -> __func__ (section: .rodata.__func__.103779)
+>> ERROR: modpost: __ex_table+0x1584 references non-executable section '.rodata.__func__.103779'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1588 (section: __ex_table) -> __func__ (section: .rodata.__func__.103817)
+ERROR: modpost: __ex_table+0x1588 references non-executable section '.rodata.__func__.103817'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1590 (section: __ex_table) -> __func__ (section: .rodata.__func__.103846)
+ERROR: modpost: __ex_table+0x1590 references non-executable section '.rodata.__func__.103846'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1594 (section: __ex_table) -> __func__ (section: .rodata.__func__.103874)
+ERROR: modpost: __ex_table+0x1594 references non-executable section '.rodata.__func__.103874'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x159c (section: __ex_table) -> __func__ (section: .rodata.__func__.103889)
+ERROR: modpost: __ex_table+0x159c references non-executable section '.rodata.__func__.103889'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x15a0 (section: __ex_table) -> __func__ (section: .rodata.__func__.103874)
+ERROR: modpost: __ex_table+0x15a0 references non-executable section '.rodata.__func__.103874'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x16c8 (section: __ex_table) -> .LASF1478 (section: .debug_str)
+ERROR: modpost: __ex_table+0x16c8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x16cc (section: __ex_table) -> .LASF1480 (section: .debug_str)
+ERROR: modpost: __ex_table+0x16cc references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17a0 (section: __ex_table) -> .LASF1906 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17a0 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17a4 (section: __ex_table) -> .LASF1908 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17a4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17ac (section: __ex_table) -> .LASF1910 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17ac references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17b0 (section: __ex_table) -> .LASF1908 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17b0 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17b8 (section: __ex_table) -> .LASF1913 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17b8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17bc (section: __ex_table) -> .LASF1908 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17bc references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17c4 (section: __ex_table) -> .LASF1916 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17c4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17c8 (section: __ex_table) -> .LASF1918 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17c8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17d0 (section: __ex_table) -> .LASF1920 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17d0 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17d4 (section: __ex_table) -> .LASF1908 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17d4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17f4 (section: __ex_table) -> .LASF54 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17f4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x17f8 (section: __ex_table) -> .LASF56 (section: .debug_str)
+ERROR: modpost: __ex_table+0x17f8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1800 (section: __ex_table) -> .LASF57 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1800 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1804 (section: __ex_table) -> .LASF60 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1804 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x18f0 (section: __ex_table) -> .LLST174 (section: .debug_loc)
+ERROR: modpost: __ex_table+0x18f0 references non-executable section '.debug_loc'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x18f4 (section: __ex_table) -> .LLST176 (section: .debug_loc)
+ERROR: modpost: __ex_table+0x18f4 references non-executable section '.debug_loc'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19c8 (section: __ex_table) -> .LASF327 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19c8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19cc (section: __ex_table) -> .LASF329 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19cc references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19d4 (section: __ex_table) -> .LASF331 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19d4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19d8 (section: __ex_table) -> .LASF329 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19d8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19e0 (section: __ex_table) -> .LASF334 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19e0 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19e4 (section: __ex_table) -> .LASF336 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19e4 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19ec (section: __ex_table) -> .LASF338 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19ec references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19f0 (section: __ex_table) -> .LASF329 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19f0 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19f8 (section: __ex_table) -> .LASF2616 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19f8 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x19fc (section: __ex_table) -> .LASF2618 (section: .debug_str)
+ERROR: modpost: __ex_table+0x19fc references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a04 (section: __ex_table) -> .LASF2620 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a04 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a08 (section: __ex_table) -> .LASF2622 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a08 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a10 (section: __ex_table) -> .LASF3063 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a10 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a14 (section: __ex_table) -> .LASF3065 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a14 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a1c (section: __ex_table) -> .LASF3067 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a1c references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a20 (section: __ex_table) -> .LASF3069 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a20 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a28 (section: __ex_table) -> .LASF3071 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a28 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a2c (section: __ex_table) -> .LASF3073 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a2c references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a34 (section: __ex_table) -> .LASF3075 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a34 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a38 (section: __ex_table) -> .LASF3077 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a38 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a40 (section: __ex_table) -> .LASF3079 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a40 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a44 (section: __ex_table) -> .LASF3081 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a44 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a4c (section: __ex_table) -> .LASF3083 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a4c references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a50 (section: __ex_table) -> .LASF3085 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a50 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a58 (section: __ex_table) -> .LASF1824 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a58 references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a5c (section: __ex_table) -> .LASF1826 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a5c references non-executable section '.debug_str'
+WARNING: modpost: vmlinux: section mismatch in reference: 0x1a64 (section: __ex_table) -> .LASF1828 (section: .debug_str)
+ERROR: modpost: __ex_table+0x1a64 references non-executable section '.debug_str'
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
