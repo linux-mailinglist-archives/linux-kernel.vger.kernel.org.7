@@ -1,162 +1,130 @@
-Return-Path: <linux-kernel+bounces-757338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAB1B1C0FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C7DB1C0FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B01316F289
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9C9183147
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9D821765B;
-	Wed,  6 Aug 2025 07:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F7121773D;
+	Wed,  6 Aug 2025 07:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRQbIwLa"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ngyw4Etq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2250318C008;
-	Wed,  6 Aug 2025 07:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110052E371D;
+	Wed,  6 Aug 2025 07:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463908; cv=none; b=rHUi/D11TS5morFBwCa0NmO+hiYg6JGH09ufXv5o6Dr9P7Mv1S6NFvovV480wLWIJ5nxzujT1a/f1uHtX/7/uJv9HxTQn/2SRmZu+PIvDC8HxVbGVDjcOeNvt65OEwDwewVF8IFqRrEW9dVWXlDtrpFI3nYUpk7U3vYRzQh0fow=
+	t=1754464084; cv=none; b=CoPpg6Ihg4Ws1iZI6S5HUVLg6edhSwkMreRKDL7MR+ilVoEKgz17f9vnWUj7+3qbo2dNY/74VHCfMkyouviKQfBam1KaeCiVxpW210veR72u9YTmyZNs7hliN0OgehSuZ3HzUmLFEHjCDjg94QJvzQckKzQcVVVKlHsxX7/P2uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463908; c=relaxed/simple;
-	bh=Y+pF57zebiOWKFC1Q+znjA9oBcuxDMVzZE2toqzqXY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfCpWQC8GcfYNRPzK8xYsH6C1g7I+vfSZL+wseEtzp0h/t15uMTuDgXce4tgvV59yjcl4b51SIPG/4u4TbkCdBSs4SvxsfIaiu/CCEyhD1fE7j70f8IHzpCJ9tuHH2GXQlFugTcJYXrtmTdcjKRzm/AMBXQ/eadigJde41cTPQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRQbIwLa; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55b88369530so7880016e87.0;
-        Wed, 06 Aug 2025 00:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754463904; x=1755068704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhfozYBANXGWHIriBSKZ0vH8S8S9zWtwffMAGQ2RIno=;
-        b=NRQbIwLaKHb0bmrQ5sov4xBsIM1nTDmIa0yudUNMTnkH8Gsvwm2NdV766Svsr7eJ6x
-         GRlbkzsilQerCqiEwr79Lg+OXWdLXgGyzNzFQfnEswYYA3OB6O3GSKBWm6Az2LFgCCdv
-         B3BxeXlus9MFbEm45hFtzIArvCIgKFWsCGAK+acYTGjS1+SFnUO+fndKNdVpgV78lhvl
-         V47X9dGRYHauniFjonwEgc4nvA9foTm6LYEfcJWEKFRb9VvQ9tnzubYblrXMNRoq7aA4
-         0Ian1kivTOkttQ8yugUgDWdubQun33GQFDoEvm/wTA4tDNRrKl12DB9LTNvhPYGrsS0z
-         Yr1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754463904; x=1755068704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DhfozYBANXGWHIriBSKZ0vH8S8S9zWtwffMAGQ2RIno=;
-        b=JE1a4252hzLakjmqRUAz0DpLdjlLynu4F2+SG1+jPMWBvZmyfcmRSBep0dgpjKJ4C+
-         SCiXv4O+GNqNwK+WUTrHLDNvmB4S057wHQAynNYAfVyeF3XX/wc564WLmQeUZtgTucsF
-         yvVcHTM7EUNRUVN1aV7MkxQtH6c/9pHBFjxhG3H1mCnNQqgeIuIjczk4MJvouJG+jOV+
-         o5VTGu7tLaUve42/lKToduOTWg7QvbH/HdPzwLD/FWHFaxJsm1cnmkhFyRRMPzrHAT6N
-         yxE0wdQSy9gHVHzmNh1LitI+XPGwPStz9yAosdnzsIQ0mZhufbIcwf/06QDTPoAl0llg
-         wwvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWobDYUaSlO/hpiuBKErAnqKwDM5tpiLlTCmyLXK/utREuLA0PMZLzDGAcS9Cb2nslJ8w0yD6sBQMTM@vger.kernel.org, AJvYcCXdH2nTxEqLmSk9h9k0etA1wvBFhyqmRIsFXNezF2KYxSgHCOJ8ghS+O/nUVK6bzQdU6ZMI4e0gbq86@vger.kernel.org, AJvYcCXty9/QZqs0Q1zWaSsYJdypnjr40o3UBgvRI/Sjuu0DZr0sfJGydfB4NLM9haVJFCbMl3nl9AWdDFsXlyio@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfWG+X68GvSaQva6nySJZsGcVVdB/2QtRQwvfdhQ54hKCNmLk7
-	HrpCw/87W6oPQy9iwTOtUWHMNqj5qfTk4waKC+nuEJ/oSuezyt8zkKal
-X-Gm-Gg: ASbGncsrWXFuaLp8NprijkRK9LmYZ58sWAr5/EF14lO4jDcsHBwMziHq+A1VbxJQk5I
-	HoB6W9IaIrBB7uZL39wdBmT6Ss0ez12dNKhadJymzbuTfuZk3X+iV2eSbtcJrIlaVtYgCwmVlQ+
-	p/KXaPezenS8/+/qKLqYHEL66yfCl6fMKC070kXOZPJjVb73TvOg9ij/9/eCOL04z+VgKx1ZPLY
-	Ggvbed1FeKcHwdlzVruOuIhsfayF+aplLL1GacIAm9FGfC2SORQUo0uqhRXHEUlbwZ6up5PvYfn
-	TgMGh6Cq8y+7hfqrYNNI+n+JK/bneZ204ztVBDy3uwNeOcoua+6G06sBD3hFun1Npivh/SkfD8i
-	j1r2Gwk4TImAQpTnY5Ank4ACCAgpiTRTwryt6S0M=
-X-Google-Smtp-Source: AGHT+IHuUpHvCNOZyBG2yyyYjis1jKNdzha8195ws7NS4POVNMfve4bjabBERJYaV4gbXwq8Co5JVQ==
-X-Received: by 2002:a05:6512:159b:b0:55b:7cb7:f57c with SMTP id 2adb3069b0e04-55caf3c2e3emr520812e87.57.1754463903806;
-        Wed, 06 Aug 2025 00:05:03 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a9054sm21907041fa.28.2025.08.06.00.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 00:05:02 -0700 (PDT)
-Date: Wed, 6 Aug 2025 10:04:59 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] MAINTAINERS: A driver for simple 1-channel SPI ADCs
-Message-ID: <d4c1ebe732640aff7ca36441df68aefd8ff84606.1754463393.git.mazziesaccount@gmail.com>
-References: <cover.1754463393.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1754464084; c=relaxed/simple;
+	bh=E6/eA5QeIe1HToq//I/2AQFAF8B2dylxKHP/BW4fym0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AV5qulAld7/bPXs9jX4UBglwGKxPOsIzIw+rT+7tVHlaNxt2SuFnfizSu4c6iiaWHaOkUt9nr/c4IafNnM/qohCg2B0xDhOj0zTSQkvqboIk4jEO14blDfvLxHjhH4pfOuuffnE3RNqxb2GP/jHeYHANZskYrZkszftj7sNOnCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ngyw4Etq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9DE87C4CEE7;
+	Wed,  6 Aug 2025 07:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754464083;
+	bh=E6/eA5QeIe1HToq//I/2AQFAF8B2dylxKHP/BW4fym0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Ngyw4Etq96JE9IJ68fwHr+IQ7XgI9RBlajFr+tAGozBnpvJ3jhBNkBhiIMCLOAt2l
+	 24nQg86mdjrTyY4rt9+1Ca7X4cIn6wjwVPORZbDq9snmpPNrVpkZs8lo5mOyS/50Bi
+	 A0k/Jj4hj1fDg6WaghhGK0cD1P591+TFTny6UszlHxWsU1ENlcjmEg8nMYQUFFAC2V
+	 Wy2STxX3lljNIwhpXgc2LDlVDAD2af6COPXOAzgCuI1TJPWBuqqNaBeUz878r8sG/s
+	 eUTxgEU5kFfRQLp0ZOxgVmqmMxlb3cuOTkF53Efg1/EzYiXr0BnkL2EeJUshBAsmbB
+	 01Q7ed4P6ulrg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E30C87FCB;
+	Wed,  6 Aug 2025 07:08:03 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Wed, 06 Aug 2025 15:08:02 +0800
+Subject: [PATCH] cpupower: repair mangled powercap comment
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FRYUNwuGdlf6494p"
-Content-Disposition: inline
-In-Reply-To: <cover.1754463393.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250806-mangled_cpupower-v1-1-1a559130326b@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAFH/kmgC/x2MWwqAIBAAryL7naBCZV0lIsq2WigVpQeEd0/6n
+ IGZFyIGwggteyHgRZGczSALBmYb7Yqc5syghCqFFhU/stxxHow/vbsx8FLqqtbNoic1Qc58wIW
+ ef9n1KX0jUQ8aYgAAAA==
+X-Change-ID: 20250806-mangled_cpupower-5186789f8b2b
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
+ "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Wangyuli@uniontech.com, Guanwentao@uniontech.com, Zhanjun@uniontech.com, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754464082; l=1836;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=z8rySj9NTsoDFQbVKMmerKhopsqj2e1f45A+CAKIILE=;
+ b=EPWBB+fmsrLX1f39+XlFGZVEiToICCSR/A6CF96dUJ1/N3zHxAYwSC6iBslGKvtIxG0jSlxwe
+ tufnSpkl2mHDyJnptQnHm/rwA0jmLlP31QewFSc0jEaQLddbEIWCX3v
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
---FRYUNwuGdlf6494p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The current comment exhibits clear patch application artifacts:
+1. A stray '-' prefix indicating failed line removal
+2. Broken sentence structure from improper context patching
 
-Add undersigned as a maintainer for the ad7476.c which supports a few
-simple 1-channel ADC connected to SPI.
+What appears to be version control residue has persisted since its
+initial introduction and through the 2022 kernel submission[1]. While
+my archaeological efforts only trace back to the 2017 openSUSE patch[2],
+the corrupted syntax suggests even older origins that remain elusive -
+perhaps maintainers with longer institutional memory could shed light
+on its provenance.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Restore grammatical sanity by:
+- Removing the redundant second line with its leading '-'
+- Preserving only the primary statement about RAPL hardcoding
+- Eliminating the fragmented "should show up" clause
+
+The result reflects reality without speculative future-proofing.
+
+1. https://lore.kernel.org/all/20221123111810.16017-2-trenn@suse.de/
+2. https://build.opensuse.org/request/show/535512
+
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+ tools/power/cpupower/lib/powercap.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+index 94a0c69e55ef5e4291b13a4218e706fa8d14e6a7..609943c829efce8045d97097b5f5e9ec86d0f519 100644
+--- a/tools/power/cpupower/lib/powercap.c
++++ b/tools/power/cpupower/lib/powercap.c
+@@ -87,8 +87,6 @@ int powercap_set_enabled(int mode)
+ 
+ /*
+  * Hardcoded, because rapl is the only powercap implementation
+-- * this needs to get more generic if more powercap implementations
+- * should show up
+  */
+ int powercap_get_driver(char *driver, int buflen)
+ {
 
 ---
-I'll try to keep this on eye.
+base-commit: 6bcdbd62bd56e6d7383f9e06d9d148935b3c9b73
+change-id: 20250806-mangled_cpupower-5186789f8b2b
 
-I only have access to the ROHM BD79105 and BU79100g. I would welcome
-anyone with access to other supported ADCs (and time, energy and the
-knowledge) to join me. :)
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f8c8f682edf6..36fa6333f7b5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -455,6 +455,11 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,ad738=
-0.yaml
- F:	Documentation/iio/ad7380.rst
- F:	drivers/iio/adc/ad7380.c
-=20
-+AD7476 ADC DRIVER FOR VARIOUS SIMPLE 1-CHANNEL SPI ADCs
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Maintained
-+F:	drivers/iio/adc/ad7476.c
-+
- AD7877 TOUCHSCREEN DRIVER
- M:	Michael Hennerich <michael.hennerich@analog.com>
- S:	Supported
---=20
-2.50.1
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
 
 
---FRYUNwuGdlf6494p
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiS/psACgkQeFA3/03a
-ocVNowgA0TdC3tO5f+X4k2YSfdqbaPiI5OAVA6kHDbpleeBppf0yWagjXh2ecY/X
-B4d4W4/SrjOnfjlMdN9x+q5zacokUTDzc41f0mMwdwblLH84lsjfXto3YAMXVL1/
-KdBgZ3tvLgKAa75NcQeNj9HL8CrUJtaiR9JhtzOuHT1AmTLsjy24OMs5pDL2zH2a
-UNE7NZ/9zvEtsHTfFXCLwE5Y3gc3geakWhNgL+bp2gExaYok1YH54fogKE9CW7kL
-/t5st4NmjsyOCyuGy8hsNUmhNkzJiGtNXg2B6A99r/FnjLFk79y+b6KI4QNatnmV
-cHahdtZd+ZLjWX2YI0PmrBzOANcs5Q==
-=1cUJ
------END PGP SIGNATURE-----
-
---FRYUNwuGdlf6494p--
 
