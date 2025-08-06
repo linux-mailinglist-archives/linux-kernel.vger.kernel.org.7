@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-758352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB004B1CDF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:47:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B439AB1CDF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80A93B0F2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462AE62677F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5D52BD034;
-	Wed,  6 Aug 2025 20:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEF52BE637;
+	Wed,  6 Aug 2025 20:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edeT33nW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bZO2x0lq"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037472BFC7B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0301223DCB
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754512876; cv=none; b=bXhAc6PHQYeSBjNXL4qUC86yb8t81gTzvo8DZMQ3/fnUc2VjhGbzBH6LgndkHqxm7lHOV/D33VX+PtQBpr/yRJpkGG7BKb4tVkK2edjOBCJd4fPMYx2TCGZrfsBTqg4uuexkcacx428qaqr/DaMf6yIkMVj2/SAhuuWizwye/Mc=
+	t=1754512901; cv=none; b=ZpCpQcrNlf1FSp6t8RksEPcxoLsJ7k+AUq3O3GkKbcetgJSNYasu9FLJPaLEDDb8jc5OA8fFSz3GArDiGPA8TxEzAdAuHkmqoldwjJurFQ8rxD5lfMeylCnS98IFYVFhECZYKucParQ+FVfz+dLFs+RatqFjnvD2FM9IUH4cO0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754512876; c=relaxed/simple;
-	bh=wZbTDzkOqW/92oBJK8cSh6J/AqE96Ei6sg1Ax0dDMck=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MUXZkKpz+ZjArqezwZ4BB2nhFltYpEiDZytniYaZZgkEpa1uPMbEyRjw1k3yqNkK2DTenUQlqOf5g6sJwqikgifYY6aujvyqMQa7fEeCnrkgr2tb5ezL37ExvaOJvWMGqzxqMNcExgLDmQFG4V++zbuD5GZQ7KfNmBQj6dvVqho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edeT33nW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754512874; x=1786048874;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=wZbTDzkOqW/92oBJK8cSh6J/AqE96Ei6sg1Ax0dDMck=;
-  b=edeT33nW8K5jS9CBffnDFEnaxlS+HZl4QgF5Lt4w9kIdNSFyR3CeCmOw
-   0iP7/NefRSfFDJUYVdpm2fTom4T2EcCF+QebgxQHENX22jDyOzvM5bhEz
-   +5dXtQ9aQJpaLo0/Uh5DHklwV9MvjOsy9dCh09XG7btThWe5UrGsNEhp4
-   aptKBFTRhTQYcfl1GBBk1iVflIE8hXo0q8fflTD1dT+GeHwI7lv4mOsz6
-   12FgOxeaQeqROsxRPlGQ8abNpqgeUEoo/oIBaC33Kipv2bIpcZKijQyPd
-   1JlO/bFYHwlCB5t4TVS3Br+Eu66YDzcRC5pYXQDXZ1yb+qyAI6sh8hE+t
-   A==;
-X-CSE-ConnectionGUID: AAR3YoyoRh+eM8z9AK4q9w==
-X-CSE-MsgGUID: ViFePlxdQbKWpbClbDlBLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74303192"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="74303192"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 13:41:14 -0700
-X-CSE-ConnectionGUID: Hmvv45UKSxeoU/41Pd4siw==
-X-CSE-MsgGUID: 3dkWgvXPR36gHiWsrv/m3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164389462"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Aug 2025 13:41:11 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujkwd-00024x-1K;
-	Wed, 06 Aug 2025 20:41:07 +0000
-Date: Thu, 7 Aug 2025 04:40:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: drivers/i3c/internals.h:54:9: error: passing 'const void *' to
- parameter of type 'void *' discards qualifiers
-Message-ID: <202508070438.TZZA3f2S-lkp@intel.com>
+	s=arc-20240116; t=1754512901; c=relaxed/simple;
+	bh=fYPEqrR/QtkwB39VAKloiAiFpQmxZ6OXgbDQdeZLYvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q4ozY3zbE3KClnLKtABwew1igi7S18MePwmEWQ1FBFqeco0d0TvB8t9SQHnCACkWAb4vv2zCVO0mRObbQ5WMABOVCSi3WDtNiJ1/m6/utSYP+pDr/AR4N9cM7u5/8SGxEvvqdhgtu8wNJXKmjEO0Vf+agKUy78em074iRMsCjeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bZO2x0lq; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23ffa7b3b30so2420065ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 13:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1754512898; x=1755117698; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ia3SLEzSRc8nG56lmpcOP8Y+PfXfHWZspV0p+jrskHQ=;
+        b=bZO2x0lqz1Ng4qUuoyqnhiBNoToH3iWQ8GzE15NUH0ZsP2zpz4cJ3grsDyQGQE4BQP
+         KBme6T6uEWOP0H8sZ+HG9EQy/FXop/42UjDik0qw5VGjsCtgggFFgECj1wzzly/x3OBk
+         QmQ6rpq97oFsEexblf31htv+dXbvNYeus37Is=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754512898; x=1755117698;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ia3SLEzSRc8nG56lmpcOP8Y+PfXfHWZspV0p+jrskHQ=;
+        b=t2Ps7drMgGRpOThcoq0s4/zXi6bDNouMUozGon2p/uiafSFkDN7aMxlpjNvMaD6fC2
+         0a358Od+b6fpJEt8DkaxZQI7nMLtC7q9lrSOrqK6XDOA0Nz09HFhTXhc5hN0EBId0xSE
+         ta1ofMb4lShJGWiRkYwzLPtwjj9izg61iI4dqzYTxZEOHju9mfbLeUcNyxsGtIFAZato
+         XtFvE/O77Z0pbzG+6iB/P7sL78zPuizOETJcI0aL88CsnI1/hV6jJ7IdgCH+RX69bkJk
+         7mbv8BijPl2oToPgDsEUOys8Ge7CAFJ+Ml3EzctSG3L/RRJpKxTWqg/ip2F4PMRfv0yB
+         q31Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRvkZRVKH84gdMb6Hv9L3eGVYMSVx200aynIdhnR7kO48yvH+v9UbdVucatBGPZLo4mZpLE164RXsTFI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoHv5KEIlN722KAPFEYVac3BBVXuTAYrPoKuzv8mWkI32j16z5
+	4vDrZsfpCF2FsqLPxGkn7WuKbgw9bbH+Y6ByI9jeyWdGtMukunPch8M6rFy+76GltA==
+X-Gm-Gg: ASbGnctXIDHlqddqY9Qe+49JfV9MdnhtPE37FyFndNwnBRNpfanUA7Vbpjf69ryATv1
+	arGGmUhYT7+hSlVvzPY0+D9SPiRyJ/gmF3nqMZtYUp2nwjgNFe7Jo+I3IOuJzuCA1CjS42tyuLq
+	/gL18yB12dWqahPO8gWFMYNAkzmQI6EPrwBfeyFGLrybKru1/cxAMNtzp8wPr+HOKN2h/AU2v0V
+	+w2h0q12sc1C8aspouOig74z7ihmU1awuvBMiBuJAzagiLnhZvhA82x8IQBgqTyGh7jmjUa9Qoh
+	2CNEHXq0v0dg+ypn1XVrnJQHESQMwESHo8BxGuUK2JaQzMkTuivyI1drHXZ36M7j8mDzAmfv3PK
+	hYEPz37qX9W99NVLW76tZeuOpPp4kJOLQOcEWnnp7lcWZfcwcK3nuI/vrZ9HU3Q==
+X-Google-Smtp-Source: AGHT+IGsVmEZizu/BQRtnZByDcXVDlU2OY7UH+LY0vzm1LBEU8C8nipRQoH5hnET3JlTZpJECTO39A==
+X-Received: by 2002:a17:903:124d:b0:235:f70:fd37 with SMTP id d9443c01a7336-242a0aa6a40mr53194985ad.19.1754512898109;
+        Wed, 06 Aug 2025 13:41:38 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977896sm167085995ad.79.2025.08.06.13.41.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 13:41:37 -0700 (PDT)
+Message-ID: <0a518bd3-0a20-4b69-a29f-04b5cd3c3ea8@broadcom.com>
+Date: Wed, 6 Aug 2025 13:41:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] PCI: brcmstb: Add panic/die handler to driver
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
+ jim2101024@gmail.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250806185051.GA10150@bhelgaas>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250806185051.GA10150@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cca7a0aae8958c9b1cd14116cb8b2f22ace2205e
-commit: 3b661ca549b9e5bb11d0bc97ada6110aac3282d2 i3c: add missing include to internal header
-date:   7 days ago
-config: sparc64-randconfig-002-20250807 (https://download.01.org/0day-ci/archive/20250807/202508070438.TZZA3f2S-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7b8dea265e72c3037b6b1e54d5ab51b7e14f328b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508070438.TZZA3f2S-lkp@intel.com/reproduce)
+On 8/6/25 11:50, Bjorn Helgaas wrote:
+>> I'm not sure I understand the "racy" comment.  If the PCIe bridge is
+>> off, we do not read the PCIe error registers.  In this case, PCIe is
+>> probably not the cause of the panic.   In the rare case the PCIe
+>> bridge is off  and it was the PCIe that caused the panic, nothing
+>> gets reported, and this is where we are without this commit.
+>> Perhaps this is what you mean by "mostly-works".  But this is the
+>> best that can be done with SW given our HW.
+> 
+> Right, my fault.  The error report registers don't look like standard
+> PCIe things, so I suppose they are on the host side, not the PCIe
+> side, so they're probably guaranteed to be accessible and non-racy
+> unless the bridge is in reset.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508070438.TZZA3f2S-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/i3c/master.c:21:
->> drivers/i3c/internals.h:54:9: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      54 |         readsl(addr, buf, nbytes / 4);
-         |                ^~~~
-   arch/sparc/include/asm/io_64.h:265:41: note: passing argument to parameter 'port' here
-     265 | static inline void readsl(void __iomem *port, void *buf, unsigned long count)
-         |                                         ^
-   1 error generated.
-
-
-vim +54 drivers/i3c/internals.h
-
-733b439375b494 Jorge Marques 2025-06-24  44  
-733b439375b494 Jorge Marques 2025-06-24  45  /**
-733b439375b494 Jorge Marques 2025-06-24  46   * i3c_readl_fifo - Read data buffer from 32bit FIFO
-733b439375b494 Jorge Marques 2025-06-24  47   * @addr: FIFO Address to read from
-733b439375b494 Jorge Marques 2025-06-24  48   * @buf: Pointer to the buffer to store read bytes
-733b439375b494 Jorge Marques 2025-06-24  49   * @nbytes: Number of bytes to read
-733b439375b494 Jorge Marques 2025-06-24  50   */
-733b439375b494 Jorge Marques 2025-06-24  51  static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
-733b439375b494 Jorge Marques 2025-06-24  52  				  int nbytes)
-733b439375b494 Jorge Marques 2025-06-24  53  {
-733b439375b494 Jorge Marques 2025-06-24 @54  	readsl(addr, buf, nbytes / 4);
-733b439375b494 Jorge Marques 2025-06-24  55  	if (nbytes & 3) {
-733b439375b494 Jorge Marques 2025-06-24  56  		u32 tmp;
-733b439375b494 Jorge Marques 2025-06-24  57  
-733b439375b494 Jorge Marques 2025-06-24  58  		tmp = readl(addr);
-733b439375b494 Jorge Marques 2025-06-24  59  		memcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
-733b439375b494 Jorge Marques 2025-06-24  60  	}
-733b439375b494 Jorge Marques 2025-06-24  61  }
-733b439375b494 Jorge Marques 2025-06-24  62  
-
-:::::: The code at line 54 was first introduced by commit
-:::::: 733b439375b494e8a6950ab47d18a4b615b73cb3 i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()
-
-:::::: TO: Jorge Marques <jorge.marques@analog.com>
-:::::: CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
+To expand upon that part, the situation that I ran in we had the PCIe 
+link down and therefore clock gated the PCIe root complex hardware to 
+conserve power. Eventually I did hit a voluntary panic, and since all 
+panic notifiers registered are invoked in succession, the one registered 
+for the PCIe RC was invoked as well and accessing clock gated registers 
+would not work and trigger another fault which would be confusing and 
+mingle with the panic I was trying to debug initially. Hence this check, 
+and a clock gated PCIe RC would not be logging any errors anyway.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Florian
 
