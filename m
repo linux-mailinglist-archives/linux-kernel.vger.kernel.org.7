@@ -1,129 +1,145 @@
-Return-Path: <linux-kernel+bounces-757243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A74DB1BFAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD3AB1BFB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3AA1894D5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:49:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE45177D57
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0371F8723;
-	Wed,  6 Aug 2025 04:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7981E766E;
+	Wed,  6 Aug 2025 04:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Vsb5mhdU"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jr5wS6qo"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973831F4CBC;
-	Wed,  6 Aug 2025 04:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EE71E32A3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754455741; cv=none; b=XGLNYwHSdYvFLl+lcGvHlh0q90Gc4F4xZaw0s5YFNbJq9elJJozE5UHIUBXfjLvoSXdTzwTkDvVE953mYIYpSaFIWIhB1wqauYg/dU3BN/SVmh61fj3+6rJZ8iibs/3Ng3xDXlXpNiDtLJqyp2ZF2IG4NGEz3At6vghc1bPyvBY=
+	t=1754455867; cv=none; b=QJR3eqG/lZ29J/8opCrizCcllNNBXXDopxePJJ8UOQEcmsjTDfPuF3+EgLCxjh1W9RHmW7jWuVqpxRLwuNhosEWVhwIWbOMRQHvZSeLIL+LoLk2bIqQRR7HiktLCvrepe1O3U75NRq8DPG8huHRk8ys4b2YAI4l7961lgdRgwi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754455741; c=relaxed/simple;
-	bh=hE1jzhCIqDyIWqjL9YCdSp48W9E82NKQr3N/AJyoveA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rMtQ/bpVsAS1FF7AiyK4Vn9yx5gTI/ghkGKo8kJcr56GRPU2msPBc6ERg6J+tQT5CCki0MbVfIZmxyJvQ2L1wwfhrxXtAuHqzmTsBzlScTRhqQd9MtUDkDWVa+EHIWqy1pK5V0VnWuQuiC4G4yyi3ZJLkGXs+HKcKEDPTCRn7BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Vsb5mhdU; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bxd9N0mCsz9tBc;
-	Wed,  6 Aug 2025 06:48:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754455736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iOcmob/KBJLyEb2W1q46NfuHtAS0YPNzHthf2+pOIlc=;
-	b=Vsb5mhdUdVEPX9SNJKEOEnQHNvxL9oBMRd+iNbJvgkhG01xY7rtkxgS+BVLBlhMHlgJSE/
-	sfONYwyky1IDUj8vDvU7jHojb8o9Lh4t0aiXZ6Cyja8H85MExcD8SRgbHle0T1019L6l0I
-	aZmaE73bboQVYFUVams1dAE6ofnUP8I2wge34by98bqxGH1nh/e8qxAfBxldJQYPBXYags
-	CNzh6B7btQciNUY/44Av+vjikDPGb5kgJCI5LNYBZn5elMN5nlsXwd50P85Qik99an0hS2
-	X9udLBs9SvYStfFR0W0zD3ECKYEKD+aHu6+fXogkbp270HI2Ocd8BuJfsei1Ug==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Wed, 06 Aug 2025 14:48:30 +1000
-Subject: [PATCH 2/2] vfs: output mount_too_revealing() errors to fscontext
+	s=arc-20240116; t=1754455867; c=relaxed/simple;
+	bh=5Wntl6eu7ezcflQfPQPNfQG7jWvlblggiiBPfMJcGUs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jYIofID1vcHlcyo+3EIbJ/vAxmV+xW2UXqsNMRCqJs5xlvMgIAx8kFYwf7FwDg0d2Uoyk5VaXH16AC7AF2i7CLud+0BxxDTbhD+/QBJSqJ19v22ynUFHgiM72cHrW08w3LAUMmfjMClPgsRtgWGtzzHI30d4M/FwIyGx7NIlZzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jr5wS6qo; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250806045102epoutp02c43388c87e121f513540f2417ffd3759~ZFE-NC_pk0595305953epoutp02Z
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 04:51:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250806045102epoutp02c43388c87e121f513540f2417ffd3759~ZFE-NC_pk0595305953epoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754455862;
+	bh=YU3uFobEDt7UCHiGq89i23dmZccxqlh+VM2cnKCVKRQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=jr5wS6qoyXUUUyapJtuC/sEXHT6KHoIOpku1UzgGlPod23OVYzctfcMV1B/KX66iq
+	 8kHWfekH2qCnwX9GWez0Dkpv1RaeoNxUBjfzZDuEAbGltQzltfm3Xm7Vfy5QukAVvU
+	 SwKypBpZKDPD1xzsgIvQNSkrb8+xb0p6mwtPyECk=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250806045101epcas2p3f00ba8fa50537d7010600e037a49d7bc~ZFE_XFbdR2005420054epcas2p3-;
+	Wed,  6 Aug 2025 04:51:01 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bxdCn40Vxz3hhT9; Wed,  6 Aug
+	2025 04:51:01 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250806045100epcas2p4f12e6b71c1d6e474e049a9c22f4c9e3d~ZFE9Uzwwh0063400634epcas2p4q;
+	Wed,  6 Aug 2025 04:51:00 +0000 (GMT)
+Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250806045100epsmtip27d9e91b14160102a5feba58a6b8eb732~ZFE9Q6bIV0726907269epsmtip2G;
+	Wed,  6 Aug 2025 04:51:00 +0000 (GMT)
+From: <sw617.shin@samsung.com>
+To: "'Sam Protsenko'" <semen.protsenko@linaro.org>
+Cc: "'Guenter Roeck'" <linux@roeck-us.net>, <krzk@kernel.org>,
+	<alim.akhtar@samsung.com>, <wim@linux-watchdog.org>,
+	<khwan.seo@samsung.com>, <dongil01.park@samsung.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAPLW+4mNejXUMW0VqZW8hieNUFmDqS_-qqE=p+bV4TnwM_TWgw@mail.gmail.com>
+Subject: RE: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
+ calculated larger
+Date: Wed, 6 Aug 2025 13:51:00 +0900
+Message-ID: <01e001dc068d$b4b94b70$1e2be250$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH0xghtQJzMk6eIf2JQ+3VnAplQzQKQWbtpAWsaNKYBwwrfwwEQ7YR8A5N0zr4BpLWR/AENAjt5APhqm1WzsyI8gA==
+Content-Language: ko
+X-CMS-MailID: 20250806045100epcas2p4f12e6b71c1d6e474e049a9c22f4c9e3d
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-errorfc-mount-too-revealing-v1-2-536540f51560@cyphar.com>
-References: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
-In-Reply-To: <20250806-errorfc-mount-too-revealing-v1-0-536540f51560@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1639; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=hE1jzhCIqDyIWqjL9YCdSp48W9E82NKQr3N/AJyoveA=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMurdqu8mTilSu2XnRAn46Wkv11ng98lwunXTgR4uf5
- YrwgN07OkpZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBEmKMZ/pfsad/37aH/j/J7
- Mn1drm8ZNwTdKj0WNC/l6hR2YZ/MV1cZ/kqlf1P/x9FsENJq/Pb5bWdXQ5lVPc1/F5zwfWBlGx6
- zgQkA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250724081336epcas2p38e95932ddc5c702e05a6436f05582993
+References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
+	<20250724080854.3866566-1-sw617.shin@samsung.com>
+	<20250724080854.3866566-3-sw617.shin@samsung.com>
+	<CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
+	<000a01dc05c0$9f0ab110$dd201330$@samsung.com>
+	<18adfcd0-e955-4c3f-a68a-6a2f75ebd24d@roeck-us.net>
+	<CAPLW+4kVMo68DAO0y_=m3k81Xeh4wYV9+KX3fg=5S7xwOh0O7Q@mail.gmail.com>
+	<008501dc05da$36362600$a2a27200$@samsung.com>
+	<CAPLW+4mNejXUMW0VqZW8hieNUFmDqS_-qqE=p+bV4TnwM_TWgw@mail.gmail.com>
 
-It makes little sense for fsmount() to output the warning message when
-mount_too_revealing() is violated to kmsg. Instead, the warning should
-be output (with a "VFS" prefix) to the fscontext log. In addition,
-include the same log message for mount_too_revealing() when doing a
-regular mount for consistency.
+On Wednesday, August 6, 2025 at 7:53 AM Sam Protsenko <semen.protsenko=40li=
+naro.org> wrote:
 
-With the newest fsopen()-based mount(8) from util-linux, the error
-messages now look like
+>=20
+> I don't mind, although it's quite easy to fix the code I suggested by
+> replacing this line:
+>=20
+>     u64 t_max =3D n_max / freq;
+>=20
+> with this one:
+>=20
+>     u64 t_max =3D div64_ul(n_max, freq);
+>=20
+> from <math64.h>, as Guenter suggested. But I'm totally fine with your
+> implementation as well.
 
-  # mount -t proc proc /tmp
-  mount: /tmp: fsmount() failed: VFS: Mount too revealing.
-         dmesg(1) may have more information after failed mount system call.
+Sam Protsenko and Guenter Roeck, thank you for your kind advice.
+As you mentioned, I will proceed with the following code for the next patch=
+ set.
 
-which could finally result in mount_too_revealing() errors being easier
-for users to detect and understand.
+=40=40 -27,6 +27,7 =40=40
+ =23include <linux/mfd/syscon.h>
+ =23include <linux/regmap.h>
+ =23include <linux/delay.h>
++=23include <linux/math64.h>
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/namespace.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ =23define S3C2410_WTCON          0x00
+ =23define S3C2410_WTDAT          0x04
+=40=40 -410,9 +411,13 =40=40 static inline unsigned long s3c2410wdt_get_fre=
+q(struct s3c2410_wdt *wdt)
+ static inline unsigned int s3c2410wdt_max_timeout(struct s3c2410_wdt *wdt)
+ =7B
+        const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
++       //(S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV =3D 0x800=
+0
++       u64 t_max =3D div64_ul((u64)S3C2410_WTCNT_MAXCNT * 0x8000, freq);
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 55f28cebbe7d..b2146857cbbd 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3820,8 +3820,10 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 	int error;
- 
- 	error = security_sb_kern_mount(sb);
--	if (!error && mount_too_revealing(sb, &mnt_flags))
-+	if (!error && mount_too_revealing(sb, &mnt_flags)) {
- 		error = -EPERM;
-+		errorfcp(fc, "VFS", "Mount too revealing");
-+	}
- 
- 	if (unlikely(error)) {
- 		fc_drop_locked(fc);
-@@ -4547,7 +4549,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
- 
- 	ret = -EPERM;
- 	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
--		pr_warn("VFS: Mount too revealing\n");
-+		errorfcp(fc, "VFS", "Mount too revealing");
- 		goto err_unlock;
- 	}
- 
-
--- 
-2.50.1
+-       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX +=
+ 1)
+-                                      / S3C2410_WTCON_MAXDIV);
++       if (t_max > UINT_MAX)
++               t_max =3D UINT_MAX;
++
++       return t_max;
+ =7D
 
 
