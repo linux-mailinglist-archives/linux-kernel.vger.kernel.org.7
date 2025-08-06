@@ -1,165 +1,183 @@
-Return-Path: <linux-kernel+bounces-757882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B91B1C7DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4907FB1C813
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0E116C72A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C02418C3CBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6301A314E;
-	Wed,  6 Aug 2025 14:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F016728F926;
+	Wed,  6 Aug 2025 15:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="CDLnWMjo"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGLtct4l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7723A1990A7
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5199219E992;
+	Wed,  6 Aug 2025 15:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491627; cv=none; b=sQId69LUML+WqBAxFl0DF3HE9ZLMVqinS2M9IUWwfTXS8HZPvUj4N70vM17AWq6fNJYfdJdXejQMYLk3RouHWn+aQk2v+kH8eRHVU04mtuUNysYDPeMZI/bLYELYapZWqc1GOzBhzXIVPxoeQnn1H5JVhWeWit5HGX+wAwqxF9A=
+	t=1754492468; cv=none; b=OutgPYXNiXV1HNp+Y5JR2qmG4ZAiQNQ6G3Ghen11/yltm44qP4xY4CP7hcK3OusnDEbfetZXKAAwFFyrVgqjxwOBwvUfp+ua7yC+ylllB/+c41/BvWTWrDfBN1gkH7hcixoM7z10d3megx8A6B/s30q5ogpjt87Nq9bVvrbeU/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491627; c=relaxed/simple;
-	bh=tk7QFLlbCCpvpyvzqueXNItxkyAFxMmXrih0EUxfmek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibCk636PerK3NaVJIX7wbvNwl5I2P9xQRa0ppFbKyD0JavdXIJomoX01AaNnANH+sQZbZ6lLTe1/fyNNvTFbVzPG0O+aEQKh6No4MJhMnUGUAFbF2nt72F4YnK7VJCKS6ryApgm0zkVxqi8tlDwg/DfKsHnEzzTkVmHay4OlYe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=CDLnWMjo; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-102-183.bstnma.fios.verizon.net [173.48.102.183])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 576EkovI012595
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Aug 2025 10:46:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1754491613; bh=2PgKc0s9udb6ac5tu3jB6ZKq8EjCsICaE/1T42AF0xA=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=CDLnWMjoCrRsM+YEy/l9TRoor0OC+bnsmkdxb+oozujDq84HdTrXmR+3xG/2V19Ot
-	 tPoTSFhOF34oTn0x8C/81WHTJl09BL2zBuhhzzBXPGeqVXOBqZafQo5BIQ18sIuRmh
-	 ndagDCv+hXZ+lG0GGWcS0xig9H+POfiS47on2hK0/eLOeonokT7Dn68wLrXvdCl4tz
-	 ZnurL4djIgE6CtDmAJvBW/+jPJA0cokh5BLDFxS+v87lzxj0dcNBOkmezuOBtANCGJ
-	 AqMjzUcKD2IDJ4BY0k5lzzZGkP7Dm09WcU7rjOJ6/Ax9wnRm2OfPwNbBlp/ljCHTz/
-	 oxjQHm+BHwuWA==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 9FCFA2E00D6; Wed, 06 Aug 2025 10:46:50 -0400 (EDT)
-Date: Wed, 6 Aug 2025 10:46:50 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Mingyu He <mingyu.he@shopee.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUG] ext4: mballoctor issue observed in fs/ext4/mballoc.c
- ext4_mb_regular_allocator on kernel 6.6
-Message-ID: <20250806144650.GA778805@mit.edu>
-References: <CAAoBcuSk9j3kTAuH5uktd_FV8wryzFegZpFg_v3o94mbYPoA=A@mail.gmail.com>
+	s=arc-20240116; t=1754492468; c=relaxed/simple;
+	bh=3x0pztg71wW5Mr4XvTcNhb8qStOVBIxyYbdDxuoOqdA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AdcFlly45RZ6DJYU1tHXQqDc2HzLOhmf7tK1fE2kIFsGflyQMLPz5I3FwpjHiKUSj4AKiNNON9DaX7AyUMNAPoIhLvJEN8AbDhVmbPx2Y4/FyLencMm7BH6JoRxUGegIhpNeO8OeAtUczo6ekrVqnraBFSvY4t9pERgUURSoGCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGLtct4l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D93C4CEE7;
+	Wed,  6 Aug 2025 15:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754492465;
+	bh=3x0pztg71wW5Mr4XvTcNhb8qStOVBIxyYbdDxuoOqdA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CGLtct4lBBnUfvqSGuKmUT8uwlZj4rZu5XQSIYTLZRA+F5wYWgcylm6T8RoQrgyjK
+	 usMzmbMgl2Hf41kAFRjPe2inkaBqBKJZ9wO3uH5O19vr/Wwc9Xma+ngfrEbqAfCcOZ
+	 bXJQUXNGc2kgRUSRcsRhd5lR73seKt9PzCmkFgnKwUYd4F9oL7MdiF92jbYVDjyPun
+	 1VCXGM/sEf6//Kfx/2UBaa6XymVS31Ky7J5mUNyknM+N9iSRutULL2WxycR9rAMpqu
+	 /R7y3f/v2CPn+NRd5zmcAxWI2zLqeQoUhWpEBkX0sPc3HyAIgqfdJ0F4cZtXRlXJWx
+	 4c8L22IumBcrQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/16] rust: str: introduce `NullTerminatedFormatter`
+In-Reply-To: <D9A4DD7C-D9C2-4D91-B6C3-684BA1C100C0@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-5-3a262b4e2921@kernel.org>
+ <VdhW0gqIRZ7RLuzmrs6QN5FS-l4_hHLuKA1jb2U9YJT7z4GUb8ZxtGoBirJGZdUeD8Qdxz9nP3NobQ1EZU-MEw==@protonmail.internalid>
+ <D9A4DD7C-D9C2-4D91-B6C3-684BA1C100C0@collabora.com>
+Date: Wed, 06 Aug 2025 16:47:42 +0200
+Message-ID: <87a54c8q29.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAoBcuSk9j3kTAuH5uktd_FV8wryzFegZpFg_v3o94mbYPoA=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 04:26:49PM +0800, Mingyu He wrote:
-> Hi EXT4 maintainers,
-> 
-> I would like to report a potential bug related to the ext4 allocator
-> implementation, specifically in the file `fs/ext4/mballoc.c`.
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Yeah, this is a known issue with ext4's RAID support.  The problem is
-that we're trying too hard to try to find a precise RAID stripe
-alignment.  There are a couple of things that could be done to solve
-the issue, but none of them are easy.
+>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Add `NullTerminatedFormatter`, a formatter that writes a null terminated
+>> string to an array or slice buffer. Because this type needs to manage the
+>> trailing null marker, the existing formatters cannot be used to implement
+>> this type.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>> rust/kernel/str.rs | 50 ++++++++++++++++++++++++++++++++++++++++++++++++=
+++
+>> 1 file changed, 50 insertions(+)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index b1bc584803b0..c58925438c6e 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -838,6 +838,56 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>>     }
+>> }
+>>
+>> +/// A mutable reference to a byte buffer where a string can be written =
+into.
+>> +///
+>> +/// The buffer will be automatically null terminated after the last wri=
+tten character.
+>
+> Hmm, I suppose you want this to be the only null? See below.
 
-* Cache the number of stripe aligned regions in a particular block
-  group, so we can skip the block groups where searching is for a
-  stripe alignment is hopeless.  This will reduce the CPU time spent
-  searching all of the block groups for each alignment, but on a
-  freshly mounted disk, initial allocations will still be slow since
-  we would need to read the block allocation bitmaps into memory and
-  then process them.  We would also need to keep the cache of the
-  number of stripe aligned regions to a minimum.
+This code went through some iteration. In the original code, I kept a
+pointer to the beginning of the buffer and an offset. It made sense to
+require the buffer to be null terminated.
 
-* Have a hard limit on the amount of time (either wall clock time or
-  CPU time) spent searching for stripe aligned bitmaps.  If none are
-  available, bail out early.
+In this iteration, I let go of the pointer to the beginning of the
+buffer and point to the next writable byte. If this byte is zero, the
+original buffer is null terminated. Alice suggested rephrase, and I put
+this for the next spin:
 
-* Use a more efficient in-memory data structure for storing the free
-  block information.  Today, we use a buddy bitmap, which is great if
-  we are doing power of two allocations (which for non-RAID file
-  systems, we try to do whenever possible, up to trying to allocate
-  more space than what was asked for in case the user tries to append
-  to the file later).  If the RAID stripe size is power-of-two
-  aligned, the buddy bitmap would be fine, but very often, that isn't
-  the case.  This still requires initially reading the block bitmap
-  into memory in order to convert to that more efficient in-memory
-  data structure, but it is simpler than...
 
-* Use a more efficient on-disk data structure, such as a b-tree.  This
-  requires an on-disk format change, which means we would need to
-  update e2fsprogs, and we would have to worry about backwards
-  compatibility in case the file system needs to be mounted on an
-  older kernel.
+  /// # Invariants
+  ///
+  /// * The first byte of `buffer` is always zero.
 
-If someone is interested in working on these options (which I view as
-a new feature, not as a bug fix), please contact me and I'm happy to
-discuss further.
+At any rate, the final string is allowed to have multiple null
+characters in it.
 
-Alternatively, a workaround is to simply disable the RAID stripe
-information in the superblock.  You can do this via "tune2fs -E
-stripe_width 0 /dev/sdXX".  For a file system which is fragmented such
-that finding stripe aligned free space is hopeless, this isn't going
-to hurt, and it will definitely help.  In the most recent version of
-e2fsprogs, this is now the default in mke2fs for non-rotational (e.g.,
-thin provisioned, or flash based) storage devices:
+>
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// `buffer` is always null terminated.
+>> +pub(crate) struct NullTerminatedFormatter<'a> {
+>> +    buffer: &'a mut [u8],
+>> +}
+>> +
+>> +impl<'a> NullTerminatedFormatter<'a> {
+>> +    /// Create a new [`Self`] instance.
+>> +    pub(crate) fn new(buffer: &'a mut [u8]) -> Option<NullTerminatedFor=
+matter<'a>> {
+>> +        *(buffer.first_mut()?) =3D 0;
+>> +
+>> +        // INVARIANT: We null terminated the buffer above.
+>> +        Some(Self { buffer })
+>> +    }
+>> +
+>> +    #[expect(dead_code)]
+>> +    pub(crate) fn from_array<const N: usize>(
+>> +        buffer: &'a mut [crate::ffi::c_char; N],
+>> +    ) -> Option<NullTerminatedFormatter<'a>> {
+>> +        Self::new(buffer)
+>> +    }
+>> +}
+>> +
+>> +impl Write for NullTerminatedFormatter<'_> {
+>> +    fn write_str(&mut self, s: &str) -> fmt::Result {
+>> +        let bytes =3D s.as_bytes();
+>> +        let len =3D bytes.len();
+>> +
+>> +        // We want space for a null terminator. Buffer length is always=
+ at least 1, so no overflow.
+>
+> Perhaps this should be a type invariant? I know this is a logical conclus=
+ion
+> from saying =E2=80=9Cbuffer is always NULL terminated=E2=80=9D, but it=E2=
+=80=99s always
+> nice to be even more explicit.
 
-commit b61f182b2de1ea75cff935037883ba1a8c7db623
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Sun May 4 14:07:14 2025 -0400
+I can add a minimum size 1 byte requirement =F0=9F=91=8D
 
-    mke2fs: don't set the raid stripe for non-rotational devices by default
-    
-    The ext4 block allocator is not at all efficient when it is asked to
-    enforce RAID alignment.  It is especially bad for flash-based devices,
-    or when the file system is highly fragmented.  For non-rotational
-    devices, it's fine to set the stride parameter (which controls
-    spreading the allocation bitmaps across the RAID component devices,
-    which always makessense); but for the stripe parameter (which asks the
-    ext4 block alocator to try _very_ hard to find RAID stripe aligned
-    devices) it's probably not a good idea.
-    
-    Add new mke2fs.conf parameters with the defaults:
-    
-    [defaults]
-       set_raid_stride = always
-       set_raid_stripe = disk
-    
-    Even for RAID arrays based on HDD's, we can still have problems for
-    highly fragmented file systems.  This will need to solved in the
-    kernel, probably by having some kind of wall clock or CPU time
-    limitation for each block allocation or adding some kind of
-    optimization which is faster than using our current buddy bitmap
-    implementation, especially if the stripe size is not multiple of a
-    power of two.  But for SSD's, it's much less likely to make sense even
-    if we have an optimized block allocator, because if you've paid $$$
-    for a flash-based RAID array, the cost/benefit tradeoffs of doing less
-    optimized stripe RMW cycles versus the block allocator time and CPU
-    overhead is harder to justify without a lot of optimization effort.
-    
-    If and when we can improve the ext4 kernel implementation (and it gets
-    rolled out to users using LTS kernels), we can change the defaults.
-    And of course, system administrators can always change
-    /etc/mke2fs.conf settings.
-    
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+>
+>> +        if len > self.buffer.len() - 1 {
+>> +            return Err(fmt::Error);
+>> +        }
+>> +
+>> +        let buffer =3D core::mem::take(&mut self.buffer);
+>> +        // We break the null termination invariant for a short while.
+>> +        buffer[..len].copy_from_slice(bytes);
+>> +        self.buffer =3D &mut buffer[len..];
+>
+> As I said in my first comment, if you want this to be the only null, I
+> don=E2=80=99t think the copy above enforces it?
 
-Cheers,
+It does not need to be the only one, as long as there is a null at the
+end of the final string, we are good.
 
-						- Ted
+
+Best regards,
+Andreas Hindborg
+
+
+
 
