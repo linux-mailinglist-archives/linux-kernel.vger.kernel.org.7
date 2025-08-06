@@ -1,217 +1,209 @@
-Return-Path: <linux-kernel+bounces-757737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD295B1C61D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:41:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D64B1C619
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99D71563D22
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D6F18C24A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5012882C1;
-	Wed,  6 Aug 2025 12:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E122428BA90;
+	Wed,  6 Aug 2025 12:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="cqmOrCzl";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="dHM6W3j3"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lSpdah93"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA5E12DDA1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA80CA5E;
+	Wed,  6 Aug 2025 12:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484085; cv=none; b=KzgpU/pFGlJJNIEH3yFhDFXJXSACCHNUgnbZYqa7S1ExY5KIaPs/38brPYMWhQHQaSEg/rwqu1rbyReeutCwcXep1VF9CTFhctuKja+v8IudzH2BYS+Ae1EkzwpUjPvSi9YuVOIt8NM+herQZEOuY3NdWpGAATw4RT5/3+DP7dI=
+	t=1754484084; cv=none; b=ktUiGS4urwFaQKY1RR3WhcWo+DW3OBe35vjrlPV0rxp4YlHbBEAvmju4yGDA/K5ymeeZLS8zws/CN4sft6Bj6Big9aZ3IYSSoMDMNYYUUTb0fHMUjAzWt+WoK9gVjldWEVLYXZilaCKJ+dBw7cBxw3lhh13UAS45P3wLwZYYln0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484085; c=relaxed/simple;
-	bh=F1abfGvCfYIWKmmEZDdB0Yoq1KDpA+Q2GotDIVh/fQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JQxMlN6vO86yGWIwKx8RYe+GA6NSu+7dL4SF31C/STN8wvoI75VQzRYt7h2+XSog3+j8YZhPtoT+4Sqk+TeVmOcE4yw6s3j8xxHSs71N1T9DLwp4RPjp5XjxtUkfWCPghAmuH5Qz543fyhubCC8YGdd5Xaa8ZPsxodd87LYKGxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=cqmOrCzl; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=dHM6W3j3; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754484081; x=1755088881;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=hCMaEFvhO0WO86sv36Htm4+PajgStiRpxUBpMzicUeU=;
-	b=cqmOrCzltCdIPdKUAS0uxd3aS3UJgsLfvMom0GAfCxlpy/J7JK4j8ZmlxPBm16+c2DkyY0NRC3WH/
-	 2tQZTLXDT5NJQRbMHsWOcOG9eE3OhDXZJioo5QCsK0mgTbHm9YBmpqQlUQr+IpZEKpo4W2Gs4C580K
-	 YOxYfpFJmHk+h6KBgMQPHtUsI+0B2jRIxSnwW+wuS/2JBDocFg++nXwcMfJMPywH2kh5UOjC9dBKmr
-	 wpr2m9GXAY9gAiBYewC9/+QTLlNN8dRm+d3+GCQwx0ohOQw6mutJ2OUmDgANzMb0J+D8CpqziNCE4J
-	 rpPZhgWDhX4HBCI1aG20udYUc6b4iEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754484081; x=1755088881;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=hCMaEFvhO0WO86sv36Htm4+PajgStiRpxUBpMzicUeU=;
-	b=dHM6W3j3L332F1flNFt9fxsYwybSKwkt+3UoW/yJlz2idUUKYfOAzC+FzsfJOcx3x3LeC/NiMS+Dz
-	 bBUJwO+CQ==
-X-HalOne-ID: a7791ef9-72c2-11f0-a1bf-f78b1f841584
-Received: from localhost.localdomain (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay1.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id a7791ef9-72c2-11f0-a1bf-f78b1f841584;
-	Wed, 06 Aug 2025 12:41:21 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v15 1/4] :mm/vmalloc: allow to set node and align in vrealloc
-Date: Wed,  6 Aug 2025 14:41:08 +0200
-Message-Id: <20250806124108.1724561-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
-References: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1754484084; c=relaxed/simple;
+	bh=hnIdHHbQiqrM8IDX95keDvQrxjxn1k3aApmusKnqdJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SsX1z6mMiSM6kETkSuLjCYFuxXi0WUKfmEM54ogqO4C+ENSu8mKnSpN/VcByU+ff1CIgm7Tk7Mqhuli0+cFr56Pby3+ExKTi1YWJw5EejxQDOo46lMwV5SM4z/zURjZ1wgj9bgm5yCFrWajyDR4eHuLDCSuiTxmzyqOvMwjZ0cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lSpdah93; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576AMidR017322;
+	Wed, 6 Aug 2025 12:41:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	68tyvTM8jfB/ohgKr96ZvIfvfdK+rgKehP7ADxP0fm0=; b=lSpdah93g4GftZTp
+	f8fr/6U1U1wQUWK6bFjrXGsjVmh7fDHvlj0vsnBunIRjOvAPdEhBoix8NSpo5XMV
+	6iXE4GUCVXl0oKCiHtXW0PPtWqVPNXA8hRpA8Dy186PM90gx4/w+ZahND4P3u1IU
+	/k/0oa7MGd2gsOYUlxch2X9k94GLz6siW3DMSMMEZrhalNHmbNqFUihizsQ5LvWA
+	f/n2y8kV9uhJeA3fkiChF67g8+p1LBEQnhkguXzHn/34zXQg8T794pvOiF77MUop
+	NwUjFK379DNs3vxVDVnTJYVYoQKKvSjf5kGMUu2hiJE3x0dVm7uMcFt293Ti21e7
+	QA+6ag==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c5868a5t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 12:41:16 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 576CfFsJ017038
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Aug 2025 12:41:15 GMT
+Received: from [10.216.18.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 6 Aug
+ 2025 05:41:12 -0700
+Message-ID: <2e655067-cd7e-4584-aa07-998b517ac314@quicinc.com>
+Date: Wed, 6 Aug 2025 18:11:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for UFS controller v5
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
+References: <20250806063409.21206-1-quic_pkambar@quicinc.com>
+ <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
+Content-Language: en-US
+From: Palash Kambar <quic_pkambar@quicinc.com>
+In-Reply-To: <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YhqQcn8kDTu-GbIkcRuM_kIrd-kiFir0
+X-Authority-Analysis: v=2.4 cv=MZpsu4/f c=1 sm=1 tr=0 ts=68934d6d cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=AVhYfSqF_RTLDIin3-oA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: YhqQcn8kDTu-GbIkcRuM_kIrd-kiFir0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX6Z0Wpxn5ADfP
+ ZeWMlYCgpAKnk/YGMLa1hTV32fT2J6oDYbaKUtMbgm8mlQuBfpyU5bIB8nhT3klDPvch3pUJyv7
+ 8zuP/Iyna9VO7PqkZjY/6YBG0cRXDT/al2xz+QUZOnFRT52NgFu08toET/DT7oyCOhOUit8e9WI
+ zITW+wDhCrl5Xy86hdpEoM/dheiX3aCc40XhWMeuLe5wtVBpRKkQ5AXFm7WjwZYB+K5JynCTZT5
+ vmBvJr5nPYybc0L7FhrJayv/Qd4gXRWU0tafIlJ1oTzYZhU5KymieLZRYUFKcSfFTSUqmKqtxUu
+ B+usJa5SYjKOZcduoFHi42jS9ufzSNyx+zWPfhUif3OG8SqEVW83yIe/ZbgiGV+W9+LyvyrSkxN
+ cO1/0tDK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060064
 
-Reimplement vrealloc() to be able to set node and alignment should
-a user need to do so. Rename the function to vrealloc_node_align()
-to better match what it actually does now and introduce macros for
-vrealloc() and friends for backward compatibility.
 
-With that change we also provide the ability for the Rust part of
-the kernel to set node and alignment in its allocations.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/vmalloc.h | 12 +++++++++---
- mm/nommu.c              |  3 ++-
- mm/vmalloc.c            | 29 ++++++++++++++++++++++++-----
- 3 files changed, 35 insertions(+), 9 deletions(-)
+On 8/6/2025 4:44 PM, Manivannan Sadhasivam wrote:
+> On Wed, Aug 06, 2025 at 12:04:09PM GMT, Palash Kambar wrote:
+>> Disable of AES core in Shared ICE is not supported during power
+>> collapse for UFS Host Controller V5.0.
+>>
+>> Hence follow below steps to reset the ICE upon exiting power collapse
+>> and align with Hw programming guide.
+>>
+>> a. Write 0x18 to UFS_MEM_ICE_CFG
+>> b. Write 0x0 to UFS_MEM_ICE_CFG
+>>
+>> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+>> ---
+>>  drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++++
+>>  drivers/ufs/host/ufs-qcom.h |  2 ++
+>>  2 files changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>> index 444a09265ded..2744614bbc32 100644
+>> --- a/drivers/ufs/host/ufs-qcom.c
+>> +++ b/drivers/ufs/host/ufs-qcom.c
+>> @@ -744,6 +744,8 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+>>  	if (ufs_qcom_is_link_off(hba) && host->device_reset)
+>>  		ufs_qcom_device_reset_ctrl(hba, true);
+>>  
+>> +	host->vdd_hba_pc = true;
+> 
+> What does this variable correspond to?
+Hi Manivannan,
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index fdc9aeb74a44..68791f7cb3ba 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
- extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
- #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
- 
--void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
--		__realloc_size(2);
--#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
-+void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
-+		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
-+#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
-+	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
-+#define vrealloc_noprof(_p, _s, _f)		\
-+	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
-+#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
-+#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
-+#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
- 
- extern void vfree(const void *addr);
- extern void vfree_atomic(const void *addr);
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 07504d666d6a..3bb62b779ef4 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -119,7 +119,8 @@ void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask)
- }
- EXPORT_SYMBOL(__vmalloc_noprof);
- 
--void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				 gfp_t flags, int node)
- {
- 	return krealloc_noprof(p, size, (flags | __GFP_COMP) & ~__GFP_HIGHMEM);
- }
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6dbcdceecae1..e299b51bd922 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -4089,19 +4089,29 @@ void *vzalloc_node_noprof(unsigned long size, int node)
- EXPORT_SYMBOL(vzalloc_node_noprof);
- 
- /**
-- * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
-+ * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
-+ * remain unchanged
-  * @p: object to reallocate memory for
-  * @size: the size to reallocate
-+ * @align: requested alignment
-  * @flags: the flags for the page level allocator
-+ * @nid: node number of the target node
-+ *
-+ * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc_XXX(). If @size
-+ * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
-  *
-- * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-- * @p is not a %NULL pointer, the object pointed to is freed.
-+ * If the caller wants the new memory to be on specific node *only*,
-+ * __GFP_THISNODE flag should be set, otherwise the function will try to avoid
-+ * reallocation and possibly disregard the specified @nid.
-  *
-  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
-  * initial memory allocation, every subsequent call to this API for the same
-  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
-  * __GFP_ZERO is not fully honored by this API.
-  *
-+ * Requesting an alignment that is bigger than the alignment of the existing
-+ * allocation will fail.
-+ *
-  * In any case, the contents of the object pointed to are preserved up to the
-  * lesser of the new and old sizes.
-  *
-@@ -4111,7 +4121,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
-  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
-  *         failure
-  */
--void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				 gfp_t flags, int nid)
- {
- 	struct vm_struct *vm = NULL;
- 	size_t alloced_size = 0;
-@@ -4135,6 +4146,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 		if (WARN(alloced_size < old_size,
- 			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
- 			return NULL;
-+		if (WARN(!IS_ALIGNED((unsigned long)p, align),
-+			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
-+			return NULL;
-+		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
-+			     nid != page_to_nid(vmalloc_to_page(p)))
-+			goto need_realloc;
- 	}
- 
- 	/*
-@@ -4165,8 +4182,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 		return (void *)p;
- 	}
- 
-+need_realloc:
- 	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
--	n = __vmalloc_noprof(size, flags);
-+	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
-+
- 	if (!n)
- 		return NULL;
- 
--- 
-2.39.2
+It corresponds to power collapse, will rename it for better readability.
+
+> 
+>> +
+>>  	return ufs_qcom_ice_suspend(host);
+>>  }
+>>  
+>> @@ -759,6 +761,27 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>>  	return ufs_qcom_ice_resume(host);
+>>  }
+>>  
+>> +static void ufs_qcom_hibern8_notify(struct ufs_hba *hba,
+>> +				    enum uic_cmd_dme uic_cmd,
+>> +				    enum ufs_notify_change_status status)
+>> +{
+>> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> +
+>> +	/* Apply shared ICE WA */
+> 
+> Are you really sure it is *shared ICE*?
+
+ Yes Manivannan, I am.
+
+> 
+>> +	if (uic_cmd == UIC_CMD_DME_HIBER_EXIT &&
+>> +	    status == POST_CHANGE &&
+>> +	    host->hw_ver.major == 0x5 &&
+>> +	    host->hw_ver.minor == 0x0 &&
+>> +	    host->hw_ver.step == 0x0 &&
+>> +	    host->vdd_hba_pc) {
+>> +		host->vdd_hba_pc = false;
+>> +		ufshcd_writel(hba, 0x18, UFS_MEM_ICE);
+> 
+> Define the actual bits instead of writing magic values.
+
+Sure.
+
+> 
+>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+>> +		ufshcd_writel(hba, 0x0, UFS_MEM_ICE);
+>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> 
+> Why do you need readl()? Writes to device memory won't get reordered.
+
+Since these are hardware register, there is a potential for reordering.
+
+> 
+>> +	}
+>> +}
+>> +
+>>  static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
+>>  {
+>>  	if (host->dev_ref_clk_ctrl_mmio &&
+>> @@ -2258,6 +2281,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
+>>  	.hce_enable_notify      = ufs_qcom_hce_enable_notify,
+>>  	.link_startup_notify    = ufs_qcom_link_startup_notify,
+>>  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
+>> +	.hibern8_notify		= ufs_qcom_hibern8_notify,
+> 
+> This callback is not called anywhere. Regardeless of that, why can't you use
+> ufs_qcom_clk_scale_notify()?
+> 
+
+According to the HPG guidelines, as part of this workaround, we are required to reset the ICE controller during the Hibern8 exit sequence when the UFS controller resumes from power collapse. Therefore, this reset logic has been added to the H8 exit notifier callback.
+
+The ufs_clk_scale_notify function is invoked whenever clock scaling (up or down) occurs, regardless of whether a power collapse has taken place. Hence, the ICE controller reset was specifically added to the H8 exit notifier to ensure it is executed only in the appropriate context.
+
+
+Regards,
+Palash K 
 
 
