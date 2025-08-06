@@ -1,201 +1,130 @@
-Return-Path: <linux-kernel+bounces-757154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D68B1BE64
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:37:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE51DB1BE67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3F53BDDD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C177A2E62
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55A8191F72;
-	Wed,  6 Aug 2025 01:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678D718A6DB;
+	Wed,  6 Aug 2025 01:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ar7upmIc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4UlhDjG"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABDA157493
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5B51FB3;
+	Wed,  6 Aug 2025 01:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754444234; cv=none; b=rpUhs2ZgPHeiYBRo/whmAhsfJ8RNv4CTT9BJokD4aSNNT6CX8tCmKsB6IAyxooai4IwEzbRS2WMlmqFhiMlgR6oLdOrbZ/FFAHw4sgRdbTN5QEH3WUJRXeAz0GhPUYvQMUin8lvwrWDNARZkHj54wZGYkh7wVkGYgxnKIF7vNOI=
+	t=1754444670; cv=none; b=P31iH+TUZy10yJhb9I9MkKlE6O027Ztt1LBVfodyuZf0OPBMmvhLtd68ybsHwh+6H0DN4JblNsVBwjIsdazQsSC2KAgASvKToe+NBQnxhARhSkc0X2/Z3gRljYeDHhItGC7n+uf/j3cVCko0cEUU/iYTI5k06tz6QRKzREd/MQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754444234; c=relaxed/simple;
-	bh=RRE7SubbvLGoTInPGjBxocoPugbap9T5IPFdYvgN7rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSSE9ziyhaoeZyv+MprCCPfW84FWTX3RKPEAeZKI7v+WqMZQpHqUi/bg1MYRiAByZGVW/FN8dpqstKUlI9AywOeXImWq15vYsYktaHfFIUVZKtw2qnqmXg+f4yLfWRlWgDiMp9/R5eVpTG7yiHRADxrSLnaKtsOH3d4rFiqvxh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ar7upmIc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 575IJ3v6028034
-	for <linux-kernel@vger.kernel.org>; Wed, 6 Aug 2025 01:37:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Y5BGHsX5GwN0R/WPVZybiA6n
-	q6pOn7ZZQtqZPvsh1ZI=; b=ar7upmIcTc761VOtLtdC7DInUh1WzBUWngqNPJef
-	kyutXZ7bURFerkcVxvAMZGYzkJgT2d7x4TgcfZtmBbXxii3bCXoSflUqV4AIohc/
-	Eb0uYZCcKhXcS3mJ/DSTrX8MwVPrpLpgSIg3NGKkY2GFV/y6fHluxEbM03nJgvde
-	gmyEAPkDe0iPP/31TCgrn24ytFI75NFKZZDLFwImuW+YUzblEHFpio/LyiMHVxnR
-	6qeO0pvhdPqHhi6GnkOIjo6IMlRiS0ZKpeNOTbVMsxBMMjthMXVOLJhOk06Hd50f
-	+kmQIGTqvsB1pIOBT0mNNJ6ZDwiExAMt0OfJRgaUkzskLg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpyb8yh1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 01:37:11 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06a73b580so6410081cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:37:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754444230; x=1755049030;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1754444670; c=relaxed/simple;
+	bh=w74FIGq0AXw75gXfOcQZe3mmzfSZaThuFNuCPXvRBdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GxD0Ov2722JefuT/JY7H/SaT8tdQFkW8quy9caN6WQq3B1zMB1pfARoDJcsKMFwk+iwkjwQ/Muwzy+rWX55fKRCIOjaBdlBoRGB4RoFRjMzN/7LUzhfyi3OCGOAqnyXJaqxJyPtpozU79cNca4H9fjx2Ue7Vc04iP4sLD7Nomzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4UlhDjG; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24003ed822cso36097135ad.1;
+        Tue, 05 Aug 2025 18:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754444669; x=1755049469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y5BGHsX5GwN0R/WPVZybiA6nq6pOn7ZZQtqZPvsh1ZI=;
-        b=MZ8JuPcAZ3jqiGSYG4IHiyPuXTkCj6xpTgwuG9SftLiKQkatRM+4BNeJRLdK4T4l4H
-         EsK/Mg03Ns2RpdUuuTYMjwCaHq3Fh2lU4uv5xPp7S51Mc9mEstCkW5E7bECN2ZGR0SNo
-         52Ve96kuJgEolaacKuc2mH6eBtgntVwqHOvrZaiqXQcdTAR0j+y3HhPwWEEq0J9VXz7I
-         V8kEEgi00kOMRAeeUNkRHVFNIKp8JNI8Ja9eTId+SbEUgs5OFaj8cq4XQrLUWZPnf0VG
-         KwU/eOHhCytdrQJo6NCUQ6CeyZERhUxFeth5sN9WuYvrjs2NUVKBJMZLrPbswodIiPfb
-         OiEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv2Z8NEBQmxt/34DIU1QQGXgPXJZ5krv0uGEvYpQouov/t2ygBEopnN5jlJ/rXBAaj/zbxWigPSBzaGPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXyELdBG4sMMvEc7T/87seeXP/9Qw9yZ9XFSdbNtAw/5NkXrfs
-	g70af6UbTkchcUlmTs64nd8B/8wn9ZSzCVTsEc82cAWOXgnSIt+l+8Tw1k8+IafJV/bpawiMltY
-	jbybfOJEFZZIE9u7pC5riSqAWdeWko7n6lPVnzRwVuhhtrtXByLL686xP4R/GwoCT8OE=
-X-Gm-Gg: ASbGnctIYPGztEtdJvyjSQa+R3EjrDDG7SLP+Of+as+B4PjQqpfhTVwHzNr0D1fW37V
-	v7g8+10dn0n+wUeg08ZMUVZ77CcpXWrgxeQ1ndDFouc75FZFeV05f144tcgD6FNfxqKIPaB/6yo
-	jKAdxdNF8EnEdo0710JBavCPK8q/RwndAhVyrw3CuB7wgDQXiiS4lrJ1SssktqSNx4Wzm8yah+Y
-	QJkyQ0IoMk7LJMVxxRvHQuUDr11cJ3lLxxYzzBM04cJsWMa9URVo0pCoyDaUwdmGmWC46FvXudW
-	5IcPRPr9xgCLKhmUMoGAUXCzx8cG0yPLyvw/E6gLIX/tYNpZ5ufk3AsSHncQ75/TwUtZSZY2LWj
-	VUuNk3RBKIdSwgkWE8eMM5jSiX5MowVIhCUlig96wh2PINlJV8hDv
-X-Received: by 2002:a05:622a:178c:b0:4b0:6ac0:c768 with SMTP id d75a77b69052e-4b0914d50e1mr16270661cf.30.1754444230381;
-        Tue, 05 Aug 2025 18:37:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRPy+CB7VNKZJKeGujjW/TC3XEhIKX487sXoFYQjy1GNxVzzWwyH5iYaG7LsA4AjRzdpZUzg==
-X-Received: by 2002:a05:622a:178c:b0:4b0:6ac0:c768 with SMTP id d75a77b69052e-4b0914d50e1mr16270471cf.30.1754444229806;
-        Tue, 05 Aug 2025 18:37:09 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bd6esm2197151e87.6.2025.08.05.18.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 18:37:08 -0700 (PDT)
-Date: Wed, 6 Aug 2025 04:37:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
-        quic_vgarodia@quicinc.com, konradybcio@kernel.org, krzk+dt@kernel.org,
-        mchehab@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
- resource data
-Message-ID: <to2hrxml3um6iep4fcxhkq7pbibuimfnv4kfwqzlwdkh4osk5f@orjzbuawwgko>
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-6-jorge.ramirez@oss.qualcomm.com>
- <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
- <aJHgh8mon9auOHzi@trex>
- <aJHqpiqvulGY2BYH@trex>
+        bh=w74FIGq0AXw75gXfOcQZe3mmzfSZaThuFNuCPXvRBdI=;
+        b=A4UlhDjGlXhcQzRq2SJ7Lhg8RPD8fGDDy6cFGB573jRGdjuWc857yFjCA79JfA8ytC
+         nmw6zNNjD9TkA9pKlNjB9RsW2uO3R1YTA/SiIESThUfD6p29FkRr7soIauAp5Xh1otAV
+         3uYjxXU/UEWuHExBz5Sm6GYq6z1X8c8Q7NOGAqJzJtu/aPyAThhSTGq/awnfztLvWaR7
+         4Rt8hacWzCUhM23WY0Eyf6AZ3Uf+rRYZUKvw8bR3NoAQaaRjcp6iOj11Cc2x9ybcVTv7
+         48e8T2cf//WAQ6lRK3q3OsAwmwu4s6LzvUoNQurajZhnptRiEqrZlTfFTJFvOpDQv9KD
+         IE0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754444669; x=1755049469;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w74FIGq0AXw75gXfOcQZe3mmzfSZaThuFNuCPXvRBdI=;
+        b=qJq23P3KhlQXQFcRiOfD+mOAUrnKmbod02gJvn+s5H4/isJbTuYPm9yhZrPapVnkop
+         BEj+Mn+xyw3qPHLCU78KTDfqAvVmbPMd/WizcFFU7qr+2z/8gOCPLzEr+4GO2E/79/80
+         3t334heGDOcaM2Iin163CtG8gQzGXsfNTP5vweW3a1nLBd01SP34j7C2oGj338X28WxY
+         vqE2KNefuOxJBTeqYdKgVoRI6p50S4CcJvPk3vl7Dl1sAIkBcIG02HM3oSrgIO26xLu9
+         fu5hAj16KNQmNb+r3NBR23+OPT9LMQwqpRN3+FvXuhBpdSBymNkEmlsWYcxpoqw8p+8q
+         VFNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA9IB7AgcRio+wbd7tIOAIz8b3qW/wHEvx2jgqOM+db1xMXP05KkDjBgie7j5pNj048DwfKf4BBsplK4eMxIIS@vger.kernel.org, AJvYcCWZfEIZJ6ECiQD8pgQlX4p0X96G+yw799x10oSbsuu3RnhEEuyTA6PwDe7DyNaH9LzvTqaKvUeJ4lf7V0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIHJXyuVvfccHEGsEw3OrzyKi/rT19OAngD8L4lja1JvLdOFrw
+	fOltUKkVlSnoIbRq+fSQNChMSu8aCWW9LaaG+j5C7o1tXzjsifvFo+hH
+X-Gm-Gg: ASbGnctuzcv068JZnXfDXza/faPRirxPIhaz5je4CDMROkVUE3Tyiu2CP5H3No72JOX
+	IVXXk2HPF6mXKjk3ygx/aVqfjGc2FtFmwdUC7AU5HNYvbHIwLYl2+27SfAzC6vADS2F+l1lcJBo
+	3qBJH+LGmv1skFXfUqX5g9SdjXSaBoLbCNgjbgL1LXSEirVQpl37c5LocgJGYwRCBqURJ3/7Tfd
+	SwMGBNqdcIhzJAPyufe+tKryGyN5c5gnokVNv90AlFa5SufHelAU+RDdXPoDqSzaYo+PYytsLam
+	aZm6XfBj2FYfxDqPd+vkqUG8Q9kn9ZqdIMwWlpDTLeHl5UOLvoXV2yNgf3RqcOdGJknnS9pDkmF
+	vzTbij24xF170IYAQ2iyFWAPgrYeGeAYmcFfplQB7HWnhRg==
+X-Google-Smtp-Source: AGHT+IF57QVaXPLLcilicCteL+bMl77C52uViQHcrH/iqr0Corkc4MbpfAiii/PIkLD6ZK5p+aBAoA==
+X-Received: by 2002:a17:902:f691:b0:240:66ff:b253 with SMTP id d9443c01a7336-2429f55dcfdmr18204635ad.46.1754444668829;
+        Tue, 05 Aug 2025 18:44:28 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8900:21f8:86c:408a:124f:465a:e2e4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee0d77sm17890187a91.20.2025.08.05.18.44.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 05 Aug 2025 18:44:28 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: ziy@nvidia.com
+Cc: akpm@linux-foundation.org,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	david@redhat.com,
+	jannh@google.com,
+	liam.howlett@oracle.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	richard.weiyang@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz
+Subject: Re: [PATCH] selftests/mm: fix FORCE_READ to read input value correctly.
+Date: Wed,  6 Aug 2025 09:44:17 +0800
+Message-Id: <20250806014417.19918-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <6E5CCF4D-CB63-4E4C-BEDA-6FE533E0DFCD@nvidia.com>
+References: <6E5CCF4D-CB63-4E4C-BEDA-6FE533E0DFCD@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJHqpiqvulGY2BYH@trex>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX2HxB0OBfy29e
- mzLSIkhuPK1ll5+a5MR5bvXRdnNZ010z1cxKTCdZknDv2pfJhLC5zeaSaDK2T1DB+q3jFLg60g4
- jtGJ57Lo7jFPWw8w6SM3ELEJheo3dIfMzj1/OQv/CWeows0yCG5dGofUiVEdXSTWg/svFojxwYM
- i3zu6UKQvj5DgiZk++48W/NekwV7mULJZ/t/ABLZ5L0JKYa24m/2dIU2QMSNX8j39Z5e1xXf1b3
- ziyqmKvx6lKME0m0/orXJ48o289QmXu8UJVgT2Zy2tO3t8Hh3Cme7Q9FnAAW6y5MDVN0MrZ/aiK
- eLw3uTC864GMI6GLmMleyxnyN/TtMVYhNX8p73r/Y5Rplsc5XIuLesnYoTCvY7zyjtNxg+7Yo38
- Fs20di5jwspjKvzXhN0hiyAu4V+JQtVqcm3J+VwQLjgk/njsdULHPwKuTBkG0PyEMMCT3nqj
-X-Proofpoint-GUID: TIcIwl-7oW7jPhAXXmvfSrbEuK6nhGvI
-X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=6892b1c7 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=2yNqk32ZLtqgZHoNgFQA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: TIcIwl-7oW7jPhAXXmvfSrbEuK6nhGvI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 phishscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 05, 2025 at 01:27:34PM +0200, Jorge Ramirez wrote:
-> On 05/08/25 12:44:23, Jorge Ramirez wrote:
-> > On 05/08/25 13:04:50, Dmitry Baryshkov wrote:
-> > > On Tue, Aug 05, 2025 at 08:44:28AM +0200, Jorge Ramirez-Ortiz wrote:
-> > > > Add a qcm2290 compatible binding to the Cenus core.
-> > > > 
-> > > > The maximum concurrency is video decode at 1920x1080 (FullHD) with video
-> > > > encode at 1280x720 (HD).
-> > > > 
-> > > > The driver is not available to firmware versions below 6.0.55 due to an
-> > > > internal requirement for secure buffers.
-> > > > 
-> > > > The bandwidth tables incorporate a conservative safety margin to ensure
-> > > > stability under peak DDR and interconnect load conditions.
-> > > > 
-> > > > Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> > > > Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> > > > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> > > > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > > > Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > > ---
-> > > >  drivers/media/platform/qcom/venus/core.c | 50 ++++++++++++++++++++++++
-> > > >  1 file changed, 50 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> > > > index adc38fbc9d79..753a16f53622 100644
-> > > > --- a/drivers/media/platform/qcom/venus/core.c
-> > > > +++ b/drivers/media/platform/qcom/venus/core.c
-> > > > @@ -1070,6 +1070,55 @@ static const struct venus_resources sc7280_res = {
-> > > >  	.enc_nodename = "video-encoder",
-> > > >  };
-> > > >  
-> > > > +static const struct bw_tbl qcm2290_bw_table_dec[] = {
-> > > > +	{ 352800, 597000, 0, 746000, 0 }, /* 1080p@30 + 720p@30 */
-> > > > +	{ 244800, 413000, 0, 516000, 0 }, /* 1080p@30 */
-> > > > +	{ 216000, 364000, 0, 454000, 0 }, /* 720p@60  */
-> > > > +	{ 108000, 182000, 0, 227000, 0 }, /* 720p@30  */
-> > > > +};
-> > > > +
-> > > > +static const struct bw_tbl qcm2290_bw_table_enc[] = {
-> > > > +	{ 352800, 396000, 0, 0, 0 }, /* 1080p@30 + 720p@30 */
-> > > > +	{ 244800, 275000, 0, 0, 0 }, /* 1080p@30 */
-> > > > +	{ 216000, 242000, 0, 0, 0 }, /* 720p@60  */
-> > > > +	{ 108000, 121000, 0, 0, 0 }, /* 720p@30  */
-> > > > +};
-> > > > +
-> > > > +static const struct firmware_version min_fw = {
-> > > > +	.major = 6, .minor = 0, .rev = 55,
-> > > > +};
-> > > 
-> > > This will make venus driver error out with the firmware which is
-> > > available in Debian trixie (and possibly other distributions). If I
-> > > remember correctly, the driver can work with that firmware with the
-> > > limited functionality. Can we please support that instead of erroring
-> > > out completely?
-> > 
-> > yes, in V7 I did implement this functionality plus a fix for EOS
-> > handling (broken in pre 6.0.55 firmwares).
-> 
-> just re-reading your note, in case this was not clear, the _current_
-> driver upstream will never work with the current firmware if that is
-> what you were thinking (it would need v7 of this series to enable video
-> decoding).
 
-I'd really prefer if we could support firmware that is present in Debian
-trixie and that has been upstreamed more than a year ago.
+Hi Zi Yan, Lorenzo,
 
--- 
-With best wishes
-Dmitry
+Thank you for the detailed discussion. I have been following the
+thread closely and it has been very insightful.
+
+Zi Yan's fix is excellent and I appreciate the rigorous analysis.
+Lorenzo's feedback has also deepened my own understanding of the
+subtleties around the FORCE_READ macro.
+
+Out of curiosity, I also checked the `(void)` prefixing on Godbolt.
+As Zi Yan concluded, the resulting assembly appears identical.
+
+I will be happy to join any future discussions regarding the exact
+behavior of volatile in this context.
+
+For this patch, it's definitely LGTM from my side as well, so.
+Reviewed-by:wang lian <lianux.mm@gmail.com>
+
+
+Thanks,
+wang lian
+
 
