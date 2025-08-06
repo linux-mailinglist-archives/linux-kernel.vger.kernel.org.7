@@ -1,134 +1,191 @@
-Return-Path: <linux-kernel+bounces-758093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666EDB1CAC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC4CB1CAC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924DA1622CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E2818C4DA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22E6293C45;
-	Wed,  6 Aug 2025 17:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9D6298CB6;
+	Wed,  6 Aug 2025 17:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WurARD/D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH0Lum0L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC799EEA6;
-	Wed,  6 Aug 2025 17:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612B9EEA6;
+	Wed,  6 Aug 2025 17:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501269; cv=none; b=eepLV2TN7UIKG0+WMcrTRst6KcSyh2rLabTrqGlEPOKgZ7p1afF2dh+/eyFj8nBTgywht6JJZ8lOnnTFuAST7XXfjoE0bJVSZifHWQk2fYTQAXl8BhdvM4xKUbeP19o+9i7eqYi0GCOn3LcfvS43BmtWPARsc692kyaqk41Q0BI=
+	t=1754501325; cv=none; b=sgTI8sS8EFesAIKPPD/AErB4OhpRwuh7FNBWciSJm4I3wPb+/uJX9KLNyfopzCWoCUd/n99YalOuo0myc8QGxK+W3GP1NFMuzWYxT3UH6n1pWOJuqRejYB+EMDpgDzjfKQKEwq9WNpVZub1Qf6XsQTg5Y8aUZsEYbdtBlK6Rd+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501269; c=relaxed/simple;
-	bh=qINxFNOSNV/nP03Q/5LwI2yjA97EIhoqWLjHbd4WtHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bT/+Fj+af11hPmfl0v+7fXl7zA419wG9wS+RM/OdFW0dHZ1G8huyostlzqpwvhg8av9PoGPPLNp4/XIb26pRsGyctEOci9EaT3DgBaholl5E/7u7Bwcm7mY5yelHhgIiRADFeuznb++QVB6W/VmrFBHjchVfu3sDneR68qZ6eoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WurARD/D; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754501268; x=1786037268;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qINxFNOSNV/nP03Q/5LwI2yjA97EIhoqWLjHbd4WtHc=;
-  b=WurARD/DJX0LtJOTINkdIjYpqxVG9Lg7i/e9W0AMnHT44ZUybDY7eSZY
-   rYyNmU9j375MK6shT0ugTu7FsfQr3/nTB5ioak3e1Ci7g1PsvuSRsMvrE
-   3J8wovMA/LOSKQIRff6eJPOmRoLSuusuuqsC9qYs0BzVAekTLB0MatOoc
-   x+JEFgoEaQtpC1hWG33bF62Z2nlSqu3M1Y2BsSvZskmTjkBTPX+XRff+c
-   7e1DldCDLmNO9ZtLr2++MXaDVNkrSD1j8i0PsXNEwr08aF6nhULxqquhQ
-   IgWt4AyCvSHv520/E4HFCPO9gKPIZ8Eduh/ZYMPgAIATzK1gVo6GfBZFU
-   g==;
-X-CSE-ConnectionGUID: xtDuG6uIR/qZS6RWYmR4Bg==
-X-CSE-MsgGUID: KMMhyYqSTy2AFxTaIgxsog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56745444"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56745444"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:27:47 -0700
-X-CSE-ConnectionGUID: c9QjsHL/Sumkn0rQcFTqkQ==
-X-CSE-MsgGUID: PlD+IWDcQTa1TZ0KTRHOLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164847977"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:27:44 -0700
-Message-ID: <7972e017-ec4a-4fe4-a11f-bc0a1ff9b6f7@intel.com>
-Date: Wed, 6 Aug 2025 10:27:38 -0700
+	s=arc-20240116; t=1754501325; c=relaxed/simple;
+	bh=XOh7ZW934UbNE6R+YKem0b85T3g/dZjtzAE7tD6zXO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BY8zOTueEcecvr633lOmsY+jT0McLR4FjzfmiZ67TikIq15brz5f5yUu1WzI4Wkkc784vNGilTbpPLBE+KKLPTGAibrUBrUtLHXgoV6VxKBSulhNGTVriRw7xSKffUIbpZ5233rqY/71bjVPXv1SMqAKC7014EVLD795mpQ2Eik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iH0Lum0L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D6DC4CEE7;
+	Wed,  6 Aug 2025 17:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754501324;
+	bh=XOh7ZW934UbNE6R+YKem0b85T3g/dZjtzAE7tD6zXO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iH0Lum0LENw7kN3xt7mfold6zbNxOFFqzvLy9h72OrLAxBXht5FEje6vG0IP2CJc8
+	 YmPF7ZpmfWcJlAJN5WFZt2FWCmGwLAumq/6Hwy6B5V8tQN4DjzSZhDRwHhLFpi5pNW
+	 GdBr6Bvvw9WMj6h5Cq9/rJghS7sULAKMlP/cotpBwWAIAAtwwq4RiNAZ7FFkLYUDqR
+	 TKv+PD21+cYPZYIVWRCiEcCoSCw3HtsAttCTyWdvl/IB2OrWCw7Nk4sFe6YcskEQxp
+	 MDIRbVfols+dM8wvpBZYoKuKEDusU+A7fao7i2pjj5FUKj+gXRzdrYd8laqp55oiip
+	 hjZejeKa0FuXg==
+Date: Wed, 6 Aug 2025 22:58:39 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v2 3/5] bus: mhi: host: pci_generic: Remove MHI driver
+ and ensure graceful device recovery
+Message-ID: <y3bvlfxjo5thagngezv57d5jwe6uwwot2hwqwdne2p6yvogor2@obs4nls47hx3>
+References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
+ <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] dmaengine: idxd: Fix freeing the allocated ida too
- late
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
- Fenghua Yu <fenghuay@nvidia.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
- <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-8-4e020fbf52c1@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-8-4e020fbf52c1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
 
-
-
-On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
-> It can happen that when the cdev .release() is called, the driver
-> already called ida_destroy(). Move ida_free() to the _del() path.
+On Thu, Jul 10, 2025 at 02:28:34PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
 > 
-> We see with DEBUG_KOBJECT_RELEASE enabled and forcing an early PCI
-> unbind.
-> 
-> Fixes: 04922b7445a1 ("dmaengine: idxd: fix cdev setup and free device lifetime issues")
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> When the MHI driver is removed from the host side, it is crucial to ensure
+> graceful recovery of the device. To achieve this, the host driver will
+> perform the following steps:
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Please rewrite the description in an imperative tone.
+
+> 
+> 1. Disable SRIOV for any SRIOV-enabled devices on the Physical Function.
+
+You haven't enabled SR-IOV at this point, but only in the next patch. So you
+need to swap patches 3 and 4.
+
+> 2. Perform a SOC_RESET on Physical Function (PF).
+> 
+> Disabling SRIOV ensures that all virtual functions are properly shut down,
+> preventing any potential issues during the reset process. Performing
+> SOC_RESET on each physical function guarantees that the device is fully
+
+Each physical function? How many PF does this device support? It should be
+described somewhere on the total PF and VF it supports.
+
+> reset and ready for subsequent operations.
+> 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
 > ---
->  drivers/dma/idxd/cdev.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/bus/mhi/host/pci_generic.c | 26 +++++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-> index 7e4715f927732702416d917f34ab0a83f575d533..4105688cf3f060704b851ee17467c135c170326e 100644
-> --- a/drivers/dma/idxd/cdev.c
-> +++ b/drivers/dma/idxd/cdev.c
-> @@ -158,11 +158,7 @@ static const struct device_type idxd_cdev_file_type = {
->  static void idxd_cdev_dev_release(struct device *dev)
->  {
->  	struct idxd_cdev *idxd_cdev = dev_to_cdev(dev);
-> -	struct idxd_cdev_context *cdev_ctx;
-> -	struct idxd_wq *wq = idxd_cdev->wq;
->  
-> -	cdev_ctx = &ictx[wq->idxd->data->type];
-> -	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
->  	kfree(idxd_cdev);
->  }
->  
-> @@ -582,11 +578,15 @@ int idxd_wq_add_cdev(struct idxd_wq *wq)
->  
->  void idxd_wq_del_cdev(struct idxd_wq *wq)
->  {
-> +	struct idxd_cdev_context *cdev_ctx;
->  	struct idxd_cdev *idxd_cdev;
->  
->  	idxd_cdev = wq->idxd_cdev;
->  	wq->idxd_cdev = NULL;
->  	cdev_device_del(&idxd_cdev->cdev, cdev_dev(idxd_cdev));
-> +
-> +	cdev_ctx = &ictx[wq->idxd->data->type];
-> +	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
->  	put_device(cdev_dev(idxd_cdev));
->  }
->  
-> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 4bafe93b56c54e2b091786e7fcd68a36c8247b8e..2d1381006293412fbc593316e5c7f0f59ac74da8 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -45,6 +45,8 @@
+>   * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
+>   *		   of inband wake support (such as sdx24)
+>   * @no_m3: M3 not supported
+> + * @reset_on_driver_unbind: Set true for devices support SOC reset and
+> + *				 perform it when unbinding driver
 
+	reset_on_remove: Reset the device while removing the driver
+
+>   */
+>  struct mhi_pci_dev_info {
+>  	const struct mhi_controller_config *config;
+> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
+>  	unsigned int mru_default;
+>  	bool sideband_wake;
+>  	bool no_m3;
+> +	bool reset_on_driver_unbind;
+>  };
+>  
+>  #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+>  	.dma_data_width = 32,
+>  	.sideband_wake = false,
+>  	.no_m3 = true,
+> +	.reset_on_driver_unbind = true,
+>  };
+>  
+>  static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
+> @@ -970,6 +974,7 @@ struct mhi_pci_device {
+>  	struct work_struct recovery_work;
+>  	struct timer_list health_check_timer;
+>  	unsigned long status;
+> +	bool reset_on_driver_unbind;
+>  };
+>  
+>  static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
+> @@ -1270,6 +1275,11 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	mhi_cntrl->mru = info->mru_default;
+>  	mhi_cntrl->name = info->name;
+>  
+> +	/* Assign reset functionalities only for PF */
+
+Remove the comment.
+
+> +	if (pdev->is_physfn)
+> +		mhi_pdev->reset_on_driver_unbind = info->reset_on_driver_unbind;
+> +
+> +
+
+Extra newline.
+
+>  	if (info->edl_trigger)
+>  		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
+>  
+> @@ -1336,7 +1346,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	return err;
+>  }
+>  
+> -static void mhi_pci_remove(struct pci_dev *pdev)
+> +static void mhi_pci_resource_deinit(struct pci_dev *pdev)
+
+Please do not create unsymmetric functions. There is no mhi_pci_resource_init().
+
+>  {
+>  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+>  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+> @@ -1352,6 +1362,20 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+>  	/* balancing probe put_noidle */
+>  	if (pci_pme_capable(pdev, PCI_D3hot))
+>  		pm_runtime_get_noresume(&pdev->dev);
+> +}
+> +
+> +static void mhi_pci_remove(struct pci_dev *pdev)
+> +{
+> +	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+> +	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+> +
+> +	/* Disable SRIOV */
+
+This one too.
+
+> +	pci_disable_sriov(pdev);
+> +	mhi_pci_resource_deinit(pdev);
+> +	if (mhi_pdev->reset_on_driver_unbind) {
+> +		dev_info(&pdev->dev, "perform SOC reset\n");
+
+This is just a spam, please drop.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
