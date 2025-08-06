@@ -1,210 +1,180 @@
-Return-Path: <linux-kernel+bounces-758449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6331B1CF4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E5EB1CF50
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2023BBB64
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25AA18C3BA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A2236429;
-	Wed,  6 Aug 2025 23:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578D626A088;
+	Wed,  6 Aug 2025 23:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EKvq2quM"
-Received: from sonic.asd.mail.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXSdvPd9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED2F1401B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 23:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEEF223301;
+	Wed,  6 Aug 2025 23:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754522198; cv=none; b=sVfp2ZTQ4y4ywgM3bMMr5tPytHwL9ObCVMOO88rHHr1Ozf1pEpgb2EHtix/6lGb40/JGPrEb+oIbFnGmYzeUFp2dARpEUWabn4SsYnfK5Ko2DNijZKLnrmRzQt4SQ28KcJ9NuRT+m27RQ4Ym9ohh/7hNftWzNNf9PmA1euE/EBo=
+	t=1754522296; cv=none; b=o2Geu78Fe1qki5yss+71FEG64KP3mqHTz6wLCY5QfNfWGXENmf8UA5LtiFIgpMrvm3SSWL2p8DIs4rYAqERPevblTcwllJX7GU1rreFKK1c+b2INg0J0FCa7ptRRqLpNcZBnfZOK9frK/NEVMSCi1ukMd7T4UZ3V0BMwzpiYWEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754522198; c=relaxed/simple;
-	bh=cJl4At+1cXXYug9GtLBmkxDFdTibYeN0XuD6qJlLMJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8GUGBWxCvzH4nUDxB4uz1MSFIfiBjp9O5MHxJgPGpDvRiUTgiPG7dP/9+yvmH7Y02Vky2MDTJOe41qMDdZdu0Ltq98DrFeggI5qzoljPUz9KQQ61l6NrFguvgwKMq5CXy6IwShPS1SYA6gIYWtA/CjsxRX0mODUAqO6IRJDMIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EKvq2quM; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754522194; bh=HkvgS4SbiUOpqGxoegOo03fYCtOsJFgBfX5j5w+YXUY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=EKvq2quMrV2JBhF6hZh6sqWDP6lSLswwqjOqZvR56/WKwjrOMcTWQdRAwd123CM26Ckj+f3tWmcg8UT81kst+BnGmCOW+TOwYjPUHk8i2mwQyDMgsA3Gr+Df6ocbHY21Spf0dobsaWhkEZ6zuOG85v/FKWGpYoPwYQzIwbsMlazVJCXj+ujKPFVj2xXFnyFuBmpBBtD4LT83DE0sNsxGVC01tfPPef0geau+pioqEG973wyO6Wy6KRxAKGHC95kDCaBwt++rnsvRKc2wGkIOcmrQttX5c9a7EX3Szgz3YeeeLBgbLJW60PCUMNS7vZfK5sdYgU1iHQWQyts9fvmtBw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754522194; bh=QICMMo0gp/PvXWOz2m+vJg/+hzHvlUicoPijRI9U7TS=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VByQ32/zED11Iaa0n3ySfhs1SPBq3g0LEPSwAfBHSiAavawBUU7shb25E+bYhvs4nfAzDyTUCHBKV5/mW66LZqiiToZGLMHlsfLhmTD7VIgbre1EjHRvRAbJzyIX4oYfY5fGwHTtbcvgWuizczOx3Jxyo8I/ImSzhrCwIUHszvaxTo/CEsU5lp28No14UsLUFcLIiAM32fDVOa8oRatRza2TW4zPTgGCATKAdJ5EuMFyQPwfsUvPaKmdAq8dSVOosCD48eZbillph+Do3ocKq0IvLE5VFLipbtJSBMYz79GeA1wKtlYtbH4LNz7I/SXBEIPiu7tc/u/APTwLIV4LRQ==
-X-YMail-OSG: CHRBBxUVM1l_twm2XTZ7Or3KxBS9VJAFaZCbzgLl8jzXjFQi7NGXp5kIVJzBxCb
- uHFIjKOGlxDbhfKorbScrG3cRD3ZoRlVEt345ttrIAtLQtGGWgJZiQFcgxjtEk8La2O9hZHwjO6t
- bDcOrWaRqAoWVrdkqgvQlxxs29cvknCultinMa27XfPEWCA0SxqTGQ9QIrKg70ov9eiTug9BC6kx
- 7znv6he4.MHvtn3jcfsUEAkdrgUBGvH6g2QG.bdXue8iLfLFysXOZen89RCF3dRnN_jDLxzF_ZA3
- qMDoFlkewmtyeFfPqVKjdooMfKerqeaXcYUHlE1y78efnqdtbAJyTZo4WVpLgD2RDnUPP4G04nG0
- 3n1.RiFj28ErIt2RgXfvxci27kmUClGVtgFANQm6CWCDFyHXEIgWjlV.OGf4CqqlKB1D0wUAJab6
- 9Q1.vG1zrXaT0sCKTzCZf8hqFRQwXjqC9NAcDBUPuAU25ivbl.u5Nu6RgNXWb9VWUw6BDS_1Xbnu
- ChO8OtmaXP0CxcKppu8w0ziiVL0jSbPLWvU40dsL4kvk3YfNs40l0KU_F5eYHr7Qcu9omAl7Ugwa
- aTQXb_h20ez5Fw0sAQMtz6Q0Mo05NSL6hi2t9uMBzO5FcVClBTr7.94RcPyC6L9Ko55lu2REPtE5
- dWp.dAltUAJmQLfsmLb.kpShBuUKEpOC.I1zmO9Jyerx1GHu4X4Ing9uulRBknOC.g2sxocRhQnq
- pZ6suO07fd95zyVErh1uakAJKnJme2QazcStVmu_aNsSbsH7mQOt8DvE1Uwxej2.aydb2MtHBsxA
- UPEYsLcVMBZZcWO16Ir6QGrHiE71mp7.m6G2FnFkEwR_jJo8S6cK7vmFh3l7YvqUrgtSGiOYKXLP
- KRbOkYIy6mRAmN3cBXQNRAEVQ0NoNuFhOtIdlUbgt2MuE8B889w6gVshrMDYhLkUorU6Co3fPl6y
- hBkDIU3Z0uF7oY3mpWJsfcLRMbTAJrCzOwsCjRVI78QDChSIsyFP8rJzpKYQaGnjaDGlwGJ.tnZA
- wR2zg2s0D0Q.7qYqs90p3vw_M.JdY6orrDZmrWhUKkiKc09vQ.eIshgHDyTbeEfmRVc5ezQDZGvn
- aBGvbSIkSlw3jheETn_BeUGG2TXFHeH4QjdrZ7DK.fYhn45v3NlelX4maZbm58dZhrakQVzIAZsw
- ENH4Bo0oO1PLF8bxssXcJuLoXBx8nG1o42DPOagaP09.QR033AfiC1bs.CdgPwfhY0If4PRy7hUg
- v9OsOFl_GNA.fmcwjYmOwU_RGdcYDKTiyLlx9Z8NG5Acts37WQuJOBbM0XYOJn6kkkDLKRjWYBD7
- k.uk1UYgzDn9D0PliPDSkPYPf4Xq3ft411qnUoivodKusvK1BabpZfe1umlk0I9._f.vpMw6ntge
- feIpTTjGfsy0sd.TcJcV80REKAnOQ5qLolr0QAM9UNXu.2phXCS8RKB.YUwO8QgtWcb0or.v.JLn
- TFG7cpcd9Ua_2NZqkpEUR9iwkiUmX0r7INvULuK_jqdHlyqGUVxx7KNj2Okbq_ZWzct0oG0OJ34N
- sI1147IfWkV_JwihSZht_Nj_fFwFwWOHEQ1RolAEYsaPeFjzFtPRwFa_rXmHL0KW4IUiYzZXTJDZ
- AGRF2._Ek6Pt97.aXSMBH.stlaz.Td78toIUxE2fbVyv.Eibx1GFH1QYkKucmTjFDg1i6hG0cLhV
- qdUxxNSVSY1K9shmNSJj5uUhVqK8l0YkE4CyE.TzcY3ayCUpa_QWWpjMk7Qt9legg91Mkw9DjGB0
- S_QdsGbVLq5qhSl6As0ygafmb48Qe1FLXAitBoUBUpRyegaUsuxq57BBPIyzknOH43i8JANrPP1I
- DoUAej93SbO6G9hJYn.15iCsGemguf1EKSypYZwdZRh26xiNDQ0.4ELmd9a_xWWDXBPzS0bgcXp4
- q6TbgluGIQjN52SNb2Xy6x7ooblnS_NCPkTZNqfoQF1VAfY60eG8z_fXeQGF9dg5hLVH5SogSbgp
- azkijnWblKiuOq_whBqxref.p34bs.5xZzf2Y8STm0KtVDv8Tt6dcltFyetvo61vh_TU2NYX.05m
- i7OtjEYM.CoOjfTRlqPsbLkPdrwX436EkWerHjiU9BwelXAQ.lSi2mF0fym7OokDdzmsAQiiidJV
- wquMW4sAEjcjxI.C9Hd69bJUeDbkeHwSeWJJ7xjs0Kz7wv7bncpKt78XL7U_zohZSWf2uel3Ge6O
- TOoJFeeklxbSRDI0T4fbUw93bqkoV_h2tYU0mdoH2h1uaiOe0lxGk2pBBgsrpVKEb6gEVUyloznd
- WdXd2QoS720xHsc60mb14Tdtgjg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4924f168-a661-4c96-87bc-3b4d4db3576a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 6 Aug 2025 23:16:34 +0000
-Received: by hermes--production-gq1-74d64bb7d7-w6q4t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b7ef53b8b4b8be522c44d02d81cf19fa;
-          Wed, 06 Aug 2025 23:16:30 +0000 (UTC)
-Message-ID: <f3a8cbc4-069f-4ec2-8bb5-708b90360b05@schaufler-ca.com>
-Date: Wed, 6 Aug 2025 16:16:28 -0700
+	s=arc-20240116; t=1754522296; c=relaxed/simple;
+	bh=LSjLsRiIKAeVQBEup9B6gwCf8DTsf9NA+YYnAYB1K1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Jy0wRdYsQCP+l17RrRRd86Ue5ke5ZSL+IfhXzKCGt3x0vTevDbFNcCOzEYRpxHIejty298NNx3APKBKlBCVpAcMHJhc0/XVqUaf2cZUGws52C90woj9XVx4e/y1dE/M70fGdw95SwhkiZEyXisAloY13eWpw6OuyhAfOmOMcDhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXSdvPd9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20FC9C4CEE7;
+	Wed,  6 Aug 2025 23:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754522296;
+	bh=LSjLsRiIKAeVQBEup9B6gwCf8DTsf9NA+YYnAYB1K1Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nXSdvPd9dAgpQdwdaOYDfbfUTBc0ohbdt/L/68ow51GTXBDFETZCDPx8ixYRDu+mk
+	 koD0aj9kF1NPMqllZDUPK4DUhCoCJqB5yPyp+EuT4bQldEScIw6hdXsXpkQrA0pVqi
+	 VQ1rBB+zFxCseF0FvHwDylDYOqhsnjEw3rp28n+lYs5DJ8wmoVbXG9tM24aeYrR83v
+	 Znac1VvpoqR9em15oDzZWepj1nS8essVM3QQ8JthRxHaqKj3Mr6CA8S86nMyMaj0Fm
+	 mZf9m0nJVEzBeihH+L2q286xSiMFP8P7AJLBb9UVN+BGrvpqMl3L4haxAfKbd3IQNj
+	 DiYyvyvzJUaGw==
+Date: Wed, 6 Aug 2025 18:18:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] PCI: Add Extended Tag + MRRS quirk for Xeon 6
+Message-ID: <20250806231814.GA25892@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] LSM: allocate mnt_opts blobs instead of module
- specific data
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250617210105.17479-3-casey@schaufler-ca.com>
- <f7e03785a79a0ac8f034cd38e263b84f@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <f7e03785a79a0ac8f034cd38e263b84f@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250610114802.7460-1-ilpo.jarvinen@linux.intel.com>
 
-On 8/6/2025 3:06 PM, Paul Moore wrote:
-> On Jun 17, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Replace allocations of LSM specific mount data with the
->> shared mnt_opts blob.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/lsm_hooks.h  |  1 +
->>  security/security.c        | 12 ++++++++++++
->>  security/selinux/hooks.c   | 10 +++++++---
->>  security/smack/smack_lsm.c |  4 ++--
->>  4 files changed, 22 insertions(+), 5 deletions(-)
-> ..
->
->> diff --git a/security/security.c b/security/security.c
->> index 8a4e0f70e49d..ec61fb7e6492 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -904,6 +904,18 @@ void security_sb_free(struct super_block *sb)
->>  	sb->s_security = NULL;
->>  }
->>  
->> +/**
->> + * lsm_mnt_opts_alloc - allocate a mnt_opts blob
->> + * @priority: memory allocation priority
->> + *
->> + * Returns a newly allocated mnt_opts blob or NULL if
->> + * memory isn't available.
->> + */
->> +void *lsm_mnt_opts_alloc(gfp_t priority)
->> +{
->> +	return kzalloc(blob_sizes.lbs_mnt_opts, priority);
->> +}
-> It's probably better to use lsm_blob_alloc() here so we have some
-> allocator consistency.
->
-> Also, make this private/static as we should just handle the blob
-> allocation in the LSM framework (see below) just like everything else,
-> unless you can explain why the mount options need to be handled
-> differently?
+On Tue, Jun 10, 2025 at 02:48:02PM +0300, Ilpo Järvinen wrote:
+> When bifurcated to x2, Xeon 6 Root Port performance is sensitive to the
+> configuration of Extended Tags, Max Read Request Size (MRRS), and 10-Bit
+> Tag Requester (note: there is currently no 10-Bit Tag support in the
+> kernel). While those can be configured to the recommended values by FW,
+> kernel may decide to overwrite the initial values.
+> 
+> Add a quirk that disallows enabling Extended Tags and setting MRRS
+> larger than 128B for devices under Xeon 6 Root Ports if the Root Port
+> is bifurcated to x2. Use the host bridge's enable_device hook to
+> overwrite MRRS if it's set to >128B for the device to be enabled.
+> 
+> The earlier attempts to implement this quirk polluted PCI core code
+> with the checks necessary to support this quirk. Using the
+> enable_device hook keeps the quirk well-contained, away from the PCI
+> core code.
+> 
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/837176
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-The mount blob is different from the other blobs in that it is
-only used if there are LSM specific mount options. If there aren't
-LSM specific mount options there is no reason to have a blob.
-I know it's not a huge deal, but there is a performance cost in
-allocating a blob that isn't used.
+Applied to pci/enumeration for v6.18, thanks.
 
-If you'd really rather accept the overhead, I can make the blob
-always allocated. Let me know. 
+> ---
+> 
+> Ingo gave his Ack on v2 but since the used approach has once again
+> changed, I didn't add his Ack.
+> 
+> Mani did express his concern on using enable_device hook but suggested
+> I send the patch anyway.
 
+Yeah, I kind of agree, and there's also nothing that enforces
+ownership of the .enable_device() pointer.  But it feels like it might
+be overengineering to deal with all that.
 
->
->>  /**
->>   * security_free_mnt_opts() - Free memory associated with mount options
->>   * @mnt_opts: LSM processed mount options
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 88cd1d56081a..f7eda0cce68f 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -2808,7 +2808,7 @@ static int selinux_fs_context_submount(struct fs_context *fc,
->>  	if (!(sbsec->flags & (FSCONTEXT_MNT|CONTEXT_MNT|DEFCONTEXT_MNT)))
->>  		return 0;
->>  
->> -	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
->> +	opts = lsm_mnt_opts_alloc(GFP_KERNEL);
-> See above.
->
->>  	if (!opts)
->>  		return -ENOMEM;
->>  
->> @@ -2830,8 +2830,12 @@ static int selinux_fs_context_dup(struct fs_context *fc,
->>  	if (!src)
->>  		return 0;
->>  
->> -	fc->security = kmemdup(src, sizeof(*src), GFP_KERNEL);
->> -	return fc->security ? 0 : -ENOMEM;
->> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
->> +	if (!fc->security)
->> +		return -ENOMEM;
-> Another case where we should do the allocation in the LSM framework.
->
->> +	memcpy(fc->security, src, sizeof(*src));
->> +	return 0;
->>  }
->>  
->>  static const struct fs_parameter_spec selinux_fs_parameters[] = {
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index 44bd92410425..1d456df40096 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -622,7 +622,7 @@ static int smack_fs_context_submount(struct fs_context *fc,
->>  	struct smack_mnt_opts *ctx;
->>  	struct inode_smack *isp;
->>  
->> -	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
->> +	ctx = lsm_mnt_opts_alloc(GFP_KERNEL);
->>  	if (!ctx)
->>  		return -ENOMEM;
->>  	fc->security = ctx;
->> @@ -673,7 +673,7 @@ static int smack_fs_context_dup(struct fs_context *fc,
->>  	if (!src)
->>  		return 0;
->>  
->> -	fc->security = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
->> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
->>  	if (!fc->security)
->>  		return -ENOMEM;
-> Same thing in Smack.
->
-> --
-> paul-moore.com
->
+> We're also looking into using _HPX Type 3 (suggested by Bjorn) eventually
+> for this class of problems where FW settings get overwritten by the
+> kernel (but it will take time to make it the sanctioned solution). In
+> the meantime, this is a real problem for Xeon 6 out there so it warrants
+> adding the quirk (which is now pretty well-contained).
+> 
+> v3:
+> - Use enable_device hook to overwrite MRRS to 128B if needed. (Lukas)
+> - Typo fix to comment (Ingo)
+> 
+> v2:
+> - Explain in changelog why FW cannot solve this on its own
+> - Moved the quirk under arch/x86/pci/
+> - Don't NULL check value from pci_find_host_bridge()
+> - Added comment above the quirk about the performance degradation
+> - Removed all setup chain 128B quirk overrides expect for MRRS write
+>   itself (assumes a sane initial value is set by FW)
+> 
+> 
+>  arch/x86/pci/fixup.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
+> index e7e71490bd25..38369124de45 100644
+> --- a/arch/x86/pci/fixup.c
+> +++ b/arch/x86/pci/fixup.c
+> @@ -294,6 +294,46 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_MCH_PB1,	pcie_r
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_MCH_PC,	pcie_rootport_aspm_quirk);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_MCH_PC1,	pcie_rootport_aspm_quirk);
+>  
+> +/*
+> + * PCIe devices underneath Xeon6 PCIe Root Port bifurcated to 2x have slower
+> + * performance with Extended Tags and MRRS > 128B. Work around the performance
+> + * problems by disabling Extended Tags and limiting MRRS to 128B.
+> + *
+> + * https://cdrdv2.intel.com/v1/dl/getContent/837176
+> + */
+> +static int limit_mrrs_to_128(struct pci_host_bridge *bridge, struct pci_dev *pdev)
+> +{
+> +	int readrq = pcie_get_readrq(pdev);
+> +
+> +	if (readrq > 128)
+> +		pcie_set_readrq(pdev, 128);
+> +
+> +	return 0;
+> +}
+> +
+> +static void quirk_pcie2x_no_tags_no_mrrs(struct pci_dev *pdev)
+> +{
+> +	struct pci_host_bridge *bridge = pci_find_host_bridge(pdev->bus);
+> +	u32 linkcap;
+> +
+> +	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &linkcap);
+> +	if (FIELD_GET(PCI_EXP_LNKCAP_MLW, linkcap) != 0x2)
+> +		return;
+> +
+> +	bridge->no_ext_tags = 1;
+> +	bridge->enable_device = limit_mrrs_to_128;
+> +	pci_info(pdev, "Disabling Extended Tags and limiting MRRS to 128B (performance reasons due to 2x PCIe link)\n");
+> +}
+> +
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db0, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db1, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db2, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db3, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db6, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db7, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db8, quirk_pcie2x_no_tags_no_mrrs);
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db9, quirk_pcie2x_no_tags_no_mrrs);
+> +
+>  /*
+>   * Fixup to mark boot BIOS video selected by BIOS before it changes
+>   *
+> 
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> -- 
+> 2.39.5
+> 
 
