@@ -1,144 +1,175 @@
-Return-Path: <linux-kernel+bounces-757954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E788B1C8C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:31:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E246DB1C8CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A0D16BA6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:31:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E093B32FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E094B291C15;
-	Wed,  6 Aug 2025 15:31:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C07292B3E;
+	Wed,  6 Aug 2025 15:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LjPqLBSg"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018522E370A;
-	Wed,  6 Aug 2025 15:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494311; cv=none; b=hl3B+U7OBAo/YqdJ4vpJUY2++znJw28HfflS6Wspj0iZGcuPZNdrzSFM/s/OOrtBo4jyDwU7EibS5EKoZOTR2tLCOZ8kRmuzYWwkUKbTdjGOAL3Sqop54oVYztAiFH7tiSL6s3DsO6e2ijTzFalht7VuH49zsCalnlBx7cR/uq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494311; c=relaxed/simple;
-	bh=RsvaOTpIAHltuIjZWM7I5SwR3disuxoHnJKNhDT8xPk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MD8ccEazLQQxbJl4RM3lcfqLjKRNk37lEPF6vn0WI0Y3a8bqFibBwoyquyWFgQWG2DNlGAy8VoLVdR4WNjE+orHmP47F06IIvDo8RVmqnpu9UP9I96rFpzpklPDcys9ohgrx6NjQkT09q2G+ggFqB6CMn3vCLBJjGBPDCWZmXwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxvKr1Stxz6GDGT;
-	Wed,  6 Aug 2025 23:27:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id ACBF314037D;
-	Wed,  6 Aug 2025 23:31:45 +0800 (CST)
-Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
- 2025 17:31:44 +0200
-Date: Wed, 6 Aug 2025 16:31:41 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-CC: <eugen.hristev@linaro.org>, <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<srini@kernel.org>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/15] iio: adc: at91-sama5d2_adc: adapt the driver for
- sama7d65
-Message-ID: <20250806163141.00005d83@huawei.com>
-In-Reply-To: <20250804100219.63325-10-varshini.rajendran@microchip.com>
-References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
-	<20250804100219.63325-10-varshini.rajendran@microchip.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A96291C02;
+	Wed,  6 Aug 2025 15:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754494341; cv=pass; b=HJNp/84EMGK9w8lvrll45Q9XyD4YL4hBKa/t7akSFg31h0T70xBZEC09iZATcmQYknqXNdvyQcbrcjLkDej1sfEIqVJz7scsQGwCWwGBwdkBwhny/Hf+MuTosnvP4uDUz54CLB1IpCpZEMlq2MVVg9/pku7UEwVVI0+Ffr4tkzU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754494341; c=relaxed/simple;
+	bh=Zmwv4vh3Fx0bxFxRlXfARN3k9faUJVlnf8ZTxt8rEjI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Fr5gO7PXtNIFDnWiL6dlrAJ/7r3sq+MkW2hhqUuPNDxb6gA0fz5a5hxFM/E6D3F00GO/A4ipriHKVMpO4ZSHRwhR7dSp9SFaMVDmPRzMhh9yGLQQ0o5Vm3JHn0dyWAc1f0siMWXqK6ck4FPX9fJc3Xfy4oLj0BLYTgMWH4v+bNQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LjPqLBSg; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754494322; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EvOxFINf6Q6TJgBgY9eusaVIUI7WQx4ErTpp8xqCj3msXCOyIl29M5MEpEX8T0IUExzELan5X7d9lZ+qavstYEMBoOhD9JCKJr3nnyAmaCNi97tSklILMeD3wWDi9RsAx//vSjbYIIwi0UUXWveb+hIRgFcXYw4HAeMVBvdZ1/4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754494322; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zVx/BBwBcVenmzScNrfKqLq/SI6/4vzW+8q9NLGYSVw=; 
+	b=drSSVxdylxxzpYsIkVa+wYn+FqE2poR63zDv2unDMC4vq4KHR8ICdxEnUhYHsqKrA4FO5o4aOhI4ftUJhPP0R3kgIYjxODiG01kDUrRp9+QOCo9Z4OlJoigzVrI11nBiQdOJ3ULku01d5mxXrGIHZJlOOClai/IvekowxwAkZ8A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754494322;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=zVx/BBwBcVenmzScNrfKqLq/SI6/4vzW+8q9NLGYSVw=;
+	b=LjPqLBSglAaBV3N8yv9Je0baMe4xWUM2MEzU5pStsjaCkQSF8n9y2Y5Gbf9If96s
+	GgIneJ94i9zggEodhYP6pBT+7BftYkR7E8AvGCuJBZJ/f2omxMdaR9fVDz348EjuoB6
+	YVfrHQ2Q7hJr4aMZGVyR1WeLZBxFuUU/jtUdDkzc=
+Received: by mx.zohomail.com with SMTPS id 1754494320728780.5263856446262;
+	Wed, 6 Aug 2025 08:32:00 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 06/16] rust: block: normalize imports for `gen_disk.rs`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <877bzg8pvp.fsf@kernel.org>
+Date: Wed, 6 Aug 2025 12:31:45 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC4C6260-9D2E-40B7-9A0F-F629EB831F5F@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-6-3a262b4e2921@kernel.org>
+ <1YjnBHBMF7DAKjkQrfW9goplGCUynLmjrUnLo3PrN5qMYx6uUcolbOtjWPNyVQEwyehPW8Xk7B1oeBAffoYr9A==@protonmail.internalid>
+ <F5A3232C-50E8-4615-929A-80F3ED4EFEBA@collabora.com>
+ <877bzg8pvp.fsf@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, 4 Aug 2025 15:32:13 +0530
-Varshini Rajendran <varshini.rajendran@microchip.com> wrote:
 
-> Add support to sama7d65 ADC. The differences are highlighted with the
-> compatible. The init and parsing of the temperature sensor and
-> calibration indexes are the main differences.
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-...
 
->  static int at91_adc_chan_xlate(struct iio_dev *indio_dev, int chan)
->  {
->  	int i;
-> @@ -2319,6 +2360,56 @@ static int at91_adc_temp_sensor_init(struct at91_adc_state *st,
->  	return ret;
->  }
->  
-> +static int at91_sama7d65_adc_temp_sensor_init(struct at91_adc_state *st,
-> +					      struct device *dev)
-> +{
-> +	struct at91_adc_temp_sensor_clb *clb = &st->soc_info.temp_sensor_clb;
-> +	struct nvmem_cell *temp_calib;
-> +	u32 *buf = NULL;
+> On 6 Aug 2025, at 11:51, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>=20
+>>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>>>=20
+>>> Clean up the import statements in `gen_disk.rs` to make the code =
+easier to
+>>> maintain.
+>>>=20
+>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> ---
+>>> rust/kernel/block/mq/gen_disk.rs | 10 +++++++---
+>>> 1 file changed, 7 insertions(+), 3 deletions(-)
+>>>=20
+>>> diff --git a/rust/kernel/block/mq/gen_disk.rs =
+b/rust/kernel/block/mq/gen_disk.rs
+>>> index cd54cd64ea88..679ee1bb2195 100644
+>>> --- a/rust/kernel/block/mq/gen_disk.rs
+>>> +++ b/rust/kernel/block/mq/gen_disk.rs
+>>> @@ -5,9 +5,13 @@
+>>> //! C header: =
+[`include/linux/blkdev.h`](srctree/include/linux/blkdev.h)
+>>> //! C header: =
+[`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
+>>>=20
+>>> -use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+>>> -use crate::{bindings, error::from_err_ptr, error::Result, =
+sync::Arc};
+>>> -use crate::{error, static_lock_class};
+>>> +use crate::{
+>>> +    bindings,
+>>> +    block::mq::{raw_writer::RawWriter, Operations, TagSet},
+>>> +    error::{self, from_err_ptr, Result},
+>>> +    static_lock_class,
+>>> +    sync::Arc,
+>>> +};
+>>> use core::fmt::{self, Write};
+>>>=20
+>>> /// A builder for [`GenDisk`].
+>>>=20
+>>> --
+>>> 2.47.2
+>>>=20
+>>>=20
+>>>=20
+>>=20
+>> Same comment as the preceding =E2=80=9Cimport=E2=80=9D patch: this is =
+syntax is problematic.
+>=20
+> I used to share your viewpoint, but I changed my opinion and now =
+prefer
+> "normalized" imports (the combined form).
+>=20
+> Now I can just blindly merge all the imports, remove duplicates and =
+then
+> ask rust-analyzer to normalize imports again, and then format with
+> rustfmt. I find that this workflow is very low overhead.
+>=20
+>=20
+> Best regards,
+> Andreas Hindborg
 
-As per earlier comment and I see Andy raised it as well. __free()
-magic dust is useful here.
+That=E2=80=99s because you have a separate commit where you do this =
+before applying
+your work on top. If you=E2=80=99re rebasing on top of someone else's =
+work, then a
+lot of conflicts will pop up. And unlike the saner approach where each =
+import
+is in its own line, it=E2=80=99s now absolutely not clear how the =
+conflicts should
+be resolved.
 
-> +	size_t len;
-> +	int ret = 0;
-> +
-> +	if (!st->soc_info.platform->temp_sensor)
-> +		return 0;
-> +
-> +	/* Get the calibration data from NVMEM. */
-> +	temp_calib = devm_nvmem_cell_get(dev, "temperature_calib");
-> +	if (IS_ERR(temp_calib)) {
-> +		ret = PTR_ERR(temp_calib);
-> +		if (ret != -ENOENT)
-> +			dev_err(dev, "Failed to get temperature_calib cell!\n");
-> +		return ret;
-> +	}
-> +
-> +	buf = nvmem_cell_read(temp_calib, &len);
-> +	if (IS_ERR(buf)) {
-> +		dev_err(dev, "Failed to read calibration data!\n");
-> +		return PTR_ERR(buf);
-> +	}
-> +
-> +	if (len < AT91_SAMA7D65_ADC_TS_CLB_IDX_MAX * sizeof(u32) ||
-> +	    buf[0] != AT91_TEMP_CALIB_TAG) {
-> +		dev_err(dev, "Invalid calibration data!\n");
-> +		ret = -EINVAL;
-> +		goto free_buf;
-> +	}
-> +
-> +	/* Store calibration data for later use. */
-> +	clb->p1 = buf[AT91_SAMA7D65_ADC_TS_CLB_IDX_P1];
-> +	clb->p4 = buf[AT91_SAMA7D65_ADC_TS_CLB_IDX_P4];
-> +	clb->p6 = buf[AT91_SAMA7D65_ADC_TS_CLB_IDX_P6];
+The only thing that can be done then is to accept whatever the current =
+change
+is, and ask rust-analyzer to reimport everything and reformat.
 
-only these indexes and the MAX check above make this different from
-the existing function.  Maybe we could just store those instead
-of a function pointer in the device type specific structure.
+IMHO, this is not great.
 
-> +
-> +	/*
-> +	 * We prepare here the conversion to milli from micro to avoid
-> +	 * doing it on hotpath.
-> +	 */
-> +	clb->p1 = clb->p1 / 1000;
-> +
-> +free_buf:
-> +	kfree(buf);
-> +	return ret;
-> +}
+=E2=80=94 Daniel
+
 
