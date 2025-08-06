@@ -1,192 +1,127 @@
-Return-Path: <linux-kernel+bounces-757959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893B2B1C8D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40720B1C8D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DF03B06D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABB717DCEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA3F292B45;
-	Wed,  6 Aug 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A83B292B35;
+	Wed,  6 Aug 2025 15:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PrZg0tBh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Mlrgkfhp"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECC024503C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A118D1E2823
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494519; cv=none; b=U5+uLV92SXECStQGQ/nNGlFoqGyURhaFMttWqAftjUfLllGlAFLlWWWk3fVJUPJvEvjp2jkTkRsKdWTYT5Jjuok7Gx3BPGSXH8NJfoNsWPbChBRO9WS2lz1WQ+BU/uFEcsaHq92czHm51bkah9bAJKiWxyx2h3BG80+9zXk6VyI=
+	t=1754494601; cv=none; b=hZETeB1sQcizodkehBCQZEpoBG1CgKZPrU+lMZbjB2L6uVNhLijOre6L2uf8URIqqpgo0Dop7GP+mecgfyC/+d9ZCyG3uDgSRqlqtiI7ra7skVQredPMYBbbAt8TE45r6fKYg6xKbWfu9GWbr0u508qcrwFe8cZZYCD/v0KmWY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494519; c=relaxed/simple;
-	bh=cF98SEkmgLDyuUz5la2IFBq9eSKef3X/kl1+HDLc3So=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V/IVEPShaTZ70j+iHzNiOOdtxMKiL1wvGUK28aRmjKPdUExpdILNrRmmFuQEJFdD7C+M94//O9oa0gSrnJfKXxYBwRSkGiQLY20hw0DJOLxoSsigmNoRY2wnuKy9fgC1On/mqCcoSmS4f1BzvOxpV+Fwc9aWLgT+HPsHpnhire8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PrZg0tBh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754494516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KdUYeA7YCatcEo56/VENniS5EQAYeVyAwozRoB1GUX4=;
-	b=PrZg0tBh5oG4WKgvbB0eyQed3nN6xBLxxbFOJlFoQSlO9iReTeBUAsA12Z3t31JEL/zjRG
-	BL32sX4JytPdSF69R0Jh0z0fT3kWPndit5YNkW/NuGBIjxyKGOKGCQHhAuA9GjwVLX/3pl
-	CUXDArtPjrNrBBEXcqWNKBH4b3Cm4tM=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-550-ti5M1cX9M_Clvkgns-JvfQ-1; Wed, 06 Aug 2025 11:35:15 -0400
-X-MC-Unique: ti5M1cX9M_Clvkgns-JvfQ-1
-X-Mimecast-MFC-AGG-ID: ti5M1cX9M_Clvkgns-JvfQ_1754494515
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88185368a51so26856339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:35:15 -0700 (PDT)
+	s=arc-20240116; t=1754494601; c=relaxed/simple;
+	bh=uvmxOPt36TrYQmAZH5PJimtskptI3m4APwNFvRAT5p0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uGBhEEgQnhWc9QOGLc5R0G2jXLgwwjVmcnUXLRG1R4j6HrlWhkRs76udQUxwzWeD+kGbx6W9qpG9wtgsgTERCvePLXwxAVdEECdD9ZnsPtw7KCnFfIH0zBMzkKfe7gxnwSZTu30COS8w2uWVy/QgWivU9846Y3LGRtqeM8pc44k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Mlrgkfhp; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61997c8e2a1so18020eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754494598; x=1755099398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=thKq8nqRZOrjc9MmhrunTNzuRRm/Pq05XYSm+m11iWc=;
+        b=MlrgkfhpSclxFqg9LOKqOdeMYXIsk2PCUGRpWGY/tEXhuPHPMcj5gZ9/zrE1+zsIkK
+         Y/q5narRBlPtijtt+TCUOW9l8jIy/6jJx0+IhHzWKzEpV/I4PAb7ILSIfRdzKLZWhKgu
+         uNxU0aWrLh9EbZzyAZ/0f+W/EhB+yR6eteueaulYUhTkBW/GH0YxKjiQXsQc+8tvgZsE
+         yoehWtAwf6YlLjxfAFVuqo1aNTTfLsn/1vpDk8J7llrGzqEJ4SHsMpssA3gmpg+YiWsB
+         mQC4csXZR6DCFAYI8izDowXzxdClgJbvyjY1112gPT9un1jQ0/SEjMvBP93x8Ib73xUg
+         avwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754494515; x=1755099315;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdUYeA7YCatcEo56/VENniS5EQAYeVyAwozRoB1GUX4=;
-        b=ipi5GEB7U6JmZOx45JO6wjqoNabmjfJenCYRAYO+XbKwHfdqUDISycoSSiSQzCQxPo
-         1xx3zBsFj5VjkiOVDjYekPQDJvowRbeEPcEiB3lb0O+rDEmJ9CCU+mL38BQgHeaWfcxr
-         p06n8FCeUx9+e7R+ifw//wJJkmrKmq9RU0mHmZn286HYa93kKAl/2PeuLPL7nA0VTtkQ
-         ug2nVJH7THcW42VVaaLA1t6hmUWBTsI2U8tuDV84iCmv8Qyc+o1Z77NTdMToRRGMX/rS
-         Z9uL/mtgfljcvuVopZW825IYEM2zIdQlJBghoqeyb31BFlSqSjAO8CoZ9EYaIY9cRN7k
-         vdig==
-X-Gm-Message-State: AOJu0YyeYcPhTgYSNHRA8XTedrj5VY4P+Xcdyw1fKAd9irHzuVe6kikC
-	avsIdDUJ4LOLo3khWw3zxSj9Mg+yayKzu/kFFM/OHoU3XuyAe9UCx1Z6MCHFxY3rGadlxhPp6rq
-	HFw5D+Y5mnmmWPofbebjaoYyhgr0VJFD0TV1TTKUhq86/BoiCennFzoOPe0fAk1fQvA==
-X-Gm-Gg: ASbGncvfAaHdoNGcTDd+Yqr+XyZdHeJFTzU6/DzcJlhL1PJsMvNOBlwP2AKm1sdQjYR
-	ORXBK9/lzlC7x4pJqJhEpcXfumzWqDLqqfvbBhu71ZZVrNaam6HR+e+sWxr5lKLQbJ+qL3m9AeE
-	9Az+r5fMgvgg8kxMnhP7OwPWZKs03trKxGTf0LJB3OchT3KTG9PMpeR+vOYySTvvXawIeRlcM6P
-	kVQsmgvRYxjT5IWLB9r8UFflpdyH8eTNdUhOEWH7HU9skRmy+014bfRic3g7CUImxRuHGxW9xh9
-	6NmzIC3kWAvxQQFe76bR2vY/LtzflWy0MpPMiGMUW5s=
-X-Received: by 2002:a05:6602:3407:b0:881:982b:9963 with SMTP id ca18e2360f4ac-8819f15d6eamr165283639f.3.1754494514872;
-        Wed, 06 Aug 2025 08:35:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEr61K454O/LcAG5ElZj+GaCuS+x7EaUPT+YI54dzPgtM40KpgzZ/COM65VNEppBUAYn+Bk5Q==
-X-Received: by 2002:a05:6602:3407:b0:881:982b:9963 with SMTP id ca18e2360f4ac-8819f15d6eamr165281739f.3.1754494514338;
-        Wed, 06 Aug 2025 08:35:14 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55da3351sm4982001173.87.2025.08.06.08.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 08:35:13 -0700 (PDT)
-Date: Wed, 6 Aug 2025 09:35:11 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org"
- <kvm@vger.kernel.org>, David Hildenbrand <david@redhat.com>, Jason
- Gunthorpe <jgg@nvidia.com>, "lizhe.67@bytedance.com"
- <lizhe.67@bytedance.com>
-Subject: [GIT PULL] VFIO updates for v6.17-rc1 v2
-Message-ID: <20250806093511.2909a521.alex.williamson@redhat.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1754494598; x=1755099398;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=thKq8nqRZOrjc9MmhrunTNzuRRm/Pq05XYSm+m11iWc=;
+        b=ZZOsvrO2sxO2xLx19QYmGqwh6QMcOflrfRqwkySUa76xcZz46T2qxjCdOU6D5bWf3X
+         bqFbq6Ks347qh2+eDFFKaJ/GPlptuijWZ2WFQiG5W8qX/bFJR/ZVAJ4UrvLQ5QHcxBP0
+         rLb9D2nilpoOC8I9a/HWLepXPIf3Chuytwti8r6lV/ckb5SZ1/HYv/bU+bBZQseJjMMl
+         z4+VONxnjtufpSsDQjl5Nq2CGClMvBrOXUrw9hk4hi74K9kR7vRVxjs+KCF46m3OT/B0
+         Ydl0RI7+Uifd8QLBUijrljQMt430ZzhmbdgRMqDZcUBrhoHmMJAoJXauHmblwZtqVRqx
+         WDyw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2v+INNd9fPHAAEF9M0tLPt3IXloBIGM1DkCPTYtOZ6lYwjlvWckT264K4YHS6TOB2mqpR4EeDAtscQMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv2oUK3girVzw3d2O0A05wc6+MwkQYy9SfNDdyHC5rZmWR1gOo
+	BXuiL4mX3WEFTs0VGBVIqk4qJaSWkvyNQPydjiCgGw50ngptaUjjhkWMJGiLDUJoMfM=
+X-Gm-Gg: ASbGncuGN7pkmYVUjlXvshNdGSHRlq3LlHLPshJlvVysii7NSjgE20QztiKcVGljovN
+	3i5cqQ+4d/HafeT3jB8XvipSibdF2w1bGZH71plef9U4RHBzCB2WrhTcHfHgaaTHdLeG4jO3ZO1
+	yYToqjMWOtyFIaqiTvGuK+ral6t5Q09G4PArem+r+geh/+4VdEeec1D9Dvjww3hfOvajKVxDRna
+	Ixr98x9LBn7MAUpMLE52yGGPe/ZvAwltwryK2HF9rA9FnWd6HXjClJx43wc3XduIyxmdraSOhDO
+	62CbFzfZtq4nIUa5tLkkvmYk89CWD1SLvzSaXYUEL9z2Tswh0Ur0cMf+/nQXubcGT+3VnAfgID7
+	MmPPqjn0yH2uJXU/RgfL/QPQbC+NrdkUhp6R9kbXbAU9Jb6JK45CrxmmyzAaCRgEAERf1VsvFuw
+	4=
+X-Google-Smtp-Source: AGHT+IEgpLxbOH1IdG1r864d3lWsygwTIH9kiW5cLmLAD0mJvYuFu4isOEti/2PmnFdeRsjTDRUgUw==
+X-Received: by 2002:a05:6820:999:b0:619:a34b:3e29 with SMTP id 006d021491bc7-61b5f62b957mr1973618eaf.1.1754494598540;
+        Wed, 06 Aug 2025 08:36:38 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-619705183bbsm2402087eaf.10.2025.08.06.08.36.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 08:36:37 -0700 (PDT)
+Message-ID: <6397c502-26b2-4fdc-825c-2f666c43ea95@baylibre.com>
+Date: Wed, 6 Aug 2025 10:36:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: ad799x: add reference voltage capability to
+ chip_info
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Stefano Manni <stefano.manni@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806090158.117628-1-stefano.manni@gmail.com>
+ <20250806090158.117628-2-stefano.manni@gmail.com>
+ <20250806155853.00003f0b@huawei.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250806155853.00003f0b@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 8/6/25 9:58 AM, Jonathan Cameron wrote:
+> On Wed,  6 Aug 2025 11:01:57 +0200
+> Stefano Manni <stefano.manni@gmail.com> wrote:
+> 
 
-I've dropped the series with the troublesome mm helper in this pull
-request.  We'll continue to work towards something acceptable there and
-re-target it for v6.18.  Thanks,
+...
 
-Alex
+>> +	else {
+> 
+> 	} else {
+> 
+>> +		st->vref = NULL;
+>> +		dev_dbg(&client->dev, "Supplied reference not supported\n");
+>> +	}
+>>  
+>>  	st->client = client;
+>>  
+> 
 
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
-
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/awilliam/linux-vfio.git tags/vfio-v6.17-rc1-v2
-
-for you to fetch changes up to b1779e4f209c7ff7e32f3c79d69bca4e3a3a68b6:
-
-  vfio/type1: conditional rescheduling while pinning (2025-08-05 15:41:19 -=
-0600)
-
-----------------------------------------------------------------
-VFIO updates for v6.17-rc1 v2
-
- - Fix imbalance where the no-iommu/cdev device path skips too much
-   on open, failing to increment a reference, but still decrements
-   the reference on close.  Add bounds checking to prevent such
-   underflows. (Jacob Pan)
-
- - Fill missing detach_ioas op for pds_vfio_pci, fixing probe failure
-   when used with IOMMUFD. (Brett Creeley)
-
- - Split SR-IOV VFs to separate dev_set, avoiding unnecessary
-   serialization between VFs that appear on the same bus.
-   (Alex Williamson)
-
- - Fix a theoretical integer overflow is the mlx5-vfio-pci variant
-   driver. (Artem Sadovnikov)
-
- - Implement missing VF token checking support via vfio cdev/IOMMUFD
-   interface. (Jason Gunthorpe)
-
- - Update QAT vfio-pci variant driver to claim latest VF devices.
-   (Ma=C5=82gorzata Mielnik)
-
- - Add a cond_resched() call to avoid holding the CPU too long during
-   DMA mapping operations. (Keith Busch)
-
-----------------------------------------------------------------
-Alex Williamson (1):
-      vfio/pci: Separate SR-IOV VF dev_set
-
-Artem Sadovnikov (1):
-      vfio/mlx5: fix possible overflow in tracking max message size
-
-Brett Creeley (1):
-      vfio/pds: Fix missing detach_ioas op
-
-Jacob Pan (2):
-      vfio: Fix unbalanced vfio_df_close call in no-iommu mode
-      vfio: Prevent open_count decrement to negative
-
-Jason Gunthorpe (1):
-      vfio/pci: Do vf_token checks for VFIO_DEVICE_BIND_IOMMUFD
-
-Keith Busch (1):
-      vfio/type1: conditional rescheduling while pinning
-
-Ma=C5=82gorzata Mielnik (1):
-      vfio/qat: add support for intel QAT 6xxx virtual functions
-
-Xin Zeng (1):
-      vfio/qat: Remove myself from VFIO QAT PCI driver maintainers
-
- MAINTAINERS                                    |  1 -
- drivers/vfio/device_cdev.c                     | 38 ++++++++++++++++++++++=
-++--
- drivers/vfio/group.c                           |  7 ++---
- drivers/vfio/iommufd.c                         |  4 +++
- drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c |  1 +
- drivers/vfio/pci/mlx5/cmd.c                    |  4 +--
- drivers/vfio/pci/mlx5/main.c                   |  1 +
- drivers/vfio/pci/nvgrace-gpu/main.c            |  2 ++
- drivers/vfio/pci/pds/vfio_dev.c                |  2 ++
- drivers/vfio/pci/qat/main.c                    |  5 +++-
- drivers/vfio/pci/vfio_pci.c                    |  1 +
- drivers/vfio/pci/vfio_pci_core.c               | 24 ++++++++++------
- drivers/vfio/pci/virtio/main.c                 |  3 ++
- drivers/vfio/vfio_iommu_type1.c                |  7 +++++
- drivers/vfio/vfio_main.c                       |  3 +-
- include/linux/vfio.h                           |  4 +++
- include/linux/vfio_pci_core.h                  |  2 ++
- include/uapi/linux/vfio.h                      | 12 +++++++-
- 18 files changed, 99 insertions(+), 22 deletions(-)
-
+I would just completely drop the else. st->vref is already
+NULL since st is zeroed at allocation and the message is no
+longer useful. Previously, it warned that the devicetree
+contained a vref-supply when the chip didn't support it.
+But now no message is printed in that case and this message
+would be printed on all chips that don't have vref-supply
+in the devicetree when that case didn't print anything before.
 
