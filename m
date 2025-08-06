@@ -1,378 +1,224 @@
-Return-Path: <linux-kernel+bounces-757713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353A7B1C5D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC060B1C5CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD953B01FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6DA188B9E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FBF28BA98;
-	Wed,  6 Aug 2025 12:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2289528A410;
+	Wed,  6 Aug 2025 12:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eftaXP3d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FqQYuTBp"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013018.outbound.protection.outlook.com [52.101.127.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE7728A414;
-	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754483241; cv=none; b=f3M+S5NVimP5u27zf/feS9x9VE56y3GdAXhvvDjjxBQ2VT+TbQd6smzEUTGHxB4gIeJ/a5gwfv9aK4EOGzegNVvrduRlkdrU4KU2ZFpv4IhBIaJjR6sIhOGitgY0I5irIL3QNPboVYHPIV1ZFfZ+cV9p7awtGFE5qPM3MASQ60g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754483241; c=relaxed/simple;
-	bh=zvBySR+OrKHdSVdITL/UagVrm1y5io96YNnNNFpt9ss=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fJZ4J/KjeVGPFLRytVzAIv3Jid0DdY982CJSNflXgpai7BE+ZLQwykNUIgNAnjhf1XIEg9qo3xcB5EmgOP02w6NTzda8oty9iQ2CiFEHu5jio17bvEtuGH+151AxJ6+QDIKC0PxHEswq/bPyMXDzIkSbwFOonR3Zv4LL51l+Ci0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eftaXP3d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BF009C4CEF7;
-	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754483240;
-	bh=zvBySR+OrKHdSVdITL/UagVrm1y5io96YNnNNFpt9ss=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=eftaXP3dsYn1h4yPk/joMaK/zj7hN4iKsqk0pHfyr3R8tdiC4TFlolQJYyqkrwBBE
-	 snT4y/xOp2PkdLanWMQ26gJ81hdpH3rddQP8TzCZPXT06K31XUm1SEqC0ZY1nPe3cE
-	 u+NxQJA2JdrnA9p9TN0y3H43RcCgqredO/RGiRGbWUFx7lkVebUstzD57JdvYp7lAN
-	 f7r1N6zRyyoSKp2VKc3HcpfNQ4HkjT/F/VLBOBqBakAr9+eWVO2zXRx0Dc1DWN4bvW
-	 +XRcs7hlPefVXkHazuptc1pOPRomeVnSvBxfSKVv+gc2soHvExB58KpxkKdr6+VLXN
-	 UqegaXecWniDw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B556AC87FCB;
-	Wed,  6 Aug 2025 12:27:20 +0000 (UTC)
-From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
-Date: Wed, 06 Aug 2025 14:26:40 +0200
-Subject: [PATCH v6 2/2] riscv: Allow for riscv-clock to pick up mmio
- address.
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DDA42A9D
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754483240; cv=fail; b=HisY/jcCn5PrfZNcmk+WGw3CNKhTtcSw4aGSgKmFQdTiGylC+C5eIIb1jE+ubnnX3OFDkcosplznTvnEJrVpmytlsqh69jXdQ9Js4iFRcWYCz2aAXdTlshzDWEsDVvMUHIp+tzjeI3Xo9sZgFlBWKdlPw9q8C3YqK+5Snhx0IZ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754483240; c=relaxed/simple;
+	bh=Tt2IpuUkcGIFISGG/coyC6LD/R2FpGP7dMSPTg5balQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lHFpPqaxHScoshuttcFBIMW9mquM3yGvj6Lf6FiTv8Mqtt9zwV6RRIo3khxt3V/fhcs79kcCQIby+rboDp06b7fUzQ3n4V5wwS7omfDTexww6+tRXmwU8d2rSf9ekkuK3Q/9gwIvtBdS2LSjqx0SH9tBZK26ND6d+Gc6DZb2RtY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FqQYuTBp; arc=fail smtp.client-ip=52.101.127.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LhXCmlrPmy139aBUKUPpNQRXUA3MliVS2YRwoEygSu7srV79pjWjVpcKMuVQO0L6UUyqs+RQN1ZxIBuDrGnvlRoR55BHlPVGsAUb0aw4T+eIwW4+pQYv6OKMM25qqTP1NfjQ4Vjq7fXkw01JE3tn893NhH/JgZK9mnTGuinFYlIDWNcgowh2ReOPHm3IkCYycX9XhLvY63N9HZRySw6vN0jtR2AV9vLyG7rYVOlgqO/6G1EbWaW8GJa6k5JFnzoZ4VX2u9ONOy0bkyRWkO3xVrymbXUg0tstukAlh3sszfU6w4CwvowX038Zb3UXlGSApWsxjWAIFnZmkfuiFkEw/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4LAHMW6OTobZTbmTiBJTIMwWXvMRo8AaJeS4IfY4QFo=;
+ b=vAiJuk68xl70jT9fIHzudgb2Ej8yUxo2sBkjlOgj4NXSLOMDEZmiH35BHYA8x4HrsekXiOPGUSktZMPsP0qSC90ZbBi4O9BJUBAIp2VEjb+MF8eVF4kbdK9eeKMvir1q86nGS6oTYotnfE+EvdMPNRbF6a0kYBBXtmHzLUhmwoo/WhFLC9sWW2tT9WF/WB65rrVbfiVzcv4h7SbUysx9PAB7euvv7ddHDI8pbJiuf3el4w6dgcMds6Vh2hoe+hyuPyIhyoNcekgiI/2u7RsMkpl04Vc6qJPMcen9F06yPbNNpEYEJeXPnLTd0Y1CR/G6NfJxB9G+EGU3p+PtJYoybg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4LAHMW6OTobZTbmTiBJTIMwWXvMRo8AaJeS4IfY4QFo=;
+ b=FqQYuTBpU9sZ2e2URxMYSUvOlFr3rmafkuv0vyF3UcB0SsKlsbZpMNRmvW4Min+TPw694WePlxWVzcQ03RqfjLeXUa1gX7eTTvVLAbeAwLJF4dGdOb+lzVg8rCxbw+vK7uhnP8WCUajfAR2Jqq3+issYd773iDfx7hi0FhtAHsAPzjQd0Y/QPI3J9Pi9GepFhoFuvojNDESBNhG1TB0V52uo+ooCPIwFRl24Ck8OzbrdfSALDbSsmUH2RK15ge4UcirjQen3L6oBpkfB4jEQCsKciAUPDgOJ60clTC/b5bW0X8NrzjJmAH3HmoFMh1+PXnrgJPApTR/Bv9GvHL4O2g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ KL1PR06MB5971.apcprd06.prod.outlook.com (2603:1096:820:d5::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.18; Wed, 6 Aug 2025 12:27:14 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.018; Wed, 6 Aug 2025
+ 12:27:14 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH v2] dm: Use vmalloc_array() to simplify code
+Date: Wed,  6 Aug 2025 20:27:04 +0800
+Message-Id: <20250806122704.378122-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0010.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::17) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-riscv-time-mmio-v6-2-2df0e8219998@htecgroup.com>
-References: <20250806-riscv-time-mmio-v6-0-2df0e8219998@htecgroup.com>
-In-Reply-To: <20250806-riscv-time-mmio-v6-0-2df0e8219998@htecgroup.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, 
- Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
- Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754483238; l=9241;
- i=aleksa.paunovic@htecgroup.com; s=20250806; h=from:subject:message-id;
- bh=UCk+odaPh5M8tm0gjN0a88ikEvJbr/kzBQOSfhNUx/o=;
- b=ikwUB3fh63NNX8zk5xnXEget2BD1Ql7DmaQFa8rGgP2pTAoNZutCgkzpQscgCiJKCdtlYxm1t
- 7HtEWkNx3VPCn2nYRW73nxK0G+BTkjJ8FW0WqaxRHlos4QWIaIqtRl9
-X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
- pk=Dn4KMnDdgyhlXJNspQQrlHJ04i7/irG29p2H27Avd+8=
-X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250806
- with auth_id=476
-X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-Reply-To: aleksa.paunovic@htecgroup.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KL1PR06MB5971:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31f88a95-aa3e-47c2-b784-08ddd4e49310
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yGL2+FJVmxzHjv5NJQoajxWpoz35srUktUdODwGMImRU/S8WkCemQVK6/WWy?=
+ =?us-ascii?Q?Oq7GCY/od0oFGUhYyuH7bw2+04n53+ml7rlFPMZ+sEEd5XKuF7QL685p1lfb?=
+ =?us-ascii?Q?uvKxmkO4VHsIR9V5a7nNBnm03CZQnYXySbcf699RSU31NpaiBEd5LOmG3fVf?=
+ =?us-ascii?Q?ptwIaG3nnqTO/5I8RmpzxbvgHQZgpZ/MfUtY2EcJ3hI1VT9ct70igqbc4bKZ?=
+ =?us-ascii?Q?MFcvb5oI9BwalrDf9syBatuTbHw2EE/WujL84ISgL+3dMg015/6O/+6RrajC?=
+ =?us-ascii?Q?sWjup6hkv4CFFOjc7X5RN+GqBkpbGPQ+1KaGwjAtZd+nDDGy9E9Zou/YySu3?=
+ =?us-ascii?Q?+Y8nT3zr1L8Fm9pvMOkvgwh+i1L5460cdPhaoPUKeiqa2OwB/KphxXcRgqjV?=
+ =?us-ascii?Q?FJ3VEBnUPdUMPxzcinvsLgjY/hBBpbtOy8r6odoIgo8Pc0PKRvXWtAIiIa/W?=
+ =?us-ascii?Q?6Wh7I1soTVBi+KV+VY5oGeN3Z3XY0nkqobNvXxcRDgoKjgz+torYvA4/So/k?=
+ =?us-ascii?Q?Y96mBdiP7JYeBIdvxteo6eR73E8PgbXllv2F+UYH6MKXzHQkgiPC95mEA+DZ?=
+ =?us-ascii?Q?y/10YzVMXXg1GGoylkXvFWZhdHQGrkAopim/m3GHFsAWFK5jhNfsC+WOY6+5?=
+ =?us-ascii?Q?ragmYcc4nS2jbjAeFWNh2VRQGPt9h5zp5Cvpni4BNM40gQEhrv2i58iNOjo0?=
+ =?us-ascii?Q?MGTS/vdoLOvn+UoPDxikN8YSfPdKPYf1mWqaGB01saeDwVKeZCnj8XCnvfGR?=
+ =?us-ascii?Q?BDcnQGjNNIj2dJiEUKzwUBvLMoFlQY6vNOcIJoZH8kPmV0LnjS+hz0Djs5oz?=
+ =?us-ascii?Q?SkoyuPW7ifNLGSKrsFDXjT4a23fvwHzAi9/PCdsOFJFUamV5OPf0iq5ZTZxW?=
+ =?us-ascii?Q?E/M86SmnzopX3qvn7uDHyXGTavgbujz2y8Rgi1cImlA02ywpssp3+sBclYyO?=
+ =?us-ascii?Q?efuAVG1ypOxSLU4o5CvASD7nWnIRKntBI0Kga3E5EqsoiH9g/Z6XHdHpu/Fy?=
+ =?us-ascii?Q?ctirpnvfuxP1FKQZlZ0gZ5BZtCND0E3kmzt1lIHcjv70afHLFK0wqceRhKeL?=
+ =?us-ascii?Q?/RYSG5+QNwUW3IfoKxFNlKHSGQBOi/iemBeNmApa/onYK/aVQFPyG/OIJOne?=
+ =?us-ascii?Q?ROJkh+OyyHtD7ms1lzGjoqyXBfkljnH8sCVkv5oeATt9IvLq2R24vySPpHW+?=
+ =?us-ascii?Q?ZBDGHw/ncHrEe5WKxHOqftZyhAfh34Cd3eSCGzAzkHRBwOc2C9xOyFxxbO+i?=
+ =?us-ascii?Q?nEnSOEcVh7GWMVPwQifeCAfb/fL7BCien+JStBmC/CZCAqvDLCnlXzGo1Cdq?=
+ =?us-ascii?Q?IgNiUaKkd9jYASFnDks/UnfW2LqE8cM0RQ2p7+9xZ450XgbYSiFgDInQvZ51?=
+ =?us-ascii?Q?SEdqTK7yiTI8APcCGV9KmyBGEe/v7OLkNIi7q6LG8+XTrwp4DsfdZYIY2Urm?=
+ =?us-ascii?Q?U0tkSCxICTAzQ2+Ina5sCXU7nMPObE4dJYJ5ryvvQ6QrdftsAng4sg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Zc7YwBJSYvBYvK+KFRq3JCFBwA623W7UwOwSWX5QBqB9N/83P88y0V/s5qWX?=
+ =?us-ascii?Q?4oy9lrS1f3fyeJHmvkG/cCYfnV/BjEe8QI9E5OXBtHZKeunCRBx8ALFK2LRN?=
+ =?us-ascii?Q?Vb26QN9zYsf+R0f+EtoDydDZGPIjmuH9jF7PWqoHKTplmv4eocCs0B2+aOBX?=
+ =?us-ascii?Q?iEyppCRufJJyFo9EedTcCS6mOcewhvY11CaacGCd8MouYgS6abSiex9LlHkl?=
+ =?us-ascii?Q?ZDh4nZkPgI7MlgT23Oj5tJ9kAPNiBP3/vodQJAptwDKxdV26Dcg9h92WtBCf?=
+ =?us-ascii?Q?pd0MwWgaVFK9yRdqGX48BiZYzRhm48UO5U8Ps9xUxjbzcc5TUvC0WO68lP4f?=
+ =?us-ascii?Q?jhq9sr/Ekh8WuEsR4HROQIBVXyv+uTP/hPMpAJ7nmqVYS57J8dqxsedfzyOP?=
+ =?us-ascii?Q?2lYYOQQbiMH57M/8I+KSs4EzMd6APsPgkd0wo6njGvZ5TI21tL2s35vKhfUs?=
+ =?us-ascii?Q?Ttwa4zIdCGKxIyati6cBlEWSB3apkm3GOtUp6Tk8pTGcQ9p8MBQy+aY9e4wL?=
+ =?us-ascii?Q?F5upPWNcJlAQUpQGKFyVbiVzpunFbl3x80OtF6bvvvuTDJNC48LTwIXkM2Xt?=
+ =?us-ascii?Q?VqJv+jPRpwoihsqcu6SwHn5BhcjBryJNFxdb9znvKLDeFKoLJQAkVWx2J5Es?=
+ =?us-ascii?Q?uJBOdzQ8AplItj65dx/8KbQKhV9YUWOg1KgQSHe+TeIeLnHOXpDQXMnYXL4j?=
+ =?us-ascii?Q?qrc2aSDoAUuJXzCyjJZslGgqgsVLVZw/v2QtFvtnbxGKuDPyn/RKWpnyaayG?=
+ =?us-ascii?Q?pmuHji69K2viLi/ztSim24u80E6j8akGyA6g9wGeP/Fq7XkbyQkuToXH47Xg?=
+ =?us-ascii?Q?ZILOVAuoLIqQViWrb5JyWY1C2qZqH8fIDOTl2vPLNN4QqPZxAQZLJsHSvy6q?=
+ =?us-ascii?Q?J0C9DcoNb1WsMk5eAo/daHQfnRl13iQb4LQAPgGzokLrq2wOR+SWRa7ObQUB?=
+ =?us-ascii?Q?y9Ibax7X6IwNM62SVn+XBjaN2ucvgQ3SpXPUv3+6mfPTYkraHO8tnGF356VA?=
+ =?us-ascii?Q?MsGgFD/cwIDZGQ5E8j9M54cmTBmeyHhZdt3rxx3zqrUzuvQBE6ZUYj5YbCyx?=
+ =?us-ascii?Q?qB4jOZQHkCkdTMoBK+AjJTSiefODksaP9Z4xu9IXbqinQCdpfFwjPZ4xrURJ?=
+ =?us-ascii?Q?2wzeGVEyRDQB8fN7ajf7tpolB0TMQbqKC63MIrRjpMfX+Y8qg264B1szUEgF?=
+ =?us-ascii?Q?yf80TJqtrV4Z1hwLUr9kf8kDC0VhjZPZXSSSCnOp9iUG/VkGawp13GrDWaFb?=
+ =?us-ascii?Q?b9udJHzqcJmYLK0X3+msFqBrSySu9tmY8hUVgzC4BrdWpPBaBVU2WJ1i3tjL?=
+ =?us-ascii?Q?hkzDri9A+PdOp5ApvluYsNSmhKyGWWANiwqdIqMoMxoGVsXxYhlScrbb3f4P?=
+ =?us-ascii?Q?+LOMLOjOdqTn0V0Rrw6O1K/MZeiJ5Q98rwEk+sYO84ZTgmGF2tpyY5M0nZaH?=
+ =?us-ascii?Q?9xfRx/eFc0rPgPEbXh8Z/xxfS0917p74zu4In+1FH5toWsab7XCK3dzryCi+?=
+ =?us-ascii?Q?izp+n/zhtaFcX5D6K9FkGWEvG4RtcxHrAy807XixFZc4T7pgHrQrCsQMTuVT?=
+ =?us-ascii?Q?bFFevsTkEv339oPFpQXZBz1J+PjSPAsCVAwFu1BP?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31f88a95-aa3e-47c2-b784-08ddd4e49310
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 12:27:14.3574
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BwNZQpGfu4wtIv8NocVNGYzkY4tUpR/c5QsXa0g8i5e08YRq91SuvC2n35E3/HTIF9Se+PXd5WaGA3tmyVtHxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB5971
 
-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Remove array_size() calls and replace vmalloc() with vmalloc_array() to
+simplify the code.
 
-Allow faster rdtime access via GCR.U mtime shadow register on RISC-V
-devices. This feature can be enabled by setting GCRU_TIME_MMIO
-during configuration.
-Reformat the clint timer to use the same mechanism if RISCV_M_MODE is set.
-
-Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
- arch/riscv/include/asm/clint.h    | 26 ----------------
- arch/riscv/include/asm/timex.h    | 63 ++++++++++++++++++++++-----------------
- drivers/clocksource/Kconfig       | 12 ++++++++
- drivers/clocksource/timer-clint.c | 20 ++++++-------
- drivers/clocksource/timer-riscv.c | 34 +++++++++++++++++++++
- 5 files changed, 90 insertions(+), 65 deletions(-)
+ drivers/md/dm-cache-policy-smq.c | 2 +-
+ drivers/md/dm-region-hash.c      | 2 +-
+ drivers/md/dm-switch.c           | 4 ++--
+ drivers/md/dm-thin.c             | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/riscv/include/asm/clint.h b/arch/riscv/include/asm/clint.h
-deleted file mode 100644
-index 0789fd37b40ae06a11f0b5cc0f01dba591b4cf16..0000000000000000000000000000000000000000
---- a/arch/riscv/include/asm/clint.h
-+++ /dev/null
-@@ -1,26 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (C) 2020 Google, Inc
-- */
--
--#ifndef _ASM_RISCV_CLINT_H
--#define _ASM_RISCV_CLINT_H
--
--#include <linux/types.h>
--#include <asm/mmio.h>
--
--#ifdef CONFIG_RISCV_M_MODE
--/*
-- * This lives in the CLINT driver, but is accessed directly by timex.h to avoid
-- * any overhead when accessing the MMIO timer.
-- *
-- * The ISA defines mtime as a 64-bit memory-mapped register that increments at
-- * a constant frequency, but it doesn't define some other constraints we depend
-- * on (most notably ordering constraints, but also some simpler stuff like the
-- * memory layout).  Thus, this is called "clint_time_val" instead of something
-- * like "riscv_mtime", to signify that these non-ISA assumptions must hold.
-- */
--extern u64 __iomem *clint_time_val;
--#endif
--
--#endif
-diff --git a/arch/riscv/include/asm/timex.h b/arch/riscv/include/asm/timex.h
-index a06697846e69521caceac2ae4d4e040d227d2ae7..fc8e18ad628e6d68bf9703688f42e76e1cd45559 100644
---- a/arch/riscv/include/asm/timex.h
-+++ b/arch/riscv/include/asm/timex.h
-@@ -7,31 +7,25 @@
- #define _ASM_RISCV_TIMEX_H
+diff --git a/drivers/md/dm-cache-policy-smq.c b/drivers/md/dm-cache-policy-smq.c
+index 2ed894155cab..7e1e8cc0e33a 100644
+--- a/drivers/md/dm-cache-policy-smq.c
++++ b/drivers/md/dm-cache-policy-smq.c
+@@ -590,7 +590,7 @@ static int h_init(struct smq_hash_table *ht, struct entry_space *es, unsigned in
+ 	nr_buckets = roundup_pow_of_two(max(nr_entries / 4u, 16u));
+ 	ht->hash_bits = __ffs(nr_buckets);
  
- #include <asm/csr.h>
-+#include <asm/mmio.h>
-+
-+#include <linux/jump_label.h>
+-	ht->buckets = vmalloc(array_size(nr_buckets, sizeof(*ht->buckets)));
++	ht->buckets = vmalloc_array(nr_buckets, sizeof(*ht->buckets));
+ 	if (!ht->buckets)
+ 		return -ENOMEM;
  
- typedef unsigned long cycles_t;
+diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
+index a4550975c27d..e9b47b659976 100644
+--- a/drivers/md/dm-region-hash.c
++++ b/drivers/md/dm-region-hash.c
+@@ -206,7 +206,7 @@ struct dm_region_hash *dm_region_hash_create(
+ 	rh->shift = RH_HASH_SHIFT;
+ 	rh->prime = RH_HASH_MULT;
  
--#ifdef CONFIG_RISCV_M_MODE
-+/*
-+ * Used for directly accessing MMIO timers. For now
-+ * this includes the M-mode clint timer and the GCR.U mtime shadow copy.
-+ */
-+extern u64 __iomem *riscv_time_val;
+-	rh->buckets = vmalloc(array_size(nr_buckets, sizeof(*rh->buckets)));
++	rh->buckets = vmalloc_array(nr_buckets, sizeof(*rh->buckets));
+ 	if (!rh->buckets) {
+ 		DMERR("unable to allocate region hash bucket memory");
+ 		kfree(rh);
+diff --git a/drivers/md/dm-switch.c b/drivers/md/dm-switch.c
+index bb1a70b5a215..50a52ca50b34 100644
+--- a/drivers/md/dm-switch.c
++++ b/drivers/md/dm-switch.c
+@@ -114,8 +114,8 @@ static int alloc_region_table(struct dm_target *ti, unsigned int nr_paths)
+ 		return -EINVAL;
+ 	}
  
--#include <asm/clint.h>
-+extern cycles_t (*get_cycles_ptr)(void);
-+extern u32 (*get_cycles_hi_ptr)(void);
+-	sctx->region_table = vmalloc(array_size(nr_slots,
+-						sizeof(region_table_slot_t)));
++	sctx->region_table = vmalloc_array(nr_slots,
++					   sizeof(region_table_slot_t));
+ 	if (!sctx->region_table) {
+ 		ti->error = "Cannot allocate region table";
+ 		return -ENOMEM;
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 007bb93e5fca..c84149ba4e38 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -3031,8 +3031,8 @@ static struct pool *pool_create(struct mapped_device *pool_md,
+ 	}
  
--#ifdef CONFIG_64BIT
--static inline cycles_t get_cycles(void)
--{
--	return readq_relaxed(clint_time_val);
--}
--#else /* !CONFIG_64BIT */
--static inline u32 get_cycles(void)
--{
--	return readl_relaxed(((u32 *)clint_time_val));
--}
--#define get_cycles get_cycles
-+#define get_cycles get_cycles_ptr
-+#define get_cycles_hi get_cycles_hi_ptr
- 
--static inline u32 get_cycles_hi(void)
--{
--	return readl_relaxed(((u32 *)clint_time_val) + 1);
--}
--#define get_cycles_hi get_cycles_hi
--#endif /* CONFIG_64BIT */
-+#ifdef CONFIG_RISCV_M_MODE
- 
- /*
-  * Much like MIPS, we may not have a viable counter to use at an early point
-@@ -40,34 +34,47 @@ static inline u32 get_cycles_hi(void)
-  */
- static inline unsigned long random_get_entropy(void)
- {
--	if (unlikely(clint_time_val == NULL))
-+	if (unlikely(riscv_time_val == NULL))
- 		return random_get_entropy_fallback();
- 	return get_cycles();
- }
-+
- #define random_get_entropy()	random_get_entropy()
-+#endif
- 
--#else /* CONFIG_RISCV_M_MODE */
-+#ifdef CONFIG_64BIT
-+static inline cycles_t __maybe_unused mmio_get_cycles(void)
-+{
-+	return readq_relaxed(riscv_time_val);
-+}
-+#else /* !CONFIG_64BIT */
-+static inline cycles_t __maybe_unused mmio_get_cycles(void)
-+{
-+	return readl_relaxed(((u32 __iomem *)riscv_time_val));
-+}
-+#endif /* CONFIG_64BIT */
- 
--static inline cycles_t get_cycles(void)
-+static inline cycles_t __maybe_unused get_cycles_csr(void)
- {
- 	return csr_read(CSR_TIME);
- }
--#define get_cycles get_cycles
- 
--static inline u32 get_cycles_hi(void)
-+static inline u32 __maybe_unused mmio_get_cycles_hi(void)
- {
--	return csr_read(CSR_TIMEH);
-+	return readl_relaxed(((u32 __iomem *)riscv_time_val) + 1);
- }
--#define get_cycles_hi get_cycles_hi
- 
--#endif /* !CONFIG_RISCV_M_MODE */
-+static inline u32 __maybe_unused get_cycles_hi_csr(void)
-+{
-+	return csr_read(CSR_TIMEH);
-+}
- 
- #ifdef CONFIG_64BIT
- static inline u64 get_cycles64(void)
- {
- 	return get_cycles();
- }
--#else /* CONFIG_64BIT */
-+#else /* !CONFIG_64BIT */
- static inline u64 get_cycles64(void)
- {
- 	u32 hi, lo;
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 645f517a1ac26d0c12d4b2b46591321ddf6e20b3..fbe4d0d6183ea24f557ce692b8c18e88dcf58155 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -669,6 +669,18 @@ config CLINT_TIMER
- 	  This option enables the CLINT timer for RISC-V systems.  The CLINT
- 	  driver is usually used for NoMMU RISC-V systems.
- 
-+config GCRU_TIME_MMIO
-+	bool "GCR.U timer support for RISC-V platforms"
-+	depends on !RISCV_M_MODE && RISCV && RISCV_TIMER
-+	default n
-+	help
-+        Access GCR.U shadow copy of the RISC-V mtime register
-+        on platforms that provide a compatible device, instead of
-+        reading the time CSR. Since reading the time CSR
-+        traps to M mode on certain platforms, this may be more efficient.
-+
-+        If you don't know what to do here, say n.
-+
- config CSKY_MP_TIMER
- 	bool "SMP Timer for the C-SKY platform" if COMPILE_TEST
- 	depends on CSKY
-diff --git a/drivers/clocksource/timer-clint.c b/drivers/clocksource/timer-clint.c
-index 0bdd9d7ec545839109cf82ad36632889f5b2d2ef..d6ab794741a6b59227827323017a7e6ff830963c 100644
---- a/drivers/clocksource/timer-clint.c
-+++ b/drivers/clocksource/timer-clint.c
-@@ -24,10 +24,6 @@
- #include <linux/smp.h>
- #include <linux/timex.h>
- 
--#ifndef CONFIG_RISCV_M_MODE
--#include <asm/clint.h>
--#endif
--
- #define CLINT_IPI_OFF		0
- #define CLINT_TIMER_CMP_OFF	0x4000
- #define CLINT_TIMER_VAL_OFF	0xbff8
-@@ -41,8 +37,14 @@ static unsigned long clint_timer_freq;
- static unsigned int clint_timer_irq;
- 
- #ifdef CONFIG_RISCV_M_MODE
--u64 __iomem *clint_time_val;
--EXPORT_SYMBOL(clint_time_val);
-+u64 __iomem *riscv_time_val __ro_after_init;
-+EXPORT_SYMBOL(riscv_time_val);
-+
-+cycles_t (*get_cycles_ptr)(void) = mmio_get_cycles;
-+EXPORT_SYMBOL(get_cycles_ptr);
-+
-+u32 (*get_cycles_hi_ptr)(void) = mmio_get_cycles_hi;
-+EXPORT_SYMBOL(get_cycles_hi_ptr);
- #endif
- 
- #ifdef CONFIG_SMP
-@@ -218,11 +220,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
- 	clint_timer_freq = riscv_timebase;
- 
- #ifdef CONFIG_RISCV_M_MODE
--	/*
--	 * Yes, that's an odd naming scheme.  time_val is public, but hopefully
--	 * will die in favor of something cleaner.
--	 */
--	clint_time_val = clint_timer_val;
-+	riscv_time_val = clint_timer_val;
- #endif
- 
- 	pr_info("%pOFP: timer running at %ld Hz\n", np, clint_timer_freq);
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index 4d7cf338824a3b21461c2756a002236dedc48f5f..dcef6f2afd382711559326c419e09630386df7e2 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -22,6 +22,7 @@
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/interrupt.h>
- #include <linux/of_irq.h>
-+#include <linux/of_address.h>
- #include <linux/limits.h>
- #include <clocksource/timer-riscv.h>
- #include <asm/smp.h>
-@@ -32,6 +33,15 @@
- static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
- static bool riscv_timer_cannot_wake_cpu;
- 
-+u64 __iomem *riscv_time_val __ro_after_init;
-+EXPORT_SYMBOL(riscv_time_val);
-+
-+cycles_t (*get_cycles_ptr)(void) = get_cycles_csr;
-+EXPORT_SYMBOL(get_cycles_ptr);
-+
-+u32 (*get_cycles_hi_ptr)(void) = get_cycles_hi_csr;
-+EXPORT_SYMBOL(get_cycles_hi_ptr);
-+
- static void riscv_clock_event_stop(void)
- {
- 	if (static_branch_likely(&riscv_sstc_available)) {
-@@ -209,6 +219,11 @@ static int __init riscv_timer_init_dt(struct device_node *n)
- 	int cpuid, error;
- 	unsigned long hartid;
- 	struct device_node *child;
-+#if defined(CONFIG_GCRU_TIME_MMIO)
-+	u64 mmio_addr;
-+	u64 mmio_size;
-+	struct device_node *gcru;
-+#endif
- 
- 	error = riscv_of_processor_hartid(n, &hartid);
- 	if (error < 0) {
-@@ -226,6 +241,25 @@ static int __init riscv_timer_init_dt(struct device_node *n)
- 	if (cpuid != smp_processor_id())
- 		return 0;
- 
-+#if defined(CONFIG_GCRU_TIME_MMIO)
-+	gcru = of_find_compatible_node(NULL, NULL, "mips,p8700-gcru");
-+	if (gcru) {
-+		if (!of_property_read_reg(gcru, 0, &mmio_addr, &mmio_size)) {
-+			riscv_time_val = ioremap((long)mmio_addr, mmio_size);
-+			if (riscv_time_val) {
-+				pr_info("Using mmio time register at 0x%llx\n",
-+					mmio_addr);
-+				get_cycles_ptr = &mmio_get_cycles;
-+				get_cycles_hi_ptr = &mmio_get_cycles_hi;
-+			} else {
-+				pr_warn("Unable to use mmio time at 0x%llx\n",
-+					mmio_addr);
-+			}
-+			of_node_put(gcru);
-+		}
-+	}
-+#endif
-+
- 	child = of_find_compatible_node(NULL, NULL, "riscv,timer");
- 	if (child) {
- 		riscv_timer_cannot_wake_cpu = of_property_read_bool(child,
-
+ 	pool->cell_sort_array =
+-		vmalloc(array_size(CELL_SORT_ARRAY_SIZE,
+-				   sizeof(*pool->cell_sort_array)));
++		vmalloc_array(CELL_SORT_ARRAY_SIZE,
++			      sizeof(*pool->cell_sort_array));
+ 	if (!pool->cell_sort_array) {
+ 		*error = "Error allocating cell sort array";
+ 		err_p = ERR_PTR(-ENOMEM);
 -- 
-2.43.0
-
+2.34.1
 
 
