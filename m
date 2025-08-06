@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-757962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62E7B1C8DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:38:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E4FB1C8DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBBA3561272
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:38:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B84F4E35E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5CA292B54;
-	Wed,  6 Aug 2025 15:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4491292B36;
+	Wed,  6 Aug 2025 15:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ZEB97zWZ"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rx6I/p8l"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4CC28DF0B;
-	Wed,  6 Aug 2025 15:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB5D2D7BF;
+	Wed,  6 Aug 2025 15:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494702; cv=none; b=FzLH4hM32LcjQQcmySKBYnJGSbjrreGbdzRqikdw0U7wF1m36BU95/PwvIXoDJ122vlfDsKa06I1ZRvQKuoxAn8GWEvoNvM+TStfkkFTnUmRgk1WHo/7g8U8MMRfiHNyg12kQSDmN6RQE25a70pJVwyKr2CanSHeJ7qa9FwseU4=
+	t=1754494720; cv=none; b=KkFcd/woPvbJ50Yddpc6hWyL4sCVcnvpNLgAtLYi2lda9iIbCeLY/LKJUVzaOcjVWHIAiqtO1dk5EvSQfmFZMNKrOwlwfodYmXzRESBZ/umk18vxncCLyqOU89mxEkKrVkSvdpXrhB9NKe9zI2LMoR06zq2OR6nesaXN9stmIlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494702; c=relaxed/simple;
-	bh=PEoUnt4AgnR6Fd7v85MjBEM/E5KRwOYJgA/4ocwPaxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iaMucUtNQE/GE810eNq9+5zGTi2xiAVLTDCEmRtP2tPM4/AVtAp8b0Jw1/Sw+hImBX6O+LDgStgKXzvJpWN4ZEnLXpMM3wdWr2rVkJa785gzrYt+IQIs0CXAmQB6EUnSOMKvHOhOceAxGzx8F/tl4vKMYZSd2JsKY3ROD9NC1qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ZEB97zWZ; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 576Fc7252816231
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 6 Aug 2025 08:38:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 576Fc7252816231
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754494687;
-	bh=BwMz/a6HBP1jRXFSy336gRq7UYAGQsyc1ISSrTWV42I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZEB97zWZsdVR5Irot5pYTKakb3p2t6F3lQt0omGJt+HfSEoUswGO70MQAVPZAw0+1
-	 UPSY1IHdOGT0n/SCZibm7+G1m0xNDEvqIE82qLcIoLaPqRVmOP2/Su7G/z+0C2T1Cs
-	 zgPx8XsZiXpwZNQ3yy3dw35wX9a/P2dmZtvdzeMc9cxazkb8fUq1xLWuU2P+O05IHY
-	 nq+pvRT30Vs5yE12Wdz0bkStObHpuasGG5Mwo2+LywPQt/ZkbcoY8rb3ONNKHspw+o
-	 hPYfuMtUe2xYOciZWobWD1TraFQE+WInZ4MLDHNfPSfo7ooISaI86IHzrBrMBzbl+e
-	 gntoI0UsgLklA==
-Message-ID: <cb16c839-a281-488b-bfe4-98c9d0b150e2@zytor.com>
-Date: Wed, 6 Aug 2025 08:38:06 -0700
+	s=arc-20240116; t=1754494720; c=relaxed/simple;
+	bh=b5xV378mmIVkPQ2XJHTTVqaUFaKTnwOkMfVxl6qad7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DZb7DS5VDzVV71TXfv/Z2fzaXFoJH33zSkmYi9TWphlDUIc5stfN60UTSDg9MDm2Z5XY3qdRBrNB2eSE/KyExK3r6FMSFxoC67UJPVgUFBQdKcwkljE6UHghjbGeAQPIZbOF6KL2eEHprgskqYEeQgOkZhd9ldparbyhNvv9k3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rx6I/p8l; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30799a41109so32533fac.2;
+        Wed, 06 Aug 2025 08:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754494717; x=1755099517; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WrOiLUjlHMAD5qB46+Jo2Wz4HXpj9fepKX/diN8D56c=;
+        b=Rx6I/p8lO979/ShjJxEkIZHkpvW59bgafJwhozK61vfrSHucKqunnd1YuK+kcbbfES
+         dZVYuXHR9C9e0kq7YtKMwV9EvHvYSDwBRpZDmoDgwhV9d9BB+sZCS8D9eZlsXNX5qWvo
+         2L6PblpKgaOsa967E34UHkIEnWzAYrzUshHcOMgsippMDD2duOBXF16rw+P0eus6/4Gi
+         FnMAXB02HtvTzp+KoW1oSo62+cEE7QDn3qLkNgMSiSrQTdl9EQKLX+Eo4eC9b0Kw4kvc
+         E1iOiMBJq6Wk84n3QZzesEaFeFPnJTkPWLjFW34YhVQ1Lu9Fa1Mew38KAAyJ1LFBMBfZ
+         PD+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754494717; x=1755099517;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WrOiLUjlHMAD5qB46+Jo2Wz4HXpj9fepKX/diN8D56c=;
+        b=uAdA7L/h8VnWQkj2AJlp5pSmri/CaSn7yM127dpQqbL8z2zWsUgFv7/NJLNumfemHr
+         Sz3KiZ4GnUiljfeBU9qCiUd0T1GNmF3Oly40Ut9l7tsYSfkqZTk97xQZGmfk/05plitk
+         EtiWS87tZ2iH+IP0mD5+PkaVrjx6DQFzGYgmh47EfBTVXFi/lbyfhwuqilvqzIQGbcZ6
+         xg5YgYthBFrHVcTLUywUcqb8nqRo6indcMNmbKNifo15Dk87qWGJWAVX6GBNdMYYBaTx
+         RQacE7upMBOuUg2JTEnD8mUwtRz/QLHGUMuRAqy3n0RlVUEkLTCT8rYF6nJHKAr0UzI0
+         +T6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVl+hrSUpejm3uXs/sLy/M3QbROBn+7Dg8ejWTS5kw7Ih/0ZiAbl3GHwi6ic/gnjzzpvyO1Y4gQN48Sjjc=@vger.kernel.org, AJvYcCWRRG1Je+Y4j+DsKlVrhAwIn0gnZt+Ki1QPXzbydOrt2DfxxGpqcMw4X6l/pAlpAg4sUY6kWFds@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoWvfQ4Cqa9PlZokq3Fsz6BdicPu97ejSKoDSXCVBVkYK38/2w
+	43mlNPeY4PUc0hzRS/nHL5Nioik3l6G92/NjEvPPiuEaYXoSwMrC2S3DthcxKYYDOwexbzoiten
+	pksBd23tLCA+n326Wx23pQDwgPNMoXt8=
+X-Gm-Gg: ASbGncuo9kvrtNZljK7mqNHCb6EprEBBzn43ZUkwVtO28C3+y+30aDJBGr5QxuwB/zN
+	kpObwS2OqHw90oG/kGAxHvU/+UI0IsDtQn58Gqt0BuxMB174wLEbQZXTHMyak6lr+7PMPtzMKYR
+	5IhZpKaOFxHdzRkqzuLYNkgEpTGQf8hlS03BCvnUBGW6SA5hqqKw7HV6y3XeOTJ1vbHInkVXnLl
+	kegUGbr
+X-Google-Smtp-Source: AGHT+IFYz8e/stP8Hupv1QOCESKJJcWXdDupZ7+uMLrWpZ9GYUBBRbHCBkNonI8IRQBTq1coB1FaRIx+CPg0mnqQSF4=
+X-Received: by 2002:a05:6870:3929:b0:306:c53a:f904 with SMTP id
+ 586e51a60fabf-30be2961c85mr2219047fac.9.1754494717379; Wed, 06 Aug 2025
+ 08:38:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] KVM: VMX: Handle the immediate form of MSR
- instructions
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>
-References: <20250805202224.1475590-1-seanjc@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250805202224.1475590-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250806153433.9070-1-suchitkarunakaran@gmail.com>
+In-Reply-To: <20250806153433.9070-1-suchitkarunakaran@gmail.com>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Wed, 6 Aug 2025 21:08:23 +0530
+X-Gm-Features: Ac12FXwWWIuBvgVBmXN6nTaFuKW8SoROaRzgJ17UnQsFmv7ch28vadLMsyDfm2k
+Message-ID: <CAO9wTFi9MHnzEw0p9QhhFOW_sk3mo_1yT3-YkjTYwN+spYUFWg@mail.gmail.com>
+Subject: Re: [PATCH v5] x86/cpu/intel: Fix the constant_tsc model check for
+ Pentium 4
+To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de, 
+	sohil.mehta@intel.com, peterz@infradead.org, ravi.bangoria@amd.com
+Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/5/2025 1:22 PM, Sean Christopherson wrote:
-> On behalf of Xin, to avoid having to resolve conflicts when applying.
-> This applies on the fastpath cleanup series:
-> https://lore.kernel.org/all/20250805190526.1453366-1-seanjc@google.com
+On Wed, 6 Aug 2025 at 21:04, Suchit Karunakaran
+<suchitkarunakaran@gmail.com> wrote:
 >
+> Pentium 4's which are INTEL_P4_PRESCOTT (model 0x03) and later have
+> a constant TSC. This was correctly captured until commit fadb6f569b10
+> ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks").
+>
+> In that commit, an error was introduced while selecting the last P4
+> model (0x06) as the upper bound. Model 0x06 was transposed to
+> INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
+> simple typo, probably just copying and pasting the wrong P4 model.
+>
+> Fix the constant TSC logic to cover all later P4 models. End at
+> INTEL_P4_CEDARMILL which accurately corresponds to the last P4 model.
+>
+> Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks")
+> Cc: <stable@vger.kernel.org> # v6.15
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
+> Changes since v4:
+> - Updated the patch based on review suggestions
+>
+> Changes since v3:
+> - Refined changelog
+>
+> Changes since v2:
+> - Improved commit message
+>
+> Changes since v1:
+> - Fixed incorrect logic
+>
+>  arch/x86/kernel/cpu/intel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index 076eaa41b8c8..98ae4c37c93e 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+>         if (c->x86_power & (1 << 8)) {
+>                 set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+>                 set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
+> -       } else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
+> +       } else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
+>                    (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
+>                 set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+>         }
+> --
+> 2.50.1
 
-Thanks for being considerate, and this is a much better use of time :)
-> v3:
->   - Rebase on the fastpath cleanups.
->   - Split patches to better isolate the functional changes.
->   - Massage and expand on a changelogs.
->   - Make a handful of (mostly) stylistic changes (shouldn't affect
->     functionality, key word "should").
+Hi Sohil,
+Could you please review the patch? I hope I haven't made any mistakes
+this time, and if there are any, it was completely unintentional and I
+apologise in advance.
 
-Tested after applying both patch sets, it works well.
+Thanks,
+Suchit
 
