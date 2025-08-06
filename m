@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-757775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EC9B1C67E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3DDB1C682
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B39C34E2032
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5C0188BAC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5540628A703;
-	Wed,  6 Aug 2025 12:57:51 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FD628BA9C;
+	Wed,  6 Aug 2025 12:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YnawhX8U"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B40192D68;
-	Wed,  6 Aug 2025 12:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485071; cv=none; b=S73wyek/IHPUvI+dwCECNw7369W7GqswpfJVwTX3pYw3ZjltPQdja0u+sY1WGN3sDr+dWen3DuhDX+d8CO6DKzZqPnafH0Z5ypFuQ3Hn1Ct01szVhGD47PcgT+Eod4dfdURpVQEn0TYG3VxxDV3YVki4SW/frx5v9CwG4p4IWO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485071; c=relaxed/simple;
-	bh=idVj0LDZ1ciPqiFyp3oqlafE+EDtWJ2HQ/71qe7VF+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLphxrvbDfSeJ9BSkaqKgbSIYwit3blbNRvKGRdt0vHfJLApg/2vvAQddM1G5N1G1dGRyJ8aABAzIirnZUGPnRv/95OTb4fuM9jY3k+ykegB3A72B+yFbme8j2ynN2cEY3cO06UkOi8JJKmUSGLETIuj1V42cc52Oe/uxpgzn7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so1476240566b.3;
-        Wed, 06 Aug 2025 05:57:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754485066; x=1755089866;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U17pHvY+UHWFMa3DFDRkDraysS0TjqbCsuAVzTOwy7E=;
-        b=qbIUlhR3YnUNYZNFvWfv7aw4PHyii2mjFtKzmRkFDOxGF0WsaCpwv5hdQLpkeP0f/3
-         e5WlO29CjRId8VkL6TmMzIdHS2lri5u0/Z09xsamXzsKSVDOz07Jh/fk6HRH4kCXzfsZ
-         ycLCJjo5sZ/AlgKf1ROIAAt1wuxrztCUMYvFetbKoKihHaJiEFV58EiHvsu7rWsv8qbo
-         JSX2nJ3Lxl/k5DGmR4wx5v9thzf6BIoeKWCG5XTkaWymp5kZm18345Gizk3/sac/Ch7V
-         fsbUuKWwRp3M1ygsnySAZE4EBb2wLFeOgQ98fTApA2nenv/KGQhXaUaO/oLsRr6tLoMB
-         TEsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmzQ2CGl3CMXkKGnvPsQAHAbfe30mCvOpbPLcytpJ5ENBCq2csnDKWn5deYtBLaJEPPYRWdbjrcMrD@vger.kernel.org, AJvYcCVp/LvKGuQHpysozlICUOwJAeUHfcHjL2zUlQnvsPkD9/HJXdWXo58o6C2i0Mu2fNHYb31JPFdUS0YbSAjg@vger.kernel.org, AJvYcCXyvVwGFJmaeFunHGnhFADPIhSKSpNWNNvi3m7nfoBnZpIjiba5wqZ0KXtGPenMmzpF35Ix+L0yLsRUNSqtyumfVSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI8rvQchPt6tkq/enLo68eSqTQzn2HLnUhPZppLJqRpqD4I2bK
-	eOsFwAiPgA+EXzaQa6hd9Z/UdrOxZ1YyquE6woEnHAuFTdRF4A1bBgUCyGkjTqwbV0I=
-X-Gm-Gg: ASbGncv8Y+8GbIsMKXJPt5bPBYC6NB7mibtjGLnEsU8bLe01TS+sJvZ/m7XTYP63wtW
-	IAbL+tmQaPhi7tEuci+13po4i5WJJpAM5my2W3fskaXWn0CPcTVrxy+JktNejMwjNguyG6Xnmno
-	ElcboIvAqvBIMPKldvSB8JAuUbIS5lPsURRcgxUi++s6U6Xl72Z+bq7menWQ2M3HLRPwPj4LBON
-	R4wBjvwjGzYTXX3UAnzFAKgTz2Ad4B5YaotfKgKtTDFtopNWzMZ7etXf7SVcXL4e1eQWec8nrfe
-	AAW8HOrwCEL/aQ+o5TcSjzGv3w7nFBnFmQRVguMA3kDyd3dsO6lbsBfQs5jjazZw2SOueTTh8Ep
-	dRC8VwPcGs2280NerZplcL1hb0xLdst25hkTWR9PwIybx89FU6q9fHkk3VXCb
-X-Google-Smtp-Source: AGHT+IH7KKGtrKpoSaBghAPv5zZMM7jMTywrjEVG3ljTGmpRaCHW4rWHx8LjXLGITJ6jRpRx2T0NKQ==
-X-Received: by 2002:a17:907:3e10:b0:ae3:7255:ba53 with SMTP id a640c23a62f3a-af99048e4f2mr264827366b.53.1754485065623;
-        Wed, 06 Aug 2025 05:57:45 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0e7sm1095922866b.114.2025.08.06.05.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 05:57:44 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6157c81ff9eso9979418a12.3;
-        Wed, 06 Aug 2025 05:57:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOeA1+x/Rvro3H9uKw1jeu9mQ0bUBuBxApwNtDIjDuHZeWB0uktELwGJwDOgBrnxrpjB/x5mhJJNHwiiH0@vger.kernel.org, AJvYcCV+4nPnLfhY3o3FMFqDIAix3Cx54Ya54Y1UnXD4QAsNveOi3bIx4oXuhBn3THlAsAm+LVmqoAQES7MT@vger.kernel.org, AJvYcCVRHF4ym+TjohoJwZgTAdFVxWBwadTAV3HV2rWxshK4WmMrQIiawJb1SqWaeHUObrDNcfBX7HkZEnpTVcTs/yUx3Ec=@vger.kernel.org
-X-Received: by 2002:a17:907:9304:b0:af9:3727:99e0 with SMTP id
- a640c23a62f3a-af9903f06d0mr270371266b.38.1754485062293; Wed, 06 Aug 2025
- 05:57:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB72192D68;
+	Wed,  6 Aug 2025 12:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754485178; cv=pass; b=lrdMoZvTNZEN9gwkac7mUmbq4pyqM6P1dyUz0JPafaqFE31bAYqQ043Ud/gTF6+xO8no72danm82Ntx55x/4JhoScnRNDKVAIEKYZOQBwiKqcG6YybuhteGCnkE7Wq3D7n/shr+MGnPYvPP6r/59NrZq2RZOCTymJSZxdnugDgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754485178; c=relaxed/simple;
+	bh=sccRvjWO8qYKQF4pMmNy1suS+6rw5KNqTkJEfCt4rn8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pXV3E4XJvcZakuoP5+t+4XSqq5feXsWWsfj7tbm6h1Sdn5nofSRStWyQOtVE6+ebHdvkOmLKh1NC8kxXS3dQnRQUDNqGR/3DdT0Xw0CGqsrE6AgEeM7WPi7uOEzKwVgx+vcF4ce5Leq7qA1fj5rct+vZtQInNPgtvheRzcJfWBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YnawhX8U; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754485161; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=h4lXCRutFnaV0Exnp03AuMVXzduD58KA8NOarjCZJfDWEFYtAD762t51VN5T9ggpvXiTEuWuUAqGxtas17rREb4v6EGvKUmoaQ8ztO2Jrt7XAKawD5sZacjkW2Y0MkvYX90FzBuvFUmg0BbN5QcVcNt5FVuLMncWPlJkzJCSqlI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754485161; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MYoIeLesrB8dXB4doGUptdUb9SA2VNw7HCU02k3TwjA=; 
+	b=JDOfXw/rJaRVH586BfkTsg/7B0jDCCejyO11eSZvf6qEobSXv1sKtPodTUsF/qRxJ/CBTrVF3bMy+gXqQ1tZ4Ae8Jzo4OUf0Au2lRGQcoyQCeQtCMmdPK9j6MK7RrtfoSQa/oUXDjNqGrwxa61YnuHXUwECg497M4Lx00hZxWTU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754485161;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=MYoIeLesrB8dXB4doGUptdUb9SA2VNw7HCU02k3TwjA=;
+	b=YnawhX8Ut3gcvMwCT3Se6mXoIC/CYjT1SMf4ZB83bQ9D5VHv3ieCCOyNmFBcC6CO
+	fq/oMberdE7cBgnpxWziPfoZ9BVu59/HbeOYnrYFPCWjOmglgeilCLC4daKzfCmesmY
+	GIaHaaVwKo7DTOYXOUbQOzBvtcjmahSKMiEEwNQ4=
+Received: by mx.zohomail.com with SMTPS id 1754485158590384.6390366625128;
+	Wed, 6 Aug 2025 05:59:18 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250709160819.306875-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250709160819.306875-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Aug 2025 14:57:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXu+sYNO2=QU+9e7E1pMFpgWBPEh_VoWgVPb-5aDG6D_w@mail.gmail.com>
-X-Gm-Features: Ac12FXz_Dp0l00QbEPO2xRsjcEZM6XNtVJ4vdS-kUOwkvJPpEMkvtl13GIy81ug
-Message-ID: <CAMuHMdXu+sYNO2=QU+9e7E1pMFpgWBPEh_VoWgVPb-5aDG6D_w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] pinctrl: renesas: rzg2l: Unify OEN handling across RZ/{G2L,V2H,V2N}
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 01/16] rust: str: normalize imports in `str.rs`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-1-3a262b4e2921@kernel.org>
+Date: Wed, 6 Aug 2025 09:59:03 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <501E5204-6270-448C-ACF2-F98B041B49F5@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-1-3a262b4e2921@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hi Prabhakar,
+Hi Andreas,
 
-On Wed, 9 Jul 2025 at 18:08, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Unify the OEN handling on RZ/V2H(P) and RZ/V2N SoCs by reusing the existing
-> rzg2l_read_oen and rzg2l_write_oen functions from RZ/G2L. Add a
-> pin_to_oen_bit callback in rzg2l_pinctrl_data to look up per-pin OEN bit
-> positions, and introduce an oen_pwpr_lock flag in the hwcfg to manage PWPR
-> locking on SoCs that require it (RZ/V2H(P) family). Remove the hardcoded
-> PFC_OEN define and obsolete per-SoC OEN helpers.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Clean up imports in `str.rs`. This makes future code manipulation more
+> manageable.
 
-Thanks for your patch!
+Here=E2=80=99s another instance of why I think this import syntax is not =
+good.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 7 ++++---
+> 1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index a927db8e079c..488b0e97004e 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -3,10 +3,11 @@
+> //! String representations.
+>=20
+> use crate::alloc::{flags::*, AllocError, KVec};
+> -use core::fmt::{self, Write};
+> -use core::ops::{self, Deref, DerefMut, Index};
+> -
+> use crate::prelude::*;
+> +use core::{
+> +    fmt::{self, Write},
+> +    ops::{self, Deref, DerefMut, Index},
+> +};
+>=20
+> /// Byte string without UTF-8 validity guarantee.
+> #[repr(transparent)]
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
 
-> @@ -270,6 +270,7 @@ struct rzg2l_hwcfg {
->         u8 func_base;
->         u8 oen_max_pin;
->         u8 oen_max_port;
-> +       bool oen_pwpr_lock;
-
-While u8 and bool do have the same size, please keep the bools grouped
-ogether.
-
->  };
->
->  struct rzg2l_dedicated_configs {
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
