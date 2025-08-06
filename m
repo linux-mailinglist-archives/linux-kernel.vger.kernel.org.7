@@ -1,103 +1,147 @@
-Return-Path: <linux-kernel+bounces-757957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDF0B1C8D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61CDB1C8D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAE6E7A3B56
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2EB3A464B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11AE294A0B;
-	Wed,  6 Aug 2025 15:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717A128A1E7;
+	Wed,  6 Aug 2025 15:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJJzJ5m4"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jf6thGFV"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19524503C;
-	Wed,  6 Aug 2025 15:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755AA28DB4C;
+	Wed,  6 Aug 2025 15:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494468; cv=none; b=WiaD2KKFlxO9MlwD1NG4jOdXbdDlAXvqTcnI6mdorakJvQo6/coFzDiMYeFsRPBPcOzuAwZNyKvkHAIqWPpzHNmrurLoGIijaPwLCZMATp4tUgYApDjAnhH9jrQzyGrLUa/l8rdxGL2Xm/Ucu7aSj2OJqHAeEW4A/3l+hEDIpwQ=
+	t=1754494485; cv=none; b=sj7hPJSi/zLOn6qzQOLtlyXs19Fo/8ltrsIuuYMug1cvYaYHt/rSUHkX70q/j80T3K0/Us6R2CAWw/tH+i3N8DDa1sIzfbuvXo5qqR9FmMS2xxHVMWEuuWSykUaCc3pZTA9W1PNXhjsLFgnaVYro+MadRt9ZeM6hhSCPs2wKlN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494468; c=relaxed/simple;
-	bh=9k5FqnoKkgBQy4Bx9d/Hz1VRfIa6e+0sJLuBBqzZUKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=elcrqjRiNvyB6S4bj1owW20MrIIsZz/XEQfCnDk5BAWvM0hMQYqVHH6mBlTyreqBIzr/idisDOQu81mTqvKbWO9sCnQoUDEOu/EXvotN8/Y/rS7ODDvNf566au9YmyHne3gnKkG3UaNTYZ102PGv0tRD7WW/8RLX+lR1dnefuyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJJzJ5m4; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1754494485; c=relaxed/simple;
+	bh=l+BjPJugvSX1xnYBlRpydXaOEpnLR9ZZrGzevonqp/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CU56+WseVeiQbSNTjXEs0NyCCNsn8RHo2U2Rg+aId0rGgh3xOxIRaK7LGd2zkuJuPK1VRSGtm7MsxGfhY7K4bnAySIeO9NU+EMuxyo3LRMzbGnBinuO3qH+xTvUWl4nRfv1cWBhJsFnW33wRBovOhJwyAruNHNH+66DaubCj3bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jf6thGFV; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55b823c9129so6847902e87.3;
-        Wed, 06 Aug 2025 08:34:26 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bc61152d8so86726b3a.2;
+        Wed, 06 Aug 2025 08:34:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754494465; x=1755099265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dr2iD/x5RNPmf2/wZEirrgdGMAy27l5lk2Wo0A6tpXk=;
-        b=nJJzJ5m4BN0Q2AqdOZ36CW/wdCvynCkbRrIEIfGt4yM1WlE55pDaJf4lVVp3qFQ9Fw
-         KB7FMbVMaQTPRfbHlANGk+QHB721D7/PKZcBUnRIxQLI2kAbTElwoZscjlEwyF45jldQ
-         iWOsstU9Za3/ApPjWPjaAomTWaflIePE5ODF71Eu/mYD5LTm5AGl+6AA7rmEPZKDS/WD
-         jXA2xKMqHuU0MsxnFh8lHdsNW7VWTKAqo+/UYSo9o0CZvfDybWxLPR0C4FS5wnsK6rXD
-         3HWaC+xGVZFAQIvkp1wegVjyzSzsewkq4ltGTW+8L+Ibrk+ioIrmOIcQ3G9mm52/dbh9
-         ZayA==
+        d=gmail.com; s=20230601; t=1754494484; x=1755099284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8FWAmyygJI9ykU3sqCpkELXQA+zPUabO2nOc+Pr1Qc=;
+        b=jf6thGFVBifiZUJSAEomMO+PzWyNB7+bv1iXfgiYQ0thdET1AIKB53KIkfZ3VEO4t0
+         pJDLTZX/v6bFJiwNKSNxzgwcF6+t6oVCy18WXphInTNX7jKCJ+4pjwdZ8gu0oxzc3s68
+         Mr+UGxgGqaaoxkfM/Vit2KOk1uM2toWbn3KlhvPlPCgC9dQaDRQ9Z9NJUYU1DiCAQBcU
+         PXkY6+T88CCWq/3q7yj1zbJKOKc4J7YRXykSznJtbTpqVe6VQmIaa2zU2QFn84b7ndFD
+         53eJ80Vd34GNFRWv9JdhwPHGazBlNuwzWU4zmRsE0bu6cUsb0432sGa0GTDdY2A4CXg4
+         X1Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754494465; x=1755099265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dr2iD/x5RNPmf2/wZEirrgdGMAy27l5lk2Wo0A6tpXk=;
-        b=slK28Ck0hEnTvh4cbq3UDB9bEKKa7x6HZ2NKhqk0TXVQJ9YAf+bS4LfiXmo2xl/koN
-         TB6BUMP9yfVpnK70Ve7vIz5VG7f1NW//POxvV/LCfL3OedIHWVZcqCfzOskPNU9/OJW1
-         Zb4YI0hsAB54YRK7G2VhDxUtaoDfzzMH+7digs2zRrVD6Oh18pSSdqBLmsM3HjuVsraQ
-         y87gqDSsQxFGtBk+cmdRVSOpIpo5ZdIZQeMbYZrKUJ5hLpee/ptUnPUov4bLfejBSMZ1
-         Fknb7v4pI7hml7QsupNKTKfgV1PReRlNtlvv4w/bPviQmd8BOMDD2PY0VWKBiC1o3nVV
-         zS3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfENQVhaktTcTvyk3JVoHv0lQeT+2dJ+XDgfrMNS5ZdbpqQZTKXsy6jcwlFs1+xzNPdECKrLgOOjGOliuuJBHI@vger.kernel.org, AJvYcCV2foRLVS54Tm0qeAKCKghCk7TBZvsNeQxxvHO4IVU6jR0egbPR5uKhzK39nbspA0AtGyXhhqEN@vger.kernel.org, AJvYcCWO3pajrqLaBCy4SzSdnCMXvaWfAe2qgg88PTp1HD3w0ioQe+umlCnXG9VBdoMXVevgbwpaLOk3NvrLgsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx26TTgAN8NoGNQbdJ+CMmxXOWc3U0lHRMYz4ifXh06VfPCUY0+
-	Tz7jQefJaV+u4yjtgxC0mHY8DFpTwv5UMZSb+1PV7PxYI0WDiVW/paLIuRQVQ10WdduRqjRaKhI
-	l1eWPij3KC2IvrSQGLnhMURIDmjF1k55augDw
-X-Gm-Gg: ASbGncsCpitM9Zm2XVb8f/wc2mtMcOJsyd2ji76ybvDvMkuPXcEP6+4h+faA9ZgNf0m
-	YgctlDi24YVfEOl4aN8k3diG7WDD+794aCaW0hP1TWud9ISvpYJ8/wSgR/LF5rzQTB/75jYPjXv
-	xTUK50aaPo4o5athf+hSVTTK6qWapWskHLnJkzvASbvtrw+LbizXOr9cC80w1eoD1WEyOb8zyzu
-	BUJ6KIo45HQ6gBlkGamqNh3GQIVp3hFbg5fbq70cQ==
-X-Google-Smtp-Source: AGHT+IHzYnj2t0StXyiHnTT7AmBDLHvyVs5VmB+AUx/CTQwaqmFE5NjD51Ls4fjvngJ3ybeRwbshDtvTMQF8qgnMbII=
-X-Received: by 2002:a05:6512:3c8e:b0:55b:8f40:32bd with SMTP id
- 2adb3069b0e04-55caf34c5bfmr1035444e87.33.1754494464775; Wed, 06 Aug 2025
- 08:34:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754494484; x=1755099284;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G8FWAmyygJI9ykU3sqCpkELXQA+zPUabO2nOc+Pr1Qc=;
+        b=ezIz6kA/i7Nu8S3Hxax2pu2Q5jEVncA00VCvNFYbehsT7eqFElS9r25P8Q4xvQkclA
+         TgOXxpjo0UzIwH0MmbSlYeKMqfAmITxKmxlnLt24abNjvFtjqfVExGWKqCoa4/EZF/dQ
+         wouUFDtj/NRxEED5pNSHO2u8fMFuikOL2vsDRH5PO5I1BOTewRE7NCvJJM/+NN/vbSLZ
+         xvbosr/ATWa/6p7vnnbDPIVFuPRlAPGDKM0kq2PI7SQoEccd5o6/33ttlEUHzxY1O8v/
+         U1AA3IFvkR+C4p8LfzKYoexoRoKpnZQo7/ZsEMjfPGH2lqGqUOaVJhqDxPtuAWFXAaoG
+         274g==
+X-Forwarded-Encrypted: i=1; AJvYcCUGaDRJwkzKtZ7DPMUk9IHVJ+1aHSiTFNAdJIoWRV+b7nK0GrS9uy0fP7VNh6x6C2Bwn+QpgqZo@vger.kernel.org, AJvYcCV5kBiE4VgjEONnzAE5xPE51U8oHlgXwCy3qJ1Xlq99vFxFZ9i8R//n+oqI4nlZZU10e2WgDIOc1zURTQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyYc72FUpl8qeIsyhOCxpRieb6lqDQK8Ikd18vbTURouF5GgTJ
+	cG3diC8Xfwkpn4L/xWGIvPv6zVnd0gstPVPuyMbpRsgo79y9363kj1W+kKWFTHFpVbM=
+X-Gm-Gg: ASbGncusFdU133LfyJHlomPB8rJSiv4DJuqf2x229zcOOlIqCcstNP23GSfhm+pQEb1
+	PPrdEgb0UXrTioykcnj0Iq6qoBPqn5qSF59aA6OeF56BUO6DfHvwkCAHHUd3k9rUScQNl+gJoOF
+	nA7b3BxeQ92KWu3ZHHlkCplAQMPyTaM4VIcoUVgjWFBBTruAJOC/MqU/ozgWn0oQh8Mzhs9HiWu
+	rSRYN4D8ROLveJEmH3Mwe4hczRL4S2lS7XQ5Sj/D2sEHp+AdOkRVmY2aElORyaXmuOnPqoqcP5m
+	pku+er5+1cmhkC8gcH/30yMtTeb1v5e1UdKwFuPPwAoojJch5CjbgQQq7s0vvwWy3rHbOo7pGZJ
+	7zm+pZGuBatr3ZZUJDizwKtU6o7ieVpO1vnRnABb6
+X-Google-Smtp-Source: AGHT+IE1mEFPS1/GYteQGs7cvs/+9c5s9KgpQScsfzp5Wld/S4EMQoGCuFw6NzbPwLhiL7WdxjTiFw==
+X-Received: by 2002:a17:903:2445:b0:240:99e6:6bc3 with SMTP id d9443c01a7336-2429ee8b919mr47219875ad.20.1754494483441;
+        Wed, 06 Aug 2025 08:34:43 -0700 (PDT)
+Received: from archlinux ([205.254.163.46])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899d28asm161899175ad.142.2025.08.06.08.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 08:34:43 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	darwi@linutronix.de,
+	sohil.mehta@intel.com,
+	peterz@infradead.org,
+	ravi.bangoria@amd.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v5] x86/cpu/intel: Fix the constant_tsc model check for Pentium 4
+Date: Wed,  6 Aug 2025 21:04:33 +0530
+Message-ID: <20250806153433.9070-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806082016.14891-1-pranav.tyagi03@gmail.com> <20250806082933.4c1240c1@kernel.org>
-In-Reply-To: <20250806082933.4c1240c1@kernel.org>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Wed, 6 Aug 2025 21:04:12 +0530
-X-Gm-Features: Ac12FXyFmqPogFZVuBbAAVtJwDwboWX38L2kXniEux0YesnBsfKWjaAg2UPcZOc
-Message-ID: <CAH4c4jKB_oTHDN6tp_ujBY_mNOyY_J60RrNFiFKXf=H_OCMPEA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/drivers/net: replace typeof() with __auto_type
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, shuah@kernel.org, dw@davidwei.uk, haiyuewa@163.com, 
-	axboe@kernel.dk, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 6, 2025 at 8:59=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Wed,  6 Aug 2025 13:50:16 +0530 Pranav Tyagi wrote:
-> > Replace typeof() with __auto_type in iou-zcrx.c.
-> > __auto_type was introduced in GCC 4.9 and reduces the compile time for
-> > all compilers. No functional changes intended.
->
-> Yet another unnecessary compiler feature. Please no.
+Pentium 4's which are INTEL_P4_PRESCOTT (model 0x03) and later have
+a constant TSC. This was correctly captured until commit fadb6f569b10
+("x86/cpu/intel: Limit the non-architectural constant_tsc model checks").
 
-I understand. Thanks
+In that commit, an error was introduced while selecting the last P4
+model (0x06) as the upper bound. Model 0x06 was transposed to
+INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
+simple typo, probably just copying and pasting the wrong P4 model.
+
+Fix the constant TSC logic to cover all later P4 models. End at
+INTEL_P4_CEDARMILL which accurately corresponds to the last P4 model.
+
+Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural constant_tsc model checks")
+Cc: <stable@vger.kernel.org> # v6.15
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+Changes since v4:
+- Updated the patch based on review suggestions
+
+Changes since v3:
+- Refined changelog
+
+Changes since v2:
+- Improved commit message
+
+Changes since v1:
+- Fixed incorrect logic
+
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 076eaa41b8c8..98ae4c37c93e 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86_power & (1 << 8)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
+-	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
++	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
+ 		   (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 	}
+-- 
+2.50.1
+
 
