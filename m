@@ -1,102 +1,271 @@
-Return-Path: <linux-kernel+bounces-757636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759FFB1C48F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:54:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7286B1C493
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325A118A82FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59765607A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4F71F874C;
-	Wed,  6 Aug 2025 10:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E456F28AAFC;
+	Wed,  6 Aug 2025 10:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKGApy0l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q95c3k26"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A325F78F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2927928AAE6
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754477660; cv=none; b=ZhBDwxjyT4zENRVLpPpilQ0zsOqsFGrC9W884cfS5vJCfoHhZooYgGzLN6c8RzyBJRa4bm7BOdaYMMoBfUGDBfLKgMuaRk1XrE71/v2BpRHU6knmM2uH+J/5ao8mmjoAvidSY9D8oJgppWli9iHiwRdBBEWbgNTk/xUeNQM6GHY=
+	t=1754477891; cv=none; b=Wp7Qc9hbQ5ih2+BC/dDkRwvWsXKxpPBIWRr1Uczs0z0C3eQEU5NecSIl842tFif7UhBioa0XEPSQ5ifj0fCr6vbnzNsigtFbAhOPmVwFz6oM5wFAfTf3b9hAgVyqp4l9ULO75Y/ZS+3Iybfr+fM1/HXsFiuuBzkAgSZNbB1TbzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754477660; c=relaxed/simple;
-	bh=i2uI+lUBfjiSG+v9KMFT8zJfDvUFVH+PsQfODjy3ias=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tjg2Jf0+lPn6w8p9JvdrnFlVt5wO1LEpboxPa02olhz37r+atqWFizw6NV0Yskh/l4vpdhWpuy3UP5PChrYrvqZ2J8CwtVEuPqxdtp8LLOdqGk2Mjjky/GUG0bp76a/pckyNFjyLU3jCIwAHvI6bFvrkxjk/26VojqnF0+287XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKGApy0l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0120C4CEE7;
-	Wed,  6 Aug 2025 10:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754477660;
-	bh=i2uI+lUBfjiSG+v9KMFT8zJfDvUFVH+PsQfODjy3ias=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tKGApy0lewt7v918KB25guqvipI+Nz5f2IgnqBt6dnZVP1TaS7PhzA98LjNkDbC0X
-	 gO1+GGthaP/bwlVW48oUqO7M71/s8nUQ82LzuVXYf+kjvjwNfFWOtmPKzm8kV3ZFuv
-	 GEUoBoenKV/oTkp4DrH0kM5BXx/E1rpMS4iRpwTO05iV+lBwfGv/D+hvAOAo/n/XhX
-	 9Gf2rp22cND8P9EZ+DF1zGo4ZjssN6zXYaPbaKjeYvFEYl3hdakuVY4Ba+FNa011Iz
-	 zNZRFGeZQo/MRktAZxlcLfCxZxDEG7jTURd1aCfP/pGvwTIM38BZlE4FIsNy1+A7Bp
-	 q3O2y8WeHhpaw==
-Date: Wed, 6 Aug 2025 16:24:16 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
-	Jayesh Choudhary <j-choudhary@ti.com>
-Subject: Re: [PATCH 0/2] phy: cdns-dphy: hs-clk improvement and a cleanup
-Message-ID: <aJM0WPVDUkte9E_D@vaman>
-References: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
- <cc0e4cf5-1bd9-4ae3-a130-0483dbfc6335@ideasonboard.com>
+	s=arc-20240116; t=1754477891; c=relaxed/simple;
+	bh=z8GYCyAVv8Y4wWeN8izDuoifjHdbxLP+rh9guv80GFA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=H0zqwP3YgNvwq4Q5fhc5JYj9dQv1foW3h43aJkqoXsmAcfOtDqRhai2Kr7ZzAzaR8yRSokx6L28I7cYArI2E8k1sDjg9ixgAec+47V2LQn2j1iCSjRFsPCyYrM6eNTjpq89XomYDhLZN80y+HArjcEN1a2RKMFzRR2/Gr+DBiqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q95c3k26; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c8c870e25c07aee5c84c84aa62cebd655ff53f50.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754477876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vNROiky5WQWNyX8i1Lin0xM/vtQO7Q82V16OYUAfCxM=;
+	b=q95c3k26iia3cRM0I4Dnd1gzmoM0yr3JevffrUOq3zzpvwP3oUQCTV7e/0YGWFwH/5Udom
+	+h7mr6nGUUItZ6F5kVhkdrShJgExBu/VjapfObHQ5+E0ydcoLxWFtQiahF4kEJjCCB+Tfn
+	f4OIxcQSb1WL/Ar4A9hy/a31I1RDwww=
+Subject: Re: [PATCH bpf-next 1/1] bpf: Allow fall back to interpreter for
+ programs with stack size <= 512
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org, 
+ daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org, 
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ kpsingh@kernel.org,  sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ mrpre@163.com,  bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 06 Aug 2025 18:57:43 +0800
+In-Reply-To: <401418b7-248c-42a3-ba74-9b2b2959e36c@linux.dev>
+References: <20250805115513.4018532-1-kafai.wan@linux.dev>
+	 <401418b7-248c-42a3-ba74-9b2b2959e36c@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc0e4cf5-1bd9-4ae3-a130-0483dbfc6335@ideasonboard.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 05-08-25, 15:03, Tomi Valkeinen wrote:
-> Hi Vinod, Kishon,
-> 
-> On 23/07/2025 13:01, Tomi Valkeinen wrote:
-> > A cdns-dphy improvement to return the actual hs clock rate, and a
-> > cleanup to remove leftover code.
-> > 
-> > These were part of a Cadence DSI series:
-> > 
-> > https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02%40ideasonboard.com/
-> > 
-> > but are now separately here for easier merging.
-> > 
-> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+On Tue, 2025-08-05 at 10:45 -0700, Yonghong Song wrote:
+>=20
+>=20
+> On 8/5/25 4:55 AM, KaFai Wan wrote:
+> > OpenWRT users reported regression on ARMv6 devices after updating
+> > to latest
+> > HEAD, where tcpdump filter:
+> >=20
+> > tcpdump -i mon1 \
+> > "not wlan addr3 3c37121a2b3c and not wlan addr2 184ecbca2a3a \
+> > and not wlan addr2 14130b4d3f47 and not wlan addr2 f0f61cf440b7 \
+> > and not wlan addr3 a84b4dedf471 and not wlan addr3 d022be17e1d7 \
+> > and not wlan addr3 5c497967208b and not wlan addr2 706655784d5b"
+> >=20
+> > fails with warning: "Kernel filter failed: No error information"
+> > when using config:
+> > =C2=A0 # CONFIG_BPF_JIT_ALWAYS_ON is not set
+> > =C2=A0 CONFIG_BPF_JIT_DEFAULT_ON=3Dy
+> >=20
+> > The issue arises because commits:
+> > 1. "bpf: Fix array bounds error with may_goto" changed default
+> > runtime to
+> > =C2=A0=C2=A0=C2=A0 __bpf_prog_ret0_warn when jit_requested =3D 1
+> > 2. "bpf: Avoid __bpf_prog_ret0_warn when jit fails" returns error
+> > when
+> > =C2=A0=C2=A0=C2=A0 jit_requested =3D 1 but jit fails
+> >=20
+> > This change restores interpreter fallback capability for BPF
+> > programs with
+> > stack size <=3D 512 bytes when jit fails.
+> >=20
+> > Reported-by: Felix Fietkau <nbd@nbd.name>
+> > Closes:
+> > https://lore.kernel.org/bpf/2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.na=
+me/
+> > Fixes: 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
+> > Fixes: 86bc9c742426 ("bpf: Avoid __bpf_prog_ret0_warn when jit
+> > fails")
+> > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 > > ---
-> > Tomi Valkeinen (2):
-> >       phy: cdns-dphy: Store hs_clk_rate and return it
-> >       phy: cdns-dphy: Remove leftover code
-> > 
-> >  drivers/phy/cadence/cdns-dphy.c | 24 +++++++++---------------
-> >  1 file changed, 9 insertions(+), 15 deletions(-)
-> > ---
-> > base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> > change-id: 20250723-cdns-dphy-hs-clk-rate-fix-a8857a5789dd
-> 
-> Is this good to merge, and if so, do you have any estimate when? While
-> this is independent from the DSI series, I'd rather push the DSI series
-> into drm-misc about the same time, so both would appear in linux-next
-> relatively together.
+> > =C2=A0 kernel/bpf/core.c | 12 +++++++-----
+> > =C2=A0 1 file changed, 7 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > index 5d1650af899d..2d86bd4b0b97 100644
+> > --- a/kernel/bpf/core.c
+> > +++ b/kernel/bpf/core.c
+> > @@ -2366,8 +2366,8 @@ static unsigned int
+> > __bpf_prog_ret0_warn(const void *ctx,
+> > =C2=A0=C2=A0					 const struct bpf_insn
+> > *insn)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	/* If this handler ever gets executed, then
+> > BPF_JIT_ALWAYS_ON
+> > -	 * is not working properly, or interpreter is being used
+> > when
+> > -	 * prog->jit_requested is not 0, so warn about it!
+> > +	 * or may_goto may cause stack size > 512 is not working
+> > properly,
+> > +	 * so warn about it!
+> > =C2=A0=C2=A0	 */
+> > =C2=A0=C2=A0	WARN_ON_ONCE(1);
+> > =C2=A0=C2=A0	return 0;
+> > @@ -2478,10 +2478,10 @@ static void bpf_prog_select_func(struct
+> > bpf_prog *fp)
+> > =C2=A0=C2=A0	 * But for non-JITed programs, we don't need bpf_func, so
+> > no bounds
+> > =C2=A0=C2=A0	 * check needed.
+> > =C2=A0=C2=A0	 */
+> > -	if (!fp->jit_requested &&
+> > -	=C2=A0=C2=A0=C2=A0 !WARN_ON_ONCE(idx >=3D ARRAY_SIZE(interpreters))) =
+{
+> > +	if (idx < ARRAY_SIZE(interpreters)) {
+> > =C2=A0=C2=A0		fp->bpf_func =3D interpreters[idx];
+> > =C2=A0=C2=A0	} else {
+> > +		WARN_ON_ONCE(!fp->jit_requested);
+> > =C2=A0=C2=A0		fp->bpf_func =3D __bpf_prog_ret0_warn;
+> > =C2=A0=C2=A0	}
+>=20
+> Your logic here is to do interpreter even if fp->jit_requested is
+> true.
+> This is different from the current implementation.
+>=20
+> Also see below code:
+>=20
+> static unsigned int __bpf_prog_ret0_warn(const void *ctx,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 const struct bpf_insn
+> *insn)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* If this handler ever =
+gets executed, then
+> BPF_JIT_ALWAYS_ON
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is not working p=
+roperly, or interpreter is being used
+> when
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * prog->jit_reques=
+ted is not 0, so warn about it!
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE(1);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> }
+>=20
+>=20
+> It mentions to warn if the interpreter is being used when
+> prog->jit_requested is not 0.
+>=20
+> So if prog->jit_requested is not 0, it is expected not to use
+> interpreter.
+>=20
 
-I will start taking patches after merge window closes next monday, so
-next week should be a good estimate
+The commit 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
+[1] this patch fix change the code to that, before this commit it was:
 
--- 
-~Vinod
+static unsigned int __bpf_prog_ret0_warn(const void *ctx,
+					 const struct bpf_insn *insn)
+{
+	/* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
+	 * is not working properly, so warn about it!
+	 */
+	WARN_ON_ONCE(1);
+	return 0;
+}
+
+And=20
+
+static void bpf_prog_select_func(struct bpf_prog *fp)
+{
+#ifndef CONFIG_BPF_JIT_ALWAYS_ON
+	u32 stack_depth =3D max_t(u32, fp->aux->stack_depth, 1);
+
+	fp->bpf_func =3D interpreters[(round_up(stack_depth, 32) / 32) -
+1];
+#else
+	fp->bpf_func =3D __bpf_prog_ret0_warn;
+#endif
+}
+
+so it can fall back to the interpreter when jit fails. And this fit the
+intent of bpf_prog_select_runtime(), see comment:
+
+/**
+ *	bpf_prog_select_runtime - select exec runtime for BPF program
+ *	@fp: bpf_prog populated with BPF program
+ *	@err: pointer to error variable
+ *
+ * Try to JIT eBPF program, if JIT is not available, use interpreter.
+ * The BPF program will be executed via bpf_prog_run() function.
+ *
+ * Return: the &fp argument along with &err set to 0 for success or
+ * a negative errno code on failure
+ */
+struct bpf_prog *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
+
+
+And this:
+
+	bpf_prog_select_func(fp);
+
+	/* eBPF JITs can rewrite the program in case constant
+	 * blinding is active. However, in case of error during
+	 * blinding, bpf_int_jit_compile() must always return a
+	 * valid program, which in this case would simply not
+	 * be JITed, but falls back to the interpreter.
+	 */
+	if (!bpf_prog_is_offloaded(fp->aux)) {
+
+
+The commit [1] mismatch the intent of bpf_prog_select_runtime(), so it
+should be fixed.
+
+
+[1] https://lore.kernel.org/all/20250214091823.46042-2-mrpre@163.com/
+
+>=20
+> > =C2=A0 #else
+> > @@ -2505,7 +2505,7 @@ struct bpf_prog
+> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
+> > =C2=A0=C2=A0	/* In case of BPF to BPF calls, verifier did all the prep
+> > =C2=A0=C2=A0	 * work with regards to JITing, etc.
+> > =C2=A0=C2=A0	 */
+> > -	bool jit_needed =3D fp->jit_requested;
+> > +	bool jit_needed =3D false;
+> > =C2=A0=20
+> > =C2=A0=C2=A0	if (fp->bpf_func)
+> > =C2=A0=C2=A0		goto finalize;
+> > @@ -2515,6 +2515,8 @@ struct bpf_prog
+> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
+> > =C2=A0=C2=A0		jit_needed =3D true;
+> > =C2=A0=20
+> > =C2=A0=C2=A0	bpf_prog_select_func(fp);
+> > +	if (fp->bpf_func =3D=3D __bpf_prog_ret0_warn)
+> > +		jit_needed =3D true;
+> > =C2=A0=20
+> > =C2=A0=C2=A0	/* eBPF JITs can rewrite the program in case constant
+> > =C2=A0=C2=A0	 * blinding is active. However, in case of error during
+>=20
+
+--=20
+Thanks,
+KaFai
 
