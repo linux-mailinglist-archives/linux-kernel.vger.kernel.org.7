@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-757885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BDAB1C7E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1BAB1C7E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7821117CAD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D23F188E895
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC281D63DF;
-	Wed,  6 Aug 2025 14:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Q1gJfF0Z"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93E1DD9D3;
+	Wed,  6 Aug 2025 14:50:03 +0000 (UTC)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E16E1D5146
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128BF1A3166;
+	Wed,  6 Aug 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491715; cv=none; b=J6mDzLu8pB7zjMLx3QFG885LSRmynL6tUr6hxp6wkq7OxWAFu2LBuegyqa26bs6ekl046t4dVgYDRbs3RgLYWWGeZvgC6dGB6V9SrjDiGkw3fytOlgK/OFfJk0rtAuPLBtSSnQe2Bdn5fd5HahIXhW9B2B8WTV6pDXQqU6I5/So=
+	t=1754491803; cv=none; b=E495HQZQ5v7VQtNnYnZZ283u/SDMcwFm/QYDqfSvAc/+HK478BQlPIhAmr4vaH57g00DSgf5nnhibCeb7uKlrT6ZcUiGyhLAdz4MZ102wkh2FUXubx2pAAEfuyLOGe5j3SkH+Ncubh/cdwCworiE24bD3qqmd/lE3jzHay1kvwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491715; c=relaxed/simple;
-	bh=/WaxHr/fcNNvwBMyYXeMTnOq8nei6iL8c2DAY83YZms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8V/bJ/GY44PepkdzUX78nuU4/7gD6IBm660TRS0Cm5vhcsRphJj316MM98IC8Htbyulz17MBvnHdEJNnFF1dFRub+hciBmUasE244mo1Yh6Iqdn5pR6oy+VOmm+EMJQsXHAVJLnNgrVjvk4tapQz5Wx7vUVLQl0GPRrFoaJBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Q1gJfF0Z; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e817450f7eso68415885a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1754491712; x=1755096512; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+IXGiQjY6etL1HijGeumViSvmoghZhD/MAbBHOTCY8=;
-        b=Q1gJfF0ZJQ2wuJsuUHFtQcwByclcU9u8lhDUxFvwQg+8F+uHc42W/w5B3VtMbOr/pD
-         2fEb1QzbNc1QQG7qMvUVy3piA86xu+ZD2wgGp6K9R9nHzIlybeKFVKN4nt3AL4QbLCX5
-         HOhFLI7UZjQDVx/VzWWKPbCFsQwolGzePLe5s49++dxiXktVdjbSX65R2uxiQoPPvq1A
-         Do+PU6xj7g0HHRscGN8G014BaDhyLj/o34Wedj5FYoVj9KVsT1E22UdSzTYKOgisM99p
-         4MSsKBO5ssSN410aAoe0IR/MFAcF1QaP+ZZppVxOp8G+sc/lJ3ukNMG8BV9ySMT3t81j
-         mhCQ==
+	s=arc-20240116; t=1754491803; c=relaxed/simple;
+	bh=+6SyK8ZmrEFbUZ/+rmzwEs3ygGgK9fzB69pfZ674ek0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ohyF8hKqSbIf5y5Wkt+KNPEd8pu4hrDIRSBDL90d1XQ8hcHOfqOvhRPBu4sDSavcycDKUwPV9EZK1USmOUa7YQCUpmAKLJs/2xSbrMjiREQX5Z8hDMwv48XO68FU+eAUe8eTjh/zrabsLhFhMj5yEZ/VriNYoK8TR5FsT1bUsNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4febcc4c93dso3480137.0;
+        Wed, 06 Aug 2025 07:50:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754491712; x=1755096512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d+IXGiQjY6etL1HijGeumViSvmoghZhD/MAbBHOTCY8=;
-        b=OMQYDtkU35CNmnaeZRCsXsWDHembY23BB3FnRRdO+bMDOWEiZpUk7JiVbi5Inafhic
-         4bPqJifZa8r/n6VX6X56zMkZhbqdEsilKrvxP68ZLzq/r53arwDaAPubDrpN5XjVRqQq
-         y6njtBEjBzCWKe3q0cmi4BH5xwNNlUulevi5ipjZpjgGlD3gRnqjED77eE6QKOrto5Ym
-         YaqwkSDZne/ZDmnHDxZjvFofqAVn+OcUenQjBD+9W6NIVrwQb0ssh8F6ebBHdIxNNb0/
-         Ylj3S07sH4282c8468yH39Z1dgwWSJgR4JG1cXrzJWnJ9UL4hl3bEi5EEYtLTOVSO+Sj
-         YC5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUU/GZejvVwZB8M4HZvsI+b6D6l9++jzxyGRsQ/x1A9NSTUD38xcAPJ2JbUn61UZdNkDanvElNxCumxo7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkl/UoFaaSBb9lPO86liWGrR3NwxQHqBAXuj5oOJV2jhKT6WkU
-	Rd9QoLKOPbY7/bk05BG7xahDVxK0RpoOY00BEyK+riB54PlfvescthFc+vHQWizvJQ==
-X-Gm-Gg: ASbGncu9HP+zAkuUcEnyUPk/1HfOVV7///4XRb6ArUHsqvBmB5nP+gw7fmgaW+b4POj
-	xgN4qNuLVQ+56BWoVetnSkWqtl67P5AJ2uI2uGkalm5wynSm2kLKW8uz8FE/Oj8ZCSCSJT1hvG/
-	6sVOvvqfj+NI8WLPg6Sbvs6q3rQmDFEWraiiKRYM8gLBaqTUIVQ+okr5G0/5MlI8I+wXYTTNMjp
-	Iiy4lwK/26iwtpCMi0YWtDE8Kx45Ap0tzs9lClkhQMNW5l3wCz68FHjlpmMMBh1Vatw1gFfkBk/
-	yaq2gLGSbiGmO4yyBs8v1xmzOXbP9cIPbSXtKIKDNqkkDX9utdfqJuur1MepmjfnxTb35hivZvH
-	XTdTL14d+Q/+I9oNruayy9Jpme83DUZIbJjM7gTlr
-X-Google-Smtp-Source: AGHT+IEoV2J1KPJpYzF/n7at19yY+noWoVgVnUNgi+OTjlcXhUx/F0riVfkSgi2p1CxUP3mVELiYww==
-X-Received: by 2002:a05:620a:2914:b0:7e6:9c12:f0ce with SMTP id af79cd13be357-7e814ed1dadmr517512885a.66.1754491712397;
-        Wed, 06 Aug 2025 07:48:32 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e7fa87e7d0sm445254285a.82.2025.08.06.07.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 07:48:31 -0700 (PDT)
-Date: Wed, 6 Aug 2025 10:48:27 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: gregkh@linuxfoundation.org, mingo@kernel.org, tglx@linutronix.de,
-	jun.li@nxp.com, viro@zeniv.linux.org.uk,
-	thomas.weissschuh@linutronix.de, andriy.shevchenko@linux.intel.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH] usb: core: hcd: fix accessing unmapped memory in
- SINGLE_STEP_SET_FEATURE test
-Message-ID: <2f0148fa-ba18-4711-81dd-89da3bdd1627@rowland.harvard.edu>
-References: <20250806083955.3325299-1-xu.yang_2@nxp.com>
+        d=1e100.net; s=20230601; t=1754491799; x=1755096599;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=omW+pjCKzU3olfxaX/yXl31LwCdljgRa62TIZGNkUZ8=;
+        b=xCRd0tXgW0O9kHUj89cRg7kcAYECJmp39cRwR95qR3IGG/xJ8hqMoX0GbT/+I3qlOX
+         /t+qo0rxGcy3QQVOMNhX6bP8UFLKWFNm540oFggSza9apmO9lHOLSgleSn3tNY2wK22M
+         zaz9FbhWykmm5gtZZl+SUKOcdesI3ufLbVcypcRiTXOvjxfGFDuUNXaNjs7rt6FtHDj1
+         GZiQJaajrjyqGFUXZl8+9yKtXDJy19b58ZMZTf1/V9f3cXimPVH9VD9L9nldMoN1/Fi3
+         1ff5VJPsl1kVUvesAIj70sC+3qfLia4JDD1Cwh8eOv2RCew2MrrzDkMrAZi6lxi1pYBK
+         WZLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUBlZ5Dhbhyp7VgiGynd/9miFX1GA1XcWhdbCS4qi05wirLnpjeqeHhFh0tp64A/DCLB7HeyPBFNGH@vger.kernel.org, AJvYcCW8+hkHVODQFgHeZS3QTu1aZep0MMZ9nfWIaMSFy2u299B2+Jxf/MXMK5ayH6en2R6XXX0mYSNfrT26RSdz@vger.kernel.org, AJvYcCWqMYHR7rliLRnOvKn+R46cJz1iqysHkXhd58gYeIUXI6e4nvQLLmmLnISaotsHuWXgEEoJtf3gKc2W9Q==@vger.kernel.org, AJvYcCXssJJ4oLhgeLCkJoAHxVKwWJVeRPACEBoRXhS7iQSiQL6wNqqQq58+Y/XYAQYZdEtSbOn0rCDHFV6V5YkeowmS+wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynLAikv6z0XFDrHmCg1OyxyFJrIT1ukKaQQVUXwwsGAyIFcPft
+	7raSQQw9Svjud7qBJk8oaGTS6rQdWuBztxRhD7GBnPzVWuZWdgEuThQ75mrGCUh+Idg=
+X-Gm-Gg: ASbGncurqjxiHshucyBF7XqV7He2rXNZu8tE3EcH8OjggcQPfshHsj0BC9TDWqVkk2f
+	0n8W6kw2rmRnDlZiRLVsz1ZYTfF3LNrQkYTf2KuOflLhVZYIVxDoEV9J32RZT2+C9iCIEy1DPzI
+	fSAxvjQEXw6Nx0KbsgHMKewcSU37Njx+HJPA7Bs8pEAPIu5NEC3H+QiThTPGLP77V1klUl5QaEc
+	wv9BMJ7WcMn91Wj/FFuLZFHR64qNGP7YjSklauEpsMcP8ga13EnwyIDFo5xGAd0tUZ3dAcc+ZXY
+	pf5rObGY8CmjlkkLoNukB+7ck9QlWUA+CMIwFKSZAM0b3cGJecbT4AlxtQvUXMjh9Eyelp7Gmq0
+	buLiaYf3z/OIJPEFO4Cifl88gTXi2u5ZXL5od4hpFg4HnTzHlckNQzbuJhGE5X5NwbhlrpHc=
+X-Google-Smtp-Source: AGHT+IHXZJt/Qh5JbVY77STVGSBzEQZ98pK6NdWrzDI2Z901fvoz/2pkv7cLkExrLB1NBxwaqo+wvQ==
+X-Received: by 2002:a05:6102:4a8d:b0:4f9:69aa:60d with SMTP id ada2fe7eead31-5036a05a1bfmr1517463137.13.1754491799447;
+        Wed, 06 Aug 2025 07:49:59 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fca3aea9fesm3123237137.21.2025.08.06.07.49.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 07:49:58 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-88bc19ddfe3so252018241.1;
+        Wed, 06 Aug 2025 07:49:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCyR3BXuOmsMrDyj32Tq+4SI4RrjigL07fOvqTe7ftss+uEPSWO5EzJJtHIvKh53NTjj8yj3juaZOKMA==@vger.kernel.org, AJvYcCUykiynGtqJkjdwhYMpstNMUJraDG7w8GegvGiYjsnNAucbaoSf2WxEkynGobuDNmjNcQD/nEwTpWADldEVTAwTuKk=@vger.kernel.org, AJvYcCX9YP75tXnY/pfaG9CMpR/ucT/KcKBRelpJp6CG1YUvzzybHi3d+kcJ8MCQXWv3yjfP6MS/IlfBnkvt6Tar@vger.kernel.org, AJvYcCXh2wDRSNr/kzrOHucngZCTeh8ZZG9Vn4TMVlKXNYGRYfSR/swjn6oEVg+h8HYnP4b9uk6vAw+BDRrz@vger.kernel.org
+X-Received: by 2002:a05:6122:1a85:b0:539:15fb:9f20 with SMTP id
+ 71dfb90a1353d-539a04e5f8dmr1146613e0c.6.1754491798208; Wed, 06 Aug 2025
+ 07:49:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806083955.3325299-1-xu.yang_2@nxp.com>
+References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250801154550.3898494-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250801154550.3898494-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 16:49:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVv=AT3G8njFfGU8=gwwGX6G55TdTpspdwX=HBWdsGGNg@mail.gmail.com>
+X-Gm-Features: Ac12FXzDu_XNp_pKm2ix0bDrwXxG4DjSW-bObHyakoC8eSP3EW4syyh4bhxCJ_k
+Message-ID: <CAMuHMdVv=AT3G8njFfGU8=gwwGX6G55TdTpspdwX=HBWdsGGNg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] pinctrl: renesas: rzt2h: Add support for RZ/N2H SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 06, 2025 at 04:39:55PM +0800, Xu Yang wrote:
-> The USB core will unmap urb->transfer_dma after SETUP stage completes.
-> Then the USB controller will access unmapped memory when it received
-> device descriptor. If iommu is equipped, the entire test can't be
-> completed due to the memory accessing is blocked.
-> 
-> Fix it by calling map_urb_for_dma() again for IN stage. To reduce
-> redundant map for urb->transfer_buffer, this will also set
-> URB_NO_TRANSFER_DMA_MAP flag before first map_urb_for_dma() to skip
-> dma map for urb->transfer_buffer and clear URB_NO_TRANSFER_DMA_MAP
-> flag before second map_urb_for_dma().
-> 
-> Fixes: 216e0e563d81 ("usb: core: hcd: use map_urb_for_dma for single step set feature urb")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Jun Li <jun.li@nxp.com>
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> ---
+Hi Prabhakar,
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+On Fri, 1 Aug 2025 at 17:46, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The RZ/N2H (R9A09G087) SoC from Renesas shares a similar pin controller
+> architecture with the RZ/T2H (R9A09G077) SoC, differing primarily in the
+> number of supported pins-576 on RZ/N2H versus 729 on RZ/T2H.
+>
+> Add the necessary pin configuration data and compatible string to enable
+> support for the RZ/N2H SoC in the RZ/T2H pinctrl driver.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I guess we both overlooked the fact that the URBs used in this debugging 
-pathway get submitted in two partial steps.
+Thanks for your patch!
 
-Alan Stern
+> --- a/drivers/pinctrl/renesas/Kconfig
+> +++ b/drivers/pinctrl/renesas/Kconfig
+> @@ -304,7 +305,7 @@ config PINCTRL_RZN1
+>           This selects pinctrl driver for Renesas RZ/N1 devices.
+>
+>  config PINCTRL_RZT2H
+> -       bool "pin control support for RZ/T2H" if COMPILE_TEST
+> +       bool "pin control support for RZ/N2H and RZ/T2H" if COMPILE_TEST
+
+Do you plan to update this for each new SoC?
+
+>         depends on 64BIT && OF
+>         select GPIOLIB
+>         select GENERIC_PINCTRL_GROUPS
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> index 877f6d00830f..55c64d74cb54 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> @@ -764,6 +764,12 @@ static const u8 r9a09g077_gpio_configs[] = {
+>         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
+>  };
+>
+> +static const u8 r9a09g087_gpio_configs[] = {
+> +       0x1f, 0xff, 0xff, 0x1f, 0, 0xfe, 0xff, 0, 0x7e, 0xf0, 0xff, 0x1,
+> +       0xff, 0xff, 0xff, 0, 0xe0, 0xff, 0xff, 0, 0xff, 0xff, 0xff, 0x1,
+> +       0xe0, 0xff, 0xff, 0x7f, 0, 0xfe, 0xff, 0x7f, 0, 0xfc, 0x7f,
+
+Please always use 0xXX for consistent formatting.
+
+> +};
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
