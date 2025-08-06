@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-757937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D610B1C88A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2983B1C88C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE24D18A6659
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5443BA71A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FF428FFDA;
-	Wed,  6 Aug 2025 15:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5587C28D85D;
+	Wed,  6 Aug 2025 15:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3q975gPN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="R9CC+6TS"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C6828D85D
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B783D218AAB
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493556; cv=none; b=O3030kv+nuMQGrJftKrGm30ZfbsCjwTBG+JGi2e5BnN+cXNu5yklwWHNi08U0Uo0mn5+HrRg0bXeQDyksPgHLUiyTsoIdipFw6qCjoyYgmHBTixr+1k6lwTMvgAjx+drYOo3ToyjH0BiWcdMv2V5FyrARterKX8upN3DtA0Oxhc=
+	t=1754493611; cv=none; b=CS6WNqoByxntNODwJu3kj4zOUg6lb2nMbPofVmPyc0+2Fd0jmmzIGm9T9SMq1sX7Yd38/gBAMLv+2+YnCMrcce8Qc2xGNx18mVrXyT+DfeQ+zFu2Ce+LxAuF7wRTgE0KGXB9Xk+Nl2fxx7tEcH6Fxhm+g1bmptRaBsdoLJCrPFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493556; c=relaxed/simple;
-	bh=+SzIyp+azHzXi3wmerkgl+OB8gD77zXbcUhm1m4L1GI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=U+dHEEmlyPNf1wa0+XxJ6cksqfL30c5YlWU1MtAKlS+apzDFCwF2aQK5NBfZkv/mPw/FYFs8MfjXCugfF5YbRd+8uKeFNA0lPAjTxftsuWHUryxLyauyqbDgcmlFJDFmwtsbciL0HmuJ3ex88W3/gWfyK5zhNz2Mz1bE0GYy39k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3q975gPN; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31ed9a17f22so108063a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:19:14 -0700 (PDT)
+	s=arc-20240116; t=1754493611; c=relaxed/simple;
+	bh=XeQ4LyBFuYf/lAfwUZjLXpPrasqdVwQUMQNjXbI29Vs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lb1bJiQsMj8m4rzQW02rl1vrwk46QcawyFx7AvbgvL1k6puONxEZ455vqgTGTqNnpsQ49zCxkMIro/nVNr0OUCGrdwTidBa8QxfCzUGV0MhJd8uQeVrVbPnTAL+wLsqPiWBLadYA+AHjARFCjBkT1e1lITxkOiTT13uqdKZ4u8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=R9CC+6TS; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-88dab9ca6e3so1505211241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:20:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754493554; x=1755098354; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDQStjMluPm00O/x8xuIBu0JMlXP4PdE4vThsGuTUgQ=;
-        b=3q975gPNJEpXZwdQD64N64osa5ya5bwW5nSyGv0J3n4O6nYpCYXTicAURw5rR8m10I
-         3wDJh3WGhau1GZTWTQCPoQYXGygtEaaa6HJUhtdj74OTgup3NJIMOWlhB/QBL0dJiRhq
-         qjN7jfKpWNr6fJKxO4K2lFZxuPquwTFdQi2deZVfv6oy8i+zJ8n7NTNT0E4DntUrZM95
-         a76cE7i6TMQkB8nLNDoclWzf4saBWiOgHHQYNLBph3g86cgUNE1RVDsPB753edwai95h
-         JyXXqahOQ+4n/clG94gMEkvm635KcTk661GBb9aiRpZn89i30D6RhEMQZvuATfW4Xj74
-         U2fw==
+        d=fooishbar.org; s=google; t=1754493608; x=1755098408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=805K6fvtdokSqfEHjnN7vRqDDCTH7wpXcqcu6F316LE=;
+        b=R9CC+6TSBmseLHQJ/C3w5MJSPT8nDX/blXoTmZAF11N1cLTKcg5Gk7cFR5kZzsIeiM
+         Ej3+3iX9Anb1e/MATo3kKg9opj1t4Gvjp60CICmiiDruQFeEOE9XeacdnK2DWvTqBFrm
+         JMc9/Tu9DQ8KzMD3uP2LSBhPtmmfVknbPWb31DggfHt14ON6/I31NKO+eaus8pUR9z3p
+         Mvy/RKuPWf2vGR2u9kSykm6IGu4XE40aopIGhh2YOQKkg0pBgiQbzOl7SS+aTTQbFCHE
+         QF39hxk9CuPg4PEj4MCEpHfGb6huM5ZZmJzlGOyYbCPLx90wMGpFRuhoJC5KjKk4HL9e
+         35IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493554; x=1755098354;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDQStjMluPm00O/x8xuIBu0JMlXP4PdE4vThsGuTUgQ=;
-        b=ozkVAadmWZULcD3OP/nF7tivgdpt+16Fx07aJXveHePBc3/yP7kHLINe1rJv+ysKQe
-         +4cemp6Nm/8MBtsdBNvkxRZ+Ilk6nWHt1coKXcViBc/AzoBcdrSx++KbN1xw0OI2Qb46
-         ii9dTemy8jE5PZNVa04wurscs5XcqNEyzMAwv5zzeu5P0QLrsY3+VXRmFm0sQPFPmxFh
-         UP1RcPClgq6Om+m2rs3gnrvV6mPYtSJqy5uTliIMv5O0V7AphHJfSs/wC75Pa8SwypSL
-         LK9cOjQn00dKUHCEXv0/S/WWvnufrqgpU2wJX0CHpAl6hO4cJBoZPpTpuVCjakfWvakc
-         VrBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/yAP53NOwuEQYruXURSBGSrqOVRL0mdjj5YH3D/jkTFv0a9qT2IrLcXkjBnw1k8LbZXVSSRLbCenVW+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbwv6SVF7M8YO/c/iUckKqUo5dpQDGIvgfdCXDesn6+KuqGmoY
-	6UkSa9qVixapsYuko9LPzjNypZQP/SO8EtKblkUQpXYGuh61oq93djz9y+XKfdX3PweusuHn++w
-	JeOXF9w==
-X-Google-Smtp-Source: AGHT+IE0ws3A1oPMpeyK+BWoSra1biTwg8ZIx15Eh9OYdEDbAXwg9YusjzqGIk7Bj9JXcN/gIQTc0EhEi2I=
-X-Received: from pjx15.prod.google.com ([2002:a17:90b:568f:b0:31c:32f8:3f88])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d607:b0:31e:ebb6:6499
- with SMTP id 98e67ed59e1d1-32166cc68fdmr4543810a91.24.1754493554269; Wed, 06
- Aug 2025 08:19:14 -0700 (PDT)
-Date: Wed, 6 Aug 2025 08:19:13 -0700
-In-Reply-To: <7f1aaf559a4f93f63f8e996938cfd957e151cb50.camel@intel.com>
+        d=1e100.net; s=20230601; t=1754493608; x=1755098408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=805K6fvtdokSqfEHjnN7vRqDDCTH7wpXcqcu6F316LE=;
+        b=Mjyti7Z/IUIK19rUjnbM+sr5eLD1COpPVeDVHTe6Q4dqmXbCMVwDSHamWzEJ7poMcG
+         ehOS5B7t13IfwHCbHzFiGtkdIK+0L6381VGa1oKeXi9lAnt3i+xnxkkjwWV/Z1H7Mfj7
+         /s7yAK1VhyAmL1ughHJy+/wZeoHWKZ9DMmp8LGRDLSdnl40SaL2TEsW2B1jA8nDwajnA
+         UhNN8yvEaYs+aCeSrq8F5J85VEEJbgLvWYrV0bM5ne2lD4kbBv1p9+3jFJ6tb3J8ZaqA
+         0lqFVipWRJ9wvn+l6qoZrqxjl6fooXsZmZJ6i40fF+1ryS6iA7xHnvWBbqaH+ecU49UA
+         2WqQ==
+X-Gm-Message-State: AOJu0YyfLhzDaihKa0z43qzMP9YBdoCnKQFE16clTBirigs7osbs/YRM
+	Ijw2+sB2PIg5e5bNKmTo+/9Xi56AudfLSd/2tIpN1wTuZLERUeVWnjZAWOt2faEMXM3GAdMsTt0
+	j5D7+pcuwx75/jkS8aGK6jDGYGwFsN3gi2R0CduggoA==
+X-Gm-Gg: ASbGncvvvPZ2pzE4CBRvZ+qNppzpttcmC2a6Ra/fvR6tntbFe22yEAmgIdzCIvVbsHk
+	iepySopDfzuvpYdU/8lknn4prDTlEJbdiOstXw4N+h3OVLfHRDuoKtux8E8zMAl+okvy8j3MBOY
+	afC65r3Km4jqydB1WswRFO2A2Psp+Pc9LutV2IsUbdjvSOx031RoTHcEZpT2x96+CEn7RhmTuDN
+	4g8
+X-Google-Smtp-Source: AGHT+IEwtib/MiSSe6PyJvzqzeOSOjkXKPFo4O7cvuV5C+3dwyYliOiUE4LGgYQXOufi1bsGFYsJcYEM5+C9sofisDk=
+X-Received: by 2002:a05:6102:dc7:b0:4de:d08f:6727 with SMTP id
+ ada2fe7eead31-503731b8172mr1694875137.13.1754493608384; Wed, 06 Aug 2025
+ 08:20:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aFxpuRLYA2L6Qfsi@google.com> <vgk3ql5kcpmpsoxfw25hjcw4knyugszdaeqnzur6xl4qll73xy@xi7ttxlxot2r>
- <3e55fd58-1d1c-437a-9e0a-72ac92facbb5@intel.com> <aF1sjdV2UDEbAK2h@google.com>
- <1fbdfffa-ac43-419c-8d96-c5bb1bdac73f@intel.com> <70484aa1b553ca250d893f80b2687b5d915e5309.camel@intel.com>
- <aIv8wZzs1oXDCXSU@google.com> <3f39e6f85341e141f61527b3192cefde0097edb8.camel@intel.com>
- <aIwB6X6cw9kwgJzs@google.com> <7f1aaf559a4f93f63f8e996938cfd957e151cb50.camel@intel.com>
-Message-ID: <aJNycTvk1GEWgK_Q@google.com>
-Subject: Re: [PATCHv2 01/12] x86/tdx: Consolidate TDX error handling
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	Kai Huang <kai.huang@intel.com>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250731173534.3494324-1-adrian.larumbe@collabora.com>
+In-Reply-To: <20250731173534.3494324-1-adrian.larumbe@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 6 Aug 2025 16:19:56 +0100
+X-Gm-Features: Ac12FXyX3LGMeD1c7gpkSiDZahsXCZ1jgp3yTJhhAYZ-wv0f2moDW31lBHHWdaw
+Message-ID: <CAPj87rPrGX2c3RQKJ6NxGYWbzbNp-9zCC=twCN4OLcD4aXcuHg@mail.gmail.com>
+Subject: Re: [PATCH] drm/panfrost: Print RSS for tiler heap BO's in debugfs
+ GEMS file
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, 
+	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025, Rick P Edgecombe wrote:
-> On Thu, 2025-07-31 at 16:53 -0700, Sean Christopherson wrote:
-> > On Thu, Jul 31, 2025, Rick P Edgecombe wrote:
-> > > On Thu, 2025-07-31 at 16:31 -0700, Sean Christopherson wrote:
-> > > > On Wed, Jul 30, 2025, Rick P Edgecombe wrote:
-> > > > > So STATUS_OPERAND_BUSY() seems like an ok thing to try next for v3 of this
-> > > > > series at least. Unless anyone has any strong objections ahead of time.
-> > > > 
-> > > > Can you make it IS_TDX_STATUS_OPERAND_BUSY() so that it's obviously a check and
-> > > > not a statement/value, and to scope it to TDX?
-> > > 
-> > > It's a mouthful, but I can live with it. Yea, it def should have TDX in the name.
-> > 
-> > IS_TDX_STATUS_OP_BUSY?
-> 
-> Ehh, would nicer to have it closer to what is in the TDX docs. The worst
-> would be to read TDX_STATUS_OP_BUSY, then have to look at the value to figure
-> out which error code it actually was.
-> 
-> Maybe just drop STATUS and have IS_TDX_OPERAND_BUSY()? It still loses the ERR
-> part, which made it look like IS_ERR().
+Hi Adri=C3=A1n,
 
-Any of the IS_TDX_xxx options work for me.
+On Thu, 31 Jul 2025 at 18:36, Adri=C3=A1n Larumbe
+<adrian.larumbe@collabora.com> wrote:
+> @@ -432,7 +432,8 @@ static void panfrost_gem_debugfs_bo_print(struct panf=
+rost_gem_object *bo,
+>         if (!refcount)
+>                 return;
+>
+> -       resident_size =3D bo->base.pages ? bo->base.base.size : 0;
+> +       resident_size =3D bo->base.pages ?
+> +               (bo->is_heap ? bo->heap_rss_size : bo->base.base.size) : =
+0;
+
+Just use panfrost_gem_rss() here, though you'll need to make it non-static.
+
+With that:
+Reviewed-by: Daniel Stone <daniels@collabora.com>
+
+Cheers,
+Daniel
 
