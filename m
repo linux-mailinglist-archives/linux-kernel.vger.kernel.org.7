@@ -1,199 +1,164 @@
-Return-Path: <linux-kernel+bounces-758425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1455B1CEF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:06:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32880B1CEFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5642C18C653E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A611723D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A38237165;
-	Wed,  6 Aug 2025 22:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BCB2367BF;
+	Wed,  6 Aug 2025 22:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UN2lAX0J"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWGQg/wR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751121A5B8B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 22:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D32233D9C;
+	Wed,  6 Aug 2025 22:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754517978; cv=none; b=g58aj2MSpjtONgZQSJ3KlkjvOeffswwZHYjt4h9V5Kg4+W+m9r/7O4svAFFpnyQeNSNqZo2WTPI24JWKJJCdMcaDG3wGYC1FXGxVgsFrwd7ms7QuIcZro9wnVp5/PzEBsncyMjly1cF+oVmjDurmUvpQ7vp07Sq+832shAh4PIw=
+	t=1754518017; cv=none; b=YgRrK2TJw6QerOFKwIENpnl7RD88W4i2gfc1iKjW7rHFcoRUZhtrtilciLQZei65CR2vEf0yZ/tyqU68l1pZ5/J6uaDI19PxU0t+7Xzd0ek7MFqybDIeitDLDJwXeH2tC9uA67Z1V8ib74ZlGZAtd62bLSxXrSvwfphgOn/Qm+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754517978; c=relaxed/simple;
-	bh=1+1mh2UTW8nha3AlApBzYw9ktnvsRC6MZw3w/Q+Tgrw=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=rqYQIBUct/TYF+tP7AJOLvluHSvAyWPB3GF4i6uUQiLYEujZkHBBY/Ltqsp2teMcp1zuR4KBnQezPDjV0D1UMnYEyL1VxWIGTVugctWHx+RClyabZV8dlpmQqe8fdVVE4Rx3iJ3X+wilUdqfIKOM5AJl0thZ5WC4j028YLtsaiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UN2lAX0J; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e2c1dc6567so27686985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 15:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754517975; x=1755122775; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DqrwiDX753cPr23iwZVrIBxXM8laVdcIlzxoK8+/Djg=;
-        b=UN2lAX0JPKYfTsmw6yYvEazlw1xr0dfkYp7DzLKdCpwg8mN+u9KBbeo/cUBoOHbttS
-         iJrnGu56gwMS3zn/S5/SMt0GuOoBvJ/h+GeBZtxc7YJUJUxqmoyvcRZv2YnIqSN5Qiv5
-         n/PDUmkOCzbs+VVWeSYuM3/2J/vJPbzW//hw/m3nmpG0w/WHLBTYKKIA1jheBm27jy/T
-         2wpFlWRb9eTKUZlvMhgat+VIy+EOsoXdeq7z/H2ZG/0mdQQu14uZ8+OugY0UpmzDkz+4
-         lDlbxMU1J+zbX2+NnF8DmIioyS7gam9PNkc+p23jI1KvZNqq0rAdKBJj9/R/qs+BFPi4
-         NiCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754517975; x=1755122775;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DqrwiDX753cPr23iwZVrIBxXM8laVdcIlzxoK8+/Djg=;
-        b=Tt0tCHZc56uflmc+39/SpekaeidhSAJ3leO6YsmKM+LRJNztQXYIWxuNXVN2QkaMuQ
-         NyK52yEmSunCtMQzbR/HQP6bkUsgNbGaoo8HBkGLt0RYd26S0Zx5sh3z7mPCz1L6fw8G
-         5GYFA/L2aXjarsAva7nks1sh5NPoAKU3330c+vz6f6hhH7QSzDHu+h2g5cn8buRWp4qX
-         VaxT/OSW5c+1DIX2Z/dJltY+hNt3IkNldN+LPH0+z9rUjLSF2yXxt3aX05ecvcA4+MD5
-         S28Ur4YgBf+0FwQLRnE9LTdwlu10MmBFIalzjy2o03pxi4Jo/La7VU2W8OTLKSk+vJJ9
-         ++vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm1nlqCwKungbvI/pDckj8qqayAtP5f3/H2L3YIUpoi+2gwsWGKPf86FIlYWJhB5Uyd2JYBsIkYt+ogQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDBFS/kGN2Z+tQ3sNUbouZCMdYAvobGoURCFlfrqcyFxRiU36B
-	Nu2Pjz92oAyOrQOvJW+7VBQhh5TvXkIJrg+ba+OeFm+FzzAOlMcOZ1KQtE0NS+xFOA==
-X-Gm-Gg: ASbGncvaUPKR6/pf5SoMHJL3LV5ML2Xd9PkpAHM0wEQV7nj+W0u2+O82ASS92MAdKR9
-	M52SSO6nxrdri4kTR4xxgbAX3o8SGF+2PlLRJt6CmjsaTsv9G8UJteyGPoP7pUyoQsU1ZfRNyd5
-	ckI0yksYDziPbIXeRuGnTiJPpDqApteQ4F6hGbNlWWbH17xbw+IMhKCfiQxJa46v77denRc83mX
-	7/3pD0we8VWl1YbP/nxmTgo7B5QlKWEaIa1Hr1aSkPM2bwWNKjBu1fK1BjN9b8PGRFwG/HcafK9
-	yNWrGRW6VkkaRDWaXPCmerlfP93PS2319rfGWAwrBg8Jh9HrCQnkeViPiwYd9S6KBakuzOyFVac
-	fynV2R2Y/VhZEDX41dqA0KLgMWvlkRhHVeZZSC5YN6DpjM6sl40d6cwgDkoNtcp5dpkruqcGNWp
-	QzBg==
-X-Google-Smtp-Source: AGHT+IEQrlAQNLT9WdO6VwMIGCaqXQxPGX0ewn8Cl64BGagN9wv8L/9CzddXItLjrvM+oRV/1M94xQ==
-X-Received: by 2002:a05:620a:2a0b:b0:7e8:1853:a40f with SMTP id af79cd13be357-7e81853a9eemr473495785a.58.1754517975107;
-        Wed, 06 Aug 2025 15:06:15 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e67f594353sm856626185a.17.2025.08.06.15.06.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 15:06:13 -0700 (PDT)
-Date: Wed, 06 Aug 2025 18:06:13 -0400
-Message-ID: <f7e03785a79a0ac8f034cd38e263b84f@paul-moore.com>
+	s=arc-20240116; t=1754518017; c=relaxed/simple;
+	bh=W5KDX1Oo+lZSX0tbOFKjtk+FjaBNv9Ve/X9SznlVBBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DiozhFH5rcxvmGYI/2LU/vg/jKza7gR6QxDpCG8o/AdmcHMdKRn07Ol6khf7yXJRibAmdWtwvnS27O2RoKQ/6BLadsdOZeBeDKZQQB0pZ7atFdmUld+cg2/+br9OrsyDtkvvrN0aqtNhK1IrhP6+/RHcwoLI0lRIQhkEJEqd2Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWGQg/wR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80E5C4CEE7;
+	Wed,  6 Aug 2025 22:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754518014;
+	bh=W5KDX1Oo+lZSX0tbOFKjtk+FjaBNv9Ve/X9SznlVBBU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fWGQg/wRiMFXJBoaCDiw2bEI6tPeGVH4K/WgBmVH6Gyz07KICeFO95Pwuxid2uO2m
+	 uzvybAuw9CB/waZUM42423hArIR2wbjWKdRmMPJ4jAQt4bYmGljl1/0CYuebizzaPR
+	 z1wTYm51FKbj/Tdv4gX9whVVTaCuRoYnHxAhvDHXkvUMwO7enbcAPGFiga+vWrI+50
+	 rFl2rvyk5ydK8lGDZRtuSQzxTEElfrPSNolj7qhucLVaR7TQSfRXSeoGDtEeE4LaDa
+	 7GRM+nqDePC3a+kbAhyMoxsfnfHDWBEZb4QdlthJN+qT1q+MHZU3ipX6JD/Tbl1nTr
+	 PA3xWDHuoNb5Q==
+Date: Wed, 6 Aug 2025 17:06:53 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: grwhyte@linux.microsoft.com
+Cc: linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com,
+	code@tyhicks.com, Okaya@kernel.org, bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v3 1/2] PCI: Add flr_delay parameter to pci_dev struct
+Message-ID: <20250806220653.GA20136@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250806_1659/pstg-lib:20250806_1657/pstg-pwork:20250806_1659
-From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 2/3] LSM: allocate mnt_opts blobs instead of module  specific data
-References: <20250617210105.17479-3-casey@schaufler-ca.com>
-In-Reply-To: <20250617210105.17479-3-casey@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611000552.1989795-2-grwhyte@linux.microsoft.com>
 
-On Jun 17, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Wed, Jun 11, 2025 at 12:05:51AM +0000, grwhyte@linux.microsoft.com wrote:
+> From: Graham Whyte <grwhyte@linux.microsoft.com>
 > 
-> Replace allocations of LSM specific mount data with the
-> shared mnt_opts blob.
+> Add a new flr_delay member of the pci_dev struct to allow customization of
+> the delay after FLR for devices that do not support immediate readiness.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Graham Whyte <grwhyte@linux.microsoft.com>
 > ---
->  include/linux/lsm_hooks.h  |  1 +
->  security/security.c        | 12 ++++++++++++
->  security/selinux/hooks.c   | 10 +++++++---
->  security/smack/smack_lsm.c |  4 ++--
->  4 files changed, 22 insertions(+), 5 deletions(-)
+>  drivers/pci/pci.c   | 8 ++++++--
+>  drivers/pci/pci.h   | 2 ++
+>  include/linux/pci.h | 1 +
+>  3 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e9448d55113b..04f2660df7c4 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3233,6 +3233,8 @@ void pci_pm_init(struct pci_dev *dev)
+>  	dev->bridge_d3 = pci_bridge_d3_possible(dev);
+>  	dev->d3cold_allowed = true;
+>  
+> +	dev->flr_delay = PCI_FLR_DELAY;
 
-...
+There are some delays mentioned in pci_pm_init(), but I don't think
+this one has anything to do with the PM Capability, so it should go
+elsewhere.  Maybe somewhere related to this recent change:
+https://git.kernel.org/linus/5c0d0ee36f16 ("PCI: Support Immediate
+Readiness on devices without PM cap abilities").
 
-> diff --git a/security/security.c b/security/security.c
-> index 8a4e0f70e49d..ec61fb7e6492 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -904,6 +904,18 @@ void security_sb_free(struct super_block *sb)
->  	sb->s_security = NULL;
+This would be more attractive if we actually added support for the
+Readiness Time Reporting Capability (PCIe r7.0, sec 7.9.16).  Then
+devices that implement that would get actual benefit from this.
+
+I'm not committing to merging a quirk just for the Microsoft devices,
+but I definitely wouldn't merge it unless devices that did the work of
+supporting the standard mechanism also got the benefit.  The hardest
+part might be *finding* a device that supports Readiness Time
+Reporting so we could test it.
+
+>  	dev->d1_support = false;
+>  	dev->d2_support = false;
+>  	if (!pci_no_d1d2(dev)) {
+> @@ -4529,9 +4531,11 @@ int pcie_flr(struct pci_dev *dev)
+>  	/*
+>  	 * Per PCIe r4.0, sec 6.6.2, a device must complete an FLR within
+>  	 * 100ms, but may silently discard requests while the FLR is in
+> -	 * progress.  Wait 100ms before trying to access the device.
+> +	 * progress.  Wait 100ms before trying to access the device, unless
+> +	 * otherwise modified if the device supports a faster reset.
+> +	 * Use usleep_range to support delays under 20ms.
+>  	 */
+> -	msleep(100);
+> +	usleep_range(dev->flr_delay, dev->flr_delay+1);
+
+As Ilpo suggested, I think fsleep() is the right thing for this.
+Readiness Time Reporting supports values down to 1ns, but I suspect we
+can live with microsecond resolution for now.
+
+>  	return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
 >  }
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 12215ee72afb..abc1cf6e6d9b 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -135,6 +135,8 @@ struct pci_cap_saved_state *pci_find_saved_ext_cap(struct pci_dev *dev,
+>  #define PCI_PM_D3HOT_WAIT       10	/* msec */
+>  #define PCI_PM_D3COLD_WAIT      100	/* msec */
 >  
-> +/**
-> + * lsm_mnt_opts_alloc - allocate a mnt_opts blob
-> + * @priority: memory allocation priority
-> + *
-> + * Returns a newly allocated mnt_opts blob or NULL if
-> + * memory isn't available.
-> + */
-> +void *lsm_mnt_opts_alloc(gfp_t priority)
-> +{
-> +	return kzalloc(blob_sizes.lbs_mnt_opts, priority);
-> +}
+> +#define PCI_FLR_DELAY           100000 /* usec */
 
-It's probably better to use lsm_blob_alloc() here so we have some
-allocator consistency.
+Isn't PCIE_RESET_CONFIG_WAIT_MS the right value for the default delay?
+(I think that name was probably settled on after you posted this.)
 
-Also, make this private/static as we should just handle the blob
-allocation in the LSM framework (see below) just like everything else,
-unless you can explain why the mount options need to be handled
-differently?
+Maybe it's not; I see that Readiness Time Reporting includes separate
+values for Reset Time, DL_Up Time, FLR Time, and D3Hot to D0 Time.
+I'm not sure Linux comprehends those differences yet.
 
->  /**
->   * security_free_mnt_opts() - Free memory associated with mount options
->   * @mnt_opts: LSM processed mount options
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 88cd1d56081a..f7eda0cce68f 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2808,7 +2808,7 @@ static int selinux_fs_context_submount(struct fs_context *fc,
->  	if (!(sbsec->flags & (FSCONTEXT_MNT|CONTEXT_MNT|DEFCONTEXT_MNT)))
->  		return 0;
->  
-> -	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +	opts = lsm_mnt_opts_alloc(GFP_KERNEL);
+>  void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
+>  void pci_refresh_power_state(struct pci_dev *dev);
+>  int pci_power_up(struct pci_dev *dev);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 05e68f35f392..4c9989037ed1 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -402,6 +402,7 @@ struct pci_dev {
+>  						   bit manually */
+>  	unsigned int	d3hot_delay;	/* D3hot->D0 transition time in ms */
+>  	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
+> +	unsigned int    flr_delay;      /* pci post flr sleep time in us */
 
-See above.
+I think this should be named to correspond with the Readiness Time
+Reporting Capability.  
 
->  	if (!opts)
->  		return -ENOMEM;
->  
-> @@ -2830,8 +2830,12 @@ static int selinux_fs_context_dup(struct fs_context *fc,
->  	if (!src)
->  		return 0;
->  
-> -	fc->security = kmemdup(src, sizeof(*src), GFP_KERNEL);
-> -	return fc->security ? 0 : -ENOMEM;
-> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
-> +	if (!fc->security)
-> +		return -ENOMEM;
-
-Another case where we should do the allocation in the LSM framework.
-
-> +	memcpy(fc->security, src, sizeof(*src));
-> +	return 0;
->  }
->  
->  static const struct fs_parameter_spec selinux_fs_parameters[] = {
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 44bd92410425..1d456df40096 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -622,7 +622,7 @@ static int smack_fs_context_submount(struct fs_context *fc,
->  	struct smack_mnt_opts *ctx;
->  	struct inode_smack *isp;
->  
-> -	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	ctx = lsm_mnt_opts_alloc(GFP_KERNEL);
->  	if (!ctx)
->  		return -ENOMEM;
->  	fc->security = ctx;
-> @@ -673,7 +673,7 @@ static int smack_fs_context_dup(struct fs_context *fc,
->  	if (!src)
->  		return 0;
->  
-> -	fc->security = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
-> +	fc->security = lsm_mnt_opts_alloc(GFP_KERNEL);
->  	if (!fc->security)
->  		return -ENOMEM;
-
-Same thing in Smack.
-
---
-paul-moore.com
+>  	u16		l1ss;		/* L1SS Capability pointer */
+>  #ifdef CONFIG_PCIEASPM
+> -- 
+> 2.25.1
+> 
 
