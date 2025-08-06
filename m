@@ -1,186 +1,235 @@
-Return-Path: <linux-kernel+bounces-757798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1462BB1C6C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80940B1C6CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FD818A5D03
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC818A6847
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AA228C02A;
-	Wed,  6 Aug 2025 13:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="SOqopnT8"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B75028BAAE;
+	Wed,  6 Aug 2025 13:27:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFA938FB9;
-	Wed,  6 Aug 2025 13:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754486736; cv=pass; b=Ya8JWlblSe61hGpskKgL6VFjNCY3DhF9YJyPjBMMeK1jSrB1xJnwO4MDsygridfxEVdgEaGVjeh35HOnVQ/T4XQKyDtLj4/bg3vEcOcsh6n+jmpPAxG2mKiahLJ6aVmhPG9/+kz6WyTl31teS9E4QM36szCZ5Vl+2p6xJ35ZBgI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754486736; c=relaxed/simple;
-	bh=vAeKaPEXvcDqf61rNHSQ9ZM38yO9ECSL+nekoCHhAJc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=VNUcBoT9Yx3/EJ3ROAF12+1v7XiffUwaT/DJ4JBPxb1UkAV2INfxB8/CCQbgDJqlwEe/osQVG2MUkOPoM58jHGZO01dDg+/IZ7h3WszI8DHSSg0LlP/CtMXS2Qt1uRhllps/sulL4n7YUIm0vP97P1DEWuG6+mZZjr+IB53MyzQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=SOqopnT8; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754486719; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZQuDF8px7NB9KWIOu2w3QFGEImOYx5uhTyG7uuoz2ziZTu4XRsi8i/H9iwJeUrrIJodfl7PY8tgvPAEpmRzbuzVRCW9D/o2F+WccMuc5QoRW49UhbuEc8sGWeY1RJtLryXj3c728KY432grJNNI41s56F1cSmahrZ/EH/qvtLY8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754486719; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rbN3opuwJukBcj9/ZRoP78wqC7nPDjMjgfVcpb6PIks=; 
-	b=Ye4dUbKXnReLecbyEGdmo6hOcXEBNMWFWUgRNmba1fCoLeF1aa45bQVghf42yfqEMyqQNrC++i/BUpYqf2lD0213Uz4Oqv/jePhPeyMu5n/a50CZ3SJDGjTjcqaFzGvHKO6IwpiJ70YsyPE2A0fv5bshCWgSvTR9bKCXmfAGHac=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754486719;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=rbN3opuwJukBcj9/ZRoP78wqC7nPDjMjgfVcpb6PIks=;
-	b=SOqopnT88cA0ZrEL+ICf8s/fVe9wQ/b3uKK74662FAEG+2Bs+J+W+6E/UoA7hb12
-	w/yuUvv6X2IGFrFpMq2yEGgW1F2UcAHyScbnMHvGsT5cAdn/AgXMD8s+8sGl3QLIG9J
-	JPgpge0zOYlq4Ovz+Xn3/ED99mhUFo4msYzdquhI=
-Received: by mx.zohomail.com with SMTPS id 1754486716196557.3989243653147;
-	Wed, 6 Aug 2025 06:25:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01838FB9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754486844; cv=none; b=JCOfgAWmtLw0mNNimIXzlyNTHWRYZ0+qUVduV+odJ/5LeC0AXexQaWtkldQiZmmsdWPxq8eMoxqTJNNoQjlUNwjFiSkjWw6Jj67YpQkw70MvTPNROwqz3oWE+wCbJKXdm1Ctn4x3cPG0yNe+gwf1zodZ/nlVO2SUsP2uYh238yo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754486844; c=relaxed/simple;
+	bh=2SL2HIqFBKBgfphArow9T9jHTK03gKBHImShrrU36+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CfNvEk7Eiqs2JtwDMDutdfZFQFeXnQFAkyaYHSVwVDIaCspitjlJxMm7z3H1n+Ui0EKFOTsuDWlyobd7yIQAGwlagml2KGiz/DtgENAXmDcLrh/HzXvuCfi812e/L8lgPnnOjna2XpS469cK+VxOqm9+9ZPeXDI53YGXk4nhmvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ujeAY-0007wq-Ev; Wed, 06 Aug 2025 15:27:02 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ujeAX-00CDWu-2f;
+	Wed, 06 Aug 2025 15:27:01 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1ujeAX-00CH9C-2J;
+	Wed, 06 Aug 2025 15:27:01 +0200
+Date: Wed, 6 Aug 2025 15:27:01 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Frank Li <frank.li@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH v18 3/7] firmware: imx: add driver for NXP
+ EdgeLock Enclave
+Message-ID: <20250806132701.fouikyuqtzdsxqwh@pengutronix.de>
+References: <20250619-imx-se-if-v18-3-c98391ba446d@nxp.com>
+ <20250625105546.pxuatcnfpe7mssgs@pengutronix.de>
+ <AM9PR04MB8604611B8D91B5526C9704E69545A@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20250627084653.6vgwnm3llf3zknlp@pengutronix.de>
+ <b02055bb-0995-4fd8-99f3-4ca5146eedd4@kontron.de>
+ <20250630121722.wviidlggt7hguyt7@pengutronix.de>
+ <087b8689-7443-4720-a94c-160edd31a5da@kontron.de>
+ <AM9PR04MB8604C05882605EDB4913DA089549A@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20250714094124.e6fnkrocnqagbm22@pengutronix.de>
+ <AM9PR04MB8604EFCC5400DEBB7DF0CF49952DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 08/16] rust: block: remove `RawWriter`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250711-rnull-up-v6-16-v3-8-3a262b4e2921@kernel.org>
-Date: Wed, 6 Aug 2025 10:25:02 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <844D39CF-647A-45BA-A940-072DAEB911E0@collabora.com>
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
- <20250711-rnull-up-v6-16-v3-8-3a262b4e2921@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB8604EFCC5400DEBB7DF0CF49952DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On 25-08-06, Pankaj Gupta wrote:
+> > On 25-07-09, Pankaj Gupta wrote:
+> > > > Am 30.06.25 um 14:17 schrieb Marco Felsch:
 
+...
 
-> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> `RawWriter` is now dead code, so remove it.
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/block/mq.rs            |  1 -
-> rust/kernel/block/mq/raw_writer.rs | 56 =
---------------------------------------
-> 2 files changed, 57 deletions(-)
->=20
-> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-> index fb0f393c1cea..faa3ccb5a49a 100644
-> --- a/rust/kernel/block/mq.rs
-> +++ b/rust/kernel/block/mq.rs
-> @@ -89,7 +89,6 @@
->=20
-> pub mod gen_disk;
-> mod operations;
-> -mod raw_writer;
-> mod request;
-> mod tag_set;
->=20
-> diff --git a/rust/kernel/block/mq/raw_writer.rs =
-b/rust/kernel/block/mq/raw_writer.rs
-> deleted file mode 100644
-> index 0aef55703e71..000000000000
-> --- a/rust/kernel/block/mq/raw_writer.rs
-> +++ /dev/null
-> @@ -1,56 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -
-> -use core::fmt::{self, Write};
-> -
-> -use crate::error::Result;
-> -use crate::prelude::EINVAL;
-> -
-> -/// A mutable reference to a byte buffer where a string can be =
-written into.
-> -///
-> -/// # Invariants
-> -///
-> -/// `buffer` is always null terminated.
-> -pub(crate) struct RawWriter<'a> {
-> -    buffer: &'a mut [u8],
-> -    pos: usize,
-> -}
-> -
-> -impl<'a> RawWriter<'a> {
-> -    /// Create a new `RawWriter` instance.
-> -    fn new(buffer: &'a mut [u8]) -> Result<RawWriter<'a>> {
-> -        *(buffer.last_mut().ok_or(EINVAL)?) =3D 0;
-> -
-> -        // INVARIANT: We null terminated the buffer above.
-> -        Ok(Self { buffer, pos: 0 })
-> -    }
-> -
-> -    #[expect(dead_code)]
-> -    pub(crate) fn from_array<const N: usize>(
-> -        a: &'a mut [crate::ffi::c_char; N],
-> -    ) -> Result<RawWriter<'a>> {
-> -        Self::new(
-> -            // SAFETY: the buffer of `a` is valid for read and write =
-as `u8` for
-> -            // at least `N` bytes.
-> -            unsafe { =
-core::slice::from_raw_parts_mut(a.as_mut_ptr().cast::<u8>(), N) },
-> -        )
-> -    }
-> -}
-> -
-> -impl Write for RawWriter<'_> {
-> -    fn write_str(&mut self, s: &str) -> fmt::Result {
-> -        let bytes =3D s.as_bytes();
-> -        let len =3D bytes.len();
-> -
-> -        // We do not want to overwrite our null terminator
-> -        if self.pos + len > self.buffer.len() - 1 {
-> -            return Err(fmt::Error);
-> -        }
-> -
-> -        // INVARIANT: We are not overwriting the last byte
-> -        self.buffer[self.pos..self.pos + len].copy_from_slice(bytes);
-> -
-> -        self.pos +=3D len;
-> -
-> -        Ok(())
-> -    }
-> -}
->=20
-> --=20
-> 2.47.2
->=20
->=20
->=20
+> > Lockdown: For a verified boot setup you need to burn an eFuse at some
+> point,
+> > to tell the bootROM to boot only correct verified firmware images.
+> > 
+> > After this lockdown it's no longer possible to burn eFuses from the REE
+> albeit
+> > the production line setup still requires the support.
+> > 
+> Understood. ELE access from both secure and non-secure world is fixed in Q3
+> release.
+> User can be able to modify eFuses via OPTEE.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+Splitting the read and write between two drivers is even worse.
+
+Can you please point out why you can't just move the driver parts into
+the tee? I do see many advantages if only op-tee is used:
+
+ + Minimize the maintainer effort, because only one driver
+   implementation is used.
+ + TEE code could be reused by other OSes
+ + You could already start adding the support for it to OP-TEE because
+   no ELE-FW update is required.
+ + TEE is used anyway for new projects due to CRA and friends
+ + Concurrent access handling is done by the TEE core
+
+The only downside of this approach is the integration effort for the
+TEE, but this shouldn't be an excuse. Mostly all well known buildsystems
+like: Yocto/OE, buildroot, ptxdist do have mainline support for OP-TEE.
+
+> > > >>  - With new regulations like the EU CRA I think we need some sort of
+> > > >>    secure-enclave anyway.
+> > >
+> > > > Probably some sort of, yes. But not necessarily in the form of TEE
+> > > > or TrustZone, I guess.
+> > > To use ELE features through Linux, there is no dependency on OPTEE-OS.
+> > 
+> > Once again, still no fix available and if your system requires a TEE
+> you're forced
+> > to move the ELE communication into the TEE (at least until now).
+> > 
+> > Also the eFuse R/W access is not possible from the REE/Linux after doing
+> the
+> > device lockdown.
+> > 
+> ELE access from both secure and non-secure world will be fixed in Q3
+> release.
+> User can be able to modify eFuses via OPTEE.
+
+NACK, please see my comment above.
+
+> > > >>  - Making it optional cause more paths of potential errors e.g. by
+> not
+> > > >>    including the correct "secure.dtsi". Multiple paths also require
+> more
+> > > >>    maintain- and testing effort. IMHO I do think that one of the
+> paths
+> > > >>    get unmaintened at some point but we would need to keep it for
+> > > >>    backward compatibility.
+> > > >>
+> > > >>    Having one implementation eliminates this since.
+> > > >>
+> > > >>  - All above points assume that the ELE-FW and -HW is capable of
+> talking
+> > > >>    to both world, which is not the case. As we learned NXP doesn't
+> have
+> > > >>    a fix for the 2-MUs ELE yet and even more important there are 1-MU
+> > > >>    ELE-IPs.
+> > >
+> > > For i.MX9x SoC(s) there is at least one dedicated ELE MU(s) for each
+> > > world - Linux(one or more) and OPTEE-OS (one or more), that needs to
+> > > be shared between them.
+> > 
+> > Please mention this within your commit message.
+> Accepted & mentioned.
+> 
+> > 
+> > > As mentioned earlier, there is an issue of using MUs simultaneously,
+> > > from both worlds. Fix is in progress.
+> > 
+> > So until now no fix available and i.MX93 based products which do use a TEE
+> > are forced to move the communication into OP-TEE.
+> > 
+> > > >> I do see the (minimal) drawback of having +1 FW but I think this is
+> > > >> more an integration problem.
+> > > >> Speaking of FW files, for the new i.MX9* you already have plenty fo
+> > > >> them: bootloader, TF-A, ele-fw, scu-fw (i.MX95). So your integation
+> > > >> needs to handle multiple firmware files already.
+> > >
+> > > > Sure, but I really like to keep the complexity and therefore the
+> > > > number of FW files as low as possible. I'm not sure what has more
+> > > > weight in terms of
+> > > > security: shipping an additional firmware and therefore increasing
+> > > > the attack surface or maintaining an additional code-path.
+> > >
+> > > There is no +1 firmware in case of i.MX93.
+> > >
+> > > >>
+> > > >>> Anyway, I see your point of having a single implementation for the
+> > > >>> ELE API in the "right" place. But as far as I know other platforms
+> > > >>> like
+> > > >>> STM32MP1 also implement both ways for the HWRNG, secure access via
+> > > >>> OPTEE and non-secure access via kernel directly.
+> > > >>
+> > > >> I'm not a STM32MP1 expert but here you have this setup with the
+> > > >> *-scmi.dtsi. So you have two code paths which needs to be
+> > > >> maintained and tested. Also if one customer of yours want to use
+> > > >> OP-TEE you need the integration anyway, so you (Kontron) needs to
+> > > >> maintain multiple configuration as well. I don't see the added value.
+> > > >>
+> > > >> I think for STM32MP1 the *-scmi.dtsi support was added later
+> > > >> because it required a lot effort to support it. This is not the
+> > > >> case for the
+> > > >> i.MX9* series.
+> > >
+> > > > Anyway, thanks for elaborating. Your points are all valid and
+> > > > basically I
+> > > agree. I'm fine with either way. But I'm afraid that implementing the
+> > > ELE API in OP-TEE only will cause another tremendous delay for having
+> > > ELE access in the kernel, especially seeing how slow NXP seems to be
+> > > working on these topics right now.
+> > >
+> > > To use ELE features through Linux, there is no dependency on OPTEE-OS.
+> > 
+> > How exactly do you provide the eFuse write access after the device was
+> locked
+> > down?
+> As mentioned above by you. It will be done via OPTEE-OS (or may be via TFA).
+
+Why TF-A? Please see my comments above.
+
+At the moment I don't see why the ELE must be a Linux driver. You could
+start adding a TEE driver now, because there is no need to wait 3 months
+for a ELE-FW fix.
+
+IMHO having a dedicated normal-world driver makes only sense for
+bootlaoders which don't have support for the TEE communication but need
+access to the ELE. This is not the case for the kernel.
+
+Regards,
+  Marco
 
