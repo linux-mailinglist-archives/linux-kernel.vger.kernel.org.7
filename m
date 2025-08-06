@@ -1,58 +1,49 @@
-Return-Path: <linux-kernel+bounces-757138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A6FB1BE30
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:10:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96119B1BE2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F318A1945
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC9A3B630D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9D513957E;
-	Wed,  6 Aug 2025 01:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2316A95B;
+	Wed,  6 Aug 2025 01:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KIf78Jsp"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDrN3ZD1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEF786334
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF72E36E7;
+	Wed,  6 Aug 2025 01:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754442626; cv=none; b=REa3C1eEj9fH/5+SMfqlZxXhguDqYjiXoFL/OjaAkvVOViLSPJn1rw6o34aKO9QQOuETYMix1qEsQQtkXIRaGn0lbqdmcm8O10zoXdSKQFzRsD7/wMkePqrMuU1F8bI6xJSTdtidJqzJQ/3VMURyJajapup3nGbah8P7WrqbF3w=
+	t=1754442592; cv=none; b=nR5yB0RGdqduJFFQleNsOIVOCz3C+J18AXVfguHA4YTUcrBVcgBfooJhx0svpDfsRZk+xnZwk+7yxyhAMKUwSeFP7EBCd4bHn4wX5ERklNGt87uQKCzV9nC0Et2ZhDVySDHk3gAgSEzhO2SGmaKlzr8KPrz71pBqD0mOpErPcPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754442626; c=relaxed/simple;
-	bh=0DVPw6O45AkUZvlXgh5UxLzYAIkyrauQJO2LLg6jfAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WSetLHIUZCCwCf1NwLIMLCOtAy9A0FBN8qOw5vP4GG6XPNw0UzsOsgo3DhqdmOnlmXBEWiBeaRiGGixUQ7zQbUVyTR+XLPjAghGF+BQ1jIxHI04jBHuAk83SBQIxjXut6nhH3L8nIDKnPBjXHdFQS0eMA4v9bYH9TZhVWz1lgl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KIf78Jsp; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754442622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Pg+CB8rchBFVimAHaKPBm1B8BHU3IpcAVyad+HNZZ+Q=;
-	b=KIf78Jspc/VfghXIDY12PjKgHGzsDl1NesqMgJm6ZnVrjOeWM8PsgFF9TQ4Qpg5VzEl3Is
-	7dpxemTY+8iVZIcyjzW4vtPNtI2wNmUAP8s0g2yyBT79BRxuBA9QlBYMUY6nqcRua4CZ3a
-	/r5ff+W1nqnc3//K6yu6y/jlEQQF8T0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	stable@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] NFSD: Fix destination buffer size in nfsd4_ssc_setup_dul()
-Date: Wed,  6 Aug 2025 03:10:01 +0200
-Message-ID: <20250806011000.62482-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1754442592; c=relaxed/simple;
+	bh=3tS+wAYkpgkrdZK8wc8gi2qjSh3qJT1gxLr9GvDEwzk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LKI8R0k1T1cc23NE9hbRW1H2puER15WsvXrNqvLjY7B6fmpczUrvQC4y3s04j7mbz2mFulA5k5IsF0s3v/OaA6GqKglp82B9nHyC2xUhMXVFUDwl0bwOqKqTcYAfXrEAhrrydbqZ3j1J5Pc4KNYoVv6fZccnvOiheNx8QBW74SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDrN3ZD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DB8C4CEF0;
+	Wed,  6 Aug 2025 01:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754442591;
+	bh=3tS+wAYkpgkrdZK8wc8gi2qjSh3qJT1gxLr9GvDEwzk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dDrN3ZD1bGqoaFM+Gf+3bitCrKEpCCziRcLWeryBJwSEb3gBFROAzfP7KEw6BUv9N
+	 ZaofsK6a6POIWdPqaNSQbNOWElYwXhspku7WSGmpqHAD0jeXSHA7Te4XwjwoqCJwol
+	 cJiQhZuqvglmb1YjOOmWzXjm6MTKYbY4EgRl8xQbnp+AM4zDkJzdcseRSdrRNmkt3X
+	 vB4YwtVq8mkzBTGdo/isbMLj4QFZ93x6m1ew8GsjOFsRz0nXaHU4vhRJ37imxv0g49
+	 754KDDnuqM0cR4RX6pZOSdezTj9+W6lNsBgpgRuyPSZdNMfdZfATdAG2Y7J39r7Wvn
+	 5wvltn+iaZYHw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCB1383BF63;
+	Wed,  6 Aug 2025 01:10:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix skb handling for
+ XDP_PASS
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175444260551.2227515.8563697587474144829.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Aug 2025 01:10:05 +0000
+References: <20250803180216.3569139-1-m-malladi@ti.com>
+In-Reply-To: <20250803180216.3569139-1-m-malladi@ti.com>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: namcao@linutronix.de, r-gunasekaran@ti.com, jacob.e.keller@intel.com,
+ sdf@fomichev.me, john.fastabend@gmail.com, hawk@kernel.org,
+ daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com, kuba@kernel.org,
+ edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, vigneshr@ti.com,
+ rogerq@kernel.org, danishanwar@ti.com
 
-Commit 5304877936c0 ("NFSD: Fix strncpy() fortify warning") replaced
-strncpy(,, sizeof(..)) with strlcpy(,, sizeof(..) - 1), but strlcpy()
-already guaranteed NUL-termination of the destination buffer and
-subtracting one byte potentially truncated the source string.
+Hello:
 
-The incorrect size was then carried over in commit 72f78ae00a8e ("NFSD:
-move from strlcpy with unused retval to strscpy") when switching from
-strlcpy() to strscpy().
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Fix this off-by-one error by using the full size of the destination
-buffer again.
+On Sun, 3 Aug 2025 23:32:16 +0530 you wrote:
+> emac_rx_packet() is a common function for handling traffic
+> for both xdp and non-xdp use cases. Use common logic for
+> handling skb with or without xdp to prevent any incorrect
+> packet processing. This patch fixes ping working with
+> XDP_PASS for icssg driver.
+> 
+> Fixes: 62aa3246f4623 ("net: ti: icssg-prueth: Add XDP support")
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> 
+> [...]
 
-Cc: stable@vger.kernel.org
-Fixes: 5304877936c0 ("NFSD: Fix strncpy() fortify warning")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Use three parameter variant of strscpy() for easier backporting
-- Link to v1: https://lore.kernel.org/lkml/20250805175302.29386-2-thorsten.blum@linux.dev/
----
- fs/nfsd/nfs4proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here is the summary with links:
+  - [net,v2] net: ti: icssg-prueth: Fix skb handling for XDP_PASS
+    https://git.kernel.org/netdev/net/c/d942fe13f72b
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 71b428efcbb5..954543e92988 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1469,7 +1469,7 @@ static __be32 nfsd4_ssc_setup_dul(struct nfsd_net *nn, char *ipaddr,
- 		return 0;
- 	}
- 	if (work) {
--		strscpy(work->nsui_ipaddr, ipaddr, sizeof(work->nsui_ipaddr) - 1);
-+		strscpy(work->nsui_ipaddr, ipaddr, sizeof(work->nsui_ipaddr));
- 		refcount_set(&work->nsui_refcnt, 2);
- 		work->nsui_busy = true;
- 		list_add_tail(&work->nsui_list, &nn->nfsd_ssc_mount_list);
+You are awesome, thank you!
 -- 
-2.50.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
