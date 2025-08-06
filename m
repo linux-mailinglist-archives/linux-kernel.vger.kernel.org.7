@@ -1,171 +1,153 @@
-Return-Path: <linux-kernel+bounces-757273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917E6B1C021
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E6FB1C024
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AE918C02FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD8018C033F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 05:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EEE1FF7B4;
-	Wed,  6 Aug 2025 05:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58D520125F;
+	Wed,  6 Aug 2025 05:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="eao6pOTq"
-Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="m6z/PmWV"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F229B1DEFD2;
-	Wed,  6 Aug 2025 05:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCD915E97;
+	Wed,  6 Aug 2025 05:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754459841; cv=none; b=WRcGGmJhAaLfEvZPiepOwgY/gbCESZcOqOt30LsMAwnNKe0TQadO44Ru7ZkQCt5R37WnndN6xbu0PYtNhr6OXlehpfPfDD6df1TbOHbTjsO3GJSO+GZLXoR+y8t1jQjZr9XoBYP9id3o9Ijv2k8C01pN0o5Q+j9vA2i4kY2xNEY=
+	t=1754459880; cv=none; b=diVk2MW+WxPloCZ64v5HxvIHjzd7BFAoImxQ6h/Rg/ZNas7k40Ojtyn/83Nh47toU+yvDKW2G06w8YPtw1ZvKXRHAH00sxWZ4P/9uuFmcNmGIhKNq/q9wixVrsNkC1acxv6KxerUuP/EyV2n/6FJoFLcKhZt7289IL3ozoI4QoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754459841; c=relaxed/simple;
-	bh=ayQesVw/rM4qaaKbOYFV/X23n9kB65dbpVD96KNFi1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WkPN0ifbuxmYk90tNHL8y991AaIzM5NEtbfU3HhqCnxqQTzwiHR0RK6FKUfx/J5lnsS7yBkfTxrlm1cFHNAIiANlvL7n5Q3ixqIPFzouNBewAL4LyPdasxxr+jz0gTRMCChvCLU9wHxvO4vTC0l7nYxukek57DS0KniUHA0RrHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=eao6pOTq; arc=none smtp.client-ip=178.154.239.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:152c:0:640:d236:0])
-	by forward500d.mail.yandex.net (Yandex) with ESMTPS id 2B25981ED0;
-	Wed, 06 Aug 2025 08:57:09 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 3vZDlV7L3a60-Fn31Me8l;
-	Wed, 06 Aug 2025 08:57:08 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1754459828;
-	bh=abbD+wbkBUwwZmPjkf0v357RVnk/hpuUN85h/N1bW5g=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=eao6pOTqrgm1dmllwxhTkdo+gSV8iaUyh6PljRA05+fG1WloE0ox0GZmF2T/iov8Y
-	 Ww97hehpn6NNMvvDhK8WPwA8Sg0mg+cHG4s129qyzKffUPtmnV2pF5DiDMFiOdWPBK
-	 oYzjL1d0D6/dG0Xx/IM36puV94FSZmE0JT0urxzs=
-Authentication-Results: mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Wed, 6 Aug 2025 08:57:02 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Lyude Paul <thatslyude@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, lossin@kernel.org, a.hindborg@kernel.org,
- aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org,
- peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
- bjorn3_gh@protonmail.com, lyude@redhat.com
-Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
-Message-ID: <20250806085702.5bf600a3@nimda.home>
-In-Reply-To: <ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
-References: <20250621184454.8354-1-work@onurozkan.dev>
-	<20250724165351.509cff53@nimda.home>
-	<ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1754459880; c=relaxed/simple;
+	bh=b9vQBEGjjIj6W3GpSAfTfIPFn2Bv2lvFlhnuXlSDcDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZY7mqPnA3a05ZcEVybi0/1BN3n6aDucE4Q9wvNOPG+vor1IyuTZBRWrM842Z+VBmN77FS1LDIyEIXh1Y2aybnP7lI7licebsuH9WAGl1TrOca39MdTZkuOIFtr9Zx1PZFfp8Hrai2aPV4DDkEnLc+eRFJzastkrhdE6Ko04r6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=m6z/PmWV; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hIPqd5cWs5HbBAHPrTJhdAwIWXUUNfMuyrvxyL8XD7w=; b=m6z/PmWVBvAZXmypedd/Z5xWRQ
+	no7mtvBzrm0Z6V8qu67sfjuDzHurrnDFgXkpWM08KMDfuGCxOfeyCv/eYw1rNloTc7n+SlbH4gBXJ
+	GEcg6guxcQyCcGt0r2HpRPW+oDdKcK46aQAoDhg2RP/kZPZBrD/xf8Ixe78N+N3HkU8iWKDTQEVuq
+	sujm2dktxAgXLpAOXBDLEWm0yevVgmDkUt8cpTmnit7HuuIdfFypZbici9pJYB1Aw0yTkylA8j/11
+	GUvQQ6QEKMO93MkYMsLirJ3h3NfSdz3tFneRLz8EMorZhudFjXjJsXRORxwhgSGzkoa6vDg4AmXTp
+	bYti8rwA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujX9v-00000008rVV-0kB4;
+	Wed, 06 Aug 2025 05:57:55 +0000
+Date: Wed, 6 Aug 2025 06:57:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] fscontext: do not consume log entries for -EMSGSIZE
+ case
+Message-ID: <20250806055755.GF222315@ZenIV>
+References: <20250806-fscontext-log-cleanups-v1-0-880597d42a5a@cyphar.com>
+ <20250806-fscontext-log-cleanups-v1-1-880597d42a5a@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806-fscontext-log-cleanups-v1-1-880597d42a5a@cyphar.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, 05 Aug 2025 12:22:33 -0400
-Lyude Paul <thatslyude@gmail.com> wrote:
+On Wed, Aug 06, 2025 at 03:31:10PM +1000, Aleksa Sarai wrote:
+> Userspace generally expects APIs that return EMSGSIZE to allow for them
+> to adjust their buffer size and retry the operation. However, the
+> fscontext log would previously clear the message even in the EMSGSIZE
+> case.
+> 
+> Given that it is very cheap for us to check whether the buffer is too
+> small before we remove the message from the ring buffer, let's just do
+> that instead.
+> 
+> Fixes: 007ec26cdc9f ("vfs: Implement logging through fs_context")
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: <stable@vger.kernel.org> # v5.2+
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  fs/fsopen.c | 22 ++++++++++++++--------
+>  1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/fsopen.c b/fs/fsopen.c
+> index 1aaf4cb2afb2..f5fdaa97965b 100644
+> --- a/fs/fsopen.c
+> +++ b/fs/fsopen.c
+> @@ -36,23 +36,25 @@ static ssize_t fscontext_read(struct file *file,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	if (log->head == log->tail) {
+> -		mutex_unlock(&fc->uapi_mutex);
+> -		return -ENODATA;
+> -	}
+> +	ret = -ENODATA;
+> +	if (log->head == log->tail)
+> +		goto err_unlock_nomsg;
+>  
+>  	index = log->tail & (logsize - 1);
+>  	p = log->buffer[index];
+> +	n = strlen(p);
+> +
+> +	ret = -EMSGSIZE;
+> +	if (n > len)
+> +		goto err_unlock_nomsg;
+> +
 
-> Hey! Onur, if you could make sure that future emails get sent to
->=20
-> lyude at redhat dot com
->=20
-> That would be appreciated! I usually am paying much closer attention
-> to that email address. That being said, some comments down below:
+FWIW, I would rather turn that into a helper taking log and len and
+returning p or ERR_PTR(...); something like
 
-Sure thing, added it the cc list.
+static inline const char *fetch_message(struct fc_log *log, size_t len,
+					bool *need_free)
+{
+	int index = log->tail & (ARRAY_SIZE(log->buffer) - 1);
+	const char *p = log->buffer[index];
 
-> On Thu, 2025-07-24 at 16:53 +0300, Onur =C3=96zkan wrote:
-> > Hi again,
-> >=20
-> > Just finished going over the C-side use of `ww_mutex` today and I
-> > wanted to share some notes and thoughts based on that.
-> >=20
-> > To get the full context, you might want to take a look at this
-> > thread [1].
-> >=20
-> > - The first note I took is that we shouldn't allow locking without
-> > `WwAcquireCtx` (which is currently possible in v5). As explained in
-> > ww_mutex documentation [2], this basically turns it into a regular
-> > mutex and you don't get benefits of `ww_mutex`.
->=20
-> I disagree about this conclusion actually, occasionally you do just
-> need to acquire a single mutex and not multiple. Actually - we even
-> have a drm_modeset_lock_single_*() set of functions in KMS
-> specifically for this purpose.=20
->=20
-> Here's an example where we use it in nouveau for inspecting the
-> atomic display state of a specific crtc:
->=20
-> https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/nouveau/dis=
-pnv50/crc.c#L682
->=20
-> This isn't actually too unusual of a usecase tbh, especially
-> considering that the real reason we have ww_mutexes in KMS is to deal
-> with the atomic transaction model that's used for modesetting in the
-> kernel.
->=20
-> A good example, which also doubles as a ww_mutex example you likely
-> missed on your first skim since all of it is done through the
-> drm_modeset_lock API and not ww_mutex directly:
->=20
-> https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/nouveau/dis=
-pnv50/crc.c#L544
->
-> drm_modeset_acquire_init() is a wrapper around ww_mutex_init() which
-> actually does pretty much exactly what Daniel is describing lower in
-> the thread: keeping track of a list of each acquired lock so that
-> they can be dropped once the context is released.
->=20
-> drm_atomic_get_crtc_state() grabs the CRTC context and ensures that
-> the crtc's modeset lock (e.g. a ww_mutex) is actually acquired
->=20
-> drm_atomic_commit()=C2=A0performs the checking of the atomic modeset
-> transaction, e.g. going through the requested display settings and
-> ensuring that the display hardware is actually capable of supporting
-> it before allowing the modeset to continue. Often times for GPU
-> drivers this process can involve not just checking limitations on the
-> modesetting object in question, but potentially adding other
-> modesetting objects into the transaction that the driver needs to
-> also inspect the state of. Adding any of these modesetting objects
-> potentially means having to acquire their modeset locks using the
-> same context, and we can't and don't really want to force users to
-> have an idea of exactly how many locks can ever be acquired. Display
-> hardware is wonderful at coming up with very wacky limitations we
-> can't really know ahead of time because they can even depend on the
-> global display state.
->=20
-> So tracking locks is definitely the way to go, but we should keep in
-> mind there's already infrastructure in the kernel doing this that we
-> want to be able to handle with these APIs as well.
+	if (unlikely(log->head == log->tail))
+		return ERR_PTR(-ENODATA);
 
+	n = strlen(p);
+	if (unlikely(n > len))
+		return ERR_PTR(-EMSGSIZE);
 
-Thanks for the feedback! Supporting single locks is easy, I just
-didn't think it was a good idea at first but it looks like I missed
-some cases.
+	log->buffer[index] = NULL;
+	*need_free = log->need_free & (1 << index);
+	log->need_free &= ~(1 << index);
+	log->tail++;
 
-I can implement two types of locking functions: one on `WwMutex` where
-`WwMutex::lock` handles a single lock without a context, and another on
-`WwAcquireCtx`, where `WwAcquireCtx::lock` is used for handling
-multiple contexts.
+	return p;
+}
 
-e.g.,:
+with caller being
 
-    let mutex =3D WwMutex::new(...);
-    mutex.lock(); // without context, for single locks
+        ret = mutex_lock_interruptible(&fc->uapi_mutex);
+	if (ret < 0)
+		return ret;
+	p = fetch_message(log, len, &need_free);
+	mutex_unlock(&fc->uapi_mutex);
+	if (IS_ERR(p))
+		return PTR_ERR(p);
+	n = strlen(p);
+	if (copy_to_user(_buf, p, n))
+		n = -EFAULT;
+	if (need_free)
+		kfree(p);
+	return n;
 
-    let ctx =3D WwAcquireCtx::new(...);
-    ctx.lock(mutex); // with context, for multiple locks
-
-What do you think?
-
-Regards,
-Onur
+and that's it.
 
