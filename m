@@ -1,214 +1,402 @@
-Return-Path: <linux-kernel+bounces-757883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE04B1C7DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D588B1C7E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3110E18A6F16
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B8E3ABEFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894CC1D88D0;
-	Wed,  6 Aug 2025 14:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GlGZkvQP"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FEA28A726;
+	Wed,  6 Aug 2025 14:48:07 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAAF192B96
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521151D7995;
+	Wed,  6 Aug 2025 14:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754491683; cv=none; b=lXKfSB2TSgp0txML8HYwMCPjhs7iggUc7CSJZOEXxxXxlXZu2MH6DjUVhyIXvElsOsjhnjX1XB3gUOeuJvGy1f0E6Sm0UB+tUcGfSmcRcOX8RcITQdkw4uSkZD/mYJuiFMbTfJgj/Hx8N6Xj2mrntc58M1zq8H/NyFexOozQrx0=
+	t=1754491686; cv=none; b=XJoD1zIe5ObUs04DI7c7LcFm6+C3i5DVBTjdr68J4R4sdvoM82Jhw+N++4Fzw1rogCio/FYUsRxowrXMAsEJQcx5meYzA5uRpGix8DBxl/4DA89a1oLp/ji2ke82VOHkmTa7KgbJaFHhdX5qliyCln6ktswvg6CXhCr3/8rkzws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754491683; c=relaxed/simple;
-	bh=nagcVWDgivgYkG4H/gH1qCcHu6Fjcnp2VtEXdVXsMvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sjosWLEG5j+801gUaLWj6HYpv+xEIo3NRHEFtlYO6qK49KCM6gRAsMngTlW1FJJUg7Zz/xwJiBqn2LUK9yzcZK+i97M4g6PMfvmZF4qJTBn8zThM50knG3ZGeSGW0/1E9SS2e/kZ644PGuzVpjoAAPS06Kquea8DYaszdniSb4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GlGZkvQP; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576EloOm539020;
-	Wed, 6 Aug 2025 09:47:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754491670;
-	bh=nNdYi/P3Vm7YhgLbOZzyZO2vNSPhfW3P2AS/YBfGhXM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=GlGZkvQP3gvJXS/SyQ/wO1mAbb6UunwxzrXL7dBh+Lv9TB2czQUR6QvBpt28Sesc7
-	 /+B4Rbgtni8eeybF3l+b6kNiWX8Qb+EXm1yefWloMoHshIgic51GUKVkr4SV9RgqJT
-	 SBG8Va6z8wNfWFQSmNy0eZ+skoCH4ZsRtOlKB+FY=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576Eloan3163511
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 6 Aug 2025 09:47:50 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
- Aug 2025 09:47:49 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 6 Aug 2025 09:47:49 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576ElncW3693508;
-	Wed, 6 Aug 2025 09:47:49 -0500
-Message-ID: <11e7159a-d712-405c-a345-6dbb8171c1d1@ti.com>
-Date: Wed, 6 Aug 2025 09:47:49 -0500
+	s=arc-20240116; t=1754491686; c=relaxed/simple;
+	bh=vyWa69z+sJzDQ+TdwHNMtNnrGZNW8qjNnPSndCOtWlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AY/DdIXKwkcbcDO6m3DSXvq3oedvzeqt36eLFKmsWoS7NaY+TlDV98Vjqb+SSk2h6r3d7rdd2iOKG3eDS3ySc2lI68LrtxrTUER+ZeICsaDqIrGmxwSL4yur7qpLtWVEYbB7MV/o3qmC33Tr4JnCkuJtv2F55yq0Ve4yk+VvxGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-88c61c2843aso1391860241.2;
+        Wed, 06 Aug 2025 07:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754491683; x=1755096483;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ewIXJjQUmiEQh0L3XDGnFBhJg4VA1jPsjxIit/17xDY=;
+        b=Amqq5Q6TeRZGAy3jwsL5nmiljNQenMDOwBXR0rUSwPjBs5bpGb/K8yo+wv9PasuBAJ
+         9SmaHQpZjwRpkhWlWaPTrPqynS+a4dmKxe+f+ioet/g69t1EDl9oE2nkWTJHbOaDVprT
+         N8d4GwmZe3vRNmW5wVjxVIYZxBbY+88xyiEMKPPPofzxSfGKLkAS6P4rSS3tWziVn+7Y
+         ExCbI+BgXoCI6PUqvyYP0t3jdgG2Nk9lCTvZlEJGvJWqZZ0WZNSoJMcTuWI0nBip0T/T
+         kzpLkuc7gWcwEZTVLrM+2zKgZIq7cA53/sZGASp9TBmwnMqjUoS8/LvwbV7qAW6owZQY
+         Yf9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCukmQ+K2aZN3Prplm1cM3EZjzvk6KJj7W8Eptxn+AsUnigqWIxDm4ZdhtdcUE3j7YViDukijSi7AZoA==@vger.kernel.org, AJvYcCVIUNPdScgpN9l2HREzVkC4bhH70itqsdvtCDOof8l54rDq0+FOsYYdI+NwlZsLac1/SglVw8DnR9ULlqce@vger.kernel.org, AJvYcCWC3WrTUlnhzb+1ER1aMxcIcsn020ZaYr0qUW8DBv2Y6gyFV4hniMRoN7AxzB3veFZ6Ht9vdin1yMgC@vger.kernel.org, AJvYcCXMKS2su6U5FsdIpa84yr9k/w4JLx/nvNdz7YJ61qsd3+p+6RQ8xSvib/098VB9kh4XALsYsMF5hpLVfJbooSoPCng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMTNUlZb+hakHVefWnLFEh6Zkf8DPlOU6w8bUPOqex6Hy58EDe
+	ihE/FHULqinAVE6pmFasnMTd3wgYQdUocxa4bFXAe3zhJMZVfFW2/l0peB1uWpiXYiw=
+X-Gm-Gg: ASbGncuF7lUCLPhaQ06ehekqzd6Kon9MC0kYNUSOJRmVcrH7Psx9Jk65zQM0g4+Kid4
+	becMpw+CXMW8cE9Cxu9a3SCfMniAHHO78v11eSytB0IzGXWyIPrCz+Jw/gMJ7Jzd5qs4KrVFVKk
+	hZxbeUMRrZjwfc+nZjTwPVlLCaiFj3/BjmcpyEO2lZGvKZtQo1n3HTjLas5/0Fw/bHInJsPgod2
+	s0unMAiPGpA9iVX7/eRTpWTE/S39Dcb+a2vO6nx0l9LkZFOx4Y9l+t0NcW8xsolY85of9lmu8mg
+	NDqirSRujcV7FMl2UbQpgJN6A5Sa4+Ubxb5uGF03bSpENhgpqbNCGogLsAH4hQ5O13vsPoL5zGq
+	DxfbwWvaUNPbYPHHa8jLYLtD36SEom+fZFI0jOkqeqhS/niyTbl1XkRyrdrIX
+X-Google-Smtp-Source: AGHT+IGjakNIfsmadSZOR6aZ3tqau8cktZYMKenKn1noXV4fs3GcwFdAU9m8Y2JYK0aGQfWZnoAbrQ==
+X-Received: by 2002:a05:6102:38d3:b0:4c3:3eb:e84d with SMTP id ada2fe7eead31-503733cc2b5mr1444766137.21.1754491682783;
+        Wed, 06 Aug 2025 07:48:02 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d46d50bsm3684673137.17.2025.08.06.07.48.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 07:48:02 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-88dc394f5e7so1049102241.1;
+        Wed, 06 Aug 2025 07:48:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUawhEDnWowaIZzu7Y4jOPhGySFVs/SPa7Prwj9NQ54ahR4i43y0zh7Bb1aH7aBJUYEg1VuW+VuUHu8tQ==@vger.kernel.org, AJvYcCUtSA/yacZvsoWIhmLrh/3k/BeeqXP2A8lFA7xIzjRcCbcbh77l9kdzXS9oe2h+zRP6e3W+tBjbjjpA@vger.kernel.org, AJvYcCVI2n1FntbeQhRustn/rH3tVPjiZD7X4BE8UUe27zvQcti0b7ibfOAJ0QmzCpCmTt+PHP2gYgxGzTocnQQJ@vger.kernel.org, AJvYcCWx6M5GoZ+mVIzpdnUc8cLMXDmDbEkn10YvoLvTD5bWBdf61NwDaGCnM0L2ZH/ChNBtQm4GzmZINDQoTa5VGBjk5cA=@vger.kernel.org
+X-Received: by 2002:a05:6102:8025:b0:4e9:a01a:ed57 with SMTP id
+ ada2fe7eead31-503733d4a69mr1442588137.20.1754491681691; Wed, 06 Aug 2025
+ 07:48:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: multi_v7_defconfig: Enable more OMAP related configs
-To: Beleswar Padhi <b-padhi@ti.com>, <linux@armlinux.org.uk>, <arnd@arndb.de>
-CC: <krzk@kernel.org>, <u-kumar1@ti.com>, <praneeth@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250806141808.4013462-1-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250806141808.4013462-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250801154550.3898494-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250801154550.3898494-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 16:47:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVhxxJprKSr3-QmO-8+ue+guqErW5e1tj3yEHRMZhdeiQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy1Ns8UyKuQbFZn4T5aPw1qTSCP74zvexMXmvhIlIAHeZDLYuc9Mo5GFMs
+Message-ID: <CAMuHMdVhxxJprKSr3-QmO-8+ue+guqErW5e1tj3yEHRMZhdeiQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] pinctrl: renesas: Add support for RZ/T2H
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/6/25 9:18 AM, Beleswar Padhi wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
-> 
-> This allows us to enable various peripherals in the TI OMAP family
-> platforms like AM571X-IDK, AM572X-IDK, AM574X-IDK, AM57XX-BEAGLE-X15,
-> AM57XX-EVM using the multi_v7_defconfig, instead of only with the
-> OMAP specific defconfigs.
-> 
-> IKCONFIG*:
-> Allows reading the current kernel configuration through /proc/config.gz
-> 
+Hi Prabhakar,
 
-This gives the "what" the config does, but not the "why" it should be
-in multi_v7_defconfig. For this item a better "why" would be something
-explaining that the majority of platform specific defconfigs have this
-and so does the main ARM64 defconfig, so it should be reasonable for
-the main common ARMv7 defconfig to also have it.
-
-Anyway these are all reasonable to have and help us make this shared
-defconfig useful for more platforms,
-
-Acked-by: Andrew Davis <afd@ti.com>
-
-> {TI/DRA752}_THERMAL:
-> Enables TI's bandgap temperature sensor and thermal zone framework for
-> thermal management on the OMAP SoC family.
-> 
-> THERMAL_EMULATION:
-> Adds emul_temp sysfs node under thermal zones to allow emulating
-> temperature changes.
-> 
-> DRM_PANEL_OSD_OSD101T2587_53TS:
-> TOUCHSCREEN_EDT_FT5X06:
-> Enables OSD LCD panel and capacitive touchscreen support used in AM57XX
-> evaluation modules.
-> 
-> SPI_TI_QSPI:
-> Enables TI's QSPI master controller driver for accessing flash devices
-> on OMAP5 platforms.
-> 
-> FANOTIFY:
-> Allows sending open file descriptors to userspace listeners along with
-> file access events.
-> 
-> USER_NS:
-> NAMESPACES:
-> Enable user NS to provide user info of different users for different
-> process.
-> 
-> POSIX_MQUEUE:
-> Supports POSIX message queues for priority-based IPC.
-> 
-> BSD_PROCESS_ACCT:
-> Enables BSD process accounting to allow user space program to write
-> process accounting information to a file.
-> 
-> bloat-o-meter:
-> Total: Before=24537037, After=24640034, chg +0.42%
-> 
-> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
-> Co-developed-by: Carlos Hernandez <ceh@ti.com>
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+On Fri, 1 Aug 2025 at 17:46, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+>
+> Add the pinctrl and gpio driver for RZ/T2H
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Co-developed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->   arch/arm/configs/multi_v7_defconfig | 14 +++++++++++++-
->   1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index f2822eeefb95..d88177cbf2ce 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -1,7 +1,13 @@
->   CONFIG_SYSVIPC=y
-> +CONFIG_POSIX_MQUEUE=y
->   CONFIG_NO_HZ_IDLE=y
->   CONFIG_HIGH_RES_TIMERS=y
-> +CONFIG_BSD_PROCESS_ACCT=y
-> +CONFIG_IKCONFIG=y
-> +CONFIG_IKCONFIG_PROC=y
->   CONFIG_CGROUPS=y
-> +CONFIG_NAMESPACES=y
-> +CONFIG_USER_NS=y
->   CONFIG_BLK_DEV_INITRD=y
->   CONFIG_EXPERT=y
->   CONFIG_PERF_EVENTS=y
-> @@ -333,7 +339,7 @@ CONFIG_TOUCHSCREEN_ADC=m
->   CONFIG_TOUCHSCREEN_ATMEL_MXT=m
->   CONFIG_TOUCHSCREEN_ELAN=m
->   CONFIG_TOUCHSCREEN_MMS114=m
-> -CONFIG_TOUCHSCREEN_EDT_FT5X06=m
-> +CONFIG_TOUCHSCREEN_EDT_FT5X06=y
->   CONFIG_TOUCHSCREEN_WM97XX=m
->   CONFIG_TOUCHSCREEN_ST1232=m
->   CONFIG_TOUCHSCREEN_STMPE=y
-> @@ -453,6 +459,7 @@ CONFIG_SPI_GXP=m
->   CONFIG_SPI_GPIO=m
->   CONFIG_SPI_FSL_DSPI=m
->   CONFIG_SPI_OMAP24XX=y
-> +CONFIG_SPI_TI_QSPI=y
->   CONFIG_SPI_ORION=y
->   CONFIG_SPI_PL022=y
->   CONFIG_SPI_ROCKCHIP=m
-> @@ -547,6 +554,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
->   CONFIG_SENSORS_INA2XX=m
->   CONFIG_CPU_THERMAL=y
->   CONFIG_DEVFREQ_THERMAL=y
-> +CONFIG_THERMAL_EMULATION=y
->   CONFIG_IMX_THERMAL=y
->   CONFIG_QORIQ_THERMAL=m
->   CONFIG_ROCKCHIP_THERMAL=y
-> @@ -555,6 +563,8 @@ CONFIG_ARMADA_THERMAL=y
->   CONFIG_BCM2711_THERMAL=m
->   CONFIG_BCM2835_THERMAL=m
->   CONFIG_BRCMSTB_THERMAL=m
-> +CONFIG_TI_THERMAL=y
-> +CONFIG_DRA752_THERMAL=y
->   CONFIG_ST_THERMAL_MEMMAP=y
->   CONFIG_TEGRA_SOCTHERM=m
->   CONFIG_TEGRA30_TSENSOR=m
-> @@ -747,6 +757,7 @@ CONFIG_DRM_PANEL_SIMPLE=y
->   CONFIG_DRM_PANEL_EDP=y
->   CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
->   CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
-> +CONFIG_DRM_PANEL_OSD_OSD101T2587_53TS=y
->   CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
->   CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=m
->   CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
-> @@ -1260,6 +1271,7 @@ CONFIG_COUNTER=m
->   CONFIG_STM32_LPTIMER_CNT=m
->   CONFIG_STM32_TIMER_CNT=m
->   CONFIG_EXT4_FS=y
-> +CONFIG_FANOTIFY=y
->   CONFIG_AUTOFS_FS=y
->   CONFIG_MSDOS_FS=y
->   CONFIG_VFAT_FS=y
+> v3->v4:
+> - No changes
+>
+> v2->v3:
+> - Fixed Kconfig dependency.
+> - Added dependency for 64bit to avoid build errors on 32bit systems.
+> - Included bitfield.h
 
+Thanks for the update!
+
+Seems like several of my review comments on v1 were missed.
+
+> --- /dev/null
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+
+> +#define PM_MASK                        GENMASK(1, 0)
+> +#define PM_PIN_MASK(pin)       (PM_MASK << ((pin) * 2))
+
+Please move PM_INPUT and PM_OUTPUT here, and insert a blank line
+between the PM_* and PFC_* definitions.
+
+> +#define PFC_MASK               GENMASK_ULL(5, 0)
+> +#define PFC_PIN_MASK(pin)      (PFC_MASK << ((pin) * 8))
+> +
+> +#define PM_INPUT       0x01
+
+BIT(0)
+
+> +#define PM_OUTPUT      0x02
+
+BIT(1)
+
+> +struct rzt2h_pinctrl_data {
+> +       const char * const *port_pins;
+
+Do you need this? It always points rzt2h_gpio_names[].
+
+> +       unsigned int n_port_pins;
+> +       const u8 *port_pin_configs;
+> +       unsigned int n_ports;
+> +};
+> +
+> +struct rzt2h_pinctrl {
+> +       struct pinctrl_dev              *pctl;
+> +       struct pinctrl_desc             desc;
+> +       struct pinctrl_pin_desc         *pins;
+> +       const struct rzt2h_pinctrl_data *data;
+> +       void __iomem                    *base0, *base1;
+> +       struct device                   *dev;
+> +       struct gpio_chip                gpio_chip;
+> +       struct pinctrl_gpio_range       gpio_range;
+> +       spinlock_t                      lock;
+> +       struct mutex                    mutex;
+
+Please add comments to these two locks, to clarify what they are
+protecting against.
+
+> +       bool                            safety_port_enabled;
+> +};
+> +
+> +#define RZT2H_PINCTRL_REG_ACCESS(size, type) \
+> +static inline void rzt2h_pinctrl_write##size(struct rzt2h_pinctrl *pctrl, u8 port, \
+> +                                            type val, u16 offset) \
+
+unsigned int offset?
+
+> +{ \
+> +       if (port > RZT2H_MAX_SAFETY_PORTS) \
+> +               write##size(val, pctrl->base0 + offset); \
+> +       else \
+> +               write##size(val, pctrl->base1 + offset); \
+> +} \
+> +\
+> +static inline type rzt2h_pinctrl_read##size(struct rzt2h_pinctrl *pctrl, u8 port, u16 offset) \
+
+Likewise
+
+> +{ \
+> +       if (port > RZT2H_MAX_SAFETY_PORTS) \
+> +               return read##size(pctrl->base0 + offset); \
+> +       else \
+> +               return read##size(pctrl->base1 + offset); \
+> +}
+
+> +static int rzt2h_validate_pin(struct rzt2h_pinctrl *pctrl, unsigned int offset)
+> +{
+> +       u8 port = RZT2H_PIN_ID_TO_PORT(offset);
+> +       u8 pin = RZT2H_PIN_ID_TO_PIN(offset);
+> +       u8 pincfg;
+> +
+> +       if (offset >= pctrl->data->n_port_pins || port >= pctrl->data->n_ports)
+> +               return -EINVAL;
+> +
+> +       if (!pctrl->safety_port_enabled && port <= RZT2H_MAX_SAFETY_PORTS)
+> +               return -EINVAL;
+> +
+> +       pincfg = pctrl->data->port_pin_configs[port];
+> +       return (pincfg & (1 << pin)) ? 0 : -EINVAL;
+
+BIT(pin)
+
+> +}
+> +
+
+> +static int rzt2h_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+> +                                unsigned int func_selector,
+> +                                unsigned int group_selector)
+> +{
+> +       struct rzt2h_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> +       struct function_desc *func;
+> +       struct group_desc *group;
+> +       const unsigned int *pins;
+> +       unsigned int i;
+> +       u8 *psel_val;
+> +       int ret;
+> +
+> +       func = pinmux_generic_get_function(pctldev, func_selector);
+> +       if (!func)
+> +               return -EINVAL;
+> +       group = pinctrl_generic_get_group(pctldev, group_selector);
+> +       if (!group)
+> +               return -EINVAL;
+> +
+> +       psel_val = func->data;
+> +       pins = group->grp.pins;
+> +
+> +       for (i = 0; i < group->grp.npins; i++) {
+> +               dev_dbg(pctrl->dev, "port:%u pin: %u PSEL:%u\n",
+
+Please use consistent spacing around colons.
+
+> +                       RZT2H_PIN_ID_TO_PORT(pins[i]), RZT2H_PIN_ID_TO_PIN(pins[i]),
+> +                       psel_val[i]);
+> +               ret = rzt2h_validate_pin(pctrl, pins[i]);
+> +               if (ret)
+> +                       return ret;
+
+Please insert a blank line.
+
+> +               rzt2h_pinctrl_set_pfc_mode(pctrl, RZT2H_PIN_ID_TO_PORT(pins[i]),
+> +                                          RZT2H_PIN_ID_TO_PIN(pins[i]), psel_val[i]);
+> +       }
+> +
+> +       return 0;
+> +};
+
+> +static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct rzt2h_pinctrl *pctrl = gpiochip_get_data(chip);
+> +       u8 port = RZT2H_PIN_ID_TO_PORT(offset);
+> +       u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
+> +       int ret;
+> +
+> +       ret = rzt2h_validate_pin(pctrl, offset);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (!(rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit))) {
+
+Invert the logic and return early, to reduce indentation?
+
+> +               u16 reg;
+> +
+> +               reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
+> +               reg = (reg >> (bit * 2)) & PM_MASK;
+> +               if (reg == PM_OUTPUT)
+
+The hardware supports enabling both input and output, so I think you
+better check for "reg & PM_OUTPUT".
+
+> +                       return GPIO_LINE_DIRECTION_OUT;
+> +               if (reg == PM_INPUT)
+> +                       return GPIO_LINE_DIRECTION_IN;
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+
+> +static int rzt2h_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct rzt2h_pinctrl *pctrl = gpiochip_get_data(chip);
+> +       u8 port = RZT2H_PIN_ID_TO_PORT(offset);
+> +       u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
+> +       u16 reg;
+> +
+> +       reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
+> +       reg = (reg >> (bit * 2)) & PM_MASK;
+> +
+> +       if (reg == PM_INPUT)
+
+"if (reg & PM_INPUT)", to handle both PM_INPUT and PM_OUTPUT set?
+
+> +               return !!(rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit));
+> +       if (reg == PM_OUTPUT)
+> +               return !!(rzt2h_pinctrl_readb(pctrl, port, P(port)) & BIT(bit));
+> +       return -EINVAL;
+> +}
+
+> +static int rzt2h_pinctrl_register(struct rzt2h_pinctrl *pctrl)
+> +{
+> +       struct pinctrl_desc *desc = &pctrl->desc;
+> +       struct device *dev = pctrl->dev;
+> +       struct pinctrl_pin_desc *pins;
+> +       unsigned int i, j;
+> +       u8 *pin_data;
+> +       int ret;
+> +
+> +       desc->name = DRV_NAME;
+> +       desc->npins = pctrl->data->n_port_pins;
+> +       desc->pctlops = &rzt2h_pinctrl_pctlops;
+> +       desc->pmxops = &rzt2h_pinctrl_pmxops;
+> +       desc->owner = THIS_MODULE;
+> +
+> +       pins = devm_kcalloc(dev, desc->npins, sizeof(*pins), GFP_KERNEL);
+> +       if (!pins)
+> +               return -ENOMEM;
+> +
+> +       pin_data = devm_kcalloc(dev, desc->npins,
+> +                               sizeof(*pin_data), GFP_KERNEL);
+
+Fits on a single line.
+
+> +       if (!pin_data)
+> +               return -ENOMEM;
+> +
+> +       pctrl->pins = pins;
+> +       desc->pins = pins;
+> +
+> +       for (i = 0, j = 0; i < pctrl->data->n_port_pins; i++) {
+> +               pins[i].number = i;
+> +               pins[i].name = pctrl->data->port_pins[i];
+> +               if (i && !(i % RZT2H_PINS_PER_PORT))
+> +                       j++;
+> +               pin_data[i] = pctrl->data->port_pin_configs[j];
+> +               pins[i].drv_data = &pin_data[i];
+
+Where is this used?
+
+> +       }
+> +
+> +       ret = devm_pinctrl_register_and_init(dev, desc, pctrl, &pctrl->pctl);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "pinctrl registration failed\n");
+> +
+> +       ret = pinctrl_enable(pctrl->pctl);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "pinctrl enable failed\n");
+> +
+> +       return rzt2h_gpio_register(pctrl);
+> +}
+> +
+> +static int rzt2h_pinctrl_cfg_regions(struct platform_device *pdev,
+> +                                    struct rzt2h_pinctrl *pctrl)
+> +{
+> +       pctrl->base0 = devm_platform_ioremap_resource_byname(pdev, "nsr");
+> +       if (IS_ERR(pctrl->base0))
+> +               return PTR_ERR(pctrl->base0);
+> +
+> +       pctrl->base1 = devm_platform_ioremap_resource_byname(pdev, "srs");
+
+When the optional "srs" region is missing, it is ignored by the
+code below, but __devm_ioremap_resource() will still have printed
+an error message.  So you either have to open-code this using
+platform_get_resource_byname() and devm_ioremap_resource() here, or
+create a static devm_platform_ioremap_resource_byname_optional()
+helper that does the same, or go for a public helper directly.
+
+> +       if (IS_ERR(pctrl->base1)) {
+> +               if (PTR_ERR(pctrl->base1) != -EINVAL)
+> +                       return PTR_ERR(pctrl->base1);
+> +       } else {
+> +               u8 port;
+> +
+> +               pctrl->safety_port_enabled = true;
+> +
+> +               /* Configure to select safety region 0x812c0xxx */
+> +               for (port = 0; port <= RZT2H_MAX_SAFETY_PORTS; port++)
+> +                       writeb(0x0, pctrl->base1 + RSELP(port));
+> +       }
+> +
+> +       return 0;
+> +}
+
+> +static const u8 r9a09g077_gpio_configs[] = {
+> +       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+> +       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+> +       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
