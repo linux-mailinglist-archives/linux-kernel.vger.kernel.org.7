@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-757192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA09B1BEEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:56:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2725B1BEED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 04:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61B7624E16
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FF618A3C5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3651D86FF;
-	Wed,  6 Aug 2025 02:56:04 +0000 (UTC)
-Received: from mail-m158214.netease.com (mail-m158214.netease.com [47.251.158.214])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571931D86FF;
+	Wed,  6 Aug 2025 02:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ia5yhXqX"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AFD17A2F6;
-	Wed,  6 Aug 2025 02:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.251.158.214
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6935B1A7253
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 02:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754448963; cv=none; b=TmxaySAI5P4N9+rQUqzQaxy04/ipes/P1SEA6pIh0MAQauEDElFKVAJ0X0c7KJklCXaQ24ucdKP8sqQFaEYbMj9iQMZrMwv7ZYC7PL1pWEFbsdMEqncfEEB7BMNJIVoQztBWMkSGy+M/CDALLcLWIv8HCGDisb1G1jDn2e92EyI=
+	t=1754449136; cv=none; b=SRpxk24RppTGJ3A03r2mmwnFxtanCEG4U8ErHxj3U4CftRPRVGPsNolz3M712K9W62ciNJsOLFRoLgLiGk35+1X1LEAwfb3CuMhaFi3y5CIXmXdZAQLGUDOthW/6kqmDOU8p3vYtvkjc6U5nAkgoD05LKzdMIWKvSq6I/FPnRAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754448963; c=relaxed/simple;
-	bh=z6X5D3erwN78KoY99M+XF9YsI9lWTL31yP3cCfFzeQY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PUtMH6JZJY9GYwEZ6aZE/ewoawDPlWqND1tuA0Ul7+S3TaAUl1daU+L/BkcPvTFjcCPEqWtk8vd4ul0cg1rBU+HXZaagRlhvGg+ekW33s1coeC1uDaV8PXTqBXvfJW5hiyNj1Ijrf3n+fUpWKRfY9mfHW8UU/9dc0YNm++oK4v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=47.251.158.214
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id e3561010;
-	Wed, 6 Aug 2025 10:55:47 +0800 (GMT+08:00)
-From: Zhen Ni <zhen.ni@easystack.cn>
-To: krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Zhen Ni <zhen.ni@easystack.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] memory: samsung: exynos-srom: Fix of_iomap leak in exynos_srom_probe
-Date: Wed,  6 Aug 2025 10:55:38 +0800
-Message-Id: <20250806025538.306593-1-zhen.ni@easystack.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250731083340.1057564-1-zhen.ni@easystack.cn>
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+	s=arc-20240116; t=1754449136; c=relaxed/simple;
+	bh=t96KIHl3o8o/01DWmztfbOb1bGxRH3j7rU9fQFrfzFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIq6O2PuUM3ttAbpISUfGHooxN1s6WnrAlj+uPYsyNI7SGwLgGtnqjUS3wRXaasBPhljrgxHeLMMWYP05Bgq1rRaYWfy2wXAATfZ83gv99LEGyt9pP4g/7XiqJr5VgC8+UnzX542AMOtQL2j7LXoZu6md8oLbfGH5A11bFm/yZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ia5yhXqX; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-321461ab4efso2064091a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 19:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1754449134; x=1755053934; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfI2/EUStwEeHLBjx/Qw57TggouFa/RBsyWtj84i+Do=;
+        b=Ia5yhXqXKkNBxN+obQcORUNAkXjiYFV1Fq5qfF8G+dEht6MjEx13Wrok18m1ihpzwD
+         gbUxaOjWcKQ/UoGBTaIO1ft6yWriOHGHIvoZ2J2zcKhB8JUvHDpdfse0QB2zhmY8bUax
+         aMGAtOYFLFstM1E6/GzR8WlHlb9wHwxVmOouI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754449134; x=1755053934;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dfI2/EUStwEeHLBjx/Qw57TggouFa/RBsyWtj84i+Do=;
+        b=jfjauE57k/c5adx2CgIF4gTQavcOTJoi8+krYwrr4ucHZcFH0Y423kfEJHoEFLIlLg
+         5l7sQ5zTl4Fmvpz7BksHzMziuu7E2Kx/dP5aokXZrYN/Gz587g2kQzu3z+Cp17KZ7Wt4
+         4tSlbojZP2EmLd7Nvrk+srFgJsAnGBQMik12Px4XzWaLQYDbqRodHYIkc/tGF00HCM27
+         JSAO14SSzlgSRkKgCyXwYQzsPqvtOZHh+EIBTqWbrtlQ3t736hl8+pmNtSqv/lLjdLG4
+         375S6z8d2DayaksXv2GfTXiVO0k5EHJTDK/k6VzOmkZ0xN+1mdOr7oX7G0qIsDt5NGT6
+         6J3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVF4cvKhsoT3BbyH8K552fG+MRaytsPB9fODYZJJbuf/SIXZqIwpdpgNBJPXIY10Wx/1YDN7J73zGkcuYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIZcM5zVFF3t/01esvQtLvMzBQpy/RhRE736QlAPPVBuxA9L5/
+	yKPXUVRJK5liEZViR5zdicClOZ4kB96JCMeHPK6DdtgH2WuYK1a+O1OvxUpgZp2fMg==
+X-Gm-Gg: ASbGncvxNfGGsIWut0VXx4qHG7OklE2SJZaWBPiZ6Dw8ZwAtdccaKVcw+hvLEWbZwk8
+	UUimtO2e6tqmiK7EyEVtdIyb2Clw0Xwdw0Rgkatxx+JAPUiSOpDvsM+bKzqoZ8arAmI8f+p7v59
+	buVbjkvvDBAfMCCQfY0ChpwwsxwvkxNVwZnftrZ/L3zhqhZnojZssKOW8oG0bKEYJWPAyE1Sb0g
+	dUKGE4P1INMnHjGW7rG1Z73Lm3qvt0l71v2eqq/dMf1wa3TIr+eLQbqHRzd4tR2f4hnnmDII0l5
+	Ri6S7r0k6bhAwGy4JfButrThkeDo1bWbzgDW4OSHzNWXq3xpRHq8WYPMyX31gkc+EqXHoPktiuk
+	sIlBxenlHY8WZL5P01B/Cntw=
+X-Google-Smtp-Source: AGHT+IGw0u3Yt/rwI0EXQXBc2LWgvbdwvZIG23v14ikG4dlkYmTsPpd8+RNDzIsBOgy5fSED1HkM5Q==
+X-Received: by 2002:a17:90b:2e51:b0:31f:6d6b:b453 with SMTP id 98e67ed59e1d1-32166cfc84amr1545302a91.30.1754449134450;
+        Tue, 05 Aug 2025 19:58:54 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:5a2c:a3e:b88a:14d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3216129c8cfsm1438665a91.34.2025.08.05.19.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 19:58:54 -0700 (PDT)
+Date: Wed, 6 Aug 2025 11:58:49 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, Seyediman Seyedarab <imandevel@gmail.com>
+Subject: Re: [PATCH] zram: protect recomp_algorithm_show() with ->init_lock
+Message-ID: <fm5et2vgfl5npfmivdpwj7lb5ztrgmvst4kbvxccisdnudyhhx@5szzuwprhmgw>
+References: <20250805101946.1774112-1-senozhatsky@chromium.org>
+ <20250805150323.0f5615ec97de2cc5d50b0b6f@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a987d4e66f70229kunmafffe608625d3e
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTUJPVh8YGkNNHkwaSkhOGFYVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxKVUpLS1
-	VKQktLWQY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805150323.0f5615ec97de2cc5d50b0b6f@linux-foundation.org>
 
-The of_platform_populate() call at the end of the function has a
-possible failure path, causing a resource leak.
+On (25/08/05 15:03), Andrew Morton wrote:
+> On Tue,  5 Aug 2025 19:19:29 +0900 Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
+> 
+> > sysfs handlers should be called under ->init_lock and are not
+> > supposed to unlock it until return, otherwise e.g. a concurrent
+> > reset() can occur.  There is one handler that breaks that rule:
+> > recomp_algorithm_show().
+> > 
+> > Move ->init_lock handling outside of __comp_algorithm_show()
+> > (also drop it and call zcomp_available_show() directly) so that
+> > the entire recomp_algorithm_show() loop is protected by the
+> > lock, as opposed to protecting individual iterations.
+> 
+> As always, I'm wondering "does -stable need this".  But without knowing
+> the runtime effects of the bug, I cannot know.
+> 
+> Providing this info in the changelog would answer this for everyone, please.
 
-Replace of_iomap() with devm_platform_ioremap_resource() to ensure
-automatic cleanup of srom->reg_base.
+Sure, Andrew.
 
-This issue was detected by smatch static analysis:
-drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()warn:
-'srom->reg_base' from of_iomap() not released on lines: 155.
+The patch does not need to go to -stable, as it does not fix any
+runtime errors (at least I can't think of any).  It makes
+recomp_algorithm_show() "atomic" w.r.t. zram reset() (just like
+the rest of zram sysfs show() handlers), that's a pretty minor
+change.
 
-Fixes: 8ac2266d8831 ("memory: samsung: exynos-srom: Add support for bank configuration")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
----
-chanegs in v2:
-- Update commit msg
----
- drivers/memory/samsung/exynos-srom.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> > Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > Reported-by: Seyediman Seyedarab <imandevel@gmail.com>
+> 
+> And including a Closes: for Seyediman's report (if it's publicly
+> linkable) would be great too, thanks.
+> 
+> I'm guessing that a Fixes: isn't appropriate here because the
+> bug has been there since day 1.
 
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-index e73dd330af47..d913fb901973 100644
---- a/drivers/memory/samsung/exynos-srom.c
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	srom->dev = dev;
--	srom->reg_base = of_iomap(np, 0);
--	if (!srom->reg_base) {
-+	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(srom->reg_base)) {
- 		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
--		return -ENOMEM;
-+		return PTR_ERR(srom->reg_base);
- 	}
- 
- 	platform_set_drvdata(pdev, srom);
- 
- 	srom->reg_offset = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
- 						      ARRAY_SIZE(exynos_srom_offsets));
--	if (!srom->reg_offset) {
--		iounmap(srom->reg_base);
-+	if (!srom->reg_offset)
- 		return -ENOMEM;
--	}
- 
- 	for_each_child_of_node(np, child) {
- 		if (exynos_srom_configure_bank(srom, child)) {
--- 
-2.20.1
+Yes, also there isn't really a public bug report there, I just noticed
+that while looking at some things that Seyediman was looking at.  So I
+wanted to give Seyediman some credit.  I suppose I probably should have
+added
+	Suggested-by: Seyediman Seyedarab <imandevel@gmail.com>
 
+instead.  Should I send a v2?
 
