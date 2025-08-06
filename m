@@ -1,179 +1,164 @@
-Return-Path: <linux-kernel+bounces-758103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA74B1CADC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:33:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48914B1CAEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99927166A82
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D15720D56
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27D329B205;
-	Wed,  6 Aug 2025 17:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF729CB52;
+	Wed,  6 Aug 2025 17:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tQY0wjsC"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="tt9i4Luy"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F87D28DF0C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8A1E25E8;
+	Wed,  6 Aug 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501604; cv=none; b=e8qjgRduvRAJDB2Phs7mIdQ1C6OQpn5xIi2FmUvQyGYGR+6wbHjMaK/TBe83oIpYZpWcaNiU9imd5pYQJQ+hDZtqYt34ioJXhlZa4TcAoa8QnEBOsfHFf2VpYGQEHVKKhx7sjPXaTzBiTVAqogkcNKc4zVIjZwlxR1Cdx4bIQkg=
+	t=1754501716; cv=none; b=TdDyG5f0I7nz9J+18l3DKfkeVtiRFBhqhM4HY5Uo9GzySHQBwRMHbFs3hUiPwiHrY+9sw9ZAlQACFnfdEYkbGLFyTkDDX5YNLfBV212YrQ5cwvfzD9u31vMGfmlXNxOHyk4/F0npavGDAzkOlQ0QTlEyaocedGvtFKIzxx5uR70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501604; c=relaxed/simple;
-	bh=HFDlB11tURPLQBHaQNMud7q6jwYGLOK7OT6Zg/6s3aU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OCt/TTEhEPjjBzHyf+ExEAMhwGSwSgSCq6XQDlLKLqqI+ZIUMFr9BeNR3UGgngAC9kiVgfkTAcoCYUDiykbKW2aNhk2if02aif2NWOCXR0Sll+ibQwOzl38VpjYpLEeRwSFsOw43UmqUCp26yaUhQ2VodWBZ3IcREY3R+UDX5Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tQY0wjsC; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31366819969so237817a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754501601; x=1755106401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LyAOeGFk30dXtQCLyt1rvWsDLNvdp4rxsI4DU4RPNQI=;
-        b=tQY0wjsCwBAQV11z5u48o5QmNHUOEn89qBOczS4Tn8HACJfaj+We8xuPC5LCUeYPOQ
-         dn5vVMa1OEHFgzGjMD35g8n2yjQz7kv04Nx3qliTsS59/QTrrlmKPTt4STmfDapKvsDb
-         jg1Z20oAwo58bCyckiBsuNyDQzLMwehK2DcDxbmDJ8fnduzeUusQcFlNPUMtIRL3v6J/
-         BM40TQCkxQpPqN+dscO5qAG2rVQGWDeW+sFmTF/q054JVEbgKCygrJI5wf3P2u1JLMiH
-         91QgF0vUVzWys+7mg2OhE5Jx2hEF6AXcCr6K9JTLIWNsyrBMhh2cCx7vPdb5p0VnJc5s
-         m3iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754501601; x=1755106401;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LyAOeGFk30dXtQCLyt1rvWsDLNvdp4rxsI4DU4RPNQI=;
-        b=kAZ7K2xY7Y/lKUV4ZcQ8j9mmnBOfFhP8dj+gATQa4/lzMbKRYE/PpjNJ+Km6bsHD2G
-         pt7aH1LwQWAnvTMtH0TvC/Oh0uuB19yA1JbK/ArJ9JxefHrRcnuWYnd1/UfQA95rourv
-         KkZaZAQ4iP+c7mRXszWGCjAiH/pvt/Yz7PlZ7GWwnL4SJHMgtWaS1+AhZJa7xqJdFEFa
-         Cnw+Q7kGD53DolG8J3SQjAm2Q8Wk/YJfj5YxJMxi4uUm32FveHW3EgsejMVhOT0/8esY
-         rwOu/Dt71QZQ/XZqe6hFBkDZ3NeNyef0oI6IOPMKB7xRSZyaGvFvZqOl1TsBWsUbDyx3
-         M2xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhDb3EppsZJMps2UAESe2wA1/8Xsng5ibubqaBIRA4Xgas/k4suuDJTY9S/1Ej48btSIw4FblD2Nfr8Pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhxU7K5DK9pXIm0NfYaKOqbQ7UdoQICHMCJoxCdlsxC9WtIStQ
-	XgrBb5lbLFqBZO1gvhsPOowWdbeF71iKUoJK7Xy5qCnGDTtZKJjPM31NRg4y5EhEj2zN0cu85Nl
-	OqOG5ug==
-X-Google-Smtp-Source: AGHT+IGr5NQ4unyFFD1LCKq5VEbjUEGgPs67kjJYV97puf807pg/ZHj7pgAJv73ef0jkdIubgiWbliotX1Y=
-X-Received: from pjje11.prod.google.com ([2002:a17:90a:630b:b0:31e:998f:7b79])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a4f:b0:31f:12d:ee4f
- with SMTP id 98e67ed59e1d1-32166cd2f77mr4291258a91.23.1754501601572; Wed, 06
- Aug 2025 10:33:21 -0700 (PDT)
-Date: Wed, 6 Aug 2025 10:33:20 -0700
-In-Reply-To: <e64951b0-4707-42ed-abf4-947def74ea34@linux.intel.com>
+	s=arc-20240116; t=1754501716; c=relaxed/simple;
+	bh=Z1gEMJiFIFjpRGok6tz/RfwwoNl0Rv2K7M7v3c9mDIw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jRO4XdQn3XMwYMhHDqZJlBcq68licWOTiYY3qE+IKgbKt/hmJyyyk7W2Ce/FDCx59hHqObhdin6D24slh9Cc8DRGSJAllNxDRaRUlLqoawAeGVYyCdvuTqhxcKRwFUzygNb15S9paVBw1x6FUd2y+MUuxqkOC2Dt1+MmaCWSLhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=tt9i4Luy; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=fV6lVtW13D0yu6iCI/jPFRPbDpKGqEPIm6A+8YzQujM=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1754501630; v=1; x=1754933630;
+ b=tt9i4LuylpZBhSuTuK9fRqLtp9gqEe9lN2eWeJbj22p4QHsOUDtod8ktIIlSwrngs5kXjlE9
+ nhSxBJVppkGnhT4bojW9PQIujy0a8Iu35WjrmueQ6ofQvfD1fnEHkUnsj0QhJ+6EcE0/gJGh1lN
+ ebmxopqB4UOqe0Xlu95uHfXkDZqrOG1Ng/EsyHVaqAwF/WpDKYwqHIeey0xWOkLZX7tYFsP3sMY
+ tKobRVGF4LRNZKMCWVwNjTl2PNwJCqwefOf66XIfI5nqYe386q62NauVhAbwD6bUdao2krTrqxv
+ Xxk7w2PjWzQlrIam3J2OzcBJfjU6l7D7QSfP/tqskpchg==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id ee7cda2d; Wed, 06 Aug 2025 19:33:50 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Date: Wed, 06 Aug 2025 19:33:20 +0200
+Subject: [PATCH RFC 1/5] dt-bindings: clock: marvell,pxa1908: Add
+ simple-mfd, syscon compatible to apmu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250805190526.1453366-1-seanjc@google.com> <20250805190526.1453366-18-seanjc@google.com>
- <e64951b0-4707-42ed-abf4-947def74ea34@linux.intel.com>
-Message-ID: <aJOR4Bk3DwKSVdQV@google.com>
-Subject: Re: [PATCH 17/18] KVM: x86: Push acquisition of SRCU in fastpath into kvm_pmu_trigger_event()
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xin Li <xin@zytor.com>, Sandipan Das <sandipan.das@amd.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250806-pxa1908-genpd-v1-1-16409309fc72@dujemihanovic.xyz>
+References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+In-Reply-To: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2431;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=Z1gEMJiFIFjpRGok6tz/RfwwoNl0Rv2K7M7v3c9mDIw=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTJ/5Z0mnWXV+/UbX1oWRn2Pp4jWtV4ZapKw8vnbqc3
+ fnxTE31jlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZhI4VKG/z4zlEJKtGumOxVI
+ hNg6yD227M76wvc6UTnRUD9xQtv3DoZ/dgEqycen7nV9sNT/wTU5KyWHb98M6758mGz5WlTjQYw
+ EAwA=
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-On Wed, Aug 06, 2025, Dapeng Mi wrote:
->=20
-> On 8/6/2025 3:05 AM, Sean Christopherson wrote:
-> > Acquire SRCU in the VM-Exit fastpath if and only if KVM needs to check =
-the
-> > PMU event filter, to further trim the amount of code that is executed w=
-ith
-> > SRCU protection in the fastpath.  Counter-intuitively, holding SRCU can=
- do
-> > more harm than good due to masking potential bugs, and introducing a ne=
-w
-> > SRCU-protected asset to code reachable via kvm_skip_emulated_instructio=
-n()
-> > would be quite notable, i.e. definitely worth auditing.
-> >
-> > E.g. the primary user of kvm->srcu is KVM's memslots, accessing memslot=
-s
-> > all but guarantees guest memory may be accessed, accessing guest memory
-> > can fault, and page faults might sleep, which isn't allowed while IRQs =
-are
-> > disabled.  Not acquiring SRCU means the (hypothetical) illegal sleep wo=
-uld
-> > be flagged when running with PROVE_RCU=3Dy, even if DEBUG_ATOMIC_SLEEP=
-=3Dn.
-> >
-> > Note, performance is NOT a motivating factor, as SRCU lock/unlock only
-> > adds ~15 cycles of latency to fastpath VM-Exits.  I.e. overhead isn't a
-> > concern _if_ SRCU protection needs to be extended beyond PMU events, e.=
-g.
-> > to honor userspace MSR filters.
-> >
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
+Add required syscon and simple-mfd compatibles to the APMU controller.
+This is required for the SoC's power domain controller as the registers
+are shared. The simple-mfd compatible allows devices whose registers are
+completely contained in the APMU range (such as the power domain
+controller and potentially more) to be children of the clock controller
+node.
 
-...
+Also add an optional power-controller child node to the APMU controller
+to accommodate the new power domain driver.
 
-> > @@ -968,12 +968,14 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu=
- *vcpu,
-> >  			     (unsigned long *)&pmu->global_ctrl, X86_PMC_IDX_MAX))
-> >  		return;
-> > =20
-> > +	idx =3D srcu_read_lock(&vcpu->kvm->srcu);
->=20
-> It looks the asset what "kvm->srcu" protects here is
-> kvm->arch.pmu_event_filter which is only read by pmc_is_event_allowed().
-> Besides here, pmc_is_event_allowed() is called by reprogram_counter() but
-> without srcu_read_lock()/srcu_read_unlock() protection.
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml | 36 ++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-No, reprogram_counter() is only called called in the context of KVM_RUN, i.=
-e. with
-the vCPU loaded and thus with kvm->srcu already head for read (acquired by
-kvm_arch_vcpu_ioctl_run()).
-=20
-> So should we shrink the protection range further and move the
-> srcu_read_lock()/srcu_read_unlock() pair into pmc_is_event_allowed()
-> helper? The side effect is it would bring some extra overhead since
-> srcu_read_lock()/srcu_read_unlock() could be called multiple times.
+diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
+index 4e78933232b6b925811425f853bedf6e9f01a27d..5e924ebd97e6457191ac021addafd22caba48964 100644
+--- a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
++++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
+@@ -19,11 +19,15 @@ description: |
+ 
+ properties:
+   compatible:
+-    enum:
+-      - marvell,pxa1908-apbc
+-      - marvell,pxa1908-apbcp
+-      - marvell,pxa1908-mpmu
+-      - marvell,pxa1908-apmu
++    oneOf:
++      - enum:
++          - marvell,pxa1908-apbc
++          - marvell,pxa1908-apbcp
++          - marvell,pxa1908-mpmu
++      - items:
++          - const: marvell,pxa1908-apmu
++          - const: simple-mfd
++          - const: syscon
+ 
+   reg:
+     maxItems: 1
+@@ -31,18 +35,38 @@ properties:
+   '#clock-cells':
+     const: 1
+ 
++  power-controller:
++    description: |
++      Optional power domain controller node.
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: marvell,pxa1908-power-controller
++
+ required:
+   - compatible
+   - reg
+   - '#clock-cells'
+ 
++allOf:
++  - if:
++      not:
++        properties:
++          compatible:
++            contains:
++              const: marvell,pxa1908-apmu
++    then:
++      properties:
++        power-controller: false
++
+ additionalProperties: false
+ 
+ examples:
+   # APMU block:
+   - |
+     clock-controller@d4282800 {
+-      compatible = "marvell,pxa1908-apmu";
++      compatible = "marvell,pxa1908-apmu", "simple-mfd", "syscon";
+       reg = <0xd4282800 0x400>;
+       #clock-cells = <1>;
+     };
 
-No, I don't think it's worth getting that precise.  As you note, there will=
- be
-extra overhead, and it could actually become non-trivial amount of overhead=
-,
-albeit in a somewhat pathological scenario.  And cpl_is_matched() is easy t=
-o
-audit, i.e. is very low risk with respect to having "bad" behavior that's h=
-idden
-by virtue of holding SRCU.
+-- 
+2.50.1
 
-E.g. if the guest is using all general purpose PMCs to count instructions
-retired, then KVM would acquire/release SRCU 8+ times.  On Intel, the fastp=
-ath
-can run in <800 cycles.  Adding 8 * 2 full memory barriers (difficult to me=
-asure,
-but somewhere in the neighborhood of ~10 cycles per barrier) would increase=
- the
-latency by 10-20%.
-
-Again, that's an extreme scenario, but since there's almost nothing to gain=
- from
-pushing SRCU acquisition into the filter checks, I don't see any reason to =
-go
-with an approach that we *know* is sub-optimal.
-
-> An alternative could be to add srcu_read_lock()/srcu_read_unlock() around
-> pmc_is_event_allowed() in=C2=A0reprogram_counter() helper as well.
-
-As above, there's no need to modify reprogram_counter().  I don't see any f=
-uture
-where reprogram_counter() would be safe to call in the fastpath, there's si=
-mply
-too much going on, i.e. I think reprogram_counter() will always be a non-is=
-sue.
 
