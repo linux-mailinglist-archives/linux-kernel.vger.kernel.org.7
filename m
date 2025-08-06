@@ -1,157 +1,308 @@
-Return-Path: <linux-kernel+bounces-757413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C24B1C1E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:12:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B097B1C1E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B49E1864A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:12:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1404C7A61D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5A0220F3E;
-	Wed,  6 Aug 2025 08:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947E9220F57;
+	Wed,  6 Aug 2025 08:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZs67FFi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWvzrgTk"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558D7220F3F;
-	Wed,  6 Aug 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AD61E25F2;
+	Wed,  6 Aug 2025 08:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754467911; cv=none; b=fF+UW+T72eKFWcl2O05CF02JO1x1Hvs9J00Zbiz1QJg2PIP9vcziH09Ko8ZIkhVEYIDnRTazaqr7K2Zi3j5cz6V1EIqJudLCMN+cmMZE26CzEe1FfA5pPrOml/IY+ekdCnvxjKf2iAcH39N5AhDYQdh3Tna1csuLUosgrN8uE/8=
+	t=1754468046; cv=none; b=ZHXYitbVM/Qa72x4dGgALmktYCjMAkA6Euwg/PA0vHF7RFTCzfjnNvZUlu0MRHEquT9S4jEMU8i5UHwlav15Vn3uTgLz5cvRLNkNTSKpbBCvoSfdP/V/iu/dliY1GosM3B3t9gj3J4uQcVRLX66IvhlBoKkNb+bYlp2+sjPvLd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754467911; c=relaxed/simple;
-	bh=Y4O80rSSas60qvJ+XjKjIgVtJrI7oZDBYw1AZHMpnTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pO87MndkqSXP/skQY7qFLZ/er6ijoViu0X8klSsmL/v31EPpmeNJGbPkdhX+nuf8LTBLAAqbpNV9W2VrM9BScX34Tfn9HpHwqyMk/ZgYNlxwIw/JEkPmQ4FzWXjoh4hZ81yWmZrlQWvjQALeknC3BRCkqDbNsdO9FI/FPOBVjIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZs67FFi; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1754468046; c=relaxed/simple;
+	bh=beASYza5E57cVoDtIn1iRebYz8v66FZLxh1F1aHWihE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kANrW2Vu0gywgohtEdXz3jdIwedO6YW52leceNw4OhmZn/UlDN8kSp3fIygs+fLXk4pveQgs+YpVsUJwAy7+ImsrRpFF9pl7G65KY/L6EWMjhti/bf98ZfwZIrEo8d3dx556mseTA7jyIo42OdmAIZTv3fyxTmWide7VcD8GqqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWvzrgTk; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754467909; x=1786003909;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y4O80rSSas60qvJ+XjKjIgVtJrI7oZDBYw1AZHMpnTc=;
-  b=KZs67FFif4g47WjSHxBW+inyk3BrYmSe5BueW1b/jfqtNZXkj2/k6sz7
-   a2GejPhyEtClWcM/is9Xql52ejau9R2G7JozS4U+NuepuWkkOo6bo6AFa
-   S6wzVD5lMs4D2RAIuYKpX2usgAzIcyvjAwBtXXbO5O/EgL/xU0oerT4CE
-   yfj1Ecpa1KNrmOf7BJilEXd98/2NMas1c6ykx+BfaZSkEQ9cq9p9lOmuf
-   dXEY7kym1pf/gWHjGOzpoahalHSbi774w8BHqUZ2LGuOiI9aNmeTOGh82
-   qnh0fJl8INqeX5DYornqamCHYudPum2lmf0d86SwpGRPNrmb1CZtt9Ihl
-   A==;
-X-CSE-ConnectionGUID: VMt/66sfQvmThV1YpyUA+A==
-X-CSE-MsgGUID: ppFQaeHoTrGmcYNIQW1SnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56853231"
+  t=1754468045; x=1786004045;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=beASYza5E57cVoDtIn1iRebYz8v66FZLxh1F1aHWihE=;
+  b=EWvzrgTkqMmQhNLfVbQ9zp8CHFClrb0E2YBEUTnDKUzemoigApfDQIhV
+   4F+hwPY4XLur9gOz6sYXe8JmO4WsLnKxrnYv875DkWBvWexPXBog/5Fvm
+   rj5G1tRbTYd1hm7b+lC8Z6TFY+M9Yw2GyHusiR3XN2lIz1zlnXYPuKV5u
+   o6zkU7cPiC/shYAZ9gkD+Bp0c8iGI4ueUlGRQPoWozxS1sIrJroZfd4c3
+   Zx5uDWGcUaCEPYeQaiPOaADsOGKqYxA5tqaYhVqtWh+16V8ZjLs+aj68e
+   si5YXTzHrC11l6+hMmz9jIyJkhKfSgpblLgT34fEkTtlQNdGisb59Wn9C
+   g==;
+X-CSE-ConnectionGUID: nlNgpd2fQtmdH86H46wTmQ==
+X-CSE-MsgGUID: roJne68rS0yH73/zm72uWw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56853611"
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56853231"
+   d="scan'208";a="56853611"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:11:31 -0700
-X-CSE-ConnectionGUID: hDevkkrcTeKc3/bKsyXNsw==
-X-CSE-MsgGUID: ss0bFaQkT1SHyGzqDIBGsA==
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:14:04 -0700
+X-CSE-ConnectionGUID: fag+is3GRMKbDAXBbJtGWw==
+X-CSE-MsgGUID: fOqbYjoGRn+MRt+nNosS/g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="169167697"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:11:29 -0700
-Message-ID: <c516f0e7-4e34-411a-824e-54e8c2dbae5e@linux.intel.com>
-Date: Wed, 6 Aug 2025 16:11:26 +0800
+   d="scan'208";a="169168401"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.125])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:13:57 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v11 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Wed,  6 Aug 2025 11:11:51 +0300
+Message-ID: <20250806081344.404004-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/18] KVM: x86: Fastpath cleanups and PMU prep work
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li
- <xin@zytor.com>, Sandipan Das <sandipan.das@amd.com>
-References: <20250805190526.1453366-1-seanjc@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
 
-On 8/6/2025 3:05 AM, Sean Christopherson wrote:
-> This is a prep series for the mediated PMU, and for Xin's series to add
-> support for the immediate forms of RDMSR and WRMSRNS (I'll post a v3 of
-> that series on top of this).
->
-> The first half cleans up a variety of warts and flaws in the VM-Exit fastpath
-> handlers.  The second half cleans up the PMU code related to "triggering"
-> instruction retired and branches retired events.  The end goal of the two
-> halves (other than general cleanup) is to be able bail from the fastpath when
-> using the mediated PMU and the guest is counting instructions retired, with
-> minimal overhead, e.g. without having to acquire SRCU.
->
-> Because the mediated PMU context switches PMU state _outside_ of the fastpath,
-> the mediated PMU won't be able to increment PMCs in the fastpath, and so won't
-> be able to skip emulated instructions in the fastpath if the vCPU is counting
-> instructions retired.
->
-> The last patch to handle INVD in the fastpath is a bit dubious.  It works just
-> fine, but it's dangerously close to "just because we can, doesn't mean we
-> should" territory.  I added INVD to the fastpath before I realized that
-> MSR_IA32_TSC_DEADLINE could be handled in the fastpath irrespective of the
-> VMX preemption timer, i.e. on AMD CPUs.  But being able to use INVD to test
-> the fastpath is still super convenient, as there are no side effects (unless
-> someone ran the test on bare metal :-D), no register constraints, and no
-> vCPU model requirements.  So, I kept it, because I couldn't come up with a
-> good reason not to.
->
-> Sean Christopherson (18):
->   KVM: SVM: Skip fastpath emulation on VM-Exit if next RIP isn't valid
->   KVM: x86: Add kvm_icr_to_lapic_irq() helper to allow for fastpath IPIs
->   KVM: x86: Only allow "fast" IPIs in fastpath WRMSR(X2APIC_ICR) handler
->   KVM: x86: Drop semi-arbitrary restrictions on IPI type in fastpath
->   KVM: x86: Unconditionally handle MSR_IA32_TSC_DEADLINE in fastpath
->     exits
->   KVM: x86: Acquire SRCU in WRMSR fastpath iff instruction needs to be
->     skipped
->   KVM: x86: Unconditionally grab data from EDX:EAX in WRMSR fastpath
->   KVM: x86: Fold WRMSR fastpath helpers into the main handler
->   KVM: x86/pmu: Move kvm_init_pmu_capability() to pmu.c
->   KVM: x86/pmu: Add wrappers for counting emulated instructions/branches
->   KVM: x86/pmu: Calculate set of to-be-emulated PMCs at time of WRMSRs
->   KVM: x86/pmu: Rename pmc_speculative_in_use() to
->     pmc_is_locally_enabled()
->   KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
->   KVM: x86/pmu: Drop redundant check on PMC being globally enabled for
->     emulation
->   KVM: x86/pmu: Drop redundant check on PMC being locally enabled for
->     emulation
->   KVM: x86/pmu: Rename check_pmu_event_filter() to
->     pmc_is_event_allowed()
->   KVM: x86: Push acquisition of SRCU in fastpath into
->     kvm_pmu_trigger_event()
->   KVM: x86: Add a fastpath handler for INVD
->
->  arch/x86/include/asm/kvm_host.h |   3 +
->  arch/x86/kvm/lapic.c            |  59 ++++++++----
->  arch/x86/kvm/lapic.h            |   3 +-
->  arch/x86/kvm/pmu.c              | 155 +++++++++++++++++++++++++-------
->  arch/x86/kvm/pmu.h              |  60 ++-----------
->  arch/x86/kvm/svm/svm.c          |  14 ++-
->  arch/x86/kvm/vmx/nested.c       |   2 +-
->  arch/x86/kvm/vmx/pmu_intel.c    |   2 +-
->  arch/x86/kvm/vmx/vmx.c          |   2 +
->  arch/x86/kvm/x86.c              |  85 +++++-------------
->  arch/x86/kvm/x86.h              |   1 +
->  11 files changed, 218 insertions(+), 168 deletions(-)
->
->
-> base-commit: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
-Run PMU kselftests
-(pmu_counters_test/pmu_event_filter_test/vmx_pmu_caps_test) on Sapphire
-Rapids, no issue is found. Thanks.
 
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel-6.16.0_rc7 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/sgx.h               | 37 ++++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+ arch/x86/kernel/cpu/scattered.c          |  1 +
+ arch/x86/kernel/cpu/sgx/driver.c         | 19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |  1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |  5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 91 ++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |  3 +
+ arch/x86/kernel/cpu/sgx/virt.c           | 20 +++++-
+ tools/arch/x86/include/asm/cpufeatures.h |  1 +
+ 11 files changed, 163 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
 
 
