@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-757150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6492B1BE58
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C79AB1BE5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE197624A97
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815061882C8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9841A23A0;
-	Wed,  6 Aug 2025 01:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DA71B4247;
+	Wed,  6 Aug 2025 01:34:27 +0000 (UTC)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A627E185B48;
-	Wed,  6 Aug 2025 01:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5DD19E992;
+	Wed,  6 Aug 2025 01:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754444065; cv=none; b=P0A/NtIiM7OO8uwIcOMHk69gxYxbnGktwwN42YzdSDr2Cu2E7j5dduhyIn+pnkfUJipKoJlEOLqlLdR0eMRIW4jIC245+XgKCXE3BAfSVq5MTHMwJ4nXfMUvElKADCaOCa0aSA0u+PdSgFhOUJAGvDPFZ9JT3lyY0LZlxRsvLR4=
+	t=1754444067; cv=none; b=bgQmmmxJtpn4p1IPtZZJsx5/5v5/aJX9LZZMDUfqqSaDiJRko9fKox1ZNYaYSWTttPDCqiFGPmetbakxfR10WjdOSYuNj1sqtA/CImfsamfO6c6VO9KWhiL+bfyiv0RbM/IkZ8yjaDn3PhBC+a2+yXqEaqeTFG8G43m9Hde5+yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754444065; c=relaxed/simple;
-	bh=ohY4NDWOBXGUn5xQk9bIjBVH5sXz7LJ9Z22E3eacocc=;
+	s=arc-20240116; t=1754444067; c=relaxed/simple;
+	bh=WdFAsa0ufaMayNtK1EnOAsVxDcm3sLPL+1c7SzaBcwk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jiaOWKQDP52q1IB5DyI6mUwHUCEocDI3jAWPhuiERHFBLJ5yluv5YWDbKjfY+VhyPv4Lvz5r7BmHk51Dpgv0s61M24vH5FoVy1htqg3YFsfgoeBP9QGNwdKqpcVAnf3dGA0oUsiw9qCtr4/zjQY4iPE2ppbaVBCd52WXlEiEFNY=
+	 In-Reply-To:To:Cc; b=l8ZrxMdk9TT+Pzj4en8HWesSwdodqBy05bMML2efE3XRzW3f/4NBnHUxWobqhzHsjL8/HNZN9mJChqGiV88TYhagFcXjlL/mHJw9BnfSbEXf4eRANFTWdjCKObKOJV3yRFuIb5RvTZqpE8IFWvx0e2kL+rEpz7TT2ZozfoA7ckM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D2E751A0E0C;
-	Wed,  6 Aug 2025 03:34:15 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1339F1A1D4F;
+	Wed,  6 Aug 2025 03:34:18 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9591D1A0DEB;
-	Wed,  6 Aug 2025 03:34:15 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D39951A1D4A;
+	Wed,  6 Aug 2025 03:34:17 +0200 (CEST)
 Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C9E4718000A4;
-	Wed,  6 Aug 2025 09:34:12 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1538818000AB;
+	Wed,  6 Aug 2025 09:34:14 +0800 (+08)
 From: Joseph Guo <qijian.guo@nxp.com>
-Date: Wed, 06 Aug 2025 10:33:33 +0900
-Subject: [PATCH v3 2/3] dt-bindings: display: panel: Add waveshare DPI
- panel support
+Date: Wed, 06 Aug 2025 10:33:34 +0900
+Subject: [PATCH v3 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-waveshare-v3-2-fd28e01f064f@nxp.com>
+Message-Id: <20250806-waveshare-v3-3-fd28e01f064f@nxp.com>
 References: <20250806-waveshare-v3-0-fd28e01f064f@nxp.com>
 In-Reply-To: <20250806-waveshare-v3-0-fd28e01f064f@nxp.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -67,39 +66,284 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, victor.liu@nxp.com, 
  Joseph Guo <qijian.guo@nxp.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754444048; l=1209;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754444048; l=8308;
  i=qijian.guo@nxp.com; s=20250519; h=from:subject:message-id;
- bh=ohY4NDWOBXGUn5xQk9bIjBVH5sXz7LJ9Z22E3eacocc=;
- b=xLr5Zv8E05xuU8R93BdmPTzLg7eEWdeje9uQ6m1JVELURWQnyynlM0vxqKZrOF1UhyvZE6n7r
- ih6z6RUlzDXBWoEmv1Rq+h5yEjwxW9aCJjghaaxDzItsiiz06hwgL7w
+ bh=WdFAsa0ufaMayNtK1EnOAsVxDcm3sLPL+1c7SzaBcwk=;
+ b=dg6jnFh7be3vjeF8KWQ0FY0xJPXuYaLvEnpybswkUY3OwLtgu0VpHHZAE/yTogYyEGUtb7ivR
+ diyvFZyoQiODfJ2/7D8GQgedjZ/5Xr/ZWe8BV9L35MR97xaXK2r/k4N
 X-Developer-Key: i=qijian.guo@nxp.com; a=ed25519;
  pk=VRjOOFhVecTRwBzK4mt/k3JBnHoYfuXKCm9FM+hHQhs=
 X-Virus-Scanned: ClamAV using ClamSMTP
 
-Add dt-binding documentation for waveshare DPI panel
+Waveshare touchscreen consists of a DPI panel and a driver board.
+The waveshare driver board consists of ICN6211 and a MCU to
+convert DSI to DPI and control the backlight.
+This driver treats the MCU and ICN6211 board as a whole unit.
+It can support all resolution waveshare DSI2DPI based panel,
+the timing table should come from 'panel-dpi' panel in the device tree.
 
 Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
 Suggested-by: Liu Ying <victor.liu@nxp.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/display/panel/panel-simple.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Change from v2 to v3
+- Sort the config names alphabetically
+- Add depends on BACKLIGHT_CLASS_DEVICE
+- Drop disable_debugfs in regmap_config
+- Sort the variables in reverse Christmas tree
+- Drop inappropriate blank line
+- Drop duplicate backlight variable
+- Change API to upstream version
+---
+ drivers/gpu/drm/bridge/Kconfig         |  12 ++
+ drivers/gpu/drm/bridge/Makefile        |   1 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c | 203 +++++++++++++++++++++++++++++++++
+ 3 files changed, 216 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-index b89e3979057911ab9e669e97e71c16578d9e0150..16465fe3333948909c5d1fdc2a4ddf231bfbce70 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-@@ -301,6 +301,10 @@ properties:
-       - vivax,tpc9150-panel
-         # VXT 800x480 color TFT LCD panel
-       - vxt,vl050-8048nt-c01
-+        # Waveshare 13.3" FHD (1920x1080) LCD panel
-+      - waveshare,13.3inch-panel
-+        # Waveshare 7.0" WSVGA (1024x600) LCD panel
-+      - waveshare,7.0inch-c-panel
-         # Winstar Display Corporation 3.5" QVGA (320x240) TFT LCD panel
-       - winstar,wf35ltiacd
-         # Yes Optoelectronics YTC700TLAG-05-201C 7" TFT LCD panel
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index cb3b797fcea1c73e83c9187fef6582296b340305..0447967d125fe8c4cb7dccf3f55323086e7c6ef7 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -446,6 +446,18 @@ config DRM_TI_TPD12S015
+ 	  Texas Instruments TPD12S015 HDMI level shifter and ESD protection
+ 	  driver.
+ 
++config DRM_WAVESHARE_BRIDGE
++	tristate "Waveshare DSI bridge"
++	depends on OF
++	depends on BACKLIGHT_CLASS_DEVICE
++	select DRM_PANEL_BRIDGE
++	select DRM_KMS_HELPER
++	select DRM_MIPI_DSI
++	select REGMAP_I2C
++	help
++	  Driver for waveshare DSI to DPI bridge board.
++	  Please say Y if you have such hardware
++
+ source "drivers/gpu/drm/bridge/analogix/Kconfig"
+ 
+ source "drivers/gpu/drm/bridge/adv7511/Kconfig"
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index 72185bfd87e4ff6e6ef367edb9d9f52d92bc75fa..fcec44cb273eb99fce08fc924d0d86eab67356ad 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
+ obj-$(CONFIG_DRM_TI_TDP158) += ti-tdp158.o
+ obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
+ obj-$(CONFIG_DRM_TI_TPD12S015) += ti-tpd12s015.o
++obj-$(CONFIG_DRM_WAVESHARE_BRIDGE) += waveshare-dsi.o
+ obj-$(CONFIG_DRM_NWL_MIPI_DSI) += nwl-dsi.o
+ obj-$(CONFIG_DRM_ITE_IT66121) += ite-it66121.o
+ 
+diff --git a/drivers/gpu/drm/bridge/waveshare-dsi.c b/drivers/gpu/drm/bridge/waveshare-dsi.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..01c70e7d3d3bd50b17b25396ed9507a2a7e96d18
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/waveshare-dsi.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2025 NXP
++ * Based on panel-raspberrypi-touchscreen by Broadcom
++ */
++
++#include <linux/backlight.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_graph.h>
++#include <linux/regmap.h>
++
++#include <drm/drm_bridge.h>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_of.h>
++#include <drm/drm_panel.h>
++
++struct ws_bridge {
++	struct drm_bridge bridge;
++	struct drm_bridge *next_bridge;
++	struct backlight_device *backlight;
++	struct device *dev;
++	struct regmap *reg_map;
++};
++
++static const struct regmap_config ws_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0xff,
++};
++
++static struct ws_bridge *bridge_to_ws_bridge(struct drm_bridge *bridge)
++{
++	return container_of(bridge, struct ws_bridge, bridge);
++}
++
++static int ws_bridge_attach_dsi(struct ws_bridge *ws)
++{
++	const struct mipi_dsi_device_info info = {
++		.type = "ws-bridge",
++		.channel = 0,
++		.node = NULL,
++	};
++	struct device_node *dsi_host_node;
++	struct device *dev = ws->dev;
++	struct mipi_dsi_device *dsi;
++	struct mipi_dsi_host *host;
++	int ret;
++
++	dsi_host_node = of_graph_get_remote_node(dev->of_node, 0, 0);
++	if (!dsi_host_node) {
++		dev_err(dev, "Failed to get remote port\n");
++		return -ENODEV;
++	}
++	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
++	of_node_put(dsi_host_node);
++	if (!host)
++		return dev_err_probe(dev, -EPROBE_DEFER, "Failed to find dsi_host\n");
++
++	dsi = devm_mipi_dsi_device_register_full(dev, host, &info);
++	if (IS_ERR(dsi))
++		return dev_err_probe(dev, PTR_ERR(dsi), "Failed to create dsi device\n");
++
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_HSE | MIPI_DSI_MODE_VIDEO |
++			  MIPI_DSI_CLOCK_NON_CONTINUOUS;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->lanes = 2;
++
++	ret = devm_mipi_dsi_attach(dev, dsi);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Failed to attach dsi to host\n");
++
++	return 0;
++}
++
++static int ws_bridge_bridge_attach(struct drm_bridge *bridge,
++				   struct drm_encoder *encoder,
++				   enum drm_bridge_attach_flags flags)
++{
++	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
++	int ret;
++
++	ret = ws_bridge_attach_dsi(ws);
++	if (ret)
++		return ret;
++
++	return drm_bridge_attach(encoder, ws->next_bridge,
++				 &ws->bridge, flags);
++}
++
++static void ws_bridge_bridge_enable(struct drm_bridge *bridge)
++{
++	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
++
++	regmap_write(ws->reg_map, 0xad, 0x01);
++	backlight_enable(ws->backlight);
++}
++
++static void ws_bridge_bridge_disable(struct drm_bridge *bridge)
++{
++	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
++
++	backlight_disable(ws->backlight);
++	regmap_write(ws->reg_map, 0xad, 0x00);
++}
++
++static const struct drm_bridge_funcs ws_bridge_bridge_funcs = {
++	.enable = ws_bridge_bridge_enable,
++	.disable = ws_bridge_bridge_disable,
++	.attach = ws_bridge_bridge_attach,
++};
++
++static int ws_bridge_bl_update_status(struct backlight_device *bl)
++{
++	struct ws_bridge *ws = bl_get_data(bl);
++
++	regmap_write(ws->reg_map, 0xab, 0xff - backlight_get_brightness(bl));
++	regmap_write(ws->reg_map, 0xaa, 0x01);
++
++	return 0;
++}
++
++static const struct backlight_ops ws_bridge_bl_ops = {
++	.update_status = ws_bridge_bl_update_status,
++};
++
++static struct backlight_device *ws_bridge_create_backlight(struct ws_bridge *ws)
++{
++	const struct backlight_properties props = {
++		.type = BACKLIGHT_RAW,
++		.brightness = 255,
++		.max_brightness = 255,
++	};
++	struct device *dev = ws->dev;
++
++	return devm_backlight_device_register(dev, dev_name(dev), dev, ws,
++					      &ws_bridge_bl_ops, &props);
++}
++
++static int ws_bridge_probe(struct i2c_client *i2c)
++{
++	struct device *dev = &i2c->dev;
++	struct drm_panel *panel;
++	struct ws_bridge *ws;
++	int ret;
++
++	ws = devm_drm_bridge_alloc(dev, struct ws_bridge, bridge, &ws_bridge_bridge_funcs);
++	if (!ws)
++		return -ENOMEM;
++
++	ws->dev = dev;
++
++	ws->reg_map = devm_regmap_init_i2c(i2c, &ws_regmap_config);
++	if (IS_ERR(ws->reg_map))
++		return dev_err_probe(dev, PTR_ERR(ws->reg_map), "Failed to allocate regmap\n");
++
++	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, -1, &panel, NULL);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to find remote panel\n");
++
++	ws->next_bridge = devm_drm_panel_bridge_add(dev, panel);
++	if (IS_ERR(ws->next_bridge))
++		return PTR_ERR(ws->next_bridge);
++
++	ws->backlight = ws_bridge_create_backlight(ws);
++	if (IS_ERR(ws->backlight)) {
++		ret = PTR_ERR(ws->backlight);
++		dev_err(dev, "Failed to create backlight: %d\n", ret);
++		return ret;
++	}
++
++	regmap_write(ws->reg_map, 0xc0, 0x01);
++	regmap_write(ws->reg_map, 0xc2, 0x01);
++	regmap_write(ws->reg_map, 0xac, 0x01);
++
++	ws->bridge.type = DRM_MODE_CONNECTOR_DPI;
++	ws->bridge.of_node = dev->of_node;
++	devm_drm_bridge_add(dev, &ws->bridge);
++
++	return 0;
++}
++
++static const struct of_device_id ws_bridge_of_ids[] = {
++	{.compatible = "waveshare,dsi2dpi",},
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, ws_bridge_of_ids);
++
++static struct i2c_driver ws_bridge_driver = {
++	.driver = {
++		.name = "ws_dsi2dpi",
++		.of_match_table = ws_bridge_of_ids,
++	},
++	.probe = ws_bridge_probe,
++};
++module_i2c_driver(ws_bridge_driver);
++
++MODULE_AUTHOR("Joseph Guo <qijian.guo@nxp.com>");
++MODULE_DESCRIPTION("Waveshare DSI2DPI bridge driver");
++MODULE_LICENSE("GPL");
 
 -- 
 2.34.1
