@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-758094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81B1B1CAC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666EDB1CAC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B2B720F85
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924DA1622CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019FD29DB88;
-	Wed,  6 Aug 2025 17:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22E6293C45;
+	Wed,  6 Aug 2025 17:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ym4t3AXx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WurARD/D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A55829C33F;
-	Wed,  6 Aug 2025 17:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501273; cv=pass; b=nIB+9LwoPYOnjBx/VKPZ0wYtNwpiTCr1uYQR0whn4F78AJ+PSblqle7BKq86RvbM3EAo4fQonFnaFjd6UhHVIqjl1MZoXQKfxvbUKooTSj8vwGPUZWOrHbbGt7vyVcQwq4n8Nn3tfO6V5DqmtbIUAH3oUkymCMDSdsrX5WOtgKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501273; c=relaxed/simple;
-	bh=AiDW2IByVRQaIFxwRX9AJSLG80KNm0g/2Us9YzkfDh0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Z/FPwf2FSTeE0JrQJPmUkE77L+tlIjoRNwFHgRAOwz/TmcEJxKJwQD2Lj0nKz/cl1mw1p77T5zbJSFBnKs0UwkRm3kUz9vEnn4MSX5rscIatDK7DFCFPvyI+zn3+j1NEtRqbVJRINPsS2nLuGYyV15v1AC8KeLTI+Y/5lGLt6qw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ym4t3AXx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754501256; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=II/aM85UGjvH361g1lFby19/7Seyj9xDjmm4V4j8aXSPv35kuoZpImP45iM2OqjVixPGtPHOg2Rwqz7sPezbaroNYVrj+UwOgL3iewlU4zDmpsFpgiCQZXXnzCfRVjs0tggwo/nVid4bZ3fcokx3/t1M0ZQVgygc/5X2o85oVcQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754501256; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AiDW2IByVRQaIFxwRX9AJSLG80KNm0g/2Us9YzkfDh0=; 
-	b=BH6aOCA6L7T9xEDfYgCVwxArrwMr94ypRYXhow77GsQS4brdXScjGIpXkR1uOLGTUuoz7U53h9uT7WqFxs+GWfG5Rzz1LP+P/YvUENm37nn2bbB1IdbzFrnrWe4NlSZicKEiL4wEWlUwAIaahwt3RhS9F9VVquOttzOUoz1GFhE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754501256;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=AiDW2IByVRQaIFxwRX9AJSLG80KNm0g/2Us9YzkfDh0=;
-	b=Ym4t3AXxPjUGoCmjGZyvbtffrBYBU200lXhFXTIO1IVsT/ifmepdYRjZUCNYRnhy
-	mI9bLr6sufqqF1YLljU/EnS+pbmGQ8EvRzE0ofhdkJcXKDQdgrxfCg5dpQc3qCxn6VS
-	8aVkK5iOw5alg+lmuj6YoxwGV2CedQnghVnVC0pk=
-Received: by mx.zohomail.com with SMTPS id 1754501254280353.52511468314515;
-	Wed, 6 Aug 2025 10:27:34 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC799EEA6;
+	Wed,  6 Aug 2025 17:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754501269; cv=none; b=eepLV2TN7UIKG0+WMcrTRst6KcSyh2rLabTrqGlEPOKgZ7p1afF2dh+/eyFj8nBTgywht6JJZ8lOnnTFuAST7XXfjoE0bJVSZifHWQk2fYTQAXl8BhdvM4xKUbeP19o+9i7eqYi0GCOn3LcfvS43BmtWPARsc692kyaqk41Q0BI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754501269; c=relaxed/simple;
+	bh=qINxFNOSNV/nP03Q/5LwI2yjA97EIhoqWLjHbd4WtHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bT/+Fj+af11hPmfl0v+7fXl7zA419wG9wS+RM/OdFW0dHZ1G8huyostlzqpwvhg8av9PoGPPLNp4/XIb26pRsGyctEOci9EaT3DgBaholl5E/7u7Bwcm7mY5yelHhgIiRADFeuznb++QVB6W/VmrFBHjchVfu3sDneR68qZ6eoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WurARD/D; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754501268; x=1786037268;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qINxFNOSNV/nP03Q/5LwI2yjA97EIhoqWLjHbd4WtHc=;
+  b=WurARD/DJX0LtJOTINkdIjYpqxVG9Lg7i/e9W0AMnHT44ZUybDY7eSZY
+   rYyNmU9j375MK6shT0ugTu7FsfQr3/nTB5ioak3e1Ci7g1PsvuSRsMvrE
+   3J8wovMA/LOSKQIRff6eJPOmRoLSuusuuqsC9qYs0BzVAekTLB0MatOoc
+   x+JEFgoEaQtpC1hWG33bF62Z2nlSqu3M1Y2BsSvZskmTjkBTPX+XRff+c
+   7e1DldCDLmNO9ZtLr2++MXaDVNkrSD1j8i0PsXNEwr08aF6nhULxqquhQ
+   IgWt4AyCvSHv520/E4HFCPO9gKPIZ8Eduh/ZYMPgAIATzK1gVo6GfBZFU
+   g==;
+X-CSE-ConnectionGUID: xtDuG6uIR/qZS6RWYmR4Bg==
+X-CSE-MsgGUID: KMMhyYqSTy2AFxTaIgxsog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56745444"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56745444"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:27:47 -0700
+X-CSE-ConnectionGUID: c9QjsHL/Sumkn0rQcFTqkQ==
+X-CSE-MsgGUID: PlD+IWDcQTa1TZ0KTRHOLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="164847977"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.97]) ([10.247.119.97])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 10:27:44 -0700
+Message-ID: <7972e017-ec4a-4fe4-a11f-bc0a1ff9b6f7@intel.com>
+Date: Wed, 6 Aug 2025 10:27:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 10/16] rust: block: add block related constants
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
-Date: Wed, 6 Aug 2025 14:27:19 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8CD9F17A-0F1C-4EDC-A63D-F6A0EAC75F35@collabora.com>
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
- <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] dmaengine: idxd: Fix freeing the allocated ida too
+ late
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Fenghua Yu <fenghuay@nvidia.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com>
+ <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-8-4e020fbf52c1@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250804-idxd-fix-flr-on-kernel-queues-v3-v1-8-4e020fbf52c1@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Add a few block subsystem constants to the rust `kernel::block` name =
-space.
-> This makes it easier to access the constants from rust code.
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+On 8/4/25 6:27 PM, Vinicius Costa Gomes wrote:
+> It can happen that when the cdev .release() is called, the driver
+> already called ida_destroy(). Move ida_free() to the _del() path.
+> 
+> We see with DEBUG_KOBJECT_RELEASE enabled and forcing an early PCI
+> unbind.
+> 
+> Fixes: 04922b7445a1 ("dmaengine: idxd: fix cdev setup and free device lifetime issues")
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 > ---
-> rust/kernel/block.rs | 12 ++++++++++++
-> 1 file changed, 12 insertions(+)
->=20
-> diff --git a/rust/kernel/block.rs b/rust/kernel/block.rs
-> index 150f710efe5b..7461adf4d7e0 100644
-> --- a/rust/kernel/block.rs
-> +++ b/rust/kernel/block.rs
-> @@ -3,3 +3,15 @@
-> //! Types for working with the block layer.
->=20
-> pub mod mq;
+>  drivers/dma/idxd/cdev.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+> index 7e4715f927732702416d917f34ab0a83f575d533..4105688cf3f060704b851ee17467c135c170326e 100644
+> --- a/drivers/dma/idxd/cdev.c
+> +++ b/drivers/dma/idxd/cdev.c
+> @@ -158,11 +158,7 @@ static const struct device_type idxd_cdev_file_type = {
+>  static void idxd_cdev_dev_release(struct device *dev)
+>  {
+>  	struct idxd_cdev *idxd_cdev = dev_to_cdev(dev);
+> -	struct idxd_cdev_context *cdev_ctx;
+> -	struct idxd_wq *wq = idxd_cdev->wq;
+>  
+> -	cdev_ctx = &ictx[wq->idxd->data->type];
+> -	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
+>  	kfree(idxd_cdev);
+>  }
+>  
+> @@ -582,11 +578,15 @@ int idxd_wq_add_cdev(struct idxd_wq *wq)
+>  
+>  void idxd_wq_del_cdev(struct idxd_wq *wq)
+>  {
+> +	struct idxd_cdev_context *cdev_ctx;
+>  	struct idxd_cdev *idxd_cdev;
+>  
+>  	idxd_cdev = wq->idxd_cdev;
+>  	wq->idxd_cdev = NULL;
+>  	cdev_device_del(&idxd_cdev->cdev, cdev_dev(idxd_cdev));
 > +
-> +/// Bit mask for masking out [`SECTOR_SIZE`]
-
-Missing period.
-
-> +pub const SECTOR_MASK: u32 =3D bindings::SECTOR_MASK;
-> +
-> +/// Sectors are size `1 << SECTOR_SHIFT`.
-> +pub const SECTOR_SHIFT: u32 =3D bindings::SECTOR_SHIFT;
-> +
-> +/// Size of a sector.
-> +pub const SECTOR_SIZE: u32 =3D bindings::SECTOR_SIZE;
-> +
-> +/// Power of two difference in size of a page and size of a sector.
-
-A bit hard to parse this.
-
-Maybe =E2=80=9CThe difference between the size of a page and the size of =
-a sector,
-expressed as a power of two=E2=80=9D ?
-
-> +pub const PAGE_SECTORS_SHIFT: u32 =3D bindings::PAGE_SECTORS_SHIFT;
->=20
-> --=20
-> 2.47.2
->=20
->=20
->=20
-
-
- let sector: usize =3D something;
- let page_offset =3D (sector & block::SECTOR_MASK as usize) << =
-block::SECTOR_SHIFT;
-
-
-Wait, the parenthesis evaluate to usize, and the shift is a u32. How =
-does this compile?
-
-=E2=80=94 Daniel
+> +	cdev_ctx = &ictx[wq->idxd->data->type];
+> +	ida_free(&cdev_ctx->minor_ida, idxd_cdev->minor);
+>  	put_device(cdev_dev(idxd_cdev));
+>  }
+>  
+> 
 
 
