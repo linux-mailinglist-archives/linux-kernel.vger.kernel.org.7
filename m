@@ -1,60 +1,91 @@
-Return-Path: <linux-kernel+bounces-757831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90802B1C72F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1177B1C733
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67141894FB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0EE1884D14
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474F128C5DE;
-	Wed,  6 Aug 2025 13:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DAF28CF45;
+	Wed,  6 Aug 2025 14:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldDYlA7t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXRsvFVf"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFCE215F42;
-	Wed,  6 Aug 2025 13:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7111328BA98
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754488760; cv=none; b=k4IOj+J3ebqDiYA0007fmjdpd13hIMwGOW/p0hyIrB+BL6ceWwEIHIlDzsOu4isF4yLm4IsvlFb7y6+Ez4QVLQfIZyg0ZQRWVhO1xczwFUBf0fL7fU6LbaTve+4aYO5/oBrbXylR3D2a6n23lmB6BR4bkI+80TmaAxukyXphL9k=
+	t=1754488836; cv=none; b=r/aVgVWFY89hl5zHz3+SGWOpodc80MmRgqR3q0SZ2B8Xyp/4GkQ5ULnnIJxJEyrE2dvuWsIasFR7HWvw/JwYSSRTo506qci0+6JoT46RT36IohnecKqI1ZLKogoOJFidFa8Czjqx9sKmvtTXSDOvLPfj6wJMVisrMroFhj1PN8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754488760; c=relaxed/simple;
-	bh=8MHhwlzeXksk6M5aMykLGDerlQQmZYeCH/6hBTMseoc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d+meEOFfP3bVl3Mn7v19XUbNE6ub6a7AokMVFtQtC4xwZXLlKeTrK/kNmz5ZsM4zR61+pkEkIgeWi9e6WFJS6R4hhEVQYvjVcSFabeeZCLD/QJTQK/f0o11AUd3HL0KmXNpD82GcAHUwLgEfxUzzX3MLygDgIM5jGliwio80VaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldDYlA7t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089E1C4CEE7;
-	Wed,  6 Aug 2025 13:59:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754488760;
-	bh=8MHhwlzeXksk6M5aMykLGDerlQQmZYeCH/6hBTMseoc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ldDYlA7tBkf9WkERpPS2ILQf8RvFePCOqfSnqvwMorL8BKppkoZ1Ll/PE/fQcB0pP
-	 +A9jBnLyJ9Px+x1M1opnP+WIjsWJyhilKx1959NqI8zbRjUnbrK7ZnygrmQWYYUnCs
-	 GlQETzabBIAD382lsIre0hETEHsfpcjnIAS2x4Kb2dO6tdFk/R/tipDjC6gguDChIC
-	 ni86w7dvPSLvbyKEOSwUiFxVd+60HSwH/aW3XxYQyA1f0x5xtfWNXmh6HS2QfN/i0O
-	 ZD3kySumb69xJSZakxkBWW5rikB6FpXm8EEKJ4ycMj+dfwIMJfXVyAZR4ULK27zoYR
-	 OlNOxXTq60N+A==
-From: Michael Walle <mwalle@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	nm@ti.com,
-	vigneshr@ti.com,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v2] phy: ti: gmii-sel: Force RGMII TX delay
-Date: Wed,  6 Aug 2025 15:59:13 +0200
-Message-Id: <20250806135913.662340-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1754488836; c=relaxed/simple;
+	bh=1e0Vl0DLzBwJ1AEPVtS966+I1J911xIBcPy784b2oeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nt4pMQo9iE5aFAsiFmHgPxWIwX9ryAolNWBZT/bJ1Zmx0BhriO6UDgSQpcyuVeqdTY6Lk3XNPRtObo9QsnYXxonWQUWB9imUohy9Kuq9Opv/wpdD2azzYAY81XuF1arBYWH3GiSQmm+qef9iNlIJVPykpmp3/23c4mC5XLn+0b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TXRsvFVf; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b783d851e6so5799183f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754488832; x=1755093632; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S02Ags7WvqYe7LIFO8GxG705rWR0j/aMg3rhghXyds8=;
+        b=TXRsvFVfVY220CPqMlInmShETRQpmZej6tRQe3dMved5lK2YaOpiXmUaooYIoIMsbI
+         7ODb5DsWIMV5skC9U1xsuLoZN5mGkmaVHxsHYjYKm5+TlQbdN0FKXZPUJbRSSg0wpPXR
+         YQ6VOC3jLyQllnaOnPWXfLQJEcM6kNb4rvobZe0k/I/DCE5iIvOkgHjhGCV0L4ORCcQZ
+         u4WrQbMB5g4mojXDZMhtXQ6KFCBauzYGp9kwjwu0rD5K8MhPMjZdcfpybkpmEMduMwuo
+         JVECkspqS8ODh+xCaV6HPCO1O6QblxoEshYp8l3PuJINi4HXKoDrULuB3iSlhhgdFWse
+         Ojxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754488832; x=1755093632;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S02Ags7WvqYe7LIFO8GxG705rWR0j/aMg3rhghXyds8=;
+        b=OpPcxyBsSCmMN+LXb042kNvtGqmkdPnoZ5fP+LdgDNTK9ytoaRcNDpAyPUFRJmJZTP
+         eegrWlinFGHIo2Nh4EohRZCAxLKp2jHC/DFVGxwEnS42DbLmaj1qGKfd5j6MPLHxCrXz
+         qFzNjrig6jnioXgAy1kdPEahtGaySo4eXRAQ6qAS3Lv2yakG+sIVAVNJuRC9u3lfaCyB
+         6k71AVB0EaQpSuf/UC1Y5uMPGkepVXXJ4FjgVYakAC/6mbjagrBWOCDnbj/QGqWLSWmq
+         54A2LrU1V57DcFJB6T21FVsgfoAokbbJqXEz807meP3Bv++CFDvtdFqE4kykmU5u75Tp
+         oIaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg6uV2N/4qTcupCGWcWv4mqwFvVIISndYBJqxQiPd077pLtmBb9ZiHD1iLiDg6f1WllIfcgPLvHDOzKrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy5cLSBRSBtyikGDF/9SttRlCFl7GA378lHBILwDreCEAQ7RY6
+	rqwwu50czVw56R9c9IESCQC1XiAw/5R5jCOFMBE8USwQLfWt9Yss52sEbBsHUQk0k/vIvPQ2igE
+	2hirI
+X-Gm-Gg: ASbGncvbc7yyJ/vkYMwfz4M7p4k+/U2omd/RvmdNSZR1bO4kn3U3PJuX+ubNU4Gt2Zy
+	HDlld0uZwEvi9eScXEs7k3b3b1HbXsRMLsiWBN0rT+jXVZ1eSdaIoCGhlc7HR7/ED7W/HT84HDg
+	Mb3DfSpXJfr9JtJAIhbeRy3OSplHrJTI3ZbNIXLvDsHxOOf2TNY4MMpHRYUMDOj5Yte18QS1DXw
+	IeQjndL8IkzDGowBijrm0/fit5Z9jNvn/AzlwsgjodwqLD4DiZAVEJagxcJwR3EpAkD5YBzm3j7
+	+QItNKCzF77iwgIfF4044HubsfsOEwNihIDqln8XLtEiMAi1945v8KeEmXWoXNQ4zu1Dt9uhgrv
+	nB/S1KxLOLauinKQDVNnM9dnEnQFrM45xDg9ir8Cawdk=
+X-Google-Smtp-Source: AGHT+IETmAlWMwJ2qjfxtHRSSLJlNaDSRStt3AyM41fvjsH5fd9IH28npg8xRcL+NtabnZE8k9FKKw==
+X-Received: by 2002:a05:6000:22c7:b0:3b5:f0af:4bb0 with SMTP id ffacd0b85a97d-3b8f48e046emr2027583f8f.23.1754488831620;
+        Wed, 06 Aug 2025 07:00:31 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm147276365e9.22.2025.08.06.07.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 07:00:31 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: linux-sound@vger.kernel.org,
+	srini@kernel.org,
+	broonie@kernel.org,
+	lgirdwood@gmail.com
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: codecs: tx-macro: correct tx_macro_component_drv name
+Date: Wed,  6 Aug 2025 15:00:30 +0100
+Message-ID: <20250806140030.691477-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,140 +94,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some SoCs are just validated with the TX delay enabled. With commit
-ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
-RGMII TX delay"), the network driver will patch the delay setting on the
-fly assuming that the TX delay is fixed. In reality, the TX delay is
-configurable and just skipped in the documentation. There are
-bootloaders, which will disable the TX delay and this will lead to a
-transmit path which doesn't add any delays at all. Fix that by always
-forcing the TX delay to be enabled.
+We already have a component driver named "RX-MACRO", which is
+lpass-rx-macro.c. The tx macro component driver's name should
+be "TX-MACRO" accordingly. Fix it.
 
-This is safe to do and shouldn't break any boards in mainline because
-the fixed delay is only introduced for gmii-sel compatibles which are
-used together with the am65-cpsw-nuss driver and are affected by the
-commit above.
-
-Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
-Signed-off-by: Michael Walle <mwalle@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
+
 v2:
- - reject invalid PHY modes. Thanks Matthias.
- - add a paragraph to the commit message that this patch shouldn't
-   break any existing boards. Thanks Andrew.
+  - added tag from Neil, corrected Srini's email;
+  - changed commit description (reworded).
 
- drivers/phy/ti/phy-gmii-sel.c | 58 ++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 8 deletions(-)
+First version: https://lore.kernel.org/linux-sound/20241016215930.1144527-1-alexey.klimov@linaro.org/
 
-diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
-index ff5d5e29629f..ed078475c4cb 100644
---- a/drivers/phy/ti/phy-gmii-sel.c
-+++ b/drivers/phy/ti/phy-gmii-sel.c
-@@ -34,6 +34,7 @@ enum {
- 	PHY_GMII_SEL_PORT_MODE = 0,
- 	PHY_GMII_SEL_RGMII_ID_MODE,
- 	PHY_GMII_SEL_RMII_IO_CLK_EN,
-+	PHY_GMII_SEL_FIXED_TX_DELAY,
- 	PHY_GMII_SEL_LAST,
- };
+ sound/soc/codecs/lpass-tx-macro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
+index 40d79bee4584..1da34cb3505f 100644
+--- a/sound/soc/codecs/lpass-tx-macro.c
++++ b/sound/soc/codecs/lpass-tx-macro.c
+@@ -2229,7 +2229,7 @@ static int tx_macro_register_mclk_output(struct tx_macro *tx)
+ }
  
-@@ -127,6 +128,22 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
- 		goto unsupported;
- 	}
- 
-+	/*
-+	 * Some SoCs only support fixed MAC side TX delays. According to the
-+	 * datasheet, they are always enabled, but that turns out not to be the
-+	 * case and the delay is configurable. But according to the vendor that
-+	 * mode is not validated and might not work. Some bootloaders disable
-+	 * this bit. To work around that, enable it again.
-+	 */
-+	if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY)) {
-+		/* With a fixed delay, some modes are not supported at all. */
-+		if (submode == PHY_INTERFACE_MODE_RGMII_ID ||
-+		    submode == PHY_INTERFACE_MODE_RGMII_TXID)
-+			return -EINVAL;
-+
-+		rgmii_id = 0;
-+	}
-+
- 	if_phy->phy_if_mode = submode;
- 
- 	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
-@@ -210,25 +227,46 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814 = {
- 
- static const
- struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] = {
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2), },
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x0, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x4, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x8, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0xC, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x10, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x14, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x18, 4, 4),
-+	}, {
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x1C, 4, 4),
-+	},
- };
- 
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- };
- 
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
- 		       BIT(PHY_INTERFACE_MODE_USXGMII),
-@@ -239,6 +277,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII),
- 	.num_ports = 8,
-@@ -248,6 +288,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j784s4 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-+		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
- 	.regfields = phy_gmii_sel_fields_am654,
- 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
- 		       BIT(PHY_INTERFACE_MODE_USXGMII),
+ static const struct snd_soc_component_driver tx_macro_component_drv = {
+-	.name = "RX-MACRO",
++	.name = "TX-MACRO",
+ 	.probe = tx_macro_component_probe,
+ 	.controls = tx_macro_snd_controls,
+ 	.num_controls = ARRAY_SIZE(tx_macro_snd_controls),
 -- 
-2.39.5
+2.47.2
 
 
