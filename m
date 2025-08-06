@@ -1,309 +1,178 @@
-Return-Path: <linux-kernel+bounces-758375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF650B1CE33
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CA2B1CE3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 23:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD5D7AA05D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20F3118942DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 21:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C59224AEB;
-	Wed,  6 Aug 2025 21:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E17223324;
+	Wed,  6 Aug 2025 21:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="num9sttN"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebAb3PKH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C63220F29;
-	Wed,  6 Aug 2025 21:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754514265; cv=fail; b=O2JkP0daaSPhZDXCizecCg9E0lVQCJS/rf5MM/+z7b/ia7ybSuM/8WyeI2DakupoMGbC5X9a2cBcdQlT4UQw7DbtefFBXJg7uWP9BriBU8KyKE4aIPawcA8qoystx/S9kEOGyb6Elt/pdLqChE6fTTErNvtw/dR7AnO9U6TidJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754514265; c=relaxed/simple;
-	bh=RtFc+lx1HsnjAQ48Z5ifILnuRr/yh8B1KdcptJSiwKA=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=B697A66ntjtZ8ImBiJvF4xv6UjnIyarC8NNRZrFN4LjQDasq6ocJ1JNKGriza5RJeOadbhbnY8zqxnfdVKWTfC4kB35Qe7a6YAwO5f1Jm95Sd76/5vZNxLqM0tfnfSzQl0WA5NMauJYHPy1yFyJHDrjENysaO5GfRZuuQTmMo+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=num9sttN; arc=fail smtp.client-ip=40.107.92.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iT9rQIne3NXr/VUp7SBFCkHj1H1vlpp1ie5umUeFXIe3ICLg6+hMUq3xw29R6H9zjt5ciSVlTtGY5d07SXb7O+9N42xqs7swD0UpCSxeNHZvyRVcqCbk653pQluO1ZrHGWznmQAsfptGryHU4sb8Oabo3T24gCPfVxZ/aJ7rT6sEOKCyrKRkMDPVttBlo/Sv8r24sqnXxGDspqjOYwgEv3c2MFUmwW59atmfdwpsRFlj7oVboEhbpjRCXLwuHht0f70ilupqnoluz6uUjdw4E4c8PAgiFmMZIO+Gj9aiwSjo+aaGQ5+cOz+0RaPhUYoDot65vaAf8ncS5bU5CDh+wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FmuubP+BYZVvpXJm+vlUQvuxrJYPFrcsqKofE9fCJgs=;
- b=A6mX77h5QasBPVvJSuwy+7IXS1ZE2P9GmHggmldqkJiYiFOlAljJoV6y3r8T2V0xK+S+Q5xDERUnTsycptnv+JE8MvUm1bFgCQjL3TlZuKDdKoMa7+gGbMYgaWpIhDkmE5SY8aLIWJa0bLyReclwkBI1nc6oUgzqhFlYi9bk7jwJtbRV8SyY5IfTP2PXyteXDwibtUh2QLgCFzn4eBu+GpwUAyadq4SqEN18OT/xRSSCXiiwSBqgue6mQ7RzWlWDrktHBeU5MqeswSmJjb9nFSED0T4U56rCk+2+91ogdAYkNgqS7nqN66jlfsNGU34NgEo0xT4ossu/bKR2ve75RA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FmuubP+BYZVvpXJm+vlUQvuxrJYPFrcsqKofE9fCJgs=;
- b=num9sttNmxq+u7s5V46B84rutpQZkMRdAQzAfsNoUn5f8KhRdVfVUXIe8hT37uSGD7xa0kjBWDu3a2Iaolszu6vot8KcyvPq+tRWZ/fMiyZ3pOKzOq0b04Txdwo2uJitu3co3544/ZjloAi6s0k9JQFepyrHOdYbwdspA0SyCzM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by SA0PR12MB4367.namprd12.prod.outlook.com
- (2603:10b6:806:94::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Wed, 6 Aug
- 2025 21:04:20 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Wed, 6 Aug 2025
- 21:04:20 +0000
-Message-ID: <829a2a91-c599-4973-a4b3-015323875402@amd.com>
-Date: Wed, 6 Aug 2025 16:04:16 -0500
-User-Agent: Mozilla Thunderbird
-From: "Moger, Babu" <babu.moger@amd.com>
-Subject: Re: [PATCH v16 08/34] x86,fs/resctrl: Detect Assignable Bandwidth
- Monitoring feature details
-Reply-To: babu.moger@amd.com
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
- akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
- seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
- sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
- mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
- gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1753467772.git.babu.moger@amd.com>
- <bb06941505a33df996fe0e8d997c2eb2c4f4b379.1753467772.git.babu.moger@amd.com>
- <aed0a452-9b16-46ca-8075-7be9eaa0cfd1@intel.com>
-Content-Language: en-US
-In-Reply-To: <aed0a452-9b16-46ca-8075-7be9eaa0cfd1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS7PR03CA0259.namprd03.prod.outlook.com
- (2603:10b6:5:3b3::24) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9391C862D;
+	Wed,  6 Aug 2025 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754514349; cv=none; b=uJvwcwr+aV46X+DDV1EVh1U64Q77TfXsXbcVA/C6W85WnkEa9sTfNBcoOrHdliMqURF7nXFPLiLSxhJNqIfiOk6KE9bqeRle286e/ezKlCpGP0JKFUHzJTHeRhVx9XrN+aXqR1caAqiP+/4RyMbcyMf7rBbZ/5aBhpn+B0mAbIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754514349; c=relaxed/simple;
+	bh=inOXr2gxpXIuq1rhwe8J8ETm165ksxf6xYrXSkgR6Hg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQRe+idMqFryrLykXg6VNv3cMVDBshewFOxeatiMVKfxrdr/zh4qmrFdfQxBYglSlydt6SchJggM1FlgtHT4TlLtGsW4amf82wVSskjjSMVU3/h6oZtyZ2wMrwgf06u2LykmY24sCAmmh3jcNbxhfqLy1T+INYqyoquoXWs+pcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebAb3PKH; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2405c0c431cso2546395ad.1;
+        Wed, 06 Aug 2025 14:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754514347; x=1755119147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9mqLSDQG6lM86WBfEbXIj7RV4h0WuVHXNTq3ygYzF6o=;
+        b=ebAb3PKHbk+ES9Ii8MuZKidIHlJ0h2XWKln7sTrsP3RtSW3ouLo5TMBiSOXixhTnDJ
+         /lZmkDPIdFEwayUUht0menSkwJMqEByLN7tNpmqJ1iS577XYt61iEI/tTetLw8ZfjWvB
+         WidHdo9c/cpJR0u4ycV1X8jZJPnJTZZRBZo5sckv71RsLxeYC3nKOU+VVrvagMYBV3Px
+         8yeH3DRb+7B1qgaoOWoJ9rsHPs1USeILvUdF4fzrrDaZmSQcDNQ2PdlxoTpst1/BZGhL
+         bssz+oMITngYR+CqmISpzmP5UwVMeubVNOFegXRnh5/TnaI9O+sAGzBW7bcjNy5XFceH
+         OEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754514347; x=1755119147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9mqLSDQG6lM86WBfEbXIj7RV4h0WuVHXNTq3ygYzF6o=;
+        b=ADv1/wmC3sF4nZsZYgba51q+dg9BorqknjGfgSVlDRBfQbZ02yTrN7PwuWAzdT96Vi
+         khS3lKYmKWQMZEAWSam5Ou6KZPhVDFFGMiBxY9mF1ClPPhLUthYKZPgllUV2xlVlco8G
+         IPiFUgF4iP2sbMeJujTU9fO/7L4EMc8GTCWoLjzOWRh4SUFoHHKc9CnZ1Nr8QplVtNEr
+         G8YcFJNJVW12Uef66yVw3vGI61/zsrGc+qU6X3Zi6oD4DsjOCJnLDc9FbOjQh71dz98r
+         HOdtiGtDYaJ7373kzQeI57mvVbP44+MbDZR7ZdWlx4hBl3fVJJOWTprQFVe1myzk9S7o
+         qpsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUesfCuYLOTfoiHh3178UQJMANgRXhWowpSZZCOFxBThv1tH44d7cjiMukC6wdZ2er+/GLvLLQSFytzl98i@vger.kernel.org, AJvYcCUmn+Nh1xkqL3uWpUJ1rrWkzz9Cf0cXU/r2u5h25WtNphM8qAL7zS3f8bIHZcNC72tkzt8bxEAxBhs9HIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaWjHDSLL6qyolcaf1fSn2VXuy8/qqd6VNt+w4yEx3wDy12S2s
+	c7OIfdmLEXQsunStwXGQq2c2tdgriLNkPKH6bzCG7bCgeFII8cgAL7+mK/S9fECDYy9pXVGHkdQ
+	HllpWaob53JN3srJXoqHjVlr6vgA4+oU=
+X-Gm-Gg: ASbGnctplvWg2QRO98Qr+0+VZO0IRAB4pVcuszQ6hGMVMQxYHKsuDgqcFzAXXUMBnbA
+	8aTnjsrRlmGmPeZmGb1IAVg3u9pjdrzi1wETbw8tBBfQ/60pgl+sSphbuGL+Ai4CBnXN8UxPDL8
+	ZF4Hw+d2IeiYiDL+HXGxhLL5KzsZ8M973STHWTSjKSk8XKlXmxeMSlw1MFeMkCE3Vu54YQb6ZHm
+	sNUdBg=
+X-Google-Smtp-Source: AGHT+IGX97bzlOFvWNARro2Lk94bJ2TmsR0RtAZCjrabVOI+X+5or8c4VEDiURAc7sTFx4wmP4FpSp2zGpmTk7vswhs=
+X-Received: by 2002:a17:902:f690:b0:23f:cd4d:a91a with SMTP id
+ d9443c01a7336-2429f30b017mr51042875ad.30.1754514347173; Wed, 06 Aug 2025
+ 14:05:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|SA0PR12MB4367:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3eb6c1ea-80ca-41f7-07f2-08ddd52cd051
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SGwzL09FN05KM21JeGZiTXpoMGdWVktlcGlLM1drZTkrZm1nbktLVXBDY2pL?=
- =?utf-8?B?RjFkeC9kWU93dVcxNFZjOHFiQktTNGRxUXFKZHcweTVhSkw2K0RjbkZ2UHBo?=
- =?utf-8?B?bG41dlpPQ2ZMdU5RVXlzS2dyNkZTT1cybUZTcnBHWjN2b05DOVZuc2lkUDhB?=
- =?utf-8?B?LzZtaG9YNTNvNThia2w0WVVtMTkrMWxobVdzMGtDV084MjhwRW1Yc09idE16?=
- =?utf-8?B?bHpMa2xCeVhxMXdZNCsxNnc2dSs5dVl3UzR3YTNLaU8zYlpjRUNrVVgrQktQ?=
- =?utf-8?B?SnI5QytEMzhTR2YyTGxxT2V2aVBTbkl1SldyTjM0ZUx4UjZ6aVJqZzIySUkv?=
- =?utf-8?B?eWVqR1RLMWdPOXhiSkIvTklLS2ppWGJIUDQyMHpnNVU3L3ZGOXNuVTQyZEJm?=
- =?utf-8?B?VFozUS9LSENzZ1BoN1BxRTVIVWhnZGpERnpoemlxNy9yM2lKRy93b29aZndu?=
- =?utf-8?B?K1VKZjN1NlBqQWZqaVk5V0pzZThkNGhRSklaS29mVk5ZT2FySVpVV0xtSHVo?=
- =?utf-8?B?RFpmaUx4Q3ppMW9QdDFLa05FL3g5bFZRamoyZ0VTRHV4Sko4a0twRDgyd1Ju?=
- =?utf-8?B?QmFXREc4SWlBeGlHSURqb1dac3hjUjAvQjNWUkV2dWhtNmJ2bkFtbWFrWHNv?=
- =?utf-8?B?SFBvR2h4RVFOUTN5aUZNWVBGLzlDUHpteDVpTnp6eThyZmNRd0ZLN2JYd0ty?=
- =?utf-8?B?bGFSTGlBMzRoeFJmWDByM0JVS2JJcTVOZEY0NThodnBMS3U0K3VWTUxnUnN3?=
- =?utf-8?B?Z1dnUVoxMDBtOC9vc1JTRG9nRzA2bDZlWDJBcmlZemZuYXNOanFkVStyQzdx?=
- =?utf-8?B?b2pVM0NSMG56YWdGQ0NRNVpuR2p0VHZ2M2M5QXYrRFdHMDJGVjU0Z25JUmZV?=
- =?utf-8?B?V1ZScTlpZVE0Y2M2RHBMenZmR0MwZ3lWdHUyZG43Yk8ya2hrSGtwMDVsTVBM?=
- =?utf-8?B?aktlK0J0T3lsTW8wYWRXNlpmdlpYNTRRcEJEMnpKQ0lMdi9QR2MxMlZpRnVR?=
- =?utf-8?B?WGFzWXBaVXRQZTcwdW9aWHhXamdKTllIajNFdys2dDFqR1E2VUlOd2Yzai95?=
- =?utf-8?B?aC82bU5UTGt2Vk1iWjNGMGtKRTRraU1SL3lNQ2dmZXY4TWNJb043Ri9zbGho?=
- =?utf-8?B?dDdCWE9nRkdJUXNXYVViR3FQdG03anFEYW0xbFdMZDdRMXhweGVJSVJJcVBO?=
- =?utf-8?B?Z0gySXlMQktpZmZvdEx1eFFVWVVHUzhzdGhISk9vbGhGSmlidGhrWjNxNm5n?=
- =?utf-8?B?cWJTcGhlR2cvME5sU21LZWhjZVBKakNxOFVRcS9QVHYzTDQxUEJIeTJBZmls?=
- =?utf-8?B?cVRQMFBvcnF4Z1UzT0IyWFdwbFRmNVNRMnZkbVVIY0x5eFlPNFJSNjZCNmp4?=
- =?utf-8?B?WnQxTXlydEVibUNjSkVwTHQveUROV1R5R3ViZE5reml5T29BNEo5WkxzYk1U?=
- =?utf-8?B?amc3NWluZWhudVNORHRndEUyNy9SZG91bk9acDZvMld0VzFZbTIrbWEvNGdm?=
- =?utf-8?B?dnZtUVRmWWVtUHhhV2NPUGQ5TW9qRWI2RzhVaXBwd0xxVmorTjVXdlhOSE11?=
- =?utf-8?B?dHludThUQS9ybGIzVStuM1VTMWlDQXhhUFF0c3dQQlZsVk8rMnREc3E3c2hz?=
- =?utf-8?B?cmZ5N0ZpaXRHaFUrMzRPbGJaVlhuZkVpeWk2RkpVaHoxcEdGWnFsQU45K1dy?=
- =?utf-8?B?cW1STldnWVMxa1NHZlVrUVZTNWF4Z0JkTVNmRURDeWVadUdNa1FBcjNWZXN2?=
- =?utf-8?B?UjFBU09sajhDSmlIaE9kdEprNkhKd1NMK0Ftc3RicmVNejR2QlZQV2owNHhO?=
- =?utf-8?B?UmVwU3B6Yk5TcmZMV1VSc281Q3NoREIyUVgwRzFrSzZxMitFYkpvWE84VmZH?=
- =?utf-8?B?SG91RnZVamc0K0hmMUJRd0pMNGNtdTdUOWRpZE5HUjlBZmRPcWplQ250MXd2?=
- =?utf-8?Q?zFJMDcbU0ps=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R3czRlo2YjIxNDl1cDJKN2xGVE0rNk1pVFJJNVVVSHlxVVFOUlloaXluaWhq?=
- =?utf-8?B?L1dQVjlOOWNyZXZnY0tNVDlSb0dMRG81MC9VbVRGVS9Zd3E1RTdqOS80QmVw?=
- =?utf-8?B?M2tXTXJFbyt5RHdzNW9rZEs2dzFsU2lJeTgyRFFKa2xxNk5xb3hDNlZRalVw?=
- =?utf-8?B?SXhCcHdxMFNYNGVMYmVyVSt5aDB2dkgyb0dtaEcyWlBWMW11a1NMdGtXSDBM?=
- =?utf-8?B?VUxEY3FpSm9reHdSMkZmWXRSejdNY0dDMGFvTjBGdmNxYVVxOGZ5NE9GYmpR?=
- =?utf-8?B?OEdydENweHJXZGl2V0VxWlZOU1J4VkpxdU8xNDZmOG0yeTBpN2ZmZldpUU1Y?=
- =?utf-8?B?c3BxUUxpNTFEVHMzUHhmdGRTc3V0Zyt3RklVVFNLSURFMjlxd0FCdXNNQ1VX?=
- =?utf-8?B?R1MvY3c5WU91TVptZ0graGxtMFBqMm9tYjVYME83aW1IdjBsODBXYndqV09r?=
- =?utf-8?B?YS9OTGdWQmVDUWx1TGo0QVEyU1ZOWnUyeW5JbkFUWERWOWhPMUNselg5SUUy?=
- =?utf-8?B?RGFWZ0F0VW1ld0xPTW9aNC93VE00RTl0QzJ6bDlaVTZuVnQ0cVc0cWl5eHNh?=
- =?utf-8?B?TFhUZ1F3dDN4RC95WUVKNXpPN2RoMmV0ZTJSb2t3RVl4eGdwbUNwTlNTdm42?=
- =?utf-8?B?K0xWUW1Vc1VmcmhwcnI3Z1BoSkM3aUF5SUF1OXV6TWo2eXo3WWxzQ2psemln?=
- =?utf-8?B?QytHR3JDdTA3QXVzK0xld0hIWHRkcEg4TjIzOVNEaWh2ZWs2L1RCdTY5akE2?=
- =?utf-8?B?cWRDUW9PRUhGNXA4WjRxV0drLzNGZWgrRnVPdzhTN1BDTVVHTHByZS95QkdB?=
- =?utf-8?B?OEZNa1NJRWh3T2MyZmhROVpJVFJITTg0czlkSkJWSlBwM3VIZTBidDFBUWJr?=
- =?utf-8?B?UWtpNU8rUW9ENUNxcDNERmkxVVU5dkxVMjUvalVXSkVadFZVc0VuMHNJcjJ5?=
- =?utf-8?B?amloWHdoYjR5SUU2MTNpa1cwODJuN0E0NzVzNGtCQStHRVFiY1A1eFFjVlY3?=
- =?utf-8?B?aGdXbEFkTWN1bUlWUkRQUXVIVmFMdi8yQ1hZTWpneEJ4RTkyU1Nkd1BxMDBU?=
- =?utf-8?B?bmQ1OFN4Z2d5YnBrQmtMVUZ3SzQ3eWV2REJBeXJnVXBhaWsranVTZXJydEhl?=
- =?utf-8?B?RHNlRE55NGFXWTBpUHBjam5XblBTL0RsVzluaFN6WGpZa1dpWEMyS29PMlF6?=
- =?utf-8?B?RC95dFliR001QVR0dFpSZU9MSHNGSEJ1WjJ5enJQTVhldFRReGJtaGdCL0Ju?=
- =?utf-8?B?NDN3d3JqWEdDYUw2SUx3eHpablRBL2RwMFlDNWFVYit5b1V6M0hTY3NKL1lh?=
- =?utf-8?B?WGo1ZmVsdmh2UGNEcEJKd0ptR0xCaEoxS0I4TWxTS2NaY2dra3BiWVAwL3Ja?=
- =?utf-8?B?Ukk2UWpVNE9QdVhCRDF2SUNFei9INlFBdmQvRmxMMVJsdTlzYVVnZ3lBWEMr?=
- =?utf-8?B?S0c1MFBzeFVVdG03Ny83MUVKdm1Qdmppd2N3a3JtRm9lLzUrSFZSTXB6bE16?=
- =?utf-8?B?YlBobjQ2c0dnVWQydmU0Z2VXWnlJaWdwbTJ0OVVZeHlqUzJjdUdBdGJVNStz?=
- =?utf-8?B?cWhuSTY0SjNyNUxuNXhnZWtMZVhjaTNXcm9QOTY1Y084c3gzUEQwL1AvalB6?=
- =?utf-8?B?WjltQ295YWhRN2ZQbzdFRjhETnVrK0FaOHlSRmtocTBsdnpvRURNV2FHTVpD?=
- =?utf-8?B?RTZzclpRT0RrcEJTQUNsZGxlYWs5UUt5WHJrbnhHdFdXaXdPcDlPL2g2NC9m?=
- =?utf-8?B?U2JGR0VMWEJWci9yL3dCSTh0SXkxYVg4Mk51SnhYd1dGUG5wZDVFZnArQkFK?=
- =?utf-8?B?cW5YdUxmT2s5THE3dkVkdWJYT291d2Z3OVMreitIMjF4V0tGM3ZOVGxVT1RU?=
- =?utf-8?B?M0RML0xxWHpja29XME9lUkRXQWh5UmxLSzlRRnVSM1BwdWRmeFJabjBBL3Q5?=
- =?utf-8?B?TVlJRHlMRElHbkxyalo0UVpGLzNiQTRvM1JIVU5manZEcC9yeFI0UHAzK05P?=
- =?utf-8?B?MGZ5QUkyQjRzdm1Da2NUN0tSeFpGYkV1V1pTbk12Wi9VdFc0dVJSZGNIWS9a?=
- =?utf-8?B?cU5TT0c2ZDhva1JWR2J0R3N4NDRDR2hpWndxa0gzMDhjbStHWjl3b1RHNm5R?=
- =?utf-8?Q?EDVM=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3eb6c1ea-80ca-41f7-07f2-08ddd52cd051
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 21:04:20.8147
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xu2gjq+Rrc20gGSBKA0GpvFPzQKAhdrpWolX7s2i63mfKawdF5fyowq7vpaPGhib
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4367
+References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com> <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
+In-Reply-To: <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+Date: Thu, 7 Aug 2025 02:36:24 +0530
+X-Gm-Features: Ac12FXwiKjB95HCJYl0H6dPexm14JCfOzUTSqY9AD9VQx0sdO3FtNFHgJs2ofF0
+Message-ID: <CAMV7Lq6ky1w5j4QJPpHh-aLTAqWUywnF2hVoOE4nesL+2HSUJA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in serial8250_probe_acpi()
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Wed, Aug 6, 2025 at 12:32=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+> Hi Abinash,
+Hi ,Arnd
 
-On 7/30/25 14:49, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/25/25 11:29 AM, Babu Moger wrote:
->> ABMC feature details are reported via CPUID Fn8000_0020_EBX_x5.
->> Bits Description
->> 15:0 MAX_ABMC Maximum Supported Assignable Bandwidth
->>      Monitoring Counter ID + 1
->>
->> The feature details are documented in APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
->> Monitoring (ABMC).
->>
->> Detect the feature and number of assignable counters supported. For
->> backward compatibility, upon detecting the assignable counter feature,
->> enable the mbm_total_bytes and mbm_local_bytes events that users are
->> familiar with as part of original L3 MBM support.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
-> 
-> ...
-> 
->> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
->> index 267e9206a999..09cb5a70b1cb 100644
->> --- a/arch/x86/kernel/cpu/resctrl/core.c
->> +++ b/arch/x86/kernel/cpu/resctrl/core.c
->> @@ -883,6 +883,8 @@ static __init bool get_rdt_mon_resources(void)
->>  		resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID);
->>  		ret = true;
->>  	}
->> +	if (rdt_cpu_has(X86_FEATURE_ABMC))
->> +		ret = true;
->>  
->>  	if (!ret)
->>  		return false;
->> @@ -990,7 +992,8 @@ void resctrl_cpu_detect(struct cpuinfo_x86 *c)
->>  
-> 
-> To complement the change below, shouldn't the snippet that precedes it look like:
-> 	if (!cpu_has(c, X86_FEATURE_CQM_LLC) && !cpu_has(c, X86_FEATURE_ABMC)) {
-> 		...
-> 		return;
-> 	}
+> I've seen this one as well in some configurations, thanks
+> for helping out addressing it!
 
+You are welcome ..! ,
+ I have a patch accepted in that
+commit : (3df63fa8f2af) dma: dw-edma: Fix build warning in dw_edma_pcie_pro=
+be()
 
-Sure. Added now.
+In general, using dynamic memory allocation in functions that are not in
+performance-critical paths=E2=80=94like probe routines=E2=80=94is a reasona=
+ble approach
+to reduce large stack usage without performance penalties.
 
-> 
->>  	if (cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC) ||
->>  	    cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL) ||
->> -	    cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)) {
->> +	    cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL) ||
->> +	    cpu_has(c, X86_FEATURE_ABMC)) {
->>  		u32 eax, ebx, ecx, edx;
->>  
->>  		/* QoS sub-leaf, EAX=0Fh, ECX=1 */
->> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
->> index 2558b1bdef8b..0a695ce68f46 100644
->> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
->> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
->> @@ -339,6 +339,7 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
->>  	unsigned int mbm_offset = boot_cpu_data.x86_cache_mbm_width_offset;
->>  	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
->>  	unsigned int threshold;
->> +	u32 eax, ebx, ecx, edx;
->>  
->>  	snc_nodes_per_l3_cache = snc_get_config();
->>  
->> @@ -368,14 +369,18 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
->>  	 */
->>  	resctrl_rmid_realloc_threshold = resctrl_arch_round_mon_val(threshold);
->>  
->> -	if (rdt_cpu_has(X86_FEATURE_BMEC)) {
->> -		u32 eax, ebx, ecx, edx;
->> -
->> +	if (rdt_cpu_has(X86_FEATURE_BMEC) || rdt_cpu_has(X86_FEATURE_ABMC)) {
->>  		/* Detect list of bandwidth sources that can be tracked */
->>  		cpuid_count(0x80000020, 3, &eax, &ebx, &ecx, &edx);
->>  		r->mon.mbm_cfg_mask = ecx & MAX_EVT_CONFIG_BITS;
-> 
-> I interpret this mbm_cfg_mask initialization that an ABMC system will report which of
-> the memory transactions can be monitored. 
-> In patch #15 "fs/resctrl: Introduce event configuration field in struct mon_evt"
-> the event configurations of memory transactions that should be monitored are hardcoded
-> as below without taking into account what the system supports:
-> 
-> 	resctrl_mon_resource_init() {
-> 		...
-> 		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = MAX_EVT_CONFIG_BITS;
-> 		mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = READS_TO_LOCAL_MEM |
-> 								   READS_TO_LOCAL_S_MEM |
-> 								   NON_TEMP_WRITE_TO_LOCAL_MEM;
-> 		...
-> 	}
+> The same problem does show up in a lot of 8250 driver variants,
+> plus a couple that have it in theory but don't run into the
+> 1024 byte limit:
 
-That is correct.
-Changed the assignment.
+You are absolutely right. I compiled these drivers with
+"-fstack-usage" flag which generated the stack usage of each function.
 
-mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask;
-mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg =
-r->mon.mbm_cfg_mask & (READS_TO_LOCAL_MEM | READS_TO_LOCAL_S_MEM |
-NON_TEMP_WRITE_TO_LOCAL_MEM);
+> drivers/char/mwave/mwavedd.c-static int register_serial_portandirq(unsign=
+ed int port, int irq)
+> drivers/char/mwave/mwavedd.c-{
+> drivers/char/mwave/mwavedd.c:   struct uart_8250_port uart;
+>
+// stack usage using -fstack-usage in bytes
+drivers/char/mwave/mwavedd.c:123:13:mwave_ioctl 216 static
+drivers/char/mwave/mwavedd.c:437:12:register_serial_portandirq 976 static
 
+> drivers/ptp/ptp_ocp.c-ptp_ocp_serial_line(struct ptp_ocp *bp, struct ocp_=
+resource *r)
+> drivers/ptp/ptp_ocp.c-{
+> drivers/ptp/ptp_ocp.c-  struct pci_dev *pdev =3D bp->pdev;
+> drivers/ptp/ptp_ocp.c:  struct uart_8250_port uart;
+>
+// stack usage using -fstack-usage bytes
+drivers/ptp/ptp_ocp.c:2273:1:ptp_ocp_serial_line.isra 984 static
+drivers/ptp/ptp_ocp.c:2295:1:ptp_ocp_register_serial 32 static
 
+similar results for other drivers mentioned.....
 
-> 
-> It may thus be that a system may not support all memory transactions it is configured to
-> monitor. It seems to me that the initialization done in resctrl_mon_resource_init() needs
-> to take r->mon.mbm_cfg_mask (what the system supports) into account? If so, then
-> the same hardcoding done by patch #32 in resctrl_mbm_assign_mode_write() should
-> also be changed.
+> In total, I see 34 drivers using this exact pattern for
+> their probe function, and ideally we would to to fix them
+> all to do it some other way.
+>
+Dynamic memory allocation is acceptable in probe functions,
+as the introduced delay is minimal and these functions are
+called infrequently.
 
-Yes. Sure.
+> Note how serial8250_register_8250_port() ands up just copying
+> individual members of the passed uart_8250_port structure into
+> the global array of the same type, so one way of addressing
+> this would be to use a structure for initialization that only
+> contains a subset of the uart_8250_port members and can still
+> be allocated on the stack, or possibly be constant.
+>
+This is a very good approach because it confines dynamic
+memory allocation to the probe function, where it is acceptable.
+In most other functions, dynamic allocation is generally not suitable.
 
--- 
-Thanks
-Babu Moger
+I also reviewed a few functions and noticed that only a small number
+of fields from the stack-allocated struct uart_8250_port are
+actually used. Therefore, this method is well-suited for such cases.
 
+> There is already a 'struct plat_serial8250_port', which some
+> (mostly ancient) drivers use to register a 8250 compatible
+> uart through the 8250_platform driver. That driver has
+> a number of problems, so I don't really want to expand its
+> usage, but it may be possible to use a single structure
+> for both purposes.
+>
+To proceed, we can introduce a smaller struct containing only the
+required fields.
+In the probe function, the choice between dynamic allocation and using
+this reduced
+struct can be made based on the number of fields used in each specific scen=
+ario.
+
+Thanks.
+
+Abinash
 
