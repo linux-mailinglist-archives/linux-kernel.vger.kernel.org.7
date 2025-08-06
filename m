@@ -1,200 +1,187 @@
-Return-Path: <linux-kernel+bounces-757578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBB5B1C3D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC96B1C3D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EA218C0D0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E6A18A7F04
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B88231845;
-	Wed,  6 Aug 2025 09:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IMvTxLI9"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013008.outbound.protection.outlook.com [52.101.72.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F60728A411
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473878; cv=fail; b=sRD8MbSxb5DVa9Yd/hoKmJPnAs5puFV/MttFDHn8fWsHjwh3yeN+YvYkT+R6unTrzPLVctX2TmuGxIow88sLp5BJzByDVRaypCVPjMEpH84lGFlamnUZ34qMkRQokrI2mEQJVyf+aIdScCMcjdFY50rwiksvT3zQt3zxjM+n3xo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473878; c=relaxed/simple;
-	bh=eZ5YiPSSoq/Ucuo9CHpflYgXkSijK+grWp8MDnl3Jy8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=PncROyHtDPK46kKXkk1yZvobnpDK5kkspwIZ5DDjAQpxw5DjvhlFWHkQMikCOp7bInW0yF7ikgjCZMADDPP9MvR414ySfLbbtLwQjhuy93CK2ceX06AthcuypLyI9m3Nwxh8D/8Gan9TrJ4SieNY6sDJz3pKP8d0BCLx6bV/+9c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IMvTxLI9; arc=fail smtp.client-ip=52.101.72.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ODYVroxXEaosE57gvslw0QE1f5yNoDLVl/ErjrLvCUPuDswT2Y/8mjQGoYKsBTC7QSIT5t/x1NiDhMIFw8bwwMC7erRJAKNCa3eqyz8lUciZqBiJ7lKBjSS8q0Q+xWhhEzUmfZ7z1PiH9yjosJUh3ETtMgR/gUkRV9CEsXs1XxfSpSMHuerL0Y3IKBqJT6girQXXI4SXHrWtLNZdHwhJ/uMGmuLH0d/UUdZ47Ft0y/RIOa+YO3hPN35WKHSEGgF0TeZVW5uBTaEsy6fqHywfqlrYq++l1HcCiZkxETFhL2Ud+Bk5wrbV0SKdd7RagGW7SRxzqxvve7oA1hLSyKQvJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AInD3mtNpiXZP4yAh7NQG44bFLG3xRwaLLuqf+1BYPk=;
- b=TKwPqvGAJo9nBQwpZZfGuyxhFmvk/8c3zEO6vSL4/tYXGM3kaWeFJaeI/M4gUuAOTcEXb2j8riaQkO/Ltf4/4s9DtQrdYruC3Q0hbH4foGIPx8V7sQ2uB9Gh6NzhBGMNx8ZJDO9U2Lip2J55jkAmBLDNC1LKcWx/4KbmYImIw/4LwnnAvblGv97WtjP7+y0iFaC2S501/khlL/xIvzP8dqLcd8BX2Al+jSJOPeh0eINfeg6BsQRYH1RU89q2otl3NETTdmP6YQ2w4q5BjdjNzN+iEuN+WPl9dEjjYNGwuB05aGb6ReFXkOyY0YwjqBRp4b8Ue6dGlZbeQts1uo1mBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AInD3mtNpiXZP4yAh7NQG44bFLG3xRwaLLuqf+1BYPk=;
- b=IMvTxLI9iy4LhQZ+ieIQTXfVT5gvffAWkHOvqeMEE8hERZoQA1aswnC1ryhXZb50G6QoV2Xfz8S2p81wS6Cj1nsZ58pau5gwbt15yrr0MX9Dk9BCr52QQIkf/zJ1IcrRibWZ6fQsD+KZBZwSig4Pp3uQjYWYqgkBW5kaE3/VNXMVg5aCFFn0YrYneLqqF8bwyx+Qni0G6sjSjfO0TLfQTv0jkEJCsubK1YnjC/ruVGmjAnp8TAH4SYQJ5G71J6OuKmg9/mzxgbr5Rvgksz1582AQtgyGbrbDxJ5iQb5uz5IKz9Atc8Mvvo1Mx1UrHayVuFstAJ3UE9JoW4WJlLANcg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DB9PR04MB8314.eurprd04.prod.outlook.com (2603:10a6:10:249::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Wed, 6 Aug
- 2025 09:51:09 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 09:51:09 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	damon.ding@rock-chips.com,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com
-Subject: [PATCH v2] drm/bridge: analogix_dp: Fix bailout for devm_drm_bridge_alloc()
-Date: Wed,  6 Aug 2025 17:52:24 +0800
-Message-Id: <20250806095224.527938-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0015.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::27)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C98289E3F;
+	Wed,  6 Aug 2025 09:55:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D71C189;
+	Wed,  6 Aug 2025 09:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754474148; cv=none; b=VtVLi/kE2KjNXVo63VpMvq4G8lWgmyj9k7IsyLwJHy5hJzg4A8zQwZJMu3tF0NOU8nYObVjU0ZfePVfHQyiqwDrv9l51OSUtS6CGKeUUescjnXX1/l4zpQGgb8vyAxK8U5gfRGADa6PkVz2S+QQnCUJ2ioPIVbd1xr6lfwzdgDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754474148; c=relaxed/simple;
+	bh=ogl/6uUxsTmKYlZhaGGPUzfHI6TRbL3GimvYJNfJFhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtWbTKBxbiulBgVU1l4cawJS0UktALUOGSI4/RvIGJIGjK2ThJ/Um2Q3UzcK0VDrTtIKNJXXjL6n+Km9ehdvDHswASEUE4tFVnaMx0XlLKSMg5/fp6CCmq9ZT4t9QEApSVQEliwaTjBDL8ilybjrqnOnpEL6rIv7oazR87AsWGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 585BD1E8D;
+	Wed,  6 Aug 2025 02:55:37 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75E0B3F738;
+	Wed,  6 Aug 2025 02:55:40 -0700 (PDT)
+Date: Wed, 6 Aug 2025 11:55:24 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rafael@kernel.org,
+	viresh.kumar@linaro.org, sudeep.holla@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, vincent.guittot@linaro.org,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	lihuisong@huawei.com, yubowen8@huawei.com, linhongye@h-partners.com
+Subject: Re: [PATCH v3 3/3] arm64: topology: Setup AMU FIE for online CPUs
+ only
+Message-ID: <aJMmjKenJaDnRskH@arm.com>
+References: <20250805093330.3715444-1-zhenglifeng1@huawei.com>
+ <20250805093330.3715444-4-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB9PR04MB8314:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98341c0a-a503-468d-9531-08ddd4cec51f
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|19092799006|7416014|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?2OhgdaBIGSjD5znXqFon3Ue9XWRn8N6Hl5CB3byzcwuEXPPf+HJoiPU6lKKj?=
- =?us-ascii?Q?k/na8qXV9h7tMeqmL992AEXtH+7BqbnEaIyxJQ4KAcEAp5hRbCwbzzXfAMkO?=
- =?us-ascii?Q?rDv+FQOKoiWyRpirdJ9X6rd+u7ogL0Kfw3mlFVoZtmVZRa2YFkLcF5dsumaH?=
- =?us-ascii?Q?4BV+mgt/8lEiXYPSperIv8yox5/hNHxYVOmBoDmF88e1fhIleblSERRjLypz?=
- =?us-ascii?Q?lS4yhymRzYjSSyBdHbnYNmLMOPHY9OEXRE4pTLx5bzYSSKEHoaHJ70H34Xy/?=
- =?us-ascii?Q?ieORgr8t1mfg0IOedm31Kp653mpFRaaA9E6RuF+//e+5ySHYfy+krIXZ3YmL?=
- =?us-ascii?Q?rhT823yWVCy3s6ttik8X4i4+V5DWAaCpoTvWS9vKJVMg/NLGk5wFxr7pq+aZ?=
- =?us-ascii?Q?sBtvLEfXRiXIeHNNDEAsFW44Xjxy7uHWaxfOIL9lwxd0Dx/DvmDHN0Yvvi9L?=
- =?us-ascii?Q?fcDchdYKNxrhw8EM5ZXfwwLbtFvfdGWyfmE2JR25bwPBGVtWuMBa87tv5nQ0?=
- =?us-ascii?Q?x2TWI0HhQaADy9IykB6bRJO7cxsTcMdSVRKksmoyfITiMUT12lT3JUCe+SU+?=
- =?us-ascii?Q?e6WSvJHsdXZGxpwmz9qTwMsZda0OZYYJnrvDPop0GvGgNGjhVOgkvGP5nvtt?=
- =?us-ascii?Q?EontgtkdMzuG6wmxs//f78a5dp8ytPceqEI4Pvyg15LG2GwBgrtl1AGrjb9p?=
- =?us-ascii?Q?LoWEOy2xIDKdnwkZLLuiiCnqMzZgIN5pH6/3aRfCSA1Z3ONK3xPhZ2byI6P1?=
- =?us-ascii?Q?RODoUf1T1jJ2OpL9MXAaLDpjE1OKU1cz4DLPxrgFfU9p3CGBJLk3tjg0q4hr?=
- =?us-ascii?Q?TYbwhekTjqKpFv7eTZhY+PpE98Av5L/7EoTRQRO7PWaXUjQZ3a0N3hzN1NOd?=
- =?us-ascii?Q?ImwMV/cbha+fymjrLep86Oc6ECcNOhi9c1aI4x+rojn4+kunB10NxhUme9mC?=
- =?us-ascii?Q?ZH0Z7iO7WEYpVuK/+Ku615LaRgYz9uRdS49PTEM2NMUIBl1nUAVXtU36qk6L?=
- =?us-ascii?Q?4s50LJcyAPvmhnlg213qs47at3k7P4GMsMd8/99g/BierzvORC8n++6+eWt9?=
- =?us-ascii?Q?eVQfOEeM9aXblSOZoDoep5dYkWW2XGvcnZDAJjfrVXrLSnx8D7FIei5k6NGg?=
- =?us-ascii?Q?zyDEU45CRFTvfp4zHhaJkz3mk2RZH/m60/OCZ3btRVicuum9/RhxoiETuxJK?=
- =?us-ascii?Q?ciLplrkBfQlKxkIipSBpqmw1vH6FexI7KeGDr/aTmBzZ9jGBDq+nkPG2/yfC?=
- =?us-ascii?Q?FuduBM59WP6XMDQ7Vh1EDSzVtzGE9NAHRoAZBDwL6K5VTqBXHUM09yt9Y0K6?=
- =?us-ascii?Q?NYsKeU8OJYHHu6ghoGb/lJ8vZ+8bfHZNbioc/0uIMpg8x/111CCgAXZ9JgTo?=
- =?us-ascii?Q?B/tqAyladIzVULdA/kbks7zwOzMKeQavc9g8m5W1YKVAVUINukefge2djX4S?=
- =?us-ascii?Q?7vABkYhQkHnM+s9Xr9mD2a7g5Z7L2GbuK/a9UiD51VSMDaQ1X5gUaA=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?8M+v9NwhDcowM65pL9515dlJXc93mM9VTWUe/iY7SnB2USRYUQAPi6GngBE+?=
- =?us-ascii?Q?vpOgplqKTaFk4N4XKYH2KMIgpy55B2oFOVp+2ZOKuANdhzof0RaXH+flqEYj?=
- =?us-ascii?Q?OV4VCmJ+5zJkcJJoXKJCiDwyLourarZrsryd9IwWeIH8Eieuv9vQXrNdg5iL?=
- =?us-ascii?Q?Gl5vZHcs6inta7ANbn95dlCSc6HgItSn3zWNP4tdUBlsTya7ZeGtkE9u/xGR?=
- =?us-ascii?Q?TAEBlk46Tvy0W/GjzEpHV+CQo3BUVHdC/4ot0VEUKdc289uifVUadFBgo890?=
- =?us-ascii?Q?voErdbBMuRtMcmu15C6THzu6roVzLDXwkaBLNpstEuq2IsGIVcLbyrrCK475?=
- =?us-ascii?Q?y06eIziI6A3v85cuxjHbmM88LhRwO3rZK+V5kg7c28JP6rfSbVUHfBKO9yak?=
- =?us-ascii?Q?u7wyc9IujSlDwnwskrik9tJxjfVUBx6TNYYJ7aUbmxx0mxm6iZWy7gn/QOfp?=
- =?us-ascii?Q?wewn68W3kgD5jf++kAHYE2bvm9CHy2IwbcMNL5Il8LIX949SkFtZUIv8HRxn?=
- =?us-ascii?Q?CFRuzRs/5Z2XNLYzLBnmA5v5GvqwIi5M9K+by6SreT3xV/e9dwFCWCELo4e0?=
- =?us-ascii?Q?cyT+cSCGh5hORqH6AZNu8Izr7A57bDvNQh0v9Qq4WWqDNVKqG//Oyw3EDNvq?=
- =?us-ascii?Q?pRR49AI1a9DypRuZFJbQj/oWwrpFNsxCjvhJecdKggtXJEyDO4BOn7UQEjRq?=
- =?us-ascii?Q?RT10Hlck5cMkTty4pbl6RZr39Nojn0TiPPL4yqDkNNFFNDJUWYJrfqtPiYic?=
- =?us-ascii?Q?mk4B0/ABdOJmunVczXQNM6VxNhGgiIjjc4ijxWPMuFmblb8/ZPkEEmnaKaKQ?=
- =?us-ascii?Q?nnAyFokcIJp9+I2DeDVe36Ewrlztt+9ruBv3znoaikvQwhDVT2pNvnLH7/Gm?=
- =?us-ascii?Q?Z5EvB3928HrqI4OxGTB3QqrC08P5d0G58o44GbfbO+AVClRdyoF4ghgNeiZ3?=
- =?us-ascii?Q?XV8ekur56kkTXjhTEaw6VV19s7zb8XRt5iVZvEyP3f+eSU61xEr7NFDbn03W?=
- =?us-ascii?Q?gpirs+zu3NSgNfj79gMIDmg9LT3vdjAmUf2+VHQEbCxSlrIWHYCyz2+Qjyg4?=
- =?us-ascii?Q?w0TM8T5rUyaS5n1rxppGPYliQBVm6HBaiHwORczkxbnLIt1Fqvavlh6kRUQc?=
- =?us-ascii?Q?cjCIpmclN9T6+0y38i64cUe9jOrNHfTADtB43llnXWiMAzfq0QarBoyM0T8c?=
- =?us-ascii?Q?VlCknle+Br/BmOo9FBd2PRsn1NZZJVvCPxnUWdbm7+zHttfajP1rKB1TlpRN?=
- =?us-ascii?Q?LgIez2ppYdfYkMPYRC62kEx56rmwmtFZ+1d/mfChd339wVH3K4qLVdePNk9v?=
- =?us-ascii?Q?ioxlilWlOpUdZHtm84WtbeKtUwXW26O06i6C0gFyDQegFfaMDuT1ZJiriw08?=
- =?us-ascii?Q?QfKIYNrSR6vmdtTEZwa7Kc3ZJsYya4IwRJaCQLaV755Pcu+1Nzin70NqkV7T?=
- =?us-ascii?Q?Vk3zLFoG7ZxZiTJ1ity86ueRwdi3LAr+meWvrg8xDAXuhjw6yowHBIrI7ExO?=
- =?us-ascii?Q?uDOmnDDKhXzUZ8gLUirVoLLHwDXtWBhuETOjauQn/DY/Y4Vgq60kYnNRrV6d?=
- =?us-ascii?Q?u9Yt20hJHD2fBa7pmFv75ranW422utXGHNDzVHgJ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98341c0a-a503-468d-9531-08ddd4cec51f
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 09:51:09.5407
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cu7SLTPElj8heRj6JhaI0He6AQBPRZouhhpb+i/7ynMEp8KWLATNjZJavmROHHChOnz2+UJPn+MXV1bqMEUsqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8314
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805093330.3715444-4-zhenglifeng1@huawei.com>
 
-devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
-NULL pointer, so use IS_ERR() to check the returned pointer.
-While at it, on failure, return ERR_CAST(dp) instead of
-ERR_PTR(-ENOMEM) in order not to depend on devm_drm_bridge_alloc()
-error code implementation.
+On Tue, Aug 05, 2025 at 05:33:30PM +0800, Lifeng Zheng wrote:
+> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
+> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
+> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
+> when it shares a cpufreq policy with other CPU(s). After that, when other
+> CPUs are finally online and the support AMU flags of them are set, they'll
+> never have a chance to set up AMU FIE, even though they're eligible.
+> 
+> To solve this problem, the process of setting up AMU FIE needs to be
+> modified as follows:
+> 
+> 1. Set up AMU FIE only for the online CPUs.
+> 
+> 2. Try to set up AMU FIE each time a CPU goes online and do the
+> freq_counters_valid() check. If this check fails, clear scale freq source
+> of all the CPUs related to the same policy, in case they use different
+> source of the freq scale.
+> 
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
+>  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
+>  1 file changed, 52 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 9317a618bb87..b68621b3c071 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+>  	struct cpufreq_policy *policy = data;
+>  
+>  	if (val == CPUFREQ_CREATE_POLICY)
+> -		amu_fie_setup(policy->related_cpus);
+> +		amu_fie_setup(policy->cpus);
+I think my previous comment still stands.
+This will indeed set the AMU FIE support for online cpus.
+Still, on each frequency change, arch_set_freq_scale will be called with
+`related_cpus`, and that mask will be used to verify support for AMU counters,
+and it will report there is none as 'related_cpus' won't be a subset of
+`scale_freq_counters_mask`. As a consequence, new scale will be set, as seen by
+the cpufreq. Now this will be corrected on next tick but it might cause
+disruptions. So this change should also be applied to cpufreq - if feasible, or
+at least be proven not to be an issue. Unless I am missing smth.
+>  
+>  	/*
+>  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+> @@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
+>  	.notifier_call = init_amu_fie_callback,
+>  };
+>  
+> +static int cpuhp_topology_online(unsigned int cpu)
+> +{
+> +	struct cpufreq_policy *policy = cpufreq_cpu_get_raw_no_check(cpu);
+> +
+> +	/*
+> +	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
+> +	 * an AMU FIE one, no need to set it.
+> +	 */
+> +	if (!policy || !cpumask_available(amu_fie_cpus) ||
+> +	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
+> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
+> +		return 0;
+This is getting rather cumbersome as the CPU that is coming online might belong
+to a policy that is yet to be created. Both AMU FIE support, as well as cpufreq,
+rely on dynamic hp state so, in theory, we cannot be certain that the cpufreq
+callback will be fired first (although that seems to be the case).
+If that does not happen, the policy will not exist, and as such given CPU
+will not use AMUs for FIE. The problem might be hypothetical but it at least
+deservers a comment I think.
+Second problem is cpumask_available use: this might be the very fist CPU that
+might potentially rely on AMUs for frequency invariance so that mask may not be
+available yet. That does not mean AMUs setup should be skipped. Not just yet,
+at least. Again more hypothetical.
+BTW, there should be `amu_fie_cpu_supported'.
+> +
+> +	/*
+> +	 * If the new online CPU cannot pass this check, all the CPUs related to
+> +	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
+> +	 * may use different source of the freq scale.
+> +	 */
+> +	if (!freq_counters_valid(cpu)) {
+> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
+> +						 policy->related_cpus);
+> +		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
+I think it might deserve a warning as this probably should not happen.
 
-Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
 ---
-v2:
-- Return ERR_CAST(dp) on failure.  (Luca)
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index ed35e567d117..efe534977d12 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1474,8 +1474,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 
- 	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
- 				   &analogix_dp_bridge_funcs);
--	if (!dp)
--		return ERR_PTR(-ENOMEM);
-+	if (IS_ERR(dp))
-+		return ERR_CAST(dp);
- 
- 	dp->dev = &pdev->dev;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
--- 
-2.34.1
-
+BR
+Beata
+> +		return 0;
+> +	}
+> +
+> +	cpumask_set_cpu(cpu, amu_fie_cpus);
+> +
+> +	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
+> +
+> +	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
+> +
+> +	return 0;
+> +}
+> +
+>  static int __init init_amu_fie(void)
+>  {
+> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
+> +	int ret;
+> +
+> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
+>  					CPUFREQ_POLICY_NOTIFIER);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+> +					"arm64/topology:online",
+> +					cpuhp_topology_online,
+> +					NULL);
+> +	if (ret < 0) {
+> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
+> +					    CPUFREQ_POLICY_NOTIFIER);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  core_initcall(init_amu_fie);
+>  
+> -- 
+> 2.33.0
+> 
 
