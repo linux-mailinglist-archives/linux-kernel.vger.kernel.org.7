@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-757355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87394B1C12E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:19:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CDEB1C130
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE0AD7A9C02
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378F418A609F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC91218ACC;
-	Wed,  6 Aug 2025 07:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTDMb+Ns"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA91E1D63F7;
-	Wed,  6 Aug 2025 07:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700C42185B1;
+	Wed,  6 Aug 2025 07:20:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E983B211A11
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 07:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754464787; cv=none; b=o+IrQMYNGiETsjR/ie+OIJIYK4nrGELje3dAlcfJ2rgFbAuH79Wq79uRsL80Eb9cCLP6v03UT6mWaojLx2f2JhN2rXroJjXCz3KTgXRv/qhJEBmSfNpquXjJybQ/AK70Ft/Fge9YVyBN1Z6zNztAhdAz3f1EGWKLL5zTgtm42z4=
+	t=1754464816; cv=none; b=bQ5Nphp7ryMjgoNi51kn0bM5Nixv0OZ1mdAAkslIDdtieeBCxs4O3mX9hvexdBDJDvRXOCmFG1GoezYkEJ/KMkXpygiCTL6Yu94vG1/iuuY1PvaB7a3EF47ht3wQmvrULFy6Arc/kaaxp3GTkjxKVannwn3/n7un4VqShj4W87E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754464787; c=relaxed/simple;
-	bh=KOWpcG7TXgMilyda7kVhOJeX0oxi6CCnLzWaPn4H7J4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HeD0P5lqNd93Ism+ADThFRkCqLvqDdX4x34V+IbKf1aOSKCjs2FKHHFzRs2H2ztphSeRdxUD/4Ik3qNrM1AeG7o4za5PRJfU5zlmBQrCcvAHw3z71ffXtS76vwm7SOGTmcs9YWhqXejyNyaDzhNS8fc7pW8le3VrXH6uoJeniwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTDMb+Ns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F56CC4CEE7;
-	Wed,  6 Aug 2025 07:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754464787;
-	bh=KOWpcG7TXgMilyda7kVhOJeX0oxi6CCnLzWaPn4H7J4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cTDMb+NspX+pIpgFqI9MX6ws8Ozh56adhg/6OtfoW9I6GkG3Pcs1evfnH3fnJlcBa
-	 AIHOH8Skcgqjzj3PJ7VAyvWfo4lgM3ZSAMesXALT7DRf2pB/YmzmIfeiXnL2aQXA1o
-	 23yLvrwpsK0ZgR89gOsudefLeXksNGsZe69xYPaFO4P3sr3X44RuF2ouFKdEvHSJCj
-	 yTc/7LOqBo/q3FsUFqR/cxQDMS8wAMWIejeNChAoTCZxhQrcISfd2ddYxIttVPJ+rS
-	 yaUBWvd75Lc9633P7m4AKyMMbtY8ZmNIP69gPhaVVd+cSM5u1uIMs4SCucZPaLi3UW
-	 P1hDkLf1BiUDA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ujYR6-004O92-Jc;
-	Wed, 06 Aug 2025 08:19:44 +0100
-Date: Wed, 06 Aug 2025 08:19:44 +0100
-Message-ID: <86bjosapdb.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
-In-Reply-To: <CAJZ5v0jnSwkOHuq5QjvVN7RLk=BV1Oi6Jbv1SvP5TCbAERq0yw@mail.gmail.com>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
-	<7770672.EvYhyI6sBW@rjwysocki.net>
-	<86o6sv6n94.wl-maz@kernel.org>
-	<CAJZ5v0g=eSeAp96mHCOm+C9jis3uNRXgPhNgtT0SgP9kZ1emvw@mail.gmail.com>
-	<86ectpahdj.wl-maz@kernel.org>
-	<CAJZ5v0jnSwkOHuq5QjvVN7RLk=BV1Oi6Jbv1SvP5TCbAERq0yw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754464816; c=relaxed/simple;
+	bh=ITc5j2EdBGbnc8FR5zHr/8buf88ufpYEjsvJUHui298=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oc4ErN0q/egu0oYUCYZQqkNLwnFv++dliA1fhrzrWN3sAVjjzWwaeHp4mXbrdndSQm16zDH0kZUfnlutfB7Kgrbo8OpZ7wSSZLUh7Mct2YiQMvwxV9nAqZVCM05IfD2nd3yO3AGxUtg+Sqqgu1RzVZCp+ReTcU8ProB1+04Ydjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD7141F37;
+	Wed,  6 Aug 2025 00:20:04 -0700 (PDT)
+Received: from [10.57.88.107] (unknown [10.57.88.107])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DD7F3F5A1;
+	Wed,  6 Aug 2025 00:20:11 -0700 (PDT)
+Message-ID: <b2d3e684-e3dc-41b5-9708-ca5926c55ebf@arm.com>
+Date: Wed, 6 Aug 2025 08:20:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rafael@kernel.org, christian.loehle@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, artem.bityutskiy@linux.intel.com, aboorvad@linux.ibm.com, tglx@linutronix.de, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: mm: support large block mapping when
+ rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724221216.1998696-1-yang@os.amperecomputing.com>
+ <20250724221216.1998696-4-yang@os.amperecomputing.com>
+ <0e86671e-18bb-4f3b-9294-c583299ad49e@arm.com>
+ <e65ed11d-68ef-4b9c-80ad-7e880743b3d3@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <e65ed11d-68ef-4b9c-80ad-7e880743b3d3@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 05 Aug 2025 19:50:21 +0100,
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
-
-[...]
-
-> > > Any chance to try the teo governor on it to see if this problem can
-> > > also be observed?
-> >
-> > Neither ladder nor teo have this issue. The number of broadcast timer
-> > IPIs is minimal, and so is the number of interrupts delivered from the
-> > backup timer. Only menu exhibits the IPI-hose behaviour on this box
-> > (and only this one).
-> 
-> Good to know, thanks!
-> 
-> <shameless plug>Switch over to teo?</shameless plug>
-
-Sure thing. Just start with:
-
-	git rm drivers/cpuidle/governors/menu.c
-
-and I'll gladly switch to something else! ;-)
+On 05/08/2025 19:53, Yang Shi wrote:
 
 [...]
 
-> The attached patch (completely untested) causes menu to insert an
-> "invalid interval" value to the array of recent intervals after the
-> idle state selected previously got rejected.  It basically should
-> prevent get_typical_interval() from returning small values if deeper
-> idle states get rejected all the time.
+>>> +    arch_enter_lazy_mmu_mode();
+>>> +    ret = split_pgd(pgd_offset_k(start), start, end);
+>> My instinct still remains that it would be better not to iterate over the range
+>> here, but instead call a "split(start); split(end);" since we just want to split
+>> the start and end. So the code would be simpler and probably more performant if
+>> we get rid of all the iteration.
+> 
+> It should be more performant for splitting large range, especially the range
+> includes leaf mappings at different levels. But I had some optimization to skip
+> leaf mappings in this version, so it should be close to your implementation from
+> performance perspective. And it just walks the page table once instead of twice.
+> It should be more efficient for small split, for example, 4K.
 
-Yup, this does the trick, thanks. When you get to post this, please
-add my:
+I guess this is the crux of our disagreement. I think the "walks the table once
+for 4K" is a micro optimization, which I doubt we would see on any benchmark
+results. In the absence of data, I'd prefer the simpler, smaller, easier to
+understand version.
 
-Tested-by: Marc Zyngier <maz@kernel.org>
+Both implementations are on list now; perhaps the maintainers can steer us.
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks,
+Ryan
 
