@@ -1,210 +1,136 @@
-Return-Path: <linux-kernel+bounces-757793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DABB1C6B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC98B1C6B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9531785D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181A65621A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D03328BAA9;
-	Wed,  6 Aug 2025 13:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DC028C02A;
+	Wed,  6 Aug 2025 13:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9wf9jvQ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="IfPxlgHx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520763398B;
-	Wed,  6 Aug 2025 13:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754486311; cv=none; b=c2FyRIxwwcD0mY9K8mx2MZCoTahNyfQpIFP22NCmPUd74dQkF8iNK8hxPvPE2dX+HaOm9AOtq8QNzJgxe1SWT6bu6s4ro5AvedZtwFonTpNBQsp35E5SsHDG8FRZYICdyQ76feNauXbMsCMSrtWzzFvmWB9BbuAmGmyBGzNQaWk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754486311; c=relaxed/simple;
-	bh=rfgaiLWxVI97cRVXmy6XfavdY84+4UY8Gyiw4Qz4hwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rSG+C0kQZO5MjqM6E3kNuDvN0rdk2+sxLaxDiGf85wtpBDPtmf7IH7SoEeosGPafK2UhlqUdMHf+BJQ3ep9vLUHe4APCDJL0yXgV8MM56eYIPGDLkxUIz5nzPYB/T0OrIl4dLuzgm/oCWRGRn+q8U2mb8oe6faLGV5wDJq6hlfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9wf9jvQ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-458bc3ce3beso27461045e9.1;
-        Wed, 06 Aug 2025 06:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754486307; x=1755091107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPGiRTcpm1yV3vPw5mjGOqDhanwq+tGNym74Y47LA5I=;
-        b=N9wf9jvQ98uFdssBcti+huf++FeH1T26i0bMk07MwvcTCRnipkkz/Hpff/He7gOkZY
-         GUV73VkToiyz0G+yyKfOQ/rVeo/fXwryAFb+eYN2TVLaWMwER+AeIqduRVTajYnUcGRR
-         m/uaBooBoL3YrQXj+uTUTGCK7nTwNsAvHqWWOSIQPHLXgTpFBy9Sr9jzdT5Kh6vSYyt7
-         R2hwUitM1KNvypEOD4DqcqaN5YVPsQ2JJ9/vaCM2/8BmwRcu1siTb9P/EEYuHL2cx7N4
-         TVqpEEY6j+PNNRyhuu6tTuRRQe66XHjQEjt9048DJ2SUke5H9Lj9LgFEMRjeBbFIAz7H
-         uN+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754486307; x=1755091107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xPGiRTcpm1yV3vPw5mjGOqDhanwq+tGNym74Y47LA5I=;
-        b=Obl/nWRl7hEE/tVwy0jrRJ98ByOnY2Kx+ZLS5PrISeV3bTb54Dz02pV85HZu8RIypw
-         FTD0MLrs78+KmdV3GKXGk5WhSnmbDenLSd+siLD6mESTgjKVXNcKkxpPTYzJU2AYt/Sd
-         azKiaW0bf+z2vXR4y2DZ38E4hv+GLIRZUQia9ge3YjfktIkRZ0hjuQpS2ya+jdrkaE9T
-         DHuq2O5VwWx34Du+meoKWAPriz6PH4lH1nPttanEp7RQ80p27saYwAbtlgwq+H7bSasF
-         eiLsBx0nc46f9vfzLXXl3DV70hcCaxdeiru7YQKfz64GQjgR6uNsRM+76RvQqk7rNg75
-         oxZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOsiR9xikAw8NAyKUwpnSKdfml4FhAug2rd9/1zS9nD0J1Ibb8rKAVdlTjTnwgndzubbSh1fkZKAJR9zk=@vger.kernel.org, AJvYcCV9Jb0Idq/M4zViG40lEoUHoy6B0FGII2ZzNb3amxPN1LmYnioeqW02yJr8jEvDjxw9G4SS60G0XICswc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylxtq54azZv9JWlH7BIG8IWGeZ80jEZXbS2Z45a7WmEJYZtz0U
-	0FJUlBjAuCQJzGacytEvEOeGLGOIDbZYCKHNJ39wKoFnN7b+7GhDCYjjWHUanFbreaJoEg==
-X-Gm-Gg: ASbGncuDBNbeBd9lHgfA1DFEPBX+yO31JdQQJpvyzVNCqPkaVjBfpccRYD4WZXKyuj1
-	258vap3Fq4Dn/2lQAUA1ctsfDAgXgnENB0gdIKP3mtJ9s1BqseiN+V58UuKjqlhfdkUGVF+FY3o
-	aMnzZuwqLW9vSUJL92++7cm5U8qwG4V77ZUDFsns24m5HXpKL0tsIfbPnFjA6rU+JNujPkQhbD8
-	qUj83KZqTkurp46QFi/EbaF2Pg129kXdzbeY+xrXmjregkTQorFa8IwWHnQMkbMf6jRDvD4nFPV
-	jGnmz6D1uiOx6Cq7PTmZWDRlmb5+gwczSKmPiicMY0dlOZCTPp+FwAjVmPFpI6JdeZJeH049Q0+
-	2i6aKiTyb6pfA
-X-Google-Smtp-Source: AGHT+IG5eSmjKB0oUsyK5jzp73+3ckIw7mQ2dBrq516QfGUOitH4EY69ekvQ8//92ihFcZCNmeZoiA==
-X-Received: by 2002:a05:600c:19d1:b0:456:19eb:2e09 with SMTP id 5b1f17b1804b1-459e744f690mr23561195e9.8.1754486306829;
-        Wed, 06 Aug 2025 06:18:26 -0700 (PDT)
-Received: from mmk-tp ([139.179.138.38])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5862be7sm53219795e9.15.2025.08.06.06.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 06:18:26 -0700 (PDT)
-From: Mahdi Khosravi <mmk1776@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mahdi Khosravi <mmk1776@gmail.com>
-Subject: [PATCH v3] ASoC: dt-bindings: realtek,alc5623: convert to DT schema
-Date: Wed,  6 Aug 2025 16:18:18 +0300
-Message-ID: <20250806131818.38278-1-mmk1776@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864F13398B;
+	Wed,  6 Aug 2025 13:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754486348; cv=pass; b=U/BEmWSMvKULjjmvngRLKi2HmAzwRolT4WkR5xr3Jp33psSqpLN6FM36FT9eko9owke8WT5SdczpcvmxIQnrfK5pfxloS+XqbFIAd5cURVzYKpLhfGZsZV+OEZmMHR0m5QBI+jDuKSHjKBGQOWJNqnxrJGq2/KERFmtxllTPyUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754486348; c=relaxed/simple;
+	bh=8XF2Wm5tZg3cfpi2Fmfz3qB3Cf3dERh/2dXyKjt+AII=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=p745GGE4SuoUsLJg3o5xpbIjiMf9XZ4PeXN+e5fWtJHa+K2DQr2AvyRqA8V2vr1E0jDwXYxTIwH5dMcwqRzO7Wpy4CbN6YSd1Rmefi8yINJu6xiY1bYc7QNuaTRbGM/9C/bbQls5GuQvQWXy21IS4aDYyHdcAUJPD2o63p78tTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=IfPxlgHx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754486329; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YLI8YlI4SeMWfjpMGh3nlY+HLs50+NQUURoaYVBACTxymKvUnFol398kQcBks0jNDBJFdzUmFl2ha4/qjOObsTYvsc/4flNjJcdwD+9kx80zu18fNPXoRJpku8RtW6P1bCSR77AbB7eMLILd5teX2wsjSDVSLQ/E1LiZUh/IZ74=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754486329; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=huaiX/ufWgpYzt41uF5yQzLm16cIy2PNu+SzH1hEfuc=; 
+	b=VTHLnutpBSmcjkLAv2COG+pRa0Ct1XRF2g6+rO9U9xpo0l6SuQQ/UatOo0vHTAimqrNVWlDKgpd+ujLV3baIfdWXDxtCeTfW5B+hqZzmL9Ff+IQSJvnb6hQS7fCSzCvTlEgTQojD7SBanpQNmNjuyn0nsqyjaijBKbdfEmA9ofE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754486329;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=huaiX/ufWgpYzt41uF5yQzLm16cIy2PNu+SzH1hEfuc=;
+	b=IfPxlgHxwQzJxfyzwgZqWvHC7U7C+L6Q29OSPF0qPAjyB3py739dkw2vOMGoSHjg
+	CcBUWZ6IMi7yPrO9T9/TI7frEVL5T8Gw79wGnOT8Y+Y1mUcs5kcmS3F/oQ7KNGt3Aru
+	3+TA7dZUbrr5fnI/HUe/AENY4Z8XHUyNGbCt6N/M=
+Received: by mx.zohomail.com with SMTPS id 1754486327241580.4707847732928;
+	Wed, 6 Aug 2025 06:18:47 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 06/16] rust: block: normalize imports for `gen_disk.rs`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-6-3a262b4e2921@kernel.org>
+Date: Wed, 6 Aug 2025 10:18:32 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F5A3232C-50E8-4615-929A-80F3ED4EFEBA@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-6-3a262b4e2921@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-I converted the alc5623 audio codec binding from text to DT schema.
-This is my first try and I used make dt_binding_check & make dtbs_check to verify
-without getting any errors.
 
-Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
----
-Changes in v3:
-- Drop allOf, just use $ref for uint32
-- Remove stray '>' in descriptions
-- Fix subject to "to DT schema"
 
-Changes in v2:
-- Add dai-common ref
-- Switch add-ctrl/jack-det-ctrl to allOf uint32
-- Use unevaluatedProperties
-- Fix example compatible
----
- .../devicetree/bindings/sound/alc5623.txt     | 25 ---------
- .../bindings/sound/realtek,alc5623.yaml       | 52 +++++++++++++++++++
- 2 files changed, 52 insertions(+), 25 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/alc5623.txt
- create mode 100644 Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Clean up the import statements in `gen_disk.rs` to make the code =
+easier to
+> maintain.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/block/mq/gen_disk.rs | 10 +++++++---
+> 1 file changed, 7 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/rust/kernel/block/mq/gen_disk.rs =
+b/rust/kernel/block/mq/gen_disk.rs
+> index cd54cd64ea88..679ee1bb2195 100644
+> --- a/rust/kernel/block/mq/gen_disk.rs
+> +++ b/rust/kernel/block/mq/gen_disk.rs
+> @@ -5,9 +5,13 @@
+> //! C header: =
+[`include/linux/blkdev.h`](srctree/include/linux/blkdev.h)
+> //! C header: =
+[`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
+>=20
+> -use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+> -use crate::{bindings, error::from_err_ptr, error::Result, sync::Arc};
+> -use crate::{error, static_lock_class};
+> +use crate::{
+> +    bindings,
+> +    block::mq::{raw_writer::RawWriter, Operations, TagSet},
+> +    error::{self, from_err_ptr, Result},
+> +    static_lock_class,
+> +    sync::Arc,
+> +};
+> use core::fmt::{self, Write};
+>=20
+> /// A builder for [`GenDisk`].
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
 
-diff --git a/Documentation/devicetree/bindings/sound/alc5623.txt b/Documentation/devicetree/bindings/sound/alc5623.txt
-deleted file mode 100644
-index 26c86c98d671..000000000000
---- a/Documentation/devicetree/bindings/sound/alc5623.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--ALC5621/ALC5622/ALC5623 audio Codec
--
--Required properties:
--
-- - compatible:	"realtek,alc5623"
-- - reg:		the I2C address of the device.
--
--Optional properties:
--
-- - add-ctrl:	  Default register value for Reg-40h, Additional Control
--		  Register. If absent or has the value of 0, the
--		  register is untouched.
--
-- - jack-det-ctrl: Default register value for Reg-5Ah, Jack Detect
--		  Control Register. If absent or has value 0, the
--		  register is untouched.
--
--Example:
--
--	alc5621: alc5621@1a {
--		compatible = "alc5621";
--		reg = <0x1a>;
--		add-ctrl = <0x3700>;
--		jack-det-ctrl = <0x4810>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-new file mode 100644
-index 000000000000..2a389ca95b0d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ALC5621/ALC5622/ALC5623 Audio Codec
-+
-+maintainers:
-+  - Mahdi Khosravi <mmk1776@gmail.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: realtek,alc5623
-+
-+  reg:
-+    maxItems: 1
-+
-+  add-ctrl:
-+    description:
-+      Default register value for Reg-40h, Additional Control Register.
-+      If absent or zero, the register is left untouched.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  jack-det-ctrl:
-+    description:
-+      Default register value for Reg-5Ah, Jack Detect Control Register.
-+      If absent or zero, the register is left untouched.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        codec@1a {
-+            compatible = "realtek,alc5623";
-+            reg = <0x1a>;
-+            add-ctrl = <0x3700>;
-+            jack-det-ctrl = <0x4810>;
-+        };
-+    };
--- 
-2.50.1
+Same comment as the preceding =E2=80=9Cimport=E2=80=9D patch: this is =
+syntax is problematic.
 
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
