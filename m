@@ -1,117 +1,190 @@
-Return-Path: <linux-kernel+bounces-757163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ACFB1BE7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06637B1BE7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F937AF522
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 734667A64F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFAB1C84BC;
-	Wed,  6 Aug 2025 01:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A351A254E;
+	Wed,  6 Aug 2025 01:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UplxV76y"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="L744vBhq"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FC419DF6A
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C712502BE;
+	Wed,  6 Aug 2025 01:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754445297; cv=none; b=tIiIP08dP23uZo3JjG4ScSHpQgsvuOqRU5qXS2ceRW1BVy6GeVUQAosxatsZJsyEx1tyiv9VJF5bE+SBK4uh/z5mFP0137ezHrTZBr6pMLP8AmL5GSSDbZS/Q1+S1g3I7gpNud2dFBlZ867eEyCOVoMaVlBR6FghDiia9fXOI5I=
+	t=1754445295; cv=none; b=cJnkn0FVcTNLbUZT7yRUfnK7wgvDHBfysWbim7Y8Ee95RlTWUlwDm7tsoEIqlanPtdM7S/3uj7jlj/RNyNnWQgLd9ZR1N08F+AMXQWFJBzpT8JzGJ9+dAuV3jXb7DIrVGMlwIDNRkDiUkOxlK73OrdvYY1OM2ToG00qojrXq+6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754445297; c=relaxed/simple;
-	bh=kQQnVC0izYvjXyrwC7oXu9KciKX+b5K//bAiSMoT01Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A33aQaJhU11PvPsOWZMWMkri8UsGX9uawqs5EIsHuegaRDpU5BborhvL2Czx4gyhAMozIO0dAtlmS83ld68Dy3KhkPTcHBqU5prDDHmA8ldDfMXpsIxjhfo7fUtICjsoBJio0oHfHtkffunpGgvd69hecprGIXBtzO1LpMWrHBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UplxV76y; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-615622ed70fso9623971a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1754445294; x=1755050094; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1PkDCTaXOlCgVfN+O/OMDhLH2gXEH5igacRG1rqZxQ=;
-        b=UplxV76yN2gbq+P3s54S4t31K4nY8zSj9LjyaUmLUWVWVNH4Hfm/KF77NfrfAYbCSS
-         pJGfwX9fgHDt9/Ul+XNWdPyJolSCvqozRrfyY3Lj8QHtgTjFo3i2Rfx5qfrItH43NhAD
-         x3Ee0ULrYl7pIUlVOD33r1j/1OClaAPb/20YU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754445294; x=1755050094;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L1PkDCTaXOlCgVfN+O/OMDhLH2gXEH5igacRG1rqZxQ=;
-        b=wUBHZIG9XpXRQ6tmyf9LfVIwiUbPBJCFt2Nw/jLzEyjJg9EwjxVkOlVdA154vrgUMe
-         5xyZog/Dxnfzs9qinWnqxW88kfgXdyUtk0HIrtB079zdbaP+UeEVVZvCb6sigsc8stL3
-         3KEviqHVIhG7AMphgJKNZJsn3YjvDFrTPN7S2doYnR4yv7CJp0iVV69bIRc7l9UFl0B0
-         EOlLCgys3jBcl8HlHxiveX4lcssVUWKfNzEOJ5x7CHrXcK+3D425m9i9alnkaTOnbLu8
-         SYPi0L+0VOK0VsqHPC1WRgrpUfUAj1kmumadA9mMsHiCvAEz2Gxpd7dBcAAS6izNWF4W
-         DmXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6rmnOYdGl/fw7RHP3Tue8ISnGwbvrZE2TNyxb7zIXNxtg7dCLwb7qwlJq6nQRZNutCmTuua3TOhdT19Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybFzyj9b3q1Qtn+rN8Jw2fuaC3Ffe1aHFqlq6yskKweVyWLBeY
-	QFnsoGcgVHfX8RYb4fQtjsZ8aQCtsJ0knidJXeDgVXkX88nf4r/Y0JppjhWSig54kXXkf7z0EqD
-	pB5KGNWC1Pg==
-X-Gm-Gg: ASbGncvTgAhOlHW82vFYqqMr6BO0FgF5ltvHiLUnnhP1PN+CqVW6VgrT0h4GBSyyyRe
-	iW9fayzoo7idkKrkCGb9f2HHbsansNECFmQ4tr8QEgbGo8zHxfP+NEnAC8W9Frb8oQtPJTphF/Q
-	WYVeFcSzzXlt+5hYss8uHIfCFljIfjQjcAMoQ6bNDZXhB36FMFRssFViHIw+lKkYP/s/2ad8PPg
-	M53Zzdveh1bjbbF5gafuHFqj3RpIduvc64JCmHiVH9diy9lBnUzluzbBEgQ3fsrJAFN908vuy3/
-	cI3/38hqiF59GXuaq374lGxLo4d48UYFRMwZoN7SuV8aQqRTL0XmfPOsgkrug/piVnulk/RMtD8
-	ZAMNjPeMByqZBSArs6gmpZZvfMPsCTsTITabuj5tX2YRSzcMqMP7WcYHsvP9EJ/y4vu12kZd0
-X-Google-Smtp-Source: AGHT+IFlJVbiprbzPyoCL9/yQlHoB5flpgbIHz+c9NYRm+Aw3Oa1Zy4MltvuRqUiqeXL720iIEL3dw==
-X-Received: by 2002:a17:907:3d8f:b0:adb:45eb:7d0b with SMTP id a640c23a62f3a-af990294e51mr110998466b.15.1754445294069;
-        Tue, 05 Aug 2025 18:54:54 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af92b650c8asm862304166b.65.2025.08.05.18.54.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 18:54:52 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so11096339a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 18:54:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVW8Sx0fJORBZEBQMf8mycEY2LHF/EyM3iw4zY/XpqPxA1RN/18ixO2izpN5OROleVT/Xs351OWLgSP4hI=@vger.kernel.org
-X-Received: by 2002:aa7:d64b:0:b0:608:6501:6a1f with SMTP id
- 4fb4d7f45d1cf-617960b2169mr747725a12.1.1754445292221; Tue, 05 Aug 2025
- 18:54:52 -0700 (PDT)
+	s=arc-20240116; t=1754445295; c=relaxed/simple;
+	bh=EPVzJPUmvWwbmQcqVM3T4ytLQLa5WfF2jfCt0acpElE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScF3ieRZY51BFVox2gqoaErtbbJ+hbtcVk1LUzvGDfeKIJJkHySzkXk0N+f7yjC6XD9XGSqIwLr99ozBTM7K/zkxmJA8gbMRsfweZdqSPTrYWzjxcRwDdpMwhOjLBq4urGzLD2mtYWABbiSIKBplDCoIKMQXBtJQSbUiuc7LcaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=L744vBhq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y7hjcTlBLlHEkIsVkJW9LcLYrfSDMpCRStdSI9oCyBM=; b=L744vBhqaFVKh14WsOoVpPCpHk
+	Um4YnOsK0YP+Eb69qKtI76/vtSGMMUY9nBQN+YPT2U/WQKvvIi9T5refIu2ThAdMCbGYCVKXAh4Px
+	Ff3n6Ie5XtTSolnLiIOZxqsv9/tCStxb7vgQhIS6e7u0kLJuMXhvNAphammMluL9+CUpN363VNH2r
+	FWz8IoX1+jU3hNtXCvsyTh4NoQK4O9HErhAJflMa8WjFM1vatAJK7N34S105oExp6vsbipc8OvjZe
+	LjvTUXfo9FQV0lrue+LCVbeaokOsgrhFKDPdrJ+7PY+Rc80OQuvbSnpCRJWdJe4icmLQZzJwkMbSB
+	jF12ROjg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujTMf-00000007Aqw-3DD8;
+	Wed, 06 Aug 2025 01:54:49 +0000
+Date: Wed, 6 Aug 2025 02:54:49 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
+Message-ID: <20250806015449.GA1638962@ZenIV>
+References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+ <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
+ <20250804155229.GY222315@ZenIV>
+ <20250805-beleidigen-klugheit-c19b1657674a@brauner>
+ <20250805153457.GB222315@ZenIV>
+ <20250805195003.GC222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
- <20250804100050.GQ8494@horms.kernel.org> <20250805202848.GC61519@horms.kernel.org>
- <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com> <CAHk-=wh+bnqPjL=9oq3uEkyZ7WB8=F_QMOHsGjHLj98oYk-X3Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wh+bnqPjL=9oq3uEkyZ7WB8=F_QMOHsGjHLj98oYk-X3Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 6 Aug 2025 04:54:36 +0300
-X-Gmail-Original-Message-ID: <CAHk-=wjedw0vsfByNOrxd-QMF9svfNjbSo1szokEZuKtktG7Lw@mail.gmail.com>
-X-Gm-Features: Ac12FXyVcowt5QK4YaVtsfApiqsjcc5RnE4u3G8HT-dXMHsAGYoNHxft3oIBLvY
-Message-ID: <CAHk-=wjedw0vsfByNOrxd-QMF9svfNjbSo1szokEZuKtktG7Lw@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on() call placement
-To: Simon Horman <horms@kernel.org>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, Oliver Neukum <oneukum@suse.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linux Netdev Mailing List <netdev@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org, 
-	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805195003.GC222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 6 Aug 2025 at 04:11, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> And yeah, the attached patch also fixes the problem for me and makes
-> more sense to me.
+On Tue, Aug 05, 2025 at 08:50:03PM +0100, Al Viro wrote:
+> On Tue, Aug 05, 2025 at 04:34:57PM +0100, Al Viro wrote:
+> 
+> > They do no allow to express things like "foo() consumes lock X".
+> > >From time to time, we *do* need that, and when that happens guards
+> > become a menace.
+> > 
+> > Another case is
+> > 	lock
+> > 	if (lock-dependent condition)
+> > 		some work
+> > 		unlock
+> > 		work that can't be under that lock
+> > 	else
+> > 		some other work
+> > 		unlock
+> > 		more work that can't be under that lock
+> > 
+> > Fairly common, especially when that's a spinlock and "can't be under that
+> > lock" includes blocking operations.  Can't be expressed with guards, not
+> > without a massage that often ends up with bloody awful results.
+> 
+> FWIW, I'm looking through the raw data I've got during ->d_lock audit.
+> Except for a few functions (all static in fs/dcache.c), all scopes
+> terminate in the same function where they begin.
 
-Ok, crossed emails because I was reading things in odd orders and
-going back to bed trying to get over jetlag.
+... and for ->file_lock we have the following:
+	expand_fdtable(): drops and regains
+	expand_files(): either nothing or drops and regains
+	do_dup2(): drops
+everything else is neutral.
 
-Anyway, I've applied Ammar's v3 that ended up the same patch that I also tested,
+20 functions touching that stuff total.  Convertible to guard() or
+scoped_guard(): put_unused_fd(), fd_install(), close_fd() (scoped_guard
+only), __range_cloexec(), file_close_fd(), set_close_on_exec(),
+iterate_fd(), fcntl_setlk() and fcntl_setlk64() (scoped_guard only), 
+seq_show() - 10 out of 20.
 
-              Linus
+Anything that uses expand_fdtable() is in the best case an abuse of
+guard/scoped_guard; in the worst, it's actively confusing, since
+there's *not* one continuous scope there.  expand_files() is in
+the same boat.  That covers alloc_fd(), replace_fd() and ksys_dup3().
+That's 5 out of remaining 10.  BTW, trying to eliminate gotos from
+alloc_fd() is not fun either.
+
+dup_fd():
+	spin_lock(&oldf->file_lock);
+	...
+	while (unlikely(open_files > new_fdt->max_fds)) {
+		spin_unlock(&oldf->file_lock);
+		... (blocking, possibly return on failure here)
+		spin_lock(&oldf->file_lock);
+		...
+	}
+	...
+	spin_unlock(&oldf->file_lock);
+	...
+No way to do that with guard() - not unless you mix it with explicit
+unlock/lock in the middle of scope, and even that will be bitch to
+deal with due to failure exit after allocation failure.  We'd need
+to do this:
+	spin_unlock(&oldf->file_lock);
+	if (new_fdt != &newf->fdtab)
+		__free_fdtable(new_fdt);
+	new_fdt = alloc_fdtable(open_files);
+	spin_lock(&oldf->file_lock);
+	if (IS_ERR(new_fdt)) {
+		kmem_cache_free(files_cachep, newf);
+		return ERR_CAST(new_fdt);
+	}
+all of that under guard(spinlock)(&oldf->file_lock).  IMO that would
+be too confusing and brittle.
+
+__range_close():
+	spin_lock(&files->file_lock);
+	...
+	for (; fd <= max_fd; fd++) { 
+		file = file_close_fd_locked(files, fd);
+		if (file) {
+			spin_unlock(&files->file_lock);
+			filp_close(file, files);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		} else if (need_resched()) {
+			spin_unlock(&files->file_lock);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		}
+	}
+	spin_unlock(&files->file_lock);
+Not a good fit for guard(), for the same reasons.
+
+do_close_on_exec():
+	...
+	spin_lock(&files->file_lock);
+	for (i = 0; ; i++) {
+		....
+		for ( ; set ; fd++, set >>= 1) {
+			....
+			spin_unlock(&files->file_lock);
+			filp_close(file, files);
+			cond_resched();
+			spin_lock(&files->file_lock);
+		}
+	}
+	spin_unlock(&files->file_lock);
+Same story.
+
+io_close():
+	might be convertible to scoped_guard; won't be pretty,
+AFAICS - that -EAGAIN case in the middle makes it very clumsy.
+
+do_dup2(): well... we could lift filp_close() into the callers,
+but that ends up with fairly unpleasant boilerplate in the
+callers, and one of those callers is a fairly hot syscall.
+
+And that's the remaining 5.  For some locks scoped_guard() is
+a decent fit; for some it really isn't ;-/
 
