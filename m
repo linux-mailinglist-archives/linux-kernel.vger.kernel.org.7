@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-757933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582C9B1C87D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:15:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F88B1C880
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F9B3BA17B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F7D16EE9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859D028CF75;
-	Wed,  6 Aug 2025 15:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC9D291C18;
+	Wed,  6 Aug 2025 15:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn+tgNUn"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y1bilnj0"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A4F290BB0;
-	Wed,  6 Aug 2025 15:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9A29117A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493310; cv=none; b=uqHLE5tyP25+WXs9YIkHT8vtNOvIcpduMdeuzAe3jC5kk9t94sVND5SRSLYTDdnxPbhrK/9hBoVu40o3Wpw+94OhwcFcFY97nPsK+2/CY/8tqySjiGC6GA+tlRFl18hFL+ELuIoZMLYMOT0+7cw8sCA6tizZAjGchC8hZrwFyOM=
+	t=1754493315; cv=none; b=kpoXiXNGQitmuBp5ciENeLl4PcWarOjlhdjCAdu+42/m+LjIHayDdRXH4eyNoZarUT2j4OsXCaEQxwQiPx2kUFYs/fCnXiXPJFIJuOACg090R3RXU/52MTuKbV/E/OkTH9DwlLY9FH+T73fEEhxfU1At8rLjbz7DegYFA7ik+sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493310; c=relaxed/simple;
-	bh=Rl1SfxwCLKvrq00bLHbOoBlB/ADIvSlEXCLtUNhWq3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TnlnxKEfVEgg+kXl0qwMsZVQmPlVXQ2aA+CK8j5ydSyUn3dd3uImx6ZGq0RSB4gGYWoJJ1uIcuAnxN3c+vN9rG7aedcvvxV/zEg3Xm71Y6tmYbIohEjbFpgITiLqNz8Xp5BIRm4co5EFPxE92yA4w96QMnnB/bVzUaIRkuU6Oh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn+tgNUn; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b79bdc9a7dso4327288f8f.1;
-        Wed, 06 Aug 2025 08:15:08 -0700 (PDT)
+	s=arc-20240116; t=1754493315; c=relaxed/simple;
+	bh=4jBazG5zYk2rS+2cf/v/0ufmFOcZH62LVA+dp+dr8mQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifUK4ztDn1I4+cCbyqKBQz4TIE8WnIiN+20h9f4byVdSXvS4k5X2wkycspeQmgZyHWEJCbtthDo/LJIpNCACGYG/G+hEpMb+NGf9f/OlmFS31yuoUw7pRXc3gj665olmBJNcMVceo6CbSEp7fUiY2reLvvfONazN+6XTwgz7ORQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y1bilnj0; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-741a5e8fa94so14459a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754493307; x=1755098107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O89XX5vY+fQift6Eku/HiD8rOrFjs3z5KMiAI4i7vnk=;
-        b=Yn+tgNUn5tJ+Xk7Lk0qWIYDYkNxge3MtABDvXRq79Zn8HmCWQxowufQJcHK6Bg8md6
-         cdez5UN5nMy6LDGhjWAKXEgtZVr1Nj+omEDdTP6tNJM5h0Arp2GQnl1XitGx46h6V2bL
-         Epxu5mEZUzlZ31Xy8dzoh5XjvJVEceQo8dWNJXb6IeOEnI+mXWkMx3ol8ZXqoyHgakg1
-         f9OPGhzNGRGRt2lYUAJYSIbizp/t8THdLxBFhijST7gup4TJLo/kqShaFzDVQMriGwqN
-         wb/wk+RCrk16egHhoPBrxufGki6U81yKI92JGS6wB+J4YIUuMmQ9qizJbDqM5lao9FCi
-         4DgQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754493312; x=1755098112; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vwjt9aIF2ZwUy5PzdCx1sYJ/afXlRKHayAs+g7h+FzM=;
+        b=y1bilnj0Fr/M/rRmUkj7GhgVlu8eq1IYY8V8i6+Z7vkPsBkzy1/C0xm7PimnBcl11l
+         jw7b+qdcpN7QH13Ib2Rl7WebpZwRrozmOyMwisMuYx+E+sgcjBBCjF7KXjJzrqn4FV5w
+         zsR8SQApKHejsX9OHXgYk1ZK3TJNE322dEgVcwPEMI9dQSzI+QCi909SUIDHFD+Mypyc
+         o0ZX3yFlEyFJ/LmiGZdZ0CHhMaZ9Ax6fewUt7WxbmyIDVfz8B22om0pOdJP8o4caAhzC
+         XrIRGUH4ltIvCdwlLmyY2fu14uDJgsKOWcdjbOgrsft59peKaKwhvfPqUGXNUkMfqREP
+         C2ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493307; x=1755098107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O89XX5vY+fQift6Eku/HiD8rOrFjs3z5KMiAI4i7vnk=;
-        b=eRw7sTa6y83EPK2CWHfjhzC0Ciwb4g79kpFxj0wsMcEKaDmBonwO41Bwit6U1baPkM
-         NArnzDCwhsHeBKPhC6ylRmBCVDbZZt1u8yEtkZWs3wjCztM1HTg8dmZFEEkAlSslAkas
-         diQT5D8PjqBciaeRyoZ60y3/aJU6d8J3B0yQdOirO7EWGnzinkapCk26yFlz31E29Thr
-         +JKz9MjjRfeXjJQd0RnICbEIp3qrzCuD7Q/1PGvzqSNEEm6NwXrnZMTZH+DpJu86ySgJ
-         ilml0SP1BTEVlQQI+rOLjYs7KTuzDn4bPq0pFPu4hQbsqS3HKWegDczHJyWh5TNHBAh0
-         6OWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYld6v+j007iudgF90n0aZVKvBSlB32TjeZG6BEjqne9Z2oaPkkeWEduLVKeZFMvKrxT4Ucd5r2sdy@vger.kernel.org, AJvYcCX6oZt8foRgmeVnvupoaWkHRoDT6TR3EpatWC0xrkkxK46Rh/+pZc5yuX63gYW8aIkoO6nMbDsqFmUaL6on1fb4GPI=@vger.kernel.org, AJvYcCXRacb5EWAN9SBMpMdgUUo7liLo84P7rQPFiDK2UNo20NFwGjr0tfpsCJXpbuPjegxWLheKqqoz+nOccmEG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywoias6qrvruN8EBQnbOOrbdMsEo4dQDQPPTjYDN2SIwTKkKAU
-	Yd3dVqoP7EReIM3OccNYd+Ik9dUmAGG8eVSztZnjLHhO0n/2SWZyUiBbQN5UtH2ZUazufzMvi6g
-	zA9YVyLcOo52OVvS9o+zlGk/kMZrCsbs=
-X-Gm-Gg: ASbGnctcBhpwCjYClHrUM0OPCRiOaZhRPTcY/WudaXp9SOTZya5SDVQmhWYwV+wUCWe
-	ApZ2wav8hWNMcYr7zEpDoYQfVtjio1qF2WXlJ3Scl/Waa+L2GuyVshRx/82XSzygsqb2mY2wGD9
-	2Ii9cwEMZIlE0+WbqW+0SlQSNBm+SJ+QMFTJIbKcdGT3gVtc6RECY/fDUGgKqeftCxtvity29Tq
-	d5z9qxz/XBRi+nl
-X-Google-Smtp-Source: AGHT+IEQQiaQZAOP4z3B1b1MOjADmdCLF2ACdROtZ/e3MjVKUStyyZmo0+KG5cOCaRMAmZ3YSngUcTJqA3Q84lNzoBk=
-X-Received: by 2002:a5d:5887:0:b0:3b7:8c98:2f4c with SMTP id
- ffacd0b85a97d-3b8f4916c5fmr2744208f8f.33.1754493307396; Wed, 06 Aug 2025
- 08:15:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754493312; x=1755098112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vwjt9aIF2ZwUy5PzdCx1sYJ/afXlRKHayAs+g7h+FzM=;
+        b=ISsucEnOzmkzcMhs2rUyBBqDLUyg0rLhe/iocyssSKQmJ5oWMsJZqzwSMbjRuCSouj
+         3IBB130OvTsIDaDffm5sc4riK0UkgD12D2ZSdBd8WbDmpZcFG9sekoRXfv/AFchUVlSi
+         yVHERZfr2/HCAW10RbLbonvEt1eydT/t/wbgH3v58CuH82+UuKIrwkbT/v++BrA5r6Ez
+         CT1JNppdgo0JrV3u3NkLJWcML16EuEzyLDT7Z9hWgdb1W/769uEjbtzHCh/ugrcSOF0k
+         pJ2a6PrcpMHSx+2pieAtJNv1fFsqUgV0b/UQPoDYInAnk1b2VfVzBQjhRNnvBeiJ+Tlw
+         Y+GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUx4HHLdiKBbasF7xrTXeAhFqTJYnvoqG/+/Q9PfGWM2oMUiROcv33hmUSZ69NF7L/AtmlVRyS+UMkYiCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD0H+KxoNYQloAHDuup4RQ+cPYiVREubwjB1f4/4hk6M3O0CDM
+	31SZs+FsdrA2SNZyge1B2DnL2rDCd1xhFgTn6a40jZLPotZcjPtF7sZPjCHLq8DaxiY=
+X-Gm-Gg: ASbGnct4kngwuaMUj6tNdT2jshhFR/fxWTt0zuagTUwfOgtfM82V+ybLvikqhvxpgMA
+	+hf1MJ0BqNATIZcMPDzF8h658jM5tm9YdccYPIn5S6Ptnbxl3e399DarcAS+XQxaBiWyVf0MAkE
+	77IIyyRK70mjuGFc+EfN2IJdczCsf63i2zve/h5/ZR1FLOgZASVkSLYAjSJIDspvsHLSjfBBCIs
+	ACniUiJB8m7nV4Ue+GfkiVZupAcUR8+2OaG7rJ7I/2TpGr2t1cmfKaouMgI2U5X2qPRctzXaCM4
+	xGqQYnxqN1wbaQcc9n6Zh79OGam8WKtUQ9AlJbSgfM6iF7UaBRbpkG54JdCG+cT0eH4OwY7vvSA
+	4OAzUiJYp4Y/R2372E1qQF+dONFWYudoDf2AwbJVhixqMF8m4TypyLZfCLwEQ/yB4RMhVR/G52A
+	4=
+X-Google-Smtp-Source: AGHT+IGCESCBCXrWJZWUhhFLLtiv++FNPRq4nMWQZi2pwIQ9FHPV1Mrzbz1pksW3SKTGn1YPFjak+g==
+X-Received: by 2002:a05:6830:2a0c:b0:741:b263:4ded with SMTP id 46e09a7af769-74308eb9546mr2175713a34.15.1754493312449;
+        Wed, 06 Aug 2025 08:15:12 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-741abaa74c0sm2163802a34.3.2025.08.06.08.15.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 08:15:11 -0700 (PDT)
+Message-ID: <d37371a8-4a03-4893-a6bc-48b7f367c916@baylibre.com>
+Date: Wed, 6 Aug 2025 10:15:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250709160819.306875-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUKvC1HWGZc=52gCRJSKHcyM2NgAo6_YioGy31hBmTSbA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUKvC1HWGZc=52gCRJSKHcyM2NgAo6_YioGy31hBmTSbA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 6 Aug 2025 16:14:39 +0100
-X-Gm-Features: Ac12FXzQ1WRzNa-8dq7G6bVfsojQQ76xGJ_StYkOHVKbKvWXQSgNnwOl7dZHu0A
-Message-ID: <CA+V-a8sDcYkNKMrbWpO8ze9qpHmU=iqQyr-2J9Zh0tWO6VkbHg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] pinctrl: renesas: rzg2l: Unify OEN access by
- making pin-to-bit mapping configurable
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1754463393.git.mazziesaccount@gmail.com>
+ <3066337cb183afa5f53a4e6cf94ce15a36d14ec8.1754463393.git.mazziesaccount@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <3066337cb183afa5f53a4e6cf94ce15a36d14ec8.1754463393.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+On 8/6/25 2:04 AM, Matti Vaittinen wrote:
+> The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
+> pin used to start the ADC conversion. Other than the 'CONVSTART', there
+> are 3 supply pins (one used as a reference), analog inputs, ground and
+> communication pins. It's worth noting that the pin somewhat confusingly
+> labeled as 'DIN', is a pin which should be used as a chip-select. The IC
+> does not have any writable registers.
+> 
+> The device is designed so that the output pin can, in addition to
+> outputting the data, be used as a 'data-ready'-IRQ. This, however, would
+> require the IRQ to be masked from host side for the duration of the data
+> reads - and it wouldn't also work when the SPI is shared. (As access to
+> the other SPI devices would cause data line changes to be detected as
+> IRQs - and the BD79105 provides no means to detect if it has generated
+> an IRQ).
+> 
+> Hence the device-tree does not contain any IRQ properties.
 
-Thank you for the review.
+There are lots of other ADC chips that have a ready signal like this
+and we've made them work. Since devicetree bindings should be as
+complete as possible even if the driver doesn't use all of the
+features, I think we should be including the interrupt in the binding.
+We have also found that some interrupt controllers won't work
+as you have suggested and in that case we also needed a ready-gpios
+to be able to read the state of the pin.
 
-On Wed, Aug 6, 2025 at 1:55=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, 9 Jul 2025 at 18:08, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Refactor the RZG2L pinctrl driver to support reuse of the common
-> > rzg2l_read_oen() and rzg2l_write_oen() helpers across SoCs with
-> > different output-enable (OEN) bit mappings.
-> >
-> > Introduce a new `pin_to_oen_bit` callback in `struct rzg2l_pinctrl_data=
-`
-> > to allow SoCs to provide custom logic for mapping a pin to its OEN bit.
-> > Update the generic OEN read/write paths to use this callback when prese=
-nt.
-> >
-> > With this change, SoCs like RZ/G3S can reuse the common OEN handling
-> > code by simply supplying their own `pin_to_oen_bit` implementation.
-> > The previously duplicated `rzg3s_oen_read()` and `rzg3s_oen_write()`
-> > functions are now removed.
-> >
-> > This improves maintainability and prepares the driver for supporting
-> > future SoCs with minimal duplication.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > @@ -296,6 +296,7 @@ struct rzg2l_pinctrl_data {
-> >  #endif
-> >         void (*pwpr_pfc_lock_unlock)(struct rzg2l_pinctrl *pctrl, bool =
-lock);
-> >         void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, u16 off=
-set);
-> > +       int (*pin_to_oen_bit)(struct rzg2l_pinctrl *pctrl, unsigned int=
- _pin);
-> >         u32 (*oen_read)(struct rzg2l_pinctrl *pctrl, unsigned int _pin)=
-;
-> >         int (*oen_write)(struct rzg2l_pinctrl *pctrl, unsigned int _pin=
-, u8 oen);
-> >         int (*hw_to_bias_param)(unsigned int val);
-> > @@ -1070,7 +1071,9 @@ static u32 rzg2l_read_oen(struct rzg2l_pinctrl *p=
-ctrl, unsigned int _pin)
-> >  {
-> >         int bit;
-> >
-> > -       bit =3D rzg2l_pin_to_oen_bit(pctrl, _pin);
-> > +       if (!pctrl->data->pin_to_oen_bit)
-> > +               return 0;
->
-> Please add a blank line.
->
-Ok, I will add a blank line here.
-
-> > +       bit =3D pctrl->data->pin_to_oen_bit(pctrl, _pin);
-> >         if (bit < 0)
-> >                 return 0;
-> >
-> > @@ -1084,9 +1087,11 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl =
-*pctrl, unsigned int _pin, u8 oe
-> >         int bit;
-> >         u8 val;
-> >
-> > -       bit =3D rzg2l_pin_to_oen_bit(pctrl, _pin);
-> > +       if (!pctrl->data->pin_to_oen_bit)
-> > +               return -EINVAL;
->
-> Likewise.
->
-ditto.
-
-Cheers,
-Prabhakar
 
