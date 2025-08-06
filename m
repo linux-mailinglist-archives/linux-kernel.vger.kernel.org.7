@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-757975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7034FB1C934
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:48:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470A3B1C939
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1837252CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD7F16B098
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906B4299AA0;
-	Wed,  6 Aug 2025 15:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D91D290BAB;
+	Wed,  6 Aug 2025 15:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVkyBRS9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ/B+cFJ"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C2F294A1B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB327292B54;
+	Wed,  6 Aug 2025 15:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754495066; cv=none; b=DfMlFN/4YPG6UMmL1zFvi/S4N2kNehj/4AkitJPcMoIGvCc6bwbl4CpRqZPNP+ui74O4x1FMge8s5C0r+ZJmnBB2xHJux5gt/5Opttg9Br6sXvkdWi+d5mX0zRvl+rYQLrmJFXajjBJCkb+fcUPutsGdH8QOdaTJlGPub2A54wc=
+	t=1754495166; cv=none; b=aNM8n3RYpAZBF7zNSjAXphxXdXQymTvch/pCPnbEoWnhZyj196zaP5KIR7qjFEhqur+gNqLk0bYa01I0U/0PanWzYH2MVknyXviciLNw9mj7PoHCrBRgW2L3DF/5qwZ2eDYB6eS6GdWZoZuRCw8ubnJ5atKtUdxOzP+8SjH78+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754495066; c=relaxed/simple;
-	bh=tSR9xwfKiHqyt7Vh5FCTU67Ydz1kZXM72qUvReVb4SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jnntJr6iIr/IUm6k6+QdkgXqREgxHdawnPOVfBuwabLQCrOCwbOms6UBub5Z2l89jhj0HPYxMLCC4+rcA4zOgPssJKb8ah7sN9RwgTm1SCjyorJAnQ9zs6XBLIEZClhK0vlPqtSNy12Xu9wXx5bZZd14tAux0Kc6ZirvH62ysq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVkyBRS9; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754495064; x=1786031064;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=tSR9xwfKiHqyt7Vh5FCTU67Ydz1kZXM72qUvReVb4SE=;
-  b=EVkyBRS9c1C/2L9S+LhbThOk02hNmnM2WcrGE6oS6NoGCik9vBnqoqEv
-   X7pPCHKPUL4TUrkWkNdgxN3JEOhAS3edvd1OVONEHa+6SIyTcuJX5/2Yf
-   6kvlx3MuNJ/I1g3tPvIJeUG6+05dm6OsWbTPfjQKFDX+rlAuOG1K1Ba8w
-   KiRcBOnMEn4Z04iRwrmfGIYgn5wkDWW1dM+XHTyU5dRJeVlqnmE1BL3E8
-   PxJkwPSRCiqA/NIqfI+1NNXRGz9svdhgkRQqXfn4TFWNO0H+DphDvTBq3
-   aF5xGL4Qb3GMfo9PQ4GrAsBi0UZpmMT3tssTpMjvGbV1tlmRRlZTmdyl1
-   w==;
-X-CSE-ConnectionGUID: ecRpvV8NSWC55n82OAkH6Q==
-X-CSE-MsgGUID: pNJrIhNtSMmvzfyyCcRUcA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="44408596"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="44408596"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 08:44:22 -0700
-X-CSE-ConnectionGUID: oTeNE9IXQyiBF57qC51Sdg==
-X-CSE-MsgGUID: 57s/xDonSmmFrwwNf+MJmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164018155"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 06 Aug 2025 08:44:21 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujgJO-0001pO-07;
-	Wed, 06 Aug 2025 15:44:18 +0000
-Date: Wed, 6 Aug 2025 23:43:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Cyril Bur <cyrilbur@tenstorrent.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: block/ioctl.c:72:39: sparse: sparse: Using plain integer as NULL
- pointer
-Message-ID: <202508062321.gHv4kvuY-lkp@intel.com>
+	s=arc-20240116; t=1754495166; c=relaxed/simple;
+	bh=jmUH1JzYQAfaDnXZLVWzBEI4r9jrLU/kenC5OLCdEOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Isl3PdDc4I2AnYOpa8tetScqIAAkh8UJN/FdAv/KVJeGlRj3+29VhTvUJllVAci0GOuJv81sa6b+koX+1Fh/b3ujq6xgRAXBkowscZfUw4tUbe0bwtOZN3C350YELWqvpNNxBhx4vDT7Eq69Nhv8aB3DbryV1sFuafsJ0xRPkic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ/B+cFJ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55b978c61acso3640e87.2;
+        Wed, 06 Aug 2025 08:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754495163; x=1755099963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5zmrMmlSKNc8Wry1y8dWX27pKFPjQrw0O9VLnGzkRYw=;
+        b=KJ/B+cFJa6X4I6XVunDC3I+vUqtBiYanfLfLoeYuUnVv5awQl6k8GR22Yd0qwTTw6/
+         ZgdN6iN0Z/cQJT7EFDZLMq0SMeLJpj+RV+9JpYy/8njUXZDTByJV539bmCCi2v5EBS0E
+         Pq/7vwmra+CuNCBjPcWO34L6Uy9diZRL3U1Kc5Tso/Um8QjIEU1JNmHtiOY8vPFM/p4o
+         6iZ7lp2K7rHT4LFY5ImVmJQtn9VFCXGbhSEOS9f1Uk4F2gN9LoKh3w4ceNcYa3Zu4Ni5
+         TlbPOLPkkf7+TynvxFkzFSLcX1+6WhUMJgMPMSb+iDkzX+Wy99yju35zlwoEqot6lZkh
+         jFvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754495163; x=1755099963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5zmrMmlSKNc8Wry1y8dWX27pKFPjQrw0O9VLnGzkRYw=;
+        b=ksZ4FkD3PSY3kb3oC5p/8rIyQSbj/qmQLjXQHqKbq/l/xno5wlDi30ixbqdADUJp86
+         p2xpg16hW1St7k/2njP6sRt4k0obNC5C3Fv6a7dyAnzuY/I6cZDMI59Kroae/FQ8BDQN
+         B3Y29hgcM4Z+sQRWN3ExHnIywu0yrjHkgg6OnbVb9BHytvpe+T2co7Ry5u8gpRuIfYnC
+         3KTtLSNylMwpgLUsCZ3iQ3D5rHdVp7xg+UTlPNbbD0m92IjCrJWoLdLpGPcCuEqutY++
+         sckIhPIFoZU1qjPYExzGHiXvV+ZmEvCssILMc/vUWH4KI81zsBleK8QClbtrXCJbGeZq
+         Ehgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkaTu+fBnydsnolsTn+MxZpNmybJ9ClbUhnIFJUwpuSftx73jN97joXjSqDnXckyrwqhjAdojhUsScZ2g=@vger.kernel.org, AJvYcCXaB7HmM2c4xWT4mgh9u5+7+Yt4H8g+YYXutD1/n5lJ/64DfUoI+VDql7EMNynxU6myekehGhzrFp1y0Gg7srG7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIEFXw5//Q5bQqDGa1O6yxr2IVohZyRyaG6Lb0jCmH7AZv6MhZ
+	PbOAc65jZuDIPqeVP6ceNSqPBwiFunNuYUlfOUGttzF9a1UIfeixM+qYah5q2xkwCKv1nx33Y5L
+	MfFSqmNcYctaACLQh9AyzrYVDxs2IeC8=
+X-Gm-Gg: ASbGncuew/JxnN1B2gzC1+h0yjFyswRPaLdoOhX9hHUpmalwISLHoKdCZqYvLoyTR0l
+	he7Uim7OUs28QUAxd/TKi4EstUyrvyLIbY4zH423p5UnWVOqpbu1xPKwmVnYpE7llBkhQywkqII
+	ckuQHx//ItoHorhkaaNC8YeyJhZq+ZIKPY4py6y77Jxck2b/tJPLl1QYtiKTmxdshhCbTFCGQSm
+	i63FfABog0nldx7Cjpzw+xvmNOOzvVlNaiKdLFikw==
+X-Google-Smtp-Source: AGHT+IGXosmjvzExQ3C4RK78Mcex7Mn1Uk/h0JUj5QUxdn/C6gvDfKT6OI5wS9vLx2H97RSvkUJIJkgfNFNXTPXKb0g=
+X-Received: by 2002:a05:6512:118a:b0:55b:82b8:c2f3 with SMTP id
+ 2adb3069b0e04-55caf5f82b4mr1212425e87.43.1754495162686; Wed, 06 Aug 2025
+ 08:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250730142301.6754-1-pranav.tyagi03@gmail.com>
+In-Reply-To: <20250730142301.6754-1-pranav.tyagi03@gmail.com>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 6 Aug 2025 21:15:50 +0530
+X-Gm-Features: Ac12FXyNkNIXJt8LjQHrVLUgBnSRkW0iOHvQddA77ExTJZswxw6Wx4O4SJ98_zE
+Message-ID: <CAH4c4jJ8VywRUfn2z8HnA73vNxviZ53DZttcR3JaPULF3JFkQA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: use __auto_type in swap() macro
+To: akpm@linux-foundation.org, peterx@redhat.com, shuah@kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cca7a0aae8958c9b1cd14116cb8b2f22ace2205e
-commit: f6bff7827a48e59cff1ef98aae72452d65174e0c riscv: uaccess: use 'asm_goto_output' for get_user()
-date:   3 months ago
-config: riscv-randconfig-r133-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062321.gHv4kvuY-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 12.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250806/202508062321.gHv4kvuY-lkp@intel.com/reproduce)
+On Wed, Jul 30, 2025 at 7:53=E2=80=AFPM Pranav Tyagi <pranav.tyagi03@gmail.=
+com> wrote:
+>
+> Replace typeof() with __auto_type in the swap() macro in uffd-stress.c.
+> __auto_type was introduced in GCC 4.9 and reduces the compile time for
+> all compilers. No functional changes intended.
+>
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> ---
+>  tools/testing/selftests/mm/uffd-stress.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/sel=
+ftests/mm/uffd-stress.c
+> index 40af7f67c407..c0f64df5085c 100644
+> --- a/tools/testing/selftests/mm/uffd-stress.c
+> +++ b/tools/testing/selftests/mm/uffd-stress.c
+> @@ -51,7 +51,7 @@ static char *zeropage;
+>  pthread_attr_t attr;
+>
+>  #define swap(a, b) \
+> -       do { typeof(a) __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } while=
+ (0)
+> +       do { __auto_type __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } whi=
+le (0)
+>
+>  const char *examples =3D
+>         "# Run anonymous memory test on 100MiB region with 99999 bounces:=
+\n"
+> --
+> 2.49.0
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508062321.gHv4kvuY-lkp@intel.com/
+Hi,
 
-sparse warnings: (new ones prefixed by >>)
-   WARNING: invalid argument to '-march': '_zacas_zabha'
->> block/ioctl.c:72:39: sparse: sparse: Using plain integer as NULL pointer
+Just a gentle follow-up on this cleanup patch. From what I could find,
+this is the only use of
+typeof() left in the mm selftests, so this should be the only instance
+needing this change.
 
-vim +72 block/ioctl.c
+Thanks for considering!
 
-^1da177e4c3f41 drivers/block/ioctl.c Linus Torvalds 2005-04-16  65  
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  66  static int blkpg_ioctl(struct block_device *bdev,
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  67  		       struct blkpg_ioctl_arg __user *arg)
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  68  {
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  69  	struct blkpg_partition __user *udata;
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  70  	int op;
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  71  
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28 @72  	if (get_user(op, &arg->op) || get_user(udata, &arg->data))
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  73  		return -EFAULT;
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  74  
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  75  	return blkpg_do_ioctl(bdev, udata, op);
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  76  }
-5fb889f587fa2a block/ioctl.c         Arnd Bergmann  2019-11-28  77  
-
-:::::: The code at line 72 was first introduced by commit
-:::::: 5fb889f587fa2ae486e067d8a00df955ae6492b3 compat_ioctl: block: simplify compat_blkpg_ioctl()
-
-:::::: TO: Arnd Bergmann <arnd@arndb.de>
-:::::: CC: Arnd Bergmann <arnd@arndb.de>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards
+Pranav Tyagi
 
