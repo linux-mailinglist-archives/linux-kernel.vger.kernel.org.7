@@ -1,113 +1,257 @@
-Return-Path: <linux-kernel+bounces-757778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725FDB1C684
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839ADB1C68B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A337A5860
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:59:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D9416AF53
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6FC28A41E;
-	Wed,  6 Aug 2025 13:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCB1215198;
+	Wed,  6 Aug 2025 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="kIQRATFv"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IzumBXAB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE75FB95;
-	Wed,  6 Aug 2025 13:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C122B28C030;
+	Wed,  6 Aug 2025 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485226; cv=none; b=Z2NVpVvgp9qs8Mg4nYldq1wFr+1Ak1bYT9wwz5pyriH1ZkAeGGQbcYtR6aIPCUQTZN2+Q11BuNVCCRTKynBMsLmi3IJdQbPA+/M7eq5tLEr6gDo+5gOsWjEbJU02/znAqIgKZsAVhk1CkvMRmgDgoX/ZpUzE1hSQfLynGwBCfIw=
+	t=1754485287; cv=none; b=LoYol69DtCxePvy9qcAxhLJy4oAQK+YXs0yvM/ZXz5nKGP9dm2UPKld07/mxR48k2yimbPpvjm7JPUd5R10TSE4KpARb8r7j+pMp2nisSl50oQ1526ZtELaE4S7NXBFFhqP0yGqm4Ww07+N4tuDOKfCHZeaaEcO3O0uosLTFU78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485226; c=relaxed/simple;
-	bh=5dBsSFUhzpantvZNynZVlQp2rA4vTP7pUqhKRuQ2aqQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IlB0eYXclZOyHLCEqEcYM+iJ0tgQXV7DxqXWRGb8JHHJ4yNUGmdblPrDBznaurVftO2YvZR207hqxDg2ZiVgRRGExdEj42Q3nXSsbZjjyWl/qWkYhKefxA+n/iwfqFRZXd35BGkTDdXgO4Eb1NHYNRhB97dwcsBCj2vif1UGWWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=kIQRATFv; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4DD4F40AD2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1754485220; bh=im7LLmwAt+qnrrIdtEWbBORzYEkTYFR5z3r9vPt2t1g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=kIQRATFvKHkvdsD3LzWuIoQwzOdnIFlx7S99tlZwt0LhqkTfEJlQVi0AOZ00ySugw
-	 wo3840PtNlJsoEBCGBS8yVc2nDkQRu82swEfp6dG1D7J1H+5mFLwXzArHETUqh9AnU
-	 UQylKM3kap6DPVneV9JbDk2T4NZJ+dx2baDmfNO5ig2GpV4LbbO0T93Fsp91T8hkRa
-	 cNZsISTo3l1DtsNRycXw9KQ+aZk1ERGjALNluiCkrH9NHMFZ07YkbMAMrQ5RQk4Xdu
-	 Bj6qm52zkJUtrZAZF0/3p/Hp+e1gUHNpnFQMEl2ZycMZNWXeL0AzXOjATTvlqwRbY5
-	 otrhnNbQ4Ga2A==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4DD4F40AD2;
-	Wed,  6 Aug 2025 13:00:20 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 10/12] docs: kdoc: further rewrite_struct_members() cleanup
-In-Reply-To: <20250806110538.35bcc127@foz.lan>
-References: <20250801001326.924276-1-corbet@lwn.net>
- <20250801001326.924276-11-corbet@lwn.net>
- <20250801080744.14f83626@foz.lan> <87v7n6pscu.fsf@trenco.lwn.net>
- <20250804151511.73ffb949@foz.lan> <87ms8djsjx.fsf@trenco.lwn.net>
- <20250806110538.35bcc127@foz.lan>
-Date: Wed, 06 Aug 2025 07:00:19 -0600
-Message-ID: <87ikj0k3ks.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1754485287; c=relaxed/simple;
+	bh=USF27734rhUGxTTxaKenxfQZV3iNbTS9iVuWzN66CJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDcfAbrmLJKWozVsR33CpxsLmJNVWwE41abbGYDblmV5ZWKGblzgPF/6cR+CORyZZd0vnSL8xPkjpjIC0Ld7OTWNUSVTZvtozSVy2Pwf+pHZT7B4f/CpqhkLwnOOFpp6k/R2JI0DxRZv5c6XkCCL5vdYjqjjzdsjZ28uCTHvXnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IzumBXAB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765S2kI031191;
+	Wed, 6 Aug 2025 13:00:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ljFgOM
+	iBRVtDLpOpWjFAyrQWXwloHyc0+prHUNBM090=; b=IzumBXABAXx9aECP6SUKzU
+	jE7T0QPVlw4j4Uku8BBojVzEk1h59sNumrV48BJbJ+s5g5nkR5VT+SmJNYRl/Zyf
+	BVnCVZ+/iKkB2HBtToLHCsHsuHUixpRcsBp3QK8AYeg41EmrI6DwI78dzHmYM95H
+	J4t5zgVa+XGio93grbTV6YccfM5lcPWQj/nxO6v8M27p3/wlrs2CdU77qbPV7i8a
+	1XI3yuon/QNdu0IOdL7XbjXtNUBLfqKvoHbRPCYdXrpIRDZ7nmQHtBSBD4K0AHxm
+	0c7M3AUF7hM6+RXw15gN5ZTHJM4nIKQEhllWkSQhWAs4cYpjFhs5h+XPK26NBTcA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq61v6ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 13:00:48 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 576D0lrP028162;
+	Wed, 6 Aug 2025 13:00:47 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq61v6u0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 13:00:47 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 576CLlCd022661;
+	Wed, 6 Aug 2025 13:00:45 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqbnnw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 13:00:45 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 576D0iYI26215072
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 6 Aug 2025 13:00:45 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C8E2758057;
+	Wed,  6 Aug 2025 13:00:44 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CEF558059;
+	Wed,  6 Aug 2025 13:00:39 +0000 (GMT)
+Received: from [9.109.245.113] (unknown [9.109.245.113])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  6 Aug 2025 13:00:38 +0000 (GMT)
+Message-ID: <e9079694-1e30-46b6-97e7-b79be01c65a6@linux.ibm.com>
+Date: Wed, 6 Aug 2025 18:30:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org,
+        Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
+        pfalcato@suse.de, david@redhat.com, ziy@nvidia.com,
+        baolin.wang@linux.alibaba.com, npache@redhat.com, ryan.roberts@arm.com,
+        dev.jain@arm.com, baohua@kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ritesh.list@gmail.com
+References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
+ <20250729053403.1071807-4-aboorvad@linux.ibm.com>
+ <20250804091141.ifwryfmgjepwrog4@master>
+ <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
+ <20250805170353.6vlbyg6qn5hv4yzz@master>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20250805170353.6vlbyg6qn5hv4yzz@master>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA4MiBTYWx0ZWRfX6uhDhzTX0D6p
+ zzENgYWe4Cw4S+bLugiRnD2j1vGgk53ulaVl3JNfY7BLso8v/cf4QMd444xqr8of0S6mIUk+iyT
+ 0C01igUqmT7iZG8Nh8pigcVbQUSHH2dskD4EUYPERHRluunAJtlQnlXZk0xnBlIn4kqadgCUrv7
+ sMZnHe+HSjbCtNWOlvY+86nSRbI/GNZreo98fBEpipGlp9b29QDRVdqM+vUZ1LyBrwSFnM877sy
+ Z/v41s6iIDKYYacfxwbyBGgS47w8Ho2KqlZ/UENBJ120UH0Ex/GTc77ztVNAqqum6/BRqKWw2h3
+ Mp6Vd0qm6e4WSE4JwrrLUg5144BuDIFimppmUjplFd7Qyo4cYw/xAWdWRgH8OnJCqQICXrNAJlF
+ 27UJ98BsGofaigFTpj5s5fswxWplQijY8uCPVOk+82q97WkMa0gDxHQqjHm/33OWpIPAr+V0
+X-Proofpoint-GUID: 2SoYs2zepIRjTMqSQfHJPiZSDc4oaCAF
+X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=68935200 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=zGy9US7bIuLH9GykFbwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: -g48qCyw9tYgyzPSZx840atRw_MtDf5i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060082
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
->> > Btw, on this specific case, better to use non-capture group matches
->> > to avoid those "empty" spaces, e.g. (if I got it right):  
->> 
->> The problem is this line here:
->> 
->>                 oldmember = "".join(t) # Reconstruct the original formatting
->> 
->> The regex *has* to capture the entire match string so that it can be
->> reconstructed back to its original form, which we need to edit the full
->> list of members later on.
->> 
->> This code could use a deep rethink, but it works for now :)
->
-> well, we can still do:
->
-> 	for t in tuples:
-> 	    maintype, -, -, content, -, s_ids = t
-> 	    oldmember = "".join(t)
->
-> this way, we'll be naming the relevant parameters and reconstructing
-> the the original form.
-
-I've already made a change much like that (the "-" syntax doesn't work,
-of course); I hope to post the updates series today, but it's going to
-be busy.
-
-> Btw, while re.findall() has an API that doesn't return match
-> objects which is incoherent with the normal re API, while looking
-> at the specs today(*), there is an alternative: re.finditer(). 
-> We could add it to KernRE cass and use it on a way that it will use
-> a Match instance. Something like:
->
-> 	# Original regex expression
-> 	res = Re.finditer(...)
+On 8/5/25 10:33 PM, Wei Yang wrote:
+> On Tue, Aug 05, 2025 at 11:39:15AM +0530, Donet Tom wrote:
+>> On 8/4/25 2:41 PM, Wei Yang wrote:
+>>> On Tue, Jul 29, 2025 at 11:03:59AM +0530, Aboorva Devarajan wrote:
+>>>> From: Donet Tom <donettom@linux.ibm.com>
+>>>>
 > [...]
+>>>> diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
+>>>> index d8bd1911dfc0..996dc6645570 100644
+>>>> --- a/tools/testing/selftests/mm/ksm_functional_tests.c
+>>>> +++ b/tools/testing/selftests/mm/ksm_functional_tests.c
+>>>> @@ -46,6 +46,8 @@ static int ksm_use_zero_pages_fd;
+>>>> static int pagemap_fd;
+>>>> static size_t pagesize;
+>>>>
+>>>> +static void init_global_file_handles(void);
+>>>> +
+>>>> static bool range_maps_duplicates(char *addr, unsigned long size)
+>>>> {
+>>>> 	unsigned long offs_a, offs_b, pfn_a, pfn_b;
+>>>> @@ -274,6 +276,7 @@ static void test_unmerge(void)
+>>>> 	ksft_test_result(!range_maps_duplicates(map, size),
+>>>> 			 "Pages were unmerged\n");
+>>>> unmap:
+>>>> +	ksm_unmerge();
+>>> In __mmap_and_merge_range(), we call ksm_unmerge(). Why this one not help?
+>>>
+>>> Not very familiar with ksm stuff. Would you mind giving more on how this fix
+>>> the failure you see?
+>>
+>> The issue I was facing here was test_prctl_fork was failing.
+>>
+>> # [RUN] test_prctl_fork
+>> # Still pages merged
+>> #
+>>
+>> This issue occurred because the previous test performed a merge, causing
+>> the value of /proc/self/ksm_merging_pages to reflect the number of
+>> deduplicated pages. After that, a fork() was called. Post-fork, the child
+>> process
+>> inherited the parent's ksm_merging_pages value.
+>>
+> Yes, this one is fixed by calling init_global_file_handles() in child.
+>
+>> Then, the child process invoked __mmap_and_merge_range(), which resulted
+>> in unmerging the pages and resetting the value. However, since the parent
+>> process
+>> had performed the merge, its ksm_merging_pages value also got reset to 0.
+>> Meanwhile, the child process had not performed any merge itself, so the
+>> inherited
+> I assume the behavior described here is after the change to call
+> init_global_file_handles() in child.
 
-A definite possible improvement for later... :)
+Yes
 
-Thanks,
 
-jon
+>
+> Child process inherit the ksm_merging_pages from parent, which is reasonable
+> to me. But I am confused why ksm_unmerge() would just reset ksm_merging_pages
+> for parent and leave ksm_merging_pages in child process unchanged.
+>
+> ksm_unmerge() writes to /sys/kernel/mm/ksm/run, which is a system wide sysfs
+> interface. I expect it applies to both parent and child.
+
+I am not very familiar with the KSM code, but from what I understand:
+
+The ksm_merging_pages counter is maintained per mm_struct. When
+we write to /sys/kernel/mm/ksm/run, unmerging is triggered, and the
+counters are updated for all mm_structs present in the ksm_mm_slot list.
+
+A mm_struct gets added to this list  when MADV_MERGEABLE is called.
+In the case of the child process, since MADV_MERGEABLE has not been
+invoked yet, its mm_struct is not part of the list. As a result,
+its ksm_merging_pages counter is not reset.
+
+
+>> value remained unchanged. That’s why get_my_merging_page() in the child was
+>> returning a non-zero value.
+>>
+> I guess you mean the get_my_merging_page() in __mmap_and_merge_range() return
+> a non-zero value. But there is ksm_unmerge() before it. Why this ksm_unmerge()
+> couldn't reset the value, but a ksm_unmerge() in parent could.
+>
+>> Initially, I fixed the issue by calling ksm_unmerge() before the fork(), and
+>> that
+>> resolved the problem. Later, I decided it would be cleaner to move the
+>> ksm_unmerge() call to the test cleanup phase.
+>>
+> Also all the tests before test_prctl_fork(), except test_prctl(), calls
+>
+>    ksft_test_result(!range_maps_duplicates());
+>
+> If the previous tests succeed, it means there is no duplicate pages. This
+> means ksm_merging_pages should be 0 before test_prctl_fork() if other tests
+> pass. And the child process would inherit a 0 ksm_merging_pages. (A quick test
+> proves it.)
+
+
+If I understand correctly, all the tests are calling MADV_UNMERGEABLE,
+which internally calls break_ksm() in the kernel. This function replaces the
+KSM page with an exclusive anonymous page. However, the
+ksm_merging_pages counters are not updated at this point.
+
+The function range_maps_duplicates(map, size) checks whether the pages
+have been unmerged. Since break_ksm() does perform the unmerge, this
+function returns false, and the test passes.
+
+The ksm_merging_pages update happens later via the ksm_scan_thread().
+That’s why we observe that ksm_merging_pages values are not reset
+immediately after the test finishes.
+
+If we add a sleep(1) after the MADV_UNMERGEABLE call, we can see that
+the ksm_merging_pages values are reset after the sleep.
+
+Once the test completes successfully, we can call ksm_unmerge(), which
+will immediately reset the ksm_merging_pages value. This way, in the fork
+test, the child process will also see the correct value.
+>
+> So which part of the story I missed?
+>
+
+So, during the cleanup phase after a successful test, we can call
+ksm_unmerge() to reset the counter. Do you see any issue with
+this approach?
+
+
+>
 
