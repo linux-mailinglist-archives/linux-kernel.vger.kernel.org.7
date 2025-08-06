@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-757740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C432B1C622
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB3EB1C626
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42ACA18C2B47
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DC83B5A90
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9065621D5BF;
-	Wed,  6 Aug 2025 12:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073D52882C1;
+	Wed,  6 Aug 2025 12:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eNOzoGLA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LvzGNGeH"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6228C12DDA1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC2112DDA1
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484151; cv=none; b=c5UaOC8+YGHZ0zdwOwpBebHhpmkqvjjsdJvw5pZXYGaA+qV+t0wg8Sc4Go0snbh+yqVDwN9dEz4/mqOT4lHIUJQHRnvOxYoJCoonKduLN7cCtIt84M6cVP4wS3lpeT2ZVO0UYPpZ+Ip6DCGXO7etc+ZtrVDHO37Z1o0ENwMP6/4=
+	t=1754484159; cv=none; b=B0eHvhhK33amxB2Aolh9Ywk7IKQpQ18oPEPkkooE8diH6WilXLLZqsmZAgJ55DWXrXh3+WeKLP/fhnXTjMDgtk6o2rXhmUMqzVEZm8kvf+haVUr3YYFufpqu2nmO+3FspCb/VtgdlYEVenQzKqYRKMgYCFY2bMyQSY4/Dp5FbU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484151; c=relaxed/simple;
-	bh=rFHj5aUhNi4spLOCKUNftny0u9kpf1dxvjwzlTxlfe0=;
+	s=arc-20240116; t=1754484159; c=relaxed/simple;
+	bh=r0fmGzYcagyINld/TI+rBkkDqvPQe0hlIzd0sfrGAEw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqTfnB+2LZUrTigg8aNggWYU3INn1ozPUqoqFJetkcyuIoQs9Tud2loEet5i51Pd37778BbgykiPOgcMaN/+aJh47jVrQQ365q20+z5z/g36oyZFjEf5hrbqMih2Tklx2BFPwJAHkC6o8X9xVmWReaktSiA+QMuQnMAuZt23pxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eNOzoGLA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754484149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6fC+wuZRrS98vNZxfDF8dB7BkGXm5HyL/fUXW2U/KHQ=;
-	b=eNOzoGLA8prQtkKS1k/dWrew/DVqOdvqSKJKwoZvZqEf9kIvz4mWDOqVJgJ3Q7BASgbAmU
-	gtIYj5oM6cl/y0R9WvI6eA76D8Xia9SFrB0IUeF3gTzV4LjVV6BXPZ2y5kREh5l6Q47IV4
-	3n72yPwxu+MalAsfn9amU4WzNEt3t/I=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-uBiNvbKRNdSlTSgFpwb0Mw-1; Wed, 06 Aug 2025 08:42:22 -0400
-X-MC-Unique: uBiNvbKRNdSlTSgFpwb0Mw-1
-X-Mimecast-MFC-AGG-ID: uBiNvbKRNdSlTSgFpwb0Mw_1754484141
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7812e887aso2035213f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:42:21 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=kQb4D+Te676lrnK8pDs61YoGNybg0PLnieOoTg9OCm4ow51kA9q8Wo4I3NOC1ALdiUWRpSbBQ92oDSWGa443k7on/uL0F7QllrPbFiPIpgSvA9PBqJMR81vreXugB9sm3niau4q81ZHl0/9Wi6zZBdWyJBOMHXCTtCXpJ8F6Wh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LvzGNGeH; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6155237bc53so969145a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 05:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754484156; x=1755088956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4R4sVgGxp0XHjP4HC85qZY5xFFqmMJ51kHLyqljDZ9Q=;
+        b=LvzGNGeHqiQv2FnvkhtKHlZEZxIxTxEtDoW2tW68U5Q+1xTTfBa9HT/rhDR+JYQnmJ
+         hOZAGhNNdcOAjMAaRT/O2RKpQZ2+bkqvLnTZKdJ72onYV95FJ8a9rU3CSOv84czN9ykT
+         zfRDZuXx/vjNYzJDcJG6B1GNeHYrHx0lVpfOxZuEapTZw+yE6mw8mYOrOWSM2AGocn0a
+         apG3hh9QoUE2MZftcsCOSCNI8bAz0MehkmlHo5d01TFX/DUKhE4MKN3tzoZdF1/buxk9
+         3vhNktFXvA6UpsI08cpqOlj/tGUUsdjpy+j+wNLphEJJuXZDesiCMu4k+ZZTgnKI5A9g
+         8vXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754484141; x=1755088941;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6fC+wuZRrS98vNZxfDF8dB7BkGXm5HyL/fUXW2U/KHQ=;
-        b=v7igRfIZjrAgs6T4BcWJPPEfhMMBcdN9IM4u2MIDeFFrwYozZ0pZU8+vmYFVM1eEnY
-         DCauts2hcc73b7IMhCbhmolBa3fL3aaKuOcFR+JGvNWzI90eoeyfmtbnAIkoHUwzY6vr
-         eGEZTa/ZlNBmk8daeVv+JFIEQHypHcb7mtbdNqQ31LQ/FgZV85k8UlghREapj/932EwK
-         1W7THb1inBDpnEMlmr040VJ2rRNnTnReV4VD3fZSIkpbxaR8qP9LGPy6huuG2MbuJ01f
-         4PgCIAcdzXVn4aLFWNVBZqAXRNO+YNeFLdhQ3CYtXo+JkcNQTSCvTRScAq6okbDERReX
-         pJHg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1xtj3KZAkXRrln/IOiXpIoGAQDzo3FUqYpT7re85CsZjhIEMmW8xoLv8K7uOiBnz3/6Z9/gV+XWWBVXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRWRH0fLv2BbLmoV4EmkGNzOlZegk3XN1joYS64elBjR+qkzNH
-	rkSr9mgYYDSBogJzDy49gIGbph3sMawnO+LNUcarXa2caIzTCCd6zkQ/TaHBIvUg4AJChZW7phQ
-	2ev7s/Lsvs+M7zRC5AOc3LcPyH1Nut23LaDR2AsT+0ZmeEAP9TzAMgm5dxMSfb76tdQ==
-X-Gm-Gg: ASbGncvcLyww1j+yeMiZEO0DSzAF/fgyrGFpLP8LJRripMz3nBKQ5NAAKUnIf9NUCUg
-	NxoUMg/tdCLZIV2Xagf2G073dIBOAeIu8WmpmquH41GxtWlfneXjqaG8d2o3qMn3nC1X67b+R+s
-	OOgpUdDTIzE+RJFa0Bv4THoXj79D+LWuqZtdi3tIUmMmp7+ZAVU8XmTpBUiGocmUGE0pWHPCLV5
-	Qv6MbGlo1udaMLLo6S7Mu1K/v1V6Njnjk2/e/uv1SAA4jSy/k4XxoH0MX51evR9iJnzEleNknRN
-	Kjdo81yRQv9SfPGjvhHPI/asu8xh5xB/c8NIrELlel7jqk0kQwz8pD4IRsgZ3p9Tmu2M/KJKQO2
-	uXpcRS0MNOvz4CHaRFKy7PJE9tfLec6/4/+iwskW2iqL15ea8L0zzYhss8phQJdMpSy8=
-X-Received: by 2002:a5d:5846:0:b0:3b7:930a:bb0d with SMTP id ffacd0b85a97d-3b8f48e929bmr1886360f8f.20.1754484140573;
-        Wed, 06 Aug 2025 05:42:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgk4+ikHQX6105e2puO+JLj1QNXAy0kwvoA7WxfsLLJbZOR8ZghoT2xETRXpsUtY54KVrOYA==
-X-Received: by 2002:a5d:5846:0:b0:3b7:930a:bb0d with SMTP id ffacd0b85a97d-3b8f48e929bmr1886329f8f.20.1754484140086;
-        Wed, 06 Aug 2025 05:42:20 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:8a00:42f7:2657:34cc:a51f? (p200300d82f358a0042f7265734cca51f.dip0.t-ipconnect.de. [2003:d8:2f35:8a00:42f7:2657:34cc:a51f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453d6esm22995355f8f.37.2025.08.06.05.42.18
+        d=1e100.net; s=20230601; t=1754484156; x=1755088956;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4R4sVgGxp0XHjP4HC85qZY5xFFqmMJ51kHLyqljDZ9Q=;
+        b=N/XYM2T8YXL8Tu1nh23mRrYi9QAjyy5Eh+JRG2TLH3RHr2g2OIXI7HwlW2S92iOAQK
+         h+jTb7etp3MnYRXXbv10TE1Usl/NUvz/40vBskz8Q27mScwMKLMLcRC0nGiiJHXgVkAP
+         69jUcZ2GoAXyP6clX9Ca4InUf9307zIs2S8wLLg+xoj2xcqP8QK/gyVdcyJcGgxWyDsq
+         tVBaAnN2qP57FzJMaRsZgehz07ryamkx+UclBgUdqEP6h7sRLnukV0ZEaTuM0Y+YyrQ4
+         zDVmrmlRReJG24/+k/bdqa/VplJ75wfN33AXpk7nMp2As7aYQEepxRm12BRhGHb2o3pI
+         aqFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzXlkqvB4zAPq87NjIrmLj0s+/t7fn3XKmydxj5l+naWrfde1gfiqJOLx4lHzWlVwyby3gaMEjp8jKFHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkZc+JUMzIPtIP0sLGkrUzqXAEQIJe9iMg8L62ofT2eFTTolim
+	15VcFwenYLWo6xdOCUFHRxKdzSlRigTmbYJu1gZlnnDqsJ4cXS+9kiEL5wwQLsgWq0Y=
+X-Gm-Gg: ASbGncuiCXJVQNcRGkB8+Ajlm4jhtkkriIACi/PCDbAfYR22ZW8I+gHmpyxynBwpFCF
+	lpV0UGWb6Wi8h/K8ClvLQNPzf0wIFofcDvpDu7wR4qWNkGZZYgk8+vFpdYpsuv0vJBSGqnUCnto
+	cuZzwPEHEXKA7cKkHJS465k2MCjm2t5XFtktQ9OE6VDhPd6v9FvJF/zk30TDUmnXQvAMcEpUu2s
+	5rPorHkOyM9vzAKPc2gGcIh89lZ0HAnWz7jzLpLX9Of9uil1ggMC6Et5xieN+ULdm+Jx8MeCu6o
+	hKY0w3bcqPmHNMlXQXZEoPE/UlvpsFresKMt5uLBpHUzqY8rDCox35kAEU9EoDiRvHkxRSoEAK6
+	hIbT3Ljs43DnYxJn/MPfUkk5g2w9KHKF1Of9VttUT2Ls=
+X-Google-Smtp-Source: AGHT+IGgUnR826lCkLGf6PcmGh4lmnfnohEsVZEEz76f5xn1VrQtfcGFZd1FkzgLcYBhBEYx9KCkog==
+X-Received: by 2002:a17:907:6d0c:b0:af9:3d0a:f383 with SMTP id a640c23a62f3a-af99002e708mr122435666b.6.1754484155766;
+        Wed, 06 Aug 2025 05:42:35 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.218.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0df2e4sm1081963566b.62.2025.08.06.05.42.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 05:42:19 -0700 (PDT)
-Message-ID: <6a39f79a-d709-43ba-ab28-2b86f2e4c547@redhat.com>
-Date: Wed, 6 Aug 2025 14:42:17 +0200
+        Wed, 06 Aug 2025 05:42:35 -0700 (PDT)
+Message-ID: <ffd07f38-670e-45f1-96df-60b2d38ff185@linaro.org>
+Date: Wed, 6 Aug 2025 14:42:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,82 +82,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/huge_memory: add new_order and offset to
- split_huge_pages*() pr_debug.
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250806022045.342824-1-ziy@nvidia.com>
- <20250806022045.342824-2-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] cdx: don't select CONFIG_GENERIC_MSI_IRQ
+To: Arnd Bergmann <arnd@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+ Nikhil Agarwal <nikhil.agarwal@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuu?= <linux@weissschuh.net>,
+ Qiu-ji Chen <chenqiuji666@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Rob Herring (Arm)" <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Abhijit Gangurde <abhijit.gangurde@amd.com>,
+ Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250805161059.4006484-1-arnd@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250806022045.342824-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250805161059.4006484-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06.08.25 04:20, Zi Yan wrote:
-> They are useful information for debugging split huge page tests.
+On 05/08/2025 18:10, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
+> x86 does not use CONFIG_GENERIC_MSI_IRQ, and trying to enable it anyway
+> results in a build failure:
+> 
+> In file included from include/linux/ssb/ssb.h:10,
+>                  from drivers/ssb/pcihost_wrapper.c:18:
+> include/linux/gpio/driver.h:41:33: error: field 'msiinfo' has incomplete type
+>    41 |         msi_alloc_info_t        msiinfo;
+>       |                                 ^~~~~~~
+> In file included from include/linux/kvm_host.h:19,
+>                  from arch/x86/events/intel/core.c:17:
+> include/linux/msi.h:528:33: error: field 'alloc_info' has incomplete type
+>   528 |         msi_alloc_info_t        alloc_info;
+> 
+> Change the driver to actually build without this symbol and remove the
+> incorrect 'select' statements.
+> 
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Maybe also original reported-by credits?
+https://lore.kernel.org/all/20250717091053.129175-2-krzysztof.kozlowski@linaro.org/
 
--- 
-Cheers,
+And cc-stable and fixes.
 
-David / dhildenb
+I started working on this and had similar fix, but then I got impression
+the CDX people will fix that:
 
+https://lore.kernel.org/all/BL1PR12MB5333449243C7FE258728C8E39D5EA@BL1PR12MB5333.namprd12.prod.outlook.com/
+
+so I stopped working.
+
+Shall CDX maintainers entry be changed to Odd Fixes?
+
+Best regards,
+Krzysztof
 
