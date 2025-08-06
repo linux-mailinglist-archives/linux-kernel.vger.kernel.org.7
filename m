@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-757115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7DDB1BDEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:31:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B46FB1BDEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D9F3AD68C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6824B7AF6B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FE815278E;
-	Wed,  6 Aug 2025 00:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F7E7082A;
+	Wed,  6 Aug 2025 00:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="CvzrkSwz"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2z0onBo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B969A1E49F;
-	Wed,  6 Aug 2025 00:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C051E49F;
+	Wed,  6 Aug 2025 00:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754440276; cv=none; b=tHJzmBTfethottoqTpIplsO8oKQUW5TYbF49g0Tdgj2NW6v0CNVCniLgkb58FC9l6yTzCvAdAol5wWD6WYNZGaIVhKXbA2Pu2DVUOrDEjYdPUzIafsr7/m6EYxEuzjdRhLzpuzeWQ+YeZmm836SJn9oBt30/7W2ZFvtzZ0SQN98=
+	t=1754440318; cv=none; b=XhWrWMqJM65Gx5tf3gF6lYQ58x9b5MW9SdeqLmEXwG83kej9ZuU8HouUfRkA4Mjwr8WD07/f/8Yp+x7QfiYq86n4/RY7qj+HiAnZ8uzJxbmF3nbSlyBquYqTyD31zWG2DSK77l8d5tZYP29l3BpcCZJfCLDlrwhfhZiyT1J6ufE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754440276; c=relaxed/simple;
-	bh=mihGPIF3tSl1RqP6MaT1Lb5zWUmmcthYhUU66yuams8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C7FdVXOVXNFmLoMi+94jpqIYiFkAgoLt+2QEFyJtuG7YcXmmykLDeup6gSAcwaD1QvyOdd79/hKUZtLxVf2NFRfFg9NtNO50Q+7jpskFIc5AUav2on5ZI3htTr3scui0YYyJT2n4cF7bG7mCh8TXTglk3T2TYxWvdJyZDW4fq7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=CvzrkSwz; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1754440272;
-	bh=mihGPIF3tSl1RqP6MaT1Lb5zWUmmcthYhUU66yuams8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
-	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=CvzrkSwzubECXmQl/qdFVQMQoxcPmPeR6MJkbiC7npIzSnfwrllrCtdc/2lX1Aoio
-	 Yj8E38ldIiBUS7w5lVDP1vs7SBga0iEIYV1Uwbm/9VEOgNi3VJko9xOxLOz72J3np5
-	 AwUxXe5DiV23QbJoG0f4XFbrvwA96s4WhDsweXRUsMEDgQ7HbkIhjv7p5Z9Ti3CRsb
-	 qS6bb6dmykgz0Gvnv/prJ7UezLIOnumIdIwbBYqpL+uAcW6XbzjCdZkyvfR2LJuDYv
-	 UhbHl2FOL3e8KFPPHmM5oKpI0sU5MlRzcUcZvoBT1pgJv5E7O+5e+UMjEvAL1xnjlO
-	 86jw/7qmlkh7w==
-Received: from integral2.. (unknown [182.253.126.229])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 393BD3127C24;
-	Wed,  6 Aug 2025 00:31:09 +0000 (UTC)
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Oliver Neukum <oneukum@suse.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-	Simon Horman <horms@kernel.org>,
-	John Ernberg <john.ernberg@actia.se>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Netdev Mailing List <netdev@vger.kernel.org>,
-	Linux USB Mailing List <linux-usb@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>,
-	gwml@vger.gnuweeb.org,
-	stable@vger.kernel.org
-Subject: [PATCH net v3] net: usbnet: Fix the wrong netif_carrier_on() call
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Wed,  6 Aug 2025 07:31:05 +0700
-Message-Id: <20250806003105.15172-1-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754440318; c=relaxed/simple;
+	bh=4zmQW9P3pk7Gnm2G3ECHQv/n2CS39Br075AHVDBqKPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tGxiOfdxux+9p+9K7s68ecJJMc7rxIvuP5wvvlwY8qLkMkVFwXgClHdrVOTi+MpPe8nHijSAsDATuEAForDSfon97zaAq//ul+Vxabpn9U2Ph8Zjf6OYN5fLf1jZZtV1c2+9rpd86n1+imVjnufOZrtNwcyOsij/DBOmgxnaYSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2z0onBo; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754440317; x=1785976317;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4zmQW9P3pk7Gnm2G3ECHQv/n2CS39Br075AHVDBqKPU=;
+  b=V2z0onBozTa4y65aP9fs6CiHmS95aIHaJLo35RL8DsgjFBkttrL9J9bj
+   r/aQniMwgNBoW9DBXgbE43lT25od3anjq0Gn5Ez8drLN/Q12/5ppRE4pz
+   dhEAqSTerv4EpjBxT2UZgWPyaMXiM/rNmzWBXuYCu+ycU/mKhaBMsRQov
+   Fr+XUiabKXpj8ipOepueLhY7txZY+inPNLOLjskprlraOoto7LDqfB13+
+   d31MOHUb8dwDWFcx0WdLuOwWrvDtG6k14/160t54rGupP2y8w+F5eBItU
+   U+a2mP4Sq+oLl7pSQl4z6m8hWm9Iprb/czcDgxGVSlyfP+wdMuBK23eA3
+   A==;
+X-CSE-ConnectionGUID: IqY3+tiAQOaXn2vn08pq4w==
+X-CSE-MsgGUID: /y+FLtIESL2mdEaJIOE1bQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="59366365"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="59366365"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:31:56 -0700
+X-CSE-ConnectionGUID: Phc5g1kVSdi2CFHRSBlJ0A==
+X-CSE-MsgGUID: pL+ThEXdTTSscRrNvjJcow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="168889109"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:31:53 -0700
+Message-ID: <58f01b41-5acb-47d1-a68e-d496d45bb298@linux.intel.com>
+Date: Wed, 6 Aug 2025 08:31:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] perf tools kvm: Use "cycles" to sample guest for "kvm
+ top" on Intel
+To: Aditya Bodkhe <adityab1@linux.ibm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kevin Tian <kevin.tian@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
+ <20250805004633.135904-6-dapeng1.mi@linux.intel.com>
+ <c1076dbd-de63-4a9e-a097-de0f64c74a95@linux.intel.com>
+ <5b4882dc-c90d-409b-8355-45d8b96df93f@linux.ibm.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <5b4882dc-c90d-409b-8355-45d8b96df93f@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The commit referenced in the Fixes tag causes usbnet to malfunction
-(identified via git bisect). Post-commit, my external RJ45 LAN cable
-fails to connect. Linus also reported the same issue after pulling that
-commit.
 
-The code has a logic error: netif_carrier_on() is only called when the
-link is already on. Fix this by moving the netif_carrier_on() call
-outside the if-statement entirely. This ensures it is always called
-when EVENT_LINK_CARRIER_ON is set and properly clears it regardless
-of the link state.
+On 8/5/2025 7:32 PM, Aditya Bodkhe wrote:
+> On 05/08/25 6:27 am, Mi, Dapeng wrote:
+>> On 8/5/2025 8:46 AM, Dapeng Mi wrote:
+>>> As same reason with previous patch, use "cyles" instead of "cycles:P"
+>>> event by default to sample guest for "perf kvm top" command on Intel
+>>> platforms.
+>>>
+>>> Reported-by: Kevin Tian <kevin.tian@intel.com>
+>>> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
+>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>> ---
+>>>   tools/perf/builtin-kvm.c | 30 +++++++++++++++++++++++++++++-
+>>>   1 file changed, 29 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+>>> index 7e48d2437710..d72b40f3df12 100644
+>>> --- a/tools/perf/builtin-kvm.c
+>>> +++ b/tools/perf/builtin-kvm.c
+>>> @@ -2075,6 +2075,34 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
+>>>   	return ret;
+>>>   }
+>>>   
+>>> +static int __cmd_top(int argc, const char **argv)
+>>> +{
+>>> +	int i = 0, ret;
+>>> +	const char **rec_argv;
+>>> +
+>>> +	/*
+>>> +	 * kvm_add_default_arch_event() may add 2 extra options, so
+>>> +	 * allocate 2 more pointers in adavance.
+>>> +	 */
+>>> +	rec_argv = calloc(argc + 2 + 1, sizeof(char *));
+>>> +	if (!rec_argv)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	for (i = 0; i < argc; i++)
+>>> +		rec_argv[i] = argv[i];
+>>> +
+>>> +	BUG_ON(i != argc);
+>>> +
+>>> +	ret = kvm_add_default_arch_event(&i, rec_argv);
+>>> +	if (ret)
+>>> +		return -EINVAL;
+>>> +
+>>> +	ret = cmd_top(i, rec_argv);
+>>> +	free(rec_argv);
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>>   int cmd_kvm(int argc, const char **argv)
+>>>   {
+>>>   	const char *file_name = NULL;
+>>> @@ -2135,7 +2163,7 @@ int cmd_kvm(int argc, const char **argv)
+>>>   	else if (strlen(argv[0]) > 2 && strstarts("diff", argv[0]))
+>>>   		return cmd_diff(argc, argv);
+>>>   	else if (!strcmp(argv[0], "top"))
+>>> -		return cmd_top(argc, argv);
+>>> +		return __cmd_top(argc, argv);
+>>>   	else if (strlen(argv[0]) > 2 && strstarts("buildid-list", argv[0]))
+>>>   		return __cmd_buildid_list(file_name, argc, argv);
+>>>   #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+>> This patch would impact powerpc platform as well. Base on the comments
+>> before kvm_add_default_arch_event() in
+>> tools/perf/arch/powerpc/util/kvm-stat.c, I suppose powerpc also needs this
+>> change, otherwise "perf kvm top" command can't sample guest records. But I
+>> have no any powerpc on my hand, so it's not tested on powerpc platform. Any
+>> test on powerpc is appreciated. Thanks.
+> I have powerpc systems . I will test can share the results .
 
-Cc: stable@vger.kernel.org
-Cc: Armando Budianto <sprite@gnuweeb.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/all/CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com
-Closes: https://lore.kernel.org/netdev/CAHk-=wjKh8X4PT_mU1kD4GQrbjivMfPn-_hXa6han_BTDcXddw@mail.gmail.com
-Closes: https://lore.kernel.org/netdev/0752dee6-43d6-4e1f-81d2-4248142cccd2@gnuweeb.org
-Fixes: 0d9cfc9b8cb1 ("net: usbnet: Avoid potential RCU stall on LINK_CHANGE event")
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
+Thanks.
 
-v3:
-  - Move the netif_carrier_on() call outside of the if-statement
-    entirely (Linus).
 
-v2:
-  - Rebase on top of the latest netdev/net tree. The previous patch was
-    based on 0d9cfc9b8cb1. Line numbers have changed since then.
-  Link: https://lore.gnuweeb.org/gwml/20250801190310.58443-1-ammarfaizi2@gnuweeb.org
-
- drivers/net/usb/usbnet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index a38ffbf4b3f0..511c4154cf74 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1113,32 +1113,32 @@ static const struct ethtool_ops usbnet_ethtool_ops = {
- 	.set_link_ksettings	= usbnet_set_link_ksettings_mii,
- };
- 
- /*-------------------------------------------------------------------------*/
- 
- static void __handle_link_change(struct usbnet *dev)
- {
- 	if (!test_bit(EVENT_DEV_OPEN, &dev->flags))
- 		return;
- 
-+	if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
-+		netif_carrier_on(dev->net);
-+
- 	if (!netif_carrier_ok(dev->net)) {
- 		/* kill URBs for reading packets to save bus bandwidth */
- 		unlink_urbs(dev, &dev->rxq);
- 
- 		/*
- 		 * tx_timeout will unlink URBs for sending packets and
- 		 * tx queue is stopped by netcore after link becomes off
- 		 */
- 	} else {
--		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
--			netif_carrier_on(dev->net);
--
- 		/* submitting URBs for reading packets */
- 		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- 
- 	/* hard_mtu or rx_urb_size may change during link change */
- 	usbnet_update_max_qlen(dev);
- 
- 	clear_bit(EVENT_LINK_CHANGE, &dev->flags);
- }
- 
--- 
-Ammar Faizi
-
+>>
 
