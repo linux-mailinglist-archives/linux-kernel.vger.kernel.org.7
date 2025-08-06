@@ -1,223 +1,212 @@
-Return-Path: <linux-kernel+bounces-757386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AAFB1C187
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:45:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5860B1C19F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 365CD4E1EC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B00D4185E80
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 07:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAB521CC44;
-	Wed,  6 Aug 2025 07:43:43 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7B21C9F9;
+	Wed,  6 Aug 2025 07:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5VcmbqqQ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA6C21ABC8
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 07:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754466223; cv=none; b=SzIW6lTH5L9sjPIRZLXb4qZGcMFuft64dhx5+qcdij5yKnPMGobVDCEwn7WPuGFR+JuRCFX1sESmrbs4QHKL5NItkVrRGAxxvyrS8HNLiJzo7MJs7ZUIH6zUnUMWLkGUsz493GJXdDr9yDvUfeyhge0FWro5By0EtgnILqEOZN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754466223; c=relaxed/simple;
-	bh=L4AofNB68ilVon8P/Vu85cxNOvl2ivQq4/GZyJ1I+2U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Lp12kgijzZEDf2KUGT/epEiDFDzSKIV+Eg6bc365XnbhasIPajHuc54EvoM3p7hEqpYZtXQ+4CnmXEw3W6Oc4uPHngg6THK2S65p8eIVC/UL7Ytb2k322vX9eLDd/mpIVOlzcXNdGYcXnnLBiIlxSKIBcH1m6g5cewpUYEig/ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8649be94fa1so1108065139f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 00:43:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754466218; x=1755071018;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uRGuKT6QrKliWgsUCET6ezjgzIPpJgz36J4X3QKXBxI=;
-        b=fCun+b8u+X/HCLU6mR/wLvnGe4L0tEl7IREnf9xHOs+cNGScu6tyzem2RG1W5M0cKe
-         dAgpSr/ZNezhZVd9MJyI1tR4IbTETEUkApr0QYoIL6mri3Mavu19b3E3/lZ9MZMV3V6w
-         aHxbI0mmQewBk9K5IDLZfxb88zU/jpk+Zjkv20oidBOC434sRGLgJuaOVdl1grQjBknO
-         1OnrfYWXwmvUDHpMvhYJbJhtnLgGcSHb4lihO5dQ6s8nGLlH7Emq8+msBd49hg5Ld17c
-         6cUqN0XRqGe7GhpSLxTTZzvAFXo8OHwQxxOuQ/nDT2XO5c9eEo1y0IcVRFoi9rBPxPh5
-         RHYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyqpiO5sv8KRiKlVFp3Tlc9/pZik8IvP5Z+Iwh2MaQFgcrStP/VMhS7se1yMOEwGYFgBMZ4xgMu3qmMIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+a6DEUtuJDVHUJ6IZ9Z7hOaWQLhLaCobPyCgLKt5thiq1rAIv
-	jL/Yys2g7GTXSXchg1CDxE0PH+GXTddY8s4n6l2VQvX1/RGHCkR64C0FxTkRICEB4MP34Lz3Vg1
-	YewW8o7woV1E0LZQVNBSpL/1lXd47p45338Z+zCCemtuHP0M5UmvCnY2Zogo=
-X-Google-Smtp-Source: AGHT+IFssaKUpcvjB89EazSePj/sDisMWSpwHZ2yGmOn3v0iZWw+w8izZFUWIAQleFm1s54vcLfKjBSPYWpQ3QSUeSOJGKUJh0VT
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F8C212B2B;
+	Wed,  6 Aug 2025 07:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754466863; cv=fail; b=K+7E4ALD5MkOKdpiUHBLnCTahlkFMcerHEWcHPolpgwkw4ftvVrliWhWTln1VPqBcCn3PexUmFoDFU6DOmqOmwG0WnbfdQCMUZdShpuNFArEHrAUnVJtW0rX/S+OTljOZSwTbqKcbL9sBLV7fELGHCXKvoqwWBWMYvKrWY4eb0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754466863; c=relaxed/simple;
+	bh=Xd/GHVJAksXRMAoOqd+VhSYUuZ47o+ajWVCgw/nMU0Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lI2UEDhJR6RTuOWsRxkt39zMERKDSdqGbT9t7kSleJbSm46pPb8c22xPTIMjfigOprvVu2X7pZopkKJXhBaHlGTql777lGV7D8WHsxIwDFmrcRRlXpvuvK0ixQ0nGFwvn6djpA7trAyaz+jOK0UqZjeFTxWJDiEH8cuuO55FioY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5VcmbqqQ; arc=fail smtp.client-ip=40.107.93.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KCB9Y0cLu01U544eccq0FRccdYxgZ67Ch9p7S1QksY/YGev80X6cbp6xTl2g28ApjuxLW6wapfcUloG3uDuKWLaEaOQD0ROgyZEA3+Ugf1LlMTL/Vir9WTVAH8VlOZ7nUV+cgCDx7GzWUD1sTpXEj1sFZSF+xwQBW0df3luwyO9nGvX2mfhfxRLj+HvUq0ph/NqXBzDOas0058pjEym9Xctc21dSHnNVcUJJBUkfLmwwVD328nkOSeIvNQn2X8ydetGGdxstWXgPH0Nr7POy0JlMXguoIPI3eCkzITprrqJHLXiPPCZ3HXIDW+Zj/3OlMRuD5aLWJ/j2dJIxpohkhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bf0BrYw/PCdv47U6/0IUWbt8fVjbgLnj8rTiCupFvgg=;
+ b=Hs2poo0DUX0+VIHep8jpaxX17753ijhgDxBKlC9TsHu85FaIOsnJB4WRZ5mHyG/ZeoboO1hD3KxTjKhTI1xEpoAxo/xv8QZrboEd7TSfGCLPpQ+f2hVnVuJtAnwjheB8H8zNig+Kkn6xkX+ZbFXKB3C2TTAxmGNFZtcurK4yK6o9r5EQCeD5RKixn3spaPuec4nsNEawyluIOmYkAIjBCAW1O264pBh1NLCBlia4Sc3+CmSyDFgUabXkosf9gFb6/qFO3Gxq6T1CYfrtdy5LGygutcIaneDN7oIzrU1X56H9ssduXJ9YJpWmuBGSW4bditFFjB7/MZTVIMbp48gwBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bf0BrYw/PCdv47U6/0IUWbt8fVjbgLnj8rTiCupFvgg=;
+ b=5VcmbqqQvt4RPRH236VOOs3oW1Luh6q01oDc84GAAKUt0+ngT3pbNsqeI4Dhera+r5Wrlg+4o6hkdPbQqt+Q61GaA+T/rCS2zN2GU3m4MQz9FIPY20HWiyfgThi/j7SZwPZ8cxF09gxzQAOp0RIx0UM1iElXz1VmF3c/yYxi+R4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB9066.namprd12.prod.outlook.com (2603:10b6:510:1f6::5)
+ by PH7PR12MB8055.namprd12.prod.outlook.com (2603:10b6:510:268::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Wed, 6 Aug
+ 2025 07:54:15 +0000
+Received: from PH7PR12MB9066.namprd12.prod.outlook.com
+ ([fe80::954d:ca3a:4eac:213f]) by PH7PR12MB9066.namprd12.prod.outlook.com
+ ([fe80::954d:ca3a:4eac:213f%4]) with mapi id 15.20.8989.018; Wed, 6 Aug 2025
+ 07:54:14 +0000
+Message-ID: <5d495e57-71f5-e465-cba0-d727c6b36167@amd.com>
+Date: Wed, 6 Aug 2025 13:24:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v4 03/14] net: ionic: Export the APIs from net driver to
+ support device commands
+Content-Language: en-US
+To: Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Simon Horman <horms@kernel.org>
+Cc: shannon.nelson@amd.com, brett.creeley@amd.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, corbet@lwn.net, leon@kernel.org,
+ andrew+netdev@lunn.ch, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+ linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
+ <20250723173149.2568776-4-abhijit.gangurde@amd.com>
+ <20250725164106.GI1367887@horms.kernel.org> <20250801170014.GG26511@ziepe.ca>
+ <20250801132128.69940aab@kernel.org>
+From: Abhijit Gangurde <abhijit.gangurde@amd.com>
+In-Reply-To: <20250801132128.69940aab@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0066.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::11) To PH7PR12MB9066.namprd12.prod.outlook.com
+ (2603:10b6:510:1f6::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6b07:b0:881:81b7:1058 with SMTP id
- ca18e2360f4ac-8819f070216mr352963239f.7.1754466218392; Wed, 06 Aug 2025
- 00:43:38 -0700 (PDT)
-Date: Wed, 06 Aug 2025 00:43:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689307aa.050a0220.7f033.003c.GAE@google.com>
-Subject: [syzbot] [mm?] general protection fault in __pte_offset_map_lock (2)
-From: syzbot <syzbot+45ad2baf16fce6bc81f3@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	mhocko@suse.com, rppt@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    5998f2bca43e Merge tag 'exfat-for-6.17-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=136cc434580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb90b5976661bfd8
-dashboard link: https://syzkaller.appspot.com/bug?extid=45ad2baf16fce6bc81f3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102eb6a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134d16a2580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/616a65da77ea/disk-5998f2bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0f3838a6bd07/vmlinux-5998f2bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/298a57ed56ee/bzImage-5998f2bc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+45ad2baf16fce6bc81f3@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 6221 Comm: syz.2.42 Not tainted 6.16.0-syzkaller-11741-g5998f2bca43e #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:kasan_byte_accessible+0x15/0x30 mm/kasan/generic.c:199
-Code: 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ef 03 48 01 c7 <0f> b6 07 3c 07 0f 96 c0 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00
-RSP: 0018:ffffc90003cdf6d8 EFLAGS: 00010286
-RAX: dffffc0000000000 RBX: 0000000000000018 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8b92232e RDI: dffffc0000000003
-RBP: 0000000000000018 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8b92232e
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881246ce000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3e8b1dff98 CR3: 000000000e380000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __kasan_check_byte+0x13/0x50 mm/kasan/common.c:567
- kasan_check_byte include/linux/kasan.h:399 [inline]
- lock_acquire kernel/locking/lockdep.c:5842 [inline]
- lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5825
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- __pte_offset_map_lock+0x10f/0x310 mm/pgtable-generic.c:401
- pte_offset_map_lock include/linux/mm.h:3029 [inline]
- zap_pte_range mm/memory.c:1712 [inline]
- zap_pmd_range mm/memory.c:1818 [inline]
- zap_pud_range mm/memory.c:1847 [inline]
- zap_p4d_range mm/memory.c:1868 [inline]
- unmap_page_range+0xacf/0x42c0 mm/memory.c:1889
- unmap_single_vma.constprop.0+0x153/0x240 mm/memory.c:1932
- unmap_vmas+0x218/0x470 mm/memory.c:1976
- exit_mmap+0x1b9/0xb90 mm/mmap.c:1280
- __mmput+0x12a/0x410 kernel/fork.c:1129
- mmput+0x62/0x70 kernel/fork.c:1152
- exit_mm kernel/exit.c:582 [inline]
- do_exit+0x7c7/0x2bf0 kernel/exit.c:949
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
- __do_sys_exit_group kernel/exit.c:1113 [inline]
- __se_sys_exit_group kernel/exit.c:1111 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1111
- x64_sys_call+0x14fa/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f412178eb69
-Code: Unable to access opcode bytes at 0x7f412178eb3f.
-RSP: 002b:00007ffcf2965e78 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f412178eb69
-RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007ffcf2965edc R08: 0000000af2965f6f R09: 00000000000927c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: 00000000000927c0 R14: 00000000000215e0 R15: 00007ffcf2965f30
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:kasan_byte_accessible+0x15/0x30 mm/kasan/generic.c:199
-Code: 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ef 03 48 01 c7 <0f> b6 07 3c 07 0f 96 c0 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00
-RSP: 0018:ffffc90003cdf6d8 EFLAGS: 00010286
-RAX: dffffc0000000000 RBX: 0000000000000018 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8b92232e RDI: dffffc0000000003
-RBP: 0000000000000018 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8b92232e
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881246ce000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3e8b1dff98 CR3: 000000000e380000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	0f 1f 00             	nopl   (%rax)
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	90                   	nop
-   8:	90                   	nop
-   9:	90                   	nop
-   a:	90                   	nop
-   b:	90                   	nop
-   c:	90                   	nop
-   d:	90                   	nop
-   e:	90                   	nop
-   f:	90                   	nop
-  10:	90                   	nop
-  11:	90                   	nop
-  12:	90                   	nop
-  13:	90                   	nop
-  14:	90                   	nop
-  15:	66 0f 1f 00          	nopw   (%rax)
-  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  20:	fc ff df
-  23:	48 c1 ef 03          	shr    $0x3,%rdi
-  27:	48 01 c7             	add    %rax,%rdi
-* 2a:	0f b6 07             	movzbl (%rdi),%eax <-- trapping instruction
-  2d:	3c 07                	cmp    $0x7,%al
-  2f:	0f 96 c0             	setbe  %al
-  32:	c3                   	ret
-  33:	cc                   	int3
-  34:	cc                   	int3
-  35:	cc                   	int3
-  36:	cc                   	int3
-  37:	66                   	data16
-  38:	66                   	data16
-  39:	2e                   	cs
-  3a:	0f                   	.byte 0xf
-  3b:	1f                   	(bad)
-  3c:	84 00                	test   %al,(%rax)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB9066:EE_|PH7PR12MB8055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a3389ee-951b-4b2e-9132-08ddd4be6fe0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkRjdThPSjZneEpacDA0UU1qSUhNeVNZOXFvcS83N2pqYm9ZSWFwQ21lblkv?=
+ =?utf-8?B?L1lKNFFFMjlNa3FrcmJCdWVOOVprbTFZOUE4dkQwTkZyblJDeW9sK2VoaVVz?=
+ =?utf-8?B?RTN6NVQvZFVBZFFpV2FQYzMvNHZDcnBOczRiQk5KV29BQ1NyaVBDZ0lmdXpN?=
+ =?utf-8?B?ZEJTWDZFSEsvV1M1MHB4TFJ5SlFyTU5uMklXZTZucE1BS2hsdVpkdGVYZkI4?=
+ =?utf-8?B?ekpsUjJWamxvbEhzUzNUcGNtZUoxMDVLSW5PQ2dJakUvRkNwbWVtNXpEdXBT?=
+ =?utf-8?B?dERwOXVkRHdBOWlXUDNVR3JGUldnSGkvZmNmMFVCdlBGcm4yVUpvK0drU0VV?=
+ =?utf-8?B?anBqckMwRndKbVFNNWFMajJKTzM1K1RBK2RKSFZ4VnNPYlJQV0VLTlIxNHZ2?=
+ =?utf-8?B?NW5wT3hyNUdsUmpFVW9WV01YQlFyeDJBRDV5bnU1RGlLMU92N3hCdWZkUnhp?=
+ =?utf-8?B?aktjMVVmazh3RGFsMjBSUUp2Njl4RzNKcXlCSkFTRllPQzZVd2VkZmtLZ0dW?=
+ =?utf-8?B?RnFwNCtiNDhTYmU4Q293Y3VpaG9RRmhDYzNhdDFxM2RiOXBHdVpjV052Lytu?=
+ =?utf-8?B?bGl3U1BERmdndmVjZ0NsaVlpR0djYnc4TE9wUnd6ZGxKZGJTUTdiclIxczAz?=
+ =?utf-8?B?TXhMOHZHQVlPZC82U2htcEVTMmFLaXd3c04ra2hUTzVUVlFHTWdHcFpLVkQ0?=
+ =?utf-8?B?VmZrNjhsaEJoRStCQW5jRCtWZEtoZzU2RnE5SjZoOUdJb2tZZ21tZzQyL2JJ?=
+ =?utf-8?B?ZVlkRzN0dmdZTHNSUEQ0a0p5YUVyZU1rTmk5SjZoQ04vaXpyUERmM2xxdXJT?=
+ =?utf-8?B?WVJtZDZrVWdmNmFsZmtHcUFnS2dwRi8rSGQ5K3MxS3dzRG53Uk1vdGtmWlpR?=
+ =?utf-8?B?MmlSVGUxSHZha1JtdE1rOFl4U2ZmcldZS0Q2VzhBQjVzYzM5RDlra1Y5eHp5?=
+ =?utf-8?B?Q29uS3NETmFBbEtBVStkRlFCYWtCMFE3Zk9mS3JPN1dtaCt6MEprU2s1Z2d4?=
+ =?utf-8?B?Rkk3M1VKS1BMTUVBWUEwUXpHeWxKRkQ1aWdwVE9aT2VlckRqMWJDMkhqbTB0?=
+ =?utf-8?B?N21YTGJNTGdNMHI5RWgyZW1yZmRaZG5Jb1hVKzB1dkdoRkQvOUhyM3R4Lytj?=
+ =?utf-8?B?dnlmOGdvaENJeHNkN1paRDJHWjMvNkFuWTlMelJWblo3QmVoVlVDcUxISkpl?=
+ =?utf-8?B?L1NUSC9mWXpGR0xsVS9CMEt0RWJQazJLaGRvY2MxZWlob1FhVWlvYk1PZldQ?=
+ =?utf-8?B?cXBUdFBEYm93SzJzUEZacXBvTHNkdjZIQ2xEemNnMmtBWENwMGE5dnpxb2hM?=
+ =?utf-8?B?SkhSMU90bGVLd2J2THVCSWthRkgvS1JMcElCTnRrTVJ5bmtUOVhJTFFBb2FT?=
+ =?utf-8?B?bm9EbmxQZm9HSXRJaDdUVHhxT09GV1JOd2d1K01sWWI2eTExSHNBUThOWUlZ?=
+ =?utf-8?B?dWI0cUlLYm50cURGa3JadktaWUlCMkYvSDNPMjhrOUJocUxVbGo1QnhHWVpv?=
+ =?utf-8?B?WUdHOUFnaU55S2NrN0JHWklpeldGSTlJdE05WUdPcHpramVEZi9qTWtzU0l5?=
+ =?utf-8?B?a2FWWnZyUHNIam16bzA1OWd5VWdLY0luaXVITzEvWXMvTlBmdlNoK05rMkdX?=
+ =?utf-8?B?bFV5WTZQU3lLSDI0TEpMNmM0S2R1dTlZU3JJbjJ4R0szdnNURDExZUEySUgv?=
+ =?utf-8?B?am14bnhzeEZzMGFIWjZSY0FNRlNMZnBwN3pCZVlFSk1zRFJoUm44YTRkL1Z2?=
+ =?utf-8?B?blYwek10b0tMZnZPc2NKazZ4SmhiVjJrbTZHcHVYbGJPdUVKamd0Y3RZcVIw?=
+ =?utf-8?B?eUZYSTlXZmczS01ORFlCQXRCSkg3UzFBWm5abW13amRqd0hhTEE5RDJHSGJq?=
+ =?utf-8?B?ZHRhZTRZTTZlWHRxdDNXcDhLaklrNDZET1VaQWZZOFNPbG5keHl2TVdqdU9M?=
+ =?utf-8?Q?HjMj7ZdOJZk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB9066.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eFQzN1hIblE4emZmUC9PdWhYUGVXZXBQeGZVYlJLUzdDUFE2Q0hJbTNqZnNM?=
+ =?utf-8?B?TzFpYnhscWdheFlYM1c2c2ZySXVLWkNLVzZvUHN5Z0loS1ZEbEhTOVJGek9O?=
+ =?utf-8?B?c3k2d2paZ3MrMSs0S2tqZ2NRVDF4SmxBNHlsNzNDVllMcmdVTWVkV3Y5L3dq?=
+ =?utf-8?B?YnB0a3o3dlNUOHVJS21RcUJMYWRwS3BVUjhucVpqN2NQZ014MG0vVkdvSHZ4?=
+ =?utf-8?B?RmNFVlUwNHB2YTVwS2F6WEtudGhkV2RrYVZWVS9oSVhFNkpIYnNrdW11TDRR?=
+ =?utf-8?B?dys5akthSXN4VUd1RUIrbVk5cVhiMEE4ak5TMlhLTmtBMElnS05tN1FkTWFl?=
+ =?utf-8?B?ZDNCU0YwbU5pREV6aTdiQW1PN1BBcDQvRkJMWGRaY2VjcHNGQWEyNUtUNkl5?=
+ =?utf-8?B?Uzg4YnY3TGhrVEtreC9IL0d5ZjZQK1BZVnNaRWEwOUNRQ3FUa1loUXhNc3VO?=
+ =?utf-8?B?dmxVZnJzRkduVnAvU2t0SEZCR2ZvZ01pczFXUkEwSHQzL1ZHVnUxSjJOMU9i?=
+ =?utf-8?B?TUIreWdXbzJhbEZ2R2hUYmh2TmpIUHltMHQ0MDRXV2JEdzM1WnFGMUsvLy8z?=
+ =?utf-8?B?QTA1R2Z0YkczWnYzRFRXbW5UamMvT2tLMW5oVm9qQzZ2NTVzUUZGRXdaQ25D?=
+ =?utf-8?B?eHllN2plMHRmeHhZdWV3RzFoQStnZER3Z1ZsMnVQbklieXhDcFgwOTA1M3p4?=
+ =?utf-8?B?R2lOMEhITXlFZWlQWjNQZU9VOFdqVS8wWFY0eHFqeGNRZU9UcVZSVmxmN0pC?=
+ =?utf-8?B?U1RpSmFUSmcvNWE1ZS80eHZIbGQxbGdSTFd5T0E5aXh5eWZtWE9jRmlsaDVU?=
+ =?utf-8?B?MFpEVWQvSVBoWEdoa2hicWtWajZ4ZVdlT2tNMVpDTnpNNWRVazA2YXU4U3Rn?=
+ =?utf-8?B?VFZ6VDBLbUl2a3dpb2c2QThtRmtGUFpEbktkUkt5OE9DdWZrNzJSVy9udklG?=
+ =?utf-8?B?eUR3TDcxQkZHMWxueFNJK1pkZG5jYkVQd3llNG9BYWhzOWZuZzhhVXhpTFo3?=
+ =?utf-8?B?bXorNFJ6Y3JEVUZuc3hMRFJVQnlFSTRKTFZGWkl3a05VSUFQbXNYT0Q2dFZo?=
+ =?utf-8?B?NFI3dnFZLzVxcW9XTGg5THBVb0RQVGhETUNsY1kwbmI4ZXQvazVpWFpMZGNm?=
+ =?utf-8?B?Q3lNOFpZUXllNk4yNEhPOGlZV2Q3cnVZNC9mUXJxUmZCU0w2Y29JUi8zSFZS?=
+ =?utf-8?B?NUxvbnB2c29HRUNuWm5DN21YcnN0VlFrUjFKamptKzM0c09TeFdINVdtaTNm?=
+ =?utf-8?B?OFRkYXA2ZmNHR1BIYmpLakI1Y1hmVFJZYTd1ajJuOGtpMTY3UGdNVWxsbWZj?=
+ =?utf-8?B?Sk5DdjFBT2ZMSFJYNUFWTnZUL1BGdUNGeGVHQjZ0L3N2QWdVdjhRYkdXT05X?=
+ =?utf-8?B?T2R5d3FiWGFwNFhMRnk5OHFqbmlLYnk2WVY4UUI4b2p4UnYzNjFhMVZrT2ZC?=
+ =?utf-8?B?T0xDQyt5MGFwbUxZU2NpZDVsTWxwK1Y4SWhaZnVrREtZcWdkTmpuVFgwdnZR?=
+ =?utf-8?B?WXkvVVRzcHRHdmpRVFBjVXRzL0I4L2hJeVcwOFNZb2J5RFJMcTU2cTkxcGhL?=
+ =?utf-8?B?NENyRU9sVG5zYXpjaGFGUDNidGJHVkNpN0xSMnBWenpvSEhDcDhzTHNkbDVY?=
+ =?utf-8?B?NmRIUElFRlAwcVIyVHovaHJndDJsSUcwcm1KSXFUZi94RllKL0dMc2krOFFs?=
+ =?utf-8?B?Z09FcmJuMnBlTGVHdWNsVitxRUVid1NOQ0V3RXRtQUZ1cDZDZGFkTWhlS3BT?=
+ =?utf-8?B?NElGcHBydjd1YnMzYi8zUmpwZlJPTm90a1YxSC9pbysvQmVyZkpCNEc1ajR4?=
+ =?utf-8?B?UHY5Y0hvOTNPRmxTR2QxY1EzUGw1ZjBmVVcyTWUzSXYxTWxpUmpBMmh3UUNG?=
+ =?utf-8?B?Y3BZQ1Z1ay80b01tVEpsRG1lWU10QWJ5bmY0SWRYRzkzWG5VeXdidFN3NWl1?=
+ =?utf-8?B?WUllNUtnY0Y3Q0xKZkNsTnMwUExjTC8vNnV5a0dMMkxta0xubEczSGFxNlRC?=
+ =?utf-8?B?OXd3SGpyNS9FdGxiVnRhbTVFZGIyanlmZ3VNTUI1SUM5WVd5NEpSbmpESDhl?=
+ =?utf-8?B?M09PdG11b0EwNWQwYmk2NGZ6Zyt2VzN3WFZteU5WWlhYeVVzZWd5TStzVWZR?=
+ =?utf-8?Q?Y1jlxwOD9VC68bKrA0jvoIIc2?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a3389ee-951b-4b2e-9132-08ddd4be6fe0
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB9066.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 07:54:14.5939
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RvYmYkYm9Pzt5AoP6VX15+aGdl1+q8nROx2AgpMBqQdUMwz/vje/VdEReWqxcnM6JzGBFh5wjMNoVJHlXJTUuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8055
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 8/2/25 01:51, Jakub Kicinski wrote:
+> On Fri, 1 Aug 2025 14:00:14 -0300 Jason Gunthorpe wrote:
+>>> Perhaps I misunderstand things, or otherwise am on the wrong track here.
+>>> But this seems to open the possibility of users of ionic_adminq_post_wait(),
+>>> outside the Ethernet driver, executing a wide range or admin commands.
+>>> It seems to me that it would be nice to narrow that surface.
+>> The kernel is monolithic, it is not normal to spend performance
+>> aggressively policing APIs.
+>>
+>> mlx5 and other drivers already have interfaces almost exactly like this.
+> Which is not to say that it's a good idea.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thank you for the feedback, and apologies for the delay. This discussion 
+prompted a thorough internal review.
+Although a precedent for similar interfaces exists in other RDMA 
+drivers, the point is well-taken and we understand the concern about a 
+wide API. To address this, two potential approaches are being considered,
+1. The function can be documented as a privileged, clarifying that it 
+performs no input sanitization and making the caller responsible for 
+device access.
+2. Alternatively, a new, narrower function could be introduced 
+specifically for RDMA use that validates commands against an explicit 
+allow list.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+We are open to either approach and would appreciate a guidance on the 
+preferred direction.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Abhijit
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
