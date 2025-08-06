@@ -1,151 +1,89 @@
-Return-Path: <linux-kernel+bounces-757320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3DAB1C0C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD4CB1C0BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BC894E2F80
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC60189B691
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC12214A6A;
-	Wed,  6 Aug 2025 06:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C7C213254;
+	Wed,  6 Aug 2025 06:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HyFEZJJq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bTEsT08T"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0052116F4;
-	Wed,  6 Aug 2025 06:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7324431
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 06:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754463561; cv=none; b=TeUome6bevgYAP9TXc4h3JTwvSZapzcozA5BXuiG4/F96Imnq4+RrBaezwUHATkOOMcqhHdi09r9m0xRblPHohFnq1r8Mxr9T+jMH/EVEmcZnhbc6kORDvzCAe4GUtG1fvRajFPPCWzGFhrrOAW0LLExTfLWsvr0mmbPUVCvKOA=
+	t=1754463445; cv=none; b=sddXJJtqpalrDvUgLlHX5kEgUFJ2QYnICKkt01ccDassGWwNPAJqaY4P/BfKybTKz2ReQcIEB4LD3friXJ2VSrIagb8uF7dDhbnd4IiITQnj/E09+1XjDJ0kWJ9mtkVOlrZ4ZnP1RtHSbny61leLy37kWBk5F+740weks2+vm2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754463561; c=relaxed/simple;
-	bh=1O89QYN8d1dcc3QruuHauYoW5IWmr4ZkIeVcdj9XOp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tnRlXMJo9PYFaEwL+Ea83w9N4K7qi93tMFDFcMGqxqRr6XKUrROVpoCLDta3sMnHghgf8iivXQZAocOqGrfIyWG6D8RBvVXlK6TLKgE6Zo+8HG2CtKrY2TaTgQ0s5IKio2Atbc/gLbDzjntnwnTOnzfcpMjMRMxYUgFtF4j5sP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HyFEZJJq; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754463560; x=1785999560;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1O89QYN8d1dcc3QruuHauYoW5IWmr4ZkIeVcdj9XOp8=;
-  b=HyFEZJJqlLEqG9aihkH0NY/opa9AB0bzn7TQOMvRQ9YlXsOW7/UQrqnJ
-   lyfyfdhbDgQVcaxMaV+PSOQXSj1P7CpEaLunswKvVmZY8DxX9zIhnHicn
-   JbSWnHgYCGtPMZ8lvzzkq6lBmx98WeyNmb9/d99CICmytMvV3WTZZyU6b
-   Xf31tQ0tV8PrwxQxnbxXrFDykKVRVkFcCjuRpMQhNJ8qgCAR+qd3fs8Mg
-   ScS2de819Nu6bFhjosVFoxOE4GMNGz6KmnIM/AHTLSmOx/80ARP0CDrWy
-   52jhi54asc94Z5t+Zb91fERQIFZxkShBjmuiOvB/dFQBxqjnhQzaGyvbN
-   A==;
-X-CSE-ConnectionGUID: 73XcvumNRB23WYdAh1DyIQ==
-X-CSE-MsgGUID: XO12QrYoRoeofcaxydom1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56638239"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="56638239"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 23:59:19 -0700
-X-CSE-ConnectionGUID: BDovrBJgTsumwTBklslw4g==
-X-CSE-MsgGUID: yK8+ak9uSwKJCfV1tPPIJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="170076107"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 23:59:17 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Jose Jesus Ambriz Meza <jose.jesus.ambriz.meza@intel.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Lai Yi <yi1.lai@linux.intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/i10nm: Skip DIMM enumeration on a disabled memory controller
-Date: Wed,  6 Aug 2025 14:57:07 +0800
-Message-ID: <20250806065707.3533345-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754463445; c=relaxed/simple;
+	bh=Ztuv9Zl/QP1Ykqjs14qunqoxFKoTE2QwVzuw0OQI20w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KV6jlwbr3WK4YFg7pMm5R693JDI9k5HUjOWt730yCDkdgRmVqFBQUJ44628pbBL17JU5+HvuDhjYIYPFjPqga+q0zVuQFhemPnhPZkbiASLHAmX8GUV0GTU0nRe3KX9RYmlMG0QfvuroWZ/i/aqOecirnUu2GMcHB2qZuVDvd9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bTEsT08T; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2E1D1443DA;
+	Wed,  6 Aug 2025 06:57:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754463434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ztuv9Zl/QP1Ykqjs14qunqoxFKoTE2QwVzuw0OQI20w=;
+	b=bTEsT08TkeiaIq96drOmkJ7sImQn4KK3dOcj8ShyXHIfwHc4Wusod2Jj36LQJDRYElj8UA
+	mye6o7RNqHrs4Tyl0RHJzV8KshA/poEqfR2CALXd3vY8ZcIwNlSjWmFX/PV4FGICyIiuID
+	LPVaWnYBBGWTfkrolK9VSef1yDC8p4fFE0kDY4CCocjWgWtpOiTUI9f7Q7Z4eAQQKh/hJK
+	qxwfujUchf3HBner1wH3v7yyq1SCQ5DI0P9K5+d4DK+zeKvHLg3A3gIlhMSR/KRQO8ZOUD
+	4R63fjJRkK193w0ncGJABjdR34qFoOmvKcHfbyPnDwbbKxi3TArVkjDpLs7rng==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
+  linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: expose ooblayout information via sysfs
+In-Reply-To: <20250719-mtd-ooblayout-sysfs-v1-1-e0d68d872e17@gmail.com> (Gabor
+	Juhos's message of "Sat, 19 Jul 2025 14:06:48 +0200")
+References: <20250719-mtd-ooblayout-sysfs-v1-1-e0d68d872e17@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 06 Aug 2025 08:57:11 +0200
+Message-ID: <87tt2ley48.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudejfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeehpdhrtghpthhtohepjhegghekhiejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-When loading the i10nm_edac driver on some Intel Granite Rapids servers,
-a call trace may appear as follows:
+Hello Gabor,
 
-  UBSAN: shift-out-of-bounds in drivers/edac/skx_common.c:453:16
-  shift exponent -66 is negative
-  ...
-  __ubsan_handle_shift_out_of_bounds+0x1e3/0x390
-  skx_get_dimm_info.cold+0x47/0xd40 [skx_edac_common]
-  i10nm_get_dimm_config+0x23e/0x390 [i10nm_edac]
-  skx_register_mci+0x159/0x220 [skx_edac_common]
-  i10nm_init+0xcb0/0x1ff0 [i10nm_edac]
-  ...
+On 19/07/2025 at 14:06:48 +02, Gabor Juhos <j4g8y7@gmail.com> wrote:
 
-This occurs because some BIOS may disable a memory controller if there
-aren't any memory DIMMs populated on this memory controller. The DIMMMTR
-register of this disabled memory controller contains the invalid value
-~0, resulting in the call trace above.
+> Add two new sysfs device attributes which allows to determine the OOB
+> layout used by a given MTD device. This can be useful to verify the
+> current layout during driver development without adding extra debug
+> code. The exposed information also makes it easier to analyze NAND
+> dumps without the need of cravling out the layout from the driver
+> code.
 
-Fix this call trace by skipping DIMM enumeration on a disabled memory
-controller.
+I would prefer a debugfs entry, as this is mostly focusing on
+development and debugging purposes. sysfs has a stable API, which makes
+it a less relevant place in this case.
 
-Fixes: ba987eaaabf9 ("EDAC/i10nm: Add Intel Granite Rapids server support")
-Reported-by: Jose Jesus Ambriz Meza <jose.jesus.ambriz.meza@intel.com>
-Reported-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-Closes: https://lore.kernel.org/all/20250730063155.2612379-1-acelan.kao@canonical.com/
-Tested-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/i10nm_base.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index a3fca2567752..ac9afcf461d7 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -1047,6 +1047,15 @@ static bool i10nm_check_ecc(struct skx_imc *imc, int chan)
- 	return !!GET_BITFIELD(mcmtr, 2, 2);
- }
- 
-+static bool i10nm_channel_disabled(struct skx_imc *imc, int chan)
-+{
-+	u32 mcmtr = I10NM_GET_MCMTR(imc, chan);
-+
-+	edac_dbg(1, "mc%d ch%d mcmtr reg %x\n", imc->mc, chan, mcmtr);
-+
-+	return (mcmtr == ~0 || GET_BITFIELD(mcmtr, 18, 18));
-+}
-+
- static int i10nm_get_dimm_config(struct mem_ctl_info *mci,
- 				 struct res_config *cfg)
- {
-@@ -1060,6 +1069,11 @@ static int i10nm_get_dimm_config(struct mem_ctl_info *mci,
- 		if (!imc->mbase)
- 			continue;
- 
-+		if (i10nm_channel_disabled(imc, i)) {
-+			edac_dbg(1, "mc%d ch%d is disabled.\n", imc->mc, i);
-+			continue;
-+		}
-+
- 		ndimms = 0;
- 
- 		if (res_cfg->type != GNR)
-
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
--- 
-2.43.0
-
+Thanks,
+Miqu=C3=A8l
 
