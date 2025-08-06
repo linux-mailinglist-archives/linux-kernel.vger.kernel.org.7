@@ -1,102 +1,83 @@
-Return-Path: <linux-kernel+bounces-757134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2403EB1BE1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5525FB1BE23
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 03:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6AD183D74
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EF8625E0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 01:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E778386342;
-	Wed,  6 Aug 2025 01:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D613B293;
+	Wed,  6 Aug 2025 01:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eVVd3e1w"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="TZ81NPG0"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AE318024
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 01:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1512E36EC;
+	Wed,  6 Aug 2025 01:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754442292; cv=none; b=SWtSs98VhTgzhyjpJqoqCQnM6uxTfcDyEJ1UY8VWFQnd47IBn8a0H90djSim5M9ajLHdD+DqErFTnRZZnnj67IUkA4fLJyJT+5R0YPx/F+tG8jsTy5pnmJCF9/e6eU12yWZ4yH3AZKx+gWT0qnch70xVjd9eXl0akcgT8iHc4sM=
+	t=1754442393; cv=none; b=irviiiKNJCK6tXNipm+6f/NJqyqWzRRz3LMMBWEZGzBSiWCMLlSiaizMjAAfX15hCU8yKvDBljLU+JCt9zU1NqbDDoXEad6z5RSVRIYlgACfTM9l1fql9noD7Y9/QVidLnr/ohv8KtRXUHChgDK5eg497q6eobWLl2oFXaKHqLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754442292; c=relaxed/simple;
-	bh=7xv4EuNJe9l+nHGwPOvCi5WPN3pL0wKiQw4xh+kWLKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TS2nXgcPXkQzioqOQco0pEscVLzZDeEDrlvMsYUG1YE3zTPIvaAoyrR3uUe2xsqSTCV46mzqIsHCrgfneMFC214QijyIEBXrcn6WGfYGbPde2WLMMhwuW31xoZnFlAr/xFYqIxO9pFSVcRre5i2sAfZwK5f7wOrzC8dqwwCsPPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eVVd3e1w; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754442277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a2FuUZ+f2cjOGCbD5ZW+D9cVIW5HzYCMplPAzNqlP4A=;
-	b=eVVd3e1wE6kUIHZf/Gy/r0lt5HawdOmJBwAPpf+hJpL6xIfYDS/0NC67BeuFBPVvxNwDyc
-	n7HKhMeEPZILTkqUNab3BTsQpozJRk/Hk72kX5imnkw2ahbvzlokGkWs7fuU+w+oLNxboC
-	Yi2m98c4IApwXCpZ5fH73ByL8flMQno=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Hyunchul Lee <hyc.lee@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	stable@vger.kernel.org,
-	Steve French <stfrench@microsoft.com>,
-	Namjae Jeon <namjae.jeon@samsung.com>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] smb: server: Fix extension string in ksmbd_extract_shortname()
-Date: Wed,  6 Aug 2025 03:03:49 +0200
-Message-ID: <20250806010348.61961-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1754442393; c=relaxed/simple;
+	bh=gwF7z9u/rohQmNKBibMXPTIelepRwIhG4IPSRFG28Iw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HTysFDyUBBtmRjQNY2AKAzC1fGcxTgtESNhyg0+Rtc04n24tuND0lcFXWNEp8uKg1bJ4M8ja2Q0WN/fvq5YvlUt4Yu079F6Jqa0wXUn8E2rLg9ET1SRfVHlpW94xnZ1YoQsz7cGqn+FvYmoo8hdyDda8lH1vjp7ZMYKtLwRByoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=TZ81NPG0; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1754442382;
+	bh=gJIT0RKIFHGb2UNWgeL4YzLrs92/FLX3uGi5Yvs8A6Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=TZ81NPG0Tpthj1GIOe4bGS2Jubcfz/OZCd47fs81p3MHlpHRx/JE1InaYGm1VNmOk
+	 eegoZnSabX9UsZBc5kuxapDFz38wPr2kJfNLamgqMfqaKGt9KBOM3d2zV2xQJyPvbH
+	 RcgE0jDa5P6hZTKSC762wBbswZAcGQr8R7iyf/uIF1qA5VFEJlMytsYQnRMuquWltS
+	 MsooPpG02HSaArN3UPkzb16C464yxUmRG92PbOAQrrKI6UZ60k0uHV50kfPsphAoWj
+	 uKxxH8XDDXSROrQApO09PBPyG1UTiK5scUtVKJnisHowTMYQrzGg/7kWXkIswrJZoQ
+	 PFRrzAFd7f2Ig==
+Received: from [127.0.1.1] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3982D67B49;
+	Wed,  6 Aug 2025 09:06:21 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Tan Siewert <tan@siewert.io>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250803151822.68080-1-tan@siewert.io>
+References: <20250803151822.68080-1-tan@siewert.io>
+Subject: Re: [PATCH 0/4] ARM: dts: aspeed: Convert remaining ASRock systems
+ to NVMEM layout syntax
+Message-Id: <175444238112.266976.6701389016981871511.b4-ty@codeconstruct.com.au>
+Date: Wed, 06 Aug 2025 10:36:21 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-In ksmbd_extract_shortname(), strscpy() is incorrectly called with the
-length of the source string (excluding the NUL terminator) rather than
-the size of the destination buffer. This results in "__" being copied
-to 'extension' rather than "___" (two underscores instead of three).
+On Sun, 03 Aug 2025 17:18:16 +0200, Tan Siewert wrote:
+> While investigating an issue with an ASRock Rack platform, I noticed
+> that most of the ASPEED device trees using NVMEM cells to populate
+> MAC addresses still rely on a deprecated NVMEM binding syntax.
+> As a result, the MAC addresses are not populated from the
+> device tree/NVMEM cells properly, and an address from "the chip" is
+> being used instead.
+> 
+> [...]
 
-Use the destination buffer size instead to ensure that the string "___"
-(three underscores) is copied correctly.
+Thanks, I've applied this to the BMC tree.
 
-Cc: stable@vger.kernel.org
-Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Use three parameter variant of strscpy() for easier backporting
-- Link to v1: https://lore.kernel.org/lkml/20250805221424.57890-1-thorsten.blum@linux.dev/
----
- fs/smb/server/smb_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
-index 425c756bcfb8..b23203a1c286 100644
---- a/fs/smb/server/smb_common.c
-+++ b/fs/smb/server/smb_common.c
-@@ -515,7 +515,7 @@ int ksmbd_extract_shortname(struct ksmbd_conn *conn, const char *longname,
- 
- 	p = strrchr(longname, '.');
- 	if (p == longname) { /*name starts with a dot*/
--		strscpy(extension, "___", strlen("___"));
-+		strscpy(extension, "___", sizeof(extension));
- 	} else {
- 		if (p) {
- 			p++;
 -- 
-2.50.1
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
 
