@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-758294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB81B1CD4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:15:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E11FB1CD4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 22:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111073BD086
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E48567F77
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15362C158E;
-	Wed,  6 Aug 2025 20:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840A22C0303;
+	Wed,  6 Aug 2025 20:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CH6KhZEb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kw3urDcB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JkbIJAtm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S0Thr4zo"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEBD1C862D
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D802C08CA
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 20:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754511183; cv=none; b=GmQ3iTv0jv1QYUr9MW9dX/6V35RSwTckKKX50J5b/hb7fwXvVsVkVv+jNhX7trxEFbnUsC98VAf8U/63yQeyfTH4083xhG+0WrcPqpaUMP9HAGv5jR0FseP3US3rU4NELU54/6L58L2DWTGuVNJ+6cO/t5o6pc+NPAl2fsNhx+s=
+	t=1754511184; cv=none; b=QUu4P6DkHY2pFJGeJXIx2EMiGa1IhEPRGtIJr5ld9Rxjpe6T2sqSj6CciH8+Xb+qoOc8RSfB/b4UMjrLg8F1ndlxxUosxIPP0iDM6zf5yHohqUQyHMOCS0jNQPR2li00qnyv5WVX9phj3wMuLZCZoCMoFp1mt5pVm4xWf7cjlAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754511183; c=relaxed/simple;
-	bh=mptlW4QvppdOxcML4TpyWb/m8EUMoIUssMOWjbfA3d8=;
+	s=arc-20240116; t=1754511184; c=relaxed/simple;
+	bh=EvekjKimv6DPVa4oXAQouJKYBitznonUqyeEHOjkb5U=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=GGJfGbss96NTqAsqNMIVasjQcLTiZFNq2XDSjek9EzgytjvzitKWIA5g8v3R2BQyB0e+KZeRNSe1Xo+GgaamxBymrjI1V7kcefAVKopzu119QjiMvOlO8yF0Jr+WXFnAcQv5W+2rJz1hi8kfM2sA2/c/WTZ1PbU8+/0xcAHJgGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CH6KhZEb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kw3urDcB; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=XE7i9uWz6AidwZ9a4J14KvBCtF+GZvMfcY9mL0YBWYfUHxj+PBw6NKVJNEmf5Ga4AJVwQya1nOYQXyEo1SP8XA2b/NiCvku7WMzlcvsgwrneivgMAABdc97HD9rwYg/NjnGXzqP++slRpEu4y4jBXG1dS7C6UMm6x0v8B8rkg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JkbIJAtm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S0Thr4zo; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250806200617.450396385@linutronix.de>
+Message-ID: <20250806200617.513959766@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754511179;
+	s=2020; t=1754511181;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Q8ibW5m28of82Bs979FQ4uHADNle8n1fHPOg+oWk1mo=;
-	b=CH6KhZEbInrHnzjopUeycuoGdw7RTrV/yaA10H5yaQEuMagU3q29dkGGfBOuRMta6+jW7Z
-	2lSxdeP/DS3j3V6t7vcJ4E1fdSFoA40W3si7ep1f0mLw1xZqVwmqkpQiNfyMTJiCCXAJkS
-	dL+UBkxmmdjE7B5n+z2LuiW6o1M13dN9z8tmsx4K2k6/hEZOhXWp3c+CROFM3l9gARZU3d
-	yl91z39R+P+LVKW4OJh5fijYzvw7EPWCsMb/A7A/mGbVkIVP8zVJ6R/BOaMCSLiCEBVI9V
-	ih/r80OQlcLV1ExfuoY4hONymLBS+IRefI4S8X8sqp+CW813iPbyrd6e+5TKUQ==
+	 references:references; bh=5impsAP87RWuwsK32+xW8Xa7uCwljYhrxKJgzH5kwI4=;
+	b=JkbIJAtmSC+HFIn2FJbeJfoM2Gqq40Hfv7BvxnVbNrABVI3TdF3KqdFWioPEZLnxOXMvmE
+	2ummQemjkoApFLAAxE+2QhVCsuE5rriIbeXLXK0xjXcShbyW1UgKg6Iu5Yqbw/UJVLU3PP
+	dEbf4vs2fkVaoF0kDE7qEW+CIzRMQKbCVshy2OllY2nas1zH07v6YoRPSqB+y6VlNF6vGQ
+	OIIeduGaqLDTOKi9IpOLBe5G9PZbZBS7AW5i1UnpcP3YIUsPTThAXGHh/FWBLiWr8JYCij
+	1HCoBPxW4puSKMwWit8+gREgM1HsN9sdNqTiPP2HeGixmHt5Hvddu2/C/vB9vg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754511179;
+	s=2020e; t=1754511181;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Q8ibW5m28of82Bs979FQ4uHADNle8n1fHPOg+oWk1mo=;
-	b=Kw3urDcBeZGqwAjYC39VZbU+HvsjmiltVoojaTRUHx5WUjvbrS0Hyp8RzkYl2PKYWLl/LK
-	rtKPW7rBm1wIrIBQ==
+	 references:references; bh=5impsAP87RWuwsK32+xW8Xa7uCwljYhrxKJgzH5kwI4=;
+	b=S0Thr4zo1plI/cxzCWEPZlFBsV6LVvpTaTIWbv4i3anmg8oHux4qVkjOXzqPCgEIOKmuB5
+	qdouZVcYk/9rsRBQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -58,7 +58,8 @@ Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
  Arnaldo Carvalho de Melo <acme@redhat.com>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Kees Cook <kees@kernel.org>
-Subject: [patch 4/6] perf/core: Split out ringbuffer allocation
+Subject: [patch 5/6] perf/core: Split the ringbuffer mmap() and allocation
+ code out
 References: <20250806195624.880096284@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,198 +68,242 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed,  6 Aug 2025 22:12:58 +0200 (CEST)
+Date: Wed,  6 Aug 2025 22:13:00 +0200 (CEST)
 
 The code logic in perf_mmap() is incomprehensible and has been source of
 subtle bugs in the past. It makes it impossible to convert the atomic_t
 reference counts to refcount_t.
 
-There is not really much, which is shared between the ringbuffer and AUX
-buffer allocation code since the mlock limit calculation and the
-accounting has been split out into helper functions.
+Now that the AUX buffer mapping and allocation code is in it's own function
+apply the same treatment to the ringbuffer part and remove the temporary
+workarounds created by the AUX split out.
 
-Move the AUX buffer allocation code out and integrate the call with a
-momentary workaround to allow skipping the remaining ringbuffer related
-code completely. That workaround will be removed once the ringbuffer
-allocation is moved to its own function as well.
-
-No functional change.
+No functional change intended.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/events/core.c |  134 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 75 insertions(+), 59 deletions(-)
+ kernel/events/core.c |  175 ++++++++++++++++++++++-----------------------------
+ 1 file changed, 77 insertions(+), 98 deletions(-)
 
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -6970,12 +6970,76 @@ static void perf_mmap_account(struct vm_
+@@ -6970,6 +6970,69 @@ static void perf_mmap_account(struct vm_
  	atomic64_add(extra, &vma->vm_mm->pinned_vm);
  }
  
-+static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
-+			 unsigned long nr_pages)
++static int perf_mmap_rb(struct vm_area_struct *vma, struct perf_event *event,
++			unsigned long nr_pages)
 +{
 +	long user_extra = nr_pages, extra = 0;
 +	struct perf_buffer *rb = event->rb;
-+	u64 aux_offset, aux_size;
-+	int ret, rb_flags = 0;
++	int rb_flags = 0;
 +
 +	/*
-+	 * AUX area mapping: if rb->aux_nr_pages != 0, it's already
-+	 * mapped, all subsequent mappings should have the same size
-+	 * and offset. Must be above the normal perf buffer.
++	 * If we have rb pages ensure they're a power-of-two number, so we
++	 * can do bitmasks instead of modulo.
 +	 */
-+	aux_offset = READ_ONCE(rb->user_page->aux_offset);
-+	aux_size = READ_ONCE(rb->user_page->aux_size);
-+
-+	if (aux_offset < perf_data_size(rb) + PAGE_SIZE)
++	if (--nr_pages != 0 && !is_power_of_2(nr_pages))
 +		return -EINVAL;
 +
-+	if (aux_offset != vma->vm_pgoff << PAGE_SHIFT)
-+		return -EINVAL;
++	WARN_ON_ONCE(event->ctx->parent_ctx);
 +
-+	/* Already mapped with a different offset */
-+	if (rb_has_aux(rb) && rb->aux_pgoff != vma->vm_pgoff)
-+		return -EINVAL;
++	if (rb) {
++		if (data_page_nr(rb) != nr_pages)
++			return -EINVAL;
 +
-+	if (aux_size != nr_pages * PAGE_SIZE)
-+		return -EINVAL;
-+
-+	/* Already mapped with a different size */
-+	if (rb_has_aux(rb) && rb->aux_nr_pages != nr_pages)
-+		return -EINVAL;
-+
-+	if (!is_power_of_2(nr_pages))
-+		return -EINVAL;
-+
-+	/* If this succeeds, subsequent failures have to undo it */
-+	if (!atomic_inc_not_zero(&rb->mmap_count))
-+		return -EINVAL;
-+
-+	/* If mapped, attach to it */
-+	if (rb_has_aux(rb)) {
-+		atomic_inc(&rb->aux_mmap_count);
-+		return 0;
++		if (atomic_inc_not_zero(&event->rb->mmap_count)) {
++			/*
++			 * Success -- managed to mmap() the same buffer
++			 * multiple times.
++			 */
++			atomic_inc(&event->mmap_count);
++			return 0;
++		}
++		/*
++		 * Raced against perf_mmap_close()'s
++		 * atomic_dec_and_mutex_lock() remove the event and
++		 * continue as if !event->rb
++		 */
++		ring_buffer_attach(event, NULL);
 +	}
 +
-+	if (!perf_mmap_calc_limits(vma, &user_extra, &extra)) {
-+		atomic_dec(&rb->mmap_count);
++	if (!perf_mmap_calc_limits(vma, &user_extra, &extra))
 +		return -EPERM;
-+	}
 +
-+	ret = rb_alloc_aux(rb, event, vma->vm_pgoff, nr_pages,
-+			   event->attr.aux_watermark, rb_flags);
-+	if (ret) {
-+		atomic_dec(&rb->mmap_count);
-+		return ret;
-+	}
++	if (vma->vm_flags & VM_WRITE)
++		rb_flags |= RING_BUFFER_WRITABLE;
 +
-+	atomic_set(&rb->aux_mmap_count, 1);
-+	rb->aux_mmap_locked = extra;
++	rb = rb_alloc(nr_pages, event->attr.watermark ? event->attr.wakeup_watermark : 0,
++		      event->cpu, rb_flags);
++
++	if (!rb)
++		return -ENOMEM;
++
++	atomic_set(&rb->mmap_count, 1);
++	rb->mmap_user = get_current_user();
++	rb->mmap_locked = extra;
++
++	ring_buffer_attach(event, rb);
++
++	perf_event_update_time(event);
++	perf_event_init_userpage(event);
++	perf_event_update_userpage(event);
++
 +	perf_mmap_account(vma, user_extra, extra);
-+	atomic_inc(&event->mmap_count);
++	atomic_set(&event->mmap_count, 1);
 +	return 0;
 +}
 +
- static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
+ 			 unsigned long nr_pages)
+ {
+@@ -7039,10 +7102,8 @@ static int perf_mmap(struct file *file,
  {
  	struct perf_event *event = file->private_data;
  	unsigned long vma_size, nr_pages;
- 	long user_extra = 0, extra = 0;
--	struct mutex *aux_mutex = NULL;
- 	struct perf_buffer *rb = NULL;
- 	int ret, flags = 0;
+-	long user_extra = 0, extra = 0;
+-	struct perf_buffer *rb = NULL;
+-	int ret, flags = 0;
  	mapped_f mapped;
-@@ -7055,51 +7119,15 @@ static int perf_mmap(struct file *file,
- 		}
++	int ret;
  
- 	} else {
--		/*
--		 * AUX area mapping: if rb->aux_nr_pages != 0, it's already
--		 * mapped, all subsequent mappings should have the same size
--		 * and offset. Must be above the normal perf buffer.
--		 */
--		u64 aux_offset, aux_size;
+ 	/*
+ 	 * Don't allow mmap() of inherited per-task counters. This would
+@@ -7068,114 +7129,32 @@ static int perf_mmap(struct file *file,
+ 	if (vma_size != PAGE_SIZE * nr_pages)
+ 		return -EINVAL;
+ 
+-	user_extra = nr_pages;
 -
--		rb = event->rb;
--		if (!rb)
--			goto aux_unlock;
+-	mutex_lock(&event->mmap_mutex);
+-	ret = -EINVAL;
 -
--		aux_mutex = &rb->aux_mutex;
--		mutex_lock(aux_mutex);
+-	/*
+-	 * This relies on __pmu_detach_event() taking mmap_mutex after marking
+-	 * the event REVOKED. Either we observe the state, or __pmu_detach_event()
+-	 * will detach the rb created here.
+-	 */
+-	if (event->state <= PERF_EVENT_STATE_REVOKED) {
+-		ret = -ENODEV;
+-		goto unlock;
+-	}
 -
--		aux_offset = READ_ONCE(rb->user_page->aux_offset);
--		aux_size = READ_ONCE(rb->user_page->aux_size);
+-	if (vma->vm_pgoff == 0) {
+-		nr_pages -= 1;
 -
--		if (aux_offset < perf_data_size(rb) + PAGE_SIZE)
--			goto aux_unlock;
--
--		if (aux_offset != vma->vm_pgoff << PAGE_SHIFT)
--			goto aux_unlock;
--
--		/* already mapped with a different offset */
--		if (rb_has_aux(rb) && rb->aux_pgoff != vma->vm_pgoff)
--			goto aux_unlock;
--
--		if (aux_size != nr_pages * PAGE_SIZE)
--			goto aux_unlock;
--
--		/* already mapped with a different size */
--		if (rb_has_aux(rb) && rb->aux_nr_pages != nr_pages)
--			goto aux_unlock;
--
--		if (!is_power_of_2(nr_pages))
--			goto aux_unlock;
--
--		if (!atomic_inc_not_zero(&rb->mmap_count))
--			goto aux_unlock;
--
--		if (rb_has_aux(rb)) {
--			atomic_inc(&rb->aux_mmap_count);
--			ret = 0;
++	scoped_guard(mutex, &event->mmap_mutex) {
+ 		/*
+-		 * If we have rb pages ensure they're a power-of-two number, so we
+-		 * can do bitmasks instead of modulo.
++		 * This relies on __pmu_detach_event() taking mmap_mutex
++		 * after marking the event REVOKED. Either we observe the
++		 * state, or __pmu_detach_event() will detach the rb
++		 * created here.
+ 		 */
+-		if (nr_pages != 0 && !is_power_of_2(nr_pages))
 -			goto unlock;
-+		if (event->rb) {
-+			ret = -EINVAL;
-+		} else {
-+			scoped_guard(mutex, &event->rb->aux_mutex)
-+				ret = perf_mmap_aux(vma, event, nr_pages);
- 		}
-+		// Temporary workaround to split out AUX handling first
-+		mutex_unlock(&event->mmap_mutex);
-+		goto out;
- 	}
- 
- 	if (!perf_mmap_calc_limits(vma, &user_extra, &extra)) {
-@@ -7132,28 +7160,16 @@ static int perf_mmap(struct file *file,
- 		perf_event_init_userpage(event);
- 		perf_event_update_userpage(event);
- 		ret = 0;
--	} else {
--		ret = rb_alloc_aux(rb, event, vma->vm_pgoff, nr_pages,
--				   event->attr.aux_watermark, flags);
--		if (!ret) {
--			atomic_set(&rb->aux_mmap_count, 1);
--			rb->aux_mmap_locked = extra;
--		}
- 	}
 -
- unlock:
- 	if (!ret) {
- 		perf_mmap_account(vma, user_extra, extra);
- 		atomic_inc(&event->mmap_count);
--	} else if (rb) {
--		/* AUX allocation failed */
--		atomic_dec(&rb->mmap_count);
- 	}
--aux_unlock:
--	if (aux_mutex)
--		mutex_unlock(aux_mutex);
- 	mutex_unlock(&event->mmap_mutex);
+-		WARN_ON_ONCE(event->ctx->parent_ctx);
+-
+-		if (event->rb) {
+-			if (data_page_nr(event->rb) != nr_pages)
+-				goto unlock;
+-
+-			if (atomic_inc_not_zero(&event->rb->mmap_count)) {
+-				/*
+-				 * Success -- managed to mmap() the same buffer
+-				 * multiple times.
+-				 */
+-				ret = 0;
+-				/* We need the rb to map pages. */
+-				rb = event->rb;
+-				goto unlock;
+-			}
+-
+-			/*
+-			 * Raced against perf_mmap_close()'s
+-			 * atomic_dec_and_mutex_lock() remove the
+-			 * event and continue as if !event->rb
+-			 */
+-			ring_buffer_attach(event, NULL);
+-		}
++		if (event->state <= PERF_EVENT_STATE_REVOKED)
++			return -ENODEV;
  
-+// Temporary until RB allocation is split out.
-+out:
+-	} else {
+-		if (event->rb) {
+-			ret = -EINVAL;
++		if (vma->vm_pgoff == 0) {
++			ret = perf_mmap_rb(vma, event, nr_pages);
+ 		} else {
++			if (!event->rb)
++				return -EINVAL;
+ 			scoped_guard(mutex, &event->rb->aux_mutex)
+ 				ret = perf_mmap_aux(vma, event, nr_pages);
+ 		}
+-		// Temporary workaround to split out AUX handling first
+-		mutex_unlock(&event->mmap_mutex);
+-		goto out;
+-	}
+-
+-	if (!perf_mmap_calc_limits(vma, &user_extra, &extra)) {
+-		ret = -EPERM;
+-		goto unlock;
+-	}
+-
+-	WARN_ON(!rb && event->rb);
+-
+-	if (vma->vm_flags & VM_WRITE)
+-		flags |= RING_BUFFER_WRITABLE;
+-
+-	if (!rb) {
+-		rb = rb_alloc(nr_pages,
+-			      event->attr.watermark ? event->attr.wakeup_watermark : 0,
+-			      event->cpu, flags);
+-
+-		if (!rb) {
+-			ret = -ENOMEM;
+-			goto unlock;
+-		}
+-
+-		atomic_set(&rb->mmap_count, 1);
+-		rb->mmap_user = get_current_user();
+-		rb->mmap_locked = extra;
+-
+-		ring_buffer_attach(event, rb);
+-
+-		perf_event_update_time(event);
+-		perf_event_init_userpage(event);
+-		perf_event_update_userpage(event);
+-		ret = 0;
+-	}
+-unlock:
+-	if (!ret) {
+-		perf_mmap_account(vma, user_extra, extra);
+-		atomic_inc(&event->mmap_count);
+ 	}
+-	mutex_unlock(&event->mmap_mutex);
+ 
+-// Temporary until RB allocation is split out.
+-out:
  	if (ret)
  		return ret;
+ 
+ 	/*
+ 	 * Since pinned accounting is per vm we cannot allow fork() to copy our
+-	 * vma.
++	 * VMA. The VMA is fixed size and must not be included in dumps.
+ 	 */
+ 	vm_flags_set(vma, VM_DONTCOPY | VM_DONTEXPAND | VM_DONTDUMP);
+ 	vma->vm_ops = &perf_mmap_vmops;
+@@ -7190,7 +7169,7 @@ static int perf_mmap(struct file *file,
+ 	 * full cleanup in this case and therefore does not invoke
+ 	 * vmops::close().
+ 	 */
+-	ret = map_range(rb, vma);
++	ret = map_range(event->rb, vma);
+ 	if (ret)
+ 		perf_mmap_close(vma);
  
 
 
