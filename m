@@ -1,210 +1,215 @@
-Return-Path: <linux-kernel+bounces-757450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C75B1C247
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C78BB1C255
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E360F16D546
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5353F17CCE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DDA28851E;
-	Wed,  6 Aug 2025 08:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CAD28934D;
+	Wed,  6 Aug 2025 08:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ANfkpbmY"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013056.outbound.protection.outlook.com [40.107.162.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6Grod9H"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA112882AA;
-	Wed,  6 Aug 2025 08:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754469425; cv=fail; b=gjP4JqqMJAYLX3pIZF4j4fzJ1PsnCw1uRFNxv9EiMTrzKRLOMbh8MAJ1mAjPe7krFNAcdjwjZb0939prxtXVbCnfbIkBTXUKoPheK4YmgzQkscqzZLNt24W22nshFNfKF/txI/mxeA/lU2pFpfRIoIrGLrMYHL7rYc7KGkddFu0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754469425; c=relaxed/simple;
-	bh=O6NS73chfvNWq5Em1qQPYUb8Xi21dbTvexBWqMo+a0c=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=enXUliwmw9Cbnkrsh1m/Z0/d6z2c2KhxZHiUQoGsm0hDCORdJfGJ/AAr5qwbPl0/Nt3m5hYGrV1X0JQ1ZaC2FrFocR+kLC7CGczrBryKmkaxaq6bRHLCpJJym+9SgTKSMc0j47sCM6gUDXgwzRhdLvDHSNXBD8RhWxOhaauEJ8o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ANfkpbmY; arc=fail smtp.client-ip=40.107.162.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PCXT7lzisSBy7YI1AaKWuSZ1La/fW2+MttQekYCro+RE+mV1BLZDfCIEqkswEu0kZjxXfP7YPMBpedIhy3VG0J2giSVQ4I8Tp/w8KEvvRGBkBvTCiLNu7/ndWW6Ow3fckWg/P+JoPVSf0pLh0RGxLJBYdTxemhIZgkgltYmGGVaAIZOG7mRh+Bd3G2mfQd2fYORgvyYcax5vz8dBQ6x/D9vPmaHAKSCBgZKLPt2pmEsI0l1hpcbppqX14L1EdsZs/tGWdq7F4e0TiING+x9PG6NPRP+KzZCnmThu6Vo5TO3yJxePRfgWbbSqq1al72vuWtlVSRXddVzUO2d9lAcXYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tW2Rf5dQkFCxvDo1QfktfO3yxQes5+H2lVaVHz7cjbg=;
- b=DKWbDbSDFGwnNxHURnN3dVcB8Br8YONqXkVMP2pRSMyKOhf3H1KHcfngZgxVDz6euNr31KaExJF8QzhzzNMTNS5WkhHjv+y6J3jfA2LWbDP31V0F6T1DpO0dXF43R7eLzchONguFV0WI9IRhB6Jw1PsKoRl0CSvH+ubcNFZWaZlQwSfIRdrzo9tufv1oh7irlVOmq8Acmg95RvGZUteyoRXI0Z6cPRNHVGg/0xLpeFkUhQ45zbqqKxRibc55kxHDp3Iu3mfHf+LkpAp0YHYbccQbqEVxD0kdJESmLPdtJWjACTcli2a4LFkHhfI3JFgGYYl9KI5vuOFuilY0lOKq8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tW2Rf5dQkFCxvDo1QfktfO3yxQes5+H2lVaVHz7cjbg=;
- b=ANfkpbmYCxxNbs7oHH3qIzHws9gIwWwdPgX0ZfEpoysGmkqhIzWTIL++ZloKcjQgStR8CygzbkZ2SG8VuVycXmihTS45lS9VEmTGy+RnKTyrU3IUj8LBRcdJ6v2HO00AkH/vXQwy4/EfNQWY1TI0GjhCh3hzD36laIBN7lT073S6gIcs/yBxjXanKY/59A4xWTwb9TSczi7BlXA4CRTccRUv9wFzdHIsIVz9zlY2eA8mMh0lPzpNr+D4L/SdRB3n5l5k08Gx1S2eD7FcytdgooZL5ukuAYmR/RwMCqYZvmvKtRQXb66UkcGG2pVpFf9tNxT/4DDaZJYZsM8t+fACWQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by GV1PR04MB10870.eurprd04.prod.outlook.com (2603:10a6:150:20a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Wed, 6 Aug
- 2025 08:36:59 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%4]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 08:36:59 +0000
-From: Xu Yang <xu.yang_2@nxp.com>
-To: gregkh@linuxfoundation.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	jun.li@nxp.com,
-	viro@zeniv.linux.org.uk,
-	thomas.weissschuh@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH] usb: core: hcd: fix accessing unmapped memory in SINGLE_STEP_SET_FEATURE test
-Date: Wed,  6 Aug 2025 16:39:55 +0800
-Message-Id: <20250806083955.3325299-1-xu.yang_2@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::31)
- To DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28340288CB2;
+	Wed,  6 Aug 2025 08:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754469623; cv=none; b=obrQTrTgOvM6cnOmVDFzidFfKoIKWw00bIoOVGPfeXVOykTfCNv0GIORYJhkrORJcrlJMPkeHShhF8IvDi24HfA2BaG38Jc0pPXah7gWVlqJmPNw9Rl1WIaF9cxtBHDra4k7CxKtHK3ruSSJ25sJ2RE5SjUddJqx1FQHzDQrYhI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754469623; c=relaxed/simple;
+	bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FxexyABWZsfEk6rZVjrrXvM3LhoLo9rUD5YMSAAwnu+mtYoE+Oe0eS59xiOiNGfSVWW8lWrQtvvIqMoI0EeyMj77x2HKrj/31QybT1QIzMCvTUloV6p8H8RZtlwMso+Yovd/TqwfTVH/GlEjoGiRbx7u/HebDC2rimO1S1EglxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6Grod9H; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af66d49daffso934203466b.1;
+        Wed, 06 Aug 2025 01:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754469619; x=1755074419; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
+        b=X6Grod9HcCQPgzJy6rojKkqdSfOw7yiWKX75pm7En2HfXr9GbjGMeaH4L/Mm0+aKNd
+         HT/SJARE8Cto4fHvDGUUBRjAojFlkBTfHDJNSFNxhwk2G6FBcSfyZX3HItXGDq1eJtP1
+         RuF93+DxCrgHoXdxEpjHyfanZkQeT68sI6Xm+icXCdW/qyLeJw3y1zVGbBsoRn9aSaSX
+         Okr72Yy0FImdMLZ1zJkzx2jmeizY8+sNwJ0P+hNy/3b34yOMvdcb4uhxvfhaaqt8bolE
+         z8S8Uwx8iYSqF8VvN3GbWOyX1VAckfJIQklINs65jIfUaxtVGjm+mSKe+P0ocl9o3vW8
+         l8UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754469619; x=1755074419;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BQS17Gx8nIJNb+Eu5z6Nn4tpeVvUU+ssz+FqyUsLAP4=;
+        b=jtfh4EaMsk9Ej1dfdGC1PZ+XtJf/XmP6hn4xm1p3WrSBnIn9E25EUH2+NJb2rVmFTm
+         ttaoWtYzx1bSBW6wb1uC/Q9Eah2KoC1LKwaLcsbNhdmVi7HeK2XcZYYIMyu6tWNkk89e
+         BchtM2tz7xY87nrY5s7lfwd+pKgVcyoZtCvgVlkGt2AiL4P61pbPJEwSyJzbwfPQWNQc
+         TIJX9lMeUdgDWAvNLMEC6PeEWAUjJ/DrLg0zz8sGallUdqFfTSXk7EMI348qJc7G525s
+         dRMiz0Dd67a1YJ/at+VGA8DLomyvCV5pzQ1O43MYeczAP/WyIQBHnDHqXYpOYpa29qJP
+         FKKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHjiWFhPRzNHXmc2Mooo+SLOm1diJyG/efdycnfrdw7ID6oIlW2oROtVLLJScY/Te93eYnZmK+QEA=@vger.kernel.org, AJvYcCWx3Dy2N8BUUurr5IqOmZj7DxYfWkEV753QB47d+r3taiHqu1cI6HWjd01+9+hFjnfzIQ4XATinLIfi@vger.kernel.org
+X-Gm-Message-State: AOJu0YypfkyFmIxVrww5Otql6u/7yCc0mTqEi5Nz+Fb+4S9RukxfCQvj
+	bDybxOf1ThF5vLmxbH4mAIZ85nUu6yHzq8YK+IdzXK7NEDztedojotsPsfvTXCfD9Gc6vSoChzK
+	c6LPbVpwPK9gXxBOxHpZPqSPU1InMK6E=
+X-Gm-Gg: ASbGncuRxJGLMFTR/56D1SjnC5WZQ01JkE8ev2l7rTyEup3VwOkwV1XjEj17kUtRH6Y
+	+KlrypdRyyZeATbOmyFy83ZX45iy0sVvJN/m3mglCbZblxcdHrlvvJwSOm5dLeZIboSR52EYegW
+	c1i4xnhHpTEkdZerRjf25qVGTYn5G4o9IM+OHHzqtoCfl7JhBfhAgeh7iNcnWfZ+ZW4kGfQv5+j
+	HrcLKXM
+X-Google-Smtp-Source: AGHT+IHfJ9svIzWODa8rgbvEIq584AUL0oyBljvd+PygocMjYZHjM2aXI+fyfYg0JbEiFEnyH4qTbculH1RSbuT6U5U=
+X-Received: by 2002:a17:907:980f:b0:aec:6600:dbe3 with SMTP id
+ a640c23a62f3a-af992bc3acfmr138428466b.56.1754469619115; Wed, 06 Aug 2025
+ 01:40:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|GV1PR04MB10870:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3e3dc45-a68d-4d02-38d9-08ddd4c46887
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2wQmwlLWI8dEArQdN1ZrVLov00XEbtKbo/XH74sxLgz2CAg1kh4l7YNu4KN0?=
- =?us-ascii?Q?IURKFXxCQj6b11vnW/gAlzzIlVHZ+LtXNMt8wfk/g3zPDKuoApv++hqJ1a0t?=
- =?us-ascii?Q?ZJrcCjTPRlLz0bAny4AVKh/HcnELXI7CyJJtlt56N4Z31b/WzuDJV10g8Jfg?=
- =?us-ascii?Q?IwbAwoxMktNDGVit/LO7b90/MbbnD9PkG2qjRzxnpepm0UeUZa++k9E5EFlm?=
- =?us-ascii?Q?fRuAA/uPWZdY5azHFi3raBGWuzOntGwKTEjbecqYs6OQLTrVcQuyBbq52b6i?=
- =?us-ascii?Q?C1DSwjr5MprBGypmXG1yPrZ4I9NJN7kGzznfs7XYyIjyuIsCLnml+RvSnDEH?=
- =?us-ascii?Q?XetpW4RgEXVcTI3moCFUDCP7DUDjIiIEr9x2YrZL2AMI7NjYAO1omAMzJn9D?=
- =?us-ascii?Q?+lxejRyPhGk3k/yljEOr2gLK3HNHftHu7POEk/UeF7dCb6JueXONwPX1mr8m?=
- =?us-ascii?Q?8IOF6UfITw2obrFlavG2t+od2JBh3igrkS9Hkd6g9okhFNC6FU2fLR3ShHLB?=
- =?us-ascii?Q?jYfGAjuu0Oc/9EUM+67ChUAzDc1yWVLGE8REw6ppEvb2zFtAU7QevX0aWgDB?=
- =?us-ascii?Q?CkLzGa92FO1TOh6P/YzeEQGOzbaTvP16LDwy6LVdRJSrdpLRIGuG1uwddiPu?=
- =?us-ascii?Q?EH9Hv5iY7AuL8CzM5y8m6A4z3ED1k9aHcq8Q2ggUsdd3SAWpTvfy3vExuGr4?=
- =?us-ascii?Q?N+JUkJzhQjW4MYHIXod/NpYYgkKDmjlKzjmW4wFb3HNIMfiyeHj3ciI1kX1B?=
- =?us-ascii?Q?NtCSzjoPy42oyWaALpoVLIfieN0bZ+8lGDwnzEbhQnl9wE61dNZMa2RYWtnQ?=
- =?us-ascii?Q?rZtzcAW7Li5sVwtIGApXPKAdAEJUMoAmraqZN0U6o9H8GtFz7phmjVrPJs/A?=
- =?us-ascii?Q?xWXnF+1wbegeRXTvYUTzjAFcadpR03aD/ZLsQ93GRC5YL1yaPgs9DqH3iLw0?=
- =?us-ascii?Q?xNxn1V8Trpqb4K/qVKLnmiRNeu1SiYWA5mBNFF+wt8BpNOXbVj6pJPDSsykk?=
- =?us-ascii?Q?zAhnVj9vSxB6qM3LFyyRelGWNz8Ej2JliRL35q/7x/8ENo1CFEnTieNB/fFG?=
- =?us-ascii?Q?Vyo3tx1Y/tTchOyg/CdrODofDG7x3mirANSu3ZoehUX1JULvNRC6yPpAWPSi?=
- =?us-ascii?Q?73ILl9/ctIE+0DXNlDJWBpWWtBbRw4EY8Gx2mCHHiMoGll80q9fDWvunPjaI?=
- =?us-ascii?Q?JQ3OcrqWWib4elToNLEanTqWcm/jDiIAB+k2C8S5Sq38xgwOz/WI5rS7nkM6?=
- =?us-ascii?Q?bgRDnZv07hkhxFKTDUNp48Jfme/6MjbOih5mkOSbkaGPOJbIV9sgpEYCx22j?=
- =?us-ascii?Q?DYOyqthQztRScRyxzR2D5LQd7fvj0DUCZC5jKHygMH1YXoutNLeVKY/c8rgX?=
- =?us-ascii?Q?TKaJV+r2YmBZJ8NjL+btABrMORY0ZmmdFHlsp6lTFH2tBgzcYoB5qVlqOfyF?=
- =?us-ascii?Q?GJGWDt9mBNa953dO9fU+1UupCdH8TBeJokD97iKjv2PO2ZjzIvw4RQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xqsKFf0y6J8GNiGTHVvcU9/HSLMbaPA33tQN08BV2vChHnLak4Rd1/hm77g6?=
- =?us-ascii?Q?LeyS2t5mgqmE83CI5FK8elclDKizlpKjnbXN/lTWrT2oxwQ+7EZYilxPnWv7?=
- =?us-ascii?Q?V6yEF061wCWjRX59ev0pJ+41MvY7uT+FlGL8LkXnv/NVs1dzxJYPBoQRXa+K?=
- =?us-ascii?Q?m8mf+DMy+JkNPbcsOeSV7iOrsGkWbKUE5HbdhtpSZ3DYpSu9u5BoGSRLHifk?=
- =?us-ascii?Q?dvbOwYQT1WnI66tj89V6nG4EyytL8OZIzjlMe33XnNMQN2yrC8B4H1liZE8F?=
- =?us-ascii?Q?HdHIB6EJQlH5kDP560cgB1aGPaR1+8R6Rfyv1p9XK62/dUmMfdg+iJbxMKcq?=
- =?us-ascii?Q?EKFpYFBBKcGpwGQWyUV2OFfxBGQWek//JehwG1kdqhfB59DAQYQJdzi84dua?=
- =?us-ascii?Q?0fh5ZLJvRwk5aAz+SdOkRwyCxkwopmdnKPx5cLSI8CrXhCxU4p9jzuQkJxEK?=
- =?us-ascii?Q?Fl1AuL/kPkrI/5rvX9dNVRw7/00hRmXKY+r+nUKVcJlqhJBMq+8dkYwI5GHG?=
- =?us-ascii?Q?2uuBc1qATz5KyGMFzLuLJYyrim3ZsGXhbafuRx/sJ9Bdb0JnPCGU4FHWAKgu?=
- =?us-ascii?Q?/PHzWl/yR8d9JeUzo1bmWd6CjoPyPi+0PkcnPtq8Rb7V894gIOACddp9bGBR?=
- =?us-ascii?Q?PJKlEJtFEYdJ17usEymPNfi6YwD2XBF/Dbw6h4gOudQlv0L916596JJXEK4Y?=
- =?us-ascii?Q?JJ9i4Pd2zAE7kXVlvdbTFLn+rAKLJPoxyR9A+QwPB8qHCqRYGARz0pd/2Y7j?=
- =?us-ascii?Q?i4wq29UDEpDuUC/YXsbk1nUkNEZF4U7J3Roxtz5BGlBewx1cSxMqW7a65iKj?=
- =?us-ascii?Q?GtnhUaXEl2qyiUF6kcEyMkkemVRSF83U9JZvVdllPxDeGyvikvhFfaDQ5F+a?=
- =?us-ascii?Q?/VX/Yf3UyzFbtgPo4hauFT7B+kMGEMOJMLBAFX+i6xNmIYu12EiOMkclFQ5n?=
- =?us-ascii?Q?ib9Px+PuY7qQY4I4+rKGB6vWWimE5vktKc006Jkhu4IjYWER1VfEAohlhH25?=
- =?us-ascii?Q?JniBeiBJ7g7DPruifRpzwzn8A9biXcgTHgLGluV5AmQtgQRwibdNGk3H+qVO?=
- =?us-ascii?Q?HD/3vZJo74fx51TjeW2BSyEjBjTS9x1nYOIW3A+d2rbgYXQAqJ5dFhRdzh5C?=
- =?us-ascii?Q?1L2qP2SLYZv9RSZXvR/WsfNVxtBRTIew1R/gTNke6ZqM1EwAx1QeR4jRTywE?=
- =?us-ascii?Q?yxHNnxzDTQkWQ9HT9wbjBxlrsTIE7c15j78UrKjLoP25HPm+wTfUjtrMt7yF?=
- =?us-ascii?Q?a60trscFK9DID7MJuGbT3wfLkIwW1CodrrpKj+lWNihBsQRVymjqRa0TV+wj?=
- =?us-ascii?Q?BBrEw+dLnUEw+ve79wikz2aSQ4O8+kynj8SluPuKwpnhz0FZ1g3WVhYejJmz?=
- =?us-ascii?Q?KekST8JjzjgSNhid0vlWnY0B78OUVUd3kJMxIQiwuE28RfPUbhtkb7T4FxhR?=
- =?us-ascii?Q?NGmD4cJZoDkR13f5YrXheHfSrUJjgqq5xnT7MUDWfe/x1J1dTkGjDcr9UwvR?=
- =?us-ascii?Q?1xhLOp9hif3sIk+7FeXdE8c4pyl+1v98hLtR3dRvazdVogfzWkGSoFmBDk0s?=
- =?us-ascii?Q?7JffJSzUkQIL2aVV72p+NTbWJeSYaNRgHNrqDAO3?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3e3dc45-a68d-4d02-38d9-08ddd4c46887
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 08:36:59.5020
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /Ezr1j9NrNz9TjHZuuc8C3rRvXiKzpklYY2IV/VU8Y1ymliWeC7f6d0SYjWwATgMQQjc6gFPcoAiA14csMMdNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10870
+References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
+ <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
+ <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com> <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
+ <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com> <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com>
+In-Reply-To: <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com>
+From: Andy Mindful <andy.mindful@gmail.com>
+Date: Wed, 6 Aug 2025 11:40:07 +0300
+X-Gm-Features: Ac12FXxTKMWG1pZklTF0P1qlwOqSdhMr6Q33eeVUrsVUud3FdPfuQWhVKcJIN3Y
+Message-ID: <CACTEcX7hsRkzYEBg4pQd5s36p_ZXJM=dtxSGmBjfkt5sWrXP8g@mail.gmail.com>
+Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
+ 6.8+ on ThinkPad X1 Carbon Gen 10
+To: regressions@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-acpi@vger.kernel.org, rafael@kernel.org, ville.syrjala@linux.intel.com, 
+	tglx@linutronix.de, Christian Brauner <brauner@kernel.org>, 
+	Jani Nikula <jani.nikula@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The USB core will unmap urb->transfer_dma after SETUP stage completes.
-Then the USB controller will access unmapped memory when it received
-device descriptor. If iommu is equipped, the entire test can't be
-completed due to the memory accessing is blocked.
+Hello,
 
-Fix it by calling map_urb_for_dma() again for IN stage. To reduce
-redundant map for urb->transfer_buffer, this will also set
-URB_NO_TRANSFER_DMA_MAP flag before first map_urb_for_dma() to skip
-dma map for urb->transfer_buffer and clear URB_NO_TRANSFER_DMA_MAP
-flag before second map_urb_for_dma().
+Can somebody advise how to properly bisect issues in linux-stable
+repository between v6.7.11 to v6.8-rc1 tags?
 
-Fixes: 216e0e563d81 ("usb: core: hcd: use map_urb_for_dma for single step set feature urb")
-Cc: stable@vger.kernel.org
-Reviewed-by: Jun Li <jun.li@nxp.com>
-Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
----
- drivers/usb/core/hcd.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I tried two options:
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 03771bbc6c01..c4a1875b5d3d 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -2166,7 +2166,7 @@ static struct urb *request_single_step_set_feature_urb(
- 	urb->complete = usb_ehset_completion;
- 	urb->status = -EINPROGRESS;
- 	urb->actual_length = 0;
--	urb->transfer_flags = URB_DIR_IN;
-+	urb->transfer_flags = URB_DIR_IN | URB_NO_TRANSFER_DMA_MAP;
- 	usb_get_urb(urb);
- 	atomic_inc(&urb->use_count);
- 	atomic_inc(&urb->dev->urbnum);
-@@ -2230,9 +2230,15 @@ int ehset_single_step_set_feature(struct usb_hcd *hcd, int port)
- 
- 	/* Complete remaining DATA and STATUS stages using the same URB */
- 	urb->status = -EINPROGRESS;
-+	urb->transfer_flags &= ~URB_NO_TRANSFER_DMA_MAP;
- 	usb_get_urb(urb);
- 	atomic_inc(&urb->use_count);
- 	atomic_inc(&urb->dev->urbnum);
-+	if (map_urb_for_dma(hcd, urb, GFP_KERNEL)) {
-+		usb_put_urb(urb);
-+		goto out1;
-+	}
-+
- 	retval = hcd->driver->submit_single_step_set_feature(hcd, urb, 0);
- 	if (!retval && !wait_for_completion_timeout(&done,
- 						msecs_to_jiffies(2000))) {
--- 
-2.34.1
+1. No skip
 
+git checkout v6.7.11
+git bisect start
+git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
+git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+
+Leads to:
+The merge base 0dd3ee31125508cd67f7e7172247f05b7fd1753a is bad.
+This means the bug has been fixed between
+0dd3ee31125508cd67f7e7172247f05b7fd1753a and
+[6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1].
+
+What should be done next?
+
+2. Skip
+git checkout v6.7.11
+git bisect start
+git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
+git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+git bisect good ba5afb9a84df2e6b26a1b6389b98849cd16ea757
+git bisect good 61da593f4458f25c59f65cfd9ba1bda570db5db7
+git bisect bad e38f734add21d75d76dbcf7b214f4823131c1bae
+git bisect bad 5d197e97fb106c09d3d013be341e5961fd70ec8a
+git bisect good 1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+git bisect bad 8c9244af4dc8680a453e759331f0c93d5bde1898
+git bisect bad 783288010035e4c250a0b6491a4642cdb8d30548
+git bisect bad 1c3c87d720cbd1ff86dc1bfc6df8ee9adce5879b
+git bisect good 8d99e347c097ab3f9fb93d0f88dddf20051d7c88
+git bisect bad 6c370dc65374db5afbc5c6c64c662f922a2555ad
+git bisect good 43f623f350ce1c46c53b6b77f4dbe741af8c44f3
+git bisect good 8a89efd43423cb3005c5e641e846184e292c1465
+git bisect good 5d74316466f4aabdd2ee1e33b45e4933c9bc3ea1
+
+Leads to:
+
+# first bad commit: [6c370dc65374db5afbc5c6c64c662f922a2555ad] Merge
+branch 'kvm-guestmemfd' into HEAD
+
+Which is incorrect as per Paolo Bonzini comment.
+
+I'd like to test this thing, because hibernation is quite crucial in a
+multi-boot environment and may save a lot of time while working with
+different systems.
+
+Thank you in advance.
+
+=D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 22:49=
+ Andy Mindful <andy.mindful@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Can you please advise on how to bisect further?
+>
+> andy@lenovo:~/linux-stable$ git bisect bad
+> The merge base 0dd3ee31125508cd67f7e7172247f05b7fd1753a is bad.
+> This means the bug has been fixed between
+> 0dd3ee31125508cd67f7e7172247f05b7fd1753a and
+> [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1].
+>
+> andy@DESKTOP-0R165CF:~/linux-stable$ git bisect log
+> git bisect start
+> # status: waiting for both good and bad commits
+> # good: [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1] Linux 6.7.11
+> git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+> # status: waiting for bad commit, 1 good commit known
+> # bad: [6613476e225e090cc9aad49be7fa504e290dd33d] Linux 6.8-rc1
+> git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
+> # bad: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
+> git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+>
+> andy@lenovo:~/linux-stable$ git status
+> HEAD detached at 0dd3ee311255
+> You are currently bisecting, started from branch '6fc5460ed8dd'.
+> (use "git bisect reset" to get back to the original branch)
+>
+> It is not moving further.
+>
+> =D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 17:=
+50 Paolo Bonzini <pbonzini@redhat.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Mon, Aug 4, 2025 at 12:57=E2=80=AFPM Andy Mindful <andy.mindful@gmai=
+l.com> wrote:
+> > > Double-checked bisect, looks like I've have found broken commit:
+> > >
+> > > > > git bisect bad
+> > > > > The merge base ba5afb9a84df2e6b26a1b6389b98849cd16ea757 is bad.
+> > > > > This means the bug has been fixed between
+> > > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757 and
+> > > > > [1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+> > > > > 61da593f4458f25c59f65cfd9ba1bda570db5db7
+> > > > > 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+> > > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757].
+> >
+> > This skip is messing up the results:
+> >
+> > # skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
+> > git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+> >
+> > and there are still 3858 commits in
+> > ba5afb9a84df2e6b26a1b6389b98849cd16ea757..{1b1934dbbdcf9aa2d507932ff488=
+cec47999cf3f,61da593f4458f25c59f65cfd9ba1bda570db5db7,ba5afb9a84df2e6b26a1b=
+6389b98849cd16ea757}
+> >
+> > Any chance you can get 6.7 to work and restrict the range further?
+> >
+> > Thanks,
+> >
+> > Paolo
+> >
 
