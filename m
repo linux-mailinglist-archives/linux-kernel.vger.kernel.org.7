@@ -1,175 +1,123 @@
-Return-Path: <linux-kernel+bounces-757955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E246DB1C8CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:32:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECBBB1C8CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E093B32FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:32:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 136B04E34B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C07292B3E;
-	Wed,  6 Aug 2025 15:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72C8291C18;
+	Wed,  6 Aug 2025 15:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LjPqLBSg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="skleuETo"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A96291C02;
-	Wed,  6 Aug 2025 15:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754494341; cv=pass; b=HJNp/84EMGK9w8lvrll45Q9XyD4YL4hBKa/t7akSFg31h0T70xBZEC09iZATcmQYknqXNdvyQcbrcjLkDej1sfEIqVJz7scsQGwCWwGBwdkBwhny/Hf+MuTosnvP4uDUz54CLB1IpCpZEMlq2MVVg9/pku7UEwVVI0+Ffr4tkzU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754494341; c=relaxed/simple;
-	bh=Zmwv4vh3Fx0bxFxRlXfARN3k9faUJVlnf8ZTxt8rEjI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Fr5gO7PXtNIFDnWiL6dlrAJ/7r3sq+MkW2hhqUuPNDxb6gA0fz5a5hxFM/E6D3F00GO/A4ipriHKVMpO4ZSHRwhR7dSp9SFaMVDmPRzMhh9yGLQQ0o5Vm3JHn0dyWAc1f0siMWXqK6ck4FPX9fJc3Xfy4oLj0BLYTgMWH4v+bNQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LjPqLBSg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754494322; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EvOxFINf6Q6TJgBgY9eusaVIUI7WQx4ErTpp8xqCj3msXCOyIl29M5MEpEX8T0IUExzELan5X7d9lZ+qavstYEMBoOhD9JCKJr3nnyAmaCNi97tSklILMeD3wWDi9RsAx//vSjbYIIwi0UUXWveb+hIRgFcXYw4HAeMVBvdZ1/4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754494322; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zVx/BBwBcVenmzScNrfKqLq/SI6/4vzW+8q9NLGYSVw=; 
-	b=drSSVxdylxxzpYsIkVa+wYn+FqE2poR63zDv2unDMC4vq4KHR8ICdxEnUhYHsqKrA4FO5o4aOhI4ftUJhPP0R3kgIYjxODiG01kDUrRp9+QOCo9Z4OlJoigzVrI11nBiQdOJ3ULku01d5mxXrGIHZJlOOClai/IvekowxwAkZ8A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754494322;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=zVx/BBwBcVenmzScNrfKqLq/SI6/4vzW+8q9NLGYSVw=;
-	b=LjPqLBSglAaBV3N8yv9Je0baMe4xWUM2MEzU5pStsjaCkQSF8n9y2Y5Gbf9If96s
-	GgIneJ94i9zggEodhYP6pBT+7BftYkR7E8AvGCuJBZJ/f2omxMdaR9fVDz348EjuoB6
-	YVfrHQ2Q7hJr4aMZGVyR1WeLZBxFuUU/jtUdDkzc=
-Received: by mx.zohomail.com with SMTPS id 1754494320728780.5263856446262;
-	Wed, 6 Aug 2025 08:32:00 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97756AD5A;
+	Wed,  6 Aug 2025 15:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754494467; cv=none; b=oKmit+y5L26yOXK7OhA8vK++ZH7IKVrqUm8XsoClxsqqT4neETmk9pC/FHs1kFngip0tBr3+ICeTtM5/XG+sGKblAe2L6Hcom3tr+YzRveN8hGcj0lSz3sQ+5Wzv2HZhFqLWkLGaWg5M2uxFp7S+gmDS4mXfc9HBzXnonnOopL4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754494467; c=relaxed/simple;
+	bh=Jit/bnNHlQMDo9ewLxqU4Bc5KKfUzRCxyJ/cLnh1YNo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eBZLXAyWPtmMvwC9f/FNO11/rOVCxxCEr2eICtMFXCgsBZFYL1EgE7DNxOP0zhbL49LPOFmFkIeEJ98iybWDieAzD+byryTamsIZBMJY0Vsx9jX9aPFZ+5ohHyJGbdv2MQTmOAIoolq+TRi4jamkNFnK8AXXJCMAVs2egGSxkp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=skleuETo; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576FTZjq001991;
+	Wed, 6 Aug 2025 17:34:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=VGM4i/YY8L3GxVbjbzZ+E1
+	wPLPAJDd6KHMtwpJhsXpg=; b=skleuEToU7r5Casj+OZTYun99QOB8DFNTFQ4gF
+	yLZwcardz6CLAhXNpoFWCTjttw94meQyIvM0uUQQLkFzq0RLYX7Eh2QldUct1v1U
+	LH5M7mMW7AUO2ceaRvyXOTuQmZsPChxoKmryoh5QA1okx2yKksGkG2Tx3oDVJItv
+	SBxhNnvMiMKvUhecO0siRRIm4A9jcFl6+EGhd5Hdy8g+ufpHewostoxOEaaimwT9
+	EDCVS3EApwDVWtrv3Sr7PwcF7J/RHT9MApWwNcl8QPilLpumde8stW2lxMSKsP5L
+	apKUvkID04kAmGSIijAdsB47yYTqP6d8B447BtSxoVP8defg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx8c1b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 17:34:12 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 551D240053;
+	Wed,  6 Aug 2025 17:33:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1A45D7385C3;
+	Wed,  6 Aug 2025 17:32:43 +0200 (CEST)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Aug
+ 2025 17:32:42 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Date: Wed, 6 Aug 2025 17:32:42 +0200
+Subject: [PATCH] memory: stm32_omm: Fix req2ack update test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 06/16] rust: block: normalize imports for `gen_disk.rs`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <877bzg8pvp.fsf@kernel.org>
-Date: Wed, 6 Aug 2025 12:31:45 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DC4C6260-9D2E-40B7-9A0F-F629EB831F5F@collabora.com>
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
- <20250711-rnull-up-v6-16-v3-6-3a262b4e2921@kernel.org>
- <1YjnBHBMF7DAKjkQrfW9goplGCUynLmjrUnLo3PrN5qMYx6uUcolbOtjWPNyVQEwyehPW8Xk7B1oeBAffoYr9A==@protonmail.internalid>
- <F5A3232C-50E8-4615-929A-80F3ED4EFEBA@collabora.com>
- <877bzg8pvp.fsf@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250806-upstream_omm_fix_req2ack_test_condition-v1-1-4879a1d7f794@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAJl1k2gC/x2N0QrCMAwAf2Xk2UJX0RV/RSTUNtMgbWfSiTD27
+ xYfD467DZSESeEybCD0YeVaOoyHAeIzlAcZTp3BWXey3p7NumgTChlrzjjzF4XeLsQXNtKGsZb
+ ErTfMNJGf7zaNx+Sh1xahbv9P19u+/wBG27kLeQAAAA==
+X-Change-ID: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <stable@vger.kernel.org>,
+        Patrice
+ Chotard <patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_04,2025-08-06_01,2025-03-28_01
 
+Fix test which allows to compute req2ack value.
 
+Cc: stable@vger.kernel.org
+Fixes: 8181d061dcff ("memory: Add STM32 Octo Memory Manager driver")
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+ drivers/memory/stm32_omm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On 6 Aug 2025, at 11:51, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
->=20
->>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->>>=20
->>> Clean up the import statements in `gen_disk.rs` to make the code =
-easier to
->>> maintain.
->>>=20
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> ---
->>> rust/kernel/block/mq/gen_disk.rs | 10 +++++++---
->>> 1 file changed, 7 insertions(+), 3 deletions(-)
->>>=20
->>> diff --git a/rust/kernel/block/mq/gen_disk.rs =
-b/rust/kernel/block/mq/gen_disk.rs
->>> index cd54cd64ea88..679ee1bb2195 100644
->>> --- a/rust/kernel/block/mq/gen_disk.rs
->>> +++ b/rust/kernel/block/mq/gen_disk.rs
->>> @@ -5,9 +5,13 @@
->>> //! C header: =
-[`include/linux/blkdev.h`](srctree/include/linux/blkdev.h)
->>> //! C header: =
-[`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
->>>=20
->>> -use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
->>> -use crate::{bindings, error::from_err_ptr, error::Result, =
-sync::Arc};
->>> -use crate::{error, static_lock_class};
->>> +use crate::{
->>> +    bindings,
->>> +    block::mq::{raw_writer::RawWriter, Operations, TagSet},
->>> +    error::{self, from_err_ptr, Result},
->>> +    static_lock_class,
->>> +    sync::Arc,
->>> +};
->>> use core::fmt::{self, Write};
->>>=20
->>> /// A builder for [`GenDisk`].
->>>=20
->>> --
->>> 2.47.2
->>>=20
->>>=20
->>>=20
->>=20
->> Same comment as the preceding =E2=80=9Cimport=E2=80=9D patch: this is =
-syntax is problematic.
->=20
-> I used to share your viewpoint, but I changed my opinion and now =
-prefer
-> "normalized" imports (the combined form).
->=20
-> Now I can just blindly merge all the imports, remove duplicates and =
-then
-> ask rust-analyzer to normalize imports again, and then format with
-> rustfmt. I find that this workflow is very low overhead.
->=20
->=20
-> Best regards,
-> Andreas Hindborg
+diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
+index 79ceb1635698f6bc8bd4a39fdeaced1ec318e1f6..9efc56a85b5ecca49eb6dfc0ef83880f89591cd1 100644
+--- a/drivers/memory/stm32_omm.c
++++ b/drivers/memory/stm32_omm.c
+@@ -247,7 +247,7 @@ static int stm32_omm_configure(struct device *dev)
+ 		if (mux & CR_MUXEN) {
+ 			ret = of_property_read_u32(dev->of_node, "st,omm-req2ack-ns",
+ 						   &req2ack);
+-			if (!ret && !req2ack) {
++			if (!ret && req2ack) {
+ 				req2ack = DIV_ROUND_UP(req2ack, NSEC_PER_SEC / clk_rate_max) - 1;
+ 
+ 				if (req2ack > 256)
 
-That=E2=80=99s because you have a separate commit where you do this =
-before applying
-your work on top. If you=E2=80=99re rebasing on top of someone else's =
-work, then a
-lot of conflicts will pop up. And unlike the saner approach where each =
-import
-is in its own line, it=E2=80=99s now absolutely not clear how the =
-conflicts should
-be resolved.
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
 
-The only thing that can be done then is to accept whatever the current =
-change
-is, and ask rust-analyzer to reimport everything and reformat.
-
-IMHO, this is not great.
-
-=E2=80=94 Daniel
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
