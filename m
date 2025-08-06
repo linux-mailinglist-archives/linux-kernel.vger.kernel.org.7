@@ -1,354 +1,113 @@
-Return-Path: <linux-kernel+bounces-757779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64759B1C685
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725FDB1C684
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10194188DC7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A337A5860
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063BF28B519;
-	Wed,  6 Aug 2025 13:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6FC28A41E;
+	Wed,  6 Aug 2025 13:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b5vCGgsI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="kIQRATFv"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C1A215F6B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 13:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE75FB95;
+	Wed,  6 Aug 2025 13:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485236; cv=none; b=e+ZVpOMue6a4p9TUj7SA37fV9SlWlo7sIwM4mlBa+XYB/Z9MyGVG+1wW/Uzw1MuPZ7fkXJgw53cdxA8++GOSiG8DrjmjSHd6/B3bdWqnPjajqlGUtg9i/NccYWqWIFp/4USOJuIK5yQ3s/ejiNtpv99+L2Fla9HdVwvniFh0QOQ=
+	t=1754485226; cv=none; b=Z2NVpVvgp9qs8Mg4nYldq1wFr+1Ak1bYT9wwz5pyriH1ZkAeGGQbcYtR6aIPCUQTZN2+Q11BuNVCCRTKynBMsLmi3IJdQbPA+/M7eq5tLEr6gDo+5gOsWjEbJU02/znAqIgKZsAVhk1CkvMRmgDgoX/ZpUzE1hSQfLynGwBCfIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485236; c=relaxed/simple;
-	bh=xXV+mD9P20qcxx12jKhuzGdRXrAXqtIKrJ86d1mcirE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NbKTdiu5x3xSzQ/lxM8fcnTZyGcqr5Erv9qwHShFIMRS0FJ/3Q2BNTNrEoUg/BINgZAez++uSpRcLjBANQ1VsoREOxVV25Ihm3qUD421R22MNcdx7DUdCpCXtvD1pZN4Hwno8TbhvX5uR6TaSvCbm8ROi/gqF2ewf7Xo+jBD8zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b5vCGgsI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754485233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=648BoZ6XUs9/Wk59p7dCoGBCyNzwgD9DBIqZM2kcsG8=;
-	b=b5vCGgsI0B5rX0u/SNyGLqcGJjaNeM34GSh9IAavkVCl1fxPutxHnt5OCEm0LjhJ6LuXGr
-	wrTurhTHx8g2X4CTDdx7NvGbirGNuzCw6Bmf0+wk+P+yzlcXX7DMSyOzSJPTjTqw5+jYm+
-	HQsBihCxqeUvK7DJUaMj4p3uRBT/7nc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-BoG8oBp8NTiQfPY65IM34Q-1; Wed,
- 06 Aug 2025 09:00:31 -0400
-X-MC-Unique: BoG8oBp8NTiQfPY65IM34Q-1
-X-Mimecast-MFC-AGG-ID: BoG8oBp8NTiQfPY65IM34Q_1754485227
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	s=arc-20240116; t=1754485226; c=relaxed/simple;
+	bh=5dBsSFUhzpantvZNynZVlQp2rA4vTP7pUqhKRuQ2aqQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IlB0eYXclZOyHLCEqEcYM+iJ0tgQXV7DxqXWRGb8JHHJ4yNUGmdblPrDBznaurVftO2YvZR207hqxDg2ZiVgRRGExdEj42Q3nXSsbZjjyWl/qWkYhKefxA+n/iwfqFRZXd35BGkTDdXgO4Eb1NHYNRhB97dwcsBCj2vif1UGWWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=kIQRATFv; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4DD4F40AD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1754485220; bh=im7LLmwAt+qnrrIdtEWbBORzYEkTYFR5z3r9vPt2t1g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=kIQRATFvKHkvdsD3LzWuIoQwzOdnIFlx7S99tlZwt0LhqkTfEJlQVi0AOZ00ySugw
+	 wo3840PtNlJsoEBCGBS8yVc2nDkQRu82swEfp6dG1D7J1H+5mFLwXzArHETUqh9AnU
+	 UQylKM3kap6DPVneV9JbDk2T4NZJ+dx2baDmfNO5ig2GpV4LbbO0T93Fsp91T8hkRa
+	 cNZsISTo3l1DtsNRycXw9KQ+aZk1ERGjALNluiCkrH9NHMFZ07YkbMAMrQ5RQk4Xdu
+	 Bj6qm52zkJUtrZAZF0/3p/Hp+e1gUHNpnFQMEl2ZycMZNWXeL0AzXOjATTvlqwRbY5
+	 otrhnNbQ4Ga2A==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB054195419D;
-	Wed,  6 Aug 2025 13:00:26 +0000 (UTC)
-Received: from jbrnak-thinkpadx1carbongen9.tpbc.com (unknown [10.43.17.245])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1BABE3000198;
-	Wed,  6 Aug 2025 13:00:22 +0000 (UTC)
-From: Jakub Brnak <jbrnak@redhat.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	howardchu95@gmail.com,
-	jbrnak@redhat.com
-Subject: [PATCH] perf: use standard syscall tracepoint structs for augmentation
-Date: Wed,  6 Aug 2025 15:00:17 +0200
-Message-ID: <20250806130017.541416-1-jbrnak@redhat.com>
+	by ms.lwn.net (Postfix) with ESMTPSA id 4DD4F40AD2;
+	Wed,  6 Aug 2025 13:00:20 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 10/12] docs: kdoc: further rewrite_struct_members() cleanup
+In-Reply-To: <20250806110538.35bcc127@foz.lan>
+References: <20250801001326.924276-1-corbet@lwn.net>
+ <20250801001326.924276-11-corbet@lwn.net>
+ <20250801080744.14f83626@foz.lan> <87v7n6pscu.fsf@trenco.lwn.net>
+ <20250804151511.73ffb949@foz.lan> <87ms8djsjx.fsf@trenco.lwn.net>
+ <20250806110538.35bcc127@foz.lan>
+Date: Wed, 06 Aug 2025 07:00:19 -0600
+Message-ID: <87ikj0k3ks.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
 
-Replace custom syscall structs with the standard trace_event_raw_sys_enter
-and trace_event_raw_sys_exit from vmlinux.h.
-This fixes a data structure misalignment issue discovered on RHEL-9, which
-prevented BPF programs from correctly accessing syscall arguments.
-This change also aims to improve compatibility between different version
-of the perf tool and kernel by using CO-RE so BPF code can correclty
-adjust field offsets.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
----
-The issue was encountered on RHEL-9 by failing trace enum augmentation tests.
+>> > Btw, on this specific case, better to use non-capture group matches
+>> > to avoid those "empty" spaces, e.g. (if I got it right):  
+>> 
+>> The problem is this line here:
+>> 
+>>                 oldmember = "".join(t) # Reconstruct the original formatting
+>> 
+>> The regex *has* to capture the entire match string so that it can be
+>> reconstructed back to its original form, which we need to edit the full
+>> list of members later on.
+>> 
+>> This code could use a deep rethink, but it works for now :)
+>
+> well, we can still do:
+>
+> 	for t in tuples:
+> 	    maintype, -, -, content, -, s_ids = t
+> 	    oldmember = "".join(t)
+>
+> this way, we'll be naming the relevant parameters and reconstructing
+> the the original form.
 
-Before change:
-113: perf trace enum augmentation tests:
---- start ---
-test child forked, pid 92876
-Checking if vmlinux exists
-Tracing syscall landlock_add_rule
-[syscall failure] Failed to trace syscall landlock_add_rule, output:
+I've already made a change much like that (the "-" syntax doesn't work,
+of course); I hope to post the updates series today, but it's going to
+be busy.
 
----- end(-1) ----
-113: perf trace enum augmentation tests                              : FAILED!
+> Btw, while re.findall() has an API that doesn't return match
+> objects which is incoherent with the normal re API, while looking
+> at the specs today(*), there is an alternative: re.finditer(). 
+> We could add it to KernRE cass and use it on a way that it will use
+> a Match instance. Something like:
+>
+> 	# Original regex expression
+> 	res = Re.finditer(...)
+> [...]
 
-After change:
-113: perf trace enum augmentation tests:
---- start ---
-test child forked, pid 98369
-Checking if vmlinux exists
-Tracing syscall landlock_add_rule
-Tracing non-syscall tracepoint timer:hrtimer_start
----- end(0) ----
-113: perf trace enum augmentation tests                              : Ok
+A definite possible improvement for later... :)
 
- .../bpf_skel/augmented_raw_syscalls.bpf.c     | 58 ++++++++-----------
- tools/perf/util/bpf_skel/vmlinux/vmlinux.h    | 14 +++++
- 2 files changed, 37 insertions(+), 35 deletions(-)
+Thanks,
 
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index cb86e261b4de..de397b3b0776 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -60,18 +60,6 @@ struct syscalls_sys_exit {
- 	__uint(max_entries, 512);
- } syscalls_sys_exit SEC(".maps");
- 
--struct syscall_enter_args {
--	unsigned long long common_tp_fields;
--	long		   syscall_nr;
--	unsigned long	   args[6];
--};
--
--struct syscall_exit_args {
--	unsigned long long common_tp_fields;
--	long		   syscall_nr;
--	long		   ret;
--};
--
- /*
-  * Desired design of maximum size and alignment (see RFC2553)
-  */
-@@ -115,7 +103,7 @@ struct pids_filtered {
- } pids_filtered SEC(".maps");
- 
- struct augmented_args_payload {
--	struct syscall_enter_args args;
-+	struct trace_event_raw_sys_enter args;
- 	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
- };
- 
-@@ -135,7 +123,7 @@ struct beauty_map_enter {
- } beauty_map_enter SEC(".maps");
- 
- struct beauty_payload_enter {
--	struct syscall_enter_args args;
-+	struct trace_event_raw_sys_enter args;
- 	struct augmented_arg aug_args[6];
- };
- 
-@@ -192,7 +180,7 @@ unsigned int augmented_arg__read_str(struct augmented_arg *augmented_arg, const
- }
- 
- SEC("tp/raw_syscalls/sys_enter")
--int syscall_unaugmented(struct syscall_enter_args *args)
-+int syscall_unaugmented(struct trace_event_raw_sys_enter *args)
- {
- 	return 1;
- }
-@@ -204,7 +192,7 @@ int syscall_unaugmented(struct syscall_enter_args *args)
-  * filename.
-  */
- SEC("tp/syscalls/sys_enter_connect")
--int sys_enter_connect(struct syscall_enter_args *args)
-+int sys_enter_connect(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[1];
-@@ -225,7 +213,7 @@ int sys_enter_connect(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_sendto")
--int sys_enter_sendto(struct syscall_enter_args *args)
-+int sys_enter_sendto(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[4];
-@@ -243,7 +231,7 @@ int sys_enter_sendto(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_open")
--int sys_enter_open(struct syscall_enter_args *args)
-+int sys_enter_open(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *filename_arg = (const void *)args->args[0];
-@@ -258,7 +246,7 @@ int sys_enter_open(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_openat")
--int sys_enter_openat(struct syscall_enter_args *args)
-+int sys_enter_openat(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *filename_arg = (const void *)args->args[1];
-@@ -273,7 +261,7 @@ int sys_enter_openat(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_rename")
--int sys_enter_rename(struct syscall_enter_args *args)
-+int sys_enter_rename(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[0],
-@@ -304,7 +292,7 @@ int sys_enter_rename(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_renameat2")
--int sys_enter_renameat2(struct syscall_enter_args *args)
-+int sys_enter_renameat2(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[1],
-@@ -346,7 +334,7 @@ struct perf_event_attr_size {
- };
- 
- SEC("tp/syscalls/sys_enter_perf_event_open")
--int sys_enter_perf_event_open(struct syscall_enter_args *args)
-+int sys_enter_perf_event_open(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const struct perf_event_attr_size *attr = (const struct perf_event_attr_size *)args->args[0], *attr_read;
-@@ -378,7 +366,7 @@ int sys_enter_perf_event_open(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_clock_nanosleep")
--int sys_enter_clock_nanosleep(struct syscall_enter_args *args)
-+int sys_enter_clock_nanosleep(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *rqtp_arg = (const void *)args->args[2];
-@@ -399,7 +387,7 @@ int sys_enter_clock_nanosleep(struct syscall_enter_args *args)
- }
- 
- SEC("tp/syscalls/sys_enter_nanosleep")
--int sys_enter_nanosleep(struct syscall_enter_args *args)
-+int sys_enter_nanosleep(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *req_arg = (const void *)args->args[0];
-@@ -429,7 +417,7 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
- 	return bpf_map_lookup_elem(pids, &pid) != NULL;
- }
- 
--static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
-+static int augment_sys_enter(void *ctx, struct trace_event_raw_sys_enter *args)
- {
- 	bool augmented, do_output = false;
- 	int zero = 0, index, value_size = sizeof(struct augmented_arg) - offsetof(struct augmented_arg, value);
-@@ -444,7 +432,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- 		return 1;
- 
- 	/* use syscall number to get beauty_map entry */
--	nr             = (__u32)args->syscall_nr;
-+	nr             = (__u32)args->id;
- 	beauty_map     = bpf_map_lookup_elem(&beauty_map_enter, &nr);
- 
- 	/* set up payload for output */
-@@ -454,8 +442,8 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- 	if (beauty_map == NULL || payload == NULL)
- 		return 1;
- 
--	/* copy the sys_enter header, which has the syscall_nr */
--	__builtin_memcpy(&payload->args, args, sizeof(struct syscall_enter_args));
-+	/* copy the sys_enter header, which has the id */
-+	__builtin_memcpy(&payload->args, args, sizeof(struct trace_event_raw_sys_enter));
- 
- 	/*
- 	 * Determine what type of argument and how many bytes to read from user space, using the
-@@ -515,14 +503,14 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- 		}
- 	}
- 
--	if (!do_output || (sizeof(struct syscall_enter_args) + output) > sizeof(struct beauty_payload_enter))
-+	if (!do_output || (sizeof(struct trace_event_raw_sys_enter) + output) > sizeof(struct beauty_payload_enter))
- 		return 1;
- 
--	return augmented__beauty_output(ctx, payload, sizeof(struct syscall_enter_args) + output);
-+	return augmented__beauty_output(ctx, payload, sizeof(struct trace_event_raw_sys_enter) + output);
- }
- 
- SEC("tp/raw_syscalls/sys_enter")
--int sys_enter(struct syscall_enter_args *args)
-+int sys_enter(struct trace_event_raw_sys_enter *args)
- {
- 	struct augmented_args_payload *augmented_args;
- 	/*
-@@ -550,16 +538,16 @@ int sys_enter(struct syscall_enter_args *args)
- 	 * unaugmented tracepoint payload.
- 	 */
- 	if (augment_sys_enter(args, &augmented_args->args))
--		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-+		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.id);
- 
- 	// If not found on the PROG_ARRAY syscalls map, then we're filtering it:
- 	return 0;
- }
- 
- SEC("tp/raw_syscalls/sys_exit")
--int sys_exit(struct syscall_exit_args *args)
-+int sys_exit(struct trace_event_raw_sys_exit *args)
- {
--	struct syscall_exit_args exit_args;
-+	struct trace_event_raw_sys_exit exit_args;
- 
- 	if (pid_filter__has(&pids_filtered, getpid()))
- 		return 0;
-@@ -570,7 +558,7 @@ int sys_exit(struct syscall_exit_args *args)
- 	 * "!raw_syscalls:unaugmented" that will just return 1 to return the
- 	 * unaugmented tracepoint payload.
- 	 */
--	bpf_tail_call(args, &syscalls_sys_exit, exit_args.syscall_nr);
-+	bpf_tail_call(args, &syscalls_sys_exit, exit_args.id);
- 	/*
- 	 * If not found on the PROG_ARRAY syscalls map, then we're filtering it:
- 	 */
-diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-index a59ce912be18..b8b234726863 100644
---- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-+++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-@@ -212,4 +212,18 @@ struct pglist_data {
- 	int nr_zones;
- } __attribute__((preserve_access_index));
- 
-+struct trace_event_raw_sys_enter {
-+	struct trace_entry ent;
-+	long int id;
-+	long unsigned int args[6];
-+	char __data[0];
-+} __attribute__((preserve_access_index));
-+
-+struct trace_event_raw_sys_exit {
-+	struct trace_entry ent;
-+	long int id;
-+	long int ret;
-+	char __data[0];
-+} __attribute__((preserve_access_index));
-+
- #endif // __VMLINUX_H
--- 
-2.50.1
-
+jon
 
