@@ -1,252 +1,112 @@
-Return-Path: <linux-kernel+bounces-758138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E92B1CB7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:56:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D8FB1CB84
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89B217754A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:56:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B8A24E2606
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996632BD024;
-	Wed,  6 Aug 2025 17:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2466029B8D8;
+	Wed,  6 Aug 2025 17:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="M3u0mtN8"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSPedcTn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2148B2BCF5D;
-	Wed,  6 Aug 2025 17:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7288F1E7C03;
+	Wed,  6 Aug 2025 17:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754502948; cv=none; b=Wx+XX6QYWuZeLyc48k7FI3wyT14sfmRX1+CW+7zsvn7J/lO0ffogdopnR6VTTAOQFfksiKbvBZEtasrGVmVbnXLejwkrY41N+KryRWppDyKGLW0KCEs4fdNlJl2Zv6GQ/mJsJki6ANabTmyA5daGxINRCUSQQWctZClPwDM1XRM=
+	t=1754503102; cv=none; b=J26pYj9rIa0CZLXDJi9KbTCs1XlnIOPVZORf6B+FF8iuoK+yKlhtIb1onKenVTvQIHipqLz7M9xaQAAwzWuM2KJGsEul0Bq4RmNgEMdWc+JajQw8oQEJC8hOdvEtyuWZelWN3nNd5mlNJRK/LqF2CFd9/zeoZX5IumLMpNMCfOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754502948; c=relaxed/simple;
-	bh=YfzESCjmw7efFV3Bycvd9p6+JMPz/pBQ3JyWrH1QtCo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EeAdO4UMYtZTWgiDyNQ43LR1Pc7WdsuSm2Enftoi+jTuT2C+rHmAA9P4lf9Qq44Ihpd3hau2gMvJQ4nDIqJpr1HBd2u0tA7wBBz2JQLZSPLPD3e3vr0IWrm3ch3JpzTYg+PbhdEmg9eKuFSnspb1vfIt0kEvIJyluAamc+Z+ZcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=M3u0mtN8; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bxyd95hCLz9tmC;
-	Wed,  6 Aug 2025 19:55:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754502941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GgHcJ8FhweBKsT5Y/D492w6gSm+YeJZzSPhVUGFdD20=;
-	b=M3u0mtN8SUXUZdMrfkndbmCAWNckXJ1hVWL8pWTn0sSKc1gnbIhV7sEjDO7ojFIkXF3XJu
-	+YSeuwWop84DbMG4rQ+0Y+sZShOh7lIRW24eFgWlIu+fkQy+6a3qfOCY2Nu20er/x/ZopH
-	yXAfOFBlw9NOZR9DQEjYV/592tvIyA0617v1zdzBtwVijOtcrG72LpvkETZFDLt/O8b3F+
-	NzRpbnIJh4/1HvRe3fpwqahqkpZxIivt2tZ7w/DPJk9B0YwRwXcV49lZPI+a/TMD9UguJd
-	GlUXNK2o3gNg43xWk1FMojyfFW73vw4ArusAr2sifhfJtyke2p14gUgPVNMhhw==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 07 Aug 2025 03:55:24 +1000
-Subject: [PATCH v3 2/2] selftests/filesystems: add basic fscontext log
- tests
+	s=arc-20240116; t=1754503102; c=relaxed/simple;
+	bh=QRv/wMrnx6kdm9+dkuQm+1R6GRmMJS9e4RFnl9DCqgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIVX2pt9n9DYm9jvjjQkGMQoC+npyEaq6/LX51P4ymn93AnRifKKtfNGzLZWV1a6LgUFSNozNkQ8rGST+wsbxNlEIi7ig6crgy2zZMRPjqPcCKuFycvEAaeeq601tnvSH5NGrdL3YKT+6of+DTHJWW8l0vzz3cjoyE9VMRY7FDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSPedcTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82CCC4CEF7;
+	Wed,  6 Aug 2025 17:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754503102;
+	bh=QRv/wMrnx6kdm9+dkuQm+1R6GRmMJS9e4RFnl9DCqgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SSPedcTnb9PNFJz5BquW88b7de3lTQAmDba8eXMpQiteJlXzluzbH2j45kR4N6RQz
+	 o10imlbS0xV9f/PuyG69RxEB1PHVyBVxEpHnNok/8mEkS/Wi3qJVEyrzf3gnXks46i
+	 rwHjVx9dBKw85guTrX7GccXznHPudxj2Tt7xh3coZVn2MifKXj1OgBxe10KW8xIFM0
+	 u/VRZElnuJU6cQE/CXgFKclWAkzNk23uoZPHI4lcRcKgGpdVh01d/YvVWu2kWt6HcH
+	 a6aRbLFJWadwqOAELuptKiaB1ZjO7RQFYo2sgbtn0RCB+KyonKHnvlU/tMb5dI4iLT
+	 CQTaR+dOoA60A==
+Date: Wed, 6 Aug 2025 20:58:18 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Simon Horman <horms@kernel.org>, shannon.nelson@amd.com,
+	brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, corbet@lwn.net, andrew+netdev@lunn.ch,
+	allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/14] net: ionic: Export the APIs from net driver to
+ support device commands
+Message-ID: <20250806175818.GV402218@unreal>
+References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
+ <20250723173149.2568776-4-abhijit.gangurde@amd.com>
+ <20250725164106.GI1367887@horms.kernel.org>
+ <20250801170014.GG26511@ziepe.ca>
+ <20250801132128.69940aab@kernel.org>
+ <5d495e57-71f5-e465-cba0-d727c6b36167@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250807-fscontext-log-cleanups-v3-2-8d91d6242dc3@cyphar.com>
-References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
-In-Reply-To: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5274; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=YfzESCjmw7efFV3Bycvd9p6+JMPz/pBQ3JyWrH1QtCo=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMns6/VGvj81OTt9x+yjlPIjT5+pOrtowLP96Pa7X6G
- TVj6WFG8Y5SFgYxLgZZMUWWbX6eoZvmL76S/GklG8wcViaQIQxcnAIwEYtVDP/ju2tfL3/Nsv7N
- u5XsH9q/SjGGpnpt9vtx5ccizq3n+/4sYWS4lqc/PZKtVSO9PrfxVzz71ev+NlFBNXdOuL49e9p
- z2RFWAA==
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d495e57-71f5-e465-cba0-d727c6b36167@amd.com>
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- tools/testing/selftests/filesystems/.gitignore |   1 +
- tools/testing/selftests/filesystems/Makefile   |   2 +-
- tools/testing/selftests/filesystems/fclog.c    | 130 +++++++++++++++++++++++++
- 3 files changed, 132 insertions(+), 1 deletion(-)
+On Wed, Aug 06, 2025 at 01:24:04PM +0530, Abhijit Gangurde wrote:
+> 
+> On 8/2/25 01:51, Jakub Kicinski wrote:
+> > On Fri, 1 Aug 2025 14:00:14 -0300 Jason Gunthorpe wrote:
+> > > > Perhaps I misunderstand things, or otherwise am on the wrong track here.
+> > > > But this seems to open the possibility of users of ionic_adminq_post_wait(),
+> > > > outside the Ethernet driver, executing a wide range or admin commands.
+> > > > It seems to me that it would be nice to narrow that surface.
+> > > The kernel is monolithic, it is not normal to spend performance
+> > > aggressively policing APIs.
+> > > 
+> > > mlx5 and other drivers already have interfaces almost exactly like this.
+> > Which is not to say that it's a good idea.
+> 
+> Thank you for the feedback, and apologies for the delay. This discussion
+> prompted a thorough internal review.
+> Although a precedent for similar interfaces exists in other RDMA drivers,
+> the point is well-taken and we understand the concern about a wide API. To
+> address this, two potential approaches are being considered,
+> 1. The function can be documented as a privileged, clarifying that it
+> performs no input sanitization and making the caller responsible for device
+> access.
+> 2. Alternatively, a new, narrower function could be introduced specifically
+> for RDMA use that validates commands against an explicit allow list.
+> 
+> We are open to either approach and would appreciate a guidance on the
+> preferred direction.
 
-diff --git a/tools/testing/selftests/filesystems/.gitignore b/tools/testing/selftests/filesystems/.gitignore
-index fcbdb1297e24..64ac0dfa46b7 100644
---- a/tools/testing/selftests/filesystems/.gitignore
-+++ b/tools/testing/selftests/filesystems/.gitignore
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- dnotify_test
- devpts_pts
-+fclog
- file_stressor
- anon_inode_test
- kernfs_test
-diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing/selftests/filesystems/Makefile
-index 73d4650af1a5..85427d7f19b9 100644
---- a/tools/testing/selftests/filesystems/Makefile
-+++ b/tools/testing/selftests/filesystems/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- CFLAGS += $(KHDR_INCLUDES)
--TEST_GEN_PROGS := devpts_pts file_stressor anon_inode_test kernfs_test
-+TEST_GEN_PROGS := devpts_pts file_stressor anon_inode_test kernfs_test fclog
- TEST_GEN_PROGS_EXTENDED := dnotify_test
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/filesystems/fclog.c b/tools/testing/selftests/filesystems/fclog.c
-new file mode 100644
-index 000000000000..912a8b755c3b
---- /dev/null
-+++ b/tools/testing/selftests/filesystems/fclog.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Author: Aleksa Sarai <cyphar@cyphar.com>
-+ * Copyright (C) 2025 SUSE LLC.
-+ */
-+
-+#include <assert.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/mount.h>
-+
-+#include "../kselftest_harness.h"
-+
-+#define ASSERT_ERRNO(expected, _t, seen)				\
-+	__EXPECT(expected, #expected,					\
-+		({__typeof__(seen) _tmp_seen = (seen);			\
-+		  _tmp_seen >= 0 ? _tmp_seen : -errno; }), #seen, _t, 1)
-+
-+#define ASSERT_ERRNO_EQ(expected, seen) \
-+	ASSERT_ERRNO(expected, ==, seen)
-+
-+#define ASSERT_SUCCESS(seen) \
-+	ASSERT_ERRNO(0, <=, seen)
-+
-+FIXTURE(ns)
-+{
-+	int host_mntns;
-+};
-+
-+FIXTURE_SETUP(ns)
-+{
-+	/* Stash the old mntns. */
-+	self->host_mntns = open("/proc/self/ns/mnt", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->host_mntns);
-+
-+	/* Create a new mount namespace and make it private. */
-+	ASSERT_SUCCESS(unshare(CLONE_NEWNS));
-+	ASSERT_SUCCESS(mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL));
-+}
-+
-+FIXTURE_TEARDOWN(ns)
-+{
-+	ASSERT_SUCCESS(setns(self->host_mntns, CLONE_NEWNS));
-+	ASSERT_SUCCESS(close(self->host_mntns));
-+}
-+
-+TEST_F(ns, fscontext_log_enodata)
-+{
-+	int fsfd = fsopen("tmpfs", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	/* A brand new fscontext has no log entries. */
-+	char buf[128] = {};
-+	for (int i = 0; i < 16; i++)
-+		ASSERT_ERRNO_EQ(-ENODATA, read(fsfd, buf, sizeof(buf)));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+}
-+
-+TEST_F(ns, fscontext_log_errorfc)
-+{
-+	int fsfd = fsopen("tmpfs", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_ERRNO_EQ(-EINVAL, fsconfig(fsfd, FSCONFIG_SET_STRING, "invalid-arg", "123", 0));
-+
-+	char buf[128] = {};
-+	ASSERT_SUCCESS(read(fsfd, buf, sizeof(buf)));
-+	EXPECT_STREQ("e tmpfs: Unknown parameter 'invalid-arg'\n", buf);
-+
-+	/* The message has been consumed. */
-+	ASSERT_ERRNO_EQ(-ENODATA, read(fsfd, buf, sizeof(buf)));
-+	ASSERT_SUCCESS(close(fsfd));
-+}
-+
-+TEST_F(ns, fscontext_log_errorfc_after_fsmount)
-+{
-+	int fsfd = fsopen("tmpfs", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_ERRNO_EQ(-EINVAL, fsconfig(fsfd, FSCONFIG_SET_STRING, "invalid-arg", "123", 0));
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+	int mfd = fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOEXEC | MOUNT_ATTR_NOSUID);
-+	ASSERT_SUCCESS(mfd);
-+	ASSERT_SUCCESS(move_mount(mfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH));
-+
-+	/*
-+	 * The fscontext log should still contain data even after
-+	 * FSCONFIG_CMD_CREATE and fsmount().
-+	 */
-+	char buf[128] = {};
-+	ASSERT_SUCCESS(read(fsfd, buf, sizeof(buf)));
-+	EXPECT_STREQ("e tmpfs: Unknown parameter 'invalid-arg'\n", buf);
-+
-+	/* The message has been consumed. */
-+	ASSERT_ERRNO_EQ(-ENODATA, read(fsfd, buf, sizeof(buf)));
-+	ASSERT_SUCCESS(close(fsfd));
-+}
-+
-+TEST_F(ns, fscontext_log_emsgsize)
-+{
-+	int fsfd = fsopen("tmpfs", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_ERRNO_EQ(-EINVAL, fsconfig(fsfd, FSCONFIG_SET_STRING, "invalid-arg", "123", 0));
-+
-+	char buf[128] = {};
-+	/*
-+	 * Attempting to read a message with too small a buffer should not
-+	 * result in the message getting consumed.
-+	 */
-+	ASSERT_ERRNO_EQ(-EMSGSIZE, read(fsfd, buf, 0));
-+	ASSERT_ERRNO_EQ(-EMSGSIZE, read(fsfd, buf, 1));
-+	for (int i = 0; i < 16; i++)
-+		ASSERT_ERRNO_EQ(-EMSGSIZE, read(fsfd, buf, 16));
-+
-+	ASSERT_SUCCESS(read(fsfd, buf, sizeof(buf)));
-+	EXPECT_STREQ("e tmpfs: Unknown parameter 'invalid-arg'\n", buf);
-+
-+	/* The message has been consumed. */
-+	ASSERT_ERRNO_EQ(-ENODATA, read(fsfd, buf, sizeof(buf)));
-+	ASSERT_SUCCESS(close(fsfd));
-+}
-+
-+TEST_HARNESS_MAIN
+I suggest you to take standard kernel coding pattern and create
+in-kernel API which suits your "in-kernel customers". There is no
+need in any "allow list" for in-kernel APIs. Let's don't bring
+complexity and defense programming style where it is not needed
+and here it is not needed.
 
--- 
-2.50.1
+Thanks
 
+> 
+> Abhijit
+> 
+> 
 
