@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-757109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F33FB1BDD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:24:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF54B1BDDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7E33AAF31
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23543AC62C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1259F3D984;
-	Wed,  6 Aug 2025 00:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90E60DCF;
+	Wed,  6 Aug 2025 00:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jdpvXhla"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H8R01tOn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50A113AF2;
-	Wed,  6 Aug 2025 00:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3F7171C9;
+	Wed,  6 Aug 2025 00:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754439865; cv=none; b=chYRI6UA6IJ7N1hMKSr9BMbT6Kum2gHs+WAA0rQTpSZ5n9FRkrPKwCSMxYZYvlq9GGojk+/Zl5VT0/Mt5o769tzRZmbGsJQV27naxM5/WiRMOIvfJFuSx141s5CbwJuylMEYvSQznwYBqHVBZ2MrhICAjPLzne4laXTc6XljWlE=
+	t=1754439924; cv=none; b=I6hi5Mhfv53sX/A9F5n5bytarsGAaCH6EL3JHr67NMwTc/g2aNY7k/azPOxGVwneZ0kqt3Y7tMsnd4xlBv/OQedAZ+aI+0AMxW9v+1K3KckIugIiM0cx99n1vdsrtA4o/F8QaZZeQxyWd+Bfw9F33XkAzXetGqvVPP6RpSG3xEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754439865; c=relaxed/simple;
-	bh=NiDxZsY547/dYaQ+I07KrcgaTx4wOefvN+uysj//JVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Svx4HOJlO05QqJJsnSIp9WpS/1SefG6p9pKHoOJZ6QC17RvIjWF0XWwr/EQU0VUknKwsVg157k3q2ah5995/VeKV+dO39EYFpJIBbztEDXEXgxDc1Lnb/jUUchp/OhsV0lTQ3jarHFwgs1ExiHC7/whYBEuoNKNf+1DxeoAvSwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jdpvXhla; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754439864; x=1785975864;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NiDxZsY547/dYaQ+I07KrcgaTx4wOefvN+uysj//JVg=;
-  b=jdpvXhlaLSCX0VNan+CHDZlCD0ki6MKHCkML9sK5xo+pgo2UddM94Cty
-   mnP92+6t+jKbRvn6JtH+t69nnWrw8m6pD1FW1+bipt1kzxGoC9Oqhilm9
-   H8L1AjZVvdBBTGSFxcVm0N4REHv1Mju979KjfFq68TDfuayoA/jHHLHGF
-   WiuL/n02i7Hgqi+jxQhR+2P+/O061kWpTEsoU+6uAlweHZnV77+UbchUq
-   34/rBlArkC9XiBwnaQ2MEqKE9NJ+fLWDhLTx2MMsu2IPZmMmuDSqinmrm
-   XDoqqKsBLiFJF8276+hM2/ppjmeEsyeQ0wOJf7q2gyqEaNN0YZzHTdpi1
-   w==;
-X-CSE-ConnectionGUID: 1uayUPStSwG6wjpdy7rNTA==
-X-CSE-MsgGUID: SG9X1+NSRICqYxu34srrng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="74326411"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="74326411"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 17:24:23 -0700
-X-CSE-ConnectionGUID: 9O4T3e7/QeiZ0gjjq8UODg==
-X-CSE-MsgGUID: iIbob0mFSXS4KoXZm0GVvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="169897799"
-Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Aug 2025 17:24:21 -0700
-From: Even Xu <even.xu@intel.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: srinivas.pandruvada@linux.intel.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Even Xu <even.xu@intel.com>,
-	Rui Zhang <rui1.zhang@intel.com>
-Subject: [PATCH] Hid: Intel-thc-hid: Intel-quicki2c: Enhance driver re-install flow
-Date: Wed,  6 Aug 2025 08:23:32 +0800
-Message-Id: <20250806002332.1487447-1-even.xu@intel.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1754439924; c=relaxed/simple;
+	bh=Xa8K2I92uLyO484B0qkAfsO5WwTjl3NToPDEdFw7lcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wjtwq6tBw5ge/E46UTDs6102S5txoXSxpQZtN9IorDsfI3dkdDFVOeUGpOi5v2tYq7tT2/qP+dRhc7BykzPbcCI/7KAfM2nRs0T/Cv+zfgokHGDSS2HVBpUOGxK/Uyy3J/3zMw5MYs9g6MxVh+zq31vEj4QwP+9gYhI3ZkIM4EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H8R01tOn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=zYA8n4MidVExydv3/JxDVqPaTJImy9qKxpLFRRwzZo0=; b=H8R01tOndR7j5SuRFu/C4Cwen/
+	qLz3YG25lqRLqoW6M+4RKs+nHpyWcdKTRyr0ZP5nxnd3D6HmKyoWDxmWXgRHGOUc1FW46lewgrfJ0
+	LSEMLCNC/IH9zpuV4kFdU5ByyPyffXWewCwvfb1ebK7EiQWMyfPZCLw9Yip1A6yH/v00SuK/Aqs9r
+	yWWWVYTuX6LZ/bobuRQDVZ5+aXzrH98yhIA2PePmC4XhJOeiyU8kpCGxyxKyfzMP+fo/jovz2+9tZ
+	lUUp2RUxQXVNT8j9kIlvm2bvsq+hkYJm/litTEgfQNXMZfHmBjQ/e3Ua0f38lvrIVRUjZ3fUNdyg0
+	clkeqPxw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujRy4-0000000E3ZF-3ciz;
+	Wed, 06 Aug 2025 00:25:20 +0000
+Message-ID: <9027aa89-b3b2-46c8-8338-6c37f1c5b97a@infradead.org>
+Date: Tue, 5 Aug 2025 17:25:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250805-procfs-pidns-api-v4-3-705f984940e7@cyphar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After driver module is removed and during re-install stage, if there
-is continueous user touching on the screen, it is a risk impacting
-THC hardware initialization which causes driver installation failure.
 
-This patch enhances this flow by quiescing the external touch
-interrupt after driver is removed which keeps THC hardware
-ignore external interrupt during this remove and re-install stage.
 
-Signed-off-by: Even Xu <even.xu@intel.com>
-Tested-by: Rui Zhang <rui1.zhang@intel.com>
-Fixes: 66b59bfce6d9 ("HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver")
----
- drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c | 1 +
- 1 file changed, 1 insertion(+)
+On 8/4/25 10:45 PM, Aleksa Sarai wrote:
+> /proc has historically had very opaque semantics about PID namespaces,
+> which is a little unfortunate for container runtimes and other programs
+> that deal with switching namespaces very often. One common issue is that
+> of converting between PIDs in the process's namespace and PIDs in the
+> namespace of /proc.
+> 
+> In principle, it is possible to do this today by opening a pidfd with
+> pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+> contain a PID value translated to the pid namespace associated with that
+> procfs superblock). However, allocating a new file for each PID to be
+> converted is less than ideal for programs that may need to scan procfs,
+> and it is generally useful for userspace to be able to finally get this
+> information from procfs.
+> 
+> So, add a new API to get the pid namespace of a procfs instance, in the
+> form of an ioctl(2) you can call on the root directory of said procfs.
+> The returned file descriptor will have O_CLOEXEC set. This acts as a
+> sister feature to the new "pidns" mount option, finally allowing
+> userspace full control of the pid namespaces associated with procfs
+> instances.
+> 
+> The permission model for this is a bit looser than that of the "pidns"
+> mount option (and also setns(2)) because /proc/1/ns/pid provides the
+> same information, so as long as you have access to that magic-link (or
+> something equivalently reasonable such as being in an ancestor pid
+> namespace) it makes sense to allow userspace to grab a handle. Ideally
+> we would check for ptrace-read access against all processes in the pidns
+> (which is very likely to be true for at least one process, as
+> SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set by most
+> programs), but this would obviously not scale.
+> 
+> setns(2) will still have their own permission checks, so being able to
+> open a pidns handle doesn't really provide too many other capabilities.
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  Documentation/filesystems/proc.rst |  4 +++
+>  fs/proc/root.c                     | 68 ++++++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/fs.h            |  4 +++
+>  3 files changed, 74 insertions(+), 2 deletions(-)
+> 
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-index e944a6ccb776..854926b3cfd4 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-@@ -419,6 +419,7 @@ static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __io
-  */
- static void quicki2c_dev_deinit(struct quicki2c_device *qcdev)
- {
-+	thc_interrupt_quiesce(qcdev->thc_hw, true);
- 	thc_interrupt_enable(qcdev->thc_hw, false);
- 	thc_ltr_unconfig(qcdev->thc_hw);
- 	thc_wot_unconfig(qcdev->thc_hw);
+
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 0bd678a4a10e..68e65e6d7d6b 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -435,8 +435,12 @@ typedef int __bitwise __kernel_rwf_t;
+>  			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+>  			 RWF_DONTCACHE)
+>  
+> +/* This matches XSDFEC_MAGIC, so we need to allocate subvalues carefully. */
+>  #define PROCFS_IOCTL_MAGIC 'f'
+>  
+> +/* procfs root ioctls */
+> +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 32)
+
+Since the _IO() nr here is 32, Documentation/userspace-api/ioctl/ioctl-number.rst
+should be updated like:
+
+-'f'   00-0F  linux/fs.h                                                conflict!
++'f'   00-1F  linux/fs.h                                                conflict!
+
+(17 is already used for PROCFS_IOCTL_MAGIC somewhere else, so that probably should
+have update the Doc/rst file.)
+
+> +
+>  /* Pagemap ioctl */
+>  #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
+>  
+> 
+Thanks.
 -- 
-2.40.1
+~Randy
 
 
