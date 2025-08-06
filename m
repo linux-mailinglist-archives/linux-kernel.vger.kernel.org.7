@@ -1,103 +1,202 @@
-Return-Path: <linux-kernel+bounces-757830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B786B1C72C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:58:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90802B1C72F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A7D188CBD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67141894FB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3C828C5D1;
-	Wed,  6 Aug 2025 13:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474F128C5DE;
+	Wed,  6 Aug 2025 13:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="xTakyPQ8"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldDYlA7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9336028B516;
-	Wed,  6 Aug 2025 13:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFCE215F42;
+	Wed,  6 Aug 2025 13:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754488680; cv=none; b=qRQUs+BRTXYpx1rBB+SgU/alV7ctmJcJcO5FOyCkZ/LKftFeI+udd6Q9xGLlbmR7NF5zWgFGjjvAziXyyPrKtoxl6W6+/Idd6q/lKS1AWuSRbmPmi3y0HaRe/BFAgaxlP0N+Fj/ISTZ9F7K/3b51CRjEYfHUbeDYJGFUiZcIGZ0=
+	t=1754488760; cv=none; b=k4IOj+J3ebqDiYA0007fmjdpd13hIMwGOW/p0hyIrB+BL6ceWwEIHIlDzsOu4isF4yLm4IsvlFb7y6+Ez4QVLQfIZyg0ZQRWVhO1xczwFUBf0fL7fU6LbaTve+4aYO5/oBrbXylR3D2a6n23lmB6BR4bkI+80TmaAxukyXphL9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754488680; c=relaxed/simple;
-	bh=t6uig3ov/NbPQ0m9pNa2ettAxkzswOWZIb3NitFRcc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5kOOQ8NEGSNVo2P0U+y44uQUOgV1CMUb6izA0WuucteB/Y4kK+NCVJ0L7N1eKn7+k5OmoAXkfeSR7FrFiKvbnG6qRrluEj9TIn77u7MrqoTiCk2R7MLX0PcQIOU/EWz1J/4ADboekw41dmaDVJaIcElRYe7/SKP9EvqLemg8ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=xTakyPQ8; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=+88mmlwu0Nm7OIJ3HtcXAQRPm1cSYqICgM3gFbzJwno=; b=xTakyPQ8sh795O1Y6m4RfdY21P
-	hzPLtgBTRgvqs8GPonMvzt2bDQ5e3l0T6lWipVtiscak3O2KaGS9EW6t8BkCqTyJxyZDn8Ph2c/0I
-	Ou6paN1Zo9h61F7IqIHgZ9MkkFnyf5RmkQj1iX6Ip22F9sh3ImmfVHVRpeEn5/UykOfUYA/tLmnXT
-	lOKLxiYbS6qlz4QyCIVsPt+aim7qeMBqQNDtBtalAkjLM83Mh8r9f9e5hmCpc8V3H1ka1UsqIBYL3
-	JYlBM+DpOCNzvRbhGhBaNNInPChTH8KqMVqF3KGraXhYQkj9Tfo4FA8/AcjsEvfXVxi5FW4LMMwaD
-	FeF4nWSnu5MqjxPngpxpftkE1gXbMLQhOKRRtJO8JPBOhvlZ+ySq8P4nm+7dPgjy3DyzvuPhkZj+t
-	wfZozl56+LJjFARrFJKdxSHNPARqm3PMi0s2efjaWdg3zRxQWRK12nMHpXA6opPeYxNeMI1xsvx9f
-	dwErFK/pzhhIRPVHC+TJOonA;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1ujeeR-001Mac-2r;
-	Wed, 06 Aug 2025 13:57:56 +0000
-Message-ID: <91f09266-b81e-4e28-95c3-4272096a0fca@samba.org>
-Date: Wed, 6 Aug 2025 15:57:55 +0200
+	s=arc-20240116; t=1754488760; c=relaxed/simple;
+	bh=8MHhwlzeXksk6M5aMykLGDerlQQmZYeCH/6hBTMseoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d+meEOFfP3bVl3Mn7v19XUbNE6ub6a7AokMVFtQtC4xwZXLlKeTrK/kNmz5ZsM4zR61+pkEkIgeWi9e6WFJS6R4hhEVQYvjVcSFabeeZCLD/QJTQK/f0o11AUd3HL0KmXNpD82GcAHUwLgEfxUzzX3MLygDgIM5jGliwio80VaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldDYlA7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089E1C4CEE7;
+	Wed,  6 Aug 2025 13:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754488760;
+	bh=8MHhwlzeXksk6M5aMykLGDerlQQmZYeCH/6hBTMseoc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ldDYlA7tBkf9WkERpPS2ILQf8RvFePCOqfSnqvwMorL8BKppkoZ1Ll/PE/fQcB0pP
+	 +A9jBnLyJ9Px+x1M1opnP+WIjsWJyhilKx1959NqI8zbRjUnbrK7ZnygrmQWYYUnCs
+	 GlQETzabBIAD382lsIre0hETEHsfpcjnIAS2x4Kb2dO6tdFk/R/tipDjC6gguDChIC
+	 ni86w7dvPSLvbyKEOSwUiFxVd+60HSwH/aW3XxYQyA1f0x5xtfWNXmh6HS2QfN/i0O
+	 ZD3kySumb69xJSZakxkBWW5rikB6FpXm8EEKJ4ycMj+dfwIMJfXVyAZR4ULK27zoYR
+	 OlNOxXTq60N+A==
+From: Michael Walle <mwalle@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	nm@ti.com,
+	vigneshr@ti.com,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH v2] phy: ti: gmii-sel: Force RGMII TX delay
+Date: Wed,  6 Aug 2025 15:59:13 +0200
+Message-Id: <20250806135913.662340-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ksmbd: add kcov remote coverage support via ksmbd_conn
-To: Yunseong Kim <ysk@kzalloc.com>, Namjae Jeon <linkinjeon@kernel.org>,
- Steve French <smfrench@gmail.com>
-Cc: Paulo Alcantara <pc@manguebit.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>,
- linux-cifs@vger.kernel.org, syzkaller@googlegroups.com,
- linux-kernel@vger.kernel.org, notselwyn@pwning.tech
-References: <20250806135224.116724-2-ysk@kzalloc.com>
-Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20250806135224.116724-2-ysk@kzalloc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Yunseong,
+Some SoCs are just validated with the TX delay enabled. With commit
+ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
+RGMII TX delay"), the network driver will patch the delay setting on the
+fly assuming that the TX delay is fixed. In reality, the TX delay is
+configurable and just skipped in the documentation. There are
+bootloaders, which will disable the TX delay and this will lead to a
+transmit path which doesn't add any delays at all. Fix that by always
+forcing the TX delay to be enabled.
 
-> diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
-> index 3f04a2977ba8..21352f37384f 100644
-> --- a/fs/smb/server/connection.c
-> +++ b/fs/smb/server/connection.c
-> @@ -93,6 +93,9 @@ struct ksmbd_conn *ksmbd_conn_alloc(void)
->   	down_write(&conn_list_lock);
->   	list_add(&conn->conns_list, &conn_list);
->   	up_write(&conn_list_lock);
-> +
-> +	ksmbd_conn_set_kcov_handle(conn, kcov_common_handle());
-> +
->   	return conn;
->   }
+This is safe to do and shouldn't break any boards in mainline because
+the fixed delay is only introduced for gmii-sel compatibles which are
+used together with the am65-cpsw-nuss driver and are affected by the
+commit above.
 
-...
+Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+v2:
+ - reject invalid PHY modes. Thanks Matthias.
+ - add a paragraph to the commit message that this patch shouldn't
+   break any existing boards. Thanks Andrew.
 
-> +
-> +static inline void ksmbd_conn_set_kcov_handle(struct ksmbd_conn *conn,
-> +				       const u64 kcov_handle)
-> +{
-> +#ifdef CONFIG_KCOV
-> +	conn->kcov_handle = kcov_common_handle();
-> +#endif
-> +}
+ drivers/phy/ti/phy-gmii-sel.c | 58 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 8 deletions(-)
 
-The caller passes kcov_common_handle() as argument, which is not used
-but kcov_common_handle() is called again...
-
-metze
+diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
+index ff5d5e29629f..ed078475c4cb 100644
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -34,6 +34,7 @@ enum {
+ 	PHY_GMII_SEL_PORT_MODE = 0,
+ 	PHY_GMII_SEL_RGMII_ID_MODE,
+ 	PHY_GMII_SEL_RMII_IO_CLK_EN,
++	PHY_GMII_SEL_FIXED_TX_DELAY,
+ 	PHY_GMII_SEL_LAST,
+ };
+ 
+@@ -127,6 +128,22 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
+ 		goto unsupported;
+ 	}
+ 
++	/*
++	 * Some SoCs only support fixed MAC side TX delays. According to the
++	 * datasheet, they are always enabled, but that turns out not to be the
++	 * case and the delay is configurable. But according to the vendor that
++	 * mode is not validated and might not work. Some bootloaders disable
++	 * this bit. To work around that, enable it again.
++	 */
++	if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY)) {
++		/* With a fixed delay, some modes are not supported at all. */
++		if (submode == PHY_INTERFACE_MODE_RGMII_ID ||
++		    submode == PHY_INTERFACE_MODE_RGMII_TXID)
++			return -EINVAL;
++
++		rgmii_id = 0;
++	}
++
+ 	if_phy->phy_if_mode = submode;
+ 
+ 	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
+@@ -210,25 +227,46 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814 = {
+ 
+ static const
+ struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] = {
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2), },
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x0, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x4, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x8, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0xC, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x10, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x14, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x18, 4, 4),
++	}, {
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x1C, 4, 4),
++	},
+ };
+ 
+ static const
+ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 = {
+ 	.use_of_data = true,
++	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
++		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
+ 	.regfields = phy_gmii_sel_fields_am654,
+ };
+ 
+ static const
+ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
+ 	.use_of_data = true,
++	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
++		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
+ 	.regfields = phy_gmii_sel_fields_am654,
+ 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
+ 		       BIT(PHY_INTERFACE_MODE_USXGMII),
+@@ -239,6 +277,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 = {
+ static const
+ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
+ 	.use_of_data = true,
++	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
++		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
+ 	.regfields = phy_gmii_sel_fields_am654,
+ 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII),
+ 	.num_ports = 8,
+@@ -248,6 +288,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e = {
+ static const
+ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j784s4 = {
+ 	.use_of_data = true,
++	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
++		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
+ 	.regfields = phy_gmii_sel_fields_am654,
+ 	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
+ 		       BIT(PHY_INTERFACE_MODE_USXGMII),
+-- 
+2.39.5
 
 
