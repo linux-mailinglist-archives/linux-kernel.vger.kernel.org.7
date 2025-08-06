@@ -1,87 +1,105 @@
-Return-Path: <linux-kernel+bounces-757618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742E2B1C45F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:33:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E178DB1C462
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99013B031D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900F418A55D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0767428A726;
-	Wed,  6 Aug 2025 10:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0925A64C;
+	Wed,  6 Aug 2025 10:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bXCsUiIU"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Wa2wGgFn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8fT/7Dyr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yuUMPAUu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HLtTDCyS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA591FDD;
-	Wed,  6 Aug 2025 10:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1923A41
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 10:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754476399; cv=none; b=qQndD/3Z08iXRGfJwRi84C0p9IObQGvU9COeefF30/i91WFuPpYiFXA0rkOYhC1MZnYgd0/2WVXWPuMU6ePPSpa3wHT5ZnYDUQs375pHjQZro2Z8EFmJmnSM/X/AVubf8J1PPCwlw3h9Sc2rMRPGFye8Ru8ES0+pYu+4bi0ie/E=
+	t=1754476505; cv=none; b=nR4Y0LonXsU9nTgR0MMn0q9tujzTkhGO97eTmK4WHu/B64Ny4c9dPOM9WPJlsl2M6CWHlxaTZ8L6rqVekEfRM2c5CJHIt8cWsWPlwKsW90v39ZPARANK8bqFGMH9QpR+ShWui4dP4db6NfkMZbr8xC0TbRK1aWJOczQLhjOrT2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754476399; c=relaxed/simple;
-	bh=4ONmXejy9qRChYD8YFLgNZvQakZuFN0pKogdmn9BB7A=;
+	s=arc-20240116; t=1754476505; c=relaxed/simple;
+	bh=jOv27bYas95QkeECm3PnrDh5I1MRkQkwmE/50PTvqts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lECl74WgiAuBMxhS2Zvk7JkLFiWwgT0MYCLCaX7z3cYlsOr9bY+xIxtfIIHTgMVRTao6UMwhfGw8XIh05roYWoZzY8Yl83s0yvFbsYWlSYlMTmruUr1Wa68XFMGHzPgy+bMGFlM4n12ve7tuFH8Pbix6X+LIkGoEY9Pe9syjCMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bXCsUiIU; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57692NPP018065;
-	Wed, 6 Aug 2025 10:33:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=3wBoqQwRkSBaQEVLP0xWuNtEXTupVT
-	vuJMqQFfbbBMk=; b=bXCsUiIUGuNdsnpstSK7KJ+EHWCL6u+flAEgHfLhazaMGZ
-	A2cOEBmYWln1FbP2qTEczCBjdPo+RtNzcIMRJ19xPazntSu2S12gUFaaHfuo/nQU
-	jHyAcBmYwm3yQi2lpywOWKhy9UgshrQmFDKiqSYdN0lvR6LteIeMno5fOYwy2N+1
-	SS8FrDWGFapdZMQYu8BDyoEf+invbVP0dQ13P+dm0meAwlmfJ5hGZ1W3Ffuv22RH
-	rVF7zho8Jk2fTvPROq5h3F2/8QA/aNNZQNOFLxnMzJDGjimVoQCGH45+KR3bmLfS
-	0wlyA9YB8dI+vXNZ7cjWcVN308jpV5LOdVcXGSzA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq633jar-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 10:33:04 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57683Fvx020612;
-	Wed, 6 Aug 2025 10:33:04 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwmu5p9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 10:33:03 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 576AX2qq32703150
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Aug 2025 10:33:02 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C7912005A;
-	Wed,  6 Aug 2025 10:33:02 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7A652004B;
-	Wed,  6 Aug 2025 10:33:01 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  6 Aug 2025 10:33:01 +0000 (GMT)
-Date: Wed, 6 Aug 2025 12:33:00 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 14/17] s390: Add __attribute_const__ to ffs()-family
- implementations
-Message-ID: <20250806103300.11925Cbe-hca@linux.ibm.com>
-References: <20250804163910.work.929-kees@kernel.org>
- <20250804164417.1612371-14-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJjpKWlOeVepsq6LuH/VNChzptNc8IW+HPXTinbOiJiW3yJ2IYLQTlp35FvRGWaOJCxoT1FKCpAaEV43MwWqgmeARjnkBwRlxUf/gTT34oFY5Z+fC3h9aMqNZya+vgyHYT+SOxqSjFVFuprXhIKwoBqNG0NNCCv83t6wiEwXk1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Wa2wGgFn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8fT/7Dyr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yuUMPAUu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HLtTDCyS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DE805211E0;
+	Wed,  6 Aug 2025 10:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754476501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7vXoJTyUOofn7iNpjbcuqYrzqeHk3HW6mJEtsTB0bk=;
+	b=Wa2wGgFn9z5q6vRBMQ+z4njDof4QUAq9hyWYNrjDVNju7giFzzC/7iJARLyuXaTWqbFEkA
+	Qs4xJ/WQwQWmvEXcRMwvXMaGi8Hhx3PyR0uTd4qBggYlZQ3spijR22Qeo+dixSpqMvbziq
+	h/F/Y1VKmH/BpV8X5TasmuU0GYsIsZc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754476501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7vXoJTyUOofn7iNpjbcuqYrzqeHk3HW6mJEtsTB0bk=;
+	b=8fT/7DyrYwhJhV7ps1uut07EsEfi4JQKSX7fasxAUKkQdge78mFAvX5Ao3sgNu66iRuIAu
+	9L2Ne4fM8CGizdDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754476499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7vXoJTyUOofn7iNpjbcuqYrzqeHk3HW6mJEtsTB0bk=;
+	b=yuUMPAUuGv4E3V/oiEfpLyQbbPOJw+zjzvqcp4Q6UleSxIQkYJf4JtBe91RB/Uhvia7xZ9
+	kemVn5AYxRoF8PeCGFBEA/DR8HdOIHIeBYLZlNvaSfHCoRfgq85gf4meSj2/poYmYwYGXD
+	uaSomXEeLmAEp2bXdBTks5P8lviW5I8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754476499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7vXoJTyUOofn7iNpjbcuqYrzqeHk3HW6mJEtsTB0bk=;
+	b=HLtTDCySyCi6YR8MCMBb/aW3/vozaivzhtlXuImiRB+4MFZlF/hDnqZvstxo8TV7ATlH2j
+	vPHmxeiNOLLnDsDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8A0B13ABE;
+	Wed,  6 Aug 2025 10:34:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ve+1LdIvk2gyNQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 06 Aug 2025 10:34:58 +0000
+Date: Wed, 6 Aug 2025 11:34:57 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Zi Yan <ziy@nvidia.com>, wang lian <lianux.mm@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, David Hildenbrand <david@redhat.com>, 
+	Wei Yang <richard.weiyang@gmail.com>, Christian Brauner <brauner@kernel.org>, 
+	Jann Horn <jannh@google.com>, Kairui Song <ryncsn@gmail.com>, 
+	Liam Howlett <liam.howlett@oracle.com>, Mark Brown <broonie@kernel.org>, SeongJae Park <sj@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/mm: fix FORCE_READ to read input value
+ correctly.
+Message-ID: <vahlhhwb3vh33c7nh67usxfraeotqq5pw5cwfak5ke3ysegv5l@bgtlqmv2wqyf>
+References: <20250805175140.241656-1-ziy@nvidia.com>
+ <7eaa1660-06d3-49b9-ba5e-28df1c35dcd1@lucifer.local>
+ <6E5CCF4D-CB63-4E4C-BEDA-6FE533E0DFCD@nvidia.com>
+ <dc139b0b-e461-4edb-ba1d-fc824f875142@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,53 +108,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250804164417.1612371-14-kees@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX1ElbkHLwop5M
- nPtrgbB752LU1pfAwNBDgIAJaBFi6LdxUXlVN+CUECGityjOLd34EGE9Toa3cseKpijmOYkbMrT
- aNwZhYK7iA/bCymHo9U7IaM/O7Xot0VGlpwnnhV1aXHyUVrek/1n8npVMb07MiX+K+TDGIg0AO4
- ihzZswvna0t8psGTcbnxJracRM2oTHbAzHtGyMCKd3aNtNi66J9AADNlixjxITc6ZJ7TjnULCHk
- P4T4ObjAhkO8s+SveY8dJN1qu9r4TUmsgwFAOb96zQD69cH4RtCGyQz1GCIcyhMWlhz5kn2Ucc+
- LWbDbC/Jrwgoq+v6/0pZM6yn2Dx13ovRiSUZITmIvPptutFSJZ1mNsE00D5CNG/6vkJ4UDgYu3T
- wIBBzpQWWdbv/iQCNo1U4G1hbBeBXZZlCO1Mqsl7bXq7JJnmf6ZyHAANHSil8agH6h4bvtmd
-X-Proofpoint-GUID: eM8kqSdm0FroOEI9WgdEMMtevU6pWRX4
-X-Authority-Analysis: v=2.4 cv=PoCTbxM3 c=1 sm=1 tr=0 ts=68932f60 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=La76t7K_3jgqz9qSpcQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: eM8kqSdm0FroOEI9WgdEMMtevU6pWRX4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 adultscore=0 clxscore=1011 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=896 mlxscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508060064
+In-Reply-To: <dc139b0b-e461-4edb-ba1d-fc824f875142@lucifer.local>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[nvidia.com,gmail.com,linux-foundation.org,kvack.org,redhat.com,kernel.org,google.com,oracle.com,suse.cz,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[godbolt.org:url,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.30
 
-On Mon, Aug 04, 2025 at 09:44:10AM -0700, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
+On Tue, Aug 05, 2025 at 08:21:23PM +0100, Lorenzo Stoakes wrote:
+> +cc Pedro
 > 
-> Add missing __attribute_const__ annotations to S390's implementations of
-> ffs(), __ffs(), fls(), and __fls() functions. These are pure mathematical
-> functions that always return the same result for the same input with no
-> side effects, making them eligible for compiler optimization.
+> On Tue, Aug 05, 2025 at 03:09:54PM -0400, Zi Yan wrote:
+> > On 5 Aug 2025, at 15:00, Lorenzo Stoakes wrote:
+> >
+> > > On Tue, Aug 05, 2025 at 01:51:40PM -0400, Zi Yan wrote:
+> > >> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> > >> index c20298ae98ea..b55d1809debc 100644
+> > >> --- a/tools/testing/selftests/mm/vm_util.h
+> > >> +++ b/tools/testing/selftests/mm/vm_util.h
+> > >> @@ -23,7 +23,7 @@
+> > >>   * anything with it in order to trigger a read page fault. We therefore must use
+> > >>   * volatile to stop the compiler from optimising this away.
+> > >>   */
+> > >> -#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+> > >> +#define FORCE_READ(x) (*(const volatile typeof(x) *)&(x))
+> > >
+> > > NIT: but wonder if const is necessary, and also (as discussed off-list
+> >
+> > I just used READ_ONCE() code, but it is not necessary.
 > 
-> Build tested ARCH=s390 defconfig with GCC s390x-linux-gnu 14.2.0.
+> It's not end of the world though.
 > 
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  arch/s390/include/asm/bitops.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > > again :) will this work with a (void) prefixed, just to a. make it clear
+> > > we're reading but discarding and b. to avoid any possible compiler warning
+> > > on this?
+> >
+> > Adding (void) makes no difference, at least from godbolt.
+>
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+I disagree with adding (void), because volatile being properly propagated into
+the type should hide any Wunused-value warnings (because volatile reads can have
+side effects, so discarding a read is most definitely valid).
+
+And as I was seeing in https://godbolt.org/z/jnWsET1vx yesterday, GCC (and clang)
+can silently drop the volatile qualifier For Some Reason.
+
+-- 
+Pedro
 
