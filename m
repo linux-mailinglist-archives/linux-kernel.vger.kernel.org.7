@@ -1,127 +1,211 @@
-Return-Path: <linux-kernel+bounces-757431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4BEB1C20A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EBFB1C214
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819BF1894E85
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843043BE296
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CF5221FD8;
-	Wed,  6 Aug 2025 08:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF6722541B;
+	Wed,  6 Aug 2025 08:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdsPfF2G"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gEmTUuxm"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5AB1E32CF;
-	Wed,  6 Aug 2025 08:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E523C2066DE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754468428; cv=none; b=E6O8AMDFdM/AjOXXG1661EIfTv2MJo6JGj527FG8BMYT8mHSfhPLcbQUuSW8QIYnnuDsQTzBD6eger2NTGXR7S7lCIZvOi1rsc7YnolQg5wspPCROAkFZRNGeJvCxi/U57xNH3ygV/bDL3s8UEaXhSvLx5ohBFJiXU4uR4JQl7w=
+	t=1754468543; cv=none; b=WD6tLBd3GVk2virxUBHlwccnAc+9KdqH5rd2y5hmWwVj6omWbiiaxXamgekzeLY0XFNKMYdPxIS4h6KmHSu+qVdSbxNP/x39pLWi35MOfkcTf/aAHizV04zR1Yy1qPXlcyMDKLUsB1B3Zbc86txifG9xr7K06aOQ/+SS6ntNHQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754468428; c=relaxed/simple;
-	bh=2Zg3JIzvXIyqJnoZOSLrCALPdYrjS+32WFTDqn2TkLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EDDtayuVDVvHJwquAKVowWjoCfV9eMMciBZxHJoV7smgysY3aqnkNGBdTt6GfKBFFWrwa1ZXsTMEPLilZR28IHVe4pUIdr38B+efWvFF5jwp5I1XWzwE8ihzYrJPGvXSq1g+kwu0lc4EglqONs0gCJrid3mXY3Kf5NnkHF4UUI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MdsPfF2G; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b422b31b1c0so3958713a12.0;
-        Wed, 06 Aug 2025 01:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754468426; x=1755073226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tk74vFBOtgpOUaVzdQICrykdzva6RLuKYXQfB725rV0=;
-        b=MdsPfF2Gw8ijIC1wEH/mHJtOPVG15vx7uB3KKUsdOspNeU/JhPKyFwDL5VR1SIN7N6
-         Tao7+Udo84UBBDPT7flOScJ+9oB24wckomsN6aBuevQWVuABazk/Oay4PgyE89nP11nt
-         GCUmP7abcmupvPrz1Y/kkIhzQlgIa2DcXXqnvuhU0z8IrcdhUs4NF3QhONyQLlD2TcAG
-         TKOyrPS0zGmkIawqHcoRU0dbCjfZA5ZITwlC7uyng5xnfyrBdr9J1wU/ol/CzChDZ4OO
-         ksBcgEnwo0uJ8JPHYF1ydjh/isvjcVm+cpwanGO6VTvcKu+czpgjuKOu8/2X+xYkghVw
-         Jb2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754468426; x=1755073226;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tk74vFBOtgpOUaVzdQICrykdzva6RLuKYXQfB725rV0=;
-        b=JjeHTtQoXIW+xOVdTK2XZo/kmuQYW/Y3ssXYUwZvO0yPPuKn8JCCyZNx+LnL3dJOEa
-         8WRtoM6qxtsYZM3rvY4GTe/9oDHjpkpDmsIfGPIUUmUKPQUmoWWTe8eBg+a5mQgY+MSU
-         f89CM4DwFRgXQySLhdZQg/iM8LSyutUYhLnvZVh8+khq92YPkKb73E1VBdKVylDlr1kR
-         9M7ceBUhb7m5UlsKHK6d4vWrYWxkdF5tZIeaRykGwtkdK9yzPGXYeuvmHf5bDf6OYVeI
-         D5MN9/jUUpvjX0hnJ4PxpywPrE1p1FBga6WHJU3IFlIFA9U1YTKOa8472vGVNouFYl3D
-         LZhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKJtVy6mdkvV+pfdQ85A+CR7ZD/3URFTWxBdTiIXEXGyEuvUKRC7fYd9hPhqk40bj/PAKteOYn@vger.kernel.org, AJvYcCVBsrPKmXFCN25qU0IlfnevOnCkgs9xKbw1K9PpMGRGtx+gYV5keU6uiGt94ZDJPx6MaFjR8M73rszlsg5jZcUg@vger.kernel.org, AJvYcCW5GAPu/JBLT+NUb6l1aUfhlWsIiuW5eCniMe01Czan8Dl5x4shg8iCJV5npe/cQoFQP+oZDhaLcDTzZoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnlTquXe0xM3AOE8ZILCsQGlpfSbNdk7YMe9SMrcNCS3ffnJIM
-	obtufF5oGnHnii+iiUB+N3hjUIKkLh6ks2SWFF0IOdaA8+8YqhcuG+jR
-X-Gm-Gg: ASbGnctgGuubQpQ6x31VSVFCoIDmX+nv/K9hiYVn7Q60L5aDmj0QIeSTpocrVyfAoPm
-	bBg0S3B4mFXd8HzLSJwI4MOp0NXnkTQsEAZKX/wMGTY/9K8XdKW/1KZ+eYNkwwsoEfHkjH1SK29
-	PfYpvDQZfuQm3Eju9sAFEdgJ4kzs7/S6bBlxPTWoEIERxkka3HIz5Pj4Ax8TiLPa1ySXk3hHBPO
-	lB/XoorQHfe3XNWpdvp4MoEW8Mey0kaIGopCmM//UcqM8hTHCk4ViigqRXX0A20J1kLK5VmAEKm
-	oLRmqcDwEQR9Yhzu9EiRGkC2xTGZg+AV3jqRT6F4IOUBGGX9WvdsK1yMpsr4yETFo3a8Rs9RWCQ
-	AKTu3Xh1nmUHyM19lZQEwCYtnLyn9u28eLX4dOxjYR9Lm9PaSoAjHNg==
-X-Google-Smtp-Source: AGHT+IEReFrA9fu6w4gM/cP7i9PjlBPwmU6McdahgPWGATLeJixMmq/Kf/I51qnimVALN6oZwVx02A==
-X-Received: by 2002:a17:90b:48d2:b0:31a:ab75:6e45 with SMTP id 98e67ed59e1d1-32166cb5d9amr2019526a91.28.1754468426250;
-        Wed, 06 Aug 2025 01:20:26 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c30:7b0d:6527:282d:9edd:5f40])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3216126c96esm2078947a91.22.2025.08.06.01.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 01:20:25 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	dw@davidwei.uk,
-	haiyuewa@163.com,
-	axboe@kernel.dk,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>
-Subject: [PATCH] selftests/drivers/net: replace typeof() with __auto_type
-Date: Wed,  6 Aug 2025 13:50:16 +0530
-Message-ID: <20250806082016.14891-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1754468543; c=relaxed/simple;
+	bh=m7sqR9B0NN86kX0PoItCJADw/zIvrr2/IE+k7Ve7aao=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=cLNYqwJRf1jM+oqVhpQ8RuAYRqoyH+NzHsDMNluxRH9dJolWLb4j5kxURlCXwhb9BfPXtwIuzYxq7r6QF7J+qM8yHCmloKJNPdpSbfKCvDzISPqgtsaYMZFi4tXYYWFc5wmwU8jqdsObAVTXG6rlxyYqUGqTrLrFLWUN77W9/hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gEmTUuxm; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250806082219epoutp0401a72844be0a3ac158ab0ac9281dd8be~ZH9dBBg591154611546epoutp04e
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:22:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250806082219epoutp0401a72844be0a3ac158ab0ac9281dd8be~ZH9dBBg591154611546epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754468539;
+	bh=m7sqR9B0NN86kX0PoItCJADw/zIvrr2/IE+k7Ve7aao=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=gEmTUuxmCfuWXNYVyJZg2seg6+c/BelnYnxR4CcGOhNf17X7Hue/dVeyWjq4tx8xE
+	 2tvbG55Uw39nHba6Ar3DhTzhReZ/rWsaxONqjFRVJGEJ/ahww82P+ZQDLQTV8jVhlW
+	 x86fXNbvlvlPvKNqe1PXIUWR/jDTszJgLSl1WU7w=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250806082218epcas5p33aecd08f1649afbc6048ea4b3067297c~ZH9b645E70885208852epcas5p3z;
+	Wed,  6 Aug 2025 08:22:18 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bxjvX6p3sz2SSKY; Wed,  6 Aug
+	2025 08:22:16 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250806082216epcas5p2976661d5f4c9a10835fe831e97cf7fd1~ZH9aWh2GV0281802818epcas5p2V;
+	Wed,  6 Aug 2025 08:22:16 +0000 (GMT)
+Received: from INBRO001561 (unknown [107.122.12.6]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250806082211epsmtip1d80097c73b45e759d745e4b959969147~ZH9V88NzW1683116831epsmtip1R;
+	Wed,  6 Aug 2025 08:22:11 +0000 (GMT)
+From: "Pankaj Dubey" <pankaj.dubey@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'SeonGu Kang'"
+	<ksk4725@coasia.com>, "'Jesper Nilsson'" <jesper.nilsson@axis.com>,
+	"'Michael Turquette'" <mturquette@baylibre.com>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>, "'Krzysztof
+ Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
+	"'Sylwester Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Linus
+ Walleij'" <linus.walleij@linaro.org>, "'Tomasz Figa'"
+	<tomasz.figa@gmail.com>, "'Catalin Marinas'" <catalin.marinas@arm.com>,
+	"'Will Deacon'" <will@kernel.org>, "'Arnd Bergmann'" <arnd@arndb.de>
+Cc: "'kenkim'" <kenkim@coasia.com>, "'Jongshin Park'" <pjsin865@coasia.com>,
+	"'GunWoo	Kim'" <gwk1013@coasia.com>, "'HaGyeong Kim'" <hgkim05@coasia.com>,
+	"'GyoungBo Min'" <mingyoungbo@coasia.com>, "'SungMin Park'"
+	<smn1196@coasia.com>, "'Shradha Todi'" <shradha.t@samsung.com>, "'Ravi
+ Patel'" <ravi.patel@samsung.com>, "'Inbaraj E'" <inbaraj.e@samsung.com>,
+	"'Swathi K S'" <swathi.ks@samsung.com>, "'Hrishikesh'"
+	<hrishikesh.d@samsung.com>, "'Dongjin Yang'" <dj76.yang@samsung.com>, "'Sang
+ Min Kim'" <hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<soc@lists.linux.dev>
+In-Reply-To: <99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
+Subject: RE: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
+Date: Wed, 6 Aug 2025 13:52:10 +0530
+Message-ID: <000501dc06ab$37f09440$a7d1bcc0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGJY/8wx4BImu0YLFPVfwpfqUmFNgKXZrJuAgeQag4A83Fv2QHBXkcOtL/uTdA=
+Content-Language: en-us
+X-CMS-MailID: 20250806082216epcas5p2976661d5f4c9a10835fe831e97cf7fd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	<847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
+	<bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
+	<CGME20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7@epcas5p4.samsung.com>
+	<99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
 
-Replace typeof() with __auto_type in iou-zcrx.c.
-__auto_type was introduced in GCC 4.9 and reduces the compile time for
-all compilers. No functional changes intended.
 
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
----
- tools/testing/selftests/drivers/net/hw/iou-zcrx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/drivers/net/hw/iou-zcrx.c b/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-index 62456df947bc..85551594bf0f 100644
---- a/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-+++ b/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-@@ -42,8 +42,8 @@ static long page_size;
- #define SEND_SIZE (512 * 4096)
- #define min(a, b) \
- 	({ \
--		typeof(a) _a = (a); \
--		typeof(b) _b = (b); \
-+		__auto_type _a = (a); \
-+		__auto_type _b = (b); \
- 		_a < _b ? _a : _b; \
- 	})
- #define min_t(t, a, b) \
--- 
-2.49.0
-
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Monday, July 21, 2025 12:10 PM
+> To: SeonGu Kang <ksk4725=40coasia.com>; Jesper Nilsson
+> <jesper.nilsson=40axis.com>; Michael Turquette <mturquette=40baylibre.com=
+>;
+> Stephen Boyd <sboyd=40kernel.org>; Rob Herring <robh=40kernel.org>;
+> Krzysztof Kozlowski <krzk+dt=40kernel.org>; Conor Dooley
+> <conor+dt=40kernel.org>; Sylwester Nawrocki <s.nawrocki=40samsung.com>;
+> Chanwoo Choi <cw00.choi=40samsung.com>; Alim Akhtar
+> <alim.akhtar=40samsung.com>; Linus Walleij <linus.walleij=40linaro.org>;
+> Tomasz Figa <tomasz.figa=40gmail.com>; Catalin Marinas
+> <catalin.marinas=40arm.com>; Will Deacon <will=40kernel.org>; Arnd Bergma=
+nn
+> <arnd=40arndb.de>
+> Cc: kenkim <kenkim=40coasia.com>; Jongshin Park <pjsin865=40coasia.com>;
+> GunWoo Kim <gwk1013=40coasia.com>; HaGyeong Kim
+> <hgkim05=40coasia.com>; GyoungBo Min <mingyoungbo=40coasia.com>;
+> SungMin Park <smn1196=40coasia.com>; Pankaj Dubey
+> <pankaj.dubey=40samsung.com>; Shradha Todi <shradha.t=40samsung.com>;
+> Ravi Patel <ravi.patel=40samsung.com>; Inbaraj E <inbaraj.e=40samsung.com=
+>;
+> Swathi K S <swathi.ks=40samsung.com>; Hrishikesh
+> <hrishikesh.d=40samsung.com>; Dongjin Yang <dj76.yang=40samsung.com>;
+> Sang Min Kim <hypmean.kim=40samsung.com>; linux-kernel=40vger.kernel.org;
+> linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.o=
+rg;
+> linux-arm-kernel=40axis.com; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-gpio=40vger.kernel.org; soc=40lists.l=
+inux.dev
+> Subject: Re: =5BPATCH 00/16=5D Add support for the Axis ARTPEC-8 SoC
+>=20
+> On 21/07/2025 06:50, SeonGu Kang wrote:
+> > 2025-07-10 (=EB=AA=A9),=2009:07=20+0200,=20Krzysztof=20Kozlowski:=0D=0A=
+>=20>>=20On=2010/07/2025=2002:20,=20ksk4725=40coasia.com=20wrote:=0D=0A>=20=
+>>>=20From:=20SeonGu=20Kang=20<ksk4725=40coasia.com>=0D=0A>=20>>>=0D=0A>=20=
+>>>=20Add=20basic=20support=20for=20the=20Axis=20ARTPEC-8=20SoC.=0D=0A>=20>=
+>>=20This=20SoC=20contains=20four=20Cortex-A53=20CPUs=20and=20other=20sever=
+al=20IPs.=0D=0A>=20>>>=0D=0A>=20>>>=20Patches=201=20to=2010=20provide=20the=
+=20support=20for=20the=20clock=20controller,=20which=0D=0A>=20>>>=20is=20si=
+milar=20to=20other=20Samsung=20SoCs.=0D=0A>=20>>>=0D=0A>=20>>=20You=20shoul=
+d=20explain=20here=20(and=20in=20DTS=20patches=20or=20the=20bindings)=20the=
+=0D=0A>=20>>=20hardware,=20that=20this=20is=20Samsung=20SoC.=0D=0A>=20>>=0D=
+=0A>=20>>=20You=20could=20also=20explain=20the=20differences=20from=20Exyno=
+s=20and=20proposed=0D=0A>=20>>=20handling=20of=20patches=20(because=20this=
+=20is=20odd)=0D=0A>=20>>=0D=0A>=20>>=20Also,=20entire=20patchset=20has=20wr=
+ong=20and=20incomplete=20SoBs.=20Your=20SoB=20is=0D=0A>=20>>=20missing=20ev=
+erywhere,=20others=20have=20wrong=20order.=0D=0A>=20>>=0D=0A>=20>>=20Please=
+=20read=20submitting=20patches=20first.=0D=0A>=20>>=0D=0A>=20>=0D=0A>=20>=
+=20This=20Custom=20SoC=20is=20owned=20by=20the=20Axis=20(OEM)=20and=20manuf=
+actured=20by=20the=0D=0A>=20>=20Samsung=20(ODM).=20It=20has=20standard=20Sa=
+msung=20specific=20IP=20blocks.=0D=0A>=20=0D=0A>=20=0D=0A>=20It=20is=20desi=
+gned=20by=20Samsung.=20It=20is=20Samsung=20SoC.=0D=0A>=20=0D=0A>=20Anyway,=
+=20don't=20explain=20to=20me,=20but=20in=20your=20patchset.=0D=0A=0D=0AHi=
+=20Krzysztof,=0D=0A=0D=0AThank=20you=20for=20your=20review=20comments=20on=
+=20the=20ARTPEC-8=20platform=20patches.=0D=0AI'd=20like=20to=20add=20more=
+=20context=20about=20the=20ARTPEC-8=20SoC=20to=20help=20clarify=20its=0D=0A=
+relationship=20with=20Exynos.=0D=0A=0D=0AHere=20are=20the=20key=20details=
+=20about=20ARTPEC-8:=0D=0A=20=20=20-=20Manufactured=20by=20Samsung=20Foundr=
+y=0D=0A=20=20=20-=20SoC=20architecture=20is=20owned=20by=20Axis=20Communica=
+tions=0D=0A=09-=20On=20similar=20model=20as=20Tesla's=20FSD=20chip=20owned=
+=20by=20Tesla=20and=20=0D=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20manuf=
+actured=20and=20=20by=20Samsung=0D=0A=20=20=20-=20IPs=20from=20both=20Samsu=
+ng=20and=20Axis=20Communications=0D=0A=0D=0ASamsung-provided=20IPs:=0D=0A=
+=20=20-=20UART=0D=0A=20=20-=20Ethernet=20(Vendor:=20Synopsys)=0D=0A=20=20=
+=20=20=20=20=20-=20Same=20IP=20has=20been=20integrated=20as=20integrated=20=
+in=20FSD=20Chip=0D=0A=20=20-=20SDIO=0D=0A=20=20-=20SPI=0D=0A=20=20-=20HSI2C=
+=0D=0A=20=20-=20I2S=0D=0A=20=20-=20CMU=20(Clock=20Management=20Unit)=0D=0A=
+=20=20=20=20=20=20=20Follows=20same=20CMU=20HW=20architecture=20as=20Exynos=
+=20SoC=20have=0D=0A=20=20-=20Pinctrl=20(GPIO)=0D=0A=20=20-=20PCIe=20(Vendor=
+:=20Synopsys)=0D=0A=20=20=20=20=20=20=20Though=20Exynos,=20FSD,=20ARTPEC=20=
+have=20same=20DesignWare=20Controller,=20=0D=0A=20=20=20=20=20=20=20the=20g=
+lue/wrapper=20layer=20around=20DWC=20Core=20has=20differences=20across=0D=
+=0A=20=20=20=20=20=20=20these=20SoCs.=20All=20manufactured=20by=20Samsung,=
+=20but=20differences=20are=20there=0D=0A=20=20=20=20=20=20=20in=20HW=20desi=
+gn=20and=20for=20different=20products.=20For=20the=20same=20reason=20PCIe=
+=20patch=0D=0A=20=20=20=20=20=20=20refactoring=20effort=20is=20being=20put=
+=20by=20us=20=5B1=5D=20to=20streamline=20single=20Exynos=20driver=0D=0A=20=
+=20=20=20=20=20=20which=20can=20support=20all=20Samsung=20manufactured=20So=
+Cs=20having=20DWC=20PCIe=20controller.=0D=0A=20=20=20=20=20=20=5B1=5D:=20ht=
+tps://patchwork.ozlabs.org/project/linux-pci/patch/20250625165229.3458-2-sh=
+radha.t=40samsung.com/=0D=0A=0D=0AAxis-provided=20IPs:=0D=0A=20=20=20=20-=
+=20VIP=20(Image=20Sensor=20Processing=20IP)=0D=0A=20=20=20=20-=20VPP=20(Vid=
+eo=20Post=20Processing)=0D=0A=20=20=20=20-=20GPU=0D=0A=20=20=20=20-=20CDC=
+=20(Video=20Encoder)=0D=0A=0D=0AAs=20part=20of=20the=20upstreaming=20effort=
+,=20Samsung=20and=20Coasia=20(DSP)=20team=20will=20work=20together=0D=0Ato=
+=20upstream=20basic=20SoC=20support=20and=20Samsung=20IPs=20support.=0D=0AT=
+he=20Axis=20team=20will=20be=20the=20primary=20maintainer=20for=20the=20ART=
+PEC-8=20SoC=20codebase.=0D=0A=0D=0AGiven=20that=20ARTPEC-8=20is=20a=20disti=
+nct=20SoC=20with=20its=20own=20set=20of=20IPs,=20we=20believe=20it's=20reas=
+onable=0D=0Ato=20create=20a=20separate=20directory=20for=20it,=20similar=20=
+to=20FSD.=0D=0A=0D=0AWe=20will=20remove=20Samsung=20and=20Coasia=20teams=20=
+from=20the=20maintainers=20list=20in=20v2=20and=20only=0D=0AAxis=20team=20w=
+ill=20be=20maintainer.=0D=0A=0D=0AMaintainer=20list=20for=20previous=20gene=
+ration=20of=20Axis=20chips=20(ARM=20based)=20is=20already=20present,=0D=0As=
+o=20this=20will=20be=20merged=20into=20that.=0D=0A=0D=0APlease=20let=20us=
+=20know=20if=20this=20explanation=20addresses=20your=20concerns.=20=0D=0AWe=
+'ll=20update=20the=20commit=20message=20and=20cover=20letter=20accordingly.=
+=0D=0A=0D=0AThanks,=0D=0APankaj=20Dubey=0D=0A=0D=0A>=20=0D=0A>=20Best=20reg=
+ards,=0D=0A>=20Krzysztof=0D=0A=0D=0A
 
