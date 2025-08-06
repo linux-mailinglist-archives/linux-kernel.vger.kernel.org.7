@@ -1,70 +1,75 @@
-Return-Path: <linux-kernel+bounces-757461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E078B1C266
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:47:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1FEB1C269
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1B77B11B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA1B3A5838
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7604022256F;
-	Wed,  6 Aug 2025 08:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52968288533;
+	Wed,  6 Aug 2025 08:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C1c1mEs1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D3GD6YB+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/MYfMJ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CB71EEA31;
-	Wed,  6 Aug 2025 08:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E8A1E0DE3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 08:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754470020; cv=none; b=E3Mr3fWyjcO6KJPSPg2p2aLhzeJ+dGJ+raI9xI4OVLnftj18yJpmDbpdlGvY52YfsMP41SmL2861qqFutz8kufi//BjIQ0ZUnf0w6/7NzovpqUVje9VRvdCaczk8LbgpwpZAgiYeUvkGexeOFfRBioj+G5iFMAsYSMyFWInJBw8=
+	t=1754470172; cv=none; b=k/wQ0sEmikJg/8bJhaLqkPS74qsiDYJhlTMZ9AcbTPCW36tWnlZVKZg8Hvzow2cJ6n+tea4xR99VTaDsTpd8juohpUMHvjKlLWIwOgodLtRRLSHNrilxyN6ColaD8z+vU02brSS2YjWn+fD8B0tV06x0eFIeYKacRykm3+USDxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754470020; c=relaxed/simple;
-	bh=hYNqEsP82qdILUOKzEkzPVaFsBgV6sHYuztseoRNoq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AA7KsWDyOGdZU1o0Hf2x2Oi6BdAeEPpDCAi0Uz9fNa/4oRC3IAhLccZvQu8HI1gHz3YUPF+Ix/LW32kYnDryhl0NihqHt5Z4R60UQkiKCzx/Vgm+vNRQxCOc7Mba0kYqYzlpeqNHDAVSIRIusFlr9F4HLmZtJIJ7onYw1RZ5txU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C1c1mEs1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D3GD6YB+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 6 Aug 2025 10:46:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754470017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CYJrA1BGlXrP0d9RCZmbXBI9p4Rr1CBSrbu3cWfdZJ4=;
-	b=C1c1mEs1VQtvuq+dVQKHKwaG+hoKEH+C5HSdx71X83du5/7AhXLgCAzX9Sw/aH2DrFR2Em
-	cW+haLzyr2l+HpyCgn6iBHgnLfkpn6PWyCUlsI56pKhyXDOei3A9lrOhwgBxbAohuuqJGl
-	X3v/GOop1sVrNAogs3HZhDMptzmib+1cBz2EJ1y6MXqlKjiFxqAdJnWWkMkGpT7ft02ws1
-	6IjE5i9iBO7PnHBh60Mv0XgMbEQZFrBhjjCpBuYEtsH0JwDBe6yMnS2vfZs4vln1HSWehm
-	g1ctFAgGD64Rcvw74uhhUhcCRNMkOeE/2HQsuuP7yCr6SvFcOl6sMOhfmDgoiQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754470017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CYJrA1BGlXrP0d9RCZmbXBI9p4Rr1CBSrbu3cWfdZJ4=;
-	b=D3GD6YB+kfrVUiUym13eSnrXIpy0o1qG4P9GhGw/7qIT0pBVAfOxCe/akjZalsUqNxrzSS
-	2RFYxfpCGFKPH6BQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] rv: Add rts monitor
-Message-ID: <20250806084652.3TFe1T1W@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
- <20834b8fcd4dfe75642cec2097e29f4c636a33fb.1753879295.git.namcao@linutronix.de>
- <b3499e8d79c2215b4fb765c0ceb5294f322efa3a.camel@redhat.com>
- <20250805122215.hXbwUchz@linutronix.de>
- <20250805154515.CchJtec3@linutronix.de>
- <1ddbe4c89a12c6282fa6db19c4649b90ab2fcf9d.camel@redhat.com>
+	s=arc-20240116; t=1754470172; c=relaxed/simple;
+	bh=0988g4lUsWGkNxdb3eVyghAVByp1FYNQVFvB+omhiyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eiKMLppdvYXS3PPSKMkN+jwBYY/5QGVV44ObpfK12k19On3y7J1ErXnXBKcyM4Mvbh1sxLmabwhZO10eUzUe/cSCHpI/NYY1xW/Q4HJHPcrmUf4GpHqPgKQ8mqAafFoS/X+4skmbg8hXXUMBWr3Mvj7EnQoS7FVZEeao30XR8X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/MYfMJ6; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754470170; x=1786006170;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=0988g4lUsWGkNxdb3eVyghAVByp1FYNQVFvB+omhiyE=;
+  b=e/MYfMJ6Jc4na0by5BFG6hdOridg//LMpz1tMK9RN0YKBquritgpSsOY
+   EoGmKSD12ND75zz6aBINXeZav3L3wrV6sb20LOUEWc717JvkcJQnoqnEw
+   5KfXUckTB62tNO7V3bBkrLTRzOKjY3pldRTsrRtjWEzgjFGLykOuLBqDm
+   NVmE5lfG7hMcCJx4YgIqLZuOKE5ZOy4I38kvM/bS7EKRWtBg0p72hy3jN
+   U1FVBPs1dnkY6G8cePeSaX+izd+GXW42LSh/bpQmlKovQd3J0MNJNvVje
+   8oc3U4isqwtUQlcWce+qAZlxPc3QkIRKkvz2PWk6DENkYFzGTwv5XRTzr
+   Q==;
+X-CSE-ConnectionGUID: cNVg69FuRQiFQ3mFD19a/Q==
+X-CSE-MsgGUID: HNb5jtVpTcKENDT/x7HpUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="59395437"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="59395437"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:49:29 -0700
+X-CSE-ConnectionGUID: Q382yZR6RXm/enhKfEhR+Q==
+X-CSE-MsgGUID: xMIaYgrxQ4mAdoyr94eE/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="165488771"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 06 Aug 2025 01:49:28 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujZpt-0001Q6-20;
+	Wed, 06 Aug 2025 08:49:25 +0000
+Date: Wed, 6 Aug 2025 16:49:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: kismet: WARNING: unmet direct dependencies detected for SERIAL_8250
+ when selected by ECONET
+Message-ID: <202508061622.zf1SMW7r-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,183 +78,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ddbe4c89a12c6282fa6db19c4649b90ab2fcf9d.camel@redhat.com>
 
-On Wed, Aug 06, 2025 at 10:15:48AM +0200, Gabriele Monaco wrote:
-> I didn't make it on time before your V2, I assume you solved already so
-> you might ignore this.
-> 
-> You kinda have something like the da_monitor_enabled: the
-> rv_ltl_all_atoms_known
-> 
-> I wonder if you could define LTL_RT_TASK_ENQUEUED only when you
-> actually know it (or are reasonably sure based on your internal
-> counter). Or at least not set all atoms until the monitor is fully set
-> up.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   479058002c32b77acac43e883b92174e22c4be2d
+commit: 79ee1d20e37cd553cc961962fca8107e69a0c293 mips: econet: Fix incorrect Kconfig dependencies
+date:   2 months ago
+config: mips-kismet-CONFIG_SERIAL_8250-CONFIG_ECONET-0-0 (https://download.01.org/0day-ci/archive/20250806/202508061622.zf1SMW7r-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250806/202508061622.zf1SMW7r-lkp@intel.com/reproduce)
 
-The rv_ltl_all_atoms_known() thingy is for situation where relevant
-tracepoints have not been hit yet.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508061622.zf1SMW7r-lkp@intel.com/
 
-This case is slightly different, the tracepoint has been hit. And it is not
-clear how to implement the "reasonably sure based on your internal counter"
-part.
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for SERIAL_8250 when selected by ECONET
+   WARNING: unmet direct dependencies detected for SERIAL_8250
+     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && !S390
+     Selected by [y]:
+     - ECONET [=y]
+   
+   WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
+     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && SERIAL_8250 [=y] && OF [=y]
+     Selected by [y]:
+     - ECONET [=y]
 
-> Anyway reordering the tracepoints registration is likely necessary
-> whatever you do, but I'm afraid a problem like this can occur pretty
-> often with this type of monitors.
-
-What I have in v2 is a workaround only, by reordering the tracepoint
-registrations.
-
-The root problem is not specific to this monitor, but all LTL monitors. My
-idea for the real fix is the untested patch below. I will send it
-separately. It is not urgent, so I can wait for your DA macro removal patch
-to be merged first.
-
-As I'm sending the patch to you, I realized that the patch effectively
-nullifies ltl_atoms_init(). So I will need to fix that up..
-
-Nam
-
-commit 7fbb9a99f1a95e5149d476fa3d83a60be1a9a579
-Author: Nam Cao <namcao@linutronix.de>
-Date:   Tue Aug 5 22:47:49 2025 +0200
-
-    rv: Share the da_monitor_enabled_##name() function with LTL
-    
-    The LTL monitors also need the functionality that
-    da_monitor_enabled_##name() offers.
-    
-    This is useful to prevent the automaton from being executed before the
-    monitor is completely enabled, preventing the situation where the
-    monitors run before all tracepoints are registered. This situation can
-    cause a false positive error, because the monitors do not see some
-    events and do not validate properly.
-    
-    Pull da_monitor_enabled_##name() to be in the common header, and use
-    it for both LTL and DA.
-    
-    Signed-off-by: Nam Cao <namcao@linutronix.de>
-
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 1aa01d98e390..8a885b3665a8 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -119,6 +119,14 @@ int rv_register_monitor(struct rv_monitor *monitor, struct rv_monitor *parent);
- int rv_get_task_monitor_slot(void);
- void rv_put_task_monitor_slot(int slot);
- 
-+static inline bool rv_monitor_enabled(struct rv_monitor *monitor)
-+{
-+	if (unlikely(!rv_monitoring_on()))
-+		return 0;
-+
-+	return likely(monitor->enabled);
-+}
-+
- #ifdef CONFIG_RV_REACTORS
- bool rv_reacting_on(void);
- int rv_unregister_reactor(struct rv_reactor *reactor);
-diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
-index 17fa4f6e5ea6..92b8a8c0b9b7 100644
---- a/include/rv/da_monitor.h
-+++ b/include/rv/da_monitor.h
-@@ -74,29 +74,12 @@ static inline bool da_monitoring_##name(struct da_monitor *da_mon)				\
- 	return da_mon->monitoring;								\
- }												\
- 												\
--/*												\
-- * da_monitor_enabled_##name - checks if the monitor is enabled					\
-- */												\
--static inline bool da_monitor_enabled_##name(void)						\
--{												\
--	/* global switch */									\
--	if (unlikely(!rv_monitoring_on()))							\
--		return 0;									\
--												\
--	/* monitor enabled */									\
--	if (unlikely(!rv_##name.enabled))							\
--		return 0;									\
--												\
--	return 1;										\
--}												\
--												\
- /*												\
-  * da_monitor_handling_event_##name - checks if the monitor is ready to handle events		\
-  */												\
- static inline bool da_monitor_handling_event_##name(struct da_monitor *da_mon)			\
- {												\
--												\
--	if (!da_monitor_enabled_##name())							\
-+	if (!rv_monitor_enabled(&rv_##name))							\
- 		return 0;									\
- 												\
- 	/* monitor is actually monitoring */							\
-@@ -390,7 +373,7 @@ static inline bool da_handle_start_event_##name(enum events_##name event)			\
- {												\
- 	struct da_monitor *da_mon;								\
- 												\
--	if (!da_monitor_enabled_##name())							\
-+	if (!rv_monitor_enabled(&rv_##name))							\
- 		return 0;									\
- 												\
- 	da_mon = da_get_monitor_##name();							\
-@@ -415,7 +398,7 @@ static inline bool da_handle_start_run_event_##name(enum events_##name event)
- {												\
- 	struct da_monitor *da_mon;								\
- 												\
--	if (!da_monitor_enabled_##name())							\
-+	if (!rv_monitor_enabled(&rv_##name))				\
- 		return 0;									\
- 												\
- 	da_mon = da_get_monitor_##name();							\
-@@ -475,7 +458,7 @@ da_handle_start_event_##name(struct task_struct *tsk, enum events_##name event)
- {												\
- 	struct da_monitor *da_mon;								\
- 												\
--	if (!da_monitor_enabled_##name())							\
-+	if (!rv_monitor_enabled(&rv_##name))							\
- 		return 0;									\
- 												\
- 	da_mon = da_get_monitor_##name(tsk);							\
-@@ -501,7 +484,7 @@ da_handle_start_run_event_##name(struct task_struct *tsk, enum events_##name eve
- {												\
- 	struct da_monitor *da_mon;								\
- 												\
--	if (!da_monitor_enabled_##name())							\
-+	if (!rv_monitor_enabled(&rv_##name))							\
- 		return 0;									\
- 												\
- 	da_mon = da_get_monitor_##name(tsk);							\
-diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
-index 29bbf86d1a52..85a3d07a0303 100644
---- a/include/rv/ltl_monitor.h
-+++ b/include/rv/ltl_monitor.h
-@@ -16,6 +16,8 @@
- #error "Please include $(MODEL_NAME).h generated by rvgen"
- #endif
- 
-+#define RV_MONITOR_NAME CONCATENATE(rv_, MONITOR_NAME)
-+
- #if LTL_MONITOR_TYPE == LTL_TASK_MONITOR
- 
- #define TARGET_PRINT_FORMAT "%s[%d]"
-@@ -33,7 +35,6 @@ typedef unsigned int monitor_target;
- #endif
- 
- #ifdef CONFIG_RV_REACTORS
--#define RV_MONITOR_NAME CONCATENATE(rv_, MONITOR_NAME)
- static struct rv_monitor RV_MONITOR_NAME;
- 
- static struct ltl_monitor *ltl_get_monitor(monitor_target target);
-@@ -156,6 +157,9 @@ static void ltl_attempt_start(monitor_target target, struct ltl_monitor *mon)
- 
- static inline void ltl_atom_set(struct ltl_monitor *mon, enum ltl_atom atom, bool value)
- {
-+	if (!rv_monitor_enabled(&RV_MONITOR_NAME))
-+		return;
-+
- 	__clear_bit(atom, mon->unknown_atoms);
- 	if (value)
- 		__set_bit(atom, mon->atoms);
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
