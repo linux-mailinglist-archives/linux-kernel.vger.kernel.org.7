@@ -1,150 +1,199 @@
-Return-Path: <linux-kernel+bounces-758002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBC8B1C994
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D339B1C997
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2AE3B6891
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04EE3B7FCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98616296170;
-	Wed,  6 Aug 2025 16:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFB1296170;
+	Wed,  6 Aug 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JbIuZI5M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfaGPGz9"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228C1A08BC;
-	Wed,  6 Aug 2025 16:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D7C2A1D1;
+	Wed,  6 Aug 2025 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754496273; cv=none; b=LfucKZKHjQlN1SmtXPFn+YwNjHZAwdzQ4BujbCRSG95mtjzqr+9+qxTwyXiaf208kABDP1bXpXg74YfPLq2yPGGff+SryQnyMnRmniGOVd8jaItUX3mMjXUIC++e+Ncwj0MmKBL3rVlncBULYH+Nu0Dg+FommuFNjFx8V/oVYYM=
+	t=1754496324; cv=none; b=XMtsuvOC2AuKL7BotnQhne/1JZjyfKIfbwdl9JacqIevZ652YI0TEnbpIeCZ0ICynLOO3X9xvIznkdtphv5aAve4pS2UbJoVcHjdq1LdhgVOTXdNVL8y1GIFvdKfHNOXbNTky/v1jK6VvMA/dOiIvmPT+pOP8Ev2hFkXfCbNypQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754496273; c=relaxed/simple;
-	bh=HPpQ0hjuxb+HAo7BRui7PSven5uFFgNblr1pQ4elSHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WF0NPCdhNJGjREdFqPgtALb5oSHDA8bI0CjyEw3cUdIjwk7n+GJqk942yN3PYJUnYyjHtg90bvbyRZ4qcVdgz6s2cIQekOlOXs56w2VToVcfrEMIUB776diyYijcn3umArlTLCgGyFFpbQ3lhKWBwhi2lQh1EbTZUYcNaGiIeic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JbIuZI5M; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754496271; x=1786032271;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HPpQ0hjuxb+HAo7BRui7PSven5uFFgNblr1pQ4elSHs=;
-  b=JbIuZI5M3WbjGQh9XOgShoKF06q/7/O7Sj5FZ2asnGO5GwSjUcnP85vX
-   g891MGNrgLw82UP7P5tLQAJsAzm8AY63m+N7QRYH9df3VvcH8+mVNfwnx
-   YqifnCeCUHWmFUZOgtX1FeB2UTzjHwpfJb+QAP/7CyqkjBz3CCBPFvP5o
-   Xb4XwVEyW2wzMG7zjwVUI52fpWMqXZ62aMPAwmSNeuutwisZfOlCKe08i
-   +H+Lbov69OvJRNMVbYwypjswvy1kjIUqloQ5GhxqG9jc3XVORkbEwXw+j
-   4gU8kfN1sSiTbf7/yTQ0oAwBIIEdmWNDrdPSLz3XUEjWTW/OE0CbZKJIw
-   g==;
-X-CSE-ConnectionGUID: ogJ1vzAcS4mWz3djGVgdSQ==
-X-CSE-MsgGUID: eHaokjyMRF6CeiJ4lQKIzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74280618"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="74280618"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 09:04:30 -0700
-X-CSE-ConnectionGUID: XlS7HMGnR4+Hycu0/IeD2A==
-X-CSE-MsgGUID: Xm68ssQERNilUQzENzRyNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="164020832"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.110.154]) ([10.125.110.154])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 09:04:30 -0700
-Message-ID: <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
-Date: Wed, 6 Aug 2025 09:04:29 -0700
+	s=arc-20240116; t=1754496324; c=relaxed/simple;
+	bh=PhwHG+EYFOVRG5uXkt7IEDkcKqrpvkAxqGQnnryKl0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qmEKaIj3P8Lm2yTUhLI3QfAuMFOGAXXiNuNM7L2xP+hkHseLEIdt3BXrvEZU/dpfURtK1SB0hSDG/LTqFIiWp79IczUJBom4FCvcu5haUEtYwErnNC96rervTeo94WBSF9obuROIi6ubz2+JLtmDQ0WsDbAgkGk6wYoj2LLknKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfaGPGz9; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32129c4e9a4so104302a91.1;
+        Wed, 06 Aug 2025 09:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754496323; x=1755101123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3mIOK50dkPBYkubxS1HC0J6F3j7e4NYAAxh00VWx4Sg=;
+        b=HfaGPGz9zVBEaxMuBSzx7ZGwjtxXiQt/fH10UnSQHunTRX0/+n0qYuP2H9eq+18MzR
+         Djn/qDL6veJjfW2FVUxqyJ5qRbyrgSS4BaDDJIugkWTqfJ2PIvwxvVdt5bcQ6va5wxwQ
+         8mP1dktbLjYNDxGo44HyhLjx88jJKg5t+A0PujnUpdJHowVu2i2a/6uo/6uXIgSfCsiB
+         3D3kmOzRkKKVPOKa2l7NOzcmgwT3j7u3F6N4OhKYd/nOSvmuHRiD+ZSFyq1M7oipyW5Y
+         /Jh6irqKKKH3w4BK7QcUdNoFBQyLFY5vmQTZy5PRjJuxNft82YCVjXbmdyUGniNIWtBC
+         +wMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754496323; x=1755101123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3mIOK50dkPBYkubxS1HC0J6F3j7e4NYAAxh00VWx4Sg=;
+        b=oEE3uAX+pSyBfNYpJ1p6P2BFkzWEVAQfajYhulr6pyQKum6b278jNPOWkQiPmDfh3F
+         ue1rZZQMYmd15E5iPXiBm9nMGM3DCXSixXLKXX950U8wnXswNtg7efbtiR0n0wu2rSIm
+         W/Ii3+sxoNM7JpeJPUySa4SL6naYDk4QKnUP73GhaDS71JDfPXOkTdd55Jir6TZeZnGE
+         x9QxMLAOFFIrUpYgDzdcsPYIMOEZU9B/kYS+33zCIDAezVE/YMfpSXDEfLIBolDYA4ai
+         W8whOMdDXGNjS1nAiZu1jLHaWscV8codKpnvKn4IntWpSXKAE/3SiG/9OqPH7K1m9U5l
+         B7hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsWDZXxKIXV+mFNwOl/z7DkwoFfdnEWGL1R7n2V5YQLNZ6T4VlOxPmqNiaanNbKNx81jtIhCL2QNaW87yk@vger.kernel.org, AJvYcCW4TCMqoS4S6p27y41UYUY8XS/LEeWWf1B0BqlJLt1Hv95FTmj0FZfvPwt80vKIEd+R1WRhOOPsF8C1tYyZ@vger.kernel.org, AJvYcCXDgEVXPOjuurA2f9M1liqSxZ/pf+QLoju+QXBhFGafuv2MQehDZ2loygBpLKjIxtXkMykRBmYfDo1o@vger.kernel.org
+X-Gm-Message-State: AOJu0YwULy2xynv3qkP5DBUJMXuOGt401O6D4RqR3qgdo+AKMHp7o75H
+	HWz4bzfFTC1LiBPZjSM6A1GxG8w8yBC9xUuaSgFwaupD3xd6u0k1fDaHVZOiGc2HYBI/tNZE4ce
+	HeOGhznHmXjyEX/1DFFIaN8FAbNEe+VM=
+X-Gm-Gg: ASbGncsy0cyozYL+f2e/jSisPq8XzzJgsKnhFGqB6qEsD0uVNalW7AZSIhlthiEFNDq
+	7wU9/6ToT7iapR9OPIKf933pnfee0Bg4/mjvP1fakaIvjIH7uU9k690/4qWDGpa5+BOno5h0KkC
+	KH8L4tsqhcIrmLfVdGcSD+MeLPIjFsAoHZn09MLjgHPib4rJVLCtFyZ33eEhzzVhIy7CCF4MAlM
+	ckHIjH4W9yNomU=
+X-Google-Smtp-Source: AGHT+IGAB9zEBN9WyI1cOqR8gsShigz2DOPciDd134KjWnUqYPaBIAixD49cDE6AL0Ceby+ICO9OTnyOVztal+CLDGk=
+X-Received: by 2002:a17:90b:3e84:b0:312:1c83:58fb with SMTP id
+ 98e67ed59e1d1-32166e24168mr3970705a91.1.1754496322361; Wed, 06 Aug 2025
+ 09:05:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250806155223.GV184255@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250806121855.442103-1-ltykernel@gmail.com> <20250806121855.442103-3-ltykernel@gmail.com>
+ <SN6PR02MB41577D7BFC7FA078880979A5D42DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <SN6PR02MB41577D7BFC7FA078880979A5D42DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Thu, 7 Aug 2025 00:04:45 +0800
+X-Gm-Features: Ac12FXzgB4ZlCcmb1NTN1lJxRIunYBc-Z8YR70b8_09nzYK16W-8MlX8Y0jCCYw
+Message-ID: <CAMvTesAmCyO6XF-sRtMKw=TwKgeqaEkMQTmtkZbA7P-zeqDg6Q@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 2/4 Resend] Drivers: hv: Allow vmbus message synic
+ interrupt injected from Hyper-V
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>, 
+	"Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>, Tianyu Lan <tiala@microsoft.com>, 
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/25 08:52, Jason Gunthorpe wrote:
->> Isn't that still a use-after-free? It's for some arbitrary amount of
->> time and better than before but it's still a use-after-free.
-> Yes it is.
-> 
-> You can't do this approach without also pushing the pages to freed on
-> a list and defering the free till the work. This is broadly what the
-> normal mm user flow is doing..
-
-FWIW, I think the simplest way to do this is to plop an unconditional
-schedule_work() in pte_free_kernel(). The work function will invalidate
-the IOTLBs and then free the page.
-
-Keep the schedule_work() unconditional to keep it simple. The
-schedule_work() is way cheaper than all the system-wide TLB invalidation
-IPIs that have to get sent as well. No need to add complexity to
-optimize out something that's in the noise already.
+On Wed, Aug 6, 2025 at 10:11=E2=80=AFPM Michael Kelley <mhklinux@outlook.co=
+m> wrote:
+>
+> From: Tianyu Lan <ltykernel@gmail.com> Sent: Wednesday, August 6, 2025 5:=
+19 AM
+> >
+> > When Secure AVIC is enabled, VMBus driver should
+> > call x2apic Secure AVIC interface to allow Hyper-V
+> > to inject VMBus message interrupt.
+> >
+> > Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+> > ---
+> > Change since RFC V5:
+> >        - Rmove extra line and move hv_enable_coco_interrupt()
+> >          just after hv_set_msr() in the hv_synic_disable_regs().
+> >
+> > Change since RFC V4:
+> >         - Change the order to call hv_enable_coco_interrupt()
+> >         in the hv_synic_enable/disable_regs().
+> >       - Update commit title "Drivers/hv:" to "Drivers: hv:"
+> >
+> > Change since RFC V3:
+> >        - Disable VMBus Message interrupt via hv_enable_
+> >                coco_interrupt() in the hv_synic_disable_regs().
+> > ---
+> >  arch/x86/hyperv/hv_apic.c      | 5 +++++
+> >  drivers/hv/hv.c                | 7 ++++++-
+> >  drivers/hv/hv_common.c         | 5 +++++
+> >  include/asm-generic/mshyperv.h | 1 +
+> >  4 files changed, 17 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> > index 01bc02cc0590..c9808a51fa37 100644
+> > --- a/arch/x86/hyperv/hv_apic.c
+> > +++ b/arch/x86/hyperv/hv_apic.c
+> > @@ -54,6 +54,11 @@ static void hv_apic_icr_write(u32 low, u32 id)
+> >       wrmsrq(HV_X64_MSR_ICR, reg_val);
+> >  }
+> >
+> > +void hv_enable_coco_interrupt(unsigned int cpu, unsigned int vector, b=
+ool set)
+> > +{
+> > +     apic_update_vector(cpu, vector, set);
+> > +}
+> > +
+> >  static u32 hv_apic_read(u32 reg)
+> >  {
+> >       u32 reg_val, hi;
+> > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> > index 308c8f279df8..d68a96de1626 100644
+> > --- a/drivers/hv/hv.c
+> > +++ b/drivers/hv/hv.c
+> > @@ -312,10 +312,13 @@ void hv_synic_enable_regs(unsigned int cpu)
+> >       shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE=
+_SINT);
+> >
+> >       shared_sint.vector =3D vmbus_interrupt;
+> > +
+>
+> The spurious blank line is still here.
+>
+> >       shared_sint.masked =3D false;
+> >       shared_sint.auto_eoi =3D hv_recommend_using_aeoi();
+> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
+64);
+> >
+> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, true);
+> > +
+> >       /* Enable the global synic bit */
+> >       sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
+> >       sctrl.enable =3D 1;
+> > @@ -342,7 +345,6 @@ void hv_synic_disable_regs(unsigned int cpu)
+> >       union hv_synic_scontrol sctrl;
+> >
+> >       shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE=
+_SINT);
+> > -
+> >       shared_sint.masked =3D 1;
+> >
+> >       /* Need to correctly cleanup in the case of SMP!!! */
+> > @@ -350,6 +352,9 @@ void hv_synic_disable_regs(unsigned int cpu)
+> >       hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint=
+64);
+> >
+> >       simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
+> > +
+> > +     hv_enable_coco_interrupt(cpu, vmbus_interrupt, false);
+> > +
+>
+> This line is still in the wrong place. Maybe you accidentally resent
+> the previous version of the patch instead of the version with your
+> intended changes?
+>
+> Michael
+Hi Michael:
+      I just sent out an update version. Sorry for confusion.
+--=20
+Thanks
+Tianyu Lan
 
