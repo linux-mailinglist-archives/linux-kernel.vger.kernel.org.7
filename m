@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-757781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E9FB1C689
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:01:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71E0B1C68E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131DB166089
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F43A7B15D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033DB288CAC;
-	Wed,  6 Aug 2025 13:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SlBqHmO2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01529244691;
+	Wed,  6 Aug 2025 13:01:52 +0000 (UTC)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF6623E358;
-	Wed,  6 Aug 2025 13:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1842AA5;
+	Wed,  6 Aug 2025 13:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754485282; cv=none; b=NHt87+xAlkknHM66zvtYijwYfHcgs3+zvUFZw623zEXOasibDgSRq7FrTdZmbm/Dla8FiZUcnHFv3MzQysTlIoUUugYC93X7f6AFPOuRWbpyiEIYefPehzVW6Fyjnb4VsdKQWCRlj66eR0Tscu9zoCfFgNkYwHA3ppc4S0n8WSY=
+	t=1754485311; cv=none; b=LzmyS3akcozH1O4Ow/bt1AqFiZhKORtnIDxkfRkY4XDg55E0HLWBlvzlZtVN720AjXLQ89lete/k8xTaYSfdtVq31XarIkBzwD3IABnGgq6xDoj1MG7l79+3v3gMzXYyEqwb46Fh8vJ4mBzhkhOd/V/UGwjhBw3Ye6xBJtC/5ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754485282; c=relaxed/simple;
-	bh=ZNUXG2GvGCx2VZ5W4Qg1NTNoY1RcTQ2Omyt1UvC2aK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpmZft0lF4hUzC4kLTsmHPWDMMBO37SUmUEeSZSRzWqfgESYl4ye0kE+PBv2fGca3Wts2SXoam/OH0TAf5Ya7EvD3wX2PTgZreZWDbhw4ZDi7gSlZ+s2igSN8y92zeydNRjWVeUfZZZMT4qWuwfLJDEpWWZcgVEHdua7Z6gFrAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=SlBqHmO2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u8l9q58ZeHFderpggttge7hAv/WuaSueIaS+TqcUHkw=; b=SlBqHmO2/3GEayE4e7p2CmyOWH
-	1NUi5JhhD4t0yyCOvl4izVxltdXZyf8PGO4e8eSK//M4QzAiLrdOYTi6UWVIPz5CLhGHpribUTMXr
-	nkJdSFPTH4NOTESLbZGES0mS+h0y2K19Zxm2zpWg+YYCKSW2TBN9KpgnhN9ZDa43qqOsjOPZCBVHd
-	ffXE1sUuZ4aT7oCJ2IKjMMdrRfaeb3jQiFd9VK4Vi7gGS804YP0ON6vKh+0PT9UMAHlUFOFXwWWuP
-	Un0ykXP1vVeJOSYT8ViBZKw62M4z88ZzV/ZfAr895FolTwF3g6SUuSjqDcMKNgsdRVKEUdPcoAyxa
-	HRCKBc3Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56824)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ujdlQ-0004Yx-2V;
-	Wed, 06 Aug 2025 14:01:04 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ujdlN-00077e-31;
-	Wed, 06 Aug 2025 14:01:01 +0100
-Date: Wed, 6 Aug 2025 14:01:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, o.rempel@pengutronix.de,
-	pabeni@redhat.com, netdev@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
-References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
- <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
- <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
+	s=arc-20240116; t=1754485311; c=relaxed/simple;
+	bh=atyL/BY0VKuqOLzOGFYrTSXHxdrXsLWotPxW+pZkGJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JxiKbs1mCiF7iIZxRHOCWW1wE5LRXEJJDrGWcjlQX5hvZ2aQAlfOnlYugVl6xSQ2w/NkFbDVA6oiENrbgftKIxOnIGnftLsywW2g8/hEfABcRKGAEEmrn4TSjPHfthuUdlYs3cgYiRHh/mc1izCEBZBH78G0XWr0UY+jMUtq+yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-741a8bb8aa4so1220642a34.1;
+        Wed, 06 Aug 2025 06:01:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754485309; x=1755090109;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JAT+fbsVBlKl4BCqeaUk3Yqdz9E5O5hG6x7f+SIR9a0=;
+        b=KoxIwhHCaXD1C2Q09s2QyGu7R2edMz3YlHgw2ZmOn9/fkKhGAK3S9/Y3svmlnd2mfm
+         MN5wP2FYBiGb5Z33f1nTJFZ/g7dcmifNejAKjo9jqck9UvjgbWLWTGkcyu4vnrI09xk6
+         kf2QXrpeD7Pul0bQ/nzUdQmwsHWX+8T0sPTDyA6sqkbky73+Ko32jTFfNX+W2//VqK8g
+         mv6NyWJZEMY/M+YNVIxI8MnlCq4Ck5AeXppyI8sBt8V3f0haaZC0hgpxVvNg/zGBTfdv
+         a47NkCWe5xGlt5IZu9LsoBzpZ9MIciqZbk9M166jqOb/d7MZfj9VOGfyX2spFshoB6ar
+         hYCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD4/Lt1I3KCI0NrJyzzA6nl0bZKZqx2hRTzZMbb+yzPJ8IjuE3W4lefRfVIZHtNaTtcUSkVmTl43mg@vger.kernel.org, AJvYcCVnfe0BRiIgkYDswfv2WFHBaHSxJk4qkEfkfR9TolLX/DePxFps5jnBY8/6tYvYbsnhVg+zi+OSNRXhJVeLvloL/7M=@vger.kernel.org, AJvYcCWDPtf4toiWZvuTBMUi/DgcK8PuB7pX6T86LfYwh2N/ICdO3TvCpfmPf5aF4lzG0JHGPpnfG7oNYCMpreKO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSPbNAnKD3FTic5vu45M/pbzwzJQ0veIrfXzTgpvHFC7wiFHCr
+	Z6XlfCwaya65csDVaXOJ7OML4jhi6DaNFgmu4qDyUFGfkeaz+2dZ1UAcvz8aH137xHM=
+X-Gm-Gg: ASbGnct48UkMr9yjv0KRm87jXY0WdLyjLZrwoXMx8CsyN7GT6Xrg97atwFGVuxAjHYh
+	IG/I5gHSRYAVxGIhpE0MwtBOHc6GO/sELvN5xk4N89PMaOWF6u9RrlVjC7DFlvfrczM35UOAIwv
+	rRONrH9R/THdxB4Q0rMPeuCv8uEM2ObyXk/A8qbmu7N6KkAjiqC1GhcHheeO/rv8NaPTjv7sOQu
+	f5BhnaJBuEBpbtbTHfh4VGuuTjLC+MhGqUjwhfZ3CizSsAuBhT03rwbfLPXO/P/RlBaUxvdgWaY
+	IC0ofQFFtPPfvtZn8mTofdERNBd7y3sXOWvkAI+QZ2T/CXHE4hO495PCzOWs5IfZeqVQHcWSzo/
+	Omu44ZZ9o8vFnhtCP2b7PqrueqXaoiG7G50FjJczhsVP2VNwhbF60ROqsmQF+
+X-Google-Smtp-Source: AGHT+IHKIKHdb8z1Tq4wrAr53O1lQdtCz/IPLAuNBzl1S7vm4MuI0bqmdp69kvC9C3TetbYUj43hbQ==
+X-Received: by 2002:a05:6122:4f83:b0:538:dbaf:773e with SMTP id 71dfb90a1353d-539a0248bc6mr1064401e0c.0.1754485297671;
+        Wed, 06 Aug 2025 06:01:37 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d14c1csm4192199e0c.29.2025.08.06.06.01.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 06:01:37 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-88dbaea0580so1036228241.0;
+        Wed, 06 Aug 2025 06:01:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUU5QFp7aFw0yUYcegCvErxYddVhvuspo+vA0ErgRrYT0MdJ0MEptqshI8sVIkilRKw7e1ZGkWJFmSfIq0E@vger.kernel.org, AJvYcCUYTIOUIqLtx62QpQUnHRJDMWrvz03S8MEQZSzuI+h+1t2OKUTMtPKz/22xzAeiFWLRRigQMI3BGmziIl3lXAK8S5c=@vger.kernel.org, AJvYcCX6wpUAy8p9HrckTm4gJbeaccghZwf1ro+cyjFPnBTI5n95ss+0dNCaGgCw5dWEwDpMb0LAHqGyuUPc@vger.kernel.org
+X-Received: by 2002:a05:6102:5111:b0:4e9:add0:2816 with SMTP id
+ ada2fe7eead31-503710c71b4mr1001391137.5.1754485279951; Wed, 06 Aug 2025
+ 06:01:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250709160819.306875-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250709160819.306875-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250709160819.306875-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Aug 2025 15:01:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVKCav74osWY+q4jEdni-zdcZvKg8B9VJVi7NtM7+kYDw@mail.gmail.com>
+X-Gm-Features: Ac12FXwXxnHV6_RQQSE260BaQoZl3QuUrHJgyPEXlLOvLnl8pLxggLqK44ASlu4
+Message-ID: <CAMuHMdVKCav74osWY+q4jEdni-zdcZvKg8B9VJVi7NtM7+kYDw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] pinctrl: renesas: rzg2l: Add PFC_OEN support for
+ RZ/G3E SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	John Madieu <john.madieu.xa@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 06, 2025 at 04:56:58PM +0800, Xu Yang wrote:
-> Hi Russell,
-> 
-> On Wed, Aug 06, 2025 at 09:45:01AM +0100, Russell King (Oracle) wrote:
-> > On Wed, Aug 06, 2025 at 04:29:31PM +0800, Xu Yang wrote:
-> > > Not all phy devices have phy driver attached, so fix the NULL pointer
-> > > dereference issue in phy_polling_mode() which was observed on USB net
-> > > devices.
-> > 
-> > See my comments in response to your first posting.
-> 
-> Thanks for the comments!
-> 
-> Reproduce step is simple:
-> 
-> 1. connect an USB to Ethernet device to USB port, I'm using "D-Link Corp.
->    DUB-E100 Fast Ethernet Adapter".
-> 2. the asix driver (drivers/net/usb/asix_devices.c) will bind to this USB
->    device.
-> 
-> root@imx95evk:~# lsusb -t
-> /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ci_hdrc/1p, 480M
->     |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=asix, 480M
-> 
-> 3. then the driver will create many mdio devices. 
-> 
-> root@imx95evk:/sys/bus/mdio_bus# ls -d devices/usb*
-> devices/usb-001:005:00  devices/usb-001:005:04  devices/usb-001:005:08  devices/usb-001:005:0c  devices/usb-001:005:10  devices/usb-001:005:14  devices/usb-001:005:18  devices/usb-001:005:1c
-> devices/usb-001:005:01  devices/usb-001:005:05  devices/usb-001:005:09  devices/usb-001:005:0d  devices/usb-001:005:11  devices/usb-001:005:15  devices/usb-001:005:19  devices/usb-001:005:1d
-> devices/usb-001:005:02  devices/usb-001:005:06  devices/usb-001:005:0a  devices/usb-001:005:0e  devices/usb-001:005:12  devices/usb-001:005:16  devices/usb-001:005:1a  devices/usb-001:005:1e
-> devices/usb-001:005:03  devices/usb-001:005:07  devices/usb-001:005:0b  devices/usb-001:005:0f  devices/usb-001:005:13  devices/usb-001:005:17  devices/usb-001:005:1b  devices/usb-001:005:1f
+On Wed, 9 Jul 2025 at 18:08, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for configuring the PFC_OEN register on the RZ/G3E SoC to
+> enable output-enable control for specific pins. On this SoC, certain
+> pins such as TXC_TXCLK need to support switching between input and
+> output modes depending on the PHY interface mode (e.g., MII vs RGMII).
+> This functionality maps to the 'output-enable' property in the device
+> tree and requires explicit control via the PFC_OEN register.
+>
+> This change updates the r9a09g047_variable_pin_cfg array to mark PB1, PE1,
+> PL0, PL1, PL2, and PL4 with the PIN_CFG_OEN flag to indicate output-enable
+> support. A new helper, rzg3e_pin_to_oen_bit(), is introduced to map these
+> pin names to their respective OEN bit positions, and the corresponding
+> callbacks are wired into the RZ/G3E SoC configuration using the generic
+> rzg2l_read_oen() and rzg2l_write_oen() accessors. Additionally, the GPIO
+> configuration for the PB, PE, and PL ports is updated to use the variable
+> port pack macro, enabling per-pin configuration necessary for OEN handling.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This looks broken - please check what
-/sys/bus/mdio_bus/devices/usb*/phy_id contains.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-However, this patch should stop the oops. Please test and let me know
-whether it works. Thanks.
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 7556aa3dd7ee..e6a673faabe6 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -288,7 +288,7 @@ static bool phy_uses_state_machine(struct phy_device *phydev)
- 		return phydev->attached_dev && phydev->adjust_link;
- 
- 	/* phydev->phy_link_change is implicitly phylink_phy_change() */
--	return true;
-+	return !!phydev->phy_link_change;
- }
- 
- static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+                        Geert
+
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
