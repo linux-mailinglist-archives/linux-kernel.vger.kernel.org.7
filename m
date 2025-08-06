@@ -1,103 +1,171 @@
-Return-Path: <linux-kernel+bounces-757935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AB5B1C885
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:17:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF137B1C888
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5AE18A5B98
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0492F564CAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E178228E575;
-	Wed,  6 Aug 2025 15:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNHdk5Xb"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663E228B7F1;
+	Wed,  6 Aug 2025 15:18:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AA128C2B9;
-	Wed,  6 Aug 2025 15:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCEA28C03B;
+	Wed,  6 Aug 2025 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493463; cv=none; b=SgJJ/HH6/es2qILMKcGNyjib31MynoA66hAchIHdZySO0x8BV2X9cfNXz9zfUiyXxkX8R730K/c6S85+A6sR9Xr38GNCfy5r9YflmjCWtaDbdhMmvK9pmYC+AVgMwOGQzhnLVWJVg2M9GvBlx7u/7FMetxodJ3XIKKYKuknNmPs=
+	t=1754493490; cv=none; b=sFooR4ZbYXkEDqLL7GLkcOmHsaMKapD3+1blQwXxe9IG/1TEXAYQkcpMxapdbZtjHxgiRtiW7WuQBUVxMzMk75W4oYcKWF2y2y4KVsSRyePCX50OjQM4/mJCgXgIk3wmxv5qYZkSSIe/PmVKh2CmPtZ8YvdaKbvwGgSGElF0ksc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493463; c=relaxed/simple;
-	bh=hWQuqMlYGqSysFZY0WYGkixYRNv5nyQF+2TTKw6FCds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pImXmTXxEmVW81wAUW/m1hJtRYbMI6wawJHVwMqbnxaZuBUp7AupGgy3lzyquIhnVnxZSGSvFD6lTWCuC49ss2fOQo7aDYvmAk2q7XkHrbeFJKxchY44C1GVeE6DUB4e6GSMbTmLi6nuh2LxnHqVm8rIUreQkxiBHIf/siKFZCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNHdk5Xb; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so1511196466b.3;
-        Wed, 06 Aug 2025 08:17:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754493460; x=1755098260; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hWQuqMlYGqSysFZY0WYGkixYRNv5nyQF+2TTKw6FCds=;
-        b=KNHdk5XbPf2T+kbR9JVjfhRaHFrVUA4/O75nq2MZMCoHv7IalnGJJoZHUxnWQqtwIg
-         uCmKmOIZORlhaz7/7MGkWo7BWyuhSAAP2/nC9sm10BSLqFbfTDJnyQOlTlTEEhj8jKEt
-         c81MHOk1JsNLL701WP/i47UH+6y25nsPerQjlslxTq6+21F2uYNN8tiQqDXdX2WQHLRj
-         yfVEh6LIOT5TYPvGWOuHdWx3YPyMWpgm9LACZQsu7FrwBmvYx2luGC6VjjOJFAgRi3xb
-         cREdNXU8JPd1i2vpkOmfd2XnkX36tLHZk7TbSK/Ls7fPX8sh+RWP9RkYNZMY7UGicFK7
-         Fj6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493460; x=1755098260;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hWQuqMlYGqSysFZY0WYGkixYRNv5nyQF+2TTKw6FCds=;
-        b=pD1qYBhRZy/aW16o/lcYhfC7VX+vnjXXXUwQEaeNV090Nk7nG54tjX3+G7aA3I0/yh
-         Ze68/tUzomPsDXofuOGKyKQbJfdJ3rN4126yv7AfdF1Txf76m+zW4UMJ4ndfGnXXR6ZL
-         ARcXc93x9TZqGIP5Zxpo7/u/iRvUMGpZBMD03MfJDc/V8z6KOic4xtISMsjg0N9yQvzG
-         8NOd1Ms//M1RNoXFwBCzBOoD9OYkiaJj/rMVAfjfVUN9soYuOo/8sERujxK7Lnh6wNBr
-         excmFMHsdiqRQQeG+ZjkPBwX2ZpdbfxlMVOJvxTfYrbfZWrZua+9LgX6LnRV1blGcEyd
-         xknA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHSPGVU/f1VWfPH7/MrZX0HNp6W1A+m+yxOrQA1uBn7Nr7ShuZaRTMDS/49/fWr6RpjdkAzupuUMqb6Q==@vger.kernel.org, AJvYcCXb4ggUiNn2m5OXd7lkqbDHuCxLJK22JlC1VbNQ/4BstQPd1TDxmv1+iEsmWsauzF5+C68PMMQPEST2QcVG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOKzpKTv9RI0RJqhy93RUFS+VjAitARFVyhhMkllKLFzTUh2u9
-	kPMdySVpZYyz2lfEIRXxaqL2jrNLXO8TdkzhKSOzmd/xTs/e3UBg4T0Xa94rNSbFoFw/cVgF8cf
-	Nd1AbhWpwj25ZDeUDV5cC/eDXczK7WHnXFgfXVw==
-X-Gm-Gg: ASbGncsEk/XSB5aDe+ViC69vAClHosXLjx0Pya5S2kPeLnviNznxFQg7Sy4pu1teUSx
-	Tg4j5BH7kk6WmaQHAmpELJ+f1qbJfNcur8Vxh2yX8FTqDQ/9cl6DKS9rmdjKNDcXFPlfQIX7jCq
-	geZLuYhq8ldQ9Ue+RJsf5XtntBExZ9iqnM6JQ/MhX118pcelIfOUuqA5lcy0xLs49+wNXxVN9/P
-	foFO0Tf
-X-Google-Smtp-Source: AGHT+IHqAZrOzsfGjlwFpHagjFXpijWrYwxgeDkU7dDh9FKQf6tOGtsnsjNT25i0oWnRYKJzAVqswF/fG0a3uP8w/J4=
-X-Received: by 2002:a17:907:3d4c:b0:af9:610e:343e with SMTP id
- a640c23a62f3a-af990116764mr322240666b.11.1754493459873; Wed, 06 Aug 2025
- 08:17:39 -0700 (PDT)
+	s=arc-20240116; t=1754493490; c=relaxed/simple;
+	bh=wD3AFqCfEfELY7oTxCwNUgcOUAfylPmOzdVUd2+M5WU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QoembBNo6G3RRsz/ZKs30VrPpgGMjLzjsQb4yRLxqoZFTQZxr7IRMkGcXmqaUrgxNsTP8yfPCU9NW9HVenUIGdcDoLromq1D2OWavOBanqxYoaVbmdsusH208h4XPWpmTu4bSxes5/R/3jFRbqxa6ongRzWnFGzYjo2auRsweyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bxv234808z6GDDL;
+	Wed,  6 Aug 2025 23:13:31 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0A7D814027A;
+	Wed,  6 Aug 2025 23:18:05 +0800 (CST)
+Received: from localhost (10.81.207.60) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 6 Aug
+ 2025 17:18:04 +0200
+Date: Wed, 6 Aug 2025 16:18:01 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Akshay Jindal <akshayaj.lkd@gmail.com>, <anshulusr@gmail.com>,
+	<jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<andy@kernel.org>, <shuah@kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+Message-ID: <20250806161801.000061c0@huawei.com>
+In-Reply-To: <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
+	<CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+	<CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+	<CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803134114.2707-1-ujwal.kundur@gmail.com> <20250805120001.3990-1-hdanton@sina.com>
- <8f1183d0-dfee-9448-446e-2a8846987319@huaweicloud.com>
-In-Reply-To: <8f1183d0-dfee-9448-446e-2a8846987319@huaweicloud.com>
-From: Ujwal Kundur <ujwal.kundur@gmail.com>
-Date: Wed, 6 Aug 2025 20:47:27 +0530
-X-Gm-Features: Ac12FXx0T4QSbWP1S2EdAexmxgi9MXwdQeH2eVEwt9jN8SSZrh0zgBiK5AfCsY0
-Message-ID: <CALkFLLLTBfLxtq0Euz6tYb0gwgDs37P8_TmfNQ8qaPZ5D9SuMA@mail.gmail.com>
-Subject: Re: [PATCH] block: prevent deadlock in del_gendisk()
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Hillf Danton <hdanton@sina.com>, axboe@kernel.dk, ming.lei@redhat.com, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com, 
-	"yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-> This problem is already fixed inside nbd by:
-> 8b428f42f3ed ("nbd: fix lockdep deadlock warning")
+On Tue, 5 Aug 2025 14:47:32 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Thanks for letting me know.
+> On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <akshayaj.lkd@gmail.=
+com> wrote:
+> >
+> > On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote: =20
+> > >
+> > > Doesn't sound right to me. HAve you investigated PM runtime paths? =20
+> > Yes I did investigate and found that PM runtime->suspend() callback
+> > co-exists with remove callback.
+> > =20
+> > > Looking at what the code you added there it sounds to me like a part
+> > > of PM runtime ->suspend() callback. =20
+> > Yes, part of functionality will always be common, because both the
+> > callback implementations put
+> > the device into powered down or low power state which is what has been =
+done here
+> > Both _suspend() and remove are called at different times in the lifecyc=
+le of the
+> > driver, but with respect to register setting, they put the device into
+> > power down state. =20
+>=20
+> Are you sure about the remove stage and how it interacts with runtime
+> PM? Please, check how the device driver core manages PM on the remove
+> stage.
+>=20
+> > Additionally .remove() can have code for:
+> > 1. disable runtime power management (if enabled while device registrati=
+on). =20
+>=20
+> If the device core enables it for you, it will disable it
+> symmetrically. I don't see the issue here, it should be done
+> automatically. If you do that explicitly, use the respective
+> devm_pm_runtime_*() call.
+>=20
+> > 2. device cleanup (disabling interrupt and cleaning up other configs do=
+ne). =20
+>=20
+> Wrap them into devm if required.
+>=20
+> > 2. unregister the device. =20
+>=20
+> Already done in the original code which your patch reverts, why?
+>=20
+> > For eg: another light sensor bh1750
+> > static void bh1750_remove(struct i2c_client *client)
+> > {
+> >     iio_device_unregister(indio_dev);
+> >     mutex_lock(&data->lock);
+> >     i2c_smbus_write_byte(client, BH1750_POWER_DOWN);
+> >     mutex_unlock(&data->lock);
+> > }
+> >
+> > static int bh1750_suspend(struct device *dev)
+> > {
+> >     mutex_lock(&data->lock);
+> >     ret =3D i2c_smbus_write_byte(data->client, BH1750_POWER_DOWN);
+> >     mutex_unlock(&data->lock);
+> >     return ret;
+> > } =20
+>=20
+> Correct and where do you see the problem here? Perhaps the problem is
+> in the cleanup aordering and some other bugs vs. devm calls?
+>=20
+> > In drivers/iio/light, you can find similar examples in pa12203001,
+> > rpr0521, apds9960,
+> > vcnl4000, isl29028, vcnl4035. You can find many more examples in
+> > sensors other than light sensors. =20
+>=20
+> Good, should all they need to be fixed?
 
-Would this patch still make sense as it narrows the scope of the
-read-critical section? It reduces the chances of holding other locks
-while trying to update the number of hw queues (and thus avoids more
-lockdep warnings for this particular lock in the future).
+The complex corners that occur with devm + runtime pm are around
+things that we must not run if we are already in runtime suspend.
+Typically disabling power supplies (as we can underflow counters
+and getting warning prints).  Seeing as this driver is not
+doing that it should be simple to use a devm_add_action_or_reset()
 
-Thanks,
-Ujwal
+Key thing to consider is that runtime pm may not be built.
+So the flow should work with those calls doing nothing.  That means that
+if you turn the device on in probe we should make sure to explicitly turn
+it off in the remove flow. That's where devm_add_action_or_reset()
+comes in handy.
+
+ret =3D regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_SENSOR_ENABL=
+E);
+Is the paired operation with the second disable you add in remove.
+Wrap that in a devm callback.
+
+More complex is the interrupt enable as that doesn't pair with
+anything in particular in probe. I'm curious though, do we need
+to disable it given the next operation turns off the sensor and on
+probe we reset the sensor.
+
+Is just clearing the enable bit enough?=20
+
+Jonathan
+
+
+
+>=20
+
 
