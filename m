@@ -1,246 +1,286 @@
-Return-Path: <linux-kernel+bounces-757801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DC8B1C6D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D67DB1C6DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D6E560B20
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F7218A09D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC6328BA92;
-	Wed,  6 Aug 2025 13:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4E128B516;
+	Wed,  6 Aug 2025 13:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="ycv1EeXp"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJRKyXVC"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B3419A;
-	Wed,  6 Aug 2025 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754487237; cv=pass; b=YrO8n+x7eCUptRExzYY5C8Rc0V4nBCJXX3+F46085AgQnFs+Qc1n6/VSASQ139X2Pbi5DJiIecrA0MATjT/65UZCLy/XzVBcoKU9A/ZatRWFXat/kB3sC6/gzN9AQy8LkU0Ka3C3w3WDoHFFeSIAywyJ6PIwfk7YEhGMEcrN0gk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754487237; c=relaxed/simple;
-	bh=2dOpAIADWbF4C8PVCONYvk4DELIrO2AJVZvujBeeo7M=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=NuchVGziPdDv1XZiqciojwUui3QwdvEmxG9sj5hV9UxziCkJaoR74iAWspBEbzaT4b+dl/MEaL/i4HYwnVguaxIdAuDoRRZdbNR5v1vT2I8TQod7VxsMKiQShZgfNiv12V5tdK42Fk6H0oGWz1waTDQbL2FMpjNJq5SyXM1Ezqo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=ycv1EeXp; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1754487223; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QqrnqNINOdK12q5QUx5zBkEhg6O06NIYbwLwR17IXka+miZamWzxsSvT8Ym8S5TROOsuhMiuHZgnPjELlYcVOy8qvODgolnnWyhHB+vvKItUZSByUxd+Swtq66FF066aOEGibNQFZplZW1wu1Q4ATED7QUs18D683vShDglFaF8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754487223; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pYCTlk/GK40nYVeUtUwS5qlXulOvqUMfkNed0naDUDQ=; 
-	b=Fu+f6p//RMxGO8LhCP6kzcoP1RvvsPM1pNn4Es25dPOoUycjj6KqaTkehMd7bh9Eb7TTIiSo5sBDxb7fg+MlzXqbMYmS3Z1XmixBp4JX4jUnshQU/q1jfFdhUd+yM/qN8OW9Uxse5QfcQM4kZtONwf8MB38qff34ZbzWeV4HGWA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754487223;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=pYCTlk/GK40nYVeUtUwS5qlXulOvqUMfkNed0naDUDQ=;
-	b=ycv1EeXpYpdUiOwi7KAYBWKa/KEUInXVL0JKZQfFZvej36pQQF4OVT5zAfE+xxnz
-	PlRDC2CsPbViUBfGgrLQAF98A1L1/BhW9m4n/V+Y0fRetXZarwxI3dx15lF3HcSfFWR
-	id9ybrcPE1vylacRimfJAZj2aa6tUElYS7ooEJLM=
-Received: by mx.zohomail.com with SMTPS id 1754487219747607.5034324774383;
-	Wed, 6 Aug 2025 06:33:39 -0700 (PDT)
-Message-ID: <b7ad97009fa0a49b9229ade0af5f526057869a36.camel@rong.moe>
-Subject: Re: [PATCH 2/2] platform/x86: ideapad-laptop: Fully support auto
- kbd backlight
-From: Rong Zhang <i@rong.moe>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Ike Panhc <ikepanhc@gmail.com>, "Derek J. Clark"
- <derekjohn.clark@gmail.com>,  Mark Pearson <mpearson-lenovo@squebb.ca>,
- Hans de Goede <hansg@kernel.org>, 	platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <9a2fad3c-66d5-c877-698b-a9b5a589f081@linux.intel.com>
-References: <20250805140131.284122-1-i@rong.moe>
-	 <20250805140131.284122-3-i@rong.moe>
-	 <9a2fad3c-66d5-c877-698b-a9b5a589f081@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 06 Aug 2025 21:28:39 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720FD2750FE;
+	Wed,  6 Aug 2025 13:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754487308; cv=none; b=JaBjDDuXtODQ5CzDLrbhwFRxASzYiTMYzLQugBi0WGs2Lu70DdIjJkvPmUH0NVJ8FoWXSkwILWpPmtIViPVfOI5AMPjik5jGCl8kyZuUPZnBkBfdQOVCiV+XSCNYTSzktqEtusS8MzTwIMX5i7gDteKExqSjp3oxAE+v0tz/sKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754487308; c=relaxed/simple;
+	bh=4pdWS84KRZO1SXuKgGgyD1aaqPQhqa/LVwQApBfPiyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C7Yj6F8X5tL6hzN9EMZgPwIablReKYCmpnHWtekEW5rZKdA+NStw5RHMzLhSC7B7/QqzsOx6toMMYbRinihR2zdTbsZEKENZ7gB9Eo97YUstmMJp1NMRcBbLzVjH5P1GDJzbGi3NohX8gj6lKk7qyRpgv87EPlKkjX0KGrb1f/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJRKyXVC; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55b9dfd4020so642105e87.2;
+        Wed, 06 Aug 2025 06:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754487304; x=1755092104; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GkBywKSK+jarcaDEWkMpZ6690o3qyLvHV2Ljs5N+BnY=;
+        b=MJRKyXVCh0SF/8Fy904H0EaxJhr99pqiIcHWziSSDlvBROjGuvhD4yKS930sGh6TkH
+         VqfoxAJjKm03B2ENfoeEkuPboOu9+qseR65WFhR98Z1Z/5gAIuQMwmNwcssf5jpVqvM7
+         IAFQajPwm+Em+cx+z91X9s0ZvW58t7qKZeyNOiNNW5ru4XfWH+fGSUhJLXzkJ6DPlLMK
+         rXpZo7f0Hqr5AowQ3a2JCrazPZAXJb1WUlB/5pERqzVDVKeFsYKYXrBRXt3KaCAsHgW7
+         tH+Ira4TFTsFGcJq6XRKU9Hxlmti5STmoz/UabeYAoHpvIFLUaDnGHGh8jUHZ2jWJsBv
+         qmbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754487304; x=1755092104;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkBywKSK+jarcaDEWkMpZ6690o3qyLvHV2Ljs5N+BnY=;
+        b=RRkxEMrndSGeZWqmeYAIB8oov2GDbNlsjX4f1HxYI74M4w8v9YF6nmky4PJ4HWo2qT
+         qPf+AF7PXzWxHtwylX6cM7URjvXRdL1BsdJE2Vd88xMf+0jzAsHeoUoxHiGXX3rlzSpX
+         hVhMcKZiVAHnnrQwCrMJ7s6O2nLwfCdFJz+8h/jcT9xs0Qh9vJiWgjO8wGpeD8SSBMkZ
+         9eSwFk6nxezZnDJOT5Ng19Mkf9NmviMzbtlbNkUaSMFmdFmvrRwtNzuSXXr7GSn4sJXy
+         wYnBK1cbBTa0xGCi/cRX4ua22l8BtWD+S5LzPGSHRn2KCpJo5S1M0Pr0VU0daNntoA8V
+         GMpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtxEfql+780Rajto1zU5YhrDoGSsOkUZEjWnkEJWhLBPfP018g5181UQgKLRO5Jm0Hv59hgRMjghXTJr8=@vger.kernel.org, AJvYcCXSWvsYgd1g/HIQ5KMNksqkaZDJukHVzeCQvx5VBznIH8bmlqoQe0OYaDaIACVI66p5jZYI1Ew2DZVWzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8vg1CkROWZnQD9GVLuWOINaudTZ5QE98a/vTQ2PKvA7OhEpgu
+	BLC3ZUTiB/UTSKoDTvCcm65uTiKlfBWV2eIIMJkgPVhIvcGPmk1GGdCCxxnilIxc5Is=
+X-Gm-Gg: ASbGncuXy+4QUZ+5beK0WBRXRf3q7by843UFd8nJtCTt/vJOnuZyz7EG0dtFusmc0s5
+	Ytf0mqaV7ZwQPSRQBxOM5phpOhTLQF6eNbIHM3MQIVhf/ycwrYQJdXpp7dNdYa23IYgZoK/TBqV
+	YlD471fKnjlB+Pmm35liVIosHcks98yBH2ZimFou562qgagkBwQ21owm1jDFXrE5FKpHPmAB/dj
+	7aptzdtMlGBaFviOG4bUHjskgB725Scwvnv/VUziXPtP+53IuY9q/NGCfd9DMmpiDigI9maL8MO
+	N3W3egEBa3wyZIDmhe7PPAJJnBj1QuHtT2Jr6hknBcYLv44IQtDeTeX8OiVg+oPRnKxUB2+v+t9
+	bohnDJ+iTCCpHNWXuKcVA1ICa7auO
+X-Google-Smtp-Source: AGHT+IG/+xV14jPScIlu8zUGGDD+ajQ7/dFSreWgfNZ5pS9U8lvRiqBw989XNjNOSP9y7GWZ8ScIMA==
+X-Received: by 2002:a05:6512:ad1:b0:55a:4d9e:6536 with SMTP id 2adb3069b0e04-55caf2f956dmr417291e87.2.1754487304191;
+        Wed, 06 Aug 2025 06:35:04 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8899ebd2sm2302283e87.42.2025.08.06.06.35.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 06:35:03 -0700 (PDT)
+Message-ID: <5a73e633-a374-47f2-a1e1-680e24d9f260@gmail.com>
+Date: Wed, 6 Aug 2025 15:34:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.1-1 
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/9] kasan: introduce ARCH_DEFER_KASAN and unify static
+ key across modes
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, hca@linux.ibm.com,
+ christophe.leroy@csgroup.eu, andreyknvl@gmail.com, agordeev@linux.ibm.com,
+ akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
+ trishalfonso@google.com, davidgow@google.com
+Cc: glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250805142622.560992-1-snovitoll@gmail.com>
+ <20250805142622.560992-2-snovitoll@gmail.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250805142622.560992-2-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ilpo,
 
-On Wed, 2025-08-06 at 14:26 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Tue, 5 Aug 2025, Rong Zhang wrote:
->=20
-> > Currently, the auto brightness mode of keyboard backlight maps to
-> > brightness=3D0 in LED classdev. The only method to switch to such a mod=
-e
-> > is by pressing the manufacturer-defined shortcut (Fn+Space). However, 0
-> > is a multiplexed brightness value; writing 0 simply results in the
-> > backlight being turned off.
-> >=20
-> > With brightness processing code decoupled from LED classdev, we can now
-> > fully support the auto brightness mode. In this mode, the keyboard
-> > backlight is controlled by the EC according to the ambient light sensor
-> > (ALS).
-> >=20
-> > To utilize this, a sysfs node is exposed to the userspace:
-> > /sys/class/leds/platform::kbd_backlight/als_enabled. The name is chosen
-> > to align with dell-laptop, which provides a similar feature.
-> >=20
-> > Signed-off-by: Rong Zhang <i@rong.moe>
-> > ---
-> >  .../ABI/testing/sysfs-platform-ideapad-laptop | 12 ++++
-> >  drivers/platform/x86/lenovo/ideapad-laptop.c  | 65 ++++++++++++++++++-
-> >  2 files changed, 75 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop b/=
-Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > index 5ec0dee9e707..a2b78aa60aaa 100644
-> > --- a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > +++ b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
-> > @@ -50,3 +50,15 @@ Description:
-> >  		Controls whether the "always on USB charging" feature is
-> >  		enabled or not. This feature enables charging USB devices
-> >  		even if the computer is not turned on.
-> > +
-> > +What:		/sys/class/leds/platform::kbd_backlight/als_enabled
-> > +Date:		July 2025
-> > +KernelVersion:	6.17
->=20
-> This ship has sailed.
 
-How time flies! It is embarrassing that I wrote this several weeks ago
-but forgot to update it before finishing the patch. Thanks for your
-reminder and I will update this in v2.
+On 8/5/25 4:26 PM, Sabyrzhan Tasbolatov wrote:
+> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures that need
+> to defer KASAN initialization until shadow memory is properly set up,
+> and unify the static key infrastructure across all KASAN modes.
+> 
+> Some architectures (like PowerPC with radix MMU) need to set up their
+> shadow memory mappings before KASAN can be safely enabled, while others
+> (like s390, x86, arm) can enable KASAN much earlier or even from the
+> beginning.
+> 
+> Historically, the runtime static key kasan_flag_enabled existed only for
+> CONFIG_KASAN_HW_TAGS mode. Generic and SW_TAGS modes either relied on
+> architecture-specific kasan_arch_is_ready() implementations or evaluated
+> KASAN checks unconditionally, leading to code duplication.
+> 
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+> Changes in v4:
+> - Fixed HW_TAGS static key functionality (was broken in v3)
 
->=20
-> > +Contact:	platform-driver-x86@vger.kernel.org
-> > +Description:
-> > +		This file allows to control the automatic keyboard
->=20
-> Please avoid using "This file" entirely in the description.
->=20
-> Start with "Controls ..."
+I don't think it fixed. Before you patch kasan_enabled() esentially
+worked like this:
 
-Sure.
+ if (IS_ENABLED(CONFIG_KASAN_HW_TAGS))
+        return static_branch_likely(&kasan_flag_enabled);
+ else
+        return IS_ENABLED(CONFIG_KASAN);
 
-> > +		illumination mode on some systems that have an ambient
-> > +		light sensor. Write 1 to this file to enable the auto
-> > +		mode, 0 to disable it. In this mode, the actual
->=20
-> What is "this mode" ? Did you mean, e.g., "When the auto mode is enabled,=
-"
-> ?
+Now it's just IS_ENABLED(CONFIG_KASAN);
 
-It does sound more understandable to describe it that way. Thanks for
-your suggestion and I will improve the wording in v2.
+And there are bunch of kasan_enabled() calls left whose behavior changed for
+no reason.
 
-> > +		brightness level is not available and reading the
-> > +		"brightness" file always returns 0.
-> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
-tform/x86/lenovo/ideapad-laptop.c
-> > index 5014c1d0b633..49f2fc68add4 100644
-> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > @@ -1712,6 +1712,57 @@ static void ideapad_kbd_bl_notify(struct ideapad=
-_private *priv)
-> >  	ideapad_kbd_bl_notify_known(priv, brightness);
-> >  }
-> > =20
-> > +static ssize_t als_enabled_show(struct device *dev,
-> > +				struct device_attribute *attr,
-> > +				char *buf)
-> > +{
-> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > +	struct ideapad_private *priv =3D container_of(led_cdev, struct ideapa=
-d_private, kbd_bl.led);
-> > +	int hw_brightness;
-> > +
-> > +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
-> > +	if (hw_brightness < 0)
-> > +		return hw_brightness;
-> > +
-> > +	return sysfs_emit(buf, "%d\n", hw_brightness =3D=3D KBD_BL_AUTO_MODE_=
-HW_BRIGHTNESS);
-> > +}
-> > +
-> > +static ssize_t als_enabled_store(struct device *dev,
-> > +				 struct device_attribute *attr,
-> > +				 const char *buf, size_t count)
-> > +{
-> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > +	struct ideapad_private *priv =3D container_of(led_cdev, struct ideapa=
-d_private, kbd_bl.led);
-> > +	bool state;
-> > +	int err;
-> > +
-> > +	err =3D kstrtobool(buf, &state);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	/*
-> > +	 * Auto (ALS) mode uses a predefined HW brightness value. It is
-> > +	 * impossible to disable it without setting another brightness value.
-> > +	 * Set the brightness to 0 when disabling is requested.
-> > +	 */
-> > +	err =3D ideapad_kbd_bl_hw_brightness_set(priv, state ? KBD_BL_AUTO_MO=
-DE_HW_BRIGHTNESS : 0);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	/* Both HW brightness values map to 0 in the LED classdev. */
-> > +	ideapad_kbd_bl_notify_known(priv, 0);
-> > +
-> > +	return count;
-> > +}
-> > +
-> > +static DEVICE_ATTR_RW(als_enabled);
-> > +
-> > +static struct attribute *ideapad_kbd_bl_als_attrs[] =3D {
-> > +	&dev_attr_als_enabled.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(ideapad_kbd_bl_als);
-> > +
-> >  static int ideapad_kbd_bl_init(struct ideapad_private *priv)
-> >  {
-> >  	int brightness, err;
-> > @@ -1722,10 +1773,20 @@ static int ideapad_kbd_bl_init(struct ideapad_p=
-rivate *priv)
-> >  	if (WARN_ON(priv->kbd_bl.initialized))
-> >  		return -EEXIST;
-> > =20
-> > -	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type)) {
-> > +	switch (priv->kbd_bl.type) {
-> > +	case KBD_BL_TRISTATE_AUTO:
-> > +		/* The sysfs node will be /sys/class/leds/platform::kbd_backlight/al=
-s_enabled */
-> > +		priv->kbd_bl.led.groups =3D ideapad_kbd_bl_als_groups;
-> > +		fallthrough;
-> > +	case KBD_BL_TRISTATE:
-> >  		priv->kbd_bl.led.max_brightness =3D 2;
-> > -	} else {
-> > +		break;
-> > +	case KBD_BL_STANDARD:
-> >  		priv->kbd_bl.led.max_brightness =3D 1;
-> > +		break;
-> > +	default:
-> > +		/* This has already been validated by ideapad_check_features(). */
-> > +		unreachable();
-> >  	}
-> > =20
-> >  	brightness =3D ideapad_kbd_bl_brightness_get(priv);
-> >=20
 
-Thanks for your review,
-Rong
+> - Merged configuration and implementation for atomicity
+> ---
+>  include/linux/kasan-enabled.h | 36 +++++++++++++++++++++++-------
+>  include/linux/kasan.h         | 42 +++++++++++++++++++++++++++--------
+>  lib/Kconfig.kasan             |  8 +++++++
+>  mm/kasan/common.c             | 18 ++++++++++-----
+>  mm/kasan/generic.c            | 23 +++++++++++--------
+>  mm/kasan/hw_tags.c            |  9 +-------
+>  mm/kasan/kasan.h              | 36 +++++++++++++++++++++---------
+>  mm/kasan/shadow.c             | 32 ++++++--------------------
+>  mm/kasan/sw_tags.c            |  4 +++-
+>  mm/kasan/tags.c               |  2 +-
+>  10 files changed, 133 insertions(+), 77 deletions(-)
+> 
+> diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
+> index 6f612d69ea0..52a3909f032 100644
+> --- a/include/linux/kasan-enabled.h
+> +++ b/include/linux/kasan-enabled.h
+> @@ -4,32 +4,52 @@
+>  
+>  #include <linux/static_key.h>
+>  
+> -#ifdef CONFIG_KASAN_HW_TAGS
+> +/* Controls whether KASAN is enabled at all (compile-time check). */
+> +static __always_inline bool kasan_enabled(void)
+> +{
+> +	return IS_ENABLED(CONFIG_KASAN);
+> +}
+>  
+> +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
+> +/*
+> + * Global runtime flag for KASAN modes that need runtime control.
+> + * Used by ARCH_DEFER_KASAN architectures and HW_TAGS mode.
+> + */
+>  DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
+>  
+> -static __always_inline bool kasan_enabled(void)
+> +/*
+> + * Runtime control for shadow memory initialization or HW_TAGS mode.
+> + * Uses static key for architectures that need deferred KASAN or HW_TAGS.
+> + */
+> +static __always_inline bool kasan_shadow_initialized(void)
+
+Don't rename it, just leave as is - kasan_enabled().
+It's better name, shorter and you don't need to convert call sites, so
+there is less chance of mistakes due to unchanged kasan_enabled() -> kasan_shadow_initialized().
+
+
+>  {
+>  	return static_branch_likely(&kasan_flag_enabled);
+>  }
+>  
+> -static inline bool kasan_hw_tags_enabled(void)
+> +static inline void kasan_enable(void)
+> +{
+> +	static_branch_enable(&kasan_flag_enabled);
+> +}
+> +#else
+> +/* For architectures that can enable KASAN early, use compile-time check. */
+> +static __always_inline bool kasan_shadow_initialized(void)
+>  {
+>  	return kasan_enabled();
+>  }
+>  
+
+...
+
+>  
+>  void kasan_populate_early_vm_area_shadow(void *start, unsigned long size);
+> -int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
+> -void kasan_release_vmalloc(unsigned long start, unsigned long end,
+> +
+> +int __kasan_populate_vmalloc(unsigned long addr, unsigned long size);
+> +static inline int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
+> +{
+> +	if (!kasan_shadow_initialized())
+> +		return 0;
+
+
+What's the point of moving these checks to header?
+Leave it in C, it's easier to grep and navigate code this way.
+
+
+> +	return __kasan_populate_vmalloc(addr, size);
+> +}
+> +
+> +void __kasan_release_vmalloc(unsigned long start, unsigned long end,
+>  			   unsigned long free_region_start,
+>  			   unsigned long free_region_end,
+>  			   unsigned long flags);
+> +static inline void kasan_release_vmalloc(unsigned long start,
+> +			   unsigned long end,
+> +			   unsigned long free_region_start,
+> +			   unsigned long free_region_end,
+> +			   unsigned long flags)
+> +{
+> +	if (kasan_shadow_initialized())
+> +		__kasan_release_vmalloc(start, end, free_region_start,
+> +			   free_region_end, flags);
+> +}
+>  
+
+...> @@ -250,7 +259,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+>  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>  				unsigned long ip)
+>  {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+>  		return false;
+>  	return check_slab_allocation(cache, object, ip);
+>  }
+> @@ -258,7 +267,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>  bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>  		       bool still_accessible)
+>  {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+>  		return false;
+>  
+>  	poison_slab_object(cache, object, init, still_accessible);
+> @@ -282,9 +291,6 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>  
+>  static inline bool check_page_allocation(void *ptr, unsigned long ip)
+>  {
+> -	if (!kasan_arch_is_ready())
+> -		return false;
+> -
+
+
+Well, you can't do this yet, because no arch using ARCH_DEFER_KASAN yet, so this breaks
+bisectability.
+Leave it, and remove with separate patch only when there are no users left.
+
+>  	if (ptr != page_address(virt_to_head_page(ptr))) {
+>  		kasan_report_invalid_free(ptr, ip, KASAN_REPORT_INVALID_FREE);
+>  		return true;
+> @@ -511,7 +517,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+>  		return true;
+>  	}
+>  
+> -	if (is_kfence_address(ptr) || !kasan_arch_is_ready())
+> +	if (is_kfence_address(ptr))
+>  		return true;
+>  
+>  	slab = folio_slab(folio);
+
+
 
