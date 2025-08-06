@@ -1,225 +1,119 @@
-Return-Path: <linux-kernel+bounces-757690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981BAB1C57A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 13:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE05B1C58A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ABE3BDEA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7787621A24
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2832228C2DF;
-	Wed,  6 Aug 2025 11:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A041279DA4;
+	Wed,  6 Aug 2025 12:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g/cgpcyk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jjiq6aMR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E565928C2B0;
-	Wed,  6 Aug 2025 11:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7DF221729;
+	Wed,  6 Aug 2025 12:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754481121; cv=none; b=aSagUAvFHh0u+7L9YW31/pJA2Mdr1yn3gCKZRZXGVWoYu4/6iwJoKi8kIGvdPgkT4La1YTj+NBLe3rYFdre9/WoQx22W628nUp6fa7oYIDq+iNojnCMjmkJL3neRsZF3/GJJ5EWOltl/kZrpmVxACO7Xn4NqshZcYbmKCBQfZus=
+	t=1754481783; cv=none; b=hUlE5cBz//zRb5zq2ZA+cvNkI1ftKc5kI6F7VaSYLW5qd/IeIQ4ThplhX7ymToCzSGf5xkgBpSFl4eTJYcCQOT2rcQnWjb1okygHujiAs+Q7QW8vlygbgkQIfEHoRRyXulQJ+N6C6JFfnXNNYveJHdenlGT+6FLF0cu8K7RwxEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754481121; c=relaxed/simple;
-	bh=LlDptYXPOWubo/br2039xV8dQ2nTHpARiOHj+csODBY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bogNDXvb4hQ+VoRusgejy5sxA7j1P9uGAZCPy2yQFZJgbTdDbxnkyA3YkRck57GBtSofo4uGMHfdmsENHElh6i/l0Hedc5PI3NkSntwuQkszx+SFO273as2ysl5UunJPr/2UzeK+Nnv8RpOUKkoeo4WTgs+QJ9fDvL4G8mztrNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g/cgpcyk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576AMfCK017265;
-	Wed, 6 Aug 2025 11:51:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vFO6rmjckLLVKu2RdrnvwAaA0dZ1+j3gbeU8qFfMmHI=; b=g/cgpcykMVwb/IuF
-	92gNNe2LjEl7AKN0I9PqV2Uow4YPskGODFE8SIWyVDyYq25VJvLiyhno6HykoPGH
-	Ijqo5/D0ATZoQWloVQlRo3dRcLnaYY26n0ZmJDyHgLfvceBQx+dPhdPGQSiTNra7
-	O5s4fIj8qlgMBC5ygfGvy7PRUsQF3QAZGDqtTXShbUUak2y5Xru3+1m+KGwuHD4F
-	GpjmubakTEFLKwPjR/ytv3I1ZjK9ps5uAnpqEfe7OjP3qLWyniTXbf49h3X5pRwx
-	QRYN8zM7i45pypKz0Xf2+3SlKwZPw7yHCpur2GSrhk7TbopF9DKOeMycf1ykOMDF
-	HHYG6A==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c58686b1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Aug 2025 11:51:52 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 576Bpp0V021877
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Aug 2025 11:51:51 GMT
-Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 6 Aug 2025 04:51:48 -0700
-From: Ling Xu <quic_lxu5@quicinc.com>
-To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <sumit.semwal@linaro.org>,
-        <christian.koenig@amd.com>, <thierry.escande@linaro.org>,
-        <quic_vgattupa@quicinc.com>
-CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, Ling Xu <quic_lxu5@quicinc.com>,
-        <stable@kernel.org>
-Subject: [PATCH v2 4/4] misc: fastrpc: Skip reference for DMA handles
-Date: Wed, 6 Aug 2025 17:21:14 +0530
-Message-ID: <20250806115114.688814-5-quic_lxu5@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250806115114.688814-1-quic_lxu5@quicinc.com>
-References: <20250806115114.688814-1-quic_lxu5@quicinc.com>
+	s=arc-20240116; t=1754481783; c=relaxed/simple;
+	bh=iM3DL6rk0RbOHKY0NOC2WS44N14rliZCsKY1vAOE0s4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tqdNiIjTyFgLPwAefJRTjfispK4zewykaRn8Bj3BXfdvPbNngb9naS3jKZ0qsUvD0zC1oDIKq6VsTj3j3spp+WPAr3QmBYQVft6nULAnrIseJGscMvSQIeyr+JCgejC3yFJ0nTPXoky5aiNADN0FsNXmsAwrDBFs1g45+q3tPV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jjiq6aMR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F95DC4CEEB;
+	Wed,  6 Aug 2025 12:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754481783;
+	bh=iM3DL6rk0RbOHKY0NOC2WS44N14rliZCsKY1vAOE0s4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Jjiq6aMRhbWCv5v74m8F3r/WETA/ORQJKafiqRDXRe1OAI+ZWJJuCD1Rb6RuQ930+
+	 cxGf4XAVSsFnHxzsV5imiaoQi0U6QxnVqa8b8jhLJGQVPqjYAJT4WtOESQLnTEBLcr
+	 PdrWB5UTHuhRc/Pnc1xgTVONPRQamGcj5PEpEu4aaFvYE69JKzAXlBMhCIo9lhfz44
+	 kEl96fvPjQh4UQOa0ISpr/HxTvDWPp2GXE9WRbQIt7uQJq4/rQk83yihh/4AsBrZd6
+	 q/rJ9lbo1yIC2+m/EGCJJXcKVBbUNpsA8xDbuSon0D+0WkBHxTLxmAIQsrl9vAYYOR
+	 Pcqs7riARcj7w==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Steven Rostedt
+ <rostedt@goodmis.org>,  Jason Gunthorpe <jgg@nvidia.com>,  Thomas Gleixner
+ <tglx@linutronix.de>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  anna.schumaker@oracle.com,  song@kernel.org,  zhangguopeng@kylinos.cn,
+  linux@weissschuh.net,  linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-mm@kvack.org,
+  gregkh@linuxfoundation.org,  mingo@redhat.com,  bp@alien8.de,
+  dave.hansen@linux.intel.com,  x86@kernel.org,  hpa@zytor.com,
+  rafael@kernel.org,  dakr@kernel.org,  bartosz.golaszewski@linaro.org,
+  cw00.choi@samsung.com,  myungjoo.ham@samsung.com,
+  yesanishhere@gmail.com,  Jonathan.Cameron@huawei.com,
+  quic_zijuhu@quicinc.com,  aleksander.lobakin@intel.com,
+  ira.weiny@intel.com,  andriy.shevchenko@linux.intel.com,
+  leon@kernel.org,  lukas@wunner.de,  bhelgaas@google.com,
+  wagi@kernel.org,  djeffery@redhat.com,  stuart.w.hayes@gmail.com,
+  lennart@poettering.net,  brauner@kernel.org,  linux-api@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  saeedm@nvidia.com,
+  ajayachandra@nvidia.com,  parav@nvidia.com,  leonro@nvidia.com,
+  witu@nvidia.com
+Subject: Re: [PATCH v2 31/32] libluo: introduce luoctl
+In-Reply-To: <CA+CK2bA=pmEtNWc5nN2hWcepq_+8HtbH2mTP2UUgabZ8ERaROw@mail.gmail.com>
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+	<20250723144649.1696299-32-pasha.tatashin@soleen.com>
+	<20250729161450.GM36037@nvidia.com> <877bzqkc38.ffs@tglx>
+	<20250729222157.GT36037@nvidia.com>
+	<20250729183548.49d6c2dc@gandalf.local.home>
+	<mafs07bzqeg3x.fsf@kernel.org>
+	<CA+CK2bA=pmEtNWc5nN2hWcepq_+8HtbH2mTP2UUgabZ8ERaROw@mail.gmail.com>
+Date: Wed, 06 Aug 2025 14:02:52 +0200
+Message-ID: <mafs0ectod5eb.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IXWq56583LaveKK_w542hCx4Ram19CAI
-X-Authority-Analysis: v=2.4 cv=MZpsu4/f c=1 sm=1 tr=0 ts=689341d8 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=65MDuzgJ9_6jycvYPFoA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: IXWq56583LaveKK_w542hCx4Ram19CAI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX8AXCfwdECaAP
- BbB+KAtaVKf+CVbHicwG7uNwoJemkLEtmkSp13s+ClXfrgT7e7GsleD2kaUz0GWAndd5YhzUW/g
- BODrjglaCJIb7qdInodPFG3x1CCcGLgOZ+etrAw2gzjvIw3rh55KeFS1osOZYtUY6hC5rCfXUA0
- 2HfXn/j7Gcu6wDaO7k5a60NYy8OVRqIIxEb2OWYvsc6tA3WOLSwM0hi817XTFuBaElhtlSbokP4
- T8RSep2yW3dvAjyA+gfO7UXkHwtjmjtMvYtX2BOPCGCI6Bi9QA5t1i6bNfGKJKQU6tva1Yuykb3
- WoDm3oHwCpo3kSfGiJg5B3zArVy6LFhAPKXVLVFXxgGZp7fY11y/vJuNFFdF5TqXbWimIforEEC
- K/sXpf4O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060064
 
-If multiple dma handles are passed with same fd over a remote call
-the kernel driver takes a reference and expects that put for the
-map will be called as many times to free the map. But DSP only
-updates the fd one time in the fd list when the DSP refcount
-goes to zero and hence kernel make put call only once for the
-fd. This can cause SMMU fault issue as the same fd can be used
-in future for some other call.
+Hi Pasha,
 
-Fixes: 35a82b87135d ("misc: fastrpc: Add dma handle implementation")
-Cc: stable@kernel.org
-Co-developed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
----
- drivers/misc/fastrpc.c | 44 ++++++++++++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 17 deletions(-)
+On Tue, Aug 05 2025, Pasha Tatashin wrote:
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index d950a179bff8..3b7ad4a043eb 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -363,7 +363,7 @@ static int fastrpc_map_get(struct fastrpc_map *map)
- 
- 
- static int fastrpc_map_lookup(struct fastrpc_user *fl, int fd,
--			    struct fastrpc_map **ppmap, bool take_ref)
-+			    struct fastrpc_map **ppmap)
- {
- 	struct fastrpc_session_ctx *sess = fl->sctx;
- 	struct fastrpc_map *map = NULL;
-@@ -379,15 +379,6 @@ static int fastrpc_map_lookup(struct fastrpc_user *fl, int fd,
- 		if (map->fd != fd || map->buf != buf)
- 			continue;
- 
--		if (take_ref) {
--			ret = fastrpc_map_get(map);
--			if (ret) {
--				dev_dbg(sess->dev, "%s: Failed to get map fd=%d ret=%d\n",
--					__func__, fd, ret);
--				break;
--			}
--		}
--
- 		*ppmap = map;
- 		ret = 0;
- 		break;
-@@ -757,7 +748,7 @@ static const struct dma_buf_ops fastrpc_dma_buf_ops = {
- 	.release = fastrpc_release,
- };
- 
--static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
-+static int fastrpc_map_attach(struct fastrpc_user *fl, int fd,
- 			      u64 len, u32 attr, struct fastrpc_map **ppmap)
- {
- 	struct fastrpc_session_ctx *sess = fl->sctx;
-@@ -766,9 +757,6 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 	struct scatterlist *sgl = NULL;
- 	int err = 0, sgl_index = 0;
- 
--	if (!fastrpc_map_lookup(fl, fd, ppmap, true))
--		return 0;
--
- 	map = kzalloc(sizeof(*map), GFP_KERNEL);
- 	if (!map)
- 		return -ENOMEM;
-@@ -853,6 +841,24 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 	return err;
- }
- 
-+static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
-+			      u64 len, u32 attr, struct fastrpc_map **ppmap)
-+{
-+	struct fastrpc_session_ctx *sess = fl->sctx;
-+	int err = 0;
-+
-+	if (!fastrpc_map_lookup(fl, fd, ppmap)) {
-+		if (!fastrpc_map_get(*ppmap))
-+			return 0;
-+		dev_dbg(sess->dev, "%s: Failed to get map fd=%d\n",
-+			__func__, fd);
-+	}
-+
-+	err = fastrpc_map_attach(fl, fd, len, attr, ppmap);
-+
-+	return err;
-+}
-+
- /*
-  * Fastrpc payload buffer with metadata looks like:
-  *
-@@ -925,8 +931,12 @@ static int fastrpc_create_maps(struct fastrpc_invoke_ctx *ctx)
- 		    ctx->args[i].length == 0)
- 			continue;
- 
--		err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
--			 ctx->args[i].length, ctx->args[i].attr, &ctx->maps[i]);
-+		if (i < ctx->nbufs)
-+			err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
-+				 ctx->args[i].length, ctx->args[i].attr, &ctx->maps[i]);
-+		else
-+			err = fastrpc_map_attach(ctx->fl, ctx->args[i].fd,
-+				 ctx->args[i].length, ctx->args[i].attr, &ctx->maps[i]);
- 		if (err) {
- 			dev_err(dev, "Error Creating map %d\n", err);
- 			return -EINVAL;
-@@ -1116,7 +1126,7 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
- 	for (i = 0; i < FASTRPC_MAX_FDLIST; i++) {
- 		if (!fdlist[i])
- 			break;
--		if (!fastrpc_map_lookup(fl, (int)fdlist[i], &mmap, false))
-+		if (!fastrpc_map_lookup(fl, (int)fdlist[i], &mmap))
- 			fastrpc_map_put(mmap);
- 	}
- 
+>> To add some context: one of the reasons to include it in the series as
+>> an RFC at the end was to showcase the userspace side of the API and have
+>> a way for people to see how it can be used. Seeing an API in action
+>> provides useful context for reviewing patches.
+>>
+>> I think Pasha forgot to add the RFC tags when he created v2, since it is
+>> only meant to be RFC right now and not proper patches.
+>
+> Correct, I accidently removed RFC from memfd patches in the version. I
+> will include memfd preservation as RFCv1 in v3 submission.
+
+I didn't mean this for the memfd patches, only for libluo.
+
+I think the memfd patches are in decent shape. They aren't pristine, but
+I do think they are good enough to land and be improved iteratively.
+
+If you think otherwise, then what do you reckon needs to be done to make
+them _not_ RFC?
+
 -- 
-2.34.1
-
+Regards,
+Pratyush Yadav
 
