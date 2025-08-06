@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-757612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25A2B1C439
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F1FB1C446
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FDB187294
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50EFE3AEFF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 10:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691C328B3F9;
-	Wed,  6 Aug 2025 10:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8370328B50E;
+	Wed,  6 Aug 2025 10:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="U3I5F5KD"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H04/9vE+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAE5207A22;
-	Wed,  6 Aug 2025 10:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754475939; cv=pass; b=pvzf4/FS/95vtAoGrRA8fEUpj+MXj8MGlnFhWT98zssD/P3otK8QqaxlnV6oVpsjDIVIVJT3GR80FAaveh/RKwj1A/FLE6IPClJ7euTOdyaOiyICnwWwly0RKpXvICZ3wx7mnxylPj5KX504fxTAvKdYLW0SO6uens68UDlm/aw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754475939; c=relaxed/simple;
-	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gmvyG/sc1cn8eEyPOBPBtRQN+Suzj5QJmuEiFbcjkMvkoxhT9/vVESia8v3ET+plvrYeDTb75B3cWRayRA6wloTOa7H4cmJH9oF8nlfCTkFDHHJ5UG3Y45DMIUMjQK990CZPtQwjHNC/WxtPa+GCPlZntUC2FdBPCKIqybHUt+I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=U3I5F5KD; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754475910; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fepJ8qRfgN4zCRlmQcXewJjX7ndwkr9ZErcwug1fF/Qm4DmSeg0CtFZXIJbYf+F0xfwH7f/CECvYQPanzhikWH8O/BjUqDef0G9p41zZKS3zwx8o9HWSCtjm5koJhUTATq32wNwln4xbiCrj24wmFmfcGZAS/93DgCViOLuRcIA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754475910; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=; 
-	b=hVATTcTbTnrdSRZYHokKzVn89UaAZFwSJiHoVgn25NRuEf9eaZydmSHv8+FY1BByvl0yZZPq8dgcb1ghDlZ/FgDz1ZZdaNcWkFy5hZGJlnz4xFwlFGZPt4v+dEFf9sTiW4q7wIyQaI3yYItV/AA3lh4qJpH9URv93h6skV3OOSY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754475910;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=+wmQqhO/faO6co4hBA9A8Ni4X+9sQBZZYbpDBYq8EfQ=;
-	b=U3I5F5KDYBTv3/hL6pjdw8mRCB0ECyCmCoRP/aqriH0MSxXaWoFSIv1w8BmYmWLz
-	e4V+2FbB/iEiLnq9uTfVGKgrFCzK14RYT1Ns0kLmSQHWUdXS+E0AfpUZj+IM2FkTgCV
-	/q0+57F21dqblHR/PNOwAZcgpHgsMiIgVhhH9/hk=
-Received: by mx.zohomail.com with SMTPS id 1754475907706352.8426825833187;
-	Wed, 6 Aug 2025 03:25:07 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: cyphar@cyphar.com
-Cc: amir73il@gmail.com,
-	brauner@kernel.org,
-	corbet@lwn.net,
-	jack@suse.cz,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	luto@amacapital.net,
-	shuah@kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-Date: Wed,  6 Aug 2025 13:25:01 +0300
-Message-ID: <20250806102501.75104-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
-References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F28428A40F;
+	Wed,  6 Aug 2025 10:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754476044; cv=none; b=rScbWNob63ZxQDEoZvMRTeW7fXGfzQqfrAX9LQaVGE9X8OkUBa2cb1X4QLLPwG7VXoiFxdaRG26iRM22+acTpIQAhadqt9+PExoQXXnpNH0dYbvji+veMnA2mRJ4esKAZqyMEuomlL0iybSNPjMRANuFwCPn3Dvbhtu1zEyE9Sk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754476044; c=relaxed/simple;
+	bh=TlN1HaCL6uk/FnlDEk5L31NC3werVUINEYaa2ZoDE0U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SMYdjvK/s7iegaesPYYNq4as81SeP0HxpOBT4ZOG3VqC1JklY/67HbKnt3FeWvMap2obYkpOReeOrNSOefqf7Sx41++s/q8yX2gDQS7RhjU3bhcH881WHWx1cToWx2qRM3T7vWv8COk3/NRP2261dAYjQ833+zDx4aE3UHsXBE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H04/9vE+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765ffgG031580;
+	Wed, 6 Aug 2025 10:27:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=rBK/XJFxnA4H+qs+vmLEXS
+	Ye5OyqDwA6i9lNg270YFs=; b=H04/9vE+u22JMSTTjqz6+cId8V8/dE2/4YhkHf
+	3QBzTJTtn6kwQ8lOnbyhIjs83R36jpI8MUxrIubNqLi4ijT80H1/Yhxt+HQF7Eod
+	nP6hxR4AOAm4R1VF6bChfVbl3FcBM10xnkrRqrxOtVI05uX+hlKO5WP1O5lcefRQ
+	+hL73lAemrLYvuArZxyCUuUc9Wg1/s42I8li8Oq7T7gn7rO0P1ZnjdYhDYdJIEiO
+	OTG3JRfXJ2cKIsn4PaRnfFoqHp/1I0upBbSvXdzxJF7UtDsrn+0gO5H4qkzdxWiW
+	DqOmZ2hfYG8cYpZOiVrXxlHowCxu11AvzATSXaA6NYEbR0mw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpybaetq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Aug 2025 10:27:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 576ARBPe012436
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Aug 2025 10:27:11 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 6 Aug 2025 03:27:11 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v10 0/2] coresight: Add label sysfs node support
+Date: Wed, 6 Aug 2025 03:26:56 -0700
+Message-ID: <20250806102658.536683-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,15 +80,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227cd007dd0b9c9dcb652e3ba8400007454c63885fa4739e1a2448e2dfcd94715a18ae97a0dffae61:zu08011227eb8290984d483d5d1a43e04000005dc1ce89a5e53403a5117830c5dff694efbf2d6162e2802556:rf0801122c8cf1f5d05d0e16bf0447132600008990b2a0cdb4e3567989e390629257cc551dc8fb0a863a8c551d183331cc:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX+G16V8e7ecj7
+ sEOqEpbQ/CCU5eJYMSB1jaApZ2LmE707D2LAJw7nZKHIsuPx4jgqycV0VCr4+BZHFlBaOETA8Hy
+ oUgClfvcIep+12mXWnjUHNeSgGPJFIEYeTd3efaKPWTQlndMeydC/xxQ/PadC8pqLDxfRnvFi1r
+ X9BdZdnmUxK1ZsyGZUDHWAf2WKqxDie1rtKmPCS6waxUIKCJNKPYeB4GiiS5PnmF9kI7OJvwdO5
+ 1ad+MawgWdaqryzoHnHiyja50gFzAbUljUesU+o2SWaf+imOFTtjSNZsO1xl8VcmGiKZxwhJKcc
+ hXKBgABjlP4VZ6TrYljTTAgJpVJEMbbQg8fxgnj/crmj8ziIFRkz4bo6LCHiHmcI6vdsLq00ZI2
+ 2AEAWd+W
+X-Proofpoint-GUID: XWokKa2HX_RX6fpQLFVOqbp6wZvXW5Ta
+X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=68932e00 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=2OwXVqhp2XgA:10 a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=C_w9g3tfadNPII6ijWgA:9 a=W4TVW4IDbPiebHqcZpNg:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: XWokKa2HX_RX6fpQLFVOqbp6wZvXW5Ta
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-> I just realised that we probably also want to support FSCONFIG_SET_PATH
+Change since V9:
+1. Replace scnprintf with sysfs_emit.
+2. Update date in ABI files.
+V9 link: https://lkml.org/lkml/2025/7/17/832
 
-I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH. Moreover, fsparam_path macro is present since 5.1. And for all this time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody used it, so this will not break anything.
+Change since V8:
+1. Add label in all documentations of coresight components.
+2. Add control of the visibility of the label sysfs attribute.
+V8 link: https://lkml.org/lkml/2025/7/3/985
 
-If you okay with that, I can submit patch, removing it.
+Change since V7:
+1. Update the conflict when apply to coresight next.
+2. Update the Date and version in ABI file.
+V7 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250226121926.2687497-3-quic_jinlmao@quicinc.com/
 
---
-Askar Safin
+Change since V6:
+1. Update the date and version in ABI file.
+
+Change since V5:
+1. Update the kernel version of ABI files.
+2. Add link of different patch versions.
+V5 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20241210122253.31926-1-quic_jinlmao@quicinc.com/
+
+Change since V4:
+1. Add label in DT and add label sysfs node for each coresight device.
+V4 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
+
+Change since V3:
+1. Change device-name to arm,cs-dev-name.
+2. Add arm,cs-dev-name to only CTI and sources' dt-binding.
+V3 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240131082628.6288-1-quic_jinlmao@quicinc.com/
+
+Change since V2:
+1. Fix the error in coresight core.
+drivers/hwtracing/coresight/coresight-core.c:1775:7: error: assigning to 'char *' from 'const char *' discards qualifiers
+
+2. Fix the warning when run dtbinding check.
+Documentation/devicetree/bindings/arm/arm,coresight-cpu-debug.yaml: device-name: missing type definition
+V2 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240115164252.26510-1-quic_jinlmao@quicinc.com/
+
+Change since V1:
+1. Change coresight-name to device name.
+2. Add the device-name in coresight dt bindings.
+V1 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230208110716.18321-1-quic_jinlmao@quicinc.com/#25231737
+
+Mao Jinlong (2):
+  dt-bindings: arm: Add label in the coresight components
+  coresight: Add label sysfs node support
+
+ .../testing/sysfs-bus-coresight-devices-cti   |  6 ++
+ .../sysfs-bus-coresight-devices-dummy-source  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etb10 |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm3x |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm4x |  6 ++
+ .../sysfs-bus-coresight-devices-funnel        |  6 ++
+ .../testing/sysfs-bus-coresight-devices-stm   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tmc   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tpdm  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-trbe  |  6 ++
+ .../bindings/arm/arm,coresight-cti.yaml       |  4 ++
+ .../arm/arm,coresight-dummy-sink.yaml         |  4 ++
+ .../arm/arm,coresight-dummy-source.yaml       |  4 ++
+ .../arm/arm,coresight-dynamic-funnel.yaml     |  4 ++
+ .../arm/arm,coresight-dynamic-replicator.yaml |  4 ++
+ .../bindings/arm/arm,coresight-etb10.yaml     |  4 ++
+ .../bindings/arm/arm,coresight-etm.yaml       |  4 ++
+ .../arm/arm,coresight-static-funnel.yaml      |  4 ++
+ .../arm/arm,coresight-static-replicator.yaml  |  4 ++
+ .../bindings/arm/arm,coresight-tmc.yaml       |  4 ++
+ .../bindings/arm/arm,coresight-tpiu.yaml      |  4 ++
+ .../bindings/arm/qcom,coresight-ctcu.yaml     |  4 ++
+ .../arm/qcom,coresight-remote-etm.yaml        |  4 ++
+ .../bindings/arm/qcom,coresight-tpda.yaml     |  4 ++
+ .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 ++
+ drivers/hwtracing/coresight/coresight-sysfs.c | 71 ++++++++++++++++++-
+ 26 files changed, 189 insertions(+), 2 deletions(-)
+
+-- 
+2.25.1
+
 
