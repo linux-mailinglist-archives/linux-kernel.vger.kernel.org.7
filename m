@@ -1,248 +1,187 @@
-Return-Path: <linux-kernel+bounces-757489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D421B1C2B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:03:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5069B1C2BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3104F3B5512
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FEB18C11A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38B3289E15;
-	Wed,  6 Aug 2025 09:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC9128A1DF;
+	Wed,  6 Aug 2025 09:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5HruQMb/"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZ/lh3tP"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0860922332E;
-	Wed,  6 Aug 2025 09:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754471003; cv=fail; b=bIFixxSKKoxzx50co1U8nk2Nl+Hxur5o6FrS8Hh/BFdr+IjzUeRWuMf5UFrzHJ7A30kc3Oz3mO1zHHOiektO3oFpICrFaStyEph+aj+AI3swl0wb18xdfsRmGfHcSUjqsqjMs0Hn2rCPAhd2qxyhgKdPTj3BSmBSmWpoCfNtWoA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754471003; c=relaxed/simple;
-	bh=cAVaUwcaAXaLwZYCo8utzLpNcFMm90TMsu8c29ussG8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iXed7DWKTZ6elDh0ayY7S9liwuLdwhQvCXeZMsDWb3MV3sNITtP/chwbnT0JE75o+sMmmxt2PEwLewpDgC/5I4SuavFm+qVkTh8uOAVTZzqysHTdP2c9VUDVMf5/g3GTFIpF0MhlXihZEOuvPHIetYqxXsZqJlIqfKxQU4h1KtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5HruQMb/; arc=fail smtp.client-ip=40.107.243.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MiCLirFQFteKo5LbZ8XD8qaVdAYOLkihibZpOfmkJIJX1bkYCDxiNJfOjAdwHSRwwKiACayesjdOR0ANVJB6Nw4yFT/rffQCOJ5+aJVQvve+poTJX8Ef9ot5w2AMPf+KtT4IeMGgaAKIPgtAZA4H522cgGB4F0BamSkPNXE85SNimSp4VeodXCzTwb2h79DfZrrjaKVn/ZGNGNJoUGQfVo4FXSOBV5QPrl/ofPFW3S7i37iZz0f+tq2JpAwwExZvcJm9xNLWd10vcIQR7GDdj5TOFdJw7QX6CmLFgtHy0uE9raifn7yHKJChrSieE9qO2ecJ0NNd/7F3tYZKNAtssA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2W65ibs+MH0cyH1/YSbBAQtxJ261sTAcfCYgTjlgT7k=;
- b=WzRLOkeHiiAgbqlMIn5ci0oJKJ869ovWqn+kQ9AI7urONISbtZj5fdZ8SyUAhksiP+FW+V8t6/A0Wu93HLeWusSsFEProzNiP3iaY1tu/m3KC92/Wi5cJYRGQKOAvboFjty2ZNlDOLVdAu7+l3ZIWVlBONO2SxXJ7N1/9OOfDoM3TsOviHzN6lPdZRljeB2UC1E3qxgpFjhTubiXL5n3Ufhgaf+8L3AKEoE2UJXUN+2aJdt0BoSEeRP/2ryV3SeI9gyaNrQ7wYZQNLAqXFNWelRC8vMP8QUDjPekbsBd8cSJircrMyyLna6U4M0RI4/3eLoFO3nc10nfSOreCC1guQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2W65ibs+MH0cyH1/YSbBAQtxJ261sTAcfCYgTjlgT7k=;
- b=5HruQMb/nrx0OV4Qv1pDp9tYra+Xe0IIg2Lsk3tsX1wlLa+s+r2mOTF2K7i2OjPwW4iS/tX6qI2iKqBQ/KgY01DbcOaqAhJxDIAEN/5cICXcKRglmKDGVwVM0Hpq5evQgBUrN2TF1Yjoy9gtczrDVfkyikGLizlHqwkYSQVL5vI=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by DS7PR12MB5789.namprd12.prod.outlook.com (2603:10b6:8:74::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Wed, 6 Aug
- 2025 09:03:16 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%6]) with mapi id 15.20.8989.018; Wed, 6 Aug 2025
- 09:03:16 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "Simek, Michal"
-	<michal.simek@amd.com>, "sean.anderson@linux.dev" <sean.anderson@linux.dev>,
-	"horms@kernel.org" <horms@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Katakam, Harini" <harini.katakam@amd.com>
-Subject: RE: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head
- pointer after BD is successfully allocated in dmaengine flow
-Thread-Topic: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head
- pointer after BD is successfully allocated in dmaengine flow
-Thread-Index: AQHcBj33CzCOb/lK00ituSZCoqdfS7RVVLMQ
-Date: Wed, 6 Aug 2025 09:03:16 +0000
-Message-ID:
- <MN0PR12MB5953E5B18BAC06C0116B0F7FB72DA@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <20250805191958.412220-1-suraj.gupta2@amd.com>
-In-Reply-To: <20250805191958.412220-1-suraj.gupta2@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-08-06T09:00:44.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|DS7PR12MB5789:EE_
-x-ms-office365-filtering-correlation-id: 9308ff71-7eb1-43d1-7c4d-08ddd4c814e6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018|7053199007|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?vsgmTmbsF9obHKfsb6Kwp5348k60POvnfKDtZK3nfOEX/kXGtwDQ/euRINkY?=
- =?us-ascii?Q?7dzLnMIwRqACZiP8BmEXsl5tkENMBVVHDD9zlx7JHuokx0WuyfL2eesDnZvL?=
- =?us-ascii?Q?47mQ0WWqcnxqm7L9frDER5BP+nC58UjmrZ5KmD3LNlAmxN/JbF2OwrctNwkq?=
- =?us-ascii?Q?dpN/vIsWP+lXuj/iyhb6Xb+3v4P/UR/ld7rKIo+9xMEejPR4wQDFX/h9PQWY?=
- =?us-ascii?Q?zOlXb0jqwVCawg0Mz+bKom3F671/OVefD5VFXTdcKe7wbZirx8zBuxVr0KTP?=
- =?us-ascii?Q?yKHB3fNMmK7KpVWzvUudmLiVdmdaZdJGCE4xx9V+S9+5gAPFTw01ndOf/U4Y?=
- =?us-ascii?Q?z4Q0Pgr+KwK0ZKlq5nM58TJmnTCHgh3oS/RSvFAG7zOHx8Xmf342OpjzHyni?=
- =?us-ascii?Q?mXwc6SDo1yp0dwDdYBG0eRDYB6iFp33mKkxc5IT5kWBnmyl0LfP1FHGik+s/?=
- =?us-ascii?Q?LJSxYUaSaPShyEVKwEdoHEsfcDVJnIpvooidbIdVnK1tz/g9L2AZtgnYSXEl?=
- =?us-ascii?Q?n2ojD4Hb9z66UxK7FA/mL7BUssGs7JgAlgLA/YVAVZu0p+CJp3u0LShbnUco?=
- =?us-ascii?Q?HdYWfqN0DZwSS31fw8aR7DKi09XjC7h2HSHeBFeuFBdhnKlwPFLMBGGjduOK?=
- =?us-ascii?Q?o4Vm91sPFENc8bCp/vLObF3UHw0iZFqDvhFBhe/yC2qDpQT5v4cPUoxR2U9s?=
- =?us-ascii?Q?OpVXwjn7/EmLIrFHf/c0Pt8VhEzDfth5M8MwGiempWVGhDsOWLyTpqlKw7vi?=
- =?us-ascii?Q?CqR0KwXltNF2f3rJeUUwnIO3dKhLVj+WDaOoN8QjRGGNakAZRjChsUukjfyQ?=
- =?us-ascii?Q?in6stuYOKcG/zQetBV6IXbCkgHocytE5p6GYg6vL9gCs9Q98fj9izRGRzPkG?=
- =?us-ascii?Q?iU661fv6jUCO7JPiY528+C6XIZO09eO+DGUrY3+ERe2MnmKgZgJOk/wBmoe3?=
- =?us-ascii?Q?mEPW+eGSZDkG521yTn7selzFgmHy40cUQue3redsKucAone2F3NejnL9LrFw?=
- =?us-ascii?Q?qvv2HqefWDsIKc+gNj1RGpE0YpZdZ1p54PtSx0ctbbmR0kTEOGj14lDkSXly?=
- =?us-ascii?Q?EsbJo2xek/x2Aa9jqMWJDEVp94M6JmienQ6UFS19heJMLtKE+7zbSTbpHBGI?=
- =?us-ascii?Q?plqFOJEs9suCUC7MeihXkQW3OQveHh7hsJXomJPhVjEYFbMvzQOFjtAripDv?=
- =?us-ascii?Q?RRD1bMRRRGUHjvJKlG3iQjCPMGurDKAnw/TmFCd04z61A/iuWMFBKtrUTfUs?=
- =?us-ascii?Q?F5qHGV6yYgExHN5u9sqz+PcsjpLLXWFoK+OHVjqMtsa0bgGiF1P6iyky5Rs4?=
- =?us-ascii?Q?8A+Mc+10A9z5T7pJAW63IH8K6pkARTEfp7fjoGBVhn9cHvrGlRifH8CLklZp?=
- =?us-ascii?Q?mU0wwlyDyAaVq3PRr5qbNv+XM6Xqy0WnJ1ybbDvSXA0M4url7YNnX2agiXzc?=
- =?us-ascii?Q?GtVrlQKlyPN1V/g7eO00Zs9O8/gK5fP5NG5zE89bSNZWEGD/wi1FPgPloUyn?=
- =?us-ascii?Q?InTVN11XaG/M3r0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018)(7053199007)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?FpiR49+/sIbtUARYLYZd904PLo0j4/NZAC3ajFai1ssuQ7Jhm6vhQWhKIBv3?=
- =?us-ascii?Q?bOFA5VZibxBc6HBbh6QnVULY985jFBmVn78+QeI7WuSJFicxWqduahEH3fQ6?=
- =?us-ascii?Q?vTxw9g6tLaEMz8TtE9YRmDkLwYRSxEfiyr3VBEnP/by1s1dHhsahOCv3MLLb?=
- =?us-ascii?Q?mPRS0G75tJrigiq7m5BX+tcUbQMFm/6PEDUGxn9lij+/WVlzmtenxamP73mF?=
- =?us-ascii?Q?YFIF5glXNn+z5BNm8d4kn1jlKP3uL/3OPzPQ3uQWA+YGh8thx4EPSA3tcEgs?=
- =?us-ascii?Q?Buce5VqiAIdKdZ0M/zxEw9v2TRVQqgLVLIKIB6elNvX7n/5CM7oIZcj2Ubn7?=
- =?us-ascii?Q?lfUHd/PY/LgFPwjbfG7hSlFXIcs5Y2V4hYq62ZrUmW0e4iu+GsR96GFh1wmz?=
- =?us-ascii?Q?ZQmARoGaiLWANGK+6/Dwp0UhRmyrYTpMFQ/0krR39kucPLF/qPMP9FoqgX52?=
- =?us-ascii?Q?KOeV7sQFcnWVMgxqk++PaqxIIs/4xo9UfYtc4bqJ76Pi3texAJ5Y4eCnOQfp?=
- =?us-ascii?Q?ecemgdqaODUNyjZdePtHIOhlJ6p2OURim9Jp2Sc+2W1yfwrSwGWl7iUCiNEI?=
- =?us-ascii?Q?C1kiZ173ABXEm7iYo/bcB5tFHOI+170mOlwoHAIIJdCsjBxWk9COJzitrqjJ?=
- =?us-ascii?Q?/XQsPSuhTrpB70zb7DGwacGHWiKXkgYNgmOFwhkluC38gOuIMW+6+X2iPT34?=
- =?us-ascii?Q?SjhbOm8s1vThDyH0Q+FOSZU/HnVoEzuqHmIVXyWUKgBW03RlCH9MJCTsf1Xe?=
- =?us-ascii?Q?0wkubvOSNtrPVvp5o+cEFhHOOWUy3pAPeg226jOwOEM+wIy5wEBpvppz+nKD?=
- =?us-ascii?Q?vVIsnWeWZ5pSFkj7g1l5DKOdIARyVszhLBdV8HmDY5OrnmRhQ8PpVGzAiiKv?=
- =?us-ascii?Q?2WLTceyKRbAVnsj7eAe3xds5zCKGRpJPOxyQ1Fc7y1cua6vqTDpCZ1Bsyyec?=
- =?us-ascii?Q?mYwz7+kiyaRUk1dJ4AUhhCmZj16zKgYphH0O3+bnNF+bX9Uc78q0iqa44m/n?=
- =?us-ascii?Q?xAI7aLDriL3IT7NpuUdcF1Y1KLXg6VuVabXF5gk+QNUtgNlxaQFXOh0UVb66?=
- =?us-ascii?Q?qiDps5jR6yuZzlXSWJNbv6VILJUMr0s5L6Ldt9TdNFYoZIxDMoWK2WqUPNL4?=
- =?us-ascii?Q?ZtaxUqWUGhjdewbE6bu+2qRHXXgFFrSlflsLP6A1XgjD6ehU5ka5bjM84kRN?=
- =?us-ascii?Q?IYDkUDNhr4DUeM9Z1RMs7eaKBafn2cOMDszm/2e9IMxta+EnaBaXiTra93Pa?=
- =?us-ascii?Q?hhDEqayU/99nFFIFRtsw0yti6oOXnDdSztGVRL3P8pBBqYjT5+/45An02lsh?=
- =?us-ascii?Q?hA5csr0U34Az3ZzdIbEx7z9HJ2m+qqgdsE4R5pXXberMrqjdRlUFu8Daovgi?=
- =?us-ascii?Q?bTiVH7V1y1Wx+AksLEaE+M/pV/WpWiS1ck+H2zLhqVhp8I573WCJUpZ0/G8S?=
- =?us-ascii?Q?ZqXbcEzxjzMsffzU0StNlQ081XgnCjeuTVcOEe8HgqhVGCs+nw9o6SW1fleC?=
- =?us-ascii?Q?2Zj9sR+AvZNWdDJ+M0jeWUvOkKytS/bkeS0g2nvbZ6WZxJEBdTkfkR++NEoK?=
- =?us-ascii?Q?70sSs2cDqbwPghvjbgo=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2831E766E;
+	Wed,  6 Aug 2025 09:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754471004; cv=none; b=L/uJ5awwppYqSX21AibbvbQMx1QGw2kOVL+Z4iUtohbwCAzbuWJvTknWhi98ChzZUpEKioGI3keCD12MMI6oQlKqjEmVPKWsx3icCfqUBEic/aUNhbifJkbif0G6/2ZX3snT5J2XHAGzXn6ckbboOyR2XrIIkWJ9IA1GGdEzldk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754471004; c=relaxed/simple;
+	bh=3o7NlWh5GslLq8gFtc/dnRSaMerNmIwx5vLw1ZOTjiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIone9+S6Uon8fC7BJylgRTPYI29S4DMKoII782zwkB9GRVYUXwDfzdp076w8BOimUFb9gsSGJJF0/gVgUI7ZFoW3G9M/Pc8o+1EimEZt8vORzNr6ZI6FSNmxzNMd28HUsYpWsGhHkUsU74F1mAiQsmm519VA2Eny3HLt6DCxlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZ/lh3tP; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61568fbed16so8410212a12.3;
+        Wed, 06 Aug 2025 02:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754471001; x=1755075801; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X7VlvHodp5bmcUXkA6dSTDBa8OaE5M3KbiDKEm7c3mA=;
+        b=VZ/lh3tPTlXGiSPKQCHXk36zNkNiOaAQYztxxKG6PEbMkgCxL8+m1USP8Byg6PvxBJ
+         xyxHcLzR/Sv+VW9RBqmBzP42s+UbbYKxFb9GMBcJ+7pIR5UcK1zleZm+GZMVJNxLIGUq
+         E8t1QSjs88kmqMzk3vl73ubfb/VqmvNl9MAifdYPs6lgP3U7TSH7Eb8ZWyb1bWl2IOqI
+         Wb56lCf/pQZp8U13SrZILCAieR9NSqL26gY0WPeLeURnmvszhk/ihPS8b4DOfbufkE46
+         1bVXZkXDW09BeDGE8ujn9D9pFXnGj8CqFcB1VgWHfBhcQMo7F7cvxm0JupcMdl7apSIk
+         AAgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754471001; x=1755075801;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=X7VlvHodp5bmcUXkA6dSTDBa8OaE5M3KbiDKEm7c3mA=;
+        b=ucg6uz/mjg1b4OUHedLLfixT282QtQRBuq9ZRXoJCkJ1zBynjIpBidvue5lMUdPx/3
+         6i+BLc3xsGLu5XqRrKJ4t/tvlkzrvBfY9sqYGBJoIk0FOOsxqHgRL1tw80mTEntKurho
+         xbSy8ok/rls5/ViEIOHXrG0nIsqgT25UfFv49qK93RZ91uYQY7qFdkMXlMgD2pPxHrVg
+         b0gSEx2ooQBjKcWlX2pZiyleoOz4rrJEnDeDTzrIK4EocDIjU7Y+EyplgNTFx5xNlf6+
+         MQqXtLbOfXNXxiyR/t5HIWItgthF50JVnH/1DxnlMK06/HwPjmekoMeTH1JaTUiP8F4A
+         iuxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+OLDs3I5PvM51gmCeQASyizBTEM9DiWz2q6I3hqBWxgMXeMQS91YEd/lEjc6WeHrYWdWdUOlbQMz9pg==@vger.kernel.org, AJvYcCXpcUY8YNwt1OFf4EzEGWhMnibp9721YLixboal+n0lXOUlSA80ilYkylyfeRDTuEwYD7w3BrCgO/P1rzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUxUZEOJXdr6A/x1Uwjasq6JcEAaOLniUhcpslrmNs5p+NVoti
+	wDr6okflEElsJcZvLBDCtaLlaGG2vIC0MwFXNYSK2djgc8aENCKi3wzLQw/OpqSd
+X-Gm-Gg: ASbGnctCs2hk1V1CoL4XXvRX/bQXULV1pJpxGesTSYVGPYaB5tkWZrHamIhxJMHg3+s
+	Sas6Ko5fnIILjdRV5RJugTb15DPF6Oh8cHTXp2Y92QMYijKXD/CFO1tmMXAXvxd6EEIS1CnAEuL
+	es4ZraRGBNFs1LgaUDImv+2SFhugruU5k1+n5OsJoerT66DGeaEFmqAuADMGkUIQaZoyF+cgsJp
+	qsgADhcOLt9zujZXXximCyqaP6q4Ba+NfLlmD0LBBxhCHGogOVvUE/eJN66RmU7OpPbJ1xiG8dX
+	kHZkpJ5OpljONG2CrzPUS2jpj0C5XjQLGSw4a9JejfsnCb+p4hxgC4Gg3ywlcyoOqQGFfzy8Li9
+	svD4KHBQHHKAHlUXNlOP6dw==
+X-Google-Smtp-Source: AGHT+IGKQsNAIUh+xJlHzy3nN2xphCyw1az4JEJ6yq9Qx4/Oq6uuF5spFilgh+DFG3Lfh7up2OBaUA==
+X-Received: by 2002:aa7:d386:0:b0:615:481c:7e03 with SMTP id 4fb4d7f45d1cf-61797de13b0mr1103751a12.21.1754471001035;
+        Wed, 06 Aug 2025 02:03:21 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8ffbd97sm9780487a12.53.2025.08.06.02.03.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Aug 2025 02:03:20 -0700 (PDT)
+Date: Wed, 6 Aug 2025 09:03:20 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v2] mm: fix accounting of memmap pages for early sections
+Message-ID: <20250806090320.wdt4zsfiambtgkvy@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250804151328.2326642-1-sumanthk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9308ff71-7eb1-43d1-7c4d-08ddd4c814e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 09:03:16.5117
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SWbJpkx0UBG0nMcC1B2G5b8o9mWgXxPF4nNMtLwqfoNZ/PzQrs2Y1kwiLBd66vxq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5789
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804151328.2326642-1-sumanthk@linux.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On Mon, Aug 04, 2025 at 05:13:27PM +0200, Sumanth Korikkar wrote:
+>memmap pages can be allocated either from the memblock (boot) allocator
+>during early boot or from the buddy allocator.
+>
+>When these memmap pages are removed via arch_remove_memory(), the
+>deallocation path depends on their source:
+>
+>* For pages from the buddy allocator, depopulate_section_memmap() is
+>  called, which should decrement the count of nr_memmap_pages.
+>
+>* For pages from the boot allocator, free_map_bootmem() is called, which
+>  should decrement the count of the nr_memmap_boot_pages.
+>
+>Ensure correct tracking of memmap pages for both early sections and non
+>early sections by adjusting the accounting in section_deactivate().
+>
+>Cc: stable@vger.kernel.org
+>Fixes: 15995a352474 ("mm: report per-page metadata information")
+>Suggested-by: David Hildenbrand <david@redhat.com>
+>Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+>---
+>v2: consider accounting for !CONFIG_SPARSEMEM_VMEMMAP.
+>
+> mm/sparse.c | 9 ++++++---
+> 1 file changed, 6 insertions(+), 3 deletions(-)
+>
+>diff --git a/mm/sparse.c b/mm/sparse.c
+>index 3c012cf83cc2..b9cc9e548f80 100644
+>--- a/mm/sparse.c
+>+++ b/mm/sparse.c
+>@@ -680,7 +680,6 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+> 	unsigned long start = (unsigned long) pfn_to_page(pfn);
+> 	unsigned long end = start + nr_pages * sizeof(struct page);
+> 
+>-	memmap_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
+> 	vmemmap_free(start, end, altmap);
+> }
+> static void free_map_bootmem(struct page *memmap)
+>@@ -856,10 +855,14 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> 	 * The memmap of early sections is always fully populated. See
+> 	 * section_activate() and pfn_valid() .
+> 	 */
+>-	if (!section_is_early)
+>+	if (!section_is_early) {
+>+		memmap_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE)));
+> 		depopulate_section_memmap(pfn, nr_pages, altmap);
+>-	else if (memmap)
+>+	} else if (memmap) {
+>+		memmap_boot_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page),
+>+				      PAGE_SIZE)));
+> 		free_map_bootmem(memmap);
+>+	}
 
-> -----Original Message-----
-> From: Suraj Gupta <suraj.gupta2@amd.com>
-> Sent: Wednesday, August 6, 2025 12:50 AM
-> To: andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
-> kuba@kernel.org; pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>;
-> sean.anderson@linux.dev; Pandey, Radhey Shyam
-> <radhey.shyam.pandey@amd.com>; horms@kernel.org
-> Cc: netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Katakam, Harini <harini.katakam@amd.com>
-> Subject: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head poi=
-nter after
-> BD is successfully allocated in dmaengine flow
->
-> In DMAengine flow, AXI DMA driver invokes callback before freeing BD in
-> irq handling path.
-> In Rx callback (axienet_dma_rx_cb()), axienet driver tries to allocate
-> new BD after processing skb.
-> This will be problematic if both AXI-DMA and AXI ethernet have same
-> BD count as all Rx BDs will be allocated initially and it won't be
-> able to allocate new one after Rx irq. Incrementing head pointer w/o
-> checking for BD allocation will result in garbage values in skb BD and
-> cause the below kernel crash:
->
-> Unable to handle kernel paging request at virtual address fffffffffffffff=
-a
-> <snip>
-> Internal error: Oops: 0000000096000006 [#1]  SMP
-> pc : axienet_dma_rx_cb+0x78/0x150
-> lr : axienet_dma_rx_cb+0x78/0x150
->  Call trace:
->   axienet_dma_rx_cb+0x78/0x150 (P)
->   xilinx_dma_do_tasklet+0xdc/0x290
->   tasklet_action_common+0x12c/0x178
->   tasklet_action+0x30/0x3c
->   handle_softirqs+0xf8/0x230
-> <snip>
->
-> Fixes: 6a91b846af85 ("net: axienet: Introduce dmaengine support")
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+The change here is reasonable. While maybe we still miss the counting at some
+other points.
 
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+For example:
 
-> ---
->  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 6011d7eae0c7..acd5be60afec 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -1457,7 +1457,6 @@ static void axienet_rx_submit_desc(struct net_devic=
-e
-> *ndev)
->       if (!skbuf_dma)
->               return;
->
-> -     lp->rx_ring_head++;
->       skb =3D netdev_alloc_skb(ndev, lp->max_frm_size);
->       if (!skb)
->               return;
-> @@ -1482,6 +1481,7 @@ static void axienet_rx_submit_desc(struct net_devic=
-e
-> *ndev)
->       skbuf_dma->desc =3D dma_rx_desc;
->       dma_rx_desc->callback_param =3D lp;
->       dma_rx_desc->callback_result =3D axienet_dma_rx_cb;
-> +     lp->rx_ring_head++;
->       dmaengine_submit(dma_rx_desc);
->
->       return;
-> --
-> 2.25.1
+a. 
 
+  sparse_init_nid()
+    __populate_section_memmap()
+
+If !CONFIG_SPARSEMEM_VMEMMAP, and sparse_buffer_alloc() return NULL, it
+allocate extra memory from bootmem, which looks not counted.
+
+b. 
+
+  section_activate()
+    populate_section_memmap()
+
+If !CONFIG_SPARSEMEM_VMEMMAP, it just call kvmalloc_node(), which looks not
+counted.
+
+Do I missed something?
+
+> 
+> 	if (empty)
+> 		ms->section_mem_map = (unsigned long)NULL;
+>-- 
+>2.48.1
+>
+
+-- 
+Wei Yang
+Help you, Help me
 
