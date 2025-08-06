@@ -1,279 +1,288 @@
-Return-Path: <linux-kernel+bounces-757849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E618BB1C763
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD99B1C766
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 16:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C671D5623D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E0A18C3840
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D42128CF45;
-	Wed,  6 Aug 2025 14:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A6C28CF5E;
+	Wed,  6 Aug 2025 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wB+E1Mr7"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="KS5AhqAe"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazolkn19010009.outbound.protection.outlook.com [52.103.13.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8628C5C6
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 14:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754489443; cv=none; b=NwFOIV5GrcXkRttb6R6/f7Olj7BIabZUJyfF5JYPAeojr/GfogxXZsviuDHRRvSJbwX6HjuStSSdQtCrdshtJEfwv/jv9PJG4wecmVMpDgP9goEJv07AcDsIcm33rq1j7kh0C2YHYVWOJDFZDcd4JZ1M95cnffaf1Syv1oBYTdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754489443; c=relaxed/simple;
-	bh=mI4po3rtq8bTqDBPQ2/M/FfMHfYJAJgg+g3qJhjf+sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nWwtUeJo43e075rL/NwWtdO3l+98Af+m0LWE6smJ9M6xUj1AdsMnvo21BItfb57xk1XAwfYoLUbhj8t4yP2x8Z8Z9Tosqlu8j5Xm+C+YT0gnJ+/bkIQW7h29Og1IX56azThdTDjj++yq56Dm5pjUwzJ3WrD2cD3iXxQ6eMr71Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wB+E1Mr7; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-458bf57a4e7so60255e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 07:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754489440; x=1755094240; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S8t5HFUqc+uUOq+DP418Q40OKNx1R/fQImmMod37+pg=;
-        b=wB+E1Mr7QMzG+dVnStwkDX5Xo9i7N9hdscb/HKv0wvGLkkUP2JxhvHZqqDJctGaWDJ
-         oE23ClGIdBTGcvDHEDEcoW7r8QU076/D0RO93gUkFa9GxVQ6ZuRjZ7N5OIPWnoUY3Z/q
-         2jkLQIBclF+LT9De0eu3UNlX8Je08JsbXdXbrPKacBNcn/NUOpTsdo2I8H44LOPSYSVs
-         rpn70TWxL+lKh4pBCuKic+WEEznNXeefQzcNqRMlN4NSnI2ZXcCHeOwj2VkYdcb9FVNq
-         eEtydC1aacOuCcMKqN1CBvqLctUWmxxZK8RZStTVstVd4DzLq8XYbuZjki0UMOak61aa
-         AGPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754489440; x=1755094240;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S8t5HFUqc+uUOq+DP418Q40OKNx1R/fQImmMod37+pg=;
-        b=d5ED0tfoXkwoDrrH+mt7poAoJ72NgU3b9iS2tuK2meFYv02dfD7Gu2x+upcqrNVgKz
-         JhevVcZAHIihE0/Ab8SxNZjKHmqSLgB1ZJTdpIlINagXnCaGbbzqGvCbqHjyHqu3CIJ9
-         fGbOpD9UKJEMNaIZkEjFMAKgUBKxlUnQeTPb7akefK5q9Uax8o/TfEnsGj6xQMzXQxgI
-         OPkuFJFO6H4qiGGwdwL32lGlgBSAHKVvusNPgkLL0RdM+tAqgyGaUaW0yZljIaW6iaxC
-         fKaxA5kAet1MSbIf3UWX6fkZxArMenk+fBGDO5hOXti4p1/O1H4aW2mXuVos1+R5NhGs
-         Ka3A==
-X-Gm-Message-State: AOJu0YyBhEotkw2T9jIECP8YMz4Z4kKnlq9v1spwV2alBpQvKxQkzX2b
-	0Lqxv1cz1l4xuwQ1OMz2vvy6h+1Kwxhuyh3v/ACWW/5EKZBZgDns35IsIAJ3+yFdng==
-X-Gm-Gg: ASbGnctBNpsc0/yjnK+Ru/r2dd/sysquBYfVbjoh9BUkVG+RbhFpgtcEf8bSWrbQ4bC
-	T/Z2GQS/Vv6slrMfW+AekfH/Cv1q+jHQ77PMG7K9E3Fi/LKiLkBIpF5vuMyiwJDSYDtTinbndp0
-	pKvLkx5Z3yGy1EtiTgjZTTih7X+fmULKombaB5u3ol6KNzTTLRLtvq4c0m/cgQmnKboONRYNNAu
-	vmzAjougWCwEgmH2xhq26uO+ixQToyQmayr4eQAAQrLzvDP4xmilSVqfaEm6mYvzecN6hf0UFIj
-	c68bypUmuNcOY+vi7TUvwNqC3w5xKjowH0QAkRJ6ZEl9v4gtWoZa7DNB8F+mzFR3/NPoJWWWonn
-	WuNZVbJ06M5h0E4JbbxwXa8j8csgnsX0DUPG/EAXneJNrh2rGqZ98kPnQS7N14ktTmQ==
-X-Google-Smtp-Source: AGHT+IHFwOHplPeniFX/OYHA6MsJidP9FSVHfWws6kd04FRGtTTr89FlkYU0XPDUkpq8hanIQWmrxQ==
-X-Received: by 2002:a05:600c:1f10:b0:456:e94:466c with SMTP id 5b1f17b1804b1-459e74b4543mr1411575e9.3.1754489439774;
-        Wed, 06 Aug 2025 07:10:39 -0700 (PDT)
-Received: from google.com (110.121.148.146.bc.googleusercontent.com. [146.148.121.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5843021sm58288915e9.3.2025.08.06.07.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 07:10:38 -0700 (PDT)
-Date: Wed, 6 Aug 2025 14:10:35 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
-Message-ID: <aJNiW48DdXIAFz8r@google.com>
-References: <20250728175316.3706196-30-smostafa@google.com>
- <20250730144253.GM26511@ziepe.ca>
- <aIo1ImP7R7VhRpVE@google.com>
- <20250730164752.GO26511@ziepe.ca>
- <aIt67bOzp6XS_yO-@google.com>
- <20250731165757.GZ26511@ziepe.ca>
- <aIurlx5QzEtjpFLd@google.com>
- <20250801185930.GH26511@ziepe.ca>
- <aJDGm02ihZyrBalY@google.com>
- <20250805175753.GY26511@ziepe.ca>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D80A28934D;
+	Wed,  6 Aug 2025 14:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754489485; cv=fail; b=FO3osuEzXtpS2Q8H+Wd4o6pCHJHHbd4lopVXxtnq3KCDpl9YtuVoQd0Pn4hYFycpY+7UZVzVxA9DyG0QMpb8clJaKBE6KQ16KWudWxQFFUsIkCZqCfIovGD41QLvAReGhmFzs+1Bo1tpRg8xYIxmVhWXk66b3dkkEQvybgrwjMg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754489485; c=relaxed/simple;
+	bh=i0QsXT7+cSBh29bNe3XKFWcLhOnGBv9h/ANoY/dok5k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jFYT4bttvcTo76WjE+p0wPTo9CAnOEwR4oleWfRqvWJrYYNsdI47wr6lEnN7dq9pwu4ETKvtiC3Z1cXV2QlyEyJiLcd3zBAg/YKqk/zzsWEi4AHRa+Q+It6OdeC89KPvCPjLgineVOqc+j/Po6d98qUEMU1d9QKvr1gsUopWt5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=KS5AhqAe; arc=fail smtp.client-ip=52.103.13.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b2XERe9sP9NrW0uY9OXIgye5JyEOiiDChe0LB0nWzWTE50GeG59we3Q1Tg4x+k55yxsjuk8taoQuKM9/OsmLAZZkr+F/xLSsG89F6R+PQu/n+RoPfml2E2hjmFKDxxL61Wkfm3p5ipyISfwxMX8jjtv48Aev5JgZLYc7mL/+wcE0Cs8ukU4kdZohSvZU0rhj9YNbZkU5kfbhheRW2fIwdXEU2d+OZdVSX/ZsuReogWXhT4wCBF8nm1YuMzO4XO7fqY8PZdeBitUKe3A+31D/RAZB2OQBR67H5KUjmXfpFBkeHis5gjjFY5NyQLeXqistEqqTgPNTLb60MH0wTITcLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kr8n9R5f0cSbx4CwdnydWLi07qJFlF0ikAakzOY2TLU=;
+ b=rdl/lG4YlloaK49vx9y7bWmfT55KDGSHXxoWo5YnE/iIzXtLNZ6uaHTBFI9UioK+02f5ArAMxsPYYylm+Snqg3IEhX0pAkpPxX4KAw5CyrThekmsSk7HYqIun0vIYD0H0pb6K1/5LtsiaKPH113+FvK7fwJ0bJTrxP7vefhnMyLPAj01teLGsMi6Q8DTjBErmStYtfb1Jz7m+cdlyzzqs+WaSM5dLQ5Yh1KlvEftc2kZKdMPatkL+FziqdQuTa5clJVMHl5EkFGMlJrCisUQcDHGiZ9JUMd3/3H3nZACVHZN6TQCFBRMingKQR7W32wg+PaDrtLVVYFp5iClViQIHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kr8n9R5f0cSbx4CwdnydWLi07qJFlF0ikAakzOY2TLU=;
+ b=KS5AhqAeu7z1yWpx3ZyjiUwWqEr5Z0aAMNKOTJoIM0S9p++9fQruak+XkEz5zeJJvjhBrIzPjd4002NzFrL/W0cxwXaSBlhSUbgS7ojLJbhPy2TvKuKW9eAgIY+O4MuSGag0ZFJIKzSSp9QBPo/hI5ii3+oShoJYbli3FAJWOccpuIEnj5JpPfHkoCufllp1dx+r1yB6FTuHYBaUQImtSPGA+ROa0hd6+HdFHqDvRBV5ZJ6ia9bN+l6pF1BsGB600S3zB/ZBDVvrF3BuOGJ663uCVtw1o6RUX8fx3ykyzd3f0ML4WXOaD8O0crDsGMLhHDhmH+1C0sNyXdvkcE4g3A==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SN7PR02MB10179.namprd02.prod.outlook.com (2603:10b6:806:2a4::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Wed, 6 Aug
+ 2025 14:11:20 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 14:11:20 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Tianyu Lan <ltykernel@gmail.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de"
+	<arnd@arndb.de>, "Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>
+CC: Tianyu Lan <tiala@microsoft.com>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH V6 2/4 Resend] Drivers: hv: Allow vmbus message synic
+ interrupt injected from Hyper-V
+Thread-Topic: [RFC PATCH V6 2/4 Resend] Drivers: hv: Allow vmbus message synic
+ interrupt injected from Hyper-V
+Thread-Index: AQHcBsxgXd6tBAZ7EE+/V3BH9h35h7RVqUTA
+Date: Wed, 6 Aug 2025 14:11:20 +0000
+Message-ID:
+ <SN6PR02MB41577D7BFC7FA078880979A5D42DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250806121855.442103-1-ltykernel@gmail.com>
+ <20250806121855.442103-3-ltykernel@gmail.com>
+In-Reply-To: <20250806121855.442103-3-ltykernel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SN7PR02MB10179:EE_
+x-ms-office365-filtering-correlation-id: c9f2cdfa-36bd-48d4-520a-08ddd4f31e05
+x-ms-exchange-slblob-mailprops:
+ qdrM8TqeFBtg1x3yx1r6QKZAk6LGeuzaqwLw3C0egdbRMleiIaW7Zl7nUVC9de5NmRPvrvpOI0Vtg8Ngr4sViOP83CcsC9RMgpt/59NqTyQaQXLrP1QwyeGKFFmlAq6NwtgC30FvGSLtrQfcCKhNxIlDz2NcBIMBEiToTFuFsixbeBtlUiKh5xo85TjET2kssdhOEwAZ+NjzxgY/DvZgBwoB/H6sKgJnU1tdSpfi9F3dUUTv6B3zi9myzXU4At6HpMr8KIotEimbLUvUTw5tVdbBmLLyLtoxViQX6/gM6TLQJdasVpjFQxY15T4IpcRsDNJI2fyMEPFo9qCSnYhFvBZ7USYQ0gsTKk9XcFNDOb2zJSonqHKmM5DXtqvVB9r4E1n7NBtxnxEN3sO0ETbgTJiD3nYcoRfYy1LHgu6ywwEd5r552RwgicnEG9u/lW5wUfiTiye383Ui/x49ycj1/UZuJhYAm28xBykscm9kXD8w909AbbtNSuq2hsME3mEtYI4K12oEwAmWaGb6RfWyLaxsW136TQYvW8U6jc+qVCsn+Zc14gw2saFqLl+u1p/GGrvTGh8lQTs4ve6701XoPAHZgpGpC4yy/K5WxxNte3IX9jEExTpbRg8bpKbqbKvhNYPsIXvvlAtwvgsVw7Svseui9vVnvZOzS2AH7qI3OFjXdTq26tNVxMQZKq6w4oqn1Ada+7npDL7USzJ9CqPeNmCXS7R/KCMLSNn5pTuHj+TMn76WNeN2ZgU6WGBLxQ2Kcm7eLWY7DFYbwouYGunBypSzaRZY1JS7
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799012|31061999003|8060799015|19110799012|8062599012|440099028|40105399003|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?80a5QYCaFz4LM46Ozu+hJcLniOtWEwEEfFkyZi4oOdNPUml0Fj5D5oggZeVE?=
+ =?us-ascii?Q?h2axcSx2XRmIcBe6XLwFJFauq7xLUqoyRpDiKexp7zBhiu4S/XMWnjiNjez2?=
+ =?us-ascii?Q?0E+UpwRq8lsx087RxiV3mqcmrrvYkFjqMy5MqUx/ySIa5eBGt/6eN0d2Fwm1?=
+ =?us-ascii?Q?btr9wEBJOevaA3VFyyUob2CgrZoXC73oG1hkeXBCEyC2AVCeCGlMmYP4UUYO?=
+ =?us-ascii?Q?tK7mbvOfaD4SWR4SKWvIBQYo8oHQodc9z5584que5TS5u4sRCKeMeyBv+d1x?=
+ =?us-ascii?Q?Yp07MzuWjNE1far65N2BDSLTjX4PAO1h4wAZfLc/D/IvWi3w/th6Q5nP7Sdo?=
+ =?us-ascii?Q?PBUorgt6AUlUlZ1gS5ygPYMmkSextdXZDMiOeBx1Na+8zVayvQR3Eaz6Sv/p?=
+ =?us-ascii?Q?Qsu0wL2G/1dJmOjI94vTQ/fI+wm/9PoUBmBPHeagwjd/2MNUi+251zOfB2C+?=
+ =?us-ascii?Q?3+nUvAR8JtbEasbWUb4zI5TpKbhin6vS6gUZ2YM38RTWOp/fGPzppkU3/OiM?=
+ =?us-ascii?Q?Wp6A4elZTpGflWLBT5FrqHWf2cbV+5Yy0/aseHu0qfgUcEMXZkdj0+MQXW70?=
+ =?us-ascii?Q?iif/NaAZafT6MyXEDTvI7WOjVp06aMwjLDPK40ZUsuXchNrFiR0pdXUN5uAJ?=
+ =?us-ascii?Q?gIFLhbIihCrb8K8dB9eCEPKGVUqlubSGNKn2/pfv4Uoiy1XjElkLbfuF0RqW?=
+ =?us-ascii?Q?6ygcMHnksWwU5Y8145o5GJdtQkFkx2Q6cLrw6a4Lb+WZHXa6Uu+aIwFHQaWy?=
+ =?us-ascii?Q?vnDd9xKzxJExEZtF+M4LEYi8QzLULBsknex7o7K+W//2D8CWlf04tuPoteKM?=
+ =?us-ascii?Q?syGxpRTUqXuKAd5A7GJJ7z0fozbDvROWXKukmdjLVOnwRGWV8fvhMaTlszzj?=
+ =?us-ascii?Q?FhUUnE+9xk5VKuV3DiJdYFjcN/a0shP01mCIbW4+55ScQWNCwDb+SgglSi51?=
+ =?us-ascii?Q?haHtzHxMG+N8brJlcHfL8IyL4eU7NrK4iLK4oh0/eGAtfk7KPwzgT78bgTjp?=
+ =?us-ascii?Q?vWeDIPhR4lnt643tpZNSRY/wI+evO12bieJ08POySN3WSeulm3hufYS/0y/Y?=
+ =?us-ascii?Q?4dxuYavO0IJqdkKRoWIVmxPcWoqQ1PzRpcggrF+EYRB7OsCqyvqi1vbRt5Je?=
+ =?us-ascii?Q?fNsZRgDFRPkZVSKx2HIl4N3sMldUaeC/hQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?DjfEP0Q5FCTzuvCCk/edOSnBPiikbCU+0KzlaOKpg9OaVROSsOA06MeojciK?=
+ =?us-ascii?Q?Aa6sY5tf9ZcMzBI6OIP++9MOVxgaWP8QjUO+oedTH6j+faOlbSc83u86WVZO?=
+ =?us-ascii?Q?0uuNqrd6kY1Zfp4oIpZTzcINAtZXbqTuR3y91Nf7gyTgRWm/y8DFcf9/ONor?=
+ =?us-ascii?Q?dJ6I1Q4U+8Yilahbvp5eLPqXBk/v63Wzxd5c7NMkdby8vJarKMHANpfj3VPU?=
+ =?us-ascii?Q?IPTAkgPEmBkwGn+kOum/vm+UGbKS3vmvioq0YGDzeCBmRu92QFReAu0URyst?=
+ =?us-ascii?Q?Vr5mm9kDl1ANvjOtMnJ4qP/E3yBR+k2x+B7OYAzCPvH+YlDlZqUb3CwzPFHI?=
+ =?us-ascii?Q?KY6NOkpf+bA6AhmtA22P5pwwYz/gRWIuFGw6Rj1+rzswWML69h7A/EMLvoZm?=
+ =?us-ascii?Q?yqR/q/HBA+X34vgXhApM6d6krBRItJ/pwW0onzxR4BxgmEQBDFKRVSBvLyIa?=
+ =?us-ascii?Q?DRcdPB/CIl5IDCXRfNAmQy2B1SEW1yxkLLMpXBnv3Sl3YqE4gztnHu6EZToi?=
+ =?us-ascii?Q?l8qkw7uKqam1H3xXUpUypdg5s1ahxf9ytq7/ivvhTacY1xh8Fn5lNiTFWAec?=
+ =?us-ascii?Q?EKGs18CgITSRW3+tew9DMKktLs85sCDMwdRNQwd0GWKjGpZh3Hs22gPnnKWo?=
+ =?us-ascii?Q?GRLWTq5q1MvSWRqtU9MLnZ3dNmcQDh9Ec/H/5EICg9HigRM2BFMM74x0lF5N?=
+ =?us-ascii?Q?JrKzsgv3sYiSVqWN9LA6VtByjT+ozN2UbHc0o/tzM1MfjoV2KRP7HVXE2uOW?=
+ =?us-ascii?Q?ouNLV1EkmmCol6IT7ESO0LCrgjgJmDRpG+GFThkPKf1YDJ5iK7+32UTEp0b9?=
+ =?us-ascii?Q?Gonm3JPUf+jPlsOJ4TqMFC/GVpnI4uhJKFzvLRbEZ0PnGOMGd8DmNZy9WZax?=
+ =?us-ascii?Q?AuE5EUu8NuI5uyR4e+6KVSWozHCSCwrm7q4CKcwUvAg2p5zOwTUOOQ76+Mjz?=
+ =?us-ascii?Q?LfbLpr3giOQW9r28DylttKrxv/tmtcOjBjtHstCydAU9IWqILqngh38Qgpsh?=
+ =?us-ascii?Q?45YTYJ/lxN0Ahe/S2g8kfcMerYtDqUi2C/CWqaVGvgXHz2EYFw5SW9PBkqnf?=
+ =?us-ascii?Q?RWvWlUAmi2xxeDxIAAZwL/CDCLj41xrPYp3Di0cBH+g8+RbdyvmulMKgY8gp?=
+ =?us-ascii?Q?tAke5vDTxz+QrKOfZE3GzicWGZ4H2suSaryv1Xcj1Mh5ExiyV9uJFCdA/tXW?=
+ =?us-ascii?Q?plsuWgXwqsJi3Mj3823Fsn6xKvfUlkbXGULG/9qjZ+dztIhu+bwumyUkqcY?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250805175753.GY26511@ziepe.ca>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9f2cdfa-36bd-48d4-520a-08ddd4f31e05
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 14:11:20.2122
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR02MB10179
 
-On Tue, Aug 05, 2025 at 02:57:53PM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 04, 2025 at 02:41:31PM +0000, Mostafa Saleh wrote:
-> > > Are you saying the event queue is left behind for the kernel? How does
-> > > that work if it doesn't have access to the registers?
-> > 
-> > The evtq itself will be owned by the kernel, However, MMIO access would be
-> > trapped and emulated, here the PoC for part-2 of this series (as mentioned in
-> > the cover letter) This is very close to how nesting will work.
-> > https://android-kvm.googlesource.com/linux/+/refs/heads/for-upstream/pkvm-smmu-v3-part-2/drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c#744
-> 
-> Oh weird, but Ok.
-> 
-> > > In other words you have two cleanly seperate concerns here, an "pkvm
-> > > iommu subsystem" that lets pkvm control iommu HW - and the current
-> > > "iommu subsystem" that lets the kernel control iommu HW. The same
-> > > driver should not register to both.
-> > > 
-> > 
-> > I am not sure how that would work exactly, for example how would probe_device
-> > work, xlate... in a generic way?
-> 
-> Well, I think it is not so bad actually.
-> 
-> You just need to call iommu_device_register
-> 
-> 	ret = iommu_device_register(&smmu->iommu, &arm_smmu_ops, dev);
-> 
-> Where 'dev' is always the smmu struct device, even if your current
-> probing driver is not the smmu device. That will capture all the iommu
-> activity the ACPI/DT says is linked to that dev.
-> 
-> From there you just make a normal small iommu driver with no
-> connection back to the SMMUv3.
-> 
-> Eg you could spawn an aux device from smmuv3 to do this with a far
-> cleaner separation.
-> 
-> xlate is just calling iommu_fwspec_add_ids() it is one line.
+From: Tianyu Lan <ltykernel@gmail.com> Sent: Wednesday, August 6, 2025 5:19=
+ AM
+>=20
+> When Secure AVIC is enabled, VMBus driver should
+> call x2apic Secure AVIC interface to allow Hyper-V
+> to inject VMBus message interrupt.
+>=20
+> Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+> ---
+> Change since RFC V5:
+>        - Rmove extra line and move hv_enable_coco_interrupt()
+>          just after hv_set_msr() in the hv_synic_disable_regs().
+>=20
+> Change since RFC V4:
+>         - Change the order to call hv_enable_coco_interrupt()
+> 	  in the hv_synic_enable/disable_regs().
+> 	- Update commit title "Drivers/hv:" to "Drivers: hv:"
+>=20
+> Change since RFC V3:
+>        - Disable VMBus Message interrupt via hv_enable_
+>        	 coco_interrupt() in the hv_synic_disable_regs().
+> ---
+>  arch/x86/hyperv/hv_apic.c      | 5 +++++
+>  drivers/hv/hv.c                | 7 ++++++-
+>  drivers/hv/hv_common.c         | 5 +++++
+>  include/asm-generic/mshyperv.h | 1 +
+>  4 files changed, 17 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> index 01bc02cc0590..c9808a51fa37 100644
+> --- a/arch/x86/hyperv/hv_apic.c
+> +++ b/arch/x86/hyperv/hv_apic.c
+> @@ -54,6 +54,11 @@ static void hv_apic_icr_write(u32 low, u32 id)
+>  	wrmsrq(HV_X64_MSR_ICR, reg_val);
+>  }
+>=20
+> +void hv_enable_coco_interrupt(unsigned int cpu, unsigned int vector, boo=
+l set)
+> +{
+> +	apic_update_vector(cpu, vector, set);
+> +}
+> +
+>  static u32 hv_apic_read(u32 reg)
+>  {
+>  	u32 reg_val, hi;
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index 308c8f279df8..d68a96de1626 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -312,10 +312,13 @@ void hv_synic_enable_regs(unsigned int cpu)
+>  	shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT)=
+;
+>=20
+>  	shared_sint.vector =3D vmbus_interrupt;
+> +
 
-I am not sure I understand, the SMMU driver will register its IOMMU
-ops to probe the devices, then faux devices would also register
-IOMMU ops for the KVM HVCs?
-But that means that all DMA operations would still go through the
-SMMU one?
+The spurious blank line is still here.
 
-> 
-> > same for other ops. We can make some of these
-> > functions (hypercalls wrappers) in a separate file. 
-> 
-> What other ops are you worried about?
-> 
-> static struct iommu_ops arm_smmu_ops = {
-> 	.identity_domain	= &arm_smmu_identity_domain,
-> 	.blocked_domain		= &arm_smmu_blocked_domain,
-> 	.release_device		= arm_smmu_release_device,
-> 	.domain_alloc_paging_flags = arm_smmu_domain_alloc_paging_flags,
-> 
-> 	^^ Those are all your new domain type that does the hypercalls
-> 
-> 	.probe_device		= arm_smmu_probe_device,
-> 	.get_resv_regions	= arm_smmu_get_resv_regions,
-> 
->   	^^ These are pretty empty
-> 
-> 	.device_group		= arm_smmu_device_group,
-> 	.of_xlate		= arm_smmu_of_xlate,
-> 
->         ^^ Common code
-> 
-> Don't need these:
-> 
-> 	.capable		= arm_smmu_capable,
-> 	.hw_info		= arm_smmu_hw_info,
-> 	.domain_alloc_sva       = arm_smmu_sva_domain_alloc,
-> 	.page_response		= arm_smmu_page_response,
-> 	.def_domain_type	= arm_smmu_def_domain_type,
-> 	.get_viommu_size	= arm_smmu_get_viommu_size,
-> 	.viommu_init		= arm_vsmmu_init,
-> 	.user_pasid_table	= 1,
-> 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
-> 	.owner			= THIS_MODULE,
+>  	shared_sint.masked =3D false;
+>  	shared_sint.auto_eoi =3D hv_recommend_using_aeoi();
+>  	hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
+>=20
+> +	hv_enable_coco_interrupt(cpu, vmbus_interrupt, true);
+> +
+>  	/* Enable the global synic bit */
+>  	sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
+>  	sctrl.enable =3D 1;
+> @@ -342,7 +345,6 @@ void hv_synic_disable_regs(unsigned int cpu)
+>  	union hv_synic_scontrol sctrl;
+>=20
+>  	shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT)=
+;
+> -
+>  	shared_sint.masked =3D 1;
+>=20
+>  	/* Need to correctly cleanup in the case of SMP!!! */
+> @@ -350,6 +352,9 @@ void hv_synic_disable_regs(unsigned int cpu)
+>  	hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
+>=20
+>  	simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
+> +
+> +	hv_enable_coco_interrupt(cpu, vmbus_interrupt, false);
+> +
 
-Makes sense, thanks for the detailed explanation.
+This line is still in the wrong place. Maybe you accidentally resent
+the previous version of the patch instead of the version with your
+intended changes?
 
-> 
-> > Also I am not sure how that
-> > looks from the kernel perspective (do we have 2 struct devices per SMMU?)
-> 
-> I think you'd want to have pkvm bound to the physical struct device
-> and then spawn new faux, aux or something devices for the virtualized
-> IOMMUs that probes the new paravirt driver. This driver would be fully
-> self contained.
+Michael
 
-I think it’s hard to reason about this as 2 devices, from my pov it seems
-that the pKVM HVCs are a library that can be part of separate common file,
-then called from drivers. (with common ops)
-Instead of having extra complexity of 2 drivers (KVM and IOMMU PV).
-However, I can see the value of that as it totally abstracts the iommu ops
-outside the device specific code, I will give it more thought.
-But it feels that might be more suitable for a full fledged PV
-implementation (as in RFC v1 and v2).
+>  	/*
+>  	 * In Isolation VM, sim and sief pages are allocated by
+>  	 * paravisor. These pages also will be used by kdump
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 49898d10faff..0f024ab3d360 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -716,6 +716,11 @@ u64 __weak hv_tdx_hypercall(u64 control, u64 param1,=
+ u64
+> param2)
+>  }
+>  EXPORT_SYMBOL_GPL(hv_tdx_hypercall);
+>=20
+> +void __weak hv_enable_coco_interrupt(unsigned int cpu, unsigned int vect=
+or, bool set)
+> +{
+> +}
+> +EXPORT_SYMBOL_GPL(hv_enable_coco_interrupt);
+> +
+>  void hv_identify_partition_type(void)
+>  {
+>  	/* Assume guest role */
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index a729b77983fa..7907c9878369 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -333,6 +333,7 @@ bool hv_is_isolation_supported(void);
+>  bool hv_isolation_type_snp(void);
+>  u64 hv_ghcb_hypercall(u64 control, void *input, void *output, u32 input_=
+size);
+>  u64 hv_tdx_hypercall(u64 control, u64 param1, u64 param2);
+> +void hv_enable_coco_interrupt(unsigned int cpu, unsigned int vector, boo=
+l set);
+>  void hyperv_cleanup(void);
+>  bool hv_query_ext_cap(u64 cap_query);
+>  void hv_setup_dma_ops(struct device *dev, bool coherent);
+> --
+> 2.25.1
+>=20
 
-> 
-> > I think we are on the same page about how that will look at the end.
-> > For nesting there will be a pKVM driver (as mentioned in the cover letter)
-> > to probe register the SMMUs, then it will unbind itself to let the
-> > current
-> 
-> That sounds a little freaky to me. I guess it can be made to work, and
-> is maybe the best option, but if this is the longterm plan then
-> starting out with a non-iommu subsystem pkvm driver seems like a good
-> idea.
-> 
-> Today the pkvm driver would do enough to boot up pkvm in this limited
-> mode, and maybe you have some small code duplications with the iommu
-> driver. It forks off a aux device to create the para-virt pkvm iommu
-> subsystem driver.
-> 
-> Tomorrow you further shrink down the pkvm driver and remove the
-> para-virt driver, then just somehow bind/unbind the pkvm one at early
-> boot.
-> 
-> Minimal changes to the existing smmu driver in either case.
-> 
-> > Then the hypervisor driver will use trap and emulate to handle SMMU access
-> > to the MMIO, providing an architecturally accurate SMMUv3 emualation, and
-> > it will not register iommu_ops.
-> 
-> Well, it registers normal smmuv3 ops only, I think you mean.
-
-I mean when nesting is added, the arm-smmu-v3-kvm, will not call
-“iommu_device_register”
-
-> 
-> > So, I will happily drop the hypercalls and the iommu_ops from this series,
-> > if there is a better way to enlighten the hypervisor about the SIDs to be
-> > in identity.
-> 
-> The iommu ops are a reasonable and appropriate way to do this.
-> 
-> But since pkvm is all so special anyhow maybe you could hook
-> pci_enable_device() and do your identity hypercall there? Do you
-> already trap the config write to catch Bus Master Enable? Can pkvm
-> just set identity when BME=1 and ABORT when BME=0?
-
-pKVM doesn’t trap actual device access, also we have to support
-platform devices, so it would be better to rely on existing
-abstractions as “probe_device”
-
-
-I had an offline discussion with Will and Robin and they believe it might
-be better if we get rid of the kernel KVM SMMUv3 driver at all, and just
-rely on ARM_SMMU_V3 + extra hooks, so there is a single driver managing
-the SMMUs in the system.
-This way we don’t need to split current SMMUv3 or have different IOMMU ops,
-and reduces some of the duplication, also that avoids the need for a fake device.
-
-Then we have an extra file for KVM with some of the hooks (similar to the
-hooks in arm_smmu_impl_ops we have for tegra)
-
-And that might be more suitable for nesting also, to avoid the bind/unbind flow.
-
-I will investigate that and if feasible I will send v4 (hopefully
-shortly) based on this idea, otherwise I will see if we can separate
-KVM code and SMMU bootstrap code.
-
-
-Thanks,
-Mostafa
-
-> 
-> Jason
 
