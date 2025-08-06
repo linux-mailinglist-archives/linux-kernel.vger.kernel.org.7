@@ -1,211 +1,146 @@
-Return-Path: <linux-kernel+bounces-757559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863ECB1C390
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839B5B1C38E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 11:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090213ACE8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 927B3161914
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 09:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980F328A416;
-	Wed,  6 Aug 2025 09:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39E628A1D9;
+	Wed,  6 Aug 2025 09:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BcWPGh9A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jLiteBcS"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF741C3027;
-	Wed,  6 Aug 2025 09:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508CC1C3027
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 09:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473327; cv=none; b=PqBMqditraHHDL9RJK2cWXIonGZIWD771MGj0Pc58NAY/S1EmZJSYWyEf89BT5fdaqDtgOZW+2dpYYAnVioojd2FBKWKRIW+ddJKe/OhEZmDhmWBowK63IiA23sfpFbx4eTWeP67VfJVzzOx+9l5eriqP8G/2MIT4jeV13fL4uo=
+	t=1754473318; cv=none; b=prApR4HuXc5+eTdK7uhR6lyWrkaoRGDq2r/FyqTrwgjVioZJg8An0QFsNVKUPOyjhcTKwgGni1C3I42DTsqCF+fUxqbbZUjS0OKhtqrXOOdz1O848SfIh/wJMlnZlo6rpzhE2drkN3GJWmj0sQ1EbzLsmlJCUhOpYBesFdTAH/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473327; c=relaxed/simple;
-	bh=EP/2nbnxkVQbVU2omhh0DFzLJaZBfDQ/1aC8njt6IuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bsM7DqMcbF7Kw3gIC0pKoU4XjcxErEMsP9EJgf6bP6qjLPPqT2jCkf5v45jZtcSkJXloCySyfTM1XD7hjWFfwXSG/RodRRruHfpsNyNoEhQpoJsKyEBo3rAiFjsQ9iYmxgmC+rvp7yoSpWAbf2M42D4IDG3dw5cxvTrgvHg0FaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BcWPGh9A; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754473326; x=1786009326;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EP/2nbnxkVQbVU2omhh0DFzLJaZBfDQ/1aC8njt6IuQ=;
-  b=BcWPGh9ARFEAeZeavTj65ZAkE0EaijhtDQbjuI1N1Yc3BlcAY8zn9yTR
-   zHluwMNGsHoFbmGzNrKHUytOZXVi2Jz56K49+LJ99jM5ldlhm09N8+jDa
-   SNW3rXXk/jwmNUVkD54fIStuWcBWM32VgzyBmlJ4Fp6ZsKY9LB/9WsSas
-   7RZ2oVit8K+xnZ7aLOQT3HwZ8nyLF93IqUolJl6T05J2yVw559uH8SN3r
-   VUAs1e6lVxl+rRYJwWFNC3plHNpr7ogn7Ps/mZ6jPdJYtxrj91KRVfl19
-   /7Zo8PSBYmnxr0ROH99LlQC6K8jz6I1TUvlW5WQDCd9T3boofJSl8ku0p
-   g==;
-X-CSE-ConnectionGUID: aQZ0uHwrSZmZBB3n5zSgtQ==
-X-CSE-MsgGUID: f6M9eK/8QQGfxBH4iS/yWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="67862281"
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="67862281"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 02:42:05 -0700
-X-CSE-ConnectionGUID: wqJnxfUNR3e2Nnv3NYwAZg==
-X-CSE-MsgGUID: nHxQ1/O0TCac0jLf/m1d5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
-   d="scan'208";a="170003161"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Aug 2025 02:42:02 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujaed-0001U6-0p;
-	Wed, 06 Aug 2025 09:41:58 +0000
-Date: Wed, 6 Aug 2025 17:41:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
-	akpm@linux-foundation.org, ming.lei@redhat.com, dlemoal@kernel.org,
-	jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH v3 1/2] lib/sbitmap: convert shallow_depth from one word
- to the whole sbitmap
-Message-ID: <202508061722.0vTVFHLe-lkp@intel.com>
-References: <20250805073748.606294-2-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1754473318; c=relaxed/simple;
+	bh=/yG5AimmnLpDv8FHf2ZQhI/CqBBVygh/7tsG/7JrD00=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KbTVAJu9BhfCLHonmn5fHLNg2p8RxeGCzbXFZ8PR36qyujmDpTQlOaDJcbXs/jv+vsrLmOCFAoFF1mv2SkRXOmE+7cD3XSDSdTtQw4V2b+squCsQxjRGi6C7XU+EJu5RUs4pqhQH4yp7WvngY0Qgr7H5dcoXMjVvCzV1yJoc3mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jLiteBcS; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BE6634316E;
+	Wed,  6 Aug 2025 09:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754473314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NZJODZEXyM0Btp0NhLuGNYblMjw4tGSyhRayjb63qFI=;
+	b=jLiteBcScsmmXTcEUSGgHxsf8j8XdYx5gBw8FkcF1+UFbSGMiT0WnvzGql8tP6gQEVFzs+
+	IAW6FTdSIIl2OF9EuRKGfu4Sn0zs/yBWIZsQbryjQc6yPbsErpcGetBVlwEOXX2kElONoS
+	+7Oddy4b1DyuQkM7/6jLfd3txWtrK2Gx/9W78JpNyryIfI/SFIFDqPWZraWyhberKpgkHD
+	BMXxWxC3KnAxydFAfSEoPRilYuEexSnz3w4oU6y8gqqK4wH2hHqEpVcoOmKRK6t0tgJobT
+	JvJl6LCxkVRHfT82g/Ujx2EiCfRbtfDHHDiKMx/BYkNPaZ7FtKrgij1fA418vg==
+Date: Wed, 6 Aug 2025 11:41:50 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
+ damon.ding@rock-chips.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix bailout for
+ devm_drm_bridge_alloc()
+Message-ID: <20250806114150.57e1ad97@booty>
+In-Reply-To: <b5556cbe-76ed-4ddd-9b76-5896c2e1520c@nxp.com>
+References: <20250806085424.518274-1-victor.liu@nxp.com>
+	<20250806112641.7af982e3@booty>
+	<b5556cbe-76ed-4ddd-9b76-5896c2e1520c@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805073748.606294-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudejjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehvihgtthhorhdrlhhiuhesnhigphdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrt
+ ghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgv
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Yu,
+On Wed, 6 Aug 2025 17:38:17 +0800
+Liu Ying <victor.liu@nxp.com> wrote:
 
-kernel test robot noticed the following build errors:
+> On 08/06/2025, Luca Ceresoli wrote:
+> > Hello Liu,
+> > 
+> > On Wed,  6 Aug 2025 16:54:24 +0800
+> > Liu Ying <victor.liu@nxp.com> wrote:
+> >   
+> >> devm_drm_bridge_alloc() returns ERR_PTR on failure instead of a
+> >> NULL pointer, so use IS_ERR() to check the returned pointer.
+> >>
+> >> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
+> >> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >> ---
+> >>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> index ed35e567d117..86cf898a09bb 100644
+> >> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> >> @@ -1474,7 +1474,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+> >>  
+> >>  	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
+> >>  				   &analogix_dp_bridge_funcs);
+> >> -	if (!dp)
+> >> +	if (IS_ERR(dp))
+> >>  		return ERR_PTR(-ENOMEM);  
+> > 
+> > Good catch, thanks!
+> > 
+> > You fix is correct but now I realized one additional fix is needed in
+> > the following line:
+> > 
+> > -		return ERR_PTR(-ENOMEM);
+> > +		return ERR_PTR(dp);  
+> 
+> You mean ERR_CAST(dp)?
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on linus/master v6.16 next-20250806]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Ah, indeed!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/lib-sbitmap-convert-shallow_depth-from-one-word-to-the-whole-sbitmap/20250806-100430
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20250805073748.606294-2-yukuai1%40huaweicloud.com
-patch subject: [PATCH v3 1/2] lib/sbitmap: convert shallow_depth from one word to the whole sbitmap
-config: sparc-randconfig-001-20250806 (https://download.01.org/0day-ci/archive/20250806/202508061722.0vTVFHLe-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508061722.0vTVFHLe-lkp@intel.com/reproduce)
+> > Can you send a v2 with that fixed?  
+> 
+> I find devm_drm_bridge_alloc() always returns ERR_PTR(-ENOMEM) in this
+> driver context, so it seems fine to keep the existing ERR_PTR(-ENOMEM).
+> If you prefer ERR_CAST(dp), I may send v2 to use ERR_CAST(dp).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508061722.0vTVFHLe-lkp@intel.com/
+The documentation says:
 
-All error/warnings (new ones prefixed by >>):
+ * Returns:                  
+ * Pointer to new bridge, or ERR_PTR on failure.
 
-   In file included from ./arch/sparc/include/generated/asm/div64.h:1,
-                    from include/linux/math.h:6,
-                    from include/linux/kernel.h:27,
-                    from include/linux/cpumask.h:11,
-                    from arch/sparc/include/asm/smp_32.h:15,
-                    from arch/sparc/include/asm/smp.h:7,
-                    from arch/sparc/include/asm/switch_to_32.h:5,
-                    from arch/sparc/include/asm/switch_to.h:7,
-                    from arch/sparc/include/asm/ptrace.h:120,
-                    from arch/sparc/include/asm/thread_info_32.h:19,
-                    from arch/sparc/include/asm/thread_info.h:7,
-                    from include/linux/thread_info.h:60,
-                    from arch/sparc/include/asm/current.h:15,
-                    from include/linux/sched.h:12,
-                    from lib/sbitmap.c:7:
-   lib/sbitmap.c: In function '__map_depth_with_shallow':
-   include/asm-generic/div64.h:183:35: warning: comparison of distinct pointer types lacks a cast
-     183 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
-         |                                   ^~
-   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
-     222 |         reminder = do_div(shallow_word_depth, sb->depth);
-         |                    ^~~~~~
-   In file included from arch/sparc/include/asm/bug.h:6,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from arch/sparc/include/asm/current.h:15,
-                    from include/linux/sched.h:12,
-                    from lib/sbitmap.c:7:
->> include/asm-generic/div64.h:195:32: warning: right shift count >= width of type [-Wshift-count-overflow]
-     195 |         } else if (likely(((n) >> 32) == 0)) {          \
-         |                                ^~
-   include/linux/compiler.h:76:45: note: in definition of macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
-     222 |         reminder = do_div(shallow_word_depth, sb->depth);
-         |                    ^~~~~~
-   In file included from ./arch/sparc/include/generated/asm/div64.h:1,
-                    from include/linux/math.h:6,
-                    from include/linux/kernel.h:27,
-                    from include/linux/cpumask.h:11,
-                    from arch/sparc/include/asm/smp_32.h:15,
-                    from arch/sparc/include/asm/smp.h:7,
-                    from arch/sparc/include/asm/switch_to_32.h:5,
-                    from arch/sparc/include/asm/switch_to.h:7,
-                    from arch/sparc/include/asm/ptrace.h:120,
-                    from arch/sparc/include/asm/thread_info_32.h:19,
-                    from arch/sparc/include/asm/thread_info.h:7,
-                    from include/linux/thread_info.h:60,
-                    from arch/sparc/include/asm/current.h:15,
-                    from include/linux/sched.h:12,
-                    from lib/sbitmap.c:7:
->> include/asm-generic/div64.h:199:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     199 |                 __rem = __div64_32(&(n), __base);       \
-         |                                    ^~~~
-         |                                    |
-         |                                    unsigned int *
-   lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
-     222 |         reminder = do_div(shallow_word_depth, sb->depth);
-         |                    ^~~~~~
-   include/asm-generic/div64.h:174:38: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'unsigned int *'
-     174 | extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
-         |                            ~~~~~~~~~~^~~~~~~~
-   cc1: some warnings being treated as errors
+So let's follow that, which is a (relatively) immutable contract, and
+not the implementation which might change over time.
 
+This is also what all callers of devm_drm_bridge_alloc() do, unless I
+missed something.
 
-vim +/__div64_32 +199 include/asm-generic/div64.h
-
-^1da177e4c3f415 Linus Torvalds     2005-04-16  176  
-^1da177e4c3f415 Linus Torvalds     2005-04-16  177  /* The unnecessary pointer compare is there
-^1da177e4c3f415 Linus Torvalds     2005-04-16  178   * to check for type safety (n must be 64bit)
-^1da177e4c3f415 Linus Torvalds     2005-04-16  179   */
-^1da177e4c3f415 Linus Torvalds     2005-04-16  180  # define do_div(n,base) ({				\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  181  	uint32_t __base = (base);			\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  182  	uint32_t __rem;					\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  183  	(void)(((typeof((n)) *)0) == ((uint64_t *)0));	\
-911918aa7ef6f86 Nicolas Pitre      2015-11-02  184  	if (__builtin_constant_p(__base) &&		\
-911918aa7ef6f86 Nicolas Pitre      2015-11-02  185  	    is_power_of_2(__base)) {			\
-911918aa7ef6f86 Nicolas Pitre      2015-11-02  186  		__rem = (n) & (__base - 1);		\
-911918aa7ef6f86 Nicolas Pitre      2015-11-02  187  		(n) >>= ilog2(__base);			\
-c747ce4706190ef Geert Uytterhoeven 2021-08-11  188  	} else if (__builtin_constant_p(__base) &&	\
-461a5e51060c93f Nicolas Pitre      2015-10-30  189  		   __base != 0) {			\
-461a5e51060c93f Nicolas Pitre      2015-10-30  190  		uint32_t __res_lo, __n_lo = (n);	\
-461a5e51060c93f Nicolas Pitre      2015-10-30  191  		(n) = __div64_const32(n, __base);	\
-461a5e51060c93f Nicolas Pitre      2015-10-30  192  		/* the remainder can be computed with 32-bit regs */ \
-461a5e51060c93f Nicolas Pitre      2015-10-30  193  		__res_lo = (n);				\
-461a5e51060c93f Nicolas Pitre      2015-10-30  194  		__rem = __n_lo - __res_lo * __base;	\
-911918aa7ef6f86 Nicolas Pitre      2015-11-02 @195  	} else if (likely(((n) >> 32) == 0)) {		\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  196  		__rem = (uint32_t)(n) % __base;		\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  197  		(n) = (uint32_t)(n) / __base;		\
-c747ce4706190ef Geert Uytterhoeven 2021-08-11  198  	} else {					\
-^1da177e4c3f415 Linus Torvalds     2005-04-16 @199  		__rem = __div64_32(&(n), __base);	\
-c747ce4706190ef Geert Uytterhoeven 2021-08-11  200  	}						\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  201  	__rem;						\
-^1da177e4c3f415 Linus Torvalds     2005-04-16  202   })
-^1da177e4c3f415 Linus Torvalds     2005-04-16  203  
+Thanks,
+Luca
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
