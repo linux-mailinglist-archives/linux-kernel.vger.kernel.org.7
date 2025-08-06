@@ -1,160 +1,300 @@
-Return-Path: <linux-kernel+bounces-758098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D32B1CACC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:30:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220B8B1CACD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 19:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C963A334E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15DB16E002
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F991E573F;
-	Wed,  6 Aug 2025 17:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF03119DFAB;
+	Wed,  6 Aug 2025 17:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xf/z4h9S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UttnNqoc"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383CEA41
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA651586C8
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 17:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501445; cv=none; b=q7jHbXpAHtNQCjxljJxD3rViWLuIob2OhlUdf6yoP3hPQLoSW8sCiwQ0gGRFCuTtaWYiCl/jziYvJ0y3ZEq0SdlNvY+lrOuqQm0UmCsja2QEiJceQ0X7OtkHsEcGcSPFq2rh/FZMuySUhQIQQtZJDCmqrPYGVEKt/RBuQXwQU6U=
+	t=1754501464; cv=none; b=uyqlwSfCZJLa5wMLq5COrEJff2qnRdg+EUXZ1gNJeSwjS4ZLIy3b1/Cmb2dN1LIHGZ2ZutUL2HyZkPxf3g2awK/0hjd/InaOP5wHGSvpS9hwe3tVn5fuofVYrNWU6YMCAV51x0XlI/JhxTW/I19GBYWjsH8B0GM6xWZXJAc3gQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501445; c=relaxed/simple;
-	bh=rwu7EbHnd6wQb+iO4s/C8em34k2dJwqajxQ0+wzSRO8=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Cfpu14N+Wb1GkFxIRAiww5tGZ8yOXi/yg4m1nFvbcqYLRrN0LBe8MZwSLzH/ulUGUldRIjyfdBiP6rB2n/phGBCC9KFfTRWXP4o8gAYPNLuYN9Ybiz3Ff2TnwvPrgWBld/N/vDvjDnlZyVvRU6JIz0lDRhC1GRa80ALFhSEwPFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xf/z4h9S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754501442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S0FtVJ+cvvsMupVuJOSmNRM6v2yyfUsa12kAjP3d/wU=;
-	b=Xf/z4h9SuzzMkH4O+l198gfvHAYGu7QADd/U5KeeDbHRRTuCFkog54CdjAlZCOZgFg5+ZU
-	AMooPEhnW1lLd5h9nDnkM/lCRHNYjR9N8oI9/SIOJADrB2d7WyVeIggO/kjjQxoY1Yrl4Q
-	5aLHKOrfdLa6ogeiIaJgZ1PXfHlDrKQ=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-OBH4MciMNDakqnOvoXLuog-1; Wed, 06 Aug 2025 13:30:39 -0400
-X-MC-Unique: OBH4MciMNDakqnOvoXLuog-1
-X-Mimecast-MFC-AGG-ID: OBH4MciMNDakqnOvoXLuog_1754501438
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e6c4ae500bso11805885a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:30:39 -0700 (PDT)
+	s=arc-20240116; t=1754501464; c=relaxed/simple;
+	bh=ifz/jLXVCJwYbx1zwgm/RXTrChVFKnJMUhFs/l8vA2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ecjpQQiy9GESYsqyl4EZmxcSY8vh1nqS0YGtFvIdoTzdEyaZQTMPCeZiIE29LSopPUpX8dKY0JIx4PzYBHGNLXNICOJVnr8wfcZFcWtOsZKuHJ1FObSkJKqu43YC0sV6KWKR3P2kJSjLHHXB4vKUYuVbPJE6rAZ2YCcithIKL5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UttnNqoc; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso815a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 10:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754501460; x=1755106260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2O1zwfL/UYqQtx8ceSMM8iZ39OAphqSN6A4Iks0YaB0=;
+        b=UttnNqocG7CUT6N+o73u0iJ31+5vprhMskvCO/ktPx9/LqnklrVLk3oDSKXjU8nXFW
+         g+ovRyuj+ZFk7cucsE9trGIUD+PgqrK7dLAvEAo17dX2E2FRfypr51qwfu6u2Birk881
+         nTPjNVwbU1P/RqOncIgr5i9b+P4v3bMU81Kl2wJtf54t0Cj3+aJVcJIp3Cd6QpVIyC3v
+         nUATmB3/+PAK61Wc9Ey8spNqKlbwHgOq/vO7pWbju4a9D98Fl6o7vvrsy14RtHWzM3ye
+         0yJ2eMFGyU8qj+QJtbI53KOO9iOAqRRZT3ekyTTyIwARbbsPclJeWfTFEx5azhoAEaIt
+         q3CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754501438; x=1755106238;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S0FtVJ+cvvsMupVuJOSmNRM6v2yyfUsa12kAjP3d/wU=;
-        b=e6EqTrzrszX/VIEFjXl/FqeZeUySKR/WyO40hm0VW2Yp5EE5B0l2KXudO2EIH03v/s
-         zOEJ8V+Ejfnnnlse8/jYh8IcxnUsbNvj92viJczu1XFalUzjquCGmyBHrCBm2jLuo+/h
-         DVgxqD4cgs8r1Z66/EwSHqZtdZchaiQgAe2AgrFLaJNMbt09YrGb5jBLlZpso1zEESuX
-         zX9CPv/gPRtwQ+NA4sv1GBDi9Xbp6u79w6AQiCDgWdYpHQEriDYWSc4mUaZlcQTbuKau
-         NyPNeDxjShc4OSBzs7DgcSiGwmxmfqeByC7+ilaO9jDMaP4ugQ0BYOK4VWBoHkHl0ZVY
-         pvDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh/y9G6mxAQ/HqBO7WiNSoXOWGpkxfuKJElVf+72dRHMxnlTJWCXMpIdVO3qDYUwrUIMDyVpUYLkTtRlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4oq31E/4mCzbGwkUrR1U7EcHKVEOGi7ogRvsQxp2ACch2xOqK
-	OaPwzkmB2M0fZ1rEWHEgdnsml3CEYjmjA7cxBgGjLvf4HJp95vLS8uX24o7hfjZBkUcGMr5i4Pf
-	so8WIrikYvPpoh7Il3CKRtGpGBFWLnid5XIFecFyUKj2TKadI5VR+lAMZXLGPRsJ/9A==
-X-Gm-Gg: ASbGnctR9Jc31djUknuFG2XoPz13eyk842CyaxawUWKBIPzVRx3o7aic0TlOE5Gpb0D
-	BHQ7a2rayY9aSKNrwxqpr+TtkDOe5A7z7Pjl2FDC3G5zgvGM+yweFqI8VLL+X3NY/mj/ErJLQd3
-	elU3RgpT4R9CtpqtCdzqNLWqaxWe3VH0izYkkhad/fVl66XypglVv4t5CHOZYcnHJonFnVi2ulP
-	TupvvkerR5azkduRs3ODQdOC1jGrCvWBu9bKdaj3mCh6ZA/bfuwFv6rn/Ziml8izRYof7tshw5P
-	Ifls4qcD/v+f0GnPvE/5ynjriqXvx2TtIta7wSVvQwD5l4FVC9F5geIBpXG0iZTB5RoC8/hhsBD
-	4Bmx/F2loCQ==
-X-Received: by 2002:a05:620a:2546:b0:7e3:363f:2c19 with SMTP id af79cd13be357-7e816709015mr540443185a.50.1754501438347;
-        Wed, 06 Aug 2025 10:30:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUY/YEaX2Klj4Ymjnw1Oc1ae8Dt5bDFRXWaXaUiPkMDaNaMn8PLlQGjoTN+3PRBhj6S9Strw==
-X-Received: by 2002:a05:620a:2546:b0:7e3:363f:2c19 with SMTP id af79cd13be357-7e816709015mr540430185a.50.1754501437403;
-        Wed, 06 Aug 2025 10:30:37 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5947dbsm829284385a.12.2025.08.06.10.30.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 10:30:36 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <4ebbbe0b-0f4c-4002-b13b-263b7efc9f69@redhat.com>
-Date: Wed, 6 Aug 2025 13:30:35 -0400
+        d=1e100.net; s=20230601; t=1754501460; x=1755106260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2O1zwfL/UYqQtx8ceSMM8iZ39OAphqSN6A4Iks0YaB0=;
+        b=mHtN24idRrO+KlT81p1RlyTqnv9bVuJuvcMgWouvqWVQLRGiVksCSfikiwn/TwQnjt
+         digpfKFmDs4zyHWQhbqLxkZOHsHQVb1g1JqLDw5blvafmoyGdivSYQafk7ORhmaKbaaX
+         u2TsO2qTdSQoFoDv8eTL3TuPPt+upRfd62LGzaDbuTM4Szqx9oHCfIrDl5DFOD1nbPqZ
+         ZaPMYZl2ASuujEnQhNCzPfVU/jkMQn1RxqdSBh/kQ7Dvj23QpqJt6BZba/Nto12za/RL
+         aQteI9g4nhWlCEAJSm2xP3y2yVlNQvlSQ3u9viZWekagx82YV47DXxoAi+m+bOLI0a/Q
+         vIWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtIa0Hc9vr27HG+ZQDRoojxyKX8ykvqlE9CPuxmw6nsqMCe7Yo8yVZCLC27paj5Xh10XqYQ7i3ZxUet0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMzOGm3pEgQfn8YKxmztIxOAdzhzeaQoYitB1qL2JZ0ZvcDdyQ
+	lIyzAjeL4w3g6zW5xURCInMJXm/ojYRSeCrZTtFSPaN9Ud3ANcnpygOLzPmsTldpGakGvKGTdzI
+	YbUou82lOoWSunDTx5uFK5oOupHWz9NGHQIrWpPwQDfZ2Dp2hBKAxM6yiLxY=
+X-Gm-Gg: ASbGnctgmz2m3cO56S/ygnt+H9t/eyP4k7SlT+yJo726VVEc4l1Vl6HcfiB2QygrgZG
+	fmkJy3g0tBaCBbciz8hq92gmp4i7uyg+vdxg8836jXFqVF6JWCYZTli8MoIQx3+jfHTTHD1APAO
+	9G5qQNfNTH8shDIHS5Alb8Uhbo1g/2bfHlvXMTJdEoXRAkkgcIx2Q/UEmBpHmu45MoFg4cN5pdd
+	tFl1yWaniYF0XywAuqVNWDuU+8MhtnSV8muYQWYyA==
+X-Google-Smtp-Source: AGHT+IGZYHqMO6nOext8IXEfZFnlVxuTzvfAsD1ASp7WlH8v9FRFw+U7OqG6LSsKKeEwE87Emf/LUxOiCHp7W6/3mQY=
+X-Received: by 2002:a05:6402:3082:b0:615:60d2:c013 with SMTP id
+ 4fb4d7f45d1cf-61797e7bc1amr91621a12.3.1754501459967; Wed, 06 Aug 2025
+ 10:30:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] cgroup/cpuset.c: Fix a partition error with CPU
- hotplug
-To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-References: <20250806172430.1155133-1-longman@redhat.com>
- <20250806172430.1155133-3-longman@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250806172430.1155133-3-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250805121410.1658418-1-lokeshgidra@google.com> <a00a8cca-e435-434f-855c-a3b56f2aece4@lucifer.local>
+In-Reply-To: <a00a8cca-e435-434f-855c-a3b56f2aece4@lucifer.local>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Wed, 6 Aug 2025 10:30:47 -0700
+X-Gm-Features: Ac12FXwSYt0WGCr2k_VsdRbGveIp_87zZmB7V02_hsc1VeZ3C2syDDfiVLignxw
+Message-ID: <CA+EESO6F4=jQujGU35EPp_EVtHRHEG7b7_izLv1-NJW_VFvGRw@mail.gmail.com>
+Subject: Re: [PATCH v2] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 21cnbao@gmail.com, ngeoffray@google.com, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/25 1:24 PM, Waiman Long wrote:
-> It was found during testing that an invalid leaf partition with an
-> empty effective exclusive CPU list can become a valid empty partition
-> with no CPU afer an offline/online operation of an unrelated CPU. An
-> empty partition root is allowed in the special case that it has no
-> task in its cgroup and has distributed out all its CPUs to its child
-> partitions. That is certainly not the case here.
+On Wed, Aug 6, 2025 at 10:18=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> The problem is in the cpumask_subsets() test in the hotplug case
-> (update with no new mask) of update_parent_effective_cpumask() as it
-> also returns true if the effective exclusive CPU list is empty. Fix that
-> by addding the cpumask_empty() test to root out this exception case.
-> Also add the cpumask_empty() test in cpuset_hotplug_update_tasks()
-> to avoid calling update_parent_effective_cpumask() for this special case.
+> Andrew - Could we drop this for now, please, it's splatting and has broke=
+n
+> mm-new.
 >
-> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Lokesh - could you make sure to run the mm self tests with CONFIG_DBUG_VM
+> set before you submit please? As this is splat is occurring immediately o=
+n
+> uffd-unit-tests.
 
-Oh, forget to remove the unneeded ".c" from the patch title.
-
--Longman
-
-> ---
->   kernel/cgroup/cpuset.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
+Sincere apologies. Will be extra careful from now on.
 >
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index bf149246e001..d993e058a663 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1843,7 +1843,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->   			if (is_partition_valid(cs))
->   				adding = cpumask_and(tmp->addmask,
->   						xcpus, parent->effective_xcpus);
-> -		} else if (is_partition_invalid(cs) &&
-> +		} else if (is_partition_invalid(cs) && !cpumask_empty(xcpus) &&
->   			   cpumask_subset(xcpus, parent->effective_xcpus)) {
->   			struct cgroup_subsys_state *css;
->   			struct cpuset *child;
-> @@ -3870,9 +3870,10 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs, struct tmpmasks *tmp)
->   		partcmd = partcmd_invalidate;
->   	/*
->   	 * On the other hand, an invalid partition root may be transitioned
-> -	 * back to a regular one.
-> +	 * back to a regular one with a non-empty effective xcpus.
->   	 */
-> -	else if (is_partition_valid(parent) && is_partition_invalid(cs))
-> +	else if (is_partition_valid(parent) && is_partition_invalid(cs) &&
-> +		 !cpumask_empty(cs->effective_xcpus))
->   		partcmd = partcmd_update;
->   
->   	if (partcmd >= 0) {
-
+> On Tue, Aug 05, 2025 at 05:14:10AM -0700, Lokesh Gidra wrote:
+> > MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
+> > for moving present pages. Mitigate this cost by opportunistically
+> > batching present contiguous pages for TLB flushing.
+> >
+> > Without batching, in our testing on an arm64 Android device with UFFD G=
+C,
+> > which uses MOVE ioctl for compaction, we observed that out of the total
+> > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
+> > ~20% in vm_normal_folio().
+> >
+> > With batching, the proportion of vm_normal_folio() increases to over
+> > 70% of move_pages_pte() without any changes to vm_normal_folio().
+> > Furthermore, time spent within move_pages_pte() is only ~20%, which
+> > includes TLB-flush overhead.
+> >
+> > Cc: Suren Baghdasaryan <surenb@google.com>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Barry Song <v-songbaohua@oppo.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Peter Xu <peterx@redhat.com>
+> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > ---
+> > Changes since v1 [1]
+> > - Removed flush_tlb_batched_pending(), per Barry Song
+> > - Unified single and multi page case, per Barry Song
+>
+> Splat, decoded via scripts/decode_stacktrace.sh:
+>
+> $ sudo ./uffd-unit-tests
+> Testing UFFDIO_API (with syscall)... done
+> Testing UFFDIO_API (with /dev/userfaultfd)... done
+> Testing register-ioctls on anon... done
+> Testing register-ioctls on shmem... done
+> Testing register-ioctls on shmem-private... done
+> Testing register-ioctls on hugetlb... skipped [reason: memory allocation =
+failed]
+> Testing register-ioctls on hugetlb-private... skipped [reason: memory all=
+ocation failed]
+> Testing zeropage on anon... done
+> Testing zeropage on shmem... done
+> Testing zeropage on shmem-private... done
+> Testing zeropage on hugetlb... skipped [reason: memory allocation failed]
+> Testing zeropage on hugetlb-private... skipped [reason: memory allocation=
+ failed]
+> Testing move on anon... [   12.230740] Kernel panic - not syncing: kernel=
+: panic_on_warn set ...
+> [   12.231322] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S Arch Linux 1.17.0-1-1 04/01/2014
+> [   12.231655] Call Trace:
+> [   12.231748]  <TASK>
+> [   12.231830] dump_stack_lvl (lib/dump_stack.c:122)
+> [   12.231963] vpanic (kernel/panic.c:448)
+> [   12.232088] panic (kernel/panic.c:312 kernel/panic.c:303)
+> [   12.232199] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+>
+> Appears to be:
+>
+>         VM_WARN_ON_ONCE(err > 0);
+>
+> [   12.232341] check_panic_on_warn.cold (kernel/panic.c:327)
+> [   12.232502] __warn.cold (kernel/panic.c:839)
+> [   12.232628] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+> [   12.232764] report_bug (lib/bug.c:176 lib/bug.c:215)
+> [   12.232891] handle_bug (arch/x86/kernel/traps.c:338 (discriminator 1))
+> [   12.233034] ? move_pages (mm/userfaultfd.c:1964 (discriminator 2))
+> [   12.233174] exc_invalid_op (arch/x86/kernel/traps.c:392 (discriminator=
+ 3))
+> [   12.233312] asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
+> [   12.233460] RIP: 0010:move_pages (mm/userfaultfd.c:1964 (discriminator=
+ 2))
+> [ 12.233615] Code: 5e 41 5f c3 cc cc cc cc 49 89 c5 e9 e1 fe ff ff eb c4 =
+e9 6d ff ff ff 90 0f 0b 90 45 31 ff eb cf 90 0f 0b 90 48 85 d2 7e c6 90 <0f=
+> 0b 90 eb b9 90 0f 0b 90 f7 c1 ff 0f 00 00 0f 84 4e fe ff ff 90
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   5e                      pop    %rsi
+>    1:   41 5f                   pop    %r15
+>    3:   c3                      ret
+>    4:   cc                      int3
+>    5:   cc                      int3
+>    6:   cc                      int3
+>    7:   cc                      int3
+>    8:   49 89 c5                mov    %rax,%r13
+>    b:   e9 e1 fe ff ff          jmp    0xfffffffffffffef1
+>   10:   eb c4                   jmp    0xffffffffffffffd6
+>   12:   e9 6d ff ff ff          jmp    0xffffffffffffff84
+>   17:   90                      nop
+>   18:   0f 0b                   ud2
+>   1a:   90                      nop
+>   1b:   45 31 ff                xor    %r15d,%r15d
+>   1e:   eb cf                   jmp    0xffffffffffffffef
+>   20:   90                      nop
+>   21:   0f 0b                   ud2
+>   23:   90                      nop
+>   24:   48 85 d2                test   %rdx,%rdx
+>   27:   7e c6                   jle    0xffffffffffffffef
+>   29:   90                      nop
+>   2a:*  0f 0b                   ud2             <-- trapping instruction
+>   2c:   90                      nop
+>   2d:   eb b9                   jmp    0xffffffffffffffe8
+>   2f:   90                      nop
+>   30:   0f 0b                   ud2
+>   32:   90                      nop
+>   33:   f7 c1 ff 0f 00 00       test   $0xfff,%ecx
+>   39:   0f 84 4e fe ff ff       je     0xfffffffffffffe8d
+>   3f:   90                      nop
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   0f 0b                   ud2
+>    2:   90                      nop
+>    3:   eb b9                   jmp    0xffffffffffffffbe
+>    5:   90                      nop
+>    6:   0f 0b                   ud2
+>    8:   90                      nop
+>    9:   f7 c1 ff 0f 00 00       test   $0xfff,%ecx
+>    f:   0f 84 4e fe ff ff       je     0xfffffffffffffe63
+>   15:   90                      nop
+> [   12.234294] RSP: 0018:ffffafeb00483d70 EFLAGS: 00010206
+> [   12.234484] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 000000000=
+0000002
+> [   12.234738] RDX: 0000000000001000 RSI: ffff90afbb433078 RDI: ffff90afb=
+c7f0080
+> [   12.234997] RBP: ffff90afbc7f0000 R08: ffff90b037cae540 R09: 000000000=
+0000001
+> [   12.235255] R10: ffffffffffffffff R11: 0000000000000003 R12: ffff90af0=
+1acb980
+> [   12.235508] R13: ffff90afbc7f0240 R14: ffffefc386e80b00 R15: 000000000=
+0001000
+> [   12.235764] userfaultfd_ioctl (fs/userfaultfd.c:1925 fs/userfaultfd.c:=
+2046)
+> [   12.235917] __x64_sys_ioctl (fs/ioctl.c:51 fs/ioctl.c:598 fs/ioctl.c:5=
+84 fs/ioctl.c:584)
+> [   12.236065] ? ksys_read (./include/linux/file.h:63 ./include/linux/fil=
+e.h:80 ./include/linux/file.h:85 fs/read_write.c:706)
+> [   12.236202] do_syscall_64 (arch/x86/entry/syscall_64.c:63 (discriminat=
+or 1) arch/x86/entry/syscall_64.c:94 (discriminator 1))
+> [   12.236345] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:=
+130)
+> [   12.236524] RIP: 0033:0x7f457600fecd
+> [ 12.236658] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 =
+b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89=
+> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   04 25                   add    $0x25,%al
+>    2:   28 00                   sub    %al,(%rax)
+>    4:   00 00                   add    %al,(%rax)
+>    6:   48 89 45 c8             mov    %rax,-0x38(%rbp)
+>    a:   31 c0                   xor    %eax,%eax
+>    c:   48 8d 45 10             lea    0x10(%rbp),%rax
+>   10:   c7 45 b0 10 00 00 00    movl   $0x10,-0x50(%rbp)
+>   17:   48 89 45 b8             mov    %rax,-0x48(%rbp)
+>   1b:   48 8d 45 d0             lea    -0x30(%rbp),%rax
+>   1f:   48 89 45 c0             mov    %rax,-0x40(%rbp)
+>   23:   b8 10 00 00 00          mov    $0x10,%eax
+>   28:   0f 05                   syscall
+>   2a:*  89 c2                   mov    %eax,%edx                <-- trapp=
+ing instruction
+>   2c:   3d 00 f0 ff ff          cmp    $0xfffff000,%eax
+>   31:   77 1a                   ja     0x4d
+>   33:   48 8b 45 c8             mov    -0x38(%rbp),%rax
+>   37:   64 48 2b 04 25 28 00    sub    %fs:0x28,%rax
+>   3e:   00 00
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   89 c2                   mov    %eax,%edx
+>    2:   3d 00 f0 ff ff          cmp    $0xfffff000,%eax
+>    7:   77 1a                   ja     0x23
+>    9:   48 8b 45 c8             mov    -0x38(%rbp),%rax
+>    d:   64 48 2b 04 25 28 00    sub    %fs:0x28,%rax
+>   14:   00 00
+> [   12.237333] RSP: 002b:00007f4569dfed20 EFLAGS: 00000246 ORIG_RAX: 0000=
+000000000010
+> [   12.237599] RAX: ffffffffffffffda RBX: 0000000000001000 RCX: 00007f457=
+600fecd
+> [   12.237854] RDX: 00007f4569dfeda0 RSI: 00000000c028aa05 RDI: 000000000=
+0000009
+> [   12.238129] RBP: 00007f4569dfed70 R08: 0000000000000000 R09: 000000000=
+0000000
+> [   12.238384] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffb=
+974ba60
+> [   12.238636] R13: 00007fffb974b830 R14: 00007f4569dffcdc R15: 00007fffb=
+974b937
+> [   12.238890]  </TASK>
+> [   12.239094] Kernel Offset: 0x33000000 from 0xffffffff81000000 (relocat=
+ion range: 0xffffffff80000000-0xffffffffbfffffff)
+> [   12.239480] ---[ end Kernel panic - not syncing: kernel: panic_on_warn=
+ set ... ]---
 
