@@ -1,156 +1,260 @@
-Return-Path: <linux-kernel+bounces-757926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077D7B1C865
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA935B1C868
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 17:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD811686EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EE03AEFB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C60E291C16;
-	Wed,  6 Aug 2025 15:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A985928FA84;
+	Wed,  6 Aug 2025 15:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="2PXialas"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NuCx0J6E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14525290BAB
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 15:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E033AC1C;
+	Wed,  6 Aug 2025 15:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754493028; cv=none; b=ZYb1S1jXLCpgwLP9xq2kR9TchZ4UvNdLdZyaYHGwv7WFEmR0Svzkthk3iPYv+BrmaDiY9bzM3AJUlVwL+zBMyYfB345Fs6OjGQJ5D8rwc8i2dbX34qrlPi5p4seGU/mU3Nmac47iOLtNu+TlMIDaMccsOAeCeo1fFqmxN/DyjLQ=
+	t=1754493140; cv=none; b=LAjIMOcPMO/5K8YEhPIB1xFh+ECl/hIrjWzrUQVLoKXwomrBalqC2S8WofKN96Q6nIgf3jG8HKdoTAnODzHZBOh2BUD4cooZzSqV6iikLfP1KmZV22jP3mACw9zOT4hEkI2fwWFaaqZn36Aqah1hdANKziTV/mFA2RaVq+AuyLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754493028; c=relaxed/simple;
-	bh=mkMKBwz5BKx3M5ukHVq0U7xYjHmmJcHQfBYE9D9pbLY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cmccqmw0He1Qr8dN1AZKnO92hmifnpPQ2YLbO+4lSy12Tjlv/qa8TkU5uzsIKOisJusjbOERol3f0SRGh2Fo/tmsxm6zjmHnR9UsKMTgGpZ9ULIEYmyl4SPky6eABbY47lR8ULZ5W8HQi9TqTK36zDwHI0+yW/yHpNBYhInw4is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=2PXialas; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af967835d0aso581479166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 08:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1754493023; x=1755097823; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SKHJowmVjOKhweg/31XcJuN1dKyemiZUjq/gTTEI0D4=;
-        b=2PXialasG8bkbX+e6ZXi6/K+FfbcqiYwOlqmKxEAuXZu8Z4oRyhTOfAg5r3+/qbsRE
-         krBoAFDROQG6rgi3n3tHn9I+SsItHpX9iyxw4cDh8s+e690tzdapc2oOM7pXoqXPnVVY
-         pGEJdIdFLBO47THcJuGqF/u1ZcwcXVnldhQBavIM7RIdfGhMlm1U99yZeiXpobagr5SM
-         zy/5yf7MxU1o4GZ606EfzUCXxxp6Rqtyd7qHqMmNGxpjVDy7SsJ1diUQqmivJtmdsNxr
-         D8wsBcJPTxpwFQKLhgaWg0flcMHGASl0EgA5+SjhCgRG5Hbi6fg6G8ItVNivFsy9kc16
-         f1aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754493023; x=1755097823;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SKHJowmVjOKhweg/31XcJuN1dKyemiZUjq/gTTEI0D4=;
-        b=ew4GhLAJJey9HLBtXOS1CEwt/Pi6yqzi6U0dnlWSGjTAlNPQUQcewkJMBE/oivmgOu
-         BZShgr0ZaajWdZcbTeeO4sAeRY5C3ujawJYIM7avXqd6SEvpDOXJORl0YEJJUSA1Eryg
-         XhABft9rwre+9udhG/wt5q+DqoSZFJWz4RFVWm8lyIQHsyiQsIz937RDtjwiIUQPh1bt
-         F0GHPMFguivzOPwIXrQfv2Dm1bbMPEJBP3KmQESFsxlBolPvYVbOVSg2ZF0q35J3gzvl
-         O1NzMhEEyK3Y9xygImGtnf93MPDTEX2QPRYzepJ31w5Pdrvrmp95z1RhocLPD1DhEei+
-         I5tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgjE+wWxiV2I+qyAbyW3XBDw2J3D4PdNvA6S/7vQ3cjPwBrDMHz1TQVpVWjF4TFjTo9AXZSnEso++Z150=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkkPOeVsGM7SH9meNu7qpOgMxwLBDp0bvvNVQbt1aVP9nRpupP
-	Cs5k4t9J8LYlh3/1t+1zNJFX4Ha60hcehG65HFUktEYMGtzZ8nHdn2X4bVfrNnDG+hh3riIrK/9
-	rMjv5
-X-Gm-Gg: ASbGncut7iuQSgj4jNy1547+Z0y51nS522r0/Cqk3UMYU5vZtY9Hl/5IMWITY+NQVsq
-	IWXJV6WkwP3dCCpHOQp5Wgzv6axGIJ+gzKz1OWHiaT+NS62ehWqOi52TGbr+wUgKImWAAERu4lT
-	fIXjbL6J4q7sQxXT57JBbRaSgImCMOr5THPo1T71e254aq8H/B/zxsIgePpyhrFDqXeGlupUISh
-	wdPM1gX9ZrmmktwVVxDRdzqOu6ofCDKtITImUZQyqCyhDyXRNwd+Pdm/5rzfUJsbXMkTEiPBlvT
-	aaK31JEUQEFnmtx9EIkqn3AmJqjkigoMCzRRTf+bFXaO8UvfEy96DnrkwgXlsVku2b28S4nx+nn
-	fjb0zkCHfCgDmqskWu4GOHemYb6lXXv5FpLt3KIsragec9oXtrKiSon9ZT61J7GKtJEANn5rxHk
-	HDpp0=
-X-Google-Smtp-Source: AGHT+IH8DW2Kp/036um5fo54X/6vueOzgFt3fBIYDww6nDeVymURksuNRfJrnIRDzmfw+vtApSseXg==
-X-Received: by 2002:a17:907:3e8f:b0:af9:8c1f:c2b9 with SMTP id a640c23a62f3a-af99005c7fcmr299707266b.8.1754493023342;
-        Wed, 06 Aug 2025 08:10:23 -0700 (PDT)
-Received: from [172.16.220.71] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b77sm1120100666b.51.2025.08.06.08.10.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 08:10:23 -0700 (PDT)
-From: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-Date: Wed, 06 Aug 2025 17:10:10 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: qcm6490-fairphone-fp5: Add vibrator
- support
+	s=arc-20240116; t=1754493140; c=relaxed/simple;
+	bh=lRBTQ2sbJ+Nz/6xVV+Aj8nlYxa+/Em/Tzewzgn5Cdwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LuD70yQ5ARP+RTbd/WCvA3+TYBgFdQCrorvPp/ZyCdVv9h1Sv7yDQpPJS08tzppiCaR7fCtBZUQa1OT/ZHccO6DWb0IHXQ7aTcpuctS4ZBFwqnR54ZjE99pKyq4gbOWMNfb9oNyv8imN0cGZn7HBecBKjIef4+1279+ZZnznyH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NuCx0J6E; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754493137; x=1786029137;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lRBTQ2sbJ+Nz/6xVV+Aj8nlYxa+/Em/Tzewzgn5Cdwc=;
+  b=NuCx0J6E5d9zJlAGYl4Pv8kl6lF+3C77jYYwFe5c4YxuMS7eO+xZR8rm
+   s2Tah43H/SKtQvUj4h1Y2VRJOi4XEIBkF4AuqIaPEWf9FmiVbVhww2APo
+   cnkpLVNpMRL1iZt8x0jBvoz1QdvRoRY1QzWR7OnyJkItmteA3lSJCtugm
+   DT+J8kX0TLuYoK/E7AzYrE117jsTl71soYerDBkd8tPS6wEL73wTHqNQY
+   6j5V/NrlZgpDotFCodzxGamLZ4Me6dhjHUGFjDj2GH212Lz9G/tSPdtqj
+   vPB7nTVusZVTvLV60o7lG/vRkfaFSsYxWflN2lX+qlGSHN1eQurssKwlU
+   A==;
+X-CSE-ConnectionGUID: XtY8mxB3T4ejvbOmAm6k/Q==
+X-CSE-MsgGUID: iixb1WhZSQ+SALm7lN2Gnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67510052"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67510052"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 08:12:16 -0700
+X-CSE-ConnectionGUID: GHwkRMBmT5C0VJIjP7MXEg==
+X-CSE-MsgGUID: u7AAnbzWQRqWomDHpkSwAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="170172564"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 06 Aug 2025 08:12:14 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujfoI-0001oM-2l;
+	Wed, 06 Aug 2025 15:12:10 +0000
+Date: Wed, 6 Aug 2025 23:12:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: "a.shimko" <artyom.shimko@gmail.com>, linux-hwmon@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, "a.shimko" <artyom.shimko@gmail.com>,
+	linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, jdelvare@suse.com,
+	guenter.roeck@linux.com
+Subject: Re: [PATCH 1/3] hwmon: scmi: Add default case with debug output
+Message-ID: <202508062201.bWDZGD03-lkp@intel.com>
+References: <20250805125003.12573-2-artyom.shimko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250806-aw86927-v1-3-23d8a6d0f2b2@fairphone.com>
-References: <20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com>
-In-Reply-To: <20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754493019; l=1231;
- i=griffin.kroah@fairphone.com; s=20250804; h=from:subject:message-id;
- bh=mkMKBwz5BKx3M5ukHVq0U7xYjHmmJcHQfBYE9D9pbLY=;
- b=9xF1MNdjywzjYsOry9BBTU5wVDy08shUSv+1t+tc7ZOPISwDvFFGeWrjsLPziUTQaGleWWHxj
- eKbNhajwzcvBH3spUvKXYq7qI+fSiQrEEGSljDAwdNNMJPjI2rtiqCV
-X-Developer-Key: i=griffin.kroah@fairphone.com; a=ed25519;
- pk=drSBvqKFiR+xucmLWONHSq/wGrW+YvcVtBXFYnYzn8U=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805125003.12573-2-artyom.shimko@gmail.com>
 
-Add the required node for haptic playback (Awinic AW86927).
+Hi a.shimko,
 
-Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-index 4c6cb4a644e2..9576efdf1e8d 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-@@ -866,7 +866,16 @@ ocp96011_sbu_mux: endpoint {
- 		};
- 	};
- 
--	/* AW86927FCR haptics @ 5a */
-+	vibrator@5a {
-+		compatible = "awinic,aw86927";
-+		reg = <0x5a>;
-+
-+		interrupts-extended = <&tlmm 101 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&tlmm 100 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&aw86927_int_default>;
-+		pinctrl-names = "default";
-+	};
- };
- 
- &i2c2 {
-@@ -1415,6 +1424,13 @@ usb_redrive_1v8_en_default: usb-redrive-1v8-en-default-state {
- 		bias-disable;
- 		output-high;
- 	};
-+
-+	aw86927_int_default: aw86927-int-default-state {
-+		pins = "gpio101";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
- };
- 
- &uart5 {
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on linus/master v6.16 next-20250806]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/a-shimko/hwmon-scmi-Add-default-case-with-debug-output/20250806-122638
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250805125003.12573-2-artyom.shimko%40gmail.com
+patch subject: [PATCH 1/3] hwmon: scmi: Add default case with debug output
+config: arc-randconfig-001-20250806 (https://download.01.org/0day-ci/archive/20250806/202508062201.bWDZGD03-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508062201.bWDZGD03-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508062201.bWDZGD03-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/hwmon/scmi-hwmon.c: In function 'scmi_hwmon_probe':
+>> drivers/hwmon/scmi-hwmon.c:278:17: error: 'default' label not within a switch statement
+     278 |                 default:
+         |                 ^~~~~~~
+
+
+vim +/default +278 drivers/hwmon/scmi-hwmon.c
+
+   228	
+   229	static int scmi_hwmon_probe(struct scmi_device *sdev)
+   230	{
+   231		int i, idx;
+   232		u16 nr_sensors;
+   233		enum hwmon_sensor_types type;
+   234		struct scmi_sensors *scmi_sensors;
+   235		const struct scmi_sensor_info *sensor;
+   236		int nr_count[hwmon_max] = {0}, nr_types = 0, nr_count_temp = 0;
+   237		const struct hwmon_chip_info *chip_info;
+   238		struct device *hwdev, *dev = &sdev->dev;
+   239		struct hwmon_channel_info *scmi_hwmon_chan;
+   240		const struct hwmon_channel_info **ptr_scmi_ci;
+   241		const struct scmi_handle *handle = sdev->handle;
+   242		struct scmi_protocol_handle *ph;
+   243	
+   244		if (!handle)
+   245			return -ENODEV;
+   246	
+   247		sensor_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_SENSOR, &ph);
+   248		if (IS_ERR(sensor_ops))
+   249			return PTR_ERR(sensor_ops);
+   250	
+   251		nr_sensors = sensor_ops->count_get(ph);
+   252		if (!nr_sensors)
+   253			return -EIO;
+   254	
+   255		scmi_sensors = devm_kzalloc(dev, sizeof(*scmi_sensors), GFP_KERNEL);
+   256		if (!scmi_sensors)
+   257			return -ENOMEM;
+   258	
+   259		scmi_sensors->ph = ph;
+   260	
+   261		for (i = 0; i < nr_sensors; i++) {
+   262			sensor = sensor_ops->info_get(ph, i);
+   263			if (!sensor)
+   264				return -EINVAL;
+   265	
+   266			switch (sensor->type) {
+   267			case TEMPERATURE_C:
+   268			case VOLTAGE:
+   269			case CURRENT:
+   270			case POWER:
+   271			case ENERGY:
+   272				type = scmi_types[sensor->type];
+   273				if (!nr_count[type])
+   274					nr_types++;
+   275				nr_count[type]++;
+   276				break;
+   277			}
+ > 278			default:
+   279				dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
+   280					i, sensor->type, sensor->name ? sensor->name : "unnamed");
+   281				continue;
+   282		}
+   283	
+   284		if (nr_count[hwmon_temp])
+   285			nr_count_temp = nr_count[hwmon_temp];
+   286	
+   287		scmi_hwmon_chan = devm_kcalloc(dev, nr_types, sizeof(*scmi_hwmon_chan),
+   288					       GFP_KERNEL);
+   289		if (!scmi_hwmon_chan)
+   290			return -ENOMEM;
+   291	
+   292		ptr_scmi_ci = devm_kcalloc(dev, nr_types + 1, sizeof(*ptr_scmi_ci),
+   293					   GFP_KERNEL);
+   294		if (!ptr_scmi_ci)
+   295			return -ENOMEM;
+   296	
+   297		scmi_chip_info.info = ptr_scmi_ci;
+   298		chip_info = &scmi_chip_info;
+   299	
+   300		for (type = 0; type < hwmon_max; type++) {
+   301			if (!nr_count[type])
+   302				continue;
+   303	
+   304			scmi_hwmon_add_chan_info(scmi_hwmon_chan, dev, nr_count[type],
+   305						 type, hwmon_attributes[type]);
+   306			*ptr_scmi_ci++ = scmi_hwmon_chan++;
+   307	
+   308			scmi_sensors->info[type] =
+   309				devm_kcalloc(dev, nr_count[type],
+   310					     sizeof(*scmi_sensors->info), GFP_KERNEL);
+   311			if (!scmi_sensors->info[type])
+   312				return -ENOMEM;
+   313		}
+   314	
+   315		for (i = nr_sensors - 1; i >= 0 ; i--) {
+   316			sensor = sensor_ops->info_get(ph, i);
+   317			if (!sensor)
+   318				continue;
+   319	
+   320			switch (sensor->type) {
+   321			case TEMPERATURE_C:
+   322			case VOLTAGE:
+   323			case CURRENT:
+   324			case POWER:
+   325			case ENERGY:
+   326				type = scmi_types[sensor->type];
+   327				idx = --nr_count[type];
+   328				*(scmi_sensors->info[type] + idx) = sensor;
+   329				break;
+   330			default:
+   331				dev_dbg(dev, "Skipping unsupported sensor ID:%d Type:%d (%s)\n",
+   332					i, sensor->type, sensor->name ? sensor->name : "unnamed");
+   333				continue;
+   334			}
+   335		}
+   336	
+   337		hwdev = devm_hwmon_device_register_with_info(dev, "scmi_sensors",
+   338							     scmi_sensors, chip_info,
+   339							     NULL);
+   340		if (IS_ERR(hwdev))
+   341			return PTR_ERR(hwdev);
+   342	
+   343		for (i = 0; i < nr_count_temp; i++) {
+   344			int ret;
+   345	
+   346			sensor = *(scmi_sensors->info[hwmon_temp] + i);
+   347			if (!sensor)
+   348				continue;
+   349	
+   350			/*
+   351			 * Warn on any misconfiguration related to thermal zones but
+   352			 * bail out of probing only on memory errors.
+   353			 */
+   354			ret = scmi_thermal_sensor_register(dev, ph, sensor);
+   355			if (ret) {
+   356				if (ret == -ENOMEM)
+   357					return ret;
+   358				dev_warn(dev,
+   359					 "Thermal zone misconfigured for %s. err=%d\n",
+   360					 sensor->name, ret);
+   361			}
+   362		}
+   363	
+   364		return 0;
+   365	}
+   366	
 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
