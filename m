@@ -1,175 +1,143 @@
-Return-Path: <linux-kernel+bounces-757293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF50B1C066
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2A4B1C069
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 08:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5999189FE1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BFD180661
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 06:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2B220469E;
-	Wed,  6 Aug 2025 06:26:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F76D2066F7;
+	Wed,  6 Aug 2025 06:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DH3jlUME"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE31DAC95
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 06:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4EE20110B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 06:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754461600; cv=none; b=jU/JPiJ3kxjBw7Ll0mjvEOCrvHZDLm1PbGwTEFlYWJKlxycEXTLwq2ohxPbHKYMfwdpzQ7M7W1LePjy9QQIuac0hBbdFqcs4all1eAM4+BpmFuaegu9xYefBNGjk23nJ5HbEWtKeA2RFJW8gWAg4S3W4WTMk21giB0BXl9mq/vI=
+	t=1754461657; cv=none; b=Akpr47utzSKm0sXwyuKlmzYD5e49iTkYmuTew8o0KVczW9WteyJ5VpZtHkC7aWQ1GqGDuo/p1v9YBNGGC+vYfw7/27F0kdNh1lTUMuhEhF3a2+O4xEHoQqkHYus/aZDHwp/x4vDHMPu1Fj7KmN9fTpBLFuhgb2EYRVZu5zRzFCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754461600; c=relaxed/simple;
-	bh=UFsc8wdouk+ALN3i4/0++LuXJB4uKaU0H6wmOhl4lbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YTyUXvSMAUUyXw4zAUswqSxRnPKUEDYsTZQhYgQpJj89W2ARh7S8pvXhAbZKk8T/7HPmU7w+sewOb6/yLScb5mFMhlZHQ/8F+YptNdRR1xDtrEDF0KyCBDv7oRF9aSwd8j4S6xmMqQvG55DzimQfOf5y388SJgsn+IayGWQLmwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bxgDK4p7yz14MKj;
-	Wed,  6 Aug 2025 14:21:37 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id D56AE1800B1;
-	Wed,  6 Aug 2025 14:26:33 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 6 Aug 2025 14:26:32 +0800
-Message-ID: <5d81d30f-8dd4-d74c-7c8a-0714dafc09fe@huawei.com>
-Date: Wed, 6 Aug 2025 14:26:31 +0800
+	s=arc-20240116; t=1754461657; c=relaxed/simple;
+	bh=ArxsUmBRLlbSgLLVtSCRW2TXy+NtPKUl63JAPtSukp4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BbbVJUQgepmLRXKuVT/S9fQmuFnoiIDlagWgkPPf0L5jt24/qlTmO67kPwD2+Vi5PMfRszMOIUWvVaVdFAbdm3raE0SYoMyVhZDeIKyeDSVxsoVcFbgX8yg5VG5t8B+8CZVNTcdQ59LohKXJzdEytv4ZgcM19wYgtJcCrcoJtU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DH3jlUME; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b3226307787so3984225a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 23:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754461655; x=1755066455; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3VgAx1fS6I2c71PvMh+h8E4HzTPn+s88CNs629QlCA=;
+        b=DH3jlUMEwtzW3BVhI5F35HDQnK3+qhPZeMs6IjK1TG8xSXvQs3Ikhog/XbHxir2oKc
+         QuDcIIOfO9V9xKgQgsCVyDsL+44xV0Eq9ZrOjVtCGXChTB+/AiZnbGUHeR7s3bsgKk3Z
+         jCMssPBmY4fLwKhLmHjXih+1L4MuJlmLui0pKUjfoHNoLfacbsFEux5wgqVWT8Kj3fvT
+         LeK+fY4KRwBEBhpEe0vvte0utf8Vn0l4sp4zWYbB1lUcQ7R1xs6fjdsrEoROgB+dm45Y
+         v/PgRRwK3gRzTEWZKSM8a1+AprjEMVXKdAUgMrlG8NqN7M7skMOm/YAkznWbSxC6kw/I
+         UTag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754461655; x=1755066455;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v3VgAx1fS6I2c71PvMh+h8E4HzTPn+s88CNs629QlCA=;
+        b=nrVdayaV1cXy5J5mEpuf7iMV/peytTjwAqbON5g/4bhR3r/1LynjJ6ESOn/1DOzQ4u
+         vV3EqM7dsT1rqxPM8gsApemZDiwhKzSi3IJOXXWNYwfHOQ0/hjxp0cysOgxb+TU5MEIE
+         61vP2zlqzcXnXnVKNBLbIkTBYSztOMsUYFyRsWOp65TEhq9hcDOGzfJDeXOJuhzSUk9Q
+         EHIyhGQ7Cg2vFW2J1ouqiGB8/AQn9yDLFevVTfNNqkmJYmWP/3MiClL6Zzuj9716aJ78
+         cYUAwMfzh32oe+YDvhjW0suXXOP+qHCxkT6ZmohGY95305Neo3XlwoGM43uatvrjiK0W
+         gBDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGnvpqdQ2ByXu+6Q5BuCOByFJF869wLTidklKPKIi4468b6EkFxqZqL5usS733JTHMrzEcQ+yQC7MbIlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy4sZ3+fMqbeiva0nQm4re8UvVm7uH4EQbPPQuBM1j6/A6IfCZ
+	Iz2zh9v0/wMO5S2AhohPxDFJuFcYdBN2o8sMBRf9hPg0YOVEItAgxvHA
+X-Gm-Gg: ASbGnct8jp5Fp0A23C8cuzsdMP5A5t3HqpHMQnZcF6sLFRkAV2vuKJ1S8t9xxU814aC
+	tYY7O0Wg/5kySmyfTyW987CMmkdR9wOe6Jjrn7iXY+JLA8M4o1XiQkNdLixQfxOe/hRanb4ejea
+	9c8qyGnA+oe0O+X8yq9E7bK826BYkAeVRPkiklF70CpCopcuNHhPW42yy101D80fH52723BguDH
+	Di6lToTrxzKMSbWEVFv09MNMIBfb5LSoDRk0K/oow/16SuwrRjmCukAPTO48Ai3RQ+r0nDzmrg7
+	clVHMY0mRtIDrqHzeLSo4qTXRiBZ6AA6vq6jamv2mH1cBuDjDKXTSm3cxqu8jXowrkbdlHkc6P6
+	9bsgU94PEiNnkxBupDnLl1w==
+X-Google-Smtp-Source: AGHT+IEpNrcd5b5s+6Lh0/TxzBSctjDMFTnSnsB9TlfDEOgYkwSscobfkMZxY34y1QWt3oSEck/+zw==
+X-Received: by 2002:a17:903:b86:b0:242:9bbc:3645 with SMTP id d9443c01a7336-242a0bfe727mr15011065ad.55.1754461655477;
+        Tue, 05 Aug 2025 23:27:35 -0700 (PDT)
+Received: from localhost ([106.105.221.248])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32102acbc56sm8223370a91.2.2025.08.05.23.27.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Aug 2025 23:27:35 -0700 (PDT)
+From: Nai-Chen Cheng <bleach1827@gmail.com>
+Date: Wed, 06 Aug 2025 14:27:11 +0800
+Subject: [PATCH] greybus: svc: use string choice helpers instead of ternary
+ operator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next v7 5/7] arm64: entry: Refactor
- preempt_schedule_irq() check code
-Content-Language: en-US
-To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<sstabellini@kernel.org>, <mark.rutland@arm.com>, <puranjay@kernel.org>,
-	<broonie@kernel.org>, <mbenes@suse.cz>, <ryan.roberts@arm.com>,
-	<akpm@linux-foundation.org>, <chenl311@chinatelecom.cn>,
-	<anshuman.khandual@arm.com>, <kristina.martsenko@arm.com>,
-	<liaochang1@huawei.com>, <ardb@kernel.org>, <leitao@debian.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-6-ruanjinjie@huawei.com>
- <44fd646c-4e31-4ca6-9e22-f715ad19e0d7@arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <44fd646c-4e31-4ca6-9e22-f715ad19e0d7@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250806-greybus-string-choices-v1-1-3e1c91048b62@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAL71kmgC/x3MQQ5AMBBA0avIrE1SFY24iljQjppNyQxCxN01l
+ m/x/wNKwqTQFQ8Inay8poyqLMAvY4qEHLLBGtuY1jiMQvd0KOounCL6ZWVPiuRCUwdbt3Z0kON
+ NaObrH/fD+34t4QiOaAAAAA==
+To: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ linux-kernel-mentees@lists.linux.dev, Nai-Chen Cheng <bleach1827@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754461650; l=1226;
+ i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
+ bh=ArxsUmBRLlbSgLLVtSCRW2TXy+NtPKUl63JAPtSukp4=;
+ b=P45rsFVpVU9VMZHYEQEdptLJC7YPc2z7ZQPoW7edIi9BkJs4M4LOUBYu43c+mYI0vGXbDVG4z
+ b0R0MX8eaniBGUB7JAcRFB+nCLiXQC6Wsaaw72giYI/Agx0YVHkLkxx
+X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
+ pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
 
+Replace ternary operator with str_enabled_disabled() helper to improve
+code readability and consistency.
 
+Generated using Coccinelle semantic patch.
 
-On 2025/8/5 23:06, Ada Couprie Diaz wrote:
-> Hi Jinjie,
-> 
-> On 29/07/2025 02:54, Jinjie Ruan wrote:
->> ARM64 requires an additional check whether to reschedule on return
->> from interrupt. So add arch_irqentry_exit_need_resched() as the default
->> NOP implementation and hook it up into the need_resched() condition in
->> raw_irqentry_exit_cond_resched(). This allows ARM64 to implement
->> the architecture specific version for switching over to
->> the generic entry code.
-> I was a bit confused by this, as I didn't see the link with the generic
-> entry
-> given you implement `raw_irqentry_exit_cond_resched()` in arch/arm64
-> as well in this patch : I expected the arm64 implementation to be added.
-> I share more thoughts below.
-> 
-> What do you think about something along those lines ?
-> 
->     Compared to the generic entry code, arm64 does additional checks
->     when deciding to reschedule on return from an interrupt.
->     Introduce arch_irqentry_exit_need_resched() in the need_resched()
-> condition
->     of the generic raw_irqentry_exit_cond_resched(), with a NOP default.
->     This will allow arm64 to implement its architecture specific checks
-> when
->     switching over to the generic entry code.
+Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
+---
+ drivers/greybus/svc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This revision makes it easier for people to understand.
+diff --git a/drivers/greybus/svc.c b/drivers/greybus/svc.c
+index 4256467fcd35..35ea7147dca6 100644
+--- a/drivers/greybus/svc.c
++++ b/drivers/greybus/svc.c
+@@ -10,6 +10,7 @@
+ #include <linux/kstrtox.h>
+ #include <linux/workqueue.h>
+ #include <linux/greybus.h>
++#include <linux/string_choices.h>
+ 
+ #define SVC_INTF_EJECT_TIMEOUT		9000
+ #define SVC_INTF_ACTIVATE_TIMEOUT	6000
+@@ -73,7 +74,7 @@ static ssize_t watchdog_show(struct device *dev, struct device_attribute *attr,
+ 	struct gb_svc *svc = to_gb_svc(dev);
+ 
+ 	return sprintf(buf, "%s\n",
+-		       gb_svc_watchdog_enabled(svc) ? "enabled" : "disabled");
++		       str_enabled_disabled(gb_svc_watchdog_enabled(svc)));
+ }
+ 
+ static ssize_t watchdog_store(struct device *dev,
 
-> 
->> [...]
->> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
->> index b82032777310..4aa9656fa1b4 100644
->> --- a/kernel/entry/common.c
->> +++ b/kernel/entry/common.c
->> @@ -142,6 +142,20 @@ noinstr irqentry_state_t irqentry_enter(struct
->> pt_regs *regs)
->>       return ret;
->>   }
->>   +/**
->> + * arch_irqentry_exit_need_resched - Architecture specific need
->> resched function
->> + *
->> + * Invoked from raw_irqentry_exit_cond_resched() to check if need
->> resched.
-> Very nit : "to check if resched is needed." ?
+---
+base-commit: 7881cd6886a89eda848192d3f5759ce08672e084
+change-id: 20250806-greybus-string-choices-e6d53d2382a6
 
-This is good.
+Best regards,
+-- 
+Nai-Chen Cheng <bleach1827@gmail.com>
 
->> + * Defaults return true.
->> + *
->> + * The main purpose is to permit arch to skip preempt a task from an
->> IRQ.
-> If feel that "to avoid preemption of a task" instead of "to skip preempt
-> a task"
-> would make this much clearer, what do you think ?
-
-Yes, this is more clearer.
-
->> + */
->> +static inline bool arch_irqentry_exit_need_resched(void);
->> +
->> +#ifndef arch_irqentry_exit_need_resched
->> +static inline bool arch_irqentry_exit_need_resched(void) { return
->> true; }
->> +#endif
->> +
-> 
-> I've had some trouble reviewing this patch : on the one hand because
-> I didn't notice `arch_irqentry_exit_need_resched()` was added in
-> the common entry code, which is on me !
-> On the other hand, I felt that the patch itself was a bit disconnected :
-> we add `arch_irqentry_exit_need_resched()` in the common entry code,
-> with a default NOP, but in the same function we add to arm64,
-> while mentioning that this is for arm64's additional checks,
-> which we only implement in patch 7.
-> 
-> Would it make sense to move the `arch_irqentry_exit_need_resched()`
-> part of the patch to patch 7, so that the introduction and
-> arch-specific implementation appear together ?
-> To me it seems easier to wrap my head around, as it would look like
-> "Move arm64 to generic entry, but it does additional checks : add a new
-> arch-specific function controlling re-scheduling, defaulting to true,
-> and implement it for arm64". I feel it could help making patch 7's
-> commit message clearer as well.
-> 
-> From what I gathered on the archive `arch_irqentry_exit_need_resched()`
-> being added here was suggested previously, so others might not have the
-> same opinion.
-> 
-> Maybe improving the commit message and comment for this would be enough
-> as well, as per my suggestions above.
-> 
-> 
-> Otherwise the changes make sense and I don't see any functional issues !
-> 
-> Thanks,
-> Ada
-> 
-> 
 
