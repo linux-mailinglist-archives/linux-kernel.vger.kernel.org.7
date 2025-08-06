@@ -1,97 +1,162 @@
-Return-Path: <linux-kernel+bounces-757102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482B4B1BDBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24333B1BDBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 02:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7981189EC62
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E359B18A439F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 00:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74E86FB9;
-	Wed,  6 Aug 2025 00:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1C610D;
+	Wed,  6 Aug 2025 00:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="DHMYWxAz"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="juTmG/Vo"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C558D136E;
-	Wed,  6 Aug 2025 00:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AA01114
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 00:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754438741; cv=none; b=jaSSSOc2o6hie7yOasOBCK9wdVCwo7OqPKggQEjRt4EeTLIm8aFXzeRXhbb1kqQJzSP1dNZvmKhswDPaQN/akGrwICZb+eP9DHY/F9rvCUkh+TD3/UmVNJ9R1vb4IVRGJXye0FYkd14IXEMWXiRi2J6ieDoT+6iDXTNCXKSjOCg=
+	t=1754438995; cv=none; b=Woyp1xAgA/AbXgxxtLQY4bYxWLcYfgXyoQPBnAJ1ltcVvYARtUuPBABwqmBPHDm9y1PMNiwVa4XfcbSMQbyIP3NQsO0Yxwyc8ymO0LTDWjFpdlr3bL8Xvc33pziUH8xS2B7Rx4lqZogXg9eZ5YSzGO/po9Uyw3rbUCCt9E/Wbcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754438741; c=relaxed/simple;
-	bh=bj+RZzaHVNpoliwAGa9XYm5UNfnwharwglOw4U7Tgek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KuKH9lZ8XL1+Vl7cT25KeXbatugXLAbNE3wp0T9g+ChhS0gEFL/KVWspRRrQJVal63LBQGomavPjPjp57D9kN3IXTW1PaEFzp5a29phvw+xpISNKrva5cN2BADPulDE5Q0CMyF7kAEqXlKkQUWmLtvwwjA5CunLA43mTPiaM3Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=DHMYWxAz; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1754438735;
-	bh=bj+RZzaHVNpoliwAGa9XYm5UNfnwharwglOw4U7Tgek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=DHMYWxAzEHmz4jrtg4O2K9dt+cvr7lk8rcZbxE7YxjADTg88lqrB0djeyOMu8zMbl
-	 7QydPwCg4ew9mpGnnokAdOBscZ9CCVFk7mUlUVVL4pj/mv7IdmZc3FsS2VHCPseB02
-	 mdEeOw0aeX1EG5pOH5zHWD2HbdQOBpPqtd2re1Si1JsAw7iIc87jDeG/XsmDEZlwJX
-	 2GCMUGkDDoP7MyEY7QvLtC1gq52P8+0W+znBjcEKdnucdiWYMgmURuu/Q1aIVCrrT7
-	 p9L90MNfz3R5WAA3t1FGqC44hyPwGQFSvs4516pCBVXMt6fvprekpkUO7bAUhLzIAV
-	 E6wm0DosSW6kA==
-Received: from linux.gnuweeb.org (unknown [182.253.126.229])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 3F29A3127C24;
-	Wed,  6 Aug 2025 00:05:32 +0000 (UTC)
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Wed, 6 Aug 2025 07:05:29 +0700
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Simon Horman <horms@kernel.org>, Oliver Neukum <oneukum@suse.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Netdev Mailing List <netdev@vger.kernel.org>,
-	Linux USB Mailing List <linux-usb@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org,
-	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
-Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on()
- call placement
-Message-ID: <aJKcSZCirArmH2/c@linux.gnuweeb.org>
-References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
- <20250804100050.GQ8494@horms.kernel.org>
- <20250805202848.GC61519@horms.kernel.org>
- <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com>
- <aJKaHfLteSF842IY@linux.gnuweeb.org>
+	s=arc-20240116; t=1754438995; c=relaxed/simple;
+	bh=ZOQsJI4hllbXPJNAkCrOFd9A4zdldwqNbRW4Sk03H0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gcb3vgTIjRrsxI6JKVI4q4hPINkYY7jAed8z8qvsLtd5INLeqavEBNARhTzJ8AiQOYfsnIYO/OaShCTRnIC8ur3obFpGkhIB9J5qRe+IPbd1pVJoFMoiUPpyonAiIPn8B1BOCxYB3Im08B9DTXfVrYEpm2A1SbRGrSHKjomj8qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=juTmG/Vo; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-240708ba498so53665ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Aug 2025 17:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754438993; x=1755043793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6I8HsqNpJhHWG5dLzFn7X6r6TawwSMkwMRxzvdZ6JwA=;
+        b=juTmG/VoaZF8EpHaHwk1AiWvBGC/rsx7tFmWuvUXqYEfEQrGC8HvultKusfcXDK3U+
+         t112rf225YJWYw+8GDIgQXq+PKw1cyoGJ6OYjvca94a7EnmbaN17rUK9+z3LMDG+5g6K
+         5MXXvMc7MVVdCNQdW/tUfDS7SrekjUNbzIv79d4YhgFQIj9zArBTqkDrGtc8ykDN8+eg
+         lIBjXtj2ol+h0UP2BfuBDydTLg1QsOLd2lirCDNKeCmWdGa4JLHi/YH6oQfg17A5Pb2v
+         6U6wBgkfjhVJO8BP8DZZhFbP1PB7ecdIbMIgJ3+RFhn8lnN1RWmcLXZnn1aXynHj3lTK
+         T2WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754438993; x=1755043793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6I8HsqNpJhHWG5dLzFn7X6r6TawwSMkwMRxzvdZ6JwA=;
+        b=PLvUpkejl6ADEnOe74Z+DfIILR9yOVUsMWiehoxkAnI2aCgQoRbtV5Hz/3fzZSVuov
+         KNDTL+gxA+LvRWlN7NDimpyEFBES40JgwjgoB/jdIabtlhBYcVbOspJEWNawfvPeZo2H
+         l+EksRwUf5GCPtyz5QOitlW3tUNe6rOllwxfzkYvHAhMyrtrthGZgHpALONrlRTXeX4D
+         NOxgAUKccfIUMTpKeIhfD8nsympAB2syko9+nyD26l/1S3uy0gPvgtN9aeBePcVbQfEO
+         52+boQ0SBV/zJrOC/wEJOOfX2BRme09JvhYshzNpREIAPSH5klrZekQd/BYZj8iNY5oL
+         de2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWijVNVFkkMOdX8vRlt5GJhfynkyE4ASplB7ST/pmTIRKi1tzE3/Z0HUjNAUJKpmhrZVZKOeL42+Fjzpvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnnwJhRnZB/3GIIvCge8DBRenHNIDo/PMHHoBUvBQvMU4YDpqb
+	rUFvqJS/1EAwOEzZabwLwdPV8BXNTXD3kThi0dEgywKpv1BNF6Nwlw0RKYQNhVYYjzAlwzz+133
+	4xxuZnwvFCHxolVH8ZhGxM7am4ia/4w0ZvyYtd1gE
+X-Gm-Gg: ASbGncuVM8CVIfzbSRWMsz6rxr36QUDYvvM9F8Pmzum1pSz2Wmqr1eXZoqlOZHxxKg1
+	Mx8E9S0qyzEdsPRtC+BZ1moIWM1jtwyjbkzTA5ssVx9y4wEfZDdgpD5GphY8KnvxlVfVY++Zx1A
+	46qVQMI9NBBQ9YO69ZuzWcQUHEBmHcqUtZmrzKVV9qZoBGKQHwmvKrQowrwKv+P7IDLFdafQsf7
+	gW6BGJd1VFKkx5zxjTJBIYpMRqKdwoMzI5rtw==
+X-Google-Smtp-Source: AGHT+IFgK86TDS44ZXL6s1kOzOAnW/EHzdJN0Sj3gIaGmBtwp+yGICBZG/enSUARPg61J2n1DVpx5A/bVG/pmazuRVg=
+X-Received: by 2002:a17:902:f70e:b0:240:469a:7e23 with SMTP id
+ d9443c01a7336-2429ecf9ec0mr1693505ad.20.1754438992714; Tue, 05 Aug 2025
+ 17:09:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJKaHfLteSF842IY@linux.gnuweeb.org>
-X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+References: <aHUmcxuh0a6WfiVr@google.com> <aHWqkodwIDZZOtX8@yzhao56-desk>
+ <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com> <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+ <aIdHdCzhrXtwVqAO@yzhao56-desk.sh.intel.com> <CAGtprH-xGHGfieOCV2xJen+GG66rVrpFw_s9jdWABuLQ2hos5A@mail.gmail.com>
+ <aIgl7pl5ZiEJKpwk@yzhao56-desk.sh.intel.com> <6888f7e4129b9_ec573294fa@iweiny-mobl.notmuch>
+ <aJFOt64k2EFjaufd@google.com> <CAGtprH9ELoYmwA+brSx-kWH5qSK==u8huW=4otEZ5evu_GTvtQ@mail.gmail.com>
+ <aJJimk8FnfnYaZ2j@google.com>
+In-Reply-To: <aJJimk8FnfnYaZ2j@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 5 Aug 2025 17:09:39 -0700
+X-Gm-Features: Ac12FXymbfJdEF0wBMOYP6-B3-5IXJh93gxKyNMf-PV_-6yUB3ZSwu9ht5Cy8wI
+Message-ID: <CAGtprH9JifhhmTdseXLi9ax_imnY5b=K_+_bhkTXKSaW8VMFRQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
+	tabba@google.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 06:56:20AM +0700, Ammar Faizi wrote:
-> Apart from moving it outside that if-statement, unlink_urbs() call
-> should probably also be guarded as we agreed it makes no sense to call
-> it when we're turning the link on.
+On Tue, Aug 5, 2025 at 12:59=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Mon, Aug 04, 2025, Vishal Annapurve wrote:
+> > On Mon, Aug 4, 2025 at 5:22=E2=80=AFPM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > > : 4) For SNP, if src !=3D null, make the target pfn to be shared, cop=
+y
+> > > : contents and then make the target pfn back to private.
+> > >
+> > > Copying from userspace under spinlock (rwlock) is illegal, as accessi=
+ng userspace
+> > > memory might_fault() and thus might_sleep().
+> >
+> > I would think that a combination of get_user_pages() and
+> > kmap_local_pfn() will prevent this situation of might_fault().
+>
+> Yes, but if SNP is using get_user_pages(), then it looks an awful lot lik=
+e the
+> TDX flow, at which point isn't that an argument for keeping populate()?
 
-Oh, no.
+Ack, I agree we can't ditch kvm_gmem_populate() for SNP VMs. I am ok
+with using it for TDX/CCA VMs with the fixes discussed in this RFC.
 
-I just realized, it does need to be guarded because if netif_carrier_on()
-is placed before the if (!netif_carrier_ok(dev->net)), it already clears
-__LINK_STATE_NOCARRIER.
+>
+> > Memory population in my opinion is best solved either by users assertin=
+g
+> > ownership of the memory and writing to it directly or by using guest_me=
+mfd
+> > (to be) exposed APIs to populate memory ranges given a source buffer. I=
+MO
+> > kvm_gmem_populate() is doing something different than both of these opt=
+ions.
+>
+> In a perfect world, yes, guest_memfd would provide a clean, well-defined =
+API
+> without needing a complicated dance between vendor code and guest_memfd. =
+ But,
+> sadly, the world of CoCo is anything but perfect.  It's not KVM's fault t=
+hat
+> every vendor came up with a different CoCo architecture.  I.e. we can't "=
+fix"
+> the underlying issue of SNP and TDX having significantly different ways f=
+or
+> initializing private memory.
+>
+> What we can do is shift as much code to common KVM as possible, e.g. to m=
+inimize
+> maintenance costs, reduce boilerplate and/or copy+paste code, provide a c=
+onsistent
+> ABI, etc.  Those things always need to be balanced against overall comple=
+xity, but
+> IMO providing a vendor callback doesn't add anywhere near enough complexi=
+ty to
+> justify open coding the same concept in every vendor implementation.
 
--- 
-Ammar Faizi
-
+Ack. My goal was to steer this implementation towards reusing existing
+KVM synchronization to protect guest memory population within KVM
+vendor logic rather than relying on guest_memfd filemap lock to
+provide the needed protection here. That being said, I agree that we
+can't solve this problem cleanly in a manner that works for all
+architectures.
 
