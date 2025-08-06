@@ -1,434 +1,256 @@
-Return-Path: <linux-kernel+bounces-757768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-757770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FF6B1C669
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:55:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C85EB1C670
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 14:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9D73A667D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9A33AC7F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 12:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8325028B7FC;
-	Wed,  6 Aug 2025 12:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D4928BAA2;
+	Wed,  6 Aug 2025 12:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="bM2Mix7j";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="QrLaB633"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j3fSG84Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1226D4E3
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754484930; cv=none; b=q7J8NGFT09Fs5Kxmj0rxFU7QHuq+1w1+7158BV043mfCQlvtU+C0t3jDEuXRrhiHPxE+RgtvGknUP7aFLCJHu4EdQsISMZFnvM2NWfa4vGi5XMZNmHqfaRhWqLk/gWt8EKmDcKnu/AoC1LwZ+K8qSHya1jwlXqZV2hI8La2eM3o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754484930; c=relaxed/simple;
-	bh=eD23kIKiZIVibNzjp5ze8NG8QLQ8zxV57jPnetI+wuo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oblmWUIrkKk/w644so3nRbIxSH2yyMm7wOlYs2ZyeETaz0Fi0iI4nuXKHjtqXttEK67cuePLDFyqaT5mcGFUL6S/V/aoJe1LH9ujx2d4wFrMC5vpN2d4ezdyVNH5IRKugQQ9eQo9W7YojlhjA49iKM+JARnwsVglyXcJIV6t01M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=bM2Mix7j; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=QrLaB633; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754484926; x=1755089726;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=2EpY0iZjaJvwwklHeHLkr7Po0NT5Jxje1Dm2vCoM5Mw=;
-	b=bM2Mix7j8hTPXUDnW4X6OqzeQ8JMIjZwwisIJTsx72xmMgSfz7BeOlYxyqNrm6uKVJogNxl3itiSn
-	 1dz+ETRJOluRfpQdPOo3Kyr5auUpajjm4ZNoKWO4+tqkRpAK+Q+mW5AJbrSa7cELxmVGA8gXBoBDn2
-	 7C+nAsSZg1jhcVHlKU2PnYTI27Cg1VMNPJID5vGdfnqwIx+n43lGQwSKSsvvct1bkoQ0VxFgpjo1Fp
-	 UtjqA6EPdk+qIREk8+b4RR8Zz/iEG4BZQdl/zy1adozDB8W4BhYqUD95kjEmp4+YiLYQD4W58wqlWx
-	 N0lbDW3T3s+OmH0okqd02dsFlGYQryQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754484926; x=1755089726;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=2EpY0iZjaJvwwklHeHLkr7Po0NT5Jxje1Dm2vCoM5Mw=;
-	b=QrLaB633JmLmW+gulWPCBUbLUwHVFFLdvXKmQYr4zMgpb5ewhvPZjDn/vdsbTRFNA/Vul3OcaTvML
-	 dzqf32sBg==
-X-HalOne-ID: 9e338ad1-72c4-11f0-aa1a-632fe8569f3f
-Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 9e338ad1-72c4-11f0-aa1a-632fe8569f3f;
-	Wed, 06 Aug 2025 12:55:25 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v15 3/4] rust: add support for NUMA ids in allocations
-Date: Wed,  6 Aug 2025 14:55:22 +0200
-Message-Id: <20250806125522.1726992-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
-References: <20250806124034.1724515-1-vitaly.wool@konsulko.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFF328BA82
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 12:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754484940; cv=fail; b=d8mt0950YuvKTl2PJmUBsfZsrodDGxcgCafSs3XWydffyz3r766Pm2kLEijbclzOyZ2GUwjsN/CWGYOvhay16E7IQck1Q8HwwQW3wfEjsYkKDGIUV5tfM/rmoBNVTRB3RkoTcF1zuu3GEIjiAaY1KJG+kSZWMovc20Cao9zNYMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754484940; c=relaxed/simple;
+	bh=ceRm90Z3HQ3CFMwJV6yoOc9UBEidFaESA3k0sC+9Y5o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=J85Bwn1U9+X3JxV1O751nurehqRsX50NKY6Akb8vuEMGogmhrnJoqnMBGngpTUN9M+/r5NTL7Eb7ffKbaIYdg3Vx3GTmnWSxkjFNRvb8JituFezuSt/RNnTpsbShztL4CuClJddSQmYfmHzrBEVVRRFOp076dF72/ioUGT+PKF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j3fSG84Z; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754484939; x=1786020939;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=ceRm90Z3HQ3CFMwJV6yoOc9UBEidFaESA3k0sC+9Y5o=;
+  b=j3fSG84ZjwcMUflolfvffDyczXL+t0njbleQN24XY3w+jzAHDUKrkm85
+   SZ2i1UaeJvmPpJvhOMDB6OXqnAAMbMP1bLoj+5YdjVhwdMK46s7sZcndT
+   VAkZnwXFoymnqIBRhbIr0SMEsc2KeeCHeQ93e86LHmd5nD5RielX0E3yN
+   r2l8QFyTda6uoOWK0aOa1czLyMJTCYlAlB0/afAMLGc7Ipk3x3IMoIjzN
+   T+GdXOocrVIJ8/+MT86YkYC638H5OmCsWflSn9J23RY3wdsDV/D2oVanO
+   uzx9gI2nZ/enrWFaApP2qJjxy5LrwsQWpZnP1nXtffXbuchRPUD1j8zQw
+   Q==;
+X-CSE-ConnectionGUID: fivYNL3wSKatbHFGuislug==
+X-CSE-MsgGUID: TRm3BYRSS16QDAY14s/3Lg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="67876032"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="67876032"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 05:55:38 -0700
+X-CSE-ConnectionGUID: eKvTjUHeTnSg6RuOlYMyIw==
+X-CSE-MsgGUID: DQ8kZEs8SuK+JeRLOyV9FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="201935457"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 05:55:38 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 6 Aug 2025 05:55:37 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 6 Aug 2025 05:55:37 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.55) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 6 Aug 2025 05:55:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nO3IOkFJXvE+iAr7qXi4MY3bcklm8rr5sW6d6P2pQb/l7yUVvgufGgBJsSzyCrO0GvJVY5+t/29VwxA17E70FxHuDyQQz66h7dDPI9i5HqP6mCm2YbiQD/Y3CHPFA00xu33nXPxrVMqETKWKxXlJzaR2PLc9UiqZzapYPv3J6G3btG7i+u392Lc6XlLzsyokn5mc6Tneq6tH/MpwRkwcHJmaxmK3iTg5pM4XAd/ZiDOKWmA0+RzzfSG1ry3l1mFwDq4i2ucGTTm0CtgGI67HwX4aAJyJVfd4+IUMiNk62vgP+mJh/qOipDsyPnsmgPp8sJiaDEVrPEbWLAN0GIWRyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XVqAikAu8iksABsDyMLhbrxD4vIAibWE3dPe/TwPyeo=;
+ b=vgsH/KO9+9gofoC+igjBH9vj+ebKEpvft+9vJzHcgoeVFVp/MAHokuPZ4Q/WUiliswBHhbXLN+uygI0ZjdftnSuXE8tGEemeIIeT+E9qMsls5li+rlYSTPkormWyDBoyof4NlZ0C1IGKkdIlh0VCUNbmiRwR8ryGJFNfnEuZ5VsldN8Srt+uTI3qD5SxMJQYen112kZiv2uHc7BJi0kWIyBeqQ2YDU2QkEBJEcOcgx0lNkpGmQ8nWxlZN3UF0o7GX5wptaWpkNysjPP0IUIL2udylCOXCEIq/jGaFcEwnF2PxGEm3JgQrKv+PxaoGs0XwYQTnx72UonkgLCaB41s4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com (2603:10b6:a03:2d1::10)
+ by CH3PR11MB7937.namprd11.prod.outlook.com (2603:10b6:610:12c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Wed, 6 Aug
+ 2025 12:55:33 +0000
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f]) by SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
+ 12:55:32 +0000
+Date: Wed, 6 Aug 2025 15:55:26 +0300
+From: Imre Deak <imre.deak@intel.com>
+To: Sasha Levin <sashal@kernel.org>
+CC: <tomi.valkeinen@ideasonboard.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <laurent.pinchart+renesas@ideasonboard.com>,
+	<ville.syrjala@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/omapdrm: Pass format info to
+ drm_helper_mode_fill_fb_struct()
+Message-ID: <aJNQvlWZNI04BU_l@ideak-desk>
+Reply-To: <imre.deak@intel.com>
+References: <20250806121235.622437-1-sashal@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250806121235.622437-1-sashal@kernel.org>
+X-ClientProxiedBy: DUZPR01CA0059.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::13) To SJ0PR11MB4845.namprd11.prod.outlook.com
+ (2603:10b6:a03:2d1::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB4845:EE_|CH3PR11MB7937:EE_
+X-MS-Office365-Filtering-Correlation-Id: d78d8c40-d269-4504-7d79-08ddd4e88774
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dMFz0loRAUgWlsUz6qmV38Pm1jQIga2jbRMm037xznrJsIA6PHxkxu2cB10T?=
+ =?us-ascii?Q?JX2buSjTG0Y5jXiv/YGJ5BEL2bVglgRxnUlfvdpXk2+CcS/op3JAuoiz0nuI?=
+ =?us-ascii?Q?qVMWV5rRqmKZ2ggPcUH8yEdRT5Agzdoho3eIsRyJlVyBTFKBA+EndWCv26q3?=
+ =?us-ascii?Q?eG6Hqb2vfMAIXCAYdc/sOQhSJdch22/Zz/E3ivQFBCU7p8BSDo8dwplX2kUi?=
+ =?us-ascii?Q?JOGwn0hkk0p+cXs21dByuGxTvTv+HTup5D2U9ajzQ5H6UTrVkz4vzPD7Kp33?=
+ =?us-ascii?Q?y8gqfQrCMfeNa+a+vZw4oci60aPLasxCCYTeUx6DvB7E40skMBkm4cK8hq4D?=
+ =?us-ascii?Q?++tMAdWH6hc2wNf/Zk5u5bQ1RbavVS+BKRYXXCqw7Mg4D4inT5u1ptaLL+3T?=
+ =?us-ascii?Q?LIE9u2lCcYWyTxLi9ZjDNl2DSGsPioKz4Iu3NvV1W/O6CAgp+zPhYUkjruTv?=
+ =?us-ascii?Q?c/aZV71znBblOmdAUdNdfpi8oVf4tHSEeGf9nluMYdZoiCefX75YTrwIYZn2?=
+ =?us-ascii?Q?ulsHRsBvJ8tRtFbLniSze4X0TifDpvOYZ1buls0UjGcUynI7F7pNSWwEun1L?=
+ =?us-ascii?Q?mIppysuPJkyaKx8pzOvyXXGYlzDJ+FHMGTysM0yquvcgxyVRGTNKUI6u6GeE?=
+ =?us-ascii?Q?7sFF9t864NkmuF5L/4cVc/fqGq8+GSdgd3JVGjsnFBDBVivECyyAPigh8Xe5?=
+ =?us-ascii?Q?RAkJ7z3cdczYdB0nKDA0ncG5wAeYTEDEtbfcEolKGpk8WqAeE59epn8UqWS8?=
+ =?us-ascii?Q?Dq7vjsoZ0ZhYaogSJYf1ZSax9cqhGzP3XmSaws9BxieBDzCX+YhwMDfT6KAu?=
+ =?us-ascii?Q?VHjPIgZUBNBAuCiS5Rrvtn4LM0bqS/D0E9HNYmP/03/4VVA+syuj8C9r0ymZ?=
+ =?us-ascii?Q?yQQTN7hIYFj8LGt+649ff5khyFFEzOjEnaZBG9ddhEh4MT6Qd61Or0YH5Y5a?=
+ =?us-ascii?Q?imG5DfY6thsrb2dRw1NZlCLmSvkY3sMCIHncCp5RM2VGIz4YhOUvF4CIkfAg?=
+ =?us-ascii?Q?GmmyhfgC+Sy99/1nBMxYsM31RyUVNoWdOA8V0teSCWYxLvI4HJdycv2yFwKs?=
+ =?us-ascii?Q?kdc0M5HAPKNZUUZCIP/BYAj/wX8l3hVqtadE4ULP6ovOFYD+z2M8atsV8w+1?=
+ =?us-ascii?Q?NHgTZvcZ1g4pLrW5wJYHj2ezCEYEorbEWx1cjA1r/pn/N9N6sW/yweXJpmG2?=
+ =?us-ascii?Q?/jDPHbch4Sm7V6J3xRxJXvlBs2Tg5uxZTvHJWKNqpgBlPurejC3jt5+pGkMq?=
+ =?us-ascii?Q?2MLZ8sCmgSo9Ihy6I2nKce+nS+PTanP2GXiYP8jEPbk/SUgqn3NM7wTksdvs?=
+ =?us-ascii?Q?SOu+GYAqW146Myrar/3Pr2VD6kNAblHxDQYFSGjciK5iYLwW4vUo541ieuXj?=
+ =?us-ascii?Q?RYCky6pWsj5ORc3eHm1NbuDK+Q1HttEZ8LFYvG2bK/flOLC2iFxCYZ1/VPVy?=
+ =?us-ascii?Q?qd00Edwcb2E=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB4845.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Rt/yBlIglpwhls9u3+5TWITWdrtePv7HPH1XYGx/czzOHb0B5RDR8AjpUkPf?=
+ =?us-ascii?Q?StUKUjM3sqb2MfTesZKYky/JQwudZfyvudrshBE0SxCoqi53GGSQ86V3JaYs?=
+ =?us-ascii?Q?85I6t21WL+0/2hPsmydugMDqh7TUUkP03zQuoLHUFFOfdTz9gFWmN9Hx58JD?=
+ =?us-ascii?Q?otK3fe4lz1pamVHSdInQsxopIGO5APayFYWoBlWqxEZ4l5EJ+C7NYV+G4q+A?=
+ =?us-ascii?Q?uitLHFHVVm4uOL0NsSeofcFIpf3YixOx+qYdhcKbYphUAHCTSh3TULdbpJNM?=
+ =?us-ascii?Q?sICkIWiJrKtg2cQ1s7/34sLAQ0GrxBdA3ozZffG/Gq0yZhqD8GWdWoGJGlsJ?=
+ =?us-ascii?Q?cKk+zsMeBtKpSagtOY6eJd1NB6Dlc15r6HpFmoVZqwzZwZvMKAEGFHxX6VjQ?=
+ =?us-ascii?Q?JSd/zitbENXRbRvu6ihztxLmSN91MjYV2teOyndsykEzFB5yXUzJtV2FiSes?=
+ =?us-ascii?Q?/iQd1B+977JAcYvlfBkyWno383Xqf2HKX4Kncvzm/ZFTFJygs+oh7d/NSfez?=
+ =?us-ascii?Q?+7E1vsGdTwp//M4PxT0uIDukm56rtQ1i/9mXP7GElI6dUzs6qsYKWdJ6HI95?=
+ =?us-ascii?Q?GrqY87bDG5etYKATm9fPIYKv9R1tgAlroSPMcVz43iAsbom7iILgZRUJAjdi?=
+ =?us-ascii?Q?pnxOVIEolx/0sEhcKT1ndVWL0MfzxrA5iM+CUY/aSJPtyYyvpZOwG6EHL8p4?=
+ =?us-ascii?Q?t/sQPFp+f5Z+98a5YXmNJbljIyMOnnAhne30xh8thX9oMBlzSWTymbjYFSWl?=
+ =?us-ascii?Q?WFN3s+V7f7qHXytBJCAtxAaG/1hTEKfIYYek1KcMjqi3AJP3DMO6R9KCgkBb?=
+ =?us-ascii?Q?nLj5S6xVGC+N2j0yOnXEo5bvqvsDRowJlsDfupeH7cE0Nvhei+Eu91vxkbQ3?=
+ =?us-ascii?Q?Tng9JeuicWCJgq990RJLx5oTuHBlaPEgaxCksoHGR6t86HSX7hdoD2sT/yAB?=
+ =?us-ascii?Q?uAsEcFyXsanI4khtMx+pZ/hMTkGh6fz85TJE5vJrPtzqNkPRaOHMtXagVo1d?=
+ =?us-ascii?Q?lpTV8bemB2YIrH37+zcevPuSvwweVzzg3tMs+FGyKlp2gNo+qnyAvkm8uyPz?=
+ =?us-ascii?Q?oxRlsB6G2+7wawoTT7DCPTKJAVVnub5KXMx58CBaDi1FLL/EAHNozLTQjku0?=
+ =?us-ascii?Q?0InHvmUgItYc+B3xnfLMhj6/OSd5vGsgkqI3D1Y+Q3XPKGpdujIPO9BT2nN8?=
+ =?us-ascii?Q?O6b6dax/RhBN4hZ7//0y8g10F3033Ne7vwHNV9TOGmw3OC5yVgS2sr1DeTTd?=
+ =?us-ascii?Q?RvX0lQp0lfKACd4eKP6yPTqO5cFP0pHrVwzz4jGvjASqvzYCiIE2NdNYhZkF?=
+ =?us-ascii?Q?JaxC+pjGC7HdTZ+W8mSfmFSuJJxubMF8nZdKy/ixrgE1Y+TbcEepPSMt1nhR?=
+ =?us-ascii?Q?zi9RqSly8D184IeQSPYtSZWY/NX+XsWEQSuzCIaHC4ZGfO8n0jjjJ1KikTmh?=
+ =?us-ascii?Q?4V63Jw/YY4PIHdxsfDYx+5ravSuTdMQ1bjKHykLi3KFMbg0ByKjVXLQwyX3A?=
+ =?us-ascii?Q?gXBdeUT9CS5VWm1qz5VcdnF0SFSFeFj46JIy8FdSA0vb0sI243KAHf701ek1?=
+ =?us-ascii?Q?2Tkh8+EM4aadiTlm7Rw8Y8avpu6p4o5HYpSS/mqf3H1tmM6QsX0ycBH8kvHo?=
+ =?us-ascii?Q?Z7LTpp12yktezBe+AwsHEBmiphftpxSdE0qb8rrizIFT?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d78d8c40-d269-4504-7d79-08ddd4e88774
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB4845.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 12:55:32.9101
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dwAINWEW3/tCN1730LwQ0zlp5Jp9vqzjrilSQjk9y/L+SBxn29aVw8TGwIF5FrLV3RUQZ0Ah1rJbguNN8vrwlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7937
+X-OriginatorOrg: intel.com
 
-Add a new type to support specifying NUMA identifiers in Rust
-allocators and extend the allocators to have NUMA id as a
-parameter. Thus, modify ReallocFunc to use the new extended realloc
-primitives from the C side of the kernel (i. e.
-k[v]realloc_node_align/vrealloc_node_align) and add the new function
-alloc_node to the Allocator trait while keeping the existing one
-(alloc) for backward compatibility.
+On Wed, Aug 06, 2025 at 08:12:35AM -0400, Sasha Levin wrote:
+> Commit 41ab92d35ccd ("drm: Make passing of format info to
+> drm_helper_mode_fill_fb_struct() mandatory") removed the fallback
+> format lookup in drm_helper_mode_fill_fb_struct(), making the
+> format info parameter mandatory.
+> 
+> The coccinelle script in commit a34cc7bf1034 ("drm: Allow the caller
+> to pass in the format info to drm_helper_mode_fill_fb_struct()")
+> correctly added NULL as the format parameter to omapdrm's call to
+> drm_helper_mode_fill_fb_struct(). However, omapdrm was subsequently
+> overlooked in the follow-up series that updated drivers to pass the
+> actual format info instead of NULL (commits b4d360701b76 through
+> 3f019d749671 updated other drivers like amdgpu, exynos, i915, msm,
+> tegra, virtio, vmwgfx, etc., but omapdrm was not included).
+> 
+> This causes fb->format to be NULL, triggering a warning in
+> drm_framebuffer_init() at line 870 and causing framebuffer
+> initialization to fail with -EINVAL, followed by an oops when
+> drm_framebuffer_remove() tries to clean up the failed initialization.
+> 
+> Note: Unlike other drivers that were fixed to pass format info from
+> their fb_create() callbacks all the way down to avoid redundant lookups,
+> we don't do that here because omap_framebuffer_init() is also called
+> from the fbdev code path (omap_fbdev.c) which doesn't have the format
+> info readily available. Changing the function signature to accept format
+> info would require adding a format lookup in the fbdev caller, so the
+> total number of lookups would remain the same - we'd just be moving the
+> lookup from omap_framebuffer_init() to its fbdev caller.
 
-This will allow to specify node to use for allocation of e. g.
-{KV}Box, as well as for future NUMA aware users of the API.
+With this change the format would be still looked up twice, in the
+drm_internal_framebuffer_create() -> (drm_mode_config_funcs::fb_create)
+omap_framebuffer_create() -> omap_framebuffer_init() call path.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Acked-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/helpers/slab.c                 |  8 ++---
- rust/helpers/vmalloc.c              |  4 +--
- rust/kernel/alloc.rs                | 54 ++++++++++++++++++++++++++---
- rust/kernel/alloc/allocator.rs      | 35 ++++++++++++-------
- rust/kernel/alloc/allocator_test.rs |  1 +
- rust/kernel/alloc/kbox.rs           |  4 +--
- rust/kernel/alloc/kvec.rs           | 11 ++++--
- 7 files changed, 89 insertions(+), 28 deletions(-)
+This is the same wrt. the other drivers, which also have both an fbdev
+and other framebuffer users (the latter calling
+drm_mode_config_funcs::fb_create()) and so OMAP should look up/pass down
+the format info the same way.
 
-diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
-index a842bfbddcba..8472370a4338 100644
---- a/rust/helpers/slab.c
-+++ b/rust/helpers/slab.c
-@@ -3,13 +3,13 @@
- #include <linux/slab.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
-+rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
- {
--	return krealloc(objp, new_size, flags);
-+	return krealloc_node(objp, new_size, flags, node);
- }
- 
- void * __must_check __realloc_size(2)
--rust_helper_kvrealloc(const void *p, size_t size, gfp_t flags)
-+rust_helper_kvrealloc_node(const void *p, size_t size, gfp_t flags, int node)
- {
--	return kvrealloc(p, size, flags);
-+	return kvrealloc_node(p, size, flags, node);
- }
-diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
-index 80d34501bbc0..62d30db9a1a6 100644
---- a/rust/helpers/vmalloc.c
-+++ b/rust/helpers/vmalloc.c
-@@ -3,7 +3,7 @@
- #include <linux/vmalloc.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
-+rust_helper_vrealloc_node(const void *p, size_t size, gfp_t flags, int node)
- {
--	return vrealloc(p, size, flags);
-+	return vrealloc_node(p, size, flags, node);
- }
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index a2c49e5494d3..b39c279236f5 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -28,6 +28,8 @@
- /// Indicates an allocation error.
- #[derive(Copy, Clone, PartialEq, Eq, Debug)]
- pub struct AllocError;
-+
-+use crate::error::{code::EINVAL, Result};
- use core::{alloc::Layout, ptr::NonNull};
- 
- /// Flags to be used when allocating memory.
-@@ -115,6 +117,31 @@ pub mod flags {
-     pub const __GFP_NOWARN: Flags = Flags(bindings::__GFP_NOWARN);
- }
- 
-+/// Non Uniform Memory Access (NUMA) node identifier.
-+#[derive(Clone, Copy, PartialEq)]
-+pub struct NumaNode(i32);
-+
-+impl NumaNode {
-+    /// Create a new NUMA node identifier (non-negative integer).
-+    ///
-+    /// Returns [`EINVAL`] if a negative id or an id exceeding [`bindings::MAX_NUMNODES`] is
-+    /// specified.
-+    pub fn new(node: i32) -> Result<Self> {
-+        // MAX_NUMNODES never exceeds 2**10 because NODES_SHIFT is 0..10.
-+        if node < 0 || node >= bindings::MAX_NUMNODES as i32 {
-+            return Err(EINVAL);
-+        }
-+        Ok(Self(node))
-+    }
-+}
-+
-+/// Specify necessary constant to pass the information to Allocator that the caller doesn't care
-+/// about the NUMA node to allocate memory from.
-+impl NumaNode {
-+    /// No node preference.
-+    pub const NO_NODE: NumaNode = NumaNode(bindings::NUMA_NO_NODE);
-+}
-+
- /// The kernel's [`Allocator`] trait.
- ///
- /// An implementation of [`Allocator`] can allocate, re-allocate and free memory buffers described
-@@ -137,7 +164,7 @@ pub mod flags {
- /// - Implementers must ensure that all trait functions abide by the guarantees documented in the
- ///   `# Guarantees` sections.
- pub unsafe trait Allocator {
--    /// Allocate memory based on `layout` and `flags`.
-+    /// Allocate memory based on `layout`, `flags` and `nid`.
-     ///
-     /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-     /// constraints (i.e. minimum size and alignment as specified by `layout`).
-@@ -153,13 +180,21 @@ pub unsafe trait Allocator {
-     ///
-     /// Additionally, `Flags` are honored as documented in
-     /// <https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
--    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-+    fn alloc(layout: Layout, flags: Flags, nid: NumaNode) -> Result<NonNull<[u8]>, AllocError> {
-         // SAFETY: Passing `None` to `realloc` is valid by its safety requirements and asks for a
-         // new memory allocation.
--        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags) }
-+        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags, nid) }
-     }
- 
--    /// Re-allocate an existing memory allocation to satisfy the requested `layout`.
-+    /// Re-allocate an existing memory allocation to satisfy the requested `layout` and
-+    /// a specific NUMA node request to allocate the memory for.
-+    ///
-+    /// Systems employing a Non Uniform Memory Access (NUMA) architecture contain collections of
-+    /// hardware resources including processors, memory, and I/O buses, that comprise what is
-+    /// commonly known as a NUMA node.
-+    ///
-+    /// `nid` stands for NUMA id, i. e. NUMA node identifier, which is a non-negative integer
-+    /// if a node needs to be specified, or [`NumaNode::NO_NODE`] if the caller doesn't care.
-     ///
-     /// If the requested size is zero, `realloc` behaves equivalent to `free`.
-     ///
-@@ -196,6 +231,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError>;
- 
-     /// Free an existing memory allocation.
-@@ -211,7 +247,15 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
-         // SAFETY: The caller guarantees that `ptr` points at a valid allocation created by this
-         // allocator. We are passing a `Layout` with the smallest possible alignment, so it is
-         // smaller than or equal to the alignment previously used with this allocation.
--        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), layout, Flags(0)) };
-+        let _ = unsafe {
-+            Self::realloc(
-+                Some(ptr),
-+                Layout::new::<()>(),
-+                layout,
-+                Flags(0),
-+                NumaNode::NO_NODE,
-+            )
-+        };
-     }
- }
- 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index aa2dfa9dca4c..8af7e04e3cc6 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -13,7 +13,7 @@
- use core::ptr;
- use core::ptr::NonNull;
- 
--use crate::alloc::{AllocError, Allocator};
-+use crate::alloc::{AllocError, Allocator, NumaNode};
- use crate::bindings;
- use crate::pr_warn;
- 
-@@ -56,20 +56,25 @@ fn aligned_size(new_layout: Layout) -> usize {
- 
- /// # Invariants
- ///
--/// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
-+/// One of the following: `krealloc_node`, `vrealloc_node`, `kvrealloc_node`.
- struct ReallocFunc(
--    unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut crate::ffi::c_void,
-+    unsafe extern "C" fn(
-+        *const crate::ffi::c_void,
-+        usize,
-+        u32,
-+        crate::ffi::c_int,
-+    ) -> *mut crate::ffi::c_void,
- );
- 
- impl ReallocFunc {
--    // INVARIANT: `krealloc` satisfies the type invariants.
--    const KREALLOC: Self = Self(bindings::krealloc);
-+    // INVARIANT: `krealloc_node` satisfies the type invariants.
-+    const KREALLOC: Self = Self(bindings::krealloc_node);
- 
--    // INVARIANT: `vrealloc` satisfies the type invariants.
--    const VREALLOC: Self = Self(bindings::vrealloc);
-+    // INVARIANT: `vrealloc_node` satisfies the type invariants.
-+    const VREALLOC: Self = Self(bindings::vrealloc_node);
- 
--    // INVARIANT: `kvrealloc` satisfies the type invariants.
--    const KVREALLOC: Self = Self(bindings::kvrealloc);
-+    // INVARIANT: `kvrealloc_node` satisfies the type invariants.
-+    const KVREALLOC: Self = Self(bindings::kvrealloc_node);
- 
-     /// # Safety
-     ///
-@@ -87,6 +92,7 @@ unsafe fn call(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         let size = aligned_size(layout);
-         let ptr = match ptr {
-@@ -110,7 +116,7 @@ unsafe fn call(
-         // - Those functions provide the guarantees of this function.
-         let raw_ptr = unsafe {
-             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, flags.0).cast()
-+            self.0(ptr.cast(), size, flags.0, nid.0).cast()
-         };
- 
-         let ptr = if size == 0 {
-@@ -134,9 +140,10 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
--        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
- 
-@@ -151,6 +158,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // TODO: Support alignments larger than PAGE_SIZE.
-         if layout.align() > bindings::PAGE_SIZE {
-@@ -160,7 +168,7 @@ unsafe fn realloc(
- 
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
--        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
- 
-@@ -175,6 +183,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // TODO: Support alignments larger than PAGE_SIZE.
-         if layout.align() > bindings::PAGE_SIZE {
-@@ -184,6 +193,6 @@ unsafe fn realloc(
- 
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
--        unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
-diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-index d19c06ef0498..955f8b8286fe 100644
---- a/rust/kernel/alloc/allocator_test.rs
-+++ b/rust/kernel/alloc/allocator_test.rs
-@@ -40,6 +40,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        _nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         let src = match ptr {
-             Some(src) => {
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index c386ff771d50..5c0b020fb2a4 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -4,7 +4,7 @@
- 
- #[allow(unused_imports)] // Used in doc comments.
- use super::allocator::{KVmalloc, Kmalloc, Vmalloc};
--use super::{AllocError, Allocator, Flags};
-+use super::{AllocError, Allocator, Flags, NumaNode};
- use core::alloc::Layout;
- use core::fmt;
- use core::marker::PhantomData;
-@@ -271,7 +271,7 @@ pub fn new(x: T, flags: Flags) -> Result<Self, AllocError> {
-     /// ```
-     pub fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>, A>, AllocError> {
-         let layout = Layout::new::<MaybeUninit<T>>();
--        let ptr = A::alloc(layout, flags)?;
-+        let ptr = A::alloc(layout, flags, NumaNode::NO_NODE)?;
- 
-         // INVARIANT: `ptr` is either a dangling pointer or points to memory allocated with `A`,
-         // which is sufficient in size and alignment for storing a `T`.
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 1a0dd852a468..aa5d27176d9c 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -5,7 +5,7 @@
- use super::{
-     allocator::{KVmalloc, Kmalloc, Vmalloc},
-     layout::ArrayLayout,
--    AllocError, Allocator, Box, Flags,
-+    AllocError, Allocator, Box, Flags, NumaNode,
- };
- use core::{
-     fmt,
-@@ -633,6 +633,7 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
-                 layout.into(),
-                 self.layout.into(),
-                 flags,
-+                NumaNode::NO_NODE,
-             )?
-         };
- 
-@@ -1058,7 +1059,13 @@ pub fn collect(self, flags: Flags) -> Vec<T, A> {
-             // the type invariant to be smaller than `cap`. Depending on `realloc` this operation
-             // may shrink the buffer or leave it as it is.
-             ptr = match unsafe {
--                A::realloc(Some(buf.cast()), layout.into(), old_layout.into(), flags)
-+                A::realloc(
-+                    Some(buf.cast()),
-+                    layout.into(),
-+                    old_layout.into(),
-+                    flags,
-+                    NumaNode::NO_NODE,
-+                )
-             } {
-                 // If we fail to shrink, which likely can't even happen, continue with the existing
-                 // buffer.
--- 
-2.39.2
+I posted the fix based on the above, see
+https://lore.kernel.org/all/20250805175752.690504-2-imre.deak@intel.com
 
+which is now also pushed to drm-misc-next-fixes -> drm-tip.
+
+> Fixes: 41ab92d35ccd ("drm: Make passing of format info to drm_helper_mode_fill_fb_struct() mandatory")
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/gpu/drm/omapdrm/omap_fb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
+> index 30c81e2e5d6b..42da78bcb5a6 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fb.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fb.c
+> @@ -440,7 +440,7 @@ struct drm_framebuffer *omap_framebuffer_init(struct drm_device *dev,
+>  		plane->dma_addr  = 0;
+>  	}
+>  
+> -	drm_helper_mode_fill_fb_struct(dev, fb, NULL, mode_cmd);
+> +	drm_helper_mode_fill_fb_struct(dev, fb, format, mode_cmd);
+>  
+>  	ret = drm_framebuffer_init(dev, fb, &omap_framebuffer_funcs);
+>  	if (ret) {
+> -- 
+> 2.39.5
+> 
 
