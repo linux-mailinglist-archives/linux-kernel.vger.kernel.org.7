@@ -1,174 +1,477 @@
-Return-Path: <linux-kernel+bounces-758181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6A5B1CC0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942E1B1CC11
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 20:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B8617B9B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9517236C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Aug 2025 18:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B058829C33C;
-	Wed,  6 Aug 2025 18:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F67529CB53;
+	Wed,  6 Aug 2025 18:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="USMrL2Od"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DOQaAiRL"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAACB29CB48
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9497D29C33C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Aug 2025 18:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754505645; cv=none; b=Ot8cKO+d0lVJXWURit+MlVsy7WmQKSFHRl3QvNmry+MZyKZWi5rTkMZv6ZyhTmF9WiCQ4CibRJFAzMUnfpew1zFYL2QdcgD52mfFW6eO02JEkUtQQaiOrNQSs9vfBWqeZWWGOuN05DZIP5xh1GG2ec6eJU07YxDpoQd/8aBIJlY=
+	t=1754505809; cv=none; b=H3//rScgQvT4TBOtEm9WB+FLawMpsk/3YtNqtxFUD1oArzWw2tUo96nqJOrLP6dyRrzIJRPo2sQXjV9ua962lev6qPctJwXz/Y1AqjEgeVU5I7xKslxtNRqWg/5p05gLYNJYhWP7OSfL6/xK69A84Co3G4wJzCMZdrQvauLQoUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754505645; c=relaxed/simple;
-	bh=FmgVduqyFQrrDuTkN7hPJDhYuDQHId3NQC+lreC3wvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVCq+MZO7lUw1pDbx1CBpgRftSSgVRr5k0ES1cCKc4ahS6+EDTUn6EpdU0icZjHKMAynwjA8DMNenGMI3SJPO+Bdh7J2F+NV2jatGUKHkM5pdkCzlM/T8RyxZczeN2RYlMiRykwZisiG0h65QRAExpQe21g2X/TW00pOKCCScv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=USMrL2Od; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 6 Aug 2025 11:40:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754505639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/FXfno0W+qkpNiKxLIrH/CR0MHBmoVI+HrerVsQ0Cgk=;
-	b=USMrL2Odl7Ei5b5TqPKxvz+HtGXYtu/kKIKKNcerxJkN8b2z5ic0tmfV6bChFP2sHI3jq4
-	ekTWF6YMSsjzqv8UfnHfloXaJJO57ckvtMzNvW2edwhG2ZZZhnMkzm1ExBxozG8ZY0JpST
-	KmUqbaAD2hGhdHywq49wBLXp4eYV218=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v1 2/2] KVM: arm64: nv: update CPU register PAR_EL1 after
- 'at s*'
-Message-ID: <aJOhnHCUR0Af4XJt@linux.dev>
-References: <20250806141707.3479194-1-volodymyr_babchuk@epam.com>
- <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
+	s=arc-20240116; t=1754505809; c=relaxed/simple;
+	bh=9QSVwX9oFoZVqljTyX8yt7lfkEFKxSojDWUswnbqZ7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hakHCi/zmwRhRnJnsVY9LV+98odTCxngNHIh94byyXW8AB/4TcH9+2qC+NF5WKlYd5rQxaaPtEbn4LS3xf/cNiVYRiKV/zKiI3NSzV2JeTL3ttRi8JaKL4P5oVECVLIGHHD19V5IkXBrtsD3kJERB6FuzgWQ3MfNTd74W4FQ4Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DOQaAiRL; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b099118fedso72301cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 11:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754505806; x=1755110606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hXVMjl2ENwPs+sngCAI8ptho3dmgSlq6SfHqbvBpUp0=;
+        b=DOQaAiRL5MznGPQnbdV2EpQaoz197mSfNH7bK7sUFcaJ1hxcEwoVYyhej2TWLbOify
+         VhLYNMRWOulWqnt8sQJ3DQhaB6J49H1jx5vPItaKl6D3/PFXzktz9vrdmO+ORWn7jgrh
+         8rj20d5j5ohhCrl65xP4cSJmifumCkpH4/J9Tlap0H07RUQoSaDILFSkOq1Ud6mYdlSE
+         nrU3RjEWPe9DLJRz9yU6GvWvTmH5em8CH9z6tBEc4Stf1DHpeqNg1+aG8PpFjPfL8h/t
+         KKXmcjFWvGgRCqFSQObc0HMJk3dZfUrMxtTalw4hhFMN2D+Tco62Hlb+p69m+SxF8aBg
+         L0UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754505806; x=1755110606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hXVMjl2ENwPs+sngCAI8ptho3dmgSlq6SfHqbvBpUp0=;
+        b=uPa41xFv5G2nEHkCpMOwivK5t3d0PucaBpoOJ0fueEERgCWIOTurdM97VtuhEKGKZp
+         E7gc1ZS3A8J8PSeX6Br8zZhsnDNJTtjTY+eUQ9zkF+Na5IGWJSgflJ7lHWyx62N8nWkD
+         KK42tCf32WnHsal7FYLpUlQ5VtPbYpfSKzpTI1wehcpSRYNrIVEixuz/0etv8nS5Tdzn
+         OkD5N8o4eIeGSXqU9NQHuJKcIe8BZQ42WKty12YcaKaOYVClsn03pi1QwlLcGGaISHSk
+         yEf54wNZtdcsuJWcDOosUBkQUa4T8Fcsf233U/5uy74eVMFiFeJWBXktuoxhRLdIo4YK
+         X+Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzCV2g0BhysIkC9hnNNyvWT6r1hITahD3QJenKKdyjbW2fTCBS6ZWsmcrs2/1ljFoVcHMcTfRWhSbOkOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA94c3TUJNPvqk7NKu/SpBEXkbnii9IgFRVx9hhQDkUeKmn679
+	sOWfYxVPKv6qDRwBFhxJNQ+EA5F3pUdkqq1Zuq1GUkd80R1W1u3DA8ESFYTqTyU+BOlvSIFMWiC
+	kneluAq96+bjDq+SV9GyJzNOk8cKuXPsDzq0tzwGO
+X-Gm-Gg: ASbGncsxFFJgRnH2UpePkFgByAYcNJUzDAoAK1HWy52eH60N6f0/1eTNMD2yo8LZAwD
+	N+KQqT/eik2UHjMHPXv0kNzHPxRXTLelVSmZ7TRKvM8k13PutSpnSYVZQ7WJTyPwXB1FD1gG5Bm
+	pUAIfIUehVG1O09tWYLG2jW3ih/u7Zdsr13NgAamiJDWhpxAVpUEcsR/57XK9y6VuRKpDTWJFie
+	AJFOyUaeT271qCe5cmb0cLHBzsC1rLgqn/b5Q==
+X-Google-Smtp-Source: AGHT+IH/vu3AEPEMg1lWhWr6c5i1Hk7l+MHr3ajLJbommv99ZScZpBMyjMSwyw60o5voAFBY5O9vUyZH8Zz3a0jPmgA=
+X-Received: by 2002:a05:622a:646:b0:4b0:85d7:b884 with SMTP id
+ d75a77b69052e-4b0a1f66a26mr272861cf.21.1754505805730; Wed, 06 Aug 2025
+ 11:43:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806141707.3479194-3-volodymyr_babchuk@epam.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250806155905.824388-1-surenb@google.com> <20250806155905.824388-3-surenb@google.com>
+ <01bedec6-53f8-4c1c-9c47-c943ca0f7b4b@lucifer.local>
+In-Reply-To: <01bedec6-53f8-4c1c-9c47-c943ca0f7b4b@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 6 Aug 2025 11:43:14 -0700
+X-Gm-Features: Ac12FXyS4v5I4rD9FZQ1-uYMFEt8OMTd5btwqy6XpYscekLqviMpnC9QC0UOhos
+Message-ID: <CAJuCfpGf6w5-Hxg8tb_3H+2m0JR_3NutLjd=nmN0X=cJyTz+yg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fs/proc/task_mmu: factor out proc_maps_private
+ fields used by PROCMAP_QUERY
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 02:17:55PM +0000, Volodymyr Babchuk wrote:
-> Previously this code update only vCPU's in-memory value, which is good,
-> but not enough, as there will be no context switch after exiting
-> exception handler, so in-memory value will not get into actual
-> register.
-> 
-> It worked good enough for VHE guests because KVM code tried fast path,
-> which of course updated real PAR_EL1.
-> 
-> Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
-> ---
->  arch/arm64/kvm/sys_regs.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 7b8a0a6f26468..ab2b5e261d312 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -3463,6 +3463,9 @@ static bool handle_at_s1e2(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
->  
->  	__kvm_at_s1e2(vcpu, op, p->regval);
->  
-> +	/* No context switch happened, so we need to update PAR_EL1 manually */
-> +	write_sysreg(vcpu_read_sys_reg(vcpu, PAR_EL1), par_el1);
-> +
+On Wed, Aug 6, 2025 at 11:04=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Aug 06, 2025 at 08:59:03AM -0700, Suren Baghdasaryan wrote:
+> > Refactor struct proc_maps_private so that the fields used by PROCMAP_QU=
+ERY
+> > ioctl are moved into a separate structure. In the next patch this allow=
+s
+> > ioctl to reuse some of the functions used for reading /proc/pid/maps
+> > without using file->private_data. This prevents concurrent modification
+> > of file->private_data members by ioctl and /proc/pid/maps readers.
+> >
+> > The change is pure code refactoring and has no functional changes.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> > ---
+> >  fs/proc/internal.h   | 15 ++++++----
+> >  fs/proc/task_mmu.c   | 70 ++++++++++++++++++++++----------------------
+> >  fs/proc/task_nommu.c | 14 ++++-----
+> >  3 files changed, 52 insertions(+), 47 deletions(-)
+> >
+> > diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> > index e737401d7383..d1598576506c 100644
+> > --- a/fs/proc/internal.h
+> > +++ b/fs/proc/internal.h
+> > @@ -378,16 +378,21 @@ extern void proc_self_init(void);
+> >   * task_[no]mmu.c
+> >   */
+> >  struct mem_size_stats;
+> > -struct proc_maps_private {
+> > -     struct inode *inode;
+> > -     struct task_struct *task;
+> > +
+> > +struct proc_maps_locking_ctx {
+>
+> Decent name :)
+>
+> >       struct mm_struct *mm;
+> > -     struct vma_iterator iter;
+> > -     loff_t last_pos;
+> >  #ifdef CONFIG_PER_VMA_LOCK
+> >       bool mmap_locked;
+> >       struct vm_area_struct *locked_vma;
+> >  #endif
+> > +};
+> > +
+> > +struct proc_maps_private {
+> > +     struct inode *inode;
+> > +     struct task_struct *task;
+> > +     struct vma_iterator iter;
+> > +     loff_t last_pos;
+> > +     struct proc_maps_locking_ctx lock_ctx;
+> >  #ifdef CONFIG_NUMA
+> >       struct mempolicy *task_mempolicy;
+> >  #endif
+>
+> I was going to ask why we have these in internal.h, but then noticed we h=
+ave to
+> have a nommu version of the task_mmu stuff for museum pieces and
+> why-do-they-exist arches, sigh.
+>
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index ee1e4ccd33bd..45134335e086 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -132,11 +132,11 @@ static void release_task_mempolicy(struct proc_ma=
+ps_private *priv)
+> >
+> >  #ifdef CONFIG_PER_VMA_LOCK
+> >
+> > -static void unlock_vma(struct proc_maps_private *priv)
+> > +static void unlock_vma(struct proc_maps_locking_ctx *lock_ctx)
+> >  {
+> > -     if (priv->locked_vma) {
+> > -             vma_end_read(priv->locked_vma);
+> > -             priv->locked_vma =3D NULL;
+> > +     if (lock_ctx->locked_vma) {
+> > +             vma_end_read(lock_ctx->locked_vma);
+> > +             lock_ctx->locked_vma =3D NULL;
+> >       }
+> >  }
+> >
+> > @@ -151,14 +151,14 @@ static inline bool lock_vma_range(struct seq_file=
+ *m,
+> >        * walking the vma tree under rcu read protection.
+> >        */
+> >       if (m->op !=3D &proc_pid_maps_op) {
+> > -             if (mmap_read_lock_killable(priv->mm))
+> > +             if (mmap_read_lock_killable(priv->lock_ctx.mm))
+> >                       return false;
+> >
+> > -             priv->mmap_locked =3D true;
+> > +             priv->lock_ctx.mmap_locked =3D true;
+> >       } else {
+> >               rcu_read_lock();
+> > -             priv->locked_vma =3D NULL;
+> > -             priv->mmap_locked =3D false;
+> > +             priv->lock_ctx.locked_vma =3D NULL;
+> > +             priv->lock_ctx.mmap_locked =3D false;
+> >       }
+> >
+> >       return true;
+> > @@ -166,10 +166,10 @@ static inline bool lock_vma_range(struct seq_file=
+ *m,
+> >
+> >  static inline void unlock_vma_range(struct proc_maps_private *priv)
+> >  {
+>
+> Not sure why we have unlock_vma() parameterised by proc_maps_locking_ctx =
+but
+> this is parameerised by proc_maps_private?
+>
+> Seems more consistent to have both parameterised by proc_maps_locking_ctx=
+.
 
-Ok, this had me thoroughly confused for a moment. The bug is actually in
-kvm_write_sys_reg() which is supposed to update the sysreg value when
-things are loaded on the CPU. __kvm_at_s1e2() is doing the right thing
-by calling this accessor.
+True, we can pass just proc_maps_locking_ctx to both lock_vma_range()
+and unlock_vma_range(). Will update.
 
-For registers like PAR_EL1 that don't have an EL2->EL1 mapping we assume
-they belong to the EL1 context and thus are in-memory when in a hyp
-context. TPIDR(RO)_EL0 is similarly affected.
+>
+> Maybe we'd want lock() forms this way too for consistency?
+>
+> > -     if (priv->mmap_locked) {
+> > -             mmap_read_unlock(priv->mm);
+> > +     if (priv->lock_ctx.mmap_locked) {
+> > +             mmap_read_unlock(priv->lock_ctx.mm);
+> >       } else {
+> > -             unlock_vma(priv);
+> > +             unlock_vma(&priv->lock_ctx);
+> >               rcu_read_unlock();
+> >       }
+> >  }
+> > @@ -179,13 +179,13 @@ static struct vm_area_struct *get_next_vma(struct=
+ proc_maps_private *priv,
+> >  {
+> >       struct vm_area_struct *vma;
+> >
+>
+> We reference priv->lock_ctx 3 times here, either extract as helper var or=
+ pass
+> in direct perhaps?
+>
+> > -     if (priv->mmap_locked)
+> > +     if (priv->lock_ctx.mmap_locked)
+> >               return vma_next(&priv->iter);
+> >
+> > -     unlock_vma(priv);
+> > -     vma =3D lock_next_vma(priv->mm, &priv->iter, last_pos);
+> > +     unlock_vma(&priv->lock_ctx);
+> > +     vma =3D lock_next_vma(priv->lock_ctx.mm, &priv->iter, last_pos);
+> >       if (!IS_ERR_OR_NULL(vma))
+> > -             priv->locked_vma =3D vma;
+> > +             priv->lock_ctx.locked_vma =3D vma;
+> >
+> >       return vma;
+> >  }
+> > @@ -193,14 +193,14 @@ static struct vm_area_struct *get_next_vma(struct=
+ proc_maps_private *priv,
+> >  static inline bool fallback_to_mmap_lock(struct proc_maps_private *pri=
+v,
+> >                                        loff_t pos)
+> >  {
+>
+> (Also)
+>
+> We reference priv->lock_ctx 3 times here, either extract as helper var or=
+ pass
+> in direct perhaps?
+>
+> > -     if (priv->mmap_locked)
+> > +     if (priv->lock_ctx.mmap_locked)
+> >               return false;
+> >
+> >       rcu_read_unlock();
+> > -     mmap_read_lock(priv->mm);
+> > +     mmap_read_lock(priv->lock_ctx.mm);
+> >       /* Reinitialize the iterator after taking mmap_lock */
+> >       vma_iter_set(&priv->iter, pos);
+> > -     priv->mmap_locked =3D true;
+> > +     priv->lock_ctx.mmap_locked =3D true;
+> >
+> >       return true;
+> >  }
+> > @@ -210,12 +210,12 @@ static inline bool fallback_to_mmap_lock(struct p=
+roc_maps_private *priv,
+> >  static inline bool lock_vma_range(struct seq_file *m,
+> >                                 struct proc_maps_private *priv)
+> >  {
+> > -     return mmap_read_lock_killable(priv->mm) =3D=3D 0;
+> > +     return mmap_read_lock_killable(priv->lock_ctx.mm) =3D=3D 0;
+> >  }
+> >
+> >  static inline void unlock_vma_range(struct proc_maps_private *priv)
+> >  {
+> > -     mmap_read_unlock(priv->mm);
+> > +     mmap_read_unlock(priv->lock_ctx.mm);
+> >  }
+> >
+> >  static struct vm_area_struct *get_next_vma(struct proc_maps_private *p=
+riv,
+> > @@ -258,7 +258,7 @@ static struct vm_area_struct *proc_get_vma(struct s=
+eq_file *m, loff_t *ppos)
+> >               *ppos =3D vma->vm_end;
+> >       } else {
+> >               *ppos =3D SENTINEL_VMA_GATE;
+> > -             vma =3D get_gate_vma(priv->mm);
+> > +             vma =3D get_gate_vma(priv->lock_ctx.mm);
+> >       }
+> >
+> >       return vma;
+> > @@ -278,7 +278,7 @@ static void *m_start(struct seq_file *m, loff_t *pp=
+os)
+> >       if (!priv->task)
+> >               return ERR_PTR(-ESRCH);
+> >
+> > -     mm =3D priv->mm;
+> > +     mm =3D priv->lock_ctx.mm;
+> >       if (!mm || !mmget_not_zero(mm)) {
+> >               put_task_struct(priv->task);
+> >               priv->task =3D NULL;
+> > @@ -318,7 +318,7 @@ static void *m_next(struct seq_file *m, void *v, lo=
+ff_t *ppos)
+> >  static void m_stop(struct seq_file *m, void *v)
+> >  {
+> >       struct proc_maps_private *priv =3D m->private;
+> > -     struct mm_struct *mm =3D priv->mm;
+> > +     struct mm_struct *mm =3D priv->lock_ctx.mm;
+> >
+> >       if (!priv->task)
+> >               return;
+> > @@ -339,9 +339,9 @@ static int proc_maps_open(struct inode *inode, stru=
+ct file *file,
+> >               return -ENOMEM;
+> >
+> >       priv->inode =3D inode;
+> > -     priv->mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > -     if (IS_ERR_OR_NULL(priv->mm)) {
+> > -             int err =3D priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> > +     priv->lock_ctx.mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > +     if (IS_ERR_OR_NULL(priv->lock_ctx.mm)) {
+> > +             int err =3D priv->lock_ctx.mm ? PTR_ERR(priv->lock_ctx.mm=
+) : -ESRCH;
+> >
+> >               seq_release_private(inode, file);
+> >               return err;
+> > @@ -355,8 +355,8 @@ static int proc_map_release(struct inode *inode, st=
+ruct file *file)
+> >       struct seq_file *seq =3D file->private_data;
+> >       struct proc_maps_private *priv =3D seq->private;
+> >
+> > -     if (priv->mm)
+> > -             mmdrop(priv->mm);
+> > +     if (priv->lock_ctx.mm)
+> > +             mmdrop(priv->lock_ctx.mm);
+> >
+> >       return seq_release_private(inode, file);
+> >  }
+> > @@ -610,7 +610,7 @@ static int do_procmap_query(struct proc_maps_privat=
+e *priv, void __user *uarg)
+> >       if (!!karg.build_id_size !=3D !!karg.build_id_addr)
+> >               return -EINVAL;
+> >
+> > -     mm =3D priv->mm;
+> > +     mm =3D priv->lock_ctx.mm;
+> >       if (!mm || !mmget_not_zero(mm))
+> >               return -ESRCH;
+> >
+> > @@ -1311,7 +1311,7 @@ static int show_smaps_rollup(struct seq_file *m, =
+void *v)
+> >  {
+> >       struct proc_maps_private *priv =3D m->private;
+> >       struct mem_size_stats mss =3D {};
+> > -     struct mm_struct *mm =3D priv->mm;
+> > +     struct mm_struct *mm =3D priv->lock_ctx.mm;
+>
+> Nit, but maybe add a
+>
+>         struct proc_maps_locking_ctx *lock_ctx =3D priv->lock_ctx;
+>
+> Here to reduce 'priv->lock_ctx' stuff?
 
-This is a bit of an ugly hack, but something like the following should
-get things working if you're able to test it:
+Yep, will do that in all the places. Thanks!
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index ad2548477257..32f8d1de8f1a 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -149,6 +149,22 @@ static bool get_el2_to_el1_mapping(unsigned int reg,
- 	}
- }
- 
-+/*
-+ * Special-cased registers that do not have an ELx mapping and are always
-+ * loaded on the CPU.
-+ */
-+static bool reg_has_elx_mapping(int reg)
-+{
-+	switch (reg) {
-+	case TPIDR_EL0:
-+	case TPIDRRO_EL0:
-+	case PAR_EL1:
-+		return false;
-+	default:
-+		return true;
-+	}
-+}
-+
- u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
- {
- 	u64 val = 0x8badf00d8badf00d;
-@@ -158,6 +174,9 @@ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
- 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
- 		goto memory_read;
- 
-+	if (!reg_has_elx_mapping(reg))
-+		goto sysreg_read;
-+
- 	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
- 		if (!is_hyp_ctxt(vcpu))
- 			goto memory_read;
-@@ -204,6 +223,7 @@ u64 vcpu_read_sys_reg(const struct kvm_vcpu *vcpu, int reg)
- 	if (unlikely(is_hyp_ctxt(vcpu)))
- 		goto memory_read;
- 
-+sysreg_read:
- 	if (__vcpu_read_sys_reg_from_cpu(reg, &val))
- 		return val;
- 
-@@ -219,6 +239,9 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
- 	if (!vcpu_get_flag(vcpu, SYSREGS_ON_CPU))
- 		goto memory_write;
- 
-+	if (!reg_has_elx_mapping(reg))
-+		goto sysreg_write;
-+
- 	if (unlikely(get_el2_to_el1_mapping(reg, &el1r, &xlate))) {
- 		if (!is_hyp_ctxt(vcpu))
- 			goto memory_write;
-@@ -259,6 +282,7 @@ void vcpu_write_sys_reg(struct kvm_vcpu *vcpu, u64 val, int reg)
- 	if (unlikely(is_hyp_ctxt(vcpu)))
- 		goto memory_write;
- 
-+sysreg_write:
- 	if (__vcpu_write_sys_reg_to_cpu(val, reg))
- 		return;
- 
--- 
-Thanks,
-Oliver
+>
+> >       struct vm_area_struct *vma;
+> >       unsigned long vma_start =3D 0, last_vma_end =3D 0;
+> >       int ret =3D 0;
+> > @@ -1456,9 +1456,9 @@ static int smaps_rollup_open(struct inode *inode,=
+ struct file *file)
+> >               goto out_free;
+> >
+> >       priv->inode =3D inode;
+> > -     priv->mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > -     if (IS_ERR_OR_NULL(priv->mm)) {
+> > -             ret =3D priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> > +     priv->lock_ctx.mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > +     if (IS_ERR_OR_NULL(priv->lock_ctx.mm)) {
+> > +             ret =3D priv->lock_ctx.mm ? PTR_ERR(priv->lock_ctx.mm) : =
+-ESRCH;
+> >
+> >               single_release(inode, file);
+> >               goto out_free;
+> > @@ -1476,8 +1476,8 @@ static int smaps_rollup_release(struct inode *ino=
+de, struct file *file)
+> >       struct seq_file *seq =3D file->private_data;
+> >       struct proc_maps_private *priv =3D seq->private;
+> >
+> > -     if (priv->mm)
+> > -             mmdrop(priv->mm);
+> > +     if (priv->lock_ctx.mm)
+> > +             mmdrop(priv->lock_ctx.mm);
+> >
+> >       kfree(priv);
+> >       return single_release(inode, file);
+> > diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+> > index 59bfd61d653a..d362919f4f68 100644
+> > --- a/fs/proc/task_nommu.c
+> > +++ b/fs/proc/task_nommu.c
+> > @@ -204,7 +204,7 @@ static void *m_start(struct seq_file *m, loff_t *pp=
+os)
+> >       if (!priv->task)
+> >               return ERR_PTR(-ESRCH);
+> >
+> > -     mm =3D priv->mm;
+> > +     mm =3D priv->lock_ctx.mm;
+> >       if (!mm || !mmget_not_zero(mm)) {
+> >               put_task_struct(priv->task);
+> >               priv->task =3D NULL;
+> > @@ -226,7 +226,7 @@ static void *m_start(struct seq_file *m, loff_t *pp=
+os)
+> >  static void m_stop(struct seq_file *m, void *v)
+> >  {
+> >       struct proc_maps_private *priv =3D m->private;
+> > -     struct mm_struct *mm =3D priv->mm;
+>
+> (same as above, I reviewed this upsidedown :P)
+>
+> NIT, but seems sensible to have a
+>
+>         struct proc_maps_locking_ctx *lock_ctx =3D priv->lock_ctx;
+>
+> Here so we can avoid the ugly 'priv->lock_ctx' stuff below.
+>
+> > +     struct mm_struct *mm =3D priv->lock_ctx.mm;
+> >
+> >       if (!priv->task)
+> >               return;
+> > @@ -259,9 +259,9 @@ static int maps_open(struct inode *inode, struct fi=
+le *file,
+> >               return -ENOMEM;
+> >
+> >       priv->inode =3D inode;
+> > -     priv->mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > -     if (IS_ERR_OR_NULL(priv->mm)) {
+> > -             int err =3D priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> > +     priv->lock_ctx.mm =3D proc_mem_open(inode, PTRACE_MODE_READ);
+> > +     if (IS_ERR_OR_NULL(priv->lock_ctx.mm)) {
+> > +             int err =3D priv->lock_ctx.mm ? PTR_ERR(priv->lock_ctx.mm=
+) : -ESRCH;
+>
+> >
+> >               seq_release_private(inode, file);
+> >               return err;
+> > @@ -276,8 +276,8 @@ static int map_release(struct inode *inode, struct =
+file *file)
+> >       struct seq_file *seq =3D file->private_data;
+> >       struct proc_maps_private *priv =3D seq->private;
+> >
+> > -     if (priv->mm)
+> > -             mmdrop(priv->mm);
+> > +     if (priv->lock_ctx.mm)
+> > +             mmdrop(priv->lock_ctx.mm);
+> >
+> >       return seq_release_private(inode, file);
+> >  }
+> > --
+> > 2.50.1.565.gc32cd1483b-goog
+> >
 
