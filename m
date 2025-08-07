@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-759548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A197B1DEF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:44:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CDDB1DEFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AA972445A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11A31AA1BE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD8D25B1C7;
-	Thu,  7 Aug 2025 21:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4119426CE3E;
+	Thu,  7 Aug 2025 21:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vObA1twg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Up+I9puW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DA02367D2;
-	Thu,  7 Aug 2025 21:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB9924DD17;
+	Thu,  7 Aug 2025 21:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754603035; cv=none; b=XwR3c8jtQctoqnAo0xSqlbMiMiZ5+LKE1/v+wkRv0J1kJBxsTarlLvzn6Ee+weJE7QowdgKtrGV/rYKYlTVAjk6lI2dy3/foKeFupeDc+9+a9Rw0Shw7uUFI2759E7M4CszPN/F/5RbNWHfcDJuFCLMKmYuhgOqNjozCtg7KeZc=
+	t=1754603043; cv=none; b=JHFN9fV0qgtxkM/Tm9/NlHFwvkAoAt05K4cXjpVoIpAJsImScwaRazyGuEKieV1nR65TiWGo7PWTSBDBVwpQkHkzrFxVjyTZWdWF60A3tDKx3ejxzfQSTK/AcKYeW/YiVqPWfUEgBAvhMhArEtBGvSwon1a/gV6naUYtA7GWXzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754603035; c=relaxed/simple;
-	bh=DaX4/z7CUYrNY4FEsHPilzzpCOERW6g7IHoDkfCmaxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=acRaOzgSgs02KZs3yGAN4Zsm16QsbLw41clKvG1G17ovpBhnfNhscIGx1Pale9Wez9V3j1EUrgLNcDgJEyNrlLPEq9nnJdnNBL3XME1NkxFs+5sM9LdPHwZ+U4ps7eacYYJJ8FpQ3nMgY90tqueqeC6psbaQftx4MWssIth3y7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vObA1twg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEF2C4CEEB;
-	Thu,  7 Aug 2025 21:43:55 +0000 (UTC)
+	s=arc-20240116; t=1754603043; c=relaxed/simple;
+	bh=4Hhu1mY/9d5fc4oL/G5cBEXvFuP6pZFVnFE808w7EtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u28aJwVUX0XfmMafXnd2hBroGXPyWSyxUa0m/loDf+GkazkBkfWWDpLIQWE+G5gE/XctEBX2LLkcwrUvSUTLgPj2sU+L0pgLtGLQUK/pmabJ1WVUUY1d3aIcS5w2V/j6bRWfRApUgCjk+qFh59D/fZOom7Kv4CfxJLAF4PmvgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Up+I9puW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E88C0C4CEEB;
+	Thu,  7 Aug 2025 21:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754603035;
-	bh=DaX4/z7CUYrNY4FEsHPilzzpCOERW6g7IHoDkfCmaxQ=;
+	s=k20201202; t=1754603043;
+	bh=4Hhu1mY/9d5fc4oL/G5cBEXvFuP6pZFVnFE808w7EtU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=vObA1twggsrMcIsdbwBiex5bl+aOqlOkzTXuUsPb61S3rpA1b/VpMc34/d+UtwyWk
-	 7LKRr4mYLLWQ5F50uJj252J6Ty03StEECCrnex4rQeBaAXnuC/xfBZi0udFDX6o19i
-	 QoTY+kKeVZL+w4JQfs1T2VrvsPySXn4L6OLLqTpvVgbURciZ1tSa+pT6E4kOpoYAH9
-	 U89/d6AUkMT2eLtDBEcFYKAponI7aXMHQLjMAN/9TIOUauVOuF8zOJ397EDAWXOW8C
-	 Dlf0Ce/nObE4S/e8qJIf+MrjC5JOiwnYnVZnGz+EF88UQQC4AbwsqtMWAlp0RnHIjG
-	 y7QMZkhKihIgQ==
+	b=Up+I9puWM3oEE1Q/1CwuKRzUqxg3kHpLkqWTEJjBti0j9cgoD95zMXxI9m5o/e0Ai
+	 PGbhwjMfOKggtYcltqjPAGeJQTg9haPoGMEQfGAg1OKLz6aTwuHGYCThOKyh+kJEW1
+	 ceVI8s/b3s2vO18QACXme5GoIH2GDNDjZVjPBp0mTXpezDFBN5bPznUWiu1pp3/HiH
+	 cJQvbI3SJvxcm+3+CX5RZBLr1kst7v5yP2IahcZ0eEG7ilaovLW0ZCCqn3+BXwhner
+	 UF+x353kaUz6OaICKFULCE++0QHgMHiHmRQ8tOeycYE/UJwj2eEdU4yseZIbC2wwA5
+	 D7Ft8yp9p0QHQ==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-usb@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb: Drop duplicate nvidia,tegra20-ehci.txt
-Date: Thu,  7 Aug 2025 16:43:50 -0500
-Message-ID: <20250807214351.4172243-1-robh@kernel.org>
+Subject: [PATCH] ASoC: dt-bindings: Drop imx-audio-sgtl5000.txt
+Date: Thu,  7 Aug 2025 16:43:57 -0500
+Message-ID: <20250807214358.4172451-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,44 +65,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The nvidia,tegra20-ehci binding is already documented in
-ci-hdrc-usb2.yaml, so drop the old text binding.
+The "fsl,imx-audio-sgtl5000" binding is already covered by
+fsl-asoc-card.yaml, so remove the old text binding.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/usb/nvidia,tegra20-ehci.txt      | 23 -------------------
- 1 file changed, 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+ .../bindings/sound/imx-audio-sgtl5000.txt     | 56 -------------------
+ 1 file changed, 56 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/imx-audio-sgtl5000.txt
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+diff --git a/Documentation/devicetree/bindings/sound/imx-audio-sgtl5000.txt b/Documentation/devicetree/bindings/sound/imx-audio-sgtl5000.txt
 deleted file mode 100644
-index f60785f73d3d..000000000000
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+index 2f89db88fd57..000000000000
+--- a/Documentation/devicetree/bindings/sound/imx-audio-sgtl5000.txt
 +++ /dev/null
-@@ -1,23 +0,0 @@
--Tegra SOC USB controllers
+@@ -1,56 +0,0 @@
+-Freescale i.MX audio complex with SGTL5000 codec
 -
--The device node for a USB controller that is part of a Tegra
--SOC is as described in the document "Open Firmware Recommended
--Practice : Universal Serial Bus" with the following modifications
--and additions :
+-Required properties:
 -
--Required properties :
-- - compatible : For Tegra20, must contain "nvidia,tegra20-ehci".
--   For Tegra30, must contain "nvidia,tegra30-ehci".  Otherwise, must contain
--   "nvidia,<chip>-ehci" plus at least one of the above, where <chip> is
--   tegra114, tegra124, tegra132, or tegra210.
-- - nvidia,phy : phandle of the PHY that the controller is connected to.
-- - clocks : Must contain one entry, for the module clock.
--   See ../clocks/clock-bindings.txt for details.
-- - resets : Must contain an entry for each entry in reset-names.
--   See ../reset/reset.txt for details.
-- - reset-names : Must include the following entries:
--   - usb
+-  - compatible		: "fsl,imx-audio-sgtl5000"
 -
--Optional properties:
-- - nvidia,needs-double-reset : boolean is to be set for some of the Tegra20
--   USB ports, which need reset twice due to hardware issues.
+-  - model		: The user-visible name of this sound complex
+-
+-  - ssi-controller	: The phandle of the i.MX SSI controller
+-
+-  - audio-codec		: The phandle of the SGTL5000 audio codec
+-
+-  - audio-routing	: A list of the connections between audio components.
+-			  Each entry is a pair of strings, the first being the
+-			  connection's sink, the second being the connection's
+-			  source. Valid names could be power supplies, SGTL5000
+-			  pins, and the jacks on the board:
+-
+-			  Power supplies:
+-			   * Mic Bias
+-
+-			  SGTL5000 pins:
+-			   * MIC_IN
+-			   * LINE_IN
+-			   * HP_OUT
+-			   * LINE_OUT
+-
+-			  Board connectors:
+-			   * Mic Jack
+-			   * Line In Jack
+-			   * Headphone Jack
+-			   * Line Out Jack
+-			   * Ext Spk
+-
+-  - mux-int-port	: The internal port of the i.MX audio muxer (AUDMUX)
+-
+-  - mux-ext-port	: The external port of the i.MX audio muxer
+-
+-Note: The AUDMUX port numbering should start at 1, which is consistent with
+-hardware manual.
+-
+-Example:
+-
+-sound {
+-	compatible = "fsl,imx51-babbage-sgtl5000",
+-		     "fsl,imx-audio-sgtl5000";
+-	model = "imx51-babbage-sgtl5000";
+-	ssi-controller = <&ssi1>;
+-	audio-codec = <&sgtl5000>;
+-	audio-routing =
+-		"MIC_IN", "Mic Jack",
+-		"Mic Jack", "Mic Bias",
+-		"Headphone Jack", "HP_OUT";
+-	mux-int-port = <1>;
+-	mux-ext-port = <3>;
+-};
 -- 
 2.47.2
 
