@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-758994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB327B1D6DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1751EB1D6DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE88724C72
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E58A583747
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D0627990C;
-	Thu,  7 Aug 2025 11:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E532797A4;
+	Thu,  7 Aug 2025 11:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXguS2hb"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kcevrr2H";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kcevrr2H"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B7279359;
-	Thu,  7 Aug 2025 11:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9108610957
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754566999; cv=none; b=GZVn3a+ennqSwOw9QtMD5+eQ8GK2+dBukcSRuJmByDZAfnNlzuqUPKDnXzVdARvaUve8Wx1yTDiTmtYVNzF2P/pFNr7c1SFsnxGoXcBXcbEU7n/S1IOOQLKuOB4KURaD9Azb2dLWZQ1Nh78k/DP3APLSAsiask1qmJWF93zP3dM=
+	t=1754567093; cv=none; b=r0UIgU9QiVtdbasiDR8MbZn8BBEHC+jHonZbUJPsVSyX+isFnIhCHBEv/AiF4I+2Ry2F1tIqtS44woL+hNln4TFJloCg7CEtKxaBSCWE5PQ69qqGXQxPpfSLIYJQI/IBH8nH9jRvXv9MiLqWmeiZYm1QnHwavl9mnCbYSJBZ5MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754566999; c=relaxed/simple;
-	bh=w6QdDiq1J/nY2DgtOOLTOlq986UtCAp+weFPE8PWT8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sPsNF44hGtfBZDQ8ewIfubFxUNQ1dBYOCpy9gipepW7G58MoxjhKemDiN0b73PfKz/Ht7QDkBi/ubnpw2GLAqfO68PHNUTDecyIiQoCYH0DQRGDXFcfrOEXzMiBi3ISvLaGdtDPgIrvbZMNRWYAFK8ts6h9Bg/tZkCEmKIICGTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXguS2hb; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23c8f179e1bso11436305ad.1;
-        Thu, 07 Aug 2025 04:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754566997; x=1755171797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdlVCkRqpyT4stO0yYsnNwcVWyXxNhQoiEcxn+xkM94=;
-        b=OXguS2hbcJN7pX4HLj1zV+4WA4/qc8MweFVFR8ceV7jYhN8UAuMh7uyoQLyvUVaktQ
-         jaS6lyhVhxgd839fB+70ho5EsjiUOJtod+xR6aKz286FJ0dBePGZjEvwc/RmMWmjdStO
-         MrQ4QCy0XLS0V0TegRnQ19FjJ9PlAzh1M3mFrDB+B9S/PXOzBNdu02sDE8mMjAR/Ax4m
-         gkbanSfaG8XSMNYvg/CMbxPtFlFSH1IwCcgI3yk9Wvcpn1ImWd784GuFlYj9rJwzWU27
-         K7ycofqW5H8R4IG4OIJJBXkWvmqcL+Jbt0njW81eOaLjyAGpCQ31kW1WtIAr029kdGKV
-         cI6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754566997; x=1755171797;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdlVCkRqpyT4stO0yYsnNwcVWyXxNhQoiEcxn+xkM94=;
-        b=VTsxZVKrxpaQ5ArZLZCmtG+bX84FKXDdTzppwsrE+Nd+db8kQTmu1RWj9omj26OdHJ
-         pd92g01dyWWMEykc28hzly0Tp5bW7q/rJ+YhTdDLQRuAgy+0F/3SzsL7j1q8XqOsqKxL
-         aNxpQASt2tNJ2AKvUeFTzIgHf9U+P6uVeB/iAZXnSvMSE9yKoUR3OLhN+/0OtTio/KiP
-         YQ+3M+ViE1wsWKC15nH4Nv6FMLguGh5Lttcl6OpIL+ZW1b0X7UxVHQqyPJf7Rt5hB8Mc
-         /cHmLPYriyd2NHjUjkFqWUj+MADKlnDewjU4RRC17c5aI1YoNNmREHS8K+S/uvQt5SEX
-         93Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoggBX5Ye2BZh644GQ9WkCOfo9N+DZ1wYiUK2XteViML0MB+t+T5wTkF65USghEw2o92mC1kdwLtYo0uA=@vger.kernel.org, AJvYcCXFaxqyHmRkswYsW7uRROEUARhciTAT3e0H/BZRb92486+c8ubE/KHf7xcjT+EaDdiBjhrjQA7RJsKKSgXPw8gI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQB/ptHDaBW7IvMH7qkBp085MRAvBa9DO6BLrElhPtz+4aYElU
-	Gan5vIeDtu3nLvaOLk7LIuOKgAcCNb4CJefKFgojD74F5QKVPmPVprRA
-X-Gm-Gg: ASbGncu4m28v3Vqo0rJEfFl15NMaBjN4vivY6qhHJyoqfN/Oy3ZH9V8vQaSLOBQIXdx
-	rxDwHLvVjECZCWU6RHIj+UHH+f/2i2mupexNwxsbJJNkIttgqNyJVCesl2XpwJyyBzttNSuocn+
-	LHDpOFIfDYIr/A4fL42mqYsMtXolnmyzLwI4JAdwmufYW5DNzWejjQ9jhQWaqrAGcphUukSbHVu
-	gHQxDHy+dZVGRadtUiB1nQo9IZNUpEKVZ6JPM2j9xGNYM0p+9qGvubH1a9tSrYCNQ4fhMOgLQ2K
-	7CGGPd6OPRvGvHeuARUiTHPo0Xh94gmNa+2WFaU94hmgzDxJ5eTvyXWlhfRPCtNz0SSpKeQBlt8
-	wrrLbn2GonUZ10X9ykNWemdOyvrvfzBYe
-X-Google-Smtp-Source: AGHT+IE2hsYekMhLXI33VtBrvQam/zjpy9H9MOsiwWs+FoHJi4dQMfSq1UkXnmhWZTzFkbdUBV8TIg==
-X-Received: by 2002:a17:902:f687:b0:240:aa0:1584 with SMTP id d9443c01a7336-242a0b8bc9fmr89417695ad.38.1754566996623;
-        Thu, 07 Aug 2025 04:43:16 -0700 (PDT)
-Received: from server.. ([103.251.57.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f21c65sm185729405ad.73.2025.08.07.04.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:43:16 -0700 (PDT)
-From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-To: anshuman.khandual@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	shuah@kernel.org,
-	broonie@kernel.org,
-	yeoreum.yun@arm.com,
-	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Subject: [PATCH v2] selftests: arm64: Fix -Waddress warning in tpidr2 test
-Date: Thu,  7 Aug 2025 17:12:29 +0530
-Message-ID: <20250807114247.5915-2-reddybalavignesh9979@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250807114247.5915-1-reddybalavignesh9979@gmail.com>
-References: <005af416-66fa-4222-964d-e20bd2eccb7f@arm.com>
- <20250807114247.5915-1-reddybalavignesh9979@gmail.com>
+	s=arc-20240116; t=1754567093; c=relaxed/simple;
+	bh=L7hfLRAJOLHOus5/zQlDJVfnXgYCJqEMBHsaSyGNiY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XYXOAcfkDyFOj0Ji/mIi7webzCje3NkuNHxy2rqZ/INnHujz1Wi9xEfZrUOmFqBSbWy7tgCYhrfpUNLntJx6ylyT53+pyZ9Vv2mdFv0TN0Zg8XsbR1j1UmxbM6D5fXYoFrcsoSUdND09Uu5wfbkLVDkKRT9r9CZps4kk7TRtp1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kcevrr2H; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kcevrr2H; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C02821FCE6;
+	Thu,  7 Aug 2025 11:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1754567089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=tOpR+gfvCF2CLA4th25JsmJoupBuWS5PLe2u+qNugnc=;
+	b=kcevrr2HEuQbI4T4G/XnwPf57ViwUAcL5GQKBLcRJI9XKfE16anKkcBA24uszr+yM4GPA7
+	kghjasjU2jxeGoj+K/oblgDq2+zsz9tkd4cxfEzNHEqsinVBIwjCjDO4G4KUygx0NnYV8v
+	reYRGsFl38lRBZ78qbQqW5l1rmpAtLg=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1754567089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=tOpR+gfvCF2CLA4th25JsmJoupBuWS5PLe2u+qNugnc=;
+	b=kcevrr2HEuQbI4T4G/XnwPf57ViwUAcL5GQKBLcRJI9XKfE16anKkcBA24uszr+yM4GPA7
+	kghjasjU2jxeGoj+K/oblgDq2+zsz9tkd4cxfEzNHEqsinVBIwjCjDO4G4KUygx0NnYV8v
+	reYRGsFl38lRBZ78qbQqW5l1rmpAtLg=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8DE513969;
+	Thu,  7 Aug 2025 11:44:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RCAdLbGRlGg5ZgAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Thu, 07 Aug 2025 11:44:49 +0000
+From: David Sterba <dsterba@suse.com>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	ebiggers@kernel.org,
+	herbert@gondor.apana.org.au,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH] lib/lzo: add unlikely hints to overrun checks
+Date: Thu,  7 Aug 2025 13:44:44 +0200
+Message-ID: <20250807114444.1341921-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,43 +79,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-Resolve compiler warning about always true condition in ksft_test_result
-in tpidr2, passing actual function.
+The NEED_* macros do an implicit goto in case the safety bounds checks
+fail. Add the unlikely hints as this is the error case and not a hot
+path. The final assembly is slightly shorter and some jumps got
+reordered according to the hints.
 
-This silences -Waddress warning while maintaining test functionality.
+   text    data     bss     dec     hex filename
+   2294      16       0    2310     906 pre/lzo1x_decompress_safe.o
+   2277      16       0    2293     8f5 post/lzo1x_decompress_safe.o
 
-Fixes compiler warning (similar for other functions):
-warning: the address of 'write_read' will always evaluate as
-'true' [-Waddress]
+   text    data     bss     dec     hex filename
+   3444      48       0    3492     da4 pre/lzo1x_compress_safe.o
+   3372      48       0    3420     d5c post/lzo1x_compress_safe.o
 
-Fixes: 6d80cb73131d ("kselftest/arm64: Convert tpidr2 test to use kselftest.h")
-
-Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 ---
- tools/testing/selftests/arm64/abi/tpidr2.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ lib/lzo/lzo1x_compress.c        | 2 +-
+ lib/lzo/lzo1x_decompress_safe.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/arm64/abi/tpidr2.c b/tools/testing/selftests/arm64/abi/tpidr2.c
-index f58a9f89b952..4c89ab0f1010 100644
---- a/tools/testing/selftests/arm64/abi/tpidr2.c
-+++ b/tools/testing/selftests/arm64/abi/tpidr2.c
-@@ -227,10 +227,10 @@ int main(int argc, char **argv)
- 	ret = open("/proc/sys/abi/sme_default_vector_length", O_RDONLY, 0);
- 	if (ret >= 0) {
- 		ksft_test_result(default_value(), "default_value\n");
--		ksft_test_result(write_read, "write_read\n");
--		ksft_test_result(write_sleep_read, "write_sleep_read\n");
--		ksft_test_result(write_fork_read, "write_fork_read\n");
--		ksft_test_result(write_clone_read, "write_clone_read\n");
-+		ksft_test_result(write_read(), "write_read\n");
-+		ksft_test_result(write_sleep_read(), "write_sleep_read\n");
-+		ksft_test_result(write_fork_read(), "write_fork_read\n");
-+		ksft_test_result(write_clone_read(), "write_clone_read\n");
+diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+index 7b10ca86a89300..01586af2347f5e 100644
+--- a/lib/lzo/lzo1x_compress.c
++++ b/lib/lzo/lzo1x_compress.c
+@@ -26,7 +26,7 @@
+ #define HAVE_OP(x) 1
+ #endif
  
- 	} else {
- 		ksft_print_msg("SME support not present\n");
+-#define NEED_OP(x) if (!HAVE_OP(x)) goto output_overrun
++#define NEED_OP(x) if (unlikely(!HAVE_OP(x))) goto output_overrun
+ 
+ static noinline int
+ LZO_SAFE(lzo1x_1_do_compress)(const unsigned char *in, size_t in_len,
+diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
+index c94f4928e1888b..318abb82c63d2c 100644
+--- a/lib/lzo/lzo1x_decompress_safe.c
++++ b/lib/lzo/lzo1x_decompress_safe.c
+@@ -22,9 +22,9 @@
+ 
+ #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
+ #define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
+-#define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
+-#define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
+-#define TEST_LB(m_pos)  if ((m_pos) < out) goto lookbehind_overrun
++#define NEED_IP(x)      if (unlikely(!HAVE_IP(x))) goto input_overrun
++#define NEED_OP(x)      if (unlikely(!HAVE_OP(x))) goto output_overrun
++#define TEST_LB(m_pos)  if (unlikely((m_pos) < out)) goto lookbehind_overrun
+ 
+ /* This MAX_255_COUNT is the maximum number of times we can add 255 to a base
+  * count without overflowing an integer. The multiply will overflow when
 -- 
-2.43.0
+2.50.1
 
 
