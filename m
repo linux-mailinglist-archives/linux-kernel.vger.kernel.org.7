@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-759028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB41B1D73F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:10:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B1FB1D74B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA9F583CCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA89117AE7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E5824337B;
-	Thu,  7 Aug 2025 12:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E42C245016;
+	Thu,  7 Aug 2025 12:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="EFIaPnUu";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="5eg+fR6M"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bXhySOjA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9EB239E7F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1795C43AA4;
+	Thu,  7 Aug 2025 12:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568626; cv=none; b=IvVhhK6Or1Yb3371DFoNsou4Onr4/PJYDDRwyxM9OV2ObNVIkZb8YJqImwHMNgc4Dq9OT5q+Gmft2BrABGJyqVm267LrH0ZjTP1olTd4dpn7M+4ruzQqpLSlzB2ZkU3GI9HE3psZ8TxztmIb8Td9aRz0bqRjaDby9Fw1eg2dnto=
+	t=1754568700; cv=none; b=RP/+XV4aIHUIPv8zzvE447IXeRlUMrrqPgNroFosK3sgR4H98wuH5MhkeN4UFN0gFKBIQGmuxGrS16zyEGCBXvBaVlCEkLIKniY0pXZnBcpZhsEo3wJML/z7IfGYCgITrnR/g/cxfjENqngx+L5pPnc1j3ghuYFjstCu+JBnXdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568626; c=relaxed/simple;
-	bh=bO8dcPP/dxchhlZwTJ+ksGxVRxEV4n3Jm2FmNev4q2E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kYer48kU1q1gwJmvTg7h8bHco9FdLB4FciBA1hXjml79BTqN45d8I8KESzuP5NQwCEZJMHoal5a4fQABCpDtyw/4ChjeEnwSX48YbH2UEb3ln9ne4FywoyxTLefSv3wmdljnJoyV8pYUeX550j4BATX6nuHCLvGQjHVDzDEf94k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=EFIaPnUu; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=5eg+fR6M; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754568621; x=1755173421;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=Q52bbfTzkfCRNzr97Nue/VaOOC2qoR/9F6VBSjElX9Y=;
-	b=EFIaPnUuUmgLgR7m5p098Z8JsSBM3NAh8fuj/ZKhsTrnly0XTjXO1sTvIlxpB1d0YjnTfx20jEU0u
-	 oBdHAtQyV4We2iaGDR4vAF41hNSTifC11zbyKJpT4utxZ6sF4G1EefTHE8bVwR9wUy/1yKpNLMfywa
-	 8Y3kqgw7WOZnwlHn4kGDCZ9PeLJNYB4CkXY9gBC5tcviEkooJDtx2s2rTn6Z7K+AjJ3djR81odCLPR
-	 YoO1ijZtf5M7aOCNviAUkZ0KO6vk/PzTyd9Y/tlbww8jQmLcnBNmvqLbL3gN1BAM3Dm9M4D2szLOeA
-	 mxokO6DGTsh2arm1BeEbHrGJzNvoqUw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754568621; x=1755173421;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=Q52bbfTzkfCRNzr97Nue/VaOOC2qoR/9F6VBSjElX9Y=;
-	b=5eg+fR6MTuRxb8YPyHtiF65WbTnnLGJR6G5WKX32WRmCaZfbM3wi/krwvJ3X6nClGPonaOwsY+EK+
-	 NOYXjpODA==
-X-HalOne-ID: 7ce91011-7387-11f0-b24c-d510462faafc
-Received: from slottsdator.home (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 7ce91011-7387-11f0-b24c-d510462faafc;
-	Thu, 07 Aug 2025 12:10:20 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH] rust: extend kbox with a new constructor
-Date: Thu,  7 Aug 2025 14:10:11 +0200
-Message-Id: <20250807121011.2317762-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754568700; c=relaxed/simple;
+	bh=mAhgBynmJnocllLCHJ6doVOLTHWJz4kK52Xulssrbe4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OhkBUxN5hGBWH9ONkZId7LzOvFNJ/abJaBPjWg/46AHrr/xwoi/9h5VJoyFHkZYtdUPBWkbjzKbEPkbpJ4E717kCp3MOc31Jt4rrMd64hQLwiAjMKhqphGullKC+61IERrCVdsfTeC3T+TyA8Mk6U4yQRdQ5d6kTXgsrsz6f7e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bXhySOjA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DDjf003806;
+	Thu, 7 Aug 2025 12:11:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=na4kuzAX6zdMPU6c5/HpDL
+	h29ZK+3d1BAZN1gqDo8kQ=; b=bXhySOjA512a2aJuYjwBaXhAYi9ScN1j+2/UAf
+	LUppPR93k8UQLWJCiel/6h53Is2dXWirEeGFBQkCCXbeQ1friUBrX3ugN1oQ2HCc
+	vVhNZ6lUblHLATw9Ispzu28UjQ9pnPDrzD5SOiPawtCITEZlyHZQrlxQie24dvyK
+	X6uCbg520pji6XPT4CmR5Diybr2dJJ1DF82hL8NivP3fO7B0mm6l+SXC6Q6jJRIs
+	87lE/7MGUeuZNGQvri/m5E6NJiyXs8FT+U8jW7QKR5nYPSGWblzKhtv0Tj52CCob
+	5FrXk6xDL0I5x30aZKyASkqXGmuLCKtB0tYuJhJL70IqPawg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpyae66q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 12:11:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577CBPim023968
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 12:11:25 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 7 Aug 2025 05:11:20 -0700
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/9] Add sa8775p camss support
+Date: Thu, 7 Aug 2025 17:40:56 +0530
+Message-ID: <20250807121105.710072-1-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,82 +74,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9HFhudJ_i4ZFKKJjesvQWRxLT7UqqYFg
+X-Authority-Analysis: v=2.4 cv=MrlS63ae c=1 sm=1 tr=0 ts=689497ee cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=4pAsuTqdjomlMBfRpP0A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX7OIc0z45hxZ2
+ 6b9GEecwFLpdu7nBRb1hIHvmVbx73XpWyo5v5wLfKssacLLYIjt3aqlRpWQMegK/0K1B6bKAmuM
+ KDCUfKn5SVxMLmoZ+47HIG0Zz/cDS2/ChWT0BnR9xwAePFiGoT4kvoyMEmG+5zz+R84OgAz+VSc
+ Z+IQ0xdjMKTUgg9s9u+VsRjgRvcA6gE2CByJw0EZ51DW1K6qKw+FIiH5XuHkdJL77eTUXQYWUug
+ Dx2mNKvmgV5ybMMZuOQT+y078Yp6X8VjNrPGq4N3rWLq4UGfjHdc4c8mGmK5EvmqzwC0fiW3/i+
+ it8BmFUNlgm4AhDWbpax2RnqV8Ow5buPUkSXDTXqpyIPkYdkil5Uux5/5HusYlE0RfGygkXFeSj
+ 9Smy7CJi
+X-Proofpoint-GUID: 9HFhudJ_i4ZFKKJjesvQWRxLT7UqqYFg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-From: Alice Ryhl <aliceryhl@google.com>
+From: Vikram Sharma <vikramsa@qti.qualcomm.com>
 
-Add a new constructor to KBox to facilitate KBox creation from a
-pinned slice of elements. This allows to efficiently allocate memory for
-e.g. arrays of structrures containing spinlocks or mutexes.
+SA8775P is a Qualcomm SoC. This series adds bindings and devicetree to bring
+up CSIPHY, TPG, CSID, VFE/RDI interfaces in SA8775P.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- rust/kernel/alloc/kbox.rs | 51 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+SA8775P provides
+- 2 x VFE, 3 RDI per VFE
+- 5 x VFE Lite, 6 RDI per VFE
+- 2 x CSID
+- 5 x CSID Lite
+- 3 x TPG
+- 4 x CSIPHY
+   
+Changes in v4 compared to v3:
+- Bindings and Device Tree: Reordered the csid_wrapper to be the first
+  entry in the register list. (Suggested by Bryan)
+- CSIPHY Driver: Added comments indicating the CSIPHY process node number.
+- VFE Configuration: Defined bit fields for vfe_top_core_cfg.
+- Clock Optimization: Trimmed down the clock list for VFE.
+- Cleanup: Removed newly added deadlines from the CSIPHY, CSID, and VFE
+  files.
+- Link to v3:
+  https://lore.kernel.org/all/20250703171938.3606998-1-quic_vikramsa@quicinc.com/
 
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index 1fef9beb57c8..74877afab0a3 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -290,6 +290,57 @@ pub fn pin(x: T, flags: Flags) -> Result<Pin<Box<T, A>>, AllocError>
-         Ok(Self::new(x, flags)?.into())
-     }
- 
-+    /// Construct a pinned slice of elements `Pin<Box<[T], A>>`. This is a convenient means for
-+    /// creation of e.g. arrays of structrures containing spinlocks or mutexes.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// #[pin_data]
-+    /// struct Example {
-+    ///     c: u32,
-+    ///     #[pin]
-+    ///     d: SpinLock<Inner>,
-+    /// }
-+    ///
-+    /// impl Example {
-+    ///     fn new() -> impl PinInit<Self> {
-+    ///         pin_init!(Self {
-+    ///             c: 10,
-+    ///             d <- new_spinlock!(Inner { a: 20, b: 30 }),
-+    ///         })
-+    ///     }
-+    /// }
-+    /// // Allocate a boxed slice of 10 `Example`s.
-+    /// let s = KBox::pin_slice(
-+    ///     | _i | Example::new(),
-+    ///     10,
-+    ///     GFP_KERNEL
-+    /// )?;
-+    /// assert_eq!(s[5].c, 10);
-+    /// assert_eq!(s[3].d.lock().a, 20),
-+    /// ```
-+    pub fn pin_slice<F, I, E>(mut init: F, len: usize, flags: Flags) -> Result<Pin<Box<[T], A>>, E>
-+    where
-+        F: FnMut(usize) -> I,
-+        I: PinInit<T, E>,
-+        E: From<AllocError>,
-+    {
-+        let mut buffer = super::Vec::<T, A>::with_capacity(len, flags)?;
-+        for i in 0..len {
-+            let ptr = buffer.spare_capacity_mut().as_mut_ptr().cast();
-+            // SAFETY: This address is available to be initialized, and it will either be dropped
-+            // on a future error or returned as a pinned location.
-+            unsafe { init(i).__pinned_init(ptr)? };
-+            // SAFETY: We initialized one more value.
-+            unsafe { buffer.inc_len(1) };
-+        }
-+        let (ptr, _, _) = buffer.into_raw_parts();
-+        let slice = core::ptr::slice_from_raw_parts_mut(ptr, len);
-+        // SAFETY: This memory holds a valid [T] allocated with the right allocator.
-+        Ok(Pin::from(unsafe { Box::from_raw(slice) }))
-+    }
-+
-     /// Convert a [`Box<T,A>`] to a [`Pin<Box<T,A>>`]. If `T` does not implement
-     /// [`Unpin`], then `x` will be pinned in memory and can't be moved.
-     pub fn into_pin(this: Self) -> Pin<Self> {
+Changes compared to v2:
+- Renaming camss-vfe-780.c to camss-vfe-gen3.c and camss-csid-780 to
+  camss-csid-gen3 to avoid code duplication for SA8775P.SA877P have csid
+  690 and vfe 690 which is almost same as csid/vfe 780 with very minor
+  change in register bitfield.
+- Restructure vfe and csid addition to reuse existing files.
+- Updated commit text for Bindings patch.
+- renamed cpas_ife_lite clock to cpas_vfe_lite. 
+- added voltage rails for csiphy in documentation.
+- removed sf and icp clocks.
+- removed sf_0 interconnect.
+- Link to v2:
+  https://lore.kernel.org/linux-arm-msm/20250427070135.884623-1-quic_vikramsa@quicinc.com/
+
+Changes compared to v1:
+- Renaming camss-vfe-780.c to camss-vfe-gen2.c and camss-csid-780 to
+  camss-csid-gen3 to avoid code duplication for SA8775P.SA877P have csid
+  690 and vfe 690 which is almost same as csid/vfe 780 with very minor
+  change in register bitfield.
+- Restructure vfe and csid addition to reuse existing files.
+- Updated cisd-lite and vfe-lite interuppt names.
+- add enumeration changes as seprate patch. 
+- Update required fileds in bindings.
+- Link to v1:
+  DT: https://lore.kernel.org/linux-arm-msm/20250210155605.575367-1-quic_vikramsa@quicinc.com/
+  Driver: https://lore.kernel.org/linux-media/20250210162843.609337-1-quic_vikramsa@quicinc.com/
+
+Sanity check for these patches:
+- make CHECK_DTBS=y W=1 DT_SCHEMA_FILES=media/qcom,sa8775p-camss.yaml
+- make DT_CHECKER_FLAGS=-m W=1
+  DT_SCHEMA_FILES=media/qcom,sa8775p-camss.yaml dt_binding_check
+- checkpatch.pl
+- Smatch: make CHECK="smatch --full-path" M=drivers/media/platform/qcom/camss/
+- make -j32 W=1
+
+We have tested this on qcs9100-ride board with 'Test Pattern Generator'
+https://lore.kernel.org/all/20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com/
+
+A rebased version of the TPG driver, built on top of this series, will be
+shared as v3 in a follow-up post.
+
+Vikram Sharma (9):
+  media: qcom: camss: Rename camss-csid-780.c to camss-csid-gen3.c
+  media: qcom: camss: Rename camss-vfe-780.c to camss-vfe-gen3.c
+  media: dt-bindings: Add qcom,sa8775p-camss compatible
+  media: qcom: camss: Add sa8775p compatible
+  media: qcom: camss: Add support for CSIPHY 690
+  media: qcom: camss: Add support for CSID for sa8775p
+  media: qcom: camss: Add support for VFE 690
+  media: qcom: camss: Enumerate resources for SA8775P
+  arm64: dts: qcom: sa8775p: Add support for camss
+
+ .../bindings/media/qcom,sa8775p-camss.yaml    | 361 +++++++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 185 ++++++++
+ drivers/media/platform/qcom/camss/Makefile    |   4 +-
+ .../{camss-csid-780.c => camss-csid-gen3.c}   |  33 +-
+ .../{camss-csid-780.h => camss-csid-gen3.h}   |   8 +-
+ .../media/platform/qcom/camss/camss-csid.h    |   2 +-
+ .../qcom/camss/camss-csiphy-3ph-1-0.c         |  84 ++++
+ .../{camss-vfe-780.c => camss-vfe-gen3.c}     |  75 ++-
+ drivers/media/platform/qcom/camss/camss-vfe.c |   5 +-
+ drivers/media/platform/qcom/camss/camss-vfe.h |   2 +-
+ drivers/media/platform/qcom/camss/camss.c     | 428 +++++++++++++++++-
+ drivers/media/platform/qcom/camss/camss.h     |   1 +
+ 12 files changed, 1138 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml
+ rename drivers/media/platform/qcom/camss/{camss-csid-780.c => camss-csid-gen3.c} (89%)
+ rename drivers/media/platform/qcom/camss/{camss-csid-780.h => camss-csid-gen3.h} (84%)
+ rename drivers/media/platform/qcom/camss/{camss-vfe-780.c => camss-vfe-gen3.c} (70%)
+
+Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 -- 
-2.39.2
+2.25.1
 
 
