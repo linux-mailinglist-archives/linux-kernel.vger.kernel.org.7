@@ -1,138 +1,95 @@
-Return-Path: <linux-kernel+bounces-758940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4136B1D5F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:43:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E36FB1D60B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E46188B26E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A04D3B63DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FC526A0BD;
-	Thu,  7 Aug 2025 10:42:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E155226D18;
+	Thu,  7 Aug 2025 10:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vfr7E9Zr"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624EB26561E;
-	Thu,  7 Aug 2025 10:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75667231A24
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754563371; cv=none; b=TTukiYImZ69loDbLvUusFMftGgB01idpnteUNTOE/Za4QzVStYIh99tYmVaV9w9fUFU7ua+wZl4U6zrGLgNz3jpxf8L5KT/7QYtd/pRJHFcn0+BSUVqxOk7RrkeM8a+CBdvRHcSLyWHlnSRIq/O5irNpe+ov0ecStMuXlF3OIZ4=
+	t=1754563938; cv=none; b=R96IOEWSxJRylxWhgZ8bHx3+t/M0HTcYPnYZfT5FwUxsVEV7JkErwR5heJUL75U277DvUJZngAjftjKFEycdQUbml1i7T1X9RJxhsXb1NNFsbRDWjWR/xpZBUFHMrvZ7aZvvpm7lQSQHnFV08smCxymMZVGYnyHIeRfsDF0lbWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754563371; c=relaxed/simple;
-	bh=lvs3Xkpt++OhLJ22sw2ONuCbf14O/uMzOeDO84uwhmQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ag9ufTR9mqREYajgzoyON3dPONCjdSyLv956s1+Y3tOwPREdrWbLy0eKg0C3vNLBGOO4IxIpKl1bdqkC701DzVglX0gM4sgL5KToN1oDbGojRq0eUvYlqK8uKT5auWrw9lr1X2bAB7xFZHns3lLyfTv4F6yTm5hzLidHL3OET0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4byNsn3rJlz67DYv;
-	Thu,  7 Aug 2025 18:38:05 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4861C14033C;
-	Thu,  7 Aug 2025 18:42:41 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 7 Aug
- 2025 12:42:40 +0200
-Date: Thu, 7 Aug 2025 11:42:39 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 04/10] PCI/TSM: Authenticate devices via platform TSM
-Message-ID: <20250807114239.00005b61@huawei.com>
-In-Reply-To: <6893e23f35349_55f0910072@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
-	<20250717183358.1332417-5-dan.j.williams@intel.com>
-	<20250729155650.000017b3@huawei.com>
-	<6892b172976f7_55f0910067@dwillia2-xfh.jf.intel.com.notmuch>
-	<20250806121026.000023fe@huawei.com>
-	<6893e23f35349_55f0910072@dwillia2-xfh.jf.intel.com.notmuch>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1754563938; c=relaxed/simple;
+	bh=hfglwkMvFhGOn4QWj+g72ZNFRcXszfY9LNm2lHtcgys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AE4GI+lnigjM1x08meeUMTRC3ixSb5WpcK37b7iqklRJdiQgNvRM+dY6UHMicSWXmatAneR4OTGKslGyjZazGohLUkIx8h+Y6H3NPZLhZRV6otV25dd0Mnv0XvdIMsG1wWWVAPlFZ8Ig/K6iY8oYD5IobF+5eX3xAWqRlYxai/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vfr7E9Zr; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 7 Aug 2025 12:51:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754563923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xqe6q9lfo06sDNWQSsMLztyPkdiJPfGU7rsiVJ59AjM=;
+	b=vfr7E9ZrPSOIdsUhfSvWrORcBxJ3ivRs2hs6UtCvr6ljhjb+aCQwIe83ZFLLG5l5wJJ0Ll
+	Jwsqqu1YHXpU7an9hjahZh6KJIqroTCTslRaM+Z+sXVlsauXPWJ9ZSA39qf2KKygnnSiHj
+	pekcmzKuI+EekDOYXt/n2HaHqfATxXA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Haoran lee <470658536@qq.com>
+Cc: masahiroy@kernel.org, nathan@kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/mod/modpost: For CentOS 7/old binutils
+ compatibility
+Message-ID: <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
+References: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
+Organization: AVM GmbH
+X-Migadu-Flow: FLOW_OUT
+
+On Tue, Jul 29, 2025 at 12:19:46AM +0800, Haoran lee wrote:
+> 
+> Signed-off-by: Haoran Lee <470658536@qq.com>
+> ---
+
+Please note that empty commit descriptions will not be accepted.
 
 
-> > > > > +	pdev = tsm->pdev;
-> > > > > +	tsm->ops->remove(tsm);
-> > > > > +	pdev->tsm = NULL;
-> > > > > +}
-> > > > > +DEFINE_FREE(tsm_remove, struct pci_tsm *, if (_T) tsm_remove(_T))
-> > > > > +
-> > > > > +static int call_cb_put(struct pci_dev *pdev, void *data,    
-> > > > 
-> > > > Is this combination worth while?  I don't like the 'and' aspect of it
-> > > > and it only saves a few lines...
-> > > > 
-> > > > vs
-> > > > 	if (pdev) {
-> > > > 		rc = cb(pdev, data);
-> > > > 		pci_dev_put(pdev);
-> > > > 		if (rc)
-> > > > 			return;
-> > > > 	}    
-> > > 
-> > > I think it is worth it, but an even better option is to just let
-> > > scope-based cleanup handle it by moving the variable inside the loop
-> > > declaration.  
-> > I don't follow that lat bit, but will look at next version to see
-> > what you mean!  
+>  scripts/mod/modpost.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> Here is new approach (only compile tested) after understanding that loop
-> declared variables do trigger cleanup on each iteration.
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 5ca7c268294e..216647e2f301 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -30,6 +30,32 @@
+>  
+>  #define MODULE_NS_PREFIX "module:"
+>  
+> +/* CentOS 7 / old binutils compatibility */
 
-Looks good.
+Since v6.16-rc1 the minimum binutils version has been lifted to 
+binutils-2.30 [1].
+
+Which binutils version do you have at CentOS 7 ?
+
+Kind regards,
+Nicolas
 
 
-> 
-> [..]
-> > I agree it's a slightly odd construction and so might cause confusion.
-> > So whilst I think I prefer it to the or_reset() pattern I guess I'll just
-> > try and remember why this is odd (should I ever read this again after it's
-> > merged!) :)  
-> 
-> However, I am interested in these "the trouble with cleanup.h" style
-> discussions.
-> 
-> I recently suggested this [1] in another thread which indeed uses
-> multiple local variables of the same object to represent the different
-> phases of the setup. It was easier there because the code was
-> straigtforward to convert to an ERR_PTR() organization.
-> 
-> If there was already an alternative device_add() like this:
-> 
-> struct device *device_add_or_reset(struct device *dev)
-> 
-> That handled the put_device() then you could write:
-> 
-> struct device *devreg __free(device_unregister) = device_add_or_reset(no_free_ptr(dev))
-> 
-> ...and help that common pattern of 'struct device' setup transitions
-> from put_device() to device_unregister() at device_add() time.
-> 
-> [1]: http://lore.kernel.org/688bcf40215c3_48e5100d6@dwillia2-xfh.jf.intel.com.notmuch
-
-That's definitely interesting (in a fairly good way) as anything to stop people
-introducing bugs around the device_add() stuff would be welcome.  It'll take a bit
-of getting used to though.  Maybe make it more explicit device_add_or_put()?
-
-Naming hard as normal..
-> 
-Jonathan
-
-
+[1]: https://git.kernel.org/torvalds/c/118c40b7b50340bf7ff7e0adee8e3
 
