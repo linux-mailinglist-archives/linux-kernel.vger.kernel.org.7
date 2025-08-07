@@ -1,587 +1,384 @@
-Return-Path: <linux-kernel+bounces-759146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B86EB1D925
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32491B1D929
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F7CA5851FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33E2216711D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850322561D1;
-	Thu,  7 Aug 2025 13:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C195259CA9;
+	Thu,  7 Aug 2025 13:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXmkcZqt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="oJKEDv8N"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012019.outbound.protection.outlook.com [40.107.75.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854AA25DAF0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754573624; cv=none; b=rsMX7OwrHRITj3B/x6DvcrIS87p3DqE36kQoJVSsffFvONYg1cBtvrD0vceXcuq3ilAjx+yrPyCNvWZMwr+Nh5WXZoMrJ3CbZLQRj3L0MU73nFUBI0DVRYd8XH44s4WFRcZH5RUbBqkyDKb5awjpRovISOPgchP09l+auO+mSHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754573624; c=relaxed/simple;
-	bh=VPaBlCqJSSY33j6aCoeEy8p9brVQKxc6LmHf7nxcjV4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e8QzAeO0ipX1wzq0jVB2FuWgonyfF42uPcLbwxoDHI6ir8WL83VjyHyPtceHhygqjhghLsFWpmi64IXt8Ss0lTTRUP1/UdUasahoZ0noB41nwyUF21FeW1ocC9bZS6CbaQvJH+S9TLw3RS4Ms3/QE4/flJslDuBTEKfBSgqpziI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXmkcZqt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754573621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JzvjZNuRe7YCX2KZM4OxlwHzZyDCzCQGFpr0/LzBYBo=;
-	b=NXmkcZqt6YXQfXxWNmguI1vvUMp1EI+pGY2YyfsansnTtSgstaF+D3C/BfgcX72lG4Uxy3
-	ItOmgHwZsE9bWayOgyJsWbaaH4t9doOmsC+quvH4aSeldYW0UldzyTQ8MDFYYWXbmuEyhD
-	Fx+AT4MPe+nnmkLSSFNYh3LfkHhqbZQ=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-uR95riayPYuYTtiL4YEf1g-1; Thu, 07 Aug 2025 09:33:40 -0400
-X-MC-Unique: uR95riayPYuYTtiL4YEf1g-1
-X-Mimecast-MFC-AGG-ID: uR95riayPYuYTtiL4YEf1g_1754573619
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7073bfeef28so11348196d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:33:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754573619; x=1755178419;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzvjZNuRe7YCX2KZM4OxlwHzZyDCzCQGFpr0/LzBYBo=;
-        b=vMJ9m9vITxuTEclEl2Ywhha/oYgTMgx2OuNJ0LaM2ip1P0q+9Ybzz0W6awvOXGZ6W/
-         mzbTYICGSdsAIGYFBUlFtbIo808CLrq+7pKTDN25gZyaFHjV9mMbvVnxyP9nCiBk7Egx
-         +uY8ZHbivJnYPlvYrbdMoBTOIuoECMk0RdH33Ir4qJ4CFHFH9KX+IV5Mnmx5m/ZXTNyA
-         o4JQbXE417snABw50MWJSwQ9liuRlJDSawpZZyH1N+nvHgF7NiKhQBp0F1+3izpGsmRa
-         jXDPTkp0C6CjpICckZhu4ZaSDewD9iKBei09URXX9S95D/cAygIFZUQbcrqmDbndaCDp
-         gTsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO9eDbBSqqRwE8vtJQSXsi4fZj2T4mq8SST1aptjr9rKAv2UUl3Qw+9wnNL54JwjGcObg2/HZG9YDo1bU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb9jjX3889lHEBZlrP8/c9Y18HHNO15abcn/Edz8KKemarwUZP
-	yUYDBi/qtdYPkq0OB0BUKU0nuMZx0R3g6tMH7OUSCUdIzo9xt2gy6Y6K0qJkVpflkWuXf1aAMmX
-	t97un09+g2OLDvNvb3TCw0Wr4KlgyByhtWO9szv4M+NWZpqQtxzTNQC4997UFZPOmDQ==
-X-Gm-Gg: ASbGncsoHclATRDc20mc0cAcSgVM/OQkbkecpVikc15yMaxJc2XwKHePCKg52ab/TeH
-	Hd2CVijzhB6HHnE1BDCkyegiLif8LElu2SrR75FpRVjxadPS+Xosz4IoIuCG7z+vBownEitYWri
-	wenoB4Ze9RmvBe5/Pq54hirzX8bfL2z/UJz/+sNSnjuP4mHm5sLQSEtZjCzl2vLYxL4X5AQfAci
-	hL6v6zZwUkk5ymqGPY7gM069rJLJDtf+BlEdSzD4PXCdeQQ99RmEMEa0UqXOqYANpqQADcID320
-	VXQ+7QHkvvF/y6vhuK6rTkAjn8P4xQzuw8N1HmpQ5xztcCGOfYgvaiDjW8PDi8Mkog==
-X-Received: by 2002:a05:6214:1d05:b0:707:4aa0:2f4 with SMTP id 6a1803df08f44-7097ae5dbb2mr85915206d6.20.1754573619034;
-        Thu, 07 Aug 2025 06:33:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEX/+DVKAkIMUWAfViHhwH0ZWPtd2exQo2/Ctaqin01+KTwAF+GzoEvfJHNNow4U4RS0EmwKA==
-X-Received: by 2002:a05:6214:1d05:b0:707:4aa0:2f4 with SMTP id 6a1803df08f44-7097ae5dbb2mr85914546d6.20.1754573618298;
-        Thu, 07 Aug 2025 06:33:38 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077c9dff72sm97167506d6.15.2025.08.07.06.33.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:33:37 -0700 (PDT)
-Message-ID: <957660bfb5c291b5bece9e557f30866728b9aed0.camel@redhat.com>
-Subject: Re: [PATCH v2 5/5] rv: Add rts monitor
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 07 Aug 2025 15:33:35 +0200
-In-Reply-To: <88fdbeb3f2ecf3a6259f3ee8636ae5b21fa6b72d.1754466623.git.namcao@linutronix.de>
-References: <cover.1754466623.git.namcao@linutronix.de>
-	 <88fdbeb3f2ecf3a6259f3ee8636ae5b21fa6b72d.1754466623.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A657126281
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754573761; cv=fail; b=gpBYbdXFCbiSSCFOaiLUXkcNyDFS56EP0CPIGKY5m96l6KAlJCXpi9FNqPGT5KwYnBmudvNfkAVcUGhvrLjPcpNGe63sNc1qjGzm/KyiH3FGACECPeDHv3Egk+bDKYKsEMAAnag+bakWOZgNInwPWnt8UQk7qYCV6Y3bIjB+Sjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754573761; c=relaxed/simple;
+	bh=DpkmO3CzAIITolUqcIm8SIyJsLheeQFFoM2uVB+k23Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=n/JwZunFmPjsjtqVnyJRQ10qwHkckPpArXpVH5W9LdHCh1SKI4bf5GRD0RNFM0GQmcHMXXcxXtZhpH7biutmbGC3oSxyXbVcze3xa5I5qXejXIwYgl5DMbrj9fnLvdOnPxGCzLBLSvttXtYNNbtc6+/+HGmyfW/G/eeWmh8gz40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=oJKEDv8N; arc=fail smtp.client-ip=40.107.75.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=demoWX0EU78T3Yphpp6FMuUjVay2z397aohp9eCT1wuhMna3NPbFakIoN7sCwDItivzexhVyCIF00b0TaXBSOWFpzIRWUAkTj3dkJgL6C4m6Gp95hIKWxm7w99LCjyNtP3cB5fPHqYvstir2PhhqcPX0L8Hh9XZOP3opt+AoBhYdZRns8LaNSPE0tJde6u+nDCC36jgSzOUfZ4/vh1eZh/QeWv4tC/Q9XkNtThzMzTrQZtZjDB0gwNxZmqazoQ1mRmLMII9Y16DkZybfjnXOP+luS9M5ZAEkvIxxRcgEN4Mk/XMXoNSP5FoOMiqsY8qYTSZcW3jItaACsEW8Tu3ulw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fZCOD1+85Us5QOOijfG1w6IXj4sUl7GT2jw3DIzpWb8=;
+ b=DBi2BaseMIV1/55LMuS2Bhf64GWjzw2fJnIuJlMC4kNHgB9deunHwE9jbMFSFXtnNU+IL5gyHP8bwk0Wx4vsVKRuHuJ1YZ3731HhV+V2NPqjj5M15hvgRHm9NyfK8wLEkJ9VUuMrxLuLF5cNeJQ30VARySoi2dqkWgD/ob0vxazMOz7rDrX3uJDae+nnIRvzPDTeY2XRBNWFBD3aoBPa8OosR0aktij8TYFBNQtRTn2gWI7E6as0/iwIlkwpCY0LaIsdxaIGJmfqpGQl9CzJQG1ZMiDuGG7koCKUvCPAQxWfXG7IjodNRCLTUGtpzvj+r2w099xqzaJq6oX8ZiKCdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fZCOD1+85Us5QOOijfG1w6IXj4sUl7GT2jw3DIzpWb8=;
+ b=oJKEDv8Nmbu1mZzGJkW+H2pxdZm2pAmyCjki28nRNRxTIaM+ADRcNU7U1dV9Kge/UzN6QkUQniXEUBZ2joCLl1TSRF/2hePmwTbWKq/Sf6qMsz7X/+0Esl3YsUjvfAo20wGC/T1bHgG5iQKWM8xrR/n75+eILZuNSsWVIZafJHcdDliruXOFH5EhVQA0Z+y879u06nE8TYTU4b38Qu+bxj8utIDIZNtZWKq1TNdpzXa55StzniLoshuKCUxuyzQqoYjIZ5GL4gFN3/fXPoAsIsjwxlYLWabRHba6gbvlKk/oooMyBdKJILR/NmFkHCrOjReCyCeQsgCScuVgo6Dt6A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TY1PPF33E28B4E6.apcprd06.prod.outlook.com (2603:1096:408::90e)
+ by TYUPR06MB6271.apcprd06.prod.outlook.com (2603:1096:400:352::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
+ 2025 13:35:54 +0000
+Received: from TY1PPF33E28B4E6.apcprd06.prod.outlook.com
+ ([fe80::6beb:51d8:f9a4:d4ed]) by TY1PPF33E28B4E6.apcprd06.prod.outlook.com
+ ([fe80::6beb:51d8:f9a4:d4ed%8]) with mapi id 15.20.8989.015; Thu, 7 Aug 2025
+ 13:35:54 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: chao@kernel.org,
+	jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH v6] f2fs: add reserved nodes for privileged users
+Date: Thu,  7 Aug 2025 21:35:01 +0800
+Message-Id: <20250807133501.551848-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0307.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38b::15) To TY1PPF33E28B4E6.apcprd06.prod.outlook.com
+ (2603:1096:408::90e)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY1PPF33E28B4E6:EE_|TYUPR06MB6271:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fc0424c-dc22-4482-9c7c-08ddd5b7550b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D4gY0KomGa2qSxNpNhFmta0w49BIxUi1DrQbgh/Q8tsJh4MtajaCZJ38g3Qx?=
+ =?us-ascii?Q?IjoyfZ3yRqn5wXdxj3y+XkNY+r9f8M0gNYy4/roFyDob6/IpQ+xQuB8m4IUc?=
+ =?us-ascii?Q?vGIgawvZqrQVrn4hHcwN3h8DEqLIZsmFNypqqwrkGypY8v08KCrxv4pfKXSs?=
+ =?us-ascii?Q?hSi67HvIdFStLonQukRTkguoBKkiLiwt5T29S/m/eo8XKx7QnfSN8BbeNt8s?=
+ =?us-ascii?Q?WZP+vHBuRllRxofhRWdPPAjS6IwoeP5x5pAGQ1/QR412AS24DVoBk2w53QCs?=
+ =?us-ascii?Q?ZaACsj+yUMRNXFF79DqCuCJNwUz0mKg2OM425O7CgytGzCHu/e5gtNuNZ6u/?=
+ =?us-ascii?Q?spXP4IkqTqZ2Mt49nn6cLwjooGYhbm+4HZXc1/IWdCWARmc06UlCqLrxWGRF?=
+ =?us-ascii?Q?xnqZr3DnPJUthTeMp50kzlRHk3YGtPHyCTZZg055IzgLiAz/ZtprQrJJLmw/?=
+ =?us-ascii?Q?Fr55PQbIlbSKwBqYX5HtgesoxfHLXH56NWGNR/T3s/KIpf/M3QJm9T/JyZQP?=
+ =?us-ascii?Q?YnQ2MeBFBySDwUpcRCUCCQr4vXUFbv6n+iW8SR1WuW1rfc4+9bg3SwwlOWMA?=
+ =?us-ascii?Q?TupL6hOT62CdmBclBlFbzO7FVGYU97HXxgeX4AsYgGEABpmbWoESC/k4VvpG?=
+ =?us-ascii?Q?rC6xADBasRuSg4HrLiyJopgxHtyqcDoRghabguEPP4WgFCilC7OH3mr922kU?=
+ =?us-ascii?Q?1gDk9c/oD0j8P3Yk9vkvwyAIjJGAMswQchst/lVLplqI+qhLIsrASJRdrFkh?=
+ =?us-ascii?Q?MqsGwJ33o+3RFLiwGCue+gi6RRsQiDr/09bxep+q43m9eHzOKBi4TKLSt7Hy?=
+ =?us-ascii?Q?9grCfz6xXGcjfbvBLsoo51k5r8c4MaMyQpQTOTbrBDjj4wHhvtr1FRZSPkvx?=
+ =?us-ascii?Q?jSI+7QXEcbFNAlUYMgDSitDu0kcIBPGf87EwvRIlxmF1vAt8j/dB68fFd8tO?=
+ =?us-ascii?Q?3StbxB4rdc0lGQ9STWQlq6jWhPKrm2Q2+ni3VnnW2l6GZTrQq3uM9jKaawEW?=
+ =?us-ascii?Q?Efdw5oTaSkzv61SV1+vJeSEur25aXz5BFv52ot9piG3fHvwPkKkvd8FpwAGS?=
+ =?us-ascii?Q?TWwJ4F2RfWD1MxgmQfHvPwvxnq5nIgCWZ/ExDNtldVPZuwcnk4ZJJHKUl90L?=
+ =?us-ascii?Q?9vSBoIKhvr/bpt1SE+0NEo+n0Fvn6tuy5o0e5k/1cRGQ2w/dhBjbo4meL2tA?=
+ =?us-ascii?Q?Jz1Pib82dsckXAw0n2JC+fhLoQTdRAyCBDAzfVAW3ZMjjpGffXctXId++LRx?=
+ =?us-ascii?Q?8JkY8M7gL7jiG4/FjmcEc3Y0+VMpPv/lW1Pk2B6t3EPRQmf0MIRcoT4rSON3?=
+ =?us-ascii?Q?sdDtT+q3lSiQUmLZ0NsXsGTTpuxa6NiHW3ObZJxaJK8u+IrY09xy+QqzbUj1?=
+ =?us-ascii?Q?Zt9isrqY/og0nG/n89tXbWA/kPXiVlTPg4vcl3o2O3guQQn87pmJMceaRUWg?=
+ =?us-ascii?Q?7DEOk/W389bPXzZk/gVu3qRsbh0AvGVICDTfxwGzVaN21+MUQuPC7y0Cy+8n?=
+ =?us-ascii?Q?m3TsCUooeNzC9Y0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PPF33E28B4E6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Kw005l0RLenHYU7w1hhvrL43sufbrZq4IWk+5a3ueSxHiX7zd7kM6EN9lg68?=
+ =?us-ascii?Q?KvxZ5tTYupnGOls6d3XmP7cgcp0nhZUurk/mbY2WG9NuOAP5jiyGMgzHDkDW?=
+ =?us-ascii?Q?5BUBPGGAXoeaWfGn0hUSRbvpCyK7FKsRS5ynAJqvTMuJxc1X6adDlhOht34F?=
+ =?us-ascii?Q?wom+2raxhmVzfUdUgaYAiH3DtHYRPKLFJsEDsM604XHhDQ5Roi2ntyRGROAx?=
+ =?us-ascii?Q?zzWoWB0d5TxAc6H2QE+o2iEEoNR76blx7xBbLY6Xk97gdFy/qsPAZEKyJvuD?=
+ =?us-ascii?Q?Ba1R/yDN75chHbyxFEuxHpevaqz4rJk4MnU5FSkIWDL+3ahZrK+KM3I53LLU?=
+ =?us-ascii?Q?OCTzyGQ6L3Tri8/caAItOCAgFY5i4jWudZCsi+DyjDz8pLDAA7TfpPXFNlVC?=
+ =?us-ascii?Q?N+awXzruIkouKYeGNloEQTs3ZvEYrJzhWuOjItqX5RMhrDSA+lUp5XtNWYQ1?=
+ =?us-ascii?Q?9Z8oQ8VIA8XKJZwFtch9iimW/BBm/j4OD+6bI/eUxLs6DViPmNPciH8lxTWm?=
+ =?us-ascii?Q?kj8SPaNySEB2AqL0ydHIFto3V2sCluyxvgywc1H3u+hbdlsvRkeO+Gkca89e?=
+ =?us-ascii?Q?SgtygvhMZsO+z+9h0el5GQUdGZwRrxubbTSfl12JWUXy4gDLcGXxa75llTbL?=
+ =?us-ascii?Q?f8mwFukkeOgoIa+dZhnVfaEQdoUjV1j1Da4P/QWTj7OsfLeWcDHY2DDxMEfV?=
+ =?us-ascii?Q?AzlNLpinzE3yx+L/av5nX9Q8r3KyYiekmXkL+04DPCsCWIFcTeUbrP7ejM6S?=
+ =?us-ascii?Q?CAG2TI8wMkphccMng8i8mtWzA95BYQmSCtF7COgrcP3XV8FwDJzAoormT+i/?=
+ =?us-ascii?Q?0sHxI5n56R8rkgiDC+rp6WCf8u/VMSDniTjky5QMIXdg5FoP/eyifBpRL9dz?=
+ =?us-ascii?Q?HDaWOfxFcHHBrAwYhkUKvk574RtkpUtJfV3bQfy5dupB1d6T/RL4J87bhd3u?=
+ =?us-ascii?Q?+fRuHhnA87v8VXL8uJQ/eombSyszzbOIsVaf+5Bh1KH5hxXyRtWXQc5YKshL?=
+ =?us-ascii?Q?nGSOEO+wvWxxrA1Hq9ypxYGe4/A3m+UlwBnqbN2SQf1k65XY0YCteO5sO7KD?=
+ =?us-ascii?Q?P8SMkrd6B6hHbeToI+lCyUBTbCPnM2TKKpGh77v0zlW4UBbykGC0Z9kyOCR4?=
+ =?us-ascii?Q?H1qaMxU2Wz9BKVhRBlGLt9q0kXrvLEUQIqjhH/2Lp558XuiLLc63XbboLPtt?=
+ =?us-ascii?Q?t2XokVPa44ATPDlxj2T8XBJDtE2GFyS+RX8dLV7ay3fRO3GOSfjV6GKi4fgf?=
+ =?us-ascii?Q?YtLP4+7bFmzPeysCLg6+mcafFHBdWkDwQZ3/hCYjyjsANtmVqofVwZznGEm+?=
+ =?us-ascii?Q?y41MnGTqBWU7itJMCv8lSAK0JvN/eJzQsbjQJs3o2pycFVXg3tlVznUDPbs+?=
+ =?us-ascii?Q?9+0kcqVYsas58lwShPjSp6NVkSiIpRurxKVr/324hNsgz7NO5Srkm6aPM+aK?=
+ =?us-ascii?Q?+YEoaN5bDjtB8I3nckfLhpfuhKM5sm1rCf5tckhFZ/9qUuvXpkSWZL0aWjrl?=
+ =?us-ascii?Q?Z+JN3rtcQLlondayUhs27MdrOsBbedHVIC1/IASgXPYvwptZRN9TeT2lp5Ll?=
+ =?us-ascii?Q?tOlNSlIa9ikYv3z/LbTfNAEElt/fT/VsbAlFdy0J?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fc0424c-dc22-4482-9c7c-08ddd5b7550b
+X-MS-Exchange-CrossTenant-AuthSource: TY1PPF33E28B4E6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:35:54.0946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +qv+K0NiSEKipPL5kFCfx8jodng0hQvAQ9qMbkvaHnteaXyASeoTCqdT99TO8CqBwEiZMhan2tZ6QeCUu4ilDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6271
 
-On Wed, 2025-08-06 at 10:01 +0200, Nam Cao wrote:
-> Add "real-time scheduling" monitor, which validates that SCHED_RR and
-> SCHED_FIFO tasks are scheduled before tasks with normal and
-> extensible scheduling policies
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> v2:
-> =C2=A0 - use the new tracepoints
-> =C2=A0 - move to be under the rtapp container monitor
-> =C2=A0 - re-generate with the modified scripts
-> =C2=A0 - fixup incorrect enqueued status
-> ---
-> =C2=A0Documentation/trace/rv/monitor_sched.rst |=C2=A0 19 +++
-> =C2=A0tools/verification/models/sched/rts.ltl=C2=A0 |=C2=A0=C2=A0 5 +
+This patch allows privileged users to reserve nodes via the
+'reserve_node' mount option, which is similar to the existing
+'reserve_root' option.
 
-You moved it under rtapp, you probably want to move the LTL model and
-the descriptions there too.
+"-o reserve_node=<N>" means <N> nodes are reserved for privileged
+users only.
 
-Thanks,
-Gabriele
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+---
+v5->v6: Modified F2FS_SPEC_reserve_node from (1<<24) to (1<<25) following Zhiguo's suggestion in v5.
+v4->v5: Apply Chao's suggestion from v4.
+v3->v4: Rebase this patch on https://lore.kernel.org/linux-f2fs-devel/20250731060338.1136086-1-chao@kernel.org
+v2->v3: Apply Chao's suggestion from v2.
+v1->v2: Add two missing handling parts.
+v1: https://lore.kernel.org/linux-f2fs-devel/20250729095238.607433-1-guochunhai@vivo.com/
+---
+ Documentation/filesystems/f2fs.rst |  9 ++++---
+ fs/f2fs/f2fs.h                     | 17 ++++++++----
+ fs/f2fs/super.c                    | 43 +++++++++++++++++++++++++-----
+ 3 files changed, 54 insertions(+), 15 deletions(-)
 
->=20
-> diff --git a/Documentation/trace/rv/monitor_sched.rst
-> b/Documentation/trace/rv/monitor_sched.rst
-> index 3f8381ad9ec7..2f9d62a1af1f 100644
-> --- a/Documentation/trace/rv/monitor_sched.rst
-> +++ b/Documentation/trace/rv/monitor_sched.rst
-> @@ -396,6 +396,25 @@ preemption is always disabled. On non-
-> ``PREEMPT_RT`` kernels, the interrupts
-> =C2=A0might invoke a softirq to set ``need_resched`` and wake up a task.
-> This is
-> =C2=A0another special case that is currently not supported by the monitor=
-.
-> =C2=A0
-> +Monitor rts
-> +-----------
-> +
-> +The real-time scheduling monitor validates that tasks with real-time
-> scheduling
-> +policies (`SCHED_FIFO` and `SCHED_RR`) are always scheduled before
-> tasks with
-> +normal and extensible scheduling policies (`SCHED_OTHER`,
-> `SCHED_BATCH`,
-> +`SCHED_IDLE`, `SCHED_EXT`):
-> +
-> +.. literalinclude:: ../../../tools/verification/models/sched/rts.ltl
-> +
-> +Note that this monitor may report errors if real-time throttling or
-> fair
-> +deadline server is enabled. These mechanisms prevent real-time tasks
-> from
-> +monopolying the CPU by giving tasks with normal and extensible
-> scheduling
-> +policies a chance to run. They give system administrators a chance
-> to kill a
-> +misbehaved real-time task. However, they violate the scheduling
-> priorities and
-> +may cause latency to well-behaved real-time tasks. Thus, if you see
-> errors from
-> +this monitor, consider disabling real-time throttling and the fair
-> deadline
-> +server.
-> +
-> =C2=A0References
-> =C2=A0----------
-> =C2=A0
-> diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-> index 7ef89006ed50..e9007ed32aea 100644
-> --- a/kernel/trace/rv/Kconfig
-> +++ b/kernel/trace/rv/Kconfig
-> @@ -67,6 +67,7 @@ source "kernel/trace/rv/monitors/opid/Kconfig"
-> =C2=A0source "kernel/trace/rv/monitors/rtapp/Kconfig"
-> =C2=A0source "kernel/trace/rv/monitors/pagefault/Kconfig"
-> =C2=A0source "kernel/trace/rv/monitors/sleep/Kconfig"
-> +source "kernel/trace/rv/monitors/rts/Kconfig"
-> =C2=A0# Add new rtapp monitors here
-> =C2=A0
-> =C2=A0# Add new monitors here
-> diff --git a/kernel/trace/rv/Makefile b/kernel/trace/rv/Makefile
-> index 750e4ad6fa0f..d7bfc7ae6677 100644
-> --- a/kernel/trace/rv/Makefile
-> +++ b/kernel/trace/rv/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_RV_MON_STS) +=3D monitors/sts/sts.o
-> =C2=A0obj-$(CONFIG_RV_MON_NRP) +=3D monitors/nrp/nrp.o
-> =C2=A0obj-$(CONFIG_RV_MON_SSSW) +=3D monitors/sssw/sssw.o
-> =C2=A0obj-$(CONFIG_RV_MON_OPID) +=3D monitors/opid/opid.o
-> +obj-$(CONFIG_RV_MON_RTS) +=3D monitors/rts/rts.o
-> =C2=A0# Add new monitors here
-> =C2=A0obj-$(CONFIG_RV_REACTORS) +=3D rv_reactors.o
-> =C2=A0obj-$(CONFIG_RV_REACT_PRINTK) +=3D reactor_printk.o
-> diff --git a/kernel/trace/rv/monitors/rts/Kconfig
-> b/kernel/trace/rv/monitors/rts/Kconfig
-> new file mode 100644
-> index 000000000000..5481b371bce1
-> --- /dev/null
-> +++ b/kernel/trace/rv/monitors/rts/Kconfig
-> @@ -0,0 +1,17 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +config RV_MON_RTS
-> +	depends on RV
-> +	select RV_LTL_MONITOR
-> +	depends on RV_MON_RTAPP
-> +	default y
-> +	select LTL_MON_EVENTS_CPU
-> +	bool "rts monitor"
-> +	help
-> +	=C2=A0 Add support for RTS (real-time scheduling) monitor which
-> validates
-> +	=C2=A0 that real-time-priority tasks are scheduled before
-> SCHED_OTHER tasks.
-> +
-> +	=C2=A0 This monitor may report an error if RT throttling or
-> deadline server
-> +	=C2=A0 is enabled.
-> +
-> +	=C2=A0 Say Y if you are debugging or testing a real-time system.
-> diff --git a/kernel/trace/rv/monitors/rts/rts.c
-> b/kernel/trace/rv/monitors/rts/rts.c
-> new file mode 100644
-> index 000000000000..b4c3d3a4671d
-> --- /dev/null
-> +++ b/kernel/trace/rv/monitors/rts/rts.c
-> @@ -0,0 +1,144 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/ftrace.h>
-> +#include <linux/tracepoint.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/rv.h>
-> +#include <linux/sched/deadline.h>
-> +#include <linux/sched/rt.h>
-> +#include <rv/instrumentation.h>
-> +
-> +#define MODULE_NAME "rts"
-> +
-> +#include <trace/events/sched.h>
-> +#include <rv_trace.h>
-> +#include <monitors/rtapp/rtapp.h>
-> +
-> +#include "rts.h"
-> +#include <rv/ltl_monitor.h>
-> +
-> +static DEFINE_PER_CPU(unsigned int, nr_queued);
-> +
-> +static void ltl_atoms_fetch(unsigned int cpu, struct ltl_monitor
-> *mon)
-> +{
-> +}
-> +
-> +static void ltl_atoms_init(unsigned int cpu, struct ltl_monitor
-> *mon,
-> +			=C2=A0=C2=A0 bool target_creation)
-> +{
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH, false);
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_DL, false);
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_RT, false);
-> +
-> +	/*
-> +	 * This may not be accurate, there may be enqueued RT tasks.
-> But that's
-> +	 * okay, the worst we get is a false negative. It will be
-> accurate as
-> +	 * soon as the CPU no longer has any queued RT task.
-> +	 */
-> +	ltl_atom_set(mon, LTL_RT_TASK_ENQUEUED, false);
-> +}
-> +
-> +static void handle_enqueue_task(void *data, int cpu, struct
-> task_struct *task)
-> +{
-> +	unsigned int *queued =3D per_cpu_ptr(&nr_queued, cpu);
-> +
-> +	if (!rt_task(task))
-> +		return;
-> +
-> +	(*queued)++;
-> +	ltl_atom_update(cpu, LTL_RT_TASK_ENQUEUED, true);
-> +}
-> +
-> +static void handle_dequeue_task(void *data, int cpu, struct
-> task_struct *task)
-> +{
-> +	unsigned int *queued =3D per_cpu_ptr(&nr_queued, cpu);
-> +
-> +	if (!rt_task(task))
-> +		return;
-> +
-> +	/*
-> +	 * This may not be accurate for a short time after the
-> monitor is
-> +	 * enabled, because there may be enqueued RT tasks which are
-> not counted
-> +	 * torward nr_queued. But that's okay, the worst we get is a
-> false
-> +	 * negative. nr_queued will be accurate as soon as the CPU
-> no longer has
-> +	 * any queued RT task.
-> +	 */
-> +	if (*queued)
-> +		(*queued)--;
-> +	if (!*queued)
-> +		ltl_atom_update(cpu, LTL_RT_TASK_ENQUEUED, false);
-> +}
-> +
-> +static void handle_sched_switch(void *data, bool preempt, struct
-> task_struct *prev,
-> +				struct task_struct *next, unsigned
-> int prev_state)
-> +{
-> +	unsigned int cpu =3D smp_processor_id();
-> +	struct ltl_monitor *mon =3D ltl_get_monitor(cpu);
-> +
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_RT, rt_task(next));
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_DL, dl_task(next));
-> +	ltl_atom_update(cpu, LTL_SCHED_SWITCH, true);
-> +
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_RT, false);
-> +	ltl_atom_set(mon, LTL_SCHED_SWITCH_DL, false);
-> +	ltl_atom_update(cpu, LTL_SCHED_SWITCH, false);
-> +}
-> +
-> +static int enable_rts(void)
-> +{
-> +	unsigned int cpu;
-> +	int retval;
-> +
-> +	retval =3D ltl_monitor_init();
-> +	if (retval)
-> +		return retval;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		unsigned int *queued =3D per_cpu_ptr(&nr_queued, cpu);
-> +
-> +		*queued =3D 0;
-> +	}
-> +
-> +	rv_attach_trace_probe("rts", dequeue_task_tp,
-> handle_dequeue_task);
-> +	rv_attach_trace_probe("rts", enqueue_task_tp,
-> handle_enqueue_task);
-> +	rv_attach_trace_probe("rts", sched_switch,
-> handle_sched_switch);
-> +
-> +	return 0;
-> +}
-> +
-> +static void disable_rts(void)
-> +{
-> +	rv_detach_trace_probe("rts", sched_switch,
-> handle_sched_switch);
-> +	rv_detach_trace_probe("rts", enqueue_task_tp,
-> handle_enqueue_task);
-> +	rv_detach_trace_probe("rts", dequeue_task_tp,
-> handle_dequeue_task);
-> +
-> +	ltl_monitor_destroy();
-> +}
-> +
-> +/*
-> + * This is the monitor register section.
-> + */
-> +static struct rv_monitor rv_rts =3D {
-> +	.name =3D "rts",
-> +	.description =3D "Validate that real-time tasks are scheduled
-> before lower-priority tasks",
-> +	.enable =3D enable_rts,
-> +	.disable =3D disable_rts,
-> +};
-> +
-> +static int __init register_rts(void)
-> +{
-> +	return rv_register_monitor(&rv_rts, &rv_rtapp);
-> +}
-> +
-> +static void __exit unregister_rts(void)
-> +{
-> +	rv_unregister_monitor(&rv_rts);
-> +}
-> +
-> +module_init(register_rts);
-> +module_exit(unregister_rts);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-> +MODULE_DESCRIPTION("rts: Validate that real-time tasks are scheduled
-> before lower-priority tasks");
-> diff --git a/kernel/trace/rv/monitors/rts/rts.h
-> b/kernel/trace/rv/monitors/rts/rts.h
-> new file mode 100644
-> index 000000000000..5881f30a38ce
-> --- /dev/null
-> +++ b/kernel/trace/rv/monitors/rts/rts.h
-> @@ -0,0 +1,126 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * C implementation of Buchi automaton, automatically generated by
-> + * tools/verification/rvgen from the linear temporal logic
-> specification.
-> + * For further information, see kernel documentation:
-> + *=C2=A0=C2=A0 Documentation/trace/rv/linear_temporal_logic.rst
-> + */
-> +
-> +#include <linux/rv.h>
-> +
-> +#define MONITOR_NAME rts
-> +
-> +#define LTL_MONITOR_TYPE RV_MON_PER_CPU
-> +
-> +enum ltl_atom {
-> +	LTL_RT_TASK_ENQUEUED,
-> +	LTL_SCHED_SWITCH,
-> +	LTL_SCHED_SWITCH_DL,
-> +	LTL_SCHED_SWITCH_RT,
-> +	LTL_NUM_ATOM
-> +};
-> +static_assert(LTL_NUM_ATOM <=3D RV_MAX_LTL_ATOM);
-> +
-> +static const char *ltl_atom_str(enum ltl_atom atom)
-> +{
-> +	static const char *const names[] =3D {
-> +		"rt_ta_en",
-> +		"sc_sw",
-> +		"sc_sw_dl",
-> +		"sc_sw_rt",
-> +	};
-> +
-> +	return names[atom];
-> +}
-> +
-> +enum ltl_buchi_state {
-> +	S0,
-> +	S1,
-> +	S2,
-> +	S3,
-> +	S4,
-> +	RV_NUM_BA_STATES
-> +};
-> +static_assert(RV_NUM_BA_STATES <=3D RV_MAX_BA_STATES);
-> +
-> +static void ltl_start(unsigned int cpu, struct ltl_monitor *mon)
-> +{
-> +	bool sched_switch_rt =3D test_bit(LTL_SCHED_SWITCH_RT, mon-
-> >atoms);
-> +	bool sched_switch_dl =3D test_bit(LTL_SCHED_SWITCH_DL, mon-
-> >atoms);
-> +	bool sched_switch =3D test_bit(LTL_SCHED_SWITCH, mon->atoms);
-> +	bool rt_task_enqueued =3D test_bit(LTL_RT_TASK_ENQUEUED, mon-
-> >atoms);
-> +	bool val13 =3D !rt_task_enqueued;
-> +	bool val8 =3D sched_switch_dl || val13;
-> +	bool val9 =3D sched_switch_rt || val8;
-> +	bool val6 =3D !sched_switch;
-> +	bool val1 =3D !rt_task_enqueued;
-> +
-> +	if (val1)
-> +		__set_bit(S0, mon->states);
-> +	if (val6)
-> +		__set_bit(S1, mon->states);
-> +	if (val9)
-> +		__set_bit(S4, mon->states);
-> +}
-> +
-> +static void
-> +ltl_possible_next_states(struct ltl_monitor *mon, unsigned int
-> state, unsigned long *next)
-> +{
-> +	bool sched_switch_rt =3D test_bit(LTL_SCHED_SWITCH_RT, mon-
-> >atoms);
-> +	bool sched_switch_dl =3D test_bit(LTL_SCHED_SWITCH_DL, mon-
-> >atoms);
-> +	bool sched_switch =3D test_bit(LTL_SCHED_SWITCH, mon->atoms);
-> +	bool rt_task_enqueued =3D test_bit(LTL_RT_TASK_ENQUEUED, mon-
-> >atoms);
-> +	bool val13 =3D !rt_task_enqueued;
-> +	bool val8 =3D sched_switch_dl || val13;
-> +	bool val9 =3D sched_switch_rt || val8;
-> +	bool val6 =3D !sched_switch;
-> +	bool val1 =3D !rt_task_enqueued;
-> +
-> +	switch (state) {
-> +	case S0:
-> +		if (val1)
-> +			__set_bit(S0, next);
-> +		if (val6)
-> +			__set_bit(S1, next);
-> +		if (val9)
-> +			__set_bit(S4, next);
-> +		break;
-> +	case S1:
-> +		if (val6)
-> +			__set_bit(S1, next);
-> +		if (val1 && val6)
-> +			__set_bit(S2, next);
-> +		if (val1 && val9)
-> +			__set_bit(S3, next);
-> +		if (val9)
-> +			__set_bit(S4, next);
-> +		break;
-> +	case S2:
-> +		if (val6)
-> +			__set_bit(S1, next);
-> +		if (val1 && val6)
-> +			__set_bit(S2, next);
-> +		if (val1 && val9)
-> +			__set_bit(S3, next);
-> +		if (val9)
-> +			__set_bit(S4, next);
-> +		break;
-> +	case S3:
-> +		if (val1)
-> +			__set_bit(S0, next);
-> +		if (val6)
-> +			__set_bit(S1, next);
-> +		if (val9)
-> +			__set_bit(S4, next);
-> +		break;
-> +	case S4:
-> +		if (val1)
-> +			__set_bit(S0, next);
-> +		if (val6)
-> +			__set_bit(S1, next);
-> +		if (val9)
-> +			__set_bit(S4, next);
-> +		break;
-> +	}
-> +}
-> diff --git a/kernel/trace/rv/monitors/rts/rts_trace.h
-> b/kernel/trace/rv/monitors/rts/rts_trace.h
-> new file mode 100644
-> index 000000000000..ac4ea84162f7
-> --- /dev/null
-> +++ b/kernel/trace/rv/monitors/rts/rts_trace.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * Snippet to be included in rv_trace.h
-> + */
-> +
-> +#ifdef CONFIG_RV_MON_RTS
-> +DEFINE_EVENT(event_ltl_monitor_cpu, event_rts,
-> +	TP_PROTO(unsigned int cpu, char *states, char *atoms, char
-> *next),
-> +	TP_ARGS(cpu, states, atoms, next));
-> +
-> +DEFINE_EVENT(error_ltl_monitor_cpu, error_rts,
-> +	TP_PROTO(unsigned int cpu),
-> +	TP_ARGS(cpu));
-> +#endif /* CONFIG_RV_MON_RTS */
-> diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-> index bf7cca6579ec..7b3a6fb8ca6f 100644
-> --- a/kernel/trace/rv/rv_trace.h
-> +++ b/kernel/trace/rv/rv_trace.h
-> @@ -221,6 +221,7 @@ DECLARE_EVENT_CLASS(error_ltl_monitor_cpu,
-> =C2=A0
-> =C2=A0	TP_printk("cpu%u: violation detected", __entry->cpu)
-> =C2=A0);
-> +#include <monitors/rts/rts_trace.h>
-> =C2=A0// Add new monitors based on CONFIG_LTL_MON_EVENTS_CPU here
-> =C2=A0
-> =C2=A0#endif /* CONFIG_LTL_MON_EVENTS_CPU */
-> diff --git a/tools/verification/models/sched/rts.ltl
-> b/tools/verification/models/sched/rts.ltl
-> new file mode 100644
-> index 000000000000..90872bca46b1
-> --- /dev/null
-> +++ b/tools/verification/models/sched/rts.ltl
-> @@ -0,0 +1,5 @@
-> +RULE =3D always (RT_TASK_ENQUEUED imply SCHEDULE_RT_NEXT)
-> +
-> +SCHEDULE_RT_NEXT =3D (not SCHED_SWITCH) until (SCHED_SWITCH_RT or
-> EXCEPTIONS)
-> +
-> +EXCEPTIONS =3D SCHED_SWITCH_DL or not RT_TASK_ENQUEUED
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 5cad369ceb92..e06cbb823bb7 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -173,9 +173,12 @@ data_flush		 Enable data flushing before checkpoint in order to
+ 			 persist data of regular and symlink.
+ reserve_root=%d		 Support configuring reserved space which is used for
+ 			 allocation from a privileged user with specified uid or
+-			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
+-resuid=%d		 The user ID which may use the reserved blocks.
+-resgid=%d		 The group ID which may use the reserved blocks.
++			 gid, unit: 4KB, the default limit is 12.5% of user blocks.
++reserve_node=%d		 Support configuring reserved nodes which are used for
++			 allocation from a privileged user with specified uid or
++			 gid, the default limit is 12.5% of all nodes.
++resuid=%d		 The user ID which may use the reserved blocks and nodes.
++resgid=%d		 The group ID which may use the reserved blocks and nodes.
+ fault_injection=%d	 Enable fault injection in all supported types with
+ 			 specified injection rate.
+ fault_type=%d		 Support configuring fault injection type, should be
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f19472eb2789..047964d66736 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+  * string rather than using the MS_LAZYTIME flag, so this must remain.
+  */
+ #define F2FS_MOUNT_LAZYTIME		0x40000000
++#define F2FS_MOUNT_RESERVE_NODE		0x80000000
+ 
+ #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+ #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
+@@ -178,6 +179,7 @@ struct f2fs_rwsem {
+ struct f2fs_mount_info {
+ 	unsigned int opt;
+ 	block_t root_reserved_blocks;	/* root reserved blocks */
++	block_t root_reserved_nodes;	/* root reserved nodes */
+ 	kuid_t s_resuid;		/* reserved blocks for uid */
+ 	kgid_t s_resgid;		/* reserved blocks for gid */
+ 	int active_logs;		/* # of active logs */
+@@ -2407,7 +2409,7 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+ 	return ofs == XATTR_NODE_OFFSET;
+ }
+ 
+-static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
++static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool cap)
+ {
+ 	if (!inode)
+@@ -2432,7 +2434,7 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+ 	avail_user_block_count = sbi->user_block_count -
+ 					sbi->current_reserved_blocks;
+ 
+-	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_blocks(sbi, inode, cap))
++	if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, inode, cap))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+@@ -2790,7 +2792,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool is_inode)
+ {
+ 	block_t	valid_block_count;
+-	unsigned int valid_node_count;
++	unsigned int valid_node_count, avail_user_node_count;
+ 	unsigned int avail_user_block_count;
+ 	int err;
+ 
+@@ -2812,15 +2814,20 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 	spin_lock(&sbi->stat_lock);
+ 
+ 	valid_block_count = sbi->total_valid_block_count + 1;
+-	avail_user_block_count = get_available_block_count(sbi, inode, false);
++	avail_user_block_count = get_available_block_count(sbi, inode,
++			test_opt(sbi, RESERVE_NODE));
+ 
+ 	if (unlikely(valid_block_count > avail_user_block_count)) {
+ 		spin_unlock(&sbi->stat_lock);
+ 		goto enospc;
+ 	}
+ 
++	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
++	if (test_opt(sbi, RESERVE_NODE) &&
++			!__allow_reserved_root(sbi, inode, true))
++		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
+ 	valid_node_count = sbi->total_valid_node_count + 1;
+-	if (unlikely(valid_node_count > sbi->total_node_count)) {
++	if (unlikely(valid_node_count > avail_user_node_count)) {
+ 		spin_unlock(&sbi->stat_lock);
+ 		goto enospc;
+ 	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3f8bc42e0968..f37004780ce0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -143,6 +143,7 @@ enum {
+ 	Opt_extent_cache,
+ 	Opt_data_flush,
+ 	Opt_reserve_root,
++	Opt_reserve_node,
+ 	Opt_resgid,
+ 	Opt_resuid,
+ 	Opt_mode,
+@@ -273,6 +274,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_flag_no("extent_cache", Opt_extent_cache),
+ 	fsparam_flag("data_flush", Opt_data_flush),
+ 	fsparam_u32("reserve_root", Opt_reserve_root),
++	fsparam_u32("reserve_node", Opt_reserve_node),
+ 	fsparam_gid("resgid", Opt_resgid),
+ 	fsparam_uid("resuid", Opt_resuid),
+ 	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
+@@ -346,6 +348,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+ #define F2FS_SPEC_memory_mode			(1 << 22)
+ #define F2FS_SPEC_errors			(1 << 23)
+ #define F2FS_SPEC_lookup_mode			(1 << 24)
++#define F2FS_SPEC_reserve_node			(1 << 25)
+ 
+ struct f2fs_fs_context {
+ 	struct f2fs_mount_info info;
+@@ -447,22 +450,30 @@ static void f2fs_destroy_casefold_cache(void) { }
+ 
+ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+ {
+-	block_t limit = min((sbi->user_block_count >> 3),
++	block_t block_limit = min((sbi->user_block_count >> 3),
+ 			sbi->user_block_count - sbi->reserved_blocks);
++	block_t node_limit = sbi->total_node_count >> 3;
+ 
+ 	/* limit is 12.5% */
+ 	if (test_opt(sbi, RESERVE_ROOT) &&
+-			F2FS_OPTION(sbi).root_reserved_blocks > limit) {
+-		F2FS_OPTION(sbi).root_reserved_blocks = limit;
++			F2FS_OPTION(sbi).root_reserved_blocks > block_limit) {
++		F2FS_OPTION(sbi).root_reserved_blocks = block_limit;
+ 		f2fs_info(sbi, "Reduce reserved blocks for root = %u",
+ 			  F2FS_OPTION(sbi).root_reserved_blocks);
+ 	}
+-	if (!test_opt(sbi, RESERVE_ROOT) &&
++	if (test_opt(sbi, RESERVE_NODE) &&
++			F2FS_OPTION(sbi).root_reserved_nodes > node_limit) {
++		F2FS_OPTION(sbi).root_reserved_nodes = node_limit;
++		f2fs_info(sbi, "Reduce reserved nodes for root = %u",
++			  F2FS_OPTION(sbi).root_reserved_nodes);
++	}
++	if (!test_opt(sbi, RESERVE_ROOT) && !test_opt(sbi, RESERVE_NODE) &&
+ 		(!uid_eq(F2FS_OPTION(sbi).s_resuid,
+ 				make_kuid(&init_user_ns, F2FS_DEF_RESUID)) ||
+ 		!gid_eq(F2FS_OPTION(sbi).s_resgid,
+ 				make_kgid(&init_user_ns, F2FS_DEF_RESGID))))
+-		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root",
++		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root"
++				" and reserve_node",
+ 			  from_kuid_munged(&init_user_ns,
+ 					   F2FS_OPTION(sbi).s_resuid),
+ 			  from_kgid_munged(&init_user_ns,
+@@ -851,6 +862,11 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
+ 		ctx->spec_mask |= F2FS_SPEC_reserve_root;
+ 		break;
++	case Opt_reserve_node:
++		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
++		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
++		ctx->spec_mask |= F2FS_SPEC_reserve_node;
++		break;
+ 	case Opt_resuid:
+ 		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
+ 		ctx->spec_mask |= F2FS_SPEC_resuid;
+@@ -1438,6 +1454,14 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
+ 		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+ 		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
+ 	}
++	if (test_opt(sbi, RESERVE_NODE) &&
++			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
++			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
++		f2fs_info(sbi, "Preserve previous reserve_node=%u",
++			F2FS_OPTION(sbi).root_reserved_nodes);
++		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
++		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
++	}
+ 
+ 	err = f2fs_check_test_dummy_encryption(fc, sb);
+ 	if (err)
+@@ -1637,6 +1661,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
+ 		F2FS_OPTION(sbi).root_reserved_blocks =
+ 					F2FS_CTX_INFO(ctx).root_reserved_blocks;
++	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
++		F2FS_OPTION(sbi).root_reserved_nodes =
++					F2FS_CTX_INFO(ctx).root_reserved_nodes;
+ 	if (ctx->spec_mask & F2FS_SPEC_resgid)
+ 		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
+ 	if (ctx->spec_mask & F2FS_SPEC_resuid)
+@@ -2359,9 +2386,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_BLK)
+ 		seq_puts(seq, "fragment:block");
+ 	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
+-	if (test_opt(sbi, RESERVE_ROOT))
+-		seq_printf(seq, ",reserve_root=%u,resuid=%u,resgid=%u",
++	if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
++		seq_printf(seq, ",reserve_root=%u,reserve_node=%u,resuid=%u,"
++				"resgid=%u",
+ 				F2FS_OPTION(sbi).root_reserved_blocks,
++				F2FS_OPTION(sbi).root_reserved_nodes,
+ 				from_kuid_munged(&init_user_ns,
+ 					F2FS_OPTION(sbi).s_resuid),
+ 				from_kgid_munged(&init_user_ns,
+-- 
+2.34.1
 
 
