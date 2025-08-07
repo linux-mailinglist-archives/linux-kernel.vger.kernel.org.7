@@ -1,46 +1,53 @@
-Return-Path: <linux-kernel+bounces-758611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5920B1D15F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:00:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED30B1D161
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF1A75651D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4313BC6B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673CF1E520E;
-	Thu,  7 Aug 2025 04:00:09 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0CB1B0F1E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 04:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2DD1D86DC;
+	Thu,  7 Aug 2025 04:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l40uR5VH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DB61B0F1E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 04:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754539209; cv=none; b=TKfjArOdyQBjEYQKjs6nhAFqPyLnHH9++L97GdLf5P/CADzxS/3NmNMJmlMcY63bJBdGNSVTS3AsuXHOEob1vFGM017ISSFBSOrJoO3EXNBw6rOvvAGj0ZcdUsftgrSecdH0V7CYy7VCaAUYEZii7EZjzSEA4IzpdIXD5EMEvi0=
+	t=1754539239; cv=none; b=Y6ZvC+2b0g8ncqoL330nbcDdfTF8eqmBgEDn4j2n1dV+L26EI97xi++W5OklUDdC36H2vgVL6QU0ROMsNRiFIuN2i1orPPLGTpLJ8clKAk+oBj4pT5NbCsqrFAyTLL+hKy5XawHzVdFZiDQYNkZ/VvJwTLGDigQVIOJcvI+MYYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754539209; c=relaxed/simple;
-	bh=IxAokOYjdka6Q8GQ4OaCmhnX7CjdHItGK4MHiGtNU2o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jWZh1b3SDcLLvVYM8/iGmyEtcNeHmLqTsUK0/HTMGcfvxCzl1sZaWpg+V20YcvPN/jNridHk9v3q/gIdGmWpb+G3eFsnLqYtVPn6675lMEBoaybfJUoBvO6BHDzeWU95SNdjvahb+la0sK7ZbLJ0fb4E8JnZf/m0knfh0MeLewQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxnOK7JJRoUD06AQ--.13459S3;
-	Thu, 07 Aug 2025 11:59:55 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAxvsG7JJRovgs6AA--.44367S2;
-	Thu, 07 Aug 2025 11:59:55 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] tick: Remove unreasonable detached state set in tick_shutdown()
-Date: Thu,  7 Aug 2025 11:59:54 +0800
-Message-Id: <20250807035954.2412399-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1754539239; c=relaxed/simple;
+	bh=kBwCJJlDyKVKUDaMrt/cerX2ZHziG6F/f3hxF2St+1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m71NxC0xVJwc4b1LxPEULt8WS6D6tAaPcP3T6Fc3KlpJFsxEiU/gRbg4BSCVah9KgesWyzz9G9hCryttk++7YvyP7bMmt3CnD4Zupt9WpfKO4sOvV+1rR26fw8DjoF7Z3+9xBZj5d2X4kfbU6g48kWRsVGMUn9hfuskMNDM58dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l40uR5VH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE722C4CEEB;
+	Thu,  7 Aug 2025 04:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754539239;
+	bh=kBwCJJlDyKVKUDaMrt/cerX2ZHziG6F/f3hxF2St+1c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l40uR5VHvjl0QJ0mcyoepwYCOUS1PQJeuPBmTapo4/kKENrOGFpUO/dR5gQdosvP0
+	 2apjnAR//pEulEI4yg2FomDR/cNvEzJtBxOlFU9qVd8Jxu9z5taACiAybI6fRc67xn
+	 IYxtp19mCamrLFsHqDQSCp1avMfyn6QXiGFLYT5VyYvScCCzk8rL96/Y+tg3Kqtw54
+	 0GemrBh4hayOo5/nrpmw8/OqIRgteztm3c9klfnUeG3ckL+yA3CMAj7Gb6K7GtU8bM
+	 UhgTptW8yJOOw3t84GMryMgbDDgEPyC9einFH1gn0BxJ5GcVPESYTYVHYk8pUXB5mP
+	 VBOB931cELULA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: add timeout in f2fs_enable_checkpoint()
+Date: Thu,  7 Aug 2025 12:00:25 +0800
+Message-ID: <20250807040026.3834543-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,50 +55,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxvsG7JJRovgs6AA--.44367S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Function clockevents_switch_state() will check whether it has already
-switched to specified state, do nothing if it has.
+During f2fs_enable_checkpoint() in remount(), if we flush a large
+amount of dirty pages into slow device, it may take long time which
+will block write IO, let's add a timeout machanism during dirty
+pages flush to avoid long time block in f2fs_enable_checkpoint().
 
-In function tick_shutdown(), it will set detached state at first and
-call clockevents_switch_state() in clockevents_exchange_device(). The
-function clockevents_switch_state() will do nothing since it is already
-detached state. So the tick timer device will not be shutdown when CPU
-is offline. In guest VM system, timer interrupt will prevent vCPU to sleep
-if vCPU is hot removed.
-
-Here remove state set before calling clockevents_exchange_device(),
-its state will be set in function clockevents_switch_state() if it
-succeeds to do so.
-
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- kernel/time/tick-common.c | 5 -----
- 1 file changed, 5 deletions(-)
+ fs/f2fs/f2fs.h  |  2 ++
+ fs/f2fs/super.c | 21 +++++++++++++++------
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-index 9a3859443c04..eb9b777f5492 100644
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -424,11 +424,6 @@ void tick_shutdown(unsigned int cpu)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 464dcbf5c32e..df4466e652cf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -275,6 +275,7 @@ enum {
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+ #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
++#define DEF_ENABLE_INTERVAL		16	/* 16 secs */
+ #define DEF_DISABLE_QUICK_INTERVAL	1	/* 1 secs */
+ #define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
  
- 	td->mode = TICKDEV_MODE_PERIODIC;
- 	if (dev) {
--		/*
--		 * Prevent that the clock events layer tries to call
--		 * the set mode function!
--		 */
--		clockevent_set_state(dev, CLOCK_EVT_STATE_DETACHED);
- 		clockevents_exchange_device(dev, NULL);
- 		dev->event_handler = clockevents_handle_noop;
- 		td->evtdev = NULL;
-
-base-commit: 7e161a991ea71e6ec526abc8f40c6852ebe3d946
+@@ -1406,6 +1407,7 @@ enum {
+ 	DISCARD_TIME,
+ 	GC_TIME,
+ 	DISABLE_TIME,
++	ENABLE_TIME,
+ 	UMOUNT_DISCARD_TIMEOUT,
+ 	MAX_TIME,
+ };
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c1f45df9efec..411265c75698 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2623,16 +2623,24 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 
+ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ {
+-	int retry = DEFAULT_RETRY_IO_COUNT;
++	unsigned int nr_pages = get_pages(sbi, F2FS_DIRTY_DATA) / 16;
++
++	f2fs_update_time(sbi, ENABLE_TIME);
+ 
+ 	/* we should flush all the data to keep data consistency */
+-	do {
+-		sync_inodes_sb(sbi->sb);
++	while (get_pages(sbi, F2FS_DIRTY_DATA)) {
++		writeback_inodes_sb_nr(sbi->sb, nr_pages, WB_REASON_SYNC);
+ 		f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+-	} while (get_pages(sbi, F2FS_DIRTY_DATA) && retry--);
+ 
+-	if (unlikely(retry < 0))
+-		f2fs_warn(sbi, "checkpoint=enable has some unwritten data.");
++		if (f2fs_time_over(sbi, ENABLE_TIME))
++			break;
++	}
++
++	sync_inodes_sb(sbi->sb);
++
++	if (unlikely(get_pages(sbi, F2FS_DIRTY_DATA)))
++		f2fs_warn(sbi, "checkpoint=enable has some unwritten data: %lld",
++					get_pages(sbi, F2FS_DIRTY_DATA));
+ 
+ 	f2fs_down_write(&sbi->gc_lock);
+ 	f2fs_dirty_to_prefree(sbi);
+@@ -4229,6 +4237,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+ 	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+ 	sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_INTERVAL;
++	sbi->interval_time[ENABLE_TIME] = DEF_ENABLE_INTERVAL;
+ 	sbi->interval_time[UMOUNT_DISCARD_TIMEOUT] =
+ 				DEF_UMOUNT_DISCARD_TIMEOUT;
+ 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
 -- 
-2.39.3
+2.49.0
 
 
