@@ -1,126 +1,101 @@
-Return-Path: <linux-kernel+bounces-759276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E097B1DB5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:11:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6831DB1DB5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF767A460C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C69C1AA56E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDBC26E705;
-	Thu,  7 Aug 2025 16:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1999126E16A;
+	Thu,  7 Aug 2025 16:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="anXpfStW"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3T5VzEt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2781400C;
-	Thu,  7 Aug 2025 16:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711121940A1;
+	Thu,  7 Aug 2025 16:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583092; cv=none; b=EKyjTx/2i2b+hWelrq1DF0PMzY73BRCPslCoDvH+opItViY6fZDK3/dA2I1TgdzJMjrHSe4ot5JIFsKweKtpf48FSWr+8y/Q9pBe+ijfqPE+y0n8m6QNLZ1atCfKrKShiCGoNtKtXXOQjKETT/5s7HVw7PVqGaWmXXCT/iuwLxs=
+	t=1754583143; cv=none; b=OhfYvIkCDb8s/Fkbu+oxm2x03WShb9qcR6tmuzqaxs7X4V1va5bD5Yv7XEm11fd6qfxkRt2F6L74MZaLZcTVd1LdTHUpjIzCZMQ+ChFyi1DY5Nt/MAQYg3J78PXadJNMewIOvau8fhx1vl2TB8PquEFNQUJvR+4ck7ZXAcQkYKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583092; c=relaxed/simple;
-	bh=OV71OFYnOLI46OevvCJHarY8VZ1cMrOOOvfhQ2D4QYA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=UVc7YTSA55CSu1oNfrSBU/lTbj7ZJGCO1Z4+lX9ihRoumqiU3ozIJj9o6e8voG0FqUT1dbHRat6FHw0l8bBZ6o6RvHsq8SjbCxcyxbvyi1zbyOns3a5DGMjP+zih1SqRmklDcuibu7wusTPKAFGGlPeduk8BQg94ZkTpuIQk5g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=anXpfStW; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 81832442F6;
-	Thu,  7 Aug 2025 16:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754583087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zZKIWF9npEkKZLlXfX/TxHBsvndAZLC7cFR8tTMLusA=;
-	b=anXpfStWtQaVGcjeVkSrKGaRYMcwhCu6SGubJHwi676xFy+IfLlGDAxmSNpLg+ldHctrqi
-	tKoZKqXmvlZ73jQrVM1mC5cjDOVuL1PAsby26oO8b/w4bRLWdosvnIu5kf7QyYmDTXaV6/
-	mCa474mjGmB60FjEIirliBXL8JQNPKGTc5jL0nBrODB38VvM1wSQnmQQfn/lYZQn4l9gV0
-	7kBHY91KVPIwoJsnaoRsLW2p2d7ccF+sIokmXV91DvqDPTuJYzon5I70p85K0nZ2AgR65e
-	8DqgAB4w7oVVZc+wOntYAppe6xL0fnOK0QqJAkhYQ6uyLVUfvVzFK6PgrQMwtw==
+	s=arc-20240116; t=1754583143; c=relaxed/simple;
+	bh=/+q2AXnRLzK5aHvJtG93842Ok5qFRiN8TlO7/PVAyCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdX0UMMMt8dsmaTwK1/X5dcyJcS3iP5G/9UJ9G16cKyKoVm5Bhqw9xRsx53sqyCp+aJMHmdotTS/NIrbYoNLDBk70Ylz4fstEWHlLUWdyfrHB/nMdZ78gpim0dl3lyj9WDyy1+R/RR1UamjjVdFfyj43P/Gbrtw5z1Ff24zIzEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3T5VzEt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A474BC4CEEB;
+	Thu,  7 Aug 2025 16:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754583143;
+	bh=/+q2AXnRLzK5aHvJtG93842Ok5qFRiN8TlO7/PVAyCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U3T5VzEtIh+hNzmZhjgfrgodQNsfOY/3H5x63x+/3sbJqPd1WSWki9++FG90oi7Bz
+	 Nzgdh+EB9lMSZvxDb95HUf37bGE3A2Wars+2ykplCTyGe44EtVP9lz8ndmfM4q6Dmg
+	 GcHnb5qDCXPkiXdQCbPKu5B1LeNJR9f1NS0JsKNv+cz3KxGZ/7UtoNxrf0cLNGSiSi
+	 /C1f886TtPDq1Mro5sfiYdONzTb36nYXx09rxibt5gIfXJhBUE4Jiz3ZEjepyM2AH8
+	 Bne1INAwJeSK6PUvJAvYevY9VQGjf042XU0U5b0rybZSTyJF1woZ36HNZGvZpGDGfM
+	 ixdrs684ITpiQ==
+Date: Thu, 7 Aug 2025 17:12:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: zhengnan chen <zhengnan.chen@mediatek.com>
+Cc: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 1/3] dt-bindings: mediatek: mt8189: Add bindings for MM &
+ APU & INFRA IOMMU
+Message-ID: <20250807-wreckage-lagoon-0751eb9c53e0@spud>
+References: <20250807095756.11840-1-zhengnan.chen@mediatek.com>
+ <20250807095756.11840-2-zhengnan.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XfGVipfyRV1J9smt"
+Content-Disposition: inline
+In-Reply-To: <20250807095756.11840-2-zhengnan.chen@mediatek.com>
+
+
+--XfGVipfyRV1J9smt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Aug 2025 18:11:23 +0200
-Message-Id: <DBWBSL7Q35M2.2WWW5HKBHKUA5@bootlin.com>
-Cc: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Jiaxun Yang" <jiaxun.yang@flygoat.com>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Claudiu Beznea"
- <claudiu.beznea@tuxon.dev>, "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Samuel Holland"
- <samuel.holland@sifive.com>, "Richard Cochran" <richardcochran@gmail.com>,
- "Russell King" <linux@armlinux.org.uk>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Cyrille Pitchen"
- <cyrille.pitchen@atmel.com>, "Harini Katakam" <harini.katakam@xilinx.com>,
- "Rafal Ozieblo" <rafalo@cadence.com>, "Haavard Skinnemoen"
- <hskinnemoen@atmel.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net-next v2 16/18] MIPS: mobileye: add EyeQ5 DMA IOCU
- support
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
- <20250627-macb-v2-16-ff8207d0bb77@bootlin.com>
- <984c1bea-7020-4121-9fea-7d657a5e8da1@app.fastmail.com>
-In-Reply-To: <984c1bea-7020-4121-9fea-7d657a5e8da1@app.fastmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddufeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefvhffuofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeigfelffeuffetteetuddufffghefhudeuteeigeekteevgeeileejgfdvffelheenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefvddprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnv
- ghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hello Jiaxun,
+On Thu, Aug 07, 2025 at 05:57:46PM +0800, zhengnan chen wrote:
+> From: "zhengnan chen" <zhengnan.chen@mediatek.com>
+>=20
+> There are three iommu in total, namely MM_IOMMU, APU_IOMMU, INFRA_IOMMU,
+> Add bindings for them.
+>=20
+> Signed-off-by: zhengnan chen <zhengnan.chen@mediatek.com>
 
-On Mon Jun 30, 2025 at 3:35 PM CEST, Jiaxun Yang wrote:
-> =E5=9C=A82025=E5=B9=B46=E6=9C=8827=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8A=
-=E5=8D=8810:09=EF=BC=8CTh=C3=A9o Lebrun=E5=86=99=E9=81=93=EF=BC=9A
->> Both Cadence GEM Ethernet controllers on EyeQ5 are hardwired through CM3
->> IO Coherency Units (IOCU). For DMA coherent accesses, BIT(36) must be
->> set in DMA addresses.
->
-> Just quick question, it seems like this special driver is only applying a
-> fixed offset (1 << 36) to the DMA physical address, can we achieve that w=
-ith dma-ranges
-> property in DeviceTree?
->
-> I belive:
-> ```
-> dma-coherent;
->              # Bus addr       # Phys  # Size
-> dma-ranges =3D <0x10 0x00000000 0x0 0x0 0x10 0>;
-> ```
->
-> Will do the job.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-This is perfect! Can confirm it works just fine. When you are stuck in
-an issue for too long you don't think about broadening your viewpoint.
+--XfGVipfyRV1J9smt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJTQYQAKCRB4tDGHoIJi
+0tXRAP9w3SZ+Wbqif+YI4QTQtgl2AqYaAYFFNJG3eEk/UF2fZwEAiE3AAdpOKChr
+c7VmkXEwQgqn44SMpM3XoKEhlOX+pAE=
+=2DLy
+-----END PGP SIGNATURE-----
 
+--XfGVipfyRV1J9smt--
 
