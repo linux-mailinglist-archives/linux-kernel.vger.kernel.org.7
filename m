@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-758995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1751EB1D6DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:45:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD54B1D6E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E58A583747
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E36A7249B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E532797A4;
-	Thu,  7 Aug 2025 11:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E5230D0D;
+	Thu,  7 Aug 2025 11:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kcevrr2H";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kcevrr2H"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcHSl8Id"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9108610957
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D85B2A1CF;
+	Thu,  7 Aug 2025 11:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567093; cv=none; b=r0UIgU9QiVtdbasiDR8MbZn8BBEHC+jHonZbUJPsVSyX+isFnIhCHBEv/AiF4I+2Ry2F1tIqtS44woL+hNln4TFJloCg7CEtKxaBSCWE5PQ69qqGXQxPpfSLIYJQI/IBH8nH9jRvXv9MiLqWmeiZYm1QnHwavl9mnCbYSJBZ5MI=
+	t=1754567187; cv=none; b=Z/BiG3fa/Lxeuv/lk9qt1RNzB1ZWDQ/eKzDVKL4MuO/XaG5ySJ6vtkvRF6ecFMEDEYUnCuftdMBXquXt42Y9G3XOo/Si5tkl6yi3FXiez34CwH4t10FyPEuPQQ87UnhhdnHxtoD0kF+D0sv09v0J5jkkL2YD4rBJZdaYQhcd6wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567093; c=relaxed/simple;
-	bh=L7hfLRAJOLHOus5/zQlDJVfnXgYCJqEMBHsaSyGNiY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XYXOAcfkDyFOj0Ji/mIi7webzCje3NkuNHxy2rqZ/INnHujz1Wi9xEfZrUOmFqBSbWy7tgCYhrfpUNLntJx6ylyT53+pyZ9Vv2mdFv0TN0Zg8XsbR1j1UmxbM6D5fXYoFrcsoSUdND09Uu5wfbkLVDkKRT9r9CZps4kk7TRtp1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kcevrr2H; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kcevrr2H; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C02821FCE6;
-	Thu,  7 Aug 2025 11:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1754567089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=tOpR+gfvCF2CLA4th25JsmJoupBuWS5PLe2u+qNugnc=;
-	b=kcevrr2HEuQbI4T4G/XnwPf57ViwUAcL5GQKBLcRJI9XKfE16anKkcBA24uszr+yM4GPA7
-	kghjasjU2jxeGoj+K/oblgDq2+zsz9tkd4cxfEzNHEqsinVBIwjCjDO4G4KUygx0NnYV8v
-	reYRGsFl38lRBZ78qbQqW5l1rmpAtLg=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1754567089; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=tOpR+gfvCF2CLA4th25JsmJoupBuWS5PLe2u+qNugnc=;
-	b=kcevrr2HEuQbI4T4G/XnwPf57ViwUAcL5GQKBLcRJI9XKfE16anKkcBA24uszr+yM4GPA7
-	kghjasjU2jxeGoj+K/oblgDq2+zsz9tkd4cxfEzNHEqsinVBIwjCjDO4G4KUygx0NnYV8v
-	reYRGsFl38lRBZ78qbQqW5l1rmpAtLg=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8DE513969;
-	Thu,  7 Aug 2025 11:44:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RCAdLbGRlGg5ZgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 07 Aug 2025 11:44:49 +0000
-From: David Sterba <dsterba@suse.com>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ebiggers@kernel.org,
-	herbert@gondor.apana.org.au,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH] lib/lzo: add unlikely hints to overrun checks
-Date: Thu,  7 Aug 2025 13:44:44 +0200
-Message-ID: <20250807114444.1341921-1-dsterba@suse.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754567187; c=relaxed/simple;
+	bh=7EcW2IB/Hoo31JQCi+ZPT/KI3YtuMNEtsU4Q0qj9Ds0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=nEpyg60aV1/NPAFiTUxA4WpI4Qg0x5+rYoRmgOsnAWO9KLEhQxKFKY6jShiaXsZPkv+8pNnYEbPaQXHf/YDb2rkzZk4dMsdeU9eH9vYqi1/gR+CmGLSRKfOu/v0murWZTiNYCTa8bnLsDaNn8EAmWyCLRLyxnBDyZRHxf4sHUIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcHSl8Id; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F9BC4CEEB;
+	Thu,  7 Aug 2025 11:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754567187;
+	bh=7EcW2IB/Hoo31JQCi+ZPT/KI3YtuMNEtsU4Q0qj9Ds0=;
+	h=Date:From:Subject:To:From;
+	b=VcHSl8IdZT7wDopZTf+iv0npq2wRAQi355OQWzi+WBefsthauEB/DbLwlD3OR7eMb
+	 qmWE2vIqmWgxnXmiGeBhmdGcqfCrusNHHr9rR+6T/WfuPcaQohSOhTMzaLsEAoq6fe
+	 c1SkmJ+zoaOFGp2O2dEY1XH1dZbHyv3lwITplV4osbd7pNMl5eMin9qDneXjCmGPeH
+	 L4TYR+r2dE46kaFcLF8SHzB1zO1J2LWEGjoyEuTybgTd7KGRii/4L9i0VpOkct8V8r
+	 Ynxso2jBXIIZkVgx4ANEaShHYW+K3dgLSPHzv3y1Kk/0LS9uwH04awKsl/9Siu10AF
+	 MqUWPQSz877KA==
+Message-ID: <8c59ef9a-7b5c-4fec-b630-ac84218ed955@kernel.org>
+Date: Thu, 7 Aug 2025 13:46:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:email];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+User-Agent: Mozilla Thunderbird
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [ANNOUNCEMENT / CFP] LPC 2025 Devicetree Microconference CFP
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>, Rob Herring
+ <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ devicetree-compiler@vger.kernel.org, devicetree-spec@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The NEED_* macros do an implicit goto in case the safety bounds checks
-fail. Add the unlikely hints as this is the error case and not a hot
-path. The final assembly is slightly shorter and some jumps got
-reordered according to the hints.
+There will be a dedicated Devicetree Microconference on Linux Plumbers
+2025 in December in Tokyo and Call For Papers is currently open.
 
-   text    data     bss     dec     hex filename
-   2294      16       0    2310     906 pre/lzo1x_decompress_safe.o
-   2277      16       0    2293     8f5 post/lzo1x_decompress_safe.o
+The Devicetree Microconference focuses on discussing and solving
+problems present in the systems using Devicetree as firmware
+representation. Primarily this will be Linux kernel and U-Boot, but also
+can cover topics relevant to Zephyr or System Devicetrees.
 
-   text    data     bss     dec     hex filename
-   3444      48       0    3492     da4 pre/lzo1x_compress_safe.o
-   3372      48       0    3420     d5c post/lzo1x_compress_safe.o
+Topics suggested for discussion include, but are not limited to:
+1. DTS validation against DT schema,
+2. Style checking/linting for DTS,
+3. Using the Linux kernel DTS in U-Boot or other projects,
+4. DTB selection on EFI systems like arm64 laptops,
+5. Hot-pluggable hardware with Devicetree overlay,
+6. Common incorrect or problematic patterns of using OF Linux API, e.g.
+impossible to disable unconditional device_init_wakeup().
 
-Signed-off-by: David Sterba <dsterba@suse.com>
----
- lib/lzo/lzo1x_compress.c        | 2 +-
- lib/lzo/lzo1x_decompress_safe.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Feel welcomed to bring any other topics I am not aware of. Few more
+ideas for discussions are mentioned on DT MC abstract page:
+https://lpc.events/event/19/sessions/237/
 
-diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-index 7b10ca86a89300..01586af2347f5e 100644
---- a/lib/lzo/lzo1x_compress.c
-+++ b/lib/lzo/lzo1x_compress.c
-@@ -26,7 +26,7 @@
- #define HAVE_OP(x) 1
- #endif
- 
--#define NEED_OP(x) if (!HAVE_OP(x)) goto output_overrun
-+#define NEED_OP(x) if (unlikely(!HAVE_OP(x))) goto output_overrun
- 
- static noinline int
- LZO_SAFE(lzo1x_1_do_compress)(const unsigned char *in, size_t in_len,
-diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
-index c94f4928e1888b..318abb82c63d2c 100644
---- a/lib/lzo/lzo1x_decompress_safe.c
-+++ b/lib/lzo/lzo1x_decompress_safe.c
-@@ -22,9 +22,9 @@
- 
- #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
- #define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
--#define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
--#define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
--#define TEST_LB(m_pos)  if ((m_pos) < out) goto lookbehind_overrun
-+#define NEED_IP(x)      if (unlikely(!HAVE_IP(x))) goto input_overrun
-+#define NEED_OP(x)      if (unlikely(!HAVE_OP(x))) goto output_overrun
-+#define TEST_LB(m_pos)  if (unlikely((m_pos) < out)) goto lookbehind_overrun
- 
- /* This MAX_255_COUNT is the maximum number of times we can add 255 to a base
-  * count without overflowing an integer. The multiply will overflow when
--- 
-2.50.1
+
+CFP ends on: 14th of September 2025
+
+Proposals can be submitted here:
+
+https://lpc.events/event/19/abstracts/
+
+
+This email has a list of people in Bcc. It is far from being complete,
+so feel free to forward it further.
+
+Best regards,
+Krzysztof
 
 
