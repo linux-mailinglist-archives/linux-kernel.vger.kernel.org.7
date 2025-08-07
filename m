@@ -1,269 +1,127 @@
-Return-Path: <linux-kernel+bounces-759264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BA3B1DB3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:03:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12773B1DB36
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C761727340
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:03:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBFCB7A323C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D4926E716;
-	Thu,  7 Aug 2025 16:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BD726CE3E;
+	Thu,  7 Aug 2025 16:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEVgIqo0"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AhDZexlD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BABC146A72;
-	Thu,  7 Aug 2025 16:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A77146A72;
+	Thu,  7 Aug 2025 16:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582569; cv=none; b=k0nBg6FK+1haKT7T1sN4107DvpvBNMJxB/5qsrNNzFxzxfns615TDEh8YO1VkTSzBvDt9hcU9hRKCJCLbZ1kt5rBWHpFo9YPHD7SNdm9YD8KEob46pObSDmjkM4p3HNsklLhWavENTanZDuDNRlNv7PApFBBiqREDskGzv85Kek=
+	t=1754582561; cv=none; b=jBaxWyCb3sj9n9A+Wgp7AG0NuOtjMw/ccHc1YCaJVb8A5YNMv8rF01fPhITC46Jv+HVKAkyHFf9bUU0JzxakFk/rnbJgHSiTMgaXwy/HHL/tyLW0vnyv9ydJ2zxG4mQ72NDXfFlsHd6hUNv6keF4LZbbv5YQMkX34N8NXw8RkNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582569; c=relaxed/simple;
-	bh=Mx+69E6o84wwlLdznPlu58kyLM3gy/8avjB71gvqipg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EwcqtVCma+uIF2EdYf+rIBx4M3r3pcf82heAapd1MXCHUk1klnaiUO72HVuKjyjQtO8/VzhnFx/tIi56PeOgm0O/ThQTNZDWewZ5KSNUzravzBALuJLLJivrbvjUiOcHjOMOoZeam2RxC32lZTlLm0UMiEGJXjYKClmh4BUGvMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEVgIqo0; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-707453b031fso15217626d6.1;
-        Thu, 07 Aug 2025 09:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754582567; x=1755187367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwQu0/D6m0UDV0CRsFb/BkiCr1jp/Q0C0jJDQue2He4=;
-        b=PEVgIqo0SmFD8uSP2Yl8T5FDFS9SqQRk0cGViDlv8Pm4yvYt0l1zrhhuN5xYNc+2jN
-         RRCTnF4g7F8oRGaM8sMjKicnt505EpcuhuhDI3iP8ErpcYaQGECAxA4W/4R6omlVsUZx
-         MtUQP3ubjA4BZwkDbW7+6mxOLmViPUWLGSM+kiGDf9HI2+0WSH0jR3JR3DTff2NCLmEr
-         Yw/vz8kkkPaAu1czM/55hJ+nwf5HpGxrYuvRgjhp7e3FBS6ngOYKVtcyeP+268tST1B+
-         aoyaIc/KU8dlTesns0aPpEza70NuzjvhtY29H/DbgBoC/xTEmw6vNpZBa474ferOVr+L
-         Tk6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582567; x=1755187367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwQu0/D6m0UDV0CRsFb/BkiCr1jp/Q0C0jJDQue2He4=;
-        b=LRFJrY17EXS9Po3S5R2bnWsCO7STCd5FYuQAi34iJ2dj0MfO1+z4RHpKx6i7dc5wE9
-         K2YAI/RXppyDSKjISLkUEJZ8XWS3AhrgVDFqflhflGrKUZW38VUtPC4XZsclvsd6R1xG
-         gsqBQSZwpaI8MiwrhSvDI0TSS2nK01uvtTf+A/GtwtAMg7ZBB9X+piuGJhqmkbYBqeun
-         4BEpg2VNI0ggCTfSZpejOG4iG9SmL2BLyVA0Yru10gYw4t0goopbuszqxXXfmZJ7u1tz
-         AruVoNI8ioOXeEnfu4y3y49E1PYrcdMEnWz4Cldn1eDR4ACcOO//pl/P/3OlRfY6kYVD
-         24wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtj+6JRO4H8nsFmFdXHAqJbsWDI7/67j7+s3XcP0ypSkiBxmpDfQK7zrjaedUxte03wwD9MeiN1WutBdCd@vger.kernel.org, AJvYcCW5tGEp5ylO/Xha8ZOFg0ARKlVPw/BQBQ8Vv0H0ou2P5Q4sDmBneFWdDAojF9da6SgiY66PU3aFB0PV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1vBIOEy6UuavMJabjeUsiQyOPj1U9Q3XXl8KBVcMUPOPOzKw2
-	7nOl6on7nyLD78i4COFy/1wzV6mwc7rGDCdXbbtmb6iCsfsQeiyp6+TR//fuglnCPGYabxYazs5
-	t20kmFmxQp7JmCg8cXTWQflGj082A8q8=
-X-Gm-Gg: ASbGncu65C3fqfSnzDKvF1wPk8C5dShvg9dY424r1MhQE5qox3NF209lceim9Y+0MVK
-	qa6KDMTL4nPm7K7CnDfyvGbByW32bEDfAA1qKG2y6iPSmtaGqkXs8kbcUa/XtxTIRwbkxfFMEvm
-	qS3axNCYueQ1t9ZnPMBJcPYecHzVPU3CCovmnEel2KR7ThWICnk1L11Yip5i1a4jWI0/IlraM8M
-	zOdTPKdfbRoGff463Cptx9ernbgNL2nwP74TYDW
-X-Google-Smtp-Source: AGHT+IF+K0U+t1yOJyyd8NnabYBte1Vl/Rersze3x6tcq6Dn8dX1IwJe4XtuPvkzTFkOyVP3t5iNtMP46HlViETvYIo=
-X-Received: by 2002:a05:6214:1bca:b0:707:51a6:184f with SMTP id
- 6a1803df08f44-70979667ddfmr96617956d6.48.1754582566397; Thu, 07 Aug 2025
- 09:02:46 -0700 (PDT)
+	s=arc-20240116; t=1754582561; c=relaxed/simple;
+	bh=LvMMT8HRPwXsYdGloXGLjWypaXvPrcgc3WZiewkGmFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9uICxtx61WBHVqWo7VYHUr6r/cx7l0EtLexXaVPTDal5avIri17x7xrc4oLN1HI2NFMzS2obq6H8XME78yRViWEGdAE1sv2da4ajovIQthwhJSyEUdtPOCKua3AjF01F2BL0v1WzgdI4RXATUp117+CKVaYYrKUanGzMaXateo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AhDZexlD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13669C4CEEB;
+	Thu,  7 Aug 2025 16:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754582560;
+	bh=LvMMT8HRPwXsYdGloXGLjWypaXvPrcgc3WZiewkGmFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AhDZexlD4Ga0vzaZ0CyZ4wbKtaaaciAgaNGee60dFUyzle6d5Y4CsAarZqeurLWWq
+	 g3Vmc0CXy6nE3/jt5wdGEvJbTtQkgqWCtiG/QWlMD/44RZsneiG1awlZf3lue0s95d
+	 xdehdMalTGE/KwjGM9v3kuezKENTRkVQAwmcSs8g=
+Date: Thu, 7 Aug 2025 17:02:35 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andreas.noever@gmail.com, michael.jamet@intel.com,
+	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
+	Sanath.S@amd.com
+Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
+ dynamically
+Message-ID: <2025080758-supervise-craftily-9b7f@gregkh>
+References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
+ <20250728064743.GS2824380@black.fi.intel.com>
+ <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
+ <20250806085118.GE476609@black.igk.intel.com>
+ <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
+ <20250806150024.GF476609@black.igk.intel.com>
+ <2025080628-viral-untruth-4811@gregkh>
+ <20250807051533.GG476609@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805064708.332465-1-wangzhaolong@huaweicloud.com>
- <CAH2r5mssz19Qr+fmY62BnHOzwjQmWWU=wHXEVFkyTRGaWn-t0g@mail.gmail.com>
- <c980644d-0be1-4a88-890d-349b44ada024@huaweicloud.com> <a07e0802-da13-4ae4-b932-1560eb33129d@huaweicloud.com>
-In-Reply-To: <a07e0802-da13-4ae4-b932-1560eb33129d@huaweicloud.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 7 Aug 2025 11:02:34 -0500
-X-Gm-Features: Ac12FXwKUV-u-5TqbsZUSsx8Dcq6IW6izVNh1jlCsw7YTuA85-TRG_qYWhPQqUI
-Message-ID: <CAH2r5mtdCb501g=rehRRwcYnGiWOZjmKX16c+Vd1EYOsfeC3Pw@mail.gmail.com>
-Subject: Re: [PATCH V2 0/4] Fix mid_q_entry memory leaks in SMB client
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: pshilov@microsoft.com, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	Enzo Matsumiya <ematsumiya@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807051533.GG476609@black.igk.intel.com>
 
-presumably the first three cleanup are ok - but if objections let me know
+On Thu, Aug 07, 2025 at 07:15:33AM +0200, Mika Westerberg wrote:
+> On Wed, Aug 06, 2025 at 05:58:26PM +0100, Greg KH wrote:
+> > On Wed, Aug 06, 2025 at 05:00:24PM +0200, Mika Westerberg wrote:
+> > > On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
+> > > > On 8/6/2025 3:51 AM, Mika Westerberg wrote:
+> > > > > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
+> > > > > > > Hi,
+> > > > > > > 
+> > > > > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
+> > > > > > > > This patch series aims to update vendor properties for XDomain
+> > > > > > > > dynamically for vendors like AMD, Intel and ASMedia.
+> > > > > > > 
+> > > > > > > The XDomain properties pretty much describe "software" not the underlying
+> > > > > > > hardware so I don't understand why this is needed? We could have some USB
+> > > > > > > IF registered Linux specific ID there but I don't see why this matters at
+> > > > > > > all.
+> > > > > > 
+> > > > > > Currently, it is showing up as "Intel" on AMD host controllers during
+> > > > > > inter-domain connection. I suppose an alternative is to just call it "Linux"
+> > > > > > or "Linux Connection Manager" to ensure we accurately represent the
+> > > > > > connections across different systems.
+> > > > > > 
+> > > > > > I appreciate your guidance on this and suggestions you might have.
+> > > > > 
+> > > > > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
+> > > > > though but I don't think that matters. AFAIK we have other "donated" IDs in
+> > > > > use in Linux. Let me check on our side if that's okay.
+> > > > 
+> > > > Having looked through this discussion I personally like "Linux" for this
+> > > > string too.
+> > > > 
+> > > > As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
+> > > > Would it make sense to use that?
+> > > 
+> > > AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
+> > > here at least:
+> > > 
+> > >   https://www.usb.org/members
+> > > 
+> > > If it really matters we can sure register one.
+> > 
+> > Linux has an official USB vendor id, we use it for when Linux is used as
+> > a USB gadget device and in a few other places.  If you want to reserve a
+> > product id from it, just let me know and I can dole it out (the list is
+> > around here somewhere...)
+> 
+> Yes please :) I think this is the right thing to do.
 
-On Thu, Aug 7, 2025 at 9:43=E2=80=AFAM Wang Zhaolong
-<wangzhaolong@huaweicloud.com> wrote:
->
->
-> Sorry for the delayed response. I can see exactly what went wrong now.
->
-> The issue is that my implementation holds a spinlock (mid_lock) while
-> executing the callback, but the callback path can eventually lead to
-> crypto_alg_lookup() which tries to acquire a semaphore. This violates
-> the kernel's locking rules - we cannot sleep while holding a spinlock.
->
-> Perhaps I should consider a more ingenious solution that can safely
-> handle these cross-subsystem interactions.
->
-> I'll rework the patch to fix this locking issue and send a v3. I'll
-> probably need to rethink the whole locking strategy to be more aware
-> of what the callbacks actually do and what they might need to sleep for.
->
-> Best regards,
-> Wang Zhaolong
->
->
-> >
-> >> The first three patches (cleanup) look fine and have added to
-> >> cifs-2.6.git for-next (also added Enzo Acked-by) but the fourth patch
-> >> ("smb: client: fix mid_q_entry memleak leak with per-mid locking")
-> >> causes xfstest generic/001 to fail with signing enabled.  See
-> >> http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builde=
-rs/5/builds/58/steps/34/logs/stdio
-> >> and http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/bu=
-ilders/5/builds/59/steps/34/logs/stdio
-> >>
-> >
-> > I am unable to view any information in the link above. Is this informat=
-ion
-> > only visible to logged-in users?
-> >
-> >
-> >>
-> >> [Tue Aug 5 11:03:32 2025] run fstests generic/001 at 2025-08-05 11:03:=
-32
-> >> [Tue Aug 5 11:03:33 2025] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> [Tue Aug 5 11:03:33 2025] [ BUG: Invalid wait context ]
-> >> [Tue Aug 5 11:03:33 2025] 6.16.0 #1 Tainted: G E
-> >> [Tue Aug 5 11:03:33 2025] -----------------------------
-> >> [Tue Aug 5 11:03:33 2025] cifsd/24912 is trying to lock:
-> >> [Tue Aug 5 11:03:33 2025] ffffffffafc14630
-> >> (crypto_alg_sem){++++}-{4:4}, at: crypto_alg_lookup+0x40/0x120
-> >> [Tue Aug 5 11:03:33 2025] other info that might help us debug this:
-> >> [Tue Aug 5 11:03:33 2025] context-{5:5}
-> >> [Tue Aug 5 11:03:33 2025] 1 lock held by cifsd/24912:
-> >> [Tue Aug 5 11:03:33 2025] #0: ff11000134c25870
-> >> (&temp->mid_lock){+.+.}-{3:3}, at: mid_execute_callback+0x19/0x40
-> >> [cifs]
-> >> [Tue Aug 5 11:03:33 2025] stack backtrace:
-> >> [Tue Aug 5 11:03:33 2025] CPU: 1 UID: 0 PID: 24912 Comm: cifsd
-> >> Tainted: G E 6.16.0 #1 PREEMPT(voluntary)
-> >> [Tue Aug 5 11:03:33 2025] Tainted: [E]=3DUNSIGNED_MODULE
-> >> [Tue Aug 5 11:03:33 2025] Hardware name: Red Hat KVM, BIOS
-> >> 1.16.3-4.el9 04/01/2014
-> >> [Tue Aug 5 11:03:33 2025] Call Trace:
-> >> [Tue Aug 5 11:03:33 2025] <TASK>
-> >> [Tue Aug 5 11:03:33 2025] dump_stack_lvl+0x79/0xb0
-> >> [Tue Aug 5 11:03:33 2025] __lock_acquire+0xace/0x21c0
-> >> [Tue Aug 5 11:03:33 2025] ? check_irq_usage+0xa4/0xa80
-> >> [Tue Aug 5 11:03:33 2025] lock_acquire+0x143/0x2d0
-> >> [Tue Aug 5 11:03:33 2025] ? crypto_alg_lookup+0x40/0x120
-> >> [Tue Aug 5 11:03:33 2025] ? check_noncircular+0x71/0x120
-> >> [Tue Aug 5 11:03:33 2025] down_read+0x7c/0x2e0
-> >> [Tue Aug 5 11:03:33 2025] ? crypto_alg_lookup+0x40/0x120
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_down_read+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ? lockdep_unlock+0x51/0xc0
-> >> [Tue Aug 5 11:03:33 2025] ? __lock_acquire+0x11ee/0x21c0
-> >> [Tue Aug 5 11:03:33 2025] crypto_alg_lookup+0x40/0x120
-> >> [Tue Aug 5 11:03:33 2025] crypto_alg_mod_lookup+0x53/0x2b0
-> >> [Tue Aug 5 11:03:33 2025] crypto_alloc_tfm_node+0x76/0x130
-> >> [Tue Aug 5 11:03:33 2025] cifs_alloc_hash+0x44/0x130 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] smb3_calc_signature+0x4f0/0x7b0 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_smb3_calc_signature+0x10/0x10 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? find_held_lock+0x2b/0x80
-> >> [Tue Aug 5 11:03:33 2025] ? tcp_recvmsg+0xc9/0x2d0
-> >> [Tue Aug 5 11:03:33 2025] ? rcu_is_watching+0x20/0x50
-> >> [Tue Aug 5 11:03:33 2025] ? trace_irq_enable.constprop.0+0xac/0xe0
-> >> [Tue Aug 5 11:03:33 2025] ? tcp_recvmsg+0xc9/0x2d0
-> >> [Tue Aug 5 11:03:33 2025] ? __local_bh_enable_ip+0x90/0xf0
-> >> [Tue Aug 5 11:03:33 2025] ? sock_has_perm+0x97/0x1a0
-> >> [Tue Aug 5 11:03:33 2025] smb2_verify_signature+0x178/0x290 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_smb2_verify_signature+0x10/0x10 [cif=
-s]
-> >> [Tue Aug 5 11:03:33 2025] ? look_up_lock_class+0x5d/0x140
-> >> [Tue Aug 5 11:03:33 2025] smb2_check_receive+0x154/0x1c0 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_smb2_check_receive+0x10/0x10 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __lock_acquire+0x3f1/0x21c0
-> >> [Tue Aug 5 11:03:33 2025] ? __lock_acquire+0x3f1/0x21c0
-> >> [Tue Aug 5 11:03:33 2025] smb2_writev_callback+0x1f2/0x870 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? lock_acquire+0x143/0x2d0
-> >> [Tue Aug 5 11:03:33 2025] ? mid_execute_callback+0x19/0x40 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_smb2_writev_callback+0x10/0x10 [cifs=
-]
-> >> [Tue Aug 5 11:03:33 2025] ? do_raw_spin_lock+0x10c/0x190
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_do_raw_spin_lock+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ? _raw_spin_unlock+0x23/0x40
-> >> [Tue Aug 5 11:03:33 2025] mid_execute_callback+0x33/0x40 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] cifs_demultiplex_thread+0xc95/0x15e0 [cifs]
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_cifs_demultiplex_thread+0x10/0x10 [c=
-ifs]
-> >> [Tue Aug 5 11:03:33 2025] ? find_held_lock+0x2b/0x80
-> >> [Tue Aug 5 11:03:33 2025] ? __kthread_parkme+0x4b/0xd0
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_cifs_demultiplex_thread+0x10/0x10 [c=
-ifs]
-> >> [Tue Aug 5 11:03:33 2025] kthread+0x216/0x3e0
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_kthread+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_kthread+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ? lock_release+0xc4/0x270
-> >> [Tue Aug 5 11:03:33 2025] ? rcu_is_watching+0x20/0x50
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_kthread+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ret_from_fork+0x23a/0x2e0
-> >> [Tue Aug 5 11:03:33 2025] ? __pfx_kthread+0x10/0x10
-> >> [Tue Aug 5 11:03:33 2025] ret_from_fork_asm+0x1a/0x30
-> >> [Tue Aug 5 11:03:33 2025] </TASK>
-> >>
-> >> (it worked without the patch see e.g.
-> >> http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builde=
-rs/5/builds/60
-> >> and http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/bu=
-ilders/5/builds/56)
-> >>
-> >> On Tue, Aug 5, 2025 at 1:54=E2=80=AFAM Wang Zhaolong
-> >> <wangzhaolong@huaweicloud.com> wrote:
-> >
-> >
-> > It's quite strange that the lock reported in the stack trace is an inte=
-rnal
-> > lock of the crypto module, which only protects the internal logic of cr=
-ypto.
-> > Moreover, I have not yet found a path where the callback for cifs regis=
-tration
-> > is executed within the scope of this lock.
-> >
-> > ```c
-> > // crypto/api.c
-> > static struct crypto_alg *crypto_alg_lookup(const char *name, u32 type,
-> >                          u32 mask)
-> > {
-> >      const u32 fips =3D CRYPTO_ALG_FIPS_INTERNAL;
-> >      struct crypto_alg *alg;
-> >      u32 test =3D 0;
-> >
-> >      if (!((type | mask) & CRYPTO_ALG_TESTED))
-> >          test |=3D CRYPTO_ALG_TESTED;
-> >
-> >      down_read(&crypto_alg_sem);
-> >      ...
-> >      up_read(&crypto_alg_sem);
-> >      return alg;
-> > ```
-> > More information is needed to confirm this issue. Could you please prov=
-ide it?
-> >
-> > Best regards,
-> > Wang Zhaolong
-> >
->
->
->
->
+Great, please let me know why you need it and what it will be for and
+why.  I totally can not figure that out from this thread...
 
+thanks,
 
---=20
-Thanks,
-
-Steve
+greg k-h
 
