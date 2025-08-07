@@ -1,328 +1,224 @@
-Return-Path: <linux-kernel+bounces-759038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BACB1D775
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:14:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B5CB1D77E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D2B07A1D6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAA8188AC90
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501925C80E;
-	Thu,  7 Aug 2025 12:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3629A2472B0;
+	Thu,  7 Aug 2025 12:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Faju2d4d"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YZbvDWhX"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A34225B2FA;
-	Thu,  7 Aug 2025 12:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568746; cv=none; b=LWJqGK780zdKqbAg4ozjLch895RO/IqzDdUVLTQcBaOBhyBuki/q2QM3OLdfmPfexmxnxEVRqYgLw7dPRamN4fNkpYyiYADBHSyYIyqPN9uuaoDrJFDCtpEJhyLcFsT6kJzCbujpT03XQpIWNBRD9le3KWiLBr8QPgF3DJ3W/R4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568746; c=relaxed/simple;
-	bh=G1sm+ZMu8iGGT/sN1pZ1XM3DA0YpakPxPEp5Hb3jFY8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hfAp8YYCaQRk3z6nHKFwSeDGc8eAoHQWSdHdNzpPMR9bEQmHK7qbOVRE2P+dn2NkITuYf4klJe2NWij2JDVnQ5m3UZpNCZJWJ5BBNxthW9jtrijfSkwGd2S/vs6vSYfApFwe/PGxNVnF2p5B4/6CbxN1dfPnywk8hgIHWQX5ZQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Faju2d4d; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779D57N018265;
-	Thu, 7 Aug 2025 12:12:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4YrLOTkqE3QEWcOAyA4m9m71Fb5aGZ2Vvy8c1lVxnz4=; b=Faju2d4dFQ3WBoFO
-	5v9efXQAwLb7fh2TKS2GkyTds7SppD12UoQd2wYfSeeScfuEDEXioHvq7LV/guIf
-	CfBMTltjQqvNRFcyKAEqBW07NG4lnJlxt6tk+BtVZUKhE43YtHjzFYyONGxK36cZ
-	xwcSVteonWPbGGUI3mMeNTW/tt3OwM0eHvosWEl6mUSncL0j5i5Dyw73jCAjTL9R
-	BM7wcwwRlIkSOO3QvcFSMKtVxOrPdUCBYoU/V1YMyHIp2tGY+ZVIXMVzi+HWkcTI
-	uZjVvROKNb0181IVYQMntH74kMVhaE3mHGAhdx5LI/kdHVdndEVGuP9XhIqOpakg
-	bscKAw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c586btay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 12:12:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577CCFA5028881
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Aug 2025 12:12:15 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 7 Aug 2025 05:12:09 -0700
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v4 9/9] arm64: dts: qcom: sa8775p: Add support for camss
-Date: Thu, 7 Aug 2025 17:41:05 +0530
-Message-ID: <20250807121105.710072-10-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250807121105.710072-1-quic_vikramsa@quicinc.com>
-References: <20250807121105.710072-1-quic_vikramsa@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D3523ABB2;
+	Thu,  7 Aug 2025 12:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754568814; cv=fail; b=CH0WtinmeebKqalPzeXKfmITlxlgpj2+SsvbPy1G3NDckwjLcsBqe3egtm7+lc7x4kjw3nXztKkrwqzTH/kD7laZg5NhQxaAduk5grcq71yqewJsg3I5arFxCwsZAcAl1RvzlYg1CS9H6KiQrwa42s5tYKVa6Rjf0clO+KjzexI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754568814; c=relaxed/simple;
+	bh=oyeTrw8tywcqJMT9woWV5d9SuaUq3fo/NNPHwiwIzto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ToD7dqP3rUYwAejpx9cDgA8DUva78Fe8n3/4OG6fTZUGIIVWnV18U2h7GyUz1U6Ht1MCOORZXqr81jU7TL/tdQ+Yvv20++RoItomEUC2it908+3kWnaZrDx8SkEHEEj6rXOlruTgvE1tkMKvVKCcjmJxkGiL1IPKZKjlZz+aSO8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YZbvDWhX; arc=fail smtp.client-ip=40.107.95.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uxP7Pf0ykg70ESQ1qsMAV46ciw3fMetV5ptq9znpdyVeKuYe0CQx684fgoNYUFgJzPJn3+4lFMQwUMWJvnCER9DzlnAjzb7VOcXipnWlrp5Rw4Grsy1HtLACWH7J3Ed33vP8gXCUoLzgPGe3gtIlOAC4O9FyyR/easgliZtJvaFKrNxs0m6aavuCs6iAlt+gGerYf/zavPmSkkgZFgCQ44WhhSIATvspnXnSyxfWAQHaNOTZ/HVPTzz4GEdkjnqvf3kCRPTfrhReWfvFs/DVv4N8LeoSaEhRlihVFXR5bJsdoCD3YcCry8KRM0MFz2+8xSTiZh8WgrQMoUuWsJghuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jnd91fTvUuf7SAXkMx8PwNrI+Ba1V4Exo/CmbUm1lhI=;
+ b=DmkWUqr9j/Xt1cx/er4RxEftmeONbyeBlY6MYlI9tO6ARDn5qDSq+BE9Rn6KcWTUtkkb06gl26cXmkAlhgowChbxbNfVNKTy6XpUC+DUrHUQ+0ALoktpQmGEx9h5Jh/MukgoYpDzNR/5nD0yI9VF60sAHH9yWSOkMUkrJtsgmEW0AGhr4D7rU5U5OiAfYq7p2Pxf94PFeDtWgTKLn6MvCrf0TyKJwv1xON/D9VEEvWA2ZXuhJbeOnUXdnd63ZCwbhDaxa9qWeUGDfLQYoiGD9vb0uZnbPYHLCim+AOmlGJkL5fz5bLkUcnXmDXqyf6XULntQ+lPLJG0oRnpY7ip/fQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jnd91fTvUuf7SAXkMx8PwNrI+Ba1V4Exo/CmbUm1lhI=;
+ b=YZbvDWhXqTABMlt291caIizhKaSFiEKa8rVjOU3j280z6lSSTUTJ9gkgrtbIKNjUrsQvbdgFNoPEl13biMjDnb4IKjqKu+Q6E3Bleyj+Yk8eimX7s07c03eMIRq2ryn00DPvA/mIj1geQ3WKROV5Z+OW7NgNIuSOk0X6VcbxBaIJR+poit62h0A9cFE5RF2wZFG08zqqFKdKQwwvFcceqJezuBLK6X6H3oe+sXA5PM0zi8rUei9xWP+PpGM9HiEGTjuU9B5IotuPd9YVh5NfHW9i9u3G7QmQXRMmGYrmQ44zqlJN8/skK8wix4cQd7GI0arZ4735+Q1zxixJIIixwg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BN7PPFD3499E3E3.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6e3) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Thu, 7 Aug
+ 2025 12:13:29 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9009.017; Thu, 7 Aug 2025
+ 12:13:28 +0000
+Date: Thu, 7 Aug 2025 09:13:27 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v1 07/16] dma-mapping: convert dma_direct_*map_page to be
+ phys_addr_t based
+Message-ID: <20250807121327.GG184255@nvidia.com>
+References: <cover.1754292567.git.leon@kernel.org>
+ <882499bb37bf4af3dece27d9f791a8982ca4c6a7.1754292567.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <882499bb37bf4af3dece27d9f791a8982ca4c6a7.1754292567.git.leon@kernel.org>
+X-ClientProxiedBy: YT4PR01CA0094.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ff::8) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: K7wKqoO5ZwSwQYhICUYJupskqafvbZmg
-X-Authority-Analysis: v=2.4 cv=MZpsu4/f c=1 sm=1 tr=0 ts=68949820 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=ffUvFpYhAsioIrtRiZgA:9 a=TjNXssC_j7lpFel5tvFf:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: K7wKqoO5ZwSwQYhICUYJupskqafvbZmg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX2klEnJlA8Gkj
- CGgNTm1Ptj1le6HW5wrdrlfq/Yhwa3yGWh5EiC8CpeI+jL9KmD9VWuFFoQWxt5wRwe3I/DZeiKL
- gZyWE/Tk/GjhOEolnlAs0tRMW8HMXaIIVTBzMveFtMRxwf48zy+dpljtJCgKODC077jR/jaj16a
- TTcHJLJk7hH13Y3mz7bgUjtYroT8kqkSsgcRqiai6ONcb4CoP1FxSbu+M7epyBgULXNultOvZ1j
- Bkz4sPCKsRybFoLTjBgvdAcj/A74FXzptpyS+CnRtmgcNYZ1it1DyF5MjoS54AfRBANewRI54cG
- oK6253e2hIL6IhQOK2oTXE3HIRc60P6OvJMYqBSYUUsSZeR6Nw29wPn1O20tL9YJtmUqYC9eHWN
- lJw/6nNM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060064
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BN7PPFD3499E3E3:EE_
+X-MS-Office365-Filtering-Correlation-Id: b942e929-cfed-4d71-c440-08ddd5abd12a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?axQI8w3VTYtQ5YUSriFu37Q7Ie+PYZ1H4KfTCwRvIpV2kxnY4WC0YXxwLc1M?=
+ =?us-ascii?Q?cbMTZRNxCHmOYBy5eTk52kQcR31cLIJacQ+oXZItONC2qt8u2Zu8XIJNpKYr?=
+ =?us-ascii?Q?gu0kM7eFZBqOmCJQMScmVxYvkdyFq79o4+asu8uQDBXWpOhKtiTBQ4/5tisb?=
+ =?us-ascii?Q?TO1gXmomGnQiCfyhlPKtWUjJWhQFhbqJDXXQEb3XWHf/uds0D1iTj/UUfTfT?=
+ =?us-ascii?Q?if/OFKTceOGBXABPR2sFkNv//ZgV2MuYpq373lJwhLmT7LvdSvITw7Dk2TGy?=
+ =?us-ascii?Q?zrT16KfExdJ2dogIykgnTAacqFY1GdiloP2yb0mh474ah2q2SWdgy7WGw56y?=
+ =?us-ascii?Q?2hDMDaoXNB3+7EJdT+gGGfxan1J9eE3SSZpEo0EAs6iyCvoI3QrsvESzekkS?=
+ =?us-ascii?Q?Aq7Ug3SwekNtJvi+h6bEL0HyQL+JO/O8bldy5RAm1U/dSFLxkdFjeooWdhYe?=
+ =?us-ascii?Q?bsYjfJ85QBDGi2fzHQKsyoc+8L/rjQmO4svE02zb+8+LABJUkebPFUebZH0I?=
+ =?us-ascii?Q?RaDVIVl/B14xPSGwhWIYPkTEYyivT81KwaS91QGcBD25zmAdikz33Xft6bZG?=
+ =?us-ascii?Q?lPh0lyooYx8G3l473Bil1oyinXnaB4sWZuy1DuAfZc7o826PRCYqdq4zxy4+?=
+ =?us-ascii?Q?kakjsFfEC8Q0qAslgBVUSC6LoRUCk4p3B1HdvZwO0gfQDCkRDJ6lDNgik6cv?=
+ =?us-ascii?Q?XDTb3ChTUb/fRynp/7buwxi1ugxtNgbvZGGNnWrl1GWsbsVqsO3F8cTZ4JQt?=
+ =?us-ascii?Q?LQu1jS1XNfr+rUCIIuFUrC+qBrsiGSKD1t6zrfaZoQPSEc8PhdmMm4p+nRZH?=
+ =?us-ascii?Q?H1094+/bDuXMoCLANgKLaSAIMQF4CdpfEz5LCMQQ68jx8nHrihoK9p4X5P6N?=
+ =?us-ascii?Q?jYpsBOBpHVl5lnq75bAXGnoxZ+uw10nHH6iZe7u4kX6ZlfssoZpvdBeyOLnz?=
+ =?us-ascii?Q?LtjWmFRu+Jwk/g7XO5D5WQpheth6vm2ElRzni/9d5HHtp5/ZvhjMHcRN6mHO?=
+ =?us-ascii?Q?XZBM3ZKiRWuguOnnNngbUY+rO25Z9arZGX/fxnWQ0lIDiw1GOnI7cb5+6ize?=
+ =?us-ascii?Q?ZgPXdY/RjlkuwK6Lt6Aox/weShKvRTQB0gf4y/pOw05Ap8GqILFVIk2/dJtH?=
+ =?us-ascii?Q?Y8w/rhmP3vMiGMj9PY7cp7p7qb7AZwv8Y2iUTT35R0oTZqCWjpSaTMKH9Nkp?=
+ =?us-ascii?Q?bm42bCC9tIArDMLClNbzTHTMKgXi6ZAsJ9/EfCNcg/zNrt0Nul9w6IPKXUyb?=
+ =?us-ascii?Q?tM4cmLojMMemwoIaszqe3F0CSUcrb0IzTggrtqUXEAhejPywCBf/Fh+xQYZt?=
+ =?us-ascii?Q?E7BC9VeEIfL0ULEsFpq4P1uOG3YGqtIBIlelb5DP6eG6iWO8gPgwPANOHhAb?=
+ =?us-ascii?Q?MWaRKqhUyPwrvIdGvNHer0wFh1IBVHE3vsFURjhpYB//6MHcm1cqYt2l9dgN?=
+ =?us-ascii?Q?uM/ptoUdCi8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sR6OLO7WGVDrwfr9yuQJ+2KW/03YjBHbOxYbGMYOMCZYOWwxQoNDiL2pKIBU?=
+ =?us-ascii?Q?hdkr7lEhol4n7NuO50U7v2uTIhbvOWPEQDMioCAWwI5WQ+BE/3msfWyjn31f?=
+ =?us-ascii?Q?x3BGFqLNyI27rcfQLAUyUJHgLOFy0VsbZNJvK91B/cFod3Qf9hYYmBV5YKIt?=
+ =?us-ascii?Q?rtVCIS0Ssf3y2Mt+NT5/um6iIc7xBaLkA9NCGFuWfqdHRLjD1VNKw4VXR89R?=
+ =?us-ascii?Q?xUOuHBnZotMvkW+kxl9yx7S5XFzhtHlJUdnn2SGKzg5VtU7MsLR3dmI0I9qi?=
+ =?us-ascii?Q?qeyHePnBc1XYOGm9LIS716SdiU4ZxVX3i0CmQRym1jcMjuKbyhmH5lUi+FHh?=
+ =?us-ascii?Q?uhcbgVzRk7Yg1oR/UqFmRv5fhMBqtAEQq6oJ/tjnZHZFTaRRSDsBfE6fN6NE?=
+ =?us-ascii?Q?JKctD2IVBqmaZaHCZRmRzgY1bCzFAueOU6do0G3DAp0/enFSV38HI2OZwZF0?=
+ =?us-ascii?Q?SOMIQDdX2Efk8Fwlq3FWMITrXSexSeNHuIi5BnLIXSciAOvKAl3vOP/E3j8Q?=
+ =?us-ascii?Q?wYTJJ8sGYGHkhpJ3gv8U6ac64gsoWuWdxKlcf2SiBpHebo3B4IAAzNDVWdIv?=
+ =?us-ascii?Q?m9fnfBAtoOQGLt82yRP692KRPCQ+LkLMKn9Njq0KJWwTH8dBJ97Y8czAFS0M?=
+ =?us-ascii?Q?d1ciS4Ip6i3DlQs542nVxucomToNBgLMN+JXvkOXTrJirQ+nCgoX3ykqu88b?=
+ =?us-ascii?Q?RLcE/JY4nR3HrwLzy5YeXeM47gnfdbZwTpvyitRb2GfXGxn2Hk9uS7EnE4RN?=
+ =?us-ascii?Q?x2MbostRNOUsHQVsnUtiSKT9/bpO+lScdGXvK+8hYcE3wypOuw3J4Q+FbMxP?=
+ =?us-ascii?Q?bxeB+Ulqhl+1nXeAOfJaksQCBo1N9XCSbg/Tnq3nEXm2O+Tb2neq/mKopK+F?=
+ =?us-ascii?Q?oKl+oXuS0TcMkLo/SMlBkaWMsClLVblgaVuhVGUIeQ07K+p7HSHOLTw+Rq03?=
+ =?us-ascii?Q?NI1xJUEg9MBat+O3XeFBTbsf/WCudMezEwerfinT/opXWjlz7IchRHWWmm8S?=
+ =?us-ascii?Q?bf/No0jewWT9JekdbUbxOp1MwITG05L/7/4XB7uSinax4/JiPV6DFvIFfFio?=
+ =?us-ascii?Q?J6UR/vOAto95/JmCKTKcJ75TwpY+W0sPkMqL6S1uXILQWYkNhTbfw5ZN0JsS?=
+ =?us-ascii?Q?rPepZ9+uT0ggzsogxf8f88ruPBm6yxFrr9/BZQRlLR/i+lKSnmm1bhlDQJ77?=
+ =?us-ascii?Q?hsP3bc3vIpXfuixt+PZTiZYIU+cPc4E6h+mwwY+hjCEwKw8pf5W7Hk/rkJQV?=
+ =?us-ascii?Q?FF8V0Ynr39av9YDx+D6kS59laa1QOn4cc80bgCG0lnCGNf0fo4BHjy9EOOab?=
+ =?us-ascii?Q?1xtwoH1thASYwHssKN6HWrkfUXlzgk8Zz8LFFvntBeE2dH0lgaXNOMV5j2Se?=
+ =?us-ascii?Q?ZbE5hA7pfDc0PavMHn29DccR3V/EeR10JgW2CQyK9o5L2ZP+0BTd0j5Ap1aj?=
+ =?us-ascii?Q?VxFJSMoyvW6BiFVDB41ontdUjBXvFTPLQyKwQ0mUYVZDQ0IrJ++4PecmR3QV?=
+ =?us-ascii?Q?AOjinVp4kbGo9305fabp1UsvUHAZHAVfK1uzEXRGyTKhD+3Hc7TYU1wS+QSw?=
+ =?us-ascii?Q?DPs8HyXYZOpmOcM60GA=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b942e929-cfed-4d71-c440-08ddd5abd12a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 12:13:28.4489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KROhXLqGII19t1me5Y8/lT8ezU6d/PVXc3lHTLvPLyrmNmHxaDMV+xvImfEg9mk1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPFD3499E3E3
 
-Add changes to support the camera subsystem on the SA8775P.
+On Mon, Aug 04, 2025 at 03:42:41PM +0300, Leon Romanovsky wrote:
+> --- a/kernel/dma/direct.h
+> +++ b/kernel/dma/direct.h
+> @@ -80,42 +80,54 @@ static inline void dma_direct_sync_single_for_cpu(struct device *dev,
+>  		arch_dma_mark_clean(paddr, size);
+>  }
+>  
+> -static inline dma_addr_t dma_direct_map_page(struct device *dev,
+> -		struct page *page, unsigned long offset, size_t size,
+> -		enum dma_data_direction dir, unsigned long attrs)
+> +static inline dma_addr_t dma_direct_map_phys(struct device *dev,
+> +		phys_addr_t phys, size_t size, enum dma_data_direction dir,
+> +		unsigned long attrs)
+>  {
+> -	phys_addr_t phys = page_to_phys(page) + offset;
+> -	dma_addr_t dma_addr = phys_to_dma(dev, phys);
+> +	bool is_mmio = attrs & DMA_ATTR_MMIO;
+> +	dma_addr_t dma_addr;
+> +	bool capable;
+> +
+> +	dma_addr = (is_mmio) ? phys : phys_to_dma(dev, phys);
+> +	capable = dma_capable(dev, dma_addr, size, is_mmio);
+> +	if (is_mmio) {
+> +	       if (unlikely(!capable))
+> +		       goto err_overflow;
+> +	       return dma_addr;
 
-Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 185 ++++++++++++++++++++++++++
- 1 file changed, 185 insertions(+)
+Similar remark here, shouldn't we be checking swiotlb things for
+ATTR_MMIO and failing if swiotlb is needed?
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 9997a29901f5..510831765c54 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
- #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
- #include <dt-bindings/clock/qcom,sa8775p-videocc.h>
-+#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-@@ -4345,6 +4346,190 @@ videocc: clock-controller@abf0000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		camss: isp@ac78000 {
-+			compatible = "qcom,sa8775p-camss";
-+
-+			reg = <0x0 0xac78000 0x0 0x1000>,
-+			      <0x0 0xac7a000 0x0 0x0f00>,
-+			      <0x0 0xac7c000 0x0 0x0f00>,
-+			      <0x0 0xac84000 0x0 0x0f00>,
-+			      <0x0 0xac88000 0x0 0x0f00>,
-+			      <0x0 0xac8c000 0x0 0x0f00>,
-+			      <0x0 0xac90000 0x0 0x0f00>,
-+			      <0x0 0xac94000 0x0 0x0f00>,
-+			      <0x0 0xac9c000 0x0 0x2000>,
-+			      <0x0 0xac9e000 0x0 0x2000>,
-+			      <0x0 0xaca0000 0x0 0x2000>,
-+			      <0x0 0xaca2000 0x0 0x2000>,
-+			      <0x0 0xacac000 0x0 0x0400>,
-+			      <0x0 0xacad000 0x0 0x0400>,
-+			      <0x0 0xacae000 0x0 0x0400>,
-+			      <0x0 0xac4d000 0x0 0xd000>,
-+			      <0x0 0xac5a000 0x0 0xd000>,
-+			      <0x0 0xac85000 0x0 0x0d00>,
-+			      <0x0 0xac89000 0x0 0x0d00>,
-+			      <0x0 0xac8d000 0x0 0x0d00>,
-+			      <0x0 0xac91000 0x0 0x0d00>,
-+			      <0x0 0xac95000 0x0 0x0d00>;
-+			reg-names = "csid_wrapper",
-+				    "csid0",
-+				    "csid1",
-+				    "csid_lite0",
-+				    "csid_lite1",
-+				    "csid_lite2",
-+				    "csid_lite3",
-+				    "csid_lite4",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "csiphy3",
-+				    "tpg0",
-+				    "tpg1",
-+				    "tpg2",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe_lite0",
-+				    "vfe_lite1",
-+				    "vfe_lite2",
-+				    "vfe_lite3",
-+				    "vfe_lite4";
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CORE_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-+				 <&camcc CAM_CC_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY3_CLK>,
-+				 <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-+				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-+				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-+				 <&camcc CAM_CC_ICP_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "core_ahb",
-+				      "cpas_ahb",
-+				      "cpas_fast_ahb_clk",
-+				      "cpas_vfe_lite",
-+				      "cpas_vfe0",
-+				      "cpas_vfe1",
-+				      "csid",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "csiphy3",
-+				      "csiphy3_timer",
-+				      "csiphy_rx",
-+				      "gcc_axi_hf",
-+				      "gcc_axi_sf",
-+				      "icp_ahb",
-+				      "vfe0",
-+				      "vfe0_fast_ahb",
-+				      "vfe1",
-+				      "vfe1_fast_ahb",
-+				      "vfe_lite",
-+				      "vfe_lite_ahb",
-+				      "vfe_lite_cphy_rx",
-+				      "vfe_lite_csid";
-+
-+			interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid_lite0",
-+					  "csid_lite1",
-+					  "csid_lite2",
-+					  "csid_lite3",
-+					  "csid_lite4",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "csiphy3",
-+					  "tpg0",
-+					  "tpg1",
-+					  "tpg2",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite0",
-+					  "vfe_lite1",
-+					  "vfe_lite2",
-+					  "vfe_lite3",
-+					  "vfe_lite4";
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "ahb",
-+					     "hf_0";
-+
-+			iommus = <&apps_smmu 0x3400 0x20>;
-+
-+			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-+			power-domain-names = "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ade0000 {
- 			compatible = "qcom,sa8775p-camcc";
- 			reg = <0x0 0x0ade0000 0x0 0x20000>;
--- 
-2.25.1
+> -	if (is_swiotlb_force_bounce(dev)) {
+> -		if (is_pci_p2pdma_page(page))
+> -			return DMA_MAPPING_ERROR;
 
+This
+
+> -	if (unlikely(!dma_capable(dev, dma_addr, size, true)) ||
+> -	    dma_kmalloc_needs_bounce(dev, size, dir)) {
+> -		if (is_pci_p2pdma_page(page))
+> -			return DMA_MAPPING_ERROR;
+
+And this
+
+Jason
 
