@@ -1,189 +1,152 @@
-Return-Path: <linux-kernel+bounces-759417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277A0B1DD4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2423DB1DD4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EC93AF2EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE31B16412C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F12222DA;
-	Thu,  7 Aug 2025 19:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00A7273816;
+	Thu,  7 Aug 2025 19:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrxDhWEc"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vc+UWihr"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FB08F6E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AA421CC6A;
+	Thu,  7 Aug 2025 19:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754593544; cv=none; b=TftysoQaVWpptZ+FQl1gBgJx5uscrnJSOUxIbBCUeToz7C1s0cvEg3l1+L5OsDDHQMdk8SA6nmO+HEb7Nvz2jJaXSYgak/aEWBFCxhFLCXqKoOoneB3EpBqEW4SIrDV01xGuKa3y94+lVfE9ShNICwfQ6P7TgtB+uque//6Pt7w=
+	t=1754593545; cv=none; b=EA2cLtNGo1oLIAfHPlyKpI9eF5dZ4yZ2dYw9PeIJ7+caLzVX30rFezF/9Dz5kOHsSWDHqiSmj/Sbzi+QEJ1jJBuTuVZmqwM3xb7Btvqg2DH01Aivy8srxwXXZIFLVExSCYO6MFwnCfjczEq1kPtYi8sZfjnr3OpWGaVsyvJZ45U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754593544; c=relaxed/simple;
-	bh=dE+AVwYniT3vJHP+UoI8xx4iQ9ExHzmQRWkDYBFHlG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mgytKUi5f/yf0moMsYB4859cFjoA4tIbBeXgBQ/VqOUjEHZymxCBZSGAbd8L5A7/oCIpWsgu/oI+Qfv91HWAzyDvUfZTrQCyRty+Vki4hTxaDFdtQwZx8lrXe0hoVMbx3z+tZjn0bo68/k1OTOQAhqrrgmlA8zVAkJbJJsXXsQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrxDhWEc; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bfffe2d9-1d2a-4376-abb6-a8746a8a3a69@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754593529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9mKcMRuq6jINq5ANG/Ei6hvRGRifdTxiEw9xKT697k=;
-	b=CrxDhWEcZS33BnpYpxKbyUZQNRwX0NeaXuFlJgj+4DnB3z99uyFAkxDpFvwwjB5JZCQ3ZM
-	YKrVUS+sQqvB7T6+2w1Y3rATiHxbuKWX4h6DQi/QbiffHlff5cQkaKzrRgrrfPthmMMznh
-	5NJZ+p4V7W8p75Gg74aH9HtBPl92Q6U=
-Date: Thu, 7 Aug 2025 12:05:23 -0700
+	s=arc-20240116; t=1754593545; c=relaxed/simple;
+	bh=spQm+jymAJIrxauFHn6s78s0XVcdc+wTlMWHYLFpyF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D4xCNgbQ7I0em/JZm1eQ/cq6LiWHfuCVf8+5UCt1T+s6XeBrXSzZG3mt7/rl25SwcPjBDEDflRoBGEITrQDmVD0xqeOg3StuDo4eweqxXmD09OyV3TMA2wgIRnZh40hUQ+pSP+VmvOCDvyw3neeCZP2h1I88mvCw/qcTUpsOxqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vc+UWihr; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B7308C75;
+	Thu,  7 Aug 2025 21:04:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754593490;
+	bh=spQm+jymAJIrxauFHn6s78s0XVcdc+wTlMWHYLFpyF4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vc+UWihrd+yDV7Srt1sBKV/ODWHGIi9ayiUX2rIfLG6cSov24CkzJWo36Tb6LwfXh
+	 Ec+5vWZiMY1rsZ4D3Y8OqOl4zJiW1PTZiSrXnw5obRFxeU7cXEVUNQ3eAcmg9A1qCv
+	 b9PiYgyk1uE6BgDleHl9YIPCjh5PhGtr6hlprgf0=
+Date: Thu, 7 Aug 2025 22:05:25 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Imene Jaziri <imenjazirii18@gmail.com>, linux-media@vger.kernel.org,
+	hansg@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Log driver load in uvc_probe function
+Message-ID: <20250807190525.GA28610@pendragon.ideasonboard.com>
+References: <20250801145326.28560-1-imenjazirii18@gmail.com>
+ <20250801150430.GC4906@pendragon.ideasonboard.com>
+ <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
+ <20250807081408.GB11583@pendragon.ideasonboard.com>
+ <b2430686-3da9-4fb9-8f91-5bb7da1920b0@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Content-Language: en-GB
-To: Arnaud Lecomte <contact@arnaud-lcm.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250807175032.7381-1-contact@arnaud-lcm.com>
- <20250807175258.7613-1-contact@arnaud-lcm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250807175258.7613-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2430686-3da9-4fb9-8f91-5bb7da1920b0@linuxfoundation.org>
 
+On Thu, Aug 07, 2025 at 12:40:48PM -0600, Shuah Khan wrote:
+> On 8/7/25 02:14, Laurent Pinchart wrote:
+> > Hi Benjamin,
+> > 
+> > (CC'ing Shuah)
+> > 
+> > On Thu, Aug 07, 2025 at 09:53:41AM +0200, Benjamin Mugnier wrote:
+> >> On 8/1/25 17:04, Laurent Pinchart wrote:
+> >>> On Fri, Aug 01, 2025 at 03:53:26PM +0100, Imene Jaziri wrote:
+> >>>> Add a pr_info() in the uvc_probe function to trace when the
+> >>>> uvcvideo driver is loaded. This is for learning purposes.
+> >>>
+> >>> What part of the learning instructions you are following instructed you
+> >>> to submit this patch to kernel mailing lists ? We are regularly spammed
+> >>> by similar patches, which indicates the instructions are not clear
+> >>> enough.
+> >>>
+> >>
+> >> I got curious too. It comes from the Linux Foundation training LFD103
+> >> [1]. Chapter 8 describes this patch pretty much, and chapter 9 describes
+> >> how to send the patch, but with a warning not to do so :
+> >>
+> >>    [...]
+> >>    At this time, you can run:
+> >>
+> >>    git format-patch -1 <commit ID> --to=maintainer1 --to=maintainer2
+> >> --cc=maillist1 --cc=maillist2
+> >>
+> >>    This will generate a patch.
+> >>
+> >>    Important Note:
+> >>    Please note that this is just an example. Don’t send this patch upstream.
+> >>
+> >>    You can revert this commit now.
+> >>
+> >>    Please refer to the Select the recipients for your patch section in
+> >> the Submitting patches: the essential guide to getting your code into
+> >> the kernel document.
+> >>
+> >>    When you have your own patch ready for submittal, you can follow this
+> >> example process to generate the patch and send it upstream using the
+> >> following command:
+> >>
+> >>    git send-email <patch_file>
+> >>    [...]
+> > 
+> > Imene provided me with that information in private.
+> > 
+> >> Looking at it I guess it's pretty easy to miss the note.
+> > 
+> > Yes, reading the text, I really can't blame the people training the
+> > course for missing it. It's a bit like if a mushroom foraging book said
+> > 
+> > - go pick those red mushrooms with white dots on the cap in the forest
+> > - cut them in pieces, pan-fry them with butter
+> > - add a couple of eggs, salt and pepper to make an omelette
+> > - the dish is ready ! enjoy your meal !
+> > - you won't be eating that, it's poisonous. throw it away
+> > 
+> > :-)
+> > 
+> >> Maybe
+> >> requesting to add '--dry-run' to the git send-email command could be a
+> >> simple fix to prevent from copy/pasting ?
+> 
+> No question that the material is confusing. The material is in
+> a publicly available fee course.
+> 
+> > I've contacted Shuah, who told me she updated the training material.
+> > Hopefully we'll soon stop getting such patches.
+> 
+> It is fixed now and the spam should stop. This course has been in
+> use for 6 years, this is the first time we are seeing spam.
 
+Just to be clear, I'm not blameing Imene here. I've received quite a few
+similar patches over the last years.
 
-On 8/7/25 10:52 AM, Arnaud Lecomte wrote:
-> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-> when copying stack trace data. The issue occurs when the perf trace
->   contains more stack entries than the stack map bucket can hold,
->   leading to an out-of-bounds write in the bucket's data array.
->
-> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-> ---
->   kernel/bpf/stackmap.c | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 14e034045310..d7ef840971f0 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -250,7 +250,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
->   }
->   
->   static long __bpf_get_stackid(struct bpf_map *map,
-> -			      struct perf_callchain_entry *trace, u64 flags)
-> +			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
->   {
->   	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
->   	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-> @@ -266,6 +266,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   
->   	trace_nr = trace->nr - skip;
->   	trace_len = trace_nr * sizeof(u64);
-> +	trace_nr = min(trace_nr, max_depth - skip);
-> +
->   	ips = trace->ip + skip;
->   	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
->   	id = hash & (smap->n_buckets - 1);
-> @@ -325,19 +327,19 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->   	   u64, flags)
->   {
-> -	u32 max_depth = map->value_size / stack_map_data_size(map);
-> -	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> +	u32 elem_size = stack_map_data_size(map);
->   	bool user = flags & BPF_F_USER_STACK;
->   	struct perf_callchain_entry *trace;
->   	bool kernel = !user;
-> +	u32 max_depth;
->   
->   	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
->   			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
->   		return -EINVAL;
->   
-> -	max_depth += skip;
-> -	if (max_depth > sysctl_perf_event_max_stack)
-> -		max_depth = sysctl_perf_event_max_stack;
-> +	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-> +	if (max_depth < 0)
-> +		return -EFAULT;
+> Sorry for the oversight that resulted in spam.
 
-the above condition is not needed.
+No worries, it happens.
 
->   
->   	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
->   				   false, false);
-> @@ -346,7 +348,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->   		/* couldn't fetch the stack trace */
->   		return -EFAULT;
->   
-> -	return __bpf_get_stackid(map, trace, flags);
-> +	return __bpf_get_stackid(map, trace, flags, max_depth);
->   }
->   
->   const struct bpf_func_proto bpf_get_stackid_proto = {
-> @@ -378,6 +380,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
->   	bool kernel, user;
->   	__u64 nr_kernel;
->   	int ret;
-> +	u32 elem_size, pe_max_depth;
+-- 
+Regards,
 
-pe_max_depth -> max_depth.
-
->   
->   	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
->   	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
-> @@ -396,24 +399,25 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
->   		return -EFAULT;
->   
->   	nr_kernel = count_kernel_ip(trace);
-> -
-> +	elem_size = stack_map_data_size(map);
->   	if (kernel) {
->   		__u64 nr = trace->nr;
->   
->   		trace->nr = nr_kernel;
-> -		ret = __bpf_get_stackid(map, trace, flags);
-> +		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-> +		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
->   
->   		/* restore nr */
->   		trace->nr = nr;
->   	} else { /* user */
->   		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> -
-
-please keep an empty line here.
-
->   		skip += nr_kernel;
->   		if (skip > BPF_F_SKIP_FIELD_MASK)
->   			return -EFAULT;
->   
->   		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
-> -		ret = __bpf_get_stackid(map, trace, flags);
-> +		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-> +		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
->   	}
->   	return ret;
->   }
-
+Laurent Pinchart
 
