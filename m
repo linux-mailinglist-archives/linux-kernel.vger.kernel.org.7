@@ -1,216 +1,175 @@
-Return-Path: <linux-kernel+bounces-758896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC28CB1D53E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB91B1D53D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28201882A4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E751316B1EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0022797AD;
-	Thu,  7 Aug 2025 09:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D652C279DAF;
+	Thu,  7 Aug 2025 09:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dOAyoipS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="go9qRIE7"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA9D376F1;
-	Thu,  7 Aug 2025 09:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE7376F1;
+	Thu,  7 Aug 2025 09:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754560026; cv=none; b=hlSjFN3x+oNjHoZ9d1M/wKN/2oGvkQl9A1KVaILhnXVHF709/NpMyqc2j8m4kQkGCnPkCAUKytnwpRD5HHql6J4Qehr3g0vG6MLFG6aFIfTpefXhrolN5ctELAduL8b6PteMcVDxaU3+kLUGTzLS314lEHF+gHAVZNoSoX6qREc=
+	t=1754560034; cv=none; b=WSiYB1sov9r+MyOLLEO6RGAWbcL0l17FwXQ+H2xTTEzkXWesvR/IAHJIm6psFUlXLyOB5RQ9OVjVO9KZtqTGtQxxikQnDDz8KOVw7s5Mta7lCrfrkyjSMU1RwpNirg67TwJODNuYxfUDTODaXao3bbHjqeKRr0aMcc7CaTJhLRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754560026; c=relaxed/simple;
-	bh=QohJ+OL8OcCcI8Wjtg+1wD2yGPeRKILdN4re2iF+VXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SlE7pt0Wt+Jpamy4yNqpsA1B3YWB6KYmIOkD1yWxNaNykvRWwYRJWabiK4h70Nx7P7BzqrKXuKsbEDAOoaVuQ07Js6AhbfTMiflcAT6K1W5g1XS15T/hXuFaKwIJ+Ka9ngbJslEt440TFAuDxcG1iFNyWlEwwD5s6BSoU4hw+gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dOAyoipS; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754560025; x=1786096025;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QohJ+OL8OcCcI8Wjtg+1wD2yGPeRKILdN4re2iF+VXY=;
-  b=dOAyoipST73t0zTfPhGj87eOzlPj4nn2BIyYfKIk7hpRMnFlTMXGFHu7
-   fjnDOQXwxlw9pOYZnVDl0+5uIfGV4Dv6oag/aP3UdJ0Nzbi8jmgYFqyif
-   /rzoD1oT5+p3x9tb7K1eAC7gY5xnzlEIqFwLwAmBMNLpe/PI/YpGPssh4
-   y0JNV1O77IEGFVSP5o1CZX0GyKomICi7Lf1C4QjAnOSzU04XjvaO3eU2w
-   Kp95yHkYhAdY25U6+tBr19NF0QVHRmn5HqCT9oZyjQd/Z+t4jHkCe2/o2
-   2zzl5z/lSiPRKscdIvGqePY9ZfYuZmtU57dqVUN1Nk4nLjR8HhLW2+ig8
-   w==;
-X-CSE-ConnectionGUID: z0R/RCpuQRKt2KjNt7k/ug==
-X-CSE-MsgGUID: acg1tVAaSvSmaTHVoVtSDg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="55925643"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="55925643"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:47:04 -0700
-X-CSE-ConnectionGUID: a7qmAyM3RtaXgAOttRiJWA==
-X-CSE-MsgGUID: wwcGpd2WSJKyst8Z3C5Iew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="188698545"
-Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:46:58 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dave.hansen@intel.com,
-	kas@kernel.org,
-	tabba@google.com,
-	ackerleytng@google.com,
-	quic_eberman@quicinc.com,
-	michael.roth@amd.com,
-	david@redhat.com,
-	vannapurve@google.com,
-	vbabka@suse.cz,
-	thomas.lendacky@amd.com,
-	pgonda@google.com,
-	zhiquan1.li@intel.com,
-	fan.du@intel.com,
-	jun.miao@intel.com,
-	ira.weiny@intel.com,
-	isaku.yamahata@intel.com,
-	xiaoyao.li@intel.com,
-	binbin.wu@linux.intel.com,
-	chao.p.peng@intel.com,
-	yan.y.zhao@intel.com
-Subject: [RFC PATCH v2 23/23] KVM: TDX: Turn on PG_LEVEL_2M after TD is RUNNABLE
-Date: Thu,  7 Aug 2025 17:46:28 +0800
-Message-ID: <20250807094628.4790-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250807093950.4395-1-yan.y.zhao@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1754560034; c=relaxed/simple;
+	bh=TDeiBApOh1NcX4yBW9i2CsFOUdCFeSFRwM+KeVVkTrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sTQXZgV5k76/7a0JzNMXmvVyerfb5kbE2Z9SZ+vSuXIkpMJ96HGqPuMrGfj3LQpL8Hj6uA8Y4DjmETc2k6OEA9b88Wi81VGjdUJG8lE58o7qxeoHndmrEauBy+PK8S7lEU8W8+vr+zPNgDLO3iE5cfFF+aJd3M7XQNMho7+aKgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=go9qRIE7; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57790AX3021567;
+	Thu, 7 Aug 2025 09:46:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ImRZUe
+	6tVuS8TT869/9J1UoTQ8hVJxjnFHqcKjWzkmg=; b=go9qRIE70CfPyS9Kn8TPsq
+	JkZyaxDOMfgvgd9oOkezsaYQ7nO6H1+vyJlxnFf+6IS8gazLQFoHJPSCtC/ozPKm
+	6VKICh++4mFIXlvEA+Fv861i489NybwU9awUyTQXXGMIfzvBpYV01KVsDF9Iz4YI
+	Ww/eXWrOH1iZah1GKzst8ykQD8OdLbBS52aH5gpTLX9hzYzJnzq1Wj6ghnhGN7K+
+	HeSCbGXR0u5BWfqTnzNxp7wSohfiND9Ay/p0FkDgE9Qit35GSbcVN7CqdFOj9pan
+	uk5bsEsgRkx16zjIPUzdIH9a6QpTBUGyN7bRfWvIADnQUc0lqNAVn74p649+uPzA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq621brx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:46:53 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779eRBP008042;
+	Thu, 7 Aug 2025 09:46:52 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwmyygs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:46:52 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5779kpb241746786
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 09:46:51 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 450E158055;
+	Thu,  7 Aug 2025 09:46:51 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F5705804E;
+	Thu,  7 Aug 2025 09:46:39 +0000 (GMT)
+Received: from [9.197.227.8] (unknown [9.197.227.8])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 09:46:38 +0000 (GMT)
+Message-ID: <7f4f4d07-38f7-444c-adff-ec2a2387e86b@linux.ibm.com>
+Date: Thu, 7 Aug 2025 15:16:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/17] powerpc: Add __attribute_const__ to ffs()-family
+ implementations
+To: Kees Cook <kees@kernel.org>, linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+References: <20250804163910.work.929-kees@kernel.org>
+ <20250804164417.1612371-5-kees@kernel.org>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <20250804164417.1612371-5-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3MyBTYWx0ZWRfX0unUnmBlk9BR
+ JyFnhjGUCcX72+ZTvzudrWhw0DB4YVlTamytH3O0p7bgfe1t3RFHu6oXmijVRlkSINNESQcI2ed
+ WV3l/gYRQ2VZynkYP3Tav0+7jWhZaLSgpYND2noyaRsJ968IyHQXslrcztFRDh0MZBgxPGbCx8b
+ +uiLKSt+6Y6IffZklEx4VluWHkjrCmfWHrp45aQanh3SGagw7gHzrJqpepYvNT4HS8EbCADH/Wn
+ zPt3JFi7B14TKcENIp/5NLm0esF1T5EYGCGzXF9hdI2cf8y7VhMMiJqeZefBkl9p6Z1CLp13muG
+ PGN5oX3iZrejuEHJm8J9sJaxrIF5Rg9tb8/6Jc0aiE3VKei/f3z6YRAKdY8HGg4pDBW4p1GLl1f
+ BVmzVXfbgFB6avmCIX9UByEecqNiyQFlc4BOgzcQYghhJIGa/JLCPKcNMH7ACy88lL+pl3p9
+X-Proofpoint-GUID: _d76WmYcTWXQ7iz_O6QVqZlqoAE5ZdTK
+X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=6894760d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8
+ a=VwQbUJbxAAAA:8 a=ob59Q8BqYF9JHPHMJZcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: _d76WmYcTWXQ7iz_O6QVqZlqoAE5ZdTK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
+ malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070073
 
-Turn on PG_LEVEL_2M in tdx_gmem_private_max_mapping_level() when TD is
-RUNNABLE.
 
-Update the warnings and KVM_BUG_ON() info elsewhere to match that 2MB
-mappings are permitted after TD is RUNNABLE.
 
-Opportunistically, remove the unused params "gfn" and "pfn" in
-tdx_mem_page_record_premap_cnt().
+On 8/4/25 10:14 PM, Kees Cook wrote:
+> While tracking down a problem where constant expressions used by
+> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
+> initializer was convincing the compiler that it couldn't track the state
+> of the prior statically initialized value. Tracing this down found that
+> ffs() was used in the initializer macro, but since it wasn't marked with
+> __attribute__const__, the compiler had to assume the function might
+> change variable states as a side-effect (which is not true for ffs(),
+> which provides deterministic math results).
+> 
+> Add missing __attribute_const__ annotations to PowerPC's implementations of
+> fls() function. These are pure mathematical functions that always return
+> the same result for the same input with no side effects, making them eligible
+> for compiler optimization.
+> 
+> Build tested ARCH=powerpc defconfig with GCC powerpc-linux-gnu 14.2.0.
+> 
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
-RFC v2:
-- Merged RFC v1's patch 4 (forcing PG_LEVEL_4K before TD runnable) with
-  patch 9 (allowing PG_LEVEL_2M after TD runnable).
----
- arch/x86/kvm/vmx/tdx.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Also tested with gcc 8.1.
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 6e061d659639..a3e1ac044ee9 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1633,12 +1633,11 @@ static int tdx_mem_page_aug(struct kvm *kvm, gfn_t gfn,
-  * The counter has to be zero on KVM_TDX_FINALIZE_VM, to ensure that there
-  * are no half-initialized shared EPT pages.
-  */
--static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, gfn_t gfn,
--					  enum pg_level level, kvm_pfn_t pfn)
-+static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, enum pg_level level)
- {
- 	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
- 
--	if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
-+	if (KVM_BUG_ON(kvm->arch.pre_fault_allowed || level != PG_LEVEL_4K, kvm))
- 		return -EINVAL;
- 
- 	/* nr_premapped will be decreased when tdh_mem_page_add() is called. */
-@@ -1667,10 +1666,6 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
- 	if (ret)
- 		return ret;
- 
--	/* TODO: handle large pages. */
--	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
--		return -EINVAL;
--
- 	/*
- 	 * Read 'pre_fault_allowed' before 'kvm_tdx->state'; see matching
- 	 * barrier in tdx_td_finalize().
-@@ -1680,7 +1675,7 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
- 	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
- 		ret = tdx_mem_page_aug(kvm, gfn, level, page);
- 	else
--		ret = tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
-+		ret = tdx_mem_page_record_premap_cnt(kvm, level);
- 
- 	if (ret)
- 		tdx_pamt_put(page, level);
-@@ -1697,8 +1692,8 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
- 	gpa_t gpa = gfn_to_gpa(gfn);
- 	u64 err, entry, level_state;
- 
--	/* TODO: handle large pages. */
--	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
-+	/* Large page is not supported before TD runnable,*/
-+	if (KVM_BUG_ON(kvm_tdx->state != TD_STATE_RUNNABLE && level != PG_LEVEL_4K, kvm))
- 		return -EINVAL;
- 
- 	if (KVM_BUG_ON(!is_hkid_assigned(kvm_tdx), kvm))
-@@ -1791,7 +1786,7 @@ static int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
- static int tdx_is_sept_zap_err_due_to_premap(struct kvm_tdx *kvm_tdx, u64 err,
- 					     u64 entry, int level)
- {
--	if (!err || kvm_tdx->state == TD_STATE_RUNNABLE)
-+	if (!err || kvm_tdx->state == TD_STATE_RUNNABLE || level > PG_LEVEL_4K)
- 		return false;
- 
- 	if (err != (TDX_EPT_ENTRY_STATE_INCORRECT | TDX_OPERAND_ID_RCX))
-@@ -1811,8 +1806,8 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
- 	gpa_t gpa = gfn_to_gpa(gfn) & KVM_HPAGE_MASK(level);
- 	u64 err, entry, level_state;
- 
--	/* For now large page isn't supported yet. */
--	WARN_ON_ONCE(level != PG_LEVEL_4K);
-+	/* Large page is not supported before TD runnable,*/
-+	WARN_ON_ONCE(kvm_tdx->state != TD_STATE_RUNNABLE && level != PG_LEVEL_4K);
- 
- 	err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
- 
-@@ -1993,6 +1988,9 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 	struct folio *folio = page_folio(page);
- 	int ret;
- 
-+	WARN_ON_ONCE(folio_page_idx(folio, page) + KVM_PAGES_PER_HPAGE(level) >
-+		     folio_nr_pages(folio));
-+
- 	if (!is_hkid_assigned(to_kvm_tdx(kvm))) {
- 		KVM_BUG_ON(!kvm->vm_dead, kvm);
- 
-@@ -3470,7 +3468,10 @@ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
- 
- int tdx_gmem_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn)
- {
--	return PG_LEVEL_4K;
-+	if (unlikely(to_kvm_tdx(kvm)->state != TD_STATE_RUNNABLE))
-+		return PG_LEVEL_4K;
-+
-+	return PG_LEVEL_2M;
- }
- 
- static int tdx_online_cpu(unsigned int cpu)
--- 
-2.43.2
+Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+
+
+> Link: https://github.com/KSPP/linux/issues/364 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  arch/powerpc/include/asm/bitops.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/bitops.h b/arch/powerpc/include/asm/bitops.h
+> index 671ecc6711e3..0d0470cd5ac3 100644
+> --- a/arch/powerpc/include/asm/bitops.h
+> +++ b/arch/powerpc/include/asm/bitops.h
+> @@ -276,7 +276,7 @@ static inline void arch___clear_bit_unlock(int nr, volatile unsigned long *addr)
+>   * fls: find last (most-significant) bit set.
+>   * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+>   */
+> -static __always_inline int fls(unsigned int x)
+> +static __always_inline __attribute_const__ int fls(unsigned int x)
+>  {
+>  	int lz;
+>  
+> @@ -294,7 +294,7 @@ static __always_inline int fls(unsigned int x)
+>   * 32-bit fls calls.
+>   */
+>  #ifdef CONFIG_PPC64
+> -static __always_inline int fls64(__u64 x)
+> +static __always_inline __attribute_const__ int fls64(__u64 x)
+>  {
+>  	int lz;
+>  
 
 
