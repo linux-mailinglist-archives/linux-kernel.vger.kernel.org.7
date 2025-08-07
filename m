@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-759358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B72DB1DC95
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D92B1DC96
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A235825EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F38C5825F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0E5273D82;
-	Thu,  7 Aug 2025 17:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D3213E02D;
+	Thu,  7 Aug 2025 17:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0rIbZlE3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FwpxbV5O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="py81cQlr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BB5273806;
-	Thu,  7 Aug 2025 17:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7D725B2FA;
+	Thu,  7 Aug 2025 17:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754588609; cv=none; b=mn2u3yFqC8FLeXHH9YhzxZ0+N1BNQrKxYGrRqawtHFQZtdoQx69AF6Mi+VROQCDhA9FInlNtQXJU1kbFrtBdTLBaqMcNM3SYGmSquhn3yxQ2Y/lwO6IWJlMy/yhc+uqBcaSG8wAN34AS2CbRbAdDOyjTDi09Jni6Kg/ggojdphk=
+	t=1754588632; cv=none; b=tXwKtY0/IutkKDi8li3tcR+1plYilgYEUB789gI3dJtNbwenkHoNe8ZWnCB+sJUuT6jHQ6QuEfUV8bs0AVG2u/mFOGgR86mrYkToSvno8ZkarNrdK6PXe9xIgbfg8M9mHwv9kbuV7wsLuO3NGuem8hFLRmtsxQyFqNGfT5Bfwzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754588609; c=relaxed/simple;
-	bh=LpnjjKhJlpxUJLeVsNu0mrBkwKc8hdCdeJLFWq4wLnE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A/Mx+2WvLT9GBLlu0S/IdcoqgRfgZulvqr20/MVClwFW/0M1f6dzKVhLeo7JSSc61YSmGd5wK4wDUrxzMi4c+Fb6pkb8TvOwmKhGeGPVfK7ZRGhV+OP0et2WtzKoj7S6DsIUinhiimsWi6vcbTB6mSx86vMxZmJZqN7HIUeC9Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0rIbZlE3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FwpxbV5O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754588605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=os+EnVN5c+Emzsvy27+fTqdfegoTBRpfyxHQVxrjvUc=;
-	b=0rIbZlE3qMmRmDssa7LxAaE16+6/MlQsAfzmszEgHMd/IO1mdVfrWYxDCO7GuJwaru0zly
-	Psj61qyxCC13Ijhpvtlo3EACHDsvmYd9bWqnC4kNibp7RWoXCEesZoNlcXZi14+tQ+8z+M
-	GleYEQZ4bVNwB6J9cQqBnzWrTs2IjVoJnTWGiVvgeGZJJILMotZTAGOQ0VF9nBMAJTcRAj
-	Zm0JCkUzyeJr6Xpz18R5/u6TlkmjFHvk1QhQEr16NdB4BMLqO/R+1TborC0ql0dS6lL1l6
-	b/QO2ekYdwev+M1wsrsMsITS7Rl5w09lMTLut0abhwGUnTumdKe+jaoPRdBhIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754588605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=os+EnVN5c+Emzsvy27+fTqdfegoTBRpfyxHQVxrjvUc=;
-	b=FwpxbV5OKwWPgWQ4gVZQj14C9D154rs259oE2NDX7cWNm2I5hS60L/4Hs68Dp4aNcA510x
-	EZPWyH4akyk9I3Aw==
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>, Jonathan Derrick
- <jonathan.derrick@linux.dev>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan
- Sadhasivam
- <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Kenneth Crudup
- <kenny@panix.com>, Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH v2] PCI: vmd: Fix wrong kfree() in vmd_msi_free()
-In-Reply-To: <20250807163309.GA52078@bhelgaas>
-References: <20250807163309.GA52078@bhelgaas>
-Date: Thu, 07 Aug 2025 19:43:17 +0200
-Message-ID: <87bjorxc22.fsf@yellow.woof>
+	s=arc-20240116; t=1754588632; c=relaxed/simple;
+	bh=hsJ20AJl02FZvdjaBaFD/7kmVr1aVFSkgrbL9mdgx8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLmBvmBCTZjW3kKfy4nhW98zKOB9epyRrQz1eUWMHZwTj4bHgd9WbGZwO1xmfBUTatK5Q9rVCRJ0lgX96MliQ6Eq4OHj8xrK3AeTIfork5Ue3LG9Kf76jB4kigyh2eEsDbw4meeSA9EgbCMudLAJ6OfqY9tgRTbggyaluw5qsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=py81cQlr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25837C4CEEB;
+	Thu,  7 Aug 2025 17:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754588632;
+	bh=hsJ20AJl02FZvdjaBaFD/7kmVr1aVFSkgrbL9mdgx8Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=py81cQlrN4yMFMilgTcUb9828p9+/sKb8uMKTBcuF4nfljeMZsqBFLzGdNgHgC69Y
+	 Xo6lFkl6Qi+2oZIqVqJxoykTjWRQMsLGN95tEQHgyoARmBaZb65jt9Hel2my6rJ1O8
+	 EoZupmAzmcBK1Sr9S2xwpcdoCLIJp2/uSueQL64+erED5ZOvFeGBDpdMdCUneC3hh6
+	 2ji7Z+fSsAzlEuMf2ySVBvxE2Mlj9q9VxUGu9AcpBTGIItWwOKzEULRxfeO6gv3KwD
+	 vex19T/MYYcvPH5yecJUUxFsOGOcQ+/8mZmxgCRmoS0KYbKcB0MvraAH8f4NUIa4rq
+	 G4kozVdG2i75Q==
+Date: Thu, 7 Aug 2025 18:43:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org,
+	kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
+	bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+Message-ID: <c1435858-6288-4525-8c92-e27ed86cb55e@sirena.org.uk>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+ <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UswwCFe1kiMt6NyH"
+Content-Disposition: inline
+In-Reply-To: <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
+X-Cookie: Real Users hate Real Programmers.
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
-> On Thu, Aug 07, 2025 at 10:10:51AM +0200, Nam Cao wrote:
->> vmd_msi_alloc() allocates struct vmd_irq and stashes it into
->> irq_data->chip_data associated with the VMD's interrupt domain.
->> vmd_msi_free() extracts the pointer by calling irq_get_chip_data() and
->> frees it.
->> 
->> irq_get_chip_data() returns the chip_data associated with the top interrupt
->> domain. This worked in the past, because VMD's interrupt domain was the top
->> domain.
->> 
->> But since commit d7d8ab87e3e7 ("PCI: vmd: Switch to
->> msi_create_parent_irq_domain()") changed the interrupt domain hierarchy,
->> VMD's interrupt domain is not the top domain anymore. irq_get_chip_data()
->> now returns the chip_data at the MSI devices' interrupt domains. It is
->> therefore broken for vmd_msi_free() to kfree() this chip_data.
->> 
->> Fix this issue, correctly extract the chip_data associated with the VMD's
->> interrupt domain.
-...
->
-> Applied to pci/for-linus for v6.17, thanks!
->
-> I assume you checked the other msi_create_parent_irq_domain() changes
-> for similar problems?
 
-Not before you reminded me :(
+--UswwCFe1kiMt6NyH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But yes, none of the similar PCI patches has the same problem.
+On Thu, Aug 07, 2025 at 11:05:08PM +0530, Nitin Rawat wrote:
+> On 8/7/2025 10:56 PM, Mark Brown wrote:
 
-Nam
+> > The issue isn't using regulator_set_load(), that's perfectly fine and
+> > expected.  The issue is either reading the value to use from the
+> > constraint information (which is just buggy) or adding a generic
+> > property for this (which I'm not convinced is a good idea, I'd expect a
+> > large propoprtion of drivers should just know what their requirements
+> > are and that a generic property would just get abused).
+
+> > > These drivers also define corresponding binding properties, as seen i=
+n the
+> > > UFS instances documented here:
+
+> > > UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/k=
+ernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/uf=
+s-common.yaml?h=3Dnext-20250807)
+
+> > Note that that's specifying OPPs which is different...
+
+> Sorry for the confusion .Instead, I meant the following three properties
+> defined in the link to ufs-common.yaml binding, which specify the maximum
+> load that can be drawn from the respective power supplies.
+
+>   vcc-max-microamp:
+>     description:
+>       Specifies max. load that can be drawn from VCC supply.
+>=20
+>   vccq-max-microamp:
+>     description:
+>       Specifies max. load that can be drawn from VCCQ supply.
+>=20
+>   vccq2-max-microamp:
+>     description:
+>       Specifies max. load that can be drawn from VCCQ2 supply.
+
+OK, but that's still not motivating putting things in DT (the properties
+are there but don't explain why) and having this for some devices
+doesn't really address the why make it a generic rather than device
+specific part of things like Konrad was suggesting.  Perhaps there's
+enough board specific variation that it does make sense to put something
+specific to this consumer in DT, but it'd be another step to make it a
+generic thing that applies to all regulators.
+
+--UswwCFe1kiMt6NyH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiU5dEACgkQJNaLcl1U
+h9Dm9gf/czgCATFH8mHfsPQL7Jgte8mnqHdX8h7kP9EPNkqEGeVXbPEFYvflgjDn
+DG0TXYgKYTC7xK4KbyOHNW4s5xaF6l5vQaLI3Aqzgu8vjGtosl3wW+SB25Ndiq+k
+nYplTOOtPb5chlqkoZVzzcLAaJgniCDslLi3rcegCbWq6+E+QgFRKPhlWNaidizi
+M5RCpyrno7rTaOZ/cFSnRGStemFTWPdw9N79hJabWESTK4+M9dYQciM0yTanMfhf
+cvbNZnMqBp4CVEGl+e5l8p9MjUeyBKFkCY0rPHlPHRX3kKKpq68E6eQu8EoRjJly
+u7+Oq3myiTklfSI/f3sAD6iQwdlhVA==
+=dtCN
+-----END PGP SIGNATURE-----
+
+--UswwCFe1kiMt6NyH--
 
