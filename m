@@ -1,371 +1,327 @@
-Return-Path: <linux-kernel+bounces-759381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892B2B1DCD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3790AB1DCDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE52117565D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:03:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A22175AC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1AA221F20;
-	Thu,  7 Aug 2025 18:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3A5264605;
+	Thu,  7 Aug 2025 18:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="B0uOnuW9"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bQX8n1iJ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yl0J1oGx"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C4172636
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589814; cv=none; b=fuoQ1G6dfijnnsYd3mZV3/x3o6W8tg6R0PWYiD69sGb8KLBkRtk1kVu17jctwCqyMBrLjENTwMq/aDEoQvJAzQ9utUSqlxP9EkSAhSEu4gOpqfCek4cjSy95LeiHsr6YMpf9wzXIaT10xTvG2l4e5El8eGqNqH1VlRCXwK/4yqE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589814; c=relaxed/simple;
-	bh=8xp1KnlDEk2U9CDh5P5T5g+1LdqC3Zs9Cl713SqU2tY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+6LED8hYhT0AQa0jGZ+6wUwH5oxUhMFgaSuOWoeSBRaEd1ciBjiv3fzPWkBVA7cO3C+cULpkCkKFeIj4lb0yedusn1j9CcstCzcrpP/ieRKYI1vN0uOduBDsDJlhLj4OIEVe1xb7brjWxdpbZQyQvxu7dEJdXYwBQxrA8eU6jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=B0uOnuW9; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55b797ad392so1476325e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:03:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBB072636
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754589921; cv=fail; b=Izo7tlalJa4TpmrDQO4sb6riffu+uB2hol6SJKAMC5L40kHyoHz9VH6xmmsSJC5LAybC4b11N1Mn2dNMA2WBsseRMm+xSXUa4Ydvi1EIBLGDEUGlClL/JJyxU8YcoAKWrwhsEagEYB2X/E5V8oZwf/+9WLYbsFRWkvP4b3wgi5s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754589921; c=relaxed/simple;
+	bh=V48CYc8jbiqwUCXLTPjR+yqcXxsehY9odzTo6js5o4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rOfWGcsxeadEQw1MD7h2ZQ62tNnbyksM2iO1NO7EAsRlk3ycW+6cg3Vp4wnEiquE0BiDcSrb0UIpqpONUDqDLllIgM9ySX1aDWn6FCUhmmNNJ3/t2l7ziXFkSNrNu0DiawRc54Z6xVMjpSNmdhiFphkvuzEdFDOWG8oyvRu8kNM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bQX8n1iJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yl0J1oGx; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577HC7Hu024922;
+	Thu, 7 Aug 2025 18:04:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=ht/vylqH17oUTYQyoBibckdjU+iFtCdqPllzGTPfbbE=; b=
+	bQX8n1iJIzcC1IhXPvhMwpZgvIKW18qxqmM6d67zQOGfNUDQN49cDStbdcmRpmY1
+	HG4kb+XE4kNGm/673PADLzGqr98/9hPxhFLhVveVhuNrKXc1C49zAU3fetpeJUZe
+	/iykWI600TpiW9DZ2IrGLOg63D+S0zG7TZOJb6gU3dMNhKfvSL74cE7iKUyNiPDt
+	9ta1ZXtsn1+wH6qYTpmkAxHumVu1dmhcH55apbSK8yuUZgf6BlrQzIl0IZVcvEzY
+	Z4WMcmqqcGBc7mWsBfuylem4o0Flb9FyPPTSpGa1YwGfEAo2/l5/snCntXfAF+/G
+	+LiSetk2B/w6vxlpHRPBxg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpxy4vau-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 18:04:31 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 577HoCUJ027261;
+	Thu, 7 Aug 2025 18:04:30 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwprcrc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 18:04:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VkRASBrLX4af2nLZlxoIQ8gxOuvznKnIT23o/NDdYnX9Ql7Nc/H0pkK4gFjqCIblYPTKjzJ8VTNyqUBzGA08VsckLP/NkZBok6rR5H56caWzvyQC9RbqlW346au520zZcXlsRs88x7fjjdtnYl9TRkETLlg2Yx2B13RivVrTpsDPVUNi+JlucrvTLHbFmjbf6ceMibLcJL4Wokwq2PJEp0LHjZ0EFjjuKkegSbdGSSE42NQiEfY0+EP/4NWC2Ni/9VfVzLwLgXmLQXbWtcBlxRvAKf6umImvQ3ZRoCGKt5kgiDdSTNygywgI/1SJOgp62+92GXCLrr+q6b/R4pkFng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ht/vylqH17oUTYQyoBibckdjU+iFtCdqPllzGTPfbbE=;
+ b=JRXFXx/S/X/B00XYVp4jb3kPKXbhNb/ii6ZkhktoXXecnWCtc9cPGEM0FJtiar3TDqYq5NyYqAK2vxgwB7kWl/bTL/NlPCQq3WJySl5/1ZApS+HmfYnJm27cy4S089VdSMly0UMCNMQ5bvje8fwppDX86fo7WXdHWmST/tA+70SLlD0Bxz8rHYIbLarUH5t35EaS+yijZDU4opMzohp9S4O1aHM2/yXky2gX9jK3R2poQ1uC+SuINX9z2HTXe3sYfWy1WZqk9v9qOS/vcNvRyi0/aluJ5Nlj7HZSeeyUXzSEY2GhVyfoId/aeEt40bWtyZRelWdqzfIPqwW0H7ocQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1754589811; x=1755194611; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tsCe5N2gySc6VwbPeAR1x0jE7zYqA5OJNfAjcrseA14=;
-        b=B0uOnuW9Lek3pVlLShoP0xrfZsTxpdPhr4RiOdahUkdCnC2BQgx0F4m2myKm/kxE76
-         JqnO8LrIZSmrlG9MjC9530OSRoLr42Jp5gRnvDBFGeLu8rSmbZYd+CGViZxMNbD7rI/P
-         ozv8n0taf8jTCzuIeeysbnNR906xxY7WzEcWY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754589811; x=1755194611;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tsCe5N2gySc6VwbPeAR1x0jE7zYqA5OJNfAjcrseA14=;
-        b=hxKP4Bgkp9BWPJtLz8ZlMoMJa/Rw1Su7K13cOexMMOgWU5S6LOrL1WKpoDXEEIxOzZ
-         cre0kJBoYuPhWQKkMMjJ+ybj8D7yMb4Ubk+nhXcvx9OAkGU/RQQneO5pp+umXGeCia0H
-         SQEpcXCE/MUvKvQyE9MglRPKr5Q52FSTttfCQe+g9KSI89e+P3HPLkMMX6QFolKWIvRQ
-         6zMeowngxXyxOpXbNHAfLETZLQYyUxRkZidhklbeU9kMRKA9ultIMrtjkjeWlBxX26v0
-         ogFVJmbQSN9jJAvNYOMAHLKFRRKjcYNf6Qa1uZBUTufO9YwNp1VimMo7oiBDLEJcU7fq
-         N+OA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDhgAuMKYlO75wT8FekSOFpVGcWoh0fi9s0kI3NOJ+16DNC6/BmXHR3BrAwUelPq64M4qlW5DT79hexRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYIWP5wYK2zewAB7av6hKlXhDSfX+gYzXXgAFF+4bpKZqfpx6U
-	ID30LpFZwgfOO0nQjrBbaqKvFE2JAUW7krrFFD0SBbzP7sLtpCKrbD23M78yYgcNdIxv+q/whDl
-	rKt3e/DMwu+peV3OKunhBi3W4XsNdPzbwbK8K6y+8
-X-Gm-Gg: ASbGncuhhj9o2tcEIcgn64xoP8Wieilkozl1IJAN95ZsCcyaDMztoroWSoSYahBnsu/
-	iRtYfEIkvCVofPWEaqBX2cAcQjyjeUoAX7X97Wal+VKc9ttpY4l+HbTJI9tJpV/uNOUb0iIraCe
-	H29MbgixNKrQQr+r8TC8qDs01/68B5+9sAQHEBAuKSjhsMvPc+GEZLpdgXv6/rqYLawHfWaKPcK
-	c8BCsI5
-X-Google-Smtp-Source: AGHT+IGxtV1LWhrRdo3JC0zmjO/3qahbZxj88Vi4n0XQrjfEYquPT8WHMQimEMtyURA/sbB2cafcxr/JmX92fyxW0XI=
-X-Received: by 2002:a05:6512:689:b0:55b:9647:8e75 with SMTP id
- 2adb3069b0e04-55caf57bc22mr2577573e87.15.1754589810606; Thu, 07 Aug 2025
- 11:03:30 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ht/vylqH17oUTYQyoBibckdjU+iFtCdqPllzGTPfbbE=;
+ b=yl0J1oGxK29LXP3A7EpLv6DUg5ojEAVuXIBjV6GR7NKpHEdGegsn9po1sY2TxkvlJFVwuCndKxmYGqZ9+aNNC1xaPM3q+ypEmtx0CM+RBbB0jgkkPzHs4i36JlA6X7CE3wwG94J1+J25y6urs14uwde86QTRUOKrBhHxs3XAa1Q=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB6423.namprd10.prod.outlook.com (2603:10b6:a03:44d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
+ 2025 18:04:25 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 18:04:25 +0000
+Date: Thu, 7 Aug 2025 19:04:21 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Jann Horn <jannh@google.com>, kernel test robot <oliver.sang@intel.com>,
+        Dev Jain <dev.jain@arm.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Barry Song <baohua@kernel.org>, Pedro Falcato <pfalcato@suse.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Bang Li <libang.li@antgroup.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        bibo mao <maobibo@loongson.cn>, Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@kernel.org>, Lance Yang <ioworker0@gmail.com>,
+        Liam Howlett <liam.howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <yang@os.amperecomputing.com>, Zi Yan <ziy@nvidia.com>,
+        linux-mm@kvack.org
+Subject: Re: [linus:master] [mm] f822a9a81a:
+ stress-ng.bigheap.realloc_calls_per_sec 37.3% regression
+Message-ID: <2f0fef16-14ba-4195-b2ec-aabc69f445b1@lucifer.local>
+References: <202508071609.4e743d7c-lkp@intel.com>
+ <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
+ <CAG48ez3=8f3eShjAe9hrvivP+Dvyisw=X_Tr_phc-OX_4MzeDw@mail.gmail.com>
+ <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local>
+ <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
+ <e4f5faea-ccec-4cc7-83de-1a3c7013b81b@lucifer.local>
+ <cbc2e23d-69ab-4820-9942-c7abf2066ff7@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cbc2e23d-69ab-4820-9942-c7abf2066ff7@redhat.com>
+X-ClientProxiedBy: LO4P123CA0612.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::6) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613220843.698227-2-james.quinlan@broadcom.com> <20250806191448.GA8432@bhelgaas>
-In-Reply-To: <20250806191448.GA8432@bhelgaas>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Thu, 7 Aug 2025 14:03:18 -0400
-X-Gm-Features: Ac12FXyuvX7HlpoSndQL62wtvS59Rdx6QOQSiDT816IH2WZzhrhSN71QgjKybgk
-Message-ID: <CA+-6iNxsnj7-Nsy4Q6wFbiF-a6BwfYeTnCqdg1sAUXPCpyaMzg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PCI: brcmstb: Add a way to indicate if PCIe bridge is active
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000006b7d8c063bca468d"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB6423:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5014d5c-83a4-4ec7-ff23-08ddd5dcd844
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WUNYRmsvdW1HRkZYOGRSdjg3NEdJZmdFbkxiT0JJSDNTOEJSZUNtMjg3VThK?=
+ =?utf-8?B?SXV1Uk1tZ1ZvRWxINDZZN3JXZlA0OGxvUnd5TFdYb1BVTmUyeVRteDFFT1B6?=
+ =?utf-8?B?WlkvRm8rYXlxeGhsQURtVUtrR29TeTZyZmRTdG5idGtaVm1rRjdRbDZuaTdR?=
+ =?utf-8?B?SXY2YUpMbDhoQ0dsMm9LVzJqanFrU0d1Y1hGVmtoRnVjS2Uyb29QdDdNaHNz?=
+ =?utf-8?B?Y3U1UW9FKzZaVFRLYzA1aUdGUXFxcENIMVNYOGp6R3VrVENvNlR1RUc1WWJ2?=
+ =?utf-8?B?MmlaVGVMMzJPRDNOeHlGYnMwOTVBQmtPUEZRTHZpQTlVLy9xV0xvUGM2Wito?=
+ =?utf-8?B?Q1RRSFkyWXZPK2Y4OUV5elhxZ2hvL096WE1Fd0pGTnU1UkF5aXpWeGFvMTVN?=
+ =?utf-8?B?ZUJtc3JKVmttdkdKYlpXWkJoWTRaTUJSWXRwN2FLMzQ5dzlLNnVmRnM0b3Ux?=
+ =?utf-8?B?VzU0bXo1eEdMVkRHYnJMU0tZR2VSeGJpbUhDRnRkOW9TSW44L1lNTjRCMGxu?=
+ =?utf-8?B?VE1ob0xYYjA2K2xvVkZOdmZiMHpKam44cWVTWjV2WEEwZXlnM0JZNE5uVUFY?=
+ =?utf-8?B?c29heVMrYVF2ZVZNbjVDVXpvcUZ3WHVRdnpNWGJCRGtIdzJpTmhTNUwzeUY4?=
+ =?utf-8?B?SmliaUpLSE92M3hPcFZ1MWlIVFp4aFVWd09xTkdoNjlyTnIvS21BWFhZdlNu?=
+ =?utf-8?B?TXJ2TkFzeitDblZYejRBaVBMYWUxWGUvM25iVWZEUUFYY3BsLzNObCt3TVBV?=
+ =?utf-8?B?QTFrdmdhYTlJWjFXTnpLZnFDem5abzFxWXYyL2tJbEh0bWZnaDNYcTlpZXhB?=
+ =?utf-8?B?cnZabG10QzY4dEl2YXMyelhTbEp4YS9hazllYVQyYmlKRjhDa1ZsYi9uUXc0?=
+ =?utf-8?B?L25NNzJvZjdVZjVBWmpwRUROeURscWx6NlBGclprVEVINzBqeFhPUkZLTVJW?=
+ =?utf-8?B?VjZvdXdFVGd3ZzA2WlJ1Sk4rbEhQSUMvL3FWSnA2Mll3SkNDNGZRNVVZVGtH?=
+ =?utf-8?B?YTZtazZkNzdxQlFHTThiaTdDbmkvZ3lzbUFYVHBLdXFlYXcvbHgwMVJwQkF2?=
+ =?utf-8?B?SU4vNkwrblJRSVhyWUhOWU1OOVRrdkZNVWxHQVZWelFTK2s3RGY3SlFMa0FB?=
+ =?utf-8?B?dm1mRTZhc1RUV0F6L2p6eXp1U1V3ckkyNkJLeWd6aUttTVpZQnNzNVhVeGRk?=
+ =?utf-8?B?WmJLVWFNaWlLdk1IdnQxUC8yY0lGVFZtbzZyNWgwMlMwR3ZMTVVRdzhxd2RP?=
+ =?utf-8?B?TVdNbHlmRXVTdXBQYVNNbUpMdS93UnlLZDJPWGFjV0pjY2R4OEc3ajZsTHRt?=
+ =?utf-8?B?Vmc3UTA3L3lFZFFXUXVCQlpkalRHZEpDZFltRW9PWmduRjQvaHppZEhWNk1q?=
+ =?utf-8?B?RVBPcVVRb1pVM1JSclZ1akZVQlIrV2FDa0hmaFpWQUUrZTJBUW00MVFtb0g1?=
+ =?utf-8?B?N3lST3I1cHhPelE1V3IrU012eEVrMExtL3ozZ0I0b2ZNM2x1bVNjQm51RWZa?=
+ =?utf-8?B?VGI3U1cxTnhxN2VSU3NNTERmdENVSFpiTklIY1VJaXRrMGlEUXNxY3lEd0tS?=
+ =?utf-8?B?bWhrNUVNK2RmcG1aMlFza0d4S25DOEhzZDFlSnVhd2hCVE1uTFNLRFZTYzhp?=
+ =?utf-8?B?M0hkUm1mUVM2RnhlZzJjcm9ITFpGWCt0Z2pEZGZzeUxBcXRvN0hEOW5LemV2?=
+ =?utf-8?B?Tm05aFlyaW02VHg1a2dFMDd4VXdWeTByMjdPaUtteCszaStrcmZHeENBM2Zq?=
+ =?utf-8?B?dWhYQUVoRlBPdWtOOXBsclZiOU1VMHpQSFpNSXlncW1DVElDRUdQZFBSKzh6?=
+ =?utf-8?B?MkNOOU9ad1d3ZHJCcXlpSkh6ZDUwMHJFbVNwTGRoemNOZG03Q3N5NUUvdnRo?=
+ =?utf-8?B?N1ZIUlBNYjJXSnlzNDJWUE9OKzNvWkMyTWV6RWVBQjRqUjAwSmxyTGRuSjhO?=
+ =?utf-8?Q?OZE5R0tP/e8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVl6Ri90N21uQ3FQelRVRHk5L2RHYjJjbWxEckFuTVRVYmxPcmxDdlExU2xQ?=
+ =?utf-8?B?MmdFVkc1cDZFZEphYVhXV1dSaXdYS3J2Uk82Q3ZiT0tMN2luTzhqRklhZDJ4?=
+ =?utf-8?B?N1V0S1JTNm5ZYXVqbGs3WnlOMVZrVjBOcnFWalZ3WmhZcTRuOUNob2ZwQU9v?=
+ =?utf-8?B?bnBXKzRXVVN0aFVZdXJ6ZllSaE9LR29lYlM1RTJpQncxR003VCtjdHZOaExR?=
+ =?utf-8?B?czRGN2VjRmJnU0J6d3kwOXFxVnRrWlRKSHpmWm9LZXJGeTRsMzhZOWlncTNq?=
+ =?utf-8?B?VkFXYndoOVhCcUdPSWxzeEtWeWNoSmpqMFBuL3NrNFRSK01XTEFvaUZsc0R1?=
+ =?utf-8?B?RjJxZW9qZDJvMFRGSTZYN2pYcEdqMHhSZytxUEJ6VjA4VEdtWGR5alVrWmFU?=
+ =?utf-8?B?Wk1ycmFhenc1ZTZrTGx1elhCTmZwMm9FMXB5Nm05Q1BNc0I4WmFhdnJDaHQz?=
+ =?utf-8?B?SnVTd05rMXN1VzEzR3BZcDRieERqZklZenlaSVQwa2xlT2RtdDlEYnRrWkc3?=
+ =?utf-8?B?czFiOUd3WU5qVkhUemt3dllLaU9mSncrS2swNm5xWkdzY1g0anN3azhvTUV3?=
+ =?utf-8?B?WVJFY3p1c0dKS1FjS2M1NEJUamVER3pOcTMyQWhSL2N2KzhVQmptSzd2VWlt?=
+ =?utf-8?B?UkZuRDNxZlBtditZQVJzQ005V2E3c09UM1FmcVIvQUVpL2pyREpjQmkyL2lC?=
+ =?utf-8?B?dk9Qd1Nsekp6MGg4a2VCWGhES043UUkyK2tqcmtPRXI1TnBPZU4zd3dGbitG?=
+ =?utf-8?B?VmhQRm9OdFpEN0d5TzlRS1U5UW4yS2NtbDBzeXBGRlIzbUd0V1pGVFY5TGIr?=
+ =?utf-8?B?d3owWEpLcWVMMVBLUzBBUVNMdkVyUGROV0ZoOC9vajhrY3RxS0lteDBBSlFB?=
+ =?utf-8?B?QklGU0NvNGxhWENQZUZkUGNLMFN6OTRObFdKNitkNklLN0IvZFBMY1B1NUg5?=
+ =?utf-8?B?YXJieHFPQ3JhSGIxNm1UTE5NcXdXWW90T0czTFB5VmRPc2hpUUNKWEpBYW00?=
+ =?utf-8?B?VG9ZQ1RTZUE2a1QzRlVGWUJKSk1ZNktmWVo0R2NVWXV3R25LZUp6SzgrcnFQ?=
+ =?utf-8?B?a3JKbEhWMW42OWV6ZVNtYWNOd3pQZW14MW1xUGtxRkt5V0NmVk9mZmxvZ2N3?=
+ =?utf-8?B?ZTVtQ1lkU3Y2ZHFweFVyVE9ObmVpem1ZZjFWbktDRjJqalF3RFc0ZjlrQ0hQ?=
+ =?utf-8?B?a0NZNC9zYXA5RjhIUXVJL0xFMmsyN3JBYnF5cHM0Z3diM0xGWnBJckx1bThB?=
+ =?utf-8?B?dVdMU2RsaVJDRnZhNmNlckZHOHNtRzRDWGxYb0VodWQvMm9hMUIvZHg3YzNp?=
+ =?utf-8?B?Wk9BMEw5MnRaMGFvM2JrR2RKaDZRVzFjUHdUMjZCOEJEaVI1TURWWjhCeUF0?=
+ =?utf-8?B?TDMwa0tCZ2lpNU5WZ3VaTGlGWXJQbzV0cEtGeU5jZjBGdlNpYmd4MFBQeVJ3?=
+ =?utf-8?B?eUp1T0tpbjl0T3lpSi8rM1ZOU0oxOWw4T0NCckJCWlhLUWdnQnNoMUhMS2o3?=
+ =?utf-8?B?WlFpbnF0TitENlNrUkhxWEdaQW9udDB4eEw3Y3Zna2ROQnJGejRXYlhZK3d0?=
+ =?utf-8?B?YjhoTW9hV0hvKy9GbHo2anFSZTFxM1lWT0hlQzBRYWdhaTMzYWhhRjhadWtP?=
+ =?utf-8?B?TERpck50c09oMEl6TDhKVmpnWXZuUGhMWlVPT0lyS2c5TnlOd2JEVEVJZTBl?=
+ =?utf-8?B?SHlVRTByRUl4R1lPZjFNS3gvdHZOQ0JUZFFURmRCMTBqeXdaci9iMWtNWEFw?=
+ =?utf-8?B?all5VWVEdlMxd0E1REM3MXVKbFNFSk04ZldtOGN5TVVHWFVCZCt1QU5PazZp?=
+ =?utf-8?B?WjN3bThFMG1tQjI2dFlZYVptK0l2MkJtRzVBOWx0VlZlOWk5Ym1BMzVoa3Nu?=
+ =?utf-8?B?aVdLSytiZFQyZFB3R3A3ZlZudFdIOTFZdDQxWUI0TGw4dEVKVE1LMWsyZTdO?=
+ =?utf-8?B?ZHdtVSs2QVlrTW1iWHJzWEVweVZPWjY2bVVqQ1ZsTFp1bTVkVEthTTJiOU5V?=
+ =?utf-8?B?SkNMUWlQS0FLa0JxZm9nWVRGa094end6Y1ltbmxtK1RVaUVyanpIbTRicmM4?=
+ =?utf-8?B?UUFxWDVsNFkrNzRXeU1IWHh6cVNMTUpQTTZyYXl2R3M5UmNqUkJMMDYxV3Rz?=
+ =?utf-8?B?L3F3ODV6bjJ0OUZRNDNjT3BCVjhzWVJjelI1RlJFRy9wa3dPT014MGFaNDEx?=
+ =?utf-8?B?c1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	nf8pb8e6qKakNpTlZSkvryZdTZz3sJ/GqXDH63S6ajvL47/CvZF0CTnpktt2KAgs2PCYtIsmGk6hUPIbobL3x+/rGc09C+qdLgRM5+bzzZjfeuaVjNMTpijxMuNDmNufMgCmhddEbuCZ++f6olaLAh0OCtZQdeZNJ13meV0HE7+tZuoC9xj/7C4DRp+He+NGhYynrmGHpSugVMYzG4LB+DfPXq5eDCaIhNjbb3ikEaPJ6p9666M+njLXt0rDfRBDDycvdy8/no2Z2s+G1RtV7R1QF7L2FTJoPOtc3M0G3UN8Qt22GQyM8wW/1PDeXEi/FcDyfIibOS+IkG2K3ZHOvpi2LSX0ZY+x+/WCUGXXsnquNbCpSEjQq0ST1LZuSxBov5XadhCbEh9NKgrVefw18I5PLK+o6lcqeEx6VcMJnY39aH2aLG8+mXY0BgiZxFpMc0hUMFw/Xt+pLr8oWCFJsA3z+pd7uwHFD83SBYOZCFlRC5mDfNZ0GLs3ZS8lANrMIXP/3CO3m8fKJs+ZTGqREQ2N9M2PNwqguy4+a+tIodJiH5JGrZ4MUlLJxI3s02P4zOk8Zo38fFtJxPntzboNv8fAJi6waAbrrcy43vpQ/TY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5014d5c-83a4-4ec7-ff23-08ddd5dcd844
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 18:04:25.5035
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OPGY9SRYhcU5SV89Om1JJOXXhK07JPw6SZDfsYtyVsEeRtd9d8WQ92fbI4Tl0KyeJEdzN/0y4ZcF0IDaV3xPRuxMAiY6+eXFbJ8PAqQ9Pt8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6423
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
+ definitions=main-2508070147
+X-Proofpoint-GUID: mBEczwCN48_ywt3UqNZnDHM72ltKfEiE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDE0NyBTYWx0ZWRfX5A7l8EEWy2w3
+ wy5fdsL5a10ZmHua2aS8PAqgiJ27jh8k8mtQTt3f6+rzvDgC3MofCYMkNhqEHXhaH6xbmuDTnoo
+ d/x5BerJvnFSrb5EJ6RBCXnJXL3LyqM5ffPBgUNtG4us878tJlSlPN5XfpC4MoLe7sp8eoRPwJ2
+ 30xPnJ3VG/48Sl7SuW4JiQXwAUMpJhvYnTHuYEza3F7wpTu6ZULNXCNjnWCkKJhCVM28W//5FWO
+ 7S+7LmvdcI4YblY+ey6xUfRTrmtLrjboneZeXpRPemZYZ4CZScVzgf7BIpA8o5iqhkWDKlano5s
+ keYUF4ThU4VG8mt+fLlxeMmXCeKCVh/QiXW2qIVKGSR83xV1XAGpU97++GhPNC/RbLc+pVRxcCr
+ /8lI3PQjWYO9T4WdsPGNKtxLFOGKimostUU1Gz0s1/uRIeyd7RFkY7sbjLRKf/+HOCihB1uJ
+X-Authority-Analysis: v=2.4 cv=Y9/4sgeN c=1 sm=1 tr=0 ts=6894eaaf cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+ a=yPCof4ZbAAAA:8 a=UP7ut5tp85dssmsm4U8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: mBEczwCN48_ywt3UqNZnDHM72ltKfEiE
 
---0000000000006b7d8c063bca468d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 07, 2025 at 08:01:51PM +0200, David Hildenbrand wrote:
+> On 07.08.25 19:51, Lorenzo Stoakes wrote:
+> > On Thu, Aug 07, 2025 at 07:46:39PM +0200, Jann Horn wrote:
+> > > On Thu, Aug 7, 2025 at 7:41 PM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > On Thu, Aug 07, 2025 at 07:37:38PM +0200, Jann Horn wrote:
+> > > > > On Thu, Aug 7, 2025 at 10:28 AM Lorenzo Stoakes
+> > > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > > > On Thu, Aug 07, 2025 at 04:17:09PM +0800, kernel test robot wrote:
+> > > > > > > 94dab12d86cf77ff f822a9a81a31311d67f260aea96
+> > > > > > > ---------------- ---------------------------
+> > > > > > >           %stddev     %change         %stddev
+> > > > > > >               \          |                \
+> > > > > > >       13777 ą 37%     +45.0%      19979 ą 27%  numa-vmstat.node1.nr_slab_reclaimable
+> > > > > > >      367205            +2.3%     375703        vmstat.system.in
+> > > > > > >       55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.KReclaimable
+> > > > > > >       55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.SReclaimable
+> > > > > > >      559381           -37.3%     350757        stress-ng.bigheap.realloc_calls_per_sec
+> > > > > > >       11468            +1.2%      11603        stress-ng.time.system_time
+> > > > > > >      296.25            +4.5%     309.70        stress-ng.time.user_time
+> > > > > > >        0.81 ą187%    -100.0%       0.00        perf-sched.sch_delay.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > > > > >        9.36 ą165%    -100.0%       0.00        perf-sched.sch_delay.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > > > > >        0.81 ą187%    -100.0%       0.00        perf-sched.wait_time.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > > > > >        9.36 ą165%    -100.0%       0.00        perf-sched.wait_time.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > > > > >        5.50 ą 17%    +390.9%      27.00 ą 56%  perf-c2c.DRAM.local
+> > > > > > >      388.50 ą 10%    +114.7%     834.17 ą 33%  perf-c2c.DRAM.remote
+> > > > > > >        1214 ą 13%    +107.3%       2517 ą 31%  perf-c2c.HITM.local
+> > > > > > >      135.00 ą 19%    +130.9%     311.67 ą 32%  perf-c2c.HITM.remote
+> > > > > > >        1349 ą 13%    +109.6%       2829 ą 31%  perf-c2c.HITM.total
+> > > > > >
+> > > > > > Yeah this also looks pretty consistent too...
+> > > > >
+> > > > > FWIW, HITM hat different meanings depending on exactly which
+> > > > > microarchitecture that test happened on; the message says it is from
+> > > > > Sapphire Rapids, which is a successor of Ice Lake, so HITM is less
+> > > > > meaningful than if it came from a pre-IceLake system (see
+> > > > > https://lore.kernel.org/all/CAG48ez3RmV6SsVw9oyTXxQXHp3rqtKDk2qwJWo9TGvXCq7Xr-w@mail.gmail.com/).
+> > > > >
+> > > > > To me those numbers mainly look like you're accessing a lot more
+> > > > > cache-cold data. (On pre-IceLake they would indicate cacheline
+> > > > > bouncing, but I guess here they probably don't.) And that makes sense,
+> > > > > since before the patch, this path was just moving PTEs around without
+> > > > > looking at the associated pages/folios; basically more or less like a
+> > > > > memcpy() on x86-64. But after the patch, for every 8 bytes that you
+> > > > > copy, you have to load a cacheline from the vmemmap to get the page.
+> > > >
+> > > > Yup this is representative of what my investigation is showing.
+> > > >
+> > > > I've narrowed it down but want to wait to report until I'm sure...
+> > > >
+> > > > But yeah we're doing a _lot_ more work.
+> > > >
+> > > > I'm leaning towards disabling except for arm64 atm tbh, seems mremap is
+> > > > especially sensitive to this (I found issues with this with my abortive mremap
+> > > > anon merging stuff too, but really expected it there...)
+> > >
+> > > Another approach would be to always read and write PTEs in
+> > > contpte-sized chunks here, without caring whether they're actually
+> > > contiguous or whatever, or something along those lines.
+> >
+> > Not sure I love that, you'd have to figure out offset without cont pte batch and
+> > can it vary? And we're doing this on non-arm64 arches for what reason?
+> >
+> > And would it solve anything really? We'd still be looking at folio, yes less
+> > than now, but uselessly for arches that don't benefit?
+> >
+> > The basis of this series was (and I did explicitly ask) that it wouldn't harm
+> > other arches.
+>
+> We'd need some hint to detect "this is either small" or "this is
+> unbatchable".
+>
+> Sure, we could use pte_batch_hint(), but I'm curious if x86 would also
+> benefit with larger folios (e.g., 64K, 128K) with this patch.
 
-On Wed, Aug 6, 2025 at 3:14=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
-rote:
->
-> On Fri, Jun 13, 2025 at 06:08:42PM -0400, Jim Quinlan wrote:
-> > In a future commit, a new handler will be introduced that in part does
-> > reads and writes to some of the PCIe registers.  When this handler is
-> > invoked, it is paramount that it does not do these register accesses wh=
-en
-> > the PCIe bridge is inactive, as this will cause CPU abort errors.
-> >
-> > To solve this we keep a spinlock that guards a variable which indicates
-> > whether the bridge is on or off.  When the bridge is on, access of the =
-PCIe
-> > HW registers may proceed.
-> >
-> > Since there are multiple ways to reset the bridge, we introduce a gener=
-al
-> > function to obtain the spinlock, call the specific function that is use=
-d
-> > for the specific SoC, sets the bridge active indicator variable, and
-> > releases the spinlock.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 40 +++++++++++++++++++++++----
-> >  1 file changed, 35 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index 92887b394eb4..400854c893d8 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -29,6 +29,7 @@
-> >  #include <linux/reset.h>
-> >  #include <linux/sizes.h>
-> >  #include <linux/slab.h>
-> > +#include <linux/spinlock.h>
-> >  #include <linux/string.h>
-> >  #include <linux/types.h>
-> >
-> > @@ -254,6 +255,7 @@ struct pcie_cfg_data {
-> >       int (*perst_set)(struct brcm_pcie *pcie, u32 val);
-> >       int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
-> >       int (*post_setup)(struct brcm_pcie *pcie);
-> > +     bool has_err_report;
->
-> It doesn't look worth it to me to add this.  It only avoids locking in
-> a non-performance path.
->
-> >  };
-> >
-> >  struct subdev_regulators {
-> > @@ -299,6 +301,8 @@ struct brcm_pcie {
-> >       struct subdev_regulators *sr;
-> >       bool                    ep_wakeup_capable;
-> >       const struct pcie_cfg_data      *cfg;
-> > +     bool                    bridge_on;
-> > +     spinlock_t              bridge_lock;
-> >  };
-> >
-> >  static inline bool is_bmips(const struct brcm_pcie *pcie)
-> > @@ -306,6 +310,24 @@ static inline bool is_bmips(const struct brcm_pcie=
- *pcie)
-> >       return pcie->cfg->soc_base =3D=3D BCM7435 || pcie->cfg->soc_base =
-=3D=3D BCM7425;
-> >  }
-> >
-> > +static inline int brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie,=
- u32 val)
-> > +{
-> > +     unsigned long flags;
-> > +     int ret;
-> > +
-> > +     if (pcie->cfg->has_err_report)
-> > +             spin_lock_irqsave(&pcie->bridge_lock, flags);
-> > +
-> > +     ret =3D pcie->cfg->bridge_sw_init_set(pcie, val);
-> > +     if (ret)
-> > +             pcie->bridge_on =3D !val;
->
-> AFAICT, .bridge_sw_init_set(1) asserts reset, .bridge_sw_init_set(0)
-> deasserts reset, and it returns 0 for success, so I'm confused about
-> this.  If either assert or deassert failed (ret !=3D 0), I guess we
-> don't know the state of the bridge and can't assume it's active, so I
-> would have expected something like:
->
->   ret =3D pcie->cfg->bridge_sw_init_set(pcie, val);
->   if (ret)
->     pcie->bridge_on =3D false;
->   else
->     pcie->bridge_on =3D !val;
-Ack
+For the record I did think of using this prior to being mentioned, product of
+actually trying to get the data to back this up instead of talking...
 
->
-> Tangent: the last "return ret" in brcm_pcie_bridge_sw_init_set_generic()
-> should be "return 0" and drop the unnecessary initialization of "ret".
-Ack
->
-> And the code there would be vastly improved by using FIELD_PREP() or
-> u32p_replace_bits() and getting rid of the shifting.
-Ack
+Anyway, isn't that chicken and egg? We'd have to go get the folio to find out if
+large folio and incur the cost before we knew?
 
->
-> > +     if (pcie->cfg->has_err_report)
-> > +             spin_unlock_irqrestore(&pcie->bridge_lock, flags);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> >  /*
-> >   * This is to convert the size of the inbound "BAR" region to the
-> >   * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
-> > @@ -1078,7 +1100,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie=
-)
-> >       int memc, ret;
-> >
-> >       /* Reset the bridge */
-> > -     ret =3D pcie->cfg->bridge_sw_init_set(pcie, 1);
-> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 1);
-> >       if (ret)
-> >               return ret;
-> >
-> > @@ -1094,7 +1116,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie=
-)
-> >       usleep_range(100, 200);
-> >
-> >       /* Take the bridge out of reset */
-> > -     ret =3D pcie->cfg->bridge_sw_init_set(pcie, 0);
-> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
-> >       if (ret)
-> >               return ret;
-> >
-> > @@ -1545,7 +1567,7 @@ static int brcm_pcie_turn_off(struct brcm_pcie *p=
-cie)
-> >
-> >       if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
-> >               /* Shutdown PCIe bridge */
-> > -             ret =3D pcie->cfg->bridge_sw_init_set(pcie, 1);
-> > +             ret =3D brcm_pcie_bridge_sw_init_set(pcie, 1);
-> >
-> >       return ret;
-> >  }
-> > @@ -1633,7 +1655,9 @@ static int brcm_pcie_resume_noirq(struct device *=
-dev)
-> >               goto err_reset;
-> >
-> >       /* Take bridge out of reset so we can access the SERDES reg */
-> > -     pcie->cfg->bridge_sw_init_set(pcie, 0);
-> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
-> > +     if (ret)
-> > +             goto err_reset;
-> >
-> >       /* SERDES_IDDQ =3D 0 */
-> >       tmp =3D readl(base + HARD_DEBUG(pcie));
-> > @@ -1901,7 +1925,10 @@ static int brcm_pcie_probe(struct platform_devic=
-e *pdev)
-> >       if (ret)
-> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
-lock\n");
-> >
-> > -     pcie->cfg->bridge_sw_init_set(pcie, 0);
-> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
-> > +     if (ret)
-> > +             return dev_err_probe(&pdev->dev, ret,
-> > +                                  "could not un-reset the bridge\n");
->
-> "un-reset" doesn't mean anything to me.  Is this the same as "could
-> not take the bridge out of reset"?  Or maybe "could not deassert
-> bridge reset"?
-Ack
+So how could we make that workable?
 
-Thanks,
-Jim Quinlan
-Broadcom STB/CM
-
->
-> >       if (pcie->swinit_reset) {
-> >               ret =3D reset_control_assert(pcie->swinit_reset);
-> > @@ -1976,6 +2003,9 @@ static int brcm_pcie_probe(struct platform_device=
- *pdev)
-> >               return ret;
-> >       }
-> >
-> > +     if (pcie->cfg->has_err_report)
-> > +             spin_lock_init(&pcie->bridge_lock);
-> > +
-> >       return 0;
-> >
-> >  fail:
-> > --
-> > 2.34.1
-> >
-
---0000000000006b7d8c063bca468d
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICYDCC
-AlwCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCB47OOV0a6P5KfBZyQARHO6Hb1Ic1sB
-CtXnXRF2W0+h8zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNTA4
-MDcxODAzMzFaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0B
-AQEFAASCAQBy0YTB2Gg6ynrSyjUP4abbwTBs+0MzSETb+W8OwlkBgUqRinLtWyGi1GF6B94KjxXj
-Ke3v23ttYBeW8zh9fHbFYYYblpdhFBRljfJ6Zc2GI1QaifFDYmXVOtke+aQs56h/rlvG3QbmDQ/v
-9F+gkEU8w9rJc5DEQPiaS1mnFCagaJ5OoD1fPQf8h33adJAmzVUsMHX311n5aRWxMFcIn9pi5Nhm
-kLc6bJWVKNhXhaLFcGlCL1XM5pvsoOHzfEjSjFa7S5+prmdEDRziMQG/Zl3tRvGS8dof4EQdoSM6
-0n1grxmjGOj2+XTaeuia2r7icN8uI5D8pwnIK77RqnUsdyTS
---0000000000006b7d8c063bca468d--
+Cheers, Lorenzo
 
