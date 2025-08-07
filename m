@@ -1,219 +1,321 @@
-Return-Path: <linux-kernel+bounces-759289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3645DB1DB97
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:25:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5734FB1DBA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49C6622802
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:25:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D51F16371C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16226FA4E;
-	Thu,  7 Aug 2025 16:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60C726F454;
+	Thu,  7 Aug 2025 16:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5sSS+2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bd/7pA9H";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bd/7pA9H"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011069.outbound.protection.outlook.com [52.101.65.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA4C26E705;
-	Thu,  7 Aug 2025 16:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583923; cv=none; b=YkWTsMuIwwhjaZJGhzuatVLcMVw/JlTUTCg4zjCb7RB36kQ9tQjkEO085l9MGTXCbJ2oy2001XtapF1K5Gg7K1uqVpE+Qi3WzR27f7B6KC8e5y2Pib9ctuwzDrDnKn/9BAljEpWhtUPwi0A7aMbOE3vbAUJDYymYKiHp19O/gLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583923; c=relaxed/simple;
-	bh=BudXXcTDGTwxVD8ktjRz+4NV9TJy0IkwNxbBa3LWQks=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=CT2wAi0jff3+7cFcFlMHvl2BK9EVrG9aQcLDUT4olyRJ1i/jOCleUkolUABFeroCF6pxAEwAJFGqRIoBVcUC9lxFkcjFY8oobYiny8qH57qek0fGh509jT24NXlwqdfBQM64dMylo0kX8f1aIEIJ1BjedkGo56ObkfYVbwsk9rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5sSS+2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EEBC4CEEB;
-	Thu,  7 Aug 2025 16:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754583923;
-	bh=BudXXcTDGTwxVD8ktjRz+4NV9TJy0IkwNxbBa3LWQks=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=P5sSS+2OTaPHfKQ7mMNN/uSkilMMoN7DDZ7CND1CGKyvRJE85TL0J6gTIlABwqnSA
-	 NQXDcKFq5gydWUbE51EneYcRKby3Lu1TIymbHRfnZ/HY4R90XkkumVfQZmjF8JFOlh
-	 p2Qab2ZgAcxuHDjL72Zpd+sWhiUwVpXPsOiREIQ8FDJr254F5p2hC15CZ38aLUu6Br
-	 9boLOT1C0N4HuvQwpmyLVj0YwF248CMixT7+SS6YtmqBuw02RE06jDW5VVe2hGqbsS
-	 SHroNrEgmVyO4DJBAuwbtd1QXtnPtQCt6nFke40HU1txhdHAketkb22ynmYr6gHKU2
-	 NtateoowuMeEw==
-Date: Thu, 7 Aug 2025 11:25:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Chen Wang <unicorn_wang@outlook.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/4] PCI/MSI: Add startup/shutdown support for per device
- MSI[X] domains
-Message-ID: <20250807162521.GA50955@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624F49641
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.69
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754584050; cv=fail; b=Z/n/9ooJEx2QJwc7MYPazeAckYgxRgov3B3sfgXl2R3baeCasUVkghcqqkKtlN5Z3dkJXUABzR6Fh37TtxDPcPbrcxjMjNHhHXcAA0Vy7Ja8U0xBp2FaaczBJaJVfAqJB11MJOLFjdij2M3Ft+OgoPsWCZ6ALkOdAndqGtoraAY=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754584050; c=relaxed/simple;
+	bh=lYRDLFPqKP3W/Oj/Td9/XVz8RnI1FhmY1lvbqbHzjgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=pcTVZQNj0M1Rvt0NCOuFiFQ7LPy8yb04d4uVcIHLSGAKrdEgVVGxT0d4mWuXqA5kT8NEsYXX/n+G5FbtNI8wjcilACjjm4DcJLk2gDvry1Pt7y5k7laDr8JkEaNGaPmepIsbJzgYDNQNGtj5yQdqiy5P68xrPs9bMpJbgvBy+RY=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bd/7pA9H; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bd/7pA9H; arc=fail smtp.client-ip=52.101.65.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=no9fQrhRkzumWkbKULR3qsKvq2BokKzLsya37DrwMkh6Z6hOEMedHLlJsfL9UflY5uSLUrdwLNWbqNn/QtPkuPxuHErDvLgpOYakQeenDntENshJc2EPxBWOdIHYyeb6zk3x0W/hCqR33bGhVEjSTnS/IbrLh2CD9+MoCJnYyDDeXkOs1xwRbQJ/X6rNbiWAig79S5Y0QGZfxEKFHuwXhPcByV+wDOt58HvTJNIurzJm2EpMqot4seem6/bimeK/grv187aRJMmCyiyuLrJgC3n5RA4Bcl5VVh9ZtgGn8C5BczAJr6YSok6pGCEIv0yf82/NIjJmWAtuSKXPaK7oiQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=69tz7BkBZeaMynzsJ4gdXiZkv6CiI7d+q89jb8AndXs=;
+ b=OhsqimMQpAXs3cM+k/D7R6LnzKixYrAOqMq+8wSS3VHoeUW6OBaCXBbsLyEKM5WP2AcHofEpARNqq5Zyn/eUWpyJmpcBAawOvuhmELzPq7gc9wP36q/DpN/R8kzc0uBDL3BZcENObJ2z4MfIIPEyi5fwRcBPI410QNufPEMhNQ8EAWhblCgtmXp8c4SVcSFpdWmWFH2iUmT2iF8Ku929ZGHW+KtIRUagkU5rwW8ZLnkFyqS1OQ9F7Q1RjFphuhaW7xtCxlgiYfHclcF23PDU8b8937gEVg8pLc2MDQK6DPNVAzV5k1xLbWFh+w1pxDJGO9ZpxCgiTCkz/Y6o8H3Jdg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=69tz7BkBZeaMynzsJ4gdXiZkv6CiI7d+q89jb8AndXs=;
+ b=bd/7pA9HMtF+lRMyZSubDauhD7gedBKx+onmWhvcCfRsnlXMTpwUr7dD/HZDy2QI2UG45DRLWtvbmmXbUjTOCyoNbTMRcQkZuWAKu6B2LzFM6traTxTj244K56FWAky8l8OJhOlDG23OJtNEvV6xksK7o447nR6MhHbJBhadvto=
+Received: from DU7P190CA0015.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:550::9) by
+ AM8PR08MB5602.eurprd08.prod.outlook.com (2603:10a6:20b:1d0::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 7 Aug
+ 2025 16:27:23 +0000
+Received: from DB5PEPF00014B91.eurprd02.prod.outlook.com
+ (2603:10a6:10:550:cafe::13) by DU7P190CA0015.outlook.office365.com
+ (2603:10a6:10:550::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.15 via Frontend Transport; Thu,
+ 7 Aug 2025 16:27:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB5PEPF00014B91.mail.protection.outlook.com (10.167.8.229) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
+ via Frontend Transport; Thu, 7 Aug 2025 16:27:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M2hEvntGGGpei03Fuh/LfoB8zhox6VNY+RIUCMYd2eMi0BuzrOVzc4kGVVQk+vJOXv5rQk3yOLuLoDLtkyPp6BKByTWaChZYXkKFv+flJzayIBTXY7W37fQ58V8SnRi2bDpjOWrDCAwF+QkzpJpO2imz6Yh2Y1chfAUg73AYnKqWITQTk1Nm6Sz7xIG6+MBlzPkgnEnyDJQJAKbOZ03xfy4/bptiQ64SW+UiVlR4ueW3XltHwITMAImQaYdBbtRqzm8fZKcw0246l/zCg18FjlIo22a+8AKZpEJir8eqQn/9R5xsCrOhJWeDYQjz3FC8B9Trn3a8qznbNq3kc40ybg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=69tz7BkBZeaMynzsJ4gdXiZkv6CiI7d+q89jb8AndXs=;
+ b=etqaFS5B1XAPvlcRbDoKH/qR2803dPpdvPL3yQZfUTOjyG3+delHIChoFHHb4J4kSx3+wCHflpcCzKBXaj8UKmmHeKs0IW1W/ykVC6GoqCf0jOUrJcC6Uo7Y39192r9Aqtfyfgsg+deRZ8gFQpSkavrGTEXFEyJ+GOcZ3ZfIkiPjjQo31XWh8cVKMhk0cPK2lypyAFRHWPxQdrdZ8ixs3YMCnRxEVC8MV624INHUwWytwERr6ZycD48RNfjMHgQwOYmGKn08lgZmgOfnCX56vCizbiZiWEDYkmQqA/NIXHR4wGDodNZhrkNAsTPWTh/dRp1CGD6s+Z8YcHtUY38aOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=69tz7BkBZeaMynzsJ4gdXiZkv6CiI7d+q89jb8AndXs=;
+ b=bd/7pA9HMtF+lRMyZSubDauhD7gedBKx+onmWhvcCfRsnlXMTpwUr7dD/HZDy2QI2UG45DRLWtvbmmXbUjTOCyoNbTMRcQkZuWAKu6B2LzFM6traTxTj244K56FWAky8l8OJhOlDG23OJtNEvV6xksK7o447nR6MhHbJBhadvto=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
+ (2603:10a6:800:257::18) by DB9PR08MB9443.eurprd08.prod.outlook.com
+ (2603:10a6:10:45b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Thu, 7 Aug
+ 2025 16:26:48 +0000
+Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
+ ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
+ ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.9009.016; Thu, 7 Aug 2025
+ 16:26:47 +0000
+From: Karunika Choo <karunika.choo@arm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: nd@arm.com,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/7] Add support for new Mali GPUs
+Date: Thu,  7 Aug 2025 17:26:26 +0100
+Message-ID: <20250807162633.3666310-1-karunika.choo@arm.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0431.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a0::35) To VI0PR08MB11200.eurprd08.prod.outlook.com
+ (2603:10a6:800:257::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807112326.748740-3-inochiama@gmail.com>
+X-MS-TrafficTypeDiagnostic:
+	VI0PR08MB11200:EE_|DB9PR08MB9443:EE_|DB5PEPF00014B91:EE_|AM8PR08MB5602:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10e067d2-071f-4564-791c-08ddd5cf4915
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?AaOv6IQRjUqMdI/xQOUTWIgCr96mwlpWEaAeWCmifb7BUsA420v3sTCvdZQE?=
+ =?us-ascii?Q?A2dH3D+kee4tXob7iUSRbpCyYF/I45Tei+4la350mSgIZuy+0StKE9mon8rq?=
+ =?us-ascii?Q?BlZ/MhcQsyg1mzMATHUQSHL2ivy9ZJhCgX4QG9khYg2ouSPPnRoK3tTmta+p?=
+ =?us-ascii?Q?EMScWU6fLkKMNwxwh6QyVo0FKZacpH8SQnPhbfoJX2MNK6AZi/ov8ix9x9ue?=
+ =?us-ascii?Q?RLfk2C003ulhaPdtEpKlbC8zWjillkAhzk1mM0J0/mUHYcnu+IRaQYRKmdYh?=
+ =?us-ascii?Q?kSH4fef4BfQqyJ0WoLFgkF5U74Ziimol4KzGb198xoxKM6B2x8/Gd4uc3GIh?=
+ =?us-ascii?Q?BpztvBAosJhYunuxEMCTmGJAiNf0x06wXU+t7LXOHbhN+bFj7iJUKzQrIbLy?=
+ =?us-ascii?Q?Ag6qmVsv5JRZpHa43BSZJazpcTLqYqFS3nOfxc9XpUowm5s6OpxeVvNlQaFQ?=
+ =?us-ascii?Q?4vkJuumpIN8ydLMY6IafuSE+BAUN4yVijokFBpuBoQvsYSKBrRlBZgXynYSQ?=
+ =?us-ascii?Q?vthIin8566d1risNXodbJbsQKHwvz0TECqRJz6BSbRHgNUVU8tqs2d3ZrJy0?=
+ =?us-ascii?Q?yXTNrr3X5FLu2h88NUuBUeuxwSoHtDEgUBWCW9C4xJvi4051geDmotYQ/Pwf?=
+ =?us-ascii?Q?C/0wmYKttDBXulfexLsXsriGMCK7zRkRBy1kt8TOTTIB2fTgTKeO1QjnAbN7?=
+ =?us-ascii?Q?1tKYWTYXdcEf2Hs6oJ/qE7EWVLn5u0ObCGWUACNgwylFSm7pPBSqibU3vYBv?=
+ =?us-ascii?Q?eCDcxNbGkY3WXTivuNSsR/+ykvdu5R5btGfHXv2YKWkd81cWZDErPGQrgbtd?=
+ =?us-ascii?Q?SPK1xhqnefJxdGAZ64j8a9zMYkHQjVAIdLuRX6E1NDL0i79ihsLZ6yShoW02?=
+ =?us-ascii?Q?zST0hwFdw5tyctAmlhvKeYqv1Vp7vgInDYTkz5A0Zc9Bd05QTRQK0Dd9eaAC?=
+ =?us-ascii?Q?Ai+WMwjG+SeT2Zc3b06iguoQj/e9AXSgOc6CL04hgprpUGxhtIfFGS7gE22p?=
+ =?us-ascii?Q?8a3QUrTrx/+yM/Dg7d4McILtFZB01sDlXYuKYsGCrC0T0KhOD0np+aLKwYMu?=
+ =?us-ascii?Q?Cw2gqB3mhMzXFLAxzUqGruu7siwZoekLuJ2mHzM3NmDH/9xi2ncLAsP7DkDC?=
+ =?us-ascii?Q?V7hdGRfkRAofHC7XZtVSEUGseDRoQ883C4LRHtBRepT0W9xN7DvL4smq3rNO?=
+ =?us-ascii?Q?b0t2LGxJp1TKigXHt4R7nsrApZ+SVAAxDhIJvFPKuUefmNE999ErmnQLx7oL?=
+ =?us-ascii?Q?03jpGlbAHcjNhlRblfMKDB9lTVmbMGzMCKTiU0gGH+RXLPCEUf2iUVz9Kbid?=
+ =?us-ascii?Q?pV08fMwRo2QOu7CfGH5z4NwserAAu1lc3RHYmi4RChDajfRofrypyfSNiOBi?=
+ =?us-ascii?Q?rImf7RoCmNYDoSEJRGRRbxJf8Neb7mc0T/V86+HjpmhzlPkcYOuq7qZ/f8Q1?=
+ =?us-ascii?Q?gQeERBPJnZ0=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB9443
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B91.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	8bb38d0d-2dcb-4d72-2209-08ddd5cf34b4
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|35042699022|36860700013|376014|82310400026|14060799003|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2BxeAopJ4ZD2x+3frRMg1FMj4xF+QmTgFb297qI9ok5e6VOrkGk2K1YfFaJY?=
+ =?us-ascii?Q?WtB4gHTFj4vhk1KQGHR2a9WFLbZyGSLbxVAysXp2dCFCMjt0kkm5NZPF1FWF?=
+ =?us-ascii?Q?tYy5Ur8LDX+2fXS4Us13cpEtoRfVU5n97uvsnZFAIlYRr3zQ5SVOalDCbmYv?=
+ =?us-ascii?Q?V/qspuXdV4CCWzk8j58xYXqxVDr3O4OaX67UuqDRf4xUoTgbm+Rc5nlT29k1?=
+ =?us-ascii?Q?O447aXKpyBnURYd4baHDI6KCy/JHBVodJWTzGrtl0Lh5UVvyNkVZPZaLk49g?=
+ =?us-ascii?Q?zuiIuGjp8JHsAa2+yUzesfGBw4Rnyv5Rm0dFL1iOnnugg19Rgg01WxwvyA0O?=
+ =?us-ascii?Q?XKGa2aYpSROtmIzjzcVLQMwR8S6aJTmZXTE8bEYLpJvq1fG8G8y6KGVifJOJ?=
+ =?us-ascii?Q?Tdy79emawACCNaMCEIlptQlt502CBMl+2wjdjwBO7jbJ2eVZyJlmO2s0DnCe?=
+ =?us-ascii?Q?2Nt5LLLbOXQqNyDtnnsfK23VKwR09arQn/7qrj9rsXEQYTMJgGA8ejL43iD7?=
+ =?us-ascii?Q?QNHcJOLquK6xita4y7mqRVLSo/SRF5Z4Yd6sG90iGVN79cm47ZhJdHLSpflu?=
+ =?us-ascii?Q?DNiEYjSaX6lLs3DyedD4fVrHr1g6cPPnfh014kBVzR1DrsFQiQje+rG5IvLh?=
+ =?us-ascii?Q?HDYSXKq3RpH0In6GXsMlpcTif3iUi2kcAjC81eRd1uf0e6iZB7Sx3OBKgcsD?=
+ =?us-ascii?Q?2tk04aBevgFftGaTzLmy6pip4SjgWjb4a48FQAVRTUZimF5Ua0GC7naAgGCE?=
+ =?us-ascii?Q?woScVBBN4hSFH+yifzPh/MDMulqs+7+Jm5tZIRCGPj/42zQx8qRxvraUyWOd?=
+ =?us-ascii?Q?GOTfPURmv+PUYcn4zeXjt0s7Yq5I5H/WDnouDR/P5f0kZJu6Z6qRSUxz655F?=
+ =?us-ascii?Q?hlXfLy+YqFnxnnxBfLuEqoNdDMwpau+7xCo0amd+5oVu5s0bdf9bCd0yRyFz?=
+ =?us-ascii?Q?EE+/KT25M1twuJmAn3hDfyWeoJDS2JLOKdTUvXYPFI7k+y/XDV/b6URc+wlr?=
+ =?us-ascii?Q?EGm8iq/2bhTh63Dz3S43q85BV0CNOAmMeFkcQ7F5Z2s/FlTiCjnvtplA+BcD?=
+ =?us-ascii?Q?JKB7a/NiOagzhabPQwkTo1/RCHL3PV9gzJrkDX6mmlh/29NmhIMpSqZ9iZj/?=
+ =?us-ascii?Q?CDDuFmvUA7guEKErrewb6UOk5AOX9WIrSf+P3DibwI79vlcwi7muVqk5XUvL?=
+ =?us-ascii?Q?qqhombOKpLXPujh5NmtAN0WxwSU77fSnJUDlJZJW7hn2+YppkV9FGv7cLNGk?=
+ =?us-ascii?Q?3PTCwWubAaxoAsls5scDZJs1sGk6IghRE5WwxL8CZsgVluWEkVyIPRcuUrGt?=
+ =?us-ascii?Q?6aX/0Pqann69EEhPH7xkVnRG4iwGGNGXT2LYKePiI5zBRK1UxkM9qLjTWkCc?=
+ =?us-ascii?Q?BrWTUzSNyFDVmLc0heClmoUlq9Z32m+TaDCg9sXwCfP0fPpKLL3WXpBY2hBF?=
+ =?us-ascii?Q?NQn+lMfY8dp2O6daRqkf7dQ3qWU8HJNm1dSn0+Tn1dLmlgjoxvoPBV9taNNa?=
+ =?us-ascii?Q?MUuHVWR4X+wCiPRDUm6/xVzXvopBu19csk0phiPW1oGfPtUneJrg7E6EGw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(36860700013)(376014)(82310400026)(14060799003)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 16:27:21.6475
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10e067d2-071f-4564-791c-08ddd5cf4915
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B91.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB5602
 
-In subject, s/MSI[X]// and s/support for/for/
+This patch series introduces some minor refactoring to enable support
+for new Mali GPUs.
 
-The "MSI[X]" notation really isn't used anywhere else, and we already
-include "PCI/MSI" in the prefix, so I don't think we need it again.
+Key changes:
+- Addition of cache maintenance via the FLUSH_CACHES GPU command for all
+  supported GPUs in place of FLUSH_MEM and FLUSH_PT MMU_AS commands.
 
-On Thu, Aug 07, 2025 at 07:23:23PM +0800, Inochi Amaoto wrote:
-> As The RISC-V PLIC can not apply affinity setting without calling
-> irq_enable(), it will make the interrupt unavaible when using as
-> an underlying irq chip for MSI controller.
+Firmware for these GPUs can be found here:
+https://gitlab.com/dliviu/linux-firmware
 
-s/As The/As the/
-s/unavaible/unavailable/
-s/irq chip/IRQ chip/
+Patch Breakdown:
+[PATCH 1]:   Adds panthor_hw and refactors gpu_info initialization into
+             it, laying the foundation for subsequent changes.
+[PATCH 2]:   Simplifies the method of determining the GPU model name
+             while making it more extensible.
+[PATCH 3]:   Adds support for Mali-G710, Mali-G510 and Mali-G310.
+[PATCH 4]:   Adds support for Mali-Gx15 GPUs.
+[PATCH 5]:   Serialize FLUSH_CACHES GPU command operations.
+[PATCH 6]:   Adds cache maintenance via FLUSH_CACHES GPU command due to
+             the deprecation of FLUSH_MEM and FLUSH_PT MMU_AS commands
+             from Mali-Gx20 onwards. This feature is extended to all
+             previous GPUs as this method of cache maintenance is
+             already supported.
+[PATCH 7]:   Adds support for Mali-Gx20 and Mali-Gx25 GPUs.
 
-> Introduce the irq_startup/irq_shutdown for PCI domain template with
-> new MSI domain flag. This allow the PLIC can be properly configurated
-> when calling irq_startup().
+v9:
+- Added the FLUSH_CACHES serialization into this patch series as we
+  enable its use in PATCH 6 for all GPUs.
+  - https://lore.kernel.org/all/20250731130855.4068574-1-karunika.choo@arm.com/
+- Picked up R-bs from Liviu and Steven for PATCH 7 (previously PATCH 6).
+- link to v8: https://lore.kernel.org/all/20250724124210.3675094-1-karunika.choo@arm.com/
+v8:
+- Fixed missing new line at the end of panthor_hw.c
+- Reordered Mali-Gx10 GPU names in arch_major, product_major order.
+- Remove the coherency fix and SHAREABLE_CACHE feature from PATCH 6 to
+  be upstreamed as a separate patch at a later time.
+- Picked up R-bs from Steven.
+- Reset R-bs for PATCH 6.
+- link to v7: https://lore.kernel.org/all/20250724092600.3225493-1-karunika.choo@arm.com/
+v7:
+- Picked up R-bs from Chia-I Wu.
+- Replaced GPU_COHERENCY_FEATURES register read with the value from
+  gpu_info->coherency_features in PATCH 6.
+- Link to v6: https://lore.kernel.org/all/20250721213528.2885035-1-karunika.choo@arm.com/
+v6:
+- Picked up R-bs from Liviu.
+- Removed unused register definitions for PATCH 4 and 6.
+- Link to v5: https://lore.kernel.org/all/20250721111344.1610250-1-karunika.choo@arm.com/
+v5:
+- Removed all of the GPU-specific initialization boilerplate as it was
+  not being used.
+- Merged [PATCH 1/7] and [PATCH 2/7] into one.
+- Fixed issue with getting model name before the gpu_info struct is
+  populated.
+- Merged AMBA_FEATURES and AMBA_ENABLE into GPU_COHERENCY_FEATURES and
+  GPU_COHERENCY_PROTOCOL registers respectively. Reworked the fields of
+  GPU_COHERENCY_FEATURES and added SHAREABLE_CACHE support.
+- Link to v4: https://lore.kernel.org/all/20250602143216.2621881-1-karunika.choo@arm.com/
+v4:
+- Split 64-bit register accessor patches into another patch series.
+  - link: https://lore.kernel.org/dri-devel/20250417123725.2733201-1-karunika.choo@arm.com/
+- Switched to using arch_major for comparison instead of arch_id in
+  panthor_hw.c.
+- Removed the gpu_info_init function pointer in favour of a single
+  function to handle minor register changes. The function names have
+  also been adjusted accordingly.
+- Moved the patch to support Mali-G710, Mali-G510 and Mali-G310 forwards
+  to [PATCH 4/7].
+- Extended support to perform cache maintenance via GPU_CONTROL to
+  Mali-Gx10 and Mali-Gx15 GPUs.
+- Link to v2: https://lore.kernel.org/all/20250320111741.1937892-1-karunika.choo@arm.com/
+v3:
+- Kindly ignore this patch series as there were duplicate patches being
+  included.
+v2:
+- Removed handling for register base addresses as they are not yet
+  needed.
+- Merged gpu_info handling into panthor_hw.c as they depend on the same
+  arch_id matching mechanism.
+- Made gpu_info initialization a GPU-specific function.
+- Removed unnecessary changes for cache maintenance via GPU_CONTROL.
+- Removed unnecessary pre-parsing of register fields from v1. Retaining
+  current implementation as much as possible.
+- Added support for G710, G715, G720, and G725 series of Mali GPUs.
+- Link to v1: https://lore.kernel.org/all/20241219170521.64879-1-karunika.choo@arm.com/
 
-Maybe something like:
+Karunika Choo (7):
+  drm/panthor: Add panthor_hw and move gpu_info initialization into it
+  drm/panthor: Simplify getting the GPU model name
+  drm/panthor: Add support for Mali-G710, Mali-G510 and Mali-G310
+  drm/panthor: Add support for Mali-Gx15 family of GPUs
+  drm/panthor: Serialize GPU cache flush operations
+  drm/panthor: Make MMU cache maintenance use FLUSH_CACHES command
+  drm/panthor: Add support for Mali-Gx20 and Mali-Gx25 GPUs
 
-  Implement .irq_startup() and .irq_shutdown() for the PCI MSI and
-  MSI-X templates.  For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARENT, 
-  these startup and shutdown the parent as well, which allows ...
+ drivers/gpu/drm/panthor/Makefile         |   1 +
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_fw.c     |   5 +
+ drivers/gpu/drm/panthor/panthor_gpu.c    | 100 ++----------------
+ drivers/gpu/drm/panthor/panthor_hw.c     | 125 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_hw.h     |  11 ++
+ drivers/gpu/drm/panthor/panthor_mmu.c    |  33 ++++++
+ drivers/gpu/drm/panthor/panthor_regs.h   |   3 +
+ include/uapi/drm/panthor_drm.h           |   3 +
+ 9 files changed, 192 insertions(+), 94 deletions(-)
+ create mode 100644 drivers/gpu/drm/panthor/panthor_hw.c
+ create mode 100644 drivers/gpu/drm/panthor/panthor_hw.h
 
-s/This allow/This allows/
-s/can be properly configurated/to be configured/
+-- 
+2.49.0
 
-Evidently PLIC depends on this "parent" connection, but that isn't
-explained at all in the commit log.
-
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  drivers/pci/msi/irqdomain.c | 52 +++++++++++++++++++++++++++++++++++++
->  include/linux/msi.h         |  2 ++
->  2 files changed, 54 insertions(+)
-> 
-> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-> index 0938ef7ebabf..f0d18cadbe20 100644
-> --- a/drivers/pci/msi/irqdomain.c
-> +++ b/drivers/pci/msi/irqdomain.c
-> @@ -148,6 +148,23 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
->  	arg->hwirq = desc->msi_index;
->  }
->  
-> +static __always_inline void cond_shutdown_parent(struct irq_data *data)
-
-Is there a functional reason why we need __always_inline?
-
-If not, it seems like this annotation is just clutter, and the compiler
-will probably inline it all by itself.
-
-> +{
-> +	struct msi_domain_info *info = data->domain->host_data;
-> +
-> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
-> +		irq_chip_shutdown_parent(data);
-> +}
-> +
-> +static __always_inline unsigned int cond_startup_parent(struct irq_data *data)
-> +{
-> +	struct msi_domain_info *info = data->domain->host_data;
-> +
-> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
-> +		return irq_chip_startup_parent(data);
-> +	return 0;
-> +}
-> +
->  static __always_inline void cond_mask_parent(struct irq_data *data)
->  {
->  	struct msi_domain_info *info = data->domain->host_data;
-> @@ -164,6 +181,23 @@ static __always_inline void cond_unmask_parent(struct irq_data *data)
->  		irq_chip_unmask_parent(data);
->  }
->  
-> +static void pci_irq_shutdown_msi(struct irq_data *data)
-> +{
-> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
-> +
-> +	pci_msi_mask(desc, BIT(data->irq - desc->irq));
-> +	cond_shutdown_parent(data);
-> +}
-> +
-> +static unsigned int pci_irq_startup_msi(struct irq_data *data)
-> +{
-> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
-> +	unsigned int ret = cond_startup_parent(data);
-> +
-> +	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
-> +	return ret;
-> +}
-> +
->  static void pci_irq_mask_msi(struct irq_data *data)
->  {
->  	struct msi_desc *desc = irq_data_get_msi_desc(data);
-> @@ -194,6 +228,8 @@ static void pci_irq_unmask_msi(struct irq_data *data)
->  static const struct msi_domain_template pci_msi_template = {
->  	.chip = {
->  		.name			= "PCI-MSI",
-> +		.irq_startup		= pci_irq_startup_msi,
-> +		.irq_shutdown		= pci_irq_shutdown_msi,
->  		.irq_mask		= pci_irq_mask_msi,
->  		.irq_unmask		= pci_irq_unmask_msi,
->  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
-> @@ -210,6 +246,20 @@ static const struct msi_domain_template pci_msi_template = {
->  	},
->  };
->  
-> +static void pci_irq_shutdown_msix(struct irq_data *data)
-> +{
-> +	pci_msix_mask(irq_data_get_msi_desc(data));
-> +	cond_shutdown_parent(data);
-> +}
-> +
-> +static unsigned int pci_irq_startup_msix(struct irq_data *data)
-> +{
-> +	unsigned int ret = cond_startup_parent(data);
-> +
-> +	pci_msix_unmask(irq_data_get_msi_desc(data));
-> +	return ret;
-> +}
-> +
->  static void pci_irq_mask_msix(struct irq_data *data)
->  {
->  	pci_msix_mask(irq_data_get_msi_desc(data));
-> @@ -234,6 +284,8 @@ EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
->  static const struct msi_domain_template pci_msix_template = {
->  	.chip = {
->  		.name			= "PCI-MSIX",
-> +		.irq_startup		= pci_irq_startup_msix,
-> +		.irq_shutdown		= pci_irq_shutdown_msix,
->  		.irq_mask		= pci_irq_mask_msix,
->  		.irq_unmask		= pci_irq_unmask_msix,
->  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
-> diff --git a/include/linux/msi.h b/include/linux/msi.h
-> index e5e86a8529fb..3111ba95fbde 100644
-> --- a/include/linux/msi.h
-> +++ b/include/linux/msi.h
-> @@ -568,6 +568,8 @@ enum {
->  	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
->  	/* Support for parent mask/unmask */
->  	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
-> +	/* Support for parent startup/shutdown */
-> +	MSI_FLAG_PCI_MSI_STARTUP_PARENT	= (1 << 10),
->  
->  	/* Mask for the generic functionality */
->  	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
-> -- 
-> 2.50.1
-> 
 
