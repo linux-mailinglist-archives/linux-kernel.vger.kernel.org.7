@@ -1,384 +1,218 @@
-Return-Path: <linux-kernel+bounces-759065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6605B1D7FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C15B1D803
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618D83B601A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D164B3B8F88
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E722522B6;
-	Thu,  7 Aug 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18837E9;
+	Thu,  7 Aug 2025 12:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JP99wDpX"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ELA5XJJr"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011005.outbound.protection.outlook.com [52.101.65.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFF42EAE3
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570047; cv=none; b=CMuT0KF/iSWcPrbyt280HPznP5uIqGnxFpuYKACNUPcOQX8OMveJwqiikhsqtZisw+L7CjGL3jpQex9IFtbYwAgrNFtQphccQAqd1sh9bT+uPZqAA/VuzUtP+w6jT/ueae83ejHj5aE3LQmOBEyJyBW91Vr3RjnlW6iinSO0ZE0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570047; c=relaxed/simple;
-	bh=x67tPOz+z795FOsR1PlLJQP038SmfddfCfDhYklGAws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hHSGIaaZWd8epBrKwVZlmIk3eeCVblRjcnzi7eNOc1YM5cTh6egF4pg6bleeb/ImtJVOO5pdVk+LJI/lAtqaUTQa3MVm4F34WIBnyksw0khUONzg69gfv2jJVO5RdrfmpxBwOb8jPzjc0zV6aEdm5VgmFssRWa+mVJ4YBGeeaNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JP99wDpX; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-459ebc99726so443705e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754570043; x=1755174843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vwhi8rjC0/ZrUnzAnEoimoRQ2TDhcxTBumKozfzs2Xk=;
-        b=JP99wDpXtE0MufXyVdDXqdZD0+caXr2Nc5iQtkQ03X0YTsq4UYaq8Egtv9AU34d/Hz
-         o/PCaQm8IR0q3ntja7C984R0gBec/sim2NURSAWpL+NCgm0BLnobYTlhpfxanzUwNWTb
-         nskhtaxcb8kk/yDe1Gpk0DSRjGx5WQ4Q3yGI0fq2/xuhiNPQ8liDgVPpHGblaJuuY23D
-         WBbj54K8AZHY75yN2OtqKh1GVSf4/tnSnXMMyLQB6sxeSbE14SXBlyB77qKRrye16Mwo
-         TwDw7CnMNov/2ZqkpSjjbAk0oRkW5xbBf/B7HqcNAv8KWNpX9t9V1+oMPGsxUnumljyv
-         DkYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754570043; x=1755174843;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vwhi8rjC0/ZrUnzAnEoimoRQ2TDhcxTBumKozfzs2Xk=;
-        b=r2PTU/Jq7t6nANFVFNS95Tqz0iimErEa2sCOXgLxVDdUZJqL8c4mENU0uFHVdQx7H3
-         AubRTcd8hC1me9nDQt/Ehc0lBEW3oZLViVqbwwSaMP1LbJxUSo6k+QvzAtizzLVfpo5l
-         V6LR5ZJ6WwpBL3XbBVXezZhtKlyJJ4VS3gcdYsjdZ0LYXFxKhXQTOYIMfsexQx5pX+pY
-         1uCAJZRfT1NsFiBVodpSb1KI7rjBQ+UA3e8PZfWQimgJCADCvSJn3Oj2nNGKS5hrO3Tm
-         f3ldg3tZQpLOF4tQLgEZp3xEmDBhoZxEp0RjZhAlpiArXLoxHEYGQqVv58cLc5AAVcBh
-         evKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXVnkQznHowZAqJg49PascNe+cBRstZvTnQVsawarSU77IugYW3gGzjvt5e6QmK1hQuPqTtF+wrV5xuEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqO/9LTJCkGhYwofpxn7DxVAc+sWRQEwYckLWTjJtLE2GSA051
-	XuGmYnF4DO6vOzwep3vQnSM7/quCIyrlbpTwdvK2l5/C7B0hweFSG2N+KbrCuPt2TEY=
-X-Gm-Gg: ASbGncvLkoRLnJLNlPOmXiyD7ft91MUu0kvefPtdfjgWcaYZL2O1RxawkGh+VwMHLPV
-	ErPYG0DYe0eJuPvYXKUODRzKi8yP1p3aE5NhC+h1vHezzDb/LDaXbe0FKIwrChVoS8u6h9ucbVL
-	YL52UVv+wuP9kzw363V6zfyc85o6b3fL5CHEppUC2RrjtikEXe3DSJr43YSvSfHnEAhr8vYwxT1
-	0wZN8p9dTpZwu0HtjIr3hHQ3aOI9MPoNxnqSO071qWJnI8hYniOTiteDdCIQjJ6APLMjdiomoNd
-	VuQEkCREO8JAYofGsrqj9M1JNR+E1q4NLnW7UOEAWNplVR+hgVsc1ONdxMoNEP5Kh/QG1OyFhto
-	U6v3xwoxDmub5FlnUOY1198tfLeuQXx2XtBL4nv9QqKHfV3PScn56w+HVfM5uHUHhkspFSNHg/H
-	3B/6bl
-X-Google-Smtp-Source: AGHT+IGxwzOKjqBJACV8aOq5t96aSfoeFdqe2f+vIDI4ZXtL8yy3rgTOzp5cyNBKX9tEBDi+zCfAZw==
-X-Received: by 2002:a05:600c:3b97:b0:459:dd09:856c with SMTP id 5b1f17b1804b1-459f3a7e2b6mr1076535e9.6.1754570042841;
-        Thu, 07 Aug 2025 05:34:02 -0700 (PDT)
-Received: from ?IPV6:2a02:2455:86a0:a300:6570:b777:80f4:22f9? ([2a02:2455:86a0:a300:6570:b777:80f4:22f9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6867193sm85948925e9.6.2025.08.07.05.34.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 05:34:02 -0700 (PDT)
-Message-ID: <2549e6d3-7664-4d12-b84e-ec4a326dec60@suse.com>
-Date: Thu, 7 Aug 2025 14:34:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CAB1E48A;
+	Thu,  7 Aug 2025 12:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754570076; cv=fail; b=WE5abyu7EdwIIUiFDKCRa0HhxLin4pnCooP0dDxQjIsIY0ua/uzgFe4BRyd6Zz8vGhTHdfDNLGVIHsMrin4/pq7pCM50RHVq/NypzZQhU/poQFCmQZErt7aa5WgqsUxihcpnT9+vCoTSOWAngWp1A/3ALEVB3tnNYdrgVpYegQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754570076; c=relaxed/simple;
+	bh=jmznVbmB8xArqOxq8WyICwV+UqPrYulqR0bnrau4w30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oLrQdaayFgWSUQw/0Aey49NQ3OCenGdY5pVvtuLJuTndtHNTzCACF9KP+UR3M2sivEJxU+PyAkjxzHYM7pJVtFotEL4pOVrY/6FOs1T5haVYc1hlux5QkZXmxfXa3H83F1KfPjm43BaurQfk0uSyuCA8JUptAJY6TN7HqsMSW2g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ELA5XJJr; arc=fail smtp.client-ip=52.101.65.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Sdl518v18rsU6Ub3dR698yWM0AVF2ayg5YDtEMN0yvIu2TK986widDBgmgg6zP5t3zUY+YH5oeMn/wOlLCwNM07AID+y5HcVhLcQ+lj3VE21uZDz+HBSlJ9jWzv/FxvWUVCqZ6XT8CmAWgOTsauZWz9CjuTbTq/uU3aUeI+li2HD3vB4qZclsR8d4lRbfS1wZcdYMNp5ZaIqO5RpyPHZbfO2gXm6NlD5hDhCegQ0PpoFlF8chOJ8v+t8sOqgsBSQGCf0hGozQbpSu3SZ2OmDVTdVn+01OOjcnaZsE6x0vP2xW3tWDZrYVoKNaA2PKXYVCC87HOzd79pMD/8cZ5C6+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rDoyLzxS9oJVAUl2uO5ZbhuLoHX3BSA8UmqC/1RCNsE=;
+ b=dvQOqY+7tksjREkfk9pErBNizQkpIuaJqMNBi/QPimkKMGnt3ckqjH7IjsnhRCZ6so2WesSfnNNGbT5kRByzsrOXW8xbFux8xWMmrUeg5HRv+4SN4BJNX9u0reoIhgFW25ZaTvtrBD/5KlvcAHHBmgm+gff460GTHbTFwseo+4o4Ba15h9oUVsGUwqbbx/9OmTu2l9DDUsIRMdSWJU6V/JUhDQulJwYMX2NsdvAsSH3eXl/dEdKXrez8VJnf1fz8eInJePhAbmYndAqGSyubCEc3tmLU/8yV+sVWG4zJc8vuQx7jMk6LKKgTUbs/ILu8vTCgLkTRNLCFBAQla6t9Lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rDoyLzxS9oJVAUl2uO5ZbhuLoHX3BSA8UmqC/1RCNsE=;
+ b=ELA5XJJrhhUXZ2mZTcq1t4qcsUfxL0tLfaHGHZO7SRQmzD9DCe81ikaPVs3aTL7Odq/CRqR1ZG4JFq7aomLADjxl5wbB0Jt4Its56REhDGALRxASNvnFdwPHH26xY5OCWFFhbq6ujZTeE6mr7byy/UCDD/LdJZWrHW7/VwD1HT/8q2Gu9dv33LJg65b8eNdXj05u7o+Xvy/H5R7M2wa5eD5HtKPxQ4dPlO+O1U7f5RbsDb+4yNfBY1nrX+JKKZBXjgCnFTV877DtgjtXxHFBhUWrg/YwyC5ISBKS7Jg50gEQpwk7rFTBx0c9TxkWfH+xjFT9g6Vuc+WErrt4R+F6pg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
+ by AS8PR04MB8246.eurprd04.prod.outlook.com (2603:10a6:20b:3f6::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
+ 2025 12:34:30 +0000
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442]) by GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 12:34:30 +0000
+Date: Thu, 7 Aug 2025 15:34:26 +0300
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>, 
+	Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Marek Vasut <marex@denx.de>, Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 0/9] Add support for i.MX94 DCIF
+Message-ID: <y6tzqobvposn2xu2kuhvosixzavjdnuukkpc5wktqsnzu2j2b5@g4msjnuj3l5s>
+References: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+ <20250807-psychedelic-vulture-of-valor-d743cc@kuoka>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807-psychedelic-vulture-of-valor-d743cc@kuoka>
+X-ClientProxiedBy: FR4P281CA0245.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f5::9) To GV1PR04MB9135.eurprd04.prod.outlook.com
+ (2603:10a6:150:26::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/29] KVM: VM planes
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: roy.hopkins@suse.com, seanjc@google.com, thomas.lendacky@amd.com,
- ashish.kalra@amd.com, michael.roth@amd.com, nsaenz@amazon.com,
- anelkz@amazon.de, James.Bottomley@HansenPartnership.com,
- =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-References: <20250401161106.790710-1-pbonzini@redhat.com>
-Content-Language: en-US
-From: Vaishali Thakkar <vaishali.thakkar@suse.com>
-Autocrypt: addr=vaishali.thakkar@suse.com; keydata=
- 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
-In-Reply-To: <20250401161106.790710-1-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|AS8PR04MB8246:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08cea3bc-5ff4-4668-996e-08ddd5aec17c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?QJR7IUpGIb3qMFCSSw8OrW493Uy6x2JyWXGJw3COpgWFPVVkenm38PEG8que?=
+ =?us-ascii?Q?88S+kdwsOslEG6wFsCGvzbrlfcfkW/vJt9it/RyZLmORKPkBNBioqBYA0ZGH?=
+ =?us-ascii?Q?wz8Jb02YtsfiVcPZDtDjNe4/gS+b62LPeIHtu2EP+TZzPcefS0MWvyPCwfQ+?=
+ =?us-ascii?Q?k6vsWoJNQ+cQDZtxEgixZR7zmtYxBiZvYZvJHl/XALf8EpENEmu2emqXoZgy?=
+ =?us-ascii?Q?O86cQO8SGjTPWcSNYnH0VCBjNrQGGaH9dp6pA4rvlwz+cu8NEBrndSnWBPOQ?=
+ =?us-ascii?Q?3IEjhLnLB6avyXWjZ9pHSWRc0MtoeNPvRXqFh2CgH6HB413Bm0piMZzYebPa?=
+ =?us-ascii?Q?YQXpHDe8V36F6FH++jLcqvd5NrjR9d35KUEJrnhuacBJhqQZPPACAWYYYqi1?=
+ =?us-ascii?Q?dxruQI+o+Fix50ccA/q8Dirz17liS+VdLpQ3fiBOV2OvhK3S5QFL4yAsP2Xg?=
+ =?us-ascii?Q?Vw+LrKueBR341KdruMyYvN6zHCYLaWZxQhsO4Px6aIn3Kr0v6ZSdz3ckWnAa?=
+ =?us-ascii?Q?Z9KCOVfZeZf2gkwDDDiiGXSbx0QqFLTWe3YMBJmOQPApnwbA3Uu/MdfYgD8F?=
+ =?us-ascii?Q?HS/0VIjIMI6H21K6znzUoYBRwua+Ad+BmIkGAmHziO9ib60Zh2AITPlKGIoE?=
+ =?us-ascii?Q?BDs/JboXrJcncy+pvmpj4PD0zjhdmr5xxxwwAi5h4L03uEKId2OKH796tFaz?=
+ =?us-ascii?Q?Lw+h4qzhdwzHi1AngIDF6S6TZgx2+qbgOx/3TmxKyQj5qbgUkHY1ydNkphzB?=
+ =?us-ascii?Q?v2E0bsmuz1ut8AJiBFNEkNE/j0RSqF/AA8l/E7gjQWD/4DizKVC35iffY6/X?=
+ =?us-ascii?Q?tMDFqOOwP8Kykm3qavwl5qXpR0ZheUgImn6mG7kExggUwnT/Myum9PyoxbyH?=
+ =?us-ascii?Q?1L4rqfurLr2wTHQGztHoUGfmyTYERwfFdboqVAsffvgozaWxJKy8naMCEO0f?=
+ =?us-ascii?Q?Qpfm6NR6virxhHahFNDUq6lvTuXez/HAycBWJSgDANduAnn76PpV7IgAIEWu?=
+ =?us-ascii?Q?eP7E5MDsJ4/mWU9g/dSm0yfisJoVQ7+XJ43iTJdZX8EzqF7boeoqKexR2qh/?=
+ =?us-ascii?Q?ZKYjhHRPzuOGpffEOrD/HltjKk0iuvd9hCxgfoYlxq9mUw+KmymDgpXhaEL7?=
+ =?us-ascii?Q?S723fLqB7Wqs3OhSxBHaDHxPs1y7IWcCh/XmvBy02pMEpXiUB2QgMqEyHBI7?=
+ =?us-ascii?Q?3E6Is43PdiYA9P0YRyXYbRijKDEYC7hlTBy1uyiVh2JnhVJfJfy8VaO1qstU?=
+ =?us-ascii?Q?eO1viaafqgO5AOeswPTMDe02VLYHPI96qm8RH0xdpIoyOCJZh/7+SPxsPgqF?=
+ =?us-ascii?Q?Rb6qdsA3p6tdP8tkAGEz2E3CMuVuMJeVxL/yt2UP9pugiDRexk3bpmcpf3qQ?=
+ =?us-ascii?Q?S+42GfcTlq+MqXF/JD8F+G4i+0btJTJVlyKjkI7AtEySnf139UIT3ZncxjSz?=
+ =?us-ascii?Q?uv1bnY+cWiM=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?sPK628aTsZbmaAHVHtjHzPTkbEXBpF0DEYH48om12QaspBZgHG8C/A1YmcL9?=
+ =?us-ascii?Q?6L2sqFyTop0q8IcYYJE99TPelHoz4bfyUjNbOprNVnKuU7pxG/D9LikjpYjY?=
+ =?us-ascii?Q?2m58/ocNUDX+5PCuWUJgprGxQ3YwhEWVNZ+V2UkqBR433ccwHNi8QpXCNjuq?=
+ =?us-ascii?Q?9M2hshrpMtRFUTBFCyWPrbkyV4JJvNpo5P72QYAznZFNQueq2HXZ6Eq6gJ5n?=
+ =?us-ascii?Q?rNfa9R/QWaXdK5iBl4b6FWL7LFX8mgZbe4SDchszETCLXnOV46Y7K6RVDeny?=
+ =?us-ascii?Q?2LLGAxvzvsQjhdEoAPzoAwu8d16Jt1Bme/qv2baCwmYnZFYpQKKVCMDDLtWL?=
+ =?us-ascii?Q?zEoeCdrUPiaDb0Wx8LKpzTCDwYTexplhSAf0rAnfQ+Wq5tqQe1rBuxh4YzJ9?=
+ =?us-ascii?Q?4X8vvXdJyuTcbzhkpIb6S0Rc6gEXLYKpceiTa/tVHGF8VERep1WVKcVW5QSj?=
+ =?us-ascii?Q?u1j6N+RCEjKt0Cp83ASmGqYbf0YrafPlXDpArUkpRO3AnaljI0JryDSQ9Qfj?=
+ =?us-ascii?Q?Z6hn6KWB/wOyQTFEN3bYzy0a+QON7F/7u7p7W1tYdxgpcnvtZQ7W0XSHsxMr?=
+ =?us-ascii?Q?65PJigGQVp9tKJBmlLtR3dC8iW4eZuZwQe5h//HKe7aHvMl1G8A07bbSZ8Ep?=
+ =?us-ascii?Q?qnrz8/ZqA09cr8kXBHAejmd1lvmeKJ7xn56C3d13HgH18B/XcE7iGIoeW4pw?=
+ =?us-ascii?Q?O8jRiEkIFtzT6ipDqSR2I2yh4DsscFTPrblN7EfPgJXesuaKFb65KlroSMiH?=
+ =?us-ascii?Q?pEqNAukBOkzL+Bb68XiBQMbXRqBbRpe/+N2LY19iKYCZjqmw9wV/0ldpsyjD?=
+ =?us-ascii?Q?fHfFkEFCiPUVM/Aaevo7tOMdhrgPHo95EYN+7aFTcKTsRtuxLXMqjseqrld5?=
+ =?us-ascii?Q?E4pndtJ59jdYHQBc+rrt+tBShwlP1Ksg3SWzYZPMNDafxNMqFoqpKlxA0Eab?=
+ =?us-ascii?Q?ipCV2hrQTv2LJNPFgOG5KvX3FoVnr2JrANBpBzkVq8xIEczEqOVJ059NyzaS?=
+ =?us-ascii?Q?sAblO+0XF/B1Nry3g1bgm2Bh28Pzgygmms5hQYSoerHxuKIpc5duvmqNVhzZ?=
+ =?us-ascii?Q?w2RTO9O9TtsC3NXZ70Gs2M38vOC7qRtjeG/peUkAKX17IzqPRbwFzmMyXHfq?=
+ =?us-ascii?Q?NypZeMpF9oAn8ONSZrfMcZgmUIrrTqxftO/xB4ZM/IZZSR3zJ3I6Bnvh+4oT?=
+ =?us-ascii?Q?7sSacIeMPL6V1m3oaYDBxx7LuIUXFLmqIssd00KlgIDTkaxv/M2YObY2Q/Zo?=
+ =?us-ascii?Q?vLriIOGEToCd8cbjhIlWkhL476C79Sy6t6Ofq9B0/yQCLQ5PYGUUwTO9jDde?=
+ =?us-ascii?Q?fNttUaRts0ZesvxouKWalRMK0i6Q4kW3Sx0reQ1/qltGWP+MYsV83XWAeMu8?=
+ =?us-ascii?Q?rXTK21JOoGDQ0lHZQrv1ImSiapplmviMNMvSygX9WIcYKUazfzDUN2kV+vgD?=
+ =?us-ascii?Q?IHOSOFTwlHJcU/L6Ln8SmI8FU+lHkgl7wmrQqasu15QQmDO990clmfJap+Dh?=
+ =?us-ascii?Q?I+dETyIsdNHyb5F8k4Yeeo1RnOni2Y7Fluu7CBhWOCGBI/QGCqG6I6Pc1inA?=
+ =?us-ascii?Q?TmwE8PsP+uad9FXqNvnvDB/SQvWv6s4c4JTVF4ZVwlfzeCfEZevtWrloZ+vd?=
+ =?us-ascii?Q?wQ=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08cea3bc-5ff4-4668-996e-08ddd5aec17c
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 12:34:30.5929
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fStlwAUgwOz8V9QVI6DIYdoj8FgA9TvajaP3/zn58rtXg5Ouofn50E8ceeEDyPrhjyUgAg7fvsrZklkdG/ou6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8246
 
-Adding Joerg's functional email id.
+On Thu, Aug 07, 2025 at 09:26:55AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, Aug 06, 2025 at 06:05:07PM +0300, Laurentiu Palcu wrote:
+> > Hi,
+> > 
+> > This patch-set adds support for the i.MX94 Display Control Interface.
+> > It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
+> > needs the BLK CTL changes [2] that I spinned off from v2 in a different
+> > patchset.
+> > 
+> > Also, included in the patch-set are a few extra patches that the DCIF
+> > driver depends on for functioning properly:
+> >  * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
+> > 			   contains a patch (2/9) from Liu Ying that was already reviewed
+> > 			   and was part of another patch-set ([3]), but was never merged;
+> > 
+> > v3:
+> >  * Removed the BLK CTL patches and created a separate patch set [2] for them;
+> >  * Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
+> >  * Removed the DCIF QoS functionality until I find a better way to
+> >    implement it through syscon. QoS functionality will be added in
+> >    subsequent patches. Also, used devm_clk_bulk_get_all() and used
+> >    dev_err_probe() as suggested;
+> >  * Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+> 
+> What exactly changed?
+I removed the redundant text in the description of interrupts, to make
+the text fit on the same line with "description:" and, also, removed the
+description items for clocks as they're pretty much explained by the
+clock-names.
 
-On 4/1/25 6:10 PM, Paolo Bonzini wrote:
-> I guess April 1st is not the best date to send out such a large series
-> after months of radio silence, but here we are.
-> 
-> AMD VMPLs, Intel TDX partitions, Microsoft Hyper-V VTLs, and ARM CCA planes.
-> are all examples of virtual privilege level concepts that are exclusive to
-> guests.  In all these specifications the hypervisor hosts multiple
-> copies of a vCPU's register state (or at least of most of it) and provides
-> hypercalls or instructions to switch between them.
-> 
-> This is the first draft of the implementation according to the sketch that
-> was prepared last year between Linux Plumbers and KVM Forum.  The initial
-> version of the API was posted last October, and the implementation only
-> needed small changes.
-> 
-> Attempts made in the past, mostly in the context of Hyper-V VTLs and SEV-SNP
-> VMPLs, fell into two categories:
-> 
-> - use a single vCPU file descriptor, and store multiple copies of the state
->   in a single struct kvm_vcpu.  This approach requires a lot of changes to
->   provide multiple copies of affected fields, especially MMUs and APICs;
->   and complex uAPI extensions to direct existing ioctls to a specific
->   privilege level.  While more or less workable for SEV-SNP VMPLs, that
->   was only because the copies of the register state were hidden
->   in the VMSA (KVM does not manage it); it showed all its problems when
->   applied to Hyper-V VTLs.
-> 
->   The main advantage was that KVM kept the knowledge of the relationship
->   between vCPUs that have the same id but belong to different privilege
->   levels.  This is important in order to accelerate switches in-kernel.
-> 
-> - use multiple VM and vCPU file descriptors, and handle the switch entirely
->   in userspace.  This got gnarly pretty fast for even more reasons than
->   the previous case, for example because VMs could not share anymore
->   memslots, including dirty bitmaps and private/shared attributes (a
->   substantial problem for SEV-SNP since VMPLs share their ASID).
-> 
->   Opposite to the other case, the total lack of kernel-level sharing of
->   register state, and lack of control that vCPUs do not run in parallel,
->   is what makes this approach problematic for both kernel and userspace.
->   In-kernel implementation of privilege level switch becomes from
->   complicated to impossible, and userspace needs a lot of complexity
->   as well to ensure that higher-privileged VTLs properly interrupted a
->   lower-privileged one.
-> 
-> This design sits squarely in the middle: it gives the initial set of
-> VM and vCPU file descriptors the full set of ioctls + struct kvm_run,
-> whereas other privilege levels ("planes") instead only support a small
-> part of the KVM API.  In fact for the vm file descriptor it is only three
-> ioctls: KVM_CHECK_EXTENSION, KVM_SIGNAL_MSI, KVM_SET_MEMORY_ATTRIBUTES.
-> For vCPUs it is basically KVM_GET/SET_*.
-> 
-> Most notably, memslots and KVM_RUN are *not* included (the choice of
-> which plane to run is done via vcpu->run), which solves a lot of
-> the problems in both of the previous approaches.  Compared to the
-> multiple-file-descriptors solution, it gets for free the ability to
-> avoid parallel execution of the same vCPUs in different privilege levels.
-> Compared to having a single file descriptor churn is more limited, or
-> at least can be attacked in small bites.  For example in this series
-> only per-plane interrupt controllers are switched to use the new struct
-> kvm_plane in place of struct kvm, and that's more or less enough in
-> the absence of complex interrupt delivery scenarios.
-> 
-> Changes to the userspace API are also relatively small; they boil down
-> to the introduction of a single new kind of file descriptor and almost
-> entirely fit in common code.  Reviewing these VM-wide and architecture-
-> independent changes should be the main purpose of this RFC, since 
-> there are still some things to fix:
-> 
-> - I named some fields "plane" instead of "plane_id" because I expected no
->   fields of type struct kvm_plane*, but in retrospect that wasn't a great
->   idea.
-> 
-> - online_vcpus counts across all planes but x86 code is still using it to
->   deal with TSC synchronization.  Probably I will try and make kvmclock
->   synchronization per-plane instead of per-VM.
-> 
+> I cannot find v2 of one of the patches, no lore links here, so with
+> incomplete changelog I say you make it difficult for me to review it.
+I'm sorry about that. :/ I am aware that removing or adding patches to
+the set will most likely mess up with various tools... However, I stated
+in the last line of the v3 changelog that 6/9 was new: "Added a new
+binding patch, 6/9, for adding 'ldb' optional property to
+nxp,imx95-blk-ctl.yaml".
 
-Hi Paolo,
+Thanks,
+Laurentiu
 
-Is there still a plan to make kvmclock synchronization per-plane instead
-of per-VM? Do you plan to handle it as part of this patchset or you
-think it should be handled separately on top of this patchset?
-
-I'm asking as coconut-svsm needs a monotonic clock source which adheres
-to wall-clock time. And we have been exploring several approaches to
-achieve this. One of the idea is to use kvmclock, provided it can
-support a per-plane instance that remains synchronized across planes.
-
-Thanks.
-
-
-> - we're going to need a struct kvm_vcpu_plane similar to what Roy had in
->   https://lore.kernel.org/kvm/cover.1726506534.git.roy.hopkins@suse.com/
->   (probably smaller though).  Requests are per-plane for example, and I'm
->   pretty sure any simplistic solution would have some corner cases where
->   it's wrong; but it's a high churn change and I wanted to avoid that
->   for this first posting.
 > 
-> There's a handful of locking TODOs where things should be checked more
-> carefully, but clearly identifying vCPU data that is not per-plane will
-> also simplify locking, thanks to having a single vcpu->mutex for the
-> whole plane.  So I'm not particularly worried about that; the TDX saga
-> hopefully has taught everyone to move in baby steps towards the intended
-> direction.
+> Best regards,
+> Krzysztof
 > 
-> The handling of interrupt priorities is way more complicated than I
-> anticipated, unfortunately; everything else seems to fall into place
-> decently well---even taking into account the above incompleteness,
-> which anyway should not be a blocker for any VTL or VMPL experiments.
-> But do shout if anything makes you feel like I was too lazy, and/or you
-> want to puke.
-> 
-> Patches 1-2 are documentation and uAPI definitions.
-> 
-> Patches 3-9 are the common code for VM planes, while patches 10-14
-> are the common code for vCPU file descriptors on non-default planes.
-> 
-> Patches 15-26 are the x86-specific code, which is organized as follows:
-> 
-> - 15-20: convert APIC code to place its data in the new struct
-> kvm_arch_plane instead of struct kvm_arch.
-> 
-> - 21-24: everything else except the new userspace exit, KVM_EXIT_PLANE_EVENT
-> 
-> - 25: KVM_EXIT_PLANE_EVENT, which is used when one plane interrupts another.
-> 
-> - 26: finally make the capability available to userspace
-> 
-> Patches 27-29 finally are the testcases.  More are possible and planned,
-> but these are enough to say that, despite the missing bits, what exits
-> is not _completely_ broken.  I also didn't want to write dozens of tests
-> before committing to a selftests API.
-> 
-> Available for now at https://git.kernel.org/pub/scm/virt/kvm/kvm.git
-> branch planes-20250401.  I plan to place it in kvm-coco-queue, for lack
-> of a better place, as soon as TDX is merged into kvm/next and I test it
-> with the usual battery of kvm-unit-tests and real world guests.
-> 
-> Thanks,
-> 
-> Paolo
-> 
-> Paolo Bonzini (29):
->   Documentation: kvm: introduce "VM plane" concept
->   KVM: API definitions for plane userspace exit
->   KVM: add plane info to structs
->   KVM: introduce struct kvm_arch_plane
->   KVM: add plane support to KVM_SIGNAL_MSI
->   KVM: move mem_attr_array to kvm_plane
->   KVM: do not use online_vcpus to test vCPU validity
->   KVM: move vcpu_array to struct kvm_plane
->   KVM: implement plane file descriptors ioctl and creation
->   KVM: share statistics for same vCPU id on different planes
->   KVM: anticipate allocation of dirty ring
->   KVM: share dirty ring for same vCPU id on different planes
->   KVM: implement vCPU creation for extra planes
->   KVM: pass plane to kvm_arch_vcpu_create
->   KVM: x86: pass vcpu to kvm_pv_send_ipi()
->   KVM: x86: split "if" in __kvm_set_or_clear_apicv_inhibit
->   KVM: x86: block creating irqchip if planes are active
->   KVM: x86: track APICv inhibits per plane
->   KVM: x86: move APIC map to kvm_arch_plane
->   KVM: x86: add planes support for interrupt delivery
->   KVM: x86: add infrastructure to share FPU across planes
->   KVM: x86: implement initial plane support
->   KVM: x86: extract kvm_post_set_cpuid
->   KVM: x86: initialize CPUID for non-default planes
->   KVM: x86: handle interrupt priorities for planes
->   KVM: x86: enable up to 16 planes
->   selftests: kvm: introduce basic test for VM planes
->   selftests: kvm: add plane infrastructure
->   selftests: kvm: add x86-specific plane test
-> 
->  Documentation/virt/kvm/api.rst                | 245 +++++++--
->  Documentation/virt/kvm/locking.rst            |   3 +
->  Documentation/virt/kvm/vcpu-requests.rst      |   7 +
->  arch/arm64/include/asm/kvm_host.h             |   5 +
->  arch/arm64/kvm/arm.c                          |   4 +-
->  arch/arm64/kvm/handle_exit.c                  |   6 +-
->  arch/arm64/kvm/hyp/nvhe/gen-hyprel.c          |   4 +-
->  arch/arm64/kvm/mmio.c                         |   4 +-
->  arch/loongarch/include/asm/kvm_host.h         |   5 +
->  arch/loongarch/kvm/exit.c                     |   8 +-
->  arch/loongarch/kvm/vcpu.c                     |   4 +-
->  arch/mips/include/asm/kvm_host.h              |   5 +
->  arch/mips/kvm/emulate.c                       |   2 +-
->  arch/mips/kvm/mips.c                          |  32 +-
->  arch/mips/kvm/vz.c                            |  18 +-
->  arch/powerpc/include/asm/kvm_host.h           |   5 +
->  arch/powerpc/kvm/book3s.c                     |   2 +-
->  arch/powerpc/kvm/book3s_hv.c                  |  46 +-
->  arch/powerpc/kvm/book3s_hv_rm_xics.c          |   8 +-
->  arch/powerpc/kvm/book3s_pr.c                  |  22 +-
->  arch/powerpc/kvm/book3s_pr_papr.c             |   2 +-
->  arch/powerpc/kvm/powerpc.c                    |   6 +-
->  arch/powerpc/kvm/timing.h                     |  28 +-
->  arch/riscv/include/asm/kvm_host.h             |   5 +
->  arch/riscv/kvm/vcpu.c                         |   4 +-
->  arch/riscv/kvm/vcpu_exit.c                    |  10 +-
->  arch/riscv/kvm/vcpu_insn.c                    |  16 +-
->  arch/riscv/kvm/vcpu_sbi.c                     |   2 +-
->  arch/riscv/kvm/vcpu_sbi_hsm.c                 |   2 +-
->  arch/s390/include/asm/kvm_host.h              |   5 +
->  arch/s390/kvm/diag.c                          |  18 +-
->  arch/s390/kvm/intercept.c                     |  20 +-
->  arch/s390/kvm/interrupt.c                     |  48 +-
->  arch/s390/kvm/kvm-s390.c                      |  10 +-
->  arch/s390/kvm/priv.c                          |  60 +--
->  arch/s390/kvm/sigp.c                          |  50 +-
->  arch/s390/kvm/vsie.c                          |   2 +-
->  arch/x86/include/asm/kvm_host.h               |  46 +-
->  arch/x86/kvm/cpuid.c                          |  57 +-
->  arch/x86/kvm/cpuid.h                          |   2 +
->  arch/x86/kvm/debugfs.c                        |   2 +-
->  arch/x86/kvm/hyperv.c                         |   7 +-
->  arch/x86/kvm/i8254.c                          |   7 +-
->  arch/x86/kvm/ioapic.c                         |   4 +-
->  arch/x86/kvm/irq_comm.c                       |  14 +-
->  arch/x86/kvm/kvm_cache_regs.h                 |   4 +-
->  arch/x86/kvm/lapic.c                          | 147 +++--
->  arch/x86/kvm/mmu/mmu.c                        |  41 +-
->  arch/x86/kvm/mmu/tdp_mmu.c                    |   2 +-
->  arch/x86/kvm/svm/sev.c                        |   4 +-
->  arch/x86/kvm/svm/svm.c                        |  21 +-
->  arch/x86/kvm/vmx/tdx.c                        |   8 +-
->  arch/x86/kvm/vmx/vmx.c                        |  20 +-
->  arch/x86/kvm/x86.c                            | 319 ++++++++---
->  arch/x86/kvm/xen.c                            |   1 +
->  include/linux/kvm_host.h                      | 130 +++--
->  include/linux/kvm_types.h                     |   1 +
->  include/uapi/linux/kvm.h                      |  28 +-
->  tools/testing/selftests/kvm/Makefile.kvm      |   2 +
->  .../testing/selftests/kvm/include/kvm_util.h  |  48 ++
->  .../selftests/kvm/include/x86/processor.h     |   1 +
->  tools/testing/selftests/kvm/lib/kvm_util.c    |  65 ++-
->  .../testing/selftests/kvm/lib/x86/processor.c |  15 +
->  tools/testing/selftests/kvm/plane_test.c      | 103 ++++
->  tools/testing/selftests/kvm/x86/plane_test.c  | 270 ++++++++++
->  virt/kvm/dirty_ring.c                         |   5 +-
->  virt/kvm/guest_memfd.c                        |   3 +-
->  virt/kvm/irqchip.c                            |   5 +-
->  virt/kvm/kvm_main.c                           | 500 ++++++++++++++----
->  69 files changed, 1991 insertions(+), 614 deletions(-)
->  create mode 100644 tools/testing/selftests/kvm/plane_test.c
->  create mode 100644 tools/testing/selftests/kvm/x86/plane_test.c
-> 
-
 
