@@ -1,151 +1,216 @@
-Return-Path: <linux-kernel+bounces-758779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A746EB1D3C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:56:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39017B1D3CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA2416AB4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5F83B993A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39677244684;
-	Thu,  7 Aug 2025 07:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0F22459D2;
+	Thu,  7 Aug 2025 07:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGZp1GuR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VI7UsoNs"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EE923C512;
-	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ABB2E36EC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553367; cv=none; b=FLI1jjjfIEMpeHE8aFXddno4gFVns/k3pWnhWuUWb4pPoab9+LpTTCd62dZLzYwwvCYB/p1RrCwHIG+M606ioniNpKhLeEyj60DiNkY/OuQGrAmBtJnm87DViZjW5HsfHhoyLsRlM/xiQyEU6Frq4SUExTg+50TcFgANhSfbTsw=
+	t=1754553460; cv=none; b=CgvUjGKQ22AmUGYI8oBa9l0TBw7EFtK06RILY89aTNpzWvQQo/CPPham3UHX7j8BJC0/O5ojhDa4eH5E4ryZnlKWspLfXrmQ2AAKb09QvXXLNsUsEOv2Y+2AUkXIMkJOZimB5odTOL0vUSRCwGzqt45u/dvGDrLvEd+vLfOn2pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553367; c=relaxed/simple;
-	bh=AzHBwyfNbGjc4Jw1PZGXaDtEdx1kamPVd4BLcSJLvBo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MlDfd+zEe96KuVLbOG8zxV2G7wOz9UeyO3kfhRPr1eq5CAbP+taNmUV2awN2wrNZJJx/n9k3wEUYWbiVnalnyF+r7DTqRQzGouVqIf6r1vBvKH7VZt1DXgYsB/UhpoVQuIfg58U+C24yBENUl6msCm82i9z/sLtRR7uWptuTkxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGZp1GuR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 35588C4CEEB;
-	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754553367;
-	bh=AzHBwyfNbGjc4Jw1PZGXaDtEdx1kamPVd4BLcSJLvBo=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=qGZp1GuRICWLHmriBZXuC1xu7cOLoxviiWBHO1AB0FutndTWkZq8IpP7BIayvcf3X
-	 InyQzcsN9gcv8pdQ0kpTae7kUhKBssk4auHquZ4Xdv7k04pPRaBIG5ixY3v5fAEs0H
-	 x+lM3EcCU6e2Uym+QZMfx3fTM4d2ZIQmLPiWO1VA7EqH/uw7MZcgvVZ93fO65vbRfL
-	 VRLCunIVFj10BBE/cj2mPdsWjDPe1pFUX/EQyeT0XNQQTBXzWYGp8rL+kkUJ2ir+gS
-	 /UyUd9umnXXk4jZ6G/Xbh/lFlqyG6/apwI0M8fa1RPWZIVu4PtgKZCfNFzZOPOHaL2
-	 tyiTfVx2VdyCQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E2CC87FCA;
-	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Thu, 07 Aug 2025 15:56:03 +0800
-Subject: [PATCH] Bluetooth: hci_sync: Prevent unintended PA sync when SID
- is 0xFF
+	s=arc-20240116; t=1754553460; c=relaxed/simple;
+	bh=qfxUK/7tbAm4+fSRT0kOqzlxvDzJPvrpN7Ck+0QWw/A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nyqmJ4RwVOB+o1Pje68PRQ86Wdwv/KbXZkxpYNg3FKKiuo28ssfRbVQE8RiJJZ/0BJEZmwTs7ZIeHwaShNQW9650Kq9mrmbTS4fmNhMoio0DI1XF/mwktLYUjZOpM40kkzST0TdSivtHRkiDzgvrdA/2gROHDxxExgKH9MnQcfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VI7UsoNs; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76bd2543889so1185760b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754553458; x=1755158258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVn3pXWrE8ptkNx3q5SpDyS1PDtyVrfoh2hP9Ksy/jA=;
+        b=VI7UsoNsmSbvVLQYrqZ7KoRVFj97BSuRN0I2w0Tabs+ms+/S5z5dF54ge4J8cy3BlV
+         Q5bKRQhDkkuFH4LXPizlzbSgXfDd68wcT1JjRsJNNkrl2ZNPC8dn4x12xPbmMZQlerLd
+         vMHO/Q4d9ykjrStMn4HkAg9x1yKQ9Nte0g63aitOz5fzCn8xsdYAb3KGJrHiQKFOJ6dR
+         ZqVQe2nPEz8h7PIIehdxtU7ZtD4X1B4Y3D8cufzcUgTMh6aX7yuorNROFhn8kbDcM7Pr
+         vSVW8jW7+uycbXja+rLO3aOIE9XWbL9/9pZpVug9/a5e+jo1xKRbD5XOSyIZPd9utd5C
+         qzvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754553458; x=1755158258;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVn3pXWrE8ptkNx3q5SpDyS1PDtyVrfoh2hP9Ksy/jA=;
+        b=Z3ASW+Cfaj5RUW3K6TQdYXSHHPTMzA+QyKAsBhN2r1Z6xqrUeKLN/RS+XEnZvAZHIO
+         kW4ai2WSSE6Uizb2NuYW8AyOiOf53bnwLYSuwttGBHXxox7J/QW1Oa3u3X7gzDshrU90
+         Aj2cqVgD1zXnJfeUy78Io+0KrktCXHohI99qkcP+7FcNTUe6REEqY7YUemX4yLXtotAh
+         FzSvs9V5nzKPl+8xJECTw5Zi/UOJAbQee41MHlWB0PP9wpW17Klnh41yIcBD9QtluWPG
+         AKwL1AjMi3x0Sqe507ATg7A70JTJBcJFaMyfr4Toq08QiVpXFBLNBI6qpeE5Uejtm+fA
+         Kt8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW5LpkDke55CjuPbgKM7o5We6o1p69RymtGosycHA1hO6uMoVgeBHgbFUuiEffnKmwOs4HgQsvQ3OOuha0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxvVPXHAvAMOjzP8ggd5LYlPhd0o9HpuIAPTZ5W0eBGlSLX4pQ
+	jpVmYr19JelTyGvTGCqQh6AG2DG6uTMJFQE5Pxk7API9y+qpSbj7xFPuQDO18lo0x/mz7tNHlGl
+	dvg==
+X-Google-Smtp-Source: AGHT+IF2BSxC7vgD0XYWFDXuPwuLdGaPbk25UgUn3Ax0OeCunYBG+ypLlIzyUoGX5ubXzQtF7kNtY9S3RA==
+X-Received: from pgbcu5.prod.google.com ([2002:a05:6a02:2185:b0:b42:8b90:cffa])
+ (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1611:b0:1f5:72eb:8b62
+ with SMTP id adf61e73a8af0-240312c56d8mr9197770637.20.1754553457811; Thu, 07
+ Aug 2025 00:57:37 -0700 (PDT)
+Date: Thu,  7 Aug 2025 17:56:46 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250807-sid_invalid-v1-1-94b3902a49e3@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIABJclGgC/x3MQQqAIBBA0avIrBNsIJOuEhGmYw2EhYIE4d2Tl
- m/x/wuZElOGSbyQqHDmKzb0nQB32LiTZN8MqHBQRo0ys185Fnuyl+jMplHbgBSgFXeiwM9/m5d
- aP661q7FdAAAA
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754553364; l=2518;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=CtzsG6OQjFbI3wHcVoNvKNs7wHlNBWzJw+zuy9bA75s=;
- b=ETEyq1rB1JGnX2oJgwsj6kgqPnLa65UEjLLIkyn2hV7modUsnow39Wh8EqiU4f2YaEViwC/HV
- 6qM4SraBE3vARqgqVRrjGO9n13Ti6NdV6+nXLRN8wRtvZwpCW/Zm6Wk
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250807075647.755848-1-tweek@google.com>
+Subject: [RFC PATCH 1/2] lsm: add type to security_inode_init_security_anon
+From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>
+Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yang Li <yang.li@amlogic.com>
+Introduce a new enum (lsm_anon_inode_id) to identify the type of
+anonymous inode being created. This enum is passed down to the
+security_inode_init_security_anon LSM hook.
 
-After LE Extended Scan times out, conn->sid remains 0xFF,
-so the PA sync creation process should be aborted.
-
-Btmon snippet from PA sync with SID=0xFF:
-
-< HCI Command: LE Set Extended.. (0x08|0x0042) plen 6  #74726 [hci0] 863.107927
-        Extended scan: Enabled (0x01)
-        Filter duplicates: Enabled (0x01)
-        Duration: 0 msec (0x0000)
-        Period: 0.00 sec (0x0000)
-> HCI Event: Command Complete (0x0e) plen 4            #74727 [hci0] 863.109389
-      LE Set Extended Scan Enable (0x08|0x0042) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Periodic Ad.. (0x08|0x0044) plen 14  #74728 [hci0] 865.141168
-        Options: 0x0000
-        Use advertising SID, Advertiser Address Type and address
-        Reporting initially enabled
-        SID: 0xff
-        Adv address type: Random (0x01)
-        Adv address: 0D:D7:2C:E7:42:46 (Non-Resolvable)
-        Skip: 0x0000
-        Sync timeout: 20000 msec (0x07d0)
-        Sync CTE type: 0x0000
-> HCI Event: Command Status (0x0f) plen 4              #74729 [hci0] 865.143223
-      LE Periodic Advertising Create Sync (0x08|0x0044) ncmd 1
-        Status: Success (0x00)
-
-Signed-off-by: Yang Li <yang.li@amlogic.com>
+Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
 ---
- net/bluetooth/hci_sync.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/anon_inodes.c              | 5 +++--
+ include/linux/lsm_hook_defs.h | 3 ++-
+ include/linux/security.h      | 8 ++++++++
+ security/security.c           | 4 +++-
+ security/selinux/hooks.c      | 1 +
+ 5 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index 387c128f2ba0..540794a4495f 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -7045,10 +7045,13 @@ static int hci_le_pa_create_sync(struct hci_dev *hdev, void *data)
- 	/* SID has not been set listen for HCI_EV_LE_EXT_ADV_REPORT to update
- 	 * it.
- 	 */
--	if (conn->sid == HCI_SID_INVALID)
--		__hci_cmd_sync_status_sk(hdev, HCI_OP_NOP, 0, NULL,
-+	if (conn->sid == HCI_SID_INVALID) {
-+		err = __hci_cmd_sync_status_sk(hdev, HCI_OP_NOP, 0, NULL,
- 					 HCI_EV_LE_EXT_ADV_REPORT,
- 					 conn->conn_timeout, NULL);
-+		if (err == -ETIMEDOUT)
-+			goto done;
-+	}
- 
- 	memset(&cp, 0, sizeof(cp));
- 	cp.options = qos->bcast.options;
-@@ -7078,6 +7081,7 @@ static int hci_le_pa_create_sync(struct hci_dev *hdev, void *data)
- 		__hci_cmd_sync_status(hdev, HCI_OP_LE_PA_CREATE_SYNC_CANCEL,
- 				      0, NULL, HCI_CMD_TIMEOUT);
- 
-+done:
- 	hci_dev_clear_flag(hdev, HCI_PA_SYNC);
- 
- 	/* Update passive scan since HCI_PA_SYNC flag has been cleared */
-
----
-base-commit: df18778595f9423542f38784749feca5471f9de7
-change-id: 20250807-sid_invalid-2c8b626af2ef
-
-Best regards,
--- 
-Yang Li <yang.li@amlogic.com>
-
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 1d847a939f29..9a2f09808f86 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -21,6 +21,7 @@
+ #include <linux/magic.h>
+ #include <linux/anon_inodes.h>
+ #include <linux/pseudo_fs.h>
++#include <linux/security.h>
+=20
+ #include <linux/uaccess.h>
+=20
+@@ -121,8 +122,8 @@ struct inode *anon_inode_make_secure_inode(struct super=
+_block *sb, const char *n
+ 		return inode;
+ 	inode->i_flags &=3D ~S_PRIVATE;
+ 	inode->i_op =3D &anon_inode_operations;
+-	error =3D	security_inode_init_security_anon(inode, &QSTR(name),
+-						  context_inode);
++	error =3D security_inode_init_security_anon(inode, LSM_ANON_INODE_GENERIC=
+,
++						  &QSTR(name), context_inode);
+ 	if (error) {
+ 		iput(inode);
+ 		return ERR_PTR(error);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index fd11fffdd3c3..1634f41f7a3c 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -119,7 +119,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct =
+inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
+ 	 int *xattr_count)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+-	 const struct qstr *name, const struct inode *context_inode)
++	 enum lsm_anon_inode_id type, const struct qstr *name,
++	 const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *=
+idmap,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 521bcb5b9717..98a97b8a1093 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -263,6 +263,12 @@ struct request_sock;
+ #define LSM_UNSAFE_PTRACE	2
+ #define LSM_UNSAFE_NO_NEW_PRIVS	4
+=20
++/* anon_inode types */
++enum lsm_anon_inode_id {
++	LSM_ANON_INODE_GENERIC,
++	LSM_ANON_INODE_MEMFD
++};
++
+ #ifdef CONFIG_MMU
+ extern int mmap_min_addr_handler(const struct ctl_table *table, int write,
+ 				 void *buffer, size_t *lenp, loff_t *ppos);
+@@ -402,6 +408,7 @@ int security_inode_init_security(struct inode *inode, s=
+truct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
+ int security_inode_init_security_anon(struct inode *inode,
++				      enum lsm_anon_inode_id type,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+ int security_inode_create(struct inode *dir, struct dentry *dentry, umode_=
+t mode);
+@@ -889,6 +896,7 @@ static inline int security_inode_init_security(struct i=
+node *inode,
+ }
+=20
+ static inline int security_inode_init_security_anon(struct inode *inode,
++						    enum lsm_anon_inode_id type,
+ 						    const struct qstr *name,
+ 						    const struct inode *context_inode)
+ {
+diff --git a/security/security.c b/security/security.c
+index ad163f06bf7a..09aa858819a2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1861,6 +1861,7 @@ EXPORT_SYMBOL(security_inode_init_security);
+ /**
+  * security_inode_init_security_anon() - Initialize an anonymous inode
+  * @inode: the inode
++ * @type: the type of anonymous inode
+  * @name: the anonymous inode class
+  * @context_inode: an optional related inode
+  *
+@@ -1871,10 +1872,11 @@ EXPORT_SYMBOL(security_inode_init_security);
+  * creation of this inode, or another -errno upon other errors.
+  */
+ int security_inode_init_security_anon(struct inode *inode,
++				      enum lsm_anon_inode_id type,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode)
+ {
+-	return call_int_hook(inode_init_security_anon, inode, name,
++	return call_int_hook(inode_init_security_anon, inode, type, name,
+ 			     context_inode);
+ }
+=20
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index c95a5874bf7d..8d36d5ebb6e5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2967,6 +2967,7 @@ static int selinux_inode_init_security(struct inode *=
+inode, struct inode *dir,
+ }
+=20
+ static int selinux_inode_init_security_anon(struct inode *inode,
++					    enum lsm_anon_inode_id type,
+ 					    const struct qstr *name,
+ 					    const struct inode *context_inode)
+ {
+--=20
+2.50.1.703.g449372360f-goog
 
 
