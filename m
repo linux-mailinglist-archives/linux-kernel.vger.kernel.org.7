@@ -1,132 +1,161 @@
-Return-Path: <linux-kernel+bounces-758986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F834B1D69E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:26:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FA9B1D6B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7711E3A7039
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE22618C71E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2629F27876E;
-	Thu,  7 Aug 2025 11:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39190279910;
+	Thu,  7 Aug 2025 11:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cReP764f"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HLAGSglU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB4238140
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDC2238C16
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565973; cv=none; b=ct3ZiFp9JYhMB+Dx1bxFlVCzCivKHwmJqT/HrwsVKoNMtlj5FWa8akVGAnnIwkfVwvLJLFWDMlWGDYbyA1al79aM1o9d+W2fgofTlS+rEbPvLmU48xBbJTPv7SlVJTHl0uC1xKYBdcP+Q2JwzCZgVGiohBUql8iTvY2WxhGqgeo=
+	t=1754566242; cv=none; b=WINCKOKUPuTaGYlLma7+B/Kzbyweomqaf8RpPKZZ7n1oDl6KO/LhZJqI0SlcbTkvRXpJZ5y0ep7XjNKbFB4HjMum21jPTolgOk1Hwh2tT8y8T04F60Uc2Ly4rsCs3iwIwtzofadGImidTTt9CT6Ys7woAWy0pF4lTQ0YfksEtYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565973; c=relaxed/simple;
-	bh=aCk5oBf+uU7I0T67cVUY2P43B9j9NJNVcq2Wlv2cyTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4uSR3iWVFWGeNjCfGCZMcpsXyU9mO0rMilYDUjE1TnARgDYRQI/NoCSeZcj4T9H81ZAEqWHx/ytNtUu8D6PcdD8MVGQGL18loYycDEd5GKtCJF9KKZgxng6/MpyesarQPs2PYH5WlSTu56LLpx++Zo3JGPBe2m2bthQi3ZG0DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cReP764f; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-458bdde7dedso6673635e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754565969; x=1755170769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tS5WCia7qftr8p2mf2/K4AYPK240rc4xhDYqqtejS9o=;
-        b=cReP764fH6SbywmbRHh08uylSrtsGsdQvSXkBR/isHxijCFkVF+2FpNGaJYbT5PZGK
-         iyy7TWnVVt7bdugOF84PONsGjNFFKHjm/1hG1BaGcgOvEEiSdM33KGKm9HqK0uJKKno6
-         uLP2A6buqh3toYI5Ga4LhYGegQKx3WhK5bzsnbQ16RurNk+lqUHH7CHG6ex3YOLJewbx
-         avORP64DYcKt/JKD20pduAd/vVSkHOR1kFGQ0T4z6gFGslJsf7nXpOkPTRDkoMoEcnG0
-         3vveTsDjJluPTk4ISFJTq21LZshEaB5fbSoAxvrI8WPQqCco9zJGe7OJXui81DQIDaVM
-         w4bQ==
+	s=arc-20240116; t=1754566242; c=relaxed/simple;
+	bh=1ll+EBd5lYDpGgeKjrKYbgl28Q2HDI13rIt9slkcFLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJrEOPbkPZ5rPFS/rR6bT9R44TKl3gkldf1cFb1VNG5biaWYGSKyEH9lC1RVS4P4ovTFB6jwyvN9SlPlddxhAGIaj17xjIH2O4WxOjh2B1emwlLks1244uUlu8/H6z+A5NX0uMS8IVrbEA0KYRjq4imDLkTu5HRgLPj7v7518cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HLAGSglU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DD2c008013
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 11:30:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	i07QIqXhNjjKtS5Fw1YccCoO4yzv0J/LSujugm/+4jM=; b=HLAGSglUTlZq93XQ
+	yRncmEvWj4OIWX3Kjh3HFEb7vVO2YPECaOipD6GBFb6T7UX3hQDO+tG9MT+u/xOz
+	U3W/N7seJ7UWrDTs0IF6xRJ+Fj/PBZzc7s74ziAyVAxOG7D6ahQed2wpy0Xod5nD
+	byhEfOcrYmR9Rb8lsSESbVmZYz0gDcj9Hdl3Bx0hq24D5/Tt3YWIfFhy1Zoffd9k
+	fpBPmV5hbxE3/jWeslSuyqPuuUiPwF0EbJmeaQlbCgrwSGYWpcIHBdbyAifhbI2u
+	SdB+C6Ez2WUaITridhA08Wq6/fUF1Zat0uibHCvRdDiSN0htsYSfV3Qcur1Fa4Yh
+	RPeMUw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy6x42u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:30:39 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b0938f0dabso1516001cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:30:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754565969; x=1755170769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tS5WCia7qftr8p2mf2/K4AYPK240rc4xhDYqqtejS9o=;
-        b=QNpKJMa6NfV3iopK1XRJoOV5RUl8SXHjFaCExXEzlzmXY1f/oK6k9gmXEZ1Psv6OQ+
-         tim02Y95Pwrty1psh4ZL/mf7gzZR++jjrzG6dmo/oLAx4j7ORwF0iq+LQIc5X2TBdYSl
-         OnxMD4GSZYK746RlIpHaPAvTvA2AQ9/rsCgWLOA2c5lxdFQ0rpwnj3eE/j9AJDm2PcXM
-         QEV1dLGMmnWpnQV2JWo37K2wA83s3Eya1OWK1IX3V1A/FDTr2X+JTx1UGMAhfOsT957h
-         6EcpW7HJfuDoOaDOlQvxFUBQlX/9jCEfsXd58OcYGSWlQn/VEX1iXXod6fusNoLXKJ3i
-         Wo4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAkdCLXtiM0scQBh0AG9MO2K81GV+Harm3GBhdDoMLxF7jCQTckSzuKo5joHpgIt3/sRd0jKCdVEwrlZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7e0VyqpQCw5/Gry+VDg83CJ7QuH5tWBRYvp6ob1BC7pWWab2p
-	rVF0fBPwMrW4k8onL3Ws2IKtcaXzHT7fwR3enYpeTPlwsIWZSiEEHEr9Q71tkn7XW6tL7FrmAnQ
-	P/THs
-X-Gm-Gg: ASbGncvOoV8Usdrdf+cHF30jsRWHShmSljFP23HJ7tzpB0uD07ga9C39BMpYza5AUe3
-	9lioZQCSu5eUFlvwKL+V+k2+bf/aPcwbgyhTXqQhISfpFwLHGNrEBi6lIwcI/gCGXmg/z5YbvQm
-	+dn3e6GtA6BveMs4NmDsP2fNue4Yv/egBT1dvdl6KIxkpqODAE3ciykDNJKZOK+L6Zt4HyOnX72
-	Pomhu/ezoVXSOr+MX2Zs90pqGWuow4fDBgfIgcuEVlJe3c8TRx8SCGaYKRSt3zbLZTbrY21+29c
-	5IYHoc6Bg9kgK0bRBFq12A26twf9J6eEaSq4SKgdXVujk47BIrgG2s1yJGyfp/2Z9bVXiBdAUQb
-	FL6GqiEFys9MsxWc5iG85a+zqMkiUxZedofS+RfSVTiztMWcfYzpK
-X-Google-Smtp-Source: AGHT+IHJq29PT0clhBo6F0cn8O2V+zRK8NjH0FuLASC4fLJxcSmkIT7c170Uwdmbb9l2y/ilSTqY7A==
-X-Received: by 2002:a05:6000:2381:b0:3b8:d337:cc16 with SMTP id ffacd0b85a97d-3b8f41b523emr5416087f8f.41.1754565968809;
-        Thu, 07 Aug 2025 04:26:08 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977345sm181545495ad.108.2025.08.07.04.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:26:08 -0700 (PDT)
-Date: Thu, 7 Aug 2025 13:25:57 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH 3/3] cgroup/cpuset: Remove the unnecessary css_get/put()
- in cpuset_partition_write()
-Message-ID: <7u4dmzplzjnj2v6l54xrabdy23laax6rwjhvt3lncbueoekfbc@g6ug5de6c7u2>
-References: <20250806172430.1155133-1-longman@redhat.com>
- <20250806172430.1155133-4-longman@redhat.com>
+        d=1e100.net; s=20230601; t=1754566238; x=1755171038;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i07QIqXhNjjKtS5Fw1YccCoO4yzv0J/LSujugm/+4jM=;
+        b=ezbu6zPSBRtKu9hVp1+rUpVCJ8Jq3+SzE3fhPQYVcyQKDTItFqSCTF1Mfee5YePD2h
+         Wl4r/t5zk1xyX5y4jit/uc94MyHnuoRUAXW2zfBRueb9vN4/Q9cCh7LZY6Cfj2fh3Axo
+         THNP2YGSNtHeG9kxOeYIClhL/wCulfHjZhbf3zbfAfv1+UaEl9qA9ZYh+LeH1uF4c7B/
+         GDYMQiq4mqt0c7e40L359/OQvdJDdrH6xZ267ZAVe9REjouLhm7n8usgTXq9pzDR23fF
+         Ho3KMh8qfNC/+q+Ir3MiI+2LusyXXX17XhlkXdT9/dR2K3mMQroHQnaXh78hB1TVeL56
+         0SCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSFCBb7Qi3EK2JKV6/fE8296FusVylW4FT2eFSngSamZBHiKGsT0fykkY3UrXJ7RpD4cHEaoI6zyLyRsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLFH0S7oNangHVgHKqAJ25lUivQrHHOwywmE6966/DpL9xnKxt
+	8ZwbQW6gvC95RkahMaCaGqxmMt8o2fmB2OeUAo9I0095B1f7aOKD89cGat73HH+qPdTpYbmtA3L
+	dy8AFdFSV13TTO6/Kdu7Vkr/M7hsjNQ+eg1Vt0KS0Au7AUaMtMs6suCHc+/4naGaFEaU=
+X-Gm-Gg: ASbGnctky88+OVlY+48ThaGipa7916kzTLUGVoa4yHfU3cMvkeRlNiyExYkVlfGLzF+
+	sS/dx0nDgppGrXo2FYRbggIP4x26OSRrm1GZXbyn3mjVyUHZydoOm2bMB+wnWsbsVS50oMf9CwJ
+	RSUOdLtmvJxfpLeH4dPpFlAQ02gAZVid06oVl7QdlepKKI6Fcz8pM1zBbdduFSF6Y/tEOgnCTjM
+	sMezDVupeUttNsF5nR3jTGEoL7lWfMiaqHtz9aWQTRu9mikJn/Z5PGfqdtREGyBlZ5wNucZ1dOp
+	C/85+Wvj1BnoiAK9kSR53IZoaVgfwZmbgniG21WdC6a674Q+0xQdTSMgVZcVcjU/Jz0upt5cd8a
+	AxAoxSbUAi0T1dzaFMw==
+X-Received: by 2002:a05:6214:1c81:b0:709:8842:56f5 with SMTP id 6a1803df08f44-70988425dfbmr20817676d6.3.1754566237857;
+        Thu, 07 Aug 2025 04:30:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnXnONHbLA12/95Kl68dFu09ciwfUyG+iTcQrE/PkzMq5QqD4Es4erSTnNv0lGdP5+u6x8zQ==
+X-Received: by 2002:a05:6214:1c81:b0:709:8842:56f5 with SMTP id 6a1803df08f44-70988425dfbmr20817256d6.3.1754566237129;
+        Thu, 07 Aug 2025 04:30:37 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f16062sm11590909a12.18.2025.08.07.04.30.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 04:30:36 -0700 (PDT)
+Message-ID: <4d2140ee-f757-425c-8014-3909873e7de3@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 13:30:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kkslxjt4uy5baxbv"
-Content-Disposition: inline
-In-Reply-To: <20250806172430.1155133-4-longman@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: spi-qpic-snand: fix calculating of ECC OOB
+ regions' properties
+To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250805-qpic-snand-oob-ecc-fix-v2-1-e6f811c70d6f@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250805-qpic-snand-oob-ecc-fix-v2-1-e6f811c70d6f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: cFnu1FgH96XyioIgxudA89ckvl5DAkgy
+X-Proofpoint-GUID: cFnu1FgH96XyioIgxudA89ckvl5DAkgy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfXxP2sYVjdQJ2R
+ ml9o9PY49KWARP0EaVmZcFmfpb2cg/nmnb71ghJc48YYwrc84sJl+5dYkp8/iAGalf1ahDo3WLx
+ 3j9V3e87ELHAMoYMjnvTOYMFguvbj9+f8mCrZ3M4SJGfENmMF/o/l01Lyam9cAXMAtMraTgxweV
+ Q+o+2ftebYDfspltO8OfrOPhEYsrQN/6aPzGLPgc7NvBTl4yTSLDidRwuwQM6Dr5imFHAGmxKeu
+ nSmuVVAdl6VnADWHqB0ttiP7dzIdWfmdity+jbJEF55dUxkFQRl9UZHqV00mygRVk+0nHlyFtlu
+ XN4bScxHS7d2JiFbEx+myqKpddtlfafF6ZrxCLpFyd+teoPUFCS/mU1vPXaqrbeKIodNen65n8c
+ XkYJ+JyU
+X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=68948e5f cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=Al3NFTvqZ0TCkL53jQIA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
 
-
---kkslxjt4uy5baxbv
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/3] cgroup/cpuset: Remove the unnecessary css_get/put()
- in cpuset_partition_write()
-MIME-Version: 1.0
-
-On Wed, Aug 06, 2025 at 01:24:30PM -0400, Waiman Long <longman@redhat.com> =
-wrote:
-> The css_get/put() calls in cpuset_partition_write() are unnecessary as
-> an active reference of the kernfs node will be taken which will prevent
-> its removal and guarantee the existence of the css. Only the online
-> check is needed.
->=20
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On 8/5/25 6:05 PM, Gabor Juhos wrote:
+> The OOB layout used by the driver has two distinct regions which contains
+> hardware specific ECC data, yet the qcom_spi_ooblayout_ecc() function sets
+> the same offset and length values for both regions which is clearly wrong.
+> 
+> Change the code to calculate the correct values for both regions.
+> 
+> For reference, the following table shows the computed offset and length
+> values for various OOB size/ECC strength configurations:
+> 
+>                               +-----------------+-----------------+
+>                               |before the change| after the change|
+>   +-------+----------+--------+--------+--------+--------+--------+
+>   |  OOB  |   ECC    | region | region | region | region | region |
+>   |  size | strength | index  | offset | length | offset | length |
+>   +-------+----------+--------+--------+--------+--------+--------+
+>   |  128  |     8    |    0   |   113  |   15   |    0   |   49   |
+>   |       |          |    1   |   113  |   15   |   65   |   63   |
+>   +-------+----------+--------+--------+--------+--------+--------+
+>   |  128  |     4    |    0   |   117  |   11   |    0   |   37   |
+>   |       |          |    1   |   117  |   11   |   53   |   75   |
+>   +-------+----------+--------+--------+--------+--------+--------+
+>   |   64  |     4    |    0   |    53  |   11   |    0   |   37   |
+>   |       |          |    1   |    53  |   11   |   53   |   11   |
+>   +-------+----------+--------+--------+--------+--------+--------+
+> 
+> Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 > ---
->  kernel/cgroup/cpuset.c | 2 --
->  1 file changed, 2 deletions(-)
 
-Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
---kkslxjt4uy5baxbv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaJSNQgAKCRB+PQLnlNv4
-CN56APoCoplEsb9HyNijcd6TFKw7nn8vADYOfifnkefkpM0rWAEAgdX037v2++FT
-s3OlTMXJ6WNnYxx1X1RPo7nS0T9iFgA=
-=3StA
------END PGP SIGNATURE-----
-
---kkslxjt4uy5baxbv--
+Konrad
 
