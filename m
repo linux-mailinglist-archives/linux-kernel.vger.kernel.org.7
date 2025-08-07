@@ -1,177 +1,285 @@
-Return-Path: <linux-kernel+bounces-758685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0413BB1D29C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:46:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BAAB1D2A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09F77239A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDF5B7A5AAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDE321CA02;
-	Thu,  7 Aug 2025 06:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63864221DBA;
+	Thu,  7 Aug 2025 06:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy89nCdr"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="JfxBtduO";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mrGZMwTt"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7484A06;
-	Thu,  7 Aug 2025 06:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A222288CB;
+	Thu,  7 Aug 2025 06:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549192; cv=none; b=VfpeQiP73i/bMeQ5UKIirKl4ZS563gOFryLvlDtnKLRc1qIsEaRZkMtoDZDKyKjpb2uSM7JFwdGV5TWWneU8+s+7rprxK+Tb8lHouYhbdf9LCdCVyUC8LoPhX/jebDKKDwutvsMOzFSCjVohtJteGrTK7qWqrDPrxZzyj0bjYxY=
+	t=1754549347; cv=none; b=W1l1cWjD5eeMAFAcNhoUclQc9G7/fEjkl5ef3q5wntA3YxsgSO28WPL/8Qu8DMbxu8RBVkLlFppYCZ7eVMg2ye3pIHHifc10X5sHLl7U2wM94z76s2BNNCPS1zuHZnhGTzN8S2webFl5PQT/xCtXlwhGgLafRcBl1/i8jqhESUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549192; c=relaxed/simple;
-	bh=BQw9Ee3xh5tlkCKjINqME/B8sebkBqSB2PSgMl7bdfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5Lcllnm7l/d6sB/4WzrMC+Gz+NzA1wSwihQMDPwTQTonlwnrwV1KqJR8BtU2h8/1YwwFm/Fod0ezikW2kNS/v96xNBmzzFIb6m4A++gytYUWeKrDVoIyxsei14vo9cR9XYsBIb28JbUk1zY1ZmxdHqz3SA2mk3W2A3ZRGjIRw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy89nCdr; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-33229f67729so5521261fa.1;
-        Wed, 06 Aug 2025 23:46:30 -0700 (PDT)
+	s=arc-20240116; t=1754549347; c=relaxed/simple;
+	bh=jlhYYqseoKELITQ5ATLhE0ZFe5RLa7WX/i7FJKV2WnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z6S2+XiXE8CaeTdA5lt9FU7CncCoqUWr0umxovQSzg0mzdsK3R6sHn5Edp6RmoFNDllup4QvOfnw3BI7YJ5KOaXBIZYUs9Yh6kXNfG/jOEiUU2m3TYqigwGcxSu5nuNjEL1a2fxMrQTvZlEKGFZ1kJrC3eltpLiyBfzXfOChlPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=JfxBtduO; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mrGZMwTt reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754549189; x=1755153989; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QFkLRKwmtXs5FXxCDyQ4QjXkb+b+IkADkIzCz8KAzTk=;
-        b=Fy89nCdr4udYopun6Tio7mE0YiiyAaEpm/csI6wefQ8kwTFN5JWLs46Tfi2wBpk32P
-         RMkl2pqGm/L5Bv1yT7+mOs1ua97vCIf9bZ8mWXLyK2b6XOnKc8mBE2KOxLkeh3XdVnPE
-         q5ey7yMrKzaBehirkZQlmjj7uhkcXLvt3BbPXd1nO/NAymUNUeEl5WB7hKQTw4hNZCMa
-         StOF8tEnfPYOrjFu64QE6UJ8c1fyF2GjZfq05BZNwJSVCZkm8N79rRMT1Vh47bQbkdq1
-         1Zn9B8CYAwwTDfpd6Y0AD0dbYBRRwIKNsnkofkFC+SkDJIMOPMOLzQ64iIczhiRBbtHY
-         EkZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754549189; x=1755153989;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QFkLRKwmtXs5FXxCDyQ4QjXkb+b+IkADkIzCz8KAzTk=;
-        b=LwRNyzm9VDCmVuV4yHhy6xNIjUrogTPCnD9QjFSuN0fzCWkzLSxS+FzzwFa/zhgGil
-         onGtH8CK3OJWeX7VsVQa1tXwapfp2mq00WZjZWYoWPZCcBp+e3uWYcl5HOfoSDGrIjm3
-         c1B3eJVI3y871lhGmrJ96i0KGVd4zymC7bqGi0tVQVwsRT/59CP8bkca4kxpkIb+UDub
-         NYlUsjkFJM2xWdBTBmMc6+KeF1DOznuqWM1c9lbr4+EC02/8BBKkwsRYc32N81uVb2s5
-         vwLEKr4PbCPdkhr0JhuWXU4KMaiQEyoWyL0GtlLE4Ej/11liutq8+9R1sLkHupfH5/FN
-         Axmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrXG9djPTHS9wJt0KO3dGNCbdynHeEfW1+cMA2sxfKtHZJAUgHGsn7HoOh0b858pZyyQ5PQPws1ZA0@vger.kernel.org, AJvYcCXHPNP8VIQDNv0cinu+YkkAu6sCr7AG4N+n9Moy62JWPlrv3t8TXKB3QFeQjvZD6ZPvkDYxluvFoTrzc84I@vger.kernel.org, AJvYcCXhOtXgiQT5Atzjbop2A0OD1yhHM2p8wPmMk1Qw84AoXJn/6OXW62QuE5kS7c5Xy/n4a0aNI0GyehRf@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiO4SbtRPduBVRGJWSdj8FFg2hXM4S28Aq1L2Wc/PJRtUIjZWG
-	ec7Eux5j8cwfHAd9c/Na2qGSfTraLhG+pzibcqPQH+ovdB0RVFSoSY+P
-X-Gm-Gg: ASbGnctywNXsVRbj8yelIOrvEOtYkeemnoZU7hQy/4c0E4BdPJfSRVG7nNlrwbeD4lP
-	Nul/G0oRQbUDQJSVppSpmO6BdzF/DVZfAdnjNREho3O36GwYnq8JPLpRvIYA4rmmiypPJ8M9piQ
-	UtPCf5/gDCSG3X5qNqHvXZGcxqP3/cmNE3of2ePvpiLg7hulwiSU+3SUHCjDwKmTfvqNlzmXcCw
-	21bH/u/bHq3kO3OXNP8SXZ5Fr7RuKjMGqZhyLYjnCvtRaOR11IUb2l1ElYw/VkgGhhgTxKtNcH1
-	/x0XJ5NbqLcbnmHzs5yq4N6TyQ5Wi7Ter0+/C4PDdvFYEyu4Zvt5FC04a3bN8CGop8PTkLcLJfo
-	88ePNigBMaHqGLgc+PQkOjT3kH4i7aeoXXMBFNPd4OlnvIAraf7U6o9OwFKHOv3YXsAMeud+2rV
-	8UE6OyLwflyU8h4Q==
-X-Google-Smtp-Source: AGHT+IFneUhtOvhFzu2sBeJ9GfQ3QS+MKB6C3adzy8PGoiSDTRYFRQlZwQzcl5uV7vnTsp1Ose5XBg==
-X-Received: by 2002:a2e:bea5:0:b0:332:1720:2eb3 with SMTP id 38308e7fff4ca-33380fd6cc7mr16829411fa.0.1754549188517;
-        Wed, 06 Aug 2025 23:46:28 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33250984d0bsm20215391fa.1.2025.08.06.23.46.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 23:46:27 -0700 (PDT)
-Message-ID: <b1023916-23bb-455f-816a-1ca9412a6e32@gmail.com>
-Date: Thu, 7 Aug 2025 09:46:26 +0300
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1754549344; x=1786085344;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7Sx8JUyM3/4H7bRCB9wNV/IluDw2UIz1vKgHRy/QEVw=;
+  b=JfxBtduOBSqtaWoAq/X7VUlwQv4/XoOpcro5wWujYfUQqO/pSM00MBPx
+   iOaxcPuY76/eOpTPwAM0/ZSJ4eU25uiusHnLNxpXebGVYBA7DRfakfBAl
+   cxWUk/K8G+8igr7NrrzOn06t0zkauOTStXlVJi69qF1Ph3g9zmPNkK+1L
+   pSE92AEgbO1jhabA36+/RY1G8cedMCMbf76mybX1hP/vBRBhUA8yUgjcQ
+   AU0DfXHcTykk+2YihXnCQYe+LvILcOLmA18YOXr+gRYaZa6ADnp53M3f3
+   zh5VGVX5Bz57fjUO4jtvYGpe5ZPWVOl5Wf2esCNbOBL25z++vIydSqrt/
+   g==;
+X-CSE-ConnectionGUID: I2PmyxDYScSuTRFw+H5RPw==
+X-CSE-MsgGUID: XDJruS2UTWOZejcJYgaFyQ==
+X-IronPort-AV: E=Sophos;i="6.17,271,1747692000"; 
+   d="scan'208";a="45628058"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Aug 2025 08:48:51 +0200
+X-CheckPoint: {68944C53-3-299FBAB0-EF52EDE7}
+X-MAIL-CPID: 9B87D54F7B707BEEAED780E1C71972C8_5
+X-Control-Analysis: str=0001.0A002116.68944C87.0028,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 509341613DA;
+	Thu,  7 Aug 2025 08:48:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1754549326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Sx8JUyM3/4H7bRCB9wNV/IluDw2UIz1vKgHRy/QEVw=;
+	b=mrGZMwTtVtjo5kHwbg35IQX/P5TNnTWBQcIxNa9iUC7uSo7rTQLbuzsOAR0XdkbAgHVYVL
+	jhBCsFQ9GwQKTzxzFPGU93q2evcLKB7X2GV5sLvGVSMBpjyhMaVcnVV/rYGDshvdUVR1aY
+	2Yr7vXdhMvML4A8B1d0fq+SM2JIoHoGGPg5LifurXToqn06YRqsdSb21SAOEInEIwqMk0B
+	FooH5azD929SoI3ZX6geUNC3FRIAAorL18g5SBmBcTIs88LaVBmxpepG81KTLhjPbZWHHe
+	v6eTmkjeBRyGiFoqWRFob27/ZWAQLxM6SzAIhAMo6/mr1j/iTjRKpAZKOAuMnA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
+ cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ l.stach@pengutronix.de, perex@perex.cz, tiwai@suse.com,
+ linux-sound@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
+Subject:
+ Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel Audio
+ Interface
+Date: Thu, 07 Aug 2025 08:48:35 +0200
+Message-ID: <3006103.e9J7NaK4W3@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To:
+ <CAA+D8AMqBqfRuR7oGLwH4CUrAdY4q1XGmnPXGQYUGndY0eS=yw@mail.gmail.com>
+References:
+ <20250804104722.601440-1-shengjiu.wang@nxp.com> <2380862.ElGaqSPkdT@steina-w>
+ <CAA+D8AMqBqfRuR7oGLwH4CUrAdY4q1XGmnPXGQYUGndY0eS=yw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] iio: adc: ad7476: Use correct channel for bit info
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1754463393.git.mazziesaccount@gmail.com>
- <7c353ad496e0056e9fb3869bf07e7fd66d816018.1754463393.git.mazziesaccount@gmail.com>
- <20250806160413.00005a75@huawei.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250806160413.00005a75@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 06/08/2025 18:04, Jonathan Cameron wrote:
-> On Wed, 6 Aug 2025 10:03:43 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> The ad7476 supports ADCs which use separate GPIO for starting the
->> conversion. For such devices, the driver uses different channel
->> information if the GPIO is found. The bit information is still always
->> used from the original (non 'convstart') channels.
->>
->> This has not been causing problems because the bit information for the
->> 'convstart' -channel and the 'normal' -channel is identical. It,
->> however, will cause issues if an IC has different characteristics for an
->> 'convstart' -channel and regular channel. Furthermore, this will cause
->> problems if a device always requires the convstart GPIO and thus only
->> defines the convstart channel.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> It appears that the _only_ difference between the 'convstart' -channel
->> and the 'normal' channel is a lack of the 'raw-read' support. I might
->> prefer seeing the _same_ channel information being used for 'convstart'
->> and 'normal' channels, just setting the IIO_CHAN_INFO_RAW -bit when the
->> CONVSTART GPIO is found. This would allow getting rid of the 'convstart'
->> -channel spec altogeher. Having only one channel info spec would also
->> help the code-reader to understand that the driver really provides only
->> one data channel to the users. Currently a quick reader may assume the
->> driver for some reason provides both the 'convstart' and the 'normal'
->> channels.
->>
->> Adding the IIO_CHAN_INFO_RAW when CONVSTART GPIO is obtained would
->> however require the channel information structs to be mutable - which may
->> be seen as a "no, no" by some. Hence this minimally intrusive patch.
-> If you duplicate them before updating that is probably fine, just keep the
-> ones in the chip info static const.
+Hi,
 
-This will mean allocating a new channel spec for each instance of this 
-driver. Tradeoff seems to be clarity Vs memory consumption then. Well, I 
-suppose systems don't have that many of these ADCs, right?
+Am Mittwoch, 6. August 2025, 05:49:13 CEST schrieb Shengjiu Wang:
+> On Tue, Aug 5, 2025 at 3:09=E2=80=AFPM Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+> [snip]
+> > > +static int imx8mp_dw_hdmi_bind(struct device *dev)
+> > > +{
+> > > +     struct dw_hdmi_plat_data *plat_data;
+> > > +     struct imx8mp_hdmi *hdmi;
+> > > +     int ret;
+> > > +
+> > > +     hdmi =3D dev_get_drvdata(dev);
+> > > +     plat_data =3D &hdmi->plat_data;
+> > > +
+> > > +     ret =3D component_bind_all(dev, plat_data);
+> >
+> > Do you really need plat_data variable?
+>=20
+> yes,  it is used in imx8mp_hdmi_pai_bind()
 
-Well, I'll do this if no-one objects then.
+Sorry for not being clear. I'm not talking about struct dw_hdmi_plat_data, =
+but
+the local variable plat_data. You can use
 
->> ---
->>   drivers/iio/adc/ad7476.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
->> index 7b6d36999afc..fc701267358e 100644
->> --- a/drivers/iio/adc/ad7476.c
->> +++ b/drivers/iio/adc/ad7476.c
->> @@ -121,8 +121,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
->>   
->>   		if (ret < 0)
->>   			return ret;
->> -		*val = (ret >> st->chip_info->channel[0].scan_type.shift) &
->> -			GENMASK(st->chip_info->channel[0].scan_type.realbits - 1, 0);
->> +		*val = (ret >> chan->scan_type.shift) &
->> +			GENMASK(chan->scan_type.realbits - 1, 0);
->>   		return IIO_VAL_INT;
->>   	case IIO_CHAN_INFO_SCALE:
->>   		*val = st->scale_mv;
->> @@ -345,7 +345,7 @@ static int ad7476_probe(struct spi_device *spi)
->>   	/* Setup default message */
->>   
->>   	st->xfer.rx_buf = &st->data;
->> -	st->xfer.len = st->chip_info->channel[0].scan_type.storagebits / 8;
->> +	st->xfer.len = indio_dev->channels[0].scan_type.storagebits / 8;
->>   
->>   	spi_message_init(&st->msg);
->>   	spi_message_add_tail(&st->xfer, &st->msg);
-> 
+ret =3D component_bind_all(dev, &hdmi->plat_data);
+
+directly.
+
+>=20
+> >
+> > > +     if (ret)
+> > > +             return dev_err_probe(dev, ret, "component_bind_all fail=
+ed!\n");
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static void imx8mp_dw_hdmi_unbind(struct device *dev)
+> > > +{
+> > > +     struct dw_hdmi_plat_data *plat_data;
+> > > +     struct imx8mp_hdmi *hdmi;
+> > > +
+> > > +     hdmi =3D dev_get_drvdata(dev);
+> > > +     plat_data =3D &hdmi->plat_data;
+> > > +
+> > > +     component_unbind_all(dev, plat_data);
+> >
+> > Do you really need plat_data variable?
+>=20
+> yes,  it is used by imx8mp_hdmi_pai_unbind()
+
+Same as above. Call
+
+component_unbind_all(dev, &hdmi->plat_data)
+
+directly. Also consider assigning struct imx8mp_hdmi *hdmi =3D dev_get_drvd=
+ata(dev);
+directly.
+
+Best regards,
+Alexander
+
+>=20
+> >
+> > > +}
+> > > +
+> > > +static const struct component_master_ops imx8mp_dw_hdmi_ops =3D {
+> > > +     .bind   =3D imx8mp_dw_hdmi_bind,
+> > > +     .unbind =3D imx8mp_dw_hdmi_unbind,
+> > > +};
+> > > +
+> > >  static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
+> > >  {
+> > >       struct device *dev =3D &pdev->dev;
+> > >       struct dw_hdmi_plat_data *plat_data;
+> > > +     struct component_match *match;
+> >
+> > Set match =3D NULL for drm_of_component_match_add (and subcalls) to all=
+ocate memory.
+>=20
+> Ok.
+>=20
+> best regards
+> Shengjiu wang.
+> >
+> > Best regards
+> > Alexander
+> >
+> > > +     struct device_node *remote;
+> > >       struct imx8mp_hdmi *hdmi;
+> > > +     int ret;
+> > >
+> > >       hdmi =3D devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
+> > >       if (!hdmi)
+> > > @@ -108,6 +145,22 @@ static int imx8mp_dw_hdmi_probe(struct platform_=
+device *pdev)
+> > >
+> > >       platform_set_drvdata(pdev, hdmi);
+> > >
+> > > +     /* port@2 is for hdmi_pai device */
+> > > +     remote =3D of_graph_get_remote_node(pdev->dev.of_node, 2, 0);
+> > > +     if (remote && of_device_is_available(remote)) {
+> > > +             drm_of_component_match_add(dev, &match, component_compa=
+re_of, remote);
+> > > +
+> > > +             of_node_put(remote);
+> > > +
+> > > +             ret =3D component_master_add_with_match(dev, &imx8mp_dw=
+_hdmi_ops, match);
+> > > +             if (ret)
+> > > +                     dev_warn(dev, "Unable to register aggregate dri=
+ver\n");
+> > > +             /*
+> > > +              * This audio function is optional for avoid blocking d=
+isplay.
+> > > +              * So just print warning message and no error is return=
+ed.
+> > > +              */
+> > > +     }
+> > > +
+> > >       return 0;
+> > >  }
+> > >
+> > > @@ -115,6 +168,8 @@ static void imx8mp_dw_hdmi_remove(struct platform=
+_device *pdev)
+> > >  {
+> > >       struct imx8mp_hdmi *hdmi =3D platform_get_drvdata(pdev);
+> > >
+> > > +     component_master_del(&pdev->dev, &imx8mp_dw_hdmi_ops);
+> > > +
+> > >       dw_hdmi_remove(hdmi->dw_hdmi);
+> > >  }
+> > >
+> > > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdm=
+i.h
+> > > index 095cdd9b7424..336f062e1f9d 100644
+> > > --- a/include/drm/bridge/dw_hdmi.h
+> > > +++ b/include/drm/bridge/dw_hdmi.h
+> > > @@ -143,6 +143,12 @@ struct dw_hdmi_plat_data {
+> > >                                          const struct drm_display_inf=
+o *info,
+> > >                                          const struct drm_display_mod=
+e *mode);
+> > >
+> > > +     /*
+> > > +      * priv_audio is specially used for additional audio device to =
+get
+> > > +      * driver data through this dw_hdmi_plat_data.
+> > > +      */
+> > > +     void *priv_audio;
+> > > +
+> > >       /* Platform-specific audio enable/disable (optional) */
+> > >       void (*enable_audio)(struct dw_hdmi *hdmi, int channel,
+> > >                            int width, int rate, int non_pcm, int iec9=
+58);
+> > >
+> >
+> >
+> > --
+> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
+Germany
+> > Amtsgericht M=C3=BCnchen, HRB 105018
+> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
+ Schneider
+> > http://www.tq-group.com/
+> >
+> >
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+http://www.tq-group.com/
+
 
 
