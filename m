@@ -1,178 +1,182 @@
-Return-Path: <linux-kernel+bounces-759384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B2EB1DCDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC2AB1DCDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2871AA0CB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2F71AA0D4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAF622256C;
-	Thu,  7 Aug 2025 18:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2B225409;
+	Thu,  7 Aug 2025 18:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJr3t7ZW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXHAXTHj"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFB672636
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85E42222BA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589993; cv=none; b=gZLPUUKSJTENIx8XiiUZJQjJlaUFHk7hGQwOXkad39NAlGUu68eutwHGPPMT/40lb+bxtH5fpoiKlZWp85HjuzjC+LJzrjG9C8n2+BYgAUjQ+9JF0h/pnAr94WOwFRFvpGwbmS9rlI465pg+qv1ioAyFZqJGkIE1VIlC1C+czTI=
+	t=1754590019; cv=none; b=OpnwzA/N28+T8d2Xu8vZgaxcM8GJ+a3wSYeLG0miZ6VAJUfeHVIb/aQJ8pGmg80M6V/kVnEUydoYsUF061ZhWaSocYqR1P+kdQhpi5Qh10ffn5KtghBc6TiB7OLDhMG1LhA5SPy2KdnGsW78IAyk9W0bbN5UbbtYvmgkj1KQLrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589993; c=relaxed/simple;
-	bh=7KIkjYZinwCOik3BiYri2tGPJc4l8iBHhq9D+2sZkZw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mj5sTEbbqheHlwtx/kl3qxx4cNwoIUA2YJVW32/cULzTbskC5urGxwxCbbexOUCxEpOw14GbmdwRdgfT1SWYxKB2MX+xhpwoU5udPKnoqj8ezvQbDCWyQbmbNanzi4FvVY7Uw1h3wRpaQ1MkXWTtrUN9AChSszzJpYNgMX2VVjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJr3t7ZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF56EC4CEEB;
-	Thu,  7 Aug 2025 18:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754589992;
-	bh=7KIkjYZinwCOik3BiYri2tGPJc4l8iBHhq9D+2sZkZw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vJr3t7ZWxwISQ8AEnRu00urvLNPWD7maM2m6Q/qGwAtKRIyWnBuii8BR8yfMy4oUC
-	 dzj+8LI28atKWfowT1ucHintH6QXoB6XuSVRJLItQ6vJ5S+M5/Op4p8EXVwlAtY7R+
-	 ETLFsU5mNMUbypYdWcrpSi8GTDYEYy3pvvSyHmVVfFniheWpZIL1PCUxqvHEOZ9/g1
-	 5agFdXofmSWk0BPd1FfbjWBG3EO8OpNYCnnM9jw/FkiMpYJA+jU4ss0AmVhoZvo7/a
-	 KmojYC0/l7axhMluVfZ0lSA5OiEBEkfNlz51C1vX3OwmwyM7h7SqAGHQXjoaOPJG2f
-	 bjNo7BEzvY4cg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uk50V-0051Ea-Jd;
-	Thu, 07 Aug 2025 19:06:27 +0100
-Date: Thu, 07 Aug 2025 19:06:27 +0100
-Message-ID: <861ppn9fbw.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	oliver.upton@linux.dev,
-	james.morse@arm.com,
-	cohuck@redhat.com,
-	anshuman.khandual@arm.com,
-	palmerdabbelt@meta.com,
-	lpieralisi@kernel.org,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	broonie@kernel.org,
-	james.clark@linaro.org,
-	yeoreum.yun@arm.com,
-	joey.gouly@arm.com,
-	huangxiaojia2@huawei.com,
-	yebin10@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: Expose CPUECTLR{,2}_EL1 via sysfs
-In-Reply-To: <mhng-9D9CB730-A22F-43E2-A012-D51EF3C1E027@palmerdabbelt-mac>
-References: <864iuja70l.wl-maz@kernel.org>
-	<mhng-9D9CB730-A22F-43E2-A012-D51EF3C1E027@palmerdabbelt-mac>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754590019; c=relaxed/simple;
+	bh=M2DyyZpg9lf814eDZlbtNpXMO8lrILUVSy/Ctx7M3JI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SIiorL0Yw/DDGRezhBxgVIsBQ/CC1UfFsxGSDcCPiai4P+Jx0lPhgMm3S2tlM+cfEKeqqwh0UKZ1pQ728N8EMvjJdSrIi3soqh79FLXp9zq2ur4nX8VfOlI/flZBB4Aod5FXaA+yWR28kn7I99B1xjha601sbhUSFziYz38pHiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXHAXTHj; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-87c0166df31so65398039f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754590017; x=1755194817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zp2kgjsHdQl1y9XZJ6AyOg36IvapsXoaw7KHvWhnVmY=;
+        b=PXHAXTHjc20iAtnzn3H+hETNbO/OyDHsTYDy21fiL2x7EnrCskVTyxOSjh66Y8wQMq
+         SgZKpkP/n7UQZZkmoqZtM9WUtSbrRPCxJNmR1DwEem+EI8dfOjbhbQJ4iNvzRsq3tPig
+         veO05ZUehFkKTBX0XYKtgesAW4du77iey86r9XHVvOLf/C9sAiOZwBm5ZD1Jh3ijopUt
+         r8AFpK9QH+qjlHNc9lxvmATp2cYpkz8xadu+lnNvIq1CerunOn6aEYkh2A3PcjwMDLCC
+         tSIVqAFDfXtYEGJauo/6ucFrYf36+3vYXBTdUQMbkPTlrCggI+CNCf+SSEnzVy+9bcxP
+         mmGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754590017; x=1755194817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zp2kgjsHdQl1y9XZJ6AyOg36IvapsXoaw7KHvWhnVmY=;
+        b=WlUGJJ8uRP6u1woixRfhGr3T6QlruDt7ninFe/gUGFMZpOXScFYtre8JkJ/yVlZUpC
+         TEuDv7b9YLczNVDZg5TbR7KWXQLgtqGjCeWrmx2K49LRkqk3UBeo7zGYcTRNBF3up3y3
+         0mkCypZpf5sHhmYiHcllddLwsQUhbKlg53tjCJGj17dRSkjDXgU6udE8CMbsNNCjrZq7
+         2fRG2CyjdIUWeDya5gvvZPFTdOMNuJgwwp4KhkklfKB67AtzWbVciV8m+ZmFeyPUXZUq
+         +6wwfe4oZg7GEyUlJ4h+pAwhdsMRuNYN3GJxlA4pJzI9yBbp8YjgNhpGw6hpdEFmS8/L
+         rP3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrkFie+eIWaCYx9aZM3fQZgprdV19bM8KjJb9a7U0ZphrR6uD3Sx/OGCzLe9osHDmMWXCm9YA6+HG19Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+GBRDVLLGncITVtYJy0b6FuiMGmDqGtD/4cIUkqzsrEKEOhTn
+	ePx05hymAML0YdJZhvI3vHOd8+RR6BbDM68q38fIENhVfLZs7vRzu6+0rlxHWrREjTemWo/86Bj
+	HKKtecokTfMlkcPmOULkyS4X0LkvsfIo=
+X-Gm-Gg: ASbGncvgs7/d+axxytLGWs7VEx/8ijKkle/AJ5X/uIBEJWkWBvkRz5md86+khNZ1qNg
+	NEHfH/xp5/L0rrzYP1ajShkVjpWSC002gvSxM7GJOzITEGvII2tldojZ7zSw+M81KcNZnb0OZmb
+	ue/xXYRVqRgLzFzUcsaK6bJDozBbSmRH6lNKo9ZEqomsSpXOCYT6A+a/TzTrOxjStJHeZUgtDsW
+	r3S7JsVz5SlnuwrMQ==
+X-Google-Smtp-Source: AGHT+IF6dPAP2S0TZkEDfoukOt+XI9zAHN72crWSd6WsyFuYT+/fEx1aYTk25IY/ExVBRYVry+Q6cZfvcPf1ZT8Wd0M=
+X-Received: by 2002:a05:6602:26cb:b0:85b:3a51:2923 with SMTP id
+ ca18e2360f4ac-8819f414119mr1653264139f.14.1754590016730; Thu, 07 Aug 2025
+ 11:06:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: palmer@dabbelt.com, catalin.marinas@arm.com, mark.rutland@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, cohuck@redhat.com, anshuman.khandual@arm.com, palmerdabbelt@meta.com, lpieralisi@kernel.org, kevin.brodsky@arm.com, scott@os.amperecomputing.com, broonie@kernel.org, james.clark@linaro.org, yeoreum.yun@arm.com, joey.gouly@arm.com, huangxiaojia2@huawei.com, yebin10@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250807152720.62032-1-ryncsn@gmail.com> <20250807152720.62032-2-ryncsn@gmail.com>
+In-Reply-To: <20250807152720.62032-2-ryncsn@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 7 Aug 2025 11:06:44 -0700
+X-Gm-Features: Ac12FXzvrnsqjPLSpRzyIBRnWh8E726wBNHUXhmVtmPyFOqC0JBtFx3WCFvljX4
+Message-ID: <CAKEwX=P8Qh4mOdv68UfXv-YBSnuZJkhEeuRJezZucbX7sysWvg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] mm/mincore, swap: consolidate swap cache checking
+ for mincore
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Kemeng Shi <shikemeng@huaweicloud.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 07 Aug 2025 18:26:29 +0100,
-Palmer Dabbelt <palmer@dabbelt.com> wrote:
-> 
-> On Thu, 07 Aug 2025 01:08:26 PDT (-0700), Marc Zyngier wrote:
-> > On Wed, 06 Aug 2025 20:48:13 +0100,
-> > Palmer Dabbelt <palmer@dabbelt.com> wrote:
-> >> 
-> >> From: Palmer Dabbelt <palmerdabbelt@meta.com>
-> >> 
-> >> We've found that some of our workloads run faster when some of these
-> >> fields are set to non-default values on some of the systems we're trying
-> >> to run those workloads on.  This allows us to set those values via
-> >> sysfs, so we can do workload/system-specific tuning.
-> >> 
-> >> Signed-off-by: Palmer Dabbelt <palmerdabbelt@meta.com>
-> >> ---
-> >> I've only really smoke tested this, but I figured I'd send it along because I'm
-> >> not sure if this is even a sane thing to be doing -- these extended control
-> >> registers have some wacky stuff in them, so maybe they're not exposed to
-> >> userspace on purpose.  IIUC firmware can gate these writes, though, so it
-> >> should be possible for vendors to forbid the really scary values.
-> > 
-> > That's really wrong.
-> > 
-> > For a start, these encodings fall into the IMPDEF range. They won't
-> > exist on non-ARM implementations.
-> 
-> OK, and that's because it says "Provides additional IMPLEMENTATION
-> DEFINED configuration and control options for the processor." at the
-> start of the manual page?  Sorry, I'm kind of new to trying to read
-> the Arm specs -- I thought just the meaning of the values was
-> changing, but I probably just didn't read enough specs.
+On Thu, Aug 7, 2025 at 8:27=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> The filemap_get_incore_folio (previously find_get_incore_page) helper
+> was introduced by commit 61ef18655704 ("mm: factor find_get_incore_page
+> out of mincore_page") to be used by later commit f5df8635c5a3 ("mm: use
+> find_get_incore_page in memcontrol"), so memory cgroup charge move code
+> can be simplified.
+>
+> But commit 6b611388b626 ("memcg-v1: remove charge move code") removed
+> that user completely, it's only used by mincore now.
+>
+> So this commit basically reverts commit 61ef18655704 ("mm: factor
+> find_get_incore_page out of mincore_page"). Move it back to mincore side
+> to simplify the code.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-The architecture defines a range described in D24.2.162 (in the L.b
-revision of the ARM ARM) which is reserved for IMPDEF purposes.
+Seems reasonable to me for the most part - just a couple of questions below=
+.
 
-What these registers do is not defined, and there is no standard
-across implementations. This really is for chicken bits and other fun
-stuff. Most of them will simply generate an UNDEF, because they don't
-pass the decode stage. But for all we know, there is a bit in there
-that turns NOP into the HCF instruction -- or better.
+> ---
+>  mm/mincore.c    | 29 +++++++++++++++++++++++++++--
+>  mm/swap.h       | 10 ----------
+>  mm/swap_state.c | 38 --------------------------------------
+>  3 files changed, 27 insertions(+), 50 deletions(-)
+>
+> diff --git a/mm/mincore.c b/mm/mincore.c
+> index 10dabefc3acc..f0d3c9419e58 100644
+> --- a/mm/mincore.c
+> +++ b/mm/mincore.c
+> @@ -64,8 +64,33 @@ static unsigned char mincore_page(struct address_space=
+ *mapping, pgoff_t index)
+>          * any other file mapping (ie. marked !present and faulted in wit=
+h
+>          * tmpfs's .fault). So swapped out tmpfs mappings are tested here=
+.
+>          */
+> -       folio =3D filemap_get_incore_folio(mapping, index);
+> -       if (!IS_ERR(folio)) {
+> +       if (IS_ENABLED(CONFIG_SWAP) && shmem_mapping(mapping)) {
 
-So exposing any of that stuff for any given CPU is dangerous. And
-exposing any of it on *all* CPUs is a bit like swallowing a powered
-chainsaw (don't).
+Do we need CONFIG_SWAP check here? I suppose if !CONFIG_SWAP we'll
+never end up with an ordinary swap entry stored here right?
 
-> 
-> > Next, this will catch fire as a guest, either because the hypervisor
-> > will simply refuse to entertain letting it access registers that have
-> > no definition, or because the VM has been migrated from one
-> > implementation to another, and you have no idea this is doing on the
-> > new target.
-> 
-> Ya, makes sense.
-> 
-> >> That said, we do see some performance improvements here on real workloads.  So
-> >> we're hoping to roll some of this tuning work out more widely, but we also
-> >> don't want to adopt some internal interface.  Thus it'd make our lives easier
-> >> if we could twiddle these bits in a standard way.
-> > 
-> > Honestly, this is the sort of bring-up stuff that is better kept in
-> > your private sandbox, and doesn't really help in general.
-> 
-> So we're not doing bringup (or at least not doing what I'd call
-> bringup) here, the theory is that we just get better performance on
-> different workloads with different tunings.  That's all still a little
-> early, but if the data holds we'd want to be setting these based on
-> what workload is running (ie, not just some static tuning for
-> everything).
+Saves a couple of cycles, I suppose. No strong opinions.
 
-In general, none of that crap is safe to turn on and off at random
-times. You really want to talk to your implementer to find out. And if
-it is, the firmware is probably the place to handle that.
+> +               folio =3D filemap_get_entry(mapping, index);
+> +               /*
+> +                * shmem/tmpfs may return swap: account for swapcache
+> +                * page too.
+> +                */
+> +               if (xa_is_value(folio)) {
+> +                       struct swap_info_struct *si;
+> +                       swp_entry_t swp =3D radix_to_swp_entry(folio);
+> +                       /* There might be swapin error entries in shmem m=
+apping. */
+> +                       if (non_swap_entry(swp))
+> +                               return 0;
+> +                       /* Prevent swap device to being swapoff under us =
+*/
+> +                       si =3D get_swap_device(swp);
+> +                       if (si) {
+> +                               folio =3D filemap_get_folio(swap_address_=
+space(swp),
+> +                                                         swap_cache_inde=
+x(swp));
+> +                               put_swap_device(si);
+> +                       } else {
+> +                               return 0;
+> +                       }
+> +               }
+> +       } else {
+> +               folio =3D filemap_get_folio(mapping, index);
+> +       }
+> +
+> +       if (folio) {
 
-> That said, part of the reason I just sent this as-is is because I was
-> sort of expecting the answer to be "no" here.  No big deal if that's
-> the case, we can figure out some other way to solve the problem.
-> Happy to throw some time in to making some more generic flavor of
-> this, though...
+Should this check be "if (!IS_ERR(folio))"? Seems like that's how we
+inspect the output of filemap_get_folio() in other locations (for e.g,
+in filemap_fault()).
 
-I have no idea how we can achieve that, given that there is no
-architected definition for any of these registers.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+>                 present =3D folio_test_uptodate(folio);
+>                 folio_put(folio);
+>         }
 
