@@ -1,285 +1,157 @@
-Return-Path: <linux-kernel+bounces-758688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BAAB1D2A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC4AB1D2A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDF5B7A5AAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12026725119
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63864221DBA;
-	Thu,  7 Aug 2025 06:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE56226CEB;
+	Thu,  7 Aug 2025 06:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="JfxBtduO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mrGZMwTt"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mNe57/tU"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A222288CB;
-	Thu,  7 Aug 2025 06:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6061DE3B7
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 06:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549347; cv=none; b=W1l1cWjD5eeMAFAcNhoUclQc9G7/fEjkl5ef3q5wntA3YxsgSO28WPL/8Qu8DMbxu8RBVkLlFppYCZ7eVMg2ye3pIHHifc10X5sHLl7U2wM94z76s2BNNCPS1zuHZnhGTzN8S2webFl5PQT/xCtXlwhGgLafRcBl1/i8jqhESUQ=
+	t=1754549341; cv=none; b=j8xDBrVivjohmKI/aW03qKV8mKLOjVXeFMpdLkWZGXJ8iAPlwmsuAh+MVofZ+MD37KXWZDSOVe/NbLzD0zF51zDzQPZzoLhouZTZU9RYd/Pf5z165UeZ0UI7Do0cb+AB2xxuOGvANIf6mBnGVConSX/KaPWrEBwZGMHV7ixqbxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549347; c=relaxed/simple;
-	bh=jlhYYqseoKELITQ5ATLhE0ZFe5RLa7WX/i7FJKV2WnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z6S2+XiXE8CaeTdA5lt9FU7CncCoqUWr0umxovQSzg0mzdsK3R6sHn5Edp6RmoFNDllup4QvOfnw3BI7YJ5KOaXBIZYUs9Yh6kXNfG/jOEiUU2m3TYqigwGcxSu5nuNjEL1a2fxMrQTvZlEKGFZ1kJrC3eltpLiyBfzXfOChlPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=JfxBtduO; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mrGZMwTt reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754549344; x=1786085344;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7Sx8JUyM3/4H7bRCB9wNV/IluDw2UIz1vKgHRy/QEVw=;
-  b=JfxBtduOBSqtaWoAq/X7VUlwQv4/XoOpcro5wWujYfUQqO/pSM00MBPx
-   iOaxcPuY76/eOpTPwAM0/ZSJ4eU25uiusHnLNxpXebGVYBA7DRfakfBAl
-   cxWUk/K8G+8igr7NrrzOn06t0zkauOTStXlVJi69qF1Ph3g9zmPNkK+1L
-   pSE92AEgbO1jhabA36+/RY1G8cedMCMbf76mybX1hP/vBRBhUA8yUgjcQ
-   AU0DfXHcTykk+2YihXnCQYe+LvILcOLmA18YOXr+gRYaZa6ADnp53M3f3
-   zh5VGVX5Bz57fjUO4jtvYGpe5ZPWVOl5Wf2esCNbOBL25z++vIydSqrt/
-   g==;
-X-CSE-ConnectionGUID: I2PmyxDYScSuTRFw+H5RPw==
-X-CSE-MsgGUID: XDJruS2UTWOZejcJYgaFyQ==
-X-IronPort-AV: E=Sophos;i="6.17,271,1747692000"; 
-   d="scan'208";a="45628058"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Aug 2025 08:48:51 +0200
-X-CheckPoint: {68944C53-3-299FBAB0-EF52EDE7}
-X-MAIL-CPID: 9B87D54F7B707BEEAED780E1C71972C8_5
-X-Control-Analysis: str=0001.0A002116.68944C87.0028,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 509341613DA;
-	Thu,  7 Aug 2025 08:48:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754549326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Sx8JUyM3/4H7bRCB9wNV/IluDw2UIz1vKgHRy/QEVw=;
-	b=mrGZMwTtVtjo5kHwbg35IQX/P5TNnTWBQcIxNa9iUC7uSo7rTQLbuzsOAR0XdkbAgHVYVL
-	jhBCsFQ9GwQKTzxzFPGU93q2evcLKB7X2GV5sLvGVSMBpjyhMaVcnVV/rYGDshvdUVR1aY
-	2Yr7vXdhMvML4A8B1d0fq+SM2JIoHoGGPg5LifurXToqn06YRqsdSb21SAOEInEIwqMk0B
-	FooH5azD929SoI3ZX6geUNC3FRIAAorL18g5SBmBcTIs88LaVBmxpepG81KTLhjPbZWHHe
-	v6eTmkjeBRyGiFoqWRFob27/ZWAQLxM6SzAIhAMo6/mr1j/iTjRKpAZKOAuMnA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
- cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, perex@perex.cz, tiwai@suse.com,
- linux-sound@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-Subject:
- Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel Audio
- Interface
-Date: Thu, 07 Aug 2025 08:48:35 +0200
-Message-ID: <3006103.e9J7NaK4W3@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To:
- <CAA+D8AMqBqfRuR7oGLwH4CUrAdY4q1XGmnPXGQYUGndY0eS=yw@mail.gmail.com>
-References:
- <20250804104722.601440-1-shengjiu.wang@nxp.com> <2380862.ElGaqSPkdT@steina-w>
- <CAA+D8AMqBqfRuR7oGLwH4CUrAdY4q1XGmnPXGQYUGndY0eS=yw@mail.gmail.com>
+	s=arc-20240116; t=1754549341; c=relaxed/simple;
+	bh=T2LOZj2RtfSZDIETI52utHLg3XKuznfSzkCFMJ0ZTic=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=gFgSvW5huKObpRL9sU3rWJRYSXpgIN4zhj1d9t4s0hpHBsjRBPOCGfu+QYlLrz6um70yXZFjqscwBpCTiHMJrF34UoiuZTX76aCd83Yv9IIEcEivPP50H0zDFxSp2eGhFSHWdep2O9JgWR5fDCWNx1ya/FfV4nFVmBUSmfuSrAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mNe57/tU; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250807064857epoutp03eba0cf3e646e5767cd13023bcdc2a9f5~ZaVN9QdPN2687526875epoutp03M
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 06:48:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250807064857epoutp03eba0cf3e646e5767cd13023bcdc2a9f5~ZaVN9QdPN2687526875epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754549337;
+	bh=gENDsNiz8c+lxxAPMVk7aVyeTcOxXIGs6AZV1+YZ51s=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=mNe57/tU/pkpeHIA/w22IzwnBAIiAD/Vb5hiCgjRhSxm0pXfxTY84eeFB3t+s2IAk
+	 xG95X2WpztiwcjpPydSI8sjoH/J3+/Q6LD9dybVg6M9HrXTAX/J9+uZKuIuMZIU7ee
+	 XKHJDsvcgNLMLP1vsoE7xqrLsn62jzDFDCESZcHc=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250807064856epcas2p2a0239ad0d28d0f1d67f99a43b4faad8f~ZaVNb1MxW1997719977epcas2p2R;
+	Thu,  7 Aug 2025 06:48:56 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4byHnN07Dpz6B9m6; Thu,  7 Aug
+	2025 06:48:56 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250807064855epcas2p3079c241a4da07d478e713021ca488d13~ZaVMTENSc0483604836epcas2p3v;
+	Thu,  7 Aug 2025 06:48:55 +0000 (GMT)
+Received: from KORCO190374.samsungds.net (unknown [12.36.160.50]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250807064855epsmtip24ef157fdff63cc127cb1ee87da5c8ebd~ZaVMQDcwW1335913359epsmtip2H;
+	Thu,  7 Aug 2025 06:48:55 +0000 (GMT)
+From: Sehee Jeong <sehee1.jeong@samsung.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	sehee1.jeong@samsung.com
+Subject: timers/migration: add 'notmigr' kernel parameter to disable timer
+ migration
+Date: Thu,  7 Aug 2025 15:48:49 +0900
+Message-Id: <20250807064849.3988-1-sehee1.jeong@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250807064855epcas2p3079c241a4da07d478e713021ca488d13
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250807064855epcas2p3079c241a4da07d478e713021ca488d13
+References: <CGME20250807064855epcas2p3079c241a4da07d478e713021ca488d13@epcas2p3.samsung.com>
 
-Hi,
+On heterogeneous systems with big.LITTLE architectures, timer migration
+may cause timers from little cores to run on big cores, or vice versa,
+because core type differences are not taken into account in the current
+timer migration logic. This can be undesirable in systems that require
+strict power management, predictable latency, or core isolation.
 
-Am Mittwoch, 6. August 2025, 05:49:13 CEST schrieb Shengjiu Wang:
-> On Tue, Aug 5, 2025 at 3:09=E2=80=AFPM Alexander Stein
-> <alexander.stein@ew.tq-group.com> wrote:
-> [snip]
-> > > +static int imx8mp_dw_hdmi_bind(struct device *dev)
-> > > +{
-> > > +     struct dw_hdmi_plat_data *plat_data;
-> > > +     struct imx8mp_hdmi *hdmi;
-> > > +     int ret;
-> > > +
-> > > +     hdmi =3D dev_get_drvdata(dev);
-> > > +     plat_data =3D &hdmi->plat_data;
-> > > +
-> > > +     ret =3D component_bind_all(dev, plat_data);
-> >
-> > Do you really need plat_data variable?
->=20
-> yes,  it is used in imx8mp_hdmi_pai_bind()
+This patch does not attempt to solve the structural limitation,
+but provides a workaround by introducing an optional early boot parameter:
 
-Sorry for not being clear. I'm not talking about struct dw_hdmi_plat_data, =
-but
-the local variable plat_data. You can use
+    notmigr
 
-ret =3D component_bind_all(dev, &hdmi->plat_data);
+When specified, timer migration initialization is skipped entirely.
 
-directly.
+Signed-off-by: Sehee Jeong <sehee1.jeong@samsung.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  2 ++
+ kernel/time/timer_migration.c                   | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
->=20
-> >
-> > > +     if (ret)
-> > > +             return dev_err_probe(dev, ret, "component_bind_all fail=
-ed!\n");
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static void imx8mp_dw_hdmi_unbind(struct device *dev)
-> > > +{
-> > > +     struct dw_hdmi_plat_data *plat_data;
-> > > +     struct imx8mp_hdmi *hdmi;
-> > > +
-> > > +     hdmi =3D dev_get_drvdata(dev);
-> > > +     plat_data =3D &hdmi->plat_data;
-> > > +
-> > > +     component_unbind_all(dev, plat_data);
-> >
-> > Do you really need plat_data variable?
->=20
-> yes,  it is used by imx8mp_hdmi_pai_unbind()
-
-Same as above. Call
-
-component_unbind_all(dev, &hdmi->plat_data)
-
-directly. Also consider assigning struct imx8mp_hdmi *hdmi =3D dev_get_drvd=
-ata(dev);
-directly.
-
-Best regards,
-Alexander
-
->=20
-> >
-> > > +}
-> > > +
-> > > +static const struct component_master_ops imx8mp_dw_hdmi_ops =3D {
-> > > +     .bind   =3D imx8mp_dw_hdmi_bind,
-> > > +     .unbind =3D imx8mp_dw_hdmi_unbind,
-> > > +};
-> > > +
-> > >  static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
-> > >  {
-> > >       struct device *dev =3D &pdev->dev;
-> > >       struct dw_hdmi_plat_data *plat_data;
-> > > +     struct component_match *match;
-> >
-> > Set match =3D NULL for drm_of_component_match_add (and subcalls) to all=
-ocate memory.
->=20
-> Ok.
->=20
-> best regards
-> Shengjiu wang.
-> >
-> > Best regards
-> > Alexander
-> >
-> > > +     struct device_node *remote;
-> > >       struct imx8mp_hdmi *hdmi;
-> > > +     int ret;
-> > >
-> > >       hdmi =3D devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
-> > >       if (!hdmi)
-> > > @@ -108,6 +145,22 @@ static int imx8mp_dw_hdmi_probe(struct platform_=
-device *pdev)
-> > >
-> > >       platform_set_drvdata(pdev, hdmi);
-> > >
-> > > +     /* port@2 is for hdmi_pai device */
-> > > +     remote =3D of_graph_get_remote_node(pdev->dev.of_node, 2, 0);
-> > > +     if (remote && of_device_is_available(remote)) {
-> > > +             drm_of_component_match_add(dev, &match, component_compa=
-re_of, remote);
-> > > +
-> > > +             of_node_put(remote);
-> > > +
-> > > +             ret =3D component_master_add_with_match(dev, &imx8mp_dw=
-_hdmi_ops, match);
-> > > +             if (ret)
-> > > +                     dev_warn(dev, "Unable to register aggregate dri=
-ver\n");
-> > > +             /*
-> > > +              * This audio function is optional for avoid blocking d=
-isplay.
-> > > +              * So just print warning message and no error is return=
-ed.
-> > > +              */
-> > > +     }
-> > > +
-> > >       return 0;
-> > >  }
-> > >
-> > > @@ -115,6 +168,8 @@ static void imx8mp_dw_hdmi_remove(struct platform=
-_device *pdev)
-> > >  {
-> > >       struct imx8mp_hdmi *hdmi =3D platform_get_drvdata(pdev);
-> > >
-> > > +     component_master_del(&pdev->dev, &imx8mp_dw_hdmi_ops);
-> > > +
-> > >       dw_hdmi_remove(hdmi->dw_hdmi);
-> > >  }
-> > >
-> > > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdm=
-i.h
-> > > index 095cdd9b7424..336f062e1f9d 100644
-> > > --- a/include/drm/bridge/dw_hdmi.h
-> > > +++ b/include/drm/bridge/dw_hdmi.h
-> > > @@ -143,6 +143,12 @@ struct dw_hdmi_plat_data {
-> > >                                          const struct drm_display_inf=
-o *info,
-> > >                                          const struct drm_display_mod=
-e *mode);
-> > >
-> > > +     /*
-> > > +      * priv_audio is specially used for additional audio device to =
-get
-> > > +      * driver data through this dw_hdmi_plat_data.
-> > > +      */
-> > > +     void *priv_audio;
-> > > +
-> > >       /* Platform-specific audio enable/disable (optional) */
-> > >       void (*enable_audio)(struct dw_hdmi *hdmi, int channel,
-> > >                            int width, int rate, int non_pcm, int iec9=
-58);
-> > >
-> >
-> >
-> > --
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > http://www.tq-group.com/
-> >
-> >
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-http://www.tq-group.com/
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 85c27c97b826..4bb10ac574e5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4132,6 +4132,8 @@
+ 	no_timer_check	[X86,APIC] Disables the code which tests for
+ 			broken timer IRQ sources.
+ 
++	notmigr 	[KNL,EARLY] Disable timer migration.
++
+ 	no_uaccess_flush
+ 	                [PPC,EARLY] Don't flush the L1-D cache after accessing user data.
+ 
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 72538baa7a1f..7636a1b3ae6b 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -422,6 +422,8 @@ static unsigned int tmigr_crossnode_level __read_mostly;
+ 
+ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
+ 
++static bool tmigr_enabled = true;
++
+ #define TMIGR_NONE	0xFF
+ #define BIT_CNT		8
+ 
+@@ -1790,6 +1792,9 @@ static int __init tmigr_init(void)
+ 
+ 	BUILD_BUG_ON_NOT_POWER_OF_2(TMIGR_CHILDREN_PER_GROUP);
+ 
++	if (!tmigr_enabled)
++		return 0;
++
+ 	/* Nothing to do if running on UP */
+ 	if (ncpus == 1)
+ 		return 0;
+@@ -1854,3 +1859,12 @@ static int __init tmigr_init(void)
+ 	return ret;
+ }
+ early_initcall(tmigr_init);
++
++static int __init notmigr(char *str)
++{
++	tmigr_enabled = false;
++
++	return 0;
++}
++
++early_param("notmigr", notmigr);
+-- 
+2.49.0
 
 
