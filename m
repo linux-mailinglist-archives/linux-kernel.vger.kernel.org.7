@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-759103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38574B1D87A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:03:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA440B1D89E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1C2163449
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B78767A4C01
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DBB25229C;
-	Thu,  7 Aug 2025 13:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31724258CDC;
+	Thu,  7 Aug 2025 13:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1Lf7Ngw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=igor.torrente@collabora.com header.b="NutCNxY8"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B551DDF7;
-	Thu,  7 Aug 2025 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754571811; cv=none; b=KZJty+4RFt2/oRBmbZsfwZQojEVMG60e5+miDFHioY/hfm68AOLrzn+BH1ImTC4Js2xhoNNu9tCTMhGprmjgT4rf/D9S29UY3vYNlpshJRuRQqpyDgUuJSSagdjcgyb1rHNEu+ekAdUYgMGKz3h+cwRCSMEGn455VBVeX0Tr2iw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754571811; c=relaxed/simple;
-	bh=ITjeV1vhs/OWV7VDwZrJVXBhkUVHJfvZRS6GRlX1xaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OiSB32R9YWPeA68NclOgbpm9xbgpPAWs/ipyTIzhIWRULljwa9EWgKQVHw8NHZek98VqW446tXA2JGyHZ6yzq+bpHTDcRhGwb2cTGBj10wI5D88pOYPyfRbkx/DedNSGbHUyrXFVd1C+7NTiPf5Rdu5dfsUOVnAYBd3S7vcqsBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1Lf7Ngw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8005C4CEEB;
-	Thu,  7 Aug 2025 13:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754571810;
-	bh=ITjeV1vhs/OWV7VDwZrJVXBhkUVHJfvZRS6GRlX1xaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B1Lf7NgwIrMo5HOztfwNfC5MynlHS2F3ACdF7Bn6Tn16S1UiE1Cb3M8ZiwUsXZJp1
-	 g0SNA1/FwVyuaIS2k5piEq74s9jhSZPncOfMNik1qI0vlYwi3O9XonkwnrQxmXj7ps
-	 bipDhxJKa2oYf1QpIWxqGuYCV0T0nmSsiQIXjrtFhIt25C2BHiFDfReKKrEJUw91nN
-	 kPG2Mt65cEBjaLc2WVZiy5H/ciEsJN1qfcrc1UoSivzqa/2dxjJJCQzfvxra7k9m9C
-	 XqQo4A5bN/Hura6MAmB/Nn6Z6tyTE4tgYDmBsdLWb8r5sWxpBop4fa+ZdoHes0LUlS
-	 rKiKSSqkVvx6Q==
-Date: Thu, 7 Aug 2025 09:03:28 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Rob Clark <rob.clark@oss.qualcomm.com>
-Cc: lumag@kernel.org, abhinav.kumar@linux.dev,
-	jessica.zhang@oss.qualcomm.com, sean@poorly.run,
-	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-	antomani103@gmail.com, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: Fix objtool warning in submit_lock_objects()
-Message-ID: <aJSkIJPbvj5xuu77@lappy>
-References: <20250805225557.593192-1-sashal@kernel.org>
- <CACSVV02Z=4Saw=-MA6zz-Dsye8T=AcARWs1AhUbWnyA8sY7fdQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8A32E36EC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754572169; cv=pass; b=WCIyTPrgYsmZw7sSkLe4vBJ1ne6gqWuvRUeHxbvJcQPEp/eZmvOaZaxcHdP/IKddgDbFOaGRWzc3f+bfGBM9XL2bruOTeNS3RlkK3hHvmzoglsx8eMjN1w7Tg1qP43ADIR20Fk1zOdRF2oEK6X2XlQXfKp7aUgIFFoVRPGlN/No=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754572169; c=relaxed/simple;
+	bh=PkvL1LSHddhFS4RHqPVgHzwit9Tza51vcw4DAjp7N2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UwYBp+iG3dzTHs7hwqvZdcG6UU/d1C2jIl6SoSWK3zbRgOpbn2hBELpMQdHixu7GlhvuHcmvrPZEsfeaIilvNzb8ZvWOyL2d6p4oSrzuMZKqRQ8FTpozQJlbE3m69OKT3vBC/mywbPSRIzUsqnC3PdzsAn3E6p4Oz49SG9QYV6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=igor.torrente@collabora.com header.b=NutCNxY8; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754572150; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=R2gHgl2RBD5TQSlEkFxLvNcqXVKL+U9s0Z6yh4Qal+Lb8vyOYyZq7bVfRLaLF1hz9R9J2lF4HuXuWmZlHELki7xIAuuGdrDb6KvNTNVfXZSZc7WEH83GevuON1FOC3wh52PeuS8O7kcQ6stttMq1NxY072eP4BGXXydG/wYAox8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754572150; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GOKWd7XAOCSunMtdz4EmOG9p2XcFDVXG0DrG+q6pUT4=; 
+	b=NaiuWOuW4dIcOIdWoZklmtapdZvPZcaxlEgG35WIBLVM/kbmOinUyedBgj+gQDSoF8FgfJN+CFnPxyGYF6LpjJXcqHK/y7vQgbdXtIqMtdJ05svkt33/4QYE6lcHmfSoJjgYlXRoDKyt0hGg78zwkUAK9PmLRTY2JJQQww52hDQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=igor.torrente@collabora.com;
+	dmarc=pass header.from=<igor.torrente@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754572150;
+	s=zohomail; d=collabora.com; i=igor.torrente@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=GOKWd7XAOCSunMtdz4EmOG9p2XcFDVXG0DrG+q6pUT4=;
+	b=NutCNxY8Ad+l+5BtNcw9Rx9eAAW3X2dlRcDxjph7CUZu807rbBhdoFTcIowdlHK6
+	iU8IY6VT5c+4cCTX58cDLDlsdlGlfgyRwbhdR8LICRiTRgTfLmC9sC+4b5PIOY/D5US
+	Y4muNZr2mF2djLCYjy+P+1HrDUM/0vLLdWbYq13M=
+Received: by mx.zohomail.com with SMTPS id 1754572148318644.6251951352543;
+	Thu, 7 Aug 2025 06:09:08 -0700 (PDT)
+From: Igor Torrente <igor.torrente@collabora.com>
+To: mst@redhat.com
+Cc: sami.md.ko@gmail.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	eperezma@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	jasowang@redhat.com,
+	dmitry.osipenko@collabora.com,
+	Igor Torrente <igor.torrente@collabora.com>
+Subject: [PATCH v2] Revert "virtio: reject shm region if length is zero"
+Date: Thu,  7 Aug 2025 10:03:29 -0300
+Message-ID: <20250807130326.82662-4-igor.torrente@collabora.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACSVV02Z=4Saw=-MA6zz-Dsye8T=AcARWs1AhUbWnyA8sY7fdQ@mail.gmail.com>
+X-ZohoMailClient: External
 
-On Wed, Aug 06, 2025 at 04:38:19PM -0700, Rob Clark wrote:
->On Tue, Aug 5, 2025 at 3:56 PM Sasha Levin <sashal@kernel.org> wrote:
->>
->> Restructure submit_lock_objects() to use a single loop with break
->> statements to fix objtool warning:
->>
->>   drivers/gpu/drm/msm/msm.o: warning: objtool: submit_lock_objects+0x451:
->>   sibling call from callable instruction with modified stack frame
->>
->> The drm_exec_until_all_locked() macro uses computed gotos internally
->> for its retry loop. Having return statements inside this macro, or
->> immediately after it in certain code paths, confuses objtool's static
->> analysis of stack frames, causing it to incorrectly flag tail call
->> optimizations.
->
->Maybe we should instead just split out a separate
->submit_lock_objects_vmbind() and restore the error path 'goto error'
->instead of returning from within the loop?  Ie. basically revert
->submit_lock_objects to the way it was before commit 92395af63a99
->("drm/msm: Add VM_BIND submitqueue"), and then move the rest into a
->new fxn (with 'goto error' instead of 'return ret'?  In retrospect the
->vmbind case is kinda just shoehorned into the existing fxn.
->
->I can type up this version if you have better things to do.
+The commit 206cc44588f7 ("virtio: reject shm region if length is zero")
+breaks the Virtio-gpu `host_visible` feature.
 
-I'll send it out :)
+Right now in the Virtio-gpu code, `host_visible_region.len` is zero because
+the struct comes directly from the `kzalloc` allocation. And Virtio-gpu
+is using the `vm_get_shm_region` (drivers/virtio/virtio_mmio.c:536) to read
+the `addr` and `len` from Qemu/Crosvm.
 
+```
+drivers/gpu/drm/virtio/virtgpu_kms.c
+132 vgdev = drmm_kzalloc(dev, sizeof(struct virtio_gpu_device), GFP_KERNEL);
+[...]
+177 if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region,
+178                           VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+```
+Now it always fails.
+
+As the Virtio-gpu relies on the previous behavior, this patch reverts
+the offending commit.
+
+Fixes: 206cc44588f7 ("virtio: reject shm region if length is zero` breaks the Virtio-gpu `host_visible")
+
+This reverts commit 206cc44588f72b49ad4d7e21a7472ab2a72a83df.
+
+Signed-off-by: Igor Torrente <igor.torrente@collabora.com>
+---
+v2: Improve the commit message (Michael S. Tsirkin)
+
+ include/linux/virtio_config.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index b3e1d30c765b..169c7d367fac 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -329,8 +329,6 @@ static inline
+ bool virtio_get_shm_region(struct virtio_device *vdev,
+ 			   struct virtio_shm_region *region, u8 id)
+ {
+-	if (!region->len)
+-		return false;
+ 	if (!vdev->config->get_shm_region)
+ 		return false;
+ 	return vdev->config->get_shm_region(vdev, region, id);
 -- 
-Thanks,
-Sasha
+2.49.0
+
 
