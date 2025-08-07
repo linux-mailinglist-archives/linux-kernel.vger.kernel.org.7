@@ -1,178 +1,182 @@
-Return-Path: <linux-kernel+bounces-759169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64B5B1D984
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:56:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C83CB1D985
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C78562780
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:56:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BD67AD9EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33DE263F5B;
-	Thu,  7 Aug 2025 13:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787F2260585;
+	Thu,  7 Aug 2025 13:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CyXgfXXv"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RbRaX69u"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013065.outbound.protection.outlook.com [40.107.44.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F91262FEC;
-	Thu,  7 Aug 2025 13:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574965; cv=none; b=KY5lp2QmRJQEurqkof5ad3iNJ0Dfy1/1MufjGsaGuRRSZOpuqy2P/nBiepXe1T4W81QIzW1WNy8vGGU2T3sRbv2U+zkH5MB8x59p9E3dL6hqB2SFJd9U+wmhX8LcMa8VhU6eIhIExKUdpAVmhqwEAv2UC43MwGNbIhdBOMgyf4I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574965; c=relaxed/simple;
-	bh=mOG87tayZw5x3IBqjx1AAyFnN9RUxt9soJwUnbs0X6I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tx/89AyaT9tVzwQo9rGuzk8XPrTKCwa+WJQ9MxdHCMJ3x731oPUnCgLLwdFGxzmcE6J6ciP+UV9vuo7dLazhAbSJHsKd+RPJFNAuOGvK7fajSlqD6W8AeqemdEYuteBcHRtfEatjpLrSDseSUeKUETla8sXI6x8jQ8y+TL2mvwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CyXgfXXv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5773uSAH019831;
-	Thu, 7 Aug 2025 13:55:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=P6h6pE
-	ygabob+MKMluPz2iaWqjq/rfYE+mrRUjaz2zM=; b=CyXgfXXvrSI39MIxCFgnqr
-	vh4FTQ+YxOF5MUP1J+j/xiEAyN+3/7Pr2jXYx/qn5q36gi+DHr1Q6ONcIM0f/PDd
-	D1SZYwNW6fJsEcaBZcXXLKH4P3f+nR+fjbchS8QlH9jbXWcgSjzaLJYFB+RK+rTj
-	WOwXZsOLRSkHXnzOR4GxvdcMcw8bbAUITKeARKj2c7aprDnFbompLyiS/koy8Ppk
-	nj9UqVirTMswX16qblRxiLxmSf4qM5GgGPoWSdPzKEJp3sGOOMVdAynXAVX8rlS2
-	bUbF5zYj9tPnm2qMFjIm6JUHkB+r8PG8FMWYdESbhkkoQ11Cc7O6Es+fE8BsNQow
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tyv47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:55:57 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577DZujP010443;
-	Thu, 7 Aug 2025 13:55:57 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tyv43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:55:57 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 577DRW5u022640;
-	Thu, 7 Aug 2025 13:55:55 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqgw40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:55:55 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577Dts6B11666480
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 13:55:54 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 54D7D5805A;
-	Thu,  7 Aug 2025 13:55:54 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8993D58052;
-	Thu,  7 Aug 2025 13:55:51 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Aug 2025 13:55:51 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Thu, 07 Aug 2025 15:55:40 +0200
-Subject: [PATCH v5 3/3] powerpc/eeh: Use result of error_detected() in
- uevent
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1125E816;
+	Thu,  7 Aug 2025 13:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754574974; cv=fail; b=Q9NscEBuiY3IYmKbmdyqwCLGTQ5SOE5xeAJEtZ3GDF9/QZbG3mYc53Z0j//hOaUfzqeM/e0WZBKLABlPIxLHCPi365hIjJYIFxYNsnHl6NjQ/J1O6zuiDtGcLpA8m/FFKv5/M2dr890QwHXKVAXN35YUSU7zVBKPqgF1anT6UT8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754574974; c=relaxed/simple;
+	bh=Klc4G+Z5S8AEOOPEyy2gZQu86ettl1EKxTpfOq+rwcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VY4UucXQEXbPYk+JngLtvPVnikL3dzMPWyJAcK7S5C8ENuRjW4Zfi+ErPxSZnzDJbcCtjScf6dLj8zywaWkCahbVoemWXDqaer3xVg9MtnTuWexPZEbt05iKXTXuNY1CLebk3KSopJ0Q6Ol9lUNpECZpsy3s9QnPFKvYy5yy/+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RbRaX69u; arc=fail smtp.client-ip=40.107.44.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uZfkvVwvazAuWeMiOKA2FnqYeDqMqzLNi7+YdYhtG1T0NED5MTPrdlZijzVQZmckatZQ5emTr1IDB7pIbDPZQbnGz1m2vZJUnjemU9a5ZDxZQ50uFZJIR+lx+pQ7+SeY61i5PHYiIX9QJWg1P/panRTuhWI7jh/kCLpVgTp69imA+PLO+0uNmTEXg8fMAu5lLI2zID4XC/Bpa3Jvdk0mbMMiNV2SrxRBwlI+ceV7rkI2Aco2Q0BBKBByQZspip73kraC4LTjRTX3SMPAk4NNH5Z96IX3TwNOHOdrS+fS7dQkqZNdVpyQXj0c9Iy8buH7FyFTf5A2FwQFMoTp8/1IPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xye0zUfjHoxPcKU0CPp0a8CUSJxIsR348jdqpVBLEEM=;
+ b=SLPujDvG92B3ChuCW0Y+XNcNmmyY1z6hzRKWjKfHyp97syUQymBMqUsQhZv3TZ4//vEzv7qFRttbxZM6zEP/gUqg+eq7+8sCZpVKZzYqhMhesSJ/Z0d1++YrXAehsy/by99rAL1QW/e9T+KtWWspPNrFF43rKGfTCPq4EEtpRbWQfbGx/EgUL1/Hfk9C3ydkz5+lOP0paI91A+1aQfWbgofsT6QRWOhZvWAyOdCpLqraeLl7tR+1RxYfe0bTmtFEniC/reXqxmzyQ3ugr+jmROgy2ND88FpxO7OdRhGiq5gDMWG068yxBPRjUqKqiHJwAsBLHjuwFzlvG1das0h42w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xye0zUfjHoxPcKU0CPp0a8CUSJxIsR348jdqpVBLEEM=;
+ b=RbRaX69u0CHWkrI2yJmmAkF2XQrUwSIHL+VBlRNS0q5+IjGMjZSaAqyvg4QAJ0lRMRRKptDnzzq2kMGVA84xwpEkSGM0WETQAqBYS+bmoEeKEIjy6P9rcYvReYskcT4iLGRV+hk5oTn4yZ6kpQaeZZ50tKndjsSlzOn+B4tslkJjBjokfHKeACA8j18LWj0IM7U3qtA1sQ2veRZVjzSm1rMjajYN5W22j6aEvj+0RoprTFNJ8HwtjxZ10j5sek0v5/j1KTu7SFfdiO+fRrvtri+BeROKKdKNtL0OdGu3NJpDzls4CO8/FWrYOx6B5cmnzxUhAmkl0itDQw2gpNyWow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEYPR06MB6614.apcprd06.prod.outlook.com (2603:1096:101:177::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.16; Thu, 7 Aug 2025 13:56:09 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 13:56:09 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] loop: Remove redundant __GFP_NOWARN
+Date: Thu,  7 Aug 2025 21:55:59 +0800
+Message-Id: <20250807135559.560837-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0226.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250807-add_err_uevents-v5-3-adf85b0620b0@linux.ibm.com>
-References: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
-In-Reply-To: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-Cc: Linas Vepstas <linasvepstas@gmail.com>,
-        =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Keith Busch <kbusch@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1301;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=mOG87tayZw5x3IBqjx1AAyFnN9RUxt9soJwUnbs0X6I=;
- b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGDKmbIh1Xf15eSUry3F3oxLJStUlDkL2l8OCwo2dwqT5j
- vJquLN2lLIwiHExyIopsizqcvZbVzDFdE9QfwfMHFYmkCEMXJwCMJEbgQz/6182btbxe8CgHMrm
- svNxf9hE1RIp7ezuFTkGn5kLNi7PZGS41y4REPRnm/urK8UFQXaf72ye+/rza99An+6v4Y95Wxw
- ZAA==
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YH0b8-6YXjdsqzw7jV_FMU1BENykmw9c
-X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6894b06d cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=USTt9hxsF4_VS_TezIQA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: fQbQG1xr9EhhieZp8D-XY0qjJ3wzijgZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDExMiBTYWx0ZWRfX/XXI7Fr1FvJY
- FOXThBrUUHzXjsk98nkr2a80J2h7wW/6Z7XWUTlp0cEOL4j+Zy49UU65Jrb+mXZoIo4m5p/8xxO
- Nrm7OlcUW3ahqemn/ryOEdRhyUV+1VxGMB2WWOzaba4A/V/UBtDzBVzijlu8Vi8IcWJcHUYfExE
- an9a156D2a+5kusq+clnieK9jxfWZD9Npe0SFNhvyEU/kS0++D4T1o4Od95b+b9sJPflrzd9Kkr
- vA9XYjtzjiTF+aeKxWHw6Lxc7Ntl+UUmCGdCZK6vFzd2FOWT3TEBmHUm8nuai3JAxa4K4PrEdzP
- 6GvPnjYFnA/4tJ2G0SN505iiY58F3y5QFBHEQ9DI+QRn6JHjpNKmbzLPIZUuNwl0I260Gy7QwLd
- k5FhPacQt+sqjS1y3GoGU6e1mkF2q7jx33J+4XZ+/o+0N9uHDBxfR1zfPSv+/EMui4d7kW2k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070112
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB6614:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57afa243-22ea-4317-6ef8-08ddd5ba2997
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xncPRMy6AbGs+J6HQna0g3gR04mKdCYAB9N5qihSGO9cXAqLN6KzkhEAV3e3?=
+ =?us-ascii?Q?3nHRIkHcL2F/pukUH85DnNy7T6Q1B+19RA34gbHfW/RGfBBIAPH6ivXCTdTN?=
+ =?us-ascii?Q?lGteZ64h7TnXi7igvgiWPxTs/H1G990J1oRYEPt696VQPYE0qYdhZr5e3LAx?=
+ =?us-ascii?Q?EDiNExyygJXB4myJ8ITf7BNLHAowwa3+j41ADI58wcS5vH/Ep3UBvrco55ts?=
+ =?us-ascii?Q?DWApkBICL4BYeweuIn/Q+dsbOVYn70DfxyxIaHkojWWzsr7w3QRsDn4Uc+a4?=
+ =?us-ascii?Q?ZvluORbx0tNYwgcWQACjvmA2oebRm1gQsjX0WUujCaL0YV8k7bNZ/map0Epa?=
+ =?us-ascii?Q?W+jLNeNzXTda6bkyGfS7268znvk7xJQGAf49XBPyipcEiojE3cZk0eiwMMJ7?=
+ =?us-ascii?Q?DKlEyk1R7peU0zS3aOsjZmilvaByfCFHl9WY8yjxHQA+aDmm1UuVz+pGcdPH?=
+ =?us-ascii?Q?1BCXnLQJuex0Bl6VPO6AGPp2qx8fkDJgDiFiEnLo0dBqsdTBqXxVNnLkYPG2?=
+ =?us-ascii?Q?IlNQHoszwDo5LfwVSZoPjs4WlSVTxe43MPx3+h/AMAxOkcrHb0L+T0UVUuMe?=
+ =?us-ascii?Q?mbxjhYjZCm3ByCqSY0c70IxduVI54IAupwTJ9K3RFdmvKKdiCFoFENWYuOVj?=
+ =?us-ascii?Q?5uAaKmmnyz6yB0vMWFChnFbJOnYiGee2j9RMfbROMxaV4j36iYfzS2UOXPKb?=
+ =?us-ascii?Q?fy9tWUGcjYVr0e5j1Fm3CCvE9qa/JRUkzAC0DB7ObwcWSElv5BflZE51uaVL?=
+ =?us-ascii?Q?CqIFm8bXShhQC+DX7koPWCJzjWbLu8CsO9TN01bN12PVV0vftpJEGaCphsvV?=
+ =?us-ascii?Q?Zp6UHQ6OdImqfYhNt9+LEhoMAeu8zOQ/IzvH195hWW0eK4nTL5XjsCkY3/Xj?=
+ =?us-ascii?Q?bspO0lS1linU9ldLpzK8XV5SPqfNgnl9y0u0UBRO53qQm9NYokLeJtf/sgpY?=
+ =?us-ascii?Q?pbvNr9pY9FtUmHK3lO/a9PztrvIfROwAoHZIyhtHvntQLxu+xTEEfl+Y6KmP?=
+ =?us-ascii?Q?6A/aQDdcv8b0WzmD5sMoPg4PaEJH3vNbmCC1+kQo1X4eXBBuC2qEbbiq4jIP?=
+ =?us-ascii?Q?nrRYQnJpQ+E6BBK7ETh8llsGewvVjikcwj6mmdwX8Gezh+9rD8rXyR53tsv9?=
+ =?us-ascii?Q?ACIGo1sXnmlSLWnoTQAK/HgzNKYhTFdxtZRUZj7qfSiCyVdsZtqQCPAZ4Vop?=
+ =?us-ascii?Q?QMsSJj2sgInAw/nnHCL3jPCsffYky0dLQwky5xhhnPXkhlHJU+XyVhKarH/2?=
+ =?us-ascii?Q?a9kBFf3dKwQ5PMEkvtU0c5UKns2nLjk81vVdzDxVYzk/8yOChlB+e2Kl8Is5?=
+ =?us-ascii?Q?UdF3BD+X5Jz04QMh7Ile7AO39EB+y8eB7/J0PjDvBFhM5TFcxJ2cduUNzNsu?=
+ =?us-ascii?Q?UyR+buMnxZ2AZr2dRiG1xjN7i6dMMS9XrZT+IWymu8emo60N+Y5BzNCej5iM?=
+ =?us-ascii?Q?06TYMb/1gPdDBdkPpLEq+Cd6aYE3874SOP7Ubci6FiSH3ssJELeeJA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NLMWE/Brz0FIKuVawX0lRw1P3Qj5aPPAc3+JSiGocJyTpHVfa0kKu36e3WJd?=
+ =?us-ascii?Q?4rDbNyDTASnKFAglpkkq8EiQP2SYoslxHNWwL+NnF5ZOZ/Iobn7KKL2Dp6Gn?=
+ =?us-ascii?Q?lBC4uOV6nnxtzp8z32N2r0/8aqkI9/Grfq4JvT95fcC8jw6ttbGMMW6kIaNQ?=
+ =?us-ascii?Q?1UhzWLknfgaN5EloSi5gnVMjeNxCkNd9aCdwW5v9mjBZplRlMZmGqH7ckYM4?=
+ =?us-ascii?Q?9YdakwoA1tMbv/lACs2JEtvvXrbkrKq3XJcM5oeof6PgJRQ9wHNJNJLXnu4Y?=
+ =?us-ascii?Q?YKZjR0t0Mt5eFrFIgyJWpQ9SvDiTpzGPTwdixfOG51HdOE1oH58+1d2wf+Fe?=
+ =?us-ascii?Q?/mJCk4D02uZQ89k7HcZxgjz2rj0m+S2yk39Nx2ZSaAznW23RcgQ1KJcwkPI9?=
+ =?us-ascii?Q?dZbF8cFYYhNvGJXL8wm/m1CgYZbTFewZIh1PZzyidFQs13BxDOkT+6lqEo7l?=
+ =?us-ascii?Q?r52tLtu2bQzf0BDqh9b609pztG4MdOE/sDmctpf05Ov/LVYnAerS5LoaNWMD?=
+ =?us-ascii?Q?NK5FepTvA5NSxzxV/pnoh7/MzGyUI9BTU6TGyF+DrwowHWQDdPEiAnvq0Ckt?=
+ =?us-ascii?Q?Lerlaj/xPM9lyBj5tHNE1VF8V7fYTyDMESzZtk74LDJgutoudDi9NK3IwIkV?=
+ =?us-ascii?Q?VPW+6yhsIGyYzg6E4aWr5iPxdH+MTfoPVkRjLevnu0pBbAHfVmVjOz/1+rZQ?=
+ =?us-ascii?Q?DAhl8RE4Qz2oge/M+HAdmygkYF0GcNfcapQDnrxrer3CSeT8/QVSS56MpfBZ?=
+ =?us-ascii?Q?W6o7I5AV3WkR3gLWxjyu7EAM+1QcXuW/VnICSaghl0t7csYxVeBRKtdmnvJM?=
+ =?us-ascii?Q?m+2Cz0Q5rC9ECVEXDeVU+U0C1lZQzGwMYJKaNeFnMDErrUM0iZRmXYyURBcE?=
+ =?us-ascii?Q?BDhyUi6GKpEtq5vcdC8nQrnWY9QISmGAGun/vdjQeG74GHim0uX/GQkZhpX2?=
+ =?us-ascii?Q?A6i07hF9PVLIhhHxZcSFkeZW6DjNAvUs4FrnQaob4PnuCS1HWmWNwjzUjgbw?=
+ =?us-ascii?Q?gbbcCevbT65gZXNTi4bm7cr+Efl33fr24Iewa/V1RvWHItmcApD8XrMrVogE?=
+ =?us-ascii?Q?7FoipWUkYwMtnTDq6bV7yygNivHg4Nkdbeu1Eq1xp1TkKdfkdob1RluCmGGZ?=
+ =?us-ascii?Q?flS7td46xHVGUsQje0/TBV32EOezejXuxCfytsyNePA9gEIPLpfuEebxKm9O?=
+ =?us-ascii?Q?/gHkxE6R0BrHDlAQcxu+PR4ApendM4b5IdDJqQZ5Qa8OzxmNV94upS1nSHuR?=
+ =?us-ascii?Q?MLPVqmrlR540RujOonp1d1T1ai5400ot7CrLFZF8ct1/uHzi5E5fNwH275ap?=
+ =?us-ascii?Q?NmZgTO/YIEJGDjf5ldqPxKwtXZa7T+WmbE98V43oOlqDH+t7zjeCD6BUJKNM?=
+ =?us-ascii?Q?3DsGGGMBlJ2QH5cDSKos9VQ0O00t9qrBgjztmb+g84RUFiSOlgpj/hWk9P/L?=
+ =?us-ascii?Q?gqaamrVeJN3beOcuHpZ45zhOLziCDHNZ8nihv0YaLgNlGBInjnDvALP81oGU?=
+ =?us-ascii?Q?aBnmzxMPQQ2AHuM1gHulWUytNQlApaWYA/jZfEwP8i7IxXmsd1cTigHAgUYx?=
+ =?us-ascii?Q?7rgShkqVheqmgfWK2bfoSD905DgAuxquvbURVVer?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57afa243-22ea-4317-6ef8-08ddd5ba2997
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:56:09.6952
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d2xNsaIDwnGpymmHEW8wbMkHVYuddtRFpg6jLE8EyatedBHKHW6HmY+cMqlm2UUI8Dxk5HLed9sb5ENp1bugiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6614
 
-Ever since uevent support was added for AER and EEH with commit
-856e1eb9bdd4 ("PCI/AER: Add uevents in AER and EEH error/resume"), it
-reported PCI_ERS_RESULT_NONE as uevent when recovery begins.
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+made GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-Commit 7b42d97e99d3 ("PCI/ERR: Always report current recovery status for
-udev") subsequently amended AER to report the actual return value of
-error_detected().
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+up these redundant flags across subsystems.
 
-Make the same change to EEH to align it with AER and s390.
+No functional changes.
 
-Suggested-by: Lukas Wunner <lukas@wunner.de>
-Link: https://lore.kernel.org/linux-pci/aIp6LiKJor9KLVpv@wunner.de/
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
- arch/powerpc/kernel/eeh_driver.c | 2 +-
+ drivers/block/loop.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/eeh_driver.c b/arch/powerpc/kernel/eeh_driver.c
-index 7efe04c68f0fe3fb1c3c13d97d58e79e47cf103b..20ed9685da8b7e6d419a4b02f715b52acfe715d3 100644
---- a/arch/powerpc/kernel/eeh_driver.c
-+++ b/arch/powerpc/kernel/eeh_driver.c
-@@ -334,7 +334,7 @@ static enum pci_ers_result eeh_report_error(struct eeh_dev *edev,
- 	rc = driver->err_handler->error_detected(pdev, pci_channel_io_frozen);
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 1b6ee91f8eb9..8c90b43b348b 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -812,7 +812,7 @@ static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
+ 	if (worker)
+ 		goto queue_work;
  
- 	edev->in_error = true;
--	pci_uevent_ers(pdev, PCI_ERS_RESULT_NONE);
-+	pci_uevent_ers(pdev, rc);
- 	return rc;
- }
- 
-
+-	worker = kzalloc(sizeof(struct loop_worker), GFP_NOWAIT | __GFP_NOWARN);
++	worker = kzalloc(sizeof(struct loop_worker), GFP_NOWAIT);
+ 	/*
+ 	 * In the event we cannot allocate a worker, just queue on the
+ 	 * rootcg worker and issue the I/O as the rootcg
 -- 
-2.48.1
+2.34.1
 
 
