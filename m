@@ -1,153 +1,106 @@
-Return-Path: <linux-kernel+bounces-759527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EC8B1DEAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7609CB1DEB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACEF581913
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02C7581A76
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F21244684;
-	Thu,  7 Aug 2025 21:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3974257AC6;
+	Thu,  7 Aug 2025 21:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYz+tPmN"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZIB3MLzX"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F5C9478;
-	Thu,  7 Aug 2025 21:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E088B242D88;
+	Thu,  7 Aug 2025 21:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754601415; cv=none; b=PYPupb6nommkYV0C3becF9ahAlcR5P/FSRWwCBohHQG5iDzlrApsTosPgreco9bTMsIOJn4bzPaliZLTcCu9G173Jb+L632vpOMCJj+FNc3/inOYshtRKuYE6WmfqxuiRsvqXNgriWT9UTrg4ZcTpi2JhYQfOPvdWdg75/icFrs=
+	t=1754601417; cv=none; b=b6ywwrxrzfUmykHk/vqLC7pzYmzfDR8uXkUzezfuh8pz5Y3c2c+72FCQ6dY2RqYADZ8soYb/X1j3kgkONwQgBAaHb67IzAfii3SCa38WcPGiDRXAQBpbrH8fdd450EWVl6HHDem8uT57yA3d64x3DgxwaaFzS3IHMiWA+M+KUzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754601415; c=relaxed/simple;
-	bh=9eUhhK5dfV8YL1qqjnFaB8UyCfsTlH1y3uerlBWSZeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U6RfQRer/hHrJE7/0d8ecABCtooetDbQdCDUF7Om2WaUx0Ibk0IT3zlts+Ki4bT3c2df4oFDnbh1WtGhMlu26Arna3HPjykAC4LMIz4YC3A1biV16y+ycph3WhzwIrrHY4vQhlV8Ewv0VMG1OmCK3nnTUkTBZ1IkHzd7jpdnAs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYz+tPmN; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af937728c3eso426197266b.0;
-        Thu, 07 Aug 2025 14:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754601412; x=1755206212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YW5VKuizdz3uQCAD3P3uaQbe86Sv96LJNl4VjT7BKPw=;
-        b=HYz+tPmNnTNWjbC25e5lgggvlbEIPbUPX4+NSb/dVTwGnS5KOBlHV+BhQ/4j8D+92s
-         CCjUuMthwnbsB22IqudR/Ynd4BDELr0zgiZVuSj64lxXtzw0YZ2igasjEylHKqWG0p4V
-         SgKkTBAn/J87FNzOlSbYgTmWrgp5khBuwKEWyVGJ22RIDuZgKdb8uNz2xd14OzogOM4K
-         06PClJATN0Sj0XDdLvvEjkHHocqjZ8KQgRcHdUfJ+JoYDmA6MsbEenODPDU/dA7QWk5g
-         iVyb54/yBYMEQ5LIt+kaTM/7y22+MoCFHtGOQ4gbFCoSJKfZ73EOfHXon9DO5Rq3bMm/
-         Q1Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754601412; x=1755206212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YW5VKuizdz3uQCAD3P3uaQbe86Sv96LJNl4VjT7BKPw=;
-        b=jTm0+bUYn8pB4Cvwracq6vESvmkD1zIVCUZrv8EfZHngywmejPRFJHESagN5fXPm2T
-         dHk9D2zGlU1YqaTJoWsZZSGmn23K9zNgx76EP7iyoaTLMH3S6MPrJ1l0Gkf5lua4u7Wp
-         iqKb+AorSdXcyJ0izGCDZQcu3Os6OTLGBh/FA0krGgW60AdxKoCcY9fn3fYbWUG3mu1+
-         9yHnMqEsL9JLQCwHuSklaUGeue4V4YBR8s2EI9+z6CHwivgL9vOvIJFleVlg2lbv6K4Q
-         pFz7HWULXWkq3gVzrczOJzz2aKOsFw7tWHgMFh+I/p0q0deDV8LAaDUQMrSlUH3bYCcw
-         TPBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsyJgCGl96XmFgRsN85hCN0z2/n2ZCwjbnKzfiTa73sKcr9Gf17NEOBPhbcZ6woZJ3hII+unKKTIVy@vger.kernel.org, AJvYcCVcUnSxWv36xyJw22s85TPYoV+7lKey6Xg/7/n3PN37RYhuWFwLnvrcoSZq8AE5t/pn/8Xyjw/bMa+8@vger.kernel.org, AJvYcCWJgtXN8IIH7bQvNbhKw1Pdo7cIApRg8aQP//T4h6idwT5ixQ7bM878twiAnDpEvbEUDEDMs1UKEsKQSA0T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrU83azi89ogkZUXWwyUWAH8D6emn4GWtEHmN9Y3LnXR+6FyHh
-	xUERGrT65wmRPDeXcCyBY9R3M1e/isIXD0Lf/OQz3tV5AYntneO/xaw2svma0iaR5UMD1Fagmc8
-	XBkD2hMghgSX2plOMMfxPz67YJdG6Y60=
-X-Gm-Gg: ASbGncs2KhQkBPwJiW+E01nBjiTNqTdtwITc7q9DoVwSi9RSeDwzS5U5LWWSnHE0dkA
-	p8SH6H73haf4diVbgv+j95EHrmstafWL41mencn/22UeNV6nw+8YM8hpnrMCjLMKbT5a0r5k2Xm
-	GCn8OQp4jk066MqP1lMfXq3Pa2lKKCf3Srjjxs8IENcW7NaQdM2RQ6DcvxLSrRh6eN+1C1S7rPE
-	fxH9g7EVRtg0raXOB5Q8sKnuFtIgK0SRCGCOyc/QA==
-X-Google-Smtp-Source: AGHT+IF5mbNBW94ntEyvRzUawU+yBnKWoEcM/OnUqQN7n9Ea/8VYGKZD45os8JeDIaa6K+ZOhjnNz0shSTGeBPPSwns=
-X-Received: by 2002:a17:907:7e9d:b0:af8:fded:6bad with SMTP id
- a640c23a62f3a-af9a3e3e611mr529635666b.18.1754601411885; Thu, 07 Aug 2025
- 14:16:51 -0700 (PDT)
+	s=arc-20240116; t=1754601417; c=relaxed/simple;
+	bh=PwkNYzG3U+cEE2mqijReEHcHctUbOk4Qt/P6iEiOhLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nbe5ZYPDjrg5dyjQgkgy27diZZob1F5J975P6FNc7WAaf5mKGqPQt533d3/JaZkS9qhqxUfu3FNjc4dJP40ViAcE3lCaIYbvsnLd188e//HlhbXJ8jYcyUkuvXzveOvXKUY9KrGJV8d4W7bTOKh0pbYpCKzCzle0mUpSofZ2jkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZIB3MLzX; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1C37C40AD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1754601409; bh=/f0yra3jKRUuZY1CcQozi7KbJsG/mkrO/HorAL/LPY4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZIB3MLzXk4xrYqub8wGLovKbGRG36nVXN00Ms675vVFTpPZEWOZQ27JBg+a5DlVPv
+	 O4fsggZB9CK96TGZEnAgQmHU/T7dSxypP/XqIAF66B2mQP4C1uppWCwaoKOX/uZfJr
+	 8wwWRe6omsubnaBnH58wF1cToreY3xITnbewGsmxQ49vMm92Qz1Effp/wj/fLsFw+K
+	 MR5dtnK8L+sAaevl5xw+s4nNnkdrk65xPdPjpjuoKVtZ4/m1XvFOOZHdKKhDpu+BlX
+	 W0fUuxbBDJW/xZBW8hCqz/1o0e1E+n3bArIlS8e0WtLJiDpvqzsO50QwMwE6SYxcp9
+	 83dwxeT2LCgYw==
+Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
+	by ms.lwn.net (Postfix) with ESMTPA id 1C37C40AD1;
+	Thu,  7 Aug 2025 21:16:49 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 00/12] docs: kdoc: thrash up dump_struct()
+Date: Thu,  7 Aug 2025 15:16:27 -0600
+Message-ID: <20250807211639.47286-1-corbet@lwn.net>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754559149.git.mazziesaccount@gmail.com> <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
-In-Reply-To: <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 7 Aug 2025 23:16:15 +0200
-X-Gm-Features: Ac12FXykDcbCUdUI9iHmPN3WsJWpiJjJXg5mSCfo0Pc5LWH32gtNwUrRRah3vi4
-Message-ID: <CAHp75VcHR78Uwgo74n-i3a1sSfDxBwVKWihcnFp5x3d=puAySQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 7, 2025 at 11:35=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
->
-> The ad7476 driver defines separate chan_spec structures for operation
-> with and without convstart GPIO. At quick glance this may seem as if the
-> driver did provide more than 1 data-channel to users - one for the
-> regular data, other for the data obtained with the convstart GPIO.
->
-> The only difference between the 'convstart' and 'non convstart'
-> -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
-> channel's flags.
->
-> We can drop the convstart channel spec, and related convstart macro, by
-> allocating a mutable per driver instance channel spec an adding the flag
+In my ongoing effort to truly understand our new kernel-doc, I continue to
+make changes to improve the code, and to try to make the understanding task
+easier for the next person.  These patches focus on dump_struct() in
+particular, which starts out at nearly 300 lines long - to much to fit into
+my little brain anyway.  Hopefully the result is easier to manage.
 
-and adding
+There are no changes in the rendered docs.
 
-> in probe if needed. This will simplify the driver with the cost of added
-> memory consumption.
->
-> Assuming there aren't systems with very many ADCs and very few
-> resources, this tradeoff seems worth making.
->
-> Simplify the driver by dropping the 'convstart' channel spec and
-> allocating the chan spec for each driver instance.
+Changes in v2:
 
-channel
+ - Reduce the regex backslash removal to keep them in place for
+   {}()[] even when not required.
 
-(you already used 'channel spec' above, be consistent)
+ - Restore some of the single-use variables set from regex matches
 
-...
+Mauro, I have applied your Reviewed-by to everything except patch 10,
+hopefully it is more to your liking now.
 
-> -       int ret;
-> +       int ret, i;
+[Helpful hint for the future: if you are going to make a bunch of
+subtle changes to regexes used throughout a patch series, do it at
+the end...you'll go through far less rebasing pain that way when you
+have to change them... :) ]
 
-Why? Is 'i' going to be used to hold a signed value?
+Jonathan Corbet (12):
+  docs: kdoc: consolidate the stripping of private struct/union members
+  docs: kdoc: Move a regex line in dump_struct()
+  docs: kdoc: backslashectomy in kdoc_parser
+  docs: kdoc: move the prefix transforms out of dump_struct()
+  docs: kdoc: split top-level prototype parsing out of dump_struct()
+  docs: kdoc: split struct-member rewriting out of dump_struct()
+  docs: kdoc: rework the rewrite_struct_members() main loop
+  docs: kdoc: remove an extraneous strip() call
+  docs: kdoc: Some rewrite_struct_members() commenting
+  docs: kdoc: further rewrite_struct_members() cleanup
+  docs: kdoc: extract output formatting from dump_struct()
+  docs: kdoc: a few final dump_struct() touches
 
-...
+ scripts/lib/kdoc/kdoc_parser.py | 497 +++++++++++++++++---------------
+ 1 file changed, 258 insertions(+), 239 deletions(-)
 
-> +       /*
-> +        * This will never realize. Unless someone changes the channel sp=
-ecs
+-- 
+2.50.1
 
-realize --> happen
-
-> +        * in this driver. And if someone does, without changing the loop
-> +        * below, then we'd better immediately produce a big fat error, b=
-efore
-> +        * the change proceeds from that developer's table.
-> +        */
-> +       BUILD_BUG_ON(ARRAY_SIZE(st->channel) !=3D ARRAY_SIZE(chip_info->c=
-hannel));
-
-We have static_assert(). Why can't it be used?
-
---=20
-With Best Regards,
-Andy Shevchenko
 
