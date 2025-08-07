@@ -1,156 +1,235 @@
-Return-Path: <linux-kernel+bounces-759120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F1BB1D8BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1719DB1D8C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96D13AD1E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EEE1AA4408
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAA9136E;
-	Thu,  7 Aug 2025 13:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2C723F40C;
+	Thu,  7 Aug 2025 13:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qk9PlVhN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="EibNamFn";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="qkTAnFmG"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8E425BF1B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572514; cv=none; b=DphuxX84TcdsUJrh5k/77q1c4Da8I+dP+tOW6OXBviEhCjZvHY96YPjNdzK9L1QVViB0zodc1yIqBFuygym6dV0E0Ks24eHsMkIUEgnp9dc43fa0zuPSWoB9Jnnu1LGjNFanznQUa/JNf6PSqeieKpKyYxLifq5NFdhO0frbQZY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572514; c=relaxed/simple;
-	bh=vkgsdxbnV+jO/2KYWJGzI77qW+k8hy9tEjiVY7fTWfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AS1L/x3AzMdPuVvvOkpg6SdRRixLvahSZw2CAwqw0pIoWyU9Fdycm4YkP5c67zEtOzUdQ8tGTRilm2sRo68F+CAHFJEHK5pK4mtjEgb0HMhL2wLgTjHAqa3ZltZkPRTSQ/0G9XvEy0jenLqsev0W3WMjWTpXiXRwQWM3YRKh5Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qk9PlVhN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754572511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bsCl+fG5s7XEuq47rWMb299hn6Md+wm0F7CH1smdlp4=;
-	b=Qk9PlVhNkD8m8U/Eo2xCGtC9IEVqIcI26vi7OCNbIXrZjqAFdH4dt9gvwMLKpFr39IgwDm
-	tQ5FMMuwldJbMW/nglFaIKB2uiOZ9dTEMSHcq2qzX2+r1fnHjVqSn9PlxDi3mDUQbwhyn6
-	ILX24sAN7WJlJJyfqN5LCnmb80awJMw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-312-UvXr1tDcOiyRD7r4qqs5IQ-1; Thu, 07 Aug 2025 09:15:10 -0400
-X-MC-Unique: UvXr1tDcOiyRD7r4qqs5IQ-1
-X-Mimecast-MFC-AGG-ID: UvXr1tDcOiyRD7r4qqs5IQ_1754572509
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458c0c8d169so4853015e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:15:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754572509; x=1755177309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsCl+fG5s7XEuq47rWMb299hn6Md+wm0F7CH1smdlp4=;
-        b=UkaG/8MvwgQ99xW3xWK4Y5ryPjFnuOGitNhes8p7E+NSM1fY4I/H+R6P0L2PPRSOhg
-         luY3N3hgBLETeI69NMjz6HmDvMtvORozQfej6Cb/bon2UFW7cKKzvzrSEyLtKdMKIY7r
-         C66HsMOAXT7u5nhbi9KaGFYMsiZ/lMmiTVt3AMACTuoXaPGhxHWEdSsitcLqbMOpXLAr
-         PHfI2Tq4v1EEILuDn3yVeAO7MPW+tP2DEgjWL2xHgS0JiwB9dp7nL4qlhreUhFWFpui5
-         0lKKijjZkhfu3OSwq9mCGYqxJ6NePTys/HsMAz5wXe+xWyF5DKcAH3iisUgkX0WkLrYW
-         5cAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpg/4PUrRjay4cXWoJX1LC0fDTdx/bkkuKnf1pJd2Btie8Pr62EbjnPk3lKkh4p2YdKkcodOii1g3owdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI0UFurSF5G90ye+ZzYrJxVYFHxbcruGYlcysC/5DO2KFtc59L
-	sQRSuhimdNh6ZlguuRaO5FKnZgdnES1uvJDjzJlrwHYe76pxdbIq3osKSRgUCa1Nf8to4WwZGNB
-	BXhvu8Q5G4MVCk3gsY2muylLirLrAc4idBRuLIupV4eFP0gLTNuc9RNEbrDYqir1iaw==
-X-Gm-Gg: ASbGncsmarI9PijZ71yZXLK1MLvXLrp4ahgbn4Rjla1ahE/SfjchFJb28QmlehMLsHc
-	JaJsLkycDpQLsefNVky0i856DfGoc3RzEcnSfkoThH15een3d9C/q8bomI9y1CnbwXyUx79POgO
-	YQnFrWOEhKfoJ++BAiehgj3gq76DyG6ph41CjF2BMr/rgiHpZQBfFZQ09bWXnoc9LgqOV8llZo6
-	b1G/DdJO74x6rDwcB9uAGPoKlj+T3QWTI7RpdtlJcERumHM5VJNs9O8Qk9YPVdEcmXZcrfxoc+t
-	Acdn8AvdB1msX/v/hkqUSFZtv4BvV8I8ijWviPAGjS4laMUW1EqeFVtQkIwA1HqCr8PGVTbffBw
-	yAqCjYjip98kZuQGYqRW0ldc=
-X-Received: by 2002:a05:600c:35d4:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-459e7440902mr54691985e9.6.1754572508991;
-        Thu, 07 Aug 2025 06:15:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES0zbDgiFtIMLurP4jaGdX+lg+7QeTWhWmoc1YE1i42QiR0yB42DLVlO7szOf+gfWylt/oDQ==
-X-Received: by 2002:a05:600c:35d4:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-459e7440902mr54691615e9.6.1754572508454;
-        Thu, 07 Aug 2025 06:15:08 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-2-102-14-151.as13285.net. [2.102.14.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459de91ea4csm147149985e9.10.2025.08.07.06.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:15:07 -0700 (PDT)
-Date: Thu, 7 Aug 2025 14:15:06 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH 1/3] cgroup/cpuset: Use static_branch_enable_cpuslocked()
- on cpusets_insane_config_key
-Message-ID: <aJSm2sG1G_mk_1P-@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250806172430.1155133-1-longman@redhat.com>
- <20250806172430.1155133-2-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB67013FD86;
+	Thu,  7 Aug 2025 13:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754572574; cv=fail; b=OQdPYBWhyJOTUclkWOX82chuTw33phVH7Q4xzmtSx1ExniANFb49f6jtzj0vi8phvMaw6tCI1aLL4Fv7fTMH74uHh4oB2vXZbOU8KaRxCHix2WJHwz/JsPIxRLxviMvpvk9YuKww/I+zChvgNS6c7CNMq01BbgIc487Z/ghhDq4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754572574; c=relaxed/simple;
+	bh=d8ygnZ16KZ4Xu9/Bp7s9SpAX2im5CnKvtMnFHT40bs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QTH2U5tkrbrsSD/+vD4qO8/F27EjtJRC/tvwLgH0zmvZ8ofcV6n51H4wIB89J456W8WJstTNMyRaqOob6fXHh5nW7eAc/paoLhiSK6uIGaXhtsAYkkF4GmVXiBSVXgNilRPFOW4tYJYTx4VndYkQ4R0T2a6/EKHF/6h8d0VJDys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=EibNamFn; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=qkTAnFmG; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577AoWPI024694;
+	Thu, 7 Aug 2025 08:15:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=; b=
+	EibNamFnjCIzy4E0Q2M05kQ97zVp+TyVSlgoskL7VuHgoamamB5ab5Jd0X0Z7nnN
+	dKVjrC+KRoTh94rlmqz6K4atEBP+JnFgbTW/hWuZvTEUI3w9s9r3f51QcwmIC4ZQ
+	MHdBmEubRAIuhDotzRW2BY4zOltjfARlFZpnUcns2vEqhkTRU3Ilsdg98Q/5ZOXN
+	WlAyZ9mCn3G3iVFJ1GevZRJ3MwqJF6xY1171edP+RBsSXm8QqFiU4vfPnx9htXKP
+	8EetAAEUS6x66iI/f6NaUeA+2hqSWqy4UUJ7vftYlFG2PDNz5iNlOBssFQufSbeq
+	qNl85BejhKqiAsNy0dezWg==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2124.outbound.protection.outlook.com [40.107.237.124])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 48c3m52eja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 08:15:47 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z92P6YMFm52GGYrSKW353xHH60Ps+J5fPL1NrbScT4t09ZfZ1Mh4bFrA0Y3aHKDxN5S0PoUAICWj+Bln+79nJR8l/j0hLUdE5VwpNKVQawuaizR0MJ5A5/jwwIvCXifR5WxrQAJtK5xAknrWcrlnJtOCX2Yk2kxBhhovoHhcRR9m7zkLFDdcYyDHJmwjCO9AbzQBOcH87jpopoJoswGOVvqJKAVJGNMy3z8CGcqit7A+qxODayGXvGj8ZRv1c5k5XQWd/biGw3M0DI9ChqujdnOPOndYGX4T69Kz02LtINbtUDGqbdXiXoDaPPMWdFopeaAPddalfXzad6aPT1wskg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=;
+ b=I4fdKoYF86w6FXGeBhluUWF0kXRuFFGtSiZaP2FJqox/AANoCpjzKWLzebkOULo2hl5//QKfeTdArKGY0UdayJt3gIx0YoVME1OLnRr5M79shtwQWtDEx1pmg18enNr/QyDYiTQBnLR+bzJuVhftAvG8ClQAXhd9H+0+FNyOhJRNRjbdRsm2j3tO/XUkkIHmAhBbCgwsZ6DlEtrY3YuDXu8BoFd6Ro9MKqKp83qWdDpTg56LFPcKG8cofnX5UJZrjjw/uR2Xrmc9jhCw4dBKav26lrb4iHvDdPH9iAV62CHCqUgcDR8T5tNWjuSYD8MjVqQuwroXDA9Rzb0MkVCLPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=arndb.de smtp.mailfrom=opensource.cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=;
+ b=qkTAnFmGVf0/W6/oeEIfJx6f8+3l2+2ROkf64TumhNXz9RYzRdC/Zb/B05BCrNEomaQdDyuJdlXmcZs/3cZrgaIY/+z1Y1YN+MrzUOF6OJ9RwNevN+T0Asd4ktFKyU1BFLckIGHD8K4mYhbI9LWCIhFpyjelqUILtKRfvpF1P/c=
+Received: from SA1PR03CA0018.namprd03.prod.outlook.com (2603:10b6:806:2d3::29)
+ by CY5PR19MB6339.namprd19.prod.outlook.com (2603:10b6:930:21::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 7 Aug
+ 2025 13:15:45 +0000
+Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
+ (2603:10b6:806:2d3:cafe::d8) by SA1PR03CA0018.outlook.office365.com
+ (2603:10b6:806:2d3::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Thu,
+ 7 Aug 2025 13:15:44 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
+ via Frontend Transport; Thu, 7 Aug 2025 13:15:44 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 1E4CB406540;
+	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
+Received: from [198.90.208.24] (ediswws06.ad.cirrus.com [198.90.208.24])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 02873820249;
+	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
+Message-ID: <1e7d772f-f4db-4202-a9c5-6792b37c3d26@opensource.cirrus.com>
+Date: Thu, 7 Aug 2025 14:15:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806172430.1155133-2-longman@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: madera: work around false-positive -Wininitialized
+ warning
+To: Arnd Bergmann <arnd@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linux-sound@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+References: <20250807071932.4085458-1-arnd@kernel.org>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <20250807071932.4085458-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|CY5PR19MB6339:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a119742-2bc7-41a9-9d11-08ddd5b48439
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|61400799027|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZitITHhaUkhDd3Juc0FSeDc0VjR2a1ZsOFB3R05jYjhYMVlXbE1vdmRmU3Vz?=
+ =?utf-8?B?WDVCT0owMVB3K3BGRmdWcjJMd3pVVTVsR3ZrYUsweW1FZDUrNXVtMitaRHlU?=
+ =?utf-8?B?TFh1a2NlMW1DMVJNVHhUeXp3Y2p3K1AyRHBqdElWSkhSR1EyQ0ZxRnRxcUFa?=
+ =?utf-8?B?YmFqZWU0UWFobjNTOTBkekU3N2EwdHFTQzRnMkk5VVQwR2t6NHo0SzN4WEVx?=
+ =?utf-8?B?bVZCZWJlUElBWmJLVCtHL1g1bkhPdlNTcHMxbEZ1bkF3ZEtURWJoZHk1ZU0y?=
+ =?utf-8?B?NUUrQzcrRFU1aE9mdDIxR0t1d05sMi9NL09uODZoa2xJM0tUREloNHZLZnds?=
+ =?utf-8?B?cUFHNFFUUFBtVzdqOWlZMEkxSjAzQW1OeUxLOFd0N2o2emtKSHcxL0JCU2tv?=
+ =?utf-8?B?RzNVSzhkRWJPU29FRmJGallwT1hNeGxUZXlYa21BRUNRQWVXS1FqU2JDZnhG?=
+ =?utf-8?B?MUhMNnRMU1pZRHJkZllvaENJRUpTUFFoM1ZDOU1ySmZLNUZHUzcwUmtRV2Yv?=
+ =?utf-8?B?TFJteWpGTnQ0eDJ5Nk1oNzNuN2ttZHp4aUQ3R214ZENCTTJMZ01hLzYrbXc5?=
+ =?utf-8?B?WmhrTlpzVjhOUjRrWVIxZ0YyR3RIQzExS09lMlY1OGhMb3IwcGlKU0lDazR3?=
+ =?utf-8?B?azNuMGJlZkZuV3NlNTZVY1J1ZHZOL0tGWmZmOEFVRmI3RGJWY0N6bXZzdStZ?=
+ =?utf-8?B?bXhxak9vOWdtMCtUN1FxdCtqK1FUL1U3V0xVNGpSYjBHajNHOEtyeUNydCs2?=
+ =?utf-8?B?MmVuS2c3L2toVWw5OS9sblBqTzBDQnFTU3h0SURzUHVZVUlkN3JicElrUkRx?=
+ =?utf-8?B?dUFJR0tMU2VjMklXQWNjblNuN2dKaFhDL25jbkJ3eStNNTB0b3RJbUh2L0dM?=
+ =?utf-8?B?bEZaWkpsYkw2WVAybVc5VTJvYVV4cWo2TjIrNStpUDJaZ3NUK0draXEySXFU?=
+ =?utf-8?B?WmdwY2Z1VlVVaXUrcjVmNXJzZ2VNYTRrQVdydXBpUUNwQm54Q3J1dTdzTHBV?=
+ =?utf-8?B?UTcyNlNKWDEyQnF2RGVwWm15VkxaTUFqVmo5SU5NdFNUcXFKaUszeUJMWnpt?=
+ =?utf-8?B?WXQ5b1RXbVFuR2xjcUluL21NdGVvQ3RMRnVZUmVCRk1VMXNtUCtBSFhWeUJx?=
+ =?utf-8?B?QWZ3bDFtM0lYVGVEOVkvY3pRTkF6aXRYejQ1cXFaRDZDNHFlL0hLS0tZdnp6?=
+ =?utf-8?B?OHU0Mkt6NzZXL2dUUmZYWEx6UzRzL0FRazVITDVUYkZJdnJXWTZEbndMWkRC?=
+ =?utf-8?B?RDNEblZET3NmVFY2SFJzdHFmVXhmaVorZ0RzcEJqOXBQaFBKbk5HV2hkYVNw?=
+ =?utf-8?B?Z2QveEM5SENYRUhJcTYrWHIzTm11M1lVSmpseHVUNU5sampzL0pabXpxMDZo?=
+ =?utf-8?B?L0x6SjRYOERIcjlGVzcwamJjMFUxRit0djU0L1dwTW14ZVZVbG04ZWZCVllE?=
+ =?utf-8?B?enpRUm9IcC9LQ1h6Z3QrWG03U0tVRHpxTmY1eVJYZmEvUThMRmFUTkxNc05E?=
+ =?utf-8?B?d2k4Q2lwbE83a3Z3MVJmT0RVV0JWK2dPcUNxOE9TL2JUL3pQa2VYbmRxRm5u?=
+ =?utf-8?B?TE11dW1WU1RmOGZpVGY2MTNXdjJYd2V3dklpOFpJREhxWCtPQWdTcFRxTDN6?=
+ =?utf-8?B?c3dMUE4rdUI0UVoyNUdPN2tBeS9ibGF2cWRwc3RuNUdNbDRWbXNRVG5qMm5m?=
+ =?utf-8?B?UGxnc3RBaXdxYnBPanMxeXYwZnBuaFliQU1lbDlhVmc4Q0U3WTc4WFFnblBv?=
+ =?utf-8?B?TTBMaUEyZUhuSHA5OWdGbmREZHk3U1ZiQmFySlM0dXJsbFJvUFZJcGRqQmFU?=
+ =?utf-8?B?KzF0Z2NMcVlJcFBMYkxFT3NYdHU2QmZRNytqZVRSMTBUMmhpMG90OVY1a28r?=
+ =?utf-8?B?bnNhTVE2b09FM1ZlSXNsSnlFZERYWDdOby9MVGRSY1MrNXhyUFVQUld0VDA4?=
+ =?utf-8?B?L2xMMElDZmpYRFU1Wlc1bUJxdUNNeEpidWoxa1NWdEYyUm5Ga3hPS1J5cUlB?=
+ =?utf-8?B?OFVMdkx3b3hJSlpQb2dmK3ArbThRMVJHaWdJQVBIcWZoWmx5aERsUithZHgv?=
+ =?utf-8?Q?fP2gU4?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(61400799027)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:15:44.2830
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a119742-2bc7-41a9-9d11-08ddd5b48439
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF0000150B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR19MB6339
+X-Proofpoint-GUID: n8q7axAr2KM6hiCVbNGIgnuTD-taG-cD
+X-Authority-Analysis: v=2.4 cv=W/A4VQWk c=1 sm=1 tr=0 ts=6894a703 cx=c_pps a=Bx4JecnaPChsX23rVfvkjQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=voSFIoK9SR7PB3qk9MUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: n8q7axAr2KM6hiCVbNGIgnuTD-taG-cD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA1MCBTYWx0ZWRfX+3PLYaqQo6NE XNdxTkjqiM5hgvfwxFaBq+wLbDaNTvtZ3kROCp/8S1dAhFT+uWVx2ugXA/JSBMEdwrUqcXpubEo IQ3eGvbSOOJKS8rjpSdSeeX4TFM5qnyjMD6EdUWiDz/DMwDOUUB8ihZkjt3kljBNhf1n5XeZKx3
+ 2ZhaI0L8OV332+W5dNJiPLvjur8UaY9dVa4mIhFFJYGLNoNh/SHmVD+2B9YlTR7gcEDF3uD2nzj BXM183C5MbMa/XRhZgpu7CIcCwU//WSTlEKrx8iFZFZZhLcdSRtj6bX2NeBE2ZZNZq2+dodfXtf srPf55ZIlLCZ9M4BDhdIiYnxdAo5ezY9dO6KE4C9E29wZeoefRnJfGyUh03sH4ME08cpYW8d9zn 9jUJAsga
+X-Proofpoint-Spam-Reason: safe
 
-Hi,
-
-On 06/08/25 13:24, Waiman Long wrote:
-> The following lockdep splat was observed.
+On 07/08/2025 8:19 am, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> [  812.359086] ============================================
-> [  812.359089] WARNING: possible recursive locking detected
-> [  812.359097] --------------------------------------------
-> [  812.359100] runtest.sh/30042 is trying to acquire lock:
-> [  812.359105] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0xe/0x20
-> [  812.359131]
-> [  812.359131] but task is already holding lock:
-> [  812.359134] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: cpuset_write_resmask+0x98/0xa70
->      :
-> [  812.359267] Call Trace:
-> [  812.359272]  <TASK>
-> [  812.359367]  cpus_read_lock+0x3c/0xe0
-> [  812.359382]  static_key_enable+0xe/0x20
-> [  812.359389]  check_insane_mems_config.part.0+0x11/0x30
-> [  812.359398]  cpuset_write_resmask+0x9f2/0xa70
-> [  812.359411]  cgroup_file_write+0x1c7/0x660
-> [  812.359467]  kernfs_fop_write_iter+0x358/0x530
-> [  812.359479]  vfs_write+0xabe/0x1250
-> [  812.359529]  ksys_write+0xf9/0x1d0
-> [  812.359558]  do_syscall_64+0x5f/0xe0
+> clang-21 warns about one uninitialized variable getting dereferenced
+> in madera_dev_init:
 > 
-> Since commit d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem
-> and hotplug lock order"), the ordering of cpu hotplug lock
-> and cpuset_mutex had been reversed. That patch correctly
-> used the cpuslocked version of the static branch API to enable
-> cpusets_pre_enable_key and cpusets_enabled_key, but it didn't do the
-> same for cpusets_insane_config_key.
+> drivers/mfd/madera-core.c:739:10: error: variable 'mfd_devs' is uninitialized when used here [-Werror,-Wuninitialized]
+>    739 |                               mfd_devs, n_devs,
+>        |                               ^~~~~~~~
+> drivers/mfd/madera-core.c:459:33: note: initialize the variable 'mfd_devs' to silence this warning
+>    459 |         const struct mfd_cell *mfd_devs;
+>        |                                        ^
+>        |                                         = NULL
 > 
-> The cpusets_insane_config_key can be enabled in the
-> check_insane_mems_config() which is called from update_nodemask()
-> or cpuset_hotplug_update_tasks() with both cpu hotplug lock and
-> cpuset_mutex held. Deadlock can happen with a pending hotplug event that
-> tries to acquire the cpu hotplug write lock which will block further
-> cpus_read_lock() attempt from check_insane_mems_config(). Fix that by
-> switching to use static_branch_enable_cpuslocked().
+> The code is actually correct here because n_devs is only nonzero
+> when mfd_devs is a valid pointer, but this is impossible for the
+> compiler to see reliably.
 > 
-> Fixes: d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem and hotplug lock order")
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Change the logic to check for the pointer as well, to make this easier
+> for the compiler to follow.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-
-Looks good to me. Thanks for spotting and fixing this.
-
-Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-
-Best,
-Juri
-
+>   drivers/mfd/madera-core.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+> index bdbd5bfc9714..2f74a8c644a3 100644
+> --- a/drivers/mfd/madera-core.c
+> +++ b/drivers/mfd/madera-core.c
+> @@ -456,7 +456,7 @@ int madera_dev_init(struct madera *madera)
+>   	struct device *dev = madera->dev;
+>   	unsigned int hwid;
+>   	int (*patch_fn)(struct madera *) = NULL;
+> -	const struct mfd_cell *mfd_devs;
+> +	const struct mfd_cell *mfd_devs = NULL;
+>   	int n_devs = 0;
+>   	int i, ret;
+>   
+> @@ -670,7 +670,7 @@ int madera_dev_init(struct madera *madera)
+>   		goto err_reset;
+>   	}
+>   
+> -	if (!n_devs) {
+> +	if (!n_devs || !mfd_devs) {
+>   		dev_err(madera->dev, "Device ID 0x%x not a %s\n", hwid,
+>   			madera->type_name);
+>   		ret = -ENODEV;
+Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
