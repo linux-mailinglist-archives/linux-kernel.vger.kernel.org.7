@@ -1,382 +1,240 @@
-Return-Path: <linux-kernel+bounces-759325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD42CB1DC1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34510B1DC0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307577E0D80
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:00:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14433AA8A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83F7272E7B;
-	Thu,  7 Aug 2025 17:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797D327281C;
+	Thu,  7 Aug 2025 17:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lYb8iJiJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VkYTb2HX"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFF9253F14;
-	Thu,  7 Aug 2025 17:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754586027; cv=none; b=HAPxyLf+qElgyvRyOTCcoHcOMFct1Ei/I8tIR5YFo+oA8bsxASG7YFedbfBEhKzjrFY1iXaz0Nvfa+wBT3msA1ntH3mrh6UCH6hqYyawI8F3MEx8xOHuKzdeeWErUnk3PBZgovt4MF8vm1hNSvQSPntM3nMTElLbwyMC85QMZlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754586027; c=relaxed/simple;
-	bh=Ph2972MwxH03K1MsHbi5oWwYyq69rIYm/xj5Cy1f0YY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKCNLwtKCCdGYS2D92qI5c+9tnVdBKxM/QfK2BsNt3c1XvDoVef1hCciW+SUXRjbl2ddV+Mx7XIrWID/rUgcLQZtlop+FeGCmybLhJ56rq6fQyWSrqM+srTpOzY1DEKUkMHAH27KtgkiWPhLD2xZdX71DaKXjZHoIft1xJJTjr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lYb8iJiJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9B15FC75;
-	Thu,  7 Aug 2025 18:59:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754585970;
-	bh=Ph2972MwxH03K1MsHbi5oWwYyq69rIYm/xj5Cy1f0YY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lYb8iJiJ7Myh7vVwacZIXcAuAod1VPnoKxIZz1o7mCi9f5L4WOFjPMUyrRA8RE4Zv
-	 OBQ0KO/CGHV0SoE4fhCjuDia+dXWsyxPlCHVqpcQ37bdCjuBDM2IcsFstzHhAuJfsf
-	 IRQPA/bJRvBN2/IGLlsyDBr29mX2H1BIdmaWGsok=
-Date: Thu, 7 Aug 2025 20:00:04 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
- v4l2_fh_del()
-Message-ID: <20250807170004.GG11583@pendragon.ideasonboard.com>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
- <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
- <20250807085003.GE11583@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA75427281D;
+	Thu,  7 Aug 2025 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754586012; cv=fail; b=ijp0ZUvsnmSViuQOdDMUJpQwUt14MMopWMhUb3kW5Ji149h+zcJ4BfBx549kuUM6FzEQcoyaMLBIbiIzdCcTGFU9c0bnuY/OY++6XmDlk9eomHKmxsHjbpwl9KHd8A/BeUI+7V7LWqRt5xphvs8TSkw7umjKsz63yKLW+6hPidY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754586012; c=relaxed/simple;
+	bh=rQA2aGpyUWONsC/whrOp2cHgU5M87+dSKk2UMiiQJDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DadI9oYs5qvIBetEiLHTbKuMm6c0v9IFVNVsfX7pboZyBXeb1cTB8Nb3wEV9Ngwt7TVkqYaBcNKrKqkkS14clCPM3aSJlM3BLMg6imWu0OXKqr/NmwR69rgjeKNiiIKdg80RjER5uA9hyCj9z4q9XQfNQIvQ0aBWZGGhAh/7R0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VkYTb2HX; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qNOzH19LJzGWBhze34siyjuqNdFMCde670Hc6C06QoJe/MABEO5mR/pB/6GZfF2H1U+FhK9G9MqltpOzzvkyb+lt6AyY6QOc99rzDQGgZg1Yo//ROtNScu0BJFB51lAQJF1p8ui3qRpqQEH9jPv+a0IU/IQplVIp4IkXjJFhV/v25WImXAdwsLAs3zUqyp1DqaUN2LWhqPMYVQyZ2qiW+F8DzTkEF7fXOHB7t4/emorOZ9rsVp36BnplNVmUgQvgZ27gyI79QBODl/RVr/v+y0JTi9He7yZ6V8Uleyn2GEQTiC7xFEMQxPT6ij3uPL7TiFAI114OaUSecdr8k6q/Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hENgWQa+SIlxDusf3vX8v1UG62hK+qaFvkJCjOC3WlU=;
+ b=rMdFM280tCsHO3aoOamt6t1zTsTJOx6edALHky+1IEd0WDqZr86R5FgUSLbQCMha9o3YX+wrebump4Abvh2BsTPmvZhv3Qdobrlp+RIbtsGQJsiK06QquWZ4mHdizTakvwXPHF/4h2O7tWq452ak2IzQSJm8DBw+6TZuDCG/Z6euZOtPRC7rskX2z7mBIcOQP5d5mVAg+2LWUzOE46eoA8z//04Kp010kBmqtXWYMUb+5zcbBlZfQaMDw6iI7opvvBCzKPepXUyW4Wb2r0/n2ygef/oEFqUrA1ZPl+vbme5MD0CAFgapyynFP2oAqn2aRI1+7gF8W760ofHk4wbL0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hENgWQa+SIlxDusf3vX8v1UG62hK+qaFvkJCjOC3WlU=;
+ b=VkYTb2HX9ORJXR3R7lZFdcs2NR3oVTg/PSrKJslIZQ4E1OuLgL5Ej6D5LWVHiLU+16PaaILs8gaC7M/nmi8QpJnuLP/KEcmVc/E+TayTaCccSHNpOZ96oEOvZfBGEXMXkikZt8ZyVISlqqeB0GShlbUE5SH6P8ijYoAXiuIdcTVpwQ5JX3h/J8ICawfHC2MwwmGZJW4wI8UknddlZoVlnulkrmqxB9lcsmLbI7QeZ91ls0y5jxakMF1dssHVS4ZDrxFcDK3/InP0ZoPgE+pmtFetv8Va0vlksycrD8sSAp3JRGMPs13ZBvJjwFOq7af/gvu1z10idTtQIlnZnV0yAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS7PR12MB8081.namprd12.prod.outlook.com (2603:10b6:8:e6::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.15; Thu, 7 Aug 2025 17:00:07 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 17:00:07 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: wang lian <lianux.mm@gmail.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, david@redhat.com, dev.jain@arm.com,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, mhocko@suse.com,
+ npache@redhat.com, rppt@kernel.org, ryan.roberts@arm.com, shuah@kernel.org,
+ surenb@google.com, vbabka@suse.cz
+Subject: Re: [PATCH 3/4] selftests/mm: add check_folio_orders() helper.
+Date: Thu, 07 Aug 2025 13:00:04 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <6A8E4E50-88AD-482F-811C-8707027B1E1C@nvidia.com>
+In-Reply-To: <20250807030000.33303-1-lianux.mm@gmail.com>
+References: <20250806022045.342824-4-ziy@nvidia.com>
+ <20250807030000.33303-1-lianux.mm@gmail.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BLAPR03CA0107.namprd03.prod.outlook.com
+ (2603:10b6:208:32a::22) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250807085003.GE11583@pendragon.ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS7PR12MB8081:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc302143-9e38-496b-d7aa-08ddd5d3dc95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4Yr5J+YbJejVjtgDofMOn35rBqFGCw9ZtKumD83Den4AnxXQSlz2B4/Ax7AM?=
+ =?us-ascii?Q?Cw3Nnr3pkBSmQjsZvaSgsokonsCsz/MQhQAR7ncuFmzeEb34mKP0Z9xd9rE6?=
+ =?us-ascii?Q?qIMucYgZE8Qu/XwZ4AmbgTWdPL2IyAvV3xhiptVaMEJe09eZw3gnpTzq5GnP?=
+ =?us-ascii?Q?A0uAU9nqBK0MkJsx3tb6YospUep+MAbBdWP1cvWpHs3/HfMG8xiUFR2Wy4oE?=
+ =?us-ascii?Q?cEqgqVJtEOhjM4TxQmfxia2YFfixyjjALQA4hWnh8/tJcY5ytGEVNBGR9gIe?=
+ =?us-ascii?Q?fgyaFGvbVL/gTCwqCMA1Rk9M9uhNfUZB3HHm5f8nzgXtztOeTRXb8dES9FPV?=
+ =?us-ascii?Q?KFLqgwyVcjcXOeFJGmxiAYLs4e5zj/rWY8y+qpfgU9SLSkhvQyYd/Z+Te+nc?=
+ =?us-ascii?Q?IhJSfxakl1l4MI4oucGKt8kVFsbCSD4kywPGtWLZdNT9aibPk7++xug85rDA?=
+ =?us-ascii?Q?uvGDMmZszGn6QKbJWYtwnXn1EKAOEjjIXmyD0F1b7Sl6GPT05juNTetRzwEl?=
+ =?us-ascii?Q?3a3370yxa+PVjC+7E0Ce40M+0LJoI6Tok5XtpXf6L4zcO7yRDNyxHe3jZnAz?=
+ =?us-ascii?Q?mJEwxNsL3/LLp4xj5ldjoW+iNaGIGJVfzpcyktzE5miKrgq3x37ou4pw2DAI?=
+ =?us-ascii?Q?1ERLboPvFFbDYRxNVINLOMrndftdqVCuNg4kFb6XtUoaQaui7M33SGmqGPdv?=
+ =?us-ascii?Q?9KVwU2gftc3kGEihdZlPmNpPa4VFpirMwhMb9k8vi9qz7uuSUPcOMZxNdkyt?=
+ =?us-ascii?Q?D0Yg3Y0wgat1ErEM/IxJ5N6t8eCl3x9HrFme0kkhsZ7WMjKs8xvjYV9ESfNq?=
+ =?us-ascii?Q?ztwmBZwLYeNmiDZpuGg9relr5Wk4k1oG2MWCYdFVMRK5ZCfa7ihj/FvO4KAd?=
+ =?us-ascii?Q?f7+f2invatYeswsyeWkw/mVhxa0a1YIyuXDHZAl31yvfZMtBekw+sY98iM3o?=
+ =?us-ascii?Q?DrnGb3nacF0w1lK31S9nMcNntNYV6MAGLnW5BvMGNsE8w3rs8Np5eRR1ivKf?=
+ =?us-ascii?Q?ZIufKro22Q2L2kCtAz1LA5R+TZluR66yqAvJX5nqLV3ZZb2boTIIWYMjJbt5?=
+ =?us-ascii?Q?iPXXTXHlM19V9aoVpzzCJUeVtarQprtJbvi66QADneEymBJ2upNyDFhbTeKj?=
+ =?us-ascii?Q?419HLpuYnQn5eC3we8M7HVSgqiov0QjkgppNxSR70jHnUqVb0K1pKieeQTSH?=
+ =?us-ascii?Q?kDbUMmnzBxRUEmYiU4CCc59pQ9V1Cgism1sgRSXEs3RAj6T3lccT4Gna42G+?=
+ =?us-ascii?Q?5C6QXlepPR878Jc7xjEYg9dU1Eb1GQ5/xSLQLNI/JYw6KqQcOCqF3CuDGZdq?=
+ =?us-ascii?Q?pOyP06PB1Rk+XYnb6jxFq7dugBpMSREbt2Lm4jNA2iDfVR/1uftDiUCUdfD6?=
+ =?us-ascii?Q?pwKTl0aELp7lphUK3xDA4fw/qvqJpaAbKFvVuEwYEeUXZ9ozVw5DBAz4phgv?=
+ =?us-ascii?Q?E67tbNl+Q74=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/oQPF3MTiUdE0rcF6FzudjUIuqX1AjtxmSbF9sV5qcmSbk01rbkuIPQOJqvw?=
+ =?us-ascii?Q?XRQ/a+WmgnnebB543iDZanE4iMMwgZKIK3RqlITtiUpBMdvAFk0yeubNR8qT?=
+ =?us-ascii?Q?mk07IBcXkLXj7YIBblQRSLB7MGZTaHJ4zftCdwitGs5cxgvuN1Svb9gCeER8?=
+ =?us-ascii?Q?RdxiZ1Y2kFau18o5eU2n6yHY0DEVxqk1LTQ9KjgocgAYF4lFRRGg/C1JSjJy?=
+ =?us-ascii?Q?/gJ/RnloiuyhlJLyn/NihvNrgJzNBNl0jmllzVlIO2aGzbGqGUPSgvqx3T7T?=
+ =?us-ascii?Q?F3+p4kkH8apGq7oKiyDtywF/6kVE9XZC9F3HVhR1XhTW+NQCp3d4StrNktsV?=
+ =?us-ascii?Q?JfM38E0HKWeRj6TYaQsl3KyyIf0T9F3XhL83yxt07zvvrvHxwvFxeyAe07yo?=
+ =?us-ascii?Q?CRHsT91gYztuwZHRw5fgCmC0NBBv2KgknS1nYUzVn/DKxmpEcW5K8pXyE4Rx?=
+ =?us-ascii?Q?8TVctXKwxK92DQNPvFtvpRL7TBq8owqrwKe6d4B5Luf1CsM86pdfkZKsqZ59?=
+ =?us-ascii?Q?siwQC3fDeWppYLE3x6k7LEM8mK6r7ALhLdfn3BVP5Fa/vfBb4Jdv7dXZkc26?=
+ =?us-ascii?Q?bW3D6GAM8lARLLBsRo3m/yvvH6U8y0aCWPfV6JmVlXGZmbt+87rvBLpH4y0B?=
+ =?us-ascii?Q?bCVEdLQQSe/zHJBVtfIKngUnYrOgSt+Jz6sMJkLoGfiAI/ezo6NOyNengdFK?=
+ =?us-ascii?Q?KlvrABlXgt73Vlef8w1PmGD4C0XqRbMRd79x6mVQouUBJ3efkhcUDmEGUEfe?=
+ =?us-ascii?Q?meG/V28/7xqLy24AeEYtn1Gp4Fie5OmxHMva5agzahPptF/BNkRZ6IvKAmwE?=
+ =?us-ascii?Q?ghlEkFixzgzR2Ns+5GbAr1f+Yl+NZBfyzMwGLt6Kkj6AHhRTx8LU5JNPhErC?=
+ =?us-ascii?Q?QsEmY7KOablHcUQyKKYtNSU9NZ4WhqHVQtfrvwfewicbuV5aF+Xd0YyH9XnN?=
+ =?us-ascii?Q?x1dvuTx3bj2++wqdAmziRv67tML2rdLPCoVE+VSzxW6wpzvHsXn0sWJC3oss?=
+ =?us-ascii?Q?6ktmoGjFIhIzrsKatqfI1cRKEvVGha1CdKFolgkS33rWz7TlTSjC31ELIHtS?=
+ =?us-ascii?Q?MlI6acDu7PLB4pIRHKjQ8+QuuTf4T1PCashXfkw8mLaIUrSyMcFDf/5kzZ5W?=
+ =?us-ascii?Q?q6yiAL4ssh4kpU0pTlykR6jktp3KVF/tU0u0kAxCQn9kwmNcj3+YBMKoTZ4a?=
+ =?us-ascii?Q?oC49c+I8VNUulpbMeUzaoF7ChCj+hugVUPzbSZJ1Q6kGpS/wopRUnMxDKbMR?=
+ =?us-ascii?Q?vg4UkfDsIM1YWMoEpx2IBUv5n8LJqCkoYKFViRjnSDFsP4p6zwPhrlKvJfmc?=
+ =?us-ascii?Q?lk7k7DvJEQSDKuAxdxalG0Bp5MoXdGmIOze283te+iDtDiSPIB3UpJl4Sqmo?=
+ =?us-ascii?Q?LtUtJCKTNlx+wHtYCqUgNJvjmDG2HNO4hRdNECQmLeRa4CP+/cYpZGOxxTNP?=
+ =?us-ascii?Q?LNrEDyZq996koGhuvFXygEVnLtrFW7OmHZzmQJN1S3yQA4W3/TSUXIKFhy92?=
+ =?us-ascii?Q?pCYVvMV570OIqMqfINy7csZolSJlP6Cib3V6mDMmCOw7aU+QFGsWuF7kSBCK?=
+ =?us-ascii?Q?vsRzBjnqs8VRStLtoR5ssumkQt2xM7ZIyDMqBAfJ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc302143-9e38-496b-d7aa-08ddd5d3dc95
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 17:00:07.4232
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FgpLxZEHDLmcO7T8n5c153XuCI8Rwb2JYPIPCnQ5D+62Xdr7b0ltcanQgrd4LOUm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8081
 
-On Thu, Aug 07, 2025 at 11:50:07AM +0300, Laurent Pinchart wrote:
-> On Wed, Aug 06, 2025 at 02:45:14PM +0200, Hans Verkuil wrote:
-> > On 02/08/2025 11:22, Jacopo Mondi wrote:
-> > > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > 
-> > > Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
-> > > the file->private_data pointer to NULL in their video device .release()
-> > > file operation handler. Move the code to the v4l2_fh_del() function to
-> > > avoid direct access to file->private_data in drivers. This requires
-> > > adding a file pointer argument to the function.
-> > > 
-> > > Changes to drivers have been generated with the following coccinelle
-> > > semantic patch:
-> > > 
-> > > @@
-> > > expression fh;
-> > > identifier filp;
-> > > identifier release;
-> > > type ret;
-> > > @@
-> > > ret release(..., struct file *filp, ...)
-> > > {
-> > > 	<...
-> > > -	filp->private_data = NULL;
-> > > 	...
-> > > -	v4l2_fh_del(fh);
-> > > +	v4l2_fh_del(fh, filp);
-> > > 	...>
-> > > }
-> > > 
-> > > @@
-> > > expression fh;
-> > > identifier filp;
-> > > identifier release;
-> > > type ret;
-> > > @@
-> > > ret release(..., struct file *filp, ...)
-> > > {
-> > > 	<...
-> > > -	v4l2_fh_del(fh);
-> > > +	v4l2_fh_del(fh, filp);
-> > > 	...
-> > > -	filp->private_data = NULL;
-> > > 	...>
-> > > }
-> > > 
-> > > @@
-> > > expression fh;
-> > > identifier filp;
-> > > identifier release;
-> > > type ret;
-> > > @@
-> > > ret release(..., struct file *filp, ...)
-> > > {
-> > > 	<...
-> > > -	v4l2_fh_del(fh);
-> > > +	v4l2_fh_del(fh, filp);
-> > > 	...>
-> > > }
-> > > 
-> > > Manual changes have been applied to Documentation/ to update the usage
-> > > patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
-> > > v4l2_fh_del() prototype and reset file->private_data, and to
-> > > include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
-> > > and its documentation.
-> > > 
-> > > Additionally, white space issues have been fixed manually in
-> > > drivers/usb/gadget/function/uvc_v4l2.c
-> > > 
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > ---
-> > >  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
-> > >  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
-> > >  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
-> > >  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
-> > >  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
-> > >  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
-> > >  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
-> > >  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
-> > >  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
-> > >  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
-> > >  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
-> > >  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
-> > >  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
-> > >  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
-> > >  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
-> > >  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
-> > >  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
-> > >  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
-> > >  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
-> > >  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
-> > >  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
-> > >  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
-> > >  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
-> > >  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
-> > >  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
-> > >  drivers/media/platform/qcom/venus/core.c                           | 2 +-
-> > >  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
-> > >  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
-> > >  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
-> > >  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
-> > >  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
-> > >  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
-> > >  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
-> > >  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
-> > >  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
-> > >  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
-> > >  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
-> > >  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
-> > >  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
-> > >  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
-> > >  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
-> > >  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
-> > >  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
-> > >  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
-> > >  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
-> > >  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
-> > >  drivers/media/test-drivers/vim2m.c                                 | 2 +-
-> > >  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
-> > >  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
-> > >  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
-> > >  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
-> > >  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
-> > >  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
-> > >  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
-> > >  drivers/staging/most/video/video.c                                 | 4 ++--
-> > >  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
-> > >  include/media/v4l2-fh.h                                            | 5 ++++-
-> > >  57 files changed, 89 insertions(+), 90 deletions(-)
-> > > 
-> > 
-> > <snip>
-> > 
-> > > diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> > > index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-fh.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> > > @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(v4l2_fh_open);
-> > >  
-> > > -void v4l2_fh_del(struct v4l2_fh *fh)
-> > > +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
-> > 
-> > Instead of adding a second argument, perhaps it is better to
-> > just provide the filp pointer. After all, you can get the v4l2_fh
-> > from filp->private_data.
-> > 
-> > It simplifies the code a bit.
-> 
-> That's an interesting idea. I'll give it a try.
+On 6 Aug 2025, at 23:00, wang lian wrote:
 
-We end up with code like (e.g. in v4l2_fh_release(), with similar
-constructs in lots of drivers)
+> Hi Zi,
+>
+> Thanks for the patch.
+>
+> I have a nit suggestion to centralize some of the macro definitions
+> for better consistency and reusability.
+>
+> On [Date of patch], Zi Yan wrote:
+>> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/self=
+tests/mm/vm_util.c
+>> ...
+>> +#define PGMAP_PRESENT		(1UL << 63)
+>> +#define KPF_COMPOUND_HEAD	(1UL << 15)
+>> +#define KPF_COMPOUND_TAIL	(1UL << 16)
+>> +#define KPF_THP			(1UL << 22)
+>> +#define PFN_MASK		((1UL<<55)-1)
+>
+> Currently, these macros and `PGMAP_PRESENT` are defined locally in
+> `vm_util.c`. It would be cleaner to move them to the shared header
+> `vm_util.h`.
+>
+> This would also allow us to consistently use `PM_PRESENT` (from the
+> header) instead of the local `PGMAP_PRESENT` duplicate. I noticed the
+> patch is already moving in this direction, and we can complete this
+> cleanup.
+>
+> How about a change like this?
 
-	if (fh) {
-		v4l2_fh_del(filp);
-		v4l2_fh_exit(fh);
-		kfree(fh);
-	}
+I did not know about PM_PRESENT. Sure, will move the code like you
+did below. Thanks.
 
-compared to
+>
+> --- a/tools/testing/selftests/mm/vm_util.c
+> +++ b/tools/testing/selftests/mm/vm_util.c
+> @@ -17,17 +17,6 @@
+>  #define STATUS_FILE_PATH "/proc/self/status"
+>  #define MAX_LINE_LENGTH 500
+>
+> -#define PGMAP_PRESENT          (1UL << 63)
+> -#define KPF_COMPOUND_HEAD      (1UL << 15)
+> -#define KPF_COMPOUND_TAIL      (1UL << 16)
+> -#define KPF_THP                        (1UL << 22)
+> -#define PFN_MASK     ((1UL<<55)-1)
+> -
+>  unsigned int __page_size;
+>  unsigned int __page_shift;
+>
+> @@ -360,7 +349,7 @@ static int get_page_flags(uint64_t vpn, int pagemap=
+_file, int kpageflags_file,
+>  	 * Treat non-present page as a page without any flag, so that
+>  	 * gather_folio_orders() just record the current folio order.
+>  	 */
+> -	if (!(pfn & PGMAP_PRESENT)) {
+> +	if (!(pfn & PM_PRESENT)) {
+>  		*flags =3D 0;
+>  		return 0;
+>  	}
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -17,6 +17,11 @@
+>  #define PM_FILE                        BIT_ULL(61)
+>  #define PM_SWAP                        BIT_ULL(62)
+>  #define PM_PRESENT             BIT_ULL(63)
+> +#define KPF_COMPOUND_HEAD      (1UL << 15)
+> +#define KPF_COMPOUND_TAIL      (1UL << 16)
+> +#define KPF_THP                        (1UL << 22)
+> +#define PFN_MASK     ((1UL<<55)-1)
+>
+>  extern unsigned int __page_size;
+>  extern unsigned int __page_shift;
+>
+>
+> Best regards,
+> wang lian
 
-	if (fh) {
-		v4l2_fh_del(fh, filp);
-		v4l2_fh_exit(fh);
-		kfree(fh);
-	}
 
-with the existing patch. I find the fact that v4l2_fh_del() takes a
-different pointer than v4l2_fh_exit() a bit disturbing. If you think
-it's better I'll drop the fh argument in v2.
-
-> > >  {
-> > >  	unsigned long flags;
-> > >  
-> > > @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
-> > >  	list_del_init(&fh->list);
-> > >  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
-> > >  	v4l2_prio_close(fh->vdev->prio, fh->prio);
-> > > +
-> > > +	filp->private_data = NULL;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(v4l2_fh_del);
-> > >  
-> > > @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
-> > >  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
-> > >  
-> > >  	if (fh) {
-> > > -		v4l2_fh_del(fh);
-> > > +		v4l2_fh_del(fh, filp);
-> > >  		v4l2_fh_exit(fh);
-> > >  		kfree(fh);
-> > > -		filp->private_data = NULL;
-> > >  	}
-> > >  	return 0;
-> > >  }
-> > 
-> > <snip>
-> > 
-> > > diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> > > index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
-> > > --- a/include/media/v4l2-fh.h
-> > > +++ b/include/media/v4l2-fh.h
-> > > @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
-> > >   * v4l2_fh_del - Remove file handle from the list of file handles.
-> > >   *
-> > >   * @fh: pointer to &struct v4l2_fh
-> > > + * @filp: pointer to &struct file associated with @fh
-> > > + *
-> > > + * The function resets filp->private_data to NULL.
-> > >   *
-> > >   * .. note::
-> > >   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
-> > >   *    uses &struct v4l2_fh.
-> > >   */
-> > > -void v4l2_fh_del(struct v4l2_fh *fh);
-> > > +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
-> > >  
-> > >  /**
-> > >   * v4l2_fh_exit - Release resources related to a file handle.
-
--- 
-Regards,
-
-Laurent Pinchart
+--
+Best Regards,
+Yan, Zi
 
