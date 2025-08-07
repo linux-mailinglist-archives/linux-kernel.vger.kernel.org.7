@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-759174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BCB1D998
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFAA2B1D99C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCC681AA4FF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A471888D3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9190126057C;
-	Thu,  7 Aug 2025 14:02:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAB325F998;
+	Thu,  7 Aug 2025 14:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ixHtU2lj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB3625C6EC
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19A4261574
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754575364; cv=none; b=UGbbkLMXPNTGMmN1afa67Gb/IyToCikib4q8USSbR4SlqrP8ZVhZbzcx+RpnZEhB7DU7tOqKgSMQz96sEpJSSeOzGGjCHlHqZKTfCCNqBzMuud1qisEtZwEHcqmTCTapg3SMTi0caQedlZH0sNfgOZ/T8tr08Fh9JTFvm0w2Nsk=
+	t=1754575476; cv=none; b=MMqqqCG5yQ3JWbRu5fYNdzj+r98n1QPhKGWNqh2c9NVDFV/mY845E5LNF57oXIeqpffhMNDs2vPUiFbENvF/QdDEdMao01fXuiowk6NpzngqERMHTOjCn5wuPCVJOSX72dTj91MltZa5l49V2bCrZGMg0RyFU6uWViZUtIl9yXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754575364; c=relaxed/simple;
-	bh=dUAlM7f0/ek29519zm6XLoUu3GZyva65NIoAYroTzTw=;
+	s=arc-20240116; t=1754575476; c=relaxed/simple;
+	bh=CMk97Nfce9AYr014fyggN19TjxQ2vwV9jnv9i012M/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAqhsJUTzrsQ6rBrHDOh4ZqWrdVZU6mSD/4CEypsxH+YxFO96Bah87QQXQW4hphQs1BycIITn9ZoFiJzIEuA6EoNxn9CBYw6p2oTKsQ5qj5MV/h8/DpzpMd1F2yNelLIcWjh995eg0cEGZr1y6fR7/HzLCRTc2XYhqGgYBL4dDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uk1CS-0003WQ-0k; Thu, 07 Aug 2025 16:02:32 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uk1CR-00CNyt-1P;
-	Thu, 07 Aug 2025 16:02:31 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uk1CR-00EK29-10;
-	Thu, 07 Aug 2025 16:02:31 +0200
-Date: Thu, 7 Aug 2025 16:02:31 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Xu Yang <xu.yang_2@nxp.com>, hkallweit1@gmail.com,
-	pabeni@redhat.com, netdev@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <aJSx9xTrFfFm0dcx@pengutronix.de>
-References: <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
- <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
- <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
- <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
- <aJOHObGgfzxIDzHW@shell.armlinux.org.uk>
- <2b3fvsi7c47oit4p6drgjqeaxgwyzyopt7czfv3g2a74j2ay5j@qu22cohdcrjs>
- <3mkwdhodm4zl3t6zsavcrrkuawvd3qjxtdvhxwi6gwe42ic7rs@tevlpedpwlag>
- <aJSSNg4aZNfoqqZh@shell.armlinux.org.uk>
- <aJSf0JaBl4cKphFi@pengutronix.de>
- <d137518b-604b-4be3-9eb1-96d49123a251@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqKcxYoKDZECAjVT5K9uYHCS7YHPZwiN1b3w/BkuOBiKkzKmf9HBvZySaeqwAk0JpPjGvLMo0U4czaftal5JatFpzKiAMbl7MEhTy6huiUMvC4P+MC7piVVB0bOViP8Qfe6kH6ow66wibLYGMuzX52CM/KdDPaR86xLL3C6VBe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ixHtU2lj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754575473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d16O4y9nXsFhk/FwMerVNXw25kYspWhC/njJ93UTAx8=;
+	b=ixHtU2ljJ6N1kQUwgMUy6FtdrAM+NLu2aPJ4XRqDIXPP8VoV0cYbJegh2NZMWVisbRxx+u
+	W4JXBrrhUUgY7bt47M4qll2/8G9ckJGleNfqM6KgRjYg4OztjnaHXYchcAd1TqIioNQpMW
+	HXiBcLlYIOzCCFqC52ltMS62weMBceE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-177-8DOqnMv2NWut1-jgmgt8-Q-1; Thu,
+ 07 Aug 2025 10:04:28 -0400
+X-MC-Unique: 8DOqnMv2NWut1-jgmgt8-Q-1
+X-Mimecast-MFC-AGG-ID: 8DOqnMv2NWut1-jgmgt8-Q_1754575464
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9680A19560B5;
+	Thu,  7 Aug 2025 14:04:23 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.58.4])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5EDC91954185;
+	Thu,  7 Aug 2025 14:04:18 +0000 (UTC)
+Date: Thu, 7 Aug 2025 10:04:14 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2] audit: record fanotify event regardless of presence
+ of rules
+Message-ID: <aJSyXpsVfU+PfFzN@madcap2.tricolour.ca>
+References: <6a18a0b1af0ccca1fc56a8e82f02d5e4ab36149c.1754063834.git.rgb@redhat.com>
+ <74767dff9834360b2100907df5142ab9@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d137518b-604b-4be3-9eb1-96d49123a251@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <74767dff9834360b2100907df5142ab9@paul-moore.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Aug 07, 2025 at 02:58:05PM +0200, Andrew Lunn wrote:
-> > Hm, I guess, with this change there will be a subtile regression.
-> > In case of an external PHYs the ax88772_init_phy() is using PHYlib to
-> > suspend the internal PHY.
+On 2025-08-06 21:47, Paul Moore wrote:
+> On Aug  6, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
 > > 
-> > May be:
-> >   priv->mdio->phy_mask = ~(BIT(priv->phy_addr) | BIT(AX_EMBD_PHY_ADDR));
+> > When no audit rules are in place, fanotify event results are
+> > unconditionally dropped due to an explicit check for the existence of
+> > any audit rules.  Given this is a report from another security
+> > sub-system, allow it to be recorded regardless of the existence of any
+> > audit rules.
+> > 
+> > To test, install and run the fapolicyd daemon with default config.  Then
+> > as an unprivileged user, create and run a very simple binary that should
+> > be denied.  Then check for an event with
+> > 	ausearch -m FANOTIFY -ts recent
+> > 
+> > Link: https://issues.redhat.com/browse/RHEL-9065
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> > changelog:
+> > v2
+> > - re-add audit_enabled check
+> > ---
+> >  include/linux/audit.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I looked at that:
+> Merged into audit/dev-staging with the plan being to merge it to
+> audit/dev once the merge window closes.
 
-Here we read the primary PHY address from the EEPROM. This offset may
-contain either the internal or external PHY address. See commit
-d0ffff8fddd5 ("USB: asix: Detect internal PHY and enable/use
-accordingly")
+Thanks Paul.
 
-I need to admit, asix_read_phy_addr(..., bool internal) was originally
-designed to distinguish between internal and external PHYs by setting
-internal = false.  But in practice, most vendors seem to follow the
-existing driver behavior as reference, and only modify the primary PHY
-address in the EEPROM.
+> paul-moore.com
 
-> 	ret = asix_read_phy_addr(dev, true);
-> 	if (ret < 0)
-> 		return ret;
-> 
+- RGB
 
-At this point, we store the address of the internal or external PHY:
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
-> 	priv->phy_addr = ret;
-
-If the PHY address matches the address of the internal PHY, then
-embd_phy is set to true:
-
-> 	priv->embd_phy = ((priv->phy_addr & 0x1f) == AX_EMBD_PHY_ADDR);
-> 
-> So priv->phy_addr has to be the address of the internal PHY, so this
-> should just work without anything special for the embedded PHY.
-
-For most AX88772-based devices, priv->phy_addr is indeed the internal
-PHY. However, on devices with an external PHY - like the "Linux
-Automation GmbH USB 10Base-T1L" - both internal and external PHYs are
-accessible over the MDIO bus.
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
