@@ -1,218 +1,115 @@
-Return-Path: <linux-kernel+bounces-758491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE3DB1CFD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2602AB1CFD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAA63A9A4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85BF6230B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A54070814;
-	Thu,  7 Aug 2025 00:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284CC78C9C;
+	Thu,  7 Aug 2025 00:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLp3GzT3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="br7YcBeq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460627470
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B054437A;
+	Thu,  7 Aug 2025 00:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754527016; cv=none; b=fJgaxFF7s2SAYAO/EIlBsBkG64lDdv58sZ6cL3ktBqEYO2FjwpAeL9EgrpGEm/8YMhlvjGOcTk3LuXX+j4Ody6/w21+Asg5wELJ5iwaMduH8gJpJg3Vqni2qTRvwZZS4On8E1pFoQBwPqdn0ECVM9b3UmVAubiagjb0Rn17Ol0M=
+	t=1754526987; cv=none; b=SM18DylyT2GYM/xBtwFLK0sucf77ZSi7G/4+mIQJ+6PH3EujEZjxhS2gXEHuwjx+lDs1QX5KEdwZ2EAxBlU2L+b67uA58i/YbauwxkLO7jOT5VEIFtzmYN8lI6qWzRNqrWTct0Efz4jQQ/Ub9X7n5S9mbeq/L+xkM6ZaNDiEdv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754527016; c=relaxed/simple;
-	bh=tYKrxm/K2NIF9iov47i1mvBCf30tdQ+7yunmmi/K8jU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=anB78yWRht5xdktbMwVgZhwYHLDSwXtGXFJZ9VB4X1CgMAmf6UnXmX68UQZ3EAyFVu7GAb1EIRx+i40SPO3IkN3q4pOfMrOxJ9REhPrF8NebU7lUu2Jqp+FnyhlWPxsScXkFhn/SZ/Rd+CDBTzRqnA0Uh7C9TdFvb5hxemgz3Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLp3GzT3; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754527015; x=1786063015;
-  h=date:from:to:cc:subject:message-id;
-  bh=tYKrxm/K2NIF9iov47i1mvBCf30tdQ+7yunmmi/K8jU=;
-  b=nLp3GzT3gzKC6oMlOs+VdaPzE1bRcmASQXUpDHrz0T3pF7ltmnfwNi9G
-   JFUJlECXmoUNU4wQHqwgghgpIG870LPflHWHAJOFrPD4vRk3pNPEZ0KYx
-   ZgSEryCPlWbG7A7ftmCeswmWGGU9T5RO8L23yDxc3E8XT/Qj6SH+5Gk5i
-   jS9uYptKNuE8Afge2SDsWH3Gm+WuNPKOmE3OFC9vGw18EK/qjQ5gk/nbo
-   Hl1WOKM/1r0o04DweLbJqCZW6xO5+XXHcOmaBEB8Mj9HVzgx4BRT2I4Rj
-   ZhYp/n43BISegHOqDiLooYNPtLyc93V+X8RaAZxkZwsjOSdsTERUPvF7g
-   A==;
-X-CSE-ConnectionGUID: 0FoM3t1DRwCG8bHB3saxuA==
-X-CSE-MsgGUID: ilOVOCjESR+mVgwf+ClWuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74436085"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="74436085"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 17:36:54 -0700
-X-CSE-ConnectionGUID: eiM2XFSyTcaT9GI7nDNoMA==
-X-CSE-MsgGUID: 9IGWjFA+TCOgSqDa2iil6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164432877"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Aug 2025 17:36:52 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ujock-0002DT-0s;
-	Thu, 07 Aug 2025 00:36:50 +0000
-Date: Thu, 07 Aug 2025 08:35:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 8900d6da92ce3eab8d2e2160a20af5cccf1f5e09
-Message-ID: <202508070840.XANRFfcn-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1754526987; c=relaxed/simple;
+	bh=8gZJwOibU7z3sXqO72OMz4Bxm9hzb2fPObNKfNZFRfM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qqRvpnx7GNnO/s+LmBC5TV7A4Z/4DIbTv0v4uLHH3Oa9h92cqCtNlFvl7nfeh3EbIOd+KQWdH+qrEWVyffmnEymk+hoKqSKnX70sugXI84L9EHAbQafYNaloXlp3BZd0XOqaPXR46sKmAI3/3/1uvj3v7UyOmqi+m0+6K7j3raY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=br7YcBeq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522C1C4CEE7;
+	Thu,  7 Aug 2025 00:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754526986;
+	bh=8gZJwOibU7z3sXqO72OMz4Bxm9hzb2fPObNKfNZFRfM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=br7YcBeqyTRFvDRu8jQ2I3S9WEKQvmRNxp4skfY9xPxM765lNpBfBQ6I9VbFc+mGP
+	 OWKHx3uxAdSo5Mkti1sPco1ByJBxf58e4enS4o+hvzk1duNH8zCmLhK/2YzH3jvicE
+	 GJv1SCAIiFYG0ThDMSN8DXUdHLJC9xOXG3wXJ8/4=
+Date: Wed, 6 Aug 2025 17:36:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Marco Elver <elver@google.com>
+Cc: Soham Bagchi <soham.bagchi@utah.edu>, andreyknvl@gmail.com,
+ arnd@arndb.de, corbet@lwn.net, dvyukov@google.com, glider@google.com,
+ kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sohambagchi@outlook.com, tglx@linutronix.de,
+ workflows@vger.kernel.org
+Subject: Re: [PATCH v2] kcov: load acquire coverage count in user-space code
+Message-Id: <20250806173625.f83a6fc9da16099e8ae12c85@linux-foundation.org>
+In-Reply-To: <CANpmjNNvsJ_u7ky+d1tiXtwc-T3z6VB4SiMqpo6aKWBBFO3ERA@mail.gmail.com>
+References: <CANpmjNPWzJZrAFT3-013GJhksK0jkB6n0HmF+h0hdoQUwGuxfA@mail.gmail.com>
+	<20250803180558.2967962-1-soham.bagchi@utah.edu>
+	<CANpmjNNvsJ_u7ky+d1tiXtwc-T3z6VB4SiMqpo6aKWBBFO3ERA@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 8900d6da92ce3eab8d2e2160a20af5cccf1f5e09  Merge branch into tip/master: 'timers/clocksource'
+On Mon, 4 Aug 2025 08:00:00 +0200 Marco Elver <elver@google.com> wrote:
 
-elapsed time: 855m
+> > The load-acquire pairs with the write memory barrier
+> > used in kcov_move_area()
+> >
+> > Signed-off-by: Soham Bagchi <soham.bagchi@utah.edu>
+> 
+> Reviewed-by: Marco Elver <elver@google.com>
+> 
+> > ---
+> >
+> > Changes in v2:
+> 
+> Btw, it is customary to send out the whole patch series on a version
+> bump, even if only one of the patches changed.
+> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#explicit-in-reply-to-headers
 
-configs tested: 126
-configs skipped: 6
+Yes please, try to keep everything together.  We look at a lot of
+patches!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I queued this as a -fix against the original
+https://lkml.kernel.org/r/20250728184318.1839137-2-soham.bagchi@utah.edu
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250806    gcc-12.5.0
-arc                   randconfig-002-20250806    gcc-11.5.0
-arc                    vdk_hs38_smp_defconfig    gcc-15.1.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250806    gcc-10.5.0
-arm                   randconfig-002-20250806    gcc-13.4.0
-arm                   randconfig-003-20250806    gcc-10.5.0
-arm                   randconfig-004-20250806    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250806    clang-20
-arm64                 randconfig-002-20250806    clang-22
-arm64                 randconfig-003-20250806    gcc-9.5.0
-arm64                 randconfig-004-20250806    clang-17
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250806    gcc-10.5.0
-csky                  randconfig-002-20250806    gcc-14.3.0
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250806    clang-18
-hexagon               randconfig-002-20250806    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250806    clang-20
-i386        buildonly-randconfig-002-20250806    gcc-11
-i386        buildonly-randconfig-003-20250806    clang-20
-i386        buildonly-randconfig-004-20250806    gcc-12
-i386        buildonly-randconfig-005-20250806    gcc-12
-i386        buildonly-randconfig-006-20250806    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250806    clang-18
-loongarch             randconfig-002-20250806    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250806    gcc-10.5.0
-nios2                 randconfig-002-20250806    gcc-11.5.0
-openrisc                         alldefconfig    gcc-15.1.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250806    gcc-15.1.0
-parisc                randconfig-002-20250806    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc               randconfig-001-20250806    clang-22
-powerpc               randconfig-002-20250806    gcc-14.3.0
-powerpc               randconfig-003-20250806    clang-22
-powerpc                     tqm8540_defconfig    gcc-15.1.0
-powerpc                      tqm8xx_defconfig    clang-19
-powerpc64             randconfig-001-20250806    gcc-15.1.0
-powerpc64             randconfig-002-20250806    gcc-10.5.0
-powerpc64             randconfig-003-20250806    clang-18
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250806    clang-20
-riscv                 randconfig-002-20250806    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250806    gcc-14.3.0
-s390                  randconfig-002-20250806    gcc-14.3.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250806    gcc-15.1.0
-sh                    randconfig-002-20250806    gcc-10.5.0
-sh                              ul2_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250806    gcc-11.5.0
-sparc                 randconfig-002-20250806    gcc-13.4.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250806    gcc-8.5.0
-sparc64               randconfig-002-20250806    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250806    clang-16
-um                    randconfig-002-20250806    gcc-12
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250806    gcc-12
-x86_64      buildonly-randconfig-002-20250806    clang-20
-x86_64      buildonly-randconfig-003-20250806    gcc-12
-x86_64      buildonly-randconfig-004-20250806    gcc-12
-x86_64      buildonly-randconfig-005-20250806    clang-20
-x86_64      buildonly-randconfig-006-20250806    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250806    gcc-13.4.0
-xtensa                randconfig-002-20250806    gcc-8.5.0
+--- a/Documentation/dev-tools/kcov.rst~kcov-load-acquire-coverage-count-in-user-space-code-v2
++++ a/Documentation/dev-tools/kcov.rst
+@@ -287,11 +287,6 @@ handle instance id.
+ The following program demonstrates using KCOV to collect coverage from both
+ local tasks spawned by the process and the global task that handles USB bus #1:
+ 
+-The user-space code for KCOV should also use an acquire to fetch the count
+-of coverage entries in the shared buffer. This acquire pairs with the
+-corresponding write memory barrier (smp_wmb()) on the kernel-side in
+-kcov_move_area().
+-
+ .. code-block:: c
+ 
+     /* Same includes and defines as above. */
+@@ -366,6 +361,11 @@ kcov_move_area().
+ 	 */
+ 	sleep(2);
+ 
++        /*
++         * The load to the coverage count should be an acquire to pair with
++         * pair with the corresponding write memory barrier (smp_wmb()) on
++         * the kernel-side in kcov_move_area().
++         */
+ 	n = __atomic_load_n(&cover[0], __ATOMIC_ACQUIRE);
+ 	for (i = 0; i < n; i++)
+ 		printf("0x%lx\n", cover[i + 1]);
+_
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
