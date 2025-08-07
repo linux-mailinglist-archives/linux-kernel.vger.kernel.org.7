@@ -1,176 +1,129 @@
-Return-Path: <linux-kernel+bounces-759410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6ADFB1DD31
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D87B1DD34
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2233721BC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133CA18A5D36
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C7C219A7A;
-	Thu,  7 Aug 2025 18:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E0D221DBD;
+	Thu,  7 Aug 2025 18:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YR7JxWEy"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nY1aVFTW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D271D7E26
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB9B1E0E1F;
+	Thu,  7 Aug 2025 18:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754592052; cv=none; b=RmXk/KxTYFrvPLB88SpHO/Kg5GhVgPmjpqew+OiCfr5IAblaj3HG+QimwtlsgfOVZTIwep8hjxLp0sDRxQbDXaRF4zXg7BXYm0pofLClpA8p8QElUvyOYazjc14pMEgLaIsTyJPJvbuBwv0FZgh65553XV6M0l8QsydtDMGP040=
+	t=1754592325; cv=none; b=TxJAyhxQTDB8O6Gmd8+cpFKDy/CtLel793mGRH+nuD9FXYaKpPNldnwwdMoZ9PsZVNNHzVOA7yT6aXSWY8hJzNOZJ9+g1z95CIchtwjGiICVu0nQGVfTgvJlrp9dCDnEBYxvAPodGx+e/X4aKh0SqavqluwrAh1ECwl28Lk/weg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754592052; c=relaxed/simple;
-	bh=i3aP6A/MxuAB3Zt7C+xzxPLkUUuAStt1/hot+djOP8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sX5EhahIshrkK1/mI6SoG17dgLgbpPZh+k+zep/lNTQfbqHGaoc5C5oMYhc3bAw7nJMA6lZ2hqFzL55Pfj8F9td3kVM2VVYNLsHHlFlMJsgclgcH80GyTK4zFVGa1/idX04BJBLsjwzkARHzD6++W01L7ibWNWpL8DJ9Kv7Z0aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YR7JxWEy; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e40ac40940so6016635ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1754592049; x=1755196849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XERiuoNAWPSGK7EG1EKcaSMoPUBK2/kua/o26DD/qk4=;
-        b=YR7JxWEy1FbbD2lJIAfRulKLjaT90Lb4ClG3h4D8XA60hhq6jHiPDCceB0ndcFfAuT
-         JbF8YiWpbavSbfFzscHQn7tURqjKNrBNzs3i7JwMpLGWHBYBA0bQGlRVOyFsGhpOZXZm
-         QNa6A83NJYWS6RjjgJZnUh+yzzcvNeHtVrLXg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754592049; x=1755196849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XERiuoNAWPSGK7EG1EKcaSMoPUBK2/kua/o26DD/qk4=;
-        b=gzHHcKW2kjhNhttCOSh+YrhwovUXJHjw37lR7U1tT4Kd9NHhzVJBDJfFKujYpWtJch
-         HI8Qo2vFYpD/dBW5xcT6YEDbHA8NSKsnqucZDxUpn9FPP6qt0f1QqEWpCUJ7KGC4ZQgw
-         2lPBOk2nMo7XYbDFqKiSM0amnQ9jEv9IrRXOjbhGkN6eqBAPweOI0fRkZHGmUeFKf0yc
-         eMQs8uuA6QLOO3TC8la4Nt+z20qkbnT21y/R0l+yAnHdgtR/ihvUAAJZEuOJmQ5D/dEs
-         yWYcFyxekw5+fhb+6W2SJ6jwxugNHqWYNBm0TzpzaghwWJBeCosUneqVLhvuSc/KjJbx
-         gDNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXs/k3jw7nRzMWcinYHobe01Ztk+c7AlpITDZqh9XgRZJtcaE6B7hbiRLXS9wUQ63hZtkq+J9cwQV22j0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwowV4BqS7Nmrk0/v/l3uTDqnWoQlJ67bmLlWHjvyBE4rbe6Ah7
-	Iu0RM3DeIWd55k39l8gJU9L/A5/X61H/eiFl/aOGj5m6ARg3MgDh9qyJno4tL+9OUFsbZ21PQDJ
-	bSMg5
-X-Gm-Gg: ASbGncv4wSwijEohux2AC0EHZWr5PdO6vzIuYSaZ2fRgW+1uDQPHZXvPZNIZtVCCpCF
-	P6M1BQnVmh/Y0DK9CaPbze+1O6PQX2dqis1Ox3TnQovZdzVyQhA4UzWPkExfChlYZq6QNmcbsNy
-	xZhLy/9ZoRu6AP0JCybgDHBa25yUPP20OxisVJfE+FSrv3mHHmRSkQfamLd9jbtuG+18jnjqcmf
-	AjfUYrlXHsey9I+HTu17gGZfHx6J7C4DXTBtNp1Oj0Qj9rHy7UsnyyrPeYn/IcazFmi7s8Qny24
-	bo/9pP7jMVpkRKS5795IS559jWjr1NWEsFLOC7xqESdolAuZAO2jukCzajNT3K4P5xMNkqzzeRX
-	utEjXgXOyzn4/6czIScX2ZZ9jIT9X08y4AQ==
-X-Google-Smtp-Source: AGHT+IEoPUIs8QXxDDX65uueSQcuOznUJ1A7kJhXS34684tBvm94g8joM6RL35rGIzOjEg7hyzRFAQ==
-X-Received: by 2002:a05:6e02:198e:b0:3e2:c5ff:382 with SMTP id e9e14a558f8ab-3e5249ab86bmr68723065ab.5.1754592049349;
-        Thu, 07 Aug 2025 11:40:49 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e402acacf1sm73867425ab.39.2025.08.07.11.40.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 11:40:48 -0700 (PDT)
-Message-ID: <b2430686-3da9-4fb9-8f91-5bb7da1920b0@linuxfoundation.org>
-Date: Thu, 7 Aug 2025 12:40:48 -0600
+	s=arc-20240116; t=1754592325; c=relaxed/simple;
+	bh=s41nQYbG9xds3nTMlaUxEfHRA0sbU0VGt9aCqsSBb7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clQTBuixzKEOe8mCMewntqBymtklv3akC/Fpx3wj+BwpkmEz354+M4Sp2/bIGaClNJZzMxAtLiQrIoFXflcLzCx5zv8AYy91Z6iecOwNUN0l0c+VS9DILpd6x/w6smVvEtJgctLCBhozwtTMQ/6LLKRTTM2ClMzNMYiDu9H1T8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nY1aVFTW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1DAC4CEEB;
+	Thu,  7 Aug 2025 18:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754592325;
+	bh=s41nQYbG9xds3nTMlaUxEfHRA0sbU0VGt9aCqsSBb7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nY1aVFTWftz8uIWW3hzTH6iKf1k7Sn6FtFu6bEvzRNxapAwmRIsfz7LRrUeulSiWl
+	 VlT7fu0Sgni+JHYd0vkQrXkXcirQK3Imop79h5brcHyY2UAy7JtxqNu5HQGi2h4pLO
+	 mPj8Eys8Yq1RlUoUwGumtlUurEMFGPYerBqKbg9VMR4dbXSJgvG1ecFzM8DgHvHBJk
+	 9LPbk10R/j/Zt28ufc3QJhF6W4pDIKbLgxd4mHF8XNuGw/CwQ3WRl4/TTv8haS6WY5
+	 267app3hQkPXN2JCcxSnwELVZdsug9TjBllXDEkrjGEgrR9/4cC6Dpx3fAlP44TXOh
+	 lRjTA/gk33zEA==
+Date: Thu, 7 Aug 2025 19:45:19 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org,
+	kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
+	bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+Message-ID: <4efc8a3a-ceb6-40dc-b877-328b86348e0b@sirena.org.uk>
+References: <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+ <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
+ <c1435858-6288-4525-8c92-e27ed86cb55e@sirena.org.uk>
+ <31461227-3f3a-4316-9c8a-c851209d0278@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: uvcvideo: Log driver load in uvc_probe function
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Imene Jaziri <imenjazirii18@gmail.com>, linux-media@vger.kernel.org,
- hansg@kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250801145326.28560-1-imenjazirii18@gmail.com>
- <20250801150430.GC4906@pendragon.ideasonboard.com>
- <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
- <20250807081408.GB11583@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250807081408.GB11583@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="G2ENHz2PdHsOQPSQ"
+Content-Disposition: inline
+In-Reply-To: <31461227-3f3a-4316-9c8a-c851209d0278@quicinc.com>
+X-Cookie: Real Users hate Real Programmers.
 
-On 8/7/25 02:14, Laurent Pinchart wrote:
-> Hi Benjamin,
-> 
-> (CC'ing Shuah)
-> 
-> On Thu, Aug 07, 2025 at 09:53:41AM +0200, Benjamin Mugnier wrote:
->> On 8/1/25 17:04, Laurent Pinchart wrote:
->>> On Fri, Aug 01, 2025 at 03:53:26PM +0100, Imene Jaziri wrote:
->>>> Add a pr_info() in the uvc_probe function to trace when the
->>>> uvcvideo driver is loaded. This is for learning purposes.
->>>
->>> What part of the learning instructions you are following instructed you
->>> to submit this patch to kernel mailing lists ? We are regularly spammed
->>> by similar patches, which indicates the instructions are not clear
->>> enough.
->>>
->>
->> I got curious too. It comes from the Linux Foundation training LFD103
->> [1]. Chapter 8 describes this patch pretty much, and chapter 9 describes
->> how to send the patch, but with a warning not to do so :
->>
->>    [...]
->>    At this time, you can run:
->>
->>    git format-patch -1 <commit ID> --to=maintainer1 --to=maintainer2
->> --cc=maillist1 --cc=maillist2
->>
->>    This will generate a patch.
->>
->>    Important Note:
->>    Please note that this is just an example. Don’t send this patch upstream.
->>
->>    You can revert this commit now.
->>
->>    Please refer to the Select the recipients for your patch section in
->> the Submitting patches: the essential guide to getting your code into
->> the kernel document.
->>
->>    When you have your own patch ready for submittal, you can follow this
->> example process to generate the patch and send it upstream using the
->> following command:
->>
->>    git send-email <patch_file>
->>    [...]
-> 
-> Imene provided me with that information in private.
-> 
->> Looking at it I guess it's pretty easy to miss the note.
-> 
-> Yes, reading the text, I really can't blame the people training the
-> course for missing it. It's a bit like if a mushroom foraging book said
-> 
-> - go pick those red mushrooms with white dots on the cap in the forest
-> - cut them in pieces, pan-fry them with butter
-> - add a couple of eggs, salt and pepper to make an omelette
-> - the dish is ready ! enjoy your meal !
-> - you won't be eating that, it's poisonous. throw it away
-> 
-> :-)
-> 
->> Maybe
->> requesting to add '--dry-run' to the git send-email command could be a
->> simple fix to prevent from copy/pasting ?
 
-No question that the material is confusing. The material is in
-a publicly available fee course.
+--G2ENHz2PdHsOQPSQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I've contacted Shuah, who told me she updated the training material.
-> Hopefully we'll soon stop getting such patches.
+On Thu, Aug 07, 2025 at 11:26:17PM +0530, Nitin Rawat wrote:
 
-It is fixed now and the spam should stop. This course has been in
-use for 6 years, this is the first time we are seeing spam.
+> 1. Regulator and PMIC configurations are board-specific, meaning they can
+> vary significantly across different platforms. For example, some boards m=
+ay
+> use different generations of UFS devices =E2=80=94 such as UFS 2.x =E2=80=
+=94 which come with
+> distinct power and load requirements and some with UFS3.x which has it own
+> power/load requirement.
 
-Sorry for the oversight that resulted in spam.
+Requirements from generations of UFS devices presumably come from the
+UFS spec and should just be known though?
 
-thanks,
--- Shuah
+> 2. UFS PHY load and PMIC requirements also varies across targets, dependi=
+ng
+> on the underlying technology node and the specific PHY capabilities. These
+> differences can be influenced by the MIPI version or other implementation
+> details.
+
+If you've got non-enumerable PHYs that have a big impact that's a much
+clearer use case for putting things in DT.
+
+> Given this variability, expressing these requirements in the device tree
+> allows for a flexible and accurate way to describe board-specific
+> constraints without hardcoding them into the driver.
+
+There's still the issue with making this a thing for all regulators, not
+just for this specific device.
+
+--G2ENHz2PdHsOQPSQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiU9D4ACgkQJNaLcl1U
+h9Dqwgf+JbIQrV4egEG41IhOo2GykmQdxoZIruBzsUhW9fiW7X/5mVa0iiwvNEtn
+HJ1vYBMJsMJPB3NW4tszSqFAAmc0qw8CywTwDzvGNPPot7+E4SAHVGMcoYKQDY63
+SiJRyciCV78ASvHAduHElQdln3nVEoA/DAm4nQnn090HTcLpK0lV7M9BqU95PU/+
+XuX51rX6hbXcH16FFZNJ9eqEvk5d/x67M3wZeXdFmZZ1Fb4pqFzrFblzQvveOhPF
+2z6oQ49XxsTAS5Y4c1ZVDpnXo5t2boRYnQeX1DUnDPZTAWyOCvbJkw694CAlnCX3
+F69UdClfNpyEYvrx4YYCSo/clrNe6w==
+=L2AK
+-----END PGP SIGNATURE-----
+
+--G2ENHz2PdHsOQPSQ--
 
