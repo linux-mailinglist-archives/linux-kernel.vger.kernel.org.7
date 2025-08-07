@@ -1,125 +1,207 @@
-Return-Path: <linux-kernel+bounces-758997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D5DB1D6E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:47:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9421EB1D702
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42EB3B2EDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFE972468C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE63227BB5;
-	Thu,  7 Aug 2025 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E9F23816E;
+	Thu,  7 Aug 2025 11:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SOQ/bEIE"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KELnS1FR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73731AAE17;
-	Thu,  7 Aug 2025 11:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DA9223DE8;
+	Thu,  7 Aug 2025 11:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567235; cv=none; b=odB88PBZCrtzyz1/a3b1o2EYYaH1BzFinFV0pc/rFc0sk5LBRhm9GmZPYsu2WUMFjgP4OtwGy5xeGJqyKBIZJPnmKmDRn/jNJeIYJIIcTin2gO9nqMVDL5yor8yEd2zcekX5hY4xCDpzyrVLz25VXVkuVbY8NwctWQ96QnMy/tI=
+	t=1754567559; cv=none; b=cAlMUa5anBWt8D4mZXy5xuumffkyIxEHwWYwe5ltz7ixLeKb+jlpq+zRnhyu3m2KaIA4rI2rY2q5HlxciJ+Rx3u3Zq+Dgo3if6txKuDniynW9aneX6y5O6p6SlHMnRUjydhXdeIUz4AkYvgpUk2Z8DB3e81xrS+W/4p4hpVUzKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567235; c=relaxed/simple;
-	bh=CaekhXMweGEbATse0Ot72S3jQtMglVWzZIiE6Ss2x3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KokRyLJ1o/fvFVBTGowBpMGoJZo/k9eFdSyvUecfMTTcvHCu4SOZSBJMttlSuzgLJNdDcMHftEffXSFTV5YkLbUkh5gIdppdR9yc7z40k46lOeDyprI1yIiYynZoKAVkDaGZBjMkpfE02Xp1jSm27D+LSzRFxoiL2A1OPolT3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=SOQ/bEIE; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=F55w2O7FP54zLnSv0RQaIMc8o0k83eet7kxdJLTSrDQ=; b=SOQ/bEIERLfEtrsw8VCWsMERFC
-	HG0U/2splUQG/TUua8sz+wxDsDVSNHxEDlUVj1HgSAosKi2DyPSD895afUXx0hI+bVarIdR8piwJF
-	Mc+SSd0Kkz0WElFQHLMj50fS6LwCALLUGWVQeds5QEjTMM5OlP60ZBvS3JPtgvDJ3j9DJuS9cNDfJ
-	j39TEHKHUzeda1tY3FXPnTLBlh5n7vWTcBvyCDsWviU25jmWfqCu9GaFDdXVetVatE7/LYFSHKlXP
-	v74zXGnPp6BiQda04ImRtVHwkTEzwOq04dWJsB8AmNnjbtlTyvBTqCy9ZfrByVGy2EPZoz5vLbpeQ
-	+SAJpBvQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34792)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ujz5O-00061v-11;
-	Thu, 07 Aug 2025 12:47:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ujz5K-00085X-32;
-	Thu, 07 Aug 2025 12:47:03 +0100
-Date: Thu, 7 Aug 2025 12:47:02 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, hkallweit1@gmail.com,
-	o.rempel@pengutronix.de, pabeni@redhat.com, netdev@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] net: phy: fix NULL pointer dereference in
- phy_polling_mode()
-Message-ID: <aJSSNg4aZNfoqqZh@shell.armlinux.org.uk>
-References: <20250806082931.3289134-1-xu.yang_2@nxp.com>
- <aJMWDRNyq9VDlXJm@shell.armlinux.org.uk>
- <ywr5p6ccsbvoxronpzpbtxjqyjlwp5g6ksazbeyh47vmhta6sb@xxl6dzd2hsgg>
- <aJNSDeyJn5aZG7xs@shell.armlinux.org.uk>
- <unh332ly5fvcrjgur4y3lgn4m4zlzi7vym4hyd7yek44xvfrh5@fmavbivvjfjn>
- <b9140415-2478-4264-a674-c158ca14eb07@lunn.ch>
- <aJOHObGgfzxIDzHW@shell.armlinux.org.uk>
- <2b3fvsi7c47oit4p6drgjqeaxgwyzyopt7czfv3g2a74j2ay5j@qu22cohdcrjs>
- <3mkwdhodm4zl3t6zsavcrrkuawvd3qjxtdvhxwi6gwe42ic7rs@tevlpedpwlag>
+	s=arc-20240116; t=1754567559; c=relaxed/simple;
+	bh=O+Gp1WDPR1zKNL2eACyYRIa65npWpWeI2RQg5Kl7t88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jgH57FbkcZhc6LKl0Iy5PJ75JjIRW8fqwwR67RyJRJxxVyElcOFMvaZ/CpBMjfW4UOAL4UZQMrGdxSeo2p6XY/T8SAqTCQRfjICgSLz6Q6k28Dv9jaqW90y428lnMM1p6y2Wd3H0iorXgcZTKNPiE3hUQnD3NnAWlefERNpxG40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KELnS1FR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5770Rh66021506;
+	Thu, 7 Aug 2025 11:47:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BTQHC2
+	aC2tbH1wEMSIkNmofgsFKydHAcYdDRMTIS3gI=; b=KELnS1FRFy1qDUCVKhVOWv
+	ZzK1ntN6uoQp2Jxn/SlRHeWHPQ/oHTkFBeP7lSkwz5jx0OaHS/xsnCAMHwaiAkVZ
+	kwNvecb38Qyauaum4GF7uILxu08pFPES/XeZ329i3t6kPELpMOxsaffuZSKGhnCG
+	U5fvOEg+IROBx5nvJdwSVZt70LT7cyDvvCEB0o8PwZ6Z+JT2vCg9Nrye6T3RF75q
+	3MXsWAMVoy0Eb8CdMCYtuBbjeMJKnApMdhG6CFFvr/uzt0PqXA9sPSf2lC84uXO7
+	N433iMWmayXNbDkiXgJIt3d7dynRf0fF59vu8x9pJJ65LiaVGeUmLmsTHGy9dT/g
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq621ubp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 11:47:11 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779eeZR022647;
+	Thu, 7 Aug 2025 11:47:10 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqgdqd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 11:47:10 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577Bl9VJ60359118
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 11:47:10 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD14258066;
+	Thu,  7 Aug 2025 11:47:09 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A044958057;
+	Thu,  7 Aug 2025 11:47:06 +0000 (GMT)
+Received: from [9.109.198.214] (unknown [9.109.198.214])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 11:47:06 +0000 (GMT)
+Message-ID: <470ab442-e5eb-4fa8-bde7-d6d2d1115a5a@linux.ibm.com>
+Date: Thu, 7 Aug 2025 17:17:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3mkwdhodm4zl3t6zsavcrrkuawvd3qjxtdvhxwi6gwe42ic7rs@tevlpedpwlag>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix kobject double initialization in add_disk
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        houtao1@huawei.com, zhengqixing@huawei.com
+References: <20250807072056.2627592-1-zhengqixing@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250807072056.2627592-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA5MCBTYWx0ZWRfX0KtKCmJ/SIJ0
+ hoPkHabkBmXTAiJ6wnDfbj4JnyMCQ2klEbQ7eAemZjijHU6YI8eWmH5I0UvVSs8nMoSi35gQm0q
+ /6U7O6C6MjX2LGyjqwke3VWfiCIbeyc+voKscU9+P+4ABtWvxmO7GWZ3Ctfvk6mtJw1mkT67PVo
+ HToeiIDrm5qvxP7DJwKu2vZO5Xf+trKWmLZW39P7ju0XbMNAU4wD9IbKOcjVihIWKcR0gcYOcQ9
+ CeuflSMtxQqnUpJfv5npxFt1rJihrK0Oya4CcNhi8aMvAYyyXMyho8CLT1kwraJiTzpAdffpghX
+ v6yYY7EDxBrVbfDqZFJT4eCBKVMVX/LgIMNQWye8kF3i3VgZ0MxnvYyS6HtB2Jhtx2xewQ/1Zde
+ hzMjuEUTUrp2hjgeGYQIeUFNQl6wNasxyR+ELoUHLdcvpAZmavpupotGa59XjEAIOS2uZZvY
+X-Proofpoint-GUID: tQupf28WFtjmVrYyJRnYp1eBwVucnonL
+X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=6894923f cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
+ a=FUuygD7Wb4d3zBr_g5QA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: tQupf28WFtjmVrYyJRnYp1eBwVucnonL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
+ malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070090
 
-On Thu, Aug 07, 2025 at 07:21:46PM +0800, Xu Yang wrote:
-> Hi Russell and Andrew,
+
+
+On 8/7/25 12:50 PM, Zheng Qixing wrote:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> With more debug on why asix_devices.c driver is creating so many mdio devices,
-> I found the mdio->phy_mask setting may be missing.
-
-mdio->phy_mask is really only a workaround/optimisation to prevent
-the automatic scanning of the MDIO bus.
-
-If we know for certain that we're only interested in a PHY at a
-certain set of addresses, then it's appropriate to tell the MDIO/phylib
-layer not to bother scanning the other addresses, but this will mean
-if the driver uses e.g. phy_find_first(), it will find the first PHY
-amongst those that phy_mask allows to be scanned, rather than the first
-on the bus.
-
-In other words... it's dependent on the driver.
-
-> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-> index 9b0318fb50b5..9fba1cb17134 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -676,6 +676,7 @@ static int ax88772_init_mdio(struct usbnet *dev)
->         priv->mdio->read = &asix_mdio_bus_read;
->         priv->mdio->write = &asix_mdio_bus_write;
->         priv->mdio->name = "Asix MDIO Bus";
-> +       priv->mdio->phy_mask = ~BIT(priv->phy_addr);
->         /* mii bus name is usb-<usb bus number>-<usb device number> */
->         snprintf(priv->mdio->id, MII_BUS_ID_SIZE, "usb-%03d:%03d",
->                  dev->udev->bus->busnum, dev->udev->devnum);
+> Device-mapper can call add_disk() multiple times for the same gendisk
+> due to its two-phase creation process (dm create + dm load). This leads
+> to kobject double initialization errors when the underlying iSCSI devices
+> become temporarily unavailable and then reappear.
 > 
-> Is this the right thing to do?
+> However, if the first add_disk() call fails and is retried, the queue_kobj
+> gets initialized twice, causing:
+> 
+> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
+> something is seriously wrong.
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x5b/0x80
+>   kobject_init.cold+0x43/0x51
+>   blk_register_queue+0x46/0x280
+>   add_disk_fwnode+0xb5/0x280
+>   dm_setup_md_queue+0x194/0x1c0
+>   table_load+0x297/0x2d0
+>   ctl_ioctl+0x2a2/0x480
+>   dm_ctl_ioctl+0xe/0x20
+>   __x64_sys_ioctl+0xc7/0x110
+>   do_syscall_64+0x72/0x390
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Fix this by separating kobject initialization from sysfs registration:
+>  - Initialize queue_kobj early during gendisk allocation
+>  - add_disk() only adds the already-initialized kobject to sysfs
+>  - del_gendisk() removes from sysfs but doesn't destroy the kobject
+>  - Final cleanup happens when the disk is released
+> 
+> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
+> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
+> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> ---
+>  block/blk-sysfs.c | 4 +---
+>  block/blk.h       | 1 +
+>  block/genhd.c     | 2 ++
+>  3 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 396cded255ea..37d8654faff9 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
+>  	/* nothing to do here, all data is associated with the parent gendisk */
+>  }
+>  
+> -static const struct kobj_type blk_queue_ktype = {
+> +const struct kobj_type blk_queue_ktype = {
+>  	.default_groups = blk_queue_attr_groups,
+>  	.sysfs_ops	= &queue_sysfs_ops,
+>  	.release	= blk_queue_release,
+> @@ -875,7 +875,6 @@ int blk_register_queue(struct gendisk *disk)
+>  	struct request_queue *q = disk->queue;
+>  	int ret;
+>  
+> -	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
+>  	ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, "queue");
+>  	if (ret < 0)
+>  		goto out_put_queue_kobj;
 
-If we're only expecting a MDIO device at priv->phy_addr, then I
-guess it's fine. Looking at the driver, I don't understand the
-mixture of dev->mii.* and priv->mdio->*, and sadly I don't have
-time to look in depth at this driver to work that out.
+If the kobject_add() fails here, then we jump to the label out_put_queue_kobj,
+where we release/put disk->queue_kobj. That would decrement the kref of 
+disk->queue_kobj and possibly bring it to zero. 
+Next time, when we call add_disk() again without invoking kobject_init() 
+(because the initialization is now moved outside add_disk()), the refcount
+of disk->queue_kobj — which was previously released — would now go for a
+toss. Wouldn't that lead to use-after-free or inconsistent state?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
+>  		elevator_set_none(q);
+>  
+>  	blk_debugfs_remove(disk);
+> -	kobject_put(&disk->queue_kobj);
+>  }
+
+I'm thinking a case where add_disk() fails after the queue is registered. 
+In that case, we call blk_unregister_queue() — which would ideally put()
+the disk->queue_kobj.
+But if we skip that put() in blk_unregister_queue() (and that's what we do
+above), and then later retry add_disk(), wouldn’t kobject_add() from 
+blk_register_queue() complain loudly — since we’re trying to add a kobject
+that was already added previously?
+
+Thanks,
+--Nilay
+
 
