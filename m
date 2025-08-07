@@ -1,264 +1,151 @@
-Return-Path: <linux-kernel+bounces-759345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A7FB1DC6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144C6B1DC6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13EC6189BCDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22111899343
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F885273806;
-	Thu,  7 Aug 2025 17:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE15273818;
+	Thu,  7 Aug 2025 17:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CmlHr1Gy"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tql3hRFA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF503208;
-	Thu,  7 Aug 2025 17:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6DE26FA5A;
+	Thu,  7 Aug 2025 17:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754587491; cv=none; b=LEUiuluIEGbk5q3YERu1r1+XTfYXIFfBRfI5p6vxCUxkxb+oUrlmnkdWNz9WXo4C9nwNxBqhEyf0rcQulYY2WMj4OLJhCxFus7CbRAu8lhikN97J0h8ERF8adXLN5I378iNBzqc8D2SU+vxg1eLEIfK6Cc5h7IsSV1zVb5K81l8=
+	t=1754587592; cv=none; b=AsSrBBQs61Hd7SoopPGMvkgnG1M2C5/jFdkO50fFeJw0mYk1nfdAiZ8lWTsh0FonbH/KLx+enNrZ/p/weiRjFEyhllBcXjjd+kH95uMaINVciJ2wOM0z1d0JqoLKV228Wyy5I7kfK81guNda9jU4DEIthgoVrIEP3GWz4c3GH98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754587491; c=relaxed/simple;
-	bh=xFHVK4q7xg/Y9xYwyzVM7uCiX9Gy4uq5t9Lga7/3/p8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sz+sbAPYIbqi6lOvvW6kEugqSr13tImce/k79zZ/R6LZ/CLQT5MRUosdI6aDQzPvGjzx6bGbhzs3WvlvNxDH0mIMENUlphRltYqwMu5XBu18rxUrSPqPLh/MH8kkXrOS72z4Qo6bhgrObDCvV0QglPxhWF09OpMc9t2N9IHNDAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CmlHr1Gy; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577HOUKU856464;
-	Thu, 7 Aug 2025 12:24:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754587470;
-	bh=OwE7IjWl6VZ3ggI0SvEUvgOmvcIShKD7xDHpGQrOZfc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=CmlHr1Gy5tJ3TmYS8qHbb7V746RPNQSYpAacXOEf1qAsF3yTy7gODfdaYq+wAtwGO
-	 MTX4ySWV/kTpyaO2FhkaojxAcyRicXsQhG+lXXn0GgRc4FaM7maRl/phGACH7iPdfN
-	 ChSS4cEezQr+FTCeyuZZYlLmL/opF/irVFVCVQ+s=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577HOUF24044652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 7 Aug 2025 12:24:30 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
- Aug 2025 12:24:29 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 7 Aug 2025 12:24:29 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577HOT3E1416840;
-	Thu, 7 Aug 2025 12:24:29 -0500
-Message-ID: <37f73812-be0c-43b2-a5bc-a41e09db85ea@ti.com>
-Date: Thu, 7 Aug 2025 12:24:29 -0500
+	s=arc-20240116; t=1754587592; c=relaxed/simple;
+	bh=dBqBLGaHfPvygOmUPgSRr7Lv3hSqvGhrJ/xgbHGOQEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3b2LL31nP7EWxOhI7rSz/G6LdxqJhXA7y3M77Bnpw2GvtL7IGs3TAQIPEpB8x4M3aIBHfi8TMg0NViwTxNkeuq0bEYjP2Qdtgh+x8BVOwYW+KuwVln6uqH/2zP7e3g7E41G/T6MVz6329GLOE0mFbYE1uOh6QCMRKHJ0thWqco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tql3hRFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA12C4CEEB;
+	Thu,  7 Aug 2025 17:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754587591;
+	bh=dBqBLGaHfPvygOmUPgSRr7Lv3hSqvGhrJ/xgbHGOQEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tql3hRFAbB7UmK9n+MyB/awAiw6Tt1INWh61kJC+RfPpdoun6czGMk18AEHB0r6g7
+	 AoHpyjQujOfsf241npskC61CJMXQa0R1IgPOV8XRFXMocrNznhJTDNfGYPg8UtboS8
+	 aH2U0LGItpsDkoKEsfjBwPHQ5qQmeNBIM9M4eZZ2R+pPXvtMiJ5D9BL+N+5LjFlTn2
+	 XGnT5rRXkGY0yZ68dZYguArynKD4dGk8DNkkjFkmpCHulxH7oP6AW3TVZkHzkfSydP
+	 VRAY0nBZm4k0ChVGRxIxNm5kWx9RUiovevMCBHB/2otnzkz4kY0sOuXpVDN7z3ctmp
+	 P4/MlTiHVvfqw==
+Date: Thu, 7 Aug 2025 18:26:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org,
+	kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
+	bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+Message-ID: <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] soc: ti: k3-socinfo: Add support for AM62P variants
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-References: <20250805234950.3781367-1-jm@ti.com>
- <20250805234950.3781367-3-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250805234950.3781367-3-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wdZedFUit1z97TcH"
+Content-Disposition: inline
+In-Reply-To: <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+X-Cookie: Real Users hate Real Programmers.
 
-On 8/5/25 6:49 PM, Judith Mendez wrote:
-> This adds a support for detecting AM62P SR1.0, SR1.1, SR1.2.
-> 
-> On AM62P, silicon revision is discovered with GP_SW1 instead of JTAGID
-> register, so introduce GP_SW register range to determine SoC revision.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
->   drivers/soc/ti/k3-socinfo.c | 82 +++++++++++++++++++++++++++++++++----
->   1 file changed, 74 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
-> index d716be113c84..9daeced656d6 100644
-> --- a/drivers/soc/ti/k3-socinfo.c
-> +++ b/drivers/soc/ti/k3-socinfo.c
-> @@ -15,6 +15,7 @@
->   #include <linux/sys_soc.h>
->   
->   #define CTRLMMR_WKUP_JTAGID_REG		0
-> +#define CTRLMMR_WKUP_GP_SW1_REG		4
->   /*
->    * Bits:
->    *  31-28 VARIANT	Device variant
-> @@ -62,10 +63,63 @@ static const struct k3_soc_id {
->   	{ JTAG_ID_PARTNO_AM62LX, "AM62LX" },
->   };
->   
-> +static const struct regmap_config k3_chipinfo_regmap_cfg = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +};
-> +
->   static const char * const j721e_rev_string_map[] = {
->   	"1.0", "1.1", "2.0",
->   };
->   
-> +static const char * const am62p_gpsw_rev_string_map[] = {
-> +	"1.0", "1.1", "1.2",
-> +};
-> +
-> +static int
-> +k3_chipinfo_get_variant_alternate(struct platform_device *pdev, unsigned int partno, u32 *variant)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *regmap;
-> +	void __iomem *base;
-> +	u32 offset;
-> +	int ret;
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 1);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	regmap = regmap_init_mmio(dev, base, &k3_chipinfo_regmap_cfg);
 
-devm_regmap_init_mmio()
+--wdZedFUit1z97TcH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Otherwise this regmap never gets freed up in the error paths.
+On Thu, Aug 07, 2025 at 09:12:53PM +0530, Nitin Rawat wrote:
+> On 8/7/2025 7:14 PM, Mark Brown wrote:
 
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	switch (partno) {
-> +	case JTAG_ID_PARTNO_AM62PX:
-> +		offset = CTRLMMR_WKUP_GP_SW1_REG;
-> +		break;
-> +	default:
-> +		offset = CTRLMMR_WKUP_GP_SW1_REG;
+> > > The intended use is to set the load requirement and then only en/disable
+> > > the consumer, so that the current load is updated in core (like in the
+> > > kerneldoc of _regulator_handle_consumer_enable())
 
-This switch case does nothing, if offset ever can get any other
-value, then you can add it back.
+> > > My question was about moving the custom parsing of
+> > > $supplyname-max-micromap introduced in this patch into the regulator
+> > > core, as this seems like a rather common problem.
 
-> +	}
-> +
-> +	ret = regmap_read(regmap, offset, variant);
-> +
+> > Wait, is this supposed to be some new property that you want to
+> > standardise?  I didn't see a proposal for that, it's not something that
+> > currently exists - the only standard properties that currently exist are
+> > for the regulator as a whole.
 
-Extra newline
+> The UFS QMP PHY driver is not the first client to use regulator_set_load or
+> alternatively set load requirements and invoke enable/disable or
+> alternatively
 
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static bool k3_chipinfo_variant_in_gp_sw(unsigned int partno)
-> +{
-> +	switch (partno) {
-> +	case JTAG_ID_PARTNO_AM62PX:
+The issue isn't using regulator_set_load(), that's perfectly fine and
+expected.  The issue is either reading the value to use from the
+constraint information (which is just buggy) or adding a generic
+property for this (which I'm not convinced is a good idea, I'd expect a
+large propoprtion of drivers should just know what their requirements
+are and that a generic property would just get abused).
 
-Do you really need a function just to hold a switch-case? You also
-have a switch-case that checks for PARTNO_AM62PX in the below function
-that makes use of the extra "gp_sw1", why not inside that case fetch
-the value. Would avoid passing in a variable "gp_sw1" which is unused
-in all but the PARTNO_AM62PX case.
+> These drivers also define corresponding binding properties, as seen in the
+> UFS instances documented here:
 
-Andrew
+> UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/ufs-common.yaml?h=next-20250807)
 
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
->   static int
->   k3_chipinfo_partno_to_names(unsigned int partno,
->   			    struct soc_device_attribute *soc_dev_attr)
-> @@ -83,8 +137,10 @@ k3_chipinfo_partno_to_names(unsigned int partno,
->   
->   static int
->   k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
-> -			  struct soc_device_attribute *soc_dev_attr)
-> +			  struct soc_device_attribute *soc_dev_attr, u32 gp_sw1)
->   {
-> +	u32 gpsw_variant = gp_sw1 % 16;
-> +
->   	switch (partno) {
->   	case JTAG_ID_PARTNO_J721E:
->   		if (variant >= ARRAY_SIZE(j721e_rev_string_map))
-> @@ -92,6 +148,13 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
->   		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
->   						   j721e_rev_string_map[variant]);
->   		break;
-> +	case JTAG_ID_PARTNO_AM62PX:
-> +		/* Always parse AM62P variant from GP_SW1 */
-> +		if (gpsw_variant >= ARRAY_SIZE(am62p_gpsw_rev_string_map))
-> +			goto err_unknown_variant;
-> +		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
-> +						   am62p_gpsw_rev_string_map[gpsw_variant]);
-> +		break;
->   	default:
->   		variant++;
->   		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%x.0",
-> @@ -107,12 +170,6 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
->   	return -ENODEV;
->   }
->   
-> -static const struct regmap_config k3_chipinfo_regmap_cfg = {
-> -	.reg_bits = 32,
-> -	.val_bits = 32,
-> -	.reg_stride = 4,
-> -};
-> -
->   static int k3_chipinfo_probe(struct platform_device *pdev)
->   {
->   	struct device_node *node = pdev->dev.of_node;
-> @@ -121,6 +178,7 @@ static int k3_chipinfo_probe(struct platform_device *pdev)
->   	struct soc_device *soc_dev;
->   	struct regmap *regmap;
->   	void __iomem *base;
-> +	u32 gp_sw1_val = 0;
->   	u32 partno_id;
->   	u32 variant;
->   	u32 jtag_id;
-> @@ -163,7 +221,15 @@ static int k3_chipinfo_probe(struct platform_device *pdev)
->   		goto err;
->   	}
->   
-> -	ret = k3_chipinfo_variant_to_sr(partno_id, variant, soc_dev_attr);
-> +	if (k3_chipinfo_variant_in_gp_sw(partno_id)) {
-> +		ret = k3_chipinfo_get_variant_alternate(pdev, partno_id, &gp_sw1_val);
-> +		if (ret < 0) {
-> +			dev_err(dev, "Failed to read GP_SW1: %d\n", ret);
-> +			goto err;
-> +		}
-> +	}
-> +
-> +	ret = k3_chipinfo_variant_to_sr(partno_id, variant, soc_dev_attr, gp_sw1_val);
->   	if (ret) {
->   		dev_err(dev, "Unknown SoC SR[0x%08X]: %d\n", jtag_id, ret);
->   		goto err;
+Note that that's specifying OPPs which is different...
 
+> There was a previous effort to introduce similar properties
+> (vdda-phy-max-microamp and vdda-pll-max-microamp) in the device tree
+> bindings.
+> Link - (link- https://patchwork.kernel.org/project/linux-arm-msm/patch/20220418205509.1102109-3-bhupesh.sharma@linaro.org/#24820481)
+
+That patch also fails to supply any rationale for making this board
+specific or generally putting them in the DT, AFAICT it's one of these
+things just pulled out of the vendor tree without really thinking about
+it.  The changelog just says the properties are in downstream DTs.
+
+> Currently, the regulator framework does support automatic aggregation of
+> load requests from multiple client drivers. Therefore, it is reasonable and
+> necessary for each client to individually communicate its expected runtime
+> load to the regulator framework to put the regulators in current
+> operation mode.
+
+That doesn't mean that it's a good idea to put that information in the
+DT, nor if it is sensible to put in DT does it mean that it's a good
+idea to define a generic property that applies to all regulator
+consumers which is what I now think Konrad is proposing.
+
+--wdZedFUit1z97TcH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiU4cEACgkQJNaLcl1U
+h9A1uQf+IZqIzqVC/IwgEVeZML9aeON0xrr7zZEGxO38RsjJwp34I1y1phzbA8Zx
+6kAa4M2vu35vr1eJ2VmEY0bv7Afa6PHdITjGhB3URqGAG6ahCjrMBXZywus6/fuZ
+9J5GNkcNHBD/yfqBiU9s0F8eERBe5JddiyG33RcNJCbhA4/fgAb8ZN3EGbd8K8Ej
+1s0s0DkVUkdb7DriRcVgFRZN6z/AZnNlhjTOmjt7YAdBa5vYKX7CPT9A7PxnSRfE
+HqF7hok9fr3aL2lFNInip73/fB3x+4BUqJiwPaBwztBRsqellMrHMFSFzYtagjGc
+ULSqGXZGLtUEv/b0yNCSQNkXG0kH5w==
+=AEUg
+-----END PGP SIGNATURE-----
+
+--wdZedFUit1z97TcH--
 
