@@ -1,211 +1,81 @@
-Return-Path: <linux-kernel+bounces-758592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BE8B1D122
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E679FB1D126
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2C37AB88E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC793724CAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7860B1C8633;
-	Thu,  7 Aug 2025 03:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC7F1E32A2;
+	Thu,  7 Aug 2025 03:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FiwO/d4l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ss16KIfq"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD23C133;
-	Thu,  7 Aug 2025 03:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E393C1D5ABF;
+	Thu,  7 Aug 2025 03:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754536099; cv=none; b=SN6epNCz2VHePEa4+RSHjpTBTOquOcoJYrBvyYsubBeXlEcww57OmZVTcwZalkK+VeeLyharxN5i6PYtHvqYpZeVuJZ0pbkbW9WOVFS2EBDO11t7i0rKXRH7SU5L7Xg5FNfsH28zUCRU18gGP1/RQTD0yJ/eHH+0pfNz8vf2MU4=
+	t=1754536103; cv=none; b=WXmYqfeiNg7Ns32WvKyHwNKNDVYitxO/92vYzDXPKMYdHBgGIkd0VCZKHb6vvJEdYfH7f+qohzlOD7KFZmjl17dEO2ileqTuWe7VvCOn3zQfseVq4dg0LkPN9y3jgJoFiQUGE/YJhMLq5Oo1BRKGbVcJ4rCL//S4ognQhTDzz0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754536099; c=relaxed/simple;
-	bh=GRk527uBL2x5DQixo/UdMSzo0YC2frEsKN6fDg6Cff0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=akX1GRmkjdd+6kpuGdgvJHDqt/0qkEmf9ljEepoG3KK96vF99eYLCa9RGOMwi+X3ozXCEDQVRLWy9W7BsQTqsVXumNq5djs8WTzJsejmKBDdxjtKzcbtQHX1CL5zPJaPzxHLYrIliqqZlTwLbsDEYQ/u3M0STLWsMGD4kZpBvww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FiwO/d4l; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754536098; x=1786072098;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GRk527uBL2x5DQixo/UdMSzo0YC2frEsKN6fDg6Cff0=;
-  b=FiwO/d4l0/tv0xzTVNr4Z2rRmJDFVzbY7ynmfn9kGtlAlPmfZN1rh9TG
-   knoeNBB95ZQLJiutBYMbu0lncIBYky8QuhMAgLhSNCejGarXRQpQ9QW/y
-   zsbBIHqV+/2CW25VXhf12TyWIPSE9qI2ZttlpZXfjaNcFvh39IPMcZfaF
-   i8Hoc6qQ8nQtF6BJASKa8Tql+ncOJvAF9LeBIQXampeD65aVczP1HD9Cz
-   tod/MsGu96HabmRStNGGMk985gGGhkL+1d/iEPyNlQMscmoL196WTdAAe
-   u84vHXQnyrF5oJ+Pirp8JCIoYCRHo2hrzQx1mEHk5/uingwNn3NXwvx5j
-   A==;
-X-CSE-ConnectionGUID: 5N/EwZa9S3KNWAeqdDU2yg==
-X-CSE-MsgGUID: GB85AskfQm+aCUde3ZGJaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67562132"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="67562132"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 20:08:18 -0700
-X-CSE-ConnectionGUID: NEkFjQjTQPm+tJwfZnYgsA==
-X-CSE-MsgGUID: 0uspJoupTai29Vx6JfNEJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164588660"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 20:08:15 -0700
-Message-ID: <154b59ee-0858-4caf-9972-3679db0a0c49@linux.intel.com>
-Date: Thu, 7 Aug 2025 11:08:11 +0800
+	s=arc-20240116; t=1754536103; c=relaxed/simple;
+	bh=WY2EhGfiUl1uE0qy34wSO3JErruJR865/J+qREdKGmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U71OMeOZJlu5nA/h8v2hDGYKTKPnljI9l7BTcDzJl3gtof01UoDd5nQVI9tnxi7QnkOZti5EtDX6F4HmBsS674xDW8lmUV6Pv75SBk3Ac2Mc4XSwm64CkB+mOwMX+QFQMeZKZB6NJHnj3t1YwxTw4pNMCb8aIeLSUisTmUDHysQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ss16KIfq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WY2EhGfiUl1uE0qy34wSO3JErruJR865/J+qREdKGmk=; b=Ss16KIfqBX1jUo0C5UJegCeOJt
+	xveApjcQWUE9xwvjhf3PyJVlcG7R9r2I0iCHn+wwDNrV+Cqedn26vxiIYK8Sfge6tZckj7wnSwSbV
+	e3hab71djSuq88isAjLjIdReOW06/RHGdSvfO//RyPpzUKf9h3ud87KJpXbopb0jYooBT/7uEIajx
+	QLKDyI5Xb9I6ugB6WUb4H1KyFMLmb144fQLZcIDq5b08lcKyMv9vEHIZ8D+OGGp7Y2KpdGuabopxz
+	TKZu/fTPh8pseDEzCjTbwrqj4BJlXRQa8fnDtAoudMn+Gsg/Su9O46uCO6GS0JTbXs1FYBgJaGTVc
+	Q3KZsBNg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ujqzJ-00000000JSt-2hut;
+	Thu, 07 Aug 2025 03:08:17 +0000
+Date: Thu, 7 Aug 2025 04:08:17 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+Message-ID: <20250807030817.GH222315@ZenIV>
+References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
+ <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
+ <20250806190751.GG222315@ZenIV>
+ <2025-08-07.1754534735-core-snowplow-plaid-exiles-anemic-gulls-v9Da77@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] perf tools kvm: Use "cycles" to sample guest for "kvm
- record" on Intel
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
- <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
- <aJPuhpFK_ZjLk-ct@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <aJPuhpFK_ZjLk-ct@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025-08-07.1754534735-core-snowplow-plaid-exiles-anemic-gulls-v9Da77@cyphar.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Thu, Aug 07, 2025 at 12:46:17PM +1000, Aleksa Sarai wrote:
 
-On 8/7/2025 8:08 AM, Namhyung Kim wrote:
-> On Tue, Aug 05, 2025 at 08:46:32AM +0800, Dapeng Mi wrote:
->> After KVM supports PEBS for guest on Intel platforms
->> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
->> host loses the capability to sample guest with PEBS since all PEBS related
->> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
->> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
->> fails to sample guest on Intel platforms since "cycles:P" event is used to
->> sample guest by default as below case shows.
-> Do you mean we cannot use "cycles:PG" for perf kvm record?
+> It felt odd to use "return ret;" at the start and switch to "return n;"
+> at the end, but feel free to change it when applying.
 
-Yes. Here is the output on Intel Sapphire rapids.
+s/ret/err/ would take care of that, as well as clarifying the intent -
+not that "mutex_lock_interruptible() returns 0 or error" hadn't been
+the basic common knowledge...
 
-sudo ./perf record -e cycles:PG -a
-^C[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.801 MB perf.data ]
-
-No guest records are captured with PEBS, and guest PEBS records can be
-sampled only without PEBS.
-
-sudo ./perf record -e cycles:G -a
-^C[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.798 MB perf.data (60 samples) ]
-
-
->
->> sudo perf kvm record -a
->> ^C[ perf record: Woken up 1 times to write data ]
->> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
->>
->> So to ensure guest record can be sampled successfully, use "cycles"
->> instead of "cycles:P" to sample guest record by default on Intel
->> platforms. With this patch, the guest record can be sampled
->> successfully.
->>
->> sudo perf kvm record -a
->> ^C[ perf record: Woken up 1 times to write data ]
->> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
-> What if user already gave some events in the command line?  I think you
-> need to check if "-e" or "--event" (and "--pfm-events" too) is in the
-> argv[] before adding these.
-
-kvm_add_default_arch_event() would detect if user already sets events explicitly. If so, it won't add "cycles" event any more. Thanks.
-
->
-> Thanks,
-> Namhyung
->
->> Reported-by: Kevin Tian <kevin.tian@intel.com>
->> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  tools/perf/arch/x86/util/kvm-stat.c | 46 +++++++++++++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->>
->> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
->> index 424716518b75..cdb5f3e1b5be 100644
->> --- a/tools/perf/arch/x86/util/kvm-stat.c
->> +++ b/tools/perf/arch/x86/util/kvm-stat.c
->> @@ -3,9 +3,11 @@
->>  #include <string.h>
->>  #include "../../../util/kvm-stat.h"
->>  #include "../../../util/evsel.h"
->> +#include "../../../util/env.h"
->>  #include <asm/svm.h>
->>  #include <asm/vmx.h>
->>  #include <asm/kvm.h>
->> +#include <subcmd/parse-options.h>
->>  
->>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
->>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
->> @@ -211,3 +213,47 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
->>  
->>  	return 0;
->>  }
->> +
->> +/*
->> + * After KVM supports PEBS for guest on Intel platforms
->> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
->> + * host loses the capability to sample guest with PEBS since all PEBS related
->> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
->> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
->> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
->> + * sample guest by default.
->> + *
->> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
->> + * by default to sample guest on Intel platforms.
->> + */
->> +int kvm_add_default_arch_event(int *argc, const char **argv)
->> +{
->> +	const char **tmp;
->> +	bool event = false;
->> +	int i, j = *argc;
->> +
->> +	const struct option event_options[] = {
->> +		OPT_BOOLEAN('e', "event", &event, NULL),
->> +		OPT_END()
->> +	};
->> +
->> +	if (!x86__is_intel_cpu())
->> +		return 0;
->> +
->> +	tmp = calloc(j + 1, sizeof(char *));
->> +	if (!tmp)
->> +		return -EINVAL;
->> +
->> +	for (i = 0; i < j; i++)
->> +		tmp[i] = argv[i];
->> +
->> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
->> +	if (!event) {
->> +		argv[j++] = strdup("-e");
->> +		argv[j++] = strdup("cycles");
->> +		*argc += 2;
->> +	}
->> +
->> +	free(tmp);
->> +	return 0;
->> +}
->> -- 
->> 2.34.1
->>
+Anyway, that's really nitpicking at this point.
 
