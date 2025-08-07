@@ -1,197 +1,359 @@
-Return-Path: <linux-kernel+bounces-758837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4D3B1D46C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C661B1D479
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED9D65640C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA2E62719F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA67723B629;
-	Thu,  7 Aug 2025 08:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372F25C81E;
+	Thu,  7 Aug 2025 08:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bY6WGZPD"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="k6iuvsJX"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86511400C;
-	Thu,  7 Aug 2025 08:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE10F221F13;
+	Thu,  7 Aug 2025 08:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754556479; cv=none; b=gLTuUNVaADFItx7SMkuYz7r/8wz8oajx5bQ1SzOWlHKdVEKkiUiJqx4iwyW3APH+M+grwUvtdDZNYUG+cFx8cRAOc5e/cm6M4u2uaDmLLtceeE0szqGEQZRUffAmV9Z5eDNsAU9R7fDlzlrNKXizEbPwRmeAUYc1VYuFCUzyptQ=
+	t=1754556626; cv=none; b=q70LzdazaXHzETeBYt/2sBQ8FdzWe/bIHVZtdmllMHfNPW2uscPoTRi9Z9NgcFWCSE+bO9iTXjdia9JCjffhb4iV2NslKVX4UCphk+I/oI9JxYw41LjaL9krJXF8L4+h6TO4uwePpTnzxR44DpnoiTXT4Vv+03Z8L8tPyHCUQsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754556479; c=relaxed/simple;
-	bh=UXzuKK0SXZzuuW76ghNzmiNIpvyQpByfO4po8zV8dgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7/HqGngp6CJusiCZ6OooibjK8+PunrhlNSn+KgQ7/0M3mC3TT0zsPol4p9ZrfIfEytNcZSQzN95OVURtJ3cvDweZwsHBq2CqLfvD0u6Xv+5aoc74DtS0MP4p2EfPH9iBJIzd5RuqUFPVAKVRcjLK+DFkxRTXyTaVo+u1pv+yF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bY6WGZPD; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7086dcab64bso6991177b3.1;
-        Thu, 07 Aug 2025 01:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754556476; x=1755161276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CVf9LbLojcCuAhT+ga1Vyf947M38uWa9Hm3uYLCKQ/w=;
-        b=bY6WGZPDnrK2H7GoO7MeqRtn292thEhcN4wBlPecpThcYLxMXKqWrtgZCVgbM5UK6w
-         CPaRs10LjU3qTVvFUs63LRAmHoMx+RzhyP1dJ3lMlcjqeZAmG5WZ1Rc0VCKqSBhHmlm9
-         JJbfHeqb9BOu/EfjvzrAd1eyF/tbsDU1BmsnhenV+cBb+Jf3bD43ytf7pRThE3np+gyf
-         4VBwOJBVuUT/7Aht4CDVx7b/S4s7QUqQODHRcllT/zzmGhNgRKnRdI12yak1qU6jW78x
-         4h4+aHWq9fLaB0mG0yPFw9jZ/j13f4pBauOnffm3A4HyDQ156mWbEV0qq0GMfNNgHeXm
-         pUzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754556476; x=1755161276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CVf9LbLojcCuAhT+ga1Vyf947M38uWa9Hm3uYLCKQ/w=;
-        b=Q4/6COBygLWAcKrMuEPeFKYflWZ8Ztu+PdVpNHK+2K3aVcZJlyp6P3hKNaRyGNOO65
-         glNDXglovR0AULMwpL+5PaQN7cavBqWPB1Q/iwlBLekcG0TlH/SAlTlIWdvilLboYiCt
-         PSYcDllK1MyzlsXbfk2zz3Ew/g1MSskvoQd2eKP05r6oy3RUOD6/cPVK8UXVYzwtp5UJ
-         BCfgNwXTBNKCM7jz4h0kTe7NF16fihBfOcR25jnWOxAJjJyckxD5oHW9b0BqljBxxWJm
-         nHWZ0HM0BI8dD7gyKYno+2vNRA2WqLkhc0tkExe2x7GyHlxrnA6sKOaByzgLrgRkvgEA
-         YV2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVT5Nw5MMPLX6dYtlPdHOkPDwWA85AO8kFg6shK1r81FwN/KPxIpkaUmgvJQo9xGW6bSujoxkQBuqIj@vger.kernel.org, AJvYcCWGqT5IdXTvhr20vQg+TTi2PFeFO+mHnEpa09eXGQFX0YKXg53yckQ4dWs+UkLVZJ/8FyCeu6cxpy0pTzYW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYfOR0va5f9xQ6UtiyN4EFUu6XY39bieQUU0DjzWlfiBzw6kUO
-	kZWvRQUZ6Hgag1oaSgCuq8hUt6ULU9ZcNtVl4e0HVsnKvf/CVvS8m5H6ppX425ZcfFyyI/oEg3Z
-	ukyZJiyNup3u6dF3SVCqWu77o7qXsiyk=
-X-Gm-Gg: ASbGncuJL54e6EbrKkx3UIfhi0XE6Vb/IKDMZicUeOnfLqFJgSkrKbw3ItMCQE8saR8
-	Pii3hLaORWNijzhMWocb14U+eaxujnVLhlYtzpncjCRZN5SSw/dVJPB//xu5zUKOLjhpelViQXE
-	vWwzCVGV0XPT6A/YvotVkz/DPvrKfNlHbMLG0ad7CVs/MIYHXP5j8/2Xasn1g0eHZiDNLWvY8DV
-	RufSb5NdATvvquSEOsRM33WFlJ/yTEtqvZUaJs=
-X-Google-Smtp-Source: AGHT+IEF1Rgl4ol8b1AK0WWialQnOn9GOQ4H+uDN0nCUOKmheNAVCVpOijMHFOdF8iQRgP3klAdSVLKEPQEyQTej/FU=
-X-Received: by 2002:a05:690c:9692:b0:71a:22e1:b351 with SMTP id
- 00721157ae682-71bcc7fdfb5mr76969767b3.24.1754556475564; Thu, 07 Aug 2025
- 01:47:55 -0700 (PDT)
+	s=arc-20240116; t=1754556626; c=relaxed/simple;
+	bh=gL61jIkUnYe2UH9PY1tqVu8MSrP9GJ7rcyYdJzJBz6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J7SfHrrZElrRRSM+HySroQcNcuXI6N6BtX6lDB3oEZJpqSVtBS9roxH9Yj4Fx4jiPfgRNpSNwf3YTRXfNhinspLCUkROdTzeiR3z69Y/Ar9Ewfm4pjQC5Gnt0afUUrCciZcXc9o2i+DMj5Vi5ev8ocn8x5yxqGiigcNHfKdaVfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=k6iuvsJX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0086B3C3A;
+	Thu,  7 Aug 2025 10:49:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754556571;
+	bh=gL61jIkUnYe2UH9PY1tqVu8MSrP9GJ7rcyYdJzJBz6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k6iuvsJXTNE0oJK45xZdiWrLWdQa+u3XUfWpJVm3zs0YId8LnXkSMsvLP8ZrhCZyM
+	 fZ9bVGHoYZbm0Fb7DRiaI/2NlGxo7A96nMs6gff/n0QCKZ/sHDKgsJRFvUCEEdkred
+	 C4gqI95AquETDpPRaBSesLFWMKcdtOgXkDQ4BCVI=
+Date: Thu, 7 Aug 2025 11:50:03 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
+ v4l2_fh_del()
+Message-ID: <20250807085003.GE11583@pendragon.ideasonboard.com>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
+ <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806133824.525871-1-rick.wertenbroek@gmail.com>
- <20250806133824.525871-4-rick.wertenbroek@gmail.com> <20250807-inquisitive-speedy-rooster-0a8488@kuoka>
- <c86bcdf0-f692-4263-a597-f8e36a53e8d9@kernel.org>
-In-Reply-To: <c86bcdf0-f692-4263-a597-f8e36a53e8d9@kernel.org>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Thu, 7 Aug 2025 10:47:18 +0200
-X-Gm-Features: Ac12FXxEzSnPsqcq49lE9KwQoWiI6TiOhTQgKrxWtGYG3DN0QkxgVCWP6jlC5UM
-Message-ID: <CAAEEuhpHmW9hji91tbQ3MMhBZELCYc_vA+Ra3oC2W+Rf8LLC6w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: phy: rockchip,pcie3-phy: add rockchip,phy-ref-use-pad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, 
-	alberto.dassatti@heig-vd.ch, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
 
-On Thu, Aug 7, 2025 at 9:55=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 07/08/2025 09:54, Krzysztof Kozlowski wrote:
-> > On Wed, Aug 06, 2025 at 03:38:23PM +0200, Rick Wertenbroek wrote:
-> >> >From the RK3588 Technical Reference Manual, Part1,
-> >> section 6.19 PCIe3PHY_GRF Register Description: "ref_use_pad"
-> >>
-> >> "Select reference clock connected to ref_pad_clk_p/ref_pad_clk_m.
-> >> Selects the external ref_pad_clk_p and ref_pad_clk_m inputs as the
-> >> reference clock source when asserted. When de-asserted, ref_alt_clk_p
-> >> and ref_alt_clk_m are the sources of the reference clock."
-> >>
-> >> The hardware reset value for this field is 0x1 (enabled).
-> >> Note that this register field is only available on RK3588, not on RK35=
-68.
-> >
-> > Then you miss restricting it (:false) in one of if:then: blocks.
-> >
-> > Also, binding cannot be after the user. You need to reorder patches.
-> >
-> > ...
-> >
-> >>
-> >> +  rockchip,phy-ref-use-pad:
-> >> +    description: which PHY should use the external pad as PCIe refere=
-nce clock.
-> >> +      1 means use pad (default), 0 means use internal clock (PLL_PPLL=
-).
-> >
-> > Can't you deduce it from the presence of clock inputs? IOW, if the
-> > clocks are physically connected, is it even reasonable or possible to
-> > use internal clock?
+On Wed, Aug 06, 2025 at 02:45:14PM +0200, Hans Verkuil wrote:
+> On 02/08/2025 11:22, Jacopo Mondi wrote:
+> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
+> > the file->private_data pointer to NULL in their video device .release()
+> > file operation handler. Move the code to the v4l2_fh_del() function to
+> > avoid direct access to file->private_data in drivers. This requires
+> > adding a file pointer argument to the function.
+> > 
+> > Changes to drivers have been generated with the following coccinelle
+> > semantic patch:
+> > 
+> > @@
+> > expression fh;
+> > identifier filp;
+> > identifier release;
+> > type ret;
+> > @@
+> > ret release(..., struct file *filp, ...)
+> > {
+> > 	<...
+> > -	filp->private_data = NULL;
+> > 	...
+> > -	v4l2_fh_del(fh);
+> > +	v4l2_fh_del(fh, filp);
+> > 	...>
+> > }
+> > 
+> > @@
+> > expression fh;
+> > identifier filp;
+> > identifier release;
+> > type ret;
+> > @@
+> > ret release(..., struct file *filp, ...)
+> > {
+> > 	<...
+> > -	v4l2_fh_del(fh);
+> > +	v4l2_fh_del(fh, filp);
+> > 	...
+> > -	filp->private_data = NULL;
+> > 	...>
+> > }
+> > 
+> > @@
+> > expression fh;
+> > identifier filp;
+> > identifier release;
+> > type ret;
+> > @@
+> > ret release(..., struct file *filp, ...)
+> > {
+> > 	<...
+> > -	v4l2_fh_del(fh);
+> > +	v4l2_fh_del(fh, filp);
+> > 	...>
+> > }
+> > 
+> > Manual changes have been applied to Documentation/ to update the usage
+> > patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
+> > v4l2_fh_del() prototype and reset file->private_data, and to
+> > include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
+> > and its documentation.
+> > 
+> > Additionally, white space issues have been fixed manually in
+> > drivers/usb/gadget/function/uvc_v4l2.c
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> >  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
+> >  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
+> >  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
+> >  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
+> >  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
+> >  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
+> >  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
+> >  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
+> >  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
+> >  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
+> >  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
+> >  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
+> >  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
+> >  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
+> >  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
+> >  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
+> >  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
+> >  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
+> >  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
+> >  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
+> >  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
+> >  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
+> >  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
+> >  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
+> >  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
+> >  drivers/media/platform/qcom/venus/core.c                           | 2 +-
+> >  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
+> >  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
+> >  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
+> >  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
+> >  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
+> >  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
+> >  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
+> >  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
+> >  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
+> >  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
+> >  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
+> >  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
+> >  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
+> >  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
+> >  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
+> >  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
+> >  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
+> >  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
+> >  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
+> >  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
+> >  drivers/media/test-drivers/vim2m.c                                 | 2 +-
+> >  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
+> >  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
+> >  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
+> >  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
+> >  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
+> >  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
+> >  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
+> >  drivers/staging/most/video/video.c                                 | 4 ++--
+> >  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
+> >  include/media/v4l2-fh.h                                            | 5 ++++-
+> >  57 files changed, 89 insertions(+), 90 deletions(-)
+> > 
+> 
+> <snip>
+> 
+> > diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
+> > index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
+> > --- a/drivers/media/v4l2-core/v4l2-fh.c
+> > +++ b/drivers/media/v4l2-core/v4l2-fh.c
+> > @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
+> >  }
+> >  EXPORT_SYMBOL_GPL(v4l2_fh_open);
+> >  
+> > -void v4l2_fh_del(struct v4l2_fh *fh)
+> > +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
+> 
+> Instead of adding a second argument, perhaps it is better to
+> just provide the filp pointer. After all, you can get the v4l2_fh
+> from filp->private_data.
+> 
+> It simplifies the code a bit.
 
-Thank you Krzysztof,
-But no, if there is no clock, the driver deadlocks, it needs a clock
-to probe correctly.
+That's an interesting idea. I'll give it a try.
 
-When there is a clock physically connected on the pad, you can still
-choose to use it or use the internal clock, this is no problem.
-The problem is when you have no clock on the pad (as it defaults to
-using the pad) and the loading the driver deadlocks the system...
+> >  {
+> >  	unsigned long flags;
+> >  
+> > @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
+> >  	list_del_init(&fh->list);
+> >  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+> >  	v4l2_prio_close(fh->vdev->prio, fh->prio);
+> > +
+> > +	filp->private_data = NULL;
+> >  }
+> >  EXPORT_SYMBOL_GPL(v4l2_fh_del);
+> >  
+> > @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
+> >  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
+> >  
+> >  	if (fh) {
+> > -		v4l2_fh_del(fh);
+> > +		v4l2_fh_del(fh, filp);
+> >  		v4l2_fh_exit(fh);
+> >  		kfree(fh);
+> > -		filp->private_data = NULL;
+> >  	}
+> >  	return 0;
+> >  }
+> 
+> <snip>
+> 
+> > diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
+> > index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
+> > --- a/include/media/v4l2-fh.h
+> > +++ b/include/media/v4l2-fh.h
+> > @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
+> >   * v4l2_fh_del - Remove file handle from the list of file handles.
+> >   *
+> >   * @fh: pointer to &struct v4l2_fh
+> > + * @filp: pointer to &struct file associated with @fh
+> > + *
+> > + * The function resets filp->private_data to NULL.
+> >   *
+> >   * .. note::
+> >   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
+> >   *    uses &struct v4l2_fh.
+> >   */
+> > -void v4l2_fh_del(struct v4l2_fh *fh);
+> > +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
+> >  
+> >  /**
+> >   * v4l2_fh_exit - Release resources related to a file handle.
 
-> >
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> >> +    minItems: 2
-> >> +    maxItems: 2
-> >> +    items:
-> >> +      minimum: 0
-> >> +      maximum: 1
-> >
-> > More precise:
-> >
-> > items:
-> >   - description: PHY0 reference clock config
-> >   - description: PHY1 reference clock config
-> >   enum: [ 0, 1 ]
->
-> Eh, no, rather if this stays as int:
->
->     items:
->       - description: PHY0 reference clock config
->         enum: [ 0, 1 ]
->       - description: PHY1 reference clock config
->         enum: [ 0, 1 ]
->     default: [ 1, 1 ]
->
->
-> > default: [ 1, 1 ]
-> >
-> > Anyway, default 1, 1 is pretty non-obvious, so this should be just
-> > non-unique-string-array (and property should be like
-> > rockchip,phy-ref-clk-source/sel).
-> >
-> >
-> > Best regards,
-> > Krzysztof
-> >
->
->
-> Best regards,
-> Krzysztof
+-- 
+Regards,
 
-I based my patch on patch :
-46492d10067660785a09db4ce9244545126a17b8
-dt-bindings: phy: rockchip,pcie3-phy: add rockchip,rx-common-refclk-mode
-
-As the option I add is extremely similar, it sets a feature in one of
-the PHY registers and only applies to RK3588.
-That is why I used the same style as rockchip,rx-common-refclk-mode.
-
-Wouldn't it be confusing or at least incoherent to use enum for
-rockchip,phy-ref-use-pad but not for rx-common-refclk-mode ?
-
-As for the name, I used phy-ref-use-pad as it is the name used in the
-RK3588 technical reference manual.
-(Similarly done on rx-common-refclk-mode).
-
-Best regards,
-Rick
+Laurent Pinchart
 
