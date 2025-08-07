@@ -1,133 +1,173 @@
-Return-Path: <linux-kernel+bounces-758806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569CBB1D412
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D08B1D417
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071B3188D950
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:11:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2BF3B0F58
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2139246BB7;
-	Thu,  7 Aug 2025 08:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBBF24728E;
+	Thu,  7 Aug 2025 08:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="usbxQSzd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKtyp8/e"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvJ7YEah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160BC2253F2;
-	Thu,  7 Aug 2025 08:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F83B22068D;
+	Thu,  7 Aug 2025 08:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554274; cv=none; b=RWOd/dU9J2QhxDC+GrIJCe1AJqS9VFJnhkolJdq0mSo5fL0Z7BqZqDaJX5kSvM7uOh7lko9u3ikpANbizCjuzndBFYBze75RzR0b3N3J0RLbaPxS2O+hGcc7egeRFu0v5qD0+f/k4lyFqaifcUz9tq7H1fCWljIk6pKAtNBN648=
+	t=1754554344; cv=none; b=c94fuWtKZJbA9o9n62xu220uZp9HjazqpAgLm7j1IYF8IlVMDOlULKRCUmc22OqGg+8EJ5XOze0g4Gf4b7KtKapbNAxOeIC6nhRGfH6zHRF6lWpLQGHatntb45nPIfeeuW/WmsN/I4My/X+P9fJgjozzgf6IXN0QSJEMwC60S6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554274; c=relaxed/simple;
-	bh=5aKGQmsykQ4YHSNcqMkkGkOQMP71M+/2z4kV/REFkc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qxAdMPuUDbxVrNOytpVbE6uYLxFjpKxi1yVZ1oA5U1qWU3+Vjb3yi3xG10aa/A9F5AEHJvk8pQM6/NERpOAA9ryQFJ5NlL6nzQZk2j6kK+jY1Di80CiEULwqrL10/9MLcj4QLN1mM+3kRypbQnatHbeCiDoJIlSTsPAnAKgzjGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=usbxQSzd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKtyp8/e; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754554264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qyDsKn1cvshzt5w4qfnD1ZngtpdUolUH5csMP8VFrqA=;
-	b=usbxQSzdeRq9jwMtPeZEX5Z32jk8PDI+RjAM4A+u07i+KUe3O4/+k0gFsR/KJikdjt9jyG
-	zZiscs4nNcVE1Ct/xV57Z6+3wsiwq0xK2vNXpYrXGRKKp0nYf+X6N8o6aHD5FRg8MkIlPH
-	xj96vAmf151lE9Oc/XFhIjsarEwlaVuV2hy1cskhINZUGK39XIo47WNVODGYEEmbtvyv96
-	wFKldPESx5hagUEyCTdpTArHdyC6qGZLjhcA5vnICidedR2bFH0SVdBeHygVwQYW/GmvP6
-	JUXrJsUEYT3aMa8kHVmmrq2851VeZ917EleWIj7xvtjfX67RnVBUwcluBMlztw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754554264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qyDsKn1cvshzt5w4qfnD1ZngtpdUolUH5csMP8VFrqA=;
-	b=PKtyp8/e48A1fyib0m80072mCH25Ba+Z1smfn9UMcLJORu+GJcWy+FSBABdkVATDu60r7E
-	W9sl9dQyXTO6UJAw==
-To: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	Kenneth Crudup <kenny@panix.com>,
-	Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: [PATCH v2] PCI: vmd: Fix wrong kfree() in vmd_msi_free()
-Date: Thu,  7 Aug 2025 10:10:51 +0200
-Message-Id: <20250807081051.2253962-1-namcao@linutronix.de>
+	s=arc-20240116; t=1754554344; c=relaxed/simple;
+	bh=ikf6ssEW+m4fXYrnJWWge9brgZ8WUunADfPrWN6Gu60=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=daAhPDnuzp2TDq6z7ulfZgL8qDfDnnNrkl6XeFAb+4yz4eObOCFp0oWJD5hUnmhM2v9WaqwQ0r0eZVkg/fSzOi4e+lplqSrOLInThUB8PcuKPU4rqOR+mvv3dafmMkKPd6+T2b6JTPRPtEqC13yKVk6WwezefZMew+2dfSO7anA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvJ7YEah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF77DC4CEEB;
+	Thu,  7 Aug 2025 08:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754554343;
+	bh=ikf6ssEW+m4fXYrnJWWge9brgZ8WUunADfPrWN6Gu60=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rvJ7YEahZ/e/rbh8/gNhPQqyW1g5Pi3rzl6b09kh21bX8LTTxWBB79j0dCP6OTAt6
+	 oQS/jRrXBzq3+3BOw5L4jti83m/9XscLVAFBvXTLY88cFeaWktgVKu8VTiOyyHRbB0
+	 mz9sPjWMWY+hfdM9VOgVywPSpd5eKM0WtotSV3gts1vHOwgUSj0kLIwqYT26bBHrEZ
+	 EDepLbGTAKzx5YNCsBzE/9Bf6IU2o1G6La5v37YEWuUqX0OG9EGkkQ4oJ/GPRpfQmS
+	 wb6zc5bXxP9J/CVKx6lstPiocnrmN8v1IL6U+O8NotgQMtjELvjouzvsuHPOXlyozj
+	 U9Zl0z1iUmB+g==
+Message-ID: <285eee30-58ab-4837-9fc4-ff5cd5118037@kernel.org>
+Date: Thu, 7 Aug 2025 10:12:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm: Add driver for Sitronix ST7920 LCD displays
+To: Iker Pedrosa <ikerpedrosam@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org
+References: <20250806-st7920-v1-0-64ab5a34f9a0@gmail.com>
+ <20250806-st7920-v1-1-64ab5a34f9a0@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250806-st7920-v1-1-64ab5a34f9a0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-vmd_msi_alloc() allocates struct vmd_irq and stashes it into
-irq_data->chip_data associated with the VMD's interrupt domain.
-vmd_msi_free() extracts the pointer by calling irq_get_chip_data() and
-frees it.
+On 06/08/2025 14:48, Iker Pedrosa wrote:
+> This adds a functional DRM driver for ST7920 that communicates with the
+> display via the SPI bus.
 
-irq_get_chip_data() returns the chip_data associated with the top interrupt
-domain. This worked in the past, because VMD's interrupt domain was the top
-domain.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-But since commit d7d8ab87e3e7 ("PCI: vmd: Switch to
-msi_create_parent_irq_domain()") changed the interrupt domain hierarchy,
-VMD's interrupt domain is not the top domain anymore. irq_get_chip_data()
-now returns the chip_data at the MSI devices' interrupt domains. It is
-therefore broken for vmd_msi_free() to kfree() this chip_data.
+> 
+> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+> ---
 
-Fix this issue, correctly extract the chip_data associated with the VMD's
-interrupt domain.
 
-Fixes: d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
-Reported-by: Kenneth Crudup <kenny@panix.com>
-Closes: https://lore.kernel.org/linux-pci/dfa40e48-8840-4e61-9fda-25cdb3ad8=
-1c1@panix.com/
-Reported-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Closes: https://lore.kernel.org/linux-pci/ed53280ed15d1140700b96cca2734bf32=
-7ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org/
-Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Tested-by: Kenneth Crudup <kenny@panix.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-v2: Fix typo and describe the change more precisely
----
- drivers/pci/controller/vmd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+...
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 9bbb0ff4cc15..b679c7f28f51 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -280,10 +280,12 @@ static int vmd_msi_alloc(struct irq_domain *domain, u=
-nsigned int virq,
- static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
- 			 unsigned int nr_irqs)
- {
-+	struct irq_data *irq_data;
- 	struct vmd_irq *vmdirq;
-=20
- 	for (int i =3D 0; i < nr_irqs; ++i) {
--		vmdirq =3D irq_get_chip_data(virq + i);
-+		irq_data =3D irq_domain_get_irq_data(domain, virq + i);
-+		vmdirq =3D irq_data->chip_data;
-=20
- 		synchronize_srcu(&vmdirq->irq->srcu);
-=20
---=20
-2.39.5
 
+> +#define BOTTOM_HORIZONTAL_ADDRESS	0x80
+> +
+> +#define CMD_SIZE			35
+> +
+> +const struct st7920_deviceinfo st7920_variants[] = {
+> +	[ST7920_ID] = {
+> +		.default_width = 128,
+> +		.default_height = 64,
+> +		.family_id = ST7920_FAMILY,
+
+Don't add dead code. This cannot be anything else than ST7920_FAMILY.
+
+Several places here can be simplified (and "possible" future code is not
+an argument here - this patch must be correct, simple and stand on its
+own because we do not write code just in case).
+
+
+...
+
+> +static int st7920_probe(struct spi_device *spi)
+> +{
+> +	struct st7920_device *st7920;
+> +	struct regmap *regmap;
+> +	struct device *dev = &spi->dev;
+> +	struct drm_device *drm;
+> +	int ret;
+> +
+> +	regmap = devm_regmap_init_spi(spi, &st7920_spi_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	st7920 = devm_drm_dev_alloc(dev, &st7920_drm_driver,
+> +				    struct st7920_device, drm);
+> +	if (IS_ERR(st7920))
+> +		return dev_err_probe(dev, PTR_ERR(st7920),
+> +							 "Failed to allocate DRM device\n");
+
+Misaligned but also this looks like ENOMEM error and such should never
+have dev_err.
+
+
+
+Best regards,
+Krzysztof
 
