@@ -1,159 +1,91 @@
-Return-Path: <linux-kernel+bounces-759233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1EBB1DABC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:25:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9235DB1DAC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3345169F6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702053A7AC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C1426A0A0;
-	Thu,  7 Aug 2025 15:25:12 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C976F269808;
+	Thu,  7 Aug 2025 15:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGQQ+xCF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89561265621;
-	Thu,  7 Aug 2025 15:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2727379E1;
+	Thu,  7 Aug 2025 15:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754580312; cv=none; b=vAhnRMcOwQb1fm1Ux4DYMwDiMfE+dPOPLnWSHRbn11UE1IEDAX0qXqqbHYxhNKrEVAK6o17Kuxq4xSUpuDSccDaHoshlGp+h7MZjfrSZe9JCt7DelrnXmK136oEpP9R9MSrLiPE8TfM9eWZEPowUHH95WCYLiRt3fFOH0dZVhPI=
+	t=1754580421; cv=none; b=XvKmaaDcUVSMBvyyzPaGFZyDaAgwqpRufHdo08Bd76i35G0pb6WHRtZCTo8kMtNxN/lx/PLgPyqPZqV73LeLlvSgamM2cW4TutZecUP/ItD6FKXsyXbsFXTGhkM/NK44JoSskodbxeGAEWHXvosq6VqVNBT4W6bmiCn4Sc2i+l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754580312; c=relaxed/simple;
-	bh=3Po1l4gYu0MHsFuaauDmTk7PLri0Rg6elR2hBPzCJbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqP1WId8UQ895mxYI+efdXcK35TTVLLB7k38fAe2sa69j05Ntf/+BPf/hsdGrolK4tCKzR1eIhF8jPFfQHlqSCfaosQKUfGbYw+8iqnzkzqgfpPnLfiQKLv1IPX5QA3wSYBG19lR1mfmW0GRm3CLmMoFcHfOr9eSprRMen5Pm5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id E4B101F0004D;
-	Thu,  7 Aug 2025 15:24:50 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 92D47B012AF; Thu,  7 Aug 2025 15:24:47 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 92918B012AF;
-	Thu,  7 Aug 2025 15:24:44 +0000 (UTC)
-Date: Thu, 7 Aug 2025 17:24:41 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 07/22] dt-bindings: vendor-prefixes: Shenzhen Baijie
- Technology
-Message-ID: <aJTFOV_MK4GftLWu@shepard>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-7-13b52f71fb14@linumiz.com>
+	s=arc-20240116; t=1754580421; c=relaxed/simple;
+	bh=DKtBAt1he1GWqidXOcvcFrkHmeHlrduKhcDb4KsYqUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fl5aYAG1CEAWEI+xuwr0kYlsnx1aC08w5Rjobxolf10yQLVhkvx+WaYrTtFUwyXu18MTGv6UopgEZ7rc0znQ40ojb5ZsJN9poTMIB1/AGu0UF6dCHyZlMMJQ7f4h9RWv0y5TzGAz+SOCE6JezKqiFrjSP0naV1dRbiWiob7uvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGQQ+xCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63763C4CEEB;
+	Thu,  7 Aug 2025 15:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754580420;
+	bh=DKtBAt1he1GWqidXOcvcFrkHmeHlrduKhcDb4KsYqUM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AGQQ+xCFD6bRp6RgDSbTLx07O7SHFvVP2RBvVy0pDUmjcd6sHT2OYh2trUoSZV8kx
+	 VBaSkFd19A0hxzXfefzajUQjMlCsE2loeji1Nv9rgwTDYKYVt95LtQdU4Mc3vTZ7Ir
+	 iW+74tvYInVMa9ebubbo3RMTJPV1+066P+iANb1NM7xNOgYB0sndrWhfsdjSU/8tPl
+	 bKwXiHdICGZurh2GxCPPZAQj7fcg63paks2BmIRPuVx0V6hY78gB2AJDHwX1upFlXV
+	 8Gpve0YsUdoIdf5+g9Mu7XzsHasZ80OkSOLMR+v17j450i+LlOoTn/G+b25lUhT1W/
+	 O0orEl9RAPRTA==
+Date: Thu, 7 Aug 2025 08:26:59 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: dvyukov@google.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: net: Revert tx queue length on partial failure
+ in dev_qdisc_change_tx_queue_len()
+Message-ID: <20250807082659.5557e42b@kernel.org>
+In-Reply-To: <CANp29Y5mZJJgn5LYDiLx11bH__NXZ32ut6VUTsEyXwqrOhksTw@mail.gmail.com>
+References: <20250722100743.38914e9a@kernel.org>
+	<20250723162547.1395048-1-nogikh@google.com>
+	<20250723094720.3e41b6ed@kernel.org>
+	<20250807064116.6aa8e14f@kernel.org>
+	<CANp29Y5mZJJgn5LYDiLx11bH__NXZ32ut6VUTsEyXwqrOhksTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ho7mfi0SoROEEEAS"
-Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-7-13b52f71fb14@linumiz.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 7 Aug 2025 17:09:24 +0200 Aleksandr Nogikh wrote:
+> > One more thing, would it be possible to add / correct the DKIM on these
+> > messages? Looks like when our bots load the syzbot ci emails from lore
+> > the DKIM verification fails. I see a X-Google-DKIM-Signature: header,
+> > but no real DKIM-Signature:  
+> 
+> Thanks for letting us know!
+> Do these bots also face DKIM verification issues with regular syzbot
+> emails? We send them absolutely the same way, so the problem must
+> affect all reports.
 
---ho7mfi0SoROEEEAS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I haven't checked, TBH, we don't have any automation for normal
+reports :( For the CI reports I was trying to hook them up to
+some actions, kick the patch out of our test branch unless human
+confirms that the report is a false positive.
 
-Hi,
-
-On Fri 27 Dec 24, 16:37, Parthiban Nallathambi wrote:
-> Add entry for Shenzhen Baijie Technology (https://szbaijie.com)
->=20
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-> index da01616802c7..81cbc8b6b195 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -1466,6 +1466,8 @@ patternProperties:
->    "^synopsys,.*":
->      description: Synopsys, Inc. (deprecated, use snps)
->      deprecated: true
-> +  "^szbaijie,.*":
-
-It's quite common for Chinese companies to have their main location as a pr=
-efix
-in their name, for example Rockchip's full name is Fuzhou Rockchip Electron=
-ics
-Co., Ltd.
-
-Since the company here calls itself "Baijie Technology" I think the "sz" pa=
-rt
-should be dropped from the vendor prefix and just be "baijie,.*".
-
-All the best,
-
-Paul
-
-> +    description: Shenzhen Baijie Technology Co., Ltd.
->    "^tbs,.*":
->      description: TBS Technologies
->    "^tbs-biometrics,.*":
->=20
-> --=20
-> 2.39.5
->=20
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---ho7mfi0SoROEEEAS
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmiUxTkACgkQhP3B6o/u
-lQwopA/+OeQYWbpgzDlU7JSXZXYWbcSY72g6g2qNUV8nGT5ut5lkOdPpDbag40ll
-kW45uiqEwvjAqNjfNv2jP1oIIZJ/OzRfJ+5rFc0e5iskSa4bd8NOv8AHZMF0ibL6
-Qc9N+qH1HdFiL/7e0btMZKjWTPTyoBqSLN2oJbEPrI14E/YyOpnmi0FQwP9tSBvD
-GJHPXfijHfK/JJnlIV70cJSUugUvmcLzpy3JxoiuW8PModhutaIYXdZiyDsqWxBK
-d+kxznL9QDfnY1qtQkse38eigagjwswfQXmSjTAXXNTFl+sQXFsKoxDZ21HBgd7X
-3rwxa/hqesqIe6EPAs5xDQi6F2BOBa+ZLzLnjqmlj5FEZttLx/c8IePLqPHlKcg2
-ycEsXE4XE0hpqs676aUwb/xVjVXbchBriZYX9ftKokBhRw/8AkRAUE6O4RNS4sGR
-X+rhGpoaFKBiI2kcu1aF7cAjv6BhYfOhs9d6wFVfF0dDVsC2Cf+9pBMysCc0zSXX
-/OLwkZj3sucRQHpNV5ZVsSQqR/ZUlae8K4INMLaMZFt97nW4EyCaHdmHlHrM7A7D
-dp3NaIPkts0QyUswwDFY0Ahn/dqLKRxCVlUBix05YuGy0gbfigILHXxcERddkoyq
-SG3VlZcyst6/ryITN66ZxWnPBrhxVFGN1NheSCPPe6E93GYPfuc=
-=jRKT
------END PGP SIGNATURE-----
-
---ho7mfi0SoROEEEAS--
+> We use the GAE Mail API, and its documentation[1] says that it signs
+> emails with DKIM only if a custom domain is configured. Since we send
+> from the default GAE domain, this would explain the verification
+> failures.
+> 
+> We'll explore the ways to fix this.
+> 
+> [1] https://cloud.google.com/appengine/docs/standard/services/mail?tab=go#authentication_with_domainkeys_identified_mail_dkim
 
