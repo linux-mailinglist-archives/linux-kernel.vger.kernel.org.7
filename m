@@ -1,216 +1,114 @@
-Return-Path: <linux-kernel+bounces-758781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39017B1D3CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B58CB1D3C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5F83B993A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB96163394
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0F22459D2;
-	Thu,  7 Aug 2025 07:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18AD242D8C;
+	Thu,  7 Aug 2025 07:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VI7UsoNs"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jgCUl2bT"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ABB2E36EC
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729A82E36EC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553460; cv=none; b=CgvUjGKQ22AmUGYI8oBa9l0TBw7EFtK06RILY89aTNpzWvQQo/CPPham3UHX7j8BJC0/O5ojhDa4eH5E4ryZnlKWspLfXrmQ2AAKb09QvXXLNsUsEOv2Y+2AUkXIMkJOZimB5odTOL0vUSRCwGzqt45u/dvGDrLvEd+vLfOn2pU=
+	t=1754553442; cv=none; b=EJYZodVzu/QG+1g1MsAJGX3Gm+fdo2bd1fUaXUwUWRlmxQaKIE2UjS2mg0pk4a46usAl6YHhoXX3Y4kyBrUa1623alwZsdoW6no3R42l3yHn5KfSTQi4LbKadDAHkd/LhP5KaQDMuhgIdBVfrF7/5LqEH36/7SYxg/qCQndOUzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553460; c=relaxed/simple;
-	bh=qfxUK/7tbAm4+fSRT0kOqzlxvDzJPvrpN7Ck+0QWw/A=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nyqmJ4RwVOB+o1Pje68PRQ86Wdwv/KbXZkxpYNg3FKKiuo28ssfRbVQE8RiJJZ/0BJEZmwTs7ZIeHwaShNQW9650Kq9mrmbTS4fmNhMoio0DI1XF/mwktLYUjZOpM40kkzST0TdSivtHRkiDzgvrdA/2gROHDxxExgKH9MnQcfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VI7UsoNs; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76bd2543889so1185760b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:57:38 -0700 (PDT)
+	s=arc-20240116; t=1754553442; c=relaxed/simple;
+	bh=vgkfpdwJ4jw4QPMZ8xrlzKyL8qOR5t7DvsVO97Z8Mvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cGqq5Bo+GZEgLBY1O1SfUmoysGZIDfr4yJ96t3HsM2zDHV0L+XPV0Uh1EeFhzhf8vxXzhrAPhqe1bbZddQ4aN3ZwrD/0w+CyAwoQyeT6ZQ4P4sXjkOEXme+ANxC2oxMZdjEashYZ8rHDearyM053PiYrMepppR7atT1jiiqSl6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jgCUl2bT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-458bdde7dedso5042075e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754553458; x=1755158258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVn3pXWrE8ptkNx3q5SpDyS1PDtyVrfoh2hP9Ksy/jA=;
-        b=VI7UsoNsmSbvVLQYrqZ7KoRVFj97BSuRN0I2w0Tabs+ms+/S5z5dF54ge4J8cy3BlV
-         Q5bKRQhDkkuFH4LXPizlzbSgXfDd68wcT1JjRsJNNkrl2ZNPC8dn4x12xPbmMZQlerLd
-         vMHO/Q4d9ykjrStMn4HkAg9x1yKQ9Nte0g63aitOz5fzCn8xsdYAb3KGJrHiQKFOJ6dR
-         ZqVQe2nPEz8h7PIIehdxtU7ZtD4X1B4Y3D8cufzcUgTMh6aX7yuorNROFhn8kbDcM7Pr
-         vSVW8jW7+uycbXja+rLO3aOIE9XWbL9/9pZpVug9/a5e+jo1xKRbD5XOSyIZPd9utd5C
-         qzvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754553458; x=1755158258;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754553438; x=1755158238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bVn3pXWrE8ptkNx3q5SpDyS1PDtyVrfoh2hP9Ksy/jA=;
-        b=Z3ASW+Cfaj5RUW3K6TQdYXSHHPTMzA+QyKAsBhN2r1Z6xqrUeKLN/RS+XEnZvAZHIO
-         kW4ai2WSSE6Uizb2NuYW8AyOiOf53bnwLYSuwttGBHXxox7J/QW1Oa3u3X7gzDshrU90
-         Aj2cqVgD1zXnJfeUy78Io+0KrktCXHohI99qkcP+7FcNTUe6REEqY7YUemX4yLXtotAh
-         FzSvs9V5nzKPl+8xJECTw5Zi/UOJAbQee41MHlWB0PP9wpW17Klnh41yIcBD9QtluWPG
-         AKwL1AjMi3x0Sqe507ATg7A70JTJBcJFaMyfr4Toq08QiVpXFBLNBI6qpeE5Uejtm+fA
-         Kt8g==
-X-Forwarded-Encrypted: i=1; AJvYcCW5LpkDke55CjuPbgKM7o5We6o1p69RymtGosycHA1hO6uMoVgeBHgbFUuiEffnKmwOs4HgQsvQ3OOuha0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxvVPXHAvAMOjzP8ggd5LYlPhd0o9HpuIAPTZ5W0eBGlSLX4pQ
-	jpVmYr19JelTyGvTGCqQh6AG2DG6uTMJFQE5Pxk7API9y+qpSbj7xFPuQDO18lo0x/mz7tNHlGl
-	dvg==
-X-Google-Smtp-Source: AGHT+IF2BSxC7vgD0XYWFDXuPwuLdGaPbk25UgUn3Ax0OeCunYBG+ypLlIzyUoGX5ubXzQtF7kNtY9S3RA==
-X-Received: from pgbcu5.prod.google.com ([2002:a05:6a02:2185:b0:b42:8b90:cffa])
- (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1611:b0:1f5:72eb:8b62
- with SMTP id adf61e73a8af0-240312c56d8mr9197770637.20.1754553457811; Thu, 07
- Aug 2025 00:57:37 -0700 (PDT)
-Date: Thu,  7 Aug 2025 17:56:46 +1000
+        bh=SfU3+JLlOgj4XUuWyXL62GCcWpurAz54I0DEQzkcox8=;
+        b=jgCUl2bTHVqAh44Tw/v0vqLOj6ZvfLpVWe++u4kHN/wF8M9CHlYx9PTSNZnwTgHkuY
+         fT8mmYaf8LjlNIibY1c+e8ZOtS5s6nLagfypzrwclt4HRXH2F8+veBIWAeXlY0ZXDjmq
+         oxkztSASvC0gI7FWh+WPT197Xnuh9kTf2/enBfDPbwYjh54N/SVs5oRrFEoeclQ7vkuo
+         LR0Ag1c3jG1jmWXpvEkoLJfdAsWlmzD57zDwspoVYcW0wW2VYL8b3vU1Ku/MuaFQWvb9
+         yCd19Mdmt7z+SBGqeSNJfxFKWc91bP2LaSYVSzld6Nh0gVzqu3VN3IFHGHVMWrir7RSk
+         8FFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754553438; x=1755158238;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SfU3+JLlOgj4XUuWyXL62GCcWpurAz54I0DEQzkcox8=;
+        b=UsqqeoEc8jLAisLNMRReASRzE9ntEYZPCOTFmtHb3T99I/T0b+jjkfNVzsXOA9vYkg
+         vyluF2UazP5x8muviGCx88PZfYA210cED/QG9kjV86K1/UOJujSSiIKHn6lTE30DAF+L
+         hBSPkrOrhUO84FOjC5xfsO1zk+kjYbascGa1/sP4MRXskT4Ij4FxFzp6mrEhxvKVmuo2
+         76P0WtV7nz5RQsd8xwRD9g5svp6xhTAahBxbe3LJn/zbYrMmh2gVYEJXaS4UByIXaluE
+         EHKhb+QQ0Ilc9hlNhZkxeBpei/+VCN4x01EQDgVpJXnAOpafzCdZZ5wP0EH9O6orFEJ0
+         Ld8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUBJrSu+Mk9BdEU2TewrQA5t4VDLywXP9lU2zKPDfbad0dYhpEUfZFsdT+GF6BNUbKGXqaSzqIksOnaW9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZhZ8vX8mod7IjwSGTGEG9FbYJH92bo2e5F2265Mnz8ZxZuBOm
+	jHF/fHsNYbUX5VZsL7kMVTQDMMfG1H42j8SvhGjOt1/iC5qggrjUyun/0d2XncrBl3g=
+X-Gm-Gg: ASbGncvfCr3Jgb8zJ1jr5NHRxfuKgSD6kRbBB3ctRMTiTje89aj4xvYbNla/CgYyD3L
+	ccilSJVGu1lQiRHk2zHqWXMIoWkTGyxSzVeyAkXZVKPCM+kw6uwcmNhVaKpUjmJg2sJYR+sto6r
+	JeaKBgtw4RBAUT9zF8zcQrYYfrxwJ5soiWI3b0o6DB4Z35AurqLVITc371QeL7o0S/cMvmU/Lh7
+	2X0jaEXiB4JMD7394rc9gfHAvfz9NfhUyJ+VcaeaMG7iAvwOYmWPgfdoAuHqTbzxvBUmD0oUOtF
+	cfMdEWl145rRUc2VGssx2XYZ6Ojd1FtbdDOT/wXpQn3oGx5N9vNENkmMht6n/mnexIHA0OhepOP
+	Y/EyQmSfhcTbO4GFn5NDj7eVy4f6Dr7/Pqec3EvHkU3cOgHJUSjg6ufxjEAduHK0UtqvaMMBC61
+	UQwgZ3C9I=
+X-Google-Smtp-Source: AGHT+IG1Zkw/5s891kaO2uBzPkSnBXo2w2+ZGLhV+2clBzLljqoEFUKEehl54k7C+1ej3DQSWerCIg==
+X-Received: by 2002:adf:eb83:0:b0:3b8:f8e7:7fea with SMTP id ffacd0b85a97d-3b8f8e7802dmr1563703f8f.7.1754553437672;
+        Thu, 07 Aug 2025 00:57:17 -0700 (PDT)
+Received: from brgl-pocket.. (2a02-8440-f501-4c26-fc12-1c8e-3b9e-e794.rev.sfr.net. [2a02:8440:f501:4c26:fc12:1c8e:3b9e:e794])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac093sm27069447f8f.9.2025.08.07.00.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 00:57:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: remove legacy GPIO line value setter callbacks
+Date: Thu,  7 Aug 2025 09:57:15 +0200
+Message-ID: <175455343159.5538.10394058883390003007.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250725074651.14002-1-brgl@bgdev.pl>
+References: <20250725074651.14002-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807075647.755848-1-tweek@google.com>
-Subject: [RFC PATCH 1/2] lsm: add type to security_inode_init_security_anon
-From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>
-Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Introduce a new enum (lsm_anon_inode_id) to identify the type of
-anonymous inode being created. This enum is passed down to the
-security_inode_init_security_anon LSM hook.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
----
- fs/anon_inodes.c              | 5 +++--
- include/linux/lsm_hook_defs.h | 3 ++-
- include/linux/security.h      | 8 ++++++++
- security/security.c           | 4 +++-
- security/selinux/hooks.c      | 1 +
- 5 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 1d847a939f29..9a2f09808f86 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -21,6 +21,7 @@
- #include <linux/magic.h>
- #include <linux/anon_inodes.h>
- #include <linux/pseudo_fs.h>
-+#include <linux/security.h>
-=20
- #include <linux/uaccess.h>
-=20
-@@ -121,8 +122,8 @@ struct inode *anon_inode_make_secure_inode(struct super=
-_block *sb, const char *n
- 		return inode;
- 	inode->i_flags &=3D ~S_PRIVATE;
- 	inode->i_op =3D &anon_inode_operations;
--	error =3D	security_inode_init_security_anon(inode, &QSTR(name),
--						  context_inode);
-+	error =3D security_inode_init_security_anon(inode, LSM_ANON_INODE_GENERIC=
-,
-+						  &QSTR(name), context_inode);
- 	if (error) {
- 		iput(inode);
- 		return ERR_PTR(error);
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index fd11fffdd3c3..1634f41f7a3c 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -119,7 +119,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct =
-inode *inode,
- 	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
- 	 int *xattr_count)
- LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
--	 const struct qstr *name, const struct inode *context_inode)
-+	 enum lsm_anon_inode_id type, const struct qstr *name,
-+	 const struct inode *context_inode)
- LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
- 	 umode_t mode)
- LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *=
-idmap,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 521bcb5b9717..98a97b8a1093 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -263,6 +263,12 @@ struct request_sock;
- #define LSM_UNSAFE_PTRACE	2
- #define LSM_UNSAFE_NO_NEW_PRIVS	4
-=20
-+/* anon_inode types */
-+enum lsm_anon_inode_id {
-+	LSM_ANON_INODE_GENERIC,
-+	LSM_ANON_INODE_MEMFD
-+};
-+
- #ifdef CONFIG_MMU
- extern int mmap_min_addr_handler(const struct ctl_table *table, int write,
- 				 void *buffer, size_t *lenp, loff_t *ppos);
-@@ -402,6 +408,7 @@ int security_inode_init_security(struct inode *inode, s=
-truct inode *dir,
- 				 const struct qstr *qstr,
- 				 initxattrs initxattrs, void *fs_data);
- int security_inode_init_security_anon(struct inode *inode,
-+				      enum lsm_anon_inode_id type,
- 				      const struct qstr *name,
- 				      const struct inode *context_inode);
- int security_inode_create(struct inode *dir, struct dentry *dentry, umode_=
-t mode);
-@@ -889,6 +896,7 @@ static inline int security_inode_init_security(struct i=
-node *inode,
- }
-=20
- static inline int security_inode_init_security_anon(struct inode *inode,
-+						    enum lsm_anon_inode_id type,
- 						    const struct qstr *name,
- 						    const struct inode *context_inode)
- {
-diff --git a/security/security.c b/security/security.c
-index ad163f06bf7a..09aa858819a2 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1861,6 +1861,7 @@ EXPORT_SYMBOL(security_inode_init_security);
- /**
-  * security_inode_init_security_anon() - Initialize an anonymous inode
-  * @inode: the inode
-+ * @type: the type of anonymous inode
-  * @name: the anonymous inode class
-  * @context_inode: an optional related inode
-  *
-@@ -1871,10 +1872,11 @@ EXPORT_SYMBOL(security_inode_init_security);
-  * creation of this inode, or another -errno upon other errors.
-  */
- int security_inode_init_security_anon(struct inode *inode,
-+				      enum lsm_anon_inode_id type,
- 				      const struct qstr *name,
- 				      const struct inode *context_inode)
- {
--	return call_int_hook(inode_init_security_anon, inode, name,
-+	return call_int_hook(inode_init_security_anon, inode, type, name,
- 			     context_inode);
- }
-=20
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index c95a5874bf7d..8d36d5ebb6e5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2967,6 +2967,7 @@ static int selinux_inode_init_security(struct inode *=
-inode, struct inode *dir,
- }
-=20
- static int selinux_inode_init_security_anon(struct inode *inode,
-+					    enum lsm_anon_inode_id type,
- 					    const struct qstr *name,
- 					    const struct inode *context_inode)
- {
---=20
-2.50.1.703.g449372360f-goog
+On Fri, 25 Jul 2025 09:46:50 +0200, Bartosz Golaszewski wrote:
+> With no more users of the legacy GPIO line value setters - .set() and
+> .set_multiple() - we can now remove them from the kernel.
+> 
+> 
 
+Applied, thanks!
+
+[1/1] gpio: remove legacy GPIO line value setter callbacks
+      https://git.kernel.org/brgl/linux/c/397a46c9aa3343e8efe6847bdaa124945bab1de4
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
