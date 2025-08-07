@@ -1,130 +1,187 @@
-Return-Path: <linux-kernel+bounces-758736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1287B1D349
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD4B1D34B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB881AA4731
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5761AA48BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413A323B609;
-	Thu,  7 Aug 2025 07:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4860235055;
+	Thu,  7 Aug 2025 07:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p1n8lpg7"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8911221884A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpICj5u6"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E4523184F;
+	Thu,  7 Aug 2025 07:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551648; cv=none; b=tOvc/OL2u5jnsWhPkGhVzVpobZDOCMFFdTC8PxFqOAC18So6nsd0mPeDU0V2jdLVkQEcM9rB9yEPu7jtsm7BJ0Zyz0F1yhKIeDl9oF1HCUpDaaOprKwAzc2KuaT0ER3rVVxocf0LpSGKbgHpDoxw/rLck8Ztarnxtb1n2BbLqRc=
+	t=1754551671; cv=none; b=rtPjD8gVG+1KYx2o3EMhkuUoMBZz923r4EJdsUFOOStViIkkh1o6A67J7AlZ9wfu1o+SDMoJE/x28inuZrFbnUh0lQZY1gvzPS8LZCJeOccIW7IKK//PRjx6aNJjDcO6dQvkhdA9MUvniFTyinlevHnLa/KnQvntr1xOC/+5Kmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551648; c=relaxed/simple;
-	bh=K8vukmWjzm1VXIEaooQ4JW9QPT7Hde7LLgIFCZCjTiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H29rTyJEv1TlIpKmSkh3EPetfmSgs6TJD1ulzH9LpHFiuT6I3Rj9hp9eqIVtGzpz79GVWOEeZ2CgZri9o4FzwbgSxCsXK1Q1h0x9511QRM/6ZnI2yfqYiw+EHMKLO0pU4O/xYZcjbEKtgCFWrNdQYotj2FkUZfUYXTWR2qruL9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p1n8lpg7; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=K2
-	tuHcrzTCjC6XtZmOmGV8ku7xQicRREc1BpWHeDuik=; b=p1n8lpg7453JSnznV9
-	ZweXVC461jhN3EXL1EYmTYWR7AlJXCOwDGfvHZRm5Vba+E8clLzrBupRyhTX4Ms4
-	mwx+mFtYoH4frMFyQpyxTNj8cbEUV31bdP9eRAlfIbtkIx3EI3KaIAlZiADfrPTx
-	M+Q2w2Ix3DrHAmhafz+doUSlg=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgDnOhxGVZRoUEhPDA--.562S2;
-	Thu, 07 Aug 2025 15:27:03 +0800 (CST)
-From: fanqincui@163.com
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	fanqincui@163.com,
-	Fanqin Cui <cuifq1@chinatelecom.cn>
-Subject: [PATCH] arm64/module: Support for patching modules during runtime
-Date: Thu,  7 Aug 2025 03:27:00 -0400
-Message-Id: <20250807072700.348514-1-fanqincui@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1754551671; c=relaxed/simple;
+	bh=SkTxJog/uq/QRE+prVJuk5pif6ZAmTcZRuXi/8ThBmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8rZsLfXojxHy08NhGV+yhu0tt3/rXhKPk9Qx3kk9Oe8wbdRBSqSDRVEN+xOWpCDqyDmWJ6/wYTkqGI/izGZYFe8UwiuL+xNJZA46bOy81Vu2WdNQJzQGTJnPibOIbvnwS+G/gcroMCv0tYkv/+B3zYcSL8XflVOe0z1rK01zWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpICj5u6; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55b79ea50f8so724571e87.0;
+        Thu, 07 Aug 2025 00:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754551667; x=1755156467; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vPSZZvxQDM62BTi58d+C2YdbP59VdukNodMsPczgmyk=;
+        b=YpICj5u6bCC/R96cU8bE+2QEv9p5/2wNJ15RhzK7IOBd0kIzRJMaaJfGRkABbwykwn
+         qw11aQxe/gj28p9T6ztzQvrl36zaZE05KAmx4mqglZk4KvSQyCdynPJkS6I+43LX1nWE
+         me/+97PLmm3wN2StsBBGdBMa8NgrtukC6aAkFwVx4kuo62o8vKXp9uo/4hyI+ebdeb7M
+         4EAD8u1xnxKNMg7qoiMg06SwcHyzenLZUxTWVMCXh3JAZ0de+EiPULnTmJl7VrRAtb4J
+         UiqtAYQrHbRVjCak+dt5uKkaa5VMbAMnMHQK5vRExvl4cnGD+sDTOl5glBaopAv4Ezr6
+         4eHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754551667; x=1755156467;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vPSZZvxQDM62BTi58d+C2YdbP59VdukNodMsPczgmyk=;
+        b=U5mFjKCjiiM27oEPnliKJbep1yHk6REFobWnBQKzAceVhF1r+zqQfzlA3mXUMOTJtv
+         3OKW031nxcOvNNA7V8cuoTM1nU7QG4d10mfdmkCCbpQRhFus4Fy8K3OYYetwoTtwkEuA
+         Rqv2o2sfRp0umO0k9RD4qZZNFmiMxuXGJUmx54yAc0kS59WNiV8gJVN4JXFeHk2rHxVN
+         31q4KHkzFFg0Ccx/84JUZT2llAm2YgnEtpfr45Ptzdoyz2vSQgylj/qianW36QAgGw9K
+         BcL+6tGqAcHppJln2dLbKv2N4+ypNM4tzNoXKODVmvFnDxJVtHHLp9+NbDF4+ZOMjy9J
+         mxwg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0zhCJnGbB9iEE/NB4RZsZVMJjb4Yqa5ZhrvJCh8GRWc9Vr/dG95SJmfaQjxQh0DW4vWkyF0nVQvv3wTXb@vger.kernel.org, AJvYcCUkd4x73Kj43RDJGQ9WNflYi2LvY6ZE6j20HdTIZFlosbriUQm8etLG0ah2/UfiTJRnTld/bzpjYjzT@vger.kernel.org, AJvYcCX83uPIbxAoTcNpaTwboA+Np3evThOQjlr2eoI3ikYhALY22sw6o04OPvFY7lnT63VZGVx7ry4REAOL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbbmLt8gYeEKBFTYS/s8ikDwVpJDF7RtLwWrQnNGAFVdsuxehG
+	lge9N5UKOY5CAqPn92YWbhyWmyxeZ2b5gOH/5lS0veNcdegGhpH6l6dL
+X-Gm-Gg: ASbGncuoKMLO/QWYAHye0N21uuMFN05gaNDM1WHJYXbEvjURVp1Pf/X0KIQV+jENpJ4
+	umIEPpH6MJe9rtLu5+PembnV5NDxHJ+10zmWuf6RHl2af7VHeXQLh5mJRUOxJqNRPN/wJFEAATc
+	CCpQf3AlRqvNM0JxqFL/H3xNnjmWnh3QwDg79ueEbU1bCjwfMa4grr37LUeGmjsMymEHmI008m6
+	sWwzTqRtOn/d9IzW4jwnV3kJzryeXFAWj/KDfFZPrUS9dKiAtoyTSh1cv0vJZvY2oMPawoPjd7r
+	4eFR/ymgDwGxuVRVbHDoQ3omKJMKNeIMoJNv/I6JBh25VIwUiSIZIivC7V6k4v4wHBibEP84VJZ
+	HBeXvHWU8TuHUc1A1PbC8TEqymdXrecjScBWgQbpxdSKk2twwlQUV5AFbVbOY49yJY7L+fv79Xd
+	bh1qM=
+X-Google-Smtp-Source: AGHT+IFtNR3rD4cKL88Zn6DvBYwzPeOYKFCM/K9IqHwK1lJTV9U815Mj9adWiw1lo33yAzgi1rOd4A==
+X-Received: by 2002:a05:6512:1584:b0:55b:885b:1ef2 with SMTP id 2adb3069b0e04-55caf385f5dmr1859047e87.54.1754551667009;
+        Thu, 07 Aug 2025 00:27:47 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c98c8dsm2525236e87.90.2025.08.07.00.27.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 00:27:46 -0700 (PDT)
+Message-ID: <f33a391b-e7b1-422d-b265-4f00db3b9634@gmail.com>
+Date: Thu, 7 Aug 2025 10:27:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgDnOhxGVZRoUEhPDA--.562S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW7GF1kXryUKFWUAry7Wrg_yoW8trykpF
-	n8Crn5GrZ5Xwn3Cay8twn8WF15C398Can8KFy8W3sFyw1Yqr98AF1DKry5CFyUGr45Z3y8
-	WF18Gw1jq3WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UD73PUUUUU=
-X-CM-SenderInfo: 5idq1xpqfxxqqrwthudrp/1tbiOgqipWiUUrpNrgAAsA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] iio: adc: ad7476: Support ROHM BD79105
+To: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1754463393.git.mazziesaccount@gmail.com>
+ <c7f94cdf9bdc6882953f6a074db3fd87570fa98b.1754463393.git.mazziesaccount@gmail.com>
+ <629801b8-a647-442b-83ba-6328ecf7a977@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <629801b8-a647-442b-83ba-6328ecf7a977@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Fanqin Cui <cuifq1@chinatelecom.cn>
+Thanks again David.
 
-If use the ALTERNATIVE_CB interface in a kernel module to
-patch code, the kernel will crash. The relevant log is as follows:
+On 06/08/2025 18:23, David Lechner wrote:
+> On 8/6/25 2:04 AM, Matti Vaittinen wrote:
+>> The ROHM BD79105 is a simple 16-bit ADC accessible via SPI*.
+>>
+>> The BD79105 has a CONVSTART pin, which must be set high to start the ADC
+>> conversion. Unlike with the ad7091 and ad7091r which also have a
+>> CONVSTART pin, the BD79105 requires that the pin must remain high also
+>> for the duration of the SPI access.
+>>
+>> (*) Couple of words about the SPI. The BD79105 has pins named as
+>> CONVSTART, SCLK, DIN and DOUT. For the curious reader, DIN is not SPI
+>> ISO.
+>>
+>> DIN is a signal which can be used as a chip-select. When DIN is pulled
+>> low, the ADC will output the completed measurement via DOUT as SCLK is
+>> clocked. According to the data-sheet, the DIN can also be used for
+>> daisy-chaining multiple ADCs. Also, DOUT can be used also for a
+> 
+> Leave out one of the "also"s.
+> 
+>> 'data-ready' -IRQ. These modes aren't supported by this driver.
+>>
+>> Support reading ADC scale and data from the BD79105 using SPI, when DIN
+>> is used as a chip-select.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>>   drivers/iio/adc/ad7476.c | 36 +++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+>> index 1f736be09663..fc98aadc4077 100644
+>> --- a/drivers/iio/adc/ad7476.c
+>> +++ b/drivers/iio/adc/ad7476.c
 
- Mem abort info:
-   ESR = 0x000000008600000f
-   EC = 0x21: IABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
-   FSC = 0x0f: level 3 permission fault
- swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000013cfbed000
- [ffff80007b0b0000] pgd=0000000000000000, p4d=10000013d0d03003,
-pud=1000000103175403, pmd=1000000115804403, pte=0068000116b77703
- Internal error: Oops: 000000008600000f [#1]  SMP
+...
 
- Call trace:
-  0xffff80007b0b0000 (P)
-  apply_alternatives_module+0x48/0x7c
-  module_finalize+0xc0/0x134
-  load_module+0x15c0/0x1c08
-  init_module_from_file+0x8c/0xcc
-  __arm64_sys_finit_module+0x1c0/0x2d4
-  invoke_syscall+0x48/0x110
-  el0_svc_common.constprop.0+0xc0/0xe0
-  do_el0_svc+0x1c/0x28
-  el0_svc+0x34/0xf0
-  el0t_64_sync_handler+0xa0/0xe4
-  el0t_64_sync+0x198/0x19c
- Code: 00000000 00000000 00000000 00000000 (d503233f)
- ---[ end trace 0000000000000000 ]---
+>> +
+>> +static void bd79105_convst_enable(struct ad7476_state *st)
+>> +{
+>> +	if (!st->convst_gpio)
+>> +		return;
+>> +
+>> +	gpiod_set_value(st->convst_gpio, 1);
+>> +	udelay(1); /* 10ns required for conversion */
+> 
+> So ndelay(10)?
 
-To avoid this problem, this commit supports add a new section.
-When the module is loading, this section will be found and the
-page table attributes will be set to executable state in advance.
+Thanks for pointing this out. This delay was something I thought I must 
+clarify! This 10nS comment got just copied from the existing convstart, 
+it probably is wrong for the bd79105.
 
-Signed-off-by: Fanqin Cui <cuifq1@chinatelecom.cn>
----
- arch/arm64/kernel/module.c | 4 ++++
- 1 file changed, 4 insertions(+)
+...
+  >>   	st->xfer.rx_buf = &st->data;
+>>   	st->xfer.len = indio_dev->channels[0].scan_type.storagebits / 8;
+>>   
+>> @@ -393,6 +426,7 @@ static const struct spi_device_id ad7476_id[] = {
+>>   	{ "ads7866", (kernel_ulong_t)&ads7866_chip_info },
+>>   	{ "ads7867", (kernel_ulong_t)&ads7867_chip_info },
+>>   	{ "ads7868", (kernel_ulong_t)&ads7868_chip_info },
+>> +	{ "bd79105", (kernel_ulong_t)&bd79105_chip_info },
+>>   	/*
+>>   	 * The ROHM BU79100G is identical to the TI's ADS7866 from the software
+>>   	 * point of view. The binding document mandates the ADS7866 to be
+> 
+> Unrelated to this patch, but interesting that we don't also have
+> an of_ lookup table.
 
-diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-index 40148d2725ce..2160b2877935 100644
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -24,6 +24,7 @@
- #include <asm/scs.h>
- #include <asm/sections.h>
- #include <asm/text-patching.h>
-+#include <asm-generic/set_memory.h>
- 
- enum aarch64_reloc_op {
- 	RELOC_OP_NONE,
-@@ -477,6 +478,9 @@ int module_finalize(const Elf_Ehdr *hdr,
- 	const Elf_Shdr *s;
- 	int ret;
- 
-+	s = find_section(hdr, sechdrs, ".text.alternative_cb");
-+	if (s && s->sh_size > PAGE_SIZE && PAGE_ALIGNED(s->sh_addr))
-+		set_memory_x(s->sh_addr, s->sh_size >> PAGE_SHIFT);
- 	s = find_section(hdr, sechdrs, ".altinstructions");
- 	if (s)
- 		apply_alternatives_module((void *)s->sh_addr, s->sh_size);
--- 
-2.27.0
+I am not sure what is the value of having the of_match table with the 
+SPI devices. The SPI-ID will in any case be required for the module 
+loading, and it can be built based on the DT compatible.
 
+I admit I don't really know all the dirty details but, from what I can 
+say, the only potential use would be if this driver supported two 
+variants (which needed to be distinguished) with identical 
+chip-compatible but different vendor part. I accept all education (also) 
+on this matter though :)
+
+Yours,
+	-- Matti
 
