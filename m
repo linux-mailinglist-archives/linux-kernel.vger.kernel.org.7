@@ -1,126 +1,178 @@
-Return-Path: <linux-kernel+bounces-759382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B875B1DCDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B2EB1DCDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0E8176F72
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2871AA0CB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF192226CFF;
-	Thu,  7 Aug 2025 18:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAF622256C;
+	Thu,  7 Aug 2025 18:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c56iw94L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJr3t7ZW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EA6221737;
-	Thu,  7 Aug 2025 18:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFB672636
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589921; cv=none; b=jbSqIFk8+aOjhcZZKRb2e1wO4ZcjPyrFHSyYhapIhVIYuUEcMBsEa4bLjaQs4cDmmTTLLRiTY9IRuYg5ThofMtRZgaL717s+mELtg64ZLXSD0/Nq46TYvMhC86zE0bHWnHGTREN7nHaJUna+XJeukcf9fuDJl5a8CLbNfJZWg0g=
+	t=1754589993; cv=none; b=gZLPUUKSJTENIx8XiiUZJQjJlaUFHk7hGQwOXkad39NAlGUu68eutwHGPPMT/40lb+bxtH5fpoiKlZWp85HjuzjC+LJzrjG9C8n2+BYgAUjQ+9JF0h/pnAr94WOwFRFvpGwbmS9rlI465pg+qv1ioAyFZqJGkIE1VIlC1C+czTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589921; c=relaxed/simple;
-	bh=xKpdGfGG9X89d+WYFfLmSef3z1eEJiPKsaCnJZfi//o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=W01qq+6q4mOGIwKp0oH2ny26Q6cpXJajM5oCE4pR2DFRHIeYnC0eO+qZecs7JoImyO3JuXt/STTm8L3SOa+B8aqXJl5gmsSndlll0KzCsExywZuEu3RElnG8xYcd8QApxHomLC0lxmNkg4Zxc4ZusPDkPDZJgyHYk5b5MSodBLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c56iw94L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D6AFC4CEEB;
-	Thu,  7 Aug 2025 18:05:20 +0000 (UTC)
+	s=arc-20240116; t=1754589993; c=relaxed/simple;
+	bh=7KIkjYZinwCOik3BiYri2tGPJc4l8iBHhq9D+2sZkZw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mj5sTEbbqheHlwtx/kl3qxx4cNwoIUA2YJVW32/cULzTbskC5urGxwxCbbexOUCxEpOw14GbmdwRdgfT1SWYxKB2MX+xhpwoU5udPKnoqj8ezvQbDCWyQbmbNanzi4FvVY7Uw1h3wRpaQ1MkXWTtrUN9AChSszzJpYNgMX2VVjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJr3t7ZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF56EC4CEEB;
+	Thu,  7 Aug 2025 18:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754589920;
-	bh=xKpdGfGG9X89d+WYFfLmSef3z1eEJiPKsaCnJZfi//o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=c56iw94LMjfCTQ66ZGwvscHeQingtEi1BN5o2AVxTSaGSKTDiuQ6+ltUm7Jdakf0p
-	 KJHhGzLT5y3/d1/pgUJee+oXgPAWU3BQuDWkmfluEH/+0xKhdpe/qHyf3SGc3JnUo7
-	 Kzl5xxmGFv4fXuDQMYXaH6cNq5WDiLIZf5u6/Zczvv4og25ptx6G2py/u43Ti8RIlx
-	 5TsyHim7Q5xI5qtrH8T0+53Wd4nQG/fNppMfQG7PRkTVwcbXXhh6oU1PJIxcJNdNPK
-	 qvnZFc3aAGv2A9McbAffQmwJDw3f7eRRmRM6jO6olH4SeyB3SzyI+gwAvRnCbF3LgY
-	 z8RTMlTWzR78Q==
-Date: Thu, 7 Aug 2025 13:05:19 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
-	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [RESEND PATCH 2/2] PCI: stm32: use
- pinctrl_pm_select_init_state() in stm32_pcie_resume_noirq()
-Message-ID: <20250807180519.GA56557@bhelgaas>
+	s=k20201202; t=1754589992;
+	bh=7KIkjYZinwCOik3BiYri2tGPJc4l8iBHhq9D+2sZkZw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vJr3t7ZWxwISQ8AEnRu00urvLNPWD7maM2m6Q/qGwAtKRIyWnBuii8BR8yfMy4oUC
+	 dzj+8LI28atKWfowT1ucHintH6QXoB6XuSVRJLItQ6vJ5S+M5/Op4p8EXVwlAtY7R+
+	 ETLFsU5mNMUbypYdWcrpSi8GTDYEYy3pvvSyHmVVfFniheWpZIL1PCUxqvHEOZ9/g1
+	 5agFdXofmSWk0BPd1FfbjWBG3EO8OpNYCnnM9jw/FkiMpYJA+jU4ss0AmVhoZvo7/a
+	 KmojYC0/l7axhMluVfZ0lSA5OiEBEkfNlz51C1vX3OwmwyM7h7SqAGHQXjoaOPJG2f
+	 bjNo7BEzvY4cg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uk50V-0051Ea-Jd;
+	Thu, 07 Aug 2025 19:06:27 +0100
+Date: Thu, 07 Aug 2025 19:06:27 +0100
+Message-ID: <861ppn9fbw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	cohuck@redhat.com,
+	anshuman.khandual@arm.com,
+	palmerdabbelt@meta.com,
+	lpieralisi@kernel.org,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	broonie@kernel.org,
+	james.clark@linaro.org,
+	yeoreum.yun@arm.com,
+	joey.gouly@arm.com,
+	huangxiaojia2@huawei.com,
+	yebin10@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Expose CPUECTLR{,2}_EL1 via sysfs
+In-Reply-To: <mhng-9D9CB730-A22F-43E2-A012-D51EF3C1E027@palmerdabbelt-mac>
+References: <864iuja70l.wl-maz@kernel.org>
+	<mhng-9D9CB730-A22F-43E2-A012-D51EF3C1E027@palmerdabbelt-mac>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717063042.2236524-3-christian.bruel@foss.st.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: palmer@dabbelt.com, catalin.marinas@arm.com, mark.rutland@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, cohuck@redhat.com, anshuman.khandual@arm.com, palmerdabbelt@meta.com, lpieralisi@kernel.org, kevin.brodsky@arm.com, scott@os.amperecomputing.com, broonie@kernel.org, james.clark@linaro.org, yeoreum.yun@arm.com, joey.gouly@arm.com, huangxiaojia2@huawei.com, yebin10@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Jul 17, 2025 at 08:30:42AM +0200, Christian Bruel wrote:
-> Replace direct access to dev->pins->init_state with the new helper
-> pinctrl_pm_select_init_state() to select the init pinctrl state.
-> This fixes build issues when CONFIG_PINCTRL is not defined.
+On Thu, 07 Aug 2025 18:26:29 +0100,
+Palmer Dabbelt <palmer@dabbelt.com> wrote:
 > 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> Reported-by: Bjorn Helgaas <bhelgaas@google.com>  
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
-> Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
-
-633f42f48af5 is still on pci/controller/dwc-stm32, but only for
-reference.  After v6.17-rc1, we will need to rebase to it and figure
-out the merge strategy.
-
-Part of that will be to restructure 633f42f48af5 and the material
-below such that there is no build issue at any point in the series.
-
-> ---
->  drivers/pci/controller/dwc/pcie-stm32.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+> On Thu, 07 Aug 2025 01:08:26 PDT (-0700), Marc Zyngier wrote:
+> > On Wed, 06 Aug 2025 20:48:13 +0100,
+> > Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> >> 
+> >> From: Palmer Dabbelt <palmerdabbelt@meta.com>
+> >> 
+> >> We've found that some of our workloads run faster when some of these
+> >> fields are set to non-default values on some of the systems we're trying
+> >> to run those workloads on.  This allows us to set those values via
+> >> sysfs, so we can do workload/system-specific tuning.
+> >> 
+> >> Signed-off-by: Palmer Dabbelt <palmerdabbelt@meta.com>
+> >> ---
+> >> I've only really smoke tested this, but I figured I'd send it along because I'm
+> >> not sure if this is even a sane thing to be doing -- these extended control
+> >> registers have some wacky stuff in them, so maybe they're not exposed to
+> >> userspace on purpose.  IIUC firmware can gate these writes, though, so it
+> >> should be possible for vendors to forbid the really scary values.
+> > 
+> > That's really wrong.
+> > 
+> > For a start, these encodings fall into the IMPDEF range. They won't
+> > exist on non-ARM implementations.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
-> index 50fae5f5ced2..c1d803dc3778 100644
-> --- a/drivers/pci/controller/dwc/pcie-stm32.c
-> +++ b/drivers/pci/controller/dwc/pcie-stm32.c
-> @@ -28,6 +28,7 @@ struct stm32_pcie {
->  	struct clk *clk;
->  	struct gpio_desc *perst_gpio;
->  	struct gpio_desc *wake_gpio;
-> +	bool   have_pinctrl_init;
->  };
->  
->  static void stm32_pcie_deassert_perst(struct stm32_pcie *stm32_pcie)
-> @@ -91,10 +92,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
->  	/*
->  	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
->  	 * thus if no device is present, must force it low with an init pinmux
-> -	 * to be able to access the DBI registers.
-> +	 * if present to be able to access the DBI registers.
->  	 */
-> -	if (!IS_ERR(dev->pins->init_state))
-> -		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-> +	if (stm32_pcie->have_pinctrl_init)
-> +		ret = pinctrl_pm_select_init_state(dev);
->  	else
->  		ret = pinctrl_pm_select_default_state(dev);
->  
-> @@ -274,6 +275,9 @@ static int stm32_pcie_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
->  				     "Failed to get PCIe reset\n");
->  
-> +	if (device_property_match_string(dev, "pinctrl-names", PINCTRL_STATE_INIT) >= 0)
-> +		stm32_pcie->have_pinctrl_init = true;
-> +
->  	ret = stm32_pcie_parse_port(stm32_pcie);
->  	if (ret)
->  		return ret;
-> -- 
-> 2.34.1
+> OK, and that's because it says "Provides additional IMPLEMENTATION
+> DEFINED configuration and control options for the processor." at the
+> start of the manual page?  Sorry, I'm kind of new to trying to read
+> the Arm specs -- I thought just the meaning of the values was
+> changing, but I probably just didn't read enough specs.
+
+The architecture defines a range described in D24.2.162 (in the L.b
+revision of the ARM ARM) which is reserved for IMPDEF purposes.
+
+What these registers do is not defined, and there is no standard
+across implementations. This really is for chicken bits and other fun
+stuff. Most of them will simply generate an UNDEF, because they don't
+pass the decode stage. But for all we know, there is a bit in there
+that turns NOP into the HCF instruction -- or better.
+
+So exposing any of that stuff for any given CPU is dangerous. And
+exposing any of it on *all* CPUs is a bit like swallowing a powered
+chainsaw (don't).
+
 > 
+> > Next, this will catch fire as a guest, either because the hypervisor
+> > will simply refuse to entertain letting it access registers that have
+> > no definition, or because the VM has been migrated from one
+> > implementation to another, and you have no idea this is doing on the
+> > new target.
+> 
+> Ya, makes sense.
+> 
+> >> That said, we do see some performance improvements here on real workloads.  So
+> >> we're hoping to roll some of this tuning work out more widely, but we also
+> >> don't want to adopt some internal interface.  Thus it'd make our lives easier
+> >> if we could twiddle these bits in a standard way.
+> > 
+> > Honestly, this is the sort of bring-up stuff that is better kept in
+> > your private sandbox, and doesn't really help in general.
+> 
+> So we're not doing bringup (or at least not doing what I'd call
+> bringup) here, the theory is that we just get better performance on
+> different workloads with different tunings.  That's all still a little
+> early, but if the data holds we'd want to be setting these based on
+> what workload is running (ie, not just some static tuning for
+> everything).
+
+In general, none of that crap is safe to turn on and off at random
+times. You really want to talk to your implementer to find out. And if
+it is, the firmware is probably the place to handle that.
+
+> That said, part of the reason I just sent this as-is is because I was
+> sort of expecting the answer to be "no" here.  No big deal if that's
+> the case, we can figure out some other way to solve the problem.
+> Happy to throw some time in to making some more generic flavor of
+> this, though...
+
+I have no idea how we can achieve that, given that there is no
+architected definition for any of these registers.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
