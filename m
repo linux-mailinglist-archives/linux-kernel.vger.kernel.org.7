@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-759239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1E4B1DACE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D2DB1DACF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B46D1899A5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73AB7E143D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB9226C39F;
-	Thu,  7 Aug 2025 15:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F84626CE31;
+	Thu,  7 Aug 2025 15:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioBU/uA8"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vn3fKLPR"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAC226B2DB
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90A826CE21
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754580469; cv=none; b=f5ehuAnnctVP5JhH1UiSdH97U5H+Shx8PIxMtDswZOYYUymO41QZBoXhwqBs/gMsxjEVPdvP/eUt9SZg4mzl4yNvQzAvhc2Fj6B6kgwIJUqmO2CCQR6h9sb8xoDhgKmiYTF1XrgSK0skGFtr8XIdMiibNx5BPf6c7CTlH6ICyzg=
+	t=1754580473; cv=none; b=X9Yq3hPSs0WUNrYfjgkoMFpZjC8dJCjZFcfz6P1Lfd+kZzQQcrnWna60xiz0+n5vNrp8lCckwwSKTiHHDZOgXf19JznH5R4RBMs3hXYm5nFLWFLTuYVWcybM53gE/DIVzk5rWBELsKUW22GvVaW25Sj+tW9IH5WJUTL9ljUFdms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754580469; c=relaxed/simple;
-	bh=l1HykbPMuIDjGSGihvgSNI2MrNRWddPpGPG1+EG6GXs=;
+	s=arc-20240116; t=1754580473; c=relaxed/simple;
+	bh=zIfKdNQEjciKQheNSJbyteKBoqestP8UHxIeZa4T0Uw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iCosC4aUnPT0RDoU8QUZP4y7xKIeUs5GoKrJ30vaBYCHOhNE/PaAERcoZcDFecbWxE9MSaRd3U7Z6KIkmJFOUjjtYPKIGhQyLBskDpP5Zq8YGrNzJUOOLrYif+ovexdVBkaZ9SRyvkJ6SChDK/jGJaHF8KVwzRVxhC6XPntvXKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioBU/uA8; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=QCZFLfwzEVwuzuKgp1OulPLxKfn9lfGYTzXabeur0lOyChmiq6zpad7neU6bc+t7RLXtkMCINRHPLmtRmEAlciewHv4btpHR3shkgvzm8TybMJl4kuC4dEbFKXQgTxgSVVe3y3SkwrvOYkJTg20KGTJjZ4kR+6ZMEWTH2VEaOxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vn3fKLPR; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76bf3dafaa5so2272546b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:27:46 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76bd9d723bfso1070288b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:27:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754580466; x=1755185266; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754580471; x=1755185271; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=V4HgnHp/VUMkLIl9/1CszxaTlnI+Qqu+k/nd2ePzpfU=;
-        b=ioBU/uA8NpWb+1rbvxuhSGXhy5pKJBDvO8Exp+owwLEOnpHjRVfKMv9pM/oco11s0o
-         MOm4/ptbgF/GafXpBwcDfRT57aywtefWbdvswsIi0S/UACD/Gpigq6YDBqBNuvBszzZU
-         g3GF1vDpDd4jmBDV3j+BMBTFcz1uYRThwv+0pVzUyk6q3VDsPrDQqA/eLq1OFz6kXd4h
-         Dfg83xz0USwRGAWOkdoNTQDfDI5EiIVnV/66neL0vNsGDmddMbzVs+mcyb27mZa/MHPB
-         k9PNsBJAd+vovh0v8ovy/wgJl+iVrcHLgYguigGR00aw4wv4C6pZ9FaTxg4RtZ9EKfyx
-         QOfg==
+        bh=y9fWWBXBlNjUcVIevwpnMzei9v9cyPF2woT3bX1UmP0=;
+        b=Vn3fKLPRhcoLL7NDDYaTs4bYeCp7YM8FgWnM+T8dw46rGa3d4maE2cX6/mTABw/BWH
+         wvZANnYJqs+Bprmgi/RgmOJrfVbk7epuN8vIg1Vj5iZB9hW1srJKH5/wl6OgMBEtRpuW
+         cMvSgOM9MankReo8OhMyymAXrM/zS+58AcMbEb+l4qHd5YA0a9ooTmkbTawOEMjphfG7
+         o14RLb2gID3aKUX39F+Q8unTgZvCzFSB0O4Y7xfhRsKD7MDHRJpI2Y7aShgtscsg26ST
+         CrTT/bnk2kNS1WUymBP/7isleRe6x/kBbL1zZNGBx+9QZYC7re/A9My7cruaTHb0avOj
+         D0eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754580466; x=1755185266;
+        d=1e100.net; s=20230601; t=1754580471; x=1755185271;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=V4HgnHp/VUMkLIl9/1CszxaTlnI+Qqu+k/nd2ePzpfU=;
-        b=IzzSASm2rw7kIFR2GtWljQESQSnDMmb/tcQ4iVOXsDQFULHv6geKs7RadEI9dzO+EL
-         K2z+/1+p+UK66UIfoiQthfGteqkDaYkZta3joAXAZ5JZkE7VNTTrpOkfLH7okzH2d/le
-         clfSBpvMhGED4fcDxYjRyS5VRRWKUhqFGKmJF9bAaxmf490EyF/pBqi/487AVhJzLK2Z
-         5zRc+Uz57W4YfJirkAtncILzwU0XgM9Nhu0rNApaH4JOI4pFa3nE+k+6OQa+oJwDRRb7
-         G86stJ8TWdRE0zkTh5zu4NSJXtsIjvlCdSYXVonw0Cm3mCax3q/rzQcGxVhHZw04KQoK
-         cofg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmn82PDSONcE9D6we8921WS0o/+AHXDTegJjM7l2jvVH5SAMXWc8qMYfqWawiDEhLXUby8wyVoXGQ3j1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw31SiPFFMCNj7oNPTYtOK4AyyEDxWRlCP4gm6P/B22ij7/8cqV
-	mTizQUqXz/Z23n+zgTSM5CUegrw/FGzb9oUbzFY2mXZnyDfSs9IYTCCw
-X-Gm-Gg: ASbGncvWvklR3w0FqSH/sQyO62lP3pEBwAmelFyNDn5XT3/qa8iZZMaL63/KKsHbf6J
-	CfS9OaUk+B5/DWgEn4UVgzNWJDzKTt6Q3LSEDPlXPvf4ie/jxreW9PkZTOw/+nowzberTybveIg
-	ahQ1HYXr0Lnq1EQt2v5/FplgsfZfjNtwvxZRCl4UGJ1DhyULyKhFf5X6DwkSIu+Gb9y4S18wlc8
-	ZbRk8a4QrE2IUZMMKenHsdUt2OZUOQ9++bb+888WiTJqUYN9l0jwlFw9ISOUO2Trwh2mMl9NfvX
-	//ttdGVe17OPIKfLU9wVQpcApaO0TlsuI3LuLyN7ga7zBe/bxIeRQv+/qRR/7W5UhX/DBvE0vBN
-	DGsPTUbICqoKBAnPAJmaHv8CJEYY7s7kBcKAECQ==
-X-Google-Smtp-Source: AGHT+IGRbQlMmFmrGlSgAAFMHCRTu3alRXN12IXyPHDZLhr3a/gmmz3hDLUgm15BOyTlhRlzVYIBmg==
-X-Received: by 2002:a05:6a20:3d06:b0:240:17b3:3838 with SMTP id adf61e73a8af0-240412a3734mr6406970637.20.1754580466093;
-        Thu, 07 Aug 2025 08:27:46 -0700 (PDT)
+        bh=y9fWWBXBlNjUcVIevwpnMzei9v9cyPF2woT3bX1UmP0=;
+        b=Tk9P0oLVCVQRgO7LsYvqHRNaM/aMNHfsajypBYKWcf1+c81e+s4omMgIUJivsUPay9
+         Q7y2WgByORKY5kp3Y7iSSD47JrfX9C0Pogu0yYKVjhpJjFwBk1+bD/LiOUCo5ZAZwyqk
+         CUX8W6Ajl8D8zf5fM8NWr/KTopbG97tpBx4mqJI/k9P58jn09y8gC/aMtkMQa17KNVjZ
+         AWwSqptxPmf7rk0B4dWUceqD8O4U34cZasBYLf0PIiXHi5d6hF3UKjyCwIOdoNXfLbk6
+         +kZchtqJQqbRWQepw1XTOYE6QlrT+yxCy+YQy0tAEDAvrKadmovxaULxjPApELJVN4UN
+         L2mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXec5JzJgIAgWONzyNjczJGoaKieWimqVS4vD9vcZpRcPTsi+w1uJVPnaRBUnADR1aDuC3MD5oq+Rycy7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKwyWCWFsd5EXooPPQq4PHM2I03jNx+jyoUCXIBZEEhabK7OgI
+	RU+9VzycGnEVWs5+t68n5nz2gjE5KiWQoziEasnfEsfZSUcVsK04qy6x
+X-Gm-Gg: ASbGnctWWyCxTjllL9jvfXPcdkxB+w1qhtHuhRFcV3xi6zl/SB96u8Gpdb3uPLOymr3
+	QCq/8gT8DbdK5BxKepsrDIvR8kBuAKMZDsoAib3RDmqrzGnGmK5SG2YqW2Ipf0tLPLYtQQNFWYi
+	bcESC/8x2PdpzVw+96WlRR3svkJFWKt5GLwx8RWWyXO9Dnh/+Bu8pagRBRWdDsKcN4rSOORK2Fd
+	7rJ6VNwkMkCa0Bvwdq10mnOrQxoNvLfEPR8OuB2ueAXGYs+w4feghQvuh48x4s075GpxLIBIE3Q
+	So5FukM1jxAY5X6oyAPph0+lGfhXUDEV7KcxNiDtjE31E1Oxr1/YMn4XvE2LZ+CJrpULJu784g1
+	wCiFukb6tMUlJh8o+BkudTToukgzouHPRkQh/4Q==
+X-Google-Smtp-Source: AGHT+IFg/IpKtoHQfbVW4m9sQKEKh4HvSlaXW/D9l5o9aVDbN1SGN/f6aejupBVl7miZ3sFekXHHKQ==
+X-Received: by 2002:a05:6a20:72a0:b0:23f:f99d:465e with SMTP id adf61e73a8af0-2403144953bmr11066684637.16.1754580471197;
+        Thu, 07 Aug 2025 08:27:51 -0700 (PDT)
 Received: from KASONG-MC4 ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm18430540b3a.18.2025.08.07.08.27.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm18430540b3a.18.2025.08.07.08.27.46
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 07 Aug 2025 08:27:45 -0700 (PDT)
+        Thu, 07 Aug 2025 08:27:50 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -90,9 +90,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Kemeng Shi <shikemeng@huaweicloud.com>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [RFC PATCH 2/3] mm/mincore: use a helper for checking the swap cache
-Date: Thu,  7 Aug 2025 23:27:19 +0800
-Message-ID: <20250807152720.62032-3-ryncsn@gmail.com>
+Subject: [RFC PATCH 3/3] mm/mincore: avoid touching the PTL
+Date: Thu,  7 Aug 2025 23:27:20 +0800
+Message-ID: <20250807152720.62032-4-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250807152720.62032-1-ryncsn@gmail.com>
 References: <20250807152720.62032-1-ryncsn@gmail.com>
@@ -107,111 +107,45 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-Introduce a mincore_swap helper for checking swap entries, seperate it
-from page cache checking.
-
-The new helper will only be called on swap address space, so it always
-grab the swap device before checking the entry, caller won't need to
-lock anything.
-
-The sanity WARN_ON check will also cover all use case now, previously it
-only worked for PTE checking.
+mincore only interested in the existence of a page, which is a
+changing state by nature, locking and making it stable is not needed.
+And now neither mincore_page or mincore_swap requires PTL, this PTL
+locking can be dropped.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/mincore.c | 58 ++++++++++++++++++++++++++++------------------------
- 1 file changed, 31 insertions(+), 27 deletions(-)
+ mm/mincore.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/mm/mincore.c b/mm/mincore.c
-index f0d3c9419e58..1ac53acac239 100644
+index 1ac53acac239..cc4460aba1f9 100644
 --- a/mm/mincore.c
 +++ b/mm/mincore.c
-@@ -47,6 +47,31 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
- 	return 0;
- }
- 
-+static unsigned char mincore_swap(swp_entry_t entry)
-+{
-+	struct swap_info_struct *si;
-+	struct folio *folio = NULL;
-+	unsigned char present = 0;
-+
-+	if (!IS_ENABLED(CONFIG_SWAP)) {
-+		WARN_ON(1);
-+		return 1;
-+	}
-+
-+	si = get_swap_device(entry);
-+	if (si) {
-+		folio = filemap_get_folio(swap_address_space(entry),
-+					  swap_cache_index(entry));
-+		put_swap_device(si);
-+		if (folio) {
-+			present = folio_test_uptodate(folio);
-+			folio_put(folio);
-+		}
-+	}
-+
-+	return present;
-+}
-+
- /*
-  * Later we can get more picky about what "in core" means precisely.
-  * For now, simply check to see if the page is in the page cache,
-@@ -64,33 +89,18 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t index)
- 	 * any other file mapping (ie. marked !present and faulted in with
- 	 * tmpfs's .fault). So swapped out tmpfs mappings are tested here.
- 	 */
--	if (IS_ENABLED(CONFIG_SWAP) && shmem_mapping(mapping)) {
--		folio = filemap_get_entry(mapping, index);
--		/*
--		 * shmem/tmpfs may return swap: account for swapcache
--		 * page too.
--		 */
-+	folio = filemap_get_entry(mapping, index);
-+	if (folio) {
- 		if (xa_is_value(folio)) {
--			struct swap_info_struct *si;
- 			swp_entry_t swp = radix_to_swp_entry(folio);
- 			/* There might be swapin error entries in shmem mapping. */
- 			if (non_swap_entry(swp))
- 				return 0;
--			/* Prevent swap device to being swapoff under us */
--			si = get_swap_device(swp);
--			if (si) {
--				folio = filemap_get_folio(swap_address_space(swp),
--							  swap_cache_index(swp));
--				put_swap_device(si);
--			} else {
-+			if (shmem_mapping(mapping))
-+				return mincore_swap(swp);
-+			else
- 				return 0;
--			}
- 		}
--	} else {
--		folio = filemap_get_folio(mapping, index);
--	}
--
--	if (folio) {
- 		present = folio_test_uptodate(folio);
- 		folio_put(folio);
+@@ -153,13 +153,13 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		goto out;
  	}
-@@ -177,13 +187,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 				 */
- 				*vec = 1;
- 			} else {
--#ifdef CONFIG_SWAP
--				*vec = mincore_page(swap_address_space(entry),
--						    swap_cache_index(entry));
--#else
--				WARN_ON(1);
--				*vec = 1;
--#endif
-+				*vec = mincore_swap(entry);
- 			}
+ 
+-	ptep = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
++	ptep = pte_offset_map(pmd, addr);
+ 	if (!ptep) {
+ 		walk->action = ACTION_AGAIN;
+ 		return 0;
+ 	}
+ 	for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
+-		pte_t pte = ptep_get(ptep);
++		pte_t pte = ptep_get_lockless(ptep);
+ 
+ 		step = 1;
+ 		/* We need to do cache lookup too for pte markers */
+@@ -192,7 +192,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
  		}
  		vec += step;
+ 	}
+-	pte_unmap_unlock(ptep - 1, ptl);
++	pte_unmap(ptep - 1);
+ out:
+ 	walk->private += nr;
+ 	cond_resched();
 -- 
 2.50.1
 
