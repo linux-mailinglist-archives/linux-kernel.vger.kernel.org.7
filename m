@@ -1,426 +1,355 @@
-Return-Path: <linux-kernel+bounces-759516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65800B1DE93
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:58:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C5BB1DE94
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C5E1AA5775
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808C0720BA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D8823875D;
-	Thu,  7 Aug 2025 20:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B8B237165;
+	Thu,  7 Aug 2025 20:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I77duRBP"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RHP8YpcZ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NH+UZiRA"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC31FDD;
-	Thu,  7 Aug 2025 20:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754600277; cv=none; b=RZUvE2dTe5Dc84tSEutkYkUnu3ARJswyx5eUU0Jl6nTjPQQSlbxf5VY+mJIiMbSz5B3uzqB/qsYFzZ9W8M3/zW67Av4jetVGJcUDMiILHwKXp10AVdegI1UumT6k9X4yqnI2VjqN/B9kgs3NR65jG65+5DTGioPpoAGs9cmlBN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754600277; c=relaxed/simple;
-	bh=kFntyPq0cN3CI+Xpu6OpDtjtOs3WJznk29JJdkTyCig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fdQJJ4HytMcErkNl71VJPqkVuY6vwp2gS8vip00C/XBch3BjQ+MwhoEojjeVFT8AKffsenyP6VjR4T6ehRTU0QgPZVHWltuBo2wGDmHC2Z8UeLb8twx/HwQmoFLCU5JCMd+p2ogj00SXVgxlLW6zMhtQB0i3r76AwGVHxIojRLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I77duRBP; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af968aa2de4so283974266b.1;
-        Thu, 07 Aug 2025 13:57:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D351FDD
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 20:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754600323; cv=fail; b=N8VIIjRAHKYFbyY5jikikKN3DV/VTG7d3bZqsfdBaOZZe4SlJUzwU9SPoUa+Qd5N1hKeEIiUE/XTJhrmaa3c5wSjd9JAVaXtzFGU9xFZ39DYfNGhXptv2+iX+29jsu0ITRJU5m06T3i6Gk1RFtlO88e0Fc9wJmF8bOhKc880N9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754600323; c=relaxed/simple;
+	bh=4p1fLSZ5Yfa2anWP3Pz9d5fxXW9nRo5SmwsE6vyapEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dTITYAEGwVWXBJqtF2uxGk4G5Mkc7bay/nuYExXkhdBwG7vqk42q2Gy91OvrfFpWKV6nNr7HNscXIaYKXpBTA1AT8gDxwseoIBgCv/jt4cCj5nLYRXWckKUTkTpVOare8EDlIoZV9vOx5Q6uv0/Ylw9SzvgjZx07QFUAh7GtPi8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RHP8YpcZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NH+UZiRA; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577KN8aV010336;
+	Thu, 7 Aug 2025 20:58:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=pc9maLMoRbIAHU6G+0
+	55+bfMebm6QpPWa/pEG4Jc/Ho=; b=RHP8YpcZSX8gneVQ45yYdbivs5yq6QrqeS
+	fsHnCd/dcmF7Tkj0teC09LlcfyVbM6hBoBlMdKwoheG4QRcP+Er/+bOA/xT0/rEd
+	ujTOiW7ucL8MNMBM7xAtN5saRFk08EXokysOMcAcQqv1oAWkq+HK4MF5551GkmLS
+	QWPWMTOITvj0Dt2khDQPdSCtU4uG7j2w/wTBk54stI/YbpZQRF0wx2HPbqx/T/Mf
+	40GbiGIFyvR6jTsJ7PJuPgDCpe+ywjvjio9poXNwbpVyJscX/DWxdKx5C7U/JuV5
+	BP4c5CeHD7MmZvD5UL/3kiY+jS+qNZPZdP+qbqQakrsAQJ+0e6tA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvh510f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 20:58:21 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 577JTSYN028364;
+	Thu, 7 Aug 2025 20:58:20 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwp6h0w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 20:58:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=It+BqsJKiiceLegwZN537UQYRr6owH2H9kkRh2q7Eca2oHdI/z/P8vkpbWOPwHk2/uBdusxJyrK9oEyCNKj8gaTBKwngXWacP3VZYNytnA5lDwyibeDPGrCbGwGZm3OxEwEPIwxwrpU2ywcxXzI8kHhx4hOQRCl7fuXwgJpe27jTq7Xq/1AO6LBOkCJZgpoL/0zF3T5JHeIshWrL1EWrci7tB2J9cuRJr6JGEYnaNn7yhqIygjOiNsr5Y/7OFDvRPzm36YEFpC9iKMwg8SiJlQk679avMlxrI2JFfsFLSm+NOuMVb73gEN5VMOkvzhxZecjc+ZWVqKCsee+JnRpxKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pc9maLMoRbIAHU6G+055+bfMebm6QpPWa/pEG4Jc/Ho=;
+ b=rwsIXFEJw+u/weupXGEo7Hb2BwN0HomaYBvzT67Q94rh821K+0Dw3S7mWT3rDKZtQut/qiCfVqs/YcsK2LphcAisl4ZHGf/0ffocL01qsA6SMFNxmOxThHlhH7/l7OsgLNWBHxuphS/47TuuELU67LLq/yn3DwyRBJy6Be+3VFfQwaFxZe7wLgSmd8v21516Yyu0XTWd/SohzIubXOOpmYMChEJDJADcDzV9UjzyZ7NrC/ljHSlaDZEu+T0IoYJvnxwcyNqdUPiSxgMo9zcZWGTggLH4gJPBa3xftZ+3THkg5EcSs9wVSCJteec2W5/Q6BoTXgIt4V4sSLtacmYvWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754600274; x=1755205074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=glSeLZ1T641GhR6eubMihAIYJ30XvQrSaCL7IFv3rF4=;
-        b=I77duRBPNHk/hxBTyOqSGOuXTJ6Ww/zBGAGwbtYzv4VNvgdHmRdHvREStkG7GgyIaa
-         vHWOajJ5YdHhtEz5wWJllbipFLdKFlzturWBtG3r9d7lZxP5TMUKrcWohW54nogFptrg
-         TDNz6imwMtyFOBf/M7QJqdCdTFVof3QVTWp8CKBRUfoEpMq+Kl41kHD6PHv0Vo+4QIzg
-         l8gdqxFW7owZNV7kwCoci3yFDhGySe1HcQJLRb+Jal3qLnAFc8ys7krpj0S6QlJDORrb
-         XKWeNetK7nIvB6fWJ0/HCn6/1sQZ5gwa/BUq2G/zvUu+sf2X3NtShfLkWJmlVlWxCtX3
-         6VNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754600274; x=1755205074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=glSeLZ1T641GhR6eubMihAIYJ30XvQrSaCL7IFv3rF4=;
-        b=pTGLbZAn0bpYAaxVViys/Jsg58of94Bu60ayemSZoB7vZMrdmeHwiITEF4T94AMMgA
-         GioXaT90fapOSwNyAdSl6+aRIVC3cUbpIvcrwyHT/fOxeo8QLWxikoLkJO89VcmV6Xxv
-         FCqIj9tOCN73yZoRKjfrApBpo7XWm0lGoMVwRSCyftyyruePCU8GCwYveRANUyGmXjLb
-         1AWqZHlHMNq5Jqy9kzvjLBg1kFxyKuWz7rv8bhgomKTr48B7/OtWfyBVIxSVP41GVAvb
-         vSPdt2DBCwKj6Nx3aRTBvsno7JA0FFitrO7QCQ2z0f7RmLVlHdS5fGWgCLcAZPacZJQ9
-         YzDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXPNcci8i/FGArY4XAEwzVgEXsBCALwHpPkf+3JhmzVa6S2WSwuR9/jC64IvuC2ziTWubComCupRkM@vger.kernel.org, AJvYcCX5td2hBb/L0mtnivgnpOmRda06yp9KVn7l0w06jbhJMz1TBnqaUfgY4HjovtyxGd06UJs4wp2T1Bki@vger.kernel.org, AJvYcCXBFISr6g7fIEMC/6q4ftcz2FcYA64yx0zRlNVthGzPqCBO2HNxBNEp7B3srRaw3+XKRQwrV6sj3NhFicBd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsIph/MnYdp4zY3IBLl6YBAc0xmQqxX85919KZHoMlhqinXz/z
-	IUtPRr9wUTFwpIGl7J58cEjUbPfRSsT7Za4k498AeFkXKExcjjjH19gHGAkONUiSUs6ZBpAL6NR
-	sRnMTvioTkgDE60Vq7S0E4kZzX34OMtg=
-X-Gm-Gg: ASbGncsLpRqM1A7yfJjJp/EpSrqSJn9WQDXqW8AcB7bZ4oDpcTNwhtR6Cp1dYejDR4Y
-	idkP9oDMDKHnrHc3c0aXSBpbWYcReGMCY5rRb2wzBe1ETmVtlW9CroyQV0eQHMlHBf4iCnatEAl
-	lDEG1BCfp2CEqxMeR4rmbT4TQooj+nHUnipbJbF2ArcfjZgdjtG4s9e5k1QGjiQ9P8aO0nYm7R8
-	67RbuBWceoGrzufBWughIoj8oxRN5YmY5wYxeLZlw==
-X-Google-Smtp-Source: AGHT+IFoAOXCDV1q45wJf+trPVAmwc616p+yc8qDSsN/Cv4UN+rh9HhQy67+VFobtn905rsyRTZziniOTe7XTTO/HfI=
-X-Received: by 2002:a17:906:730a:b0:af9:c31c:eeca with SMTP id
- a640c23a62f3a-af9c6546458mr33381566b.48.1754600273666; Thu, 07 Aug 2025
- 13:57:53 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pc9maLMoRbIAHU6G+055+bfMebm6QpPWa/pEG4Jc/Ho=;
+ b=NH+UZiRAxvh/pK23zPqQOLqBm6wTLZn19j5uFt14IohK3xDNUA80uLNSlSeen2OsfCQI+PkDIKhj9DRYmwQ/c4RYa+ZSy0Vq7cYXHy6YFY4o4HH6t9qyOfBRw6yOOmm13rnoPyeL1MLyKAb0Vp3oEpxsMtQb9xmjy2KzJljO8QM=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by MN2PR10MB4286.namprd10.prod.outlook.com (2603:10b6:208:1d6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Thu, 7 Aug
+ 2025 20:58:17 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 20:58:17 +0000
+Date: Thu, 7 Aug 2025 21:58:14 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, Barry Song <baohua@kernel.org>,
+        Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
+ mremap folio pte batch
+Message-ID: <ae01c6bc-019a-4263-8083-8ab073e72729@lucifer.local>
+References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
+ <158e6422-fc82-4d6c-a442-2ebe956a66da@redhat.com>
+ <3fc75720-8da7-4f6c-bdce-1e1280b8e28f@lucifer.local>
+ <6870e24f-dda6-421c-8df8-58294927b62d@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6870e24f-dda6-421c-8df8-58294927b62d@arm.com>
+X-ClientProxiedBy: AS4P191CA0049.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:657::8) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807-tlv493d-sensor-v6_16-rc5-v3-0-b80d2cb41232@gmail.com> <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
-In-Reply-To: <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 7 Aug 2025 22:57:16 +0200
-X-Gm-Features: Ac12FXwmEWjXXavhCNgyK3y3_Ob3LyDo4AU76VvPTkplTx8sWFIjz0wYfOS55oQ
-Message-ID: <CAHp75VeKPr=3H_wOvcesqj4OsrqN7zwRFFk3ys3O012JpQtxrQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|MN2PR10MB4286:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7acc2f12-fdc3-457f-bcff-08ddd5f52257
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LYcdwDwLPZFpX08fMorg+tOWIUl81c458CQTg1QUklyTXqOZ71dsvqbH8fWG?=
+ =?us-ascii?Q?30ws38t6XErIcpl8pqGAL9y7jnoB7MtZac4M+h59SP94qevAi3hSH2atwalw?=
+ =?us-ascii?Q?g9hfdnvjGXgi29up6vtDME4/64UlV5bnOUifLiuhWrJ3kS9uclxdlQJetPcw?=
+ =?us-ascii?Q?El/g3uTL9J1IHd7/wAP3NVQuZbaeZKEIrCc4GBKddcr12iKqzynSAt3OkDlT?=
+ =?us-ascii?Q?xpAdjvur6DQoRBANEjApWjCmPR9YOpFBi6Wae6rtQdV7Kp3vk8qc0ZyTV8b1?=
+ =?us-ascii?Q?r9wp2JDad9VZfJGWuAa9ulbYDLQjA1GYxBpObvRGTy707Ia9UjotNVq9e5YV?=
+ =?us-ascii?Q?UMhBItNry9sQvWGbMzIQORl2hUwEBYmKmnzkko4sH1sZJGIEw/YCH+FpHWQf?=
+ =?us-ascii?Q?/T+05Y8bzQRCFeRu67M0HnrENJtx5uWQuzZ1rZYA+8zym/M2pWG32xFHzvfD?=
+ =?us-ascii?Q?ez3MjfSNnGhihV/HW30S/2oUZ8fDJ8+MwZC73LWVpbGYI/pYPCLtK7koGGle?=
+ =?us-ascii?Q?xgLlms92AbSJNzgSnfS+T0iQtCX1pMp9yGfq/zlbRsX+spq06+Pr6OKsCAFb?=
+ =?us-ascii?Q?ma0QOozwZburvWfe3zhxQJ/ZahTMVgaAFrQA8WB0b0QIE7ZenSebygckYZGN?=
+ =?us-ascii?Q?xXy4nARTlflYR1Rj5jYyNL4sNhK30609PChH2SW4wy5y1Va22kcIk4a/cWNC?=
+ =?us-ascii?Q?bZMbjFDs7VxOhEvCVyusqLNQzs5x6EaLkPw78RD15cHkJ0hthI+6Rbi0/Rw7?=
+ =?us-ascii?Q?Ma4x3l6hxiS/oiFBxuEAV+KfxeGeragGJXMIx6R2qbayhDTuqoOb/vRrtOCr?=
+ =?us-ascii?Q?QGtR6Jxf14XiWB3WyIBc0wPN7I1eyCEfkuRnadd7QM2aB+ELT7hWXLKYX5F6?=
+ =?us-ascii?Q?MqBTtKeLl7UPDuD54fJ97wwZvLtdPfbC9UYuraf5YWtZxndvZV4Q+FWGcRqS?=
+ =?us-ascii?Q?agWEjpyPwQlTIfBOTVrnh/cXJGT7QRluEP8lgv9pW7c4JS9oDHo+kswIL3WP?=
+ =?us-ascii?Q?YE3J0s8RKqpibv0A9RPUaxTCzgt5P1ND0hN0eFTk86kphdxVLhvh90T0Q+xS?=
+ =?us-ascii?Q?QhDauUOmnoBJcWpq/sfWnXZzf1KV1EPE8wr1boArSdMrkgZd4b/+ynEwciKr?=
+ =?us-ascii?Q?caobNLnNvJin+nGci4/JEm1aVQi6L+FJ/wV1ANhRUMdEIhIHRxN5wn26RiEL?=
+ =?us-ascii?Q?wKXnbmzLQNXvuqpI1catemenMMykL8/7zRu7oK5AS8VOcKJc58WTqnur6AXI?=
+ =?us-ascii?Q?Wyns/LiT011cTpFo1ck3+A1UDnVJrNxE62aneQRwR+wbKTHeZun/W6jaMXbZ?=
+ =?us-ascii?Q?kpbDbR4OPNUJ6TR8gwczx8S5DER88SCJIKHLG1o6lMnDPEsjn8CbN0nyXMNL?=
+ =?us-ascii?Q?IV6yC1Et25nCxhrMqIIOW/9ISXzDwshRrxs6+fSPnfzE28szDfFf3BqtE5Nv?=
+ =?us-ascii?Q?8di7yhYu+ws=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aX4lmBlDZzbqx1PfU5xw9e6BeJuY34bATFDQ4OuM4ikZBJAUxc3eusGFoHMn?=
+ =?us-ascii?Q?tOOqRO37QGUt45RfztslE920MjXjvZzIkKWbZlKDK6Mzmez2nHcyFqtn4rKv?=
+ =?us-ascii?Q?Kc00y5DTKdzMBkYSJ3oeoHuyMINbZpWnXIvS2U9fLJ2RD+JsQdDI5pqJeSuy?=
+ =?us-ascii?Q?kFMpjgBxRttQiX+B/2pz6+hkNnEnXLJD7Zlxb25jRx0qcbM48OzdPx3b/j53?=
+ =?us-ascii?Q?MhDnV6V/7nTG5dnUP6OrRE/gvj1l67E/3eNiPFrIM3LojEnrR9HpDO6zq7Wk?=
+ =?us-ascii?Q?H/cxVRibSbm5RU1mAjWcPd5uZNCzlu7BKWEAF7YRjobqSF11PV6g/3naKT4F?=
+ =?us-ascii?Q?fOIhgR+sICJ9mcEb6+TqRsLAzf+8K+GbOxZrPE1PTixQWVR/xUiTbc3ACcIA?=
+ =?us-ascii?Q?Eds6qENwGeBFUXtkmATgRL2MKvDXS3gJnNwLhT70thrsD+EK0JHAhkERojaJ?=
+ =?us-ascii?Q?+ynvO3Q8mKo1szZ0jOgtmA5WpR4Dv+ztpLwrJkh9NHN6v82kIy37atiibHkz?=
+ =?us-ascii?Q?Hpd2Z/kxfbZQAsjRCmkynGqLey6+h6nblZVKp/8UVmeaH0tcew1zHm3eYscg?=
+ =?us-ascii?Q?D9p6tEJP/869PmmE7uwu5xD14fvrJttyeMTwtN7uvggBJE8SGTkr05P68zr1?=
+ =?us-ascii?Q?MOCL48Fx/KZ1j0MZIwUf7AvhRZi4w7I548rrBYUCdF4qnP8ogOKx8eMXlgM5?=
+ =?us-ascii?Q?qQc4Ek5U3/yK7w4+eQ8b2A/j3G6KHktOR6NOkRC9JMVwZf7jCA3AQuDHgCde?=
+ =?us-ascii?Q?QHC80zF3pNhQ2KIuj3ZAkb/vr41bAcgF1qJ560zy4PQ1sVPAdPsz6jh7OpXG?=
+ =?us-ascii?Q?cmqIS80o/emIyNN4/jNOnZfqlaGs2jbHGpY7q6UB+I+aaIrt/Ip9x1Ra3J2W?=
+ =?us-ascii?Q?SCsV6cv26OCMpTfG7Fuymqp97pSHJz/20KkK2xg4g+KpAvEUbZErkl1fzXFD?=
+ =?us-ascii?Q?rzH+A0Hbip78FVrrrpgVkLmY5X8xAn+QXDPgfJZeJWVqAVoUAdbOX/Uv7FJv?=
+ =?us-ascii?Q?WolI01wFzsB1puV6oHYezkPv1/EpCfjdcrJy/HSBwMEPfHR+WOD2gViaew6q?=
+ =?us-ascii?Q?0voiIm3HGZDuB6QKkLQ/JwVqNgb8KD4yNIk9YT8JEw3mUejT8IPOSOZs2ueQ?=
+ =?us-ascii?Q?k4z8qoBLXf0bN/MokEEDsK/b6Ff5mPNlVjy/CvzjKwFdXzmL5yMkb9zcAvtx?=
+ =?us-ascii?Q?SlGUlSmqKCrY723Dr3daWh3WdZYtbiDPhPkwLPoz4jQKajQAOJwoSmm77Sj5?=
+ =?us-ascii?Q?aH0wg3GyNw8mXuHVSqfqPHaCH6clo0tO4wGeCeWO/0zzN2RW79bY8vKbcV6e?=
+ =?us-ascii?Q?GdDd2L0et6M90ra9c8hfqgtR+0/fhQ83oB39mEwnoSL0dykujW20s2Nb6TRZ?=
+ =?us-ascii?Q?s8e3wxofHn7Lbxa/dsq6J/CUW9aXNaL7Cs9U6Uk8jARFnQpMr3syoPlRqAsZ?=
+ =?us-ascii?Q?nF7VpmokFkR+plZiCw1ymuuh8o/U/r3TTAlch+DGHFqPrE9GPyfTuQV2Ujxu?=
+ =?us-ascii?Q?czNgmz4twMx7elMWU/p77yrOqCnXRVJ+DdWEsM3neMq9zCyw4hnBFuRZtSdV?=
+ =?us-ascii?Q?HixLFrkRS9D6CriPrCeaXv7kKkdabJyJw6A7HEW4qnikyy/bVHO22P0P1Qfd?=
+ =?us-ascii?Q?Lg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	cHN3YHcVgDO6Ldz9CX4h9Ipwe5lOK4i1+Phwx5Ky1UbnJkHHJLvJsVopmyx7NEUI9o/qqBDdyMRy94RdzHjGGCjOAYBg0W4B56Ye9lCnTDGhsqlCSjznGz94E0tSOz3XCDGOGLZXwHi14R1Q+nqRlAnPL2u0WWnrWBbhHAJHKPzmtc77ykdrb+XG/uh8j/fZYBcZKrghuevIRkTZXacB71idT/pBBybgn1fa7xx6ICQ2qWlcwgE3xKdbX1woOZ3EuaxoVtVQ6f2HDPvJmHwYjd1m5KkPFGooBWN6KVLv+heFJ2yiFnR9xF85HXs2sYfa0Oh0W+vH396qST8kwlA0xogoCXzCrZyqRdTJk5PyBP9XLwODH73FIhXoFloaHFgfJvEdeNL+N/t79xhkImyqJAPbvxrh/jHoyE0ANJUdEylx09nUVurF+HSkXbhp1s4RZtjgrQgM0jeLdadHLE+542nXHEyYG4FFh1i4Auax9NTEilF3Pp4J8LglTpppx2on57lxQg00PiyqOwzy3/uAlT4qBd+9wC3ZMkHrdZ8L8X88ETvjWnECJvAGWW/lOeTI3D/wFY7H3TkfJDNr6qSJ/Ns+8yimcY3rslryJnL3RKA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7acc2f12-fdc3-457f-bcff-08ddd5f52257
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 20:58:17.8097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f1gegnIGBjNS3fTni+mYahQoc/CQBGZI1MIAyXuGFXRqTjmXCyT6eW/8+ZNC+lZUq6jG3FB2OzWpYzcIxK6lPqQFMd+dLTxkc06nTB4pe5s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4286
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508070172
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDE3MiBTYWx0ZWRfX15p81VqC5gxI
+ 4govjaLFJuL1WPy4jab4n1oGpcErdINlGZ2R/H625ROmwuL1zLoEKyxKhqSPwXbpjzlkGTg8dF8
+ wZxpJ66wyXHv5FGGmaYQfiAn5NFH3cTv+0IFniUxHy2HSplGVNNsKlB18yxIGCpDMQ6vpyZ8q7P
+ 9hHrRjfpV6f0lW17uRkH3A8g3J6fs9chzdpkSA2wVH35N8Cm8YBkCc9o9t7r/Q8ZulWIouq3F8b
+ eVDQ9gSzsUlJ88oHDaSdhivTumuJksVEqq/3+Bunna3IFlM7wI4Eaf2KCTGOBJyFUWxumOvqFHp
+ DRXTnT+av8E92teV1SMmYDAsKj3BFVbCcAB5IGVINg3iCoR7OieFEIsEUn1cM5rnBGsU0EqeHMs
+ dJQdx5qO8BqSS0mfH9ka87S246WN1jRKzy3P/wbODVCrerFQh4jTGoONzmVP5+8p81pwCwmG
+X-Proofpoint-ORIG-GUID: E2lzXTAQo3DqlU2DAq3UjI909IEfPXkV
+X-Proofpoint-GUID: E2lzXTAQo3DqlU2DAq3UjI909IEfPXkV
+X-Authority-Analysis: v=2.4 cv=Hpl2G1TS c=1 sm=1 tr=0 ts=6895136d b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=q3tbDd7vbPbfCbQ1mvQA:9
+ a=CjuIK1q_8ugA:10
 
-On Thu, Aug 7, 2025 at 4:57=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.co=
-m> wrote:
+On Thu, Aug 07, 2025 at 08:56:44PM +0100, Ryan Roberts wrote:
+> On 07/08/2025 20:20, Lorenzo Stoakes wrote:
+> > +cc Ryan for ContPTE stuff.
 >
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
+> Appologies, I was aware of the other thread and on-going issues but haven't had
+> the bandwidth to follow too closely.
 >
-> The Sensor is configured over I2C, and as part of Sensor measurement
-> data it provides 3-Axis magnetic fields and temperature core measurement.
+> >
+> > On Thu, Aug 07, 2025 at 09:10:52PM +0200, David Hildenbrand wrote:
+> >> Acked-by: David Hildenbrand <david@redhat.com>
+> >
+> > Thanks!
+> >
+> >>
+> >> Wondering whether we could then just use the patch hint instead of going via
+> >> the folio.
+> >>
+> >> IOW,
+> >>
+> >> return pte_batch_hint(ptep, pte);
+> >
+> > Wouldn't that break the A/D stuff? Also this doesn't mean that the PTE won't
+> > have some conflicting flags potentially. The check is empirical:
+> >
+> > static inline unsigned int pte_batch_hint(pte_t *ptep, pte_t pte)
+> > {
+> > 	if (!pte_valid_cont(pte))
+> > 		return 1;
+> >
+> > 	return CONT_PTES - (((unsigned long)ptep >> 3) & (CONT_PTES - 1));
+> > }
+> >
+> > So it's 'the most number of PTEs that _might_ coalesce'.
 >
-> The driver supports raw value read and buffered input via external trigge=
-r
-> to allow streaming values with the same sensing timestamp.
+> No that's not correct; It's "at least this number of ptes _do_ coalesce".
+> folio_pte_batch() may end up returning a larger batch, but never smaller.
+
+Yup David explained.
+
+I suggest you rename this from 'hint', because that's not what hint means
+:) unless I'm really misunderstanding what this word means (it's 10pm and I
+started work at 6am so it's currently rather possible).
+
+I understand the con PTE bit is a 'hint' but as I recall you saying at
+LSF/MM 'modern CPUs take the hint'. Which presumably is where this comes
+from, but that's kinda deceptive.
+
+Anyway the reason I was emphatic here is on the basis that I believe I had
+this explained to met his way, which obviously I or whoever it was (don't
+recall) must have misunderstood. Or perhaps I hallucinated it... :)
+
+I see that folio_pte_batch() can get _more_, is this on the basis of there
+being adjacent, physically contiguous contPTE entries that can also be
+batched up?
+
 >
-> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
-> But for bus configurations interrupt(INT) is not recommended, unless timi=
-ng
-> constraints between I2C data transfers and interrupt pulses are monitored
-> and aligned.
+> This function is looking to see if ptep is inside a conpte mapping, and if it
+> is, it's returning the number of ptes to the end of the contpte mapping (which
+> is of 64K size and alignment on 4K kernels). A contpte mapping will only exist
+> if the physical memory is appropriately aligned/sized and all belongs to a
+> single folio.
 >
-> The Sensor's I2C register map and mode information is described in produc=
-t
-> User Manual [1].
-
-...
-
-> +       help
-> +         Say Y here to add support for the Infineon TLV493D-A1B6 Low-
-> +         Power 3D Megnetic Sensor.
-
-Megnetic?
-
-> +         This driver can also be compiled as a module.
-> +         To compile this driver as a module, choose M here: the module
-> +         will be called tlv493d.
-
-...
-
-> +#define TLV493D_RD_REG_BX      0x00
-> +#define TLV493D_RD_REG_BY      0x01
-> +#define TLV493D_RD_REG_BZ      0x02
-> +#define TLV493D_RD_REG_TEMP    0x03
-> +#define TLV493D_RD_REG_BX2     0x04
-> +#define TLV493D_RD_REG_BZ2     0x05
-> +#define TLV493D_RD_REG_TEMP2   0x06
-> +#define TLV493D_RD_REG_RES1    0x07
-> +#define TLV493D_RD_REG_RES2    0x08
-> +#define TLV493D_RD_REG_RES3    0x09
-> +#define TLV493D_RD_REG_MAX     0x0a
-
-+ blank line
-
-> +#define TLV493D_WR_REG_RES     0x00
-
-I would name it _RES0 in analogue with the _RES2 below.
-
-> +#define TLV493D_WR_REG_MODE1   0x01
-> +#define TLV493D_WR_REG_RES2    0x02
-> +#define TLV493D_WR_REG_MODE2   0x03
-> +#define TLV493D_WR_REG_MAX     0x04
-
-...
-
-> +enum tlv493d_channels {
-> +       TLV493D_AXIS_X =3D 0,
-
-Why assignment? Is this HW defined value? Then you must assign all of
-them explicitly to make code robust to changes.
-
-> +       TLV493D_AXIS_Y,
-> +       TLV493D_AXIS_Z,
-> +       TLV493D_TEMPERATURE
-> +};
-> +
-> +enum tlv493d_op_mode {
-> +       TLV493D_OP_MODE_POWERDOWN =3D 0,
-
-Ditto.
-
-> +       TLV493D_OP_MODE_FAST,
-> +       TLV493D_OP_MODE_LOWPOWER,
-> +       TLV493D_OP_MODE_ULTRA_LOWPOWER,
-> +       TLV493D_OP_MODE_MASTERCONTROLLED
-> +};
-
-...
-
-> +struct tlv493d_data {
-> +       struct device *dev;
-> +       struct i2c_client *client;
-
-Why do you need both?
-
-> +       /* protects from simultaneous sensor access and register readings=
- */
-> +       struct mutex lock;
-> +       enum tlv493d_op_mode mode;
-
-> +       u8 wr_regs[TLV493D_WR_REG_MAX];
-> +};
-
-...
-
-> +       data->wr_regs[TLV493D_WR_REG_MODE1] |=3D mode1_cfg;
-> +       data->wr_regs[TLV493D_WR_REG_MODE2] |=3D mode2_cfg;
-
-No mask for the existing values in the respective wr_regs? Wouldn't
-you need to use FIELD_MODIFY() instead?
-
-...
-
-> +static s16 tlv493d_get_channel_data(u8 *b, enum tlv493d_channels ch)
-> +{
-> +       u16 val =3D 0;
-
-I would move the default assignment to the 'default' case. This makes
-the intention clearer.
-
-> +       switch (ch) {
-> +       case TLV493D_AXIS_X:
-> +               val =3D FIELD_GET(TLV493D_BX_MAG_X_AXIS_MSB, b[TLV493D_RD=
-_REG_BX]) << 4 |
-> +                       FIELD_GET(TLV493D_BX2_MAG_X_AXIS_LSB, b[TLV493D_R=
-D_REG_BX2]) >> 4;
-> +               break;
-> +       case TLV493D_AXIS_Y:
-> +               val =3D FIELD_GET(TLV493D_BY_MAG_Y_AXIS_MSB, b[TLV493D_RD=
-_REG_BY]) << 4 |
-> +                       FIELD_GET(TLV493D_BX2_MAG_Y_AXIS_LSB, b[TLV493D_R=
-D_REG_BX2]);
-> +               break;
-> +       case TLV493D_AXIS_Z:
-> +               val =3D FIELD_GET(TLV493D_BZ_MAG_Z_AXIS_MSB, b[TLV493D_RD=
-_REG_BZ]) << 4 |
-> +                       FIELD_GET(TLV493D_BZ2_MAG_Z_AXIS_LSB, b[TLV493D_R=
-D_REG_BZ2]);
-> +               break;
-> +       case TLV493D_TEMPERATURE:
-> +               val =3D FIELD_GET(TLV493D_TEMP_TEMP_MSB, b[TLV493D_RD_REG=
-_TEMP]) << 8 |
-> +                       FIELD_GET(TLV493D_TEMP2_TEMP_LSB, b[TLV493D_RD_RE=
-G_TEMP2]);
-> +               break;
-> +       }
-> +
-> +       return sign_extend32(val, 11);
-> +}
-
-...
-
-> +static int tlv493d_get_measurements(struct tlv493d_data *data, s16 *x, s=
-16 *y,
-> +                               s16 *z, s16 *t)
-> +{
-> +       u8 buff[7] =3D {};
-> +       int err, ret;
-> +       u32 sleep_us =3D tlv493d_sample_rate_us[data->mode];
-> +
-> +       guard(mutex)(&data->lock);
-
-No include for this API.
-
-> +       ret =3D pm_runtime_resume_and_get(data->dev);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       /*
-> +        * Poll until data is valid,
-> +        * For a valid data TLV493D_TEMP_CHANNEL bit of TLV493D_RD_REG_TE=
-MP should be set to 0.
-> +        * The sampling time depends on the sensor mode. poll 3x the time=
- of the sampling time.
-> +        */
-> +       ret =3D read_poll_timeout(i2c_master_recv, err, err ||
-> +                       FIELD_GET(TLV493D_TEMP_CHANNEL, buff[TLV493D_RD_R=
-EG_TEMP]) =3D=3D 0,
-> +                       sleep_us, (3 * sleep_us), false, data->client, bu=
-ff,
-
-Redundant parentheses.
-
-> +                       ARRAY_SIZE(buff));
-
-Missing include for this macro.
-
-> +       if (ret) {
-> +               dev_err(data->dev, "i2c read poll timeout, error:%d\n", r=
-et);
-> +               goto out;
-> +       }
-> +       if (err < 0) {
-> +               dev_err(data->dev, "i2c read data failed, error:%d\n", er=
-r);
-> +               ret =3D err;
-> +               goto out;
-> +       }
-> +
-> +       *x =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_X);
-> +       *y =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_Y);
-> +       *z =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_Z);
-> +       *t =3D tlv493d_get_channel_data(buff, TLV493D_TEMPERATURE);
-> +
-> +out:
-
-Labels are better made when they define what they are going to perform.
-
-out_put_autosuspend:
-
-> +       pm_runtime_put_autosuspend(data->dev);
-> +       return ret;
-> +}
-
-...
-
-> +       ret =3D tlv493d_set_operating_mode(data, data->mode);
-> +       if (ret < 0) {
-
-Is ' < 0' part required here?
-
-> +               dev_err(data->dev, "failed to set operating mode\n");
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-
-If not, these all lines can be transformed to just
-
-  return ret;
-
-> +}
-
-...
-
-> +static irqreturn_t tlv493d_trigger_handler(int irq, void *ptr)
-> +{
-> +       struct iio_poll_func *pf =3D ptr;
-> +       struct iio_dev *indio_dev =3D pf->indio_dev;
-> +       struct tlv493d_data *data =3D iio_priv(indio_dev);
-> +
-> +       struct {
-> +               s16 channels[3];
-> +               s16 temperature;
-> +               aligned_s64 timestamp;
-> +       } scan;
-
-> +
-
-No blank lines in the definition block.
-
-> +       s16 x, y, z, t;
-> +       int ret;
-> +
-> +       ret =3D tlv493d_get_measurements(data, &x, &y, &z, &t);
-> +       if (ret) {
-> +               dev_err(data->dev, "failed to read sensor data\n");
-> +               goto trig_out;
-> +       }
-> +
-> +       scan.channels[0] =3D x;
-> +       scan.channels[1] =3D y;
-> +       scan.channels[2] =3D z;
-> +       scan.temperature =3D t;
-> +       iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan),
-> +                               pf->timestamp);
-> +trig_out:
-
-Make sure you use a consistent pattern for labels.
-
-out_trigger_notify:
-
-> +       iio_trigger_notify_done(indio_dev->trig);
-> +
-> +       return IRQ_HANDLED;
-> +}
-
-...
-
-> +       data->dev =3D dev;
-> +       data->client =3D client;
-
-Choose one of them, the other can be derived.
-
-...
-
-> +               return dev_err_probe(dev, ret, "failed to initialize\n");
-
-Missing include for this API.
-
-...
-
-> +static const struct i2c_device_id tlv493d_id[] =3D {
-> +       { "tlv493d" },
-> +       { }
-> +};
-
-> +static const struct of_device_id tlv493d_of_match[] =3D {
-> +       { .compatible =3D "infineon,tlv493d-a1b6", },
-
-Inner comma is redundant.
-
-> +       { }
-> +};
-
-Missing include for both of the ID tables.
-
-...
-
-> +static struct i2c_driver tlv493d_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "tlv493d",
-> +               .of_match_table =3D tlv493d_of_match,
-
-> +               .pm =3D pm_ptr(&tlv493d_pm_ops),
-
-Missing include for this macro I believe.
-
-> +       },
-> +       .probe =3D tlv493d_probe,
-> +       .id_table =3D tlv493d_id,
-> +};
-
-> +
-
-Remove this blank line.
-
-> +module_i2c_driver(tlv493d_driver);
-
---=20
-With Best Regards,
-Andy Shevchenko
+> >
+> > (note that a bit grossly we'll call it _again_ in folio_pte_batch_flags()).
+> >
+> > I suppose we could not even bother with checking if same folio and _just_ check
+> > if PTEs have consecutive PFNs, which is not very likely if different folio
+> > but... could that break something?
+>
+> Yes something could break; the batch must *all* belong to the same folio.
+> Functions like set_ptes() require that in their documentation, and arm64 depends
+> upon it in order not to screw up the access/dirty bits.
+
+Turning this around - is a cont pte range guaranteed to belong to only one
+folio?
+
+If so then we can just limit the range to one batched block for the sake of
+mremap that perhaps doesn't necessarily hugely benefit from further
+batching anyway?
+
+Let's take the time to check performance on arm64 hardware.
+
+Are we able to check to see how things behave if we have small folios only
+in the tested range on arm64
+
+>
+> >
+> > It seems the 'magic' is in set_ptes() on arm64 where it'll know to do the 'right
+> > thing' for a contPTE batch (I may be missing something - please correct me if so
+> > Dev/Ryan).
+>
+> It will all do the right thing functionally no matter how you call it. But if
+> you can set_ptes() (and friends) on full contpte mappings, things are more
+> efficient.
+
+Yup this is what I was... hinting at ;)
+
+>
+> >
+> > So actually do we even really care that much about folio?
+>
+> From arm64's perspective, we're happy enough with batches the size of
+> pte_batch_hint(). folio_pte_batch() is a bonus, but certainly not a deal-breaker
+> for this location.
+
+OK, so I think we should definitely refactor this.
+
+David pointed out off-list we are duplicating the a/d handing _anyway_ in
+get_and_clear_ptes(). So that bit is just wasted effort, so there's really
+no need to do much that.
+
+>
+> For the record, I'm pretty sure I was the person pushing for protecting
+> vm_normal_folio() with pte_batch_hint() right at the start of this process :)
+
+I think you didn't give your hint clearly enough ;)
+
+>
+> Thanks,
+> Ryan
+>
+> >
+> >>
+> >>
+> >> Not sure if that was discussed at some point before we went into the
+> >> direction of using folios. But there really doesn't seem to be anything
+> >> gained for other architectures here (as raised by Jann).
+> >
+> > Yup... I wonder about the other instances of this... ruh roh.
+>
+> IIRC prior to Dev's mprotect and mremap optimizations, I believe all sites
+> already needed the folio. I haven't actually looked at how mprotect ended up,
+> but maybe worth checking to see if it should protect with pte_batch_hint() too.
+
+mprotect didn't? I mean let's check.
+
+We definitely need to be careful about other arches.
+
+>
+> Thanks,
+> Ryan
+
+Cheers, Lorenzo
 
