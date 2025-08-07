@@ -1,184 +1,268 @@
-Return-Path: <linux-kernel+bounces-759332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9628AB1DC34
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41272B1DC47
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31121623FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF0F188C59C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CC272E60;
-	Thu,  7 Aug 2025 17:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A952727E2;
+	Thu,  7 Aug 2025 17:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H9zy3vnp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hVJKySzA"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2069.outbound.protection.outlook.com [40.107.212.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D569926CE14
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754586185; cv=none; b=b4ubEyqszM9iu1n90myX0fIkMxNTPnDF4RYDBHLToJtl4Cu0UuXuqyL2cuYjHaQxGx2+NDuqMIe/5xXe26BMaY7dTfl7FnqJXiY5/nqXDbnmSF2stHVqjueWEFdJJuDMAc27lFp6NBvfmQmXxKm5TKnPXO8RW/iIiWH6jVpaB9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754586185; c=relaxed/simple;
-	bh=MRqFzhSuWwMpaPKOkiqO3zfdABs1SDMuFlkVK8Hi3u4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oNRaraOGn9JFUF8k7hM6GhRRZ7g63o2i6ptp9j1YR53q7O5UozTRBHGaEzwl509BwNthKWGDe/ah+qMH4KtCo05PfsDv7cpD2h9OSnQm7ar//KTnjXoIG+4rjQYVK9Oj+cas6ofShTXXrFzBrxXmYQwEBZwU5T7r8lLrOtzLh4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H9zy3vnp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DCPQ020091
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 17:03:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kT9b3uyCnzcpZ8XsWUfgQTVB6SbH1uKhJl+tlG2vK5E=; b=H9zy3vnpq6MgjC04
-	VmGfddc2j/iB+dB+g3TFzNJOnF/pDKU4u6vMZ8DeeC/nPcs5e7O6HRDTnxk23IA4
-	ENZmQFyo81AZje4Uxy7qzcALQmLDvAd383lzSUSxsxFIW6p/eOPUvzTjWbysQWJ5
-	wRO7vxVTrn2A7QSNjVwgfxviPEUt03OU+IQuUZO/M90jozjQ1F7pihr6X/yHjNsE
-	6JLcLYxhLU2PYFbf6EG+ZO5VoRalT0thvBqEFbOYSOtdPVAKmPA4BAmQI41WI9zU
-	sfjVVny+O/0uI1J7yR7o20dYs0CnkdQM03n8HO28FV+OvmVs6cfezW/KNS3WRPxJ
-	0I6lGQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw2y10e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 17:03:02 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06c7cf38eso673751cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:03:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754586182; x=1755190982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kT9b3uyCnzcpZ8XsWUfgQTVB6SbH1uKhJl+tlG2vK5E=;
-        b=hpUutzKk5CBtUf1J11QVsGspzal3pSbrfbpjDpRgluXt5lKfjzAVgD+u9srUbYzIEA
-         mbI/5em9dn433mpTQA9p/5VXF/KTNb69K9Rb8/hdwu5XRtPylGKbfEQFRMwh7QdocjyE
-         hH4auqiAzYLJ5x/xbBEiEpKtoPxKZmsg3e/j98naSt3lZJfgOKkmARiU48xkpSOHsUNd
-         5MT9jv4I/Yt5/AKYqiu/17QVbxP+seYD8TisOzYt9462tSyK6zNENEDUSekhODYOTE43
-         3D4abz8eZP3pKWBNbO/GSQRvgzh8vc7YKajq0XcFtpaSE3qB05NwbjZe5lDxwszNZd3j
-         1Jqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnGjheDK+KYIBfA1hC6X1RCvtBlzpoqAJZgXxHANIVyNcvMyWm+30Tz77naMucYD/g0nHA45R0Zc6LwGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiUy1ibZlQIJ4dKXm5zImLdNy//YS3nbs6/Y267rKoMZpV6bxI
-	4zP6OqRcKfgRL3fnWGk9USDsO8xmNRKUa1p1raOPl4XjJY7i3VpjURxYYzlDUfSUvsM1PpcWp5e
-	wYn48nTIFBuneXziGyBLfvCtMQqKhReJBTfR9iTfoM7AnVWkyjnt0Cqtrz4QRMIc2jb8=
-X-Gm-Gg: ASbGnctmPKwzDf/zbLZZX4uLSFdQgA2af0kYgd1uNJLEGUDMkXYIaMUPep1E6DRfxUQ
-	YAAgwstGsQsLx4JTcIfP1ahL92iz981UWGjyGzKYe//bjRKw30XjuuCJiuOL4bhnCLk2o/Co4AO
-	tRKMTwuWezWF+gBRInRdQQEQ8E6zt1t0f2AW8nmjeJxxvRWZMAZ2CANDnGGdHPDsYKIAxUppgpu
-	tswcu1WKvNue/37dykovJ+qCYU3Yf9ate0FNQ0N0q3RAWJapGjsmb2xL+ELdQOSgP8BlV3LiMvs
-	onBzY0sNrQyK3FybwCSLhizK6woVkPuezioUwgLEQAzmk4/007w/g1WTMFgMpB1o8NbZGEOzcEI
-	p6pM642a5ZQqdLI7Kdg==
-X-Received: by 2002:ac8:5f50:0:b0:4a9:7fc9:d20d with SMTP id d75a77b69052e-4b0913be649mr53722611cf.5.1754586181562;
-        Thu, 07 Aug 2025 10:03:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHodntMZuoTRllm//xlI3139nJlzflRuOhQf5+gUbl8UpYksDbejgbdK/rIApVL2XVDtz6+aA==
-X-Received: by 2002:ac8:5f50:0:b0:4a9:7fc9:d20d with SMTP id d75a77b69052e-4b0913be649mr53722101cf.5.1754586180920;
-        Thu, 07 Aug 2025 10:03:00 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm12028589a12.26.2025.08.07.10.02.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 10:03:00 -0700 (PDT)
-Message-ID: <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
-Date: Thu, 7 Aug 2025 19:02:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD52E1F4162;
+	Thu,  7 Aug 2025 17:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754586282; cv=fail; b=IAJRKkC+5IXCcTCjZCCrwzfBj6Np0sMNUPwlkzwd1CedwzCSWt14f4aoGlMAGyw/ogIlITW4dpnzMg26nBnYLLe2hrorAEDQEjp2yjIsZ++ELR/XHHTs9p0P801iKsuLowYfJ8ti1YtUqpfPj6rNnHRz24GXTuhTAnWgWfh47cM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754586282; c=relaxed/simple;
+	bh=SkMPVcC4OxIGOYkmfCqzmq40CW+IU8In82kbL9pvaWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hGqQEKvq4huper/gEzLDmJo8Hg6vSUJexB80Nrr2fkb05BT5yCqLCn4XghkMywNFisKLtS4klFz6QfQ7FQoWfJ8t6W6OfvfHxSs0uiKgnsMt+V6SuKid4SN03pfoD9u7z6VrFTK/ZgbcklpZRJUTLs6tWot5yjD5xjkGGPzYT2s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hVJKySzA; arc=fail smtp.client-ip=40.107.212.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BJVVk6wPflYpdPYV9tvDf4TJo5ZdfoYXSW+7DssxiDZFl6HwzJ70G9MH4OvzWWm0Ah0B8iYfevaYAOqftvLrVz55xWMHEJWZVkzH1FEnbQ6Yt17jb+BKPvRCl2XbhBYswq8tue9caAImsyt6aR8D2NsNOp/dwSB5+kYAMwkI5/UXBhGxhLYGhcBhRHJNu+wRHj7SgktwQ+9T1aHfMqbxyZnw2CIz03ISMl4g0x5WlG1enG7dMXXR52LR15shfEl2a4bDlslXqJtl/99uRGGWRj7sKAgvWOtBVzycI29b8e/O3D21xobm5puVtReLeUQLSffrfZeq6K5fisjDCh1TRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S5M1vng7PZ+jePhiKKGxdoAcG5blZS4w5osU3jAdNhI=;
+ b=S8oUAWEBr7p19J7tMwIFg7x8oaEKn/qarRWrMZdUPRhTS3Hb7AbEeHXiu5SE7udd1Icon/D2ySDl3NjJWyujQXJceeNBOwQ9WBGx0LYj4+Vh3AfKqV56arwNGDbz+cgj1F528VTncPYJ2gziUNSK7+3tvW11tt29tQpJcq4QGLC9bGVKW3QrMXBJ8WQK4vixh+kxnldfvd227spBYEapQPvcRBASWA7q69WdHT2+2MKNl8pt9pgEyaUxhLjIDB59t4pcXl/lW8J1YekUIqZUrfrdJdAsLWdcPJNnm05x8+nVLjRBW+/ohGcQvdrxyPup6SB7bMBDOOXABvCy70bvgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S5M1vng7PZ+jePhiKKGxdoAcG5blZS4w5osU3jAdNhI=;
+ b=hVJKySzA6Vo6RXEgGujh89hpaw2F6ysh++ZxBpQgMMJMkRZpqyKbHIu+h3FB2cLwpXhJm3eOpOgNjFwDxTCCCrcnd31FafZfdqg0SWmaBeJAb8AMxXoPdTtJyWUlXXTWOQqfuAZ2HUfQsw0VGv3K7gf6qMyVJq+VTq/UkCeLJVElbehjrkgilZvGOBRLiP4lOX3YUZYVym4AZAAWF7+ye32yBahStGvGeUuyWd5s1WZdcCBUF/m9B+sBimrvXomFvkOxbX3LU5NTOhrPFGIhkIyq/hrP1Yp3UsSbWRB8LMmlUpkkFXmcdz6QzohLzNC2QlnuEn/m9M+4egA1Q1qk0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ BL4PR12MB9482.namprd12.prod.outlook.com (2603:10b6:208:58d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Thu, 7 Aug
+ 2025 17:04:36 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 17:04:36 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/4] mm/huge_memory: move to next folio after
+ folio_split() succeeds.
+Date: Thu, 07 Aug 2025 13:04:34 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <30335873-106F-4154-B035-4310089849E4@nvidia.com>
+In-Reply-To: <20250807084502.vizmxfum7knsr257@master>
+References: <20250806022045.342824-1-ziy@nvidia.com>
+ <20250806022045.342824-3-ziy@nvidia.com>
+ <20250807084502.vizmxfum7knsr257@master>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BN9PR03CA0934.namprd03.prod.outlook.com
+ (2603:10b6:408:108::9) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
- shared_floor_ops
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
- <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
- <c54e8ac4-9753-47bf-af57-47410cee8ed7@oss.qualcomm.com>
- <d6a2937f-7d63-4f17-a6fb-8632ec4d60c8@oss.qualcomm.com>
- <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Vbz3PEp9 c=1 sm=1 tr=0 ts=6894dc46 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=F93HE1ha22ImTei5Bi4A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: JlhOTLS7Xhvq9g-ftd7epeq5YvcHjwzS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX14D/XQoFxuKN
- uIo9tTZcZ0AyCTV9VfG38woycNfPa4vqpXs/rINMdy+VEnknoVZjhgWpi8yVRa0qLxI0K7bFQzL
- 1nXUrADVFi7Xi4hAhJZGujyxN1c3kHzzpHBKOmOPwbFrczR6Vrm+s0wwsYxO3oXsTb9T+1iMJel
- blFRTO0krcX4foKHe1ht7Abzn/zCcpWtbaYDbPd1ezIvh/MSc7dX7zKz4QGajuVMG3DM118gc0P
- Fmhp6baheETF119WJUjKaKT4yoRMcNrBryQOY2NtpPLLyIr4Z1ocVJv7SI04vyzWN52eQdchp99
- B0estNJZ99xuFoS/d+neZR3/q6uO/fsqpi7h78VpnrFj7VaJSqLIV+NvpIMYiB/eVyjr91qCjeD
- VQI2ZqzH
-X-Proofpoint-GUID: JlhOTLS7Xhvq9g-ftd7epeq5YvcHjwzS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL4PR12MB9482:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86a360ec-00b4-409e-41dc-08ddd5d47d3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9MU81ZeOmPfSj5fako2LC2ZcBiORcMa6kOObsX3nwphkXsAz6E79JTni2AY2?=
+ =?us-ascii?Q?PHcON0Y+F9RUmOAR7dtvvCPmYeA7pg0e4F/51VYLOlYakz1FIVLv5caVwqxB?=
+ =?us-ascii?Q?6PkDsgxO4fm7zFSyQgWYH/rfLKOyT1SnMbEVquf97ZDG4ZcjTE3HEExb84gp?=
+ =?us-ascii?Q?+fbKG9BG1F+A9QhqX1/sTe/7mrMTgCRNBGlzwCs4W/EIuV+1JsKPze/MkyMj?=
+ =?us-ascii?Q?JqIflW6xmdN/E5yKJC2yZ2O/uNCr2s+pK5X8V8rpXw6U84HDch77070SGdhw?=
+ =?us-ascii?Q?Z0dZ6eUcVvzqBC+JmIRs3Qa62gjXPjOfCZjO+RVCHY2hHB+4IwAW9qYZjdQ9?=
+ =?us-ascii?Q?G/HT1y8mWs5GdPZiqcfOtwYvviSIgo60rNAzGhtyCNy9bvDKsP99fuZbibb4?=
+ =?us-ascii?Q?M1GLCey6Qh/IfcZjbgZX9byhgynVkjrfo5pEIEyWUhy+vpbgNnI49VmH59Gu?=
+ =?us-ascii?Q?kKUqJvclufTMQXp92pAyBjLdARXE0j34QJjRmqtoICPaFCaRNtQv/s0PSpKt?=
+ =?us-ascii?Q?0iS0iYXyU9/kRGhasxqrgpbqFJiOQYLkFkzZbAAXX0VQ3HE9puntmlclA4TF?=
+ =?us-ascii?Q?fjZgHjjmWB9al6NUbWV7yaKz/AHU3RNUV6lbLYEv5auaItfXpU98/1q3uLTE?=
+ =?us-ascii?Q?2woCF9971GPZsqNC3sfVSVLG5IDZj95EcGMJr9+ovP7qaQQcWFxAMNTi3Vp2?=
+ =?us-ascii?Q?Qea4DxrCyjakqQ8dc7UcFJKQYPyc5ydbXBc4NxZF3JW7bGUnBqnwo9cd+gv2?=
+ =?us-ascii?Q?3df31iix9hUjXBTc6FQbqcqxdR3WkEhFCjO7LlZzYl3GRBuGXXvA8yeD0mJg?=
+ =?us-ascii?Q?C9+q7xQ5nLyuTIiFww4m5ww1QTslGY4AAWsDrjKitkvxjhOk2sUvpCvJR92E?=
+ =?us-ascii?Q?Ebc0cZlPSquHm/dPRtlSnDHesZd1c6a8PB6deCrccd6LkvrtrwjlL0XFtU8g?=
+ =?us-ascii?Q?4ngJInMgRetgP3DJEq/bwFvufbs0TqunsIIpvdVKeCEcpHNE3kMbv9DTtYS0?=
+ =?us-ascii?Q?3dTE0Z3ig8xR2LTqp82ngCMJ9NZK+U+YBI6jjIeHEg+17VflVesDyuxS/QCn?=
+ =?us-ascii?Q?2ZAh3szKCXxSHxUDtWeE8Yc3pdVyg0RQRvgiwMLSjwgPD1NQpdezcxMZO9tL?=
+ =?us-ascii?Q?1IGPSldd9Wm1SV0LS3oB5TXZSXg6tgJXHLEdyPcvselKdCewRe68TYF92cvX?=
+ =?us-ascii?Q?ipda8uuGfbnA7ODc73Im1ofpFlR12BB1Fs0Edlov+2ReO40IkL4CA7dk69Mg?=
+ =?us-ascii?Q?RoTNQ1w000DbtsU/cHHMjWNc/4NvVwJYU1zTOttrxOuZh4lCEAEkvcqKt4mh?=
+ =?us-ascii?Q?jGv4dFcnhF7nGgMApwgT3CPvZHU+FLys0H+bdblXX8P+5CEy+JzQl7U7S2QG?=
+ =?us-ascii?Q?xunpDB8tQd3M3L3wi33o8aDZyLx+f8240a67nIpvOB3CJ6XYORQ9UDJ3FALz?=
+ =?us-ascii?Q?y7Q7xOkDJhM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?STaQF1ptFm8AtdYfZw5ZG7aUQdCkZTeKRugMTKZaP61k+ZyhmwYFe1O02txZ?=
+ =?us-ascii?Q?0b2zuDB90ugzh5Cz1uJH7+K7C7i3nAW/g88R73OSVDHcm7SWRsczuEDz2+72?=
+ =?us-ascii?Q?hXDQdjLcUL+nCILRAlTW/3XDqLJ8R8zdm32WAlaNZfeQeP0y5Bd0nzwzXON+?=
+ =?us-ascii?Q?YlAc2rYzk7Ou783LhZxRiPf9yfHyBeHzhs25K/56r9OPpi3Pr27zniHEzHw0?=
+ =?us-ascii?Q?B3zjC4yAhrO7M9RqXFjKGD9s6rf6QIlS1n3xbyZ/BJgtAxHjklrwTJ1C+wnx?=
+ =?us-ascii?Q?5LVIeBkoWAYLNhGxM2d2UpSic7HSBQhM+KzdsZtrhOduNTqdOQJolYMN+l8z?=
+ =?us-ascii?Q?AuiK3tY1Cjcf7MicH2bpvBh2iDbH6NmvH4S4u3H7zsL9SxoxanJMxVZBHK7B?=
+ =?us-ascii?Q?/6dFIzTxwksuXev2znOF/7EwZUxLFm8bCqgFlYaCN+ut5e2deeEXaIh5IzPu?=
+ =?us-ascii?Q?0SBxueOCmhVHTNaWaZNi/jw1trObms2OLNsjhYvfuKOoUnd97ohYGPSC1nXM?=
+ =?us-ascii?Q?T1fF5UOQoI/eb/Xv00ZJpRLg/6XYWy/mYGg/wiMUpWYm0RNUaRuI+LJVIskK?=
+ =?us-ascii?Q?eyg7kuPd53H1FTjHX74j8lMhBzQmYwbVsKoojuqtua/XzanDd5YnKa2MdF2I?=
+ =?us-ascii?Q?lQZ4w2JARek3T4iJaCfsqKt0n8In8grS+Yml9Y9P0ntITFenMzaCbcXU5O7C?=
+ =?us-ascii?Q?/6V6jZoxxP1GoftHBLpRKWM6v4uNoxm7G8jJmnuf7trbXAnaBqBHPbWm2DSg?=
+ =?us-ascii?Q?4896uQJgvmlk62bE6UzKIb16xmu0x+0MR9jhSzJeatG2b9inEu9ZUuKXc4AN?=
+ =?us-ascii?Q?ieHP80i69fs01zbDHCBoLxkcgPQVL88PlTfph+/bRAEE69NXtQaA/rT1V/Qu?=
+ =?us-ascii?Q?+yuoza5kdGF2W3/Lwxk+8KTZ/JQDpaWy0jQ9GgAw9lusGyYipPX0pOxVfbCO?=
+ =?us-ascii?Q?n370vx7FJ1B6BmpWFQTK8/LIwOhSplKc5vw5PbcMmXIhzgxDma5DXqhHkLb1?=
+ =?us-ascii?Q?vMZZbLKbv9MUsDbxPYNaSrHcOgBWyB6+bIIJqbojY3fESC2YgY/ybPEm+M07?=
+ =?us-ascii?Q?+/0FsJTy2FN1VKsY/3Uty+ECty8bIPWYsRF+I6wZUYpBRfwEP7r+zBcDo1i4?=
+ =?us-ascii?Q?kOb8GMgX+xX4Wi89R4eu3KM3Yx3IDtgaACNBZJSyLWfx06iXTGX3YqTRzboH?=
+ =?us-ascii?Q?9pTG+yuskDogRYDSwOj0BIpns8zAenCXNqAcH/k/9NE/UYSTuVDXhJWIfKOA?=
+ =?us-ascii?Q?FWFJMqz5lKiEFxUbhgLmE8f5oTFvfqPqaEQ+n/wlGWUqOm1Y2CYeAtxIfaMS?=
+ =?us-ascii?Q?CrW1TuWfNViSsqrqUNJOU8twWjU0XuaNpN6g2YDAatLTdJB4atzT/39nJTT3?=
+ =?us-ascii?Q?wiJWDA2NCyWP4QDbisoUjdB/MYC3fT4UOn4IupF1MgEImtzDKFlfRShlfCn4?=
+ =?us-ascii?Q?thm8yJZrhbKUT8hSTUEwwDiBXDzN1DFFo8EErUdbYxcly7wU3fMdFJk03UGl?=
+ =?us-ascii?Q?vrhll2DOJ8UzWfSFfC1BQhRXNK7jTCq4mjAAqlzUlxLnqrfHZzP5RVrCkyP2?=
+ =?us-ascii?Q?mV786V77k12cTKvz6a6oL82jjhOE9yiE2A2zgvky?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86a360ec-00b4-409e-41dc-08ddd5d47d3f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 17:04:36.8664
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9RCxq57M7geJ10hII5xW2kx4hni/nMa+Obr+KiOsFoOXODQwXTSwALq6MFXGNflk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9482
 
-On 8/6/25 11:39 AM, Taniya Das wrote:
-> 
-> 
-> On 8/6/2025 3:00 PM, Konrad Dybcio wrote:
->> On 8/6/25 11:27 AM, Taniya Das wrote:
->>>
->>>
->>> On 8/5/2025 10:52 AM, Dmitry Baryshkov wrote:
->>>> On Mon, Aug 04, 2025 at 11:59:21PM +0530, Taniya Das wrote:
->>>>> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
->>>>> boot. This happens due to the floor_ops tries to update the rcg
->>>>> configuration even if the clock is not enabled.
->>>>
->>>> This has been working for other platforms (I see Milos, SAR2130P,
->>>> SM6375, SC8280XP, SM8550, SM8650 using shared ops, all other platforms
->>>> seem to use non-shared ops). What's the difference? Should we switch all
->>>> platforms? Is it related to the hypervisor?
->>>>
->>>
->>> If a set rate is called on a clock before clock enable, the
+On 7 Aug 2025, at 4:45, Wei Yang wrote:
+
+> On Tue, Aug 05, 2025 at 10:20:43PM -0400, Zi Yan wrote:
+>> Current behavior is to move to next PAGE_SIZE and split, but that make=
+s it
+>> hard to check after-split folio orders. This is a preparation patch to=
+
+>> allow more precise split_huge_page_test check in an upcoming commit.
 >>
->> Is this something we should just fix up the drivers not to do?
+>> split_folio_to_order() part is not changed, since split_pte_mapped_thp=
+ test
+>> relies on its current behavior.
 >>
-> 
-> I do not think CCF has any such limitation where the clock should be
-> enabled and then a clock rate should be invoked. We should handle it
-> gracefully and that is what we have now when the caching capabilities
-> were added in the code. This has been already in our downstream drivers.
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>> ---
+>> mm/huge_memory.c | 18 +++++++++++-------
+>> 1 file changed, 11 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 8a11c2d402d4..b2ce8ac0c5a9 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -4341,6 +4341,7 @@ static int split_huge_pages_pid(int pid, unsigne=
+d long vaddr_start,
+>> 		struct folio *folio;
+>> 		struct address_space *mapping;
+>> 		unsigned int target_order =3D new_order;
+>> +		long nr_pages;
+>>
+>> 		if (!vma)
+>> 			break;
+>> @@ -4358,6 +4359,8 @@ static int split_huge_pages_pid(int pid, unsigne=
+d long vaddr_start,
+>> 		if (!is_transparent_hugepage(folio))
+>> 			goto next;
+>>
+>> +		nr_pages =3D folio_nr_pages(folio);
+>> +
+>
+> Could be folio_large_nr_pages()?
 
-Should we do CFG caching on *all* RCGs to avoid having to scratch our
-heads over which ops to use with each clock individually?
+Sure.
+>
+>> 		if (!folio_test_anon(folio)) {
+>> 			mapping =3D folio->mapping;
+>> 			target_order =3D max(new_order,
+>> @@ -4385,15 +4388,16 @@ static int split_huge_pages_pid(int pid, unsig=
+ned long vaddr_start,
+>> 		if (!folio_test_anon(folio) && folio->mapping !=3D mapping)
+>> 			goto unlock;
+>>
+>> -		if (in_folio_offset < 0 ||
+>> -		    in_folio_offset >=3D folio_nr_pages(folio)) {
+>> +		if (in_folio_offset < 0 || in_folio_offset >=3D nr_pages) {
+>> 			if (!split_folio_to_order(folio, target_order))
+>> 				split++;
+>> 		} else {
+>> -			struct page *split_at =3D folio_page(folio,
+>> -							   in_folio_offset);
+>> -			if (!folio_split(folio, target_order, split_at, NULL))
+>> +			struct page *split_at =3D
+>> +				folio_page(folio, in_folio_offset);
+>> +			if (!folio_split(folio, target_order, split_at, NULL)) {
+>> 				split++;
+>> +				addr +=3D PAGE_SIZE * nr_pages;
+>> +			}
+>> 		}
+>>
+>> unlock:
+>> @@ -4438,8 +4442,8 @@ static int split_huge_pages_in_file(const char *=
+file_path, pgoff_t off_start,
+>> 	if (IS_ERR(candidate))
+>> 		goto out;
+>>
+>> -	pr_debug("split file-backed THPs in file: %s, page offset: [0x%lx - =
+0x%lx]\n",
+>> -		 file_path, off_start, off_end);
+>> +	pr_debug("split file-backed THPs in file: %s, page offset: [0x%lx - =
+0x%lx], new_order %u in_folio_offset %ld\n",
+>> +		 file_path, off_start, off_end, new_order, in_folio_offset);
+>>
+>
+> How about move this part into patch 1?
 
-> 
-> We can add the fix to do a check 'clk_hw_is_enabled(hw)' in the normal
-> rcg2_ops/rcg2_floor/ceil_ops as well, then we can use them.
+Sure. I missed it. Thanks.
+>
+>> 	mapping =3D candidate->f_mapping;
+>> 	min_order =3D mapping_min_folio_order(mapping);
+>> -- =
 
-FWIW this is not the first time this issue has popped up..
+>> 2.47.2
+>>
+>
+> -- =
 
-I don't remember the details other than what I sent in the thread
+> Wei Yang
+> Help you, Help me
 
-https://lore.kernel.org/linux-arm-msm/20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org/
 
-Konrad
-> 
-> AFAIK the eMMC framework has this code and this is not limited to drivers.
-> 
+--
+Best Regards,
+Yan, Zi
 
