@@ -1,106 +1,153 @@
-Return-Path: <linux-kernel+bounces-759526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C1CB1DEAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:14:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EC8B1DEAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239B51893CD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACEF581913
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A113723AE93;
-	Thu,  7 Aug 2025 21:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F21244684;
+	Thu,  7 Aug 2025 21:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0Uza2f2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYz+tPmN"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0887C237165;
-	Thu,  7 Aug 2025 21:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F5C9478;
+	Thu,  7 Aug 2025 21:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754601287; cv=none; b=RkNzvuQABy9O89XpwiFoZkOG11qJwwO3QL5hhTSiE1S4UEB5jMTAAm7dYC0au26CF3FbtraN07EXwOLGGlp4vZmH4eayckdv/0xFLZSkcwG4TX2ehLHNb+sAQBxoJ1cEjTEjh5vek4Q7WF/q9kEKotwxzi4Uz4lKXZJr7PSSBoE=
+	t=1754601415; cv=none; b=PYPupb6nommkYV0C3becF9ahAlcR5P/FSRWwCBohHQG5iDzlrApsTosPgreco9bTMsIOJn4bzPaliZLTcCu9G173Jb+L632vpOMCJj+FNc3/inOYshtRKuYE6WmfqxuiRsvqXNgriWT9UTrg4ZcTpi2JhYQfOPvdWdg75/icFrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754601287; c=relaxed/simple;
-	bh=HAI5f935R1NcGS6jxC+XUnRQCfI1j4+QgnE9A5gcjvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1GuU3VQI6Bvu/mBIckchkr6XzXtLdshkIslOqf95CZazD/rBooK/ZPEcrEX0EEJQqK0to2Fe6E3N5ZZmZcPAzwvptMXtBkjFWnhFgCaDIAGUkvyrvqhrxh2Z1RCJGsHtlhtK7sxOEfbXG07QUEl/5oEp0J7dJuRMzMMJspk1U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0Uza2f2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B433C4CEEB;
-	Thu,  7 Aug 2025 21:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754601286;
-	bh=HAI5f935R1NcGS6jxC+XUnRQCfI1j4+QgnE9A5gcjvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0Uza2f2Y0cfOBQOIDPShmRuzwE+/VCihcPmxgI16bYQV+j7022KPaAolF0po2PlE
-	 aCVlZYMD8Qq8UGF23DTxD6WhoR+OY4Isq9kXEnA/WDtxvT8x3+HXseLFArZvBjsdM7
-	 jBUSUZfzSCNRR5aXCp/p50t1Duc9sfemsH5kzpx3PtLzisuUAme+MaY9vwO5TE4G9r
-	 gK4xsHtrlx5vRqCG74r5f+P6jjyQPj/UYmS3Wxy1p/O3ZgLKBteG7OuPay67wMtEB/
-	 AonJJIFXC8Eb0/QPKiZhBcwVK+wJzkJ5n1jzqRJlNz0ugcvQH1cO2uVuZvoOHZat6J
-	 G//Tq55dlXzlg==
-Date: Thu, 7 Aug 2025 14:14:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com
-Subject: Re: [RFC RESEND] binfmt_elf: preserve original ELF e_flags in core
- dumps
-Message-ID: <202508071414.5A5AB6B2@keescook>
-References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
- <202508061152.6B26BDC6FB@keescook>
- <e9990237-bc83-4cbb-bab8-013b939a61fb@syntacore.com>
+	s=arc-20240116; t=1754601415; c=relaxed/simple;
+	bh=9eUhhK5dfV8YL1qqjnFaB8UyCfsTlH1y3uerlBWSZeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U6RfQRer/hHrJE7/0d8ecABCtooetDbQdCDUF7Om2WaUx0Ibk0IT3zlts+Ki4bT3c2df4oFDnbh1WtGhMlu26Arna3HPjykAC4LMIz4YC3A1biV16y+ycph3WhzwIrrHY4vQhlV8Ewv0VMG1OmCK3nnTUkTBZ1IkHzd7jpdnAs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYz+tPmN; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af937728c3eso426197266b.0;
+        Thu, 07 Aug 2025 14:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754601412; x=1755206212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YW5VKuizdz3uQCAD3P3uaQbe86Sv96LJNl4VjT7BKPw=;
+        b=HYz+tPmNnTNWjbC25e5lgggvlbEIPbUPX4+NSb/dVTwGnS5KOBlHV+BhQ/4j8D+92s
+         CCjUuMthwnbsB22IqudR/Ynd4BDELr0zgiZVuSj64lxXtzw0YZ2igasjEylHKqWG0p4V
+         SgKkTBAn/J87FNzOlSbYgTmWrgp5khBuwKEWyVGJ22RIDuZgKdb8uNz2xd14OzogOM4K
+         06PClJATN0Sj0XDdLvvEjkHHocqjZ8KQgRcHdUfJ+JoYDmA6MsbEenODPDU/dA7QWk5g
+         iVyb54/yBYMEQ5LIt+kaTM/7y22+MoCFHtGOQ4gbFCoSJKfZ73EOfHXon9DO5Rq3bMm/
+         Q1Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754601412; x=1755206212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YW5VKuizdz3uQCAD3P3uaQbe86Sv96LJNl4VjT7BKPw=;
+        b=jTm0+bUYn8pB4Cvwracq6vESvmkD1zIVCUZrv8EfZHngywmejPRFJHESagN5fXPm2T
+         dHk9D2zGlU1YqaTJoWsZZSGmn23K9zNgx76EP7iyoaTLMH3S6MPrJ1l0Gkf5lua4u7Wp
+         iqKb+AorSdXcyJ0izGCDZQcu3Os6OTLGBh/FA0krGgW60AdxKoCcY9fn3fYbWUG3mu1+
+         9yHnMqEsL9JLQCwHuSklaUGeue4V4YBR8s2EI9+z6CHwivgL9vOvIJFleVlg2lbv6K4Q
+         pFz7HWULXWkq3gVzrczOJzz2aKOsFw7tWHgMFh+I/p0q0deDV8LAaDUQMrSlUH3bYCcw
+         TPBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsyJgCGl96XmFgRsN85hCN0z2/n2ZCwjbnKzfiTa73sKcr9Gf17NEOBPhbcZ6woZJ3hII+unKKTIVy@vger.kernel.org, AJvYcCVcUnSxWv36xyJw22s85TPYoV+7lKey6Xg/7/n3PN37RYhuWFwLnvrcoSZq8AE5t/pn/8Xyjw/bMa+8@vger.kernel.org, AJvYcCWJgtXN8IIH7bQvNbhKw1Pdo7cIApRg8aQP//T4h6idwT5ixQ7bM878twiAnDpEvbEUDEDMs1UKEsKQSA0T@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrU83azi89ogkZUXWwyUWAH8D6emn4GWtEHmN9Y3LnXR+6FyHh
+	xUERGrT65wmRPDeXcCyBY9R3M1e/isIXD0Lf/OQz3tV5AYntneO/xaw2svma0iaR5UMD1Fagmc8
+	XBkD2hMghgSX2plOMMfxPz67YJdG6Y60=
+X-Gm-Gg: ASbGncs2KhQkBPwJiW+E01nBjiTNqTdtwITc7q9DoVwSi9RSeDwzS5U5LWWSnHE0dkA
+	p8SH6H73haf4diVbgv+j95EHrmstafWL41mencn/22UeNV6nw+8YM8hpnrMCjLMKbT5a0r5k2Xm
+	GCn8OQp4jk066MqP1lMfXq3Pa2lKKCf3Srjjxs8IENcW7NaQdM2RQ6DcvxLSrRh6eN+1C1S7rPE
+	fxH9g7EVRtg0raXOB5Q8sKnuFtIgK0SRCGCOyc/QA==
+X-Google-Smtp-Source: AGHT+IF5mbNBW94ntEyvRzUawU+yBnKWoEcM/OnUqQN7n9Ea/8VYGKZD45os8JeDIaa6K+ZOhjnNz0shSTGeBPPSwns=
+X-Received: by 2002:a17:907:7e9d:b0:af8:fded:6bad with SMTP id
+ a640c23a62f3a-af9a3e3e611mr529635666b.18.1754601411885; Thu, 07 Aug 2025
+ 14:16:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9990237-bc83-4cbb-bab8-013b939a61fb@syntacore.com>
+References: <cover.1754559149.git.mazziesaccount@gmail.com> <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
+In-Reply-To: <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 7 Aug 2025 23:16:15 +0200
+X-Gm-Features: Ac12FXykDcbCUdUI9iHmPN3WsJWpiJjJXg5mSCfo0Pc5LWH32gtNwUrRRah3vi4
+Message-ID: <CAHp75VcHR78Uwgo74n-i3a1sSfDxBwVKWihcnFp5x3d=puAySQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 07:13:50PM +0600, Svetlana Parfenova wrote:
-> On 07/08/2025 00.57, Kees Cook wrote:
-> > On Wed, Aug 06, 2025 at 10:18:14PM +0600, Svetlana Parfenova wrote:
-> > > Preserve the original ELF e_flags from the executable in the core dump
-> > > header instead of relying on compile-time defaults (ELF_CORE_EFLAGS or
-> > > value from the regset view). This ensures that ABI-specific flags in
-> > > the dump file match the actual binary being executed.
-> > > 
-> > > Save the e_flags field during ELF binary loading (in load_elf_binary())
-> > > into the mm_struct, and later retrieve it during core dump generation
-> > > (in fill_note_info()). Use this saved value to populate the e_flags in
-> > > the core dump ELF header.
-> > > 
-> > > Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS, to guard
-> > > this behavior. Although motivated by a RISC-V use case, the mechanism is
-> > > generic and can be applied to all architectures.
-> > 
-> > In the general case, is e_flags mismatched? i.e. why hide this behind a
-> > Kconfig? Put another way, if I enabled this Kconfig and dumped core from
-> > some regular x86_64 process, will e_flags be different?
-> > 
-> 
-> The Kconfig option is currently restricted to the RISC-V architecture
-> because it's not clear to me whether other architectures need actual e_flags
-> value from ELF header. If this option is disabled, the core dump will always
-> use a compile time value for e_flags, regardless of which method is
-> selected: ELF_CORE_EFLAGS or CORE_DUMP_USE_REGSET. And this constant does
-> not necessarily reflect the actual e_flags of the running process (at least
-> on RISC-V), which can vary depending on how the binary was compiled. Thus, I
-> made a third method to obtain e_flags that reflects the real value. And it
-> is gated behind a Kconfig option, as not all users may need it.
+On Thu, Aug 7, 2025 at 11:35=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> The ad7476 driver defines separate chan_spec structures for operation
+> with and without convstart GPIO. At quick glance this may seem as if the
+> driver did provide more than 1 data-channel to users - one for the
+> regular data, other for the data obtained with the convstart GPIO.
+>
+> The only difference between the 'convstart' and 'non convstart'
+> -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
+> channel's flags.
+>
+> We can drop the convstart channel spec, and related convstart macro, by
+> allocating a mutable per driver instance channel spec an adding the flag
 
-Can you check if the ELF e_flags and the hard-coded e_flags actually
-differ on other architectures? I'd rather avoid using the Kconfig so we
-can have a common execution path for all architectures.
+and adding
 
--- 
-Kees Cook
+> in probe if needed. This will simplify the driver with the cost of added
+> memory consumption.
+>
+> Assuming there aren't systems with very many ADCs and very few
+> resources, this tradeoff seems worth making.
+>
+> Simplify the driver by dropping the 'convstart' channel spec and
+> allocating the chan spec for each driver instance.
+
+channel
+
+(you already used 'channel spec' above, be consistent)
+
+...
+
+> -       int ret;
+> +       int ret, i;
+
+Why? Is 'i' going to be used to hold a signed value?
+
+...
+
+> +       /*
+> +        * This will never realize. Unless someone changes the channel sp=
+ecs
+
+realize --> happen
+
+> +        * in this driver. And if someone does, without changing the loop
+> +        * below, then we'd better immediately produce a big fat error, b=
+efore
+> +        * the change proceeds from that developer's table.
+> +        */
+> +       BUILD_BUG_ON(ARRAY_SIZE(st->channel) !=3D ARRAY_SIZE(chip_info->c=
+hannel));
+
+We have static_assert(). Why can't it be used?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
